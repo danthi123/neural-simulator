@@ -9,9 +9,13 @@ spiking resonate-and-fire substrate + D-scaling), and a semantic nested fact "do
 
 This agent exposes that capability:
   - COMPREHEND/STORE: encode each SVO fact in phasor FHRR; a slot's filler is either a flat concept code OR a
-    nested product (adj ⊗ noun); bundle the role-bindings.
-  - QUERY/PRODUCE: unbind a role; the abstention threshold (TPAM-style) detects whether the slot is FLAT (a
-    clean concept match) or NESTED (no flat match -> the resonator factors it into adjective + noun).
+    nested product (adj ⊗ noun, or adj ⊗ adj ⊗ noun for a two-attribute entity "big red ball"); bundle the
+    role-bindings.
+  - QUERY/PRODUCE: unbind a role; the slot's DEPTH is detected automatically from confidence signals -- the
+    flat cleanup confidence (flat vs nested), then the 2-factor reconstruction residual (one attribute vs two).
+    A flat slot is a clean concept match; a one-attribute slot is factored by the 2-factor resonator; a
+    two-attribute slot (the adjectives share a codebook -> permutation symmetry) is factored by the 3-factor
+    resonator with random restarts selected by reconstruction residual.
   - ABSTAIN: a query with no matching stored fact returns None (no confabulation -- the project's distinctive
     trust property carries over).
 
@@ -32,13 +36,17 @@ class NestedCompositionAgent:
     """Store + answer SVO facts whose patient may be an attributed entity (adj ⊗ noun), on phasor FHRR,
     decoded by the resonator; flat vs nested is detected automatically by the abstention threshold."""
 
-    def __init__(self, nouns, verbs, adjs, D=1024, seed=42, flat_threshold=0.30, n_iter=120):
+    def __init__(self, nouns, verbs, adjs, D=1024, seed=42, flat_threshold=0.30,
+                 n_iter=120, resid_threshold=0.5, n_restarts=16):
         self.nouns = list(nouns)
         self.verbs = list(verbs)
         self.adjs = list(adjs)
         self.D = int(D)
+        self.seed = int(seed)
         self.flat_threshold = float(flat_threshold)
+        self.resid_threshold = float(resid_threshold)   # 2-factor reconstruction residual splitting single vs multi modifier
         self.n_iter = int(n_iter)
+        self.n_restarts = int(n_restarts)                # random restarts for the repeated-codebook (multi-modifier) decode
         rng = np.random.default_rng(seed)
 
         def code():
@@ -61,13 +69,23 @@ class NestedCompositionAgent:
     def _unit(v):
         return v / (np.abs(v) + 1e-12)
 
+    @staticmethod
+    def _mods(patient):
+        """The modifier(s) of a tuple patient as a list: ('big','cat')->['big']; (('big','red'),'ball')->['big','red']."""
+        mods = patient[0]
+        return list(mods) if isinstance(mods, (tuple, list)) else [mods]
+
     def _filler(self, patient):
-        if isinstance(patient, tuple):                      # (adjective, noun) -> NESTED product
-            return self.adj_cb[patient[0]] * self.noun_cb[patient[1]]
+        if isinstance(patient, tuple):                      # (adjective(s), noun) -> NESTED product (1 OR 2 modifiers)
+            v = self.noun_cb[patient[1]]
+            for a in self._mods(patient):                   # bind each modifier in (binding is commutative)
+                v = v * self.adj_cb[a]
+            return v
         return self.noun_cb[patient]                        # flat noun
 
     def learn(self, agent, action, patient):
-        """Store a fact. `patient` is a noun (flat) or an (adjective, noun) tuple (nested attributed entity)."""
+        """Store a fact. `patient` is a noun (flat), an (adjective, noun) tuple (one attribute), or a
+        ((adjective, adjective), noun) tuple (two attributes -- 'big red ball')."""
         b = (self.roles["AGENT"] * self.noun_cb[agent]
              + self.roles["ACTION"] * self.verb_cb[action]
              + self.roles["PATIENT"] * self._filler(patient))
@@ -83,30 +101,74 @@ class NestedCompositionAgent:
     def _decode_role(self, bundle, role, MAT, names):
         return self._cleanup(bundle * np.conj(self.roles[role]), MAT, names)
 
-    def _resonator(self, p):
-        """Factor p ~ adj ⊗ noun into (adjective, noun) by the phasor resonator (the validated decode)."""
-        ea = self._unit(self.AMAT.sum(1))
-        en = self._unit(self.NMAT.sum(1))
-        for _ in range(self.n_iter):
-            xa = p * np.conj(en); ea = self._unit(self.AMAT @ (self.AMAT.conj().T @ xa))
-            xn = p * np.conj(ea); en = self._unit(self.NMAT @ (self.NMAT.conj().T @ xn))
-        a = int(np.argmax(np.abs(self.AMAT.conj().T @ ea)))
-        n = int(np.argmax(np.abs(self.NMAT.conj().T @ en)))
-        return self.adjs[a], self.nouns[n]
+    def _resonator2(self, p, K=4):
+        """Factor p ~ adj ⊗ noun into (adjective, noun) by the phasor resonator. Returns (adj, noun, residual)
+        where residual in [0,1] is the reconstruction quality |<adj⊗noun, p>|/D -- ~1 for a true single-modifier
+        product, ~0.1 for a 2-modifier product (the model-selection signal for single vs multi)."""
+        rng = np.random.default_rng(self.seed + 7)
+        Ma = len(self.adjs); best = None
+        for _ in range(K):
+            ea = self._unit(self.AMAT.sum(1) + 0.3 * self.AMAT[:, rng.integers(Ma)])
+            en = self._unit(self.NMAT.sum(1))
+            for _ in range(self.n_iter):
+                xa = p * np.conj(en); ea = self._unit(self.AMAT @ (self.AMAT.conj().T @ xa))
+                xn = p * np.conj(ea); en = self._unit(self.NMAT @ (self.NMAT.conj().T @ xn))
+            resid = float(np.abs(np.vdot(ea * en, p)) / self.D)
+            a = int(np.argmax(np.abs(self.AMAT.conj().T @ ea)))
+            n = int(np.argmax(np.abs(self.NMAT.conj().T @ en)))
+            if best is None or resid > best[0]:
+                best = (resid, a, n)
+        return self.adjs[best[1]], self.nouns[best[2]], best[0]
+
+    def _resonator3(self, p):
+        """Factor p ~ adj ⊗ adj ⊗ noun into ({adjective, adjective}, noun) by the 3-factor phasor resonator with
+        random restarts (the two adjective factors share a codebook -> permutation symmetry -> restarts + best
+        reconstruction residual break it). Adjectives are recovered as a SET (binding is commutative; order is not
+        preserved) and rendered in vocabulary order. Returns (list-of-adjectives, noun)."""
+        rng = np.random.default_rng(self.seed + 11)
+        Ma = len(self.adjs); n3 = max(self.n_iter, 150); best = None
+        cbs = [self.AMAT, self.AMAT, self.NMAT]
+        for _ in range(self.n_restarts):
+            est = [self._unit(self.AMAT.sum(1) + 0.7 * self.AMAT[:, rng.integers(Ma)]),
+                   self._unit(self.AMAT.sum(1) + 0.7 * self.AMAT[:, rng.integers(Ma)]),
+                   self._unit(self.NMAT.sum(1))]
+            for _ in range(n3):
+                new = []
+                for i in range(3):
+                    o = np.ones(self.D, complex)
+                    for j in range(3):
+                        if j != i:
+                            o = o * est[j]
+                    new.append(self._unit(cbs[i] @ (cbs[i].conj().T @ (p * np.conj(o)))))
+                est = new
+            resid = float(np.abs(np.vdot(est[0] * est[1] * est[2], p)) / self.D)
+            a1 = int(np.argmax(np.abs(self.AMAT.conj().T @ est[0])))
+            a2 = int(np.argmax(np.abs(self.AMAT.conj().T @ est[1])))
+            n = int(np.argmax(np.abs(self.NMAT.conj().T @ est[2])))
+            if best is None or resid > best[0]:
+                best = (resid, tuple(sorted({a1, a2})), n)
+        adjs = [self.adjs[i] for i in best[1]]              # vocabulary order (canonical; order is not recoverable)
+        return adjs, self.nouns[best[2]]
 
     def query_patient(self, agent, action):
-        """"what does <agent> <action>?" -> the patient: a flat concept ("cat") or an attributed entity
-        ("big cat"); None if no stored fact matches (abstention -- no confabulation)."""
+        """"what does <agent> <action>?" -> the patient: a flat concept ("cat"), a one-attribute entity
+        ("big cat"), or a two-attribute entity ("big red ball"); None if no stored fact matches (abstention --
+        no confabulation). The depth (flat / one / two modifiers) is detected automatically: first the flat
+        cleanup confidence, then the 2-factor reconstruction residual (high -> one modifier; low -> two)."""
         for b in self.kb:
             ag, _ = self._decode_role(b, "AGENT", self.NMAT, self.nouns)
             ac, _ = self._decode_role(b, "ACTION", self.VMAT, self.verbs)
             if ag == agent and ac == action:
-                p = b * np.conj(self.roles["PATIENT"])
-                noun, conf = self._cleanup(p, self.NMAT, self.nouns)
+                praw = b * np.conj(self.roles["PATIENT"])
+                noun, conf = self._cleanup(praw, self.NMAT, self.nouns)
                 if conf >= self.flat_threshold:             # a clean flat concept match
                     return noun
-                adj, nn = self._resonator(self._unit(p))    # no flat match -> NESTED -> factor it
-                return f"{adj} {nn}"
+                p = self._unit(praw)                        # no flat match -> NESTED -> factor it
+                adj, nn, resid = self._resonator2(p)
+                if resid >= self.resid_threshold:           # 2-factor reconstructs well -> ONE attribute
+                    return f"{adj} {nn}"
+                adjs, nn = self._resonator3(p)              # poor 2-factor fit -> TWO attributes
+                return " ".join(adjs + [nn])
         return None                                         # abstain
 
     def query_agent(self, action, patient):
@@ -123,13 +185,17 @@ class NestedCompositionAgent:
     # --- dialogue planning: the content-selection Control over the agent's own facts ---
     def _render(self, entry):
         pa = entry["patient"]
-        patient = f"{pa[0]} {pa[1]}" if isinstance(pa, tuple) else pa   # flat or attributed entity
+        if isinstance(pa, tuple):                                      # attributed entity (one or two modifiers)
+            mods = sorted(self._mods(pa), key=self.adjs.index)         # canonical vocabulary order
+            patient = " ".join(mods + [pa[1]])
+        else:
+            patient = pa                                              # flat
         return f"{entry['agent']} {entry['action']} {patient}"
 
     def _fact_concepts(self, entry):
         cs = [entry["agent"], entry["action"]]
         pa = entry["patient"]
-        cs += list(pa) if isinstance(pa, tuple) else [pa]
+        cs += self._mods(pa) + [pa[1]] if isinstance(pa, tuple) else [pa]
         return cs
 
     def _concept_graph(self):
@@ -177,17 +243,21 @@ def main():
     a = NestedCompositionAgent(nouns, verbs, adjs, seed=42)
     print("=== nested-composition conversational agent (phasor FHRR + resonator decode) ===\n", flush=True)
     facts = [
-        ("dog", "chase", "cat"),                 # flat
-        ("dog", "eat", ("red", "ball")),         # NESTED attributed patient
-        ("bird", "see", ("cold", "river")),      # NESTED
-        ("child", "hold", "ball"),               # flat
+        ("dog", "chase", "cat"),                       # flat
+        ("dog", "eat", ("red", "ball")),               # NESTED: one attribute
+        ("bird", "see", ("cold", "river")),            # NESTED: one attribute
+        ("cat", "want", (("big", "red"), "ball")),     # NESTED: TWO attributes
+        ("child", "hold", "ball"),                     # flat
     ]
     for ag, ac, pa in facts:
         a.learn(ag, ac, pa)
-        shown = f"({pa[0]} {pa[1]})" if isinstance(pa, tuple) else pa
+        if isinstance(pa, tuple):
+            shown = "(" + " ".join(a._mods(pa) + [pa[1]]) + ")"
+        else:
+            shown = pa
         print(f"  learn: {ag} {ac} {shown}", flush=True)
-    print("\n  -- what-queries (patient; flat or nested attributed entity) --", flush=True)
-    queries = [("dog", "chase"), ("dog", "eat"), ("bird", "see"), ("child", "hold"), ("cat", "want")]
+    print("\n  -- what-queries (patient; flat / one attribute / two attributes -- depth auto-detected) --", flush=True)
+    queries = [("dog", "chase"), ("dog", "eat"), ("bird", "see"), ("cat", "want"), ("child", "hold"), ("cat", "chase")]
     for ag, ac in queries:
         print(f"  Q: what does {ag} {ac}?   A: {a.query_patient(ag, ac)}", flush=True)
     print("\n  -- who-queries (agent) --", flush=True)
@@ -198,10 +268,10 @@ def main():
     a.set_topic("dog")
     for _ in range(3):
         print(f"  elaborate on dog -> {a.elaborate()}", flush=True)
-    print("\n  -> a UNIFIED conversational agent: stores facts whose slot is itself a structured entity (an", flush=True)
-    print("     attributed", flush=True)
-    print("     patient, 'red ball'), decoded by the resonator, and ABSTAINS on the unknown -- nested", flush=True)
-    print("     composition the flat-distinct substrate fundamentally could not do.", flush=True)
+    print("\n  -> a UNIFIED conversational agent: stores facts whose slot is itself a structured entity -- a", flush=True)
+    print("     one- OR two-attribute patient ('red ball', 'big red ball'), decoded by the resonator with the", flush=True)
+    print("     depth auto-detected from confidence signals, plans dialogue over those facts, and ABSTAINS on", flush=True)
+    print("     the unknown -- nested composition the flat-distinct substrate fundamentally could not do.", flush=True)
 
 
 if __name__ == "__main__":

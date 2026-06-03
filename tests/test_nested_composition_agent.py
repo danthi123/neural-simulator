@@ -42,6 +42,38 @@ def test_nested_recovers_both_components():
     assert a.query_patient("dog", "see") == "small river"
 
 
+def test_two_modifier_attributed_patient():
+    a = _agent()
+    a.learn("cat", "see", (("big", "red"), "ball"))         # patient has TWO attributes
+    assert a.query_patient("cat", "see") == "big red ball"   # both adjectives + noun recovered
+
+
+def test_single_and_two_modifier_distinguished_automatically():
+    # the agent is NOT told how many modifiers a patient has -- the 2-factor residual selects it
+    a = _agent()
+    a.learn("bird", "hold", ("red", "ball"))                 # ONE modifier
+    a.learn("cat", "see", (("big", "red"), "ball"))          # TWO modifiers, same noun
+    assert a.query_patient("bird", "hold") == "red ball"     # one attribute
+    assert a.query_patient("cat", "see") == "big red ball"   # two attributes
+
+
+def test_two_modifier_canonical_vocab_order():
+    # binding is commutative -> adjective ORDER is not recoverable; rendered in vocabulary order regardless of how stored
+    a = _agent()
+    a.learn("cat", "see", (("red", "big"), "ball"))          # stored reversed
+    assert a.query_patient("cat", "see") == "big red ball"   # still canonical vocab order ("big" before "red")
+
+
+def test_two_modifier_multi_seed_robust():
+    # the multi-modifier (repeated-codebook) decode must be robust across seeds (restart + residual selection)
+    ok = 0
+    for seed in (42, 43, 44, 45, 46, 47):
+        a = _agent(seed)
+        a.learn("dog", "eat", (("small", "cold"), "river"))
+        ok += int(a.query_patient("dog", "eat") == "small cold river")
+    assert ok == 6, f"multi-modifier decoded {ok}/6 seeds"
+
+
 def test_abstain_on_unknown_query():
     a = _agent()
     a.learn("dog", "chase", "cat")
