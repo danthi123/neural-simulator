@@ -209,8 +209,148 @@ def run_dialogue(graph, topic, n_turns, decay=0.7, said_decay=0.6, lam=1.0):
 #     research/findings/ and commit + push BOTH git remotes. A negative coherence result is a real
 #     finding. Long runs (real bridge loaded) should use a bounded background waiter.
 #
-# def main():
-#     raise NotImplementedError("Task 10 decisive eval is run by the human controller; see TODO above.")
-#
-# if __name__ == "__main__":
-#     main()
+def _run(selector, graph, topic, n_turns):
+    """Drive any selector (controller or baseline) for n_turns elaboration turns from `topic`,
+    feeding `topic` as the input every turn. Returns the transcript (non-None outputs, in order).
+    Stops as soon as the selector returns None OR picks a concept outside the topic's connected
+    component -- i.e. it stays ON-TOPIC and stops rather than wandering to an unrelated cluster
+    (the same guard as run_dialogue; applied to both selectors so the comparison is fair)."""
+    component = _connected_component(graph, topic)
+    out = []
+    for _ in range(n_turns):
+        c = selector.turn([topic])
+        if c is None or c not in component:
+            break
+        out.append(c)
+    return out
+
+
+def _synthetic_multi_topic_graph():
+    """A clearly-labelled SYNTHETIC multi-topic association graph (NOT from the substrate). Four loosely
+    connected topics with dense within-topic edges and a couple of sparse cross-topic bridges, so
+    dialogues run several turns and a context-blind baseline can wander or repeat. Used to test the
+    Control MECHANISM at a richer scale than the small real graph."""
+    edges = [
+        # topic: weather
+        ("rain", "cloud", 2.0), ("cloud", "sky", 2.0), ("rain", "storm", 1.5), ("storm", "wind", 1.8),
+        ("wind", "cloud", 1.2), ("sky", "sun", 1.5),
+        # topic: food
+        ("apple", "fruit", 2.0), ("fruit", "sweet", 1.8), ("apple", "tree", 1.5), ("tree", "leaf", 1.6),
+        ("sweet", "sugar", 1.7), ("fruit", "juice", 1.4),
+        # topic: animals
+        ("dog", "pet", 2.0), ("pet", "cat", 1.8), ("dog", "bark", 1.5), ("cat", "purr", 1.6),
+        ("pet", "fur", 1.4), ("fur", "warm", 1.3),
+        # topic: music
+        ("song", "melody", 2.0), ("melody", "rhythm", 1.8), ("song", "voice", 1.5), ("voice", "sing", 1.6),
+        ("rhythm", "drum", 1.5), ("melody", "tune", 1.4),
+        # sparse cross-topic bridges (so it is not perfectly partitioned)
+        ("sun", "warm", 1.0), ("leaf", "tree", 1.0), ("bark", "tree", 0.9),
+    ]
+    g = {}
+    for a, b, w in edges:
+        g.setdefault(a, {})[b] = w
+        g.setdefault(b, {})[a] = w   # symmetric, like build_association_graph
+    return g
+
+
+def main():
+    import argparse
+    import json
+    import os
+    from research.runners.content_selection import build_association_graph, ContentSelectionController
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--n-turns", type=int, default=6)
+    ap.add_argument("--out", type=str, default="research/findings/raw/content_selection_eval.json")
+    a = ap.parse_args()
+
+    metric_fns = {
+        "on_topic": lambda t, g: on_topic(t, g),
+        "non_repetition": lambda t, g: non_repetition(t),
+        "turn_to_turn": lambda t, g: turn_to_turn_coherence(t, g),
+        "progression": lambda t, g: topic_progression(t),
+    }
+    # The two metrics that are NOT near-guaranteed by the controller's hard-inhibition design --
+    # these carry the meaningful coherence signal (the controller could fail them on a bad graph).
+    MEANINGFUL = ["on_topic", "turn_to_turn"]
+    seeds = [42, 43, 44, 45, 46]
+
+    # The substrate's DOCUMENTED real learned associations (the validated 90% multitag pairs).
+    REAL_PAIRS = ["apple_big", "apple_cat", "dog_small", "dog_river",
+                  "cat_hot", "river_cold", "big_hot", "small_cold"]
+    datasets = {
+        "REAL_documented_multitag": (build_association_graph(REAL_PAIRS), ["apple", "dog"]),
+        "SYNTHETIC_multi_topic": (_synthetic_multi_topic_graph(),
+                                  ["rain", "apple", "dog", "song"]),
+    }
+
+    results = {}
+    transcripts = {}
+    for ds_name, (graph, topics) in datasets.items():
+        rows = []
+        for seed in seeds:
+            for topic in topics:
+                ctrl = ContentSelectionController(graph)        # deterministic per topic
+                base = BaselineSelector(graph, seed=seed)        # seed varies tie-breaks
+                t_ctrl = _run(ctrl, graph, topic, a.n_turns)
+                t_base = _run(base, graph, topic, a.n_turns)
+                mc = {k: float(fn(t_ctrl, graph)) for k, fn in metric_fns.items()}
+                mb = {k: float(fn(t_base, graph)) for k, fn in metric_fns.items()}
+                rows.append({"seed": seed, "topic": topic, "ctrl": mc, "base": mb})
+                key = (ds_name, topic)
+                if key not in transcripts:
+                    transcripts[key] = {"ctrl": t_ctrl, "base": t_base}
+        # per-metric mean delta (controller - baseline) over all rows
+        deltas = {k: float(np.mean([r["ctrl"][k] - r["base"][k] for r in rows])) for k in metric_fns}
+        # per-seed: did the controller beat baseline on BOTH meaningful metrics (mean over that seed's topics)?
+        seed_pass = []
+        for seed in seeds:
+            srows = [r for r in rows if r["seed"] == seed]
+            ok = all(np.mean([r["ctrl"][k] - r["base"][k] for r in srows]) > 1e-9 for k in MEANINGFUL)
+            prog_ok = np.mean([r["ctrl"]["progression"] for r in srows]) >= 0.5
+            seed_pass.append(bool(ok and prog_ok))
+        results[ds_name] = {"rows": rows, "mean_deltas": deltas, "seed_pass": seed_pass,
+                            "n_seed_pass": int(sum(seed_pass))}
+
+    # ---- report ----
+    print("=" * 78)
+    print("CONTENT-SELECTION / DIALOGUE-CONTROL -- Milestone 1 controlled coherence eval")
+    print("controller (context + association-relevance + inhibition-of-return) vs no-control baseline")
+    print("=" * 78)
+    print("HONESTY NOTE: the controller's hard inhibition makes non_repetition and progression")
+    print("near-guaranteed by construction -> the MEANINGFUL coherence signal is on_topic + turn_to_turn.")
+    print("progression is reported as a degeneracy guard (>=0.5 means the controller is not parking).")
+    overall_pass = True
+    for ds_name, res in results.items():
+        print(f"\n--- dataset: {ds_name} ---")
+        print(f"  mean delta (controller - baseline):")
+        for k in metric_fns:
+            tag = "  <- meaningful" if k in MEANINGFUL else ""
+            print(f"    {k:14s} {res['mean_deltas'][k]:+.3f}{tag}")
+        print(f"  seeds passing (both meaningful deltas>0 AND progression>=0.5): "
+              f"{res['n_seed_pass']}/{len(seeds)}  {res['seed_pass']}")
+        if res["n_seed_pass"] < 3:
+            overall_pass = False
+    print("\n--- example transcripts (read for qualitative coherence) ---")
+    for (ds_name, topic), tr in transcripts.items():
+        print(f"  [{ds_name}] topic '{topic}':")
+        print(f"      controller: {tr['ctrl']}")
+        print(f"      baseline  : {tr['base']}")
+
+    verdict = "RESOLVES" if overall_pass else "DOES-NOT-RESOLVE"
+    print(f"\nVERDICT: {verdict}")
+    print("  (RESOLVES = controller beats baseline on both meaningful coherence metrics, >=3/5 seeds,")
+    print("   on BOTH datasets, with non-degenerate progression. Milestone-1 mechanism validation;")
+    print("   the spiking versions -- Milestones 2-3 -- re-run this same eval.)")
+
+    os.makedirs(os.path.dirname(a.out), exist_ok=True)
+    with open(a.out, "w") as f:
+        json.dump({"results": {k: {"mean_deltas": v["mean_deltas"], "seed_pass": v["seed_pass"],
+                                   "n_seed_pass": v["n_seed_pass"]} for k, v in results.items()},
+                   "verdict": verdict}, f, indent=2)
+    print(f"\nwrote {a.out}")
+    return verdict
+
+
+if __name__ == "__main__":
+    main()

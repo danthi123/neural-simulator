@@ -1,0 +1,37 @@
+{
+  "results": {
+    "REAL_documented_multitag": {
+      "mean_deltas": {
+        "on_topic": 0.5,
+        "non_repetition": 0.7,
+        "turn_to_turn": 0.5,
+        "progression": 0.7000000000000001
+      },
+      "seed_pass": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "n_seed_pass": 5
+    },
+    "SYNTHETIC_multi_topic": {
+      "mean_deltas": {
+        "on_topic": 0.4090833333333334,
+        "non_repetition": 0.8333333333333334,
+        "turn_to_turn": 0.9049999999999999,
+        "progression": 0.8333333333333334
+      },
+      "seed_pass": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "n_seed_pass": 5
+    }
+  },
+  "verdict": "RESOLVES"
+}
