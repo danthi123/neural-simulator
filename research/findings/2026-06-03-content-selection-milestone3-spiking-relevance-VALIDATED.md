@@ -153,7 +153,7 @@ structured SaidTrace). Validated:
 | graph | `turn()` (rate) | `turn_latency()` |
 |---|---|---|
 | clean clusters (8c) | 4/4 in-cluster | 4/4 in-cluster (no regression) |
-| connected web (6 topics × 3 turns) | over-spreads off-topic | **6/6 chains within the 2-hop topic region** |
+| connected web (6 topics × 3 turns) | over-spreads off-topic | **18/18 chains within the 2-hop topic region (3 seeds × 6 topics)** |
 
 **M3b obstacle 3 (clean inter-probe reset) is substantially resolved.** Multi-turn latency selection
 *first* drifted off-topic on turns 2-3 because the best-effort `_reset_wm` left in-flight state. Diagnosed

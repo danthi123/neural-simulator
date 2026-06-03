@@ -83,8 +83,8 @@ OVER-SPREADS multi-hop off-topic (rain->dog/tree); the LATENCY read is the focus
 = direct neighbour 6/6). Multi-turn latency first drifted (turns 2-3) due to the best-effort reset -> found
 the missing arrays (cp_prev_firing_states, cp_refractory_timers, cp_synapse_pulse_timers/progress = delayed
 transmission) and cleared them in a FULLER _reset_wm -> multi-turn latency CLEAN 6/6 on-topic (within 2
-hops). Shipped turn_latency() = latency relevance + fuller reset + SaidTrace IoR: 6/6 connected + 4/4 clean
-(no regression). Obstacles 1(rebound)+2(direct<indirect) sidestepped by SaidTrace exclusion (not silencing).
+hops). Shipped turn_latency() = latency relevance + fuller reset + SaidTrace IoR: MULTI-SEED 18/18 connected
+(3 seeds x 6 topics) + 4/4 clean (no regression). Obstacles 1(rebound)+2(direct<indirect) sidestepped by SaidTrace exclusion (not silencing).
 So RELEVANCE + WM + inter-probe RESET are now ALL spiking + robust on realistic connected graphs; the only
 remaining "fully-spiking" purity item is a spiking SaidTrace. The validated deliverable is M3 (rate turn()
 for separable graphs 12/12 strict 8/16/24c) + turn_latency() (connected graphs 6/6); 32 tests green; (ii) NOISE-ROBUST ATTRACTORS so biological OU noise can be restored — sparse k-of-N assemblies +
