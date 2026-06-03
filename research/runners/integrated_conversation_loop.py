@@ -39,13 +39,17 @@ class ConversationalAgent:
     """Comprehend -> bind into KB -> answer questions (produce) -> AND elaborate topics via the
     content-selection Control (decide-what-to-say), producing composed sentences."""
 
-    def __init__(self, seed=42, D=1024):
+    def __init__(self, seed=42, D=1024, controller_factory=None):
         self.concepts, self.roles = build_world(len(WORDS), D, seed)
         self.words = list(self.concepts.keys())     # concept keys = word indices 0..N-1
         self.kb = []                                # list of {role: word_index} facts (the memory)
         self.focus = None                           # current elaboration topic (a word string)
         self.ctrl = None                            # content-selection Control for the current focus
         self._elaborated = set()                    # ids of facts already elaborated for this focus
+        # the Control backend (decide-what-to-say): default = structured ContentSelectionController (fast).
+        # Inject a factory building a SpikingSpreadingController for the faithful spiking dialogue planning
+        # (milestone 2) -- the .turn API is identical, so the KB-graph + produce wiring is unchanged.
+        self._controller_factory = controller_factory or (lambda graph: ContentSelectionController(graph))
 
     # --- PRODUCE (generate-by-composition) ---
     def _say(self, fact):
@@ -80,7 +84,7 @@ class ConversationalAgent:
     def _set_topic(self, topic):
         self.focus = topic
         self._elaborated = set()
-        self.ctrl = ContentSelectionController(self._kb_graph())
+        self.ctrl = self._controller_factory(self._kb_graph())
 
     def _elaborate(self):
         """Pick the most relevant unsaid fact about the focus (Control over the KB graph) and produce it.
@@ -90,8 +94,10 @@ class ConversationalAgent:
             return "(no topic yet)"
         if not self._facts_about(self.focus):
             return f"(i don't know about {self.focus})"
+        # prefer the controller's latency read (focused 1-hop, robust on the connected KB graph) if present
+        turn_fn = getattr(self.ctrl, "turn_latency", None) or self.ctrl.turn
         for _ in range(len(WORDS)):                  # walk the Control's ranked associates until one maps
-            pick = self.ctrl.turn([self.focus])      # to an unsaid fact (concept-level IoR is the Control's)
+            pick = turn_fn([self.focus])             # to an unsaid fact (concept-level IoR is the Control's)
             if pick is None:
                 break
             fact = self._fact_linking(self.focus, pick)
@@ -142,14 +148,25 @@ class ConversationalAgent:
         return "(i didn't understand)"
 
 
-def run_conversation(script, seed=42):
+def make_spiking_agent(seed=42, D=1024):
+    """Milestone 2: a ConversationalAgent whose DECIDE-WHAT-TO-SAY runs on the validated SPIKING content-
+    selection Control (SpikingSpreadingController -- spiking working memory + spreading-activation relevance
+    + latency read). Slower per topic (it builds a spiking bridge when the topic changes) but the dialogue
+    planning is faithful spiking. The loop, the KB-graph, and the production are unchanged."""
+    from research.runners.content_selection_spiking import SpikingSpreadingController
+    return ConversationalAgent(
+        seed=seed, D=D,
+        controller_factory=lambda graph: SpikingSpreadingController(graph, seed=seed))
+
+
+def run_conversation(script, seed=42, agent=None):
     """Drive a scripted conversation; return [(user, agent), ...]."""
-    a = ConversationalAgent(seed=seed)
+    a = agent if agent is not None else ConversationalAgent(seed=seed)
     return [(u, a.hear(u)) for u in script]
 
 
-def repl(seed=42):
-    a = ConversationalAgent(seed=seed)
+def repl(seed=42, agent=None):
+    a = agent if agent is not None else ConversationalAgent(seed=seed)
     print("Integrated conversational agent -- live. Teach SVO facts ('dog chase cat'), ask questions")
     print("  ('what does dog chase' | 'who chase cat' | 'tell me about cat'), or raise a topic ('dog' |")
     print("  'more') to have the agent ELABORATE its memory. 'quit' to exit.\n")
@@ -167,10 +184,23 @@ def main():
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("--repl", action="store_true", help="live interactive shell")
+    ap.add_argument("--spiking", action="store_true",
+                    help="run dialogue planning on the faithful SPIKING content-selection Control (slower)")
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
+    agent = make_spiking_agent(args.seed) if args.spiking else None
     if args.repl:
-        repl(args.seed)
+        repl(args.seed, agent=agent)
+        return
+    if args.spiking:                                 # shorter script (spiking is slower per topic)
+        print("=== integrated loop on the SPIKING content-selection Control (milestone 2) ===\n")
+        script = ["dog chase cat", "dog eat apple", "child hold ball",
+                  "what does dog chase", "dog", "more", "more", "child"]
+        for user, ag in run_conversation(script, agent=agent):
+            print(f"  user : {user}")
+            print(f"  agent: {ag}")
+        print("\n  -> the same conversational loop, dialogue planning computed by SPIKING spreading-"
+              "activation + latency.")
         return
 
     print("=== integrated conversation loop: comprehend -> decide-what-to-say (Control) -> produce ===\n")

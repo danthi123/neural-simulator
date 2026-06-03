@@ -30,10 +30,17 @@ answers factual questions with produced sentences (what/who/tell), AND -- the NE
 ELABORATES a topic by walking its associative memory: "dog" -> "dog eat apple", "more" -> "dog chase cat"
 (non-repeating), "more" -> "that's all i know about dog"; topic shift "child" -> "child hold ball". 9 tests
 pass. Design doc docs/plans/2026-06-03-integrated-conversation-loop-design.md. So the content-selection
-Control is now INTEGRATED into a working conversational agent (the tangible artifact). >>> MILESTONE 2 (next,
-faithful): swap ContentSelectionController -> SpikingSpreadingController (same .turn API; KB-graph + produce
-wiring unchanged) so the dialogue planning runs on the validated spiking substrate; optionally spiking
-production. >>> AUTONOMOUS-CONTINUABLE REFINEMENTS
+Control is now INTEGRATED into a working conversational agent (the tangible artifact). >>> MILESTONE 2 SHIPPED (faithful):
+the ConversationalAgent's Control backend is now PLUGGABLE (controller_factory param); make_spiking_agent +
+`--spiking` run the SAME loop with dialogue planning on the validated SPIKING content-selection Control
+(SpikingSpreadingController, latency read). Smoke: dog->dog eat apple, more->dog chase cat (non-repeating,
+spiking spreading-activation), more->that's all, child->child hold ball. KB-graph + production wiring
+unchanged; 9 tests still pass (pluggable backend no regression). So the tangible conversational agent now
+runs its decide-what-to-say on the faithful spiking substrate. >>> NEXT (integration milestone 3 options):
+(a) faithful Hebbian conjunctive PARSER for comprehend (the validated _vsa_parser_voice_probe) replacing
+the position-based SVO parse; (b) spiking PRODUCTION (in-substrate generate-by-composition) replacing the
+numpy compose/generate; (c) scale vocab + richer utterance types; (d) ground the KB in the 320-concept
+substrate. Each is a bounded swap of one more piece onto the spiking substrate. >>> AUTONOMOUS-CONTINUABLE REFINEMENTS
 (no new-project approval needed, smaller builds): (a) fully-spiking SaidTrace = a persistent-across-reset
 spiking trace population modulating relevance (the last structured piece; turn_latency resets the WM each
 turn so the trace must live OUTSIDE the WM); (b) noise-robust attractors = sparse k-of-N assemblies +
