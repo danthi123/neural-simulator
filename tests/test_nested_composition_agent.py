@@ -48,6 +48,15 @@ def test_abstain_on_unknown_query():
     assert a.query_patient("cat", "eat") is None           # no such fact -> abstain (no confabulation)
 
 
+def test_who_query():
+    a = _agent()
+    a.learn("dog", "chase", "cat")
+    a.learn("bird", "hold", "ball")
+    assert a.query_agent("chase", "cat") == "dog"          # who chases cat -> dog
+    assert a.query_agent("hold", "ball") == "bird"
+    assert a.query_agent("eat", "ball") is None            # no such fact -> abstain
+
+
 def test_flat_vs_nested_distinguished_automatically():
     # the agent must NOT need to be told which patient is nested -- the abstention threshold detects it
     a = _agent()

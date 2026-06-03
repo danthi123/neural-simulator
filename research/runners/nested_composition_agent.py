@@ -104,6 +104,17 @@ class NestedCompositionAgent:
                 return f"{adj} {nn}"
         return None                                         # abstain
 
+    def query_agent(self, action, patient):
+        """"who <action> <patient>?" -> the agent of the matching fact (flat patient); None if no fact
+        matches (abstention)."""
+        for b in self.kb:
+            ac, _ = self._decode_role(b, "ACTION", self.VMAT, self.verbs)
+            pn, conf = self._decode_role(b, "PATIENT", self.NMAT, self.nouns)
+            if ac == action and conf >= self.flat_threshold and pn == patient:
+                ag, _ = self._decode_role(b, "AGENT", self.NMAT, self.nouns)
+                return ag
+        return None
+
 
 def main():
     nouns = ["dog", "cat", "ball", "bird", "river", "child"]
@@ -121,10 +132,13 @@ def main():
         a.learn(ag, ac, pa)
         shown = f"({pa[0]} {pa[1]})" if isinstance(pa, tuple) else pa
         print(f"  learn: {ag} {ac} {shown}", flush=True)
-    print("\n  -- queries --", flush=True)
+    print("\n  -- what-queries (patient; flat or nested attributed entity) --", flush=True)
     queries = [("dog", "chase"), ("dog", "eat"), ("bird", "see"), ("child", "hold"), ("cat", "want")]
     for ag, ac in queries:
         print(f"  Q: what does {ag} {ac}?   A: {a.query_patient(ag, ac)}", flush=True)
+    print("\n  -- who-queries (agent) --", flush=True)
+    for ac, pa in [("chase", "cat"), ("hold", "ball"), ("eat", "ball")]:
+        print(f"  Q: who {ac} {pa}?   A: {a.query_agent(ac, pa)}", flush=True)
     print("\n  -> the agent stores + answers facts whose slot is itself a structured entity (an attributed", flush=True)
     print("     patient, 'red ball'), decoded by the resonator, and ABSTAINS on the unknown -- nested", flush=True)
     print("     composition the flat-distinct substrate fundamentally could not do.", flush=True)
