@@ -1,0 +1,7 @@
+=== resonator on a SEMANTIC nested fact (phasor FHRR; D=1024, M=16/kind) ===
+    fact = AGENT(x)noun + ACTION(x)verb + PATIENT(x)(adj(x)noun); decode the attributed patient.
+
+  resonator decodes the attributed patient (adj AND noun): 1.00
+  single-shot flat decode recovers the patient noun:        0.07  (chance 0.062)
+
+VERDICT: RESOLVES -- the resonator decodes the NESTED attributed fact on phasor FHRR (the patient = adj(x)noun is recovered as BOTH its adjective and noun) where the flat single-shot decode fails (the 0.000-class nesting failure). Nested-fact understanding is unlocked on the phasor substrate, crosstalk-robust.

@@ -129,6 +129,30 @@ layer"), where binding is clean phase-arithmetic (invertible) and the resonator 
 scalable). So nested conversational composition is achievable — on the phasor substrate, not the
 real-Hadamard 320 agent.
 
+## ✅ PAYOFF DEMONSTRATED: nested-fact understanding works on phasor FHRR
+
+`research/findings/raw/_resonator_nested_fact_probe.py` ran the decisive capability test on a GENUINE
+SEMANTIC nested fact (phasor FHRR, D=1024, M=16/kind, 40 trials):
+
+```
+fact = AGENT⊗noun + ACTION⊗verb + PATIENT⊗( adj ⊗ noun )      ("dog chase (big cat)")
+```
+
+The patient slot's filler is itself a bound product (`adj ⊗ noun` = "big cat") — the nesting a flat substrate
+cannot decode. Result:
+
+| decoder | recovers the attributed patient |
+|---|---|
+| **resonator** (factor `adj⊗noun` → adjective + noun) | **1.00** (both adj AND noun) |
+| single-shot flat decode (clean up vs the noun vocab) | **0.07** (≈ chance 0.062 — the 0.000-class failure) |
+
+**VERDICT: RESOLVES.** The resonator decodes the nested attributed fact at **100%**, recovering the patient
+as BOTH its adjective and noun, **crosstalk-robust** (the bundle of three role-bindings does not break it),
+where the flat single-shot decode (the 320-substrate approach) is **at chance**. So **nested-fact
+understanding — an SVO fact whose slot is itself a structured entity — genuinely works on the phasor FHRR
+substrate**, decoded by the spiking-validated resonator. This is the first concrete capability past the
+nesting wall that scored 0.000 and forced the flat-distinct workaround.
+
 ## Pre-registered next steps (corrected by the real-codes finding)
 
 1. ~~D-scaling sweep~~ — DONE: capacity scales with D; realistic nesting at D≈2000.

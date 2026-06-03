@@ -39,11 +39,15 @@ the resonator needs PHASOR codes; it does NOT work on the real-Hadamard dense 32
 (_resonator_real320_probe.py: 0.00 at M=16 BOTH multiply+divide unbind; PHASOR control same D=2000/M=16 =
 1.00). FUNDAMENTAL not a bug -- dense real-Hadamard binding is non-invertible (a(x)b then *a = a^2(x)b != b),
 which is PRECISELY why the 320 substrate can't nest (forced flat-distinct). So integrating the resonator into
-the real-Hadamard 320 pipeline is REJECTED -- impossible there. (3) THE REAL PAYOFF BUILD: nested composition
-on the PHASOR substrate (resonate_fire_fhrr / spiking_phasor_fhrr -- validated 2026-05-22 'working
-compositional layer', clean invertible phase-arithmetic where the resonator RESOLVES). Build a 2-level NESTED
-fact (fact-about-a-fact / attributed concept / embedded clause) in phasor FHRR, decode with the spiking
-resonator, frozen gate vs single-shot 0.000-class failure, no-confab moat carries (phasor TPAM has it).
+the real-Hadamard 320 pipeline is REJECTED -- impossible there. (3) PAYOFF CAPABILITY DEMONSTRATED (_resonator_nested_fact_probe.py):
+a GENUINE semantic nested fact on phasor FHRR -- fact = AGENT(x)noun + ACTION(x)verb + PATIENT(x)(adj(x)noun)
+("dog chase (big cat)") -- the resonator decodes the attributed patient (BOTH adjective AND noun) at 1.00,
+CROSSTALK-ROBUST (the 3-binding bundle doesn't break it), where the flat single-shot decode is at CHANCE
+(0.07, the 0.000-class nesting failure). So nested-fact understanding (a slot that is itself a structured
+entity) genuinely WORKS on the phasor substrate. The nesting wall is concretely passable on phasor. REMAINING
+= the full pipeline build: a nested-composition conversational agent on phasor FHRR (resonate_fire_fhrr:
+roles + nested facts + spiking resonator decode + the phasor-TPAM abstention moat) -- a real focused build,
+the architectural decision being 'commit nesting-capable composition to phasor FHRR'.
 NET Direction-A honest status: a genuinely-new mechanism gets past the nesting wall ON THE PHASOR SUBSTRATE
 (algebra+spiking+scalable RESOLVE); it is NOT a drop-in for the real-Hadamard 320 agent -> it implies a
 substrate choice (phasor FHRR for nesting-capable composition). Scoped advance, not over-claim. Then optionally Direction B (thalamocortical
