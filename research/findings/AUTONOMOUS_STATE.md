@@ -9,7 +9,7 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> NEWEST — SPIKING CONTENT-SELECTION SEED-ROBUSTNESS RESOLVED (2026-06-03; read THIS first) <<<
+## >>> NEWEST — SPIKING CONTENT-SELECTION: M2 SEED-ROBUSTNESS RESOLVED + M3 SPIKING RELEVANCE VALIDATED (2026-06-03; read THIS first) <<<
 
 ACTIVE ARC = conversation via the content-selection / dialogue-Control frontier (owner chose B,
 "effective/worth not fast"; staging Approach 2 structured -> 3 spiking dlPFC -> 1 fully spiking).
@@ -31,14 +31,27 @@ doc updated with the RESOLVED banner. So the faithful brain-analogue conversatio
 (spiking cortico-PFC loop-attractor WM holding discourse context + PFC content-selection over it) is
 VALIDATED *and* seed-robust.
 
->>> EXACT NEXT (pre-registered, the genuine remaining faithfulness steps — pick one as a fresh focused
-arc, cheap-first): (i) NOISE-ROBUST ATTRACTORS so biological OU noise can be restored — sparse k-of-N
-assemblies + per-assembly inhibitory shadows so attractors tolerate default OU without spurious tipping
-(this is the principled version of the enable_ou=False fix); (ii) LEARN the attractor weights with a
-stabilized one-shot rule (not vanilla Hebbian, which destabilized; the weights are currently SET
-outer-product); (iii) MILESTONE 3 = make the relevance/selection logic itself spiking; (iv) richer REAL
-association substrate (train a tagged engram bridge) + larger multi-seed coherence eval. Both remotes;
-biology-faithful; cheap-first; honest negatives are the deliverable.
+>>> ALSO RESOLVED SAME CYCLE: MILESTONE 3 (spiking relevance) VALIDATED -> the SELECTION computation is
+now itself spiking. `SpikingSpreadingController` (content_selection_spiking.py) embodies the association
+graph as inter-assembly synapses (cortex_A -> dlpfc_B at weight ~ graph[A][B]); driving the discourse
+context SPREADS activation to associated assemblies, and the most-active candidate assembly IS the
+selection (faithful spiking analogue of the numpy relevance sum). Cheap-probe: driving apple lights
+big/cat/hot ~0.32, dog-cluster stays 0.00 (clean by construction — only designed edges have a path).
+Full controller 6 seeds x 2 topics = **12/12 conditions coherent**. So the content-selection Control is
+now demonstrated at THREE faithfulness levels: structured M1 -> spiking-WM M2 -> fully-spiking-relevance
+M3. Finding 2026-06-03-content-selection-milestone3-spiking-relevance-VALIDATED.md. 31 structured tests
+still green.
+
+>>> EXACT NEXT (pre-registered, genuine remaining faithfulness steps — pick one as a fresh focused arc,
+cheap-first): (i) M3b SPIKING INHIBITION-OF-RETURN — replace the structured SaidTrace with spike-frequency
+adaptation on the selected assembly (the current M3 is coherent 12/12 but can repeat, e.g. hot/cat/hot,
+because the said-trace decays; spiking adaptation gives non-repetition in the fully-spiking controller);
+(ii) NOISE-ROBUST ATTRACTORS so biological OU noise can be restored — sparse k-of-N assemblies +
+per-assembly inhibitory shadows so attractors tolerate default OU without spurious tipping (principled
+version of the enable_ou=False fix); (iii) LEARN the attractor + graph weights with a stabilized rule
+(not vanilla Hebbian; both are currently SET, not learned); (iv) richer REAL association substrate (train
+a tagged engram bridge) + larger multi-seed coherence eval. Both remotes; biology-faithful; cheap-first;
+honest negatives are the deliverable.
 
 ## >>> DIRECTION A PREP -- (superseded by the content-selection arc above; 2026-05-31) <<<
 

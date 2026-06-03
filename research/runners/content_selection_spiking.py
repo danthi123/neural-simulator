@@ -191,10 +191,12 @@ class SpikingLoopContextBuffer:
         rng = np.random.default_rng(seed)
         perm = rng.permutation(n)
         self._cpat = {}
+        self._dpat = {}   # dlPFC assembly indices per concept (for Milestone-3 spiking spreading-activation)
         for i, c in enumerate(self.concepts):
             p = perm[i * pattern_size:(i + 1) * pattern_size]
             cpat, dpat = cidx[p], didx[p]
             self._cpat[c] = self.xp.asarray(cpat)
+            self._dpat[c] = self.xp.asarray(dpat)
             pre1 = np.repeat(cpat, pattern_size).astype(np.int64)
             post1 = np.tile(dpat, pattern_size).astype(np.int64)
             pre2 = np.repeat(dpat, pattern_size).astype(np.int64)
@@ -270,6 +272,65 @@ class SpikingController:
         if choice is not None:
             self.said.mark(choice)
             self.ctx.update([choice])
+        return choice
+
+
+class SpikingSpreadingController:
+    """Milestone 3: the RELEVANCE computation is itself spiking. The association graph is embodied as
+    inter-assembly synapses (cortex_A -> dlpfc_B at weight proportional to graph[A][B]); driving the
+    discourse context into the spiking working memory SPREADS activation along those synapses to the
+    associated concept assemblies, and the most-active candidate assembly IS the selection. This is the
+    faithful spiking analogue of the structured relevance sum (Sum_c context[c]*graph[c][candidate]) in
+    Milestone 1/2 -- there the relevance was computed in numpy over the graph; here it is computed by
+    spreading spikes through learned-style associative synapses (cortico-cortical spreading activation).
+    Inhibition-of-return is the structured SaidTrace (making it spiking, e.g. spike-frequency adaptation
+    on the selected assembly, is the documented Milestone-3b step).
+
+    Validated cheap-first (2026-06-03): driving 'apple' lights apple's cluster (big/cat/hot ~0.32) while
+    the unrelated dog-cluster stays at 0.00 -- the spreading reproduces the relevance ranking cleanly and
+    seed-robustly. Uses the same clean-dynamics config as the validated SpikingController
+    (internal_density=0 + enable_ou=False) so the multi-concept hold stays exact."""
+
+    def __init__(self, graph, seed=42, said_decay=0.6, edge_scale=20.0, internal_density=0.0,
+                 verbose=False):
+        from research.runners.content_selection import SaidTrace
+        self.graph = graph
+        self._vocab = sorted(set(graph) | {a for v in graph.values() for a in v})
+        n = max(600, 60 * len(self._vocab))
+        self.ctx = SpikingLoopContextBuffer(self._vocab, n=n, internal_density=internal_density,
+                                            seed=seed, enable_ou=False, verbose=verbose)
+        self._install_graph_edges(edge_scale)
+        self.said = SaidTrace(decay=said_decay)
+
+    def _install_graph_edges(self, scale):
+        """Embody each association A->B as cortex_A -> dlpfc_B synapses (weight = graph[A][B]*scale), so
+        that A firing drives B's assembly (B's within-concept attractor then sustains it). Only DESIGNED
+        associations get a synaptic path -> spreading stays on the association graph, never into unrelated
+        concepts (clean by construction)."""
+        ps = self.ctx._psize
+        for A in self.graph:
+            for B, w in self.graph[A].items():
+                cA = self.ctx.B.to_host(self.ctx._cpat[A])
+                dB = self.ctx.B.to_host(self.ctx._dpat[B])
+                pre = np.repeat(cA, ps).astype(np.int64)
+                post = np.tile(dB, ps).astype(np.int64)
+                ww = np.full(ps * ps, float(w) * scale, np.float32)
+                self.ctx.bridge.set_pathway_weights("c2d", pre_indices=pre, post_indices=post,
+                                                    weights=ww, add_missing=True)
+
+    def turn(self, user_concepts):
+        """Drive the discourse context -> spreading activation lights associated assemblies -> the
+        most-active unsaid candidate assembly IS the selection (relevance computed in spikes)."""
+        self.ctx.update(list(user_concepts))               # drive context; spreading lights associates
+        self.said.step()
+        held = self.ctx.read()                             # per-assembly firing = spiking relevance
+        uc = set(user_concepts)
+        cands = [(c, held[c]) for c in self._vocab
+                 if c not in uc and self.said.activation(c) < 0.5 and held[c] > 0.02]
+        if not cands:
+            return None
+        choice = max(cands, key=lambda kv: kv[1])[0]       # winner-take-all over spread activation
+        self.said.mark(choice)
         return choice
 
 
