@@ -11,6 +11,7 @@ from research.runners.content_selection import (
     select_candidate,
     ContentSelectionController,
 )
+from research.runners.content_selection_eval import BaselineSelector
 
 
 # --- Task 1: Context buffer -------------------------------------------------
@@ -88,3 +89,14 @@ def test_controller_walks_coherently_without_repeating():
     assert said[0] == "big"               # apple's strongest associate
     assert len(set(said)) == 3            # no repeats across the 3 turns
     assert "apple" not in said            # doesn't just echo the topic
+
+
+# --- Task 6: No-control baseline --------------------------------------------
+
+def test_baseline_ignores_context_and_repetition():
+    # Baseline = retrieval-only: pick the globally strongest associate of the *last input*,
+    # with NO context buffer and NO inhibition -> it will happily repeat.
+    graph = {"apple": {"big": 2.0, "cat": 1.0}}
+    b = BaselineSelector(graph, seed=0)
+    out = [b.turn(["apple"]) for _ in range(3)]
+    assert out == ["big", "big", "big"]   # repeats because no inhibition / context progression
