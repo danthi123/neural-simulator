@@ -1,0 +1,7 @@
+=== SPIKING nested fact (resonate-and-fire FHRR; D=256 M=8) ===
+    fact = AGENT(x)noun + ACTION(x)verb + PATIENT(x)(adj(x)noun), decoded in spikes.
+
+  spiking resonator decodes the attributed patient (adj AND noun): 1.00
+  single-shot spiking flat decode recovers the patient noun:        0.00 (chance 0.125)
+
+VERDICT: RESOLVES -- a SEMANTIC nested fact decodes on the genuine resonate-and-fire substrate (crosstalk-robust) where the flat decode fails. Nested-fact understanding is biology-faithful.

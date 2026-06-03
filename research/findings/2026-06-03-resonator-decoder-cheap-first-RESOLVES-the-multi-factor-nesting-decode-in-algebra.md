@@ -153,6 +153,25 @@ understanding — an SVO fact whose slot is itself a structured entity — genui
 substrate**, decoded by the spiking-validated resonator. This is the first concrete capability past the
 nesting wall that scored 0.000 and forced the flat-distinct workaround.
 
+## ✅ BIOLOGY-FAITHFUL CAPSTONE + AGENT (Direction A end-to-end)
+
+- **Spiking nested fact** (`_spiking_nested_fact_probe.py`): the SAME nested fact built + decoded ENTIRELY
+  with the genuine resonate-and-fire ops (`rf_bind`/`rf_unbind`/`rf_bundle` + spiking resonator), D=256, M=8:
+  **spiking resonator 1.00** (recovers the attributed patient's adjective AND noun in spikes, crosstalk-
+  robust) vs **single-shot spiking flat decode 0.00**. So nested-fact understanding is **biology-faithful**
+  (not just numpy algebra) — validated on the resonate-and-fire substrate.
+- **Working agent** (`research/runners/nested_composition_agent.py`, 6 tests): stores + answers SVO facts
+  whose patient may be an attributed entity ("red ball"), auto-detecting flat vs nested via the abstention
+  threshold, decoding the nested slot with the resonator, and abstaining on the unknown. Demo:
+  `dog chase cat`→cat, `dog eat (red ball)`→"red ball", `bird see (cold river)`→"cold river",
+  `cat want?`→None.
+
+**Direction A, end to end:** owner-directed deep research found the resonator → validated (algebra + spiking
++ scaling) → honestly scoped (phasor FHRR, *not* the real-Hadamard 320 substrate — which is *why* that
+substrate can't nest) → capability demonstrated (nested fact 100% on phasor) → **AGENT built** → **biology-
+faithful capstone** (nested fact 100% on the genuine spiking substrate). A real, scoped, biology-faithful
+capability past the multi-factor/nesting wall that scored 0.000 and forced the flat-distinct workaround.
+
 ## Pre-registered next steps (corrected by the real-codes finding)
 
 1. ~~D-scaling sweep~~ — DONE: capacity scales with D; realistic nesting at D≈2000.

@@ -44,10 +44,19 @@ a GENUINE semantic nested fact on phasor FHRR -- fact = AGENT(x)noun + ACTION(x)
 ("dog chase (big cat)") -- the resonator decodes the attributed patient (BOTH adjective AND noun) at 1.00,
 CROSSTALK-ROBUST (the 3-binding bundle doesn't break it), where the flat single-shot decode is at CHANCE
 (0.07, the 0.000-class nesting failure). So nested-fact understanding (a slot that is itself a structured
-entity) genuinely WORKS on the phasor substrate. The nesting wall is concretely passable on phasor. REMAINING
-= the full pipeline build: a nested-composition conversational agent on phasor FHRR (resonate_fire_fhrr:
-roles + nested facts + spiking resonator decode + the phasor-TPAM abstention moat) -- a real focused build,
-the architectural decision being 'commit nesting-capable composition to phasor FHRR'.
+entity) genuinely WORKS on the phasor substrate. The nesting wall is concretely passable on phasor. >>> BUILT (autonomous,
+owner "proceed + continue autonomously"): (a) research/runners/nested_composition_agent.py -- a working
+nested-composition conversational agent (6 tests): stores+answers SVO facts whose patient is an attributed
+entity ("red ball"), auto-detects flat vs nested via the abstention threshold, resonator-decodes the nested
+slot, abstains on unknown (dog chase cat->cat / dog eat (red ball)->'red ball' / cat want?->None).
+(b) BIOLOGY-FAITHFUL CAPSTONE (_spiking_nested_fact_probe.py): the same nested fact decodes ENTIRELY on the
+genuine resonate-and-fire substrate (rf_bind/unbind/bundle + spiking resonator) at 1.00, crosstalk-robust,
+vs single-shot 0.00. So nested-fact understanding is biology-faithful end-to-end. DIRECTION A COMPLETE:
+deep research -> resonator -> validated (algebra+spiking+scaling) -> scoped (phasor) -> capability
+demonstrated -> agent built -> spiking capstone. A real biology-faithful capability past the 0.000 nesting
+wall. >>> NEXT (autonomous, open options): richer nesting (multi-modifier / any-slot), or integrate nested
+composition with the content-selection Control (dialogue planning over nested facts) toward a richer
+conversational agent, or scale vocab. Both remotes; biology-faithful; cheap-first; honest negatives deliverable.
 NET Direction-A honest status: a genuinely-new mechanism gets past the nesting wall ON THE PHASOR SUBSTRATE
 (algebra+spiking+scalable RESOLVE); it is NOT a drop-in for the real-Hadamard 320 agent -> it implies a
 substrate choice (phasor FHRR for nesting-capable composition). Scoped advance, not over-claim. Then optionally Direction B (thalamocortical
