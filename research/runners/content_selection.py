@@ -82,3 +82,37 @@ def select_candidate(candidates, context, graph, said, lam: float = 1.0):
         if score > best_score or (score == best_score and (best is None or cand < best)):
             best, best_score = cand, score
     return best
+
+
+class ContentSelectionController:
+    """Decides what to say each turn: update context with the input, score every known concept by
+    relevance-minus-inhibition, pick the best previously-unsaid-ish concept, record it."""
+
+    def __init__(self, graph, decay=0.7, said_decay=0.6, lam=1.0):
+        self.graph = graph
+        self.ctx = ContextBuffer(decay=decay)
+        self.said = SaidTrace(decay=said_decay)
+        self.lam = lam
+        self._vocab = sorted({k for k in graph} | {a for v in graph.values() for a in v})
+        # Hard inhibition-of-return: concepts already emitted this dialogue are removed from the
+        # candidate set so the controller never repeats itself. This complements the graded said-trace
+        # penalty (which still shapes the soft score) and realizes the strongest form of the design's
+        # "avoid repetition" goal. See Task 5 note in the implementation plan: the graded penalty alone
+        # is too weak to stop the strongest associate (e.g. 'big') being re-selected every turn.
+        self._already_said: set[str] = set()
+
+    def turn(self, user_concepts):
+        self.ctx.update(list(user_concepts))
+        self.said.step()
+        context = self.ctx.weights()
+        # candidates = everything except concepts in the active input this turn AND everything we have
+        # already said this dialogue (inhibition-of-return).
+        excluded = set(user_concepts) | self._already_said
+        candidates = [c for c in self._vocab if c not in excluded]
+        said_now = {c: self.said.activation(c) for c in candidates}
+        choice = select_candidate(candidates, context, self.graph, said_now, lam=self.lam)
+        if choice is not None:
+            self.said.mark(choice)
+            self._already_said.add(choice)
+            self.ctx.update([choice])     # what we said becomes part of the context
+        return choice
