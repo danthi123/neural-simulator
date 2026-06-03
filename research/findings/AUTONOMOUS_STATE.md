@@ -54,9 +54,16 @@ genuine resonate-and-fire substrate (rf_bind/unbind/bundle + spiking resonator) 
 vs single-shot 0.00. So nested-fact understanding is biology-faithful end-to-end. DIRECTION A COMPLETE:
 deep research -> resonator -> validated (algebra+spiking+scaling) -> scoped (phasor) -> capability
 demonstrated -> agent built -> spiking capstone. A real biology-faithful capability past the 0.000 nesting
-wall. >>> NEXT (autonomous, open options): richer nesting (multi-modifier / any-slot), or integrate nested
-composition with the content-selection Control (dialogue planning over nested facts) toward a richer
-conversational agent, or scale vocab. Both remotes; biology-faithful; cheap-first; honest negatives deliverable.
+wall. >>> UNIFIED AGENT BUILT (autonomous): nested_composition_agent.py now combines nested composition + who/what
+Q&A + tell_about + DIALOGUE PLANNING (content-selection Control over an association graph built from the
+agent's own facts) -> elaborate() brings up coherent on-topic facts non-repeating, INCLUDING nested ones
+(set_topic('dog')->'dog eat red ball'->'dog chase cat'->None) + abstention. Strictly richer than the earlier
+integrated_conversation_loop (which couldn't nest). 9 tests. So Direction A (nested composition) is unified
+with the validated content-selection Control on one biology-faithful substrate (phasor FHRR, which does BOTH
+flat + nested). >>> NEXT (autonomous, open options): richer nesting (multi-modifier adj1(x)adj2(x)noun via
+F=3 resonator / nesting any slot), or scale vocab + a richer multi-topic demo, or a fully-spiking unified
+agent (port encode+store to resonate_fire). Both remotes; biology-faithful; cheap-first; honest negatives
+deliverable.
 NET Direction-A honest status: a genuinely-new mechanism gets past the nesting wall ON THE PHASOR SUBSTRATE
 (algebra+spiking+scalable RESOLVE); it is NOT a drop-in for the real-Hadamard 320 agent -> it implies a
 substrate choice (phasor FHRR for nesting-capable composition). Scoped advance, not over-claim. Then optionally Direction B (thalamocortical
