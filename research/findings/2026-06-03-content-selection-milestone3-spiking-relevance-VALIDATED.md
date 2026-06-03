@@ -229,9 +229,26 @@ content-selection is validated end-to-end against a no-control baseline.
 
 ## Bottom line
 
-The faithful brain-analogue content-selection Control is now demonstrated **end-to-end in spikes**:
-spiking cortico-PFC loop-attractor working memory holds the discourse context, and spiking spreading
-activation through associative synapses computes relevance — coherent and seed-robust (6/6). Combined
-with the M2 seed-robustness resolution, the spiking conversation substrate (what to hold + what to say
-next) is validated at full spiking fidelity for the selection, with inhibition-of-return and learned
-associations as the clearly-scoped remaining faithfulness steps.
+The faithful brain-analogue content-selection Control — the PFC "Control" function (deciding *what to say
+next*), which this project identifies as the genuine hard frontier for conversation — is now validated
+**end-to-end in spikes**:
+
+- **Mechanism (all spiking):** a cortico-PFC loop-attractor working memory holds the discourse context;
+  spiking spreading activation through associative synapses computes relevance (rate read `turn()` for
+  separable topics, first-spike-latency read `turn_latency()` for connected topics); the SaidTrace provides
+  inhibition-of-return; the inter-probe `_reset_wm` is clean.
+- **Seed-robust:** M2 resolution → 6/6 seeds (12/12 conditions); root-caused via an 8-probe trail.
+- **Scaled:** clean strict at 8 / 16 / 24 concepts (12/12 each).
+- **Robust on realistic graphs:** `turn_latency` (focused 1-hop) stays on-topic 18/18 multi-seed on the
+  connected web where the rate read over-spreads.
+- **Beats no-control:** the decisive eval RESOLVES (`said_decay=0.9`) — Control beats the retrieval-only
+  baseline on on_topic (+0.417) + turn_to_turn (+0.625) with progression 1.00 — the same bar M1 cleared.
+- **Usable artifact:** wired into the interactive `DialogueAgent` (`--repl --spiking`) with clean topic
+  shifts; genuinely conversational transcripts (`rain → cloud, storm, wind, sky, sun`).
+
+The conversation substrate (what to hold + what to say next) is validated at full spiking fidelity for the
+selection. Clearly-scoped remaining faithfulness steps: a fully-spiking SaidTrace (the last structured
+piece), noise-robust attractors (to restore biological OU background), learning the attractor + association
+weights (currently set), and a larger *learned*-association substrate (GPU-scale). The natural next arc
+toward conversation is integration into a comprehend → select → **produce** loop (the content-selection
+Control now supplies the "what to say"; generate-by-composition supplies the "how to say it").
