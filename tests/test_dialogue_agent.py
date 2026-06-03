@@ -1,0 +1,48 @@
+"""Tests for the interactive coherent-dialogue agent (content-selection Control applied)."""
+
+from research.runners.dialogue_agent import DialogueAgent, run_conversation
+
+
+def _graph():
+    # Two topics (weather, food), each with within-topic associations; no cross edges.
+    return {
+        "rain": {"cloud": 2.0, "storm": 1.5},
+        "cloud": {"sky": 2.0, "rain": 2.0},
+        "storm": {"wind": 1.8, "rain": 1.5},
+        "apple": {"fruit": 2.0, "tree": 1.5},
+        "fruit": {"sweet": 1.8, "apple": 2.0},
+        "tree": {"leaf": 1.6, "apple": 1.5},
+    }
+
+
+def test_agent_responds_with_strongest_associate_of_topic():
+    agent = DialogueAgent(_graph())
+    assert agent.respond("rain") == "cloud"        # rain's strongest associate
+
+
+def test_follow_up_continues_same_topic_without_repeating():
+    agent = DialogueAgent(_graph())
+    r1 = agent.respond("rain")                      # cloud
+    r2 = agent.respond("more")                      # next coherent associate of rain, not cloud again
+    r3 = agent.respond("more")
+    assert r1 == "cloud"
+    assert len({r1, r2, r3}) == 3                   # three distinct responses, no repeats
+
+
+def test_topic_shift_changes_focus():
+    agent = DialogueAgent(_graph())
+    agent.respond("rain")
+    agent.respond("more")
+    shifted = agent.respond("apple")                # new concept -> focus shifts to apple
+    assert shifted in _graph()["apple"]             # responds within apple's associations
+
+
+def test_no_repeats_across_a_whole_conversation():
+    convo = run_conversation(_graph(), ["rain", "more", "apple", "more", "more"])
+    responses = [r for _, r in convo if r is not None]
+    assert len(set(responses)) == len(responses)    # coherence carries across topic shifts, no repeats
+
+
+def test_no_focus_yet_returns_none():
+    agent = DialogueAgent(_graph())
+    assert agent.respond("more") is None            # 'more' before any topic -> nothing to say
