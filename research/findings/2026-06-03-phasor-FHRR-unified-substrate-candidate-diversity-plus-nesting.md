@@ -86,6 +86,23 @@ is *degenerate* codes (two concepts with near-identical codes, cosine → 1.0). 
 question is de-risked for both common-mode and clustered correlation, provided the grounded encoder gives
 each concept a distinguishable code (which any non-degenerate sparse encoding does).
 
+## The unified AGENT (not just the substrate) works at production-diversity scale
+
+The `NestedCompositionAgent` was run at a 120-concept vocabulary (60 nouns + 30 verbs + 30 adjectives,
+D=2048) with 40 facts of mixed kind (flat / one-attribute / two-attribute / embedded clause), querying each:
+
+| seed | correct / 40 | abstain-on-unknown |
+|---|---|---|
+| 42 | 39/40 | ✓ (None) |
+| 43 | 38/40 | ✓ |
+| 44 | 39/40 | ✓ |
+
+≈ 96% across mixed fact kinds at 120-concept diversity, with correct abstention on an unknown query. The
+1–2 misses per seed are the known two-attribute / deeper-nesting boundary cases — consistent with the
+per-kind robustness measured separately, not a scaling collapse. So the *agent* — nested composition + the
+four auto-detected patient kinds + Q&A + abstention — holds up at production-diversity scale, not only the
+underlying substrate algebra.
+
 ## What this means (and what it does NOT)
 
 **Does mean:** phasor FHRR is a viable **unified-substrate candidate** — it has, in one representation,

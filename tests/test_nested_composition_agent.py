@@ -142,6 +142,25 @@ def test_abstain_on_unknown_query():
     assert a.query_patient("cat", "eat") is None           # no such fact -> abstain (no confabulation)
 
 
+def test_scales_to_larger_vocabulary():
+    # the agent holds up beyond the toy vocab: 40 nouns + 20 verbs + 20 adjectives, mixed fact kinds
+    nouns = [f"n{i}" for i in range(40)]
+    verbs = [f"v{i}" for i in range(20)]
+    adjs = [f"a{i}" for i in range(20)]
+    a = NestedCompositionAgent(nouns, verbs, adjs, seed=42)   # default D=2048 (deep nesting needs the headroom)
+    facts = [
+        ("n0", "v0", "n1"),                                # flat
+        ("n2", "v1", ("a0", "n3")),                        # one attribute
+        ("n4", "v2", (("a1", "a2"), "n5")),                # two attributes
+        ("n6", "v3", Clause("n7", "v4", "n8")),            # embedded clause
+    ]
+    for ag, ac, pa in facts:
+        a.learn(ag, ac, pa)
+    got = [a.query_patient(ag, ac) for ag, ac, _ in facts]
+    assert got == ["n1", "a0 n3", "a1 a2 n5", "n7 v4 n8"]   # all four kinds correct at larger vocab
+    assert a.query_patient("n39", "v19") is None            # abstain on an unknown query
+
+
 def test_who_query():
     a = _agent()
     a.learn("dog", "chase", "cat")
