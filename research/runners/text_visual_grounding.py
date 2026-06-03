@@ -59,8 +59,29 @@ def build_scaled_gabor_v1_weights(retina_size, n_orientations, n_frequencies, n_
     return (np.asarray(pre, np.int64), np.asarray(post, np.int64), np.asarray(wts, np.float32))
 
 
+def build_v1_complex_pooling_weights(n_orientations, n_frequencies, npos, weight=12.0):
+    """Structured Hubel-Wiesel V1_simple -> V1_complex phase-pooling: each complex cell at (orientation,
+    py, px) pools the n_frequencies simple cells at the SAME orientation + position across frequency/phase
+    -> phase/frequency-invariant edge detection (the max-pooling convergence the Thorpe/Masquelier pipeline
+    needs). Strong weights so the complex cell fires when ANY of its simple cells fire (sum-pooling at the
+    rate level approximates max-pooling). This replaces the random-density pooling that starved V1_complex
+    on sparse text. Returns (pre, post, weights) in region-local indices.
+      V1_simple idx = o*(n_freq*npos^2) + f*npos^2 + py*npos + px
+      V1_complex idx = o*npos^2 + py*npos + px   (n_v1c = n_orientations*npos^2)"""
+    npos2 = npos * npos
+    pre, post, wts = [], [], []
+    for o in range(n_orientations):
+        for py in range(npos):
+            for px in range(npos):
+                cidx = o * npos2 + py * npos + px
+                for f in range(n_frequencies):
+                    pre.append(o * (n_frequencies * npos2) + f * npos2 + py * npos + px)
+                    post.append(cidx); wts.append(weight)
+    return (np.asarray(pre, np.int64), np.asarray(post, np.int64), np.asarray(wts, np.float32))
+
+
 def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, n_v2=256, n_it=64, seed=42,
-                             word_pools=None, n_per_pool=64, verbose=True):
+                             word_pools=None, n_per_pool=64, structured_pooling=True, verbose=True):
     from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
     from sim.bridge import SimulationBridge
     from sim.regions import BrainRegion, RegionPathway
@@ -121,6 +142,17 @@ def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, 
         post_indices=(post + int(v0)).astype(np.int64),
         weights=(wts * 5.0).astype(np.float32),
         add_missing=True)
+    # install STRUCTURED Hubel-Wiesel V1_simple -> V1_complex phase-pooling (fixes the sparse-text cascade
+    # break + provides the max-pooling convergence the Thorpe/Masquelier pipeline needs)
+    if structured_pooling:
+        cpre, cpost, cwts = build_v1_complex_pooling_weights(n_orientations, n_frequencies, npos)
+        vs0 = rm.indices("cortex_v1_simple")[0]; vc0 = rm.indices("cortex_v1_complex")[0]
+        bridge.set_pathway_weights(
+            pathway_name="v1s_to_v1c_structured_pooling",
+            pre_indices=(cpre + int(vs0)).astype(np.int64),
+            post_indices=(cpost + int(vc0)).astype(np.int64),
+            weights=cwts.astype(np.float32),
+            add_missing=True)
     if verbose:
         print(f"[visual-text bridge] retina {retina_size}x{retina_size} ({n_retina}) -> V1s {n_v1s} -> "
               f"V1c {n_v1c} -> V2 {n_v2} -> IT {n_it}; scaled Gabor installed ({len(wts)} synapses)", flush=True)
@@ -193,7 +225,8 @@ def test_recognition(bridge, vocab, rs, font, stim_steps=60, reset_steps=30):
 
 
 def read_letters_test(bridge, rs, npos, n_letters=8, n_pos=3, n_words=80,
-                      stim_steps=100, reset_steps=30, seed=42, code="rate"):
+                      stim_steps=100, reset_steps=30, seed=42, code="rate",
+                      read_region="cortex_v1_simple"):
     """PATH 2 cheap-first decisive test: per-position letter reading on REAL spiking V1_simple.
     Render multi-letter words, collect V1_simple features, read each letter from its V1s BAND
     (position-specific -- the structure that produced the cheap probe's 0.91, never tested in spiking).
@@ -209,9 +242,10 @@ def read_letters_test(bridge, rs, npos, n_letters=8, n_pos=3, n_words=80,
     from research.findings.raw._text_as_pixels_probe import softmax, train_logreg
     rm = bridge.region_manager
     r_idx = xp.asarray(rm.indices("retina"))
-    v1 = rm.indices("cortex_v1_simple")
+    v1 = rm.indices(read_region)
     v1_arr = xp.asarray(v1)
     n_v1s = len(v1)
+    print(f"  reading off region '{read_region}' ({n_v1s} cells), code={code}", flush=True)
     alphabet = list("aeotxscn")[:n_letters]
     rng = np.random.default_rng(seed)
     words = set()
@@ -290,6 +324,10 @@ def main():
                     help="V1_simple spike-count integration window for --read-letters")
     ap.add_argument("--latency", action="store_true",
                     help="--read-letters: use first-spike latency code (Thorpe/Masquelier) instead of rate")
+    ap.add_argument("--read-region", type=str, default="cortex_v1_simple",
+                    help="--read-letters: region to read from (cortex_v1_simple or cortex_v1_complex)")
+    ap.add_argument("--no-structured-pooling", action="store_true",
+                    help="disable structured Hubel-Wiesel V1_complex pooling (use random density)")
     ap.add_argument("--events", type=int, default=80, help="training events per word (--recognize)")
     ap.add_argument("--vocab", type=str, default="dog,cat,run,sun")
     ap.add_argument("--test-steps", type=int, default=60, help="test integration window (temporal denoise)")
@@ -298,9 +336,11 @@ def main():
     a = ap.parse_args()
 
     if a.read_letters:
-        bridge, rs, npos = build_visual_text_bridge(retina_size=a.retina, seed=a.seed)
+        bridge, rs, npos = build_visual_text_bridge(retina_size=a.retina, seed=a.seed,
+                                                    structured_pooling=not a.no_structured_pooling)
         read_letters_test(bridge, rs, npos, n_words=a.n_words, stim_steps=a.integration_steps,
-                          seed=a.seed, code=("latency" if a.latency else "rate"))
+                          seed=a.seed, code=("latency" if a.latency else "rate"),
+                          read_region=a.read_region)
         return
 
     if a.recognize:
