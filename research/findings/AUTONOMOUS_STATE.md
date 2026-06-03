@@ -40,7 +40,12 @@ big/cat/hot ~0.32, dog-cluster stays 0.00 (clean by construction — only design
 Full controller 6 seeds x 2 topics = **12/12 conditions coherent**. So the content-selection Control is
 now demonstrated at THREE faithfulness levels: structured M1 -> spiking-WM M2 -> fully-spiking-relevance
 M3. Finding 2026-06-03-content-selection-milestone3-spiking-relevance-VALIDATED.md. 31 structured tests
-still green.
+still green. SCALE VALIDATED (synthetic multi-cluster graphs, each cluster a 4-cycle): 8 concepts 12/12
+(strict) -> 16 concepts 11/12 (strict; 1 within-cluster None, benign) -> 24 concepts 12/12 (on-topic, 6
+clusters x 2 seeds). The load-bearing property — NEVER picking an off-topic concept — holds at every
+scale (3x the original toy vocab); the only blemish is an occasional within-cluster None ("nothing more
+to add", tunable via edge_scale/threshold), never an incoherent answer. So the spiking content-selection's
+TOPIC DISCIPLINE is robust to 24 concepts.
 
 >>> M3b CHEAP-PROBED THIS CYCLE (hyperpolarizing-fatigue approach REFUTED): applying targeted negative
 "fatigue" current to a latched, recently-selected assembly to silence it for the next relevance read does

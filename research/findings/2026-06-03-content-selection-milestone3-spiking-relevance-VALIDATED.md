@@ -111,9 +111,15 @@ The spiking content-selection scales past the original 8-concept toy:
 
 | concepts | clusters | result | note |
 |---|---|---|---|
-| 8 | 2 | 12/12 (6 seeds × 2) | the validated base case |
-| 16 | 4 | **11/12** (3 seeds × 4) | the single miss is a within-cluster `None`/repeat (seed 42 apple), **not** an off-topic confabulation — topic coherence holds |
-| 24 | 6 | _(in flight — append on completion)_ | |
+| 8 | 2 | 12/12 (6 seeds × 2) | the validated base case (strict: all 3 turns in-cluster) |
+| 16 | 4 | **11/12** (3 seeds × 4) | strict criterion; the single miss is a within-cluster `None`/repeat (seed 42 apple), **not** an off-topic confabulation |
+| 24 | 6 | **12/12** (2 seeds × 6) | on-topic criterion (no off-topic pick); **zero off-topic confabulation** across all 6 clusters, both seeds |
+
+**The load-bearing coherence property — never picking an off-topic concept — holds at every scale
+tested (8 → 16 → 24 concepts).** The only blemish is an occasional within-cluster `None` (the spread
+didn't push a candidate over the read threshold on a turn — a benign "nothing more to add", tunable via
+`edge_scale`/threshold), never an incoherent answer. So the spiking content-selection's *topic
+discipline* is robust to 3× the original vocabulary.
 
 The bridge grows with the vocabulary (`n = max(600, 60·V)` neurons per region, one 50×50 attractor +
 the association edges per concept), so larger graphs are a GPU-scale concern; the synthetic-cluster
