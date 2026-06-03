@@ -110,7 +110,8 @@ def build_per_band_v1_fs_wiring(npos, n_orientations, n_frequencies, n_bands, v1
 
 def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, n_v2=256, n_it=64, seed=42,
                              word_pools=None, n_per_pool=64, n_word_fs=24, structured_pooling=True,
-                             v1_inhibition_mode="none", n_v1_fs=128, n_v1_bands=3, verbose=True):
+                             v1_inhibition_mode="none", n_v1_fs=128, n_v1_bands=3,
+                             enable_reward_modulation=False, verbose=True):
     from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
     from sim.bridge import SimulationBridge
     from sim.regions import BrainRegion, RegionPathway
@@ -199,6 +200,10 @@ def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, 
     cfg.enable_nmda = False; cfg.enable_structural_plasticity = False
     cfg.enable_per_type_stp = False; cfg.enable_hebbian_learning = False
     cfg.enable_short_term_plasticity = False; cfg.stdp_w_max = 10.0; cfg.fast_spike_reset = True
+    cfg.enable_reward_modulation = enable_reward_modulation  # R-STDP: supervised-ish readout learning
+    if enable_reward_modulation:
+        cfg.reward_baseline = 0.0          # so no spurious updates when current_reward_signal=0
+        cfg.reward_learning_rate = 0.05
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
     bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
@@ -296,6 +301,54 @@ def train_recognition(bridge, vocab, rs, font, n_events=80, stim_steps=60, reset
         bridge.set_plasticity_gate(gate, 0.0)
         if verbose and (i + 1) % 50 == 0:
             print(f"  [train] {i+1}/{len(schedule)} events", flush=True)
+
+
+def train_recognition_rstdp(bridge, vocab, rs, font, n_events=200, stim_steps=60, reset_steps=30,
+                            reward_steps=20, reward_pos=1.0, reward_neg=-0.5, explore_pA=400.0,
+                            seed=42, verbose=True):
+    """R-STDP (reward-modulated STDP) recognition training -- the faithful supervised-ish readout rule that
+    plain STDP couldn't provide. Pools fire via exploration noise; eligibility accumulates on co-active
+    V1->pool synapses; reward gates which binding strengthens (correct-pool-wins -> reward+ -> strengthen
+    this word's V1->correct-pool; wrong-pool-wins -> reward- -> weaken). Over events the weights self-
+    organize toward correct recognition -- the supervised credit assignment plain STDP lacked."""
+    import sim.backend as B
+    xp, _ = B.get_backend()
+    rm = bridge.region_manager
+    r_idx = xp.asarray(rm.indices("retina"))
+    pools = {w: xp.asarray(rm.indices(f"word_{w}")) for w in vocab}
+    drives = {w: _retina_drive_gpu(w, rs, font, xp) for w in vocab}
+    for w in vocab:
+        bridge.set_plasticity_gate(f"v1s_to_word_{w}", 1.0)
+    rng = np.random.default_rng(seed)
+    schedule = [w for w in vocab for _ in range(n_events)]
+    rng.shuffle(schedule)
+    n_correct = 0
+    for i, w in enumerate(schedule):
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.core_config.current_reward_signal = 0.0
+        for _ in range(reset_steps):
+            bridge._run_one_simulation_step()
+        counts = {ww: 0.0 for ww in vocab}
+        for _ in range(stim_steps):
+            bridge.cp_external_input_current[r_idx] = drives[w]
+            for ww in vocab:  # exploration: random current so pools explore firing (RL credit assignment)
+                bridge.cp_external_input_current[pools[ww]] = xp.asarray(
+                    rng.uniform(0.0, explore_pA, size=len(pools[ww])), dtype=xp.float32)
+            bridge._run_one_simulation_step()
+            fs = bridge.cp_firing_states
+            for ww in vocab:
+                counts[ww] += float(B.to_host(fs[pools[ww]]).sum())
+        winner = max(vocab, key=lambda ww: counts[ww])
+        n_correct += int(winner == w)
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.core_config.current_reward_signal = float(reward_pos if winner == w else reward_neg)
+        for _ in range(reward_steps):
+            bridge._run_one_simulation_step()
+        bridge.core_config.current_reward_signal = 0.0
+        if verbose and (i + 1) % 50 == 0:
+            print(f"  [rstdp] {i+1}/{len(schedule)} running train-acc {n_correct/(i+1):.2f}", flush=True)
+    for w in vocab:
+        bridge.set_plasticity_gate(f"v1s_to_word_{w}", 0.0)
 
 
 def test_recognition(bridge, vocab, rs, font, stim_steps=60, reset_steps=30, hard_kwta_k=0, npos=None):
@@ -452,6 +505,9 @@ def main():
     ap.add_argument("--teacher-pa", type=float, default=2500.0)
     ap.add_argument("--hard-kwta-k", type=int, default=0,
                     help="--recognize: hard per-band k-WTA spike budget (Thorpe); 0 disables")
+    ap.add_argument("--rstdp", action="store_true",
+                    help="--recognize: train the readout with reward-modulated STDP (supervised-ish)")
+    ap.add_argument("--explore-pa", type=float, default=400.0, help="--rstdp exploration current")
     a = ap.parse_args()
 
     if a.read_letters:
@@ -466,15 +522,21 @@ def main():
     if a.recognize:
         vocab = [w.strip() for w in a.vocab.split(",") if w.strip()]
         pools = [f"word_{w}" for w in vocab]
-        bridge, rs, npos = build_visual_text_bridge(retina_size=a.retina, seed=a.seed, word_pools=pools)
+        bridge, rs, npos = build_visual_text_bridge(retina_size=a.retina, seed=a.seed, word_pools=pools,
+                                                    enable_reward_modulation=a.rstdp)
         try:
             font = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", int(rs * 0.5))
         except Exception:
             font = ImageFont.load_default()
-        print(f"[recognize] vocab={vocab}; STDP-training {a.events} events/word off V1_simple word-form "
+        rule = "R-STDP (reward-modulated)" if a.rstdp else "plain STDP+teacher"
+        print(f"[recognize] vocab={vocab}; {rule} training {a.events} events/word off V1_simple word-form "
               f"(retina {rs}, train-steps {a.train_steps}, test-steps {a.test_steps})...", flush=True)
-        train_recognition(bridge, vocab, rs, font, n_events=a.events, stim_steps=a.train_steps,
-                          teacher_pA=a.teacher_pa, seed=a.seed, hard_kwta_k=a.hard_kwta_k, npos=npos)
+        if a.rstdp:
+            train_recognition_rstdp(bridge, vocab, rs, font, n_events=a.events, stim_steps=a.train_steps,
+                                    explore_pA=a.explore_pa, seed=a.seed)
+        else:
+            train_recognition(bridge, vocab, rs, font, n_events=a.events, stim_steps=a.train_steps,
+                              teacher_pA=a.teacher_pa, seed=a.seed, hard_kwta_k=a.hard_kwta_k, npos=npos)
         test_recognition(bridge, vocab, rs, font, stim_steps=a.test_steps,
                          hard_kwta_k=a.hard_kwta_k, npos=npos)
         return
