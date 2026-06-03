@@ -34,11 +34,19 @@ dynamical gating (Logiaco 2021). Owner chose "A for now."
 
 >>> EXACT NEXT (pre-registered, in order): (1) D-scaling sweep -- DONE: capacity scales with D (M=16/32/48/64
 at D=256/512/1024/2048, F=3; ~D^0.67). Realistic nesting (per-slot fan-out <=64) works at our 320-substrate
-D~2000; full M=320/slot needs D~22K (feasible). Capacity-safe lever, not a ceiling. (2) Integrate the spiking resonator
-decode into the 320-substrate composition pipeline (replace single-shot decode -> enable nested SVO /
-hierarchical structures). (3) DECISIVE capability re-test: the hierarchical-320 that scored 0.000 (forced
-flat-distinct) WITH the resonator decode -- does it now resolve? (a nested fact / fact-about-a-fact /
-embedded clause), frozen gate + no-confab moat preserved. Then optionally Direction B (thalamocortical
+D~2000; full M=320/slot needs D~22K (feasible). Capacity-safe lever, not a ceiling. (2) REAL-CODES TRANSFER TEST DONE -> KEY FINDING (honest, scoped):
+the resonator needs PHASOR codes; it does NOT work on the real-Hadamard dense 320 codes the agent uses
+(_resonator_real320_probe.py: 0.00 at M=16 BOTH multiply+divide unbind; PHASOR control same D=2000/M=16 =
+1.00). FUNDAMENTAL not a bug -- dense real-Hadamard binding is non-invertible (a(x)b then *a = a^2(x)b != b),
+which is PRECISELY why the 320 substrate can't nest (forced flat-distinct). So integrating the resonator into
+the real-Hadamard 320 pipeline is REJECTED -- impossible there. (3) THE REAL PAYOFF BUILD: nested composition
+on the PHASOR substrate (resonate_fire_fhrr / spiking_phasor_fhrr -- validated 2026-05-22 'working
+compositional layer', clean invertible phase-arithmetic where the resonator RESOLVES). Build a 2-level NESTED
+fact (fact-about-a-fact / attributed concept / embedded clause) in phasor FHRR, decode with the spiking
+resonator, frozen gate vs single-shot 0.000-class failure, no-confab moat carries (phasor TPAM has it).
+NET Direction-A honest status: a genuinely-new mechanism gets past the nesting wall ON THE PHASOR SUBSTRATE
+(algebra+spiking+scalable RESOLVE); it is NOT a drop-in for the real-Hadamard 320 agent -> it implies a
+substrate choice (phasor FHRR for nesting-capable composition). Scoped advance, not over-claim. Then optionally Direction B (thalamocortical
 gating). Both remotes; biology-faithful; cheap-first; honest negatives are the deliverable.
 
 ## >>> NEWEST — SPIKING CONTENT-SELECTION CONTROL: ARC COMPLETE, DECISIVE EVAL 5/5 RESOLVES (2026-06-03; read THIS first) <<<

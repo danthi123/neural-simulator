@@ -1,0 +1,10 @@
+=== resonator on REAL 320 codes (Hadamard; D=2000, V=320, F=3) ===
+  M= 16  resonator=0.03  single-shot(ctrl)=0.03
+  M= 32  resonator=0.03  single-shot(ctrl)=0.00
+  M= 48  resonator=0.00  single-shot(ctrl)=0.00
+
+-- pre-registered evaluation --
+  resonator @ M=16: 0.03  | single-shot @ M=16: 0.03 (must be < 0.50)
+  resonator operational capacity on REAL codes: M=0
+
+VERDICT: BOUNDARY (resonator 0.03 < 0.9 even at M=16 on real dense-Hadamard codes -> the real-code structure degrades the resonator)

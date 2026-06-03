@@ -105,17 +105,53 @@ GPU-feasible). This is a capacity-*safe* lever (more D → more capacity), not a
 path scales. So **Direction A cheap-first is fully characterized: algebra RESOLVE + spiking RESOLVE +
 D-scaling — a genuinely-new, biology-faithful, scalable mechanism past the nesting-decode wall.**
 
-## Pre-registered next steps (the payoff build, in order)
+## ⚠️ Real-codes transfer test: the resonator needs PHASOR codes, NOT the real-Hadamard 320 substrate (key architectural finding)
 
-1. ~~D-scaling sweep~~ — DONE (above): capacity scales with D; realistic nesting at D≈2000.
-2. **Integrate the resonator decode into the composition pipeline** — replace the single-shot decode in the
-   320-substrate path with the spiking resonator, enabling NESTED SVO / hierarchical structures.
-3. **Re-test the hierarchical-320** (the structure that scored 0.000 and forced flat-distinct) WITH the
-   resonator decode — does it now resolve? This is the decisive capability test (a nested fact / a fact
-   about a fact / embedded clause), with a pre-registered gate + the no-confab moat preserved.
+`research/findings/raw/_resonator_real320_probe.py` ran the resonator on the **actual 320 concept codes** (the
+`_flatdist320_codes.npz` cache the conversational agent uses): dense real (float64, D=2000, Hadamard-bound).
 
-(The noise-injection sub-claim stays a documented secondary negative on our codes; revisit only if a
-spiking limit-cycle regime appears at higher load.)
+| substrate (D=2000, M=16, F=3) | resonator success |
+|---|---|
+| **real-Hadamard 320 codes, MULTIPLY unbind** | **0.00** |
+| **real-Hadamard 320 codes, DIVIDE unbind** (true Hadamard inverse) | **0.00** |
+| **PHASOR codes (same D=2000, M=16)** | **1.00** |
+
+**This is fundamental, not a bug** (both unbind variants fail; the phasor control at the identical D/M
+RESOLVES). The dense real-Hadamard binding is **not cleanly invertible** (`a⊙b` then `·a` = `a²⊙b ≠ b`;
+elementwise division blows up on the dense near-zero elements), so the resonator's iterative unbind↔cleanup
+cannot converge. **This is precisely WHY the 320 substrate cannot nest** — its codes/binding fundamentally
+forbid clean factorization, which is what forced the flat-distinct single-binding workaround. The resonator
+cannot fix that substrate.
+
+**The resonator's nesting-unlock applies to the PHASOR substrate** (`resonate_fire_fhrr` / `spiking_phasor_
+fhrr` — the resonate-and-fire phasor FHRR layer, itself validated 2026-05-22 as a "working compositional
+layer"), where binding is clean phase-arithmetic (invertible) and the resonator RESOLVES (algebra + spiking +
+scalable). So nested conversational composition is achievable — on the phasor substrate, not the
+real-Hadamard 320 agent.
+
+## Pre-registered next steps (corrected by the real-codes finding)
+
+1. ~~D-scaling sweep~~ — DONE: capacity scales with D; realistic nesting at D≈2000.
+2. ~~Integrate into the real-Hadamard 320 pipeline~~ — **REJECTED by the real-codes test**: that substrate's
+   binding is non-invertible; the resonator cannot work there. Nesting on the 320 agent's codes is impossible.
+3. **The real payoff build: nested composition on the PHASOR substrate.** Build (or extend the validated
+   `resonate_fire_fhrr` compositional layer to) a NESTED structure — a fact-about-a-fact / attributed concept
+   / embedded clause — encoded in phasor FHRR, decoded by the spiking resonator. Pre-register a frozen gate:
+   does the phasor+resonator pipeline decode a genuine 2-level nested fact (where single-shot gives the
+   documented 0.000-class failure)? This is the decisive capability test, on the substrate where the
+   resonator actually works. The no-confab moat + abstention carry over (the phasor TPAM already has them).
+
+(The noise sub-claim stays a documented secondary negative.)
+
+## Honest framing of where Direction A stands
+
+The owner-directed deep research found a genuinely-new mechanism (the resonator) and cheap-first validation
+established, precisely: it **resolves the multi-factor/nesting decode on the phasor FHRR substrate** (algebra
++ spiking + scalable), and it **does not and cannot apply to the real-Hadamard 320 substrate** (non-invertible
+binding — the structural reason that substrate is single-binding-only). This is a real, scoped path past the
+nesting wall: nested composition is buildable on the phasor substrate. It is NOT a drop-in upgrade to the
+current 320 agent — it implies a substrate choice (phasor FHRR for composition that needs nesting). An honest,
+scoped advance, not an over-claim.
 
 ## Files / evidence
 
