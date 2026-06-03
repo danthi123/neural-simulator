@@ -64,3 +64,25 @@ def test_flat_vs_nested_distinguished_automatically():
     a.learn("dog", "eat", ("cold", "river"))               # nested, same agent
     assert a.query_patient("dog", "chase") == "cat"        # flat decoded as a flat concept
     assert a.query_patient("dog", "eat") == "cold river"   # nested decoded via the resonator
+
+
+def test_tell_about_includes_flat_and_nested():
+    a = _agent()
+    a.learn("dog", "chase", "cat")
+    a.learn("dog", "eat", ("red", "ball"))
+    facts = a.tell_about("dog")
+    assert "dog chase cat" in facts                        # flat fact rendered
+    assert "dog eat red ball" in facts                     # nested fact rendered (attributed patient)
+
+
+def test_elaborate_brings_up_topic_facts_non_repeating():
+    # the unified capability: dialogue planning (Control) over the agent's nested facts
+    a = _agent()
+    a.learn("dog", "chase", "cat")
+    a.learn("dog", "eat", ("red", "ball"))
+    a.set_topic("dog")
+    e1 = a.elaborate()
+    e2 = a.elaborate()
+    assert {e1, e2} == {"dog chase cat", "dog eat red ball"}   # both dog facts, coherent
+    assert e1 != e2                                            # non-repeating
+    assert a.elaborate() is None                              # exhausted

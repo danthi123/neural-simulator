@@ -51,7 +51,11 @@ class NestedCompositionAgent:
         self.NMAT = np.stack([self.noun_cb[w] for w in self.nouns], axis=1)   # D x |nouns|
         self.VMAT = np.stack([self.verb_cb[w] for w in self.verbs], axis=1)
         self.AMAT = np.stack([self.adj_cb[w] for w in self.adjs], axis=1)
-        self.kb = []   # list of bundle vectors (the stored facts)
+        self.kb = []      # list of bundle vectors (the stored facts; Q&A DECODES from these = composition proof)
+        self.facts = []   # parallel list of fact structures (for dialogue planning / elaboration indexing)
+        self.ctrl = None        # content-selection Control for the current elaboration topic
+        self.focus = None
+        self._elaborated = set()
 
     @staticmethod
     def _unit(v):
@@ -68,6 +72,7 @@ class NestedCompositionAgent:
              + self.roles["ACTION"] * self.verb_cb[action]
              + self.roles["PATIENT"] * self._filler(patient))
         self.kb.append(b)
+        self.facts.append({"agent": agent, "action": action, "patient": patient})
         return b
 
     def _cleanup(self, p, MAT, names):
@@ -115,6 +120,55 @@ class NestedCompositionAgent:
                 return ag
         return None
 
+    # --- dialogue planning: the content-selection Control over the agent's own facts ---
+    def _render(self, entry):
+        pa = entry["patient"]
+        patient = f"{pa[0]} {pa[1]}" if isinstance(pa, tuple) else pa   # flat or attributed entity
+        return f"{entry['agent']} {entry['action']} {patient}"
+
+    def _fact_concepts(self, entry):
+        cs = [entry["agent"], entry["action"]]
+        pa = entry["patient"]
+        cs += list(pa) if isinstance(pa, tuple) else [pa]
+        return cs
+
+    def _concept_graph(self):
+        from research.runners.content_selection import build_association_graph
+        pairs = []
+        for e in self.facts:
+            cs = self._fact_concepts(e)
+            for i in range(len(cs)):
+                for j in range(i + 1, len(cs)):
+                    pairs.append(f"{cs[i]}_{cs[j]}")
+        return build_association_graph(pairs) if pairs else {}
+
+    def tell_about(self, concept):
+        """All stored facts mentioning `concept`, rendered (flat + nested)."""
+        return [self._render(e) for e in self.facts if concept in self._fact_concepts(e)]
+
+    def set_topic(self, topic):
+        from research.runners.content_selection import ContentSelectionController
+        self.focus = topic
+        self._elaborated = set()
+        self.ctrl = ContentSelectionController(self._concept_graph())
+
+    def elaborate(self):
+        """Bring up the next coherent fact about the focus (dialogue planning via the content-selection
+        Control), rendered as a sentence -- unifying nested composition + dialogue planning. None when
+        nothing on-topic remains."""
+        if self.focus is None or not any(self.focus in self._fact_concepts(e) for e in self.facts):
+            return None
+        for _ in range(len(self.nouns) + len(self.verbs) + len(self.adjs)):
+            pick = self.ctrl.turn([self.focus])
+            if pick is None:
+                break
+            for k, e in enumerate(self.facts):
+                cs = self._fact_concepts(e)
+                if self.focus in cs and pick in cs and k not in self._elaborated:
+                    self._elaborated.add(k)
+                    return self._render(e)
+        return None
+
 
 def main():
     nouns = ["dog", "cat", "ball", "bird", "river", "child"]
@@ -139,7 +193,13 @@ def main():
     print("\n  -- who-queries (agent) --", flush=True)
     for ac, pa in [("chase", "cat"), ("hold", "ball"), ("eat", "ball")]:
         print(f"  Q: who {ac} {pa}?   A: {a.query_agent(ac, pa)}", flush=True)
-    print("\n  -> the agent stores + answers facts whose slot is itself a structured entity (an attributed", flush=True)
+    print("\n  -- dialogue planning (content-selection Control over the agent's nested facts) --", flush=True)
+    print(f"  tell me about dog: {a.tell_about('dog')}", flush=True)
+    a.set_topic("dog")
+    for _ in range(3):
+        print(f"  elaborate on dog -> {a.elaborate()}", flush=True)
+    print("\n  -> a UNIFIED conversational agent: stores facts whose slot is itself a structured entity (an", flush=True)
+    print("     attributed", flush=True)
     print("     patient, 'red ball'), decoded by the resonator, and ABSTAINS on the unknown -- nested", flush=True)
     print("     composition the flat-distinct substrate fundamentally could not do.", flush=True)
 
