@@ -22,7 +22,16 @@ real engineering, not free); random phasor codes (grounded-code re-test is the n
 de-risks the CAPACITY question, NOT the learning question. CONFIRMED both common-mode AND clustered
 (grounded-like) inter-code correlation hold 1.00. THE AGENT ITSELF works at scale: 120-concept vocab (60n+
 30v+30adj), 40 mixed facts (flat/1-attr/2-attr/clause), ~96% (39/38/39 of 40) 3 seeds + abstention. 21 tests.
-Finding `2026-06-03-phasor-FHRR-unified-substrate-candidate-diversity-plus-nesting.md`. >>> THIS is the decision the
+LEARNING ANALOG RESOLVES: one-pass Hebbian cue->phasor-code associator learns all 320 at 1.000 retrieval +
+learned codes compose SVO 1.00 (cheap-first analog of production STDP input->repr map). SO every cheap-first-
+testable axis of substrate unification is DE-RISKED (capacity, correlation, agent-at-scale, linear-learning);
+the ONE open step is the full SPIKING-STDP realization (a real engineering arc, NOT a cheap probe) + a
+grounded-encoder re-test. Finding `2026-06-03-phasor-FHRR-unified-substrate-candidate-diversity-plus-nesting.md`.
+>>> STATE: Direction A research arc COMPLETE + strategically de-risked. The next move is a LARGE bet (owner-
+steerable): (1) spiking-STDP phasor substrate unification [extends this finding toward a real impl; months],
+(2) Direction B thalamocortical dynamical gating [the other untried mechanism from the deep research], or
+(3) production-scale conversational build on the validated agent. Cheap-first increments on Direction A are
+exhausted. >>> THIS is the decision the
 owner may want to steer: whether to migrate the production substrate onto phasor FHRR to gain nesting. NEXT
 candidate (autonomous): grounded-code re-test (does the 320 result hold for sparse-encoded grounded codes,
 not just random phasors?) — cheap-first, decisive, the last capacity-side uncertainty before a migration
