@@ -71,7 +71,13 @@ the SAME fact {agent:dog,action:chase,patient:cat}; includes voice detection (BE
 parse). 48 conversation tests pass (parser 6 + integration 10 + content_selection 19 + dialogue 13). So the
 numpy loop's COMPREHEND is now learned + handles passive voice (a genuine capability add). >>> REMAINING
 milestone-3: (c) richer utterance types / multi-fact reasoning; a fully-SPIKING parser (conjunctive coding
-in the substrate's distributed codes) is the deeper faithfulness step.
+in the substrate's distributed codes) is the deeper faithfulness step. >>> + DEDUP FIX (smell-test caught
+it): active+passive of the same fact were creating two KB entries; fixed (fact-in-kb check -> "i already
+knew"). FULL RICH CONVERSATION now clean end-to-end: learn (active+passive, dedup) + factual Q&A + topic
+elaboration (non-repeating Control-driven) + topic shift, 11 integration tests pass. So the INTEGRATION ARC
+delivered a working biology-faithful conversational agent: comprehend (learned voice-invariant parser) +
+decide-what-to-say (spiking content-selection Control) + produce (generate-by-composition / spiking unbind),
+at toy scale AND 320-concept scale.
 
 >>> AUTONOMOUS-CONTINUABLE REFINEMENTS
 (no new-project approval needed, smaller builds): (a) fully-spiking SaidTrace = a persistent-across-reset

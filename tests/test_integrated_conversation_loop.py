@@ -91,3 +91,12 @@ def test_agent_understands_passive_voice():
     assert a.kb[0] == {"agent": WORDS.index("dog"), "action": WORDS.index("chase"),
                        "patient": WORDS.index("cat")}
     assert a.hear("what does dog chase").split() == ["dog", "chase", "cat"]   # and answers about it
+
+
+def test_active_and_passive_dedup_to_one_fact():
+    # the active and passive forms of the same fact must NOT create two KB entries (voice-invariant dedup)
+    a = ConversationalAgent(seed=42)
+    a.hear("dog chase cat")
+    resp = a.hear("cat is chased by dog")
+    assert len(a.kb) == 1                                  # one fact, not two
+    assert "already knew" in resp

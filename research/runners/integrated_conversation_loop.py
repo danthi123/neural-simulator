@@ -143,6 +143,8 @@ class ConversationalAgent:
         meaning = self.parser.parse(text, self._vocab)                 # STATEMENT (voice-invariant) -> bind
         if meaning is not None:
             fact = {r: W2I[meaning[r]] for r in ROLES3}
+            if fact in self.kb:                                        # active+passive of the same fact -> dedup
+                return "i already knew: " + self._say(fact)
             self.kb.append(fact)
             return "ok -- i learned: " + self._say(fact)
         content = [t for t in toks if t in W2I]
