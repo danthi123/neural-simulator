@@ -28,7 +28,8 @@ class DialogueAgent:
     """
 
     _YESNO_WORDS = ("is", "are", "related", "associated", "?", "does", "do")
-    _LINK_WORDS = ("link", "links", "common", "both", "connect", "share", "and")
+    _LINK_WORDS = ("link", "links", "common", "both", "connect", "share")
+    _DESCRIBE_WORDS = ("tell", "describe", "about", "know")
 
     def __init__(self, graph, **ctrl_kwargs):
         self.graph = graph
@@ -43,11 +44,26 @@ class DialogueAgent:
     def _assoc(self, x, y):
         return float(self.graph.get(x, {}).get(y, 0.0) or self.graph.get(y, {}).get(x, 0.0))
 
-    def _answer_yes_no(self, x, y):
+    def _answer_yes_no(self, x, y, negated=False):
         s = self._assoc(x, y)
-        if s > 0:
+        associated = s > 0
+        if negated:                                  # user asked "is X NOT related to Y"
+            if associated:
+                return f"Actually, {x} and {y} ARE associated (strength {s:.1f})."
+            return f"Right -- {x} and {y} are not associated."
+        if associated:
             return f"Yes -- {x} and {y} are associated (strength {s:.1f})."
         return f"No -- {x} and {y} are not directly associated."
+
+    def _describe(self, x, top_k=3):
+        """A multi-fact summary: the top-k strongest associates of x, as a sentence."""
+        assoc = sorted(self.graph.get(x, {}).items(), key=lambda kv: -kv[1])[:top_k]
+        names = [a for a, _ in assoc]
+        if not names:
+            return f"I don't know anything about {x}."
+        if len(names) == 1:
+            return f"{x} is associated with {names[0]}."
+        return f"{x} is associated with {', '.join(names[:-1])} and {names[-1]}."
 
     def _answer_common(self, x, y):
         common = sorted(set(self.graph.get(x, {})) & set(self.graph.get(y, {})))
@@ -61,18 +77,27 @@ class DialogueAgent:
         answered from the association substrate. Mentioned concepts feed the Control context so the
         conversation stays coherent across questions and topics."""
         text = (user_input or "").strip().lower()
+        words = text.replace("?", " ").split()
         if text in ("more", ""):                                  # follow-up on the current topic
             if self.focus is None:
                 return None
             return self.ctrl.turn([self.focus])
         known = self._known(text)
-        if len(known) >= 2 and any(w in text.split() for w in self._LINK_WORDS):
+        if known and any(w in words for w in self._DESCRIBE_WORDS):   # "tell me about X" -> multi-fact
+            self.focus = known[0]
+            self.ctrl.ctx.update([known[0]])
+            return self._describe(known[0])
+        if len(known) >= 2 and any(w in words for w in self._LINK_WORDS):
             self.ctrl.ctx.update(known[:2])                       # the asked-about concepts enter context
             return self._answer_common(known[0], known[1])
-        if len(known) >= 2 and any(w in text.split() for w in self._YESNO_WORDS):
+        if len(known) >= 2 and any(w in words for w in self._YESNO_WORDS):
             self.ctrl.ctx.update(known[:2])
-            return self._answer_yes_no(known[0], known[1])
+            negated = "not" in words or "n't" in text             # "is X NOT related to Y"
+            return self._answer_yes_no(known[0], known[1], negated)
         if len(known) >= 1:                                       # a topic -> set focus, elaborate
+            if known[0] != self.focus:                            # explicit topic shift: strongly refocus
+                for _ in range(3):                                # (PFC attention reorienting to the new topic
+                    self.ctrl.ctx.update([known[0]])              #  so it dominates the accumulated context)
             self.focus = known[0]
             return self.ctrl.turn([self.focus])
         return "I don't know about that."
@@ -85,30 +110,50 @@ def run_conversation(graph, script, **kwargs):
     return [(u, agent.respond(u)) for u in script]
 
 
+def repl(graph):
+    """Live interactive shell: the user types, the agent responds, until 'quit'."""
+    agent = DialogueAgent(graph)
+    print("Dialogue agent -- live. Try:  <concept> | more | tell me about <X> |")
+    print("  is <X> related to <Y> | is <X> not related to <Y> | what links <X> and <Y> | quit\n")
+    while True:
+        try:
+            u = input("user : ").strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if u.lower() in ("quit", "exit"):
+            break
+        print(f"agent: {agent.respond(u)}")
+
+
 def main():
-    # Reuse the synthetic multi-topic association graph from the Milestone-1 eval for a richer demo.
+    import argparse
     from research.runners.content_selection_eval import _synthetic_multi_topic_graph
 
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--repl", action="store_true", help="live interactive dialogue shell")
+    a = ap.parse_args()
     graph = _synthetic_multi_topic_graph()
-    # A varied conversation mixing topic elaboration, follow-ups, yes/no questions, and a common-link
-    # question -- all answered from the association substrate with Control-driven coherence.
+    if a.repl:
+        repl(graph)
+        return
+
+    # Scripted demo showing every capability: multi-fact describe, topic + follow-up, yes/no, negation,
+    # common-link, and a coherent topic shift -- all on the validated Control substrate.
     script = [
-        "rain", "more",                       # elaborate a topic
-        "is rain related to storm?",          # yes/no question  -> Yes
-        "what links cloud and storm?",        # common-link question -> their shared associates
-        "is apple related to rain?",          # yes/no question  -> No (different topics)
+        "tell me about rain",                 # multi-fact answer
+        "rain", "more",                       # topic elaboration + follow-up
+        "is rain related to storm?",          # yes/no -> Yes
+        "is rain not related to apple?",      # negation -> Right, not associated
+        "what links cloud and storm?",        # common-link -> shared associates
         "apple", "more",                      # shift topic + elaborate
-        "song", "more",                       # shift topic + elaborate
     ]
     convo = run_conversation(graph, script)
-
-    print("Interactive coherent-dialogue agent -- scripted demo (Control + KB question-answering)")
-    print("(a concept = topic; 'more' = continue; 'is X related to Y' / 'what links X and Y' = questions)\n")
+    print("Interactive dialogue agent -- scripted demo (multi-fact + negation + Q&A + coherent topics)\n")
     for user, agent in convo:
         print(f"  user : {user}")
         print(f"  agent: {agent}")
-    print("\n  -> the agent answers association questions AND elaborates topics coherently, tracking "
-          "context across both -- content-selection Control as an interactive question-answering dialogue.")
+    print("\n  -> multi-fact answers, negation, association Q&A, and coherent topic elaboration -- a "
+          "usable conversational agent on the validated Control.  (run with --repl for a live shell.)")
 
 
 if __name__ == "__main__":

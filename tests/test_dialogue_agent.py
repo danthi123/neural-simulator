@@ -72,3 +72,22 @@ def test_common_link_question():
 def test_unknown_input():
     agent = DialogueAgent(_graph())
     assert agent.respond("xyzzy") == "I don't know about that."
+
+
+def test_describe_multi_fact():
+    agent = DialogueAgent(_graph())
+    ans = agent.respond("tell me about rain")          # rain -> cloud (2.0), storm (1.5)
+    assert "rain is associated with" in ans
+    assert "cloud" in ans and "storm" in ans
+
+
+def test_negation_when_not_associated():
+    agent = DialogueAgent(_graph())
+    ans = agent.respond("is rain not related to apple?")   # different topics, no edge
+    assert ans.startswith("Right")
+
+
+def test_negation_when_associated():
+    agent = DialogueAgent(_graph())
+    ans = agent.respond("is rain not related to storm?")   # they ARE associated -> correct the negation
+    assert ans.startswith("Actually")
