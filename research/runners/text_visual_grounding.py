@@ -59,7 +59,7 @@ def build_scaled_gabor_v1_weights(retina_size, n_orientations, n_frequencies, n_
     return (np.asarray(pre, np.int64), np.asarray(post, np.int64), np.asarray(wts, np.float32))
 
 
-def build_v1_complex_pooling_weights(n_orientations, n_frequencies, npos, weight=12.0):
+def build_v1_complex_pooling_weights(n_orientations, n_frequencies, npos, weight=60.0):
     """Structured Hubel-Wiesel V1_simple -> V1_complex phase-pooling: each complex cell at (orientation,
     py, px) pools the n_frequencies simple cells at the SAME orientation + position across frequency/phase
     -> phase/frequency-invariant edge detection (the max-pooling convergence the Thorpe/Masquelier pipeline
@@ -226,7 +226,7 @@ def test_recognition(bridge, vocab, rs, font, stim_steps=60, reset_steps=30):
 
 def read_letters_test(bridge, rs, npos, n_letters=8, n_pos=3, n_words=80,
                       stim_steps=100, reset_steps=30, seed=42, code="rate",
-                      read_region="cortex_v1_simple"):
+                      read_region="cortex_v1_simple", kwta_frac=1.0):
     """PATH 2 cheap-first decisive test: per-position letter reading on REAL spiking V1_simple.
     Render multi-letter words, collect V1_simple features, read each letter from its V1s BAND
     (position-specific -- the structure that produced the cheap probe's 0.91, never tested in spiking).
@@ -286,7 +286,11 @@ def read_letters_test(bridge, rs, npos, n_letters=8, n_pos=3, n_words=80,
     band_cells = {p: np.where((px >= p * npos // n_pos) & (px < (p + 1) * npos // n_pos))[0]
                   for p in range(n_pos)}
     def band_vec(w, p):
-        v = feats[w][band_cells[p]]
+        v = feats[w][band_cells[p]].astype(np.float32)
+        if kwta_frac < 1.0:  # k-winners-take-all: keep only the earliest/strongest responders, zero rest
+            n_keep = max(1, int(len(v) * kwta_frac))
+            thr = np.partition(v, -n_keep)[-n_keep]
+            v = np.where(v >= thr, v, 0.0).astype(np.float32)
         return v / (np.linalg.norm(v) + 1e-9)
     n_ho = n_words // 3
     ho, pool = words[-n_ho:], words[:-n_ho]
@@ -326,6 +330,8 @@ def main():
                     help="--read-letters: use first-spike latency code (Thorpe/Masquelier) instead of rate")
     ap.add_argument("--read-region", type=str, default="cortex_v1_simple",
                     help="--read-letters: region to read from (cortex_v1_simple or cortex_v1_complex)")
+    ap.add_argument("--kwta-frac", type=float, default=1.0,
+                    help="--read-letters: k-winners-take-all fraction per band (Thorpe lateral inhibition)")
     ap.add_argument("--no-structured-pooling", action="store_true",
                     help="disable structured Hubel-Wiesel V1_complex pooling (use random density)")
     ap.add_argument("--events", type=int, default=80, help="training events per word (--recognize)")
@@ -340,7 +346,7 @@ def main():
                                                     structured_pooling=not a.no_structured_pooling)
         read_letters_test(bridge, rs, npos, n_words=a.n_words, stim_steps=a.integration_steps,
                           seed=a.seed, code=("latency" if a.latency else "rate"),
-                          read_region=a.read_region)
+                          read_region=a.read_region, kwta_frac=a.kwta_frac)
         return
 
     if a.recognize:
