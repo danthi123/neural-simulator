@@ -27,11 +27,22 @@ learned codes compose SVO 1.00 (cheap-first analog of production STDP input->rep
 testable axis of substrate unification is DE-RISKED (capacity, correlation, agent-at-scale, linear-learning);
 the ONE open step is the full SPIKING-STDP realization (a real engineering arc, NOT a cheap probe) + a
 grounded-encoder re-test. Finding `2026-06-03-phasor-FHRR-unified-substrate-candidate-diversity-plus-nesting.md`.
->>> STATE: Direction A research arc COMPLETE + strategically de-risked. The next move is a LARGE bet (owner-
-steerable): (1) spiking-STDP phasor substrate unification [extends this finding toward a real impl; months],
-(2) Direction B thalamocortical dynamical gating [the other untried mechanism from the deep research], or
-(3) production-scale conversational build on the validated agent. Cheap-first increments on Direction A are
-exhausted. >>> THIS is the decision the
+>>> STATE: Direction A research arc COMPLETE + strategically de-risked. Decision artifact written:
+`docs/plans/2026-06-03-phasor-substrate-unification-design-note.md` (de-risked evidence + the ONE open step
+[spiking-STDP learning of the input->phasor-code map] + a pre-registered frozen minimal first experiment +
+Direction B alternative).
+>>> EXACT NEXT CONCRETE ACTION (cheap-first, per the design note's minimal first experiment): build a small
+resonate-and-fire network probe `research/findings/raw/_spiking_stdp_phasor_learn_probe.py` — input cue spike
+pattern -> STDP/phase-aligned plasticity on input->output weights -> learn each of N concepts' phasor code
+(N=8 then 32); test retrieval (cleanup vs codebook) + a learned 2-role bind/unbind. FROZEN GATE: RESOLVES
+(retrieval>=0.90 @ N=32 AND learned bind/unbind>=0.80) / BOUNDARY (works small N, degrades by 32) /
+DOES-NOT-RESOLVE (STDP can't drive output phases to target). ANTI-CHEAT: reproduce-the-failure (shuffled
+target phases must NOT learn to same acc) + smell-test any PASS (this session caught 2 harness false-negatives
+that way: list-order + rf_resonate). This is the load-bearing unknown for substrate unification; outcome
+decides whether to writing-plans the full migration or keep substrates separate (honest negative). Reuse
+resonate_fire_fhrr by import; no protected-module edits; GPU/CuPy if heavy, numpy ok for the N=8 smoke.
+Alternatives if owner steers away: Direction B (thalamocortical, Logiaco 2021) or a production-scale
+conversational build on the validated nesting agent. >>> THIS is the decision the
 owner may want to steer: whether to migrate the production substrate onto phasor FHRR to gain nesting. NEXT
 candidate (autonomous): grounded-code re-test (does the 320 result hold for sparse-encoded grounded codes,
 not just random phasors?) — cheap-first, decisive, the last capacity-side uncertainty before a migration
