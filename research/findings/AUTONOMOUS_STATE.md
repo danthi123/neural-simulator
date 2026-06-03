@@ -56,7 +56,10 @@ association graph built from the agent's own stored facts, PRODUCTION = spiking 
 + production); only the SVO parse is numpy. Demo (GPU, V=320, D=2000): stored wolf->fall->huge /
 wolf->taste->well / fish->send->weak; "wolf" -> "wolf fall huge", "more" -> "wolf taste well"
 (non-repeating, Control-driven), "more" -> "that's all i know about wolf"; "fish" -> "fish send weak" --
-each produced by spiking unbind. Reuses _insubstrate_bind_unbind_probe + _insubstrate_relational_memory_
+each produced by spiking unbind. PLUS factual Q&A via spiking unbind ("what does wolf fall" -> "wolf fall
+huge"; "who send weak" -> "fish send weak"; "tell me about X") -> a FULL conversational agent (learn +
+ask + elaborate) over 320 concepts, all faithful spiking except the parse. Reuses _insubstrate_bind_unbind_
+probe + _insubstrate_relational_memory_
 probe + the 320 codes cache; no protected-module change. So the tangible conversational agent now runs at
 the project's SCALE FRONTIER with mostly-faithful spiking pieces. >>> REMAINING milestone-3: (a) faithful
 conjunctive-coding parser (the last numpy piece); (c) richer utterance types / multi-fact reasoning.

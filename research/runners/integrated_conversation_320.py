@@ -79,6 +79,29 @@ class Conversation320Agent:
     def _facts_about(self, word):
         return [e for e in self.kb if word in e["fact"].values()]
 
+    def _find_fact(self, **constraints):
+        for e in self.kb:
+            if all(e["fact"].get(role) == word for role, word in constraints.items()):
+                return e
+        return None
+
+    def _answer_question(self, toks):
+        """Answer who/what/tell questions, producing the recovered fact via spiking unbind."""
+        if toks[0] == "tell":                                  # "tell me about <word>"
+            noun = toks[-1]
+            facts = self._facts_about(noun)
+            if not facts:
+                return f"(i don't know about {noun})"
+            return " ; ".join(self._produce(e) for e in facts)
+        content = [w for w in toks[1:] if w in self.codes]
+        if toks[0] == "what" and len(content) >= 2:            # agent + action known -> produce fact
+            e = self._find_fact(agent=content[0], action=content[1])
+            return self._produce(e) if e else f"(i don't know what {content[0]} {content[1]})"
+        if toks[0] == "who" and len(content) >= 2:             # action + patient known -> produce fact
+            e = self._find_fact(action=content[0], patient=content[1])
+            return self._produce(e) if e else f"(i don't know who {content[0]} {content[1]})"
+        return "(i didn't understand the question)"
+
     # --- DECIDE WHAT TO SAY (content-selection Control) + produce ---
     def set_topic(self, topic):
         self.focus = topic
@@ -106,6 +129,8 @@ class Conversation320Agent:
         toks = (text or "").strip().rstrip("?").split()
         if not toks:
             return "(i didn't understand)"
+        if toks[0] in ("what", "who", "tell"):                 # QUESTION -> retrieve + produce (unbind)
+            return self._answer_question(toks)
         if toks[0] in ("more", "and") and self.focus is not None:
             return self.elaborate()
         content = [t for t in toks if t in self.codes]
@@ -148,7 +173,12 @@ def main():
         f"{nouns[0]} {verbs[1]} {adjs[1]}",
         f"{nouns[1]} {verbs[2]} {adjs[2]}",
     ]
-    script = facts + [nouns[0], "more", "more", nouns[1]]
+    script = facts + [
+        f"what does {nouns[0]} {verbs[0]}",       # factual Q&A -> produced via spiking unbind
+        f"who {verbs[2]} {adjs[2]}",
+        nouns[0], "more", "more",                 # topic elaboration via the content-selection Control
+        "tell me about " + nouns[1],
+    ]
     for u in script:
         print(f"  user : {u}", flush=True)
         print(f"  agent: {agent.hear(u)}", flush=True)
