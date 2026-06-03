@@ -72,7 +72,36 @@ recognition is not in V1_simple. Two well-specified paths to a faithful spiking 
 window (200 steps) + reduced pool inhibition lift single-letter recognition above the 0.40 ceiling?
 If yes -> path 2 (letter-composition) is viable without the full hierarchy. If still ~0.40 -> the
 ceiling is fundamental to V1-simple-readout and path 1 (full hierarchy) is genuinely required.
-[VERDICT APPENDED BELOW WHEN THE RUN LANDS.]
+
+### VERDICT (run landed): the V1-simple whole-glyph ceiling is FUNDAMENTAL
+
+retina 64 + 200-step integration + reduced pool inhibition (iw 1.5) gave **1/5 = 0.20 = chance**,
+*worse* than retina 32 (0.40), via **dominant-pool collapse**: every test letter predicted 'o'
+(pool 'o' fired 0.7-0.8 for ALL inputs while the rest sat at 0.4-0.6). More signal + less
+inhibition did not separate the glyphs — it let one pool's STDP weights grow to dominate every
+input. This is the same winner-take-all collapse the concept-pool arc spent 14 iterations taming
+(FS cross-inhibition + topographic prior + target-only gating).
+
+Crucially, the cheap scaled-Gabor probe's ceiling (0.37) was measured with an **optimal linear
+classifier** (no dominant-pool artifact) — so ~0.37-0.40 is the genuine **whole-glyph
+V1-simple-readout ceiling**, not a WTA artifact. Adding WTA machinery would recover the collapse
+back toward ~0.40 but cannot exceed it. **Conclusion: reading word/letter recognition off the
+spiking V1_simple layer as a whole glyph is decisively insufficient (~0.40 ceiling).**
+
+The faithful spiking word recognizer therefore needs structure beyond whole-glyph V1-simple:
+- **Path 1 — full V1->V2->IT hierarchy** (DiCarlo: invariant object recognition is solved in IT,
+  not V1). Requires fixing V1_complex propagation (structured phase-pooling) + V2/IT tuning +
+  WTA pools. The biologically canonical route.
+- **Path 2 — per-position letter-composition** (the cheap probe's 0.91, NOT YET tested in
+  spiking): read each letter BAND of V1_simple separately (exploiting position structure), one
+  letter pool per (position, letter) with FS cross-inhibition WTA, compose into a word. This is
+  the data-efficient open-vocabulary route; the 0.91 came specifically from per-position reading,
+  which my whole-glyph tests never exploited.
+
+Next: test path 2 (per-position letter pools + WTA) cheap-first, since it directly exploits the
+position structure that produced the validated 0.91 and is cheaper than fixing the full hierarchy.
+If per-position spiking reading beats the 0.40 whole-glyph ceiling -> the data-efficient recognizer
+is viable; if it also collapses -> path 1 (full hierarchy) is the only faithful route.
 
 ## Honest scope
 
