@@ -179,6 +179,18 @@ the fix direction is dedicated per-attractor inhibition and/or dropping the inte
 dynamics refinement.) The mechanism (spiking WM holds context + Control selects over it) is validated;
 full seed-robustness is the remaining work.
 
+**Three robustness fixes tried, none help (definitive boundary):** (1) sparser patterns -> cleaner
+held-set margin but BROKE controller coherence; (2) internal_density=0 -> WORSE (3/6); (3) held-set
+threshold (drop weakly-held concepts before scoring) -> 4/6, no change. So at 2/3 seeds the
+seed-fragility is robust to the cheap fixes -- it is a genuine deep spiking-dynamics property (the
+attractor-interaction / shared-inhibition / relevance coupling), needing careful dynamics work
+(per-attractor inhibition, learned orthogonal codes via an input layer, or a proper WM-encoding
+protocol), NOT a one-line tune. **Honest final scope of this session's spiking arc:** the faithful
+spiking working memory and faithful spiking content-selection are *validated as mechanisms* and
+*demonstrated coherent at 2/3 seeds*; making them seed-robust is a genuine, well-characterized open
+refinement -- the same spiking-dynamics-tuning difficulty that has been the through-line of the whole
+session, now precisely located at the content-selection layer.
+
 **Net (the arc from a single session's cheap-first probes):** content-selection Control was validated
 structurally (Milestone 1), then the spiking working memory it needs was characterized
 (standalone=no / untrained-loop=blob / **trained-loop-attractor=works, 220x**), packaged
