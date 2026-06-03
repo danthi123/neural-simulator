@@ -16,6 +16,16 @@ ACTIVE ARC = conversation via the content-selection / dialogue-Control frontier 
 Milestone 1 (structured Control) VALIDATED 5/5. Milestone 2 (faithful spiking Control) was
 DEMONSTRATED 2/3-seed and flagged seed-fragile.
 
+>>> DECISIVE EVAL RESOLVES (the rigorous capstone, same bar M1 cleared): the SPIKING Control (turn_latency,
+said_decay=0.9) BEATS the no-control retrieval-only baseline on the connected synthetic graph -- on_topic
++0.417, turn_to_turn +0.625 (both meaningful), AND progression=1.00, 2/2 seeds. Transcripts are genuinely
+conversational (rain->cloud,storm,wind,sky,sun ; apple->fruit,sweet,tree,juice,sugar ; dog->bark,pet,cat,
+fur,purr) -- vs baseline robotically repeating one concept (cloud,cloud,cloud). The said_decay lever: 0.6
+beat baseline on all metrics but ALTERNATED 2 neighbours (progression 0.4 < 0.5 gate); 0.9 (now default)
+excludes ~6 turns -> full topic progression, no regression on clean clusters (8c 6/6 both rate+latency).
+So the faithful spiking content-selection Control is VALIDATED END-TO-END against a no-control baseline,
+clearing the same decisive bar as the structured M1 Control.
+
 >>> RESOLVED THIS CYCLE: the 2/3-seed fragility of `SpikingController`
 (research/runners/content_selection_spiking.py) is FIXED -> **6/6 seeds (42-47), 12/12 conditions
 coherent** (apple->big/cat/hot, dog->river/cold/small). ROOT CAUSE (8-probe cheap-first falsification

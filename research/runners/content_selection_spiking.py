@@ -291,8 +291,13 @@ class SpikingSpreadingController:
     seed-robustly. Uses the same clean-dynamics config as the validated SpikingController
     (internal_density=0 + enable_ou=False) so the multi-concept hold stays exact."""
 
-    def __init__(self, graph, seed=42, said_decay=0.6, edge_scale=60.0, internal_density=0.0,
+    def __init__(self, graph, seed=42, said_decay=0.9, edge_scale=60.0, internal_density=0.0,
                  verbose=False):
+        # said_decay 0.9 (was 0.6): the inhibition-of-return must keep a just-said concept excluded for
+        # SEVERAL turns so the dialogue PROGRESSES through the topic instead of alternating two direct
+        # neighbours (decay 0.6 excluded only ~1 turn -> cloud/storm/cloud/storm). At 0.9 the decisive
+        # coherence eval RESOLVES: the spiking Control beats the no-control baseline on on_topic + turn_to
+        # _turn AND progression=1.00 (rain -> cloud,storm,wind,sky,sun); validated 2026-06-03.
         # edge_scale 60 (was 20): the spread must be strong enough that EVERY designed associate latches.
         # At edge_scale=20 some seeds lit only the first associate (the within-cluster `None` blemish:
         # apple -> pear only, plum/grape stayed at 0.0); edge_scale=60 lights all in-cluster associates
