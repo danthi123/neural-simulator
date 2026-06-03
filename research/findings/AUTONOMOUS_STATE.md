@@ -9,10 +9,32 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> NEWEST — SPIKING CONTENT-SELECTION: M2 SEED-ROBUSTNESS RESOLVED + M3 SPIKING RELEVANCE VALIDATED (2026-06-03; read THIS first) <<<
+## >>> NEWEST — SPIKING CONTENT-SELECTION CONTROL: ARC COMPLETE, DECISIVE EVAL 5/5 RESOLVES (2026-06-03; read THIS first) <<<
 
-ACTIVE ARC = conversation via the content-selection / dialogue-Control frontier (owner chose B,
-"effective/worth not fast"; staging Approach 2 structured -> 3 spiking dlPFC -> 1 fully spiking).
+>>> ARC STATUS = COMPLETE + TERMINAL-VALIDATED. The faithful spiking content-selection Control (PFC
+"Control" = deciding WHAT to say, the project's identified hard frontier for conversation) is validated
+end-to-end multi-seed: all-spiking mechanism (loop-attractor WM + spreading-activation relevance +
+SaidTrace IoR + clean reset) | seed-robust 6/6 | scaled 8/16/24c (12/12 strict) | robust on CONNECTED
+realistic graphs (turn_latency 18/18) | BEATS no-control baseline (decisive eval 5/5 RESOLVES, same bar as
+M1) | usable interactive artifact (DialogueAgent --repl --spiking, progression + clean topic shifts). There
+is no higher validation bar for THIS COMPONENT.
+
+>>> NEXT FRONTIER (the genuine next arc, needs a DESIGNED start -- brainstorming skill + owner steer, since
+it is a NEW project not a refinement): INTEGRATION into a comprehend -> select -> PRODUCE loop. The
+content-selection Control now supplies "what to say"; the validated generate-by-composition supplies "how
+to say it"; the validated comprehension (Hebbian parser) supplies "what was said". Wire them into one fluid
+spiking conversational loop = the tangible conversational artifact. >>> AUTONOMOUS-CONTINUABLE REFINEMENTS
+(no new-project approval needed, smaller builds): (a) fully-spiking SaidTrace = a persistent-across-reset
+spiking trace population modulating relevance (the last structured piece; turn_latency resets the WM each
+turn so the trace must live OUTSIDE the WM); (b) noise-robust attractors = sparse k-of-N assemblies +
+inhibitory stabilization so biological OU noise can be restored (principled version of enable_ou=False);
+(c) LEARN the attractor + association weights with a stabilized rule (both currently SET); (d) larger
+LEARNED-association substrate (a trained tagged engram bridge) at GPU scale + re-run the decisive eval on
+real learned associations. All committed both remotes; biology-faithful; cheap-first; honest negatives are
+the deliverable.
+
+(Historical staging context: owner chose B "effective/worth not fast"; staged Approach 2 structured ->
+3 spiking dlPFC -> 1 fully spiking. All three stages now done.)
 Milestone 1 (structured Control) VALIDATED 5/5. Milestone 2 (faithful spiking Control) was
 DEMONSTRATED 2/3-seed and flagged seed-fragile.
 
