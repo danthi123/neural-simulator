@@ -103,6 +103,37 @@ position structure that produced the validated 0.91 and is cheaper than fixing t
 If per-position spiking reading beats the 0.40 whole-glyph ceiling -> the data-efficient recognizer
 is viable; if it also collapses -> path 1 (full hierarchy) is the only faithful route.
 
+### Path-2 result + the likely missing mechanism (LATENCY CODING, literature-grounded)
+
+Per-position letter reading on REAL spiking V1_simple (100-step rate readout, 80 novel 3-letter
+words over an 8-letter alphabet): per-letter **0.09 / 0.115 / 0.192** at K=15/30/54 vs chance 0.125
+-- essentially chance, nowhere near the continuous-feature probe's 0.91. The weak rise with K shows
+a faint signal buried in spike noise. Mechanism: each V1 cell fires only ~3 times over the window
+(0.03 rate), so the per-cell spike COUNT is a hopelessly noisy estimate of the graded Gabor response
+the continuous features used.
+
+**Literature check (owner: "brains have aspects we haven't implemented; use the scientific texts").**
+The proven biologically-plausible spiking object/digit recognition models do NOT use rate/spike-count
+readout. Kheradpisheh-Ganjtabesh-Thorpe-Masquelier 2018 ("STDP-based spiking deep convolutional
+neural networks for object recognition", Neural Networks; arXiv 1611.01421) -- which matches/beats
+deep CNNs on some tasks -- and Masquelier-Thorpe 2007 use **temporal latency / rank-order coding**:
+the strongest-responding cell fires FIRST; recognition reads the spike-ORDER/latency pattern, not the
+count. This is robust to sparsity AND directly preserves the Gabor-magnitude structure (strong
+response = early spike) that the continuous features (0.91) exploited. Complementary mechanisms:
+max-pooling convergence (RF ~2.5x/stage, ~10k inputs/neuron -> invariance; Rolls VisNet) and slow/
+trace learning (temporal continuity -> invariance). My rate-count readout was simply the **wrong
+neural code**.
+
+=> Before concluding the full hierarchy is required, test the **latency code** cheap-first: read each
+V1_simple cell's FIRST-SPIKE recency (earliest = strongest) instead of its spike count, same
+per-position classifier. Implemented as `read_letters_test(code="latency")` / `--latency`. If latency
+reading beats the rate ceiling -> the fix is the neural CODE (cheap), not a multi-week hierarchy build.
+If latency also fails -> the structure genuinely needs the deep convergent hierarchy (path 1), now
+grounded in the proven Thorpe/Masquelier convolutional-SNN design rather than a from-scratch build.
+
+Sources: Kheradpisheh et al. 2018 (arXiv 1611.01421); Masquelier & Thorpe 2007; Rolls VisNet
+(slow unsupervised invariance learning).
+
 ## Honest scope
 
 The input-side-fidelity *science* is validated 4 ways (cheap probes) and the *transduction* is live

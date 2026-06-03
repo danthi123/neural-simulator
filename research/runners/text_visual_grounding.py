@@ -193,11 +193,17 @@ def test_recognition(bridge, vocab, rs, font, stim_steps=60, reset_steps=30):
 
 
 def read_letters_test(bridge, rs, npos, n_letters=8, n_pos=3, n_words=80,
-                      stim_steps=100, reset_steps=30, seed=42):
+                      stim_steps=100, reset_steps=30, seed=42, code="rate"):
     """PATH 2 cheap-first decisive test: per-position letter reading on REAL spiking V1_simple.
-    Render multi-letter words, collect V1_simple spike-count vectors, read each letter from its V1s BAND
+    Render multi-letter words, collect V1_simple features, read each letter from its V1s BAND
     (position-specific -- the structure that produced the cheap probe's 0.91, never tested in spiking).
-    Per-position classifier trained on K words, tested on NOVEL words (the data-efficiency / open-vocab test)."""
+    Per-position classifier trained on K words, tested on NOVEL words (the data-efficiency / open-vocab test).
+
+    code="rate":    per-cell spike COUNT over the window (noisy at ~3 spikes/cell -- the failing readout).
+    code="latency": per-cell FIRST-SPIKE recency (stim_steps - first_spike_step; 0 if never fired). The
+                    biologically-proven spiking-recognition code (Thorpe/Masquelier/Kheradpisheh 2018):
+                    strongest-responding cell fires FIRST -> robust to sparsity, preserves the Gabor-magnitude
+                    structure the continuous features (0.91) used."""
     import sim.backend as B
     xp, _ = B.get_backend()
     from research.findings.raw._text_as_pixels_probe import softmax, train_logreg
@@ -226,11 +232,19 @@ def read_letters_test(bridge, rs, npos, n_letters=8, n_pos=3, n_words=80,
         for _ in range(reset_steps):
             bridge._run_one_simulation_step()
         bridge.cp_external_input_current[r_idx] = drive
-        acc = xp.zeros(n_v1s, dtype=xp.float32)
-        for _ in range(stim_steps):
-            bridge._run_one_simulation_step()
-            acc += bridge.cp_firing_states[v1_arr].astype(xp.float32)
-        feats[w] = B.to_host(acc)
+        if code == "latency":
+            first = xp.full(n_v1s, float(stim_steps), dtype=xp.float32)  # default = never fired (latest)
+            for t in range(stim_steps):
+                bridge._run_one_simulation_step()
+                fired = bridge.cp_firing_states[v1_arr] > 0
+                first = xp.where(fired & (first == float(stim_steps)), xp.float32(t), first)
+            feats[w] = B.to_host(float(stim_steps) - first)  # earlier first-spike -> larger; never -> 0
+        else:
+            acc = xp.zeros(n_v1s, dtype=xp.float32)
+            for _ in range(stim_steps):
+                bridge._run_one_simulation_step()
+                acc += bridge.cp_firing_states[v1_arr].astype(xp.float32)
+            feats[w] = B.to_host(acc)
         if (wi + 1) % 25 == 0:
             print(f"  collected {wi+1}/{n_words}", flush=True)
     # V1_simple cell px (x-position) = (local_idx % npos^2) % npos; band p covers a third of px
@@ -274,6 +288,8 @@ def main():
     ap.add_argument("--n-words", type=int, default=80)
     ap.add_argument("--integration-steps", type=int, default=100,
                     help="V1_simple spike-count integration window for --read-letters")
+    ap.add_argument("--latency", action="store_true",
+                    help="--read-letters: use first-spike latency code (Thorpe/Masquelier) instead of rate")
     ap.add_argument("--events", type=int, default=80, help="training events per word (--recognize)")
     ap.add_argument("--vocab", type=str, default="dog,cat,run,sun")
     ap.add_argument("--test-steps", type=int, default=60, help="test integration window (temporal denoise)")
@@ -283,7 +299,8 @@ def main():
 
     if a.read_letters:
         bridge, rs, npos = build_visual_text_bridge(retina_size=a.retina, seed=a.seed)
-        read_letters_test(bridge, rs, npos, n_words=a.n_words, stim_steps=a.integration_steps, seed=a.seed)
+        read_letters_test(bridge, rs, npos, n_words=a.n_words, stim_steps=a.integration_steps,
+                          seed=a.seed, code=("latency" if a.latency else "rate"))
         return
 
     if a.recognize:
