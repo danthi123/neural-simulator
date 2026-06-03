@@ -63,6 +63,46 @@ def build_dlpfc_context_bridge(n_pfc=500, pfc_density=0.2, seed=42, plastic_recu
     return bridge
 
 
+def build_loop_wm_bridge(n=400, density=0.1, loop_weight=4.0, loop_density=0.15, seed=42, verbose=True):
+    """Two mutually-exciting regions forming a cortico-PFC LOOP (cortex_ctx <-> dlpfc_wm), both NMDA-
+    enabled. The hypothesis (from the Milestone-2 standalone-region negative): persistent activity is
+    sustained by reverberation around the loop, which a single recurrent region cannot do."""
+    from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
+    from sim.bridge import SimulationBridge
+    from sim.regions import BrainRegion, RegionPathway
+    from sim.enums import NeuronType
+
+    def reg(name):
+        return BrainRegion(name=name, n_neurons=n, exc_fraction=0.8, internal_density=density,
+                           exc_weight_mean=2.0, inh_weight_mean=4.0, weight_jitter=0.2,
+                           plastic_internal=False,
+                           izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name, enable_nmda=True)
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = [reg("cortex_ctx"), reg("dlpfc_wm")]
+    cfg.region_pathways = [
+        RegionPathway(from_region="cortex_ctx", to_region="dlpfc_wm", density=loop_density,
+                      weight_mean=loop_weight, weight_jitter=0.2, plastic=False),
+        RegionPathway(from_region="dlpfc_wm", to_region="cortex_ctx", density=loop_density,
+                      weight_mean=loop_weight, weight_jitter=0.2, plastic=False),
+    ]
+    cfg.dt_ms = 0.5
+    cfg.seed = seed
+    cfg.enable_nmda = True
+    cfg.enable_structural_plasticity = False
+    cfg.enable_hebbian_learning = False
+    cfg.enable_short_term_plasticity = False
+    cfg.fast_spike_reset = True
+    bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
+                              runtime_state=RuntimeState(), gpu_config=GPUConfig())
+    bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    bridge._initialize_simulation_data(called_from_playback_init=False)
+    if verbose:
+        print(f"[loop WM bridge] cortex_ctx<->dlpfc_wm loop, {n} neurons each, loop weight {loop_weight}, "
+              f"NMDA on", flush=True)
+    return bridge
+
+
 class SpikingContextBuffer:
     """Spiking analogue of the Milestone-1 ContextBuffer: the dlPFC region's sustained firing IS the
     discourse context. drive() injects a concept pattern and lets NMDA recurrence sustain it; read()

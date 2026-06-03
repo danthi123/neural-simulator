@@ -57,3 +57,29 @@ versions are a separate, harder step.
 
 Cheap-first; reuse-by-import (no protected-module edits); honest negative is the deliverable; both
 remotes.
+
+## Follow-up: the cortico-PFC LOOP probe (2026-06-03) -- persistence YES, content NO (untrained)
+
+Tested the standing hypothesis directly with `build_loop_wm_bridge` -- two mutually-exciting NMDA
+regions (cortex_ctx <-> dlpfc_wm) forming a reverberating loop:
+
+- **Persistence is recovered by the loop.** Post-drive cortex spikes over a 40-step delay:
+  standalone region ~5; loop at coupling weight 4/10/20 = 12 / 16 / **182**. At strong coupling the
+  loop clearly self-sustains activity after the drive is removed -- the single region could not.
+  This confirms the hypothesis: biological WM persistence comes from the **loop**, not a lone
+  recurrent region.
+- **But the sustained activity is a generic blob, not the driven pattern.** Pattern-specificity
+  ratio = **0.2x** (driven-pattern neurons fire 0.10/neuron vs 0.51/neuron for the rest -- i.e. the
+  activity drifted OFF the pattern). With random untrained loop connections, the loop sustains
+  *some* activity but not the *specific* concept, so it carries no usable content.
+
+**Mechanism fully characterized (cheap-first, three probes):** (1) standalone region = no
+persistence; (2) untrained loop = persistence but no content; (3) => **faithful spiking WM = a
+TRAINED cortico-PFC loop** -- the loop connections must be shaped (autoencoder/attractor: cortex
+pattern -> dlPFC pattern -> back to the SAME cortex pattern) so the reverberation holds the specific
+concept. That is the scoped faithful build: train the loop into pattern-specific attractors, then the
+spiking dlPFC context buffer (Milestone 2) and the spiking Control (Milestone 3) follow.
+
+This is a biology-translatable characterization (persistence = loop reverberation; content =
+trained loop attractors) obtained for the cost of three small probes -- the cheap-first discipline
+locating exactly what the faithful build requires before committing to it.
