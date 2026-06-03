@@ -170,18 +170,24 @@ reset are now all spiking and robust on realistic connected graphs.**
 
 The validated spiking Control is wired into the interactive `DialogueAgent` (dependency injection:
 `DialogueAgent(graph, controller=SpikingSpreadingController(graph))`, or `dialogue_agent.py --repl
---spiking`). A scripted multi-turn conversation, *every elaboration computed by spreading spikes through
-the spiking working memory* (seed 42, 8-concept graph):
+--spiking`). The agent prefers the controller's `turn_latency` (focused 1-hop) when available, so it stays
+on-topic on connected graphs. A scripted multi-turn conversation on the **connected** multi-topic graph,
+*every elaboration computed by spreading spikes + first-spike latency through the spiking working memory*
+(seed 42, `said_decay=0.9`):
 
 ```
-user : apple        agent: hot          (apple's cluster: big/cat/hot)
+user : rain         agent: cloud        (progresses through the weather topic)
+user : more         agent: storm
+user : more         agent: wind
+user : more         agent: sky
+user : is rain related to storm?   agent: Yes -- rain and storm are associated (strength 1.5)
+user : dog          agent: bark         (clean topic shift -> animal topic)
+user : more         agent: pet
 user : more         agent: cat
-user : more         agent: hot
-user : is apple related to big?   agent: Yes -- apple and big are associated (strength 1.0)
-user : dog          agent: small        (clean topic shift -> dog's cluster: small/river/cold)
-user : more         agent: river
-user : more         agent: small
 ```
+
+Note the **progression** (cloud → storm → wind → sky, distinct each turn — not the alternation of the old
+`said_decay=0.6`) and the **clean topic shift** (rain's weather topic → dog's animal topic, no bleed).
 
 **Topic-shift contamination, caught and fixed.** Without intervention the shift to "dog" resurfaced
 "apple" (the prior topic's assemblies stay *latched* in the persistent spiking WM and bleed into the new
@@ -198,19 +204,19 @@ disjoint-topic switch but not for within-topic per-turn suppression.)
 The final rigorous test (the same one M1 used for the structured Control): does the *spiking* Control beat
 a fair **no-control retrieval-only baseline** (`BaselineSelector` — strongest associate of the input, no
 context, no inhibition-of-return), not merely produce coherent transcripts? Run on the connected synthetic
-multi-topic graph, `turn_latency` vs baseline, 4 topics × 2 seeds × 5 turns, scored by the four coherence
-metrics:
+multi-topic graph, `turn_latency` vs baseline, 4 topics × **5 seeds** × 5 turns, scored by the four
+coherence metrics:
 
-| metric | Δ (Control − baseline) |
+| metric | Δ (Control − baseline), 5-seed mean |
 |---|---|
-| on_topic | **+0.417** (meaningful) |
-| turn_to_turn | **+0.625** (meaningful) |
-| non_repetition | +0.200 |
-| topic_progression | +0.200 |
+| on_topic | **+0.492** (meaningful) |
+| turn_to_turn | **+0.410** (meaningful) |
+| non_repetition | +0.800 |
+| topic_progression | +0.800 |
 
-**Verdict: RESOLVES, 2/2 seeds** (at the validated default `said_decay=0.9`). The Control beats the
-baseline on both *meaningful* coherence metrics **and** reaches `progression = 1.00` (every turn introduces
-a new on-topic concept). The transcripts are genuinely conversational, computed entirely by spreading
+**Verdict: RESOLVES, 5/5 seeds** (at the validated default `said_decay=0.9`; exceeds M1's ≥3/5 bar). Every
+seed: the Control beats the baseline on both *meaningful* coherence metrics **and** reaches
+`progression = 1.00` (every turn introduces a new on-topic concept). The transcripts are genuinely conversational, computed entirely by spreading
 spikes + latency reading + said-trace inhibition-of-return:
 
 ```

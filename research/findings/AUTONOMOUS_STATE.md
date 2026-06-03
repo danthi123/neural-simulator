@@ -17,8 +17,11 @@ Milestone 1 (structured Control) VALIDATED 5/5. Milestone 2 (faithful spiking Co
 DEMONSTRATED 2/3-seed and flagged seed-fragile.
 
 >>> DECISIVE EVAL RESOLVES (the rigorous capstone, same bar M1 cleared): the SPIKING Control (turn_latency,
-said_decay=0.9) BEATS the no-control retrieval-only baseline on the connected synthetic graph -- on_topic
-+0.417, turn_to_turn +0.625 (both meaningful), AND progression=1.00, 2/2 seeds. Transcripts are genuinely
+said_decay=0.9) BEATS the no-control retrieval-only baseline on the connected synthetic graph. 5-SEED
+(42-46): on_topic +0.492, turn_to_turn +0.410 (both meaningful), progression=1.00 ALL seeds -> seed_pass
+5/5 RESOLVES (exceeds M1's >=3/5 bar). DialogueAgent now prefers turn_latency (focused 1-hop) so the spiking
+backend stays on-topic on connected graphs; fresh transcript rain->cloud,storm,wind,sky (progression) +
+clean shift to dog->bark,pet,cat. 13 dialogue tests pass. Transcripts are genuinely
 conversational (rain->cloud,storm,wind,sky,sun ; apple->fruit,sweet,tree,juice,sugar ; dog->bark,pet,cat,
 fur,purr) -- vs baseline robotically repeating one concept (cloud,cloud,cloud). The said_decay lever: 0.6
 beat baseline on all metrics but ALTERNATED 2 neighbours (progression 0.4 < 0.5 gate); 0.9 (now default)

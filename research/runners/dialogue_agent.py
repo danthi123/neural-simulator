@@ -75,6 +75,14 @@ class DialogueAgent:
             return f"{x} and {y} are both associated with: {', '.join(common)}."
         return f"{x} and {y} have no association in common."
 
+    def _elaborate(self):
+        """One elaboration turn on the current focus. Prefers the controller's latency read
+        (`turn_latency`: focused 1-hop, robust on connected graphs) when it exposes one -- this is how the
+        spiking backend stays on-topic on a richly-connected association graph where the rate read would
+        over-spread. The structured controller (no `turn_latency`) falls back to its `turn`."""
+        turn_fn = getattr(self.ctrl, "turn_latency", None) or self.ctrl.turn
+        return turn_fn([self.focus])
+
     def respond(self, user_input):
         """Return the agent's response (a string). A concept name elaborates that topic (returns the
         chosen associate); 'more'/'' continues the current topic; a yes/no or common-link question is
@@ -85,7 +93,7 @@ class DialogueAgent:
         if text in ("more", ""):                                  # follow-up on the current topic
             if self.focus is None:
                 return None
-            return self.ctrl.turn([self.focus])
+            return self._elaborate()
         known = self._known(text)
         if known and any(w in words for w in self._DESCRIBE_WORDS):   # "tell me about X" -> multi-fact
             self.focus = known[0]
@@ -105,7 +113,7 @@ class DialogueAgent:
                 for _ in range(3):                                # (PFC attention reorienting to the new topic
                     self.ctrl.ctx.update([known[0]])              #  so it dominates the accumulated context)
             self.focus = known[0]
-            return self.ctrl.turn([self.focus])
+            return self._elaborate()
         return "I don't know about that."
 
 
