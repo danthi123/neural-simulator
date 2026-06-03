@@ -146,3 +146,24 @@ is data-efficient) is VALIDATED 4 ways + the composition loop works (1.000). The
 implementation is a real sub-problem with a clear biology-faithful plan (saccades + invariance + learned
 refinement), now the well-specified next sub-arc of the production build (alongside segmentation + the bridge
 wire-up). Not a dead end -- a refinement of WHAT the production build must implement.
+
+## Recognition needs the full visual hierarchy (honest boundary on the cheap front-end)
+LEARNED saccadic single-letter recognition (logreg on K jittered+noisy V1-simple views): 0.52@3 -> 0.65@6 ->
+plateaus ~0.64 at 12-24 views (26 letters, chance 0.038). So even with learning, V1-SIMPLE + LINEAR readout
+through 32x32 plateaus ~0.65 -- letters are confusable in V1-simple features at this scale. => faithful word
+recognition needs the DEEPER VISUAL HIERARCHY (retina -> V1 -> V2 -> IT object recognition, which the project
+HAS: 256 V2 + 64 IT) + learning, not just V1 + linear. This is the real production-build recognition effort.
+
+## NET honest synthesis of the input-side arc
+- INSIGHT (owner): VALIDATED decisively 4 ways -- the tokenizer's orthogonal coding forces the data-hungry
+  regime; grounding / text-as-pixels (shared structure) is data-efficient (grounded generalizes from ~9
+  examples / open-vocab reading / faithful V1). NOT a side detail; a real missing data-efficient structure.
+- COMPOSITION + grounding loop: WORKS (grounded words compose into novel produced sentences 1.000; one-shot
+  grounding works on clean views).
+- RECOGNITION front-end: a genuine sub-problem -- the cheap V1-simple+prototype scaffold is jitter-limited
+  (~0.65); faithful recognition needs the deeper hierarchy (V2/IT) + learned invariance + saccadic reading.
+  This is the well-specified production-build piece (alongside segmentation + the bridge wire-up).
+The data-efficiency roadmap's step-2 is now concrete and biology-faithful: replace the tokenizer with text
+through the FULL visual pathway (retina->V1->V2->IT learned word recognition) + multimodal grounding, on
+hardware we have. The honest negatives (recognition front-end limits) are characterizations that specify the
+production build, not dead ends.
