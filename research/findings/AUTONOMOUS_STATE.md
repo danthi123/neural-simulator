@@ -9,7 +9,27 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> DIRECTION A — RESONATOR DECODER: DOUBLE-RESOLVE, a real path past the nesting wall (2026-06-03; read THIS first) <<<
+## >>> MULTI-MODIFIER ATTRIBUTION RESOLVES (2026-06-03, latest) — the unified agent now nests TWO attributes <<<
+
+After the unified conversational agent (below), extended its patient slot from one attribute ("red ball")
+to TWO ("big red ball" = adj1(x)adj2(x)noun). Two adjectives share a codebook -> classic resonator
+repeated-factor permutation symmetry. CHEAP-FIRST (numpy phasor algebra, decisive before any agent edit):
+naive 3-factor decode 0.00 -> random sym-break 0.43 -> **K=16 restarts selected by reconstruction residual
+0.93** (the documented repeated-factor fix). Depth (flat / one / two attributes) is AUTO-DETECTED from one
+honest confidence signal: flat cleanup confidence, then the 2-factor reconstruction residual (one-attribute
+0.998 vs two-attribute 0.114 — a clean split; same principle as the no-confab abstention threshold extended
+to attribute count). Agent-level WITH bundle crosstalk @ D=1024: **6/6 seeds** decode the two-attribute
+patient; one-vs-two auto-distinguished on the same noun. 13/13 tests (9+4). Honest scope: adjective ORDER is
+not recoverable (commutative binding) -> render the modifier SET in canonical vocab order; phasor substrate
+only (real-Hadamard 320 still cannot nest). Commit pushed both remotes; finding
+`2026-06-03-multi-modifier-attribution-resonator-restarts-RESOLVES.md`.
+>>> NEXT (autonomous, open options): nesting in OTHER slots (attributed agent "big dog chase cat" / nested
+action), or scale vocab + a richer multi-topic dialogue demo, or a fully-spiking unified agent (port
+encode+store+depth-detect to resonate_fire), or Direction B (thalamocortical dynamical gating, Logiaco 2021
+— the other untried mechanism the deep research surfaced). Both remotes; biology-faithful; cheap-first;
+honest negatives deliverable.
+
+## >>> DIRECTION A — RESONATOR DECODER: DOUBLE-RESOLVE, a real path past the nesting wall (2026-06-03) <<<
 
 OWNER ARC (this session): asked for deep research into the generative-conversation wall + "how others get
 past it" -> 5-thread web research (findings 2026-06-03-deep-research-...md). Owner then chose, in order:
