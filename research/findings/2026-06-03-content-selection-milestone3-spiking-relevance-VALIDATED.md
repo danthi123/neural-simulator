@@ -81,6 +81,24 @@ cl={'apple':{'big','cat','hot'},'dog':{'small','river','cold'}}; \
     (pre-registered) connects to this project's validated **latency/rank-order coding** insight: read the
     *transient* spread (first-spike latency) rather than the sustained latch, so a fatigued (slower-to-
     respond) assembly loses the transient WTA race — a real read-path redesign, not a one-line fatigue.
+  - **Latency read VALIDATED as a richer relevance signal (shipped: `relevance_by_latency`).** Reading
+    first-spike latency of the spread encodes graph DISTANCE in spike timing, seed-robustly (3/3 seeds,
+    fresh-bridge probe): driving "apple" -> direct associates big/cat earliest (~8-19 steps), the 2-hop
+    hot later (~16-20), unrelated dog-cluster NEVER fires. Strictly more informative than the rate read
+    (which gives all in-cluster roughly equal); the faithful spiking analogue of spreading-activation with
+    distance = latency.
+  - **Fully-spiking inhibition-of-return has THREE obstacles (honest open sub-problem):** (1) REBOUND —
+    hyperpolarizing a latched assembly raises its firing, so a recently-selected concept can't be silenced
+    by inhibition; (2) DIRECT-BEFORE-INDIRECT — latency ranks direct associates before indirect ones, and
+    an indirect concept reached via a direct one can never out-race its own upstream, so latency-fatigue
+    cycles among direct neighbours (big<->cat) and cannot reach a 2-hop concept (hot) by delay alone
+    (full-cluster coverage still needs exclusion, the structured SaidTrace); (3) RESET — `_reset_wm`
+    returns v/u/conductances/firing to rest but does NOT clear the in-flight synaptic delay buffers / slow
+    NMDA state, so repeated latency probes on one bridge are contaminated (a 2nd apple probe fires faster;
+    a dog probe lights the apple-cluster first). Net: the validated deliverable is M3 spiking relevance
+    (rate read, 6/6) + structured SaidTrace inhibition-of-return, plus the latency read as a richer
+    single-probe relevance; the fully-spiking multi-turn inhibition-of-return is a precisely-characterized
+    open sub-problem, not a one-session drop-in.
 - **Graph is installed, not learned:** the association synapses are set from the known graph (`w·scale`),
   not learned from experience — same scope caveat as the set (not learned) attractor weights.
 - **Small toy substrate:** an 8-concept association graph. Scaling to a larger learned-association

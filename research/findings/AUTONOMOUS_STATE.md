@@ -51,9 +51,15 @@ this project's validated latency/rank-order coding insight) not the sustained la
 slower-to-respond assembly loses the transient WTA race -- a real read-path redesign.
 
 >>> EXACT NEXT (pre-registered, genuine remaining faithfulness steps — pick one as a fresh focused arc,
-cheap-first): (i) M3b SPIKING INHIBITION-OF-RETURN via the LATENCY/TRANSIENT read redesign (above; the
-hyperpolarizing-fatigue shortcut is refuted -> read first-spike latency of the spread + fatigue delays
-recently-won assemblies -> non-repetition in the fully-spiking controller); (ii) NOISE-ROBUST ATTRACTORS so biological OU noise can be restored — sparse k-of-N assemblies +
+cheap-first): (i) M3b FULLY-SPIKING INHIBITION-OF-RETURN — EXPLORED this cycle: latency read VALIDATED as
+a RICHER relevance (shipped relevance_by_latency; encodes graph DISTANCE in spike timing, seed-robust 3/3
+fresh-bridge: apple -> direct big/cat earliest, 2-hop hot later, dog-cluster never). BUT fully-spiking
+non-repetition has THREE characterized obstacles: (1) REBOUND resists silencing a latched assembly;
+(2) latency ranks DIRECT<INDIRECT so it can't reach a 2-hop concept by delay (full coverage still needs
+exclusion); (3) clean inter-probe RESET needs clearing in-flight delay buffers + slow NMDA, not just
+v/u/conductances/firing (repeated probes contaminate). So fully-spiking multi-turn inhibition-of-return is
+a precisely-scoped OPEN sub-problem (fuller reset + a rebound-surviving exclusion); the validated
+deliverable is M3 rate-read relevance 6/6 + structured SaidTrace + the latency single-probe relevance; (ii) NOISE-ROBUST ATTRACTORS so biological OU noise can be restored — sparse k-of-N assemblies +
 per-assembly inhibitory shadows so attractors tolerate default OU without spurious tipping (principled
 version of the enable_ou=False fix); (iii) LEARN the attractor + graph weights with a stabilized rule
 (not vanilla Hebbian; both are currently SET, not learned); (iv) richer REAL association substrate (train

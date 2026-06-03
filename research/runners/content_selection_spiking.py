@@ -333,6 +333,53 @@ class SpikingSpreadingController:
         self.said.mark(choice)
         return choice
 
+    def _reset_wm(self):
+        """Active WM reset (inter-probe interval): return v / u / conductances / firing to rest. BEST-
+        EFFORT ONLY -- it does NOT clear the in-flight synaptic DELAY BUFFERS or slow NMDA/eligibility
+        state, so REPEATED probes on the same bridge are still partially contaminated by prior activations
+        (verified 2026-06-03: a 2nd apple probe fires much faster, and a dog probe lights the apple-cluster
+        first). A fully clean inter-probe reset is a non-trivial open sub-problem (part of the M3b boundary;
+        see finding doc). relevance_by_latency is validated for a SINGLE fresh-bridge probe."""
+        b = self.ctx.bridge
+        if getattr(b, "cp_firing_states", None) is not None:
+            b.cp_firing_states[:] = False
+        for g in ("cp_conductance_g_e", "cp_conductance_g_i", "cp_conductance_g_nmda",
+                  "cp_conductance_g_nmda_rise"):
+            arr = getattr(b, g, None)
+            if arr is not None:
+                arr[:] = 0.0
+        if getattr(b, "cp_izh_vr", None) is not None and b.cp_membrane_potential_v is not None:
+            b.cp_membrane_potential_v[:] = b.cp_izh_vr
+        if getattr(b, "cp_recovery_variable_u", None) is not None:
+            b.cp_recovery_variable_u[:] = 0.0
+
+    def relevance_by_latency(self, context_concept, steps=60, drive_pA=2500.0, thresh=0.15):
+        """Spiking relevance as first-spike LATENCY of the spread -- richer than the rate read: it encodes
+        graph DISTANCE (direct associates fire earlier than indirect ones; unrelated concepts never fire).
+        Resets the WM, drives the context concept, and returns {concept: first-spike step} (None = never
+        fired = unrelated). Validated seed-robust (2026-06-03): driving 'apple' -> direct big/cat earliest
+        (~8-19), 2-hop hot later (~16-20), unrelated dog-cluster never. This is a faithful spiking analogue
+        of graph spreading-activation with distance encoded in spike timing (latency/rank-order coding).
+
+        NOTE the honest boundary (M3b): latency naturally ranks DIRECT associates before INDIRECT ones, and
+        an indirect concept (reached via a direct one) can never out-race its own upstream -> latency-based
+        inhibition-of-return cannot reach indirect associates by delay alone; full-cluster non-repetition
+        still needs exclusion (the structured SaidTrace). See finding doc."""
+        self._reset_wm()
+        drv = self.ctx._cpat[context_concept]
+        first = {c: None for c in self._vocab}
+        for t in range(steps):
+            cur = self.ctx.bridge.cp_external_input_current
+            cur[:] = 0.0
+            cur[drv] = drive_pA
+            self.ctx.bridge._run_one_simulation_step()
+            fs = self.ctx.bridge.cp_firing_states
+            for c in self._vocab:
+                if first[c] is None and \
+                        float(self.ctx.B.to_host(fs[self.ctx._cpat[c]]).sum()) / self.ctx._psize > thresh:
+                    first[c] = t
+        return first
+
 
 def main():
     ap = argparse.ArgumentParser()
