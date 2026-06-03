@@ -60,7 +60,7 @@ def build_scaled_gabor_v1_weights(retina_size, n_orientations, n_frequencies, n_
 
 
 def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, n_v2=256, n_it=64, seed=42,
-                             verbose=True):
+                             word_pools=None, n_per_pool=64, verbose=True):
     from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
     from sim.bridge import SimulationBridge
     from sim.regions import BrainRegion, RegionPathway
@@ -91,6 +91,15 @@ def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, 
         RegionPathway(from_region="cortex_v2", to_region="cortex_it", density=0.25,
                       weight_mean=7.0, weight_jitter=0.5, plastic=True, plasticity_gate="visual_cortex_it"),
     ]
+    # step-2a: word-recognition pools fed by a PLASTIC V1_simple->pool pathway (one gate per pool so each
+    # word's training is isolated). Recognition is read DIRECTLY off the working V1_simple word-form via STDP,
+    # bypassing the (sparse-text-starved) V1c->V2->IT cascade. Still cortically faithful: V1 simple cells ->
+    # cortico-cortical STDP. Non-zero init (0.5+-0.3) per the readout-init lesson (STDP can't grow from exact 0).
+    for nm in (word_pools or []):
+        regions.append(vis_region(nm, n_per_pool, exc=0.9, dens=0.05, ew=2.0, iw=1.5, jit=0.2, plast=True))
+        pathways.append(RegionPathway(from_region="cortex_v1_simple", to_region=nm, density=0.05,
+                                      weight_mean=0.5, weight_jitter=0.3, plastic=True,
+                                      plasticity_gate=f"v1s_to_{nm}"))
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions); cfg.region_pathways = list(pathways)
@@ -118,12 +127,99 @@ def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, 
     return bridge, retina_size, npos
 
 
+def _retina_drive_gpu(word, rs, font, xp):
+    img = render_word_image(word, rs, font)
+    drive = VC.image_to_retina_drive(img, drive_max_pA=2500.0)
+    return xp.asarray(drive, dtype=xp.float32)
+
+
+def train_recognition(bridge, vocab, rs, font, n_events=80, stim_steps=60, reset_steps=30,
+                      teacher_pA=2500.0, seed=42, verbose=True):
+    """Teacher-supervised STDP: drive retina(word) -> V1_simple word-form fires; simultaneously drive the
+    target word-pool with teacher current; STDP on the (open-gated) V1s->target-pool pathway binds the word-form
+    to the pool. Interleaved (shuffled) events, one gate open at a time -> isolated per-word training."""
+    import sim.backend as B
+    xp, _ = B.get_backend()
+    rm = bridge.region_manager
+    r_idx = xp.asarray(rm.indices("retina"))
+    pools = {w: xp.asarray(rm.indices(f"word_{w}")) for w in vocab}
+    drives = {w: _retina_drive_gpu(w, rs, font, xp) for w in vocab}
+    schedule = [w for w in vocab for _ in range(n_events)]
+    np.random.default_rng(seed).shuffle(schedule)
+    for i, w in enumerate(schedule):
+        gate = f"v1s_to_word_{w}"
+        bridge.set_plasticity_gate(gate, 1.0)
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(reset_steps):
+            bridge._run_one_simulation_step()
+        bridge.cp_external_input_current[r_idx] = drives[w]
+        bridge.cp_external_input_current[pools[w]] += float(teacher_pA)
+        for _ in range(stim_steps):
+            bridge._run_one_simulation_step()
+        bridge.set_plasticity_gate(gate, 0.0)
+        if verbose and (i + 1) % 50 == 0:
+            print(f"  [train] {i+1}/{len(schedule)} events", flush=True)
+
+
+def test_recognition(bridge, vocab, rs, font, stim_steps=60, reset_steps=30):
+    """Drive retina(word) with NO teacher; the word-pool with the highest firing is the recognition. Earned
+    visual word recognition off the V1_simple word-form -- no tokenizer, no orthogonal lang_input."""
+    import sim.backend as B
+    xp, _ = B.get_backend()
+    rm = bridge.region_manager
+    r_idx = xp.asarray(rm.indices("retina"))
+    pools = {w: xp.asarray(rm.indices(f"word_{w}")) for w in vocab}
+    drives = {w: _retina_drive_gpu(w, rs, font, xp) for w in vocab}
+    ok = 0
+    for w in vocab:
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(reset_steps):
+            bridge._run_one_simulation_step()
+        bridge.cp_external_input_current[r_idx] = drives[w]
+        counts = {ww: 0.0 for ww in vocab}
+        for _ in range(stim_steps):
+            bridge._run_one_simulation_step()
+            fs = bridge.cp_firing_states
+            for ww in vocab:
+                counts[ww] += float(B.to_host(fs[pools[ww]]).sum())
+        pred = max(vocab, key=lambda ww: counts[ww])
+        ok += int(pred == w)
+        rates = ", ".join(f"{ww}:{counts[ww]/stim_steps:.1f}" for ww in vocab)
+        print(f"  {'OK ' if pred == w else 'XX '}'{w}' -> '{pred}'  [{rates}]", flush=True)
+    acc = ok / len(vocab)
+    print(f"  RECOGNITION {ok}/{len(vocab)} = {acc:.2f} (chance {1/len(vocab):.2f})  "
+          f"-- earned visual word recognition off V1_simple word-form", flush=True)
+    return acc
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--retina", type=int, default=64)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--steps", type=int, default=40)
+    ap.add_argument("--recognize", action="store_true",
+                    help="step-2a: STDP-train word-recognition pools off V1_simple, then test recognition")
+    ap.add_argument("--events", type=int, default=80, help="training events per word (--recognize)")
+    ap.add_argument("--vocab", type=str, default="dog,cat,run,sun")
+    ap.add_argument("--test-steps", type=int, default=60, help="test integration window (temporal denoise)")
+    ap.add_argument("--train-steps", type=int, default=60, help="stim steps per training event")
+    ap.add_argument("--teacher-pa", type=float, default=2500.0)
     a = ap.parse_args()
+
+    if a.recognize:
+        vocab = [w.strip() for w in a.vocab.split(",") if w.strip()]
+        pools = [f"word_{w}" for w in vocab]
+        bridge, rs, npos = build_visual_text_bridge(retina_size=a.retina, seed=a.seed, word_pools=pools)
+        try:
+            font = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", int(rs * 0.5))
+        except Exception:
+            font = ImageFont.load_default()
+        print(f"[recognize] vocab={vocab}; STDP-training {a.events} events/word off V1_simple word-form "
+              f"(retina {rs}, train-steps {a.train_steps}, test-steps {a.test_steps})...", flush=True)
+        train_recognition(bridge, vocab, rs, font, n_events=a.events, stim_steps=a.train_steps,
+                          teacher_pA=a.teacher_pa, seed=a.seed)
+        test_recognition(bridge, vocab, rs, font, stim_steps=a.test_steps)
+        return
     bridge, rs, npos = build_visual_text_bridge(retina_size=a.retina, seed=a.seed)
     try:
         font = ImageFont.truetype("C:/Windows/Fonts/arial.ttf", int(rs * 0.5))
