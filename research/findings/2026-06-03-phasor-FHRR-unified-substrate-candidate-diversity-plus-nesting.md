@@ -103,6 +103,25 @@ per-kind robustness measured separately, not a scaling collapse. So the *agent* 
 four auto-detected patient kinds + Q&A + abstention — holds up at production-diversity scale, not only the
 underlying substrate algebra.
 
+## The learning question — cheap-first analog RESOLVES
+
+The production system does not construct representations algebraically; it *learns* a map from input
+("word") to representation (concept activity) via Hebbian/STDP plasticity. The cheap-first phasor analog: a
+single-pass Hebbian heteroassociator `W = (1/N) Σ_c code_c ⊗ cue_c^H` that learns to retrieve each concept's
+phasor code from its input cue, then composes the *retrieved* codes.
+
+| D | cue→code retrieval (320 concepts) | compose-from-learned-cues, full-SVO |
+|---|---|---|
+| 1024 | 1.000 | 1.00 |
+| 2048 | 1.000 | 1.00 |
+| 4096 | 1.000 | 1.00 |
+
+A one-pass Hebbian rule learns the 320-concept input→code map at 1.000 retrieval (320 < D, within linear
+associator capacity), and the *learned* representations compose into an SVO fact at 1.00. **Honest scope:**
+this is a *linear* Hebbian associator, not a spiking-STDP network — it shows the map is learnable *in
+principle* at this scale; the spiking-STDP realization is a further engineering step. But the cheap-first
+learning analog passes, which is real evidence the learning side is tractable, not just the capacity side.
+
 ## What this means (and what it does NOT)
 
 **Does mean:** phasor FHRR is a viable **unified-substrate candidate** — it has, in one representation,
@@ -114,12 +133,14 @@ answered: there is no capacity wall at 320.
 **Does NOT mean:** that the production system should be migrated today. Important honest caveats:
 
 - These bindings are **algebraic** (constructed by phase arithmetic). The production system **learns**
-  bindings via STDP on a spiking network. Migrating would require re-implementing the learned binding +
-  cleanup on phasor codes — a real engineering effort, not free. This finding de-risks the *capacity*
-  question, not the *learning* question.
-- The codes here are random phasors. Production **grounded** codes (from sparse sensory encoding) have
-  structure; the resonator + composition results held for random phasors, but a grounded-code re-test is
-  the natural follow-up before committing.
+  the input→representation map via STDP on a spiking network. The cheap-first learning analog (a one-pass
+  Hebbian associator, above) passes at 320 scale, so the learning side is plausibly tractable — but the
+  full **spiking-STDP** realization is still a real engineering step, not free. This finding de-risks the
+  *capacity* question and the *linear-learning* analog; the spiking-STDP implementation remains open.
+- The codes here are random phasors. The correlation sweeps (common-mode + clustered, above) cover the
+  main ways production **grounded** codes (from sparse sensory encoding) depart from orthogonality, and
+  both hold at 1.00 — but a re-test with the actual grounded encoder is still the cleanest confirmation
+  before committing.
 - The diversity test stores each fact as its own bundle (as the agent does). It is not a claim about
   superposing hundreds of facts in one vector (that bends at K≈48, as shown).
 
