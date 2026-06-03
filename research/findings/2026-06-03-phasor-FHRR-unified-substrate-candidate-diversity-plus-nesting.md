@@ -52,6 +52,25 @@ bend at K≈48 and break at K≈64 are the expected VSA bundle-capacity curve (c
 move up with D. The production unit (one fact per bundle, a knowledge base = a list of bundles, exactly as
 the nesting agent's `self.kb` works) sits deep inside the safe region.
 
+## Grounded-proxy: robust to common-mode inter-code correlation (the easy kind)
+
+Grounded codes are not orthogonal. Injecting a shared component into all 320 codes (D=1024) to raise their
+mean pairwise |cosine|:
+
+| shared-component α | mean pairwise \|cos\| | full-SVO |
+|---|---|---|
+| 0.0 | 0.028 | 1.00 |
+| 0.3 | 0.035 | 1.00 |
+| 0.6 | 0.102 (≈ production overlap) | 1.00 |
+| 1.0 | 0.404 | 1.00 |
+| 1.5 | 0.768 | 1.00 |
+
+SVO decode holds at 1.00 even at mean cosine 0.768. **Honest caveat:** a single shared component is
+*common-mode* correlation — it shifts every cleanup candidate equally, so it does not move the argmax; this
+is the *easy* kind of correlation. It does **not** test *clustered/structured* correlation (semantically
+related concepts forming mutually-similar subsets), which is the harder grounded case and is not probed
+here. So this shows robustness to common-mode overlap at realistic levels, not a full grounded-code result.
+
 ## What this means (and what it does NOT)
 
 **Does mean:** phasor FHRR is a viable **unified-substrate candidate** — it has, in one representation,
