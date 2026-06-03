@@ -145,12 +145,14 @@ context?) is answered: yes.
 the discourse context held in the spiking cortico-PFC loop: per turn it drives the input into the
 spiking working memory, reads the held set, selects the most relevant unsaid associate (reusing the
 validated relevance + inhibition-of-return), and drives the selection back into the spiking context.
-On the substrate's real documented associations, elaborating topic `apple` yields the walk
-**`big -> cat -> ...`** -- the first two are apple's correct associates, chosen by relevance to the
-*spiking-held* context, no repeats. The third pick wandered (to `cold`, an unrelated cluster) -- the
-spiking context's cross-talk (the spurious-activation issue) bleeding into relevance. So the
-end-to-end mechanism works; the remaining gap is the cross-talk, a tuning refinement (stronger
-inhibition / sparser attractor patterns / a cleaner read), not a fundamental failure.
+On the substrate's real documented associations, elaborating topic `apple` first yielded
+`big -> cat -> cold` -- the third pick wandering to an unrelated cluster via spiking cross-talk. The
+fix: the cross-talk came from the *generic* random loop connections bleeding driven patterns into
+undriven ones, so dropping them (`loop_weight=0` -- the installed concept attractors are the only loop)
+makes the walk **`big -> hot -> cat`** -- all three in apple's cluster, **fully coherent end to end,
+no wandering**, with the context held entirely in the spiking working memory. (A residual config-
+dependent spurious holdover can still appear with some vocabularies; sparser patterns / stronger
+inhibition would clean it further.)
 
 **Net (the arc from a single session's cheap-first probes):** content-selection Control was validated
 structurally (Milestone 1), then the spiking working memory it needs was characterized

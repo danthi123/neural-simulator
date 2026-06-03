@@ -166,12 +166,15 @@ class SpikingLoopContextBuffer:
     specificity) and a SET of >=3 concepts at once (the WM span). Attractor weights are SET here
     (outer-product); learning them with the correct rule is the documented next step."""
 
-    def __init__(self, concepts, n=600, pattern_size=50, attractor_weight=50.0, seed=42, verbose=False):
+    def __init__(self, concepts, n=600, pattern_size=50, attractor_weight=50.0, loop_weight=0.0,
+                 seed=42, verbose=False):
         import sim.backend as B
         self.B = B
         self.xp, _ = B.get_backend()
         self.concepts = list(concepts)
-        self.bridge = build_loop_wm_bridge(n=n, loop_weight=0.5, loop_density=0.05, seed=seed,
+        # loop_weight=0 -> the installed concept attractors are the ONLY loop connections (no generic
+        # random reverberation to bleed driven patterns into undriven ones -> less cross-talk).
+        self.bridge = build_loop_wm_bridge(n=n, loop_weight=loop_weight, loop_density=0.05, seed=seed,
                                            verbose=verbose)
         rm = self.bridge.region_manager
         cidx = np.asarray(rm.indices("cortex_ctx"))
