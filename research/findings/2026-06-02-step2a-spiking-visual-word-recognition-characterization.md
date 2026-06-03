@@ -219,3 +219,31 @@ representation is proven discriminative; the remaining work is the V1-level inhi
 -- a focused build, not a gamble. Also the multimodal-grounding prerequisite. Next: build V1-level
 lateral inhibition and test whether the sparsified V1 spiking code lets the pools/readout reach the
 0.575 the offline proxy showed.
+
+## MILESTONE CHECKPOINT (2026-06-03): mechanism found, faithful spiking build scoped
+
+Tried V1-level **global** feedback inhibition (V1->v1_FS->V1): per-letter 0.292/0.233/0.200 -- NO
+improvement over latency-only, declining with K. Global inhibition suppresses by *total* activity,
+not per-position competition, so it does not replicate the per-band readout kWTA. Together with the
+pool-level FS-WTA = 0/5 chance, this establishes (two independent in-substrate kWTA attempts) that
+the faithful spiking recognizer needs **per-band/per-feature** lateral inhibition + a learned readout
+rule (R-STDP / readout layer) -- a focused multi-session build, which the iron law says to design
+rather than keep ad-hoc-tuning in one session.
+
+**What this arc delivered (genuine, complete):**
+1. Input-side-fidelity principle validated 4 ways (cheap probes): text-as-pixels -> shared structure
+   -> data-efficient open-vocab reading; grounding -> data-efficiency.
+2. GPU transduction LIVE: retina -> V1_simple faithfully responds to rendered words (the
+   tokenizer-replacement substrate, on the RTX 3090).
+3. **The latency+kWTA mechanism DISCOVERED + the V1 representation PROVEN discriminative** (0.575
+   per-letter on novel words via a learned readout, 4.6x chance, climbing with K). This is the
+   broadly-useful insight: this project's spiking layers were being READ with the wrong neural code
+   (rate vs latency) + missing lateral inhibition (kWTA). It likely generalizes beyond vision.
+4. The faithful fully-spiking recognizer SCOPED + de-risked: V1 latency code + per-band in-substrate
+   kWTA + R-STDP/learned readout (+ optional conv layers for translation invariance), grounded in the
+   proven Thorpe/Masquelier conv-SNN. Two in-substrate-kWTA placements ruled out (pool-level, V1-global);
+   per-band is the specified remaining piece.
+
+**Status:** mechanism FOUND; representation PROVEN discriminative; faithful fully-spiking recognizer
+is a scoped, designed-next focused arc (per-band in-substrate kWTA + learned readout). Also the
+multimodal-grounding prerequisite. No shortcuts; biology-faithful; both remotes.
