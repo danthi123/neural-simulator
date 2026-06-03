@@ -36,11 +36,17 @@ the ConversationalAgent's Control backend is now PLUGGABLE (controller_factory p
 (SpikingSpreadingController, latency read). Smoke: dog->dog eat apple, more->dog chase cat (non-repeating,
 spiking spreading-activation), more->that's all, child->child hold ball. KB-graph + production wiring
 unchanged; 9 tests still pass (pluggable backend no regression). So the tangible conversational agent now
-runs its decide-what-to-say on the faithful spiking substrate. >>> NEXT (integration milestone 3 options):
-(a) faithful Hebbian conjunctive PARSER for comprehend (the validated _vsa_parser_voice_probe) replacing
-the position-based SVO parse; (b) spiking PRODUCTION (in-substrate generate-by-composition) replacing the
-numpy compose/generate; (c) scale vocab + richer utterance types; (d) ground the KB in the 320-concept
-substrate. Each is a bounded swap of one more piece onto the spiking substrate. >>> AUTONOMOUS-CONTINUABLE REFINEMENTS
+runs its decide-what-to-say on the faithful spiking substrate. >>> INTEGRATION CHECKPOINT: Milestones 1+2 = a
+working conversational agent with FAITHFUL (spiking) dialogue planning. 41 conversation tests green
+(content_selection 19 + dialogue 13 + integrated_conversation_loop 9). >>> NEXT (milestone 3 options -- each
+is a REAL BUILD, NOT a drop-in swap: the validated pieces are science-PROBES, packaging them as reusable
+spiking modules is the work): (a) faithful conjunctive-coding PARSER for comprehend -- the
+_vsa_parser_voice_probe VALIDATED the science (conjunctive position*voice coding -> voice-invariant role
+parsing, PxV 1.000 vs P/PV 0.000) but is a throwaway probe, NOT a packaged parser; a real parser module is
+the build; (b) spiking PRODUCTION (in-substrate generate-by-composition) replacing numpy compose/generate;
+(c) scale vocab + richer utterance types (production capacity-limited -- raise D); (d) ground the KB in the
+validated 320-concept substrate. The integration ARCHITECTURE (comprehend -> Control -> produce) is proven;
+each milestone-3 piece makes one more component faithful/larger. >>> AUTONOMOUS-CONTINUABLE REFINEMENTS
 (no new-project approval needed, smaller builds): (a) fully-spiking SaidTrace = a persistent-across-reset
 spiking trace population modulating relevance (the last structured piece; turn_latency resets the WM each
 turn so the trace must live OUTSIDE the WM); (b) noise-robust attractors = sparse k-of-N assemblies +
