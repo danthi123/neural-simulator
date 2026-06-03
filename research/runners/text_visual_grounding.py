@@ -81,7 +81,8 @@ def build_v1_complex_pooling_weights(n_orientations, n_frequencies, npos, weight
 
 
 def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, n_v2=256, n_it=64, seed=42,
-                             word_pools=None, n_per_pool=64, structured_pooling=True, verbose=True):
+                             word_pools=None, n_per_pool=64, n_word_fs=24, structured_pooling=True,
+                             verbose=True):
     from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
     from sim.bridge import SimulationBridge
     from sim.regions import BrainRegion, RegionPathway
@@ -116,11 +117,31 @@ def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, 
     # word's training is isolated). Recognition is read DIRECTLY off the working V1_simple word-form via STDP,
     # bypassing the (sparse-text-starved) V1c->V2->IT cascade. Still cortically faithful: V1 simple cells ->
     # cortico-cortical STDP. Non-zero init (0.5+-0.3) per the readout-init lesson (STDP can't grow from exact 0).
-    for nm in (word_pools or []):
+    wp = word_pools or []
+    for nm in wp:
         regions.append(vis_region(nm, n_per_pool, exc=0.9, dens=0.05, ew=2.0, iw=1.5, jit=0.2, plast=True))
         pathways.append(RegionPathway(from_region="cortex_v1_simple", to_region=nm, density=0.05,
                                       weight_mean=0.5, weight_jitter=0.3, plastic=True,
                                       plasticity_gate=f"v1s_to_{nm}"))
+    # per-pool FS cross-inhibition = the spiking kWTA (validated Tier 1 motor-FS recipe): each pool excites
+    # its own purely-inhibitory FS pool, which inhibits the OTHER pools -> winner-take-all. This is exactly
+    # the lateral inhibition the readout kWTA showed is decisive; it fixes the dominant-pool collapse that
+    # made the original whole-word recognizer chance-level.
+    if wp and n_word_fs > 0:
+        from sim.enums import NeuronType
+        for nm in wp:
+            regions.append(BrainRegion(name=f"{nm}_FS", n_neurons=n_word_fs, exc_fraction=0.0,
+                                       internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                                       weight_jitter=0.0, plastic_internal=False,
+                                       izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
+        for nm in wp:
+            pathways.append(RegionPathway(from_region=nm, to_region=f"{nm}_FS", density=0.5,
+                                          weight_mean=10.0, weight_jitter=0.3, plastic=False))
+            for other in wp:
+                if other == nm:
+                    continue
+                pathways.append(RegionPathway(from_region=f"{nm}_FS", to_region=other, density=0.5,
+                                              weight_mean=10.0, weight_jitter=0.3, plastic=False))
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions); cfg.region_pathways = list(pathways)
