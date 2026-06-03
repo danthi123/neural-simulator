@@ -239,6 +239,27 @@ def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, 
     return bridge, retina_size, npos
 
 
+def _band_cell_arrays(rm, xp, npos, n_bands=3, region="cortex_v1_simple"):
+    """Per-band global V1 index arrays (x-position thirds) for hard-kWTA masking."""
+    v1 = np.asarray(rm.indices(region)); n = len(v1)
+    px = (np.arange(n) % (npos * npos)) % npos
+    return [xp.asarray(v1[(px >= p * npos // n_bands) & (px < (p + 1) * npos // n_bands)]) for p in range(n_bands)]
+
+
+def _hard_kwta_step(bridge, xp, band_arrays, band_counts, k):
+    """HARD per-band k-WTA spike budget (Thorpe/Kheradpisheh): once a band has emitted k spikes this event,
+    hard-suppress further firing of that band's V1 cells (zero them in cp_firing_states) so only the first-k
+    (earliest = strongest) propagate downstream. The precise selection soft FS feedback couldn't achieve."""
+    fs = bridge.cp_firing_states
+    for b, cells in enumerate(band_arrays):
+        if band_counts[b] >= k:
+            fs[cells] = 0
+        else:
+            band_counts[b] += int(fs[cells].sum())
+            if band_counts[b] >= k:
+                fs[cells] = 0
+
+
 def _retina_drive_gpu(word, rs, font, xp):
     img = render_word_image(word, rs, font)
     drive = VC.image_to_retina_drive(img, drive_max_pA=2500.0)
@@ -246,7 +267,7 @@ def _retina_drive_gpu(word, rs, font, xp):
 
 
 def train_recognition(bridge, vocab, rs, font, n_events=80, stim_steps=60, reset_steps=30,
-                      teacher_pA=2500.0, seed=42, verbose=True):
+                      teacher_pA=2500.0, seed=42, verbose=True, hard_kwta_k=0, npos=None):
     """Teacher-supervised STDP: drive retina(word) -> V1_simple word-form fires; simultaneously drive the
     target word-pool with teacher current; STDP on the (open-gated) V1s->target-pool pathway binds the word-form
     to the pool. Interleaved (shuffled) events, one gate open at a time -> isolated per-word training."""
@@ -256,6 +277,7 @@ def train_recognition(bridge, vocab, rs, font, n_events=80, stim_steps=60, reset
     r_idx = xp.asarray(rm.indices("retina"))
     pools = {w: xp.asarray(rm.indices(f"word_{w}")) for w in vocab}
     drives = {w: _retina_drive_gpu(w, rs, font, xp) for w in vocab}
+    band_arrays = _band_cell_arrays(rm, xp, npos) if (hard_kwta_k > 0 and npos) else None
     schedule = [w for w in vocab for _ in range(n_events)]
     np.random.default_rng(seed).shuffle(schedule)
     for i, w in enumerate(schedule):
@@ -266,14 +288,17 @@ def train_recognition(bridge, vocab, rs, font, n_events=80, stim_steps=60, reset
             bridge._run_one_simulation_step()
         bridge.cp_external_input_current[r_idx] = drives[w]
         bridge.cp_external_input_current[pools[w]] += float(teacher_pA)
+        band_counts = [0] * len(band_arrays) if band_arrays else None
         for _ in range(stim_steps):
             bridge._run_one_simulation_step()
+            if band_arrays:
+                _hard_kwta_step(bridge, xp, band_arrays, band_counts, hard_kwta_k)
         bridge.set_plasticity_gate(gate, 0.0)
         if verbose and (i + 1) % 50 == 0:
             print(f"  [train] {i+1}/{len(schedule)} events", flush=True)
 
 
-def test_recognition(bridge, vocab, rs, font, stim_steps=60, reset_steps=30):
+def test_recognition(bridge, vocab, rs, font, stim_steps=60, reset_steps=30, hard_kwta_k=0, npos=None):
     """Drive retina(word) with NO teacher; the word-pool with the highest firing is the recognition. Earned
     visual word recognition off the V1_simple word-form -- no tokenizer, no orthogonal lang_input."""
     import sim.backend as B
@@ -282,6 +307,7 @@ def test_recognition(bridge, vocab, rs, font, stim_steps=60, reset_steps=30):
     r_idx = xp.asarray(rm.indices("retina"))
     pools = {w: xp.asarray(rm.indices(f"word_{w}")) for w in vocab}
     drives = {w: _retina_drive_gpu(w, rs, font, xp) for w in vocab}
+    band_arrays = _band_cell_arrays(rm, xp, npos) if (hard_kwta_k > 0 and npos) else None
     ok = 0
     for w in vocab:
         bridge.cp_external_input_current[:] = 0.0
@@ -289,8 +315,11 @@ def test_recognition(bridge, vocab, rs, font, stim_steps=60, reset_steps=30):
             bridge._run_one_simulation_step()
         bridge.cp_external_input_current[r_idx] = drives[w]
         counts = {ww: 0.0 for ww in vocab}
+        band_counts = [0] * len(band_arrays) if band_arrays else None
         for _ in range(stim_steps):
             bridge._run_one_simulation_step()
+            if band_arrays:
+                _hard_kwta_step(bridge, xp, band_arrays, band_counts, hard_kwta_k)
             fs = bridge.cp_firing_states
             for ww in vocab:
                 counts[ww] += float(B.to_host(fs[pools[ww]]).sum())
@@ -421,6 +450,8 @@ def main():
     ap.add_argument("--test-steps", type=int, default=60, help="test integration window (temporal denoise)")
     ap.add_argument("--train-steps", type=int, default=60, help="stim steps per training event")
     ap.add_argument("--teacher-pa", type=float, default=2500.0)
+    ap.add_argument("--hard-kwta-k", type=int, default=0,
+                    help="--recognize: hard per-band k-WTA spike budget (Thorpe); 0 disables")
     a = ap.parse_args()
 
     if a.read_letters:
@@ -443,8 +474,9 @@ def main():
         print(f"[recognize] vocab={vocab}; STDP-training {a.events} events/word off V1_simple word-form "
               f"(retina {rs}, train-steps {a.train_steps}, test-steps {a.test_steps})...", flush=True)
         train_recognition(bridge, vocab, rs, font, n_events=a.events, stim_steps=a.train_steps,
-                          teacher_pA=a.teacher_pa, seed=a.seed)
-        test_recognition(bridge, vocab, rs, font, stim_steps=a.test_steps)
+                          teacher_pA=a.teacher_pa, seed=a.seed, hard_kwta_k=a.hard_kwta_k, npos=npos)
+        test_recognition(bridge, vocab, rs, font, stim_steps=a.test_steps,
+                         hard_kwta_k=a.hard_kwta_k, npos=npos)
         return
     bridge, rs, npos = build_visual_text_bridge(retina_size=a.retina, seed=a.seed)
     try:
