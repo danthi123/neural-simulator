@@ -63,10 +63,12 @@ def build_dlpfc_context_bridge(n_pfc=500, pfc_density=0.2, seed=42, plastic_recu
     return bridge
 
 
-def build_loop_wm_bridge(n=400, density=0.1, loop_weight=4.0, loop_density=0.15, seed=42, verbose=True):
+def build_loop_wm_bridge(n=400, density=0.1, loop_weight=4.0, loop_density=0.15, seed=42,
+                         plastic_loop=False, hebbian=False, verbose=True):
     """Two mutually-exciting regions forming a cortico-PFC LOOP (cortex_ctx <-> dlpfc_wm), both NMDA-
     enabled. The hypothesis (from the Milestone-2 standalone-region negative): persistent activity is
-    sustained by reverberation around the loop, which a single recurrent region cannot do."""
+    sustained by reverberation around the loop, which a single recurrent region cannot do. With
+    plastic_loop + hebbian, the loop connections can be SHAPED into pattern-specific attractors."""
     from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
     from sim.bridge import SimulationBridge
     from sim.regions import BrainRegion, RegionPathway
@@ -82,16 +84,17 @@ def build_loop_wm_bridge(n=400, density=0.1, loop_weight=4.0, loop_density=0.15,
     cfg.brain_regions = [reg("cortex_ctx"), reg("dlpfc_wm")]
     cfg.region_pathways = [
         RegionPathway(from_region="cortex_ctx", to_region="dlpfc_wm", density=loop_density,
-                      weight_mean=loop_weight, weight_jitter=0.2, plastic=False),
+                      weight_mean=loop_weight, weight_jitter=0.2, plastic=plastic_loop),
         RegionPathway(from_region="dlpfc_wm", to_region="cortex_ctx", density=loop_density,
-                      weight_mean=loop_weight, weight_jitter=0.2, plastic=False),
+                      weight_mean=loop_weight, weight_jitter=0.2, plastic=plastic_loop),
     ]
     cfg.dt_ms = 0.5
     cfg.seed = seed
     cfg.enable_nmda = True
     cfg.enable_structural_plasticity = False
-    cfg.enable_hebbian_learning = False
+    cfg.enable_hebbian_learning = bool(hebbian)
     cfg.enable_short_term_plasticity = False
+    cfg.stdp_w_max = 30.0
     cfg.fast_spike_reset = True
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())

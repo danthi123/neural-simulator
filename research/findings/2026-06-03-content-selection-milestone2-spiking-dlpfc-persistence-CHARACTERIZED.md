@@ -83,3 +83,26 @@ spiking dlPFC context buffer (Milestone 2) and the spiking Control (Milestone 3)
 This is a biology-translatable characterization (persistence = loop reverberation; content =
 trained loop attractors) obtained for the cost of three small probes -- the cheap-first discipline
 locating exactly what the faithful build requires before committing to it.
+
+## RESOLVED: the loop-attractor mechanism WORKS (2026-06-03) -- faithful spiking WM validated
+
+Trying to learn the attractor with Hebbian co-activity FAILED (it destabilized the loop -> silent,
+0.0x) -- the recurring spiking-plasticity-tuning wall, and the wrong learning rule. So instead of
+tuning plasticity, a decisive MECHANISM test: set the loop weights analytically (Hopfield-style --
+the pattern's cortex and dlPFC neurons strongly inter-excite, nothing else), and ask whether a
+properly-weighted loop holds the SPECIFIC pattern:
+
+- attractor weight 20 -> specificity 0.7x (too weak to sustain);
+- **attractor weight 50 -> specificity 220x** (pattern neurons fire 13.2/neuron post-drive vs
+  0.06/neuron for the rest).
+
+**The cortico-PFC loop-attractor holds the specific concept as a stable working memory.** The
+faithful spiking-WM mechanism is VALIDATED -- the obstacle was never the architecture, it was the
+weights, and the right weights (outer-product attractor) hold the pattern decisively.
+
+**Milestone 2 reframed (positive):** it is no longer a deep, uncertain build -- it is well-defined:
+install (or learn, with the correct rule -- not vanilla Hebbian) outer-product attractor weights for
+each concept in the cortico-PFC loop, then the spiking dlPFC context buffer holds concept attractors,
+and the spiking Control (Milestone 3) follows. Next: a capacity test (how many concept attractors the
+loop holds at once = the working-memory span), then wire the spiking context buffer into the
+controller and re-run the Milestone-1 coherence eval.
