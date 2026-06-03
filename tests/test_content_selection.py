@@ -18,6 +18,7 @@ from research.runners.content_selection_eval import (
     non_repetition,
     turn_to_turn_coherence,
     topic_progression,
+    run_dialogue,
 )
 
 
@@ -177,3 +178,37 @@ def test_build_association_graph_accumulates_strength():
     graph = build_association_graph(["apple_big", "apple_big"])
     assert abs(graph["apple"]["big"] - 2.0) < 1e-9
     assert abs(graph["big"]["apple"] - 2.0) < 1e-9
+
+
+# --- Task 9: Integration smoke (controller on a real-shaped graph) ----------
+
+def _connected_component(graph, start):
+    """All concepts reachable from `start` via association edges (undirected reachability)."""
+    seen = {start}
+    stack = [start]
+    while stack:
+        node = stack.pop()
+        for nbr in graph.get(node, {}):
+            if nbr not in seen:
+                seen.add(nbr)
+                stack.append(nbr)
+    return seen
+
+
+def test_run_dialogue_nonempty_nonrepeating_in_component():
+    # apple - big - hot chain plus apple - cat branch. All four are in apple's component.
+    graph = build_association_graph(["apple_big", "big_hot", "apple_cat"])
+    transcript = run_dialogue(graph, topic="apple", n_turns=5)
+    assert len(transcript) > 0                         # non-empty
+    assert len(transcript) == len(set(transcript))     # non-repeating
+    component = _connected_component(graph, "apple")
+    assert all(c in component for c in transcript)      # stays within topic's component
+    assert "apple" not in transcript                   # elaborates, doesn't echo the topic
+
+
+def test_run_dialogue_isolated_topic_returns_empty():
+    # A topic with no associations has an empty component (besides itself); the controller has
+    # nothing relevant to say and must not fabricate off-topic content.
+    graph = build_association_graph(["dog_river"])      # apple absent entirely
+    transcript = run_dialogue(graph, topic="apple", n_turns=3)
+    assert transcript == []

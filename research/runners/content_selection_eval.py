@@ -33,6 +33,20 @@ import numpy as np
 from research.runners.content_selection import ContentSelectionController
 
 
+def _connected_component(graph, start):
+    """All concepts reachable from `start` via association edges (undirected reachability over the
+    graph's directed adjacency). Returns a set that always includes `start` itself."""
+    seen = {start}
+    stack = [start]
+    while stack:
+        node = stack.pop()
+        for nbr in graph.get(node, {}):
+            if nbr not in seen:
+                seen.add(nbr)
+                stack.append(nbr)
+    return seen
+
+
 class BaselineSelector:
     """No-control, retrieval-only baseline.
 
@@ -138,3 +152,65 @@ def topic_progression(transcript):
             introduced += 1
             seen.add(c)
     return float(introduced / len(transcript))
+
+
+# --- Multi-turn dialogue runner (Task 9) ------------------------------------
+
+
+def run_dialogue(graph, topic, n_turns, decay=0.7, said_decay=0.6, lam=1.0):
+    """Drive a ContentSelectionController for up to `n_turns` elaboration turns from `topic`, and
+    return the transcript (the ordered list of concepts the controller chose to say).
+
+    Each turn supplies the `topic` concept as the user input -- an "elaborate about <topic>" turn.
+    Because the topic is in the input every turn, the controller never echoes it back; because the
+    controller hard-excludes everything it has already said, the transcript never repeats. A turn's
+    output is appended only if it is a concept inside the topic's connected component (so the
+    dialogue stays on-topic); the dialogue stops early as soon as the controller has nothing
+    on-topic and unsaid left to offer (it returns None, or its best remaining choice falls outside
+    the topic's component). Uses only the controller's public `turn()` API.
+    """
+    component = _connected_component(graph, topic)
+    ctrl = ContentSelectionController(graph, decay=decay, said_decay=said_decay, lam=lam)
+    transcript = []
+    for _ in range(n_turns):
+        choice = ctrl.turn([topic])
+        if choice is None or choice not in component:
+            break
+        transcript.append(choice)
+    return transcript
+
+
+# --- Task 10 (CONTROLLER-RUN, NOT a subagent): decisive multi-seed coherence eval ---
+#
+# TODO(Task 10, human controller): implement and RUN the pre-registered controlled
+# experiment here. This is deliberately left unimplemented for the human-facing agent
+# to run with the mandatory smell-test; do not auto-run it from a subagent.
+#
+# Specification (from docs/plans/2026-06-03-content-selection-dialogue-control-implementation.md):
+#   - For each of seeds 42-46: build several-topic dialogues and run each twice on the SAME real
+#     association graph -- once with ContentSelectionController, once with BaselineSelector. Build
+#     the graph from a loaded saved substrate bridge via
+#         tag_names = [t["name"] for t in bridge.list_engram_tags()]
+#         graph = build_association_graph(tag_names)
+#     (reuse-by-import only; do NOT modify the bridge or any sim/ module). Fall back to a synthetic
+#     multi-topic graph if no bridge is provided, clearly labelled as synthetic in the output.
+#   - Score every dialogue with the four metrics (on_topic, non_repetition, turn_to_turn_coherence,
+#     topic_progression).
+#   - Pre-registered PASS: the controller beats the baseline on on_topic, non_repetition, AND
+#     turn_to_turn_coherence, AND the controller's topic_progression is not degenerate (>= 0.5),
+#     across a clear majority of seeds, by a margin outside seed noise.
+#   - Print a per-seed table, the mean deltas, a verdict line (RESOLVES / BOUNDARY /
+#     DOES-NOT-RESOLVE), and one example transcript per condition for a human to read.
+#   - MANDATORY smell-test: scrutinise a PASS harder than a FAIL. Confirm the controller is not
+#     winning trivially (e.g. parking on one concept -- topic_progression is designed to catch this)
+#     and that the baseline is a fair retrieval-only selector, not a crippled strawman. If the
+#     comparison is unfair, fix the baseline and re-run.
+#   - Honest propagation: write the result (PASS or NEGATIVE) to a findings doc under
+#     research/findings/ and commit + push BOTH git remotes. A negative coherence result is a real
+#     finding. Long runs (real bridge loaded) should use a bounded background waiter.
+#
+# def main():
+#     raise NotImplementedError("Task 10 decisive eval is run by the human controller; see TODO above.")
+#
+# if __name__ == "__main__":
+#     main()
