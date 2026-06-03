@@ -152,7 +152,9 @@ undriven ones, so dropping them (`loop_weight=0` -- the installed concept attrac
 makes the walk **`big -> hot -> cat`** -- all three in apple's cluster, **fully coherent end to end,
 no wandering**, with the context held entirely in the spiking working memory. (A residual config-
 dependent spurious holdover can still appear with some vocabularies; sparser patterns / stronger
-inhibition would clean it further.)
+inhibition would clean it further.) **Robust across topics:** topic `dog` likewise yields
+`river -> cold -> small` (all of dog's cluster) -- both topics produce coherent in-cluster walks, the
+context held entirely in the spiking working memory.
 
 **Net (the arc from a single session's cheap-first probes):** content-selection Control was validated
 structurally (Milestone 1), then the spiking working memory it needs was characterized
