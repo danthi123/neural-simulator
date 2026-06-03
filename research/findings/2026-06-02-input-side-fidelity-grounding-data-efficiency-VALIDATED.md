@@ -127,3 +127,22 @@ composition + production). Honest caveat: the one-shot recognition uses identica
 robustness to rendering variation (jitter/scale/noise) is the next hardening. Next: (a) harden recognition
 with rendering variation; (b) wire this loop into the bridge (retina -> V1 -> grounded concept pools) as the
 production input path, replacing set_token_drive's orthogonal code.
+
+## Recognition front-end: characterized limits + refined production plan (honest)
+Hardening the capstone loop with rendering variation (jitter+noise) exposed real, characterized limits of the
+CHEAP recognition (one-shot nearest-prototype on V1 SIMPLE cells), distinct from the validated INSIGHT:
+- Cramped 32x32 3-letter rendering -> low V1 word-form separability: few-shot recognition across noisy views
+  0.38 (1 exposure) -> 0.59 (5 exposures), chance 0.04. (Composition unaffected: 1.000.)
+- Even a SINGLE clear letter (truetype-24) is only 0.67 across jitter+noise -- V1 SIMPLE cells are POSITION-
+  SPECIFIC (Gabor RFs at fixed positions) so jitter shifts the features; the project's complex cells are
+  phase-pooled but still 16x16 position-specific -> not jitter-invariant either.
+=> Faithful word RECOGNITION needs the brain's INVARIANCE + LEARNING machinery, not a crude prototype:
+  (a) SACCADIC/foveated reading (one letter or syllable per 32x32 fixation -- matches the retina + how humans
+      read), (b) spatial pooling / V1-complex invariance for jitter tolerance, (c) LEARNED STDP refinement of
+      the V1->word-form mapping over a few views. These ARE the production build's "learned word recognition"
+      piece -- the cheap prototype was only a scaffold.
+HONEST SCOPE: the input-side INSIGHT (tokenizer orthogonal coding forces data-hunger; grounding/text-as-pixels
+is data-efficient) is VALIDATED 4 ways + the composition loop works (1.000). The faithful RECOGNITION
+implementation is a real sub-problem with a clear biology-faithful plan (saccades + invariance + learned
+refinement), now the well-specified next sub-arc of the production build (alongside segmentation + the bridge
+wire-up). Not a dead end -- a refinement of WHAT the production build must implement.
