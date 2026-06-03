@@ -10,6 +10,7 @@ from research.runners.content_selection import (
     SaidTrace,
     select_candidate,
     ContentSelectionController,
+    build_association_graph,
 )
 from research.runners.content_selection_eval import (
     BaselineSelector,
@@ -147,3 +148,32 @@ def test_parked_walk_high_coherence_low_progression():
     self_loop = {"big": {"big": 5.0}}
     assert abs(turn_to_turn_coherence(_PARKED_WALK, self_loop) - 5.0) < 1e-9   # high coherence
     assert abs(topic_progression(_PARKED_WALK) - (1.0 / 3.0)) < 1e-9           # low progression
+
+
+# --- Task 8: build_association_graph from substrate tags --------------------
+
+def test_build_association_graph_symmetric_edges():
+    graph = build_association_graph(["apple_big", "dog_river"])
+    assert graph == {
+        "apple": {"big": 1.0},
+        "big": {"apple": 1.0},
+        "dog": {"river": 1.0},
+        "river": {"dog": 1.0},
+    }
+
+
+def test_build_association_graph_skips_malformed():
+    # 'weirdtag' has no underscore -> skipped, not crashed. 'a_b_c' is not a 2-concept
+    # tag -> skipped. An empty side ('_x' / 'x_') -> skipped.
+    graph = build_association_graph(["apple_big", "weirdtag", "a_b_c", "_x", "y_"])
+    assert graph == {
+        "apple": {"big": 1.0},
+        "big": {"apple": 1.0},
+    }
+
+
+def test_build_association_graph_accumulates_strength():
+    # The same edge appearing in multiple tags accumulates strength (e.g. apple_big twice -> 2.0).
+    graph = build_association_graph(["apple_big", "apple_big"])
+    assert abs(graph["apple"]["big"] - 2.0) < 1e-9
+    assert abs(graph["big"]["apple"] - 2.0) < 1e-9

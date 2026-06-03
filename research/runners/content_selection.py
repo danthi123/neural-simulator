@@ -116,3 +116,32 @@ class ContentSelectionController:
             self._already_said.add(choice)
             self.ctx.update([choice])     # what we said becomes part of the context
         return choice
+
+
+def build_association_graph(tag_names) -> dict:
+    """Turn the substrate's stored association tags (['apple_big','dog_river',...]) into a symmetric
+    association graph {concept:{associate:strength}}. Unknown/malformed tags are skipped, not crashed.
+
+    Each well-formed tag has the form 'a_b' (exactly two non-empty concept names joined by a single
+    underscore), denoting a learned association edge between concept 'a' and concept 'b'. The edge is
+    added in both directions with strength 1.0 (a later refinement can use retrieval cosine scores).
+    The same edge appearing in multiple tags accumulates strength. Tags that are not exactly two
+    non-empty parts (e.g. 'weirdtag', 'a_b_c', '_x', 'y_') are skipped.
+
+    Reuse note: a loaded substrate bridge exposes its tags via bridge.list_engram_tags(), which
+    returns a list of dicts with a 'name' key (see compose_concept_chat.py). Pass those names in as
+    tag_names. This function does not touch the bridge or any sim/ module.
+    """
+    graph: dict[str, dict[str, float]] = {}
+    for tag in tag_names:
+        if not isinstance(tag, str):
+            continue
+        parts = tag.split("_")
+        if len(parts) != 2:
+            continue
+        a, b = parts
+        if not a or not b:
+            continue
+        graph.setdefault(a, {})[b] = graph.setdefault(a, {}).get(b, 0.0) + 1.0
+        graph.setdefault(b, {})[a] = graph.setdefault(b, {}).get(a, 0.0) + 1.0
+    return graph
