@@ -82,12 +82,14 @@ def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, 
     pathways = [
         RegionPathway(from_region="retina", to_region="cortex_v1_simple", density=0.05,
                       weight_mean=0.5, weight_jitter=0.5, plastic=True, plasticity_gate="visual_cortex_v1"),
+        # text is SPARSE (thin strokes) vs g11's dense gridworld blocks -> few V1s spikes; strengthen the
+        # phase-pooling weight so sparse coincidences still fire V1_complex (diagnosed break point).
         RegionPathway(from_region="cortex_v1_simple", to_region="cortex_v1_complex",
-                      density=n_frequencies / float(n_v1s), weight_mean=2.0, weight_jitter=0.0, plastic=False),
-        RegionPathway(from_region="cortex_v1_complex", to_region="cortex_v2", density=0.10,
-                      weight_mean=1.0, weight_jitter=0.5, plastic=True, plasticity_gate="visual_cortex_v2"),
-        RegionPathway(from_region="cortex_v2", to_region="cortex_it", density=0.20,
-                      weight_mean=1.5, weight_jitter=0.5, plastic=True, plasticity_gate="visual_cortex_it"),
+                      density=4.0 * n_frequencies / float(n_v1s), weight_mean=20.0, weight_jitter=0.0, plastic=False),
+        RegionPathway(from_region="cortex_v1_complex", to_region="cortex_v2", density=0.15,
+                      weight_mean=6.0, weight_jitter=0.5, plastic=True, plasticity_gate="visual_cortex_v2"),
+        RegionPathway(from_region="cortex_v2", to_region="cortex_it", density=0.25,
+                      weight_mean=7.0, weight_jitter=0.5, plastic=True, plasticity_gate="visual_cortex_it"),
     ]
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
@@ -104,7 +106,12 @@ def build_visual_text_bridge(retina_size=64, n_orientations=8, n_frequencies=4, 
     pre, post, wts = build_scaled_gabor_v1_weights(retina_size, n_orientations, n_frequencies, npos)
     rm = bridge.region_manager
     r0 = rm.indices("retina")[0]; v0 = rm.indices("cortex_v1_simple")[0]
-    bridge.set_pathway_weights(pre + int(r0), post + int(v0), wts * 5.0, add_missing=True)
+    bridge.set_pathway_weights(
+        pathway_name="retina_to_v1_simple_gabor_scaled",
+        pre_indices=(pre + int(r0)).astype(np.int64),
+        post_indices=(post + int(v0)).astype(np.int64),
+        weights=(wts * 5.0).astype(np.float32),
+        add_missing=True)
     if verbose:
         print(f"[visual-text bridge] retina {retina_size}x{retina_size} ({n_retina}) -> V1s {n_v1s} -> "
               f"V1c {n_v1c} -> V2 {n_v2} -> IT {n_it}; scaled Gabor installed ({len(wts)} synapses)", flush=True)
@@ -128,17 +135,20 @@ def main():
     r_idx = xp.asarray(rm.indices("retina"))
     for word in ("dog", "cat", "run"):
         img = render_word_image(word, rs, font)
-        drive = VC.image_to_retina_drive(img, drive_max_pA=250.0)
-        v1 = rm.indices("cortex_v1_simple"); v2 = rm.indices("cortex_v2"); it = rm.indices("cortex_it")
-        acc = {"v1": 0.0, "v2": 0.0, "it": 0.0}
+        drive = VC.image_to_retina_drive(img, drive_max_pA=2500.0)
+        ret = rm.indices("retina"); v1 = rm.indices("cortex_v1_simple")
+        v1c = rm.indices("cortex_v1_complex"); v2 = rm.indices("cortex_v2"); it = rm.indices("cortex_it")
+        acc = {"ret": 0.0, "v1": 0.0, "v1c": 0.0, "v2": 0.0, "it": 0.0}
         for t in range(a.steps):
             bridge.cp_external_input_current[r_idx] = xp.asarray(drive, dtype=xp.float32)
             bridge._run_one_simulation_step()
             fs = bridge.cp_firing_states
-            acc["v1"] += float(B.to_host(fs[v1]).mean()); acc["v2"] += float(B.to_host(fs[v2]).mean())
+            acc["ret"] += float(B.to_host(fs[ret]).mean()); acc["v1"] += float(B.to_host(fs[v1]).mean())
+            acc["v1c"] += float(B.to_host(fs[v1c]).mean()); acc["v2"] += float(B.to_host(fs[v2]).mean())
             acc["it"] += float(B.to_host(fs[it]).mean())
-        print(f"  '{word}': mean firing over {a.steps} steps -- V1 {acc['v1']/a.steps:.3f}  "
-              f"V2 {acc['v2']/a.steps:.3f}  IT {acc['it']/a.steps:.3f}", flush=True)
+        n = a.steps
+        print(f"  '{word}': mean firing -- retina {acc['ret']/n:.3f}  V1s {acc['v1']/n:.3f}  "
+              f"V1c {acc['v1c']/n:.3f}  V2 {acc['v2']/n:.3f}  IT {acc['it']/n:.3f}", flush=True)
     print("  -> if V1/V2/IT fire in response to the rendered word, the GPU visual-text pipeline is live; "
           "step 2 = STDP-train an IT readout to RECOGNISE words (replacing the tokenizer).", flush=True)
 
