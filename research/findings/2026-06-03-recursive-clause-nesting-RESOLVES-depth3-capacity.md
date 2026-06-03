@@ -85,9 +85,38 @@ in the harness, not the substrate.
 - `research/findings/raw/_recursive_clause_probe.py` — the frozen depth-2 RESOLVES probe.
 - Capacity sweep was inline (this note records the table).
 
+## Agent integration (same day) — single embedded clause is the robust agent capability
+
+The capability is now exposed in the unified conversational agent
+(`research/runners/nested_composition_agent.py`): a fact's patient can be a `Clause` namedtuple
+("dog see (cat chase bird)"), decoded by recursive unbinding. The agent must *auto-detect* the slot's
+kind (no flag tells it), using a clause detector — a verb component is present only in a clause
+(ACTION-unbind confidence: clause 0.247–0.316 vs flat/attributed ≤0.077, a clean split; validated
+cheap-first).
+
+**Robust (tested, claimed): a single embedded clause with flat-noun arguments — 6/6 seeds.**
+- `test_embedded_clause_multi_seed_robust`: "dog see (cat chase bird)" decoded 6/6.
+- Auto-distinguished from flat and attributed patients (`test_clause_vs_flat_and_attributed_distinguished`).
+
+**Boundary (documented, NOT claimed):** the *agent's auto-detection* is robust to **one** embedded
+clause, not the substrate's depth-3. Two distinct error sources compound the raw-substrate capacity:
+
+| Case | Agent multi-seed | Why |
+|---|---|---|
+| Single clause, flat args ("cat chase bird") | 6/6 | within SNR; detection clean |
+| Clause-in-clause ("cat chase bird hold ball") | ~5/6 | detection error compounds per level |
+| Attribute inside a clause ("cat chase (big bird)") | unreliable | the resonator on a doubly-crosstalk'd `adj⊗noun` is past SNR |
+
+The agent degrades **gracefully, not confabulatorily**: inside a clause it decodes arguments as flat
+nouns only (no resonator), so an attributed inner argument loses its adjective rather than inventing a
+wrong attribute. The distinction is honest: the **raw substrate** with *known* role structure recurses
+to depth 3 (the probe + sweep above); the **agent's auto-detection** adds a per-level kind-decision whose
+error compounds, so its robust depth is one embedded clause.
+
 ## Verdict
 
-**RESOLVES.** Recursive clause nesting works to depth 3 (perfect, vocab-robust) on phasor FHRR, with a
-clean dimension-limited boundary at depth 4–5. A genuine path past the nesting / multi-hop wall for
-embedded clauses. Next: expose clause-as-argument in the unified conversational agent (store and answer
-"what does dog see? → cat chase bird").
+**RESOLVES (substrate, depth 3) + agent capability (one embedded clause, robust).** Recursive clause
+nesting works to depth 3 (perfect, vocab-robust) on the phasor FHRR substrate with a clean
+dimension-limited boundary at depth 4–5; the unified agent exposes a single embedded clause with flat
+arguments robustly (6/6 seeds) and documents the deeper-nesting / attribute-in-clause boundary honestly.
+A genuine path past the nesting / multi-hop wall for embedded clauses.

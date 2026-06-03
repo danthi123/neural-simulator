@@ -9,7 +9,32 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> MULTI-MODIFIER ATTRIBUTION RESOLVES (2026-06-03, latest) — the unified agent now nests TWO attributes <<<
+## >>> RECURSIVE CLAUSE NESTING RESOLVES + agent integration (2026-06-03, latest) — read THIS first <<<
+
+The strongest nesting result of the arc. A CLAUSE AS AN ARGUMENT — "dog see (cat chase bird)" — is the real
+syntactic recursion the deep-research synthesis flagged as THE wall (hierarchical-320 scored 0.000 on
+structured facts). Unlike multi-modifier (a product of unknowns -> resonator), a nested clause is a BUNDLE of
+KNOWN role-products -> decoded by RECURSIVE UNBINDING (no resonator). Only the multi-level bundle SNR was in
+question. CHEAP-FIRST frozen probe (`_recursive_clause_probe.py`): depth-2 full 5-filler recovery 1.00,
+control (patient-as-flat-noun) 0.20<0.50. CAPACITY SWEEP: **depth-3 (7 fillers) PERFECT across vocab M=8..64**;
+depth-4 degrades (0.70->0.38); depth-5 breaks — a clean D=1024-limited SNR boundary that moves up with D.
+Depth-3 exceeds human center-embedding. Smell-test logged: first sweep's ~0.05 was a FALSE NEGATIVE from a
+comparison bug (innermost-first vs outermost-first list), decode was correct — scrutinise a surprising
+NEGATIVE as hard as a positive. AGENT INTEGRATION: patient can now be a Clause namedtuple, auto-detected by a
+verb-presence detector (clause verb-conf 0.247-0.316 vs non-clause <=0.077, clean). ROBUST+TESTED: single
+embedded clause with flat args 6/6 seeds. HONEST BOUNDARY (documented, NOT claimed): the AGENT's
+auto-detection is robust to ONE embedded clause (clause-in-clause ~5/6; attribute-inside-clause unreliable —
+resonator past SNR); inside a clause it decodes flat-only so an attributed inner arg gracefully DROPS its adj
+rather than confabulating. The raw substrate recurses to depth-3 with KNOWN structure; the agent's
+auto-detection compounds per-level error so robust depth is 1. 17/17 tests. Commits pushed both remotes;
+findings `2026-06-03-recursive-clause-nesting-RESOLVES-depth3-capacity.md`.
+>>> NEXT (autonomous, open options): push the agent's robust clause depth (higher D to lift the SNR / a
+positive "attribute-present" detector to make attribute-in-clause non-confabulatory), or a fully-spiking
+unified agent (port encode+depth-detect to resonate_fire), or Direction B (thalamocortical dynamical gating,
+Logiaco 2021 — the other untried mechanism from the deep research), or scale vocab + a richer multi-topic
+dialogue demo. Both remotes; biology-faithful; cheap-first; honest negatives deliverable.
+
+## >>> MULTI-MODIFIER ATTRIBUTION RESOLVES (2026-06-03) — the unified agent now nests TWO attributes <<<
 
 After the unified conversational agent (below), extended its patient slot from one attribute ("red ball")
 to TWO ("big red ball" = adj1(x)adj2(x)noun). Two adjectives share a codebook -> classic resonator
