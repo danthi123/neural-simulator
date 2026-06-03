@@ -81,7 +81,7 @@ def build_v1_complex_pooling_weights(n_orientations, n_frequencies, npos, weight
 
 
 def build_per_band_v1_fs_wiring(npos, n_orientations, n_frequencies, n_bands, v1_offset, fs_offsets,
-                                n_v1_fs, n_v1_to_fs=64, v1_to_fs_weight=1.5, fs_to_v1_weight=6.0, seed=42):
+                                n_v1_fs, n_v1_to_fs=256, v1_to_fs_weight=8.0, fs_to_v1_weight=12.0, seed=42):
     """Per-band V1 feedback lateral inhibition = in-substrate per-band kWTA. For each spatial band p
     (x-position third), band-p V1_simple cells excite v1_fs_b{p}, which inhibits ONLY band-p V1_simple cells.
     Strongest/earliest band-p cells fire before the FS suppresses the rest -> sparse per-band code (the kWTA
