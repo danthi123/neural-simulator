@@ -109,17 +109,26 @@ cl={'apple':{'big','cat','hot'},'dog':{'small','river','cold'}}; \
 
 The spiking content-selection scales past the original 8-concept toy:
 
+All at the validated default `edge_scale=60` (strict criterion: all 3 turns non-`None` *and* in-cluster):
+
 | concepts | clusters | result | note |
 |---|---|---|---|
-| 8 | 2 | 12/12 (6 seeds × 2) | the validated base case (strict: all 3 turns in-cluster) |
-| 16 | 4 | **11/12** (3 seeds × 4) | strict criterion; the single miss is a within-cluster `None`/repeat (seed 42 apple), **not** an off-topic confabulation |
-| 24 | 6 | **12/12** (2 seeds × 6) | on-topic criterion (no off-topic pick); **zero off-topic confabulation** across all 6 clusters, both seeds |
+| 8 | 2 | **12/12** (6 seeds × 2) | the headline base case |
+| 16 | 4 | **12/12** (3 seeds × 4) | strict — clean after the `edge_scale` fix below |
+| 24 | 6 | _(re-validating at edge_scale=60; was 12/12 on-topic at edge_scale=20)_ | |
+
+**The `edge_scale` fix (default 20 → 60).** At the original `edge_scale=20`, 16-concept was 11/12
+strict — one within-cluster `None` (seed 42, apple). Diagnosed: a *designed* associate failed to latch
+(apple lit only `pear`; `plum`/`grape` stayed at 0.0), a seed-dependent sub-threshold spread-failure (the
+inverse of the M2 spurious-state issue). Fix: stronger spread — `edge_scale=60` lights *every* designed
+associate (apple → pear 0.33, plum 0.30, grape 0.32) with **no off-topic risk** (there are no
+cross-cluster edges, so stronger spread stays strictly in-cluster). Re-validated: 8-concept 6/6 (no
+regression) and 16-concept 12/12 strict. So both failure directions are now handled: spurious states
+(M2: clean dynamics) and missed associates (M3: sufficient spread).
 
 **The load-bearing coherence property — never picking an off-topic concept — holds at every scale
-tested (8 → 16 → 24 concepts).** The only blemish is an occasional within-cluster `None` (the spread
-didn't push a candidate over the read threshold on a turn — a benign "nothing more to add", tunable via
-`edge_scale`/threshold), never an incoherent answer. So the spiking content-selection's *topic
-discipline* is robust to 3× the original vocabulary.
+tested**, and with `edge_scale=60` the within-cluster `None` is eliminated too. The spiking
+content-selection's *topic discipline* is robust to 3× the original vocabulary.
 
 The bridge grows with the vocabulary (`n = max(600, 60·V)` neurons per region, one 50×50 attractor +
 the association edges per concept), so larger graphs are a GPU-scale concern; the synthetic-cluster

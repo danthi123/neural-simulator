@@ -43,9 +43,14 @@ M3. Finding 2026-06-03-content-selection-milestone3-spiking-relevance-VALIDATED.
 still green. SCALE VALIDATED (synthetic multi-cluster graphs, each cluster a 4-cycle): 8 concepts 12/12
 (strict) -> 16 concepts 11/12 (strict; 1 within-cluster None, benign) -> 24 concepts 12/12 (on-topic, 6
 clusters x 2 seeds). The load-bearing property — NEVER picking an off-topic concept — holds at every
-scale (3x the original toy vocab); the only blemish is an occasional within-cluster None ("nothing more
-to add", tunable via edge_scale/threshold), never an incoherent answer. So the spiking content-selection's
-TOPIC DISCIPLINE is robust to 24 concepts.
+scale (3x the original toy vocab). The one blemish (occasional within-cluster None at 16c) was DIAGNOSED
++ FIXED: a designed associate failed to LATCH at the default spread strength (apple lit only pear;
+plum/grape stayed 0.0 -- seed-dependent sub-threshold spread-failure, the INVERSE of the M2 spurious
+issue). Fix = bump default edge_scale 20->60 (stronger spread lights EVERY designed associate, no
+off-topic risk since no cross-cluster edges). Re-validated STRICT at edge_scale=60: 8-concept 12/12
+conditions (6-seed, headline holds) + 16-concept 12/12 strict (None gone); 24-concept strict re-validation
+in flight (was 12/12 on-topic at edge_scale=20). So BOTH failure directions are now handled: spurious
+states (M2 clean dynamics) and missed associates (M3 sufficient spread). 31 structured tests green.
 
 >>> M3b CHEAP-PROBED THIS CYCLE (hyperpolarizing-fatigue approach REFUTED): applying targeted negative
 "fatigue" current to a latched, recently-selected assembly to silence it for the next relevance read does

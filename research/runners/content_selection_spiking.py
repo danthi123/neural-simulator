@@ -291,8 +291,13 @@ class SpikingSpreadingController:
     seed-robustly. Uses the same clean-dynamics config as the validated SpikingController
     (internal_density=0 + enable_ou=False) so the multi-concept hold stays exact."""
 
-    def __init__(self, graph, seed=42, said_decay=0.6, edge_scale=20.0, internal_density=0.0,
+    def __init__(self, graph, seed=42, said_decay=0.6, edge_scale=60.0, internal_density=0.0,
                  verbose=False):
+        # edge_scale 60 (was 20): the spread must be strong enough that EVERY designed associate latches.
+        # At edge_scale=20 some seeds lit only the first associate (the within-cluster `None` blemish:
+        # apple -> pear only, plum/grape stayed at 0.0); edge_scale=60 lights all in-cluster associates
+        # (validated 2026-06-03: 8-concept 6/6 + 16-concept 12/12 STRICT, no off-topic risk since there
+        # are no cross-cluster edges). See finding doc scaling section.
         from research.runners.content_selection import SaidTrace
         self.graph = graph
         self._vocab = sorted(set(graph) | {a for v in graph.values() for a in v})
