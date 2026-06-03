@@ -91,3 +91,21 @@ def test_negation_when_associated():
     agent = DialogueAgent(_graph())
     ans = agent.respond("is rain not related to storm?")   # they ARE associated -> correct the negation
     assert ans.startswith("Actually")
+
+
+def test_agent_accepts_injected_controller():
+    # An injected controller (same .turn / .ctx.update interface) is used instead of the default --
+    # this is how the faithful SpikingSpreadingController is dropped in behind the same dialogue agent.
+    class _StubCtx:
+        def update(self, concepts):
+            pass
+
+    class _StubController:
+        def __init__(self):
+            self.ctx = _StubCtx()
+
+        def turn(self, concepts):
+            return "stub:" + concepts[0]
+
+    agent = DialogueAgent(_graph(), controller=_StubController())
+    assert agent.respond("rain") == "stub:rain"            # the injected controller's turn() is used

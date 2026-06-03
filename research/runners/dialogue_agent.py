@@ -31,9 +31,13 @@ class DialogueAgent:
     _LINK_WORDS = ("link", "links", "common", "both", "connect", "share")
     _DESCRIBE_WORDS = ("tell", "describe", "about", "know")
 
-    def __init__(self, graph, **ctrl_kwargs):
+    def __init__(self, graph, controller=None, **ctrl_kwargs):
+        """`controller` lets a caller inject an alternative content-selection backend with the same
+        interface (`.turn(concepts)` + `.ctx.update(concepts)`) -- e.g. the validated faithful
+        SpikingSpreadingController, so the SAME interactive dialogue runs on the spiking substrate. When
+        omitted, the structured (numpy) ContentSelectionController is used (fast default)."""
         self.graph = graph
-        self.ctrl = ContentSelectionController(graph, **ctrl_kwargs)
+        self.ctrl = controller if controller is not None else ContentSelectionController(graph, **ctrl_kwargs)
         self.focus = None
         self._nodes = set(graph) | {a for v in graph.values() for a in v}
 
@@ -110,10 +114,12 @@ def run_conversation(graph, script, **kwargs):
     return [(u, agent.respond(u)) for u in script]
 
 
-def repl(graph):
-    """Live interactive shell: the user types, the agent responds, until 'quit'."""
-    agent = DialogueAgent(graph)
-    print("Dialogue agent -- live. Try:  <concept> | more | tell me about <X> |")
+def repl(graph, controller=None):
+    """Live interactive shell: the user types, the agent responds, until 'quit'. Pass `controller` to run
+    the dialogue on an alternative backend (e.g. the faithful SpikingSpreadingController)."""
+    agent = DialogueAgent(graph, controller=controller)
+    backend = type(agent.ctrl).__name__
+    print(f"Dialogue agent -- live ({backend}). Try:  <concept> | more | tell me about <X> |")
     print("  is <X> related to <Y> | is <X> not related to <Y> | what links <X> and <Y> | quit\n")
     while True:
         try:
@@ -131,10 +137,17 @@ def main():
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--repl", action="store_true", help="live interactive dialogue shell")
+    ap.add_argument("--spiking", action="store_true",
+                    help="run the REPL on the faithful SpikingSpreadingController backend (validated "
+                         "spiking content-selection; slower per turn)")
     a = ap.parse_args()
     graph = _synthetic_multi_topic_graph()
     if a.repl:
-        repl(graph)
+        controller = None
+        if a.spiking:
+            from research.runners.content_selection_spiking import SpikingSpreadingController
+            controller = SpikingSpreadingController(graph, seed=42)
+        repl(graph, controller=controller)
         return
 
     # Scripted demo showing every capability: multi-fact describe, topic + follow-up, yes/no, negation,

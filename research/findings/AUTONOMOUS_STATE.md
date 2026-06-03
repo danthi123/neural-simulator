@@ -47,10 +47,16 @@ scale (3x the original toy vocab). The one blemish (occasional within-cluster No
 + FIXED: a designed associate failed to LATCH at the default spread strength (apple lit only pear;
 plum/grape stayed 0.0 -- seed-dependent sub-threshold spread-failure, the INVERSE of the M2 spurious
 issue). Fix = bump default edge_scale 20->60 (stronger spread lights EVERY designed associate, no
-off-topic risk since no cross-cluster edges). Re-validated STRICT at edge_scale=60: 8-concept 12/12
-conditions (6-seed, headline holds) + 16-concept 12/12 strict (None gone); 24-concept strict re-validation
-in flight (was 12/12 on-topic at edge_scale=20). So BOTH failure directions are now handled: spurious
-states (M2 clean dynamics) and missed associates (M3 sufficient spread). 31 structured tests green.
+off-topic risk since no cross-cluster edges). Re-validated STRICT at edge_scale=60: CLEAN STRICT AT EVERY
+SCALE -- 8-concept 12/12 (6-seed, headline holds) + 16-concept 12/12 + 24-concept 12/12 (all conditions,
+no Nones). So BOTH failure directions are now handled: spurious states (M2 clean dynamics) and missed
+associates (M3 sufficient spread).
+
+>>> USABLE ARTIFACT: the validated spiking Control is now wired into the interactive DialogueAgent via
+dependency injection (controller= param). `dialogue_agent.py --repl --spiking` runs the SAME conversation
+on the faithful SpikingSpreadingController. Smoke: spiking-backed agent, apple -> ['hot','cat'] (in-cluster).
+32 structured tests green (+1 injection test). So the spiking content-selection is a usable interactive
+conversational artifact, not just an eval.
 
 >>> M3b CHEAP-PROBED THIS CYCLE (hyperpolarizing-fatigue approach REFUTED): applying targeted negative
 "fatigue" current to a latched, recently-selected assembly to silence it for the next relevance read does
