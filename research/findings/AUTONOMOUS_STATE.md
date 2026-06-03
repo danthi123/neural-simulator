@@ -9,7 +9,24 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> RECURSIVE CLAUSE NESTING RESOLVES + agent integration (2026-06-03, latest) — read THIS first <<<
+## >>> PHASOR FHRR = UNIFIED-SUBSTRATE CANDIDATE (2026-06-03, latest strategic finding) — read THIS first <<<
+
+The strategically central output of the Direction-A arc. The phasor FHRR substrate the nesting lives on ALSO
+holds production-scale DIVERSITY: 320 concepts + a 3-role SVO fact decode **1.00 at D=1024** (per-role
+1.00/1.00/1.00); single-bundle capacity ~24-32 role-bindings (bend K~48, break K~64) = 8-10x headroom over a
+3-role fact. So the SUBSTRATE SPLIT is NOT forced by capacity: production diversity currently sits on a
+NON-INVERTIBLE real-Hadamard binding (which CANNOT nest — hierarchical-320 scored 0.000), while phasor FHRR
+has diversity + composition + NESTING + an invertible binding + a validated spiking realization
+(resonate-and-fire). HONEST CAVEATS: these are ALGEBRAIC bindings (production LEARNS via STDP -> migration is
+real engineering, not free); random phasor codes (grounded-code re-test is the natural follow-up); this
+de-risks the CAPACITY question, NOT the learning question. Finding
+`2026-06-03-phasor-FHRR-unified-substrate-candidate-diversity-plus-nesting.md`. >>> THIS is the decision the
+owner may want to steer: whether to migrate the production substrate onto phasor FHRR to gain nesting. NEXT
+candidate (autonomous): grounded-code re-test (does the 320 result hold for sparse-encoded grounded codes,
+not just random phasors?) — cheap-first, decisive, the last capacity-side uncertainty before a migration
+decision.
+
+## >>> RECURSIVE CLAUSE NESTING RESOLVES + agent integration (2026-06-03) — earlier today <<<
 
 The strongest nesting result of the arc. A CLAUSE AS AN ARGUMENT — "dog see (cat chase bird)" — is the real
 syntactic recursion the deep-research synthesis flagged as THE wall (hierarchical-320 scored 0.000 on
