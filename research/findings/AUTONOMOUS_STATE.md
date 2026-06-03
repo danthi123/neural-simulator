@@ -46,7 +46,22 @@ parsing, PxV 1.000 vs P/PV 0.000) but is a throwaway probe, NOT a packaged parse
 the build; (b) spiking PRODUCTION (in-substrate generate-by-composition) replacing numpy compose/generate;
 (c) scale vocab + richer utterance types (production capacity-limited -- raise D); (d) ground the KB in the
 validated 320-concept substrate. The integration ARCHITECTURE (comprehend -> Control -> produce) is proven;
-each milestone-3 piece makes one more component faithful/larger. >>> AUTONOMOUS-CONTINUABLE REFINEMENTS
+each milestone-3 piece makes one more component faithful/larger.
+
+>>> MILESTONE 3d SHIPPED (2026-06-03): research/runners/integrated_conversation_320.py -- the conversational
+agent grounded in the validated 320-concept spiking substrate (15x the 22-word toy). STORAGE = spiking
+coincidence bind (RM.bind_fact_spiking), DIALOGUE PLANNING = content-selection Control over the 320-word
+association graph built from the agent's own stored facts, PRODUCTION = spiking unbind + cleanup over all
+320 concepts (RM.unbind_spiking). So THREE of four pieces are FAITHFUL SPIKING (storage + dialogue planning
++ production); only the SVO parse is numpy. Demo (GPU, V=320, D=2000): stored wolf->fall->huge /
+wolf->taste->well / fish->send->weak; "wolf" -> "wolf fall huge", "more" -> "wolf taste well"
+(non-repeating, Control-driven), "more" -> "that's all i know about wolf"; "fish" -> "fish send weak" --
+each produced by spiking unbind. Reuses _insubstrate_bind_unbind_probe + _insubstrate_relational_memory_
+probe + the 320 codes cache; no protected-module change. So the tangible conversational agent now runs at
+the project's SCALE FRONTIER with mostly-faithful spiking pieces. >>> REMAINING milestone-3: (a) faithful
+conjunctive-coding parser (the last numpy piece); (c) richer utterance types / multi-fact reasoning.
+
+>>> AUTONOMOUS-CONTINUABLE REFINEMENTS
 (no new-project approval needed, smaller builds): (a) fully-spiking SaidTrace = a persistent-across-reset
 spiking trace population modulating relevance (the last structured piece; turn_latency resets the WM each
 turn so the trace must live OUTSIDE the WM); (b) noise-robust attractors = sparse k-of-N assemblies +
