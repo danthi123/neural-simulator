@@ -53,3 +53,21 @@ def relevance(candidate: str, context: dict, graph: dict) -> float:
     for c, w in context.items():
         total += w * graph.get(c, {}).get(candidate, 0.0)
     return total
+
+
+class SaidTrace:
+    """A fading record of what was recently said, to penalize repetition (inhibition-of-return)."""
+
+    def __init__(self, decay: float = 0.6):
+        self.decay = float(decay)
+        self._a: dict[str, float] = {}
+
+    def mark(self, concept: str):
+        self._a[concept] = self._a.get(concept, 0.0) + 1.0
+
+    def step(self):
+        for k in list(self._a):
+            self._a[k] *= self.decay
+
+    def activation(self, concept: str) -> float:
+        return self._a.get(concept, 0.0)

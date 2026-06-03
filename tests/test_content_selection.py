@@ -7,6 +7,7 @@ they are fast and deterministic and need no spiking bridge / GPU. Plain ASCII on
 from research.runners.content_selection import (
     ContextBuffer,
     relevance,
+    SaidTrace,
 )
 
 
@@ -43,3 +44,13 @@ def test_relevance_weights_by_context_strength():
     context = {"apple": 0.5, "river": 1.0}   # river is more active
     # big: 0.5*2.0 + 1.0*1.0 = 2.0
     assert abs(relevance("big", context, graph) - 2.0) < 1e-9
+
+
+# --- Task 3: Inhibition-of-return (said trace) ------------------------------
+
+def test_said_trace_decays():
+    st = SaidTrace(decay=0.5)
+    st.mark("big")                       # big -> 1.0
+    st.step()                            # fade -> 0.5
+    assert abs(st.activation("big") - 0.5) < 1e-9
+    assert st.activation("apple") == 0.0
