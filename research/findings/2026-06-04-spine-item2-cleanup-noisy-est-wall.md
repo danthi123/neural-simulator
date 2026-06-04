@@ -27,18 +27,40 @@ bridge.
 discriminates 320 concepts fine when the cue is clean); the wall is the *noisy est* (cue-cosine 0.35 ≈ the
 diagnostic's 0.33 point ≈ the real-est 0.47).
 
-## The lever — integration time (PENDING result)
+## The lever — integration time (helps, then plateaus at ~0.78 → saturation)
 
 numpy `argmax` is instantaneous and infinite-precision; a spiking readout trades precision for **time** — more
-accumulation steps average out the firing-rate noise, so the rates converge to the exact match scores numpy uses,
-and recovery should climb toward parity. Run-steps sweep at the real-est noise level (M=320, cue-cosine 0.33,
-run-steps 80 → 800): **PENDING**.
+accumulation steps average the firing-rate noise. Run-steps sweep at the real-est noise level (M=320, cue-cosine
+0.335): recovery **0.475 (80 steps) → 0.759 (300) → 0.775 (800)**. So longer integration helps substantially (the
+rate-noise component), but **plateaus at ~0.78**, ~22pp below numpy's 1.00. The flat 300→800 is a SYSTEMATIC floor,
+not rate noise — consistent with **saturation**: at the tuned gain, the true concept and a few competitors all drive
+*past* the neuron's saturation, so their firing rates tie and `argmax` cannot separate them. The fix is to keep the
+population in its responsive (non-saturated) range — **lower match gain and/or divisive normalization** (the
+canonical cortical gain-control; Carandini-Heeger). Lower gain alone does NOT close it (w_match 20 → 0.71, 15 →
+0.47; both ≤ the w_match-40 0.78) — gain and signal scale together, so anti-saturation needs the actual
+normalization *circuit*, not just a smaller gain.
 
-- If recovery climbs toward ~0.9+ at longer integration, item 2 succeeds with an honest **compute cost** (the spiking
-  cleanup needs several-fold more integration than the bind to match numpy precision — biologically reasonable; the
-  brain's ~100 ms recognition latency *is* exactly this precision-time tradeoff).
-- If it plateaus below parity, there is a systematic (non-averagable) error at low cue-cosine and the cleanup needs a
-  recurrent denoising attractor (capacity ~0.14·D → D ≳ 2560 for 320) or a cleaner unbind.
+**So the full spiking cleanup is the canonical cortical computation:** matched filter (synaptic dot-product) +
+decorrelation (common-mode invariance) + temporal integration (precision) + divisive normalization (anti-saturation
+gain control). Each numpy convenience (`argmax`'s infinite precision, instantaneity, common-mode invariance) maps to
+a concrete cortical mechanism the brain must spend resources on.
+
+## Conclusion + decision
+
+The numpy `argmax` cleanup is **a thin, high-precision linear readout** — the same category as the already-disclosed
+linear inter-phase ops (superposition sum, ON/OFF opponency). Removing it with a fully-spiking cleanup is reachable
+in principle (the matched filter is perfect at M=320 on clean cues) but requires the **complete cortical cleanup
+circuit** — decorrelation + temporal integration + divisive normalization — to overcome the composer's noisy `est`,
+and a partial version (~0.78 on cue-cosine-0.35 est) would **regress the validated capability matrix** (which numpy
+holds at 1.00). For a thin readout, that is a poor trade.
+
+**Decision:** characterize the `argmax` cleanup as a **disclosed high-precision readout** (not a hidden cheat) with
+the biology mapping captured below, rather than ship a sub-parity spiking version that loses capability. The load-
+bearing nonlinearity (the bind/unbind coincidence) IS already spiking — the hard part is done. The full cortical
+cleanup circuit is a legitimate **future sub-project** (Carandini-Heeger normalization on the core bridge), not the
+highest-value next step. Move to grounding (item 3) / one-bridge (B), revisiting the cleanup circuit when the agent
+is otherwise complete. NO capability bar is changed; nothing is weakened — the numpy readout stays, now honestly
+documented as to *why* a cheap spiking replacement is not yet warranted.
 
 ## Biology-translatable insight (independent of the run-steps outcome)
 
