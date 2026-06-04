@@ -84,11 +84,25 @@ thalamic firing in-step (`test_bridge_internal_gate_coupling`). The remaining in
 disinhibition to the real `g11_bg` GPi→thal pathway (currently the thalamic pools are driven directly as a BG
 stand-in).
 
+## Sequencing — temporal variable binding
+
+`research/runners/gated_sequence_demo.py` + `tests/test_gated_sequence.py`: a **plan** is an ordered list of
+(verb, motor) bindings; the BG steps through it (disinhibiting one thalamic gate pool at a time → the
+bridge-internal coupling opens that route gate) → the ordered motor sequence is produced. Crucially this
+includes **temporal variable binding**: plan `[GO:N, LOOK:E, GO:S]` → `[N, E, S]` — the *same* verb `GO`
+bound to `N` at position 0 and `S` at position 2, re-bound mid-sequence with **zero weight change**. A
+grown-weight model cannot represent this (a verb's grown weight is a constant). This is the foundation for
+multi-element structures (utterances are ordered sequences of bindings). Honest scope: the sequencer here is
+an external plan-loop; *autonomous* cortical sequence generation (Option C, the low-rank effective-connectivity
+gate over cortical trajectories with preparatory transitions) is the further build.
+
 ## Verdict
 
-**SHIPPED + loop closed.** The transmission-gate primitive is in the bridge, validated in spikes, solves the
-v16 compose-binding problem (4/4 deterministic + re-binding, zero weight change) that STDP-grown weights could
-not, and is driven by BG→thalamus gate selection (the closed thalamocortical loop). The biology-faithful fix
-for "compose-pathways went silent" is real and loop-complete. Next: a bridge-internal thalamus→gate coupling +
-the real `g11_bg` GPi→thal disinhibition, and Option C (low-rank effective-connectivity gate) for *sequencing*
-bound primitives.
+**SHIPPED + loop closed + in-substrate + sequencing.** The transmission-gate primitive is in the bridge,
+validated in spikes, solves the v16 compose-binding problem (4/4 deterministic + re-binding, zero weight
+change) that STDP-grown weights could not; it is driven by BG→thalamus gate selection (the closed
+thalamocortical loop), fully in-substrate (the gate opens from thalamic firing inside the step), and supports
+ordered **sequencing** with temporal variable binding. The biology-faithful fix for "compose-pathways went
+silent" is real, loop-complete, and composes over time. Next: wire to the real `g11_bg` GPi→thal pathway
+(genuine BG selector); Option C (low-rank gate) for *autonomous* cortical sequence generation; Track 3
+(grammar-over-composition conversational artifact).

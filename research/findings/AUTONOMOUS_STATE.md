@@ -71,12 +71,18 @@ internal coupling); BG selection = which thal pools disinhibited. Finding update
 opens from a control (thalamic) pool's FIRING inside `_run_one_simulation_step` (`_apply_gate_couplings`, EMA;
 no-op when empty). The thalamocortical loop is now FULLY IN-SUBSTRATE (drive thal pools -> bridge opens cortical
 gates -> verb routes; 4/4, test_bridge_internal_gate_coupling). 9 gating tests + numpy-backend regression clean.
->>> EXACT NEXT (owner-steerable): (a) wire the thal-pool disinhibition to the REAL g11_bg GPi->thal pathway
-(currently thal pools driven directly as a BG stand-in) -- makes the BG the genuine selector. (b) OPTION C:
-low-rank effective-connectivity gate (J_eff = J_cc + sum s_k u_k v_k^T, Logiaco/Kao) for SEQUENCING bound
-primitives over time (cortical TRAJECTORIES + preparatory transitions, not just static routing) -- the rung
-toward multi-element structures conversation needs. (c) Track 3: assembly-generation + grammar-over-composition
-conversational artifact (CPU).
+>>> SEQUENCING DONE (external-sequencer form): `gated_sequence_demo.py` + `test_gated_sequence.py`. BG steps
+through an ordered plan of (verb,motor) bindings -> ordered motor sequence; incl. TEMPORAL VARIABLE BINDING
+(plan [GO:N,LOOK:E,GO:S] -> [N,E,S], same verb GO re-bound mid-sequence, zero weight change, impossible for
+grown weights). 11 gating tests total. The full thalamocortical-gating arc is COMPLETE: primitive -> compose
+binding (4/4) -> BG selection -> in-substrate coupling -> temporal sequencing.
+>>> EXACT NEXT (owner-steerable): (a) wire thal-pool disinhibition to the REAL g11_bg GPi->thal pathway
+(genuine BG selector; currently thal pools driven directly). (b) OPTION C: low-rank effective-connectivity
+gate (J_eff = J_cc + sum s_k u_k v_k^T, Logiaco/Kao) for AUTONOMOUS cortical sequence generation (trajectories
++ preparatory transitions, not an external plan-loop). (c) Track 3: assembly-generation + grammar-over-
+composition conversational artifact (CPU) -- the conversational payoff. Honest: spiking-faithful not
+fully-biological; phasor binding is a hypothesis; fluent generation is a documented wall; gating's
+determinism is by-construction (the science is it works in spikes, re-bindable, zero weight change).
 Honest: spiking-faithful not fully-biological; phasor binding is a hypothesis; fluent generation is a
 documented wall; gating's "4/4 deterministic" is by-construction (you bind what you gate) -- the science is it
 works in genuine spikes with zero weight change where grown weights were seed-fragile (5/20).
