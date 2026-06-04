@@ -5,9 +5,41 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-06-03
+**Updated:** 2026-06-04
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
+
+## >>> UNIFIED-AGENT BENCHMARK ARC (2026-06-04, LATEST — read THIS first) <<<
+
+OWNER APPROVED (this turn) the strategic recommendation: **CONVERGE, don't add.** The bottleneck is no longer a
+missing mechanism — it is FRAGMENTATION (many validated pieces in separate demos on partly-different substrates)
++ the absence of an honest end-to-end measurement. Two framing facts: (1) fluent generation from-scratch
+biology-faithful is a documented wall, so the deliverable is the composition/memory/trust half (capabilities
+instrumental; honest characterization is the science); (2) phasor FHRR is de-risked as the unified substrate
+candidate (diversity + nesting + the learning analog).
+
+THE WORK: build ONE coherent, honestly-benchmarked agent on ONE committed substrate (phasor FHRR). The
+NestedCompositionAgent ALREADY unifies compose + who/what Q&A + abstain + dialogue and accepts `external_codes`
+(learned, from PhasorAssociativeMemory). So the new module is a BENCHMARK HARNESS + frozen conversational test
+set, not a new mechanism.
+
+>>> STANDING DIRECTIVE (owner 2026-06-04): when NO higher-priority work remains, remove remaining
+cheats/shortcuts to return the sim to a **pure-biology-backed state**. Honest backlog (the explicit ledger):
+`research/findings/2026-06-04-pure-biology-cheat-removal-backlog.md` (7 items: algebra-not-spikes, BG stand-in,
+commanded-not-learned binding, ungrounded codes, phasor-as-hypothesis, transformer-teacher baseline, older nav
+cheats). Rule when worked: a capability that only survived WITH a shortcut and honestly fails without it IS the
+finding; never quietly keep a shortcut to preserve a number.
+
+>>> EXACT NEXT CONCRETE ACTION: build `research/runners/unified_agent_benchmark.py` —
+  (1) constructed-codes mode FIRST (cheap, the validated path): NestedCompositionAgent at 320-concept scale,
+      a FROZEN conversational test set (flat / 1-attr / 2-attr / clause facts + what/who queries + abstention
+      probes), multi-seed 42–46, per-category pass-rate + honest boundary report. Formalizes the 48%→100%
+      claim into a rigorous frozen multi-seed benchmark.
+  (2) grounded-codes mode SECOND (the honest extension + cheat-backlog item #4): cheap probe of
+      PhasorAssociativeMemory recall fidelity at 320 concepts; if it holds, feed grounded recall → compose and
+      re-measure (does grounded-cue recall fidelity degrade composition? — honest, either way).
+  + a smoke test `tests/test_unified_agent_benchmark.py`. Reuse-by-import only; no protected-module edits.
+  Propagate the result (positive OR negative) to both remotes.
 
 ## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<
 
