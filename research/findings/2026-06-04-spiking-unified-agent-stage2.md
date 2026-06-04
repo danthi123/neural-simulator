@@ -136,11 +136,15 @@ Remaining: the full-320 / resonate-and-fire scale-up on GPU (the reserved-GPU ru
 
 ## Verdict
 
-**Stages 2a + 2b + 2c + 3 SHIPPED.** The unified agent runs in genuine spikes and reproduces the numpy benchmark
-**category-for-category**: the robust core (flat / who / abstain) at 100% on BOTH the engineering-scaffold
-substrate AND the biological resonate-and-fire neuron model + attractor cleanup; and the **FULL benchmark**
-(flat + one-attribute + two-attribute + depth-1 clause + who + abstain) at **72/72 = 100%** (2 seeds, N_dim=2048)
-on the scaffold substrate. The brain analogue does fact memory, one- and two-attribute composition, embedded
-clauses, who/what Q&A, and the no-confabulation moat (as a basin-of-attraction property) — entirely in spikes.
-Each stage gated by the same benchmark. Remaining: the full-320 + resonate-and-fire scale-up on GPU (the
-reserved-GPU run); depth-2 clause-in-clause is the documented ceiling in both the numpy and spiking agents.
+**Stages 2a + 2b + 2c + 3 (3a/3b/3c) SHIPPED.** The unified agent runs in genuine spikes and reproduces the numpy
+benchmark **category-for-category, on BOTH substrates**:
+- **Engineering-scaffold substrate** (Orchard integrator neurons), full 320-concept vocab: the FULL benchmark
+  (flat + one-attribute + two-attribute + depth-1 clause + who + abstain) = **72/72 = 100%** (2 seeds, N_dim=2048).
+- **Biological resonate-and-fire substrate** (Izhikevich/Frady-Sommer neurons + `ResonateFireTPAM` attractor
+  cleanup), core vocab: the FULL benchmark = **36/36 = 100%** (`_rf_unified_agent_probe.py`, stage 3c).
+
+The brain analogue does fact memory, one- and two-attribute composition, embedded clauses, who/what Q&A, and the
+no-confabulation moat (as a basin-of-attraction property) — entirely in spikes, on the genuine biological neuron
+model. Each stage gated by the same benchmark. Remaining: the GPU/CuPy scale-up of the resonate-and-fire
+substrate to full-320 (currently slow on CPU — the reserved-GPU run); depth-2 clause-in-clause is the documented
+ceiling in both the numpy and spiking agents.

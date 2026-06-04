@@ -1,0 +1,33 @@
+{
+  "res": {
+    "flat": [
+      8,
+      8
+    ],
+    "1-attribute": [
+      6,
+      6
+    ],
+    "2-attribute": [
+      5,
+      5
+    ],
+    "clause-depth1": [
+      5,
+      5
+    ],
+    "who-query": [
+      6,
+      6
+    ],
+    "abstain": [
+      6,
+      6
+    ]
+  },
+  "overall": [
+    36,
+    36
+  ],
+  "verdict": "RESOLVES"
+}
