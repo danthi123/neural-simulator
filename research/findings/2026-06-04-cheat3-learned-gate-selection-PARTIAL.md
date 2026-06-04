@@ -76,16 +76,38 @@ neurons the learned-magnitude weight fires the high-rheobase MSN-D1, which silen
 thalamic relay, and routes to the motor — the genuine #2 disinhibition cascade completing from the cue alone, no
 direct current. This is consistent with the validated Tier-1 word→action recipe (500-1000 neuron pools).
 
-The full multi-seed close (retrain at `--n-verb 500`, true + permuted-teacher anti-cheat) runs via
-`gated_compose_bg_learned_demo.py --n-verb 500` (the demo now supports the scaled cue pool). If the LEARNED weight
-at scale reproduces the cascade with the permuted-teacher control passing, #3 moves PARTIAL → RESOLVED.
+## Full multi-binding close — HONEST NEGATIVE (the single-binding cascade fires, the 16-binding selection does not)
+
+The full retrain at `--n-verb 500` (3 seeds, true + permuted-teacher anti-cheat,
+`research/findings/raw/cheat3_close_nverb500.txt`) is a **NEGATIVE**:
+
+```
+TRUE teacher:      seed 42/43/44 = 1/4 each  ->  3/12   [GO->N(ok) COME->N(X) STOP->N(X) LOOK->N(X)]
+PERMUTED teacher:  TRUE-label hits 3/12 (=chance),  PERMUTED-label hits 3/12 (=chance)
+=> NEEDS TUNING / NOT YET LEARNED
+```
+
+Every verb routes to **N** regardless of the teacher (true AND permuted both 3/12 = chance) — GO→N is correct
+only by coincidence with the bias. So scaling the cue pool fired the single-binding cascade in ISOLATION (the
+cheap-first probe above) but did NOT close the full 16-binding selection: it collapses to the **structural N-bias**.
+
+Why: with 16 gated `verb_V → motor_M` routes and 500-neuron cue pools, the motor decode is dominated by one pool
+(N) — partially-open / leaky gates plus the random-init structural favouring of N let `motor_N` win even when the
+correct `d1_COME_S → ... → g_COME_S` cascade is the trained one. This is exactly the project's long-documented
+**structural-N-bias / silent-motor-trap** (the reason Phase B replaced reservoir+argmax with the per-action BG
+cascade, and the reason motor WTA / FS lateral inhibition exists): a multi-action selector with a dominant-motor
+bias is NOT fixed by more presynaptic drive — it needs cross-pool **winner-take-all** (FS lateral inhibition
+between motor pools, or one-gate-open enforcement) so a single binding wins cleanly. Pool scaling addresses the
+DRIVE wall (real, cheap-first confirmed) but not the SELECTION-arbitration wall.
 
 ## Honest status
 
-- LEARNING (the hard, scientific part): **validated** — selective cortico-striatal STDP.
-- END-TO-END routing: **de-risked + closing** — the gap was drive magnitude; a Tier-1-scale (≥300) cue pool fires
-  the MSN-D1 cascade synaptically at the learned weight (cheap-first confirmed). The scaled multi-seed retrain +
-  permuted-teacher anti-cheat is the final confirmation.
+- LEARNING (the hard, scientific part): **validated** — selective cortico-striatal STDP (correct verb→D1 grows).
+- Single-binding cascade at scale: **fires** (cheap-first isolation; the drive wall is closed by ≥300 cue neurons).
+- FULL multi-binding end-to-end: **HONEST NEGATIVE** — collapses to the structural N-bias (3/12, true == permuted
+  == chance). The remaining blocker is selection arbitration (motor WTA / FS lateral inhibition), the documented
+  fix for the N-bias — NOT drive magnitude, and NOT addressed by pool scaling. This is the deliverable: the close
+  honestly fails without the WTA arbitration, which localizes exactly what #3's genuine end-to-end requires next.
 
 ## Files
 

@@ -85,15 +85,27 @@ level (earlier). Reusable findings: inhibition needs physiological weight scale;
 doesn't advance the clock; `external_codes` are phase-angles not phasors; composition needs decorrelated (IT-level)
 codes, retrieval rides on early sensory features.
 
->>> EXACT NEXT CONCRETE ACTION (owner-steerable): (A) CLOSE #3 end-to-end — scale the learned-selection
-presynaptic pools to the validated Tier-1 recipe (500-1000 neurons + motor FS) so the learned cue fires the
-high-rheobase MSN-D1 synaptically, then run the multi-seed + permuted-teacher anti-cheat already coded in
-`gated_compose_bg_learned_demo._eval`; OR (D) return to the converge-not-add composition agent (the top-line
-conversational goal — cheat-removal was the "no higher-priority work remains" backlog). Recommend (D): the
-cheat-removal backlog's active-composition items are now all resolved or scoped, so the top-line goal is the
-highest value. HARD RULES: GPU/CuPy for real runs (numpy ok for tiny smokes); honest propagation of EVERY outcome
-(incl. negative) to BOTH remotes; never weaken frozen bars or the no-confab moat; a capability that only survives
-WITH a shortcut and honestly fails without it IS the finding; never end a turn on a future-tense promise.
+>>> (A) #3 CLOSE — two-part result: DRIVE wall closed (cheap-first), SELECTION-arbitration wall = HONEST NEGATIVE.
+Cheap-first `_msn_synaptic_drive_probe`: a cue pool >=300 neurons (silent at 30/100) fires the high-rheobase MSN-D1
+at the learned weight (16) → GPi silenced 0.28→0.06 → thal released → motor routes (the genuine #2 cascade from the
+cue alone, single binding in isolation). BUT the FULL multi-seed retrain (`gated_compose_bg_learned_demo.py
+--n-verb 500`, `research/findings/raw/cheat3_close_nverb500.txt`) is a **NEGATIVE**: TRUE 3/12 AND PERMUTED 3/12
+(both = chance) — every verb routes to the structural-N-bias motor regardless of the teacher. So pool scaling
+closes the DRIVE wall but NOT the multi-binding SELECTION-ARBITRATION wall: with 16 gated routes + a dominant-N
+random bias, the motor decode collapses to N (the documented silent-motor-trap / structural-N-bias). The localized
+remaining fix is motor WTA / FS lateral inhibition (the documented N-bias fix — Phase B replaced reservoir+argmax
+with the per-action BG cascade for exactly this; FS lateral inhibition between motor pools enforces one-binding-
+wins), NOT more drive. #3 stays PARTIAL (learning validated + single-binding cascade fires; full multi-binding
+end-to-end honestly fails without WTA arbitration — the deliverable). Findings updated; committed both remotes.
+
+>>> EXACT NEXT CONCRETE ACTION (owner-steerable): after the #3 close retrain lands + is finalized → (D) return to
+the converge-not-add composition agent (the top-line conversational goal; cheat-removal was the "no higher-priority
+work remains" backlog, now all resolved/scoped). (D) is open-ended/strategic (months-scale) → best steered by the
+owner; candidate bounded steps: feed grounded codes into the SPIKING unified agent (unify the spiking + grounding
+threads end-to-end), or a richer multi-turn conversational demo, or revisit the clause-depth2 ceiling. HARD RULES:
+GPU/CuPy for real runs (numpy ok for tiny smokes); honest propagation of EVERY outcome (incl. negative) to BOTH
+remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and
+honestly fails without it IS the finding; never end a turn on a future-tense promise.
 
 ## >>> UNIFIED-AGENT BENCHMARK ARC (2026-06-04, earlier — read THIS first) <<<
 
