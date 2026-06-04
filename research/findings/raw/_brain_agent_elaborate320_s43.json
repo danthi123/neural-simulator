@@ -1,0 +1,48 @@
+{
+  "seed": 43,
+  "vocab": 320,
+  "on_topic": 4,
+  "total": 4,
+  "results": [
+    {
+      "topic": "c000",
+      "elaborate": "c010",
+      "neighbors": [
+        "c010",
+        "c020",
+        "c021"
+      ],
+      "on_topic": true
+    },
+    {
+      "topic": "c001",
+      "elaborate": "c011",
+      "neighbors": [
+        "c011",
+        "c022",
+        "c023"
+      ],
+      "on_topic": true
+    },
+    {
+      "topic": "c002",
+      "elaborate": "c024",
+      "neighbors": [
+        "c012",
+        "c024",
+        "c025"
+      ],
+      "on_topic": true
+    },
+    {
+      "topic": "c003",
+      "elaborate": "c013",
+      "neighbors": [
+        "c013",
+        "c026",
+        "c027"
+      ],
+      "on_topic": true
+    }
+  ]
+}

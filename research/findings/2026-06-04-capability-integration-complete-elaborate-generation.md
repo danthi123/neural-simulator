@@ -11,8 +11,8 @@ numpy simulator: comprehend → store → recall (who/what) → abstain → nega
 - **`elaborate` validated at V=320** (`_brain_agent_elaborate320_probe.py`): with the agent built on the production
   320-concept codes and a connected set of stored facts, `elaborate(topic)` returns an **on-topic associate** — and
   not just any neighbor, the **strongest** one (the concept that co-occurs most with the topic), chosen by the dlPFC
-  spiking content-selection Control (`SpikingSpreadingController`, a real 2-region `SimulationBridge`). Seed 42: 4/4.
-  (`elaborate` spreads over the association graph built from the agent's own facts, so its difficulty tracks the
+  spiking content-selection Control (`SpikingSpreadingController`, a real 2-region `SimulationBridge`). **Seeds
+  42/43/44: 4/4 each** (multi-seed). (`elaborate` spreads over the association graph built from the agent's own facts, so its difficulty tracks the
   number of facts, not the vocabulary size — this confirms the capability is wired and working in the consolidated
   agent.)
 - **`elaborate` first-classed:** the dlPFC Control is now built lazily and **cached**, rebuilt only when the
