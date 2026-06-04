@@ -1,11 +1,25 @@
-# One-bridge unification step 1 — capability gate: robust core PRESERVED, two-attribute regresses at the marginal D — 2026-06-04
+# One-bridge unification step 1 DONE — NO capability regression at the production dimension D=2048 — 2026-06-04
 
-**One line:** Task 6 (the no-regression gate) at production scale, multi-seed (42/43/44), comparing the UNIFIED
-one-bridge agent to the SEPARATE two-bridge baseline on the real `denoise64` codes: the **robust core (flat fact /
-one-attribute / negation / comprehension) is preserved** on the merged bridge; **two-attribute — the K=5
-capacity-edge category, already a documented seed-variable boundary — regresses ~1 trial mean** at the marginal
-`proj_dim=800`. A re-run at the stage-1.5 production dimension `D=2048` (where two-attribute has dimensional
-headroom) is in flight to test whether the regression is a marginal-D artifact.
+**One line:** Task 6 (the no-regression gate), multi-seed (42/43/44), UNIFIED one-bridge vs SEPARATE two-bridge on
+the real `denoise64` codes. At the production dimension **D=2048 there is NO regression** — every category (flat /
+one-attribute / two-attribute / negation) is identical on the unified and separate bridges (all 6/6, 12/12, all
+seeds) and the parser comprehends voice-invariantly on the merged bridge. The two-attribute drop seen at the
+marginal `D=800` was exactly the predicted marginal-regime artifact (two-attribute is the K=5 capacity-edge; at D=800
+even the separate baseline is seed-variable 6/4/3, at D=2048 it is robust 6/6/6 with headroom to absorb the
+shared-bridge perturbation). **Step 1 of one-bridge unification — the parser + composer on ONE interacting bridge,
+capability-equivalent — is DONE.**
+
+## D=2048 (the production dimension) — NO REGRESSION
+
+| seed | flat | one-attribute | two-attribute | negation | parser |
+|---|---|---|---|---|---|
+| 42 | 6/6 = 6/6 | 6/6 = 6/6 | 6/6 = 6/6 | 12/12 = 12/12 | active dog/go/north, passive agent=dog ✓ |
+| 43 | 6/6 = 6/6 | 6/6 = 6/6 | 6/6 = 6/6 | 12/12 = 12/12 | ✓ |
+| 44 | 6/6 = 6/6 | 6/6 = 6/6 | 6/6 = 6/6 | 12/12 = 12/12 | ✓ |
+
+Every category within ±1 trial (in fact exactly equal) on every seed. This is the gate; step 1 passes it at the
+production dimension. The D=800 result below is retained as the honest record of the marginal regime + the diagnosis
+that led to the (confirmed) dimensional mitigation.
 
 ## Result (proj_dim=800, separate vs unified, 6 trials/category)
 
@@ -34,21 +48,21 @@ this; two-attribute, at the edge, tips at 2/3 seeds.
 
 The principled mitigation is **dimension**: stage 1.5 already decided the production agent runs at **D=2048**, where
 two-attribute resolves even under high code correlation (the dimensional-cost finding). At D=2048 two-attribute has
-headroom that should absorb the shared-bridge perturbation. **Re-run at D=2048 is in flight**
-(`research/findings/raw/_unified_capability_D2048.log`); this finding will be updated with the outcome:
-- If two-attribute is preserved at D=2048 → step 1 has **no regression at the production dimension** (the D=800 drop
-  was a marginal-regime artifact) → step 1 of B is DONE.
-- If it still regresses at D=2048 → the cost is structural (the composer-neuron heterogeneity shift), and the
-  mitigation is per-region seeding (align the composer slice's neuron parameters to its standalone draws) — a real
-  but localized fix, surfaced for the decision.
+headroom that should absorb the shared-bridge perturbation. **CONFIRMED at D=2048 (table at top): NO regression** —
+two-attribute is 6/6 = 6/6 on every seed, so the D=800 drop was exactly the predicted marginal-regime artifact, not
+a structural cost. The dimensional mitigation was already the production decision (stage 1.5), so no new mitigation
+is needed; step 1 runs at D=2048 like the rest of the production agent.
 
 ## Honest framing
 
-Step 1's load-bearing claim — *the parser + composer run on ONE interacting bridge with the core conversational
-capabilities preserved* — is VALIDATED at production scale, multi-seed. The single regression is on the documented
-capacity-edge boundary category at the marginal dimension, with a principled dimensional mitigation in flight. The
-regression is recorded, not hidden; the no-regression test was left honest (it fails on two-attribute at D=800) and
-the heavy multi-seed comparison is the on-demand probe `_unified_bridge_capability_probe.py`.
+Step 1's load-bearing claim — *the parser + composer run on ONE interacting bridge, capability-equivalent* — is
+VALIDATED at the production dimension D=2048, multi-seed, with NO regression in any category. The only blemish (the
+two-attribute drop at the marginal D=800) was an honest, transient artifact of testing below the production
+dimension; it is recorded, not hidden, and resolves at the production D=2048 with no new mitigation needed. The
+heavy multi-seed comparison is the on-demand probe `_unified_bridge_capability_probe.py` (run at D=2048 via the
+skip-by-default test). **Step 1 of (B) one-bridge unification is DONE.** Next: step 2 — the gated synaptic
+parser→composer route (replace the remaining Python role hand-off with the `transmission_gate` route) — pending the
+owner's go-ahead.
 
 ## Files
 - `research/findings/raw/_unified_bridge_capability_probe.py` (the multi-seed unified-vs-separate comparison)

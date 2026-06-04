@@ -9,7 +9,7 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> CURRENT STATUS (2026-06-04, NEWEST — read THIS first): B chosen + designed, AWAITING OWNER APPROVAL <<<
+## >>> CURRENT STATUS (2026-06-04, NEWEST — read THIS first): B STEP 1 DONE (parser+composer on ONE bridge); awaiting go-ahead for step 2 <<<
 
 Post-consolidation spine COMPLETE through item 2 (commits up to b739acb4, all on both remotes): item 1 (capability
 integration — `elaborate` first-classed at V=320, 4/4 multi-seed + generation `describe`; 12/12 on-brain tests);
@@ -36,15 +36,18 @@ Task 6 (capability NO-REGRESSION gate) D=800 DONE (commit d4a8499c, both remotes
 `2026-06-04-one-bridge-unification-step1-capability.md`): ROBUST CORE PRESERVED on the merged bridge — flat /
 one-attribute / negation within ±1 trial every seed + the parser comprehends voice-invariantly (the load-bearing
 claim holds); BUT TWO-ATTRIBUTE (K=5 capacity-edge, documented boundary) REGRESSES ~1 trial mean at the marginal
-D=800 (seed42 6->3, 43 4->2, 44 3->5). Principled mitigation = DIMENSION (stage-1.5 production D=2048, where
-two-attribute has headroom): a D=2048 re-run IS IN FLIGHT (python PID 26140; my waiter is background task bcrlnnbwk;
-log `research/findings/raw/_unified_capability_D2048.log`). ON the D=2048 result: if two-attribute PRESERVED -> step 1
-of B is DONE (the D=800 drop was a marginal-regime artifact) -> update the finding + the test (gate at D=2048, drop
-the skip), surface to owner, STOP for the step-2 [gated synaptic parser->composer route] plan, do NOT auto-start
-step 2. If two-attribute STILL regresses at D=2048 -> the cost is structural (composer-neuron heterogeneity shift at
-the merged-bridge offset 126); mitigation = per-region seeding to align the composer slice; surface for the decision.
-If a watchdog fires while the D=2048 run is in flight (PID 26140 alive, no new Task-6 commit): WAIT, do not duplicate.
-HARD RULES unchanged.
+D=800 (seed42 6->3, 43 4->2, 44 3->5). Principled mitigation = DIMENSION (stage-1.5 production D=2048): the D=2048 re-run is DONE -> **NO REGRESSION**,
+every category 6/6=6/6 + 12/12=12/12 on all 3 seeds, two-attribute fully preserved (the D=800 drop was the predicted
+marginal-regime artifact, not structural). **STEP 1 OF (B) IS DONE** + committed: the parser + composer run on ONE
+interacting SimulationBridge, capability-equivalent at the production dimension D=2048, multi-seed. Finding
+`2026-06-04-one-bridge-unification-step1-capability.md` updated to DONE; the no-regression test gates at D=2048
+(skip-by-default heavy). All committed both remotes.
+>>> EXACT NEXT: step 1 of B is DONE. AWAITING OWNER GO-AHEAD for STEP 2 — the gated synaptic parser->composer route
+(replace the remaining Python role hand-off with the shipped `transmission_gate`: the parser's role-ensemble firing
+OPENS the gate routing a word's code to the selected role's composer bind bank; design
+`docs/plans/2026-06-04-one-bridge-unification-design.md` §4). Do NOT auto-start step 2 (it is the next milestone, per
+the incremental plan + the owner steers milestones). If a watchdog fires with no go-ahead: low-regret hygiene only;
+do NOT start step 2 or re-run the done step-1 gate. HARD RULES unchanged.
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04) <<<
 

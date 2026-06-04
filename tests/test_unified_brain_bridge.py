@@ -388,8 +388,11 @@ def test_unified_capability_no_regression():
     from research.findings.raw._unified_bridge_capability_probe import run_capability_comparison
 
     seeds = (42, 43, 44)
+    # Gate at the PRODUCTION dimension D=2048 (the stage-1.5 decision). At D=2048 there is NO regression in any
+    # category (verified 2026-06-04); the merge is capability-equivalent. (At the marginal D=800 two-attribute, the
+    # K=5 capacity-edge category, drops ~1 trial — a marginal-regime artifact documented in the finding.)
     try:
-        results = run_capability_comparison(seeds=seeds, proj_dim=800, n=6)
+        results = run_capability_comparison(seeds=seeds, proj_dim=2048, n=6)
     except FileNotFoundError:
         pytest.skip("denoise64 concept-code cache not present for one of seeds 42/43/44")
 
