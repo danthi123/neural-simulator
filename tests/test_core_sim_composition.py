@@ -8,7 +8,7 @@ concept-code cache is absent."""
 import numpy as np
 import pytest
 
-from research.runners.core_sim_composition import CoreSimComposer
+from research.runners.core_sim_composition import CoreSimComposer, Clause
 
 
 def _composer(seed=42, proj_dim=800):
@@ -38,6 +38,17 @@ def test_negation_yes_no_on_the_bridge():
     assert c.ask_yes_no("dog", "go", "north") == "yes"
     assert c.ask_yes_no("cat", "come", "south") == "no"
     assert c.ask_yes_no("apple", "stop", "west") == "unknown"
+
+
+def test_clause_recall_on_the_bridge():
+    """An embedded clause as a patient ('dog look (cat go south)') decodes through two levels of spiking
+    bind/unbind, coexisting with flat facts and abstention."""
+    c = _composer()
+    c.store("dog", "look", Clause("cat", "go", "south"))   # clause patient (recursive role-filler)
+    c.store("apple", "stop", "west")                        # flat patient
+    assert c.query_patient("dog", "look") == "cat go south"
+    assert c.query_patient("apple", "stop") == "west"
+    assert c.query_patient("river", "come") is None
 
 
 def test_recovery_rate_clears_frozen_bar():

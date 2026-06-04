@@ -28,7 +28,11 @@ Provenance (ported faithfully; a regression test pins parity to the probe):
 """
 from __future__ import annotations
 import os
+from collections import namedtuple
 import numpy as np
+
+# An embedded clause used as a filler (recursive role-filler structure): "dog look (cat go south)".
+Clause = namedtuple("Clause", ["agent", "action", "patient"])
 
 from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
 from sim.config import CoreSimConfig
@@ -175,41 +179,70 @@ class CoreSimComposer:
         return hadamard_spiking(self.bridge, self.idx, role_vec, fill_on_cur, fill_off_cur,
                                 self.D, self.run_steps, self.coinc_bias)
 
+    def _filler_signed(self, filler):
+        """The signed code to bind for a filler: a concept's code, OR (recursively) the bound vector of an embedded
+        Clause -- so a clause can be a filler (recursive role-filler nesting)."""
+        if isinstance(filler, Clause):
+            cb = self.bind_fact({"agent": filler.agent, "action": filler.action, "patient": filler.patient})
+            return cb[0] - cb[1]
+        return self.concepts[filler]
+
     def bind_fact(self, fact):
-        """Bind sum_role role (x) concept[fact[role]] in spiking; return canonical (ON, OFF). `fact` maps each
-        present role to a concept word (polarity optional)."""
+        """Bind sum_role role (x) filler[fact[role]] in spiking; return canonical (ON, OFF). Each present role's
+        filler is a concept word OR an embedded Clause (recursively bound)."""
         bon = np.zeros(self.D); boff = np.zeros(self.D)
         for role in self.ROLES:
             if role not in fact:
                 continue
-            c_on, c_off = onoff(self.concepts[fact[role]])
+            c_on, c_off = onoff(self._filler_signed(fact[role]))
             fon, foff = _scale_to_current(c_on, c_off, FILL_DRIVE)
             o, f = self._op(self.roles[role], fon, foff)
             bon += o; boff += f
         return onoff(bon - boff)      # ON/OFF opponency (common-mode removal) before storage
 
-    def unbind(self, bound_onoff, role, codebook=None):
-        """Spiking-unbind `role` from a bound (ON, OFF); clean up to the nearest code in `codebook` (default: all
-        concept words). Returns the recovered word."""
-        words = codebook if codebook is not None else self.words
+    def _unbind_onoff(self, bound_onoff, role):
+        """Spiking-unbind `role` from a bound (ON, OFF) -> the recovered filler's (est_ON, est_OFF)."""
         fon, foff = _scale_to_current(bound_onoff[0], bound_onoff[1], FILL_DRIVE)
-        e_on, e_off = self._op(self.roles[role], fon, foff)
+        return self._op(self.roles[role], fon, foff)
+
+    def unbind(self, bound_onoff, role, codebook=None):
+        """Spiking-unbind `role`; clean up to the nearest code in `codebook` (default: all concept words)."""
+        words = codebook if codebook is not None else self.words
+        e_on, e_off = self._unbind_onoff(bound_onoff, role)
         est = e_on - e_off
-        sims = np.array([self.concepts[w] @ est for w in words])
-        return words[int(np.argmax(sims))]
+        return words[int(np.argmax([self.concepts[w] @ est for w in words]))]
+
+    def _render_filler(self, bound_onoff, role, stored):
+        """Decode the filler of `role` from a bound structure, FROM THE SPIKING UNBIND. `stored` is the agent's
+        memory of the filler's structure (a word or a Clause) -- used only to ROUTE flat-cleanup vs recursive
+        clause-decode; the CONTENT is decoded from the substrate. Returns a rendered string."""
+        e_on, e_off = self._unbind_onoff(bound_onoff, role)
+        if isinstance(stored, Clause):
+            rec = onoff(e_on - e_off)                      # the recovered clause-bound vector
+            a = self._render_filler(rec, "agent", stored.agent)
+            ac = self._render_filler(rec, "action", stored.action)
+            pt = self._render_filler(rec, "patient", stored.patient)
+            return f"{a} {ac} {pt}"
+        est = e_on - e_off
+        return self.words[int(np.argmax([self.concepts[w] @ est for w in self.words]))]
 
     # --- conversational API ---
-    def store(self, agent, action, patient, polarity="AFFIRM"):
-        """Learn an SVO fact (optionally with a polarity tag for negation). Stored as its own bound vector."""
-        fact = {"agent": agent, "action": action, "patient": patient, "polarity": polarity}
+    def store(self, agent, action, patient, polarity=None):
+        """Learn an SVO fact. `patient` may be a concept word OR an embedded Clause. `polarity` (AFFIRM/NEGATE) is
+        OPTIONAL: include it only for facts you'll ask yes/no about -- it adds a 4th binding (more superposition
+        load, which the nested-clause dynamic range needs free), so plain facts and clause facts are the lighter
+        K<=3 without it."""
+        fact = {"agent": agent, "action": action, "patient": patient}
+        if polarity is not None:
+            fact["polarity"] = polarity
         self.kb.append((fact, self.bind_fact(fact)))
 
     def query_patient(self, agent, action):
-        """'what does <agent> <action>?' -> the patient of the matching fact; None if no fact's agent matches the
-        cue (abstention -- the no-confab moat)."""
+        """'what does <agent> <action>?' -> the patient of the matching fact (a concept word, or a rendered
+        embedded clause). None if no fact's agent matches the cue (abstention -- the no-confab moat)."""
         for fact, bound in self.kb:
             if self.unbind(bound, "agent") == agent and self.unbind(bound, "action") == action:
-                return self.unbind(bound, "patient")
+                return self._render_filler(bound, "patient", fact["patient"])
         return None
 
     def query_agent(self, action, patient):
