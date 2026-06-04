@@ -9,7 +9,52 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> PURE-BIOLOGY CHEAT-REMOVAL ARC (2026-06-04, NEWEST — read THIS first) <<<
+## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04, NEWEST — read THIS first) <<<
+
+OWNER DIRECTIVE (signed-off plan `docs/plans/2026-06-04-consolidate-conversational-pipeline-onto-core-sim-design.md`):
+"the core sim IS the simulated brain; capabilities realized through it, no bolted-on modules" — consolidate BEFORE
+scaling. ALL 4 PHASES DONE, committed + pushed BOTH remotes (origin 84daa833, gitea synced):
+
+- **Phase 1** `research/runners/core_sim_composition.py` (`CoreSimComposer`): role-filler VSA composition computed by
+  spiking COINCIDENCE NEURONS on a real ~6400-neuron Izhikevich `SimulationBridge` (the ±1 Hadamard
+  bound_ON=AND(role_ON,fill_ON)+AND(role_OFF,fill_OFF), reused for unbind); SVO fact memory + who/what Q&A + abstention
+  (no-confab moat = None when no agent matches) + negation/yes-no (bound polarity tag); concept codes the substrate's
+  own (denoise64). 5 regression tests pin the frozen bars (recovery ≥ 0.80).
+- **Phase 2** `research/runners/brain_conversational_agent.py` (`BrainConversationalAgent`, `BridgeParser`): the FULL
+  conversational loop on the brain — a Hebbian-learned PARSER bridge (comprehension: (word-position × voice) → role,
+  voice-INVARIANT: active "dog go north" + its passive frame assign the same agent) + the composer + recursive CLAUSES
+  ("dog look (cat go south)" → "cat go south") + DIALOGUE PLANNING (`elaborate(topic)` via the dlPFC spiking
+  content-selection Control over an association graph from the agent's OWN facts). 5 on-brain tests pass. NO bolted-on
+  numpy simulator anywhere in the path.
+- **Phase 3** attributes (the one gap), honest 3-state: the ±1 coincidence scheme can't invertibly bind two concept
+  codes (adj⊗noun) → feature-binding ATTRIBUTE role-tag. 1-ATTRIBUTE RESOLVES ("cat go (big apple)" → "big apple");
+  2-ATTRIBUTE is a documented K=5-load BOUNDARY (adjectives recover, noun degrades at the bind-capacity edge ~0.93,
+  liftable with higher D); the FHRR resonator's general multi-attribute FACTORING stays a numpy reference.
+- **Phase 4** retired the bolted-on numpy phasor sims: `spiking_phasor_fhrr.py` + `resonate_fire_fhrr.py` carry a
+  NUMPY-REFERENCE header (retained as the FHRR validation ceiling, NOT deleted); capability_status.json n=115 tier +
+  pillar + CLAUDE.md section point production at the brain agent; doc-drift counts synced (tests 271, findings 589).
+
+10 on-brain regression tests pass (`tests/test_core_sim_composition.py` 5 + `tests/test_brain_conversational_agent.py`
+5; both build a real bridge, skip gracefully if the denoise64 cache is absent). Finding
+`2026-06-04-conversational-pipeline-consolidated-onto-core-sim.md`; audit
+`2026-06-04-conversational-pipeline-substrate-audit.md`. Reuse-by-import; NO protected sim-core edits; no-confab moat
+preserved; NO bar change.
+
+>>> EXACT NEXT CONCRETE ACTION: the consolidation arc is COMPLETE — SURFACE the completion to the owner and AWAIT the
+steer on the deferred SCALING work (the owner explicitly placed consolidation "before moving to other tasks like
+scaling"). The months-scale scaling directions, owner-steerable: (A) production scaling beyond 320 via the
+sparse-distributed G.20 multi-bridge (per-bridge ≤320 = full capability on the brain agent, linear cross-bridge);
+(B) the dialogue-planning layer fully wired into ONE bridge with all regions (vs the current orchestrated three
+bridges); (C) deeper sensory grounding (the project's real V1→V2→IT stack vs the ZCA stand-in); (D) owner-chosen.
+If the owner has NOT yet been surfaced this completion, the next action is to surface it. If the watchdog fires with
+no owner steer, do NOT auto-start a months-scale scaling commitment — instead do honest in-scope polish: the v=16→320
+brain-agent scale-up is the smallest concrete next step (extend `CoreSimComposer`/`BrainConversationalAgent` to the
+sparse-distributed concept codes, multi-seed, honest BOUNDARY surfaced) and is consistent with "probe-scale first →
+production scale." HARD RULES: GPU/CuPy for real runs (numpy only for tiny smoke); honest propagation of EVERY outcome
+(incl. negative) to BOTH remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH
+a shortcut and honestly fails without it IS the finding; never end a turn on a future-tense promise.
+
+## >>> PURE-BIOLOGY CHEAT-REMOVAL ARC (2026-06-04) <<<
 
 OWNER (2026-06-04): "handle 2 and 3 then 4 in this session" from the cheat-removal backlog
 (`2026-06-04-pure-biology-cheat-removal-backlog.md`); making the gating arc genuine = wiring into the core sim,
