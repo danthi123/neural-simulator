@@ -116,14 +116,92 @@ def build_unified_bridge(seed=42, proj_dim=64):
 
 
 class UnifiedBrainBridge:
-    """The parser and composer on ONE shared SimulationBridge (step 1 skeleton in Task 2; both regions wired
-    + the agent API exposed in Task 5). `parser_slice` is the parser's neuron index range (0..125);
-    `composer_offset` is the first composer neuron index (126). `self.bridge` is the single shared bridge."""
+    """The PARSER and COMPOSER on ONE shared SimulationBridge — their neurons as disjoint index slices.
+    `parser_slice` is the parser's neuron index range (0..125); `composer_offset` is the first composer neuron
+    index (126); `self.bridge` is the single shared bridge that holds both regions.
 
-    def __init__(self, seed=42, proj_dim=64):
+    The conversational API the `BrainConversationalAgent` uses is delegated here (`parse`, `store`,
+    `query_patient`, `query_agent`, `ask_yes_no`, `describe`, `render_fact`), plus the read-through attributes
+    `kb`, `words`, `concepts`. Dialogue planning (`elaborate`) stays on its own dlPFC bridge for now — out of
+    scope until step 3.
+
+    Build ORDER is load-bearing (see `merge_population_into_shared_bridge`): the composer's FIXED `"bind"`
+    population is wired first, then the parser's plastic `"parse"` population (each wiring re-injects the
+    accumulated union, resetting every weight to its DESIGN value), and the parser is TRAINED LAST. Training is
+    deferred (`defer_train=True`) so it runs after all populations are wired — a later re-injection would
+    otherwise reset the trained `"parse"` weights. The composer's gated bind weights stay frozen throughout
+    (plasticity gain 0.0), so the parser's global-Hebbian training cannot drift them (Task 1 isolation)."""
+
+    def __init__(self, seed=42, proj_dim=64, concepts=None):
+        """`concepts` (optional): a {word: code} codebook for the composer. When None, the composer loads its
+        default substrate `denoise64` concept codes (requires the cache; raises FileNotFoundError if absent).
+        Passing a small synthetic codebook keeps a unit build cache-independent."""
+        # Defer the import to here to avoid a construction-time import cycle (these modules import this one
+        # for `merge_population_into_shared_bridge`).
+        from research.runners.brain_conversational_agent import BridgeParser
+        from research.runners.core_sim_composition import CoreSimComposer
+
         self.seed = int(seed)
         self.proj_dim = int(proj_dim)
         self.bridge = build_unified_bridge(seed=self.seed, proj_dim=self.proj_dim)
         self.parser_slice = range(0, PARSER_SLICE_SIZE)     # 0..125
         self.composer_offset = PARSER_SLICE_SIZE            # 126
-        # Region wiring (parser + composer) is added in Task 5.
+
+        # 1) Composer first: wire the FIXED "bind" coincidence population at the offset (gated to 0.0).
+        self.composer = CoreSimComposer(seed=self.seed, proj_dim=self.proj_dim, concepts=concepts,
+                                        shared_bridge=self.bridge, index_offset=self.composer_offset)
+        # 2) Parser next: wire the plastic "parse" population at offset 0; DEFER training (re-injection above/here
+        #    resets weights, so we train only once everything is wired).
+        self.parser = BridgeParser(seed=self.seed, shared_bridge=self.bridge, index_offset=0, defer_train=True)
+        # 3) Train the parser LAST — no further wiring/re-injection follows, so the trained weights persist; the
+        #    gated composer bind weights stay frozen under this global-Hebbian training (Task 1 isolation).
+        self.parser.train()
+
+    # --- read-through attributes the agent reads ---
+    @property
+    def kb(self):
+        return self.composer.kb
+
+    @kb.setter
+    def kb(self, value):
+        self.composer.kb = value
+
+    @property
+    def words(self):
+        return self.composer.words
+
+    @property
+    def concepts(self):
+        return self.composer.concepts
+
+    # --- delegated conversational API (comprehend → store/recall/compose on the ONE shared bridge) ---
+    def parse(self, sentence, voice="active"):
+        """Comprehend an SVO sentence -> {role: word}. Accepts a string ('dog go north') or a 3-word list."""
+        words = sentence.split() if isinstance(sentence, str) else list(sentence)
+        return self.parser.parse(words, voice)
+
+    def store(self, agent, action, patient, polarity=None):
+        """Store an SVO fact in the composer's spiking memory (patient may be a concept, an attributed entity,
+        or an embedded Clause; `polarity` AFFIRM/NEGATE is optional for yes/no facts)."""
+        return self.composer.store(agent, action, patient, polarity=polarity)
+
+    def query_patient(self, agent, action):
+        """'what does <agent> <action>?' -> patient, or None (abstention)."""
+        return self.composer.query_patient(agent, action)
+
+    def query_agent(self, action, patient):
+        """'who <action> <patient>?' -> agent, or None."""
+        return self.composer.query_agent(action, patient)
+
+    def ask_yes_no(self, agent, action, patient):
+        """'does <agent> <action> <patient>?' -> 'yes'/'no'/'unknown' via the bound polarity tag."""
+        return self.composer.ask_yes_no(agent, action, patient)
+
+    def render_fact(self, agent):
+        """Generation: render a stored sentence whose agent matches `agent` (decoded from the spiking unbind),
+        or None if no fact's agent matches (the no-confab moat)."""
+        return self.composer.render_fact(agent)
+
+    def describe(self, agent):
+        """Alias of render_fact (matches BrainConversationalAgent.describe)."""
+        return self.composer.render_fact(agent)
