@@ -50,10 +50,16 @@ ZERO route-weight change (thalamocortical: re-bind = which gate opens, not which
 Task-2 note: the public `couple_gate_to_pool(gate, REGION_NAME)` needs the brain-region framework, but the unified
 bridge uses raw inject_explicit_wiring indices -> couple via raw indices (write the `bridge._gate_couplings` dict shape
 that `_apply_gate_couplings` reads, with the parser's raw role_idx indices) -- a runner-side helper, NOT a sim/ edit.
-CONTINUING Task 2 (hear_synaptic: 3 gated routes role_pattern[R] -> composer role bank gated by parser ensemble[R];
-word code -> fill bank; accumulate across the 3 words; bind -- replacing the Python {role:word} hand-off) then Task 3
-(no-regression gate at D=2048 via the synaptic route). Each: fresh subagent, controller trust-but-verify. If a
-watchdog fires: continue the next unstarted step-2 task (check git log). HARD RULES unchanged.
+Task 2 DONE (commit 2a44caff, verified): `UnifiedBrainBridge.hear_synaptic` reproduces the Python parse+store path --
+comprehension ROUTES COMPOSITION IN SPIKES via the gated route (query_patient/who/abstain parity, voice-invariant,
+no-confab moat preserved; NO sim/ edits; opt-in `enable_synaptic_route`, 3 per-role `role_src` pools topographically
+gated by the parser ensembles, routes plasticity-gated 0.0 + wired before training; `couple_gate_to_indices` runner
+helper for the raw-index coupling). Task 3 (heavy D=2048 multi-seed no-regression gate: the hear_synaptic FLAT-SVO
+route vs Python parse+store -- the synaptic route only affects SVO comprehension; attribute/clause/negation use
+composer.store directly, unchanged) IS IN FLIGHT (background subagent). ON Task 3: PASS -> STEP 2 DONE (the
+parser->composer hand-off is synaptic) -> write `2026-06-04-one-bridge-unification-step2-DONE.md`, surface to owner,
+STOP for the step-3 [dlPFC merge, dt=0.5+NMDA hard case] decision, do NOT auto-start step 3. REGRESSION -> honest
+finding + decide. If a watchdog fires while Task 3 in flight: WAIT, do not duplicate. HARD RULES unchanged.
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04) <<<
 
