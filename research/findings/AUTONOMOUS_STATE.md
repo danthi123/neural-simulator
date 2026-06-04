@@ -39,13 +39,21 @@ FULL-AGENT HEADLINE: 320-concept agent ~48% -> **100% (120/120 mixed nested fact
 perfect (flat/1-attr/2-attr/clause), at DEFAULT D=2048. 38 tests green + new regression test. Biologically =
 predictive subtraction (predictive coding). Note: all phasor/composition code is NUMPY/CPU by design (no GPU);
 GPU only for spiking-bridge validation or training.
->>> EXACT NEXT: (a) read crosstalk-subtraction probe result; if it lifts 320 two-attr/clause 0->high, integrate
-into NestedCompositionAgent.query_patient (subtract decoded agent+action role-bindings before unbinding the
-patient) + multi-seed test. (b) Then the BIG lever: THALAMOCORTICAL GATING cheap-first H1 (Track 2) -- the
-2-role x 2-filler reduced model + a per-pathway multiplicative transmission-gate primitive (bridge change);
-deterministic variable binding vs seed-fragile grown weights, scored with the permuted-mapping anti-cheat.
-(c) Track 3 assembly-generation reframe + grammar-over-composition as the conversational artifact. Honest:
-spiking-faithful not fully-biological; phasor binding is a hypothesis; fluent generation is a documented wall.
+>>> TRACK 2 H1 DONE = RESOLVES (toy gate-keeper). `_thalamocortical_gating_H1_probe.py` (4 roles x 4 fillers,
+re-binding, 3 seeds): multiplicative gate latest-binding 1.000 vs grown weights 0.695 (can't re-bind on
+command). HONEST: near-tautological principle-check (gate reflects command by construction) = gate-keeper NOT
+proof. Justifies the real build.
+>>> EXACT NEXT (the BIG owner-steerable build, multi-hour, touches the spiking bridge): integrate a PER-PATHWAY
+MULTIPLICATIVE TRANSMISSION GATE into the spiking g11_bg cascade (cascade ALREADY has gpi->thal->cortex skeleton;
+neuromods have only additive excitability_drive + scalar synaptic_gain -- need a NEW multiplicative gate
+target_type / RegionPathway gate that scales effective synaptic CURRENT, not weight updates -- CLAUDE.md notes
+plasticity gates don't gate current, this is the complementary primitive). Then test on the ACTUAL v16
+verb->motor compose problem (the binding that "went silent" with grown weights): does thalamic-gated routing
+bind go->north etc. where STDP-grown weights were seed-fragile (5/20)? Score with the permuted-mapping
+anti-cheat. This is GPU territory (spiking bridge). Options C-level (full low-rank J_cc + sum s_k u_k v_k^T
+gate) for sequencing is the further step. ALSO available: Track 3 (assembly-generation + grammar-over-
+composition conversational artifact, CPU). Honest: spiking-faithful not fully-biological; phasor binding is a
+hypothesis; fluent generation is a documented wall; the toy H1 is a principle-check not the substrate proof.
 
 ## >>> PHASOR FHRR = UNIFIED-SUBSTRATE CANDIDATE (2026-06-03 earlier) <<<
 
