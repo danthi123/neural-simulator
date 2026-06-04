@@ -503,3 +503,77 @@ def test_step2_parser_role_gated_route_is_selective():
     assert res["weight_delta"] < 1e-3, (
         f"synaptic weights changed across the routing conditions ({res['weight_delta']:.6f}) — the route must "
         "re-bind purely via the gates, with no weight change (thalamocortical gating hypothesis).")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Step 2 — Task 2: `UnifiedBrainBridge.hear_synaptic` — comprehend→store via the gated route.
+#
+# This is the real thing Task 1 de-risked. `hear_synaptic(sentence, voice)` comprehends an SVO sentence and
+# STORES the fact via the SYNAPTIC route: for each word, the PARSER's role-ensemble firing opens a transmission
+# gate that routes that role's ±1 pattern into the composer's role bank (role_ON/OFF), while the word's concept
+# code drives the fill bank (role-independent, ungated). The coincidence circuit binds (role ⊗ filler) for the
+# parser-SELECTED role — the role each word binds to is chosen by the parser's SPIKING, NOT by a Python
+# {role: word} dict (which is what the reference `hear`/`store` path uses). After the 3 words, the accumulated
+# (bound_ON, bound_OFF) is the stored fact, appended to the composer's kb so query_patient / query_agent /
+# ask_yes_no / abstention all work unchanged.
+#
+# The PASS bar (the standing gate): the synaptic route reproduces the Python-hand-off path's capability —
+# the SAME fact stored + recalled (who / what / abstain), voice-invariantly, and matching what `u.hear` stores.
+# The synaptic route is NOT weaker than the Python route. A genuine failure to reproduce is an honest finding
+# (research/findings/2026-06-04-step2-hear-synaptic-PARTIAL.md), not a weakened test.
+#
+# SPIKING test on the validated production (CuPy/GPU) backend (the parser's Hebbian convergence + the gate
+# operating point are GPU-validated, not NumPy). Skips gracefully without a GPU backend.
+# ─────────────────────────────────────────────────────────────────────────────
+def test_hear_synaptic_stores_fact_via_gated_route():
+    """`u.hear_synaptic("dog go north")` stores the SVO fact via the parser→gate→composer SYNAPTIC route (no
+    Python {role: word} dict passed to store), and the recall is IDENTICAL to the Python-hand-off `u.hear`:
+
+      * query_patient("dog", "go")  == "north"    (who/what recall through the synaptic-bound fact)
+      * query_agent("go", "north")  == "dog"
+      * query_patient("river", "look") is None    (abstention — the no-confab moat, preserved)
+      * voice-invariance: the passive frame stores the SAME fact (agent still "dog", recall identical)
+      * parity: a sibling bridge that stored the SAME sentence via the Python `hear` path recalls the same
+        patient/agent — the synaptic route is not weaker than the Python route.
+    """
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("hear_synaptic is a SPIKING test; run on the validated CuPy/GPU backend (the parser's "
+                    "Hebbian convergence + gate operating point are GPU-validated, not NumPy).")
+
+    from research.runners.unified_brain_bridge import UnifiedBrainBridge
+
+    proj_dim = 64
+    concepts = _synthetic_concepts(proj_dim)
+
+    # The synaptic-route bridge (opt-in: wires the parser→gate→composer routes before training).
+    u = UnifiedBrainBridge(seed=42, proj_dim=proj_dim, concepts=concepts, enable_synaptic_route=True)
+
+    # --- Comprehend + store via the SYNAPTIC route (active voice). NO Python {role: word} dict is passed. ---
+    u.hear_synaptic("dog go north")
+    assert u.query_patient("dog", "go") == "north", (
+        "synaptic-route store→recall failed: what does dog go? should be 'north'. The parser-gated role drive "
+        "did not bind the fact as the Python path does.")
+    assert u.query_agent("go", "north") == "dog", "synaptic-route recall: who go north? should be 'dog'."
+    # Abstention preserved: an unstored cue returns None (the no-confab moat must survive the synaptic route).
+    assert u.query_patient("river", "look") is None, (
+        "synaptic-route abstention broke: an unstored (river, look) cue must return None (no confabulation).")
+
+    # --- Voice-invariance: the PASSIVE frame stores the SAME fact via the synaptic route. ---
+    u2 = UnifiedBrainBridge(seed=42, proj_dim=proj_dim, concepts=concepts, enable_synaptic_route=True)
+    u2.hear_synaptic("north go dog", voice="passive")   # passive frame of "dog go north"
+    assert u2.query_patient("dog", "go") == "north", (
+        "voice-invariance broke on the synaptic route: the passive frame must store the same fact "
+        "(agent 'dog', patient 'north').")
+    assert u2.query_agent("go", "north") == "dog"
+
+    # --- Parity with the Python hand-off path: a sibling bridge storing the SAME sentence via the Python
+    #     {role: word} hand-off (`parse` → `store`, the regression oracle that `BrainConversationalAgent.hear`
+    #     uses) must recall the same patient/agent. The synaptic route is not weaker than the Python route. ---
+    u_ref = UnifiedBrainBridge(seed=42, proj_dim=proj_dim, concepts=concepts)
+    roles_ref = u_ref.parse("dog go north")                     # Python comprehension → {role: word} dict
+    u_ref.store(roles_ref["agent"], roles_ref["action"], roles_ref["patient"])   # Python hand-off store
+    assert u_ref.query_patient("dog", "go") == u.query_patient("dog", "go") == "north", (
+        "the synaptic route must reproduce the Python hand-off path's patient recall (no regression).")
+    assert u_ref.query_agent("go", "north") == u.query_agent("go", "north") == "dog", (
+        "the synaptic route must reproduce the Python hand-off path's agent recall (no regression).")
