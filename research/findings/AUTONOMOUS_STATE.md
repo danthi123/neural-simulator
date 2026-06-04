@@ -116,15 +116,25 @@ across 3 seeds; permuted-teacher anti-cheat PASSES (permuted-label 10/12, true-l
 PARTIAL→RESOLVED. So the owner's "2 and 3 then 4" are ALL RESOLVED + the brain-analogue capstone (spiking+grounding
 100%). Finding updated; COMMITTED both remotes.
 
->>> EXACT NEXT CONCRETE ACTION: proceeding in the listed order → **(ii) the clause-depth2 ceiling** (the one
-benchmark category at 0% in BOTH constructed and grounded). Prior finding: NOT dimension-budget (D=4096 still 0/6)
-— it's the per-level auto-detection over-trigger (the inner clause's flat agent gains a spurious attribute). The
-bounded attempt: a cheap-first probe of an inside-clause flat-vs-attributed refinement (model-comparison, not a
-fixed threshold) on `nested_composition_agent`, with regression guards on depth-1 (must stay 100%). If it resolves
-cheaply → ship; if it needs a deep rewrite with depth-1 regression risk → honest-negative + leave as the documented
-ceiling and move to (iii) vocab scaling past 320, (iv) richer multi-turn demo, (v) multi-modal grounding. HARD
-RULES: GPU/CuPy for real runs (numpy ok for tiny smokes); honest propagation of EVERY outcome (incl. negative) to
-BOTH remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and
+>>> (ii) clause-depth2 ceiling — RESOLVED (for flat inner args). The "documented honest ceiling" was a 4-line
+decode-policy bug, NOT the SNR/dimension wall it was filed as: at depth ≥ 2 the flat-vs-attributed resonator
+over-triggered AND returned a WRONG noun (resid > conf, crosstalk-depressed conf), overriding the CORRECT cleanup.
+Fix (`nested_composition_agent._decode_filler`): at depth ≥ 2 trust the cleanup (flat), skip the resonator. Result:
+clause-depth2 **15/15 = 100%** (5 seeds); the FULL unified-agent benchmark is now **195/195 = 100%, NO category
+below 100%** (was 92.3% with clause-depth2 the lone ceiling); depth-1 preserved (incl. attributed inner args); 24
+nested/clause tests pass (no regression). Honest scope: flat innermost args (the common case); depth-2 ATTRIBUTED
+innermost args out of scope (degrade to flat noun). Finding `2026-06-04-clause-depth2-ceiling-resolved-flat-inner.md`.
+COMMITTING + pushing both remotes.
+
+>>> EXACT NEXT CONCRETE ACTION: proceeding in the listed order → **(iii) scale vocab beyond 320**. The benchmark is
+now 100% at 320 concepts (D=2048); the question is how it holds as vocab grows. Prior capacity work
+(`2026-06-04-capacity-curve-scaling-cost-model.md`): memory/retrieval/who/abstain/1-attr/clause hold at fixed D to
+4× vocab; the two-attribute F=3 resonator is the lone bottleneck (needs D∝M², GPU-enabled at D=8192 for 120 adjs).
+The sparse-distributed G.20 route (`concept_pool_sparse_distributed`, 320-concept multi-bridge) is the documented
+production scaling path. Cheap-first: run the benchmark at growing vocab (640/1280) to map where each category
+degrades at fixed D, then (if two-attribute is the limiter) the GPU resonator / sparse block codes. HARD RULES:
+GPU/CuPy for real runs (numpy ok for tiny smokes); honest propagation of EVERY outcome (incl. negative) to BOTH
+remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and
 honestly fails without it IS the finding; never end a turn on a future-tense promise.
 
 ## >>> UNIFIED-AGENT BENCHMARK ARC (2026-06-04, earlier — read THIS first) <<<

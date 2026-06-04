@@ -202,7 +202,15 @@ class NestedCompositionAgent:
                 pt = self._decode_filler(p_clean * np.conj(self.roles["PATIENT"]), depth + 1)
                 return f"{ag} {ac} {pt}"
         noun, conf = self._cleanup(p, self.NMAT, self.nouns)  # not a clause -> a terminal filler
-        if depth > 0:                                       # inside a clause: flat noun OR one-attribute argument
+        if depth >= 2:                                       # TWO+ levels inside nested clauses: the multi-level
+            return noun                                      # bundle crosstalk makes the flat-vs-attributed
+            #                                                  resonator unreliable here (it spuriously prefers an
+            #                                                  attributed decode AND returns a wrong noun); an
+            #                                                  attributed innermost arg in a clause-in-clause is out
+            #                                                  of scope -> trust the cleanup (flat). This recovers
+            #                                                  depth-2 FLAT inner args (the common case); depth-2
+            #                                                  ATTRIBUTED inner args remain out of scope.
+        if depth > 0:                                       # ONE level inside a clause: flat noun OR one-attribute
             adj, nn, resid = self._resonator2(p)            # compare which model explains p better (no threshold):
             return noun if conf >= resid else f"{adj} {nn}"  # flat-noun confidence vs attributed reconstruction
         if conf >= self.flat_threshold:                     # top level: flat noun

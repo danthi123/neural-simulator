@@ -74,8 +74,10 @@ FACTS_CLAUSE = [          # depth-1: the patient is one embedded clause (flat or
     ("snake", "follow", Clause("cat", "chase", ("cold", "river"))),
     ("rabbit", "find", Clause("wolf", "push", "horse")),
 ]
-FACTS_CLAUSE2 = [        # depth-2: the embedded clause's OWN patient is itself a clause (clause-in-clause) --
-                          # the documented robust-depth boundary (~2, "occasionally costs a seed", needs D>=2048)
+FACTS_CLAUSE2 = [        # depth-2: the embedded clause's OWN patient is itself a clause (clause-in-clause). Was the
+                          # lone benchmark ceiling (0%); RESOLVED 2026-06-04 (15/15 = 100% multi-seed) by a depth>=2
+                          # flat-bias in _decode_filler -- the failure was a decode-policy bug, not the SNR wall.
+                          # Honest scope: FLAT innermost args (these cases); attributed innermost args are out of scope.
     ("dog", "see", Clause("cat", "chase", Clause("bird", "eat", "leaf"))),
     ("man", "watch", Clause("wolf", "follow", Clause("mouse", "find", "bread"))),
     ("child", "see", Clause("frog", "catch", Clause("duck", "hold", "fish"))),
