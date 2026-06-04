@@ -39,13 +39,20 @@ explicit user stop/pause or a true safety boundary halts work)
   A decorrelating step (ZCA, the visual-grounding fix) is the option if 2-attr-at-0.80 must be recovered.
 B [AFTER] collapse the 3 functional bridges (parser 126n + composer 6400n + dlPFC 2-region) into ONE multi-region
   bridge; turn the Python hand-offs into synaptic RegionPathways. Then nested-sentence parsing (a new capability).
->>> EXACT NEXT CONCRETE ACTION: item-2 INTEGRATION test — decorrelate the captured codebook globally (ZCA on the M concept codes; orthonormalize via
-the Gram G^{-1/2}) in the composer, swap the numpy-argmax cleanup for the spiking matched-filter cleanup on the core
-bridge (`_spiking_cleanup_core_probe` build), and re-run the capability matrix (now possibly at LOWER D, since
-decorrelated codes need less). Decisive gate: does the fully-spiking-cleanup + decorrelated composer PRESERVE the
-capability matrix? A regression IS the measured cost of removing the argmax cheat. Fallback if some correlation must
-be tolerated without full decorrelation: a divisive/subtractive common-mode-removal (normalization) circuit in the
-cleanup. HARD RULES: GPU for real runs (numpy only tiny smoke); honest propagation to BOTH
+>>> EXACT NEXT CONCRETE ACTION: item 2 CONCLUDED (best judgment): the spiking matched-filter cleanup is PERFECT at M=320 on CLEAN cues but on the
+composer's NOISY est (cue-cos 0.35) plateaus at ~0.78 (matched-filter + integration + gain) — full parity needs the
+complete cortical cleanup circuit (decorrelation + temporal integration + divisive normalization), and a sub-parity
+spiking cleanup would REGRESS the validated matrix. DECISION: characterize numpy argmax as a DISCLOSED high-precision
+readout (same category as the already-disclosed bundling/opponency linear ops); bank the biology insight (the
+shortcut maps to 3 concrete cortical mechanisms: decorrelation/integration/normalization); do NOT ship a lossy
+spiking cleanup. The load-bearing nonlinearity (bind/unbind coincidence) is ALREADY spiking. Findings
+`2026-06-04-spine-item2-*` (committed 93963d5d/e809db71/35d81993). Full cortical cleanup circuit = a future sub-project.
+>>> EXACT NEXT (owner offered the choice; I lean MOVE ON, reported it): proceed to item 3 (grounded capture) starting
+with the CHEAP-FIRST decorrelation de-risk — add `decorrelate` (ZCA via Gram G^{-1/2}) to CoreSimComposer + test it on
+the REAL V=16 denoise64 captured codes (cos-0.80): does decorrelating real captured codes PRESERVE Q&A and run at
+LOWER D? Validates the decorrelation linchpin (1.5 + item-2) on real codes before the heavy 320 capture; low-regret
+regardless of the big direction (item 3 grounded capture / B one-bridge / build the cleanup circuit). Owner-steerable
+on the big direction. HARD RULES: GPU for real runs (numpy only tiny smoke); honest propagation to BOTH
 remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and honestly
 fails without it IS the finding; never end a turn on a future-tense promise.
 

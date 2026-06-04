@@ -150,7 +150,8 @@ class CoreSimComposer:
 
     ROLES = ("agent", "action", "patient", "polarity", "attribute", "attribute2")
 
-    def __init__(self, seed=42, proj_dim=800, coinc_bias=DEFAULT_BIAS, run_steps=DEFAULT_RUN_STEPS, concepts=None):
+    def __init__(self, seed=42, proj_dim=800, coinc_bias=DEFAULT_BIAS, run_steps=DEFAULT_RUN_STEPS, concepts=None,
+                 decorrelate=False):
         if concepts is None:
             if not os.path.exists(CACHE % seed):
                 raise FileNotFoundError(f"concept cache missing: {CACHE % seed}")
@@ -160,6 +161,15 @@ class CoreSimComposer:
             self.words = sorted(concepts)
             codes = np.stack([_center(concepts[w]) for w in self.words])
         self.D = codes.shape[1]
+        if decorrelate and codes.shape[0] > 1:
+            # ZCA: orthonormalize the concept codebook (G^{-1/2} @ codes) -> near-zero between-cos. Biologically the
+            # ventral hierarchy's efficient-coding decorrelation; here it makes captured (correlated) codes
+            # composition-/cleanup-ready and lowers the dimensional budget D.
+            g = codes @ codes.T
+            evals, evecs = np.linalg.eigh(g)
+            ginvsqrt = evecs @ np.diag(1.0 / np.sqrt(np.maximum(evals, 1e-9))) @ evecs.T
+            codes = (ginvsqrt @ codes)
+            codes = codes / (np.linalg.norm(codes, axis=1, keepdims=True) + 1e-12)
         self.concepts = {w: codes[i] for i, w in enumerate(self.words)}
         self.coinc_bias = float(coinc_bias)
         self.run_steps = int(run_steps)
