@@ -54,12 +54,20 @@ Task 2 DONE (commit 2a44caff, verified): `UnifiedBrainBridge.hear_synaptic` repr
 comprehension ROUTES COMPOSITION IN SPIKES via the gated route (query_patient/who/abstain parity, voice-invariant,
 no-confab moat preserved; NO sim/ edits; opt-in `enable_synaptic_route`, 3 per-role `role_src` pools topographically
 gated by the parser ensembles, routes plasticity-gated 0.0 + wired before training; `couple_gate_to_indices` runner
-helper for the raw-index coupling). Task 3 (heavy D=2048 multi-seed no-regression gate: the hear_synaptic FLAT-SVO
-route vs Python parse+store -- the synaptic route only affects SVO comprehension; attribute/clause/negation use
-composer.store directly, unchanged) IS IN FLIGHT (background subagent). ON Task 3: PASS -> STEP 2 DONE (the
-parser->composer hand-off is synaptic) -> write `2026-06-04-one-bridge-unification-step2-DONE.md`, surface to owner,
-STOP for the step-3 [dlPFC merge, dt=0.5+NMDA hard case] decision, do NOT auto-start step 3. REGRESSION -> honest
-finding + decide. If a watchdog fires while Task 3 in flight: WAIT, do not duplicate. HARD RULES unchanged.
+helper for the raw-index coupling). Task 3 (heavy D=2048 multi-seed no-regression gate) DONE
+(commit 7036f006): 1-SEED REGRESSION (honest, test fails not weakened) -- seed42 `what` 4/6 vs Python 6/6 (-2);
+seeds 43/44 perfect parity 6/6=6/6. DIAGNOSIS (quantified, finding
+`2026-06-04-one-bridge-unification-step2-synaptic-no-regression-REGRESSION.md`): the parser-coupled transmission gate
+RAMPS from 0 via its EMA over the readout window (gate<0.99 on 102/150 steps, mean 0.320 -> composer role bank fires
+~1/7 of the Python direct-current rate); at the correlated denoise64 codes (between-cos 0.81) the thinner cleanup
+margin tips borderline "come" patients on seed 42. Systematic, not OU. FIX (faithful timing, not magnitude/weakening):
+PRE-WARM the gate -- drive the parser conjunction in a short pre-window so the gate EMA reaches ~1.0 BEFORE the
+composer readout window, so the role bank fires at full rate (biologically correct order: comprehend -> then compose).
+Runner-side change to `_op_synaptic` in unified_brain_bridge.py, NO sim/ edit. CONTROLLER DECISION: apply the
+pre-warm + re-run the Task-3 gate. A mitigation subagent IS IN FLIGHT (applies pre-warm + re-runs D=2048 multi-seed).
+ON its result: RESOLVED (seed42 within +-1) -> STEP 2 DONE -> retitle finding to step2-DONE, update test (now passes),
+surface to owner, STOP for step-3 [dlPFC dt=0.5+NMDA] decision. NOT resolved -> tune pre-warm length / surface. If a
+watchdog fires while it's in flight: WAIT, do not duplicate. HARD RULES unchanged.
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04) <<<
 
