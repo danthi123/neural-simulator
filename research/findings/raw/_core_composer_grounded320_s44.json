@@ -1,0 +1,17 @@
+{
+  "seed": 44,
+  "vocab": 320,
+  "n_pool": 2000,
+  "pattern_size": 100,
+  "proj_dim": 800,
+  "kb_size": 20,
+  "code_source": "G20_sparse_distributed_production",
+  "between_cos_mean": 0.0495821024996881,
+  "between_cos_max": 0.21628372879947394,
+  "what_correct": 20,
+  "who_correct": 20,
+  "abstain_correct": 20,
+  "what_rate": 1.0,
+  "who_rate": 1.0,
+  "abstain_rate": 1.0
+}
