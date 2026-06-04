@@ -1,0 +1,35 @@
+{
+  "seed": 42,
+  "vocab": 320,
+  "code_source": "synthetic_rho_0.80",
+  "proj_dim": 800,
+  "between_cos_mean": 0.8004227963307873,
+  "between_cos_max": 0.8342268907365341,
+  "scores": {
+    "flat": {
+      "correct": 4,
+      "total": 6,
+      "rate": 0.6666666666666666
+    },
+    "one_attr": {
+      "correct": 2,
+      "total": 6,
+      "rate": 0.3333333333333333
+    },
+    "two_attr": {
+      "correct": 2,
+      "total": 6,
+      "rate": 0.3333333333333333
+    },
+    "clause": {
+      "correct": 0,
+      "total": 6,
+      "rate": 0.0
+    },
+    "negation_yesno": {
+      "correct": 9,
+      "total": 12,
+      "rate": 0.75
+    }
+  }
+}

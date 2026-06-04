@@ -11,6 +11,31 @@ explicit user stop/pause or a true safety boundary halts work)
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04, NEWEST — read THIS first) <<<
 
+>>> POST-CONSOLIDATION SPINE (owner approved my proposed order + "proceed following your best judgement"):
+1 [DONE] capability integration — `elaborate` (dialogue planning) first-classed at V=320 (dlPFC Control cached on
+  graph CONTENT not fact-count; 4/4 multi-seed 42/43/44) + GENERATION added (`composer.render_fact`/`agent.describe`,
+  decoded from spikes, abstains on unknown). 12/12 on-brain tests (+2 new). Commits 8e47eec3, ba0b31e7. The whole
+  conversational loop now runs through SimulationBridges, no bolted-on numpy simulator.
+1.5 [IN FLIGHT] de-risk — measured the REAL captured-code correlation: the `denoise64` codes the composer actually
+  uses are cos **~0.80** (mean; max ~0.88), multi-seed — MUCH harder than the cos-0.05 production-SCHEME codes the
+  V=320 capability matrix (rungs 1-3) used. So the "2-attr resolves at 320" result was the EASY end; real captured
+  codes are the hard regime. A synthetic-ρ=0.80 capability matrix (task btavc64rf, D=800 + D=2048) is confirming the
+  PREDICTION that 2-attribute regresses to a boundary under captured correlation (as it did at V=16). Finding
+  `2026-06-04-stage1.5-captured-code-correlation-derisk.md` (drafted, PENDING the ρ=0.80 numbers).
+2 [NEXT] migrate the load-bearing numpy off the composer: CLEANUP (numpy argmax → spiking attractor cleanup;
+  precedents = rf ResonateFireTPAM at full 320 [now numpy-ref] + the validated spiking pattern-completion; MUST work
+  at cos 0.80) then the linear BUNDLING + ON/OFF opponency. Each matrix-gated; a capacity regression IS the
+  deliverable (the measured cost of removing the cheat). Cheap-first small→320.
+3 [THEN] fully-grounded capture (`capture_concept_activity` in vocabulary_scaling_run.py → cos-0.80 codes the
+  substrate's OWN); ONE heavy run on the final spiking-cleanup composer (why 2-before-3: avoids a duplicate heavy run).
+  A decorrelating step (ZCA, the visual-grounding fix) is the option if 2-attr-at-0.80 must be recovered.
+B [AFTER] collapse the 3 functional bridges (parser 126n + composer 6400n + dlPFC 2-region) into ONE multi-region
+  bridge; turn the Python hand-offs into synaptic RegionPathways. Then nested-sentence parsing (a new capability).
+>>> EXACT NEXT CONCRETE ACTION: read task btavc64rf (ρ=0.80 matrix); fill + commit the 1.5 finding; then BEGIN item 2
+(spiking cleanup, cheap-first small→320, matrix-gated). HARD RULES: GPU for real runs (numpy only tiny smoke); honest
+propagation to BOTH remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a
+shortcut and honestly fails without it IS the finding; never end a turn on a future-tense promise.
+
 >>> (A) IN PROGRESS — grounded 320-concept brain agent, rungs 1-3 (all committed both remotes, multi-seed unless noted):
 - rung 1 [DONE] composer at V=320 on the REAL production codes (G.20 sparse-distributed generate_sparse_patterns):
   20-fact relational KB what/who/abstain 20/20 EVERY seed (42/43/44). Findings
