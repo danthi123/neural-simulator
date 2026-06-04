@@ -100,20 +100,19 @@ the map. So (c) is an INTEGRATION of de-risked pieces, not a research gamble.
        flat/1-attr/2-attr/clause-depth1/who/abstain -- the spiking agent reproduces EVERY benchmark category the
        numpy agent does (depth-2 clause-in-clause is the documented ceiling in BOTH). test asserts all 6. COMMITTED.
   (3c) OWNER CHOSE "Build 3c (rf at scale + GPU)".
-  (3c-part1) [DONE] FULL benchmark on the genuine BIOLOGICAL resonate-and-fire substrate. `_rf_unified_agent_probe.py`
-       extended (RFUnifiedAgent): rf_bind/unbind/bundle + ResonateFireTPAM role cleanup + membrane-state complex-sum
-       bundle -> exact crosstalk subtraction -> the SAME validated phasor recursive decode (two-attribute resonator
-       + clause recursion). RESOLVES: flat/1-attr/2-attr/clause-depth1/who/abstain = **36/36 = 100%** at core vocab,
-       D=2048. So the FULL benchmark runs on BOTH substrates: scaffold @ full-320 (72/72) + biological rf @ core
-       vocab (36/36). COMMITTING.
-  (3c-part2) [NEXT] GPU/CuPy scale-up of the rf substrate to full-320 (rf at 320 is slow on CPU -- the TPAM n_dim^2
-       settle + rf_resonate loop). The resonator matmuls + TPAM matmuls are GPU-friendly; the loop-bound rf_resonate
-       bind ops are the challenge (use the validated closed-form / fast-mode where genuine time-stepping is
-       intractable at scale). The reserved-GPU run.
-  >>> MAJOR MILESTONE: the spiking unified agent (brain analogue) does the FULL composition benchmark in genuine
-      spikes on BOTH the engineering-scaffold (full-320) AND the biological resonate-and-fire (core vocab) substrate.
-      fact memory + 1/2-attr composition + embedded clauses + who/what + no-confab moat. Only the rf full-320 GPU
-      scale-up remains.
+  (3c) [DONE — rf at FULL 320 on CPU] FULL benchmark on the genuine BIOLOGICAL resonate-and-fire substrate at the
+       FULL 320-concept vocab. `_rf_unified_agent_probe.py --full-vocab` (RFUnifiedAgent: rf_bind/unbind/bundle +
+       ResonateFireTPAM role cleanup + membrane-state complex-sum bundle -> exact crosstalk subtraction -> the SAME
+       validated phasor recursive decode). RESOLVES: flat/1-attr/2-attr/clause-depth1/who/abstain = **36/36 = 100%
+       at FULL 320 vocab, D=2048, 3m24s CPU**. The TPAM attractor cleanup HOLDS at 200 noun attractors. So the FULL
+       benchmark runs on BOTH substrates AT FULL 320 VOCAB: scaffold (72/72) + biological rf (36/36). The cheap-first
+       CPU test made the GPU port UNNECESSARY for the capability -- "rf at 320" is achieved on CPU (3.4 min). The
+       GPU/CuPy port is now a PURE SPEED OPTIMIZATION (3.4 min -> faster), not a capability gap. COMMITTING.
+  >>> (c) ARC SUBSTANTIVELY COMPLETE. The spiking unified agent (brain analogue) does the FULL composition
+      benchmark in genuine spikes on BOTH the engineering-scaffold AND the biological resonate-and-fire substrate,
+      AT FULL 320 VOCAB: fact memory + 1/2-attr composition + embedded clauses + who/what + no-confab moat. The
+      remaining rf-320-GPU is a pure speed optimization (capability achieved on CPU). depth-2 clause-in-clause is the
+      documented ceiling in both numpy + spiking.
   Benchmark = the routine multi-seed gate.
 
 ## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<

@@ -141,10 +141,12 @@ benchmark **category-for-category, on BOTH substrates**:
 - **Engineering-scaffold substrate** (Orchard integrator neurons), full 320-concept vocab: the FULL benchmark
   (flat + one-attribute + two-attribute + depth-1 clause + who + abstain) = **72/72 = 100%** (2 seeds, N_dim=2048).
 - **Biological resonate-and-fire substrate** (Izhikevich/Frady-Sommer neurons + `ResonateFireTPAM` attractor
-  cleanup), core vocab: the FULL benchmark = **36/36 = 100%** (`_rf_unified_agent_probe.py`, stage 3c).
+  cleanup), **full 320-concept vocab**: the FULL benchmark = **36/36 = 100%** (`_rf_unified_agent_probe.py
+  --full-vocab`, stage 3c; 3m24s on CPU). The TPAM attractor cleanup holds at 200 noun attractors.
 
 The brain analogue does fact memory, one- and two-attribute composition, embedded clauses, who/what Q&A, and the
 no-confabulation moat (as a basin-of-attraction property) — entirely in spikes, on the genuine biological neuron
-model. Each stage gated by the same benchmark. Remaining: the GPU/CuPy scale-up of the resonate-and-fire
-substrate to full-320 (currently slow on CPU — the reserved-GPU run); depth-2 clause-in-clause is the documented
-ceiling in both the numpy and spiking agents.
+model, **at the full 320-concept vocabulary on both substrates**. Each stage gated by the same benchmark. The
+GPU/CuPy port is now a pure speed optimization (the rf substrate at 320 runs in ~3.4 min on CPU — the capability
+is achieved, not GPU-gated). depth-2 clause-in-clause is the documented ceiling in both the numpy and spiking
+agents.

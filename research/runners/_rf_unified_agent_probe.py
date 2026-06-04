@@ -202,11 +202,24 @@ class RFUnifiedAgent:
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser(description="Unified agent FULL benchmark on the biological resonate-and-fire "
+                                             "substrate.")
+    ap.add_argument("--full-vocab", action="store_true", help="full 320-concept vocab (default: core vocab)")
+    ap.add_argument("--n-dim", type=int, default=2048)
+    ap.add_argument("--seed", type=int, default=42)
+    args = ap.parse_args()
+    if args.full_vocab:
+        from research.runners.unified_agent_benchmark import build_vocab
+        nouns, verbs, adjs = build_vocab()
+    else:
+        nouns, verbs, adjs = list(CORE_NOUNS), list(CORE_VERBS), list(CORE_ADJS)
+
     print("=== unified agent FULL benchmark on the BIOLOGICAL resonate-and-fire substrate + TPAM (stage 3c) ===",
           flush=True)
-    print(f"  core vocab: {len(CORE_NOUNS)} nouns, {len(CORE_VERBS)} verbs, {len(CORE_ADJS)} adjs; "
-          f"cycle={CYCLE_STEPS}; D=2048\n", flush=True)
-    agent = RFUnifiedAgent(CORE_NOUNS, CORE_VERBS, CORE_ADJS, n_dim=2048, seed=42)
+    print(f"  vocab: {len(nouns)} nouns, {len(verbs)} verbs, {len(adjs)} adjs; cycle={CYCLE_STEPS}; "
+          f"D={args.n_dim}\n", flush=True)
+    agent = RFUnifiedAgent(nouns, verbs, adjs, n_dim=args.n_dim, seed=args.seed)
     for ag, ac, pa in FACTS_FLAT + FACTS_1ATTR + FACTS_2ATTR + FACTS_CLAUSE:
         agent.learn(ag, ac, pa)
 
@@ -215,7 +228,7 @@ def main():
             return f"{_render(pa.agent)} {pa.action} {_render(pa.patient)}"
         if isinstance(pa, tuple):
             mods = pa[0] if isinstance(pa[0], tuple) else (pa[0],)
-            return " ".join(sorted(mods, key=CORE_ADJS.index) + [pa[1]])
+            return " ".join(sorted(mods, key=adjs.index) + [pa[1]])
         return pa
 
     res, wrong = {}, []
