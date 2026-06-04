@@ -58,8 +58,21 @@ where the two adjectives share a codebook (permutation symmetry, restart-residua
 resonator factor) is *perfect* on learned codes; flat and clause are strong. So it is a **narrow,
 well-characterized boundary** (the hardest construction on correlated codes), not broad degradation. A
 mis-recalled word (seed 43, recall 0.97) also cascades into its facts. This is the honest price of
-biologically-grounded learned codes vs idealized ones. Levers if the two-attribute case matters later:
-higher D, adjective-codebook decorrelation, or more restarts — not chased here; the honest baseline stands.
+biologically-grounded learned codes vs idealized ones.
+
+**The lever is D, not restarts (measured, isolated two-attribute case):**
+
+| | restarts=16 | restarts=48 |
+|---|---|---|
+| D=2048 | 0.83 | 0.83 |
+| D=4096 | **0.96** | 0.96 |
+
+Doubling the resonator restarts does **nothing** (0.83→0.83) — the issue is not restart selection (finding
+the factorization) but the **dimension/SNR floor**: the grounded-correlated adjective codes sit too close at
+D=2048. Doubling D (2048→4096) lifts the isolated two-attribute case to **0.96**, exactly as the substrate
+D-capacity finding predicts. So the two-attribute gap is closed by dimension, at 2× compute. The agent default
+stays D=2048 (the common cases — flat / one-attribute / clause — are already strong there; D=4096 is the knob
+for two-attribute-heavy use). A narrow, characterized boundary with a known, measured fix.
 
 ## Where this sits
 
