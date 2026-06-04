@@ -126,13 +126,22 @@ nested/clause tests pass (no regression). Honest scope: flat innermost args (the
 innermost args out of scope (degrade to flat noun). Finding `2026-06-04-clause-depth2-ceiling-resolved-flat-inner.md`.
 COMMITTING + pushing both remotes.
 
->>> EXACT NEXT CONCRETE ACTION: proceeding in the listed order → **(iii) scale vocab beyond 320**. The benchmark is
-now 100% at 320 concepts (D=2048); the question is how it holds as vocab grows. Prior capacity work
-(`2026-06-04-capacity-curve-scaling-cost-model.md`): memory/retrieval/who/abstain/1-attr/clause hold at fixed D to
-4× vocab; the two-attribute F=3 resonator is the lone bottleneck (needs D∝M², GPU-enabled at D=8192 for 120 adjs).
-The sparse-distributed G.20 route (`concept_pool_sparse_distributed`, 320-concept multi-bridge) is the documented
-production scaling path. Cheap-first: run the benchmark at growing vocab (640/1280) to map where each category
-degrades at fixed D, then (if two-attribute is the limiter) the GPU resonator / sparse block codes. HARD RULES:
+>>> (iii) vocab scaling — DONE = capacity curve refines (corrects) the cost model. At fixed D=2048, growing vocab
+320→640→1280: the RETRIEVAL/TRUST CORE (flat / 1-attribute / who / abstain) HOLDS 100% to 4×; the COMPOSITION-DEPTH
+categories DEGRADE — two-attribute 0% @640+ (F=3 resonator needs D∝M²), AND clauses (clause-d1 50%@640→0%@1280,
+clause-d2 67%→0%) because the recursive cleanup compounds the larger-codebook distractor crosstalk. This CORRECTS
+the prior `2026-06-04-capacity-curve-scaling-cost-model.md` claim that "clause holds to 4×" (that was the spiking
+core harness; the numpy agent's clauses degrade). Production route beyond 320: keep each bridge ≤320 (full
+capability) + scale by ADDING bridges (sparse-distributed G.20 multi-bridge) — linear, not D∝M². Finding
+`2026-06-04-vocab-scaling-capacity-curve-refines-cost-model.md`; `unified_agent_capacity_curve.py`. COMMITTING both
+remotes.
+
+>>> EXACT NEXT CONCRETE ACTION: proceeding in the listed order → **(iv) a richer multi-turn conversational demo on
+the unified grounded-spiking agent**. The pieces exist (spiking_unified_agent on V1-grounded codes = 100% core;
+the numpy NestedCompositionAgent has dialogue planning / elaborate()); the bounded step is a multi-turn REPL/script
+demo that exercises learn-facts → answer who/what → compose → abstain → elaborate-on-topic across turns, on the
+grounded substrate, as a user-facing artifact (the conversational payoff of the session's capabilities). Then (v)
+multi-modal grounding (visual concepts via V1 + abstract concepts via the word encoder in one agent). HARD RULES:
 GPU/CuPy for real runs (numpy ok for tiny smokes); honest propagation of EVERY outcome (incl. negative) to BOTH
 remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and
 honestly fails without it IS the finding; never end a turn on a future-tense promise.

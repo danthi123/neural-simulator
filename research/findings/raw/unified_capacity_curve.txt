@@ -1,0 +1,18 @@
+=== unified-agent CAPACITY CURVE | D=2048 | seeds=[42, 43] | sizes=[320, 640, 1280] ===
+  (frozen test set fixed; larger vocab = more distractor concepts at fixed D)
+
+  vocab=  320 (200n/60v/60a):  flat=100%  1-attribute=100%  2-attribute=100%  clause-depth1=100%  clause-depth2=100%  who-query=100%  abstain=100%  OVERALL=100%
+  vocab=  640 (400n/120v/120a):  flat=100%  1-attribute=100%  2-attribute=0%  clause-depth1=50%  clause-depth2=67%  who-query=100%  abstain=100%  OVERALL=78%
+  vocab= 1280 (800n/240v/240a):  flat=100%  1-attribute=100%  2-attribute=0%  clause-depth1=0%  clause-depth2=0%  who-query=100%  abstain=100%  OVERALL=67%
+
+  --- per-category across the curve (hold vs degrade) ---
+    flat             320:100%  640:100%  1280:100%   HOLDS
+    1-attribute      320:100%  640:100%  1280:100%   HOLDS
+    2-attribute      320:100%  640:0%  1280:0%   DEGRADES
+    clause-depth1    320:100%  640:50%  1280:0%   DEGRADES
+    clause-depth2    320:100%  640:67%  1280:0%   DEGRADES
+    who-query        320:100%  640:100%  1280:100%   HOLDS
+    abstain          320:100%  640:100%  1280:100%   HOLDS
+
+  wrote research/findings/raw/unified_capacity_curve.json
+EXIT=0
