@@ -94,10 +94,16 @@ the map. So (c) is an INTEGRATION of de-risked pieces, not a research gamble.
        not nested). Result: flat/1-attr/2-attr/who/abstain = **62/62 = 100% (2 seeds)**. Resonator-skip
        optimization (only when flat/one don't already explain). spiking_unified_agent.py extended; test->N_dim=2048
        + 2-attr assertion. COMMITTING.
-  (3b) [NEXT] embedded CLAUSES in spikes (recursive decode -- the patient is itself a role-binding bundle; detect
-       verb, recurse). The last benchmark category.
-  (3c) GPU/CuPy scale-up: full-320 resonate-and-fire substrate; the resonator matmuls are GPU-friendly (the
-       loop-bound bind ops less so). The reserved-GPU run.
+  (3b) [DONE] embedded CLAUSES in spikes (recursive _decode_filler: detect verb in the patient's ACTION slot,
+       cleanup inner agent+action, explain-away, recurse on inner patient; clause filler stored as the spike-phase
+       of its role-binding superposition). FULL BENCHMARK IN SPIKES = **72/72 = 100% (2 seeds, N_dim=2048)**:
+       flat/1-attr/2-attr/clause-depth1/who/abstain -- the spiking agent reproduces EVERY benchmark category the
+       numpy agent does (depth-2 clause-in-clause is the documented ceiling in BOTH). test asserts all 6. COMMITTED.
+  (3c) [NEXT] GPU/CuPy scale-up: full-320 + resonate-and-fire substrate at scale. The resonator matmuls are
+       GPU-friendly (the loop-bound bind ops less so). The reserved-GPU run. Owner-steerable.
+  >>> The spiking unified agent (brain analogue) now does the FULL composition benchmark in genuine spikes. The
+      (c) arc -- robust core on both substrates + full benchmark (flat/1-attr/2-attr/clause/who/abstain) -- is a
+      major milestone. Stage 3c (GPU scale) is the remaining piece.
   Benchmark = the routine multi-seed gate.
 
 ## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<

@@ -21,7 +21,8 @@ import numpy as np
 
 from research.runners.spiking_phasor_fhrr import (
     SpikingPhasorFHRR, phase_sum_neuron, phase_subtraction_neuron, phase_midpoint_bundle, phase_similarity,
-    spikes_to_phases, cleanup)
+    spikes_to_phases, phases_to_spikes, cleanup)
+from research.runners.nested_composition_agent import Clause
 
 ROLES = ("AGENT", "ACTION", "PATIENT")
 
@@ -63,14 +64,39 @@ class SpikingUnifiedAgent:
                      if self.nouns else None)
         self.AMAT = (np.stack([_to_phasor(self.adj_sym[w]) for w in self.adjs], axis=1)
                      if self.adjs else None)
+        self.VMAT = (np.stack([_to_phasor(self.verb_sym[w]) for w in self.verbs], axis=1)
+                     if self.verbs else None)
+        self.role_ph = {r: _to_phasor(self.role_sym[r]) for r in ROLES}  # cached role phasors
         self.kb = []        # phase-midpoint bundle spikes per fact (the pure-phase readout; role matching)
         self.kb_complex = []  # the complex-SUM bundle per fact (the neuron's subthreshold membrane state, with
         #                       magnitude) -- enables EXACT crosstalk subtraction for the F=3 patient decode
         self.facts = []     # parallel (agent, action, patient) for reference
 
+    def _filler_phasor(self, x):
+        """The phasor of a filler: flat noun -> its code; (adj(s), noun) -> bound product; Clause -> the unit
+        phasor of its role-binding superposition (recursive)."""
+        if isinstance(x, Clause):
+            return _unit(self._clause_sum(x))
+        if isinstance(x, tuple):
+            mods = x[0] if isinstance(x[0], tuple) else (x[0],)
+            v = _to_phasor(self.noun_sym[x[1]])
+            for a in mods:
+                v = v * _to_phasor(self.adj_sym[a])
+            return v
+        return _to_phasor(self.noun_sym[x])
+
+    def _clause_sum(self, clause):
+        """The complex-sum superposition of a clause's three role-bindings (phasor; the bundle filler)."""
+        return (self.role_ph["AGENT"] * self._filler_phasor(clause.agent)
+                + self.role_ph["ACTION"] * _to_phasor(self.verb_sym[clause.action])
+                + self.role_ph["PATIENT"] * self._filler_phasor(clause.patient))
+
     def _patient_filler(self, patient):
-        """flat noun -> its symbol; (adjective, noun) -> bound product; ((adj, adj), noun) -> bind both
-        adjectives and the noun (phase-sum neurons; binding is commutative)."""
+        """The PATIENT filler as a spike pattern. flat noun / (adj, noun) / ((adj, adj), noun) -> phase-sum
+        neurons; a Clause -> the spike-phase of its role-binding superposition (a bundle filler, so the spike
+        carries the phase and the magnitude lives in the membrane state via the complex-sum bundle)."""
+        if isinstance(patient, Clause):
+            return phases_to_spikes(np.mod(np.angle(self._clause_sum(patient)) / (2 * np.pi), 1.0))
         if isinstance(patient, tuple):
             mods = patient[0] if isinstance(patient[0], tuple) else (patient[0],)
             v = self.noun_sym[patient[1]]
@@ -147,15 +173,45 @@ class SpikingUnifiedAgent:
         clean_bp = (self.kb_complex[idx]
                     - self._bound_phasor("AGENT", self.noun_sym[agent])
                     - self._bound_phasor("ACTION", self.verb_sym[action]))
-        p = _unit(clean_bp * np.conj(_to_phasor(self.role_sym["PATIENT"])))
+        p = clean_bp * np.conj(self.role_ph["PATIENT"])     # the clean patient filler (crosstalk explained away)
+        return self._decode_filler(p, depth=0)
+
+    @staticmethod
+    def _cleanup_phasor(p, MAT, names):
+        """Nearest-vocabulary phasor cleanup: (name, confidence = |<p, best>|/D); (None, 0) if codebook empty."""
+        if MAT is None:
+            return None, 0.0
+        ov = np.abs(MAT.conj().T @ _unit(p))
+        k = int(np.argmax(ov))
+        return names[k], float(ov[k] / p.shape[0])
+
+    def _decode_filler(self, p, depth=0):
+        """Decode a filler phasor into a string, auto-detecting its KIND. An embedded CLAUSE (a verb component is
+        present after unbinding the ACTION role) -> decode its agent/action and recurse on its patient, with the
+        SAME exact crosstalk subtraction at each level. Otherwise a terminal filler: flat noun / one- /
+        two-attribute, chosen by reconstruction similarity with a parsimony upgrade. The two-attribute resonator
+        runs at the top level only (inside a clause the arguments are flat or one-attribute)."""
+        p = _unit(p)
         margin = 0.05
 
-        # flat model
+        # clause? (only a clause carries a verb component in its ACTION slot)
+        if depth < 3 and self.VMAT is not None:
+            ac, vconf = self._cleanup_phasor(p * np.conj(self.role_ph["ACTION"]), self.VMAT, self.verbs)
+            if vconf >= 0.18:
+                ag = self._decode_filler(p * np.conj(self.role_ph["AGENT"]), depth + 1)
+                p_clean = p
+                if ag in self.noun_sym and ac in self.verb_sym:        # explain away the inner agent + action
+                    p_clean = (p - self.role_ph["AGENT"] * _to_phasor(self.noun_sym[ag])
+                               - self.role_ph["ACTION"] * _to_phasor(self.verb_sym[ac]))
+                pt = self._decode_filler(p_clean * np.conj(self.role_ph["PATIENT"]), depth + 1)
+                return f"{ag} {ac} {pt}"
+
+        # terminal filler -- flat model
         nidx = int(np.argmax(np.abs(self.NMAT.conj().T @ p)))
         sim_flat = _phasor_sim(p, self.NMAT[:, nidx])
         flat_noun = self.nouns[nidx]
 
-        # one-attribute model (enumeration: unbind each adjective, clean up to the nouns)
+        # one-attribute model (enumeration)
         one = None
         if self.AMAT is not None:
             for ai in range(self.AMAT.shape[1]):
@@ -164,18 +220,14 @@ class SpikingUnifiedAgent:
                 if one is None or sim > one[0]:
                     one = (sim, self.adjs[ai], self.nouns[ni])
 
-        # two-attribute model (F=3 resonator) -- only when neither flat nor one-attribute already explains the
-        # patient cleanly (the resonator is expensive; a clean flat/one reconstruction means this is not a
-        # two-attribute patient, so the resonator is skipped -- a large speed-up on the common cases).
+        # two-attribute model (F=3 resonator) -- top level only, and only when flat/one don't already explain p
         two = None
         best_simple = max(sim_flat, one[0] if one is not None else 0.0)
-        if self.AMAT is not None and self.AMAT.shape[1] >= 2 and best_simple < 0.5:
+        if depth == 0 and self.AMAT is not None and self.AMAT.shape[1] >= 2 and best_simple < 0.5:
             adj_idx, noun_idx, sim_two = self._resonator3(p)
             two = (sim_two, [self.adjs[i] for i in adj_idx], self.nouns[noun_idx])
 
-        # parsimony as progressive upgrade: start flat; upgrade to a richer model only if it beats the CURRENT
-        # best by the margin. (For a two-attribute patient flat AND one-attribute both sit at the noise floor,
-        # so two-attribute must be checked against the running best, not nested behind one beating flat.)
+        # parsimony upgrade: flat -> one -> two, each only if it beats the running best by the margin
         choice, score = "flat", sim_flat
         if one is not None and one[0] > score + margin:
             choice, score = "one", one[0]
@@ -210,10 +262,10 @@ def run_core_benchmark(n_dim=512, seed=42, abstain_threshold=0.15):
     using the same frozen test set so the spiking result is comparable to the numpy-algebra result. Flat and
     one-attribute facts are stored together so the patient decode must auto-detect flat vs attributed."""
     from research.runners.unified_agent_benchmark import (
-        build_vocab, FACTS_FLAT, FACTS_1ATTR, FACTS_2ATTR, WHO_QUERIES, ABSTAIN_QUERIES)
+        build_vocab, FACTS_FLAT, FACTS_1ATTR, FACTS_2ATTR, FACTS_CLAUSE, WHO_QUERIES, ABSTAIN_QUERIES)
     nouns, verbs, adjs = build_vocab()
     agent = SpikingUnifiedAgent(nouns, verbs, adjs, n_dim=n_dim, seed=seed, abstain_threshold=abstain_threshold)
-    for ag, ac, pa in FACTS_FLAT + FACTS_1ATTR + FACTS_2ATTR:
+    for ag, ac, pa in FACTS_FLAT + FACTS_1ATTR + FACTS_2ATTR + FACTS_CLAUSE:
         agent.learn(ag, ac, pa)
 
     res, wrong = {}, []
@@ -243,6 +295,22 @@ def run_core_benchmark(n_dim=512, seed=42, abstain_threshold=0.15):
             wrong.append(("2-attribute", f"what does {ag} {ac}?", got, want))
     res["2-attribute"] = [ta_ok, len(FACTS_2ATTR)]
 
+    def _render(pa):
+        if isinstance(pa, Clause):
+            return f"{_render(pa.agent)} {pa.action} {_render(pa.patient)}"
+        if isinstance(pa, tuple):
+            mods = pa[0] if isinstance(pa[0], tuple) else (pa[0],)
+            return " ".join(sorted(mods, key=adjs.index) + [pa[1]])
+        return pa
+    cl_ok = 0
+    for ag, ac, pa in FACTS_CLAUSE:
+        want = _render(pa)
+        got = agent.query_patient(ag, ac)
+        cl_ok += (got == want)
+        if got != want:
+            wrong.append(("clause-depth1", f"what does {ag} {ac}?", got, want))
+    res["clause-depth1"] = [cl_ok, len(FACTS_CLAUSE)]
+
     who_ok = 0
     for ac, pn, want in WHO_QUERIES:
         got = agent.query_agent(ac, pn)
@@ -271,8 +339,8 @@ def main():
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
-    print(f"=== spiking unified agent | flat + one/two-attribute + who + abstain in spikes | N_dim={args.n_dim} "
-          f"| seeds={args.seeds} ===\n", flush=True)
+    print(f"=== spiking unified agent | flat + 1/2-attribute + clause + who + abstain in spikes | "
+          f"N_dim={args.n_dim} | seeds={args.seeds} ===\n", flush=True)
     per_seed = []
     for s in args.seeds:
         res, wrong = run_core_benchmark(n_dim=args.n_dim, seed=s, abstain_threshold=args.abstain_threshold)
