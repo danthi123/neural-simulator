@@ -40,6 +40,17 @@ def test_negation_yes_no_on_the_bridge():
     assert c.ask_yes_no("apple", "stop", "west") == "unknown"
 
 
+def test_one_attribute_on_the_bridge():
+    """An attributed entity ('big apple') via a feature-binding ATTRIBUTE role-tag: the noun (patient) and the
+    adjective (attribute) both decode from the spiking unbind, rendered as 'big apple'. (One-attribute RESOLVES;
+    two-attribute is a documented K=5-load boundary -- see the module docstring.)"""
+    c = _composer()
+    c.store("cat", "go", ("big", "apple"))     # one attribute
+    c.store("apple", "stop", "west")           # flat
+    assert c.query_patient("cat", "go") == "big apple"
+    assert c.query_patient("apple", "stop") == "west"
+
+
 def test_clause_recall_on_the_bridge():
     """An embedded clause as a patient ('dog look (cat go south)') decodes through two levels of spiking
     bind/unbind, coexisting with flat facts and abstention."""

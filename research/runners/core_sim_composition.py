@@ -148,7 +148,7 @@ class CoreSimComposer:
     the unknown. Concept codes are the substrate's own (grounded). The brain analogue of the role-filler half of
     the unified agent -- no bolted-on numpy simulator in the path."""
 
-    ROLES = ("agent", "action", "patient", "polarity")
+    ROLES = ("agent", "action", "patient", "polarity", "attribute", "attribute2")
 
     def __init__(self, seed=42, proj_dim=800, coinc_bias=DEFAULT_BIAS, run_steps=DEFAULT_RUN_STEPS, concepts=None):
         if concepts is None:
@@ -228,21 +228,41 @@ class CoreSimComposer:
 
     # --- conversational API ---
     def store(self, agent, action, patient, polarity=None):
-        """Learn an SVO fact. `patient` may be a concept word OR an embedded Clause. `polarity` (AFFIRM/NEGATE) is
-        OPTIONAL: include it only for facts you'll ask yes/no about -- it adds a 4th binding (more superposition
-        load, which the nested-clause dynamic range needs free), so plain facts and clause facts are the lighter
-        K<=3 without it."""
-        fact = {"agent": agent, "action": action, "patient": patient}
+        """Learn an SVO fact. `patient` may be:
+          - a concept word ('apple'); or
+          - an ATTRIBUTED entity ('big apple') as a tuple (adj, noun) or ((adj1, adj2), noun) -- the adjective(s)
+            are bound to dedicated ATTRIBUTE role(s) (feature binding), the noun to the patient role; or
+          - an embedded Clause (recursive role-filler).
+        `polarity` (AFFIRM/NEGATE) is OPTIONAL (adds a binding -> more load), only for yes/no facts."""
+        fact = {"agent": agent, "action": action}
+        if isinstance(patient, Clause):
+            fact["patient"] = patient
+        elif isinstance(patient, tuple):                       # (adj(s), noun) -- an attributed entity
+            adjs, noun = patient
+            adjs = list(adjs) if isinstance(adjs, (tuple, list)) else [adjs]
+            fact["patient"] = noun
+            fact["attribute"] = adjs[0]
+            if len(adjs) > 1:
+                fact["attribute2"] = adjs[1]
+        else:
+            fact["patient"] = patient
         if polarity is not None:
             fact["polarity"] = polarity
         self.kb.append((fact, self.bind_fact(fact)))
 
     def query_patient(self, agent, action):
-        """'what does <agent> <action>?' -> the patient of the matching fact (a concept word, or a rendered
-        embedded clause). None if no fact's agent matches the cue (abstention -- the no-confab moat)."""
+        """'what does <agent> <action>?' -> the patient of the matching fact: a concept word, an ATTRIBUTED entity
+        ('big apple' / 'big red ball'), or a rendered embedded clause. None if no fact's agent matches the cue
+        (abstention -- the no-confab moat). The noun + each adjective are decoded from the spiking unbind; the
+        stored structure only routes the rendering."""
         for fact, bound in self.kb:
             if self.unbind(bound, "agent") == agent and self.unbind(bound, "action") == action:
-                return self._render_filler(bound, "patient", fact["patient"])
+                noun = self._render_filler(bound, "patient", fact["patient"])
+                adjs = [self.unbind(bound, r) for r in ("attribute", "attribute2") if r in fact]
+                if adjs:
+                    adjs = sorted(adjs, key=self.words.index)     # canonical vocabulary order (set, not sequence)
+                    return " ".join(adjs + [noun])
+                return noun
         return None
 
     def query_agent(self, action, patient):
