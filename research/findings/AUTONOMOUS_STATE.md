@@ -46,13 +46,22 @@ SOFT SPOT IS CLOSED. Finding `2026-06-03-spiking-STDP-learns-phasor-map-RESOLVES
 substrate unification is now DE-RISKED (capacity, correlation, scale, linear-learning, AND real-weight spiking
 STDP learning+composition). The remaining work is purely the FULL IMPLEMENTATION: an online spike-driven STDP
 loop + membrane ODE wired across the production path = a writing-plans ENGINEERING arc, science de-risked.
->>> EXACT NEXT CONCRETE ACTION: this is now a STRATEGIC fork the owner should weigh (the next step is a real
-engineering investment, not a cheap probe): (1) writing-plans the full membrane-level online-spiking-STDP
-phasor learner -> production migration [the substrate-unification payoff: production gains nesting], (2)
-Direction B thalamocortical dynamical gating [Logiaco 2021, the other untried deep-research mechanism], or
-(3) a production-scale conversational build on the validated nesting agent. Cheap-first de-risking of
-Direction A + substrate unification is EXHAUSTED; the next move is a build. Recommend (1) — it has no
-remaining scientific blocker and directly delivers nesting to the production conversational system. >>> THIS is the decision the
+>>> OPTION 1 BUILD STARTED (owner said "proceed autonomously" after the honest "1 is spiking-faithful NOT
+fully biological — it rests on the phasor-binding HYPOTHESIS" framing). First build milestone SHIPPED:
+`research/runners/phasor_associative_memory.py` — PhasorAssociativeMemory LEARNS word->phasor-code via online-
+bounded STDP on the grounded vocab_to_drive_pattern encoder, recalls w/ abstention, composes (bind/unbind).
+Then wired the LEARNED codes into the FULL nesting agent via an additive `external_codes` hook (+
+`learned_nesting_demo.py`): flat + resonator-decoded attribute + embedded clause + abstention ALL run on
+STDP-LEARNED codes (not constructed). 28 tests (7 memory + 21 nesting still green). The substrate-unification
+core works end-to-end on biologically-grounded learned codes.
+>>> EXACT NEXT CONCRETE ACTION (autonomous, option 1 continuation): the next fidelity rung toward the full
+build is the FULL MEMBRANE-LEVEL online spike-driven loop (replace the closed-form/phase-population readout
+with an actual LIF/resonate-and-fire membrane ODE + refractory + an online spike-pair STDP loop, small scale,
+frozen gate vs the phenomenological result). After that: scale vocab (32->320) on the learned-code path +
+multi-seed. Honest reminder for any future cycle: option 1 = spiking-FAITHFUL, not "fully biological"; the
+phasor-binding framework is a biologically-grounded HYPOTHESIS, and full membrane/dendritic/grounded-embodied
+realism is beyond it — surface that honestly, never overclaim "fully biological". Alternatives the owner may
+steer to: (2) Direction B thalamocortical (Logiaco 2021), (3) production-scale conversational build. >>> THIS is the decision the
 owner may want to steer: whether to migrate the production substrate onto phasor FHRR to gain nesting. NEXT
 candidate (autonomous): grounded-code re-test (does the 320 result hold for sparse-encoded grounded codes,
 not just random phasors?) — cheap-first, decisive, the last capacity-side uncertainty before a migration
