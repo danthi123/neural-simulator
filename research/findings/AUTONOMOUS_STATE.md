@@ -47,12 +47,16 @@ readout (same category as the already-disclosed bundling/opponency linear ops); 
 shortcut maps to 3 concrete cortical mechanisms: decorrelation/integration/normalization); do NOT ship a lossy
 spiking cleanup. The load-bearing nonlinearity (bind/unbind coincidence) is ALREADY spiking. Findings
 `2026-06-04-spine-item2-*` (committed 93963d5d/e809db71/35d81993). Full cortical cleanup circuit = a future sub-project.
->>> EXACT NEXT (owner offered the choice; I lean MOVE ON, reported it): proceed to item 3 (grounded capture) starting
-with the CHEAP-FIRST decorrelation de-risk — add `decorrelate` (ZCA via Gram G^{-1/2}) to CoreSimComposer + test it on
-the REAL V=16 denoise64 captured codes (cos-0.80): does decorrelating real captured codes PRESERVE Q&A and run at
-LOWER D? Validates the decorrelation linchpin (1.5 + item-2) on real codes before the heavy 320 capture; low-regret
-regardless of the big direction (item 3 grounded capture / B one-bridge / build the cleanup circuit). Owner-steerable
-on the big direction. HARD RULES: GPU for real runs (numpy only tiny smoke); honest propagation to BOTH
+>>> EXACT NEXT: the decorrelation de-risk is DONE (ZCA on real V=16 captured codes: between-cos 0.82->0.00, capability
+PRESERVED 6/6 all categories; committed c5addc12). The post-consolidation spine through item 2 is COMPLETE (1, 1.5, 2
+all done + committed). AWAITING OWNER STEER on the big direction (all substantial commitments): (B, RECOMMENDED)
+one-bridge unification — collapse parser+composer+dlPFC into ONE multi-region bridge, Python hand-offs -> synaptic
+RegionPathways (the architectural milestone; item-3 grounding is marginal since the V=320 agent already runs on
+validated scheme codes, and the cleanup circuit is a deferred sub-project); (item 3) truly-grounded 320 capture
+(multi-hour, marginal grounding gain); (cleanup circuit) the deferred item-2 cortical cleanup (decorrelation +
+integration + divisive normalization). If a watchdog fires with NO owner steer, the low-regret default = START THE B
+DESIGN DOC (brainstorm -> design -> owner approval -> implement), NOT auto-launch the multi-week B implementation or
+the multi-hour item-3 capture. HARD RULES unchanged. HARD RULES: GPU for real runs (numpy only tiny smoke); honest propagation to BOTH
 remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and honestly
 fails without it IS the finding; never end a turn on a future-tense promise.
 
