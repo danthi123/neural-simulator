@@ -9,7 +9,40 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> PHASOR FHRR = UNIFIED-SUBSTRATE CANDIDATE (2026-06-03, latest strategic finding) — read THIS first <<<
+## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<
+
+OWNER DECISIONS (this arc): (1) Pre-compute review found the spiking-vs-tiny-LLM gap is ALREADY measured
+(33,000x, architectural, matches the field) -> do NOT re-run; fluent-generation from-scratch biology-faithful
+is a documented wall. Owner chose FORK 1 (advance biology-faithful COMPOSITION frontier; capabilities
+instrumental, biology+honest-negatives the deliverable) + "deeper research into surpassing the blockers via
+dedicated agents." THREE deep-research agents delivered (synthesis:
+`2026-06-03-deep-research-surpassing-the-blockers-synthesis.md`):
+- TRACK 1 (compositional scaling): resonator fixes -- softmax-attention, noise injection, ZCA decorrelation,
+  SPARSE BLOCK CODES (5000x capacity), CSim recursive cleanup, hierarchical/partitioned resonator.
+- TRACK 2 (THALAMOCORTICAL GATING, Logiaco-Abbott-Escola 2021): the DEEP lever. compose-pathways "went silent"
+  because we grew STATIC additive weights; biology binds by DYNAMICAL MULTIPLICATIVE GATING (J_eff = J_cc +
+  J_ct.S.J_tc; binding = which thalamic gate is open, NOT which weight grew) -> variable binding + NO-forgetting
+  + one-shot rebinding. g11_bg ALREADY has gpi->thal->cortex skeleton; MISSING primitive = per-pathway
+  multiplicative TRANSMISSION GATE (neuromods only have additive drive + scalar gain). Cheap-first H1 (~1 day):
+  2-role x 2-filler reduced model; gating gives deterministic re-binding where grown weights were seed-fragile.
+- TRACK 3 (untried conversational): Assembly Calculus/NEMO (our architecture's TWIN, no-backprop SVO generation,
+  hits the SAME honest ceiling -> reframes our wall as a CITED biological boundary; github dmitropolsky/assemblies)
+  + grammar-over-VSA-composition (beats end-to-end on grounding+no-hallucination); spiking-SSM capability
+  yardstick; ANN->SNN conversion secondary.
+CHEAP-FIRST RESULTS IN: softmax resonator NEGATIVE on our well-conditioned FHRR (clean F=3 @ 320-codebook:
+standard 0.96 vs softmax 0.21). 320 two-attr/clause blocker RE-LOCALIZED: NOT resonator capacity, it's BUNDLE
+CROSSTALK (depth detection correct; resonator drowns in agent+action crosstalk at 200-noun codebook). Candidate
+fix = CROSSTALK SUBTRACTION (agent already decodes agent+action to match -> subtract those role-bindings ->
+clean product -> resonator works at 0.96). [PROBE bte99vip3 IN FLIGHT.]
+>>> EXACT NEXT: (a) read crosstalk-subtraction probe result; if it lifts 320 two-attr/clause 0->high, integrate
+into NestedCompositionAgent.query_patient (subtract decoded agent+action role-bindings before unbinding the
+patient) + multi-seed test. (b) Then the BIG lever: THALAMOCORTICAL GATING cheap-first H1 (Track 2) -- the
+2-role x 2-filler reduced model + a per-pathway multiplicative transmission-gate primitive (bridge change);
+deterministic variable binding vs seed-fragile grown weights, scored with the permuted-mapping anti-cheat.
+(c) Track 3 assembly-generation reframe + grammar-over-composition as the conversational artifact. Honest:
+spiking-faithful not fully-biological; phasor binding is a hypothesis; fluent generation is a documented wall.
+
+## >>> PHASOR FHRR = UNIFIED-SUBSTRATE CANDIDATE (2026-06-03 earlier) <<<
 
 The strategically central output of the Direction-A arc. The phasor FHRR substrate the nesting lives on ALSO
 holds production-scale DIVERSITY: 320 concepts + a 3-role SVO fact decode **1.00 at D=1024** (per-role
