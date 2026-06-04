@@ -1,0 +1,325 @@
+{
+  "mode": "constructed",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "D": 2048,
+  "n_concepts": 320,
+  "aggregate": {
+    "flat": [
+      40,
+      40,
+      1.0
+    ],
+    "1-attribute": [
+      30,
+      30,
+      1.0
+    ],
+    "2-attribute": [
+      25,
+      25,
+      1.0
+    ],
+    "clause-depth1": [
+      25,
+      25,
+      1.0
+    ],
+    "clause-depth2": [
+      0,
+      15,
+      0.0
+    ],
+    "who-query": [
+      30,
+      30,
+      1.0
+    ],
+    "abstain": [
+      30,
+      30,
+      1.0
+    ]
+  },
+  "overall": [
+    180,
+    195
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "recall_conf": null,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          6,
+          6
+        ],
+        "2-attribute": [
+          5,
+          5
+        ],
+        "clause-depth1": [
+          5,
+          5
+        ],
+        "clause-depth2": [
+          0,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": [
+        {
+          "q": "what does dog see?",
+          "got": "cat chase soft noun_124 eat fast noun_103",
+          "want": "cat chase bird eat leaf",
+          "cat": "clause-depth2"
+        },
+        {
+          "q": "what does man watch?",
+          "got": "wolf follow adj_40 noun_2 find adj_25 noun_90",
+          "want": "wolf follow mouse find bread",
+          "cat": "clause-depth2"
+        },
+        {
+          "q": "what does child see?",
+          "got": "frog catch adj_20 noun_92 hold adj_0 noun_107",
+          "want": "frog catch duck hold fish",
+          "cat": "clause-depth2"
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "recall_conf": null,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          6,
+          6
+        ],
+        "2-attribute": [
+          5,
+          5
+        ],
+        "clause-depth1": [
+          5,
+          5
+        ],
+        "clause-depth2": [
+          0,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": [
+        {
+          "q": "what does dog see?",
+          "got": "cat chase adj_27 noun_55 eat adj_14 noun_46",
+          "want": "cat chase bird eat leaf",
+          "cat": "clause-depth2"
+        },
+        {
+          "q": "what does man watch?",
+          "got": "wolf follow green noun_91 find adj_39 man",
+          "want": "wolf follow mouse find bread",
+          "cat": "clause-depth2"
+        },
+        {
+          "q": "what does child see?",
+          "got": "frog catch young noun_150 hold adj_41 noun_4",
+          "want": "frog catch duck hold fish",
+          "cat": "clause-depth2"
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "recall_conf": null,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          6,
+          6
+        ],
+        "2-attribute": [
+          5,
+          5
+        ],
+        "clause-depth1": [
+          5,
+          5
+        ],
+        "clause-depth2": [
+          0,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": [
+        {
+          "q": "what does dog see?",
+          "got": "cat chase adj_17 noun_3 eat adj_7 noun_159",
+          "want": "cat chase bird eat leaf",
+          "cat": "clause-depth2"
+        },
+        {
+          "q": "what does man watch?",
+          "got": "wolf follow adj_15 dog find adj_11 noun_55",
+          "want": "wolf follow mouse find bread",
+          "cat": "clause-depth2"
+        },
+        {
+          "q": "what does child see?",
+          "got": "frog catch adj_44 cloud hold adj_22 noun_35",
+          "want": "frog catch duck hold fish",
+          "cat": "clause-depth2"
+        }
+      ]
+    },
+    {
+      "seed": 45,
+      "recall_conf": null,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          6,
+          6
+        ],
+        "2-attribute": [
+          5,
+          5
+        ],
+        "clause-depth1": [
+          5,
+          5
+        ],
+        "clause-depth2": [
+          0,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": [
+        {
+          "q": "what does dog see?",
+          "got": "cat chase hot noun_126 eat young noun_60",
+          "want": "cat chase bird eat leaf",
+          "cat": "clause-depth2"
+        },
+        {
+          "q": "what does man watch?",
+          "got": "wolf follow hard stone find adj_4 noun_124",
+          "want": "wolf follow mouse find bread",
+          "cat": "clause-depth2"
+        },
+        {
+          "q": "what does child see?",
+          "got": "frog catch adj_33 noun_99 hold adj_20 noun_35",
+          "want": "frog catch duck hold fish",
+          "cat": "clause-depth2"
+        }
+      ]
+    },
+    {
+      "seed": 46,
+      "recall_conf": null,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          6,
+          6
+        ],
+        "2-attribute": [
+          5,
+          5
+        ],
+        "clause-depth1": [
+          5,
+          5
+        ],
+        "clause-depth2": [
+          0,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": [
+        {
+          "q": "what does dog see?",
+          "got": "cat chase adj_30 noun_44 eat cold noun_99",
+          "want": "cat chase bird eat leaf",
+          "cat": "clause-depth2"
+        },
+        {
+          "q": "what does man watch?",
+          "got": "wolf follow adj_22 noun_146 find adj_7 noun_138",
+          "want": "wolf follow mouse find bread",
+          "cat": "clause-depth2"
+        },
+        {
+          "q": "what does child see?",
+          "got": "frog catch adj_8 noun_80 hold adj_14 noun_148",
+          "want": "frog catch duck hold fish",
+          "cat": "clause-depth2"
+        }
+      ]
+    }
+  ]
+}

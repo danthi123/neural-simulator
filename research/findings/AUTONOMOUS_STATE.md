@@ -30,16 +30,29 @@ commanded-not-learned binding, ungrounded codes, phasor-as-hypothesis, transform
 cheats). Rule when worked: a capability that only survived WITH a shortcut and honestly fails without it IS the
 finding; never quietly keep a shortcut to preserve a number.
 
->>> EXACT NEXT CONCRETE ACTION: build `research/runners/unified_agent_benchmark.py` —
-  (1) constructed-codes mode FIRST (cheap, the validated path): NestedCompositionAgent at 320-concept scale,
-      a FROZEN conversational test set (flat / 1-attr / 2-attr / clause facts + what/who queries + abstention
-      probes), multi-seed 42–46, per-category pass-rate + honest boundary report. Formalizes the 48%→100%
-      claim into a rigorous frozen multi-seed benchmark.
-  (2) grounded-codes mode SECOND (the honest extension + cheat-backlog item #4): cheap probe of
-      PhasorAssociativeMemory recall fidelity at 320 concepts; if it holds, feed grounded recall → compose and
-      re-measure (does grounded-cue recall fidelity degrade composition? — honest, either way).
-  + a smoke test `tests/test_unified_agent_benchmark.py`. Reuse-by-import only; no protected-module edits.
-  Propagate the result (positive OR negative) to both remotes.
+>>> UNIFIED-AGENT BENCHMARK DONE = SHIPPED + honest measurement. `research/runners/unified_agent_benchmark.py`
++ `tests/test_unified_agent_benchmark.py` (3/3 pass). Finding:
+`2026-06-04-unified-agent-benchmark-converge-not-add.md`. Raw JSON in research/findings/raw/.
+  - CONSTRUCTED codes, 5-seed (42–46), D=2048: robust 6-category core (flat/1-attr/2-attr/clause-depth1/
+    who/abstain) = **100% EVERY seed (zero variance)**; ONE honest ceiling clause-depth2 = **0%** (per-level
+    auto-detect over-triggers the attribute resonator on flat inner args). OVERALL 180/195 = 92.3%.
+  - GROUNDED STDP codes (recall capacity curve: 1.9/16.9/55.3/86.3% at n_input 512/1024/2048/4096): at
+    n_input=4096 (~86% recall), the trust+retrieval core (flat/who/abstain) **survives 100%**, attribute
+    composition (1-attr/2-attr) **collapses to 0%**; OPPOSITE failure profile from ONE mechanism (attribute
+    resonator needs clean codes — clean codes recover attrs but over-fire depth-2; noisy codes can't recover
+    attrs but therefore can't over-fire). OVERALL 52/78 = 66.7%. Quantifies cheat-backlog #4 (ungrounded codes).
+  COMMITTED + pushed both remotes.
+
+>>> EXACT NEXT (owner-steerable; cheap follow-ups the benchmark localized):
+  (a) constructed clause-depth2 fix: the inner-level attribute over-trigger — test a more conservative
+      inside-clause flat-vs-attributed margin OR higher D; is the ceiling dimension-budget or fundamental?
+      (tune nested_composition_agent; guard 1-attr/2-attr; re-run the benchmark as the gate).
+  (b) grounded attribute composition: the resonator's grounded-noise fragility is the real barrier to a
+      fully-grounded agent — a denoising cleanup before the resonator OR a higher-fidelity grounded encoder
+      (n_input>=8192 / learned-prototype readout). The genuine open problem the benchmark surfaced.
+  (c) pure-biology backlog item #1 (algebra->spikes): the GPU-worthy decisive build — the spiking realization
+      of this same agent. Bigger.
+  The benchmark is now the routine multi-seed gate for any composition/substrate change.
 
 ## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<
 
