@@ -55,3 +55,18 @@ def test_recall_confidence_separates_learned_from_unlearned():
     learned_conf = m.recall_confidence("dog")
     unlearned_conf = m.recall_confidence("zebra")
     assert learned_conf > unlearned_conf       # learned words read out more confidently than novel ones
+
+
+def test_learned_codes_drive_full_nesting_agent():
+    # the substrate-unification payoff: the FULL nesting agent (flat / attribute / clause / abstain) on LEARNED codes
+    from research.runners.learned_nesting_demo import build_learned_agent
+    from research.runners.nested_composition_agent import Clause
+    agent, _ = build_learned_agent(["dog", "cat", "ball", "river", "bird"], ["chase", "see", "eat", "hold"],
+                                   ["big", "red", "cold"])
+    agent.learn("dog", "chase", "cat")                          # flat
+    agent.learn("bird", "see", ("red", "ball"))                # one attribute (resonator)
+    agent.learn("dog", "eat", Clause("cat", "chase", "river"))  # embedded clause
+    assert agent.query_patient("dog", "chase") == "cat"
+    assert agent.query_patient("bird", "see") == "red ball"
+    assert agent.query_patient("dog", "eat") == "cat chase river"
+    assert agent.query_patient("cat", "hold") is None          # abstain on the unknown

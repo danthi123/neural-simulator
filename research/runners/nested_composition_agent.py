@@ -54,7 +54,7 @@ class NestedCompositionAgent:
 
     def __init__(self, nouns, verbs, adjs, D=2048, seed=42, flat_threshold=0.30,
                  n_iter=120, resid_threshold=0.5, n_restarts=16,
-                 verb_threshold=0.12, max_clause_depth=4):
+                 verb_threshold=0.12, max_clause_depth=4, external_codes=None):
         self.nouns = list(nouns)
         self.verbs = list(verbs)
         self.adjs = list(adjs)
@@ -67,13 +67,16 @@ class NestedCompositionAgent:
         self.n_iter = int(n_iter)
         self.n_restarts = int(n_restarts)                # random restarts for the repeated-codebook (multi-modifier) decode
         rng = np.random.default_rng(seed)
+        ext = external_codes or {}              # token -> phase array (D,): LEARNED codes (e.g. from PhasorAssociativeMemory)
 
-        def code():
+        def code(token=None):
+            if token is not None and token in ext:
+                return self._unit(np.exp(1j * np.asarray(ext[token])))   # use the externally-LEARNED code
             return self._unit(np.exp(1j * rng.uniform(-np.pi, np.pi, size=self.D)))
 
-        self.noun_cb = {w: code() for w in self.nouns}
-        self.verb_cb = {w: code() for w in self.verbs}
-        self.adj_cb = {w: code() for w in self.adjs}
+        self.noun_cb = {w: code(w) for w in self.nouns}
+        self.verb_cb = {w: code(w) for w in self.verbs}
+        self.adj_cb = {w: code(w) for w in self.adjs}
         self.roles = {r: code() for r in ROLES}
         self.NMAT = np.stack([self.noun_cb[w] for w in self.nouns], axis=1)   # D x |nouns|
         self.VMAT = np.stack([self.verb_cb[w] for w in self.verbs], axis=1)
