@@ -133,6 +133,20 @@ Testing Track-1 #1 immediately corrected the diagnosis:
   capacity — it was crosstalk from composing a multi-role fact.
 
 Lesson reinforced: cheap-first testing the literature's #1 fix against the *actual* wall (not the assumed one)
-re-localized the blocker in minutes and pointed at a simpler, structure-specific fix. The Track-2
-(thalamocortical gating) and Track-3 (assembly-generation + grammar) levers remain the larger biology-faithful
-bets and are the next pre-registered steps.
+re-localized the blocker in minutes and pointed at a simpler, structure-specific fix.
+
+**Track 1 outcome — the 320 composition wall is SURPASSED.** Crosstalk subtraction took the full 320-concept
+agent from ~48% to **100%** (60 mixed nested facts × 2 seeds = 120/120; two-attribute and clause from 0/x to
+16/16, 17/17, 18/18, 11/11), at the default D=2048, 38 tests green. Shipped in `nested_composition_agent.py`.
+
+**Track 2 cheap-first H1 — RESOLVES at toy scale (gate-keeper passed).** `_thalamocortical_gating_H1_probe.py`
+(4 roles × 4 fillers, re-binding protocol, 3 seeds): a multiplicative gate gives latest-binding accuracy
+**1.000**; grown static weights only **0.695** (the first binding's weight persists — they cannot re-bind on
+command). Honest caveat: this is a near-tautological principle-check (the gate reflects the command by
+construction) — it is the *gate-keeper*, not the proof. The genuinely decisive test is integrating a
+**per-pathway multiplicative transmission gate into the spiking `g11_bg` cascade** (the cascade already has the
+`gpi→thal→cortex` skeleton; the neuromodulator subsystem has only additive drive + scalar gain) and testing it
+on the actual compose problem (the v16 `verb→motor` binding that "went silent" with grown weights). That is a
+multi-hour bridge build — the next big, owner-steerable step.
+
+The Track-3 (assembly-generation + grammar-over-composition) lever remains the conversational-artifact bet.
