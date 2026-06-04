@@ -90,6 +90,11 @@ clause — **resolves at V=320 on production codes once D=2048** (D=800 carries 
 clause). The only cost of 320-word vocabulary is more dimensions for the deepest (recursive) composition, exactly
 as the capacity model predicts.
 
+**Multi-seed (42/43/44):** at **D=2048 every category is 18/18** (flat / one-attribute / two-attribute / clause /
+negation all 6/6 each seed). At D=800: flat / one-attribute / negation perfect every seed; two-attribute 17/18 (one
+5/6 wobble at seed 43); clause the boundary (1–2/6 per seed) that D=2048 resolves.
+(`_core_composer_matrix320_s{42,43,44}.json`, `_core_composer_matrix320_D2048_s{42,43,44}.json`.)
+
 ## Honest scope (what this is and isn't)
 
 - **Is:** the brain composer (spiking bind/unbind + cleanup + no-confab moat) operating at 320-word production vocab

@@ -1,0 +1,32 @@
+{
+  "seed": 43,
+  "vocab": 320,
+  "code_source": "G20_sparse_distributed_production",
+  "scores": {
+    "flat": {
+      "correct": 6,
+      "total": 6,
+      "rate": 1.0
+    },
+    "one_attr": {
+      "correct": 6,
+      "total": 6,
+      "rate": 1.0
+    },
+    "two_attr": {
+      "correct": 5,
+      "total": 6,
+      "rate": 0.8333333333333334
+    },
+    "clause": {
+      "correct": 2,
+      "total": 6,
+      "rate": 0.3333333333333333
+    },
+    "negation_yesno": {
+      "correct": 12,
+      "total": 12,
+      "rate": 1.0
+    }
+  }
+}
