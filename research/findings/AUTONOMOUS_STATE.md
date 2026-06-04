@@ -55,14 +55,20 @@ finding; never quietly keep a shortcut to preserve a number.
     revert. Biology insight: composition runs on stable concept attractors, not raw sensory input (cortex/
     hippocampus split; Marr 1971). RESOLVES cheat-backlog #4 (ungrounded codes). COMMITTED + pushed both remotes.
 
->>> EXACT NEXT (owner-steerable):
-  (a) the ONE remaining composition ceiling: clause-depth2 (constructed AND cleanup, identical -> it's a
-      composition limit, not a code-fidelity one). Inner-level attribute over-trigger; test conservative
-      inside-clause margin OR higher D. Cheap; benchmark is the gate; guard 1-attr/2-attr.
-  (c) pure-biology backlog item #1 (algebra->spikes): the GPU-worthy decisive build — spiking realization of this
-      same agent (resonate-and-fire + an autoassociative cleanup network for the pattern-completion step). The
-      benchmark is the spec it must reproduce. Bigger.
-  The benchmark is the routine multi-seed gate for any composition/substrate change.
+>>> (a) DIAGNOSED + PARKED: clause-depth2 ceiling is NOT dimension-budget (D=4096 still 0/6) -> it's the
+per-level auto-detection over-trigger (the inner clause's flat agent gains a spurious attribute). A robust fix
+is a non-trivial inside-clause flat-vs-attributed refinement with regression risk to depth-1 attributed args,
+and deep clause-in-clause nesting is rare in real conversation -> LEFT as the documented honest ceiling (the
+benchmark holds the gate if revisited). Committed.
+
+>>> EXACT NEXT = (c) pure-biology backlog item #1 (algebra -> spikes), PENDING owner confirm on the big-build
+scale. The GPU-worthy decisive build: the SPIKING realization of this same unified agent — resonate-and-fire
+phasor neurons (validated in pieces: _spiking_resonator_probe, membrane-resonate-fire RESOLVES-needs-high-Q) +
+an AUTOASSOCIATIVE CLEANUP network for the now-load-bearing pattern-completion step (CA3 attractor; the (b)
+result makes this a REQUIRED component, not optional). The unified-agent benchmark is the exact spec it must
+reproduce (the per-category pass-rate table is the target). This is the pure-biology payoff + the GPU path.
+Surfaced the fork to the owner; proceeding toward (c) unless redirected. The benchmark is the routine multi-seed
+gate for any composition/substrate change.
 
 ## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<
 

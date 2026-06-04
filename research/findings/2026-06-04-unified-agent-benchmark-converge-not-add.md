@@ -137,10 +137,14 @@ surfaced is now resolved with a biology-faithful mechanism.
 
 ## Next (owner-steerable)
 
-- **Constructed/cleanup clause-depth2** is now the single remaining composition ceiling (identical in both
-  modes — it is a composition limit, not a code-fidelity one). The failure is the inner-level attribute
-  over-trigger; a more conservative inside-clause flat-vs-attributed margin OR higher `D` may lift it. Cheap;
-  the benchmark is the gate; guard 1-attr/2-attr against regression.
+- **Constructed/cleanup clause-depth2** is the single remaining composition ceiling (identical in both modes —
+  a composition limit, not a code-fidelity one). Diagnostic (2026-06-04): **`D=4096` does NOT lift it** (still
+  0/6) — so it is the per-level auto-detection over-trigger, not a dimension budget. At `D=4096` the deepest
+  level decodes ("eat leaf" correct) but the inner clause's *flat agent* (bird/mouse/duck) still gains a
+  spurious attribute. A robust fix is a non-trivial refinement of the inside-clause flat-vs-attributed decision
+  with real regression risk to the depth-1 attributed-arg case — NOT a cheap knob. Left as the **documented
+  honest ceiling** (deep clause-in-clause nesting is rare in real conversation); the benchmark holds the gate
+  if it is revisited.
 - **Pure-biology backlog item #1 (algebra → spikes):** the GPU-worthy decisive build — the spiking realization
   of this same agent (resonate-and-fire + an autoassociative cleanup network for the pattern-completion step).
   The benchmark is the spec it must reproduce.
