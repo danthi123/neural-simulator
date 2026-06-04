@@ -83,6 +83,30 @@ def bind_via_bg(sb, mapping, settle_steps=40, thal_drive_pA=1500.0, gate_thresh=
     return opened
 
 
+def couple_all_route_gates(sb, threshold=0.03):
+    """Register bridge-internal couplings: each cortical route gate g_X_Y is driven by its thalamic pool
+    thal_X_Y's firing, INSIDE the step (no runner read). After this, opening a route = disinhibiting its
+    thalamic pool; the bridge opens the gate from the thalamic activity."""
+    for v in VERBS:
+        for m in MOTORS:
+            sb.couple_gate_to_pool(f"g_{v}_{m}", f"thal_{v}_{m}", threshold=threshold)
+
+
+def decode_with_bg(sb, verb, mapping, n_steps=60, drive_pA=1500.0):
+    """Drive `verb` AND keep the BG disinhibiting the `mapping` thalamic pools, so the coupled gates stay
+    open in-substrate; return the motor that fires most. (Requires couple_all_route_gates first.)"""
+    from sim.backend import to_host
+    sb.cp_external_input_current[:] = 0.0
+    sb.cp_external_input_current[np.asarray(sb.region_manager.indices(f"verb_{verb}"))] = drive_pA
+    for v, m in mapping.items():
+        sb.cp_external_input_current[np.asarray(sb.region_manager.indices(f"thal_{v}_{m}"))] = drive_pA
+    acc = np.zeros(sb.core_config.num_neurons, dtype=np.float64)
+    for _ in range(n_steps):
+        sb._run_one_simulation_step()
+        acc += to_host(sb.cp_firing_states).astype(np.float64)
+    return max(MOTORS, key=lambda m: acc[np.asarray(sb.region_manager.indices(f"motor_{m}"))].mean())
+
+
 def main():
     print("=== BG-driven thalamocortical gate selection (verb->motor binding), spiking substrate ===\n", flush=True)
     for seed in (42, 43, 44):

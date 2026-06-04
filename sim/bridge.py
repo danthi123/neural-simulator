@@ -315,6 +315,13 @@ class SimulationBridge:
         self._transmission_gate_indices_gpu = {}
         self._transmission_gate_values = {}
 
+        # Activity-driven gate couplings (bridge-internal thalamocortical loop, 2026-06-03): a transmission
+        # gate can be OPENED by the firing of a control population (a thalamic gate pool) rather than an
+        # external command -- thalamic activity opens the cortical route gate, in-substrate. Each entry:
+        # {gate_name, control_idx (gpu), threshold, alpha (EMA), open_value, ema, last_value}.
+        # Empty by default -> zero overhead in the step.
+        self._gate_couplings = []
+
         # Cluster B.1 (2026-04-28): D1/D2 plasticity asymmetry.
         # Per-synapse sign multiplier on the reward-modulated weight update.
         # +1 for D1-targeting (and everything else), -1 for D2-targeting.
@@ -2513,6 +2520,42 @@ class SimulationBridge:
         nnz = self.cp_transmission_gain.shape[0]
         if indices.size > 0 and int(indices.max()) < nnz:
             self.cp_transmission_gain[indices] = cp.float32(value)
+
+    def couple_gate_to_pool(self, gate_name: str, control_region_name: str, threshold: float = 0.05,
+                            alpha: float = 0.3, open_value: float = 1.0) -> None:
+        """Drive a transmission gate from the FIRING of a control population, in-substrate (the
+        thalamocortical loop without a runner read). Each step, if the control region's smoothed firing rate
+        (EMA) is >= threshold the gate opens (to open_value), else it closes. So disinhibiting a thalamic gate
+        pool -> its activity -> the cortical route gate opens, entirely inside _run_one_simulation_step.
+
+        Requires the brain-region framework (control_region_name is resolved to neuron indices). The gate must
+        have been declared as a `transmission_gate` on some pathway.
+        """
+        gate_name = self._canonicalize_gate_name(gate_name)
+        if gate_name not in self._transmission_gate_to_synapses:
+            raise KeyError(f"No transmission gate named '{gate_name}'.")
+        if self.region_manager is None:
+            raise RuntimeError("couple_gate_to_pool requires the brain-region framework (region_manager).")
+        idx = self.region_manager.indices(control_region_name)
+        self._gate_couplings.append({
+            "gate_name": gate_name,
+            "control_idx": cp.asarray(np.asarray(idx, dtype=np.int64)),
+            "threshold": float(threshold), "alpha": float(alpha), "open_value": float(open_value),
+            "ema": 0.0, "last_value": None,
+        })
+
+    def _apply_gate_couplings(self) -> None:
+        """Per-step hook: update activity-driven transmission gates from control-pool firing. No-op when none
+        are registered (zero overhead). Called after cp_firing_states is finalized."""
+        if not self._gate_couplings:
+            return
+        for c in self._gate_couplings:
+            rate = float(self.cp_firing_states[c["control_idx"]].mean())   # firing fraction of the control pool
+            c["ema"] = c["alpha"] * rate + (1.0 - c["alpha"]) * c["ema"]
+            value = c["open_value"] if c["ema"] >= c["threshold"] else 0.0
+            if value != c["last_value"]:                                  # only write the gate when it changes
+                self.set_transmission_gate(c["gate_name"], value)
+                c["last_value"] = value
 
     # ──────────────────────────────────────────────────────────────────
     # Engram-tagging API (P2 / roadmap T1.C / catalog D.14)
@@ -5271,6 +5314,10 @@ class SimulationBridge:
             # Engram tagging (catalog D.14): auto-accumulate spike counts
             # for any active recordings. Zero overhead when no recordings.
             self._tick_engram_recordings()
+
+            # Activity-driven transmission-gate couplings (bridge-internal thalamocortical loop): a control
+            # pool's firing opens/closes its coupled cortical route gate. Zero overhead when none registered.
+            self._apply_gate_couplings()
 
             # Combine spike count + any() into a single GPU reduction.
             # cp.sum(bool_array) gives spike count; > 0 gives _fired_any — one kernel, one sync.
