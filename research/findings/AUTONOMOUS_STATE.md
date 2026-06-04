@@ -42,12 +42,18 @@ marginal-regime artifact, not structural). **STEP 1 OF (B) IS DONE** + committed
 interacting SimulationBridge, capability-equivalent at the production dimension D=2048, multi-seed. Finding
 `2026-06-04-one-bridge-unification-step1-capability.md` updated to DONE; the no-regression test gates at D=2048
 (skip-by-default heavy). All committed both remotes.
->>> EXACT NEXT: step 1 of B is DONE. AWAITING OWNER GO-AHEAD for STEP 2 — the gated synaptic parser->composer route
-(replace the remaining Python role hand-off with the shipped `transmission_gate`: the parser's role-ensemble firing
-OPENS the gate routing a word's code to the selected role's composer bind bank; design
-`docs/plans/2026-06-04-one-bridge-unification-design.md` §4). Do NOT auto-start step 2 (it is the next milestone, per
-the incremental plan + the owner steers milestones). If a watchdog fires with no go-ahead: low-regret hygiene only;
-do NOT start step 2 or re-run the done step-1 gate. HARD RULES unchanged.
+>>> EXACT NEXT: STEP 2 IN PROGRESS (owner said Proceed; plan
+`docs/plans/2026-06-04-one-bridge-unification-step2-implementation.md` committed a912c119; subagent-driven). Task 1
+(de-risk) DONE + verified (commit b8615543): parser-role-gated SELECTIVE routing WORKS on the merged bridge (agent-
+drive -> agent_target only 0.20; patient-drive -> patient only 0.24; no-drive -> all silent), parser ensembles fire,
+ZERO route-weight change (thalamocortical: re-bind = which gate opens, not which weight grew). NO sim/ edits. KEY
+Task-2 note: the public `couple_gate_to_pool(gate, REGION_NAME)` needs the brain-region framework, but the unified
+bridge uses raw inject_explicit_wiring indices -> couple via raw indices (write the `bridge._gate_couplings` dict shape
+that `_apply_gate_couplings` reads, with the parser's raw role_idx indices) -- a runner-side helper, NOT a sim/ edit.
+CONTINUING Task 2 (hear_synaptic: 3 gated routes role_pattern[R] -> composer role bank gated by parser ensemble[R];
+word code -> fill bank; accumulate across the 3 words; bind -- replacing the Python {role:word} hand-off) then Task 3
+(no-regression gate at D=2048 via the synaptic route). Each: fresh subagent, controller trust-but-verify. If a
+watchdog fires: continue the next unstarted step-2 task (check git log). HARD RULES unchanged.
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04) <<<
 
