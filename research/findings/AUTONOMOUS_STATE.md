@@ -71,10 +71,18 @@ the map. So (c) is an INTEGRATION of de-risked pieces, not a research gamble.
   `_spiking_pattern_completion_probe.py` RESOLVES (pre-registered): spiking cleanup recovers a corrupted phasor
   code to the correct attractor at 100% out to self-sim 0.45, 99.7% at self-sim 0.17 (= the numpy grounded
   recall_conf; mirrors id_acc ~1.00); anti-cheat holds (collapses to ~chance under full randomization).
-  STAGED BUILD (each benchmark-gated): (1) [done] cheap de-risk; (2) spiking agent reproducing the ROBUST CORE
-  (flat/who/abstain/one-attribute) on CPU; (3) full benchmark in spikes on GPU (the reserved-GPU decisive run).
-  Surfaced the go/no-go to the owner. If confirmed -> stage 2. If redirected -> e.g. concept/vocab scale or
-  strengthen the conversational surface on the validated algebra agent. Benchmark = the routine multi-seed gate.
+  OWNER CHOSE (c) — BUILD THE SPIKING AGENT. STAGED BUILD (each benchmark-gated):
+  (1) [done] cheap de-risk (pattern completion in spikes RESOLVES).
+  (2a) [DONE] flat robust core in spikes: `research/runners/spiking_unified_agent.py` (SpikingUnifiedAgent on
+       spiking_phasor_fhrr) reproduces the benchmark's flat/who/abstain at **100% (40/40, 2 seeds)** at 320-concept
+       vocab; no-confabulation moat holds in spikes. `tests/test_spiking_unified_agent.py` (2). Finding
+       `2026-06-04-spiking-unified-agent-stage2.md`. COMMITTED + pushed.
+  (2b) [NEXT] one-attribute composition in spikes via the two-factor FACTORING RESONATOR (iterative
+       unbind<->cleanup; validated separately "1.00 in genuine spikes D=256"). Patient = adj⊗noun.
+  (2c) migrate to the BIOLOGICAL resonate-and-fire substrate (`resonate_fire_fhrr`: rf_bind/unbind/bundle +
+       ResonateFireTPAM attractor cleanup = the biological CA3 pattern completion). The pure-biology refinement.
+  (3) full benchmark in spikes on GPU (the reserved-GPU decisive run; 2-attr + clauses at 320).
+  Benchmark = the routine multi-seed gate.
 
 ## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<
 
