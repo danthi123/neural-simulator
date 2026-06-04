@@ -76,7 +76,12 @@ large-D GPU test).
   codebook); for *far* scaling (thousands), the **algorithmic resonator-capacity fix — sparse block codes**
   (deep-research Track-1, ~5000× capacity) — is the necessary long-term lever, and it scales *without* the D²
   blow-up. The D=32768 degradation (3/5) hints at a precision ceiling for brute dimension even on GPU.
-- **Memory/retrieval scaling is a CPU vectorization** (the clean-up loop → matmul), not a GPU need.
+- **Memory/retrieval scaling is a CPU vectorization** (the clean-up loop → matmul), not a GPU need. **SHIPPED
+  2026-06-04** (roadmap item 1): the role-matching clean-up is now a single cos-similarity reduction over the
+  K×D codebook (same metric, threshold unchanged; regression-clean). Demonstration — **vocab 2560 (8× the
+  original 320) now completes in 252s** where it previously *timed out* (>595s), with memory/retrieval/Q&A/
+  abstention/clause all at 100% (two-attribute 0% there, as the cost model predicts: D=2048 ≪ the D∝M² the
+  480-adjective codebook needs).
 
 So the highest-value scaling roadmap is: **(1) vectorize the clean-up** (memory at large vocab, CPU); **(2) GPU
 the resonator** (two-attribute composition, near-term, the prototyped port); **(3) sparse block codes** (the

@@ -63,7 +63,7 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
 sim/                    # 42 modules (+ __init__.py), ~18K lines — core engine
-  bridge.py             # 6781 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate)
+  bridge.py             # 6828 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate)
   config.py             #  760 lines — all @dataclass configs
   enums.py              #  825 lines — NeuronType (50+ presets), enums, default param managers
   connectivity.py       #  999 lines — spatial/WS/motif connection generators (backend-pluggable)
@@ -87,9 +87,9 @@ sim/                    # 42 modules (+ __init__.py), ~18K lines — core engine
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 203 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/generator_S-D-E-F-G/mode-unification/content_selection+content_selection_spiking+dialogue_agent/nested_composition+phasor_associative_memory+phasor_chat+gated_compose/etc) for research
-research/findings/      # session-by-session findings docs (574 files)
-tests/                  # 265 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, mode-unification, content-selection/dialogue, nested-composition, transmission-gate/gated-compose, etc.)
+research/runners/       # 210 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/generator_S-D-E-F-G/mode-unification/content_selection+content_selection_spiking+dialogue_agent/nested_composition+phasor_associative_memory+phasor_chat+gated_compose/unified_agent_benchmark+spiking_unified_agent/etc) for research
+research/findings/      # session-by-session findings docs (578 files)
+tests/                  # 268 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, mode-unification, content-selection/dialogue, nested-composition, transmission-gate/gated-compose, unified-agent-benchmark/spiking-unified-agent, etc.)
 ```
 
 ### Thread Model

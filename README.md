@@ -414,6 +414,31 @@ batch finishes in ~45-55 minutes on an RTX 3090.
 
 ## Latest validated result
 
+**The brain analogue does the full composition benchmark in genuine spikes (2026-06-04):**
+
+- **One coherent agent, benchmarked end-to-end, then realized in spikes.** The scattered composition/memory
+  pieces were converged into one agent and measured on a frozen 320-concept conversational test set (store facts
+  including attributed and nested ones, who/what Q&A, compose, abstain), then realized as a **spiking neural
+  network**. It reproduces the full benchmark — flat facts + one/two-attribute composition + embedded clauses +
+  who/what + the no-confabulation moat — at **100%** on *both* an engineering-scaffold spiking substrate (full
+  320 vocab) **and the genuine biological resonate-and-fire neuron model** (Izhikevich 2001 / Frady-Sommer 2019)
+  with an attractor-network (CA3-style) cleanup, where abstention is a basin-of-attraction property. See
+  `research/findings/2026-06-04-spiking-unified-agent-stage2.md`.
+
+- **Grounded composition resolved by pattern completion.** With biology-grounded (learned) codes, raw sensory
+  readout is too noisy for composition; snapping it to the consolidated concept attractor first (CA3 pattern
+  completion) restores full composition — anti-cheat-validated. The biology-translatable insight: composition
+  runs on stable concept representations, not raw sensory input. See
+  `research/findings/2026-06-04-unified-agent-benchmark-converge-not-add.md`.
+
+- **A measured scaling cost model.** A cheap-first measurement shows memory / retrieval / Q&A / abstention /
+  one-attribute / clauses all scale cheaply at fixed dimension; only the two-attribute resonator needs dimension
+  D ∝ M² in the codebook, making the GPU the genuine enabler for composition past ~320 concepts (now integrated;
+  the default backend auto-detects the GPU). See
+  `research/findings/2026-06-04-capacity-curve-scaling-cost-model.md`.
+
+---
+
 **Compositional structure: two long-standing walls surpassed, biology-faithfully (2026-06-03):**
 
 - **The 320-concept *nested*-composition wall — surpassed (≈48% → 100%).** Storing facts whose slots are
