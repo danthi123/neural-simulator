@@ -11,7 +11,7 @@ def test_spiking_core_reproduces_benchmark():
     (N_dim=2048 -- the F=3 two-attribute resonator needs the dimension) — the spiking agent reproduces every
     benchmark category the numpy agent does, including embedded clauses (recursive decode) and the
     no-confabulation moat (abstention)."""
-    res, wrong = run_core_benchmark(n_dim=2048, seed=42)
+    res, wrong = run_core_benchmark(n_dim=2048, seed=42, resonator_backend="numpy")   # pin CPU for determinism
     assert res["flat"] == [8, 8], f"flat regressed: {res['flat']}  ({wrong})"
     assert res["1-attribute"] == [6, 6], f"one-attribute regressed: {res['1-attribute']}  ({wrong})"
     assert res["2-attribute"] == [5, 5], f"two-attribute regressed: {res['2-attribute']}  ({wrong})"

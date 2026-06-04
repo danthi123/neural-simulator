@@ -46,7 +46,7 @@ class SpikingUnifiedAgent:
     one bundle of three role-bindings (role ⊗ filler); a query unbinds a role and cleans up to the vocabulary."""
 
     def __init__(self, nouns, verbs, adjs=(), n_dim=512, seed=42, abstain_threshold=0.15,
-                 resonator_backend="numpy"):
+                 resonator_backend="auto"):
         self.nouns, self.verbs, self.adjs = list(nouns), list(verbs), list(adjs)
         self.abstain_threshold = float(abstain_threshold)
         self.net = SpikingPhasorFHRR(n_dim, np.random.default_rng(seed))
@@ -57,6 +57,11 @@ class SpikingUnifiedAgent:
         self.noun_vocab = [self.noun_sym[w] for w in self.nouns]   # clean-up codebooks (spike populations)
         self.verb_vocab = [self.verb_sym[w] for w in self.verbs]
         self.adj_vocab = [self.adj_sym[w] for w in self.adjs]
+        # vectorized clean-up codebooks: each vocabulary's spike-phases stacked (K x D). The role-matching WTA is
+        # then ONE cos-similarity reduction over the codebook instead of a Python loop -- same metric, so memory
+        # /retrieval scales to large vocabularies without the per-symbol loop (the capacity-curve cost lever).
+        self._noun_phases = (np.stack([spikes_to_phases(s) for s in self.noun_vocab]) if self.nouns else None)
+        self._verb_phases = (np.stack([spikes_to_phases(s) for s in self.verb_vocab]) if self.verbs else None)
         # phasor codebooks (D x |vocab|) for the two-attribute resonator decode (matmul-based, GPU-friendly)
         self.D = int(n_dim)
         self.seed = int(seed)
@@ -69,18 +74,20 @@ class SpikingUnifiedAgent:
                      if self.verbs else None)
         self.role_ph = {r: _to_phasor(self.role_sym[r]) for r in ROLES}  # cached role phasors
         # resonator backend: the two-attribute F=3 decode is matmul-heavy and needs D ~ M^2 at large vocab,
-        # where CPU cannot run it (D>=8192 times out). resonator_backend="cupy" runs _resonator3 on the GPU.
-        # The default ("numpy") is byte-for-byte the validated CPU path.
+        # where CPU cannot run it (D>=8192 times out) -- so the GPU is the production default. "auto" (the
+        # default) uses the GPU when one is present and falls back to numpy when not; "cupy"/"numpy" force it.
+        # The numpy path is byte-for-byte the validated CPU resonator (the regression test pins it).
         self._res_xp = np
         self._res_AMAT, self._res_NMAT = self.AMAT, self.NMAT
-        if resonator_backend == "cupy":
+        if resonator_backend in ("cupy", "auto"):
             try:
                 import cupy as _cp
-                self._res_xp = _cp
-                self._res_AMAT = _cp.asarray(self.AMAT) if self.AMAT is not None else None
-                self._res_NMAT = _cp.asarray(self.NMAT)
+                if _cp.cuda.runtime.getDeviceCount() > 0:
+                    self._res_xp = _cp
+                    self._res_AMAT = _cp.asarray(self.AMAT) if self.AMAT is not None else None
+                    self._res_NMAT = _cp.asarray(self.NMAT)
             except Exception:
-                pass  # cupy unavailable -> fall back to numpy (no behavior change)
+                pass  # no cupy / no GPU -> numpy (the auto fallback; no behavior change)
         self.kb = []        # phase-midpoint bundle spikes per fact (the pure-phase readout; role matching)
         self.kb_complex = []  # the complex-SUM bundle per fact (the neuron's subthreshold membrane state, with
         #                       magnitude) -- enables EXACT crosstalk subtraction for the F=3 patient decode
@@ -141,12 +148,15 @@ class SpikingUnifiedAgent:
         k = int(np.argmax(sims))
         return names[k], float(sims[k])
 
-    def _unbind_clean(self, bundle, role, vocab, names):
-        """Unbind a role (phase-subtraction neurons) then clean up to the vocabulary (WTA + abstention).
+    def _unbind_clean(self, bundle, role, phase_matrix, names):
+        """Unbind a role (phase-subtraction neurons) then clean up to the vocabulary -- a VECTORIZED winner-take-
+        all by spike-phase similarity (one cos-similarity reduction over the K×D codebook, not a Python loop),
+        with abstention. Same similarity metric as the per-symbol clean-up (so the threshold is unchanged).
         Returns the recovered name, or None if the top similarity is below the abstention threshold."""
-        recovered = phase_subtraction_neuron(bundle, self.role_sym[role])
-        idx, _ = cleanup(recovered, vocab, self.abstain_threshold)
-        return names[idx] if idx >= 0 else None
+        rec = spikes_to_phases(phase_subtraction_neuron(bundle, self.role_sym[role]))   # (D,)
+        sims = np.cos(2.0 * np.pi * (phase_matrix - rec[None, :])).mean(axis=1)          # (K,) = phase_similarity
+        k = int(np.argmax(sims))
+        return names[k] if float(sims[k]) >= self.abstain_threshold else None
 
     def _resonator3(self, p):
         """Factor the patient phasor p ~ adj1 ⊗ adj2 ⊗ noun by the phasor resonator with random restarts (the
@@ -267,22 +277,22 @@ class SpikingUnifiedAgent:
         """"what does <agent> <action>?" -> the patient (flat noun or "adjective noun"), or None (abstain) if no
         stored fact matches."""
         for i, b in enumerate(self.kb):
-            if (self._unbind_clean(b, "AGENT", self.noun_vocab, self.nouns) == agent
-                    and self._unbind_clean(b, "ACTION", self.verb_vocab, self.verbs) == action):
+            if (self._unbind_clean(b, "AGENT", self._noun_phases, self.nouns) == agent
+                    and self._unbind_clean(b, "ACTION", self._verb_phases, self.verbs) == action):
                 return self._decode_patient(i, agent, action)
         return None
 
     def query_agent(self, action, patient):
         """"who <action> <patient>?" -> the agent noun, or None (abstain) if no stored fact matches."""
         for b in self.kb:
-            if (self._unbind_clean(b, "ACTION", self.verb_vocab, self.verbs) == action
-                    and self._unbind_clean(b, "PATIENT", self.noun_vocab, self.nouns) == patient):
-                return self._unbind_clean(b, "AGENT", self.noun_vocab, self.nouns)
+            if (self._unbind_clean(b, "ACTION", self._verb_phases, self.verbs) == action
+                    and self._unbind_clean(b, "PATIENT", self._noun_phases, self.nouns) == patient):
+                return self._unbind_clean(b, "AGENT", self._noun_phases, self.nouns)
         return None
 
 
 def run_core_benchmark(n_dim=512, seed=42, abstain_threshold=0.15, n_noun=200, n_verb=60, n_adj=60,
-                       resonator_backend="numpy"):
+                       resonator_backend="auto"):
     """Run the unified-agent benchmark on the spiking agent at a chosen VOCABULARY SIZE (n_noun/n_verb/n_adj --
     default 320 concepts), using the same frozen test set (which uses only the core words) so accuracy at larger
     vocabularies measures how more distractor concepts stress the clean-up / resonator / decode at fixed
@@ -363,8 +373,9 @@ def main():
     ap.add_argument("--n-dim", type=int, default=512)
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43])
     ap.add_argument("--abstain-threshold", type=float, default=0.15)
-    ap.add_argument("--resonator-backend", choices=["numpy", "cupy"], default="numpy",
-                    help="cupy runs the two-attribute F=3 resonator on the GPU (the scaling enabler)")
+    ap.add_argument("--resonator-backend", choices=["auto", "numpy", "cupy"], default="auto",
+                    help="auto (default) uses the GPU when present else numpy; the F=3 resonator is the scaling "
+                         "enabler past ~320 concepts")
     ap.add_argument("--n-noun", type=int, default=200)
     ap.add_argument("--n-verb", type=int, default=60)
     ap.add_argument("--n-adj", type=int, default=60)
