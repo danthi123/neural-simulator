@@ -4,11 +4,13 @@
 > The 320 complex-composition collapse was re-localized (deep-research-informed cheap-first probes) from
 > "resonator capacity" to **bundle crosstalk**, and a principled fix — **crosstalk subtraction** (the agent
 > already decodes the agent+action to match a query, so subtract those known role-bindings before unbinding
-> the patient) — lifts isolated two-attribute and clause decode at 320 concepts from **0/12 → 12/12 (both
-> seeds)**, at the default D=2048, with 37 existing tests still green. The "scale boundary" below was real but
-> is now surpassed; this doc is kept as the diagnostic trail. The headline insight: the wall was crosstalk
-> from composing a multi-role fact, not a capacity limit — and "explaining away" known components (predictive
-> subtraction) is the cheap, biology-grounded fix.
+> the patient) — surpasses it. **Full-agent headline: the 320-concept agent goes from ~48% to 100%** — 60
+> mixed nested facts (flat / one-attribute / two-attribute / clause) × 2 seeds = **120/120 correct**, every
+> kind perfect, at the default D=2048 (raw result `research/findings/raw/_320_crosstalk_result.json`). The
+> two-attribute and clause kinds that were **0/x** are now **16/16, 17/17, 18/18, 11/11**. 38 tests green.
+> The "scale boundary" below was real but is now surpassed; this doc is kept as the diagnostic trail. The
+> headline insight: the wall was crosstalk from composing a multi-role fact, not a capacity limit — and
+> "explaining away" known components (predictive subtraction) is the cheap, biology-grounded fix.
 
 
 
