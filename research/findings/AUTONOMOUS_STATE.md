@@ -66,12 +66,24 @@ and-fire)->spike(resonant phase)->readout(rf cleanup)->compose(bind/unbind). Fin
 de-risked; remaining option-1 work is PRODUCTION-INTEGRATION ENGINEERING (large) + the documented two-
 attribute resonator cost on grounded codes (the one quality gap, 0.56 vs everything-else-strong). (A) TWO-ATTRIBUTE DONE: lever = D not restarts (measured: restarts 16->48 no change 0.83->0.83; D 2048->4096
 lifts 0.83->0.96 isolated). Gap = dimension/SNR floor (grounded-correlated adj codes too close @2048), closed
-by D at 2x compute; default stays 2048 (common cases strong). (C) SCALE 40->320 = capstone run IN FLIGHT
-(background, learned-code agent at 320 concepts + per-kind breakdown). Remaining big item: (B) production-
-integration (large engineering arc -> writing-plans first) or (D) Direction B thalamocortical -- OWNER-
-STEERABLE. Honest reminder: option 1 = spiking-FAITHFUL not "fully biological"; phasor binding is a
-biologically-grounded HYPOTHESIS; never overclaim. The cheap-first + first-build + quality-characterization
-work is COMPLETE; the next move is the large production arc, for owner steer. >>> THIS is the decision the
+by D at 2x compute; default stays 2048 (common cases strong). (C) SCALE 40->320 DONE = HONEST NEGATIVE
+(`2026-06-03-learned-code-agent-320-scale-boundary-HONEST-NEGATIVE.md`): the 40-concept ~80% does NOT cleanly
+extrapolate to 320. Decomposed: (1) 'recall 0.00' = abstention threshold + input-overload NOT retrieval
+failure (argmax recall 0.72@n_input=256 -> 0.98@1024; 320 concepts can't be independent in 256-dim input;
+cue overlap fine 0.10). (2) FLAT + 1-ATTRIBUTE SCALE to 320 (perfect). (3) TWO-ATTRIBUTE (F=3 resonator) +
+EMBEDDED-CLAUSE (recursive decode) COLLAPSE at D=2048 -- correlated-code SNR floor; clause correctly detected
+(verb-conf 0.288) but recursive cleanup garbage. Levers: n_input>=vocab + much higher D for composition (real
+costs). Constructed-code SUBSTRATE scales (SVO 1.00) but learned-code AGENT complex paths don't at fixed dim.
+ALSO SHIPPED: `research/runners/phasor_chat.py` -- conversational agent on the substrate (type statements +
+questions -> learns/answers/nests/abstains), 8 tests, works at SMALL vocab (the conversational payoff;
+simple parser front-end honestly scoped).
+>>> EXACT NEXT (autonomous / owner-steerable): the cheap-first + first-build + scale-characterization work is
+COMPLETE. Remaining is the LARGE production-integration arc (must BUDGET DIMENSION for complex paths per the
+320 finding; n_input>=vocab, D scaled, recalibrated thresholds; 2-attr may need a different mechanism than
+F=3 resonator at large vocab) -- a writing-plans engineering arc. OR (D) Direction B thalamocortical. Honest
+reminder: spiking-FAITHFUL not "fully biological"; phasor binding is a HYPOTHESIS; the 320 honest negative is
+the scientific deliverable. Recommend the owner steer the production-integration scope (it's a months-scale
+production-architecture commitment). >>> THIS is the decision the
 owner may want to steer: whether to migrate the production substrate onto phasor FHRR to gain nesting. NEXT
 candidate (autonomous): grounded-code re-test (does the 320 result hold for sparse-encoded grounded codes,
 not just random phasors?) — cheap-first, decisive, the last capacity-side uncertainty before a migration
