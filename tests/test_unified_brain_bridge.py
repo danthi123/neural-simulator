@@ -341,3 +341,79 @@ def test_unified_end_to_end_one_bridge():
     assert ok, (
         "composer FIXED bind weights drifted under the parser's global Hebbian training on the shared bridge "
         f"-> plasticity-gate isolation failed at full scale. min={vals.min()} max={vals.max()}")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Task 6: the capability NO-REGRESSION gate — does merging the parser + composer onto one bridge change the
+# composer's recall versus the two separate bridges, at PRODUCTION scale with the REAL substrate codes?
+#
+# For each seed (42/43/44): build the SEPARATE-bridge baseline (`CoreSimComposer`, proj_dim=800, REAL denoise64
+# V=16 codes) and the UNIFIED one-bridge (`UnifiedBrainBridge`, same default codes), run the SAME capability
+# matrix (flat / one-attribute / two-attribute / negation, 6 trials each via the shared `run_matrix` helper),
+# and assert the UNIFIED score for EACH category is within ±1 trial of the SEPARATE baseline (the spiking-noise
+# tolerance). A drop beyond ±1 in any category, any seed, is a REGRESSION — the test must NOT be weakened to pass;
+# the regression is the measured cost of the shared step loop (shared OU background noise + the parser slice's
+# activity shifting the composer's operating point) and is recorded honestly for the controller to decide on a
+# mitigation (e.g. per-region OU / per-region reset). Two-attribute is a KNOWN V=16 boundary in BOTH arrangements,
+# so it is compared unified-vs-separate, NOT vs a perfect score.
+#
+# RUNTIME: this is a heavy SPIKING run on the production (CuPy/GPU) backend — each seed builds a ~6526-neuron
+# unified bridge AND a ~6400-neuron separate bridge and trains the parser; ~minutes per seed, tens of minutes
+# total for 3 seeds. There is no registered `slow` pytest marker in this repo, so the test is NOT marked (an
+# unregistered marker would only warn, not gate); it is still runnable directly:
+#     pytest tests/test_unified_brain_bridge.py::test_unified_capability_no_regression -v
+# It runs on the auto-selected backend (CuPy when present) and SKIPS gracefully if a seed's denoise64 cache is
+# absent (it must not silently pass on NumPy with no GPU, where the substrate's validated behavior diverges).
+# ─────────────────────────────────────────────────────────────────────────────
+_CAP_CATEGORIES = ("flat", "one_attr", "two_attr", "negation")
+
+
+def test_unified_capability_no_regression():
+    """Multi-seed (42/43/44) at production proj_dim=800 with the REAL denoise64 codes: for EACH category the
+    UNIFIED (one-bridge) capability score must be within ±1 trial of the SEPARATE-bridge baseline. A genuine
+    drop beyond ±1 in any category/seed is a REGRESSION (do not weaken — record it). Also confirms the parser
+    parses voice-invariantly on the merged production bridge ('dog go north' active == 'north go dog' passive).
+
+    HEAVY + on-demand: builds two production (~6.5K-neuron) bridges per seed and trains the parser — tens of minutes
+    on the GPU. Skipped by default so the suite stays fast; the load-bearing claim (the merge preserves the core
+    conversational capabilities) is already gated by `test_unified_end_to_end_one_bridge`. The full multi-seed result,
+    including the documented two-attribute capacity-edge cost at the marginal D=800 and the D=2048 mitigation, lives in
+    `research/findings/2026-06-04-one-bridge-unification-step1-capability.md`. Run on demand:
+        SIM_RUN_HEAVY_CAPABILITY=1 pytest tests/test_unified_brain_bridge.py::test_unified_capability_no_regression -v
+    """
+    import os
+    if not os.environ.get("SIM_RUN_HEAVY_CAPABILITY"):
+        pytest.skip("heavy multi-seed production capability gate (run with SIM_RUN_HEAVY_CAPABILITY=1); result + the "
+                    "two-attribute boundary cost are in 2026-06-04-one-bridge-unification-step1-capability.md")
+    from research.findings.raw._unified_bridge_capability_probe import run_capability_comparison
+
+    seeds = (42, 43, 44)
+    try:
+        results = run_capability_comparison(seeds=seeds, proj_dim=800, n=6)
+    except FileNotFoundError:
+        pytest.skip("denoise64 concept-code cache not present for one of seeds 42/43/44")
+
+    # Parser-on-merged-bridge confirmation (every seed): correct active parse + voice-invariant agent.
+    for seed in seeds:
+        p = results[seed]["parser"]
+        assert p["active"] == {"agent": "dog", "action": "go", "patient": "north"}, (
+            f"seed {seed}: parser active parse wrong on the merged production bridge: {p['active']}")
+        assert p["passive_agent"] == "dog", (
+            f"seed {seed}: parser passive frame did not assign the same agent on the merged bridge "
+            f"(voice-invariance broken): passive_agent={p['passive_agent']!r}")
+
+    # No-regression assertion: every category, every seed, unified within ±1 trial of separate.
+    regressions = []
+    for seed in seeds:
+        sep = results[seed]["separate"]
+        uni = results[seed]["unified"]
+        for cat in _CAP_CATEGORIES:
+            sep_ok = sep[cat][0]
+            uni_ok = uni[cat][0]
+            if uni_ok - sep_ok < -1:                     # unified more than 1 trial below separate
+                regressions.append((seed, cat, sep_ok, uni_ok))
+
+    assert not regressions, (
+        "UNIFIED bridge capability REGRESSED vs the SEPARATE baseline (drop > 1 trial in some category/seed) — "
+        "this is the measured cost of the shared step loop; record it, do NOT weaken the test. Drops: "
+        + "; ".join(f"seed {s} {c}: separate {so} -> unified {uo}" for s, c, so, uo in regressions))
