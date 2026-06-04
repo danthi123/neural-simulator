@@ -98,14 +98,25 @@ with the per-action BG cascade for exactly this; FS lateral inhibition between m
 wins), NOT more drive. #3 stays PARTIAL (learning validated + single-binding cascade fires; full multi-binding
 end-to-end honestly fails without WTA arbitration — the deliverable). Findings updated; committed both remotes.
 
->>> EXACT NEXT CONCRETE ACTION (owner-steerable): after the #3 close retrain lands + is finalized → (D) return to
-the converge-not-add composition agent (the top-line conversational goal; cheat-removal was the "no higher-priority
-work remains" backlog, now all resolved/scoped). (D) is open-ended/strategic (months-scale) → best steered by the
-owner; candidate bounded steps: feed grounded codes into the SPIKING unified agent (unify the spiking + grounding
-threads end-to-end), or a richer multi-turn conversational demo, or revisit the clause-depth2 ceiling. HARD RULES:
-GPU/CuPy for real runs (numpy ok for tiny smokes); honest propagation of EVERY outcome (incl. negative) to BOTH
-remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and
-honestly fails without it IS the finding; never end a turn on a future-tense promise.
+>>> (D) CAPSTONE DONE = brain-analogue unification: the SPIKING unified agent runs the full core benchmark on
+real-V1-SENSORY-GROUNDED + decorrelated codes at **72/72 = 100% (2 seeds)** — constructed parity IN GENUINE SPIKES,
+no spike-quantization cost on the core. `spiking_unified_agent_grounded.py` (the spiking agent gained a
+backward-compatible `external_phases` hook; its 3 tests still pass). This unifies the session's two validated
+brain-analogue threads (genuine-spikes composition + sensory grounding) into the most complete brain-analogue
+conversational artifact: fact memory + who/what + abstention + 1/2-attr composition + embedded clauses, every op a
+spiking-phasor population, every concept code from a real V1 receptive-field bank. Finding
+`2026-06-04-spiking-plus-grounding-unification.md`. COMMITTING + pushing both remotes.
+
+>>> EXACT NEXT CONCRETE ACTION (owner-steerable): the cheat-removal arc (2/3/4) is comprehensively resolved/scoped
+and the brain-analogue is unified end-to-end (spikes + grounding, 100% core). Remaining open frontiers for the
+top-line conversational goal, all open-ended/strategic (owner-steer): (i) #3's remaining SELECTION-ARBITRATION
+close (motor WTA / FS lateral inhibition — the localized fix from the honest negative); (ii) the clause-depth2
+ceiling (documented hard, NOT dimension-budget — a per-level detector refinement); (iii) scale vocab beyond 320
+(the sparse-distributed G.20 route); (iv) a richer multi-turn conversational demo on the unified grounded-spiking
+agent; (v) multi-modal grounding (non-visual concepts). HARD RULES: GPU/CuPy for real runs (numpy ok for tiny
+smokes); honest propagation of EVERY outcome (incl. negative) to BOTH remotes; never weaken frozen bars or the
+no-confab moat; a capability that only survives WITH a shortcut and honestly fails without it IS the finding;
+never end a turn on a future-tense promise.
 
 ## >>> UNIFIED-AGENT BENCHMARK ARC (2026-06-04, earlier — read THIS first) <<<
 

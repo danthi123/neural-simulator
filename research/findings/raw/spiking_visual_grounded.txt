@@ -1,0 +1,18 @@
+=== SPIKING unified agent on real-V1-GROUNDED codes | 320 concepts | D=2048 | decorrelate=True | seeds=[42, 43] ===
+
+  seed 42:  flat=8/8  1-attribute=6/6  2-attribute=5/5  clause-depth1=5/5  who-query=6/6  abstain=6/6
+  seed 43:  flat=8/8  1-attribute=6/6  2-attribute=5/5  clause-depth1=5/5  who-query=6/6  abstain=6/6
+
+  --- per-category pass-rate (multi-seed, SPIKING + V1-grounded) ---
+    flat              16/16  = 100.0%
+    1-attribute       12/12  = 100.0%
+    2-attribute       10/10  = 100.0%
+    clause-depth1     10/10  = 100.0%
+    who-query         12/12  = 100.0%
+    abstain           12/12  = 100.0%
+
+  OVERALL: 72/72 = 100.0%  (2 seeds)
+  (numpy agent on the SAME grounded+decorrelated codes = 92.3%, 6-category core 100%, constructed parity)
+
+  wrote research/findings/raw/spiking_visual_grounded.json
+EXIT=0

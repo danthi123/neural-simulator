@@ -46,13 +46,22 @@ class SpikingUnifiedAgent:
     one bundle of three role-bindings (role ⊗ filler); a query unbinds a role and cleans up to the vocabulary."""
 
     def __init__(self, nouns, verbs, adjs=(), n_dim=512, seed=42, abstain_threshold=0.15,
-                 resonator_backend="auto"):
+                 resonator_backend="auto", external_phases=None):
         self.nouns, self.verbs, self.adjs = list(nouns), list(verbs), list(adjs)
         self.abstain_threshold = float(abstain_threshold)
         self.net = SpikingPhasorFHRR(n_dim, np.random.default_rng(seed))
-        self.noun_sym = {w: self.net.random_symbol() for w in self.nouns}
-        self.verb_sym = {w: self.net.random_symbol() for w in self.verbs}
-        self.adj_sym = {w: self.net.random_symbol() for w in self.adjs}
+        # external_phases: optional {token -> phase array in [0,1)} -- e.g. SENSORY-GROUNDED codes (V1 Gabor +
+        # decorrelation). A grounded token becomes a spike symbol via phases_to_spikes; ungrounded tokens (and
+        # the roles) stay random. Default None = all random (backward-compatible; the tests pin this path).
+        ext = external_phases or {}
+
+        def _sym(token):
+            return phases_to_spikes(np.asarray(ext[token]), self.net.t_steps) if token in ext \
+                else self.net.random_symbol()
+
+        self.noun_sym = {w: _sym(w) for w in self.nouns}
+        self.verb_sym = {w: _sym(w) for w in self.verbs}
+        self.adj_sym = {w: _sym(w) for w in self.adjs}
         self.role_sym = {r: self.net.random_symbol() for r in ROLES}
         self.noun_vocab = [self.noun_sym[w] for w in self.nouns]   # clean-up codebooks (spike populations)
         self.verb_vocab = [self.verb_sym[w] for w in self.verbs]
@@ -292,7 +301,7 @@ class SpikingUnifiedAgent:
 
 
 def run_core_benchmark(n_dim=512, seed=42, abstain_threshold=0.15, n_noun=200, n_verb=60, n_adj=60,
-                       resonator_backend="auto"):
+                       resonator_backend="auto", external_phases=None):
     """Run the unified-agent benchmark on the spiking agent at a chosen VOCABULARY SIZE (n_noun/n_verb/n_adj --
     default 320 concepts), using the same frozen test set (which uses only the core words) so accuracy at larger
     vocabularies measures how more distractor concepts stress the clean-up / resonator / decode at fixed
@@ -301,7 +310,7 @@ def run_core_benchmark(n_dim=512, seed=42, abstain_threshold=0.15, n_noun=200, n
         build_vocab, FACTS_FLAT, FACTS_1ATTR, FACTS_2ATTR, FACTS_CLAUSE, WHO_QUERIES, ABSTAIN_QUERIES)
     nouns, verbs, adjs = build_vocab(n_noun, n_verb, n_adj)
     agent = SpikingUnifiedAgent(nouns, verbs, adjs, n_dim=n_dim, seed=seed, abstain_threshold=abstain_threshold,
-                                resonator_backend=resonator_backend)
+                                resonator_backend=resonator_backend, external_phases=external_phases)
     for ag, ac, pa in FACTS_FLAT + FACTS_1ATTR + FACTS_2ATTR + FACTS_CLAUSE:
         agent.learn(ag, ac, pa)
 

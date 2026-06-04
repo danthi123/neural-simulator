@@ -1,0 +1,107 @@
+{
+  "mode": "spiking-visual-grounded",
+  "decorrelate": true,
+  "seeds": [
+    42,
+    43
+  ],
+  "D": 2048,
+  "aggregate": {
+    "flat": [
+      16,
+      16,
+      1.0
+    ],
+    "1-attribute": [
+      12,
+      12,
+      1.0
+    ],
+    "2-attribute": [
+      10,
+      10,
+      1.0
+    ],
+    "clause-depth1": [
+      10,
+      10,
+      1.0
+    ],
+    "who-query": [
+      12,
+      12,
+      1.0
+    ],
+    "abstain": [
+      12,
+      12,
+      1.0
+    ]
+  },
+  "overall": [
+    72,
+    72
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          6,
+          6
+        ],
+        "2-attribute": [
+          5,
+          5
+        ],
+        "clause-depth1": [
+          5,
+          5
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": []
+    },
+    {
+      "seed": 43,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          6,
+          6
+        ],
+        "2-attribute": [
+          5,
+          5
+        ],
+        "clause-depth1": [
+          5,
+          5
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": []
+    }
+  ]
+}
