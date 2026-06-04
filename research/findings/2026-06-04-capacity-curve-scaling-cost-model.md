@@ -66,8 +66,12 @@ large-D GPU test).
 ## Recommendation
 
 - **Yes, a GPU resonator is worthwhile for scaling composition** — it's the difference between two-attribute being
-  impossible (CPU can't reach D=8192) and ~11s. The targeted port is the **resonator** (`_resonator3` → CuPy;
-  prototyped in `_gpu_resonator_capacity.py`), not the whole substrate.
+  impossible (CPU can't reach D=8192) and ~11s. The targeted port is the **resonator** (`_resonator3` → CuPy),
+  not the whole substrate. **SHIPPED 2026-06-04** (`SpikingUnifiedAgent(resonator_backend="cupy")`): the numpy
+  path is byte-for-byte the validated CPU resonator (regression 2/2); the GPU path reproduces the benchmark at
+  D=2048 (36/36 = CPU); and it **unblocks scaling** — the full agent at **vocab 640, D=8192** decodes
+  two-attribute **5/5** → 36/36 = 100%, where pure-CPU got 0/5 at D=2048 and could not run D=8192. GPU guard
+  test added (skipped without a GPU).
 - **But D ∝ M² (cost ~ M⁴) is a steep ceiling.** GPU buys near-term headroom (a few hundred concepts per
   codebook); for *far* scaling (thousands), the **algorithmic resonator-capacity fix — sparse block codes**
   (deep-research Track-1, ~5000× capacity) — is the necessary long-term lever, and it scales *without* the D²

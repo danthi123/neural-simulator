@@ -45,7 +45,8 @@ class SpikingUnifiedAgent:
     """Store flat SVO facts and answer who/what + abstain, entirely in spiking-phasor populations. Each fact is
     one bundle of three role-bindings (role ⊗ filler); a query unbinds a role and cleans up to the vocabulary."""
 
-    def __init__(self, nouns, verbs, adjs=(), n_dim=512, seed=42, abstain_threshold=0.15):
+    def __init__(self, nouns, verbs, adjs=(), n_dim=512, seed=42, abstain_threshold=0.15,
+                 resonator_backend="numpy"):
         self.nouns, self.verbs, self.adjs = list(nouns), list(verbs), list(adjs)
         self.abstain_threshold = float(abstain_threshold)
         self.net = SpikingPhasorFHRR(n_dim, np.random.default_rng(seed))
@@ -67,6 +68,19 @@ class SpikingUnifiedAgent:
         self.VMAT = (np.stack([_to_phasor(self.verb_sym[w]) for w in self.verbs], axis=1)
                      if self.verbs else None)
         self.role_ph = {r: _to_phasor(self.role_sym[r]) for r in ROLES}  # cached role phasors
+        # resonator backend: the two-attribute F=3 decode is matmul-heavy and needs D ~ M^2 at large vocab,
+        # where CPU cannot run it (D>=8192 times out). resonator_backend="cupy" runs _resonator3 on the GPU.
+        # The default ("numpy") is byte-for-byte the validated CPU path.
+        self._res_xp = np
+        self._res_AMAT, self._res_NMAT = self.AMAT, self.NMAT
+        if resonator_backend == "cupy":
+            try:
+                import cupy as _cp
+                self._res_xp = _cp
+                self._res_AMAT = _cp.asarray(self.AMAT) if self.AMAT is not None else None
+                self._res_NMAT = _cp.asarray(self.NMAT)
+            except Exception:
+                pass  # cupy unavailable -> fall back to numpy (no behavior change)
         self.kb = []        # phase-midpoint bundle spikes per fact (the pure-phase readout; role matching)
         self.kb_complex = []  # the complex-SUM bundle per fact (the neuron's subthreshold membrane state, with
         #                       magnitude) -- enables EXACT crosstalk subtraction for the F=3 patient decode
@@ -137,28 +151,38 @@ class SpikingUnifiedAgent:
     def _resonator3(self, p):
         """Factor the patient phasor p ~ adj1 ⊗ adj2 ⊗ noun by the phasor resonator with random restarts (the
         two adjectives share a codebook -> permutation symmetry -> restarts + best reconstruction break it).
-        Returns (sorted-adjective-indices, noun-index, reconstruction-similarity). Matmul-based (GPU-friendly)."""
+        Runs on the resonator backend (numpy by default; cupy/GPU when resonator_backend='cupy') -- the matmuls
+        dominate and need D ~ M^2 at large vocabulary, so the GPU is the enabler past ~320 concepts. The numpy
+        path is byte-for-byte the validated CPU resonator. Returns (sorted-adjective-indices, noun-index,
+        reconstruction-similarity)."""
+        xp = self._res_xp
+        AMAT, NMAT = self._res_AMAT, self._res_NMAT
+        cbs = [AMAT, AMAT, NMAT]
+        p = xp.asarray(p)
         rng = np.random.default_rng(self.seed + 11)
-        Ma = self.AMAT.shape[1]
-        cbs = [self.AMAT, self.AMAT, self.NMAT]
+        Ma = AMAT.shape[1]
+
+        def unit(v):
+            return v / (xp.abs(v) + 1e-12)
+
         best = None
         for _ in range(self.n_restarts):
-            est = [_unit(self.AMAT.sum(1) + 0.7 * self.AMAT[:, rng.integers(Ma)]),
-                   _unit(self.AMAT.sum(1) + 0.7 * self.AMAT[:, rng.integers(Ma)]),
-                   _unit(self.NMAT.sum(1))]
+            est = [unit(AMAT.sum(1) + 0.7 * AMAT[:, int(rng.integers(Ma))]),
+                   unit(AMAT.sum(1) + 0.7 * AMAT[:, int(rng.integers(Ma))]),
+                   unit(NMAT.sum(1))]
             for _ in range(150):
                 new = []
                 for i in range(3):
-                    o = np.ones(self.D, dtype=complex)
+                    o = xp.ones(self.D, dtype=complex)
                     for j in range(3):
                         if j != i:
                             o = o * est[j]
-                    new.append(_unit(cbs[i] @ (cbs[i].conj().T @ (p * np.conj(o)))))
+                    new.append(unit(cbs[i] @ (cbs[i].conj().T @ (p * xp.conj(o)))))
                 est = new
-            resid = _phasor_sim(p, est[0] * est[1] * est[2])
-            a1 = int(np.argmax(np.abs(self.AMAT.conj().T @ est[0])))
-            a2 = int(np.argmax(np.abs(self.AMAT.conj().T @ est[1])))
-            n = int(np.argmax(np.abs(self.NMAT.conj().T @ est[2])))
+            resid = float(xp.abs(xp.vdot(est[0] * est[1] * est[2], p)) / self.D)
+            a1 = int(xp.argmax(xp.abs(AMAT.conj().T @ est[0])))
+            a2 = int(xp.argmax(xp.abs(AMAT.conj().T @ est[1])))
+            n = int(xp.argmax(xp.abs(NMAT.conj().T @ est[2])))
             if best is None or resid > best[0]:
                 best = (resid, tuple(sorted({a1, a2})), n)
         return best[1], best[2], best[0]
@@ -257,7 +281,8 @@ class SpikingUnifiedAgent:
         return None
 
 
-def run_core_benchmark(n_dim=512, seed=42, abstain_threshold=0.15, n_noun=200, n_verb=60, n_adj=60):
+def run_core_benchmark(n_dim=512, seed=42, abstain_threshold=0.15, n_noun=200, n_verb=60, n_adj=60,
+                       resonator_backend="numpy"):
     """Run the unified-agent benchmark on the spiking agent at a chosen VOCABULARY SIZE (n_noun/n_verb/n_adj --
     default 320 concepts), using the same frozen test set (which uses only the core words) so accuracy at larger
     vocabularies measures how more distractor concepts stress the clean-up / resonator / decode at fixed
@@ -265,7 +290,8 @@ def run_core_benchmark(n_dim=512, seed=42, abstain_threshold=0.15, n_noun=200, n
     from research.runners.unified_agent_benchmark import (
         build_vocab, FACTS_FLAT, FACTS_1ATTR, FACTS_2ATTR, FACTS_CLAUSE, WHO_QUERIES, ABSTAIN_QUERIES)
     nouns, verbs, adjs = build_vocab(n_noun, n_verb, n_adj)
-    agent = SpikingUnifiedAgent(nouns, verbs, adjs, n_dim=n_dim, seed=seed, abstain_threshold=abstain_threshold)
+    agent = SpikingUnifiedAgent(nouns, verbs, adjs, n_dim=n_dim, seed=seed, abstain_threshold=abstain_threshold,
+                                resonator_backend=resonator_backend)
     for ag, ac, pa in FACTS_FLAT + FACTS_1ATTR + FACTS_2ATTR + FACTS_CLAUSE:
         agent.learn(ag, ac, pa)
 
@@ -337,14 +363,22 @@ def main():
     ap.add_argument("--n-dim", type=int, default=512)
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43])
     ap.add_argument("--abstain-threshold", type=float, default=0.15)
+    ap.add_argument("--resonator-backend", choices=["numpy", "cupy"], default="numpy",
+                    help="cupy runs the two-attribute F=3 resonator on the GPU (the scaling enabler)")
+    ap.add_argument("--n-noun", type=int, default=200)
+    ap.add_argument("--n-verb", type=int, default=60)
+    ap.add_argument("--n-adj", type=int, default=60)
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
     print(f"=== spiking unified agent | flat + 1/2-attribute + clause + who + abstain in spikes | "
-          f"N_dim={args.n_dim} | seeds={args.seeds} ===\n", flush=True)
+          f"N_dim={args.n_dim} | vocab={args.n_noun + args.n_verb + args.n_adj} | "
+          f"resonator={args.resonator_backend} | seeds={args.seeds} ===\n", flush=True)
     per_seed = []
     for s in args.seeds:
-        res, wrong = run_core_benchmark(n_dim=args.n_dim, seed=s, abstain_threshold=args.abstain_threshold)
+        res, wrong = run_core_benchmark(n_dim=args.n_dim, seed=s, abstain_threshold=args.abstain_threshold,
+                                        n_noun=args.n_noun, n_verb=args.n_verb, n_adj=args.n_adj,
+                                        resonator_backend=args.resonator_backend)
         per_seed.append({"seed": s, "categories": res, "wrong": wrong})
         line = "  ".join(f"{c}={res[c][0]}/{res[c][1]}" for c in res)
         print(f"  seed {s}:  {line}", flush=True)

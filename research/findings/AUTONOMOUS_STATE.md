@@ -126,9 +126,17 @@ the map. So (c) is an INTEGRATION of de-risked pieces, not a research gamble.
         (`_resonator3`->CuPy; prototyped `_gpu_resonator_capacity.py`) for two-attribute (near-term enabler);
         (3) sparse block codes (the resonator's D~M^2 i.e. cost~M^4 ceiling; far scaling, deep-research Track-1).
       So the GPU port the owner asked about IS worthwhile -- TARGETED at the resonator, not the whole substrate.
-  >>> EXACT NEXT (owner-steerable): per the roadmap -- (1) cleanup vectorization, (2) integrate the GPU resonator
-      into the agent (backend-aware _resonator3), or (3) sparse block codes. OR the cheat-removal backlog. OR
-      wiki-sync/consolidate. Awaiting owner steer on which scaling-roadmap piece (or other direction).
+  >>> ROADMAP ITEM 2 SHIPPED: GPU resonator integrated into the agent. `SpikingUnifiedAgent(resonator_backend=
+      "cupy")` -- backend-aware `_resonator3` (numpy default byte-identical to the validated CPU path; cupy opt-in).
+      VALIDATED 3 ways: (a) numpy regression 2/2 (no behavior change); (b) GPU correctness at D=2048 vocab 320 =
+      36/36 (= CPU); (c) SCALING UNBLOCKED -- full agent at vocab 640, D=8192, resonator=cupy -> two-attribute
+      5/5 -> 36/36 = 100%, where pure-CPU got 0/5 at D=2048 and COULDN'T RUN D=8192 (timeout). GPU guard test
+      added (skipped without GPU). CLI: --resonator-backend cupy --n-noun/--n-verb/--n-adj. COMMITTING.
+  >>> EXACT NEXT (owner-steerable): remaining scaling-roadmap pieces -- (1) cleanup vectorization (memory at large
+      vocab, CPU win: the WTA cleanup() python-loop -> single matmul), (3) sparse block codes (the resonator's
+      D~M^2 / cost~M^4 ceiling for FAR scaling, deep-research Track-1). OR the pure-biology cheat-removal backlog
+      (BG gate -> real g11_bg, sensory-grounded codes). OR wiki-sync/consolidate this enormous session. Awaiting
+      owner steer.
   Benchmark = the routine multi-seed gate.
 
 ## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<

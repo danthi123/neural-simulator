@@ -20,6 +20,21 @@ def test_spiking_core_reproduces_benchmark():
     assert res["abstain"] == [6, 6], f"abstain (no-confabulation) regressed: {res['abstain']}  ({wrong})"
 
 
+def test_gpu_resonator_matches_numpy():
+    """If cupy + a GPU are available, the GPU resonator backend reproduces the robust core (and two-attribute)
+    -- correctness of the backend-aware _resonator3 (the scaling enabler). Skipped without a GPU."""
+    import pytest
+    try:
+        import cupy as cp
+        if cp.cuda.runtime.getDeviceCount() < 1:
+            pytest.skip("no GPU")
+    except Exception:
+        pytest.skip("cupy/GPU unavailable")
+    res, wrong = run_core_benchmark(n_dim=2048, seed=42, resonator_backend="cupy")
+    assert res["2-attribute"] == [5, 5], f"GPU resonator two-attribute: {res['2-attribute']}  ({wrong})"
+    assert res["flat"] == [8, 8] and res["who-query"] == [6, 6] and res["abstain"] == [6, 6]
+
+
 def test_spiking_agent_abstains_on_unknown_pair():
     """A direct no-confabulation check: a stored agent + a stored action that were never paired -> abstain."""
     agent = SpikingUnifiedAgent(["dog", "cat", "bird"], ["chase", "see"], n_dim=512, seed=42)
