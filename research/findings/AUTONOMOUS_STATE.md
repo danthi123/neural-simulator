@@ -11,6 +11,27 @@ explicit user stop/pause or a true safety boundary halts work)
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04, NEWEST — read THIS first) <<<
 
+>>> OWNER STEER (this turn): owner SURFACED the completion + chose **(A) grounded 320-concept brain agent** as the
+active scaling direction, and confirmed **(B) one-bridge-all-regions** as a follow-on (asked the bridge count). FACTS
+for B: the conversational brain = **3 SimulationBridges** — parser (126n, Hebbian ensembles), composer (6400n,
+hand-wired coincidence banks), dlPFC content-selection (~2 regions, built on demand, ALREADY uses the brain-region
+framework). Cross-bridge signals are Python hand-offs, NOT synaptic pathways. The G.20 production-scaling route's ~5
+bridges are a DELIBERATE vocab-shard (a feature, NOT a seam) → B = merge the 3 FUNCTIONAL regions onto one
+multi-region bridge (the BrainRegion/RegionPathway framework exists + is proven by the dlPFC bridge; cost =
+multi-week refactor + re-validate the 10 tests), NOT merge the vocab shards. Sequencing agreed: (A) now, (B) the very
+next architecture milestone. CHEAP-FIRST VALIDATION this turn (committed both remotes): the promoted CoreSimComposer
+is vocab-robust to V=320 multi-seed (42/43/44) even on HARD correlated codes (between-cos ~0.60) — K=1 what/who/abstain
+12/12, AND a 20-fact relational KB at V=320 holds 20/20 who + 20/20 what + 20/20 abstain every seed. Finding
+`2026-06-04-core-composer-V320-vocab-robustness-confirmed.md`.
+>>> EXACT NEXT CONCRETE ACTION (supersedes the SURFACE/AWAIT one below): BEGIN (A). Cheap-first FIRST increment =
+feed the project's REAL production 320-concept codes (the G.20 sparse-distributed `generate_sparse_patterns` scheme,
+or any captured 320-concept-pool activity) through `CoreSimComposer(concepts=...)` and validate composition + KB +
+abstention on GROUNDED codes (vs this turn's synthetic rho codes); honest BOUNDARY surfaced if the production code
+statistics break the bind/threshold. THEN the heavier grounded rung (capture 320 concept-pool activities from a
+sparse-distributed shared-pool bridge so the codes are the substrate's OWN, like denoise64 at V=16). (B) queued right
+after (A). HARD RULES unchanged (GPU for real runs, numpy only for tiny smoke; honest propagation to BOTH remotes;
+never weaken frozen bars or the no-confab moat; never end a turn on a future-tense promise).
+
 OWNER DIRECTIVE (signed-off plan `docs/plans/2026-06-04-consolidate-conversational-pipeline-onto-core-sim-design.md`):
 "the core sim IS the simulated brain; capabilities realized through it, no bolted-on modules" — consolidate BEFORE
 scaling. ALL 4 PHASES DONE, committed + pushed BOTH remotes (origin 84daa833, gitea synced):
