@@ -39,7 +39,15 @@ import numpy as np
 from sim.regions import BrainRegion, RegionPathway
 from sim.enums import NeuronType
 from research.runners.gated_compose_demo import VERBS, MOTORS, TRUE_MAP, decode  # noqa: F401
-from research.runners.gated_compose_bg_genuine_demo import THAL_TONIC_PA, GPI_TONIC_PA
+from research.runners.gated_compose_bg_genuine_demo import THAL_TONIC_PA
+
+# Learned regime needs a LOWER GPi pacemaker tonic than #2's direct-drive regime. #2 drives D1 directly (~1500 pA
+# → d1 fires 0.12-0.30, strong) and pairs it against a strongly-pacing GPi (2200 pA). Here D1 is driven by the
+# STDP-LEARNED cortico-striatal weight, which fires d1 only WEAKLY (~0.06 even at n_verb=1000); a weak d1 can only
+# silence a weakly-pacing GPi. 600 pA lets the learned d1 silence its GPi (→0.00, thal released) while baseline GPi
+# still gates the non-selected thalamic relays. (Diagnosed 2026-06-04: at 2200 the learned d1 couldn't complete the
+# cascade → everything defaulted to N; at 600, seed 42 = 4/4.)
+GPI_TONIC_PA = 600.0
 
 D1_W = 15.0       # D1 -| GPi (g11_bg scale; large weights explode g_i -> see cheat-#2 finding)
 GPI_W = 8.0       # GPi -| thal

@@ -100,14 +100,45 @@ bias is NOT fixed by more presynaptic drive — it needs cross-pool **winner-tak
 between motor pools, or one-gate-open enforcement) so a single binding wins cleanly. Pool scaling addresses the
 DRIVE wall (real, cheap-first confirmed) but not the SELECTION-arbitration wall.
 
-## Honest status
+## 🎉 RESOLVED (2026-06-04): the negative was a cascade-tuning mismatch, NOT structural — and the anti-cheat passes
 
-- LEARNING (the hard, scientific part): **validated** — selective cortico-striatal STDP (correct verb→D1 grows).
-- Single-binding cascade at scale: **fires** (cheap-first isolation; the drive wall is closed by ≥300 cue neurons).
-- FULL multi-binding end-to-end: **HONEST NEGATIVE** — collapses to the structural N-bias (3/12, true == permuted
-  == chance). The remaining blocker is selection arbitration (motor WTA / FS lateral inhibition), the documented
-  fix for the N-bias — NOT drive magnitude, and NOT addressed by pool scaling. This is the deliverable: the close
-  honestly fails without the WTA arbitration, which localizes exactly what #3's genuine end-to-end requires next.
+The "needs WTA / structural N-bias" reading was wrong — **three** successive smell-test diagnostics corrected it:
+
+1. At `n_verb=500` the learned weight only reached ~4 (plateaus; more epochs don't help) → d1 didn't fire →
+   nothing routed → the decode *defaulted* to N (argmax of zeros). Not an N-bias; a non-firing cascade.
+2. At `n_verb=1000` the learned weight reached ~7.75 and d1 fired **SELECTIVELY** (only `d1_COME_S` = 0.06; the
+   wrong d1 pools stayed silent) — so selection/arbitration was never the problem. But thal stayed suppressed.
+3. The real blocker: a weak, STDP-learned d1 (0.06) cannot silence a GPi pacing at #2's **2200 pA** tonic (which
+   #2 needs because it drives d1 DIRECTLY to 0.12-0.30). The genuine cascade was tuned for strong direct-drive d1,
+   not weak learned d1.
+
+**Fix:** rebalance the GPi pacemaker tonic to the LEARNED regime — `GPI_TONIC_PA = 600` (vs #2's 2200). At 600 the
+weak learned d1 fully silences its GPi (→0.00), the thalamic relay is released (0.10), the cascade completes, and
+the cue routes to its motor — while baseline GPi still gates the non-selected relays.
+
+**Result (`--n-verb 1000`, `research/findings/raw/cheat3_close_nverb1000_gpi600.txt`):**
+
+```
+TRUE teacher:      seed 42/43/44 = 4/4 each  ->  12/12   (GO->N COME->S STOP->W LOOK->E, every seed)
+PERMUTED teacher:  PERMUTED-label hits 10/12 (learns the taught permuted mapping),
+                   TRUE-label hits 1/12 (BELOW chance 3/12 -- no structural true-mapping bias)
+=> LEARNED SELECTION
+```
+
+The anti-cheat is decisive: the selection **follows the teacher** — true teacher → true mapping (12/12); permuted
+teacher → permuted mapping (10/12) with the true mapping collapsing to chance (1/12). So the gate that opens is
+selected by a TRAINED cortico-striatal pathway, not commanded, and not a structural artifact.
+
+## Honest status — RESOLVED
+
+- LEARNING: **validated** — selective cortico-striatal STDP (correct verb→D1 grows; wrong stays at init).
+- Genuine end-to-end (learned cue → D1 → disinhibition cascade → gate → motor): **RESOLVED** — 12/12 true across
+  3 seeds with the permuted-teacher anti-cheat passing, at `n_verb=1000` + the learned-regime `GPI_TONIC_PA=600`.
+- Key biology-translatable insight: a downstream cascade tuned for STRONG (direct-drive) input fails on WEAK
+  (plasticity-learned) input even when the learned selection is perfectly correct — the pacemaker/threshold of the
+  *receiving* stage must match the magnitude the *learned* projection actually delivers. The honest-negative→
+  diagnose→rebalance loop (three corrected hypotheses) is what found it; the first "structural N-bias / needs WTA"
+  reading was a decode-default artifact.
 
 ## Files
 

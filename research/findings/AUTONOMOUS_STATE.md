@@ -107,16 +107,25 @@ conversational artifact: fact memory + who/what + abstention + 1/2-attr composit
 spiking-phasor population, every concept code from a real V1 receptive-field bank. Finding
 `2026-06-04-spiking-plus-grounding-unification.md`. COMMITTING + pushing both remotes.
 
->>> EXACT NEXT CONCRETE ACTION (owner-steerable): the cheat-removal arc (2/3/4) is comprehensively resolved/scoped
-and the brain-analogue is unified end-to-end (spikes + grounding, 100% core). Remaining open frontiers for the
-top-line conversational goal, all open-ended/strategic (owner-steer): (i) #3's remaining SELECTION-ARBITRATION
-close (motor WTA / FS lateral inhibition — the localized fix from the honest negative); (ii) the clause-depth2
-ceiling (documented hard, NOT dimension-budget — a per-level detector refinement); (iii) scale vocab beyond 320
-(the sparse-distributed G.20 route); (iv) a richer multi-turn conversational demo on the unified grounded-spiking
-agent; (v) multi-modal grounding (non-visual concepts). HARD RULES: GPU/CuPy for real runs (numpy ok for tiny
-smokes); honest propagation of EVERY outcome (incl. negative) to BOTH remotes; never weaken frozen bars or the
-no-confab moat; a capability that only survives WITH a shortcut and honestly fails without it IS the finding;
-never end a turn on a future-tense promise.
+>>> (i) #3 CLOSE — RESOLVED (owner said "proceed in order pending findings that reprioritize"). The honest negative
+was NOT structural N-bias / WTA (3 smell-test corrections): at n_verb=500 the learned weight was too low to fire
+d1 (decode defaulted to N); at n_verb=1000 d1 fired SELECTIVELY (0.06, only correct) but couldn't silence a GPi
+pacing at #2's 2200 pA tonic. Fix: rebalance GPi tonic to the LEARNED regime (`GPI_TONIC_PA=600` vs #2's 2200) so
+weak learned d1 silences its GPi. Result (`--n-verb 1000`, `cheat3_close_nverb1000_gpi600.txt`): TRUE **12/12**
+across 3 seeds; permuted-teacher anti-cheat PASSES (permuted-label 10/12, true-label 1/12 below chance). #3
+PARTIAL→RESOLVED. So the owner's "2 and 3 then 4" are ALL RESOLVED + the brain-analogue capstone (spiking+grounding
+100%). Finding updated; COMMITTED both remotes.
+
+>>> EXACT NEXT CONCRETE ACTION: proceeding in the listed order → **(ii) the clause-depth2 ceiling** (the one
+benchmark category at 0% in BOTH constructed and grounded). Prior finding: NOT dimension-budget (D=4096 still 0/6)
+— it's the per-level auto-detection over-trigger (the inner clause's flat agent gains a spurious attribute). The
+bounded attempt: a cheap-first probe of an inside-clause flat-vs-attributed refinement (model-comparison, not a
+fixed threshold) on `nested_composition_agent`, with regression guards on depth-1 (must stay 100%). If it resolves
+cheaply → ship; if it needs a deep rewrite with depth-1 regression risk → honest-negative + leave as the documented
+ceiling and move to (iii) vocab scaling past 320, (iv) richer multi-turn demo, (v) multi-modal grounding. HARD
+RULES: GPU/CuPy for real runs (numpy ok for tiny smokes); honest propagation of EVERY outcome (incl. negative) to
+BOTH remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and
+honestly fails without it IS the finding; never end a turn on a future-tense promise.
 
 ## >>> UNIFIED-AGENT BENCHMARK ARC (2026-06-04, earlier — read THIS first) <<<
 
