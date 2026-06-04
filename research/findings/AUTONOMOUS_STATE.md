@@ -54,14 +54,23 @@ Then wired the LEARNED codes into the FULL nesting agent via an additive `extern
 `learned_nesting_demo.py`): flat + resonator-decoded attribute + embedded clause + abstention ALL run on
 STDP-LEARNED codes (not constructed). 28 tests (7 memory + 21 nesting still green). The substrate-unification
 core works end-to-end on biologically-grounded learned codes.
->>> EXACT NEXT CONCRETE ACTION (autonomous, option 1 continuation): the next fidelity rung toward the full
-build is the FULL MEMBRANE-LEVEL online spike-driven loop (replace the closed-form/phase-population readout
-with an actual LIF/resonate-and-fire membrane ODE + refractory + an online spike-pair STDP loop, small scale,
-frozen gate vs the phenomenological result). After that: scale vocab (32->320) on the learned-code path +
-multi-seed. Honest reminder for any future cycle: option 1 = spiking-FAITHFUL, not "fully biological"; the
-phasor-binding framework is a biologically-grounded HYPOTHESIS, and full membrane/dendritic/grounded-embodied
-realism is beyond it — surface that honestly, never overclaim "fully biological". Alternatives the owner may
-steer to: (2) Direction B thalamocortical (Logiaco 2021), (3) production-scale conversational build. >>> THIS is the decision the
+>>> MEMBRANE-LEVEL RUNG DONE = RESOLVES. `_membrane_resonate_fire_phase_probe.py`: a GENUINE spiking
+resonate-and-fire membrane (input spikes -> integration -> output spike) preserves the learned phase readout
+1.00 (no leak); naive integrate-and-fire (first threshold crossing) at CHANCE 0.03 -> the resonate-and-fire
+mechanism is LOAD-BEARING. Biology-translatable insight: phase coding needs a HIGH-Q (low-leak) resonator =
+intrinsic resonant currents (Ih, which the project's HH models have); leak degrades (0.82@0.005, 0.33@0.02).
+THE FULL SPIKING PIPELINE IS NOW VALIDATED END-TO-END: learn(STDP)->encode(grounded cue)->integrate(resonate-
+and-fire)->spike(resonant phase)->readout(rf cleanup)->compose(bind/unbind). Finding
+`2026-06-03-membrane-resonate-fire-preserves-phase-RESOLVES-needs-high-Q.md`.
+>>> EXACT NEXT CONCRETE ACTION (autonomous): the substrate-unification science + spiking pipeline are FULLY
+de-risked; remaining option-1 work is PRODUCTION-INTEGRATION ENGINEERING (large) + the documented two-
+attribute resonator cost on grounded codes (the one quality gap, 0.56 vs everything-else-strong). Choose:
+(A) push the two-attribute case (higher D / adjective-codebook decorrelation / more restarts -- bounded
+quality fix on the learned-code agent), (B) begin production-integration (large engineering arc -> a
+writing-plans pass first), (C) scale learned-code agent 40->320, or (D) Direction B thalamocortical. Honest
+reminder: option 1 = spiking-FAITHFUL not "fully biological"; phasor binding is a biologically-grounded
+HYPOTHESIS; never overclaim. Recommend (A) then (C): finish the learned-code conversational quality before
+the big production arc. >>> THIS is the decision the
 owner may want to steer: whether to migrate the production substrate onto phasor FHRR to gain nesting. NEXT
 candidate (autonomous): grounded-code re-test (does the 320 result hold for sparse-encoded grounded codes,
 not just random phasors?) — cheap-first, decisive, the last capacity-side uncertainty before a migration
