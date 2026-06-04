@@ -33,16 +33,29 @@ drops gpi 0.276→0.068).
   inhibitory results) forced the control that corrected a premature "framework inhibition is inverted" finding.
   Finding `2026-06-04-cheat2-genuine-bg-disinhibition-RESOLVED.md`. COMMITTED + pushed both remotes.
 
->>> EXACT NEXT CONCRETE ACTION: cheat-removal **#3** — make the gate SELECTION learned/emergent, not commanded.
-Currently WHICH D1 pool is driven (= which gate opens) is set by hand. Build reward/R-STDP (or cortico-striatal
-plasticity) so the *correct* D1 pool wins from upstream dynamics. Cheap-first: a small reduced model (drive a
-cue → cortex → plastic cortico-striatal → the right D1 pool fires → genuine disinhibition opens the right gate),
-reward-gated, with a pre-registered frozen bar + a permuted-cue anti-cheat control (a commanded-by-construction
-result is the gate-keeper, NOT proof — exactly the #2 honesty note). Then **#4** (sensory-ground the concept
-codes: visual-cortex/Gabor → concept reps; the audit marks #4 PARTIAL, grounded word-cue done, visual open).
-HARD RULES: GPU/CuPy for real runs (numpy ok for these tiny BG smokes); honest propagation of every outcome
-(incl. a negative) to BOTH remotes; never weaken frozen bars; a capability that only survives WITH a shortcut
-and fails without it IS the finding.
+>>> #3 PARTIAL = learned cortico-striatal selection works; end-to-end routing pending a synaptic-drive fix.
+`research/runners/gated_compose_bg_learned_demo.py`: a plastic verb→D1 pathway trained supervised (co-drive cue +
+teacher on the correct D1). **VALIDATED: STDP selectively learns the map** — correct verb→D1 grows 0.5→~16, wrong
+targets stay 0.5 (genuinely LEARNED, not commanded). TWO load-bearing discoveries: (1) `_run_one_simulation_step()`
+does NOT advance `current_time_ms` (the batch-run loop does, bridge.py:3179) → calling the step directly froze the
+clock → every spike timestamp 0 → delta_t=0 → STDP a SILENT no-op (weights frozen at exactly init). `_step()`
+advances the clock; with it STDP learns. (#2 demo also calls the step directly — harmless, no plasticity.)
+(2) REMAINING GAP (engineering, not science): the learned weight (~16, even a manual ~120) doesn't drive the
+high-rheobase striatal MSN-D1 to fire SYNAPTICALLY at inference (same wall #2 sidestepped with direct current;
+#2's sel→d1 at weight 40 was also too weak). Continuation: scale the presynaptic drive the way the validated
+Tier-1 word→action recipe does (500-1000 neuron pools + motor FS), or an excitable cortico-striatal relay upstream
+of the MSN → then learned cue fires D1 → genuine #2 cascade → gate → permuted-teacher anti-cheat (already coded) is
+the multi-seed gate. Finding `2026-06-04-cheat3-learned-gate-selection-PARTIAL.md`. COMMITTED + pushed both remotes.
+
+>>> EXACT NEXT CONCRETE ACTION: choose one — (A) CLOSE #3's end-to-end by scaling the verb/selection pools to the
+Tier-1 recipe (500-1000 neurons + FS) so the learned cue fires the MSN-D1 synaptically, then run the multi-seed +
+permuted-teacher anti-cheat that's already coded; OR (B) cheat-removal **#4** (sensory-ground the concept codes:
+visual-cortex/Gabor → concept reps — `sim/visual_cortex.py` Gabor RFs already exist; the audit marks #4 PARTIAL
+with the grounded word-cue done and visual grounding open). #4 is the higher-value-for-conversation item (it
+feeds the actual composition agent's concept reps), so prefer #4 unless closing #3 cleanly is quick. HARD RULES:
+GPU/CuPy for real runs (numpy ok for tiny BG smokes); honest propagation of EVERY outcome (incl. negative) to BOTH
+remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and fails
+without it IS the finding; never end a turn on a future-tense promise.
 
 ## >>> UNIFIED-AGENT BENCHMARK ARC (2026-06-04, earlier — read THIS first) <<<
 
