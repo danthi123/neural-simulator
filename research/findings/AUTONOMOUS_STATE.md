@@ -9,7 +9,24 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04, NEWEST — read THIS first) <<<
+## >>> CURRENT STATUS (2026-06-04, NEWEST — read THIS first): B chosen + designed, AWAITING OWNER APPROVAL <<<
+
+Post-consolidation spine COMPLETE through item 2 (commits up to b739acb4, all on both remotes): item 1 (capability
+integration — `elaborate` first-classed at V=320, 4/4 multi-seed + generation `describe`; 12/12 on-brain tests);
+item 1.5 (captured codes cos~0.80, the cost is DIMENSIONAL, grounded agent → D=2048); item 2 (the numpy argmax
+CLEANUP is a DISCLOSED high-precision readout — a spiking matched-filter is perfect at M=320 on clean cues but
+plateaus ~0.78 on the composer's noisy est; full parity needs the complete cortical cleanup circuit = decorrelation +
+temporal integration + divisive normalization; biology insight banked; did NOT ship a capability-regressing partial);
+decorrelation linchpin VALIDATED on real captured codes (ZCA cos 0.82→0.00, capability preserved). Owner CHOSE (B)
+one-bridge unification; design committed `docs/plans/2026-06-04-one-bridge-unification-design.md` (b739acb4) +
+presented for approval.
+>>> EXACT NEXT: AWAITING OWNER APPROVAL of the B design before implementing (the design-before-implement gate). On
+approval → writing-plans for B step 1 (merge the dt=1.0-compatible parser+composer onto ONE bridge; the dt=0.5+NMDA
+dlPFC is the hard step-3 merge) → subagent-driven TDD implementation. If a watchdog fires with NO approval: do
+doc-sync / low-regret hygiene — do NOT implement B without approval, and do NOT re-run the already-concluded item-2
+investigation (it is done, commit 93963d5d). HARD RULES unchanged.
+
+## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04) <<<
 
 >>> POST-CONSOLIDATION SPINE (owner approved my proposed order + "proceed following your best judgement"):
 1 [DONE] capability integration — `elaborate` (dialogue planning) first-classed at V=320 (dlPFC Control cached on

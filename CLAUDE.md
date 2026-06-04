@@ -88,7 +88,7 @@ viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
 research/runners/       # 210 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/generator_S-D-E-F-G/mode-unification/content_selection+content_selection_spiking+dialogue_agent/nested_composition+phasor_associative_memory+phasor_chat+gated_compose/unified_agent_benchmark+spiking_unified_agent/etc) for research
-research/findings/      # session-by-session findings docs (589 files)
+research/findings/      # session-by-session findings docs (595 files)
 tests/                  # 271 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, mode-unification, content-selection/dialogue, nested-composition, transmission-gate/gated-compose, unified-agent-benchmark/spiking-unified-agent, core-sim-composition + brain-conversational-agent, etc.)
 ```
 
