@@ -61,9 +61,14 @@ class PhasorChat:
         toks = text.lower().replace("?", " ").replace(".", " ").split()
         if not toks:
             return ""
-        unknown = [t for t in toks if t not in {"what", "does", "who"} and self._kind(t) is None]
+        keywords = {"what", "does", "who", "tell", "me", "about"}
+        unknown = [t for t in toks if t not in keywords and self._kind(t) is None]
         if unknown:
             return f"I don't know the word{'s' if len(unknown) > 1 else ''}: {', '.join(unknown)}."
+        # "tell me about X" -> volunteer everything known about a concept (dialogue planning)
+        if toks[:3] == ["tell", "me", "about"] and len(toks) >= 4 and self._kind(toks[3]) is not None:
+            facts = self.agent.tell_about(toks[3])
+            return "; ".join(facts) if facts else f"I don't know anything about {toks[3]}."
         # questions
         if toks[:2] == ["what", "does"] and len(toks) >= 4 and self._kind(toks[2]) == "n" and self._kind(toks[3]) == "v":
             ans = self.agent.query_patient(toks[2], toks[3])
@@ -104,6 +109,7 @@ def main():
         "what does child hold",          # -> big red ball
         "what does dog eat",             # -> cat chase ball (embedded clause)
         "who chase cat",                 # -> dog
+        "tell me about dog",             # volunteer all known dog facts (dialogue planning)
         "what does cat want",            # -> abstain (never told)
         "dog chase zebra",               # unknown word
     ])

@@ -52,6 +52,15 @@ def test_abstain_on_untold_fact():
     assert "don't know" in c.say("what does cat want")          # never told -> abstain
 
 
+def test_tell_me_about_volunteers_facts():
+    c = _chat()
+    c.say("dog chase cat")
+    c.say("dog eat cat chase ball")          # nested fact about dog
+    reply = c.say("tell me about dog")
+    assert "dog chase cat" in reply           # volunteers the flat fact
+    assert "dog eat cat chase ball" in reply  # and the nested one
+
+
 def test_reject_unknown_word():
     c = _chat()
     assert "don't know the word" in c.say("dog chase zebra")     # zebra not in vocab
