@@ -61,3 +61,26 @@ def test_dialogue_planning_elaborate(agent):
     associates = set(agent._assoc_graph().get("dog", {}))
     assert agent.elaborate("dog") in associates       # an on-topic concept, chosen on the dlPFC bridge
     assert agent.elaborate("river") is None            # unconnected topic
+
+
+def test_generation_describe(agent):
+    """Generation: the agent produces a sentence about a known subject from its spiking memory; abstains (None) on
+    an unknown subject (no confabulation)."""
+    agent.composer.kb = []
+    agent.hear("dog go north")
+    assert agent.describe("dog") == "dog go north"
+    assert agent.describe("river") is None
+
+
+def test_elaborate_cache_invalidates_on_graph_change(agent):
+    """The dlPFC Control is cached on the graph CONTENT, so a new fact set of the SAME size cannot reuse a stale
+    Control (regression guard for the cache-key fix)."""
+    agent.composer.kb = []
+    agent.hear("dog go north")
+    agent.hear("dog come south")
+    assert agent.elaborate("dog") in agent._assoc_graph().get("dog", {})
+    agent.composer.kb = []                              # same length (2 facts), different graph
+    agent.hear("cat stop west")
+    agent.hear("cat look east")
+    assert agent.elaborate("dog") is None              # dog absent from the new graph
+    assert agent.elaborate("cat") in agent._assoc_graph().get("cat", {})

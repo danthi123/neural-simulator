@@ -120,6 +120,8 @@ class BrainConversationalAgent:
         self.seed = int(seed)
         self.parser = BridgeParser(seed=seed)
         self.composer = CoreSimComposer(seed=seed, proj_dim=proj_dim, concepts=concepts)
+        self._dlpfc = None              # dialogue-planning Control: built lazily, cached, rebuilt only when the graph changes
+        self._dlpfc_key = None
 
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO statement and store it. `sentence` is 'agent action patient' (or its passive frame)."""
@@ -141,6 +143,11 @@ class BrainConversationalAgent:
 
     def is_it_true(self, agent, action, patient):
         return self.composer.ask_yes_no(agent, action, patient)
+
+    def describe(self, agent):
+        """Generation: produce a sentence about `agent` from the spiking memory ('dog go north'), or None if the
+        agent knows no fact about it (no confabulation)."""
+        return self.composer.render_fact(agent)
 
     # --- dialogue planning (what to say next) ---
     def _assoc_graph(self):
@@ -166,5 +173,9 @@ class BrainConversationalAgent:
         graph = self._assoc_graph()
         if topic not in graph:
             return None
-        ctrl = SpikingSpreadingController(graph, seed=self.seed)
-        return ctrl.turn_latency([topic])
+        # cache key = the graph CONTENT (not kb length: different fact sets can share a length -> stale Control)
+        key = tuple(sorted((k, tuple(sorted(v.items()))) for k, v in graph.items()))
+        if self._dlpfc is None or self._dlpfc_key != key:
+            self._dlpfc = SpikingSpreadingController(graph, seed=self.seed)   # first-class: rebuild only when the graph changes
+            self._dlpfc_key = key
+        return self._dlpfc.turn_latency([topic])

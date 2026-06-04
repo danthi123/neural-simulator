@@ -279,3 +279,14 @@ class CoreSimComposer:
                     and self.unbind(bound, "patient") == patient):
                 return "yes" if self.unbind(bound, "polarity", self.pol_words) == "AFFIRM" else "no"
         return "unknown"
+
+    def render_fact(self, agent):
+        """Generation: render a full stored sentence whose agent matches `agent` -- e.g. 'dog go north' -- with the
+        action + patient DECODED from the spiking unbind (not the stored labels). None if no fact's agent matches
+        (the no-confab moat: the agent does not invent a sentence about an unknown subject)."""
+        for fact, bound in self.kb:
+            if self.unbind(bound, "agent") == agent:
+                action = self.unbind(bound, "action")
+                patient = self._render_filler(bound, "patient", fact["patient"])
+                return f"{agent} {action} {patient}"
+        return None
