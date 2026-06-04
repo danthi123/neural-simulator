@@ -32,12 +32,19 @@ disjoint index slices — `research/runners/unified_brain_bridge.py` (`UnifiedBr
 `merge_population_into_shared_bridge`) + parameterized `BridgeParser`/`CoreSimComposer` for shared-bridge wiring.
 End-to-end on ONE bridge: comprehend->store->recall->abstain works; full-scale plasticity isolation holds (composer
 bind weights stay 320.0 after the parser's global-Hebbian training, via the gate). 19 tests pass, NO sim/ edits.
-Task 6 (the capability NO-REGRESSION gate: multi-seed production-scale matrix, unified vs separate bridges) IS IN
-FLIGHT as a background subagent (ac3d95b8). ON Task 6 completion: PASS -> step 1 of B is DONE (write finding
-`2026-06-04-one-bridge-unification-step1-DONE.md`, surface to owner, STOP for the step-2 [gated synaptic route] plan,
-do NOT auto-start step 2); REGRESSION -> surface the measured numbers honestly + decide a mitigation (e.g. per-region
-OU). If a watchdog fires WHILE Task 6 is in flight: do NOT duplicate Task 6 (check `git log`; if no Task-6 commit yet
-the subagent is likely still running) — do low-regret hygiene instead. HARD RULES unchanged.
+Task 6 (capability NO-REGRESSION gate) D=800 DONE (commit d4a8499c, both remotes; finding
+`2026-06-04-one-bridge-unification-step1-capability.md`): ROBUST CORE PRESERVED on the merged bridge — flat /
+one-attribute / negation within ±1 trial every seed + the parser comprehends voice-invariantly (the load-bearing
+claim holds); BUT TWO-ATTRIBUTE (K=5 capacity-edge, documented boundary) REGRESSES ~1 trial mean at the marginal
+D=800 (seed42 6->3, 43 4->2, 44 3->5). Principled mitigation = DIMENSION (stage-1.5 production D=2048, where
+two-attribute has headroom): a D=2048 re-run IS IN FLIGHT (python PID 26140; my waiter is background task bcrlnnbwk;
+log `research/findings/raw/_unified_capability_D2048.log`). ON the D=2048 result: if two-attribute PRESERVED -> step 1
+of B is DONE (the D=800 drop was a marginal-regime artifact) -> update the finding + the test (gate at D=2048, drop
+the skip), surface to owner, STOP for the step-2 [gated synaptic parser->composer route] plan, do NOT auto-start
+step 2. If two-attribute STILL regresses at D=2048 -> the cost is structural (composer-neuron heterogeneity shift at
+the merged-bridge offset 126); mitigation = per-region seeding to align the composer slice; surface for the decision.
+If a watchdog fires while the D=2048 run is in flight (PID 26140 alive, no new Task-6 commit): WAIT, do not duplicate.
+HARD RULES unchanged.
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04) <<<
 
