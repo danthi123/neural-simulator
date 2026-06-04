@@ -59,14 +59,22 @@ opens gate g_GO_N; drive "go" alone -> motor_N fires. RESULT: bind {GO:N,COME:S,
 DETERMINISTIC (seeds 42/43/44); RE-BIND to permuted {GO:S,COME:W,STOP:E,LOOK:N} -> 4/4 for NEW mapping, ZERO
 weight change. vs STDP-grown weights 5/20 seed-fragile + couldn't re-bind. The compose-pathways-went-silent
 problem is SOLVED in spikes. Finding `2026-06-03-thalamocortical-gating-solves-compose-binding-SHIPPED.md`.
->>> EXACT NEXT (the biology-completing steps): (a) BG-DRIVEN GATE SELECTION -- wire the transmission gate to
-basal-ganglia disinhibition (gpi->thal->cortex, the g11_bg cascade skeleton) so the BG SELECTS which gate is
-open (not an external bind command); this closes the thalamocortical loop biologically. (b) OPTION C: full
-low-rank effective-connectivity gate (J_eff = J_cc + sum s_k u_k v_k^T per Logiaco/Kao) for SEQUENCING bound
-primitives (not just routing). (c) Track 3: assembly-generation + grammar-over-composition conversational
-artifact (CPU). Honest: spiking-faithful not fully-biological; phasor binding is a hypothesis; fluent
-generation is a documented wall; gating's "4/4 deterministic" is by-construction (you bind what you gate) --
-the science is that it works in genuine spikes with zero weight change where grown weights were seed-fragile.
+>>> BG-DRIVEN GATE SELECTION DONE = LOOP CLOSED. `gated_compose_bg_demo.py` + `test_gated_compose_bg.py`:
+each verb->motor route has a thalamic gate-control pool (thal_X_Y, normally silent); BG binds (verb,motor) by
+DISINHIBITING the selected thal pool -> thal ACTIVITY opens the cortical route gate -> verb routes to motor.
+BG selects TRUE_MAP -> thal opens exactly those gates (match) -> 4/4 deterministic (seeds 42/43/44); BG
+RE-SELECTION (permuted) -> re-opens different gates -> re-bound 4/4. Binding flows BG-disinhibition -> thalamus
+-> gate -> cortex. Honest scope: thal->gate coupling read in the runner (cheap-first stand-in for a bridge-
+internal coupling); BG selection = which thal pools disinhibited. Finding updated
+`2026-06-03-thalamocortical-gating-solves-compose-binding-SHIPPED.md`.
+>>> EXACT NEXT (further integration, owner-steerable): (a) BRIDGE-INTERNAL thalamus->gate coupling (make
+cp_transmission_gain a function of presynaptic thalamic activity inside the step, + wire the disinhibition to
+the real g11_bg GPi->thal pathway) so the loop is fully in-substrate, not runner-read. (b) OPTION C: low-rank
+effective-connectivity gate (J_eff = J_cc + sum s_k u_k v_k^T, Logiaco/Kao) for SEQUENCING bound primitives
+(not just routing). (c) Track 3: assembly-generation + grammar-over-composition conversational artifact (CPU).
+Honest: spiking-faithful not fully-biological; phasor binding is a hypothesis; fluent generation is a
+documented wall; gating's "4/4 deterministic" is by-construction (you bind what you gate) -- the science is it
+works in genuine spikes with zero weight change where grown weights were seed-fragile (5/20).
 
 ## >>> PHASOR FHRR = UNIFIED-SUBSTRATE CANDIDATE (2026-06-03 earlier) <<<
 

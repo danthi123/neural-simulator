@@ -60,9 +60,31 @@ thalamocortical literature predicts and that grown static weights lack.
   seed-fragile grown-weight binding into a reliable, controllable one. The scientific content is that this
   works in genuine spiking dynamics with zero weight change, not that argmax-of-an-open-gate is surprising.
 
+## BG-driven gate selection — the loop is closed
+
+`research/runners/gated_compose_bg_demo.py` + `tests/test_gated_compose_bg.py` complete the biology: instead
+of an external command opening the gate, each verb→motor route has a **thalamic gate-control pool**
+(`thal_X_Y`, normally silent). The **basal ganglia** bind `(verb, motor)` by **disinhibiting** the selected
+thalamic pool, and that thalamic **activity** opens the cortical route gate → the verb routes to its motor.
+Binding flows **BG-disinhibition → thalamus → gate → cortex** (Logiaco-Abbott-Escola 2021; Rikhye-Halassa
+2018).
+
+Result (spiking substrate): BG selects `{GO:N, COME:S, STOP:W, LOOK:E}` → the thalamus opens *exactly* those
+gates (match) → driving each verb → **4/4 deterministic, seeds 42/43/44**. BG **re-selection** (a permuted
+mapping) → the thalamus re-opens different gates → **re-bound 4/4**. The basal ganglia select the binding; the
+thalamus opens the gate; re-selection re-binds — the closed thalamocortical loop, in spikes.
+
+Honest scope of this step: the thalamus→gate coupling (thalamic rate → transmission gain) is read in the
+runner loop as a cheap-first stand-in for a fully bridge-internal coupling; the BG selection (which thalamic
+pools are disinhibited) is the bind mechanism. The closed loop is demonstrated behaviourally; a bridge-internal
+thalamus→gate coupling (and wiring the disinhibition to the real `g11_bg` GPi→thal pathway) is the further
+integration.
+
 ## Verdict
 
-**SHIPPED.** The transmission-gate primitive is in the bridge, validated in spikes, and solves the v16
-compose-binding problem (4/4 deterministic + re-binding, zero weight change) that STDP-grown weights could
-not. The biology-faithful fix for "compose-pathways went silent" is real. Next: BG-driven gate selection
-(close the thalamocortical loop) and Option C (low-rank gate) for sequencing.
+**SHIPPED + loop closed.** The transmission-gate primitive is in the bridge, validated in spikes, solves the
+v16 compose-binding problem (4/4 deterministic + re-binding, zero weight change) that STDP-grown weights could
+not, and is driven by BG→thalamus gate selection (the closed thalamocortical loop). The biology-faithful fix
+for "compose-pathways went silent" is real and loop-complete. Next: a bridge-internal thalamus→gate coupling +
+the real `g11_bg` GPi→thal disinhibition, and Option C (low-rank effective-connectivity gate) for *sequencing*
+bound primitives.
