@@ -67,11 +67,16 @@ RE-SELECTION (permuted) -> re-opens different gates -> re-bound 4/4. Binding flo
 -> gate -> cortex. Honest scope: thal->gate coupling read in the runner (cheap-first stand-in for a bridge-
 internal coupling); BG selection = which thal pools disinhibited. Finding updated
 `2026-06-03-thalamocortical-gating-solves-compose-binding-SHIPPED.md`.
->>> EXACT NEXT (further integration, owner-steerable): (a) BRIDGE-INTERNAL thalamus->gate coupling (make
-cp_transmission_gain a function of presynaptic thalamic activity inside the step, + wire the disinhibition to
-the real g11_bg GPi->thal pathway) so the loop is fully in-substrate, not runner-read. (b) OPTION C: low-rank
-effective-connectivity gate (J_eff = J_cc + sum s_k u_k v_k^T, Logiaco/Kao) for SEQUENCING bound primitives
-(not just routing). (c) Track 3: assembly-generation + grammar-over-composition conversational artifact (CPU).
+>>> BRIDGE-INTERNAL COUPLING DONE: `bridge.couple_gate_to_pool(gate, control_region)` -> transmission gate
+opens from a control (thalamic) pool's FIRING inside `_run_one_simulation_step` (`_apply_gate_couplings`, EMA;
+no-op when empty). The thalamocortical loop is now FULLY IN-SUBSTRATE (drive thal pools -> bridge opens cortical
+gates -> verb routes; 4/4, test_bridge_internal_gate_coupling). 9 gating tests + numpy-backend regression clean.
+>>> EXACT NEXT (owner-steerable): (a) wire the thal-pool disinhibition to the REAL g11_bg GPi->thal pathway
+(currently thal pools driven directly as a BG stand-in) -- makes the BG the genuine selector. (b) OPTION C:
+low-rank effective-connectivity gate (J_eff = J_cc + sum s_k u_k v_k^T, Logiaco/Kao) for SEQUENCING bound
+primitives over time (cortical TRAJECTORIES + preparatory transitions, not just static routing) -- the rung
+toward multi-element structures conversation needs. (c) Track 3: assembly-generation + grammar-over-composition
+conversational artifact (CPU).
 Honest: spiking-faithful not fully-biological; phasor binding is a hypothesis; fluent generation is a
 documented wall; gating's "4/4 deterministic" is by-construction (you bind what you gate) -- the science is it
 works in genuine spikes with zero weight change where grown weights were seed-fragile (5/20).

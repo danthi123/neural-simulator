@@ -74,11 +74,15 @@ gates (match) → driving each verb → **4/4 deterministic, seeds 42/43/44**. B
 mapping) → the thalamus re-opens different gates → **re-bound 4/4**. The basal ganglia select the binding; the
 thalamus opens the gate; re-selection re-binds — the closed thalamocortical loop, in spikes.
 
-Honest scope of this step: the thalamus→gate coupling (thalamic rate → transmission gain) is read in the
-runner loop as a cheap-first stand-in for a fully bridge-internal coupling; the BG selection (which thalamic
-pools are disinhibited) is the bind mechanism. The closed loop is demonstrated behaviourally; a bridge-internal
-thalamus→gate coupling (and wiring the disinhibition to the real `g11_bg` GPi→thal pathway) is the further
-integration.
+**Now fully in-substrate.** `bridge.couple_gate_to_pool(gate, control_region)` makes a transmission gate open
+from the **firing of a control (thalamic) pool**, computed inside `_run_one_simulation_step`
+(`_apply_gate_couplings`: EMA of the control pool's rate → gate value; no-op/zero-overhead when none
+registered). So disinhibiting a thalamic pool → its activity → the cortical route gate opens, *entirely in the
+substrate* — no runner read. Validated: couple all 16 verb→motor gates to their thalamic pools, drive the
+selected thalamic pools (BG disinhibition) + each verb → **4/4 correct routing** with gates opened from
+thalamic firing in-step (`test_bridge_internal_gate_coupling`). The remaining integration is wiring the
+disinhibition to the real `g11_bg` GPi→thal pathway (currently the thalamic pools are driven directly as a BG
+stand-in).
 
 ## Verdict
 
