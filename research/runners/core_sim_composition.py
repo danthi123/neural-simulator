@@ -79,26 +79,34 @@ def _scale_to_current(on, off, drive):
     return on / m * drive, off / m * drive
 
 
-def build_bind_bridge(seed, D):
-    """Build the 8D-neuron coincidence bridge: role_ON/OFF + fill_ON/OFF sources -> 4 AND banks A/B/C/D, wired so
-    A=AND(role_ON,fill_ON), B=AND(role_OFF,fill_OFF), C=AND(role_ON,fill_OFF), D=AND(role_OFF,fill_ON). Plasticity
-    OFF (a fixed-wiring computation). Returns (bridge, idx)."""
-    cfg = CoreSimConfig()
-    cfg.num_neurons = 8 * D
-    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
-    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
-    cfg.seed = int(seed); cfg.dt_ms = 1.0
-    cfg.connections_per_neuron = 0; cfg.num_traits = 1
-    for f in ("enable_stdp", "enable_hebbian_learning", "enable_short_term_plasticity",
-              "enable_structural_plasticity", "enable_homeostasis", "enable_reward_modulation",
-              "enable_watts_strogatz"):
-        setattr(cfg, f, False)
-    cfg.ou_std_current_pA = 20.0
+# Plasticity-gate name for the composer's FIXED "bind" population when it lives on a SHARED bridge whose
+# global Hebbian learning is ON. Task 1 (research/findings/2026-06-04-unified-bridge-plasticity-isolation.md)
+# found that plastic=False alone does NOT freeze a population under global Hebbian (the ungated decay term
+# still drifts it). Tagging the population with this gate and setting its per-synapse gain to 0.0 freezes
+# both the Hebbian potentiation and decay terms. On the composer's OWN bridge (Hebbian OFF) no gate is used.
+COMPOSER_BIND_GATE = "composer_bind_fixed"
 
-    role_on = np.arange(0, D); role_off = np.arange(D, 2 * D)
-    fill_on = np.arange(2 * D, 3 * D); fill_off = np.arange(3 * D, 4 * D)
-    A = np.arange(4 * D, 5 * D); B = np.arange(5 * D, 6 * D)
-    C = np.arange(6 * D, 7 * D); Dd = np.arange(7 * D, 8 * D)
+
+def build_bind_bridge(seed, D, shared_bridge=None, index_offset=0):
+    """Build (or wire onto a shared bridge) the 8D-neuron coincidence circuit: role_ON/OFF + fill_ON/OFF
+    sources -> 4 AND banks A/B/C/D, wired so A=AND(role_ON,fill_ON), B=AND(role_OFF,fill_OFF),
+    C=AND(role_ON,fill_OFF), D=AND(role_OFF,fill_ON). The wiring is FIXED (a coincidence computation).
+
+    Default path (`shared_bridge=None`): build a private 8D-neuron SimulationBridge with ALL plasticity OFF
+    (including global Hebbian) and inject the `"bind"` population — unchanged from before.
+
+    Shared-bridge path (`shared_bridge` given): the circuit's neurons live at `index_offset + local_index`
+    on the provided bridge (every role_ON/OFF, fill_ON/OFF, A/B/C/D index shifted). Because the shared bridge
+    has global Hebbian learning ON, the `"bind"` population is tagged `plasticity_gate=COMPOSER_BIND_GATE` and
+    its gain is set to 0.0 (via `merge_population_into_shared_bridge`) so the fixed weights cannot drift.
+
+    Returns (bridge, idx) where idx maps each bank name to a backend int array of its (offset) neuron indices.
+    """
+    o = int(index_offset)
+    role_on = np.arange(o + 0, o + D); role_off = np.arange(o + D, o + 2 * D)
+    fill_on = np.arange(o + 2 * D, o + 3 * D); fill_off = np.arange(o + 3 * D, o + 4 * D)
+    A = np.arange(o + 4 * D, o + 5 * D); B = np.arange(o + 5 * D, o + 6 * D)
+    C = np.arange(o + 6 * D, o + 7 * D); Dd = np.arange(o + 7 * D, o + 8 * D)
     pre, post = [], []
     for src1, src2, dst in ((role_on, fill_on, A), (role_off, fill_off, B),
                             (role_on, fill_off, C), (role_off, fill_on, Dd)):
@@ -106,12 +114,35 @@ def build_bind_bridge(seed, D):
             pre.append(int(src1[i])); post.append(int(dst[i]))
             pre.append(int(src2[i])); post.append(int(dst[i]))
     w = np.full(len(pre), W_COINC, dtype=np.float32)
-    plan = {"bind": {"pre_indices": pre, "post_indices": post, "initial_weights": w,
-                     "plastic": False, "conn_type": "E_TO_E", "count": len(pre)}}
-    bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
-                              runtime_state=RuntimeState(), gpu_config=GPUConfig())
-    bridge._initialize_simulation_data(called_from_playback_init=False)
-    bridge.inject_explicit_wiring(plan)
+
+    if shared_bridge is None:
+        cfg = CoreSimConfig()
+        cfg.num_neurons = 8 * D
+        cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+        cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+        cfg.seed = int(seed); cfg.dt_ms = 1.0
+        cfg.connections_per_neuron = 0; cfg.num_traits = 1
+        for f in ("enable_stdp", "enable_hebbian_learning", "enable_short_term_plasticity",
+                  "enable_structural_plasticity", "enable_homeostasis", "enable_reward_modulation",
+                  "enable_watts_strogatz"):
+            setattr(cfg, f, False)
+        cfg.ou_std_current_pA = 20.0
+        plan = {"bind": {"pre_indices": pre, "post_indices": post, "initial_weights": w,
+                         "plastic": False, "conn_type": "E_TO_E", "count": len(pre)}}
+        bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
+                                  runtime_state=RuntimeState(), gpu_config=GPUConfig())
+        bridge._initialize_simulation_data(called_from_playback_init=False)
+        bridge.inject_explicit_wiring(plan)
+    else:
+        bridge = shared_bridge
+        # FIXED population on a Hebbian-enabled shared bridge: tag with the plasticity gate AND zero its gain
+        # (plastic=False is insufficient here — Task 1 finding).
+        plan = {"bind": {"pre_indices": pre, "post_indices": post, "initial_weights": w,
+                         "plastic": False, "plasticity_gate": COMPOSER_BIND_GATE,
+                         "conn_type": "E_TO_E", "count": len(pre)}}
+        from research.runners.unified_brain_bridge import merge_population_into_shared_bridge
+        merge_population_into_shared_bridge(bridge, plan, gates_to_zero=(COMPOSER_BIND_GATE,))
+
     xp, _ = get_backend()
     idx = dict(role_on=role_on, role_off=role_off, fill_on=fill_on, fill_off=fill_off, A=A, B=B, C=C, D=Dd)
     return bridge, {k: xp.asarray(v, dtype=xp.int64) for k, v in idx.items()}
@@ -124,7 +155,9 @@ def hadamard_spiking(bridge, idx, role_vec, fill_on_cur, fill_off_cur, D, run_st
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(RESET_STEPS):
         bridge._run_one_simulation_step()
-    cur = xp.zeros(8 * D, dtype=xp.float32)
+    # Size the drive array to the WHOLE bridge so offset (shared-bridge) indices in `idx` are in range. On a
+    # standalone composer bridge num_neurons == 8*D and the offset is 0 → identical to the prior `8*D` array.
+    cur = xp.zeros(bridge.core_config.num_neurons, dtype=xp.float32)
     cur[idx["role_on"]] = xp.asarray((role_vec > 0).astype(np.float32) * ROLE_DRIVE)
     cur[idx["role_off"]] = xp.asarray((role_vec < 0).astype(np.float32) * ROLE_DRIVE)
     cur[idx["fill_on"]] = xp.asarray(fill_on_cur.astype(np.float32))
@@ -151,7 +184,13 @@ class CoreSimComposer:
     ROLES = ("agent", "action", "patient", "polarity", "attribute", "attribute2")
 
     def __init__(self, seed=42, proj_dim=800, coinc_bias=DEFAULT_BIAS, run_steps=DEFAULT_RUN_STEPS, concepts=None,
-                 decorrelate=False):
+                 decorrelate=False, shared_bridge=None, index_offset=0):
+        """`shared_bridge` / `index_offset`: when a shared SimulationBridge is given, wire the FIXED `"bind"`
+        coincidence population onto it at `index_offset` (the composer slice) instead of building a private
+        bridge. Because the shared bridge has global Hebbian learning ON, the bind population is tagged with a
+        plasticity gate held at 0.0 so its fixed weights cannot drift (Task 1 finding). All spiking ops address
+        neurons via `self.idx`, which is offset-shifted by `build_bind_bridge`, so nothing else changes. Default
+        (no shared_bridge) builds a standalone bridge with Hebbian OFF and no gate — byte-identical to before."""
         if concepts is None:
             if not os.path.exists(CACHE % seed):
                 raise FileNotFoundError(f"concept cache missing: {CACHE % seed}")
@@ -181,7 +220,8 @@ class CoreSimComposer:
         # +-1 distributed roles (ON/OFF realizable); unit-normalized
         self.roles = {r: rng.choice([-1.0, 1.0], size=self.D) for r in self.ROLES}
         self.roles = {r: v / np.linalg.norm(v) for r, v in self.roles.items()}
-        self.bridge, self.idx = build_bind_bridge(seed, self.D)
+        self.bridge, self.idx = build_bind_bridge(seed, self.D, shared_bridge=shared_bridge,
+                                                  index_offset=index_offset)
         self.kb = []   # list of (fact_dict, bound_onoff)
 
     # --- low-level spiking ops ---
