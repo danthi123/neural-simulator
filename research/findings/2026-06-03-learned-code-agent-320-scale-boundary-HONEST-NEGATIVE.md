@@ -56,6 +56,24 @@ correlated codes. The agent's threshold-free argmax cleanup over 320 works.
   depth-detect → recurse → clean up over 320 correlated codes) accumulates crosstalk past the SNR floor. It
   needs higher D (and possibly scale-aware depth thresholds).
 
+## Cause-isolation (correction): the 320 collapse is CAPACITY/DIMENSION, not correlation
+
+A follow-up probe ran the *same* two-attribute and clause facts at 320 concepts with the agent's **default
+well-separated random** phasor codes (not grounded). They collapse identically: **two-attribute 0/12, clause
+0/12 (both seeds)** — the same as grounded codes (0/16, 0/17). So the 320 collapse is **not** caused by
+grounded-code correlation; **it is dimension/decode capacity.** The specific limit: the resonator's factoring
+capacity (~M=96-112 per codebook at D=2048, per the resonator-capacity finding) is **exceeded by the 200-noun
+codebook** at 320 concepts; the recursive clause decode hits the analogous multi-hop cleanup-over-320 floor.
+
+This **corrects** the milestone finding's earlier framing, which attributed the two-attribute weakness partly
+to grounded correlation. Honest refinement: there are *two distinct effects* — (a) at moderate scale (~40
+concepts), grounded correlation does cost the two-attribute resonator (0.56 grounded vs higher idealized);
+(b) at large scale (320), capacity dominates and **both** random and grounded codes collapse. The 320 wall is
+(b). The direct lever is D (resonator capacity scales with D — ~D=8192 would be needed for a 200-codebook,
+4× the default, costly); a *smarter* fix (sparse codes / noise-injected resonator / hierarchical or gated
+decode) is the subject of active deep research. Simple SVO still scales to 320 (the substrate finding's
+1.00) because it needs no resonator — only the multi-factor and recursive paths hit the capacity wall.
+
 ## Honest verdict
 
 **The learned-code agent partially scales to 320.** Simple conversational capabilities (factual recall with
