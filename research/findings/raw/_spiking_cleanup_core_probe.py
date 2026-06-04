@@ -109,6 +109,8 @@ def main():
     ap.add_argument("--w-match", type=float, default=40.0)
     ap.add_argument("--w-inh", type=float, default=0.0)
     ap.add_argument("--concept-bias", type=float, default=-150.0)
+    ap.add_argument("--run-steps", type=int, default=80, help="cleanup accumulation steps (longer -> rates approach exact dot-products)")
+    ap.add_argument("--sigma", type=float, default=None, help="test a single noise level (else the full sweep)")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
@@ -117,7 +119,7 @@ def main():
     bridge, idx = build_cleanup_bridge(args.seed, codes, args.w_match, args.w_inh)
 
     rng = np.random.default_rng(args.seed + 1)
-    sigmas = [0.0, 0.02, 0.04, 0.06, 0.10]            # scaled to the code magnitude: cue-code cos ~1.0 -> ~0.4
+    sigmas = [args.sigma] if args.sigma is not None else [0.0, 0.02, 0.04, 0.06, 0.10]
     rows = {}
     for sigma in sigmas:
         ok = ok_np = tot = 0
@@ -126,7 +128,7 @@ def main():
             for _ in range(args.trials):
                 est = codes[c] + rng.normal(0, sigma, size=args.d)
                 coss.append(float(codes[c] @ est / (np.linalg.norm(est) + 1e-12)))
-                rates = cleanup_spiking(bridge, idx, args.d, args.m, est, args.concept_bias)
+                rates = cleanup_spiking(bridge, idx, args.d, args.m, est, args.concept_bias, run_steps=args.run_steps)
                 ok += int(int(np.argmax(rates)) == c)
                 ok_np += int(int(np.argmax(codes @ est)) == c)        # numpy-argmax baseline (what the composer does)
                 tot += 1
