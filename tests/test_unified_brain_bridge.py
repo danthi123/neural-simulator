@@ -141,3 +141,37 @@ def test_fixed_population_survives_global_hebbian():
     assert np.array_equal(before_bind, after_bind), (
         "FIXED composer weights drifted under global Hebbian -> per-population plastic=False does NOT "
         f"isolate. before={before_bind} after={after_bind}")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Task 2: UnifiedBrainBridge skeleton — ONE bridge sized for both regions.
+#
+# The skeleton builds a single SimulationBridge whose neuron count is the sum of the parser slice
+# (6 conjunction units + 3*40 role-ensemble neurons = 126) and the composer slice (8*proj_dim). It
+# exposes the two regions' index layout: `parser_slice` (the parser's contiguous block, 0..125) and
+# `composer_offset` (the first composer neuron index, 126). No region wiring yet — that is Tasks 3–5.
+# ─────────────────────────────────────────────────────────────────────────────
+def test_unified_skeleton_sizes_and_disjoint_slices():
+    """UnifiedBrainBridge(seed=42, proj_dim=64) builds ONE bridge of (6 + 3*40) + 8*64 neurons, with a
+    parser_slice = range(0, 126) and composer_offset = 126, and the two regions do not overlap."""
+    from research.runners.unified_brain_bridge import UnifiedBrainBridge
+
+    proj_dim = 64
+    u = UnifiedBrainBridge(seed=42, proj_dim=proj_dim)
+
+    expected_parser = 6 + 3 * 40                       # conjunction units + role ensembles = 126
+    expected_total = expected_parser + 8 * proj_dim    # + composer coincidence slice
+
+    assert u.bridge.core_config.num_neurons == expected_total, (
+        f"bridge sized {u.bridge.core_config.num_neurons}, expected {expected_total}")
+    # global Hebbian must be ON (the parser's learning rule lives on this shared bridge)
+    assert u.bridge.core_config.enable_hebbian_learning is True
+
+    assert u.parser_slice == range(0, expected_parser), u.parser_slice
+    assert u.composer_offset == expected_parser, u.composer_offset
+
+    # the two regions are disjoint and tile the bridge with no gap/overlap
+    parser_set = set(u.parser_slice)
+    composer_set = set(range(u.composer_offset, expected_total))
+    assert parser_set.isdisjoint(composer_set), "parser and composer slices overlap"
+    assert len(parser_set) + len(composer_set) == expected_total, "slices leave a gap or overlap"
