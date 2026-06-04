@@ -29,11 +29,16 @@ dedicated agents." THREE deep-research agents delivered (synthesis:
   hits the SAME honest ceiling -> reframes our wall as a CITED biological boundary; github dmitropolsky/assemblies)
   + grammar-over-VSA-composition (beats end-to-end on grounding+no-hallucination); spiking-SSM capability
   yardstick; ANN->SNN conversion secondary.
-CHEAP-FIRST RESULTS IN: softmax resonator NEGATIVE on our well-conditioned FHRR (clean F=3 @ 320-codebook:
-standard 0.96 vs softmax 0.21). 320 two-attr/clause blocker RE-LOCALIZED: NOT resonator capacity, it's BUNDLE
-CROSSTALK (depth detection correct; resonator drowns in agent+action crosstalk at 200-noun codebook). Candidate
-fix = CROSSTALK SUBTRACTION (agent already decodes agent+action to match -> subtract those role-bindings ->
-clean product -> resonator works at 0.96). [PROBE bte99vip3 IN FLIGHT.]
+>>> 320 COMPOSITION WALL SURPASSED (cheap-first, deep-research-informed): softmax resonator NEGATIVE on our
+well-conditioned FHRR (standard 0.96 vs softmax 0.21 on clean F=3 @ 320-codebook -> resonator NOT the blocker).
+RE-LOCALIZED to BUNDLE CROSSTALK (patient slot = clean filler + agent+action role-bindings; drowns the
+resonator at 200-noun codebook). FIX = CROSSTALK SUBTRACTION: query_patient already decodes agent+action to
+match -> subtract those role-bindings from the bundle before unbinding the patient -> clean filler -> resonator
+works. Applied recursively inside clauses too. SHIPPED in NestedCompositionAgent (query_patient + _decode_filler).
+FULL-AGENT HEADLINE: 320-concept agent ~48% -> **100% (120/120 mixed nested facts, 2 seeds)**, every kind
+perfect (flat/1-attr/2-attr/clause), at DEFAULT D=2048. 38 tests green + new regression test. Biologically =
+predictive subtraction (predictive coding). Note: all phasor/composition code is NUMPY/CPU by design (no GPU);
+GPU only for spiking-bridge validation or training.
 >>> EXACT NEXT: (a) read crosstalk-subtraction probe result; if it lifts 320 two-attr/clause 0->high, integrate
 into NestedCompositionAgent.query_patient (subtract decoded agent+action role-bindings before unbinding the
 patient) + multi-seed test. (b) Then the BIG lever: THALAMOCORTICAL GATING cheap-first H1 (Track 2) -- the
