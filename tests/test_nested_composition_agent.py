@@ -142,6 +142,20 @@ def test_abstain_on_unknown_query():
     assert a.query_patient("cat", "eat") is None           # no such fact -> abstain (no confabulation)
 
 
+def test_crosstalk_subtraction_complex_composition_at_scale():
+    # crosstalk subtraction lets two-attribute + clause facts decode at a larger vocabulary, where the
+    # agent+action role-bindings would otherwise drown the resonator (the 320-wall fix). 80 nouns is well past
+    # where two-attribute/clause collapse without the fix.
+    nouns = [f"noun{i}" for i in range(80)]
+    verbs = [f"verb{i}" for i in range(24)]
+    adjs = [f"adj{i}" for i in range(24)]
+    a = NestedCompositionAgent(nouns, verbs, adjs, seed=42)
+    a.learn("noun3", "verb1", (("adj2", "adj7"), "noun40"))     # two attributes, large codebooks
+    a.learn("noun5", "verb2", Clause("noun9", "verb4", "noun60"))  # embedded clause, large codebooks
+    assert a.query_patient("noun3", "verb1") == "adj2 adj7 noun40"
+    assert a.query_patient("noun5", "verb2") == "noun9 verb4 noun60"
+
+
 def test_scales_to_larger_vocabulary():
     # the agent holds up beyond the toy vocab: 40 nouns + 20 verbs + 20 adjectives, mixed fact kinds
     nouns = [f"n{i}" for i in range(40)]

@@ -1,5 +1,17 @@
 # Learned-code agent at 320 concepts — scale boundary (honest negative) — 2026-06-03
 
+> **⚡ RESOLVED later the same day (see below + `2026-06-03-deep-research-surpassing-the-blockers-synthesis.md`).**
+> The 320 complex-composition collapse was re-localized (deep-research-informed cheap-first probes) from
+> "resonator capacity" to **bundle crosstalk**, and a principled fix — **crosstalk subtraction** (the agent
+> already decodes the agent+action to match a query, so subtract those known role-bindings before unbinding
+> the patient) — lifts isolated two-attribute and clause decode at 320 concepts from **0/12 → 12/12 (both
+> seeds)**, at the default D=2048, with 37 existing tests still green. The "scale boundary" below was real but
+> is now surpassed; this doc is kept as the diagnostic trail. The headline insight: the wall was crosstalk
+> from composing a multi-role fact, not a capacity limit — and "explaining away" known components (predictive
+> subtraction) is the cheap, biology-grounded fix.
+
+
+
 **One line:** The learned-code nesting agent's ~80% at 40 concepts does **not** cleanly extrapolate to 320.
 With the defaults tuned for ~40 concepts, the 320-concept capstone gives a misleadingly-low headline; the
 honest decomposition shows **simple capabilities scale (flat, one-attribute, retrieval) but complex
