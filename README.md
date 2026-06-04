@@ -414,6 +414,32 @@ batch finishes in ~45-55 minutes on an RTX 3090.
 
 ## Latest validated result
 
+**Compositional structure: two long-standing walls surpassed, biology-faithfully (2026-06-03):**
+
+- **The 320-concept *nested*-composition wall — surpassed (≈48% → 100%).** Storing facts whose slots are
+  themselves structured ("dog sees (cat chase ball)", "big red ball") collapsed at 320 concepts. A
+  deep-research-informed cheap-first pass re-localized the cause (it was bundle *crosstalk*, not resonator
+  capacity) and the fix — **crosstalk subtraction** (subtract the already-known agent+action, biologically =
+  predictive coding) — takes the full 320-concept agent to **100%** (120/120 mixed nested facts, multi-seed),
+  at the default dimension. See `research/findings/2026-06-03-deep-research-surpassing-the-blockers-synthesis.md`.
+
+- **"Compose-pathways went silent" — solved by thalamocortical gating.** The project's recurring
+  variable-binding failure (verb→motor weights grown by STDP "went silent", 5/20 seed-fragile) is fixed by a
+  new **per-pathway transmission gate** in the spiking bridge: binding = *which gate is open*, not which weight
+  grew (Logiaco-Abbott-Escola 2021). Gated routing binds the verb→motor mapping **4/4 deterministic** and
+  re-binds with **zero weight change**, where grown weights could not — and the loop is closed biologically
+  (**basal ganglia disinhibit thalamus → thalamic activity opens the cortical gate**). Validated in spikes (8
+  tests). See `research/findings/2026-06-03-thalamocortical-gating-solves-compose-binding-SHIPPED.md`.
+
+- **Honest scope (the deliverable is composition + memory + trust, not fluency).** A pre-compute review
+  confirmed — without spending GPU — that fluent open-ended generation from a *from-scratch, biology-faithful,
+  single-GPU* spiking model is a documented wall (a 25M-param spiking LM overfits to held-out perplexity
+  ~204K versus a 6M transformer's 6.1 on the same corpus; this matches the field). The project's distinctive
+  contribution is the biology-faithful composition / memory / no-confabulation half, which is where these
+  wins land. See `research/findings/2026-06-03-pre-compute-review-the-tiny-LLM-gap-is-ALREADY-MEASURED.md`.
+
+---
+
 **Four new pillars in one autonomous arc (2026-05-25/26):**
 
 - **Pillar n=108 VALIDATED**: D4 dedicated-pool bio_brain_regions

@@ -62,14 +62,14 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
-sim/                    # 35 modules (+ __init__.py), ~17.6K lines — core engine
-  bridge.py             # 6704 lines — SimulationBridge + GPU state orchestration
+sim/                    # 42 modules (+ __init__.py), ~18K lines — core engine
+  bridge.py             # 6781 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate)
   config.py             #  760 lines — all @dataclass configs
   enums.py              #  825 lines — NeuronType (50+ presets), enums, default param managers
   connectivity.py       #  999 lines — spatial/WS/motif connection generators (backend-pluggable)
   kernels.py            #  326 lines — fused @fuse() neuron + plasticity kernels (cupy/numpy)
   profiles.py           #  432 lines — NEURAL_STRUCTURE_PROFILES + CONNECTIVITY_MOTIFS dicts
-  regions.py            #  602 lines — BrainRegion + RegionPathway + RegionManager
+  regions.py            #  612 lines — BrainRegion + RegionPathway (incl. transmission_gate) + RegionManager
   neuromodulators.py    # 1052 lines — declarative neuromodulator subsystem
   data_bus.py           #   95 lines — DataChannel pub/sub for streaming sim data
   replicas.py           #  243 lines — replicated wiring (multi-bridge support)
@@ -87,9 +87,9 @@ sim/                    # 35 modules (+ __init__.py), ~17.6K lines — core engi
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 195 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/generator_S-D-E-F-G/mode-unification/content_selection+content_selection_spiking+dialogue_agent/etc) for research
-research/findings/      # session-by-session findings docs (560+ files)
-tests/                  # 257 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, mode-unification, content-selection/dialogue, etc.)
+research/runners/       # 203 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/generator_S-D-E-F-G/mode-unification/content_selection+content_selection_spiking+dialogue_agent/nested_composition+phasor_associative_memory+phasor_chat+gated_compose/etc) for research
+research/findings/      # session-by-session findings docs (574 files)
+tests/                  # 265 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, mode-unification, content-selection/dialogue, nested-composition, transmission-gate/gated-compose, etc.)
 ```
 
 ### Thread Model
