@@ -1,0 +1,15 @@
+{
+  "seed": 42,
+  "vocab": 320,
+  "proj_dim": 800,
+  "n_facts": 12,
+  "between_cos_mean": -2.6432656438540156e-05,
+  "between_cos_max": 0.14439529484480856,
+  "what_correct": 12,
+  "who_correct": 12,
+  "abstain_correct": 12,
+  "abstain_total": 12,
+  "what_rate": 1.0,
+  "who_rate": 1.0,
+  "abstain_rate": 1.0
+}
