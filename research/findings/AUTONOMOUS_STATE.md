@@ -27,10 +27,17 @@ GLOBAL Hebbian (the fixed weight drifted 320->319.897 via the Hebbian decay term
 'bind' population with a `plasticity_gate` + `bridge.set_plasticity_gate(name, 0.0)` (zeros cp_plasticity_rate_gain
 over those synapses); NO sim/ edit; 12/12 on-brain tests pass. KEY downstream rule for Tasks 4-5: the
 UnifiedBrainBridge + parameterized CoreSimComposer MUST gate the composer 'bind' population (plasticity_gate=0.0), not
-just plastic=False. CONTINUING Tasks 2-6 (UnifiedBrainBridge skeleton → parameterize BridgeParser → parameterize
-CoreSimComposer WITH the gate → wire both + end-to-end → capability-matrix no-regression gate multi-seed). Each: a
-fresh subagent, controller trust-but-verify the diff. If a watchdog fires: continue the next UNSTARTED task (check
-`git log` for the latest committed Task N). HARD RULES unchanged.
+just plastic=False. Tasks 1-5 DONE (commit a0dedbab, both remotes): the parser + composer now run on ONE shared SimulationBridge as
+disjoint index slices — `research/runners/unified_brain_bridge.py` (`UnifiedBrainBridge` +
+`merge_population_into_shared_bridge`) + parameterized `BridgeParser`/`CoreSimComposer` for shared-bridge wiring.
+End-to-end on ONE bridge: comprehend->store->recall->abstain works; full-scale plasticity isolation holds (composer
+bind weights stay 320.0 after the parser's global-Hebbian training, via the gate). 19 tests pass, NO sim/ edits.
+Task 6 (the capability NO-REGRESSION gate: multi-seed production-scale matrix, unified vs separate bridges) IS IN
+FLIGHT as a background subagent (ac3d95b8). ON Task 6 completion: PASS -> step 1 of B is DONE (write finding
+`2026-06-04-one-bridge-unification-step1-DONE.md`, surface to owner, STOP for the step-2 [gated synaptic route] plan,
+do NOT auto-start step 2); REGRESSION -> surface the measured numbers honestly + decide a mitigation (e.g. per-region
+OU). If a watchdog fires WHILE Task 6 is in flight: do NOT duplicate Task 6 (check `git log`; if no Task-6 commit yet
+the subagent is likely still running) — do low-regret hygiene instead. HARD RULES unchanged.
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04) <<<
 
