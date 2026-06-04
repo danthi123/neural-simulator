@@ -61,14 +61,20 @@ is a non-trivial inside-clause flat-vs-attributed refinement with regression ris
 and deep clause-in-clause nesting is rare in real conversation -> LEFT as the documented honest ceiling (the
 benchmark holds the gate if revisited). Committed.
 
->>> EXACT NEXT = (c) pure-biology backlog item #1 (algebra -> spikes), PENDING owner confirm on the big-build
-scale. The GPU-worthy decisive build: the SPIKING realization of this same unified agent — resonate-and-fire
-phasor neurons (validated in pieces: _spiking_resonator_probe, membrane-resonate-fire RESOLVES-needs-high-Q) +
-an AUTOASSOCIATIVE CLEANUP network for the now-load-bearing pattern-completion step (CA3 attractor; the (b)
-result makes this a REQUIRED component, not optional). The unified-agent benchmark is the exact spec it must
-reproduce (the per-category pass-rate table is the target). This is the pure-biology payoff + the GPU path.
-Surfaced the fork to the owner; proceeding toward (c) unless redirected. The benchmark is the routine multi-seed
-gate for any composition/substrate change.
+>>> (c) SCOPED + DE-RISKED, PENDING owner go/no-go on the staged build. Scoping note:
+`docs/plans/2026-06-04-spiking-unified-agent-scoping.md`. KEY DISCOVERY: the spiking substrate LARGELY EXISTS +
+is individually validated — `research/runners/spiking_phasor_fhrr.py` (Orchard-2023 spiking bind/unbind/bundle
++ cleanup-with-abstention; self-test clears the frozen 0.80 bar at loads {2,3,5}); spiking resonator (nested
+decode) "1.00 in genuine spikes D=256" (recursive-clause finding); membrane resonate-fire; spiking-STDP learns
+the map. So (c) is an INTEGRATION of de-risked pieces, not a research gamble.
+  THE ONE NEW LOAD-BEARING PIECE the (b) result added = pattern-completion cleanup -> DE-RISKED IN SPIKES TODAY:
+  `_spiking_pattern_completion_probe.py` RESOLVES (pre-registered): spiking cleanup recovers a corrupted phasor
+  code to the correct attractor at 100% out to self-sim 0.45, 99.7% at self-sim 0.17 (= the numpy grounded
+  recall_conf; mirrors id_acc ~1.00); anti-cheat holds (collapses to ~chance under full randomization).
+  STAGED BUILD (each benchmark-gated): (1) [done] cheap de-risk; (2) spiking agent reproducing the ROBUST CORE
+  (flat/who/abstain/one-attribute) on CPU; (3) full benchmark in spikes on GPU (the reserved-GPU decisive run).
+  Surfaced the go/no-go to the owner. If confirmed -> stage 2. If redirected -> e.g. concept/vocab scale or
+  strengthen the conversational surface on the validated algebra agent. Benchmark = the routine multi-seed gate.
 
 ## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<
 
