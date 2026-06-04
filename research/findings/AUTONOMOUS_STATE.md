@@ -24,22 +24,28 @@ explicit user stop/pause or a true safety boundary halts work)
   agent operates at D=2048** (owner asked "why bother with D=800" — right: D=800 was the inherited default +
   measurement baseline, NOT an operating point; high D is more capable AND more biological, ~16K neurons trivial on
   GPU). Finding `2026-06-04-stage1.5-captured-code-correlation-derisk.md`. Committed both remotes.
-2 [NEXT] migrate the load-bearing numpy off the composer: CLEANUP (numpy argmax → spiking attractor cleanup;
-  precedents = rf ResonateFireTPAM at full 320 [now numpy-ref] + the validated spiking pattern-completion; MUST work
-  at cos 0.80) then the linear BUNDLING + ON/OFF opponency. Each matrix-gated; a capacity regression IS the
-  deliverable (the measured cost of removing the cheat). Cheap-first small→320.
+2 [IN PROGRESS] migrate the load-bearing numpy off the composer. CLEANUP cheap-first DONE: a matched-filter+WTA
+  cleanup region on the core bridge (concept codes as synaptic receptive fields; removes BOTH numpy steps) works on
+  DECORRELATED codes (cos~0: spiking 0.99 ≈ numpy 1.00, graceful degradation) but FAILS on the captured cos-0.80
+  regime (0.17 vs 1.00, even clean cues; WTA made it WORSE 0.02). DIAGNOSIS (deliverable): the spiking matched filter
+  is NOT common-mode invariant — correlated codes' shared component saturates every concept neuron, destroying the
+  residual; numpy argmax cancels a constant offset for free. So the cortex decorrelates PRECISELY to make spiking
+  matching possible. KEY REFRAME: decorrelation (ZCA) is PROMOTED from an item-3 efficiency lever to a PREREQUISITE
+  for item 2 — one biological move that (a) makes the spiking cleanup work, (b) lowers D (1.5), (c) is biology-grounded.
+  Finding `2026-06-04-spine-item2-spiking-cleanup-needs-decorrelation.md`, committed e809db71. Then the linear
+  BUNDLING + ON/OFF opponency.
 3 [THEN] fully-grounded capture (`capture_concept_activity` in vocabulary_scaling_run.py → cos-0.80 codes the
   substrate's OWN); ONE heavy run on the final spiking-cleanup composer (why 2-before-3: avoids a duplicate heavy run).
   A decorrelating step (ZCA, the visual-grounding fix) is the option if 2-attr-at-0.80 must be recovered.
 B [AFTER] collapse the 3 functional bridges (parser 126n + composer 6400n + dlPFC 2-region) into ONE multi-region
   bridge; turn the Python hand-offs into synaptic RegionPathways. Then nested-sentence parsing (a new capability).
->>> EXACT NEXT CONCRETE ACTION: BEGIN item 2 — a spiking attractor cleanup ON the core SimulationBridge (Hopfield-
-style: store the concept codes as fixed-point attractors via recurrent outer-product weights; drive with the unbind's
-decoded `est`; settle to the nearest concept in-network). This removes BOTH numpy steps at once (the `argmax` AND the
-dot-product matching), unlike a shallow spiking-argmax-over-numpy-scores. Algorithmic template = rf ResonateFireTPAM
-(held 320 attractors, numpy reference in resonate_fire_fhrr.py) + research/runners/_spiking_pattern_completion_probe.py
-(numpy phasor cleanup). Cheap-first 32→320 attractors; target regime cos-0.80 D=2048; matrix-gated; a capacity
-regression IS the deliverable. HARD RULES: GPU for real runs (numpy only tiny smoke); honest propagation to BOTH
+>>> EXACT NEXT CONCRETE ACTION: item-2 INTEGRATION test — decorrelate the captured codebook globally (ZCA on the M concept codes; orthonormalize via
+the Gram G^{-1/2}) in the composer, swap the numpy-argmax cleanup for the spiking matched-filter cleanup on the core
+bridge (`_spiking_cleanup_core_probe` build), and re-run the capability matrix (now possibly at LOWER D, since
+decorrelated codes need less). Decisive gate: does the fully-spiking-cleanup + decorrelated composer PRESERVE the
+capability matrix? A regression IS the measured cost of removing the argmax cheat. Fallback if some correlation must
+be tolerated without full decorrelation: a divisive/subtractive common-mode-removal (normalization) circuit in the
+cleanup. HARD RULES: GPU for real runs (numpy only tiny smoke); honest propagation to BOTH
 remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and honestly
 fails without it IS the finding; never end a turn on a future-tense promise.
 
