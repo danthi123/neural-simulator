@@ -81,9 +81,14 @@ the map. So (c) is an INTEGRATION of de-risked pieces, not a research gamble.
        unbind it + clean up to the nouns; best clean noun wins -- sidesteps the resonator F=2 "problem of 2").
        Flat-vs-attributed auto-detected. FULL ROBUST CORE now 52/52 = 100% in spikes (flat/1-attr/who/abstain,
        2 seeds), = numpy benchmark. `spiking_unified_agent.py` extended; test updated. COMMITTED + pushed.
-  (2c) [NEXT] migrate to the BIOLOGICAL resonate-and-fire substrate (`resonate_fire_fhrr`: rf_bind/unbind/bundle
-       + ResonateFireTPAM attractor cleanup = the biological CA3 pattern completion). The pure-biology refinement.
-  (3) full benchmark in spikes on GPU (the reserved-GPU decisive run; 2-attr + clauses at 320).
+  (2c) [DONE] robust core on the BIOLOGICAL resonate-and-fire substrate (`resonate_fire_fhrr`: rf_bind/unbind/
+       bundle + ResonateFireTPAM attractor-network cleanup = biological CA3 pattern completion; abstention = a
+       basin-of-attraction property). `_rf_unified_agent_probe.py` RESOLVES: robust core 26/26 = 100% at CORE
+       vocab (30n/15v/12a) on CPU. Honest: reduced vocab = easier cleanup; full-320 rf = stage 3 (GPU, slow on
+       CPU). The brain analogue does the robust core incl. the no-confab moat as network dynamics. COMMITTED.
+  (3) [NEXT] full benchmark in spikes on GPU (the reserved-GPU decisive run): two-attribute (F=3) + clauses
+       (recursive decode) at 320, AND the resonate-and-fire substrate at full 320 vocab. Needs the GPU/CuPy port
+       of the spiking ops (the reserved-GPU build). Owner-steerable: stage 3 is the big GPU run.
   Benchmark = the routine multi-seed gate.
 
 ## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<

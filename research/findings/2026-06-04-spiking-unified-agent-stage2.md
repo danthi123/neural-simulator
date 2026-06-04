@@ -56,6 +56,31 @@ OVERALL robust core: **52/52 = 100%** (2 seeds). The full robust core — fact m
 composition, who/what Q&A, and the no-confabulation moat — now runs in genuine spikes and matches the numpy
 benchmark category-for-category. No spurious attributes on flat facts, no missed attributes on attributed facts.
 
+## Stage 2c — the BIOLOGICAL resonate-and-fire substrate, RESOLVES
+
+Stages 2a/2b run on `spiking_phasor_fhrr` (genuine time-stepped spiking, but Orchard's function-first *integrator*
+neurons). Stage 2c re-runs the SAME robust core on `resonate_fire_fhrr` — the genuine biological
+**resonate-and-fire** neuron model (Izhikevich 2001 / Frady-Sommer 2019): bind/unbind/bundle on resonate-and-fire
+neurons, and clean-up by `ResonateFireTPAM`, a complex-valued **attractor network** whose stable fixed points are
+the stored concepts. Abstention is a basin-of-attraction property (the recurrent drive collapses below threshold
+for an ungroundable input) — the no-confabulation moat as network dynamics, not a list-argmax threshold.
+
+`research/runners/_rf_unified_agent_probe.py` (`RFUnifiedAgent`), at the frozen test set's CORE vocabulary
+(30 nouns / 15 verbs / 12 adjectives):
+
+| category | biological substrate |
+|---|---|
+| flat | 8/8 = 100% |
+| one-attribute | 6/6 = 100% |
+| who-query | 6/6 = 100% |
+| abstain | 6/6 = 100% |
+
+OVERALL: **26/26 = 100%** — **RESOLVES**. The robust core reproduces on the genuine biological neuron model with
+the biological attractor-network cleanup. Honest scope: the resonate-and-fire substrate steps a ~1000-step cycle
+per operation and the TPAM settles recurrently, so this validates the substrate at the core vocabulary on CPU;
+the reduced vocabulary is an EASIER clean-up than 320, so this is a substrate-works validation, not a
+difficulty-matched one. The full-320 resonate-and-fire run is the reserved-GPU build (stage 3).
+
 ## Honest scope + the path to full pure-biology
 
 - **Substrate (stage 2a):** `spiking_phasor_fhrr` is genuine time-stepped spiking, but its bind/unbind are
@@ -64,16 +89,17 @@ benchmark category-for-category. No spurious attributes on flat facts, no missed
   (Izhikevich 2001 / Frady-Sommer 2019) with `rf_bind/rf_unbind/rf_bundle` AND `ResonateFireTPAM`, a genuine
   complex-valued **attractor-network** cleanup (the biological CA3 pattern-completion the (b) result needs, with
   abstention as a basin-of-attraction property). Migrating the agent onto that substrate + TPAM is the
-  pure-biology refinement (**stage 2c**).
+  pure-biology refinement (**stage 2c — DONE above, 26/26 at core vocab**).
 - **One-attribute composition (stage 2b):** SHIPPED (above) via spiking enumeration factoring — 12/12.
 - **Two-attribute + clauses at 320 in spikes (stage 3):** the larger, GPU-worthy part (the reserved-GPU run);
   two-attribute needs the F=3 factoring, clauses the recursive decode.
 
 ## Verdict
 
-**Stages 2a + 2b SHIPPED.** The full robust core of the unified agent — fact memory, two-factor attribute
+**Stages 2a + 2b + 2c SHIPPED.** The full robust core of the unified agent — fact memory, two-factor attribute
 composition, who/what Q&A, and the no-confabulation moat — runs in genuine spikes and reproduces the numpy
-benchmark **52/52 = 100%** (2 seeds) at full 320-concept vocab. The brain-analogue build is underway, each stage
-gated by the same benchmark. Next: 2c (migrate to the resonate-and-fire biological neuron model +
-`ResonateFireTPAM` attractor cleanup — the pure-biology refinement), then stage 3 (two-attribute + clauses at
-320 on GPU).
+benchmark **52/52 = 100%** (2 seeds, full 320-concept vocab) on the engineering-scaffold substrate AND **26/26 =
+100%** on the genuine **biological resonate-and-fire neuron model + attractor-network cleanup** (core vocab).
+The brain analogue does the robust core — including the no-confabulation moat as a basin-of-attraction property.
+Each stage gated by the same benchmark. Next: **stage 3** — the reserved-GPU build: two-attribute + clauses, and
+the resonate-and-fire substrate at full 320 vocab.

@@ -1,0 +1,25 @@
+{
+  "res": {
+    "flat": [
+      8,
+      8
+    ],
+    "1-attribute": [
+      6,
+      6
+    ],
+    "who-query": [
+      6,
+      6
+    ],
+    "abstain": [
+      6,
+      6
+    ]
+  },
+  "overall": [
+    26,
+    26
+  ],
+  "verdict": "RESOLVES"
+}
