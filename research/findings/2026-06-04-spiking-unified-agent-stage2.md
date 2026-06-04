@@ -31,7 +31,30 @@ Driven by the benchmark's frozen test set (so it is comparable category-for-cate
 | abstain | **12/12 = 100%** | 100% |
 
 OVERALL flat core: **40/40 = 100%** (2 seeds). The no-confabulation moat (abstain on an in-vocabulary but
-never-stored pair) holds in genuine spikes. `tests/test_spiking_unified_agent.py` (2 tests) guards it.
+never-stored pair) holds in genuine spikes. `tests/test_spiking_unified_agent.py` guards it.
+
+## Stage 2b — one-attribute composition, SHIPPED
+
+The patient as adjective⊗noun ("red ball"), decoded in spikes by a **two-factor enumeration factoring**: unbind
+the patient role, then for each adjective unbind it (phase-subtraction neurons) and clean up to the nouns — the
+adjective whose unbind yields the best clean noun is the attribute. Enumeration (not the iterative resonator)
+sidesteps the resonator's "problem of 2" (F=2 limit cycles) and is robust for two factors; it is genuinely
+spiking (unbind + clean-up populations). Flat-vs-attributed is auto-detected by comparing the flat-noun clean-up
+similarity against the best adjective-factoring similarity. Flat and one-attribute facts are stored together, so
+the decode must discriminate.
+
+Result (`N_dim=512`, 2 seeds), full robust core:
+
+| category | spikes | numpy benchmark |
+|---|---|---|
+| flat | 16/16 = 100% | 100% |
+| **one-attribute** | **12/12 = 100%** | 100% |
+| who-query | 12/12 = 100% | 100% |
+| abstain | 12/12 = 100% | 100% |
+
+OVERALL robust core: **52/52 = 100%** (2 seeds). The full robust core — fact memory, two-factor attribute
+composition, who/what Q&A, and the no-confabulation moat — now runs in genuine spikes and matches the numpy
+benchmark category-for-category. No spurious attributes on flat facts, no missed attributes on attributed facts.
 
 ## Honest scope + the path to full pure-biology
 
@@ -42,14 +65,15 @@ never-stored pair) holds in genuine spikes. `tests/test_spiking_unified_agent.py
   complex-valued **attractor-network** cleanup (the biological CA3 pattern-completion the (b) result needs, with
   abstention as a basin-of-attraction property). Migrating the agent onto that substrate + TPAM is the
   pure-biology refinement (**stage 2c**).
-- **One-attribute composition (stage 2b):** the patient as adjective⊗noun needs the two-factor *factoring
-  resonator* (iterative unbind↔cleanup) in spikes — validated separately (recursive-clause finding: "1.00 in
-  genuine spikes, D=256"). Next.
-- **Two-attribute + clauses at 320 in spikes (stage 3):** the larger, GPU-worthy part (the reserved-GPU run).
+- **One-attribute composition (stage 2b):** SHIPPED (above) via spiking enumeration factoring — 12/12.
+- **Two-attribute + clauses at 320 in spikes (stage 3):** the larger, GPU-worthy part (the reserved-GPU run);
+  two-attribute needs the F=3 factoring, clauses the recursive decode.
 
 ## Verdict
 
-**Stage 2a SHIPPED.** The flat robust core of the unified agent — fact memory, who/what Q&A, and the
-no-confabulation moat — runs in genuine spikes and reproduces the numpy benchmark at 100% at full 320-concept
-vocab. The brain-analogue build is underway, each stage gated by the same benchmark. Next: 2b (one-attribute via
-the spiking factoring resonator), then 2c (migrate to the resonate-and-fire biological neuron + TPAM cleanup).
+**Stages 2a + 2b SHIPPED.** The full robust core of the unified agent — fact memory, two-factor attribute
+composition, who/what Q&A, and the no-confabulation moat — runs in genuine spikes and reproduces the numpy
+benchmark **52/52 = 100%** (2 seeds) at full 320-concept vocab. The brain-analogue build is underway, each stage
+gated by the same benchmark. Next: 2c (migrate to the resonate-and-fire biological neuron model +
+`ResonateFireTPAM` attractor cleanup — the pure-biology refinement), then stage 3 (two-attribute + clauses at
+320 on GPU).

@@ -20,7 +20,8 @@ from __future__ import annotations
 import numpy as np
 
 from research.runners.spiking_phasor_fhrr import (
-    SpikingPhasorFHRR, phase_sum_neuron, phase_subtraction_neuron, phase_midpoint_bundle, cleanup)
+    SpikingPhasorFHRR, phase_sum_neuron, phase_subtraction_neuron, phase_midpoint_bundle, phase_similarity,
+    cleanup)
 
 ROLES = ("AGENT", "ACTION", "PATIENT")
 
@@ -29,25 +30,41 @@ class SpikingUnifiedAgent:
     """Store flat SVO facts and answer who/what + abstain, entirely in spiking-phasor populations. Each fact is
     one bundle of three role-bindings (role ⊗ filler); a query unbinds a role and cleans up to the vocabulary."""
 
-    def __init__(self, nouns, verbs, n_dim=512, seed=42, abstain_threshold=0.15):
-        self.nouns, self.verbs = list(nouns), list(verbs)
+    def __init__(self, nouns, verbs, adjs=(), n_dim=512, seed=42, abstain_threshold=0.15):
+        self.nouns, self.verbs, self.adjs = list(nouns), list(verbs), list(adjs)
         self.abstain_threshold = float(abstain_threshold)
         self.net = SpikingPhasorFHRR(n_dim, np.random.default_rng(seed))
         self.noun_sym = {w: self.net.random_symbol() for w in self.nouns}
         self.verb_sym = {w: self.net.random_symbol() for w in self.verbs}
+        self.adj_sym = {w: self.net.random_symbol() for w in self.adjs}
         self.role_sym = {r: self.net.random_symbol() for r in ROLES}
         self.noun_vocab = [self.noun_sym[w] for w in self.nouns]   # clean-up codebooks (spike populations)
         self.verb_vocab = [self.verb_sym[w] for w in self.verbs]
+        self.adj_vocab = [self.adj_sym[w] for w in self.adjs]
         self.kb = []        # bundle spikes per stored fact
         self.facts = []     # parallel (agent, action, patient) for reference
 
+    def _patient_filler(self, patient):
+        """A flat noun -> its symbol; an (adjective, noun) tuple -> the bound product (phase-sum neurons)."""
+        if isinstance(patient, tuple):
+            return phase_sum_neuron(self.adj_sym[patient[0]], self.noun_sym[patient[1]])
+        return self.noun_sym[patient]
+
     def learn(self, agent, action, patient):
-        """Store a flat SVO fact: bind each (role, filler) with phase-sum neurons, bundle them (phase-midpoint)."""
+        """Store an SVO fact (patient = flat noun OR (adjective, noun)): bind each (role, filler) with phase-sum
+        neurons, bundle them (phase-midpoint)."""
         bound = [phase_sum_neuron(self.role_sym["AGENT"], self.noun_sym[agent]),
                  phase_sum_neuron(self.role_sym["ACTION"], self.verb_sym[action]),
-                 phase_sum_neuron(self.role_sym["PATIENT"], self.noun_sym[patient])]
+                 phase_sum_neuron(self.role_sym["PATIENT"], self._patient_filler(patient))]
         self.kb.append(phase_midpoint_bundle(bound))
         self.facts.append((agent, action, patient))
+
+    @staticmethod
+    def _argmax_sim(query, vocab, names):
+        """Raw nearest-vocabulary match (no abstention): (name, similarity)."""
+        sims = [phase_similarity(query, v) for v in vocab]
+        k = int(np.argmax(sims))
+        return names[k], float(sims[k])
 
     def _unbind_clean(self, bundle, role, vocab, names):
         """Unbind a role (phase-subtraction neurons) then clean up to the vocabulary (WTA + abstention).
@@ -56,12 +73,31 @@ class SpikingUnifiedAgent:
         idx, _ = cleanup(recovered, vocab, self.abstain_threshold)
         return names[idx] if idx >= 0 else None
 
+    def _decode_patient(self, bundle):
+        """Decode the PATIENT slot, auto-detecting flat noun vs (adjective, noun) -- the spiking two-factor
+        decode. Unbind the patient role, then COMPARE two models: the flat-noun clean-up vs the best
+        adjective-factoring (for each adjective, unbind it and clean up to the nouns; the adjective whose unbind
+        yields the best clean noun is the attribute -- an enumeration factoring, robust for two factors). The
+        model with the higher reconstruction similarity wins."""
+        recovered = phase_subtraction_neuron(bundle, self.role_sym["PATIENT"])
+        flat_noun, flat_sim = self._argmax_sim(recovered, self.noun_vocab, self.nouns)
+        best = None
+        for ai, a in enumerate(self.adjs):
+            unbound = phase_subtraction_neuron(recovered, self.adj_vocab[ai])
+            noun, sim = self._argmax_sim(unbound, self.noun_vocab, self.nouns)
+            if best is None or sim > best[0]:
+                best = (sim, a, noun)
+        if best is None or flat_sim >= best[0]:
+            return flat_noun
+        return f"{best[1]} {best[2]}"
+
     def query_patient(self, agent, action):
-        """"what does <agent> <action>?" -> the patient noun, or None (abstain) if no stored fact matches."""
+        """"what does <agent> <action>?" -> the patient (flat noun or "adjective noun"), or None (abstain) if no
+        stored fact matches."""
         for b in self.kb:
             if (self._unbind_clean(b, "AGENT", self.noun_vocab, self.nouns) == agent
                     and self._unbind_clean(b, "ACTION", self.verb_vocab, self.verbs) == action):
-                return self._unbind_clean(b, "PATIENT", self.noun_vocab, self.nouns)
+                return self._decode_patient(b)
         return None
 
     def query_agent(self, action, patient):
@@ -74,13 +110,14 @@ class SpikingUnifiedAgent:
 
 
 def run_core_benchmark(n_dim=512, seed=42, abstain_threshold=0.15):
-    """Run the unified-agent benchmark's FLAT robust core (flat / who / abstain) on the spiking agent, using the
-    same frozen test set so the spiking result is comparable to the numpy-algebra result."""
+    """Run the unified-agent benchmark's robust core (flat / one-attribute / who / abstain) on the spiking agent,
+    using the same frozen test set so the spiking result is comparable to the numpy-algebra result. Flat and
+    one-attribute facts are stored together so the patient decode must auto-detect flat vs attributed."""
     from research.runners.unified_agent_benchmark import (
-        build_vocab, FACTS_FLAT, WHO_QUERIES, ABSTAIN_QUERIES)
-    nouns, verbs, _ = build_vocab()
-    agent = SpikingUnifiedAgent(nouns, verbs, n_dim=n_dim, seed=seed, abstain_threshold=abstain_threshold)
-    for ag, ac, pa in FACTS_FLAT:
+        build_vocab, FACTS_FLAT, FACTS_1ATTR, WHO_QUERIES, ABSTAIN_QUERIES)
+    nouns, verbs, adjs = build_vocab()
+    agent = SpikingUnifiedAgent(nouns, verbs, adjs, n_dim=n_dim, seed=seed, abstain_threshold=abstain_threshold)
+    for ag, ac, pa in FACTS_FLAT + FACTS_1ATTR:
         agent.learn(ag, ac, pa)
 
     res, wrong = {}, []
@@ -91,6 +128,15 @@ def run_core_benchmark(n_dim=512, seed=42, abstain_threshold=0.15):
         if got != pa:
             wrong.append(("flat", f"what does {ag} {ac}?", got, pa))
     res["flat"] = [flat_ok, len(FACTS_FLAT)]
+
+    oa_ok = 0
+    for ag, ac, pa in FACTS_1ATTR:
+        want = f"{pa[0]} {pa[1]}"
+        got = agent.query_patient(ag, ac)
+        oa_ok += (got == want)
+        if got != want:
+            wrong.append(("1-attribute", f"what does {ag} {ac}?", got, want))
+    res["1-attribute"] = [oa_ok, len(FACTS_1ATTR)]
 
     who_ok = 0
     for ac, pn, want in WHO_QUERIES:
@@ -120,7 +166,7 @@ def main():
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
-    print(f"=== spiking unified agent | flat robust core in spikes | N_dim={args.n_dim} | "
+    print(f"=== spiking unified agent | robust core (flat + one-attribute) in spikes | N_dim={args.n_dim} | "
           f"seeds={args.seeds} ===\n", flush=True)
     per_seed = []
     for s in args.seeds:

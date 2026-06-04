@@ -77,10 +77,12 @@ the map. So (c) is an INTEGRATION of de-risked pieces, not a research gamble.
        spiking_phasor_fhrr) reproduces the benchmark's flat/who/abstain at **100% (40/40, 2 seeds)** at 320-concept
        vocab; no-confabulation moat holds in spikes. `tests/test_spiking_unified_agent.py` (2). Finding
        `2026-06-04-spiking-unified-agent-stage2.md`. COMMITTED + pushed.
-  (2b) [NEXT] one-attribute composition in spikes via the two-factor FACTORING RESONATOR (iterative
-       unbind<->cleanup; validated separately "1.00 in genuine spikes D=256"). Patient = adj⊗noun.
-  (2c) migrate to the BIOLOGICAL resonate-and-fire substrate (`resonate_fire_fhrr`: rf_bind/unbind/bundle +
-       ResonateFireTPAM attractor cleanup = the biological CA3 pattern completion). The pure-biology refinement.
+  (2b) [DONE] one-attribute composition in spikes via a two-factor ENUMERATION factoring (for each adjective,
+       unbind it + clean up to the nouns; best clean noun wins -- sidesteps the resonator F=2 "problem of 2").
+       Flat-vs-attributed auto-detected. FULL ROBUST CORE now 52/52 = 100% in spikes (flat/1-attr/who/abstain,
+       2 seeds), = numpy benchmark. `spiking_unified_agent.py` extended; test updated. COMMITTED + pushed.
+  (2c) [NEXT] migrate to the BIOLOGICAL resonate-and-fire substrate (`resonate_fire_fhrr`: rf_bind/unbind/bundle
+       + ResonateFireTPAM attractor cleanup = the biological CA3 pattern completion). The pure-biology refinement.
   (3) full benchmark in spikes on GPU (the reserved-GPU decisive run; 2-attr + clauses at 320).
   Benchmark = the routine multi-seed gate.
 
