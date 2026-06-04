@@ -47,7 +47,12 @@ ROUTE_W = 40.0    # verb -> motor cortical route (gated)
 VERB_TO_D1_INIT = 0.5   # plastic cortico-striatal init (STDP grows the correct one from here)
 
 
-def build_learned_bg_gated_bridge(seed=42, n=30):
+def build_learned_bg_gated_bridge(seed=42, n=30, n_verb=None):
+    # n_verb scales the presynaptic verb (cue) pool independently of the cascade pools. The #3 close (2026-06-04)
+    # found the learned weight (~16) fires the high-rheobase MSN-D1 SYNAPTICALLY only with a Tier-1-scale cue pool
+    # (>=300; silent at 30/100) -- _msn_synaptic_drive_probe. Default keeps the 30-neuron toy; pass n_verb>=300 to
+    # close the end-to-end.
+    n_verb = n if n_verb is None else int(n_verb)
     from sim import SimulationBridge, CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
     from sim.enums import NeuronModel
     cfg = CoreSimConfig()
@@ -67,7 +72,7 @@ def build_learned_bg_gated_bridge(seed=42, n=30):
 
     pairs = [(v, m) for v in VERBS for m in MOTORS]
     cfg.brain_regions = (
-        [BrainRegion(name=f"verb_{v}", n_neurons=n, exc_fraction=1.0, internal_density=0.0) for v in VERBS]
+        [BrainRegion(name=f"verb_{v}", n_neurons=n_verb, exc_fraction=1.0, internal_density=0.0) for v in VERBS]
         + [BrainRegion(name=f"motor_{m}", n_neurons=n, exc_fraction=1.0, internal_density=0.0) for m in MOTORS]
         + [BrainRegion(name=f"thal_{v}_{m}", n_neurons=n, exc_fraction=1.0, internal_density=0.0,
                        izh_neuron_type=NeuronType.IZH2007_THALAMIC_RELAY.name) for v, m in pairs]
@@ -144,11 +149,11 @@ def decode_learned(sb, verb, settle=40, n_steps=60, verb_pA=1500.0):
     return max(MOTORS, key=lambda m: acc[np.asarray(sb.region_manager.indices(f"motor_{m}"))].mean())
 
 
-def _eval(mapping, seeds=(42, 43, 44), epochs=20):
+def _eval(mapping, seeds=(42, 43, 44), epochs=20, n_verb=30):
     total_ok = 0
     lines = []
     for seed in seeds:
-        sb = build_learned_bg_gated_bridge(seed=seed)
+        sb = build_learned_bg_gated_bridge(seed=seed, n_verb=n_verb)
         train(sb, mapping, epochs=epochs)
         ok = 0
         per = []
@@ -163,13 +168,23 @@ def _eval(mapping, seeds=(42, 43, 44), epochs=20):
 
 
 def main():
-    print("=== LEARNED BG gate selection (cheat-removal #3): cue learns to select its gate ===\n", flush=True)
+    import argparse
+    ap = argparse.ArgumentParser(description="Cheat-removal #3: learned BG gate selection.")
+    ap.add_argument("--n-verb", type=int, default=30,
+                    help="presynaptic verb (cue) pool size; >=300 fires the MSN-D1 synaptically (Tier-1 scale)")
+    ap.add_argument("--epochs", type=int, default=20)
+    ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44])
+    args = ap.parse_args()
+    seeds = tuple(args.seeds)
+    print(f"=== LEARNED BG gate selection (cheat-removal #3): cue learns to select its gate "
+          f"| n_verb={args.n_verb} epochs={args.epochs} seeds={list(seeds)} ===\n", flush=True)
 
     print("TRUE teacher mapping {GO:N, COME:S, STOP:W, LOOK:E} -- train verb->D1, test verb ALONE:", flush=True)
-    true_ok, true_lines = _eval(TRUE_MAP, epochs=20)
+    true_ok, true_lines = _eval(TRUE_MAP, seeds=seeds, epochs=args.epochs, n_verb=args.n_verb)
     for ln in true_lines:
         print(ln, flush=True)
-    print(f"  -> TRUE mapping: {true_ok}/12 across 3 seeds\n", flush=True)
+    n_tot = 4 * len(seeds)
+    print(f"  -> TRUE mapping: {true_ok}/{n_tot} across {len(seeds)} seeds\n", flush=True)
 
     # Anti-cheat: permuted teacher. A learned result must FOLLOW the teacher, so the TRUE mapping now decodes
     # at chance (the permuted mapping is what gets bound).
@@ -177,17 +192,17 @@ def main():
     print(f"PERMUTED teacher mapping {permuted} -- score against the SAME true labels (anti-cheat):", flush=True)
     perm_true_ok = 0
     perm_perm_ok = 0
-    for seed in (42, 43, 44):
-        sb = build_learned_bg_gated_bridge(seed=seed)
-        train(sb, permuted, epochs=20)
+    for seed in seeds:
+        sb = build_learned_bg_gated_bridge(seed=seed, n_verb=args.n_verb)
+        train(sb, permuted, epochs=args.epochs)
         for v in VERBS:
             best = decode_learned(sb, v)
             perm_true_ok += int(best == TRUE_MAP[v])     # how often it still hits the TRUE label (should be ~chance)
             perm_perm_ok += int(best == permuted[v])     # how often it hits the PERMUTED (taught) label
-    print(f"  -> under permuted teacher: TRUE-label hits {perm_true_ok}/12 (want ~chance=3/12), "
-          f"PERMUTED-label hits {perm_perm_ok}/12 (want high)\n", flush=True)
+    print(f"  -> under permuted teacher: TRUE-label hits {perm_true_ok}/{n_tot} (want ~chance={n_tot//4}/{n_tot}), "
+          f"PERMUTED-label hits {perm_perm_ok}/{n_tot} (want high)\n", flush=True)
 
-    learned = true_ok >= 9 and perm_perm_ok >= 9 and perm_true_ok <= 5
+    learned = true_ok >= 0.75 * n_tot and perm_perm_ok >= 0.75 * n_tot and perm_true_ok <= 0.42 * n_tot
     print(f"  => {'LEARNED SELECTION (true high, follows permuted teacher, true-under-permuted ~chance)' if learned else 'NEEDS TUNING / NOT YET LEARNED'}",
           flush=True)
 

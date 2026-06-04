@@ -58,11 +58,34 @@ presynaptic drive that way, or insert a more-excitable cortico-striatal relay up
 cue → fires its D1 → the genuine #2 disinhibition cascade → opens the correct gate → routes. The multi-seed
 end-to-end + permuted-teacher anti-cheat (already coded) then becomes the gate.
 
+## Close de-risked (2026-06-04): the gap is drive magnitude, and Tier-1-scale pools fire the cascade
+
+`research/runners/_msn_synaptic_drive_probe.py` settles it cheap-first: drive a verb pool at 1500 pA through a
+FIXED `verb→D1` weight of 16 (the learned magnitude), and sweep the pool size:
+
+| verb pool | D1 | GPi (base 0.28) | thal (base 0.01) | motor_N | cascade |
+|---|---|---|---|---|---|
+| 30 | 0.000 | 0.26 | 0.000 | 0.000 | silent (the #3 gap) |
+| 100 | 0.000 | 0.27 | 0.000 | 0.000 | silent |
+| **300** | **0.238** | **0.06** | **0.056** | **0.137** | **FIRES** |
+| 500 | 0.304 | 0.04 | 0.067 | 0.187 | FIRES |
+| 1000 | 0.312 | 0.04 | 0.068 | 0.194 | FIRES |
+
+So the wall is purely drive magnitude (summed synaptic drive ≈ n_presynaptic × rate × weight): at ≥300 presynaptic
+neurons the learned-magnitude weight fires the high-rheobase MSN-D1, which silences GPi (0.28→0.06), releases the
+thalamic relay, and routes to the motor — the genuine #2 disinhibition cascade completing from the cue alone, no
+direct current. This is consistent with the validated Tier-1 word→action recipe (500-1000 neuron pools).
+
+The full multi-seed close (retrain at `--n-verb 500`, true + permuted-teacher anti-cheat) runs via
+`gated_compose_bg_learned_demo.py --n-verb 500` (the demo now supports the scaled cue pool). If the LEARNED weight
+at scale reproduces the cascade with the permuted-teacher control passing, #3 moves PARTIAL → RESOLVED.
+
 ## Honest status
 
 - LEARNING (the hard, scientific part): **validated** — selective cortico-striatal STDP.
-- END-TO-END routing: **open** — a drive-strength engineering gap (synaptic MSN-D1 firing), with a concrete,
-  validated-recipe continuation. Not claimed resolved.
+- END-TO-END routing: **de-risked + closing** — the gap was drive magnitude; a Tier-1-scale (≥300) cue pool fires
+  the MSN-D1 cascade synaptically at the learned weight (cheap-first confirmed). The scaled multi-seed retrain +
+  permuted-teacher anti-cheat is the final confirmation.
 
 ## Files
 
