@@ -1,0 +1,217 @@
+{
+  "D": 2048,
+  "seeds": [
+    42,
+    43
+  ],
+  "raw": [
+    {
+      "seed": 42,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          0,
+          6
+        ],
+        "2-attribute": [
+          0,
+          5
+        ],
+        "clause-depth1": [
+          3,
+          5
+        ],
+        "clause-depth2": [
+          3,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      }
+    },
+    {
+      "seed": 43,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          0,
+          6
+        ],
+        "2-attribute": [
+          0,
+          5
+        ],
+        "clause-depth1": [
+          3,
+          5
+        ],
+        "clause-depth2": [
+          3,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      }
+    }
+  ],
+  "decorrelated": [
+    {
+      "seed": 42,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          6,
+          6
+        ],
+        "2-attribute": [
+          5,
+          5
+        ],
+        "clause-depth1": [
+          5,
+          5
+        ],
+        "clause-depth2": [
+          3,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      }
+    },
+    {
+      "seed": 43,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          6,
+          6
+        ],
+        "2-attribute": [
+          5,
+          5
+        ],
+        "clause-depth1": [
+          5,
+          5
+        ],
+        "clause-depth2": [
+          3,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      }
+    }
+  ],
+  "agg_raw": {
+    "flat": [
+      16,
+      16,
+      1.0
+    ],
+    "1-attribute": [
+      0,
+      12,
+      0.0
+    ],
+    "2-attribute": [
+      0,
+      10,
+      0.0
+    ],
+    "clause-depth1": [
+      6,
+      10,
+      0.6
+    ],
+    "clause-depth2": [
+      6,
+      6,
+      1.0
+    ],
+    "who-query": [
+      12,
+      12,
+      1.0
+    ],
+    "abstain": [
+      12,
+      12,
+      1.0
+    ]
+  },
+  "agg_dec": {
+    "flat": [
+      16,
+      16,
+      1.0
+    ],
+    "1-attribute": [
+      12,
+      12,
+      1.0
+    ],
+    "2-attribute": [
+      10,
+      10,
+      1.0
+    ],
+    "clause-depth1": [
+      10,
+      10,
+      1.0
+    ],
+    "clause-depth2": [
+      6,
+      6,
+      1.0
+    ],
+    "who-query": [
+      12,
+      12,
+      1.0
+    ],
+    "abstain": [
+      12,
+      12,
+      1.0
+    ]
+  }
+}

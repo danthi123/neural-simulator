@@ -1,0 +1,27 @@
+=== MULTI-MODAL grounding | nouns->V1 Gabor (visual), verbs+adjs->word encoder (abstract) | 320 concepts | D=2048 | seeds=[42, 43] ===
+  combined feature dim 10240 (V1 8192 + word 2048); nouns visual, verbs+adjs abstract
+
+  --- RAW mixed-modality (no decorrelation) (multi-seed) ---
+    flat              16/16  = 100.0%
+    1-attribute        0/12  =   0.0%
+    2-attribute        0/10  =   0.0%
+    clause-depth1      6/10  =  60.0%
+    clause-depth2      6/6   = 100.0%
+    who-query         12/12  = 100.0%
+    abstain           12/12  = 100.0%
+    OVERALL: 52/78 = 66.7%
+
+  --- DECORRELATED mixed-modality (ventral-hierarchy stand-in) (multi-seed) ---
+    flat              16/16  = 100.0%
+    1-attribute       12/12  = 100.0%
+    2-attribute       10/10  = 100.0%
+    clause-depth1     10/10  = 100.0%
+    clause-depth2      6/6   = 100.0%
+    who-query         12/12  = 100.0%
+    abstain           12/12  = 100.0%
+    OVERALL: 78/78 = 100.0%
+
+  (numpy agent on single-modality V1-grounded + decorrelate = 92.3% constructed parity, #4)
+
+  wrote research/findings/raw/multimodal_grounded.json
+EXIT=0

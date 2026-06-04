@@ -144,15 +144,27 @@ one artifact. Honest: composition+moat validated in spikes (#4 capstone); dialog
 selection Control (spiking-validated separately). Finding `2026-06-04-iv-grounded-multiturn-conversation-demo.md`.
 COMMITTING both remotes.
 
->>> EXACT NEXT CONCRETE ACTION: proceeding in the listed order → **(v) multi-modal grounding**. #4 grounded the
-VISUAL subset (V1 Gabor → visual concepts); abstract words (go/big/function words) have no canonical image. (v) =
-ground the VISUAL concepts via V1 AND the non-visual concepts via the project's word encoder (`vocab_to_drive_pattern`,
-the grounded word-cue level already RESOLVED) in ONE agent, then run the benchmark — does a mixed-modality codebook
-(some codes from V1, some from the word encoder, all decorrelated) still match constructed parity? Cheap-first:
-build the 320-concept external_codes from BOTH sources (visual stimuli for nouns/visualizable, word-encoder for the
-rest), decorrelate, run the unified_agent benchmark. Honest negative if mixed-modality coherence breaks composition.
-HARD RULES: GPU/CuPy for real runs (numpy ok for tiny smokes); honest propagation of EVERY outcome (incl. negative)
-to BOTH remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and
+>>> (v) multi-modal grounding — DONE = decorrelation unifies vision + language. Nouns→real V1 Gabor (visual),
+verbs+adjs→word encoder (`vocab_to_drive_pattern`, abstract), one block-padded codebook. DECORRELATED = full
+benchmark **78/78 = 100% (constructed parity)**; RAW mixed = 66.7% (1-/2-attribute collapse — the word-block
+coherence drowns the resonator; same coherence-blocks-composition mechanism as #4). So the agent is
+modality-agnostic at the concept level: the decorrelating hierarchy maps ANY modality's features to a unified
+low-coherence composition-ready code → the path to grounding the FULL vocabulary (vision for visual concepts,
+language for abstract). Finding `2026-06-04-v-multimodal-grounding-decorrelation-unifies.md`;
+`unified_agent_multimodal_grounded.py`. COMMITTING both remotes.
+
+>>> ENTIRE LISTED ORDER (i–v) COMPLETE. Session arc: cheat-removal #2/#3/#4 ALL RESOLVED; brain-analogue capstone
+(spiking+grounding 100% core); (i) #3 close RESOLVED (12/12 + anti-cheat); (ii) clause-depth2 RESOLVED (benchmark
+195/195=100%, no ceilings); (iii) capacity curve (cost model corrected: retrieval scales free, composition-depth
+doesn't); (iv) grounded multi-turn conversation demo + tests; (v) multi-modal grounding RESOLVED (100% parity).
+>>> EXACT NEXT CONCRETE ACTION (owner-steerable; the listed frontiers are done): strategic directions for the
+top-line conversational goal, all open-ended — (A) production scaling beyond 320 via the sparse-distributed G.20
+multi-bridge (per-bridge ≤320 = full capability, linear cross-bridge); (B) the spiking realization of the dialogue-
+planning layer fully wired into the grounded-spiking agent (the content-selection arc validated it in spikes
+separately); (C) deeper sensory grounding (real images / the project's V1→V2→IT stack vs the ZCA stand-in); (D) a
+new owner-chosen direction. Recommend the owner steer (these are months-scale architecture commitments). HARD
+RULES: GPU/CuPy for real runs (numpy ok for tiny smokes); honest propagation of EVERY outcome (incl. negative) to
+BOTH remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and
 honestly fails without it IS the finding; never end a turn on a future-tense promise.
 
 ## >>> UNIFIED-AGENT BENCHMARK ARC (2026-06-04, earlier — read THIS first) <<<
