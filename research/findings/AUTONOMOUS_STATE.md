@@ -20,11 +20,17 @@ temporal integration + divisive normalization; biology insight banked; did NOT s
 decorrelation linchpin VALIDATED on real captured codes (ZCA cos 0.82→0.00, capability preserved). Owner CHOSE (B)
 one-bridge unification; design committed `docs/plans/2026-06-04-one-bridge-unification-design.md` (b739acb4) +
 presented for approval.
->>> EXACT NEXT: AWAITING OWNER APPROVAL of the B design before implementing (the design-before-implement gate). On
-approval → writing-plans for B step 1 (merge the dt=1.0-compatible parser+composer onto ONE bridge; the dt=0.5+NMDA
-dlPFC is the hard step-3 merge) → subagent-driven TDD implementation. If a watchdog fires with NO approval: do
-doc-sync / low-regret hygiene — do NOT implement B without approval, and do NOT re-run the already-concluded item-2
-investigation (it is done, commit 93963d5d). HARD RULES unchanged.
+>>> EXACT NEXT: B APPROVED by owner + IMPLEMENTING step 1 (subagent-driven; plan
+`docs/plans/2026-06-04-one-bridge-unification-step1-implementation.md`, committed 8549c8c0). Task 1 (the load-bearing
+de-risk) DONE + verified (commit 25bdccd7): per-population `plastic=False` does NOT isolate a fixed population under
+GLOBAL Hebbian (the fixed weight drifted 320->319.897 via the Hebbian decay term) — the FALLBACK works: tag the fixed
+'bind' population with a `plasticity_gate` + `bridge.set_plasticity_gate(name, 0.0)` (zeros cp_plasticity_rate_gain
+over those synapses); NO sim/ edit; 12/12 on-brain tests pass. KEY downstream rule for Tasks 4-5: the
+UnifiedBrainBridge + parameterized CoreSimComposer MUST gate the composer 'bind' population (plasticity_gate=0.0), not
+just plastic=False. CONTINUING Tasks 2-6 (UnifiedBrainBridge skeleton → parameterize BridgeParser → parameterize
+CoreSimComposer WITH the gate → wire both + end-to-end → capability-matrix no-regression gate multi-seed). Each: a
+fresh subagent, controller trust-but-verify the diff. If a watchdog fires: continue the next UNSTARTED task (check
+`git log` for the latest committed Task N). HARD RULES unchanged.
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04) <<<
 
