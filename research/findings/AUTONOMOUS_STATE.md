@@ -153,7 +153,23 @@ low-coherence composition-ready code → the path to grounding the FULL vocabula
 language for abstract). Finding `2026-06-04-v-multimodal-grounding-decorrelation-unifies.md`;
 `unified_agent_multimodal_grounded.py`. COMMITTING both remotes.
 
->>> ENTIRE LISTED ORDER (i–v) COMPLETE. Session arc: cheat-removal #2/#3/#4 ALL RESOLVED; brain-analogue capstone
+>>> NEW DIRECTIVE (owner 2026-06-04): BEFORE scaling, CONSOLIDATE external/bolted-on modules so the sim is clean +
+self-contained, no cheats/shortcuts/bolted-on modules. SUBSTRATE AUDIT DONE
+(`2026-06-04-conversational-pipeline-substrate-audit.md`): the core SimulationBridge has VALIDATED spiking
+realizations of 11/13 conversational capabilities (bind/unbind, KB/Q&A, abstention, negation, learned parser,
+dlPFC content-selection, grounding, generation) — but they live as `_insubstrate_*` probes in `findings/raw/`
+(used only by owner-facing demos), while the UNIFIED agents (`nested_composition_agent`, `spiking_unified_agent`,
+the benchmark + the `unified_agent_*` runners shipped this session) BYPASS them and compute on two BOLTED-ON
+standalone numpy-spiking simulators: `spiking_phasor_fhrr.py` + `resonate_fire_fhrr.py`. The LONE capability with
+NO core-sim realization anywhere = the F=3 two-attribute resonator (only numpy `_resonator3` / the rf abstraction).
+CONSOLIDATION PLAN (4 phases): (1) promote the validated `_insubstrate_*` core-sim primitives from findings/raw
+into a proper tested module; (2) build ONE `CoreSimUnifiedAgent` on the SimulationBridge wiring them (KB + bind/
+unbind + Q&A + abstention + negation + clauses + 1-attr via bridge enumeration); (3) the F=3 resonator —
+bridge-native attempt, honest gap if it doesn't validate; (4) retire/relabel the numpy simulators as reference
+only. Default approach = FAITHFUL (everything bridge-native; honest gaps surfaced), matching the owner's stated
+values. STARTING phase 1.
+
+>>> ENTIRE LISTED FRONTIER ORDER (i–v) COMPLETE (now superseded by the consolidation directive above). Session arc: cheat-removal #2/#3/#4 ALL RESOLVED; brain-analogue capstone
 (spiking+grounding 100% core); (i) #3 close RESOLVED (12/12 + anti-cheat); (ii) clause-depth2 RESOLVED (benchmark
 195/195=100%, no ceilings); (iii) capacity curve (cost model corrected: retrieval scales free, composition-depth
 doesn't); (iv) grounded multi-turn conversation demo + tests; (v) multi-modal grounding RESOLVED (100% parity).
