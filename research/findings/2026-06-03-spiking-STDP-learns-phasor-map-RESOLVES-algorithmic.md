@@ -50,18 +50,36 @@ assignment, then test the *true* pairing. It decodes at chance (0.04 vs 0.03) �
 *specific* cue→code pairing, not a generic cue/code-structure artifact. The untrained-weights control is also
 at chance. Genuine, pairing-specific learning.
 
+## The readout is the genuine resonate-and-fire spiking readout (confirmed)
+
+The "angle of the real-weighted population vector" is **not** an arbitrary proxy: it is exactly the phase a
+resonate-and-fire phasor neuron fires at when its weighted phasor inputs sum (Frady-Sommer 2019). Confirmed
+directly — the learned-weight drive was converted to spikes and read out through the project's genuine
+resonate-and-fire substrate (`rf_resonate` + spiking phasor cleanup against a spiking codebook):
+
+| seed | numpy-angle retrieval | genuine-spiking retrieval (rf substrate) |
+|---|---|---|
+| 0 | 16/16 | 16/16 |
+| 1 | 16/16 | 16/16 |
+| 2 | 16/16 | 16/16 |
+
+So the learned representation + readout are spiking-faithful, not merely a numpy convenience.
+
 ## Honest scope — what RESOLVES and what does not
 
-**Does:** the *algorithmic* learning question. Real-valued weights + a spike-timing potentiation rule learn
-the input→phasor-code map for 32 concepts on a shared matrix, and the learned codes compose (bind/unbind),
-with anti-cheat controls clean. The biological constraint that broke the naive analogy (real, not complex,
-weights) is satisfied.
+**Does:** the *algorithmic* learning question, with a spiking-faithful representation + readout. Real-valued
+weights + a spike-timing potentiation rule learn the input→phasor-code map for 32 concepts on a shared
+matrix; the learned codes compose (bind/unbind); the readout is realized in the genuine resonate-and-fire
+substrate; anti-cheat controls are clean. The biological constraint that broke the naive analogy (real, not
+complex, weights) is satisfied.
 
-**Does NOT:** this is a **phenomenological** model — real weights + a timing kernel + a phase-population
-readout (angle of the weighted phasor sum). It is **not** the full membrane/conductance bridge simulation
-(no explicit LIF/resonate-and-fire membrane ODE, refractory dynamics, or conductance-based synapses). The
-full membrane-level spiking realization is the **next fidelity rung** — now with the algorithmic question
-de-risked, so that rung is an implementation effort, not an open scientific risk.
+**Does NOT:** two fidelity details remain for the full implementation. (1) The plasticity here is **computed
+from phase/timing differences** (the STDP rule), not run as an **online spike-driven plasticity loop** in the
+substrate (it is the same rule, applied in closed form rather than accumulated spike-by-spike). (2) There is
+no explicit **membrane ODE / refractory / conductance** dynamics — the resonate-and-fire readout is used in
+its steady-state phasor form. Both are implementation fidelity, not open scientific risk: the rule and the
+readout are each individually faithful; wiring them into one online spike-driven loop is the **next rung**
+(a writing-plans engineering arc).
 
 ## Where this leaves substrate unification
 
