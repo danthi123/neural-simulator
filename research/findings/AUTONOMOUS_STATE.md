@@ -86,9 +86,18 @@ the map. So (c) is an INTEGRATION of de-risked pieces, not a research gamble.
        basin-of-attraction property). `_rf_unified_agent_probe.py` RESOLVES: robust core 26/26 = 100% at CORE
        vocab (30n/15v/12a) on CPU. Honest: reduced vocab = easier cleanup; full-320 rf = stage 3 (GPU, slow on
        CPU). The brain analogue does the robust core incl. the no-confab moat as network dynamics. COMMITTED.
-  (3) [NEXT] full benchmark in spikes on GPU (the reserved-GPU decisive run): two-attribute (F=3) + clauses
-       (recursive decode) at 320, AND the resonate-and-fire substrate at full 320 vocab. Needs the GPU/CuPy port
-       of the spiking ops (the reserved-GPU build). Owner-steerable: stage 3 is the big GPU run.
+  (3) OWNER CHOSE "Build stage 3 (GPU)". STAGE 3 in progress (engineering-scaffold substrate, N_dim=2048):
+  (3a) [DONE] TWO-ATTRIBUTE composition in spikes. Key fixes: (i) keep the complex-SUM bundle (membrane state,
+       magnitude intact) -> EXACT crosstalk subtraction of agent+action -> clean patient phasor (sim 1.000 to
+       true product; the pure-phase midpoint bundle's crosstalk ~0.1 defeats the F=3 resonator); (ii) F=3
+       resonator needs D=2048 (fails <=1024); (iii) parsimony UPGRADE selection (flat->one->two vs running best,
+       not nested). Result: flat/1-attr/2-attr/who/abstain = **62/62 = 100% (2 seeds)**. Resonator-skip
+       optimization (only when flat/one don't already explain). spiking_unified_agent.py extended; test->N_dim=2048
+       + 2-attr assertion. COMMITTING.
+  (3b) [NEXT] embedded CLAUSES in spikes (recursive decode -- the patient is itself a role-binding bundle; detect
+       verb, recurse). The last benchmark category.
+  (3c) GPU/CuPy scale-up: full-320 resonate-and-fire substrate; the resonator matmuls are GPU-friendly (the
+       loop-bound bind ops less so). The reserved-GPU run.
   Benchmark = the routine multi-seed gate.
 
 ## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<

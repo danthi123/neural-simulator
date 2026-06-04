@@ -7,11 +7,13 @@ from research.runners.spiking_unified_agent import run_core_benchmark, SpikingUn
 
 
 def test_spiking_core_reproduces_benchmark():
-    """flat / one-attribute / who / abstain all perfect in spikes at seed 42 — the spiking analogue of the numpy
-    robust core, including the two-factor (adjective+noun) decode and the no-confabulation moat (abstention)."""
-    res, wrong = run_core_benchmark(n_dim=512, seed=42)
+    """flat / one-attribute / two-attribute / who / abstain all perfect in spikes at seed 42 (N_dim=2048 -- the
+    F=3 two-attribute resonator needs the dimension) — the spiking analogue of the numpy robust core plus
+    two-attribute composition, including the no-confabulation moat (abstention)."""
+    res, wrong = run_core_benchmark(n_dim=2048, seed=42)
     assert res["flat"] == [8, 8], f"flat regressed: {res['flat']}  ({wrong})"
     assert res["1-attribute"] == [6, 6], f"one-attribute regressed: {res['1-attribute']}  ({wrong})"
+    assert res["2-attribute"] == [5, 5], f"two-attribute regressed: {res['2-attribute']}  ({wrong})"
     assert res["who-query"] == [6, 6], f"who regressed: {res['who-query']}  ({wrong})"
     assert res["abstain"] == [6, 6], f"abstain (no-confabulation) regressed: {res['abstain']}  ({wrong})"
 

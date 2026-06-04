@@ -81,6 +81,28 @@ per operation and the TPAM settles recurrently, so this validates the substrate 
 the reduced vocabulary is an EASIER clean-up than 320, so this is a substrate-works validation, not a
 difficulty-matched one. The full-320 resonate-and-fire run is the reserved-GPU build (stage 3).
 
+## Stage 3 (in progress) — two-attribute composition in spikes
+
+Two-attribute patients ("big red ball" = adj1 ⊗ adj2 ⊗ noun) need the F=3 factoring resonator. Two things made
+it work in the spiking agent:
+
+1. **Membrane-state bundle + crosstalk subtraction.** The pure-phase midpoint bundle discards magnitude, and the
+   recovered patient's crosstalk (~0.1 similarity to the true product) defeats the F=3 resonator. Keeping the
+   complex-SUM bundle (the neuron's subthreshold membrane state, magnitude intact) lets the known agent + action
+   role-bindings be subtracted EXACTLY (predictive explaining-away) → the clean patient phasor (similarity
+   **1.000** to the true product). The resonator then factors a clean product. Biologically: the spike reads out
+   the phase, but the magnitude is the subthreshold membrane potential, and explaining-away is predictive coding.
+2. **Dimension + selection.** The F=3 resonator (60 adjectives sharing one codebook) needs **D=2048** (correct at
+   2048, sim 0.97; fails at ≤1024). Model selection is a parsimony *upgrade* (flat → one → two, each only if it
+   beats the running best by a margin), because for a two-attribute patient BOTH flat and one-attribute sit at
+   the noise floor and only two-attribute scores high — a nested "two only if one beats flat" cascade wrongly
+   defaults to flat.
+
+Result (`N_dim=2048`, 2 seeds): flat 16/16, one-attribute 12/12, **two-attribute 10/10**, who 12/12, abstain
+12/12 = **62/62 = 100%**. Two-attribute composition runs in genuine spikes. A speed optimization runs the
+expensive resonator only when neither flat nor one-attribute already explains the patient cleanly. Remaining
+stage 3: embedded clauses (recursive decode), then the full-320 / resonate-and-fire scale-up on GPU.
+
 ## Honest scope + the path to full pure-biology
 
 - **Substrate (stage 2a):** `spiking_phasor_fhrr` is genuine time-stepped spiking, but its bind/unbind are

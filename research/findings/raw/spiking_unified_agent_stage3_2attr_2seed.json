@@ -1,0 +1,65 @@
+{
+  "n_dim": 2048,
+  "seeds": [
+    42,
+    43
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          6,
+          6
+        ],
+        "2-attribute": [
+          5,
+          5
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": []
+    },
+    {
+      "seed": 43,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          6,
+          6
+        ],
+        "2-attribute": [
+          5,
+          5
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": []
+    }
+  ],
+  "overall": [
+    62,
+    62
+  ]
+}
