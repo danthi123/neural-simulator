@@ -193,7 +193,13 @@ class NestedCompositionAgent:
             ac, vconf = self._cleanup(p * np.conj(self.roles["ACTION"]), self.VMAT, self.verbs)
             if vconf >= self.verb_threshold:
                 ag = self._decode_filler(p * np.conj(self.roles["AGENT"]), depth + 1)
-                pt = self._decode_filler(p * np.conj(self.roles["PATIENT"]), depth + 1)
+                # crosstalk-subtract the inner clause's now-known agent+action before decoding its patient,
+                # so the recursion stays clean level-by-level (same predictive-subtraction fix as the top level)
+                p_clean = p
+                if ag in self.noun_cb and ac in self.verb_cb:
+                    p_clean = self._unit(p - self.roles["AGENT"] * self.noun_cb[ag]
+                                         - self.roles["ACTION"] * self.verb_cb[ac])
+                pt = self._decode_filler(p_clean * np.conj(self.roles["PATIENT"]), depth + 1)
                 return f"{ag} {ac} {pt}"
         noun, conf = self._cleanup(p, self.NMAT, self.nouns)  # not a clause -> a terminal filler
         if depth > 0:                                       # inside a clause: flat noun OR one-attribute argument
@@ -216,7 +222,13 @@ class NestedCompositionAgent:
             ag, _ = self._decode_role(b, "AGENT", self.NMAT, self.nouns)
             ac, _ = self._decode_role(b, "ACTION", self.VMAT, self.verbs)
             if ag == agent and ac == action:
-                return self._decode_filler(b * np.conj(self.roles["PATIENT"]))
+                # crosstalk subtraction: remove the KNOWN agent+action role-bindings ("explain them away") so
+                # the patient slot is the clean filler, not filler + crosstalk. This is what lifts complex
+                # composition (two-attribute / clause) from collapse at large vocabularies (the resonator
+                # drowns in the agent+action crosstalk otherwise). Biologically: predictive subtraction.
+                b_clean = (b - self.roles["AGENT"] * self.noun_cb[agent]
+                           - self.roles["ACTION"] * self.verb_cb[action])
+                return self._decode_filler(b_clean * np.conj(self.roles["PATIENT"]))
         return None                                         # abstain
 
     def query_agent(self, action, patient):
