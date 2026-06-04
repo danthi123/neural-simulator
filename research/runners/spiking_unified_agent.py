@@ -257,13 +257,14 @@ class SpikingUnifiedAgent:
         return None
 
 
-def run_core_benchmark(n_dim=512, seed=42, abstain_threshold=0.15):
-    """Run the unified-agent benchmark's robust core (flat / one-attribute / who / abstain) on the spiking agent,
-    using the same frozen test set so the spiking result is comparable to the numpy-algebra result. Flat and
-    one-attribute facts are stored together so the patient decode must auto-detect flat vs attributed."""
+def run_core_benchmark(n_dim=512, seed=42, abstain_threshold=0.15, n_noun=200, n_verb=60, n_adj=60):
+    """Run the unified-agent benchmark on the spiking agent at a chosen VOCABULARY SIZE (n_noun/n_verb/n_adj --
+    default 320 concepts), using the same frozen test set (which uses only the core words) so accuracy at larger
+    vocabularies measures how more distractor concepts stress the clean-up / resonator / decode at fixed
+    dimension -- the capacity curve."""
     from research.runners.unified_agent_benchmark import (
         build_vocab, FACTS_FLAT, FACTS_1ATTR, FACTS_2ATTR, FACTS_CLAUSE, WHO_QUERIES, ABSTAIN_QUERIES)
-    nouns, verbs, adjs = build_vocab()
+    nouns, verbs, adjs = build_vocab(n_noun, n_verb, n_adj)
     agent = SpikingUnifiedAgent(nouns, verbs, adjs, n_dim=n_dim, seed=seed, abstain_threshold=abstain_threshold)
     for ag, ac, pa in FACTS_FLAT + FACTS_1ATTR + FACTS_2ATTR + FACTS_CLAUSE:
         agent.learn(ag, ac, pa)

@@ -113,6 +113,22 @@ the map. So (c) is an INTEGRATION of de-risked pieces, not a research gamble.
       AT FULL 320 VOCAB: fact memory + 1/2-attr composition + embedded clauses + who/what + no-confab moat. The
       remaining rf-320-GPU is a pure speed optimization (capability achieved on CPU). depth-2 clause-in-clause is the
       documented ceiling in both numpy + spiking.
+
+  >>> SCALING COST MODEL MEASURED (owner asked: is the GPU port worthwhile if scaling needs >320?). Finding
+      `2026-06-04-capacity-curve-scaling-cost-model.md`. Cheap-first capacity curve + GPU resonator D-sweep:
+      - Memory/retrieval/who-what/abstention/ONE-attribute/CLAUSE all HOLD at 100% to 4x vocab (1280) at FIXED
+        D=2048 -> scale cheaply on CPU; the only cost is the clean-up python loop (vectorize -> CPU win + GPU).
+      - TWO-attribute (F=3 resonator) is the LONE bottleneck: needs D proportional to M^2 (codebook). 60 adj ->
+        D=2048; 120 adj -> D=8192 (recovers 5/5 on GPU; CPU can't reach D>=8192 -- timeouts). So GPU IS the
+        enabler for two-attribute composition past ~320. (Honest: a mid-measurement "algorithm not GPU" lean from
+        CPU's D=4096 failure was PREMATURE -- the GPU D=8192 test flipped it; measurement earned its keep.)
+      - SCALING ROADMAP: (1) vectorize the clean-up (memory at large vocab, CPU); (2) GPU the resonator
+        (`_resonator3`->CuPy; prototyped `_gpu_resonator_capacity.py`) for two-attribute (near-term enabler);
+        (3) sparse block codes (the resonator's D~M^2 i.e. cost~M^4 ceiling; far scaling, deep-research Track-1).
+      So the GPU port the owner asked about IS worthwhile -- TARGETED at the resonator, not the whole substrate.
+  >>> EXACT NEXT (owner-steerable): per the roadmap -- (1) cleanup vectorization, (2) integrate the GPU resonator
+      into the agent (backend-aware _resonator3), or (3) sparse block codes. OR the cheat-removal backlog. OR
+      wiki-sync/consolidate. Awaiting owner steer on which scaling-roadmap piece (or other direction).
   Benchmark = the routine multi-seed gate.
 
 ## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<

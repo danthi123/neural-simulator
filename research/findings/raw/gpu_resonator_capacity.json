@@ -1,0 +1,22 @@
+{
+  "2048": {
+    "clean_recover": 0,
+    "secs": 13.6
+  },
+  "4096": {
+    "clean_recover": 0,
+    "secs": 11.6
+  },
+  "8192": {
+    "clean_recover": 5,
+    "secs": 11.4
+  },
+  "16384": {
+    "clean_recover": 5,
+    "secs": 19.1
+  },
+  "32768": {
+    "clean_recover": 3,
+    "secs": 36.6
+  }
+}
