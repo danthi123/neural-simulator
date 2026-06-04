@@ -64,13 +64,14 @@ and-fire)->spike(resonant phase)->readout(rf cleanup)->compose(bind/unbind). Fin
 `2026-06-03-membrane-resonate-fire-preserves-phase-RESOLVES-needs-high-Q.md`.
 >>> EXACT NEXT CONCRETE ACTION (autonomous): the substrate-unification science + spiking pipeline are FULLY
 de-risked; remaining option-1 work is PRODUCTION-INTEGRATION ENGINEERING (large) + the documented two-
-attribute resonator cost on grounded codes (the one quality gap, 0.56 vs everything-else-strong). Choose:
-(A) push the two-attribute case (higher D / adjective-codebook decorrelation / more restarts -- bounded
-quality fix on the learned-code agent), (B) begin production-integration (large engineering arc -> a
-writing-plans pass first), (C) scale learned-code agent 40->320, or (D) Direction B thalamocortical. Honest
-reminder: option 1 = spiking-FAITHFUL not "fully biological"; phasor binding is a biologically-grounded
-HYPOTHESIS; never overclaim. Recommend (A) then (C): finish the learned-code conversational quality before
-the big production arc. >>> THIS is the decision the
+attribute resonator cost on grounded codes (the one quality gap, 0.56 vs everything-else-strong). (A) TWO-ATTRIBUTE DONE: lever = D not restarts (measured: restarts 16->48 no change 0.83->0.83; D 2048->4096
+lifts 0.83->0.96 isolated). Gap = dimension/SNR floor (grounded-correlated adj codes too close @2048), closed
+by D at 2x compute; default stays 2048 (common cases strong). (C) SCALE 40->320 = capstone run IN FLIGHT
+(background, learned-code agent at 320 concepts + per-kind breakdown). Remaining big item: (B) production-
+integration (large engineering arc -> writing-plans first) or (D) Direction B thalamocortical -- OWNER-
+STEERABLE. Honest reminder: option 1 = spiking-FAITHFUL not "fully biological"; phasor binding is a
+biologically-grounded HYPOTHESIS; never overclaim. The cheap-first + first-build + quality-characterization
+work is COMPLETE; the next move is the large production arc, for owner steer. >>> THIS is the decision the
 owner may want to steer: whether to migrate the production substrate onto phasor FHRR to gain nesting. NEXT
 candidate (autonomous): grounded-code re-test (does the 320 result hold for sparse-encoded grounded codes,
 not just random phasors?) — cheap-first, decisive, the last capacity-side uncertainty before a migration
