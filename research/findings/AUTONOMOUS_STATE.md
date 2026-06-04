@@ -16,12 +16,14 @@ explicit user stop/pause or a true safety boundary halts work)
   graph CONTENT not fact-count; 4/4 multi-seed 42/43/44) + GENERATION added (`composer.render_fact`/`agent.describe`,
   decoded from spikes, abstains on unknown). 12/12 on-brain tests (+2 new). Commits 8e47eec3, ba0b31e7. The whole
   conversational loop now runs through SimulationBridges, no bolted-on numpy simulator.
-1.5 [IN FLIGHT] de-risk — measured the REAL captured-code correlation: the `denoise64` codes the composer actually
-  uses are cos **~0.80** (mean; max ~0.88), multi-seed — MUCH harder than the cos-0.05 production-SCHEME codes the
-  V=320 capability matrix (rungs 1-3) used. So the "2-attr resolves at 320" result was the EASY end; real captured
-  codes are the hard regime. A synthetic-ρ=0.80 capability matrix (task btavc64rf, D=800 + D=2048) is confirming the
-  PREDICTION that 2-attribute regresses to a boundary under captured correlation (as it did at V=16). Finding
-  `2026-06-04-stage1.5-captured-code-correlation-derisk.md` (drafted, PENDING the ρ=0.80 numbers).
+1.5 [DONE] de-risk — the `denoise64` codes the composer actually uses are cos **~0.80** (multi-seed), far harder
+  than the cos-0.05 production-SCHEME codes the V=320 matrix used. My prediction (2-attr regresses to a FUNDAMENTAL
+  boundary) was FALSIFIED + corrected: at cos-0.80, D=800 degrades EVERYTHING (flat 4/6), but **D=2048 recovers all
+  except clause** (multi-seed 42/43/44: flat/1-attr/2-attr 6/6, neg 12/12, clause 1-2/6), and clause itself climbs
+  with D (4/6 at D=4096). The cost of correlation / depth / vocab is ONE thing: DIMENSIONAL. **DECISION: the grounded
+  agent operates at D=2048** (owner asked "why bother with D=800" — right: D=800 was the inherited default +
+  measurement baseline, NOT an operating point; high D is more capable AND more biological, ~16K neurons trivial on
+  GPU). Finding `2026-06-04-stage1.5-captured-code-correlation-derisk.md`. Committed both remotes.
 2 [NEXT] migrate the load-bearing numpy off the composer: CLEANUP (numpy argmax → spiking attractor cleanup;
   precedents = rf ResonateFireTPAM at full 320 [now numpy-ref] + the validated spiking pattern-completion; MUST work
   at cos 0.80) then the linear BUNDLING + ON/OFF opponency. Each matrix-gated; a capacity regression IS the
@@ -31,10 +33,15 @@ explicit user stop/pause or a true safety boundary halts work)
   A decorrelating step (ZCA, the visual-grounding fix) is the option if 2-attr-at-0.80 must be recovered.
 B [AFTER] collapse the 3 functional bridges (parser 126n + composer 6400n + dlPFC 2-region) into ONE multi-region
   bridge; turn the Python hand-offs into synaptic RegionPathways. Then nested-sentence parsing (a new capability).
->>> EXACT NEXT CONCRETE ACTION: read task btavc64rf (ρ=0.80 matrix); fill + commit the 1.5 finding; then BEGIN item 2
-(spiking cleanup, cheap-first small→320, matrix-gated). HARD RULES: GPU for real runs (numpy only tiny smoke); honest
-propagation to BOTH remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a
-shortcut and honestly fails without it IS the finding; never end a turn on a future-tense promise.
+>>> EXACT NEXT CONCRETE ACTION: BEGIN item 2 — a spiking attractor cleanup ON the core SimulationBridge (Hopfield-
+style: store the concept codes as fixed-point attractors via recurrent outer-product weights; drive with the unbind's
+decoded `est`; settle to the nearest concept in-network). This removes BOTH numpy steps at once (the `argmax` AND the
+dot-product matching), unlike a shallow spiking-argmax-over-numpy-scores. Algorithmic template = rf ResonateFireTPAM
+(held 320 attractors, numpy reference in resonate_fire_fhrr.py) + research/runners/_spiking_pattern_completion_probe.py
+(numpy phasor cleanup). Cheap-first 32→320 attractors; target regime cos-0.80 D=2048; matrix-gated; a capacity
+regression IS the deliverable. HARD RULES: GPU for real runs (numpy only tiny smoke); honest propagation to BOTH
+remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and honestly
+fails without it IS the finding; never end a turn on a future-tense promise.
 
 >>> (A) IN PROGRESS — grounded 320-concept brain agent, rungs 1-3 (all committed both remotes, multi-seed unless noted):
 - rung 1 [DONE] composer at V=320 on the REAL production codes (G.20 sparse-distributed generate_sparse_patterns):
