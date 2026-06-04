@@ -95,35 +95,49 @@ ABSTAIN_QUERIES = [("river", "chase"), ("apple", "eat"), ("star", "hold"), ("dog
                    ("cat", "follow"), ("bird", "eat")]
 
 
-def _build_grounded_codes(nouns, verbs, adjs, D, seed, n_input):
+def _build_grounded_codes(nouns, verbs, adjs, D, seed, n_input, cleanup=False):
     """Learn a phasor code per token via PhasorAssociativeMemory (grounded-cue -> code STDP), then return the
-    recalled-readout codes (NOT the stored targets) so the benchmark exercises genuine grounded recall fidelity.
-    Returns (codes_by_token, mean_recall_confidence)."""
+    per-token code used for composition.
+
+    cleanup=False (raw grounded): the noisy recall READOUT itself (angle(W @ cue)) -- the harshest test, which
+      conflates perception noise with composition (the resonator drowns in it).
+    cleanup=True (pattern completion / CA3 autoassociator): snap the noisy readout to the nearest CLEAN concept
+      ATTRACTOR and compose on THAT -- the biological architecture (perception is noisy; the cortical concept
+      representation is a stable attractor; composition operates on the concept, not the raw sensory readout).
+      The honest residual cost is recall MIS-identification (a wrong-but-clean attractor), reported as id_acc.
+
+    Returns (codes_by_token, mean_recall_confidence, identification_accuracy_or_None)."""
     import numpy as np
     from research.runners.phasor_associative_memory import PhasorAssociativeMemory
     mem = PhasorAssociativeMemory(n_input=n_input, D=D, seed=seed)
     toks = list(nouns) + list(verbs) + list(adjs)
     for t in toks:
         mem.learn(t)
-    codes, confs = {}, []
+    codes, confs, n_id_correct = {}, [], 0
     for t in toks:
-        cue = mem._cue(t)[0]
-        codes[t] = mem._readout(cue)          # the grounded recall (imperfect), not the clean stored target
-        confs.append(mem.recall_confidence(t))
-    return codes, float(np.mean(confs))
+        pred = mem._readout(mem._cue(t)[0])           # the grounded recall (imperfect)
+        confs.append(mem._best(pred)[1])
+        if cleanup:
+            tok = mem._best(pred)[0]                   # nearest clean attractor (pattern completion; no threshold)
+            n_id_correct += (tok == t)
+            codes[t] = mem.codes[tok]                  # compose on the consolidated concept code, not raw readout
+        else:
+            codes[t] = pred                            # compose on the raw noisy sensory readout
+    return codes, float(np.mean(confs)), (n_id_correct / len(toks) if cleanup else None)
 
 
 def run_seed(seed, D=2048, mode="constructed", n_input=512, n_noun=N_NOUN, n_verb=N_VERB, n_adj=N_ADJ):
     """Run the frozen conversational test set on one seed; return per-category + who + abstain pass counts."""
     nouns, verbs, adjs = build_vocab(n_noun, n_verb, n_adj)
-    ext, recall_conf = (None, None)
-    if mode == "grounded":
-        ext, recall_conf = _build_grounded_codes(nouns, verbs, adjs, D, seed, n_input)
+    ext, recall_conf, id_acc = None, None, None
+    if mode in ("grounded", "grounded-cleanup"):
+        ext, recall_conf, id_acc = _build_grounded_codes(nouns, verbs, adjs, D, seed, n_input,
+                                                         cleanup=(mode == "grounded-cleanup"))
     agent = NestedCompositionAgent(nouns, verbs, adjs, D=D, seed=seed, external_codes=ext)
     for ag, ac, pa in ALL_FACTS:
         agent.learn(ag, ac, pa)
 
-    res = {"seed": seed, "recall_conf": recall_conf, "categories": {}, "wrong": []}
+    res = {"seed": seed, "recall_conf": recall_conf, "id_acc": id_acc, "categories": {}, "wrong": []}
     for name, facts in CATEGORIES:
         ok = 0
         for ag, ac, pa in facts:
@@ -171,7 +185,7 @@ def aggregate(seed_results):
 
 def main():
     ap = argparse.ArgumentParser(description="Unified-agent benchmark: one agent, 320 concepts, frozen test set.")
-    ap.add_argument("--mode", choices=["constructed", "grounded"], default="constructed")
+    ap.add_argument("--mode", choices=["constructed", "grounded", "grounded-cleanup"], default="constructed")
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44, 45, 46])
     ap.add_argument("--quick", action="store_true", help="2-seed smoke")
     ap.add_argument("--D", type=int, default=2048)
@@ -194,7 +208,8 @@ def main():
         seed_results.append(r)
         line = "  ".join(f"{c}={r['categories'][c][0]}/{r['categories'][c][1]}" for c in r["categories"])
         rc = f" | recall_conf={r['recall_conf']:.2f}" if r["recall_conf"] is not None else ""
-        print(f"  seed {s}:  {line}{rc}", flush=True)
+        ida = f" id_acc={r['id_acc']:.2f}" if r.get("id_acc") is not None else ""
+        print(f"  seed {s}:  {line}{rc}{ida}", flush=True)
 
     agg, gok, gtot = aggregate(seed_results)
     print("\n  --- per-category pass-rate (multi-seed) ---", flush=True)

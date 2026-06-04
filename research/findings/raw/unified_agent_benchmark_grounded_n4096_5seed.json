@@ -1,0 +1,625 @@
+{
+  "mode": "grounded",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "D": 2048,
+  "n_concepts": 320,
+  "aggregate": {
+    "flat": [
+      40,
+      40,
+      1.0
+    ],
+    "1-attribute": [
+      0,
+      30,
+      0.0
+    ],
+    "2-attribute": [
+      0,
+      25,
+      0.0
+    ],
+    "clause-depth1": [
+      15,
+      25,
+      0.6
+    ],
+    "clause-depth2": [
+      15,
+      15,
+      1.0
+    ],
+    "who-query": [
+      30,
+      30,
+      1.0
+    ],
+    "abstain": [
+      30,
+      30,
+      1.0
+    ]
+  },
+  "overall": [
+    130,
+    195
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "recall_conf": 0.17437357020802918,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          0,
+          6
+        ],
+        "2-attribute": [
+          0,
+          5
+        ],
+        "clause-depth1": [
+          3,
+          5
+        ],
+        "clause-depth2": [
+          3,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": [
+        {
+          "q": "what does cat want?",
+          "got": "adj_45 noun_104",
+          "want": "red ball",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does dog carry?",
+          "got": "adj_38 noun_112",
+          "want": "big stone",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does child throw?",
+          "got": "noun_78",
+          "want": "small leaf",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does man give?",
+          "got": "bread",
+          "want": "cold bread",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does horse pull?",
+          "got": "car",
+          "want": "old car",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does frog see?",
+          "got": "noun_0",
+          "want": "green snake",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does woman hold?",
+          "got": "big noun_104",
+          "want": "big red ball",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does lion chase?",
+          "got": "adj_38 noun_104",
+          "want": "small fast rabbit",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does man find?",
+          "got": "adj_0 noun_27",
+          "want": "old soft book",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does child want?",
+          "got": "adj_14 noun_104",
+          "want": "big blue star",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does bear push?",
+          "got": "adj_32 noun_0",
+          "want": "cold hard stone",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does woman watch?",
+          "got": "dog eat adj_45 noun_104",
+          "want": "dog eat red apple",
+          "cat": "clause-depth1"
+        },
+        {
+          "q": "what does snake follow?",
+          "got": "cat chase adj_38 noun_104",
+          "want": "cat chase cold river",
+          "cat": "clause-depth1"
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "recall_conf": 0.1758804145871165,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          0,
+          6
+        ],
+        "2-attribute": [
+          0,
+          5
+        ],
+        "clause-depth1": [
+          3,
+          5
+        ],
+        "clause-depth2": [
+          3,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": [
+        {
+          "q": "what does cat want?",
+          "got": "adj_18 noun_94",
+          "want": "red ball",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does dog carry?",
+          "got": "stone",
+          "want": "big stone",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does child throw?",
+          "got": "adj_30 noun_39",
+          "want": "small leaf",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does man give?",
+          "got": "adj_10 noun_120",
+          "want": "cold bread",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does horse pull?",
+          "got": "car",
+          "want": "old car",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does frog see?",
+          "got": "noun_121",
+          "want": "green snake",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does woman hold?",
+          "got": "adj_18 fish",
+          "want": "big red ball",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does lion chase?",
+          "got": "adj_30 noun_14",
+          "want": "small fast rabbit",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does man find?",
+          "got": "adj_10 noun_91",
+          "want": "old soft book",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does child want?",
+          "got": "adj_18 noun_13",
+          "want": "big blue star",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does bear push?",
+          "got": "adj_39 noun_40",
+          "want": "cold hard stone",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does woman watch?",
+          "got": "dog eat adj_10 noun_74",
+          "want": "dog eat red apple",
+          "cat": "clause-depth1"
+        },
+        {
+          "q": "what does snake follow?",
+          "got": "cat chase adj_10 noun_74",
+          "want": "cat chase cold river",
+          "cat": "clause-depth1"
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "recall_conf": 0.17479238426194693,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          0,
+          6
+        ],
+        "2-attribute": [
+          0,
+          5
+        ],
+        "clause-depth1": [
+          3,
+          5
+        ],
+        "clause-depth2": [
+          3,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": [
+        {
+          "q": "what does cat want?",
+          "got": "hard noun_77",
+          "want": "red ball",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does dog carry?",
+          "got": "hard house",
+          "want": "big stone",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does child throw?",
+          "got": "leaf",
+          "want": "small leaf",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does man give?",
+          "got": "bread",
+          "want": "cold bread",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does horse pull?",
+          "got": "car",
+          "want": "old car",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does frog see?",
+          "got": "noun_43",
+          "want": "green snake",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does woman hold?",
+          "got": "green noun_4",
+          "want": "big red ball",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does lion chase?",
+          "got": "adj_16 mouse",
+          "want": "small fast rabbit",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does man find?",
+          "got": "book",
+          "want": "old soft book",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does child want?",
+          "got": "adj_27 noun_144",
+          "want": "big blue star",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does bear push?",
+          "got": "adj_27 noun_144",
+          "want": "cold hard stone",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does woman watch?",
+          "got": "dog eat adj_16 mouse",
+          "want": "dog eat red apple",
+          "cat": "clause-depth1"
+        },
+        {
+          "q": "what does snake follow?",
+          "got": "cat chase river",
+          "want": "cat chase cold river",
+          "cat": "clause-depth1"
+        }
+      ]
+    },
+    {
+      "seed": 45,
+      "recall_conf": 0.17753222779637476,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          0,
+          6
+        ],
+        "2-attribute": [
+          0,
+          5
+        ],
+        "clause-depth1": [
+          3,
+          5
+        ],
+        "clause-depth2": [
+          3,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": [
+        {
+          "q": "what does cat want?",
+          "got": "wolf",
+          "want": "red ball",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does dog carry?",
+          "got": "adj_3 noun_39",
+          "want": "big stone",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does child throw?",
+          "got": "leaf",
+          "want": "small leaf",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does man give?",
+          "got": "bread",
+          "want": "cold bread",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does horse pull?",
+          "got": "noun_74",
+          "want": "old car",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does frog see?",
+          "got": "adj_16 apple",
+          "want": "green snake",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does woman hold?",
+          "got": "adj_16 noun_39",
+          "want": "big red ball",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does lion chase?",
+          "got": "adj_16 mouse",
+          "want": "small fast rabbit",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does man find?",
+          "got": "adj_16 noun_39",
+          "want": "old soft book",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does child want?",
+          "got": "adj_16 apple",
+          "want": "big blue star",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does bear push?",
+          "got": "adj_16 mouse",
+          "want": "cold hard stone",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does woman watch?",
+          "got": "dog eat adj_10 apple",
+          "want": "dog eat red apple",
+          "cat": "clause-depth1"
+        },
+        {
+          "q": "what does snake follow?",
+          "got": "cat chase adj_16 apple",
+          "want": "cat chase cold river",
+          "cat": "clause-depth1"
+        }
+      ]
+    },
+    {
+      "seed": 46,
+      "recall_conf": 0.17610307885616533,
+      "categories": {
+        "flat": [
+          8,
+          8
+        ],
+        "1-attribute": [
+          0,
+          6
+        ],
+        "2-attribute": [
+          0,
+          5
+        ],
+        "clause-depth1": [
+          3,
+          5
+        ],
+        "clause-depth2": [
+          3,
+          3
+        ],
+        "who-query": [
+          6,
+          6
+        ],
+        "abstain": [
+          6,
+          6
+        ]
+      },
+      "wrong": [
+        {
+          "q": "what does cat want?",
+          "got": "adj_21 noun_92",
+          "want": "red ball",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does dog carry?",
+          "got": "noun_94",
+          "want": "big stone",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does child throw?",
+          "got": "adj_21 noun_92",
+          "want": "small leaf",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does man give?",
+          "got": "cold noun_92",
+          "want": "cold bread",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does horse pull?",
+          "got": "adj_17 noun_138",
+          "want": "old car",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does frog see?",
+          "got": "cold noun_92",
+          "want": "green snake",
+          "cat": "1-attribute"
+        },
+        {
+          "q": "what does woman hold?",
+          "got": "adj_3 noun_92",
+          "want": "big red ball",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does lion chase?",
+          "got": "old noun_98",
+          "want": "small fast rabbit",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does man find?",
+          "got": "adj_34 noun_138",
+          "want": "old soft book",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does child want?",
+          "got": "adj_17 noun_31",
+          "want": "big blue star",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does bear push?",
+          "got": "adj_17 noun_138",
+          "want": "cold hard stone",
+          "cat": "2-attribute"
+        },
+        {
+          "q": "what does woman watch?",
+          "got": "dog eat adj_45 noun_87",
+          "want": "dog eat red apple",
+          "cat": "clause-depth1"
+        },
+        {
+          "q": "what does snake follow?",
+          "got": "cat chase adj_3 noun_138",
+          "want": "cat chase cold river",
+          "cat": "clause-depth1"
+        }
+      ]
+    }
+  ]
+}

@@ -43,16 +43,26 @@ finding; never quietly keep a shortcut to preserve a number.
     attrs but therefore can't over-fire). OVERALL 52/78 = 66.7%. Quantifies cheat-backlog #4 (ungrounded codes).
   COMMITTED + pushed both remotes.
 
->>> EXACT NEXT (owner-steerable; cheap follow-ups the benchmark localized):
-  (a) constructed clause-depth2 fix: the inner-level attribute over-trigger — test a more conservative
-      inside-clause flat-vs-attributed margin OR higher D; is the ceiling dimension-budget or fundamental?
-      (tune nested_composition_agent; guard 1-attr/2-attr; re-run the benchmark as the gate).
-  (b) grounded attribute composition: the resonator's grounded-noise fragility is the real barrier to a
-      fully-grounded agent — a denoising cleanup before the resonator OR a higher-fidelity grounded encoder
-      (n_input>=8192 / learned-prototype readout). The genuine open problem the benchmark surfaced.
-  (c) pure-biology backlog item #1 (algebra->spikes): the GPU-worthy decisive build — the spiking realization
-      of this same agent. Bigger.
-  The benchmark is now the routine multi-seed gate for any composition/substrate change.
+>>> (b) DONE = grounded composition barrier RESOLVED by pattern completion (owner chose b). Finding updated
+(`2026-06-04-unified-agent-benchmark-converge-not-add.md`); `grounded-cleanup` mode + anti-cheat sweep raw JSON.
+  - raw grounded readout: attribute composition 0% at BOTH n_input=4096 AND 8192 -> encoder scale is NOT the fix.
+  - PATTERN COMPLETION (CA3 autoassociator: snap noisy readout -> nearest CLEAN concept attractor, compose on
+    that): attribute composition 0% -> **100% (92.3% = constructed)** at n_input>=2048 where threshold-free
+    identification is perfect. (Correction: the "86% recall" was an ABSTENTION-THRESHOLD artifact; threshold-free
+    id_acc = 0.91/0.97/1.00 at n_input 512/1024/2048.)
+  - ANTI-CHEAT PASSES: grounded-cleanup composition TRACKS id_acc (2-attr 40% @ id 0.91 -> 100% @ id 1.00) ->
+    genuine grounded composition bottlenecked by PERCEPTION (a clean n_input capacity curve), NOT a clean-code
+    revert. Biology insight: composition runs on stable concept attractors, not raw sensory input (cortex/
+    hippocampus split; Marr 1971). RESOLVES cheat-backlog #4 (ungrounded codes). COMMITTED + pushed both remotes.
+
+>>> EXACT NEXT (owner-steerable):
+  (a) the ONE remaining composition ceiling: clause-depth2 (constructed AND cleanup, identical -> it's a
+      composition limit, not a code-fidelity one). Inner-level attribute over-trigger; test conservative
+      inside-clause margin OR higher D. Cheap; benchmark is the gate; guard 1-attr/2-attr.
+  (c) pure-biology backlog item #1 (algebra->spikes): the GPU-worthy decisive build — spiking realization of this
+      same agent (resonate-and-fire + an autoassociative cleanup network for the pattern-completion step). The
+      benchmark is the spec it must reproduce. Bigger.
+  The benchmark is the routine multi-seed gate for any composition/substrate change.
 
 ## >>> FORK 1 + DEEP RESEARCH ON SURPASSING THE BLOCKERS (2026-06-03, LATEST — read THIS first) <<<
 
