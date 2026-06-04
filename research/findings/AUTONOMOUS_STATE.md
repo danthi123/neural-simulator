@@ -37,8 +37,9 @@ that scale not rotate) learns the input->phasor-code map at N=32 (retrieval 1.00
 compose (bind/unbind 0.95), BOTH anti-cheat controls at chance (untrained 0.03, SHUFFLED-PAIRING 0.04 vs
 chance 0.03 — the decisive control: train on permuted pairs -> true pairing decodes at chance -> pairing-
 specific learning, not artifact). D lever measured (raw-compose 0.65@256->0.95@512->1.00@1024). Readout CONFIRMED
-in the GENUINE rf spiking substrate (16/16 x3). Finding
-`2026-06-03-spiking-STDP-learns-phasor-map-RESOLVES-algorithmic.md`. SO EVERY cheap-first SCIENTIFIC axis of
+in the GENUINE rf spiking substrate (16/16 x3). ONLINE WEIGHT-BOUNDED STDP also RESOLVES (interleaved +
+incremental + hard saturation clip = realistic constraint; N=32 retrieval 1.00) -> closed-form result is NOT
+an unbounded-weight artifact. Finding `2026-06-03-spiking-STDP-learns-phasor-map-RESOLVES-algorithmic.md`. SO EVERY cheap-first SCIENTIFIC axis of
 substrate unification is now DE-RISKED (capacity, correlation, scale, linear-learning, AND real-weight spiking
 STDP learning+composition). The remaining work is purely the FULL IMPLEMENTATION: an online spike-driven STDP
 loop + membrane ODE wired across the production path = a writing-plans ENGINEERING arc, science de-risked.
