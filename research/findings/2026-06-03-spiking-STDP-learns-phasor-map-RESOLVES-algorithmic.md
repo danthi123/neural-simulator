@@ -92,6 +92,23 @@ confirmed in the genuine `rf_*` substrate above). And the learning here is **sup
 target code phases); an unsupervised/self-organized variant is a separate extension. Neither is an open
 scientific blocker for the supervised associative map; both are implementation/extension work.
 
+## Grounded word codes also RESOLVE (the last scientific soft spot)
+
+The probes above used random-phasor cues. The production system uses **grounded** word codes — sparse,
+rate-coded (which input neurons are active), via `sim.text_embeddings.vocab_to_drive_pattern`. These are a
+*different code family* (rate vs phase), so the faithful bridge is: each input neuron has a fixed preferred
+phase, a word's cue is the population vector of its active neurons' phases, and plasticity is on co-active
+synapses only. Tested with the **actual** word encoder and its **real** overlap
+(`research/findings/raw/_grounded_code_phasor_learn_probe.py`):
+
+| N | retrieval | learned bind/unbind | real grounded cue overlap (mean / max) |
+|---|---|---|---|
+| 8 | 1.00 | 1.00 | 0.09 / 0.23 |
+| 32 | 1.00 | 0.90 | 0.10 / 0.31 |
+
+**RESOLVES** — the project's real grounded word codes (the rate→phase bridge a migration must do) learn and
+compose at N=32, with the genuine ~10% word-code overlap. The random-phasor results transfer to real codes.
+
 ## Where this leaves substrate unification
 
 Every cheap-first-testable axis is now de-risked (all committed 2026-06-03):
@@ -104,6 +121,8 @@ Every cheap-first-testable axis is now de-risked (all committed 2026-06-03):
 | Agent at production-diversity scale (120 concepts) | ~96% |
 | Linear-Hebbian learning analog | 1.00 |
 | **Real-weight spike-timing learning + composition (algorithmic)** | **RESOLVES (this finding)** |
+| Online weight-bounded (realistic) plasticity | RESOLVES |
+| **Grounded word codes (real `vocab_to_drive_pattern`, real overlap)** | **RESOLVES** |
 
 The remaining step is the **full membrane-level spiking implementation** of the learned binding + cleanup
 across the production path — a writing-plans engineering arc, with the science de-risked. Whether to invest

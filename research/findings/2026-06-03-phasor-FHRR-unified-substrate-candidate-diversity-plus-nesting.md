@@ -138,9 +138,10 @@ answered: there is no capacity wall at 320.
   full **spiking-STDP** realization is still a real engineering step, not free. This finding de-risks the
   *capacity* question and the *linear-learning* analog; the spiking-STDP implementation remains open.
 - The codes here are random phasors. The correlation sweeps (common-mode + clustered, above) cover the
-  main ways production **grounded** codes (from sparse sensory encoding) depart from orthogonality, and
-  both hold at 1.00 — but a re-test with the actual grounded encoder is still the cleanest confirmation
-  before committing.
+  main ways production **grounded** codes depart from orthogonality, and both hold at 1.00. **Update
+  (resolved):** a re-test with the *actual* grounded encoder (`vocab_to_drive_pattern`, real ~10% overlap)
+  now also RESOLVES — see `2026-06-03-spiking-STDP-learns-phasor-map-RESOLVES-algorithmic.md` §"Grounded
+  word codes". The grounded-code question is no longer open.
 - The diversity test stores each fact as its own bundle (as the agent does). It is not a claim about
   superposing hundreds of facts in one vector (that bends at K≈48, as shown).
 
