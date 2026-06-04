@@ -58,6 +58,38 @@ and what, and abstains on the unknown — all at 320-word production vocabulary,
 parser's position→role comprehension is confirmed **vocabulary-agnostic at production scale**.
 (`research/findings/raw/_brain_agent_grounded320_s{42,43,44}.json`.)
 
+## Rung 3: the full capability matrix at V=320 (production codes)
+
+Rungs 1–2 covered flat fact memory. Rung 3 checks every composer capability at 320 on production codes (seed 42,
+6 trials/category; `_core_composer_capability_matrix_320_probe.py`):
+
+| category | V=320, D=800 | note |
+|---|---|---|
+| flat | 6/6 | |
+| one-attribute | 6/6 | resolves |
+| two-attribute | 6/6 | **resolves at 320** — see below |
+| negation / yes-no | 12/12 | |
+| embedded clause | 1/6 | **honest boundary** — see below |
+
+**Two-attribute resolves at 320 — refining the V=16 boundary.** The consolidation flagged two-attribute as a
+K=5-load boundary *at V=16* (on the `denoise64` codes, between-cos ~0.70). At V=320 on the production codes
+(between-cos ~0.05) it is 6/6. So that boundary was **code-correlation-driven, not vocabulary-driven**: the
+decorrelated production code scheme sidesteps it even at 20× the vocabulary. (The attribute role-tags' cleanups
+confuse under high code *correlation*, not under high *count*.)
+
+**Embedded clause is an honest boundary at D=800 — that more dimensions lift.** A clause patient decodes by
+recursive unbind + cleanup; at 320 distractors the nested decode's crosstalk compounds across the three inner slots
+and recall collapses to 1/6 at D=800 (vs perfect at V=16). _Capacity diagnostic:_ at **D=2048** the clause
+**RESOLVES 6/6** (and every other category stays 6/6 — `_core_composer_matrix320_D2048_s42.json`). So clause-at-320
+is a **capacity boundary, not an architectural one**: the composition-*depth* axis the cost model flagged needs D to
+grow with vocabulary (flat / attribute / negation hold at D=800; the recursive clause needs D≈2048 at 320 words).
+The fix is dimensional.
+
+**Net:** the composer's entire capability matrix — flat, one-attribute, two-attribute, negation/yes-no, embedded
+clause — **resolves at V=320 on production codes once D=2048** (D=800 carries everything except the recursive
+clause). The only cost of 320-word vocabulary is more dimensions for the deepest (recursive) composition, exactly
+as the capacity model predicts.
+
 ## Honest scope (what this is and isn't)
 
 - **Is:** the brain composer (spiking bind/unbind + cleanup + no-confab moat) operating at 320-word production vocab
@@ -76,6 +108,8 @@ parser's position→role comprehension is confirmed **vocabulary-agnostic at pro
 
 - `research/findings/raw/_core_composer_grounded320_probe.py` (composer, rung 1)
 - `research/findings/raw/_brain_agent_grounded320_probe.py` (full agent, rung 2)
+- `research/findings/raw/_core_composer_capability_matrix_320_probe.py` (capability matrix, rung 3)
 - `research/findings/raw/_core_composer_grounded320_s{42,43,44}.json` +
-  `_brain_agent_grounded320_s{42,43,44}.json`
+  `_brain_agent_grounded320_s{42,43,44}.json` + `_core_composer_matrix320_s42.json` +
+  `_core_composer_matrix320_D2048_s42.json`
 - agent constructor gained a `concepts=` passthrough (`research/runners/brain_conversational_agent.py`)

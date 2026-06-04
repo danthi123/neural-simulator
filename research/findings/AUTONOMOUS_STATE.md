@@ -11,6 +11,24 @@ explicit user stop/pause or a true safety boundary halts work)
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04, NEWEST — read THIS first) <<<
 
+>>> (A) IN PROGRESS — grounded 320-concept brain agent, rungs 1-3 (all committed both remotes, multi-seed unless noted):
+- rung 1 [DONE] composer at V=320 on the REAL production codes (G.20 sparse-distributed generate_sparse_patterns):
+  20-fact relational KB what/who/abstain 20/20 EVERY seed (42/43/44). Findings
+  `2026-06-04-core-composer-V320-vocab-robustness-confirmed.md` + `2026-06-04-grounded-320-brain-composer-first-increment.md`.
+- rung 2 [DONE] the FULL BrainConversationalAgent at V=320 (added a `concepts=` passthrough; parser is
+  vocab-agnostic so one trained parser serves any vocab): hear->comprehend->store->query = what/who/abstain 12/12
+  EVERY seed (42/43/44); 5/5 brain-agent tests still pass.
+- rung 3 [seed 42; multi-seed + diagnostic PENDING] composer CAPABILITY MATRIX at V=320 on production codes:
+  flat 6/6, one-attr 6/6, TWO-attr 6/6 (!! resolves at 320 — the V=16 2-attr boundary was CODE-CORRELATION-driven,
+  NOT vocab; production codes cos 0.05 vs denoise64 0.70), negation/yes-no 12/12 — all RESOLVE; CLAUSE 1/6 = HONEST
+  BOUNDARY (recursive nested-decode crosstalk at 320 distractors, D=800). A D=2048 clause diagnostic is IN FLIGHT
+  (task b9c64o9sq) to test whether clause is a CAPACITY boundary (raise D, per the cost model) vs fundamental.
+>>> EXACT NEXT CONCRETE ACTION: read the D=2048 clause diagnostic (task b9c64o9sq); write the rung-3 finding
+(honest: flat/1-attr/2-attr/negation RESOLVE at 320, clause a D-capacity boundary if D=2048 lifts it, else a deeper
+limit); commit both remotes; then multi-seed the matrix (43/44); then the remaining (A) rungs — dialogue-planning
+(`elaborate`) at 320, and the truly-grounded CAPTURED codes (capture 320 concept-pool activities so codes are the
+substrate's OWN, vs generated+projected). (B) one-bridge-all-regions queued right after (A). HARD RULES unchanged.
+
 >>> OWNER STEER (this turn): owner SURFACED the completion + chose **(A) grounded 320-concept brain agent** as the
 active scaling direction, and confirmed **(B) one-bridge-all-regions** as a follow-on (asked the bridge count). FACTS
 for B: the conversational brain = **3 SimulationBridges** — parser (126n, Hebbian ensembles), composer (6400n,
