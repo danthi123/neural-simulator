@@ -1,0 +1,26 @@
+[
+  {
+    "seed": 42,
+    "memory_recall_320": 0.0,
+    "facts_correct": "27/60",
+    "accuracy": 0.45,
+    "by_kind": {
+      "2-attr": "0/16",
+      "clause": "0/17",
+      "1-attr": "15/15",
+      "flat": "12/12"
+    }
+  },
+  {
+    "seed": 43,
+    "memory_recall_320": 0.0,
+    "facts_correct": "31/60",
+    "accuracy": 0.517,
+    "by_kind": {
+      "1-attr": "14/14",
+      "2-attr": "0/18",
+      "flat": "17/17",
+      "clause": "0/11"
+    }
+  }
+]
