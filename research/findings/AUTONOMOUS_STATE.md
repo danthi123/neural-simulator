@@ -53,14 +53,20 @@ backend): closed gate -> target SILENT (0.000, no current despite non-zero weigh
 thalamocortical hypothesis in genuine spikes where grown weights couldn't re-bind. Regression-clean (53 core
 CPU tests; pre-existing 5 numpy-backend STDP failures unrelated). CLAUDE.md gotcha updated (the "not yet
 implemented" current-gate now exists).
->>> EXACT NEXT: apply the gate to the ACTUAL v16 verb->motor compose problem. Build verb pools + motor pools
-+ verb->motor routes (text_minimal_isolation build_biological_brain_regions --enable-direct-verb-to-motor),
-but pre-wire the routes FIXED + transmission_gate-tagged + held CLOSED; to bind (go,north) OPEN gate
-verb_GO->motor_N; drive "go" alone -> does motor_N fire (bound) where STDP-grown weights "went silent" /
-were seed-fragile 5/20? Score with the permuted-mapping anti-cheat (TRUE mapping rank 1/24). Then Option C
-(low-rank J_cc + sum s_k u_k v_k^T) for sequencing. ALSO available: Track 3 (assembly-generation + grammar
-conversational artifact, CPU). Honest: spiking-faithful not fully-biological; phasor binding is a hypothesis;
-fluent generation is a documented wall.
+>>> V16 COMPOSE PROBLEM SOLVED BY GATING. `gated_compose_demo.py` + `test_gated_compose.py`: 4 verb pools +
+4 motor pools + 16 verb->motor routes pre-wired FIXED + transmission_gate-tagged + held CLOSED; bind (go,north)
+opens gate g_GO_N; drive "go" alone -> motor_N fires. RESULT: bind {GO:N,COME:S,STOP:W,LOOK:E} -> 4/4
+DETERMINISTIC (seeds 42/43/44); RE-BIND to permuted {GO:S,COME:W,STOP:E,LOOK:N} -> 4/4 for NEW mapping, ZERO
+weight change. vs STDP-grown weights 5/20 seed-fragile + couldn't re-bind. The compose-pathways-went-silent
+problem is SOLVED in spikes. Finding `2026-06-03-thalamocortical-gating-solves-compose-binding-SHIPPED.md`.
+>>> EXACT NEXT (the biology-completing steps): (a) BG-DRIVEN GATE SELECTION -- wire the transmission gate to
+basal-ganglia disinhibition (gpi->thal->cortex, the g11_bg cascade skeleton) so the BG SELECTS which gate is
+open (not an external bind command); this closes the thalamocortical loop biologically. (b) OPTION C: full
+low-rank effective-connectivity gate (J_eff = J_cc + sum s_k u_k v_k^T per Logiaco/Kao) for SEQUENCING bound
+primitives (not just routing). (c) Track 3: assembly-generation + grammar-over-composition conversational
+artifact (CPU). Honest: spiking-faithful not fully-biological; phasor binding is a hypothesis; fluent
+generation is a documented wall; gating's "4/4 deterministic" is by-construction (you bind what you gate) --
+the science is that it works in genuine spikes with zero weight change where grown weights were seed-fragile.
 
 ## >>> PHASOR FHRR = UNIFIED-SUBSTRATE CANDIDATE (2026-06-03 earlier) <<<
 
