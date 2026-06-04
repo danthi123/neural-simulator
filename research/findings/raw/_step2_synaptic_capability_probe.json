@@ -1,0 +1,194 @@
+{
+  "42": {
+    "synaptic": {
+      "what": [
+        4,
+        6
+      ],
+      "who": [
+        5,
+        6
+      ]
+    },
+    "python": {
+      "what": [
+        6,
+        6
+      ],
+      "who": [
+        6,
+        6
+      ]
+    },
+    "abstention": true,
+    "parser": {
+      "active": {
+        "agent": "dog",
+        "action": "go",
+        "patient": "north"
+      },
+      "passive_agent": "dog"
+    },
+    "facts": [
+      [
+        "east",
+        "look",
+        "go"
+      ],
+      [
+        "apple",
+        "south",
+        "come"
+      ],
+      [
+        "cold",
+        "south",
+        "west"
+      ],
+      [
+        "east",
+        "cold",
+        "come"
+      ],
+      [
+        "stop",
+        "cat",
+        "east"
+      ],
+      [
+        "river",
+        "cold",
+        "come"
+      ]
+    ],
+    "elapsed_s": 187.3
+  },
+  "43": {
+    "synaptic": {
+      "what": [
+        6,
+        6
+      ],
+      "who": [
+        6,
+        6
+      ]
+    },
+    "python": {
+      "what": [
+        6,
+        6
+      ],
+      "who": [
+        6,
+        6
+      ]
+    },
+    "abstention": true,
+    "parser": {
+      "active": {
+        "agent": "dog",
+        "action": "go",
+        "patient": "north"
+      },
+      "passive_agent": "dog"
+    },
+    "facts": [
+      [
+        "south",
+        "big",
+        "look"
+      ],
+      [
+        "west",
+        "dog",
+        "big"
+      ],
+      [
+        "small",
+        "apple",
+        "south"
+      ],
+      [
+        "come",
+        "east",
+        "north"
+      ],
+      [
+        "dog",
+        "east",
+        "stop"
+      ],
+      [
+        "south",
+        "west",
+        "stop"
+      ]
+    ],
+    "elapsed_s": 183.4
+  },
+  "44": {
+    "synaptic": {
+      "what": [
+        6,
+        6
+      ],
+      "who": [
+        6,
+        6
+      ]
+    },
+    "python": {
+      "what": [
+        6,
+        6
+      ],
+      "who": [
+        6,
+        6
+      ]
+    },
+    "abstention": true,
+    "parser": {
+      "active": {
+        "agent": "dog",
+        "action": "go",
+        "patient": "north"
+      },
+      "passive_agent": "dog"
+    },
+    "facts": [
+      [
+        "small",
+        "river",
+        "hot"
+      ],
+      [
+        "north",
+        "small",
+        "stop"
+      ],
+      [
+        "dog",
+        "river",
+        "look"
+      ],
+      [
+        "hot",
+        "east",
+        "come"
+      ],
+      [
+        "look",
+        "go",
+        "south"
+      ],
+      [
+        "north",
+        "hot",
+        "stop"
+      ]
+    ],
+    "elapsed_s": 171.5
+  }
+}

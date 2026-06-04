@@ -577,3 +577,81 @@ def test_hear_synaptic_stores_fact_via_gated_route():
         "the synaptic route must reproduce the Python hand-off path's patient recall (no regression).")
     assert u_ref.query_agent("go", "north") == u.query_agent("go", "north") == "dog", (
         "the synaptic route must reproduce the Python hand-off path's agent recall (no regression).")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Step 2 — Task 3: the SYNAPTIC-ROUTE no-regression gate — does `hear_synaptic` (comprehension routing
+# composition IN SPIKES through transmission gates) reproduce the Python parse+store hand-off path at
+# PRODUCTION scale, multi-seed?
+#
+# The synaptic route only affects FLAT subject-verb-object (SVO) comprehension (the parser→composer hand-off).
+# Attribute / clause / negation facts are stored structurally via `composer.store` and are UNCHANGED by this
+# route, so the gate is the FLAT SVO category: per random 3-word fact, store via `u.hear_synaptic("a ac p")`
+# and check `query_patient(a, ac) == p` (the "what") AND `query_agent(ac, p) == a` (the "who"). The ORACLE is
+# the Python hand-off (`u.parse` → `u.store`) on the SAME bridge, over the SAME facts. The PASS bar: the
+# SYNAPTIC who/what recall is within ±1 trial of the Python path on EVERY seed (the synaptic route is not
+# weaker). A genuine drop beyond ±1 in any metric/seed is a REGRESSION — the test must NOT be weakened to pass;
+# the regression is recorded honestly (e.g. gate-EMA warm-up costing rate at scale, or the larger composer
+# shifting the parser firing-rate→gate coupling) for the controller to decide on a mitigation.
+#
+# RUNTIME: this is a heavy SPIKING run on the production (CuPy/GPU) backend — each seed builds ONE ~16.5K-neuron
+# unified bridge (parser 126 + composer 8*2048 + the 3*2048 role-src route pools) and trains the parser, then
+# runs BOTH paths over N flat facts; tens of minutes per seed. Skipped by default (like step 1's heavy gate) so
+# the suite stays fast; the load-bearing claim (the synaptic route reproduces the Python store→recall) is already
+# gated by `test_hear_synaptic_stores_fact_via_gated_route` at D=64. Run on demand:
+#     SIM_RUN_HEAVY_CAPABILITY=1 pytest tests/test_unified_brain_bridge.py::test_step2_synaptic_no_regression -v
+# It runs on the auto-selected backend (CuPy when present) and SKIPS gracefully if a seed's denoise64 cache is
+# absent (it must not silently pass on NumPy with no GPU, where the substrate's validated behavior diverges).
+# ─────────────────────────────────────────────────────────────────────────────
+def test_step2_synaptic_no_regression():
+    """Multi-seed (42/43/44) at production proj_dim=2048 with the REAL denoise64 codes: for the FLAT SVO
+    category, the SYNAPTIC route's (`hear_synaptic`) who AND what recall must each be within ±1 trial of the
+    Python hand-off path's recall on EVERY seed. A genuine drop beyond ±1 in any metric/seed is a REGRESSION
+    (do not weaken — record it). Also confirms the parser parses voice-invariantly on the merged production
+    bridge with the route wired ('dog go north' active == 'north go dog' passive) and abstention is preserved.
+
+    HEAVY + on-demand: builds one production (~16.5K-neuron) unified bridge per seed and trains the parser —
+    tens of minutes on the GPU. Skipped by default so the suite stays fast; the load-bearing claim (the
+    synaptic route reproduces the Python store→recall) is already gated by
+    `test_hear_synaptic_stores_fact_via_gated_route` at D=64. The full multi-seed result lives in
+    `research/findings/2026-06-04-one-bridge-unification-step2-DONE.md`. Run on demand:
+        SIM_RUN_HEAVY_CAPABILITY=1 pytest tests/test_unified_brain_bridge.py::test_step2_synaptic_no_regression -v
+    """
+    import os
+    if not os.environ.get("SIM_RUN_HEAVY_CAPABILITY"):
+        pytest.skip("heavy multi-seed production synaptic-route no-regression gate (run with "
+                    "SIM_RUN_HEAVY_CAPABILITY=1); result is in 2026-06-04-one-bridge-unification-step2-DONE.md")
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("the synaptic-route gate is a SPIKING run; run on the validated CuPy/GPU backend (the "
+                    "parser's Hebbian convergence + gate operating point are GPU-validated, not NumPy).")
+    from research.findings.raw._step2_synaptic_capability_probe import run_synaptic_comparison, find_regressions
+
+    seeds = (42, 43, 44)
+    # Gate at the PRODUCTION dimension D=2048 (the stage-1.5 decision; step 1 verified D=2048 is the
+    # capability-equivalent operating point). The synaptic route only changes the FLAT SVO hand-off.
+    try:
+        results = run_synaptic_comparison(seeds=seeds, proj_dim=2048, n=6)
+    except FileNotFoundError:
+        pytest.skip("denoise64 concept-code cache not present for one of seeds 42/43/44")
+
+    # Parser-on-merged-bridge confirmation (every seed): correct active parse + voice-invariant agent.
+    for seed in seeds:
+        p = results[seed]["parser"]
+        assert p["active"] == {"agent": "dog", "action": "go", "patient": "north"}, (
+            f"seed {seed}: parser active parse wrong on the merged production bridge with the route wired: "
+            f"{p['active']}")
+        assert p["passive_agent"] == "dog", (
+            f"seed {seed}: parser passive frame did not assign the same agent on the merged bridge "
+            f"(voice-invariance broken): passive_agent={p['passive_agent']!r}")
+        # Abstention (the no-confab moat) must survive the synaptic route on every seed.
+        assert results[seed]["abstention"], (
+            f"seed {seed}: an unstored cue did NOT abstain through the synaptic route (no-confab moat broke).")
+
+    # No-regression assertion: every metric (who/what), every seed, synaptic within ±1 trial of python.
+    regressions = find_regressions(results)
+    assert not regressions, (
+        "SYNAPTIC route FLAT recall REGRESSED vs the Python hand-off path (drop > 1 trial in some metric/seed) "
+        "— this is the measured cost of routing composition through transmission gates at scale; record it, do "
+        "NOT weaken the test. Drops: "
+        + "; ".join(f"seed {s} {m}: python {po} -> synaptic {so}" for s, m, po, so in regressions))
