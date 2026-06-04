@@ -212,6 +212,14 @@ class RegionPathway:
     plastic: bool = True
     neuromodulator_gates: List[str] = field(default_factory=list)
     plasticity_gate: str = None
+    # transmission_gate (2026-06-03): optional name for a runtime-controllable MULTIPLICATIVE
+    # TRANSMISSION gate. Unlike plasticity_gate (which freezes weight UPDATES only, leaving synaptic
+    # CURRENT flowing), this scales the pathway's effective synaptic CURRENT in [0,1] via
+    # bridge.set_transmission_gate(name, value). Use it to pre-wire a route with a fixed weight, hold it
+    # normally CLOSED (gate=0, no current, no STDP cold-start), and OPEN it on command -- thalamocortical
+    # dynamical gating: binding = which gate is open, not which weight grew (Logiaco-Abbott-Escola 2021).
+    # None = always-on transmission (current behavior, not added to any transmission gate).
+    transmission_gate: str = None
 
     # Cluster E v1 (2026-04-29): distance-dependent connection probability.
     # When set AND both source and target regions have coordinate_dim > 0,
@@ -594,6 +602,8 @@ class RegionManager:
             "neuromodulator_gates": list(pw.neuromodulator_gates),
             # Per-pathway plasticity gate name (runtime-controllable). None = always-on.
             "plasticity_gate": pw.plasticity_gate,
+            # Per-pathway transmission gate name (runtime-controllable; scales synaptic CURRENT). None = always-on.
+            "transmission_gate": pw.transmission_gate,
         }
 
     def _has_coords(self, region_name: str) -> bool:

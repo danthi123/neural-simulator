@@ -305,6 +305,16 @@ class SimulationBridge:
         self._plasticity_gate_indices_gpu = {}
         self._plasticity_gate_values = {}
 
+        # Per-pathway TRANSMISSION gating (2026-06-03; thalamocortical dynamical gating).
+        # cp_transmission_gain: per-synapse float multiplier (1.0=full current, 0.0=closed).
+        #   Scales effective synaptic CURRENT (complement of cp_plasticity_rate_gain, which gates only
+        #   weight updates). Default None when no pathway uses transmission_gate.
+        # set via set_transmission_gate(name, value). See RegionPathway.transmission_gate.
+        self.cp_transmission_gain = None
+        self._transmission_gate_to_synapses = {}
+        self._transmission_gate_indices_gpu = {}
+        self._transmission_gate_values = {}
+
         # Cluster B.1 (2026-04-28): D1/D2 plasticity asymmetry.
         # Per-synapse sign multiplier on the reward-modulated weight update.
         # +1 for D1-targeting (and everything else), -1 for D2-targeting.
@@ -1874,23 +1884,29 @@ class SimulationBridge:
         all_w = []
         all_plastic = []
         all_gates = []  # gate_name string per synapse, or "" for ungated
+        all_trans_gates = []  # transmission gate_name per synapse, or "" (scales CURRENT)
         any_fixed = False
         any_gated = False
+        any_trans_gated = False
         for name, group in wiring_plan.items():
             if not isinstance(group, dict) or "pre_indices" not in group:
                 continue
             plastic_flag = bool(group.get("plastic", True))
             gate_name = group.get("plasticity_gate", None) or ""
+            trans_gate_name = group.get("transmission_gate", None) or ""
             if not plastic_flag:
                 any_fixed = True
             if gate_name:
                 any_gated = True
+            if trans_gate_name:
+                any_trans_gated = True
             n_syn = len(group["pre_indices"])
             all_pre.extend(group["pre_indices"])
             all_post.extend(group["post_indices"])
             all_w.extend([float(x) for x in group["initial_weights"]])
             all_plastic.extend([plastic_flag] * n_syn)
             all_gates.extend([gate_name] * n_syn)
+            all_trans_gates.extend([trans_gate_name] * n_syn)
 
         if len(all_pre) == 0:
             self._log_console("inject_explicit_wiring: no synapses in plan.", "warning")
@@ -1920,16 +1936,16 @@ class SimulationBridge:
         # internal order (row-major by pre then post), so we re-sort the
         # original tuples by the same key to match. Sort once over
         # (pre, post, plastic, gate) tuples since they're row-aligned.
-        if any_fixed or any_gated:
+        if any_fixed or any_gated or any_trans_gated:
             keyed = sorted(
-                zip(all_pre, all_post, all_plastic, all_gates),
+                zip(all_pre, all_post, all_plastic, all_gates, all_trans_gates),
                 key=lambda t: (t[0], t[1]),
             )
         else:
             keyed = None
 
         if any_fixed:
-            sorted_plastic = np.asarray([p for _, _, p, _ in keyed], dtype=np.bool_)
+            sorted_plastic = np.asarray([p for _, _, p, _, _ in keyed], dtype=np.bool_)
             self.cp_synapse_plastic_mask = cp.asarray(sorted_plastic)
         else:
             self.cp_synapse_plastic_mask = None
@@ -1938,7 +1954,7 @@ class SimulationBridge:
         # Allocate cp_plasticity_rate_gain only if any synapse is gated; otherwise
         # leave None and the plasticity update paths skip gain multiplication.
         if any_gated:
-            sorted_gates = [g for _, _, _, g in keyed]
+            sorted_gates = [g for _, _, _, g, _ in keyed]
             gate_to_indices: Dict[str, List[int]] = {}
             for syn_idx, gname in enumerate(sorted_gates):
                 if gname:
@@ -1957,6 +1973,29 @@ class SimulationBridge:
             self._plasticity_gate_indices_gpu = {}
             self._plasticity_gate_values = {}
             self.cp_plasticity_rate_gain = None
+
+        # Per-pathway TRANSMISSION gates (mirror of plasticity gates, but scales synaptic CURRENT, not
+        # weight updates). gate_name → synapse-indices; cp_transmission_gain is the per-synapse multiplier
+        # applied to effective_synaptic_strength in the step. Default 1.0 (open); runners call
+        # set_transmission_gate(name, value) to open/close at runtime.
+        if any_trans_gated:
+            sorted_trans = [tg for _, _, _, _, tg in keyed]
+            tgate_to_indices: Dict[str, List[int]] = {}
+            for syn_idx, tgname in enumerate(sorted_trans):
+                if tgname:
+                    tgate_to_indices.setdefault(tgname, []).append(syn_idx)
+            self._transmission_gate_to_synapses = tgate_to_indices
+            self._transmission_gate_indices_gpu = {
+                name: cp.asarray(np.asarray(indices, dtype=np.int32))
+                for name, indices in tgate_to_indices.items()
+            }
+            self._transmission_gate_values = {n: 1.0 for n in tgate_to_indices}
+            self.cp_transmission_gain = cp.ones(nnz, dtype=cp.float32)
+        else:
+            self._transmission_gate_to_synapses = {}
+            self._transmission_gate_indices_gpu = {}
+            self._transmission_gate_values = {}
+            self.cp_transmission_gain = None
 
         # Cluster B.1 (2026-04-28): tag D2-targeting synapses with sign=-1.
         # D1-targeting + everything else stays at +1 (default). The reward-
@@ -2448,6 +2487,32 @@ class SimulationBridge:
         nnz = self.cp_plasticity_rate_gain.shape[0]
         if indices.size > 0 and int(indices.max()) < nnz:
             self.cp_plasticity_rate_gain[indices] = cp.float32(value)
+
+    def set_transmission_gate(self, name: str, value: float) -> None:
+        """Set the runtime synaptic-CURRENT gain for all synapses in pathways tagged with
+        `transmission_gate=name`.
+
+        Default gain on inject is 1.0 (full transmission). Set to 0.0 to CLOSE the route (no synaptic
+        current flows through it, even though its weight is non-zero), or any value in between. This is the
+        complement of set_plasticity_gate: that one freezes weight UPDATES but leaves current flowing; this
+        one gates the CURRENT itself. Used for thalamocortical dynamical gating -- pre-wire a route with a
+        fixed weight, hold it closed, and open it on command so binding = which gate is open.
+
+        Raises KeyError if `name` was not declared as a transmission_gate on any pathway.
+        """
+        name = self._canonicalize_gate_name(name)
+        if name not in self._transmission_gate_to_synapses:
+            raise KeyError(
+                f"No transmission gate named '{name}'. "
+                f"Known gates: {list(self._transmission_gate_to_synapses.keys())}"
+            )
+        self._transmission_gate_values[name] = float(value)
+        if self.cp_transmission_gain is None:
+            return
+        indices = self._transmission_gate_indices_gpu[name]
+        nnz = self.cp_transmission_gain.shape[0]
+        if indices.size > 0 and int(indices.max()) < nnz:
+            self.cp_transmission_gain[indices] = cp.float32(value)
 
     # ──────────────────────────────────────────────────────────────────
     # Engram-tagging API (P2 / roadmap T1.C / catalog D.14)
@@ -4899,6 +4964,18 @@ class SimulationBridge:
                         effective_connections_matrix = self.cp_connections
                 else:
                     effective_connections_matrix = self.cp_connections
+
+            # Per-pathway TRANSMISSION gate (thalamocortical dynamical gating, 2026-06-03): scale the
+            # effective synaptic CURRENT by the per-synapse gain (closed gate=0.0 -> no current flows, even
+            # though the weight is non-zero). Build a fresh matrix so cp_connections is never mutated; data
+            # is row-aligned with cp_connections.data, so cp_transmission_gain (same order) multiplies directly.
+            if self.cp_transmission_gain is not None and self.cp_connections.nnz > 0:
+                _tg_nnz = self.cp_connections.nnz
+                _gated_data = effective_connections_matrix.data * self.cp_transmission_gain[:_tg_nnz]
+                effective_connections_matrix = csp.csr_matrix(
+                    (_gated_data, self.cp_connections.indices, self.cp_connections.indptr),
+                    shape=self.cp_connections.shape,
+                )
 
             if _profiling: _backend_synchronize(); _prof['t_stp'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 2. Synaptic Conductance Update & Current Calculation ---
