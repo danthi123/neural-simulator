@@ -67,18 +67,33 @@ codes). Two reusable bug findings shipped: (a) conductance-based inhibition need
 explodes g_i, breaks Izhikevich into rebound → looks excitatory); (b) `_run_one_simulation_step()` doesn't advance
 `current_time_ms` → direct-call STDP is a silent no-op.
 
->>> EXACT NEXT CONCRETE ACTION (owner-steerable): the three requested cheats are all moved forward. Remaining
-removable work, pick one: (A) CLOSE #3 end-to-end — scale the learned-selection presynaptic pools to the validated
-Tier-1 recipe (500-1000 neurons + motor FS) so the learned cue fires the high-rheobase MSN-D1 synaptically, then
-run the multi-seed + permuted-teacher anti-cheat already coded in `gated_compose_bg_learned_demo._eval`; (B) #4
-AGENT INTEGRATION — feed the visual-grounded V1 codes into the unified composition agent as `external_codes` and
-re-run the frozen benchmark (the grounded-cleanup mode already showed learned grounded codes compose); (C)
-consolidate/wiki-sync this large cheat-removal session; (D) return to the converge-not-add composition agent
-(the top-line conversational goal — cheat-removal was the "no higher-priority work remains" backlog). Recommend
-(B) then (D): (B) finishes #4 end-to-end cheaply and (D) is the top-line goal. HARD RULES: GPU/CuPy for real runs
-(numpy ok for tiny smokes); honest propagation of EVERY outcome (incl. negative) to BOTH remotes; never weaken
-frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and honestly fails without it IS
-the finding; never end a turn on a future-tense promise (next-action tool call same turn).
+>>> (B) #4 AGENT INTEGRATION DONE = RESOLVED at constructed parity. `unified_agent_visual_grounded.py`: the FULL
+unified-agent benchmark (320 concepts, frozen test set) on concept codes from the REAL V1 Gabor bank
+(`sim/visual_cortex.py`) + a ventral-hierarchy decorrelation step (ZCA = efficient coding) **= 92.3% overall,
+6-category core (flat/1-attr/2-attr/clause-d1/who/abstain) 100%, IDENTICAL to the constructed baseline** (clause-d2
+the documented ceiling in both). The blocker was single-V1-layer INTER-CODE COHERENCE (max cosine 0.96 from
+visual similarity); decorrelation (orthonormal, max ~0) restored attribute composition 0%→100% (hypothesis
+confirmed: per-code phases were already uniform; only inter-code correlation differed). SMELL-TEST CATCH: a
+complex-vs-phase format bug (the agent's `external_codes` contract is real phase ANGLES, `exp(1j*ext)`; I passed
+complex phasors) silently mangled codes — passed retrieval, broke composition — corrected before concluding.
+Finding `2026-06-04-cheat4-visual-grounding-agent-integration.md`. COMMITTING + pushing both remotes.
+
+>>> ARC SUMMARY (owner's "2 and 3 then 4" + "continue as planned"): #2 RESOLVED (genuine BG disinhibition opens the
+gate, 11/12); #3 PARTIAL (cortico-striatal STDP genuinely LEARNS selection; end-to-end pending MSN synaptic-drive
+scale-up); #4 RESOLVED for the visual subset (V1 grounding + decorrelation = constructed parity 92.3%) + word-cue
+level (earlier). Reusable findings: inhibition needs physiological weight scale; `_run_one_simulation_step()`
+doesn't advance the clock; `external_codes` are phase-angles not phasors; composition needs decorrelated (IT-level)
+codes, retrieval rides on early sensory features.
+
+>>> EXACT NEXT CONCRETE ACTION (owner-steerable): (A) CLOSE #3 end-to-end — scale the learned-selection
+presynaptic pools to the validated Tier-1 recipe (500-1000 neurons + motor FS) so the learned cue fires the
+high-rheobase MSN-D1 synaptically, then run the multi-seed + permuted-teacher anti-cheat already coded in
+`gated_compose_bg_learned_demo._eval`; OR (D) return to the converge-not-add composition agent (the top-line
+conversational goal — cheat-removal was the "no higher-priority work remains" backlog). Recommend (D): the
+cheat-removal backlog's active-composition items are now all resolved or scoped, so the top-line goal is the
+highest value. HARD RULES: GPU/CuPy for real runs (numpy ok for tiny smokes); honest propagation of EVERY outcome
+(incl. negative) to BOTH remotes; never weaken frozen bars or the no-confab moat; a capability that only survives
+WITH a shortcut and honestly fails without it IS the finding; never end a turn on a future-tense promise.
 
 ## >>> UNIFIED-AGENT BENCHMARK ARC (2026-06-04, earlier — read THIS first) <<<
 
