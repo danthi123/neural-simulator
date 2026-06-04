@@ -420,3 +420,86 @@ def test_unified_capability_no_regression():
         "UNIFIED bridge capability REGRESSED vs the SEPARATE baseline (drop > 1 trial in some category/seed) — "
         "this is the measured cost of the shared step loop; record it, do NOT weaken the test. Drops: "
         + "; ".join(f"seed {s} {c}: separate {so} -> unified {uo}" for s, c, so, uo in regressions))
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Step 2 — Task 1 (the load-bearing DE-RISK): parser-role-gated synaptic routing.
+#
+# The one falsifiable question: on the unified bridge (parser at offset 0, composer at offset 126 on ONE
+# SimulationBridge), can the PARSER's role-ensemble FIRING — when the parser assigns a word to a role —
+# OPEN a transmission gate that routes a drive SELECTIVELY to that role's target and NOT the others?
+#
+# Mechanism under test (all SHIPPED + VALIDATED primitives, no sim/ edit):
+#   * `transmission_gate` on a pathway scales that route's effective synaptic CURRENT in [0,1] at runtime.
+#   * the gate is OPENED by a control pool's firing (EMA-smoothed) inside `_run_one_simulation_step`
+#     (the shipped `_apply_gate_couplings` hook; here the control pool is the parser's role ensemble).
+#
+# The probe (`research/findings/raw/_step2_gated_route_probe.py`) adds, on the SAME bridge that holds the
+# trained parser: one MARKER input pool and three TARGET pools (agent/action/patient), with strong
+# excitatory routes marker→target gated `route_<role>`, each gate coupled to the parser's role ensemble.
+# Driving the parser conjunction for (position 0, active) fires the AGENT ensemble → opens `route_agent`
+# only → the marker reaches agent_target, not action/patient. Driving (position 2, active) fires the
+# PATIENT ensemble → the SAME marker reaches patient_target instead — a re-bind with ZERO weight change.
+# A control: with NO parser drive (no ensemble firing) the marker reaches NO target (all gates closed).
+#
+# This is a SPIKING test on the validated production (CuPy/GPU) backend, NOT NumPy (the parser's Hebbian
+# convergence + the gating operating point are GPU-validated). It SKIPS gracefully if no GPU backend.
+# ─────────────────────────────────────────────────────────────────────────────
+def test_step2_parser_role_gated_route_is_selective():
+    """De-risk PASS criteria, all three conditions on ONE unified bridge with ZERO weight change between them:
+
+      1. parser conjunction (pos 0, active) → AGENT ensemble fires → marker routes to agent_target ONLY
+         (agent_target rate >> 0; action_target, patient_target ~silent).
+      2. parser conjunction (pos 2, active) → PATIENT ensemble fires → SAME marker routes to patient_target
+         ONLY (patient_target rate >> 0; agent_target, action_target ~silent).
+      3. NO parser drive → NO ensemble fires → marker reaches NO target (all three ~silent).
+
+    Also confirms (non-vacuity, per the task's explicit requirement) that the driven parser ENSEMBLE itself
+    actually fired in conditions 1 and 2 — a gate result is only trustworthy if the control pool fired.
+    """
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("Step 2 gated-route de-risk is a SPIKING test; run on the validated CuPy/GPU backend "
+                    "(the parser's Hebbian convergence + gate operating point are GPU-validated, not NumPy).")
+
+    from research.findings.raw._step2_gated_route_probe import run_gated_route_probe
+
+    res = run_gated_route_probe(seed=42, proj_dim=64)
+
+    # The parser ensembles must actually have fired when their conjunction was driven (else any gate result
+    # is meaningless — the control pool never activated). The probe reports the driven-ensemble firing rate.
+    assert res["agent_drive"]["ensemble_rate"] > 0.05, (
+        "AGENT ensemble did not fire when its conjunction was driven — gate result untrustworthy. "
+        f"ensemble_rate={res['agent_drive']['ensemble_rate']:.4f}")
+    assert res["patient_drive"]["ensemble_rate"] > 0.05, (
+        "PATIENT ensemble did not fire when its conjunction was driven — gate result untrustworthy. "
+        f"ensemble_rate={res['patient_drive']['ensemble_rate']:.4f}")
+
+    # Condition 1: agent-drive → marker routes to agent_target ONLY.
+    ad = res["agent_drive"]
+    assert ad["agent_target"] > 0.05, f"agent-drive: agent_target should fire, got {ad['agent_target']:.4f}"
+    assert ad["action_target"] < 0.01, f"agent-drive: action_target should stay closed, got {ad['action_target']:.4f}"
+    assert ad["patient_target"] < 0.01, f"agent-drive: patient_target should stay closed, got {ad['patient_target']:.4f}"
+    assert ad["agent_target"] > 5 * max(ad["action_target"], ad["patient_target"], 1e-6), (
+        "agent-drive: agent_target must DECISIVELY dominate the other targets (selective routing). "
+        f"agent={ad['agent_target']:.4f} action={ad['action_target']:.4f} patient={ad['patient_target']:.4f}")
+
+    # Condition 2: patient-drive → the SAME marker routes to patient_target ONLY (re-bind, zero weight change).
+    pd = res["patient_drive"]
+    assert pd["patient_target"] > 0.05, f"patient-drive: patient_target should fire, got {pd['patient_target']:.4f}"
+    assert pd["agent_target"] < 0.01, f"patient-drive: agent_target should stay closed, got {pd['agent_target']:.4f}"
+    assert pd["action_target"] < 0.01, f"patient-drive: action_target should stay closed, got {pd['action_target']:.4f}"
+    assert pd["patient_target"] > 5 * max(pd["agent_target"], pd["action_target"], 1e-6), (
+        "patient-drive: patient_target must DECISIVELY dominate (re-routed selectively). "
+        f"agent={pd['agent_target']:.4f} action={pd['action_target']:.4f} patient={pd['patient_target']:.4f}")
+
+    # Condition 3 (control): no parser drive → no gate opens → marker reaches no target.
+    nd = res["no_drive"]
+    assert nd["agent_target"] < 0.01 and nd["action_target"] < 0.01 and nd["patient_target"] < 0.01, (
+        "no-drive control: with NO parser firing, the marker must reach NO target (all gates closed). "
+        f"agent={nd['agent_target']:.4f} action={nd['action_target']:.4f} patient={nd['patient_target']:.4f}")
+
+    # Zero weight change across all three conditions — binding is which gate is open, not which weight grew.
+    assert res["weight_delta"] < 1e-3, (
+        f"synaptic weights changed across the routing conditions ({res['weight_delta']:.6f}) — the route must "
+        "re-bind purely via the gates, with no weight change (thalamocortical gating hypothesis).")
