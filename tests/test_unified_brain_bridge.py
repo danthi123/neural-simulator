@@ -175,3 +175,169 @@ def test_unified_skeleton_sizes_and_disjoint_slices():
     composer_set = set(range(u.composer_offset, expected_total))
     assert parser_set.isdisjoint(composer_set), "parser and composer slices overlap"
     assert len(parser_set) + len(composer_set) == expected_total, "slices leave a gap or overlap"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Task 3: BridgeParser parameterized to wire into a shared bridge at an index offset.
+#
+# When given a `shared_bridge`, the parser must NOT build its own bridge — it uses the provided one,
+# offsets every conjunction/role index by `index_offset` (in the "parse" wiring plan AND the drive/readout
+# index arrays), injects its population onto the shared bridge, and trains through the offset. The result
+# must be capability-equivalent to a standalone parser: voice-invariant role assignment (the active<->passive
+# 1st<->3rd flip). The default (no `shared_bridge`) path must stay byte-identical to before.
+# ─────────────────────────────────────────────────────────────────────────────
+def test_bridgeparser_on_shared_bridge_parses_voice_invariantly():
+    """A BridgeParser wired onto a freshly-built merged bridge at offset 0 assigns the SAME agent in the
+    active frame ('dog go north') and the passive frame ('north go dog') — voice-invariant, just like the
+    standalone parser. It uses the provided bridge (does not allocate its own)."""
+    from research.runners.brain_conversational_agent import BridgeParser
+    from research.runners.unified_brain_bridge import build_unified_bridge
+
+    shared = build_unified_bridge(seed=42, proj_dim=64)
+    parser = BridgeParser(seed=42, shared_bridge=shared, index_offset=0)
+
+    # The parser used the shared bridge, not a private one.
+    assert parser.bridge is shared, "shared-bridge parser must NOT build its own bridge"
+
+    # Voice-invariant comprehension (the core parser capability): agent is 'dog' in both frames.
+    active = parser.parse(["dog", "go", "north"], "active")
+    passive = parser.parse(["north", "go", "dog"], "passive")
+    assert active["agent"] == "dog", f"active agent wrong: {active}"
+    assert passive["agent"] == "dog", f"passive agent wrong: {passive}"
+    # full active role assignment is correct
+    assert active == {"agent": "dog", "action": "go", "patient": "north"}, active
+
+
+def test_bridgeparser_default_path_unchanged():
+    """The no-arg (standalone) BridgeParser path is unchanged: it builds its OWN bridge of 6 + 3*40 neurons
+    and parses voice-invariantly. (Regression guard — the merge must not perturb the default behavior.)"""
+    from research.runners.brain_conversational_agent import BridgeParser
+
+    parser = BridgeParser(seed=42)
+    assert parser.bridge.core_config.num_neurons == 6 + 3 * 40
+    assert parser.parse(["dog", "go", "north"], "active")["agent"] == "dog"
+    assert parser.parse(["north", "go", "dog"], "passive")["agent"] == "dog"
+
+
+# A tiny synthetic concept codebook so the shared-bridge composer tests do not depend on the `denoise64`
+# concept-code cache: 8 ORTHONORMAL vectors of dimension `proj_dim` (rows of a QR factorization of a random
+# Gaussian). Orthogonal codes have near-zero pairwise cosine, so the spiking unbind→cleanup margin is wide
+# and unambiguous — random Gaussian codes at D=64 leave a razor-thin margin that the bridge's OU noise can
+# flip (more so on the shared bridge, whose 638-neuron heterogeneity/OU stream shifts the composer's operating
+# point vs the standalone 512-neuron bridge). The production `denoise64` codes are likewise decorrelated, so
+# orthogonal synthetic codes are the faithful well-conditioned analogue, not a weakening of the test. NOTE:
+# these are SPIKING tests — they run on the validated production (CuPy/GPU) backend, NOT NumPy (on NumPy the
+# composer's low-D cleanup and the parser's Hebbian convergence both diverge from the validated behavior).
+def _synthetic_concepts(proj_dim=64, seed=0):
+    rng = np.random.default_rng(seed)
+    words = ["dog", "cat", "go", "come", "north", "south", "river", "look"]
+    q, _ = np.linalg.qr(rng.standard_normal((proj_dim, proj_dim)))   # orthonormal rows
+    return {w: q[i] for i, w in enumerate(words)}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Task 4: CoreSimComposer parameterized to wire into a shared bridge at an index offset.
+#
+# When given a `shared_bridge`, the composer wires its FIXED "bind" coincidence population at the offset
+# (every role_ON/OFF, fill_ON/OFF, A/B/C/D index shifted by `index_offset`). Because the shared bridge has
+# global Hebbian learning ON, plastic=False is NOT enough to freeze the bind weights (Task 1 finding) — so
+# the population is tagged plasticity_gate="composer_bind_fixed" and its gain set to 0.0. The default
+# (no shared_bridge) path builds a standalone bridge with Hebbian OFF and needs no gate (kept byte-identical).
+# ─────────────────────────────────────────────────────────────────────────────
+def test_composer_on_shared_bridge_recovers_flat_fact():
+    """A CoreSimComposer wired onto a merged bridge at offset 126 stores a flat fact and recovers it via
+    spiking unbind, with abstention on an unstored cue. Uses a tiny synthetic codebook (no cache needed)."""
+    from research.runners.core_sim_composition import CoreSimComposer
+    from research.runners.unified_brain_bridge import build_unified_bridge
+
+    proj_dim = 64
+    shared = build_unified_bridge(seed=42, proj_dim=proj_dim)
+    composer = CoreSimComposer(seed=42, proj_dim=proj_dim, shared_bridge=shared, index_offset=126,
+                               concepts=_synthetic_concepts(proj_dim))
+
+    assert composer.bridge is shared, "shared-bridge composer must NOT build its own bridge"
+    # the FIXED bind population is gated to 0.0 on the Hebbian-enabled shared bridge (Task-1 isolation)
+    assert "composer_bind_fixed" in shared.list_plasticity_gates()
+    assert shared.get_plasticity_gate_value("composer_bind_fixed") == 0.0
+
+    composer.store("dog", "go", "north")
+    assert composer.query_patient("dog", "go") == "north"
+    assert composer.query_agent("go", "north") == "dog"
+    assert composer.query_patient("river", "look") is None      # abstention (no-confab moat)
+
+
+def test_composer_default_path_unchanged():
+    """The no-shared-bridge CoreSimComposer path is unchanged: it builds its OWN 8*proj_dim bridge with
+    Hebbian OFF and no plasticity gate, and recovers a flat fact. (Regression guard.)"""
+    from research.runners.core_sim_composition import CoreSimComposer
+
+    proj_dim = 64
+    composer = CoreSimComposer(seed=42, proj_dim=proj_dim, concepts=_synthetic_concepts(proj_dim))
+    assert composer.bridge.core_config.num_neurons == 8 * proj_dim
+    assert composer.bridge.core_config.enable_hebbian_learning is False
+    # default standalone bridge has NO plasticity gates (composer relies on Hebbian-OFF, not a gate)
+    assert composer.bridge.list_plasticity_gates() == []
+    composer.store("dog", "go", "north")
+    assert composer.query_patient("dog", "go") == "north"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Task 5: UnifiedBrainBridge wires BOTH regions onto one bridge + exposes the agent API.
+#
+# The unified bridge builds the shared bridge, constructs BridgeParser(offset=0) + CoreSimComposer(offset=126)
+# into it, and delegates the conversational API (parse / store / query_patient / query_agent / ask_yes_no /
+# describe / render_fact, + kb / words / concepts). The whole comprehend→store→recall loop must work on ONE
+# bridge, and the composer's FIXED bind weights must be UNCHANGED after the parser trained on the shared bridge
+# (re-asserting Task 1's isolation at FULL scale — the parser's Hebbian training must not drift the gated
+# composer weights).
+# ─────────────────────────────────────────────────────────────────────────────
+def _all_bind_weights_equal(unified, expected=320.0):
+    """Read every composer bind-synapse weight from the shared bridge's CSR and check it equals `expected`
+    (the fixed coincidence weight W_COINC). Reconstructs the bind edge list from the composer's offset index
+    banks exactly as build_bind_bridge wired them."""
+    from sim.backend import to_host
+    idx = unified.composer.idx
+    D = unified.composer.D
+    role_on = to_host(idx["role_on"]); role_off = to_host(idx["role_off"])
+    fill_on = to_host(idx["fill_on"]); fill_off = to_host(idx["fill_off"])
+    A = to_host(idx["A"]); B = to_host(idx["B"]); C = to_host(idx["C"]); Dd = to_host(idx["D"])
+    edges = []
+    for src1, src2, dst in ((role_on, fill_on, A), (role_off, fill_off, B),
+                            (role_on, fill_off, C), (role_off, fill_on, Dd)):
+        for i in range(D):
+            edges.append((int(src1[i]), int(dst[i])))
+            edges.append((int(src2[i]), int(dst[i])))
+    csr = unified.bridge.cp_connections
+    vals = np.array([float(to_host(csr[i, j])) for (i, j) in edges], dtype=np.float64)
+    return bool(np.all(vals == expected)), vals
+
+
+def test_unified_end_to_end_one_bridge():
+    """END-TO-END on ONE bridge: UnifiedBrainBridge comprehends an SVO sentence (parser), stores + recalls it
+    (composer), abstains on the unknown — all on the single shared bridge. And the composer's FIXED bind
+    weights are still exactly the design value after the parser's Hebbian training (full-scale isolation)."""
+    from research.runners.unified_brain_bridge import UnifiedBrainBridge
+
+    proj_dim = 64
+    u = UnifiedBrainBridge(seed=42, proj_dim=proj_dim, concepts=_synthetic_concepts(proj_dim))
+
+    # ONE bridge holds both regions.
+    assert u.parser.bridge is u.bridge
+    assert u.composer.bridge is u.bridge
+
+    # Comprehension (parser on the shared bridge): voice-invariant role assignment.
+    roles = u.parse("dog go north")
+    assert roles == {"agent": "dog", "action": "go", "patient": "north"}, roles
+
+    # Store + recall (composer on the same bridge).
+    u.store(roles["agent"], roles["action"], roles["patient"])
+    assert u.query_patient("dog", "go") == "north"
+    assert u.query_agent("go", "north") == "dog"
+    assert u.query_patient("river", "look") is None         # abstention (no-confab moat)
+
+    # Full-scale isolation re-assertion: the parser trained (Hebbian) on the shared bridge AFTER the composer's
+    # bind population was wired; the gated bind weights must be byte-identical to their fixed design value.
+    ok, vals = _all_bind_weights_equal(u, expected=320.0)
+    assert ok, (
+        "composer FIXED bind weights drifted under the parser's global Hebbian training on the shared bridge "
+        f"-> plasticity-gate isolation failed at full scale. min={vals.min()} max={vals.max()}")

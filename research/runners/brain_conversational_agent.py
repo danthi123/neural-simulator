@@ -31,24 +31,28 @@ class BridgeParser:
 
     ROLES = ["agent", "action", "patient"]
 
-    def __init__(self, seed=42, R=40, n_epochs=30, train_steps=120, test_steps=80, drive=2500.0):
+    def __init__(self, seed=42, R=40, n_epochs=30, train_steps=120, test_steps=80, drive=2500.0,
+                 shared_bridge=None, index_offset=0, defer_train=False):
+        """Build a 6-conjunction → 3-role-ensemble Hebbian parser.
+
+        Default (standalone) path — `shared_bridge=None`: build a private SimulationBridge of `6 + 3*R`
+        neurons, wire + train it (unchanged from before).
+
+        Shared-bridge path — `shared_bridge` given: do NOT build/init a bridge; use the provided one. Every
+        conjunction unit (0..5) and role-ensemble neuron lives at `index_offset + local_index` on the shared
+        bridge, so the `"parse"` wiring plan AND the drive/readout index arrays are all shifted by
+        `index_offset`. The `"parse"` population is added to the shared bridge via
+        `merge_population_into_shared_bridge` (which re-injects the running union of every region wired so
+        far — see that helper's docstring). When `defer_train=True`, training is skipped in `__init__` and
+        the caller invokes `train()` AFTER all other populations are wired (a later re-injection would
+        otherwise reset the trained `"parse"` weights to their initial design values); the unified builder
+        uses this. When `defer_train=False` (default), training runs in `__init__` as before."""
         self.R = R; self.test_steps = test_steps; self.drive = drive
-        cfg = CoreSimConfig()
-        cfg.num_neurons = 6 + 3 * R
-        cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
-        cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
-        cfg.seed = int(seed); cfg.dt_ms = 1.0
-        cfg.connections_per_neuron = 0; cfg.num_traits = 1
-        cfg.enable_stdp = False
-        cfg.enable_hebbian_learning = True       # v16 embodied-Hebbian CO-FIRING rule (pre&post-gated -> selective)
-        cfg.hebbian_max_weight = 400.0
-        cfg.hebbian_learning_rate = 0.005
-        for f in ("enable_short_term_plasticity", "enable_structural_plasticity", "enable_homeostasis",
-                  "enable_reward_modulation", "enable_watts_strogatz"):
-            setattr(cfg, f, False)
-        cfg.ou_std_current_pA = 20.0
-        self.conj = list(range(6))
-        self.role_idx = {r: list(range(6 + i * R, 6 + (i + 1) * R)) for i, r in enumerate(self.ROLES)}
+        self.index_offset = int(index_offset)
+        # Local layout (pre-offset): conjunction units 0..5, then 3 role ensembles of R neurons each.
+        self.conj = [self.index_offset + k for k in range(6)]
+        self.role_idx = {r: [self.index_offset + 6 + i * R + j for j in range(R)]
+                         for i, r in enumerate(self.ROLES)}
         pre, post, w = [], [], []
         for k in self.conj:
             for r in self.ROLES:
@@ -57,15 +61,46 @@ class BridgeParser:
         plan = {"parse": {"pre_indices": pre, "post_indices": post,
                           "initial_weights": np.array(w, dtype=np.float32),
                           "plastic": True, "conn_type": "E_TO_E", "count": len(pre)}}
-        self.bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
-                                       runtime_state=RuntimeState(), gpu_config=GPUConfig())
-        self.bridge._initialize_simulation_data(called_from_playback_init=False)
-        self.bridge.inject_explicit_wiring(plan)
+
+        if shared_bridge is None:
+            cfg = CoreSimConfig()
+            cfg.num_neurons = 6 + 3 * R
+            cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+            cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+            cfg.seed = int(seed); cfg.dt_ms = 1.0
+            cfg.connections_per_neuron = 0; cfg.num_traits = 1
+            cfg.enable_stdp = False
+            cfg.enable_hebbian_learning = True       # v16 embodied-Hebbian CO-FIRING rule (pre&post-gated -> selective)
+            cfg.hebbian_max_weight = 400.0
+            cfg.hebbian_learning_rate = 0.005
+            for f in ("enable_short_term_plasticity", "enable_structural_plasticity", "enable_homeostasis",
+                      "enable_reward_modulation", "enable_watts_strogatz"):
+                setattr(cfg, f, False)
+            cfg.ou_std_current_pA = 20.0
+            self.bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
+                                           runtime_state=RuntimeState(), gpu_config=GPUConfig())
+            self.bridge._initialize_simulation_data(called_from_playback_init=False)
+            self.bridge.inject_explicit_wiring(plan)
+        else:
+            self.bridge = shared_bridge
+            from research.runners.unified_brain_bridge import merge_population_into_shared_bridge
+            merge_population_into_shared_bridge(self.bridge, plan)   # parser pop is plastic → no gate
+
         xp, _ = get_backend()
         self.conj_arr = xp.asarray(self.conj, dtype=xp.int64)
         self.role_arr = {r: xp.asarray(v, dtype=xp.int64) for r, v in self.role_idx.items()}
-        self._n = 6 + 3 * R
-        self._train(n_epochs, train_steps)
+        # `self._n` is the size of the *current-state* arrays we zero/index = the whole bridge.
+        self._n = self.bridge.core_config.num_neurons
+        self._n_epochs = n_epochs
+        self._train_steps = train_steps
+        if not defer_train:
+            self._train(n_epochs, train_steps)
+
+    def train(self):
+        """Run the (deferred) Hebbian training. Used by the unified builder, which wires ALL regions onto the
+        shared bridge first and trains the parser LAST — so a later population re-injection cannot reset the
+        trained `"parse"` weights. Uses the epoch/step counts passed at construction."""
+        self._train(self._n_epochs, self._train_steps)
 
     def _step_reset(self, reset=20):
         self.bridge.cp_external_input_current[:] = 0.0
