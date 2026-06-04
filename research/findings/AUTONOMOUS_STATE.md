@@ -47,15 +47,35 @@ Tier-1 word→action recipe does (500-1000 neuron pools + motor FS), or an excit
 of the MSN → then learned cue fires D1 → genuine #2 cascade → gate → permuted-teacher anti-cheat (already coded) is
 the multi-seed gate. Finding `2026-06-04-cheat3-learned-gate-selection-PARTIAL.md`. COMMITTED + pushed both remotes.
 
->>> EXACT NEXT CONCRETE ACTION: choose one — (A) CLOSE #3's end-to-end by scaling the verb/selection pools to the
-Tier-1 recipe (500-1000 neurons + FS) so the learned cue fires the MSN-D1 synaptically, then run the multi-seed +
-permuted-teacher anti-cheat that's already coded; OR (B) cheat-removal **#4** (sensory-ground the concept codes:
-visual-cortex/Gabor → concept reps — `sim/visual_cortex.py` Gabor RFs already exist; the audit marks #4 PARTIAL
-with the grounded word-cue done and visual grounding open). #4 is the higher-value-for-conversation item (it
-feeds the actual composition agent's concept reps), so prefer #4 unless closing #3 cleanly is quick. HARD RULES:
-GPU/CuPy for real runs (numpy ok for tiny BG smokes); honest propagation of EVERY outcome (incl. negative) to BOTH
-remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and fails
-without it IS the finding; never end a turn on a future-tense promise.
+>>> #4 cheap-first RESOLVES = real Gabor-V1 sensory features ground usable concept codes.
+`research/runners/_visual_grounding_probe.py`: 12 distinct visual stimuli (8 oriented bars + 4 spots) → the REAL V1
+Gabor bank (`sim/visual_cortex.py build_v1_simple_weights`, 8192 simple cells) → grounded concept codes that are
+**well-separated (mean pairwise cosine 0.25)** and **robustly pattern-completion-cleanup-able (97% under noise σ=0.25
++ ≤2px translation)** — the SAME attractor cleanup that resolved the word-cue level. The one high-cosine pair is
+bar_0deg~bar_22deg (adjacent orientations SHOULD be similar). Honest scope: grounds the VISUAL subset (abstract
+words have no canonical image — embodied-cognition limit → multi-modal target); agent integration (feed as
+`external_codes` + benchmark) is the follow-up. Finding `2026-06-04-cheat4-visual-grounding-cheap-first-RESOLVES.md`.
+COMMITTED + pushed both remotes.
+
+>>> ARC SUMMARY (owner's "2 and 3 then 4" this session): #2 RESOLVED (genuine BG disinhibition opens the gate);
+#3 PARTIAL (cortico-striatal STDP genuinely LEARNS selection; end-to-end pending the MSN synaptic-drive scale-up);
+#4 PARTIAL→both-levels-validated (word-cue + visual/Gabor grounding mechanisms both produce usable cleanup-able
+codes). Two reusable bug findings shipped: (a) conductance-based inhibition needs PHYSIOLOGICAL weight scale (~300
+explodes g_i, breaks Izhikevich into rebound → looks excitatory); (b) `_run_one_simulation_step()` doesn't advance
+`current_time_ms` → direct-call STDP is a silent no-op.
+
+>>> EXACT NEXT CONCRETE ACTION (owner-steerable): the three requested cheats are all moved forward. Remaining
+removable work, pick one: (A) CLOSE #3 end-to-end — scale the learned-selection presynaptic pools to the validated
+Tier-1 recipe (500-1000 neurons + motor FS) so the learned cue fires the high-rheobase MSN-D1 synaptically, then
+run the multi-seed + permuted-teacher anti-cheat already coded in `gated_compose_bg_learned_demo._eval`; (B) #4
+AGENT INTEGRATION — feed the visual-grounded V1 codes into the unified composition agent as `external_codes` and
+re-run the frozen benchmark (the grounded-cleanup mode already showed learned grounded codes compose); (C)
+consolidate/wiki-sync this large cheat-removal session; (D) return to the converge-not-add composition agent
+(the top-line conversational goal — cheat-removal was the "no higher-priority work remains" backlog). Recommend
+(B) then (D): (B) finishes #4 end-to-end cheaply and (D) is the top-line goal. HARD RULES: GPU/CuPy for real runs
+(numpy ok for tiny smokes); honest propagation of EVERY outcome (incl. negative) to BOTH remotes; never weaken
+frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and honestly fails without it IS
+the finding; never end a turn on a future-tense promise (next-action tool call same turn).
 
 ## >>> UNIFIED-AGENT BENCHMARK ARC (2026-06-04, earlier — read THIS first) <<<
 
