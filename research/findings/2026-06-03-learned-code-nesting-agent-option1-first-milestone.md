@@ -43,14 +43,23 @@ and abstention (`cat hold`→None) all correct — the full compositional capabi
 ## Honest accuracy cost — grounded-code correlation
 
 The constructed-code agent reached ~96% on mixed facts at 120 concepts; the learned-code agent is ~80% at
-40. The difference is **grounded-code correlation**: learned codes carry the real ~10% word-code overlap
-(`vocab_to_drive_pattern`), which makes the **resonator** (factoring `adj ⊗ noun` for attributed entities)
-and the depth detection harder than the near-orthogonal constructed codes. The flat and clause paths
-(cleanup / recursive unbinding) are more robust to it than the resonator path. A mis-recalled word (seed 43,
-recall 0.97) also cascades into the facts that use it. This is a real, documented cost of using biologically-
-grounded learned codes rather than idealized ones — not a failure, but the honest price of faithfulness.
-Levers if it matters later: higher D, codebook decorrelation, or resonator thresholds tuned for correlated
-codes (not chased here — the honest baseline stands).
+40. **Per-kind breakdown (3 seeds, 72 facts) localizes the cost precisely:**
+
+| patient kind | learned-code accuracy |
+|---|---|
+| flat | 16/19 = 0.84 |
+| one-attribute (F=2 resonator) | **12/12 = 1.00** |
+| two-attribute (F=3 resonator) | **10/18 = 0.56** |
+| embedded clause | 21/23 = 0.91 |
+
+The cost is **almost entirely the two-attribute case** — the F=3 resonator factoring `adj₁ ⊗ adj₂ ⊗ noun`,
+where the two adjectives share a codebook (permutation symmetry, restart-residual selection) and **grounded
+~10% correlation between the adjective codes** degrades the restart selection. One-attribute (single
+resonator factor) is *perfect* on learned codes; flat and clause are strong. So it is a **narrow,
+well-characterized boundary** (the hardest construction on correlated codes), not broad degradation. A
+mis-recalled word (seed 43, recall 0.97) also cascades into its facts. This is the honest price of
+biologically-grounded learned codes vs idealized ones. Levers if the two-attribute case matters later:
+higher D, adjective-codebook decorrelation, or more restarts — not chased here; the honest baseline stands.
 
 ## Where this sits
 
