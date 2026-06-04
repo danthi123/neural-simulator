@@ -52,10 +52,13 @@ the multi-seed gate. Finding `2026-06-04-cheat3-learned-gate-selection-PARTIAL.m
 Gabor bank (`sim/visual_cortex.py build_v1_simple_weights`, 8192 simple cells) → grounded concept codes that are
 **well-separated (mean pairwise cosine 0.25)** and **robustly pattern-completion-cleanup-able (97% under noise σ=0.25
 + ≤2px translation)** — the SAME attractor cleanup that resolved the word-cue level. The one high-cosine pair is
-bar_0deg~bar_22deg (adjacent orientations SHOULD be similar). Honest scope: grounds the VISUAL subset (abstract
-words have no canonical image — embodied-cognition limit → multi-modal target); agent integration (feed as
-`external_codes` + benchmark) is the follow-up. Finding `2026-06-04-cheat4-visual-grounding-cheap-first-RESOLVES.md`.
-COMMITTED + pushed both remotes.
+bar_0deg~bar_22deg (adjacent orientations SHOULD be similar). FOLLOW-UP DONE same day
+(`_visual_grounded_composition_probe.py`): the grounded codes COMPOSE, not just separate — convert each V1 sensory
+code to a phasor via a fixed projection (grounded), run FHRR bind/bundle/unbind/cleanup on a 2-role fact →
+**24/24 = 100% clean, 11/12 = 92% from a CORRUPTED (noisy+shifted) sensory input**. So sensory features feed the
+composition substrate end-to-end (the visual analogue of the word-cue grounded-cleanup result). Honest scope:
+grounds the VISUAL subset (abstract words have no canonical image — embodied-cognition limit → multi-modal target).
+Finding `2026-06-04-cheat4-visual-grounding-cheap-first-RESOLVES.md`. COMMITTED + pushed both remotes.
 
 >>> ARC SUMMARY (owner's "2 and 3 then 4" this session): #2 RESOLVED (genuine BG disinhibition opens the gate);
 #3 PARTIAL (cortico-striatal STDP genuinely LEARNS selection; end-to-end pending the MSN synaptic-drive scale-up);

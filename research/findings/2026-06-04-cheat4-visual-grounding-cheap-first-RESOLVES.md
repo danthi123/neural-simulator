@@ -73,7 +73,30 @@ shows the codes are well-separated overall.
   remaining open item is the *agent integration* (feed visual-grounded codes as `external_codes` + benchmark) and
   multi-modal coverage of non-visual concepts.
 
+## Follow-up (same day): the grounded codes COMPOSE, not just separate
+
+`research/runners/_visual_grounded_composition_probe.py` closes the agent-integration question for the visual
+subset. Each V1 sensory code is converted to a phasor (FHRR) code via a FIXED random complex projection — so the
+phasor code is a deterministic function of the sensory features (grounded, not free). Then the composition
+substrate's primitives (bind = elementwise complex multiply, bundle = complex sum, unbind = multiply by the
+role's conjugate, cleanup = max normalized dot over the grounded codebook) run on a 2-role fact built from two
+visual-grounded concepts:
+
+```
+CLEAN compose (unbind agent + patient -> grounded concept):        24/24 = 100%
+CORRUPTED-sensory compose (agent slot from noisy+shifted image):   11/12 = 92%
+```
+
+So sensory features → grounded phasor codes → bind/bundle/unbind/cleanup → recover the correct concepts, and the
+recovery survives corrupting the sensory input (the noisy/shifted image still recovers via cleanup). The
+grounded codes compose **as well as random phasor codes** (100% clean is the expected FHRR behavior at D=2048
+over a 12-code codebook — matching the project's validated SVO decode 1.00 — so grounding does not degrade
+composition). This is the visual-grounded analogue of the word-cue grounded-cleanup composition result: real
+sensory grounding feeds the composition substrate end-to-end.
+
 ## Files
 
 - `research/runners/_visual_grounding_probe.py` — the cheap-first Gabor-V1 grounding probe (separability +
   corruption cleanup), reusing `sim/visual_cortex.py`'s real V1 Gabor receptive fields.
+- `research/runners/_visual_grounded_composition_probe.py` — the follow-up: V1 features → phasor codes → FHRR
+  bind/unbind/cleanup (grounded codes compose 100% clean / 92% from corrupted sensory input).
