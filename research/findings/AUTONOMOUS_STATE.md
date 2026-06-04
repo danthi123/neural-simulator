@@ -9,7 +9,42 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> UNIFIED-AGENT BENCHMARK ARC (2026-06-04, LATEST — read THIS first) <<<
+## >>> PURE-BIOLOGY CHEAT-REMOVAL ARC (2026-06-04, NEWEST — read THIS first) <<<
+
+OWNER (2026-06-04): "handle 2 and 3 then 4 in this session" from the cheat-removal backlog
+(`2026-06-04-pure-biology-cheat-removal-backlog.md`); making the gating arc genuine = wiring into the core sim,
+not a bolt-on. Owner confirmed proceed after I explained the gate primitive is already core-sim
+(`cp_transmission_gain`) and the stand-in was driving thalamic pools with direct current.
+
+>>> #2 RESOLVED = genuine basal-ganglia disinhibition opens the gate (no direct thalamic current).
+`research/runners/gated_compose_bg_genuine_demo.py`: per binding, a genuine direct-pathway cascade
+`D1 -| GPi -| thal` — GPi (IZH2007_GPI_OUTPUT, all-GABAergic) tonically paces (2200 pA) and silences its
+thalamic relay; a striatal D1 "go" signal silences that GPi → disinhibits the relay → its firing opens the
+cortical route transmission gate (`couple_gate_to_pool`). Drive each verb → routes to its motor. **11/12 across
+seeds 42/43/44** (seed 44 COME→S is a verb→motor *decode* fragility of the underlying gated-compose substrate,
+NOT the cascade; the disinhibition diagnostic is CLEAN at all 3 seeds + D1→GPi inhibition isolated: driving d1
+drops gpi 0.276→0.068).
+  NON-OBVIOUS BLOCKER (the biology-translatable insight): synaptic **WEIGHT SCALE**, not cascade structure. At
+  weight~300 the inhibitory conductance g_i explodes to ~2300 (vs physiological O(1-10)), clamps V to the −75
+  reversal, and breaks Izhikevich numerics into paradoxical REBOUND firing → "inhibition" reads as EXCITATION
+  (gpi ROSE when D1 fired). g11_bg-scale weights (D1→GPi=15, GPi→thal=8) keep g_i physiological → genuine
+  silencing. Diagnosed by `_framework_inhibition_minimal_probe.py` (1 inhibitory→1 excitable control: w=300
+  EXCITES tgt 0.057→0.462; w=2..20 INHIBIT to ~0.005). The smell-test (the project has extensive *validated*
+  inhibitory results) forced the control that corrected a premature "framework inhibition is inverted" finding.
+  Finding `2026-06-04-cheat2-genuine-bg-disinhibition-RESOLVED.md`. COMMITTED + pushed both remotes.
+
+>>> EXACT NEXT CONCRETE ACTION: cheat-removal **#3** — make the gate SELECTION learned/emergent, not commanded.
+Currently WHICH D1 pool is driven (= which gate opens) is set by hand. Build reward/R-STDP (or cortico-striatal
+plasticity) so the *correct* D1 pool wins from upstream dynamics. Cheap-first: a small reduced model (drive a
+cue → cortex → plastic cortico-striatal → the right D1 pool fires → genuine disinhibition opens the right gate),
+reward-gated, with a pre-registered frozen bar + a permuted-cue anti-cheat control (a commanded-by-construction
+result is the gate-keeper, NOT proof — exactly the #2 honesty note). Then **#4** (sensory-ground the concept
+codes: visual-cortex/Gabor → concept reps; the audit marks #4 PARTIAL, grounded word-cue done, visual open).
+HARD RULES: GPU/CuPy for real runs (numpy ok for these tiny BG smokes); honest propagation of every outcome
+(incl. a negative) to BOTH remotes; never weaken frozen bars; a capability that only survives WITH a shortcut
+and fails without it IS the finding.
+
+## >>> UNIFIED-AGENT BENCHMARK ARC (2026-06-04, earlier — read THIS first) <<<
 
 OWNER APPROVED (this turn) the strategic recommendation: **CONVERGE, don't add.** The bottleneck is no longer a
 missing mechanism — it is FRAGMENTATION (many validated pieces in separate demos on partly-different substrates)
