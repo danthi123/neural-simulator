@@ -31,18 +31,24 @@ grounded-encoder re-test. Finding `2026-06-03-phasor-FHRR-unified-substrate-cand
 `docs/plans/2026-06-03-phasor-substrate-unification-design-note.md` (de-risked evidence + the ONE open step
 [spiking-STDP learning of the input->phasor-code map] + a pre-registered frozen minimal first experiment +
 Direction B alternative).
->>> EXACT NEXT CONCRETE ACTION (cheap-first, per the design note's minimal first experiment): build a small
-resonate-and-fire network probe `research/findings/raw/_spiking_stdp_phasor_learn_probe.py` — input cue spike
-pattern -> STDP/phase-aligned plasticity on input->output weights -> learn each of N concepts' phasor code
-(N=8 then 32); test retrieval (cleanup vs codebook) + a learned 2-role bind/unbind. FROZEN GATE: RESOLVES
-(retrieval>=0.90 @ N=32 AND learned bind/unbind>=0.80) / BOUNDARY (works small N, degrades by 32) /
-DOES-NOT-RESOLVE (STDP can't drive output phases to target). ANTI-CHEAT: reproduce-the-failure (shuffled
-target phases must NOT learn to same acc) + smell-test any PASS (this session caught 2 harness false-negatives
-that way: list-order + rf_resonate). This is the load-bearing unknown for substrate unification; outcome
-decides whether to writing-plans the full migration or keep substrates separate (honest negative). Reuse
-resonate_fire_fhrr by import; no protected-module edits; GPU/CuPy if heavy, numpy ok for the N=8 smoke.
-Alternatives if owner steers away: Direction B (thalamocortical, Logiaco 2021) or a production-scale
-conversational build on the validated nesting agent. >>> THIS is the decision the
+>>> SPIKING-STDP PROBE DONE = RESOLVES (algorithmic). `_spiking_stdp_phasor_learn_probe.py` (D=512, 5 seeds):
+REAL-weight spike-timing plasticity (NOT the complex-Hebbian shortcut — biology gives real scalar synapses
+that scale not rotate) learns the input->phasor-code map at N=32 (retrieval 1.00) AND the learned codes
+compose (bind/unbind 0.95), BOTH anti-cheat controls at chance (untrained 0.03, SHUFFLED-PAIRING 0.04 vs
+chance 0.03 — the decisive control: train on permuted pairs -> true pairing decodes at chance -> pairing-
+specific learning, not artifact). D lever measured (raw-compose 0.65@256->0.95@512->1.00@1024). Readout CONFIRMED
+in the GENUINE rf spiking substrate (16/16 x3). Finding
+`2026-06-03-spiking-STDP-learns-phasor-map-RESOLVES-algorithmic.md`. SO EVERY cheap-first SCIENTIFIC axis of
+substrate unification is now DE-RISKED (capacity, correlation, scale, linear-learning, AND real-weight spiking
+STDP learning+composition). The remaining work is purely the FULL IMPLEMENTATION: an online spike-driven STDP
+loop + membrane ODE wired across the production path = a writing-plans ENGINEERING arc, science de-risked.
+>>> EXACT NEXT CONCRETE ACTION: this is now a STRATEGIC fork the owner should weigh (the next step is a real
+engineering investment, not a cheap probe): (1) writing-plans the full membrane-level online-spiking-STDP
+phasor learner -> production migration [the substrate-unification payoff: production gains nesting], (2)
+Direction B thalamocortical dynamical gating [Logiaco 2021, the other untried deep-research mechanism], or
+(3) a production-scale conversational build on the validated nesting agent. Cheap-first de-risking of
+Direction A + substrate unification is EXHAUSTED; the next move is a build. Recommend (1) — it has no
+remaining scientific blocker and directly delivers nesting to the production conversational system. >>> THIS is the decision the
 owner may want to steer: whether to migrate the production substrate onto phasor FHRR to gain nesting. NEXT
 candidate (autonomous): grounded-code re-test (does the 320 result hold for sparse-encoded grounded codes,
 not just random phasors?) — cheap-first, decisive, the last capacity-side uncertainty before a migration
