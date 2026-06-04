@@ -153,6 +153,8 @@ low-coherence composition-ready code → the path to grounding the FULL vocabula
 language for abstract). Finding `2026-06-04-v-multimodal-grounding-decorrelation-unifies.md`;
 `unified_agent_multimodal_grounded.py`. COMMITTING both remotes.
 
+>>> CONSOLIDATION PHASE 1 DONE (owner signed off the plan `docs/plans/2026-06-04-consolidate-conversational-pipeline-onto-core-sim-design.md`): `research/runners/core_sim_composition.py` = the role-filler composition realized ON the core SimulationBridge (coincidence-Hadamard bind/unbind, ported faithfully from the validated _insubstrate probes into ONE clean self-contained module). `CoreSimComposer`: store SVO facts + who/what Q&A + abstention (no-confab moat) + negation/yes-no, all spiking on the bridge (6400 Izhikevich neurons, substrate's own concept codes). 3 tests pass (frozen bars: Q&A, abstention, negation, recovery>=0.80). NO bolted-on numpy simulator in the path. Owner steers: scope=research/runners (not sim/), probe-scale first. NEXT = Phase 2 (BrainConversationalAgent: + parser comprehension + clauses via recursive role-filler + content_selection_spiking dialogue planning + an on-brain frozen conversational test set; milestone/owner check-in). Then Phase 3 (attribute composition bridge-native, 3-state) + Phase 4 (retire/relabel spiking_phasor_fhrr + resonate_fire_fhrr to reference-only).
+
 >>> NEW DIRECTIVE (owner 2026-06-04): BEFORE scaling, CONSOLIDATE external/bolted-on modules so the sim is clean +
 self-contained, no cheats/shortcuts/bolted-on modules. SUBSTRATE AUDIT DONE
 (`2026-06-04-conversational-pipeline-substrate-audit.md`): the core SimulationBridge has VALIDATED spiking
