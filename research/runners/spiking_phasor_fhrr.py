@@ -1,4 +1,18 @@
-"""Spiking-phasor FHRR composition subsystem.
+"""[CONSOLIDATION 2026-06-04] NUMPY REFERENCE -- NOT the production substrate.
+
+This is a standalone NUMPY implementation of time-stepped spiking-phasor FHRR composition (an engineering scaffold,
+per the original note below) -- it does NOT run on the core `SimulationBridge`. The PRODUCTION conversational agent
+runs ON the core sim (the brain) via `research/runners/brain_conversational_agent.py` + `core_sim_composition.py`
+(genuine coincidence-neuron bind/unbind on a real SimulationBridge of Izhikevich neurons). This module is retained
+ONLY as the FHRR validation ceiling / reference -- including the F=3 two-attribute resonator, which the production
++-1 coincidence scheme cannot invertibly realize (the brain agent does attributes via a feature-binding role-tag:
+1-attribute resolves, 2-attribute is a documented boundary). Do not treat this module, or the unified agents that
+import it (nested_composition_agent / spiking_unified_agent / unified_agent_*), as "the brain analogue": they are
+the numpy/abstraction track. See docs/plans/2026-06-04-consolidate-conversational-pipeline-onto-core-sim-design.md
+and research/findings/2026-06-04-conversational-pipeline-substrate-audit.md.
+
+--- original docstring ---
+Spiking-phasor FHRR composition subsystem.
 
 A genuine time-stepped spiking implementation of Fourier Holographic
 Reduced Representation (FHRR) vector-symbolic composition, after

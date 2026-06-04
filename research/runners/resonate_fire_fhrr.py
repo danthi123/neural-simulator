@@ -1,4 +1,14 @@
-"""Resonate-and-fire FHRR composition subsystem -- biologization step 1.
+"""[CONSOLIDATION 2026-06-04] NUMPY REFERENCE -- NOT the production substrate.
+
+This is a standalone NUMPY implementation of the resonate-and-fire FHRR neuron model -- it does NOT run on the core
+`SimulationBridge`. The PRODUCTION conversational agent runs ON the core sim (the brain) via
+`research/runners/brain_conversational_agent.py` + `core_sim_composition.py` (genuine coincidence-neuron bind/unbind
+on a real SimulationBridge). This module is retained ONLY as a biology-faithful FHRR reference / validation ceiling.
+See docs/plans/2026-06-04-consolidate-conversational-pipeline-onto-core-sim-design.md and
+research/findings/2026-06-04-conversational-pipeline-substrate-audit.md.
+
+--- original docstring ---
+Resonate-and-fire FHRR composition subsystem -- biologization step 1.
 
 The validated spiking-phasor FHRR subsystem (spiking_phasor_fhrr.py) is
 an engineering scaffold: its bind / unbind operations are realized by

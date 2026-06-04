@@ -568,6 +568,43 @@ inventory + sizes per pathway. (Active after webapp restart.)
 (`tests/test_synapse_storage.py`, `tests/test_numpy_backend_integration.py`).
 All PASS, all CPU-only.
 
+### Conversational pipeline CONSOLIDATED onto the core sim (2026-06-04)
+
+**The production conversational agent runs ON the core `SimulationBridge` (the brain), not on a
+bolted-on numpy simulator.** Per the owner's directive ("the core sim IS the simulated brain;
+capabilities realized through it, no bolted-on modules"), the conversational loop —
+comprehend / store / recall / who-what Q&A / abstention / negation / clauses / one-attribute /
+dialogue planning — was consolidated onto three interacting core-sim bridges:
+
+- **`research/runners/core_sim_composition.py` (`CoreSimComposer`)** — role-filler VSA composition
+  computed by **spiking coincidence neurons** on a real ~6400-neuron Izhikevich bridge (the ±1
+  Hadamard: `bound_ON=AND(role_ON,fill_ON)+AND(role_OFF,fill_OFF)`), reused for unbind; SVO fact
+  memory, who/what Q&A, abstention (the no-confab moat → `None` when no fact's agent matches),
+  negation/yes-no (a bound polarity tag). Concept codes are the substrate's own (`denoise64`).
+- **`research/runners/brain_conversational_agent.py` (`BrainConversationalAgent`, `BridgeParser`)** —
+  the full loop: a **Hebbian-learned parser bridge** (comprehension: `(word-position × voice) → role`,
+  voice-invariant — active "dog go north" and its passive frame assign the same agent) + the composer +
+  recursive **clauses** + **dialogue planning** (`elaborate(topic)` via the dlPFC spiking
+  content-selection Control over an association graph built from the agent's own facts).
+- 10 on-brain regression tests pass: `tests/test_core_sim_composition.py` (5) +
+  `tests/test_brain_conversational_agent.py` (5). All build a real bridge; they skip gracefully if
+  the `denoise64` concept-code cache is absent.
+
+**Honest residual:** the ±1 coincidence scheme cannot invertibly bind two concept codes (adj⊗noun) —
+attributes use a feature-binding ATTRIBUTE role-tag: **1-attribute RESOLVES, 2-attribute is a
+documented K=5-load BOUNDARY**, and the FHRR F=3 resonator stays a **numpy reference**. Vocab is the
+validated probe scale (V=16); production 320-concept on the brain agent is a follow-on. The three
+bridges are orchestrated, not yet one bridge with all regions.
+
+**The two standalone numpy phasor simulators are REFERENCE-only, NOT the production substrate:**
+`research/runners/spiking_phasor_fhrr.py` + `resonate_fire_fhrr.py` (and the unified agents that import
+them — `nested_composition_agent` / `spiking_unified_agent` / `unified_agent_*`) carry a NUMPY-REFERENCE
+header and are retained only as the FHRR validation ceiling. Do not treat them as "the brain analogue."
+
+Finding: `research/findings/2026-06-04-conversational-pipeline-consolidated-onto-core-sim.md`.
+Audit: `research/findings/2026-06-04-conversational-pipeline-substrate-audit.md`.
+Plan: `docs/plans/2026-06-04-consolidate-conversational-pipeline-onto-core-sim-design.md`.
+
 ### Path 3 LLM-callable memory (2026-05-11): BridgeMemory API
 
 **Status:** Phase 3.1.5 SHIPPED 2026-05-11. The `BridgeMemory` class
