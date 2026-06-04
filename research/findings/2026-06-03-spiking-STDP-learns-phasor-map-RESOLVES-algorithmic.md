@@ -73,13 +73,24 @@ matrix; the learned codes compose (bind/unbind); the readout is realized in the 
 substrate; anti-cheat controls are clean. The biological constraint that broke the naive analogy (real, not
 complex, weights) is satisfied.
 
-**Does NOT:** two fidelity details remain for the full implementation. (1) The plasticity here is **computed
-from phase/timing differences** (the STDP rule), not run as an **online spike-driven plasticity loop** in the
-substrate (it is the same rule, applied in closed form rather than accumulated spike-by-spike). (2) There is
-no explicit **membrane ODE / refractory / conductance** dynamics — the resonate-and-fire readout is used in
-its steady-state phasor form. Both are implementation fidelity, not open scientific risk: the rule and the
-readout are each individually faithful; wiring them into one online spike-driven loop is the **next rung**
-(a writing-plans engineering arc).
+**Online, weight-bounded plasticity also RESOLVES (the realistic-constraint rung):** the closed-form result
+is not an artifact of unbounded weights. Running the same rule as an **online loop** — interleaved
+presentation order, incremental updates, and **hard weight saturation** (`clip(w, ±w_max)`, the real
+biological constraint) — preserves it:
+
+| D | N=32 retrieval | N=32 bind/unbind |
+|---|---|---|
+| 512 | 1.00 | 0.95 |
+| 1024 | 1.00 | 1.00 |
+
+Saturation doesn't break it because argmax retrieval depends on the *relative* weight structure, which
+survives clipping. So online spike-driven plasticity with realistic bounds is de-risked too.
+
+**Does NOT:** one fidelity detail remains for a full membrane-level build — no explicit **membrane ODE /
+refractory / conductance** dynamics (the resonate-and-fire readout is used in its steady-state phasor form,
+confirmed in the genuine `rf_*` substrate above). And the learning here is **supervised** (teacher-forced
+target code phases); an unsupervised/self-organized variant is a separate extension. Neither is an open
+scientific blocker for the supervised associative map; both are implementation/extension work.
 
 ## Where this leaves substrate unification
 

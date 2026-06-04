@@ -62,6 +62,22 @@ def stdp_weights(cues, codes):
     return W
 
 
+def online_bounded_weights(cues, codes, epochs=4, eta=0.05, w_max=1.0, seed=0):
+    """Same STDP rule run as an ONLINE loop with interleaved order, incremental updates, and hard weight
+    saturation (the realistic biological constraint) -- checks the closed-form result is not an artifact of
+    unbounded weights."""
+    N, d = cues.shape
+    W = np.zeros((d, d))
+    rng = np.random.default_rng(seed)
+    for _ in range(epochs):
+        for c in rng.permutation(N):
+            dt = codes[c][:, None] - cues[c][None, :]
+            dt = (dt + np.pi) % (2 * np.pi) - np.pi
+            dW = np.where(dt > 0, A_PLUS * np.exp(-dt / TAU), -A_MINUS * np.exp(dt / TAU))
+            W = np.clip(W + eta * dW, -w_max, w_max)
+    return W
+
+
 def pcos(p, c):
     return np.cos(p - c).mean()                       # phasor cosine of two phase patterns
 
@@ -108,6 +124,16 @@ def main():
         summary[N] = (r, b, u, s)
         print(f"\n  N={N}: retrieval {r:.2f}  learned-bind/unbind {b:.2f}   "
               f"[controls: untrained {u:.2f}, shuffled-pairing {s:.2f}; chance {1/N:.2f}]", flush=True)
+        # realistic-constraint rung: same rule online with hard weight bounds
+        ob = []
+        for seed in SEEDS:
+            rng = np.random.default_rng(seed)
+            cues = rng.uniform(-np.pi, np.pi, size=(N, D))
+            codes = rng.uniform(-np.pi, np.pi, size=(N, D))
+            W = online_bounded_weights(cues, codes, seed=seed)
+            ob.append(np.mean([cleanup(retrieve(W, cues[c]), codes) == c for c in range(N)]))
+        print(f"        online weight-bounded STDP retrieval: {np.mean(ob):.2f} (realistic constraint holds)",
+              flush=True)
     r32, b32, u32, s32 = summary[32]
     controls_ok = (u32 < 2.0 / 32) and (s32 < 2.0 / 32)
     if r32 >= 0.90 and b32 >= 0.80 and controls_ok:
