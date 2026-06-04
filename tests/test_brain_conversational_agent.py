@@ -50,3 +50,14 @@ def test_embedded_clause(agent):
     agent.hear("apple stop west")
     assert agent.what_does("dog", "look") == "cat go south"
     assert agent.what_does("apple", "stop") == "west"
+
+
+def test_dialogue_planning_elaborate(agent):
+    """Dialogue planning: the dlPFC spiking content-selection Control brings up an on-topic associate from the
+    agent's own facts; abstains on an unconnected topic."""
+    agent.composer.kb = []
+    agent.hear("dog go north")
+    agent.hear("dog come south")
+    associates = set(agent._assoc_graph().get("dog", {}))
+    assert agent.elaborate("dog") in associates       # an on-topic concept, chosen on the dlPFC bridge
+    assert agent.elaborate("river") is None            # unconnected topic

@@ -114,6 +114,7 @@ class BrainConversationalAgent:
     SimulationBridge neurons, the substrate's own concept codes, no bolted-on numpy simulator."""
 
     def __init__(self, seed=42, proj_dim=800):
+        self.seed = int(seed)
         self.parser = BridgeParser(seed=seed)
         self.composer = CoreSimComposer(seed=seed, proj_dim=proj_dim)
 
@@ -137,3 +138,30 @@ class BrainConversationalAgent:
 
     def is_it_true(self, agent, action, patient):
         return self.composer.ask_yes_no(agent, action, patient)
+
+    # --- dialogue planning (what to say next) ---
+    def _assoc_graph(self):
+        """An association graph (concept -> {concept: weight}) built from the agent's OWN stored facts: the
+        agent/action/patient of each fact co-occur. Clause patients are skipped (their inner concepts are
+        structural). This is the graph the dialogue-planning Control spreads over."""
+        graph = {}
+        for fact, _ in self.composer.kb:
+            cs = [fact.get(r) for r in ("agent", "action", "patient")]
+            cs = [c for c in cs if isinstance(c, str)]
+            for x in cs:
+                for y in cs:
+                    if x != y:
+                        graph.setdefault(x, {})[y] = graph.get(x, {}).get(y, 0.0) + 1.0
+        return graph
+
+    def elaborate(self, topic):
+        """Dialogue planning: bring up the next on-topic concept about `topic`, chosen by the dlPFC spiking
+        content-selection Control (loop-attractor working memory + spreading activation) over the agent's own
+        association graph -- all on a SimulationBridge. Returns an associate concept, or None if `topic` is
+        unconnected. (Builds the dlPFC bridge on demand from the current facts.)"""
+        from research.runners.content_selection_spiking import SpikingSpreadingController
+        graph = self._assoc_graph()
+        if topic not in graph:
+            return None
+        ctrl = SpikingSpreadingController(graph, seed=self.seed)
+        return ctrl.turn_latency([topic])
