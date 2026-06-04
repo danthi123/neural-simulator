@@ -136,14 +136,23 @@ capability) + scale by ADDING bridges (sparse-distributed G.20 multi-bridge) —
 `2026-06-04-vocab-scaling-capacity-curve-refines-cost-model.md`; `unified_agent_capacity_curve.py`. COMMITTING both
 remotes.
 
->>> EXACT NEXT CONCRETE ACTION: proceeding in the listed order → **(iv) a richer multi-turn conversational demo on
-the unified grounded-spiking agent**. The pieces exist (spiking_unified_agent on V1-grounded codes = 100% core;
-the numpy NestedCompositionAgent has dialogue planning / elaborate()); the bounded step is a multi-turn REPL/script
-demo that exercises learn-facts → answer who/what → compose → abstain → elaborate-on-topic across turns, on the
-grounded substrate, as a user-facing artifact (the conversational payoff of the session's capabilities). Then (v)
-multi-modal grounding (visual concepts via V1 + abstract concepts via the word encoder in one agent). HARD RULES:
-GPU/CuPy for real runs (numpy ok for tiny smokes); honest propagation of EVERY outcome (incl. negative) to BOTH
-remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and
+>>> (iv) grounded multi-turn conversation demo — DONE. `unified_agent_conversation_demo.py` + 2 smoke tests (pass):
+one INTERLEAVED dialogue on real-V1-grounded + decorrelated concept codes exercising comprehend-and-learn,
+answer-by-composition (flat / 1-attr / 2-attr / embedded clause, auto-detected), who-query, ABSTAIN on the unknown
+(no confab), and topic elaboration (dialogue planning). The conversational payoff of the session's resolutions in
+one artifact. Honest: composition+moat validated in spikes (#4 capstone); dialogue planning is the numpy content-
+selection Control (spiking-validated separately). Finding `2026-06-04-iv-grounded-multiturn-conversation-demo.md`.
+COMMITTING both remotes.
+
+>>> EXACT NEXT CONCRETE ACTION: proceeding in the listed order → **(v) multi-modal grounding**. #4 grounded the
+VISUAL subset (V1 Gabor → visual concepts); abstract words (go/big/function words) have no canonical image. (v) =
+ground the VISUAL concepts via V1 AND the non-visual concepts via the project's word encoder (`vocab_to_drive_pattern`,
+the grounded word-cue level already RESOLVED) in ONE agent, then run the benchmark — does a mixed-modality codebook
+(some codes from V1, some from the word encoder, all decorrelated) still match constructed parity? Cheap-first:
+build the 320-concept external_codes from BOTH sources (visual stimuli for nouns/visualizable, word-encoder for the
+rest), decorrelate, run the unified_agent benchmark. Honest negative if mixed-modality coherence breaks composition.
+HARD RULES: GPU/CuPy for real runs (numpy ok for tiny smokes); honest propagation of EVERY outcome (incl. negative)
+to BOTH remotes; never weaken frozen bars or the no-confab moat; a capability that only survives WITH a shortcut and
 honestly fails without it IS the finding; never end a turn on a future-tense promise.
 
 ## >>> UNIFIED-AGENT BENCHMARK ARC (2026-06-04, earlier — read THIS first) <<<
