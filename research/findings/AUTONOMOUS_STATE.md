@@ -43,17 +43,24 @@ GPU only for spiking-bridge validation or training.
 re-binding, 3 seeds): multiplicative gate latest-binding 1.000 vs grown weights 0.695 (can't re-bind on
 command). HONEST: near-tautological principle-check (gate reflects command by construction) = gate-keeper NOT
 proof. Justifies the real build.
->>> EXACT NEXT (the BIG owner-steerable build, multi-hour, touches the spiking bridge): integrate a PER-PATHWAY
-MULTIPLICATIVE TRANSMISSION GATE into the spiking g11_bg cascade (cascade ALREADY has gpi->thal->cortex skeleton;
-neuromods have only additive excitability_drive + scalar synaptic_gain -- need a NEW multiplicative gate
-target_type / RegionPathway gate that scales effective synaptic CURRENT, not weight updates -- CLAUDE.md notes
-plasticity gates don't gate current, this is the complementary primitive). Then test on the ACTUAL v16
-verb->motor compose problem (the binding that "went silent" with grown weights): does thalamic-gated routing
-bind go->north etc. where STDP-grown weights were seed-fragile (5/20)? Score with the permuted-mapping
-anti-cheat. This is GPU territory (spiking bridge). Options C-level (full low-rank J_cc + sum s_k u_k v_k^T
-gate) for sequencing is the further step. ALSO available: Track 3 (assembly-generation + grammar-over-
-composition conversational artifact, CPU). Honest: spiking-faithful not fully-biological; phasor binding is a
-hypothesis; fluent generation is a documented wall; the toy H1 is a principle-check not the substrate proof.
+>>> TRANSMISSION GATE PRIMITIVE = SHIPPED + VALIDATED IN SPIKES. Implemented the per-pathway multiplicative
+transmission gate in the spiking bridge (12 surgical touch points mirroring the plasticity-gate machinery):
+`RegionPathway.transmission_gate` field (sim/regions.py) + `bridge.set_transmission_gate(name,value)` +
+`cp_transmission_gain` scaling effective synaptic CURRENT in `_run_one_simulation_step` (fresh matrix, never
+mutates cp_connections; no-op/None when unused). VALIDATED `tests/test_transmission_gate.py` (4 tests, numpy
+backend): closed gate -> target SILENT (0.000, no current despite non-zero weight); open -> target fires
+(0.30); RE-BINDING (close A->B, open A->C) reroutes same source, ZERO weight change (sum|W| unchanged) -- the
+thalamocortical hypothesis in genuine spikes where grown weights couldn't re-bind. Regression-clean (53 core
+CPU tests; pre-existing 5 numpy-backend STDP failures unrelated). CLAUDE.md gotcha updated (the "not yet
+implemented" current-gate now exists).
+>>> EXACT NEXT: apply the gate to the ACTUAL v16 verb->motor compose problem. Build verb pools + motor pools
++ verb->motor routes (text_minimal_isolation build_biological_brain_regions --enable-direct-verb-to-motor),
+but pre-wire the routes FIXED + transmission_gate-tagged + held CLOSED; to bind (go,north) OPEN gate
+verb_GO->motor_N; drive "go" alone -> does motor_N fire (bound) where STDP-grown weights "went silent" /
+were seed-fragile 5/20? Score with the permuted-mapping anti-cheat (TRUE mapping rank 1/24). Then Option C
+(low-rank J_cc + sum s_k u_k v_k^T) for sequencing. ALSO available: Track 3 (assembly-generation + grammar
+conversational artifact, CPU). Honest: spiking-faithful not fully-biological; phasor binding is a hypothesis;
+fluent generation is a documented wall.
 
 ## >>> PHASOR FHRR = UNIFIED-SUBSTRATE CANDIDATE (2026-06-03 earlier) <<<
 

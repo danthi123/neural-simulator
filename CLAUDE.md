@@ -412,6 +412,20 @@ Key new infrastructure:
 > (small bridge change, not yet implemented). The cheat-5 v1 NEGATIVE
 > result (2026-04-28) was caused by missing this distinction; v2 fixes
 > it via zero-init.
+>
+> **UPDATE (2026-06-03): the complement now EXISTS — `transmission_gate`.**
+> `RegionPathway(transmission_gate="name")` + `bridge.set_transmission_gate(name, value)`
+> scale a pathway's effective synaptic **CURRENT** in [0,1] at runtime
+> (the `cp_transmission_gain` per-synapse multiplier in `_run_one_simulation_step`,
+> mirroring `cp_plasticity_rate_gain` but on current, not weight updates).
+> Pre-wire a route with a fixed weight, hold it CLOSED (gate=0, no current,
+> no STDP cold-start), OPEN it on command → **thalamocortical dynamical
+> gating**: binding = which gate is open, not which weight grew
+> (Logiaco-Abbott-Escola 2021). Validated in spikes
+> (`tests/test_transmission_gate.py`): closed → target silent; open → target
+> fires; re-binding reroutes the same source with **zero weight change**,
+> where grown weights could not. Default `None` = always-on (additive, zero
+> overhead unused). See `2026-06-03-deep-research-surpassing-the-blockers-synthesis.md`.
 
 Curriculum: phase 1 corticostriatal plastic + input layers frozen; phase 2
 cortex frozen (or partial) + input layers thawed. Biologically: real

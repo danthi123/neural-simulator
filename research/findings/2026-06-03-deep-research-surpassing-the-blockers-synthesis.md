@@ -149,4 +149,17 @@ construction) — it is the *gate-keeper*, not the proof. The genuinely decisive
 on the actual compose problem (the v16 `verb→motor` binding that "went silent" with grown weights). That is a
 multi-hour bridge build — the next big, owner-steerable step.
 
+**Track 2 — the gate primitive is now SHIPPED + validated in spikes.** Beyond the toy H1, the per-pathway
+multiplicative **transmission gate** is implemented in the spiking bridge (`RegionPathway.transmission_gate`
++ `bridge.set_transmission_gate`; `cp_transmission_gain` scales effective synaptic CURRENT in the step,
+mirroring the plasticity-gate machinery; the complement CLAUDE.md flagged as unimplemented). Validated in
+genuine spiking dynamics (`tests/test_transmission_gate.py`, 4 tests): a closed gate leaves the target SILENT
+(0.000, no current despite a non-zero weight); opening it drives the target (0.30); and **re-binding** (close
+route A→B, open A→C) reroutes the same source to a different target with **zero weight change** (sum|W|
+unchanged) — the thalamocortical hypothesis in spikes, where grown weights could not re-bind. Regression-clean
+(53 core CPU tests). **Next:** apply it to the actual v16 `verb→motor` compose problem — pre-wire the routes
+fixed + gated-closed, open the (verb, motor) gate to bind, and test whether gated routing binds go→north etc.
+where STDP-grown weights "went silent" (the 5/20 seed-fragile result). Then Option C (low-rank `J_cc + Σ
+s_k u_k vₖᵀ`) for sequencing.
+
 The Track-3 (assembly-generation + grammar-over-composition) lever remains the conversational-artifact bet.
