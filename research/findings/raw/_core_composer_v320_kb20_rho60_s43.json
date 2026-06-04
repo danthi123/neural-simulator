@@ -1,0 +1,17 @@
+{
+  "seed": 43,
+  "vocab": 320,
+  "proj_dim": 800,
+  "n_facts": 20,
+  "kb_size": 20,
+  "rho": 0.6,
+  "between_cos_mean": 0.6001537871374764,
+  "between_cos_max": 0.6656005833098503,
+  "what_correct": 20,
+  "who_correct": 20,
+  "abstain_correct": 20,
+  "abstain_total": 20,
+  "what_rate": 1.0,
+  "who_rate": 1.0,
+  "abstain_rate": 1.0
+}

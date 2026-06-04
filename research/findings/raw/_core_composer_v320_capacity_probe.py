@@ -41,7 +41,10 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--vocab", type=int, default=320)
     ap.add_argument("--proj-dim", type=int, default=800)
-    ap.add_argument("--n-facts", type=int, default=12)
+    ap.add_argument("--n-facts", type=int, default=12,
+                    help="number of independent single-fact trials (kb-size=1 mode)")
+    ap.add_argument("--kb-size", type=int, default=1,
+                    help="facts per KB; >1 stores ONE multi-fact KB and queries each (relational-memory axis)")
     ap.add_argument("--rho", type=float, default=0.0,
                     help="shared-component correlation; 0=near-orthogonal (easy), ~0.6=denoise64-like (hard)")
     ap.add_argument("--out", default=None)
@@ -63,26 +66,61 @@ def main():
 
     rng = np.random.default_rng(args.seed + 1)
     ok_w = ok_a = ok_abs = tot_abs = 0
-    for _ in range(args.n_facts):
-        a, ac, p = (str(x) for x in rng.choice(c.words, size=3, replace=False))
+    kb_size = max(1, args.kb_size)
+
+    if kb_size > 1:
+        # relational-memory axis: store ONE KB of kb_size facts with DISTINCT (agent,action) cues, query each.
+        facts, cues = [], set()
+        guard = 0
+        while len(facts) < kb_size and guard < 100000:
+            guard += 1
+            a, ac, p = (str(x) for x in rng.choice(c.words, size=3, replace=False))
+            if (a, ac) in cues:
+                continue
+            cues.add((a, ac))
+            facts.append((a, ac, p))
         c.kb = []
-        c.store(a, ac, p)
-        ok_w += int(c.query_patient(a, ac) == p)
-        ok_a += int(c.query_agent(ac, p) == a)
-        # no-confab moat: a never-stored agent+action -> must abstain (None)
-        a2, ac2 = (str(x) for x in rng.choice(c.words, size=2, replace=False))
-        if a2 != a:
+        for a, ac, p in facts:
+            c.store(a, ac, p)
+        for a, ac, p in facts:
+            ok_w += int(c.query_patient(a, ac) == p)
+            ok_a += int(c.query_agent(ac, p) == a)
+        # no-confab moat: kb_size never-stored cues -> must abstain
+        for _ in range(kb_size):
+            g2 = 0
+            a2 = ac2 = None
+            while g2 < 1000:
+                g2 += 1
+                a2, ac2 = (str(x) for x in rng.choice(c.words, size=2, replace=False))
+                if (a2, ac2) not in cues:
+                    break
             ok_abs += int(c.query_patient(a2, ac2) is None)
             tot_abs += 1
+        n_eval = len(facts)
+    else:
+        # vocab axis: n_facts independent single-fact trials (fresh KB each).
+        for _ in range(args.n_facts):
+            a, ac, p = (str(x) for x in rng.choice(c.words, size=3, replace=False))
+            c.kb = []
+            c.store(a, ac, p)
+            ok_w += int(c.query_patient(a, ac) == p)
+            ok_a += int(c.query_agent(ac, p) == a)
+            # no-confab moat: a never-stored agent+action -> must abstain (None)
+            a2, ac2 = (str(x) for x in rng.choice(c.words, size=2, replace=False))
+            if a2 != a:
+                ok_abs += int(c.query_patient(a2, ac2) is None)
+                tot_abs += 1
+        n_eval = args.n_facts
 
     res = {
-        "seed": args.seed, "vocab": len(c.words), "proj_dim": d, "n_facts": args.n_facts, "rho": args.rho,
+        "seed": args.seed, "vocab": len(c.words), "proj_dim": d, "n_facts": n_eval,
+        "kb_size": kb_size, "rho": args.rho,
         "between_cos_mean": float(bc.mean()), "between_cos_max": float(bc.max()),
         "what_correct": ok_w, "who_correct": ok_a, "abstain_correct": ok_abs, "abstain_total": tot_abs,
-        "what_rate": ok_w / args.n_facts, "who_rate": ok_a / args.n_facts,
+        "what_rate": ok_w / n_eval, "who_rate": ok_a / n_eval,
         "abstain_rate": (ok_abs / tot_abs) if tot_abs else None,
     }
-    print(f"[probe] what {ok_w}/{args.n_facts}  who {ok_a}/{args.n_facts}  abstain {ok_abs}/{tot_abs}")
+    print(f"[probe] kb_size={kb_size}  what {ok_w}/{n_eval}  who {ok_a}/{n_eval}  abstain {ok_abs}/{tot_abs}")
     print("[probe] " + json.dumps(res))
     if args.out:
         with open(args.out, "w", encoding="utf-8") as f:

@@ -31,6 +31,23 @@ codes' ~0.70 correlation, where naive cleanup would be expected to confuse 320 h
 at 100% across all three seeds, and critically the **abstention threshold transfers**: the no-confab moat (return
 `None` when no stored fact's agent matches the cue) is perfect at 320 concepts without recalibration.
 
+## Relational-memory axis: a 20-fact KB at V=320 (multi-seed, hard codes)
+
+The K=1 rows above vary the vocabulary at single-fact load. The complementary axis is **relational-memory depth**:
+store a full knowledge base of distinct facts in ONE composer and query each. At V=320, hard codes (ρ=0.6), a
+**20-fact KB** with distinct (agent, action) cues:
+
+| seed | between-cos | what (each fact's patient) | who (each fact's agent) | abstain (20 unstored cues) |
+|---|---|---|---|---|
+| 42 | 0.601 | 20/20 | 20/20 | 20/20 |
+| 43 | 0.600 | 20/20 | 20/20 | 20/20 |
+| 44 | 0.598 | 20/20 | 20/20 | 20/20 |
+
+All three seeds: every stored fact recalled correctly (who AND what), and every one of 20 never-stored cues
+correctly abstained — no cross-fact confusion and no confabulation at a 20-fact KB on 320-word vocab. This matches
+the separate n=113 result ("KB ≥30 facts perfect at 320 scale") and confirms the **promoted** module carries it.
+(`research/findings/raw/_core_composer_v320_kb20_rho60_s{42,43,44}.json`.)
+
 ## Honest scope (what this is and isn't)
 
 - **Is:** the COMPOSITION layer (spiking coincidence bind/unbind + cleanup + the abstention moat) of the promoted
