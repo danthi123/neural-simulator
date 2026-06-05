@@ -595,6 +595,20 @@ attributes use a feature-binding ATTRIBUTE role-tag: **1-attribute RESOLVES, 2-a
 documented K=5-load BOUNDARY**, and the FHRR F=3 resonator stays a **numpy reference**. Vocab is the
 validated probe scale (V=16); production 320-concept on the brain agent is a follow-on.
 
+**COMPOSER CLEANUP SHORTCUT CLEARED — spiking NEF cleanup (2026-06-05):** the composer's last numpy readout
+(the `np.argmax([concepts[w]·est])` nearest-concept cleanup in `unbind`/`_render_filler`) now has a validated,
+fully-spiking, biology-grounded replacement: the **NEF thresholded cleanup** (Stewart-Tang-Eliasmith 2011, the
+cleanup inside Spaun). Opt-in `CoreSimComposer(enable_spiking_cleanup=True)` builds a persistent cleanup bridge from
+the codebook (operating point `NEF_CLEANUP_OP`: input-normalized matched filter + per-concept firing threshold placed
+so off-target emits ZERO spikes + n_per=12 noise averaging) and routes the cleanup through it; **== numpy on the
+capability matrix at production D=2048 multi-seed (27/27 seeds 42/43/44, no regression, NO sim/ edits).** Reached via
+owner-steered deep research after 3 hand-tuned mechanisms plateaued/failed (divisive-norm 0.84, two-stage 0.91,
+hand-WTA 0.13 — the last violated the Rutishauser α>1 WTA-stability condition). Key insight: a rate readout is a
+LINEAR reconstructor (off-target leak caps it ~0.91); a placed threshold discretizes it to argmax parity. The grounded
+agent enables it; numpy stays the fast default. Findings: `2026-06-05-composer-cleanup-NEF-GO.md` +
+`-spiking-cleanup-memory-literature-synthesis.md`. The deeper **(B) memory shortcut** (the numpy-held bound fact +
+numpy superposition/opponency) is the remaining full-clear piece (options: `docs/plans/2026-06-05-composer-B-substrate-held-memory-options.md`).
+
 **ONE-BRIDGE UNIFICATION COMPLETE (2026-06-04):** the three conversational regions now run as disjoint
 persistent slices on ONE interacting `SimulationBridge` — `research/runners/unified_brain_bridge.py`
 (`UnifiedBrainBridge`). Step 1: parser + composer share the bridge (no capability regression at
