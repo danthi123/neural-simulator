@@ -104,12 +104,18 @@ Carandini-Heeger divisive normalization, NOT WTA which HURTS). The subagent (ran
 (`research/findings/raw/_divnorm_*.py` + `_spiking_cleanup_divnorm_probe.py`) + made a KEY discovery: g_e-vs-g_i
 routing keys on the PRESYNAPTIC inhibitory TRAIT (cp_traits ∈ inhibitory_trait_indices), NOT the wiring conn_type
 string — so the prior WTA's "I_TO_E" weights wrongly added to EXCITATION (why WTA hurt). The mechanism SANITY PASSES
-(an inhibitory-trait FS pool produces genuine divisive, rank-preserving, drive-scaled shunting). EXACT next concrete:
-the seed-42 operating-point SWEEP is running (`_divnorm_sweep.py --seed 42`, bg b3z961uhj, out
-`_divnorm_sweep_seed42.json`); when it lands, pick the best divnorm operating point, run the MULTISEED decision
-(`_divnorm_multiseed.py` at the PRODUCTION proj_dim=2048, seeds 42/43/44) → HARD GATE: GO (build the cleanup into the
-composer, replace np.argmax) if divnorm reaches numpy parity; NEGATIVE honest boundary (disclosed readout stands, do
-NOT ship sub-parity) otherwise. Commit probe+test+finding both remotes. THEN (B) substrate-held memory de-risk +
+(an inhibitory-trait FS pool produces genuine divisive, rank-preserving, drive-scaled shunting). PROGRESS (leaning
+NEGATIVE, smell-test paid off): seed-42 sweep found divnorm reaches 1.000 = numpy parity (op w_match=60 bias=-600
+w_cfs=8 w_fs=8 einh=-75) vs nodiv 0.956 — BUT the multiseed at THAT op OVERFITS: held-out seed 43 collapses to 0.507
+(nodiv 0.275), seed 44 0.986, mean **0.831, margin -0.169** from numpy 1.000 (cue_cos ~0.31 = genuine production
+noise; numpy=1.000 all seeds). divnorm DOES lift over nodiv (+9pp mean, +23pp seed 43) but the FIXED absolute
+threshold (bias) does not transfer across seeds (seed-43 est magnitude differs → miscalibrated). EXACT next concrete:
+the FAIR test — is there ONE robust operating point high on ALL 3 seeds? seed 43+44 sweeps RUNNING (bg b7cnebk05,
+out `_divnorm_sweep_seed4{3,4}.json`); aggregator `_divnorm_robust_agg.py` READY (finds the op maximizing
+min-across-seeds). When sweeps land: run the aggregator → HARD GATE: GO if the robust worst-case reaches numpy parity
+(min ≥ ~0.95); if even the best robust op leaves a seed well below parity → ONE mechanism-refinement attempt
+(STRONGER/input normalization for scale-invariant threshold — the root cause) OR honest NEGATIVE (disclosed readout
+stands, do NOT ship sub-parity). Commit probe+test+finding both remotes. THEN (B) substrate-held memory de-risk +
 build. HARD RULES unchanged (never stall on a promise — next-action tool call same turn; honest negatives are the
 deliverable; both remotes every outcome; GPU/CuPy real runs; never weaken frozen bars / the no-confab moat;
 reuse-by-import NO sim/ edits; owner steers major milestones).
