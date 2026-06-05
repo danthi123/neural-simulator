@@ -33,6 +33,57 @@ def test_rf_complex_synapse_single_bind():
     assert err < 0.05, f"complex-synapse bind error {err:.4f}; post phase {phases[1]:.4f} expected {(pa+pb)%1.0:.4f}"
 
 
+def test_rf_complex_synapse_bundle():
+    """Gate 2: several pre phasors driving one post through unit complex synapses -> the post resonates their SUM
+    (the FHRR bundle = phase of the complex sum), computed through synapses."""
+    pa, pb, pc = 0.1, 0.4, 0.7
+    za, zb, zc = (np.exp(2j * np.pi * p) for p in (pa, pb, pc))
+    bridge = _build_rf_bridge(4)  # pre 0,1,2 -> post 3 via unit synapses
+    bridge.rf_set_complex_weights([(3, 0, 1.0), (3, 1, 1.0), (3, 2, 1.0)])
+    bridge.rf_kick(np.array([za, zb, zc, 0.0 + 0.0j]), lam=0.0)
+    for _ in range(CYCLE_STEPS + 8):
+        bridge._run_one_simulation_step()
+    phases = np.asarray(bridge.rf_read_phases())
+    expected = (np.angle(za + zb + zc) / (2.0 * np.pi)) % 1.0
+    assert float(_circ_dist(phases[3], expected)) < 0.05, f"bundle phase {phases[3]:.4f} != {expected:.4f}"
+
+
+def test_rf_complex_synapse_roundtrip():
+    """Gate 3 (layer-(a) core verdict): bind a (cue, filler) then UNBIND -- both THROUGH complex synapses -- recovers
+    the filler. The bind/unbind are elementwise (bound[k]=cue[k]*filler[k]) so each is a per-dimension DIAGONAL
+    complex synapse. Two bridge runs (bind, unbind); cleanup = phase-cosine similarity to the filler vocabulary."""
+    D = 32
+    rng = np.random.default_rng(3)
+    cue = rng.uniform(0.0, 1.0, D)
+    fillers = [rng.uniform(0.0, 1.0, D) for _ in range(8)]
+    target = 3
+    zc = np.exp(2j * np.pi * cue)
+    zf = np.exp(2j * np.pi * fillers[target])
+
+    # bind: cue (0..D-1) -> bound (D..2D-1) via a diagonal synapse weighted by the filler phasor.
+    bind_bridge = _build_rf_bridge(2 * D)
+    bind_bridge.rf_set_complex_weights([(D + k, k, zf[k]) for k in range(D)])
+    kick = np.zeros(2 * D, dtype=np.complex128)
+    kick[:D] = zc
+    bind_bridge.rf_kick(kick, lam=0.0)
+    for _ in range(CYCLE_STEPS + 8):
+        bind_bridge._run_one_simulation_step()
+    bound_phases = np.asarray(bind_bridge.rf_read_phases())[D:]
+
+    # unbind: bound -> recovered via a diagonal synapse weighted by conj(cue phasor).
+    unbind_bridge = _build_rf_bridge(2 * D)
+    unbind_bridge.rf_set_complex_weights([(D + k, k, np.conj(zc[k])) for k in range(D)])
+    kick2 = np.zeros(2 * D, dtype=np.complex128)
+    kick2[:D] = np.exp(2j * np.pi * bound_phases)
+    unbind_bridge.rf_kick(kick2, lam=0.0)
+    for _ in range(CYCLE_STEPS + 8):
+        unbind_bridge._run_one_simulation_step()
+    recovered = np.asarray(unbind_bridge.rf_read_phases())[D:]
+
+    sims = [float(np.mean(np.cos(2.0 * np.pi * (recovered - f)))) for f in fillers]
+    assert int(np.argmax(sims)) == target, f"recovered filler {int(np.argmax(sims))} != target {target}; sims={np.round(sims,3)}"
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v"]))
