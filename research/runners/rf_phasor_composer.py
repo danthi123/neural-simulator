@@ -76,10 +76,7 @@ class RFPhasorComposer:
         if b is None:
             b = _build_rf_bridge(n, self.seed)
             self._bridge_cache[n] = b
-        if getattr(b, "cp_rf_w_re", None) is not None:
-            b.cp_rf_w_re[:] = 0.0
-            b.cp_rf_w_im[:] = 0.0
-        b.rf_set_complex_weights(conns)
+        b.rf_set_complex_weights(conns)   # (c-opt) builds the sparse complex weights FRESH each op -> replaces; no reset needed
         b.rf_kick(kick, period=self.period, lam=0.0)
         for _ in range(self.period + 8):
             b._run_one_simulation_step()

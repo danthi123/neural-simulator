@@ -4915,20 +4915,23 @@ class SimulationBridge:
         return ((period - spike_step) % period) / float(period)
 
     def rf_set_complex_weights(self, connections):
-        """Install complex synaptic weights for the resonate-and-fire neurons (FHRR bind THROUGH synapses).
-        `connections` is a list of (post_idx, pre_idx, complex_weight); each step the complex synaptic input
+        """Install complex synaptic weights for the resonate-and-fire neurons (FHRR bind THROUGH synapses) as a
+        SPARSE complex matrix (csr `cp_rf_w_re` + `cp_rf_w_im`) built FRESH from `connections` (a list of
+        (post_idx, pre_idx, complex_weight)) -- REPLACES any prior weights. Each step the complex synaptic input
         u_i = sum_j W_ij z_j is added to neuron i's complex state, so binding phasor_a*phasor_b is phasor_a passing
-        through a synapse whose complex weight is phasor_b (complex multiply = phase sum). Dense N x N for the
-        de-risk (production would use a sparse complex matrix). See
-        docs/plans/2026-06-05-full-fhrr-on-bridge-feature-plan.md."""
+        through a synapse whose complex weight is phasor_b (complex multiply = phase sum). The matvec `W @ z` in the
+        RF branch is then O(nnz) -- the diagonal bind/unbind + unit bundle synapses are O(D) sparse, not O(N^2) --
+        which is what makes 320-concept production scale (D=512) tractable. The matvec line is identical for
+        sparse/dense (`matrix @ vector`). See docs/plans/2026-06-05-full-fhrr-on-bridge-feature-plan.md."""
         n = self.core_config.num_neurons
-        if getattr(self, "cp_rf_w_re", None) is None:
-            self.cp_rf_w_re = cp.zeros((n, n), dtype=cp.float64)
-            self.cp_rf_w_im = cp.zeros((n, n), dtype=cp.float64)
-        for (post, pre, w) in connections:
-            w = complex(w)
-            self.cp_rf_w_re[int(post), int(pre)] = float(w.real)
-            self.cp_rf_w_im[int(post), int(pre)] = float(w.imag)
+        m = len(connections)
+        rows = np.fromiter((int(post) for (post, pre, w) in connections), dtype=np.int32, count=m)
+        cols = np.fromiter((int(pre) for (post, pre, w) in connections), dtype=np.int32, count=m)
+        w_re = np.fromiter((float(complex(w).real) for (post, pre, w) in connections), dtype=np.float64, count=m)
+        w_im = np.fromiter((float(complex(w).imag) for (post, pre, w) in connections), dtype=np.float64, count=m)
+        r = cp.asarray(rows); c = cp.asarray(cols)
+        self.cp_rf_w_re = csp.csr_matrix((cp.asarray(w_re), (r, c)), shape=(n, n))
+        self.cp_rf_w_im = csp.csr_matrix((cp.asarray(w_im), (r, c)), shape=(n, n))
 
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""

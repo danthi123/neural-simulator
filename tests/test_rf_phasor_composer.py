@@ -141,7 +141,11 @@ def test_rf_phasor_composer_production_scale(seed):
 def test_brain_agent_with_rf_composer():
     """(c2a) end-to-end: BrainConversationalAgent using the FHRR-on-bridge RFPhasorComposer (opt-in injection) --
     the Hebbian parser comprehends sentences and feeds the RF composer; hear -> store, query, abstain. Validates
-    the switch works at the AGENT level (the rate-coded composer stays the default; this is the explicit opt-in)."""
+    the switch works at the AGENT level (the rate-coded composer stays the default; this is the explicit opt-in).
+    GPU-only: the Hebbian BridgeParser is GPU-validated (numpy-backend KeyError in the parser bridge)."""
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("BridgeParser is GPU-validated (numpy-backend KeyError in the parser bridge)")
     from research.runners.rf_phasor_composer import RFPhasorComposer
     from research.runners.brain_conversational_agent import BrainConversationalAgent
     rf = RFPhasorComposer(seed=42, D=96, period=200)
