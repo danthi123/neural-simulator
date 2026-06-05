@@ -18,7 +18,7 @@ from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConf
 from sim.enums import NeuronModel
 from sim.bridge import SimulationBridge
 
-ROLES = ("agent", "action", "patient")
+ROLES = ("agent", "action", "patient", "polarity")
 DEFAULT_VOCAB = ["dog", "cat", "go", "run", "stop", "look", "north", "south", "east", "west", "apple", "river"]
 
 
@@ -53,6 +53,10 @@ class RFPhasorComposer:
         rng = np.random.default_rng(seed)
         # phasor codes: phases in [0,1)^D per concept + per role (deterministic per seed)
         self.concepts = {w: rng.uniform(0.0, 1.0, self.D) for w in self.words}
+        # AFFIRM/NEGATE polarity fillers (phasor codes; cleaned up only against pol_words, not the main vocab)
+        self.pol_words = ["AFFIRM", "NEGATE"]
+        for tag in self.pol_words:
+            self.concepts[tag] = rng.uniform(0.0, 1.0, self.D)
         self.roles = {r: rng.uniform(0.0, 1.0, self.D) for r in ROLES}
         self.kb = []  # (fact_dict, composite_phases)
 
@@ -109,12 +113,14 @@ class RFPhasorComposer:
         sims = [float(np.mean(np.cos(2.0 * np.pi * (rec_phases - self.concepts[w])))) for w in words]
         return words[int(np.argmax(sims))]
 
-    def unbind(self, composite_phases, role):
-        return self._cleanup(self._unbind_phases(composite_phases, role))
+    def unbind(self, composite_phases, role, words=None):
+        return self._cleanup(self._unbind_phases(composite_phases, role), words)
 
     # --- conversational API (mirrors CoreSimComposer; the no-confab moat preserved) ---
-    def store(self, agent, action, patient):
+    def store(self, agent, action, patient, polarity=None):
         fact = {"agent": agent, "action": action, "patient": patient}
+        if polarity is not None:
+            fact["polarity"] = polarity      # a bound AFFIRM/NEGATE tag (extra binding -> more load)
         self.kb.append((fact, self._encode(fact)))
 
     def query_agent(self, action, patient):
@@ -130,3 +136,12 @@ class RFPhasorComposer:
             if self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action:
                 return self.unbind(comp, "patient")
         return None
+
+    def ask_yes_no(self, agent, action, patient):
+        """'does <agent> <action> <patient>?' -> 'yes'/'no'/'unknown' via the bound AFFIRM/NEGATE polarity tag.
+        Matches the full SVO; 'unknown' (abstention) when no stored fact matches."""
+        for fact, comp in self.kb:
+            if (self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action
+                    and self.unbind(comp, "patient") == patient):
+                return "yes" if self.unbind(comp, "polarity", self.pol_words) == "AFFIRM" else "no"
+        return "unknown"

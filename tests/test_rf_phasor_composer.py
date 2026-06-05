@@ -27,6 +27,20 @@ def test_rf_phasor_composer_who_what_abstain(seed):
     assert comp.query_patient("dog", "run") is None        # agent=dog but action=run is not a stored pair
 
 
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_negation_yesno(seed):
+    """b.2: a bound AFFIRM/NEGATE polarity tag -> ask_yes_no returns yes/no via the unbound tag; 'unknown'
+    (abstention) when no stored fact matches. A 4-role bind (SVO + polarity) through the RF complex synapses."""
+    comp = RFPhasorComposer(seed=seed, D=64, period=400)
+    comp.store("dog", "go", "north", polarity="AFFIRM")
+    comp.store("cat", "go", "south", polarity="NEGATE")
+
+    assert comp.ask_yes_no("dog", "go", "north") == "yes"
+    assert comp.ask_yes_no("cat", "go", "south") == "no"
+    # abstention: no stored fact matches this full SVO cue
+    assert comp.ask_yes_no("dog", "go", "south") == "unknown"
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))
