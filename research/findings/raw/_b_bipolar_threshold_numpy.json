@@ -1,0 +1,32 @@
+{
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "n_total": 13,
+      "graded_recovery": 1.0,
+      "bipolar_recovery": 1.0,
+      "bipolar_eq_graded": 1.0,
+      "mean_bipolar_signed_cos": 0.7099210775634273
+    },
+    "43": {
+      "seed": 43,
+      "n_total": 13,
+      "graded_recovery": 1.0,
+      "bipolar_recovery": 1.0,
+      "bipolar_eq_graded": 1.0,
+      "mean_bipolar_signed_cos": 0.7400595331573488
+    },
+    "44": {
+      "seed": 44,
+      "n_total": 13,
+      "graded_recovery": 1.0,
+      "bipolar_recovery": 1.0,
+      "bipolar_eq_graded": 1.0,
+      "mean_bipolar_signed_cos": 0.7298954470688589
+    }
+  },
+  "min_graded": 1.0,
+  "min_bipolar": 1.0,
+  "mean_bipolar": 1.0,
+  "verdict": "GO"
+}
