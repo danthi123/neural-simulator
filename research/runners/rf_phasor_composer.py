@@ -12,6 +12,8 @@ filler via a DIAGONAL complex synapse (weight = the role phasor); bundle = unit 
 opponency); unbind = conj diagonal synapse; cleanup = phase-cosine argmax. Abstention (the no-confab moat): the
 relational query returns None when no stored fact's cue roles match (architecture-preserved).
 """
+from collections import namedtuple
+
 import numpy as np
 
 from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
@@ -21,6 +23,8 @@ from sim.bridge import SimulationBridge
 ROLES = ("agent", "action", "patient", "polarity", "attribute")
 DEFAULT_VOCAB = ["dog", "cat", "go", "run", "stop", "look", "north", "south", "east", "west", "apple", "river",
                  "big", "small", "hot", "cold"]
+# A recursive SVO clause that can be a filler ('dog look (cat go north)'). Mirrors core_sim_composition.Clause.
+Clause = namedtuple("Clause", ["agent", "action", "patient"])
 
 
 def _build_rf_bridge(n, seed=42):
@@ -95,9 +99,26 @@ class RFPhasorComposer:
             kick[l * D:(l + 1) * D] = self._to_phasor(phase_list[l])
         return self._resonate((L + 1) * D, conns, kick)[L * D:]
 
+    def _filler_phases(self, filler):
+        """The phasor phases to bind for a filler: a concept's code, OR (recursively) a Clause's bound composite."""
+        if isinstance(filler, Clause):
+            return self._encode({"agent": filler.agent, "action": filler.action, "patient": filler.patient})
+        return self.concepts[filler]
+
     def _encode(self, fact):
-        bounds = [self._bind(self.roles[r], self.concepts[fact[r]]) for r in ROLES if r in fact]
+        bounds = [self._bind(self.roles[r], self._filler_phases(fact[r])) for r in ROLES if r in fact]
         return self._bundle(bounds) if len(bounds) > 1 else bounds[0]
+
+    def _render(self, comp_phases, role, stored):
+        """Render `role`'s filler from a composite, FROM THE RF UNBIND. `stored` (a word or Clause) ROUTES
+        flat-cleanup vs recursive clause-decode; the content is decoded from the substrate, not the stored labels."""
+        rec = self._unbind_phases(comp_phases, role)
+        if isinstance(stored, Clause):
+            a = self._cleanup(self._unbind_phases(rec, "agent"))
+            ac = self._cleanup(self._unbind_phases(rec, "action"))
+            pt = self._cleanup(self._unbind_phases(rec, "patient"))
+            return f"{a} {ac} {pt}"
+        return self._cleanup(rec)
 
     def _unbind_phases(self, composite_phases, role):
         """recovered = conj(role_phasor) (x) composite, via a conj diagonal complex synapse."""
@@ -120,7 +141,9 @@ class RFPhasorComposer:
     # --- conversational API (mirrors CoreSimComposer; the no-confab moat preserved) ---
     def store(self, agent, action, patient, polarity=None):
         fact = {"agent": agent, "action": action}
-        if isinstance(patient, tuple):            # ('big', 'apple') -- an attributed entity (1-attribute)
+        if isinstance(patient, Clause):            # a recursive clause filler (check BEFORE tuple: Clause IS a tuple)
+            fact["patient"] = patient
+        elif isinstance(patient, tuple):           # ('big', 'apple') -- an attributed entity (1-attribute)
             adj, noun = patient
             fact["patient"] = noun
             fact["attribute"] = adj
@@ -143,7 +166,7 @@ class RFPhasorComposer:
         the words are decoded from the RF unbind."""
         for fact, comp in self.kb:
             if self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action:
-                noun = self.unbind(comp, "patient")
+                noun = self._render(comp, "patient", fact["patient"])   # a word OR a recursive Clause
                 if "attribute" in fact:
                     return f"{self.unbind(comp, 'attribute')} {noun}"
                 return noun

@@ -57,6 +57,20 @@ def test_rf_phasor_composer_one_attribute(seed):
     assert comp.query_patient("cat", "look") is None
 
 
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_clause(seed):
+    """b.3b: a recursive CLAUSE as a filler ('dog look (cat go north)') -- the clause's bound composite is the
+    patient filler; the query renders the nested SVO, decoded from the RF unbind (double-nesting through the RF
+    complex synapses). D=128 for the nesting SNR."""
+    from research.runners.rf_phasor_composer import Clause
+    comp = RFPhasorComposer(seed=seed, D=128, period=400)
+    comp.store("dog", "look", Clause("cat", "go", "north"))
+    comp.store("river", "stop", "apple")
+
+    assert comp.query_patient("dog", "look") == "cat go north"   # the nested clause renders
+    assert comp.query_patient("river", "stop") == "apple"          # a flat patient still works
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))
