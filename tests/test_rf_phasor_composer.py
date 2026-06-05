@@ -88,6 +88,32 @@ def test_rf_phasor_composer_dialogue(seed):
     assert comp.elaborate("apple") is None    # apple is in no stored fact -> unconnected (abstention)
 
 
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_full_matrix_at_scale(seed):
+    """Layer (c1): the full capability matrix at a larger fact set (5 facts) -- who/what Q&A, abstention, negation,
+    one-attribute, generation -- multi-seed, mirroring the rate-composer's capability bar. D=96 for the 5-fact load."""
+    comp = RFPhasorComposer(seed=seed, D=96, period=400)
+    comp.store("dog", "go", "north")
+    comp.store("cat", "run", "south")
+    comp.store("river", "look", ("big", "apple"))           # one-attribute
+    comp.store("dog", "stop", "east", polarity="AFFIRM")
+    comp.store("cat", "look", "west", polarity="NEGATE")
+
+    # who/what (action disambiguates the two dog/cat facts)
+    assert comp.query_agent("go", "north") == "dog"
+    assert comp.query_patient("cat", "run") == "south"
+    assert comp.query_patient("river", "look") == "big apple"      # one-attribute resolves at scale
+    # generation (river is a unique agent)
+    assert comp.render_fact("river") == "river look big apple"
+    # negation / yes-no
+    assert comp.ask_yes_no("dog", "stop", "east") == "yes"
+    assert comp.ask_yes_no("cat", "look", "west") == "no"
+    # abstention (the no-confab moat) at scale
+    assert comp.query_agent("go", "south") is None
+    assert comp.ask_yes_no("dog", "go", "west") == "unknown"
+    assert comp.render_fact("apple") is None                       # apple is not an agent
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))

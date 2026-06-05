@@ -183,6 +183,20 @@ class RFPhasorComposer:
                 return "yes" if self.unbind(comp, "polarity", self.pol_words) == "AFFIRM" else "no"
         return "unknown"
 
+    def render_fact(self, agent):
+        """Generation: render a full stored sentence whose agent matches `agent` -- e.g. 'dog go north' (an
+        attributed patient 'big apple' or a nested clause renders too). The action + patient are DECODED from the
+        RF unbind (not the stored labels); None if no fact's agent matches (the no-confab moat -- no invented
+        sentence about an unknown subject)."""
+        for fact, comp in self.kb:
+            if self.unbind(comp, "agent") == agent:
+                ac = self.unbind(comp, "action")
+                pt = self._render(comp, "patient", fact["patient"])
+                if "attribute" in fact:
+                    pt = f"{self.unbind(comp, 'attribute')} {pt}"
+                return f"{agent} {ac} {pt}"
+        return None
+
     # --- dialogue planning (the dlPFC content-selection Control; architecture-independent: operates on the graph) ---
     def _assoc_graph(self):
         """An association graph (concept -> {concept: weight}) from the stored facts (agent/action/patient co-occur;
