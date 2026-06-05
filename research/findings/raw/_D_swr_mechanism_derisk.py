@@ -29,6 +29,18 @@ That reuses a known-good STDP+reward+propagation stack instead of debugging this
 THEN scale to the v16 concept-pool architecture + the 27.5% baseline. GPU for the real run; multi-seed; permuted-pair
 anti-cheat. (This minimal probe served its purpose: it isolated the mechanism -- the substrate learns, but directed
 timing-based consolidation needs the working three-factor reward path, not a from-scratch reward wiring.)
+
+CONFIRMED continuation plan (read `bio_three_factor.update_eligibility_and_weights`): the working three-factor is
+RUNNER-SIDE (eligibility array + dopamine per action, NOT the bridge's reward modulation -- which is why setting
+core_config.current_reward_signal did nothing). The update is COINCIDENCE-based: `elig[lang_active[src] &
+post_active[dst]] += 1; w += lr * elig * da_per_action[edge_action]`. Two implications: (1) reuse this exact function
+for the SWR co-replay weight update (proven, GPU-ready, multi-seed-validated). (2) it strengthens DIRECTED edges but
+SYMMETRICALLY (co-activity of A,B grows both A->B and B->A) -- so the PRIMARY testable hypothesis with this stack is
+"REPEATED SWR consolidation STRENGTHENS the A->B association pathway -> lifts cue-recall above 27.5%" (a
+consolidation-STRENGTH claim, McClelland CLS), and the temporal-ORDER asymmetry (swr vs swr_rev) is a SEPARATE,
+harder STDP-timing question this coincidence stack can't decide. Build the consolidation-strength de-risk first
+(repeated co-replay of associated pairs + positive dopamine -> stronger pathway -> cue-recall lift), reusing
+update_eligibility_and_weights; scale to v16 + the 27.5% baseline; permuted-pair anti-cheat; GPU multi-seed.
 """
 import numpy as np
 
