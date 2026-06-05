@@ -9,7 +9,19 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> CURRENT STATUS (2026-06-05, NEWEST — read THIS first): item-2 (A) cleanup — NEF thresholded cleanup is the RIGHT mechanism (literature-grounded), closing the last seed-robustness gap <<<
+## >>> CURRENT STATUS (2026-06-05, NEWEST — read THIS first): item-2 (A) cleanup shortcut CLEARED (spiking NEF cleanup == numpy at production D=2048 multi-seed, 27/27); (B) memory shortcut NEXT (research launched) <<<
+
+**(A) CLEARED (commit 84cd1d35).** The owner steered "ground the cleanup in the science"; a deep-research synthesis
+(`2026-06-05-spiking-cleanup-memory-literature-synthesis.md`) found the NEF thresholded cleanup (Stewart-Eliasmith,
+the Spaun cleanup) after 3 hand-tuned approaches failed/plateaued. De-risk GO (seed-robust 0.978/0.993,
+`2026-06-05-composer-cleanup-NEF-GO.md`); built into the composer opt-in (`enable_spiking_cleanup`, commit 18352657,
+NO sim/ edits, numpy default byte-unchanged, 13 on-brain tests green); production D=2048 multi-seed no-regression
+validation **27/27 spiking==numpy** (who/what/abstain/one-attr/yes-no/generation, seeds 42/43/44). The composer's numpy
+argmax cleanup now has a validated fully-spiking biology-grounded replacement at production parity. NEXT: (B)
+substrate-held memory (the numpy-held bound fact + numpy superposition/opponency) — the (B) deep-research pass is
+RUNNING (subagent; spiking associative memory / line-attractor State / engram fidelity / graded-pattern fidelity);
+options drafted `docs/plans/2026-06-05-composer-B-substrate-held-memory-options.md`. Then the de-risk (graded-fidelity)
++ build per the A pattern. Owner steers (B) milestone.
 
 Owner steered: stop parameter-guessing the cleanup; ground it in the science (catalog docs/biology.md + backing
 papers/Kandel). Deep-research synthesis (`2026-06-05-spiking-cleanup-memory-literature-synthesis.md`, commit cbe4e201)
