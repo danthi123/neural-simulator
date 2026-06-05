@@ -5,11 +5,31 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-06-04
+**Updated:** 2026-06-05
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> CURRENT STATUS (2026-06-04, NEWEST — read THIS first): B STEP 3 DONE (qualified MERGE) → B STRUCTURALLY COMPLETE — parser + composer + dlPFC are ONE interacting bridge <<<
+## >>> CURRENT STATUS (2026-06-05, NEWEST — read THIS first): item-2 (A) cleanup — NEF thresholded cleanup is the RIGHT mechanism (literature-grounded), closing the last seed-robustness gap <<<
+
+Owner steered: stop parameter-guessing the cleanup; ground it in the science (catalog docs/biology.md + backing
+papers/Kandel). Deep-research synthesis (`2026-06-05-spiking-cleanup-memory-literature-synthesis.md`, commit cbe4e201)
+diagnosed all 3 prior failures (rate-readout≠argmax; divnorm=Krotov-Hopfield Model-C n=2 plateau; hand-WTA violated
+Rutishauser α>1 stability) and prescribed the **NEF thresholded cleanup** (Stewart-Eliasmith, the Spaun cleanup):
+input-normalized matched filter + THRESHOLD placed so off-target→0 spikes + clean per-concept readout. RESULT: it
+BROKE the 0.78→0.84→0.91 plateau — **per-seed 1.000 = numpy parity** (seed 42, multiple ops); multi-seed best
+(bias=-700,w_match=120,n_per=6) = **mean 0.948, per-seed 42:0.978/43:0.978/44:0.889** (worst 0.889, seed 44 laggard),
+the best result of the whole arc. >>> EXACT NEXT: closing the last gap to seed-robust ≥0.95 via the synthesis's
+robustness levers — n_per↑ (more neurons/concept = less spike noise, "error ∝ 1/N") + finer threshold. RUNNING:
+`_spiking_cleanup_nef.py --n-per 12` (bg b4athqos6, out `_nef_nper12.json`, bias∈{-625,-700,-775} w_match120). HARD
+GATE: if worst-case ≥0.95 → **GO: build the NEF cleanup into the composer** (replace np.argmax in core_sim_composition
+`unbind`/`_render_filler`; reuse-by-import wrapper, NO sim/ edit), validate no-regression on the full capability
+matrix multi-seed, finish (A). If still <0.95 → more levers: n_per 20, Mechanism B (iterated high-β softmax /
+project-back, synthesis §3), input-norm tuning. The NEF mechanism is VALIDATED right (per-seed 1.000); only the
+fixed-op seed-robustness remains. AFTER (A): (B) substrate-held memory. Watchdog: read `_nef_nper12.json` verdict +
+continue per the gate. HARD RULES unchanged (honest negatives; both remotes; GPU/CuPy; never weaken frozen bars /
+no-confab moat; reuse-by-import NO sim/ edits; owner steers milestones).
+
+## >>> (prior) B STEP 3 DONE (qualified MERGE) → B STRUCTURALLY COMPLETE — parser + composer + dlPFC are ONE interacting bridge <<<
 
 **B step 3 (dlPFC merge) DONE.** Task 1 de-risk (commit f3bd7b34): the dlPFC NMDA-dependent working-memory latch
 SURVIVES dt=1.0 (post-drive 263–513% of the dt=0.5 rate, still NMDA-dependent) → MERGE; methodology catch — pinned
