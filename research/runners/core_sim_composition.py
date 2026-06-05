@@ -49,6 +49,15 @@ FILL_DRIVE = 2500.0
 RESET_STEPS = 20
 DEFAULT_RUN_STEPS = 150
 
+# Spiking NEF cleanup operating point (opt-in `enable_spiking_cleanup`). The literature-grounded thresholded
+# cleanup (Stewart-Tang-Eliasmith 2011, the Spaun cleanup) that reaches seed-robust numpy parity on the
+# composer's real noisy unbind est (worst-case 0.978, mean 0.993 across seeds 42/43/44 -- see the de-risk
+# finding research/findings/2026-06-05-composer-cleanup-NEF-GO.md and the probe
+# research/findings/raw/_spiking_cleanup_nef.py). Wired by-import (no duplicated NEF wiring); when the flag is
+# False the numpy argmax cleanup is byte-unchanged (the default path).
+NEF_CLEANUP_OP = dict(bias=-625.0, w_match=120.0, n_per=12, w_in_cfs=1.0, w_in_fs=10.0, n_in_fs=60,
+                      einh=-80.0, run_steps=400)
+
 
 def _center(v):
     v = np.asarray(v, dtype=np.float64); v = v - v.mean()
@@ -184,13 +193,24 @@ class CoreSimComposer:
     ROLES = ("agent", "action", "patient", "polarity", "attribute", "attribute2")
 
     def __init__(self, seed=42, proj_dim=800, coinc_bias=DEFAULT_BIAS, run_steps=DEFAULT_RUN_STEPS, concepts=None,
-                 decorrelate=False, shared_bridge=None, index_offset=0):
+                 decorrelate=False, shared_bridge=None, index_offset=0, enable_spiking_cleanup=False,
+                 nef_op=None):
         """`shared_bridge` / `index_offset`: when a shared SimulationBridge is given, wire the FIXED `"bind"`
         coincidence population onto it at `index_offset` (the composer slice) instead of building a private
         bridge. Because the shared bridge has global Hebbian learning ON, the bind population is tagged with a
         plasticity gate held at 0.0 so its fixed weights cannot drift (Task 1 finding). All spiking ops address
         neurons via `self.idx`, which is offset-shifted by `build_bind_bridge`, so nothing else changes. Default
-        (no shared_bridge) builds a standalone bridge with Hebbian OFF and no gate — byte-identical to before."""
+        (no shared_bridge) builds a standalone bridge with Hebbian OFF and no gate — byte-identical to before.
+
+        `enable_spiking_cleanup` (opt-in, default False): replace the numpy `argmax(concepts[w]·est)` cleanup in
+        `unbind` / `_render_filler` with the literature-grounded spiking NEF thresholded cleanup (Stewart-Tang-
+        Eliasmith 2011, the Spaun cleanup). When True, build ONE persistent NEF cleanup bridge from the
+        composer's own codebook (`self.concepts`/`self.words`) by importing `_spiking_cleanup_nef.build_nef_bridge`
+        + `cleanup` (no duplicated NEF wiring), and route the full-codebook cleanup through it: drive `est`
+        through the NEF bridge, read the per-concept summed firing, argmax -> the word. A passed sub-codebook
+        (e.g. the 2-code AFFIRM/NEGATE polarity set) falls back to numpy — the MAIN path is the full V-concept
+        cleanup. When False the numpy argmax cleanup is byte-unchanged. `nef_op` overrides the validated NEF
+        operating point (defaults to NEF_CLEANUP_OP)."""
         if concepts is None:
             if not os.path.exists(CACHE % seed):
                 raise FileNotFoundError(f"concept cache missing: {CACHE % seed}")
@@ -224,6 +244,21 @@ class CoreSimComposer:
                                                   index_offset=index_offset)
         self.kb = []   # list of (fact_dict, bound_onoff)
 
+        # Opt-in spiking NEF cleanup: build ONE persistent NEF cleanup bridge from this composer's own codebook
+        # (self.words order matches the argmax over self.words in unbind/_render_filler). Lazy import keeps the
+        # numpy default path import-clean (avoids the probe's import-time cycle back into this module).
+        self.enable_spiking_cleanup = bool(enable_spiking_cleanup)
+        self.nef_op = dict(NEF_CLEANUP_OP if nef_op is None else nef_op)
+        self._nef = None
+        if self.enable_spiking_cleanup:
+            from research.findings.raw._spiking_cleanup_nef import build_nef_bridge
+            code_mat = np.stack([self.concepts[w] for w in self.words])     # [V, D], self.words order
+            op = self.nef_op
+            nbridge, nidx, nM, nper = build_nef_bridge(
+                seed, code_mat, op["n_per"], op["w_match"], op["w_in_cfs"], op["w_in_fs"],
+                op["n_in_fs"], op["einh"])
+            self._nef = dict(bridge=nbridge, idx=nidx, M=nM, n_per=nper)
+
     # --- low-level spiking ops ---
     def _op(self, role_vec, fill_on_cur, fill_off_cur):
         return hadamard_spiking(self.bridge, self.idx, role_vec, fill_on_cur, fill_off_cur,
@@ -255,12 +290,25 @@ class CoreSimComposer:
         fon, foff = _scale_to_current(bound_onoff[0], bound_onoff[1], FILL_DRIVE)
         return self._op(self.roles[role], fon, foff)
 
+    def _cleanup(self, est, words):
+        """Clean up the signed unbind estimate `est` to the nearest word in `words`. The DEFAULT is the numpy
+        argmax over `concepts[w]·est`. With `enable_spiking_cleanup`, the FULL-codebook case (`words is
+        self.words`) routes through the persistent spiking NEF cleanup bridge (per-concept thresholded firing
+        -> argmax); a passed sub-codebook (e.g. the 2-code AFFIRM/NEGATE polarity set, not on the NEF bridge)
+        falls back to numpy."""
+        if self.enable_spiking_cleanup and words is self.words and self._nef is not None:
+            from research.findings.raw._spiking_cleanup_nef import cleanup as nef_cleanup
+            per_concept = nef_cleanup(self._nef["bridge"], self._nef["idx"], self._nef["M"],
+                                      self._nef["n_per"], est, self.nef_op["bias"], self.nef_op["run_steps"])
+            return self.words[int(np.argmax(per_concept))]
+        return words[int(np.argmax([self.concepts[w] @ est for w in words]))]
+
     def unbind(self, bound_onoff, role, codebook=None):
         """Spiking-unbind `role`; clean up to the nearest code in `codebook` (default: all concept words)."""
         words = codebook if codebook is not None else self.words
         e_on, e_off = self._unbind_onoff(bound_onoff, role)
         est = e_on - e_off
-        return words[int(np.argmax([self.concepts[w] @ est for w in words]))]
+        return self._cleanup(est, words)
 
     def _render_filler(self, bound_onoff, role, stored):
         """Decode the filler of `role` from a bound structure, FROM THE SPIKING UNBIND. `stored` is the agent's
@@ -274,7 +322,7 @@ class CoreSimComposer:
             pt = self._render_filler(rec, "patient", stored.patient)
             return f"{a} {ac} {pt}"
         est = e_on - e_off
-        return self.words[int(np.argmax([self.concepts[w] @ est for w in self.words]))]
+        return self._cleanup(est, self.words)
 
     # --- conversational API ---
     def store(self, agent, action, patient, polarity=None):

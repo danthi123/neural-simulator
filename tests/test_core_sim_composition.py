@@ -74,3 +74,67 @@ def test_recovery_rate_clears_frozen_bar():
         ok += int(c.query_patient(a, ac) == p)
         tot += 1
     assert ok / tot >= 0.80, f"recovery {ok}/{tot} below the frozen 0.80 bar"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Opt-in spiking NEF cleanup (Stewart-Tang-Eliasmith 2011, the Spaun cleanup) replaces the numpy argmax in
+# `unbind` / `_render_filler`. The numpy path stays the DEFAULT (enable_spiking_cleanup=False). No-regression
+# GATE: a spiking-cleanup composer answers the capability matrix IDENTICALLY to the numpy composer on the SAME
+# facts/seed/codebook. Self-contained: a synthetic orthonormal codebook (no concept-cache needed), so the
+# cleanup runs in its cleanest regime. Heavy/GPU: the NEF cleanup runs a real spiking SimulationBridge per
+# unbind, so this skips without a GPU backend.
+# ─────────────────────────────────────────────────────────────────────────────
+def _synthetic_concepts(proj_dim=256, seed=0):
+    """An orthonormal concept codebook (QR rows) — zero off-target similarity, the cleanest cleanup regime."""
+    rng = np.random.default_rng(seed)
+    words = ["dog", "cat", "go", "come", "stop", "north", "south", "west", "big", "apple", "river", "look"]
+    q, _ = np.linalg.qr(rng.standard_normal((proj_dim, proj_dim)))   # orthonormal rows
+    return {w: q[i] for i, w in enumerate(words)}
+
+
+def _run_capability_matrix(c):
+    """Drive the full capability matrix on a composer and return a tuple of its answers (order-stable). Each
+    category uses its own low-load KB (mirroring the per-category on-brain tests). Categories: flat who/what,
+    one-attribute, negation/yes-no, abstention (the no-confab moat)."""
+    # flat who/what + abstention
+    c.kb = []
+    c.store("dog", "go", "north")
+    c.store("cat", "come", "south")
+    flat = (c.query_patient("dog", "go"),                # -> 'north'
+            c.query_patient("cat", "come"),              # -> 'south'
+            c.query_agent("go", "north"),                # -> 'dog'
+            c.query_patient("river", "look"))            # abstention -> None
+    # one attribute
+    c.kb = []
+    c.store("cat", "go", ("big", "apple"))               # one attribute
+    c.store("apple", "stop", "west")                     # flat
+    attr = (c.query_patient("cat", "go"),                # -> 'big apple'
+            c.query_patient("apple", "stop"))            # -> 'west'
+    # negation / yes-no
+    c.kb = []
+    c.store("dog", "go", "north", polarity="AFFIRM")
+    c.store("cat", "come", "south", polarity="NEGATE")
+    neg = (c.ask_yes_no("dog", "go", "north"),           # -> 'yes'
+           c.ask_yes_no("cat", "come", "south"),         # -> 'no'
+           c.ask_yes_no("apple", "stop", "west"))        # unstored -> 'unknown'
+    return flat + attr + neg
+
+
+def test_spiking_cleanup_matches_numpy_on_capability_matrix():
+    """No-regression GATE: a CoreSimComposer(enable_spiking_cleanup=True) answers the capability matrix
+    IDENTICALLY to the numpy composer on the SAME synthetic orthonormal codebook + seed. The spiking NEF
+    cleanup (per-concept thresholded firing -> argmax) must reproduce the numpy argmax cleanup."""
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("spiking NEF cleanup is heavy; requires a GPU (CuPy) backend")
+    proj_dim, seed = 256, 0
+    concepts = _synthetic_concepts(proj_dim=proj_dim, seed=seed)
+    numpy_c = CoreSimComposer(seed=seed, proj_dim=proj_dim, concepts=concepts)
+    spiking_c = CoreSimComposer(seed=seed, proj_dim=proj_dim, concepts=dict(concepts),
+                                enable_spiking_cleanup=True)
+    assert spiking_c.enable_spiking_cleanup and spiking_c._nef is not None, "NEF cleanup bridge not built"
+    numpy_ans = _run_capability_matrix(numpy_c)
+    spiking_ans = _run_capability_matrix(spiking_c)
+    # sanity: the numpy path must itself be correct on the clean orthonormal codebook (else the GATE is vacuous)
+    assert numpy_ans == ("north", "south", "dog", None, "big apple", "west", "yes", "no", "unknown"), numpy_ans
+    assert spiking_ans == numpy_ans, f"spiking cleanup diverged from numpy: {spiking_ans} != {numpy_ans}"
