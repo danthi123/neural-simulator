@@ -18,8 +18,9 @@ from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConf
 from sim.enums import NeuronModel
 from sim.bridge import SimulationBridge
 
-ROLES = ("agent", "action", "patient", "polarity")
-DEFAULT_VOCAB = ["dog", "cat", "go", "run", "stop", "look", "north", "south", "east", "west", "apple", "river"]
+ROLES = ("agent", "action", "patient", "polarity", "attribute")
+DEFAULT_VOCAB = ["dog", "cat", "go", "run", "stop", "look", "north", "south", "east", "west", "apple", "river",
+                 "big", "small", "hot", "cold"]
 
 
 def _build_rf_bridge(n, seed=42):
@@ -118,7 +119,13 @@ class RFPhasorComposer:
 
     # --- conversational API (mirrors CoreSimComposer; the no-confab moat preserved) ---
     def store(self, agent, action, patient, polarity=None):
-        fact = {"agent": agent, "action": action, "patient": patient}
+        fact = {"agent": agent, "action": action}
+        if isinstance(patient, tuple):            # ('big', 'apple') -- an attributed entity (1-attribute)
+            adj, noun = patient
+            fact["patient"] = noun
+            fact["attribute"] = adj
+        else:
+            fact["patient"] = patient
         if polarity is not None:
             fact["polarity"] = polarity      # a bound AFFIRM/NEGATE tag (extra binding -> more load)
         self.kb.append((fact, self._encode(fact)))
@@ -131,10 +138,15 @@ class RFPhasorComposer:
         return None
 
     def query_patient(self, agent, action):
-        """'what does <agent> <action>?' -> the patient of the matching fact; None if no match (abstention)."""
+        """'what does <agent> <action>?' -> the patient of the matching fact (an attributed entity 'big apple' if
+        the fact bound an ATTRIBUTE); None if no match (abstention). The stored structure only routes the rendering;
+        the words are decoded from the RF unbind."""
         for fact, comp in self.kb:
             if self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action:
-                return self.unbind(comp, "patient")
+                noun = self.unbind(comp, "patient")
+                if "attribute" in fact:
+                    return f"{self.unbind(comp, 'attribute')} {noun}"
+                return noun
         return None
 
     def ask_yes_no(self, agent, action, patient):

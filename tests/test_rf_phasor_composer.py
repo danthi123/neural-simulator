@@ -41,6 +41,22 @@ def test_rf_phasor_composer_negation_yesno(seed):
     assert comp.ask_yes_no("dog", "go", "south") == "unknown"
 
 
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_one_attribute(seed):
+    """b.3a: a 1-attribute entity ('big apple') -- the ATTRIBUTE role-tag binding RESOLVES (adjective + noun both
+    decoded from the RF unbind). A 4-role bind (agent/action/patient/attribute) through the RF complex synapses.
+    (2-attribute is the documented K=5-load BOUNDARY, not asserted here -- carries over from the +-1 composer.)"""
+    comp = RFPhasorComposer(seed=seed, D=64, period=400)
+    comp.store("dog", "look", ("big", "apple"))
+    comp.store("cat", "go", "river")
+
+    assert comp.query_patient("dog", "look") == "big apple"   # attribute resolves
+    assert comp.query_patient("cat", "go") == "river"           # plain patient still works
+    assert comp.query_agent("look", "apple") == "dog"           # query on the noun (patient)
+    # abstention
+    assert comp.query_patient("cat", "look") is None
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))
