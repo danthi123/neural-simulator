@@ -138,3 +138,69 @@ def test_spiking_cleanup_matches_numpy_on_capability_matrix():
     # sanity: the numpy path must itself be correct on the clean orthonormal codebook (else the GATE is vacuous)
     assert numpy_ans == ("north", "south", "dog", None, "big apple", "west", "yes", "no", "unknown"), numpy_ans
     assert spiking_ans == numpy_ans, f"spiking cleanup diverged from numpy: {spiking_ans} != {numpy_ans}"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Opt-in substrate weight-store memory (`enable_spiking_memory`, piece B of the "full clear"). Instead of the
+# bound (ON,OFF) vector living in `self.kb` (a Python list — the MEMORY shortcut), each fact's bound vector is
+# IMPRINTED into a per-fact Crawford-Gingerich-Eliasmith weight-store (a trigger population whose OUTPUT weights
+# ARE the bound vector); the queries RETRIEVE it in SPIKES (fire the fact's trigger → read the reconstructed
+# (ON,OFF)) before unbind + cleanup. The de-risk (B) finding `2026-06-05-B-substrate-store-fidelity-GO.md`
+# validated this round-trip at numpy parity (recon cosine ~0.97, every role recovers the same filler).
+# No-regression GATE: a spiking-MEMORY composer answers the capability matrix (incl. generation) IDENTICALLY to
+# the numpy-storage composer on the SAME synthetic orthonormal codebook + seed. The numpy path stays the DEFAULT
+# (enable_spiking_memory=False). Heavy/GPU: each fact's store/retrieve runs a real spiking SimulationBridge, so
+# this skips without a GPU backend (the de-risk noted the spiking bind is degenerate on the numpy backend).
+# ─────────────────────────────────────────────────────────────────────────────
+def _run_capability_matrix_with_generation(c):
+    """The capability matrix PLUS the generation category (`render_fact`): flat who/what, one-attribute,
+    negation/yes-no, abstention, and generation (render a stored sentence about a known subject; abstain on an
+    unknown one). Returns an order-stable tuple of answers."""
+    base = _run_capability_matrix(c)
+    # generation (the no-confab moat on render): a known subject -> a full sentence; an unknown one -> None
+    c.kb = []
+    c.store("dog", "go", "north")
+    gen = (c.render_fact("dog"),                          # -> 'dog go north'
+           c.render_fact("river"))                        # unknown subject -> None
+    return base + gen
+
+
+def test_spiking_memory_matches_numpy_on_capability_matrix():
+    """No-regression GATE (piece B): a CoreSimComposer(enable_spiking_memory=True) answers the capability matrix
+    (incl. generation) IDENTICALLY to the numpy-storage composer on the SAME synthetic orthonormal codebook +
+    seed. The substrate weight-store (per-fact trigger → readout banks, bound vector in the OUTPUT weights,
+    retrieved in spikes) must reproduce the numpy `self.kb` storage. The cleanup is held at the numpy default in
+    both arms, so the STORE is what's tested."""
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("substrate weight-store is heavy; requires a GPU (CuPy) backend "
+                    "(spiking bind is degenerate on the numpy backend)")
+    proj_dim, seed = 256, 0
+    concepts = _synthetic_concepts(proj_dim=proj_dim, seed=seed)
+    numpy_c = CoreSimComposer(seed=seed, proj_dim=proj_dim, concepts=concepts)
+    spiking_c = CoreSimComposer(seed=seed, proj_dim=proj_dim, concepts=dict(concepts),
+                                enable_spiking_memory=True)
+    assert spiking_c.enable_spiking_memory, "spiking-memory flag not honored"
+    # the spiking-memory composer must NOT fall back to numpy self.kb storage of the bound vector
+    assert getattr(spiking_c, "_substrate_store", None) is not None, "substrate store not built"
+    numpy_ans = _run_capability_matrix_with_generation(numpy_c)
+    spiking_ans = _run_capability_matrix_with_generation(spiking_c)
+    # sanity: the numpy path must itself be correct on the clean orthonormal codebook (else the GATE is vacuous)
+    assert numpy_ans == ("north", "south", "dog", None, "big apple", "west", "yes", "no", "unknown",
+                         "dog go north", None), numpy_ans
+    assert spiking_ans == numpy_ans, f"substrate-store memory diverged from numpy: {spiking_ans} != {numpy_ans}"
+
+
+def test_spiking_memory_default_off_keeps_numpy_kb():
+    """The default (enable_spiking_memory=False) keeps numpy `self.kb` storage UNCHANGED: store() appends the
+    (fact, bound_onoff) tuple and no substrate store is built (byte-identical to before this flag)."""
+    proj_dim, seed = 64, 0
+    concepts = _synthetic_concepts(proj_dim=proj_dim, seed=seed)
+    c = CoreSimComposer(seed=seed, proj_dim=proj_dim, concepts=concepts)
+    assert c.enable_spiking_memory is False
+    assert getattr(c, "_substrate_store", None) is None
+    c.store("dog", "go", "north")
+    assert len(c.kb) == 1
+    fact, bound = c.kb[0]
+    assert fact["agent"] == "dog" and fact["action"] == "go" and fact["patient"] == "north"
+    assert isinstance(bound, tuple) and len(bound) == 2     # (ON, OFF) numpy vector held in the list

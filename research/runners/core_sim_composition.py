@@ -58,6 +58,16 @@ DEFAULT_RUN_STEPS = 150
 NEF_CLEANUP_OP = dict(bias=-625.0, w_match=120.0, n_per=12, w_in_cfs=1.0, w_in_fs=10.0, n_in_fs=60,
                       einh=-80.0, run_steps=400)
 
+# Substrate weight-store operating point (opt-in `enable_spiking_memory`). The Crawford-Gingerich-Eliasmith
+# per-fact associative memory de-risked in 2026-06-05-B-substrate-store-fidelity-GO.md: each fact's bound
+# (ON,OFF) vector is imprinted into the OUTPUT WEIGHTS of a per-fact trigger population (trigger_i -> readout_ON[k]
+# weight = bon[k]*w_gain; -> readout_OFF[k] weight = boff[k]*w_gain), and RETRIEVED in SPIKES (drive the trigger,
+# accumulate the readout firing, per-dimension-average the n_per neurons). Validated to unbind at numpy parity
+# (recon cosine ~0.97, 12/12 per seed). Reused BY IMPORT from the probe (build_store_bridge / retrieve_bound) so
+# the validated store mechanism is not re-implemented. When the flag is False the numpy self.kb storage is
+# byte-unchanged (the default path).
+STORE_MEMORY_OP = dict(n_trig=40, n_per=4, w_gain=250.0, trig_drive=600.0, run_steps=300)
+
 
 def _center(v):
     v = np.asarray(v, dtype=np.float64); v = v - v.mean()
@@ -194,7 +204,7 @@ class CoreSimComposer:
 
     def __init__(self, seed=42, proj_dim=800, coinc_bias=DEFAULT_BIAS, run_steps=DEFAULT_RUN_STEPS, concepts=None,
                  decorrelate=False, shared_bridge=None, index_offset=0, enable_spiking_cleanup=False,
-                 nef_op=None):
+                 nef_op=None, enable_spiking_memory=False, store_op=None):
         """`shared_bridge` / `index_offset`: when a shared SimulationBridge is given, wire the FIXED `"bind"`
         coincidence population onto it at `index_offset` (the composer slice) instead of building a private
         bridge. Because the shared bridge has global Hebbian learning ON, the bind population is tagged with a
@@ -210,7 +220,22 @@ class CoreSimComposer:
         through the NEF bridge, read the per-concept summed firing, argmax -> the word. A passed sub-codebook
         (e.g. the 2-code AFFIRM/NEGATE polarity set) falls back to numpy — the MAIN path is the full V-concept
         cleanup. When False the numpy argmax cleanup is byte-unchanged. `nef_op` overrides the validated NEF
-        operating point (defaults to NEF_CLEANUP_OP)."""
+        operating point (defaults to NEF_CLEANUP_OP).
+
+        `enable_spiking_memory` (opt-in, default False): hold each fact's bound (ON,OFF) vector in the SUBSTRATE
+        (a per-fact Crawford-Gingerich-Eliasmith weight-store de-risked in
+        2026-06-05-B-substrate-store-fidelity-GO.md) instead of in `self.kb` (a Python list — the MEMORY
+        shortcut). When True, `store(...)` still builds the bound vector via `bind_fact` (the numpy
+        superposition/opponency stay numpy — a separate follow-on), then IMPRINTS it into a per-fact substrate
+        store (trigger population whose OUTPUT weights ARE the bound vector), reused BY IMPORT from the probe
+        (`_b_substrate_weight_store_probe.build_store_bridge`); `self.kb` keeps the `fact` dict (structure/labels
+        for clause routing + polarity) paired with the store HANDLE, not the numpy vector. The queries
+        (`query_patient`/`query_agent`/`ask_yes_no`/`render_fact`) RETRIEVE each fact's bound vector from the
+        substrate (fire its trigger → read the reconstructed (ON,OFF) in spikes via the probe's `retrieve_bound`)
+        before `_unbind_onoff` + cleanup. Composes with `enable_spiking_cleanup` (the cleanup choice is
+        orthogonal). When False the numpy `self.kb` storage is byte-unchanged (the default path). GPU-only at this
+        operating point (the spiking bind is degenerate on the numpy backend). `store_op` overrides the validated
+        store operating point (defaults to STORE_MEMORY_OP)."""
         if concepts is None:
             if not os.path.exists(CACHE % seed):
                 raise FileNotFoundError(f"concept cache missing: {CACHE % seed}")
@@ -242,7 +267,12 @@ class CoreSimComposer:
         self.roles = {r: v / np.linalg.norm(v) for r, v in self.roles.items()}
         self.bridge, self.idx = build_bind_bridge(seed, self.D, shared_bridge=shared_bridge,
                                                   index_offset=index_offset)
-        self.kb = []   # list of (fact_dict, bound_onoff)
+        # self.kb entries are (fact_dict, stored). In the DEFAULT (numpy) path `stored` is the bound (ON,OFF)
+        # numpy vector; with `enable_spiking_memory` it is the per-fact substrate-store HANDLE (the bound vector
+        # lives in the store's weights, not the list). `_get_bound(stored)` resolves either to the bound vector;
+        # it is identity in the default path so that path stays byte-identical.
+        self.kb = []
+        self.seed = int(seed)
 
         # Opt-in spiking NEF cleanup: build ONE persistent NEF cleanup bridge from this composer's own codebook
         # (self.words order matches the argmax over self.words in unbind/_render_filler). Lazy import keeps the
@@ -258,6 +288,24 @@ class CoreSimComposer:
                 seed, code_mat, op["n_per"], op["w_match"], op["w_in_cfs"], op["w_in_fs"],
                 op["n_in_fs"], op["einh"])
             self._nef = dict(bridge=nbridge, idx=nidx, M=nM, n_per=nper)
+
+        # Opt-in substrate weight-store memory: hold each fact's bound vector in the SUBSTRATE (a per-fact
+        # Crawford-style weight-store) instead of in self.kb. When on, `_substrate_store` is the registry of
+        # per-fact store handles (a list, parallel to self.kb); when off it stays None and self.kb holds the
+        # numpy bound vectors as before. The store mechanism (build_store_bridge / retrieve_bound) is reused
+        # BY IMPORT from the de-risked probe (no re-implementation); the import is lazy so the default path
+        # stays import-clean. GPU-only operating point (the spiking bind is degenerate on the numpy backend).
+        self.enable_spiking_memory = bool(enable_spiking_memory)
+        self.store_op = dict(STORE_MEMORY_OP if store_op is None else store_op)
+        self._substrate_store = None
+        self._store_build = None
+        self._store_retrieve = None
+        if self.enable_spiking_memory:
+            from research.findings.raw._b_substrate_weight_store_probe import (
+                build_store_bridge as _bsb, retrieve_bound as _rb)
+            self._store_build = _bsb
+            self._store_retrieve = _rb
+            self._substrate_store = []   # list of per-fact handles (parallel to self.kb)
 
     # --- low-level spiking ops ---
     def _op(self, role_vec, fill_on_cur, fill_off_cur):
@@ -284,6 +332,27 @@ class CoreSimComposer:
             o, f = self._op(self.roles[role], fon, foff)
             bon += o; boff += f
         return onoff(bon - boff)      # ON/OFF opponency (common-mode removal) before storage
+
+    # --- substrate weight-store (opt-in `enable_spiking_memory`) ---
+    def _imprint_bound(self, bound_onoff):
+        """Imprint a fact's bound (ON,OFF) vector into a per-fact substrate weight-store and return its HANDLE
+        (bridge, idx, D). The bound vector lives in the store's OUTPUT weights (trigger -> readout banks); it is
+        retrieved in spikes by `_get_bound`. Reuses the de-risked probe's `build_store_bridge` BY IMPORT."""
+        op = self.store_op
+        bridge, idx, D = self._store_build(self.seed, bound_onoff, op["n_trig"], op["n_per"], op["w_gain"])
+        return {"bridge": bridge, "idx": idx, "D": D}
+
+    def _get_bound(self, stored):
+        """Resolve a `self.kb` `stored` value to the bound (ON,OFF) vector the queries unbind. DEFAULT path:
+        `stored` IS the numpy bound vector — returned unchanged (so the default path is byte-identical). Spiking-
+        memory path: `stored` is a per-fact store handle — fire its trigger and READ the reconstructed (ON,OFF)
+        in spikes (the probe's `retrieve_bound`), so the memory is read from the SUBSTRATE, not a numpy list."""
+        if not self.enable_spiking_memory:
+            return stored
+        op = self.store_op
+        bon_p, boff_p = self._store_retrieve(stored["bridge"], stored["idx"], stored["D"],
+                                             op["n_per"], op["trig_drive"], op["run_steps"])
+        return (bon_p, boff_p)
 
     def _unbind_onoff(self, bound_onoff, role):
         """Spiking-unbind `role` from a bound (ON, OFF) -> the recovered filler's (est_ON, est_OFF)."""
@@ -346,14 +415,23 @@ class CoreSimComposer:
             fact["patient"] = patient
         if polarity is not None:
             fact["polarity"] = polarity
-        self.kb.append((fact, self.bind_fact(fact)))
+        bound = self.bind_fact(fact)        # numpy superposition/opponency (still numpy — a separate follow-on)
+        if self.enable_spiking_memory:
+            # IMPRINT the bound vector into the SUBSTRATE (per-fact weight-store); self.kb keeps the fact dict
+            # (structure/labels for routing + polarity) paired with the store HANDLE, not the numpy vector.
+            handle = self._imprint_bound(bound)
+            self._substrate_store.append(handle)
+            self.kb.append((fact, handle))
+        else:
+            self.kb.append((fact, bound))   # numpy path: the bound (ON,OFF) vector lives in the list (unchanged)
 
     def query_patient(self, agent, action):
         """'what does <agent> <action>?' -> the patient of the matching fact: a concept word, an ATTRIBUTED entity
         ('big apple' / 'big red ball'), or a rendered embedded clause. None if no fact's agent matches the cue
         (abstention -- the no-confab moat). The noun + each adjective are decoded from the spiking unbind; the
         stored structure only routes the rendering."""
-        for fact, bound in self.kb:
+        for fact, stored in self.kb:
+            bound = self._get_bound(stored)          # numpy vector (default) OR substrate spiking-read (opt-in)
             if self.unbind(bound, "agent") == agent and self.unbind(bound, "action") == action:
                 noun = self._render_filler(bound, "patient", fact["patient"])
                 adjs = [self.unbind(bound, r) for r in ("attribute", "attribute2") if r in fact]
@@ -365,14 +443,16 @@ class CoreSimComposer:
 
     def query_agent(self, action, patient):
         """'who <action> <patient>?' -> the agent of the matching fact; None if no match."""
-        for fact, bound in self.kb:
+        for fact, stored in self.kb:
+            bound = self._get_bound(stored)
             if self.unbind(bound, "action") == action and self.unbind(bound, "patient") == patient:
                 return self.unbind(bound, "agent")
         return None
 
     def ask_yes_no(self, agent, action, patient):
         """'does <agent> <action> <patient>?' -> 'yes'/'no'/'unknown' via the bound POLARITY tag."""
-        for fact, bound in self.kb:
+        for fact, stored in self.kb:
+            bound = self._get_bound(stored)
             if (self.unbind(bound, "agent") == agent and self.unbind(bound, "action") == action
                     and self.unbind(bound, "patient") == patient):
                 return "yes" if self.unbind(bound, "polarity", self.pol_words) == "AFFIRM" else "no"
@@ -382,7 +462,8 @@ class CoreSimComposer:
         """Generation: render a full stored sentence whose agent matches `agent` -- e.g. 'dog go north' -- with the
         action + patient DECODED from the spiking unbind (not the stored labels). None if no fact's agent matches
         (the no-confab moat: the agent does not invent a sentence about an unknown subject)."""
-        for fact, bound in self.kb:
+        for fact, stored in self.kb:
+            bound = self._get_bound(stored)
             if self.unbind(bound, "agent") == agent:
                 action = self.unbind(bound, "action")
                 patient = self._render_filler(bound, "patient", fact["patient"])
