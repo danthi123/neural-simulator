@@ -1,0 +1,179 @@
+{
+  "op": {
+    "M": 8000,
+    "src_drive": 500.0,
+    "w_nef": 40.0,
+    "einh": -80.0,
+    "gain_lo": 1.0,
+    "gain_hi": 3.0,
+    "bias_lo": 20.0,
+    "bias_hi": 80.0,
+    "read_steps": 120,
+    "settle_frac": 0.35,
+    "ou_std": 20.0,
+    "n_train": 80,
+    "reg": 0.02,
+    "train_jitter": 0.15
+  },
+  "per_seed": {
+    "42": {
+      "recovery": 0.07692307692307693,
+      "n_roles": 13,
+      "n_facts": 4,
+      "mean_signed_cos": 0.9026634172112485,
+      "mean_recon_cos": 0.9128365009570265,
+      "smell_zero_collapse": 1.8236,
+      "lin_cos": null,
+      "per_fact": [
+        {
+          "fact": {
+            "agent": "north",
+            "action": "big",
+            "patient": "river"
+          },
+          "signed_cos": 0.9188,
+          "recon_cos": 0.9308,
+          "roles": {
+            "agent": {
+              "numpy": "north",
+              "nef": "east",
+              "match": false,
+              "truth": "north"
+            },
+            "action": {
+              "numpy": "big",
+              "nef": "east",
+              "match": false,
+              "truth": "big"
+            },
+            "patient": {
+              "numpy": "river",
+              "nef": "go",
+              "match": false,
+              "truth": "river"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "big",
+            "action": "river",
+            "patient": "small"
+          },
+          "signed_cos": 0.9131,
+          "recon_cos": 0.9187,
+          "roles": {
+            "agent": {
+              "numpy": "big",
+              "nef": "go",
+              "match": false,
+              "truth": "big"
+            },
+            "action": {
+              "numpy": "river",
+              "nef": "go",
+              "match": false,
+              "truth": "river"
+            },
+            "patient": {
+              "numpy": "small",
+              "nef": "go",
+              "match": false,
+              "truth": "small"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "go",
+            "action": "stop",
+            "patient": "river"
+          },
+          "signed_cos": 0.9236,
+          "recon_cos": 0.9313,
+          "roles": {
+            "agent": {
+              "numpy": "go",
+              "nef": "cold",
+              "match": false,
+              "truth": "go"
+            },
+            "action": {
+              "numpy": "stop",
+              "nef": "go",
+              "match": false,
+              "truth": "stop"
+            },
+            "patient": {
+              "numpy": "river",
+              "nef": "go",
+              "match": false,
+              "truth": "river"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "big",
+            "action": "north",
+            "patient": "go",
+            "attribute": "south"
+          },
+          "signed_cos": 0.8553,
+          "recon_cos": 0.8705,
+          "roles": {
+            "agent": {
+              "numpy": "big",
+              "nef": "go",
+              "match": false,
+              "truth": "big"
+            },
+            "action": {
+              "numpy": "north",
+              "nef": "go",
+              "match": false,
+              "truth": "north"
+            },
+            "patient": {
+              "numpy": "go",
+              "nef": "go",
+              "match": true,
+              "truth": "go"
+            },
+            "attribute": {
+              "numpy": "south",
+              "nef": "dog",
+              "match": false,
+              "truth": "south"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "recoveries": {
+    "42": 0.07692307692307693
+  },
+  "min_recovery": 0.07692307692307693,
+  "mean_recovery": 0.07692307692307693,
+  "mean_signed_cos": 0.9026634172112485,
+  "mean_recon_cos": 0.9128365009570265,
+  "m_sweep": {
+    "2000": {
+      "recovery": 0.07692307692307693,
+      "mean_signed_cos": 0.9031259843753184,
+      "mean_recon_cos": 0.9129514840728293
+    },
+    "8000": {
+      "recovery": 0.07692307692307693,
+      "mean_signed_cos": 0.9025676344473048,
+      "mean_recon_cos": 0.9128746415910302
+    },
+    "16000": {
+      "recovery": 0.07692307692307693,
+      "mean_signed_cos": 0.903820166527541,
+      "mean_recon_cos": 0.9140406574869284
+    }
+  },
+  "verdict": "NEGATIVE"
+}
