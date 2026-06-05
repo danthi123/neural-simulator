@@ -8,6 +8,11 @@ class NeuronModel(Enum):
     IZHIKEVICH = "IZHIKEVICH"
     HODGKIN_HUXLEY = "HODGKIN_HUXLEY"
     ADEX = "ADEX"  # Adaptive Exponential Integrate-and-Fire
+    # Resonate-and-fire (Izhikevich 2001; Frady & Sommer 2019) — complex-state phasor neuron for FHRR composition.
+    # Complex state Z=re+i*im (reuses v=re, u=im); each step Z*=exp(lambda+i*omega); spikes on the upward Im
+    # zero-crossing, so the spike step encodes the kick's phase. Substrate for on-bridge FHRR (opponency-free
+    # composition); see docs/plans/2026-06-05-rf-on-bridge-derisk-design.md. Opt-in only; Izhikevich/HH/AdEx unaffected.
+    RESONATE_AND_FIRE = "RESONATE_AND_FIRE"
 
 
 class NeuronType(Enum):

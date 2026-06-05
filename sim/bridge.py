@@ -4877,9 +4877,42 @@ class SimulationBridge:
         self._mock_network_avg_firing_rate_hz = state_dict_np.get("_mock_network_avg_firing_rate_hz", 0.0)
         self._mock_total_plasticity_events = state_dict_np.get("_mock_total_plasticity_events", 0)
 
-        if is_initial_state: 
+        if is_initial_state:
             self.runtime_state.current_time_ms = state_dict_np.get("start_time_ms", 0.0)
             self.runtime_state.current_time_step = state_dict_np.get("start_time_step", 0)
+
+    # --- Resonate-and-fire FHRR substrate (opt-in, owner-funded Option A; see
+    #     docs/plans/2026-06-05-rf-on-bridge-derisk-design.md). Active only when
+    #     neuron_model_type == RESONATE_AND_FIRE; zero impact on Izhikevich/HH/AdEx. ---
+    def rf_kick(self, kick_complex, period=None, lam=-3.0e-4, floor=1.0e-3):
+        """Inject a complex 'kick' into the resonate-and-fire neurons: set the complex state Z = re + i*im (reusing
+        v=re, u=im) to kick_complex and reset the phase-readout trackers. Then run `period`(+8) steps of
+        `_run_one_simulation_step` (with neuron_model_type=RESONATE_AND_FIRE) and call `rf_read_phases()` to recover
+        each neuron's phase. The kick is the FHRR operand (bind = phasor_a*phasor_b, unbind = phasor_c*conj(a),
+        bundle = sum of phasors); the resonate + phase readout run on the bridge's own neurons in its own step.
+        period defaults to 1000 (one phasor cycle = T bridge steps). Mirrors resonate_fire_fhrr.rf_resonate."""
+        kick = np.asarray(kick_complex, dtype=np.complex128).reshape(-1)
+        n = self.core_config.num_neurons
+        if kick.shape[0] != n:
+            raise ValueError(f"rf_kick expects {n} complex values (one per neuron), got {kick.shape[0]}")
+        self._rf_period = int(period) if period else 1000
+        self._rf_omega = 2.0 * np.pi / self._rf_period
+        self._rf_lambda = float(lam)
+        self._rf_floor = float(floor)
+        self._rf_counter = 0
+        self.cp_membrane_potential_v[:] = cp.asarray(kick.real, dtype=self.cp_membrane_potential_v.dtype)
+        self.cp_recovery_variable_u[:] = cp.asarray(kick.imag, dtype=self.cp_recovery_variable_u.dtype)
+        self.cp_rf_prev_im = self.cp_recovery_variable_u.copy()
+        self.cp_rf_fired = cp.zeros(n, dtype=bool)
+        # default spike step = period -> phase 0 for a neuron that never crosses (|Z| decayed below the floor).
+        self.cp_rf_spike_step = cp.full(n, self._rf_period, dtype=cp.int64)
+
+    def rf_read_phases(self):
+        """Recover the RF neurons' phases in [0,1) from their first-spike steps (the magnitude-invariant readout):
+        phase = ((period - spike_step) mod period) / period. Call after running period(+8) steps post-rf_kick()."""
+        period = int(getattr(self, "_rf_period", 1000))
+        spike_step = np.asarray(_backend_to_host(self.cp_rf_spike_step)).astype(np.int64)
+        return ((period - spike_step) % period) / float(period)
 
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
@@ -5308,6 +5341,39 @@ class SimulationBridge:
                 self.cp_membrane_potential_v[:] = v_new
                 self.cp_adex_w[:] = w_new
                 self.cp_refractory_timers[self.cp_refractory_timers > 0] -= 1
+
+            elif cfg.neuron_model_type == NeuronModel.RESONATE_AND_FIRE.name:
+                # Resonate-and-fire (Izhikevich 2001; Frady & Sommer 2019): a complex-state phasor neuron.
+                # State Z = re + i*im REUSES v (=re) and u (=im). Each step Z *= exp(lambda + i*omega), i.e.
+                #   re' = e^lambda (re*cos w - im*sin w);  im' = e^lambda (re*sin w + im*cos w).
+                # A spike fires at the first UPWARD zero-crossing of im (prev_im < 0, im >= 0) with |Z| > floor;
+                # the spike step counted from rf_kick() encodes the kick's phase (magnitude-invariant readout).
+                # Opt-in via rf_kick()/rf_read_phases(); Izhikevich/HH/AdEx paths above are untouched.
+                # See docs/plans/2026-06-05-rf-on-bridge-derisk-design.md.
+                if getattr(self, "cp_rf_prev_im", None) is None:
+                    # Stepped before rf_kick(): lazily initialize trackers from the current state (no spikes).
+                    self.cp_rf_prev_im = self.cp_recovery_variable_u.copy()
+                    self.cp_rf_fired = cp.zeros(n_neurons, dtype=bool)
+                    self.cp_rf_spike_step = cp.full(n_neurons, int(getattr(self, "_rf_period", 1000)), dtype=cp.int64)
+                    self._rf_counter = 0
+                _rf_decay = float(np.exp(getattr(self, "_rf_lambda", -3.0e-4)))
+                _rf_omega = float(getattr(self, "_rf_omega", 2.0 * np.pi / 1000.0))
+                _rf_floor2 = float(getattr(self, "_rf_floor", 1.0e-3)) ** 2
+                _rf_cos = float(np.cos(_rf_omega)); _rf_sin = float(np.sin(_rf_omega))
+                _rf_re = self.cp_membrane_potential_v
+                _rf_im = self.cp_recovery_variable_u
+                _rf_re_new = _rf_decay * (_rf_re * _rf_cos - _rf_im * _rf_sin)
+                _rf_im_new = _rf_decay * (_rf_re * _rf_sin + _rf_im * _rf_cos)
+                self._rf_counter = int(getattr(self, "_rf_counter", 0)) + 1
+                _rf_mag2 = _rf_re_new * _rf_re_new + _rf_im_new * _rf_im_new
+                _rf_crossed = ((~self.cp_rf_fired) & (self.cp_rf_prev_im < 0.0)
+                               & (_rf_im_new >= 0.0) & (_rf_mag2 > _rf_floor2))
+                fired_this_step = _rf_crossed
+                self.cp_rf_spike_step = cp.where(_rf_crossed, self._rf_counter, self.cp_rf_spike_step)
+                self.cp_rf_fired = self.cp_rf_fired | _rf_crossed
+                self.cp_membrane_potential_v[:] = _rf_re_new
+                self.cp_recovery_variable_u[:] = _rf_im_new
+                self.cp_rf_prev_im = _rf_im_new
 
             self.cp_firing_states[:] = fired_this_step
 
