@@ -7,12 +7,22 @@ pathways; Buzsaki 2015 + McClelland CLS). Minimal substrate: 2 concept pools A,B
 firing well above baseline AND above symmetric. Anti-cheat: a B->A-only consolidation must NOT lift the A->B cue.
 Design: docs/plans/2026-06-05-D-cue-recall-SWR-consolidation-design.md.
 
-WIP 2026-06-05: the substrate builds + runs (A fires ~8% under 900 pA), but B does NOT fire post-consolidation at
-w_max=30 / density=1.0 / 90 cycles in ANY mode. The A->B STDP-propagation is not yet producing downstream firing.
-NEXT (the D-arc continuation): diagnose whether (a) STDP did not grow the A->B weight (read the pathway weight pre/
-post -- the region-framework STDP may not update region-pathway connections the way the g* runners' do), or (b) the
-weight grew but the synaptic current is too weak to fire B (synaptic-current scaling vs the external drive units).
-Likely a synaptic-strength / STDP-integration tuning, not a hypothesis falsification yet. Use GPU + read the weight.
+WIP 2026-06-05 (DIAGNOSED -- substrate works; mechanism understood):
+- cp_connections is PRE x POST (the A->B pathway is the [A,B]=M[pre=A][:,post=B] block; my first read used [B,A]=0,
+  a read bug now fixed). Connections exist (nnz 6400 = 80x80, init |w|~0.01).
+- The substrate CAN learn: with enable_hebbian_learning=True, co-firing grows |A->B| 0.01->0.05. BUT Hebbian is
+  SYMMETRIC -- symmetric/swr/swr_rev all grow ~equally (0.05/0.052/0.051), so it CANNOT test the temporal-order
+  asymmetry the SWR hypothesis needs.
+- enable_stdp ALONE does NOT change the weight (stays 0.01): the bridge's STDP forms an eligibility trace
+  (reward-gated THREE-FACTOR), not a direct weight update. The timing-based (directed) STDP needs a consolidation
+  REWARD signal to convert eligibility->weight.
+- B still does not fire (cue-recall 0): the grown weight (~0.05) + synaptic propagation is too weak vs the 900 pA
+  external drive.
+NEXT (the precise continuation): (1) enable_stdp + inject a consolidation REWARD during co-replay (the three-factor
+mechanism: timing-based eligibility x reward -> DIRECTED weight) -- find the reward setter (grep bridge for
+current_reward_signal / reward application); (2) tune the weight ceiling + synaptic scaling so the grown A->B fires B
+(the cue-recall readout); (3) THEN compare swr (A-before-B) vs swr_rev (B-before-A) -- the directed-association
+asymmetry IS the hypothesis test. GPU for the real run.
 """
 import numpy as np
 
@@ -90,22 +100,34 @@ def consolidate(b, A, B_idx, mode, cycles=90, drive_pA=900.0):
         _run(b, 10)
 
 
+def _ab_weight(b, A, B_idx):
+    """Mean/max |A->B| connection weight. cp_connections is PRE x POST (verified: the A->B pathway is the [A,B]
+    block = M[pre=A][:, post=B]), NOT post x pre."""
+    M = to_host(b.cp_connections)
+    sub = M[np.asarray(A)][:, np.asarray(B_idx)]
+    d = np.asarray(sub.todense() if hasattr(sub, "todense") else sub, dtype=float)
+    return float(np.abs(d).mean()), float(np.abs(d).max())
+
+
 def run(seed):
     out = {}
     for mode in ("baseline", "symmetric", "swr", "swr_rev"):
         b = build(seed)
         rm = b.region_manager
         A = np.asarray(rm.indices("A")); B_idx = np.asarray(rm.indices("B"))
+        wpre = _ab_weight(b, A, B_idx)
         preb, prea = cue_recall_B(b, A, B_idx)
         if mode != "baseline":
             consolidate(b, A, B_idx, mode)
+        wpost = _ab_weight(b, A, B_idx)
         postb, posta = cue_recall_B(b, A, B_idx)
-        out[mode] = (preb, postb, posta)
+        out[mode] = (preb, postb, posta, wpre, wpost)
     return out
 
 
 if __name__ == "__main__":
-    for seed in (42, 43, 44):
+    for seed in (42,):
         o = run(seed)
-        print(f"seed={seed}: " + "  ".join(f"{m}:B {pre:.3f}->{post:.3f}(A={fa:.2f})"
-                                            for m, (pre, post, fa) in o.items()), flush=True)
+        for m, (pre, post, fa, wpre, wpost) in o.items():
+            print(f"seed={seed} {m}: B {pre:.3f}->{post:.3f} (A={fa:.2f})  "
+                  f"|A->B|w mean {wpre[0]:.3f}->{wpost[0]:.3f} max {wpre[1]:.2f}->{wpost[1]:.2f}", flush=True)
