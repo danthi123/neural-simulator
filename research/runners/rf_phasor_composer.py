@@ -64,6 +64,8 @@ class RFPhasorComposer:
             self.concepts[tag] = rng.uniform(0.0, 1.0, self.D)
         self.roles = {r: rng.uniform(0.0, 1.0, self.D) for r in ROLES}
         self.kb = []  # (fact_dict, composite_phases)
+        self._dlpfc = None       # dialogue-planning Control (lazy; rebuilt only when the association graph changes)
+        self._dlpfc_key = None
 
     # --- RF complex-synapse ops (each op a per-op RF bridge; reuse-by-import the substrate) ---
     def _resonate(self, n, conns, kick):
@@ -180,3 +182,31 @@ class RFPhasorComposer:
                     and self.unbind(comp, "patient") == patient):
                 return "yes" if self.unbind(comp, "polarity", self.pol_words) == "AFFIRM" else "no"
         return "unknown"
+
+    # --- dialogue planning (the dlPFC content-selection Control; architecture-independent: operates on the graph) ---
+    def _assoc_graph(self):
+        """An association graph (concept -> {concept: weight}) from the stored facts (agent/action/patient co-occur;
+        clause patients are skipped -- their inner concepts are structural). The graph the dlPFC spreads over."""
+        graph = {}
+        for fact, _ in self.kb:
+            cs = [fact.get(r) for r in ("agent", "action", "patient") if isinstance(fact.get(r), str)]
+            for x in cs:
+                for y in cs:
+                    if x != y:
+                        graph.setdefault(x, {})[y] = graph.get(x, {}).get(y, 0.0) + 1.0
+        return graph
+
+    def elaborate(self, topic):
+        """Dialogue planning: the next on-topic concept about `topic`, chosen by the dlPFC spiking content-selection
+        Control (loop-attractor working memory + spreading activation) over the agent's own association graph -- the
+        same validated SpikingSpreadingController the rate-coded agent uses (it operates on the GRAPH, so it is
+        substrate-independent). None if `topic` is unconnected."""
+        from research.runners.content_selection_spiking import SpikingSpreadingController
+        graph = self._assoc_graph()
+        if topic not in graph:
+            return None
+        key = tuple(sorted((k, tuple(sorted(v.items()))) for k, v in graph.items()))
+        if self._dlpfc is None or self._dlpfc_key != key:
+            self._dlpfc = SpikingSpreadingController(graph, seed=self.seed)
+            self._dlpfc_key = key
+        return self._dlpfc.turn_latency([topic])

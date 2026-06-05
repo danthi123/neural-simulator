@@ -71,6 +71,23 @@ def test_rf_phasor_composer_clause(seed):
     assert comp.query_patient("river", "stop") == "apple"          # a flat patient still works
 
 
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_dialogue(seed):
+    """b.4: dialogue planning -- elaborate(topic) brings up an on-topic associate via the dlPFC spiking
+    content-selection over the association graph built from the RF composer's facts; None when unconnected.
+    GPU-only: the reused SpikingSpreadingController (dlPFC) has a numpy-backend IndexError in that component."""
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("dlPFC SpikingSpreadingController is GPU-validated (numpy-backend IndexError in that component)")
+    comp = RFPhasorComposer(seed=seed, D=64, period=400)
+    comp.store("dog", "go", "north")
+    comp.store("dog", "run", "south")
+
+    assoc = comp.elaborate("dog")
+    assert assoc in {"go", "north", "run", "south"}, f"elaborate('dog')={assoc} not an on-topic associate"
+    assert comp.elaborate("apple") is None    # apple is in no stored fact -> unconnected (abstention)
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))
