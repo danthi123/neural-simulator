@@ -148,7 +148,8 @@ class BrainConversationalAgent:
     statements, answer who/what, abstain on the unknown, negate, and handle embedded clauses -- all spiking on
     SimulationBridge neurons, the substrate's own concept codes, no bolted-on numpy simulator."""
 
-    def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None, composer_kind="rf"):
+    def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None, composer_kind="rf",
+                 enable_spiking_cleanup=False):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -170,7 +171,10 @@ class BrainConversationalAgent:
         else:
             from research.runners.rf_phasor_composer import RFPhasorComposer
             vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
-            self.composer = RFPhasorComposer(seed=seed, D=128, vocab=vocab, period=200)
+            # enable_spiking_cleanup (opt-in): route cleanup through the fully-on-bridge spiking path (matched filter
+            # on the complex synapse + Izhikevich WTA). == numpy at parity multi-seed; default OFF = numpy fast path.
+            self.composer = RFPhasorComposer(seed=seed, D=128, vocab=vocab, period=200,
+                                             enable_spiking_cleanup=enable_spiking_cleanup)
         self._dlpfc = None              # dialogue-planning Control: built lazily, cached, rebuilt only when the graph changes
         self._dlpfc_key = None
 

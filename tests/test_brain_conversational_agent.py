@@ -84,3 +84,22 @@ def test_elaborate_cache_invalidates_on_graph_change(agent):
     agent.hear("cat look east")
     assert agent.elaborate("dog") is None              # dog absent from the new graph
     assert agent.elaborate("cat") in agent._assoc_graph().get("cat", {})
+
+
+def test_spiking_cleanup_agent_qa():
+    """Cheat-B conversion at the AGENT level: enable_spiking_cleanup routes the agent's composer cleanup through the
+    FULLY-on-bridge spiking path (matched filter on the complex synapse + Izhikevich WTA, argmax-over-firing). The
+    whole comprehend/store/QA loop + the no-confab moat must work, identical to the numpy default (== numpy at the
+    composer parity, 27/27 multi-seed). GPU-only: the Hebbian BridgeParser is GPU-validated."""
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("BridgeParser is GPU-validated (numpy-backend KeyError in the parser bridge)")
+    try:
+        sp = BrainConversationalAgent(seed=42, enable_spiking_cleanup=True)
+    except FileNotFoundError:
+        pytest.skip("denoise64 concept-code cache not present")
+    sp.hear("dog go north")
+    sp.hear("cat come south")
+    assert sp.what_does("dog", "go") == "north"          # cleanup runs on the substrate (spikes)
+    assert sp.who_does("go", "north") == "dog"
+    assert sp.what_does("river", "look") is None         # no-confab moat preserved under the spiking cleanup
