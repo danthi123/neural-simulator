@@ -19,6 +19,7 @@ import numpy as np
 from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
 from sim.enums import NeuronModel
 from sim.bridge import SimulationBridge
+from sim.backend import to_host
 
 ROLES = ("agent", "action", "patient", "polarity", "attribute", "attribute2")
 DEFAULT_VOCAB = ["dog", "cat", "go", "run", "come", "stop", "look", "north", "south", "east", "west", "apple",
@@ -58,10 +59,17 @@ def _build_rf_bridge(n, seed=42):
 
 
 class RFPhasorComposer:
-    def __init__(self, seed=42, D=64, vocab=None, period=200):
+    def __init__(self, seed=42, D=64, vocab=None, period=200, enable_spiking_cleanup=False):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
+        # (cheat-B conversion, opt-in) route _cleanup through the fully-on-bridge spiking cleanup (matched filter on
+        # the complex synapse + Izhikevich WTA). Default OFF: numpy argmax stays the fast path (the rate composer's
+        # NEF-cleanup opt-in pattern). Validated == numpy multi-seed.
+        self.enable_spiking_cleanup = bool(enable_spiking_cleanup)
+        self._izh_bank_cache = {}      # Stage-2 Izhikevich WTA banks, keyed by candidate count
+        self._cleanup_drive_pA = 60.0  # input-normalized drive for the winner (sane band 20-100; >=200 over-drives)
+        self._cleanup_window = 120
         self.words = sorted(vocab) if vocab is not None else sorted(DEFAULT_VOCAB)
         rng = np.random.default_rng(seed)
         # phasor codes: phases in [0,1)^D per concept + per role (deterministic per seed)
@@ -145,8 +153,88 @@ class RFPhasorComposer:
         kick[:D] = zc
         return self._resonate(2 * D, conns, kick)[D:]
 
+    def _izh_bank(self, V):
+        """A cached Izhikevich concept bank of V neurons (no wiring; driven by external current) -- the Stage-2 WTA."""
+        bank = self._izh_bank_cache.get(V)
+        if bank is None:
+            cfg = CoreSimConfig()
+            cfg.num_neurons = int(V)
+            cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+            cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+            cfg.seed = self.seed
+            cfg.dt_ms = 1.0
+            cfg.connections_per_neuron = 0
+            cfg.num_traits = 1
+            for f in ("enable_stdp", "enable_hebbian_learning", "enable_short_term_plasticity",
+                      "enable_structural_plasticity", "enable_homeostasis", "enable_reward_modulation",
+                      "enable_watts_strogatz", "enable_neuromodulator_subsystem", "enable_brain_region_framework"):
+                if hasattr(cfg, f):
+                    setattr(cfg, f, False)
+            cfg.ou_std_current_pA = 0.0
+            bank = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
+                                    runtime_state=RuntimeState(), gpu_config=GPUConfig())
+            bank._initialize_simulation_data(called_from_playback_init=False)
+            # snapshot the resting state so each cleanup starts clean (a cached bank's v/u persist across calls,
+            # which would let a recently-fired neuron's adapted state bias the next cleanup's WTA)
+            bank._cleanup_v0 = bank.cp_membrane_potential_v.copy()
+            bank._cleanup_u0 = bank.cp_recovery_variable_u.copy()
+            self._izh_bank_cache[V] = bank
+        return bank
+
+    def _spiking_cleanup(self, rec_phases, words):
+        """Fully on-bridge cleanup (clears cheat B). Stage 1 -- the matched FILTER is the bridge's complex-synapse
+        matvec (the SAME op as unbind): install conj(codebook) synapses (rec -> concept), kick rec, one matvec step,
+        read each concept neuron's |c_k| = |S* rec| off the membrane (cp_membrane_potential_v / cp_recovery_variable_u
+        = the RF re/im). Stage 2 -- the SELECTION is a spiking Izhikevich WTA driven by the input-normalized scores;
+        winner = argmax-over-FIRING (a readout of spiking output, as the NEF cleanup's final argmax). The only numpy
+        is the membrane readout + the firing-argmax readout -- NO numpy COMPUTATION of the match or the selection.
+        Validated == numpy argmax multi-seed: research/findings/2026-06-05-phase1-tpam-cleanup-derisk-GO.md."""
+        D = self.D
+        V = len(words)
+        # Stage 1: matched filter on the complex synapse (concept k = index D+k receives rec via conj(code_k)).
+        conns = []
+        for k in range(V):
+            cc = np.conj(self._to_phasor(self.concepts[words[k]]))
+            for d in range(D):
+                conns.append((D + k, d, cc[d]))
+        b = self._bridge_cache.get(D + V)
+        if b is None:
+            b = _build_rf_bridge(D + V, self.seed)
+            self._bridge_cache[D + V] = b
+        b.rf_set_complex_weights(conns)
+        kick = np.zeros(D + V, dtype=np.complex128)
+        kick[:D] = self._to_phasor(rec_phases)
+        b.rf_kick(kick, period=self.period, lam=0.0)
+        b.rf_resonate_steps(1)
+        # The matched-filter score is Re(c_k) = the concept neuron's membrane (re) = exactly the numpy cos score
+        # (mean cos = Re(c_k)/D). Rectified so off-target concepts (Re~0 / negative) emit ZERO drive -> silent ->
+        # a clean WTA (the NEF cleanup's "off-target emits zero spikes"). |c_k| would leave off-targets driven.
+        re = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)[D:D + V]
+        scores = np.maximum(re, 0.0)
+        peak = float(scores.max())
+        if peak <= 1e-9:
+            return words[int(np.argmax(scores))]
+        # Stage 2: spiking WTA (input-normalized drive -> firing -> argmax-over-firing).
+        drive = (scores / peak) * self._cleanup_drive_pA
+        bank = self._izh_bank(V)
+        bank.cp_membrane_potential_v[:] = bank._cleanup_v0   # reset to resting -> each cleanup is independent
+        bank.cp_recovery_variable_u[:] = bank._cleanup_u0
+        import sim.backend as _b
+        xp, _ = _b.get_backend()
+        bank.cp_external_input_current[:] = xp.asarray(drive, dtype=bank.cp_external_input_current.dtype)
+        firing = np.zeros(V)
+        for _ in range(self._cleanup_window):
+            bank._run_one_simulation_step()
+            firing += np.asarray(to_host(bank.cp_firing_states)).astype(float)
+        bank.cp_external_input_current[:] = 0.0
+        if float(firing.max()) <= 0.0:
+            return words[int(np.argmax(scores))]
+        return words[int(np.argmax(firing))]
+
     def _cleanup(self, rec_phases, words=None):
         words = words if words is not None else self.words
+        if self.enable_spiking_cleanup:
+            return self._spiking_cleanup(rec_phases, words)
         sims = [float(np.mean(np.cos(2.0 * np.pi * (rec_phases - self.concepts[w])))) for w in words]
         return words[int(np.argmax(sims))]
 

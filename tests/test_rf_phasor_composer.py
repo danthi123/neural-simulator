@@ -172,6 +172,23 @@ def test_rf_phasor_composer_two_attribute(seed):
     assert comp.query_patient("dog", "go") is None                                       # abstention (no-confab moat)
 
 
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_spiking_cleanup_parity(seed):
+    """Cheat-B conversion (opt-in): enable_spiking_cleanup routes cleanup through the FULLY-on-bridge spiking path
+    -- the matched FILTER is the complex-synapse matvec (the same op as unbind; |c_k| read off the membrane) and the
+    SELECTION is a spiking Izhikevich WTA (argmax-over-firing, the NEF-cleanup structure). It must give the SAME
+    answers as the numpy-argmax default, AND preserve the no-confab moat (abstention). D=256 (the cleanup codebook
+    is dense; the D-dial clears it, as for two-attribute)."""
+    cn = RFPhasorComposer(seed=seed, D=256, period=200, enable_spiking_cleanup=False)
+    cs = RFPhasorComposer(seed=seed, D=256, period=200, enable_spiking_cleanup=True)
+    for a, v, p in [("dog", "go", "north"), ("cat", "run", "south"), ("river", "look", "apple")]:
+        cn.store(a, v, p); cs.store(a, v, p)
+    for v, p, a in [("go", "north", "dog"), ("run", "south", "cat"), ("look", "apple", "river")]:
+        assert cs.query_agent(v, p) == cn.query_agent(v, p) == a            # selection in spikes == numpy
+        assert cs.query_patient(a, v) == cn.query_patient(a, v) == p
+    assert cs.query_agent("go", "river") is None                            # no-confab moat preserved
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))
