@@ -168,8 +168,8 @@ def main():
     # 1.000 on seed 42). Decisive: does a FIXED op reach numpy parity across seeds 42/43/44 (the threshold on the
     # input-normalized = cosine similarity should be scale-invariant)?
     grid = []
-    for bias, w_match in [(-400, 60), (-700, 120), (-1000, 120), (-400, 120), (-700, 60)]:
-        grid.append({"bias": bias, "w_match": w_match, "n_per": args.n_per, "w_in_cfs": 1.0,
+    for bias in [-625, -700, -775]:                       # finer threshold sweep around the winner (-700, w_match 120)
+        grid.append({"bias": bias, "w_match": 120, "n_per": args.n_per, "w_in_cfs": 1.0,
                      "w_in_fs": 10.0, "n_in_fs": 60, "einh": -80})
 
     results = []
