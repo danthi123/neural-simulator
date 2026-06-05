@@ -1,0 +1,121 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "numpy": {
+        "what_A_AC": "c011",
+        "who_AC_P": "c003",
+        "what_A2_AC2": "c033",
+        "who_AC2_P2": "c020",
+        "abstain_what": null,
+        "render_A": "c003 c007 c011",
+        "attr_what": "c040 c044",
+        "yesno_true": "yes",
+        "yesno_wrong": "unknown"
+      },
+      "spiking": {
+        "what_A_AC": "c011",
+        "who_AC_P": "c003",
+        "what_A2_AC2": "c033",
+        "who_AC2_P2": "c020",
+        "abstain_what": null,
+        "render_A": "c003 c007 c011",
+        "attr_what": "c040 c044",
+        "yesno_true": "yes",
+        "yesno_wrong": "unknown"
+      },
+      "match": {
+        "abstain_what": true,
+        "attr_what": true,
+        "render_A": true,
+        "what_A2_AC2": true,
+        "what_A_AC": true,
+        "who_AC2_P2": true,
+        "who_AC_P": true,
+        "yesno_true": true,
+        "yesno_wrong": true
+      },
+      "n_match": 9,
+      "n_total": 9
+    },
+    {
+      "seed": 43,
+      "numpy": {
+        "what_A_AC": "c011",
+        "who_AC_P": "c003",
+        "what_A2_AC2": "c033",
+        "who_AC2_P2": "c020",
+        "abstain_what": null,
+        "render_A": "c003 c007 c011",
+        "attr_what": "c040 c044",
+        "yesno_true": "yes",
+        "yesno_wrong": "unknown"
+      },
+      "spiking": {
+        "what_A_AC": "c011",
+        "who_AC_P": "c003",
+        "what_A2_AC2": "c033",
+        "who_AC2_P2": "c020",
+        "abstain_what": null,
+        "render_A": "c003 c007 c011",
+        "attr_what": "c040 c044",
+        "yesno_true": "yes",
+        "yesno_wrong": "unknown"
+      },
+      "match": {
+        "abstain_what": true,
+        "attr_what": true,
+        "render_A": true,
+        "what_A2_AC2": true,
+        "what_A_AC": true,
+        "who_AC2_P2": true,
+        "who_AC_P": true,
+        "yesno_true": true,
+        "yesno_wrong": true
+      },
+      "n_match": 9,
+      "n_total": 9
+    },
+    {
+      "seed": 44,
+      "numpy": {
+        "what_A_AC": "c011",
+        "who_AC_P": "c003",
+        "what_A2_AC2": "c033",
+        "who_AC2_P2": "c020",
+        "abstain_what": null,
+        "render_A": "c003 c007 c011",
+        "attr_what": "c040 c044",
+        "yesno_true": "yes",
+        "yesno_wrong": "unknown"
+      },
+      "spiking": {
+        "what_A_AC": "c011",
+        "who_AC_P": "c003",
+        "what_A2_AC2": "c033",
+        "who_AC2_P2": "c020",
+        "abstain_what": null,
+        "render_A": "c003 c007 c011",
+        "attr_what": "c040 c044",
+        "yesno_true": "yes",
+        "yesno_wrong": "unknown"
+      },
+      "match": {
+        "abstain_what": true,
+        "attr_what": true,
+        "render_A": true,
+        "what_A2_AC2": true,
+        "what_A_AC": true,
+        "who_AC2_P2": true,
+        "who_AC_P": true,
+        "yesno_true": true,
+        "yesno_wrong": true
+      },
+      "n_match": 9,
+      "n_total": 9
+    }
+  ],
+  "total_match": 27,
+  "total": 27,
+  "verdict": "GO"
+}

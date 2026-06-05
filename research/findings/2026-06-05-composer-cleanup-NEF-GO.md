@@ -52,7 +52,30 @@ default until the build is validated. **No-regression GATE:** the full capabilit
 noisier regime; D=2048 is cleaner so parity is expected — the matrix validation confirms it at production). If the
 matrix holds with the spiking cleanup → (A) the readout shortcut is genuinely CLEARED, fully spiking.
 
+## RESOLVED — built into the composer + production D=2048 validation: (A) CLEARED
+
+The NEF cleanup is now wired into the composer (commit 18352657, `research/runners/core_sim_composition.py`):
+opt-in `enable_spiking_cleanup=False` flag; when True, the composer builds ONE persistent NEF cleanup bridge from its
+own codebook at init (operating point `NEF_CLEANUP_OP` = the validated bias=-625/w_match=120/n_per=12) and routes
+`unbind` + `_render_filler` through it (a new `_cleanup` helper; the 2-code AFFIRM/NEGATE polarity sub-codebook falls
+back to numpy). The numpy default path is **byte-unchanged** (the `else` branch is the original
+`argmax([concepts[w]·est])`); the 10 on-brain tests stay green; NO `sim/` edits.
+
+**Production no-regression validation (`_nef_composer_validate.py`, D=2048, V=320, seeds 42/43/44):** the
+spiking-cleanup composer answers the capability matrix (flat who/what, abstention, one-attribute, negation/yes-no,
+generation) **IDENTICALLY to numpy — 27/27 match across all three seeds → GO.** The de-risk was at the harder
+proj_dim=800 (noisier est); D=2048 is cleaner, and the operating point transferred cleanly (the input normalization
+makes the threshold scale-invariant, as the synthesis predicted), so production parity held with no retuning.
+
+**(A) the readout shortcut is CLEARED:** the composer's numpy `argmax` cleanup has a validated, fully-spiking,
+biologically-grounded replacement (Stewart-Eliasmith NEF cleanup) at production-scale numpy parity, multi-seed,
+no regression. It is opt-in (the grounded conversational agent enables it; the numpy path stays the fast default for
+non-grounded uses). The deeper **(B) memory shortcut** (the numpy-held bound fact + numpy superposition/opponency) is
+the remaining piece — options drafted in `docs/plans/2026-06-05-composer-B-substrate-held-memory-options.md`.
+
 ## Artifacts
-- `research/findings/raw/_spiking_cleanup_nef.py`, `_nef_s42.log`, `_nef_multiseed.json`, `_nef_nper12.json`
+- `research/findings/raw/_spiking_cleanup_nef.py`, `_nef_multiseed.json`, `_nef_nper12.json`,
+  `_nef_composer_validate.py` + `_nef_composer_validate.json` (production validation, 27/27)
+- Composer integration: `research/runners/core_sim_composition.py` (commit 18352657)
 - Synthesis: `2026-06-05-spiking-cleanup-memory-literature-synthesis.md`
 - Backend: CuPy / RTX 3090.
