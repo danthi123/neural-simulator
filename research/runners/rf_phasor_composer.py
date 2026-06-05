@@ -50,7 +50,7 @@ def _build_rf_bridge(n, seed=42):
 
 
 class RFPhasorComposer:
-    def __init__(self, seed=42, D=64, vocab=None, period=400):
+    def __init__(self, seed=42, D=64, vocab=None, period=200):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)

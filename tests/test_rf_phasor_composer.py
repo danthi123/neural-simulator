@@ -11,7 +11,7 @@ from research.runners.rf_phasor_composer import RFPhasorComposer
 def test_rf_phasor_composer_who_what_abstain(seed):
     """b.1 GATE (multi-seed): store 2 SVO facts; who/what queries retrieve the right role; an absent cue ABSTAINS
     (returns None) -- the no-confab moat preserved on the RF phasor substrate."""
-    comp = RFPhasorComposer(seed=seed, D=64, period=400)
+    comp = RFPhasorComposer(seed=seed, D=64, period=200)
     comp.store("dog", "go", "north")
     comp.store("cat", "run", "south")
 
@@ -31,7 +31,7 @@ def test_rf_phasor_composer_who_what_abstain(seed):
 def test_rf_phasor_composer_negation_yesno(seed):
     """b.2: a bound AFFIRM/NEGATE polarity tag -> ask_yes_no returns yes/no via the unbound tag; 'unknown'
     (abstention) when no stored fact matches. A 4-role bind (SVO + polarity) through the RF complex synapses."""
-    comp = RFPhasorComposer(seed=seed, D=64, period=400)
+    comp = RFPhasorComposer(seed=seed, D=64, period=200)
     comp.store("dog", "go", "north", polarity="AFFIRM")
     comp.store("cat", "go", "south", polarity="NEGATE")
 
@@ -46,7 +46,7 @@ def test_rf_phasor_composer_one_attribute(seed):
     """b.3a: a 1-attribute entity ('big apple') -- the ATTRIBUTE role-tag binding RESOLVES (adjective + noun both
     decoded from the RF unbind). A 4-role bind (agent/action/patient/attribute) through the RF complex synapses.
     (2-attribute is the documented K=5-load BOUNDARY, not asserted here -- carries over from the +-1 composer.)"""
-    comp = RFPhasorComposer(seed=seed, D=64, period=400)
+    comp = RFPhasorComposer(seed=seed, D=64, period=200)
     comp.store("dog", "look", ("big", "apple"))
     comp.store("cat", "go", "river")
 
@@ -63,7 +63,7 @@ def test_rf_phasor_composer_clause(seed):
     patient filler; the query renders the nested SVO, decoded from the RF unbind (double-nesting through the RF
     complex synapses). D=128 for the nesting SNR."""
     from research.runners.rf_phasor_composer import Clause
-    comp = RFPhasorComposer(seed=seed, D=128, period=400)
+    comp = RFPhasorComposer(seed=seed, D=128, period=200)
     comp.store("dog", "look", Clause("cat", "go", "north"))
     comp.store("river", "stop", "apple")
 
@@ -79,7 +79,7 @@ def test_rf_phasor_composer_dialogue(seed):
     from sim.backend import is_gpu_backend
     if not is_gpu_backend():
         pytest.skip("dlPFC SpikingSpreadingController is GPU-validated (numpy-backend IndexError in that component)")
-    comp = RFPhasorComposer(seed=seed, D=64, period=400)
+    comp = RFPhasorComposer(seed=seed, D=64, period=200)
     comp.store("dog", "go", "north")
     comp.store("dog", "run", "south")
 
@@ -92,7 +92,7 @@ def test_rf_phasor_composer_dialogue(seed):
 def test_rf_phasor_composer_full_matrix_at_scale(seed):
     """Layer (c1): the full capability matrix at a larger fact set (5 facts) -- who/what Q&A, abstention, negation,
     one-attribute, generation -- multi-seed, mirroring the rate-composer's capability bar. D=96 for the 5-fact load."""
-    comp = RFPhasorComposer(seed=seed, D=96, period=400)
+    comp = RFPhasorComposer(seed=seed, D=96, period=200)
     comp.store("dog", "go", "north")
     comp.store("cat", "run", "south")
     comp.store("river", "look", ("big", "apple"))           # one-attribute
@@ -118,7 +118,7 @@ def test_rf_phasor_composer_full_matrix_at_scale(seed):
 def test_rf_phasor_composer_production_scale(seed):
     """Layer (c-scale): a larger fact set (10 facts) -- who/what Q&A retrieves the RIGHT fact and the no-confab moat
     does NOT false-match among 10 facts. The key production-scale risk: spurious matches as the KB grows. D=128."""
-    comp = RFPhasorComposer(seed=seed, D=128, period=400)
+    comp = RFPhasorComposer(seed=seed, D=128, period=200)
     facts = [
         ("dog", "go", "north"), ("cat", "run", "south"), ("dog", "look", "east"),
         ("river", "stop", "west"), ("apple", "go", "south"), ("cat", "look", "north"),
