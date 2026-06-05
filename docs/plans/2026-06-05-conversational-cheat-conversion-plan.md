@@ -99,3 +99,23 @@ On completion: the conversational composition path is FULLY spiking (cleanup + m
 readout/store), the codes are grounded for the groundable subset, and the association memory is substrate-held — with
 the four honest boundaries above explicitly disclosed. That is "all the convertible non-biological shortcuts converted,
 the unconvertible ones named as biology limits" — the honest finish line.
+
+---
+
+## ✅ FINAL STATUS (2026-06-05) — arc complete
+
+| Cheat | Result | Evidence |
+|---|---|---|
+| **B — numpy cleanup** | ✅ **CONVERTED** | matched filter on the complex synapse + spiking Izhikevich WTA; composer == numpy 27/27 multi-seed; agent **8/8 GPU**. `enable_spiking_cleanup`. `2026-06-05-phase1-tpam-cleanup-derisk-GO.md` |
+| **C — Python memory** | ✅ **CONVERTED** | bound composites in per-fact synaptic weights (Crawford store), retrieved in spikes; composer == numpy 27/27 multi-seed; agent **9/9 GPU** (both opt-ins). `enable_substrate_store`. `2026-06-05-phase2-substrate-store-derisk-GO.md` |
+| **A — random codes** | ⚠️ **PARTIAL (interface + boundary)** | RF composer works on REAL V1-Gabor-grounded codes 6/6 multi-seed; `grounded_codes` opt-in shipped. BOUNDARY: real-image semantic grounding + abstract-concept grounding (embodied limit) is a multi-month arc. `2026-06-05-phase3-grounded-codes-PARTIAL.md` |
+| **D — Python assoc graph** | ⚠️ **SUBSTRATE-GENUINE + weight-source residual** | the dlPFC associative memory (concept assemblies + association synapses + spiking spread) is already on the bridge; residual = the association weights are SET (outer-product) not Hebbian-LEARNED (the module's own documented next step); deeper boundary = 27.5% cue-direction recall. `2026-06-05-phase4-assoc-graph-substrate-genuine-residual.md` |
+
+**Net:** the 2 clearable cheats (B+C — the ones the rate composer had cleared) are FULLY converted, agent-validated on
+GPU, no-confab moat intact, zero regression, NO `sim/` edits. The 2 harder cheats (A+D) are honestly bounded: A's
+grounding interface works (full grounding is the embodied/dataset boundary); D's associative memory is substrate-genuine
+(the weight-learning residual is a documented buildable follow-on; cue-direction recall is the measured boundary).
+
+**The one remaining BUILD (not a boundary):** D's Hebbian-learned c2d (drive co-occurring concept assemblies at store →
+Hebbian, replacing the outer-product set-from-graph). Designed; the infrastructure exists; owner-steerable as the next
+step. Everything else convertible is converted; everything unconvertible is a named biology/architecture limit.
