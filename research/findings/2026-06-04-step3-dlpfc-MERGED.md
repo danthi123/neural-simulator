@@ -106,6 +106,32 @@ tests stay green.
 - Probe: `research/findings/raw/_step3_dlpfc_char_probe.py` — the characterization table above.
 - Backend: CuPy / RTX 3090 (spiking dynamics are GPU-bound).
 
+## End-to-end capstone — the full conversation on ONE bridge (production D=2048)
+
+`research/findings/raw/_unified_brain_capstone_demo.py` runs a scripted conversation exercising the FULL unified
+API on a single **18,430-neuron** `UnifiedBrainBridge(enable_dlpfc=True)` at the production dimension **D=2048**,
+seed 42, the real denoise64 concept codes:
+
+```
+COMPREHEND  heard 'dog go north' / 'cat come south' / 'dog look river'  -> roles assigned by the parser
+WHO/WHAT    what does dog go? -> north | cat come? -> south | dog look? -> river
+            who go north? -> dog | who come south? -> cat | who look river? -> dog          (6/6)
+ABSTAIN     what does cat go? -> None | who go river? -> None                       (the no-confab moat)
+YES/NO      does dog go north? -> yes | does dog go south? -> unknown               (bound polarity tag)
+GENERATE    describe dog -> 'dog go north' | describe cat -> 'cat come south' | describe apple -> None
+DIALOGUE    elaborate dog -> go | cat -> come | river -> dog | apple -> None         (dlPFC; abstains)
+```
+
+All three conversational regions — parser (comprehension), composer (bind/unbind recall, yes/no, generation),
+dlPFC (dialogue planning) — interoperate on ONE interacting SimulationBridge. This is the capability the unit
+tests validate, shown end-to-end at the operating dimension.
+
+**Dimensional caveat (consistent with stage-1.5):** the same demo at proj_dim=64 degrades the composer's recall
+(what/who mostly None; `describe dog -> 'dog hot look'` confabulated) while the dlPFC stays correct — the
+correlated denoise64 codes (cos~0.80) need D=2048 to separate. The composer's recall is dimension-bound; the
+dlPFC uses pattern-size assemblies (not the D-dim codes), so it is D-robust. The unified agent operates at
+D=2048, as decided in stage 1.5.
+
 ## Status
 **B step 3 = qualified MERGE → B structurally complete: parser + composer + dlPFC are one interacting bridge.** The
 step-1 (shared substrate) + step-2 (comprehension routes composition in spikes via the gated latch) results stand;
