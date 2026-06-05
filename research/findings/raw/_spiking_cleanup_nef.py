@@ -164,13 +164,13 @@ def main():
         numpy_rec[s] = sum(int(words[int(np.argmax(code_mat @ est))] == t) for est, t, _ in items) / len(items)
         print(f"[nef] captured seed {s}: {len(items)} items, numpy={numpy_rec[s]:.3f}", flush=True)
 
-    # The KEY knob is the THRESHOLD (concept bias): place it so off-target -> silent, true -> fires. Sweep bias x
-    # match-gain x input-norm strength. concept_bias scans the threshold from gentle to strong.
+    # MULTI-SEED test at the seed-42 winning region (bias=-400/w_match=60, bias=-700/-1000 w_match=120 each hit
+    # 1.000 on seed 42). Decisive: does a FIXED op reach numpy parity across seeds 42/43/44 (the threshold on the
+    # input-normalized = cosine similarity should be scale-invariant)?
     grid = []
-    for bias, w_match in itertools.product([-200, -400, -700, -1000], [60, 120]):
-        for w_in_cfs in [0.5, 1.0]:
-            grid.append({"bias": bias, "w_match": w_match, "n_per": args.n_per, "w_in_cfs": w_in_cfs,
-                         "w_in_fs": 10.0, "n_in_fs": 60, "einh": -80})
+    for bias, w_match in [(-400, 60), (-700, 120), (-1000, 120), (-400, 120), (-700, 60)]:
+        grid.append({"bias": bias, "w_match": w_match, "n_per": args.n_per, "w_in_cfs": 1.0,
+                     "w_in_fs": 10.0, "n_in_fs": 60, "einh": -80})
 
     results = []
     for op in grid:
