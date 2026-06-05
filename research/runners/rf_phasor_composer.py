@@ -21,10 +21,18 @@ from sim.enums import NeuronModel
 from sim.bridge import SimulationBridge
 
 ROLES = ("agent", "action", "patient", "polarity", "attribute")
-DEFAULT_VOCAB = ["dog", "cat", "go", "run", "stop", "look", "north", "south", "east", "west", "apple", "river",
-                 "big", "small", "hot", "cold"]
+DEFAULT_VOCAB = ["dog", "cat", "go", "run", "come", "stop", "look", "north", "south", "east", "west", "apple",
+                 "river", "big", "small", "hot", "cold"]
 # A recursive SVO clause that can be a filler ('dog look (cat go north)'). Mirrors core_sim_composition.Clause.
 Clause = namedtuple("Clause", ["agent", "action", "patient"])
+
+
+def _is_clause(x):
+    """A clause-like filler: any namedtuple with (agent, action, patient) fields. Duck-typed so it recognizes BOTH
+    this module's Clause AND core_sim_composition.Clause (the BrainConversationalAgent passes the latter) -- they are
+    distinct namedtuple classes, so isinstance() would miss across them. A plain tuple (e.g. an ('adj', 'noun')
+    attribute) has no _fields -> correctly NOT a clause."""
+    return getattr(x, "_fields", None) == ("agent", "action", "patient")
 
 
 def _build_rf_bridge(n, seed=42):
@@ -108,7 +116,7 @@ class RFPhasorComposer:
 
     def _filler_phases(self, filler):
         """The phasor phases to bind for a filler: a concept's code, OR (recursively) a Clause's bound composite."""
-        if isinstance(filler, Clause):
+        if _is_clause(filler):
             return self._encode({"agent": filler.agent, "action": filler.action, "patient": filler.patient})
         return self.concepts[filler]
 
@@ -120,7 +128,7 @@ class RFPhasorComposer:
         """Render `role`'s filler from a composite, FROM THE RF UNBIND. `stored` (a word or Clause) ROUTES
         flat-cleanup vs recursive clause-decode; the content is decoded from the substrate, not the stored labels."""
         rec = self._unbind_phases(comp_phases, role)
-        if isinstance(stored, Clause):
+        if _is_clause(stored):
             a = self._cleanup(self._unbind_phases(rec, "agent"))
             ac = self._cleanup(self._unbind_phases(rec, "action"))
             pt = self._cleanup(self._unbind_phases(rec, "patient"))
@@ -148,7 +156,7 @@ class RFPhasorComposer:
     # --- conversational API (mirrors CoreSimComposer; the no-confab moat preserved) ---
     def store(self, agent, action, patient, polarity=None):
         fact = {"agent": agent, "action": action}
-        if isinstance(patient, Clause):            # a recursive clause filler (check BEFORE tuple: Clause IS a tuple)
+        if _is_clause(patient):                    # a recursive clause filler (check BEFORE tuple: a Clause IS a tuple)
             fact["patient"] = patient
         elif isinstance(patient, tuple):           # ('big', 'apple') -- an attributed entity (1-attribute)
             adj, noun = patient

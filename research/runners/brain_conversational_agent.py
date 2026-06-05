@@ -148,18 +148,29 @@ class BrainConversationalAgent:
     statements, answer who/what, abstain on the unknown, negate, and handle embedded clauses -- all spiking on
     SimulationBridge neurons, the substrate's own concept codes, no bolted-on numpy simulator."""
 
-    def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None):
-        """`concepts` (optional) = a {word: code} dict to construct the composer at an arbitrary vocabulary
-        (e.g. the production 320-concept code scheme) instead of the default V=16 `denoise64` cache. The parser is
+    def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None, composer_kind="rf"):
+        """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
-        `composer` (optional, opt-in) = an externally-constructed composer instance to use INSTEAD of the default
-        rate-coded `CoreSimComposer` -- e.g. `RFPhasorComposer` (the FHRR-on-bridge substrate, opponency-free). The
-        agent delegates all fact storage/retrieval to it; the parser + dialogue-planning are composer-agnostic. The
-        rate-coded composer remains the DEFAULT (passing `composer` is the explicit opt-in)."""
+        `composer_kind` (default **'rf'** as of the 2026-06-05 production switch): the DEFAULT composer substrate
+        when no explicit `composer` is passed --
+          - 'rf'   = the FHRR-on-bridge `RFPhasorComposer` (resonate-and-fire phasor neurons + complex synapses) --
+                     OPPONENCY-FREE; the production default. Validated end-to-end (full capability matrix,
+                     320-correctness, optimized, zero regression).
+          - 'rate' = the legacy rate-coded `CoreSimComposer` (the +-1 Hadamard; opponency-bounded) -- kept as an
+                     explicit opt-in (`composer_kind='rate'`) + needs the denoise64 cache.
+        `composer` (optional) = an externally-constructed composer instance, overriding `composer_kind`. The agent
+        delegates all fact storage/retrieval to the composer; the parser + dialogue-planning are composer-agnostic."""
         self.seed = int(seed)
         self.parser = BridgeParser(seed=seed)
-        self.composer = composer if composer is not None else CoreSimComposer(seed=seed, proj_dim=proj_dim, concepts=concepts)
+        if composer is not None:
+            self.composer = composer
+        elif composer_kind == "rate":
+            self.composer = CoreSimComposer(seed=seed, proj_dim=proj_dim, concepts=concepts)
+        else:
+            from research.runners.rf_phasor_composer import RFPhasorComposer
+            vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
+            self.composer = RFPhasorComposer(seed=seed, D=128, vocab=vocab, period=200)
         self._dlpfc = None              # dialogue-planning Control: built lazily, cached, rebuilt only when the graph changes
         self._dlpfc_key = None
 
