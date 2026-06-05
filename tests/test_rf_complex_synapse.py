@@ -84,6 +84,63 @@ def test_rf_complex_synapse_roundtrip():
     assert int(np.argmax(sims)) == target, f"recovered filler {int(np.argmax(sims))} != target {target}; sims={np.round(sims,3)}"
 
 
+def test_rf_complex_synapse_multibind_roundtrip():
+    """Gate 4 (the superposition through synapses = the full-task mechanism at load 3): bind 3 (cue,filler) pairs,
+    BUNDLE the 3 bound vectors, then UNBIND each -- ALL through complex synapses on the bridge -- and recover every
+    filler via cleanup. Diagonal synapses for bind/unbind (elementwise), unit synapses for the bundle (the sum)."""
+    D = 64
+    rng = np.random.default_rng(11)
+    n_fillers = 8
+    cues = [rng.uniform(0.0, 1.0, D) for _ in range(3)]
+    fillers = [rng.uniform(0.0, 1.0, D) for _ in range(n_fillers)]
+    fact = [(0, 2), (1, 5), (2, 1)]  # (cue_idx, filler_idx)
+
+    def _resonate(bridge):
+        for _ in range(CYCLE_STEPS + 8):
+            bridge._run_one_simulation_step()
+
+    # bind each pair: bound_l[k] = cue_l[k] * filler_l[k] via a diagonal synapse weighted by the filler phasor.
+    bounds = []
+    for (ci, fi) in fact:
+        zc = np.exp(2j * np.pi * cues[ci])
+        zf = np.exp(2j * np.pi * fillers[fi])
+        bb = _build_rf_bridge(2 * D)
+        bb.rf_set_complex_weights([(D + k, k, zf[k]) for k in range(D)])
+        kick = np.zeros(2 * D, dtype=np.complex128)
+        kick[:D] = zc
+        bb.rf_kick(kick, lam=0.0)
+        _resonate(bb)
+        bounds.append(np.asarray(bb.rf_read_phases())[D:])
+
+    # bundle: composite[k] = sum_l bound_l[k] via unit synapses (L bound blocks -> 1 composite block).
+    L = len(bounds)
+    bundle_bridge = _build_rf_bridge((L + 1) * D)
+    conns = [(L * D + k, l * D + k, 1.0) for l in range(L) for k in range(D)]
+    bundle_bridge.rf_set_complex_weights(conns)
+    kick = np.zeros((L + 1) * D, dtype=np.complex128)
+    for l in range(L):
+        kick[l * D:(l + 1) * D] = np.exp(2j * np.pi * bounds[l])
+    bundle_bridge.rf_kick(kick, lam=0.0)
+    _resonate(bundle_bridge)
+    composite = np.asarray(bundle_bridge.rf_read_phases())[L * D:]
+
+    # unbind each + cleanup.
+    n_correct = 0
+    for (ci, fi) in fact:
+        zc = np.exp(2j * np.pi * cues[ci])
+        ub = _build_rf_bridge(2 * D)
+        ub.rf_set_complex_weights([(D + k, k, np.conj(zc[k])) for k in range(D)])
+        kick = np.zeros(2 * D, dtype=np.complex128)
+        kick[:D] = np.exp(2j * np.pi * composite)
+        ub.rf_kick(kick, lam=0.0)
+        _resonate(ub)
+        recovered = np.asarray(ub.rf_read_phases())[D:]
+        sims = [float(np.mean(np.cos(2.0 * np.pi * (recovered - f)))) for f in fillers]
+        if int(np.argmax(sims)) == fi:
+            n_correct += 1
+    assert n_correct == len(fact), f"recovered {n_correct}/{len(fact)} fillers through synapses (load 3 superposition)"
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v"]))
