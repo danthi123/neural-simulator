@@ -46,6 +46,15 @@ def swr_consolidate(bridge, pairs, cycles, teacher_pA, replay_steps=12, quiet_st
     strengthen the directed a->b cross-pool pathway. Repeated cycles = the consolidation."""
     cp, _ = get_backend()
     rm = bridge.region_manager
+    # FREEZE the input + readout pathways during replay so the strong pool drive can't perturb the lang_input->pool
+    # or pool->lang_output tuning (the NEGATIVE-with-scrambled-readout signature). ONLY the cross-pool learns.
+    kinds = ["noun", "verb", "adjective", "motor"]
+    freeze = [f"language_input_to_{k}_pool" for k in kinds] + [f"{k}_pool_to_language_output" for k in kinds]
+    for g in freeze:
+        try:
+            bridge.set_plasticity_gate(g, 0.0)
+        except KeyError:
+            pass
     try:
         bridge.set_plasticity_gate("cross_pool_concept", 1.0)
     except KeyError:
@@ -67,6 +76,11 @@ def swr_consolidate(bridge, pairs, cycles, teacher_pA, replay_steps=12, quiet_st
         bridge.set_plasticity_gate("cross_pool_concept", 0.0)
     except KeyError:
         pass
+    for g in freeze:
+        try:
+            bridge.set_plasticity_gate(g, 1.0)
+        except KeyError:
+            pass
 
 
 def main():
