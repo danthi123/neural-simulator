@@ -93,19 +93,26 @@ needs a working-memory LATCH to sustain routing during the downstream read -- 'c
 parser opens the per-role gate via its firing; the readout window HOLDS that parser-determined gate state by pausing
 the coupling; no hand-set gate, no magnitude change, no sim/ edit). Finding
 `2026-06-04-one-bridge-unification-step2-DONE.md`; test passes.
->>> EXACT NEXT: B IS STRUCTURALLY COMPLETE (steps 1+2+3 all DONE, committed both remotes; full gate 23 passed). The
-one-bridge unification arc is finished: the parser (comprehension), composer (role-filler VSA bind/unbind), and dlPFC
-(dialogue planning) now run as disjoint persistent slices on ONE interacting SimulationBridge — comprehension routes
-composition IN SPIKES via the step-2 gated latch, and dialogue planning runs on the same substrate at dt=1.0.
-Surfaced to owner. NEXT MAJOR ARC (owner steers — it is a milestone, like each B step was): the spine's remaining
-items — (item 2 residual) the load-bearing numpy on the composer CLEANUP is a DISCLOSED high-precision readout (the
-full cortical cleanup circuit = decorrelation + temporal integration + divisive normalization is the deferred real
-build); (item 3) the FULLY GROUNDED run — the production V=320 / D=2048 grounded conversational agent end-to-end on
-the unified substrate. If a watchdog fires with NO owner steer: low-regret hygiene only (sync-documentation +
-keep-webapp-current for the step-3 merge; characterize honest residuals like the V²-vs-V=320 dlPFC pre-allocation
-scope note). Do NOT auto-start the fully-grounded major arc without the owner. HARD RULES unchanged (never stall on a
-promise; honest negatives are the deliverable; both remotes every outcome; GPU/CuPy real runs; never weaken frozen
-bars / the no-confab moat; reuse-by-import NO sim/ edits).
+>>> EXACT NEXT: B COMPLETE + surfaced; owner chose ITEM 2 FULL-CLEAR (A+B) NEXT (migrate ALL per-query numpy off the
+composer before the fully-grounded run). Audit (`2026-06-04-composer-shortcut-audit.md`, commit 20b466e0): the
+bind/unbind COMPUTE is spiking, but THREE per-query numpy steps remain — (A) the cleanup argmax (readout) + (B) the
+superposition/opponency + numpy fact STORAGE (the memory). Owner-approved design (commit 00b06703,
+`docs/plans/2026-06-04-composer-full-clear-design.md`): full clear, sequenced A→B, DE-RISK-FIRST. NOW: (A) cleanup
+de-risk IN PROGRESS — can a spiking matched-filter + DIVISIVE NORMALIZATION + temporal integration reach numpy parity
+on the composer's REAL noisy est (the prior cheap-first plateaued ~0.78 vs numpy 1.00; the diagnosed fix is
+Carandini-Heeger divisive normalization, NOT WTA which HURTS). The subagent (ran out mid-wait) BUILT the probes
+(`research/findings/raw/_divnorm_*.py` + `_spiking_cleanup_divnorm_probe.py`) + made a KEY discovery: g_e-vs-g_i
+routing keys on the PRESYNAPTIC inhibitory TRAIT (cp_traits ∈ inhibitory_trait_indices), NOT the wiring conn_type
+string — so the prior WTA's "I_TO_E" weights wrongly added to EXCITATION (why WTA hurt). The mechanism SANITY PASSES
+(an inhibitory-trait FS pool produces genuine divisive, rank-preserving, drive-scaled shunting). EXACT next concrete:
+the seed-42 operating-point SWEEP is running (`_divnorm_sweep.py --seed 42`, bg b3z961uhj, out
+`_divnorm_sweep_seed42.json`); when it lands, pick the best divnorm operating point, run the MULTISEED decision
+(`_divnorm_multiseed.py` at the PRODUCTION proj_dim=2048, seeds 42/43/44) → HARD GATE: GO (build the cleanup into the
+composer, replace np.argmax) if divnorm reaches numpy parity; NEGATIVE honest boundary (disclosed readout stands, do
+NOT ship sub-parity) otherwise. Commit probe+test+finding both remotes. THEN (B) substrate-held memory de-risk +
+build. HARD RULES unchanged (never stall on a promise — next-action tool call same turn; honest negatives are the
+deliverable; both remotes every outcome; GPU/CuPy real runs; never weaken frozen bars / the no-confab moat;
+reuse-by-import NO sim/ edits; owner steers major milestones).
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04) <<<
 
