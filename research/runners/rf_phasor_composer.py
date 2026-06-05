@@ -20,7 +20,7 @@ from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConf
 from sim.enums import NeuronModel
 from sim.bridge import SimulationBridge
 
-ROLES = ("agent", "action", "patient", "polarity", "attribute")
+ROLES = ("agent", "action", "patient", "polarity", "attribute", "attribute2")
 DEFAULT_VOCAB = ["dog", "cat", "go", "run", "come", "stop", "look", "north", "south", "east", "west", "apple",
                  "river", "big", "small", "hot", "cold"]
 # A recursive SVO clause that can be a filler ('dog look (cat go north)'). Mirrors core_sim_composition.Clause.
@@ -158,10 +158,13 @@ class RFPhasorComposer:
         fact = {"agent": agent, "action": action}
         if _is_clause(patient):                    # a recursive clause filler (check BEFORE tuple: a Clause IS a tuple)
             fact["patient"] = patient
-        elif isinstance(patient, tuple):           # ('big', 'apple') -- an attributed entity (1-attribute)
-            adj, noun = patient
+        elif isinstance(patient, tuple):           # (adj(s), noun) -- an attributed entity ('big apple' or 'big hot apple')
+            adjs, noun = patient
+            adjs = list(adjs) if isinstance(adjs, (tuple, list)) else [adjs]
             fact["patient"] = noun
-            fact["attribute"] = adj
+            fact["attribute"] = adjs[0]
+            if len(adjs) > 1:
+                fact["attribute2"] = adjs[1]       # 2-attribute (the +-1 scheme's K=5 boundary -- does FHRR lift it?)
         else:
             fact["patient"] = patient
         if polarity is not None:
@@ -182,8 +185,9 @@ class RFPhasorComposer:
         for fact, comp in self.kb:
             if self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action:
                 noun = self._render(comp, "patient", fact["patient"])   # a word OR a recursive Clause
-                if "attribute" in fact:
-                    return f"{self.unbind(comp, 'attribute')} {noun}"
+                adjs = [self.unbind(comp, r) for r in ("attribute", "attribute2") if r in fact]
+                if adjs:
+                    return " ".join(adjs + [noun])    # 'big apple' / 'big hot apple'
                 return noun
         return None
 
@@ -205,8 +209,9 @@ class RFPhasorComposer:
             if self.unbind(comp, "agent") == agent:
                 ac = self.unbind(comp, "action")
                 pt = self._render(comp, "patient", fact["patient"])
-                if "attribute" in fact:
-                    pt = f"{self.unbind(comp, 'attribute')} {pt}"
+                adjs = [self.unbind(comp, r) for r in ("attribute", "attribute2") if r in fact]
+                if adjs:
+                    pt = " ".join(adjs + [pt])
                 return f"{agent} {ac} {pt}"
         return None
 

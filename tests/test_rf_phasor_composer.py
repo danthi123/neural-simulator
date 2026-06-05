@@ -159,6 +159,19 @@ def test_brain_agent_with_rf_composer():
     assert agent.composer.query_agent("go", "south") is None    # abstention -- the no-confab moat, end to end
 
 
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_two_attribute(seed):
+    """2-attribute ('big hot apple') -- the documented K=5-load BOUNDARY of the rate-coded +-1 composer (the noun
+    degrades at the 5-binding edge ~0.93). The FHRR phasor substrate has better capacity (SNR ~ 2N/M, a D dial):
+    at D=256 it RESOLVES multi-seed -- the boundary is LIFTED by the substrate, no F=3 resonator needed."""
+    comp = RFPhasorComposer(seed=seed, D=256, period=200)
+    comp.store("dog", "look", (("big", "hot"), "apple"))   # two-attribute entity (5-binding fact)
+    comp.store("cat", "go", "river")
+    assert set(comp.query_patient("dog", "look").split()) == {"big", "hot", "apple"}   # BOTH adjectives + the noun
+    assert comp.query_patient("cat", "go") == "river"                                    # flat patient still works
+    assert comp.query_patient("dog", "go") is None                                       # abstention (no-confab moat)
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))
