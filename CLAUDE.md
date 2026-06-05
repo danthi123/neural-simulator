@@ -568,6 +568,29 @@ inventory + sizes per pathway. (Active after webapp restart.)
 (`tests/test_synapse_storage.py`, `tests/test_numpy_backend_integration.py`).
 All PASS, all CPU-only.
 
+### 🎉 OPPONENCY ESCAPED — FHRR-on-bridge composer is the conversational PRODUCTION DEFAULT (2026-06-05)
+
+**`BrainConversationalAgent` now defaults to the FHRR-on-bridge `RFPhasorComposer` (opponency-free).** The composer's
+last numpy op — `onoff(bon−boff)` opponency (common-mode removal of a small signed difference of correlated channels)
+— was confirmed a FUNDAMENTAL rate-coded SNR wall: 3 independent spiking mechanisms NEGATIVE (simple accumulator
+0.41, NEF integrator 0.90-aggregate/0.077-unbind, bipolar/WTA 0.385), because biology removes the common mode in the
+ANALOG stage BEFORE spiking — rate codes physically can't (Kandel 6e Ch 22, the retina). Fix: pivot the bound-vector
+representation from the ±1 Hadamard to **spiking-phasor FHRR** (Frady-Sommer 2019 resonate-and-fire phasor neurons +
+complex synapses) — unit-magnitude, info in PHASE, so there is no common mode and no small signed difference and the
+opponency simply does not exist. Realized ON the bridge: new `NeuronModel.RESONATE_AND_FIRE` (complex state
+Z=re+i·im reusing v/u; rotate `exp(λ+iω)`; Im zero-crossing spike = phase) + complex synaptic matvec
+(`rf_set_complex_weights`, SPARSE) + a dedicated `rf_resonate_steps` fast loop + `rf_kick`/`rf_read_phases` (all
+ADDITIVE/guarded protected `sim/` edits — Izhikevich/HH/AdEx byte-unchanged; the bind/unbind/bundle happen THROUGH
+complex synapses, Frady-Sommer). `RFPhasorComposer` (`research/runners/rf_phasor_composer.py`) reproduces the full
+capability matrix (who/what Q&A, abstention, negation/yes-no, one-attribute, recursive clauses, dialogue, generation)
+multi-seed; 320-concept correctness GO (8/8/8). The agent's FULL existing suite (`tests/test_brain_conversational_agent.py`)
+passes VERBATIM on the RF default — behavioral parity, no-confab moat intact, ZERO regression (29 GPU tests). Rate
+composer = explicit opt-in (`composer_kind='rate'`); the separate 320-concept retrieval pipeline is untouched. The
+F=3 two-attribute resonator (which the ±1 scheme provably can't do) is now available to lift the K=5 boundary
+(follow-on). Findings: `2026-06-05-fhrr-production-switch-DONE.md`, `-fhrr-layer-{a,b,c}-*`,
+`-B-opponency-rate-coded-SNR-wall-CONFIRMED.md`, `-FHRR-pivot-derisk.md`,
+`-spiking-opponency-literature-synthesis.md`. Plan: `docs/plans/2026-06-05-full-fhrr-on-bridge-feature-plan.md`.
+
 ### Conversational pipeline CONSOLIDATED onto the core sim (2026-06-04)
 
 **The production conversational agent runs ON the core `SimulationBridge` (the brain), not on a
