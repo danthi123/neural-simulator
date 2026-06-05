@@ -109,14 +109,23 @@ NEGATIVE, smell-test paid off): seed-42 sweep found divnorm reaches 1.000 = nump
 w_cfs=8 w_fs=8 einh=-75) vs nodiv 0.956 — BUT the multiseed at THAT op OVERFITS: held-out seed 43 collapses to 0.507
 (nodiv 0.275), seed 44 0.986, mean **0.831, margin -0.169** from numpy 1.000 (cue_cos ~0.31 = genuine production
 noise; numpy=1.000 all seeds). divnorm DOES lift over nodiv (+9pp mean, +23pp seed 43) but the FIXED absolute
-threshold (bias) does not transfer across seeds (seed-43 est magnitude differs → miscalibrated). EXACT next concrete:
-the FAIR test — is there ONE robust operating point high on ALL 3 seeds? seed 43+44 sweeps RUNNING (bg b7cnebk05,
-out `_divnorm_sweep_seed4{3,4}.json`); aggregator `_divnorm_robust_agg.py` READY (finds the op maximizing
-min-across-seeds). When sweeps land: run the aggregator → HARD GATE: GO if the robust worst-case reaches numpy parity
-(min ≥ ~0.95); if even the best robust op leaves a seed well below parity → ONE mechanism-refinement attempt
-(STRONGER/input normalization for scale-invariant threshold — the root cause) OR honest NEGATIVE (disclosed readout
-stands, do NOT ship sub-parity). Commit probe+test+finding both remotes. THEN (B) substrate-held memory de-risk +
-build. HARD RULES unchanged (never stall on a promise — next-action tool call same turn; honest negatives are the
+threshold (bias) does not transfer across seeds (seed-43 est magnitude differs → miscalibrated). RESOLVED — (A) de-risk =
+NEGATIVE (rigorous, committed ab5b97af, finding `2026-06-04-composer-cleanup-divisive-norm-NEGATIVE.md`). The robust
+search over 60 ops × seeds 42/43/44 (`_divnorm_robust_agg.json`): each seed is parity-capable at its OWN op (divnorm
+best 1.000 each) but NO single fixed op reaches parity across seeds — best worst-case 0.844, margin -0.156 from numpy
+1.000. Root cause: the absolute firing threshold is SCALE-VARIANT (est magnitudes differ seed-to-seed); output
+divisive normalization (maxed, w_cfs→25) standardizes the output but not the input drive. The deeper fix = a spiking
+INPUT-layer normalization circuit (two-stage normalization) for a scale-invariant threshold — exceeds the thin-readout
+value, DEFERRED. Disclosed numpy argmax readout STANDS (no sub-parity ship that regresses the matrix). Kept: the
+divisive-norm mechanism + the g_e/g_i trait-routing discovery (the prior WTA "hurt" was lateral EXCITATION — inhibitory
+trait was off). >>> EXACT NEXT: (A) is a documented deferred sub-project; the "full clear" is now partial (A can't be
+cheaply cleared). Per owner A→B sequencing, NEXT is (B) substrate-held memory de-risk + build (the bound fact is held
+as a numpy vector + numpy superposition/opponency — the DEEPER shortcut). (B) starts with a DESIGN (mechanism choice:
+engram-tag set vs recurrent attractor vs one-shot fast-weight imprint for graded bound-pattern fidelity), present for
+owner approval (design-before-build), then de-risk-first. Owner flagged time + leaned "move on to (B)"; surface the (A)
+NEGATIVE + the (B) plan. If a watchdog fires with no steer: start the (B) design doc (non-GPU, bounded), do NOT launch
+a major (B) GPU build without owner approval of the design. HARD RULES unchanged (honest negatives are the deliverable;
+both remotes; GPU/CuPy; never weaken frozen bars / no-confab moat; reuse-by-import NO sim/ edits; owner steers milestones). HARD RULES unchanged (never stall on a promise — next-action tool call same turn; honest negatives are the
 deliverable; both remotes every outcome; GPU/CuPy real runs; never weaken frozen bars / the no-confab moat;
 reuse-by-import NO sim/ edits; owner steers major milestones).
 
