@@ -4933,6 +4933,46 @@ class SimulationBridge:
         self.cp_rf_w_re = csp.csr_matrix((cp.asarray(w_re), (r, c)), shape=(n, n))
         self.cp_rf_w_im = csp.csr_matrix((cp.asarray(w_im), (r, c)), shape=(n, n))
 
+    def _rf_advance_one(self):
+        """One step of the resonate-and-fire dynamics: rotate the complex state Z=re+i*im (v=re, u=im) by
+        exp(lambda+i*omega), add the complex synaptic input u=W z (sparse matvec from the presynaptic RF states),
+        detect the upward Im zero-crossing -> spike (recording its step = the kick's phase). Updates the state +
+        spike trackers; returns the fired mask. Shared by the main-step RF branch and the fast rf_resonate_steps()
+        loop. Assumes the RF trackers exist (rf_kick() or the step's lazy init)."""
+        _rf_decay = float(np.exp(getattr(self, "_rf_lambda", -3.0e-4)))
+        _rf_omega = float(getattr(self, "_rf_omega", 2.0 * np.pi / 1000.0))
+        _rf_floor2 = float(getattr(self, "_rf_floor", 1.0e-3)) ** 2
+        _rf_cos = float(np.cos(_rf_omega)); _rf_sin = float(np.sin(_rf_omega))
+        _rf_re = self.cp_membrane_potential_v
+        _rf_im = self.cp_recovery_variable_u
+        _rf_re_new = _rf_decay * (_rf_re * _rf_cos - _rf_im * _rf_sin)
+        _rf_im_new = _rf_decay * (_rf_re * _rf_sin + _rf_im * _rf_cos)
+        if getattr(self, "cp_rf_w_re", None) is not None:
+            # FHRR bind THROUGH synapses: complex matvec u_i = sum_j W_ij z_j from the presynaptic RF states.
+            _rf_re_new = _rf_re_new + (self.cp_rf_w_re @ _rf_re - self.cp_rf_w_im @ _rf_im)
+            _rf_im_new = _rf_im_new + (self.cp_rf_w_re @ _rf_im + self.cp_rf_w_im @ _rf_re)
+        self._rf_counter = int(getattr(self, "_rf_counter", 0)) + 1
+        _rf_mag2 = _rf_re_new * _rf_re_new + _rf_im_new * _rf_im_new
+        _rf_crossed = ((~self.cp_rf_fired) & (self.cp_rf_prev_im < 0.0)
+                       & (_rf_im_new >= 0.0) & (_rf_mag2 > _rf_floor2))
+        self.cp_rf_spike_step = cp.where(_rf_crossed, self._rf_counter, self.cp_rf_spike_step)
+        self.cp_rf_fired = self.cp_rf_fired | _rf_crossed
+        self.cp_membrane_potential_v[:] = _rf_re_new
+        self.cp_recovery_variable_u[:] = _rf_im_new
+        self.cp_rf_prev_im = _rf_im_new
+        return _rf_crossed
+
+    def rf_resonate_steps(self, n_steps):
+        """Run `n_steps` of the RF resonate dynamics DIRECTLY (the production-fast path) -- skips the full
+        `_run_one_simulation_step` machinery (conductance / plasticity / recording / engram / gate couplings / stats),
+        none of which the RF/FHRR substrate uses. The composer's per-op resonate window calls this instead of looping
+        `_run_one_simulation_step`, eliminating the dominant per-step overhead at 320-concept scale. Assumes
+        rf_kick() was called (else a no-op)."""
+        if getattr(self, "cp_rf_prev_im", None) is None:
+            return
+        for _ in range(int(n_steps)):
+            self._rf_advance_one()
+
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
         if not self.is_initialized or self.core_config.num_neurons == 0: return
@@ -5375,30 +5415,7 @@ class SimulationBridge:
                     self.cp_rf_fired = cp.zeros(n_neurons, dtype=bool)
                     self.cp_rf_spike_step = cp.full(n_neurons, int(getattr(self, "_rf_period", 1000)), dtype=cp.int64)
                     self._rf_counter = 0
-                _rf_decay = float(np.exp(getattr(self, "_rf_lambda", -3.0e-4)))
-                _rf_omega = float(getattr(self, "_rf_omega", 2.0 * np.pi / 1000.0))
-                _rf_floor2 = float(getattr(self, "_rf_floor", 1.0e-3)) ** 2
-                _rf_cos = float(np.cos(_rf_omega)); _rf_sin = float(np.sin(_rf_omega))
-                _rf_re = self.cp_membrane_potential_v
-                _rf_im = self.cp_recovery_variable_u
-                _rf_re_new = _rf_decay * (_rf_re * _rf_cos - _rf_im * _rf_sin)
-                _rf_im_new = _rf_decay * (_rf_re * _rf_sin + _rf_im * _rf_cos)
-                if getattr(self, "cp_rf_w_re", None) is not None:
-                    # Complex synaptic input u_i = sum_j W_ij z_j (FHRR bind THROUGH synapses carrying the operand
-                    # phasor: phasor_a*phasor_b = phasor_a through a phasor_b-weighted synapse). Complex matvec
-                    # from the PRESYNAPTIC RF states z(t)=(re,im), added to the rotated state (Frady-Sommer 2019).
-                    _rf_re_new = _rf_re_new + (self.cp_rf_w_re @ _rf_re - self.cp_rf_w_im @ _rf_im)
-                    _rf_im_new = _rf_im_new + (self.cp_rf_w_re @ _rf_im + self.cp_rf_w_im @ _rf_re)
-                self._rf_counter = int(getattr(self, "_rf_counter", 0)) + 1
-                _rf_mag2 = _rf_re_new * _rf_re_new + _rf_im_new * _rf_im_new
-                _rf_crossed = ((~self.cp_rf_fired) & (self.cp_rf_prev_im < 0.0)
-                               & (_rf_im_new >= 0.0) & (_rf_mag2 > _rf_floor2))
-                fired_this_step = _rf_crossed
-                self.cp_rf_spike_step = cp.where(_rf_crossed, self._rf_counter, self.cp_rf_spike_step)
-                self.cp_rf_fired = self.cp_rf_fired | _rf_crossed
-                self.cp_membrane_potential_v[:] = _rf_re_new
-                self.cp_recovery_variable_u[:] = _rf_im_new
-                self.cp_rf_prev_im = _rf_im_new
+                fired_this_step = self._rf_advance_one()
 
             self.cp_firing_states[:] = fired_this_step
 

@@ -78,8 +78,7 @@ class RFPhasorComposer:
             self._bridge_cache[n] = b
         b.rf_set_complex_weights(conns)   # (c-opt) builds the sparse complex weights FRESH each op -> replaces; no reset needed
         b.rf_kick(kick, period=self.period, lam=0.0)
-        for _ in range(self.period + 8):
-            b._run_one_simulation_step()
+        b.rf_resonate_steps(self.period + 8)   # (c-opt) fast RF dynamics loop -- skips the full-step machinery
         return np.asarray(b.rf_read_phases())
 
     @staticmethod
