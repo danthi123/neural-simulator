@@ -18,11 +18,17 @@ WIP 2026-06-05 (DIAGNOSED -- substrate works; mechanism understood):
   REWARD signal to convert eligibility->weight.
 - B still does not fire (cue-recall 0): the grown weight (~0.05) + synaptic propagation is too weak vs the 900 pA
   external drive.
-NEXT (the precise continuation): (1) enable_stdp + inject a consolidation REWARD during co-replay (the three-factor
-mechanism: timing-based eligibility x reward -> DIRECTED weight) -- find the reward setter (grep bridge for
-current_reward_signal / reward application); (2) tune the weight ceiling + synaptic scaling so the grown A->B fires B
-(the cue-recall readout); (3) THEN compare swr (A-before-B) vs swr_rev (B-before-A) -- the directed-association
-asymmetry IS the hypothesis test. GPU for the real run.
+UPDATE: setting `cfg.enable_reward_modulation=True` + `b.core_config.current_reward_signal=1.0` during co-replay did
+NOT convert the eligibility either (weight stays 0.010) -- core_config.current_reward_signal is NOT the path the
+bridge's step reads for reward conversion. The reward-application API needs matching the WORKING three-factor setup.
+NEXT (the clean path -- do NOT keep reverse-engineering this minimal substrate's reward wiring): build the de-risk ON
+the VALIDATED three-factor runner (`research/runners/bio_three_factor.py`, Tier-1 6/6 multi-seed -- it already drives
+STDP + reward + directed weight growth correctly). Add the SWR co-replay phase (temporal-ordered A-before-B
+co-stimulation) into that working harness, then compare cue-recall before/after consolidation + swr vs swr_rev.
+That reuses a known-good STDP+reward+propagation stack instead of debugging this from-scratch substrate's reward path.
+THEN scale to the v16 concept-pool architecture + the 27.5% baseline. GPU for the real run; multi-seed; permuted-pair
+anti-cheat. (This minimal probe served its purpose: it isolated the mechanism -- the substrate learns, but directed
+timing-based consolidation needs the working three-factor reward path, not a from-scratch reward wiring.)
 """
 import numpy as np
 
@@ -47,9 +53,11 @@ def build(seed, pool=80):
     cfg.enable_stdp = True
     cfg.stdp_w_max = 30.0
     cfg.enable_hebbian_learning = False
+    cfg.enable_reward_modulation = True     # three-factor: STDP eligibility (timing) x reward -> DIRECTED weight
+    cfg.reward_learning_rate = 0.05
     cfg.ou_std_current_pA = 0.0
     for f in ("enable_short_term_plasticity", "enable_structural_plasticity", "enable_homeostasis",
-              "enable_reward_modulation", "enable_neuromodulator_subsystem"):
+              "enable_neuromodulator_subsystem"):
         if hasattr(cfg, f):
             setattr(cfg, f, False)
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
@@ -86,7 +94,9 @@ def cue_recall_B(b, A, B_idx, drive_pA=900.0, window=60):
 
 
 def consolidate(b, A, B_idx, mode, cycles=90, drive_pA=900.0):
-    """mode: 'symmetric' = A+B together; 'swr' = A then B (temporal order, A leads -> A->B LTP); 'swr_rev' = B then A."""
+    """mode: 'symmetric' = A+B together; 'swr' = A then B (temporal order, A leads -> A->B LTP); 'swr_rev' = B then A.
+    Reward modulation ON during co-replay: STDP eligibility (timing-based) x positive reward -> DIRECTED weight."""
+    b.core_config.current_reward_signal = 1.0     # positive reward gates the eligibility->weight conversion
     for _ in range(cycles):
         if mode == "symmetric":
             _drive(b, np.concatenate([A, B_idx])); _run(b, 12)
@@ -98,6 +108,7 @@ def consolidate(b, A, B_idx, mode, cycles=90, drive_pA=900.0):
             _drive(b, np.concatenate([A, B_idx])); _run(b, 8)        # B precedes A (anti-cheat: should NOT build A->B)
         b.cp_external_input_current[:] = 0.0
         _run(b, 10)
+    b.core_config.current_reward_signal = 0.0
 
 
 def _ab_weight(b, A, B_idx):
