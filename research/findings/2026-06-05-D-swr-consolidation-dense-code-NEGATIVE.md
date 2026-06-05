@@ -1,5 +1,12 @@
 # D cue-recall arc — SWR consolidation on the DENSE v16 substrate: NEGATIVE (the heteroassociative capacity wall) — 2026-06-05
 
+> ⚠️ **CORRECTION (2026-06-05, same day): the "capacity wall" analysis below is WRONG and SUPERSEDED.** A numpy
+> Hopfield heteroassociative resolves 4/4 for BOTH sparse and dense codes at this scale — capacity was never the
+> binding constraint. The dense-v16 failure was that the cross-pool did NOT learn/propagate (the open caveat this
+> doc itself flagged). The D cue-recall is now **RESOLVED** via a LEARNED sparse recurrent heteroassociative memory:
+> see **`2026-06-05-D-cue-recall-RESOLVED-sparse-heteroassoc.md`** (multi-seed, anti-cheat-clean). This doc is kept
+> for the trail; its capacity-wall conclusion is retracted.
+
 First REAL-substrate result of the D cue-recall arc (`docs/plans/2026-06-05-D-cue-recall-SWR-consolidation-design.md`).
 Per the top-level goal, this honest negative IS the deliverable.
 
