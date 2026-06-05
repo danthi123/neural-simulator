@@ -138,6 +138,23 @@ def test_rf_phasor_composer_production_scale(seed):
     assert comp.query_patient("dog", "stop") is None         # dog never stops
 
 
+def test_brain_agent_with_rf_composer():
+    """(c2a) end-to-end: BrainConversationalAgent using the FHRR-on-bridge RFPhasorComposer (opt-in injection) --
+    the Hebbian parser comprehends sentences and feeds the RF composer; hear -> store, query, abstain. Validates
+    the switch works at the AGENT level (the rate-coded composer stays the default; this is the explicit opt-in)."""
+    from research.runners.rf_phasor_composer import RFPhasorComposer
+    from research.runners.brain_conversational_agent import BrainConversationalAgent
+    rf = RFPhasorComposer(seed=42, D=96, period=200)
+    agent = BrainConversationalAgent(seed=42, composer=rf)
+    agent.hear("dog go north")
+    agent.hear("cat run south")
+
+    # the parser comprehended each sentence and stored it in the RF composer
+    assert agent.composer.query_agent("go", "north") == "dog"
+    assert agent.composer.query_patient("cat", "run") == "south"
+    assert agent.composer.query_agent("go", "south") is None    # abstention -- the no-confab moat, end to end
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))

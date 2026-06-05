@@ -148,13 +148,18 @@ class BrainConversationalAgent:
     statements, answer who/what, abstain on the unknown, negate, and handle embedded clauses -- all spiking on
     SimulationBridge neurons, the substrate's own concept codes, no bolted-on numpy simulator."""
 
-    def __init__(self, seed=42, proj_dim=800, concepts=None):
+    def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None):
         """`concepts` (optional) = a {word: code} dict to construct the composer at an arbitrary vocabulary
         (e.g. the production 320-concept code scheme) instead of the default V=16 `denoise64` cache. The parser is
-        vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab."""
+        vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
+
+        `composer` (optional, opt-in) = an externally-constructed composer instance to use INSTEAD of the default
+        rate-coded `CoreSimComposer` -- e.g. `RFPhasorComposer` (the FHRR-on-bridge substrate, opponency-free). The
+        agent delegates all fact storage/retrieval to it; the parser + dialogue-planning are composer-agnostic. The
+        rate-coded composer remains the DEFAULT (passing `composer` is the explicit opt-in)."""
         self.seed = int(seed)
         self.parser = BridgeParser(seed=seed)
-        self.composer = CoreSimComposer(seed=seed, proj_dim=proj_dim, concepts=concepts)
+        self.composer = composer if composer is not None else CoreSimComposer(seed=seed, proj_dim=proj_dim, concepts=concepts)
         self._dlpfc = None              # dialogue-planning Control: built lazily, cached, rebuilt only when the graph changes
         self._dlpfc_key = None
 
