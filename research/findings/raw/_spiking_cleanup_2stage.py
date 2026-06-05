@@ -168,12 +168,13 @@ def main():
         numpy_rec[s] = sum(int(words[int(np.argmax(code_mat @ est))] == t) for est, t, _ in items) / len(items)
         print(f"[2stage] captured seed {s}: {len(items)} items, numpy={numpy_rec[s]:.3f}", flush=True)
 
-    # Focused first-pass grid: input-norm strengths (the new lever) at a fixed sensible output-norm + match/bias.
+    # FINAL bounded grid: the output-norm's best region (w_cfs=25, strong threshold) COMBINED with gentle input
+    # norm (w_in_cfs ~0.3-1) -- the fairest completion of the two-stage. If this misses parity, NEGATIVE.
     grid = []
-    for w_in_cfs, w_in_fs in itertools.product([100, 200], [25, 50]):
-        for w_match, bias in [(60, -500), (100, -700)]:
-            grid.append({"w_match": w_match, "bias": bias, "w_in_cfs": w_in_cfs, "w_in_fs": w_in_fs,
-                         "w_cfs": 15, "w_fs": 8, "n_in_fs": 60, "n_fs": 40, "einh": -80})
+    for w_in_cfs in [0.3, 0.5, 1.0]:
+        for w_match, bias in [(100, -800), (100, -700)]:
+            grid.append({"w_match": w_match, "bias": bias, "w_in_cfs": w_in_cfs, "w_in_fs": 10.0,
+                         "w_cfs": 25, "w_fs": 8, "n_in_fs": 60, "n_fs": 40, "einh": -90})
 
     results = []
     for op in grid:

@@ -7,6 +7,14 @@ fixed operating point that reaches parity across seeds** — the best worst-case
 capability matrix from 1.000 to ~0.84 worst-case. The disclosed numpy `argmax` readout **stands** (no sub-parity
 ship). The mechanism, and a sharp bridge-mechanics discovery, are real deliverables.
 
+> **UPDATE 2026-06-05 — the deeper TWO-STAGE fix was subsequently BUILT + tested (owner-approved), and is ALSO
+> NEGATIVE, though it clearly helps.** Adding a spiking INPUT-layer divisive-normalization circuit (the diagnosed
+> scale-invariance fix) lifts the seed-robust worst-case from output-only's **0.844 → 0.911** (mean 0.926, per-seed
+> 42:0.956 / 43:0.911 / 44:0.911) — input normalization is genuinely the right lever (validated: it rescued seed-42
+> from 0.356 to 0.867 at the gentle weight). But 0.911 is still below numpy's exact **1.000**, and the operating
+> point is FRAGILE (seed 43 swings 0.2→0.978 across nearby ops). A 0.911 cleanup would still regress the matrix ~9pp.
+> So the disclosed readout stands. See the UPDATE section at the bottom.
+
 This is the de-risk gate doing its job: the seed-42 result *looked* like a clean GO (divnorm 1.000) and the
 multi-seed gate caught it as an overfit before any composer rewrite.
 
@@ -89,3 +97,47 @@ Per the owner's full-clear sequencing, the cleanup (A) is the *readout* shortcut
   `_divnorm_multiseed.py`, `_divnorm_robust_agg.py`
 - `_divnorm_sweep_seed{42,43,44}.json`, `_divnorm_multiseed_800.json`, `_divnorm_robust_agg.json`
 - Backend: CuPy / RTX 3090.
+
+---
+
+## UPDATE 2026-06-05 — the deeper TWO-STAGE fix (input + output normalization): BUILT, helps, still NEGATIVE
+
+The owner chose to build the deeper fix rather than defer it. `research/findings/raw/_spiking_cleanup_2stage.py` adds
+a spiking **INPUT-layer** divisive-normalization circuit — a second inhibitory-trait FS pool that pools the est's
+ON/OFF input population and shunts it (input→input_FS E_TO_I, input_FS→input I_TO_E) — *before* the matched filter,
+so the matched-filter drive is contrast/magnitude-normalized and the firing threshold transfers across seeds. Plus
+the validated concept-layer (output) divisive norm. Both FS pools carry the inhibitory trait.
+
+**Calibration matters enormously (the input-FS pools ~1600 neurons → tiny weights):** the first grid (w_in_cfs
+100-200) over-shunted to **0.000** (input signal killed). A single-seed sweep found the gentle sweet spot — input
+normalization lifts seed-42 from **0.356 (no input norm) → 0.867** at w_in_cfs=0.5, then collapses again by 4.0. So
+the mechanism genuinely works; it is just sharply tuned.
+
+**Multi-seed result (seeds 42/43/44, V=320 real est, the output-norm best region + gentle input norm):**
+
+| approach | robust worst-case (min across seeds) | mean | best op |
+|---|---|---|---|
+| output-only divisive norm | 0.844 | 0.904 | w_match100 bias-800 w_cfs25 |
+| two-stage (gentle, narrow grid) | 0.778 | 0.852 | w_match100 bias-600 w_in_cfs0.5 |
+| **two-stage (output-best + input norm)** | **0.911** | **0.926** | w_match100 bias-700 w_in_cfs0.5 w_cfs25 (per-seed 0.956/0.911/0.911) |
+| numpy oracle | 1.000 | 1.000 | — |
+
+**Verdict: NEGATIVE (improved but sub-parity + fragile).** Input normalization is the right lever (+6.7pp over
+output-only → 0.911 seed-robust), confirming the two-stage diagnosis. But the spiking cleanup plateaus at ~0.91 — it
+does NOT reach numpy's exact 1.000 — and the operating point is FRAGILE: seed 43 swings 0.2→0.978 across neighbouring
+ops, so 0.911 sits on a knife-edge, not a robust basin. A 0.911 cleanup still regresses the validated matrix ~9pp, so
+the disclosed numpy `argmax` readout **stands**.
+
+**Why the gap persists (the honest mechanism):** numpy `argmax` is **infinite-precision and exactly scale-invariant
+for free**. The spiking two-stage cleanup earns *approximate* scale-invariance (input normalization) and *finite*
+precision (temporal integration), and the residual ~9pp is the precision/robustness the rate-coded readout cannot buy
+at a fixed operating point on a 320-way comparison with a cue-cos-0.31 est. Reaching a robust 1.000 would need either
+(a) a non-rate readout (e.g. a learned/attractor cleanup that settles to an exact stored code), or (b) far more
+integration time / a much larger population — both exceeding what a thin `argmax` readout warrants.
+
+**Status of (A):** the two-stage cortical cleanup circuit is now BUILT + fully characterized (input + output divisive
+normalization, the inhibitory-trait shunting mechanism, the gentle-calibration requirement, the 0.844→0.911 lift). It
+is the best spiking cleanup attempted and a genuine biology-grounded artifact, but it does not reach deployable
+seed-robust numpy parity. The disclosed numpy readout stands. Per the owner's full-clear sequencing, the deeper **(B)
+memory shortcut** (the bound fact held as a numpy vector + numpy superposition/opponency) is the higher-value next
+piece. Extra two-stage artifacts: `_spiking_cleanup_2stage.py`, `_2stage{,_gentle,_final}.json`.
