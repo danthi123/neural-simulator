@@ -205,6 +205,26 @@ def test_rf_phasor_composer_substrate_store_parity(seed):
     assert cs.query_agent("go", "river") is None                           # no-confab moat preserved
 
 
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_grounded_codes_interface(seed):
+    """Cheat-A conversion (opt-in INTERFACE): grounded_codes={word: phases[D]} overrides the random rng.uniform codes
+    for those words. The composer must USE the provided codes and still do who/what Q&A + abstention. This guards the
+    grounding INTERFACE; the genuine V1-Gabor-grounded validation (codes from REAL sensory features, 6/6 multi-seed)
+    is research/findings/raw/_phase3_grounded_codes_derisk.py. The FULL grounding (real object images + abstract-
+    concept grounding) is the documented embodied-cognition boundary -- this is the interface, not full semantics."""
+    import numpy as np
+    words = ["dog", "cat", "go", "run", "north", "south", "river", "apple"]
+    g_rng = np.random.default_rng(seed + 4242)
+    grounded = {w: g_rng.uniform(0.0, 1.0, 128) for w in words}             # externally-provided codes (de-risk uses V1)
+    comp = RFPhasorComposer(seed=seed, D=128, period=200, grounded_codes=grounded)
+    for w in words:
+        assert np.allclose(comp.concepts[w], grounded[w])                   # the composer USED the provided codes
+    comp.store("dog", "go", "north"); comp.store("cat", "run", "south")
+    assert comp.query_agent("go", "north") == "dog"                         # Q&A works on the provided codes
+    assert comp.query_patient("cat", "run") == "south"
+    assert comp.query_agent("go", "south") is None                         # no-confab moat preserved
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))

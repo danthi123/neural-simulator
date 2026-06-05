@@ -60,7 +60,7 @@ def _build_rf_bridge(n, seed=42):
 
 class RFPhasorComposer:
     def __init__(self, seed=42, D=64, vocab=None, period=200, enable_spiking_cleanup=False,
-                 enable_substrate_store=False):
+                 enable_substrate_store=False, grounded_codes=None):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
@@ -78,6 +78,15 @@ class RFPhasorComposer:
         rng = np.random.default_rng(seed)
         # phasor codes: phases in [0,1)^D per concept + per role (deterministic per seed)
         self.concepts = {w: rng.uniform(0.0, 1.0, self.D) for w in self.words}
+        # (cheat-A conversion, opt-in) SENSORY-GROUNDED codes: a {word: phases[D]} dict (e.g. real V1 Gabor responses
+        # projected to phases) overrides the random codes for those words. Validated == random at parity (the
+        # grounding INTERFACE works on the RF substrate). HONEST boundary: producing meaningful grounded codes (real
+        # object images + abstract-concept grounding) is the open problem -- the embodied-cognition limit; this is the
+        # interface, not full semantic grounding.
+        if grounded_codes:
+            for w, ph in grounded_codes.items():
+                if w in self.concepts:
+                    self.concepts[w] = np.asarray(ph, dtype=float)
         # AFFIRM/NEGATE polarity fillers (phasor codes; cleaned up only against pol_words, not the main vocab)
         self.pol_words = ["AFFIRM", "NEGATE"]
         for tag in self.pol_words:
