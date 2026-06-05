@@ -1,0 +1,383 @@
+{
+  "op": {
+    "n_trig": 40,
+    "n_per": 4,
+    "w_gain": 250.0,
+    "trig_drive": 600.0,
+    "run_steps": 300
+  },
+  "per_seed": {
+    "42": {
+      "recovery": 1.0,
+      "mean_recon_cos": 0.9746459743716573,
+      "min_recon_cos": 0.9728322335967373,
+      "n_facts": 4,
+      "n_roles": 12,
+      "per_fact": [
+        {
+          "fact": {
+            "agent": "north",
+            "action": "big",
+            "patient": "river"
+          },
+          "recon_cos": 0.9753,
+          "roles": {
+            "agent": {
+              "numpy": "north",
+              "substrate": "north",
+              "match": true,
+              "truth": "north"
+            },
+            "action": {
+              "numpy": "big",
+              "substrate": "big",
+              "match": true,
+              "truth": "big"
+            },
+            "patient": {
+              "numpy": "river",
+              "substrate": "river",
+              "match": true,
+              "truth": "river"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "big",
+            "action": "river",
+            "patient": "small"
+          },
+          "recon_cos": 0.9755,
+          "roles": {
+            "agent": {
+              "numpy": "big",
+              "substrate": "big",
+              "match": true,
+              "truth": "big"
+            },
+            "action": {
+              "numpy": "river",
+              "substrate": "river",
+              "match": true,
+              "truth": "river"
+            },
+            "patient": {
+              "numpy": "small",
+              "substrate": "small",
+              "match": true,
+              "truth": "small"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "go",
+            "action": "stop",
+            "patient": "river"
+          },
+          "recon_cos": 0.9728,
+          "roles": {
+            "agent": {
+              "numpy": "go",
+              "substrate": "go",
+              "match": true,
+              "truth": "go"
+            },
+            "action": {
+              "numpy": "stop",
+              "substrate": "stop",
+              "match": true,
+              "truth": "stop"
+            },
+            "patient": {
+              "numpy": "river",
+              "substrate": "river",
+              "match": true,
+              "truth": "river"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "go",
+            "action": "river",
+            "patient": "cat"
+          },
+          "recon_cos": 0.975,
+          "roles": {
+            "agent": {
+              "numpy": "go",
+              "substrate": "go",
+              "match": true,
+              "truth": "go"
+            },
+            "action": {
+              "numpy": "river",
+              "substrate": "river",
+              "match": true,
+              "truth": "river"
+            },
+            "patient": {
+              "numpy": "cat",
+              "substrate": "cat",
+              "match": true,
+              "truth": "cat"
+            }
+          }
+        }
+      ]
+    },
+    "43": {
+      "recovery": 1.0,
+      "mean_recon_cos": 0.9778973432223947,
+      "min_recon_cos": 0.9769423810869821,
+      "n_facts": 4,
+      "n_roles": 12,
+      "per_fact": [
+        {
+          "fact": {
+            "agent": "east",
+            "action": "look",
+            "patient": "go"
+          },
+          "recon_cos": 0.9769,
+          "roles": {
+            "agent": {
+              "numpy": "east",
+              "substrate": "east",
+              "match": true,
+              "truth": "east"
+            },
+            "action": {
+              "numpy": "look",
+              "substrate": "look",
+              "match": true,
+              "truth": "look"
+            },
+            "patient": {
+              "numpy": "go",
+              "substrate": "go",
+              "match": true,
+              "truth": "go"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "apple",
+            "action": "south",
+            "patient": "come"
+          },
+          "recon_cos": 0.9788,
+          "roles": {
+            "agent": {
+              "numpy": "apple",
+              "substrate": "apple",
+              "match": true,
+              "truth": "apple"
+            },
+            "action": {
+              "numpy": "south",
+              "substrate": "south",
+              "match": true,
+              "truth": "south"
+            },
+            "patient": {
+              "numpy": "come",
+              "substrate": "come",
+              "match": true,
+              "truth": "come"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "cold",
+            "action": "south",
+            "patient": "west"
+          },
+          "recon_cos": 0.9781,
+          "roles": {
+            "agent": {
+              "numpy": "cold",
+              "substrate": "cold",
+              "match": true,
+              "truth": "cold"
+            },
+            "action": {
+              "numpy": "south",
+              "substrate": "south",
+              "match": true,
+              "truth": "south"
+            },
+            "patient": {
+              "numpy": "west",
+              "substrate": "west",
+              "match": true,
+              "truth": "west"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "east",
+            "action": "cold",
+            "patient": "come"
+          },
+          "recon_cos": 0.9778,
+          "roles": {
+            "agent": {
+              "numpy": "east",
+              "substrate": "east",
+              "match": true,
+              "truth": "east"
+            },
+            "action": {
+              "numpy": "cold",
+              "substrate": "cold",
+              "match": true,
+              "truth": "cold"
+            },
+            "patient": {
+              "numpy": "come",
+              "substrate": "come",
+              "match": true,
+              "truth": "come"
+            }
+          }
+        }
+      ]
+    },
+    "44": {
+      "recovery": 1.0,
+      "mean_recon_cos": 0.9774332467129629,
+      "min_recon_cos": 0.9759447140507939,
+      "n_facts": 4,
+      "n_roles": 12,
+      "per_fact": [
+        {
+          "fact": {
+            "agent": "south",
+            "action": "big",
+            "patient": "look"
+          },
+          "recon_cos": 0.9759,
+          "roles": {
+            "agent": {
+              "numpy": "south",
+              "substrate": "south",
+              "match": true,
+              "truth": "south"
+            },
+            "action": {
+              "numpy": "big",
+              "substrate": "big",
+              "match": true,
+              "truth": "big"
+            },
+            "patient": {
+              "numpy": "look",
+              "substrate": "look",
+              "match": true,
+              "truth": "look"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "west",
+            "action": "dog",
+            "patient": "big"
+          },
+          "recon_cos": 0.9766,
+          "roles": {
+            "agent": {
+              "numpy": "west",
+              "substrate": "west",
+              "match": true,
+              "truth": "west"
+            },
+            "action": {
+              "numpy": "dog",
+              "substrate": "dog",
+              "match": true,
+              "truth": "dog"
+            },
+            "patient": {
+              "numpy": "big",
+              "substrate": "big",
+              "match": true,
+              "truth": "big"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "small",
+            "action": "apple",
+            "patient": "south"
+          },
+          "recon_cos": 0.9778,
+          "roles": {
+            "agent": {
+              "numpy": "small",
+              "substrate": "small",
+              "match": true,
+              "truth": "small"
+            },
+            "action": {
+              "numpy": "apple",
+              "substrate": "apple",
+              "match": true,
+              "truth": "apple"
+            },
+            "patient": {
+              "numpy": "south",
+              "substrate": "south",
+              "match": true,
+              "truth": "south"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "come",
+            "action": "east",
+            "patient": "north"
+          },
+          "recon_cos": 0.9793,
+          "roles": {
+            "agent": {
+              "numpy": "come",
+              "substrate": "come",
+              "match": true,
+              "truth": "come"
+            },
+            "action": {
+              "numpy": "east",
+              "substrate": "east",
+              "match": true,
+              "truth": "east"
+            },
+            "patient": {
+              "numpy": "north",
+              "substrate": "north",
+              "match": true,
+              "truth": "north"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "recoveries": {
+    "42": 1.0,
+    "43": 1.0,
+    "44": 1.0
+  },
+  "min_recovery": 1.0,
+  "mean_recovery": 1.0,
+  "mean_recon_cos": 0.976658854769005,
+  "verdict": "GO"
+}
