@@ -61,11 +61,23 @@ that CLEARS the cheat: the cleanup runs in spikes on the bridge; the only numpy 
 (a readout of spiking output, NOT a computation — identical to the NEF cleanup's final argmax the owner accepted).
 Over-drive (scale 200) degrades via firing saturation → use a normalized drive in the integration.
 
-## Phase 1 status: BOTH de-risks GO. The cheat is convertible (TPAM algorithm) AND the on-bridge spiking realization works (concept bank).
-Next: integrate the spiking concept-bank cleanup as an opt-in on `RFPhasorComposer._cleanup` (the rec → concept
-matched-filter complex synapses + the concept bank + argmax-over-firing), re-validate the agent's FULL suite at parity,
-commit. The matched-filter score should be the bridge's complex synapse (rec → concept, conj(code) weights) so the
-score is in the substrate too. Then Phase 2 (C-A), Phase 3 (A), Phase 4 (D).
+## ✅ Phase 1 (cheat B) DONE — integrated + agent-validated on GPU (commits fb2526a9, 99172573)
+- INTEGRATED: `RFPhasorComposer(enable_spiking_cleanup=True)` routes `_cleanup` through the fully-on-bridge spiking
+  path (default OFF = numpy fast path). Stage 1 matched filter = the complex-synapse matvec (the SAME op as unbind),
+  `Re(c_k)` read off the membrane; Stage 2 selection = a spiking Izhikevich WTA, argmax-over-firing.
+- VALIDATED: composer queries with the spiking cleanup == the numpy default **27/27 multi-seed at D=128 (the agent's
+  D) and D=256**, no-confab moat (abstention) preserved. The agent's FULL suite **8/8 on GPU** including the new
+  `test_spiking_cleanup_agent_qa` (the agent's comprehend/store/QA loop runs on the substrate cleanup). RF composer
+  suite 24 passed / 4 GPU-skipped. ZERO regression; NO `sim/` edits.
+- The only numpy left in the cleanup is the membrane readout + the firing-argmax readout — readouts of spiking
+  output (as the NEF cleanup's final argmax over per-concept firing the owner accepted), NOT a computation.
+- Two integration bugs fixed: drove Stage 2 by `|c_k|` (always positive → off-targets fire) → fixed to `Re(c_k)`
+  rectified (off-targets silent); cached Izhikevich bank's `v/u` persisted across cleanups → reset to a resting
+  snapshot each call.
+
+**Next: Phase 2 (cheat C — the memory store).** Route C-A: hold the bound phasor composite in per-fact COMPLEX
+output weights (the substrate weights are already complex), retrieve by firing the trigger → phase readout (the
+TPAM/Hopfield `W = S S*` = the bridge complex synapse, same object as this cleanup). Then Phase 3 (A), Phase 4 (D).
 
 ## Artifacts
 `research/findings/raw/_phase1_tpam_cleanup_derisk.py` (TPAM algorithm vs argmax, D-sweep) +
