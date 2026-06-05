@@ -4914,6 +4914,22 @@ class SimulationBridge:
         spike_step = np.asarray(_backend_to_host(self.cp_rf_spike_step)).astype(np.int64)
         return ((period - spike_step) % period) / float(period)
 
+    def rf_set_complex_weights(self, connections):
+        """Install complex synaptic weights for the resonate-and-fire neurons (FHRR bind THROUGH synapses).
+        `connections` is a list of (post_idx, pre_idx, complex_weight); each step the complex synaptic input
+        u_i = sum_j W_ij z_j is added to neuron i's complex state, so binding phasor_a*phasor_b is phasor_a passing
+        through a synapse whose complex weight is phasor_b (complex multiply = phase sum). Dense N x N for the
+        de-risk (production would use a sparse complex matrix). See
+        docs/plans/2026-06-05-full-fhrr-on-bridge-feature-plan.md."""
+        n = self.core_config.num_neurons
+        if getattr(self, "cp_rf_w_re", None) is None:
+            self.cp_rf_w_re = cp.zeros((n, n), dtype=cp.float64)
+            self.cp_rf_w_im = cp.zeros((n, n), dtype=cp.float64)
+        for (post, pre, w) in connections:
+            w = complex(w)
+            self.cp_rf_w_re[int(post), int(pre)] = float(w.real)
+            self.cp_rf_w_im[int(post), int(pre)] = float(w.imag)
+
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
         if not self.is_initialized or self.core_config.num_neurons == 0: return
@@ -5364,6 +5380,12 @@ class SimulationBridge:
                 _rf_im = self.cp_recovery_variable_u
                 _rf_re_new = _rf_decay * (_rf_re * _rf_cos - _rf_im * _rf_sin)
                 _rf_im_new = _rf_decay * (_rf_re * _rf_sin + _rf_im * _rf_cos)
+                if getattr(self, "cp_rf_w_re", None) is not None:
+                    # Complex synaptic input u_i = sum_j W_ij z_j (FHRR bind THROUGH synapses carrying the operand
+                    # phasor: phasor_a*phasor_b = phasor_a through a phasor_b-weighted synapse). Complex matvec
+                    # from the PRESYNAPTIC RF states z(t)=(re,im), added to the rotated state (Frady-Sommer 2019).
+                    _rf_re_new = _rf_re_new + (self.cp_rf_w_re @ _rf_re - self.cp_rf_w_im @ _rf_im)
+                    _rf_im_new = _rf_im_new + (self.cp_rf_w_re @ _rf_im + self.cp_rf_w_im @ _rf_re)
                 self._rf_counter = int(getattr(self, "_rf_counter", 0)) + 1
                 _rf_mag2 = _rf_re_new * _rf_re_new + _rf_im_new * _rf_im_new
                 _rf_crossed = ((~self.cp_rf_fired) & (self.cp_rf_prev_im < 0.0)
