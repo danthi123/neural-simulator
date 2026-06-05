@@ -68,6 +68,43 @@ def test_rf_phase_readout_on_bridge():
     )
 
 
+def test_rf_bind_unbind_bundle_on_bridge():
+    """Gate 2: the FHRR ops (bind=phasor_a*phasor_b, unbind=phasor_c*conj(a), bundle=sum) computed by kicking the
+    bridge's RF neurons with the right complex value and reading the resonated phase back."""
+    D = 64
+    rng = np.random.default_rng(7)
+    pa, pb, pc = (rng.uniform(0.0, 1.0, D) for _ in range(3))
+    za, zb, zc = (np.exp(2j * np.pi * p) for p in (pa, pb, pc))
+    bridge = _build_rf_bridge(D)
+
+    def _resonate(kick):
+        bridge.rf_kick(kick)
+        for _ in range(CYCLE_STEPS + 8):
+            bridge._run_one_simulation_step()
+        return np.asarray(bridge.rf_read_phases())
+
+    # bind: phase(a)+phase(b)
+    assert float(np.mean(_circ_dist(_resonate(za * zb), (pa + pb) % 1.0))) < 0.03
+    # unbind: phase(c)-phase(a)
+    assert float(np.mean(_circ_dist(_resonate(zc * np.conj(za)), (pc - pa) % 1.0))) < 0.03
+    # bundle: phase of the complex sum
+    expected_bundle = (np.angle(za + zb + zc) / (2.0 * np.pi)) % 1.0
+    assert float(np.mean(_circ_dist(_resonate(za + zb + zc), expected_bundle))) < 0.03
+
+
+def test_rf_composer_task_on_bridge():
+    """Gate 3 (the de-risk verdict): the project's compositional task at smoke scale, with EVERY resonate-and-fire
+    operation routed through the bridge's RF step -> accuracy clears the frozen 0.80 bar AND abstention separates,
+    matching the numpy reference (research/runners/spiking_phasor_fhrr.py). Proves the FHRR composition runs on the
+    bridge's own neurons."""
+    from research.findings.raw._rf_on_bridge_probe import run
+    results, verdict = run(D=128, n_cues=8, n_fillers=8, loads=[2, 3], trials=3, period=1000, seed=42)
+    assert verdict == "GO", f"RF-on-bridge composer task NEGATIVE: {results}"
+    for load in (2, 3):
+        assert results[load]["accuracy"] >= 0.80, f"load {load} acc {results[load]['accuracy']}"
+        assert results[load]["abstention_separates"], f"load {load} abstention failed: {results[load]}"
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v"]))

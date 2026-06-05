@@ -1,0 +1,37 @@
+{
+  "params": {
+    "d": 256,
+    "n_cues": 8,
+    "n_fillers": 8,
+    "loads": [
+      2,
+      3,
+      5
+    ],
+    "trials": 15,
+    "period": 1000,
+    "seed": 42,
+    "out": "research/findings/raw/_rf_on_bridge.json"
+  },
+  "results": {
+    "2": {
+      "accuracy": 1.0,
+      "groundable_sim_min": 0.5939942658432042,
+      "ungroundable_sim_max": 0.1271336236477636,
+      "abstention_separates": true
+    },
+    "3": {
+      "accuracy": 1.0,
+      "groundable_sim_min": 0.4391986615929182,
+      "ungroundable_sim_max": 0.12989063628753914,
+      "abstention_separates": true
+    },
+    "5": {
+      "accuracy": 1.0,
+      "groundable_sim_min": 0.33919255531090203,
+      "ungroundable_sim_max": 0.12258935746879826,
+      "abstention_separates": true
+    }
+  },
+  "verdict": "GO"
+}
