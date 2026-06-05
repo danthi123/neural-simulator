@@ -66,10 +66,19 @@ class RFPhasorComposer:
         self.kb = []  # (fact_dict, composite_phases)
         self._dlpfc = None       # dialogue-planning Control (lazy; rebuilt only when the association graph changes)
         self._dlpfc_key = None
+        self._bridge_cache = {}  # (c-opt) reuse RF bridges by neuron count -> avoid _initialize_simulation_data per op
 
     # --- RF complex-synapse ops (each op a per-op RF bridge; reuse-by-import the substrate) ---
     def _resonate(self, n, conns, kick):
-        b = _build_rf_bridge(n, self.seed)
+        # (c-opt) reuse a cached bridge per neuron count; zero its complex weights (rf_set_complex_weights appends)
+        # and rf_kick resets the RF state -> each op is clean. Avoids _initialize_simulation_data per op.
+        b = self._bridge_cache.get(n)
+        if b is None:
+            b = _build_rf_bridge(n, self.seed)
+            self._bridge_cache[n] = b
+        if getattr(b, "cp_rf_w_re", None) is not None:
+            b.cp_rf_w_re[:] = 0.0
+            b.cp_rf_w_im[:] = 0.0
         b.rf_set_complex_weights(conns)
         b.rf_kick(kick, period=self.period, lam=0.0)
         for _ in range(self.period + 8):
