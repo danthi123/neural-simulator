@@ -82,9 +82,17 @@ def main():
     p.add_argument("--teacher-pA", type=float, default=500.0)
     p.add_argument("--swr-cycles", type=int, default=40)
     p.add_argument("--swr-teacher-pA", type=float, default=600.0)
+    p.add_argument("--permute", action="store_true",
+                    help="ANTI-CHEAT: consolidate PERMUTED (wrong) pairings -- the TRUE cue-recall must NOT lift.")
     args = p.parse_args()
 
     pairs = [tuple(s.split(":")) for s in args.pairs.split(",")]
+    # consolidation pairs: TRUE, or (anti-cheat) permuted -- rotate the b's so each a consolidates with the WRONG b.
+    cons_pairs = pairs
+    if args.permute:
+        bs = [b for _, b in pairs]
+        bs = bs[1:] + bs[:1]
+        cons_pairs = [(a, b) for (a, _), b in zip(pairs, bs)]
 
     bridge = cpd.build_concept_bridge(
         seed=args.seed, n_lang_input=args.n_lang_input, n_per_pool=args.n_per_pool,
@@ -99,11 +107,12 @@ def main():
                             balanced_teacher_pA=args.teacher_pA, verbose=False)
 
     base_hits, n, base_rows = assoc_recall(bridge, pairs, args.n_lang_input, args.sparsity)
-    swr_consolidate(bridge, pairs, args.swr_cycles, args.swr_teacher_pA)
-    post_hits, _, post_rows = assoc_recall(bridge, pairs, args.n_lang_input, args.sparsity)
+    swr_consolidate(bridge, cons_pairs, args.swr_cycles, args.swr_teacher_pA)
+    post_hits, _, post_rows = assoc_recall(bridge, pairs, args.n_lang_input, args.sparsity)   # always measure TRUE
 
-    print(f"=== D SWR v16 de-risk (seed={args.seed}, swr_cycles={args.swr_cycles}) ===")
-    print(f"cue-recall (b in top-3): BASELINE {base_hits}/{n}  ->  POST-SWR {post_hits}/{n}")
+    tag = "PERMUTED-control (TRUE must NOT lift)" if args.permute else "TRUE consolidation"
+    print(f"=== D SWR v16 de-risk (seed={args.seed}, swr_cycles={args.swr_cycles}, {tag}) ===")
+    print(f"cue-recall (TRUE b in top-3): BASELINE {base_hits}/{n}  ->  POST-SWR {post_hits}/{n}")
     for (a, b, h0, t0), (_, _, h1, t1) in zip(base_rows, post_rows):
         print(f"  {a}->{b}: base {'HIT' if h0 else 'miss'} {t0}  ->  post {'HIT' if h1 else 'miss'} {t1}")
 
