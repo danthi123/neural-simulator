@@ -1,0 +1,412 @@
+{
+  "op": {
+    "w_acc": 500.0,
+    "w_opp": 200.0,
+    "einh": -80.0,
+    "run_steps": 150,
+    "ou_std": 20.0
+  },
+  "per_seed": {
+    "42": {
+      "recovery": 0.46153846153846156,
+      "mean_recon_cos": 0.6028532838983104,
+      "min_recon_cos": 0.594682647851809,
+      "n_facts": 4,
+      "n_roles": 13,
+      "per_fact": [
+        {
+          "fact": {
+            "agent": "north",
+            "action": "big",
+            "patient": "river"
+          },
+          "recon_cos": 0.6108,
+          "roles": {
+            "agent": {
+              "numpy": "north",
+              "in_network": "north",
+              "match": true,
+              "truth": "north"
+            },
+            "action": {
+              "numpy": "big",
+              "in_network": "east",
+              "match": false,
+              "truth": "big"
+            },
+            "patient": {
+              "numpy": "river",
+              "in_network": "river",
+              "match": true,
+              "truth": "river"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "big",
+            "action": "river",
+            "patient": "small"
+          },
+          "recon_cos": 0.6063,
+          "roles": {
+            "agent": {
+              "numpy": "big",
+              "in_network": "stop",
+              "match": false,
+              "truth": "big"
+            },
+            "action": {
+              "numpy": "river",
+              "in_network": "cat",
+              "match": false,
+              "truth": "river"
+            },
+            "patient": {
+              "numpy": "small",
+              "in_network": "hot",
+              "match": false,
+              "truth": "small"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "go",
+            "action": "stop",
+            "patient": "river"
+          },
+          "recon_cos": 0.5997,
+          "roles": {
+            "agent": {
+              "numpy": "go",
+              "in_network": "go",
+              "match": true,
+              "truth": "go"
+            },
+            "action": {
+              "numpy": "stop",
+              "in_network": "stop",
+              "match": true,
+              "truth": "stop"
+            },
+            "patient": {
+              "numpy": "river",
+              "in_network": "river",
+              "match": true,
+              "truth": "river"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "big",
+            "action": "north",
+            "patient": "go",
+            "attribute": "south"
+          },
+          "recon_cos": 0.5947,
+          "roles": {
+            "agent": {
+              "numpy": "big",
+              "in_network": "cat",
+              "match": false,
+              "truth": "big"
+            },
+            "action": {
+              "numpy": "north",
+              "in_network": "cat",
+              "match": false,
+              "truth": "north"
+            },
+            "patient": {
+              "numpy": "go",
+              "in_network": "go",
+              "match": true,
+              "truth": "go"
+            },
+            "attribute": {
+              "numpy": "south",
+              "in_network": "east",
+              "match": false,
+              "truth": "south"
+            }
+          }
+        }
+      ],
+      "mean_signed_cos": 0.3724752488665784,
+      "upper_bound_recovery": 0.46153846153846156
+    },
+    "43": {
+      "recovery": 0.6923076923076923,
+      "mean_recon_cos": 0.6286026447991875,
+      "min_recon_cos": 0.6053436094535682,
+      "n_facts": 4,
+      "n_roles": 13,
+      "per_fact": [
+        {
+          "fact": {
+            "agent": "east",
+            "action": "look",
+            "patient": "go"
+          },
+          "recon_cos": 0.6319,
+          "roles": {
+            "agent": {
+              "numpy": "east",
+              "in_network": "east",
+              "match": true,
+              "truth": "east"
+            },
+            "action": {
+              "numpy": "look",
+              "in_network": "look",
+              "match": true,
+              "truth": "look"
+            },
+            "patient": {
+              "numpy": "go",
+              "in_network": "big",
+              "match": false,
+              "truth": "go"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "apple",
+            "action": "south",
+            "patient": "come"
+          },
+          "recon_cos": 0.6429,
+          "roles": {
+            "agent": {
+              "numpy": "apple",
+              "in_network": "apple",
+              "match": true,
+              "truth": "apple"
+            },
+            "action": {
+              "numpy": "south",
+              "in_network": "south",
+              "match": true,
+              "truth": "south"
+            },
+            "patient": {
+              "numpy": "come",
+              "in_network": "big",
+              "match": false,
+              "truth": "come"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "cold",
+            "action": "south",
+            "patient": "west"
+          },
+          "recon_cos": 0.6342,
+          "roles": {
+            "agent": {
+              "numpy": "cold",
+              "in_network": "cold",
+              "match": true,
+              "truth": "cold"
+            },
+            "action": {
+              "numpy": "south",
+              "in_network": "south",
+              "match": true,
+              "truth": "south"
+            },
+            "patient": {
+              "numpy": "west",
+              "in_network": "west",
+              "match": true,
+              "truth": "west"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "east",
+            "action": "north",
+            "patient": "south",
+            "attribute": "cold"
+          },
+          "recon_cos": 0.6053,
+          "roles": {
+            "agent": {
+              "numpy": "east",
+              "in_network": "east",
+              "match": true,
+              "truth": "east"
+            },
+            "action": {
+              "numpy": "north",
+              "in_network": "apple",
+              "match": false,
+              "truth": "north"
+            },
+            "patient": {
+              "numpy": "south",
+              "in_network": "south",
+              "match": true,
+              "truth": "south"
+            },
+            "attribute": {
+              "numpy": "cold",
+              "in_network": "south",
+              "match": false,
+              "truth": "cold"
+            }
+          }
+        }
+      ],
+      "mean_signed_cos": 0.4302449548865378,
+      "upper_bound_recovery": 0.6923076923076923
+    },
+    "44": {
+      "recovery": 0.6923076923076923,
+      "mean_recon_cos": 0.62974376159347,
+      "min_recon_cos": 0.6175880542250474,
+      "n_facts": 4,
+      "n_roles": 13,
+      "per_fact": [
+        {
+          "fact": {
+            "agent": "south",
+            "action": "big",
+            "patient": "look"
+          },
+          "recon_cos": 0.6413,
+          "roles": {
+            "agent": {
+              "numpy": "south",
+              "in_network": "south",
+              "match": true,
+              "truth": "south"
+            },
+            "action": {
+              "numpy": "big",
+              "in_network": "big",
+              "match": true,
+              "truth": "big"
+            },
+            "patient": {
+              "numpy": "look",
+              "in_network": "apple",
+              "match": false,
+              "truth": "look"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "west",
+            "action": "dog",
+            "patient": "big"
+          },
+          "recon_cos": 0.6351,
+          "roles": {
+            "agent": {
+              "numpy": "west",
+              "in_network": "west",
+              "match": true,
+              "truth": "west"
+            },
+            "action": {
+              "numpy": "dog",
+              "in_network": "dog",
+              "match": true,
+              "truth": "dog"
+            },
+            "patient": {
+              "numpy": "big",
+              "in_network": "west",
+              "match": false,
+              "truth": "big"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "small",
+            "action": "apple",
+            "patient": "south"
+          },
+          "recon_cos": 0.6176,
+          "roles": {
+            "agent": {
+              "numpy": "small",
+              "in_network": "east",
+              "match": false,
+              "truth": "small"
+            },
+            "action": {
+              "numpy": "apple",
+              "in_network": "apple",
+              "match": true,
+              "truth": "apple"
+            },
+            "patient": {
+              "numpy": "south",
+              "in_network": "cat",
+              "match": false,
+              "truth": "south"
+            }
+          }
+        },
+        {
+          "fact": {
+            "agent": "come",
+            "action": "river",
+            "patient": "north",
+            "attribute": "dog"
+          },
+          "recon_cos": 0.625,
+          "roles": {
+            "agent": {
+              "numpy": "come",
+              "in_network": "come",
+              "match": true,
+              "truth": "come"
+            },
+            "action": {
+              "numpy": "river",
+              "in_network": "river",
+              "match": true,
+              "truth": "river"
+            },
+            "patient": {
+              "numpy": "north",
+              "in_network": "north",
+              "match": true,
+              "truth": "north"
+            },
+            "attribute": {
+              "numpy": "dog",
+              "in_network": "dog",
+              "match": true,
+              "truth": "dog"
+            }
+          }
+        }
+      ],
+      "mean_signed_cos": 0.4298858569027935,
+      "upper_bound_recovery": 0.7692307692307693
+    }
+  },
+  "recoveries": {
+    "42": 0.46153846153846156,
+    "43": 0.6923076923076923,
+    "44": 0.6923076923076923
+  },
+  "min_recovery": 0.46153846153846156,
+  "mean_recovery": 0.6153846153846154,
+  "mean_recon_cos": 0.620399896763656,
+  "mean_signed_cos": 0.41086868688530326,
+  "mean_upper_bound_recovery": 0.641025641025641,
+  "verdict": "NEGATIVE"
+}
