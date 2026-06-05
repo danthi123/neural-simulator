@@ -593,8 +593,25 @@ dialogue planning — was consolidated onto three interacting core-sim bridges:
 **Honest residual:** the ±1 coincidence scheme cannot invertibly bind two concept codes (adj⊗noun) —
 attributes use a feature-binding ATTRIBUTE role-tag: **1-attribute RESOLVES, 2-attribute is a
 documented K=5-load BOUNDARY**, and the FHRR F=3 resonator stays a **numpy reference**. Vocab is the
-validated probe scale (V=16); production 320-concept on the brain agent is a follow-on. The three
-bridges are orchestrated, not yet one bridge with all regions.
+validated probe scale (V=16); production 320-concept on the brain agent is a follow-on.
+
+**ONE-BRIDGE UNIFICATION COMPLETE (2026-06-04):** the three conversational regions now run as disjoint
+persistent slices on ONE interacting `SimulationBridge` — `research/runners/unified_brain_bridge.py`
+(`UnifiedBrainBridge`). Step 1: parser + composer share the bridge (no capability regression at
+production D=2048 multi-seed; a `plastic=False` population still drifts under global Hebbian, so the
+composer's fixed bind population is frozen by a per-synapse plasticity gate, `cp_plasticity_rate_gain=0`).
+Step 2: the parser→composer hand-off is SYNAPTIC — comprehension routes composition in spikes via a
+parser-gated transmission route (`hear_synaptic`); a transmission gate coupled to a BURSTY control needs a
+working-memory LATCH to hold routing during the downstream read (comprehend→latch→compose). Step 3: the
+dlPFC dialogue-planning loop (`enable_dlpfc=True`) merges at dt=1.0 — its NMDA-dependent WM latch survives
+dt=1.0 (de-risked at the genuinely NMDA-dependent attractor weight 30, not the saturated 50 = AMPA
+ping-pong); a per-region NMDA mask isolates NMDA to the dlPFC slice; `elaborate` reproduces the dlPFC's
+validated dialogue-planning function with no regression. QUALIFIED nuance: rank-order (latency) coding
+RESOLUTION is dt-bound, so at dt=1.0 equidistant direct neighbours tie and the tie-break may pick a
+different-but-equally-valid associate than the dt=0.5 oracle (the GATE asserts the validated function, not
+the tie-break). NO `sim/` edits anywhere in the unification (reuse-by-import). Findings:
+`2026-06-04-one-bridge-unification-step1-capability.md`, `-step2-DONE.md`, `-step3-dlpfc-dt-survives.md`,
+`-step3-dlpfc-MERGED.md`.
 
 **The two standalone numpy phasor simulators are REFERENCE-only, NOT the production substrate:**
 `research/runners/spiking_phasor_fhrr.py` + `resonate_fire_fhrr.py` (and the unified agents that import
