@@ -62,6 +62,22 @@ ROLE_GATE_THRESHOLD = 0.05                              # couple_gate_to_pool de
 SYNAPTIC_ROUTE_ROLES = ("agent", "action", "patient")  # the parser's three roles (the composer also has polarity/
 #                                                        attribute roles, but the parser only assigns these three)
 
+# ── Step 2 gate PRE-WARM (resolves the seed-42 patient-readout regression) ───────────────────────────────────
+# The parser-coupled gate `role_route_<R>` opens via an EMA (alpha 0.3, threshold 0.05) of the parser role
+# ensemble's firing. After each op's RESET_STEPS of zero input the EMA has decayed to ~0; and the parser
+# ensemble fires at a LOW, BURSTY rate (mean ~0.042 of 40 neurons) so its EMA hovers right AT the 0.05
+# threshold — the gate FLICKERS open/closed and is open on only ~1/3 of a cold readout window. The role bank
+# then fires at ~1/7 the Python path's direct-role rate, thinning the cleanup margin enough to mis-decode
+# borderline patients ("come") at the correlated V=16 codes on seed 42 (the documented regression; diagnosis
+# in 2026-06-04-one-bridge-unification-step2-...-REGRESSION.md). The FAITHFUL fix (timing, not magnitude — no
+# weight/current change, the gate is NOT set by hand): drive the parser conjunction for a PRE-WINDOW so the
+# parser FIRES and (via the coupling) OPENS the gate, THEN run the readout window holding the parser-opened
+# gate — the biologically correct order (comprehend → latch the route → compose). Measured: the parser opens
+# the gate at step ~24-27 (well under the cap); with the parser-opened gate held, the gate reads 1.0 on all
+# 150 readout steps and seed-42 what-recall returns to 6/6 (= the Python path). Validated in
+# `research/findings/raw/_step2_synaptic_holdopen_validate.py`.
+ROLE_GATE_PREWARM_CAP_STEPS = 60   # max pre-window steps to wait for the parser to open its role gate
+
 
 def couple_gate_to_indices(bridge, gate_name, control_idx, threshold=ROLE_GATE_THRESHOLD, alpha=0.3,
                            open_value=1.0):
@@ -347,6 +363,19 @@ class UnifiedBrainBridge:
         fill bank with the word's code; then reads the 4 coincidence banks over the window. Mirrors the
         composer's `hadamard_spiking` EXCEPT the role bank is driven synaptically through the gate.
 
+        GATE PRE-WARM (faithful timing, not magnitude — resolves the seed-42 patient regression; see
+        ROLE_GATE_PREWARM_CAP_STEPS): the readout is split into two windows over the SAME drive current —
+          (1) a PRE-WINDOW that runs until the parser FIRES and the coupling OPENS the selected role's gate
+              (capped at ROLE_GATE_PREWARM_CAP_STEPS), accumulating NOTHING. The gate genuinely opens from the
+              parser's firing here — it is not set by hand.
+          (2) the READOUT window, run holding the parser-opened gate (the per-step gate coupling is paused for
+              this window so the gate RETAINS the value the parser's comprehension produced — the biologically
+              correct order: comprehend → latch the route → compose). The coincidence banks are accumulated
+              here, with the gate at the parser-opened value (1.0) for the whole window instead of flickering
+              at the EMA threshold and starving the role bank.
+        The coupling + the closed-gate default are restored at the end so the NEXT op starts clean (this op is
+        self-contained, exactly as before). No synaptic weight or drive magnitude is changed.
+
         Returns (out_on, out_off) = (rates[A]+rates[B], rates[C]+rates[D]) — identical readout to `_op`.
         """
         xp, _ = get_backend()
@@ -368,13 +397,47 @@ class UnifiedBrainBridge:
             cur[idx[bank]] = comp.coinc_bias
         bridge.cp_external_input_current[:] = cur
 
-        acc = {b: xp.zeros(comp.D, dtype=xp.float64) for b in ("A", "B", "C", "D")}
-        for _ in range(comp.run_steps):
+        # (1) PRE-WINDOW: run (no accumulation) until the parser opens one of its role gates, capped. The gate
+        # opens via the coupling from the parser's firing — purely the parser's doing, not a hand-set value.
+        role_gate_names = [f"role_route_{r}" for r in SYNAPTIC_ROUTE_ROLES]
+
+        def _any_role_gate_open():
+            for gn in role_gate_names:
+                syn = bridge._transmission_gate_to_synapses.get(gn)
+                if syn is not None and bridge.cp_transmission_gain is not None:
+                    if float(bridge.cp_transmission_gain[syn].mean()) >= 0.99:
+                        return True
+            return False
+
+        for _ in range(ROLE_GATE_PREWARM_CAP_STEPS):
             bridge.runtime_state.current_time_ms += bridge.core_config.dt_ms
             bridge._run_one_simulation_step()
-            for b in ("A", "B", "C", "D"):
-                acc[b] += bridge.cp_firing_states[idx[b]].astype(xp.float64)
-        bridge.cp_external_input_current[:] = 0.0
+            if _any_role_gate_open():
+                break
+
+        # (2) READOUT: hold the parser-opened gate by pausing the per-step coupling for this window (the gate
+        # keeps the value the parser's comprehension set), then accumulate the coincidence banks.
+        saved_couplings = bridge._gate_couplings
+        bridge._gate_couplings = []
+        try:
+            acc = {b: xp.zeros(comp.D, dtype=xp.float64) for b in ("A", "B", "C", "D")}
+            for _ in range(comp.run_steps):
+                bridge.runtime_state.current_time_ms += bridge.core_config.dt_ms
+                bridge._run_one_simulation_step()
+                for b in ("A", "B", "C", "D"):
+                    acc[b] += bridge.cp_firing_states[idx[b]].astype(xp.float64)
+        finally:
+            # Restore the coupling and re-close every role gate + reset its EMA so the next op starts clean
+            # (each op holds the gate closed at entry and re-opens only the parser-selected role).
+            bridge._gate_couplings = saved_couplings
+            for r in SYNAPTIC_ROUTE_ROLES:
+                bridge.set_transmission_gate(f"role_route_{r}", 0.0)
+                cpl = next((c for c in bridge._gate_couplings if c["gate_name"] == f"role_route_{r}"), None)
+                if cpl is not None:
+                    cpl["ema"] = 0.0
+                    cpl["last_value"] = None
+            bridge.cp_external_input_current[:] = 0.0
+
         rates = {b: to_host(acc[b]) / comp.run_steps for b in ("A", "B", "C", "D")}
         return rates["A"] + rates["B"], rates["C"] + rates["D"]
 

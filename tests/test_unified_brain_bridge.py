@@ -610,10 +610,18 @@ def test_step2_synaptic_no_regression():
     (do not weaken — record it). Also confirms the parser parses voice-invariantly on the merged production
     bridge with the route wired ('dog go north' active == 'north go dog' passive) and abstention is preserved.
 
+    STATUS (2026-06-04): PASSES at D=2048 — synaptic 6/6 == python 6/6 on every seed/metric, abstention
+    preserved. An earlier 1-seed regression (seed-42 patient `what` at 4/6, from the parser-coupled gate
+    FLICKERING at its EMA threshold and starving the composer's role bank) was diagnosed and RESOLVED by a
+    faithful gate PRE-WARM in `UnifiedBrainBridge._op_synaptic` (the gate opens from the parser's firing and
+    is held at that value while the composer reads — comprehend → latch → compose; no weight/drive magnitude
+    changed, the gate not set by hand). The assertion below is unchanged (it was never weakened to pass).
+
     HEAVY + on-demand: builds one production (~16.5K-neuron) unified bridge per seed and trains the parser —
     tens of minutes on the GPU. Skipped by default so the suite stays fast; the load-bearing claim (the
     synaptic route reproduces the Python store→recall) is already gated by
-    `test_hear_synaptic_stores_fact_via_gated_route` at D=64. The full multi-seed result lives in
+    `test_hear_synaptic_stores_fact_via_gated_route` at D=64. The full multi-seed result + the regression
+    history, diagnosis, and the pre-warm fix live in
     `research/findings/2026-06-04-one-bridge-unification-step2-DONE.md`. Run on demand:
         SIM_RUN_HEAVY_CAPABILITY=1 pytest tests/test_unified_brain_bridge.py::test_step2_synaptic_no_regression -v
     """
