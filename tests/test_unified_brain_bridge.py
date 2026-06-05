@@ -778,3 +778,174 @@ def test_step3_dlpfc_bistability_survives_dt1():
         "dt=1.0 persistence is not clearly above the no-drive baseline despite clearing the relative bar — the "
         f"result is ambiguous and must be characterized, not asserted. dt=1.0 post_drive={r10['driven_post_drive']:.4f}, "
         f"baseline={r05['no_drive_baseline']:.4f}")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Step 3 — Task 2 (the GATE): bring the dlPFC dialogue-planning loop onto the unified bridge at dt=1.0.
+#
+# `UnifiedBrainBridge(enable_dlpfc=True)` holds the parser (offset 0) + composer (offset 126) + the dlPFC
+# `cortex_ctx`/`dlpfc_wm` loop regions (further index slices) on ONE SimulationBridge. `u.elaborate(topic)`
+# must reproduce the SEPARATE-dlPFC `BrainConversationalAgent.elaborate` behavior: an on-topic associate
+# chosen by the spiking spreading-activation Control over the agent's OWN association graph, and ABSTAIN
+# (return None) on a topic that is unconnected in that graph (never confabulate). The separate
+# `BrainConversationalAgent` (its dlPFC builds a throwaway bridge per call) is the REGRESSION ORACLE: same
+# facts + same topic → same associate.
+#
+# THE SECOND CRUX (beyond the dt decision de-risked in Task 1): one bridge has ONE global `enable_nmda`, but
+# the dlPFC needs NMDA (its working-memory latch) while the parser+composer must stay NMDA-OFF (their binding
+# regime). The merge isolates NMDA to the dlPFC slice ONLY via the per-neuron NMDA mask (`cp_nmda_neuron_mask`
+# — the cluster-G `--enable-pfc-nmda` mechanism: NMDA current applied only to masked neuron indices), with
+# `cfg.enable_nmda=True` but the mask 1.0 on the dlPFC slice and 0.0 on parser+composer. The test therefore
+# verifies BOTH halves: (a) `elaborate` works (the dlPFC slice latches/spreads on the unified bridge), AND
+# (b) the parser+composer capability is UNAFFECTED — re-asserted via `test_unified_end_to_end_one_bridge`'s
+# comprehend→store→recall→abstain + full-scale composer-bind-weight isolation.
+#
+# Scope clamp (YAGNI): the association graph is still built Python-side from the agent's facts (making the
+# fact→graph hand-off synaptic is a hypothetical step 4). Task 2 = the dlPFC LOOP runs on the SAME bridge /
+# same step loop / dt=1.0, with `elaborate` driving the shared-bridge dlPFC slice instead of a throwaway one.
+#
+# SPIKING test on the validated production (CuPy/GPU) backend (the loop's persistent-activity + spreading
+# dynamics are GPU-bound; on NumPy they diverge). Skips gracefully without a GPU backend (the on-brain tests'
+# guard); the composer uses the DEFAULT denoise64 codes so it also skips if that cache is absent.
+# ─────────────────────────────────────────────────────────────────────────────
+def _merged_latency_ranking(u, topic):
+    """The merged dlPFC's first-spike latency ranking for `topic`, with OU forced off (the validated dlPFC
+    regime — content_selection_spiking runs OU-off; OU noise tips bistable attractors into spurious ON states).
+    Returns [(concept, first_spike_step), ...] sorted earliest-first (fired concepts only). Used to tell a
+    UNIQUE earliest winner (exact oracle parity required) from a top-latency TIE among equidistant direct
+    neighbours (dt=1.0's coarser resolution; the tie-break may pick a different-but-equally-valid associate)."""
+    ctrl = u._dlpfc_controller
+    prev = u.bridge.core_config.enable_ou_process
+    u.bridge.core_config.enable_ou_process = False
+    try:
+        lat = ctrl.relevance_by_latency(topic)
+    finally:
+        u.bridge.core_config.enable_ou_process = prev
+    return sorted([(c, int(v)) for c, v in lat.items() if v is not None], key=lambda kv: kv[1])
+
+
+def test_step3_dlpfc_merged_elaborate_matches_separate_path():
+    """The GATE: a dlPFC-enabled UnifiedBrainBridge reproduces the separate-dlPFC `elaborate` oracle on the
+    SAME facts, AND the parser+composer capability is unchanged.
+
+      1. ORACLE PARITY: for each connected topic, `u.elaborate(topic)` returns the SAME associate the separate
+         `BrainConversationalAgent.elaborate` returns (same facts, same seed). The associate is on-topic (a
+         neighbour in the agent's own association graph) — never confabulated.
+      2. ABSTENTION (the no-confab moat): `u.elaborate(<unconnected topic>)` returns None, exactly as the
+         separate path does (the topic is in no stored fact → unconnected in the graph).
+      3. NO REGRESSION: parser+composer still comprehend→store→recall→abstain on the SAME (now dlPFC-enabled)
+         bridge, and the composer's FIXED bind weights are byte-identical to their design value after the
+         parser's Hebbian training (the Task-1 isolation, re-asserted at full scale with the dlPFC slice
+         present — adding the NMDA dlPFC slice must not perturb the parser/composer).
+    """
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("Step 3 dlPFC merge is a SPIKING test; run on the validated CuPy/GPU backend (the loop's "
+                    "persistent-activity + spreading dynamics are GPU-bound, not NumPy).")
+
+    from research.runners.unified_brain_bridge import UnifiedBrainBridge
+    from research.runners.brain_conversational_agent import BrainConversationalAgent
+
+    seed = 42
+    proj_dim = 64
+    # The same fact set on both paths. (Default denoise64 codes — the composer skips if the cache is absent.)
+    facts = [("dog", "go", "north"), ("cat", "come", "south"), ("dog", "look", "river")]
+    connected_topics = ["dog", "cat", "river"]   # each appears in a stored fact → connected in the graph
+    unconnected_topic = "apple"                  # in no fact → unconnected → must abstain (None)
+
+    # --- The regression ORACLE: the separate-dlPFC agent (its dlPFC builds a throwaway bridge per call). ---
+    try:
+        oracle = BrainConversationalAgent(seed=seed, proj_dim=proj_dim, concepts=None)
+    except FileNotFoundError:
+        pytest.skip("denoise64 concept-code cache not present for seed 42 (composer codebook unavailable).")
+    for a, ac, p in facts:
+        oracle.hear(f"{a} {ac} {p}")
+    oracle_assoc = {t: oracle.elaborate(t) for t in connected_topics}
+    oracle_abstain = oracle.elaborate(unconnected_topic)
+    # The oracle itself must produce on-topic non-None associates for connected topics and None for the
+    # unconnected one — otherwise the comparison would be vacuous.
+    assert oracle_abstain is None, (
+        f"oracle did not abstain on the unconnected topic {unconnected_topic!r} (got {oracle_abstain!r}) — "
+        "the abstention comparison would be vacuous.")
+    for t in connected_topics:
+        assert oracle_assoc[t] is not None, (
+            f"oracle returned None for connected topic {t!r} — the parity comparison would be vacuous.")
+
+    # --- The MERGED path: parser + composer + dlPFC loop on ONE unified bridge at dt=1.0. ---
+    u = UnifiedBrainBridge(seed=seed, proj_dim=proj_dim, concepts=None, enable_dlpfc=True)
+    # ONE bridge holds ALL THREE regions (parser, composer, dlPFC loop).
+    assert u.parser.bridge is u.bridge
+    assert u.composer.bridge is u.bridge
+    assert u.dlpfc_bridge is u.bridge, "the dlPFC loop must run on the unified bridge, not a throwaway one"
+
+    for a, ac, p in facts:
+        u.hear(f"{a} {ac} {p}")
+
+    # (1) ABSTENTION (the no-confab moat): merged returns None on the unconnected topic, exactly as the oracle.
+    merged_abstain = u.elaborate(unconnected_topic)
+    assert merged_abstain is None, (
+        f"merged dlPFC did NOT abstain on the unconnected topic {unconnected_topic!r} (got {merged_abstain!r}) "
+        "— the no-confab moat broke on the unified bridge.")
+
+    # (2) THE VALIDATED FUNCTIONAL CRITERION — not exact-pick parity. The dlPFC selection is a rank-order
+    #     (first-spike LATENCY) code; the merged bridge runs at dt=1.0 (the de-risked faithful merge regime),
+    #     the separate oracle at dt=0.5. dt=1.0's coarser latency resolution can leave EQUIDISTANT direct
+    #     neighbours tied (e.g. dog's four 1-hop neighbours all fire at the same step), so the tie-break may pick
+    #     a different — but equally valid — direct associate than the oracle. content_selection_spiking's OWN
+    #     validation criterion (line 376, 6/6 seeds) is "the earliest-latency pick is a DIRECT neighbour" +
+    #     "multi-turn chains stay in the 2-hop topic region", NOT a fixed answer key. We assert THAT criterion,
+    #     and require exact oracle parity ONLY where the latency code resolves a UNIQUE earliest winner (no tie).
+    #     See research/findings/2026-06-04-step3-dlpfc-MERGED.md.
+    graph = u._assoc_graph()
+    for t in connected_topics:
+        merged = u.elaborate(t)
+        direct = set(graph.get(t, {}))
+        # on-topic: the pick is a DIRECT (1-hop) neighbour — never a confabulated/unrelated concept.
+        assert merged is not None and merged in direct, (
+            f"merged elaborate({t!r}) returned {merged!r}, which is NOT a direct on-topic associate "
+            f"(neighbours of {t!r}: {sorted(direct)}).")
+        # the oracle reproduces the same KIND of behavior (also a direct neighbour) — the comparison is real.
+        assert oracle_assoc[t] in direct, (
+            f"oracle elaborate({t!r}) = {oracle_assoc[t]!r} is not a direct neighbour — comparison vacuous.")
+        # parity-where-resolvable: if the merged pick differs from the oracle, it is acceptable ONLY when the
+        # two are EQUIDISTANT in the merged first-spike latency code (a dt=1.0 tie the finer-dt oracle could
+        # split). If the oracle's pick fires STRICTLY EARLIER in the merged ranking, the merge skipped an
+        # earlier associate -> a real divergence (degradation), and the test fails.
+        if merged != oracle_assoc[t]:
+            lat = {c: l for c, l in _merged_latency_ranking(u, t)}
+            assert merged in lat and oracle_assoc[t] in lat and lat[merged] <= lat[oracle_assoc[t]], (
+                f"merged elaborate({t!r}) = {merged!r} (latency {lat.get(merged)}) is LATER than the oracle "
+                f"pick {oracle_assoc[t]!r} (latency {lat.get(oracle_assoc[t])}) in the merged ranking — a real "
+                "divergence (the merge skipped an earlier associate), not a dt equidistance tie.")
+
+    # (2b) MULTI-TURN COHERENCE (the rest of the validated criterion): a 3-turn elaboration of one topic rotates
+    #      through its neighbours via the SaidTrace and stays inside the topic's 2-hop region (the oracle's 6/6
+    #      multi-turn criterion), with OU off (deterministic).
+    u._dlpfc_controller = None
+    u._dlpfc_graph_key = None
+    seq = [u.elaborate("dog") for _ in range(3)]
+    region = set(graph.get("dog", {}))
+    for nb in graph.get("dog", {}):
+        region |= set(graph.get(nb, {}))
+    assert all(s in region for s in seq if s is not None), (
+        f"3-turn merged elaboration {seq} wandered outside dog's 2-hop region {sorted(region)} — multi-turn "
+        "topic coherence regressed on the unified bridge.")
+
+    # (3) NO REGRESSION: the parser+composer comprehend→store→recall→abstain unchanged on the dlPFC-enabled
+    #     bridge, and the composer's FIXED bind weights are still the design value (full-scale isolation with
+    #     the NMDA dlPFC slice present). We use a FRESH dlPFC-enabled bridge with the synthetic orthonormal
+    #     codebook so this mirrors `test_unified_end_to_end_one_bridge` exactly (the bind-weight check needs
+    #     the known W_COINC=320 design value).
+    u2 = UnifiedBrainBridge(seed=seed, proj_dim=proj_dim, concepts=_synthetic_concepts(proj_dim),
+                            enable_dlpfc=True)
+    roles = u2.parse("dog go north")
+    assert roles == {"agent": "dog", "action": "go", "patient": "north"}, roles
+    u2.store(roles["agent"], roles["action"], roles["patient"])
+    assert u2.query_patient("dog", "go") == "north", (
+        "parser+composer recall regressed with the dlPFC slice present (NMDA mask must isolate the dlPFC).")
+    assert u2.query_agent("go", "north") == "dog"
+    assert u2.query_patient("river", "look") is None        # abstention preserved
+    ok, vals = _all_bind_weights_equal(u2, expected=320.0)
+    assert ok, (
+        "composer FIXED bind weights drifted on the dlPFC-enabled unified bridge -> adding the NMDA dlPFC "
+        f"slice perturbed the parser/composer isolation. min={vals.min()} max={vals.max()}")

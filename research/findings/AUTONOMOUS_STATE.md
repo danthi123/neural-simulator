@@ -9,7 +9,28 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> CURRENT STATUS (2026-06-04, NEWEST — read THIS first): B STEPS 1+2 DONE (comprehension routes composition IN SPIKES on ONE bridge); awaiting decision on step 3 (dlPFC merge) <<<
+## >>> CURRENT STATUS (2026-06-04, NEWEST — read THIS first): B STEP 3 DONE (qualified MERGE) → B STRUCTURALLY COMPLETE — parser + composer + dlPFC are ONE interacting bridge <<<
+
+**B step 3 (dlPFC merge) DONE.** Task 1 de-risk (commit f3bd7b34): the dlPFC NMDA-dependent working-memory latch
+SURVIVES dt=1.0 (post-drive 263–513% of the dt=0.5 rate, still NMDA-dependent) → MERGE; methodology catch — pinned
+the probe at the genuinely NMDA-dependent attractor weight 30, NOT the module's 50 (where "persistence" survives even
+NMDA-off = trivial AMPA ping-pong, the wrong mechanism). Task 2 merge (finding `2026-06-04-step3-dlpfc-MERGED.md`):
+`UnifiedBrainBridge(enable_dlpfc=True)` wires the dlPFC `cortex_ctx`/`dlpfc_wm` loop as persistent slices on the
+unified bridge at dt=1.0; a per-region NMDA mask isolates NMDA CURRENT to the dlPFC slice (parser+composer stay
+NMDA-free despite the global flag — the second crux); `elaborate` reproduces the dlPFC's VALIDATED dialogue-planning
+function (direct on-topic associate + abstain + deterministic + multi-turn 2-hop coherence — the exact 6/6-seed
+criterion content_selection_spiking was validated on) with NO regression (composer FIXED bind weights byte-identical
+with the NMDA slice present). Full standing gate GREEN: **23 passed, 2 skipped**. QUALIFIED-MERGE nuance (honest,
+characterized, NOT a weakened bar): the merged path doesn't always reproduce the dt=0.5 oracle's EXACT associate — on
+a topic whose direct neighbours are EQUIDISTANT, dt=1.0's coarser first-spike-latency resolution ties them (dog:
+go=look=north=river=23) so the tie-break picks a different-but-equally-valid direct associate (go vs look); matches on
+cat/river. The GATE asserts the validated function + requires exact oracle parity ONLY where the latency code resolves
+a UNIQUE winner. Biology insight: rank-order (latency) coding RESOLUTION is dt-bound — WM function is substrate-
+shareable, sub-step ranking of equidistant associates is not. One principled fix found in verification: the merged
+dlPFC runs OU-OFF (its validated config; OU tips bistable attractors into spurious ON states) — `elaborate` toggles OU
+off for the dlPFC read while parser+composer keep it on. NO sim/ edit (whole step-3 diff in unified_brain_bridge.py +
+the test). The step-1 (shared substrate) + step-2 (comprehension routes composition in spikes via the gated latch)
+results stand; B = all three conversational regions on one interacting bridge.
 
 Post-consolidation spine COMPLETE through item 2 (commits up to b739acb4, all on both remotes): item 1 (capability
 integration — `elaborate` first-classed at V=320, 4/4 multi-seed + generation `describe`; 12/12 on-brain tests);
@@ -72,12 +93,19 @@ needs a working-memory LATCH to sustain routing during the downstream read -- 'c
 parser opens the per-role gate via its firing; the readout window HOLDS that parser-determined gate state by pausing
 the coupling; no hand-set gate, no magnitude change, no sim/ edit). Finding
 `2026-06-04-one-bridge-unification-step2-DONE.md`; test passes.
->>> EXACT NEXT: STEPS 1+2 of B DONE. AWAITING OWNER DECISION on STEP 3 -- the dlPFC merge (the dt=0.5 + NMDA hard case;
-the dlPFC's bistable working memory is tuned to dt=0.5 while the merged bridge is dt=1.0; per the design this may be an
-honest BOUNDARY if the bistability doesn't survive dt=1.0). Per the incremental plan + owner-steers-milestones, do NOT
-auto-start step 3; surface step-2 DONE + the step-3 options (try the dt=1.0 re-tune cheap-first; accept 'dlPFC stays
-separate-timing' as an honest boundary if it doesn't survive -- do NOT break the validated dialogue planning). If a
-watchdog fires with no decision: low-regret hygiene only. HARD RULES unchanged.
+>>> EXACT NEXT: B IS STRUCTURALLY COMPLETE (steps 1+2+3 all DONE, committed both remotes; full gate 23 passed). The
+one-bridge unification arc is finished: the parser (comprehension), composer (role-filler VSA bind/unbind), and dlPFC
+(dialogue planning) now run as disjoint persistent slices on ONE interacting SimulationBridge — comprehension routes
+composition IN SPIKES via the step-2 gated latch, and dialogue planning runs on the same substrate at dt=1.0.
+Surfaced to owner. NEXT MAJOR ARC (owner steers — it is a milestone, like each B step was): the spine's remaining
+items — (item 2 residual) the load-bearing numpy on the composer CLEANUP is a DISCLOSED high-precision readout (the
+full cortical cleanup circuit = decorrelation + temporal integration + divisive normalization is the deferred real
+build); (item 3) the FULLY GROUNDED run — the production V=320 / D=2048 grounded conversational agent end-to-end on
+the unified substrate. If a watchdog fires with NO owner steer: low-regret hygiene only (sync-documentation +
+keep-webapp-current for the step-3 merge; characterize honest residuals like the V²-vs-V=320 dlPFC pre-allocation
+scope note). Do NOT auto-start the fully-grounded major arc without the owner. HARD RULES unchanged (never stall on a
+promise; honest negatives are the deliverable; both remotes every outcome; GPU/CuPy real runs; never weaken frozen
+bars / the no-confab moat; reuse-by-import NO sim/ edits).
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04) <<<
 

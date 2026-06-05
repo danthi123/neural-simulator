@@ -79,6 +79,47 @@ SYNAPTIC_ROUTE_ROLES = ("agent", "action", "patient")  # the parser's three role
 ROLE_GATE_PREWARM_CAP_STEPS = 60   # max pre-window steps to wait for the parser to open its role gate
 
 
+# ── Step 3 (enable_dlpfc) dlPFC dialogue-planning loop operating point ─────────────────────────────────────
+# The third conversational region: the dlPFC `cortex_ctx ↔ dlpfc_wm` reverberatory working-memory loop that
+# `BrainConversationalAgent.elaborate` uses for dialogue planning (spreading activation over the agent's own
+# association graph → the next on-topic associate). Today it builds a THROWAWAY bridge per `elaborate` call;
+# Step 3 brings the loop onto the unified bridge as further index slices (cortex_ctx + dlpfc_wm), at the
+# parser/composer's dt=1.0.
+#
+# THE TWO LOAD-BEARING DESIGN CALLS (both from the Task-1 de-risk, research/findings/2026-06-04-step3-dlpfc-dt-survives.md):
+#   (1) dt=1.0 — the de-risk proved the dlPFC's NMDA-dependent working-memory latch SURVIVES dt=1.0 (263–513%
+#       of the dt=0.5 rate, still NMDA-dependent). So the loop joins the unified bridge at dt=1.0, no separate
+#       timestep needed.
+#   (2) self-attractor weight ≈30, NOT the module's saturated 50 — at weight 50 the "persistence" is trivial
+#       AMPA ping-pong that survives even NMDA-off (the WRONG mechanism); at weight 30 the loop sits in the
+#       genuinely NMDA-DEPENDENT regime (the real WM latch). The merge therefore wires the self-attractors at
+#       30 AND runs NMDA on the dlPFC slice only.
+#
+# THE SECOND CRUX (per-region NMDA): one bridge has ONE global `cfg.enable_nmda`, but the dlPFC needs NMDA
+# while parser+composer must stay NMDA-OFF. Resolved by the cluster-G per-neuron NMDA MASK
+# (`bridge.cp_nmda_neuron_mask` — see sim/bridge.py: NMDA current is multiplied by this 0/1 mask, so only
+# masked neurons receive NMDA). The mask is set 1.0 on the dlPFC slice and 0.0 on parser+composer, with
+# `cfg.enable_nmda=True`. (The bridge's auto-mask build is gated on `region_manager is not None`; the unified
+# bridge has none — it is an `inject_explicit_wiring` bridge — so the mask is set DIRECTLY here, the same
+# public attribute the cluster-G code populates. No `sim/` edit.)
+#
+# THE CSR-SAFE WIRING (why the dlPFC edges are PRE-ALLOCATED at weight 0): the dlPFC loop attractors +
+# association-graph edges live in the SAME `cp_connections` CSR as the parser/composer. The graph is built
+# Python-side from the agent's facts and CHANGES as facts arrive (exactly as the separate path rebuilds its
+# Control). Installing graph edges at `elaborate` time via `set_pathway_weights(add_missing=True)` would, if
+# the edges were NEW, trigger a CSR rebuild that RESORTS the matrix and INVALIDATES the composer's
+# `composer_bind_fixed` plasticity-gate→synapse-index map (the Task-1 isolation). So ALL dlPFC edges (every
+# word's self-attractor + every directed word-pair graph edge over the composer's full vocabulary) are
+# PRE-ALLOCATED at construction (weight 0, tagged `plasticity_gate=DLPFC_FIXED_GATE` held 0.0 so global
+# Hebbian cannot drift them) as part of the union plan. At `elaborate` time the borrowed
+# `SpikingSpreadingController._install_graph_edges` calls `set_pathway_weights(add_missing=True)` and finds
+# every edge ALREADY present → it only OVERWRITES `.data` IN PLACE (no rebuild, no resort, gate maps intact).
+DLPFC_PATTERN_SIZE = 50            # per-concept assembly size (matches SpikingLoopContextBuffer default)
+DLPFC_ATTRACTOR_WEIGHT = 30.0      # self-attractor weight — the de-risk's NMDA-DEPENDENT regime (NOT 50)
+DLPFC_EDGE_SCALE = 60.0            # graph-edge scale (matches the validated SpikingSpreadingController default)
+DLPFC_FIXED_GATE = "dlpfc_fixed"   # one plasticity gate over ALL dlPFC loop+graph edges (held 0.0)
+
+
 def couple_gate_to_indices(bridge, gate_name, control_idx, threshold=ROLE_GATE_THRESHOLD, alpha=0.3,
                            open_value=1.0):
     """Append an activity-driven gate↔pool coupling using RAW neuron indices (the parser's role ensemble),
@@ -146,7 +187,7 @@ def merge_population_into_shared_bridge(bridge, plan, gates_to_zero=()):
         bridge.set_plasticity_gate(g, 0.0)
 
 
-def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False):
+def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False, dlpfc_n=0):
     """Build ONE SimulationBridge sized for both regions: (6 + 3*PARSER_R) parser neurons + 8*proj_dim
     composer neurons. Config matches the parser's (Izhikevich, GENERIC_UNSTRUCTURED, dt=1ms, global Hebbian
     ON, STDP/STP/structural/homeostasis/reward/Watts-Strogatz OFF, OU noise 20 pA) — the composer's FIXED
@@ -156,10 +197,19 @@ def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False):
     composer slice for the per-role `role_src` pools that drive the composer's role bank through the parser-
     gated route (Step 2 `hear_synaptic`). The default (False) keeps the bridge byte-identical to before so the
     Python-hand-off path and the step-1 tests are unaffected.
+
+    `dlpfc_n` (Step 3): when > 0, allocate `2 * dlpfc_n` extra neurons past everything else for the dlPFC
+    dialogue-planning loop's two regions (`cortex_ctx` + `dlpfc_wm`, `dlpfc_n` each), and turn on `cfg.enable_nmda`
+    so the dlPFC slice can carry its NMDA-dependent working-memory latch. The per-neuron NMDA mask
+    (`cp_nmda_neuron_mask`) — set by `UnifiedBrainBridge` after wiring — restricts NMDA CURRENT to the dlPFC
+    slice ONLY, so parser+composer stay NMDA-free despite the global flag (the second crux). The default
+    (dlpfc_n=0) keeps `cfg.enable_nmda=False` and the bridge byte-identical to the step-1/2 build.
     """
     total = PARSER_SLICE_SIZE + 8 * int(proj_dim)
     if enable_synaptic_route:
         total += len(SYNAPTIC_ROUTE_ROLES) * int(proj_dim)
+    if dlpfc_n:
+        total += 2 * int(dlpfc_n)
     cfg = CoreSimConfig()
     cfg.num_neurons = total
     cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
@@ -176,11 +226,61 @@ def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False):
               "enable_reward_modulation", "enable_watts_strogatz"):
         setattr(cfg, f, False)
     cfg.ou_std_current_pA = 20.0
+    # Step 3: global NMDA ON so the dlPFC slice can carry its working-memory latch; the per-neuron NMDA mask
+    # (set by UnifiedBrainBridge after wiring) confines the NMDA current to the dlPFC slice, so parser+composer
+    # remain NMDA-free (the second crux — one global flag, but NMDA isolated to the dlPFC via the mask).
+    cfg.enable_nmda = bool(dlpfc_n)
 
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
     bridge._initialize_simulation_data(called_from_playback_init=False)
     return bridge
+
+
+class _SharedDlpfcContext:
+    """A shared-bridge-backed stand-in for `content_selection_spiking.SpikingLoopContextBuffer` — the object a
+    `SpikingSpreadingController` reads as `self.ctx`. It exposes EXACTLY the attributes the controller's
+    borrowed methods touch (`.bridge`, `._cpat`, `._dpat`, `._psize`, `.B`), but its bridge is the UNIFIED
+    bridge and its concept assemblies are sparse subsets of the dlPFC slice's `cortex_ctx`/`dlpfc_wm` index
+    ranges, laid out byte-IDENTICALLY to how `SpikingLoopContextBuffer` lays them out (same `n`, same
+    `pattern_size`, same `seed`-derived permutation, same word ordering) so the merged dialogue planning
+    reproduces the separate path. It does NOT build its own bridge (the whole point of Step 3) — and it does
+    NOT install loop attractors via a CSR-rebuilding `set_pathway_weights(add_missing=True)` (the unified-bridge
+    attractor edges are PRE-ALLOCATED at construction; see `UnifiedBrainBridge._wire_dlpfc`).
+
+    Layout faithfulness (oracle parity): the separate `SpikingSpreadingController` builds
+    `SpikingLoopContextBuffer(vocab, n, pattern_size=50, seed)` → `perm = np.random.default_rng(seed).permutation(n)`,
+    concept i (in SORTED vocab order) → assembly `perm[i*ps:(i+1)*ps]` indexing the region's cortex/dlPFC index
+    arrays. Here `cortex_ctx` = global indices `[cortex_base : cortex_base+n)` and `dlpfc_wm` =
+    `[dlpfc_base : dlpfc_base+n)`, so the SAME permutation over the SAME word ordering picks the SAME
+    (offset-shifted) assemblies. The spiking dynamics differ only by the bridge's neuron heterogeneity (a
+    larger total-N RNG draw), not by the assembly/graph structure.
+    """
+
+    def __init__(self, bridge, words, cortex_base, dlpfc_base, n, pattern_size, seed):
+        import sim.backend as B
+        self.B = B
+        self.xp, _ = B.get_backend()
+        self.bridge = bridge
+        self._psize = int(pattern_size)
+        self._n = int(n)
+        # Word ordering MUST match the controller's `self._vocab = sorted(...)` so assembly i is the same word.
+        self._words = sorted(words)
+        cidx = np.arange(cortex_base, cortex_base + n, dtype=np.int64)
+        didx = np.arange(dlpfc_base, dlpfc_base + n, dtype=np.int64)
+        rng = np.random.default_rng(int(seed))
+        perm = rng.permutation(n)
+        self._cpat = {}
+        self._dpat = {}
+        self._cpat_host = {}
+        self._dpat_host = {}
+        for i, w in enumerate(self._words):
+            p = perm[i * pattern_size:(i + 1) * pattern_size]
+            cpat, dpat = cidx[p], didx[p]
+            self._cpat[w] = self.xp.asarray(cpat)
+            self._dpat[w] = self.xp.asarray(dpat)
+            self._cpat_host[w] = cpat
+            self._dpat_host[w] = dpat
 
 
 class UnifiedBrainBridge:
@@ -190,8 +290,10 @@ class UnifiedBrainBridge:
 
     The conversational API the `BrainConversationalAgent` uses is delegated here (`parse`, `store`,
     `query_patient`, `query_agent`, `ask_yes_no`, `describe`, `render_fact`), plus the read-through attributes
-    `kb`, `words`, `concepts`. Dialogue planning (`elaborate`) stays on its own dlPFC bridge for now — out of
-    scope until step 3.
+    `kb`, `words`, `concepts`. Dialogue planning (`elaborate`, Step 3) joins the SAME bridge when
+    `enable_dlpfc=True`: the dlPFC `cortex_ctx`/`dlpfc_wm` loop is wired as further index slices and `elaborate`
+    drives that shared slice (instead of building a throwaway bridge per call), matching the separate-dlPFC
+    `BrainConversationalAgent.elaborate` behavior.
 
     Build ORDER is load-bearing (see `merge_population_into_shared_bridge`): the composer's FIXED `"bind"`
     population is wired first, then the parser's plastic `"parse"` population (each wiring re-injects the
@@ -200,7 +302,7 @@ class UnifiedBrainBridge:
     otherwise reset the trained `"parse"` weights. The composer's gated bind weights stay frozen throughout
     (plasticity gain 0.0), so the parser's global-Hebbian training cannot drift them (Task 1 isolation)."""
 
-    def __init__(self, seed=42, proj_dim=64, concepts=None, enable_synaptic_route=False):
+    def __init__(self, seed=42, proj_dim=64, concepts=None, enable_synaptic_route=False, enable_dlpfc=False):
         """`concepts` (optional): a {word: code} codebook for the composer. When None, the composer loads its
         default substrate `denoise64` concept codes (requires the cache; raises FileNotFoundError if absent).
         Passing a small synthetic codebook keeps a unit build cache-independent.
@@ -211,7 +313,15 @@ class UnifiedBrainBridge:
         (a later re-injection would reset the trained `"parse"` weights — see `merge_population_into_shared_bridge`),
         and their weights are plasticity-gated to 0.0 so the parser's global Hebbian training cannot drift them.
         The default (False) keeps the bridge byte-identical to the step-1 build; `hear_synaptic` then raises a
-        clear error directing the caller to enable the route."""
+        clear error directing the caller to enable the route.
+
+        `enable_dlpfc` (Step 3): when True, also bring the dlPFC dialogue-planning loop (`cortex_ctx`/`dlpfc_wm`
+        regions) onto the SAME bridge as further index slices, with NMDA isolated to that slice (the per-neuron
+        NMDA mask), and route `elaborate` through it. All dlPFC loop+graph edges are PRE-ALLOCATED at weight 0
+        (gated `dlpfc_fixed` held 0.0) over the composer's full vocabulary BEFORE the parser trains, so that
+        `elaborate`-time graph-edge installs only overwrite weights in place (no CSR rebuild → the composer's
+        bind-gate isolation is preserved). The default (False) keeps the bridge byte-identical to the step-1/2
+        build; `elaborate` then raises a clear error directing the caller to enable the dlPFC."""
         # Defer the import to here to avoid a construction-time import cycle (these modules import this one
         # for `merge_population_into_shared_bridge`).
         from research.runners.brain_conversational_agent import BridgeParser
@@ -220,8 +330,20 @@ class UnifiedBrainBridge:
         self.seed = int(seed)
         self.proj_dim = int(proj_dim)
         self.synaptic_route_enabled = bool(enable_synaptic_route)
+        self.dlpfc_enabled = bool(enable_dlpfc)
+
+        # The dlPFC region size must be known BEFORE the bridge is sized. It mirrors the separate
+        # SpikingSpreadingController: n = max(600, 60*len(vocab)) per region, over the composer's full
+        # vocabulary. The vocab is the concept words — read from the codebook (if given) or the denoise64 cache.
+        self._dlpfc_n = 0
+        self._dlpfc_words = None
+        if self.dlpfc_enabled:
+            self._dlpfc_words = self._resolve_vocab_words(concepts, self.seed)
+            self._dlpfc_n = max(600, 60 * len(self._dlpfc_words))
+
         self.bridge = build_unified_bridge(seed=self.seed, proj_dim=self.proj_dim,
-                                           enable_synaptic_route=self.synaptic_route_enabled)
+                                           enable_synaptic_route=self.synaptic_route_enabled,
+                                           dlpfc_n=self._dlpfc_n)
         self.parser_slice = range(0, PARSER_SLICE_SIZE)     # 0..125
         self.composer_offset = PARSER_SLICE_SIZE            # 126
 
@@ -237,10 +359,38 @@ class UnifiedBrainBridge:
         self._role_src = None
         if self.synaptic_route_enabled:
             self._wire_synaptic_route()
+        # 3b) dlPFC loop (opt-in) BEFORE training: pre-allocate the cortex_ctx<->dlpfc_wm self-attractors + all
+        #     directed graph edges (weight 0, gated 0.0) and set the per-neuron NMDA mask to the dlPFC slice
+        #     only. Also wired here (not lazily) for the same reason — every wiring re-injects the union and
+        #     resets weights, so it must precede the parser's (final) training.
+        self._dlpfc_ctx = None
+        self._dlpfc_controller = None
+        self._dlpfc_graph_key = None
+        if self.dlpfc_enabled:
+            self._wire_dlpfc()
         # 4) Train the parser LAST — no further wiring/re-injection follows, so the trained weights persist; the
-        #    gated composer bind weights (and the role-route weights) stay frozen under this global-Hebbian
+        #    gated composer bind weights (and the role-route + dlPFC edges) stay frozen under this global-Hebbian
         #    training (Task 1 isolation).
         self.parser.train()
+
+    @property
+    def dlpfc_bridge(self):
+        """The bridge the dlPFC loop runs on — the unified bridge itself when `enable_dlpfc=True` (the Step-3
+        invariant: the dlPFC shares the bridge), else None."""
+        return self.bridge if self.dlpfc_enabled else None
+
+    @staticmethod
+    def _resolve_vocab_words(concepts, seed):
+        """The concept words the dlPFC sizes its assemblies for — the codebook keys when a {word: code} dict is
+        given, else the sorted words of the `seed`'s denoise64 cache (the composer's default vocabulary). Loading
+        the cache words here (a tiny read, not a bridge build) lets the dlPFC region be sized before the bridge
+        is constructed; it raises FileNotFoundError exactly as the composer would if the cache is absent."""
+        if concepts is not None:
+            return sorted(concepts.keys())
+        # Mirror CoreSimComposer's default load: read the denoise64 cache's word list for this seed.
+        from research.runners.core_sim_composition import CACHE
+        d = np.load(CACHE % int(seed))
+        return sorted(k[5:] for k in d.files if k.startswith("obs__"))
 
     # --- Step 2: the synaptic parser→gate→composer route (replaces the Python {role: word} hand-off) ---
     def _wire_synaptic_route(self):
@@ -441,6 +591,146 @@ class UnifiedBrainBridge:
         rates = {b: to_host(acc[b]) / comp.run_steps for b in ("A", "B", "C", "D")}
         return rates["A"] + rates["B"], rates["C"] + rates["D"]
 
+    # --- Step 3: the dlPFC dialogue-planning loop on the shared bridge ---
+    def _wire_dlpfc(self):
+        """Wire, once at construction, the dlPFC `cortex_ctx ↔ dlpfc_wm` loop onto the unified bridge:
+
+          1. Lay the two dlPFC regions as contiguous index slices PAST the composer (and any role-src) slice.
+          2. Build the shared-slice context (`_SharedDlpfcContext`) whose per-concept assemblies are
+             byte-identically laid out to the separate `SpikingLoopContextBuffer` (oracle parity).
+          3. PRE-ALLOCATE every dlPFC edge into the union plan (so no later `set_pathway_weights` rebuilds the
+             CSR and breaks the composer's bind-gate isolation):
+               * c2d: cortex_A → dlpfc_B for ALL (A, B) word pairs (V² pairs). The DIAGONAL (A==B) is the
+                 forward self-attractor (weight DLPFC_ATTRACTOR_WEIGHT); the off-diagonal pairs are the
+                 association-graph edge SLOTS, pre-allocated at weight 0 and overwritten at `elaborate` time.
+               * d2c: dlpfc_C → cortex_C for all C (the backward self-attractor, weight DLPFC_ATTRACTOR_WEIGHT).
+             All dlPFC edges are tagged `plasticity_gate=DLPFC_FIXED_GATE` and held at 0.0 so the parser's
+             global Hebbian training (and any elaborate-time firing) cannot drift them.
+          4. Set the per-neuron NMDA mask 1.0 on the dlPFC slice, 0.0 elsewhere — NMDA current reaches ONLY the
+             dlPFC (parser+composer stay NMDA-free despite the global `cfg.enable_nmda=True`).
+
+        Self-attractor weight is DLPFC_ATTRACTOR_WEIGHT (≈30), the de-risk's genuinely NMDA-DEPENDENT regime
+        (the module's 50 would be trivial AMPA ping-pong — the wrong mechanism); see the module-level note.
+
+        NOTE on scale: pre-allocating V² c2d pairs is fine at the validated probe vocabulary (V=16). Scaling the
+        dlPFC to the production V≈320 vocabulary would need a sparser pre-allocation (only the realizable
+        association pairs) — a documented step-4 concern, out of Task-2 scope.
+        """
+        xp, _ = get_backend()
+        words = sorted(self.composer.words)
+        V = len(words)
+        n = self._dlpfc_n
+        ps = DLPFC_PATTERN_SIZE
+
+        # dlPFC slices live PAST the composer (+ role-src route pools, if wired).
+        base = self.composer_offset + 8 * self.proj_dim
+        if self.synaptic_route_enabled:
+            base += len(SYNAPTIC_ROUTE_ROLES) * self.proj_dim
+        self._dlpfc_cortex_base = base
+        self._dlpfc_dlpfc_base = base + n
+
+        # Shared-slice context: assemblies laid out IDENTICALLY to SpikingLoopContextBuffer (same n, ps, seed,
+        # word ordering) so the borrowed spreading-activation methods reproduce the separate path.
+        self._dlpfc_ctx = _SharedDlpfcContext(self.bridge, words, self._dlpfc_cortex_base,
+                                              self._dlpfc_dlpfc_base, n, ps, self.seed)
+
+        # --- Pre-allocate the dlPFC edges (vectorized outer products) into one gated population. ---
+        cpat = {w: self._dlpfc_ctx._cpat_host[w] for w in words}   # cortex assembly indices per word
+        dpat = {w: self._dlpfc_ctx._dpat_host[w] for w in words}   # dlPFC assembly indices per word
+
+        c2d_pre = []; c2d_post = []; c2d_w = []
+        for a in words:                        # cortex_A -> dlpfc_B for ALL (A, B): diagonal = self-attractor
+            preA = np.repeat(cpat[a], ps)      # (ps*ps,) each cortex_A neuron -> every dlpfc_B neuron
+            for b in words:
+                c2d_pre.append(preA)
+                c2d_post.append(np.tile(dpat[b], ps))
+                w0 = DLPFC_ATTRACTOR_WEIGHT if a == b else 0.0     # self-attractor on the diagonal, slot elsewhere
+                c2d_w.append(np.full(ps * ps, w0, dtype=np.float32))
+        d2c_pre = []; d2c_post = []; d2c_w = []
+        for c in words:                        # dlpfc_C -> cortex_C (backward self-attractor only)
+            d2c_pre.append(np.repeat(dpat[c], ps))
+            d2c_post.append(np.tile(cpat[c], ps))
+            d2c_w.append(np.full(ps * ps, DLPFC_ATTRACTOR_WEIGHT, dtype=np.float32))
+
+        pre = np.concatenate(c2d_pre + d2c_pre).astype(np.int64)
+        post = np.concatenate(c2d_post + d2c_post).astype(np.int64)
+        ww = np.concatenate(c2d_w + d2c_w).astype(np.float32)
+        plan = {"dlpfc_loop": {
+            "pre_indices": pre, "post_indices": post, "initial_weights": ww,
+            "plastic": False, "plasticity_gate": DLPFC_FIXED_GATE, "conn_type": "E_TO_E", "count": int(pre.size),
+        }}
+        merge_population_into_shared_bridge(self.bridge, plan, gates_to_zero=(DLPFC_FIXED_GATE,))
+
+        # --- Per-region NMDA: mask 1.0 on the dlPFC slice ONLY (parser+composer stay NMDA-free). ---
+        nmask = xp.zeros(self.bridge.core_config.num_neurons, dtype=xp.float32)
+        nmask[self._dlpfc_cortex_base:self._dlpfc_dlpfc_base + n] = 1.0
+        self.bridge.cp_nmda_neuron_mask = nmask
+
+    def _assoc_graph(self):
+        """An association graph (concept -> {concept: weight}) built from the agent's OWN stored facts (the
+        composer's kb): the agent/action/patient of each fact co-occur. Clause patients are skipped (their inner
+        concepts are structural). Identical to `BrainConversationalAgent._assoc_graph` — the graph the dialogue-
+        planning Control spreads over."""
+        graph = {}
+        for fact, _ in self.composer.kb:
+            cs = [fact.get(r) for r in ("agent", "action", "patient")]
+            cs = [c for c in cs if isinstance(c, str)]
+            for x in cs:
+                for y in cs:
+                    if x != y:
+                        graph.setdefault(x, {})[y] = graph.get(x, {}).get(y, 0.0) + 1.0
+        return graph
+
+    def elaborate(self, topic):
+        """Dialogue planning on the SHARED bridge: bring up the next on-topic concept about `topic`, chosen by
+        the dlPFC spiking spreading-activation Control over the agent's own association graph — driving the
+        unified bridge's dlPFC slice (NOT a throwaway bridge). Returns an associate concept, or None if `topic`
+        is unconnected (the abstention / no-confab moat). Matches `BrainConversationalAgent.elaborate`.
+
+        The Control is a `SpikingSpreadingController` whose `.ctx` is swapped for the shared-slice context
+        (`_SharedDlpfcContext`): its validated methods (`_install_graph_edges`, `relevance_by_latency`,
+        `turn_latency`, `_reset_wm`) run UNCHANGED against the shared dlPFC slice — reuse-by-import, no edit to
+        `content_selection_spiking`. The association graph stays Python-built (scope clamp). The Control is cached
+        and rebuilt only when the graph CONTENT changes (the off-diagonal c2d graph-edge weights are overwritten
+        in place — no CSR rebuild — so the composer's bind isolation is preserved)."""
+        if not self.dlpfc_enabled:
+            raise RuntimeError(
+                "elaborate requires the dlPFC loop — construct UnifiedBrainBridge(enable_dlpfc=True). The default "
+                "build wires only the parser+composer (comprehend/store/recall); dialogue planning is opt-in.")
+        from research.runners.content_selection_spiking import SpikingSpreadingController
+        from research.runners.content_selection import SaidTrace
+
+        graph = self._assoc_graph()
+        if topic not in graph:
+            return None
+        # cache key = the graph CONTENT (not kb length: different fact sets can share a length -> stale Control).
+        key = tuple(sorted((k, tuple(sorted(v.items()))) for k, v in graph.items()))
+        if self._dlpfc_controller is None or self._dlpfc_graph_key != key:
+            # Build a SpikingSpreadingController WITHOUT its __init__ (which would build a throwaway bridge): set
+            # its attributes by hand against the shared-slice context, then install the graph edges (in place,
+            # over the pre-allocated slots) via its OWN validated method. This reuses the validated method bodies
+            # verbatim — no edit to content_selection_spiking.
+            ctrl = object.__new__(SpikingSpreadingController)
+            ctrl.graph = graph
+            ctrl._vocab = sorted(set(graph) | {a for v in graph.values() for a in v})
+            ctrl.ctx = self._dlpfc_ctx
+            ctrl.said = SaidTrace(decay=0.9)                      # the validated SpikingSpreadingController default
+            ctrl._install_graph_edges(DLPFC_EDGE_SCALE)           # overwrites the pre-allocated c2d slots IN PLACE
+            self._dlpfc_controller = ctrl
+            self._dlpfc_graph_key = key
+        # The dlPFC's VALIDATED dialogue-planning config (content_selection_spiking, 6/6 seeds 2026-06-03) runs
+        # OU OFF: OU background noise tips the bistable concept attractors into spurious ON states (Hopfield
+        # spurious states), corrupting the latency-ranked selection. The unified bridge runs OU ON for the
+        # parser+composer; here we toggle it off ONLY for the dlPFC spreading-activation read (elaborate drives
+        # and reads the dlPFC slice alone — parser+composer are not active during it), matching the validated
+        # regime. `cfg.enable_ou_process` is read dynamically each step (sim/bridge.py), so the toggle is clean.
+        prev_ou = self.bridge.core_config.enable_ou_process
+        self.bridge.core_config.enable_ou_process = False
+        try:
+            return self._dlpfc_controller.turn_latency([topic])
+        finally:
+            self.bridge.core_config.enable_ou_process = prev_ou
+
     # --- read-through attributes the agent reads ---
     @property
     def kb(self):
@@ -459,6 +749,16 @@ class UnifiedBrainBridge:
         return self.composer.concepts
 
     # --- delegated conversational API (comprehend → store/recall/compose on the ONE shared bridge) ---
+    def hear(self, sentence, voice="active", polarity=None):
+        """Comprehend an SVO statement and store it (parse -> store), mirroring `BrainConversationalAgent.hear`
+        exactly. This is the transparent-API entry point so the conversational agent runs on the unified bridge
+        unchanged. `sentence` is 'agent action patient' (or its passive frame). The step-2 spiking
+        comprehend->compose route is the separate `hear_synaptic`; this is the default parse-then-store
+        comprehension that `elaborate`'s association graph (built from stored facts) reads from."""
+        roles = self.parse(sentence, voice)
+        self.store(roles["agent"], roles["action"], roles["patient"], polarity=polarity)
+        return roles
+
     def parse(self, sentence, voice="active"):
         """Comprehend an SVO sentence -> {role: word}. Accepts a string ('dog go north') or a 3-word list."""
         words = sentence.split() if isinstance(sentence, str) else list(sentence)
