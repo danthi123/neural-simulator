@@ -161,11 +161,12 @@ def main():
         numpy_rec[s] = sum(int(words[int(np.argmax(code_mat @ est))] == t) for est, t, _ in items) / len(items)
         print(f"[attr] captured seed {s}: {len(items)} items, numpy={numpy_rec[s]:.3f}", flush=True)
 
-    # WTA attractor: self-excitation (latch) x inhibition strength (competition) x match gain. concept_bias 0
-    # (the attractor decides; no absolute threshold needed -> scale-invariant).
+    # WTA attractor calibration v2: the winner must ESCAPE its own global inhibition via self-excitation, so
+    # self-excitation must DOMINATE inhibition. Stronger matched drive (w_match 200) so concepts fire robustly;
+    # strong self-latch (50-400) vs moderate inhibition (15-40). concept_bias 0 (the attractor decides).
     grid = []
-    for w_self, w_fs in itertools.product([5, 15, 40], [20, 50, 100]):
-        for w_match in [40, 80]:
+    for w_self, w_fs in itertools.product([50, 150, 400], [15, 40]):
+        for w_match in [150, 300]:
             grid.append({"w_match": w_match, "bias": 0.0, "w_self": w_self, "w_cfs": 8.0, "w_fs": w_fs,
                          "n_fs": 40, "einh": -80})
 
