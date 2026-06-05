@@ -9,7 +9,7 @@
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
 
-## >>> CURRENT STATUS (2026-06-04, NEWEST — read THIS first): B STEP 1 DONE (parser+composer on ONE bridge); awaiting go-ahead for step 2 <<<
+## >>> CURRENT STATUS (2026-06-04, NEWEST — read THIS first): B STEPS 1+2 DONE (comprehension routes composition IN SPIKES on ONE bridge); awaiting decision on step 3 (dlPFC merge) <<<
 
 Post-consolidation spine COMPLETE through item 2 (commits up to b739acb4, all on both remotes): item 1 (capability
 integration — `elaborate` first-classed at V=320, 4/4 multi-seed + generation `describe`; 12/12 on-brain tests);
@@ -63,11 +63,21 @@ RAMPS from 0 via its EMA over the readout window (gate<0.99 on 102/150 steps, me
 margin tips borderline "come" patients on seed 42. Systematic, not OU. FIX (faithful timing, not magnitude/weakening):
 PRE-WARM the gate -- drive the parser conjunction in a short pre-window so the gate EMA reaches ~1.0 BEFORE the
 composer readout window, so the role bank fires at full rate (biologically correct order: comprehend -> then compose).
-Runner-side change to `_op_synaptic` in unified_brain_bridge.py, NO sim/ edit. CONTROLLER DECISION: apply the
-pre-warm + re-run the Task-3 gate. A mitigation subagent IS IN FLIGHT (applies pre-warm + re-runs D=2048 multi-seed).
-ON its result: RESOLVED (seed42 within +-1) -> STEP 2 DONE -> retitle finding to step2-DONE, update test (now passes),
-surface to owner, STOP for step-3 [dlPFC dt=0.5+NMDA] decision. NOT resolved -> tune pre-warm length / surface. If a
-watchdog fires while it's in flight: WAIT, do not duplicate. HARD RULES unchanged.
+Runner-side change to `_op_synaptic` in unified_brain_bridge.py, NO sim/ edit. RESOLVED + merged to main (commit
+5a57cef9, both remotes): the gate pre-warm + LATCH fix works -- seed42 what 4/6->6/6, who 5/6->6/6, seeds 43/44 stay
+6/6, NO regression any seed; the synaptic route reproduces the Python path at D=2048 multi-seed. STEP 2 IS DONE: the
+parser->composer hand-off is SYNAPTIC (comprehension routes composition in spikes via the gated route). MECHANISM +
+biology insight: a transmission gate coupled to a BURSTY control (the parser ensemble fires ~0.04, flickering the EMA)
+needs a working-memory LATCH to sustain routing during the downstream read -- 'comprehend -> latch -> compose' (the
+parser opens the per-role gate via its firing; the readout window HOLDS that parser-determined gate state by pausing
+the coupling; no hand-set gate, no magnitude change, no sim/ edit). Finding
+`2026-06-04-one-bridge-unification-step2-DONE.md`; test passes.
+>>> EXACT NEXT: STEPS 1+2 of B DONE. AWAITING OWNER DECISION on STEP 3 -- the dlPFC merge (the dt=0.5 + NMDA hard case;
+the dlPFC's bistable working memory is tuned to dt=0.5 while the merged bridge is dt=1.0; per the design this may be an
+honest BOUNDARY if the bistability doesn't survive dt=1.0). Per the incremental plan + owner-steers-milestones, do NOT
+auto-start step 3; surface step-2 DONE + the step-3 options (try the dt=1.0 re-tune cheap-first; accept 'dlPFC stays
+separate-timing' as an honest boundary if it doesn't survive -- do NOT break the validated dialogue planning). If a
+watchdog fires with no decision: low-regret hygiene only. HARD RULES unchanged.
 
 ## >>> CONSOLIDATION ARC COMPLETE — conversational pipeline now ON the core sim (2026-06-04) <<<
 
