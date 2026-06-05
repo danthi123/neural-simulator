@@ -114,6 +114,30 @@ def test_rf_phasor_composer_full_matrix_at_scale(seed):
     assert comp.render_fact("apple") is None                       # apple is not an agent
 
 
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_production_scale(seed):
+    """Layer (c-scale): a larger fact set (10 facts) -- who/what Q&A retrieves the RIGHT fact and the no-confab moat
+    does NOT false-match among 10 facts. The key production-scale risk: spurious matches as the KB grows. D=128."""
+    comp = RFPhasorComposer(seed=seed, D=128, period=400)
+    facts = [
+        ("dog", "go", "north"), ("cat", "run", "south"), ("dog", "look", "east"),
+        ("river", "stop", "west"), ("apple", "go", "south"), ("cat", "look", "north"),
+        ("dog", "run", "west"), ("river", "go", "east"), ("apple", "stop", "north"),
+        ("cat", "go", "west"),
+    ]
+    for a, v, p in facts:
+        comp.store(a, v, p)
+
+    # retrieval: the (action, patient) / (agent, action) cue disambiguates the right fact among 10
+    assert comp.query_agent("go", "north") == "dog"
+    assert comp.query_agent("run", "south") == "cat"
+    assert comp.query_patient("river", "stop") == "west"
+    assert comp.query_patient("apple", "go") == "south"
+    # abstention (the no-confab moat) at 10 facts: cues that match NO stored fact -> None (no false match)
+    assert comp.query_agent("stop", "south") is None       # no fact has action=stop AND patient=south
+    assert comp.query_patient("dog", "stop") is None         # dog never stops
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))
