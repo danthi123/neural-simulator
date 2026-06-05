@@ -103,3 +103,22 @@ def test_spiking_cleanup_agent_qa():
     assert sp.what_does("dog", "go") == "north"          # cleanup runs on the substrate (spikes)
     assert sp.who_does("go", "north") == "dog"
     assert sp.what_does("river", "look") is None         # no-confab moat preserved under the spiking cleanup
+
+
+def test_substrate_store_agent_qa():
+    """Cheat-C conversion at the AGENT level: enable_substrate_store holds the agent's fact memory in the SUBSTRATE
+    (per-fact trigger->readout complex weights), retrieved via firing. Combined with enable_spiking_cleanup, BOTH the
+    fact memory AND the cleanup run on the substrate -- the fully-on-substrate conversational path. The whole
+    comprehend/store/QA loop + the no-confab moat must work. GPU-only: the Hebbian BridgeParser is GPU-validated."""
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("BridgeParser is GPU-validated (numpy-backend KeyError in the parser bridge)")
+    try:
+        ag = BrainConversationalAgent(seed=42, enable_spiking_cleanup=True, enable_substrate_store=True)
+    except FileNotFoundError:
+        pytest.skip("denoise64 concept-code cache not present")
+    ag.hear("dog go north")
+    ag.hear("cat come south")
+    assert ag.what_does("dog", "go") == "north"          # memory AND cleanup both on the substrate
+    assert ag.who_does("go", "north") == "dog"
+    assert ag.what_does("river", "look") is None         # no-confab moat preserved

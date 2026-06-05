@@ -59,10 +59,14 @@ def _build_rf_bridge(n, seed=42):
 
 
 class RFPhasorComposer:
-    def __init__(self, seed=42, D=64, vocab=None, period=200, enable_spiking_cleanup=False):
+    def __init__(self, seed=42, D=64, vocab=None, period=200, enable_spiking_cleanup=False,
+                 enable_substrate_store=False):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
+        # (cheat-C conversion, opt-in) hold each fact's bound composite in the SUBSTRATE (per-fact trigger->readout
+        # complex weights) instead of a numpy array in self.kb; retrieve via firing. Default OFF: numpy kb fast path.
+        self.enable_substrate_store = bool(enable_substrate_store)
         # (cheat-B conversion, opt-in) route _cleanup through the fully-on-bridge spiking cleanup (matched filter on
         # the complex synapse + Izhikevich WTA). Default OFF: numpy argmax stays the fast path (the rate composer's
         # NEF-cleanup opt-in pattern). Validated == numpy multi-seed.
@@ -257,11 +261,41 @@ class RFPhasorComposer:
             fact["patient"] = patient
         if polarity is not None:
             fact["polarity"] = polarity      # a bound AFFIRM/NEGATE tag (extra binding -> more load)
-        self.kb.append((fact, self._encode(fact)))
+        comp = self._encode(fact)
+        self.kb.append((fact, self._store_substrate(comp) if self.enable_substrate_store else comp))
+
+    def _store_substrate(self, comp_phases):
+        """Hold the bound composite in the SUBSTRATE: a persistent (1+D) RF bridge whose trigger(neuron 0) ->
+        readout(1..D) complex weights carry the composite phasor. The composite lives in the synaptic weights
+        (cp_rf_w_re/im), NOT a numpy array -- the Crawford-Eliasmith weight-store (Hebb memory-in-weights). The kb
+        holds this bridge handle, not the composite. Validated == numpy store at parity (Phase-2 de-risk GO)."""
+        D = self.D
+        zc = self._to_phasor(comp_phases)
+        conns = [(1 + k, 0, zc[k]) for k in range(D)]
+        b = _build_rf_bridge(1 + D, self.seed)
+        b.rf_set_complex_weights(conns)
+        return b
+
+    def _retrieve_substrate(self, b):
+        """Read a substrate-held composite back: fire the trigger (unit phasor) -> the readout neurons reconstruct
+        the composite IN PHASE (the magnitude-invariant RF phase readout)."""
+        D = self.D
+        kick = np.zeros(1 + D, dtype=np.complex128)
+        kick[0] = 1.0
+        b.rf_kick(kick, period=self.period, lam=0.0)
+        b.rf_resonate_steps(self.period + 8)
+        return np.asarray(b.rf_read_phases())[1:1 + D]
+
+    def _iter_facts(self):
+        """Yield (fact_dict, composite_phases) per stored fact. With the substrate store, the composite is read back
+        from its substrate weight-bridge (fire the trigger); else it's the numpy array in kb. Lazy -> an early-return
+        query only retrieves the facts it actually checks."""
+        for fact, handle in self.kb:
+            yield fact, (self._retrieve_substrate(handle) if self.enable_substrate_store else handle)
 
     def query_agent(self, action, patient):
         """'who <action> <patient>?' -> the agent of the matching fact; None if no fact matches (abstention)."""
-        for fact, comp in self.kb:
+        for fact, comp in self._iter_facts():
             if self.unbind(comp, "action") == action and self.unbind(comp, "patient") == patient:
                 return self.unbind(comp, "agent")
         return None
@@ -270,7 +304,7 @@ class RFPhasorComposer:
         """'what does <agent> <action>?' -> the patient of the matching fact (an attributed entity 'big apple' if
         the fact bound an ATTRIBUTE); None if no match (abstention). The stored structure only routes the rendering;
         the words are decoded from the RF unbind."""
-        for fact, comp in self.kb:
+        for fact, comp in self._iter_facts():
             if self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action:
                 noun = self._render(comp, "patient", fact["patient"])   # a word OR a recursive Clause
                 adjs = [self.unbind(comp, r) for r in ("attribute", "attribute2") if r in fact]
@@ -282,7 +316,7 @@ class RFPhasorComposer:
     def ask_yes_no(self, agent, action, patient):
         """'does <agent> <action> <patient>?' -> 'yes'/'no'/'unknown' via the bound AFFIRM/NEGATE polarity tag.
         Matches the full SVO; 'unknown' (abstention) when no stored fact matches."""
-        for fact, comp in self.kb:
+        for fact, comp in self._iter_facts():
             if (self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action
                     and self.unbind(comp, "patient") == patient):
                 return "yes" if self.unbind(comp, "polarity", self.pol_words) == "AFFIRM" else "no"
@@ -293,7 +327,7 @@ class RFPhasorComposer:
         attributed patient 'big apple' or a nested clause renders too). The action + patient are DECODED from the
         RF unbind (not the stored labels); None if no fact's agent matches (the no-confab moat -- no invented
         sentence about an unknown subject)."""
-        for fact, comp in self.kb:
+        for fact, comp in self._iter_facts():
             if self.unbind(comp, "agent") == agent:
                 ac = self.unbind(comp, "action")
                 pt = self._render(comp, "patient", fact["patient"])

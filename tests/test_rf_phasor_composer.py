@@ -189,6 +189,22 @@ def test_rf_phasor_composer_spiking_cleanup_parity(seed):
     assert cs.query_agent("go", "river") is None                            # no-confab moat preserved
 
 
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_substrate_store_parity(seed):
+    """Cheat-C conversion (opt-in): enable_substrate_store holds each fact's bound composite in per-fact SUBSTRATE
+    weights (a trigger->readout complex-synapse bridge, the Crawford-Eliasmith weight-store = Hebb memory-in-weights),
+    retrieved by firing the trigger -> phase readout -- NOT a numpy kb array. It must give the SAME answers as the
+    numpy-kb default AND preserve the no-confab moat (abstention)."""
+    cn = RFPhasorComposer(seed=seed, D=128, period=200, enable_substrate_store=False)
+    cs = RFPhasorComposer(seed=seed, D=128, period=200, enable_substrate_store=True)
+    for a, v, p in [("dog", "go", "north"), ("cat", "run", "south"), ("river", "look", "apple")]:
+        cn.store(a, v, p); cs.store(a, v, p)
+    for v, p, a in [("go", "north", "dog"), ("run", "south", "cat"), ("look", "apple", "river")]:
+        assert cs.query_agent(v, p) == cn.query_agent(v, p) == a            # memory in the substrate == numpy
+        assert cs.query_patient(a, v) == cn.query_patient(a, v) == p
+    assert cs.query_agent("go", "river") is None                           # no-confab moat preserved
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))

@@ -39,7 +39,25 @@ not a passthrough leak).
   COMPOSITE (the bound content); the label-structure is a named residual. Retrieval via firing is slower than a numpy
   read (a resonate per fact per query) — acceptable for the opt-in no-shortcut path; numpy stays the fast default.
 
+## ✅ INTEGRATED (composer validated; agent on GPU)
+`RFPhasorComposer(enable_substrate_store=True)` holds each fact's bound composite in a per-fact substrate weight
+bridge (`_store_substrate`: a (1+D) RF bridge whose trigger→readout complex weights carry the composite phasor;
+`_retrieve_substrate`: fire the trigger → phase readout). The query path iterates `_iter_facts()` (lazy: an
+early-return query only retrieves the facts it checks). The numpy `kb` array is gone for stored composites — the
+memory lives in `cp_rf_w_re/im` (synaptic weights). Default OFF = numpy fast path (the Phase-1 opt-in pattern).
+
+VALIDATED: composer queries with the substrate store == the numpy-kb default **27/27 multi-seed at D=128 and D=256**
+(`_phase2_substrate_store_parity.py`), no-confab moat (abstention) preserved. RF composer suite 27 passed / 4
+GPU-skipped (new `test_..._substrate_store_parity`). Agent threaded (`enable_substrate_store`), new GPU test
+`test_substrate_store_agent_qa` exercises BOTH opt-ins (memory + cleanup on the substrate). NO `sim/` edits.
+
+HONEST residual (per the plan): the `fact_dict` LABELS (the words + clause-vs-flat routing) stay Python — the
+STRUCTURE metadata. The bound CONTENT (the composite) is now substrate-held; decoding the full structure from the
+bound vector is the named harder residual. Retrieval via firing is slower than a numpy read (a resonate per fact per
+query) — acceptable for the opt-in; numpy stays the fast default.
+
 ## Artifacts
 `research/findings/raw/_phase2_substrate_store_derisk.py` (substrate weight-store retrieve + unbind+cleanup vs numpy,
-trigger-silence control, multi-seed). NO sim/ edits — reuses `rf_set_complex_weights` + `rf_kick` + `rf_read_phases`
-(the same RF complex-synapse machinery as bind/unbind/cleanup).
+trigger-silence control, multi-seed) + `_phase2_substrate_store_parity.py` (integration parity, multi-seed). NO sim/
+edits — reuses `rf_set_complex_weights` + `rf_kick` + `rf_read_phases` (the same RF complex-synapse machinery as
+bind/unbind/cleanup).
