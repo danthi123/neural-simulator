@@ -1,0 +1,51 @@
+{
+  "sweep": {
+    "200.0": {
+      "seed": 42,
+      "n_total": 13,
+      "graded_recovery": 0.3076923076923077,
+      "bipolar_recovery": 0.38461538461538464,
+      "mean_sign_agree": 0.6165625,
+      "mean_signed_cos": 0.3784170507661267
+    },
+    "800.0": {
+      "seed": 42,
+      "n_total": 13,
+      "graded_recovery": 0.15384615384615385,
+      "bipolar_recovery": 0.15384615384615385,
+      "mean_sign_agree": 0.5846874999999999,
+      "mean_signed_cos": 0.28899306274342434
+    },
+    "2000.0": {
+      "seed": 42,
+      "n_total": 13,
+      "graded_recovery": 0.0,
+      "bipolar_recovery": 0.07692307692307693,
+      "mean_sign_agree": 0.359375,
+      "mean_signed_cos": 0.13331930439684703
+    },
+    "5000.0": {
+      "seed": 42,
+      "n_total": 13,
+      "graded_recovery": 0.0,
+      "bipolar_recovery": 0.07692307692307693,
+      "mean_sign_agree": 0.08281250000000001,
+      "mean_signed_cos": -0.03684617495120164
+    }
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "n_total": 13,
+      "graded_recovery": 0.3076923076923077,
+      "bipolar_recovery": 0.38461538461538464,
+      "mean_sign_agree": 0.6165625,
+      "mean_signed_cos": 0.3784170507661267
+    }
+  },
+  "min_bipolar": 0.38461538461538464,
+  "mean_bipolar": 0.38461538461538464,
+  "min_graded": 0.3076923076923077,
+  "w_opp": 200.0,
+  "verdict": "NEGATIVE"
+}
