@@ -122,3 +122,22 @@ def test_substrate_store_agent_qa():
     assert ag.what_does("dog", "go") == "north"          # memory AND cleanup both on the substrate
     assert ag.who_does("go", "north") == "dog"
     assert ag.what_does("river", "look") is None         # no-confab moat preserved
+
+
+def test_learned_assoc_graph_agent():
+    """Cheat-D conversion at the AGENT level: enable_learned_assoc makes dialogue planning (elaborate) spread over a
+    SUBSTRATE-LEARNED association graph -- a sparse Hebbian recurrent (the CA3 autoassociator / _D_sparse_heteroassoc
+    mechanism) -- instead of the Python co-occurrence recompute. The graph is LEARNED from heard facts (store_fact
+    co-fires the concepts -> the recurrent grows), and elaborate brings up a true co-occurring associate. GPU-only."""
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("BridgeParser is GPU-validated; LearnedAssocGraph also builds a bridge")
+    try:
+        ag = BrainConversationalAgent(seed=42, enable_learned_assoc=True)
+    except FileNotFoundError:
+        pytest.skip("denoise64 concept-code cache not present")
+    for s in ["dog go north", "cat run south", "dog look apple"]:
+        ag.hear(s)
+    assert ag._learned_assoc is not None                                  # substrate-learned, NOT a Python recompute
+    assert set(ag._assoc_graph().get("dog", {})) & {"go", "north", "look", "apple"}   # learned = true co-occurrences
+    assert ag.elaborate("dog") in {"go", "north", "look", "apple"}        # dialogue planning -> a true associate

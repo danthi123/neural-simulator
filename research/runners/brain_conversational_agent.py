@@ -149,7 +149,8 @@ class BrainConversationalAgent:
     SimulationBridge neurons, the substrate's own concept codes, no bolted-on numpy simulator."""
 
     def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None, composer_kind="rf",
-                 enable_spiking_cleanup=False, enable_substrate_store=False, grounded_codes=None):
+                 enable_spiking_cleanup=False, enable_substrate_store=False, grounded_codes=None,
+                 enable_learned_assoc=False):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -179,11 +180,22 @@ class BrainConversationalAgent:
                                              grounded_codes=grounded_codes)
         self._dlpfc = None              # dialogue-planning Control: built lazily, cached, rebuilt only when the graph changes
         self._dlpfc_key = None
+        # (cheat-D conversion, opt-in) the dialogue-planning association graph LEARNED in the substrate (a sparse
+        # Hebbian recurrent, the CA3-autoassociator mechanism) instead of recomputed from the Python kb. hear() updates
+        # it as facts arrive; _assoc_graph reads it. Validated multi-seed (24/24 edges, 9/9 top associate).
+        self._learned_assoc = None
+        if enable_learned_assoc:
+            from research.runners.learned_assoc_graph import LearnedAssocGraph
+            vocab = self.composer.words if hasattr(self.composer, "words") else (
+                sorted(concepts.keys()) if isinstance(concepts, dict) else None)
+            self._learned_assoc = LearnedAssocGraph(list(vocab), seed=seed)
 
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO statement and store it. `sentence` is 'agent action patient' (or its passive frame)."""
         roles = self.parser.parse(sentence.split(), voice)
         self.composer.store(roles["agent"], roles["action"], roles["patient"], polarity=polarity)
+        if self._learned_assoc is not None:                  # learn the concept co-occurrence in the substrate
+            self._learned_assoc.store_fact([roles["agent"], roles["action"], roles["patient"]])
         return roles
 
     def hear_clause_fact(self, agent, action, clause, polarity=None):
@@ -210,7 +222,13 @@ class BrainConversationalAgent:
     def _assoc_graph(self):
         """An association graph (concept -> {concept: weight}) built from the agent's OWN stored facts: the
         agent/action/patient of each fact co-occur. Clause patients are skipped (their inner concepts are
-        structural). This is the graph the dialogue-planning Control spreads over."""
+        structural). This is the graph the dialogue-planning Control spreads over.
+
+        With enable_learned_assoc, the graph is read from the SUBSTRATE-LEARNED sparse Hebbian recurrent (cheat-D
+        resolution) instead of recomputed from the Python kb -- so dialogue planning spreads over a learned
+        association memory, not a Python dict."""
+        if self._learned_assoc is not None:
+            return self._learned_assoc.graph()
         graph = {}
         for fact, _ in self.composer.kb:
             cs = [fact.get(r) for r in ("agent", "action", "patient")]

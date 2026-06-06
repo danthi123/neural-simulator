@@ -28,7 +28,7 @@ class LearnedAssocGraph:
         self.pg = _pool_global(self.bridge, self.patterns)
         self.pool_base = np.asarray(self.bridge.region_manager.indices("pool"))
 
-    def store_fact(self, concept_list, cycles=12):
+    def store_fact(self, concept_list, cycles=30):
         """Co-fire the fact's concept patterns -> Hebbian growth on the recurrent learns the pairwise co-occurrence."""
         ids = [self.idx[c] for c in concept_list if c in self.idx]
         if len(ids) < 2:
