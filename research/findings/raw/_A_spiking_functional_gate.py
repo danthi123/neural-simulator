@@ -15,11 +15,12 @@ from research.runners.nested_composition_agent import NestedCompositionAgent
 from research.findings.raw._A_spiking_decorrelation import build, it_code, coherence
 
 
-def spiking_codes(feats, seed, n_it=4000, epochs=20, ff_density=0.06, ff_weight=25.0):
+def spiking_codes(feats, seed, n_it=4000, epochs=20, ff_density=0.06, ff_weight=25.0, wta_weight=1.0):
     """Run the on-bridge spiking competitive+anti-Hebbian decorrelation on the 320 grounded features -> IT codes.
     Fair capacity: n_it=4000 (12.5 neurons/concept) + SPARSE feed-forward (density 0.06 -> ~2.5M synapses, feasible;
-    dense would be ~hours) + stronger weight for the sparse fan-in (homeostasis bootstraps the rest)."""
-    b = build(seed, feats.shape[1], n_it=n_it, ff_density=ff_density, ff_weight=ff_weight)
+    dense would be ~hours) + stronger weight for the sparse fan-in (homeostasis bootstraps the rest). wta_weight tunes
+    the FS winner-take-all strength (higher -> sparser codes)."""
+    b = build(seed, feats.shape[1], n_it=n_it, ff_density=ff_density, ff_weight=ff_weight, wta_weight=wta_weight)
     rm = b.region_manager
     inp = np.asarray(rm.indices("inp")); it = np.asarray(rm.indices("it"))
     for g in ("ff", "lat"):
@@ -65,9 +66,11 @@ def main():
     feats, dim, tokens = build_multimodal_features(nouns, verbs, adjs)
     print(f"features: {feats.shape}, tokens: {len(tokens)} ({len(nouns)}n/{len(verbs)}v/{len(adjs)}a)", flush=True)
     out = {}
-    n_it = int(__import__("os").environ.get("NIT", "6000"))
+    import os
+    n_it = int(os.environ.get("NIT", "4000"))
+    wta = float(os.environ.get("WTA", "1.0"))
     for seed in (42,):
-        sp = spiking_codes(feats, seed, n_it=n_it)
+        sp = spiking_codes(feats, seed, n_it=n_it, wta_weight=wta)
         cm, cx = coherence(sp); active = (sp > 0).sum(1)
         print(f"  seed={seed} SPIKING codes: coh mean={cm:.3f}/max={cx:.3f}  mean_active={active.mean():.1f}/"
               f"{sp.shape[1]}  n_silent={int((active == 0).sum())}/{len(sp)}  (RAW coh "
