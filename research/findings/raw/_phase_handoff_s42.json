@@ -1,0 +1,73 @@
+{
+  "source": "cifar10",
+  "K": 300,
+  "lam": 0.01,
+  "gain": 0.0,
+  "act_scale": 15.0,
+  "drive_scale": 1400.0,
+  "window": 40,
+  "settle": 15,
+  "period": 400,
+  "seeds": [
+    42
+  ],
+  "bench_seeds": [
+    42
+  ],
+  "raw_coherence": [
+    0.24870736610906072,
+    0.9681609888088611
+  ],
+  "RAW": [
+    26,
+    39
+  ],
+  "CONCEPT-whiten": [
+    39,
+    39
+  ],
+  "SEEDS": {
+    "42": {
+      "known_compose": [
+        39,
+        39
+      ],
+      "m_ratio": 0.08635144628470645,
+      "blew_up": false,
+      "rate_compose": [
+        33,
+        39
+      ],
+      "rate_coh": 0.08843550423131048,
+      "phase_direct_compose": [
+        39,
+        39
+      ],
+      "phase_direct_guards": {
+        "phase_spread": 0.16354080224157652,
+        "n_zero_phase": 177,
+        "roundtrip_phase_corr": 0.9999898358663536,
+        "read_coh_mean": 0.04346632368465509,
+        "read_coh_max": 0.5770969622870161
+      },
+      "phase_direct_degenerate": false,
+      "phase_thrumem_compose": [
+        34,
+        39
+      ],
+      "phase_thrumem_guards": {
+        "mean_spike_active": 124.615625,
+        "min_spike_active": 69,
+        "n_silent_latency": 0,
+        "latency_coh_mean": 0.07186978957958857,
+        "rate_coh_mean": 0.08843550423131048,
+        "phase_phase_spread": 0.20067608021508682,
+        "phase_n_zero_phase": 508,
+        "phase_roundtrip_phase_corr": 0.9999915768096999,
+        "phase_read_coh_mean": 0.0718953878427604,
+        "phase_read_coh_max": 0.47314508219423934
+      },
+      "phase_thrumem_degenerate": false
+    }
+  }
+}

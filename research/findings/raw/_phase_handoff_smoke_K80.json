@@ -1,0 +1,56 @@
+{
+  "source": "cifar10",
+  "K": 80,
+  "lam": 0.01,
+  "gain": 0.0,
+  "act_scale": 15.0,
+  "drive_scale": 1400.0,
+  "window": 40,
+  "settle": 15,
+  "period": 400,
+  "seeds": [
+    42
+  ],
+  "bench_seeds": [
+    42
+  ],
+  "raw_coherence": [
+    0.24870736610906072,
+    0.9681609888088611
+  ],
+  "RAW": [
+    26,
+    39
+  ],
+  "CONCEPT-whiten": [
+    39,
+    39
+  ],
+  "SEEDS": {
+    "42": {
+      "known_compose": [
+        36,
+        39
+      ],
+      "m_ratio": 0.07395140354366747,
+      "blew_up": false,
+      "rate_compose": [
+        35,
+        39
+      ],
+      "rate_coh": 0.13514249704591544,
+      "phase_direct_compose": [
+        36,
+        39
+      ],
+      "phase_direct_guards": {
+        "phase_spread": 0.18812423887420757,
+        "n_zero_phase": 161,
+        "roundtrip_phase_corr": 0.9999922716283265,
+        "read_coh_mean": 0.10190034404960385,
+        "read_coh_max": 0.7805243394259802
+      },
+      "phase_direct_degenerate": true
+    }
+  }
+}
