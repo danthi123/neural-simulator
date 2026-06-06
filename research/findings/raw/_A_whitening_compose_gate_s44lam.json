@@ -1,0 +1,27 @@
+{
+  "source": "cifar10",
+  "K": 300,
+  "seeds": [
+    44
+  ],
+  "RAW (floor control)": [
+    26,
+    39
+  ],
+  "CONCEPT-whiten (100% target control)": [
+    39,
+    39
+  ],
+  "DIM-analytic": [
+    26,
+    39
+  ],
+  "LEARNED": {
+    "compose": [
+      39,
+      39
+    ],
+    "m_ratio": 0.08636053635462446,
+    "blew_up": false
+  }
+}
