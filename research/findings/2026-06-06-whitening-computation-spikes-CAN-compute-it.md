@@ -59,5 +59,36 @@ Honest caveat to carry: the analytic `L` is still a fixed wiring derived from th
 from the stream" is the real biological bar, and the upstream-graded-stage framing (retina/LGN, biology-faithful)
 remains a legitimate alternative if local learning proves seed-fragile at scale.
 
+## UPDATE — local-learning de-risk: a 2ND near-false-positive caught; the worst-pair-LEARNING gap STANDS
+`_A_whitening_learn_lateral_derisk.py`. Tested whether a LOCAL stable rule LEARNS the whitening lateral inhibition from
+raw correlated input. (A) analytic M=C^½−I control (coh 0.036); (B) naive ΔM∝⟨yyᵀ⟩ (= attempt #2, no target);
+(C) whitening-target ΔM∝⟨yyᵀ⟩−I.
+- **(C) reported coh 0.032 — looked like a WIN — but ‖M_learned−M_analytic‖/‖M_analytic‖ = 72–9047** (the learned M is
+  up to 9000× the analytic). The M BLEW UP: the toy data is RANK-DEFICIENT (32 concepts in 128 dims), so driving the
+  output covariance → I tries to amplify the empty null-space to unit variance → M diverges in magnitude → the output
+  collapses toward noise → noise is decorrelated → low coherence that is NOT whitening. **A 2nd near-false-positive,
+  caught by the M-ratio control** (the 1st was the unstable-solver bug). **COHERENCE ALONE IS INSUFFICIENT** — a
+  noise-collapsed output passes it.
+- (B) naive: coh 0.118/0.345 — partial only, does NOT reach the worst-pair (max 0.345 vs target 0.036).
+
+**Honest result:** this de-risk does NOT demonstrate local learning of worst-pair whitening — the naive rules either
+blow up (whitening-target, rank-deficiency) or reach only partial (naive). **The worst-pair-via-LOCAL-LEARNING gap
+STANDS.** Handed-in analytic L works in spikes (the computation de-risk above); learning it locally does not, yet.
+
+**Rigorous follow-on (clean context):** (1) the rule needs REGULARIZATION / rank-handling — whiten only the data
+subspace, OR the proper Pehlevan `y=M⁻¹Wx` formulation where the feedforward `W` learns the subspace, OR a decay `−λM`;
+(2) **gate on COMPOSITION (the agent benchmark), NOT coherence** — a noise-collapsed output has low coherence but won't
+compose; the coherence proxy is what nearly shipped the false positive. The 320-concept full-rank production case may
+behave differently from this 32-in-128 rank-deficient toy. After TWO near-false-positives here, the local-learning
+question wants a fresh careful build with composition as the gate.
+
+**Honest meta-note:** two convenient-but-wrong results in one thread (an unstable solver that confirmed the pessimistic
+prior; a noise-collapse that confirmed the optimistic hope) — the controls (noiseless solver check; analytic-M match
+check) caught both. The net scientific position is UNCHANGED by the learning de-risk: spikes HOLD and COMPUTE whitening
+with handed-in/analytic L; local LEARNING of the worst-pair solution remains open; the upstream-graded-stage (retina/
+LGN, biology-faithful) remains the robust alternative.
+
 ## Artifact
-`research/findings/raw/_A_whitening_computation_derisk.py` (Q1 + Q2 + noiseless control + stable solver). NO sim/ edits.
+`research/findings/raw/_A_whitening_computation_derisk.py` (Q1 + Q2 + noiseless control + stable solver) +
+`research/findings/raw/_A_whitening_learn_lateral_derisk.py` (learning de-risk + analytic/naive controls + M-ratio
+guard). NO sim/ edits.
