@@ -72,6 +72,16 @@ benchmark (320 concepts: nouns→V1 Gabor, verbs+adjs→word encoder; numpy VSA 
   overlap, so the collisions cost it first. Closeable via collision-reduction: overlap-rejection (the G.20 distinct-
   seed recipe), more capacity, or interneuron-diversity for true pairwise specificity.
 
+- **Capacity sweep (informative NEGATIVE) — the residual is NOT the collision:** bumping to n_it=6000 REMOVED the
+  collision (max coh 1.0 → 0.968, 0 silent) but composition got WORSE (76.9% → 71.8%, 1-attr 2/6 → 0/6) because the
+  codes got denser (mean_active 24.4 → 33.1). So the attribute shortfall is NOT primarily the worst-pair collision —
+  it is the spiking codes' RESIDUAL COHERENCE (mean 0.06, with structured max ~0.97) vs ZCA's near-zero all-pairs
+  (0.003). Attribute binding is the capability most sensitive to that residual structure; the local competitive rule
+  plateaus at ~0.06 mean coherence and cannot reach ZCA's all-pairs cleanliness. **n_it=4000 (sparser codes, 76.9%)
+  is the operating point; capacity is not the lever.** The indicated levers for the residual are SPARSER codes
+  (stronger WTA / lower homeostatic target) or interneuron diversity (pairwise cleanliness) — or accept the partial
+  win and keep numpy ZCA for the cleanest codes.
+
 **REVISED VERDICT: the on-bridge spiking decorrelation is a PARTIAL FUNCTIONAL WIN, not a boundary.** It is a genuine
 biological mechanism that improves grounded-code composition over raw (+10pp) and recovers most capabilities to ZCA
 parity; the attribute-composition shortfall is the named, closeable worst-pair-collision residual (the E/I non-

@@ -65,8 +65,9 @@ def main():
     feats, dim, tokens = build_multimodal_features(nouns, verbs, adjs)
     print(f"features: {feats.shape}, tokens: {len(tokens)} ({len(nouns)}n/{len(verbs)}v/{len(adjs)}a)", flush=True)
     out = {}
+    n_it = int(__import__("os").environ.get("NIT", "6000"))
     for seed in (42,):
-        sp = spiking_codes(feats, seed)
+        sp = spiking_codes(feats, seed, n_it=n_it)
         cm, cx = coherence(sp); active = (sp > 0).sum(1)
         print(f"  seed={seed} SPIKING codes: coh mean={cm:.3f}/max={cx:.3f}  mean_active={active.mean():.1f}/"
               f"{sp.shape[1]}  n_silent={int((active == 0).sum())}/{len(sp)}  (RAW coh "
