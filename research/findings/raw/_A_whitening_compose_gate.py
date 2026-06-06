@@ -46,9 +46,10 @@ def dim_analytic(feats, K, seed, eps=1e-2):
     return Zc @ Cinv_sqrt
 
 
-def learned_whiten(feats, K, seed, n_iters=4000, eta=0.01, eps=1e-2):
+def learned_whiten(feats, K, seed, n_iters=4000, eta=0.01, eps=1e-2, lam=0.0):
     """Project to K (≤N → full rank, no null-space blow-up) then LEARN the K×K whitening lateral M via ΔM∝⟨yyᵀ⟩−I.
-    Returns the whitened codes, the M-ratio vs analytic, and a blow-up flag."""
+    lam>0 adds a −λM weight-decay (the regularized fallback — caps any residual blow-up at a small cost to the fixed
+    point). Returns the whitened codes, the M-ratio vs analytic, and a blow-up flag."""
     Z = feats @ _proj(feats.shape[1], K, seed)
     Zc = Z - Z.mean(0)
     Cinv_sqrt, Csqrt = _analytic_whiten_K(Zc, eps)
@@ -61,7 +62,7 @@ def learned_whiten(feats, K, seed, n_iters=4000, eta=0.01, eps=1e-2):
         if not np.all(np.isfinite(Y)) or np.abs(Y).max() > 1e6:
             blew = True
             break
-        M = M + eta * (Y.T @ Y / len(Zc) - I)
+        M = M + eta * (Y.T @ Y / len(Zc) - I) - lam * M
         M = 0.5 * (M + M.T)
     Y = np.linalg.solve(I + M, Zc.T).T if not blew else Zc @ Cinv_sqrt
     mratio = float(np.linalg.norm(M - M_analytic) / (np.linalg.norm(M_analytic) + 1e-9))
@@ -72,6 +73,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
     ap.add_argument("--K", type=int, default=300)
+    ap.add_argument("--lam", type=float, default=0.0, help="−λM weight-decay regularizer for the learned rule (fallback)")
     ap.add_argument("--out", default="research/findings/raw/_A_whitening_compose_gate.json")
     args = ap.parse_args()
     nouns, verbs, adjs = build_vocab()
@@ -96,7 +98,7 @@ def main():
     out["DIM-analytic"] = [gok, gtot]
     print(f"  {'DIM-analytic (realizable, K-subspace)':<40} {gok}/{gtot} = {gok/gtot*100:.1f}%", flush=True)
     # (4) LEARNED whitening
-    Yl, mratio, blew = learned_whiten(feats, args.K, args.seeds[0])
+    Yl, mratio, blew = learned_whiten(feats, args.K, args.seeds[0], lam=args.lam)
     gok, gtot, _ = comp("LEARNED", Yl)
     out["LEARNED"] = {"compose": [gok, gtot], "m_ratio": mratio, "blew_up": blew}
     guard = "  ⚠ M BLEW UP" if (blew or mratio > 0.5) else "  (M matches analytic)"
