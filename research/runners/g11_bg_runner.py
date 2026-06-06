@@ -2452,6 +2452,25 @@ def run_moving_goal_episode(
     # drift (no goal info available).
     goal_silence_after_step: int = -1,
     goal_silence_duration: int = 0,
+    # N8 cheat conversion (2026-06-06): genuine GPi->thalamus disinhibition.
+    # The default tonic regime drives thal_X with a direct 300 pA current (N8)
+    # and gpi_X with only 110 pA — the thalamic relay is externally PACED, so
+    # the BG cascade's output gate is short-circuited (selection happens
+    # upstream but the thalamus it should gate is paced regardless). When
+    # genuine_thal_disinhibition=True, the thalamic relay is RELEASED by a real
+    # direct-pathway cascade instead: GPi is a strong tonic pacemaker
+    # (genuine_gpi_tonic_pA) that silences thal_X by default; the selected
+    # action's cortex drive -> D1 -> (GABA) GPi silence -> thal_X DISINHIBITED.
+    # thal_X carries only a tonic excitation (genuine_thal_tonic_pA) it can
+    # express ONLY when its GPi is released. The cortex->D1->gpi->thal->motor
+    # pathways already exist at the validated weight scale (D1->GPi=15,
+    # GPi->thal=8); this flag only changes the gpi/thal DRIVES and removes the
+    # direct thal pacing. Ported from gated_compose_bg_genuine_demo.py
+    # (Logiaco-Abbott-Escola 2021; Kandel ch 38 direct-pathway "go").
+    # Default OFF = the tonic-drive cheat stays runnable as the CONTROL.
+    genuine_thal_disinhibition: bool = False,
+    genuine_gpi_tonic_pA: float = 1000.0,   # tonic GPi pacemaker drive (silences thal by default)
+    genuine_thal_tonic_pA: float = 900.0,   # tonic thalamic excitation (expressed only when GPi releases)
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -2915,7 +2934,15 @@ def run_moving_goal_episode(
                   f"rewrote {n_modified} sensory->cortex weights with directional prior "
                   f"(alpha={informed_init_alpha})")
 
-    # Setup baseline tonic drives that don't change between steps
+    # Setup baseline tonic drives that don't change between steps.
+    # N8 conversion: under genuine_thal_disinhibition, GPi becomes a strong
+    # tonic pacemaker (genuine_gpi_tonic_pA) and thalamus carries only a tonic
+    # excitation (genuine_thal_tonic_pA) expressed when GPi is released — NO
+    # direct 300 pA thal pacing. Otherwise the legacy tonic cheat (gpi 110,
+    # thal 300) is used. GPe/STN/SNc drives are unchanged in both (N9, out of
+    # scope for this conversion).
+    _gpi_tonic = cp.float32(genuine_gpi_tonic_pA if genuine_thal_disinhibition else 110.0)
+    _thal_tonic = cp.float32(genuine_thal_tonic_pA if genuine_thal_disinhibition else 300.0)
     bridge.cp_external_input_current[:] = 0.0
     for region_name in [f"gpe_{a}" for a in ACTION_NAMES]:
         bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(150.0)
@@ -2923,11 +2950,16 @@ def run_moving_goal_episode(
         if region_name in region_indices_cp:
             bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(120.0)
     for region_name in [f"gpi_{a}" for a in ACTION_NAMES]:
-        bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(110.0)
+        bridge.cp_external_input_current[region_indices_cp[region_name]] = _gpi_tonic
     for region_name in ["stn", "snc"]:
         bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(150.0)
     for region_name in [f"thal_{a}" for a in ACTION_NAMES]:
-        bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(300.0)
+        bridge.cp_external_input_current[region_indices_cp[region_name]] = _thal_tonic
+    if genuine_thal_disinhibition and verbose:
+        print(f"[g11 seed={seed}] N8 GENUINE thalamic disinhibition ON: "
+              f"gpi_tonic={genuine_gpi_tonic_pA:.0f} pA (pacemaker), "
+              f"thal_tonic={genuine_thal_tonic_pA:.0f} pA (released by D1-|GPi-|thal); "
+              f"NO direct thal pacing.", flush=True)
 
     # Action deltas
     ACTION_DELTAS = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # N, E, S, W
@@ -3325,15 +3357,18 @@ def run_moving_goal_episode(
         # does test whether the BG's per-action structure dissolves the
         # silent-motor trap on phase change.
         # RE-SET ALL baseline drives every trial (defensive against any drift).
+        # N8 conversion: genuine disinhibition uses a strong GPi pacemaker +
+        # tonic-only thal excitation (no direct thal pacing); see the one-time
+        # setup block above and the function-signature docstring.
         bridge.cp_external_input_current[:] = 0.0
         for rn in [f"gpe_{a}" for a in ACTION_NAMES]:
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
         for rn in [f"gpi_{a}" for a in ACTION_NAMES]:
-            bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(110.0)
+            bridge.cp_external_input_current[region_indices_cp[rn]] = _gpi_tonic
         for rn in ["stn", "snc"]:
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
         for rn in [f"thal_{a}" for a in ACTION_NAMES]:
-            bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(300.0)
+            bridge.cp_external_input_current[region_indices_cp[rn]] = _thal_tonic
         # Cluster F (cerebellum) baseline drives. Inferior olive baseline
         # gives ~1 Hz spontaneous firing (Hesslow & Yeo 2002 §"Afferent
         # Systems" p 99); CF burst on negative-reward step is set below
@@ -4422,6 +4457,26 @@ def main():
                          "Provides the teaching signal missing for "
                          "cross-projection learning. See "
                          "docs/plans/2026-04-29-cluster-a-closed-bg-loop-design.md.")
+    ap.add_argument("--genuine-thal-disinhibition", action="store_true",
+                    help="N8 cheat conversion (2026-06-06): release the thalamic "
+                         "relay via a genuine GPi->thalamus DISINHIBITION cascade "
+                         "instead of the default tonic 300 pA thal drive. GPi "
+                         "becomes a strong tonic pacemaker (--genuine-gpi-tonic-pa, "
+                         "default 1000) that silences thal_X by default; the "
+                         "selected action's cortex drive -> D1 -> (GABA) GPi "
+                         "silence -> thal_X disinhibited. thal carries only a tonic "
+                         "excitation (--genuine-thal-tonic-pa, default 600) "
+                         "expressed when released. Pathways already wired "
+                         "(D1->GPi=15, GPi->thal=8). Ported from "
+                         "gated_compose_bg_genuine_demo.py. Default OFF keeps the "
+                         "tonic-drive cheat as the control.")
+    ap.add_argument("--genuine-gpi-tonic-pa", type=float, default=1000.0,
+                    help="Tonic GPi pacemaker drive (pA) when "
+                         "--genuine-thal-disinhibition is set (default 1000).")
+    ap.add_argument("--genuine-thal-tonic-pa", type=float, default=900.0,
+                    help="Tonic thalamic excitation (pA, expressed only when GPi "
+                         "releases the relay) when --genuine-thal-disinhibition is "
+                         "set (default 900).")
     ap.add_argument("--enable-tonic-da", action="store_true",
                     help="Cluster C v1 (2026-04-29): replace signed-scalar "
                          "reward modulation with a real `dopamine` "
@@ -4903,6 +4958,9 @@ def main():
             heuristic_single_pool=args.heuristic_single_pool,
             goal_silence_after_step=args.goal_silence_after_step,
             goal_silence_duration=args.goal_silence_duration,
+            genuine_thal_disinhibition=args.genuine_thal_disinhibition,
+            genuine_gpi_tonic_pA=args.genuine_gpi_tonic_pa,
+            genuine_thal_tonic_pA=args.genuine_thal_tonic_pa,
         )
         return 0
 
