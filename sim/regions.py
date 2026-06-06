@@ -152,6 +152,20 @@ class BrainRegion:
     # share these coordinates. coordinate_dim must equal len(coordinate_center).
     coordinate_center: Optional[Tuple[float, ...]] = None
 
+    # Graded LGN decorrelation (2026-06-06): opt this region into the GRADED
+    # pairwise lateral inhibition stage (the analog, pre-spike whitening the
+    # retina/LGN does). When True AND cfg.enable_graded_lateral is True, the
+    # bridge allocates a per-region dense plastic lateral matrix M (n_neurons x
+    # n_neurons) and, BEFORE the spike threshold each step, adds the graded
+    # recurrent inhibition -(M @ a) to this region's input current, where
+    # a = relu((v - v_rest) / act_scale) is the region's SUB-THRESHOLD analog
+    # activity (NOT spikes). M learns ΔM ∝ ⟨a aᵀ⟩ - I - λM (anti-Hebbian on
+    # graded co-activity + identity target + weight-decay). Default False:
+    # zero effect on every existing region/run (the new code is a guarded
+    # no-op unless BOTH this flag and the global cfg.enable_graded_lateral
+    # are set). See docs/plans/2026-06-06-graded-lgn-decorrelation-design.md.
+    graded_lateral: bool = False
+
 
 @dataclass
 class RegionPathway:

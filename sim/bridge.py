@@ -234,6 +234,17 @@ class SimulationBridge:
         # When None, NMDA applies globally per cfg.enable_nmda — backward
         # compatible. Set in _build_per_neuron_nmda_mask after region init.
         self.cp_nmda_neuron_mask = None
+        # Graded LGN decorrelation (2026-06-06): per-region dense plastic lateral
+        # matrix M (K x K) for the region flagged with BrainRegion.graded_lateral
+        # when cfg.enable_graded_lateral is True. None (default) = no graded
+        # lateral, the new step code is unreached, byte-unchanged behavior.
+        # Allocated at the end of _initialize_simulation_data; consumed pre-spike
+        # in _run_one_simulation_step. _graded_lateral_slice = (start, end) is the
+        # flagged region's contiguous index range; _graded_lateral_coact holds the
+        # EMA co-activity estimate ⟨a aᵀ⟩.
+        self.cp_graded_lateral_M = None
+        self._graded_lateral_slice = None
+        self.cp_graded_lateral_coact = None
         self.cp_conductance_g_nmda_rise = None
         self.cp_external_input_current = None 
         self.cp_firing_states = None        
@@ -1481,6 +1492,16 @@ class SimulationBridge:
                     and self.region_manager is not None
                     and self.cp_connections is not None):
                 self._initialize_synapse_store(cfg)
+
+            # ── Graded LGN decorrelation stage (2026-06-06) ──
+            # Opt-in via cfg.enable_graded_lateral + BrainRegion.graded_lateral.
+            # Allocate the per-region dense plastic lateral M (K x K), the
+            # contiguous index slice, the co-activity EMA buffer, and snapshot
+            # the region's resting membrane baseline (model-agnostic: == vr /
+            # v_rest / E_L, which the membrane is initialized to). When no region
+            # is flagged (or the global flag is off) this is a no-op and
+            # cp_graded_lateral_M stays None — byte-unchanged behavior.
+            self._init_graded_lateral(cfg, n)
         except Exception as e:
             self._log_console(f"Error during simulation data initialization (3D): {e}","critical")
             import traceback; traceback.print_exc()
@@ -1488,6 +1509,135 @@ class SimulationBridge:
             if is_gpu_backend() and 'cupy' in sys.modules:
                 cp.get_default_memory_pool().free_all_blocks()
                 cp.get_default_pinned_memory_pool().free_all_blocks()
+
+    # ────────────────────────────────────────────────────────────────────
+    # Graded LGN decorrelation stage (2026-06-06) — additive, opt-in.
+    #
+    # The biology-faithful on-substrate realization of the validated whitening
+    # rule (research/findings/2026-06-06-option1-local-learning-whitening-
+    # VALIDATED-6seed.md). A per-region GRADED pairwise lateral inhibition acts
+    # on the region's SUB-THRESHOLD analog activity (a = relu((v - v_rest)/scale),
+    # NOT spikes), added to the input current BEFORE the spike threshold, with a
+    # plastic K x K matrix M learning ΔM ∝ ⟨a aᵀ⟩ - I - λM (anti-Hebbian on
+    # graded co-activity + identity target + weight-decay). This is where the
+    # retina/LGN does variance equalization (the rate-code opponency wall: the
+    # common-mode subtraction must be analog, pre-spike). A shared-FS SPIKING
+    # lateral does GLOBAL gain, not pairwise whitening (2026-06-06 BOUNDARY); this
+    # graded stage does the precise pairwise subtraction.
+    #
+    # GUARDED NO-OP when off: both methods return immediately unless
+    # cfg.enable_graded_lateral AND a region's graded_lateral are set, so the
+    # Izhikevich/HH/AdEx step paths are byte-unchanged for every existing run.
+    # ────────────────────────────────────────────────────────────────────
+    def _init_graded_lateral(self, cfg, n):
+        """Allocate the per-region graded lateral M (K x K), the contiguous index
+        slice, the co-activity EMA buffer, and the resting-membrane baseline for
+        the FIRST region flagged with graded_lateral=True. No-op (leaves
+        cp_graded_lateral_M None) when the global flag is off or no region is
+        flagged."""
+        self.cp_graded_lateral_M = None
+        self._graded_lateral_slice = None
+        self.cp_graded_lateral_coact = None
+        self.cp_graded_lateral_baseline = None
+        if not getattr(cfg, "enable_graded_lateral", False):
+            return
+        if self.region_manager is None:
+            return
+        flagged = [r for r in self.region_manager.regions()
+                   if getattr(r, "graded_lateral", False)]
+        if not flagged:
+            return
+        # One graded-lateral region (the LGN stage). If multiple are flagged, use
+        # the first and warn — the design scopes ONE region.
+        region = flagged[0]
+        if len(flagged) > 1:
+            self._log_console(
+                f"Graded lateral: {len(flagged)} regions flagged; only the first "
+                f"('{region.name}') gets the graded lateral (design scopes one).",
+                "warning")
+        idx = list(self.region_manager.indices(region.name))
+        if not idx:
+            return
+        K = len(idx)
+        # Indices are a CONTIGUOUS slice (RegionManager.initialize allocates
+        # range(start, end)); store (start, end) so the per-step matvec works on a
+        # contiguous view — no fancy indexing.
+        start, end = int(idx[0]), int(idx[-1]) + 1
+        assert end - start == K, "graded-lateral region indices are not contiguous"
+        self._graded_lateral_slice = (start, end)
+        self.cp_graded_lateral_M = cp.zeros((K, K), dtype=cp.float32)
+        self.cp_graded_lateral_coact = cp.zeros((K, K), dtype=cp.float32)
+        # Snapshot the resting baseline (== vr / v_rest / E_L the membrane is
+        # initialized to) so a = relu(v - baseline) is the depolarization above
+        # rest, model-agnostically.
+        if self.cp_membrane_potential_v is not None:
+            self.cp_graded_lateral_baseline = self.cp_membrane_potential_v[start:end].copy()
+        else:
+            self.cp_graded_lateral_baseline = cp.zeros(K, dtype=cp.float32)
+        self._log_console(
+            f"Graded LGN lateral allocated for region '{region.name}': K={K} "
+            f"(slice [{start}:{end}]), lr={getattr(cfg, 'graded_lateral_lr', 0.0)}, "
+            f"lambda={getattr(cfg, 'graded_lateral_lambda', 0.0)}, "
+            f"gain={getattr(cfg, 'graded_lateral_gain_pA', 0.0)}pA")
+
+    def _graded_lateral_activity(self):
+        """The region's SUB-THRESHOLD analog activity a = clip((v - baseline)/scale, 0, 1)
+        over the flagged slice. Uses the membrane potential at the current point in
+        the step (the previous step's settled v), NOT spikes — the analog drive the
+        retina/LGN whitens. The clip to [0, 1] is a SATURATING sub-threshold readout:
+        it rectifies (drop hyperpolarization) and excludes brief supra-threshold
+        spike-peak transients (the f-I curve saturates), so `a` is a bounded graded
+        signal, NOT a spike count. `scale` mV of depolarization above rest maps to
+        a≈1. Returns a 1-D array of length K (cupy/numpy)."""
+        cfg = self.core_config
+        start, end = self._graded_lateral_slice
+        scale = float(getattr(cfg, "graded_lateral_act_scale", 15.0)) or 1.0
+        v = self.cp_membrane_potential_v[start:end]
+        a = (v - self.cp_graded_lateral_baseline) * (1.0 / scale)
+        return cp.clip(a, 0.0, 1.0)
+
+    def _graded_lateral_inhibition_pA(self):
+        """The graded recurrent inhibition current -(M @ a) * gain for the flagged
+        region (a vector of length K, in pA, already NEGATIVE = inhibitory). Returns
+        (a, inhib_pA). Called pre-spike each step when the lateral is active."""
+        cfg = self.core_config
+        a = self._graded_lateral_activity()
+        gain = float(getattr(cfg, "graded_lateral_gain_pA", 300.0))
+        # -(M @ a): each neuron i is inhibited in proportion to how strongly it is
+        # correlated (via M_ij) with its co-active neighbours j.
+        inhib = -(self.cp_graded_lateral_M @ a) * gain
+        return a, inhib
+
+    def _graded_lateral_learn(self, a):
+        """Update M with ΔM ∝ ⟨a aᵀ⟩ - I - λM (anti-Hebbian co-activity + identity
+        target + weight-decay). a is the sub-threshold analog activity (length K).
+        The diagonal is held at 0 (self-inhibition is not part of the lateral)."""
+        cfg = self.core_config
+        lr = float(getattr(cfg, "graded_lateral_lr", 0.0))
+        if lr <= 0.0:
+            return
+        lam = float(getattr(cfg, "graded_lateral_lambda", 0.0))
+        ema = float(getattr(cfg, "graded_lateral_coact_ema", 0.0))
+        K = a.shape[0]
+        outer = cp.outer(a, a)                       # a aᵀ (the instantaneous co-activity)
+        if ema > 0.0:
+            self.cp_graded_lateral_coact = (ema * self.cp_graded_lateral_coact
+                                            + (1.0 - ema) * outer)
+            coact = self.cp_graded_lateral_coact
+        else:
+            coact = outer
+        eye = cp.eye(K, dtype=self.cp_graded_lateral_M.dtype)
+        # ΔM = lr*(⟨a aᵀ⟩ - I) - λM. The (coact - I) anti-Hebbian term drives the
+        # off-diagonal toward the correlation structure; -λM is the regularizer
+        # that settles the gentle bounded fixed point (the rate-model's -λM).
+        self.cp_graded_lateral_M += lr * (coact - eye) - lam * self.cp_graded_lateral_M
+        # Symmetrize (the rate-model M is symmetric) and clamp the diagonal to 0
+        # (no self-term; the diagonal "identity target" lives in the update, not in
+        # a self-inhibition weight).
+        self.cp_graded_lateral_M = 0.5 * (self.cp_graded_lateral_M
+                                          + self.cp_graded_lateral_M.T)
+        di = cp.arange(K)
+        self.cp_graded_lateral_M[di, di] = 0.0
 
     def _apply_per_region_neuron_types(self, cfg, n):
         """Override per-neuron parameters based on region.izh_neuron_type /
@@ -5162,6 +5312,21 @@ class SimulationBridge:
                     self.cp_conductance_g_e += g_e_increase
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
+
+            # ── Graded LGN decorrelation (2026-06-06): GRADED pre-spike pairwise
+            # lateral inhibition on the flagged region's SUB-THRESHOLD analog
+            # activity (NOT spikes). GUARDED NO-OP: cp_graded_lateral_M is None
+            # unless cfg.enable_graded_lateral AND a region's graded_lateral are
+            # set, so this whole block is unreached for every existing run and
+            # the Izhikevich/HH/AdEx step path below is byte-unchanged. When
+            # active: add -(M @ a)*gain to the region's contiguous current slice
+            # BEFORE the spike threshold, then learn ΔM ∝ ⟨a aᵀ⟩ - I - λM.
+            if self.cp_graded_lateral_M is not None:
+                _gl_start, _gl_end = self._graded_lateral_slice
+                _gl_a, _gl_inhib = self._graded_lateral_inhibition_pA()
+                total_input_current_pA[_gl_start:_gl_end] = (
+                    total_input_current_pA[_gl_start:_gl_end] + _gl_inhib)
+                self._graded_lateral_learn(_gl_a)
 
             # Neuromodulator excitability_drive (additive pA, scope=all + per-neuron).
             if (getattr(cfg, "enable_neuromodulator_subsystem", False)

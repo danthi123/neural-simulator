@@ -258,6 +258,36 @@ class CoreSimConfig:
     brain_regions: list = field(default_factory=list)  # List[BrainRegion]
     region_pathways: list = field(default_factory=list)  # List[RegionPathway]
 
+    # ─── Graded LGN decorrelation stage (2026-06-06) ───────────────
+    # The biology-faithful, on-substrate realization of the validated
+    # whitening rule (research/findings/2026-06-06-option1-local-learning-
+    # whitening-VALIDATED-6seed.md): a per-region GRADED pairwise lateral
+    # inhibition operating on SUB-THRESHOLD analog activity (NOT spikes),
+    # pre-spike, where the retina/LGN does variance equalization. Default
+    # OFF for full backward compatibility — when off, the Izhikevich/HH/
+    # AdEx step paths are byte-unchanged (the new code is a guarded no-op
+    # reached only when this flag AND a region's BrainRegion.graded_lateral
+    # are both set). Requires enable_brain_region_framework=True.
+    # Design: docs/plans/2026-06-06-graded-lgn-decorrelation-design.md
+    enable_graded_lateral: bool = False
+    # Learning rate η for the anti-Hebbian co-activity update ΔM ∝ ⟨a aᵀ⟩ - I.
+    graded_lateral_lr: float = 0.02
+    # The -λM synaptic weight-decay (the rate-model regularizer that settles a
+    # GENTLE, bounded fixed point ≈C^-1/3 instead of over-whitening). Typically
+    # set λ≈η. This is a DEDICATED knob (not cfg.hebbian_weight_decay) so the
+    # graded lateral is fully isolated from the global Hebbian plumbing.
+    graded_lateral_lambda: float = 0.01
+    # Scales the graded inhibitory current -(M @ a) into pA before it is added
+    # to the region's input current.
+    graded_lateral_gain_pA: float = 300.0
+    # Normalizer for the sub-threshold analog activity a = relu((v - v_rest)/scale).
+    # Sets the operating point of a (roughly the mV of depolarization that maps
+    # to a~1). ~10-20 mV is the sub-threshold dynamic range above rest.
+    graded_lateral_act_scale: float = 15.0
+    # EMA decay for the running co-activity estimate ⟨a aᵀ⟩ (0 = instantaneous
+    # a aᵀ each step; >0 averages over ~1/(1-decay) steps for a smoother target).
+    graded_lateral_coact_ema: float = 0.0
+
     # ─── Synapse tiering (Phase 3 Strategy B, 2026-05-11) ──────────
     # Activity-tracked TieredSynapseStore mirrors the per-pathway CSRs
     # alongside the monolithic cp_connections. Foundation for Phase 4
