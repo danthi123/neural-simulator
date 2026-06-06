@@ -1,5 +1,12 @@
 # Real-object grounding works (100%) + the whitening boundary is the LOCAL COMPUTATION, not representation — 2026-06-06
 
+> **⚠️ CORRECTION (same day):** the "boundary is the local COMPUTATION of whitening" conclusion below is SUPERSEDED by
+> `2026-06-06-whitening-computation-spikes-CAN-compute-it.md`. The computation de-risk shows rate-coded spiking CAN
+> compute whitening (with the analytic lateral inhibition + stable leaky dynamics; the membrane averages the rate-noise).
+> My first computation attempt's "wall" was an unstable-solver bug, not the spiking. The boundary is NARROWER: LOCAL
+> LEARNING of the lateral inhibition. Option 1 is RE-OPENED with a concrete path (the Pehlevan-Chklovskii stable rule).
+> The Track A real-object grounding result (100%) below is unaffected and stands.
+
 Owner steered: "start on 2 (real-object grounding) + background deep-research for 1 (the decorrelation blocker)." Both
 tracks landed together and converge to a clean, honest, biology-translatable picture.
 
