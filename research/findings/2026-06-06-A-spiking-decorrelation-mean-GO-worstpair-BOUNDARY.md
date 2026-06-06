@@ -49,11 +49,42 @@ forcing it (stronger anti-Hebbian) over-suppresses the whole pool toward silence
 abstracts. A single FS pool captures the global effect; the pairwise specificity needs the interneuron diversity
 (multiple specialized FS sub-pools). This is a multi-week architectural build, named here as the path, not forced.
 
+## Functional gate (fair capacity) — PARTIAL WIN, revises the verdict upward
+`_A_spiking_functional_gate.py`: the spiking-decorrelated codes drive the full 2026-06-04 multimodal grounded
+benchmark (320 concepts: nouns→V1 Gabor, verbs+adjs→word encoder; numpy VSA reference agent). RAW vs ZCA vs SPIKING.
+
+| codes | overall | flat | 1-attr | 2-attr | clause-d1 | clause-d2 | who | abstain |
+|---|---|---|---|---|---|---|---|---|
+| RAW (grounded, no decorrelation) | 66.7% (26/39) | 8/8 | 0/6 | 0/5 | 3/5 | 3/3 | 6/6 | 6/6 |
+| ZCA (numpy stand-in) | **100%** (39/39) | 8/8 | 6/6 | 5/5 | 5/5 | 3/3 | 6/6 | 6/6 |
+| **SPIKING (on-bridge)** | **76.9% (30/39)** | **8/8** | 2/6 | 0/5 | **5/5** | **3/3** | **6/6** | **6/6** |
+
+- **CAPACITY was the dominant variable, not a fundamental failure.** At n_it=600 (1.9 neurons/concept) the codes
+  blurred → 20.5%, even flat retrieval collapsed (2/8). At fair capacity n_it=4000 (12.5/concept) + a SPARSE
+  feed-forward (density 0.06 → 2.9M synapses; dense would be ~hours of matvec) → **76.9%**. The sparse feed-forward is
+  itself biologically apt (cortical feed-forward is sparse) and matches the project's own sparse-distributed coding.
+- **The on-bridge decorrelation FUNCTIONALLY HELPS** — +10pp over raw grounded codes (66.7→76.9), and it RECOVERS
+  flat retrieval, both clause depths, who-queries, and abstention to FULL ZCA parity. The mean coherence tightens at
+  320-scale too (raw 0.104 → spiking 0.060).
+- **The residual is ATTRIBUTE composition specifically** (1-attr 2/6, 2-attr 0/5 vs ZCA's 6/6, 5/5). Cause: the
+  worst-pair COLLISIONS (max coh 1.0 — one pair of concepts gets near-identical codes, + 1 silent concept; seed-
+  fragile, the same collision the numpy Földiák showed). Attribute binding is the capability most sensitive to code
+  overlap, so the collisions cost it first. Closeable via collision-reduction: overlap-rejection (the G.20 distinct-
+  seed recipe), more capacity, or interneuron-diversity for true pairwise specificity.
+
+**REVISED VERDICT: the on-bridge spiking decorrelation is a PARTIAL FUNCTIONAL WIN, not a boundary.** It is a genuine
+biological mechanism that improves grounded-code composition over raw (+10pp) and recovers most capabilities to ZCA
+parity; the attribute-composition shortfall is the named, closeable worst-pair-collision residual (the E/I non-
+specificity → occasional collisions). numpy ZCA stays the all-pairs reference; the spiking layer is a working,
+partially-converted on-bridge realization.
+
 ## Deep-grounding arc status (honest)
 - **Grounding INTERFACE:** works (Phase 3 — V1-Gabor / word-encoder codes → composer at parity, `grounded_codes`).
 - **On-bridge DECORRELATION (mean/global):** ✅ realized in spikes (this finding) — the project's components, multi-seed.
-- **On-bridge DECORRELATION (all-pairs / worst-pair):** ⚠️ BOUNDARY — single-FS E/I can't realize Földiák's pairwise
-  specificity; interneuron diversity is the principled path. numpy ZCA stays the reference for full all-pairs.
+- **On-bridge DECORRELATION (functional, 320-scale):** ✅ PARTIAL WIN — improves grounded-code composition +10pp over
+  raw (66.7→76.9%) and recovers flat/clauses/who/abstain to FULL ZCA parity; ATTRIBUTE composition is the residual
+  (worst-pair collisions, max coh 1.0 — single-FS E/I can't realize Földiák's pairwise specificity). Closeable via
+  collision-reduction (overlap-rejection / capacity / interneuron diversity). numpy ZCA stays the all-pairs reference.
 - **Abstract-concept grounding from raw sensation:** embodied-cognition boundary (the word encoder stands in).
 - **Deep SEMANTIC grounding (real object-image dataset → V1→IT):** the dataset/embodied boundary (multi-month).
 
