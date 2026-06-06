@@ -30,7 +30,7 @@ def coherence(X):
     return float(off.mean()), float(off.max())
 
 
-def build(seed, n_feat, n_it=200, n_fs=120):
+def build(seed, n_feat, n_it=200, n_fs=120, ff_density=0.5, ff_weight=8.0):
     regions = [
         BrainRegion(name="inp", n_neurons=n_feat, exc_fraction=1.0, internal_density=0.0,
                     exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
@@ -40,7 +40,7 @@ def build(seed, n_feat, n_it=200, n_fs=120):
                     exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
     ]
     pathways = [
-        RegionPathway(from_region="inp", to_region="it", density=0.5, weight_mean=8.0, weight_jitter=2.0,
+        RegionPathway(from_region="inp", to_region="it", density=ff_density, weight_mean=ff_weight, weight_jitter=2.0,
                       plastic=True, plasticity_gate="ff"),                 # plastic Hebbian feed-forward (strong: fire IT)
         RegionPathway(from_region="it", to_region="fs", density=0.5, weight_mean=1.0, weight_jitter=0.2,
                       plastic=True, plasticity_gate="lat"),                # anti-Hebbian-via-FS: co-active IT pairs

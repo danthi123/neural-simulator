@@ -12,12 +12,14 @@ from research.runners.unified_agent_multimodal_grounded import build_multimodal_
 from research.runners.unified_agent_visual_grounded import _decorrelate
 from research.runners.unified_agent_benchmark import build_vocab, ALL_FACTS, CATEGORIES, WHO_QUERIES, ABSTAIN_QUERIES
 from research.runners.nested_composition_agent import NestedCompositionAgent
-from research.findings.raw._A_spiking_decorrelation import build, it_code
+from research.findings.raw._A_spiking_decorrelation import build, it_code, coherence
 
 
-def spiking_codes(feats, seed, n_it=600, epochs=20):
-    """Run the on-bridge spiking competitive+anti-Hebbian decorrelation on the 320 grounded features -> IT codes."""
-    b = build(seed, feats.shape[1], n_it=n_it)
+def spiking_codes(feats, seed, n_it=4000, epochs=20, ff_density=0.06, ff_weight=25.0):
+    """Run the on-bridge spiking competitive+anti-Hebbian decorrelation on the 320 grounded features -> IT codes.
+    Fair capacity: n_it=4000 (12.5 neurons/concept) + SPARSE feed-forward (density 0.06 -> ~2.5M synapses, feasible;
+    dense would be ~hours) + stronger weight for the sparse fan-in (homeostasis bootstraps the rest)."""
+    b = build(seed, feats.shape[1], n_it=n_it, ff_density=ff_density, ff_weight=ff_weight)
     rm = b.region_manager
     inp = np.asarray(rm.indices("inp")); it = np.asarray(rm.indices("it"))
     for g in ("ff", "lat"):
@@ -65,6 +67,10 @@ def main():
     out = {}
     for seed in (42,):
         sp = spiking_codes(feats, seed)
+        cm, cx = coherence(sp); active = (sp > 0).sum(1)
+        print(f"  seed={seed} SPIKING codes: coh mean={cm:.3f}/max={cx:.3f}  mean_active={active.mean():.1f}/"
+              f"{sp.shape[1]}  n_silent={int((active == 0).sum())}/{len(sp)}  (RAW coh "
+              f"{coherence(feats)[0]:.3f}, ZCA {coherence(_decorrelate(feats))[0]:.3f})", flush=True)
         for label, codes in (("RAW", feats), ("ZCA", _decorrelate(feats)), ("SPIKING", sp)):
             res, ok, n = bench_codes(seed, codes, tokens, nouns, verbs, adjs)
             out[f"{label}_{seed}"] = {"overall": [ok, n], "cats": res}
