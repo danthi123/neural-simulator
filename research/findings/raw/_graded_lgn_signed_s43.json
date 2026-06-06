@@ -1,0 +1,75 @@
+{
+  "source": "cifar10",
+  "K": 300,
+  "lam": 0.01,
+  "lr": 0.02,
+  "gain": 40.0,
+  "act_scale": 15.0,
+  "coact_ema": 0.0,
+  "epochs": 8,
+  "signed": true,
+  "seeds": [
+    43
+  ],
+  "bench_seeds": [
+    43
+  ],
+  "raw_coherence": [
+    0.24111162034514738,
+    0.9710006416964907
+  ],
+  "params": {
+    "drive_scale": 1400.0,
+    "window": 30,
+    "settle": 10
+  },
+  "RAW": [
+    26,
+    39
+  ],
+  "CONCEPT-whiten": [
+    39,
+    39
+  ],
+  "GRADED_LGN": {
+    "43": {
+      "graded_compose": [
+        26,
+        39
+      ],
+      "spiking_compose": [
+        26,
+        39
+      ],
+      "guards": {
+        "mean_graded_active": 239.5625,
+        "min_graded_active": 212,
+        "n_silent_graded": 0,
+        "mean_spike_active": 73.409375,
+        "min_spike_active": 29,
+        "n_silent_spiking": 0,
+        "total_spikes": 29700,
+        "M_norm": 31.458860397338867,
+        "M_max": 0.7055109143257141,
+        "M_offdiag_max": 0.7055109143257141,
+        "drive_coh_mean": 0.46329011487930366,
+        "drive_coh_max": 0.9740057817178291,
+        "graded_coh_mean": 0.19082303424991218,
+        "graded_coh_max": 0.8763542437972146,
+        "spike_coh_mean": 0.15779805661962212,
+        "spike_coh_max": 0.8191121282340976,
+        "nolat_graded_coh_mean": 0.25674362501413234,
+        "nolat_spike_coh_mean": 0.22924637206082446
+      },
+      "degenerate": false,
+      "nolat_graded_compose": [
+        26,
+        39
+      ],
+      "nolat_spiking_compose": [
+        26,
+        39
+      ]
+    }
+  }
+}
