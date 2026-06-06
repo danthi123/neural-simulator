@@ -78,9 +78,15 @@ benchmark (320 concepts: nouns→V1 Gabor, verbs+adjs→word encoder; numpy VSA 
   it is the spiking codes' RESIDUAL COHERENCE (mean 0.06, with structured max ~0.97) vs ZCA's near-zero all-pairs
   (0.003). Attribute binding is the capability most sensitive to that residual structure; the local competitive rule
   plateaus at ~0.06 mean coherence and cannot reach ZCA's all-pairs cleanliness. **n_it=4000 (sparser codes, 76.9%)
-  is the operating point; capacity is not the lever.** The indicated levers for the residual are SPARSER codes
-  (stronger WTA / lower homeostatic target) or interneuron diversity (pairwise cleanliness) — or accept the partial
-  win and keep numpy ZCA for the cleanest codes.
+  is the operating point; capacity is not the lever.**
+- **Sparser-codes lever (also NEGATIVE) — the ceiling is confirmed:** a stronger FS winner-take-all (wta_weight 1.0→2.0)
+  did NOT sparsen the codes (mean_active stayed 24.5 — the HOMEOSTASIS compensates, holding each neuron's firing rate
+  to its target regardless of WTA strength) and composition was slightly worse (74.4%, 1-attr 1/6); mean coherence
+  stayed pinned at 0.060. So BOTH simple levers (capacity, WTA) are negative: the local competitive rule plateaus at
+  ~0.06 mean coherence and cannot reach ZCA's all-pairs 0.003 by simple tuning. **The only remaining on-bridge lever
+  for the attribute residual is interneuron DIVERSITY** (specialized inhibitory sub-pools implementing Földiák's
+  pairwise decorrelation — the PV/SST/VIP microcircuit; a deeper architectural build) — or accept the partial win and
+  keep numpy ZCA for the cleanest codes. The definitive on-bridge operating point is n_it=4000 / WTA=1.0 → **76.9%**.
 
 **REVISED VERDICT: the on-bridge spiking decorrelation is a PARTIAL FUNCTIONAL WIN, not a boundary.** It is a genuine
 biological mechanism that improves grounded-code composition over raw (+10pp) and recovers most capabilities to ZCA
