@@ -88,6 +88,19 @@ def build_bg_brain_regions(
     # Lower values (10/5) leave FS pool subthreshold and inhibition is dead.
     motor_to_fs_weight: float = 50.0,
     fs_to_motor_weight: float = 20.0,
+    # Thalamic reticular-nucleus (TRN)-style lateral inhibition between thal
+    # relay pools (2026-06-06, N8+N6). Under genuine GPi->thal disinhibition the
+    # released action's thal is the cleanest selection signal, but during a
+    # plastic multi-goal run cumulative D1 plasticity leaks several thals at
+    # once (ties). TRN provides reciprocal inhibition between thalamic relay
+    # nuclei (Pinault 2004; Crabtree 2018) — a biological WTA on the relay that
+    # suppresses the non-winner thals so the readout_source="thal" argmax sees a
+    # single clean winner. Modeled like the motor WTA: thal_X -> thal_FS_X
+    # (excitatory) and thal_FS_X -> thal_Y!=X (inhibitory). Default OFF.
+    enable_thal_lateral_inhibition: bool = False,
+    n_thal_fs_per_action: int = 5,
+    thal_to_fs_weight: float = 50.0,
+    thal_fs_to_thal_weight: float = 20.0,
     # Distributed motor coding (2026-05-02). Adds excitatory cross-coupling
     # between motor pools at ADJACENT cardinal directions (N↔E, E↔S, S↔W,
     # W↔N — 90° angular distance). Opposite directions (N↔S, E↔W) get NO
@@ -1320,6 +1333,47 @@ def build_bg_brain_regions(
                     plastic=False,
                 ))
 
+    # ---- Thalamic reticular-nucleus (TRN) lateral inhibition (opt-in,
+    #      2026-06-06, N8+N6) ----
+    # A biological WTA on the thalamic RELAY (the cleanest genuine-disinhibition
+    # selection signal). Under genuine GPi->thal disinhibition + a plastic
+    # multi-goal run, cumulative D1 plasticity partially releases several thal
+    # pools at once -> the readout_source="thal" argmax ties. The thalamic
+    # reticular nucleus (TRN) provides reciprocal GABAergic inhibition between
+    # relay nuclei (Pinault 2004; Crabtree 2018; Halassa 2017) — it sharpens the
+    # released winner and silences the leaked losers, so the readout sees ONE
+    # clean winner. Same microcircuit shape as the motor WTA, applied one stage
+    # upstream where the signal is strong. Combine with --readout-source thal.
+    if enable_thal_lateral_inhibition:
+        for action_idx, action in enumerate(ACTION_NAMES):
+            regions.append(BrainRegion(
+                name=f"thal_FS_{action}",
+                n_neurons=n_thal_fs_per_action,
+                exc_fraction=0.0,  # all-inhibitory (TRN is GABAergic)
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+                action_index=action_idx,
+            ))
+        # thal_X → thal_FS_X (excitatory: relay collaterals drive TRN)
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"thal_{action}", to_region=f"thal_FS_{action}",
+                density=1.0, weight_mean=thal_to_fs_weight, weight_jitter=0.2,
+                plastic=False,
+            ))
+        # thal_FS_X → thal_Y for Y != X (inhibitory cross-pool suppression)
+        for src_action in ACTION_NAMES:
+            for tgt_action in ACTION_NAMES:
+                if src_action == tgt_action:
+                    continue
+                pathways.append(RegionPathway(
+                    from_region=f"thal_FS_{src_action}", to_region=f"thal_{tgt_action}",
+                    density=1.0, weight_mean=thal_fs_to_thal_weight, weight_jitter=0.2,
+                    plastic=False,
+                ))
+
     # ---- Motor cross-coupling (opt-in, 2026-05-02) ----
     # Models distributed/overlapping somatotopy in M1 (Penfield 1937 fuzzy
     # boundaries; Pulvermüller 1999 distributed action-word neurons).
@@ -2471,6 +2525,24 @@ def run_moving_goal_episode(
     genuine_thal_disinhibition: bool = False,
     genuine_gpi_tonic_pA: float = 1000.0,   # tonic GPi pacemaker drive (silences thal by default)
     genuine_thal_tonic_pA: float = 900.0,   # tonic thalamic excitation (expressed only when GPi releases)
+    # N6 readout-source (2026-06-06): which spiking pool the host argmax reads
+    # for action selection. "motor" = legacy (host argmax over motor_X spike
+    # counts; the N6 cheat). "thal" = read the cleanly-selective THALAMUS
+    # (argmax over thal_X spike counts). Under genuine GPi->thal disinhibition
+    # the thalamus is the cleanest, strongest selection signal (only the
+    # released action's thal fires, others ~0); the thal->motor labeled-line
+    # amplification is too weak for a reliable motor-count argmax over a noisy
+    # multi-goal run. Reading thal is the combined N8+N6 fix's cheap test:
+    # "is the weak motor SIGNAL the whole problem?". Default "motor"
+    # (backward-compatible). See research/findings/2026-06-06-N8N6-*.
+    readout_source: str = "motor",
+    # TRN-style thalamic lateral inhibition (2026-06-06, N8+N6) — a biological
+    # WTA on the thalamic relay (the clean genuine-disinhibition signal). See
+    # build_bg_brain_regions for the mechanism. Combine with readout_source="thal".
+    enable_thal_lateral_inhibition: bool = False,
+    n_thal_fs_per_action: int = 5,
+    thal_to_fs_weight: float = 50.0,
+    thal_fs_to_thal_weight: float = 20.0,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -2512,6 +2584,10 @@ def run_moving_goal_episode(
     regions, pathways = build_bg_brain_regions(
         n_cortex=100,  # 25 per action — keeps D1 firing in physiological range (~75 Hz)
         enable_motor_lateral_inhibition=enable_motor_lateral_inhibition,
+        enable_thal_lateral_inhibition=enable_thal_lateral_inhibition,
+        n_thal_fs_per_action=n_thal_fs_per_action,
+        thal_to_fs_weight=thal_to_fs_weight,
+        thal_fs_to_thal_weight=thal_fs_to_thal_weight,
         enable_cortex_lateral_inhibition=enable_cortex_lateral_inhibition,
         enable_learned_perception=enable_learned_perception,
         enable_hippocampus=enable_hippocampus,
@@ -2792,6 +2868,24 @@ def run_moving_goal_episode(
     motor_idx_per_action = {
         a: region_indices_cp[f"motor_{a}"] for a in ACTION_NAMES
     }
+    # N6 readout sources — host index arrays precomputed once (the legacy
+    # readout called .get() on the cupy index every substep inside the
+    # readout window). motor_X is the legacy source; thal_X is the
+    # cleanly-selective genuine-disinhibition source (readout_source="thal").
+    motor_idx_host = {a: motor_idx_per_action[a].get() for a in ACTION_NAMES}
+    thal_idx_host = {
+        a: region_indices_cp[f"thal_{a}"].get()
+        for a in ACTION_NAMES
+        if f"thal_{a}" in region_indices_cp
+    }
+    _readout_source = str(readout_source).lower()
+    if _readout_source not in ("motor", "thal"):
+        raise ValueError(
+            f"readout_source must be 'motor' or 'thal', got {readout_source!r}")
+    if _readout_source == "thal" and len(thal_idx_host) != N_ACTIONS:
+        raise ValueError(
+            "readout_source='thal' requires per-action thal_X regions; "
+            f"found {sorted(thal_idx_host)}")
 
     # Per-action DA targeting: pre-compute synapse-post-action mask.
     # For each plastic cortex→str_D1_X synapse, mark which action X it serves.
@@ -2977,6 +3071,7 @@ def run_moving_goal_episode(
     trajectory = [(x, y)]
     goal_log = [(gx, gy)]
     motor_counts_log = []
+    thal_counts_log = []  # N6 thal-readout firing guard (per-step thal_X counts)
     action_log = []
     reward_log = []
     distance_log = [manhattan(x, y)]
@@ -3775,8 +3870,11 @@ def run_moving_goal_episode(
                         cp.maximum(cur_out, cp.asarray(g_out, dtype=cp.float32))
                     )
 
-        # Run stimulus window and tally motor spikes
+        # Run stimulus window and tally motor (and, for readout_source="thal",
+        # thalamus) spike counts over the readout window.
         motor_counts = {a: 0 for a in ACTION_NAMES}
+        thal_counts = {a: 0 for a in ACTION_NAMES}
+        _read_thal = (_readout_source == "thal")
         bridge.core_config.current_reward_signal = 0.0
         for s in range(n_stim_steps):
             bridge._run_one_simulation_step()
@@ -3787,13 +3885,23 @@ def run_moving_goal_episode(
             if readout_start <= s < readout_end:
                 firing = bridge.cp_firing_states.get().astype(bool)
                 for a in ACTION_NAMES:
-                    motor_counts[a] += int(firing[motor_idx_per_action[a].get()].sum())
+                    motor_counts[a] += int(firing[motor_idx_host[a]].sum())
+                    if _read_thal:
+                        thal_counts[a] += int(firing[thal_idx_host[a]].sum())
 
         motor_counts_log.append([motor_counts[a] for a in ACTION_NAMES])
+        if _read_thal:
+            thal_counts_log.append([thal_counts[a] for a in ACTION_NAMES])
 
-        # Argmax action selection (random if all silent)
-        if max(motor_counts.values()) > 0:
-            action_idx = max(range(N_ACTIONS), key=lambda i: motor_counts[ACTION_NAMES[i]])
+        # Action selection (N6 readout). Default reads the motor pool (legacy,
+        # the host-argmax cheat). readout_source="thal" reads the cleanly-
+        # selective thalamus (genuine GPi->thal disinhibition releases only the
+        # selected action's thal; the thal->motor amplification is too weak for
+        # a reliable motor-count argmax over a noisy run). Random fallback when
+        # the chosen source is fully silent.
+        _sel_counts = thal_counts if _read_thal else motor_counts
+        if max(_sel_counts.values()) > 0:
+            action_idx = max(range(N_ACTIONS), key=lambda i: _sel_counts[ACTION_NAMES[i]])
         else:
             action_idx = int(np.random.default_rng(seed * 10000 + step).integers(0, N_ACTIONS))
         action_log.append(action_idx)
@@ -4057,6 +4165,8 @@ def run_moving_goal_episode(
         "reward_learning_rate": learning_rate,
         "trajectory": trajectory, "goal_log": goal_log,
         "motor_counts": motor_counts_log,
+        "thal_counts": thal_counts_log,
+        "readout_source": _readout_source,
         "action_log": action_log, "reward_log": reward_log,
         "distance_log": distance_log,
         "mean_distance_overall": float(dist_arr.mean()),
@@ -4477,6 +4587,37 @@ def main():
                     help="Tonic thalamic excitation (pA, expressed only when GPi "
                          "releases the relay) when --genuine-thal-disinhibition is "
                          "set (default 900).")
+    ap.add_argument("--readout-source", choices=["motor", "thal"], default="motor",
+                    help="N6 readout source: which spiking pool the host argmax "
+                         "reads for action selection. 'motor' (default) = legacy "
+                         "host-argmax over motor_X spike counts (the N6 cheat). "
+                         "'thal' = read the cleanly-selective THALAMUS (argmax "
+                         "over thal_X spike counts). Under genuine GPi->thal "
+                         "disinhibition the thalamus is the strongest/cleanest "
+                         "selection signal (only the released action's thal "
+                         "fires); the thal->motor amplification is too weak for a "
+                         "reliable motor-count argmax. The combined N8+N6 fix.")
+    ap.add_argument("--enable-thal-lateral-inhibition", action="store_true",
+                    help="N8+N6 (2026-06-06): TRN-style lateral inhibition "
+                         "between thalamic relay pools. A biological WTA on the "
+                         "thalamic relay (the clean genuine-disinhibition "
+                         "signal) — the thalamic reticular nucleus reciprocally "
+                         "inhibits relay nuclei (Pinault 2004), sharpening the "
+                         "released winner and silencing leaked losers so a "
+                         "--readout-source thal argmax sees one clean winner. "
+                         "Adds thal_FS_X pools + thal_X->thal_FS_X (exc) + "
+                         "thal_FS_X->thal_Y!=X (inh). Combine with "
+                         "--readout-source thal + --genuine-thal-disinhibition.")
+    ap.add_argument("--thal-to-fs-weight", type=float, default=50.0,
+                    help="thal_X -> thal_FS_X excitatory weight for the TRN WTA "
+                         "(default 50, mirrors the motor WTA).")
+    ap.add_argument("--thal-fs-to-thal-weight", type=float, default=20.0,
+                    help="thal_FS_X -> thal_Y!=X inhibitory weight for the TRN "
+                         "WTA (default 20, mirrors the motor WTA).")
+    ap.add_argument("--learning-rate", type=float, default=0.01,
+                    help="reward_learning_rate for STDP/reward modulation "
+                         "(default 0.01). Set 0.0 to freeze plasticity (diagnostic: "
+                         "isolate dynamics from cumulative weight changes).")
     ap.add_argument("--enable-tonic-da", action="store_true",
                     help="Cluster C v1 (2026-04-29): replace signed-scalar "
                          "reward modulation with a real `dopamine` "
@@ -4961,6 +5102,11 @@ def main():
             genuine_thal_disinhibition=args.genuine_thal_disinhibition,
             genuine_gpi_tonic_pA=args.genuine_gpi_tonic_pa,
             genuine_thal_tonic_pA=args.genuine_thal_tonic_pa,
+            readout_source=args.readout_source,
+            enable_thal_lateral_inhibition=args.enable_thal_lateral_inhibition,
+            thal_to_fs_weight=args.thal_to_fs_weight,
+            thal_fs_to_thal_weight=args.thal_fs_to_thal_weight,
+            learning_rate=args.learning_rate,
         )
         return 0
 
