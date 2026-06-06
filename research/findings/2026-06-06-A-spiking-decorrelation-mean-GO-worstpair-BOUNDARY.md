@@ -94,6 +94,24 @@ parity; the attribute-composition shortfall is the named, closeable worst-pair-c
 specificity → occasional collisions). numpy ZCA stays the all-pairs reference; the spiking layer is a working,
 partially-converted on-bridge realization.
 
+## Interneuron-diversity de-risk (the one remaining lever) — NEGATIVE → worst-pair is a CONFIRMED boundary
+`_A_interneuron_diversity_derisk.py`: replaced the single all-to-all FS pool with K=8 TOPOGRAPHIC local FS sub-pools
+(each an independent local WTA decorrelator on its own IT window) — the realizable proxy for Földiák's pairwise
+specificity. **NEGATIVE (3 seeds): worst-pair max coherence stayed 0.94-0.96 — no improvement over the single-pool
+~0.91** (mean ~0.15-0.19, comparable). Diagnosis: disjoint local decorrelators each see the SAME correlated input and
+cluster the correlated concepts the same way in parallel — *locality of inhibition does not push correlated inputs
+apart, it just clusters them K times over.* Spatial/topographic diversity is NOT the lever.
+
+**So the worst-pair / attribute residual is a CONFIRMED on-bridge boundary.** THREE realizable local-rule mechanisms
+all leave max coherence ~0.9: (1) single global FS pool, (2) plastic anti-Hebbian FS lateral (unstable), (3) K=8
+topographic local FS. The local competitive rule FUNDAMENTALLY clusters correlated inputs; Földiák's pairwise W_ik
+decorrelation does not map onto the E/I spiking substrate via any spatial/connectivity realization tested. The only
+untested possibility is multi-TYPE interneuron *dynamics* diversity (PV fast-perisomatic / SST slow-dendritic / VIP
+disinhibition — distinct temporal kernels, not just distinct wiring) — a deep, uncertain build — OR accept the partial
+win and keep numpy ZCA for the all-pairs-clean codes. Per the top-level goal, this is a real biology-translatable
+boundary: a single interneuron class (even topographically organized) cannot implement pairwise decorrelation; the
+cortex's interneuron-TYPE diversity is not decorative — it is load-bearing for efficient coding.
+
 ## Deep-grounding arc status (honest)
 - **Grounding INTERFACE:** works (Phase 3 — V1-Gabor / word-encoder codes → composer at parity, `grounded_codes`).
 - **On-bridge DECORRELATION (mean/global):** ✅ realized in spikes (this finding) — the project's components, multi-seed.
