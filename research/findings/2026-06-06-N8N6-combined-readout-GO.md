@@ -48,8 +48,11 @@ bottleneck. So the two cheats had to be converted together, as one BG output sta
   residual on the conversational side).
 - **Operating point is sensitive** (gpi1300/thal750 works; gpi2200/thal600 = 22.5) — multi-seed confirms gpi1300/thal750
   is seed-robust, but the conversion ships with that specific operating point, not a wide basin.
-- **Scale:** grid-8 multi-seed (the smoke scale). Grid-32 production-scale confirmation IN FLIGHT (genuine+thalread vs
-  the original tonic+motor baseline) — appended below when it lands.
+- **Scale: CONFIRMED at production (grid-32, seed 42).** genuine disinhibition + thal-readout = **2.71** vs the
+  original tonic+motor-argmax cheat = **5.35** — 2× BETTER, holds at scale (comparable to the documented Config B
+  flagship 2.57, which uses tonic+motor + visual cortex). So the N8/N6 conversion beats the cheats it replaces at
+  BOTH grid-8 (multi-seed 42/43/44) AND grid-32 (production). The conversion is validated, not just a smoke-scale
+  artifact.
 
 ## Artifacts
 - `research/runners/g11_bg_runner.py` — `--genuine-thal-disinhibition` (+ `--genuine-gpi-tonic-pa`,
