@@ -5,9 +5,21 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-06-05
+**Updated:** 2026-06-06
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
+
+## >>> CURRENT STATUS (2026-06-06, NEWEST — read THIS first; supersedes every block below): graded-LGN decorrelation build IN FLIGHT; owner-confirmed 4-step sim-wide roadmap <<<
+
+**OWNER ROADMAP (confirmed 2026-06-06 in chat, load-bearing — biologize EVERYTHING sim-wide BEFORE any scaling / new capabilities):**
+1. **Finish CONVERSATIONAL biologization** — the graded decorrelation stage (IN FLIGHT). A GO closes the LAST conversational cheat (cheat A's on-substrate whitening). Cheats B (numpy cleanup→spiking NEF), C (Python memory→substrate weight-store), D (Python assoc graph→learned recurrent) ALREADY converted.
+2. **Biologize the NAVIGATIONAL path** — audit every remaining gridworld shortcut (the action heuristic `--heuristic-single-pool`; the PARKED cross-projection cheat #5 "on hold pending biology buildout"; perception/reward conveniences), convert-or-honestly-bound each with the SAME rigor as the conversational arc. (The 3 coordinate cheats were already closed by the perception arc.)
+3. **FOLD nav + conversational into a SINGLE always-on instance** — one simulated brain, all capability regions live on ONE `SimulationBridge` (same engine/substrate/learning rules; different `BrainRegion` slices + `RegionPathway`s via the brain-region framework; NOT a separate brain). Extends the conversational-side one-bridge unification sim-wide. Owner-requested 2026-06-06; explicitly AFTER all cheats are biologized.
+4. **THEN** scaling + new capabilities.
+
+**EXACT NEXT CONCRETE ACTION:** the graded-LGN decorrelation build is IN FLIGHT (background subagent `a632b42f9d035f681`; design `docs/plans/2026-06-06-graded-lgn-decorrelation-design.md`; owner-APPROVED the ONE additive opt-in protected `sim/` edit: `enable_graded_lateral` + `BrainRegion.graded_lateral` + `cp_graded_lateral_M` (K×K) + the guarded PRE-SPIKE `−(M@a)` graded recurrent-inhibition term + the `ΔM∝⟨aaᵀ⟩−I−λM` update; HARD: no-op / byte-unchanged when off; TDD `tests/test_graded_lateral.py`). DO NOT spawn a duplicate; await the subagent. On completion: (a) REVIEW the protected `sim/` diff BYTE-FOR-BYTE — Izhikevich/HH/AdEx/Resonate paths byte-unchanged when off, the flag truly gates, no global side-effects; (b) REVIEW the composition-gated multi-seed result with the FP-catchers — controls (RAW ~67% floor / CONCEPT-whiten ~100% target) VALID or distrust; guards (graded LGN alive not silent/blown-up, M bounded, no-lateral baseline); gate on COMPOSITION not coherence (it misled 3× this arc); 6-seed. GO = graded LGN whitening composes ~100% on-substrate → **conversational biologization step 1 COMPLETE** → begin step 2 (navigational cheat audit). BOUNDARY = the honest limit + the research-confirmed FAITHFUL fallback (upstream graded retina/LGN whitening — the numpy ZCA models a real ANALOG pre-spike stage, biology-faithful, not a cheat; the conversational path stays grounded end-to-end either way). Commit (subagent local) → main session pushes BOTH remotes (origin + gitea) + reports whichever lands.
+
+**CONTEXT (the arc this sits in):** option-1 decorrelation is RESOLVED at the ALGORITHM level (a regularized LOCAL rule composes 100%, 6/6 seeds — `2026-06-06-option1-local-learning-whitening-VALIDATED-6seed.md`); the on-bridge SHARED-FS SPIKING realization was a BOUNDARY (global gain ≠ pairwise whitening = the Mikulasch-Priesemann point-neuron wall — see the line-77 block below); the graded-LGN stage is the biology-FAITHFUL on-substrate realization (whitening belongs in the GRADED pre-spike retina/LGN stage, not the recurrent spiking inhibition). Track A real-object grounding DONE 100% (CIFAR-10 → real V1 Gabor → ZCA → composer, 117/117, 3 seeds). HARD RULES unchanged (honest negatives to BOTH remotes; GPU/CuPy for real runs, numpy only for tiny smoke; never weaken frozen bars / no-confab moat; protected `sim/` edits ONLY with owner approval + byte-for-byte review; no future-tense hand-back).
 
 ## >>> CURRENT STATUS (2026-06-05 ~08:00, NEWEST — read THIS first): RF-on-bridge de-risk GO — the bridge natively hosts resonate-and-fire phasor neurons (FHRR composition at PARITY); NEXT = the full FHRR-on-bridge feature (owner-funded months-arc) <<<
 
