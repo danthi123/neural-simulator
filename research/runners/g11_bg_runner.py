@@ -101,6 +101,68 @@ def build_bg_brain_regions(
     n_thal_fs_per_action: int = 5,
     thal_to_fs_weight: float = 50.0,
     thal_fs_to_thal_weight: float = 20.0,
+    # Spiking action-selection WTA readout (2026-06-06, N6 biologization).
+    # A DEDICATED, READ-ONLY selection layer that biologizes the host argmax:
+    # four sel_X excitatory pools driven feed-forward by the cleanly-selective
+    # thal_X (strong thal_to_sel_weight), competing among themselves via
+    # sel_FS_X GABAergic interneurons (sel_X -> sel_FS_X exc; sel_FS_X ->
+    # sel_Y!=X inh). The DECISION emerges from this spiking competition (the
+    # winner is which sel_X fires); the host then merely OBSERVES which pool
+    # won, instead of computing an argmax over raw rates. Critically this layer
+    # has NO back-projection to thal — it does NOT perturb the thal->motor
+    # cascade or the navigation dynamics (unlike enable_thal_lateral_inhibition,
+    # which put the competition ON the relay and corrupted the forward signal,
+    # scoring 20.0). Drive the competition from the strong clean thalamus, not
+    # the weak motor counts (which scored 14.7). Enabled when
+    # readout_source="spiking_wta". Cortical soft-WTA microcircuit (Douglas-
+    # Martin 2004; Rutishauser-Douglas-Slotine 2011 lateral-inhibition WTA).
+    enable_spiking_wta_readout: bool = False,
+    n_sel_per_action: int = 20,
+    n_sel_fs_per_action: int = 10,
+    thal_to_sel_weight: float = 30.0,    # thal_X -> sel_X (feed-forward EVIDENCE; modest, not saturating)
+    sel_to_sel_fs_weight: float = 20.0,  # sel_X -> sel_FS_X (drives the competing interneuron)
+    sel_fs_to_sel_weight: float = 5.0,   # sel_FS_X -> sel_Y!=X (GENTLE cross-pool suppression; symmetric over-inhibition is unstable)
+    # ACCUMULATE-THEN-COMMIT (2026-06-06, N6 fix). The gain-0 sel_X soft-WTA
+    # above is a PASSIVE INSTANTANEOUS COMPARATOR (internal_density=0,
+    # exc_weight_mean=0) — it cannot manufacture a winner from the weak released
+    # thalamus (the deep-research finding 2026-06-06-action-selection-readout-
+    # deep-research.md). The brain commits decisions in TWO STAGES:
+    #   (1) ACCUMULATE: each sel_X gets NMDA-SLOW recurrent self-excitation
+    #       (sel_recurrent_density>0, sel_recurrent_weight>0, soft-WTA gain
+    #       alpha<1 — STABLE attractor per Rutishauser-Douglas-Slotine 2011, NOT
+    #       alpha>1 unstable). The recurrence amplifies + integrates the weak
+    #       thal drive over the readout window (network tau = tau_syn/|1-w_rec|;
+    #       Wang 2002 Neuron slow-reverberation decision attractor). sel_X is
+    #       NMDA-enabled via the per-region cp_nmda_neuron_mask (the same
+    #       mechanism enable_pfc_nmda uses) so the integration time constant is
+    #       biological (NMDA tau_decay=100ms), not AMPA-fast.
+    #   (2) COMMIT: a downstream burst pool commit_X (superior-colliculus /
+    #       saccade-generator analogue, H.24/H.25) is held silent by a tonically
+    #       firing commit_OPN omnipause pool (constant external drive). Only when
+    #       sel_X ramps past threshold does sel_X -> commit_X overcome the tonic
+    #       inhibition and commit_X fires ALL-OR-NONE (Lo-Wang 2006 Nat Neurosci
+    #       SC threshold; Stine-Shadlen 2023 LIP-accumulate/SC-commit). The host
+    #       reads which commit_X burst — a thresholded spiking event, NOT an
+    #       argmax over graded rates. All additive, read-only, NO sim/ edit.
+    sel_recurrent_density: float = 0.5,   # sel_X internal recurrence density (Wang attractor)
+    sel_recurrent_weight: float = 1.0,    # sel_X -> sel_X NMDA-slow gain (soft-WTA alpha<1)
+    enable_commit_burst: bool = True,     # build the commit_X / commit_OPN burst stage
+    n_commit_per_action: int = 20,        # neurons per commit_X burst pool
+    n_commit_opn: int = 20,               # neurons in the shared omnipause pool
+    sel_to_commit_weight: float = 22.0,   # sel_X -> commit_X (the winning ramp fires the burst)
+    commit_recurrent_density: float = 0.5,  # commit_X internal recurrence (all-or-none burst)
+    commit_recurrent_weight: float = 0.6,   # commit_X -> commit_X (burst regeneration; low to avoid rebound-bursting)
+    opn_to_commit_weight: float = 10.0,   # commit_OPN -> commit_X tonic inhibition
+    # OPN tonic default 0: the commit_X burst pool is gated by the sel_X ramp +
+    # its own intrinsic IZH threshold (commit fires all-or-none only when its
+    # sel_X has ramped high enough — the deep-research finding's documented
+    # "minimal variant"). A CONSTANT commit_OPN drive (the textbook SC/OPN gate,
+    # H.24) induces SYNCHRONIZED REBOUND BURSTING across all commit pools on this
+    # rate-coded substrate (the symmetric-inhibition instability — Rutishauser):
+    # 500pA -> all commit fire (rebound); 200pA -> none fire. No constant middle
+    # exists, so the structurally-faithful OPN is left available but OFF by
+    # default; opt in with --commit-opn-tonic-pa for experiments.
+    commit_opn_tonic_pA: float = 0.0,
     # Distributed motor coding (2026-05-02). Adds excitatory cross-coupling
     # between motor pools at ADJACENT cardinal directions (N↔E, E↔S, S↔W,
     # W↔N — 90° angular distance). Opposite directions (N↔S, E↔W) get NO
@@ -1374,6 +1436,140 @@ def build_bg_brain_regions(
                     plastic=False,
                 ))
 
+    # ---- Spiking action-selection WTA readout (opt-in, 2026-06-06, N6) ----
+    # A DEDICATED, READ-ONLY selection layer that biologizes the host argmax.
+    # The N6 residual was that action selection, even reading the clean
+    # thalamus, was still a host-side argmax over raw rates. Here the decision
+    # instead EMERGES from a spiking competition:
+    #   thal_X --(thal_to_sel_weight, exc, feed-forward)--> sel_X
+    #   sel_X  --(sel_to_sel_fs_weight, exc)--------------> sel_FS_X
+    #   sel_FS_X --(sel_fs_to_sel_weight, inh)------------> sel_Y (Y != X)
+    # The selected action's thal (the cleanest genuine-disinhibition signal,
+    # only that pool released) drives its sel_X decisively above threshold;
+    # sel_X recruits sel_FS_X, which silences the other three sel pools — a
+    # cortical soft-WTA (Douglas-Martin 2004; Rutishauser-Douglas-Slotine
+    # 2011). The host then OBSERVES which sel_X fired (the winner of the
+    # competition), not an argmax over rates.
+    #
+    # Why this differs from enable_thal_lateral_inhibition (which scored 20.0):
+    # that put the competition ON the thalamic relay (thal_FS_X -| thal_Y),
+    # corrupting the SAME thal_X signal that drives the thal->motor cascade and
+    # navigation. The sel layer is a pure readout tap — it reads thal but never
+    # projects back, so the forward dynamics are byte-identical to thal-readout.
+    # Why it differs from the motor WTA (14.7): that drove the competition from
+    # the WEAK motor counts (one synapse past the clean thal); here the
+    # competition is driven by the STRONG clean thalamus.
+    if enable_spiking_wta_readout:
+        for action_idx, action in enumerate(ACTION_NAMES):
+            # ACCUMULATE stage. Excitatory selection pool (the competitor whose
+            # ramping firing = accumulated evidence). NMDA-SLOW recurrent
+            # self-excitation (sel_recurrent_density / sel_recurrent_weight)
+            # turns the gain-0 passive comparator into a Wang-2002 amplifying
+            # integrator: a small consistent thal drive is re-excited + integrated
+            # over the readout window to a committed bound. enable_nmda=True puts
+            # this slice (and only this slice, unless --enable-pfc-nmda is also on)
+            # in the bridge's cp_nmda_neuron_mask so the recurrence is NMDA-slow
+            # (tau_decay=100ms), the biological integration constant. Soft-WTA
+            # gain alpha<1 (Rutishauser-Douglas-Slotine 2011) — tuned to ramp/hold
+            # but not self-ignite without thalamic drive.
+            regions.append(BrainRegion(
+                name=f"sel_{action}",
+                n_neurons=n_sel_per_action,
+                exc_fraction=1.0,
+                internal_density=sel_recurrent_density,
+                exc_weight_mean=sel_recurrent_weight, inh_weight_mean=0.0,
+                weight_jitter=0.2, plastic_internal=False,
+                enable_nmda=True,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+                action_index=action_idx,
+            ))
+            # Inhibitory interneuron (GABAergic, mediates structured cross-pool
+            # WTA competition — Rutishauser selective inhibition, not a symmetric
+            # blanket: sel_FS_X is driven only by sel_X and inhibits only sel_Y!=X).
+            regions.append(BrainRegion(
+                name=f"sel_FS_{action}",
+                n_neurons=n_sel_fs_per_action,
+                exc_fraction=0.0,  # all-inhibitory → outgoing synapses are inhibitory
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+                action_index=action_idx,
+            ))
+            if enable_commit_burst:
+                # COMMIT stage. Burst pool (SC / saccade-generator EBN analogue,
+                # H.24/H.25). Held silent by the tonic commit_OPN; fires ALL-OR-
+                # NONE only when sel_X ramps past threshold (Lo-Wang 2006 SC
+                # threshold; Stine-Shadlen 2023). Its own recurrence regenerates
+                # the burst once triggered (decisive commit, not a graded rate).
+                regions.append(BrainRegion(
+                    name=f"commit_{action}",
+                    n_neurons=n_commit_per_action,
+                    exc_fraction=1.0,
+                    internal_density=commit_recurrent_density,
+                    exc_weight_mean=commit_recurrent_weight, inh_weight_mean=0.0,
+                    weight_jitter=0.2, plastic_internal=False,
+                    izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+                    action_index=action_idx,
+                ))
+        if enable_commit_burst:
+            # Shared omnipause pool (OPN, H.24). Tonically driven (commit_opn_
+            # tonic_pA set on cp_external_input_current at setup) → fires
+            # continuously → inhibits every commit_X equally, holding them all
+            # below threshold until a sel_X accumulator wins.
+            regions.append(BrainRegion(
+                name="commit_OPN",
+                n_neurons=n_commit_opn,
+                exc_fraction=0.0,  # all-inhibitory
+                internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+            ))
+        # thal_X → sel_X (excitatory feed-forward: the clean relay drives its
+        # selection pool). READ-ONLY: there is no sel_X → thal projection.
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"thal_{action}", to_region=f"sel_{action}",
+                density=1.0, weight_mean=thal_to_sel_weight, weight_jitter=0.2,
+                plastic=False,
+            ))
+        # sel_X → sel_FS_X (excitatory: a winning sel pool recruits its
+        # interneuron, which then suppresses the losers).
+        for action in ACTION_NAMES:
+            pathways.append(RegionPathway(
+                from_region=f"sel_{action}", to_region=f"sel_FS_{action}",
+                density=1.0, weight_mean=sel_to_sel_fs_weight, weight_jitter=0.2,
+                plastic=False,
+            ))
+        # sel_FS_X → sel_Y for Y != X (inhibitory cross-pool suppression).
+        for src_action in ACTION_NAMES:
+            for tgt_action in ACTION_NAMES:
+                if src_action == tgt_action:
+                    continue
+                pathways.append(RegionPathway(
+                    from_region=f"sel_FS_{src_action}", to_region=f"sel_{tgt_action}",
+                    density=1.0, weight_mean=sel_fs_to_sel_weight, weight_jitter=0.2,
+                    plastic=False,
+                ))
+        if enable_commit_burst:
+            # sel_X → commit_X (excitatory: the accumulator drives its burst pool;
+            # weight tuned so only a RAMPED sel_X overcomes the OPN tonic inhibition).
+            for action in ACTION_NAMES:
+                pathways.append(RegionPathway(
+                    from_region=f"sel_{action}", to_region=f"commit_{action}",
+                    density=1.0, weight_mean=sel_to_commit_weight, weight_jitter=0.2,
+                    plastic=False,
+                ))
+            # commit_OPN → commit_X (inhibitory: tonic omnipause suppression of all
+            # burst pools until the accumulator wins).
+            for action in ACTION_NAMES:
+                pathways.append(RegionPathway(
+                    from_region="commit_OPN", to_region=f"commit_{action}",
+                    density=1.0, weight_mean=opn_to_commit_weight, weight_jitter=0.2,
+                    plastic=False,
+                ))
+
     # ---- Motor cross-coupling (opt-in, 2026-05-02) ----
     # Models distributed/overlapping somatotopy in M1 (Penfield 1937 fuzzy
     # boundaries; Pulvermüller 1999 distributed action-word neurons).
@@ -2542,6 +2738,44 @@ def run_moving_goal_episode(
     enable_thal_lateral_inhibition: bool = False,
     n_thal_fs_per_action: int = 5,
     thal_to_fs_weight: float = 50.0,
+    # Spiking action-selection WTA readout (2026-06-06, N6 biologization). A
+    # dedicated read-only sel_X / sel_FS_X selection layer driven by the clean
+    # thalamus; the action decision EMERGES from the spiking competition rather
+    # than a host argmax. Built when readout_source="spiking_wta". See
+    # build_bg_brain_regions for the mechanism + why it differs from the prior
+    # (failed) motor/TRN WTAs.
+    n_sel_per_action: int = 20,
+    n_sel_fs_per_action: int = 10,
+    thal_to_sel_weight: float = 30.0,
+    sel_to_sel_fs_weight: float = 20.0,
+    sel_fs_to_sel_weight: float = 5.0,
+    # Accumulate-then-commit readout (2026-06-06, N6 fix). See
+    # build_bg_brain_regions for the full mechanism (Wang-2002 NMDA recurrent
+    # accumulator on sel_X + Lo-Wang/SC commit_X burst stage). These tune the
+    # recurrent gain (alpha<1 soft-WTA), the commit threshold, and the OPN
+    # tonic inhibition. Active only when readout_source="spiking_wta".
+    sel_recurrent_density: float = 0.5,
+    sel_recurrent_weight: float = 1.0,
+    enable_commit_burst: bool = True,
+    n_commit_per_action: int = 20,
+    n_commit_opn: int = 20,
+    sel_to_commit_weight: float = 22.0,
+    commit_recurrent_density: float = 0.5,
+    commit_recurrent_weight: float = 0.6,
+    opn_to_commit_weight: float = 10.0,
+    commit_opn_tonic_pA: float = 0.0,
+    # Reset the accumulator (sel_X + commit_X NMDA + fast conductances) at the
+    # START of each trial. Motivation: the NMDA-slow accumulator (tau_decay=100ms)
+    # persists ~one full inter-trial, so at goal-change boundaries the previous
+    # trial's winner lingers (working-memory hysteresis). HOWEVER, empirically
+    # (grid-8 multi-goal seed 42) the reset is NET NEGATIVE: zeroing the NMDA
+    # state each trial removes the carried-over drive that helps the burst fire,
+    # so commit goes silent on ~55% of trials (vs ~34% un-reset) and the score
+    # WORSENS (6.93 reset vs 4.71 un-reset). The cross-trial persistence is a
+    # smaller cost than the lost ramp. So default FALSE; the persistence (a
+    # working-memory latch, biologically real) is kept. Opt in with
+    # --reset-accumulator for the goal-change-hysteresis ablation. NO sim/ edit.
+    reset_accumulator_each_trial: bool = False,
     thal_fs_to_thal_weight: float = 20.0,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
@@ -2581,6 +2815,14 @@ def run_moving_goal_episode(
         [(int(s), tuple(g)) for s, g in goal_schedule], key=lambda t: t[0]
     )
 
+    # N6 readout-source normalization. Validated up-front (before wiring) so
+    # the builder can conditionally add the spiking-WTA selection layer.
+    _readout_source = str(readout_source).lower()
+    if _readout_source not in ("motor", "thal", "spiking_wta"):
+        raise ValueError(
+            "readout_source must be 'motor', 'thal', or 'spiking_wta', "
+            f"got {readout_source!r}")
+
     regions, pathways = build_bg_brain_regions(
         n_cortex=100,  # 25 per action — keeps D1 firing in physiological range (~75 Hz)
         enable_motor_lateral_inhibition=enable_motor_lateral_inhibition,
@@ -2588,6 +2830,21 @@ def run_moving_goal_episode(
         n_thal_fs_per_action=n_thal_fs_per_action,
         thal_to_fs_weight=thal_to_fs_weight,
         thal_fs_to_thal_weight=thal_fs_to_thal_weight,
+        enable_spiking_wta_readout=(_readout_source == "spiking_wta"),
+        n_sel_per_action=n_sel_per_action,
+        n_sel_fs_per_action=n_sel_fs_per_action,
+        thal_to_sel_weight=thal_to_sel_weight,
+        sel_to_sel_fs_weight=sel_to_sel_fs_weight,
+        sel_fs_to_sel_weight=sel_fs_to_sel_weight,
+        sel_recurrent_density=sel_recurrent_density,
+        sel_recurrent_weight=sel_recurrent_weight,
+        enable_commit_burst=enable_commit_burst,
+        n_commit_per_action=n_commit_per_action,
+        n_commit_opn=n_commit_opn,
+        sel_to_commit_weight=sel_to_commit_weight,
+        commit_recurrent_density=commit_recurrent_density,
+        commit_recurrent_weight=commit_recurrent_weight,
+        opn_to_commit_weight=opn_to_commit_weight,
         enable_cortex_lateral_inhibition=enable_cortex_lateral_inhibition,
         enable_learned_perception=enable_learned_perception,
         enable_hippocampus=enable_hippocampus,
@@ -2738,6 +2995,18 @@ def run_moving_goal_episode(
         cfg.nmda_ratio = 0.5  # Wang 2002 PFC calibration (default 0.4)
         # nmda_tau_decay (100 ms) and nmda_tau_rise (3 ms) keep their
         # CoreSimConfig defaults — already match Wang 2002.
+    # N6 accumulate-then-commit (2026-06-06): the sel_X accumulator pools carry
+    # BrainRegion.enable_nmda=True (set in build_bg_brain_regions). Turning on
+    # global cfg.enable_nmda activates the dual-exponential NMDA conductance; the
+    # bridge's per-region cp_nmda_neuron_mask then restricts the NMDA CURRENT to
+    # the sel_X slice only (and dlpfc/cortex too if --enable-pfc-nmda is also on).
+    # This gives the recurrent self-excitation the slow Wang-2002 integration
+    # time constant (nmda_tau_decay=100ms) needed to ramp the weak thalamic drive
+    # to a committed bound. Without this the sel_X recurrence would be AMPA-fast.
+    if _readout_source == "spiking_wta":
+        cfg.enable_nmda = True
+        if not enable_pfc_nmda:
+            cfg.nmda_ratio = 0.5  # PFC-typical NMDA dominance for the accumulator
     # Cluster B.3 (2026-04-28): cholinergic TANs. Turn the neuromod
     # subsystem ON cumulatively (no other flag in this runner enables it
     # today, but `|=` keeps it future-proof if one starts to) and append
@@ -2871,21 +3140,58 @@ def run_moving_goal_episode(
     # N6 readout sources — host index arrays precomputed once (the legacy
     # readout called .get() on the cupy index every substep inside the
     # readout window). motor_X is the legacy source; thal_X is the
-    # cleanly-selective genuine-disinhibition source (readout_source="thal").
+    # cleanly-selective genuine-disinhibition source (readout_source="thal");
+    # sel_X is the spiking-WTA selection layer (readout_source="spiking_wta").
     motor_idx_host = {a: motor_idx_per_action[a].get() for a in ACTION_NAMES}
     thal_idx_host = {
         a: region_indices_cp[f"thal_{a}"].get()
         for a in ACTION_NAMES
         if f"thal_{a}" in region_indices_cp
     }
-    _readout_source = str(readout_source).lower()
-    if _readout_source not in ("motor", "thal"):
-        raise ValueError(
-            f"readout_source must be 'motor' or 'thal', got {readout_source!r}")
+    sel_idx_host = {
+        a: region_indices_cp[f"sel_{a}"].get()
+        for a in ACTION_NAMES
+        if f"sel_{a}" in region_indices_cp
+    }
+    # N6 accumulate-then-commit: the commit_X burst pools are the ACTUAL spiking
+    # decision readout when enable_commit_burst is on (the host reads which
+    # commit_X bursts past threshold). sel_X is the accumulator (logged as a guard).
+    commit_idx_host = {
+        a: region_indices_cp[f"commit_{a}"].get()
+        for a in ACTION_NAMES
+        if f"commit_{a}" in region_indices_cp
+    }
+    _use_commit = (_readout_source == "spiking_wta"
+                   and enable_commit_burst
+                   and len(commit_idx_host) == N_ACTIONS)
+    # (_readout_source already normalized + validated above, before wiring.)
     if _readout_source == "thal" and len(thal_idx_host) != N_ACTIONS:
         raise ValueError(
             "readout_source='thal' requires per-action thal_X regions; "
             f"found {sorted(thal_idx_host)}")
+    if _readout_source == "spiking_wta" and len(sel_idx_host) != N_ACTIONS:
+        raise ValueError(
+            "readout_source='spiking_wta' requires per-action sel_X regions; "
+            f"found {sorted(sel_idx_host)}")
+    if _readout_source == "spiking_wta" and enable_commit_burst and len(commit_idx_host) != N_ACTIONS:
+        raise ValueError(
+            "readout_source='spiking_wta' with enable_commit_burst requires "
+            f"per-action commit_X regions; found {sorted(commit_idx_host)}")
+    # N6 accumulate-then-commit: precompute the combined sel_X (+ commit_X) index
+    # slice (cupy) for the per-trial accumulator reset (zero NMDA conductance +
+    # reset membrane to rest each trial so each decision integrates fresh thalamic
+    # evidence — see reset_accumulator_each_trial docstring).
+    _accum_reset_idx_cp = None
+    if _readout_source == "spiking_wta" and reset_accumulator_each_trial:
+        _acc_names = [f"sel_{a}" for a in ACTION_NAMES]
+        if enable_commit_burst:
+            _acc_names += [f"commit_{a}" for a in ACTION_NAMES]
+        _acc_idx = []
+        for nm in _acc_names:
+            if nm in region_indices_cp:
+                _acc_idx.extend(region_indices_cp[nm].get().tolist())
+        if _acc_idx:
+            _accum_reset_idx_cp = cp.asarray(sorted(set(_acc_idx)), dtype=cp.int64)
 
     # Per-action DA targeting: pre-compute synapse-post-action mask.
     # For each plastic cortex→str_D1_X synapse, mark which action X it serves.
@@ -3049,6 +3355,12 @@ def run_moving_goal_episode(
         bridge.cp_external_input_current[region_indices_cp[region_name]] = cp.float32(150.0)
     for region_name in [f"thal_{a}" for a in ACTION_NAMES]:
         bridge.cp_external_input_current[region_indices_cp[region_name]] = _thal_tonic
+    # N6 commit stage: keep commit_OPN tonically firing (omnipause) so it holds
+    # every commit_X burst pool below threshold until a sel_X accumulator ramps
+    # past the bound (Lo-Wang 2006 SC threshold; H.24 OPN->EBN). Constant drive,
+    # set once like the GPi pacemaker above.
+    if _use_commit and "commit_OPN" in region_indices_cp:
+        bridge.cp_external_input_current[region_indices_cp["commit_OPN"]] = cp.float32(commit_opn_tonic_pA)
     if genuine_thal_disinhibition and verbose:
         print(f"[g11 seed={seed}] N8 GENUINE thalamic disinhibition ON: "
               f"gpi_tonic={genuine_gpi_tonic_pA:.0f} pA (pacemaker), "
@@ -3072,6 +3384,12 @@ def run_moving_goal_episode(
     goal_log = [(gx, gy)]
     motor_counts_log = []
     thal_counts_log = []  # N6 thal-readout firing guard (per-step thal_X counts)
+    sel_counts_log = []   # N6 spiking-WTA firing guard (per-step sel_X counts)
+    commit_counts_log = []  # N6 accumulate-then-commit guard (per-trial commit_X burst counts)
+    # Per-step accumulation/commit traces for a few sample trials (the guard the
+    # task asks for: winner's sel ramps + its commit bursts while losers stay low).
+    _GUARD_SAMPLE_TRIALS = {0, 1, 2, 60, 120}
+    accum_trace_log = {}  # step -> {"sel": [[per-action per-substep]], "commit": [[...]]}
     action_log = []
     reward_log = []
     distance_log = [manhattan(x, y)]
@@ -3464,6 +3782,27 @@ def run_moving_goal_episode(
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
         for rn in [f"thal_{a}" for a in ACTION_NAMES]:
             bridge.cp_external_input_current[region_indices_cp[rn]] = _thal_tonic
+        # N6 commit stage: RE-set the commit_OPN tonic drive every trial (the
+        # `cp_external_input_current[:] = 0.0` above wipes the one-time setup, so
+        # without this the omnipause pool goes silent after trial 0 and the commit
+        # burst pools are no longer held below threshold). Keeps the omnipause
+        # tonically firing so commit_X stays gated until a sel_X accumulator wins.
+        if _use_commit and "commit_OPN" in region_indices_cp:
+            bridge.cp_external_input_current[region_indices_cp["commit_OPN"]] = cp.float32(commit_opn_tonic_pA)
+        # N6 accumulate-then-commit: RESET the accumulator each trial. Zero the
+        # NMDA-slow conductance (the integrator state, tau=100ms) plus the fast
+        # excitatory/inhibitory conductances on the sel_X (+ commit_X) slice so
+        # each decision integrates FRESH thalamic evidence rather than carrying
+        # the previous trial's winner across the inter-trial (the working-memory
+        # hysteresis that mis-commits at goal-change boundaries). The 30ms
+        # pre-readout window lets membrane settle to rest; only conductance state
+        # is zeroed (no IZH-specific membrane poke). NO sim/ edit.
+        if _accum_reset_idx_cp is not None:
+            if getattr(bridge, "cp_conductance_g_nmda", None) is not None:
+                bridge.cp_conductance_g_nmda[_accum_reset_idx_cp] = 0.0
+                bridge.cp_conductance_g_nmda_rise[_accum_reset_idx_cp] = 0.0
+            bridge.cp_conductance_g_e[_accum_reset_idx_cp] = 0.0
+            bridge.cp_conductance_g_i[_accum_reset_idx_cp] = 0.0
         # Cluster F (cerebellum) baseline drives. Inferior olive baseline
         # gives ~1 Hz spontaneous firing (Hesslow & Yeo 2002 §"Afferent
         # Systems" p 99); CF burst on negative-reward step is set below
@@ -3871,37 +4210,111 @@ def run_moving_goal_episode(
                     )
 
         # Run stimulus window and tally motor (and, for readout_source="thal",
-        # thalamus) spike counts over the readout window.
+        # thalamus; "spiking_wta", the sel_X selection layer) spike counts over
+        # the readout window.
         motor_counts = {a: 0 for a in ACTION_NAMES}
         thal_counts = {a: 0 for a in ACTION_NAMES}
+        sel_counts = {a: 0 for a in ACTION_NAMES}
+        commit_counts = {a: 0 for a in ACTION_NAMES}
         _read_thal = (_readout_source == "thal")
+        _read_sel = (_readout_source == "spiking_wta")
+        # When the spiking-WTA accumulator reads sel/commit, ALSO tally the
+        # upstream thal_X it is fed by (the cleanly-selective input) so the guard
+        # can confirm the accumulator's winner matches the thalamic winner it
+        # integrates. Cheap (4 sums/substep) and only over the readout window.
+        _read_thal_guard = _read_sel and len(thal_idx_host) == N_ACTIONS
         bridge.core_config.current_reward_signal = 0.0
+        _capture = step in _GUARD_SAMPLE_TRIALS
+        if _capture:
+            _trace_sel = []     # per-substep [per-action sel spike count]
+            _trace_commit = []  # per-substep [per-action commit spike count]
         for s in range(n_stim_steps):
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
             bridge.runtime_state.current_time_ms = (
                 bridge.runtime_state.current_time_step * cfg.dt_ms
             )
+            # Capture the FULL-window per-substep sel/commit traces for the guard
+            # (sample trials only) so the accumulation ramp + commit burst onset
+            # are visible, not just the windowed totals.
+            if _capture and _read_sel:
+                firing_g = bridge.cp_firing_states.get().astype(bool)
+                _trace_sel.append([int(firing_g[sel_idx_host[a]].sum()) for a in ACTION_NAMES])
+                if _use_commit:
+                    _trace_commit.append([int(firing_g[commit_idx_host[a]].sum()) for a in ACTION_NAMES])
             if readout_start <= s < readout_end:
-                firing = bridge.cp_firing_states.get().astype(bool)
+                if not (_capture and _read_sel):
+                    firing = bridge.cp_firing_states.get().astype(bool)
+                else:
+                    firing = firing_g
                 for a in ACTION_NAMES:
                     motor_counts[a] += int(firing[motor_idx_host[a]].sum())
-                    if _read_thal:
+                    if _read_thal or _read_thal_guard:
                         thal_counts[a] += int(firing[thal_idx_host[a]].sum())
+                    if _read_sel:
+                        sel_counts[a] += int(firing[sel_idx_host[a]].sum())
+                        if _use_commit:
+                            commit_counts[a] += int(firing[commit_idx_host[a]].sum())
 
         motor_counts_log.append([motor_counts[a] for a in ACTION_NAMES])
-        if _read_thal:
+        if _read_thal or _read_thal_guard:
             thal_counts_log.append([thal_counts[a] for a in ACTION_NAMES])
+        if _read_sel:
+            sel_counts_log.append([sel_counts[a] for a in ACTION_NAMES])
+            if _use_commit:
+                commit_counts_log.append([commit_counts[a] for a in ACTION_NAMES])
+        if _capture and _read_sel:
+            accum_trace_log[step] = {
+                "sel": _trace_sel,
+                "commit": _trace_commit if _use_commit else [],
+            }
 
         # Action selection (N6 readout). Default reads the motor pool (legacy,
         # the host-argmax cheat). readout_source="thal" reads the cleanly-
         # selective thalamus (genuine GPi->thal disinhibition releases only the
         # selected action's thal; the thal->motor amplification is too weak for
-        # a reliable motor-count argmax over a noisy run). Random fallback when
-        # the chosen source is fully silent.
-        _sel_counts = thal_counts if _read_thal else motor_counts
-        if max(_sel_counts.values()) > 0:
-            action_idx = max(range(N_ACTIONS), key=lambda i: _sel_counts[ACTION_NAMES[i]])
+        # a reliable motor-count argmax over a noisy run). readout_source=
+        # "spiking_wta" reads the ACCUMULATE-THEN-COMMIT layer: each sel_X is a
+        # Wang-2002 NMDA-recurrent accumulator that ramps the weak clean thalamus
+        # to a bound; the downstream commit_X burst pool fires ALL-OR-NONE only
+        # when its sel_X crosses threshold (gated by the sel->commit drive +
+        # commit's intrinsic threshold; the commit_OPN omnipause gate is OFF by
+        # default — a constant drive rebound-bursts on this rate substrate; see
+        # commit_opn_tonic_pA docstring). Lo-Wang 2006 SC. The DECISION is the
+        # commit_X threshold CROSSING — read which commit_X burst (the spiking
+        # termination event), NOT an argmax of graded sel rates. When commit is
+        # disabled (a #2 Rutishauser soft-WTA ablation), fall back to the sel_X argmax.
+        # The host argmax below merely OBSERVES which commit pool bursted; under a
+        # decisive commit the loser counts are ~0, so it is a tie-break of last
+        # resort, not the selection mechanism.
+        #
+        # Fallback chain for accumulate-then-commit (_use_commit): the all-or-none
+        # commit_X burst is the PRIMARY decision (the threshold crossing). On a
+        # SUB-THRESHOLD trial (no commit crosses — e.g. a brief/weak release where
+        # the winner's sel ramp didn't reach the burst bound), the decision falls
+        # back to the sel_X ACCUMULATOR's leading pool: the accumulator still
+        # carries a graded "lean" toward the winning action (it is selective:
+        # winner ~12 vs runner-up ~0.1), so reading its argmax is the biological
+        # provisional commitment (Shadlen affordance / Stine 2023: the accumulator
+        # keeps a candidate even when the SC burst hasn't fired) — vastly better
+        # than a random guess. Random is the last resort only when BOTH the burst
+        # AND the accumulator are fully silent (a genuinely undriven trial).
+        if _use_commit:
+            _primary = commit_counts
+            _fallback = sel_counts
+        elif _read_sel:
+            _primary = sel_counts
+            _fallback = None
+        elif _read_thal:
+            _primary = thal_counts
+            _fallback = None
+        else:
+            _primary = motor_counts
+            _fallback = None
+        if max(_primary.values()) > 0:
+            action_idx = max(range(N_ACTIONS), key=lambda i: _primary[ACTION_NAMES[i]])
+        elif _fallback is not None and max(_fallback.values()) > 0:
+            action_idx = max(range(N_ACTIONS), key=lambda i: _fallback[ACTION_NAMES[i]])
         else:
             action_idx = int(np.random.default_rng(seed * 10000 + step).integers(0, N_ACTIONS))
         action_log.append(action_idx)
@@ -4166,6 +4579,10 @@ def run_moving_goal_episode(
         "trajectory": trajectory, "goal_log": goal_log,
         "motor_counts": motor_counts_log,
         "thal_counts": thal_counts_log,
+        "sel_counts": sel_counts_log,
+        "commit_counts": commit_counts_log,
+        "accum_trace": accum_trace_log,
+        "use_commit_readout": bool(_use_commit),
         "readout_source": _readout_source,
         "action_log": action_log, "reward_log": reward_log,
         "distance_log": distance_log,
@@ -4587,16 +5004,83 @@ def main():
                     help="Tonic thalamic excitation (pA, expressed only when GPi "
                          "releases the relay) when --genuine-thal-disinhibition is "
                          "set (default 900).")
-    ap.add_argument("--readout-source", choices=["motor", "thal"], default="motor",
-                    help="N6 readout source: which spiking pool the host argmax "
-                         "reads for action selection. 'motor' (default) = legacy "
-                         "host-argmax over motor_X spike counts (the N6 cheat). "
-                         "'thal' = read the cleanly-selective THALAMUS (argmax "
-                         "over thal_X spike counts). Under genuine GPi->thal "
-                         "disinhibition the thalamus is the strongest/cleanest "
-                         "selection signal (only the released action's thal "
-                         "fires); the thal->motor amplification is too weak for a "
-                         "reliable motor-count argmax. The combined N8+N6 fix.")
+    ap.add_argument("--readout-source", choices=["motor", "thal", "spiking_wta"],
+                    default="motor",
+                    help="N6 readout source: how action selection is read. "
+                         "'motor' (default) = legacy host-argmax over motor_X "
+                         "spike counts (the N6 cheat). 'thal' = host-argmax over "
+                         "the cleanly-selective THALAMUS spike counts (biologizes "
+                         "the SIGNAL SOURCE, still a host argmax). 'spiking_wta' = "
+                         "biologize the DECISION: a dedicated read-only sel_X / "
+                         "sel_FS_X selection layer driven feed-forward by the "
+                         "clean thalamus competes via lateral inhibition, and the "
+                         "winning (firing) sel_X IS the action — the selection "
+                         "emerges from a spiking competition, not a host argmax "
+                         "over rates. The sel layer has no back-projection to "
+                         "thal, so the thal->motor cascade / navigation dynamics "
+                         "are unperturbed. Combine with "
+                         "--genuine-thal-disinhibition. See "
+                         "research/findings/2026-06-06-N6-spiking-wta-readout-*.")
+    ap.add_argument("--n-sel-per-action", type=int, default=20,
+                    help="Neurons per sel_X selection pool (spiking_wta readout).")
+    ap.add_argument("--n-sel-fs-per-action", type=int, default=10,
+                    help="Neurons per sel_FS_X interneuron pool (spiking_wta).")
+    ap.add_argument("--thal-to-sel-weight", type=float, default=30.0,
+                    help="thal_X -> sel_X excitatory feed-forward EVIDENCE weight "
+                         "(spiking_wta; modest so the accumulator integrates "
+                         "rather than instantly saturating).")
+    ap.add_argument("--sel-to-sel-fs-weight", type=float, default=20.0,
+                    help="sel_X -> sel_FS_X excitatory weight (spiking_wta; "
+                         "recruits the interneuron that suppresses the losers).")
+    ap.add_argument("--sel-fs-to-sel-weight", type=float, default=5.0,
+                    help="sel_FS_X -> sel_Y!=X inhibitory cross-pool weight "
+                         "(spiking_wta; GENTLE — symmetric over-inhibition is "
+                         "unstable per Rutishauser-Douglas-Slotine).")
+    # Accumulate-then-commit readout (N6 fix, 2026-06-06).
+    ap.add_argument("--sel-recurrent-density", type=float, default=0.5,
+                    help="sel_X internal recurrent self-excitation density "
+                         "(spiking_wta accumulate-then-commit; Wang-2002 NMDA "
+                         "attractor. 0.0 reverts to the passive comparator).")
+    ap.add_argument("--sel-recurrent-weight", type=float, default=1.0,
+                    help="sel_X -> sel_X NMDA-slow recurrent gain (soft-WTA "
+                         "alpha<1; amplifies+integrates the weak thal drive).")
+    ap.add_argument("--no-commit-burst", dest="enable_commit_burst",
+                    action="store_false",
+                    help="Disable the commit_X / commit_OPN burst stage (ablation "
+                         "to a #2 Rutishauser instantaneous soft-WTA; read sel_X "
+                         "argmax instead of the commit threshold crossing).")
+    ap.set_defaults(enable_commit_burst=True)
+    ap.add_argument("--n-commit-per-action", type=int, default=20,
+                    help="Neurons per commit_X burst pool.")
+    ap.add_argument("--n-commit-opn", type=int, default=20,
+                    help="Neurons in the shared commit_OPN omnipause pool.")
+    ap.add_argument("--sel-to-commit-weight", type=float, default=22.0,
+                    help="sel_X -> commit_X weight (the winning sel_X ramp fires "
+                         "the all-or-none burst; the decision threshold).")
+    ap.add_argument("--commit-recurrent-density", type=float, default=0.5,
+                    help="commit_X internal recurrence density (all-or-none burst).")
+    ap.add_argument("--commit-recurrent-weight", type=float, default=0.6,
+                    help="commit_X -> commit_X recurrent gain (burst regeneration; "
+                         "low to avoid OPN-driven rebound bursting).")
+    ap.add_argument("--opn-to-commit-weight", type=float, default=10.0,
+                    help="commit_OPN -> commit_X tonic inhibition weight (gentle "
+                         "gate; symmetric crushing inhibition causes rebound bursts).")
+    ap.add_argument("--commit-opn-tonic-pa", type=float, default=0.0,
+                    help="Constant drive (pA) that keeps commit_OPN tonically "
+                         "firing (the omnipause baseline; H.24). Default 0 = OFF: "
+                         "a constant drive induces synchronized rebound bursting "
+                         "across commit pools on this rate-coded substrate, so the "
+                         "commit burst is gated by the sel_X ramp + intrinsic "
+                         "threshold instead (the minimal-variant commit).")
+    ap.add_argument("--reset-accumulator", dest="reset_accumulator_each_trial",
+                    action="store_true",
+                    help="Zero the sel_X/commit_X NMDA+conductance state each trial "
+                         "(spiking_wta) so each decision integrates fresh evidence. "
+                         "Default OFF: empirically NET NEGATIVE on grid-8 multi-goal "
+                         "(removes carried-over drive -> commit goes silent ~55%% of "
+                         "trials -> score worsens 4.71->6.93). The cross-trial "
+                         "persistence (a working-memory latch) is kept by default.")
+    ap.set_defaults(reset_accumulator_each_trial=False)
     ap.add_argument("--enable-thal-lateral-inhibition", action="store_true",
                     help="N8+N6 (2026-06-06): TRN-style lateral inhibition "
                          "between thalamic relay pools. A biological WTA on the "
@@ -5106,6 +5590,22 @@ def main():
             enable_thal_lateral_inhibition=args.enable_thal_lateral_inhibition,
             thal_to_fs_weight=args.thal_to_fs_weight,
             thal_fs_to_thal_weight=args.thal_fs_to_thal_weight,
+            n_sel_per_action=args.n_sel_per_action,
+            n_sel_fs_per_action=args.n_sel_fs_per_action,
+            thal_to_sel_weight=args.thal_to_sel_weight,
+            sel_to_sel_fs_weight=args.sel_to_sel_fs_weight,
+            sel_fs_to_sel_weight=args.sel_fs_to_sel_weight,
+            sel_recurrent_density=args.sel_recurrent_density,
+            sel_recurrent_weight=args.sel_recurrent_weight,
+            enable_commit_burst=args.enable_commit_burst,
+            n_commit_per_action=args.n_commit_per_action,
+            n_commit_opn=args.n_commit_opn,
+            sel_to_commit_weight=args.sel_to_commit_weight,
+            commit_recurrent_density=args.commit_recurrent_density,
+            commit_recurrent_weight=args.commit_recurrent_weight,
+            opn_to_commit_weight=args.opn_to_commit_weight,
+            commit_opn_tonic_pA=args.commit_opn_tonic_pa,
+            reset_accumulator_each_trial=args.reset_accumulator_each_trial,
             learning_rate=args.learning_rate,
         )
         return 0
