@@ -1,0 +1,113 @@
+{
+  "source": "cifar10",
+  "K": 300,
+  "lam": 0.0002,
+  "epochs": 12,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "bench_seeds": [
+    42
+  ],
+  "raw_coherence": [
+    0.24870736610906072,
+    0.9681609888088611
+  ],
+  "params": {
+    "n_fs": 300,
+    "drive_scale": 2500.0,
+    "window": 40,
+    "lat_density": 0.6,
+    "lat_weight": 0.1,
+    "fs_inh_weight": 0.8,
+    "hebbian_lr": 0.05,
+    "hebbian_max": 4.0
+  },
+  "RAW": [
+    26,
+    39
+  ],
+  "CONCEPT-whiten": [
+    39,
+    39
+  ],
+  "SPIKING": {
+    "42": {
+      "compose": [
+        26,
+        39
+      ],
+      "guards": {
+        "mean_active_IT": 85.934375,
+        "min_active_IT": 64,
+        "n_silent_concepts": 0,
+        "total_IT_spikes": 115483,
+        "lateral_norm": 29.81687355041504,
+        "lateral_max": 2.849518299102783,
+        "lateral_mean": 0.011753466911613941,
+        "code_coh_mean": 0.32778735134997333,
+        "code_coh_max": 0.9032623728834683,
+        "drive_coh_mean": 0.4858797533353852,
+        "drive_coh_max": 0.9728233927912421,
+        "nolat_code_coh_mean": 0.33912354179774185
+      },
+      "degenerate": false,
+      "nolat_compose": [
+        26,
+        39
+      ]
+    },
+    "43": {
+      "compose": [
+        26,
+        39
+      ],
+      "guards": {
+        "mean_active_IT": 88.7375,
+        "min_active_IT": 73,
+        "n_silent_concepts": 0,
+        "total_IT_spikes": 124180,
+        "lateral_norm": 37.40516662597656,
+        "lateral_max": 3.2399771213531494,
+        "lateral_mean": 0.01659347116947174,
+        "code_coh_mean": 0.3412726134471526,
+        "code_coh_max": 0.9043904980048745,
+        "drive_coh_mean": 0.4818317352289613,
+        "drive_coh_max": 0.967520370375532,
+        "nolat_code_coh_mean": 0.36016775959533104
+      },
+      "degenerate": false,
+      "nolat_compose": [
+        26,
+        39
+      ]
+    },
+    "44": {
+      "compose": [
+        26,
+        39
+      ],
+      "guards": {
+        "mean_active_IT": 86.2125,
+        "min_active_IT": 65,
+        "n_silent_concepts": 0,
+        "total_IT_spikes": 114881,
+        "lateral_norm": 32.79005813598633,
+        "lateral_max": 3.101289749145508,
+        "lateral_mean": 0.014228043146431446,
+        "code_coh_mean": 0.32424419575660823,
+        "code_coh_max": 0.9333100961305222,
+        "drive_coh_mean": 0.46837556692810445,
+        "drive_coh_max": 0.9788236276569785,
+        "nolat_code_coh_mean": 0.34475845828648405
+      },
+      "degenerate": false,
+      "nolat_compose": [
+        26,
+        39
+      ]
+    }
+  }
+}

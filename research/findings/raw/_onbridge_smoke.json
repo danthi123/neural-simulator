@@ -1,0 +1,56 @@
+{
+  "source": "cifar10",
+  "K": 40,
+  "lam": 0.001,
+  "epochs": 2,
+  "seeds": [
+    42
+  ],
+  "bench_seeds": [
+    42
+  ],
+  "raw_coherence": [
+    0.24870736610906072,
+    0.9681609888088611
+  ],
+  "params": {
+    "n_fs": 24,
+    "drive_scale": 600.0,
+    "window": 40,
+    "lat_density": 0.6,
+    "lat_weight": 1.0,
+    "fs_inh_weight": 1.0,
+    "proj_density": 0.1,
+    "proj_weight": 600.0,
+    "hebbian_lr": 0.01,
+    "hebbian_max": 4.0
+  },
+  "RAW": [
+    26,
+    39
+  ],
+  "CONCEPT-whiten": [
+    39,
+    39
+  ],
+  "SPIKING": {
+    "42": {
+      "compose": [
+        6,
+        39
+      ],
+      "guards": {
+        "mean_active_IT": 0.0,
+        "min_active_IT": 0,
+        "n_silent_concepts": 320,
+        "total_IT_spikes": 0,
+        "lateral_norm": 1.4258670741514046e-13,
+        "lateral_max": 1.0158249295986327e-14,
+        "lateral_mean": 5.625454969741556e-15,
+        "code_coh_mean": 0.0,
+        "code_coh_max": 0.0
+      },
+      "degenerate": true
+    }
+  }
+}
