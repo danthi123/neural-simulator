@@ -591,6 +591,21 @@ F=3 two-attribute resonator (which the ±1 scheme provably can't do) is now avai
 `-B-opponency-rate-coded-SNR-wall-CONFIRMED.md`, `-FHRR-pivot-derisk.md`,
 `-spiking-opponency-literature-synthesis.md`. Plan: `docs/plans/2026-06-05-full-fhrr-on-bridge-feature-plan.md`.
 
+**Known limitation — composer is a principled idealization, not a functional cortex (2026-06-06):** the
+FHRR/VSA composer is a *principled idealization* (Eliasmith Spaun / Semantic Pointer Architecture — a
+serious hypothesis that cortex binds VSA-like), NOT a functional reproduction of cortex. Its binding is
+a clean, exactly-invertible ALGEBRA that DEMANDS decorrelated full-precision codes (the whole whitening
+requirement is downstream of this); a real cortex has LEARNED, lossy, redundant read-outs that learn to
+read whatever messy code arrives. The binding OPERATIONS are already on-substrate spiking (FHRR
+resonate-and-fire + complex synapses); the residual idealization is the exact-inverse algebra + the
+clean-code demand. The spike-native robustness ladder (a phase-encoded handoff, b temporal integration,
+c population redundancy + attractor cleanup) makes the scaffold spike-FAITHFUL; the genuine-cortical
+conversion (d: learned read-outs replacing the fixed algebra) is **BENCHED** below the planned work
+(cheat/shortcut removal → single-brain consolidation → capability addition + scaling). NOT labelled a
+"cheat," but stay cognizant it is not functionally identical to the cortex it stands in for. Trade-off:
+the algebra buys the no-confab moat + compositional reliability ~free; a learned cortex does not.
+See `research/findings/2026-06-06-composer-vsa-idealization-known-limitation.md`.
+
 ### Conversational pipeline CONSOLIDATED onto the core sim (2026-06-04)
 
 **The production conversational agent runs ON the core `SimulationBridge` (the brain), not on a
