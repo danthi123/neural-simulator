@@ -1,0 +1,39 @@
+{
+  "source": "cifar10",
+  "K": 300,
+  "gain": 40.0,
+  "epochs": 3,
+  "signed": true,
+  "seeds": [
+    42
+  ],
+  "bench_seeds": [
+    42
+  ],
+  "RAW": [
+    26,
+    39
+  ],
+  "CONCEPT-whiten": [
+    39,
+    39
+  ],
+  "SEEDS": {
+    "42": {
+      "graded_clip_compose": [
+        26,
+        39
+      ],
+      "graded_phase_compose": [
+        26,
+        39
+      ],
+      "graded_coh": 0.21872109537500775,
+      "phase_read_coh": 0.2186217787926613,
+      "phase_roundtrip_corr": 0.999996411464287,
+      "phase_frac_zero": 0.0049479166666666664,
+      "n_silent_graded": 0,
+      "M_norm": 18.594226837158203
+    }
+  }
+}
