@@ -1,6 +1,6 @@
 # N1 perceptual cold-start broken BIOLOGICALLY — an innate superior-colliculus orienting reflex (image-sourced, NO coordinates) navigates as well as the coordinate heuristic, 3/3 seeds (6-seed confirming). The deep-research "wrong-pathway" diagnosis is validated; the agent orients to the goal from VISION. — 2026-06-07
 
-**Status:** **6-SEED GO** (grid-8, multi-goal, decisive — A/C 0.14–0.23 every seed; 6/6 navigate; mean A 4.49 ≈ cheat 4.55); **grid-32 production confirm IN FLIGHT**. NO `sim/` edit (protected set byte-empty); additive default-off flag; 7/7 helper unit tests. This is the **Rank-1 de-risk** from `2026-06-07-perceptual-bootstrap-deep-research.md`; the durable LEARNED circuit is Rank 2 (next).
+**Status:** **6-SEED GO + grid-32 PASS** (grid-8: A/C 0.14–0.23 every seed, 6/6 navigate, mean A 4.49 ≈ cheat 4.55; grid-32 seed-42: A **4.10** vs floor **121.13**, A/C **0.03** — holds at 4× scale). **N1 perception cheat BIOLOGIZED (Rank 1).** NO `sim/` edit (protected set byte-empty); additive default-off flag; 7/7 helper unit tests. This is the **Rank-1 de-risk** from `2026-06-07-perceptual-bootstrap-deep-research.md`; the durable LEARNED circuit is **Rank 2 (owner-approved, building next)**.
 
 ## The one-line result
 
@@ -36,7 +36,7 @@ Reference — **B (heuristic ON, the coordinate cheat), seed 42 = 4.55.** So **A
 
 - **Rank-1 is an INNATE reflex, not yet a LEARNED circuit.** It proves the agent CAN orient to the goal from vision (the "no innate teacher" half of the cold-start is solved — biologically). The DURABLE learned fix is **Rank 2**: re-source the existing `enable_learned_perception` plastic sensory→cortex pathway (currently coordinate-driven, `g11_bg_runner.py:~4138`) from the IMAGE salience map, so the LEARNED `where→cortex_X` circuit gets a position-PRESERVING input (the thing the position-invariant `IT→cortex_X` path could not); the reflex teaches it, then weans via `transmission_gate`.
 - **Separate residual (N2):** the goal is still PAINTED into the render using its coordinates. The reflex reading WHERE the goal appears on the retina is genuine perception; the render placement is the separate, lesser N2 "goal-render" item, tracked on its own.
-- **6-seed GO (firm); grid-32 confirm in flight.** Decisive across all 6 canonical seeds (A/C 0.14–0.23, 6/6 navigate, mean A 4.49 ≈ cheat 4.55) — the standing 6-seed rule is satisfied. The grid-32 production confirm (the N8/N6 validation pattern) is in flight.
+- **6-seed GO + grid-32 PASS (firm).** Decisive across all 6 canonical seeds (A/C 0.14–0.23, 6/6 navigate, mean A 4.49 ≈ cheat 4.55) — the standing 6-seed rule is satisfied; grid-32 seed-42 A 4.10 vs floor 121.13 (A/C 0.03) holds at 4× scale. Owner approved Rank 2 (the durable learned read-out) as the next build.
 
 ## Net for the nav arc
 
