@@ -69,6 +69,40 @@ ACTION_NAMES = ["N", "E", "S", "W"]
 N_ACTIONS = 4
 
 
+def sc_orienting_cardinal_from_image(image):
+    """Innate superior-colliculus orienting reflex: read the goal's RETINAL
+    direction from the rendered retinotopic image ALONE — no (gx,gy)/(x,y)
+    coordinate access. Biology: the SC computes a retinotopic salience map and
+    orients toward the salient target (Kandel 6e Ch 35; catalog A.07/H.25); the
+    de-risk for the navigation perceptual cold-start
+    (research/findings/2026-06-07-perceptual-bootstrap-deep-research.md).
+
+    sim/visual_cortex.render_gridworld_to_image paints the agent as the bright
+    ON blob (~1.0/0.7) and the goal as a dimmer ON blob (~0.5). This reads both
+    blob CENTROIDS from the pixels and returns the cardinal of the goal's offset
+    from the agent (= the goal's eccentricity on a retina centred on the agent).
+    Returns one of "N"/"E"/"S"/"W", or None if either blob is absent (e.g. the
+    agent is already on the goal).
+
+    ANTI-CHEAT: the only argument is the rendered image array; coordinates never
+    enter this function. Image convention (matches render_gridworld_to_image):
+    channel 0 = ON; larger pixel-x = +grid-x = East; larger pixel-y = +grid-y =
+    North (so the cardinal mapping matches the heuristic's gx/gy comparison).
+    """
+    on = np.asarray(image)[0]
+    agent_ys, agent_xs = np.where(on >= 0.65)               # bright agent blob
+    goal_ys, goal_xs = np.where((on >= 0.35) & (on < 0.65))  # dimmer goal blob
+    if agent_ys.size == 0 or goal_ys.size == 0:
+        return None
+    dx = float(goal_xs.mean() - agent_xs.mean())   # +x = East
+    dy = float(goal_ys.mean() - agent_ys.mean())   # +y = North
+    if abs(dx) < 0.5 and abs(dy) < 0.5:
+        return None  # essentially co-located → no orienting target
+    if abs(dx) >= abs(dy):
+        return "E" if dx > 0 else "W"
+    return "N" if dy > 0 else "S"
+
+
 def build_bg_brain_regions(
     n_cortex: int = 100,
     n_striatum_per_action: int = 50,
@@ -2451,6 +2485,10 @@ def run_moving_goal_episode(
     enable_cue_reflex: bool = False,
     cue_reflex_strength: float = 800.0,  # peak reflex drive matching heuristic
     cue_reflex_replaces_heuristic: bool = False,  # if True, heuristic disabled when reflex on
+    # N1 de-risk (2026-06-07): innate SC orienting reflex — image-sourced (NO
+    # coords), the biological replacement for the coordinate heuristic-teacher.
+    sc_orienting_reflex: bool = False,
+    sc_reflex_strength: float = 800.0,  # SC orienting push (pA), matches heuristic
     learning_rate: float = 0.01,
     reward_eligibility_tau_ms: float = 500.0,
     reward_hold_steps: int = 10,
@@ -4361,6 +4399,19 @@ def run_moving_goal_episode(
                 bridge.cp_external_input_current[region_indices_cp["retina"]] = (
                     cp.asarray(drive, dtype=cp.float32)
                 )
+                # Innate superior-colliculus orienting reflex (N1 de-risk,
+                # 2026-06-07): read the goal's retinal direction from THIS
+                # rendered image alone (no coords) and inject an orienting push
+                # into the matching cortex pool — the biological replacement for
+                # the coordinate heuristic-teacher. Naturally gated to awake,
+                # non-goal-silence steps (this branch). Anti-cheat:
+                # sc_orienting_cardinal_from_image sees only `img` (pixels).
+                if sc_orienting_reflex:
+                    _sc_card = sc_orienting_cardinal_from_image(img)
+                    if _sc_card is not None:
+                        bridge.cp_external_input_current[
+                            region_indices_cp[f"cortex_{_sc_card}"]
+                        ] = cp.float32(sc_reflex_strength)
 
         # Tier 2.2 (2026-05-06): embodied-language during nav. Drive
         # language regions simultaneously with the agent's perception/
@@ -5129,6 +5180,10 @@ def main():
                     help="Peak reflex drive (pA) — matches heuristic strength by default.")
     ap.add_argument("--cue-reflex-replaces-heuristic", action="store_true",
                     help="If set with --cue-reflex, the heuristic is fully disabled; only reflex provides cortex drive.")
+    ap.add_argument("--sc-orienting-reflex", action="store_true",
+                    help="N1 de-risk: innate superior-colliculus orienting reflex. Reads the goal's retinal direction from the rendered image ALONE (no coords) and pushes the matching cortex pool — the biological replacement for the coordinate heuristic-teacher. Requires --enable-visual-cortex; run with --heuristic-strength 0 so the reflex (not the heuristic) provides the drive.")
+    ap.add_argument("--sc-reflex-strength", type=float, default=800.0,
+                    help="SC orienting push (pA) — matches heuristic strength by default.")
     # Canonical name: --enable-landmark-sensor (the implementation is a sensor
     # abstraction, not landmark-cell biology). --landmarks is the legacy alias
     # kept for one release cycle (2026-04-29 Wave-1 rename).
@@ -5817,6 +5872,8 @@ def main():
             enable_cue_reflex=args.cue_reflex,
             cue_reflex_strength=args.cue_reflex_strength,
             cue_reflex_replaces_heuristic=args.cue_reflex_replaces_heuristic,
+            sc_orienting_reflex=args.sc_orienting_reflex,
+            sc_reflex_strength=args.sc_reflex_strength,
             enable_landmarks=args.enable_landmark_sensor,
             n_landmark_sensors=args.n_landmark_sensors,
             landmark_to_place_weight=args.landmark_to_place_weight,
