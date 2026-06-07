@@ -11,10 +11,11 @@ The host-side argmax over thalamic pool rates (cheat N6's *decision* mechanism �
 `argmax`, off-brain) is REPLACED by a genuine spiking decision: a recurrent NMDA **accumulator** integrates the clean
 thalamic evidence to a bound (Wang 2002) and a downstream **commit burst** fires all-or-none at threshold (Lo-Wang
 2006 / Stine-Shadlen 2023), with a Cisek collapsing-urgency bound so weak late-phase evidence still commits. The
-decision EMERGES from spiking dynamics. It scores **4.08** (grid-8, seed 42) — **beats the original tonic+motor cheat
-(5.0)**; the residual gap to the optimized argmax (2.34) is concentrated entirely in the post-goal-change phases and
-is the *biologically faithful* cost of a decision circuit that carries memory (a real brain does not instantly
-abandon a commitment when the target jumps).
+decision EMERGES from spiking dynamics. It scores **~4–4.6** (grid-8 seeds 42/43/44 =
+4.08 / 3.96 / 6.10; grid-32 = 4.58) — REALISTIC and roughly COMPARABLE to the original tonic+motor cheat (~5.0),
+seed-variable (beats it at 2/3 grid-8 seeds + grid-32; slightly slower at seed 44). The residual gap to the optimized
+argmax (2.34) is concentrated entirely in the post-goal-change phases and is the *biologically faithful* cost of a
+decision circuit that carries memory (a real brain does not instantly abandon a commitment when the target jumps).
 
 ## The arc (how we got here — the owner steered "fully biologize the argmax, exhaust the methods")
 
@@ -68,7 +69,15 @@ So the gate is REALISTIC performance, not 2.34. 4.08 clears it:
 - The residual goal-change cost is accepted as biologically faithful (owner-endorsed), not ground away.
 - Per the owner's reasonable-budget guidance, the further menu options (explicit race-to-threshold integrators,
   DA-modulated bound) were NOT pursued — urgency-180 is a realistic, grounded production config.
-- Validation: grid-8 seed 42 here; **multi-seed (43/44) + grid-32 IN FLIGHT** (appended below).
+- **Validation (multi-seed + grid-32):** grid-8 seeds 42/43/44 = **4.08 / 3.96 / 6.10** (mean 4.71, range 3.96–6.10);
+  grid-32 seed 42 = **4.58**. Honest read: the spiking decision is REALISTIC at every seed + scale (the agent
+  navigates and re-acquires every goal; the variance is entirely in the goal-change phases — the faithful
+  re-targeting delay, which some random goal layouts make bite harder), and ≈ the original cheat on average (beats it
+  at seeds 42/43 + grid-32; slightly slower at seed 44, 6.10 vs ~5.0). It is **seed-variable, NOT robustly better than
+  the cheat**. Per the owner-relaxed gate (realistic, not 2.34; do not over-invest) this clears the bar — the decision
+  is biologized and the performance is realistic — so it is NOT ground further. A seed-robust tightening (e.g. a more
+  stable urgency operating point, or the DA-modulated bound) is a documented future option, deliberately not pursued
+  per the reasonable-budget guidance.
 
 ## Production config
 ```
