@@ -8,6 +8,7 @@
 **Updated:** 2026-06-07
 **Mode:** continuous autonomous (24/7; no self-imposed stopping; only an
 explicit user stop/pause or a true safety boundary halts work)
+**STANDING PRACTICE (owner directive 2026-06-07):** at any significant roadblock (multiply-confirmed boundary / repeated NEGATIVE) OR before starting a new part of the sim, run a DEEP RESEARCH + reference-catalog review FIRST (read-only subagent → diagnosis + ranked biology-grounded options + reusable machinery + a cheap-first de-risk + anti-cheat controls), review + present BEFORE building. See CLAUDE.md "Standing practice". It has been the decisive pivot repeatedly (whitening reframe, the missing-accumulator decision fix, the ventral-vs-dorsal navigation root-cause).
 
 ## >>> CURRENT STATUS (2026-06-07, NEWEST — read THIS first; supersedes every block below) <<<
 
