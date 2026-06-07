@@ -2776,6 +2776,41 @@ def run_moving_goal_episode(
     # working-memory latch, biologically real) is kept. Opt in with
     # --reset-accumulator for the goal-change-hysteresis ablation. NO sim/ edit.
     reset_accumulator_each_trial: bool = False,
+    # N6 refinement 1 (2026-06-06): LOSER-ONLY accumulator reset. Zero the NMDA +
+    # fast conductances on every sel_X (+commit_X) pool EXCEPT the previous trial's
+    # selected action each trial. Surgical hysteresis removal: the winner's
+    # working-memory latch persists (fast re-ramp when the goal is stable) while the
+    # three losers integrate fresh evidence, so at a goal change the stale old winner
+    # decays naturally instead of out-competing the new thal evidence. Unlike the
+    # naive ALL-reset (reset_accumulator_each_trial, NET NEGATIVE → 6.93) the eventual
+    # winner is only ever reset while it is a loser, so its eventual ramp is never
+    # zeroed. Mutually exclusive with reset_accumulator_each_trial (the all-reset
+    # takes precedence if both set). Active only under readout_source="spiking_wta".
+    # NO sim/ edit. (Cisek trial-wise re-baselining of the losing options.)
+    # EMPIRICAL (grid-8 multi-goal seed 42, 2026-06-06): NET NEGATIVE alone (SUM
+    # 5.58 vs 4.71 baseline — it preserves the PREVIOUS-decision winner's latch, so
+    # at a goal change the stale winner is kept while the new winner — among the
+    # freshly-reset losers — integrates slower; random fallback jumps to 25.7%) and
+    # adds no net lift combined with urgency (4.35 combined vs 4.08 urgency-alone:
+    # phase 2 regresses 1.43→2.02). Kept opt-in; NOT recommended.
+    reset_losers_only: bool = False,
+    # N6 refinement 2 (2026-06-06): CISEK URGENCY / collapsing decision bound. Peak
+    # (pA) of a ramping action-INDEPENDENT urgency current injected into all sel_X
+    # over the readout window (0 at readout_start → urgency_max_pA at readout_end).
+    # The effective commit bound collapses with elapsed time so even a weak
+    # late-phase release crosses within the 100ms window → the commit bursts
+    # (eliminates the silent-commit → host-argmax-residual fallback). Same drive for
+    # every pool → no action bias; only the time-to-cross shrinks (Cisek 2009;
+    # Thura-Cisek 2014; Lo-Wang 2006 DA-modulated bound). Default 0 = OFF. Active
+    # only under readout_source="spiking_wta". NO sim/ edit.
+    # EMPIRICAL (grid-8 multi-goal seed 42, 2026-06-06): the BEST refinement. At
+    # urgency_max_pA=180 the cheat-5 SUM improves 4.71→4.08, the random fallback is
+    # nearly eliminated (25%→1.4%), thal-winner alignment jumps 80%→94.8% and commit
+    # separation 15×→49× (the decision is MORE decisive + accurate, not a quiet
+    # argmax lean). Phases 0-1 reach the host-argmax reference (0.60/0.50); the
+    # residual cost stays in the goal-change phases 2-3 (cross-trial NMDA hysteresis,
+    # which the loser-only reset does not fix). RECOMMENDED value: 180.
+    urgency_max_pA: float = 0.0,
     thal_fs_to_thal_weight: float = 20.0,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
@@ -3182,6 +3217,48 @@ def run_moving_goal_episode(
     # reset membrane to rest each trial so each decision integrates fresh thalamic
     # evidence — see reset_accumulator_each_trial docstring).
     _accum_reset_idx_cp = None
+    # N6 refinement 1 (2026-06-06): LOSER-ONLY reset. Per-action sel_X (+commit_X)
+    # index slice so the previous trial's WINNER keeps its carried NMDA drive (the
+    # legit working-memory latch when the goal is stable) while the three LOSERS are
+    # zeroed each trial. At a goal change the new winner is among the freshly-cleared
+    # losers (clean fresh integration of the new thal evidence) and the OLD winner —
+    # no longer fed by thal — decays naturally instead of contaminating the race
+    # (Cisek trial-wise re-baselining of the losing options). Surgical alternative
+    # to the naive ALL-reset (which zeroed the eventual winner's drive too → silent
+    # commit → WORSE). Built whenever spiking_wta is active so the per-trial code can
+    # use it under either reset_accumulator_each_trial OR reset_losers_only.
+    _accum_reset_idx_per_action_cp = {}
+    if _readout_source == "spiking_wta":
+        for a in ACTION_NAMES:
+            _names_a = [f"sel_{a}"]
+            if enable_commit_burst:
+                _names_a.append(f"commit_{a}")
+            _idx_a = []
+            for nm in _names_a:
+                if nm in region_indices_cp:
+                    _idx_a.extend(region_indices_cp[nm].get().tolist())
+            if _idx_a:
+                _accum_reset_idx_per_action_cp[a] = cp.asarray(
+                    sorted(set(_idx_a)), dtype=cp.int64)
+    # N6 refinement 2 (2026-06-06): CISEK URGENCY / collapsing bound. Combined
+    # sel_X index slice (all four accumulator pools). A ramping action-INDEPENDENT
+    # urgency current is injected into this slice over the readout window so the
+    # effective commit bound collapses with elapsed time: even on a weak late-phase
+    # release the winning accumulator (the one ALSO receiving thal evidence) crosses
+    # the bound within the 100ms window → its commit bursts (eliminates the
+    # silent-commit → host-argmax-residual fallback). The urgency is the same for
+    # every pool so it does NOT bias WHICH action wins — it only lowers the
+    # threshold over time (Cisek 2009; Thura-Cisek 2014; Lo-Wang 2006 DA-modulated
+    # bound). NO sim/ edit.
+    _sel_all_idx_cp = None
+    if _readout_source == "spiking_wta":
+        _sel_idx_all = []
+        for a in ACTION_NAMES:
+            nm = f"sel_{a}"
+            if nm in region_indices_cp:
+                _sel_idx_all.extend(region_indices_cp[nm].get().tolist())
+        if _sel_idx_all:
+            _sel_all_idx_cp = cp.asarray(sorted(set(_sel_idx_all)), dtype=cp.int64)
     if _readout_source == "spiking_wta" and reset_accumulator_each_trial:
         _acc_names = [f"sel_{a}" for a in ACTION_NAMES]
         if enable_commit_burst:
@@ -3386,6 +3463,11 @@ def run_moving_goal_episode(
     thal_counts_log = []  # N6 thal-readout firing guard (per-step thal_X counts)
     sel_counts_log = []   # N6 spiking-WTA firing guard (per-step sel_X counts)
     commit_counts_log = []  # N6 accumulate-then-commit guard (per-trial commit_X burst counts)
+    # N6 guard: count which arm of the fallback chain each trial took. "primary" =
+    # the commit burst fired (the genuine spiking decision); "fallback" = silent
+    # commit → sel-lean argmax residual; "random" = both silent. A GO drives
+    # fallback+random toward 0 (the commit fires reliably).
+    _decision_path_counts = {"primary": 0, "fallback": 0, "random": 0}
     # Per-step accumulation/commit traces for a few sample trials (the guard the
     # task asks for: winner's sel ramps + its commit bursts while losers stay low).
     _GUARD_SAMPLE_TRIALS = {0, 1, 2, 60, 120}
@@ -3803,6 +3885,30 @@ def run_moving_goal_episode(
                 bridge.cp_conductance_g_nmda_rise[_accum_reset_idx_cp] = 0.0
             bridge.cp_conductance_g_e[_accum_reset_idx_cp] = 0.0
             bridge.cp_conductance_g_i[_accum_reset_idx_cp] = 0.0
+        # N6 refinement 1 (2026-06-06): LOSER-ONLY reset. Zero the NMDA + fast
+        # conductances on every sel_X (+commit_X) pool EXCEPT the previous trial's
+        # selected action (the carry-winner). Surgical hysteresis removal: the
+        # winner's latch persists (fast re-ramp when the goal is stable), but the
+        # three losers integrate FRESH evidence each trial. At a goal change the new
+        # winner is among the freshly-cleared losers (clean) and the stale old winner
+        # — now contradicted by thal — decays naturally over the 100ms window instead
+        # of out-competing the new evidence (the all-reset's lost-drive penalty is
+        # avoided because the eventual winner is only ever reset while it is a loser).
+        # Mutually exclusive with the all-reset above. NO sim/ edit.
+        if (reset_losers_only and _accum_reset_idx_per_action_cp
+                and not reset_accumulator_each_trial):
+            _carry_winner = action_log[-1] if action_log else None
+            for _ai, _an in enumerate(ACTION_NAMES):
+                if _ai == _carry_winner:
+                    continue  # keep the winner's carried drive (the WM latch)
+                _ridx = _accum_reset_idx_per_action_cp.get(_an)
+                if _ridx is None:
+                    continue
+                if getattr(bridge, "cp_conductance_g_nmda", None) is not None:
+                    bridge.cp_conductance_g_nmda[_ridx] = 0.0
+                    bridge.cp_conductance_g_nmda_rise[_ridx] = 0.0
+                bridge.cp_conductance_g_e[_ridx] = 0.0
+                bridge.cp_conductance_g_i[_ridx] = 0.0
         # Cluster F (cerebellum) baseline drives. Inferior olive baseline
         # gives ~1 Hz spontaneous firing (Hesslow & Yeo 2002 §"Afferent
         # Systems" p 99); CF burst on negative-reward step is set below
@@ -4229,6 +4335,17 @@ def run_moving_goal_episode(
             _trace_sel = []     # per-substep [per-action sel spike count]
             _trace_commit = []  # per-substep [per-action commit spike count]
         for s in range(n_stim_steps):
+            # N6 refinement 2: CISEK URGENCY ramp. Inject a growing
+            # action-independent baseline into ALL sel_X over the readout window so
+            # the effective commit bound collapses with elapsed time. Linear ramp
+            # from 0 at readout_start to urgency_max_pA at readout_end. Same for
+            # every pool → no action bias; only the time-to-cross shrinks, so a weak
+            # late-phase winner still bursts within the window (kills silent-commit).
+            if (urgency_max_pA > 0.0 and _sel_all_idx_cp is not None
+                    and readout_start <= s < readout_end):
+                _u_frac = (s - readout_start) / max(1, (readout_end - readout_start))
+                bridge.cp_external_input_current[_sel_all_idx_cp] = cp.float32(
+                    urgency_max_pA * _u_frac)
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
             bridge.runtime_state.current_time_ms = (
@@ -4313,10 +4430,18 @@ def run_moving_goal_episode(
             _fallback = None
         if max(_primary.values()) > 0:
             action_idx = max(range(N_ACTIONS), key=lambda i: _primary[ACTION_NAMES[i]])
+            _decision_path = "primary"  # commit burst fired (the spiking decision)
         elif _fallback is not None and max(_fallback.values()) > 0:
             action_idx = max(range(N_ACTIONS), key=lambda i: _fallback[ACTION_NAMES[i]])
+            _decision_path = "fallback"  # silent commit → sel-lean (argmax residual)
         else:
             action_idx = int(np.random.default_rng(seed * 10000 + step).integers(0, N_ACTIONS))
+            _decision_path = "random"  # both silent
+        # N6 guard: track which arm of the fallback chain made each decision so the
+        # commit-fire-rate / silent-commit-fallback-rate can be reported (a GO needs
+        # the commit firing reliably, not quietly leaning on the argmax fallback).
+        if _use_commit:
+            _decision_path_counts[_decision_path] += 1
         action_log.append(action_idx)
         # Cluster C v2 (2026-04-29): expose selected action so per-action DA
         # production rules can fire only for the matching channel.
@@ -4583,6 +4708,9 @@ def run_moving_goal_episode(
         "commit_counts": commit_counts_log,
         "accum_trace": accum_trace_log,
         "use_commit_readout": bool(_use_commit),
+        "decision_path_counts": dict(_decision_path_counts),
+        "reset_losers_only": bool(reset_losers_only),
+        "urgency_max_pA": float(urgency_max_pA),
         "readout_source": _readout_source,
         "action_log": action_log, "reward_log": reward_log,
         "distance_log": distance_log,
@@ -5081,6 +5209,29 @@ def main():
                          "trials -> score worsens 4.71->6.93). The cross-trial "
                          "persistence (a working-memory latch) is kept by default.")
     ap.set_defaults(reset_accumulator_each_trial=False)
+    ap.add_argument("--reset-losers-only", dest="reset_losers_only",
+                    action="store_true",
+                    help="N6 refinement 1: LOSER-ONLY accumulator reset (spiking_wta). "
+                         "Zero the sel_X/commit_X NMDA+conductance state each trial on "
+                         "every pool EXCEPT the previous trial's selected action — the "
+                         "winner's working-memory latch persists (fast re-ramp when the "
+                         "goal is stable) while the losers integrate fresh evidence, so "
+                         "at a goal change the stale old winner decays instead of "
+                         "out-competing the new thal evidence. Surgical alternative to "
+                         "the naive --reset-accumulator (which zeroed the eventual "
+                         "winner too → silent commit → worse). Cisek trial-wise "
+                         "re-baselining of the losing options.")
+    ap.set_defaults(reset_losers_only=False)
+    ap.add_argument("--urgency-max-pa", type=float, default=0.0,
+                    help="N6 refinement 2: CISEK URGENCY / collapsing bound "
+                         "(spiking_wta). Peak (pA) of a ramping action-independent "
+                         "urgency current injected into all sel_X over the readout "
+                         "window (0 at readout_start → this at readout_end). The "
+                         "effective commit bound collapses with elapsed time so a weak "
+                         "late-phase winner still bursts within the 100ms window "
+                         "(eliminates the silent-commit → argmax-residual fallback). "
+                         "Same drive for every pool → no action bias. Default 0 = OFF. "
+                         "(Cisek 2009; Thura-Cisek 2014; Lo-Wang DA-modulated bound.)")
     ap.add_argument("--enable-thal-lateral-inhibition", action="store_true",
                     help="N8+N6 (2026-06-06): TRN-style lateral inhibition "
                          "between thalamic relay pools. A biological WTA on the "
@@ -5606,6 +5757,8 @@ def main():
             opn_to_commit_weight=args.opn_to_commit_weight,
             commit_opn_tonic_pA=args.commit_opn_tonic_pa,
             reset_accumulator_each_trial=args.reset_accumulator_each_trial,
+            reset_losers_only=args.reset_losers_only,
+            urgency_max_pA=args.urgency_max_pa,
             learning_rate=args.learning_rate,
         )
         return 0

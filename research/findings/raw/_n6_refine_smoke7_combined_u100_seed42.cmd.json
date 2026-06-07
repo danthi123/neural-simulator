@@ -1,0 +1,14 @@
+{
+  "label": "N6 refinement smoke #7 -- COMBINED loser-only + urgency=100",
+  "seed": 42, "grid_size": 8, "n_steps": 1800,
+  "cmd": ["python","-m","research.runners.g11_bg_runner",
+    "--moving-goal","--goal-schedule","multi","--deterministic",
+    "--enable-msn-lateral-inhibition","--enable-d1-d2-asymmetry","--enable-striatal-pv-fsi",
+    "--enable-cluster-a-closed-loop","--enable-cluster-e-topography","--heuristic-single-pool",
+    "--genuine-thal-disinhibition","--genuine-gpi-tonic-pa","1300","--genuine-thal-tonic-pa","750",
+    "--readout-source","spiking_wta","--reset-losers-only","--urgency-max-pa","100",
+    "--grid-size","8","--seed","42","--n-steps","1800",
+    "--out","research/findings/raw/_n6_refine_smoke7_combined_u100_seed42.json"],
+  "result": {"sum": 4.345, "per_phase": [0.504,1.221,2.018,0.602],
+             "commit_fired_pct": 79.7, "fallback_pct": 13.9, "random_pct": 6.4, "align_thal_pct": 87.5}
+}
