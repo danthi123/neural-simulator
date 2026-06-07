@@ -1,8 +1,30 @@
 # N1 critical-period developmental scaffold = TRACTABLE — the heuristic teaches the visual-cortex navigation mapping, then is WEANED to zero, and the deployed agent KEEPS navigating from learned perception (no heuristic). The deepest nav cheat is removable. — 2026-06-06
 
-**Status:** TRACTABLE (the (a) step the owner chose after the perceptual-bootstrap gauge BLOCKED). Single-seed (42)
-here; multi-seed (43/44) confirmation IN FLIGHT (appended below). The only runner change is the additive, default-off
-`--heuristic-wean-start` / `--heuristic-wean-steps`; NO `sim/` edits.
+**Status:** TRACTABLE-IN-PRINCIPLE but FIXED-CONFIG-FRAGILE — **CORRECTED after multi-seed** (the single-seed-42
+TRACTABLE result below is real for that seed/config but does NOT generalize at a fixed critical-period length). NO
+`sim/` edits; additive default-off wean flags.
+
+> **⚠️ MULTI-SEED CORRECTION (supersedes the single-seed TRACTABLE headline):** the post-wean hold is
+> SEED-AND-CONFIG-DEPENDENT and NON-MONOTONIC — **no fixed critical-period length is robust across seeds.**
+> Post-wean mean distance (heuristic fully OFF; HOLD ~1-2, COLLAPSE ~5-6):
+> | seed | 3000-step crit | 5000-step crit |
+> |---|---|---|
+> | 42 | **2.14 ✓ holds** | 6.16 ✗ collapses |
+> | 43 | 1.69 ✓ holds | 1.68 ✓ holds |
+> | 44 | 6.03 ✗ collapses | **1.63 ✓ holds** |
+>
+> Every seed biologizes at SOME critical-period length (the MECHANISM is real — the visual cortex CAN learn
+> self-sufficient navigation), but the sweet-spot LENGTH is seed-dependent and **more teaching can HURT** (the longer
+> crit fixed seed 44 but BROKE seed 42 — whack-a-mole). A FIXED critical-period CLOCK is not robust. **The
+> biologically-correct fix is ADAPTIVE / activity-gated weaning** — real critical periods close when the circuit is
+> READY (neuromodulator / activity-dependent gating), NOT at a fixed age: wean when the learned `IT→cortex` mapping is
+> consolidated (measured online — e.g. the agent's recent at-goal rate or the readout-pathway weight magnitude), not
+> at a fixed step. That (or a sharper-IT goal-localization front-end) is the path to ROBUST N1 biologization. **Net:
+> N1 biologization is demonstrably POSSIBLE (every seed does it at its own sweet spot) but not yet ROBUST at one
+> recipe; robust = adaptive weaning, owner decision below.**
+
+---
+*(original single-seed write-up follows — accurate for seed 42 @ 3000-crit, but read it through the correction above)*
 
 ## The one-line result
 
