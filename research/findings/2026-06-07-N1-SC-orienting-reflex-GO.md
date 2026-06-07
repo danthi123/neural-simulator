@@ -1,10 +1,10 @@
 # N1 perceptual cold-start broken BIOLOGICALLY — an innate superior-colliculus orienting reflex (image-sourced, NO coordinates) navigates as well as the coordinate heuristic, 3/3 seeds (6-seed confirming). The deep-research "wrong-pathway" diagnosis is validated; the agent orients to the goal from VISION. — 2026-06-07
 
-**Status:** 3-SEED GO (grid-8, multi-goal, decisive — A/C 0.16–0.22 every seed); **6-SEED EXTENSION (100/101/102) IN FLIGHT** (`bewtcevx4`) + grid-32 production confirm queued — headline updates to 6-seed on completion. NO `sim/` edit (protected set byte-empty); additive default-off flag; 7/7 helper unit tests. This is the **Rank-1 de-risk** from `2026-06-07-perceptual-bootstrap-deep-research.md`; the durable LEARNED circuit is Rank 2 (next).
+**Status:** **6-SEED GO** (grid-8, multi-goal, decisive — A/C 0.14–0.23 every seed; 6/6 navigate; mean A 4.49 ≈ cheat 4.55); **grid-32 production confirm IN FLIGHT**. NO `sim/` edit (protected set byte-empty); additive default-off flag; 7/7 helper unit tests. This is the **Rank-1 de-risk** from `2026-06-07-perceptual-bootstrap-deep-research.md`; the durable LEARNED circuit is Rank 2 (next).
 
 ## The one-line result
 
-The navigation perceptual cold-start — the agent senses the goal's rough direction but cannot localize it, a boundary that resisted reward-bootstrap (`-gauge-BLOCKED`), a fixed critical-period scaffold (`-scaffold-TRACTABLE`, seed-fragile), and adaptive activity-gated weaning (`-adaptive-wean-...-bank`, 1/3) — is broken by giving the agent the **right pathway**. An innate superior-colliculus orienting reflex, reading the goal's retinal direction from the **rendered image alone (no coordinates)**, navigates **as well as the coordinate heuristic-teacher** and ~5–6× below the no-perception floor, on all 3 seeds. The deep-research diagnosis (the project routed navigation through the position-*invariant* ventral "what"/IT stream, which structurally cannot localize) is validated: supply a "where" signal (collicular retinotopic salience) and the agent navigates from vision.
+The navigation perceptual cold-start — the agent senses the goal's rough direction but cannot localize it, a boundary that resisted reward-bootstrap (`-gauge-BLOCKED`), a fixed critical-period scaffold (`-scaffold-TRACTABLE`, seed-fragile), and adaptive activity-gated weaning (`-adaptive-wean-...-bank`, 1/3) — is broken by giving the agent the **right pathway**. An innate superior-colliculus orienting reflex, reading the goal's retinal direction from the **rendered image alone (no coordinates)**, navigates **as well as the coordinate heuristic-teacher** and ~5–7× below the no-perception floor, on all **6 seeds**. The deep-research diagnosis (the project routed navigation through the position-*invariant* ventral "what"/IT stream, which structurally cannot localize) is validated: supply a "where" signal (collicular retinotopic salience) and the agent navigates from vision.
 
 ## The decisive table (grid-8, multi-goal cheat-5 sum-finalQ, LOWER better; inside the N8+N6 biologized back-end)
 
@@ -13,6 +13,9 @@ The navigation perceptual cold-start — the agent senses the goal's rough direc
 | 42 | 4.21  [per-phase 1.13/0.94/1.02/1.12] | 25.82 | 0.16 |
 | 43 | 4.39 | 19.69 | 0.22 |
 | 44 | 4.88 | 26.27 | 0.19 |
+| 100 | 4.58 | 26.56 | 0.17 |
+| 101 | 3.81 | 27.33 | 0.14 |
+| 102 | 5.07 | 22.49 | 0.23 |
 | **mean A** | **4.49** | — | — |
 
 Reference — **B (heuristic ON, the coordinate cheat), seed 42 = 4.55.** So **A (4.49 mean) ≈ B (4.55)** — the image-only reflex matches (slightly beats) the coordinate cheat — and every seed sits ~5–6× below the floor. The reflex's per-phase profile [~1.0 across all four phases including post-goal-change] is also *cleaner* than the multi-pool heuristic's (which spikes to 1.81 on a goal change), because the reflex drives a single orienting cardinal (no BG arbitration noise).
@@ -33,7 +36,7 @@ Reference — **B (heuristic ON, the coordinate cheat), seed 42 = 4.55.** So **A
 
 - **Rank-1 is an INNATE reflex, not yet a LEARNED circuit.** It proves the agent CAN orient to the goal from vision (the "no innate teacher" half of the cold-start is solved — biologically). The DURABLE learned fix is **Rank 2**: re-source the existing `enable_learned_perception` plastic sensory→cortex pathway (currently coordinate-driven, `g11_bg_runner.py:~4138`) from the IMAGE salience map, so the LEARNED `where→cortex_X` circuit gets a position-PRESERVING input (the thing the position-invariant `IT→cortex_X` path could not); the reflex teaches it, then weans via `transmission_gate`.
 - **Separate residual (N2):** the goal is still PAINTED into the render using its coordinates. The reflex reading WHERE the goal appears on the retina is genuine perception; the render placement is the separate, lesser N2 "goal-render" item, tracked on its own.
-- **3-seed → 6-seed.** Decisive at 3 seeds (A/C 0.16–0.22); the canonical 6-seed (100/101/102) + grid-32 confirm is in flight. Per the standing 6-seed rule the firm claim waits on it; this is flagged, not overstated.
+- **6-seed GO (firm); grid-32 confirm in flight.** Decisive across all 6 canonical seeds (A/C 0.14–0.23, 6/6 navigate, mean A 4.49 ≈ cheat 4.55) — the standing 6-seed rule is satisfied. The grid-32 production confirm (the N8/N6 validation pattern) is in flight.
 
 ## Net for the nav arc
 
