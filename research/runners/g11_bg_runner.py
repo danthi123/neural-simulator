@@ -103,6 +103,31 @@ def sc_orienting_cardinal_from_image(image):
     return "N" if dy > 0 else "S"
 
 
+def sc_salience_offset_from_image(image, grid_size=8, image_size=32):
+    """Continuous goal offset (dx, dy) in GRID-CELL units, read from the rendered
+    retinotopic image ALONE (no coordinates) — the position-PRESERVING "where"
+    signal for the Rank-2 learned dorsal/PPC read-out (Rank 2 of
+    research/findings/2026-06-07-perceptual-bootstrap-deep-research.md).
+
+    Sibling of sc_orienting_cardinal_from_image: same agent/goal blob-centroid
+    read, but returns the GRADED offset (= the goal's retinal eccentricity in
+    cells) rather than a cardinal. (dx, dy) matches the coordinate (gx-x, gy-y)
+    convention (+x=East/+gx, +y=North/+gy) so it plugs straight into the existing
+    sensory Gaussian-bump code. Returns None if either blob is absent.
+
+    ANTI-CHEAT: the only data input is the image array; coordinates never enter.
+    """
+    on = np.asarray(image)[0]
+    agent_ys, agent_xs = np.where(on >= 0.65)
+    goal_ys, goal_xs = np.where((on >= 0.35) & (on < 0.65))
+    if agent_ys.size == 0 or goal_ys.size == 0:
+        return None
+    ppc = max(1.0, float(image_size) / float(grid_size))  # pixels per grid cell
+    dx = float(goal_xs.mean() - agent_xs.mean()) / ppc     # +x = East  = +gx
+    dy = float(goal_ys.mean() - agent_ys.mean()) / ppc     # +y = North = +gy
+    return (dx, dy)
+
+
 def build_bg_brain_regions(
     n_cortex: int = 100,
     n_striatum_per_action: int = 50,
@@ -2489,6 +2514,12 @@ def run_moving_goal_episode(
     # coords), the biological replacement for the coordinate heuristic-teacher.
     sc_orienting_reflex: bool = False,
     sc_reflex_strength: float = 800.0,  # SC orienting push (pA), matches heuristic
+    # Rank 2 (2026-06-07): the DURABLE learned dorsal/PPC read-out — drive the
+    # learned sensory population from the IMAGE salience offset (position-
+    # preserving, NO coords); the innate SC reflex teaches then weans.
+    learned_perception_from_vision: bool = False,
+    sc_reflex_wean_start: int = -1,   # step to begin weaning the reflex (-1 = never)
+    sc_reflex_wean_steps: int = 1500,  # linear ramp-to-zero window
     learning_rate: float = 0.01,
     reward_eligibility_tau_ms: float = 500.0,
     reward_hold_steps: int = 10,
@@ -4173,7 +4204,7 @@ def run_moving_goal_episode(
         # Sensory layer drive (opt-in, additive on top of heuristic).
         # Each sensory neuron i has preferred (dx_i, dy_i); rate = max * exp(-d²/2σ²)
         # The sensory→cortex pathway is plastic — agent learns mapping via STDP+reward.
-        if enable_learned_perception:
+        if enable_learned_perception and not learned_perception_from_vision:
             dx = float(gx - x)
             dy = float(gy - y)
             dx_clip = max(-3.0, min(3.0, dx))
@@ -4407,11 +4438,40 @@ def run_moving_goal_episode(
                 # non-goal-silence steps (this branch). Anti-cheat:
                 # sc_orienting_cardinal_from_image sees only `img` (pixels).
                 if sc_orienting_reflex:
-                    _sc_card = sc_orienting_cardinal_from_image(img)
-                    if _sc_card is not None:
-                        bridge.cp_external_input_current[
-                            region_indices_cp[f"cortex_{_sc_card}"]
-                        ] = cp.float32(sc_reflex_strength)
+                    # Rank 2 wean: the innate reflex TEACHES, then fades to zero
+                    # over [wean_start, wean_start+wean_steps] as the learned
+                    # circuit matures (developmental scaffold; -1 = never wean).
+                    _sc_eff = sc_reflex_strength
+                    if sc_reflex_wean_start >= 0:
+                        if step >= sc_reflex_wean_start + sc_reflex_wean_steps:
+                            _sc_eff = 0.0
+                        elif step >= sc_reflex_wean_start:
+                            _wf = (step - sc_reflex_wean_start) / float(max(1, sc_reflex_wean_steps))
+                            _sc_eff = sc_reflex_strength * (1.0 - _wf)
+                    if _sc_eff > 0:
+                        _sc_card = sc_orienting_cardinal_from_image(img)
+                        if _sc_card is not None:
+                            bridge.cp_external_input_current[
+                                region_indices_cp[f"cortex_{_sc_card}"]
+                            ] = cp.float32(_sc_eff)
+                # Rank 2 (2026-06-07): drive the LEARNED sensory population from
+                # the IMAGE salience offset (position-PRESERVING "where" signal,
+                # NO coords), so the plastic sensory→cortex_X learns a durable
+                # where→action mapping (the thing the position-invariant
+                # IT→cortex_X could not). The coord-sourced sensory drive is gated
+                # OFF when this flag is set. Anti-cheat: sc_salience_offset_from_image
+                # sees only `img`.
+                if (enable_learned_perception and learned_perception_from_vision
+                        and sensory_pref_dx is not None):
+                    _off = sc_salience_offset_from_image(
+                        img, grid_size=int(grid_size), image_size=int(visual_image_size))
+                    if _off is not None:
+                        _vdx = max(-3.0, min(3.0, _off[0]))
+                        _vdy = max(-3.0, min(3.0, _off[1]))
+                        _vd_sq = (sensory_pref_dx - _vdx) ** 2 + (sensory_pref_dy - _vdy) ** 2
+                        _vsens = sensory_drive_max_pA * np.exp(-_vd_sq / (2.0 * sensory_drive_sigma ** 2))
+                        bridge.cp_external_input_current[region_indices_cp["sensory"]] = (
+                            cp.asarray(_vsens, dtype=cp.float32))
 
         # Tier 2.2 (2026-05-06): embodied-language during nav. Drive
         # language regions simultaneously with the agent's perception/
@@ -5184,6 +5244,12 @@ def main():
                     help="N1 de-risk: innate superior-colliculus orienting reflex. Reads the goal's retinal direction from the rendered image ALONE (no coords) and pushes the matching cortex pool — the biological replacement for the coordinate heuristic-teacher. Requires --enable-visual-cortex; run with --heuristic-strength 0 so the reflex (not the heuristic) provides the drive.")
     ap.add_argument("--sc-reflex-strength", type=float, default=800.0,
                     help="SC orienting push (pA) — matches heuristic strength by default.")
+    ap.add_argument("--learned-perception-from-vision", action="store_true",
+                    help="Rank 2: drive the learned sensory population (--enable-learned-perception) from the IMAGE salience offset (position-preserving 'where' signal, NO coords) instead of (gx-x,gy-y). The plastic sensory->cortex learns a durable where->action mapping; the SC reflex teaches it. Requires --enable-visual-cortex --enable-learned-perception.")
+    ap.add_argument("--sc-reflex-wean-start", type=int, default=-1,
+                    help="Rank 2: step to begin weaning the SC orienting reflex to zero (-1 = never). The innate reflex teaches, then fades as the learned circuit matures (developmental scaffold).")
+    ap.add_argument("--sc-reflex-wean-steps", type=int, default=1500,
+                    help="Rank 2: linear ramp-to-zero window for the SC reflex wean.")
     # Canonical name: --enable-landmark-sensor (the implementation is a sensor
     # abstraction, not landmark-cell biology). --landmarks is the legacy alias
     # kept for one release cycle (2026-04-29 Wave-1 rename).
@@ -5874,6 +5940,9 @@ def main():
             cue_reflex_replaces_heuristic=args.cue_reflex_replaces_heuristic,
             sc_orienting_reflex=args.sc_orienting_reflex,
             sc_reflex_strength=args.sc_reflex_strength,
+            learned_perception_from_vision=args.learned_perception_from_vision,
+            sc_reflex_wean_start=args.sc_reflex_wean_start,
+            sc_reflex_wean_steps=args.sc_reflex_wean_steps,
             enable_landmarks=args.enable_landmark_sensor,
             n_landmark_sensors=args.n_landmark_sensors,
             landmark_to_place_weight=args.landmark_to_place_weight,
