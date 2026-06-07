@@ -1,104 +1,100 @@
 # Neural Simulator
 
-**A brain-inspired AI that learns by spike timing, not gradient descent.**
+**A GPU-accelerated simulator for biologically realistic spiking neural
+networks — with a real-time 3D view of every neuron firing.**
 
-This is a research project building a virtual brain that learns from
-experience the way real brains do — through individual neurons firing
-together, dopamine reinforcing successful actions, and connections
-strengthening or weakening based on millisecond-precise timing.
+It learns the way brains do: individual neurons fire in real time,
+dopamine-like reward reinforces successful actions, and connections
+strengthen or weaken from millisecond-precise spike timing. The core
+runs on local biological rules — *not* backpropagation through a static
+graph, no supervised labels, no symbolic optimizer.
 
-No backpropagation. No supervised training labels. No symbolic
-optimization. Just real neurons firing in real time, learning from
-reward and biological plasticity rules.
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
+![Backend](https://img.shields.io/badge/backend-CuPy%20(CUDA)%20%2F%20NumPy%20(CPU)-orange.svg)
+![Status](https://img.shields.io/badge/status-active%20research-yellow.svg)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Agent sees the world → cortex activates → BG selects action    │
-│            ↑                                          ↓          │
-│      Reward shapes  ←  Move toward goal   ←  Motor cortex fires  │
-│      future choices       (or away)                              │
+│  Agent sees the world  →  cortex activates  →  basal ganglia     │
+│            ↑                                     selects an action │
+│      Reward shapes        Move toward goal            ↓           │
+│      future choices   ←   (or away)        ←   Motor cortex fires │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+**Jump to:** [Quick start](#try-it-in-60-seconds) ·
+[Who it's for](#who-its-for) · [What it does today](#what-it-does-today) ·
+[The biology](#what-real-biology-looks-like-inside) ·
+[Architecture](#architecture) ·
+[Performance & hardware](#performance--hardware) ·
+[Status & limits](#whats-known-to-work-what-isnt) ·
+[Docs](#documentation--further-reading)
+
+---
+
+## Who it's for
+
+| If you are a… | You'll care that… |
+|---|---|
+| **Software developer** | It's a scriptable Python engine: 50+ brain regions, sparse GPU kernels, a YAML-driven experiment runner, a FastAPI dashboard, and a NumPy fallback that runs with no GPU at all. |
+| **Computational neuroscientist** | Neurons are real models (Izhikevich, Hodgkin–Huxley, AdEx); plasticity reproduces published timing curves (Bi & Poo 1998); regions, pathways, and neuromodulators are declared, not hand-wired — and every result is multi-seed with anti-cheat controls. |
+| **Biologist** | Mechanisms are grounded in *Principles of Neural Science* (Kandel, 6th ed.) plus a dozen specialty texts, in plain language — see [the biology](#what-real-biology-looks-like-inside). |
+| **Curious reader** | You can watch a virtual brain learn to navigate and to remember words, in 3D, in real time — and see exactly how far "biology alone" gets you. |
 
 ---
 
 ## What it does today
 
-**A trustworthy continual memory.** You can teach the system
-word–concept facts ("apple is big"); it recalls them on cue, and —
-the genuinely hard part it actually solves — it keeps old memories
-intact while learning new ones (no *catastrophic forgetting*). It
-holds roughly **320 distinct concepts** spread across a five-part
-cortex, validated across multiple random seeds. Scientific basis:
-words stored as distributed cell assemblies spanning cortex
-(Pulvermüller 2001), recalled as scattered sparse patterns (sparse
-distributed memory, Kanerva 1988), each memory a re-triggerable
-tagged ensemble (engram cells — Liu/Tonegawa et al. 2012), and
-protected from being overwritten by hippocampus→cortex consolidation
-with sharp-wave-ripple replay (complementary learning systems — Marr
-1971; McClelland, McNaughton & O'Reilly 1995; Buzsáki replay).
+**A trustworthy continual memory.** You can teach it word–concept facts
+("apple is big", "the dog ate the apple"); it recalls them on cue and —
+the genuinely hard part — keeps old memories intact while learning new
+ones (this is called avoiding *catastrophic forgetting*, the usual
+failure mode of neural networks that keep learning). It holds roughly
+**320 distinct concepts** across a five-part model cortex, validated
+across many random seeds. The scientific basis: words stored as
+distributed cell assemblies spanning the cortex (Pulvermüller 2001),
+recalled as sparse scattered patterns (Kanerva 1988), each memory a
+re-triggerable tagged ensemble of neurons (Liu/Tonegawa 2012), and
+protected from being overwritten by a hippocampus→cortex transfer with
+replay during simulated sleep (complementary learning systems — McClelland,
+McNaughton & O'Reilly 1995).
+
+**It combines concepts into facts — in spikes.** Beyond storing single
+words, it binds them into structured facts ("who did what to whom",
+attributes, and even nested clauses like "the dog sees the cat chase the
+ball") and answers questions about them — *who* ran, *what* is big, yes/no
+including negation. The binding and unbinding are computed by spiking
+neurons, not a lookup table.
 
 **It refuses to make things up.** Asked about something it was never
-taught, it answers "I don't know" instead of fabricating a confident
-wrong answer — a trust property today's language models lack. This is
-validated quantitatively: a clean confidence separation between what
-it knows and what it does not.
+taught, it answers "I don't know" rather than confidently fabricating a
+wrong one — a trust property today's large language models notably lack.
+This is measured: there is a clean confidence gap between what it knows
+and what it does not.
 
-**It is learning to speak in its own words (early-stage).** The
-system's *own* spiking network is being trained to generate language
-from a local text corpus using spike-based backprop-through-time
-(surrogate-gradient learning, Neftci, Mostafa & Zenke 2019). The
-foundation is validated — it provably learns *real* text structure,
-not noise — but it is **not yet fluent**, and honestly far from a
-large language model. A separate model may be used only as a
-training-time teacher (knowledge distillation, Hinton, Vinyals &
-Dean 2015); **after training the system runs entirely on its own and
-fully local** — no external model and no hand-written response
-templates in actual use.
+**It navigates from vision.** The original capability: it finds a goal on
+a gridworld using only simulated retinal input — no direct coordinates and
+no hand-coded distance signal — reaching the goal far above chance (about
+38% of the time on a 16×16 grid in the validated configuration). The
+action-selection circuitry (basal ganglia → thalamus → motor cortex) is
+being progressively rebuilt so the decision is made *in spikes* rather
+than by any off-brain shortcut.
 
-**It still navigates from vision.** The original capability: it
-finds a goal in a gridworld using only simulated retinal input,
-picking directions and learning from a reward signal — ~38% of time
-at the goal on a 16×16 grid, well above chance.
+**It is learning to speak in its own words (early stage).** The system's
+*own* spiking network is being trained to generate language from a local
+text corpus, using a spike-compatible form of gradient learning
+(surrogate-gradient backprop-through-time — Neftci, Mostafa & Zenke 2019).
+The foundation is validated — it provably learns *real* text structure,
+not noise — but it is **not yet fluent**, and honestly far from a large
+language model. A separate model may be used only as a training-time
+teacher (knowledge distillation — Hinton, Vinyals & Dean 2015); **after
+training the system runs entirely on its own, fully local** — no external
+model and no hand-written reply templates in use.
 
-**It visualizes its own brain.** Live 3D view of every neuron firing
-and synapse pulsing, with interactive control — watch it learn in
-real time.
-
----
-
-## Why this matters
-
-Modern AI uses gradient descent — a powerful but biologically implausible
-optimization technique. Real brains have no equivalent of backpropagation
-through time. They learn from local rules: "neurons that fire together,
-wire together" (Hebb 1949), refined by dopamine reward (Schultz 1998).
-
-This project tests how far you can go with **only those biological
-rules**, entirely locally. The answer so far: navigation works well;
-a biologically-grounded **memory** works genuinely well — continual
-(no catastrophic forgetting) and trustworthy (it abstains rather than
-confabulate); open-ended **language generation** is an active,
-honestly-hard frontier (foundation validated, fluency not yet). The
-system has clear limits, and mapping those limits — with anti-cheat
-controls and forthright retractions when a result doesn't hold — is
-itself the contribution.
-
----
-
-## What the brain can do
-
-| Capability | How it works | Status |
-|---|---|---|
-| **See** | Retina → V1 (Gabor edge detectors) → V2 → IT (object) | ✅ Working |
-| **Decide** | Basal ganglia cascade picks one action from competing options | ✅ Working |
-| **Move** | Motor cortex pools fire, agent moves on grid | ✅ Working |
-| **Learn from reward** | Dopamine modulates spike-timing plasticity | ✅ Working |
-| **Hold goals in mind** | Prefrontal cortex working memory (NMDA bistability) | ✅ Working |
-| **Remember word–concept facts** | Distributed cortical word-ensembles (Pulvermüller); sparse distributed recall (Kanerva 1988); engram tagging (Tonegawa) | ✅ Working — ~320 concepts, multi-seed validated |
-| **Not forget when learning more** | Hippocampus→cortex consolidation + sharp-wave-ripple replay (complementary learning systems, McClelland 1995) | ✅ Working — no catastrophic forgetting |
-| **Know what it doesn't know** | Recall-confidence threshold; abstains below it | ✅ Working — refuses to confabulate |
-| **Speak in its own words** | Own spiking network trained by surrogate-gradient backprop-through-time (Neftci 2019) on local text | ⚠️ Early — foundation validated, not yet fluent |
+**It visualizes its own brain.** A live 3D view of every neuron firing and
+synapse pulsing, with interactive camera control — watch it learn in real
+time.
 
 ---
 
@@ -108,10 +104,66 @@ itself the contribution.
 git clone https://github.com/danthi123/neural-simulator
 cd neural-simulator
 pip install -r requirements.txt   # CuPy + DearPyGUI + PyOpenGL + h5py + ...
-python neural-simulator.py        # GUI mode with live 3D viz
+python neural-simulator.py        # GUI with live 3D visualization
 ```
 
-Or run the navigation flagship headless (current best on 16×16 perception-only):
+**No NVIDIA GPU? Run anything on the CPU** by setting one environment
+variable — the engine swaps its GPU array library (CuPy) for NumPy with no
+code change. It is slower, but every demo below works:
+
+```bash
+SIM_BACKEND=numpy python -m research.runners.chat_demo --seed 43
+```
+
+### Talk to it
+
+Type a direction word and watch the matching motor pool light up
+(four-word vocabulary, ~6 min to train on one seed):
+
+```bash
+python -m research.runners.chat_demo --seed 43 --train-events 200
+```
+
+With synonyms — both `north` and `up` activate the same motor pool
+(eight-word vocabulary, ~10 min):
+
+```bash
+python -m research.runners.chat_synonym_demo --seed 42 --train-events 400
+```
+
+Interactive shell that saves its trained brain so you reload instantly
+next time:
+
+```bash
+# First time: train, then save (~6–20 min depending on vocabulary)
+python -m research.runners.chat_repl --mode tier1 --seed 43 \
+    --save-bridge simulation_checkpoints_h5/repl_tier1.simstate.h5
+
+# Later sessions: load the saved brain (~30 sec) and start chatting
+python -m research.runners.chat_repl --mode tier1 --seed 43 \
+    --load-bridge simulation_checkpoints_h5/repl_tier1.simstate.h5
+```
+
+A trained, larger-vocabulary brain holds a short conversation grounded in
+its own memory:
+
+```
+> remember the dog is big
+  OK, I'll remember dog is big.
+> is the dog big?
+  Yes, dog is big.
+> is the apple small?
+  I don't know. I haven't been told.
+> who ate the apple?
+  Dog did.
+```
+
+See [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) for every
+conversational demo.
+
+### Watch it navigate
+
+Run the navigation flagship headless (vision-only, 16×16 grid):
 
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
@@ -122,225 +174,232 @@ python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --d
     --grid-size 16 --seed 42 --n-steps 1800
 ```
 
-Or talk to the sim — type a direction word and watch the motor pool
-activate (Tier 1 4-word vocab, ~6 min single seed):
+It prints live progress (`step 800/1800  pos=(6,1)  goal=(1,6)
+recent_dist=2.6 …`) and writes a per-run JSON summary. Full setup,
+prerequisites, and troubleshooting are in [QUICKSTART.md](QUICKSTART.md).
 
-```bash
-python -m research.runners.chat_demo --seed 43 --train-events 200
-```
+---
 
-Or with synonyms — both `north` and `up` activate motor_N (Tier 2.1
-8-word vocab, ~10 min single seed):
+## Why this matters
 
-```bash
-python -m research.runners.chat_synonym_demo --seed 42 --train-events 400
-```
+Modern AI is built on gradient descent — a powerful but biologically
+implausible optimizer. Real brains have no equivalent of backpropagation
+through a frozen computational graph. They learn from local rules:
+"neurons that fire together, wire together" (Hebb 1949), refined by
+dopamine reward (Schultz 1998).
 
-Or interactive REPL with checkpoint save (train once, reload instantly
-in future sessions):
+This project tests how far you can get with **only those biological
+rules, entirely locally.** The answer so far: navigation works; a
+biologically grounded **memory** works genuinely well — continual (it does
+not forget) and trustworthy (it abstains instead of fabricating);
+open-ended **language generation** is an active, honestly hard frontier
+(foundation proven, fluency not). The system has clear limits, and mapping
+those limits — with anti-cheat controls and forthright retractions when a
+result does not hold up — is itself part of the contribution.
 
-```bash
-# First time: train + save (~6 min for tier1, ~10-20 min for synonym)
-python -m research.runners.chat_repl --mode tier1 --seed 43 \
-    --save-bridge simulation_checkpoints_h5/repl_tier1.simstate.h5
+---
 
-# Subsequent sessions: load saved bridge (~30 sec, REPL ready)
-python -m research.runners.chat_repl --mode tier1 --seed 43 \
-    --load-bridge simulation_checkpoints_h5/repl_tier1.simstate.h5
+## What the brain can do
 
-# Or 16-word vocab with Unicode arrows:
-python -m research.runners.chat_repl --mode synonym16 --seed 42
-# Type ↑ or "north" or "up" or "n" → all activate motor_N
-```
-
-See [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) for all
-conversational demos (Tier 1 / Tier 2.1 synonym / Phase 1.4 continual
-learning).
-
-### 🎉 G.20 160-concept multi-bridge ensemble SHIPPED (2026-05-15)
-
-**5 G.20 bridges × 32 concepts = 160 unique concept words.**
-All 5 bridges at EXACTLY 26/32 (81.2%) top-1 / 31/32 (96.9%) top-5
-at seed 42 — identical PASS rate across 5 different vocab categories.
-
-```bash
-# Run end-to-end demo (requires 5 bridges trained):
-python research/runners/g20_160word_demo.py --seed 42 --friendly
-```
-
-Example session:
-```
-> vocab                          → TOTAL: 160 unique concepts
-> remember apple is big          → OK (cross-bridge: apple in A, big in C)
-> what is apple                  → Apple is associated with: big, red, ...
-> is a dog an animal?            → Yes, dog is a kind of animal.
-> what mammals do you know?      → Kinds of mammal: dog, cat, person, baby
-> what is dogs (tokenized→dog)   → Dog is associated with: small, fast, ...
-```
-
-Combined effective vocab: **160 concepts × ~6 morpheme variations
-≈ 960 surface forms** — toddler-vocabulary range.
-
-Plus 4-SEED validation at 32-concept tier: 96/128 (75.0%) — statistically
-equivalent to v16 baseline (77.5%) at 2× vocabulary + 1/2 substrate.
-
-Catalog G.20 status: PARTIALLY MISSING → **5-BRIDGE PRODUCTION ENSEMBLE**.
-
-```bash
-# Train a 32-concept G.20 bridge (~30 min):
-python -m research.runners.concept_pool_demo_shared --seed 42 \
-    --n-concepts 32 --n-train-events 400 --n-lang-input 8192 \
-    --n-shared-pool 1600 --slice-size 50 --top-k 100 \
-    --topographic-factor 10.0 --off-target-factor 0.1 --sparsity 0.03 \
-    --save-bridge bridges/shared_pool_n32.h5 \
-    --out results/shared_pool_n32.json
-
-# Chat with the trained bridge:
-python -m research.runners.shared_pool_chat \
-    --load-bridge bridges/shared_pool_n32.h5 \
-    --vocab "apple,river,dog,cat,go,come,stop,look,big,small,hot,cold,\
-tree,bird,sun,moon,walk,run,eat,sleep,red,blue,fast,slow,\
-house,road,fire,water,give,take,find,lose" --friendly
-```
-
-Per-neuron PASS efficiency: 4.2× better than v16. Catalog
-G.20 (Pulvermüller distributed cortical word ensembles) status:
-**PROTOTYPE VALIDATED**. See
-[`research/findings/2026-05-15-G20-shared-pool-BREAKTHROUGH-32-concepts.md`](research/findings/2026-05-15-G20-shared-pool-BREAKTHROUGH-32-concepts.md).
-
-### 60-word multi-bridge conversation (2026-05-15)
-
-Single bridge has an architectural ceiling at 16-word vocab. The
-**multi-bridge ensemble** runs 5 v16 bridges (each owning 12 distinct
-concept words = 60 unique vocab) with automatic dispatch:
-
-```bash
-# End-to-end demo with natural-language output
-python research/runners/multibridge_60word_demo.py --seed 42 --friendly
-```
-
-Example session (--friendly mode):
-```
-> remember the dog is big
-  OK, I'll remember dog is big.
-> remember the dog ate apple
-  OK, I'll remember dog ate apple.
-> is the dog big?
-  Yes, dog is big.
-> is the apple small?
-  I don't know. I haven't been told.
-> who ate apple?
-  Dog did.
-> what did dog ate?
-  Apple.
-> remember sun is hot
-  OK, I'll remember sun is hot.    # CROSS-SET (sun in set2, hot in set1)
-> remember apple's color is red
-  OK, I'll remember apple's color is red.
-> what color is apple?
-  Red.
-```
-
-11 conversational features: pair encoding, N-word sentences, negation,
-conjunctions, possessives, pronoun coreference, tense (PAST/FUTURE),
-comparisons, yes/no, role queries, relational queries. Plus memory
-CRUD (about / forget / save). 91 unit tests passing in 1.2s.
-
-See [`research/findings/2026-05-15-multibridge-60word-shipped.md`](research/findings/2026-05-15-multibridge-60word-shipped.md)
-for the full milestone doc.
-
-Full setup in [QUICKSTART.md](QUICKSTART.md).
+| Capability | How it works | Status |
+|---|---|---|
+| **See** | Retina → V1 (edge detectors) → V2 → IT (object recognition) | ✅ Working |
+| **Decide** | Basal ganglia let competing options race; the winner is selected, losers silenced | ✅ Working |
+| **Move** | Motor-cortex pools fire; the agent moves on the grid | ✅ Working |
+| **Learn from reward** | Dopamine modulates spike-timing plasticity | ✅ Working |
+| **Hold a goal in mind** | Prefrontal working memory keeps firing after input stops (NMDA bistability) | ✅ Working |
+| **Remember word–concept facts** | Distributed cortical word-ensembles; sparse scattered recall; tagged engram ensembles | ✅ Working — ~320 concepts, multi-seed |
+| **Not forget while learning more** | Hippocampus→cortex transfer with sleep replay (McClelland 1995) | ✅ Working — no catastrophic forgetting |
+| **Know what it doesn't know** | A recall-confidence threshold; it abstains below it | ✅ Working — refuses to confabulate |
+| **Speak in its own words** | Its own spiking net, trained by surrogate-gradient learning on local text | ⚠️ Early — foundation proven, not yet fluent |
 
 ---
 
 ## What real biology looks like inside
 
-The simulator implements ~375 biological mechanisms documented in
-[`references/feature-catalog.md`](references/feature-catalog.md), drawn from
-Kandel et al. *Principles of Neural Science* (6th ed, 2021) plus 12
-specialty texts.
+The simulator implements hundreds of mechanisms drawn from Kandel et al.,
+*Principles of Neural Science* (6th ed., 2021) plus a dozen specialty
+texts. The canonical term list lives in
+[`references/glossary.md`](references/glossary.md); the plain-language tour
+is in [`docs/biology.md`](docs/biology.md). A few highlights:
 
-A few highlights, in plain language:
+**The retina** — a 32×32 grid of light-sensitive cells, each firing more
+when light hits its receptive field. Just like real retinal ganglion cells
+(Hubel & Wiesel 1962).
 
-**The retina** — 32×32 grid of light-sensitive cells, each firing more
-when light hits its receptive field. Just like real retinal ganglion
-cells (Hubel & Wiesel 1962).
+**Visual cortex (V1)** — neurons tuned to oriented edges (using *Gabor*
+receptive fields — a math description of edge detectors). They pick out
+horizontal, vertical, and diagonal lines, the same wiring real V1 develops
+in the first weeks of life.
 
-**Visual cortex (V1)** — neurons tuned to oriented edges using Gabor
-receptive fields. Detects horizontal lines, vertical lines, diagonals.
-Same wiring real V1 develops in the first weeks of life.
+**Basal ganglia** — the brain's "action selector." Several options compete;
+the strongest wins; the losing pathways are silenced. Damage here causes
+Parkinson's (too little selection) or Tourette's (too much).
 
-**Basal ganglia** — the brain's "action selector". Multiple options
-compete; the strongest one wins; the loser pathways are silenced.
-Damage here causes Parkinson's (loss of selection) or Tourette's
-(over-selection).
+**Working memory (prefrontal cortex)** — neurons that keep firing *after*
+their input stops, holding a goal in mind. Real prefrontal cortex does this
+through NMDA receptors that create a self-sustaining "on" state
+("bistability") — the same property this model implements (Wang 2002).
 
-**Working memory (PFC)** — neurons that keep firing after their input
-stops, holding the goal in mind. Real prefrontal cortex does this
-via NMDA receptors creating "bistability" — the same property our
-model implements (Wang 2002).
+**Plasticity** — connections strengthen when two neurons fire together
+within about 20 ms (long-term potentiation), and weaken when the timing is
+reversed (long-term depression). It is reward-modulated: only the right
+pairings get reinforced (Schultz 1998 dopamine reward-prediction). The
+model reproduces the published Bi & Poo (1998) timing curves.
 
-**Plasticity** — connections between neurons strengthen when both
-fire together within 20 ms (LTP, Long-Term Potentiation), weaken
-when one fires before the other (LTD). Reward-modulated: only the
-right pairings get the reinforcement (Schultz 1998 dopamine RPE).
+**Hippocampus** — a pattern separator (dentate gyrus), a pattern completer
+(CA3), and a memory readout (CA1). Damage means no new memories — the
+classic patient "H.M."
 
-**Hippocampus** — pattern separator (DG), pattern completer (CA3),
-memory readout (CA1). Damage = no new memories (Henry Molaison "H.M.").
+**No symbolic shortcuts.** There is no `agent.pick_best_action()`. The
+action emerges from spike rates in motor pools, the way real motor commands
+emerge from primary-motor-cortex firing.
 
-**No symbolic shortcuts.** No `agent.pick_best_action()`. The action
-emerges from spike rates in motor pools, just like real motor commands
-emerge from M1 firing.
-
-For the deep technical view, see [docs/biology.md](docs/biology.md).
+For the deep technical view, see [`docs/biology.md`](docs/biology.md).
 
 ---
 
-## What's known to work, what's not
+## Architecture
+
+Two threads keep the interface responsive while the brain computes:
+
+```
+Main thread                         Simulation thread
+───────────                         ─────────────────
+DearPyGUI event loop      ◄──────►  GPU neural dynamics (CuPy/CUDA)
+OpenGL 3D rendering    lock-free     spike + plasticity kernels
+camera / interaction     queues      recording / checkpointing
+```
+
+The engine lives in `sim/` (42 modules). The central object is the
+**`SimulationBridge`**, which owns all neuron and synapse state as GPU
+arrays and advances the network one millisecond-scale step at a time:
+synaptic currents → background noise → neuron model update → plasticity →
+visualization → recording.
+
+| Package | What's in it |
+|---|---|
+| `sim/` | The engine: the bridge, neuron/plasticity GPU kernels, brain-region framework, neuromodulators, connectivity, checkpointing |
+| `viz/` | OpenGL 3D renderer, camera, neuron picker, overlays |
+| `ui/` | DearPyGUI control panels and the configuration round-trip |
+| `experiment/` | Stimulus injection, neuron-group management, readout/analysis, training protocols |
+| `research/runners/` | Headless experiment scripts (navigation, conversation, consolidation, …) |
+| `webapp/` | FastAPI dashboard for launching runs and watching them live |
+
+Networks are stored as sparse connection matrices, so memory grows with
+the number of *actual synapses*, not with neurons-squared. Brain regions
+and the pathways between them are *declared* as data, then wired
+automatically — adding a region does not mean hand-editing the engine.
+
+---
+
+## Performance & hardware
+
+The realistic operating envelope on a single GPU (measured on an
+NVIDIA RTX 3090, 24 GB):
+
+| Network size | Backend | Notes |
+|---|---|---|
+| 1K–10K neurons | CuPy or NumPy | Runs on a laptop CPU in NumPy mode; comfortable on any CUDA GPU |
+| 10K–100K neurons | CuPy (CUDA) | The everyday research range; fits in 8–24 GB depending on connectivity |
+| 100K+ neurons | CuPy (CUDA) | Needs ~20 GB+ VRAM; use sparse connectivity and the memory-pool limit |
+
+- **GPU vs. CPU.** CuPy (CUDA) is the speed path; NumPy is the portability
+  path for laptops, CI, and machines with no GPU — roughly 4–50× slower
+  depending on the workload, but numerically equivalent.
+- **Memory.** Connectivity is sparse (compressed-row format), so VRAM
+  tracks real connections. `GPUConfig.memory_pool_limit_fraction` (default
+  0.8) caps the CuPy memory pool.
+- **Time step.** 0.5 ms for the fast neuron models (Izhikevich, AdEx),
+  automatically tightened to 0.05 ms for full Hodgkin–Huxley biophysics.
+- **Throughput.** The engine is ~7–8× faster than the project's original
+  single-file implementation; a six-seed minimal-architecture sweep
+  finishes in ~45–55 minutes on an RTX 3090.
+
+---
+
+## What's known to work, what isn't
 
 ### Working (validated, multi-seed where stated)
 
-- **Continual memory:** ~320 concepts across a five-part cortex; new
-  learning does **not** erase old memories (no catastrophic
-  forgetting) — multi-seed validated
-- **Trustworthy recall:** the system abstains ("I don't know")
-  instead of confabulating on un-taught queries — quantified clean
-  confidence separation between known vs unknown
-- **Associative retrieval:** cue→associate recall ≈87% at the
-  320-concept scale / ≈93% multi-seed at the 160-concept scale;
-  subject→(verb, object) sentence-style retrieval ≈80%
-- **Navigation:** ~38% time at goal on 16×16 grid from simulated
-  vision only, no shortcuts — see [docs/CURRENT-STATE.md](docs/CURRENT-STATE.md)
-- **Own-network text learning (foundation):** the system's own
-  spiking net provably learns real local text structure (beats a
-  shuffled-text control), trained by surrogate-gradient
-  backprop-through-time — fully local
-- **Multi-region cascading:** 50+ brain regions, biology-grounded
-  pathways; **real-time 3D visualization**; **reproducibility**
-  (all RNG seeded, deterministic mode); **performance** ~7–8×
-  speedup vs the original engine
+- **Continual memory** — ~320 concepts across a five-part cortex; new
+  learning does not erase old memories.
+- **Trustworthy recall** — abstains ("I don't know") instead of
+  confabulating on untaught queries, with a measured confidence gap.
+- **Compositional facts** — binds concepts into who-did-what facts,
+  attributes, and nested clauses, and answers who/what/yes-no questions
+  (including negation), computed in spiking neurons.
+- **Navigation** — reaches a goal from simulated vision only, no
+  coordinate or distance shortcuts.
+- **Own-network text learning (foundation)** — the system's own spiking
+  net provably learns real local text structure (it beats a
+  shuffled-text control), fully local.
+- **Infrastructure** — 50+ brain regions; real-time 3D visualization;
+  full reproducibility (every random-number source seeded; a deterministic
+  mode); checkpoint save/restore.
 
-### Modest / early
+### Early / modest
 
-- **Language fluency:** the own-network generator's foundation is
-  validated but output is far below a large language model — fluency
-  is the active frontier (knowledge-distillation training underway)
-- **Working memory across long delays:** prefrontal working memory
-  holds a goal for seconds, not minutes
+- **Language fluency** — the generator's foundation is proven, but its
+  output is far below a large language model; fluency is the active
+  frontier.
+- **Working memory over long delays** — prefrontal working memory holds a
+  goal for seconds, not minutes.
 
-### Known limitations (honest)
+### Honest limitations
 
-- **Not LLM-fluent.** The genuine contribution is a *continual,
-  trustworthy, fully-local* memory — not open-ended fluent prose.
-  Local hardware caps generation well below cloud models; integrity
-  (no cheating, no fabrication, self-contained), not parity, is the
-  point.
-- **Scale:** thousands of neurons per region vs 10⁴–10⁶ in biology;
-  training on far fewer examples than a developing brain sees
-- **Static structure:** developmental synaptic pruning / cortical
-  layer formation not modeled
-- **Single time scale:** millisecond spike-timing plasticity only;
-  no protein-synthesis-dependent late-phase consolidation
+- **Not LLM-fluent.** The real contribution is a *continual, trustworthy,
+  fully local* memory — not open-ended fluent prose. Local hardware caps
+  generation well below cloud models; the point is integrity (no cheating,
+  no fabrication, self-contained), not parity.
+- **Scale.** Thousands of neurons per region versus 10⁴–10⁶ in biology;
+  far fewer training examples than a developing brain sees.
+- **Static structure.** Developmental synaptic pruning and cortical-layer
+  formation are not modeled.
+- **Single time scale.** Millisecond spike-timing plasticity only; no
+  protein-synthesis-dependent late-phase consolidation.
+- **Research software.** APIs may change; this is not peer-reviewed for any
+  clinical or diagnostic use.
+
+---
+
+## Current status
+
+This is an **active research project.** The validated core today is the
+biologically grounded **memory** (continual, trustworthy, ~320 concepts,
+multi-seed) and **navigation** from vision; **language generation** is an
+honestly hard frontier with a proven foundation but no fluency yet. Recent
+work has focused on making every remaining shortcut more biologically
+faithful — for example, rebuilding the navigation action-selection
+pathway so the decision is genuinely made in spikes.
+
+The project keeps a detailed, dated record. Each research session writes a
+findings document (including negative results — they are real findings),
+and milestones are summarized in the changelog.
+
+- **History & milestones:** [CHANGELOG.md](CHANGELOG.md)
+- **What works today, in technical detail:** [`docs/CURRENT-STATE.md`](docs/CURRENT-STATE.md)
+- **The science roadmap:** [`docs/SCIENCE_ROADMAP.md`](docs/SCIENCE_ROADMAP.md)
+- **Per-session findings:** `research/findings/` (chronological)
+
+A note on method: results are reported with the random seeds and
+conditions used, and several promising numbers have been **retracted** when
+an anti-cheat control later failed. Those corrections are part of the
+record, not hidden — honest negatives under strict biology are the point.
+
+---
+
+## How autonomous research runs
+
+A YAML-driven runner queues overnight parameter sweeps without one-off
+scripts. Each file declares conditions (flag combinations) × seeds; runs
+emit a uniform progress event and write per-run JSON.
+
+```bash
+python -m research.experiment_runner experiments/biology_sweep.yaml   # run a sweep
+python -m research.result_aggregator biology_sweep                    # roll up + verdict line
+python -m research.runners.morning_briefing --short                   # summarize an overnight run
+```
 
 ---
 
@@ -349,382 +408,89 @@ For the deep technical view, see [docs/biology.md](docs/biology.md).
 ```
 neural-simulator/
 ├── README.md              ← you are here
-├── QUICKSTART.md          ← 60-second setup
+├── QUICKSTART.md          ← full setup + troubleshooting
+├── CHANGELOG.md           ← dated history & milestones
 ├── neural-simulator.py    ← GUI host + main entry point
 ├── benchmark.py           ← GPU throughput benchmark
-├── viz_benchmark.py       ← visualization performance benchmark
 ├── run_benchmarks.py      ← biological validation suite
-├── run_experiment_headless.py
-├── run_parameter_sweep.py
-├── requirements.txt
-├── docs/
-│   ├── CURRENT-STATE.md   ← what works today, technical details
-│   ├── biology.md         ← what biology we model, plain language
-│   ├── plans/             ← architecture decision records
-│   └── project-history-archive.md  ← prior README content (preserved)
-├── sim/                   ← engine: bridge, regions, kernels, plasticity
-├── experiment/            ← ExperimentEngine + Stimulus + Readout + Training
+├── sim/                   ← engine (42 modules)
+├── viz/                   ← 3D OpenGL rendering
+├── ui/                    ← DearPyGUI controls
+├── experiment/            ← stimulus, groups, readout, training
 ├── experiments/           ← YAML configs for autonomous sweeps
 ├── research/
-│   ├── runners/           ← experiment scripts (g1-g11, text_*, k_v2)
-│   ├── findings/          ← chronological session findings
-│   ├── experiment_runner.py ← YAML-driven sweep orchestrator
-│   └── result_aggregator.py ← cross-condition rollup + verdict line
-├── references/
-│   ├── feature-catalog.md ← biology mechanism encyclopedia (375+ entries)
-│   └── glossary.md
-├── webapp/                ← FastAPI dashboard (server.py + static/)
+│   ├── runners/           ← experiment scripts (navigation, chat, …)
+│   └── findings/          ← chronological session findings
+├── references/            ← glossary + source textbooks
+├── docs/                  ← biology, current state, roadmap, guides
+├── webapp/                ← FastAPI dashboard
 ├── simulation_profiles/   ← 47 brain-region JSON profiles
-├── tests/                 ← pytest test suite (248 files)
-├── viz/                   ← 3D OpenGL rendering
-└── ui/                    ← DearPyGUI controls
+└── tests/                 ← pytest suite (279 files)
 ```
 
 ---
 
-## How autonomous research runs
+## Documentation & further reading
 
-The project ships a YAML-driven experiment runner so the operator can
-queue overnight sweeps without writing one-off scripts. Each YAML file
-declares conditions (CLI flag combinations) × seeds; runs emit a
-universal `[PROGRESS] {json}` event format and write per-run JSON
-outputs.
+- [QUICKSTART.md](QUICKSTART.md) — install, prerequisites, first run
+- [`docs/biology.md`](docs/biology.md) — the modeled biology, plain language
+- [`docs/CURRENT-STATE.md`](docs/CURRENT-STATE.md) — what works today, technically
+- [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) — every conversational demo
+- [`docs/SCIENCE_ROADMAP.md`](docs/SCIENCE_ROADMAP.md) — where it's going
+- [CONTRIBUTING.md](CONTRIBUTING.md) — how to contribute
+- [CHANGELOG.md](CHANGELOG.md) — dated history
+- `CLAUDE.md` — developer/architecture guide
+
+---
+
+## Contributing
+
+Contributions are welcome — bug fixes, new brain-region profiles,
+biological-validation tests, and documentation especially. Please read
+[CONTRIBUTING.md](CONTRIBUTING.md) and run the test suite first:
 
 ```bash
-# Run a sweep (anti-cheat controls + biology variants)
-python -m research.experiment_runner experiments/biology_sweep.yaml
-
-# Aggregate results with a verdict line
-python -m research.result_aggregator biology_sweep
-
-# Morning summary of any overnight run
-python -m research.runners.morning_briefing --short
+pytest tests/ -v
 ```
-
-Built-in YAMLs in `experiments/`: `biology_sweep`, `minimum_biology`
-(dose-response), `eval_sanity_check` (eval-methodology validator),
-`b2_sparse_codes`, `b4_long_training`. The pre-staged decision chain
-auto-launches the appropriate follow-up based on the verdict line.
-
-A 7-8x speedup stack (`dt=1.0` + parallel-3 GPU sharing +
-`cfg.fast_spike_reset`) ships with the runner; a 6-seed minimal-arch
-batch finishes in ~45-55 minutes on an RTX 3090.
 
 ---
 
-## Latest validated result
+## How to cite
 
-**The brain analogue does the full composition benchmark in genuine spikes (2026-06-04):**
+If you use this simulator in research, please cite the repository:
 
-- **One coherent agent, benchmarked end-to-end, then realized in spikes.** The scattered composition/memory
-  pieces were converged into one agent and measured on a frozen 320-concept conversational test set (store facts
-  including attributed and nested ones, who/what Q&A, compose, abstain), then realized as a **spiking neural
-  network**. It reproduces the full benchmark — flat facts + one/two-attribute composition + embedded clauses +
-  who/what + the no-confabulation moat — at **100%** on *both* an engineering-scaffold spiking substrate (full
-  320 vocab) **and the genuine biological resonate-and-fire neuron model** (Izhikevich 2001 / Frady-Sommer 2019)
-  with an attractor-network (CA3-style) cleanup, where abstention is a basin-of-attraction property. See
-  `research/findings/2026-06-04-spiking-unified-agent-stage2.md`.
-
-- **Grounded composition resolved by pattern completion.** With biology-grounded (learned) codes, raw sensory
-  readout is too noisy for composition; snapping it to the consolidated concept attractor first (CA3 pattern
-  completion) restores full composition — anti-cheat-validated. The biology-translatable insight: composition
-  runs on stable concept representations, not raw sensory input. See
-  `research/findings/2026-06-04-unified-agent-benchmark-converge-not-add.md`.
-
-- **A measured scaling cost model.** A cheap-first measurement shows memory / retrieval / Q&A / abstention /
-  one-attribute / clauses all scale cheaply at fixed dimension; only the two-attribute resonator needs dimension
-  D ∝ M² in the codebook, making the GPU the genuine enabler for composition past ~320 concepts (now integrated;
-  the default backend auto-detects the GPU). See
-  `research/findings/2026-06-04-capacity-curve-scaling-cost-model.md`.
-
----
-
-**Compositional structure: two long-standing walls surpassed, biology-faithfully (2026-06-03):**
-
-- **The 320-concept *nested*-composition wall — surpassed (≈48% → 100%).** Storing facts whose slots are
-  themselves structured ("dog sees (cat chase ball)", "big red ball") collapsed at 320 concepts. A
-  deep-research-informed cheap-first pass re-localized the cause (it was bundle *crosstalk*, not resonator
-  capacity) and the fix — **crosstalk subtraction** (subtract the already-known agent+action, biologically =
-  predictive coding) — takes the full 320-concept agent to **100%** (120/120 mixed nested facts, multi-seed),
-  at the default dimension. See `research/findings/2026-06-03-deep-research-surpassing-the-blockers-synthesis.md`.
-
-- **"Compose-pathways went silent" — solved by thalamocortical gating.** The project's recurring
-  variable-binding failure (verb→motor weights grown by STDP "went silent", 5/20 seed-fragile) is fixed by a
-  new **per-pathway transmission gate** in the spiking bridge: binding = *which gate is open*, not which weight
-  grew (Logiaco-Abbott-Escola 2021). Gated routing binds the verb→motor mapping **4/4 deterministic** and
-  re-binds with **zero weight change**, where grown weights could not — and the loop is closed biologically
-  (**basal ganglia disinhibit thalamus → thalamic activity opens the cortical gate**). Validated in spikes (8
-  tests). See `research/findings/2026-06-03-thalamocortical-gating-solves-compose-binding-SHIPPED.md`.
-
-- **Honest scope (the deliverable is composition + memory + trust, not fluency).** A pre-compute review
-  confirmed — without spending GPU — that fluent open-ended generation from a *from-scratch, biology-faithful,
-  single-GPU* spiking model is a documented wall (a 25M-param spiking LM overfits to held-out perplexity
-  ~204K versus a 6M transformer's 6.1 on the same corpus; this matches the field). The project's distinctive
-  contribution is the biology-faithful composition / memory / no-confabulation half, which is where these
-  wins land. See `research/findings/2026-06-03-pre-compute-review-the-tiny-LLM-gap-is-ALREADY-MEASURED.md`.
-
----
-
-**Four new pillars in one autonomous arc (2026-05-25/26):**
-
-- **Pillar n=108 VALIDATED**: D4 dedicated-pool bio_brain_regions
-  cross-bridge composition (V=80 = 5 bridges × V=16). OB 1.000 every
-  load through L=7 (zero errors / 3600 trials); OI 1.000 / 1.000 /
-  0.977 at L=2/3/5; capacity envelope passes through L=6 (0.813)
-  before collapse at L=7. Dramatically beats both D5 hybrid (0.790)
-  and pillar n=95 G.20 sparse (0.790) at L=5 OI. Pure dedicated-pool
-  is the cleanest cross-bridge composition substrate the project has
-  produced. Reviewer 9/9 CLEAR.
-
-- **Pillar n=107 VALIDATED**: Wang 2002 cortical NMDA bistability at
-  substrate scale via NMDA:AMPA conductance ratio fix. n=1000
-  dlpfc_wm density=0.20 with nmda_ratio=0.6 (or 0.8) → 3.00s
-  sustained activity all 3 seeds (rate_ratio 753-897). NMDA-off
-  control silent. Closes Direction Q across 4 prior PARTIAL axes
-  (density / scale / E/I balance); falsifies "Izhikevich isn't
-  biological enough" alternative. Reviewer 12/12 CLEAR.
-
-- **Pillar n=106 VALIDATED (BOUNDARY)**: D5 hybrid sparse-distributed
-  bio_brain_regions cross-bridge composition. OB 1.000 every load;
-  OI 1.000 / 0.998 / 0.790 at L=2/3/5; L=5 OI EXACTLY mirrors pillar
-  n=95 G.20 sparse boundary. First architecture unifying biology-
-  faithful dedicated pools (n=98/n=105) with sparse-distributed
-  cross-bridge composition (n=95). Reviewer 9/9 CLEAR.
-
-- **Pillar n=105 VALIDATED**: bio_brain_regions V=16 → V=32 single-
-  substrate vocab scaling. 18/18 cells PASS at 0.80 bar; L=5 OI =
-  0.993. Reviewer 7/7 CLEAR.
-
-**Bug-discovery pattern recognized**: 4 reversals in 24 hours where
-prior NEGATIVE findings turned out to be specific seeding/parameter
-bugs (D5/D4 cross-bridge uniformity; Q NMDA-AMPA ratio default).
-Standing discipline going forward: when architecture returns
-essentially-chance results, suspect a systematic bug BEFORE
-declaring architectural failure.
-
-See [CHANGELOG.md](CHANGELOG.md) 2026-05-26 entry for full per-pillar
-details + commit SHAs.
-
----
-
-**Prior validated tier (2026-05-23/24):
-Biologized theta-gamma mode-unification (Lisman-Idiart N.16):**
-
-The catalog-documented mechanism for order-bearing AND order-invariant
-readouts from one theta-gamma encoded code — flagged earlier as
-"the key catalog-documented interconnection the project never built"
-— is now biologized end-to-end on the project's spiking substrate
-across three nested scales:
-
-```
-Per-bridge mode-unification (n=94):  multi-seed OB 1.000 + OI 1.000/
-                                      1.000/0.960-0.987 across all 5
-                                      bridges of the 160-concept
-                                      ensemble; both readouts PASS
-                                      with parallel-population-matching
-                                      identification (feedforward
-                                      dendritic-integration + lateral-
-                                      inhibition WTA over substrate-
-                                      derived grounded symbols)
-Cross-bridge characterisation (n=95): OB extends PERFECTLY cross-
-                                      bridge (1.000 every cell on 160-
-                                      symbol distractors; zero errors
-                                      / 3600 trials); OI marginal-sum
-                                      top-K ceilings at L=5 x V=160
-                                      (~0.79; just below the 0.80 bar)
-Substrate-grounding on build_biological_brain_regions (n=96):
-                                      parallel-matching PASSes on the
-                                      v14/v16 16-pool concept architecture
-                                      (multi-seed 1.000/1.000/0.997 at
-                                      L=2/3/5) -- CLEANER than G.20
-                                      sparse because per-concept pools
-                                      have near-orthogonal raw activity
-With hippocampus PRESENT (n=97):      parallel-matching still PASSes
-                                      with hippocampus EC/DG/CA3/CA1 +
-                                      Phase 1.3 SWR consolidation
-                                      pathways enabled (multi-seed
-                                      1.000/1.000/0.993) -- the
-                                      substrate that ALSO has Phase
-                                      1.3 SWR consolidation validated
-                                      (3/3 strict anti-cheat multi-seed)
-                                      supports the mode-unification
-                                      mechanism cleanly
+```bibtex
+@software{neural_simulator,
+  title  = {Neural Simulator: a GPU-accelerated biologically realistic
+            spiking neural network simulator with real-time 3D visualization},
+  author = {Thiberge, Daniel},
+  year   = {2026},
+  url    = {https://github.com/danthi123/neural-simulator}
+}
 ```
 
-Five adversarial reviews CLEAR across 69+ exploit-class checks total
-(including independent byte-exact reproductions of single cells from
-caches; per-concept activity-vector distinctness verification;
-substrate-identity checks; no-confab moat 7/7 throughout; frozen 0.80
-bar never tuned). The (c) generative-replay loop -- the third leg of
-the 2026-05-19 conversational-path reframe (SPEAR → theta-gamma mode-
-unification → generative replay) -- can now build on a substrate where
-ALL FIVE load-bearing components are validated together. Honest scope:
-this is the biology-grounded compositional substrate; explicitly NOT
-LLM-fluent prose; the conversational arc's next milestone is the (c)
-loop-controller build that produces partial-sequence completion via
-SWR replay against the consolidated cortical schema. The oracle-
-adjacency caveat from the parallel-matching design (decoder
-structurally closer to argmax-over-vocab than TPAM's recurrent
-attractor; "vocabulary" IS the substrate's own grounded symbols, not
-engineered) is preserved throughout.
-
-See `research/findings/2026-05-23-OPTION3-parallel-matching-PASSES-on-build_biological_brain_regions-substrate-cleanest-biology-match-for-generative-replay.md`,
-`research/findings/2026-05-23-HIPPO-OPTION3-PASS-parallel-matching-mode-unification-still-works-with-hippocampus-PRESENT-c-can-build-cleanly.md`,
-and `docs/plans/2026-05-23-generative-replay-design.md` /
-`docs/plans/2026-05-24-generative-replay-implementation.md` for the
-full thread + (c) build plan.
-
 ---
-
-**Earlier flagship — trustworthy, continual, fully-local concept memory + an
-early own-network speech generator (2026-05-16):**
-
-A multi-part cortex storing many concepts as distributed sparse
-ensembles (Pulvermüller cortical word-webs; Kanerva sparse
-distributed memory; Tonegawa engram tagging) now demonstrates, with
-anti-cheat controls:
-
-```
-Concept capacity:   320 concepts (5 cortices × 64), every cortex
-                    ~98% concept-discrimination; 160-concept tier
-                    100% per-cortex
-Cross-cue recall:   ~87% genuine (320) / ~93% multi-seed (160),
-                    measured with a pre/post anti-cheat control
-                    (counts only if it was NOT already the answer
-                    before being taught — rules out coincidence)
-Sentence recall:    subject→(verb, object) ≈80%
-Trustworthiness:    clean confidence separation known vs unknown —
-                    the system abstains instead of confabulating
-Continual learning: new vocabulary does not erase old memories
-                    (no catastrophic forgetting), multi-seed
-Generator (early):  the system's OWN spiking net, trained by
-                    surrogate-gradient backprop-through-time on a
-                    local text corpus, provably learns real text
-                    structure (70% loss reduction; 22% better than
-                    a shuffled-text control) — foundation only,
-                    not yet fluent
-```
-
-Honest framing: the validated, distinctive result is a
-biology-grounded memory that is **continual** (doesn't forget) and
-**trustworthy** (doesn't fabricate), running **entirely locally**.
-Open-ended fluent generation is an active frontier — the foundation
-is proven; fluency is not, and is not overclaimed. Several results
-en route were retracted forthrightly when anti-cheat controls
-failed (e.g. a 2026-05-14 architecture-mismatch bug; a
-seed-favourable retrieval number corrected to its multi-seed mean) —
-those corrections are part of the record, not hidden.
-
-See `research/findings/2026-05-16-G20-failure-mechanism-FINAL-SYNTHESIS.md`
-and `research/findings/2026-05-16-generator-increment1-foundation.md`.
-
----
-
-**Earlier flagship — navigation on 16×16 gridworld with biology-grounded perception** —
-agent reaches goal 38% of the time using only retinal input, no
-shortcuts (no direct (x,y) access, no heuristic, no distance reward).
-
-```
-Configuration: A+E + G v2.5 + Cluster K v2 visual cortex
-Validation:    6 independent seeds, 1800 steps each
-Result:        Mean 2.87 ± 0.19 Manhattan distance to goal
-```
-
-See [`docs/CURRENT-STATE.md`](docs/CURRENT-STATE.md) for the configuration
-and [`research/findings/2026-05-01-cluster-k-v2-breakthrough.md`](research/findings/2026-05-01-cluster-k-v2-breakthrough.md)
-for the breakthrough writeup.
-
-**Word→action mapping was UNDER INVESTIGATION as of 2026-05-03**
-(permuted-label control falsified the prior 28.5% claim). Resolved
-on 2026-05-06 by changing the training paradigm to embodied Hebbian
-co-firing — Tier 1 BREAKTHROUGH (W→A 5/6 + A→W 6/6 aligned), Tier 2.1
-BREAKTHROUGH (8-word + 12-word synonyms 5/6 + 6/6 aligned). The
-permuted-label control was the right anti-cheat — it caught a real
-problem with the previous training approach.
-
-**Continual learning + sleep consolidation validated multi-seed
-(2026-05-08 → 2026-05-09):**
-- Phase 1.4 BRANCH A: 5/6 PASS, mean 103% retention (no catastrophic
-  forgetting when learning new vocab)
-- 8-word Phase 1.3 + Tier 2.1 combined: **3/3 GO** at multi-seed
-  + 3-seed strict anti-cheat IDENTICAL to non-strict (cortex truly
-  retains binding post-consolidation)
-- 12-word vocab default arch: **2/3 GO PARTIAL** (defines capacity
-  boundary; seed 43 fails at 71% primary)
-- 12-word vocab **scaled arch** (n_motor=2000): **3/3 GO unanimous**
-  multi-seed (mean primary 95.5%, mean synonym 115.0%) — capacity
-  hypothesis confirmed at multi-seed (2026-05-09)
-- Phase 1.5 unified 4-benchmark suite at scaled arch (3-seed FINAL,
-  2026-05-09): **DEMOTED** from milestone gate to tier report. Mean
-  **0.629 ± 0.056** — below 0.70 master plan threshold. All 3 hypothesis
-  tests refuted; architectural ceilings real:
-  - **2/4 PASS** all 3 seeds (sequential_expansion 0.95,
-    retention_over_time 0.94) — sequential continual learning regime
-    validated at scaled arch
-  - **2/4 architectural ceiling** (interference 0.39, long_tail 0.26
-    after 3-lever sweep): under-training REFUTED (+0.005), capacity
-    REFUTED (+0.045), dose+teacher REFUTED (+0.090). All small
-    sub-threshold lifts. Per-word bimodal pattern (some words bind,
-    others don't) consistent across all tests suggests drive-pattern
-    collision under sparse encoding — architectural not tunable.
-- Track 3 v1 conversational scaffolding **feature-complete +
-  multi-seed validated** (2026-05-09): 4 layers shipped (`--learn`
-  primitive, `chat_learn_demo` runner, `:again`/`:opposite`/`:history`/
-  `:forget` dialog state, `:speak` generative decoder). chat_speak_demo
-  single-seed validated at 75% A2W (3/4 actions decoded correctly).
-  **6-seed multi-seed: A2W mean 58.3% ± 20.4%, 5/6 seeds at ≥50%**
-  (5/6 above-chance). Per-direction A2W: N=67% E=67% S=67% W=33%
-  (W cascade-bias mirror of the Tier 1 BREAKTHROUGH N-bias).
-  Track 3 v1 conversation example: read words, write words, remember
-  last action, learn new vocab online — all biology-grounded.
-- **Phase 2 path-f-hybrid scale thesis REFUTED (2026-05-09 evening):**
-  Phase 2.2b v3 at 50M params (375× larger than Phase 2.3a's 134K)
-  produced inter-word cosine 0.85 — WORSE than Phase 2.3a's 0.72.
-  Bigger model packs direction-word features MORE alike, not less.
-  Char-level next-char objective is wrong for word-action transfer;
-  scale doesn't fix it. **Phase 2 path-f-hybrid is a documented
-  dead-end at single-3090 scale class.** The path forward to
-  conversational capability is fully **Path A (biology-grounded):**
-  Phase 1.4 BRANCH A + Phase 1.3 consolidation + Tier 2.1 12-word
-  scaled multi-seed + Track 3 v1 (chat_repl `--learn` / `:speak`
-  generative decoder / dialog state). Currently:
-  `chat_speak_synonym_demo` (Tier 2.1 8-word :speak production-side
-  test) smoke in flight, then 6-seed multi-seed wrapper pre-staged.
-  Subsequent: 16-word capacity rule extension test (predicted PASS
-  at scaled arch).
-
-This characterizes the architecture's empirical capability: the
-biology-grounded continual learning works at multi-seed (4/8/12-word
-vocab tiers), sleep consolidation transfers binding to cortex
-genuinely (anti-cheat validated), and motor pool capacity scales
-linearly with vocab size (rule: ~333 neurons per sub-population).
-
-See:
-- [`research/findings/2026-05-09-Phase1.3-Tier2.1-12word-scaled-3seed-CONFIRMED.md`](research/findings/2026-05-09-Phase1.3-Tier2.1-12word-scaled-3seed-CONFIRMED.md) (12-word multi-seed)
-- [`research/findings/2026-05-09-Phase-1.5-interference-undertraining-hypothesis.md`](research/findings/2026-05-09-Phase-1.5-interference-undertraining-hypothesis.md) (Phase 1.5 partial + hypothesis)
-- [`research/findings/2026-05-08-Phase1.3-Tier2.1-strict-anti-cheat-3seed-CONFIRMED.md`](research/findings/2026-05-08-Phase1.3-Tier2.1-strict-anti-cheat-3seed-CONFIRMED.md) (anti-cheat)
-- [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) (capacity scaling table)
-
----
-
-## License
-
-MIT. See [LICENSE](LICENSE).
-
-## Mirrors
-
-- GitHub: https://github.com/danthi123/neural-simulator
-- Gitea: https://git.dant123.com/dant123/neural-simulator
 
 ## How this differs from typical AI
 
 | Typical AI (e.g., LLMs) | This project |
 |---|---|
-| Gradient descent on millions of parameters | Spike-timing plasticity at each synapse |
+| Gradient descent over millions of parameters | Spike-timing plasticity at each synapse |
 | Trained once, then frozen | Always learning from interaction |
-| Symbolic input/output (tokens) | Continuous neural activity |
-| Massive corpora, no embodiment | Embodied agent in a world |
-| Capabilities far exceed biology | Capabilities limited by biology faithfulness |
+| Symbolic tokens in and out | Continuous neural activity |
+| Massive corpora, no body | An embodied agent in a world |
+| Capabilities far exceed biology | Capabilities bounded by biological faithfulness |
 
-We're not trying to compete with GPT. We're trying to understand
-**how much of intelligence emerges from biology alone**.
+We are not trying to compete with GPT. We are trying to understand **how
+much of intelligence emerges from biology alone.**
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+## Mirrors
+
+- GitHub: https://github.com/danthi123/neural-simulator
+- Gitea: https://git.dant123.com/dant123/neural-simulator
