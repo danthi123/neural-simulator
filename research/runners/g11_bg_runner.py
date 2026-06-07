@@ -5574,6 +5574,14 @@ def main():
         far_se = (max(0, gs - 2), max(0, 1))              # was (6, 1)
         if args.goal_schedule == "multi":
             goal_schedule = [(0, far), (450, far_west), (900, sw), (1350, far_se)]
+        elif args.goal_schedule == "single":
+            # 2026-06-06 perceptual-bootstrap gauge: ONE fixed goal for the
+            # whole episode. Use with a long --n-steps so a zero-init
+            # perception→action pathway (e.g. visual-cortex IT→cortex_X) has
+            # time + many goal-reaches to bootstrap from reward + exploration
+            # WITHOUT the coordinate heuristic. The cleanest "can perception
+            # learn to navigate at all?" test (no goal-change generalization).
+            goal_schedule = [(0, far)]
         elif args.goal_schedule == "curriculum":
             flip = max(1200, args.curriculum_warmup_steps + 600)
             goal_schedule = [(0, far), (flip, far_west)]
