@@ -2664,6 +2664,25 @@ def run_moving_goal_episode(
     # over heuristic_decay_after_step.
     heuristic_wean_start: int = -1,
     heuristic_wean_steps: int = 1500,
+    # ADAPTIVE / activity-gated weaning (N1, 2026-06-06). A FIXED critical-period
+    # clock (heuristic_wean_start) is NOT robust across seeds — the post-wean hold
+    # is seed-dependent and non-monotonic (more teaching can HURT; see
+    # research/findings/2026-06-06-N1-critical-period-scaffold-TRACTABLE.md). Real
+    # critical periods close when the circuit is READY (Hensch — activity/
+    # maturation-gated), not on a clock. With heuristic_wean_adaptive=True the
+    # runner PROBES readiness online: every wean_probe_every steps it turns the
+    # heuristic OFF for a short probe window (wean_probe_window steps) and measures
+    # the agent's mean distance to goal during the probe. If the learned mapping
+    # navigates self-sufficiently (mean probe distance <= wean_probe_threshold),
+    # it COMMITS — weans the heuristic off permanently by ramping to 0 over
+    # heuristic_wean_steps from the commit step. Otherwise the heuristic turns back
+    # ON (keep teaching) until the next probe. This adapts to each seed's sweet
+    # spot and avoids over-training. Takes precedence over the fixed-clock wean
+    # (heuristic_wean_start) when both are set. Default OFF (unchanged behavior).
+    heuristic_wean_adaptive: bool = False,
+    wean_probe_every: int = 500,
+    wean_probe_window: int = 200,
+    wean_probe_threshold: float = 2.5,
     # Sleep-replay memory consolidation (Stage 7, 2026-04-27).
     # During sleep phases: no external goal, hippo cells fire in random
     # replay patterns (modeling NREM sharp-wave ripples), corticostriatal
@@ -3489,6 +3508,20 @@ def run_moving_goal_episode(
     distance_log = [manhattan(x, y)]
     goal_change_steps = []
 
+    # ----- ADAPTIVE / activity-gated heuristic weaning state (N1) -----
+    # Phase machine: "teaching" (heuristic full strength, occasionally interrupted
+    # by OFF probe windows) -> "committed" (heuristic permanently weaning to 0 by
+    # ramping over heuristic_wean_steps from adaptive_commit_step).
+    adaptive_phase = "teaching"
+    adaptive_probe_active = False          # currently inside an OFF probe window
+    adaptive_probe_start_step = -1         # step at which the active probe began
+    adaptive_commit_step = -1              # step at which the wean committed (-1 = not yet)
+    adaptive_probe_history = []            # list of dicts: {probe_start, probe_end, mean_dist, committed}
+    # First probe begins at the first multiple of wean_probe_every that is > 0
+    # (i.e. after at least one teaching block). Guard against degenerate configs.
+    _wpe = max(1, int(wean_probe_every))
+    _wpw = max(1, int(wean_probe_window))
+
     STIMULUS_MS = 100.0
     READOUT_START_MS = 30.0
     READOUT_END_MS = 100.0
@@ -3664,6 +3697,54 @@ def run_moving_goal_episode(
     current_gating_strength = 1.0
     visual_cortex_action_gate_opened = False
     for step in range(n_steps):
+        # ----- ADAPTIVE / activity-gated heuristic weaning scheduler (N1) -----
+        # Run BEFORE the per-step h_strength decision below. While in the
+        # "teaching" phase, periodically open an OFF probe window (heuristic
+        # silenced) to measure whether the learned IT->cortex mapping can
+        # navigate self-sufficiently. If a probe shows readiness (mean distance
+        # over the window <= wean_probe_threshold), COMMIT the wean; otherwise
+        # resume teaching until the next probe.
+        if heuristic_wean_adaptive and adaptive_phase == "teaching":
+            if adaptive_probe_active:
+                # Are we at the first step AFTER the active probe window? If so,
+                # evaluate the distances recorded during the window (the last
+                # _wpw entries of distance_log are exactly the probe-window steps).
+                if step >= adaptive_probe_start_step + _wpw:
+                    probe_dists = distance_log[-_wpw:]
+                    mean_probe_dist = float(np.mean(probe_dists)) if probe_dists else float("inf")
+                    committed = mean_probe_dist <= float(wean_probe_threshold)
+                    adaptive_probe_history.append({
+                        "probe_start": int(adaptive_probe_start_step),
+                        "probe_end": int(step),
+                        "mean_dist": mean_probe_dist,
+                        "committed": bool(committed),
+                    })
+                    adaptive_probe_active = False
+                    if committed:
+                        adaptive_phase = "committed"
+                        adaptive_commit_step = step
+                        if verbose:
+                            print(f"[g11 seed={seed}] step {step}: ADAPTIVE WEAN "
+                                  f"COMMITTED (probe mean dist {mean_probe_dist:.2f} "
+                                  f"<= threshold {wean_probe_threshold}); ramping "
+                                  f"heuristic to 0 over {heuristic_wean_steps} steps",
+                                  flush=True)
+                    else:
+                        if verbose:
+                            print(f"[g11 seed={seed}] step {step}: adaptive probe "
+                                  f"NOT ready (mean dist {mean_probe_dist:.2f} > "
+                                  f"threshold {wean_probe_threshold}); resume teaching",
+                                  flush=True)
+            else:
+                # Open a new probe window every _wpe steps (first probe at step _wpe).
+                if step > 0 and step % _wpe == 0:
+                    adaptive_probe_active = True
+                    adaptive_probe_start_step = step
+                    if verbose:
+                        print(f"[g11 seed={seed}] step {step}: adaptive readiness "
+                              f"PROBE start (heuristic OFF for {_wpw} steps)",
+                              flush=True)
+
         # Cluster K v2 visual cortex critical-period close: open the
         # IT -> cortex_X gate at the configured warmup step. Mimics real
         # visuomotor development: V1/V2/IT mature first (sensory critical
@@ -3948,6 +4029,25 @@ def run_moving_goal_episode(
                                 and step < goal_silence_after_step + goal_silence_duration)
         if in_sleep or in_goal_silence_step:
             h_strength = 0.0
+        elif heuristic_wean_adaptive:
+            # ADAPTIVE / activity-gated weaning (N1): the scheduler at the top of
+            # the loop drives the phase machine. During the "teaching" phase the
+            # heuristic is full strength EXCEPT inside an OFF readiness-probe
+            # window (heuristic silenced to measure self-sufficiency). Once the
+            # wean has committed, ramp from full strength to 0 over
+            # heuristic_wean_steps from adaptive_commit_step, then hold at 0.
+            if adaptive_phase == "committed":
+                if step >= adaptive_commit_step + heuristic_wean_steps:
+                    h_strength = 0.0
+                else:
+                    _wean_frac = (step - adaptive_commit_step) / float(max(1, heuristic_wean_steps))
+                    h_strength = heuristic_strength * (1.0 - _wean_frac)
+            elif adaptive_probe_active:
+                # OFF probe window: silence the heuristic so we measure whether
+                # the learned mapping navigates on its own.
+                h_strength = 0.0
+            else:
+                h_strength = heuristic_strength
         elif heuristic_wean_start >= 0:
             # Critical-period developmental scaffold (N1): base strength during
             # the critical period (step < wean_start), linear ramp to 0 over
@@ -4736,6 +4836,20 @@ def run_moving_goal_episode(
         "reset_losers_only": bool(reset_losers_only),
         "urgency_max_pA": float(urgency_max_pA),
         "readout_source": _readout_source,
+        # N1 adaptive weaning instrumentation. adaptive_wean_commit_step is -1 if
+        # adaptive weaning was off or never committed; otherwise the step at which
+        # the readiness probe passed and the permanent wean began. probe_history
+        # is the sequence of probe windows ({probe_start, probe_end, mean_dist,
+        # committed}) showing readiness rising over time.
+        "heuristic_wean_adaptive": bool(heuristic_wean_adaptive),
+        "adaptive_wean_commit_step": int(adaptive_commit_step),
+        "adaptive_wean_probe_history": adaptive_probe_history,
+        "adaptive_wean_probe_params": {
+            "every": int(wean_probe_every),
+            "window": int(wean_probe_window),
+            "threshold": float(wean_probe_threshold),
+            "wean_steps": int(heuristic_wean_steps),
+        },
         "action_log": action_log, "reward_log": reward_log,
         "distance_log": distance_log,
         "mean_distance_overall": float(dist_arr.mean()),
@@ -5533,7 +5647,22 @@ def main():
                          "teaches IT->cortex during [0, wean-start], then fades over --heuristic-wean-steps, then is off.")
     ap.add_argument("--heuristic-wean-steps", type=int, default=1500,
                     help="N1 critical-period scaffold: number of steps over which the heuristic linearly ramps from "
-                         "full strength to 0 (default 1500). Only active when --heuristic-wean-start >= 0.")
+                         "full strength to 0 (default 1500). Active for both --heuristic-wean-start and "
+                         "--heuristic-wean-adaptive (ramps from the adaptive commit step).")
+    ap.add_argument("--heuristic-wean-adaptive", action="store_true",
+                    help="N1 ADAPTIVE / activity-gated weaning: instead of a fixed critical-period clock, PROBE "
+                         "readiness online — every --wean-probe-every steps silence the heuristic for "
+                         "--wean-probe-window steps and measure mean distance to goal; if <= --wean-probe-threshold "
+                         "(learned mapping is self-sufficient) COMMIT the wean (ramp to 0 over --heuristic-wean-steps), "
+                         "else keep teaching. Robust across seeds where a fixed clock is not. Takes precedence over "
+                         "--heuristic-wean-start.")
+    ap.add_argument("--wean-probe-every", type=int, default=500,
+                    help="Adaptive weaning: probe readiness every N steps (default 500).")
+    ap.add_argument("--wean-probe-window", type=int, default=200,
+                    help="Adaptive weaning: length (steps) of each OFF readiness-probe window (default 200).")
+    ap.add_argument("--wean-probe-threshold", type=float, default=2.5,
+                    help="Adaptive weaning: commit the wean when the probe-window mean distance to goal is "
+                         "<= this value (default 2.5 — the learned mapping navigates without the heuristic).")
     ap.add_argument("--sleep-replay-after-step", type=int, default=-1,
                     help="Step at which to enter sleep-replay phase (default -1 = no sleep). During sleep, hippo replays random place/goal patterns, corticostriatal thaws for consolidation.")
     ap.add_argument("--sleep-replay-steps", type=int, default=300,
@@ -5765,6 +5894,10 @@ def main():
             post_curriculum_heuristic_strength=args.post_curriculum_heuristic_strength,
             heuristic_wean_start=args.heuristic_wean_start,
             heuristic_wean_steps=args.heuristic_wean_steps,
+            heuristic_wean_adaptive=args.heuristic_wean_adaptive,
+            wean_probe_every=args.wean_probe_every,
+            wean_probe_window=args.wean_probe_window,
+            wean_probe_threshold=args.wean_probe_threshold,
             sleep_replay_after_step=args.sleep_replay_after_step,
             sleep_replay_steps=args.sleep_replay_steps,
             sleep_replay_rate_hz=args.sleep_replay_rate_hz,
