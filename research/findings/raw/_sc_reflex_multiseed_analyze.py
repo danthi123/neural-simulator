@@ -11,11 +11,17 @@ orients to the goal from VISION (no coordinates) via an innate collicular
 reflex. -> write the finding, extend to 6 seeds, then Rank 2 (dorsal/PPC
 learned read-out + transmission_gate wean).
 """
+import glob
 import json
 import os
+import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SEEDS = [42, 43, 44]
+# Auto-detect seeds from the A-condition files present (handles 3- or 6-seed).
+SEEDS = sorted({int(m.group(1)) for f in glob.glob(os.path.join(HERE, "_sc_reflex_A_s*.json"))
+                if (m := re.search(r"_sc_reflex_A_s(\d+)\.json$", f))})
+if not SEEDS:
+    SEEDS = [42, 43, 44]
 
 
 def score(fn):
