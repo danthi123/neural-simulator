@@ -2652,6 +2652,18 @@ def run_moving_goal_episode(
     # post_curriculum_heuristic_strength. -1 = no change (default).
     heuristic_decay_after_step: int = -1,
     post_curriculum_heuristic_strength: float = 0.0,
+    # Critical-period developmental scaffold (N1, 2026-06-06). Instead of the
+    # abrupt step-down of heuristic_decay_after_step, this LINEARLY ramps the
+    # effective heuristic_strength from its base value down to 0 over the
+    # window [heuristic_wean_start, heuristic_wean_start + heuristic_wean_steps],
+    # then holds at 0. Biology: an innate scaffold (the heuristic teacher)
+    # bootstraps the learned IT->cortex_X mapping during an early critical
+    # period, then fades — the deployed weaned agent navigates from genuinely-
+    # learned perception with NO heuristic. heuristic_wean_start = -1 (default)
+    # disables the wean (unchanged behavior). When enabled, it takes precedence
+    # over heuristic_decay_after_step.
+    heuristic_wean_start: int = -1,
+    heuristic_wean_steps: int = 1500,
     # Sleep-replay memory consolidation (Stage 7, 2026-04-27).
     # During sleep phases: no external goal, hippo cells fire in random
     # replay patterns (modeling NREM sharp-wave ripples), corticostriatal
@@ -3936,6 +3948,18 @@ def run_moving_goal_episode(
                                 and step < goal_silence_after_step + goal_silence_duration)
         if in_sleep or in_goal_silence_step:
             h_strength = 0.0
+        elif heuristic_wean_start >= 0:
+            # Critical-period developmental scaffold (N1): base strength during
+            # the critical period (step < wean_start), linear ramp to 0 over
+            # [wean_start, wean_start + wean_steps], then 0 forever after.
+            if step < heuristic_wean_start:
+                h_strength = heuristic_strength
+            elif step >= heuristic_wean_start + heuristic_wean_steps:
+                h_strength = 0.0
+            else:
+                # Linear ramp factor 1.0 -> 0.0 across the wean window.
+                _wean_frac = (step - heuristic_wean_start) / float(max(1, heuristic_wean_steps))
+                h_strength = heuristic_strength * (1.0 - _wean_frac)
         elif heuristic_decay_after_step >= 0 and step >= heuristic_decay_after_step:
             h_strength = post_curriculum_heuristic_strength
         elif enable_cue_reflex and cue_reflex_replaces_heuristic:
@@ -5503,6 +5527,13 @@ def main():
                     help="Step after which heuristic_strength changes to --post-curriculum-heuristic-strength (default -1 = no decay).")
     ap.add_argument("--post-curriculum-heuristic-strength", type=float, default=0.0,
                     help="Heuristic strength after decay step (default 0.0 = full off).")
+    ap.add_argument("--heuristic-wean-start", type=int, default=-1,
+                    help="N1 critical-period scaffold: step at which the heuristic begins linearly weaning to 0 "
+                         "(default -1 = no wean). Takes precedence over --heuristic-decay-after-step. The heuristic "
+                         "teaches IT->cortex during [0, wean-start], then fades over --heuristic-wean-steps, then is off.")
+    ap.add_argument("--heuristic-wean-steps", type=int, default=1500,
+                    help="N1 critical-period scaffold: number of steps over which the heuristic linearly ramps from "
+                         "full strength to 0 (default 1500). Only active when --heuristic-wean-start >= 0.")
     ap.add_argument("--sleep-replay-after-step", type=int, default=-1,
                     help="Step at which to enter sleep-replay phase (default -1 = no sleep). During sleep, hippo replays random place/goal patterns, corticostriatal thaws for consolidation.")
     ap.add_argument("--sleep-replay-steps", type=int, default=300,
@@ -5732,6 +5763,8 @@ def main():
             heuristic_strength=args.heuristic_strength,
             heuristic_decay_after_step=args.heuristic_decay_after_step,
             post_curriculum_heuristic_strength=args.post_curriculum_heuristic_strength,
+            heuristic_wean_start=args.heuristic_wean_start,
+            heuristic_wean_steps=args.heuristic_wean_steps,
             sleep_replay_after_step=args.sleep_replay_after_step,
             sleep_replay_steps=args.sleep_replay_steps,
             sleep_replay_rate_hz=args.sleep_replay_rate_hz,
