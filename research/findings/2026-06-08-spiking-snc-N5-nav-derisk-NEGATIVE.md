@@ -1,7 +1,21 @@
 # Fully brain-based reward + dopamine REGRESSES navigation (honest negative)
 
+> ## ⚠️ CORRECTION (2026-06-08, same day): this NEGATIVE is CONFOUNDED by a bridge BUG — do NOT cite as a substrate limit.
+> The diagnosis (chasing 137 MB run logs from the frontend work) found the neural runs throw a
+> **silent shape-mismatch every step** at `sim/bridge.py:5964`
+> (`weight_updates * cp_d1_d2_sign[:actual_nnz]`, shapes `(241047,)` vs `(173888,)`): `cp_d1_d2_sign`
+> is allocated once at init to the initial synapse count but the synapse arrays later grow, so it is
+> never regrown → the reward-modulated weight update **raises and is silently caught every step it
+> runs**, dropping reward-driven plasticity. It hits BOTH conditions but ~11× more in the neural runs
+> (377k vs 34k errors) because the continuous N5 reward + tonic SNc dopamine run the reward block far
+> more often. So the "regression" is the neural agent's learning being **silently broken**, NOT the
+> spiking SNc failing on its own merits. **The spiking-SNc Stage A verdict must be RE-RUN after the
+> bug fix.** Also: this bug silently degrades ANY reward-modulated nav run — a broader audit is warranted.
+> Fix = size `cp_d1_d2_sign` (and `cp_transmission_gain`, same pattern at `:2150`) to match the synapse
+> arrays / regrow on structural growth (protected `sim/` edit, owner byte-review).
+
 **Date:** 2026-06-08
-**Status:** NEGATIVE (honest deliverable per the BRAIN-BASED-ONLY standard) — diagnosis in flight
+**Status:** ~~NEGATIVE~~ → **CONFOUNDED by a bridge bug (above); re-run pending the fix**
 **Runner:** `research/runners/g11_bg_runner.py` flagship multi-goal (SC reflex + N8 + N6 back-end)
 **Analyzer:** `research/findings/raw/_biorda_derisk_analyze.py`
 **Raw:** `_biorda_{neural,cheat}_s{42,43,44}.json`
