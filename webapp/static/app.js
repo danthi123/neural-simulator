@@ -2977,9 +2977,13 @@ async function refreshBrainLive() {
         "No active runs. Launch one from the Lab tab to see it here."));
       return;
     }
+    // 2026-06-08: explicitly clear the initial "Loading in-flight runs…" /
+    // empty-state / error placeholder. diffUpdateRunCards keys on
+    // data-run-name and does NOT remove a bare <p>, so without this the
+    // "Loading…" text lingered above the loaded run cards.
+    const _ph = container.querySelector("p.muted, p.error");
+    if (_ph) _ph.remove();
     // Diff-update — preserves cards in place, no flicker on poll.
-    // Empty-state placeholder text from a prior tick is removed because
-    // it has no data-run-name; the helper drops it as a stale child.
     diffUpdateRunCards(container, runs, renderBrainRunCard);
   } catch (e) {
     container.replaceChildren(el("p", { class: "error" },
