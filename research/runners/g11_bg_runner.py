@@ -2710,6 +2710,31 @@ def run_moving_goal_episode(
     # When False, Stage A behavior is byte-unchanged (host _V_scaffold subtraction).
     # Validated CPU de-risk: research/findings/2026-06-08-gabab-girk-stageB-derisk-GO.md.
     enable_neural_critic: bool = False,
+    # ── Critic drive calibration (2026-06-08, runner-side; diagnosed by
+    #    research/findings/raw/g11_bg/_placecritic_diag*.py). The smoke found the
+    #    MSN-D1 striosome_value critic NEVER FIRED in nav. Root cause (decisive):
+    #    (1) the MSN-D1 preset's depolarized rheobase (~700 pA) is built for the
+    #        cortically-driven up-state; the SPARSE sensor_place_readout place code
+    #        (HIPPO_PYRAMIDAL, ~3-8 Hz) cannot supply that convergent current, so the
+    #        afferent route can't fire it at ANY weight (verified to w=25) — and even
+    #        a 600 pA teacher gave 0.4 Hz. A more EXCITABLE critic type
+    #        (IZH2007_RS_CORTICAL_PYRAMIDAL) DOES fire from the place code (5-20 Hz,
+    #        graded by drive x weight) — diag4.
+    #    (2) a reward-window TEACHER current on the critic is COUNTER-productive: it
+    #        drives post >> pre so STDP sees post-before-pre LTD and the place->value
+    #        weight COLLAPSES (diag6). The place-driven RS critic gives clean LTP.
+    #    (3) at grid_size=32 the default place sigma=0.5 (tuned for the 8x8 grid,
+    #        cell spacing 1) is far narrower than the 4.43 cell spacing -> the place
+    #        code is near-silent at most positions. A modest widening makes it a real
+    #        population bump so a value-of-LOCATION can be carved (diag6: sigma>=1.5 +
+    #        RS critic + afferent w>=8 -> V rises, V(near)>V(far), location-selective
+    #        weight growth, teacher-FREE).
+    #    Calibration = RS critic + raised afferent weight + NO teacher (+ the place
+    #    sigma widened via --hippocampus-drive-sigma at the run level). All runner-
+    #    side; the MSN-D1 default is preserved when the override is None.
+    critic_neuron_type: str = None,            # override striosome_value izh type (None=keep MSN-D1)
+    critic_afferent_weight: float = 3.0,       # sensor_place_readout->striosome_value init weight
+    critic_afferent_density: float = 0.6,
     # Stage 2 windowed GABA_B (2026-06-08 redesign): gate the striosome_value->snc
     # GABA_B current to a bounded LEAD window into each reward evaluation so the
     # slow conductance pre-builds ~1 tau before reward but does NOT integrate
@@ -3187,6 +3212,11 @@ def run_moving_goal_episode(
         enable_visual_cortex=enable_visual_cortex,
         # Spiking-SNc actor-critic Stage B: the neural value critic (2026-06-08).
         enable_neural_critic=enable_neural_critic,
+        # Critic drive calibration (2026-06-08): raised place-afferent weight so the
+        # learned value-of-location is well-graded (the MSN-D1->RS type swap is applied
+        # to the returned region below, after build, to keep the build signature stable).
+        critic_cortex_it_to_value_weight=critic_afferent_weight,
+        critic_cortex_it_to_value_density=critic_afferent_density,
         visual_n_orientations=visual_n_orientations,
         visual_n_frequencies=visual_n_frequencies,
         visual_n_positions_per_dim=visual_n_positions_per_dim,
@@ -3208,6 +3238,21 @@ def run_moving_goal_episode(
         text_input_to_cortex_density=text_input_to_cortex_density,
         text_it_to_output_density=text_it_to_output_density,
     )
+
+    # Critic neuron-type calibration (2026-06-08, runner-side; NO sim/ edit). The
+    # smoke found the MSN-D1 striosome_value critic silent in nav: its depolarized
+    # rheobase (~700 pA) is built for the cortical up-state and the sparse place
+    # code (sensor_place_readout, ~3-8 Hz) can't reach it through the afferent at
+    # ANY weight. A more excitable type fires from the place code (diag4: RS gives
+    # 5-20 Hz, graded by drive x weight) and carves a teacher-free value-of-location
+    # (diag6). Applied by mutating the returned BrainRegion BEFORE the bridge is
+    # built (the build signature is untouched). None => keep the MSN-D1 default
+    # (byte-equivalent to the prior behavior).
+    if enable_neural_critic and critic_neuron_type:
+        for _r in regions:
+            if _r.name == "striosome_value":
+                _r.izh_neuron_type = str(critic_neuron_type)
+                break
 
     # Pre-compute sensory neuron preferred (dx, dy) — 7x7 grid covering [-3, 3]²
     if enable_learned_perception:
@@ -6395,6 +6440,45 @@ def main():
                          "cannot integrate across a long dwell. ~1 GABA_B tau "
                          "(150 ms); the de-risk sweet spot was 100-150. Default "
                          "120.")
+    ap.add_argument("--critic-neuron-type", type=str, default=None,
+                    help="Override the striosome_value critic's Izhikevich type "
+                         "(2026-06-08 calibration). Default None keeps the MSN-D1 "
+                         "preset; but the smoke showed the MSN-D1's depolarized "
+                         "rheobase (~700 pA) can't be reached by the SPARSE "
+                         "sensor_place_readout place code (~3-8 Hz) through the "
+                         "afferent at ANY weight, so the critic stayed silent. "
+                         "Pass IZH2007_RS_CORTICAL_PYRAMIDAL: a more excitable type "
+                         "that DOES fire from the place code (5-20 Hz, graded by "
+                         "drive x weight) and carves a teacher-free value-of-"
+                         "location (research/findings/raw/g11_bg/_placecritic_diag*).")
+    ap.add_argument("--critic-afferent-weight", type=float, default=3.0,
+                    help="Init weight of the sensor_place_readout->striosome_value "
+                         "plastic afferent (the value-critic input). Default 3.0. "
+                         "Raise (~12-15) so the learned value-of-location is well-"
+                         "graded once the place code fires an excitable critic "
+                         "(--critic-neuron-type). stdp_w_max headroom is ensured in "
+                         "run_g11. NOTE a reward-window TEACHER current was tried "
+                         "and REJECTED: it drives post>>pre so STDP sees post-before-"
+                         "pre LTD and the weight COLLAPSES (diag6); the place-driven "
+                         "excitable critic gives clean LTP teacher-free.")
+    ap.add_argument("--hippocampus-drive-sigma", type=float, default=None,
+                    help="Override the place/goal Gaussian drive sigma (cells per "
+                         "bump). Default None keeps 0.5 (tuned for the 8x8 grid). "
+                         "At grid_size=32 the 0.5 code is far narrower than the "
+                         "~4.43 cell spacing -> near-silent at most positions; a "
+                         "modest widening (1.5-2.5) makes it a real population bump "
+                         "so a value-of-LOCATION can be carved by the neural critic "
+                         "(diag6). Affects the actor's place/goal drive too, so "
+                         "validate nav when changing it.")
+    ap.add_argument("--hippocampus-drive-max-pa", type=float, default=None,
+                    help="Override the place/goal Gaussian drive PEAK pA. Default "
+                         "None keeps 600. The deterministic nav (OU off) place code "
+                         "fires <1 Hz at 600 pA — too sparse to drive ANY striatal "
+                         "value critic (diag4/7/8: even an RS critic needs ~1200+ pA "
+                         "to fire from place). Raise (~1200-1500) to fire the critic, "
+                         "BUT this doubles the actor's place+goal drive too, so "
+                         "validate nav. (Pairs with --critic-neuron-type + "
+                         "--critic-afferent-weight + --hippocampus-drive-sigma.)")
     ap.add_argument("--surprise-lr-boost", action="store_true",
                     help="Boost reward_learning_rate when |RPE| is high (NE-like fast meta-modulation)")
     ap.add_argument("--surprise-lr-alpha", type=float, default=2.0)
@@ -6595,6 +6679,15 @@ def main():
             n_steps=args.n_steps,
             grid_size=args.grid_size,
             n_hippocampus_per_layer=args.n_hippocampus_per_layer,
+            # Place/goal drive sigma: keep the 0.5 default unless overridden
+            # (2026-06-08 critic calibration — widen for a real population bump at
+            # large grids so the neural value critic can carve a value-of-location).
+            hippocampus_drive_sigma=(args.hippocampus_drive_sigma
+                                     if args.hippocampus_drive_sigma is not None
+                                     else 0.5),
+            hippocampus_drive_max_pA=(args.hippocampus_drive_max_pa
+                                      if args.hippocampus_drive_max_pa is not None
+                                      else 600.0),
             sensory_to_cortex_weight=args.sensory_to_cortex_weight,
             hippocampus_to_cortex_weight=args.hippocampus_to_cortex_weight,
             enable_pfc=args.pfc,
@@ -6695,6 +6788,8 @@ def main():
             enable_neural_critic=args.enable_neural_critic,
             enable_critic_window=args.critic_window,
             critic_lead_steps=args.critic_lead_steps,
+            critic_neuron_type=args.critic_neuron_type,
+            critic_afferent_weight=args.critic_afferent_weight,
             enable_surprise_lr_boost=args.surprise_lr_boost,
             surprise_lr_alpha=args.surprise_lr_alpha,
             enable_curriculum=args.curriculum,
