@@ -354,7 +354,22 @@ def run_place(seed, *, snc_tonic_pa=180.0, snc_reward_gain=300.0,
               hold_steps=40, n_train=40, reward_learning_rate=0.12,
               place_to_strio_weight=0.2, strio_to_snc_weight=10.0,
               snc_da_sensitivity=8.0, lesion=False, verbose=True,
-              gabab=False, gabab_tau_decay=150.0, gabab_propagation_strength=0.105):
+              gabab=False, gabab_tau_decay=150.0, gabab_propagation_strength=0.105,
+              lead_steps=0, return_trained=False):
+    """Run the full PLACE-CODE value-critic de-risk for one seed.
+
+    lead_steps (NEW, nav-realistic timing de-risk, 2026-06-08): how many steps the place
+    code is held ACTIVE *before* the reward burst arrives, in EACH test condition. In real
+    navigation the place/value afferent fires for many steps while the agent is AT/approaching
+    a location BEFORE the reward event — so the critic's value V and its slow (tau~150 ms)
+    GABA_B inhibition on the SNc are PRE-BUILT before the reward burst, letting the slow
+    conductance cancel a fast burst. The prior probe drove place+reward SIMULTANEOUSLY
+    (lead_steps=0), which the slow GABA_B could NOT cancel (the burst is over before the
+    conductance ramps) — the "probe != deployment" timing trap. With lead_steps>0 the predicted
+    (NEAR) burst should be canceled (V high -> GABA_B pre-built) while the unpredicted (FAR)
+    burst stays full (V(far) low -> no pre-built GABA_B). lead_steps=0 reproduces the original
+    simultaneous timing exactly (backward-compatible default).
+    """
     from sim.backend import get_backend
     xp, _ = get_backend()
     bridge, cfg = _build_place_bridge(
@@ -426,13 +441,58 @@ def run_place(seed, *, snc_tonic_pa=180.0, snc_reward_gain=300.0,
     w_near_final = _mean_pathway_weight(bridge, "place", "striosome_value", pre_subset=near_set)
     w_far_final = _mean_pathway_weight(bridge, "place", "striosome_value", pre_subset=far_set)
 
+    # Training-derived quantities are bundled so the test/gate phase can be re-run at multiple
+    # LEADS from the SAME trained critic (the lead sweep trains once, tests many).
+    train_state = dict(
+        seed=seed, lesion=lesion, gabab=gabab, cfg=cfg, idx_map=idx_map,
+        near_vec=near_vec, far_vec=far_vec, snc_tonic_pa=snc_tonic_pa,
+        snc_reward_gain=snc_reward_gain, hold_steps=hold_steps,
+        na=na, nb=nb, overlap=overlap, distinct_ensembles=distinct_ensembles,
+        near_v_early=near_v_early, near_v_late=near_v_late,
+        w_init=w_init, w_final=w_final, w_near_init=w_near_init, w_near_final=w_near_final,
+        w_far_init=w_far_init, w_far_final=w_far_final,
+        near_v_curve=near_v_curve, near_burst_curve=near_burst_curve,
+    )
+    result = _test_and_gate(bridge, xp, train_state, lead_steps, verbose=verbose)
+    if return_trained:
+        # For the lead sweep: hand back the TRAINED bridge + its train_state so the caller can
+        # re-run _test_and_gate at other leads without retraining (train once, test many).
+        return result, bridge, xp, train_state
+    return result
+
+
+def _test_and_gate(bridge, xp, ts, lead_steps, *, verbose=True):
+    """The test+gate phase for a TRAINED place critic at a given LEAD. Re-warms and measures
+    the four conditions (baseline / predicted-NEAR / unpredicted-FAR / omission), applies the
+    NAV-REALISTIC LEAD, computes the gates, and returns the result dict. Split out of run_place
+    so a lead sweep can re-run JUST this phase (each lead re-warmed + held-out V re-read) on the
+    SAME trained bridge — train once, test at every lead. (2026-06-08.)
+    """
+    cfg = ts["cfg"]; idx_map = ts["idx_map"]
+    near_vec = ts["near_vec"]; far_vec = ts["far_vec"]
+    snc_tonic_pa = ts["snc_tonic_pa"]; snc_reward_gain = ts["snc_reward_gain"]
+    hold_steps = ts["hold_steps"]
+    lesion = ts["lesion"]; gabab = ts["gabab"]; seed = ts["seed"]
+
     # A re-warmed test condition: an ITI floor (learning frozen) re-settles the SNc adaptation
     # state, THEN the condition is measured. Without the re-warm the SNc's adaptation carries over
     # from the previous test (the near test adapts it down → the far burst is spuriously small),
     # confounding the gap. (Diagnosed 2026-06-08.)
+    #
+    # NAV-REALISTIC LEAD (2026-06-08): when lead_steps>0 AND there is a place drive, the place
+    # code is held active (tonic SNc, NO reward) for `lead_steps` BETWEEN the re-warm and the
+    # measured reward window. This pre-builds V and — crucially — the slow GABA_B/GIRK
+    # conductance on the SNc, so a high-V (near) state can cancel the subsequent fast reward
+    # burst from its first step. This replicates how the nav place code leads the reward event
+    # (the prior simultaneous timing gave the slow conductance no time to ramp). The re-warm
+    # holds place OFF so GABA_B decays toward 0 first; the lead then ramps it under the actual
+    # test place ensemble; the measured window reads the burst with GABA_B already in place.
     def _test(place_vec, snc_pa):
         _drive_place(bridge, idx_map, None, {"snc": snc_tonic_pa},
                      hold_steps + 20, xp, freeze_lr=0.0, cfg=cfg)
+        if lead_steps > 0 and place_vec is not None:
+            _drive_place(bridge, idx_map, place_vec, {"snc": snc_tonic_pa},
+                         int(lead_steps), xp, freeze_lr=0.0, cfg=cfg)
         return _drive_place(bridge, idx_map, place_vec, {"snc": snc_pa},
                             hold_steps, xp, freeze_lr=0.0, cfg=cfg)
 
@@ -458,7 +518,7 @@ def run_place(seed, *, snc_tonic_pa=180.0, snc_reward_gain=300.0,
     # Omission (regression guard): NEAR state, reward omitted -> SNc should dip below tonic.
     omit_r, omit_v, _ = _test(near_vec, snc_tonic_pa)
     if verbose:
-        print(f"  [test V] V(near,pred)={pred_v:.1f}Hz  V(far,unpred)={unpred_v:.1f}Hz  "
+        print(f"  [test V lead={lead_steps}] V(near,pred)={pred_v:.1f}Hz  V(far,unpred)={unpred_v:.1f}Hz  "
               f"V(near,omit)={omit_v:.1f}Hz  baseline={base_v:.1f}Hz")
 
     # Anti-cheat (c) host-EMA contrast: a global reward-EMA value is PLACE-BLIND. We compute the
@@ -468,11 +528,20 @@ def run_place(seed, *, snc_tonic_pa=180.0, snc_reward_gain=300.0,
     host_value_near = host_value_far = float(snc_reward_gain)  # an EMA of r is place-independent
     host_gap_ratio = 1.0  # host EMA cannot differ by location
 
+    near_v_early = ts["near_v_early"]; near_v_late = ts["near_v_late"]
+    w_near_init = ts["w_near_init"]; w_near_final = ts["w_near_final"]
+    w_far_final = ts["w_far_final"]
+
     # ---- Gates ----
     # (1) V-learned-spatial: near V rose AND ends higher than far V (a graded value-of-location).
     v_learned_spatial = (near_v_late > 1.20 * near_v_early) and (near_v_late > 1.20 * max(far_v_late, 1e-6))
     # (2) State-specific RPE: far (unpredicted) burst >> near (predicted) burst.
     state_specific = (unpred_r > 1.30 * max(pred_r, 1e-6))
+    # (2b) ABOVE THE SNc NOISE FLOOR: the gap is only MEANINGFUL if the unpredicted burst is a
+    # REAL burst (not ~0 vs ~0.8 Hz). Require the far (unpredicted) burst >= 10 Hz so the ratio
+    # discriminates a cancelled-vs-uncancelled REWARD, not floor noise. (Brief, 2026-06-08.)
+    above_floor = (unpred_r >= 10.0)
+    state_specific_above_floor = bool(state_specific and above_floor)
     # (3) Weight grew LOCATION-SELECTIVELY: the near-ensemble synapses grew from init AND grew
     #     MORE than the held-out far-ensemble synapses (the learned value is place-specific).
     weight_grew = (w_near_final > 1.05 * max(w_near_init, 1e-6)
@@ -485,25 +554,47 @@ def run_place(seed, *, snc_tonic_pa=180.0, snc_reward_gain=300.0,
     w_near_far_ratio = w_near_final / max(w_far_final, 1e-6)
     return {
         "seed": seed, "lesion": lesion, "gabab": gabab,
-        "place_ensemble_near_active": na, "place_ensemble_far_active": nb,
-        "place_ensemble_overlap": overlap, "distinct_ensembles": bool(distinct_ensembles),
+        "lead_steps": int(lead_steps), "lead_ms": float(lead_steps) * float(cfg.dt_ms),
+        "place_ensemble_near_active": ts["na"], "place_ensemble_far_active": ts["nb"],
+        "place_ensemble_overlap": ts["overlap"], "distinct_ensembles": bool(ts["distinct_ensembles"]),
         "near_v_early_hz": near_v_early, "near_v_late_hz": near_v_late,
         "far_v_late_hz": far_v_late, "v_near_far_ratio": v_near_far_ratio,
-        "w_init": w_init, "w_final": w_final,
+        "w_init": ts["w_init"], "w_final": ts["w_final"],
         "w_near_init": w_near_init, "w_near_final": w_near_final,
-        "w_far_init": w_far_init, "w_far_final": w_far_final,
+        "w_far_init": ts["w_far_init"], "w_far_final": w_far_final,
         "w_near_far_ratio": w_near_far_ratio,
         "test_baseline_hz": base_r, "test_predicted_near_hz": pred_r,
         "test_unpredicted_far_hz": unpred_r, "test_omission_hz": omit_r,
-        "gap_ratio": gap_ratio, "host_gap_ratio": host_gap_ratio,
+        "gap_ratio": gap_ratio, "above_floor": bool(above_floor),
+        "state_specific_above_floor": state_specific_above_floor,
+        "host_gap_ratio": host_gap_ratio,
         "host_value_near": host_value_near, "host_value_far": host_value_far,
         "v_learned_spatial": bool(v_learned_spatial),
         "state_specific": bool(state_specific),
         "weight_grew": bool(weight_grew),
         "omission_dip": bool(omission_dip),
-        "near_v_curve": near_v_curve, "far_v_curve": far_v_curve,
-        "near_burst_curve": near_burst_curve,
+        "near_v_curve": ts["near_v_curve"], "far_v_curve": far_v_curve,
+        "near_burst_curve": ts["near_burst_curve"],
     }
+
+
+def run_place_lead_sweep(seed, lead_steps_list, *, verbose=True, **kw):
+    """Train the place critic ONCE for `seed`, then run the test+gate phase at EACH lead in
+    `lead_steps_list` (re-warmed per condition per lead) on the SAME trained bridge. Returns a
+    list of result dicts (one per lead). This is the decisive nav-timing de-risk: does a
+    nav-realistic value-leads-reward lead open the state-specific SNc gap ROBUSTLY above floor?
+
+    The expensive part is training (V acquisition over n_train trials); the lead only affects the
+    test phase. So we train once at the first lead (run_place(..., return_trained=True)) and then
+    re-run only _test_and_gate for the remaining leads on the SAME trained bridge.
+    """
+    first, bridge, xp, ts = run_place(
+        seed, verbose=verbose, lead_steps=int(lead_steps_list[0]),
+        return_trained=True, **kw)
+    results = [first]
+    for lead in lead_steps_list[1:]:
+        results.append(_test_and_gate(bridge, xp, ts, int(lead), verbose=verbose))
+    return results
 
 
 def _print_result(r):
@@ -520,6 +611,103 @@ def _print_result(r):
           f"{r['test_baseline_hz']:.2f} Hz  (dip: {r['omission_dip']})")
     print(f"  [anti-cheat c] host-EMA value near={r['host_value_near']:.1f} == far={r['host_value_far']:.1f} "
           f"=> host gap_ratio {r['host_gap_ratio']:.2f} (place-BLIND; cannot produce the gap)")
+
+
+def _lead_sweep_main(seeds, lead_sweep_str, kw, args):
+    """The DECISIVE nav-timing de-risk: sweep the value-leads-reward LEAD over a nav-realistic
+    range, multi-seed, on a critic trained ONCE per seed. Prints the lead x seed table
+    (near_burst, far_burst, gap, above-floor?) and the multi-seed verdict at the best lead.
+
+    The gate at a lead is the state-specific SNc gap (far_burst > 1.30 x near_burst) that is
+    ALSO above the SNc noise floor (far_burst >= 10 Hz, so the ratio discriminates a real
+    cancelled-vs-uncancelled reward, not floor noise) — sign-consistent across >= 3 seeds.
+    """
+    leads_ms = [float(x) for x in lead_sweep_str.split(",")]
+    lead_steps_list = [int(round(m / 1.0)) for m in leads_ms]   # dt_ms = 1.0
+    sweep_kw = {k: v for k, v in kw.items() if k != "lead_steps"}
+
+    def _fmt_gap(r):
+        # Display helper: when near≈0 the far/near ratio diverges; show it as 'INF' (complete
+        # cancellation of the predicted reward) rather than a 7-digit floor-division artifact.
+        # The GATE (state_specific_above_floor) is unaffected — this is cosmetic only.
+        if r["test_predicted_near_hz"] < 0.5:
+            return "  INF" if r["test_unpredicted_far_hz"] >= 0.5 else " 0.00"
+        return "{:5.2f}".format(r["gap_ratio"])
+
+    # results_by_seed[seed] = [result per lead], all on the same trained critic.
+    results_by_seed = {}
+    for s in seeds:
+        print(f"\n##### LEAD SWEEP seed={s} (train once, test at leads {leads_ms} ms) #####")
+        rs = run_place_lead_sweep(s, lead_steps_list, verbose=True, **sweep_kw)
+        results_by_seed[s] = rs
+        r0 = rs[0]
+        print(f"  [seed {s}] LEARNING: V(near)/V(far)={r0['v_near_far_ratio']:.2f}  "
+              f"w_near/w_far={r0['w_near_far_ratio']:.2f}  "
+              f"V-learned-spatial={r0['v_learned_spatial']}  weight-grew={r0['weight_grew']}")
+
+    # ---- The lead x seed sweep table ----
+    print("\n" + "=" * 92)
+    print("=== LEAD SWEEP TABLE: near_burst / far_burst / gap_ratio(far/near) / above-floor? ===")
+    print("=" * 92)
+    header = "  lead_ms |" + "".join(f"  seed {s:>4}                          |" for s in seeds)
+    print(header)
+    for li, lead_ms in enumerate(leads_ms):
+        cells = []
+        for s in seeds:
+            r = results_by_seed[s][li]
+            nb_ = r["test_predicted_near_hz"]; fb_ = r["test_unpredicted_far_hz"]
+            af = r["above_floor"]
+            sa = r["state_specific_above_floor"]
+            flag = "OK" if sa else ("--" if not af else "lo")
+            cells.append(f" near={nb_:5.1f} far={fb_:5.1f} g={_fmt_gap(r)} {('AF' if af else '..')}/{flag} |")
+        print(f"  {lead_ms:6.0f}  |" + "".join(cells))
+    print("  (AF = far_burst >= 10 Hz above floor;  OK = state-specific gap AND above floor)")
+
+    # ---- Per-lead multi-seed robustness ----
+    print("\n=== PER-LEAD multi-seed robustness (state-specific gap AND above floor) ===")
+    best_lead_idx = None; best_n = -1
+    for li, lead_ms in enumerate(leads_ms):
+        rl = [results_by_seed[s][li] for s in seeds]
+        n_gap = sum(1 for r in rl if r["state_specific"])
+        n_af = sum(1 for r in rl if r["above_floor"])
+        n_robust = sum(1 for r in rl if r["state_specific_above_floor"])
+        gap_strs = ", ".join("{}={}".format(r["seed"], _fmt_gap(r).strip()) for r in rl)
+        far_strs = ", ".join("{}={:.1f}".format(r["seed"], r["test_unpredicted_far_hz"]) for r in rl)
+        print(f"  lead={lead_ms:4.0f}ms: ROBUST(gap&floor) {n_robust}/{len(seeds)}  "
+              f"[gap>1.30 {n_gap}/{len(seeds)}, above-floor {n_af}/{len(seeds)}]  "
+              f"gaps[{gap_strs}]  far_burst[{far_strs}]")
+        # "best" = max robust seeds; tie-break on the larger total far_burst (more headroom).
+        if n_robust > best_n:
+            best_n = n_robust; best_lead_idx = li
+
+    best_lead_ms = leads_ms[best_lead_idx]
+    rl_best = [results_by_seed[s][best_lead_idx] for s in seeds]
+    n_robust_best = sum(1 for r in rl_best if r["state_specific_above_floor"])
+    n_learn = sum(1 for r in rl_best if r["v_learned_spatial"] and r["weight_grew"])
+    print("\n" + "=" * 92)
+    verdict_pass = (n_robust_best >= 3 and n_robust_best >= max(3, (len(seeds) + 1) // 2))
+    # Decisive: the gap must open ROBUSTLY (>=3 seeds) AND above floor at a nav-realistic lead,
+    # with LEARNING retained.
+    print(f"=== BEST LEAD = {best_lead_ms:.0f} ms: ROBUST state-specific gap (above floor) "
+          f"{n_robust_best}/{len(seeds)} seeds; LEARNING retained {n_learn}/{len(seeds)} ===")
+    decisive = "PASS" if (verdict_pass and n_learn >= 3) else "FAIL"
+    print(f"=== NAV-TIMING SUBTRACTION DE-RISK VERDICT: {decisive}  "
+          f"(>=3 seeds robust-above-floor at a nav-realistic lead AND learning retained) ===")
+    print("=" * 92)
+
+    if args.out:
+        out = {
+            "mode": "place_gabab_lead_sweep" if args.gabab else "place_gaba_a_lead_sweep",
+            "leads_ms": leads_ms,
+            "best_lead_ms": best_lead_ms,
+            "n_robust_best": n_robust_best,
+            "n_learn_best": n_learn,
+            "verdict": decisive,
+            "results_by_seed": {str(s): results_by_seed[s] for s in seeds},
+        }
+        with open(args.out, "w") as f:
+            json.dump(out, f, indent=2)
+        print(f"  wrote {args.out}")
 
 
 def main():
@@ -545,10 +733,42 @@ def main():
                          "(E_K=-90mV); without it, GABA_A direct = the depolarized-SNc A/B control")
     ap.add_argument("--gabab-tau-decay", type=float, default=150.0)
     ap.add_argument("--gabab-propagation-strength", type=float, default=0.105)
+    ap.add_argument("--lead-ms", type=float, default=0.0,
+                    help="NAV-REALISTIC LEAD: ms the place code leads the reward burst in each "
+                         "test condition (pre-builds V + the slow GABA_B conductance on the SNc). "
+                         "0 = the original simultaneous timing.")
+    ap.add_argument("--lead-sweep", type=str, default=None,
+                    help="comma ms leads, e.g. '0,100,200,300,400,500'. Trains the critic ONCE "
+                         "per seed and tests the state-specific gap at each lead. The decisive "
+                         "nav-timing de-risk.")
+    ap.add_argument("--nav-derisk", action="store_true",
+                    help="DECISIVE nav-timing de-risk preset (2026-06-08): the canonical "
+                         "value-leads-reward sweep at the PHYSIOLOGICAL GABA_B operating point. "
+                         "Sets --gabab, the LIVE SNc regime (tonic=180/reward=300 -> baseline + "
+                         "real reward burst), a MODERATE GABA_B (gabab_propagation_strength=0.02 "
+                         "so the slow conductance settles physiologically instead of saturating "
+                         "to ~170 and flatlining the SNc, the bug the default 0.105 hits over a "
+                         "long lead), and the lead sweep 0,100,150,200,300,400,500. Override any "
+                         "of these by passing them explicitly AFTER --nav-derisk.")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
+    # --nav-derisk preset: the physiological live-SNc + moderate-GABA_B operating point at which
+    # the value-leads-reward lead recovers the state-specific subtraction (PASS 3/3 at lead
+    # 100-150 ms). Applied as defaults the user can still override on the same command line.
+    if args.nav_derisk:
+        args.gabab = True
+        if args.gabab_propagation_strength == 0.105:   # default untouched -> set live value
+            args.gabab_propagation_strength = 0.02
+        if args.snc_tonic_pa == 180.0:
+            args.snc_tonic_pa = 180.0
+        if args.snc_reward_gain == 300.0:
+            args.snc_reward_gain = 300.0
+        if args.lead_sweep is None:
+            args.lead_sweep = "0,100,150,200,300,400,500"
+
     seeds = [int(s) for s in args.seeds.split(",")] if args.seeds else [args.seed]
+    lead_steps = int(round(args.lead_ms / 1.0))  # dt_ms = 1.0 in this probe -> 1 step per ms
     kw = dict(snc_tonic_pa=args.snc_tonic_pa, snc_reward_gain=args.snc_reward_gain,
               place_drive_pa=args.place_drive_pa, place_sigma=args.place_sigma,
               p_near=args.p_near, p_far=args.p_far, hold_steps=args.hold_steps,
@@ -558,6 +778,13 @@ def main():
               snc_da_sensitivity=args.snc_da_sensitivity, lesion=args.lesion,
               gabab=args.gabab, gabab_tau_decay=args.gabab_tau_decay,
               gabab_propagation_strength=args.gabab_propagation_strength)
+
+    # ===== LEAD SWEEP (the decisive nav-timing de-risk) =====
+    if args.lead_sweep:
+        _lead_sweep_main(seeds, args.lead_sweep, kw, args)
+        return
+
+    kw["lead_steps"] = lead_steps
     results = []
     for s in seeds:
         tag = ("LESION (GABA_B mask cut)" if args.lesion
