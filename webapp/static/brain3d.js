@@ -78,6 +78,13 @@ let liveRunsList = [];        // current /api/inflight result (alive only)
 let liveSelectedName = null;  // name of the run we're currently following
 let liveTrajectory = [];      // synthetic per-step trajectory built from log progress
 let livePartialBytes = 0;     // log bytes consumed so far (for incremental tail)
+// Real [ACTIVITY] frames buffered client-side so the scrubber / play / Latest
+// can replay PAST brain states, not just the most recent frame. When non-empty,
+// THIS is the live scrub timeline — the brain shows the exact frame at the
+// scrubbed index (frontend-revamp Phase 1 only kept the latest frame, so the
+// controls had nothing to scrub through for a real-activity run).
+let liveActivityHistory = []; // [{t, regions}], ring buffer
+const LIVE_ACTIVITY_CAP = 600; // ~matches the server-side activity_frames ring
 
 // ─── Real activity stream (frontend-revamp Phase 1, 2026-06-08) ──────────
 // When the followed run is a webapp-launched run that streams [ACTIVITY]
@@ -1240,6 +1247,8 @@ function setSpeed(stepsPerSec) {
 // ─── Live mode ─────────────────────────────────────────────────────────
 function startLiveMode() {
   liveMode = true;
+  livePlaying = true;        // start following the latest frame
+  updateLivePlayButton();
   if (livePollHandle) clearInterval(livePollHandle);
   // Don't pre-hide the mini gridworld — renderLiveStep will show it
   // when the run emits per-step pos/goal data (navigation runs) and
@@ -1254,10 +1263,14 @@ function stopLiveMode() {
   disconnectActivityWS();  // close the real-activity WS (frontend-revamp Phase 1)
   liveSelectedName = null;
   liveTrajectory = [];
+  liveActivityHistory = [];
   livePartialBytes = 0;
   // Reset run-name back to neutral
   const runNameEl = document.getElementById("brain3d-run-name");
   if (runNameEl) runNameEl.textContent = "No run loaded";
+  // Hand the Play button back to replay control (loadRun starts paused).
+  const playBtn = document.getElementById("brain3d-play");
+  if (playBtn) playBtn.textContent = "▶ Play";
 }
 
 // Pick which live run to follow. Called from the Brain tab UI's
@@ -1265,6 +1278,9 @@ function stopLiveMode() {
 function selectLiveRun(name) {
   liveSelectedName = name;
   liveTrajectory = [];
+  liveActivityHistory = [];   // new run → fresh activity timeline
+  livePlaying = true;         // follow the newly selected run
+  updateLivePlayButton();
   livePartialBytes = 0;
   // A new run was selected — drop any activity WS bound to the old run; it
   // re-binds on the next poll once we know the new run's run_id.
@@ -1329,16 +1345,30 @@ function disconnectActivityWS() {
 // fractions are typically small (sparse spiking ~0.01-0.1), so we scale into a
 // visible 0..1 range with a gain + soft clamp.
 const ACTIVITY_GAIN = 6.0;  // map sparse firing fraction -> visible brightness
-function applyActivityFrame(frame) {
-  realActivityActive = true;
-  lastActivityTs = Date.now();
-  lastActivityFrame = frame;
-  const regions = frame.regions || {};
+function applyActivityRegions(regions) {
   for (const name in regions) {
     if (!(name in regionTargets)) continue; // region not in the 3D layout
     const rate = regions[name] || 0;
     regionTargets[name] = Math.max(0, Math.min(1.0, rate * ACTIVITY_GAIN));
   }
+}
+
+function applyActivityFrame(frame) {
+  realActivityActive = true;
+  lastActivityTs = Date.now();
+  lastActivityFrame = frame;
+  const regions = frame.regions || {};
+  // Buffer the frame so the scrubber / play / Latest can replay past brain
+  // states (bounded ring — see LIVE_ACTIVITY_CAP).
+  liveActivityHistory.push({ t: frame.t, regions });
+  if (liveActivityHistory.length > LIVE_ACTIVITY_CAP) liveActivityHistory.shift();
+  // Only drive the displayed brain when FOLLOWING live (livePlaying). When the
+  // user has scrubbed back (paused), hold the scrubbed frame; new frames still
+  // accumulate so "Latest" / Play can catch back up.
+  if (livePlaying) applyActivityRegions(regions);
+  // Grow the scrub range as frames arrive (the handle only jumps to the end
+  // while playing — syncScrubberToLive moves .value only when livePlaying).
+  syncScrubberToLive();
   // Surface a small "REAL" indicator + the frame's sim time on the live label
   // if present (non-fatal if the element isn't there).
   const liveLabel = document.getElementById("brain3d-live-label");
@@ -1374,6 +1404,7 @@ async function pollLive() {
     if (!liveSelectedName || !allRuns.find((r) => r.name === liveSelectedName)) {
       liveSelectedName = allRuns[0].name;
       liveTrajectory = [];
+      liveActivityHistory = [];   // auto-switched run → fresh activity timeline
       livePartialBytes = 0;
     }
 
@@ -1408,7 +1439,7 @@ async function pollLive() {
     }
 
     if (livePlaying) {
-      replayStep = Math.max(0, liveTrajectory.length - 1);
+      replayStep = Math.max(0, activeTimelineLen() - 1);
       renderLiveStep(replayStep);
     }
     syncScrubberToLive();
@@ -1618,9 +1649,26 @@ function rebuildTrajectoryFromLog(logText, run) {
 function liveJumpToLatest() {
   if (!liveMode) return;
   livePlaying = true;
-  replayStep = Math.max(0, liveTrajectory.length - 1);
+  replayStep = Math.max(0, activeTimelineLen() - 1);
   renderLiveStep(replayStep);
   syncScrubberToLive();
+  updateLivePlayButton();
+}
+
+// Live play/pause: toggles auto-follow. Playing = follow the latest frame;
+// paused = hold the current (scrubbed) frame while new frames keep buffering.
+function toggleLivePlay() {
+  if (!liveMode) return;
+  livePlaying = !livePlaying;
+  if (livePlaying) liveJumpToLatest();   // resume → catch up to the latest frame
+  else updateLivePlayButton();           // pause → hold the current frame
+}
+
+// Reflect live follow/pause state on the shared Play button (the same button
+// drives replay play/pause when not in live mode — see play()/pause()).
+function updateLivePlayButton() {
+  const b = document.getElementById("brain3d-play");
+  if (b && liveMode) b.textContent = livePlaying ? "⏸ Pause" : "▶ Play";
 }
 
 // Track whether the user is letting playback follow live or paused on
@@ -1646,18 +1694,28 @@ function appendLiveStep(run, progress) {
 }
 
 function renderLiveStep(step) {
+  // Real-activity timeline: when [ACTIVITY] frames have been buffered, the
+  // scrub timeline IS that history — show the exact brain frame at the scrubbed
+  // index so play / scrub / Latest move through REAL past activity. (Phase 1
+  // only kept the latest frame, so the controls couldn't scrub it.)
+  if (liveActivityHistory.length > 0) {
+    const aLen = liveActivityHistory.length;
+    const i = Math.max(0, Math.min(aLen - 1, step));
+    const frame = liveActivityHistory[i];
+    if (frame) applyActivityRegions(frame.regions);
+    // Map the activity index onto the coarser progress timeline so the
+    // mini-gridworld + agent HUD stay roughly in sync with the brain frame.
+    const trajLen = liveTrajectory.length;
+    const tj = trajLen ? Math.round((i / Math.max(1, aLen - 1)) * (trajLen - 1)) : -1;
+    renderLiveGridworld(tj >= 0 ? liveTrajectory[tj] : null, tj);
+    return;
+  }
+  // No real activity buffered — synthesize action->region lighting from the
+  // progress trajectory (runs not emitting activity), exactly as before.
   const sample = liveTrajectory[step];
   if (!sample) return;
   const p = sample.progress || {};
-  // Real-activity gate (frontend-revamp Phase 1): when a live [ACTIVITY]
-  // stream is driving regionTargets from REAL firing rates, SKIP the
-  // synthesized action->region lighting below so it doesn't fight the real
-  // data. The mini-gridworld + agent HUD (further down) still render — those
-  // are behavior, not synthesized neural activity. When no real stream is
-  // present (detached run, run not emitting activity, stream stale), we fall
-  // through to synthesis exactly as before (graceful fallback).
-  const _synth = !realActivityFresh();
-  if (_synth) {
+  {
   clearAllActivity();
   // Activity by progress kind — same logic as the original pollLive
   // but driven by a specific timeline sample.
@@ -1821,11 +1879,16 @@ function renderLiveStep(step) {
       }
     }
   }
-  }  // end if (_synth) — real-activity gate (frontend-revamp Phase 1)
-  // 2026-05-03 — render the mini gridworld + agent HUD for live
-  // navigation runs (kind=step) which carry pos/goal/action/reward in
-  // each log line. Live curriculum/SWR runs don't carry per-step grid
-  // position so they stay hidden.
+  }  // end synthetic-lighting block
+  renderLiveGridworld(sample, step);
+}
+
+// Render the mini gridworld + agent HUD for live navigation runs (kind=step)
+// which carry pos/goal/action/reward in each log line. `trajStep` bounds the
+// trail slice. Live curriculum/SWR runs carry no per-step grid position, so the
+// inset stays hidden for them.
+function renderLiveGridworld(sample, trajStep) {
+  const p = (sample && sample.progress) || {};
   if (p.kind === "step" && Array.isArray(p.pos) && Array.isArray(p.goal)) {
     const synthT = {
       pos: p.pos,
@@ -1833,10 +1896,9 @@ function renderLiveStep(step) {
       action: p.action != null ? p.action : -1,
       reward: p.reward != null ? p.reward : 0,
     };
-    // Build a synthetic trajectory array for the trail — last few live
-    // samples that also have pos data.
+    const upTo = (trajStep != null && trajStep >= 0) ? trajStep + 1 : liveTrajectory.length;
     const trailFromLive = liveTrajectory
-      .slice(0, step + 1)
+      .slice(0, upTo)
       .map((s) => Array.isArray(s.progress?.pos) ? s.progress.pos : null)
       .filter(Boolean);
     renderMiniGridworld(synthT, trailFromLive, trailFromLive.length - 1, null);
@@ -1849,11 +1911,18 @@ function renderLiveStep(step) {
   }
 }
 
+// The live scrub timeline: the buffered real [ACTIVITY] frames when present (so
+// the user scrubs through real brain history), else the synthetic progress
+// trajectory (runs not emitting activity).
+function activeTimelineLen() {
+  return liveActivityHistory.length || liveTrajectory.length;
+}
+
 function syncScrubberToLive() {
-  // Update scrubber to match the live trajectory length.
+  // Update scrubber to match the active live timeline length.
   const scrubber = document.getElementById("brain3d-scrubber");
   const stepLabel = document.getElementById("brain3d-step-label");
-  const total = Math.max(1, liveTrajectory.length);
+  const total = Math.max(1, activeTimelineLen());
   if (scrubber) {
     scrubber.max = String(total - 1);
     if (livePlaying) scrubber.value = String(total - 1);
@@ -1891,7 +1960,7 @@ function refreshLiveRunPicker() {
 // the end means "release follow"; scrubbing back means "show that step".
 function liveSetStep(step) {
   if (!liveMode) return false;
-  const total = liveTrajectory.length;
+  const total = activeTimelineLen();
   if (step >= total - 1) {
     livePlaying = true;
     replayStep = total - 1;
@@ -1901,6 +1970,7 @@ function liveSetStep(step) {
   }
   renderLiveStep(replayStep);
   syncScrubberToLive();
+  updateLivePlayButton();
   return true;
 }
 
@@ -1955,6 +2025,7 @@ export function brain3dRenderStep(step) {
 }
 export function brain3dPlay() { return play(); }
 export function brain3dPause() { return pause(); }
+export function brain3dToggleLivePlay() { return toggleLivePlay(); }
 export function brain3dSetSpeed(s) { return setSpeed(s); }
 export function brain3dStartLive() { return startLiveMode(); }
 export function brain3dStopLive() { return stopLiveMode(); }
@@ -1977,8 +2048,10 @@ export function brain3dGetState() {
     replayTotal,
     replayPlaying,
     liveMode,
+    livePlaying,
     liveSelectedName,
     liveRunsList: liveRunsList.map((r) => ({ name: r.name, alive: r.alive })),
     liveTrajectoryLen: liveTrajectory.length,
+    liveActivityLen: liveActivityHistory.length,
   };
 }

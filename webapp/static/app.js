@@ -2810,10 +2810,12 @@ async function initBrain3DOnce() {
 }
 
 function setupBrain3DControls(mod) {
-  // Play / pause
+  // Play / pause — live mode toggles auto-follow; replay mode plays/pauses
+  // the loaded run's trajectory.
   $("#brain3d-play")?.addEventListener("click", () => {
     const st = mod.brain3dGetState();
-    if (st.replayPlaying) mod.brain3dPause();
+    if (st.liveMode) mod.brain3dToggleLivePlay();
+    else if (st.replayPlaying) mod.brain3dPause();
     else mod.brain3dPlay();
   });
   // Scrubber
