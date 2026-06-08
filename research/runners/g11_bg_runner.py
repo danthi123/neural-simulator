@@ -134,6 +134,24 @@ def build_bg_brain_regions(
     n_gpe_per_action: int = 10,
     n_gpe_arky_per_action: int = 4,  # R3.7: arkypallidal (PV-) subpool
     n_str_striosome_per_action: int = 8,  # R3.11: striosome (patch) subpool
+    # ── Spiking-SNc actor-critic Stage B (2026-06-08): neural value critic ──
+    # When True, add a dedicated `striosome_value` GABAergic critic population
+    # driven by the PERCEIVED state (cortex_it, the ventral-stream object code —
+    # never coordinates), with a PLASTIC cortex_it->striosome_value pathway
+    # (gate "value_input") trained by the SAME SNc-derived dopamine delta the
+    # actor uses, so the striosome firing comes to encode the expected value V.
+    # Its inhibition reaches the SNc through the slow GABA_B/GIRK K+ conductance
+    # (E_K=-90mV, receptor="gaba_b") so the value subtraction r-V happens at the
+    # SNc MEMBRANE (sign-correct + strong on the KCC2-lacking depolarized SNc),
+    # NOT a host arithmetic term. Only meaningful with spiking_snc=True; when set,
+    # the host _V_scaffold subtraction is DROPPED (the subtraction is now neural).
+    # Validated CPU de-risk: research/findings/2026-06-08-gabab-girk-stageB-derisk-GO.md.
+    enable_neural_critic: bool = False,
+    n_striosome_value: int = 80,            # critic pool size (GABAergic MSN-D1)
+    critic_cortex_it_to_value_weight: float = 3.0,   # plastic afferent init weight (STDP grows V)
+    critic_cortex_it_to_value_density: float = 0.6,
+    critic_value_to_snc_weight: float = 2.5,         # GABA_B inhibitory critic->SNc weight
+    critic_value_to_snc_density: float = 0.5,
     enable_cluster_a_closed_loop: bool = False,  # Cluster A: hyperdirect + thal->cortex
     n_gpi_per_action: int = 10,
     n_stn: int = 20,
@@ -859,6 +877,28 @@ def build_bg_brain_regions(
         syn_reversal_potential_i_override=-55.0,
     ))
 
+    # Spiking-SNc actor-critic Stage B (2026-06-08): a dedicated neural value
+    # critic. `striosome_value` is the striosome/patch state-value population
+    # (Houk-Adams-Barto 1995 / catalog C.30: striosome-patch = critic V(s)).
+    # FULLY GABAergic (MSNs are ~100% inhibitory) so its projection SUBTRACTS at
+    # the SNc; no internal recurrence so V is a graded value readout that scales
+    # with the learned cortex_it->striosome_value weight (not a WTA gate). This
+    # is Option A of 2026-06-08-spiking-snc-stageB-striosome-critic-research.md
+    # (a dedicated region — cleaner + more additive than re-purposing the four
+    # per-action str_striosome_* pools, which are Q(s,a)-shaped and action-cortex
+    # driven). Mirrors the validated CPU de-risk's striosome_value recipe.
+    if enable_neural_critic:
+        regions.append(BrainRegion(
+            name="striosome_value",
+            n_neurons=n_striosome_value,
+            exc_fraction=0.0,            # fully GABAergic: a pure inhibitory value
+            internal_density=0.0,       # graded readout, not winner-take-all
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
+            syn_reversal_potential_i_override=-60.0,  # MSN GABA_A reversal
+        ))
+
     # Cluster D v1 (2026-04-29): hippocampus trisynaptic loop.
     # Five new regions implementing the canonical Cajal loop. See
     # docs/plans/2026-04-29-cluster-d-hippocampus-design.md.
@@ -1331,6 +1371,48 @@ def build_bg_brain_regions(
         pathways.append(RegionPathway(
             from_region=f"str_striosome_{action}", to_region=f"gpi_{action}",
             density=0.3, weight_mean=1.5, weight_jitter=0.2, plastic=False,
+        ))
+
+    # Spiking-SNc actor-critic Stage B (2026-06-08): the neural value critic's
+    # two pathways. (1) PERCEIVED STATE -> critic (plastic, gate "value_input"),
+    # trained by the SNc-derived dopamine delta via the existing three-factor
+    # pipeline so the critic LEARNS V(s). (2) critic -> SNc, GABAergic, routed
+    # through the slow GABA_B/GIRK K+ conductance (receptor="gaba_b", E_K=-90mV)
+    # so V is SUBTRACTED at the SNc membrane (the host _V_scaffold term is then
+    # dropped in the reward block). Anti-cheat: the critic's afferent is the
+    # ventral object code `cortex_it` ONLY — a perceived-state region, never
+    # coordinates (combined with N5 perceived reward the whole RPE loop is
+    # coordinate-free). See the Stage-B research doc Option A.
+    if enable_neural_critic:
+        if not enable_visual_cortex:
+            raise ValueError(
+                "--enable-neural-critic requires a perceived-state source for "
+                "the value critic. The implemented afferent is the ventral "
+                "object code `cortex_it`, which only exists with "
+                "--enable-visual-cortex. Enable visual cortex (the flagship "
+                "A+E+G v2.5 stack already does) or extend the afferent union to "
+                "another perceived-state region (ppc_goal_input / "
+                "sensor_place_readout)."
+            )
+        # Anti-cheat provenance assertion: the critic reads ONLY perceived state.
+        _critic_afferent = "cortex_it"
+        assert _critic_afferent not in ("goal_cells",), (
+            "neural-critic anti-cheat: the value critic must not read a "
+            "coordinate/goal-cell region; afferent must be a perceived-state "
+            f"region, got {_critic_afferent!r}."
+        )
+        pathways.append(RegionPathway(
+            from_region=_critic_afferent, to_region="striosome_value",
+            density=float(critic_cortex_it_to_value_density),
+            weight_mean=float(critic_cortex_it_to_value_weight),
+            weight_jitter=0.5, plastic=True, plasticity_gate="value_input",
+        ))
+        pathways.append(RegionPathway(
+            from_region="striosome_value", to_region="snc",
+            density=float(critic_value_to_snc_density),
+            weight_mean=float(critic_value_to_snc_weight),
+            weight_jitter=0.2, plastic=False,
+            receptor="gaba_b",   # slow GIRK K+ subtraction onto the depolarized SNc
         ))
 
     # R3.10 (2026-04-29): GPi/SNr -> snc collateral disinhibition
@@ -2591,6 +2673,17 @@ def run_moving_goal_episode(
     snc_reward_gain: float = 400.0,    # k_r: excitatory reward afferent gain (pA per unit r)
     snc_value_gain: float = 400.0,     # k_v: inhibitory value (striosome) drive gain (pA per unit V)
     snc_da_sensitivity: float = 8.0,   # signed-rule sensitivity (firing-rate deviation -> DA conc)
+    # ── Spiking-SNc actor-critic Stage B (2026-06-08): NEURAL value critic ──
+    # Only meaningful with spiking_snc=True. When True, a dedicated GABAergic
+    # `striosome_value` critic (built in build_bg_brain_regions) learns V(s) from
+    # the perceived state (cortex_it) via the SNc-derived dopamine delta, and
+    # SUBTRACTS V at the SNc membrane through the slow GABA_B/GIRK K+ conductance
+    # (cfg.enable_gabab; the critic->snc pathway is receptor="gaba_b"). The host
+    # _V_scaffold term in the reward block is then DROPPED — the r-V subtraction
+    # is NEURAL, not host arithmetic (the BRAIN-BASED-ONLY completion of Stage B).
+    # When False, Stage A behavior is byte-unchanged (host _V_scaffold subtraction).
+    # Validated CPU de-risk: research/findings/2026-06-08-gabab-girk-stageB-derisk-GO.md.
+    enable_neural_critic: bool = False,
     # Surprise-boosted learning rate: when |RPE| is high (unexpected outcome),
     # temporarily boost reward_learning_rate. Models NE-like fast meta-modulation.
     enable_surprise_lr_boost: bool = False,
@@ -3058,6 +3151,8 @@ def run_moving_goal_episode(
         enable_cluster_f_cerebellum=enable_cluster_f_cerebellum,
         n_granule=n_granule,
         enable_visual_cortex=enable_visual_cortex,
+        # Spiking-SNc actor-critic Stage B: the neural value critic (2026-06-08).
+        enable_neural_critic=enable_neural_critic,
         visual_n_orientations=visual_n_orientations,
         visual_n_frequencies=visual_n_frequencies,
         visual_n_positions_per_dim=visual_n_positions_per_dim,
@@ -3169,6 +3264,20 @@ def run_moving_goal_episode(
     cfg.enable_conductance_noise = False
     cfg.enable_parameter_heterogeneity = False
     cfg.enable_structural_plasticity = False  # keep synapse count fixed (per-action DA mask depends on it)
+    # Spiking-SNc actor-critic Stage B (2026-06-08): the neural value critic's
+    # critic->SNc projection (built with receptor="gaba_b") subtracts V via the
+    # slow GABA_B/GIRK K+ conductance (E_K=-90mV) — strong + sign-correct on the
+    # KCC2-lacking depolarized SNc, where weak GABA_A failed. Default OFF =>
+    # byte-identical when the critic is not enabled (the protected sim/ GABA_B
+    # support, commit a7370d49, is inert unless cfg.enable_gabab is set AND a
+    # pathway is tagged receptor="gaba_b"). Note: cfg.stdp_w_max above (=150) is
+    # already far above the critic's working weight range, so the soft-bound STDP
+    # collapse (CLAUDE.md gotcha) cannot clip V — no extra calibration needed.
+    if enable_neural_critic:
+        cfg.enable_gabab = True
+        cfg.gabab_reversal_potential = -90.0
+        cfg.gabab_tau_decay = 150.0
+        cfg.gabab_propagation_strength = 0.105
     cfg.enable_structural_pruning = enable_structural_pruning
     cfg.enable_d1_d2_asymmetry = enable_d1_d2_asymmetry
     # Cluster G v1 (2026-05-01): Wang 2002 NMDA-mediated PFC working memory.
@@ -3526,6 +3635,51 @@ def run_moving_goal_episode(
     snc_rate_log = []
     if spiking_snc and "snc" in region_indices_cp:
         _snc_idx_host = region_indices_cp["snc"].get()
+
+    # Spiking-SNc Stage B (2026-06-08): neural-critic instrumentation. Host index
+    # for the striosome_value pool (to read its firing during reward windows =
+    # the learned value V), plus a reader for the plastic cortex_it->striosome_value
+    # weight so we can confirm the critic LEARNS (the weight grows from its init
+    # and V tracks expected reward). The smoke gate inspects these.
+    _striov_idx_host = None
+    striov_rate_log = []          # per-trial striosome_value spike count (reward window)
+    critic_weight_initial = None  # mean cortex_it->striosome_value weight at start
+
+    def _mean_critic_weight():
+        """Mean weight of the cortex_it->striosome_value edges in the CSR.
+        In this bridge's cp_connections, rows=PRE(source), cols=POST(target)
+        (verified: the cortex_it->striosome_value afferent matches rows in
+        cortex_it, cols in striosome_value). Vectorized via np.isin (the CSR has
+        ~140k synapses — a per-edge Python generator is far too slow). Returns
+        None if the critic isn't built or no edges match."""
+        if not enable_neural_critic:
+            return None
+        if ("striosome_value" not in region_indices_cp
+                or "cortex_it" not in region_indices_cp):
+            return None
+        try:
+            pre = region_indices_cp["cortex_it"].get()           # source rows
+            post = region_indices_cp["striosome_value"].get()    # target cols
+            coo = bridge.cp_connections.tocoo()
+            rows = coo.row.get() if hasattr(coo.row, "get") else np.asarray(coo.row)
+            cols = coo.col.get() if hasattr(coo.col, "get") else np.asarray(coo.col)
+            data = coo.data.get() if hasattr(coo.data, "get") else np.asarray(coo.data)
+            m = np.isin(rows, pre) & np.isin(cols, post)
+            if not m.any():
+                # Fallback to the opposite orientation (robust to CSR convention).
+                m = np.isin(rows, post) & np.isin(cols, pre)
+            return float(data[m].mean()) if m.any() else None
+        except Exception:
+            return None
+
+    if enable_neural_critic and "striosome_value" in region_indices_cp:
+        _striov_idx_host = region_indices_cp["striosome_value"].get()
+        critic_weight_initial = _mean_critic_weight()
+        if verbose:
+            print(f"[g11 seed={seed}] Spiking-SNc Stage B: NEURAL value critic ON "
+                  f"(striosome_value n={len(_striov_idx_host)}, cortex_it->value "
+                  f"w0={critic_weight_initial}); r-V subtracted via GABA_B/GIRK "
+                  f"(E_K=-90mV). Host _V_scaffold DROPPED.")
 
     # DA-gated WTA: pre-compute FS->motor synapse indices and save baseline weights.
     # Per-trial we'll scale these weights by gating_strength to make WTA adaptive.
@@ -5059,13 +5213,33 @@ def run_moving_goal_episode(
             # the reward-hold loop, this write persists across all hold steps.
             # NO sim/ edit — pure cp_external_input_current write, the same
             # mechanism every other region uses.
+            #
+            # Stage B (2026-06-08, --enable-neural-critic): the host _V_scaffold
+            # subtraction is DROPPED. The value V is now SUBTRACTED at the SNc
+            # membrane by the NEURAL critic's GABA_B/GIRK inhibition (the
+            # striosome_value -> snc pathway, receptor="gaba_b", driven by the
+            # perceived state through a plastic, dopamine-delta-trained afferent).
+            # I_snc carries only tonic + reward; the brain does the r - V
+            # subtraction (BRAIN-BASED-ONLY). The striosome critic LEARNS V via
+            # the existing three-factor pipeline (the same SNc-derived da_signal
+            # the actor uses), so as the cue->value weight grows, the GABA_B
+            # current cancels the reward drive and the SNc burst shrinks toward
+            # the predicted level — all neural, no host value read.
             if spiking_snc and "snc" in region_indices_cp:
-                _V_scaffold = max(0.0, float(reward_ema_pre))
-                _I_snc = (
-                    float(snc_tonic_pa)
-                    + float(snc_reward_gain) * max(0.0, float(reward))
-                    - float(snc_value_gain) * _V_scaffold
-                )
+                if enable_neural_critic:
+                    _I_snc = (
+                        float(snc_tonic_pa)
+                        + float(snc_reward_gain) * max(0.0, float(reward))
+                        # NO host -k_v*V term: the striosome_value GABA_B
+                        # inhibition subtracts V at the membrane.
+                    )
+                else:
+                    _V_scaffold = max(0.0, float(reward_ema_pre))
+                    _I_snc = (
+                        float(snc_tonic_pa)
+                        + float(snc_reward_gain) * max(0.0, float(reward))
+                        - float(snc_value_gain) * _V_scaffold
+                    )
                 bridge.cp_external_input_current[region_indices_cp["snc"]] = (
                     cp.float32(_I_snc)
                 )
@@ -5080,8 +5254,10 @@ def run_moving_goal_episode(
 
             # Accumulate SNc spikes over the reward-hold window (the spiking RPE
             # READOUT — measured from cp_firing_states, not a formula). Logged
-            # for diagnostics / the calibration harness.
+            # for diagnostics / the calibration harness. Stage B also accumulates
+            # the striosome_value (critic) firing = the learned value V.
             _snc_spikes_this_trial = 0
+            _striov_spikes_this_trial = 0
             for _ in range(reward_hold_steps):
                 bridge._run_one_simulation_step()
                 bridge.runtime_state.current_time_step += 1
@@ -5092,8 +5268,14 @@ def run_moving_goal_episode(
                     _snc_spikes_this_trial += int(
                         bridge.cp_firing_states[_snc_idx_host].sum()
                     )
+                if _striov_idx_host is not None:
+                    _striov_spikes_this_trial += int(
+                        bridge.cp_firing_states[_striov_idx_host].sum()
+                    )
             if spiking_snc:
                 snc_rate_log.append(_snc_spikes_this_trial)
+            if _striov_idx_host is not None:
+                striov_rate_log.append(_striov_spikes_this_trial)
             bridge.core_config.current_reward_signal = 0.0
             # Restore base reward_learning_rate (in case surprise-boosted)
             if enable_surprise_lr_boost:
@@ -5228,7 +5410,20 @@ def run_moving_goal_episode(
         # SCAFFOLD at Stage A (NOT a neural critic — honestly labeled).
         "snc_rate_log": snc_rate_log,
         "spiking_snc": bool(spiking_snc),
-        "snc_value_source": ("host_reward_ema_scaffold" if spiking_snc else None),
+        "snc_value_source": (
+            "neural_striosome_gabab" if (spiking_snc and enable_neural_critic)
+            else "host_reward_ema_scaffold" if spiking_snc
+            else None
+        ),
+        # Spiking-SNc Stage B (2026-06-08): the NEURAL value critic. V is the
+        # striosome_value firing (per-trial spike count over the reward window),
+        # subtracted at the SNc membrane via GABA_B/GIRK. critic_weight_* track
+        # the plastic cortex_it->striosome_value weight learning (the smoke gate:
+        # the weight should GROW from its init and striov_rate_log should track V).
+        "enable_neural_critic": bool(enable_neural_critic),
+        "striov_rate_log": striov_rate_log,
+        "critic_weight_initial": critic_weight_initial,
+        "critic_weight_final": (_mean_critic_weight() if enable_neural_critic else None),
         "mean_distance_overall": float(dist_arr.mean()),
         "mean_distance_quarters": quarters,
         "n_steps_at_goal": int((dist_arr == 0).sum()),
@@ -6061,6 +6256,21 @@ def main():
                          "the SNc firing-rate deviation from tonic maps to the "
                          "dopamine concentration deviation from baseline. "
                          "Default 8.")
+    ap.add_argument("--enable-neural-critic", action="store_true",
+                    help="Stage B (NEURAL value critic): replace the host "
+                         "_V_scaffold (reward_ema) value with a spiking "
+                         "striosome_value critic. The critic is driven by the "
+                         "PERCEIVED state (cortex_it, requires --enable-visual-"
+                         "cortex), its cortex_it->striosome_value afferent is "
+                         "PLASTIC and trained by the SAME SNc-derived dopamine "
+                         "delta the actor uses (so it learns V(s)), and it "
+                         "SUBTRACTS V at the SNc membrane through the slow "
+                         "GABA_B/GIRK K+ conductance (E_K=-90mV) — the brain "
+                         "does the r-V subtraction, not host arithmetic "
+                         "(BRAIN-BASED-ONLY completion of Stage B). Only "
+                         "meaningful with --spiking-snc; the host _V_scaffold "
+                         "term is dropped when set. Validated CPU de-risk: "
+                         "research/findings/2026-06-08-gabab-girk-stageB-derisk-GO.md.")
     ap.add_argument("--surprise-lr-boost", action="store_true",
                     help="Boost reward_learning_rate when |RPE| is high (NE-like fast meta-modulation)")
     ap.add_argument("--surprise-lr-alpha", type=float, default=2.0)
@@ -6358,6 +6568,7 @@ def main():
             snc_reward_gain=args.snc_reward_gain,
             snc_value_gain=args.snc_value_gain,
             snc_da_sensitivity=args.snc_da_sensitivity,
+            enable_neural_critic=args.enable_neural_critic,
             enable_surprise_lr_boost=args.surprise_lr_boost,
             surprise_lr_alpha=args.surprise_lr_alpha,
             enable_curriculum=args.curriculum,
