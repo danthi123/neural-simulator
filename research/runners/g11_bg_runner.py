@@ -2500,6 +2500,12 @@ def run_moving_goal_episode(
     # approaches and "cooler" as it retreats. Same information content as
     # distance-based, but operates on the agent's perceptual signal.
     enable_sensed_reward: bool = False,
+    # N5 (2026-06-08): coordinate-FREE perceived-approach reward. reward = sign of
+    # the DECREASE in the goal's retinal eccentricity (the image-sourced offset
+    # magnitude the reflex already reads from pixels) — appetitive/incentive-
+    # salience approach reward (Schultz reward-fn-2; Berridge wanting; phototaxis).
+    # Use with --enable-visual-cortex. Takes precedence over sensed/Manhattan reward.
+    perceived_approach_reward: bool = False,
     # Cue-following reflex (Item 1 Stage 3, 2026-04-27).
     # Replaces the heuristic with a hand-tuned innate reflex that computes
     # cortex drive from beacon sensor activations. Models a real animal's
@@ -4711,7 +4717,32 @@ def run_moving_goal_episode(
         # uses raw (gx, gy)). Sensed reward instead uses beacon-intensity
         # gradient (the agent "feels warmer" as it approaches), which operates
         # on the perceptual signal — biologically grounded.
-        if enable_sensed_reward and enable_beacon_perception:
+        if perceived_approach_reward:
+            # N5 (2026-06-08): coordinate-FREE perceived-approach reward. The agent is
+            # reinforced for perceiving the goal get CLOSER in its visual field — reward
+            # = sign of the decrease in the goal's retinal ECCENTRICITY (the image-sourced
+            # offset magnitude). Appetitive/incentive-salience approach reward (Schultz
+            # reward-fn-2; Berridge wanting; phototaxis-like). ANTI-CHEAT: the reward LOGIC
+            # reads only sc_salience_offset_from_image (pixels; coords never enter it); the
+            # render of the agent's visual input uses goal_pos = N2 (the world's visible
+            # goal, a defensible perception, NOT a coordinate fed to the reward).
+            from sim.visual_cortex import render_gridworld_to_image as _rgi
+            _old = trajectory[-2] if len(trajectory) >= 2 else (int(x), int(y))
+            _img_b = _rgi(agent_pos=(int(_old[0]), int(_old[1])), goal_pos=(int(gx), int(gy)),
+                          grid_size=int(grid_size), image_size=int(visual_image_size))
+            _img_a = _rgi(agent_pos=(int(x), int(y)), goal_pos=(int(gx), int(gy)),
+                          grid_size=int(grid_size), image_size=int(visual_image_size))
+            _ob = sc_salience_offset_from_image(_img_b, grid_size=int(grid_size), image_size=int(visual_image_size))
+            _oa = sc_salience_offset_from_image(_img_a, grid_size=int(grid_size), image_size=int(visual_image_size))
+            _eb = (_ob[0] ** 2 + _ob[1] ** 2) ** 0.5 if _ob is not None else 0.0
+            _ea = (_oa[0] ** 2 + _oa[1] ** 2) ** 0.5 if _oa is not None else 0.0  # None = on goal = ecc 0
+            if _ea < _eb - 1e-6:
+                reward = 1.0
+            elif _ea > _eb + 1e-6:
+                reward = -1.0
+            else:
+                reward = 0.0
+        elif enable_sensed_reward and enable_beacon_perception:
             # Compute beacon intensity at old vs new position
             d_before = float(((gx - (x - dx)) ** 2 + (gy - (y - dy)) ** 2) ** 0.5) if not in_sleep else 0.0
             d_after = float(((gx - x) ** 2 + (gy - y) ** 2) ** 0.5)
@@ -5282,6 +5313,8 @@ def main():
                     help="If set, place_cells receive ONLY landmark-derived input (no direct (x,y) cheat). True Stage 2 perception test.")
     ap.add_argument("--sensed-reward", action="store_true",
                     help="Cheat #4: compute reward from beacon-intensity gradient (sensed signal) instead of Manhattan distance change (cheat). Requires --beacon-perception.")
+    ap.add_argument("--perceived-approach-reward", action="store_true",
+                    help="N5: coordinate-FREE perceived-approach reward. reward = sign(decrease in the goal's retinal eccentricity), read from the rendered image via sc_salience_offset_from_image (pixels only; coords never enter the reward logic). Replaces the Manhattan/sensed coordinate reward; the agent is reinforced for perceiving the goal getting closer (Schultz reward-fn-2 / Berridge wanting / phototaxis). Use with --enable-visual-cortex.")
     # Canonical: --enable-corticostriatal-cross (specifies cortex→striatum
     # cross-action, not BG-internal cross). Legacy --bg-cross-projections kept
     # as alias for one release cycle (2026-04-29 Wave-2 rename #19).
@@ -5988,6 +6021,7 @@ def main():
             landmark_falloff=args.landmark_falloff,
             landmarks_replace_place=args.landmarks_replace_place,
             enable_sensed_reward=args.sensed_reward,
+            perceived_approach_reward=args.perceived_approach_reward,
             enable_bg_cross_projections=args.bg_cross_projections,
             cross_projection_weight=args.cross_projection_weight,
             cross_projection_density=args.cross_projection_density,
