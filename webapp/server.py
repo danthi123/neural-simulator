@@ -1588,8 +1588,20 @@ def _scan_for_orphans() -> int:
         return 0
     new_count = 0
     cutoff = time.time() - 86400.0  # 24h
+    # 2026-06-08: scan BOTH g11_bg/ (the default --out location) AND its
+    # parent research/findings/raw/ (custom --out locations — e.g. pool / CLI
+    # batches that pass an explicit --out) so a run with ANY --out path is
+    # auto-detected, not just default-named ones. Sidecars are de-duped by
+    # path and bounded by the 24h cutoff below.
+    _scan_dirs = {RAW_RUNS_DIR, RAW_RUNS_DIR.parent}
+    _all_sidecars: list[Path] = []
+    for _d in _scan_dirs:
+        try:
+            _all_sidecars.extend(_d.glob("*.cmd.json"))
+        except OSError:
+            pass
     sidecars = sorted(
-        RAW_RUNS_DIR.glob("*.cmd.json"),
+        set(_all_sidecars),
         key=lambda p: p.stat().st_mtime if p.exists() else 0,
         reverse=True,
     )
@@ -1610,6 +1622,13 @@ def _scan_for_orphans() -> int:
             continue
         pid = sidecar.get("pid")
         if not pid or not _process_alive(pid):
+            continue
+        # 2026-06-08: PID-dedup. If this pid is already owned by a tracked
+        # run, skip — otherwise a second sidecar recording the same (possibly
+        # reused) pid double-tracks one live process, and a kill on the
+        # phantom entry would terminate the unrelated real run. This is the
+        # bug that killed a live Rank 2 run on 2026-06-08.
+        if any(r.pid == pid for r in launched_runs.values()):
             continue
         # Defend against PID reuse: a sidecar's pid must belong to a
         # python process whose create_time matches the sidecar's

@@ -63,35 +63,23 @@
 
   <main>
     <section id="tab-overview" class="tab active">
-      <div class="section-title">At a glance</div>
-      <div class="kpi-grid" id="overview-kpis"></div>
-      <!-- 2026-05-01: in-flight detached runs (launched via Start-Process,
-           writing *.pid + *.log under research/findings/raw/g11_bg/).
-           Auto-refreshes every 5s. Hidden when no detached runs are active. -->
-      <div id="overview-inflight-section" style="display:none;">
-        <div class="section-title">In-flight training runs</div>
+      <!-- 2026-06-08 (owner directive): Home is a RUN-MANAGEMENT + MONITORING
+           surface. Live active-run cards (auto-refresh every 5s; placeholder
+           when idle) + quick links. The old project-progress panels (KPIs,
+           "Project capability status" / Path-F pillars, result distribution,
+           recent-activity / latest-findings feeds) were removed — we no longer
+           track self-reported progress here. -->
+      <div class="section-title">Active runs</div>
+      <div id="overview-inflight-section">
         <div id="overview-inflight"></div>
       </div>
-      <!-- 2026-05-09: Capability status panel. Read-only summary of the
-           latest validated capability + Path F empirical pillars + capacity
-           scaling rule + active phase. Backed by /api/capability-status
-           which serves webapp/capability_status.json (manual source of
-           truth, updated when major milestones land). Per autonomous-runs
-           skill principle #10. -->
-      <div id="overview-capability-section" style="display:none;">
-        <div class="section-title">
-          Project capability status
-          <span id="capability-as-of" class="muted"
-                style="font-size:11px;font-weight:normal;margin-left:8px;"></span>
-        </div>
-        <div id="overview-capability"></div>
+      <div class="section-title">Quick links</div>
+      <div class="overview-quicklinks">
+        <button class="quicklink-btn" data-goto="lab">▶&nbsp; Launch a run</button>
+        <button class="quicklink-btn" data-goto="runs">📋&nbsp; All runs &amp; history</button>
+        <button class="quicklink-btn" data-goto="brain">🧠&nbsp; Watch brain activity</button>
+        <button class="quicklink-btn" data-goto="world">🗺&nbsp; Watch environment</button>
       </div>
-      <div class="section-title">Result distribution (sum_finalQ)</div>
-      <div class="chart-row"><canvas id="overview-distribution" class="chart-canvas"></canvas></div>
-      <div class="section-title">Recent activity</div>
-      <div class="activity-feed" id="overview-activity"></div>
-      <div class="section-title">Latest findings</div>
-      <div class="activity-feed" id="overview-findings"></div>
     </section>
 
     <section id="tab-experiments" class="tab">

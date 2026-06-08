@@ -494,6 +494,12 @@ function activateTab(tabName) {
   if (btn) btn.click();
 }
 
+// 2026-06-08: Home quick-links — delegate clicks on [data-goto] to the tab nav.
+document.addEventListener("click", (e) => {
+  const link = e.target.closest("[data-goto]");
+  if (link) { e.preventDefault(); activateTab(link.getAttribute("data-goto")); }
+});
+
 // ─────────────────────────────────────────────────────────────────────────
 // Runs tab
 // ─────────────────────────────────────────────────────────────────────────
@@ -3141,41 +3147,12 @@ async function loadInfo() {
 // ─────────────────────────────────────────────────────────────────────────
 async function loadOverview() {
   window._overviewLoaded = true;
-  const kpiContainer = $("#overview-kpis");
-  const activityContainer = $("#overview-activity");
-  const findingsContainer = $("#overview-findings");
-  showSkeleton(kpiContainer, 4, "card");
-  showSkeleton(activityContainer, 8, "list");
-  showSkeleton(findingsContainer, 6, "list");
-
-  try {
-    // 2026-05-02: include text_io_runs for the W→A KPI
-    // 2026-05-03: include /api/inflight (detached runs) so the In-flight
-    // KPI counts BOTH foreground and detached runs
-    // 2026-05-09: include /api/capability-status for the new capability
-    // status panel (Path F pillars, capacity rule, phase status).
-    const [runsRes, findingsRes, launchesRes, textIoRes, inflightRes, capabilityRes] = await Promise.all([
-      fetch("/api/runs").then((r) => r.json()),
-      fetch("/api/findings").then((r) => r.json()),
-      fetch("/api/runs/launch").then((r) => r.json()),
-      fetch("/api/text_io_runs").then((r) => r.json()).catch(() => ({ runs: [], aggregate: {} })),
-      fetch("/api/inflight").then((r) => r.json()).catch(() => ({ inflight: [] })),
-      fetch("/api/capability-status").then((r) => r.json()).catch(() => null),
-    ]);
-
-    renderOverviewKPIs(kpiContainer, runsRes.runs, findingsRes.findings,
-                       launchesRes.runs, textIoRes, inflightRes.inflight);
-    renderOverviewCapability(capabilityRes);
-    renderOverviewDistribution(runsRes.runs);
-    renderOverviewActivity(activityContainer, runsRes.runs);
-    renderOverviewFindings(findingsContainer, findingsRes.findings);
-  } catch (e) {
-    kpiContainer.replaceChildren(el("p", { class: "error" }, e.message));
-  }
-
-  // 2026-05-01: in-flight detached-run monitor. Polls /api/inflight every
-  // 5s and shows a progress card per active detached run. Hidden when no
-  // runs are in flight (returned count == 0).
+  // 2026-06-08 (owner directive): Home is a RUN-MANAGEMENT + MONITORING
+  // surface, not a project-progress dashboard. The KPI cards, "Project
+  // capability status" / Path-F-pillars panel, result-distribution chart,
+  // and the recent-activity / latest-findings feeds were removed — they were
+  // self-reported progress we no longer track here. What remains: the live
+  // active-runs monitor (below) + quick links to launch / browse / watch.
   refreshInflightPanel();
   if (!window._inflightInterval) {
     window._inflightInterval = setInterval(refreshInflightPanel, 5000);
@@ -3197,11 +3174,16 @@ async function refreshInflightPanel() {
     checkForCompletedRuns(allRuns);
     // Sticky-alive — debounces transient tasklist hiccups (15s grace).
     const runs = filterAliveSticky(allRuns);
+    section.style.display = "";
     if (runs.length === 0) {
-      section.style.display = "none";
+      container.replaceChildren(el("p", { class: "muted" },
+        "No active runs right now. Launch one from the Lab tab — any run (CLI, pool, or launched here) is detected automatically."));
       return;
     }
-    section.style.display = "";
+    // Clear the empty-state placeholder before rendering run cards (diff-update
+    // keys on run-id and won't remove the non-card <p> on its own).
+    const _ph = container.querySelector("p.muted");
+    if (_ph) _ph.remove();
     // Diff-update — preserves cards in place, no flicker on poll.
     diffUpdateRunCards(container, runs, renderOverviewInflightCard);
   } catch (e) {
