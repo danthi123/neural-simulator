@@ -52,7 +52,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0.08,
                          cue_to_strio_weight=3.0, strio_to_snc_weight=2.5,
-                         n_cue=40, n_strio=60, n_snc=30):
+                         n_cue=40, n_strio=60, n_snc=30,
+                         bprime=False, snc_drive_to_snc_weight=6.0,
+                         strio_to_drive_weight=15.0, n_drive=40):
     """Minimal bridge: cue (CS) -> striosome_value (GABAergic critic) -> snc (DA).
 
     cue->striosome_value is PLASTIC (the value is learned by the SNc-derived delta via
@@ -103,7 +105,10 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
             izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
         ),
         BrainRegion(
-            name="striosome_value", n_neurons=n_strio, exc_fraction=0.05,
+            name="striosome_value", n_neurons=n_strio, exc_fraction=0.0,
+            # FULLY GABAergic (MSNs are ~100% inhibitory). exc_fraction=0.05 left 3 excitatory
+            # neurons whose output EXCITED the value's target, confounding the subtraction
+            # (the value must be purely inhibitory to subtract).
             internal_density=0.0,   # no lateral self-inhibition: a graded VALUE readout,
                                     # not a winner-take-all gate (so V scales with the
                                     # learned cue->striosome weight instead of capping)
@@ -120,16 +125,42 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
             syn_reversal_potential_i_override=-55.0,   # SNc lacks KCC2 -> depolarized E_GABA
         ),
     ]
-    cfg.region_pathways = [
-        # The critic's learned value: cue (perceived state) -> striosome (value). PLASTIC.
+    # The critic's learned value: cue (perceived state) -> striosome (value). PLASTIC. (both modes)
+    pathways = [
         RegionPathway(from_region="cue", to_region="striosome_value",
                       density=0.6, weight_mean=float(cue_to_strio_weight),
                       weight_jitter=0.5, plastic=True),
-        # The value subtraction: striosome (GABA) -> snc. Fixed inhibitory conduit.
-        RegionPathway(from_region="striosome_value", to_region="snc",
-                      density=0.5, weight_mean=float(strio_to_snc_weight),
-                      weight_jitter=0.2, plastic=False),
     ]
+    if bprime:
+        # B'-DISINHIBIT-EXC (research 2026-06-08): the value subtraction is delivered via a
+        # normal-reversal EXCITATORY relay, not weak GABA onto the depolarized SNc. The relay
+        # `snc_drive` (exc, no reversal override -> default -75mV NORMAL reversal) is tonically
+        # paced and supplies the SNc's excitatory drive; the GABAergic critic STRONGLY inhibits
+        # the relay (full driving force, normal reversal); more V -> relay fires less -> less
+        # excitation to the SNc -> SNc fires less. Sign-correct + strong; subtraction carried by
+        # full-strength excitation, sidestepping the weak depolarized-GABA membrane.
+        cfg.brain_regions.append(BrainRegion(
+            name="snc_drive", n_neurons=n_drive, exc_fraction=1.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
+            plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            # NO syn_reversal_potential_i_override -> default -75mV (normal) so GABA is strong on it
+        ))
+        pathways += [
+            RegionPathway(from_region="striosome_value", to_region="snc_drive",
+                          density=0.5, weight_mean=float(strio_to_drive_weight),
+                          weight_jitter=0.2, plastic=False),   # value strongly inhibits the relay
+            RegionPathway(from_region="snc_drive", to_region="snc",
+                          density=0.6, weight_mean=float(snc_drive_to_snc_weight),
+                          weight_jitter=0.2, plastic=False),   # relay excites the SNc (full strength)
+        ]
+    else:
+        # Direct (de-risk baseline): striosome GABA -> snc, the weak depolarized-reversal conduit.
+        pathways.append(
+            RegionPathway(from_region="striosome_value", to_region="snc",
+                          density=0.5, weight_mean=float(strio_to_snc_weight),
+                          weight_jitter=0.2, plastic=False))
+    cfg.region_pathways = pathways
 
     # Stage-A dopamine modulator: production = from_region_firing_signed over ['snc'].
     snc_tonic_firing_fraction = 0.30
@@ -174,8 +205,10 @@ def _drive(bridge, idx_map, drives, n_steps, xp, freeze_lr=None, cfg=None):
         saved_lr = cfg.reward_learning_rate
         cfg.reward_learning_rate = float(freeze_lr)
     snc_idx, strio_idx = idx_map["snc"], idx_map["striosome_value"]
+    relay_idx = idx_map.get("snc_drive")   # B' only
     n_snc = len(_host(snc_idx)); n_strio = len(_host(strio_idx))
-    snc_spk = strio_spk = 0
+    n_relay = len(_host(relay_idx)) if relay_idx is not None else 0
+    snc_spk = strio_spk = relay_spk = 0
     da_sum = 0.0
     for _ in range(n_steps):
         bridge._run_one_simulation_step()
@@ -188,7 +221,10 @@ def _drive(bridge, idx_map, drives, n_steps, xp, freeze_lr=None, cfg=None):
             bridge.runtime_state.current_time_step * bridge.core_config.dt_ms)
         snc_spk += int(bridge.cp_firing_states[snc_idx].sum())
         strio_spk += int(bridge.cp_firing_states[strio_idx].sum())
+        if relay_idx is not None:
+            relay_spk += int(bridge.cp_firing_states[relay_idx].sum())
         da_sum += float(bridge.neuromodulator_manager.get_concentration("dopamine"))
+    bridge._last_relay_rate = (relay_spk / max(n_relay, 1) / (n_steps * 1e-3)) if n_relay else 0.0
     if saved_lr is not None:
         cfg.reward_learning_rate = saved_lr
     dur_s = n_steps * 1e-3
@@ -205,8 +241,9 @@ def _host(a):
         return a
 
 
-def _calibrate_da_threshold(bridge, cfg, idx_map, snc_tonic_pa, xp, n_steps=300):
-    """Drive the SNc at its tonic floor, measure its mean firing FRACTION, and set the
+def _calibrate_da_threshold(bridge, cfg, idx_map, tonic_drives, xp, n_steps=300):
+    """Drive the tonic condition (snc directly, or the relay in B'), measure the SNc's mean
+    firing FRACTION, and set the
     dopamine rule's threshold to it. The signed rule (neuromodulators.py:817) emits
     sensitivity*(rate_ema - threshold): with threshold = tonic, a burst (rate>tonic)
     -> da>baseline -> LTP, a dip (rate<tonic) -> da<baseline -> LTD, tonic -> ~0. The
@@ -214,7 +251,8 @@ def _calibrate_da_threshold(bridge, cfg, idx_map, snc_tonic_pa, xp, n_steps=300)
     da_signal negative throughout (pure LTD). Auto-calibration removes that guesswork."""
     snc_idx = idx_map["snc"]; n_snc = len(_host(snc_idx))
     bridge.cp_external_input_current[:] = 0.0
-    bridge.cp_external_input_current[snc_idx] = xp.float32(snc_tonic_pa)
+    for region, pA in tonic_drives.items():
+        bridge.cp_external_input_current[idx_map[region]] = xp.float32(pA)
     frac_sum = 0.0; m = 0
     for i in range(n_steps):
         bridge._run_one_simulation_step()
@@ -247,21 +285,22 @@ def _mean_pathway_weight(bridge, pre_name, post_name):
     return float(data[m].mean()) if m.any() else 0.0
 
 
-def _lesion_strio_to_snc(bridge):
-    """Zero every striosome_value->snc edge in the CSR (the value conduit). Proves the
-    subtraction is the striosome firing, not a host formula: after this, a trained CS
-    can no longer subtract -> predicted == unpredicted."""
+def _lesion_pathway(bridge, pre_name, post_name):
+    """Zero every pre_name->post_name edge in the CSR (the value conduit). Proves the
+    subtraction is carried by neuron firing, not a host formula: after this, a trained CS
+    can no longer subtract -> predicted == unpredicted. Direct mode cuts striosome_value->snc;
+    B' mode cuts the relay snc_drive->snc."""
     import numpy as np
-    strio = set(int(i) for i in _idx(bridge, "striosome_value"))
-    snc = set(int(i) for i in _idx(bridge, "snc"))
+    pre_set = set(int(i) for i in _idx(bridge, pre_name))
+    post_set = set(int(i) for i in _idx(bridge, post_name))
     coo = bridge.cp_connections.tocoo()
     rows = np.asarray(_host(coo.row), dtype=np.int64)   # post
     cols = np.asarray(_host(coo.col), dtype=np.int64)   # pre
-    mask = np.array([(r in snc and c in strio) for r, c in zip(rows, cols)])
+    mask = np.array([(r in post_set and c in pre_set) for r, c in zip(rows, cols)])
     pre = cols[mask]; post = rows[mask]
     if len(pre) == 0:
         return 0
-    return bridge.set_pathway_weights("striosome_value->snc(lesion)",
+    return bridge.set_pathway_weights(f"{pre_name}->{post_name}(lesion)",
                                       pre, post, np.zeros(len(pre), dtype=np.float32))
 
 
@@ -300,26 +339,44 @@ def run_diag(seed, *, cue_drive_pa=1000.0, cue_to_strio_weight=20.0,
 def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=600.0,
                hold_steps=40, n_train=40, reward_learning_rate=0.08,
                cue_to_strio_weight=3.0, strio_to_snc_weight=2.5,
-               snc_da_sensitivity=8.0, lesion=False, verbose=True):
+               snc_da_sensitivity=8.0, lesion=False, verbose=True,
+               bprime=False, relay_tonic_pa=300.0, snc_drive_to_snc_weight=6.0,
+               strio_to_drive_weight=15.0):
     from sim.backend import get_backend
     xp, _ = get_backend()
     bridge, cfg = _build_stageb_bridge(
         seed, snc_da_sensitivity=snc_da_sensitivity,
         reward_learning_rate=reward_learning_rate,
-        cue_to_strio_weight=cue_to_strio_weight, strio_to_snc_weight=strio_to_snc_weight)
-    idx_map = {n: xp.asarray(_idx(bridge, n)) for n in ("cue", "striosome_value", "snc")}
+        cue_to_strio_weight=cue_to_strio_weight, strio_to_snc_weight=strio_to_snc_weight,
+        bprime=bprime, snc_drive_to_snc_weight=snc_drive_to_snc_weight,
+        strio_to_drive_weight=strio_to_drive_weight)
+    region_names = ("cue", "striosome_value", "snc") + (("snc_drive",) if bprime else ())
+    idx_map = {n: xp.asarray(_idx(bridge, n)) for n in region_names}
 
     # Calibrate the dopamine threshold to the SNc's actual tonic firing fraction so
-    # the burst gives da_signal > 0 (LTP) and the dip gives < 0 (LTD).
-    tonic_frac = _calibrate_da_threshold(bridge, cfg, idx_map, snc_tonic_pa, xp)
+    # the burst gives da_signal > 0 (LTP) and the dip gives < 0 (LTD). In B' the SNc's
+    # tonic comes from the relay (snc_drive paced), so calibrate by pacing the relay.
+    tonic_drives = {"snc_drive": relay_tonic_pa} if bprime else {"snc": snc_tonic_pa}
+    tonic_frac = _calibrate_da_threshold(bridge, cfg, idx_map, tonic_drives, xp)
     if verbose:
-        print(f"  [calib] SNc tonic firing fraction = {tonic_frac:.4f} -> dopamine threshold")
+        print(f"  [calib] SNc tonic firing fraction = {tonic_frac:.4f} -> dopamine threshold"
+              f"{' (B-prime: relay-paced)' if bprime else ''}")
 
     # Windows (drives in pA). US = reward current to the SNc; CS = drive to the cue.
-    W_baseline = {"snc": snc_tonic_pa}                                  # tonic floor
-    W_cs_us = {"cue": cue_drive_pa, "snc": snc_tonic_pa + snc_reward_gain}   # CS + reward
-    W_us_alone = {"snc": snc_tonic_pa + snc_reward_gain}                # reward, NO cue
-    W_omission = {"cue": cue_drive_pa, "snc": snc_tonic_pa}             # CS, NO reward
+    if bprime:
+        # B'-DISINHIBIT-EXC: BOTH the tonic AND the reward drive the relay (snc_drive); the
+        # value inhibits the relay, so the relay carries (tonic + reward - V) and the
+        # snc_drive->snc excitation delivers delta = r - V to the SNc. (Reward must enter at
+        # the relay, NOT directly at the SNc, or the value cannot subtract from it.)
+        W_baseline = {"snc_drive": relay_tonic_pa}                                          # relay tonic -> SNc floor
+        W_cs_us = {"cue": cue_drive_pa, "snc_drive": relay_tonic_pa + snc_reward_gain}      # relay: tonic+reward; CS=V inhibits it
+        W_us_alone = {"snc_drive": relay_tonic_pa + snc_reward_gain}                        # relay: tonic+reward, NO cue (full)
+        W_omission = {"cue": cue_drive_pa, "snc_drive": relay_tonic_pa}                     # relay: tonic; CS=V inhibits it, NO reward
+    else:
+        W_baseline = {"snc": snc_tonic_pa}                                  # tonic floor
+        W_cs_us = {"cue": cue_drive_pa, "snc": snc_tonic_pa + snc_reward_gain}   # CS + reward
+        W_us_alone = {"snc": snc_tonic_pa + snc_reward_gain}                # reward, NO cue
+        W_omission = {"cue": cue_drive_pa, "snc": snc_tonic_pa}             # CS, NO reward
 
     # --- Acquisition: CS->US trials; the critic learns (V rises, US burst shrinks) ---
     us_burst, v_cs = [], []
@@ -342,19 +399,30 @@ def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=
     v_early = _st.mean(v_cs[early]); v_late = _st.mean(v_cs[late])
 
     if lesion:
-        n_cut = _lesion_strio_to_snc(bridge)
+        if bprime:
+            n_cut = _lesion_pathway(bridge, "snc_drive", "snc")    # cut the relay conduit
+            edge = "snc_drive->snc"
+        else:
+            n_cut = _lesion_pathway(bridge, "striosome_value", "snc")
+            edge = "striosome_value->snc"
         if verbose:
-            print(f"  [lesion] zeroed {n_cut} striosome_value->snc edges")
+            print(f"  [lesion] zeroed {n_cut} {edge} edges")
 
     # --- Test (learning frozen): predicted vs unpredicted vs omission vs baseline ---
     base_r, base_v, _ = _drive(bridge, idx_map, W_baseline, hold_steps, xp, freeze_lr=0.0, cfg=cfg)
+    base_relay = getattr(bridge, "_last_relay_rate", 0.0)
     pred_r, pred_v, _ = _drive(bridge, idx_map, W_cs_us, hold_steps, xp, freeze_lr=0.0, cfg=cfg)
+    pred_relay = getattr(bridge, "_last_relay_rate", 0.0)
     unpred_r, unpred_v, _ = _drive(bridge, idx_map, W_us_alone, hold_steps, xp, freeze_lr=0.0, cfg=cfg)
+    unpred_relay = getattr(bridge, "_last_relay_rate", 0.0)
     omit_r, omit_v, _ = _drive(bridge, idx_map, W_omission, hold_steps, xp, freeze_lr=0.0, cfg=cfg)
     if verbose:
         print(f"  [test V] predicted_strio={pred_v:.1f}Hz  unpredicted_strio={unpred_v:.1f}Hz  "
               f"omission_strio={omit_v:.1f}Hz  baseline_strio={base_v:.1f}Hz  "
               f"(V cue-gated if predicted/omission >> unpredicted/baseline)")
+        if bprime:
+            print(f"  [test relay] predicted_relay={pred_relay:.1f}Hz  unpredicted_relay={unpred_relay:.1f}Hz  "
+                  f"baseline_relay={base_relay:.1f}Hz  (B': relay should be LOWER when V is high)")
 
     v_learned = (v_late > 1.20 * v_early)               # (1) striosome value rose with training
     us_shrank = (us_late < 0.60 * us_early)             # (2) reward burst shrank
@@ -362,7 +430,7 @@ def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=
     omission_dip = (omit_r < base_r)                    # (4) CS-no-reward dips below tonic
 
     return {
-        "seed": seed, "lesion": lesion,
+        "seed": seed, "lesion": lesion, "bprime": bprime,
         "us_burst_early_hz": us_early, "us_burst_late_hz": us_late,
         "v_cs_early_hz": v_early, "v_cs_late_hz": v_late,
         "test_baseline_hz": base_r, "test_predicted_hz": pred_r,
@@ -399,8 +467,14 @@ def main():
     ap.add_argument("--cue-to-strio-weight", type=float, default=3.0)
     ap.add_argument("--strio-to-snc-weight", type=float, default=2.5)
     ap.add_argument("--snc-da-sensitivity", type=float, default=8.0)
-    ap.add_argument("--lesion", action="store_true", help="anti-cheat: cut striosome->snc after training")
+    ap.add_argument("--lesion", action="store_true", help="anti-cheat: cut the value conduit after training")
     ap.add_argument("--diag", action="store_true", help="diagnostic: cue/striosome drive + MSN rheobase")
+    ap.add_argument("--bprime", action="store_true",
+                    help="B'-DISINHIBIT-EXC: value inhibits a normal-reversal excitatory relay that "
+                         "drives the SNc (strong, sign-correct subtraction; sidesteps depolarized GABA)")
+    ap.add_argument("--relay-tonic-pa", type=float, default=300.0)
+    ap.add_argument("--snc-drive-to-snc-weight", type=float, default=6.0)
+    ap.add_argument("--strio-to-drive-weight", type=float, default=15.0)
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
@@ -416,10 +490,13 @@ def main():
               reward_learning_rate=args.reward_learning_rate,
               cue_to_strio_weight=args.cue_to_strio_weight,
               strio_to_snc_weight=args.strio_to_snc_weight,
-              snc_da_sensitivity=args.snc_da_sensitivity, lesion=args.lesion)
+              snc_da_sensitivity=args.snc_da_sensitivity, lesion=args.lesion,
+              bprime=args.bprime, relay_tonic_pa=args.relay_tonic_pa,
+              snc_drive_to_snc_weight=args.snc_drive_to_snc_weight,
+              strio_to_drive_weight=args.strio_to_drive_weight)
     results = []
     for s in seeds:
-        tag = "LESION" if args.lesion else "Stage-B critic"
+        tag = "LESION" if args.lesion else ("B'-DISINHIBIT-EXC" if args.bprime else "Stage-B critic")
         print(f"[snc-stageB seed={s}] {tag} — CS-gated neural value (delta=r-V, R-W):")
         r = run_stageb(s, **kw)
         _print_result(r)
