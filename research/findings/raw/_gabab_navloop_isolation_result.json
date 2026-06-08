@@ -1,0 +1,26 @@
+{
+  "ctrl": {
+    "label": "ctrl critic-OFF gabab-OFF",
+    "force_gabab_on": false,
+    "snc_rate_log_mean": 6.933333333333334,
+    "sum_final_quarter_distance": 0.5,
+    "n_steps_at_goal": 46,
+    "snc_step_mean": 0.04875151515151516,
+    "n_fired_step_mean": 21.708727272727273,
+    "n_steps_logged": 16500,
+    "n_steps_snc_fired": 5461,
+    "gabab_all_max": NaN
+  },
+  "D": {
+    "label": "D critic-OFF gabab-FORCED-ON",
+    "force_gabab_on": true,
+    "snc_rate_log_mean": 6.76,
+    "sum_final_quarter_distance": 0.5,
+    "n_steps_at_goal": 48,
+    "snc_step_mean": 0.04878787878787879,
+    "n_fired_step_mean": 21.250666666666667,
+    "n_steps_logged": 16500,
+    "n_steps_snc_fired": 5617,
+    "gabab_all_max": 0.0
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "A": {
+    "label": "A critic-ON gabab-ON (as-built)",
+    "force_gabab_off": false,
+    "snc_rate_log_mean": 0.0,
+    "sum_final_quarter_distance": 50.86842105263158,
+    "n_steps_at_goal": 0,
+    "snc_step_mean": 0.0,
+    "n_fired_step_mean": 49.97863247863248,
+    "n_steps_snc_fired": 0,
+    "n_steps_logged": 16380,
+    "gabab_all_max": 0.0,
+    "critic_weight_initial": 2.9899749755859375
+  },
+  "B": {
+    "label": "B critic-ON gabab-FORCED-OFF",
+    "force_gabab_off": true,
+    "snc_rate_log_mean": 8.113333333333333,
+    "sum_final_quarter_distance": 0.5,
+    "n_steps_at_goal": 49,
+    "snc_step_mean": 0.05147272727272727,
+    "n_fired_step_mean": 21.52751515151515,
+    "n_steps_snc_fired": 5041,
+    "n_steps_logged": 16500,
+    "gabab_all_max": 0.0,
+    "critic_weight_initial": 2.9899749755859375
+  }
+}
