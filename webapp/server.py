@@ -1575,7 +1575,17 @@ def _scan_for_orphans() -> int:
     Performance: skips sidecars older than 24h (their PIDs would be
     stale — not worth the psutil.Process query cost). Sorts newest
     first so the freshest in-flight runs are picked up first.
+
+    Opt-out: set WEBAPP_NO_ORPHAN_RECOVERY=1 to disable sidecar recovery
+    entirely. Needed when many historical sidecars exist alongside
+    concurrent CLI/pool runs — PIDs get reused, so a stale sidecar can
+    match an unrelated live process (manufacturing a phantom run, and a
+    kill on that phantom would terminate the unrelated real process).
+    With recovery off the dashboard tracks only this-session API launches.
     """
+    if os.environ.get("WEBAPP_NO_ORPHAN_RECOVERY") == "1" \
+            or (RUNTIME_DIR / ".no_orphan_recovery").exists():
+        return 0
     new_count = 0
     cutoff = time.time() - 86400.0  # 24h
     sidecars = sorted(
