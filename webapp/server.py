@@ -1661,6 +1661,14 @@ def _scan_for_orphans() -> int:
                     ev = _try_parse_progress(line, time.time())
                     if ev is not None:
                         run.progress_events.append(ev)
+                    # Also seed activity frames so a run adopted mid-stream has
+                    # its prior brain activity available to replay + scrub (the
+                    # WS replays this history on connect). Without this, only
+                    # post-adoption frames would be scrubbable.
+                    af = _try_parse_activity(line, time.time(), run.activity_seq)
+                    if af is not None:
+                        run.activity_seq += 1
+                        run.activity_frames.append(af)
                 run.log_pos = new_pos
             except Exception:
                 run.log_pos = 0
@@ -2112,13 +2120,16 @@ async def ws_run_stdout(websocket: WebSocket, run_id: str) -> None:
     for p in run.progress_events:
         await websocket.send_json({"type": "progress", **_progress_to_json(p)})
 
-    # Replay only the LATEST activity frame (latest-wins) so a late joiner
-    # sees current brain state immediately without us re-sending a backlog.
+    # Replay the buffered activity HISTORY (up to the 600-frame ring) in order
+    # so a late-joining client can immediately scrub BACK through the run's
+    # recent brain activity — not just see the current frame. The client buffers
+    # each frame into its own history (liveActivityHistory); the live loop below
+    # then coalesces to the freshest so a slow client never backs the stream up.
+    # Snapshot the deque first (the _drain_log task appends concurrently).
     last_activity_seq = -1
-    if run.activity_frames:
-        latest = run.activity_frames[-1]
-        await websocket.send_json({"type": "activity", **_activity_to_json(latest)})
-        last_activity_seq = latest.seq
+    for af in list(run.activity_frames):
+        await websocket.send_json({"type": "activity", **_activity_to_json(af)})
+        last_activity_seq = af.seq
 
     last_stdout = 0
     last_progress = len(run.progress_events)
