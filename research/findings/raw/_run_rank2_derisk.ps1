@@ -21,7 +21,7 @@ $common = @(
   "--grid-size","8","--seed","42","--n-steps","6000"
 )
 Write-Output "=== R2: reflex teaches LEARNED-from-vision, then weans ==="
-python -m research.runners.g11_bg_runner @common --enable-learned-perception --learned-perception-from-vision --out "research/findings/raw/_rank2_R2_s42.json"
+python -m research.runners.g11_bg_runner @common --learned-perception --learned-perception-from-vision --out "research/findings/raw/_rank2_R2_s42.json"
 Write-Output "=== CTRL: reflex teaches IT-only (no learned-from-vision), then weans ==="
 python -m research.runners.g11_bg_runner @common --out "research/findings/raw/_rank2_CTRL_itonly_s42.json"
 Write-Output "=== RANK 2 DE-RISK DONE ==="
