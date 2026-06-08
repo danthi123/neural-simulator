@@ -2781,7 +2781,16 @@ function activateBrainTab() {
     }, 2000);
   }
   // Lazy-init the 3D scene on first Brain-tab activation.
-  initBrain3DOnce();
+  initBrain3DOnce().then(() => {
+    // 2026-06-08: the manual "Live mode" toggle was removed — auto-follow live
+    // runs whenever the Brain tab is open (pollLive auto-selects the newest
+    // live run). Past runs are still loaded manually via "Load run…".
+    getBrain3D().then((mod) => {
+      mod.brain3dStartLive();
+      const ll = $("#brain3d-live-label"); if (ll) ll.style.display = "";
+      const lp = $("#brain3d-live-picker"); if (lp) lp.style.display = "";
+    }).catch(() => {});
+  });
 }
 
 let _brain3dInitialized = false;
@@ -2839,6 +2848,7 @@ function setupBrain3DControls(mod) {
           ]),
         ]);
         item.addEventListener("click", () => {
+          mod.brain3dStopLive();   // 2026-06-08: reviewing a past run — pause live-follow
           mod.brain3dLoadRun(r.name);
           drawer.style.display = "none";
         });
@@ -2851,27 +2861,14 @@ function setupBrain3DControls(mod) {
   $("#brain3d-runs-close")?.addEventListener("click", () => {
     $("#brain3d-runs-drawer").style.display = "none";
   });
-  // Live mode + live-run picker
+  // 2026-06-08: the manual "Live mode" toggle was removed — live runs auto-load
+  // when the Brain tab opens (see activateBrainTab). The live-run picker stays
+  // so you can switch between concurrent live runs (and re-engage live after
+  // reviewing a past run).
   const livePicker = $("#brain3d-live-picker");
-  $("#brain3d-live")?.addEventListener("click", () => {
-    const liveLabel = $("#brain3d-live-label");
-    const st = mod.brain3dGetState();
-    if (st.liveMode) {
-      mod.brain3dStopLive();
-      if (liveLabel) liveLabel.style.display = "none";
-      if (livePicker) livePicker.style.display = "none";
-      $("#brain3d-live").textContent = "Live mode";
-    } else {
-      mod.brain3dStartLive();
-      if (liveLabel) liveLabel.style.display = "";
-      if (livePicker) livePicker.style.display = "";
-      $("#brain3d-live").textContent = "Stop live";
-    }
-  });
-  // When user picks a different live run from the dropdown, retarget.
   livePicker?.addEventListener("change", (e) => {
     const name = e.target.value;
-    if (name) mod.brain3dSelectLiveRun(name);
+    if (name) { mod.brain3dStartLive(); mod.brain3dSelectLiveRun(name); }
   });
   // Step-jump input — type a step number and press Enter to jump.
   $("#brain3d-step-jump")?.addEventListener("keydown", (e) => {
@@ -2951,6 +2948,8 @@ $$("nav button").forEach((b) => {
   b.addEventListener("click", () => {
     if (b.dataset.tab !== "brain") {
       _brainTabActive = false;
+      // 2026-06-08: leaving the Brain tab — stop live polling + free the WS.
+      getBrain3D().then((mod) => mod.brain3dStopLive()).catch(() => {});
     }
   });
 });

@@ -365,10 +365,10 @@
             <option value="top_down">Top-down</option>
           </select>
           <button id="brain3d-reset-camera" class="ctrl-btn" title="Reset camera to fit the whole scene">⟲ Reset</button>
-          <!-- Live run picker (hidden by default; revealed when Live mode active) -->
-          <select id="brain3d-live-picker" class="toolbar-input" style="display:none;width:auto;" title="Pick which live run to follow"></select>
-          <button id="brain3d-load" class="ctrl-btn">Load run…</button>
-          <button id="brain3d-live" class="ctrl-btn">Live mode</button>
+          <!-- Live runs auto-load on Brain-tab open (2026-06-08); the picker
+               lets you switch between concurrent live runs. -->
+          <select id="brain3d-live-picker" class="toolbar-input" style="display:none;width:auto;" title="Switch which live run to follow (auto-follows the newest)"></select>
+          <button id="brain3d-load" class="ctrl-btn" title="Load a past run for playback / review">Load run…</button>
           <button id="brain3d-help" class="ctrl-btn" title="What am I looking at?">?</button>
         </div>
         <!-- Pathway visibility toggles -->

@@ -434,7 +434,9 @@ function populateInfoPanel(parent, info, key) {
     inList.appendChild(el("li", { class: "muted" }, "(no incoming)"));
   } else {
     for (const p of incoming) {
-      const li = el("li", {}, [el("span", { class: `brain3d-pw-${p.kind}` }, p.fromKey)]);
+      // 2026-06-08: show the friendly display_name, not the internal key.
+      const _lbl = (usePlainLabels && layout.regions[p.fromKey] && layout.regions[p.fromKey].display_name) || p.fromKey;
+      const li = el("li", {}, [el("span", { class: `brain3d-pw-${p.kind}` }, _lbl)]);
       if (p.label) li.appendChild(document.createTextNode(` · ${p.label}`));
       inList.appendChild(li);
     }
@@ -449,7 +451,9 @@ function populateInfoPanel(parent, info, key) {
     outList.appendChild(el("li", { class: "muted" }, "(no outgoing)"));
   } else {
     for (const p of outgoing) {
-      const li = el("li", {}, [el("span", { class: `brain3d-pw-${p.kind}` }, p.toKey)]);
+      // 2026-06-08: show the friendly display_name, not the internal key.
+      const _lbl = (usePlainLabels && layout.regions[p.toKey] && layout.regions[p.toKey].display_name) || p.toKey;
+      const li = el("li", {}, [el("span", { class: `brain3d-pw-${p.kind}` }, _lbl)]);
       if (p.label) li.appendChild(document.createTextNode(` · ${p.label}`));
       outList.appendChild(li);
     }
