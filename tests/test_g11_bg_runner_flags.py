@@ -1493,3 +1493,112 @@ def test_cluster_e_kwarg_accepted(tmp_out_path):
         result = json.load(f)
     assert "phase_stats" in result
     assert len(result["motor_counts"]) == 20
+
+
+# ───────────────────── 2026-06-08: Spiking-SNc actor-critic Stage A ─────────────────────
+
+
+def test_spiking_snc_kwarg_accepted(tmp_out_path):
+    """20-step GPU smoke: runner accepts --spiking-snc without TypeError,
+    produces a valid result with the snc_rate_log surfaced (the spiking RPE
+    readout), and honestly labels V as the host scaffold."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    run_moving_goal_episode(
+        out_path=tmp_out_path, seed=42, n_steps=20, verbose=False,
+        spiking_snc=True,
+    )
+    with open(tmp_out_path) as f:
+        result = json.load(f)
+    assert "phase_stats" in result
+    assert result["spiking_snc"] is True
+    assert result["snc_value_source"] == "host_reward_ema_scaffold", (
+        "Stage A must honestly report V is the host EMA scaffold, not a neural critic")
+    assert "snc_rate_log" in result, "spiking RPE readout (snc_rate_log) must be surfaced"
+
+
+def test_spiking_snc_mutually_exclusive_with_compartmentalized_da(tmp_out_path):
+    """--spiking-snc and --enable-compartmentalized-da both claim the dopamine
+    decomposition; the runner must raise ValueError rather than silently pick
+    one (per design §4.3 #4)."""
+    pytest.importorskip("cupy")
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+    with pytest.raises(ValueError) as exc:
+        run_moving_goal_episode(
+            out_path=tmp_out_path, seed=42, n_steps=10, verbose=False,
+            spiking_snc=True,
+            enable_compartmentalized_da=True,
+        )
+    assert "spiking-snc" in str(exc.value) or "spiking_snc" in str(exc.value)
+    assert "compartmentalized" in str(exc.value)
+
+
+def test_spiking_snc_circuit_burst_then_dip_cpu():
+    """CPU-only end-to-end smoke (numpy backend, NO GPU): build a real bridge
+    with the spiking `snc` pool + the signed `dopamine` modulator (the exact
+    Stage-A wiring), drive it with a +reward step then a -reward (omission)
+    step, and assert the SNc firing rate goes ABOVE tonic (burst on +RPE) then
+    BELOW tonic (dip on -RPE). This is the delta-encoded-in-FIRING property —
+    the spiking RPE — measured from cp_firing_states, not a host formula.
+
+    Uses the Pavlovian harness's bridge builder so it matches the deployed
+    config (the project's 'probes must match deployed config' rule)."""
+    import os
+    import numpy as np
+    # Force numpy backend for this test only.
+    prev = os.environ.get("SIM_BACKEND")
+    os.environ["SIM_BACKEND"] = "numpy"
+    try:
+        from sim.backend import _reset_cache_for_tests, get_backend
+        _reset_cache_for_tests()
+        xp, name = get_backend("numpy")
+        assert name == "numpy"
+
+        from research.runners.snc_pavlovian_probe import (
+            _build_snc_bridge, _snc_indices, _drive_snc_and_count,
+        )
+
+        tonic_pa, k_r, k_v = 220.0, 400.0, 400.0
+        hold_steps = 40
+        bridge, _cfg = _build_snc_bridge(seed=42, snc_tonic_pa=tonic_pa)
+        snc_idx = xp.asarray(_snc_indices(bridge))
+        n_snc = len(_snc_indices(bridge))
+
+        def rate(spikes):
+            return spikes / max(n_snc, 1) / (hold_steps * 1e-3)
+
+        # Tonic baseline (no reward window): I = tonic.
+        b_spk, _ = _drive_snc_and_count(bridge, snc_idx, tonic_pa, hold_steps, xp)
+        tonic_rate = rate(b_spk)
+
+        # +reward (r=+1, V=0): I = tonic + k_r -> BURST above tonic.
+        r, V = 1.0, 0.0
+        I_burst = tonic_pa + k_r * max(0.0, r) - k_v * max(0.0, V)
+        burst_spk, da_burst = _drive_snc_and_count(bridge, snc_idx, I_burst, hold_steps, xp)
+        burst_rate = rate(burst_spk)
+
+        # -reward / omission (r=0, V=1): I = tonic - k_v -> DIP below tonic.
+        r, V = 0.0, 1.0
+        I_dip = tonic_pa + k_r * max(0.0, r) - k_v * max(0.0, V)
+        dip_spk, da_dip = _drive_snc_and_count(bridge, snc_idx, I_dip, hold_steps, xp)
+        dip_rate = rate(dip_spk)
+
+        assert burst_rate > tonic_rate, (
+            f"+RPE should BURST the SNc above tonic; "
+            f"burst={burst_rate:.1f}Hz tonic={tonic_rate:.1f}Hz")
+        assert dip_rate < tonic_rate, (
+            f"-RPE/omission should DIP the SNc below tonic (the signed-rule "
+            f"property the one-sided rule lacks); "
+            f"dip={dip_rate:.1f}Hz tonic={tonic_rate:.1f}Hz")
+        # And the DA concentration tracks it: burst > dip (the broadcast is
+        # produced FROM the SNc firing via from_region_firing_signed).
+        assert da_burst > da_dip, (
+            f"DA conc should track SNc firing (burst>dip); "
+            f"da_burst={da_burst:.3f} da_dip={da_dip:.3f}")
+    finally:
+        if prev is None:
+            os.environ.pop("SIM_BACKEND", None)
+        else:
+            os.environ["SIM_BACKEND"] = prev
+        from sim.backend import _reset_cache_for_tests
+        _reset_cache_for_tests()

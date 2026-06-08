@@ -128,6 +128,23 @@ class ProductionRule:
             release (PBR-160 ch 16 McGinty). Requires `bridge.region_manager`
             and `bridge.cp_firing_states` to be available; if either is
             missing, emits 0 (graceful no-op).
+        "from_region_firing_signed"
+            SIGNED (two-sided) sibling of "from_region_firing": reads the
+            mean firing rate across `source_regions`, maintains an EMA over
+            `window_ms`, and produces `sensitivity * (rate_ema - threshold)`
+            for ALL rates (NO `max(0, ·)` clamp). When the rate is ABOVE
+            threshold it raises the concentration; when BELOW threshold it
+            DRIVES THE CONCENTRATION BELOW BASELINE. The one-sided
+            "from_region_firing" can only burst (raise) — it cannot encode a
+            negative deviation. This signed form is required for a spiking
+            substantia-nigra (SNc) dopamine neuron whose SUB-tonic firing must
+            push the dopamine concentration below baseline (the omission/dip
+            half of the reward-prediction error; Schultz 1998). Set
+            `threshold = tonic_rate` so the SNc tonic rate maps to ~0
+            net production (concentration ≈ baseline = no RPE). Same graceful
+            no-op (return 0.0) when `bridge.region_manager` /
+            `bridge.cp_firing_states` are missing. (Spiking-SNc actor-critic
+            Stage A, 2026-06-08; docs/plans/2026-06-08-spiking-snc-actor-critic-design.md §3.)
         "from_action_specific_reward"
             Cluster C v2 (2026-04-29): per-action reward production.
             Reads bridge.core_config.current_reward_signal AND
@@ -753,6 +770,51 @@ class NeuromodulatorManager:
             if ema > rule.threshold:
                 return rule.sensitivity * (ema - rule.threshold) * (self.dt_ms / 1000.0)
             return 0.0
+
+        if rt == "from_region_firing_signed":
+            # Spiking-SNc actor-critic Stage A (2026-06-08): SIGNED firing-rate
+            # production. Identical to "from_region_firing" — reads the mean
+            # firing fraction across `source_regions`, EMA over `window_ms`,
+            # threshold at the region's tonic rate — EXCEPT it drops the
+            # `max(0, ·)` clamp so a SUB-threshold (sub-tonic) firing rate
+            # drives the concentration BELOW baseline. This is what lets the
+            # SNc encode a NEGATIVE reward-prediction error (the omission/dip):
+            # burst (rate > tonic) -> conc > baseline -> LTP; tonic
+            # (rate ~= threshold) -> ~0 net -> no plasticity; dip
+            # (rate < tonic) -> conc < baseline -> LTD. The one-sided sibling
+            # above physically cannot dip. Same graceful no-op when the bridge
+            # lacks region_manager / cp_firing_states.
+            # See docs/plans/2026-06-08-spiking-snc-actor-critic-design.md §3.
+            if bridge is None or not rule.source_regions:
+                return 0.0
+            rm = getattr(bridge, "region_manager", None)
+            firing = getattr(bridge, "cp_firing_states", None)
+            if rm is None or firing is None or self._cp is None:
+                return 0.0
+            try:
+                indices = []
+                for region_name in rule.source_regions:
+                    region_idx = rm.indices(region_name)
+                    if region_idx is None or len(region_idx) == 0:
+                        continue
+                    indices.extend(list(region_idx))
+                if not indices:
+                    return 0.0
+                idx_cp = self._cp.asarray(indices, dtype=self._cp.int32)
+                rate = float(self._cp.mean(firing[idx_cp].astype(self._cp.float32)))
+            except Exception:
+                return 0.0
+            # EMA over window_ms. Separate state key from the one-sided rule so
+            # the two never share running state if both are ever configured.
+            state = self._rule_state[cfg.name]
+            ema_alpha = self.dt_ms / max(rule.window_ms, 1e-9)
+            ema = state.get("signed_rate_ema", 0.0)
+            ema = ema + ema_alpha * (rate - ema)
+            state["signed_rate_ema"] = ema
+            # SIGNED: no max(0, ·) clamp — sub-threshold yields a negative
+            # contribution. Scaled by dt/1000 to match the one-sided rule's
+            # per-step magnitude so equilibrium balances against decay.
+            return rule.sensitivity * (ema - rule.threshold) * (self.dt_ms / 1000.0)
 
         # Unknown rule type: silently no-op rather than crash. Future rules
         # are forward-compatible.

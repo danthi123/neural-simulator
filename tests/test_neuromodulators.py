@@ -1152,3 +1152,189 @@ def test_subsystem_with_no_targets_matches_legacy_reward_path():
         f"subsystem-with-no-targets diverged from legacy: "
         f"legacy={w_legacy:.6f} subsys={w_subsys:.6f} rel_diff={rel_diff:.4f}"
     )
+
+
+# ---------- Spiking-SNc Stage A: from_region_firing_signed (CPU-only) ----------
+#
+# These tests exercise the new SIGNED firing-rate production rule that the
+# spiking-SNc actor-critic Stage A needs (the DIP half of the RPE). They use
+# numpy as the cp_module + a tiny fake bridge (region_manager + cp_firing_states)
+# so they run with NO GPU. See
+# docs/plans/2026-06-08-spiking-snc-actor-critic-design.md §3 (protected edit #1).
+
+
+class _FakeRegionManager:
+    """Minimal region_manager stub: maps region name -> index list."""
+
+    def __init__(self, region_to_indices):
+        self._map = {k: list(v) for k, v in region_to_indices.items()}
+
+    def indices(self, name):
+        return self._map.get(name, [])
+
+
+class _FakeFiringBridge:
+    """Fake bridge exposing region_manager + cp_firing_states for the
+    from_region_firing[_signed] rules. firing_fraction sets what fraction of
+    the 'snc' neurons fire (rounded to whole neurons)."""
+
+    def __init__(self, xp, n_snc=10, firing_fraction=0.0):
+        self._xp = xp
+        self.region_manager = _FakeRegionManager({"snc": list(range(n_snc))})
+        n_fire = int(round(firing_fraction * n_snc))
+        states = xp.zeros(n_snc, dtype=xp.float32)
+        if n_fire > 0:
+            states[:n_fire] = 1.0
+        self.cp_firing_states = states
+
+
+def _run_signed_rule_to_equilibrium(firing_fraction, *, tonic_threshold=0.4,
+                                     baseline=0.5, sensitivity=4.0,
+                                     n_steps=4000):
+    """Drive a 'dopamine' modulator whose production rule is
+    from_region_firing_signed at a fixed SNc firing fraction; return the
+    settled concentration. numpy backend => CPU-only."""
+    import numpy as np
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="dopamine",
+        baseline=baseline,
+        decay_tau_ms=200.0,
+        concentration_min=0.0,
+        concentration_max=2.0,
+        production_rules=[ProductionRule(
+            rule_type="from_region_firing_signed",
+            sensitivity=sensitivity,
+            threshold=tonic_threshold,
+            window_ms=50.0,
+            source_regions=["snc"],
+        )],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=np)
+    bridge = _FakeFiringBridge(np, n_snc=10, firing_fraction=firing_fraction)
+    for _ in range(n_steps):
+        mgr.step(bridge)
+    return mgr.get_concentration("dopamine")
+
+
+def test_signed_rule_supra_tonic_raises_above_baseline():
+    """SNc firing ABOVE the tonic threshold drives dopamine ABOVE baseline
+    (the burst half — same direction as the one-sided rule)."""
+    baseline = 0.5
+    # 0.8 firing fraction >> threshold 0.4 -> conc above baseline.
+    conc = _run_signed_rule_to_equilibrium(firing_fraction=0.8, baseline=baseline)
+    assert conc > baseline + 0.05, (
+        f"supra-tonic SNc firing should raise DA above baseline {baseline}; got {conc}")
+
+
+def test_signed_rule_sub_tonic_falls_below_baseline():
+    """SNc firing BELOW the tonic threshold drives dopamine BELOW baseline.
+
+    THIS is the property the one-sided from_region_firing lacks (it clamps at
+    0 and can only burst). The dip is the negative-RPE / omission signature the
+    spiking SNc needs."""
+    baseline = 0.5
+    # 0.0 firing fraction < threshold 0.4 -> conc below baseline.
+    conc = _run_signed_rule_to_equilibrium(firing_fraction=0.0, baseline=baseline)
+    assert conc < baseline - 0.05, (
+        f"sub-tonic SNc firing should push DA BELOW baseline {baseline}; got {conc}")
+
+
+def test_signed_rule_at_tonic_stays_near_baseline():
+    """SNc firing AT the tonic threshold leaves dopamine ~= baseline (RPE ~= 0,
+    expected reward teaches nothing)."""
+    baseline = 0.5
+    # firing fraction 0.4 == threshold 0.4 -> net production ~0 -> ~baseline.
+    conc = _run_signed_rule_to_equilibrium(firing_fraction=0.4, baseline=baseline)
+    assert abs(conc - baseline) < 0.05, (
+        f"at-tonic SNc firing should leave DA near baseline {baseline}; got {conc}")
+
+
+def test_signed_rule_matches_one_sided_on_positive_branch():
+    """On the POSITIVE (supra-threshold) branch, the signed rule produces the
+    SAME per-step contribution as the one-sided from_region_firing (the signed
+    form only differs by removing the clamp on the negative branch)."""
+    import numpy as np
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    def _settle(rule_type):
+        nm = NeuromodulatorConfig(
+            name="dopamine", baseline=0.5, decay_tau_ms=200.0,
+            concentration_min=0.0, concentration_max=2.0,
+            production_rules=[ProductionRule(
+                rule_type=rule_type, sensitivity=4.0, threshold=0.4,
+                window_ms=50.0, source_regions=["snc"])],
+        )
+        mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+        mgr.initialize(n_neurons=10, cp_module=np)
+        bridge = _FakeFiringBridge(np, n_snc=10, firing_fraction=0.8)  # supra
+        for _ in range(4000):
+            mgr.step(bridge)
+        return mgr.get_concentration("dopamine")
+
+    one_sided = _settle("from_region_firing")
+    signed = _settle("from_region_firing_signed")
+    assert abs(one_sided - signed) < 1e-6, (
+        f"signed should equal one-sided on the positive branch; "
+        f"one_sided={one_sided} signed={signed}")
+
+
+def test_signed_rule_noops_without_region_manager():
+    """Graceful no-op (returns 0 contribution -> concentration decays to
+    baseline) when the bridge lacks region_manager / cp_firing_states.
+
+    Guarantees the rule never crashes a bridge that doesn't wire the SNc."""
+    import numpy as np
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    nm = NeuromodulatorConfig(
+        name="dopamine", baseline=0.5, decay_tau_ms=200.0,
+        concentration_min=0.0, concentration_max=2.0,
+        production_rules=[ProductionRule(
+            rule_type="from_region_firing_signed", sensitivity=4.0,
+            threshold=0.4, window_ms=50.0, source_regions=["snc"])],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=10, cp_module=np)
+    # bridge=None: no region_manager / cp_firing_states.
+    for _ in range(500):
+        mgr.step(bridge=None)
+    # Decays toward baseline (no production), no exception raised.
+    assert abs(mgr.get_concentration("dopamine") - 0.5) < 1e-6
+
+
+def test_signed_rule_unknown_to_existing_configs_byte_unaffected():
+    """A modulator configured with ONLY existing rule types is byte-identical
+    whether or not the signed rule exists in the dispatcher (the new branch is
+    never reached). Sanity: the dispatcher still no-ops unknown rules."""
+    import numpy as np
+    from sim.neuromodulators import (
+        NeuromodulatorConfig,
+        NeuromodulatorManager,
+        ProductionRule,
+    )
+
+    # An unknown rule type still returns 0 (forward-compat), proving the new
+    # branch is opt-in by exact string match and doesn't capture other rules.
+    nm = NeuromodulatorConfig(
+        name="x", baseline=0.0, decay_tau_ms=500.0,
+        production_rules=[ProductionRule(rule_type="totally_made_up_rule")],
+    )
+    mgr = NeuromodulatorManager([nm], dt_ms=1.0)
+    mgr.initialize(n_neurons=4, cp_module=np)
+    mgr.step(_FakeFiringBridge(np))
+    assert mgr.get_concentration("x") == 0.0

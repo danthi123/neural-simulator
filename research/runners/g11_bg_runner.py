@@ -2570,6 +2570,27 @@ def run_moving_goal_episode(
     # the actor-only / raw-reward DA into an actor-CRITIC RPE (Schultz 1998).
     # With --perceived-approach-reward (N5) the whole RPE loop is coordinate-free.
     rpe_dopamine: bool = False,
+    # ── Spiking-SNc actor-critic Stage A (2026-06-08) ──────────────────────
+    # docs/plans/2026-06-08-spiking-snc-actor-critic-design.md.
+    # When True, the dopamine reward-prediction error is computed by the
+    # FIRING of the spiking `snc` pool (IZH2007_DOPAMINE, the previously-silent
+    # placeholder region), NOT a host formula. Each reward step the SNc pool is
+    # driven by three additive external currents:
+    #   I_snc = snc_tonic_pa + snc_reward_gain*max(0, r) - snc_value_gain*V
+    # so its windowed firing rate encodes delta = r - V (burst above tonic on
+    # +RPE, tonic at 0, DIP below tonic on -RPE). The DA broadcast is then
+    # produced FROM that firing via the new `from_region_firing_signed`
+    # neuromodulator rule (the only protected sim/ edit) -> the bridge's existing
+    # da_signal = get_concentration("dopamine") - baseline path consumes it.
+    # STAGE A: value V is the host reward_ema scaffold (the inhibitory drive is
+    # proportional to the host R̄). Stage B's neural critic is NOT in this runner.
+    # Supersedes --rpe-dopamine (host formula) and owns the `dopamine` modulator
+    # vs --enable-tonic-da (precedence guard). Default OFF (additive).
+    spiking_snc: bool = False,
+    snc_tonic_pa: float = 220.0,       # tonic pacemaker drive -> mid-range SNc rate (headroom to dip)
+    snc_reward_gain: float = 400.0,    # k_r: excitatory reward afferent gain (pA per unit r)
+    snc_value_gain: float = 400.0,     # k_v: inhibitory value (striosome) drive gain (pA per unit V)
+    snc_da_sensitivity: float = 8.0,   # signed-rule sensitivity (firing-rate deviation -> DA conc)
     # Surprise-boosted learning rate: when |RPE| is high (unexpected outcome),
     # temporarily boost reward_learning_rate. Models NE-like fast meta-modulation.
     enable_surprise_lr_boost: bool = False,
@@ -3190,10 +3211,72 @@ def run_moving_goal_episode(
     # plasticity to gate). Composes with --enable-tans and
     # --enable-bg-neuropeptides.
     #
+    # Spiking-SNc actor-critic Stage A (2026-06-08): the `dopamine` modulator's
+    # production rule reads the SNc pool's FIRING (from_region_firing_signed),
+    # so the DA broadcast IS the spiking reward-prediction error. It OWNS the
+    # `dopamine` modulator: --enable-tonic-da (which registers the from_reward
+    # `_default_dopamine_config`) is skipped when spiking_snc is set (two
+    # `dopamine` modulators would be a config error), exactly mirroring the
+    # existing tonic-vs-compartmentalized precedence below. Mutually exclusive
+    # with --enable-compartmentalized-da (per-action channels are a different DA
+    # decomposition; combining them is undefined in v1).
+    if spiking_snc and enable_compartmentalized_da:
+        raise ValueError(
+            "--spiking-snc and --enable-compartmentalized-da are mutually "
+            "exclusive: the spiking SNc owns a single global `dopamine` "
+            "modulator (from_region_firing_signed over the snc pool), while "
+            "compartmentalized DA registers 4 per-action channels. Pick one."
+        )
+    if spiking_snc:
+        from sim.neuromodulators import (
+            NeuromodulatorConfig, ModulatorTarget, ProductionRule,
+        )
+        cfg.enable_neuromodulator_subsystem = True
+        # SNc tonic firing FRACTION threshold: at this rate the signed rule
+        # nets ~0 production so the DA concentration sits at baseline (RPE=0).
+        # The pool is paced to ~mid-range by snc_tonic_pa; the threshold is the
+        # firing FRACTION (0..1) the windowed-rate EMA settles to at tonic.
+        # Calibrated empirically by the Pavlovian probe (snc_pavlovian_probe.py).
+        snc_tonic_firing_fraction = 0.30
+        # Inline (no new sim/ symbol per the design's recommendation): the same
+        # NeuromodulatorConfig the factory would build. baseline/decay match
+        # _default_dopamine_config so ACh window-gating (--enable-tans) composes.
+        cfg.neuromodulators = list(cfg.neuromodulators) + [
+            NeuromodulatorConfig(
+                name="dopamine",
+                baseline=0.5,
+                decay_tau_ms=200.0,
+                concentration_min=0.0,
+                concentration_max=2.0,
+                targets=[
+                    ModulatorTarget(
+                        target_type="plasticity_rate", scope="all",
+                        sensitivity=+1.0,
+                    ),
+                ],
+                production_rules=[
+                    ProductionRule(
+                        rule_type="from_region_firing_signed",
+                        sensitivity=float(snc_da_sensitivity),
+                        threshold=float(snc_tonic_firing_fraction),
+                        window_ms=200.0,
+                        source_regions=["snc"],
+                    ),
+                ],
+            )
+        ]
+        if verbose:
+            print(f"[g11 seed={seed}] Spiking-SNc Stage A: dopamine modulator "
+                  f"= from_region_firing_signed over ['snc'] "
+                  f"(tonic={snc_tonic_pa}pA, k_r={snc_reward_gain}, "
+                  f"k_v={snc_value_gain}); RPE is the SNc FIRING. "
+                  f"V = host reward_ema (Stage-A scaffold).")
+
     # Precedence: when both --enable-tonic-da and --enable-compartmentalized-da
     # are set, only the per-action channels are registered (the global
     # `dopamine` modulator would double-count with the per-synapse path).
-    if enable_tonic_da and not enable_compartmentalized_da:
+    # Also skipped when --spiking-snc owns the `dopamine` modulator (above).
+    if enable_tonic_da and not enable_compartmentalized_da and not spiking_snc:
         from sim.neuromodulators import _default_dopamine_config
         cfg.enable_neuromodulator_subsystem = True
         cfg.neuromodulators = list(cfg.neuromodulators) + [
@@ -3422,6 +3505,14 @@ def run_moving_goal_episode(
     # Adaptive DA state — reward EMA in [-1, +1]
     reward_ema = 0.0
     da_strength_log = []  # log per-trial gating strength for analysis
+
+    # Spiking-SNc Stage A (2026-06-08): host index array for the snc pool (used
+    # to sum cp_firing_states over the reward-hold window) + per-trial SNc spike
+    # log (the spiking RPE readout, surfaced in the output JSON for diagnostics).
+    _snc_idx_host = None
+    snc_rate_log = []
+    if spiking_snc and "snc" in region_indices_cp:
+        _snc_idx_host = region_indices_cp["snc"].get()
 
     # DA-gated WTA: pre-compute FS->motor synapse indices and save baseline weights.
     # Per-trial we'll scale these weights by gating_strength to make WTA adaptive.
@@ -4040,6 +4131,15 @@ def run_moving_goal_episode(
             bridge.cp_external_input_current[region_indices_cp[rn]] = _gpi_tonic
         for rn in ["stn", "snc"]:
             bridge.cp_external_input_current[region_indices_cp[rn]] = cp.float32(150.0)
+        # Spiking-SNc Stage A (2026-06-08): override the snc tonic floor with
+        # the calibrated snc_tonic_pa (the generic 150 pA above is for the
+        # silent placeholder). This holds the pool at its spontaneous rate
+        # OUTSIDE the reward window so there is headroom to DIP on -RPE; the
+        # reward window then layers I_reward - I_value on top (see reward block).
+        if spiking_snc and "snc" in region_indices_cp:
+            bridge.cp_external_input_current[region_indices_cp["snc"]] = (
+                cp.float32(snc_tonic_pa)
+            )
         for rn in [f"thal_{a}" for a in ACTION_NAMES]:
             bridge.cp_external_input_current[region_indices_cp[rn]] = _thal_tonic
         # N6 commit stage: RE-set the commit_OPN tonic drive every trial (the
@@ -4865,7 +4965,17 @@ def run_moving_goal_episode(
             # RPE-scaled reward (opt-in): amplify surprise (= deviation from expectation)
             # Uses reward_ema_pre (the agent's prediction BEFORE this trial's reward).
             rpe = float(reward) - reward_ema_pre
-            if rpe_dopamine:
+            if spiking_snc:
+                # Spiking-SNc Stage A (2026-06-08): the RPE is NOT a host scalar.
+                # It is computed by the FIRING of the snc pool, which is driven
+                # below (I_snc current) and read out as the `dopamine`
+                # concentration via from_region_firing_signed. So
+                # current_reward_signal stays 0 — nothing downstream reads a
+                # stale host RPE (the legacy scalar path is bypassed, not used).
+                # --spiking-snc SUPERSEDES --rpe-dopamine (mutually exclusive
+                # semantics; both would be "the RPE", and spiking wins).
+                delivered_reward = 0.0
+            elif rpe_dopamine:
                 # N9 step 1: the DA signal IS the reward-prediction-error delta = r - V
                 # (V = reward_ema_pre, the learned Rescorla-Wagner critic) — an actor-CRITIC
                 # RPE, not raw reward (Schultz 1998; catalog C.22/C.28/C.30). With N5
@@ -4896,6 +5006,32 @@ def run_moving_goal_episode(
                 # Defensive: clear stale override if v2 wasn't actually wired up
                 bridge.cp_per_synapse_reward_override = None
 
+            # Spiking-SNc Stage A (2026-06-08): drive the snc pool's external
+            # current so its windowed firing rate encodes delta = r - V.
+            #   I_snc = I_tonic + k_r * max(0, r) - k_v * V
+            # The pool integrates these opposing currents and FIRES the RPE:
+            # reward above value -> burst (rate > tonic); reward below value ->
+            # DIP (rate < tonic). V is the host reward_ema_pre scaffold for
+            # Stage A (the ONLY host use of the value; Stage B replaces it with
+            # a neural striosome critic). max(0, ·) makes the inhibitory drive
+            # the EXPECTED appetitive value (a negative expectation must not
+            # flip the inhibition into excitation). The snc tonic at :4042
+            # (=150 pA generic) is OVERRIDDEN here with the calibrated
+            # snc_tonic_pa; since cp_external_input_current is NOT reset inside
+            # the reward-hold loop, this write persists across all hold steps.
+            # NO sim/ edit — pure cp_external_input_current write, the same
+            # mechanism every other region uses.
+            if spiking_snc and "snc" in region_indices_cp:
+                _V_scaffold = max(0.0, float(reward_ema_pre))
+                _I_snc = (
+                    float(snc_tonic_pa)
+                    + float(snc_reward_gain) * max(0.0, float(reward))
+                    - float(snc_value_gain) * _V_scaffold
+                )
+                bridge.cp_external_input_current[region_indices_cp["snc"]] = (
+                    cp.float32(_I_snc)
+                )
+
             # Surprise-boosted learning rate (opt-in): NE-like fast meta-modulation.
             # When |RPE| is high, temporarily boost reward_learning_rate. Restored
             # after reward hold. Decoupled from per-action DA gating mechanism.
@@ -4904,12 +5040,22 @@ def run_moving_goal_episode(
                 surprise = abs(rpe)
                 bridge.core_config.reward_learning_rate = base_lr * (1.0 + surprise_lr_alpha * surprise)
 
+            # Accumulate SNc spikes over the reward-hold window (the spiking RPE
+            # READOUT — measured from cp_firing_states, not a formula). Logged
+            # for diagnostics / the calibration harness.
+            _snc_spikes_this_trial = 0
             for _ in range(reward_hold_steps):
                 bridge._run_one_simulation_step()
                 bridge.runtime_state.current_time_step += 1
                 bridge.runtime_state.current_time_ms = (
                     bridge.runtime_state.current_time_step * cfg.dt_ms
                 )
+                if spiking_snc and _snc_idx_host is not None:
+                    _snc_spikes_this_trial += int(
+                        bridge.cp_firing_states[_snc_idx_host].sum()
+                    )
+            if spiking_snc:
+                snc_rate_log.append(_snc_spikes_this_trial)
             bridge.core_config.current_reward_signal = 0.0
             # Restore base reward_learning_rate (in case surprise-boosted)
             if enable_surprise_lr_boost:
@@ -5018,6 +5164,13 @@ def run_moving_goal_episode(
         },
         "action_log": action_log, "reward_log": reward_log,
         "distance_log": distance_log,
+        # Spiking-SNc Stage A (2026-06-08): per-trial SNc spike count over the
+        # reward-hold window (the spiking reward-prediction error, read from
+        # cp_firing_states). Empty unless --spiking-snc. V = host reward_ema
+        # SCAFFOLD at Stage A (NOT a neural critic — honestly labeled).
+        "snc_rate_log": snc_rate_log,
+        "spiking_snc": bool(spiking_snc),
+        "snc_value_source": ("host_reward_ema_scaffold" if spiking_snc else None),
         "mean_distance_overall": float(dist_arr.mean()),
         "mean_distance_quarters": quarters,
         "n_steps_at_goal": int((dist_arr == 0).sum()),
@@ -5804,6 +5957,40 @@ def main():
     ap.add_argument("--rpe-dopamine", action="store_true",
                     help="N9 (actor-critic): the dopamine signal IS the reward-prediction-error delta = r - V (V = reward_ema, the learned Rescorla-Wagner critic), not raw reward. Converts actor-only/scalar-DA -> actor-critic RPE (Schultz 1998; catalog C.22/C.28/C.30). Combine with --perceived-approach-reward (N5) for a fully coordinate-free RPE loop.")
     ap.add_argument("--rpe-alpha", type=float, default=1.0)
+    # ── Spiking-SNc actor-critic Stage A (2026-06-08) ──────────────────────
+    ap.add_argument("--spiking-snc", action="store_true",
+                    help="Stage A (spiking SNc): the dopamine reward-prediction "
+                         "error is computed by the FIRING of the spiking `snc` "
+                         "pool (IZH2007_DOPAMINE), NOT a host formula. Each "
+                         "reward step the snc pool is driven by "
+                         "I_snc = tonic + k_r*max(0,r) - k_v*V so its windowed "
+                         "rate encodes delta = r - V (burst on +RPE, dip on "
+                         "-RPE); the DA broadcast is produced from that firing "
+                         "via from_region_firing_signed (the one protected "
+                         "sim/ edit). V = host reward_ema (Stage-A SCAFFOLD; "
+                         "Stage B's neural striosome critic is separate). "
+                         "SUPERSEDES --rpe-dopamine; owns the `dopamine` "
+                         "modulator vs --enable-tonic-da; mutually exclusive "
+                         "with --enable-compartmentalized-da. See "
+                         "docs/plans/2026-06-08-spiking-snc-actor-critic-design.md.")
+    ap.add_argument("--snc-tonic-pa", type=float, default=220.0,
+                    help="Spiking SNc tonic pacemaker drive (pA) holding the "
+                         "pool at its spontaneous rate so there is headroom to "
+                         "DIP on negative RPE. Grace & Bunney 1984; "
+                         "enums.py:665. Default 220.")
+    ap.add_argument("--snc-reward-gain", type=float, default=400.0,
+                    help="Spiking SNc excitatory reward afferent gain k_r (pA "
+                         "per unit r). Reward above zero depolarizes SNc -> "
+                         "burst. Default 400.")
+    ap.add_argument("--snc-value-gain", type=float, default=400.0,
+                    help="Spiking SNc inhibitory value (striosome) drive gain "
+                         "k_v (pA per unit V). Prediction suppresses the DA "
+                         "burst (expected reward elicits no burst). Default 400.")
+    ap.add_argument("--snc-da-sensitivity", type=float, default=8.0,
+                    help="from_region_firing_signed sensitivity: how strongly "
+                         "the SNc firing-rate deviation from tonic maps to the "
+                         "dopamine concentration deviation from baseline. "
+                         "Default 8.")
     ap.add_argument("--surprise-lr-boost", action="store_true",
                     help="Boost reward_learning_rate when |RPE| is high (NE-like fast meta-modulation)")
     ap.add_argument("--surprise-lr-alpha", type=float, default=2.0)
@@ -6094,6 +6281,11 @@ def main():
             enable_rpe_scaled_reward=args.rpe_scaled_reward,
             rpe_dopamine=args.rpe_dopamine,
             rpe_scale_alpha=args.rpe_alpha,
+            spiking_snc=args.spiking_snc,
+            snc_tonic_pa=args.snc_tonic_pa,
+            snc_reward_gain=args.snc_reward_gain,
+            snc_value_gain=args.snc_value_gain,
+            snc_da_sensitivity=args.snc_da_sensitivity,
             enable_surprise_lr_boost=args.surprise_lr_boost,
             surprise_lr_alpha=args.surprise_lr_alpha,
             enable_curriculum=args.curriculum,
