@@ -5886,6 +5886,19 @@ def main():
             # goals it was NEVER taught on. Use with --n-steps 6000 +
             # --sc-reflex-wean-start 2000 --sc-reflex-wean-steps 1000.
             goal_schedule = [(0, far), (3000, far_west), (4000, sw), (5000, far_se)]
+        elif args.goal_schedule == "generalize2":
+            # Rank 2 generalization test v2 (2026-06-08): train (reflex teaches) on
+            # ALL FOUR CORNERS rotating (0-3000, so the learned (dx,dy)->action map
+            # covers the full offset/direction space — the fix for the single-goal
+            # `generalize` failure where training on ONE goal only covered offsets
+            # toward it), wean @2000-3000, then test on THREE NEW NON-CORNER goals
+            # (3000/4000/5000) with the reflex OFF. Use --n-steps 6000 +
+            # --sc-reflex-wean-start 2000 --sc-reflex-wean-steps 1000.
+            mid_top = (max(0, gs // 2), max(0, gs - 2))
+            mid_left = (max(0, 1), max(0, gs // 2))
+            mid_right = (max(0, gs - 2), max(0, gs // 2))
+            goal_schedule = [(0, far), (700, far_west), (1400, sw), (2100, far_se),
+                             (3000, mid_top), (4000, mid_left), (5000, mid_right)]
         elif args.goal_schedule == "curriculum":
             flip = max(1200, args.curriculum_warmup_steps + 600)
             goal_schedule = [(0, far), (flip, far_west)]

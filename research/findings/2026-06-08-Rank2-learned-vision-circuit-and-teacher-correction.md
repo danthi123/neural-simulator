@@ -59,7 +59,17 @@ The plain learned-from-vision circuit is a **strong perception biologization**: 
 **Durable on all 6 (every seed ≤4.57, none collapses to the IT floor ~6.1) — but seed-variable precision** (2/6 near-reflex ≤2.7; the rest ~3.3–4.6). Honest note: my 3-seed read (42/43/44, mean 2.93) was again partly seed-lucky — it included the two best seeds (43/44). The 6-seed truth: the learned circuit reliably *consolidates and avoids collapse* (clearly beating IT) but reaches *near-reflex precision only on some seeds*. This is the durable-but-seed-variable honest result; per the reasonable-budget gate it is NOT ground further (the variability is a consolidation-quality property, not a tuning bug the simple levers fix — more teaching plateaued, the teacher is a non-robust crutch).
 
 ### Multi-goal generalization (does the learned goal-agnostic map handle NEW goals post-wean?)
-- _IN FLIGHT (`--goal-schedule generalize`: train on one goal through the wean, then 3 NEW goals with the reflex OFF). The position-preserving `(dx,dy)→action` code predicts the learned map navigates to goals it was never taught on. Appended on completion._
+
+**v1 (single-goal-trained) = NEGATIVE.** `--goal-schedule generalize` (train on ONE goal `far` through the wean, then 3 NEW goals reflex-OFF). Per-phase final-quarter (phase 0 = trained goal; phases 1-3 = NEW goals):
+| seed | phase0 (trained) | phases1-3 (NEW goals) mean |
+|---|---|---|
+| 42 | 2.97 | 4.64 |
+| 43 | 2.40 | 7.50 |
+| 44 | 3.95 | 6.91 |
+
+On the TRAINED goal the learned circuit navigates (~2.4-3.95, consistent with single-goal); on NEW goals it DEGRADES badly (4.6-7.5, sometimes worse than the IT floor ~6.1). **Diagnosis (expected):** single-goal training only covers the `(dx,dy)` offsets *toward that one goal*, so the learned map never learned the action for directions toward goals elsewhere. The position-preserving code is goal-agnostic *in principle* but only generalizes if **trained on diverse offsets**.
+
+**v2 (4-corner-trained) — IN FLIGHT (`--goal-schedule generalize2`, `be8d771qy`):** train (reflex teaches) on all 4 corners rotating (0-3000, covering the full direction space), wean, then 3 NEW non-corner goals reflex-OFF. Tests whether diverse training fixes generalization (the real test of whether Rank 2 is a multi-goal nav solution). Appended on completion.
 
 ## Artifacts / cross-references
 - Helper + flags: `g11_bg_runner.py` (`sc_salience_offset_from_image`, `--learned-perception-from-vision`, `--sc-reflex-wean-start/-steps`, `--sensory-cortex-teacher-pA` [non-robust], `--goal-schedule generalize`; all additive, default-off, NO `sim/` edit).
