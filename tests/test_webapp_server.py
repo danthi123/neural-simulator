@@ -1131,3 +1131,198 @@ def test_llm_chat_frontend_ux_helpers_present(client):
     # Specific example prompts shipped
     assert "Remember that my favorite is north" in body
     assert "What word goes with east" in body
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Live brain-activity pipeline (frontend-revamp Phase 1, 2026-06-08)
+# ─────────────────────────────────────────────────────────────────────────
+
+
+def test_activity_line_parse_valid():
+    """_try_parse_activity parses a well-formed [ACTIVITY] {json} line into an
+    ActivityFrame with the per-region rates + flux + step + stamped seq."""
+    from webapp.server import _try_parse_activity
+    line = ('[ACTIVITY] {"t": 123.4, "regions": {"cortex_N": 0.12, '
+            '"motor_N": 0.05}, "flux": {"cortex_N_to_motor_N": 0.05}, '
+            '"step": 40, "seed": 42}')
+    af = _try_parse_activity(line, now=999.0, seq=7)
+    assert af is not None
+    assert af.t == 123.4
+    assert af.regions == {"cortex_N": 0.12, "motor_N": 0.05}
+    assert af.flux == {"cortex_N_to_motor_N": 0.05}
+    assert af.step == 40
+    assert af.seq == 7
+    assert af.timestamp == 999.0
+
+
+def test_activity_line_parse_rejects_non_activity():
+    """Lines without the [ACTIVITY] prefix (e.g. [PROGRESS], plain stdout)
+    return None — the activity parser must not steal progress lines."""
+    from webapp.server import _try_parse_activity
+    assert _try_parse_activity("hello world", 0.0, 0) is None
+    assert _try_parse_activity(
+        '[PROGRESS] {"kind":"step","current":1}', 0.0, 0) is None
+    # [ACTIVITY] prefix but malformed JSON -> None (no crash)
+    assert _try_parse_activity("[ACTIVITY] {not json", 0.0, 0) is None
+    # [ACTIVITY] but missing the required `regions` dict -> None
+    assert _try_parse_activity('[ACTIVITY] {"t": 1.0}', 0.0, 0) is None
+
+
+def test_activity_line_parse_flux_optional():
+    """flux is optional; a frame without it parses with flux == {}."""
+    from webapp.server import _try_parse_activity
+    line = '[ACTIVITY] {"t": 5.0, "regions": {"snc": 0.3}}'
+    af = _try_parse_activity(line, 0.0, 0)
+    assert af is not None
+    assert af.regions == {"snc": 0.3}
+    assert af.flux == {}
+
+
+def test_region_map_endpoint(client):
+    """GET /api/runs/{id}/region-map returns the static nav region graph
+    (regions + pathways + family_colors) the Brain tab uses to build the
+    scene before activity arrives. Unknown run_id is not an error."""
+    res = client.get("/api/runs/nonexistent-run-id/region-map")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["run_id"] == "nonexistent-run-id"
+    assert data["known_run"] is False
+    assert data["family"] == "navigation"
+    # Regions + pathways present and counted; the nav layout has many of each.
+    assert isinstance(data["regions"], dict)
+    assert isinstance(data["pathways"], list)
+    assert data["n_regions"] == len(data["regions"])
+    assert data["n_pathways"] == len(data["pathways"])
+    assert data["n_regions"] > 0
+    assert data["n_pathways"] > 0
+    # The map must agree with brain3d.js's layout (same source file): a
+    # known nav region + a known nav pathway are present.
+    assert "motor_N" in data["regions"]
+    # Each region carries layout coords + family for the 3D scene.
+    sample = data["regions"]["motor_N"]
+    assert "x" in sample and "y" in sample and "family" in sample
+    # family_colors maps family -> hex (excluding `_comment` keys).
+    assert isinstance(data["family_colors"], dict)
+    assert all(not k.startswith("_") for k in data["family_colors"])
+
+
+def test_region_map_matches_static_layout(client):
+    """The region-map endpoint and /static/brain3d_layout.json are the same
+    source of truth (server + renderer must agree on the graph)."""
+    layout = client.get("/static/brain3d_layout.json").json()
+    rmap = client.get("/api/runs/whatever/region-map").json()
+    assert rmap["n_regions"] == len(layout["regions"])
+    assert rmap["n_pathways"] == len(layout["pathways"])
+
+
+def test_drain_log_populates_activity_frames(client, tmp_path):
+    """A log file containing [ACTIVITY] lines is parsed into the run's
+    bounded activity_frames ring, with a monotonic seq per frame, when the
+    drain loop runs. We drive the parse directly (no subprocess)."""
+    import asyncio
+    from webapp.server import launched_runs, LaunchedRun, _drain_log
+
+    log_path = tmp_path / "activity_run.log"
+    log_path.write_text(
+        '[g11 seed=42] step 5/100  pos=(1,1)  goal=(6,6)  recent_dist=10.0  action=N reward=+0.00\n'
+        '[ACTIVITY] {"t": 2.5, "regions": {"cortex_N": 0.1}, "step": 5}\n'
+        '[ACTIVITY] {"t": 5.0, "regions": {"cortex_N": 0.2, "motor_N": 0.08}, "step": 10}\n'
+        'some other stdout line\n',
+        encoding="utf-8",
+    )
+    fake_id = "test_activity_drain_xyz"
+    run = LaunchedRun(
+        run_id=fake_id,
+        cmd=["python", "-m", "fake.runner"],
+        started_at=0.0,
+        proc=None,
+        pid=None,         # not alive -> drain terminates after a few quiet iters
+        log_file=str(log_path),
+    )
+    launched_runs[fake_id] = run
+    try:
+        asyncio.run(asyncio.wait_for(_drain_log(run), timeout=10.0))
+        # Both activity lines parsed; progress line did NOT become an activity.
+        assert len(run.activity_frames) == 2
+        assert run.activity_seq == 2
+        first, second = run.activity_frames[0], run.activity_frames[1]
+        assert first.regions == {"cortex_N": 0.1}
+        assert second.regions == {"cortex_N": 0.2, "motor_N": 0.08}
+        # seq is monotonic and the second frame is the freshest (latest-wins).
+        assert first.seq == 0 and second.seq == 1
+        # The progress line was still parsed into progress_events (unaffected).
+        assert len(run.progress_events) == 1
+    finally:
+        launched_runs.pop(fake_id, None)
+
+
+def test_launch_status_surfaces_latest_activity(client, tmp_path):
+    """GET /api/runs/launch/{id} surfaces the latest activity frame + count
+    so non-WS pollers can detect/read the stream."""
+    from webapp.server import launched_runs, LaunchedRun, ActivityFrame
+    fake_id = "test_activity_status_xyz"
+    run = LaunchedRun(
+        run_id=fake_id, cmd=["x"], started_at=0.0, proc=None, pid=None,
+        log_file=str(tmp_path / "x.log"),
+    )
+    run.activity_frames.append(ActivityFrame(
+        t=10.0, regions={"motor_N": 0.3}, flux={}, timestamp=1.0, step=2, seq=0))
+    run.activity_seq = 1
+    launched_runs[fake_id] = run
+    try:
+        res = client.get(f"/api/runs/launch/{fake_id}")
+        assert res.status_code == 200
+        data = res.json()
+        assert data["activity_frame_count"] == 1
+        assert data["latest_activity"] is not None
+        assert data["latest_activity"]["regions"] == {"motor_N": 0.3}
+        assert data["latest_activity"]["t"] == 10.0
+    finally:
+        launched_runs.pop(fake_id, None)
+
+
+def test_activity_frame_ring_is_bounded():
+    """The activity_frames ring is bounded (maxlen) so a long run can't grow
+    it without bound — load-bearing for the 'viz never bottlenecks' rule."""
+    from webapp.server import LaunchedRun, ActivityFrame
+    run = LaunchedRun(run_id="x", cmd=["x"], started_at=0.0)
+    for i in range(5000):
+        run.activity_frames.append(ActivityFrame(
+            t=float(i), regions={}, flux={}, timestamp=0.0, seq=i))
+    # deque(maxlen=600): only the most recent 600 retained.
+    assert len(run.activity_frames) == 600
+    assert run.activity_frames[-1].seq == 4999
+
+
+def test_launch_injects_emit_activity_only_when_requested(client, monkeypatch, tmp_path):
+    """The launcher appends --emit-activity ONLY when the request asks for it
+    (Brain/Environment launch) AND the preset is live-mode capable. Science /
+    multi-seed launches (emit_activity unset) never get it -> determinism
+    preserved. We capture the cmd via a stubbed Popen (no real subprocess)."""
+    import webapp.server as srv
+
+    captured = {}
+
+    class _FakePopen:
+        def __init__(self, cmd, **kw):
+            captured["cmd"] = list(cmd)
+            self.pid = 4242
+        def poll(self):
+            return 0  # immediately "done" so drain loop exits fast
+
+    monkeypatch.setattr(srv.subprocess, "Popen", _FakePopen)
+    # Keep run artifacts in tmp so we don't pollute the repo.
+    monkeypatch.setattr(srv, "RAW_RUNS_DIR", tmp_path)
+    monkeypatch.setattr(srv, "RUNTIME_DIR", tmp_path)
+
+    # 1) Default (no emit_activity): flag absent.
+    res = client.post("/api/runs/launch", json={
+        "preset": "flagship", "seed": 42})
+    assert res.status_code == 200, res.text
+    assert "--emit-activity" not in captured["cmd"]
+
+    # 2) emit_activity=True on a live-mode (g11_bg_runner) preset: flag present.
+    res = client.post("/api/runs/launch", json={
+        "preset": "flagship", "seed": 42, "emit_activity": True})
+    assert res.status_code == 200, res.text
+    assert "--emit-activity" in captured["cmd"]

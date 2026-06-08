@@ -131,3 +131,69 @@ def test_progress_line_re_anchored_correctly():
     parsed = parse_progress_line(line)
     assert parsed is not None
     assert parsed["kind"] == "eval"
+
+
+# ─── Live brain-activity channel (frontend-revamp Phase 1, 2026-06-08) ───────
+
+
+def test_emit_activity_writes_activity_prefixed_json():
+    """emit_activity writes one line: [ACTIVITY] {json} with rounded rates."""
+    from sim.progress import emit_activity
+    buf = io.StringIO()
+    emit_activity(123.456, {"cortex_N": 0.123456, "motor_N": 0.0},
+                  {"cortex_N_to_motor_N": 0.05}, step=40, file=buf)
+    line = buf.getvalue().rstrip("\n")
+    assert line.startswith("[ACTIVITY] ")
+    payload = json.loads(line[len("[ACTIVITY] "):])
+    assert payload["t"] == 123.5  # rounded to 1 dp
+    assert payload["regions"]["cortex_N"] == 0.1235  # rounded to 4 dp
+    assert payload["regions"]["motor_N"] == 0.0
+    assert payload["flux"] == {"cortex_N_to_motor_N": 0.05}
+    assert payload["step"] == 40
+
+
+def test_emit_activity_flux_omitted_when_empty():
+    """flux is omitted from the payload when None/empty (smaller frames)."""
+    from sim.progress import emit_activity
+    buf = io.StringIO()
+    emit_activity(5.0, {"snc": 0.3}, file=buf)
+    payload = json.loads(buf.getvalue().rstrip("\n")[len("[ACTIVITY] "):])
+    assert "flux" not in payload
+    assert payload["regions"] == {"snc": 0.3}
+
+
+def test_parse_activity_line_roundtrip():
+    """emit_activity then parse_activity_line gives back the payload."""
+    from sim.progress import emit_activity, parse_activity_line
+    buf = io.StringIO()
+    emit_activity(2.5, {"cortex_N": 0.1}, step=5, file=buf)
+    parsed = parse_activity_line(buf.getvalue().rstrip("\n"))
+    assert parsed == {"t": 2.5, "regions": {"cortex_N": 0.1}, "step": 5}
+
+
+def test_parse_activity_line_rejects_progress_and_malformed():
+    """The activity parser must not match [PROGRESS] lines, and tolerates
+    malformed JSON without crashing."""
+    from sim.progress import parse_activity_line
+    assert parse_activity_line('[PROGRESS] {"kind":"step"}') is None
+    assert parse_activity_line("plain stdout") is None
+    assert parse_activity_line("[ACTIVITY] {malformed") is None
+    assert parse_activity_line("") is None
+
+
+def test_activity_and_progress_channels_are_disjoint():
+    """An [ACTIVITY] line is invisible to the progress parser and vice-versa,
+    so the two telemetry channels never cross-contaminate."""
+    from sim.progress import (emit_activity, emit_progress,
+                              parse_activity_line, parse_progress_line)
+    abuf, pbuf = io.StringIO(), io.StringIO()
+    emit_activity(1.0, {"motor_N": 0.2}, file=abuf)
+    emit_progress("step", 1, 100, file=pbuf)
+    aline = abuf.getvalue().rstrip("\n")
+    pline = pbuf.getvalue().rstrip("\n")
+    # Activity line: parses as activity, NOT as progress.
+    assert parse_activity_line(aline) is not None
+    assert parse_progress_line(aline) is None
+    # Progress line: parses as progress, NOT as activity.
+    assert parse_progress_line(pline) is not None
+    assert parse_activity_line(pline) is None

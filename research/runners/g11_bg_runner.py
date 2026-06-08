@@ -2949,6 +2949,19 @@ def run_moving_goal_episode(
     # which the loser-only reset does not fix). RECOMMENDED value: 180.
     urgency_max_pA: float = 0.0,
     thal_fs_to_thal_weight: float = 20.0,
+    # ── Live brain-activity streaming (frontend-revamp Phase 1, 2026-06-08) ──
+    # docs/plans/2026-06-08-frontend-revamp-design.md §3.4. Default OFF: when
+    # emit_activity is False, the RegionActivityProbe is never constructed and
+    # emit_activity() is never called, so the step loop is byte-identical and
+    # every multi-seed / determinism / science run is unaffected (zero overhead).
+    # When True, build the probe ONCE and emit a throttled [ACTIVITY] {json}
+    # line every `emit_activity_every` steps (fire-and-forget to stdout -> the
+    # run's .log; the webapp tails it). The probe is a tiny host-side per-region
+    # mean-firing reduction (~30 floats), NOT per-neuron, so it never bottlenecks
+    # the sim. Requires the brain-region framework (region_manager) — always on
+    # for the BG nav cascade.
+    emit_activity: bool = False,
+    emit_activity_every: int = 5,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -3865,6 +3878,31 @@ def run_moving_goal_episode(
         c_val = c_phase1 + (c_phase2 - c_phase1) * progress
         h_val = h_phase1 + (h_phase2 - h_phase1) * progress
         return c_val, h_val
+
+    # Live brain-activity probe (frontend-revamp Phase 1). Built ONCE here so
+    # the per-step loop only pays the (throttled) reduction when --emit-activity
+    # is set. Default off => _activity_probe stays None => zero overhead, the
+    # loop is byte-identical to a science run.
+    _activity_probe = None
+    _activity_emit = None
+    if emit_activity:
+        try:
+            from sim.activity_probe import RegionActivityProbe
+            from sim.progress import emit_activity as _activity_emit
+            _activity_probe = RegionActivityProbe(bridge)
+            if verbose:
+                print(
+                    f"[g11 seed={seed}] activity streaming ON: "
+                    f"{_activity_probe.n_regions} regions, "
+                    f"{_activity_probe.n_pathways} pathways, "
+                    f"every {emit_activity_every} steps",
+                    flush=True,
+                )
+        except Exception as _ap_err:
+            # Never let activity instrumentation break a run.
+            print(f"[g11 seed={seed}] activity probe init failed ({_ap_err}); "
+                  f"continuing without it", flush=True)
+            _activity_probe = None
 
     t0 = time.time()
     # Track current gating_strength (used for DA-gated WTA across the whole trial,
@@ -5088,6 +5126,26 @@ def run_moving_goal_episode(
             except Exception:
                 pass
 
+        # Live brain-activity frame (frontend-revamp Phase 1). Independent
+        # throttle from progress: emit at most every `emit_activity_every`
+        # steps so it stays ~5-30 Hz of sim-time. Fire-and-forget: the probe
+        # does one host-side per-region reduction and emit_activity() prints a
+        # stdout line and returns — it NEVER waits on a reader, so the sim is
+        # never blocked by the viz. Whole block is a no-op when --emit-activity
+        # is off (_activity_probe is None).
+        if _activity_probe is not None and emit_activity_every > 0 \
+                and (step + 1) % emit_activity_every == 0:
+            try:
+                _regions, _flux = _activity_probe.sample(bridge)
+                _activity_emit(
+                    bridge.runtime_state.current_time_ms,
+                    _regions, _flux,
+                    step=step + 1, seed=seed,
+                )
+            except Exception:
+                # Activity emission must never crash a run.
+                pass
+
         # Optional throttle for human-watchable speed in interactive mode.
         if trial_sleep_ms > 0:
             time.sleep(trial_sleep_ms / 1000.0)
@@ -5523,6 +5581,18 @@ def main():
                     help="Sleep this many ms between trials (default 0 = full "
                          "speed). Use 50-200 to watch the agent learn at "
                          "human-readable speed in interactive mode.")
+    # Live brain-activity streaming (frontend-revamp Phase 1, 2026-06-08).
+    ap.add_argument("--emit-activity", action="store_true",
+                    help="Stream live per-region brain activity as throttled "
+                         "[ACTIVITY] {json} stdout lines (the webapp Brain tab "
+                         "consumes them). Default OFF — when off there is zero "
+                         "per-step overhead and the run is byte-identical to a "
+                         "science run. Fire-and-forget: never blocks the sim.")
+    ap.add_argument("--emit-activity-every", type=int, default=5,
+                    help="Emit an [ACTIVITY] frame every N steps (default 5). "
+                         "Decoupled from the sim step rate so the stream stays "
+                         "~5-30 Hz of sim-time regardless of step speed. Only "
+                         "used when --emit-activity is set.")
     ap.add_argument("--bg-cross-thaw-step", type=int, default=-1,
                     help="Cheat #5 closure (2026-04-28): step at which bg_cross_projections "
                          "gate thaws to its phase-3 value. -1 = stay frozen. Recommended 1200 "
@@ -6266,6 +6336,8 @@ def main():
             interactive_control_file=args.interactive_control_file,
             progress_print_interval=args.progress_print_interval,
             trial_sleep_ms=args.trial_sleep_ms,
+            emit_activity=args.emit_activity,
+            emit_activity_every=args.emit_activity_every,
             goal_schedule=goal_schedule,
             enable_motor_lateral_inhibition=_warn_motor_lateral_inhibition_deprecated(args.motor_lateral_inhibition),
             enable_cortex_lateral_inhibition=args.cortex_wta,

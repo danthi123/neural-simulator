@@ -25,6 +25,7 @@ import subprocess
 import sys
 import time
 import uuid
+from collections import deque
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -79,6 +80,24 @@ class ProgressEvent:
 
 
 @dataclass
+class ActivityFrame:
+    """A parsed [ACTIVITY] {json} line from a runner's stdout — the live
+    per-region brain-activity frame (frontend-revamp Phase 1, 2026-06-08).
+
+    Tiny by construction (~30 region floats + ~30 flux floats), emitted by the
+    runner on a throttle (every N steps). The server ring-buffers the most
+    recent frames and re-broadcasts the LATEST one per WS client (latest-wins
+    coalescing), so a slow browser never backs up the stream — and the sim,
+    which only writes a fire-and-forget stdout line, is never in that loop."""
+    t: float                       # sim time (ms) for this frame
+    regions: dict[str, float]      # region_name -> mean firing fraction [0,1]
+    flux: dict[str, float]         # pathway_name -> flux [0,1]
+    timestamp: float               # server wall-clock receive time
+    step: int = -1                 # runner step at emit (if present)
+    seq: int = 0                   # monotonic per-run sequence (for coalescing)
+
+
+@dataclass
 class LaunchedRun:
     run_id: str
     cmd: list[str]
@@ -107,6 +126,14 @@ class LaunchedRun:
     pid: int | None = None
     # Position in the log file we've already drained (for the tail loop).
     log_pos: int = 0
+    # Live brain-activity frames (frontend-revamp Phase 1, 2026-06-08). A bounded
+    # ring buffer — 600 frames = 60 s at 10 Hz — so the activity stream never
+    # grows without bound even on long runs. `activity_seq` is a monotonic
+    # counter used by the WS handler for latest-wins coalescing (each client
+    # only ever sends the freshest frame and tracks the seq it last sent).
+    activity_frames: deque[ActivityFrame] = field(
+        default_factory=lambda: deque(maxlen=600))
+    activity_seq: int = 0
 
 
 launched_runs: dict[str, LaunchedRun] = {}
@@ -124,6 +151,46 @@ _PROGRESS_RE = re.compile(
 # Both fields are optional for backward compat with older runner versions.
 _PROGRESS_ACTION_RE = re.compile(r"action=([NESW?])\s+reward=([-+]?[\d.]+)")
 _ACTION_LETTER_TO_IDX = {"N": 0, "E": 1, "S": 2, "W": 3}
+
+# Live brain-activity channel (frontend-revamp Phase 1). Sibling of
+# _PROGRESS_RE — same wire format (one line, JSON after a fixed prefix), new
+# prefix. Mirrors sim/progress.py ACTIVITY_LINE_RE; kept inline here so the
+# server has no import-time dependency on sim.progress (matching how
+# _PROGRESS_RE is defined locally).
+_ACTIVITY_RE = re.compile(r"\[ACTIVITY\]\s+(\{.*\})")
+
+
+def _try_parse_activity(line: str, now: float, seq: int) -> ActivityFrame | None:
+    """Parse one log line as an [ACTIVITY] frame, or return None.
+
+    `seq` is the run's monotonic counter at the time of parse — stamped onto
+    the frame so WS clients can coalesce to the latest (latest-wins)."""
+    m = _ACTIVITY_RE.search(line)
+    if not m:
+        return None
+    try:
+        payload = json.loads(m.group(1))
+    except (json.JSONDecodeError, ValueError):
+        return None
+    if not isinstance(payload, dict):
+        return None
+    regions = payload.get("regions")
+    if not isinstance(regions, dict):
+        return None
+    flux = payload.get("flux")
+    if not isinstance(flux, dict):
+        flux = {}
+    try:
+        return ActivityFrame(
+            t=float(payload.get("t", 0.0)),
+            regions={str(k): float(v) for k, v in regions.items()},
+            flux={str(k): float(v) for k, v in flux.items()},
+            timestamp=now,
+            step=int(payload.get("step", -1)),
+            seq=seq,
+        )
+    except (TypeError, ValueError):
+        return None
 
 
 def _try_parse_progress(line: str, now: float) -> ProgressEvent | None:
@@ -1212,6 +1279,13 @@ class LaunchRequest(BaseModel):
     # floor at the cost of ~10-30% slowdown. Required for the cluster
     # comparisons that don't otherwise rise above the run-to-run noise.
     deterministic: bool = False
+    # When True, append --emit-activity so the run streams live per-region
+    # brain activity (frontend-revamp Phase 1). The frontend sets this ONLY
+    # for launches from the Brain/Environment cockpit screens — NEVER for
+    # multi-seed / science launches — so determinism-sensitive runs stay
+    # byte-identical (the runner flag is itself default-off). Only injected
+    # for live-mode-capable (g11_bg_runner navigation) presets.
+    emit_activity: bool = False
 
 
 RUNTIME_DIR = Path(__file__).resolve().parent / "runtime"
@@ -1280,6 +1354,14 @@ async def launch_run(req: LaunchRequest) -> JSONResponse:
     if supports_live_mode and not any(a == "--progress-print-interval" for a in base_extras):
         default_ppi = "1" if req.preset.startswith("interactive_") else "20"
         extras.extend(["--progress-print-interval", default_ppi])
+
+    # Live brain-activity streaming (frontend-revamp Phase 1): only when the
+    # frontend explicitly asks (Brain/Environment launch) AND the preset routes
+    # to g11_bg_runner (the only runner that accepts --emit-activity). Never
+    # auto-added to science/multi-seed launches, preserving determinism.
+    if req.emit_activity and supports_live_mode \
+            and not any(a == "--emit-activity" for a in base_extras):
+        extras.append("--emit-activity")
 
     cmd = [
         sys.executable, "-m", runner_module,
@@ -1729,6 +1811,13 @@ async def _drain_log(run: LaunchedRun) -> None:
                 ev = _try_parse_progress(line, time.time())
                 if ev is not None:
                     run.progress_events.append(ev)
+                # Live brain-activity frame (frontend-revamp Phase 1). Parsed on
+                # the same tail loop; appended to a bounded ring (latest-wins on
+                # the WS). Cheap — only matches lines with the [ACTIVITY] prefix.
+                af = _try_parse_activity(line, time.time(), run.activity_seq)
+                if af is not None:
+                    run.activity_seq += 1
+                    run.activity_frames.append(af)
         else:
             quiet_iters += 1
 
@@ -1747,6 +1836,10 @@ async def _drain_log(run: LaunchedRun) -> None:
                         ev = _try_parse_progress(line, time.time())
                         if ev is not None:
                             run.progress_events.append(ev)
+                        af = _try_parse_activity(line, time.time(), run.activity_seq)
+                        if af is not None:
+                            run.activity_seq += 1
+                            run.activity_frames.append(af)
                 run.returncode = rc
                 if run.finished_at is None:
                     run.finished_at = time.time()
@@ -1851,8 +1944,74 @@ def launch_status(run_id: str) -> JSONResponse:
         "stdout_line_count": len(run.stdout_lines),
         "tail": run.stdout_lines[-20:],
         "progress_events": [_progress_to_json(p) for p in run.progress_events],
+        # Latest live brain-activity frame (frontend-revamp Phase 1), if any.
+        # WS is the live channel; this is a convenience for non-WS pollers + a
+        # cheap signal of whether the run is streaming activity.
+        "latest_activity": (
+            _activity_to_json(run.activity_frames[-1]) if run.activity_frames else None
+        ),
+        "activity_frame_count": run.activity_seq,
         "out_path": run.out_path,
         "cmd": list(run.cmd),
+    })
+
+
+# ─── Static brain-region map (frontend-revamp Phase 1, 2026-06-08) ──────────
+# The Brain tab needs the region+pathway graph (names, families/colors, neuron
+# counts, 3D layout coords, pathway from/to/transmitter) to build the scene
+# BEFORE any activity arrives. Phase 1 returns the hardcoded NAVIGATION region
+# map — the same `brain3d_layout.json` the renderer already loads — so the
+# server and renderer agree on the graph. Phase 2 will derive it per-run from
+# sim/regions.py for non-navigation architectures.
+_REGION_MAP_CACHE: dict[str, Any] | None = None
+
+
+def _load_nav_region_map() -> dict[str, Any]:
+    """Load (and cache) the navigation region map from the static layout file.
+
+    Returns a dict with `regions`, `pathways`, and `family_colors` keys, plus
+    the underlying counts. The layout file is the single source of truth shared
+    with brain3d.js."""
+    global _REGION_MAP_CACHE
+    if _REGION_MAP_CACHE is not None:
+        return _REGION_MAP_CACHE
+    layout_path = STATIC_DIR / "brain3d_layout.json"
+    try:
+        raw = json.loads(layout_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        raw = {}
+    regions = raw.get("regions", {}) or {}
+    pathways = raw.get("pathways", []) or []
+    family_colors = {
+        k: v for k, v in (raw.get("_family_colors", {}) or {}).items()
+        if not k.startswith("_")
+    }
+    _REGION_MAP_CACHE = {
+        "family": "navigation",
+        "regions": regions,
+        "pathways": pathways,
+        "family_colors": family_colors,
+        "n_regions": len(regions),
+        "n_pathways": len(pathways),
+    }
+    return _REGION_MAP_CACHE
+
+
+@app.get("/api/runs/{run_id}/region-map")
+def run_region_map(run_id: str) -> JSONResponse:
+    """Static region+pathway graph for a run's Brain-tab scene.
+
+    Phase 1: returns the navigation region map (hardcoded to match
+    brain3d.js's built-in layout) regardless of run_id, so the Brain tab can
+    build the scene before activity arrives. The run_id is echoed back; an
+    unknown run_id is NOT an error here (the map is a static layout, useful
+    even for a run the server hasn't registered)."""
+    region_map = _load_nav_region_map()
+    run = launched_runs.get(run_id)
+    return JSONResponse({
+        "run_id": run_id,
+        "known_run": run is not None,
+        **region_map,
     })
 
 
@@ -1864,6 +2023,17 @@ def _progress_to_json(p: ProgressEvent) -> dict[str, Any]:
         "timestamp": p.timestamp,
         "action": p.action,
         "reward": p.reward,
+    }
+
+
+def _activity_to_json(a: ActivityFrame) -> dict[str, Any]:
+    return {
+        "t": a.t,
+        "regions": a.regions,
+        "flux": a.flux,
+        "step": a.step,
+        "seq": a.seq,
+        "timestamp": a.timestamp,
     }
 
 
@@ -1884,6 +2054,14 @@ async def ws_run_stdout(websocket: WebSocket, run_id: str) -> None:
     for p in run.progress_events:
         await websocket.send_json({"type": "progress", **_progress_to_json(p)})
 
+    # Replay only the LATEST activity frame (latest-wins) so a late joiner
+    # sees current brain state immediately without us re-sending a backlog.
+    last_activity_seq = -1
+    if run.activity_frames:
+        latest = run.activity_frames[-1]
+        await websocket.send_json({"type": "activity", **_activity_to_json(latest)})
+        last_activity_seq = latest.seq
+
     last_stdout = 0
     last_progress = len(run.progress_events)
     try:
@@ -1900,6 +2078,16 @@ async def ws_run_stdout(websocket: WebSocket, run_id: str) -> None:
                 for p in run.progress_events[last_progress:cur_progress]:
                     await websocket.send_json({"type": "progress", **_progress_to_json(p)})
                 last_progress = cur_progress
+            # Stream the LATEST activity frame only (coalesce / drop stale).
+            # We never iterate the backlog: if the browser fell behind while
+            # many frames arrived, it skips straight to the freshest one, so a
+            # slow client can never back the stream up. The sim is never in
+            # this loop — it already fire-and-forgot the line to its log.
+            if run.activity_frames:
+                latest = run.activity_frames[-1]
+                if latest.seq > last_activity_seq:
+                    await websocket.send_json({"type": "activity", **_activity_to_json(latest)})
+                    last_activity_seq = latest.seq
             if run.proc is not None and run.proc.poll() is not None:
                 await websocket.send_json({
                     "type": "done", "returncode": run.returncode,

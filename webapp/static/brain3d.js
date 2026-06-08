@@ -79,6 +79,25 @@ let liveSelectedName = null;  // name of the run we're currently following
 let liveTrajectory = [];      // synthetic per-step trajectory built from log progress
 let livePartialBytes = 0;     // log bytes consumed so far (for incremental tail)
 
+// ─── Real activity stream (frontend-revamp Phase 1, 2026-06-08) ──────────
+// When the followed run is a webapp-launched run that streams [ACTIVITY]
+// frames, we open a WebSocket to /ws/runs/{run_id} and drive region
+// brightness from REAL per-region firing rates instead of the synthesized
+// action->region lighting below. Graceful: if the run has no run_id (detached
+// PID-file run) or never emits activity, we fall back to synthesis.
+let activityWS = null;          // the WebSocket, or null
+let activityWSRunId = null;     // run_id the WS is bound to
+let realActivityActive = false; // true once a real [ACTIVITY] frame arrived
+let lastActivityTs = 0;         // wall-clock (ms) of the last real frame
+let lastActivityFrame = null;   // {t, regions, flux, step} of the most recent frame
+// If no real frame arrives for this long, revert to synthesis (the run
+// stopped streaming, finished, or was a non-activity run).
+const ACTIVITY_STALE_MS = 4000;
+
+function realActivityFresh() {
+  return realActivityActive && (Date.now() - lastActivityTs) < ACTIVITY_STALE_MS;
+}
+
 // ─── Color helpers ─────────────────────────────────────────────────────
 const KIND_COLOR = {
   exc: 0x60a5fa,  // blue (glutamate)
@@ -1228,6 +1247,7 @@ function startLiveMode() {
 function stopLiveMode() {
   liveMode = false;
   if (livePollHandle) { clearInterval(livePollHandle); livePollHandle = null; }
+  disconnectActivityWS();  // close the real-activity WS (frontend-revamp Phase 1)
   liveSelectedName = null;
   liveTrajectory = [];
   livePartialBytes = 0;
@@ -1242,10 +1262,87 @@ function selectLiveRun(name) {
   liveSelectedName = name;
   liveTrajectory = [];
   livePartialBytes = 0;
+  // A new run was selected — drop any activity WS bound to the old run; it
+  // re-binds on the next poll once we know the new run's run_id.
+  disconnectActivityWS();
   const runNameEl = document.getElementById("brain3d-run-name");
   if (runNameEl) runNameEl.textContent = `LIVE: ${name}`;
   // Force an immediate poll to populate trajectory + UI
   pollLive();
+}
+
+// ─── Real activity WebSocket (frontend-revamp Phase 1) ──────────────────
+// Open a per-run WS that demuxes the {"type":"activity"} frames the server
+// re-broadcasts (latest-wins). The frame's per-region rates drive
+// regionTargets directly; the per-frame lerp in tick() animates them. We do
+// NOT manage stdout/progress here — pollLive() still owns the trajectory +
+// mini-gridworld; this WS is ADDITIVE, only for the real region lighting.
+function connectActivityWS(runId) {
+  if (!runId) return;
+  if (activityWS && activityWSRunId === runId &&
+      (activityWS.readyState === WebSocket.OPEN ||
+       activityWS.readyState === WebSocket.CONNECTING)) {
+    return; // already connected to this run
+  }
+  disconnectActivityWS();
+  activityWSRunId = runId;
+  let ws;
+  try {
+    const proto = (location.protocol === "https:") ? "wss" : "ws";
+    ws = new WebSocket(`${proto}://${location.host}/ws/runs/${encodeURIComponent(runId)}`);
+  } catch (e) {
+    activityWSRunId = null;
+    return; // can't open — stay on synthesis
+  }
+  activityWS = ws;
+  ws.onmessage = (evt) => {
+    let msg;
+    try { msg = JSON.parse(evt.data); } catch (e) { return; }
+    if (!msg || msg.type !== "activity" || !msg.regions) return;
+    applyActivityFrame(msg);
+  };
+  ws.onclose = () => {
+    if (activityWS === ws) { activityWS = null; }
+  };
+  ws.onerror = () => { /* onclose handles cleanup; stay graceful */ };
+}
+
+function disconnectActivityWS() {
+  if (activityWS) {
+    try { activityWS.onmessage = null; activityWS.onclose = null; activityWS.close(); }
+    catch (e) { /* ignore */ }
+  }
+  activityWS = null;
+  activityWSRunId = null;
+  realActivityActive = false;
+  lastActivityFrame = null;
+}
+
+// Drive region brightness from a REAL [ACTIVITY] frame. Sets regionTargets[]
+// to the (already-EMA-smoothed-on-the-runner) firing fractions; tick()'s lerp
+// animates the spheres. Unknown region names in the frame are ignored; regions
+// absent from the frame keep decaying via tick()'s *0.92 fade. Firing
+// fractions are typically small (sparse spiking ~0.01-0.1), so we scale into a
+// visible 0..1 range with a gain + soft clamp.
+const ACTIVITY_GAIN = 6.0;  // map sparse firing fraction -> visible brightness
+function applyActivityFrame(frame) {
+  realActivityActive = true;
+  lastActivityTs = Date.now();
+  lastActivityFrame = frame;
+  const regions = frame.regions || {};
+  for (const name in regions) {
+    if (!(name in regionTargets)) continue; // region not in the 3D layout
+    const rate = regions[name] || 0;
+    regionTargets[name] = Math.max(0, Math.min(1.0, rate * ACTIVITY_GAIN));
+  }
+  // Surface a small "REAL" indicator + the frame's sim time on the live label
+  // if present (non-fatal if the element isn't there).
+  const liveLabel = document.getElementById("brain3d-live-label");
+  if (liveLabel && frame.t != null) {
+    // Append a compact suffix without clobbering pollLive's text on its own
+    // 1s cadence; we only annotate, the next poll re-renders the base text.
+    liveLabel.dataset.activity = `· REAL activity t=${(frame.t / 1000).toFixed(1)}s`;
+  }
 }
 
 async function pollLive() {
@@ -1264,6 +1361,7 @@ async function pollLive() {
 
     if (!allRuns.length) {
       clearAllActivity();
+      disconnectActivityWS();  // no runs -> drop the activity WS (Phase 1)
       const liveLabel = document.getElementById("brain3d-live-label");
       if (liveLabel) liveLabel.textContent = "No active runs.";
       return;
@@ -1276,6 +1374,17 @@ async function pollLive() {
     }
 
     const r = allRuns.find((rr) => rr.name === liveSelectedName) || allRuns[0];
+
+    // Real activity stream (frontend-revamp Phase 1): webapp-launched runs
+    // carry a run_id and stream [ACTIVITY] over /ws/runs/{run_id}. Bind the
+    // activity WS to it (idempotent — no-op if already connected). Detached
+    // PID-file runs have no run_id and no server WS; drop any stale WS and
+    // fall back to synthesis for them.
+    if (r.run_id) {
+      connectActivityWS(r.run_id);
+    } else if (activityWS) {
+      disconnectActivityWS();
+    }
 
     // 2026-05-03 fix: rebuild the trajectory from the FULL log, not just
     // from the single-most-recent progress entry. This gives the
@@ -1536,6 +1645,15 @@ function renderLiveStep(step) {
   const sample = liveTrajectory[step];
   if (!sample) return;
   const p = sample.progress || {};
+  // Real-activity gate (frontend-revamp Phase 1): when a live [ACTIVITY]
+  // stream is driving regionTargets from REAL firing rates, SKIP the
+  // synthesized action->region lighting below so it doesn't fight the real
+  // data. The mini-gridworld + agent HUD (further down) still render — those
+  // are behavior, not synthesized neural activity. When no real stream is
+  // present (detached run, run not emitting activity, stream stale), we fall
+  // through to synthesis exactly as before (graceful fallback).
+  const _synth = !realActivityFresh();
+  if (_synth) {
   clearAllActivity();
   // Activity by progress kind — same logic as the original pollLive
   // but driven by a specific timeline sample.
@@ -1699,6 +1817,7 @@ function renderLiveStep(step) {
       }
     }
   }
+  }  // end if (_synth) — real-activity gate (frontend-revamp Phase 1)
   // 2026-05-03 — render the mini gridworld + agent HUD for live
   // navigation runs (kind=step) which carry pos/goal/action/reward in
   // each log line. Live curriculum/SWR runs don't carry per-step grid

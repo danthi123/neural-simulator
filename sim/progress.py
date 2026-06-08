@@ -51,6 +51,12 @@ from typing import Any, Dict, Optional
 # Webapp-side regex. Captures everything after "[PROGRESS] " for json.loads.
 PROGRESS_LINE_RE = re.compile(r"\[PROGRESS\]\s+(\{.*\})")
 
+# Sibling regex for the live brain-activity channel (frontend-revamp Phase 1,
+# 2026-06-08). Same wire format as [PROGRESS] — one line, JSON after a fixed
+# prefix, flush=True — but a DISTINCT prefix so the webapp can route activity
+# frames to the Brain-tab renderer without touching the progress path.
+ACTIVITY_LINE_RE = re.compile(r"\[ACTIVITY\]\s+(\{.*\})")
+
 
 def emit_progress(
     kind: str,
@@ -100,6 +106,67 @@ def emit_progress(
 
     out = file if file is not None else sys.stdout
     print(f"[PROGRESS] {json.dumps(payload)}", file=out, flush=True)
+
+
+def emit_activity(
+    t_ms: float,
+    regions: Dict[str, float],
+    flux: Optional[Dict[str, float]] = None,
+    *,
+    file=None,
+    **extra: Any,
+) -> None:
+    """Emit one live brain-activity frame (frontend-revamp Phase 1).
+
+    Fire-and-forget by design: this writes a single `[ACTIVITY] {json}` line
+    to stdout and returns immediately. It NEVER waits on a reader, a socket,
+    or backpressure — stdout goes to the run's `.log` file, the webapp server
+    tails it, and a slow browser is the server's problem (it coalesces to the
+    latest frame), never the sim's. The caller is responsible for THROTTLING
+    (emit at most every N steps so this stays ~5-30 Hz of sim-time, not every
+    step), and for only constructing the per-region reduction (the
+    `RegionActivityProbe`) when activity emission is enabled — when it isn't,
+    this function is never called and there is ZERO per-step overhead, so
+    multi-seed / determinism / science runs stay byte-identical.
+
+    Args:
+        t_ms: simulation time in ms for this frame (x-axis for the viz).
+        regions: {region_name: mean_firing_fraction in [0,1]} — the per-region
+            host-side reduction (mean of cp_firing_states over each region's
+            neuron slice).
+        flux: optional {pathway_name: flux in [0,1]} — per-pathway activity
+            proxy (e.g. the post-region mean firing). Omitted in Phase 1 if not
+            computed.
+        file: optional file-like to write to (default sys.stdout).
+        **extra: arbitrary extra scalar fields (step, seed, etc.).
+
+    Output: one line of `[ACTIVITY] {json}` to stdout, flushed. Payload size
+    for ~30 regions ~600-900 bytes; at the throttled cadence this is a few
+    KB/s on the log — negligible.
+    """
+    payload: Dict[str, Any] = {
+        "t": round(float(t_ms), 1),
+        "regions": {str(k): round(float(v), 4) for k, v in regions.items()},
+    }
+    if flux:
+        payload["flux"] = {str(k): round(float(v), 4) for k, v in flux.items()}
+    payload.update(extra)
+
+    out = file if file is not None else sys.stdout
+    print(f"[ACTIVITY] {json.dumps(payload)}", file=out, flush=True)
+
+
+def parse_activity_line(line: str) -> Optional[Dict[str, Any]]:
+    """Parse a single log line. Returns the structured activity dict if the
+    line matches the [ACTIVITY] format, else None. Used by webapp/server.py's
+    log-tailer alongside parse_progress_line."""
+    m = ACTIVITY_LINE_RE.search(line)
+    if not m:
+        return None
+    try:
+        return json.loads(m.group(1))
+    except json.JSONDecodeError:
+        return None
 
 
 def parse_progress_line(line: str) -> Optional[Dict[str, Any]]:
