@@ -5877,6 +5877,15 @@ def main():
             # WITHOUT the coordinate heuristic. The cleanest "can perception
             # learn to navigate at all?" test (no goal-change generalization).
             goal_schedule = [(0, far)]
+        elif args.goal_schedule == "generalize":
+            # Rank 2 generalization test (2026-06-08): train on ONE goal through
+            # the reflex wean (0-3000 on `far`; reflex teaches + weans @2000-3000),
+            # then change to THREE NEW goals AFTER the wean (3000/4000/5000) with
+            # the reflex teacher OFF. Tests whether the LEARNED goal-agnostic
+            # (dx,dy)->action map (position-preserving, image-sourced) navigates to
+            # goals it was NEVER taught on. Use with --n-steps 6000 +
+            # --sc-reflex-wean-start 2000 --sc-reflex-wean-steps 1000.
+            goal_schedule = [(0, far), (3000, far_west), (4000, sw), (5000, far_se)]
         elif args.goal_schedule == "curriculum":
             flip = max(1200, args.curriculum_warmup_steps + 600)
             goal_schedule = [(0, far), (flip, far_west)]
