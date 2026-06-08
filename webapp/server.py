@@ -1684,13 +1684,22 @@ async def recover_orphan_runs() -> None:
 
 @app.on_event("startup")
 async def _periodic_orphan_scan() -> None:
-    """Re-scan for orphan sidecars every 30s. Picks up runs spawned via
-    raw `python -m research.runners.g11_bg_replicated_runner --emit-webapp-sidecar`
-    (or any other process that drops a sidecar) without requiring a
-    server restart."""
+    """Re-scan for orphan sidecars every 5s. Picks up runs spawned via
+    raw `python -m research.runners.<runner> --emit-webapp-sidecar` (the
+    DEFAULT for g11_bg_runner) without requiring a server restart, so any
+    CLI-started run is auto-detected, drained, and (if it passes
+    --emit-activity) live-streamed to the 3D brain — not just runs launched
+    through the dashboard.
+
+    5s (was 30s): a full nav brain takes ~20-30s to build before it emits
+    its first [ACTIVITY] frame, so a 5s scan reliably ADOPTS the run (starts
+    its _drain_log tailer) BEFORE streaming begins — no missed frames and the
+    run appears in the Live picker within a few seconds of launch. The scan is
+    cheap (sidecars older than 24h are skipped; only live recent ones cost a
+    psutil check), so the higher cadence is safe."""
     async def _loop():
         while True:
-            await asyncio.sleep(30)
+            await asyncio.sleep(5)
             try:
                 _scan_for_orphans()
             except Exception as e:
