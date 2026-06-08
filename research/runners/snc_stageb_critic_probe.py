@@ -54,7 +54,9 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
                          cue_to_strio_weight=3.0, strio_to_snc_weight=2.5,
                          n_cue=40, n_strio=60, n_snc=30,
                          bprime=False, snc_drive_to_snc_weight=6.0,
-                         strio_to_drive_weight=15.0, n_drive=40):
+                         strio_to_drive_weight=15.0, n_drive=40,
+                         bprime_snr=False, strio_to_disinhib_weight=20.0,
+                         disinhib_to_gaba_weight=20.0, gaba_to_snc_weight=6.0, n_relay=40):
     """Minimal bridge: cue (CS) -> striosome_value (GABAergic critic) -> snc (DA).
 
     cue->striosome_value is PLASTIC (the value is learned by the SNc-derived delta via
@@ -88,6 +90,11 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
     # orthogonal biological feature; the value-critic claim is about the value being
     # neural + state-dependent, not about STP. (Documented confound removal.)
     cfg.enable_short_term_plasticity = False
+    # Disable structural plasticity (synaptogenesis): the probe tests a FIXED circuit; activity-
+    # dependent synapse growth would change the wiring mid-test, and it grows cp_connections
+    # without growing some per-synapse arrays (cp_synapse_plastic_mask) -> IndexError on the
+    # higher-activity B'-SNr circuit. Not needed for a mechanism probe.
+    cfg.enable_structural_plasticity = False
     cfg.reward_learning_rate = float(reward_learning_rate)
     cfg.current_reward_signal = 0.0    # BRAIN-BASED: the SNc FIRING is the signal, not a host scalar
     cfg.reward_baseline = 0.0
@@ -154,6 +161,35 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
                           density=0.6, weight_mean=float(snc_drive_to_snc_weight),
                           weight_jitter=0.2, plastic=False),   # relay excites the SNc (full strength)
         ]
+    elif bprime_snr:
+        # B'-DISINHIBIT-SNr (research #2, the biology-LITERAL disinhibition; owner: real effort here).
+        # The textbook route by which the BG modulate DA: striatum/striosome -> (disinhibitor) -> SNr
+        # tonic GABA -> SNc. Sign needs an ODD number of inhibitory links from value to SNc:
+        #   value -(inh)-> disinhib -(inh)-> snr_tonic -(inh)-> snc  = net inhibitory = V up -> SNc down.
+        # snr_tonic + disinhib are GABAergic, tonically paced; they have NORMAL reversals so the
+        # inter-relay inhibition is strong. The SNc is held DEPOLARIZED (strong tonic+reward) so the
+        # final SNr->SNc GABA hop is hyperpolarizing (the depolarized-reversal regime where GABA works).
+        cfg.brain_regions.append(BrainRegion(
+            name="snr_tonic", n_neurons=n_relay, exc_fraction=0.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_GPI_OUTPUT.name,   # SNr-like GABAergic tonic output
+        ))
+        cfg.brain_regions.append(BrainRegion(
+            name="disinhib", n_neurons=n_relay, exc_fraction=0.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_GPE_PACEMAKER.name,  # tonically-active GABAergic
+        ))
+        pathways += [
+            RegionPathway(from_region="striosome_value", to_region="disinhib",
+                          density=0.5, weight_mean=float(strio_to_disinhib_weight),
+                          weight_jitter=0.2, plastic=False),     # value inhibits the disinhibitor
+            RegionPathway(from_region="disinhib", to_region="snr_tonic",
+                          density=0.5, weight_mean=float(disinhib_to_gaba_weight),
+                          weight_jitter=0.2, plastic=False),     # disinhibitor holds SNr-tonic partly off
+            RegionPathway(from_region="snr_tonic", to_region="snc",
+                          density=0.6, weight_mean=float(gaba_to_snc_weight),
+                          weight_jitter=0.2, plastic=False),     # SNr tonic GABA onto the SNc
+        ]
     else:
         # Direct (de-risk baseline): striosome GABA -> snc, the weak depolarized-reversal conduit.
         pathways.append(
@@ -205,7 +241,9 @@ def _drive(bridge, idx_map, drives, n_steps, xp, freeze_lr=None, cfg=None):
         saved_lr = cfg.reward_learning_rate
         cfg.reward_learning_rate = float(freeze_lr)
     snc_idx, strio_idx = idx_map["snc"], idx_map["striosome_value"]
-    relay_idx = idx_map.get("snc_drive")   # B' only
+    relay_idx = idx_map.get("snc_drive")   # B'-EXC relay
+    if relay_idx is None:
+        relay_idx = idx_map.get("snr_tonic")   # B'-SNr tonic-GABA relay (should go UP when V high)
     n_snc = len(_host(snc_idx)); n_strio = len(_host(strio_idx))
     n_relay = len(_host(relay_idx)) if relay_idx is not None else 0
     snc_spk = strio_spk = relay_spk = 0
@@ -341,7 +379,10 @@ def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=
                cue_to_strio_weight=3.0, strio_to_snc_weight=2.5,
                snc_da_sensitivity=8.0, lesion=False, verbose=True,
                bprime=False, relay_tonic_pa=300.0, snc_drive_to_snc_weight=6.0,
-               strio_to_drive_weight=15.0):
+               strio_to_drive_weight=15.0,
+               bprime_snr=False, gaba_tonic_pa=300.0, disinhib_pa=250.0,
+               strio_to_disinhib_weight=20.0, disinhib_to_gaba_weight=20.0,
+               gaba_to_snc_weight=6.0):
     from sim.backend import get_backend
     xp, _ = get_backend()
     bridge, cfg = _build_stageb_bridge(
@@ -349,14 +390,23 @@ def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=
         reward_learning_rate=reward_learning_rate,
         cue_to_strio_weight=cue_to_strio_weight, strio_to_snc_weight=strio_to_snc_weight,
         bprime=bprime, snc_drive_to_snc_weight=snc_drive_to_snc_weight,
-        strio_to_drive_weight=strio_to_drive_weight)
-    region_names = ("cue", "striosome_value", "snc") + (("snc_drive",) if bprime else ())
+        strio_to_drive_weight=strio_to_drive_weight,
+        bprime_snr=bprime_snr, strio_to_disinhib_weight=strio_to_disinhib_weight,
+        disinhib_to_gaba_weight=disinhib_to_gaba_weight, gaba_to_snc_weight=gaba_to_snc_weight)
+    region_names = (("cue", "striosome_value", "snc")
+                    + (("snc_drive",) if bprime else ())
+                    + (("snr_tonic", "disinhib") if bprime_snr else ()))
     idx_map = {n: xp.asarray(_idx(bridge, n)) for n in region_names}
 
-    # Calibrate the dopamine threshold to the SNc's actual tonic firing fraction so
-    # the burst gives da_signal > 0 (LTP) and the dip gives < 0 (LTD). In B' the SNc's
-    # tonic comes from the relay (snc_drive paced), so calibrate by pacing the relay.
-    tonic_drives = {"snc_drive": relay_tonic_pa} if bprime else {"snc": snc_tonic_pa}
+    # Calibrate the dopamine threshold to the SNc's actual tonic firing fraction. B'-EXC: the
+    # SNc tonic comes from the relay (pace it). B'-SNr: the SNc keeps its own tonic + the SNr/
+    # disinhib relays are paced (pace all three for the true baseline).
+    if bprime:
+        tonic_drives = {"snc_drive": relay_tonic_pa}
+    elif bprime_snr:
+        tonic_drives = {"snc": snc_tonic_pa, "snr_tonic": gaba_tonic_pa, "disinhib": disinhib_pa}
+    else:
+        tonic_drives = {"snc": snc_tonic_pa}
     tonic_frac = _calibrate_da_threshold(bridge, cfg, idx_map, tonic_drives, xp)
     if verbose:
         print(f"  [calib] SNc tonic firing fraction = {tonic_frac:.4f} -> dopamine threshold"
@@ -372,6 +422,15 @@ def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=
         W_cs_us = {"cue": cue_drive_pa, "snc_drive": relay_tonic_pa + snc_reward_gain}      # relay: tonic+reward; CS=V inhibits it
         W_us_alone = {"snc_drive": relay_tonic_pa + snc_reward_gain}                        # relay: tonic+reward, NO cue (full)
         W_omission = {"cue": cue_drive_pa, "snc_drive": relay_tonic_pa}                     # relay: tonic; CS=V inhibits it, NO reward
+    elif bprime_snr:
+        # B'-SNr: the SNc has its OWN excitatory tonic + reward (held DEPOLARIZED so SNr GABA is
+        # hyperpolarizing); the SNr-tonic + disinhib relays are paced; the value (via the disinhib
+        # chain) modulates the SNr GABA onto the SNc. value up -> SNr GABA up -> SNc down.
+        snr = {"snr_tonic": gaba_tonic_pa, "disinhib": disinhib_pa}
+        W_baseline = {"snc": snc_tonic_pa, **snr}                                           # SNc tonic; relays paced; no cue/reward
+        W_cs_us = {"cue": cue_drive_pa, "snc": snc_tonic_pa + snc_reward_gain, **snr}        # CS=V -> more SNr GABA; +reward
+        W_us_alone = {"snc": snc_tonic_pa + snc_reward_gain, **snr}                          # +reward, NO cue (SNr GABA low)
+        W_omission = {"cue": cue_drive_pa, "snc": snc_tonic_pa, **snr}                       # CS=V -> more SNr GABA; NO reward
     else:
         W_baseline = {"snc": snc_tonic_pa}                                  # tonic floor
         W_cs_us = {"cue": cue_drive_pa, "snc": snc_tonic_pa + snc_reward_gain}   # CS + reward
@@ -400,11 +459,11 @@ def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=
 
     if lesion:
         if bprime:
-            n_cut = _lesion_pathway(bridge, "snc_drive", "snc")    # cut the relay conduit
-            edge = "snc_drive->snc"
+            n_cut = _lesion_pathway(bridge, "snc_drive", "snc"); edge = "snc_drive->snc"
+        elif bprime_snr:
+            n_cut = _lesion_pathway(bridge, "snr_tonic", "snc"); edge = "snr_tonic->snc"
         else:
-            n_cut = _lesion_pathway(bridge, "striosome_value", "snc")
-            edge = "striosome_value->snc"
+            n_cut = _lesion_pathway(bridge, "striosome_value", "snc"); edge = "striosome_value->snc"
         if verbose:
             print(f"  [lesion] zeroed {n_cut} {edge} edges")
 
@@ -420,9 +479,11 @@ def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=
         print(f"  [test V] predicted_strio={pred_v:.1f}Hz  unpredicted_strio={unpred_v:.1f}Hz  "
               f"omission_strio={omit_v:.1f}Hz  baseline_strio={base_v:.1f}Hz  "
               f"(V cue-gated if predicted/omission >> unpredicted/baseline)")
-        if bprime:
+        if bprime or bprime_snr:
+            want = ("snr_tonic should be HIGHER when V is high" if bprime_snr
+                    else "snc_drive should be LOWER when V is high")
             print(f"  [test relay] predicted_relay={pred_relay:.1f}Hz  unpredicted_relay={unpred_relay:.1f}Hz  "
-                  f"baseline_relay={base_relay:.1f}Hz  (B': relay should be LOWER when V is high)")
+                  f"baseline_relay={base_relay:.1f}Hz  ({want})")
 
     v_learned = (v_late > 1.20 * v_early)               # (1) striosome value rose with training
     us_shrank = (us_late < 0.60 * us_early)             # (2) reward burst shrank
@@ -430,7 +491,7 @@ def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=
     omission_dip = (omit_r < base_r)                    # (4) CS-no-reward dips below tonic
 
     return {
-        "seed": seed, "lesion": lesion, "bprime": bprime,
+        "seed": seed, "lesion": lesion, "bprime": bprime, "bprime_snr": bprime_snr,
         "us_burst_early_hz": us_early, "us_burst_late_hz": us_late,
         "v_cs_early_hz": v_early, "v_cs_late_hz": v_late,
         "test_baseline_hz": base_r, "test_predicted_hz": pred_r,
@@ -475,6 +536,13 @@ def main():
     ap.add_argument("--relay-tonic-pa", type=float, default=300.0)
     ap.add_argument("--snc-drive-to-snc-weight", type=float, default=6.0)
     ap.add_argument("--strio-to-drive-weight", type=float, default=15.0)
+    ap.add_argument("--bprime-snr", action="store_true",
+                    help="B'-DISINHIBIT-SNr: striosome->disinhib->SNr-tonic-GABA->SNc (biology-literal disinhibition)")
+    ap.add_argument("--gaba-tonic-pa", type=float, default=300.0)
+    ap.add_argument("--disinhib-pa", type=float, default=250.0)
+    ap.add_argument("--strio-to-disinhib-weight", type=float, default=20.0)
+    ap.add_argument("--disinhib-to-gaba-weight", type=float, default=20.0)
+    ap.add_argument("--gaba-to-snc-weight", type=float, default=6.0)
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
@@ -493,10 +561,15 @@ def main():
               snc_da_sensitivity=args.snc_da_sensitivity, lesion=args.lesion,
               bprime=args.bprime, relay_tonic_pa=args.relay_tonic_pa,
               snc_drive_to_snc_weight=args.snc_drive_to_snc_weight,
-              strio_to_drive_weight=args.strio_to_drive_weight)
+              strio_to_drive_weight=args.strio_to_drive_weight,
+              bprime_snr=args.bprime_snr, gaba_tonic_pa=args.gaba_tonic_pa,
+              disinhib_pa=args.disinhib_pa, strio_to_disinhib_weight=args.strio_to_disinhib_weight,
+              disinhib_to_gaba_weight=args.disinhib_to_gaba_weight,
+              gaba_to_snc_weight=args.gaba_to_snc_weight)
     results = []
     for s in seeds:
-        tag = "LESION" if args.lesion else ("B'-DISINHIBIT-EXC" if args.bprime else "Stage-B critic")
+        tag = ("LESION" if args.lesion else "B'-DISINHIBIT-SNr" if args.bprime_snr
+               else "B'-DISINHIBIT-EXC" if args.bprime else "Stage-B critic")
         print(f"[snc-stageB seed={s}] {tag} — CS-gated neural value (delta=r-V, R-W):")
         r = run_stageb(s, **kw)
         _print_result(r)
