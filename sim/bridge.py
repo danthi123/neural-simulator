@@ -777,7 +777,7 @@ class SimulationBridge:
         self._synapse_capacity = new_capacity
         return True
 
-    def _ensure_gate_capacity(self, attr_name, n):
+    def _ensure_gate_capacity(self, attr_name, n, fill=1.0, dtype=None):
         """Lazily grow a per-synapse GATE array to at least n elements and return it.
 
         2026-06-08: defensive catch-all for the cp_d1_d2_sign / cp_transmission_gain /
@@ -792,9 +792,15 @@ class SimulationBridge:
         1.0 (open gate / +1 sign) — a no-op multiplier, so behavior is unchanged
         except that the update now actually applies. Returns None if the array is None.
         """
+        # fill / dtype: value + dtype for NEW (grown) entries. Default fill=1.0,
+        # dtype=float32 reproduces the prior cp.ones(n, float32) exactly (open gate /
+        # +1 sign = no-op multiplier) -> byte-identical for the float gate callers.
+        # The GABA_B routing MASK passes fill=False, dtype=bool so new (e.g.
+        # Gabor-grown) synapses default to GABA_A (untagged) -- the correct default
+        # for that bool mask (slicing a too-short mask does NOT fix it; growing does).
         arr = getattr(self, attr_name, None)
         if arr is not None and arr.shape[0] < n:
-            grown = cp.ones(n, dtype=cp.float32)
+            grown = cp.full(n, fill, dtype=(dtype if dtype is not None else cp.float32))
             grown[:arr.shape[0]] = arr
             setattr(self, attr_name, grown)
             arr = grown
@@ -5498,14 +5504,21 @@ class SimulationBridge:
             # so this whole block is skipped and total_input_current_pA is byte-identical.
             if getattr(cfg, "enable_gabab", False) and self.cp_conductance_g_gabab is not None:
                 # Increment from GABA_B-tagged synapses only (restricted matvec; e.g. the
-                # value->SNc pathway). Slice the mask to the live nnz (the growth-gotcha
-                # mitigation: a grown mask pads with False = GABA_A, and slicing keeps the
-                # multiply aligned with effective_connections_matrix.data).
+                # value->SNc pathway). GROW the mask to the live nnz with FALSE padding:
+                # a synapse-growth path AFTER wiring (e.g. apply_v1_gabor_weights, the
+                # Cluster-K visual pre-init) leaves cp_gabab_synapse_mask SHORTER than nnz,
+                # and slicing [:nnz] of a too-short mask does NOT fix that (it just returns
+                # the short array -> broadcast error). Route through _ensure_gate_capacity
+                # (fill=False=GABA_A for new synapses) so the multiply stays aligned with
+                # effective_connections_matrix.data. Mirrors the cp_transmission_gain /
+                # cp_plasticity_rate_gain / cp_d1_d2_sign growth fix.
                 if (self.cp_gabab_synapse_mask is not None
                         and effective_connections_matrix.nnz > 0 and _prev_any):
                     _gb_nnz = self.cp_connections.nnz
                     _gb_data = effective_connections_matrix.data * \
-                        self.cp_gabab_synapse_mask[:_gb_nnz].astype(cp.float32)
+                        self._ensure_gate_capacity(
+                            "cp_gabab_synapse_mask", _gb_nnz, fill=False, dtype=cp.bool_
+                        )[:_gb_nnz].astype(cp.float32)
                     _gb_mat = csp.csr_matrix(
                         (_gb_data, self.cp_connections.indices, self.cp_connections.indptr),
                         shape=self.cp_connections.shape)
