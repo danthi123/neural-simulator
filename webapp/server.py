@@ -1628,7 +1628,7 @@ def _scan_for_orphans() -> int:
         # reused) pid double-tracks one live process, and a kill on the
         # phantom entry would terminate the unrelated real run. This is the
         # bug that killed a live Rank 2 run on 2026-06-08.
-        if any(r.pid == pid for r in launched_runs.values()):
+        if any(r.pid == pid for r in list(launched_runs.values())):
             continue
         # Defend against PID reuse: a sidecar's pid must belong to a
         # python process whose create_time matches the sidecar's
@@ -1926,7 +1926,7 @@ def list_active_launches() -> JSONResponse:
     """Phase 2.5: list all in-flight (or recently-completed) runs known
     to this server process. Lets the World tab discover runs to follow."""
     out = []
-    for run in launched_runs.values():
+    for run in list(launched_runs.values()):  # snapshot — bg orphan-scan mutates concurrently
         is_running = _is_run_alive(run)
         latest = run.progress_events[-1] if run.progress_events else None
         # Freeze elapsed_sec for done runs so the live picker stops ticking
@@ -3014,7 +3014,11 @@ def list_inflight_runs() -> JSONResponse:
     # sees no live indicator anywhere — the run is reachable only via
     # /api/runs/launch, which doesn't feed the panels.
     seen_pids = {r.get("pid") for r in inflight if r.get("pid") is not None}
-    for run_id, run in launched_runs.items():
+    # 2026-06-08: snapshot the dict — the background orphan-scan mutates
+    # launched_runs concurrently, so iterating it live raised
+    # "dictionary changed size during iteration" (intermittent /api/inflight
+    # 500s -> the dashboard's "Failed to load in-flight runs" / stuck "Loading").
+    for run_id, run in list(launched_runs.items()):
         # Dedup: if a webapp launch also created a PID file (rare),
         # skip the launched-runs entry to avoid double-rendering.
         if run.pid is not None and run.pid in seen_pids:
