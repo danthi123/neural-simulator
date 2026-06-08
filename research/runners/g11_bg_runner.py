@@ -2565,6 +2565,11 @@ def run_moving_goal_episode(
     # muted. Real biology: DA encodes RPE not raw reward (Schultz 1997).
     enable_rpe_scaled_reward: bool = False,
     rpe_scale_alpha: float = 1.0,  # 1.0 means: delivered = 2*reward - ema
+    # N9 step 1 (2026-06-08): the dopamine signal IS the reward-PREDICTION-ERROR
+    # delta = r - V (V = reward_ema, the learned Rescorla-Wagner critic). Converts
+    # the actor-only / raw-reward DA into an actor-CRITIC RPE (Schultz 1998).
+    # With --perceived-approach-reward (N5) the whole RPE loop is coordinate-free.
+    rpe_dopamine: bool = False,
     # Surprise-boosted learning rate: when |RPE| is high (unexpected outcome),
     # temporarily boost reward_learning_rate. Models NE-like fast meta-modulation.
     enable_surprise_lr_boost: bool = False,
@@ -4860,7 +4865,14 @@ def run_moving_goal_episode(
             # RPE-scaled reward (opt-in): amplify surprise (= deviation from expectation)
             # Uses reward_ema_pre (the agent's prediction BEFORE this trial's reward).
             rpe = float(reward) - reward_ema_pre
-            if enable_rpe_scaled_reward:
+            if rpe_dopamine:
+                # N9 step 1: the DA signal IS the reward-prediction-error delta = r - V
+                # (V = reward_ema_pre, the learned Rescorla-Wagner critic) — an actor-CRITIC
+                # RPE, not raw reward (Schultz 1998; catalog C.22/C.28/C.30). With N5
+                # (--perceived-approach-reward) r is coord-free, so the whole RPE loop is.
+                # Reuses the already-present reward_ema critic; NO sim/ edit.
+                delivered_reward = rpe
+            elif enable_rpe_scaled_reward:
                 delivered_reward = float(reward) + rpe_scale_alpha * rpe
             else:
                 delivered_reward = float(reward)
@@ -5789,6 +5801,8 @@ def main():
                          "not parsed here — argparse just suppresses 'unrecognized arg'.")
     ap.add_argument("--rpe-scaled-reward", action="store_true",
                     help="Scale reward by prediction error: delivered = reward + alpha * (reward - reward_ema). Surprise gets amplified.")
+    ap.add_argument("--rpe-dopamine", action="store_true",
+                    help="N9 (actor-critic): the dopamine signal IS the reward-prediction-error delta = r - V (V = reward_ema, the learned Rescorla-Wagner critic), not raw reward. Converts actor-only/scalar-DA -> actor-critic RPE (Schultz 1998; catalog C.22/C.28/C.30). Combine with --perceived-approach-reward (N5) for a fully coordinate-free RPE loop.")
     ap.add_argument("--rpe-alpha", type=float, default=1.0)
     ap.add_argument("--surprise-lr-boost", action="store_true",
                     help="Boost reward_learning_rate when |RPE| is high (NE-like fast meta-modulation)")
@@ -6078,6 +6092,7 @@ def main():
             enable_hippocampus=args.hippocampus,
             enable_da_gated_wta=args.da_gated_wta,
             enable_rpe_scaled_reward=args.rpe_scaled_reward,
+            rpe_dopamine=args.rpe_dopamine,
             rpe_scale_alpha=args.rpe_alpha,
             enable_surprise_lr_boost=args.surprise_lr_boost,
             surprise_lr_alpha=args.surprise_lr_alpha,
