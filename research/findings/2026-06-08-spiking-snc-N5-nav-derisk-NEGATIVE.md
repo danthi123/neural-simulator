@@ -1,6 +1,19 @@
-# Fully brain-based reward + dopamine REGRESSES navigation (honest negative)
+# Fully brain-based reward + dopamine WORKS in navigation — spiking-SNc Stage A GO (the "regression" was a bridge bug)
 
-> ## ⚠️ CORRECTION (2026-06-08, same day): this NEGATIVE is CONFOUNDED by a bridge BUG — do NOT cite as a substrate limit.
+> ## ✅ RESOLVED 2026-06-08: GO (multi-seed). After fixing the silent bridge bug below, the brain-based reward+dopamine BEATS the host shortcut.
+> POST-FIX 3-seed re-run (`_biofix_*`, fixed main tree); neural = N5 perceived-approach reward + spiking-SNc; cheat = coord Manhattan reward + raw scalar DA; sum_finalQ (LOWER better):
+>
+> | seed | neural (brain-based) | cheat (host shortcut) | Δ |
+> |---|---|---|---|
+> | 42 | **2.00** | 4.17 | −2.17 |
+> | 43 | **2.00** | 3.91 | −1.91 |
+> | 44 | **2.00** | 4.65 | −2.65 |
+> | **mean** | **2.00** | **4.24** | **−2.24 (3/3 brain-based NAVIGATES BETTER)** |
+>
+> The substantia-nigra dopamine pool FIRING the reward-prediction-error (δ = r − V) is validated in full navigation — the brain doing its own dopamine works, and here it works BETTER than the host scalar. The pre-fix "23.15 regression" (below) was 100% the silent plasticity bug (`cp_d1_d2_sign`/gate arrays under-sized → reward-modulated weight update raised+caught every step → plasticity dropped, 11× worse for the high-reward-rate neural config). Fix: `sim/bridge.py` `_ensure_gate_capacity` lazy-grow guard (`512026ee`, owner-approved).
+> **NOTE — broader audit:** the cheat baseline shifted 3.83→4.24 post-fix (the fix changed the flagship baseline too). So prior reward-modulated nav results (flagship 4.08, the cluster evals) were all produced with this bug active → they warrant re-validation.
+>
+> ## ⚠️ CORRECTION (2026-06-08, same day): the original NEGATIVE was CONFOUNDED by a bridge BUG — do NOT cite as a substrate limit.
 > The diagnosis (chasing 137 MB run logs from the frontend work) found the neural runs throw a
 > **silent shape-mismatch every step** at `sim/bridge.py:5964`
 > (`weight_updates * cp_d1_d2_sign[:actual_nnz]`, shapes `(241047,)` vs `(173888,)`): `cp_d1_d2_sign`
