@@ -1,464 +1,2611 @@
 {
-  "_comment": "3D positions, display names, and descriptions for every brain region. Coordinates: +X = info flow (input left, output right); +Y = dorsal (cortex up, subcortical down); +Z = action channel index (N=front, W=back). The display_name is what shows on the 3D label (concise, plain-language). The description appears in the hover tooltip / detail panel.",
+  "_comment": "3D positions, display names, and descriptions for every brain region. Regenerated 2026-06-08 from the navigation region builder's authoritative region set (85 regions, 226 pathways). Coordinates: +X = info flow (input left, output right); +Y = dorsal (cortex up, subcortical down); +Z = action channel index (N=front, W=back). The display_name is what shows on the 3D label (concise, plain-language). The description appears in the hover tooltip / detail panel. Some regions (language input/output, motor PV-FSI, place cells) belong to other run modes and are retained alongside the navigation set.",
   "_units": "Arbitrary 3D units; fits in a roughly [-12, 12] cube",
   "regions": {
     "retina": {
-      "x": -10.0, "y":  0.5, "z":  0.0, "r": 1.4, "family": "sensory",
+      "x": -10.0,
+      "y": 0.5,
+      "z": 0.0,
+      "r": 1.4,
+      "family": "sensory",
       "display_name": "Retina",
       "function": "Visual input",
       "neurons": 2048,
-      "description": "32x32 ON + 32x32 OFF channels. Sees the gridworld image — light pixels excite ON cells, dark pixels excite OFF cells. The sole entry point for visual information."
+      "description": "32x32 ON + 32x32 OFF channels. Sees the gridworld image \u00e2\u20ac\u201d light pixels excite ON cells, dark pixels excite OFF cells. The sole entry point for visual information."
     },
     "cortex_v1_simple": {
-      "x":  -8.5, "y":  1.5, "z":  0.0, "r": 1.2, "family": "v1",
+      "x": -8.5,
+      "y": 1.5,
+      "z": 0.0,
+      "r": 1.2,
+      "family": "v1",
       "display_name": "V1 simple (Edges)",
       "function": "Oriented edge detection",
       "neurons": 1024,
       "description": "Primary visual cortex simple cells with Gabor receptive fields. Each neuron prefers a specific edge orientation (horizontal, vertical, diagonal) at a specific retinal location. Hubel-Wiesel 1962."
     },
     "cortex_v1_complex": {
-      "x":  -7.0, "y":  2.0, "z":  0.0, "r": 1.0, "family": "v2",
+      "x": -7.0,
+      "y": 2.0,
+      "z": 0.0,
+      "r": 1.0,
+      "family": "v2",
       "display_name": "V1 complex",
       "function": "Phase-invariant edges",
       "neurons": 512,
       "description": "Pools simple-cell responses across retinal positions, so neurons fire for any edge of the right orientation regardless of exact location. Position-invariant edge detection."
     },
     "cortex_v2": {
-      "x":  -5.5, "y":  2.5, "z":  0.0, "r": 0.9, "family": "v2",
+      "x": -5.5,
+      "y": 2.5,
+      "z": 0.0,
+      "r": 0.9,
+      "family": "v2",
       "display_name": "V2 (Shapes)",
       "function": "Feature integration",
       "neurons": 256,
-      "description": "Combines edges into shapes — corners, contours, simple objects. The bridge between low-level vision (V1) and high-level recognition (IT)."
+      "description": "Combines edges into shapes \u00e2\u20ac\u201d corners, contours, simple objects. The bridge between low-level vision (V1) and high-level recognition (IT)."
     },
     "cortex_it": {
-      "x":  -4.0, "y":  3.0, "z":  0.0, "r": 0.7, "family": "it",
+      "x": -4.0,
+      "y": 3.0,
+      "z": 0.0,
+      "r": 0.7,
+      "family": "it",
       "display_name": "IT (Objects)",
       "function": "Object identity",
       "neurons": 64,
       "description": "Inferotemporal cortex. High-level visual representation: 'I see the agent', 'I see the goal'. Provides object identity to the rest of the brain."
     },
     "cortex_N": {
-      "x":  -1.5, "y":  3.5, "z":  3.0, "r": 0.7, "family": "premotor",
+      "x": -1.5,
+      "y": 3.5,
+      "z": 3.0,
+      "r": 0.7,
+      "family": "premotor",
       "display_name": "Premotor N",
       "function": "Action proposal: NORTH",
       "neurons": 25,
-      "description": "Premotor cortex for the NORTH action. One of four competing pools — when this one wins (via basal-ganglia gating), the agent moves north."
+      "description": "Premotor cortex for the NORTH action. One of four competing pools \u00e2\u20ac\u201d when this one wins (via basal-ganglia gating), the agent moves north."
     },
     "cortex_E": {
-      "x":  -1.5, "y":  3.5, "z":  1.0, "r": 0.7, "family": "premotor",
+      "x": -1.5,
+      "y": 3.5,
+      "z": 1.0,
+      "r": 0.7,
+      "family": "premotor",
       "display_name": "Premotor E",
       "function": "Action proposal: EAST",
       "neurons": 25,
       "description": "Premotor cortex for the EAST action. Competes with cortex_N/S/W; the basal-ganglia loop selects one winner per step."
     },
     "cortex_S": {
-      "x":  -1.5, "y":  3.5, "z": -1.0, "r": 0.7, "family": "premotor",
+      "x": -1.5,
+      "y": 3.5,
+      "z": -1.0,
+      "r": 0.7,
+      "family": "premotor",
       "display_name": "Premotor S",
       "function": "Action proposal: SOUTH",
       "neurons": 25,
       "description": "Premotor cortex for the SOUTH action. Competes with cortex_N/E/W; the basal-ganglia loop selects one winner per step."
     },
     "cortex_W": {
-      "x":  -1.5, "y":  3.5, "z": -3.0, "r": 0.7, "family": "premotor",
+      "x": -1.5,
+      "y": 3.5,
+      "z": -3.0,
+      "r": 0.7,
+      "family": "premotor",
       "display_name": "Premotor W",
       "function": "Action proposal: WEST",
       "neurons": 25,
       "description": "Premotor cortex for the WEST action. Competes with cortex_N/E/S; the basal-ganglia loop selects one winner per step."
     },
     "str_D1_N": {
-      "x":   1.0, "y":  0.5, "z":  3.0, "r": 0.8, "family": "d1",
+      "x": 1.0,
+      "y": 0.5,
+      "z": 3.0,
+      "r": 0.8,
+      "family": "d1",
       "display_name": "D1 striatum N",
       "function": "DIRECT pathway (Go-N)",
       "neurons": 50,
       "description": "Direct-pathway striatal MSNs for NORTH. Activated by D1 dopamine receptors. Inhibits GPi -> releases thalamus -> motor cortex fires. The 'go' signal."
     },
     "str_D1_E": {
-      "x":   1.0, "y":  0.5, "z":  1.0, "r": 0.8, "family": "d1",
+      "x": 1.0,
+      "y": 0.5,
+      "z": 1.0,
+      "r": 0.8,
+      "family": "d1",
       "display_name": "D1 striatum E",
       "function": "DIRECT pathway (Go-E)",
       "neurons": 50,
       "description": "Direct-pathway striatal MSNs for EAST. D1-receptor expressing MSNs. The 'go' signal for east actions."
     },
     "str_D1_S": {
-      "x":   1.0, "y":  0.5, "z": -1.0, "r": 0.8, "family": "d1",
+      "x": 1.0,
+      "y": 0.5,
+      "z": -1.0,
+      "r": 0.8,
+      "family": "d1",
       "display_name": "D1 striatum S",
       "function": "DIRECT pathway (Go-S)",
       "neurons": 50,
       "description": "Direct-pathway striatal MSNs for SOUTH. D1-receptor expressing MSNs. The 'go' signal for south actions."
     },
     "str_D1_W": {
-      "x":   1.0, "y":  0.5, "z": -3.0, "r": 0.8, "family": "d1",
+      "x": 1.0,
+      "y": 0.5,
+      "z": -3.0,
+      "r": 0.8,
+      "family": "d1",
       "display_name": "D1 striatum W",
       "function": "DIRECT pathway (Go-W)",
       "neurons": 50,
       "description": "Direct-pathway striatal MSNs for WEST. D1-receptor expressing MSNs. The 'go' signal for west actions."
     },
     "str_D2_N": {
-      "x":   1.0, "y": -1.0, "z":  3.0, "r": 0.8, "family": "d2",
+      "x": 1.0,
+      "y": -1.0,
+      "z": 3.0,
+      "r": 0.8,
+      "family": "d2",
       "display_name": "D2 striatum N",
       "function": "INDIRECT pathway (NoGo-N)",
       "neurons": 50,
       "description": "Indirect-pathway striatal MSNs for NORTH. D2-receptor expressing. Suppresses competing actions via GPe -> STN -> GPi disinhibition. The 'don't go' signal."
     },
     "str_D2_E": {
-      "x":   1.0, "y": -1.0, "z":  1.0, "r": 0.8, "family": "d2",
+      "x": 1.0,
+      "y": -1.0,
+      "z": 1.0,
+      "r": 0.8,
+      "family": "d2",
       "display_name": "D2 striatum E",
       "function": "INDIRECT pathway (NoGo-E)",
       "neurons": 50,
       "description": "Indirect-pathway striatal MSNs for EAST. D2-receptor expressing. Suppresses east actions when activated."
     },
     "str_D2_S": {
-      "x":   1.0, "y": -1.0, "z": -1.0, "r": 0.8, "family": "d2",
+      "x": 1.0,
+      "y": -1.0,
+      "z": -1.0,
+      "r": 0.8,
+      "family": "d2",
       "display_name": "D2 striatum S",
       "function": "INDIRECT pathway (NoGo-S)",
       "neurons": 50,
       "description": "Indirect-pathway striatal MSNs for SOUTH. D2-receptor expressing. Suppresses south actions when activated."
     },
     "str_D2_W": {
-      "x":   1.0, "y": -1.0, "z": -3.0, "r": 0.8, "family": "d2",
+      "x": 1.0,
+      "y": -1.0,
+      "z": -3.0,
+      "r": 0.8,
+      "family": "d2",
       "display_name": "D2 striatum W",
       "function": "INDIRECT pathway (NoGo-W)",
       "neurons": 50,
       "description": "Indirect-pathway striatal MSNs for WEST. D2-receptor expressing. Suppresses west actions when activated."
     },
     "gpe_N": {
-      "x":   3.0, "y": -2.0, "z":  3.0, "r": 0.6, "family": "pallidum",
+      "x": 3.0,
+      "y": -2.0,
+      "z": 3.0,
+      "r": 0.6,
+      "family": "pallidum",
       "display_name": "GPe N",
       "function": "Indirect-pathway relay",
       "neurons": 25,
       "description": "External globus pallidus for NORTH channel. Tonically active; D2-MSN inhibition disinhibits the indirect pathway through STN."
     },
     "gpe_E": {
-      "x":   3.0, "y": -2.0, "z":  1.0, "r": 0.6, "family": "pallidum",
+      "x": 3.0,
+      "y": -2.0,
+      "z": 1.0,
+      "r": 0.6,
+      "family": "pallidum",
       "display_name": "GPe E",
       "function": "Indirect-pathway relay",
       "neurons": 25,
       "description": "External globus pallidus for EAST channel. Tonically active; relays D2 inhibition into the indirect pathway."
     },
     "gpe_S": {
-      "x":   3.0, "y": -2.0, "z": -1.0, "r": 0.6, "family": "pallidum",
+      "x": 3.0,
+      "y": -2.0,
+      "z": -1.0,
+      "r": 0.6,
+      "family": "pallidum",
       "display_name": "GPe S",
       "function": "Indirect-pathway relay",
       "neurons": 25,
       "description": "External globus pallidus for SOUTH channel. Tonically active; relays D2 inhibition into the indirect pathway."
     },
     "gpe_W": {
-      "x":   3.0, "y": -2.0, "z": -3.0, "r": 0.6, "family": "pallidum",
+      "x": 3.0,
+      "y": -2.0,
+      "z": -3.0,
+      "r": 0.6,
+      "family": "pallidum",
       "display_name": "GPe W",
       "function": "Indirect-pathway relay",
       "neurons": 25,
       "description": "External globus pallidus for WEST channel. Tonically active; relays D2 inhibition into the indirect pathway."
     },
     "stn": {
-      "x":   3.0, "y": -3.5, "z":  0.0, "r": 0.7, "family": "pallidum",
+      "x": 3.0,
+      "y": -3.5,
+      "z": 0.0,
+      "r": 0.7,
+      "family": "pallidum",
       "display_name": "STN (Brake)",
       "function": "Hyperdirect brake",
       "neurons": 80,
       "description": "Subthalamic nucleus. Excited by GPe and cortex (hyperdirect pathway). Excites all GPi pools -> brakes all actions. Implements global pause / 'wait, don't act yet'."
     },
     "gpi_N": {
-      "x":   4.5, "y": -2.5, "z":  3.0, "r": 0.6, "family": "pallidum",
+      "x": 4.5,
+      "y": -2.5,
+      "z": 3.0,
+      "r": 0.6,
+      "family": "pallidum",
       "display_name": "GPi N (Gate)",
       "function": "Output gate: NORTH",
       "neurons": 25,
       "description": "Internal globus pallidus for NORTH. Tonically inhibits thalamus -> 'gate closed'. D1 striatum inhibits GPi -> 'gate opens' -> NORTH motor pool fires."
     },
     "gpi_E": {
-      "x":   4.5, "y": -2.5, "z":  1.0, "r": 0.6, "family": "pallidum",
+      "x": 4.5,
+      "y": -2.5,
+      "z": 1.0,
+      "r": 0.6,
+      "family": "pallidum",
       "display_name": "GPi E (Gate)",
       "function": "Output gate: EAST",
       "neurons": 25,
-      "description": "Internal globus pallidus for EAST. The action-selection gate for east — opens when D1_E fires strongly enough to overcome GPi tonic firing."
+      "description": "Internal globus pallidus for EAST. The action-selection gate for east \u00e2\u20ac\u201d opens when D1_E fires strongly enough to overcome GPi tonic firing."
     },
     "gpi_S": {
-      "x":   4.5, "y": -2.5, "z": -1.0, "r": 0.6, "family": "pallidum",
+      "x": 4.5,
+      "y": -2.5,
+      "z": -1.0,
+      "r": 0.6,
+      "family": "pallidum",
       "display_name": "GPi S (Gate)",
       "function": "Output gate: SOUTH",
       "neurons": 25,
-      "description": "Internal globus pallidus for SOUTH. The action-selection gate for south — opens when D1_S fires strongly enough."
+      "description": "Internal globus pallidus for SOUTH. The action-selection gate for south \u00e2\u20ac\u201d opens when D1_S fires strongly enough."
     },
     "gpi_W": {
-      "x":   4.5, "y": -2.5, "z": -3.0, "r": 0.6, "family": "pallidum",
+      "x": 4.5,
+      "y": -2.5,
+      "z": -3.0,
+      "r": 0.6,
+      "family": "pallidum",
       "display_name": "GPi W (Gate)",
       "function": "Output gate: WEST",
       "neurons": 25,
-      "description": "Internal globus pallidus for WEST. The action-selection gate for west — opens when D1_W fires strongly enough."
+      "description": "Internal globus pallidus for WEST. The action-selection gate for west \u00e2\u20ac\u201d opens when D1_W fires strongly enough."
     },
     "thal_N": {
-      "x":   6.0, "y": -1.0, "z":  3.0, "r": 0.6, "family": "thalamus",
+      "x": 6.0,
+      "y": -1.0,
+      "z": 3.0,
+      "r": 0.6,
+      "family": "thalamus",
       "display_name": "Thalamus N",
       "function": "Action relay (released)",
       "neurons": 10,
       "description": "Thalamic relay for NORTH. Firing means GPi has been inhibited (gate open) -> thalamus is no longer suppressed -> motor cortex receives drive."
     },
     "thal_E": {
-      "x":   6.0, "y": -1.0, "z":  1.0, "r": 0.6, "family": "thalamus",
+      "x": 6.0,
+      "y": -1.0,
+      "z": 1.0,
+      "r": 0.6,
+      "family": "thalamus",
       "display_name": "Thalamus E",
       "function": "Action relay (released)",
       "neurons": 10,
       "description": "Thalamic relay for EAST. Drives motor cortex when GPi gate opens for the east channel."
     },
     "thal_S": {
-      "x":   6.0, "y": -1.0, "z": -1.0, "r": 0.6, "family": "thalamus",
+      "x": 6.0,
+      "y": -1.0,
+      "z": -1.0,
+      "r": 0.6,
+      "family": "thalamus",
       "display_name": "Thalamus S",
       "function": "Action relay (released)",
       "neurons": 10,
       "description": "Thalamic relay for SOUTH. Drives motor cortex when GPi gate opens for the south channel."
     },
     "thal_W": {
-      "x":   6.0, "y": -1.0, "z": -3.0, "r": 0.6, "family": "thalamus",
+      "x": 6.0,
+      "y": -1.0,
+      "z": -3.0,
+      "r": 0.6,
+      "family": "thalamus",
       "display_name": "Thalamus W",
       "function": "Action relay (released)",
       "neurons": 10,
       "description": "Thalamic relay for WEST. Drives motor cortex when GPi gate opens for the west channel."
     },
     "motor_N": {
-      "x":   8.5, "y":  2.0, "z":  3.0, "r": 0.7, "family": "motor",
+      "x": 8.5,
+      "y": 2.0,
+      "z": 3.0,
+      "r": 0.7,
+      "family": "motor",
       "display_name": "Motor N",
       "function": "MOVES AGENT NORTH",
       "neurons": 10,
       "description": "Primary motor cortex for NORTH. When this pool fires more than the others, the agent moves one cell north on the gridworld."
     },
     "motor_E": {
-      "x":   8.5, "y":  2.0, "z":  1.0, "r": 0.7, "family": "motor",
+      "x": 8.5,
+      "y": 2.0,
+      "z": 1.0,
+      "r": 0.7,
+      "family": "motor",
       "display_name": "Motor E",
       "function": "MOVES AGENT EAST",
       "neurons": 10,
       "description": "Primary motor cortex for EAST. When this pool fires more than the others, the agent moves one cell east."
     },
     "motor_S": {
-      "x":   8.5, "y":  2.0, "z": -1.0, "r": 0.7, "family": "motor",
+      "x": 8.5,
+      "y": 2.0,
+      "z": -1.0,
+      "r": 0.7,
+      "family": "motor",
       "display_name": "Motor S",
       "function": "MOVES AGENT SOUTH",
       "neurons": 10,
       "description": "Primary motor cortex for SOUTH. When this pool fires more than the others, the agent moves one cell south."
     },
     "motor_W": {
-      "x":   8.5, "y":  2.0, "z": -3.0, "r": 0.7, "family": "motor",
+      "x": 8.5,
+      "y": 2.0,
+      "z": -3.0,
+      "r": 0.7,
+      "family": "motor",
       "display_name": "Motor W",
       "function": "MOVES AGENT WEST",
       "neurons": 10,
       "description": "Primary motor cortex for WEST. When this pool fires more than the others, the agent moves one cell west."
     },
     "motor_FS_N": {
-      "x":   9.5, "y":  2.7, "z":  3.0, "r": 0.4, "family": "interneuron",
+      "x": 9.5,
+      "y": 2.7,
+      "z": 3.0,
+      "r": 0.4,
+      "family": "interneuron",
       "display_name": "Motor FS N (PV-FSI)",
       "function": "Inhibits competing motor pools",
       "neurons": 3,
       "description": "Parvalbumin-positive fast-spiking interneurons recruited by motor_N. When motor_N fires, these inhibit motor_E/S/W (cross-pool only, no self-inhibition). Biology: Vogels et al 2011; Hofer et al 2011. ~10-15% of cortical population. Provides graded competition not absolute WTA."
     },
     "motor_FS_E": {
-      "x":   9.5, "y":  2.7, "z":  1.0, "r": 0.4, "family": "interneuron",
+      "x": 9.5,
+      "y": 2.7,
+      "z": 1.0,
+      "r": 0.4,
+      "family": "interneuron",
       "display_name": "Motor FS E (PV-FSI)",
       "function": "Inhibits competing motor pools",
       "neurons": 3,
       "description": "PV-FSI for motor_E. Cross-pool inhibition to motor_N/S/W."
     },
     "motor_FS_S": {
-      "x":   9.5, "y":  2.7, "z": -1.0, "r": 0.4, "family": "interneuron",
+      "x": 9.5,
+      "y": 2.7,
+      "z": -1.0,
+      "r": 0.4,
+      "family": "interneuron",
       "display_name": "Motor FS S (PV-FSI)",
       "function": "Inhibits competing motor pools",
       "neurons": 3,
       "description": "PV-FSI for motor_S. Cross-pool inhibition to motor_N/E/W."
     },
     "motor_FS_W": {
-      "x":   9.5, "y":  2.7, "z": -3.0, "r": 0.4, "family": "interneuron",
+      "x": 9.5,
+      "y": 2.7,
+      "z": -3.0,
+      "r": 0.4,
+      "family": "interneuron",
       "display_name": "Motor FS W (PV-FSI)",
       "function": "Inhibits competing motor pools",
       "neurons": 3,
       "description": "PV-FSI for motor_W. Cross-pool inhibition to motor_N/E/S."
     },
     "snc": {
-      "x":   4.0, "y": -5.0, "z":  0.0, "r": 0.8, "family": "dopamine",
+      "x": 4.0,
+      "y": -5.0,
+      "z": 0.0,
+      "r": 0.8,
+      "family": "dopamine",
       "display_name": "SNc (Dopamine)",
       "function": "Reward signal",
       "neurons": 10,
       "description": "Substantia nigra pars compacta. Bursts on positive reward, dips on negative reward. Dopamine release across all striatum tags recent synapses for plasticity (the 'eligibility trace' pathway)."
     },
     "dlpfc_wm": {
-      "x":  -3.5, "y":  5.5, "z":  0.0, "r": 1.0, "family": "pfc",
+      "x": -3.5,
+      "y": 5.5,
+      "z": 0.0,
+      "r": 1.0,
+      "family": "pfc",
       "display_name": "PFC (Working memory)",
       "function": "Holds the goal in mind",
       "neurons": 60,
       "description": "Dorsolateral prefrontal cortex. NMDA-receptor bistability lets these neurons keep firing after their input stops, holding the current goal across delays. Damage = 'forgets the goal'. Wang 2002."
     },
     "language_input": {
-      "x":  -5.5, "y":  4.5, "z":  4.5, "r": 1.1, "family": "language",
+      "x": -5.5,
+      "y": 4.5,
+      "z": 4.5,
+      "r": 1.1,
+      "family": "language",
       "display_name": "Language IN (Wernicke-like)",
       "function": "Hears words",
       "neurons": 256,
       "description": "Wernicke-area analog. Sparse-pattern coding: the word 'north' activates a specific subset of neurons here. Drives motor cortex via PFC bypass + dlpfc_wm."
     },
     "language_output": {
-      "x":   2.5, "y":  4.5, "z":  4.5, "r": 1.1, "family": "language",
+      "x": 2.5,
+      "y": 4.5,
+      "z": 4.5,
+      "r": 1.1,
+      "family": "language",
       "display_name": "Language OUT (Broca-like)",
       "function": "Produces words",
       "neurons": 256,
       "description": "Broca-area analog. Receives input from premotor cortex and IT. Decodes which direction word the agent is currently 'thinking' / 'saying'."
     },
     "dg": {
-      "x":   0.0, "y": -1.0, "z":  7.0, "r": 0.8, "family": "hippocampus_dg",
+      "x": 0.0,
+      "y": -1.0,
+      "z": 7.0,
+      "r": 0.8,
+      "family": "hippocampus_dg",
       "display_name": "Dentate Gyrus",
       "function": "Pattern separator",
       "neurons": 64,
       "description": "Sparse activity (~5% of neurons fire); makes similar inputs distinguishable. The 'tag every memory uniquely' stage of the trisynaptic loop."
     },
     "ca3": {
-      "x":   2.5, "y": -1.0, "z":  7.0, "r": 0.8, "family": "hippocampus_ca3",
+      "x": 2.5,
+      "y": -1.0,
+      "z": 7.0,
+      "r": 0.8,
+      "family": "hippocampus_ca3",
       "display_name": "CA3 (Pattern completion)",
       "function": "Auto-associator",
       "neurons": 64,
       "description": "Recurrent autoassociative network. Given partial input, completes to the full memory pattern. The 'recall from partial cue' stage."
     },
     "ca1": {
-      "x":   5.0, "y": -1.0, "z":  7.0, "r": 0.8, "family": "hippocampus_ca1",
+      "x": 5.0,
+      "y": -1.0,
+      "z": 7.0,
+      "r": 0.8,
+      "family": "hippocampus_ca1",
       "display_name": "CA1 (Memory readout)",
       "function": "Match detection",
       "neurons": 64,
       "description": "Compares CA3 output with EC input. Output gateway of the hippocampus. Damage = no new declarative memories (Henry Molaison)."
     },
     "place_cells": {
-      "x":   7.5, "y": -1.0, "z":  7.0, "r": 0.7, "family": "place",
+      "x": 7.5,
+      "y": -1.0,
+      "z": 7.0,
+      "r": 0.7,
+      "family": "place",
       "display_name": "Place cells",
       "function": "Where am I?",
       "neurons": 64,
       "description": "Each cell fires when the agent is at a specific (x,y) location in the gridworld. O'Keefe 1971. Provides the spatial 'you are here' signal."
     },
     "ec": {
-      "x":  -2.0, "y": -1.0, "z":  7.0, "r": 0.6, "family": "hippocampus_ec",
+      "x": -2.0,
+      "y": -1.0,
+      "z": 7.0,
+      "r": 0.6,
+      "family": "hippocampus_ec",
       "display_name": "Entorhinal cortex",
       "function": "Hippocampus input",
       "neurons": 32,
       "description": "Gateway into the hippocampal formation. Receives multimodal cortex input (sensory + working memory + place); projects to DG/CA3."
+    },
+    "str_striosome_N": {
+      "x": 1.0,
+      "y": -0.2,
+      "z": 3.5,
+      "r": 0.5,
+      "family": "striosome",
+      "display_name": "Striosome N",
+      "function": "Value-critic patch (DA teaching)",
+      "neurons": 25,
+      "description": "Striosomal (patch) MSNs for the N channel. Project to the dopamine neurons (SNc) and carry the value/critic signal that shapes the reward-prediction-error teaching of action value."
+    },
+    "str_PV_FSI_N": {
+      "x": 1.0,
+      "y": 1.2,
+      "z": 2.5,
+      "r": 0.4,
+      "family": "striatal_in",
+      "display_name": "Striatal PV-FSI N",
+      "function": "Feed-forward striatal inhibition",
+      "neurons": 12,
+      "description": "Parvalbumin fast-spiking interneurons in the N striatal pool. Driven by cortex and arkypallidal GPe; inhibit the competing channels' D1/D2 MSNs to sharpen action selection (feed-forward winner-take-all)."
+    },
+    "str_striosome_E": {
+      "x": 1.0,
+      "y": -0.2,
+      "z": 1.5,
+      "r": 0.5,
+      "family": "striosome",
+      "display_name": "Striosome E",
+      "function": "Value-critic patch (DA teaching)",
+      "neurons": 25,
+      "description": "Striosomal (patch) MSNs for the E channel. Project to the dopamine neurons (SNc) and carry the value/critic signal that shapes the reward-prediction-error teaching of action value."
+    },
+    "str_PV_FSI_E": {
+      "x": 1.0,
+      "y": 1.2,
+      "z": 0.5,
+      "r": 0.4,
+      "family": "striatal_in",
+      "display_name": "Striatal PV-FSI E",
+      "function": "Feed-forward striatal inhibition",
+      "neurons": 12,
+      "description": "Parvalbumin fast-spiking interneurons in the E striatal pool. Driven by cortex and arkypallidal GPe; inhibit the competing channels' D1/D2 MSNs to sharpen action selection (feed-forward winner-take-all)."
+    },
+    "str_striosome_S": {
+      "x": 1.0,
+      "y": -0.2,
+      "z": -0.5,
+      "r": 0.5,
+      "family": "striosome",
+      "display_name": "Striosome S",
+      "function": "Value-critic patch (DA teaching)",
+      "neurons": 25,
+      "description": "Striosomal (patch) MSNs for the S channel. Project to the dopamine neurons (SNc) and carry the value/critic signal that shapes the reward-prediction-error teaching of action value."
+    },
+    "str_PV_FSI_S": {
+      "x": 1.0,
+      "y": 1.2,
+      "z": -1.5,
+      "r": 0.4,
+      "family": "striatal_in",
+      "display_name": "Striatal PV-FSI S",
+      "function": "Feed-forward striatal inhibition",
+      "neurons": 12,
+      "description": "Parvalbumin fast-spiking interneurons in the S striatal pool. Driven by cortex and arkypallidal GPe; inhibit the competing channels' D1/D2 MSNs to sharpen action selection (feed-forward winner-take-all)."
+    },
+    "str_striosome_W": {
+      "x": 1.0,
+      "y": -0.2,
+      "z": -2.5,
+      "r": 0.5,
+      "family": "striosome",
+      "display_name": "Striosome W",
+      "function": "Value-critic patch (DA teaching)",
+      "neurons": 25,
+      "description": "Striosomal (patch) MSNs for the W channel. Project to the dopamine neurons (SNc) and carry the value/critic signal that shapes the reward-prediction-error teaching of action value."
+    },
+    "str_PV_FSI_W": {
+      "x": 1.0,
+      "y": 1.2,
+      "z": -3.5,
+      "r": 0.4,
+      "family": "striatal_in",
+      "display_name": "Striatal PV-FSI W",
+      "function": "Feed-forward striatal inhibition",
+      "neurons": 12,
+      "description": "Parvalbumin fast-spiking interneurons in the W striatal pool. Driven by cortex and arkypallidal GPe; inhibit the competing channels' D1/D2 MSNs to sharpen action selection (feed-forward winner-take-all)."
+    },
+    "gpe_arky_N": {
+      "x": 3.6,
+      "y": -2.8,
+      "z": 3.0,
+      "r": 0.45,
+      "family": "pallidum",
+      "display_name": "GPe arkypallidal N",
+      "function": "Pallidostriatal feedback brake",
+      "neurons": 12,
+      "description": "Arkypallidal GPe neurons for the N channel. Unlike the prototypic GPe (which projects to STN), these project BACK to the striatum (PV-FSIs), providing a fast 'stop' / cancel signal across channels."
+    },
+    "gpe_arky_E": {
+      "x": 3.6,
+      "y": -2.8,
+      "z": 1.0,
+      "r": 0.45,
+      "family": "pallidum",
+      "display_name": "GPe arkypallidal E",
+      "function": "Pallidostriatal feedback brake",
+      "neurons": 12,
+      "description": "Arkypallidal GPe neurons for the E channel. Unlike the prototypic GPe (which projects to STN), these project BACK to the striatum (PV-FSIs), providing a fast 'stop' / cancel signal across channels."
+    },
+    "gpe_arky_S": {
+      "x": 3.6,
+      "y": -2.8,
+      "z": -1.0,
+      "r": 0.45,
+      "family": "pallidum",
+      "display_name": "GPe arkypallidal S",
+      "function": "Pallidostriatal feedback brake",
+      "neurons": 12,
+      "description": "Arkypallidal GPe neurons for the S channel. Unlike the prototypic GPe (which projects to STN), these project BACK to the striatum (PV-FSIs), providing a fast 'stop' / cancel signal across channels."
+    },
+    "gpe_arky_W": {
+      "x": 3.6,
+      "y": -2.8,
+      "z": -3.0,
+      "r": 0.45,
+      "family": "pallidum",
+      "display_name": "GPe arkypallidal W",
+      "function": "Pallidostriatal feedback brake",
+      "neurons": 12,
+      "description": "Arkypallidal GPe neurons for the W channel. Unlike the prototypic GPe (which projects to STN), these project BACK to the striatum (PV-FSIs), providing a fast 'stop' / cancel signal across channels."
+    },
+    "thal_FS_N": {
+      "x": 6.0,
+      "y": -0.1,
+      "z": 3.0,
+      "r": 0.4,
+      "family": "trn",
+      "display_name": "TRN N",
+      "function": "Thalamic reticular inhibition",
+      "neurons": 6,
+      "description": "Thalamic reticular nucleus shell for the N relay. GABAergic; driven by the thalamic relay and inhibits the OTHER channels' relays, adding lateral inhibition / attentional gating at the thalamus."
+    },
+    "thal_FS_E": {
+      "x": 6.0,
+      "y": -0.1,
+      "z": 1.0,
+      "r": 0.4,
+      "family": "trn",
+      "display_name": "TRN E",
+      "function": "Thalamic reticular inhibition",
+      "neurons": 6,
+      "description": "Thalamic reticular nucleus shell for the E relay. GABAergic; driven by the thalamic relay and inhibits the OTHER channels' relays, adding lateral inhibition / attentional gating at the thalamus."
+    },
+    "thal_FS_S": {
+      "x": 6.0,
+      "y": -0.1,
+      "z": -1.0,
+      "r": 0.4,
+      "family": "trn",
+      "display_name": "TRN S",
+      "function": "Thalamic reticular inhibition",
+      "neurons": 6,
+      "description": "Thalamic reticular nucleus shell for the S relay. GABAergic; driven by the thalamic relay and inhibits the OTHER channels' relays, adding lateral inhibition / attentional gating at the thalamus."
+    },
+    "thal_FS_W": {
+      "x": 6.0,
+      "y": -0.1,
+      "z": -3.0,
+      "r": 0.4,
+      "family": "trn",
+      "display_name": "TRN W",
+      "function": "Thalamic reticular inhibition",
+      "neurons": 6,
+      "description": "Thalamic reticular nucleus shell for the W relay. GABAergic; driven by the thalamic relay and inhibits the OTHER channels' relays, adding lateral inhibition / attentional gating at the thalamus."
+    },
+    "sel_N": {
+      "x": 7.0,
+      "y": 0.5,
+      "z": 3.0,
+      "r": 0.55,
+      "family": "selection",
+      "display_name": "Selection N",
+      "function": "Spiking WTA: candidate NORTH/EAST/SOUTH/WEST",
+      "neurons": 25,
+      "description": "Spiking action-selection pool for the N channel. Receives the released thalamic drive and competes (via its fast-spiking interneurons) so a single winning action emerges before commitment."
+    },
+    "sel_FS_N": {
+      "x": 7.0,
+      "y": 1.3,
+      "z": 2.6,
+      "r": 0.35,
+      "family": "selection",
+      "display_name": "Selection FS N",
+      "function": "Inhibits competing selection pools",
+      "neurons": 8,
+      "description": "Fast-spiking interneurons of the N selection pool. Inhibit the other three selection pools (cross-channel only) to implement the winner-take-all competition."
+    },
+    "sel_E": {
+      "x": 7.0,
+      "y": 0.5,
+      "z": 1.0,
+      "r": 0.55,
+      "family": "selection",
+      "display_name": "Selection E",
+      "function": "Spiking WTA: candidate NORTH/EAST/SOUTH/WEST",
+      "neurons": 25,
+      "description": "Spiking action-selection pool for the E channel. Receives the released thalamic drive and competes (via its fast-spiking interneurons) so a single winning action emerges before commitment."
+    },
+    "sel_FS_E": {
+      "x": 7.0,
+      "y": 1.3,
+      "z": 0.6,
+      "r": 0.35,
+      "family": "selection",
+      "display_name": "Selection FS E",
+      "function": "Inhibits competing selection pools",
+      "neurons": 8,
+      "description": "Fast-spiking interneurons of the E selection pool. Inhibit the other three selection pools (cross-channel only) to implement the winner-take-all competition."
+    },
+    "sel_S": {
+      "x": 7.0,
+      "y": 0.5,
+      "z": -1.0,
+      "r": 0.55,
+      "family": "selection",
+      "display_name": "Selection S",
+      "function": "Spiking WTA: candidate NORTH/EAST/SOUTH/WEST",
+      "neurons": 25,
+      "description": "Spiking action-selection pool for the S channel. Receives the released thalamic drive and competes (via its fast-spiking interneurons) so a single winning action emerges before commitment."
+    },
+    "sel_FS_S": {
+      "x": 7.0,
+      "y": 1.3,
+      "z": -1.4,
+      "r": 0.35,
+      "family": "selection",
+      "display_name": "Selection FS S",
+      "function": "Inhibits competing selection pools",
+      "neurons": 8,
+      "description": "Fast-spiking interneurons of the S selection pool. Inhibit the other three selection pools (cross-channel only) to implement the winner-take-all competition."
+    },
+    "sel_W": {
+      "x": 7.0,
+      "y": 0.5,
+      "z": -3.0,
+      "r": 0.55,
+      "family": "selection",
+      "display_name": "Selection W",
+      "function": "Spiking WTA: candidate NORTH/EAST/SOUTH/WEST",
+      "neurons": 25,
+      "description": "Spiking action-selection pool for the W channel. Receives the released thalamic drive and competes (via its fast-spiking interneurons) so a single winning action emerges before commitment."
+    },
+    "sel_FS_W": {
+      "x": 7.0,
+      "y": 1.3,
+      "z": -3.4,
+      "r": 0.35,
+      "family": "selection",
+      "display_name": "Selection FS W",
+      "function": "Inhibits competing selection pools",
+      "neurons": 8,
+      "description": "Fast-spiking interneurons of the W selection pool. Inhibit the other three selection pools (cross-channel only) to implement the winner-take-all competition."
+    },
+    "commit_N": {
+      "x": 7.8,
+      "y": 1.2,
+      "z": 3.0,
+      "r": 0.5,
+      "family": "commit",
+      "display_name": "Commit N",
+      "function": "Commit burst -> motor NORTH/EAST/SOUTH/WEST",
+      "neurons": 20,
+      "description": "Commit-burst pool for the N channel. Once selection settles on a winner, this pool fires a brief high-gain burst that drives the N motor pool, committing the agent to the action."
+    },
+    "commit_E": {
+      "x": 7.8,
+      "y": 1.2,
+      "z": 1.0,
+      "r": 0.5,
+      "family": "commit",
+      "display_name": "Commit E",
+      "function": "Commit burst -> motor NORTH/EAST/SOUTH/WEST",
+      "neurons": 20,
+      "description": "Commit-burst pool for the E channel. Once selection settles on a winner, this pool fires a brief high-gain burst that drives the E motor pool, committing the agent to the action."
+    },
+    "commit_S": {
+      "x": 7.8,
+      "y": 1.2,
+      "z": -1.0,
+      "r": 0.5,
+      "family": "commit",
+      "display_name": "Commit S",
+      "function": "Commit burst -> motor NORTH/EAST/SOUTH/WEST",
+      "neurons": 20,
+      "description": "Commit-burst pool for the S channel. Once selection settles on a winner, this pool fires a brief high-gain burst that drives the S motor pool, committing the agent to the action."
+    },
+    "commit_W": {
+      "x": 7.8,
+      "y": 1.2,
+      "z": -3.0,
+      "r": 0.5,
+      "family": "commit",
+      "display_name": "Commit W",
+      "function": "Commit burst -> motor NORTH/EAST/SOUTH/WEST",
+      "neurons": 20,
+      "description": "Commit-burst pool for the W channel. Once selection settles on a winner, this pool fires a brief high-gain burst that drives the W motor pool, committing the agent to the action."
+    },
+    "commit_OPN": {
+      "x": 7.8,
+      "y": 0.2,
+      "z": 0.0,
+      "r": 0.5,
+      "family": "commit",
+      "display_name": "Commit OPN (Hold/Veto)",
+      "function": "Omnipause: gates commitment",
+      "neurons": 15,
+      "description": "Omnipause-style gate shared across channels. Tonically suppresses every commit pool until selection has settled, then releases, allowing a single clean commit burst (prevents premature or double commitment)."
+    },
+    "dg_pv_basket": {
+      "x": 0.0,
+      "y": -2.0,
+      "z": 7.6,
+      "r": 0.45,
+      "family": "hippocampus_dg",
+      "display_name": "DG PV basket",
+      "function": "Feed-forward sparsity",
+      "neurons": 12,
+      "description": "Parvalbumin basket cells in the dentate gyrus. Feed-forward inhibition from the entorhinal input keeps DG activity sparse (~5% active), which is what makes pattern separation work."
+    },
+    "sensory": {
+      "x": -10.5,
+      "y": -1.5,
+      "z": 0.0,
+      "r": 1.0,
+      "family": "sensory",
+      "display_name": "Sensory input",
+      "function": "Raw sensory drive",
+      "neurons": 256,
+      "description": "General sensory input region. Distributes the current sensory state to premotor cortex, the hippocampal entorhinal cortex, and the cerebellar mossy-fibre input."
+    },
+    "ppc_goal_input": {
+      "x": -9.5,
+      "y": 2.5,
+      "z": 1.5,
+      "r": 0.8,
+      "family": "parietal",
+      "display_name": "Parietal goal input",
+      "function": "Where is the goal?",
+      "neurons": 64,
+      "description": "Posterior-parietal goal input. Carries the goal/beacon-derived spatial signal to premotor cortex and the prefrontal working memory, biasing actions toward the goal."
+    },
+    "sensor_place_readout": {
+      "x": -9.5,
+      "y": 1.0,
+      "z": -1.5,
+      "r": 0.8,
+      "family": "place",
+      "display_name": "Place readout (sensed)",
+      "function": "You-are-here estimate",
+      "neurons": 64,
+      "description": "Sensed place readout. Receives the hippocampal CA1 output and reports an estimate of the agent's current location, feeding premotor cortex and the cerebellar state input."
+    },
+    "beacon_sensors": {
+      "x": -11.0,
+      "y": 0.5,
+      "z": 1.5,
+      "r": 0.7,
+      "family": "sensory",
+      "display_name": "Beacon sensors",
+      "function": "Goal-beacon intensity",
+      "neurons": 32,
+      "description": "Beacon intensity sensors. Detect the goal-beacon gradient in the gridworld and drive the parietal goal input, providing a perceptual route to the goal location without direct goal coordinates."
+    },
+    "mossy_state": {
+      "x": 4.0,
+      "y": -7.0,
+      "z": 0.0,
+      "r": 0.7,
+      "family": "cerebellum",
+      "display_name": "Mossy fibre input",
+      "function": "Cerebellar context input",
+      "neurons": 64,
+      "description": "Mossy-fibre input to the cerebellum. Carries sensory + parietal + place context (the current state) into the granule layer for the cerebellar forward model."
+    },
+    "granule": {
+      "x": 5.3,
+      "y": -7.5,
+      "z": 0.0,
+      "r": 0.8,
+      "family": "cerebellum",
+      "display_name": "Granule cells",
+      "function": "Expansion recoding",
+      "neurons": 200,
+      "description": "Cerebellar granule cells. A very large, sparsely active layer that recodes the mossy-fibre input into a high-dimensional basis, enabling the Purkinje cells to learn fine sensorimotor mappings (Marr-Albus)."
+    },
+    "purkinje_N": {
+      "x": 6.7,
+      "y": -6.7,
+      "z": 3.0,
+      "r": 0.5,
+      "family": "cerebellum",
+      "display_name": "Purkinje N",
+      "function": "Learned action correction",
+      "neurons": 20,
+      "description": "Purkinje cells for the N channel. Their parallel-fibre synapses are tuned by climbing-fibre error signals (LTD); they shape the deep-nucleus output that nudges the N motor pool."
+    },
+    "dcn_aip_N": {
+      "x": 8.0,
+      "y": -7.1,
+      "z": 3.0,
+      "r": 0.45,
+      "family": "cerebellum_dcn",
+      "display_name": "DCN N",
+      "function": "Cerebellar output -> motor",
+      "neurons": 12,
+      "description": "Deep cerebellar nucleus (AIP) output for the N channel. The cerebellum's sole output; it sends the learned correction to the N motor pool."
+    },
+    "purkinje_E": {
+      "x": 6.7,
+      "y": -6.7,
+      "z": 1.0,
+      "r": 0.5,
+      "family": "cerebellum",
+      "display_name": "Purkinje E",
+      "function": "Learned action correction",
+      "neurons": 20,
+      "description": "Purkinje cells for the E channel. Their parallel-fibre synapses are tuned by climbing-fibre error signals (LTD); they shape the deep-nucleus output that nudges the E motor pool."
+    },
+    "dcn_aip_E": {
+      "x": 8.0,
+      "y": -7.1,
+      "z": 1.0,
+      "r": 0.45,
+      "family": "cerebellum_dcn",
+      "display_name": "DCN E",
+      "function": "Cerebellar output -> motor",
+      "neurons": 12,
+      "description": "Deep cerebellar nucleus (AIP) output for the E channel. The cerebellum's sole output; it sends the learned correction to the E motor pool."
+    },
+    "purkinje_S": {
+      "x": 6.7,
+      "y": -6.7,
+      "z": -1.0,
+      "r": 0.5,
+      "family": "cerebellum",
+      "display_name": "Purkinje S",
+      "function": "Learned action correction",
+      "neurons": 20,
+      "description": "Purkinje cells for the S channel. Their parallel-fibre synapses are tuned by climbing-fibre error signals (LTD); they shape the deep-nucleus output that nudges the S motor pool."
+    },
+    "dcn_aip_S": {
+      "x": 8.0,
+      "y": -7.1,
+      "z": -1.0,
+      "r": 0.45,
+      "family": "cerebellum_dcn",
+      "display_name": "DCN S",
+      "function": "Cerebellar output -> motor",
+      "neurons": 12,
+      "description": "Deep cerebellar nucleus (AIP) output for the S channel. The cerebellum's sole output; it sends the learned correction to the S motor pool."
+    },
+    "purkinje_W": {
+      "x": 6.7,
+      "y": -6.7,
+      "z": -3.0,
+      "r": 0.5,
+      "family": "cerebellum",
+      "display_name": "Purkinje W",
+      "function": "Learned action correction",
+      "neurons": 20,
+      "description": "Purkinje cells for the W channel. Their parallel-fibre synapses are tuned by climbing-fibre error signals (LTD); they shape the deep-nucleus output that nudges the W motor pool."
+    },
+    "dcn_aip_W": {
+      "x": 8.0,
+      "y": -7.1,
+      "z": -3.0,
+      "r": 0.45,
+      "family": "cerebellum_dcn",
+      "display_name": "DCN W",
+      "function": "Cerebellar output -> motor",
+      "neurons": 12,
+      "description": "Deep cerebellar nucleus (AIP) output for the W channel. The cerebellum's sole output; it sends the learned correction to the W motor pool."
+    },
+    "inferior_olive": {
+      "x": 5.3,
+      "y": -9.0,
+      "z": 0.0,
+      "r": 0.6,
+      "family": "inferior_olive",
+      "display_name": "Inferior olive",
+      "function": "Climbing-fibre teaching signal",
+      "neurons": 20,
+      "description": "Inferior olive. Source of the climbing fibres that deliver the error/teaching signal to the Purkinje cells, driving cerebellar learning (one strong climbing fibre per Purkinje cell)."
     }
   },
   "_family_colors": {
     "_comment": "Hex RGB; matches docs/plans/2026-05-02-webapp-3d-visualization-design.md D2 palette",
-    "sensory":         "#4ade80",
-    "v1":              "#3b82f6",
-    "v2":              "#2563eb",
-    "it":              "#1e40af",
-    "premotor":        "#a855f7",
-    "d1":              "#ef4444",
-    "d2":              "#fb923c",
-    "pallidum":        "#92400e",
-    "thalamus":        "#67e8f9",
-    "motor":           "#fbbf24",
-    "pfc":             "#14b8a6",
-    "language":        "#06b6d4",
-    "dopamine":        "#d946ef",
-    "hippocampus_ec":  "#fbcfe8",
-    "hippocampus_dg":  "#ec4899",
+    "sensory": "#4ade80",
+    "v1": "#3b82f6",
+    "v2": "#2563eb",
+    "it": "#1e40af",
+    "premotor": "#a855f7",
+    "d1": "#ef4444",
+    "d2": "#fb923c",
+    "pallidum": "#92400e",
+    "thalamus": "#67e8f9",
+    "motor": "#fbbf24",
+    "pfc": "#14b8a6",
+    "language": "#06b6d4",
+    "dopamine": "#d946ef",
+    "hippocampus_ec": "#fbcfe8",
+    "hippocampus_dg": "#ec4899",
     "hippocampus_ca3": "#be185d",
     "hippocampus_ca1": "#831843",
-    "place":           "#f9a8d4",
-    "interneuron":     "#9ca3af"
+    "place": "#f9a8d4",
+    "interneuron": "#9ca3af",
+    "striosome": "#7c3aed",
+    "striatal_in": "#c084fc",
+    "selection": "#f472b6",
+    "commit": "#fb7185",
+    "trn": "#22d3ee",
+    "cerebellum": "#34d399",
+    "cerebellum_dcn": "#10b981",
+    "inferior_olive": "#059669",
+    "parietal": "#86efac"
   },
   "_pathway_descriptions": {
     "exc": "Excitatory (glutamate). Increases firing in the post-region.",
     "inh": "Inhibitory (GABA). Decreases firing in the post-region.",
-    "da":  "Dopaminergic. Modulates plasticity and motivation in the post-region.",
+    "da": "Dopaminergic. Modulates plasticity and motivation in the post-region.",
     "ach": "Cholinergic. Modulates plasticity windows."
   },
   "pathways": [
-    { "from": "retina",            "to": "cortex_v1_simple",  "kind": "exc", "label": "Visual input" },
-    { "from": "cortex_v1_simple",  "to": "cortex_v1_complex", "kind": "exc", "label": "Edges -> position-invariant" },
-    { "from": "cortex_v1_complex", "to": "cortex_v2",         "kind": "exc", "label": "Edges -> shapes" },
-    { "from": "cortex_v2",         "to": "cortex_it",         "kind": "exc", "label": "Shapes -> objects" },
-    { "from": "cortex_it",         "to": "cortex_N",          "kind": "exc", "label": "Visual -> proposal N" },
-    { "from": "cortex_it",         "to": "cortex_E",          "kind": "exc", "label": "Visual -> proposal E" },
-    { "from": "cortex_it",         "to": "cortex_S",          "kind": "exc", "label": "Visual -> proposal S" },
-    { "from": "cortex_it",         "to": "cortex_W",          "kind": "exc", "label": "Visual -> proposal W" },
-    { "from": "cortex_N",          "to": "str_D1_N",          "kind": "exc", "label": "Cortex -> D1 (Go)" },
-    { "from": "cortex_N",          "to": "str_D2_N",          "kind": "exc", "label": "Cortex -> D2 (NoGo)" },
-    { "from": "cortex_E",          "to": "str_D1_E",          "kind": "exc", "label": "Cortex -> D1 (Go)" },
-    { "from": "cortex_E",          "to": "str_D2_E",          "kind": "exc", "label": "Cortex -> D2 (NoGo)" },
-    { "from": "cortex_S",          "to": "str_D1_S",          "kind": "exc", "label": "Cortex -> D1 (Go)" },
-    { "from": "cortex_S",          "to": "str_D2_S",          "kind": "exc", "label": "Cortex -> D2 (NoGo)" },
-    { "from": "cortex_W",          "to": "str_D1_W",          "kind": "exc", "label": "Cortex -> D1 (Go)" },
-    { "from": "cortex_W",          "to": "str_D2_W",          "kind": "exc", "label": "Cortex -> D2 (NoGo)" },
-    { "from": "str_D1_N",          "to": "gpi_N",             "kind": "inh", "label": "Direct: opens gate" },
-    { "from": "str_D1_E",          "to": "gpi_E",             "kind": "inh", "label": "Direct: opens gate" },
-    { "from": "str_D1_S",          "to": "gpi_S",             "kind": "inh", "label": "Direct: opens gate" },
-    { "from": "str_D1_W",          "to": "gpi_W",             "kind": "inh", "label": "Direct: opens gate" },
-    { "from": "str_D2_N",          "to": "gpe_N",             "kind": "inh", "label": "Indirect" },
-    { "from": "str_D2_E",          "to": "gpe_E",             "kind": "inh", "label": "Indirect" },
-    { "from": "str_D2_S",          "to": "gpe_S",             "kind": "inh", "label": "Indirect" },
-    { "from": "str_D2_W",          "to": "gpe_W",             "kind": "inh", "label": "Indirect" },
-    { "from": "gpe_N",             "to": "stn",               "kind": "inh", "label": "GPe -> STN" },
-    { "from": "gpe_E",             "to": "stn",               "kind": "inh", "label": "GPe -> STN" },
-    { "from": "gpe_S",             "to": "stn",               "kind": "inh", "label": "GPe -> STN" },
-    { "from": "gpe_W",             "to": "stn",               "kind": "inh", "label": "GPe -> STN" },
-    { "from": "stn",               "to": "gpi_N",             "kind": "exc", "label": "STN brake" },
-    { "from": "stn",               "to": "gpi_E",             "kind": "exc", "label": "STN brake" },
-    { "from": "stn",               "to": "gpi_S",             "kind": "exc", "label": "STN brake" },
-    { "from": "stn",               "to": "gpi_W",             "kind": "exc", "label": "STN brake" },
-    { "from": "gpi_N",             "to": "thal_N",            "kind": "inh", "label": "Gate (closed by default)" },
-    { "from": "gpi_E",             "to": "thal_E",            "kind": "inh", "label": "Gate (closed by default)" },
-    { "from": "gpi_S",             "to": "thal_S",            "kind": "inh", "label": "Gate (closed by default)" },
-    { "from": "gpi_W",             "to": "thal_W",            "kind": "inh", "label": "Gate (closed by default)" },
-    { "from": "thal_N",            "to": "motor_N",           "kind": "exc", "label": "Drive motor N" },
-    { "from": "thal_E",            "to": "motor_E",           "kind": "exc", "label": "Drive motor E" },
-    { "from": "thal_S",            "to": "motor_S",           "kind": "exc", "label": "Drive motor S" },
-    { "from": "thal_W",            "to": "motor_W",           "kind": "exc", "label": "Drive motor W" },
-    { "from": "thal_N",            "to": "cortex_N",          "kind": "exc", "label": "Cortico-thalamic loop" },
-    { "from": "thal_E",            "to": "cortex_E",          "kind": "exc", "label": "Cortico-thalamic loop" },
-    { "from": "thal_S",            "to": "cortex_S",          "kind": "exc", "label": "Cortico-thalamic loop" },
-    { "from": "thal_W",            "to": "cortex_W",          "kind": "exc", "label": "Cortico-thalamic loop" },
-    { "from": "snc",               "to": "str_D1_N",          "kind": "da",  "label": "DA broadcast (D1+)" },
-    { "from": "snc",               "to": "str_D1_E",          "kind": "da",  "label": "DA broadcast (D1+)" },
-    { "from": "snc",               "to": "str_D1_S",          "kind": "da",  "label": "DA broadcast (D1+)" },
-    { "from": "snc",               "to": "str_D1_W",          "kind": "da",  "label": "DA broadcast (D1+)" },
-    { "from": "snc",               "to": "str_D2_N",          "kind": "da",  "label": "DA broadcast (D2-)" },
-    { "from": "snc",               "to": "str_D2_E",          "kind": "da",  "label": "DA broadcast (D2-)" },
-    { "from": "snc",               "to": "str_D2_S",          "kind": "da",  "label": "DA broadcast (D2-)" },
-    { "from": "snc",               "to": "str_D2_W",          "kind": "da",  "label": "DA broadcast (D2-)" },
-    { "from": "language_input",    "to": "dlpfc_wm",          "kind": "exc", "label": "Word -> goal in PFC" },
-    { "from": "language_input",    "to": "cortex_N",          "kind": "exc", "label": "Word -> proposal N" },
-    { "from": "language_input",    "to": "cortex_E",          "kind": "exc", "label": "Word -> proposal E" },
-    { "from": "language_input",    "to": "cortex_S",          "kind": "exc", "label": "Word -> proposal S" },
-    { "from": "language_input",    "to": "cortex_W",          "kind": "exc", "label": "Word -> proposal W" },
-    { "from": "language_input",    "to": "motor_N",           "kind": "exc", "label": "PFC bypass (Wernicke->Broca->M1)" },
-    { "from": "language_input",    "to": "motor_E",           "kind": "exc", "label": "PFC bypass (Wernicke->Broca->M1)" },
-    { "from": "language_input",    "to": "motor_S",           "kind": "exc", "label": "PFC bypass (Wernicke->Broca->M1)" },
-    { "from": "language_input",    "to": "motor_W",           "kind": "exc", "label": "PFC bypass (Wernicke->Broca->M1)" },
-    { "from": "dlpfc_wm",          "to": "cortex_N",          "kind": "exc", "label": "Working memory bias" },
-    { "from": "dlpfc_wm",          "to": "cortex_E",          "kind": "exc", "label": "Working memory bias" },
-    { "from": "dlpfc_wm",          "to": "cortex_S",          "kind": "exc", "label": "Working memory bias" },
-    { "from": "dlpfc_wm",          "to": "cortex_W",          "kind": "exc", "label": "Working memory bias" },
-    { "from": "cortex_N",          "to": "language_output",   "kind": "exc", "label": "Premotor -> word readout" },
-    { "from": "cortex_E",          "to": "language_output",   "kind": "exc", "label": "Premotor -> word readout" },
-    { "from": "cortex_S",          "to": "language_output",   "kind": "exc", "label": "Premotor -> word readout" },
-    { "from": "cortex_W",          "to": "language_output",   "kind": "exc", "label": "Premotor -> word readout" },
-    { "from": "cortex_it",         "to": "language_output",   "kind": "exc", "label": "Object identity -> word" },
-    { "from": "ec",                "to": "dg",                "kind": "exc", "label": "Cortical input -> DG" },
-    { "from": "dg",                "to": "ca3",               "kind": "exc", "label": "Mossy fibers" },
-    { "from": "ca3",               "to": "ca1",               "kind": "exc", "label": "Schaffer collaterals" },
-    { "from": "ca3",               "to": "ca3",               "kind": "exc", "label": "Recurrent autoassociator" },
-    { "from": "ca1",               "to": "place_cells",       "kind": "exc", "label": "Hippocampus -> place readout" },
-
-    {"_comment": "2026-05-03: connect hippocampus into the rest of the system. Real EC receives multimodal cortical input (visual + working memory + spatial). Real CA1 projects back to cortex and PFC for memory-guided behavior."},
-    { "from": "cortex_it",         "to": "ec",                "kind": "exc", "label": "Visual cortex -> EC" },
-    { "from": "dlpfc_wm",          "to": "ec",                "kind": "exc", "label": "Working memory -> EC" },
-    { "from": "ca1",               "to": "dlpfc_wm",          "kind": "exc", "label": "Memory -> working memory" },
-    { "from": "place_cells",       "to": "dlpfc_wm",          "kind": "exc", "label": "Spatial -> working memory" },
-
-    {"_comment": "2026-05-03 evening: motor PV-FSI lateral inhibition (biology sweep, --enable-motor-fs). Each motor pool drives its own FS interneurons; FS inhibits the OTHER 3 motor pools (no self-inhibition). Vogels et al 2011, Hofer et al 2011."},
-    { "from": "motor_N",           "to": "motor_FS_N",        "kind": "exc", "label": "Recruit FS N" },
-    { "from": "motor_E",           "to": "motor_FS_E",        "kind": "exc", "label": "Recruit FS E" },
-    { "from": "motor_S",           "to": "motor_FS_S",        "kind": "exc", "label": "Recruit FS S" },
-    { "from": "motor_W",           "to": "motor_FS_W",        "kind": "exc", "label": "Recruit FS W" },
-    { "from": "motor_FS_N",        "to": "motor_E",           "kind": "inh", "label": "Cross-pool inhib N->E" },
-    { "from": "motor_FS_N",        "to": "motor_S",           "kind": "inh", "label": "Cross-pool inhib N->S" },
-    { "from": "motor_FS_N",        "to": "motor_W",           "kind": "inh", "label": "Cross-pool inhib N->W" },
-    { "from": "motor_FS_E",        "to": "motor_N",           "kind": "inh", "label": "Cross-pool inhib E->N" },
-    { "from": "motor_FS_E",        "to": "motor_S",           "kind": "inh", "label": "Cross-pool inhib E->S" },
-    { "from": "motor_FS_E",        "to": "motor_W",           "kind": "inh", "label": "Cross-pool inhib E->W" },
-    { "from": "motor_FS_S",        "to": "motor_N",           "kind": "inh", "label": "Cross-pool inhib S->N" },
-    { "from": "motor_FS_S",        "to": "motor_E",           "kind": "inh", "label": "Cross-pool inhib S->E" },
-    { "from": "motor_FS_S",        "to": "motor_W",           "kind": "inh", "label": "Cross-pool inhib S->W" },
-    { "from": "motor_FS_W",        "to": "motor_N",           "kind": "inh", "label": "Cross-pool inhib W->N" },
-    { "from": "motor_FS_W",        "to": "motor_E",           "kind": "inh", "label": "Cross-pool inhib W->E" },
-    { "from": "motor_FS_W",        "to": "motor_S",           "kind": "inh", "label": "Cross-pool inhib W->S" }
+    {
+      "_comment": "Regenerated 2026-06-08 from the navigation region builder's authoritative region set (85 regions, 226 pathways; research/findings/raw/_nav_regions_dump.json). Below: the full authoritative navigation wiring, followed by the conversational/other-mode edges (language_*, motor_FS_*, place_cells) preserved from the prior layout."
+    },
+    {
+      "from": "sensory",
+      "to": "cortex_N",
+      "kind": "exc",
+      "label": "Sensory -> premotor"
+    },
+    {
+      "from": "sensory",
+      "to": "cortex_E",
+      "kind": "exc",
+      "label": "Sensory -> premotor"
+    },
+    {
+      "from": "sensory",
+      "to": "cortex_S",
+      "kind": "exc",
+      "label": "Sensory -> premotor"
+    },
+    {
+      "from": "sensory",
+      "to": "cortex_W",
+      "kind": "exc",
+      "label": "Sensory -> premotor"
+    },
+    {
+      "from": "sensor_place_readout",
+      "to": "cortex_N",
+      "kind": "exc",
+      "label": "Place -> premotor"
+    },
+    {
+      "from": "ppc_goal_input",
+      "to": "cortex_N",
+      "kind": "exc",
+      "label": "Goal -> premotor"
+    },
+    {
+      "from": "sensor_place_readout",
+      "to": "cortex_E",
+      "kind": "exc",
+      "label": "Place -> premotor"
+    },
+    {
+      "from": "ppc_goal_input",
+      "to": "cortex_E",
+      "kind": "exc",
+      "label": "Goal -> premotor"
+    },
+    {
+      "from": "sensor_place_readout",
+      "to": "cortex_S",
+      "kind": "exc",
+      "label": "Place -> premotor"
+    },
+    {
+      "from": "ppc_goal_input",
+      "to": "cortex_S",
+      "kind": "exc",
+      "label": "Goal -> premotor"
+    },
+    {
+      "from": "sensor_place_readout",
+      "to": "cortex_W",
+      "kind": "exc",
+      "label": "Place -> premotor"
+    },
+    {
+      "from": "ppc_goal_input",
+      "to": "cortex_W",
+      "kind": "exc",
+      "label": "Goal -> premotor"
+    },
+    {
+      "from": "beacon_sensors",
+      "to": "ppc_goal_input",
+      "kind": "exc",
+      "label": "Beacon -> parietal goal"
+    },
+    {
+      "from": "ppc_goal_input",
+      "to": "dlpfc_wm",
+      "kind": "exc",
+      "label": "Goal -> working memory"
+    },
+    {
+      "from": "dlpfc_wm",
+      "to": "cortex_N",
+      "kind": "exc",
+      "label": "Working memory bias"
+    },
+    {
+      "from": "dlpfc_wm",
+      "to": "cortex_E",
+      "kind": "exc",
+      "label": "Working memory bias"
+    },
+    {
+      "from": "dlpfc_wm",
+      "to": "cortex_S",
+      "kind": "exc",
+      "label": "Working memory bias"
+    },
+    {
+      "from": "dlpfc_wm",
+      "to": "cortex_W",
+      "kind": "exc",
+      "label": "Working memory bias"
+    },
+    {
+      "from": "cortex_N",
+      "to": "str_D1_N",
+      "kind": "exc",
+      "label": "Cortex -> D1 (Go)"
+    },
+    {
+      "from": "cortex_N",
+      "to": "str_D2_N",
+      "kind": "exc",
+      "label": "Cortex -> D2 (NoGo)"
+    },
+    {
+      "from": "cortex_E",
+      "to": "str_D1_E",
+      "kind": "exc",
+      "label": "Cortex -> D1 (Go)"
+    },
+    {
+      "from": "cortex_E",
+      "to": "str_D2_E",
+      "kind": "exc",
+      "label": "Cortex -> D2 (NoGo)"
+    },
+    {
+      "from": "cortex_S",
+      "to": "str_D1_S",
+      "kind": "exc",
+      "label": "Cortex -> D1 (Go)"
+    },
+    {
+      "from": "cortex_S",
+      "to": "str_D2_S",
+      "kind": "exc",
+      "label": "Cortex -> D2 (NoGo)"
+    },
+    {
+      "from": "cortex_W",
+      "to": "str_D1_W",
+      "kind": "exc",
+      "label": "Cortex -> D1 (Go)"
+    },
+    {
+      "from": "cortex_W",
+      "to": "str_D2_W",
+      "kind": "exc",
+      "label": "Cortex -> D2 (NoGo)"
+    },
+    {
+      "from": "str_D1_N",
+      "to": "str_D1_E",
+      "kind": "inh",
+      "label": "Lateral inhibition (D1)"
+    },
+    {
+      "from": "str_D2_N",
+      "to": "str_D2_E",
+      "kind": "inh",
+      "label": "Lateral inhibition (D2)"
+    },
+    {
+      "from": "str_D1_N",
+      "to": "str_D1_S",
+      "kind": "inh",
+      "label": "Lateral inhibition (D1)"
+    },
+    {
+      "from": "str_D2_N",
+      "to": "str_D2_S",
+      "kind": "inh",
+      "label": "Lateral inhibition (D2)"
+    },
+    {
+      "from": "str_D1_N",
+      "to": "str_D1_W",
+      "kind": "inh",
+      "label": "Lateral inhibition (D1)"
+    },
+    {
+      "from": "str_D2_N",
+      "to": "str_D2_W",
+      "kind": "inh",
+      "label": "Lateral inhibition (D2)"
+    },
+    {
+      "from": "str_D1_E",
+      "to": "str_D1_N",
+      "kind": "inh",
+      "label": "Lateral inhibition (D1)"
+    },
+    {
+      "from": "str_D2_E",
+      "to": "str_D2_N",
+      "kind": "inh",
+      "label": "Lateral inhibition (D2)"
+    },
+    {
+      "from": "str_D1_E",
+      "to": "str_D1_S",
+      "kind": "inh",
+      "label": "Lateral inhibition (D1)"
+    },
+    {
+      "from": "str_D2_E",
+      "to": "str_D2_S",
+      "kind": "inh",
+      "label": "Lateral inhibition (D2)"
+    },
+    {
+      "from": "str_D1_E",
+      "to": "str_D1_W",
+      "kind": "inh",
+      "label": "Lateral inhibition (D1)"
+    },
+    {
+      "from": "str_D2_E",
+      "to": "str_D2_W",
+      "kind": "inh",
+      "label": "Lateral inhibition (D2)"
+    },
+    {
+      "from": "str_D1_S",
+      "to": "str_D1_N",
+      "kind": "inh",
+      "label": "Lateral inhibition (D1)"
+    },
+    {
+      "from": "str_D2_S",
+      "to": "str_D2_N",
+      "kind": "inh",
+      "label": "Lateral inhibition (D2)"
+    },
+    {
+      "from": "str_D1_S",
+      "to": "str_D1_E",
+      "kind": "inh",
+      "label": "Lateral inhibition (D1)"
+    },
+    {
+      "from": "str_D2_S",
+      "to": "str_D2_E",
+      "kind": "inh",
+      "label": "Lateral inhibition (D2)"
+    },
+    {
+      "from": "str_D1_S",
+      "to": "str_D1_W",
+      "kind": "inh",
+      "label": "Lateral inhibition (D1)"
+    },
+    {
+      "from": "str_D2_S",
+      "to": "str_D2_W",
+      "kind": "inh",
+      "label": "Lateral inhibition (D2)"
+    },
+    {
+      "from": "str_D1_W",
+      "to": "str_D1_N",
+      "kind": "inh",
+      "label": "Lateral inhibition (D1)"
+    },
+    {
+      "from": "str_D2_W",
+      "to": "str_D2_N",
+      "kind": "inh",
+      "label": "Lateral inhibition (D2)"
+    },
+    {
+      "from": "str_D1_W",
+      "to": "str_D1_E",
+      "kind": "inh",
+      "label": "Lateral inhibition (D1)"
+    },
+    {
+      "from": "str_D2_W",
+      "to": "str_D2_E",
+      "kind": "inh",
+      "label": "Lateral inhibition (D2)"
+    },
+    {
+      "from": "str_D1_W",
+      "to": "str_D1_S",
+      "kind": "inh",
+      "label": "Lateral inhibition (D1)"
+    },
+    {
+      "from": "str_D2_W",
+      "to": "str_D2_S",
+      "kind": "inh",
+      "label": "Lateral inhibition (D2)"
+    },
+    {
+      "from": "cortex_N",
+      "to": "str_PV_FSI_N",
+      "kind": "exc",
+      "label": "Cortex -> striatal FSI"
+    },
+    {
+      "from": "cortex_E",
+      "to": "str_PV_FSI_E",
+      "kind": "exc",
+      "label": "Cortex -> striatal FSI"
+    },
+    {
+      "from": "cortex_S",
+      "to": "str_PV_FSI_S",
+      "kind": "exc",
+      "label": "Cortex -> striatal FSI"
+    },
+    {
+      "from": "cortex_W",
+      "to": "str_PV_FSI_W",
+      "kind": "exc",
+      "label": "Cortex -> striatal FSI"
+    },
+    {
+      "from": "str_PV_FSI_N",
+      "to": "str_D1_E",
+      "kind": "inh",
+      "label": "FSI -> D1 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_N",
+      "to": "str_D2_E",
+      "kind": "inh",
+      "label": "FSI -> D2 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_N",
+      "to": "str_D1_S",
+      "kind": "inh",
+      "label": "FSI -> D1 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_N",
+      "to": "str_D2_S",
+      "kind": "inh",
+      "label": "FSI -> D2 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_N",
+      "to": "str_D1_W",
+      "kind": "inh",
+      "label": "FSI -> D1 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_N",
+      "to": "str_D2_W",
+      "kind": "inh",
+      "label": "FSI -> D2 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_E",
+      "to": "str_D1_N",
+      "kind": "inh",
+      "label": "FSI -> D1 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_E",
+      "to": "str_D2_N",
+      "kind": "inh",
+      "label": "FSI -> D2 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_E",
+      "to": "str_D1_S",
+      "kind": "inh",
+      "label": "FSI -> D1 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_E",
+      "to": "str_D2_S",
+      "kind": "inh",
+      "label": "FSI -> D2 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_E",
+      "to": "str_D1_W",
+      "kind": "inh",
+      "label": "FSI -> D1 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_E",
+      "to": "str_D2_W",
+      "kind": "inh",
+      "label": "FSI -> D2 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_S",
+      "to": "str_D1_N",
+      "kind": "inh",
+      "label": "FSI -> D1 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_S",
+      "to": "str_D2_N",
+      "kind": "inh",
+      "label": "FSI -> D2 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_S",
+      "to": "str_D1_E",
+      "kind": "inh",
+      "label": "FSI -> D1 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_S",
+      "to": "str_D2_E",
+      "kind": "inh",
+      "label": "FSI -> D2 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_S",
+      "to": "str_D1_W",
+      "kind": "inh",
+      "label": "FSI -> D1 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_S",
+      "to": "str_D2_W",
+      "kind": "inh",
+      "label": "FSI -> D2 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_W",
+      "to": "str_D1_N",
+      "kind": "inh",
+      "label": "FSI -> D1 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_W",
+      "to": "str_D2_N",
+      "kind": "inh",
+      "label": "FSI -> D2 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_W",
+      "to": "str_D1_E",
+      "kind": "inh",
+      "label": "FSI -> D1 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_W",
+      "to": "str_D2_E",
+      "kind": "inh",
+      "label": "FSI -> D2 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_W",
+      "to": "str_D1_S",
+      "kind": "inh",
+      "label": "FSI -> D1 (cross-channel)"
+    },
+    {
+      "from": "str_PV_FSI_W",
+      "to": "str_D2_S",
+      "kind": "inh",
+      "label": "FSI -> D2 (cross-channel)"
+    },
+    {
+      "from": "str_D1_N",
+      "to": "gpi_N",
+      "kind": "inh",
+      "label": "Direct: opens gate"
+    },
+    {
+      "from": "str_D1_E",
+      "to": "gpi_E",
+      "kind": "inh",
+      "label": "Direct: opens gate"
+    },
+    {
+      "from": "str_D1_S",
+      "to": "gpi_S",
+      "kind": "inh",
+      "label": "Direct: opens gate"
+    },
+    {
+      "from": "str_D1_W",
+      "to": "gpi_W",
+      "kind": "inh",
+      "label": "Direct: opens gate"
+    },
+    {
+      "from": "str_D2_N",
+      "to": "gpe_N",
+      "kind": "inh",
+      "label": "Indirect"
+    },
+    {
+      "from": "gpe_N",
+      "to": "stn",
+      "kind": "inh",
+      "label": "GPe -> STN"
+    },
+    {
+      "from": "str_D2_E",
+      "to": "gpe_E",
+      "kind": "inh",
+      "label": "Indirect"
+    },
+    {
+      "from": "gpe_E",
+      "to": "stn",
+      "kind": "inh",
+      "label": "GPe -> STN"
+    },
+    {
+      "from": "str_D2_S",
+      "to": "gpe_S",
+      "kind": "inh",
+      "label": "Indirect"
+    },
+    {
+      "from": "gpe_S",
+      "to": "stn",
+      "kind": "inh",
+      "label": "GPe -> STN"
+    },
+    {
+      "from": "str_D2_W",
+      "to": "gpe_W",
+      "kind": "inh",
+      "label": "Indirect"
+    },
+    {
+      "from": "gpe_W",
+      "to": "stn",
+      "kind": "inh",
+      "label": "GPe -> STN"
+    },
+    {
+      "from": "str_D2_N",
+      "to": "gpe_arky_N",
+      "kind": "inh",
+      "label": "Indirect -> arkypallidal"
+    },
+    {
+      "from": "gpe_arky_N",
+      "to": "str_PV_FSI_N",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "gpe_arky_N",
+      "to": "str_PV_FSI_E",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "gpe_arky_N",
+      "to": "str_PV_FSI_S",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "gpe_arky_N",
+      "to": "str_PV_FSI_W",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "str_D2_E",
+      "to": "gpe_arky_E",
+      "kind": "inh",
+      "label": "Indirect -> arkypallidal"
+    },
+    {
+      "from": "gpe_arky_E",
+      "to": "str_PV_FSI_N",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "gpe_arky_E",
+      "to": "str_PV_FSI_E",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "gpe_arky_E",
+      "to": "str_PV_FSI_S",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "gpe_arky_E",
+      "to": "str_PV_FSI_W",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "str_D2_S",
+      "to": "gpe_arky_S",
+      "kind": "inh",
+      "label": "Indirect -> arkypallidal"
+    },
+    {
+      "from": "gpe_arky_S",
+      "to": "str_PV_FSI_N",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "gpe_arky_S",
+      "to": "str_PV_FSI_E",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "gpe_arky_S",
+      "to": "str_PV_FSI_S",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "gpe_arky_S",
+      "to": "str_PV_FSI_W",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "str_D2_W",
+      "to": "gpe_arky_W",
+      "kind": "inh",
+      "label": "Indirect -> arkypallidal"
+    },
+    {
+      "from": "gpe_arky_W",
+      "to": "str_PV_FSI_N",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "gpe_arky_W",
+      "to": "str_PV_FSI_E",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "gpe_arky_W",
+      "to": "str_PV_FSI_S",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "gpe_arky_W",
+      "to": "str_PV_FSI_W",
+      "kind": "inh",
+      "label": "Arkypallidal -> striatal FSI"
+    },
+    {
+      "from": "stn",
+      "to": "gpi_N",
+      "kind": "exc",
+      "label": "STN brake"
+    },
+    {
+      "from": "stn",
+      "to": "gpi_E",
+      "kind": "exc",
+      "label": "STN brake"
+    },
+    {
+      "from": "stn",
+      "to": "gpi_S",
+      "kind": "exc",
+      "label": "STN brake"
+    },
+    {
+      "from": "stn",
+      "to": "gpi_W",
+      "kind": "exc",
+      "label": "STN brake"
+    },
+    {
+      "from": "gpi_N",
+      "to": "thal_N",
+      "kind": "inh",
+      "label": "Gate (closed by default)"
+    },
+    {
+      "from": "gpi_E",
+      "to": "thal_E",
+      "kind": "inh",
+      "label": "Gate (closed by default)"
+    },
+    {
+      "from": "gpi_S",
+      "to": "thal_S",
+      "kind": "inh",
+      "label": "Gate (closed by default)"
+    },
+    {
+      "from": "gpi_W",
+      "to": "thal_W",
+      "kind": "inh",
+      "label": "Gate (closed by default)"
+    },
+    {
+      "from": "cortex_N",
+      "to": "str_striosome_N",
+      "kind": "exc",
+      "label": "Cortex -> striosome (value)"
+    },
+    {
+      "from": "str_striosome_N",
+      "to": "snc",
+      "kind": "da",
+      "label": "Value -> dopamine (critic)"
+    },
+    {
+      "from": "str_striosome_N",
+      "to": "gpi_N",
+      "kind": "inh",
+      "label": "Striosome -> GPi"
+    },
+    {
+      "from": "cortex_E",
+      "to": "str_striosome_E",
+      "kind": "exc",
+      "label": "Cortex -> striosome (value)"
+    },
+    {
+      "from": "str_striosome_E",
+      "to": "snc",
+      "kind": "da",
+      "label": "Value -> dopamine (critic)"
+    },
+    {
+      "from": "str_striosome_E",
+      "to": "gpi_E",
+      "kind": "inh",
+      "label": "Striosome -> GPi"
+    },
+    {
+      "from": "cortex_S",
+      "to": "str_striosome_S",
+      "kind": "exc",
+      "label": "Cortex -> striosome (value)"
+    },
+    {
+      "from": "str_striosome_S",
+      "to": "snc",
+      "kind": "da",
+      "label": "Value -> dopamine (critic)"
+    },
+    {
+      "from": "str_striosome_S",
+      "to": "gpi_S",
+      "kind": "inh",
+      "label": "Striosome -> GPi"
+    },
+    {
+      "from": "cortex_W",
+      "to": "str_striosome_W",
+      "kind": "exc",
+      "label": "Cortex -> striosome (value)"
+    },
+    {
+      "from": "str_striosome_W",
+      "to": "snc",
+      "kind": "da",
+      "label": "Value -> dopamine (critic)"
+    },
+    {
+      "from": "str_striosome_W",
+      "to": "gpi_W",
+      "kind": "inh",
+      "label": "Striosome -> GPi"
+    },
+    {
+      "from": "gpi_N",
+      "to": "snc",
+      "kind": "da",
+      "label": "GPi -> dopamine"
+    },
+    {
+      "from": "gpi_E",
+      "to": "snc",
+      "kind": "da",
+      "label": "GPi -> dopamine"
+    },
+    {
+      "from": "gpi_S",
+      "to": "snc",
+      "kind": "da",
+      "label": "GPi -> dopamine"
+    },
+    {
+      "from": "gpi_W",
+      "to": "snc",
+      "kind": "da",
+      "label": "GPi -> dopamine"
+    },
+    {
+      "from": "thal_N",
+      "to": "motor_N",
+      "kind": "exc",
+      "label": "Drive motor N"
+    },
+    {
+      "from": "thal_E",
+      "to": "motor_E",
+      "kind": "exc",
+      "label": "Drive motor E"
+    },
+    {
+      "from": "thal_S",
+      "to": "motor_S",
+      "kind": "exc",
+      "label": "Drive motor S"
+    },
+    {
+      "from": "thal_W",
+      "to": "motor_W",
+      "kind": "exc",
+      "label": "Drive motor W"
+    },
+    {
+      "from": "cortex_N",
+      "to": "stn",
+      "kind": "exc",
+      "label": "Hyperdirect (cortex -> STN)"
+    },
+    {
+      "from": "thal_N",
+      "to": "cortex_N",
+      "kind": "exc",
+      "label": "Cortico-thalamic loop"
+    },
+    {
+      "from": "cortex_E",
+      "to": "stn",
+      "kind": "exc",
+      "label": "Hyperdirect (cortex -> STN)"
+    },
+    {
+      "from": "thal_E",
+      "to": "cortex_E",
+      "kind": "exc",
+      "label": "Cortico-thalamic loop"
+    },
+    {
+      "from": "cortex_S",
+      "to": "stn",
+      "kind": "exc",
+      "label": "Hyperdirect (cortex -> STN)"
+    },
+    {
+      "from": "thal_S",
+      "to": "cortex_S",
+      "kind": "exc",
+      "label": "Cortico-thalamic loop"
+    },
+    {
+      "from": "cortex_W",
+      "to": "stn",
+      "kind": "exc",
+      "label": "Hyperdirect (cortex -> STN)"
+    },
+    {
+      "from": "thal_W",
+      "to": "cortex_W",
+      "kind": "exc",
+      "label": "Cortico-thalamic loop"
+    },
+    {
+      "from": "thal_N",
+      "to": "thal_FS_N",
+      "kind": "exc",
+      "label": "Relay -> TRN"
+    },
+    {
+      "from": "thal_E",
+      "to": "thal_FS_E",
+      "kind": "exc",
+      "label": "Relay -> TRN"
+    },
+    {
+      "from": "thal_S",
+      "to": "thal_FS_S",
+      "kind": "exc",
+      "label": "Relay -> TRN"
+    },
+    {
+      "from": "thal_W",
+      "to": "thal_FS_W",
+      "kind": "exc",
+      "label": "Relay -> TRN"
+    },
+    {
+      "from": "thal_FS_N",
+      "to": "thal_E",
+      "kind": "inh",
+      "label": "TRN -> relay (cross-channel)"
+    },
+    {
+      "from": "thal_FS_N",
+      "to": "thal_S",
+      "kind": "inh",
+      "label": "TRN -> relay (cross-channel)"
+    },
+    {
+      "from": "thal_FS_N",
+      "to": "thal_W",
+      "kind": "inh",
+      "label": "TRN -> relay (cross-channel)"
+    },
+    {
+      "from": "thal_FS_E",
+      "to": "thal_N",
+      "kind": "inh",
+      "label": "TRN -> relay (cross-channel)"
+    },
+    {
+      "from": "thal_FS_E",
+      "to": "thal_S",
+      "kind": "inh",
+      "label": "TRN -> relay (cross-channel)"
+    },
+    {
+      "from": "thal_FS_E",
+      "to": "thal_W",
+      "kind": "inh",
+      "label": "TRN -> relay (cross-channel)"
+    },
+    {
+      "from": "thal_FS_S",
+      "to": "thal_N",
+      "kind": "inh",
+      "label": "TRN -> relay (cross-channel)"
+    },
+    {
+      "from": "thal_FS_S",
+      "to": "thal_E",
+      "kind": "inh",
+      "label": "TRN -> relay (cross-channel)"
+    },
+    {
+      "from": "thal_FS_S",
+      "to": "thal_W",
+      "kind": "inh",
+      "label": "TRN -> relay (cross-channel)"
+    },
+    {
+      "from": "thal_FS_W",
+      "to": "thal_N",
+      "kind": "inh",
+      "label": "TRN -> relay (cross-channel)"
+    },
+    {
+      "from": "thal_FS_W",
+      "to": "thal_E",
+      "kind": "inh",
+      "label": "TRN -> relay (cross-channel)"
+    },
+    {
+      "from": "thal_FS_W",
+      "to": "thal_S",
+      "kind": "inh",
+      "label": "TRN -> relay (cross-channel)"
+    },
+    {
+      "from": "thal_N",
+      "to": "sel_N",
+      "kind": "exc",
+      "label": "Thalamus -> selection"
+    },
+    {
+      "from": "thal_E",
+      "to": "sel_E",
+      "kind": "exc",
+      "label": "Thalamus -> selection"
+    },
+    {
+      "from": "thal_S",
+      "to": "sel_S",
+      "kind": "exc",
+      "label": "Thalamus -> selection"
+    },
+    {
+      "from": "thal_W",
+      "to": "sel_W",
+      "kind": "exc",
+      "label": "Thalamus -> selection"
+    },
+    {
+      "from": "sel_N",
+      "to": "sel_FS_N",
+      "kind": "exc",
+      "label": "Recruit selection FS"
+    },
+    {
+      "from": "sel_E",
+      "to": "sel_FS_E",
+      "kind": "exc",
+      "label": "Recruit selection FS"
+    },
+    {
+      "from": "sel_S",
+      "to": "sel_FS_S",
+      "kind": "exc",
+      "label": "Recruit selection FS"
+    },
+    {
+      "from": "sel_W",
+      "to": "sel_FS_W",
+      "kind": "exc",
+      "label": "Recruit selection FS"
+    },
+    {
+      "from": "sel_FS_N",
+      "to": "sel_E",
+      "kind": "inh",
+      "label": "WTA inhibition (cross-channel)"
+    },
+    {
+      "from": "sel_FS_N",
+      "to": "sel_S",
+      "kind": "inh",
+      "label": "WTA inhibition (cross-channel)"
+    },
+    {
+      "from": "sel_FS_N",
+      "to": "sel_W",
+      "kind": "inh",
+      "label": "WTA inhibition (cross-channel)"
+    },
+    {
+      "from": "sel_FS_E",
+      "to": "sel_N",
+      "kind": "inh",
+      "label": "WTA inhibition (cross-channel)"
+    },
+    {
+      "from": "sel_FS_E",
+      "to": "sel_S",
+      "kind": "inh",
+      "label": "WTA inhibition (cross-channel)"
+    },
+    {
+      "from": "sel_FS_E",
+      "to": "sel_W",
+      "kind": "inh",
+      "label": "WTA inhibition (cross-channel)"
+    },
+    {
+      "from": "sel_FS_S",
+      "to": "sel_N",
+      "kind": "inh",
+      "label": "WTA inhibition (cross-channel)"
+    },
+    {
+      "from": "sel_FS_S",
+      "to": "sel_E",
+      "kind": "inh",
+      "label": "WTA inhibition (cross-channel)"
+    },
+    {
+      "from": "sel_FS_S",
+      "to": "sel_W",
+      "kind": "inh",
+      "label": "WTA inhibition (cross-channel)"
+    },
+    {
+      "from": "sel_FS_W",
+      "to": "sel_N",
+      "kind": "inh",
+      "label": "WTA inhibition (cross-channel)"
+    },
+    {
+      "from": "sel_FS_W",
+      "to": "sel_E",
+      "kind": "inh",
+      "label": "WTA inhibition (cross-channel)"
+    },
+    {
+      "from": "sel_FS_W",
+      "to": "sel_S",
+      "kind": "inh",
+      "label": "WTA inhibition (cross-channel)"
+    },
+    {
+      "from": "sel_N",
+      "to": "commit_N",
+      "kind": "exc",
+      "label": "Selection -> commit"
+    },
+    {
+      "from": "sel_E",
+      "to": "commit_E",
+      "kind": "exc",
+      "label": "Selection -> commit"
+    },
+    {
+      "from": "sel_S",
+      "to": "commit_S",
+      "kind": "exc",
+      "label": "Selection -> commit"
+    },
+    {
+      "from": "sel_W",
+      "to": "commit_W",
+      "kind": "exc",
+      "label": "Selection -> commit"
+    },
+    {
+      "from": "commit_OPN",
+      "to": "commit_N",
+      "kind": "inh",
+      "label": "Omnipause gate"
+    },
+    {
+      "from": "commit_OPN",
+      "to": "commit_E",
+      "kind": "inh",
+      "label": "Omnipause gate"
+    },
+    {
+      "from": "commit_OPN",
+      "to": "commit_S",
+      "kind": "inh",
+      "label": "Omnipause gate"
+    },
+    {
+      "from": "commit_OPN",
+      "to": "commit_W",
+      "kind": "inh",
+      "label": "Omnipause gate"
+    },
+    {
+      "from": "sensory",
+      "to": "ec",
+      "kind": "exc",
+      "label": "Sensory -> entorhinal"
+    },
+    {
+      "from": "ec",
+      "to": "dg",
+      "kind": "exc",
+      "label": "Cortical input -> DG"
+    },
+    {
+      "from": "ec",
+      "to": "dg_pv_basket",
+      "kind": "exc",
+      "label": "EC -> DG basket"
+    },
+    {
+      "from": "dg_pv_basket",
+      "to": "dg",
+      "kind": "inh",
+      "label": "Feed-forward sparsity"
+    },
+    {
+      "from": "ec",
+      "to": "ca1",
+      "kind": "exc",
+      "label": "Direct temporoammonic"
+    },
+    {
+      "from": "dg",
+      "to": "ca3",
+      "kind": "exc",
+      "label": "Mossy fibers"
+    },
+    {
+      "from": "ca3",
+      "to": "ca1",
+      "kind": "exc",
+      "label": "Schaffer collaterals"
+    },
+    {
+      "from": "ca1",
+      "to": "sensor_place_readout",
+      "kind": "exc",
+      "label": "Hippocampus -> place readout"
+    },
+    {
+      "from": "sensor_place_readout",
+      "to": "mossy_state",
+      "kind": "exc",
+      "label": "Place -> cerebellar input"
+    },
+    {
+      "from": "ppc_goal_input",
+      "to": "mossy_state",
+      "kind": "exc",
+      "label": "Goal -> cerebellar input"
+    },
+    {
+      "from": "sensory",
+      "to": "mossy_state",
+      "kind": "exc",
+      "label": "Sensory -> cerebellar input"
+    },
+    {
+      "from": "mossy_state",
+      "to": "granule",
+      "kind": "exc",
+      "label": "Mossy fibres -> granule"
+    },
+    {
+      "from": "granule",
+      "to": "purkinje_N",
+      "kind": "exc",
+      "label": "Parallel fibres"
+    },
+    {
+      "from": "granule",
+      "to": "purkinje_E",
+      "kind": "exc",
+      "label": "Parallel fibres"
+    },
+    {
+      "from": "granule",
+      "to": "purkinje_S",
+      "kind": "exc",
+      "label": "Parallel fibres"
+    },
+    {
+      "from": "granule",
+      "to": "purkinje_W",
+      "kind": "exc",
+      "label": "Parallel fibres"
+    },
+    {
+      "from": "purkinje_N",
+      "to": "dcn_aip_N",
+      "kind": "inh",
+      "label": "Purkinje -> deep nucleus"
+    },
+    {
+      "from": "purkinje_E",
+      "to": "dcn_aip_E",
+      "kind": "inh",
+      "label": "Purkinje -> deep nucleus"
+    },
+    {
+      "from": "purkinje_S",
+      "to": "dcn_aip_S",
+      "kind": "inh",
+      "label": "Purkinje -> deep nucleus"
+    },
+    {
+      "from": "purkinje_W",
+      "to": "dcn_aip_W",
+      "kind": "inh",
+      "label": "Purkinje -> deep nucleus"
+    },
+    {
+      "from": "dcn_aip_N",
+      "to": "motor_N",
+      "kind": "exc",
+      "label": "Cerebellar output -> motor"
+    },
+    {
+      "from": "dcn_aip_E",
+      "to": "motor_E",
+      "kind": "exc",
+      "label": "Cerebellar output -> motor"
+    },
+    {
+      "from": "dcn_aip_S",
+      "to": "motor_S",
+      "kind": "exc",
+      "label": "Cerebellar output -> motor"
+    },
+    {
+      "from": "dcn_aip_W",
+      "to": "motor_W",
+      "kind": "exc",
+      "label": "Cerebellar output -> motor"
+    },
+    {
+      "from": "inferior_olive",
+      "to": "purkinje_N",
+      "kind": "exc",
+      "label": "Climbing fibre (teaching)"
+    },
+    {
+      "from": "inferior_olive",
+      "to": "purkinje_E",
+      "kind": "exc",
+      "label": "Climbing fibre (teaching)"
+    },
+    {
+      "from": "inferior_olive",
+      "to": "purkinje_S",
+      "kind": "exc",
+      "label": "Climbing fibre (teaching)"
+    },
+    {
+      "from": "inferior_olive",
+      "to": "purkinje_W",
+      "kind": "exc",
+      "label": "Climbing fibre (teaching)"
+    },
+    {
+      "from": "retina",
+      "to": "cortex_v1_simple",
+      "kind": "exc",
+      "label": "Visual input"
+    },
+    {
+      "from": "cortex_v1_simple",
+      "to": "cortex_v1_complex",
+      "kind": "exc",
+      "label": "Edges -> position-invariant"
+    },
+    {
+      "from": "cortex_v1_complex",
+      "to": "cortex_v2",
+      "kind": "exc",
+      "label": "Edges -> shapes"
+    },
+    {
+      "from": "cortex_v2",
+      "to": "cortex_it",
+      "kind": "exc",
+      "label": "Shapes -> objects"
+    },
+    {
+      "from": "cortex_it",
+      "to": "cortex_N",
+      "kind": "exc",
+      "label": "Visual -> proposal N"
+    },
+    {
+      "from": "cortex_it",
+      "to": "cortex_E",
+      "kind": "exc",
+      "label": "Visual -> proposal E"
+    },
+    {
+      "from": "cortex_it",
+      "to": "cortex_S",
+      "kind": "exc",
+      "label": "Visual -> proposal S"
+    },
+    {
+      "from": "cortex_it",
+      "to": "cortex_W",
+      "kind": "exc",
+      "label": "Visual -> proposal W"
+    },
+    {
+      "_comment": "Conversational + other-mode edges preserved from the prior layout (built only under different run flags than the navigation dump above): language input/output, motor PV-FSI lateral inhibition, and the place-cell readout loop."
+    },
+    {
+      "from": "language_input",
+      "to": "dlpfc_wm",
+      "kind": "exc",
+      "label": "Word -> goal in PFC"
+    },
+    {
+      "from": "language_input",
+      "to": "cortex_N",
+      "kind": "exc",
+      "label": "Word -> proposal N"
+    },
+    {
+      "from": "language_input",
+      "to": "cortex_E",
+      "kind": "exc",
+      "label": "Word -> proposal E"
+    },
+    {
+      "from": "language_input",
+      "to": "cortex_S",
+      "kind": "exc",
+      "label": "Word -> proposal S"
+    },
+    {
+      "from": "language_input",
+      "to": "cortex_W",
+      "kind": "exc",
+      "label": "Word -> proposal W"
+    },
+    {
+      "from": "language_input",
+      "to": "motor_N",
+      "kind": "exc",
+      "label": "PFC bypass (Wernicke->Broca->M1)"
+    },
+    {
+      "from": "language_input",
+      "to": "motor_E",
+      "kind": "exc",
+      "label": "PFC bypass (Wernicke->Broca->M1)"
+    },
+    {
+      "from": "language_input",
+      "to": "motor_S",
+      "kind": "exc",
+      "label": "PFC bypass (Wernicke->Broca->M1)"
+    },
+    {
+      "from": "language_input",
+      "to": "motor_W",
+      "kind": "exc",
+      "label": "PFC bypass (Wernicke->Broca->M1)"
+    },
+    {
+      "from": "cortex_N",
+      "to": "language_output",
+      "kind": "exc",
+      "label": "Premotor -> word readout"
+    },
+    {
+      "from": "cortex_E",
+      "to": "language_output",
+      "kind": "exc",
+      "label": "Premotor -> word readout"
+    },
+    {
+      "from": "cortex_S",
+      "to": "language_output",
+      "kind": "exc",
+      "label": "Premotor -> word readout"
+    },
+    {
+      "from": "cortex_W",
+      "to": "language_output",
+      "kind": "exc",
+      "label": "Premotor -> word readout"
+    },
+    {
+      "from": "cortex_it",
+      "to": "language_output",
+      "kind": "exc",
+      "label": "Object identity -> word"
+    },
+    {
+      "from": "ca1",
+      "to": "place_cells",
+      "kind": "exc",
+      "label": "Hippocampus -> place readout"
+    },
+    {
+      "from": "place_cells",
+      "to": "dlpfc_wm",
+      "kind": "exc",
+      "label": "Spatial -> working memory"
+    },
+    {
+      "from": "motor_N",
+      "to": "motor_FS_N",
+      "kind": "exc",
+      "label": "Recruit FS N"
+    },
+    {
+      "from": "motor_E",
+      "to": "motor_FS_E",
+      "kind": "exc",
+      "label": "Recruit FS E"
+    },
+    {
+      "from": "motor_S",
+      "to": "motor_FS_S",
+      "kind": "exc",
+      "label": "Recruit FS S"
+    },
+    {
+      "from": "motor_W",
+      "to": "motor_FS_W",
+      "kind": "exc",
+      "label": "Recruit FS W"
+    },
+    {
+      "from": "motor_FS_N",
+      "to": "motor_E",
+      "kind": "inh",
+      "label": "Cross-pool inhib N->E"
+    },
+    {
+      "from": "motor_FS_N",
+      "to": "motor_S",
+      "kind": "inh",
+      "label": "Cross-pool inhib N->S"
+    },
+    {
+      "from": "motor_FS_N",
+      "to": "motor_W",
+      "kind": "inh",
+      "label": "Cross-pool inhib N->W"
+    },
+    {
+      "from": "motor_FS_E",
+      "to": "motor_N",
+      "kind": "inh",
+      "label": "Cross-pool inhib E->N"
+    },
+    {
+      "from": "motor_FS_E",
+      "to": "motor_S",
+      "kind": "inh",
+      "label": "Cross-pool inhib E->S"
+    },
+    {
+      "from": "motor_FS_E",
+      "to": "motor_W",
+      "kind": "inh",
+      "label": "Cross-pool inhib E->W"
+    },
+    {
+      "from": "motor_FS_S",
+      "to": "motor_N",
+      "kind": "inh",
+      "label": "Cross-pool inhib S->N"
+    },
+    {
+      "from": "motor_FS_S",
+      "to": "motor_E",
+      "kind": "inh",
+      "label": "Cross-pool inhib S->E"
+    },
+    {
+      "from": "motor_FS_S",
+      "to": "motor_W",
+      "kind": "inh",
+      "label": "Cross-pool inhib S->W"
+    },
+    {
+      "from": "motor_FS_W",
+      "to": "motor_N",
+      "kind": "inh",
+      "label": "Cross-pool inhib W->N"
+    },
+    {
+      "from": "motor_FS_W",
+      "to": "motor_E",
+      "kind": "inh",
+      "label": "Cross-pool inhib W->E"
+    },
+    {
+      "from": "motor_FS_W",
+      "to": "motor_S",
+      "kind": "inh",
+      "label": "Cross-pool inhib W->S"
+    }
   ]
 }
