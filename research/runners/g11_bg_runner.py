@@ -1379,27 +1379,45 @@ def build_bg_brain_regions(
     # pipeline so the critic LEARNS V(s). (2) critic -> SNc, GABAergic, routed
     # through the slow GABA_B/GIRK K+ conductance (receptor="gaba_b", E_K=-90mV)
     # so V is SUBTRACTED at the SNc membrane (the host _V_scaffold term is then
-    # dropped in the reward block). Anti-cheat: the critic's afferent is the
-    # ventral object code `cortex_it` ONLY — a perceived-state region, never
-    # coordinates (combined with N5 perceived reward the whole RPE loop is
-    # coordinate-free). See the Stage-B research doc Option A.
+    # dropped in the reward block). See the Stage-B research doc Option A.
+    #
+    # AFFERENT RE-POINTED 2026-06-08 (redesign per
+    # 2026-06-08-nav-neural-value-critic-redesign-research.md): the original
+    # afferent was the ventral object code `cortex_it` — which is (a) the
+    # position-INVARIANT "what" stream (cannot encode a value-of-LOCATION) and
+    # (b) NEVER fires in nav (it_mean=0 over 16k steps; the smoke NEGATIVE).
+    # The biology is unambiguous (catalog C.30 / B.07; Houk-Adams-Barto 1995;
+    # Lansink 2009; van der Meer & Redish 2009): the striosome/patch critic for
+    # a SPATIAL value reads the hippocampal PLACE code (dorsal "where" stream)
+    # via the hippocampus -> ventral-striatum projection, NOT IT. The faithful +
+    # ACTIVE + position-SENSITIVE afferent already in this runner is
+    # `sensor_place_readout` (the Gaussian place-cell readout driven every nav
+    # step from the agent's (x,y)), enabled by --enable-place-goal-readout.
+    # Anti-cheat: the afferent is a perceived-position POPULATION code (a place
+    # code, not a coordinate handed to a formula); it must NOT be a
+    # coordinate/goal-cell region.
     if enable_neural_critic:
-        if not enable_visual_cortex:
+        if not enable_hippocampus:
             raise ValueError(
-                "--enable-neural-critic requires a perceived-state source for "
-                "the value critic. The implemented afferent is the ventral "
-                "object code `cortex_it`, which only exists with "
-                "--enable-visual-cortex. Enable visual cortex (the flagship "
-                "A+E+G v2.5 stack already does) or extend the afferent union to "
-                "another perceived-state region (ppc_goal_input / "
-                "sensor_place_readout)."
+                "--enable-neural-critic requires the position-SENSITIVE place "
+                "code `sensor_place_readout` as the value-critic afferent (the "
+                "dorsal 'where' / hippocampal place stream that biology uses for "
+                "spatial value; Houk-Adams-Barto 1995, Lansink 2009). It only "
+                "exists with --enable-place-goal-readout (alias --hippocampus). "
+                "Enable it. (The prior `cortex_it` afferent was the "
+                "position-INVARIANT ventral stream — inactive in nav AND wrong "
+                "for a value-of-location; see the 2026-06-08 redesign research.)"
             )
-        # Anti-cheat provenance assertion: the critic reads ONLY perceived state.
-        _critic_afferent = "cortex_it"
-        assert _critic_afferent not in ("goal_cells",), (
-            "neural-critic anti-cheat: the value critic must not read a "
-            "coordinate/goal-cell region; afferent must be a perceived-state "
-            f"region, got {_critic_afferent!r}."
+        # Anti-cheat provenance assertion: the critic reads a perceived-position
+        # PLACE-cell population, never a coordinate/goal-cell region. (goal_cells
+        # / ppc_goal_input are goal-vector codes — not the agent's perceived
+        # state of WHERE IT IS — so they are excluded here to keep V a true
+        # value-of-current-location read off the place code.)
+        _critic_afferent = "sensor_place_readout"
+        assert _critic_afferent not in ("goal_cells", "ppc_goal_input"), (
+            "neural-critic anti-cheat: the value critic must read the perceived "
+            "place code, not a coordinate/goal-cell region; got "
+            f"{_critic_afferent!r}."
         )
         pathways.append(RegionPathway(
             from_region=_critic_afferent, to_region="striosome_value",
@@ -1407,12 +1425,20 @@ def build_bg_brain_regions(
             weight_mean=float(critic_cortex_it_to_value_weight),
             weight_jitter=0.5, plastic=True, plasticity_gate="value_input",
         ))
+        # critic -> SNc GABA_B subtraction. transmission_gate="critic_snc_window"
+        # lets the runner OPEN this route only for a ~1-tau LEAD window into the
+        # reward evaluation (the de-risk's value-leads-reward constraint:
+        # d0416fc3 — the GABA_B must pre-build ~100-150 ms BEFORE reward and must
+        # NOT integrate across the whole dwell, else the far-V also gets canceled
+        # / the SNc flatlines). Default gate value is 1.0 (always-on, additive,
+        # zero overhead) so this is byte-equivalent if the runner never sets it.
         pathways.append(RegionPathway(
             from_region="striosome_value", to_region="snc",
             density=float(critic_value_to_snc_density),
             weight_mean=float(critic_value_to_snc_weight),
             weight_jitter=0.2, plastic=False,
             receptor="gaba_b",   # slow GIRK K+ subtraction onto the depolarized SNc
+            transmission_gate="critic_snc_window",
         ))
 
     # R3.10 (2026-04-29): GPi/SNr -> snc collateral disinhibition
@@ -2684,6 +2710,14 @@ def run_moving_goal_episode(
     # When False, Stage A behavior is byte-unchanged (host _V_scaffold subtraction).
     # Validated CPU de-risk: research/findings/2026-06-08-gabab-girk-stageB-derisk-GO.md.
     enable_neural_critic: bool = False,
+    # Stage 2 windowed GABA_B (2026-06-08 redesign): gate the striosome_value->snc
+    # GABA_B current to a bounded LEAD window into each reward evaluation so the
+    # slow conductance pre-builds ~1 tau before reward but does NOT integrate
+    # across a long dwell (the de-risk's >=200 ms over-suppression boundary,
+    # d0416fc3). Default False => Stage 1: gate held OPEN continuously (isolate
+    # "does it run + learn" before adding windowing).
+    enable_critic_window: bool = False,
+    critic_lead_steps: int = 120,        # bounded OPEN-window length (steps; dt=1ms)
     # Surprise-boosted learning rate: when |RPE| is high (unexpected outcome),
     # temporarily boost reward_learning_rate. Models NE-like fast meta-modulation.
     enable_surprise_lr_boost: bool = False,
@@ -3277,7 +3311,13 @@ def run_moving_goal_episode(
         cfg.enable_gabab = True
         cfg.gabab_reversal_potential = -90.0
         cfg.gabab_tau_decay = 150.0
-        cfg.gabab_propagation_strength = 0.105
+        # PHYSIOLOGICAL operating point 0.02 (NOT the 0.105 default), per the
+        # de-risk PASS (commit d0416fc3): at 0.105 the slow GABA_B conductance
+        # over-accumulates to g~50-170 nS and FLATLINES the SNc at -87mV / 0 Hz
+        # -> no live burst to discriminate (the prior smoke's "SNc silenced"
+        # failure mode). 0.02 settles g~10-20, restoring baseline 1-3 Hz +
+        # burst 50-80 Hz so the value subtraction is visible, not annihilating.
+        cfg.gabab_propagation_strength = 0.02
     cfg.enable_structural_pruning = enable_structural_pruning
     cfg.enable_d1_d2_asymmetry = enable_d1_d2_asymmetry
     # Cluster G v1 (2026-05-01): Wang 2002 NMDA-mediated PFC working memory.
@@ -3645,20 +3685,25 @@ def run_moving_goal_episode(
     striov_rate_log = []          # per-trial striosome_value spike count (reward window)
     critic_weight_initial = None  # mean cortex_it->striosome_value weight at start
 
+    # AFFERENT RE-POINTED 2026-06-08: the value critic now reads the place code
+    # `sensor_place_readout` (dorsal/place stream), not the inactive ventral
+    # `cortex_it`. The weight reader + the instrumentation below follow.
+    _critic_afferent_region = "sensor_place_readout"
+
     def _mean_critic_weight():
-        """Mean weight of the cortex_it->striosome_value edges in the CSR.
+        """Mean weight of the <afferent>->striosome_value edges in the CSR.
         In this bridge's cp_connections, rows=PRE(source), cols=POST(target)
-        (verified: the cortex_it->striosome_value afferent matches rows in
-        cortex_it, cols in striosome_value). Vectorized via np.isin (the CSR has
+        (verified: the afferent->striosome_value pathway matches rows in the
+        afferent, cols in striosome_value). Vectorized via np.isin (the CSR has
         ~140k synapses — a per-edge Python generator is far too slow). Returns
         None if the critic isn't built or no edges match."""
         if not enable_neural_critic:
             return None
         if ("striosome_value" not in region_indices_cp
-                or "cortex_it" not in region_indices_cp):
+                or _critic_afferent_region not in region_indices_cp):
             return None
         try:
-            pre = region_indices_cp["cortex_it"].get()           # source rows
+            pre = region_indices_cp[_critic_afferent_region].get()  # source rows
             post = region_indices_cp["striosome_value"].get()    # target cols
             coo = bridge.cp_connections.tocoo()
             rows = coo.row.get() if hasattr(coo.row, "get") else np.asarray(coo.row)
@@ -3676,10 +3721,35 @@ def run_moving_goal_episode(
         _striov_idx_host = region_indices_cp["striosome_value"].get()
         critic_weight_initial = _mean_critic_weight()
         if verbose:
+            _gate_mode = (
+                f"WINDOWED (lead<= {critic_lead_steps} steps, flushed otherwise)"
+                if enable_critic_window else "OPEN (continuous, Stage 1)"
+            )
             print(f"[g11 seed={seed}] Spiking-SNc Stage B: NEURAL value critic ON "
-                  f"(striosome_value n={len(_striov_idx_host)}, cortex_it->value "
-                  f"w0={critic_weight_initial}); r-V subtracted via GABA_B/GIRK "
-                  f"(E_K=-90mV). Host _V_scaffold DROPPED.")
+                  f"(striosome_value n={len(_striov_idx_host)}, "
+                  f"{_critic_afferent_region}->value w0={critic_weight_initial}); "
+                  f"r-V subtracted via GABA_B/GIRK (E_K=-90mV, prop=0.02); "
+                  f"critic->SNc gate = {_gate_mode}. Host _V_scaffold DROPPED.")
+
+    # Stage 2 windowed-GABA_B state. The `critic_snc_window` transmission gate
+    # (declared on the striosome_value->snc pathway) scales that route's
+    # effective synaptic CURRENT = the g_gabab increment. Stage 1 (default,
+    # enable_critic_window=False): hold it OPEN (1.0) for the whole run, so the
+    # slow conductance integrates continuously (isolate "does it run + learn").
+    # Stage 2 (enable_critic_window=True): a rolling sawtooth that OPENS the gate
+    # for a bounded <=critic_lead_steps lead (g_gabab pre-builds ~1 tau into the
+    # reward), then CLOSES it for an equal flush phase so the conductance decays
+    # and cannot integrate across a long dwell (the de-risk >=200 ms
+    # over-suppression boundary, d0416fc3). The gate is FORCE-OPEN through each
+    # reward block regardless of phase so the subtraction is live at reward.
+    _critic_gate_known = (
+        enable_neural_critic
+        and "critic_snc_window" in getattr(bridge, "_transmission_gate_to_synapses", {})
+    )
+    _critic_open_counter = 0
+    if _critic_gate_known:
+        # Stage 1: explicit OPEN (also the inject default, so byte-equivalent).
+        bridge.set_transmission_gate("critic_snc_window", 1.0)
 
     # DA-gated WTA: pre-compute FS->motor synapse indices and save baseline weights.
     # Per-trial we'll scale these weights by gating_strength to make WTA adaptive.
@@ -4065,6 +4135,25 @@ def run_moving_goal_episode(
     current_gating_strength = 1.0
     visual_cortex_action_gate_opened = False
     for step in range(n_steps):
+        # ----- Stage 2 windowed critic->SNc GABA_B gate (2026-06-08 redesign) -----
+        # Managed at the NAV-STEP granularity (one nav step = n_stim_steps sub-steps
+        # = ~100 ms ≈ 0.67 GABA_B tau). In WINDOWED mode, run a sawtooth: OPEN the
+        # gate for a bounded lead of ~critic_lead_steps (converted to whole nav
+        # steps), then CLOSE it for an equal flush phase so g_gabab decays and
+        # cannot integrate across a long multi-step dwell (the de-risk's >=200 ms
+        # over-suppression boundary, d0416fc3). The reward block below FORCE-OPENS
+        # the gate for its hold loop regardless of phase (the subtraction must be
+        # live at reward). Stage 1 (enable_critic_window=False): the gate was set
+        # OPEN once before the loop and is never touched here -> continuous.
+        if _critic_gate_known and enable_critic_window:
+            # lead length in whole nav steps (>=1); equal-length flush phase.
+            _lead_nav = max(1, int(round(critic_lead_steps / max(1, n_stim_steps))))
+            _phase = _critic_open_counter % (2 * _lead_nav)
+            if _phase < _lead_nav:
+                bridge.set_transmission_gate("critic_snc_window", 1.0)   # pre-build lead
+            else:
+                bridge.set_transmission_gate("critic_snc_window", 0.0)   # flush (decay)
+            _critic_open_counter += 1
         # ----- ADAPTIVE / activity-gated heuristic weaning scheduler (N1) -----
         # Run BEFORE the per-step h_strength decision below. While in the
         # "teaching" phase, periodically open an OFF probe window (heuristic
@@ -5225,6 +5314,13 @@ def run_moving_goal_episode(
             # the actor uses), so as the cue->value weight grows, the GABA_B
             # current cancels the reward drive and the SNc burst shrinks toward
             # the predicted level — all neural, no host value read.
+            # Windowed mode: FORCE the critic->SNc GABA_B gate OPEN through the
+            # reward-hold loop (regardless of the sawtooth phase above) so the
+            # value subtraction is live exactly at reward delivery — the de-risk's
+            # value-leads-reward window covers the run-up (the just-elapsed nav
+            # integration) PLUS the reward hold. (No-op in Stage 1: already open.)
+            if _critic_gate_known and enable_critic_window:
+                bridge.set_transmission_gate("critic_snc_window", 1.0)
             if spiking_snc and "snc" in region_indices_cp:
                 if enable_neural_critic:
                     _I_snc = (
@@ -5421,6 +5517,10 @@ def run_moving_goal_episode(
         # the plastic cortex_it->striosome_value weight learning (the smoke gate:
         # the weight should GROW from its init and striov_rate_log should track V).
         "enable_neural_critic": bool(enable_neural_critic),
+        "critic_afferent": (_critic_afferent_region if enable_neural_critic else None),
+        "critic_gabab_propagation_strength": (0.02 if enable_neural_critic else None),
+        "enable_critic_window": bool(enable_critic_window and enable_neural_critic),
+        "critic_lead_steps": (int(critic_lead_steps) if (enable_critic_window and enable_neural_critic) else None),
         "striov_rate_log": striov_rate_log,
         "critic_weight_initial": critic_weight_initial,
         "critic_weight_final": (_mean_critic_weight() if enable_neural_critic else None),
@@ -6259,18 +6359,42 @@ def main():
     ap.add_argument("--enable-neural-critic", action="store_true",
                     help="Stage B (NEURAL value critic): replace the host "
                          "_V_scaffold (reward_ema) value with a spiking "
-                         "striosome_value critic. The critic is driven by the "
-                         "PERCEIVED state (cortex_it, requires --enable-visual-"
-                         "cortex), its cortex_it->striosome_value afferent is "
-                         "PLASTIC and trained by the SAME SNc-derived dopamine "
-                         "delta the actor uses (so it learns V(s)), and it "
-                         "SUBTRACTS V at the SNc membrane through the slow "
-                         "GABA_B/GIRK K+ conductance (E_K=-90mV) — the brain "
-                         "does the r-V subtraction, not host arithmetic "
+                         "striosome_value critic. AFFERENT (re-pointed 2026-06-08 "
+                         "redesign): the PLACE code `sensor_place_readout` (the "
+                         "dorsal/where hippocampal place stream, requires "
+                         "--enable-place-goal-readout) — NOT the old ventral "
+                         "`cortex_it` (which was position-INVARIANT + inactive in "
+                         "nav). Its sensor_place_readout->striosome_value afferent "
+                         "is PLASTIC and trained by the SAME SNc-derived dopamine "
+                         "delta the actor uses (so it learns a value-of-LOCATION), "
+                         "and it SUBTRACTS V at the SNc membrane through the slow "
+                         "GABA_B/GIRK K+ conductance (E_K=-90mV, prop=0.02) — the "
+                         "brain does the r-V subtraction, not host arithmetic "
                          "(BRAIN-BASED-ONLY completion of Stage B). Only "
                          "meaningful with --spiking-snc; the host _V_scaffold "
                          "term is dropped when set. Validated CPU de-risk: "
-                         "research/findings/2026-06-08-gabab-girk-stageB-derisk-GO.md.")
+                         "research/findings/2026-06-08-gabab-girk-stageB-derisk-GO.md "
+                         "+ place-code de-risk d0416fc3.")
+    ap.add_argument("--critic-window", action="store_true",
+                    help="Stage 2 (windowed GABA_B): gate the "
+                         "striosome_value->snc GABA_B current to a bounded LEAD "
+                         "window into each reward evaluation (transmission_gate "
+                         "'critic_snc_window'), CLOSED otherwise. Per the "
+                         "place-code de-risk (d0416fc3) the slow GABA_B must "
+                         "pre-build ~1 tau (~100-150 ms) BEFORE reward and must "
+                         "NOT integrate across the whole dwell (>=200 ms "
+                         "over-suppresses: the far-V also gets canceled / the SNc "
+                         "flatlines). With this OFF (default, Stage 1) the gate is "
+                         "held OPEN continuously (no windowing) to first isolate "
+                         "'does it run + learn'. Requires --enable-neural-critic.")
+    ap.add_argument("--critic-lead-steps", type=int, default=120,
+                    help="When --critic-window: the bounded OPEN-window length in "
+                         "steps (dt=1 ms => ms). The critic->SNc GABA_B gate is "
+                         "OPEN for at most this many consecutive steps leading "
+                         "into a reward, CLOSED otherwise so g_gabab decays and "
+                         "cannot integrate across a long dwell. ~1 GABA_B tau "
+                         "(150 ms); the de-risk sweet spot was 100-150. Default "
+                         "120.")
     ap.add_argument("--surprise-lr-boost", action="store_true",
                     help="Boost reward_learning_rate when |RPE| is high (NE-like fast meta-modulation)")
     ap.add_argument("--surprise-lr-alpha", type=float, default=2.0)
@@ -6569,6 +6693,8 @@ def main():
             snc_value_gain=args.snc_value_gain,
             snc_da_sensitivity=args.snc_da_sensitivity,
             enable_neural_critic=args.enable_neural_critic,
+            enable_critic_window=args.critic_window,
+            critic_lead_steps=args.critic_lead_steps,
             enable_surprise_lr_boost=args.surprise_lr_boost,
             surprise_lr_alpha=args.surprise_lr_alpha,
             enable_curriculum=args.curriculum,
