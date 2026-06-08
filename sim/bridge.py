@@ -735,6 +735,20 @@ class SimulationBridge:
             new_traces[:self._synapse_count] = self.cp_eligibility_trace[:self._synapse_count]
             self.cp_eligibility_trace = new_traces
 
+        # 2026-06-08 bugfix: grow the per-synapse GATE arrays too. These were
+        # previously omitted here AND allocated to the initial nnz rather than
+        # capacity, so after structural growth (or once the CSR filled to
+        # capacity) they fell behind cp_connections.nnz and the reward-modulated
+        # weight update raised "operands could not be broadcast" — silently
+        # caught every step, dropping reward-driven plasticity. New entries
+        # default to 1.0 (open gate / +1 sign), matching the initial default.
+        for _gate_attr in ("cp_plasticity_rate_gain", "cp_transmission_gain", "cp_d1_d2_sign"):
+            _gate_arr = getattr(self, _gate_attr, None)
+            if _gate_arr is not None:
+                _grown = cp.ones(new_capacity, dtype=cp.float32)
+                _grown[:self._synapse_count] = _gate_arr[:self._synapse_count]
+                setattr(self, _gate_attr, _grown)
+
         # Grow connection type array for per-type STP
         if self.cp_synapse_conn_type is not None:
             new_conn_types = cp.zeros(new_capacity, dtype=cp.int8)
@@ -2124,7 +2138,14 @@ class SimulationBridge:
             self._plasticity_gate_values = {n: 1.0 for n in gate_to_indices}
             # Default gain: 1.0 everywhere (full plasticity). Runners call
             # set_plasticity_gate(name, value) to alter at runtime.
-            self.cp_plasticity_rate_gain = cp.ones(nnz, dtype=cp.float32)
+            # 2026-06-08 bugfix: size to the pre-allocated synapse CAPACITY,
+            # not the initial nnz. cp_connections + cp_eligibility_trace are
+            # capacity-sized and the step indexes these per-synapse gate arrays
+            # with [:actual_nnz] where actual_nnz = cp_connections.nnz (== the
+            # capacity once the CSR is filled). An nnz-sized array under-runs,
+            # raising "operands could not be broadcast" — which was being
+            # silently caught every step, dropping reward-modulated plasticity.
+            self.cp_plasticity_rate_gain = cp.ones(self._synapse_capacity, dtype=cp.float32)
         else:
             self._plasticity_gate_to_synapses = {}
             self._plasticity_gate_indices_gpu = {}
@@ -2147,7 +2168,8 @@ class SimulationBridge:
                 for name, indices in tgate_to_indices.items()
             }
             self._transmission_gate_values = {n: 1.0 for n in tgate_to_indices}
-            self.cp_transmission_gain = cp.ones(nnz, dtype=cp.float32)
+            # 2026-06-08 bugfix: capacity-sized (see cp_plasticity_rate_gain above).
+            self.cp_transmission_gain = cp.ones(self._synapse_capacity, dtype=cp.float32)
         else:
             self._transmission_gate_to_synapses = {}
             self._transmission_gate_indices_gpu = {}
@@ -2162,7 +2184,8 @@ class SimulationBridge:
         # neurons belong to str_D2_* regions).
         if (getattr(self.core_config, "enable_d1_d2_asymmetry", False)
                 and self.region_manager is not None):
-            self.cp_d1_d2_sign = cp.ones(nnz, dtype=cp.float32)
+            # 2026-06-08 bugfix: capacity-sized (see cp_plasticity_rate_gain above).
+            self.cp_d1_d2_sign = cp.ones(self._synapse_capacity, dtype=cp.float32)
             # Collect post-neuron indices for all str_D2_* regions.
             d2_post_indices: List[int] = []
             for region in self.region_manager.regions():
@@ -2175,7 +2198,10 @@ class SimulationBridge:
                 # cp_connections.indices is the post-neuron column for each
                 # synapse in CSR data order. Mask synapses whose post is in D2.
                 d2_mask = cp.isin(self.cp_connections.indices, d2_set_gpu)
-                self.cp_d1_d2_sign[d2_mask] = -1.0
+                # 2026-06-08 bugfix: d2_mask length == current cp_connections.nnz;
+                # apply to that sub-range so the boolean mask matches the now
+                # capacity-sized array. Capacity padding beyond stays +1.
+                self.cp_d1_d2_sign[:d2_mask.size][d2_mask] = -1.0
         else:
             self.cp_d1_d2_sign = None
 
