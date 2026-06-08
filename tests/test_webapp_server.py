@@ -345,6 +345,40 @@ def test_elapsed_sec_freezes_on_done_runs(client):
         srv.launched_runs.pop(run_id, None)
 
 
+def test_completed_run_not_alive_despite_pid_reuse(client, tmp_path, monkeypatch):
+    """Regression: a finished webapp-launched run (result file written) must
+    report alive=False, completed=True even if its recorded PID is reported
+    alive. OS PID reuse otherwise resurrects a completed run back into the
+    live panels (the '_biofix_neural_s44 lingers in the live runs list' bug).
+
+    The authoritative 'finished' signal is the result file existing (the
+    runner writes --out once, at the end), NOT the PID-alive check.
+    """
+    from webapp import server as srv
+    # A real result file on disk → the run is finished.
+    result = tmp_path / "_pid_reuse_regression.json"
+    result.write_text('{"phase_stats": []}', encoding="utf-8")
+    run_id = "test_pid_reuse_regression"
+    fake = srv.LaunchedRun(
+        run_id=run_id, cmd=[], started_at=0.0,
+        proc=None, returncode=None, log_file=None,
+        out_path=str(result), pid=4242,
+    )
+    # Simulate OS pid-reuse: the old pid now resolves to a live (unrelated) process.
+    monkeypatch.setattr(srv, "_check_pid_alive", lambda pid: True)
+    srv.launched_runs[run_id] = fake
+    try:
+        res = client.get("/api/inflight")
+        assert res.status_code == 200
+        entry = next(r for r in res.json()["inflight"] if r["name"] == result.stem)
+        assert entry["completed"] is True, "result file exists → run is completed"
+        assert entry["alive"] is False, (
+            "a completed run must never report alive (PID reuse must not resurrect it)"
+        )
+    finally:
+        srv.launched_runs.pop(run_id, None)
+
+
 def test_progress_line_parser():
     """Parser converts runner stdout into ProgressEvent."""
     from webapp.server import _try_parse_progress

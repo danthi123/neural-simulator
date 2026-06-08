@@ -2990,7 +2990,11 @@ def list_inflight_runs() -> JSONResponse:
         ]
         result_path = next((p for p in candidate_results if p.exists()), None)
 
-        alive = _check_pid_alive(pid)
+        # A run whose result file exists is finished — never report it alive.
+        # _check_pid_alive is fooled by OS PID reuse (a recycled pid resolves to
+        # an unrelated live process), which would otherwise resurrect a completed
+        # run into the live panels. result_path is the authoritative done-signal.
+        alive = _check_pid_alive(pid) and result_path is None
         progress = _parse_log_progress(log_file)
         log_mtime = log_file.stat().st_mtime if log_file.exists() else None
         log_size = log_file.stat().st_size if log_file.exists() else 0
@@ -3041,6 +3045,12 @@ def list_inflight_runs() -> JSONResponse:
                      if (log_path and log_path.exists()) else None)
         out_path = Path(run.out_path) if run.out_path else None
         result_exists = bool(out_path and out_path.exists())
+        # A run whose result file exists is finished — never report it alive.
+        # Otherwise OS PID reuse (run.pid recycled to an unrelated live process)
+        # flips this back to alive=True / completed=False, resurrecting a done run
+        # into the live picker (the '_biofix_neural_s44 lingers' bug). The result
+        # file is the authoritative done-signal (runner writes --out once, at end).
+        running = running and not result_exists
         # Use the output JSON's basename (without .json) as the display
         # name so the live panel shows e.g. "g11_seed42_phase_1_5_..."
         # rather than the opaque run_id hex.
