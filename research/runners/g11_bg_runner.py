@@ -2520,6 +2520,11 @@ def run_moving_goal_episode(
     learned_perception_from_vision: bool = False,
     sc_reflex_wean_start: int = -1,   # step to begin weaning the reflex (-1 = never)
     sc_reflex_wean_steps: int = 1500,  # linear ramp-to-zero window
+    # Rank 2 tuning (2026-06-07): supervised motor-teacher (feedback-error-
+    # learning). When > 0, the reflex drives its chosen target cortex pool at
+    # THIS strength (a clean supervised label for the sensory→cortex STDP)
+    # instead of the movement-reflex strength. 0 = off (plain reflex).
+    sensory_cortex_teacher_pA: float = 0.0,
     learning_rate: float = 0.01,
     reward_eligibility_tau_ms: float = 500.0,
     reward_hold_steps: int = 10,
@@ -4441,13 +4446,20 @@ def run_moving_goal_episode(
                     # Rank 2 wean: the innate reflex TEACHES, then fades to zero
                     # over [wean_start, wean_start+wean_steps] as the learned
                     # circuit matures (developmental scaffold; -1 = never wean).
-                    _sc_eff = sc_reflex_strength
+                    # Rank 2 tuning: with a supervised motor-teacher
+                    # (sensory_cortex_teacher_pA > 0, feedback-error-learning),
+                    # drive the chosen target pool at the STRONG teacher strength
+                    # (a clean supervised label) instead of the reflex strength.
+                    _base_strength = (sensory_cortex_teacher_pA
+                                      if sensory_cortex_teacher_pA > 0
+                                      else sc_reflex_strength)
+                    _sc_eff = _base_strength
                     if sc_reflex_wean_start >= 0:
                         if step >= sc_reflex_wean_start + sc_reflex_wean_steps:
                             _sc_eff = 0.0
                         elif step >= sc_reflex_wean_start:
                             _wf = (step - sc_reflex_wean_start) / float(max(1, sc_reflex_wean_steps))
-                            _sc_eff = sc_reflex_strength * (1.0 - _wf)
+                            _sc_eff = _base_strength * (1.0 - _wf)
                     if _sc_eff > 0:
                         _sc_card = sc_orienting_cardinal_from_image(img)
                         if _sc_card is not None:
@@ -5250,6 +5262,8 @@ def main():
                     help="Rank 2: step to begin weaning the SC orienting reflex to zero (-1 = never). The innate reflex teaches, then fades as the learned circuit matures (developmental scaffold).")
     ap.add_argument("--sc-reflex-wean-steps", type=int, default=1500,
                     help="Rank 2: linear ramp-to-zero window for the SC reflex wean.")
+    ap.add_argument("--sensory-cortex-teacher-pA", type=float, default=0.0,
+                    help="Rank 2 tuning: supervised motor-teacher (feedback-error-learning). When >0, the SC reflex drives its chosen target cortex pool at THIS strength (a clean supervised label for the sensory->cortex STDP) instead of the movement-reflex strength. Tightens the learned read-out if the learning rule (reward-STDP coarseness) is the precision bottleneck. 0 = off.")
     # Canonical name: --enable-landmark-sensor (the implementation is a sensor
     # abstraction, not landmark-cell biology). --landmarks is the legacy alias
     # kept for one release cycle (2026-04-29 Wave-1 rename).
@@ -5943,6 +5957,7 @@ def main():
             learned_perception_from_vision=args.learned_perception_from_vision,
             sc_reflex_wean_start=args.sc_reflex_wean_start,
             sc_reflex_wean_steps=args.sc_reflex_wean_steps,
+            sensory_cortex_teacher_pA=args.sensory_cortex_teacher_pA,
             enable_landmarks=args.enable_landmark_sensor,
             n_landmark_sensors=args.n_landmark_sensors,
             landmark_to_place_weight=args.landmark_to_place_weight,
