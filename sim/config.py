@@ -135,6 +135,14 @@ class CoreSimConfig:
     nmda_tau_decay: float = 100.0     # NMDA decay time constant (ms) -- slow compared to AMPA
     nmda_tau_rise: float = 3.0        # NMDA rise time constant (ms)
     nmda_mg_concentration: float = 1.0  # Extracellular [Mg2+] in mM
+    # GABA_B -> GIRK slow K+ inhibitory conductance (metabotropic). Default OFF;
+    # byte-identical when disabled. E_gabab is the POTASSIUM reversal (~-90 mV),
+    # independent of the chloride gradient, so it strongly hyperpolarizes KCC2-lacking
+    # DA cells where GABA_A (E_GABA ~ -55 mV) is weak/shunting. See catalog B.15, J.11.
+    enable_gabab: bool = False
+    gabab_reversal_potential: float = -90.0   # E_K (GIRK), mV
+    gabab_tau_decay: float = 150.0            # slow decay (ms); GABA_B/GIRK >> GABA_A's 10 ms
+    gabab_propagation_strength: float = 0.105 # per-spike conductance increment scale (mirrors inhibitory_propagation_strength)
     propagation_strength: float = 0.05
     inhibitory_propagation_strength: float = 0.105  # Scaled for E_inh=-75mV (was 0.15 at E_inh=-70mV)
     max_synaptic_delay_ms: float = 20.0

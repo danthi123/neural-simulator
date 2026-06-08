@@ -235,6 +235,18 @@ class RegionPathway:
     # None = always-on transmission (current behavior, not added to any transmission gate).
     transmission_gate: str = None
 
+    # receptor (2026-06-08): which inhibitory receptor an inhibitory pathway's synapses use.
+    #   "gaba_a" (default) — fast ionotropic Cl- current via the single g_i conductance,
+    #     reversal = the post neuron's E_GABA (current behavior, byte-identical routing).
+    #   "gaba_b" — slow metabotropic GABA_B -> GIRK K+ current via a SEPARATE conductance
+    #     g_gabab (E_K ~ -90 mV, tau ~150 ms), independent of the chloride gradient, so it
+    #     strongly hyperpolarizes KCC2-lacking DA cells where GABA_A is weak/shunting.
+    #     Requires cfg.enable_gabab=True; the pathway's synapses are added to the per-synapse
+    #     GABA_B mask and the post neurons' E_gabab is set to the configured K+ reversal.
+    # See catalog J.11 (the previously-missing slow inhibitory channel) and the
+    # GABA_B/GIRK conductance design doc (2026-06-08).
+    receptor: str = "gaba_a"
+
     # Cluster E v1 (2026-04-29): distance-dependent connection probability.
     # When set AND both source and target regions have coordinate_dim > 0,
     # connections are sampled with Gaussian-weighted probability:
@@ -618,6 +630,8 @@ class RegionManager:
             "plasticity_gate": pw.plasticity_gate,
             # Per-pathway transmission gate name (runtime-controllable; scales synaptic CURRENT). None = always-on.
             "transmission_gate": pw.transmission_gate,
+            # Per-pathway inhibitory receptor: "gaba_a" (default) | "gaba_b" (slow GIRK, E_K=-90mV).
+            "receptor": getattr(pw, "receptor", "gaba_a"),
         }
 
     def _has_coords(self, region_name: str) -> bool:

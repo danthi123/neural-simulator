@@ -86,6 +86,7 @@ from sim.kernels import (fused_izhikevich_legacy_dynamics_update,
                          fused_hh_NaP_current_update,
                          fused_adex_dynamics_update,
                          fused_conductance_decay_and_current,
+                         fused_gabab_decay_and_current,
                          fused_nmda_update_and_current,
                          fused_stp_decay_recovery,
                          fused_homeostasis_update,
@@ -229,6 +230,15 @@ class SimulationBridge:
         self.cp_conductance_g_e = None
         self.cp_conductance_g_i = None
         self.cp_conductance_g_nmda = None
+        # GABA_B -> GIRK slow K+ inhibitory conductance (2026-06-08). None unless
+        # cfg.enable_gabab. The mirror of NMDA, inverted: a slow (tau ~150 ms)
+        # hyperpolarizing K+ current with its own reversal (~-90 mV, the GIRK
+        # potassium reversal) and a per-synapse routing mask (only GABA_B-tagged
+        # pathways feed it). All None by default -> the new step block is unreached
+        # and total_input_current_pA is byte-identical to today.
+        self.cp_conductance_g_gabab = None          # slow GABA_B/GIRK conductance (None unless enable_gabab)
+        self.cp_gabab_reversal_per_neuron = None     # per-neuron E_gabab (~-90 mV on GABA_B targets)
+        self.cp_gabab_synapse_mask = None            # bool per-synapse: True for GABA_B-routed synapses
         # Cluster G v2 (2026-05-01): per-neuron NMDA mask (1.0 for neurons
         # in regions with BrainRegion.enable_nmda=True, 0.0 otherwise).
         # When None, NMDA applies globally per cfg.enable_nmda — backward
@@ -1143,6 +1153,23 @@ class SimulationBridge:
                         f"NMDA per-region mask: {len(nmda_regions)} regions enabled "
                         f"({sum(int(r.n_neurons) for r in nmda_regions)} neurons)",
                     )
+
+            # GABA_B -> GIRK slow K+ inhibitory conductance (2026-06-08). The NMDA
+            # pattern inverted: a second inhibitory conductance with its own slow
+            # decay and its own reversal (E_K ~ -90 mV, the GIRK potassium reversal,
+            # independent of the chloride gradient). Guarded by cfg.enable_gabab so a
+            # default config leaves all three arrays None and the per-step block is
+            # unreached (byte-identical). The per-neuron E_gabab is uniform -90 mV here;
+            # inject_explicit_wiring (re)sets it to -90 only on the post neurons of
+            # GABA_B-tagged pathways and builds the per-synapse routing mask.
+            if getattr(cfg, "enable_gabab", False) and n > 0:
+                self.cp_conductance_g_gabab = cp.zeros(n, dtype=cp.float32)
+                self.cp_gabab_reversal_per_neuron = cp.full(
+                    n, cfg.gabab_reversal_potential, dtype=cp.float32
+                )
+                # cp_gabab_synapse_mask is built in inject_explicit_wiring (needs nnz);
+                # left None here so non-wired bridges with enable_gabab are still safe.
+
             self.cp_refractory_timers = cp.zeros(n, dtype=cp.int32)
             self.cp_neuron_activity_ema = cp.zeros(n, dtype=cp.float32) 
             self.cp_viz_activity_timers = cp.zeros(n, dtype=cp.int32) 
@@ -1500,6 +1527,7 @@ class SimulationBridge:
             self._cached_decay_i = float(cp.exp(-cfg.dt_ms / cfg.syn_tau_g_i)) if cfg.syn_tau_g_i > 0 else 0.0
             self._cached_decay_nmda = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_decay)) if cfg.nmda_tau_decay > 0 else 0.0
             self._cached_decay_nmda_rise = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_rise)) if cfg.nmda_tau_rise > 0 else 0.0
+            self._cached_decay_gabab = float(cp.exp(-cfg.dt_ms / cfg.gabab_tau_decay)) if getattr(cfg, "gabab_tau_decay", 0) > 0 else 0.0
             _BASE_HH_TEMP = 6.3
             self._cached_hh_phi = cfg.hh_q10_factor ** ((cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0)
             # Per-gate phi values (Session "fix-bugs" — see HH temperature bug findings)
@@ -2079,21 +2107,26 @@ class SimulationBridge:
         all_plastic = []
         all_gates = []  # gate_name string per synapse, or "" for ungated
         all_trans_gates = []  # transmission gate_name per synapse, or "" (scales CURRENT)
+        all_receptors = []  # receptor string per synapse ("gaba_a" default | "gaba_b" -> slow GIRK)
         any_fixed = False
         any_gated = False
         any_trans_gated = False
+        any_gabab = False  # any synapse routed through the GABA_B/GIRK conductance
         for name, group in wiring_plan.items():
             if not isinstance(group, dict) or "pre_indices" not in group:
                 continue
             plastic_flag = bool(group.get("plastic", True))
             gate_name = group.get("plasticity_gate", None) or ""
             trans_gate_name = group.get("transmission_gate", None) or ""
+            receptor = (group.get("receptor", None) or "gaba_a")
             if not plastic_flag:
                 any_fixed = True
             if gate_name:
                 any_gated = True
             if trans_gate_name:
                 any_trans_gated = True
+            if receptor == "gaba_b":
+                any_gabab = True
             n_syn = len(group["pre_indices"])
             all_pre.extend(group["pre_indices"])
             all_post.extend(group["post_indices"])
@@ -2101,6 +2134,7 @@ class SimulationBridge:
             all_plastic.extend([plastic_flag] * n_syn)
             all_gates.extend([gate_name] * n_syn)
             all_trans_gates.extend([trans_gate_name] * n_syn)
+            all_receptors.extend([receptor] * n_syn)
 
         if len(all_pre) == 0:
             self._log_console("inject_explicit_wiring: no synapses in plan.", "warning")
@@ -2129,17 +2163,17 @@ class SimulationBridge:
         # aligned with cp_connections.data order. tocoo() preserves CSR's
         # internal order (row-major by pre then post), so we re-sort the
         # original tuples by the same key to match. Sort once over
-        # (pre, post, plastic, gate) tuples since they're row-aligned.
-        if any_fixed or any_gated or any_trans_gated:
+        # (pre, post, plastic, gate, trans_gate, receptor) tuples since they're row-aligned.
+        if any_fixed or any_gated or any_trans_gated or any_gabab:
             keyed = sorted(
-                zip(all_pre, all_post, all_plastic, all_gates, all_trans_gates),
+                zip(all_pre, all_post, all_plastic, all_gates, all_trans_gates, all_receptors),
                 key=lambda t: (t[0], t[1]),
             )
         else:
             keyed = None
 
         if any_fixed:
-            sorted_plastic = np.asarray([p for _, _, p, _, _ in keyed], dtype=np.bool_)
+            sorted_plastic = np.asarray([p for _, _, p, _, _, _ in keyed], dtype=np.bool_)
             self.cp_synapse_plastic_mask = cp.asarray(sorted_plastic)
         else:
             self.cp_synapse_plastic_mask = None
@@ -2148,7 +2182,7 @@ class SimulationBridge:
         # Allocate cp_plasticity_rate_gain only if any synapse is gated; otherwise
         # leave None and the plasticity update paths skip gain multiplication.
         if any_gated:
-            sorted_gates = [g for _, _, _, g, _ in keyed]
+            sorted_gates = [g for _, _, _, g, _, _ in keyed]
             gate_to_indices: Dict[str, List[int]] = {}
             for syn_idx, gname in enumerate(sorted_gates):
                 if gname:
@@ -2180,7 +2214,7 @@ class SimulationBridge:
         # applied to effective_synaptic_strength in the step. Default 1.0 (open); runners call
         # set_transmission_gate(name, value) to open/close at runtime.
         if any_trans_gated:
-            sorted_trans = [tg for _, _, _, _, tg in keyed]
+            sorted_trans = [tg for _, _, _, _, tg, _ in keyed]
             tgate_to_indices: Dict[str, List[int]] = {}
             for syn_idx, tgname in enumerate(sorted_trans):
                 if tgname:
@@ -2198,6 +2232,38 @@ class SimulationBridge:
             self._transmission_gate_indices_gpu = {}
             self._transmission_gate_values = {}
             self.cp_transmission_gain = None
+
+        # GABA_B -> GIRK per-synapse routing mask (2026-06-08). True for synapses of any
+        # pathway tagged receptor=="gaba_b"; the per-step GABA_B block (B4) feeds ONLY
+        # these synapses into the slow K+ conductance. Aligned with cp_connections.data
+        # order via the same (pre, post)-sorted `keyed` list as the gate maps. Built only
+        # when enable_gabab AND at least one pathway is GABA_B (else None -> the step block
+        # is unreached and routing is byte-identical). Capacity-sized to match the other
+        # per-synapse arrays; new (grown) synapses default to False = GABA_A. The post
+        # neurons of GABA_B synapses also get their E_gabab set to the configured K+
+        # reversal (-90 mV) so the additive current hyperpolarizes them.
+        if getattr(self.core_config, "enable_gabab", False) and any_gabab and keyed is not None:
+            # keyed is (pre, post, plastic, gate, trans_gate, receptor) in the SAME
+            # (pre,post)-sorted order as cp_connections.data — so the mask aligns
+            # synapse-for-synapse. (post_np is INSERTION order and must NOT be used here.)
+            sorted_post = [t[1] for t in keyed]
+            sorted_receptors = [t[5] for t in keyed]
+            gb_mask_host = np.fromiter(
+                (rc == "gaba_b" for rc in sorted_receptors), dtype=np.bool_, count=nnz)
+            self.cp_gabab_synapse_mask = cp.zeros(self._synapse_capacity, dtype=cp.bool_)
+            self.cp_gabab_synapse_mask[:nnz] = cp.asarray(gb_mask_host)
+            # Set E_gabab = -90 mV on the POST neurons of GABA_B synapses. Allocate the
+            # per-neuron reversal here if the guarded init alloc didn't (e.g. enable_gabab
+            # toggled after init); default-fill with the configured reversal first.
+            if self.cp_gabab_reversal_per_neuron is None and n > 0:
+                self.cp_gabab_reversal_per_neuron = cp.full(
+                    n, self.core_config.gabab_reversal_potential, dtype=cp.float32)
+            if self.cp_gabab_reversal_per_neuron is not None:
+                gb_post = np.asarray(
+                    [p for p, m in zip(sorted_post, gb_mask_host) if m], dtype=np.int64)
+                if gb_post.size > 0:
+                    self.cp_gabab_reversal_per_neuron[cp.asarray(gb_post)] = \
+                        float(self.core_config.gabab_reversal_potential)
 
         # Cluster B.1 (2026-04-28): tag D2-targeting synapses with sign=-1.
         # D1-targeting + everything else stays at +1 (default). The reward-
@@ -5424,6 +5490,33 @@ class SimulationBridge:
                     I_nmda = I_nmda * self.cp_nmda_neuron_mask
                 total_input_current_pA = total_input_current_pA + I_nmda
 
+            # --- 2.3b. GABA_B -> GIRK slow K+ inhibition (metabotropic; E_K ~ -90 mV) ---
+            # The NMDA pattern inverted: a second, slow (tau ~150 ms), hyperpolarizing
+            # conductance with its own K+ reversal (independent of the chloride gradient),
+            # incremented ONLY by GABA_B-tagged synapses (the per-synapse mask). GUARDED:
+            # cp_conductance_g_gabab is None for every run that doesn't set enable_gabab,
+            # so this whole block is skipped and total_input_current_pA is byte-identical.
+            if getattr(cfg, "enable_gabab", False) and self.cp_conductance_g_gabab is not None:
+                # Increment from GABA_B-tagged synapses only (restricted matvec; e.g. the
+                # value->SNc pathway). Slice the mask to the live nnz (the growth-gotcha
+                # mitigation: a grown mask pads with False = GABA_A, and slicing keeps the
+                # multiply aligned with effective_connections_matrix.data).
+                if (self.cp_gabab_synapse_mask is not None
+                        and effective_connections_matrix.nnz > 0 and _prev_any):
+                    _gb_nnz = self.cp_connections.nnz
+                    _gb_data = effective_connections_matrix.data * \
+                        self.cp_gabab_synapse_mask[:_gb_nnz].astype(cp.float32)
+                    _gb_mat = csp.csr_matrix(
+                        (_gb_data, self.cp_connections.indices, self.cp_connections.indptr),
+                        shape=self.cp_connections.shape)
+                    gabab_increase = (_gb_mat.T @ self.cp_prev_firing_states.astype(cp.float32)) \
+                        * cfg.gabab_propagation_strength
+                    self.cp_conductance_g_gabab += gabab_increase
+                self.cp_conductance_g_gabab, I_gabab = fused_gabab_decay_and_current(
+                    self.cp_conductance_g_gabab, self._cached_decay_gabab,
+                    self.cp_membrane_potential_v, self.cp_gabab_reversal_per_neuron)
+                total_input_current_pA = total_input_current_pA + I_gabab
+
             # --- 2.5. Update OU Process & Inject Background Noise ---
             if cfg.enable_ou_process and hasattr(self, 'cp_ou_current') and self.cp_ou_current is not None:
                 # Update OU current using exact solution: I(t+dt) = I(t)*exp(-dt/tau) + mean*(1-exp(-dt/tau)) + noise
@@ -6743,6 +6836,7 @@ class SimulationBridge:
                 self._cached_decay_i = float(cp.exp(-cfg.dt_ms / cfg.syn_tau_g_i)) if cfg.syn_tau_g_i > 0 else 0.0
                 self._cached_decay_nmda = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_decay)) if cfg.nmda_tau_decay > 0 else 0.0
                 self._cached_decay_nmda_rise = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_rise)) if cfg.nmda_tau_rise > 0 else 0.0
+                self._cached_decay_gabab = float(cp.exp(-cfg.dt_ms / cfg.gabab_tau_decay)) if getattr(cfg, "gabab_tau_decay", 0) > 0 else 0.0
 
                 # Recompute OU step-invariant constants (cp_ou_current state is
                 # preserved; coefficients are derived from dt / tau / sigma).

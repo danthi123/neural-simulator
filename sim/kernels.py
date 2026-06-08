@@ -215,6 +215,17 @@ def fused_conductance_decay_and_current(g_e, g_i, decay_e, decay_i, v, E_e, E_i)
     return g_e_new, g_i_new, I_syn
 
 @fuse()
+def fused_gabab_decay_and_current(g_gabab, decay_gabab, v, E_gabab):
+    """Slow GABA_B -> GIRK K+ inhibitory conductance (E_gabab ~ -90 mV, the
+    potassium reversal). Metabotropic/slow: decay_gabab = exp(-dt/tau) with
+    tau ~150 ms, far slower than GABA_A (~10 ms). Mirrors the AMPA/NMDA pattern
+    inverted: a hyperpolarizing K+ current independent of the chloride gradient,
+    so it strongly inhibits KCC2-lacking DA cells where GABA_A is weak/shunting."""
+    g_gabab_new = g_gabab * decay_gabab
+    I_gabab = g_gabab_new * (E_gabab - v)
+    return g_gabab_new, I_gabab
+
+@fuse()
 def fused_nmda_update_and_current(g_nmda, g_nmda_rise, decay_nmda, decay_nmda_rise, v, E_nmda, mg_conc):
     """Fused kernel for NMDA conductance with voltage-dependent Mg2+ block.
 

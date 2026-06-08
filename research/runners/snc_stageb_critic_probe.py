@@ -56,7 +56,8 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
                          bprime=False, snc_drive_to_snc_weight=6.0,
                          strio_to_drive_weight=15.0, n_drive=40,
                          bprime_snr=False, strio_to_disinhib_weight=20.0,
-                         disinhib_to_gaba_weight=20.0, gaba_to_snc_weight=6.0, n_relay=40):
+                         disinhib_to_gaba_weight=20.0, gaba_to_snc_weight=6.0, n_relay=40,
+                         gabab=False, gabab_tau_decay=150.0, gabab_propagation_strength=0.105):
     """Minimal bridge: cue (CS) -> striosome_value (GABAergic critic) -> snc (DA).
 
     cue->striosome_value is PLASTIC (the value is learned by the SNc-derived delta via
@@ -64,6 +65,14 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
     subtraction at the SNc membrane). The dopamine modulator reads the snc firing via
     `from_region_firing_signed` so da_signal = da_conc - baseline IS the spiking delta
     the reward-modulation block consumes (sim/bridge.py:5926-5953).
+
+    gabab=True routes the striosome_value->snc inhibition through the NEW slow GABA_B/GIRK
+    conductance (E_K=-90 mV, tau~150 ms) instead of weak GABA_A onto the depolarized SNc
+    (E_GABA=-55 mV). The SNc KEEPS its GABA_A reversal (-55 mV, unchanged); the GABA_B
+    current is a SEPARATE, parallel hyperpolarizing K+ term on the same SNc neurons. This
+    is the protected-edit de-risk: the GABA_A direct path failed the state-specific gap 0/3
+    because the depolarized reversal makes GABA weak/shunting; the K+ reversal (independent
+    of the chloride gradient) should subtract value strongly + sign-correctly.
     """
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
@@ -72,6 +81,14 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
     from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget, ProductionRule
 
     cfg = CoreSimConfig()
+    # Harness fix #5 (2026-06-08): PIN the bridge RNG to `seed`. Without this, cfg.seed
+    # stays -1 -> _initialize_rng time-seeds the bridge, so connectivity/heterogeneity vary
+    # run-to-run and the SAME --seed gives different dynamics each invocation (a multi-seed
+    # verdict becomes noise). Setting cfg.seed (+ het/ou seeds) makes each --seed reproducible
+    # so the GABA_B gap is a genuine per-seed result, not a per-process lottery.
+    cfg.seed = int(seed)
+    cfg.heterogeneity_seed = int(seed)
+    cfg.ou_seed = int(seed)
     cfg.dt_ms = 1.0
     cfg.num_traits = 1
     cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
@@ -103,6 +120,16 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
     # strongly NEGATIVE and the weight collapses to 2 — so V could never rise. Set w_max well
     # above the critic's working range so delta-LTP can actually grow V.
     cfg.stdp_w_max = 40.0
+
+    # GABA_B -> GIRK slow K+ inhibitory conductance (protected edit, 2026-06-08). Off by
+    # default (byte-identical); on, the striosome_value->snc pathway (tagged receptor="gaba_b"
+    # below) subtracts value via the strong, sign-correct K+ reversal (-90 mV) instead of the
+    # weak depolarized GABA_A reversal the direct baseline used.
+    if gabab:
+        cfg.enable_gabab = True
+        cfg.gabab_reversal_potential = -90.0
+        cfg.gabab_tau_decay = float(gabab_tau_decay)
+        cfg.gabab_propagation_strength = float(gabab_propagation_strength)
 
     cfg.brain_regions = [
         BrainRegion(
@@ -191,11 +218,16 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
                           weight_jitter=0.2, plastic=False),     # SNr tonic GABA onto the SNc
         ]
     else:
-        # Direct (de-risk baseline): striosome GABA -> snc, the weak depolarized-reversal conduit.
+        # Direct: striosome GABA -> snc. With gabab=False this is the weak depolarized-reversal
+        # GABA_A conduit (the de-risk baseline that FAILED the gap 0/3). With gabab=True the SAME
+        # pathway is tagged receptor="gaba_b" so its inhibition routes through the slow GIRK K+
+        # conductance (E_K=-90 mV) — the protected-edit fix. The A/B contrast (gaba_a fails,
+        # gaba_b passes) localizes any win to the new conductance.
         pathways.append(
             RegionPathway(from_region="striosome_value", to_region="snc",
                           density=0.5, weight_mean=float(strio_to_snc_weight),
-                          weight_jitter=0.2, plastic=False))
+                          weight_jitter=0.2, plastic=False,
+                          receptor=("gaba_b" if gabab else "gaba_a")))
     cfg.region_pathways = pathways
 
     # Stage-A dopamine modulator: production = from_region_firing_signed over ['snc'].
@@ -342,6 +374,26 @@ def _lesion_pathway(bridge, pre_name, post_name):
                                       pre, post, np.zeros(len(pre), dtype=np.float32))
 
 
+def _lesion_gabab_mask(bridge):
+    """Conductance lesion (the GABA_B anti-cheat): zero the per-synapse GABA_B routing mask
+    so NO synapse feeds the slow K+ conductance any more. The slow conductance still decays
+    each step but receives no new increment -> the GABA_B subtraction must VANISH (the SNc
+    bursts to every reward regardless of prediction). Proves the state-specific gap was
+    carried by the NEW GABA_B/GIRK conductance, not the residual weak GABA_A path or host
+    arithmetic. Returns the number of GABA_B synapses zeroed."""
+    m = getattr(bridge, "cp_gabab_synapse_mask", None)
+    if m is None:
+        return 0
+    n_was = int(_host(m).sum())
+    from sim.backend import get_backend
+    xp, _ = get_backend()
+    bridge.cp_gabab_synapse_mask = xp.zeros_like(m)
+    # Also clear any residual charge already on the conductance so the lesion is clean.
+    if getattr(bridge, "cp_conductance_g_gabab", None) is not None:
+        bridge.cp_conductance_g_gabab[:] = 0.0
+    return n_was
+
+
 def run_diag(seed, *, cue_drive_pa=1000.0, cue_to_strio_weight=20.0,
              strio_to_snc_weight=3.5, hold_steps=60):
     """Diagnostic: is the cue firing? does cue->striosome transmit? can the striosome
@@ -382,12 +434,15 @@ def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=
                strio_to_drive_weight=15.0,
                bprime_snr=False, gaba_tonic_pa=300.0, disinhib_pa=250.0,
                strio_to_disinhib_weight=20.0, disinhib_to_gaba_weight=20.0,
-               gaba_to_snc_weight=6.0):
+               gaba_to_snc_weight=6.0,
+               gabab=False, gabab_tau_decay=150.0, gabab_propagation_strength=0.105):
     from sim.backend import get_backend
     xp, _ = get_backend()
     bridge, cfg = _build_stageb_bridge(
         seed, snc_da_sensitivity=snc_da_sensitivity,
         reward_learning_rate=reward_learning_rate,
+        gabab=gabab, gabab_tau_decay=gabab_tau_decay,
+        gabab_propagation_strength=gabab_propagation_strength,
         cue_to_strio_weight=cue_to_strio_weight, strio_to_snc_weight=strio_to_snc_weight,
         bprime=bprime, snc_drive_to_snc_weight=snc_drive_to_snc_weight,
         strio_to_drive_weight=strio_to_drive_weight,
@@ -462,6 +517,11 @@ def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=
             n_cut = _lesion_pathway(bridge, "snc_drive", "snc"); edge = "snc_drive->snc"
         elif bprime_snr:
             n_cut = _lesion_pathway(bridge, "snr_tonic", "snc"); edge = "snr_tonic->snc"
+        elif gabab:
+            # GABA_B conductance lesion (the decisive anti-cheat): cut the per-synapse GABA_B
+            # routing mask so the slow K+ conductance gets NO increment. The subtraction must
+            # vanish -> proves it was carried by the new GABA_B/GIRK conductance.
+            n_cut = _lesion_gabab_mask(bridge); edge = "GABA_B mask (cp_gabab_synapse_mask)"
         else:
             n_cut = _lesion_pathway(bridge, "striosome_value", "snc"); edge = "striosome_value->snc"
         if verbose:
@@ -490,12 +550,16 @@ def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=
     state_specific = (unpred_r > 1.30 * max(pred_r, 1e-6))  # (3) unpredicted >> predicted (host-EMA can't)
     omission_dip = (omit_r < base_r)                    # (4) CS-no-reward dips below tonic
 
+    gap_ratio = unpred_r / max(pred_r, 1e-6)             # unpredicted/predicted (>1.30 = state-specific)
+    dip_depth = base_r - omit_r                          # tonic - omission (>0 = dip)
     return {
         "seed": seed, "lesion": lesion, "bprime": bprime, "bprime_snr": bprime_snr,
+        "gabab": gabab,
         "us_burst_early_hz": us_early, "us_burst_late_hz": us_late,
         "v_cs_early_hz": v_early, "v_cs_late_hz": v_late,
         "test_baseline_hz": base_r, "test_predicted_hz": pred_r,
         "test_unpredicted_hz": unpred_r, "test_omission_hz": omit_r,
+        "gap_ratio": gap_ratio, "dip_depth_hz": dip_depth,
         "v_learned": bool(v_learned), "us_burst_shrank": bool(us_shrank),
         "state_specific": bool(state_specific), "omission_dip": bool(omission_dip),
         "us_burst_curve": us_burst, "v_cs_curve": v_cs,
@@ -536,6 +600,13 @@ def main():
     ap.add_argument("--relay-tonic-pa", type=float, default=300.0)
     ap.add_argument("--snc-drive-to-snc-weight", type=float, default=6.0)
     ap.add_argument("--strio-to-drive-weight", type=float, default=15.0)
+    ap.add_argument("--gabab", action="store_true",
+                    help="GABA_B/GIRK: route striosome_value->snc through the slow K+ conductance "
+                         "(E_K=-90mV, the protected edit) instead of weak GABA_A onto the depolarized SNc")
+    ap.add_argument("--gabab-tau-decay", type=float, default=150.0,
+                    help="GABA_B/GIRK decay time constant (ms); slow metabotropic, GIRK-IPSC range ~150-500")
+    ap.add_argument("--gabab-propagation-strength", type=float, default=0.105,
+                    help="per-spike GABA_B conductance increment scale")
     ap.add_argument("--bprime-snr", action="store_true",
                     help="B'-DISINHIBIT-SNr: striosome->disinhib->SNr-tonic-GABA->SNc (biology-literal disinhibition)")
     ap.add_argument("--gaba-tonic-pa", type=float, default=300.0)
@@ -565,11 +636,14 @@ def main():
               bprime_snr=args.bprime_snr, gaba_tonic_pa=args.gaba_tonic_pa,
               disinhib_pa=args.disinhib_pa, strio_to_disinhib_weight=args.strio_to_disinhib_weight,
               disinhib_to_gaba_weight=args.disinhib_to_gaba_weight,
-              gaba_to_snc_weight=args.gaba_to_snc_weight)
+              gaba_to_snc_weight=args.gaba_to_snc_weight,
+              gabab=args.gabab, gabab_tau_decay=args.gabab_tau_decay,
+              gabab_propagation_strength=args.gabab_propagation_strength)
     results = []
     for s in seeds:
-        tag = ("LESION" if args.lesion else "B'-DISINHIBIT-SNr" if args.bprime_snr
-               else "B'-DISINHIBIT-EXC" if args.bprime else "Stage-B critic")
+        tag = ("LESION" if args.lesion else "GABA_B/GIRK (E_K=-90mV)" if args.gabab
+               else "B'-DISINHIBIT-SNr" if args.bprime_snr
+               else "B'-DISINHIBIT-EXC" if args.bprime else "Stage-B critic (GABA_A direct)")
         print(f"[snc-stageB seed={s}] {tag} — CS-gated neural value (delta=r-V, R-W):")
         r = run_stageb(s, **kw)
         _print_result(r)
@@ -579,6 +653,12 @@ def main():
             print(f"\n  Stage-B de-risk (seed {s}): {verdict}  "
                   f"[V-learned {r['v_learned']}, US-shrink {r['us_burst_shrank']}, "
                   f"state-specific {r['state_specific']}, omission-dip {r['omission_dip']}]")
+            # The design's PRIMARY gate is (i) state-specific gap (the one GABA_A failed 0/3),
+            # plus the regression guards (ii) v_learned and (iv) omission_dip. Report it explicitly.
+            primary = r["state_specific"] and r["v_learned"] and r["omission_dip"]
+            print(f"  [PRIMARY GATE — state-specific gap] gap_ratio(unpred/pred)={r['gap_ratio']:.2f} "
+                  f"(>1.30 PASS) | V-learned {r['v_learned']} | dip {r['omission_dip']} "
+                  f"=> {'PASS' if primary else 'FAIL'}")
         else:
             # Lesion EXPECTATION: prediction gone -> predicted ~= unpredicted, no dip.
             no_pred = (r["test_unpredicted_hz"] <= 1.30 * max(r["test_predicted_hz"], 1e-6))
@@ -593,12 +673,19 @@ def main():
     if len(results) > 1 and not args.lesion:
         n_pass = sum(1 for r in results
                      if r["v_learned"] and r["us_burst_shrank"] and r["state_specific"] and r["omission_dip"])
+        n_primary = sum(1 for r in results
+                        if r["state_specific"] and r["v_learned"] and r["omission_dip"])
         print(f"=== MULTI-SEED: {n_pass}/{len(results)} PASS all 4 gates ===")
+        print(f"=== MULTI-SEED PRIMARY GATE (state-specific gap + v-learned + dip): "
+              f"{n_primary}/{len(results)} ===")
+        gap_strs = ["{}={:.2f}".format(r["seed"], r["gap_ratio"]) for r in results]
+        print("=== gap_ratio per seed: " + ", ".join(gap_strs) + " ===")
 
     if args.out:
+        mode = ("stageb_lesion" if args.lesion
+                else "stageb_gabab" if args.gabab else "stageb_critic")
         with open(args.out, "w") as f:
-            json.dump({"mode": "stageb_lesion" if args.lesion else "stageb_critic",
-                       "results": results}, f, indent=2)
+            json.dump({"mode": mode, "results": results}, f, indent=2)
         print(f"  wrote {args.out}")
 
 
