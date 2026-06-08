@@ -767,6 +767,29 @@ class SimulationBridge:
         self._synapse_capacity = new_capacity
         return True
 
+    def _ensure_gate_capacity(self, attr_name, n):
+        """Lazily grow a per-synapse GATE array to at least n elements and return it.
+
+        2026-06-08: defensive catch-all for the cp_d1_d2_sign / cp_transmission_gain /
+        cp_plasticity_rate_gain shape bug. These three gate arrays were sized to an
+        early synapse count and a synapse-growth path (which does NOT update
+        self._synapse_capacity, so the init-time + _grow_synapse_arrays_if_needed
+        fixes alone were insufficient) left them shorter than cp_connections.nnz —
+        so the reward-modulated weight update raised 'operands could not be
+        broadcast' every step and was silently caught, dropping plasticity. Growing
+        here at the use site (where the true required length n=actual_nnz is known)
+        is robust regardless of which path grew the synapses. New entries default to
+        1.0 (open gate / +1 sign) — a no-op multiplier, so behavior is unchanged
+        except that the update now actually applies. Returns None if the array is None.
+        """
+        arr = getattr(self, attr_name, None)
+        if arr is not None and arr.shape[0] < n:
+            grown = cp.ones(n, dtype=cp.float32)
+            grown[:arr.shape[0]] = arr
+            setattr(self, attr_name, grown)
+            arr = grown
+        return arr
+
     def _add_synapses_to_arrays(self, new_count, cfg):
         """Adds new synapses to pre-allocated arrays at the current synapse_count position.
 
@@ -5282,7 +5305,7 @@ class SimulationBridge:
             # is row-aligned with cp_connections.data, so cp_transmission_gain (same order) multiplies directly.
             if self.cp_transmission_gain is not None and self.cp_connections.nnz > 0:
                 _tg_nnz = self.cp_connections.nnz
-                _gated_data = effective_connections_matrix.data * self.cp_transmission_gain[:_tg_nnz]
+                _gated_data = effective_connections_matrix.data * self._ensure_gate_capacity("cp_transmission_gain", _tg_nnz)[:_tg_nnz]
                 effective_connections_matrix = csp.csr_matrix(
                     (_gated_data, self.cp_connections.indices, self.cp_connections.indptr),
                     shape=self.cp_connections.shape,
@@ -5982,12 +6005,12 @@ class SimulationBridge:
                     # eligibility; this is the standard 3-factor rule
                     # interpretation (DA/NM gates the learning event itself).
                     if self.cp_plasticity_rate_gain is not None:
-                        weight_updates = weight_updates * self.cp_plasticity_rate_gain[:actual_nnz]
+                        weight_updates = weight_updates * self._ensure_gate_capacity("cp_plasticity_rate_gain", actual_nnz)[:actual_nnz]
                     # Cluster B.1 (2026-04-28): D1/D2 plasticity asymmetry.
                     # D2-targeting synapses move opposite to reward direction;
                     # D1-targeting + everything else move with reward.
                     if self.cp_d1_d2_sign is not None:
-                        weight_updates = weight_updates * self.cp_d1_d2_sign[:actual_nnz]
+                        weight_updates = weight_updates * self._ensure_gate_capacity("cp_d1_d2_sign", actual_nnz)[:actual_nnz]
                     # Cluster B.3 (2026-04-28): cholinergic (TAN) plasticity
                     # window gate. When ACh is at tonic baseline the gate ~ 0
                     # and reward-driven weight changes are suppressed; when
