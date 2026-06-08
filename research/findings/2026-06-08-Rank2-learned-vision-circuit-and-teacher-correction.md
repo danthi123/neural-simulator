@@ -1,10 +1,10 @@
-# Rank 2 (the durable LEARNED visuomotor circuit) navigates from vision near the reflex's precision — multi-seed; AND an honest multi-seed CORRECTION: the supervised motor-teacher's seed-42 "tighten" was a single-seed outlier artifact (the reflex already supplies supervision via co-firing, so the explicit teacher is redundant + a crutch). — 2026-06-08
+# Rank 2 (the durable LEARNED visuomotor circuit) DURABLY consolidates self-sufficient vision-navigation on all 6 seeds (none collapse, vs the position-invariant IT path's ~6.1 collapse) — at SEED-VARIABLE precision (6-seed mean 3.4; near-reflex ~2.3 on the best seeds); AND an honest multi-seed CORRECTION: the supervised motor-teacher's seed-42 "tighten" was a single-seed outlier artifact (the reflex already supplies supervision via co-firing, so the explicit teacher is redundant + a crutch). — 2026-06-08
 
 **Status:** Rank 2 plain (learned-from-vision, no teacher) = the REAL result, GOOD multi-seed; the supervised teacher = HONEST NEGATIVE (not a robust lever). Single-goal 6-seed + multi-goal generalization IN FLIGHT (appended below). NO `sim/` edit (protected set byte-empty); additive default-off flags; helper unit tests 7/7 (cardinal) + 6/6 (offset). This closes the Rank-2 build the owner approved ("tune Rank 2 for a cleaner hold") with an honest correction.
 
 ## The one-line result
 
-The owner-approved Rank 2 — a LEARNED dorsal/PPC-style where→action read-out, re-sourced from the IMAGE salience offset (position-preserving, no coordinates), taught by the innate SC reflex (Rank 1) then weaned — **consolidates a durable mapping that navigates from vision near the innate reflex's precision** (single-goal post-wean ~2.3 on the good seeds vs the reflex's single-goal ~2.0; the position-invariant IT→cortex control collapses to ~6.1). It is self-sufficient AFTER the reflex teacher is gone — the durable-consolidation property the position-invariant IT path could not achieve. **The supervised motor-teacher I added to tighten it is an HONEST NEGATIVE: its apparent seed-42 win (3.93→3.30) was a single-seed outlier artifact, refuted at multi-seed (teacher mean 2.96 ≈ plain 2.93; the teacher HURTS the well-consolidated seeds).**
+The owner-approved Rank 2 — a LEARNED dorsal/PPC-style where→action read-out, re-sourced from the IMAGE salience offset (position-preserving, no coordinates), taught by the innate SC reflex (Rank 1) then weaned — **durably consolidates a self-sufficient vision-navigation mapping on all 6 seeds** (single-goal post-wean ≤4.57 every seed, none collapsing to the position-invariant IT path's ~6.1) — **at SEED-VARIABLE precision** (6-seed mean 3.4; near the reflex's single-goal ~2.0 on the best seeds, ~3.3–4.6 on the rest). It is self-sufficient AFTER the reflex teacher is gone — the durable-consolidation property the position-invariant IT path could not achieve — though it reaches near-reflex precision only on some seeds. **The supervised motor-teacher I added to tighten it is an HONEST NEGATIVE: its apparent seed-42 win (3.93→3.30) was a single-seed outlier artifact, refuted at multi-seed (teacher mean 2.96 ≈ plain 2.93; the teacher HURTS the well-consolidated seeds).**
 
 ## The honest correction (why the seed-42 teacher result did not hold)
 
@@ -51,9 +51,12 @@ The plain learned-from-vision circuit is a **strong perception biologization**: 
 
 ## Results (multi-seed — appended as runs land)
 
-### Single-goal post-wean, plain R2 (the durable-consolidation result)
-- 3-seed (42/43/44): **3.93 / 2.25 / 2.60, mean 2.93** (2/3 near-reflex ≤2.7; seed 42 outlier).
-- 6-seed (adds 100/101/102): _IN FLIGHT (`bps4yocgm`); appended on completion._
+### Single-goal post-wean, plain R2 (the durable-consolidation result) — 6-SEED
+| seed | 42 | 43 | 44 | 100 | 101 | 102 | mean |
+|---|---|---|---|---|---|---|---|
+| post-wean | 3.93 | 2.25 | 2.60 | 3.28 | 3.96 | 4.57 | **3.43** |
+
+**Durable on all 6 (every seed ≤4.57, none collapses to the IT floor ~6.1) — but seed-variable precision** (2/6 near-reflex ≤2.7; the rest ~3.3–4.6). Honest note: my 3-seed read (42/43/44, mean 2.93) was again partly seed-lucky — it included the two best seeds (43/44). The 6-seed truth: the learned circuit reliably *consolidates and avoids collapse* (clearly beating IT) but reaches *near-reflex precision only on some seeds*. This is the durable-but-seed-variable honest result; per the reasonable-budget gate it is NOT ground further (the variability is a consolidation-quality property, not a tuning bug the simple levers fix — more teaching plateaued, the teacher is a non-robust crutch).
 
 ### Multi-goal generalization (does the learned goal-agnostic map handle NEW goals post-wean?)
 - _IN FLIGHT (`--goal-schedule generalize`: train on one goal through the wean, then 3 NEW goals with the reflex OFF). The position-preserving `(dx,dy)→action` code predicts the learned map navigates to goals it was never taught on. Appended on completion._
