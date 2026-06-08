@@ -520,6 +520,26 @@ PRESETS: dict[str, list[str]] = {
         "--progress-print-interval", "1",
         "--trial-sleep-ms", "30",
     ],
+    # Rank 2 generalization (frontend-revamp live-monitor + 6-seed verdict,
+    # 2026-06-08): biologized flagship + an innate superior-colliculus orienting
+    # reflex that TEACHES a learned-from-vision (dx,dy)->action map, then weans
+    # off, tested on 3 NEW non-corner goals (the generalize2 schedule). 6000
+    # steps. Used for the live-monitored Rank 2 extension (seeds 100/101/102).
+    "rank2_generalize2": [
+        "--moving-goal", "--goal-schedule", "generalize2", "--deterministic",
+        "--enable-msn-lateral-inhibition",
+        "--enable-d1-d2-asymmetry", "--enable-striatal-pv-fsi",
+        "--enable-cluster-a-closed-loop", "--enable-cluster-e-topography",
+        "--enable-dlpfc-wm", "--enable-pfc-nmda",
+        "--enable-visual-cortex", "--visual-cortex-action-warmup-steps", "600",
+        "--genuine-thal-disinhibition", "--genuine-gpi-tonic-pa", "1300",
+        "--genuine-thal-tonic-pa", "750",
+        "--readout-source", "spiking_wta", "--urgency-max-pa", "180",
+        "--heuristic-strength", "0", "--sc-orienting-reflex",
+        "--sc-reflex-wean-start", "2000", "--sc-reflex-wean-steps", "1000",
+        "--learned-perception", "--learned-perception-from-vision",
+        "--grid-size", "8", "--n-steps", "6000",
+    ],
     # ─── 2026-05-02 Text I/O presets (use research.runners.text_eval_embodied) ──
     # text_io_v2_baseline — current best W→A breakthrough.
     # 28.5% W→A across 6 seeds (n=600, p=0.027 vs chance). Hebbian off,
