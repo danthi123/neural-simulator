@@ -1,0 +1,258 @@
+{
+  "n_seeds": 3,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "regime": "ignite",
+  "gate_CONDUCTS_count": 0,
+  "gate_HIGH_RATE_count": 0,
+  "gate_DISTINCT_count": 3,
+  "gate_STABLE_count": 0,
+  "gate_SENSOR_DRIVEN_count": 3,
+  "all_pass_count": 0,
+  "ca1_diff_location_cosine": {
+    "mean": 0.0,
+    "min": 0.0,
+    "max": 0.0,
+    "values": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "ca1_same_location_cosine": {
+    "mean": 0.0,
+    "min": 0.0,
+    "max": 0.0,
+    "values": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "ca1_spk_per_step": {
+    "mean": 0.0,
+    "min": 0.0,
+    "max": 0.0,
+    "values": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "ca3_spk_per_step": {
+    "mean": 66.6667,
+    "min": 0.0,
+    "max": 200.0,
+    "values": [
+      0.0,
+      200.0,
+      0.0
+    ]
+  },
+  "msn_max_rate_hz": {
+    "mean": 0.0,
+    "min": 0.0,
+    "max": 0.0,
+    "values": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "msn_mean_effective_drive_pA": {
+    "mean": 0.0,
+    "min": 0.0,
+    "max": 0.0,
+    "values": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "verdict": "NEGATIVE",
+  "per_seed": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "regime": "ignite",
+      "n_neurons": 2060,
+      "n_synapses": 442918,
+      "input_pattern_overlap": 0.4913,
+      "ca1_active_per_location": {
+        "near": 0.0,
+        "far_a": 0.0,
+        "far_b": 0.0,
+        "center": 0.0,
+        "q1": 0.0,
+        "q2": 0.0
+      },
+      "ca1_spk_per_location": {
+        "near": 0.0,
+        "far_a": 0.0,
+        "far_b": 0.0,
+        "center": 0.0,
+        "q1": 0.0,
+        "q2": 0.0
+      },
+      "ca3_spk_per_location": {
+        "near": 0.0,
+        "far_a": 0.0,
+        "far_b": 0.0,
+        "center": 0.0,
+        "q1": 0.0,
+        "q2": 0.0
+      },
+      "mean_ca1_active": 0.0,
+      "mean_ca1_spk_per_step": 0.0,
+      "mean_ca3_spk_per_step": 0.0,
+      "msn_rate_hz_per_location": {
+        "near": 0.0,
+        "far_a": 0.0,
+        "far_b": 0.0,
+        "center": 0.0,
+        "q1": 0.0,
+        "q2": 0.0
+      },
+      "msn_max_rate_hz": 0.0,
+      "msn_mean_effective_drive_pA": 0.0,
+      "msn_rheobase_pA_ref": 420.0,
+      "ca1_mean_diff_location_cosine": 0.0,
+      "ca1_mean_same_location_cosine": 0.0,
+      "ablation_ca1_active": 0.0,
+      "ablation_ca1_cosine_vs_true": 0.0,
+      "gate_CONDUCTS": false,
+      "gate_HIGH_RATE": false,
+      "gate_DISTINCT": true,
+      "gate_STABLE": false,
+      "gate_SENSOR_DRIVEN": true,
+      "all_pass": false,
+      "position_leak_driven_regions": [
+        "landmark_sensors"
+      ],
+      "total_seconds": 26.8
+    },
+    {
+      "seed": 43,
+      "backend": "cupy",
+      "regime": "ignite",
+      "n_neurons": 2060,
+      "n_synapses": 442533,
+      "input_pattern_overlap": 0.4913,
+      "ca1_active_per_location": {
+        "near": 0.0,
+        "far_a": 0.0,
+        "far_b": 0.0,
+        "center": 0.0,
+        "q1": 0.0,
+        "q2": 0.0
+      },
+      "ca1_spk_per_location": {
+        "near": 0.0,
+        "far_a": 0.0,
+        "far_b": 0.0,
+        "center": 0.0,
+        "q1": 0.0,
+        "q2": 0.0
+      },
+      "ca3_spk_per_location": {
+        "near": 200.0,
+        "far_a": 200.0,
+        "far_b": 200.0,
+        "center": 200.0,
+        "q1": 200.0,
+        "q2": 200.0
+      },
+      "mean_ca1_active": 0.0,
+      "mean_ca1_spk_per_step": 0.0,
+      "mean_ca3_spk_per_step": 200.0,
+      "msn_rate_hz_per_location": {
+        "near": 0.0,
+        "far_a": 0.0,
+        "far_b": 0.0,
+        "center": 0.0,
+        "q1": 0.0,
+        "q2": 0.0
+      },
+      "msn_max_rate_hz": 0.0,
+      "msn_mean_effective_drive_pA": 0.0,
+      "msn_rheobase_pA_ref": 420.0,
+      "ca1_mean_diff_location_cosine": 0.0,
+      "ca1_mean_same_location_cosine": 0.0,
+      "ablation_ca1_active": 0.0,
+      "ablation_ca1_cosine_vs_true": 0.0,
+      "gate_CONDUCTS": false,
+      "gate_HIGH_RATE": false,
+      "gate_DISTINCT": true,
+      "gate_STABLE": false,
+      "gate_SENSOR_DRIVEN": true,
+      "all_pass": false,
+      "position_leak_driven_regions": [
+        "landmark_sensors"
+      ],
+      "total_seconds": 31.5
+    },
+    {
+      "seed": 44,
+      "backend": "cupy",
+      "regime": "ignite",
+      "n_neurons": 2060,
+      "n_synapses": 442502,
+      "input_pattern_overlap": 0.4913,
+      "ca1_active_per_location": {
+        "near": 0.0,
+        "far_a": 0.0,
+        "far_b": 0.0,
+        "center": 0.0,
+        "q1": 0.0,
+        "q2": 0.0
+      },
+      "ca1_spk_per_location": {
+        "near": 0.0,
+        "far_a": 0.0,
+        "far_b": 0.0,
+        "center": 0.0,
+        "q1": 0.0,
+        "q2": 0.0
+      },
+      "ca3_spk_per_location": {
+        "near": 0.0,
+        "far_a": 0.0,
+        "far_b": 0.0,
+        "center": 0.0,
+        "q1": 0.0,
+        "q2": 0.0
+      },
+      "mean_ca1_active": 0.0,
+      "mean_ca1_spk_per_step": 0.0,
+      "mean_ca3_spk_per_step": 0.0,
+      "msn_rate_hz_per_location": {
+        "near": 0.0,
+        "far_a": 0.0,
+        "far_b": 0.0,
+        "center": 0.0,
+        "q1": 0.0,
+        "q2": 0.0
+      },
+      "msn_max_rate_hz": 0.0,
+      "msn_mean_effective_drive_pA": 0.0,
+      "msn_rheobase_pA_ref": 420.0,
+      "ca1_mean_diff_location_cosine": 0.0,
+      "ca1_mean_same_location_cosine": 0.0,
+      "ablation_ca1_active": 0.0,
+      "ablation_ca1_cosine_vs_true": 0.0,
+      "gate_CONDUCTS": false,
+      "gate_HIGH_RATE": false,
+      "gate_DISTINCT": true,
+      "gate_STABLE": false,
+      "gate_SENSOR_DRIVEN": true,
+      "all_pass": false,
+      "position_leak_driven_regions": [
+        "landmark_sensors"
+      ],
+      "total_seconds": 25.9
+    }
+  ]
+}
