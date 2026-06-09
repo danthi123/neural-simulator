@@ -1,0 +1,208 @@
+{
+  "probe": "coincidence_volley_n9_derisk",
+  "design_doc": "2026-06-09-route-T-volley-synchronization-design.md",
+  "sync": "pacing",
+  "mode": "ablate-routeD",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "K_values": [
+    4.0
+  ],
+  "elapsed_seconds": 48.9,
+  "G_FIRE_pass_count": 0,
+  "G_VOLLEY_pass_count": 3,
+  "G_DISTINCT_pass_count": 0,
+  "G_SPARSE_pass_count": 0,
+  "n_runs": 3,
+  "per_run": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "sync": "pacing",
+      "mode": "ablate-routeD",
+      "coincidence": false,
+      "jitter_inputs": false,
+      "no_rhythm": false,
+      "k_threshold": 4.0,
+      "gamma_hz": 40.0,
+      "pace_amp_pA": 60.0,
+      "pace_duty": 0.12,
+      "driven_regions": [
+        "source(gamma-pulse:location-blind)",
+        "src_sensors"
+      ],
+      "pace_pulse_audit": [
+        [
+          "pulse_off",
+          0.0
+        ],
+        [
+          "pulse_on",
+          60.0
+        ]
+      ],
+      "source_sparsity_mean": 0.09333333333333334,
+      "source_active_rate_mean": 0.008333333333333333,
+      "source_diff_cos_mean": 0.12082531128856562,
+      "volley_per_step_max_ci_p90_mean": 1.3333333333333333,
+      "volley_per_step_max_ci_max": 4,
+      "target_max_cell_spk_per_step_mean": 0.0,
+      "target_diff_cos_mean": 0.0,
+      "per_loc_target_max_spk": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "per_loc_volley_max_ci": [
+        4,
+        3,
+        2,
+        2,
+        3,
+        4
+      ],
+      "per_loc_source_sparsity": [
+        0.135,
+        0.135,
+        0.075,
+        0.0575,
+        0.08,
+        0.0775
+      ],
+      "G_SPARSE": false,
+      "G_VOLLEY": true,
+      "G_FIRE": false,
+      "G_DISTINCT": false
+    },
+    {
+      "seed": 43,
+      "backend": "cupy",
+      "sync": "pacing",
+      "mode": "ablate-routeD",
+      "coincidence": false,
+      "jitter_inputs": false,
+      "no_rhythm": false,
+      "k_threshold": 4.0,
+      "gamma_hz": 40.0,
+      "pace_amp_pA": 60.0,
+      "pace_duty": 0.12,
+      "driven_regions": [
+        "source(gamma-pulse:location-blind)",
+        "src_sensors"
+      ],
+      "pace_pulse_audit": [
+        [
+          "pulse_off",
+          0.0
+        ],
+        [
+          "pulse_on",
+          60.0
+        ]
+      ],
+      "source_sparsity_mean": 0.08374999999999999,
+      "source_active_rate_mean": 0.008333333333333333,
+      "source_diff_cos_mean": 0.10364087663431626,
+      "volley_per_step_max_ci_p90_mean": 1.0,
+      "volley_per_step_max_ci_max": 4,
+      "target_max_cell_spk_per_step_mean": 0.0,
+      "target_diff_cos_mean": 0.0,
+      "per_loc_target_max_spk": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "per_loc_volley_max_ci": [
+        4,
+        4,
+        3,
+        2,
+        3,
+        3
+      ],
+      "per_loc_source_sparsity": [
+        0.1,
+        0.095,
+        0.0725,
+        0.0675,
+        0.0875,
+        0.08
+      ],
+      "G_SPARSE": false,
+      "G_VOLLEY": true,
+      "G_FIRE": false,
+      "G_DISTINCT": false
+    },
+    {
+      "seed": 44,
+      "backend": "cupy",
+      "sync": "pacing",
+      "mode": "ablate-routeD",
+      "coincidence": false,
+      "jitter_inputs": false,
+      "no_rhythm": false,
+      "k_threshold": 4.0,
+      "gamma_hz": 40.0,
+      "pace_amp_pA": 60.0,
+      "pace_duty": 0.12,
+      "driven_regions": [
+        "source(gamma-pulse:location-blind)",
+        "src_sensors"
+      ],
+      "pace_pulse_audit": [
+        [
+          "pulse_off",
+          0.0
+        ],
+        [
+          "pulse_on",
+          60.0
+        ]
+      ],
+      "source_sparsity_mean": 0.08458333333333334,
+      "source_active_rate_mean": 0.008333333333333333,
+      "source_diff_cos_mean": 0.14980479525780638,
+      "volley_per_step_max_ci_p90_mean": 1.0,
+      "volley_per_step_max_ci_max": 4,
+      "target_max_cell_spk_per_step_mean": 0.0,
+      "target_diff_cos_mean": 0.0,
+      "per_loc_target_max_spk": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "per_loc_volley_max_ci": [
+        4,
+        2,
+        4,
+        4,
+        3,
+        3
+      ],
+      "per_loc_source_sparsity": [
+        0.1,
+        0.075,
+        0.095,
+        0.0625,
+        0.0725,
+        0.1025
+      ],
+      "G_SPARSE": false,
+      "G_VOLLEY": true,
+      "G_FIRE": false,
+      "G_DISTINCT": false
+    }
+  ]
+}
