@@ -469,12 +469,13 @@ def _calibrate_da(bridge, cfg, snc_idx_gpu, tonic_pa, xp, n_steps=300):
     tf = frac / max(m, 1)
     cfg.neuromodulators[0].production_rules[0].threshold = float(tf)
     bridge.cp_external_input_current[:] = 0.0
-    # Calibration sanity (anti-cheat): the SNc tonic fraction MUST sit in a sane pacemaker band. A value
-    # near 0 means the SNc is being suppressed (the residual-GIRK bug) or under-driven; near the ceiling
-    # means saturation. Either mis-sets the DA threshold and silently breaks gate-2e -> flag it loudly.
-    if not (0.20 <= tf <= 0.60):
-        print(f"  [CALIB-WARN] SNc tonic_frac={tf:.4f} OUTSIDE sane band [0.20,0.60] @ {tonic_pa:.0f} pA "
-              f"-> DA threshold mis-set; gate-2e unreliable (residual-GIRK / drive issue).")
+    # Calibration sanity (anti-cheat): tf is a PER-STEP firing fraction at dt=1ms, so a healthy SNc tonic
+    # (~20-80 Hz on IZH2007_DOPAMINE at 180 pA -> 38.5 Hz -> 0.0385/step) sits in ~[0.015, 0.12]. A value
+    # near 0 means the SNc is being SUPPRESSED (the residual-GIRK bug) or under-driven; above ~0.12 means
+    # saturation. Either mis-sets the DA threshold and silently breaks gate-2e -> flag it loudly.
+    if not (0.015 <= tf <= 0.12):
+        print(f"  [CALIB-WARN] SNc tonic_frac={tf:.4f} OUTSIDE sane band [0.015,0.12] @ {tonic_pa:.0f} pA "
+              f"({tf*1000:.0f} Hz) -> DA threshold mis-set; gate-2e unreliable (residual-GIRK / drive issue).")
     return tf
 
 
@@ -534,7 +535,7 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
              fs_to_place_weight=8.0, fs_to_place_density=0.4,
              coincidence_k=4.0, coincidence_gain=2.0, coincidence_plateau=80.0, readout_plateau=None,
              stdp_w_max=40.0, coincidence_weighted_drive=False, readout_weighted_k=None,
-             gate_fs_during_selforg=False,
+             gate_fs_during_selforg=False, gate2e_gabab_scale=1.0,
              lesion=False, shuffle=False, ablate_sensors=False, jitter=False, verbose=True):
     log = print if verbose else (lambda *a, **k: None)
     from sim.backend import get_backend
@@ -810,9 +811,29 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
         n_cut = _lesion_gabab(bridge)
         log(f"  [seed {seed}] gate-2e lesion: zeroed {n_cut} GABA_B synapses")
 
+    # GATE-2e operating point (TEST-ONLY toggles; training keeps the validated config so the critic learns).
+    # TWO things must hold for a STATE-SPECIFIC arithmetic subtraction:
+    #   (1) the critic must fire DIFFERENTIALLY near>>far during the LEAD -> activate the WEIGHTED graded
+    #       plateau (the count form is weight-blind -> fires the SNc-inhibiting critic equally near+far ->
+    #       no differential GABA_B -> no gap). Mirrors the gate-2a/2b readout toggle.
+    #   (2) the GABA_B must be in the Eshel-2015 ARITHMETIC band, not the clamp: the DEFAULT critic->SNc
+    #       GIRK CLAMPS the SNc all-or-none (~-960 pA at a 20 Hz critic), so scale gabab_propagation_strength
+    #       DOWN (gate2e_gabab_scale) so the LEARNED V produces a CONSTANT downward SHIFT (predicted <
+    #       unpredicted, predicted > 0). 1.0 = the clamp baseline.
+    _saved_prop_g2e = float(bridge.core_config.gabab_propagation_strength)
+    _saved_wd_g2e = bool(getattr(bridge.core_config, "coincidence_weighted_drive", False))
+    _saved_kth_g2e = float(getattr(bridge.core_config, "coincidence_k_threshold", 4.0))
+    bridge.core_config.gabab_propagation_strength = _saved_prop_g2e * float(gate2e_gabab_scale)
+    if enable_volley and coincidence_weighted_drive:
+        bridge.core_config.coincidence_weighted_drive = True
+        if readout_weighted_k is not None:
+            bridge.core_config.coincidence_k_threshold = float(readout_weighted_k)
     pred_r = _snc_test(loc_sensor[near_name], snc_tonic_pa + snc_reward_gain)    # predicted (NEAR)
     far_for_gap = far_names[0]
     unpred_r = _snc_test(loc_sensor[far_for_gap], snc_tonic_pa + snc_reward_gain)  # unpredicted (FAR)
+    bridge.core_config.gabab_propagation_strength = _saved_prop_g2e
+    bridge.core_config.coincidence_weighted_drive = _saved_wd_g2e
+    bridge.core_config.coincidence_k_threshold = _saved_kth_g2e
     gap_ratio = unpred_r / max(pred_r, 1e-6)
     state_specific = bool((unpred_r > 1.30 * max(pred_r, 1e-6)) and (unpred_r >= 10.0))
 
@@ -951,6 +972,11 @@ def main():
                          "sparse DISTINCT fields, Stage-1 diff-cos ~0.064) and OPEN it for the volley read-out. "
                          "Targets the place-code OVERLAP (FS-PING gamma cycling during self-org densifies/blurs "
                          "the code to diff-cos 0.16-0.20), which trades G_GRADE against G_LTP.")
+    ap.add_argument("--gate2e-gabab-scale", type=float, default=1.0,
+                    help="Scale gabab_propagation_strength DOWN for the gate-2e SNc-gap TEST only (training "
+                         "keeps the default so the critic learns). The default GABA_B CLAMPS the SNc all-or-none "
+                         "(~-960 pA at 20 Hz critic); ~0.05-0.2 lands the Eshel-2015 ARITHMETIC band (predicted "
+                         ">0 AND unpredicted >1.3x predicted). 1.0 = the clamp baseline.")
     # controls
     ap.add_argument("--lesion", action="store_true", help="gate-2e: zero GABA_B mask -> gap must vanish")
     ap.add_argument("--shuffle", action="store_true",
@@ -1018,6 +1044,7 @@ def main():
         coincidence_weighted_drive=bool(args.weighted_drive),
         readout_weighted_k=float(args.readout_weighted_k),
         gate_fs_during_selforg=bool(args.gate_fs_during_selforg),
+        gate2e_gabab_scale=float(args.gate2e_gabab_scale),
         lesion=bool(args.lesion), shuffle=bool(args.shuffle), ablate_sensors=bool(args.ablate_sensors),
         jitter=bool(args.jitter))
 
