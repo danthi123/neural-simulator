@@ -111,6 +111,27 @@ class BrainRegion:
     # specifically; other cortical areas have less.
     enable_nmda: bool = False
 
+    # Per-region homeostasis enable (2026-06-08). Mirrors enable_nmda. When
+    # True, this region's neurons use the adapted cp_neuron_firing_thresholds
+    # (intrinsic homeostatic plasticity / excitability homeostasis, an EMA
+    # threshold update — deterministic, no randomness) as their spike
+    # threshold AND have their thresholds adapted each step, EVEN WHEN the
+    # global cfg.enable_homeostasis is False. When False (default), this
+    # region's neurons use the fixed cp_izh_vpeak threshold (unless global
+    # homeostasis is on, in which case the global path applies as before).
+    #
+    # Motivation: the deterministic-nav regime sets cfg.enable_homeostasis=False
+    # (g11_bg_runner.py:3340), which makes an under-active MSN-D1 value critic
+    # unable to fire from its place afferent — its KIR2-clamped rest-to-threshold
+    # gap (vr=-80, vt=-25) is unreachable through the afferent without a way to
+    # operate the cell in a firing range. Per-region homeostasis ON the critic
+    # ONLY restores firing (forensic: fire + learn + place-graded) while keeping
+    # the global determinism the nav eval relies on. Biology source: intrinsic
+    # homeostatic plasticity (Desai 1999; Turrigiano) is a real, deterministic,
+    # cell-autonomous mechanism letting a neuron operate in its firing range.
+    # See research/findings/2026-06-08-navfaithful-derisk-FAIL-homeostasis-confound.md.
+    enable_homeostasis: bool = False
+
     # Cluster C v2 (2026-04-29): per-action DA compartmentalization.
     # When a region is action-specific (cortex_X, str_D1_X, str_D2_X,
     # gpi_X, thal_X, motor_X, etc), this is the action index in [0, N-1]

@@ -244,6 +244,15 @@ class SimulationBridge:
         # When None, NMDA applies globally per cfg.enable_nmda — backward
         # compatible. Set in _build_per_neuron_nmda_mask after region init.
         self.cp_nmda_neuron_mask = None
+        # Per-region homeostasis mask (2026-06-08): bool per-neuron, True for
+        # neurons in regions with BrainRegion.enable_homeostasis=True, else
+        # False. When None (default — no region opts in), homeostasis applies
+        # globally per cfg.enable_homeostasis (byte-identical to legacy). When
+        # set, the spike-threshold SELECTION uses the adapted thresholds only
+        # for masked neurons (cp.where), and the threshold update also runs
+        # when the global flag is off. Built like cp_nmda_neuron_mask in
+        # _initialize_simulation_data after region init.
+        self.cp_homeostasis_neuron_mask = None
         # Graded LGN decorrelation (2026-06-06): per-region dense plastic lateral
         # matrix M (K x K) for the region flagged with BrainRegion.graded_lateral
         # when cfg.enable_graded_lateral is True. None (default) = no graded
@@ -1158,6 +1167,26 @@ class SimulationBridge:
                     self._log_console(
                         f"NMDA per-region mask: {len(nmda_regions)} regions enabled "
                         f"({sum(int(r.n_neurons) for r in nmda_regions)} neurons)",
+                    )
+
+                # Per-region homeostasis mask (2026-06-08): mirrors the NMDA
+                # mask above. Boolean per-neuron, True for neurons in regions
+                # with BrainRegion.enable_homeostasis=True. Built ONLY if >=1
+                # region opts in; otherwise left None so default configs are
+                # byte-identical (the per-region branch at the spike-threshold
+                # selection and the homeostasis-update gate are skipped).
+                homeo_regions = [r for r in self.region_manager.regions()
+                                 if getattr(r, "enable_homeostasis", False)]
+                if homeo_regions:
+                    homeo_mask = cp.zeros(n, dtype=cp.bool_)
+                    for r in homeo_regions:
+                        idx = list(self.region_manager.indices(r.name))
+                        if idx:
+                            homeo_mask[cp.asarray(idx, dtype=cp.int64)] = True
+                    self.cp_homeostasis_neuron_mask = homeo_mask
+                    self._log_console(
+                        f"Homeostasis per-region mask: {len(homeo_regions)} regions enabled "
+                        f"({sum(int(r.n_neurons) for r in homeo_regions)} neurons)",
                     )
 
             # GABA_B -> GIRK slow K+ inhibitory conductance (2026-06-08). The NMDA
@@ -5559,7 +5588,23 @@ class SimulationBridge:
                     total_input_current_pA, dt
                 )
                 not_in_refractory = (self.cp_refractory_timers <= 0)
-                current_spike_thresholds = self.cp_neuron_firing_thresholds if cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None else self.cp_izh_vpeak
+                # Spike-threshold selection (2026-06-08: 3-branch for per-region
+                # homeostasis). Branches 1 and 3 are byte-identical to the legacy
+                # 2-branch line when cp_homeostasis_neuron_mask is None (the
+                # default — no region opts in). Branch 2 only fires when the
+                # global flag is OFF but >=1 region set enable_homeostasis: it
+                # uses the adapted thresholds for masked neurons and the fixed
+                # vpeak for everyone else (so the global-off behavior is preserved
+                # outside the masked critic region). cp.where with a None mask is
+                # never reached.
+                if cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
+                    current_spike_thresholds = self.cp_neuron_firing_thresholds
+                elif self.cp_homeostasis_neuron_mask is not None and self.cp_neuron_firing_thresholds is not None:
+                    current_spike_thresholds = cp.where(
+                        self.cp_homeostasis_neuron_mask,
+                        self.cp_neuron_firing_thresholds, self.cp_izh_vpeak)
+                else:
+                    current_spike_thresholds = self.cp_izh_vpeak
                 fired_this_step = (v_new >= current_spike_thresholds) & not_in_refractory
 
                 if getattr(cfg, "fast_spike_reset", False):
@@ -6334,7 +6379,15 @@ class SimulationBridge:
             if _profiling: _backend_synchronize(); _prof['t_plast'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 5. Homeostatic Plasticity (gated separately from learning plasticity) ---
             # 5a. Adaptive thresholds (Izhikevich-specific)
-            if _homeostasis_gated and cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None:
+            # Run when global homeostasis is on OR when a per-region homeostasis
+            # mask is set (2026-06-08). In the per-region-only case the fused
+            # update runs over ALL neurons, but the spike-threshold selection
+            # (step 3 above) only USES the adapted thresholds for masked neurons;
+            # the adapted thresholds of unmasked neurons are computed-but-unused
+            # (harmless). When the global flag is on, behavior is unchanged.
+            _homeostasis_active = (cfg.enable_homeostasis
+                                   or self.cp_homeostasis_neuron_mask is not None)
+            if _homeostasis_gated and _homeostasis_active and self.cp_neuron_firing_thresholds is not None:
                 if cfg.neuron_model_type == NeuronModel.IZHIKEVICH.name:
                     self.cp_neuron_activity_ema, self.cp_neuron_firing_thresholds = fused_homeostasis_update(
                         self.cp_neuron_activity_ema, fired_this_step.astype(cp.float32),
@@ -6350,8 +6403,13 @@ class SimulationBridge:
             # Multiplicatively scales excitatory synaptic weights to maintain target firing rate.
             # scale_factor = 1 + rate * (target - actual_ema) per postsynaptic neuron
             if _homeostasis_gated and cfg.enable_synaptic_scaling and self.cp_connections is not None and self.cp_connections.nnz > 0:
-                # Update EMA if not already done by threshold homeostasis
-                if not (cfg.enable_homeostasis and self.cp_neuron_firing_thresholds is not None):
+                # Update EMA if not already done by threshold homeostasis.
+                # _homeostasis_active reduces to cfg.enable_homeostasis when no
+                # per-region mask is set, so this is byte-identical to the legacy
+                # `not (cfg.enable_homeostasis and ...)` guard in default configs;
+                # with a per-region mask it correctly avoids double-updating the
+                # EMA (the threshold update at 5a already ran over all neurons).
+                if not (_homeostasis_active and self.cp_neuron_firing_thresholds is not None):
                     self.cp_neuron_activity_ema = (1.0 - cfg.homeostasis_ema_alpha) * self.cp_neuron_activity_ema + \
                                                   cfg.homeostasis_ema_alpha * fired_this_step.astype(cp.float32)
                 # Compute per-neuron scaling factor based on firing rate error
