@@ -33,14 +33,40 @@ ANTI-CHEATS (each must behave consistently with an honest result):
   - CuPy regime: backend=="cupy" (numpy disqualified per the membrane-divergence root-cause); deterministic
     knobs OFF; no per-region homeostasis on CA3/CA1/MSN. Hard-asserted.
 
-STATUS: STAGED for the post-byte-review de-risk. The full multi-seed de-risk is NOT run here. A 1-seed
---smoke ONLY confirms the harness executes (clearly labelled a SMOKE, not a result).
+HARNESS-BUG FIX (2026-06-09, the DIRECT-CA3 route): the original 0/3 was a SILENT-CA3 ARTIFACT — the
+harness drove CA3 ONLY through the trisynaptic feedforward landmark_sensors->ec->dg->ca3, which does NOT
+conduct at probe scale (the EC fire-vs-select tension + DG-FFI kills the sparse mossy fan-in -> CA3 silent;
+documented in 2026-06-09-C1-trisynaptic-ca1-place-code.md). CA3 never fired -> the nmda_slow recurrent had
+nothing to store -> the protected edit was never actually tested (every metric was exactly 0.0). FIX:
+`--direct-ca3` (default ON) adds a FIXED direct landmark_sensors->ca3 AMPA detonator (the validated Stage-1
+single-hop competitive place mechanism, 2026-06-09-place-code-selforg-stage1-derisk.md) so CA3 reliably
+fires a sparse distinct ensemble per location; the ca3->ca3 recurrent stays routed nmda_slow (the protected
+edit) for the graded sustain + autoassociative storage. An INSTRUMENTATION GUARD now measures CA3 firing
+DURING storage and HARD-ASSERTS it > 0 (catches a silent-CA3 run immediately, not after the fact). The
+`--no-direct-ca3` control reproduces the original silent-CA3 bug (the guard then fires the AssertionError).
+
+RESULT (2026-06-09, CuPy, 3 seeds, BOTH operating points + recurrent-ablation anti-cheat): NEGATIVE — the
+fire-vs-grade wall is irreducible. At the DISTINCT feedforward point (intensity 450, w 20): G1/G2/G3/G5 PASS
+(CA3 distinct 0.13-0.26, sparse ~5%) but CA1 fires 0.00 spk/step -> G4 FAILS (no MSN), and the recurrent-
+ablation anti-cheat shows the recurrent contributes ~0% there (too few cells co-fire to store a basin). At
+the DENSE point (intensity 900, w 40): G4 PASSES (MSN 21-28 Hz, 372-453 pA) but G1 FAILS (CA3 0.68-0.72,
+position-blind) and G5 FAILS (autonomous reverberation) — AND ablating the recurrent does NOT collapse G4/G6
+(they come from the FIXED feedforward, the recurrent only adds the position-blind reverberation). DISTINCT and
+HIGH-RATE are on opposite sides of a sharp boundary with no overlap; the nmda_slow recurrent narrows but does
+not close it. See 2026-06-09-learned-graded-ca3-derisk-RESULT.md.
 
 USAGE (MUST be cupy):
-  # post-byte-review full de-risk (3 seeds):
+  # full de-risk (3 seeds), distinct operating point (default):
   SIM_BACKEND=cupy python -m research.runners.learned_graded_ca3_derisk \
-      --seeds 42,43,44 --out research/findings/raw/_learned_graded_ca3_3seed.json
-  # 1-seed executes-without-error smoke (NOT a result):
+      --seeds 42,43,44 --out research/findings/raw/_learned_graded_ca3_directfix_3seed.json
+  # recurrent-ablation anti-cheat (does removing the learned recurrent collapse the graded sustain?):
+  SIM_BACKEND=cupy python -m research.runners.learned_graded_ca3_derisk --seeds 42,43,44 --ablate-recurrent
+  # the DENSE operating point (G4 fires, G1 fails — the other side of the bifurcation):
+  SIM_BACKEND=cupy python -m research.runners.learned_graded_ca3_derisk --seeds 42,43,44 \
+      --max-intensity 900 --lm-to-ca3-weight 40 --lm-to-ca3-density 0.5
+  # control: reproduce the original silent-CA3 harness bug (guard fires the AssertionError):
+  SIM_BACKEND=cupy python -m research.runners.learned_graded_ca3_derisk --seed 42 --no-direct-ca3
+  # 1-seed executes-without-error smoke:
   SIM_BACKEND=cupy python -m research.runners.learned_graded_ca3_derisk --smoke
 """
 from __future__ import annotations
@@ -72,7 +98,8 @@ def _build(seed, *, n_sensors, n_ec, n_dg, n_dg_pv_basket, n_ca3, n_ca1, n_ca3_i
            inh_to_ca3_weight, inh_to_ca3_density, ca3_to_ca1_weight, ca3_to_ca1_density,
            ec_to_ca1_weight, ec_to_ca1_density, ca1_to_msn_weight, ca1_to_msn_density,
            recurrent_exc_receptor="nmda_slow", nmda_recurrent_prop=0.05, nmda_recurrent_tau=100.0,
-           rec_stdp_w_max=6.0, enable_nmda=True, dt_ms=1.0):
+           rec_stdp_w_max=6.0, enable_nmda=True, dt_ms=1.0,
+           direct_ca3=True, lm_to_ca3_weight=40.0, lm_to_ca3_density=0.5, lm_to_ca3_jitter=0.6):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from sim.regions import BrainRegion, RegionPathway
@@ -141,6 +168,30 @@ def _build(seed, *, n_sensors, n_ec, n_dg, n_dg_pv_basket, n_ca3, n_ca1, n_ca3_i
         RegionPathway(from_region="ca1", to_region="msn_d1", density=float(ca1_to_msn_density),
                       weight_mean=float(ca1_to_msn_weight), weight_jitter=0.2, plastic=False),
     ]
+    # === DIRECT-CA3 single-hop afferent (the FIX for the silent multi-hop) ===
+    # The canonical EC->DG->CA3 trisynaptic feedforward does NOT conduct at probe scale (the
+    # EC fire-vs-select tension + DG-FFI kills the sparse mossy fan-in -> CA3 silent; documented
+    # in 2026-06-09-C1-trisynaptic-ca1-place-code.md and reproduced here as the 0.0-everything
+    # artifact). The Stage-1 SINGLE-HOP competitive place mechanism (landmark_sensors -> pool,
+    # plastic, threshold/ca3_inh-WTA) DID fire a sparse distinct-per-location code 3/3 on CuPy
+    # (2026-06-09-place-code-selforg-stage1-derisk.md). So we drive CA3 DIRECTLY with that same
+    # AMPA single-hop (mossy-equivalent detonator, brain-based-legal: the body's egocentric
+    # landmark sensors feed CA3 sparsely), and KEEP the ca3->ca3 recurrent routed nmda_slow (the
+    # protected edit) for the graded sustain + autoassociative storage. This makes the AMPA
+    # feedforward reliably fire a distinct sparse CA3 ensemble per location -> the cue the
+    # nmda_slow recurrent is FOR. (EC/DG remain wired; CA3 just no longer DEPENDS on them firing.)
+    # The direct afferent is FIXED (plastic=False): it is the mossy-detonator analog (sparse +
+    # powerful + relatively fixed in biology), and crucially it lets the global stdp_w_max stay LOW
+    # (the recurrent's runaway ceiling, Step A) WITHOUT the soft-bound collapsing this strong AMPA
+    # weight (the documented stdp_w_max gotcha). The position-specificity comes from the FIXED random
+    # sparse projection + CA3's threshold/ca3_inh WTA (exactly the Stage-1 mechanism's source of
+    # distinctness); the ONLY learned structure is the ca3->ca3 recurrent under test -> the cleanest
+    # possible recurrent-ablation anti-cheat (the learned recurrent is the sole differentiator).
+    if direct_ca3:
+        pathways.append(
+            RegionPathway(from_region="landmark_sensors", to_region="ca3",
+                          density=float(lm_to_ca3_density), weight_mean=float(lm_to_ca3_weight),
+                          weight_jitter=float(lm_to_ca3_jitter), plastic=False))
 
     cfg = CoreSimConfig()
     cfg.seed = int(seed); cfg.heterogeneity_seed = int(seed); cfg.ou_seed = int(seed)
@@ -234,15 +285,31 @@ def _measure(bridge, xp, sensor_idx, region_idx_map, sensor_act, record_steps, a
 
 
 # ── Step A: the LEARNED-RECURRENT cue-clamped storage protocol ──────────
+def _step_clamped_measure_ca3(bridge, xp, n, ca3_arr):
+    """Step `n` steps and accumulate CA3 spike-count + count steps (the storage-time CA3 firing
+    instrumentation). Returns (total_ca3_spikes, n_steps). The INSTRUMENTATION GUARD source: a
+    silent-CA3 run (the harness-bug artifact) is caught immediately if this returns ~0."""
+    total = 0.0
+    for _ in range(n):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+        bridge.runtime_state.current_time_ms = (
+            bridge.runtime_state.current_time_step * bridge.core_config.dt_ms)
+        total += float(xp.sum(bridge.cp_firing_states[ca3_arr]))
+    return total, n
+
+
 def _store_recurrent(bridge, xp, sensor_idx, loc_sensor, loc_names, *, ff_gates, rec_gate,
-                     store_passes, store_settle_steps, store_clamp_steps, rng):
-    """For each distinct location, CUE-CLAMP the CA3 ensemble (the landmark cue drives the trisynaptic loop;
-    the dg->ca3 mossy detonator fires the ensemble) with the recurrent STDP gate OPEN, so the recurrent
-    Hebbian-learns THAT ensemble as its own attractor (Treves-Rolls). The mossy afferent is the brain's own
-    legitimate teacher -> brain-based-legal (NO host pattern into CA3). Feedforward gates are OPEN during a
-    warm-up phase (so the loop conducts the cue), then the recurrent is stored per-location, interleaved."""
-    # Warm-up: open feedforward gates, walk locations so EC/DG/CA3 feedforward routing forms (the cue must
-    # reach CA3 before the recurrent can learn the mossy-driven ensemble). Recurrent gate CLOSED here.
+                     store_passes, store_settle_steps, store_clamp_steps, rng, ca3_idx):
+    """For each distinct location, CUE-CLAMP the CA3 ensemble (the landmark cue drives CA3 — with the
+    direct-CA3 fix, via the FIXED landmark_sensors->ca3 detonator; the dg->ca3 mossy stays wired but the
+    multi-hop need not conduct) with the recurrent STDP gate OPEN, so the recurrent Hebbian-learns THAT
+    ensemble as its own attractor (Treves-Rolls). The afferent is the brain's own legitimate teacher ->
+    brain-based-legal (NO host pattern into CA3). Returns the CA3 spk/step DURING the store-phase clamp
+    windows (the instrumentation guard: MUST be > 0, else CA3 is silent and the recurrent stored nothing)."""
+    ca3_arr = xp.asarray(ca3_idx, dtype=xp.int64)
+    # Warm-up: open feedforward gates, walk locations so any plastic feedforward routing forms. Recurrent
+    # gate CLOSED here. (With the FIXED direct-CA3 afferent this warm-up is mostly vestigial, but harmless.)
     for g in ff_gates:
         try: bridge.set_plasticity_gate(g, 1.0)
         except Exception: pass
@@ -257,12 +324,15 @@ def _store_recurrent(bridge, xp, sensor_idx, loc_sensor, loc_names, *, ff_gates,
                 xp.asarray(loc_sensor[name], dtype=xp.float32)
             _step(bridge, store_clamp_steps)
     # Store phase: FREEZE feedforward (the ensembles are fixed), OPEN the recurrent gate, cue-clamp each
-    # location again so the recurrent learns to reproduce each fixed mossy-driven ensemble.
+    # location again so the recurrent learns to reproduce each fixed afferent-driven ensemble. INSTRUMENT
+    # CA3 firing across the clamp windows here (this is the rate that MUST be > 0).
     for g in ff_gates:
         try: bridge.set_plasticity_gate(g, 0.0)
         except Exception: pass
     try: bridge.set_plasticity_gate(rec_gate, 1.0)
     except Exception: pass
+    ca3_spk_total = 0.0
+    ca3_step_total = 0
     for _p in range(store_passes):
         order = list(loc_names); rng.shuffle(order)
         for name in order:
@@ -270,11 +340,14 @@ def _store_recurrent(bridge, xp, sensor_idx, loc_sensor, loc_names, *, ff_gates,
             _step(bridge, store_settle_steps)
             bridge.cp_external_input_current[xp.asarray(sensor_idx, dtype=xp.int64)] = \
                 xp.asarray(loc_sensor[name], dtype=xp.float32)
-            _step(bridge, store_clamp_steps)
+            s, ns = _step_clamped_measure_ca3(bridge, xp, store_clamp_steps, ca3_arr)
+            ca3_spk_total += s
+            ca3_step_total += ns
     # Freeze everything for recall measurement.
     try: bridge.set_plasticity_gate(rec_gate, 0.0)
     except Exception: pass
     bridge.cp_external_input_current[:] = 0.0
+    return ca3_spk_total / max(ca3_step_total, 1)  # CA3 spk/step during storage (the guard)
 
 
 def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, max_intensity, falloff, dist_sigma,
@@ -283,6 +356,8 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, max_intensity, fa
              lm_to_ec_weight, lm_to_ec_density, ec_to_dg_weight, dg_to_ca3_weight, dg_to_ca3_density,
              ca3_rec_weight, ca3_rec_density, inh_to_ca3_weight, ca1_to_msn_weight, ca1_to_msn_density,
              nmda_recurrent_prop, nmda_recurrent_tau, rec_stdp_w_max, msn_rheobase_pA,
+             direct_ca3=True, lm_to_ca3_weight=40.0, lm_to_ca3_density=0.5, lm_to_ca3_jitter=0.6,
+             ca3_to_ca1_weight=25.0,
              graded_lo_hz=10.0, graded_hi_hz=40.0, ablate_recurrent=False, verbose=True):
     log = print if verbose else (lambda *a, **k: None)
     from sim.backend import get_backend
@@ -301,10 +376,12 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, max_intensity, fa
         ca3_rec_weight=ca3_rec_weight, ca3_rec_density=ca3_rec_density,
         ca3_to_inh_weight=8.0, ca3_to_inh_density=0.30,
         inh_to_ca3_weight=inh_to_ca3_weight, inh_to_ca3_density=0.60,
-        ca3_to_ca1_weight=6.0, ca3_to_ca1_density=0.30, ec_to_ca1_weight=3.0, ec_to_ca1_density=0.30,
+        ca3_to_ca1_weight=float(ca3_to_ca1_weight), ca3_to_ca1_density=0.30, ec_to_ca1_weight=3.0, ec_to_ca1_density=0.30,
         ca1_to_msn_weight=ca1_to_msn_weight, ca1_to_msn_density=ca1_to_msn_density,
         recurrent_exc_receptor="nmda_slow", nmda_recurrent_prop=nmda_recurrent_prop,
-        nmda_recurrent_tau=nmda_recurrent_tau, rec_stdp_w_max=rec_stdp_w_max, enable_nmda=True)
+        nmda_recurrent_tau=nmda_recurrent_tau, rec_stdp_w_max=rec_stdp_w_max, enable_nmda=True,
+        direct_ca3=direct_ca3, lm_to_ca3_weight=lm_to_ca3_weight, lm_to_ca3_density=lm_to_ca3_density,
+        lm_to_ca3_jitter=lm_to_ca3_jitter)
     _assert_cupy_regime(cfg, backend_name)
     # confirm the protected edit is live (routed mask + slow-NMDA conductance allocated)
     routed = (getattr(bridge, "cp_nmda_recurrent_synapse_mask", None) is not None
@@ -343,9 +420,25 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, max_intensity, fa
     ff_gates = ("landmark_to_ec", "ec_to_dg", "dg_to_ca3", "ca3_to_ca1", "ec_to_ca1")
     rng = np.random.default_rng(seed)
     t_tr = time.time()
-    _store_recurrent(bridge, xp, sensor_idx, loc_sensor, loc_names, ff_gates=ff_gates,
-                     rec_gate="ca3_swr_burst", store_passes=store_passes,
-                     store_settle_steps=store_settle_steps, store_clamp_steps=store_clamp_steps, rng=rng)
+    ca3_storage_spk_step = _store_recurrent(
+        bridge, xp, sensor_idx, loc_sensor, loc_names, ff_gates=ff_gates,
+        rec_gate="ca3_swr_burst", store_passes=store_passes,
+        store_settle_steps=store_settle_steps, store_clamp_steps=store_clamp_steps, rng=rng,
+        ca3_idx=region_idx_map["ca3"])
+    # === INSTRUMENTATION GUARD (the harness-bug catcher) ===
+    # CA3 MUST fire during storage, else the recurrent stored nothing (the silent-CA3 artifact that
+    # made the 0/3 a harness bug, not a mechanism failure). Print it ALWAYS; hard-assert > 0 when the
+    # recurrent was NOT ablated (an ablated run legitimately drops the recurrent contribution but the
+    # FIXED feedforward still fires CA3, so it stays > 0 anyway — but we only HARD-fail on the real run).
+    n_ca3_eff0 = len(region_idx_map["ca3"])
+    ca3_storage_hz = ca3_storage_spk_step / max(n_ca3_eff0, 1) * (1000.0 / cfg.dt_ms)
+    log(f"  [seed {seed}] *** CA3-FIRES-DURING-STORAGE GUARD: {ca3_storage_spk_step:.2f} spk/step "
+        f"(~{ca3_storage_hz:.1f} Hz pop, {n_ca3_eff0} cells) ***")
+    if not ablate_recurrent:
+        assert ca3_storage_spk_step > 0.0, (
+            f"SILENT-CA3 ARTIFACT: CA3 fired {ca3_storage_spk_step:.3f} spk/step during storage — the "
+            f"recurrent had nothing to store (the direct-CA3 afferent is not firing CA3). This is the "
+            f"harness bug, NOT a result. Raise lm_to_ca3_weight / lm_to_ca3_density.")
     # Anti-cheat: ablate the LEARNED recurrent (zero ca3->ca3 weights) to prove the result needs it.
     if ablate_recurrent:
         _zero_recurrent(bridge, xp, rm)
@@ -420,6 +513,9 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, max_intensity, fa
         "seed": seed, "backend": backend_name,
         "n_neurons": int(cfg.num_neurons), "n_synapses": int(bridge.cp_connections.nnz),
         "nmda_slow_routed": bool(routed), "ablate_recurrent": bool(ablate_recurrent),
+        "direct_ca3": bool(direct_ca3),
+        "ca3_storage_spk_per_step": round(ca3_storage_spk_step, 3),
+        "ca3_storage_pop_hz": round(ca3_storage_hz, 2),
         "input_pattern_overlap": round(input_overlap, 4),
         "ca3_mean_diff_location_cosine": round(mean_ca3_diff, 4),
         "ca3_mean_same_location_cosine": round(mean_same, 4),
@@ -492,7 +588,9 @@ def main() -> int:
     ap.add_argument("--n-dist", type=int, default=8)
     ap.add_argument("--bexp", type=float, default=4.0)
     ap.add_argument("--dist-sigma", type=float, default=4.0)
-    ap.add_argument("--max-intensity", type=float, default=900.0)
+    ap.add_argument("--max-intensity", type=float, default=450.0,
+                    help="sensor render peak pA. 450 = the Stage-1 sparse-distinct operating point (CA3 ~5%%, "
+                         "diff-cos ~0.13). Higher (e.g. 900) drives CA3 dense -> fires CA1/MSN but position-blind.")
     ap.add_argument("--falloff", type=float, default=0.03)
     ap.add_argument("--n-ec", type=int, default=200)
     ap.add_argument("--n-dg", type=int, default=800)
@@ -506,17 +604,34 @@ def main() -> int:
     ap.add_argument("--ec-to-dg-weight", type=float, default=30.0)
     ap.add_argument("--dg-to-ca3-weight", type=float, default=40.0)
     ap.add_argument("--dg-to-ca3-density", type=float, default=0.10)
+    # === DIRECT-CA3 single-hop afferent (the FIX for the silent multi-hop) ===
+    ap.add_argument("--no-direct-ca3", dest="direct_ca3", action="store_false",
+                    help="DISABLE the direct landmark_sensors->ca3 afferent (revert to the silent multi-hop; "
+                         "reproduces the harness-bug 0/3 artifact). Default: direct-CA3 ON.")
+    ap.set_defaults(direct_ca3=True)
+    ap.add_argument("--lm-to-ca3-weight", type=float, default=20.0,
+                    help="FIXED direct landmark_sensors->ca3 detonator weight (mossy analog; the Stage-1 "
+                         "single-hop mechanism that reliably fires a sparse distinct CA3 ensemble). 20 @ "
+                         "intensity 450 -> CA3 ~5%% sparse + distinct (diff-cos ~0.13).")
+    ap.add_argument("--lm-to-ca3-density", type=float, default=0.3)
+    ap.add_argument("--lm-to-ca3-jitter", type=float, default=0.6)
     # === the learned-graded recurrent knobs ===
     ap.add_argument("--ca3-rec-weight", type=float, default=0.0,
                     help="ZERO-INIT recurrent (basins grown by storage). >0 = a small prior (not the default).")
     ap.add_argument("--ca3-rec-density", type=float, default=0.30)
     ap.add_argument("--inh-to-ca3-weight", type=float, default=14.0)
-    ap.add_argument("--nmda-recurrent-prop", type=float, default=0.05,
-                    help="slow-NMDA recurrent per-spike conductance increment scale")
+    ap.add_argument("--nmda-recurrent-prop", type=float, default=0.3,
+                    help="slow-NMDA recurrent per-spike conductance increment scale (0.3 = the recurrent's "
+                         "best-shot amplification at the distinct point; up to ~70%% of the recall rate)")
     ap.add_argument("--nmda-recurrent-tau", type=float, default=100.0, help="slow-NMDA recurrent decay (ms)")
-    ap.add_argument("--rec-stdp-w-max", type=float, default=6.0,
-                    help="low STDP ceiling so a learned basin can't overgrow into runaway (Step A)")
-    ap.add_argument("--ca1-to-msn-weight", type=float, default=30.0)
+    ap.add_argument("--rec-stdp-w-max", type=float, default=12.0,
+                    help="STDP ceiling for the learned recurrent basin (Step A; 12 lets the basin grow "
+                         "without tipping the Izhikevich recurrent into the 200-spk/step runaway)")
+    ap.add_argument("--ca3-to-ca1-weight", type=float, default=25.0,
+                    help="Schaffer CA3->CA1 weight (CA1 must fire enough to drive the MSN — G4)")
+    ap.add_argument("--ca1-to-msn-weight", type=float, default=150.0,
+                    help="CA1->MSN-D1 convergent (hippocampal->ventral-striatal) projection; must clear "
+                         "the ~420 pA MSN rheobase (G4)")
     ap.add_argument("--ca1-to-msn-density", type=float, default=0.40)
     ap.add_argument("--msn-rheobase-pA", type=float, default=420.0)
     ap.add_argument("--store-passes", type=int, default=12)
@@ -566,21 +681,37 @@ def main() -> int:
             ca1_to_msn_weight=float(args.ca1_to_msn_weight), ca1_to_msn_density=float(args.ca1_to_msn_density),
             nmda_recurrent_prop=float(args.nmda_recurrent_prop), nmda_recurrent_tau=float(args.nmda_recurrent_tau),
             rec_stdp_w_max=float(args.rec_stdp_w_max), msn_rheobase_pA=float(args.msn_rheobase_pA),
+            direct_ca3=bool(args.direct_ca3), lm_to_ca3_weight=float(args.lm_to_ca3_weight),
+            lm_to_ca3_density=float(args.lm_to_ca3_density), lm_to_ca3_jitter=float(args.lm_to_ca3_jitter),
+            ca3_to_ca1_weight=float(args.ca3_to_ca1_weight),
             ablate_recurrent=bool(args.ablate_recurrent),
             **kw))
 
     n_pass = sum(1 for r in per_seed if r["all_pass"])
+    def _gc(key):
+        return sum(1 for r in per_seed if r.get(key))
+    gate_counts = {g: _gc("gate_" + g) for g in
+                   ("G1_DISTINCT", "G2_GRADED", "G3_STABLE", "G4_HIGH_RATE", "G5_SENSOR_DRIVEN", "G6_COMPLETION")}
+    verdict = ("PASS" if n_pass == len(seeds) and len(seeds) > 0 else
+               "PARTIAL" if any(gate_counts.values()) else "NEGATIVE")
     summary = {
         "harness": "learned_graded_ca3_derisk",
         "mode": ("smoke" if args.smoke else "derisk"),
         "n_seeds": len(seeds), "n_all_pass": n_pass,
+        "ablate_recurrent": bool(args.ablate_recurrent),
+        "gate_pass_counts": gate_counts,
+        "verdict": verdict,
         "per_seed": per_seed,
     }
     if args.smoke:
         print("\nSMOKE complete — harness executed without error. This is NOT a de-risk result; the full "
               "multi-seed de-risk is post-byte-review.")
     else:
-        print(f"\nDE-RISK verdict: {n_pass}/{len(seeds)} seeds ALL_PASS (G1..G6).")
+        print(f"\nDE-RISK verdict: {n_pass}/{len(seeds)} seeds ALL_PASS (G1..G6).  gate counts: "
+              + "  ".join(f"{g}={c}/{len(seeds)}" for g, c in gate_counts.items()))
+        ca3st = [r.get("ca3_storage_spk_per_step", 0.0) for r in per_seed]
+        print(f"  CA3-fires-during-storage (the guard): {[round(x,2) for x in ca3st]} spk/step "
+              f"(>0 = fix live; silent-CA3 artifact would be 0.0)")
     if args.out:
         Path(os.path.dirname(args.out) or ".").mkdir(parents=True, exist_ok=True)
         with open(args.out, "w", encoding="utf-8") as f:
