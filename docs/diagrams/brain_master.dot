@@ -1,0 +1,127 @@
+// ============================================================================
+//  SIMULATED-BRAIN ARCHITECTURE — MASTER MAP  (as actually implemented)
+//  Source spec: research/findings/2026-06-09-brain-architecture-flowchart-spec.md
+//  Render:  dot -Tpng -Gdpi=150 brain_master.dot -o brain_master.png
+//           dot -Tsvg          brain_master.dot -o brain_master.svg
+//
+//  CLUSTER-LEVEL overview. Each box is one subsystem; the two exhaustive
+//  per-region graphs are brain_navigation.dot and brain_conversational.dot.
+//  The whole brain is ONE SimulationBridge engine assembled per-config from a
+//  declarative region/pathway grammar; "navigation" and "conversational" are
+//  two alternative configurations of that one substrate, NOT two brains.
+// ============================================================================
+digraph BrainMaster {
+    rankdir=TB;
+    newrank=true;
+    splines=spline;
+    nodesep=0.40;
+    ranksep=0.62;
+    bgcolor="white";
+    fontname="Helvetica";
+    labelloc="t";
+    fontsize=26;
+    label=<<B>Simulated-brain architecture — master map</B><BR/><FONT POINT-SIZE="13">as implemented · ONE SimulationBridge engine · two config-scoped supergroups (navigation | conversational) · honest faithful-vs-shortcut layer</FONT><BR/> >;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11.5, margin="0.16,0.10", penwidth=1.5];
+    edge [fontname="Helvetica", fontsize=9.5, color="#34495e", penwidth=1.4];
+
+    // ===== NODES ===========================================================
+    // Supergroup is conveyed by FILL: amber=navigation, gray=shared, blue=conversational
+    // -- navigation (left column) --
+    nav_in [label=<<B>Perception readouts</B>  (C7p)<BR/>place · goal · sensory · beacon · landmark<BR/><FONT POINT-SIZE="8.5">⚠ host-rendered codes (environment input)</FONT>>, fillcolor="#fdebd0", color="#ca6f1e"];
+    m1     [label=<<B>Sensorimotor cortex</B>  (C2)<BR/>cortex_N/E/S/W (×4) — M1 channels<BR/><FONT POINT-SIZE="8.5">⚠ labeled-line per-action split</FONT>>, fillcolor="#e8e1f2", color="#5b4a8a"];
+    bg     [label=<<B>Basal ganglia cascade</B>  (C3)<BR/>direct D1 ⊣ · indirect D2→GPe→STN<BR/>hyperdirect · PV-FSI · striosome (×4)<BR/><FONT POINT-SIZE="8.5"><B>action-selection heart · learning site</B></FONT>>, fillcolor="#f5cba7", color="#a04000"];
+    reward [label=<<B>Reward &amp; dopamine</B>  (C6)<BR/>striosome → <B>SNc</B> fires RPE δ=r−V<BR/>value critic V(s) ⊣<FONT COLOR="#7d3c98"><B>(GABA_B)</B></FONT>→ SNc<BR/><FONT POINT-SIZE="8.5">spiking actor-critic</FONT>>, fillcolor="#fdebd0", color="#b9770e"];
+    thal   [label=<<B>Thalamus + TRN</B>  (C4)<BR/>thal_X (×4) · reticular WTA<BR/><FONT POINT-SIZE="8.5">GPi silence releases the relay</FONT>>, fillcolor="#d0ece7", color="#148f77"];
+    sc     [label=<<B>Superior colliculus</B>  (C5)<BR/>accumulate (NMDA) → commit (×4)<BR/><FONT POINT-SIZE="8.5">Wang-2002 decision · all-or-none</FONT>>, fillcolor="#e8daef", color="#7d3c98"];
+    cb     [label=<<B>Cerebellum</B>  (C8)<BR/>mossy→granule→Purkinje ⊣ DCN<BR/><FONT POINT-SIZE="8.5">Marr-Albus-Ito · opt-in</FONT>>, fillcolor="#d0e0e3", color="#5499c7"];
+    wm_nav [label=<<B>dlPFC working memory</B>  (C9)<BR/>goal latch (NMDA)>, fillcolor="#d4e6f1", color="#2e86c1"];
+
+    // -- shared (center column) --
+    visual [label=<<B>Visual ventral stream</B>  (C1)<BR/>retina→V1→V2→IT<BR/><FONT POINT-SIZE="8.5">"what" object stream · opt-in</FONT>>, fillcolor="#cfe2f3", color="#3d6fb4"];
+    hippo  [label=<<B>Hippocampal formation</B>  (C7)<BR/>EC→DG ⊣ CA3 ⟲ →CA1<BR/><FONT POINT-SIZE="8.5">separation · completion · replay</FONT>>, fillcolor="#d9ead3", color="#6aa84f"];
+    lang_in[label=<<B>Language input</B>  (C11)<BR/>language_input<BR/><FONT POINT-SIZE="8.5">⚠ token embedding (host I/O)</FONT>>, fillcolor="#cfe2f3", color="#2986cc"];
+    motor  [label=<<B>Motor output</B>  (C10)<BR/>motor_N/E/S/W (×4)<BR/><FONT POINT-SIZE="8.5">the body acts on which pool fires</FONT>>, fillcolor="#f4cccc", color="#cc0000"];
+    lang_out[label=<<B>Language output</B>  (C11)<BR/>language_output<BR/><FONT POINT-SIZE="8.5">⚠ word readout (host I/O)</FONT>>, fillcolor="#cfe2f3", color="#2986cc"];
+
+    // -- conversational (right column) --
+    wernicke [label=<<B>Wernicke pools</B>  (C11)<BR/>comprehension · cross-pool WTA>, fillcolor="#d6eaf8", color="#2e86c1"];
+    concept  [label=<<B>Concept pools</B>  (C12)<BR/>noun · verb · adjective (×4 each)<BR/><FONT POINT-SIZE="8.5">Pulvermüller word ensembles</FONT>>, fillcolor="#d4e6f1", color="#5dade2"];
+    semantic [label=<<B>Semantic cortex (ATL)</B>  (C11)<BR/>sparse distributed concept store<BR/><FONT POINT-SIZE="8.5">plastic attractor · 320 concepts</FONT>>, fillcolor="#d6eaf8", color="#21618c"];
+    broca    [label=<<B>Broca</B>  (C11)<BR/>syntax · sentence WM>, fillcolor="#d6eaf8", color="#2e86c1"];
+    hub      [label=<<B>Multimodal hub (ATL)</B>  (C11)<BR/>auditory + visual convergence>, fillcolor="#d6eaf8", color="#2e86c1"];
+    wm_conv  [label=<<B>dlPFC verb WM</B>  (C9)<BR/>holds verb ~500 ms>, fillcolor="#d4e6f1", color="#2e86c1"];
+    speech   [label=<<B>motor_speech</B>  (C10)<BR/>articulation>, fillcolor="#f4cccc", color="#cc0000"];
+
+    // ===== RANK BANDS (horizontal layers) ==================================
+    { rank=same; nav_in;  visual; hippo; lang_in; }
+    { rank=same; m1;      wernicke; concept; }
+    { rank=same; bg;      reward;  semantic; }
+    { rank=same; thal;    broca;   hub; }
+    { rank=same; sc;      cb;      wm_conv; }
+    { rank=same; motor;   lang_out; speech; }
+
+    // ===== ARTERIES ========================================================
+    // -- navigation perception→action spine --
+    nav_in -> m1   [label="learned\npos→action"];
+    visual -> m1   [label="visual→action\n(gated)", color="#3d6fb4"];
+    m1     -> bg   [label="corticostriatal\n(DA-gated STDP)", penwidth=2.2];
+    bg     -> thal [label="GPi ⊣ thal\n(disinhibition)", arrowhead=tee, color="#922b21", penwidth=2.2];
+    thal   -> sc   [label="relay→accumulator"];
+    thal   -> motor[label="thal→motor", penwidth=2.0];
+    sc     -> motor[label="commit→act"];
+    cb     -> motor[label="DCN→motor", color="#5499c7"];
+    wm_nav -> m1   [label="WM bias", style=dashed];
+    hippo  -> nav_in [label="place readout", color="#6aa84f"];
+    wm_nav -> sc   [style=invis]; // column glue
+
+    // -- reward / dopamine loop --
+    bg     -> reward [label="striosome→SNc", arrowhead=tee, color="#922b21"];
+    reward -> bg     [label="DA bus gates\ncorticostriatal STDP", style=dotted, color="#e69138", arrowhead=odiamond, penwidth=2.4, fontcolor="#b9770e", constraint=false];
+
+    // -- conversational comprehend→produce --
+    lang_in  -> wernicke [label="phono→Wernicke"];
+    lang_in  -> concept  [label="word→pool"];
+    wernicke -> semantic [label="comprehend"];
+    concept  -> semantic [style=invis];
+    semantic -> broca    [label="meaning→syntax"];
+    semantic -> wernicke [label="produce", style=dashed, constraint=false];
+    broca    -> speech   [label="articulation"];
+    concept  -> lang_out [label="concept→word\n(A→W)", style=dashed];
+    semantic -> lang_out [label="naming", constraint=false];
+    visual   -> hub      [label="IT→hub", color="#3d6fb4"];
+    wernicke -> hub      [label="auditory", constraint=false];
+    hub      -> lang_out [label="recognition→naming"];
+    wm_conv  -> concept  [label="verb WM", style=dashed, constraint=false];
+
+    // -- hippocampal consolidation into cortex --
+    hippo  -> semantic [label="sleep-replay\nconsolidation", color="#6aa84f", constraint=false];
+    hippo  -> motor    [label="CA1→motor", color="#6aa84f", style=dashed, constraint=false];
+
+    // ===== LEGEND ==========================================================
+    subgraph cluster_legend {
+        label="";
+        style="rounded,filled"; color="#566573"; fillcolor="#fbfcfc"; margin=10;
+        leg [shape=plaintext, fillcolor="white", label=<
+          <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="3">
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>How to read this map — node fill = which config builds it</B></TD></TR>
+            <TR><TD ALIGN="RIGHT" BGCOLOR="#fdebd0"> </TD><TD ALIGN="LEFT">NAVIGATION  (build_bg_brain_regions)</TD></TR>
+            <TR><TD ALIGN="RIGHT" BGCOLOR="#cfe2f3"> </TD><TD ALIGN="LEFT">SHARED type, built by both configs</TD></TR>
+            <TR><TD ALIGN="RIGHT" BGCOLOR="#d6eaf8"> </TD><TD ALIGN="LEFT">CONVERSATIONAL  (build_biological_brain_regions)</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"> </TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>signal nature</B></TD></TR>
+            <TR><TD ALIGN="RIGHT">──▶</TD><TD ALIGN="LEFT">excitatory (glutamate, AMPA+NMDA)</TD></TR>
+            <TR><TD ALIGN="RIGHT">──⊣</TD><TD ALIGN="LEFT">fast inhibition (GABA_A, Cl⁻)</TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#7d3c98">- -⊣</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#7d3c98">slow inhibition (GABA_B / GIRK K⁺) — the one signature edge</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#e69138">····◆</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#e69138">neuromodulator broadcast (dopamine)</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT">- -</TD><TD ALIGN="LEFT">weaker / feedback / opt-in pathway</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"> </TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>honesty</B>   (full detail: see the per-region graphs + spec §6)</TD></TR>
+            <TR><TD ALIGN="RIGHT">⚠</TD><TD ALIGN="LEFT">host-rendered input = environment/body (legitimate)</TD></TR>
+            <TR><TD ALIGN="RIGHT">⚠</TD><TD ALIGN="LEFT">phenomenological / collapsed stand-in (a documented shortcut)</TD></TR>
+            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT">substrate-wide: point neurons · 1-step delay · GABA_A-default ·</TD></TR>
+            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT">global-scalar neuromodulators · Izhikevich-default (SH-1..SH-14)</TD></TR>
+            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT"><B>CORE</B> (always built) = BG cascade + Tier-1 language→motor; rest opt-in</TD></TR>
+          </TABLE>>];
+    }
+}
