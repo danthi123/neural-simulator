@@ -165,6 +165,32 @@ def build_bg_brain_regions(
     vs_place_to_value_weight: float = 0.2,   # vs_place_context->striosome_value plastic INIT weight (de-risk PASS: STDP grows 0.20->0.58)
     vs_place_to_value_density: float = 0.5,
     enable_critic_homeostasis: bool = False, # per-region homeostasis on vs_place_context + striosome_value
+    # ── 2026-06-09 CONVERGENT-EXCITATION UP-STATE (the faithful, homeostasis-free critic-firing
+    #    mechanism; research/findings/2026-06-09-N9-faithful-value-cell-design.md Option A) ──
+    # Splits the critic afferent into TWO DISTINCT regions (the RegionManager keys pathways by
+    # (from,to), sim/regions.py:537, so two pathways from ONE region COLLIDE — hence two regions):
+    #   A1  `vs_place_drive`   -> striosome_value : DENSE, NON-plastic, many weak synapses summing
+    #       PAST the MSN-D1 ~339 pA rheobase at the goal => the B.02 convergent-excitation up-state.
+    #       Fires the cell from init (breaks the LTP bootstrap structurally — no homeostasis needed).
+    #   A2  `vs_place_context` -> striosome_value : the existing SPARSE PLASTIC value-learning arm.
+    # BOTH rendered with the SAME grid-32 Gaussian place code each nav step (the runner injects the
+    # drive into BOTH when enable_convergent_upstate=True). Default OFF => byte-identical to the
+    # single-afferent path; the A1 region/pathway are simply not added.
+    #
+    # CuPy DE-RISK (2026-06-09, n9_convergent_upstate_derisk.py, 3 seeds):
+    #   FIRE 3/3, LEARNS-V(LTP) 3/3, ACTOR-NOT-PERTURBED 3/3  — but PLACE-GRADED(near>=3x far) 0/3.
+    # The dense NON-plastic A1 up-state is POSITION-BLIND: it fires the critic wherever a place bump
+    # exists (its per-location rate is set by which afferent cells happen to wire onto the critic,
+    # NOT by the goal), so the trained critic NEAR/FAR ratio caps ~1.2-1.4 (A2's learned LTP adds
+    # NEAR selectivity but cannot suppress the FAR up-state floor). Option B (per-region NMDA on the
+    # critic) deepens the up-state at BOTH locations and makes grading WORSE. The SNc value-
+    # subtraction gap was only 2/3 at one cherry-picked operating point. HONEST NEGATIVE on a
+    # value-of-LOCATION (design Option D): the up-state fires + the value LEARNS, but the spatial
+    # selectivity that makes it a value CRITIC needs a richer/self-organized place code. Shipped
+    # default-OFF as documented infrastructure; NOT wired into any flagship config.
+    enable_convergent_upstate: bool = False,
+    vs_place_drive_to_value_weight: float = 28.0,   # A1 dense NON-plastic up-state weight (de-risk: ~28 fires the corner goal >=5Hz)
+    vs_place_drive_to_value_density: float = 0.8,   # A1 dense convergence (many weak synapses, not one giant)
     enable_cluster_a_closed_loop: bool = False,  # Cluster A: hyperdirect + thal->cortex
     n_gpi_per_action: int = 10,
     n_stn: int = 20,
@@ -922,6 +948,22 @@ def build_bg_brain_regions(
             # a cell with ~0 drive at FAR can't cross even a lowered threshold. GLOBAL stays OFF.
             enable_homeostasis=bool(enable_critic_homeostasis),
         ))
+        if enable_convergent_upstate:
+            # A1 — the convergent-excitation UP-STATE drive (B.02; design Option A). A DISTINCT
+            # dense afferent region (a second pathway from vs_place_context would COLLIDE in the
+            # RegionManager's (from,to) key, sim/regions.py:537). Drive-injected with the SAME
+            # grid-32 Gaussian place code as vs_place_context each nav step. Its dense, NON-plastic
+            # vs_place_drive->striosome_value pathway (below) sums past the MSN-D1 rheobase at the
+            # goal so the critic is in a location-gated up-state from init (breaks the LTP bootstrap
+            # WITHOUT the homeostasis threshold-collapse). RS_CORTICAL_PYRAMIDAL like vs_place_context.
+            regions.append(BrainRegion(
+                name="vs_place_drive",
+                n_neurons=n_vs_place_context,
+                exc_fraction=1.0, internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            ))
         regions.append(BrainRegion(
             name="striosome_value",
             n_neurons=n_striosome_value,
@@ -1454,6 +1496,20 @@ def build_bg_brain_regions(
             "place code, not a coordinate/goal-cell region; got "
             f"{_critic_afferent!r}."
         )
+        if enable_convergent_upstate:
+            # A1 — UP-STATE arm: dense, NON-plastic convergent excitation (the B.02 pre-wired
+            # corticostriatal up-state drive). Many weak per-synapse weights summing PAST the
+            # ~339 pA rheobase at the goal (NOT one giant synapse — the convergence is via
+            # density x n_presynaptic, the per-synapse weight stays moderate). plastic=False so it
+            # does NOT learn (it is the innate up-state, escaping the bootstrap structurally).
+            pathways.append(RegionPathway(
+                from_region="vs_place_drive", to_region="striosome_value",
+                density=float(vs_place_drive_to_value_density),
+                weight_mean=float(vs_place_drive_to_value_weight),
+                weight_jitter=0.5, plastic=False,
+            ))
+        # A2 (or the sole afferent when enable_convergent_upstate=False) — the PLASTIC value
+        # learner. DA-delta-gated STDP sculpts V(s) on top of the (A1-fired, when enabled) cell.
         pathways.append(RegionPathway(
             from_region=_critic_afferent, to_region="striosome_value",
             density=float(vs_place_to_value_density),
@@ -2782,6 +2838,16 @@ def run_moving_goal_episode(
     n_vs_place_context: int = 200,             # dense dedicated place-context afferent size
     vs_place_to_value_weight: float = 0.2,     # vs_place_context->striosome_value plastic INIT weight (STDP grows V up)
     vs_place_to_value_density: float = 0.5,
+    # ── 2026-06-09 CONVERGENT-EXCITATION UP-STATE (homeostasis-free critic firing; Option A). ──
+    # Adds a DISTINCT dense NON-plastic `vs_place_drive` afferent (the B.02 up-state arm) alongside
+    # `vs_place_context` (the plastic value learner). When on, the runner injects the SAME grid-32
+    # place code into BOTH each nav step. CuPy 3-seed de-risk: FIRE/LEARNS/ACTOR pass but PLACE-
+    # GRADED FAILS (the dense up-state is position-blind) — HONEST NEGATIVE; shipped default-OFF as
+    # documented infrastructure (byte-identical when off). See build_bg_brain_regions + the finding
+    # 2026-06-09-N9-convergent-upstate-derisk.md.
+    enable_convergent_upstate: bool = False,
+    vs_place_drive_to_value_weight: float = 28.0,
+    vs_place_drive_to_value_density: float = 0.8,
     # ----- Critic value-acquisition WARM-UP (2026-06-09, the deadlock-breaker) -----
     # The 1800-step nav left the MSN-D1 critic SILENT (striov_rate_log all-zero, weight
     # frozen at 0.20). Forensic root cause (NOT the brief's "homeostasis too slow"): a
@@ -3296,6 +3362,9 @@ def run_moving_goal_episode(
         n_vs_place_context=n_vs_place_context,
         vs_place_to_value_weight=vs_place_to_value_weight,
         vs_place_to_value_density=vs_place_to_value_density,
+        enable_convergent_upstate=enable_convergent_upstate,
+        vs_place_drive_to_value_weight=vs_place_drive_to_value_weight,
+        vs_place_drive_to_value_density=vs_place_drive_to_value_density,
         visual_n_orientations=visual_n_orientations,
         visual_n_frequencies=visual_n_frequencies,
         visual_n_positions_per_dim=visual_n_positions_per_dim,
@@ -4296,6 +4365,10 @@ def run_moving_goal_episode(
                 and "snc" in region_indices_cp):
             return None
         aff_idx = region_indices_cp["vs_place_context"]
+        # A1 up-state arm (convergent-upstate, opt-in): the warm-up must also drive vs_place_drive
+        # so the critic FIRES (gives the A2 plastic synapses a post-spike to pair with).
+        drive_idx = (region_indices_cp["vs_place_drive"]
+                     if (enable_convergent_upstate and "vs_place_drive" in region_indices_cp) else None)
         snc_idx = region_indices_cp["snc"]
         # The goal locations to value: every scheduled goal (multi-goal) or just the
         # first. Dedupe preserving order so each distinct goal is warmed once.
@@ -4380,6 +4453,8 @@ def run_moving_goal_episode(
                 bridge.core_config.current_reward_signal = 1.0
                 bridge.cp_external_input_current[:] = cp.float32(0.0)
                 bridge.cp_external_input_current[aff_idx] = vs_drive_cp
+                if drive_idx is not None:
+                    bridge.cp_external_input_current[drive_idx] = vs_drive_cp   # A1 up-state arm
                 bridge.cp_external_input_current[snc_idx] = cp.float32(snc_tonic_pa + snc_reward_gain)
                 _wu_crit_spk = 0
                 for _ in range(hold):
@@ -5036,11 +5111,18 @@ def run_moving_goal_episode(
         if enable_neural_critic and "vs_place_context" in region_indices_cp:
             if in_sleep:
                 bridge.cp_external_input_current[region_indices_cp["vs_place_context"]] = cp.float32(0.0)
+                if enable_convergent_upstate and "vs_place_drive" in region_indices_cp:
+                    bridge.cp_external_input_current[region_indices_cp["vs_place_drive"]] = cp.float32(0.0)
             else:
                 vs_dsq = (vs_place_pref_x - float(x)) ** 2 + (vs_place_pref_y - float(y)) ** 2
                 vs_drive = vs_place_drive_max_pA * np.exp(-vs_dsq / (2.0 * vs_place_sigma ** 2))
-                bridge.cp_external_input_current[region_indices_cp["vs_place_context"]] = cp.asarray(
-                    vs_drive, dtype=cp.float32)
+                vs_drive_cp_step = cp.asarray(vs_drive, dtype=cp.float32)
+                bridge.cp_external_input_current[region_indices_cp["vs_place_context"]] = vs_drive_cp_step
+                # A1 up-state arm: SAME place code into vs_place_drive (the convergent up-state
+                # afferent). The dense NON-plastic vs_place_drive->striosome_value pathway fires the
+                # critic into the up-state from this drive (2026-06-09 convergent-upstate, opt-in).
+                if enable_convergent_upstate and "vs_place_drive" in region_indices_cp:
+                    bridge.cp_external_input_current[region_indices_cp["vs_place_drive"]] = vs_drive_cp_step
 
         # Landmark perception drive (Item 1 Stage 2, 2026-04-27).
         # Drives landmark_sensors based on agent's bearing+distance to a
@@ -6757,6 +6839,21 @@ def main():
     ap.add_argument("--vs-place-to-value-density", type=float, default=0.5,
                     help="Density of the vs_place_context->striosome_value afferent "
                          "(--enable-critic-homeostasis). Default 0.5 (de-risk value).")
+    ap.add_argument("--enable-convergent-upstate", action="store_true",
+                    help="CONVERGENT-EXCITATION UP-STATE (2026-06-09, homeostasis-free critic firing; "
+                         "design Option A). Adds a DISTINCT dense NON-plastic `vs_place_drive` afferent "
+                         "(the B.02 up-state arm) alongside `vs_place_context` (the plastic learner); "
+                         "the runner injects the SAME place code into BOTH each nav step. CuPy 3-seed "
+                         "de-risk: FIRE/LEARNS/ACTOR pass but PLACE-GRADED FAILS (the dense up-state is "
+                         "position-blind) -> HONEST NEGATIVE; opt-in only, NOT in any flagship config. "
+                         "See research/findings/2026-06-09-N9-convergent-upstate-derisk.md.")
+    ap.add_argument("--vs-place-drive-to-value-weight", type=float, default=28.0,
+                    help="A1 (vs_place_drive->striosome_value) dense NON-plastic up-state weight "
+                         "(many weak synapses summing past the ~339 pA rheobase). De-risk: ~28 fires "
+                         "a corner goal >=5 Hz. Only with --enable-convergent-upstate.")
+    ap.add_argument("--vs-place-drive-to-value-density", type=float, default=0.8,
+                    help="A1 up-state afferent density (dense convergence, not one giant synapse). "
+                         "Default 0.8. Only with --enable-convergent-upstate.")
     ap.add_argument("--critic-warmup-trials", type=int, default=0,
                     help="CRITIC VALUE-ACQUISITION WARM-UP (2026-06-09 deadlock-breaker). "
                          "Before the nav loop, run N de-risk-style reward-paired drives "
@@ -7111,6 +7208,9 @@ def main():
             n_vs_place_context=args.n_vs_place_context,
             vs_place_to_value_weight=args.vs_place_to_value_weight,
             vs_place_to_value_density=args.vs_place_to_value_density,
+            enable_convergent_upstate=args.enable_convergent_upstate,
+            vs_place_drive_to_value_weight=args.vs_place_drive_to_value_weight,
+            vs_place_drive_to_value_density=args.vs_place_drive_to_value_density,
             critic_warmup_trials=args.critic_warmup_trials,
             critic_warmup_hold_steps=args.critic_warmup_hold_steps,
             critic_warmup_all_goals=not args.no_critic_warmup_all_goals,
