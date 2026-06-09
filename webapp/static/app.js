@@ -180,6 +180,14 @@ function filterAliveSticky(allRuns, stickySec) {
   for (const r of allRuns) {
     if (r.alive) {
       result.push(r);
+    } else if (r.completed) {
+      // A completed run (its result file is written) is NOT live — never show
+      // it in the live list, even within the sticky grace OR when another run
+      // shares its name. The sticky memory keys by NAME, so without this a
+      // finished run lingers as a phantom "live run" whenever a same-named run
+      // was recently alive (e.g. a subagent re-running `_nav_critic_instrument_out`
+      // makes BOTH completed copies reappear). The result file is authoritative.
+      continue;
     } else {
       const lastAlive = _aliveRunMemory.get(r.name);
       if (lastAlive && now - lastAlive < stickySec) {
