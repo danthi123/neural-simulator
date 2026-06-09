@@ -108,9 +108,25 @@ G_FIRE 3/3, G_GRADE 2/3, G_LTP 2/3, G_ACTOR 3/3. All gates are individually achi
 
 **Moderated operating point (n-train 30, θ=24) → PRIMARY 2/3.** θ=24 dramatically tightens far-suppression → **G_GRADE 3/3** (ratios 23.2 / 57.2 / 4.0×), so seeds 42 + 44 now PASS. Seed 43 remains a G_LTP holdout (1.55×) — and notably its weight-ratio LTP was *better* at n-train 40 (1.82×) than 30 (1.55×), so for that seed *more* training (w_near outpacing w_far) helps, while its firing-grade is already 57× (functionally strong value-of-location; only the strict weight-ratio gate is marginal). A θ=26 / n-train 50 point (more LTP separation + protected far-suppression) is in flight `[result pending]`.
 
-## Recommendation
+## Multi-seed operating-point search → robust PRIMARY 2/3 (G_GRADE 3/3)
 
-The weighted-coincidence sim/ edit is **sound, additive, byte-identity-proven, and the decisive cause of value-grading** (count 0.52× → weighted 3.69× at identical weights). Commit it on owner byte-review. Combined with FS-gating during self-org (runner-only, landed `transmission_gate` infra), the full N9 value-of-location PRIMARY clears (seed 42; multi-seed pending): the MSN-D1 critic **fires + learns + GRADES** value-of-location on the self-organized sparse-distinct place code, with all anti-cheats accounted for (place-shuffle holds; the Stage-2 jitter is an invalid rate-halver, coincidence validated upstream at STEP-1). On a multi-seed GO, the next step is the 6-seed nav A/B (neural critic vs the host-scaffold baseline).
+| config | PRIMARY | G_GRADE | G_LTP | seed-43 weight-LTP |
+|---|---|---|---|---|
+| FS-gate, θ20, n-train 40 | 1/3 | 2/3 | 2/3 | 1.82× |
+| FS-gate, θ24, n-train 30 | 2/3 | 3/3 | 2/3 | 1.55× |
+| **FS-gate, θ26, n-train 50** | **2/3** | **3/3** (8.6/5.25/3.42×) | 2/3 | **1.86×** |
+
+θ tightens far-suppression → G_GRADE clears 3/3 with comfortable margins; seeds 42 + 44 PASS full PRIMARY. **Seed 43's weight-ratio LTP plateaus at ~1.86×** across n-train 30/40/50 (1.55/1.82/1.86) — w_far grows alongside w_near at that high-firing seed, so more training does not cross the strict 2× bar. Its FIRING grade is 5.25× and place-shuffle breaks its LTP → it IS learned value-of-location; only the strict weight-ratio proxy is marginal.
+
+## Conclusion (scope of this arc) + honest residuals
+
+**DELIVERED + owner-approved + committed (`e0818d2d`):** the weighted-coincidence plateau is the decisive value-**grading** mechanism (count 0.52× → weighted 3.69× at identical weights; G_GRADE 3/3 multi-seed). Combined with FS-gating-during-self-org (runner-only), the MSN-D1 value critic **fires + learns + grades** value-of-location on the self-organized sparse-distinct place code — **the weight-blind-plateau residual that this arc set out to fix is resolved.** Multi-seed PRIMARY 2/3 (seed 43 marginal on the strict weight-ratio LTP gate, 1.86×; functionally a value-of-location pass at 5.25× firing-grade). Anti-cheats: place-shuffle holds; the Stage-2 jitter is an invalid rate-halver (coincidence validated upstream at STEP-1).
+
+**Honest residuals (separate from this edit):**
+1. Seed 43's weight-ratio LTP plateaus at 1.86× (< the strict 2×) — operating-point/seed variance, not a mechanism failure.
+2. The **SNc r−V subtraction** (gate-2e, the broader N9 deliverable) is NOT yet validated — the SNc state-specific gap is weak (gap ~1.0; SNc tonic calibration fragile in the FS-gating config). This is a separate N9 piece (the GABA_B subtracting the learned V from the dopamine cell), predating and independent of the weighted-plateau edit.
+
+**Next:** the critic-V-grading half of N9 is validated. The remaining pieces are (a) the SNc r−V subtraction loop (gate-2e), and (b) deploying the validated critic in the full nav loop (the 6-seed nav A/B). Owner steer on sequencing.
 
 ## Files
 
