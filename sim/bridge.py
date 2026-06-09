@@ -1319,8 +1319,15 @@ class SimulationBridge:
                 self.cp_izh_d_increment = cp.asarray(np_d_increment)
                 self.cp_neuron_type_ids = cp.asarray(np_type_ids)
 
-                # Initialize membrane potential and recovery variable
-                self.cp_membrane_potential_v = cp.asarray(np_vr)
+                # Initialize membrane potential and recovery variable.
+                # .copy() is LOAD-BEARING: on the numpy backend cp.asarray(np_vr) returns
+                # np_vr ITSELF (a no-op view), so without the copy cp_membrane_potential_v
+                # would ALIAS cp_izh_vr (also cp.asarray(np_vr) at :1313) -> (v - vr) == 0
+                # every step -> the Izhikevich restoring term k*(v-vr)*(v-vt) vanishes AND
+                # recovery u never integrates -> neurons spuriously depolarize/fire near rest.
+                # On CuPy cp.asarray already host->device-copies (distinct arrays), so .copy()
+                # is a redundant no-op -> the GPU/production path is byte-identical. (2026-06-09)
+                self.cp_membrane_potential_v = cp.asarray(np_vr).copy()
                 self.cp_recovery_variable_u = self.cp_izh_b * (self.cp_membrane_potential_v - self.cp_izh_vr)
 
             elif cfg.neuron_model_type == NeuronModel.HODGKIN_HUXLEY.name:
