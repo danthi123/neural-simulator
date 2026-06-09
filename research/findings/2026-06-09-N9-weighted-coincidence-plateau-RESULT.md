@@ -94,7 +94,17 @@ The overlap is **not** from cell count (n-place 400 also gave diff-cos 0.195, an
 | FS-PING on during self-org (24 passes) | diff-cos 0.200 | 16.4 | 3.69× ✓ | 1.71× ✗ | FAIL |
 | **FS-PING gated off during self-org** | **diff-cos 0.120** | **31.5** | **3.15× ✓** | **2.56× ✓** | **PASS** |
 
-The distinct code (0.120) removes BOTH failure modes simultaneously — far_a no longer over-leaks (G_GRADE) AND the shared near/far cells no longer co-potentiate w_far (G_LTP). w_near 0.50→6.41, w_far 0.50→2.50. Multi-seed validation in flight `[3-seed result pending]`.
+The distinct code (0.120) removes BOTH failure modes simultaneously on seed 42 — far_a no longer over-leaks (G_GRADE) AND the shared near/far cells no longer co-potentiate w_far (G_LTP). w_near 0.50→6.41, w_far 0.50→2.50.
+
+**3-seed (FS-gating, θ=20):** distinct codes confirmed (diff-cos 0.036 / 0.065 / 0.120), but PRIMARY 1/3 — **each seed now misses ONE marginal gate, all traceable to seed-variable w_far growth at the strong drive** (critic fires 33–53 Hz):
+
+| Seed | diff-cos | NEAR | G_GRADE | G_LTP (w_near/far) | PRIMARY |
+|---|---|---|---|---|---|
+| 42 | 0.120 | 33.2 | 3.46× ✓ | 2.57× ✓ (6.41/2.50) | **PASS** |
+| 43 | 0.036 | 51.0 | 5.10× ✓ | 1.82× ✗ (6.27/3.45) | FAIL (LTP) |
+| 44 | 0.065 | 52.8 | 1.94× ✗ | 2.07× ✓ (10.1/4.91) | FAIL (GRADE: w_far 4.91 → far_a 27 Hz) |
+
+G_FIRE 3/3, G_GRADE 2/3, G_LTP 2/3, G_ACTOR 3/3. All gates are individually achievable; the residual is **operating-point sensitivity** — the high drive over-grows w_far, which surfaces as a LTP miss (seed 43) or a grade miss (seed 44, high w_far → far fires). place-shuffle still HOLDS at this config (LTP 2.56×→1.75× under shuffle). Operating-point moderation (fewer trials → less w_far; θ 20→24 → tighter far control) in flight `[moderated 3-seed pending]`.
 
 ## Recommendation
 
