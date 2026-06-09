@@ -20,6 +20,12 @@ xp, _bk = get_backend()
 print("backend:", _bk)
 
 
+def _host(a):
+    """Backend-safe to-host: .get() for CuPy arrays, np.array otherwise."""
+    g = getattr(a, "get", None)
+    return g() if g is not None else np.array(a)
+
+
 def _idx(bridge, name):
     return list(bridge.region_manager.indices(name))
 
@@ -28,7 +34,7 @@ def _csr_slice(bridge, pre_idx, post_idx):
     """Return (n_syn, mean_w, frac_pre_ok, frac_post_ok) for edges whose row in
     pre_idx and col in post_idx, pulled from cp_connections."""
     coo = bridge.cp_connections.tocoo()
-    rows = np.asarray(coo.row); cols = np.asarray(coo.col); data = np.asarray(coo.data)
+    rows = _host(coo.row); cols = _host(coo.col); data = _host(coo.data)
     pre_set = set(int(i) for i in pre_idx); post_set = set(int(i) for i in post_idx)
     mask = np.array([(int(r) in pre_set and int(c) in post_set) for r, c in zip(rows, cols)])
     if mask.sum() == 0:
@@ -40,7 +46,7 @@ def _csr_slice(bridge, pre_idx, post_idx):
 
 
 def _gaussian_place_drive(prefs_x, prefs_y, gx, gy, max_pA, sigma):
-    dsq = (np.asarray(prefs_x) - float(gx)) ** 2 + (np.asarray(prefs_y) - float(gy)) ** 2
+    dsq = (_host(prefs_x) - float(gx)) ** 2 + (_host(prefs_y) - float(gy)) ** 2
     return (max_pA * np.exp(-dsq / (2.0 * sigma ** 2))).astype(np.float32)
 
 
@@ -62,13 +68,13 @@ def instrument(bridge, aff_global, crit_global, snc_global, aff_drive, snc_tonic
         bridge._run_one_simulation_step()
         bridge.runtime_state.current_time_step += 1
         bridge.runtime_state.current_time_ms = bridge.runtime_state.current_time_step * bridge.core_config.dt_ms
-        ge = np.asarray(bridge.cp_conductance_g_e)[np.asarray(crit_global)]
-        gi = np.asarray(bridge.cp_conductance_g_i)[np.asarray(crit_global)]
-        v = np.asarray(bridge.cp_membrane_potential_v)[np.asarray(crit_global)]
+        ge = _host(bridge.cp_conductance_g_e)[_host(crit_global)]
+        gi = _host(bridge.cp_conductance_g_i)[_host(crit_global)]
+        v = _host(bridge.cp_membrane_potential_v)[_host(crit_global)]
         ge_log.append(float(ge.mean())); gi_log.append(float(gi.mean())); v_log.append(float(v.mean()))
-        aff_fired = np.asarray(bridge.cp_firing_states)[np.asarray(aff_global)]
+        aff_fired = _host(bridge.cp_firing_states)[_host(aff_global)]
         aff_rate_log.append(float(aff_fired.sum()) / max(n_aff, 1))
-        crit_fired = np.asarray(bridge.cp_firing_states)[np.asarray(crit_global)]
+        crit_fired = _host(bridge.cp_firing_states)[_host(crit_global)]
         crit_spk_log.append(int(crit_fired.sum()))
     # last-half means (after transient)
     h = n_steps // 2
@@ -228,7 +234,7 @@ def calibrate_da(bridge, cfg, snc_global, snc_tonic_pa, n_steps=300):
         bridge.runtime_state.current_time_step += 1
         bridge.runtime_state.current_time_ms = bridge.runtime_state.current_time_step * cfg.dt_ms
         if i >= n_steps // 2:
-            frac_sum += float(np.asarray(bridge.cp_firing_states)[np.asarray(snc_global)].sum()) / max(n_snc, 1); m += 1
+            frac_sum += float(_host(bridge.cp_firing_states)[_host(snc_global)].sum()) / max(n_snc, 1); m += 1
     frac = frac_sum / max(m, 1)
     cfg.neuromodulators[0].production_rules[0].threshold = float(frac)
     return frac
@@ -247,7 +253,7 @@ def afferent_rate(bridge, aff_global, aff_drive, n_steps=40, warmup=10):
         bridge.runtime_state.current_time_step += 1
         bridge.runtime_state.current_time_ms = bridge.runtime_state.current_time_step * bridge.core_config.dt_ms
         if t >= warmup:
-            spk += int(np.asarray(bridge.cp_firing_states)[np.asarray(aff_global)].sum()); m += 1
+            spk += int(_host(bridge.cp_firing_states)[_host(aff_global)].sum()); m += 1
     bridge.core_config.reward_learning_rate = saved
     return spk / max(n_aff, 1) / max(m * 1e-3, 1e-9)
 
@@ -291,7 +297,7 @@ def train_value_leads_reward(bridge, cfg, aff_global, crit_global, snc_global, n
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
             bridge.runtime_state.current_time_ms = bridge.runtime_state.current_time_step * cfg.dt_ms
-            crit_spk += int(np.asarray(bridge.cp_firing_states)[np.asarray(crit_global)].sum())
+            crit_spk += int(_host(bridge.cp_firing_states)[_host(crit_global)].sum())
         if t < 3 or t % 5 == 0 or t == n_train - 1:
             v_rate = crit_spk / max(n_crit, 1) / (hold * 1e-3)
             af = afferent_rate(bridge, aff_global, near_drive, n_steps=30)

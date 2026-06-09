@@ -6,13 +6,53 @@
 
 ## Headline
 
+## ⚡ DECISIVE UPDATE (2026-06-09, GPU run) — it is a CuPy-vs-numpy FIRING-MARGIN divergence (NOT recoverable-on-substrate; the CPU "bootstrap" was numpy-only)
+
+The same diagnostic script (made backend-safe), run on **CuPy**, settles it. **On the production GPU
+backend the critic NEVER fires in EITHER bridge** — so the CPU "the substrate bootstraps the critic"
+result below was a **numpy-only** result, and the original 1800-step CuPy freeze is **real and
+reproduced**:
+
+| critic `striosome_value`, 40-trial value-leads-reward | numpy (CPU) | **CuPy (GPU, production)** |
+|---|---|---|
+| ISOLATION weight 0.20 → | 0.34 (bootstraps, crit→firing) | **0.2009 (FROZEN, crit_rate 0.00 all 40 trials)** |
+| DEPLOYED weight 0.20 → | 3.31 (bootstraps, crit 0→40 Hz) | **0.2005 (FROZEN, crit_rate 0.00 all 40 trials)** |
+| critic g_e (received current) | 0.079 / 0.085 | **0.071 / 0.075 (≈ same — input is fine)** |
+| critic g_i | 0.0 | 0.0 |
+| afferent firing | 15 Hz | 13 Hz (≈ same) |
+
+**Localization (decisive):** the critic receives the **same excitatory current** (g_e ≈ 0.07–0.08,
+no inhibition) on both backends, the afferent fires the same — yet the MSN-D1 critic **fires on numpy
+and is silent on CuPy**. So it is **not** the current path, **not** deployment-vs-isolation, **not** a
+measurement artifact. It is a **backend divergence in the neuron firing itself**: the MSN-D1 critic
+sits **right at its firing threshold** from the weak place afferent; numpy numerics put it just over
+(fires → STDP → bootstraps), the **CuPy fused-kernel numerics put it just under (never fires → no
+eligibility → frozen)**. The whole place-critic isolation de-risk "PASS" was **numpy**; the production
+**CuPy backend never reproduced the firing**.
+
+**Corrected bottom line:** N9's neural value critic is **fundamentally marginal** — it works on the
+CPU reference but not on the production GPU backend, because the MSN-D1 reads the place afferent at the
+knife's edge of threshold and a CPU↔GPU numerics difference flips it silent. It is **NOT** a biological
+substrate limit, **NOT** the plastic-mask bug, **NOT** a measurement artifact — it is a **firing-margin
+fragility exposed by the backend numerics**. To deploy it on CuPy the critic must fire with **margin**
+(more excitable critic / stronger afferent / a real up-state), which reintroduces the actor-perturbation
+tension the arc already mapped. The N9 RPE *loop* remains neural in deployment via `--spiking-snc`
+(the SNc fires δ); only the learned **value-subtraction** is blocked by this margin fragility.
+
+Evidence: `research/findings/raw/_n9_critic_current_diag_CUPY.log` (controller-run; the same script,
+`SIM_BACKEND=cupy`); the per-trial trajectory shows crit_rate 0.00 across ALL 40 trials on both bridges.
+
+---
+
+## (numpy-only finding, now contextualized by the CuPy update above)
+
 The premise behind the N9 negative — "the afferent→critic pathway delivers ~20× less current in the
 deployed bridge; the critic plateaus at −79.6 mV vs −71 mV in isolation; it's a substrate wall" —
 is **FALSIFIED on the CPU path**. The deployed nav bridge (`build_bg_brain_regions`, full flag set,
 WITH Gabor visual pre-init) is **current-identical to the isolation probe** and **bootstraps the
-critic to robust firing**. The 1800-step CuPy negative is therefore **NOT** a substrate/wiring/
-current property. It is a **CuPy-path divergence (or a measurement artifact in the original CuPy
-run)**, pending one short GPU confirmation.
+critic to robust firing** — **but only on numpy** (see the CuPy update above: on the production GPU
+backend the critic does not fire at all). The 1800-step CuPy negative is therefore a **CuPy-vs-numpy
+firing-margin divergence**, now confirmed by the GPU run (not a measurement artifact).
 
 ## Decisive measured evidence (both bridges, identical warm-up drive, `SIM_BACKEND=numpy`, seed 42)
 
