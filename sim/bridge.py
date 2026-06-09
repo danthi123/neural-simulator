@@ -5954,7 +5954,18 @@ class SimulationBridge:
                             # research runners (G2+) use this to freeze
                             # reservoir weights while training input pathways.
                             if self.cp_synapse_plastic_mask is not None:
-                                plastic_here = self.cp_synapse_plastic_mask[stdp_active_indices]
+                                # 2026-06-09: route through _ensure_gate_capacity — the mask is
+                                # built once at wiring (:2212) and NOT resized when
+                                # apply_v1_gabor_weights grows cp_connections, so a stale (too-short)
+                                # mask was read OUT OF BOUNDS here when a visual-stream synapse went
+                                # STDP-active (CuPy: silent UB corrupting visual-cortex STDP; numpy:
+                                # IndexError -> blanket-except -> step skipped). Same bug class as the
+                                # gate under-sizing (512026ee) + GABA_B-mask (6f73b5f0) fixes. New
+                                # (Gabor-grown) entries default False = non-plastic (Gabor synapses
+                                # are fixed-weight). Byte-identical when no growth occurred.
+                                plastic_here = self._ensure_gate_capacity(
+                                    "cp_synapse_plastic_mask", self.cp_connections.nnz,
+                                    fill=False, dtype=cp.bool_)[stdp_active_indices]
                                 updated_weights = cp.where(
                                     plastic_here, updated_weights, current_weights
                                 )
