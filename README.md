@@ -14,14 +14,19 @@ graph, no supervised labels, no symbolic optimizer.
 ![Backend](https://img.shields.io/badge/backend-CuPy%20(CUDA)%20%2F%20NumPy%20(CPU)-orange.svg)
 ![Status](https://img.shields.io/badge/status-active%20research-yellow.svg)
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  Agent sees the world  →  cortex activates  →  basal ganglia     │
-│            ↑                                     selects an action │
-│      Reward shapes        Move toward goal            ↓           │
-│      future choices   ←   (or away)        ←   Motor cortex fires │
-└─────────────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="docs/diagrams/brain_master.png" alt="Simulated-brain architecture — master map" width="900">
+</p>
+
+<p align="center">
+  <em>The whole simulated brain, as actually implemented — one engine, two configurations
+  (navigation · conversation) sharing it, with an honest faithful-vs-shortcut layer.</em><br>
+  <strong>Full detail (zoomable):</strong>
+  <a href="docs/diagrams/brain_master.svg">master map</a> ·
+  <a href="docs/diagrams/brain_navigation.svg">navigation brain — every region &amp; pathway</a> ·
+  <a href="docs/diagrams/brain_conversational.svg">conversational brain — every region &amp; pathway</a> ·
+  <a href="docs/diagrams/README.md">how to read &amp; regenerate</a>
+</p>
 
 **Jump to:** [Quick start](#try-it-in-60-seconds) ·
 [Who it's for](#who-its-for) · [What it does today](#what-it-does-today) ·
