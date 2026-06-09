@@ -59,13 +59,33 @@ The weighted edit does exactly what it claims: it converts the weight-blind plat
 - The residual **G_GRADE gap (2/3 near-miss at 2.8-2.9×) is bounded by PLACE-CODE OVERLAP** (the single most-overlapping far location leaks via shared high-weight cells), plus seed-variable absolute NEAR firing — **NOT by the plateau mechanism** (2 of 3 FARs are perfectly silent on every seed). The honest next lever is **Stage-1 place-code distinctness** (sharper, less-overlapping fields), not a plateau change.
 - The Stage-2 jitter's non-collapse is a **test-validity finding** (rate-halver defeated by the slow plateau + learned drive), affecting count and weighted forms equally; the coincidence property was validated at STEP-1.
 
-## Stronger place-code TRAINING clears the near-miss (seed 42: 2.93× → 3.69× PASS)
+## G_GRADE clears 3/3 with stronger place-code training — but the place-code OVERLAP then trades it against G_LTP
 
-Re-running seed 42 with more self-organization (24 passes × 150 steps/loc vs 12 × 120) flips it to **G_GRADE PASS (3.69×)**. Notably the place diff-cos got slightly *worse* (0.200 vs 0.158) — so it is **NOT** reduced overlap. It is **stronger absolute NEAR firing**: more place-code exposure → the value arm sees a more robust ensemble → w_near grows 0.50→4.24 (was 2.68) → NEAR 16.39 Hz (was 5.69) → it pulls away from far_a (4.44) despite the overlap. So the near-miss seeds are limited by **place-code drive STRENGTH** (→ NEAR firing), a legitimate training-quality / experience lever (more experience → stronger place fields), not by the plateau. Multi-seed validation at 24 passes is in flight `[3-seed result pending]`.
+3-seed at 24 self-org passes × 150 steps/loc (vs 12 × 120):
+
+| Gate | 12 passes | 24 passes |
+|---|---|---|
+| 2a FIRE | 3/3 | 3/3 (NEAR 16.4 / 10.6 / 27.2) |
+| 2b PLACE-GRADED | 1/3 | **3/3** (ratio 3.69 / 4.00 / 8.91) |
+| 2c LEARNS-V (LTP ≥2×) | 2/3 | **1/3** (w_near/far 3.17 / 1.71 / 0.85) |
+| PRIMARY (all gates) | 1/3 | 1/3 |
+
+**The weighted plateau makes G_GRADE robustly achievable (3/3).** But stronger training exposes the **place-code OVERLAP** (diff-cos 0.16–0.20 at n-place 800): the near and far ensembles share cells, so training NEAR + reward potentiates those shared cells → `w_far` grows (seed 44: w_far 2.69 ≈ w_near 2.27) → gate-2c LTP (which needs w_near ≥ 2× w_far) fails. So the OVERLAP causes BOTH failure modes: far_a firing-leak at low training (G_GRADE near-miss) AND w_far growth at high training (G_LTP). PRIMARY stays 1/3 because overlap trades the two gates against each other. **The bottleneck is upstream place-code distinctness, not the plateau.**
+
+## Decisive control — the grading is the WEIGHTED plateau, NOT the learned AMPA
+
+COUNT vs WEIGHTED at the **identical** learned weights (seed 42, 24 passes, w_near 4.24 / w_far 1.34):
+
+| Plateau form | NEAR | far_a | far_center | ratio |
+|---|---|---|---|---|
+| COUNT (weight-blind) | 14.31 | 25.14 | 27.64 | **0.52×** (fires MORE at far) |
+| **WEIGHTED (this edit)** | 16.39 | 4.44 | 0.14 | **3.69×** (graded) |
+
+Same weights, opposite outcome: the count plateau is anti-graded (the position-blind dense-blob floor fires far MORE than near), the weighted plateau grades. **This unambiguously isolates the weighted-coincidence plateau as the grading mechanism** — it is not the learned AMPA (identical in both arms).
 
 ## Recommendation
 
-Commit the byte-reviewed weighted-coincidence edit (sound, additive, byte-identity-proven, a real grading improvement: count 1.23× → weighted 7.37×) on owner approval. The residual G_GRADE near-miss on the lower-NEAR-firing seeds is a Stage-1 place-code-strength matter (more self-org → stronger NEAR firing clears it, as seed 42 shows), NOT a plateau issue. The N9 value-grading is substantially advanced: the value critic now fires + learns + GRADES on the sparse-distinct place code, with the residual cleanly localized to upstream place-code drive strength.
+The weighted-coincidence sim/ edit is **sound, additive, byte-identity-proven, and the decisive cause of value-grading** (count 0.52× → weighted 3.69× at identical weights; G_GRADE 3/3 achievable). Commit it on owner byte-review. The residual full-PRIMARY gap is **upstream place-code distinctness** (n-place 800 gives diff-cos 0.16–0.20; the validated Stage-1 reached 0.064 at n-place 400) — reducing the near/far ensemble overlap is the honest next lever (it removes BOTH the far-leak and the w_far-growth failure modes simultaneously), a Stage-1 perception-quality sub-arc, NOT a plateau change. N9 value-of-location is substantially advanced: the critic fires + learns + GRADES on the sparse-distinct place code; the residual is cleanly localized to place-code overlap.
 
 ## Files
 
