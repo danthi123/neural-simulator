@@ -1,4 +1,15 @@
-# N9 nav value-subtraction — warm-up does NOT deploy: the MSN critic can't fire in the full nav bridge (honest negative, robustly mapped)
+> # ⚠️ RETRACTED (2026-06-09, same day) — the "substrate limit" conclusion below is WRONG.
+> A CPU forensic (controller-reproduced) shows the deployed nav bridge is **current-identical** to
+> the isolation probe and **DOES bootstrap the critic** (afferent→critic weight 0.2005 → 3.31 over
+> 40 trials; ≥0.71 by trial 20). There is **no −79.6 mV plateau** (both bridges integrate to ~−69 mV)
+> and the Gabor growth does **not** corrupt the afferent→critic synapses. The 1800-step CuPy freeze
+> is therefore a **CuPy-path divergence or a measurement artifact**, NOT a substrate boundary — N9 is
+> recoverable. See **`2026-06-09-N9-forensic-substrate-is-NOT-the-wall-plus-plastic-mask-bug.md`**.
+> This doc is kept for the trail; treat its "robustly mapped substrate limit" verdict as superseded.
+> (The factual run measurements below — critic 0/1800, weight frozen 0.20078, nav 2.136 — still hold;
+> only the *interpretation* was wrong.)
+
+# N9 nav value-subtraction — warm-up does NOT deploy: the MSN critic can't fire in the full nav bridge (honest negative, robustly mapped) [RETRACTED — see banner]
 
 **Date:** 2026-06-09
 **Type:** deployed-nav warm-up smoke (GPU/CuPy, seed 42) + root-cause reconciliation.
