@@ -1,0 +1,242 @@
+{
+  "mode": "lesion",
+  "n_seeds": 3,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "deterministic_regime": true,
+  "backend": "cupy",
+  "nmda_critic": false,
+  "place_to_value_weight": 0.5,
+  "n_fire": 1,
+  "n_place_graded": 1,
+  "n_ltp": 1,
+  "n_actor_ok": 3,
+  "n_snc_gap": 0,
+  "n_primary": 1,
+  "verdict": "CONTROL",
+  "crit_near_trained_hz": {
+    "mean": 4.537,
+    "min": 0.0,
+    "max": 10.139,
+    "values": [
+      10.139,
+      3.472,
+      0.0
+    ]
+  },
+  "crit_far_max_hz": {
+    "mean": 0.417,
+    "min": 0.0,
+    "max": 0.694,
+    "values": [
+      0.694,
+      0.556,
+      0.0
+    ]
+  },
+  "place_graded_ratio": {
+    "mean": 6.95,
+    "min": 0.0,
+    "max": 14.6,
+    "values": [
+      14.6,
+      6.25,
+      0.0
+    ]
+  },
+  "weight_near_over_far": {
+    "mean": 1.892,
+    "min": 1.513,
+    "max": 2.611,
+    "values": [
+      2.611,
+      1.552,
+      1.513
+    ]
+  },
+  "actor_ratio": {
+    "mean": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "values": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "snc_gap_ratio": {
+    "mean": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "values": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "place_diff_location_cosine": {
+    "mean": 0.111,
+    "min": 0.077,
+    "max": 0.138,
+    "values": [
+      0.138,
+      0.118,
+      0.077
+    ]
+  },
+  "results": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "lesion": true,
+      "shuffle": false,
+      "ablate_sensors": false,
+      "jitter": false,
+      "enable_volley": true,
+      "coincidence_weighted_drive": true,
+      "place_diff_location_cosine": 0.13810827319401972,
+      "place_sparsity": 0.05875,
+      "n_neurons": 994,
+      "n_synapses": 96271,
+      "n_place": 400,
+      "n_strio": 80,
+      "crit_near_init_hz": 58.888888888888886,
+      "crit_near_trained_hz": 10.13888888888889,
+      "crit_far_mean_hz": 0.23148148148148148,
+      "crit_far_max_hz": 0.6944444444444444,
+      "crit_far_each_hz": {
+        "far_a": 0.694,
+        "far_b": 0.0,
+        "far_center": 0.0
+      },
+      "place_graded_ratio": 14.600000000000001,
+      "fire": true,
+      "place_graded": true,
+      "w_near_init": 0.5055235624313354,
+      "w_near_final": 2.3602051734924316,
+      "w_far_init": 0.5006523728370667,
+      "w_far_final": 0.9038172364234924,
+      "weight_near_over_far": 2.6113743778908574,
+      "weight_grew": true,
+      "v_learned": false,
+      "near_v_early_hz": 15.15625,
+      "near_v_late_hz": 14.0625,
+      "actor_no_critic_hz": 62.5,
+      "actor_with_critic_hz": 62.5,
+      "actor_ratio": 1.0,
+      "actor_not_perturbed": true,
+      "snc_predicted_near_hz": 100.0,
+      "snc_unpredicted_far_hz": 100.0,
+      "snc_gap_ratio": 1.0,
+      "snc_state_specific": false,
+      "primary": true,
+      "ou_off": true,
+      "cond_noise_off": true,
+      "global_homeo_off": true,
+      "total_seconds": 67.8
+    },
+    {
+      "seed": 43,
+      "backend": "cupy",
+      "lesion": true,
+      "shuffle": false,
+      "ablate_sensors": false,
+      "jitter": false,
+      "enable_volley": true,
+      "coincidence_weighted_drive": true,
+      "place_diff_location_cosine": 0.11752204410275335,
+      "place_sparsity": 0.055625,
+      "n_neurons": 994,
+      "n_synapses": 96451,
+      "n_place": 400,
+      "n_strio": 80,
+      "crit_near_init_hz": 47.083333333333336,
+      "crit_near_trained_hz": 3.4722222222222223,
+      "crit_far_mean_hz": 0.1851851851851852,
+      "crit_far_max_hz": 0.5555555555555556,
+      "crit_far_each_hz": {
+        "far_a": 0.556,
+        "far_b": 0.0,
+        "far_center": 0.0
+      },
+      "place_graded_ratio": 6.25,
+      "fire": false,
+      "place_graded": false,
+      "w_near_init": 0.49751853942871094,
+      "w_near_final": 1.5490525960922241,
+      "w_far_init": 0.5033472776412964,
+      "w_far_final": 0.9982302188873291,
+      "weight_near_over_far": 1.5517989405478685,
+      "weight_grew": false,
+      "v_learned": true,
+      "near_v_early_hz": 11.4453125,
+      "near_v_late_hz": 13.4765625,
+      "actor_no_critic_hz": 62.5,
+      "actor_with_critic_hz": 62.5,
+      "actor_ratio": 1.0,
+      "actor_not_perturbed": true,
+      "snc_predicted_near_hz": 100.0,
+      "snc_unpredicted_far_hz": 100.0,
+      "snc_gap_ratio": 1.0,
+      "snc_state_specific": false,
+      "primary": false,
+      "ou_off": true,
+      "cond_noise_off": true,
+      "global_homeo_off": true,
+      "total_seconds": 70.4
+    },
+    {
+      "seed": 44,
+      "backend": "cupy",
+      "lesion": true,
+      "shuffle": false,
+      "ablate_sensors": false,
+      "jitter": false,
+      "enable_volley": true,
+      "coincidence_weighted_drive": true,
+      "place_diff_location_cosine": 0.07717899658607195,
+      "place_sparsity": 0.040625,
+      "n_neurons": 994,
+      "n_synapses": 95997,
+      "n_place": 400,
+      "n_strio": 80,
+      "crit_near_init_hz": 5.694444444444444,
+      "crit_near_trained_hz": 0.0,
+      "crit_far_mean_hz": 0.0,
+      "crit_far_max_hz": 0.0,
+      "crit_far_each_hz": {
+        "far_a": 0.0,
+        "far_b": 0.0,
+        "far_center": 0.0
+      },
+      "place_graded_ratio": 0.0,
+      "fire": false,
+      "place_graded": false,
+      "w_near_init": 0.5005233287811279,
+      "w_near_final": 1.0396969318389893,
+      "w_far_init": 0.5043705701828003,
+      "w_far_final": 0.6872823238372803,
+      "weight_near_over_far": 1.512765417905824,
+      "weight_grew": false,
+      "v_learned": false,
+      "near_v_early_hz": 7.1875,
+      "near_v_late_hz": 7.6171875,
+      "actor_no_critic_hz": 62.5,
+      "actor_with_critic_hz": 62.5,
+      "actor_ratio": 1.0,
+      "actor_not_perturbed": true,
+      "snc_predicted_near_hz": 100.0,
+      "snc_unpredicted_far_hz": 100.0,
+      "snc_gap_ratio": 1.0,
+      "snc_state_specific": false,
+      "primary": false,
+      "ou_off": true,
+      "cond_noise_off": true,
+      "global_homeo_off": true,
+      "total_seconds": 68.5
+    }
+  ]
+}

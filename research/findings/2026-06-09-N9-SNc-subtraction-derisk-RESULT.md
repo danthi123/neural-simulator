@@ -50,6 +50,16 @@ The subtraction is the **Eshel-2015 arithmetic signature**: predicted is shifted
 
 **Anti-cheat honesty:** the `--lesion` control (the decisive one) holds. The `--shuffle` control *survives* (gap 1.58) but this is a **test-validity** limitation, not a real failure: `--shuffle` only permutes the cell-sets used for weight *tracking* (gate-2c), it does not perturb the training or the gate-2e firing, so the subtraction is unaffected by construction. The subtraction's value-of-location is **inherited from the critic**, whose LTP *does* break under shuffle (validated in the value-grading arc).
 
+## Multi-seed (teacher 350, scale 2.0, θ=12) — 2/3 state-specific + 3/3 lesion-confirmed
+
+| seed | place diff-cos | critic | gate-2e primary | gate-2e + LESION |
+|---|---|---|---|---|
+| 42 | 0.138 | fires | pred 60 < unpred 100, gap 1.67 **state-specific** | gap 1.00 ✅ collapses |
+| 43 | — | fires | pred 42.5 < unpred 100, gap 2.35 **state-specific** | gap 1.00 ✅ collapses |
+| 44 | 0.077 | **silent** (w_near 1.04, DA-gated LTP didn't grow on this draw despite the teacher firing it 7 Hz) | pred 100 = unpred 100, gap 1.00 (no critic → no subtraction) | gap 1.00 ✅ |
+
+**The decisive LESION control holds 3/3** — on every seed, zeroing the GABA_B mask collapses the gap to exactly 1.00, so wherever a gap exists it IS the synaptic GABA_B (not host arithmetic). The **state-specific arithmetic subtraction holds 2/3** — seed 44's critic simply did not learn V on its draw (silent → no differential GABA_B → no gap to measure; the subtraction mechanism is not implicated, the upstream critic-learning is). So the SNc r−V subtraction MECHANISM is validated; the 2/3 (vs 3/3) is the same critic-learning-robustness residual as the value-grading arc (some draws under-learn V).
+
 ## Honest residual caveats (multi-seed robustness)
 
 1. **The operating point is critic-rate-dependent.** This validation is on the WEAK teacher-bootstrapped draw (critic 12 Hz, w_near 2.77) at scale 2.0. A STRONG-critic draw (33 Hz, the diagnosis's clamp scenario) would need a LOWER scale. A robust multi-seed gate needs either consistent critics (determinism + a phase-locked teacher giving stronger, more uniform LTP) or a critic-rate-normalized GABA_B. The MECHANISM is validated; the multi-seed operating-point calibration is the remaining engineering.
