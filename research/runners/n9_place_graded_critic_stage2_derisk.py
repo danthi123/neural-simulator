@@ -536,6 +536,7 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
              coincidence_k=4.0, coincidence_gain=2.0, coincidence_plateau=80.0, readout_plateau=None,
              stdp_w_max=40.0, coincidence_weighted_drive=False, readout_weighted_k=None,
              gate_fs_during_selforg=False, gate2e_gabab_scale=1.0, critic_teacher_pa=0.0,
+             pair_then_reward=False, pair_steps=100,
              lesion=False, shuffle=False, ablate_sensors=False, jitter=False, verbose=True):
     log = print if verbose else (lambda *a, **k: None)
     from sim.backend import get_backend
@@ -697,23 +698,41 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
         _step(bridge, hold_steps)
         if getattr(bridge, "cp_eligibility_trace", None) is not None:
             bridge.cp_eligibility_trace[:] = 0.0
-        # LEARN: drive landmark sensors at NEAR (-> place ensemble -> critic post-spike) + reward burst
+        # LEARN: drive landmark sensors at NEAR (-> place ensemble -> critic post-spike).
         bridge.cp_external_input_current[:] = 0.0
         bridge.cp_external_input_current[sensor_idx_g] = xp.asarray(loc_sensor[near_name], dtype=xp.float32)
-        bridge.cp_external_input_current[snc_idx_g] = xp.float32(snc_tonic_pa + snc_reward_gain)
         if critic_teacher_pa > 0.0:
-            # TEACHER scaffold (the endorsed innate-reflex-teaches-a-learned-circuit pattern): drive the
-            # critic to fire during the LEARN window so place-pre x critic-post STDP forms place->value LTP
-            # even when a weak place-code draw's volley alone is sub-threshold. ONLY the NEAR place ensemble
-            # is driven (frozen distinct code), so only near->critic potentiates (far cells stay silent ->
-            # no w_far growth). REMOVED at read-out -> the LEARNED place->value weights + the weighted
-            # plateau carry the firing (the teacher bootstraps the LTP; the learned circuit does inference).
+            # TEACHER scaffold (a BAND-AID -- the robust-value-learning diagnosis showed it fires the critic
+            # UNPHASED so net LTP ~0; default OFF, kept only for the control comparison). Removed at read-out.
             bridge.cp_external_input_current[crit_idx_g] = xp.float32(critic_teacher_pa)
-        spk = 0
-        for _ in range(hold_steps):
-            _tick(bridge)
-            spk += int(bridge.cp_firing_states[crit_idx_g].sum())
-        near_v_curve.append(spk / max(len(crit_idx), 1) / max(hold_steps * 1e-3, 1e-9))
+        spk = 0; n_meas = 0
+        if pair_then_reward:
+            # ── THE FIX (Yagishita-Kasai 2014 three-factor TIMING; 2026-06-09 diagnosis) ──
+            # PAIR phase: place ON + SNc at TONIC (DA at BASELINE), for pair_steps (>= the init-read warm-up
+            # so the bistable MSN-D1 CLIMBS into the up-state). place-pre x critic-post STDP lays a clean,
+            # net-positive, SILENT eligibility trace -- at DA-baseline the 3-factor block converts ~0 weight,
+            # so the trace ACCUMULATES. This is the pre->post pairing that must PRECEDE the dopamine.
+            bridge.cp_external_input_current[snc_idx_g] = xp.float32(snc_tonic_pa)
+            for _ in range(pair_steps):
+                _tick(bridge)
+                spk += int(bridge.cp_firing_states[crit_idx_g].sum()); n_meas += 1
+            # REWARD phase: place STILL ON (cell holds the up-state) + SNc BURST -> DA rises AFTER the
+            # pairing -> converts the now-large accumulated eligibility in a big, robust, draw-independent
+            # step (w += lr*(DA-base)*eligibility, the correct phase). The eligibility tau=1000ms ~ the ~1s
+            # biological window, so it is still large when the DA arrives.
+            bridge.cp_external_input_current[snc_idx_g] = xp.float32(snc_tonic_pa + snc_reward_gain)
+            for _ in range(hold_steps):
+                _tick(bridge)
+                spk += int(bridge.cp_firing_states[crit_idx_g].sum()); n_meas += 1
+        else:
+            # SIMULTANEOUS-DA control (the prior behavior): place pairing + reward burst TOGETHER -> the DA
+            # co-terminates with the pairing -> the high-DA window sees a ~zero eligibility integral (cell
+            # still climbing) -> fragile, draw-dependent LTP (the 2/3 boundary). The DA-timing anti-cheat.
+            bridge.cp_external_input_current[snc_idx_g] = xp.float32(snc_tonic_pa + snc_reward_gain)
+            for _ in range(hold_steps):
+                _tick(bridge)
+                spk += int(bridge.cp_firing_states[crit_idx_g].sum()); n_meas += 1
+        near_v_curve.append(spk / max(len(crit_idx), 1) / max(n_meas * 1e-3, 1e-9))
         if verbose and (t < 3 or t % 10 == 0 or t == n_train - 1):
             wn = _mean_w(bridge, "place", "striosome_value", pre_subset=near_set)
             wf = _mean_w(bridge, "place", "striosome_value", pre_subset=far_set)
@@ -986,10 +1005,16 @@ def main():
                          "(~-960 pA at 20 Hz critic); ~0.05-0.2 lands the Eshel-2015 ARITHMETIC band (predicted "
                          ">0 AND unpredicted >1.3x predicted). 1.0 = the clamp baseline.")
     ap.add_argument("--critic-teacher-pa", type=float, default=0.0,
-                    help="TEACHER current (pA) on the critic during the value-training LEARN window only "
-                         "(removed at read-out). Bootstraps place->value STDP LTP when a weak place-code draw's "
-                         "volley is sub-threshold -> the critic learns V robustly regardless of the (CuPy-"
-                         "non-deterministic) place-code draw. ~400-600 pA clears the MSN-D1 ~339 pA rheobase.")
+                    help="TEACHER current (pA) on the critic during LEARN (BAND-AID; fires it UNPHASED so net "
+                         "LTP ~0 -- kept only for the control comparison; the real fix is --pair-then-reward).")
+    ap.add_argument("--pair-then-reward", action="store_true",
+                    help="THE FIX (Yagishita-Kasai three-factor TIMING): split each LEARN trial into PAIR "
+                         "(place ON + SNc tonic / DA baseline, pair_steps -> up-state + SILENT eligibility "
+                         "trace) THEN REWARD (place still ON + SNc burst -> DA AFTER the pairing -> converts "
+                         "the accumulated eligibility). Default OFF = the simultaneous-DA control (fragile 2/3).")
+    ap.add_argument("--pair-steps", type=int, default=100,
+                    help="PAIR-phase length (steps) for --pair-then-reward (>= the init-read warm-up so the "
+                         "bistable MSN-D1 reaches the up-state). Default 100.")
     # controls
     ap.add_argument("--lesion", action="store_true", help="gate-2e: zero GABA_B mask -> gap must vanish")
     ap.add_argument("--shuffle", action="store_true",
@@ -1059,6 +1084,7 @@ def main():
         gate_fs_during_selforg=bool(args.gate_fs_during_selforg),
         gate2e_gabab_scale=float(args.gate2e_gabab_scale),
         critic_teacher_pa=float(args.critic_teacher_pa),
+        pair_then_reward=bool(args.pair_then_reward), pair_steps=int(args.pair_steps),
         lesion=bool(args.lesion), shuffle=bool(args.shuffle), ablate_sensors=bool(args.ablate_sensors),
         jitter=bool(args.jitter))
 
