@@ -154,6 +154,28 @@ class CoreSimConfig:
     nmda_recurrent_tau_decay_ms: float = 100.0 # slow NR2B decay (Wang); >> AMPA ~5ms
     nmda_recurrent_tau_rise_ms: float = 2.0    # NMDA rise (ms)
     nmda_recurrent_propagation_strength: float = 0.05  # per-spike increment scale (mirrors propagation_strength for the excitatory path)
+    # Per-pathway dendritic COINCIDENCE detection (2026-06-09; Major-Larkum-Schiller "Decade of the
+    # Dendritic NMDA Spike" + Poirazi-Mel 2003 two-layer subunit). When True AND a pathway sets
+    # coincidence_detector=True, each postsynaptic neuron forms a dendritic SUBUNIT over that pathway's
+    # synapses: if >= coincidence_k_threshold of its routed inputs fire in the SAME step (a clustered/
+    # synchronous volley), a regenerative ALL-OR-NONE plateau current (saturating, Mg2+-self-limiting via
+    # the reused Jahr-Stevens block, slow ~80ms decay) is injected -- so a SPARSE-distinct ensemble (each
+    # cell <0.2 spk/step) can fire the cell by COINCIDENCE where the linear rate-weighted matvec cannot
+    # (the point-neuron rate-coding wall, 2026-06-09-learned-graded-ca3-derisk-RESULT.md). This is the
+    # COINCIDENCE sibling of enable_nmda_recurrent (a second per-neuron conductance + a per-synapse
+    # routing mask + the reused Mg-block kernel), differing in that the fast-AMPA g_e component is KEPT
+    # (the plateau rides ADDITIVELY on top of the AMPA EPSP, matching the NMDA spike riding the EPSP --
+    # UNLIKE nmda_slow, which REPLACES AMPA). Default False => no pathway is routed, the new per-neuron
+    # coincidence block is unreached, the g_e matvec is unmasked, and total_input_current_pA is byte-
+    # identical to today (mirrors enable_nmda_recurrent / enable_gabab). The K/gain operating point is
+    # calibrated by research/runners/coincidence_wall_probe.py (Step 0). See
+    # research/findings/2026-06-09-coincidence-substrate-upgrade-design.md.
+    enable_coincidence_detection: bool = False
+    coincidence_k_threshold: float = 6.0        # # of synchronous clustered inputs to trigger the plateau (biology: 10-50 synapses; scaled to fan-in)
+    coincidence_gain: float = 2.0               # sigmoid slope of the all-or-none switch (~0.88/0.12 at K+/-1)
+    coincidence_plateau_strength: float = 80.0  # per-step plateau conductance increment scale (the regenerative NMDA-spike drive)
+    coincidence_tau_decay_ms: float = 80.0      # plateau duration (Major-Larkum-Schiller NMDA spike 50-100ms)
+    coincidence_tau_rise_ms: float = 2.0        # plateau rise (ms)
     # GABA_B -> GIRK slow K+ inhibitory conductance (metabotropic). Default OFF;
     # byte-identical when disabled. E_gabab is the POTASSIUM reversal (~-90 mV),
     # independent of the chloride gradient, so it strongly hyperpolarizes KCC2-lacking

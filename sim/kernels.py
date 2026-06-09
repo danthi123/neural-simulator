@@ -250,6 +250,34 @@ def fused_nmda_update_and_current(g_nmda, g_nmda_rise, decay_nmda, decay_nmda_ri
     return g_nmda_new, g_nmda_rise_new, I_nmda
 
 @fuse()
+def fused_coincidence_plateau(g, g_rise, decay, decay_rise, v, E_e, mg_conc,
+                              c_count, k_thresh, gain, plateau_strength):
+    """Dendritic-COINCIDENCE (NMDA-spike) plateau. A per-neuron SUPRALINEAR, all-or-none switch on the
+    COUNT of SYNCHRONOUS clustered inputs c_count: >= k_thresh coincident inputs this step -> a
+    regenerative plateau conductance increment; fewer -> ~0. The plateau then decays with the SAME
+    dual-exponential idiom as fused_nmda_update_and_current (slow ~80ms tail = the 50-100ms NMDA spike)
+    and produces an Mg2+-self-limiting (Jahr-Stevens) current, so it is genuinely NMDA-like (voltage-
+    gated, self-limiting). This is the FIRST non-linear-summation element in the engine: it makes a
+    handful of SIMULTANEOUS clustered inputs trigger the soma where the same inputs spread in time
+    (c_count < k_thresh each step) cannot -- the inverse of the point-neuron rate-coding wall.
+    (Poirazi-Brannon-Mel 2003 two-layer subunit; Major-Larkum-Schiller 2013 NMDA spike; Branco-Clark-
+    Hausser 2010 temporal sensitivity -> the jitter anti-cheat.) Called ONLY from the guarded
+    coincidence block in bridge._run_one_simulation_step, so its presence is byte-inert when
+    cfg.enable_coincidence_detection is False (the block is unreached and this kernel is never invoked)."""
+    # All-or-none sigmoid switch on the coincidence count (the supralinear subunit).
+    g_inc = plateau_strength / (1.0 + cp.exp(-gain * (c_count - k_thresh)))
+    # Dual-exponential plateau (g_slow - g_rise), mirroring the NMDA dual-exp kinetics.
+    g_new = g * decay + g_inc
+    g_rise_new = g_rise * decay_rise + g_inc
+    g_eff = g_new - g_rise_new
+    g_eff = cp.maximum(g_eff, 0.0)
+    # Voltage-dependent Mg2+ block (Jahr & Stevens 1990) -- regenerative as V depolarizes.
+    mg_block = 1.0 / (1.0 + (mg_conc / 3.57) * cp.exp(-0.062 * v))
+    # Plateau current (conductance form: driving force toward E_e = 0 mV).
+    I = g_eff * mg_block * (E_e - v)
+    return g_new, g_rise_new, I
+
+@fuse()
 def fused_stp_decay_recovery(u, x, dt, tau_f, tau_d):
     """Fused kernel for STP u and x variable decay/recovery."""
     # Ensure tau_f and tau_d are not zero to prevent division by zero.

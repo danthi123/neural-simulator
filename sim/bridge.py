@@ -88,6 +88,7 @@ from sim.kernels import (fused_izhikevich_legacy_dynamics_update,
                          fused_conductance_decay_and_current,
                          fused_gabab_decay_and_current,
                          fused_nmda_update_and_current,
+                         fused_coincidence_plateau,
                          fused_stp_decay_recovery,
                          fused_homeostasis_update,
                          fused_stdp_weight_update,
@@ -249,6 +250,18 @@ class SimulationBridge:
         self.cp_conductance_g_nmda_recurrent = None       # slow NMDA recurrent conductance (None unless enable_nmda_recurrent + a routed pathway)
         self.cp_conductance_g_nmda_recurrent_rise = None  # dual-exp rise component
         self.cp_nmda_recurrent_synapse_mask = None        # bool per-synapse: True for nmda_slow-routed synapses
+        # Dendritic-COINCIDENCE plateau (2026-06-09). The COINCIDENCE sibling of the nmda_recurrent
+        # arrays above: a SEPARATE slow (tau ~80 ms) plateau conductance (dual-exp, reuses
+        # fused_coincidence_plateau with the same Mg2+ block) driven by a SUPRALINEAR all-or-none switch
+        # on the per-step COUNT of coincident routed inputs (>= cfg.coincidence_k_threshold). Fed ONLY by
+        # synapses of pathways tagged coincidence_detector=True (the per-synapse routing mask); the fast-
+        # AMPA g_e component is KEPT (the plateau is ADDITIVE, unlike nmda_slow which suppresses AMPA). All
+        # None by default -> the new per-neuron coincidence block is unreached, the new kernel is never
+        # called, and total_input_current_pA is byte-identical to today. K/gain calibrated by
+        # research/runners/coincidence_wall_probe.py. See 2026-06-09-coincidence-substrate-upgrade-design.md.
+        self.cp_conductance_g_coincidence = None          # slow coincidence-plateau conductance (None unless enable_coincidence_detection + a routed pathway)
+        self.cp_conductance_g_coincidence_rise = None     # dual-exp rise component
+        self.cp_coincidence_synapse_mask = None           # bool per-synapse: True for coincidence_detector-routed synapses
         # Cluster G v2 (2026-05-01): per-neuron NMDA mask (1.0 for neurons
         # in regions with BrainRegion.enable_nmda=True, 0.0 otherwise).
         # When None, NMDA applies globally per cfg.enable_nmda — backward
@@ -1227,6 +1240,17 @@ class SimulationBridge:
                 self.cp_conductance_g_nmda_recurrent = cp.zeros(n, dtype=cp.float32)
                 self.cp_conductance_g_nmda_recurrent_rise = cp.zeros(n, dtype=cp.float32)
 
+            # Dendritic-coincidence plateau conductance (2026-06-09). The COINCIDENCE sibling of the
+            # nmda_recurrent alloc above: a per-neuron plateau conductance (dual-exp: g + g_rise) with its
+            # own slow ~80ms decay, driven by the supralinear coincidence switch. Guarded by
+            # cfg.enable_coincidence_detection so a default config leaves both arrays None and the per-step
+            # block is unreached (byte-identical). The routing mask is built in inject_explicit_wiring
+            # (needs nnz); left None here so non-wired bridges with enable_coincidence_detection are still
+            # safe. The plateau reversal is E_e (= 0 mV, same as AMPA), so no per-neuron reversal array.
+            if getattr(cfg, "enable_coincidence_detection", False) and n > 0:
+                self.cp_conductance_g_coincidence = cp.zeros(n, dtype=cp.float32)
+                self.cp_conductance_g_coincidence_rise = cp.zeros(n, dtype=cp.float32)
+
             self.cp_refractory_timers = cp.zeros(n, dtype=cp.int32)
             self.cp_neuron_activity_ema = cp.zeros(n, dtype=cp.float32) 
             self.cp_viz_activity_timers = cp.zeros(n, dtype=cp.int32) 
@@ -1599,6 +1623,13 @@ class SimulationBridge:
             _nmda_rec_tr = getattr(cfg, "nmda_recurrent_tau_rise_ms", 2.0)
             self._cached_decay_nmda_recurrent = float(cp.exp(-cfg.dt_ms / _nmda_rec_td)) if _nmda_rec_td > 0 else 0.0
             self._cached_decay_nmda_recurrent_rise = float(cp.exp(-cfg.dt_ms / _nmda_rec_tr)) if _nmda_rec_tr > 0 else 0.0
+            # Dendritic-coincidence plateau dual-exp decay constants (2026-06-09). Mirror the NMDA caches
+            # above with the plateau's own (slow ~80ms) taus. Always cached (cheap floats); only USED when
+            # the guarded coincidence block runs.
+            _coinc_td = getattr(cfg, "coincidence_tau_decay_ms", 80.0)
+            _coinc_tr = getattr(cfg, "coincidence_tau_rise_ms", 2.0)
+            self._cached_decay_coincidence = float(cp.exp(-cfg.dt_ms / _coinc_td)) if _coinc_td > 0 else 0.0
+            self._cached_decay_coincidence_rise = float(cp.exp(-cfg.dt_ms / _coinc_tr)) if _coinc_tr > 0 else 0.0
             _BASE_HH_TEMP = 6.3
             self._cached_hh_phi = cfg.hh_q10_factor ** ((cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0)
             # Per-gate phi values (Session "fix-bugs" — see HH temperature bug findings)
@@ -2180,11 +2211,13 @@ class SimulationBridge:
         all_trans_gates = []  # transmission gate_name per synapse, or "" (scales CURRENT)
         all_receptors = []  # receptor string per synapse ("gaba_a" default | "gaba_b" -> slow GIRK)
         all_exc_receptors = []  # exc_receptor per synapse ("ampa" default | "nmda_slow" -> slow recurrent NMDA)
+        all_coincidence = []  # coincidence_detector bool per synapse (True -> dendritic-coincidence subunit)
         any_fixed = False
         any_gated = False
         any_trans_gated = False
         any_gabab = False  # any synapse routed through the GABA_B/GIRK conductance
         any_nmda_slow = False  # any synapse routed through the slow-NMDA recurrent conductance
+        any_coincidence = False  # any synapse routed through the dendritic-coincidence plateau
         for name, group in wiring_plan.items():
             if not isinstance(group, dict) or "pre_indices" not in group:
                 continue
@@ -2193,6 +2226,7 @@ class SimulationBridge:
             trans_gate_name = group.get("transmission_gate", None) or ""
             receptor = (group.get("receptor", None) or "gaba_a")
             exc_receptor = (group.get("exc_receptor", None) or "ampa")
+            coincidence_flag = bool(group.get("coincidence_detector", False))
             if not plastic_flag:
                 any_fixed = True
             if gate_name:
@@ -2203,6 +2237,8 @@ class SimulationBridge:
                 any_gabab = True
             if exc_receptor == "nmda_slow":
                 any_nmda_slow = True
+            if coincidence_flag:
+                any_coincidence = True
             n_syn = len(group["pre_indices"])
             all_pre.extend(group["pre_indices"])
             all_post.extend(group["post_indices"])
@@ -2212,6 +2248,7 @@ class SimulationBridge:
             all_trans_gates.extend([trans_gate_name] * n_syn)
             all_receptors.extend([receptor] * n_syn)
             all_exc_receptors.extend([exc_receptor] * n_syn)
+            all_coincidence.extend([coincidence_flag] * n_syn)
 
         if len(all_pre) == 0:
             self._log_console("inject_explicit_wiring: no synapses in plan.", "warning")
@@ -2244,17 +2281,19 @@ class SimulationBridge:
         # they're row-aligned. (exc_receptor appended 2026-06-09 for nmda_slow routing —
         # the index-based GABA_B/exc-receptor reads below use t[5]/t[6]; the destructuring
         # reads add one trailing `_`.)
-        if any_fixed or any_gated or any_trans_gated or any_gabab or any_nmda_slow:
+        # (coincidence appended 2026-06-09 for the dendritic-coincidence subunit -- the index-based
+        # coincidence read below uses t[7]; the destructuring reads add one more trailing `_`.)
+        if any_fixed or any_gated or any_trans_gated or any_gabab or any_nmda_slow or any_coincidence:
             keyed = sorted(
                 zip(all_pre, all_post, all_plastic, all_gates, all_trans_gates,
-                    all_receptors, all_exc_receptors),
+                    all_receptors, all_exc_receptors, all_coincidence),
                 key=lambda t: (t[0], t[1]),
             )
         else:
             keyed = None
 
         if any_fixed:
-            sorted_plastic = np.asarray([p for _, _, p, _, _, _, _ in keyed], dtype=np.bool_)
+            sorted_plastic = np.asarray([p for _, _, p, _, _, _, _, _ in keyed], dtype=np.bool_)
             self.cp_synapse_plastic_mask = cp.asarray(sorted_plastic)
         else:
             self.cp_synapse_plastic_mask = None
@@ -2263,7 +2302,7 @@ class SimulationBridge:
         # Allocate cp_plasticity_rate_gain only if any synapse is gated; otherwise
         # leave None and the plasticity update paths skip gain multiplication.
         if any_gated:
-            sorted_gates = [g for _, _, _, g, _, _, _ in keyed]
+            sorted_gates = [g for _, _, _, g, _, _, _, _ in keyed]
             gate_to_indices: Dict[str, List[int]] = {}
             for syn_idx, gname in enumerate(sorted_gates):
                 if gname:
@@ -2295,7 +2334,7 @@ class SimulationBridge:
         # applied to effective_synaptic_strength in the step. Default 1.0 (open); runners call
         # set_transmission_gate(name, value) to open/close at runtime.
         if any_trans_gated:
-            sorted_trans = [tg for _, _, _, _, tg, _, _ in keyed]
+            sorted_trans = [tg for _, _, _, _, tg, _, _, _ in keyed]
             tgate_to_indices: Dict[str, List[int]] = {}
             for syn_idx, tgname in enumerate(sorted_trans):
                 if tgname:
@@ -2370,6 +2409,30 @@ class SimulationBridge:
             if self.cp_conductance_g_nmda_recurrent is None and n > 0:
                 self.cp_conductance_g_nmda_recurrent = cp.zeros(n, dtype=cp.float32)
                 self.cp_conductance_g_nmda_recurrent_rise = cp.zeros(n, dtype=cp.float32)
+
+        # Dendritic-COINCIDENCE per-synapse routing mask (2026-06-09). The COINCIDENCE sibling of the
+        # nmda_recurrent mask above: True for synapses of any pathway tagged coincidence_detector=True;
+        # the per-step coincidence block COUNTS only these synapses (the per-step coincidence count c_i)
+        # and feeds the supralinear plateau. Aligned with cp_connections.data order via the same
+        # (pre, post)-sorted `keyed` list (coincidence_detector is keyed[7]). Built only when
+        # enable_coincidence_detection AND at least one pathway sets coincidence_detector=True (else
+        # None -> the step block is unreached, the new kernel is never called, and routing is byte-
+        # identical). Capacity-sized; new (grown) synapses default to False = not-a-coincidence-input.
+        # NO AMPA suppression (the plateau is ADDITIVE) and NO per-neuron reversal (E = E_e = 0 mV).
+        if getattr(self.core_config, "enable_coincidence_detection", False) and any_coincidence and keyed is not None:
+            # keyed is (pre, post, plastic, gate, trans_gate, receptor, exc_receptor, coincidence) in the
+            # SAME (pre,post)-sorted order as cp_connections.data -- so the mask aligns synapse-for-
+            # synapse. (post_np is INSERTION order and must NOT be used here.)
+            sorted_coincidence = [t[7] for t in keyed]
+            co_mask_host = np.fromiter(
+                (bool(cd) for cd in sorted_coincidence), dtype=np.bool_, count=nnz)
+            self.cp_coincidence_synapse_mask = cp.zeros(self._synapse_capacity, dtype=cp.bool_)
+            self.cp_coincidence_synapse_mask[:nnz] = cp.asarray(co_mask_host)
+            # Allocate the plateau conductances here if the guarded init alloc didn't
+            # (e.g. enable_coincidence_detection toggled after init), so the step block is safe.
+            if self.cp_conductance_g_coincidence is None and n > 0:
+                self.cp_conductance_g_coincidence = cp.zeros(n, dtype=cp.float32)
+                self.cp_conductance_g_coincidence_rise = cp.zeros(n, dtype=cp.float32)
 
         # Cluster B.1 (2026-04-28): tag D2-targeting synapses with sign=-1.
         # D1-targeting + everything else stays at +1 (default). The reward-
@@ -5657,6 +5720,52 @@ class SimulationBridge:
                     self.cp_membrane_potential_v, cfg.syn_reversal_potential_e,  # E_NMDA = E_e = 0 mV
                     cfg.nmda_mg_concentration)
                 total_input_current_pA = total_input_current_pA + I_nmda_recurrent
+
+            # --- 2.3a-bis. Dendritic-COINCIDENCE plateau (Major-Larkum-Schiller NMDA spike; Poirazi-Mel
+            # two-layer subunit). The FIRST non-linear-summation element in the engine. For each post
+            # neuron, c_i = the COUNT of its coincidence_detector-routed presynaptic cells that fired this
+            # step (a restricted matvec of the BINARY routing mask against prev_fired -- the GABA_B/nmda_
+            # slow technique, but the data is the {0,1} mask itself so it COUNTS inputs, not sums weights).
+            # A supralinear all-or-none switch on c_i (>= cfg.coincidence_k_threshold) injects a
+            # regenerative, Mg2+-self-limiting, slow-decaying plateau current -- so a SPARSE-distinct
+            # ensemble whose >=K cells fire in the SAME step fires the cell by COINCIDENCE, while the same
+            # cells spread in time (c_i < K each step) cannot (the inverse of the rate-coding wall). The
+            # fast-AMPA g_e is KEPT (the plateau is ADDITIVE on top, unlike nmda_slow). GUARDED:
+            # cp_coincidence_synapse_mask / cp_conductance_g_coincidence are None for every run that
+            # doesn't set enable_coincidence_detection + a routed pathway, so this whole block is skipped,
+            # fused_coincidence_plateau is never called, and total_input_current_pA is byte-identical.
+            if (getattr(cfg, "enable_coincidence_detection", False)
+                    and self.cp_conductance_g_coincidence is not None
+                    and self.cp_coincidence_synapse_mask is not None):
+                # Coincidence count c_i per post neuron (restricted matvec; binary routed mask vs prev
+                # firing). The mask is grown to the live nnz with FALSE padding (mirrors the GABA_B/nmda_
+                # slow mask growth fix), then used as the matvec DATA (1.0 for coincidence synapses, 0
+                # else) so the matvec counts coincident inputs rather than summing weights.
+                if self.cp_connections.nnz > 0 and _prev_any:
+                    _co_nnz = self.cp_connections.nnz
+                    _co_mask_f = self._ensure_gate_capacity(
+                        "cp_coincidence_synapse_mask", _co_nnz, fill=False, dtype=cp.bool_
+                    )[:_co_nnz].astype(cp.float32)
+                    _co_mat = csp.csr_matrix(
+                        (_co_mask_f, self.cp_connections.indices, self.cp_connections.indptr),
+                        shape=self.cp_connections.shape)
+                    c_count = _co_mat.T @ self.cp_prev_firing_states.astype(cp.float32)
+                else:
+                    # No prior spikes this step -> zero coincidence count (the plateau still DECAYS below).
+                    c_count = cp.zeros_like(self.cp_conductance_g_coincidence)
+                (self.cp_conductance_g_coincidence,
+                 self.cp_conductance_g_coincidence_rise,
+                 I_coincidence) = fused_coincidence_plateau(
+                    self.cp_conductance_g_coincidence,
+                    self.cp_conductance_g_coincidence_rise,
+                    self._cached_decay_coincidence, self._cached_decay_coincidence_rise,
+                    self.cp_membrane_potential_v, cfg.syn_reversal_potential_e,  # E = E_e = 0 mV
+                    cfg.nmda_mg_concentration,
+                    c_count,
+                    cp.float32(getattr(cfg, "coincidence_k_threshold", 6.0)),
+                    cp.float32(getattr(cfg, "coincidence_gain", 2.0)),
+                    cp.float32(getattr(cfg, "coincidence_plateau_strength", 80.0)))
+                total_input_current_pA = total_input_current_pA + I_coincidence
 
             # --- 2.3b. GABA_B -> GIRK slow K+ inhibition (metabotropic; E_K ~ -90 mV) ---
             # The NMDA pattern inverted: a second, slow (tau ~150 ms), hyperpolarizing

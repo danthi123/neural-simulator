@@ -1,0 +1,897 @@
+{
+  "probe": "coincidence_wall_probe",
+  "design_doc": "2026-06-09-coincidence-substrate-upgrade-design.md",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 383.5,
+  "wall_confirmed_no_sparse_and_fires_at_realistic_weight": true,
+  "sparse_and_fires_realistic_exceptions": [],
+  "brute_force_high_weight_fires": [
+    {
+      "seed": 42,
+      "s2t_weight": 160.0,
+      "s2t_density": 0.5,
+      "source_sparsity": 0.0475,
+      "target_spk_per_step": 0.07,
+      "target_max_cell_spk_per_step": 0.01,
+      "target_fires_5hz": true
+    },
+    {
+      "seed": 42,
+      "s2t_weight": 160.0,
+      "s2t_density": 0.9,
+      "source_sparsity": 0.0475,
+      "target_spk_per_step": 0.35,
+      "target_max_cell_spk_per_step": 0.03,
+      "target_fires_5hz": true
+    },
+    {
+      "seed": 43,
+      "s2t_weight": 160.0,
+      "s2t_density": 0.3,
+      "source_sparsity": 0.0425,
+      "target_spk_per_step": 0.02,
+      "target_max_cell_spk_per_step": 0.01,
+      "target_fires_5hz": true
+    },
+    {
+      "seed": 43,
+      "s2t_weight": 160.0,
+      "s2t_density": 0.5,
+      "source_sparsity": 0.0425,
+      "target_spk_per_step": 0.05,
+      "target_max_cell_spk_per_step": 0.01,
+      "target_fires_5hz": true
+    },
+    {
+      "seed": 43,
+      "s2t_weight": 160.0,
+      "s2t_density": 0.9,
+      "source_sparsity": 0.0425,
+      "target_spk_per_step": 0.3,
+      "target_max_cell_spk_per_step": 0.03,
+      "target_fires_5hz": true
+    }
+  ],
+  "recommendation": {
+    "K_recommended": 2,
+    "gain_recommended": 2.0,
+    "plateau_strength_recommended": 80.0,
+    "tau_decay_ms_recommended": 80.0,
+    "tau_rise_ms_recommended": 2.0,
+    "no_valid_K_above_1": true,
+    "all_seeds_have_sparse_coincident_window": false,
+    "per_seed_best_sparse_coincident_operating_point": [
+      null,
+      null,
+      null
+    ],
+    "cross_seed_base_per_step_max_ci_p90": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "cross_seed_base_per_step_max_ci_p99": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "cross_seed_base_per_step_max_ci_max": [
+      2,
+      1,
+      2
+    ],
+    "cross_seed_base_ci_max": [
+      2,
+      1,
+      2
+    ],
+    "rationale": "K from the calibration intensity-sweep: the smallest K>=2 the BEST sparse-distinct (<=8% cells) operating point reaches at p90 of per-step max-over-targets c_i, across ALL seeds. If no sparse-and-coincident window exists in any seed (no_valid_K_above_1=True), the natural sparse-distinct ensemble does NOT deliver >=K>=2 coincidence per step -> the design's STOP condition (don't write a Step-A edit that can't fire; next lever = clustering+delays or multi-subunit). gain=2 = a sharp all-or-none sigmoid switch (~0.88/0.12 at K+/-1). plateau_strength=80: analytic single-step floor to clear ~420 pA MSN-D1 rheobase is g~133 at V=-70mV (mg_block~0.045, driving force 70mV), but the plateau ACCUMULATES over its ~80ms decay (~80x geometric sum) and mg_block rises regeneratively as V depolarizes, so a per-step increment ~60-90 reaches rheobase within a few steps; exact point finalized by Step A G_FIRE."
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "n_neurons": 480,
+      "n_synapses": 16121,
+      "driven_regions": [
+        "src_sensors"
+      ],
+      "source": {
+        "sparsity_mean": 0.0425,
+        "active_rate_spk_per_step_mean": 0.01,
+        "diff_cos_mean": 0.06919092209015396,
+        "per_loc_sparsity": [
+          0.0725,
+          0.0275,
+          0.0475,
+          0.03,
+          0.035,
+          0.0425
+        ],
+        "per_loc_active_rate": [
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01
+        ]
+      },
+      "wall_base_point": {
+        "s2t_weight": 20.0,
+        "s2t_density": 0.5,
+        "target_spk_per_step_mean": 0.0,
+        "target_max_cell_spk_per_step_mean": 0.0
+      },
+      "coincidence_stats": {
+        "n_coincident_events": 148,
+        "ci_mean_when_active": 1.0202702702702702,
+        "ci_p50": 1.0,
+        "ci_p90": 1.0,
+        "ci_p99": 2.0,
+        "ci_max": 2,
+        "per_step_max_ci_mean": 0.125,
+        "per_step_max_ci_p90": 1.0,
+        "per_step_max_ci_p99": 1.0,
+        "per_step_max_ci_max": 2,
+        "steps_total": 120,
+        "fan_in_min": 187,
+        "fan_in_mean": 202.75,
+        "fan_in_max": 223,
+        "trigger_rate_at_K": {
+          "2": 0.008333333333333333,
+          "3": 0.0,
+          "4": 0.0,
+          "5": 0.0,
+          "6": 0.0,
+          "8": 0.0,
+          "10": 0.0,
+          "12": 0.0,
+          "16": 0.0,
+          "20": 0.0
+        }
+      },
+      "calibration_intensity_sweep": [
+        {
+          "intensity_factor": 1.0,
+          "source_sparsity": 0.0,
+          "source_active_rate_spk_per_step": 0.0,
+          "ci_p90": 0.0,
+          "ci_p99": 1.0,
+          "ci_max": 1,
+          "ci_mean_when_active": 1.0,
+          "trig_K2": 0.0,
+          "trig_K3": 0.0,
+          "trig_K4": 0.0,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 1.5,
+          "source_sparsity": 0.4825,
+          "source_active_rate_spk_per_step": 0.010207253694534301,
+          "ci_p90": 3.0,
+          "ci_p99": 6.6200000000000045,
+          "ci_max": 7,
+          "ci_mean_when_active": 1.7566371681415929,
+          "trig_K2": 0.225,
+          "trig_K3": 0.11666666666666667,
+          "trig_K4": 0.08333333333333333,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 2.0,
+          "source_sparsity": 0.7675,
+          "source_active_rate_spk_per_step": 0.011400651931762696,
+          "ci_p90": 5.0,
+          "ci_p99": 9.0,
+          "ci_max": 12,
+          "ci_mean_when_active": 2.563758389261745,
+          "trig_K2": 0.4083333333333333,
+          "trig_K3": 0.2916666666666667,
+          "trig_K4": 0.20833333333333334,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 3.0,
+          "source_sparsity": 0.9425,
+          "source_active_rate_spk_per_step": 0.016100795269012452,
+          "ci_p90": 9.0,
+          "ci_p99": 20.860000000000014,
+          "ci_max": 23,
+          "ci_mean_when_active": 3.914985590778098,
+          "trig_K2": 0.5916666666666667,
+          "trig_K3": 0.475,
+          "trig_K4": 0.4166666666666667,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 5.0,
+          "source_sparsity": 0.9825,
+          "source_active_rate_spk_per_step": 0.027022900581359862,
+          "ci_p90": 12.0,
+          "ci_p99": 19.810000000000002,
+          "ci_max": 24,
+          "ci_mean_when_active": 5.708881578947368,
+          "trig_K2": 0.7666666666666667,
+          "trig_K3": 0.7583333333333333,
+          "trig_K4": 0.7416666666666667,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 8.0,
+          "source_sparsity": 0.9925,
+          "source_active_rate_spk_per_step": 0.039445843696594235,
+          "ci_p90": 18.0,
+          "ci_p99": 23.620000000000005,
+          "ci_max": 29,
+          "ci_mean_when_active": 8.595985589294905,
+          "trig_K2": 0.8083333333333333,
+          "trig_K3": 0.8,
+          "trig_K4": 0.8,
+          "sparse_and_coincident": false
+        }
+      ],
+      "any_sparse_and_coincident": false,
+      "wall_sweep": [
+        {
+          "s2t_weight": 10.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 10.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 10.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 20.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 20.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 20.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 40.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 40.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 40.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 80.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 80.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 80.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 160.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 160.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.07,
+          "target_max_cell_spk_per_step": 0.01,
+          "target_fires_5hz": true
+        },
+        {
+          "s2t_weight": 160.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0475,
+          "target_spk_per_step": 0.35,
+          "target_max_cell_spk_per_step": 0.03,
+          "target_fires_5hz": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "backend": "cupy",
+      "n_neurons": 480,
+      "n_synapses": 15962,
+      "driven_regions": [
+        "src_sensors"
+      ],
+      "source": {
+        "sparsity_mean": 0.03958333333333334,
+        "active_rate_spk_per_step_mean": 0.01,
+        "diff_cos_mean": 0.043433109805197066,
+        "per_loc_sparsity": [
+          0.055,
+          0.055,
+          0.0275,
+          0.0325,
+          0.0375,
+          0.03
+        ],
+        "per_loc_active_rate": [
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01
+        ]
+      },
+      "wall_base_point": {
+        "s2t_weight": 20.0,
+        "s2t_density": 0.5,
+        "target_spk_per_step_mean": 0.0,
+        "target_max_cell_spk_per_step_mean": 0.0
+      },
+      "coincidence_stats": {
+        "n_coincident_events": 104,
+        "ci_mean_when_active": 1.0,
+        "ci_p50": 1.0,
+        "ci_p90": 1.0,
+        "ci_p99": 1.0,
+        "ci_max": 1,
+        "per_step_max_ci_mean": 0.08333333333333333,
+        "per_step_max_ci_p90": 0.0,
+        "per_step_max_ci_p99": 1.0,
+        "per_step_max_ci_max": 1,
+        "steps_total": 120,
+        "fan_in_min": 184,
+        "fan_in_mean": 200.8,
+        "fan_in_max": 222,
+        "trigger_rate_at_K": {
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0,
+          "5": 0.0,
+          "6": 0.0,
+          "8": 0.0,
+          "10": 0.0,
+          "12": 0.0,
+          "16": 0.0,
+          "20": 0.0
+        }
+      },
+      "calibration_intensity_sweep": [
+        {
+          "intensity_factor": 1.0,
+          "source_sparsity": 0.0,
+          "source_active_rate_spk_per_step": 0.0,
+          "ci_p90": 0.0,
+          "ci_p99": 1.0,
+          "ci_max": 1,
+          "ci_mean_when_active": 1.0,
+          "trig_K2": 0.0,
+          "trig_K3": 0.0,
+          "trig_K4": 0.0,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 1.5,
+          "source_sparsity": 0.47,
+          "source_active_rate_spk_per_step": 0.01,
+          "ci_p90": 3.0,
+          "ci_p99": 4.0,
+          "ci_max": 6,
+          "ci_mean_when_active": 1.4992025518341308,
+          "trig_K2": 0.21666666666666667,
+          "trig_K3": 0.10833333333333334,
+          "trig_K4": 0.03333333333333333,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 2.0,
+          "source_sparsity": 0.7225,
+          "source_active_rate_spk_per_step": 0.011349481344223023,
+          "ci_p90": 5.0,
+          "ci_p99": 11.810000000000002,
+          "ci_max": 12,
+          "ci_mean_when_active": 2.5146771037181996,
+          "trig_K2": 0.4166666666666667,
+          "trig_K3": 0.2833333333333333,
+          "trig_K4": 0.24166666666666667,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 3.0,
+          "source_sparsity": 0.9175,
+          "source_active_rate_spk_per_step": 0.01618528604507446,
+          "ci_p90": 9.0,
+          "ci_p99": 14.810000000000002,
+          "ci_max": 16,
+          "ci_mean_when_active": 3.577956989247312,
+          "trig_K2": 0.6333333333333333,
+          "trig_K3": 0.5333333333333333,
+          "trig_K4": 0.43333333333333335,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 5.0,
+          "source_sparsity": 0.9875,
+          "source_active_rate_spk_per_step": 0.026253163814544678,
+          "ci_p90": 11.100000000000009,
+          "ci_p99": 20.0,
+          "ci_max": 23,
+          "ci_mean_when_active": 5.506849315068493,
+          "trig_K2": 0.775,
+          "trig_K3": 0.7583333333333333,
+          "trig_K4": 0.7166666666666667,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 8.0,
+          "source_sparsity": 0.99,
+          "source_active_rate_spk_per_step": 0.03873737335205078,
+          "ci_p90": 17.0,
+          "ci_p99": 25.810000000000002,
+          "ci_max": 27,
+          "ci_mean_when_active": 8.37707468879668,
+          "trig_K2": 0.8,
+          "trig_K3": 0.8,
+          "trig_K4": 0.8,
+          "sparse_and_coincident": false
+        }
+      ],
+      "any_sparse_and_coincident": false,
+      "wall_sweep": [
+        {
+          "s2t_weight": 10.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 10.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 10.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 20.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 20.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 20.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 40.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 40.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 40.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 80.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 80.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 80.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 160.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.02,
+          "target_max_cell_spk_per_step": 0.01,
+          "target_fires_5hz": true
+        },
+        {
+          "s2t_weight": 160.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.05,
+          "target_max_cell_spk_per_step": 0.01,
+          "target_fires_5hz": true
+        },
+        {
+          "s2t_weight": 160.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0425,
+          "target_spk_per_step": 0.3,
+          "target_max_cell_spk_per_step": 0.03,
+          "target_fires_5hz": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "backend": "cupy",
+      "n_neurons": 480,
+      "n_synapses": 15788,
+      "driven_regions": [
+        "src_sensors"
+      ],
+      "source": {
+        "sparsity_mean": 0.04333333333333333,
+        "active_rate_spk_per_step_mean": 0.01,
+        "diff_cos_mean": 0.10097736017641631,
+        "per_loc_sparsity": [
+          0.05,
+          0.035,
+          0.0425,
+          0.0475,
+          0.045,
+          0.04
+        ],
+        "per_loc_active_rate": [
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01,
+          0.01
+        ]
+      },
+      "wall_base_point": {
+        "s2t_weight": 20.0,
+        "s2t_density": 0.5,
+        "target_spk_per_step_mean": 0.0,
+        "target_max_cell_spk_per_step_mean": 0.0
+      },
+      "coincidence_stats": {
+        "n_coincident_events": 72,
+        "ci_mean_when_active": 1.1111111111111112,
+        "ci_p50": 1.0,
+        "ci_p90": 1.8999999999999986,
+        "ci_p99": 2.0,
+        "ci_max": 2,
+        "per_step_max_ci_mean": 0.06666666666666667,
+        "per_step_max_ci_p90": 0.0,
+        "per_step_max_ci_p99": 1.0,
+        "per_step_max_ci_max": 2,
+        "steps_total": 120,
+        "fan_in_min": 173,
+        "fan_in_mean": 199.3,
+        "fan_in_max": 223,
+        "trigger_rate_at_K": {
+          "2": 0.008333333333333333,
+          "3": 0.0,
+          "4": 0.0,
+          "5": 0.0,
+          "6": 0.0,
+          "8": 0.0,
+          "10": 0.0,
+          "12": 0.0,
+          "16": 0.0,
+          "20": 0.0
+        }
+      },
+      "calibration_intensity_sweep": [
+        {
+          "intensity_factor": 1.0,
+          "source_sparsity": 0.0025,
+          "source_active_rate_spk_per_step": 0.01,
+          "ci_p90": 0.0,
+          "ci_p99": 0.8100000000000023,
+          "ci_max": 1,
+          "ci_mean_when_active": 1.0,
+          "trig_K2": 0.0,
+          "trig_K3": 0.0,
+          "trig_K4": 0.0,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 1.5,
+          "source_sparsity": 0.505,
+          "source_active_rate_spk_per_step": 0.01014851450920105,
+          "ci_p90": 3.0,
+          "ci_p99": 5.810000000000002,
+          "ci_max": 6,
+          "ci_mean_when_active": 1.661993769470405,
+          "trig_K2": 0.225,
+          "trig_K3": 0.125,
+          "trig_K4": 0.058333333333333334,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 2.0,
+          "source_sparsity": 0.725,
+          "source_active_rate_spk_per_step": 0.011103448867797851,
+          "ci_p90": 6.1000000000000085,
+          "ci_p99": 9.810000000000002,
+          "ci_max": 10,
+          "ci_mean_when_active": 2.677517802644964,
+          "trig_K2": 0.38333333333333336,
+          "trig_K3": 0.2916666666666667,
+          "trig_K4": 0.20833333333333334,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 3.0,
+          "source_sparsity": 0.8975,
+          "source_active_rate_spk_per_step": 0.016267409324645998,
+          "ci_p90": 9.100000000000009,
+          "ci_p99": 16.0,
+          "ci_max": 21,
+          "ci_mean_when_active": 3.740740740740741,
+          "trig_K2": 0.5666666666666667,
+          "trig_K3": 0.475,
+          "trig_K4": 0.35,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 5.0,
+          "source_sparsity": 0.985,
+          "source_active_rate_spk_per_step": 0.026040608882904052,
+          "ci_p90": 12.100000000000009,
+          "ci_p99": 21.810000000000002,
+          "ci_max": 26,
+          "ci_mean_when_active": 5.449671772428884,
+          "trig_K2": 0.7666666666666667,
+          "trig_K3": 0.7583333333333333,
+          "trig_K4": 0.7333333333333333,
+          "sparse_and_coincident": false
+        },
+        {
+          "intensity_factor": 8.0,
+          "source_sparsity": 1.0,
+          "source_active_rate_spk_per_step": 0.03845000028610229,
+          "ci_p90": 16.0,
+          "ci_p99": 23.810000000000002,
+          "ci_max": 26,
+          "ci_mean_when_active": 8.22802481902792,
+          "trig_K2": 0.8083333333333333,
+          "trig_K3": 0.8083333333333333,
+          "trig_K4": 0.7916666666666666,
+          "sparse_and_coincident": false
+        }
+      ],
+      "any_sparse_and_coincident": false,
+      "wall_sweep": [
+        {
+          "s2t_weight": 10.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 10.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 10.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 20.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 20.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 20.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 40.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 40.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 40.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 80.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 80.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 80.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 160.0,
+          "s2t_density": 0.3,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 160.0,
+          "s2t_density": 0.5,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        },
+        {
+          "s2t_weight": 160.0,
+          "s2t_density": 0.9,
+          "source_sparsity": 0.0125,
+          "target_spk_per_step": 0.0,
+          "target_max_cell_spk_per_step": 0.0,
+          "target_fires_5hz": false
+        }
+      ]
+    }
+  ]
+}

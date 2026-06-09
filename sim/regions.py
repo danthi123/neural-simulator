@@ -281,6 +281,18 @@ class RegionPathway:
     # additive; nmda_slow replaces AMPA). See 2026-06-09-learned-graded-ca3-design.md.
     exc_receptor: str = "ampa"
 
+    # coincidence_detector (2026-06-09): when True, this EXCITATORY pathway is a dendritic-COINCIDENCE
+    # afferent -- each postsynaptic neuron forms an NMDA-spike SUBUNIT (Poirazi-Mel 2003; Major-Larkum-
+    # Schiller 2013) over this pathway's synapses, firing a regenerative all-or-none plateau current when
+    # >= cfg.coincidence_k_threshold of its routed inputs COINCIDE in one step. Lets a sparse-distinct
+    # ensemble drive the target by coincidence, not rate (the point-neuron rate-coding wall). Requires
+    # cfg.enable_coincidence_detection=True; the pathway's synapses are added to the per-synapse
+    # coincidence-routing mask. The fast-AMPA g_e component is KEPT (unlike nmda_slow, which suppresses
+    # it) -- the plateau is ADDITIVE on top, matching the NMDA spike riding the AMPA EPSP. Default False
+    # = byte-identical routing. This is the coincidence sibling of the exc_receptor/nmda_slow precedent
+    # above. See 2026-06-09-coincidence-substrate-upgrade-design.md.
+    coincidence_detector: bool = False
+
     # Cluster E v1 (2026-04-29): distance-dependent connection probability.
     # When set AND both source and target regions have coordinate_dim > 0,
     # connections are sampled with Gaussian-weighted probability:
@@ -669,6 +681,10 @@ class RegionManager:
             # Per-pathway excitatory receptor: "ampa" (default) | "nmda_slow" (slow NR2B
             # recurrent; feeds a separate slow-NMDA conductance, AMPA component suppressed).
             "exc_receptor": getattr(pw, "exc_receptor", "ampa"),
+            # Per-pathway dendritic-coincidence flag (2026-06-09): True => this pathway's synapses feed a
+            # per-postsynaptic-neuron NMDA-spike subunit (a supralinear plateau on >=K coincident inputs);
+            # AMPA component KEPT (plateau is additive). Default False = no coincidence routing.
+            "coincidence_detector": bool(getattr(pw, "coincidence_detector", False)),
         }
 
     def _has_coords(self, region_name: str) -> bool:
