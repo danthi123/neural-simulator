@@ -104,7 +104,9 @@ The distinct code (0.120) removes BOTH failure modes simultaneously on seed 42 �
 | 43 | 0.036 | 51.0 | 5.10× ✓ | 1.82× ✗ (6.27/3.45) | FAIL (LTP) |
 | 44 | 0.065 | 52.8 | 1.94× ✗ | 2.07× ✓ (10.1/4.91) | FAIL (GRADE: w_far 4.91 → far_a 27 Hz) |
 
-G_FIRE 3/3, G_GRADE 2/3, G_LTP 2/3, G_ACTOR 3/3. All gates are individually achievable; the residual is **operating-point sensitivity** — the high drive over-grows w_far, which surfaces as a LTP miss (seed 43) or a grade miss (seed 44, high w_far → far fires). place-shuffle still HOLDS at this config (LTP 2.56×→1.75× under shuffle). Operating-point moderation (fewer trials → less w_far; θ 20→24 → tighter far control) in flight `[moderated 3-seed pending]`.
+G_FIRE 3/3, G_GRADE 2/3, G_LTP 2/3, G_ACTOR 3/3. All gates are individually achievable; the residual is **operating-point sensitivity** — the high drive over-grows w_far, which surfaces as a LTP miss (seed 43) or a grade miss (seed 44, high w_far → far fires). place-shuffle still HOLDS at this config (LTP 2.56×→1.75× under shuffle).
+
+**Moderated operating point (n-train 30, θ=24) → PRIMARY 2/3.** θ=24 dramatically tightens far-suppression → **G_GRADE 3/3** (ratios 23.2 / 57.2 / 4.0×), so seeds 42 + 44 now PASS. Seed 43 remains a G_LTP holdout (1.55×) — and notably its weight-ratio LTP was *better* at n-train 40 (1.82×) than 30 (1.55×), so for that seed *more* training (w_near outpacing w_far) helps, while its firing-grade is already 57× (functionally strong value-of-location; only the strict weight-ratio gate is marginal). A θ=26 / n-train 50 point (more LTP separation + protected far-suppression) is in flight `[result pending]`.
 
 ## Recommendation
 
