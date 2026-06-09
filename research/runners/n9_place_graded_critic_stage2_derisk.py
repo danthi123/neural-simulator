@@ -181,7 +181,8 @@ def _build(seed, *, n_sensors, n_place, n_strio, n_snc, grid_size,
            enable_volley=False, n_fs=160,
            place_to_fs_weight=16.0, place_to_fs_density=0.4,
            fs_to_place_weight=8.0, fs_to_place_density=0.4,
-           coincidence_k=4.0, coincidence_gain=2.0, coincidence_plateau=80.0, stdp_w_max=40.0):
+           coincidence_k=4.0, coincidence_gain=2.0, coincidence_plateau=80.0, stdp_w_max=40.0,
+           gate_fs_during_selforg=False):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from sim.regions import BrainRegion, RegionPathway
@@ -251,9 +252,16 @@ def _build(seed, *, n_sensors, n_place, n_strio, n_snc, grid_size,
         pathways.append(
             RegionPathway(from_region="place", to_region="place_fs", density=float(place_to_fs_density),
                           weight_mean=float(place_to_fs_weight), weight_jitter=0.2, plastic=False))
+        # When gate_fs_during_selforg, tag the FS->place inhibition with a transmission gate so it can be
+        # held CLOSED during self-organization (clean threshold-WTA -> sparse, DISTINCT fields, matching the
+        # validated Stage-1 diff-cos 0.064) and OPENED for the volley read-out (the gamma packing). Without
+        # this, the FS-PING gamma cycling during self-org recruits extra cells -> denser + more-overlapping
+        # place code (diff-cos 0.16-0.20), which caps the value-grading PRIMARY.
+        _fs_inhib_kw = {"transmission_gate": "place_fs_gate"} if gate_fs_during_selforg else {}
         pathways.append(
             RegionPathway(from_region="place_fs", to_region="place", density=float(fs_to_place_density),
-                          weight_mean=float(fs_to_place_weight), weight_jitter=0.2, plastic=False))
+                          weight_mean=float(fs_to_place_weight), weight_jitter=0.2, plastic=False,
+                          **_fs_inhib_kw))
     if include_actor:
         regions.append(BrainRegion(
             name="sensor_place_readout", n_neurons=int(n_sensor_place), exc_fraction=1.0,
@@ -298,6 +306,11 @@ def _build(seed, *, n_sensors, n_place, n_strio, n_snc, grid_size,
         cfg.coincidence_k_threshold = float(coincidence_k)
         cfg.coincidence_gain = float(coincidence_gain)
         cfg.coincidence_plateau_strength = float(coincidence_plateau)
+        # NOTE: cfg.coincidence_weighted_drive is left at its default (False = COUNT form) at BUILD time so
+        # the self-org + value-TRAINING phases bootstrap LTP via the strong count plateau (the weighted
+        # plateau can't fire at the small init weight -> cold-start). run_seed toggles it to the WEIGHTED
+        # Poirazi-Mel form ONLY at READ-OUT (mirrors the readout_plateau toggle), where the LEARNED
+        # w_near >> w_far makes the plateau GRADE. cfg.coincidence_k_threshold is then in WEIGHT units.
     if gabab:
         cfg.enable_gabab = True
         cfg.gabab_reversal_potential = -90.0
@@ -495,7 +508,8 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
              enable_volley=False, n_fs=160, place_to_fs_weight=16.0, place_to_fs_density=0.4,
              fs_to_place_weight=8.0, fs_to_place_density=0.4,
              coincidence_k=4.0, coincidence_gain=2.0, coincidence_plateau=80.0, readout_plateau=None,
-             stdp_w_max=40.0,
+             stdp_w_max=40.0, coincidence_weighted_drive=False, readout_weighted_k=None,
+             gate_fs_during_selforg=False,
              lesion=False, shuffle=False, ablate_sensors=False, jitter=False, verbose=True):
     log = print if verbose else (lambda *a, **k: None)
     from sim.backend import get_backend
@@ -505,7 +519,8 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
                       place_to_fs_weight=float(place_to_fs_weight), place_to_fs_density=float(place_to_fs_density),
                       fs_to_place_weight=float(fs_to_place_weight), fs_to_place_density=float(fs_to_place_density),
                       coincidence_k=float(coincidence_k), coincidence_gain=float(coincidence_gain),
-                      coincidence_plateau=float(coincidence_plateau), stdp_w_max=float(stdp_w_max))
+                      coincidence_plateau=float(coincidence_plateau), stdp_w_max=float(stdp_w_max),
+                      gate_fs_during_selforg=bool(gate_fs_during_selforg))
 
     near_name = "near"
     far_names = [n for n in locations if n.startswith("far")]
@@ -560,6 +575,9 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
         f"({selforg_passes} passes x {len(locations)} locs)...")
     bridge.set_plasticity_gate("landmark_to_place", 1.0)
     bridge.set_plasticity_gate("value_input", 0.0)   # freeze the critic arm during place self-org
+    if gate_fs_during_selforg:
+        # FS-PING OFF during self-org -> clean threshold-WTA -> sparse, DISTINCT fields (Stage-1 regime).
+        bridge.set_transmission_gate("place_fs_gate", 0.0)
     t_so = time.time()
     rng = np.random.default_rng(seed)
     loc_names = list(locations.keys())
@@ -571,6 +589,9 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
             bridge.cp_external_input_current[sensor_idx_g] = xp.asarray(loc_sensor[name], dtype=xp.float32)
             _step(bridge, selforg_steps_per_loc)
     bridge.set_plasticity_gate("landmark_to_place", 0.0)   # FREEZE the place fields (stable afferent)
+    if gate_fs_during_selforg:
+        # FS-PING ON now -> the gamma volley packs the FROZEN distinct fields for the coincidence read-out.
+        bridge.set_transmission_gate("place_fs_gate", 1.0)
     bridge.cp_external_input_current[:] = 0.0
     log(f"  [seed {seed}] place self-org done ({time.time() - t_so:.0f}s); place fields FROZEN")
 
@@ -690,13 +711,29 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
     # strong plateau is kept during TRAINING (it bootstraps the post-spike that drives the DA-gated LTP).
     # readout_plateau<=0 disables (keeps the training plateau -> the weight-blind baseline).
     _saved_plateau = float(getattr(bridge.core_config, "coincidence_plateau_strength", 80.0))
+    _saved_weighted = bool(getattr(bridge.core_config, "coincidence_weighted_drive", False))
+    _saved_kthresh = float(getattr(bridge.core_config, "coincidence_k_threshold", 4.0))
     if enable_volley and readout_plateau is not None and readout_plateau > 0:
         bridge.core_config.coincidence_plateau_strength = float(readout_plateau)
+    if enable_volley and coincidence_weighted_drive:
+        # READ-OUT toggle to the Poirazi-Mel WEIGHTED subunit (sim/ coincidence_weighted_drive). Training
+        # stayed on the COUNT form (coincidence_k_threshold in COUNT units, ~4) so the strong plateau
+        # bootstrapped DA-gated LTP; now the plateau switches on the per-step WEIGHTED coincident sum, so
+        # the LEARNED w_near (grown) fires the critic while the unlearned w_far (~init) cannot -> GRADING
+        # from the weight itself (no readout_plateau hack needed). The threshold is swapped to WEIGHT units
+        # (readout_weighted_k, ~10-15 = a few coincident cells * the grown w_near). Jitter still desync-
+        # collapses c_w (the coincidence anti-cheat); place-shuffle decouples w from location (grading must
+        # FAIL). Restored after the read so the SNc/lesion gates below run on the as-built (count) config.
+        bridge.core_config.coincidence_weighted_drive = True
+        if readout_weighted_k is not None:
+            bridge.core_config.coincidence_k_threshold = float(readout_weighted_k)
     crit_near = _critic_rate_at_location(bridge, xp, sensor_idx_g, crit_idx_g, loc_sensor[near_name],
                                          ablate=ablate_sensors, jitter=jitter)
     crit_far_each = {fn: _critic_rate_at_location(bridge, xp, sensor_idx_g, crit_idx_g, loc_sensor[fn],
                                                   ablate=ablate_sensors, jitter=jitter) for fn in far_names}
     bridge.core_config.coincidence_plateau_strength = _saved_plateau
+    bridge.core_config.coincidence_weighted_drive = _saved_weighted
+    bridge.core_config.coincidence_k_threshold = _saved_kthresh
     crit_far = float(np.mean(list(crit_far_each.values())))
     crit_far_max = float(np.max(list(crit_far_each.values())))
     place_graded_ratio = crit_near / max(crit_far_max, 1e-3)   # vs the WORST (highest) far -> strict
@@ -767,7 +804,7 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
     primary = bool(fire and place_graded and weight_grew and actor_ok)
     return dict(
         seed=seed, backend=bk, lesion=lesion, shuffle=shuffle, ablate_sensors=ablate_sensors,
-        jitter=jitter, enable_volley=enable_volley,
+        jitter=jitter, enable_volley=enable_volley, coincidence_weighted_drive=bool(coincidence_weighted_drive),
         place_diff_location_cosine=place_diff_cos, place_sparsity=place_sparsity,
         n_neurons=int(cfg.num_neurons), n_synapses=int(bridge.cp_connections.nnz),
         n_place=int(place_idx.size), n_strio=int(crit_idx.size),
@@ -872,6 +909,20 @@ def main():
     ap.add_argument("--stdp-w-max", type=float, default=40.0,
                     help="STDP soft-bound cap on place->critic. VOLLEY: keep LOW (~4-6) so w_near stays "
                          "coincidence-dependent (a runaway w_near rate-leaks past the jitter anti-cheat).")
+    ap.add_argument("--weighted-drive", action="store_true",
+                    help="Poirazi-Mel WEIGHTED-subunit (sim/ coincidence_weighted_drive): at READ-OUT the "
+                         "plateau switches on the per-step WEIGHTED coincident sum so it GRADES with the "
+                         "learned place->value weight. Training stays on the COUNT form (--coincidence-k in "
+                         "COUNT units) to bootstrap LTP. The substrate fix that makes the weight-blind count "
+                         "plateau grade; use INSTEAD of --readout-plateau. Jitter + place-shuffle must collapse it.")
+    ap.add_argument("--readout-weighted-k", type=float, default=12.0,
+                    help="WEIGHT-unit plateau threshold for --weighted-drive at READ-OUT (~ #coincident "
+                         "cells * the grown w_near; default 12). Training keeps --coincidence-k in COUNT units.")
+    ap.add_argument("--gate-fs-during-selforg", action="store_true",
+                    help="Hold the FS-PING inhibition CLOSED during place self-org (clean threshold-WTA -> "
+                         "sparse DISTINCT fields, Stage-1 diff-cos ~0.064) and OPEN it for the volley read-out. "
+                         "Targets the place-code OVERLAP (FS-PING gamma cycling during self-org densifies/blurs "
+                         "the code to diff-cos 0.16-0.20), which trades G_GRADE against G_LTP.")
     # controls
     ap.add_argument("--lesion", action="store_true", help="gate-2e: zero GABA_B mask -> gap must vanish")
     ap.add_argument("--shuffle", action="store_true",
@@ -936,6 +987,9 @@ def main():
         coincidence_plateau=float(args.coincidence_plateau),
         readout_plateau=(float(args.readout_plateau) if args.readout_plateau is not None else None),
         stdp_w_max=float(args.stdp_w_max),
+        coincidence_weighted_drive=bool(args.weighted_drive),
+        readout_weighted_k=float(args.readout_weighted_k),
+        gate_fs_during_selforg=bool(args.gate_fs_during_selforg),
         lesion=bool(args.lesion), shuffle=bool(args.shuffle), ablate_sensors=bool(args.ablate_sensors),
         jitter=bool(args.jitter))
 

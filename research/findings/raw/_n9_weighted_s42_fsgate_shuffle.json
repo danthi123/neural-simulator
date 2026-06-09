@@ -1,0 +1,126 @@
+{
+  "mode": "shuffle",
+  "n_seeds": 1,
+  "seeds": [
+    42
+  ],
+  "deterministic_regime": true,
+  "backend": "cupy",
+  "nmda_critic": false,
+  "place_to_value_weight": 0.5,
+  "n_fire": 1,
+  "n_place_graded": 1,
+  "n_ltp": 0,
+  "n_actor_ok": 1,
+  "n_snc_gap": 0,
+  "n_primary": 0,
+  "verdict": "CONTROL",
+  "crit_near_trained_hz": {
+    "mean": 32.083,
+    "min": 32.083,
+    "max": 32.083,
+    "values": [
+      32.083
+    ]
+  },
+  "crit_far_max_hz": {
+    "mean": 9.028,
+    "min": 9.028,
+    "max": 9.028,
+    "values": [
+      9.028
+    ]
+  },
+  "place_graded_ratio": {
+    "mean": 3.554,
+    "min": 3.554,
+    "max": 3.554,
+    "values": [
+      3.554
+    ]
+  },
+  "weight_near_over_far": {
+    "mean": 1.746,
+    "min": 1.746,
+    "max": 1.746,
+    "values": [
+      1.746
+    ]
+  },
+  "actor_ratio": {
+    "mean": 1.0,
+    "min": 1.0,
+    "max": 1.0,
+    "values": [
+      1.0
+    ]
+  },
+  "snc_gap_ratio": {
+    "mean": 0.0,
+    "min": 0.0,
+    "max": 0.0,
+    "values": [
+      0.0
+    ]
+  },
+  "place_diff_location_cosine": {
+    "mean": 0.12,
+    "min": 0.12,
+    "max": 0.12,
+    "values": [
+      0.12
+    ]
+  },
+  "results": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "lesion": false,
+      "shuffle": true,
+      "ablate_sensors": false,
+      "jitter": false,
+      "enable_volley": true,
+      "coincidence_weighted_drive": true,
+      "place_diff_location_cosine": 0.11964306004328949,
+      "place_sparsity": 0.0453125,
+      "n_neurons": 1394,
+      "n_synapses": 178818,
+      "n_place": 800,
+      "n_strio": 80,
+      "crit_near_init_hz": 91.38888888888889,
+      "crit_near_trained_hz": 32.083333333333336,
+      "crit_far_mean_hz": 3.611111111111111,
+      "crit_far_max_hz": 9.027777777777779,
+      "crit_far_each_hz": {
+        "far_a": 9.028,
+        "far_b": 0.0,
+        "far_center": 1.806
+      },
+      "place_graded_ratio": 3.5538461538461537,
+      "fire": true,
+      "place_graded": true,
+      "w_near_init": 0.4985648989677429,
+      "w_near_final": 1.6798250675201416,
+      "w_far_init": 0.5004069805145264,
+      "w_far_final": 0.9621309638023376,
+      "weight_near_over_far": 1.7459422165164291,
+      "weight_grew": false,
+      "v_learned": false,
+      "near_v_early_hz": 15.859375,
+      "near_v_late_hz": 12.2265625,
+      "actor_no_critic_hz": 62.5,
+      "actor_with_critic_hz": 62.5,
+      "actor_ratio": 1.0,
+      "actor_not_perturbed": true,
+      "snc_predicted_near_hz": 0.0,
+      "snc_unpredicted_far_hz": 0.0,
+      "snc_gap_ratio": 0.0,
+      "snc_state_specific": false,
+      "primary": false,
+      "ou_off": true,
+      "cond_noise_off": true,
+      "global_homeo_off": true,
+      "total_seconds": 93.4
+    }
+  ]
+}

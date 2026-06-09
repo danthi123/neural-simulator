@@ -5723,13 +5723,17 @@ class SimulationBridge:
 
             # --- 2.3a-bis. Dendritic-COINCIDENCE plateau (Major-Larkum-Schiller NMDA spike; Poirazi-Mel
             # two-layer subunit). The FIRST non-linear-summation element in the engine. For each post
-            # neuron, c_i = the COUNT of its coincidence_detector-routed presynaptic cells that fired this
-            # step (a restricted matvec of the BINARY routing mask against prev_fired -- the GABA_B/nmda_
-            # slow technique, but the data is the {0,1} mask itself so it COUNTS inputs, not sums weights).
-            # A supralinear all-or-none switch on c_i (>= cfg.coincidence_k_threshold) injects a
-            # regenerative, Mg2+-self-limiting, slow-decaying plateau current -- so a SPARSE-distinct
-            # ensemble whose >=K cells fire in the SAME step fires the cell by COINCIDENCE, while the same
-            # cells spread in time (c_i < K each step) cannot (the inverse of the rate-coding wall). The
+            # neuron, c_drive = a restricted matvec of its coincidence_detector-routed inputs against
+            # prev_fired (the GABA_B/nmda_slow technique). The matvec DATA is either the {0,1} routing mask
+            # (COUNT form, default -- c_drive = # of coincident inputs, weight-blind) OR the effective per-
+            # synapse weight masked to those synapses (cfg.coincidence_weighted_drive -> the Poirazi-Brannon-
+            # Mel 2003 WEIGHTED subunit, c_drive = Sum_j w_eff_j*x_j, which GRADES the plateau with learned
+            # synaptic value). A supralinear all-or-none switch on c_drive (>= cfg.coincidence_k_threshold,
+            # in COUNT or WEIGHT units accordingly) injects a regenerative, Mg2+-self-limiting, slow-decaying
+            # plateau current -- so a SPARSE-distinct ensemble whose inputs arrive in the SAME step fires the
+            # cell by COINCIDENCE, while the same inputs spread in time cannot (the inverse of the rate-
+            # coding wall); the WEIGHTED form additionally makes a high-value ensemble fire where a low-value
+            # one does not. The
             # fast-AMPA g_e is KEPT (the plateau is ADDITIVE on top, unlike nmda_slow). GUARDED:
             # cp_coincidence_synapse_mask / cp_conductance_g_coincidence are None for every run that
             # doesn't set enable_coincidence_detection + a routed pathway, so this whole block is skipped,
@@ -5737,22 +5741,37 @@ class SimulationBridge:
             if (getattr(cfg, "enable_coincidence_detection", False)
                     and self.cp_conductance_g_coincidence is not None
                     and self.cp_coincidence_synapse_mask is not None):
-                # Coincidence count c_i per post neuron (restricted matvec; binary routed mask vs prev
-                # firing). The mask is grown to the live nnz with FALSE padding (mirrors the GABA_B/nmda_
-                # slow mask growth fix), then used as the matvec DATA (1.0 for coincidence synapses, 0
-                # else) so the matvec counts coincident inputs rather than summing weights.
+                # Per-post coincident drive c_drive (restricted matvec vs prev firing). The mask is grown to
+                # the live nnz with FALSE padding (mirrors the GABA_B/nmda_slow mask growth fix). TWO forms:
+                #   - COUNT (default): the {0,1} routing mask is the matvec DATA -> c_drive = COUNT of
+                #     coincident inputs (weight-BLIND; the validated Route D form -- byte-identical to the
+                #     pre-refinement on-path when cfg.coincidence_weighted_drive is False, since _co_data is
+                #     then the same _co_mask_f object the original built the matrix from).
+                #   - WEIGHTED (cfg.coincidence_weighted_drive): the EFFECTIVE per-synapse weight masked to
+                #     the routed synapses is the matvec DATA -> c_drive = Sum_j (w_eff_j * x_j), the Poirazi-
+                #     Brannon-Mel 2003 weighted subunit, so the plateau GRADES with learned synaptic value
+                #     (a strongly-weighted coincident ensemble crosses the kernel's supralinear switch; a
+                #     weakly-weighted one does not). effective_connections_matrix.data carries STP + neuromod
+                #     + transmission gates and is row-aligned with cp_connections.indices/indptr -- exactly
+                #     as the GABA_B block below consumes it. Both forms are per-step vs prev_firing, so
+                #     temporal jitter that desynchronizes the ensemble collapses either (the coincidence/
+                #     anti-rate property is kept; the weighted form ADDS value-grading on top).
                 if self.cp_connections.nnz > 0 and _prev_any:
                     _co_nnz = self.cp_connections.nnz
                     _co_mask_f = self._ensure_gate_capacity(
                         "cp_coincidence_synapse_mask", _co_nnz, fill=False, dtype=cp.bool_
                     )[:_co_nnz].astype(cp.float32)
+                    if getattr(cfg, "coincidence_weighted_drive", False):
+                        _co_data = effective_connections_matrix.data[:_co_nnz] * _co_mask_f
+                    else:
+                        _co_data = _co_mask_f
                     _co_mat = csp.csr_matrix(
-                        (_co_mask_f, self.cp_connections.indices, self.cp_connections.indptr),
+                        (_co_data, self.cp_connections.indices, self.cp_connections.indptr),
                         shape=self.cp_connections.shape)
-                    c_count = _co_mat.T @ self.cp_prev_firing_states.astype(cp.float32)
+                    c_drive = _co_mat.T @ self.cp_prev_firing_states.astype(cp.float32)
                 else:
-                    # No prior spikes this step -> zero coincidence count (the plateau still DECAYS below).
-                    c_count = cp.zeros_like(self.cp_conductance_g_coincidence)
+                    # No prior spikes this step -> zero coincident drive (the plateau still DECAYS below).
+                    c_drive = cp.zeros_like(self.cp_conductance_g_coincidence)
                 (self.cp_conductance_g_coincidence,
                  self.cp_conductance_g_coincidence_rise,
                  I_coincidence) = fused_coincidence_plateau(
@@ -5761,8 +5780,8 @@ class SimulationBridge:
                     self._cached_decay_coincidence, self._cached_decay_coincidence_rise,
                     self.cp_membrane_potential_v, cfg.syn_reversal_potential_e,  # E = E_e = 0 mV
                     cfg.nmda_mg_concentration,
-                    c_count,
-                    cp.float32(getattr(cfg, "coincidence_k_threshold", 6.0)),
+                    c_drive,  # COUNT (default) or WEIGHTED coincident sum (cfg.coincidence_weighted_drive)
+                    cp.float32(getattr(cfg, "coincidence_k_threshold", 6.0)),  # WEIGHT units when weighted_drive
                     cp.float32(getattr(cfg, "coincidence_gain", 2.0)),
                     cp.float32(getattr(cfg, "coincidence_plateau_strength", 80.0)))
                 total_input_current_pA = total_input_current_pA + I_coincidence

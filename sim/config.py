@@ -176,6 +176,20 @@ class CoreSimConfig:
     coincidence_plateau_strength: float = 80.0  # per-step plateau conductance increment scale (the regenerative NMDA-spike drive)
     coincidence_tau_decay_ms: float = 80.0      # plateau duration (Major-Larkum-Schiller NMDA spike 50-100ms)
     coincidence_tau_rise_ms: float = 2.0        # plateau rise (ms)
+    # Poirazi-Mel 2003 WEIGHTED-subunit refinement (2026-06-09). The count form above switches the plateau
+    # on the bare COUNT of coincident routed inputs (c_i = mask^T @ prev_fired), so it is WEIGHT-BLIND: a
+    # sparse-distinct ensemble that fires >= K cells everywhere triggers the same plateau regardless of the
+    # learned synaptic weight, and a value readout cannot GRADE (e.g. the N9 place->value critic fires near
+    # AND far the goal). The faithful Poirazi-Brannon-Mel subunit fires on the WEIGHTED local depolarization
+    # Sum_j (w_eff_j * x_j), NOT a count. When this flag is True the per-neuron switch variable becomes the
+    # per-step WEIGHTED coincident sum c_w (effective_connections_matrix.data masked to the routed synapses
+    # @ prev_fired) so a strongly-weighted coincident ensemble (high learned value) crosses the supralinear
+    # switch while a weakly-weighted one does not -> the plateau GRADES with synaptic value. c_w is still a
+    # per-step sum vs prev_firing, so temporal jitter that desynchronizes the ensemble drops it below
+    # threshold and collapses the plateau (the coincidence/anti-rate property of the count form is kept --
+    # verified by the jitter anti-cheat). coincidence_k_threshold is then read in WEIGHT units (the runner
+    # re-tunes it). Default False => the validated COUNT form runs unchanged (byte-identical to today).
+    coincidence_weighted_drive: bool = False
     # GABA_B -> GIRK slow K+ inhibitory conductance (metabotropic). Default OFF;
     # byte-identical when disabled. E_gabab is the POTASSIUM reversal (~-90 mV),
     # independent of the chloride gradient, so it strongly hyperpolarizes KCC2-lacking
