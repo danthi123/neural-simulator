@@ -1,0 +1,1057 @@
+{
+  "n_seeds": 5,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101
+  ],
+  "n_stage1_pass": 0,
+  "gate_1a_pass_count": 3,
+  "gate_1b_pass_count": 5,
+  "gate_1c_pass_count": 0,
+  "anti_cheat_A_pass_count": 5,
+  "diff_location_cosine": {
+    "mean": 0.2789,
+    "min": 0.2236,
+    "max": 0.3161,
+    "values": [
+      0.3161,
+      0.2665,
+      0.2867,
+      0.3014,
+      0.2236
+    ]
+  },
+  "same_location_cosine": {
+    "mean": 0.885,
+    "min": 0.8674,
+    "max": 0.9236,
+    "values": [
+      0.8732,
+      0.9236,
+      0.8843,
+      0.8674,
+      0.8764
+    ]
+  },
+  "sparsity": {
+    "mean": 0.0968,
+    "min": 0.0912,
+    "max": 0.1025,
+    "values": [
+      0.1025,
+      0.0954,
+      0.0988,
+      0.0963,
+      0.0912
+    ]
+  },
+  "input_pattern_overlap": {
+    "mean": 0.4913,
+    "min": 0.4913,
+    "max": 0.4913,
+    "values": [
+      0.4913,
+      0.4913,
+      0.4913,
+      0.4913,
+      0.4913
+    ]
+  },
+  "ablation_cosine_vs_true": {
+    "mean": 0.0,
+    "min": 0.0,
+    "max": 0.0,
+    "values": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "ablation_active_fraction": {
+    "mean": 0.0,
+    "min": 0.0,
+    "max": 0.0,
+    "values": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "partial_cue_cosine_vs_true": {
+    "mean": 0.419,
+    "min": 0.3886,
+    "max": 0.4796,
+    "values": [
+      0.3988,
+      0.3886,
+      0.4076,
+      0.4203,
+      0.4796
+    ]
+  },
+  "verdict": "NEGATIVE",
+  "per_seed": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "build_seconds": 0.2,
+      "n_neurons": 460,
+      "n_synapses": 12066,
+      "n_place_neurons": 400,
+      "n_landmark_sensors": 60,
+      "n_landmarks": 3,
+      "landmarks": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          31.0,
+          0.0
+        ],
+        [
+          15.5,
+          31.0
+        ]
+      ],
+      "locations": {
+        "near": [
+          7.75,
+          23.25
+        ],
+        "far_a": [
+          23.25,
+          7.75
+        ],
+        "far_b": [
+          24.8,
+          24.8
+        ],
+        "center": [
+          15.5,
+          15.5
+        ],
+        "q1": [
+          4.6499999999999995,
+          4.6499999999999995
+        ],
+        "q2": [
+          15.5,
+          26.349999999999998
+        ]
+      },
+      "place_homeostasis": true,
+      "input_pattern_overlap": 0.4913,
+      "train_passes": 12,
+      "train_steps_per_loc": 120,
+      "record_steps": 100,
+      "mean_diff_location_cosine": 0.3161,
+      "max_diff_location_cosine": 0.4917,
+      "diff_pairs": [
+        {
+          "a": "near",
+          "b": "far_a",
+          "cosine": 0.1827
+        },
+        {
+          "a": "near",
+          "b": "far_b",
+          "cosine": 0.2286
+        },
+        {
+          "a": "near",
+          "b": "center",
+          "cosine": 0.3275
+        },
+        {
+          "a": "near",
+          "b": "q1",
+          "cosine": 0.332
+        },
+        {
+          "a": "near",
+          "b": "q2",
+          "cosine": 0.4642
+        },
+        {
+          "a": "far_a",
+          "b": "far_b",
+          "cosine": 0.1312
+        },
+        {
+          "a": "far_a",
+          "b": "center",
+          "cosine": 0.4312
+        },
+        {
+          "a": "far_a",
+          "b": "q1",
+          "cosine": 0.3303
+        },
+        {
+          "a": "far_a",
+          "b": "q2",
+          "cosine": 0.4917
+        },
+        {
+          "a": "far_b",
+          "b": "center",
+          "cosine": 0.1992
+        },
+        {
+          "a": "far_b",
+          "b": "q1",
+          "cosine": 0.286
+        },
+        {
+          "a": "far_b",
+          "b": "q2",
+          "cosine": 0.2581
+        },
+        {
+          "a": "center",
+          "b": "q1",
+          "cosine": 0.3307
+        },
+        {
+          "a": "center",
+          "b": "q2",
+          "cosine": 0.4099
+        },
+        {
+          "a": "q1",
+          "b": "q2",
+          "cosine": 0.3383
+        }
+      ],
+      "mean_same_location_cosine": 0.8732,
+      "min_same_location_cosine": 0.7293,
+      "same_detail": [
+        {
+          "loc": "near",
+          "cosine": 0.7293
+        },
+        {
+          "loc": "far_a",
+          "cosine": 0.8374
+        },
+        {
+          "loc": "far_b",
+          "cosine": 0.9097
+        },
+        {
+          "loc": "center",
+          "cosine": 0.9536
+        },
+        {
+          "loc": "q1",
+          "cosine": 0.9069
+        },
+        {
+          "loc": "q2",
+          "cosine": 0.9021
+        }
+      ],
+      "sparsity_per_location": {
+        "near": 0.08,
+        "far_a": 0.1175,
+        "far_b": 0.1,
+        "center": 0.0925,
+        "q1": 0.105,
+        "q2": 0.12
+      },
+      "active_counts_per_location": {
+        "near": 32,
+        "far_a": 47,
+        "far_b": 40,
+        "center": 37,
+        "q1": 42,
+        "q2": 48
+      },
+      "mean_sparsity": 0.1025,
+      "ablation_mean_active_fraction": 0.0,
+      "ablation_mean_cosine_vs_true": 0.0,
+      "partial_cue_mean_cosine_vs_true": 0.3988,
+      "gate_1a_position_specific": false,
+      "gate_1b_stable": true,
+      "gate_1c_sparse": false,
+      "anti_cheat_A_sensor_ablation_degrades": true,
+      "position_leak_driven_regions": [
+        "landmark_sensors"
+      ],
+      "stage1_pass": false,
+      "total_seconds": 19.7
+    },
+    {
+      "seed": 43,
+      "backend": "cupy",
+      "build_seconds": 0.0,
+      "n_neurons": 460,
+      "n_synapses": 11946,
+      "n_place_neurons": 400,
+      "n_landmark_sensors": 60,
+      "n_landmarks": 3,
+      "landmarks": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          31.0,
+          0.0
+        ],
+        [
+          15.5,
+          31.0
+        ]
+      ],
+      "locations": {
+        "near": [
+          7.75,
+          23.25
+        ],
+        "far_a": [
+          23.25,
+          7.75
+        ],
+        "far_b": [
+          24.8,
+          24.8
+        ],
+        "center": [
+          15.5,
+          15.5
+        ],
+        "q1": [
+          4.6499999999999995,
+          4.6499999999999995
+        ],
+        "q2": [
+          15.5,
+          26.349999999999998
+        ]
+      },
+      "place_homeostasis": true,
+      "input_pattern_overlap": 0.4913,
+      "train_passes": 12,
+      "train_steps_per_loc": 120,
+      "record_steps": 100,
+      "mean_diff_location_cosine": 0.2665,
+      "max_diff_location_cosine": 0.4761,
+      "diff_pairs": [
+        {
+          "a": "near",
+          "b": "far_a",
+          "cosine": 0.1498
+        },
+        {
+          "a": "near",
+          "b": "far_b",
+          "cosine": 0.1029
+        },
+        {
+          "a": "near",
+          "b": "center",
+          "cosine": 0.4761
+        },
+        {
+          "a": "near",
+          "b": "q1",
+          "cosine": 0.1704
+        },
+        {
+          "a": "near",
+          "b": "q2",
+          "cosine": 0.3431
+        },
+        {
+          "a": "far_a",
+          "b": "far_b",
+          "cosine": 0.0925
+        },
+        {
+          "a": "far_a",
+          "b": "center",
+          "cosine": 0.2633
+        },
+        {
+          "a": "far_a",
+          "b": "q1",
+          "cosine": 0.3829
+        },
+        {
+          "a": "far_a",
+          "b": "q2",
+          "cosine": 0.3084
+        },
+        {
+          "a": "far_b",
+          "b": "center",
+          "cosine": 0.1187
+        },
+        {
+          "a": "far_b",
+          "b": "q1",
+          "cosine": 0.2209
+        },
+        {
+          "a": "far_b",
+          "b": "q2",
+          "cosine": 0.3901
+        },
+        {
+          "a": "center",
+          "b": "q1",
+          "cosine": 0.2752
+        },
+        {
+          "a": "center",
+          "b": "q2",
+          "cosine": 0.4584
+        },
+        {
+          "a": "q1",
+          "b": "q2",
+          "cosine": 0.2456
+        }
+      ],
+      "mean_same_location_cosine": 0.9236,
+      "min_same_location_cosine": 0.8401,
+      "same_detail": [
+        {
+          "loc": "near",
+          "cosine": 0.8401
+        },
+        {
+          "loc": "far_a",
+          "cosine": 0.8876
+        },
+        {
+          "loc": "far_b",
+          "cosine": 0.9316
+        },
+        {
+          "loc": "center",
+          "cosine": 0.9715
+        },
+        {
+          "loc": "q1",
+          "cosine": 0.9628
+        },
+        {
+          "loc": "q2",
+          "cosine": 0.9481
+        }
+      ],
+      "sparsity_per_location": {
+        "near": 0.075,
+        "far_a": 0.1,
+        "far_b": 0.0675,
+        "center": 0.11,
+        "q1": 0.1275,
+        "q2": 0.0925
+      },
+      "active_counts_per_location": {
+        "near": 30,
+        "far_a": 40,
+        "far_b": 27,
+        "center": 44,
+        "q1": 51,
+        "q2": 37
+      },
+      "mean_sparsity": 0.0954,
+      "ablation_mean_active_fraction": 0.0,
+      "ablation_mean_cosine_vs_true": 0.0,
+      "partial_cue_mean_cosine_vs_true": 0.3886,
+      "gate_1a_position_specific": true,
+      "gate_1b_stable": true,
+      "gate_1c_sparse": false,
+      "anti_cheat_A_sensor_ablation_degrades": true,
+      "position_leak_driven_regions": [
+        "landmark_sensors"
+      ],
+      "stage1_pass": false,
+      "total_seconds": 19.3
+    },
+    {
+      "seed": 44,
+      "backend": "cupy",
+      "build_seconds": 0.0,
+      "n_neurons": 460,
+      "n_synapses": 11802,
+      "n_place_neurons": 400,
+      "n_landmark_sensors": 60,
+      "n_landmarks": 3,
+      "landmarks": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          31.0,
+          0.0
+        ],
+        [
+          15.5,
+          31.0
+        ]
+      ],
+      "locations": {
+        "near": [
+          7.75,
+          23.25
+        ],
+        "far_a": [
+          23.25,
+          7.75
+        ],
+        "far_b": [
+          24.8,
+          24.8
+        ],
+        "center": [
+          15.5,
+          15.5
+        ],
+        "q1": [
+          4.6499999999999995,
+          4.6499999999999995
+        ],
+        "q2": [
+          15.5,
+          26.349999999999998
+        ]
+      },
+      "place_homeostasis": true,
+      "input_pattern_overlap": 0.4913,
+      "train_passes": 12,
+      "train_steps_per_loc": 120,
+      "record_steps": 100,
+      "mean_diff_location_cosine": 0.2867,
+      "max_diff_location_cosine": 0.4323,
+      "diff_pairs": [
+        {
+          "a": "near",
+          "b": "far_a",
+          "cosine": 0.2285
+        },
+        {
+          "a": "near",
+          "b": "far_b",
+          "cosine": 0.2255
+        },
+        {
+          "a": "near",
+          "b": "center",
+          "cosine": 0.3737
+        },
+        {
+          "a": "near",
+          "b": "q1",
+          "cosine": 0.2476
+        },
+        {
+          "a": "near",
+          "b": "q2",
+          "cosine": 0.3537
+        },
+        {
+          "a": "far_a",
+          "b": "far_b",
+          "cosine": 0.1546
+        },
+        {
+          "a": "far_a",
+          "b": "center",
+          "cosine": 0.4323
+        },
+        {
+          "a": "far_a",
+          "b": "q1",
+          "cosine": 0.3879
+        },
+        {
+          "a": "far_a",
+          "b": "q2",
+          "cosine": 0.3758
+        },
+        {
+          "a": "far_b",
+          "b": "center",
+          "cosine": 0.1868
+        },
+        {
+          "a": "far_b",
+          "b": "q1",
+          "cosine": 0.3111
+        },
+        {
+          "a": "far_b",
+          "b": "q2",
+          "cosine": 0.2686
+        },
+        {
+          "a": "center",
+          "b": "q1",
+          "cosine": 0.2094
+        },
+        {
+          "a": "center",
+          "b": "q2",
+          "cosine": 0.3383
+        },
+        {
+          "a": "q1",
+          "b": "q2",
+          "cosine": 0.2073
+        }
+      ],
+      "mean_same_location_cosine": 0.8843,
+      "min_same_location_cosine": 0.7634,
+      "same_detail": [
+        {
+          "loc": "near",
+          "cosine": 0.7634
+        },
+        {
+          "loc": "far_a",
+          "cosine": 0.8219
+        },
+        {
+          "loc": "far_b",
+          "cosine": 0.9211
+        },
+        {
+          "loc": "center",
+          "cosine": 0.9191
+        },
+        {
+          "loc": "q1",
+          "cosine": 0.9441
+        },
+        {
+          "loc": "q2",
+          "cosine": 0.9361
+        }
+      ],
+      "sparsity_per_location": {
+        "near": 0.07,
+        "far_a": 0.1175,
+        "far_b": 0.0875,
+        "center": 0.0875,
+        "q1": 0.115,
+        "q2": 0.115
+      },
+      "active_counts_per_location": {
+        "near": 28,
+        "far_a": 47,
+        "far_b": 35,
+        "center": 35,
+        "q1": 46,
+        "q2": 46
+      },
+      "mean_sparsity": 0.0988,
+      "ablation_mean_active_fraction": 0.0,
+      "ablation_mean_cosine_vs_true": 0.0,
+      "partial_cue_mean_cosine_vs_true": 0.4076,
+      "gate_1a_position_specific": true,
+      "gate_1b_stable": true,
+      "gate_1c_sparse": false,
+      "anti_cheat_A_sensor_ablation_degrades": true,
+      "position_leak_driven_regions": [
+        "landmark_sensors"
+      ],
+      "stage1_pass": false,
+      "total_seconds": 19.9
+    },
+    {
+      "seed": 100,
+      "backend": "cupy",
+      "build_seconds": 0.0,
+      "n_neurons": 460,
+      "n_synapses": 12021,
+      "n_place_neurons": 400,
+      "n_landmark_sensors": 60,
+      "n_landmarks": 3,
+      "landmarks": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          31.0,
+          0.0
+        ],
+        [
+          15.5,
+          31.0
+        ]
+      ],
+      "locations": {
+        "near": [
+          7.75,
+          23.25
+        ],
+        "far_a": [
+          23.25,
+          7.75
+        ],
+        "far_b": [
+          24.8,
+          24.8
+        ],
+        "center": [
+          15.5,
+          15.5
+        ],
+        "q1": [
+          4.6499999999999995,
+          4.6499999999999995
+        ],
+        "q2": [
+          15.5,
+          26.349999999999998
+        ]
+      },
+      "place_homeostasis": true,
+      "input_pattern_overlap": 0.4913,
+      "train_passes": 12,
+      "train_steps_per_loc": 120,
+      "record_steps": 100,
+      "mean_diff_location_cosine": 0.3014,
+      "max_diff_location_cosine": 0.4372,
+      "diff_pairs": [
+        {
+          "a": "near",
+          "b": "far_a",
+          "cosine": 0.3241
+        },
+        {
+          "a": "near",
+          "b": "far_b",
+          "cosine": 0.1333
+        },
+        {
+          "a": "near",
+          "b": "center",
+          "cosine": 0.4372
+        },
+        {
+          "a": "near",
+          "b": "q1",
+          "cosine": 0.2746
+        },
+        {
+          "a": "near",
+          "b": "q2",
+          "cosine": 0.4312
+        },
+        {
+          "a": "far_a",
+          "b": "far_b",
+          "cosine": 0.1285
+        },
+        {
+          "a": "far_a",
+          "b": "center",
+          "cosine": 0.278
+        },
+        {
+          "a": "far_a",
+          "b": "q1",
+          "cosine": 0.3783
+        },
+        {
+          "a": "far_a",
+          "b": "q2",
+          "cosine": 0.3055
+        },
+        {
+          "a": "far_b",
+          "b": "center",
+          "cosine": 0.2095
+        },
+        {
+          "a": "far_b",
+          "b": "q1",
+          "cosine": 0.2644
+        },
+        {
+          "a": "far_b",
+          "b": "q2",
+          "cosine": 0.4012
+        },
+        {
+          "a": "center",
+          "b": "q1",
+          "cosine": 0.3297
+        },
+        {
+          "a": "center",
+          "b": "q2",
+          "cosine": 0.3522
+        },
+        {
+          "a": "q1",
+          "b": "q2",
+          "cosine": 0.2732
+        }
+      ],
+      "mean_same_location_cosine": 0.8674,
+      "min_same_location_cosine": 0.5988,
+      "same_detail": [
+        {
+          "loc": "near",
+          "cosine": 0.5988
+        },
+        {
+          "loc": "far_a",
+          "cosine": 0.9009
+        },
+        {
+          "loc": "far_b",
+          "cosine": 0.9425
+        },
+        {
+          "loc": "center",
+          "cosine": 0.9509
+        },
+        {
+          "loc": "q1",
+          "cosine": 0.9081
+        },
+        {
+          "loc": "q2",
+          "cosine": 0.9032
+        }
+      ],
+      "sparsity_per_location": {
+        "near": 0.0425,
+        "far_a": 0.11,
+        "far_b": 0.095,
+        "center": 0.085,
+        "q1": 0.15,
+        "q2": 0.095
+      },
+      "active_counts_per_location": {
+        "near": 17,
+        "far_a": 44,
+        "far_b": 38,
+        "center": 34,
+        "q1": 60,
+        "q2": 38
+      },
+      "mean_sparsity": 0.0963,
+      "ablation_mean_active_fraction": 0.0,
+      "ablation_mean_cosine_vs_true": 0.0,
+      "partial_cue_mean_cosine_vs_true": 0.4203,
+      "gate_1a_position_specific": false,
+      "gate_1b_stable": true,
+      "gate_1c_sparse": false,
+      "anti_cheat_A_sensor_ablation_degrades": true,
+      "position_leak_driven_regions": [
+        "landmark_sensors"
+      ],
+      "stage1_pass": false,
+      "total_seconds": 19.4
+    },
+    {
+      "seed": 101,
+      "backend": "cupy",
+      "build_seconds": 0.0,
+      "n_neurons": 460,
+      "n_synapses": 11905,
+      "n_place_neurons": 400,
+      "n_landmark_sensors": 60,
+      "n_landmarks": 3,
+      "landmarks": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          31.0,
+          0.0
+        ],
+        [
+          15.5,
+          31.0
+        ]
+      ],
+      "locations": {
+        "near": [
+          7.75,
+          23.25
+        ],
+        "far_a": [
+          23.25,
+          7.75
+        ],
+        "far_b": [
+          24.8,
+          24.8
+        ],
+        "center": [
+          15.5,
+          15.5
+        ],
+        "q1": [
+          4.6499999999999995,
+          4.6499999999999995
+        ],
+        "q2": [
+          15.5,
+          26.349999999999998
+        ]
+      },
+      "place_homeostasis": true,
+      "input_pattern_overlap": 0.4913,
+      "train_passes": 12,
+      "train_steps_per_loc": 120,
+      "record_steps": 100,
+      "mean_diff_location_cosine": 0.2236,
+      "max_diff_location_cosine": 0.4649,
+      "diff_pairs": [
+        {
+          "a": "near",
+          "b": "far_a",
+          "cosine": 0.1471
+        },
+        {
+          "a": "near",
+          "b": "far_b",
+          "cosine": 0.2472
+        },
+        {
+          "a": "near",
+          "b": "center",
+          "cosine": 0.2861
+        },
+        {
+          "a": "near",
+          "b": "q1",
+          "cosine": 0.1819
+        },
+        {
+          "a": "near",
+          "b": "q2",
+          "cosine": 0.3081
+        },
+        {
+          "a": "far_a",
+          "b": "far_b",
+          "cosine": 0.0824
+        },
+        {
+          "a": "far_a",
+          "b": "center",
+          "cosine": 0.4649
+        },
+        {
+          "a": "far_a",
+          "b": "q1",
+          "cosine": 0.2729
+        },
+        {
+          "a": "far_a",
+          "b": "q2",
+          "cosine": 0.238
+        },
+        {
+          "a": "far_b",
+          "b": "center",
+          "cosine": 0.0835
+        },
+        {
+          "a": "far_b",
+          "b": "q1",
+          "cosine": 0.184
+        },
+        {
+          "a": "far_b",
+          "b": "q2",
+          "cosine": 0.3922
+        },
+        {
+          "a": "center",
+          "b": "q1",
+          "cosine": 0.1659
+        },
+        {
+          "a": "center",
+          "b": "q2",
+          "cosine": 0.1703
+        },
+        {
+          "a": "q1",
+          "b": "q2",
+          "cosine": 0.1299
+        }
+      ],
+      "mean_same_location_cosine": 0.8764,
+      "min_same_location_cosine": 0.6098,
+      "same_detail": [
+        {
+          "loc": "near",
+          "cosine": 0.6098
+        },
+        {
+          "loc": "far_a",
+          "cosine": 0.9076
+        },
+        {
+          "loc": "far_b",
+          "cosine": 0.9477
+        },
+        {
+          "loc": "center",
+          "cosine": 0.9356
+        },
+        {
+          "loc": "q1",
+          "cosine": 0.9483
+        },
+        {
+          "loc": "q2",
+          "cosine": 0.9093
+        }
+      ],
+      "sparsity_per_location": {
+        "near": 0.035,
+        "far_a": 0.1125,
+        "far_b": 0.105,
+        "center": 0.065,
+        "q1": 0.115,
+        "q2": 0.115
+      },
+      "active_counts_per_location": {
+        "near": 14,
+        "far_a": 45,
+        "far_b": 42,
+        "center": 26,
+        "q1": 46,
+        "q2": 46
+      },
+      "mean_sparsity": 0.0912,
+      "ablation_mean_active_fraction": 0.0,
+      "ablation_mean_cosine_vs_true": 0.0,
+      "partial_cue_mean_cosine_vs_true": 0.4796,
+      "gate_1a_position_specific": true,
+      "gate_1b_stable": true,
+      "gate_1c_sparse": false,
+      "anti_cheat_A_sensor_ablation_degrades": true,
+      "position_leak_driven_regions": [
+        "landmark_sensors"
+      ],
+      "stage1_pass": false,
+      "total_seconds": 19.2
+    }
+  ]
+}
