@@ -1,0 +1,304 @@
+// ============================================================================
+//  NAVIGATION BRAIN — exhaustive as-implemented graph
+//  build_bg_brain_regions()  (research/runners/g11_bg_runner.py)
+//  Source spec: research/findings/2026-06-09-brain-architecture-flowchart-spec.md §2,§3
+//  Render: dot -Tpng -Gdpi=150 brain_navigation.dot -o brain_navigation.png
+//          dot -Tsvg          brain_navigation.dot -o brain_navigation.svg
+//
+//  EVERY region TYPE and EVERY distinct pathway TYPE. Per-action pools are
+//  drawn ONCE with a "×4 (N/E/S/W)" badge; cross-action arcs are shown once,
+//  labelled. Signal NATURE, DIRECTION, plasticity and gating are all encoded
+//  (see the legend, bottom-right).
+// ============================================================================
+digraph NavigationBrain {
+    rankdir=TB;
+    compound=true;
+    newrank=true;
+    splines=spline;
+    nodesep=0.34;
+    ranksep=0.70;
+    bgcolor="white";
+    fontname="Helvetica";
+    labelloc="t";
+    fontsize=24;
+    label=<<B>Navigation brain — every region &amp; pathway, as implemented</B><BR/><FONT POINT-SIZE="12">build_bg_brain_regions() · per-action pools collapsed ×4 (N/E/S/W) · signal nature + direction + plasticity + gating encoded · faithful-vs-shortcut flagged</FONT><BR/> >;
+
+    // node default: excitatory cortical-type. Inhibitory & opt-in override per node.
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10.5,
+          margin="0.13,0.07", penwidth=1.4, color="#1f618d", fillcolor="#eaf2f8"];
+
+    // ---- edge "nature" styles (applied per edge) --------------------------
+    //   EXC      : edge [arrowhead=normal]                              (default)
+    //   GABA_A   : edge [arrowhead=tee,  color="#922b21"]
+    //   GABA_B   : edge [arrowhead=tee,  color="#7d3c98", style=dashed, penwidth=2.2]
+    //   DA bus   : edge [arrowhead=odiamond, color="#e69138", style=dotted, penwidth=2.0]
+    //   NMDArec  : edge [color="#1e8449", penwidth=2.2] (self-loop)
+    edge [fontname="Helvetica", fontsize=9, color="#5d6d7e", penwidth=1.3, arrowsize=0.8];
+
+    // ====================================================================
+    //  C7p + C1 — PERCEPTION INPUTS  (host-rendered = environment; ⚠ shortcut codes)
+    // ====================================================================
+    subgraph cluster_inputs {
+        label=<<B>Perception inputs</B>   (C7p readouts ·  C1 visual ventral stream)>;
+        style="rounded,filled"; color="#ca6f1e"; fillcolor="#fef5e7"; fontcolor="#9a7d0a"; fontsize=13; margin=12;
+
+        place    [label=<<B>sensor_place_readout</B><BR/><FONT POINT-SIZE="8.5">sparse place cells (agent x,y)<BR/>⚠ host-rendered</FONT>>, fillcolor="#fdebd0", color="#ca6f1e"];
+        goal     [label=<<B>ppc_goal_input</B><BR/><FONT POINT-SIZE="8.5">goal (gx,gy) context<BR/>⚠ host-rendered</FONT>>, fillcolor="#fdebd0", color="#ca6f1e"];
+        sensory  [label=<<B>sensory</B>  (opt)<BR/><FONT POINT-SIZE="8.5">7×7 relative (dx,dy)<BR/>⚠ host-rendered</FONT>>, style="rounded,filled,dashed", fillcolor="#fef9e7", color="#ca6f1e"];
+        beacon   [label=<<B>beacon_sensors</B>  (opt)<BR/><FONT POINT-SIZE="8.5">8 beacon-intensity dirs<BR/>⚠ host-rendered</FONT>>, style="rounded,filled,dashed", fillcolor="#fef9e7", color="#ca6f1e"];
+        landmark [label=<<B>landmark_sensors</B>  (opt)<BR/><FONT POINT-SIZE="8.5">8 (dist,bearing)<BR/>⚠ host-rendered</FONT>>, style="rounded,filled,dashed", fillcolor="#fef9e7", color="#ca6f1e"];
+
+        retina   [label=<<B>retina</B>  (opt)<BR/><FONT POINT-SIZE="8.5">2×32×32 ON/OFF<BR/>⚠ host-rendered image</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4"];
+        v1s      [label=<<B>cortex_v1_simple</B><BR/><FONT POINT-SIZE="8.5">Gabor RF (Hubel-Wiesel)</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4"];
+        v1c      [label=<<B>cortex_v1_complex</B><BR/><FONT POINT-SIZE="8.5">phase-pooled ⚠ rate≈max-pool</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4"];
+        v2       [label=<<B>cortex_v2</B><BR/><FONT POINT-SIZE="8.5">higher-order features</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4"];
+        it       [label=<<B>cortex_it</B>  (IT)<BR/><FONT POINT-SIZE="8.5">object "what" stream</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4"];
+
+        retina -> v1s [label="Gabor\nvisual_cortex_v1", fontcolor="#1f618d"];
+        v1s -> v1c [label="phase pool", color="#7f8c8d", style=dotted];
+        v1c -> v2 [label="visual_cortex_v2", fontcolor="#1f618d"];
+        v2 -> it [label="visual_cortex_it", fontcolor="#1f618d"];
+    }
+
+    // ====================================================================
+    //  C2 — SENSORIMOTOR CORTEX  (M1 channels)
+    // ====================================================================
+    subgraph cluster_cortex {
+        label=<<B>Sensorimotor cortex</B>  (C2 · M1)>;
+        style="rounded,filled"; color="#5b4a8a"; fillcolor="#f4f0fa"; fontcolor="#5b4a8a"; fontsize=13; margin=12;
+        cortex   [label=<<B>cortex_{N,E,S,W}</B>  ×4<BR/><FONT POINT-SIZE="8.5">RS pyramidal · per-action input<BR/>⚠ labeled-line split (phenomenological)</FONT>>, fillcolor="#e8e1f2", color="#5b4a8a"];
+        cortexFS [label=<<B>cortex_FS_{X}</B>  ×4 (opt)<BR/><FONT POINT-SIZE="8.5">PV-FS · per-pool WTA</FONT>>, style="rounded,filled,dashed", fillcolor="#efeaf7", color="#37306b", penwidth=2.2];
+        cortex -> cortexFS [label="drive FS", color="#5d6d7e"];
+        cortexFS -> cortex [label="WTA (cross-pool)", arrowhead=tee, color="#922b21"];
+    }
+
+    // ====================================================================
+    //  C3f — STRIATUM (the input nucleus; all GABAergic)
+    // ====================================================================
+    subgraph cluster_striatum {
+        label=<<B>Striatum</B>  (C3 / C3f · all GABAergic MSNs + interneurons)>;
+        style="rounded,filled"; color="#a04000"; fillcolor="#fdf2e9"; fontcolor="#a04000"; fontsize=13; margin=12;
+        d1   [label=<<B>str_D1_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">MSN-D1 (E_GABA=−60) · "go"<BR/>LEARNING site</FONT>>, fillcolor="#f5cba7", color="#7e3300", penwidth=2.2];
+        d2   [label=<<B>str_D2_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">MSN-D2 · "no-go"</FONT>>, fillcolor="#f5cba7", color="#7e3300", penwidth=2.2];
+        strio[label=<<B>str_striosome_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">patch MSN-D1 → drives DA<BR/>⚠ limbic input proxied by cortex</FONT>>, fillcolor="#f8c471", color="#7e3300", penwidth=2.2];
+        fsi  [label=<<B>str_PV_FSI_{X}</B>  ×4 (opt)<BR/><FONT POINT-SIZE="8.5">FS · feedforward WTA</FONT>>, style="rounded,filled,dashed", fillcolor="#fad7a0", color="#6e2c00", penwidth=2.2];
+    }
+
+    // ====================================================================
+    //  C3/C3i/C3h — PALLIDUM + STN  (BG output nuclei; GABAergic except STN)
+    // ====================================================================
+    subgraph cluster_pallidum {
+        label=<<B>Pallidum + subthalamic nucleus</B>  (C3 direct · C3i indirect · C3h hyperdirect)>;
+        style="rounded,filled"; color="#a04000"; fillcolor="#fbeee6"; fontcolor="#a04000"; fontsize=13; margin=12;
+        gpe   [label=<<B>gpe_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">GPe prototypic (PV+) pacemaker</FONT>>, fillcolor="#f6ddcc", color="#7e3300", penwidth=2.2];
+        arky  [label=<<B>gpe_arky_{X}</B>  ×4 (opt)<BR/><FONT POINT-SIZE="8.5">arkypallidal (PV−) "stop"</FONT>>, style="rounded,filled,dashed", fillcolor="#f6ddcc", color="#6e2c00", penwidth=2.2];
+        gpi   [label=<<B>gpi_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">GPi/SNr OUTPUT · tonic 40–80 Hz<BR/>⚠ GPi+SNr collapsed</FONT>>, fillcolor="#edbb99", color="#6e2c00", penwidth=2.4];
+        stn   [label=<<B>stn</B>  (shared)<BR/><FONT POINT-SIZE="8.5">STN burst · diffuse excitation</FONT>>, fillcolor="#d5f5e3", color="#1e8449", penwidth=1.6];
+    }
+
+    // ====================================================================
+    //  C6 — REWARD & DOPAMINE (midbrain)
+    // ====================================================================
+    subgraph cluster_reward {
+        label=<<B>Reward &amp; dopamine</B>  (C6 · spiking actor-critic)>;
+        style="rounded,filled"; color="#b9770e"; fillcolor="#fef9e7"; fontcolor="#9a7d0a"; fontsize=13; margin=12;
+        snc    [label=<<B>snc</B>  (A9 dopamine)<BR/><FONT POINT-SIZE="8.5">E_GABA=−55, no KCC2<BR/>FIRING = RPE δ=r−V<BR/>⚠ A9+VTA collapsed · global scalar</FONT>>, fillcolor="#f9e79f", color="#b9770e", penwidth=1.8];
+        vcrit  [label=<<B>striosome_value</B>  (opt)<BR/><FONT POINT-SIZE="8.5">MSN-D1 value critic V(s)<BR/>per-region homeostasis</FONT>>, style="rounded,filled,dashed", fillcolor="#fdebd0", color="#7e3300", penwidth=2.2];
+        vplace [label=<<B>vs_place_context</B>  (opt)<BR/><FONT POINT-SIZE="8.5">dense grid-32 place afferent<BR/>⚠ host-rendered place code</FONT>>, style="rounded,filled,dashed", fillcolor="#fdebd0", color="#ca6f1e"];
+    }
+
+    // ====================================================================
+    //  C4 — THALAMUS + TRN
+    // ====================================================================
+    subgraph cluster_thal {
+        label=<<B>Thalamus + reticular nucleus</B>  (C4)>;
+        style="rounded,filled"; color="#148f77"; fillcolor="#e8f6f3"; fontcolor="#148f77"; fontsize=13; margin=12;
+        thal   [label=<<B>thal_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">relay (TC) · released by GPi silence</FONT>>, fillcolor="#d0ece7", color="#0e6655", penwidth=1.6];
+        trn    [label=<<B>thal_FS_{X}</B>  ×4 (opt · TRN)<BR/><FONT POINT-SIZE="8.5">reticular reciprocal inhibition<BR/>⚠ modeled cortical-FS-style</FONT>>, style="rounded,filled,dashed", fillcolor="#d1f2eb", color="#0b5345", penwidth=2.2];
+    }
+
+    // ====================================================================
+    //  C5 — SUPERIOR COLLICULUS / orienting (accumulate → commit)
+    // ====================================================================
+    subgraph cluster_sc {
+        label=<<B>Superior colliculus / orienting</B>  (C5 · --readout-source spiking_wta)>;
+        style="rounded,filled,dashed"; color="#7d3c98"; fillcolor="#f5eef8"; fontcolor="#7d3c98"; fontsize=13; margin=12;
+        sel    [label=<<B>sel_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">NMDA accumulator (Wang-2002)<BR/>soft-WTA α&lt;1</FONT>>, fillcolor="#e8daef", color="#6c3483", penwidth=1.6];
+        selFS  [label=<<B>sel_FS_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">structured cross-pool WTA</FONT>>, fillcolor="#ebdef0", color="#4a235a", penwidth=2.2];
+        commit [label=<<B>commit_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">SC saccade burst · all-or-none</FONT>>, fillcolor="#e8daef", color="#6c3483", penwidth=1.6];
+        opn    [label=<<B>commit_OPN</B>  (opt)<BR/><FONT POINT-SIZE="8.5">omnipause · tonic gate</FONT>>, fillcolor="#ebdef0", color="#4a235a", penwidth=2.2];
+    }
+
+    // ====================================================================
+    //  C8 — CEREBELLUM (Marr-Albus-Ito side loop)
+    // ====================================================================
+    subgraph cluster_cb {
+        label=<<B>Cerebellum</B>  (C8 · opt-in)>;
+        style="rounded,filled,dashed"; color="#5499c7"; fillcolor="#eaf2f8"; fontcolor="#21618c"; fontsize=13; margin=12;
+        mossy   [label=<<B>mossy_state</B><BR/><FONT POINT-SIZE="8.5">MF state input</FONT>>, fillcolor="#d4e6f1", color="#2e86c1"];
+        granule [label=<<B>granule</B><BR/><FONT POINT-SIZE="8.5">sparse expansion (Marr codon)<BR/>⚠ 250 cells vs ~50M</FONT>>, fillcolor="#d4e6f1", color="#2e86c1"];
+        purk    [label=<<B>purkinje_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">⚠ FS preset stands in for PC</FONT>>, fillcolor="#d6eaf8", color="#1a5276", penwidth=2.2];
+        dcn     [label=<<B>dcn_aip_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">deep nucleus → motor</FONT>>, fillcolor="#d4e6f1", color="#2e86c1"];
+        io      [label=<<B>inferior_olive</B><BR/><FONT POINT-SIZE="8.5">climbing-fiber teaching</FONT>>, fillcolor="#d4e6f1", color="#2e86c1"];
+    }
+
+    // ====================================================================
+    //  C7 — HIPPOCAMPAL FORMATION (shared; nav variant)
+    // ====================================================================
+    subgraph cluster_hippo {
+        label=<<B>Hippocampal formation</B>  (C7 · shared)>;
+        style="rounded,filled,dashed"; color="#6aa84f"; fillcolor="#eafaf1"; fontcolor="#1e8449"; fontsize=13; margin=12;
+        ec   [label=<<B>ec</B>  (entorhinal)<BR/><FONT POINT-SIZE="8.5">perceptual entry</FONT>>, fillcolor="#d4efdf", color="#239b56"];
+        dg   [label=<<B>dg</B>  (dentate)<BR/><FONT POINT-SIZE="8.5">pattern separation</FONT>>, fillcolor="#d4efdf", color="#239b56"];
+        dgb  [label=<<B>dg_pv_basket</B><BR/><FONT POINT-SIZE="8.5">FFi → DG sparsity</FONT>>, fillcolor="#d5f5e3", color="#145a32", penwidth=2.2];
+        ca3  [label=<<B>ca3</B><BR/><FONT POINT-SIZE="8.5">autoassociator · SWR replay</FONT>>, fillcolor="#d4efdf", color="#239b56"];
+        ca1  [label=<<B>ca1</B><BR/><FONT POINT-SIZE="8.5">readout · EC+CA3 integration</FONT>>, fillcolor="#d4efdf", color="#239b56"];
+        ec -> dg [label="perforant\nec_to_dg", fontcolor="#1e8449"];
+        ec -> dgb [label="FFi"];
+        dgb -> dg [label="sparsity", arrowhead=tee, color="#922b21"];
+        ec -> ca1 [label="direct bypass\nec_to_ca1", fontcolor="#1e8449"];
+        dg -> ca3 [label="mossy\ndg_to_ca3", fontcolor="#1e8449"];
+        ca3 -> ca3 [label="recurrent ⟲\nca3_swr_burst", color="#1e8449", penwidth=2.0, fontcolor="#1e8449"];
+        ca3 -> ca1 [label="Schaffer\nca3_to_ca1", fontcolor="#1e8449"];
+    }
+
+    // ====================================================================
+    //  C9 — dlPFC WORKING MEMORY
+    // ====================================================================
+    dlpfc [label=<<B>dlpfc_wm</B>  (C9 · opt)<BR/><FONT POINT-SIZE="8.5">recurrent persistent activity<BR/>goal working memory (NMDA)</FONT>>, style="rounded,filled,dashed", fillcolor="#d4e6f1", color="#2e86c1"];
+
+    // ====================================================================
+    //  C10 — MOTOR OUTPUT
+    // ====================================================================
+    subgraph cluster_motor {
+        label=<<B>Motor output</B>  (C10 · the body acts on which pool fires)>;
+        style="rounded,filled"; color="#cc0000"; fillcolor="#fdedec"; fontcolor="#cc0000"; fontsize=13; margin=12;
+        motor   [label=<<B>motor_{N,E,S,W}</B>  ×4<BR/><FONT POINT-SIZE="8.5">RS pyramidal · motor pools</FONT>>, fillcolor="#f5b7b1", color="#922b21", penwidth=1.6];
+        motorFS [label=<<B>motor_FS_{X}</B>  ×4 (opt)<BR/><FONT POINT-SIZE="8.5">PV-FS WTA<BR/>⚠ DEPRECATED (biology = spinal Renshaw)</FONT>>, style="rounded,filled,dashed", fillcolor="#f9ebea", color="#7b241c", penwidth=2.2];
+        motorpop[label=<<B>motor_pop_{θ}</B>  ×8 (opt)<BR/><FONT POINT-SIZE="8.5">cosine-tuned population vector<BR/>(Georgopoulos)</FONT>>, style="rounded,filled,dashed", fillcolor="#fadbd8", color="#922b21"];
+    }
+    body [label=<<B>BODY / ENVIRONMENT</B><BR/><FONT POINT-SIZE="8.5">agent moves on grid · world renders next image</FONT>>, shape=box, style="filled", fillcolor="#eaeded", color="#566573", fontcolor="#566573"];
+
+    // ====================================================================
+    //  ===========================  EDGES  ==============================
+    // ====================================================================
+    // -- 3A perception → cortex --
+    place    -> cortex [label="place→action\nplace_goal_to_cortex", fontcolor="#1f618d"];
+    goal     -> cortex [label="goal→action\nplace_goal_to_cortex", fontcolor="#1f618d"];
+    sensory  -> cortex [label="pos→action\nsensory_to_cortex", fontcolor="#1f618d", style=dashed];
+    beacon   -> goal   [label="beacon_to_goal", fontcolor="#1f618d", style=dashed];
+    landmark -> place  [label="landmark_to_place", fontcolor="#1f618d", style=dashed];
+    it       -> cortex [label="visual→action\nvisual_cortex_action (gated)", color="#3d6fb4", fontcolor="#3d6fb4"];
+    dlpfc    -> cortex [label="WM bias\ndlpfc_wm_pathways", fontcolor="#1f618d"];
+    goal     -> dlpfc  [label="goal→WM\ndlpfc_wm_pathways", fontcolor="#1f618d"];
+
+    // -- 3B corticostriatal (LEARNING) --
+    cortex -> d1    [label="corticostriatal\n(DA-gated STDP)", penwidth=2.2, fontcolor="#1f618d"];
+    cortex -> d2    [label="corticostriatal", penwidth=1.8, fontcolor="#1f618d"];
+    cortex -> strio [label="limbic proxy ⚠\ncorticostriatal", fontcolor="#9a7d0a", style=dashed];
+    cortex -> d1    [label="cross-action (opt)\ncorticostriatal_cross →Y≠X", color="#7f8c8d", style=dashed, constraint=false];
+
+    // -- 3C striatal interneuron WTA --
+    cortex -> fsi   [label="drive FSI"];
+    fsi    -> d1    [label="cross-action WTA\n(X→D1/D2 Y≠X)", arrowhead=tee, color="#922b21"];
+    fsi    -> d2    [label="", arrowhead=tee, color="#922b21"];
+    d1     -> d2    [label="MSN-MSN lateral (opt)\nX→Y≠X", arrowhead=tee, color="#cd6155", style=dashed, constraint=false];
+
+    // -- 3B direct / indirect / hyperdirect cascade --
+    d1   -> gpi  [label="DIRECT \"go\"\n(disinhibition)", arrowhead=tee, color="#922b21", penwidth=2.0];
+    d2   -> gpe  [label="INDIRECT start", arrowhead=tee, color="#922b21"];
+    gpe  -> stn  [label="pallido-subthalamic", arrowhead=tee, color="#922b21"];
+    d2   -> arky [label="drive arky", arrowhead=tee, color="#922b21", style=dashed];
+    arky -> fsi  [label="arky \"stop\"\nbroadcast (opt)", arrowhead=tee, color="#922b21", style=dashed, constraint=false];
+    stn  -> gpi  [label="diffuse excitation\n(hyper/indirect convergence)", color="#1e8449", penwidth=1.6];
+    cortex -> stn [label="HYPERDIRECT (opt)\nNambu fast stop", color="#1e8449", style=dashed, constraint=false];
+    gpi  -> thal [label="BG OUTPUT gate\n(tonic ⊣; D1 silence releases)", arrowhead=tee, color="#922b21", penwidth=2.4];
+
+    // -- 3B/3D reward drive + value subtraction --
+    strio  -> snc  [label="striosome→SNc\n(drives phasic DA)", arrowhead=tee, color="#922b21"];
+    strio  -> gpi  [label="patch→SNr", arrowhead=tee, color="#cd6155", style=dashed, constraint=false];
+    gpi    -> snc  [label="SNr→SNc collateral\n(disinhibition)", arrowhead=tee, color="#cd6155", style=dashed, constraint=false];
+    vplace -> vcrit[label="learn V(s)\nvalue_input", fontcolor="#9a7d0a"];
+    vcrit  -> snc  [label="VALUE SUBTRACTION  r−V\nGABA_B/GIRK ⊟critic_snc_window", arrowhead=tee, color="#7d3c98", style=dashed, penwidth=2.6, fontcolor="#7d3c98"];
+
+    // -- DA modulatory broadcast (NOT a synapse) --
+    snc -> cortex [label="DOPAMINE bus → gates\ncorticostriatal STDP (plasticity_rate)", style=dotted, color="#e69138", arrowhead=odiamond, penwidth=2.2, fontcolor="#b9770e", constraint=false];
+    snc -> vcrit  [label="δ trains critic", style=dotted, color="#e69138", arrowhead=odiamond, penwidth=1.8, constraint=false];
+
+    // -- 3B thalamo-cortical feedback (closes the loop) --
+    thal -> cortex [label="thalamo-cortical\nfeedback (opt, Cluster A)", color="#117a65", style=dashed, constraint=false];
+
+    // -- 3B / 3E thalamus → motor & → accumulator --
+    thal -> motor [label="thal→motor", penwidth=2.0];
+    thal -> sel   [label="relay→accumulator\n(read-only tap)"];
+    thal -> trn   [label="relay collateral (opt)"];
+
+    // -- 3E SC accumulate → commit --
+    sel    -> sel    [label="NMDA-recur ⟲\nevidence integration", color="#1e8449", penwidth=2.0, fontcolor="#1e8449"];
+    sel    -> selFS  [label="recruit interneuron"];
+    selFS  -> sel    [label="cross-pool WTA\n(Y≠X)", arrowhead=tee, color="#922b21"];
+    sel    -> commit [label="ramp fires burst"];
+    commit -> commit [label="all-or-none ⟲", color="#1e8449", penwidth=1.6];
+    opn    -> commit [label="omnipause hold", arrowhead=tee, color="#922b21"];
+    commit -> motor  [label="commit→act"];
+    trn    -> thal   [label="TRN reciprocal WTA\n(Y≠X)", arrowhead=tee, color="#922b21", style=dashed, constraint=false];
+
+    // -- 3F cerebellar side loop --
+    place   -> mossy [label="state→MF", color="#5d6d7e", constraint=false];
+    mossy   -> granule [label="sparse expansion"];
+    granule -> purk  [label="parallel fiber\ncerebellum_pf_pc (LEARNING)", fontcolor="#21618c"];
+    purk    -> dcn   [label="PC pause → disinhibition", arrowhead=tee, color="#922b21"];
+    dcn     -> motor [label="DCN→motor (additive)", color="#2e86c1"];
+    io      -> purk  [label="climbing-fiber\nteaching", color="#2e86c1"];
+
+    // -- 3G hippocampus → perception readout --
+    landmark -> ec  [label="sensory→ec\n(nav entry)", color="#5d6d7e", style=dashed, constraint=false];
+    ca1      -> place [label="hippo readout\n→ place arc", color="#1e8449", constraint=false];
+
+    // -- motor lateral inhibition + distributed motor --
+    motor   -> motorFS [label="drive FS"];
+    motorFS -> motor   [label="WTA (Y≠X) ⚠depr", arrowhead=tee, color="#922b21", style=dashed, constraint=false];
+    thal    -> motorpop[label="cosine-tuned\ndistributed drive", style=dashed, constraint=false];
+    motor   -> body    [label="agent moves", penwidth=2.0, color="#922b21"];
+    motorpop-> body    [style=dashed, color="#922b21", constraint=false];
+    body    -> place   [label="world renders\nnext sensory input", color="#566573", style=dotted, constraint=false];
+
+    // ====================================================================
+    //  LEGEND
+    // ====================================================================
+    subgraph cluster_legend {
+        label=""; style="rounded,filled"; color="#566573"; fillcolor="#fbfcfc"; margin=10;
+        leg [shape=plaintext, fillcolor="white", label=<
+          <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="3">
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>SIGNAL NATURE</B>  (arrow points downstream)</TD></TR>
+            <TR><TD ALIGN="RIGHT">──▶</TD><TD ALIGN="LEFT">excitatory — glutamate (AMPA, +NMDA share)</TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#922b21">──⊣</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#922b21">fast inhibition — GABA_A (Cl⁻, E≈−75; MSN −60)</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#7d3c98">- -⊣</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#7d3c98">slow inhibition — GABA_B / GIRK K⁺ (E=−90) · the value subtraction</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1e8449">──▶</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1e8449">NMDA-recurrent self-excitation (slow integration ⟲)</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#e69138">····◆</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#e69138">dopamine broadcast — neuromodulator scalar (not a synapse)</FONT></TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"> </TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>NODE / EDGE STATUS</B></TD></TR>
+            <TR><TD ALIGN="RIGHT">▭</TD><TD ALIGN="LEFT">solid border = always built (CORE) · <B>thick</B> border = inhibitory region</TD></TR>
+            <TR><TD ALIGN="RIGHT">┄</TD><TD ALIGN="LEFT">dashed border / edge = opt-in (flag-gated) or weaker/feedback</TD></TR>
+            <TR><TD ALIGN="RIGHT">⊟</TD><TD ALIGN="LEFT">runtime gate (transmission / plasticity) · gate name in label</TD></TR>
+            <TR><TD ALIGN="RIGHT">×4</TD><TD ALIGN="LEFT">per-action template (N/E/S/W); cross-action arcs shown once, labelled</TD></TR>
+            <TR><TD ALIGN="RIGHT">⚠</TD><TD ALIGN="LEFT">documented shortcut (host-rendered input = legitimate environment/body;</TD></TR>
+            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT">collapsed/phenomenological stand-in = a reduction). Substrate-wide: point</TD></TR>
+            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT">neurons · 1-step delay · Izhikevich-default (SH-1..SH-14, see spec §6)</TD></TR>
+          </TABLE>>];
+    }
+
+    // -- rank guidance: pin the perception→action spine top→bottom ----------
+    { rank=min;  retina; place; goal; sensory; beacon; landmark; }
+    { rank=same; cortex; cortexFS; }
+    { rank=same; d1; d2; strio; fsi; }
+    { rank=same; gpe; arky; gpi; stn; }
+    { rank=same; thal; trn; }
+    { rank=same; sel; selFS; commit; opn; }
+    { rank=same; motor; motorFS; motorpop; }
+    { rank=max;  body; }
+    // invisible anchors to keep the side-modules from pulling motor sideways
+    commit -> motor [style=invis, weight=20];
+    thal   -> motor [style=invis, weight=20];
+    motor  -> body  [style=invis, weight=20];
+}
