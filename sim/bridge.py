@@ -239,6 +239,16 @@ class SimulationBridge:
         self.cp_conductance_g_gabab = None          # slow GABA_B/GIRK conductance (None unless enable_gabab)
         self.cp_gabab_reversal_per_neuron = None     # per-neuron E_gabab (~-90 mV on GABA_B targets)
         self.cp_gabab_synapse_mask = None            # bool per-synapse: True for GABA_B-routed synapses
+        # Slow-NMDA recurrent routing (2026-06-09). The EXCITATORY mirror of the GABA_B
+        # arrays above: a SEPARATE slow (tau ~100 ms) NMDA conductance (dual-exp, reuses
+        # fused_nmda_update_and_current with the Mg2+ block) fed ONLY by synapses of
+        # pathways tagged exc_receptor=="nmda_slow" (the per-synapse routing mask), with
+        # their fast-AMPA g_e component suppressed. All None by default -> the new step
+        # block is unreached, the g_e matvec is unmasked, and total_input_current_pA is
+        # byte-identical to today. See 2026-06-09-learned-graded-ca3-design.md.
+        self.cp_conductance_g_nmda_recurrent = None       # slow NMDA recurrent conductance (None unless enable_nmda_recurrent + a routed pathway)
+        self.cp_conductance_g_nmda_recurrent_rise = None  # dual-exp rise component
+        self.cp_nmda_recurrent_synapse_mask = None        # bool per-synapse: True for nmda_slow-routed synapses
         # Cluster G v2 (2026-05-01): per-neuron NMDA mask (1.0 for neurons
         # in regions with BrainRegion.enable_nmda=True, 0.0 otherwise).
         # When None, NMDA applies globally per cfg.enable_nmda — backward
@@ -1205,6 +1215,18 @@ class SimulationBridge:
                 # cp_gabab_synapse_mask is built in inject_explicit_wiring (needs nnz);
                 # left None here so non-wired bridges with enable_gabab are still safe.
 
+            # Slow-NMDA recurrent conductance (2026-06-09). The EXCITATORY mirror of the
+            # GABA_B alloc above: a second NMDA conductance (dual-exp: g + g_rise) with its
+            # own slow decay, fed only by exc_receptor=="nmda_slow" synapses. Guarded by
+            # cfg.enable_nmda_recurrent so a default config leaves all arrays None and the
+            # per-step block is unreached (byte-identical). The routing mask is built in
+            # inject_explicit_wiring (needs nnz); left None here so non-wired bridges with
+            # enable_nmda_recurrent are still safe. The NMDA reversal is E_e (= 0 mV, same
+            # as AMPA), so no per-neuron reversal array is needed (unlike GABA_B's E_K).
+            if getattr(cfg, "enable_nmda_recurrent", False) and n > 0:
+                self.cp_conductance_g_nmda_recurrent = cp.zeros(n, dtype=cp.float32)
+                self.cp_conductance_g_nmda_recurrent_rise = cp.zeros(n, dtype=cp.float32)
+
             self.cp_refractory_timers = cp.zeros(n, dtype=cp.int32)
             self.cp_neuron_activity_ema = cp.zeros(n, dtype=cp.float32) 
             self.cp_viz_activity_timers = cp.zeros(n, dtype=cp.int32) 
@@ -1570,6 +1592,13 @@ class SimulationBridge:
             self._cached_decay_nmda = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_decay)) if cfg.nmda_tau_decay > 0 else 0.0
             self._cached_decay_nmda_rise = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_rise)) if cfg.nmda_tau_rise > 0 else 0.0
             self._cached_decay_gabab = float(cp.exp(-cfg.dt_ms / cfg.gabab_tau_decay)) if getattr(cfg, "gabab_tau_decay", 0) > 0 else 0.0
+            # Slow-NMDA recurrent dual-exp decay constants (2026-06-09). Mirror the global
+            # NMDA caches above with the recurrent's own (slower) taus. Always cached
+            # (cheap floats); only USED when the guarded recurrent block runs.
+            _nmda_rec_td = getattr(cfg, "nmda_recurrent_tau_decay_ms", 100.0)
+            _nmda_rec_tr = getattr(cfg, "nmda_recurrent_tau_rise_ms", 2.0)
+            self._cached_decay_nmda_recurrent = float(cp.exp(-cfg.dt_ms / _nmda_rec_td)) if _nmda_rec_td > 0 else 0.0
+            self._cached_decay_nmda_recurrent_rise = float(cp.exp(-cfg.dt_ms / _nmda_rec_tr)) if _nmda_rec_tr > 0 else 0.0
             _BASE_HH_TEMP = 6.3
             self._cached_hh_phi = cfg.hh_q10_factor ** ((cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0)
             # Per-gate phi values (Session "fix-bugs" — see HH temperature bug findings)
@@ -2150,10 +2179,12 @@ class SimulationBridge:
         all_gates = []  # gate_name string per synapse, or "" for ungated
         all_trans_gates = []  # transmission gate_name per synapse, or "" (scales CURRENT)
         all_receptors = []  # receptor string per synapse ("gaba_a" default | "gaba_b" -> slow GIRK)
+        all_exc_receptors = []  # exc_receptor per synapse ("ampa" default | "nmda_slow" -> slow recurrent NMDA)
         any_fixed = False
         any_gated = False
         any_trans_gated = False
         any_gabab = False  # any synapse routed through the GABA_B/GIRK conductance
+        any_nmda_slow = False  # any synapse routed through the slow-NMDA recurrent conductance
         for name, group in wiring_plan.items():
             if not isinstance(group, dict) or "pre_indices" not in group:
                 continue
@@ -2161,6 +2192,7 @@ class SimulationBridge:
             gate_name = group.get("plasticity_gate", None) or ""
             trans_gate_name = group.get("transmission_gate", None) or ""
             receptor = (group.get("receptor", None) or "gaba_a")
+            exc_receptor = (group.get("exc_receptor", None) or "ampa")
             if not plastic_flag:
                 any_fixed = True
             if gate_name:
@@ -2169,6 +2201,8 @@ class SimulationBridge:
                 any_trans_gated = True
             if receptor == "gaba_b":
                 any_gabab = True
+            if exc_receptor == "nmda_slow":
+                any_nmda_slow = True
             n_syn = len(group["pre_indices"])
             all_pre.extend(group["pre_indices"])
             all_post.extend(group["post_indices"])
@@ -2177,6 +2211,7 @@ class SimulationBridge:
             all_gates.extend([gate_name] * n_syn)
             all_trans_gates.extend([trans_gate_name] * n_syn)
             all_receptors.extend([receptor] * n_syn)
+            all_exc_receptors.extend([exc_receptor] * n_syn)
 
         if len(all_pre) == 0:
             self._log_console("inject_explicit_wiring: no synapses in plan.", "warning")
@@ -2205,17 +2240,21 @@ class SimulationBridge:
         # aligned with cp_connections.data order. tocoo() preserves CSR's
         # internal order (row-major by pre then post), so we re-sort the
         # original tuples by the same key to match. Sort once over
-        # (pre, post, plastic, gate, trans_gate, receptor) tuples since they're row-aligned.
-        if any_fixed or any_gated or any_trans_gated or any_gabab:
+        # (pre, post, plastic, gate, trans_gate, receptor, exc_receptor) tuples since
+        # they're row-aligned. (exc_receptor appended 2026-06-09 for nmda_slow routing —
+        # the index-based GABA_B/exc-receptor reads below use t[5]/t[6]; the destructuring
+        # reads add one trailing `_`.)
+        if any_fixed or any_gated or any_trans_gated or any_gabab or any_nmda_slow:
             keyed = sorted(
-                zip(all_pre, all_post, all_plastic, all_gates, all_trans_gates, all_receptors),
+                zip(all_pre, all_post, all_plastic, all_gates, all_trans_gates,
+                    all_receptors, all_exc_receptors),
                 key=lambda t: (t[0], t[1]),
             )
         else:
             keyed = None
 
         if any_fixed:
-            sorted_plastic = np.asarray([p for _, _, p, _, _, _ in keyed], dtype=np.bool_)
+            sorted_plastic = np.asarray([p for _, _, p, _, _, _, _ in keyed], dtype=np.bool_)
             self.cp_synapse_plastic_mask = cp.asarray(sorted_plastic)
         else:
             self.cp_synapse_plastic_mask = None
@@ -2224,7 +2263,7 @@ class SimulationBridge:
         # Allocate cp_plasticity_rate_gain only if any synapse is gated; otherwise
         # leave None and the plasticity update paths skip gain multiplication.
         if any_gated:
-            sorted_gates = [g for _, _, _, g, _, _ in keyed]
+            sorted_gates = [g for _, _, _, g, _, _, _ in keyed]
             gate_to_indices: Dict[str, List[int]] = {}
             for syn_idx, gname in enumerate(sorted_gates):
                 if gname:
@@ -2256,7 +2295,7 @@ class SimulationBridge:
         # applied to effective_synaptic_strength in the step. Default 1.0 (open); runners call
         # set_transmission_gate(name, value) to open/close at runtime.
         if any_trans_gated:
-            sorted_trans = [tg for _, _, _, _, tg, _ in keyed]
+            sorted_trans = [tg for _, _, _, _, tg, _, _ in keyed]
             tgate_to_indices: Dict[str, List[int]] = {}
             for syn_idx, tgname in enumerate(sorted_trans):
                 if tgname:
@@ -2306,6 +2345,31 @@ class SimulationBridge:
                 if gb_post.size > 0:
                     self.cp_gabab_reversal_per_neuron[cp.asarray(gb_post)] = \
                         float(self.core_config.gabab_reversal_potential)
+
+        # Slow-NMDA recurrent per-synapse routing mask (2026-06-09). The EXCITATORY mirror
+        # of the GABA_B mask above: True for synapses of any pathway tagged
+        # exc_receptor=="nmda_slow"; the per-step recurrent-NMDA block feeds ONLY these
+        # synapses into the slow NMDA conductance AND suppresses their fast-AMPA g_e
+        # component. Aligned with cp_connections.data order via the same (pre, post)-sorted
+        # `keyed` list (exc_receptor is keyed[6]). Built only when enable_nmda_recurrent AND
+        # at least one pathway is nmda_slow (else None -> the step block is unreached, the
+        # g_e matvec is unmasked, and routing is byte-identical). Capacity-sized; new
+        # (grown) synapses default to False = AMPA. NO per-neuron reversal array is needed
+        # (E_NMDA = E_e = 0 mV, unlike GABA_B's E_K).
+        if getattr(self.core_config, "enable_nmda_recurrent", False) and any_nmda_slow and keyed is not None:
+            # keyed is (pre, post, plastic, gate, trans_gate, receptor, exc_receptor) in the
+            # SAME (pre,post)-sorted order as cp_connections.data — so the mask aligns
+            # synapse-for-synapse. (post_np is INSERTION order and must NOT be used here.)
+            sorted_exc_receptors = [t[6] for t in keyed]
+            ns_mask_host = np.fromiter(
+                (er == "nmda_slow" for er in sorted_exc_receptors), dtype=np.bool_, count=nnz)
+            self.cp_nmda_recurrent_synapse_mask = cp.zeros(self._synapse_capacity, dtype=cp.bool_)
+            self.cp_nmda_recurrent_synapse_mask[:nnz] = cp.asarray(ns_mask_host)
+            # Allocate the slow-NMDA conductances here if the guarded init alloc didn't
+            # (e.g. enable_nmda_recurrent toggled after init), so the step block is safe.
+            if self.cp_conductance_g_nmda_recurrent is None and n > 0:
+                self.cp_conductance_g_nmda_recurrent = cp.zeros(n, dtype=cp.float32)
+                self.cp_conductance_g_nmda_recurrent_rise = cp.zeros(n, dtype=cp.float32)
 
         # Cluster B.1 (2026-04-28): tag D2-targeting synapses with sign=-1.
         # D1-targeting + everything else stays at +1 (default). The reward-
@@ -5419,6 +5483,31 @@ class SimulationBridge:
                     shape=self.cp_connections.shape,
                 )
 
+            # Slow-NMDA recurrent AMPA SUPPRESSION (2026-06-09; Wang recurrent=NMDA). For
+            # exc_receptor=="nmda_slow" pathways the fast-AMPA g_e component is REPLACED by a
+            # slow-NMDA increment (the recurrent block below). Here we capture the routed
+            # synapses' (STP/transmission-gated) data for that NMDA increment, then ZERO
+            # those entries in the matrix the g_e/g_i matvec uses — so they contribute NO
+            # AMPA. GUARDED NO-OP: cp_nmda_recurrent_synapse_mask is None for every run that
+            # doesn't set enable_nmda_recurrent + a routed pathway, so effective_connections
+            # _matrix is unchanged and the g_e matvec is byte-identical. _nmda_rec_src_data is
+            # left None when unused. (The mask is grown to the live nnz with FALSE padding via
+            # _ensure_gate_capacity, mirroring the GABA_B-mask growth fix 6f73b5f0.)
+            _nmda_rec_src_data = None
+            if self.cp_nmda_recurrent_synapse_mask is not None and self.cp_connections.nnz > 0:
+                _nr_nnz = self.cp_connections.nnz
+                _nr_mask_f = self._ensure_gate_capacity(
+                    "cp_nmda_recurrent_synapse_mask", _nr_nnz, fill=False, dtype=cp.bool_
+                )[:_nr_nnz].astype(cp.float32)
+                # Source for the slow-NMDA increment: routed synapses' current (gated) weights.
+                _nmda_rec_src_data = effective_connections_matrix.data * _nr_mask_f
+                # AMPA-suppressed matrix for g_e/g_i: zero the routed synapses' AMPA component.
+                _ampa_data = effective_connections_matrix.data * (1.0 - _nr_mask_f)
+                effective_connections_matrix = csp.csr_matrix(
+                    (_ampa_data, self.cp_connections.indices, self.cp_connections.indptr),
+                    shape=self.cp_connections.shape,
+                )
+
             if _profiling: _backend_synchronize(); _prof['t_stp'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 2. Synaptic Conductance Update & Current Calculation ---
             decay_e = self._cached_decay_e
@@ -5531,6 +5620,43 @@ class SimulationBridge:
                 if self.cp_nmda_neuron_mask is not None:
                     I_nmda = I_nmda * self.cp_nmda_neuron_mask
                 total_input_current_pA = total_input_current_pA + I_nmda
+
+            # --- 2.3a. Slow-NMDA RECURRENT conductance (Wang 2001/2002 graded attractor) ---
+            # The EXCITATORY mirror of the GABA_B block below: a SEPARATE slow (tau ~100 ms)
+            # NMDA conductance, incremented ONLY by exc_receptor=="nmda_slow" synapses (whose
+            # fast-AMPA component was suppressed at the matvec above), reusing the SAME
+            # fused_nmda_update_and_current kernel (dual-exp + Mg2+ self-limiting block,
+            # E_NMDA = E_e = 0 mV). So a CA3 recurrent reverberates gradedly (no synchronous
+            # AMPA volley) while the mossy detonator stays fast AMPA. GUARDED: cp_conductance
+            # _g_nmda_recurrent is None for every run that doesn't set enable_nmda_recurrent +
+            # a routed pathway, so this whole block is skipped and total_input_current_pA is
+            # byte-identical. (Unlike the global NMDA above this does NOT use the global
+            # g_e_increase — the routed synapses' g_e was suppressed — but its OWN restricted
+            # increment _nmda_rec_src_data captured at the suppression site.)
+            if (getattr(cfg, "enable_nmda_recurrent", False)
+                    and self.cp_conductance_g_nmda_recurrent is not None):
+                # Increment from the nmda_slow-routed synapses only (restricted matvec, the
+                # GABA_B technique). _nmda_rec_src_data is the routed synapses' (STP/gated)
+                # weights with non-routed entries already zeroed, in cp_connections CSR order.
+                if _nmda_rec_src_data is not None and self.cp_connections.nnz > 0 and _prev_any:
+                    _nr_mat = csp.csr_matrix(
+                        (_nmda_rec_src_data, self.cp_connections.indices, self.cp_connections.indptr),
+                        shape=self.cp_connections.shape)
+                    g_nmda_rec_increase = (
+                        (_nr_mat.T @ self.cp_prev_firing_states.astype(cp.float32))
+                        * getattr(cfg, "nmda_recurrent_propagation_strength", 0.05)
+                        * getattr(cfg, "nmda_recurrent_ratio", 1.0))
+                    self.cp_conductance_g_nmda_recurrent += g_nmda_rec_increase
+                    self.cp_conductance_g_nmda_recurrent_rise += g_nmda_rec_increase
+                (self.cp_conductance_g_nmda_recurrent,
+                 self.cp_conductance_g_nmda_recurrent_rise,
+                 I_nmda_recurrent) = fused_nmda_update_and_current(
+                    self.cp_conductance_g_nmda_recurrent,
+                    self.cp_conductance_g_nmda_recurrent_rise,
+                    self._cached_decay_nmda_recurrent, self._cached_decay_nmda_recurrent_rise,
+                    self.cp_membrane_potential_v, cfg.syn_reversal_potential_e,  # E_NMDA = E_e = 0 mV
+                    cfg.nmda_mg_concentration)
+                total_input_current_pA = total_input_current_pA + I_nmda_recurrent
 
             # --- 2.3b. GABA_B -> GIRK slow K+ inhibition (metabotropic; E_K ~ -90 mV) ---
             # The NMDA pattern inverted: a second, slow (tau ~150 ms), hyperpolarizing

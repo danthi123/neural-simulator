@@ -135,6 +135,25 @@ class CoreSimConfig:
     nmda_tau_decay: float = 100.0     # NMDA decay time constant (ms) -- slow compared to AMPA
     nmda_tau_rise: float = 3.0        # NMDA rise time constant (ms)
     nmda_mg_concentration: float = 1.0  # Extracellular [Mg2+] in mM
+    # Per-pathway slow-NMDA-dominant recurrent routing (2026-06-09; Wang 2001/2002
+    # graded persistent attractor). When True AND a pathway sets exc_receptor=
+    # "nmda_slow", that pathway's excitatory synapses feed a SEPARATE slow-NMDA
+    # conductance (its own tau, Mg2+-block self-limiting) and their fast-AMPA g_e
+    # component is SUPPRESSED -- so a CA3 recurrent can reverberate gradedly (no
+    # synchronous AMPA volley) while the mossy detonator stays fast AMPA. This is
+    # the EXCITATORY mirror of the GABA_B `receptor=` per-pathway routing (a second
+    # conductance + a per-synapse routing mask), differing only in that the AMPA
+    # component is suppressed for routed synapses (GABA_B is additive on top of
+    # GABA_A; nmda_slow REPLACES AMPA with slow NMDA, per the Wang recurrent=NMDA /
+    # feedforward=AMPA architecture). Default False => no pathway is routed, the new
+    # increment block is unreached, the g_e matvec is unmasked, and
+    # total_input_current_pA is byte-identical to today (mirrors enable_gabab /
+    # enable_nmda). See research/findings/2026-06-09-learned-graded-ca3-design.md.
+    enable_nmda_recurrent: bool = False
+    nmda_recurrent_ratio: float = 1.0          # recurrent slow-NMDA increment scale (AMPA component suppressed for nmda_slow pathways)
+    nmda_recurrent_tau_decay_ms: float = 100.0 # slow NR2B decay (Wang); >> AMPA ~5ms
+    nmda_recurrent_tau_rise_ms: float = 2.0    # NMDA rise (ms)
+    nmda_recurrent_propagation_strength: float = 0.05  # per-spike increment scale (mirrors propagation_strength for the excitatory path)
     # GABA_B -> GIRK slow K+ inhibitory conductance (metabotropic). Default OFF;
     # byte-identical when disabled. E_gabab is the POTASSIUM reversal (~-90 mV),
     # independent of the chloride gradient, so it strongly hyperpolarizes KCC2-lacking

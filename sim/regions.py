@@ -268,6 +268,19 @@ class RegionPathway:
     # GABA_B/GIRK conductance design doc (2026-06-08).
     receptor: str = "gaba_a"
 
+    # exc_receptor (2026-06-09): which EXCITATORY receptor an excitatory pathway uses.
+    #   "ampa" (default) -- fast ionotropic g_e (current behavior, byte-identical routing).
+    #   "nmda_slow" -- slow NR2B-NMDA-dominant: the pathway's synapses feed a SEPARATE
+    #     slow-NMDA conductance (Mg2+-block self-limiting, tau ~100ms) and their fast-AMPA
+    #     g_e component is SUPPRESSED, so a recurrent can hold a graded reverberatory
+    #     attractor (Wang 2001/2002) without the fast-AMPA synchronous runaway, while the
+    #     feedforward detonator stays AMPA. Requires cfg.enable_nmda_recurrent=True; the
+    #     pathway's synapses are added to the per-synapse nmda-recurrent routing mask.
+    # The EXCITATORY mirror of the GABA_B/`receptor=` precedent above (the inhibitory one),
+    # differing only in that the AMPA component is suppressed for routed synapses (GABA_B is
+    # additive; nmda_slow replaces AMPA). See 2026-06-09-learned-graded-ca3-design.md.
+    exc_receptor: str = "ampa"
+
     # Cluster E v1 (2026-04-29): distance-dependent connection probability.
     # When set AND both source and target regions have coordinate_dim > 0,
     # connections are sampled with Gaussian-weighted probability:
@@ -653,6 +666,9 @@ class RegionManager:
             "transmission_gate": pw.transmission_gate,
             # Per-pathway inhibitory receptor: "gaba_a" (default) | "gaba_b" (slow GIRK, E_K=-90mV).
             "receptor": getattr(pw, "receptor", "gaba_a"),
+            # Per-pathway excitatory receptor: "ampa" (default) | "nmda_slow" (slow NR2B
+            # recurrent; feeds a separate slow-NMDA conductance, AMPA component suppressed).
+            "exc_receptor": getattr(pw, "exc_receptor", "ampa"),
         }
 
     def _has_coords(self, region_name: str) -> bool:
