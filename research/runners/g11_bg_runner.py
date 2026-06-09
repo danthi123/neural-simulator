@@ -2782,6 +2782,33 @@ def run_moving_goal_episode(
     n_vs_place_context: int = 200,             # dense dedicated place-context afferent size
     vs_place_to_value_weight: float = 0.2,     # vs_place_context->striosome_value plastic INIT weight (STDP grows V up)
     vs_place_to_value_density: float = 0.5,
+    # ----- Critic value-acquisition WARM-UP (2026-06-09, the deadlock-breaker) -----
+    # The 1800-step nav left the MSN-D1 critic SILENT (striov_rate_log all-zero, weight
+    # frozen at 0.20). Forensic root cause (NOT the brief's "homeostasis too slow"): a
+    # LTP-bootstrap DEADLOCK. At the init weight 0.20 the afferent fires ~12 Hz but the
+    # critic cannot cross MSN-D1 threshold at ANY threshold value (threshold-sweep: 0 Hz
+    # down to -54 mV; the per-region homeostasis lowers the threshold ~1 mV in 1800 steps,
+    # nowhere near enough). With no critic spike there is no STDP post-event -> eligibility
+    # stays exactly 0 -> reward cannot grow the weight -> the critic stays silent forever.
+    # The de-risk PASSES only because it runs 40 CONCENTRATED reward-paired drives at ONE
+    # location (the value-leads-reward protocol), which fires the critic enough to seed LTP
+    # and grow the weight 0.20->0.58; a free-moving agent never gets that concentration.
+    # Speeding up homeostasis (brief option 1) is NEGATIVE: a faster afferent adapt-rate
+    # HOMOGENIZES the place code (place-selectivity ratio collapses to ~0.4, the gate-5
+    # failure mode). Raising the init weight (option 2) gives a FLAT, non-graded V.
+    # The faithful fix (brief option 3) is this WARM-UP: before the nav loop, run
+    # `critic_warmup_trials` de-risk-style reward-paired drives at the scheduled goal
+    # location(s) at the BASELINE homeostasis rate (which preserves place-selectivity, as
+    # the de-risk's gate-5 PASS shows). This is the value system maturing on the rewarding
+    # locations before the test (latent learning / pre-exposure) — the LTP, the critic
+    # firing, the GABA_B subtraction are ALL neural; only the agent placement + reward
+    # delivery is environment/body scaffolding (BRAIN-BASED-ONLY compliant). Validated in
+    # isolation: 20 trials -> V_goal 2.08 Hz > V_far 1.25 Hz (place-graded, deadlock broken).
+    # Default 0 => OFF (byte-equivalent to the pre-warmup runner; the smoke's silent critic).
+    critic_warmup_trials: int = 0,
+    critic_warmup_hold_steps: int = 40,        # steps per warm-up sub-phase (de-risk used 40)
+    critic_warmup_all_goals: bool = True,      # warm up at EVERY scheduled goal (multi-goal)
+                                               # vs only the first goal
     # Stage 2 windowed GABA_B (2026-06-08 redesign): gate the striosome_value->snc
     # GABA_B current to a bounded LEAD window into each reward evaluation so the
     # slow conductance pre-builds ~1 tau before reward but does NOT integrate
@@ -4253,6 +4280,141 @@ def run_moving_goal_episode(
                   f"continuing without it", flush=True)
             _activity_probe = None
 
+    # ===== CRITIC VALUE-ACQUISITION WARM-UP (2026-06-09 deadlock-breaker) =====
+    # Before the nav loop, seed the MSN-D1 value critic with the de-risk's VALIDATED
+    # value-leads-reward protocol at the scheduled goal location(s), at the BASELINE
+    # homeostasis rate (which preserves place-selectivity — the de-risk gate-5 PASS).
+    # This breaks the LTP-bootstrap deadlock the 1800-step nav can't (the critic must
+    # fire to seed STDP eligibility, but at the init weight it can't fire from a
+    # free-moving agent's brief per-location visits). All neural (afferent fires ->
+    # critic fires -> SNc bursts -> DA -> three-factor LTP grows vs_place->value);
+    # only the agent placement + reward delivery is environment/body scaffolding.
+    def _run_critic_warmup():
+        if not (enable_neural_critic and critic_warmup_trials > 0
+                and "vs_place_context" in region_indices_cp
+                and "striosome_value" in region_indices_cp
+                and "snc" in region_indices_cp):
+            return None
+        aff_idx = region_indices_cp["vs_place_context"]
+        snc_idx = region_indices_cp["snc"]
+        # The goal locations to value: every scheduled goal (multi-goal) or just the
+        # first. Dedupe preserving order so each distinct goal is warmed once.
+        goals = [g for _, g in goal_schedule_sorted] if critic_warmup_all_goals \
+            else [goal_schedule_sorted[0][1]]
+        seen = set(); goal_list = []
+        for g in goals:
+            if g not in seen:
+                seen.add(g); goal_list.append(g)
+        w_pre = _mean_critic_weight()
+        hold = int(critic_warmup_hold_steps)
+        saved_reward = bridge.core_config.current_reward_signal
+        # --- DA-threshold calibration (the de-risk's _calibrate_da_threshold) ---
+        # CRITICAL: the nav HARDCODES the dopamine production-rule threshold at the SNc
+        # tonic firing FRACTION 0.30, tuned for the nav loop's SNc RPE dynamics. But the
+        # warm-up drives the SNc differently (tonic floor + a reward burst), and at 0.30
+        # the burst does NOT cross threshold -> DA DECAYS instead of rising -> the three-
+        # factor LTP is never gated -> the weight stays frozen (forensic: warm-up trials
+        # at threshold 0.30 gave crit_spk=0, DA 0.35->0.15, weight unchanged). The de-risk
+        # CALIBRATES the threshold to the SNc's measured tonic fraction (~0.02) so a reward
+        # burst -> DA>baseline -> LTP. Replicate that HERE for the warm-up, then RESTORE the
+        # nav's 0.30 so the nav loop's SNc RPE is byte-unchanged. Find the dopamine rule.
+        _da_rule = None
+        try:
+            for _nm in (bridge.neuromodulator_manager._configs
+                        if bridge.neuromodulator_manager is not None else []):
+                if _nm.name == "dopamine" and _nm.production_rules:
+                    for _pr in _nm.production_rules:
+                        if _pr.rule_type == "from_region_firing_signed":
+                            _da_rule = _pr; break
+                if _da_rule is not None:
+                    break
+        except Exception:
+            _da_rule = None
+        _saved_da_threshold = (_da_rule.threshold if _da_rule is not None else None)
+        if _da_rule is not None:
+            # Measure the SNc tonic firing fraction under the warm-up's tonic drive (300
+            # steps, average over the back half — exactly _calibrate_da_threshold).
+            _n_snc = int(snc_idx.size) if hasattr(snc_idx, "size") else len(snc_idx)
+            bridge.core_config.current_reward_signal = 0.0
+            bridge.cp_external_input_current[:] = cp.float32(0.0)
+            bridge.cp_external_input_current[snc_idx] = cp.float32(snc_tonic_pa)
+            _frac_sum = 0.0; _m = 0
+            for _i in range(300):
+                bridge._run_one_simulation_step()
+                bridge.runtime_state.current_time_step += 1
+                bridge.runtime_state.current_time_ms = (
+                    bridge.runtime_state.current_time_step * cfg.dt_ms)
+                if _i >= 150:
+                    _frac_sum += float(bridge.cp_firing_states[snc_idx].sum()) / max(_n_snc, 1)
+                    _m += 1
+            _tonic_frac = _frac_sum / max(_m, 1)
+            _da_rule.threshold = float(_tonic_frac)
+        # WARMUP_DRIVE_MULT (env, default 1.0): a diagnostic knob for the warm-up's afferent
+        # drive strength. The 2026-06-09 forensic showed that even 10x drive (g_exc 0.5 >
+        # the de-risk's firing 0.35) did NOT fire the MSN-D1 critic in the deployed nav
+        # bridge (the critic's membrane plateaus at ~-79.6 mV where the byte-identical de-risk
+        # critic integrates to -71 mV on the same g_exc — the unresolved nav-bridge blocker).
+        _drive_mult = float(os.environ.get("WARMUP_DRIVE_MULT", "1.0"))
+        for (wgx, wgy) in goal_list:
+            # the (x,y)->dense place-code drive, the SAME rendering the nav loop uses.
+            vs_dsq = (vs_place_pref_x - float(wgx)) ** 2 + (vs_place_pref_y - float(wgy)) ** 2
+            vs_drive = (_drive_mult * vs_place_drive_max_pA) * np.exp(-vs_dsq / (2.0 * vs_place_sigma ** 2))
+            vs_drive_cp = cp.asarray(vs_drive, dtype=cp.float32)
+            for _t in range(int(critic_warmup_trials)):
+                # (1) ITI floor: SNc tonic only, no place drive, no reward -> clears
+                #     any lingering depolarization (de-risk's inter-trial interval).
+                bridge.core_config.current_reward_signal = 0.0
+                bridge.cp_external_input_current[:] = cp.float32(0.0)
+                bridge.cp_external_input_current[snc_idx] = cp.float32(snc_tonic_pa)
+                for _ in range(hold):
+                    bridge._run_one_simulation_step()
+                    bridge.runtime_state.current_time_step += 1
+                    bridge.runtime_state.current_time_ms = (
+                        bridge.runtime_state.current_time_step * cfg.dt_ms)
+                # (2) clear eligibility (de-risk clears between trials so each trial's
+                #     LTP reflects THIS location's coincidence, not a carry-over).
+                if bridge.cp_eligibility_trace is not None:
+                    bridge.cp_eligibility_trace[:] = cp.float32(0.0)
+                # (3) LEARN: drive the place code at the goal + a reward burst on the
+                #     SNc (the value-leads-reward pairing -> DA -> three-factor LTP).
+                bridge.core_config.current_reward_signal = 1.0
+                bridge.cp_external_input_current[:] = cp.float32(0.0)
+                bridge.cp_external_input_current[aff_idx] = vs_drive_cp
+                bridge.cp_external_input_current[snc_idx] = cp.float32(snc_tonic_pa + snc_reward_gain)
+                _wu_crit_spk = 0
+                for _ in range(hold):
+                    bridge._run_one_simulation_step()
+                    bridge.runtime_state.current_time_step += 1
+                    bridge.runtime_state.current_time_ms = (
+                        bridge.runtime_state.current_time_step * cfg.dt_ms)
+                    if os.environ.get("WARMUP_DEBUG"):
+                        _wu_crit_spk += int(bridge.cp_firing_states[
+                            region_indices_cp["striosome_value"]].sum())
+                if os.environ.get("WARMUP_DEBUG") and (_t < 2 or _t == int(critic_warmup_trials) - 1):
+                    _da = (bridge.neuromodulator_manager.get_concentration("dopamine")
+                           if bridge.neuromodulator_manager is not None else float("nan"))
+                    print(f"[WARMUP_DEBUG goal=({wgx},{wgy}) trial={_t}] crit_spk={_wu_crit_spk} "
+                          f"DA={_da:.3f} w={_mean_critic_weight():.4f}", flush=True)
+        # restore pre-warmup transient state for a clean nav start.
+        bridge.core_config.current_reward_signal = saved_reward
+        bridge.cp_external_input_current[:] = cp.float32(0.0)
+        if bridge.cp_eligibility_trace is not None:
+            bridge.cp_eligibility_trace[:] = cp.float32(0.0)
+        # RESTORE the nav's hardcoded DA threshold (0.30) so the nav loop's SNc RPE
+        # dynamics are byte-unchanged — the warm-up's calibrated threshold was ONLY for
+        # the warm-up's LTP gating.
+        if _da_rule is not None and _saved_da_threshold is not None:
+            _da_rule.threshold = float(_saved_da_threshold)
+        w_post = _mean_critic_weight()
+        return (w_pre, w_post, len(goal_list))
+
+    _warmup_stats = _run_critic_warmup()
+    if _warmup_stats is not None and verbose:
+        _wp, _wq, _ng = _warmup_stats
+        print(f"[g11 seed={seed}] CRITIC WARM-UP: {critic_warmup_trials} reward-paired "
+              f"trials x {_ng} goal(s) -> vs_place->value weight {_wp:.4f} -> {_wq:.4f} "
+              f"(deadlock-breaker; baseline homeostasis preserves place-selectivity)", flush=True)
+
     t0 = time.time()
     # Track current gating_strength (used for DA-gated WTA across the whole trial,
     # not just the reward-hold sub-step). Initialized to 1.0 (full WTA on first trial
@@ -5673,6 +5835,11 @@ def run_moving_goal_episode(
         "striov_rate_log": striov_rate_log,
         "critic_weight_initial": critic_weight_initial,
         "critic_weight_final": (_mean_critic_weight() if enable_neural_critic else None),
+        # Critic value-acquisition warm-up (2026-06-09 deadlock-breaker) facts.
+        "critic_warmup_trials": int(critic_warmup_trials),
+        "critic_warmup_weight_pre": (float(_warmup_stats[0]) if _warmup_stats and _warmup_stats[0] is not None else None),
+        "critic_warmup_weight_post": (float(_warmup_stats[1]) if _warmup_stats and _warmup_stats[1] is not None else None),
+        "critic_warmup_n_goals": (int(_warmup_stats[2]) if _warmup_stats else 0),
         "mean_distance_overall": float(dist_arr.mean()),
         "mean_distance_quarters": quarters,
         "n_steps_at_goal": int((dist_arr == 0).sum()),
@@ -6590,6 +6757,27 @@ def main():
     ap.add_argument("--vs-place-to-value-density", type=float, default=0.5,
                     help="Density of the vs_place_context->striosome_value afferent "
                          "(--enable-critic-homeostasis). Default 0.5 (de-risk value).")
+    ap.add_argument("--critic-warmup-trials", type=int, default=0,
+                    help="CRITIC VALUE-ACQUISITION WARM-UP (2026-06-09 deadlock-breaker). "
+                         "Before the nav loop, run N de-risk-style reward-paired drives "
+                         "(ITI floor -> clear eligibility -> place-code-at-goal + SNc reward "
+                         "burst) at the scheduled goal location(s), at the BASELINE "
+                         "homeostasis rate. The 1800-step nav leaves the MSN-D1 critic SILENT "
+                         "(weight frozen at init): a LTP-bootstrap deadlock — the critic must "
+                         "fire to seed STDP, but at the init weight it can't fire from a "
+                         "free-moving agent's brief per-location visits, and faster homeostasis "
+                         "(option 1) goes place-blind. This warm-up seeds the LTP (validated in "
+                         "isolation: 20 trials -> V_goal > V_far, place-graded). All neural "
+                         "(afferent->critic->SNc->DA->three-factor LTP); only agent placement + "
+                         "reward delivery is environment/body scaffolding. Default 0 = OFF "
+                         "(byte-equivalent). Requires --enable-neural-critic. Try 20-40.")
+    ap.add_argument("--critic-warmup-hold-steps", type=int, default=40,
+                    help="Steps per warm-up sub-phase (ITI floor / LEARN). Default 40 "
+                         "(the de-risk's hold_steps).")
+    ap.add_argument("--no-critic-warmup-all-goals", action="store_true",
+                    help="Warm up the critic ONLY at the first scheduled goal (default warms "
+                         "at EVERY distinct scheduled goal so V is graded for each multi-goal "
+                         "epoch).")
     ap.add_argument("--hippocampus-drive-sigma", type=float, default=None,
                     help="Override the place/goal Gaussian drive sigma (cells per "
                          "bump). Default None keeps 0.5 (tuned for the 8x8 grid). "
@@ -6923,6 +7111,9 @@ def main():
             n_vs_place_context=args.n_vs_place_context,
             vs_place_to_value_weight=args.vs_place_to_value_weight,
             vs_place_to_value_density=args.vs_place_to_value_density,
+            critic_warmup_trials=args.critic_warmup_trials,
+            critic_warmup_hold_steps=args.critic_warmup_hold_steps,
+            critic_warmup_all_goals=not args.no_critic_warmup_all_goals,
             enable_surprise_lr_boost=args.surprise_lr_boost,
             surprise_lr_alpha=args.surprise_lr_alpha,
             enable_curriculum=args.curriculum,
