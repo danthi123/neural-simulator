@@ -144,7 +144,8 @@ def _build_navfaithful_bridge(
     n_sensor_place=64, n_cortex_per_action=50, sensor_place_to_cortex_weight=10.0,
     include_actor=True,
     snc_da_sensitivity=8.0, reward_learning_rate=0.12,
-    gabab=False, gabab_tau_decay=150.0, gabab_propagation_strength=0.02):
+    gabab=False, gabab_tau_decay=150.0, gabab_propagation_strength=0.02,
+    critic_homeostasis=False, afferent_homeostasis=False):
     """Deterministic-nav-regime bridge: a DEDICATED DENSE `vs_place_context` (the proposed fix)
     -> `striosome_value` (GABAergic MSN-D1 critic, PLASTIC) -> `snc` (DA), PLUS a SEPARATE SPARSE
     `sensor_place_readout` -> `cortex_{N,E,S,W}` actor stub (so the actor-not-perturbed gate is
@@ -195,6 +196,15 @@ def _build_navfaithful_bridge(
             name="vs_place_context", n_neurons=n_vs_place, exc_fraction=1.0, internal_density=0.0,
             exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            # 6th-iteration de-risk (2026-06-08): per-region homeostasis on the dense AFFERENT
+            # too (in addition to the critic). The forensic showed GLOBAL homeostasis lifted V
+            # because it ALSO lowered the afferent's threshold so it fired harder — critic-only
+            # homeostasis (the 5th de-risk) left the critic at ~0.4 Hz (too weak). This drives
+            # the afferent into a firing range under the deterministic regime so it can fire the
+            # MSN critic. The LOAD-BEARING RISK: homeostasis adapts the afferent toward a uniform
+            # target rate, which could HOMOGENIZE the place code (NEAR==FAR -> place-blind). Gate
+            # (NEW 5) measures exactly that. GLOBAL cfg.enable_homeostasis stays False.
+            enable_homeostasis=bool(afferent_homeostasis),
         ),
         BrainRegion(
             name="striosome_value", n_neurons=n_strio, exc_fraction=0.0,   # FULLY GABAergic MSN
@@ -202,6 +212,12 @@ def _build_navfaithful_bridge(
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
             syn_reversal_potential_i_override=-60.0,
+            # Per-region homeostasis on the CRITIC ONLY (protected sim/ edit under test).
+            # The GLOBAL cfg.enable_homeostasis stays False (deterministic regime preserved;
+            # anti-cheat (d) still passes). Intrinsic homeostatic plasticity lets the
+            # under-active MSN-D1 reach a firing range from its place afferent. The actor
+            # regions below DO NOT set this — only the critic gets the per-region mask.
+            enable_homeostasis=bool(critic_homeostasis),
         ),
         BrainRegion(
             name="snc", n_neurons=n_snc, exc_fraction=1.0, internal_density=0.0,
@@ -363,6 +379,38 @@ def _measure_actor_cortex_rate(bridge, idx_map, sensor_vec, xp, *, cortex_tonic_
     return spk / max(n_cx, 1) / max(m * 1e-3, 1e-9)
 
 
+def _measure_afferent_ensemble_rate(bridge, idx_map, drive_vec, ensemble_local, xp,
+                                     *, n_steps=40, warmup=10):
+    """Gate (NEW 5) helper — the place-blindness guard. Drive the dense `vs_place_context`
+    afferent with `drive_vec` (a NEAR or FAR position bump) and return the mean firing rate (Hz)
+    of the cells in `ensemble_local` (LOCAL indices into the region, e.g. the NEAR-ensemble's bump
+    core). Learning frozen (forward dynamics only — measures the afferent's place tuning, not its
+    plastic readout). If afferent homeostasis HOMOGENIZES the place code, the NEAR-ensemble cells
+    fire at the SAME rate whether the agent is at NEAR or FAR (place-blind). A place-GRADED code
+    fires the NEAR-ensemble harder at NEAR than at FAR. We hold the afferent's homeostasis state
+    fixed across the two measurements (NEAR then FAR back-to-back, short windows) so the ratio
+    reflects POSITION, not threshold drift between the two reads.
+    """
+    aff_idx = idx_map["vs_place_context"]
+    ens = np.asarray(ensemble_local, dtype=np.int64)
+    n_ens = max(len(ens), 1)
+    saved_lr = bridge.core_config.reward_learning_rate
+    bridge.core_config.reward_learning_rate = 0.0
+    bridge.cp_external_input_current[:] = 0.0
+    bridge.cp_external_input_current[aff_idx] = xp.asarray(drive_vec, dtype=xp.float32)
+    spk = 0; m = 0
+    for t in range(n_steps):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+        bridge.runtime_state.current_time_ms = (
+            bridge.runtime_state.current_time_step * bridge.core_config.dt_ms)
+        if t >= warmup:
+            fired = np.asarray(_host(bridge.cp_firing_states[aff_idx])).astype(np.int64)
+            spk += int(fired[ens].sum()); m += 1
+    bridge.core_config.reward_learning_rate = saved_lr
+    return spk / n_ens / max(m * 1e-3, 1e-9)
+
+
 def run_navfaithful(seed, *, grid_size=32, p_near_xy=(26.571, 26.571), p_far_xy=(4.429, 4.429),
                     vs_place_sigma=4.0, vs_place_drive_pa=800.0,
                     sensor_place_sigma=1.5, sensor_place_drive_pa=1500.0,
@@ -372,6 +420,7 @@ def run_navfaithful(seed, *, grid_size=32, p_near_xy=(26.571, 26.571), p_far_xy=
                     vs_place_to_strio_weight=0.2, strio_to_snc_weight=10.0,
                     snc_da_sensitivity=8.0, lesion=False, verbose=True,
                     gabab=False, gabab_tau_decay=150.0, gabab_propagation_strength=0.02,
+                    critic_homeostasis=False, afferent_homeostasis=False,
                     lead_steps=0, return_trained=False):
     """The full deterministic-nav-faithful de-risk for one seed. Builds the dedicated-dense-afferent
     critic + actor stub in the deterministic regime, trains the value-leads-reward protocol, runs
@@ -383,7 +432,8 @@ def run_navfaithful(seed, *, grid_size=32, p_near_xy=(26.571, 26.571), p_far_xy=
         seed, grid_size=grid_size,
         vs_place_to_strio_weight=vs_place_to_strio_weight, strio_to_snc_weight=strio_to_snc_weight,
         snc_da_sensitivity=snc_da_sensitivity, reward_learning_rate=reward_learning_rate,
-        gabab=gabab, gabab_tau_decay=gabab_tau_decay, gabab_propagation_strength=gabab_propagation_strength)
+        gabab=gabab, gabab_tau_decay=gabab_tau_decay, gabab_propagation_strength=gabab_propagation_strength,
+        critic_homeostasis=critic_homeostasis, afferent_homeostasis=afferent_homeostasis)
 
     # Anti-cheat (d): hard-assert the deterministic regime BEFORE anything runs.
     _assert_deterministic_regime(cfg)
@@ -421,7 +471,8 @@ def run_navfaithful(seed, *, grid_size=32, p_near_xy=(26.571, 26.571), p_far_xy=
         seed, grid_size=grid_size, vs_place_to_strio_weight=0.0,  # afferent weight irrelevant here
         strio_to_snc_weight=strio_to_snc_weight, snc_da_sensitivity=snc_da_sensitivity,
         reward_learning_rate=reward_learning_rate, gabab=gabab,
-        gabab_tau_decay=gabab_tau_decay, gabab_propagation_strength=gabab_propagation_strength)
+        gabab_tau_decay=gabab_tau_decay, gabab_propagation_strength=gabab_propagation_strength,
+        critic_homeostasis=critic_homeostasis, afferent_homeostasis=afferent_homeostasis)
     _assert_deterministic_regime(base_cfg)
     base_idx_map = {f"cortex_{a}": xp.asarray(_idx(base_bridge, f"cortex_{a}")) for a in ("N", "E", "S", "W")}
     base_idx_map["sensor_place_readout"] = xp.asarray(_idx(base_bridge, "sensor_place_readout"))
@@ -480,6 +531,38 @@ def run_navfaithful(seed, *, grid_size=32, p_near_xy=(26.571, 26.571), p_far_xy=
               f"(no-critic {actor_rate_no_critic:.3f} Hz, ratio {actor_ratio:.3f}, "
               f"not-perturbed: {actor_not_perturbed})")
 
+    # --- GATE (NEW 5) PLACE-SELECTIVITY-PRESERVED — the load-bearing place-blindness guard ---
+    # Homeostasis on the AFFERENT adapts its threshold toward a target rate, which could
+    # HOMOGENIZE the place code (every place cell driven to the same rate regardless of position
+    # -> NEAR and FAR ensembles fire identically -> the place representation goes PLACE-BLIND ->
+    # no value-of-location possible). We measure exactly that on the TRAINED afferent: the
+    # NEAR-ensemble afferent cells' firing rate at NEAR vs at FAR. A place-GRADED code fires the
+    # NEAR-ensemble harder at NEAR; a homogenized (place-blind) code fires it the same at both.
+    # near_set is GLOBAL indices -> convert to LOCAL indices into the vs_place_context region.
+    aff_global = np.asarray(_host(idx_map["vs_place_context"]), dtype=np.int64)
+    g2l = {int(g): i for i, g in enumerate(aff_global)}
+    near_ens_local = np.asarray([g2l[g] for g in near_set if g in g2l], dtype=np.int64)
+    aff_near_ens_rate_at_near = _measure_afferent_ensemble_rate(
+        bridge, idx_map, near_vec, near_ens_local, xp)
+    aff_near_ens_rate_at_far = _measure_afferent_ensemble_rate(
+        bridge, idx_map, far_vec, near_ens_local, xp)
+    # Use a 1e-2 Hz floor on the FAR rate so a place code that drives the NEAR-ensemble to 0 Hz
+    # at FAR (the STRONGEST possible selectivity, the symmetric-corner case) yields a large-but-
+    # finite ratio instead of a 1e6 floor-division artifact. The gate (>=1.5) is unaffected; this
+    # is for an honest, readable ratio. A homogenized (place-blind) code would push at-FAR UP
+    # toward at-NEAR -> ratio -> 1, which is what the gate guards against.
+    place_sel_ratio = aff_near_ens_rate_at_near / max(aff_near_ens_rate_at_far, 1e-2)
+    # PASS: the NEAR-ensemble fires >=1.5x harder at NEAR than at FAR (robust place tuning) AND
+    # the ensembles stay distinct (Jaccard < 0.5, carried from anti-cheat (a)). If afferent
+    # homeostasis flattens the place firing (ratio collapses toward 1, or V went place-blind),
+    # that is the honest NEGATIVE.
+    place_selectivity_preserved = bool(place_sel_ratio >= 1.5 and distinct_ensembles)
+    if verbose:
+        print(f"  [gate-5 PLACE-SELECTIVITY] NEAR-ensemble afferent rate: at-NEAR "
+              f"{aff_near_ens_rate_at_near:.2f} Hz vs at-FAR {aff_near_ens_rate_at_far:.2f} Hz "
+              f"(ratio {place_sel_ratio:.2f}, >=1.5 + distinct-ensembles {distinct_ensembles} "
+              f"=> place-selectivity-preserved: {place_selectivity_preserved})")
+
     train_state = dict(
         seed=seed, lesion=lesion, gabab=gabab, cfg=cfg, idx_map=idx_map,
         near_vec=near_vec, far_vec=far_vec, snc_tonic_pa=snc_tonic_pa,
@@ -498,7 +581,23 @@ def run_navfaithful(seed, *, grid_size=32, p_near_xy=(26.571, 26.571), p_far_xy=
     result["actor_not_perturbed"] = bool(actor_not_perturbed)
     result["ou_off"] = (not cfg.enable_ou_process)
     result["conductance_noise_off"] = (not cfg.enable_conductance_noise)
-    result["homeostasis_off"] = (not cfg.enable_homeostasis)
+    result["homeostasis_off"] = (not cfg.enable_homeostasis)   # GLOBAL flag — stays off even with the per-region critic mask
+    # Per-region homeostasis fact: the GLOBAL flag is off (regime fidelity), but the critic
+    # region may carry the per-region mask (the protected edit under test). Report both so the
+    # verdict is transparent: this is the homeostasis-ON-the-critic-ONLY chain the forensic
+    # predicted should PASS, while the deterministic regime is preserved globally.
+    result["critic_homeostasis_requested"] = bool(critic_homeostasis)
+    result["afferent_homeostasis_requested"] = bool(afferent_homeostasis)
+    result["per_region_homeostasis_mask_set"] = bool(
+        getattr(bridge, "cp_homeostasis_neuron_mask", None) is not None)
+    # Gate (NEW 5) place-selectivity facts.
+    result["aff_near_ens_rate_at_near_hz"] = float(aff_near_ens_rate_at_near)
+    result["aff_near_ens_rate_at_far_hz"] = float(aff_near_ens_rate_at_far)
+    result["place_selectivity_ratio"] = float(place_sel_ratio)
+    result["place_selectivity_preserved"] = bool(place_selectivity_preserved)
+    # The critic's firing rate (the gate the critic-only version failed at ~0.4 Hz). V(near,late)
+    # IS the striosome critic rate on the near place drive — surface it explicitly as the headline.
+    result["critic_rate_late_hz"] = float(near_v_late)
     if return_trained:
         return result, bridge, xp, train_state
     return result
@@ -512,7 +611,12 @@ def run_navfaithful_lead_sweep(seed, lead_steps_list, *, verbose=True, **kw):
         seed, verbose=verbose, lead_steps=int(lead_steps_list[0]), return_trained=True, **kw)
     g4 = {k: first[k] for k in ("actor_rate_no_critic_hz", "actor_rate_with_critic_hz",
                                 "actor_ratio", "actor_not_perturbed",
-                                "ou_off", "conductance_noise_off", "homeostasis_off")}
+                                "ou_off", "conductance_noise_off", "homeostasis_off",
+                                "critic_homeostasis_requested", "afferent_homeostasis_requested",
+                                "per_region_homeostasis_mask_set",
+                                "aff_near_ens_rate_at_near_hz", "aff_near_ens_rate_at_far_hz",
+                                "place_selectivity_ratio", "place_selectivity_preserved",
+                                "critic_rate_late_hz")}
     results = [first]
     for lead in lead_steps_list[1:]:
         r = _test_and_gate(bridge, xp, ts, int(lead), verbose=verbose)
@@ -544,8 +648,15 @@ def _lead_sweep_main(seeds, lead_sweep_str, kw, args):
         print(f"  [seed {s}] LEARNING: V(near)/V(far)={r0['v_near_far_ratio']:.2f}  "
               f"w_near/w_far={r0['w_near_far_ratio']:.2f}  "
               f"V-learned-spatial={r0['v_learned_spatial']}  weight-grew(LTP){r0['weight_grew']}  "
+              f"| critic-rate(V near,late)={r0['critic_rate_late_hz']:.2f}Hz  "
               f"| GATE4 actor-not-perturbed={r0['actor_not_perturbed']} (ratio {r0['actor_ratio']:.3f})  "
-              f"| regime OU-off={r0['ou_off']} cond-noise-off={r0['conductance_noise_off']}")
+              f"| GATE5 place-sel-preserved={r0['place_selectivity_preserved']} "
+              f"(NEAR-ens rate near/far {r0['place_selectivity_ratio']:.2f})  "
+              f"| regime OU-off={r0['ou_off']} cond-noise-off={r0['conductance_noise_off']} "
+              f"GLOBAL-homeo-off={r0['homeostasis_off']} "
+              f"per-region-mask={r0['per_region_homeostasis_mask_set']} "
+              f"(critic-homeo={r0['critic_homeostasis_requested']}, "
+              f"afferent-homeo={r0['afferent_homeostasis_requested']})")
 
     print("\n" + "=" * 100)
     print("=== NAV-FAITHFUL LEAD SWEEP: near_burst / far_burst / gap_ratio(far/near) / above-floor? ===")
@@ -582,32 +693,57 @@ def _lead_sweep_main(seeds, lead_sweep_str, kw, args):
     rl_best = [results_by_seed[s][best_lead_idx] for s in seeds]
     n_robust_best = sum(1 for r in rl_best if r["state_specific_above_floor"])
     n_learn = sum(1 for r in rl_best if r["v_learned_spatial"] and r["weight_grew"])
-    # Gate 4 is lead-independent — count from any lead (use seed-0 row from each seed's first lead).
+    # Gate 4 + Gate 5 are lead-independent — count from any lead (seed-0 row from each seed's first lead).
     n_actor_ok = sum(1 for s in seeds if results_by_seed[s][0]["actor_not_perturbed"])
+    n_place_sel_ok = sum(1 for s in seeds if results_by_seed[s][0]["place_selectivity_preserved"])
+    n_critic_fires = sum(1 for s in seeds if results_by_seed[s][0]["critic_rate_late_hz"] >= 1.0)
     n_regime_ok = sum(1 for s in seeds if results_by_seed[s][0]["ou_off"]
                       and results_by_seed[s][0]["conductance_noise_off"]
                       and results_by_seed[s][0]["homeostasis_off"])
+    crit_rates = ", ".join("{}={:.2f}".format(s, results_by_seed[s][0]["critic_rate_late_hz"]) for s in seeds)
+    psel_strs = ", ".join("{}={:.2f}".format(s, results_by_seed[s][0]["place_selectivity_ratio"]) for s in seeds)
 
     print("\n" + "=" * 100)
-    # The verdict requires: gap robust (>=3 seeds) above floor AND learning retained AND
-    # the actor is not perturbed AND the deterministic regime is verified.
+    # The verdict requires: gap robust (>=3 seeds) above floor AND learning retained AND the actor
+    # is not perturbed AND the deterministic regime is verified AND (NEW 5) the place code stays
+    # place-graded (afferent homeostasis did NOT homogenize it into place-blindness).
     verdict_pass = (n_robust_best >= 3 and n_robust_best >= max(3, (len(seeds) + 1) // 2))
+    n_seeds = len(seeds)
+    print(f"=== CRITIC FIRING RATE (V near,late) per seed: {crit_rates} Hz "
+          f"(critic-fires>=1Hz {n_critic_fires}/{n_seeds}) ===")
+    print(f"=== GATE5 PLACE-SELECTIVITY (NEAR-ens afferent rate near/far) per seed: {psel_strs} "
+          f"(>=1.5 preserved {n_place_sel_ok}/{n_seeds}) ===")
     print(f"=== BEST LEAD = {best_lead_ms:.0f} ms: ROBUST state-specific gap (above floor) "
-          f"{n_robust_best}/{len(seeds)} ; LEARNING(LTP) retained {n_learn}/{len(seeds)} ; "
-          f"GATE4 actor-not-perturbed {n_actor_ok}/{len(seeds)} ; regime-OU/cond/homeo-off "
-          f"{n_regime_ok}/{len(seeds)} ===")
+          f"{n_robust_best}/{n_seeds} ; LEARNING(LTP) retained {n_learn}/{n_seeds} ; "
+          f"GATE4 actor-not-perturbed {n_actor_ok}/{n_seeds} ; GATE5 place-selectivity-preserved "
+          f"{n_place_sel_ok}/{n_seeds} ; regime-OU/cond/homeo-off {n_regime_ok}/{n_seeds} ===")
     decisive = "PASS" if (verdict_pass and n_learn >= 3 and n_actor_ok >= 3
-                          and n_regime_ok == len(seeds)) else "FAIL"
+                          and n_place_sel_ok >= 3 and n_regime_ok == n_seeds) else "FAIL"
     print(f"=== DETERMINISTIC-NAV-FAITHFUL DE-RISK VERDICT: {decisive}  "
           f"(>=3 seeds: gap-robust-above-floor at a nav-realistic lead AND LTP learning AND "
-          f"actor-not-perturbed; deterministic regime asserted) ===")
+          f"actor-not-perturbed AND place-selectivity-preserved; deterministic regime asserted) ===")
     if decisive == "FAIL":
-        print("=== GRACEFUL-FAIL: under OU-OFF + the dense dedicated afferent, the de-risk did "
-              "NOT carry the learned place-graded value subtraction. Honest conclusion: the "
-              "deterministic-nav constraint and the MSN up-state are in genuine tension -> the "
-              "faithful fix needs a protected per-region noise/up-state sim/ edit OR relaxing "
-              "determinism. NOT rescued by re-enabling OU / over-driving the actor / direct "
-              "critic drive (all disallowed). ===")
+        # Diagnose WHICH gate failed so the negative is honest + pinned.
+        if n_place_sel_ok < 3 and n_robust_best < 3:
+            why = ("afferent homeostasis went PLACE-BLIND (homogenized the place code: NEAR-ens "
+                   "afferent rate near/far ~1) AND the state-specific gap did not open -> the "
+                   "place-of-value is destroyed by the same mechanism that fires the critic")
+        elif n_place_sel_ok < 3:
+            why = ("afferent homeostasis went PLACE-BLIND (it homogenized the place code: "
+                   "NEAR-ens afferent rate near/far collapsed toward 1) -> no value-of-location "
+                   "possible (gate 5 failed) — the load-bearing risk realized")
+        elif n_critic_fires < 3:
+            why = ("the critic still did NOT fire to a useful rate (V near,late < 1 Hz) even with "
+                   "afferent+critic homeostasis -> no V -> no GABA_B subtraction")
+        else:
+            why = ("the critic fires + the place code stays graded, but the state-specific SNc gap "
+                   "did not open robustly above floor at a nav-realistic lead")
+        print(f"=== GRACEFUL-FAIL: under the deterministic regime with afferent+critic per-region "
+              f"homeostasis, {why}. Honest conclusion: even homeostasis on the afferent+critic "
+              f"can't fire the MSN critic to a useful PLACE-GRADED rate under the strict regime "
+              f"without going place-blind. NOT rescued by re-enabling global OU/homeostasis, "
+              f"over-driving, or relaxing the place-selectivity check (all disallowed). Bank the "
+              f"negative. ===")
     print("=" * 100)
 
     if args.out:
@@ -616,10 +752,16 @@ def _lead_sweep_main(seeds, lead_sweep_str, kw, args):
             "deterministic_regime": True,
             "afferent": "dedicated_dense_vs_place_context",
             "actor_stub": "sensor_place_readout->cortex_X (sparse, separate)",
+            "critic_homeostasis": bool(kw.get("critic_homeostasis", False)),
+            "afferent_homeostasis": bool(kw.get("afferent_homeostasis", False)),
             "grid_size": kw.get("grid_size", 32),
             "leads_ms": leads_ms, "best_lead_ms": best_lead_ms,
             "n_robust_best": n_robust_best, "n_learn_best": n_learn,
             "n_actor_ok": n_actor_ok, "n_regime_ok": n_regime_ok,
+            "n_place_sel_ok": n_place_sel_ok, "n_critic_fires": n_critic_fires,
+            "n_seeds": n_seeds,
+            "critic_rate_late_hz_by_seed": {str(s): results_by_seed[s][0]["critic_rate_late_hz"] for s in seeds},
+            "place_selectivity_ratio_by_seed": {str(s): results_by_seed[s][0]["place_selectivity_ratio"] for s in seeds},
             "verdict": decisive,
             "results_by_seed": {str(s): results_by_seed[s] for s in seeds},
         }
@@ -661,6 +803,24 @@ def main():
     ap.add_argument("--gabab", action="store_true")
     ap.add_argument("--gabab-tau-decay", type=float, default=150.0)
     ap.add_argument("--gabab-propagation-strength", type=float, default=0.02)
+    ap.add_argument("--critic-homeostasis", action="store_true",
+                    help="PROTECTED-EDIT DE-RISK: enable per-region homeostasis on the "
+                         "striosome_value CRITIC ONLY (global cfg.enable_homeostasis stays "
+                         "False — deterministic regime preserved; anti-cheat (d) still passes). "
+                         "Intrinsic homeostatic plasticity lets the MSN-D1 critic fire from its "
+                         "place afferent under the deterministic regime. The actor stays "
+                         "homeostasis-off. This is the homeostasis-ON-the-critic chain the "
+                         "forensic predicted should PASS.")
+    ap.add_argument("--afferent-homeostasis", action="store_true",
+                    help="6th-iteration DE-RISK: ALSO enable per-region homeostasis on the dense "
+                         "vs_place_context AFFERENT (in addition to --critic-homeostasis). The 5th "
+                         "de-risk (critic-only) left the critic at ~0.4 Hz (too weak); the forensic "
+                         "showed GLOBAL homeostasis lifted V because it ALSO lowered the afferent's "
+                         "threshold so it fired harder. This drives the afferent into a firing "
+                         "range under the deterministic regime. GLOBAL cfg.enable_homeostasis stays "
+                         "False (anti-cheat (d) still passes); the actor's sensor_place_readout is "
+                         "NOT homeostasis'd. LOAD-BEARING RISK: it may HOMOGENIZE the place code "
+                         "(place-blind) — gate (NEW 5) measures + gates exactly that.")
     ap.add_argument("--lead-ms", type=float, default=0.0)
     ap.add_argument("--lead-sweep", type=str, default=None,
                     help="comma ms leads, e.g. '0,100,150,200,300,400,500'")
@@ -693,7 +853,9 @@ def main():
         strio_to_snc_weight=args.strio_to_snc_weight,
         snc_da_sensitivity=args.snc_da_sensitivity, lesion=args.lesion,
         gabab=args.gabab, gabab_tau_decay=args.gabab_tau_decay,
-        gabab_propagation_strength=args.gabab_propagation_strength)
+        gabab_propagation_strength=args.gabab_propagation_strength,
+        critic_homeostasis=args.critic_homeostasis,
+        afferent_homeostasis=args.afferent_homeostasis)
 
     if args.lead_sweep:
         _lead_sweep_main(seeds, args.lead_sweep, kw, args)
@@ -712,14 +874,24 @@ def main():
               f"with-critic={r['actor_rate_with_critic_hz']:.3f}Hz ratio={r['actor_ratio']:.3f} "
               f"=> not-perturbed {r['actor_not_perturbed']}")
         print(f"  [anti-cheat d] OU-off={r['ou_off']} cond-noise-off={r['conductance_noise_off']} "
-              f"homeostasis-off={r['homeostasis_off']}")
+              f"GLOBAL-homeostasis-off={r['homeostasis_off']} "
+              f"(critic-homeo={r['critic_homeostasis_requested']}, "
+              f"afferent-homeo={r['afferent_homeostasis_requested']}, "
+              f"per-region-mask={r['per_region_homeostasis_mask_set']})")
+        print(f"  [critic rate] V(near,late) = {r['critic_rate_late_hz']:.2f} Hz "
+              f"(the gate critic-only failed at ~0.4 Hz)")
+        print(f"  [gate-5 place-selectivity] NEAR-ens afferent rate at-near "
+              f"{r['aff_near_ens_rate_at_near_hz']:.2f}Hz / at-far {r['aff_near_ens_rate_at_far_hz']:.2f}Hz "
+              f"ratio {r['place_selectivity_ratio']:.2f} => preserved {r['place_selectivity_preserved']}")
         if not args.lesion:
             primary = (r["v_learned_spatial"] and r["state_specific_above_floor"]
-                       and r["weight_grew"] and r["actor_not_perturbed"])
+                       and r["weight_grew"] and r["actor_not_perturbed"]
+                       and r["place_selectivity_preserved"])
             print(f"\n  NAV-FAITHFUL de-risk (seed {s}): {'PASS' if primary else 'FAIL'}  "
                   f"[V-learned-spatial {r['v_learned_spatial']}, state-specific-above-floor "
                   f"{r['state_specific_above_floor']}, weight-grew(LTP) {r['weight_grew']}, "
-                  f"actor-not-perturbed {r['actor_not_perturbed']}]")
+                  f"actor-not-perturbed {r['actor_not_perturbed']}, "
+                  f"place-selectivity-preserved {r['place_selectivity_preserved']}]")
         else:
             no_gap = (r["test_unpredicted_far_hz"] <= 1.30 * max(r["test_predicted_near_hz"], 1e-6))
             print(f"\n  LESION anti-cheat (seed {s}): {'PASS' if no_gap else 'UNEXPECTED'}  "
@@ -731,13 +903,18 @@ def main():
         n_learn = sum(1 for r in results if r["v_learned_spatial"] and r["weight_grew"])
         n_gap = sum(1 for r in results if r["state_specific_above_floor"])
         n_actor = sum(1 for r in results if r["actor_not_perturbed"])
+        n_place_sel = sum(1 for r in results if r["place_selectivity_preserved"])
+        n_critic = sum(1 for r in results if r["critic_rate_late_hz"] >= 1.0)
         n_primary = sum(1 for r in results
                         if r["v_learned_spatial"] and r["state_specific_above_floor"]
-                        and r["weight_grew"] and r["actor_not_perturbed"])
+                        and r["weight_grew"] and r["actor_not_perturbed"]
+                        and r["place_selectivity_preserved"])
+        print(f"=== MULTI-SEED CRITIC-FIRES (V near,late >= 1 Hz): {n_critic}/{len(results)} ===")
         print(f"=== MULTI-SEED LEARNING (V-learned-spatial + location-selective LTP): {n_learn}/{len(results)} ===")
         print(f"=== MULTI-SEED SUBTRACTION (state-specific SNc gap above floor): {n_gap}/{len(results)} ===")
         print(f"=== MULTI-SEED GATE-4 (actor-not-perturbed): {n_actor}/{len(results)} ===")
-        print(f"=== MULTI-SEED PRIMARY (all four): {n_primary}/{len(results)} ===")
+        print(f"=== MULTI-SEED GATE-5 (place-selectivity-preserved): {n_place_sel}/{len(results)} ===")
+        print(f"=== MULTI-SEED PRIMARY (all five): {n_primary}/{len(results)} ===")
     elif len(results) > 1 and args.lesion:
         n_gone = sum(1 for r in results
                      if r["test_unpredicted_far_hz"] <= 1.30 * max(r["test_predicted_near_hz"], 1e-6))
