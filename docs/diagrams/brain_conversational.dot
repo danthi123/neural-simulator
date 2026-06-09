@@ -1,0 +1,211 @@
+// ============================================================================
+//  CONVERSATIONAL BRAIN — exhaustive as-implemented graph
+//  build_biological_brain_regions()  (research/runners/text_minimal_isolation.py)
+//  Source spec: research/findings/2026-06-09-brain-architecture-flowchart-spec.md §2,§3
+//  Render: dot -Tpng -Gdpi=150 brain_conversational.dot -o brain_conversational.png
+//          dot -Tsvg          brain_conversational.dot -o brain_conversational.svg
+//
+//  EVERY region TYPE and EVERY distinct pathway TYPE. Per-concept pools are
+//  drawn ONCE per KIND with a "×4 names" badge. Comprehension flows down the
+//  left, production back up the right; hippocampal consolidation bridges them.
+//  Composition pathways that are NEGATIVE / BOUNDARY results are flagged as
+//  "present, not a working capability" (honesty Axis B).
+// ============================================================================
+digraph ConversationalBrain {
+    rankdir=TB;
+    compound=true;
+    newrank=true;
+    splines=spline;
+    nodesep=0.34;
+    ranksep=0.66;
+    bgcolor="white";
+    fontname="Helvetica";
+    labelloc="t";
+    fontsize=24;
+    label=<<B>Conversational brain — every region &amp; pathway, as implemented</B><BR/><FONT POINT-SIZE="12">build_biological_brain_regions() · concept pools collapsed ×4-names · comprehend→produce · signal nature + plasticity + result-quality encoded</FONT><BR/> >;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10.5,
+          margin="0.13,0.07", penwidth=1.4, color="#2471a3", fillcolor="#ebf5fb"];
+    edge [fontname="Helvetica", fontsize=9, color="#5d6d7e", penwidth=1.3, arrowsize=0.8];
+
+    // ====================================================================
+    //  INPUT — language + visual (host I/O boundary) + episodic context
+    // ====================================================================
+    subgraph cluster_input {
+        label=<<B>Input</B>   (language · visual ventral stream · episodic context)>;
+        style="rounded,filled"; color="#2471a3"; fillcolor="#eaf2f8"; fontcolor="#1f618d"; fontsize=13; margin=12;
+        langin  [label=<<B>language_input</B>  (Wernicke-ish)<BR/><FONT POINT-SIZE="8.5">token-embedding input · plastic recurrent<BR/>⚠ token embedding host-supplied</FONT>>, fillcolor="#d6eaf8", color="#1f618d", penwidth=1.7];
+        eccx    [label=<<B>ec_context</B>  (opt)<BR/><FONT POINT-SIZE="8.5">positional / time-cell drive<BR/>⚠ positional code host-generated</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#2e86c1"];
+        retina  [label=<<B>retina</B>  (opt)<BR/><FONT POINT-SIZE="8.5">⚠ host-rendered image</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4"];
+        it      [label=<<B>cortex_v1→v2→it</B>  (opt)<BR/><FONT POINT-SIZE="8.5">visual "what" stream → IT</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4"];
+        retina -> it [label="V1 Gabor → V2 → IT", color="#3d6fb4"];
+    }
+
+    // ====================================================================
+    //  COMPREHENSION — Wernicke pools
+    // ====================================================================
+    subgraph cluster_wernicke {
+        label=<<B>Wernicke</B>  (C11 · comprehension · multi-pool)>;
+        style="rounded,filled"; color="#2e86c1"; fillcolor="#eaf2f8"; fontcolor="#21618c"; fontsize=13; margin=12;
+        wern    [label=<<B>wernicke_pool_{i}</B>  ×N<BR/><FONT POINT-SIZE="8.5">per-concept comprehension pool<BR/>(single-pool variant: wernicke)</FONT>>, fillcolor="#d6eaf8", color="#21618c"];
+        wernfs  [label=<<B>wernicke_fs_pool_{i}</B>  ×N<BR/><FONT POINT-SIZE="8.5">cross-pool WTM (sparse codes)</FONT>>, fillcolor="#d4e6f1", color="#1a5276", penwidth=2.2];
+        wern -> wernfs [label="drive FS"];
+        wernfs -> wern [label="cross-pool WTM (j≠i)", arrowhead=tee, color="#922b21"];
+    }
+
+    // ====================================================================
+    //  SEMANTIC — ATL concept store + multimodal hub
+    // ====================================================================
+    subgraph cluster_semantic {
+        label=<<B>Semantic cortex (ATL)</B>  (C11 · concept store + hub)>;
+        style="rounded,filled"; color="#1f618d"; fillcolor="#e8f0f8"; fontcolor="#1a5276"; fontsize=13; margin=12;
+        sem     [label=<<B>semantic_cortex</B>  (ATL)<BR/><FONT POINT-SIZE="8.5">sparse distributed concept store<BR/>plastic recurrent attractor · 320 concepts</FONT>>, fillcolor="#d6eaf8", color="#1a5276", penwidth=1.7];
+        semfs   [label=<<B>semantic_fs</B><BR/><FONT POINT-SIZE="8.5">winner-take-most</FONT>>, fillcolor="#d4e6f1", color="#154360", penwidth=2.2];
+        hub     [label=<<B>multimodal_hub</B>  (ATL)<BR/><FONT POINT-SIZE="8.5">auditory + visual convergence<BR/>(hub-and-spoke)</FONT>>, fillcolor="#d6eaf8", color="#1a5276"];
+        sem -> semfs [label="drive FS"];
+        semfs -> sem [label="WTM", arrowhead=tee, color="#922b21"];
+    }
+
+    // ====================================================================
+    //  SYNTAX — Broca
+    // ====================================================================
+    broca [label=<<B>broca</B>  (C11)<BR/><FONT POINT-SIZE="8.5">syntactic composition · sentence WM<BR/>plastic recurrent</FONT>>, fillcolor="#d6eaf8", color="#21618c", penwidth=1.6];
+
+    // ====================================================================
+    //  CONCEPT POOLS  (Pulvermüller distributed word ensembles)
+    // ====================================================================
+    subgraph cluster_pools {
+        label=<<B>Concept pools</B>  (C12 · ×4 names per kind · within-kind WTA)>;
+        style="rounded,filled"; color="#5dade2"; fillcolor="#eef6fb"; fontcolor="#2874a6"; fontsize=13; margin=12;
+        noun [label=<<B>noun_pool_{NAME}</B>  ×4<BR/><FONT POINT-SIZE="8.5">apple · river · dog · cat</FONT>>, fillcolor="#d4e6f1", color="#2874a6"];
+        verb [label=<<B>verb_pool_{NAME}</B>  ×4<BR/><FONT POINT-SIZE="8.5">go · come · stop · look</FONT>>, fillcolor="#d4e6f1", color="#2874a6"];
+        adj  [label=<<B>adjective_pool_{NAME}</B>  ×4<BR/><FONT POINT-SIZE="8.5">big · small · hot · cold</FONT>>, fillcolor="#d4e6f1", color="#2874a6"];
+        poolfs [label=<<B>{kind}_pool_{NAME}_fs</B><BR/><FONT POINT-SIZE="8.5">within-kind WTM (cross-kind omitted)</FONT>>, fillcolor="#d6dbdf", color="#566573", penwidth=2.2];
+    }
+
+    // ====================================================================
+    //  WORKING MEMORY — dlPFC verb
+    // ====================================================================
+    dlpfc [label=<<B>dlpfc_verb</B>  (C9 · opt)<BR/><FONT POINT-SIZE="8.5">holds verb context ~500 ms (NMDA)</FONT>>, style="rounded,filled,dashed", fillcolor="#d4e6f1", color="#2e86c1"];
+
+    // ====================================================================
+    //  HIPPOCAMPUS — shared trisynaptic loop + consolidation
+    // ====================================================================
+    subgraph cluster_hippo {
+        label=<<B>Hippocampal formation</B>  (C7 · shared · consolidation bridge)>;
+        style="rounded,filled,dashed"; color="#6aa84f"; fillcolor="#eafaf1"; fontcolor="#1e8449"; fontsize=13; margin=12;
+        ec   [label=<<B>ec</B>  (entorhinal)>, fillcolor="#d4efdf", color="#239b56"];
+        dg   [label=<<B>dg</B>  (separation)>, fillcolor="#d4efdf", color="#239b56"];
+        dgb  [label=<<B>dg_pv_basket</B><BR/><FONT POINT-SIZE="8.5">FFi → sparsity</FONT>>, fillcolor="#d5f5e3", color="#145a32", penwidth=2.2];
+        ca3  [label=<<B>ca3</B>  (autoassociator)>, fillcolor="#d4efdf", color="#239b56"];
+        ca1  [label=<<B>ca1</B>  (readout)>, fillcolor="#d4efdf", color="#239b56"];
+        ec -> dg [label="ec_to_dg"];
+        eccx2 [style=invis, shape=point, width=0.01];
+        ec -> dgb [label="FFi"];
+        dgb -> dg [label="sparsity", arrowhead=tee, color="#922b21"];
+        ec -> ca1 [label="ec_to_ca1"];
+        dg -> ca3 [label="dg_to_ca3"];
+        ca3 -> ca3 [label="⟲ ca3_swr_burst", color="#1e8449", penwidth=2.0, fontcolor="#1e8449"];
+        ca3 -> ca1 [label="ca3_to_ca1"];
+    }
+
+    // ====================================================================
+    //  OUTPUT — language_output pools, motor, motor_speech
+    // ====================================================================
+    subgraph cluster_output {
+        label=<<B>Output</B>  (C10/C11 · naming · articulation · embodied action)>;
+        style="rounded,filled"; color="#239b56"; fillcolor="#eafaf1"; fontcolor="#1e8449"; fontsize=13; margin=12;
+        langout [label=<<B>language_output</B>  (Broca-ish)<BR/><FONT POINT-SIZE="8.5">word-pattern output (A→W readout)<BR/>⚠ word readout host-decoded</FONT>>, fillcolor="#d5f5e3", color="#1e8449", penwidth=1.7];
+        langoutp[label=<<B>lang_output_pool_{i}</B>  ×N<BR/><FONT POINT-SIZE="8.5">per-concept naming pool (+ _fs WTM)</FONT>>, fillcolor="#d4efdf", color="#239b56"];
+        motor   [label=<<B>motor_{N,E,S,W}</B>  ×4<BR/><FONT POINT-SIZE="8.5">embodied direction action</FONT>>, fillcolor="#f5b7b1", color="#922b21", penwidth=1.6];
+        speech  [label=<<B>motor_speech</B><BR/><FONT POINT-SIZE="8.5">4-slot articulation</FONT>>, fillcolor="#f5b7b1", color="#922b21"];
+    }
+
+    // ====================================================================
+    //  =============================  EDGES  ============================
+    // ====================================================================
+    // -- Tier-1 embodied binding (always built, the CORE) --
+    langin -> motor   [label="word→action\nlanguage_input_to_motor  (Tier 1)", penwidth=2.2, fontcolor="#1f618d"];
+    motor  -> langout [label="action→word\nmotor_to_language_output  (A→W)", penwidth=1.8, fontcolor="#1e8449"];
+
+    // -- comprehension chain --
+    langin -> wern  [label="phono→Wernicke\nlang_to_wernicke_pool_i", fontcolor="#1f618d"];
+    wern   -> sem   [label="comprehend\n{pool}_to_semantic", fontcolor="#1f618d"];
+    sem    -> wern  [label="produce (weaker)\nsemantic_to_{pool}", style=dashed, constraint=false];
+    wern   -> langout [label="naming\n{pool}_to_lang_out", fontcolor="#1e8449", constraint=false];
+
+    // -- concept pools (Tier-1 recipe) --
+    langin -> noun  [label="word→pool\nlanguage_input_to_noun_pool", fontcolor="#1f618d"];
+    langin -> verb  [label="language_input_to_verb_pool", fontcolor="#1f618d"];
+    langin -> adj   [label="language_input_to_adjective_pool", fontcolor="#1f618d"];
+    noun -> langout [label="concept→word (A→W)\n{kind}_pool_to_language_output", fontcolor="#1e8449", constraint=false];
+    verb -> langout [label="", fontcolor="#1e8449", constraint=false];
+    adj  -> langout [label="", fontcolor="#1e8449", constraint=false];
+    verb -> poolfs  [label="drive FS"];
+    poolfs -> verb  [label="within-kind WTM", arrowhead=tee, color="#922b21"];
+
+    // -- syntax / production --
+    wern -> broca [label="wernicke_to_broca", fontcolor="#1f618d"];
+    sem  -> broca [label="semantic_to_broca", fontcolor="#1f618d"];
+    broca -> broca [label="⟲ sentence WM", color="#1e8449", penwidth=1.6];
+    broca -> speech [label="articulation\nbroca_to_motor_speech", fontcolor="#1e8449"];
+    broca -> eccx [label="broca_to_ec_context", style=dashed, constraint=false];
+
+    // -- multimodal hub --
+    it   -> langout [label="image→word\nit_to_language_output", color="#3d6fb4", constraint=false];
+    it   -> hub  [label="it_to_hub", color="#3d6fb4"];
+    wern -> hub  [label="wernicke_pool_i_to_hub", constraint=false];
+    hub  -> langoutp [label="recognition→naming\nhub_to_lang_pool_i", fontcolor="#1e8449"];
+
+    // -- episodic positional binding --
+    eccx -> dg [label="ec_context_to_dg\n(word×position)", style=dashed, constraint=false];
+
+    // -- hippocampal entry + consolidation (the KEY no-forgetting bridge) --
+    langin -> ec  [label="lang_to_ec\n(cortex→hippo entry)", fontcolor="#1f618d", constraint=false];
+    ca1 -> sem    [label="ca1_to_semantic\n(engrams→durable meaning · KEY)", color="#1e8449", penwidth=2.0, fontcolor="#1e8449", constraint=false];
+    ca1 -> motor  [label="ca1_to_motor\n(sleep-replay consolidation)", color="#1e8449", style=dashed, constraint=false];
+    ca1 -> langout[label="ca1_to_lang_out", color="#1e8449", style=dashed, constraint=false];
+    ca1 -> langoutp[label="ca1_to_lang_pool_i", color="#1e8449", style=dashed, constraint=false];
+
+    // -- COMPOSITION pathways: present STRUCTURALLY but NEGATIVE/BOUNDARY results --
+    verb -> motor [label="✗ verb→motor direct (v16)\nverb_to_motor_direct · BOUNDARY (weak)", color="#909497", fontcolor="#909497", style="dashed", constraint=false];
+    verb -> dlpfc [label="✗ v12/v15 (NEGATIVE)\nverb_pool_to_dlpfc", color="#909497", fontcolor="#909497", style="dashed", constraint=false];
+    dlpfc -> motor [label="✗ v15 unidir (NEGATIVE)\ndlpfc_verb_to_motor", color="#909497", fontcolor="#909497", style="dashed", constraint=false];
+    noun -> adj   [label="✗ cross-pool assoc (v18)\ncross_pool_concept · NEGATIVE", color="#909497", fontcolor="#909497", style="dotted", constraint=false];
+    langin -> dlpfc [label="verb→WM", style=dashed, constraint=false];
+
+    // ====================================================================
+    //  LEGEND
+    // ====================================================================
+    subgraph cluster_legend {
+        label=""; style="rounded,filled"; color="#566573"; fillcolor="#fbfcfc"; margin=10;
+        leg [shape=plaintext, fillcolor="white", label=<
+          <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="3">
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>SIGNAL NATURE</B>  (arrow points downstream)</TD></TR>
+            <TR><TD ALIGN="RIGHT">──▶</TD><TD ALIGN="LEFT">excitatory — glutamate (AMPA, +NMDA share)</TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#922b21">──⊣</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#922b21">fast inhibition — GABA_A (cross-pool / within-kind WTM)</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1e8449">──▶</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1e8449">recurrent ⟲ / hippocampal consolidation into cortex</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#3d6fb4">──▶</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#3d6fb4">visual ("what" stream) input</FONT></TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"> </TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>NODE / EDGE STATUS</B></TD></TR>
+            <TR><TD ALIGN="RIGHT">▭</TD><TD ALIGN="LEFT">solid = always built (CORE) · <B>thick</B> border = inhibitory region</TD></TR>
+            <TR><TD ALIGN="RIGHT">┄</TD><TD ALIGN="LEFT">dashed border = opt-in (flag-gated) · dashed edge = weaker/feedback</TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#909497">✗ ┄</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#909497">composition pathway present STRUCTURALLY but a NEGATIVE / BOUNDARY</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT"><FONT COLOR="#909497">result (v12/v15/v16/v18) — NOT a working capability</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT">×4/×N</TD><TD ALIGN="LEFT">per-concept template (×4 names per kind; ×N pools)</TD></TR>
+            <TR><TD ALIGN="RIGHT">⚠</TD><TD ALIGN="LEFT">host I/O boundary (token embedding in / word readout out) ·</TD></TR>
+            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT">substrate-wide shortcuts SH-1..SH-14 (see spec §6)</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>CORE</B> (always built) = language_input → motor_X (Tier-1 binding) + its A→W reciprocal</TD></TR>
+          </TABLE>>];
+    }
+
+    // -- rank guidance: comprehend (top) → produce (bottom) -----------------
+    //    (hippocampus left as a coherent side-loop cluster, not forced into ranks)
+    { rank=min;  langin; retina; eccx; }
+    { rank=same; wern; noun; verb; adj; it; }
+    { rank=same; sem; hub; }
+    { rank=max;  langout; langoutp; motor; speech; }
+    // invisible anchors keeping the produce band at the bottom
+    sem   -> langout [style=invis, weight=20];
+    broca -> speech  [style=invis, weight=20];
+}
