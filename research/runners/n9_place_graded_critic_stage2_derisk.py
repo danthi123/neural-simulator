@@ -437,9 +437,28 @@ def _mean_w(bridge, pre_name, post_name, pre_subset=None):
     return float(data[m].mean()) if m.any() else 0.0
 
 
+def _reset_snc_subtraction_state(bridge, snc_idx_gpu):
+    """Clear the SLOW GABA_B->GIRK conductance + reset the SNc membrane before a calibration / test phase.
+    THE RESIDUAL-CONDUCTANCE FIX (2026-06-09 SNc-rV-subtraction diagnosis): cp_conductance_g_gabab is
+    otherwise only zeroed in _lesion_gabab, and there is NO inter-phase membrane/conductance reset. So a
+    phase where the critic fired hard (e.g. the FS-gating value-training at 33-53 Hz) leaves a huge standing
+    GIRK current (tau=150 ms => ~150x temporal summation) that keeps hyperpolarizing the SNc in the
+    IMMEDIATELY-following phase -> the DA tonic calibration reads 0 Hz and gate-2e collapses. Zeroing it (+
+    the SNc membrane/recovery) at each phase boundary makes each phase measure the SNc cleanly; the LEAD
+    window of _snc_test then builds a FRESH differential GABA_B (the Eshel-2015 sustained expectation)."""
+    if getattr(bridge, "cp_conductance_g_gabab", None) is not None:
+        bridge.cp_conductance_g_gabab[:] = 0.0
+    if (getattr(bridge, "cp_membrane_potential_v", None) is not None
+            and getattr(bridge, "cp_izh_vr", None) is not None):
+        bridge.cp_membrane_potential_v[snc_idx_gpu] = bridge.cp_izh_vr[snc_idx_gpu]
+    if getattr(bridge, "cp_recovery_variable_u", None) is not None:
+        bridge.cp_recovery_variable_u[snc_idx_gpu] = 0.0
+
+
 def _calibrate_da(bridge, cfg, snc_idx_gpu, tonic_pa, xp, n_steps=300):
     """Set the DA production threshold to the SNc tonic firing fraction (so phasic bursts drive DA)."""
     n_snc = int(snc_idx_gpu.size)
+    _reset_snc_subtraction_state(bridge, snc_idx_gpu)  # clear residual GIRK from the prior (training) phase
     bridge.cp_external_input_current[:] = 0.0
     bridge.cp_external_input_current[snc_idx_gpu] = xp.float32(tonic_pa)
     frac = 0.0; m = 0
@@ -450,6 +469,12 @@ def _calibrate_da(bridge, cfg, snc_idx_gpu, tonic_pa, xp, n_steps=300):
     tf = frac / max(m, 1)
     cfg.neuromodulators[0].production_rules[0].threshold = float(tf)
     bridge.cp_external_input_current[:] = 0.0
+    # Calibration sanity (anti-cheat): the SNc tonic fraction MUST sit in a sane pacemaker band. A value
+    # near 0 means the SNc is being suppressed (the residual-GIRK bug) or under-driven; near the ceiling
+    # means saturation. Either mis-sets the DA threshold and silently breaks gate-2e -> flag it loudly.
+    if not (0.20 <= tf <= 0.60):
+        print(f"  [CALIB-WARN] SNc tonic_frac={tf:.4f} OUTSIDE sane band [0.20,0.60] @ {tonic_pa:.0f} pA "
+              f"-> DA threshold mis-set; gate-2e unreliable (residual-GIRK / drive issue).")
     return tf
 
 
@@ -755,6 +780,9 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
 
     # ── SNc state-specific gap (value-leads-reward LEAD test) + gate-2e lesion ──
     def _snc_test(sensor_act, snc_pa):
+        # Clear residual GIRK + reset the SNc before this test phase (the residual-conductance fix) so the
+        # predicted (near) vs unpredicted (far) measurement differs ONLY by the FRESH GABA_B the LEAD builds.
+        _reset_snc_subtraction_state(bridge, snc_idx_g)
         # ITI floor
         bridge.cp_external_input_current[:] = 0.0
         bridge.cp_external_input_current[snc_idx_g] = xp.float32(snc_tonic_pa)
