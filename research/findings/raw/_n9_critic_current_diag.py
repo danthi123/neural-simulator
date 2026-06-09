@@ -26,6 +26,22 @@ def _host(a):
     return g() if g is not None else np.array(a)
 
 
+def _homeo_state(bridge, crit_idx, tag):
+    """Print the per-region homeostasis threshold state for the critic pool —
+    does the firing threshold adapt DOWN from vpeak (homeostasis working) or not?"""
+    th = getattr(bridge, "cp_neuron_firing_thresholds", None)
+    vpk = getattr(bridge, "cp_izh_vpeak", None)
+    msk = getattr(bridge, "cp_homeostasis_neuron_mask", None)
+    ci = _host(crit_idx)
+    line = f"  [HOMEO {tag}] thresholds_set={th is not None} mask_set={msk is not None}"
+    if th is not None and vpk is not None:
+        thm = float(_host(th)[ci].mean()); vpm = float(_host(vpk)[ci].mean())
+        line += f" | critic threshold mean={thm:.3f} mV vs vpeak {vpm:.3f} mV (adapted_down={thm < vpm - 0.5})"
+    if msk is not None:
+        m = _host(msk)[ci]; line += f" | critic_in_mask={int(m.sum())}/{len(ci)}"
+    print(line, flush=True)
+
+
 def _idx(bridge, name):
     return list(bridge.region_manager.indices(name))
 
@@ -124,7 +140,7 @@ def build_deployed(seed=42, with_gabor=True, full_flags=False):
         enable_neural_critic=True,
         enable_critic_homeostasis=True,
         n_vs_place_context=200,
-        vs_place_to_value_weight=0.2,
+        vs_place_to_value_weight=0.2 * float(os.environ.get("CRITIC_MARGIN_MULT", "1.0")),
         vs_place_to_value_density=0.5,
         enable_cluster_a_closed_loop=True,
         enable_cluster_e_topography=True,
@@ -363,9 +379,12 @@ if __name__ == "__main__":
     dep2_aff = _idx(dep2, "vs_place_context"); dep2_crit = _idx(dep2, "striosome_value"); dep2_snc = _idx(dep2, "snc")
     dep2_drive = _gaussian_place_drive(dep2_prefs[0], dep2_prefs[1], GX, GY, DRIVE, SIGMA)
     # Test BOTH with the isolation probe's exact knobs (so the ONLY difference is the bridge).
+    _homeo_state(dep2, dep2_crit, "DEPLOYED after-train")
     w_dep_final = train_value_leads_reward(
         dep2, dep2_cfg, dep2_aff, dep2_crit, dep2_snc, dep2_drive,
         180.0, 300.0, n_train=40, hold=40, label="DEPLOYED (same probe knobs)")
+    _homeo_state(dep2, dep2_crit, "DEPLOYED post-train")
+    _homeo_state(iso2, iso2_crit, "ISOLATION post-train")
 
     print("\n\n########## DECISIVE VERDICT ##########")
     print(f"  ISOLATION critic weight 0.20 -> {w_iso_final:.4f}  (bootstrapped: {w_iso_final > 0.25})")
