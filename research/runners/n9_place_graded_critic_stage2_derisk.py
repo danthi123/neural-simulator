@@ -535,7 +535,7 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
              fs_to_place_weight=8.0, fs_to_place_density=0.4,
              coincidence_k=4.0, coincidence_gain=2.0, coincidence_plateau=80.0, readout_plateau=None,
              stdp_w_max=40.0, coincidence_weighted_drive=False, readout_weighted_k=None,
-             gate_fs_during_selforg=False, gate2e_gabab_scale=1.0,
+             gate_fs_during_selforg=False, gate2e_gabab_scale=1.0, critic_teacher_pa=0.0,
              lesion=False, shuffle=False, ablate_sensors=False, jitter=False, verbose=True):
     log = print if verbose else (lambda *a, **k: None)
     from sim.backend import get_backend
@@ -701,6 +701,14 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
         bridge.cp_external_input_current[:] = 0.0
         bridge.cp_external_input_current[sensor_idx_g] = xp.asarray(loc_sensor[near_name], dtype=xp.float32)
         bridge.cp_external_input_current[snc_idx_g] = xp.float32(snc_tonic_pa + snc_reward_gain)
+        if critic_teacher_pa > 0.0:
+            # TEACHER scaffold (the endorsed innate-reflex-teaches-a-learned-circuit pattern): drive the
+            # critic to fire during the LEARN window so place-pre x critic-post STDP forms place->value LTP
+            # even when a weak place-code draw's volley alone is sub-threshold. ONLY the NEAR place ensemble
+            # is driven (frozen distinct code), so only near->critic potentiates (far cells stay silent ->
+            # no w_far growth). REMOVED at read-out -> the LEARNED place->value weights + the weighted
+            # plateau carry the firing (the teacher bootstraps the LTP; the learned circuit does inference).
+            bridge.cp_external_input_current[crit_idx_g] = xp.float32(critic_teacher_pa)
         spk = 0
         for _ in range(hold_steps):
             _tick(bridge)
@@ -977,6 +985,11 @@ def main():
                          "keeps the default so the critic learns). The default GABA_B CLAMPS the SNc all-or-none "
                          "(~-960 pA at 20 Hz critic); ~0.05-0.2 lands the Eshel-2015 ARITHMETIC band (predicted "
                          ">0 AND unpredicted >1.3x predicted). 1.0 = the clamp baseline.")
+    ap.add_argument("--critic-teacher-pa", type=float, default=0.0,
+                    help="TEACHER current (pA) on the critic during the value-training LEARN window only "
+                         "(removed at read-out). Bootstraps place->value STDP LTP when a weak place-code draw's "
+                         "volley is sub-threshold -> the critic learns V robustly regardless of the (CuPy-"
+                         "non-deterministic) place-code draw. ~400-600 pA clears the MSN-D1 ~339 pA rheobase.")
     # controls
     ap.add_argument("--lesion", action="store_true", help="gate-2e: zero GABA_B mask -> gap must vanish")
     ap.add_argument("--shuffle", action="store_true",
@@ -1045,6 +1058,7 @@ def main():
         readout_weighted_k=float(args.readout_weighted_k),
         gate_fs_during_selforg=bool(args.gate_fs_during_selforg),
         gate2e_gabab_scale=float(args.gate2e_gabab_scale),
+        critic_teacher_pa=float(args.critic_teacher_pa),
         lesion=bool(args.lesion), shuffle=bool(args.shuffle), ablate_sensors=bool(args.ablate_sensors),
         jitter=bool(args.jitter))
 
