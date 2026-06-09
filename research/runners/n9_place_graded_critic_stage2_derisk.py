@@ -1,6 +1,21 @@
 """Stage-2 de-risk — a SPARSE-read MSN-D1 value critic GRADES NEAR>>FAR on the Stage-1 self-organized
 spiking place code (the N9 value-of-LOCATION unblock). CuPy-only.
 
+═══════════════════════════════════════════════════════════════════════════════════════════════════
+STEP-2 VOLLEY UPGRADE (2026-06-09, --enable-volley; default OFF -> the baseline reproduces the prior
+NEGATIVE where critic@NEAR=0.0 Hz). The baseline arm read the sparse-distinct place code with PLAIN
+synapses and could NOT fire the critic (the RATE-CODING / ASYNCHRONY wall: a sparse-async ~10 Hz
+ensemble emits per-step coincidence c_i<=1). STEP-1 (coincidence_volley_n9_derisk.py, GO 3/3 seeds)
+broke that wall: an FS-PING gamma volley re-times the sparse ensemble into a coincident packet that
+the landed Route-D plateau (b980070a) fires -- at <=5% sparsity, with jitter collapsing it (coincidence
+not rate). --enable-volley wires THAT mechanism into THIS critic arm (n-place 800 + FS-PING on `place`
++ place->striosome_value as a coincidence_detector), so the critic FIRES from the sparse-distinct code
+and the gates (FIRE/GRADE/LTP/ACTOR/GABA_B) + anti-cheats (jitter/place-shuffle/ablate) re-test whether
+place-GRADING finally opens. Operating point = the STEP-1 GO (re-tuned FS-PING, K=4, plateau 80).
+Run: SIM_BACKEND=cupy python -m research.runners.n9_place_graded_critic_stage2_derisk \\
+       --enable-volley --n-place 800 --seeds 42,43,44 --out ..._volley.json
+═══════════════════════════════════════════════════════════════════════════════════════════════════
+
 THE LOAD-BEARING TEST OF THE WHOLE ARC. Stage 1 (placecode_selforg_stage1_derisk.py, PASS 3/3 CuPy)
 produced a SELF-ORGANIZED sparse SPIKING place code (landmark_sensors -> `place` pool, Hartley-Burgess
 competitive learning): position-specific (diff-location cosine 0.064), stable (0.872), ~3.65% sparse,
@@ -154,7 +169,19 @@ def _build(seed, *, n_sensors, n_place, n_strio, n_snc, grid_size,
            gabab, gabab_tau_decay, gabab_propagation_strength,
            include_actor=True, n_sensor_place=64, n_cortex_per_action=50,
            sensor_place_to_cortex_weight=10.0, place_to_value_active=True,
-           nmda_critic=False, dt_ms=1.0):
+           nmda_critic=False, dt_ms=1.0,
+           # ── STEP-2 VOLLEY ADDITIONS (2026-06-09; default OFF -> byte-identical baseline) ──
+           # When enable_volley=True, the validated STEP-1 mechanism is wired into the critic arm:
+           #   (1) an FS-PING pool on `place` (place->FS exc, FS->place GABA_A) so a gamma rhythm
+           #       EMERGES and re-times the sparse place ensemble into a coincident VOLLEY;
+           #   (2) the place->striosome_value arm is a Route-D coincidence_detector (the landed b980070a
+           #       dendritic-plateau subunit) -> the synchronized volley fires the critic that the
+           #       sparse-async code could not. STILL plastic + DA-gated (so it GRADES + LEARNS).
+           # Operating point = the STEP-1 GO (n_place 800, re-tuned FS-PING, K=4, plateau 80).
+           enable_volley=False, n_fs=160,
+           place_to_fs_weight=16.0, place_to_fs_density=0.4,
+           fs_to_place_weight=8.0, fs_to_place_density=0.4,
+           coincidence_k=4.0, coincidence_gain=2.0, coincidence_plateau=80.0, stdp_w_max=40.0):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from sim.regions import BrainRegion, RegionPathway
@@ -174,12 +201,14 @@ def _build(seed, *, n_sensors, n_place, n_strio, n_snc, grid_size,
                     weight_jitter=0.0, plastic_internal=False,
                     izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name),
         # The MSN-D1 value critic (fully GABAergic, KIR2 up/down, rheobase ~339 pA; B.02).
+        # STEP-2 VOLLEY: the coincidence plateau reuses the Mg2+-block kernel, so the critic needs NMDA
+        # ON when the volley arm is active (mirrors the STEP-1 volley bed's target enable_nmda=True).
         BrainRegion(name="striosome_value", n_neurons=int(n_strio), exc_fraction=0.0,
                     internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
                     weight_jitter=0.0, plastic_internal=False,
                     izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
                     syn_reversal_potential_i_override=-60.0,
-                    enable_nmda=bool(nmda_critic)),
+                    enable_nmda=bool(nmda_critic or enable_volley)),
         BrainRegion(name="snc", n_neurons=int(n_snc), exc_fraction=1.0, internal_density=0.0,
                     exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
                     izh_neuron_type=NeuronType.IZH2007_DOPAMINE.name,
@@ -193,17 +222,38 @@ def _build(seed, *, n_sensors, n_place, n_strio, n_snc, grid_size,
                       plasticity_gate="landmark_to_place"),
         # THE STAGE-2 ARM: place -> striosome_value, PLASTIC, DA-delta-gated, SPARSE. NO dense A1 floor.
         # When place_to_value_active=False this is weight 0 (the critic-absent twin for gate 2d).
+        # STEP-2 VOLLEY: coincidence_detector=enable_volley -> this arm reads the FS-PING-synchronized
+        # place volley through the landed Route-D plateau (the thing that fires the critic from a
+        # sparse-distinct code). Still PLASTIC + DA-gated so it grades + learns.
         RegionPathway(from_region="place", to_region="striosome_value",
                       density=float(place_to_value_density),
                       weight_mean=float(place_to_value_weight if place_to_value_active else 0.0),
                       weight_jitter=float(place_to_value_jitter), plastic=True,
-                      plasticity_gate="value_input"),
+                      plasticity_gate="value_input",
+                      coincidence_detector=bool(enable_volley and place_to_value_active)),
         # The shipped GABA_B value subtraction (striosome_value -> snc).
         RegionPathway(from_region="striosome_value", to_region="snc",
                       density=0.5, weight_mean=float(strio_to_snc_weight),
                       weight_jitter=0.2, plastic=False,
                       receptor=("gaba_b" if gabab else "gaba_a")),
     ]
+    if enable_volley:
+        # ── FS-PING gamma synchronizer on the place pool (the STEP-1 GO mechanism, brain-based) ──
+        # An FS interneuron pool reciprocally wired to `place`: the active place cells excite FS, FS
+        # GABA_A silences the pool for ~one GABA_A decay, release -> the active cells re-fire TOGETHER
+        # each gamma cycle. The gamma EMERGES from neurons+synapses (mirrors CORTEX_GAMMA_FS_NETWORK).
+        # Location-BLIND (FS sees only the currently-active place cells -> it sets WHEN they fire, the
+        # place code selects WHICH) -> distinctness preserved, NOT densified. No host pacing.
+        regions.append(
+            BrainRegion(name="place_fs", n_neurons=int(n_fs), exc_fraction=0.0, internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+                        izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
+        pathways.append(
+            RegionPathway(from_region="place", to_region="place_fs", density=float(place_to_fs_density),
+                          weight_mean=float(place_to_fs_weight), weight_jitter=0.2, plastic=False))
+        pathways.append(
+            RegionPathway(from_region="place_fs", to_region="place", density=float(fs_to_place_density),
+                          weight_mean=float(fs_to_place_weight), weight_jitter=0.2, plastic=False))
     if include_actor:
         regions.append(BrainRegion(
             name="sensor_place_readout", n_neurons=int(n_sensor_place), exc_fraction=1.0,
@@ -235,9 +285,19 @@ def _build(seed, *, n_sensors, n_place, n_strio, n_snc, grid_size,
     cfg.reward_learning_rate = float(reward_learning_rate)
     cfg.current_reward_signal = 0.0       # BRAIN-BASED: the SNc FIRING is the signal, not a host scalar
     cfg.reward_baseline = 0.0
-    cfg.enable_nmda = bool(nmda_critic)
-    cfg.stdp_w_max = 40.0
+    cfg.enable_nmda = bool(nmda_critic or enable_volley)  # per-region mask restricts NMDA to the critic
+    # STDP soft-bound cap. STEP-2 VOLLEY: keep this LOW (~4-6) so the learned place->critic AMPA stays
+    # in the COINCIDENCE-DEPENDENT regime -- if w_near runs away (>~8) the rate-coded AMPA alone fires
+    # the critic and the jitter anti-cheat no longer collapses it (a rate leak; observed at the
+    # over-grown seed). Capping keeps the critic firing CONTINGENT on the synchronized volley.
+    cfg.stdp_w_max = float(stdp_w_max)
     cfg.fast_spike_reset = True
+    # === STEP-2 Route-D coincidence read-out (landed b980070a); default OFF (enable_volley=False) ===
+    if enable_volley:
+        cfg.enable_coincidence_detection = True
+        cfg.coincidence_k_threshold = float(coincidence_k)
+        cfg.coincidence_gain = float(coincidence_gain)
+        cfg.coincidence_plateau_strength = float(coincidence_plateau)
     if gabab:
         cfg.enable_gabab = True
         cfg.gabab_reversal_potential = -90.0
@@ -306,16 +366,28 @@ def _drive_landmarks(bridge, xp, sensor_idx_gpu, sensor_act, ablate=False):
 
 
 def _critic_rate_at_location(bridge, xp, sensor_idx_gpu, crit_idx_gpu, sensor_act, *,
-                             n_steps=120, warmup=30, ablate=False, freeze_lr=True):
+                             n_steps=120, warmup=30, ablate=False, freeze_lr=True, jitter=False):
     """Drive landmark_sensors at a location (-> place pool fires its ensemble -> critic), measure the
-    critic firing rate over a post-warmup window. Learning frozen so this is a pure read."""
+    critic firing rate over a post-warmup window. Learning frozen so this is a pure read.
+
+    jitter (THE coincidence anti-cheat, Branco-Hausser): de-synchronize the place drive by clamping
+    the sensors only every OTHER step (same active cells, same total drive, spikes spread across
+    alternating steps -> the FS-PING volley is destroyed). If the critic firing/grading SURVIVES
+    jitter it is rate, not coincidence -> NOT a real volley read."""
     n_crit = int(crit_idx_gpu.size)
     saved = bridge.core_config.reward_learning_rate
     if freeze_lr:
         bridge.core_config.reward_learning_rate = 0.0
-    _drive_landmarks(bridge, xp, sensor_idx_gpu, sensor_act, ablate=ablate)
+    if not jitter:
+        _drive_landmarks(bridge, xp, sensor_idx_gpu, sensor_act, ablate=ablate)
+    act_gpu = xp.asarray(sensor_act, dtype=xp.float32) if sensor_act is not None else None
     spk = 0; m = 0
     for t in range(n_steps):
+        if jitter:
+            # desync: sensor clamp ON only on even steps (place spikes scatter, no coincident volley)
+            bridge.cp_external_input_current[:] = 0.0
+            if (not ablate) and act_gpu is not None and (t % 2 == 0):
+                bridge.cp_external_input_current[sensor_idx_gpu] = act_gpu
         _tick(bridge)
         if t >= warmup:
             spk += int(bridge.cp_firing_states[crit_idx_gpu].sum()); m += 1
@@ -420,10 +492,20 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
              strio_to_snc_weight, snc_da_sensitivity, reward_learning_rate,
              gabab, gabab_propagation_strength, nmda_critic,
              sensor_drive_pa, sensor_sigma, actor_cortex_tonic_pa,
-             lesion=False, shuffle=False, ablate_sensors=False, verbose=True):
+             enable_volley=False, n_fs=160, place_to_fs_weight=16.0, place_to_fs_density=0.4,
+             fs_to_place_weight=8.0, fs_to_place_density=0.4,
+             coincidence_k=4.0, coincidence_gain=2.0, coincidence_plateau=80.0, readout_plateau=None,
+             stdp_w_max=40.0,
+             lesion=False, shuffle=False, ablate_sensors=False, jitter=False, verbose=True):
     log = print if verbose else (lambda *a, **k: None)
     from sim.backend import get_backend
     xp, bk = get_backend()
+    # Shared volley kwargs for both the main + critic-absent-twin builds.
+    _volley_kw = dict(enable_volley=bool(enable_volley), n_fs=int(n_fs),
+                      place_to_fs_weight=float(place_to_fs_weight), place_to_fs_density=float(place_to_fs_density),
+                      fs_to_place_weight=float(fs_to_place_weight), fs_to_place_density=float(fs_to_place_density),
+                      coincidence_k=float(coincidence_k), coincidence_gain=float(coincidence_gain),
+                      coincidence_plateau=float(coincidence_plateau), stdp_w_max=float(stdp_w_max))
 
     near_name = "near"
     far_names = [n for n in locations if n.startswith("far")]
@@ -440,7 +522,7 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
         strio_to_snc_weight=strio_to_snc_weight, snc_da_sensitivity=snc_da_sensitivity,
         reward_learning_rate=reward_learning_rate, gabab=gabab,
         gabab_tau_decay=150.0, gabab_propagation_strength=gabab_propagation_strength,
-        nmda_critic=nmda_critic)
+        nmda_critic=nmda_critic, **_volley_kw)
     _assert_cupy_regime(cfg, bk)
     build_s = time.time() - t0
 
@@ -530,7 +612,7 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
         strio_to_snc_weight=strio_to_snc_weight, snc_da_sensitivity=snc_da_sensitivity,
         reward_learning_rate=reward_learning_rate, gabab=gabab, gabab_tau_decay=150.0,
         gabab_propagation_strength=gabab_propagation_strength, nmda_critic=nmda_critic,
-        place_to_value_active=False)
+        place_to_value_active=False, **_volley_kw)
     _assert_cupy_regime(base_cfg, bk)
     base_idx = {n: xp.asarray(_idx(base_bridge, n)) for n in
                 ("landmark_sensors", "sensor_place_readout", "cortex_N", "cortex_E", "cortex_S", "cortex_W")}
@@ -595,11 +677,26 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
     # ════════════════════════════════════════════════════════════════
     # GATES
     # ════════════════════════════════════════════════════════════════
-    # 2a FIRE + 2b PLACE-GRADED: trained critic rate NEAR vs each FAR (sensor-driven, learning frozen)
+    # 2a FIRE + 2b PLACE-GRADED: trained critic rate NEAR vs each FAR (sensor-driven, learning frozen).
+    # Under --jitter, the place drive is de-synchronized at recall -> the volley collapses (the
+    # decisive coincidence anti-cheat: G_FIRE + G_GRADE must FAIL).
+    #
+    # READOUT-PLATEAU (2026-06-09): the Route-D coincidence count is WEIGHT-BLIND (c_i = #coincident
+    # spikes, not summed weights), so at the training plateau strength the critic fires at ANY volley
+    # (NEAR + FAR) -> grading washes out (~1.2x, the dense-blob ceiling). Biology: the NMDA plateau is a
+    # coincidence-GATED integration WINDOW -- it depolarizes the cell so the LEARNED AMPA weights decide
+    # threshold crossing. We model that by LOWERING the plateau at READ-OUT (a sub-threshold window) so
+    # the cell needs the learned NEAR AMPA (w~5) to fire and the unlearned FAR AMPA (w~0.6) can't. The
+    # strong plateau is kept during TRAINING (it bootstraps the post-spike that drives the DA-gated LTP).
+    # readout_plateau<=0 disables (keeps the training plateau -> the weight-blind baseline).
+    _saved_plateau = float(getattr(bridge.core_config, "coincidence_plateau_strength", 80.0))
+    if enable_volley and readout_plateau is not None and readout_plateau > 0:
+        bridge.core_config.coincidence_plateau_strength = float(readout_plateau)
     crit_near = _critic_rate_at_location(bridge, xp, sensor_idx_g, crit_idx_g, loc_sensor[near_name],
-                                         ablate=ablate_sensors)
+                                         ablate=ablate_sensors, jitter=jitter)
     crit_far_each = {fn: _critic_rate_at_location(bridge, xp, sensor_idx_g, crit_idx_g, loc_sensor[fn],
-                                                  ablate=ablate_sensors) for fn in far_names}
+                                                  ablate=ablate_sensors, jitter=jitter) for fn in far_names}
+    bridge.core_config.coincidence_plateau_strength = _saved_plateau
     crit_far = float(np.mean(list(crit_far_each.values())))
     crit_far_max = float(np.max(list(crit_far_each.values())))
     place_graded_ratio = crit_near / max(crit_far_max, 1e-3)   # vs the WORST (highest) far -> strict
@@ -670,6 +767,7 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
     primary = bool(fire and place_graded and weight_grew and actor_ok)
     return dict(
         seed=seed, backend=bk, lesion=lesion, shuffle=shuffle, ablate_sensors=ablate_sensors,
+        jitter=jitter, enable_volley=enable_volley,
         place_diff_location_cosine=place_diff_cos, place_sparsity=place_sparsity,
         n_neurons=int(cfg.num_neurons), n_synapses=int(bridge.cp_connections.nnz),
         n_place=int(place_idx.size), n_strio=int(crit_idx.size),
@@ -752,16 +850,43 @@ def main():
     ap.add_argument("--sensor-drive-pa", type=float, default=1500.0)
     ap.add_argument("--sensor-sigma", type=float, default=1.5)
     ap.add_argument("--actor-cortex-tonic-pa", type=float, default=400.0)
+    # ── STEP-2 VOLLEY (2026-06-09): the validated STEP-1 mechanism wired into the critic arm ──
+    # Default OFF -> the baseline (sparse-async place code, NO volley) reproduces the prior NEGATIVE.
+    # --enable-volley turns on the FS-PING synchronizer + the Route-D coincidence read-out at the
+    # STEP-1 GO operating point (n-place 800, re-tuned FS-PING, K=4, plateau 80).
+    ap.add_argument("--enable-volley", action="store_true",
+                    help="STEP-2: FS-PING gamma volley + Route-D coincidence read-out on the place->critic arm")
+    ap.add_argument("--n-fs", type=int, default=160, help="FS-PING pool size (~20%% of n-place)")
+    ap.add_argument("--place-to-fs-weight", type=float, default=16.0)
+    ap.add_argument("--place-to-fs-density", type=float, default=0.4)
+    ap.add_argument("--fs-to-place-weight", type=float, default=8.0)
+    ap.add_argument("--fs-to-place-density", type=float, default=0.4)
+    ap.add_argument("--coincidence-k", type=float, default=4.0, help="Route-D K threshold (MUST be > 1)")
+    ap.add_argument("--coincidence-gain", type=float, default=2.0)
+    ap.add_argument("--coincidence-plateau", type=float, default=80.0,
+                    help="TRAINING plateau strength (bootstraps the post-spike for DA-gated LTP)")
+    ap.add_argument("--readout-plateau", type=float, default=None,
+                    help="READ-OUT plateau strength (lowered -> sub-threshold integration window so the "
+                         "LEARNED AMPA decides firing -> grading via weight, not weight-blind coincidence). "
+                         "Default None = keep training plateau (weight-blind baseline).")
+    ap.add_argument("--stdp-w-max", type=float, default=40.0,
+                    help="STDP soft-bound cap on place->critic. VOLLEY: keep LOW (~4-6) so w_near stays "
+                         "coincidence-dependent (a runaway w_near rate-leaks past the jitter anti-cheat).")
     # controls
     ap.add_argument("--lesion", action="store_true", help="gate-2e: zero GABA_B mask -> gap must vanish")
     ap.add_argument("--shuffle", action="store_true",
                     help="anti-cheat a: permute place-cell->location mapping -> gates 2b+gap must FAIL")
     ap.add_argument("--ablate-sensors", action="store_true",
                     help="anti-cheat b: zero landmark sensors at recall -> grading must collapse")
+    ap.add_argument("--jitter", action="store_true",
+                    help="anti-cheat (coincidence): de-synchronize the place drive at recall -> the volley "
+                         "collapses -> gates 2a+2b must FAIL (proves coincidence, not rate)")
     ap.add_argument("--nmda-critic", action="store_true",
                     help="Option B fallback: per-region NMDA on the critic (only if plain FAILs)")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
+    if float(args.coincidence_k) <= 1.0:
+        raise AssertionError("ANTI-CHEAT: coincidence_k_threshold must be > 1 (a single input must not trigger).")
 
     seeds = [int(s) for s in args.seeds.split(",")] if args.seeds else [args.seed]
     grid_size = int(args.grid_size)
@@ -772,7 +897,9 @@ def main():
     mode = ("LESION (gate-2e)" if args.lesion else
             "SHUFFLE-CONTROL (anti-cheat a)" if args.shuffle else
             "SENSOR-ABLATION (anti-cheat b)" if args.ablate_sensors else
-            "PRIMARY (sparse-read place-graded critic)")
+            "JITTER-CONTROL (coincidence anti-cheat)" if args.jitter else
+            ("PRIMARY-VOLLEY (FS-PING + Route-D critic)" if args.enable_volley else
+             "PRIMARY (sparse-read place-graded critic)"))
     print("=" * 78)
     print("Stage-2 de-risk: SPARSE-read MSN-D1 value critic on the self-organized place code")
     print(f"  mode={mode}  seeds={seeds}  grid={grid_size}")
@@ -802,14 +929,22 @@ def main():
         gabab=True, gabab_propagation_strength=float(args.gabab_propagation_strength),
         nmda_critic=bool(args.nmda_critic), sensor_drive_pa=float(args.sensor_drive_pa),
         sensor_sigma=float(args.sensor_sigma), actor_cortex_tonic_pa=float(args.actor_cortex_tonic_pa),
-        lesion=bool(args.lesion), shuffle=bool(args.shuffle), ablate_sensors=bool(args.ablate_sensors))
+        enable_volley=bool(args.enable_volley), n_fs=int(args.n_fs),
+        place_to_fs_weight=float(args.place_to_fs_weight), place_to_fs_density=float(args.place_to_fs_density),
+        fs_to_place_weight=float(args.fs_to_place_weight), fs_to_place_density=float(args.fs_to_place_density),
+        coincidence_k=float(args.coincidence_k), coincidence_gain=float(args.coincidence_gain),
+        coincidence_plateau=float(args.coincidence_plateau),
+        readout_plateau=(float(args.readout_plateau) if args.readout_plateau is not None else None),
+        stdp_w_max=float(args.stdp_w_max),
+        lesion=bool(args.lesion), shuffle=bool(args.shuffle), ablate_sensors=bool(args.ablate_sensors),
+        jitter=bool(args.jitter))
 
     results = []
     for s in seeds:
         print(f"\n[stage2 seed={s}] {mode}:")
         r = run_seed(s, **kw)
         results.append(r)
-        if not args.lesion and not args.shuffle and not args.ablate_sensors:
+        if not args.lesion and not args.shuffle and not args.ablate_sensors and not args.jitter:
             print(f"  => seed {s} PRIMARY {'PASS' if r['primary'] else 'FAIL'} "
                   f"[fire {r['fire']}, place-graded {r['place_graded']}, LTP {r['weight_grew']}, "
                   f"actor-ok {r['actor_not_perturbed']}]")
@@ -835,7 +970,7 @@ def main():
     print(f"  2d ACTOR-NOT-PERTURBED      : {n_actor}/{N}  ratio {_agg('actor_ratio')['values']}")
     print(f"  2e SNc state-specific gap   : {n_gap}/{N}  gap {_agg('snc_gap_ratio')['values']} "
           f"(LESION/SHUFFLE expect 0/N; primary expects >=N/2)")
-    if not args.lesion and not args.shuffle and not args.ablate_sensors:
+    if not args.lesion and not args.shuffle and not args.ablate_sensors and not args.jitter:
         print(f"  PRIMARY (2a+2b+2c+2d)      : {n_primary}/{N}")
         verdict = ("PASS" if n_primary == N else "PARTIAL" if n_primary > 0 else "NEGATIVE")
     else:

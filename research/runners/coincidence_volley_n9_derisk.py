@@ -121,7 +121,8 @@ def _build(seed, *, n_sensors, n_source, n_target, src_drive_weight, src_drive_d
            s2t_weight, s2t_density, s2t_jitter, k_threshold, gain, plateau_strength,
            enable_coincidence=True, sync="pacing", n_fs=80,
            place_to_fs_weight=24.0, place_to_fs_density=0.6,
-           fs_to_place_weight=14.0, fs_to_place_density=0.6, no_rhythm=False, dt_ms=1.0):
+           fs_to_place_weight=14.0, fs_to_place_density=0.6, no_rhythm=False, dt_ms=1.0,
+           place_homeostasis=False, homeostasis_target_rate=0.04, homeostasis_adapt_rate=0.004):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from sim.regions import BrainRegion, RegionPathway
@@ -131,8 +132,17 @@ def _build(seed, *, n_sensors, n_source, n_target, src_drive_weight, src_drive_d
         BrainRegion(name="src_sensors", n_neurons=int(n_sensors), exc_fraction=1.0, internal_density=0.0,
                     exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
                     izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name),
+        # The place pool (hippocampal pyramidal). With place_homeostasis ON, per-region INTRINSIC
+        # homeostatic plasticity (Desai 1999 / Turrigiano; BrainRegion.enable_homeostasis, runs even
+        # with global homeostasis OFF, deterministic) regulates each cell's active fraction toward
+        # homeostasis_target_rate (~2-4%) -> pins the sparse code <=5% across seeds/locations (fixing
+        # the threshold-only seed/location fragility). LEGITIMATE intrinsic-excitability mechanism, NOT
+        # a threshold-collapse rescue (it targets a FIRING RATE, not "drop threshold until it fires");
+        # the place pool still fires ONLY from the sensor-routed synaptic current. Location-BLIND (same
+        # target rate for every place cell regardless of location) -> sets HOW-MUCH, not WHICH.
         BrainRegion(name="source", n_neurons=int(n_source), exc_fraction=1.0, internal_density=0.0,
                     exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+                    enable_homeostasis=bool(place_homeostasis),
                     izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name),
         # MSN-D1 target: enable_nmda=True so the coincidence subunit's Mg2+ block is active; depolarized
         # E_GABA (-60) like the C1/N9 build.
@@ -191,8 +201,16 @@ def _build(seed, *, n_sensors, n_source, n_target, src_drive_weight, src_drive_d
     cfg.coincidence_k_threshold = float(k_threshold)
     cfg.coincidence_gain = float(gain)
     cfg.coincidence_plateau_strength = float(plateau_strength)
+    # Per-region intrinsic homeostasis (Desai/Turrigiano) target/rate. Only CONSUMED when the source
+    # region opts in (enable_homeostasis=True above); GLOBAL homeostasis stays OFF for regime fidelity.
+    # Faster adapt rate than the engine default (0.0005) so the place pool's threshold-EMA converges
+    # within the short settling window. The MSN-D1 target does NOT opt into homeostasis (it must fire
+    # from the coincidence current, not threshold collapse).
+    cfg.homeostasis_target_rate = float(homeostasis_target_rate)
+    cfg.homeostasis_threshold_adapt_rate = float(homeostasis_adapt_rate)
     # === deterministic-nav regime ===
-    cfg.enable_homeostasis = False
+    cfg.enable_homeostasis = False         # GLOBAL homeostasis OFF (regime fidelity); the place pool
+                                            # uses PER-REGION homeostasis only when place_homeostasis=True
     cfg.enable_short_term_plasticity = False
     cfg.enable_ou_process = False
     cfg.enable_conductance_noise = False
@@ -348,6 +366,8 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_source, n_targe
              train_passes, train_steps_per_loc, record_steps,
              sync, gamma_hz, pace_amp_pA, pace_duty, n_fs,
              place_to_fs_weight, place_to_fs_density, fs_to_place_weight, fs_to_place_density,
+             place_homeostasis=False, homeostasis_target_rate=0.04, homeostasis_adapt_rate=0.004,
+             homeostasis_settle_passes=0,
              enable_coincidence=True, jitter_inputs=False, no_rhythm=False, verbose=True):
     log = print if verbose else (lambda *a, **k: None)
     from sim.backend import get_backend
@@ -364,7 +384,8 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_source, n_targe
         enable_coincidence=enable_coincidence, sync=sync, n_fs=n_fs,
         place_to_fs_weight=place_to_fs_weight, place_to_fs_density=place_to_fs_density,
         fs_to_place_weight=fs_to_place_weight, fs_to_place_density=fs_to_place_density,
-        no_rhythm=no_rhythm)
+        no_rhythm=no_rhythm, place_homeostasis=place_homeostasis,
+        homeostasis_target_rate=homeostasis_target_rate, homeostasis_adapt_rate=homeostasis_adapt_rate)
     _assert_cupy_regime(cfg, backend_name)
     rm = bridge.region_manager
     sensor_idx = np.asarray(rm.indices("src_sensors"), dtype=np.int64)
@@ -394,6 +415,33 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_source, n_targe
     bridge.set_plasticity_gate("src_drive", 0.0)
     bridge.cp_external_input_current[:] = 0.0
     _step(bridge, 30)
+
+    # ── Per-region intrinsic-homeostasis settling (Desai/Turrigiano) ──
+    # With src_drive frozen, cycle the location clamps so the place pool's threshold-EMA converges
+    # toward homeostasis_target_rate at EVERY location -> pins the active fraction <=5% uniformly
+    # (kills the per-location/per-seed sparsity variance that left the FS-PING just over the bar).
+    # The FS-PING synchronizer is active during settling (sync='ping') so homeostasis adapts to the
+    # realistic gamma-paced firing pattern, not a tonic one. Then FREEZE the threshold (null the
+    # per-region mask) so measurement reads the CONVERGED sparse code (no drift during recording).
+    settle_active = bool(place_homeostasis and homeostasis_settle_passes > 0
+                         and bridge.cp_homeostasis_neuron_mask is not None)
+    if settle_active:
+        log(f"  [seed {seed}] homeostasis settling: {homeostasis_settle_passes} passes "
+            f"(target_rate={homeostasis_target_rate}, adapt={homeostasis_adapt_rate})")
+        rng_h = np.random.default_rng(seed + 7919)
+        for _hp in range(int(homeostasis_settle_passes)):
+            order = list(range(len(loc_acts)))
+            rng_h.shuffle(order)
+            for li in order:
+                bridge.cp_external_input_current[:] = 0.0
+                _step(bridge, 15)
+                _set_clamp(bridge, xp, sens_arr, xp.asarray(loc_acts[li], dtype=xp.float32))
+                _step(bridge, train_steps_per_loc)
+        # FREEZE: stash + null the per-region homeostasis mask so thresholds hold during measure.
+        _frozen_homeo_mask = bridge.cp_homeostasis_neuron_mask
+        bridge.cp_homeostasis_neuron_mask = None
+        bridge.cp_external_input_current[:] = 0.0
+        _step(bridge, 30)
 
     afferents = _afferent_lists(bridge, source_idx, target_idx)
 
@@ -471,6 +519,10 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_source, n_targe
         "target_diff_cos_mean": tgt_diff_cos_mean,
         "per_loc_target_max_spk": tgt_max_spk, "per_loc_volley_max_ci": per_loc_volley_max,
         "per_loc_source_sparsity": sparsities,
+        "place_homeostasis": bool(place_homeostasis),
+        "homeostasis_target_rate": float(homeostasis_target_rate),
+        "homeostasis_adapt_rate": float(homeostasis_adapt_rate),
+        "homeostasis_settle_passes": int(homeostasis_settle_passes),
         "G_SPARSE": g_sparse, "G_VOLLEY": g_volley, "G_FIRE": g_fire, "G_DISTINCT": g_distinct,
     }
 
@@ -503,6 +555,25 @@ def main():
     ap.add_argument("--place-to-fs-density", type=float, default=0.6)
     ap.add_argument("--fs-to-place-weight", type=float, default=14.0)
     ap.add_argument("--fs-to-place-density", type=float, default=0.6)
+    # Per-region intrinsic homeostasis on the place pool (Desai/Turrigiano) -- pins sparsity <=5%
+    # across seeds/locations. LEGITIMATE intrinsic excitability (targets a FIRING RATE), not a
+    # threshold-collapse rescue. Settles with the FS-PING active, then freezes for measurement.
+    # NOTE (2026-06-09 STEP-1 finding): threshold-EMA homeostasis is the WRONG sparsity lever here --
+    # it structurally DENSIFIES sparse codes (most cells are silent at any location -> homeostasis sees
+    # them as "too quiet" -> drops their thresholds -> all-fire). Confirmed at every target-rate tried
+    # (densifies to 100%); matches the placecode_selforg_stage1 homeo runs (5.7-10% vs 3.4% canonical).
+    # The sparsity FIX that worked is SCALING the place pool (n-source 800: 5%-sparse = 40 active ->
+    # thicker volley fires the MSN at <=5%) with re-tuned FS-PING -- NOT homeostasis. Kept opt-in /
+    # default-off as documented infrastructure.
+    ap.add_argument("--place-homeostasis", action="store_true",
+                    help="per-region intrinsic homeostasis on the place pool (Desai/Turrigiano) -- "
+                         "DENSIFIES sparse codes (STEP-1 finding); use n-source scaling instead")
+    ap.add_argument("--homeostasis-target-rate", type=float, default=0.035,
+                    help="target active fraction for the place pool (~3-4%% -> sparse code <=5%%)")
+    ap.add_argument("--homeostasis-adapt-rate", type=float, default=0.004,
+                    help="threshold-EMA adapt rate (faster than engine default 0.0005 for short settle)")
+    ap.add_argument("--homeostasis-settle-passes", type=int, default=6,
+                    help="settling passes (cycle clamps, FS-PING on) for the threshold-EMA to converge")
     # topology (matches the wall probe)
     ap.add_argument("--n-source", type=int, default=400)
     ap.add_argument("--n-target", type=int, default=20)
@@ -551,6 +622,10 @@ def main():
                         pace_duty=args.pace_duty, n_fs=args.n_fs,
                         place_to_fs_weight=args.place_to_fs_weight, place_to_fs_density=args.place_to_fs_density,
                         fs_to_place_weight=args.fs_to_place_weight, fs_to_place_density=args.fs_to_place_density,
+                        place_homeostasis=args.place_homeostasis,
+                        homeostasis_target_rate=args.homeostasis_target_rate,
+                        homeostasis_adapt_rate=args.homeostasis_adapt_rate,
+                        homeostasis_settle_passes=args.homeostasis_settle_passes,
                         enable_coincidence=(not args.ablate_subunit), jitter_inputs=args.jitter_inputs,
                         no_rhythm=args.no_rhythm, verbose=True)
 

@@ -1,0 +1,178 @@
+{
+  "probe": "coincidence_volley_n9_derisk",
+  "design_doc": "2026-06-09-route-T-volley-synchronization-design.md",
+  "sync": "ping",
+  "mode": "volley",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "K_values": [
+    4.0
+  ],
+  "elapsed_seconds": 62.7,
+  "G_FIRE_pass_count": 2,
+  "G_VOLLEY_pass_count": 3,
+  "G_DISTINCT_pass_count": 1,
+  "G_SPARSE_pass_count": 0,
+  "n_runs": 3,
+  "per_run": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "sync": "ping",
+      "mode": "volley",
+      "coincidence": true,
+      "jitter_inputs": false,
+      "no_rhythm": false,
+      "k_threshold": 4.0,
+      "gamma_hz": 40.0,
+      "pace_amp_pA": 60.0,
+      "pace_duty": 0.12,
+      "driven_regions": [
+        "src_sensors"
+      ],
+      "pace_pulse_audit": [],
+      "source_sparsity_mean": 0.06708333333333333,
+      "source_active_rate_mean": 0.008333333333333333,
+      "source_diff_cos_mean": 0.12196353929590874,
+      "volley_per_step_max_ci_p90_mean": 0.16666666666666666,
+      "volley_per_step_max_ci_max": 7,
+      "target_max_cell_spk_per_step_mean": 0.011111111111111112,
+      "target_diff_cos_mean": 0.10230704403160404,
+      "per_loc_target_max_spk": [
+        0.016666666666666666,
+        0.0,
+        0.0,
+        0.016666666666666666,
+        0.025,
+        0.008333333333333333
+      ],
+      "per_loc_volley_max_ci": [
+        6,
+        4,
+        4,
+        6,
+        7,
+        7
+      ],
+      "per_loc_source_sparsity": [
+        0.07,
+        0.0525,
+        0.0525,
+        0.0725,
+        0.0875,
+        0.0675
+      ],
+      "G_SPARSE": false,
+      "G_VOLLEY": true,
+      "G_FIRE": true,
+      "G_DISTINCT": true
+    },
+    {
+      "seed": 43,
+      "backend": "cupy",
+      "sync": "ping",
+      "mode": "volley",
+      "coincidence": true,
+      "jitter_inputs": false,
+      "no_rhythm": false,
+      "k_threshold": 4.0,
+      "gamma_hz": 40.0,
+      "pace_amp_pA": 60.0,
+      "pace_duty": 0.12,
+      "driven_regions": [
+        "src_sensors"
+      ],
+      "pace_pulse_audit": [],
+      "source_sparsity_mean": 0.0725,
+      "source_active_rate_mean": 0.008333333333333333,
+      "source_diff_cos_mean": 0.09190163870409697,
+      "volley_per_step_max_ci_p90_mean": 0.0,
+      "volley_per_step_max_ci_max": 7,
+      "target_max_cell_spk_per_step_mean": 0.015277777777777779,
+      "target_diff_cos_mean": 0.1588812239107962,
+      "per_loc_target_max_spk": [
+        0.0,
+        0.0,
+        0.016666666666666666,
+        0.016666666666666666,
+        0.03333333333333333,
+        0.025
+      ],
+      "per_loc_volley_max_ci": [
+        4,
+        4,
+        7,
+        7,
+        7,
+        7
+      ],
+      "per_loc_source_sparsity": [
+        0.06,
+        0.0625,
+        0.08,
+        0.07,
+        0.0925,
+        0.07
+      ],
+      "G_SPARSE": false,
+      "G_VOLLEY": true,
+      "G_FIRE": true,
+      "G_DISTINCT": false
+    },
+    {
+      "seed": 44,
+      "backend": "cupy",
+      "sync": "ping",
+      "mode": "volley",
+      "coincidence": true,
+      "jitter_inputs": false,
+      "no_rhythm": false,
+      "k_threshold": 4.0,
+      "gamma_hz": 40.0,
+      "pace_amp_pA": 60.0,
+      "pace_duty": 0.12,
+      "driven_regions": [
+        "src_sensors"
+      ],
+      "pace_pulse_audit": [],
+      "source_sparsity_mean": 0.059166666666666666,
+      "source_active_rate_mean": 0.008333333333333333,
+      "source_diff_cos_mean": 0.11203614492048418,
+      "volley_per_step_max_ci_p90_mean": 0.0,
+      "volley_per_step_max_ci_max": 8,
+      "target_max_cell_spk_per_step_mean": 0.001388888888888889,
+      "target_diff_cos_mean": 0.0,
+      "per_loc_target_max_spk": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.008333333333333333,
+        0.0
+      ],
+      "per_loc_volley_max_ci": [
+        5,
+        3,
+        5,
+        6,
+        8,
+        5
+      ],
+      "per_loc_source_sparsity": [
+        0.0575,
+        0.0475,
+        0.0625,
+        0.0675,
+        0.075,
+        0.045
+      ],
+      "G_SPARSE": false,
+      "G_VOLLEY": true,
+      "G_FIRE": false,
+      "G_DISTINCT": false
+    }
+  ]
+}
