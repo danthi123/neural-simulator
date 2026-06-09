@@ -83,9 +83,22 @@ COUNT vs WEIGHTED at the **identical** learned weights (seed 42, 24 passes, w_ne
 
 Same weights, opposite outcome: the count plateau is anti-graded (the position-blind dense-blob floor fires far MORE than near), the weighted plateau grades. **This unambiguously isolates the weighted-coincidence plateau as the grading mechanism** — it is not the learned AMPA (identical in both arms).
 
+## 🎉 Resolution — gating the FS-PING OFF during self-organization gives clean PRIMARY
+
+The overlap is **not** from cell count (n-place 400 also gave diff-cos 0.195, and its thinner volley went silent). It is the **FS-PING gamma cycling during self-organization**: the cycling recruits extra cells, densifying (3.65% → 4.8–7.2%) and blurring (0.064 → 0.20) the place code. The validated Stage-1 had no FS-PING and reached 0.064.
+
+**The fix (runner-only, using the landed `transmission_gate` infra):** hold the FS→place inhibition CLOSED during self-org (clean threshold-WTA → sparse DISTINCT fields), OPEN it for the volley read-out (the gamma packing the coincidence plateau needs). Seed 42:
+
+| | overlap | NEAR | G_GRADE | G_LTP | PRIMARY |
+|---|---|---|---|---|---|
+| FS-PING on during self-org (24 passes) | diff-cos 0.200 | 16.4 | 3.69× ✓ | 1.71× ✗ | FAIL |
+| **FS-PING gated off during self-org** | **diff-cos 0.120** | **31.5** | **3.15× ✓** | **2.56× ✓** | **PASS** |
+
+The distinct code (0.120) removes BOTH failure modes simultaneously — far_a no longer over-leaks (G_GRADE) AND the shared near/far cells no longer co-potentiate w_far (G_LTP). w_near 0.50→6.41, w_far 0.50→2.50. Multi-seed validation in flight `[3-seed result pending]`.
+
 ## Recommendation
 
-The weighted-coincidence sim/ edit is **sound, additive, byte-identity-proven, and the decisive cause of value-grading** (count 0.52× → weighted 3.69× at identical weights; G_GRADE 3/3 achievable). Commit it on owner byte-review. The residual full-PRIMARY gap is **upstream place-code distinctness** (n-place 800 gives diff-cos 0.16–0.20; the validated Stage-1 reached 0.064 at n-place 400) — reducing the near/far ensemble overlap is the honest next lever (it removes BOTH the far-leak and the w_far-growth failure modes simultaneously), a Stage-1 perception-quality sub-arc, NOT a plateau change. N9 value-of-location is substantially advanced: the critic fires + learns + GRADES on the sparse-distinct place code; the residual is cleanly localized to place-code overlap.
+The weighted-coincidence sim/ edit is **sound, additive, byte-identity-proven, and the decisive cause of value-grading** (count 0.52× → weighted 3.69× at identical weights). Commit it on owner byte-review. Combined with FS-gating during self-org (runner-only, landed `transmission_gate` infra), the full N9 value-of-location PRIMARY clears (seed 42; multi-seed pending): the MSN-D1 critic **fires + learns + GRADES** value-of-location on the self-organized sparse-distinct place code, with all anti-cheats accounted for (place-shuffle holds; the Stage-2 jitter is an invalid rate-halver, coincidence validated upstream at STEP-1). On a multi-seed GO, the next step is the 6-seed nav A/B (neural critic vs the host-scaffold baseline).
 
 ## Files
 
