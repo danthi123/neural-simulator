@@ -150,8 +150,21 @@ def build_bg_brain_regions(
     n_striosome_value: int = 80,            # critic pool size (GABAergic MSN-D1)
     critic_cortex_it_to_value_weight: float = 3.0,   # plastic afferent init weight (STDP grows V)
     critic_cortex_it_to_value_density: float = 0.6,
-    critic_value_to_snc_weight: float = 2.5,         # GABA_B inhibitory critic->SNc weight
+    critic_value_to_snc_weight: float = 10.0,        # GABA_B inhibitory critic->SNc weight (de-risk PASS value)
     critic_value_to_snc_density: float = 0.5,
+    # ── 2026-06-09 VALIDATED redesign (navfaithful-afferent-critic-homeostasis PASS) ──
+    # The critic afferent is a DEDICATED DENSE `vs_place_context` region (a grid-32-tuned
+    # Gaussian place code so 30-80 cells fire/location), NOT the SPARSE actor
+    # `sensor_place_readout` (~1-3 cells) which provably can't fire the MSN critic. Per-region
+    # homeostasis (intrinsic homeostatic plasticity; the committed 89b8d909 sim/ edit) is set
+    # on BOTH `vs_place_context` AND `striosome_value` (GLOBAL cfg.enable_homeostasis stays
+    # OFF — deterministic regime preserved). This is the exact wiring the de-risk PASSED 3/3
+    # (snc_stageb_critic_probe_navfaithful.py --afferent-homeostasis): critic ~1.3-1.5 Hz,
+    # place code sharply graded (~59 Hz near vs 0 Hz far), GABA_B value subtraction opens.
+    n_vs_place_context: int = 200,           # dense dedicated place-context afferent (feeds ONLY the critic)
+    vs_place_to_value_weight: float = 0.2,   # vs_place_context->striosome_value plastic INIT weight (de-risk PASS: STDP grows 0.20->0.58)
+    vs_place_to_value_density: float = 0.5,
+    enable_critic_homeostasis: bool = False, # per-region homeostasis on vs_place_context + striosome_value
     enable_cluster_a_closed_loop: bool = False,  # Cluster A: hyperdirect + thal->cortex
     n_gpi_per_action: int = 10,
     n_stn: int = 20,
@@ -888,6 +901,27 @@ def build_bg_brain_regions(
     # per-action str_striosome_* pools, which are Q(s,a)-shaped and action-cortex
     # driven). Mirrors the validated CPU de-risk's striosome_value recipe.
     if enable_neural_critic:
+        # The DEDICATED DENSE place-context afferent (2026-06-09 VALIDATED redesign). A
+        # grid-32-tuned Gaussian place code drive-injected each nav step (wide sigma => 30-80
+        # cells fire/location, the convergent-excitation up-state the SPARSE actor place code
+        # ~1-3 cells cannot deliver). RS_CORTICAL_PYRAMIDAL (excitable) + per-region homeostasis
+        # so it reaches a firing range under the deterministic regime. Feeds ONLY the critic
+        # (no edge to the actor cortex — actor-not-perturbed gate-4 of the de-risk: ratio 1.000).
+        # Mirrors snc_stageb_critic_probe_navfaithful.py:_build_navfaithful_bridge vs_place_context.
+        regions.append(BrainRegion(
+            name="vs_place_context",
+            n_neurons=n_vs_place_context,
+            exc_fraction=1.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            # Per-region homeostasis on the AFFERENT (committed sim/ edit 89b8d909). The forensic
+            # showed the global-homeostasis "fix" lifted V by firing the afferent harder (lowering
+            # its threshold); per-region homeostasis on the afferent reproduces that faithfully.
+            # Place-blindness risk did NOT materialize (de-risk gate-5: ~59 Hz near vs 0 Hz far) —
+            # a cell with ~0 drive at FAR can't cross even a lowered threshold. GLOBAL stays OFF.
+            enable_homeostasis=bool(enable_critic_homeostasis),
+        ))
         regions.append(BrainRegion(
             name="striosome_value",
             n_neurons=n_striosome_value,
@@ -897,6 +931,11 @@ def build_bg_brain_regions(
             weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
             syn_reversal_potential_i_override=-60.0,  # MSN GABA_A reversal
+            # Per-region homeostasis on the CRITIC (committed sim/ edit 89b8d909). Intrinsic
+            # homeostatic plasticity lets the under-active MSN-D1 reach a firing range from its
+            # place afferent. GLOBAL cfg.enable_homeostasis stays False (deterministic regime
+            # preserved). The actor regions DO NOT set this — only the critic gets the mask.
+            enable_homeostasis=bool(enable_critic_homeostasis),
         ))
 
     # Cluster D v1 (2026-04-29): hippocampus trisynaptic loop.
@@ -1397,23 +1436,19 @@ def build_bg_brain_regions(
     # code, not a coordinate handed to a formula); it must NOT be a
     # coordinate/goal-cell region.
     if enable_neural_critic:
-        if not enable_hippocampus:
-            raise ValueError(
-                "--enable-neural-critic requires the position-SENSITIVE place "
-                "code `sensor_place_readout` as the value-critic afferent (the "
-                "dorsal 'where' / hippocampal place stream that biology uses for "
-                "spatial value; Houk-Adams-Barto 1995, Lansink 2009). It only "
-                "exists with --enable-place-goal-readout (alias --hippocampus). "
-                "Enable it. (The prior `cortex_it` afferent was the "
-                "position-INVARIANT ventral stream — inactive in nav AND wrong "
-                "for a value-of-location; see the 2026-06-08 redesign research.)"
-            )
-        # Anti-cheat provenance assertion: the critic reads a perceived-position
-        # PLACE-cell population, never a coordinate/goal-cell region. (goal_cells
-        # / ppc_goal_input are goal-vector codes — not the agent's perceived
-        # state of WHERE IT IS — so they are excluded here to keep V a true
-        # value-of-current-location read off the place code.)
-        _critic_afferent = "sensor_place_readout"
+        # 2026-06-09 VALIDATED redesign: the critic afferent is the DEDICATED DENSE
+        # `vs_place_context` (built above), drive-injected each nav step with the agent's
+        # perceived (x,y) as a grid-32 Gaussian place code. This is the dorsal 'where' /
+        # hippocampal place stream biology uses for spatial value (Houk-Adams-Barto 1995,
+        # Lansink 2009), but a DEDICATED dense version (not the SPARSE actor
+        # `sensor_place_readout` ~1-3 cells, which provably can't fire the MSN critic at ANY
+        # weight — the 2026-06-08 calibration NEGATIVE). The dense afferent is self-contained
+        # (its own region + drive injection), so --enable-place-goal-readout is no longer a
+        # hard requirement for the critic itself (the flagship still enables it for the actor).
+        # Anti-cheat provenance: vs_place_context is a perceived-POSITION population code (a
+        # place code rendered from (x,y), NOT a coordinate handed to a formula), never a
+        # coordinate/goal-cell region.
+        _critic_afferent = "vs_place_context"
         assert _critic_afferent not in ("goal_cells", "ppc_goal_input"), (
             "neural-critic anti-cheat: the value critic must read the perceived "
             "place code, not a coordinate/goal-cell region; got "
@@ -1421,8 +1456,8 @@ def build_bg_brain_regions(
         )
         pathways.append(RegionPathway(
             from_region=_critic_afferent, to_region="striosome_value",
-            density=float(critic_cortex_it_to_value_density),
-            weight_mean=float(critic_cortex_it_to_value_weight),
+            density=float(vs_place_to_value_density),
+            weight_mean=float(vs_place_to_value_weight),
             weight_jitter=0.5, plastic=True, plasticity_gate="value_input",
         ))
         # critic -> SNc GABA_B subtraction. transmission_gate="critic_snc_window"
@@ -2733,8 +2768,20 @@ def run_moving_goal_episode(
     #    sigma widened via --hippocampus-drive-sigma at the run level). All runner-
     #    side; the MSN-D1 default is preserved when the override is None.
     critic_neuron_type: str = None,            # override striosome_value izh type (None=keep MSN-D1)
-    critic_afferent_weight: float = 3.0,       # sensor_place_readout->striosome_value init weight
+    critic_afferent_weight: float = 3.0,       # (legacy 2026-06-08) sensor_place_readout->value weight
     critic_afferent_density: float = 0.6,
+    # ── 2026-06-09 VALIDATED redesign (navfaithful-afferent-critic-homeostasis PASS) ──
+    # The critic afferent is now the DEDICATED DENSE `vs_place_context` (grid-32 place code,
+    # 30-80 cells/location), fired into a useful range by per-region homeostasis on BOTH the
+    # afferent AND the MSN-D1 critic (GLOBAL homeostasis stays OFF). This SUPERSEDES the
+    # 2026-06-08 RS-critic-type + raised-sensor-afferent-weight calibration above (which the
+    # de-risk arc showed could not, on its own, fire the MSN critic from the SPARSE actor place
+    # code under the deterministic regime). With this on, --critic-neuron-type stays None (the
+    # critic keeps its MSN-D1 default; homeostasis — not the type swap — fires it).
+    enable_critic_homeostasis: bool = False,   # per-region homeostasis on vs_place_context + critic
+    n_vs_place_context: int = 200,             # dense dedicated place-context afferent size
+    vs_place_to_value_weight: float = 0.2,     # vs_place_context->striosome_value plastic INIT weight (STDP grows V up)
+    vs_place_to_value_density: float = 0.5,
     # Stage 2 windowed GABA_B (2026-06-08 redesign): gate the striosome_value->snc
     # GABA_B current to a bounded LEAD window into each reward evaluation so the
     # slow conductance pre-builds ~1 tau before reward but does NOT integrate
@@ -3217,6 +3264,11 @@ def run_moving_goal_episode(
         # to the returned region below, after build, to keep the build signature stable).
         critic_cortex_it_to_value_weight=critic_afferent_weight,
         critic_cortex_it_to_value_density=critic_afferent_density,
+        # 2026-06-09 VALIDATED redesign: the dense dedicated afferent + per-region homeostasis.
+        enable_critic_homeostasis=enable_critic_homeostasis,
+        n_vs_place_context=n_vs_place_context,
+        vs_place_to_value_weight=vs_place_to_value_weight,
+        vs_place_to_value_density=vs_place_to_value_density,
         visual_n_orientations=visual_n_orientations,
         visual_n_frequencies=visual_n_frequencies,
         visual_n_positions_per_dim=visual_n_positions_per_dim,
@@ -3279,6 +3331,33 @@ def run_moving_goal_episode(
     else:
         hippo_pref_x = None
         hippo_pref_y = None
+
+    # Pre-compute the DEDICATED DENSE `vs_place_context` afferent's preferred (x,y) tiling +
+    # its wide place-code sigma (2026-06-09 VALIDATED redesign). Mirrors the de-risk probe's
+    # _grid_prefs: a near-square sub-grid of side=round(sqrt(N)) tiling [0,grid_size)^2,
+    # padded/truncated to exactly N cells. The wide sigma (grid_size/8 => 4.0 at grid-32, the
+    # de-risk's validated value) makes 30-80 cells fire per location (the convergent-excitation
+    # up-state), UNLIKE the actor's narrow hippocampus_drive_sigma=0.5 (~1-3 cells). Drive-
+    # injected each nav step (see the nav loop). Built only when the neural critic is on.
+    if enable_neural_critic:
+        _vs_side = int(round(n_vs_place_context ** 0.5))
+        _vs_xs = np.linspace(0.0, grid_size - 1.0, _vs_side, dtype=np.float32)
+        _vs_ys = np.linspace(0.0, grid_size - 1.0, _vs_side, dtype=np.float32)
+        _vs_gx, _vs_gy = np.meshgrid(_vs_xs, _vs_ys)
+        _vs_px = _vs_gx.ravel(); _vs_py = _vs_gy.ravel()
+        if _vs_px.size < n_vs_place_context:
+            _reps = int(np.ceil(n_vs_place_context / max(_vs_px.size, 1)))
+            _vs_px = np.tile(_vs_px, _reps)[:n_vs_place_context]
+            _vs_py = np.tile(_vs_py, _reps)[:n_vs_place_context]
+        vs_place_pref_x = _vs_px[:n_vs_place_context].copy()
+        vs_place_pref_y = _vs_py[:n_vs_place_context].copy()
+        vs_place_sigma = float(grid_size) / 8.0       # 4.0 at grid-32 (de-risk validated)
+        vs_place_drive_max_pA = 800.0                 # de-risk validated drive
+    else:
+        vs_place_pref_x = None
+        vs_place_pref_y = None
+        vs_place_sigma = None
+        vs_place_drive_max_pA = None
 
     # Pre-compute beacon sensor preferred directions (Item 1 Stage 1).
     # Sensors evenly distributed in 2D — for n=8: N, NE, E, SE, S, SW, W, NW.
@@ -3730,10 +3809,11 @@ def run_moving_goal_episode(
     striov_rate_log = []          # per-trial striosome_value spike count (reward window)
     critic_weight_initial = None  # mean cortex_it->striosome_value weight at start
 
-    # AFFERENT RE-POINTED 2026-06-08: the value critic now reads the place code
-    # `sensor_place_readout` (dorsal/place stream), not the inactive ventral
-    # `cortex_it`. The weight reader + the instrumentation below follow.
-    _critic_afferent_region = "sensor_place_readout"
+    # AFFERENT 2026-06-09 VALIDATED redesign: the value critic reads the DEDICATED DENSE
+    # `vs_place_context` place-context code (drive-injected each nav step), NOT the SPARSE
+    # actor `sensor_place_readout` (which can't fire the MSN critic). The weight reader +
+    # the instrumentation below follow this afferent.
+    _critic_afferent_region = "vs_place_context"
 
     def _mean_critic_weight():
         """Mean weight of the <afferent>->striosome_value edges in the CSR.
@@ -4782,6 +4862,24 @@ def run_moving_goal_episode(
             bridge.cp_external_input_current[region_indices_cp["sensor_place_readout"]] = cp.float32(0.0)
             bridge.cp_external_input_current[region_indices_cp["ppc_goal_input"]] = cp.float32(0.0)
 
+        # === DEDICATED DENSE value-critic afferent drive (2026-06-09 VALIDATED redesign) ===
+        # Render the agent's perceived (x,y) into the `vs_place_context` place code EACH nav step
+        # (a grid-32 Gaussian over the cells' preferred (x,y), WIDE sigma => 30-80 cells fire/
+        # location — the convergent-excitation up-state the SPARSE actor place code cannot
+        # deliver). This is legitimate sensory rendering under BRAIN-BASED-ONLY (the same
+        # mechanism the actor place code uses); the critic's value computation downstream is all
+        # neural. Independent of enable_hippocampus / landmarks_replace_place (the critic afferent
+        # is its own region). Zeroed during sleep (no live position to value). Mirrors the de-risk
+        # probe's grid_place_code_drive; the critic LEARNS V via the three-factor pipeline.
+        if enable_neural_critic and "vs_place_context" in region_indices_cp:
+            if in_sleep:
+                bridge.cp_external_input_current[region_indices_cp["vs_place_context"]] = cp.float32(0.0)
+            else:
+                vs_dsq = (vs_place_pref_x - float(x)) ** 2 + (vs_place_pref_y - float(y)) ** 2
+                vs_drive = vs_place_drive_max_pA * np.exp(-vs_dsq / (2.0 * vs_place_sigma ** 2))
+                bridge.cp_external_input_current[region_indices_cp["vs_place_context"]] = cp.asarray(
+                    vs_drive, dtype=cp.float32)
+
         # Landmark perception drive (Item 1 Stage 2, 2026-04-27).
         # Drives landmark_sensors based on agent's bearing+distance to a
         # FIXED landmark position. Each unique (distance, bearing) gives a
@@ -5564,6 +5662,12 @@ def run_moving_goal_episode(
         "enable_neural_critic": bool(enable_neural_critic),
         "critic_afferent": (_critic_afferent_region if enable_neural_critic else None),
         "critic_gabab_propagation_strength": (0.02 if enable_neural_critic else None),
+        # 2026-06-09 VALIDATED redesign facts (the smoke / Stage-0 replication check reads these).
+        "enable_critic_homeostasis": bool(enable_critic_homeostasis and enable_neural_critic),
+        "global_homeostasis_off": (not cfg.enable_homeostasis),   # MUST be True (deterministic regime)
+        "per_region_homeostasis_mask_set": bool(
+            getattr(bridge, "cp_homeostasis_neuron_mask", None) is not None),
+        "n_vs_place_context": (int(n_vs_place_context) if enable_neural_critic else None),
         "enable_critic_window": bool(enable_critic_window and enable_neural_critic),
         "critic_lead_steps": (int(critic_lead_steps) if (enable_critic_window and enable_neural_critic) else None),
         "striov_rate_log": striov_rate_log,
@@ -6461,6 +6565,31 @@ def main():
                          "and REJECTED: it drives post>>pre so STDP sees post-before-"
                          "pre LTD and the weight COLLAPSES (diag6); the place-driven "
                          "excitable critic gives clean LTP teacher-free.")
+    ap.add_argument("--enable-critic-homeostasis", action="store_true",
+                    help="2026-06-09 VALIDATED redesign (navfaithful-afferent-critic-"
+                         "homeostasis PASS 3/3): add a DEDICATED DENSE `vs_place_context` "
+                         "afferent (grid-32 Gaussian place code, 30-80 cells/location, "
+                         "drive-injected each nav step) feeding ONLY the critic, AND set "
+                         "per-region homeostasis (committed sim/ edit 89b8d909) on BOTH "
+                         "vs_place_context AND the MSN-D1 striosome_value critic (GLOBAL "
+                         "cfg.enable_homeostasis stays OFF -> deterministic regime "
+                         "preserved). The de-risk fired the critic ~1.3-1.5 Hz, kept the "
+                         "place code sharply graded (~59 Hz near vs 0 Hz far — no place-"
+                         "blindness), and opened the GABA_B value subtraction. SUPERSEDES "
+                         "the 2026-06-08 RS-critic-type calibration: with this on, leave "
+                         "--critic-neuron-type unset (homeostasis fires the MSN-D1, not a "
+                         "type swap). Requires --enable-neural-critic --spiking-snc.")
+    ap.add_argument("--n-vs-place-context", type=int, default=200,
+                    help="Size of the dense dedicated value-critic place afferent "
+                         "(--enable-critic-homeostasis). Default 200 (the de-risk value).")
+    ap.add_argument("--vs-place-to-value-weight", type=float, default=0.2,
+                    help="INIT weight of the vs_place_context->striosome_value plastic "
+                         "afferent (--enable-critic-homeostasis). Default 0.2 (the de-risk PASS "
+                         "value); STDP grows the location-selective value UP from here (the "
+                         "de-risk grew w_near 0.20->0.58). NOT a large init — the critic LEARNS V.")
+    ap.add_argument("--vs-place-to-value-density", type=float, default=0.5,
+                    help="Density of the vs_place_context->striosome_value afferent "
+                         "(--enable-critic-homeostasis). Default 0.5 (de-risk value).")
     ap.add_argument("--hippocampus-drive-sigma", type=float, default=None,
                     help="Override the place/goal Gaussian drive sigma (cells per "
                          "bump). Default None keeps 0.5 (tuned for the 8x8 grid). "
@@ -6790,6 +6919,10 @@ def main():
             critic_lead_steps=args.critic_lead_steps,
             critic_neuron_type=args.critic_neuron_type,
             critic_afferent_weight=args.critic_afferent_weight,
+            enable_critic_homeostasis=args.enable_critic_homeostasis,
+            n_vs_place_context=args.n_vs_place_context,
+            vs_place_to_value_weight=args.vs_place_to_value_weight,
+            vs_place_to_value_density=args.vs_place_to_value_density,
             enable_surprise_lr_boost=args.surprise_lr_boost,
             surprise_lr_alpha=args.surprise_lr_alpha,
             enable_curriculum=args.curriculum,

@@ -1,0 +1,26 @@
+{
+  "seed": 42,
+  "grid_size": 32,
+  "backend": "cupy",
+  "n_regions": 47,
+  "has_vs_place_context": true,
+  "has_striosome_value": true,
+  "n_vs_place_context": 200,
+  "n_striosome_value": 80,
+  "global_homeostasis_off": true,
+  "per_region_mask_set": true,
+  "masked_regions": [
+    "vs_place_context",
+    "striosome_value"
+  ],
+  "afferent_near_ens_at_near_hz": 66.0,
+  "afferent_near_ens_at_far_hz": 0.0,
+  "afferent_place_sel_ratio": 6600.0,
+  "afferent_n_active_near": 31,
+  "afferent_place_graded": true,
+  "critic_rheobase_pa": 600.0,
+  "critic_can_fire": true,
+  "afferent_weight_init": 0.20026831328868866,
+  "critic_fires_note": "Stage-1 gate (needs DA/STDP pipeline); de-risk-identical under bare drive",
+  "verdict": "MATCHES_DERISK"
+}
