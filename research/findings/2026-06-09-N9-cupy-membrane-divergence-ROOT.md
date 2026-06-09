@@ -1,4 +1,22 @@
-# N9 ROOT (refined): NOT homeostasis — a CuPy-vs-numpy divergence in the MSN-D1 critic's membrane response to excitatory current
+> # ✅ RESOLVED (2026-06-09, same day) — the divergence is a numpy ALIASING BUG; **CuPy was correct, numpy was the artifact** (framing below is INVERTED).
+> Root cause (controller-verified by code-read + direct test): `sim/bridge.py:1313` and `:1323` both call
+> `cp.asarray(np_vr)` on the SAME array. On numpy `np.asarray(existing ndarray)` returns the array ITSELF,
+> so `cp_izh_vr` and `cp_membrane_potential_v` were **one aliased object** → `(v−vr) ≡ 0` every step →
+> the Izhikevich restoring term `k(v−vr)(v−vt)` vanished and recovery `u` never integrated → numpy neurons
+> **spuriously depolarized/fired near rest.** CuPy `cp.asarray` host→device-copies each call (distinct arrays)
+> → **CuPy was always correct.** So "numpy fires/bootstraps the critic (0.20→3.31)" was the BUG, and the
+> place-critic numpy "isolation PASS" was an artifact. The MSN-D1 critic's true rheobase ≈ **339 pA** (both
+> backends); the weak place afferent delivers ~5 pA → it correctly does **not** fire.
+> **FIX LANDED (owner byte-reviewed + approved, commit `36f15b25`):** `.copy()` at `:1323` → numpy now
+> INDEPENDENT (verified: vr no longer follows v), CuPy byte-identical (still independent, builds fine =
+> production unchanged). **N9 re-frame:** biologizing the value critic = give it proper **convergent**
+> excitatory drive (denser/stronger place→value projection → MSN up-state, catalog B.02), NOT a kernel fix.
+> **Broad implication:** the numpy Izhikevich-2007 backend was broken for **weak-drive / near-rest** cases
+> (strong-drive neurons fire regardless, so most numpy results held + all CuPy production results are
+> unaffected); numpy weak-drive de-risks should be re-checked on CuPy. The hypotheses in the body below
+> (fused kernel / −60 reversal leak) were RULED OUT; treat the "CuPy fails to depolarize" framing as inverted.
+
+# N9 ROOT (refined): NOT homeostasis — a CuPy-vs-numpy divergence in the MSN-D1 critic's membrane response to excitatory current [RESOLVED — see banner: it was a numpy aliasing bug, CuPy was correct]
 
 **Date:** 2026-06-09
 **Type:** controller-run dual-backend instrumentation (numpy + CuPy, same script/config).
