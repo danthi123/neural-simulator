@@ -64,6 +64,16 @@ The owner correctly rejected the 2/3 as a documentable residual. Root cause (sep
 
 **All 3 now learn V strongly (w_near 3.3–5.0; the previously-frozen seed 44 included) — the frozen-critic problem is FIXED.** The r−V subtraction is **3/3 state-specific + 3/3 lesion-confirmed**. The DA-timing diagnosis was right and the fix is biology (the correct three-factor phase), not a band-aid.
 
+### The full BIDIRECTIONAL Schultz RPE (gate-2e positive arm + gate-2f omission dip) — 3/3
+
+| seed | positive (reward given): pred (NEAR) vs unpred (FAR) | negative (reward OMITTED): omit_near (NEAR,V) vs omit_far (FAR,~0) |
+|---|---|---|
+| 42 | 0.8 ≪ 100 ✓ | **0.0 ≪ 50.0** → dip ✓ |
+| 43 | 0.0 ≪ 100 ✓ | **0.0 ≪ 32.5** → dip ✓ |
+| 44 | 71.7 ≪ 100 ✓ | **0.0 ≪ 38.3** → dip ✓ |
+
+The spiking SNc computes **δ = r − V bidirectionally**, all-synaptic: at a learned cue, an *expected* reward → little firing (δ small, pred low); an *omitted* reward → a firing **dip below tonic** (negative δ = 0 − V, omit_near ≈ 0 ≪ omit_far); an *unexpected* reward → full firing (unpred 100). This is the canonical dopamine reward-prediction-error signature (Schultz 1997). The omission dip's magnitude (omit_near → 0 at scale 2.0) reflects the strong GABA_B; it is the negative arm of the same δ = r − V. (Negative-arm lesion control — the dip must also vanish when the GABA_B is zeroed — running.)
+
 **Honest residuals (calibration, not mechanism):** (1) seed 43's strict weight-*ratio* gate is 1.57× (its w_far grew to 2.13 — value IS learned, w_near 3.33). (2) The GABA_B scale is now critic-strength-matched: at scale 2.0 the stronger critics over-clamp (pred → 0; a scale-0.5 check de-clamps seed 42 to pred 54.2, confirming it's de-clampable arithmetic, exactly the diagnosis's "detune-down for strong critics"). The now-uniform critics (3.3–5.0) want scale ~0.5; calibrating a single scale across the residual 3.3–5.0 spread for a clean 3/3 *arithmetic* (pred > 0) band is the remaining tune.
 
 ## (earlier) Multi-seed (teacher 350, scale 2.0, θ=12) — 2/3 state-specific + 3/3 lesion-confirmed
