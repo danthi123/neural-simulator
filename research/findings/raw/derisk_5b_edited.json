@@ -1,0 +1,13 @@
+{
+  "derisk": "5b_edited_sliced_rf_ops",
+  "backend": "cupy",
+  "n_izh": 24,
+  "n_rf": 8,
+  "period": 200,
+  "seed": 42,
+  "phase_dev_max": 0.0,
+  "phase_match": true,
+  "izh_isolated": true,
+  "rf_ran": true,
+  "pass": true
+}

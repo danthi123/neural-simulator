@@ -5318,13 +5318,20 @@ class SimulationBridge:
     # --- Resonate-and-fire FHRR substrate (opt-in, owner-funded Option A; see
     #     docs/plans/2026-06-05-rf-on-bridge-derisk-design.md). Active only when
     #     neuron_model_type == RESONATE_AND_FIRE; zero impact on Izhikevich/HH/AdEx. ---
-    def rf_kick(self, kick_complex, period=None, lam=-3.0e-4, floor=1.0e-3):
+    def rf_kick(self, kick_complex, period=None, lam=-3.0e-4, floor=1.0e-3, neuron_mask=None):
         """Inject a complex 'kick' into the resonate-and-fire neurons: set the complex state Z = re + i*im (reusing
         v=re, u=im) to kick_complex and reset the phase-readout trackers. Then run `period`(+8) steps of
         `_run_one_simulation_step` (with neuron_model_type=RESONATE_AND_FIRE) and call `rf_read_phases()` to recover
         each neuron's phase. The kick is the FHRR operand (bind = phasor_a*phasor_b, unbind = phasor_c*conj(a),
         bundle = sum of phasors); the resonate + phase readout run on the bridge's own neurons in its own step.
-        period defaults to 1000 (one phasor cycle = T bridge steps). Mirrors resonate_fire_fhrr.rf_resonate."""
+        period defaults to 1000 (one phasor cycle = T bridge steps). Mirrors resonate_fire_fhrr.rf_resonate.
+
+        neuron_mask (co-residence, 2026-06-10): optional bool array (True = RF neuron). None (default) = whole
+        bridge => BYTE-IDENTICAL to the standalone composer (whose per-op bridges are 100% RF and pass no mask).
+        When set, rf_kick + `_rf_advance_one` read/write ONLY the masked neurons' v/u, leaving a CO-RESIDENT
+        Izhikevich (navigation) slice's v/u untouched -- the minimal `sim/` edit for strict RF co-residence on
+        one bridge (the RF ops are sliced; the Izhikevich/HH/AdEx dynamics + the global step dispatch are
+        byte-unchanged). See research/findings/2026-06-10-unification-5b-rf-izh-KILL-and-minimal-edit-approach.md."""
         kick = np.asarray(kick_complex, dtype=np.complex128).reshape(-1)
         n = self.core_config.num_neurons
         if kick.shape[0] != n:
@@ -5334,8 +5341,16 @@ class SimulationBridge:
         self._rf_lambda = float(lam)
         self._rf_floor = float(floor)
         self._rf_counter = 0
-        self.cp_membrane_potential_v[:] = cp.asarray(kick.real, dtype=self.cp_membrane_potential_v.dtype)
-        self.cp_recovery_variable_u[:] = cp.asarray(kick.imag, dtype=self.cp_recovery_variable_u.dtype)
+        self._rf_neuron_mask = None if neuron_mask is None else cp.asarray(neuron_mask, dtype=cp.bool_)
+        _kick_re = cp.asarray(kick.real, dtype=self.cp_membrane_potential_v.dtype)
+        _kick_im = cp.asarray(kick.imag, dtype=self.cp_recovery_variable_u.dtype)
+        if self._rf_neuron_mask is None:
+            self.cp_membrane_potential_v[:] = _kick_re
+            self.cp_recovery_variable_u[:] = _kick_im
+        else:
+            _m = self._rf_neuron_mask
+            self.cp_membrane_potential_v[_m] = _kick_re[_m]
+            self.cp_recovery_variable_u[_m] = _kick_im[_m]
         self.cp_rf_prev_im = self.cp_recovery_variable_u.copy()
         self.cp_rf_fired = cp.zeros(n, dtype=bool)
         # default spike step = period -> phase 0 for a neuron that never crosses (|Z| decayed below the floor).
@@ -5389,10 +5404,20 @@ class SimulationBridge:
         _rf_mag2 = _rf_re_new * _rf_re_new + _rf_im_new * _rf_im_new
         _rf_crossed = ((~self.cp_rf_fired) & (self.cp_rf_prev_im < 0.0)
                        & (_rf_im_new >= 0.0) & (_rf_mag2 > _rf_floor2))
+        # Co-residence (2026-06-10): when an RF neuron mask is set, write the advanced state + spike trackers
+        # back ONLY for the masked (RF) neurons, so a co-resident Izhikevich slice's v/u is left untouched.
+        # _rf_neuron_mask is None on a 100%-RF composer bridge => byte-identical to the prior code path.
+        _rf_mask = getattr(self, "_rf_neuron_mask", None)
+        if _rf_mask is not None:
+            _rf_crossed = _rf_crossed & _rf_mask
         self.cp_rf_spike_step = cp.where(_rf_crossed, self._rf_counter, self.cp_rf_spike_step)
         self.cp_rf_fired = self.cp_rf_fired | _rf_crossed
-        self.cp_membrane_potential_v[:] = _rf_re_new
-        self.cp_recovery_variable_u[:] = _rf_im_new
+        if _rf_mask is None:
+            self.cp_membrane_potential_v[:] = _rf_re_new
+            self.cp_recovery_variable_u[:] = _rf_im_new
+        else:
+            self.cp_membrane_potential_v[_rf_mask] = _rf_re_new[_rf_mask]
+            self.cp_recovery_variable_u[_rf_mask] = _rf_im_new[_rf_mask]
         self.cp_rf_prev_im = _rf_im_new
         return _rf_crossed
 
