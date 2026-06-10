@@ -4279,7 +4279,9 @@ def run_moving_goal_episode(
             # biases action selection vs the BG cascade + OU noise. The host reflex injects
             # ~150 pA; the synaptic pooling must be strong enough to match. Sweepable via the
             # SC_CORTEX_W env var (tuning the integration-vs-isolation gap, A/B 2026-06-10).
-            _scw = float(os.environ.get("SC_CORTEX_W", "1.0"))
+            # Default 15.0 = the single-seed sweet spot (A/B 2026-06-10: SC/host 1.13 at w=15,
+            # non-monotonic — w=40 over-dominates the BG policy). Override via SC_CORTEX_W.
+            _scw = float(os.environ.get("SC_CORTEX_W", "15.0"))
             _scramble = os.environ.get("SC_SCRAMBLE", "0") == "1"   # anti-cheat lesion
             install_spiking_sc_wiring(bridge, visual_image_size=visual_image_size,
                                       w_sc_cortex=_scw, scramble=_scramble, verbose=verbose)
