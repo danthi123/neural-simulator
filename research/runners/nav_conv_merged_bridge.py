@@ -45,6 +45,10 @@ PARSER_GATE = "parser_fixed"
 #                           the parser train pass nor a later navigation episode can drift them.
 DLPFC_PATTERN_SIZE = 50
 DLPFC_ATTRACTOR_WEIGHT = 30.0
+#   DLPFC_EDGE_SCALE        the graph-edge scale `elaborate` installs over the pre-allocated c2d slots. 60.0 is the
+#                           validated SpikingSpreadingController default (unified_brain_bridge.py:119) — the spread must
+#                           be strong enough that every designed associate latches.
+DLPFC_EDGE_SCALE = 60.0
 DLPFC_FIXED_GATE = "dlpfc_fixed"
 
 
@@ -105,14 +109,25 @@ def train_parser_on_slices(bridge, conj_arr, role_arr, n_epochs: int = 30, train
     bridge.cp_external_input_current[:] = 0.0
 
 
+# The parser READ-path quiescence window (design risk 4.3 / 5a). On a FRESH merged bridge the parser reads
+# byte-stably with reset=20; but when a read follows a prior heavy drive of the SAME slices (e.g. the agent's
+# `hear` ran the parser just before), the merged bridge's larger neuron population has not fully relaxed and the
+# FIRST read drifts (a single position mis-reads its role -> a degenerate parse). A longer pre-read settle restores
+# it. Measured on the merged bridge (seed 42, after a prior `hear`): reset=20 -> 3/5 stable, reset=60/120/200 ->
+# 5/5. 60 is the stable floor with margin (the 5a "longer settle restores byte-identity" mitigation), used for the
+# read ports only (training drives continuously -> its inter-epoch reset stays 20).
+PARSER_READ_SETTLE = 60
+
+
 def role_of_on_slices(bridge, conj_arr, role_arr, position: int, voice="active",
-                      test_steps: int = 80, drive: float = 2500.0):
+                      test_steps: int = 80, drive: float = 2500.0, reset: int = PARSER_READ_SETTLE):
     """Port of BridgeParser.role_of: drive the (position, voice) conjunction ALONE; the role ensemble that
-    fires most is the learned role."""
+    fires most is the learned role. `reset` is the pre-read quiescence window (design risk 4.3): a longer settle
+    self-quiesces the merged bridge from any prior drive before the read, so the WTA readout is stable."""
     xp, _ = get_backend()
     n = bridge.core_config.num_neurons
     k = position * 2 + (0 if voice in (0, "active") else 1)
-    _step_reset(bridge)
+    _step_reset(bridge, reset)
     cur = xp.zeros(n, dtype=xp.float32)
     cur[conj_arr[k]] = drive
     bridge.cp_external_input_current[:] = cur
@@ -125,9 +140,10 @@ def role_of_on_slices(bridge, conj_arr, role_arr, position: int, voice="active",
     return max(rates, key=rates.get)
 
 
-def parse_on_slices(bridge, conj_arr, role_arr, words, voice="active", test_steps: int = 80, drive: float = 2500.0):
+def parse_on_slices(bridge, conj_arr, role_arr, words, voice="active", test_steps: int = 80, drive: float = 2500.0,
+                    reset: int = PARSER_READ_SETTLE):
     assert len(words) == 3, "this minimal parser handles 3-word SVO sentences"
-    return {role_of_on_slices(bridge, conj_arr, role_arr, pos, voice, test_steps, drive): words[pos]
+    return {role_of_on_slices(bridge, conj_arr, role_arr, pos, voice, test_steps, drive, reset): words[pos]
             for pos in range(3)}
 
 
@@ -346,6 +362,172 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         "role_arr": role_arr,
     }
     return bridge, handles
+
+
+# ── the parser adapter (the BrainConversationalAgent `.parser.parse(...)` surface on framework slices) ───────
+class _MergedParserAdapter:
+    """Exposes the `BridgeParser` READ surface (`parse(words, voice)`) on the merged bridge's framework parser
+    slices, so the agent shim's `self.parser.parse(...)` call sites are byte-for-byte the BrainConversationalAgent's.
+
+    There is no separate parser bridge: `parse` drives `parse_conj`/`parse_role` slices of the MERGED bridge via the
+    ported `parse_on_slices`. The parser readout needs OU (finding 2026-06-10-merge-parser-on-framework-slices-PASS-
+    needs-OU.md): the merged config rests with OU off, so this adapter toggles OU on (20 pA) for the read and restores
+    the resting flag afterward — mirroring how `construction_smoke` and `UnifiedBrainBridge.elaborate` toggle their
+    reads. The OU per-neuron state was allocated at build (build-OU-on), so the runtime toggle is clean."""
+
+    ROLES = ROLES
+
+    def __init__(self, bridge, conj_arr, role_arr):
+        self._bridge = bridge
+        self._conj_arr = conj_arr
+        self._role_arr = role_arr
+
+    def parse(self, words, voice="active"):
+        cc = self._bridge.core_config
+        prev_ou, prev_std = cc.enable_ou_process, cc.ou_std_current_pA
+        cc.enable_ou_process = True
+        cc.ou_std_current_pA = 20.0
+        try:
+            return parse_on_slices(self._bridge, self._conj_arr, self._role_arr, words, voice)
+        finally:
+            cc.enable_ou_process, cc.ou_std_current_pA = prev_ou, prev_std
+
+    def role_of(self, position, voice=0):
+        cc = self._bridge.core_config
+        prev_ou, prev_std = cc.enable_ou_process, cc.ou_std_current_pA
+        cc.enable_ou_process = True
+        cc.ou_std_current_pA = 20.0
+        try:
+            return role_of_on_slices(self._bridge, self._conj_arr, self._role_arr, position, voice)
+        finally:
+            cc.enable_ou_process, cc.ou_std_current_pA = prev_ou, prev_std
+
+
+# ── the agent shim (design §3 STEP 2a: the BrainConversationalAgent surface on the merged bridge) ────────────
+class MergedNavConvAgent:
+    """STEP 2a agent shim: the `BrainConversationalAgent` surface where comprehension (the PARSER) and dialogue
+    planning (the dlPFC `elaborate`) run on the MERGED nav+conv `SimulationBridge`, while fact storage/retrieval
+    (`store`/`query_*`/`render_fact`/`ask_yes_no`) delegate to a SEPARATE-bridge production `RFPhasorComposer`
+    (STEP 2a keeps the RF composer on its own per-op bridges; STEP 2b co-residence is gated on the owner byte-review).
+
+    Per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md` §3 STEP 2a. The method signatures + semantics
+    MATCH `brain_conversational_agent.BrainConversationalAgent` exactly so `tests/test_brain_conversational_agent.py`'s
+    assertions pass VERBATIM against this shim (incl. the three `is None` no-confab moat assertions).
+
+    Anti-cheat (asserted in __init__, design §3): the parser+dlPFC actually run on the merged bridge (a silent fallback
+    to a standalone parser/dlPFC bridge fails loudly):
+      * `"parse_conj"` AND `"dlpfc_wm"` are regions of `self._merged_bridge.region_manager` (the parser+dlPFC slices
+        live on the merged bridge), AND
+      * the dlPFC context `elaborate` drives is the merged bridge's (`self._dlpfc_ctx.bridge is self._merged_bridge`).
+    """
+
+    def __init__(self, seed=42, vocab=None):
+        """Build the merged nav+parser+dlPFC bridge + the separate RFPhasorComposer (same seed + vocab). The composer's
+        vocab is the merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory
+        codebook share one word set."""
+        self.seed = int(seed)
+        self._merged_bridge, self._handles = build_merged_nav_conv_bridge(seed=seed, vocab=vocab)
+        words = self._handles["vocab"]   # the sorted merged vocab (the dlPFC + parser word set)
+
+        # The production composer on its OWN bridge(s) (STEP 2a: separate). Same seed + vocab as the merged dlPFC.
+        from research.runners.rf_phasor_composer import RFPhasorComposer
+        self.composer = RFPhasorComposer(seed=seed, D=128, vocab=words, period=200)
+
+        # The parser READ surface on the merged framework slices (so `self.parser.parse(...)` matches the agent's).
+        self.parser = _MergedParserAdapter(self._merged_bridge, self._handles["conj_arr"], self._handles["role_arr"])
+
+        # The dlPFC context (`_SharedDlpfcContext` over the merged cortex_ctx/dlpfc_wm slices) that `elaborate` drives.
+        self._dlpfc_ctx = self._handles["dlpfc_ctx"]
+        self._dlpfc_controller = None
+        self._dlpfc_graph_key = None
+
+        # --- ANTI-CHEAT asserts (design §3): the parser+dlPFC run on the MERGED bridge, not a standalone fallback. ---
+        region_names = self._merged_bridge.region_manager.region_indices_dict()
+        assert "parse_conj" in region_names, \
+            f"FAIL anti-cheat: 'parse_conj' not on the merged bridge (regions: {sorted(region_names)[:8]}...)"
+        assert "dlpfc_wm" in region_names, \
+            f"FAIL anti-cheat: 'dlpfc_wm' not on the merged bridge (regions: {sorted(region_names)[:8]}...)"
+        assert self._dlpfc_ctx.bridge is self._merged_bridge, \
+            "FAIL anti-cheat: elaborate's dlPFC context is NOT the merged bridge (silent standalone-dlPFC fallback)"
+
+    # --- comprehend / store / recall (mirror BrainConversationalAgent exactly) ---
+    def hear(self, sentence, voice="active", polarity=None):
+        """Comprehend an SVO statement and store it. `sentence` is 'agent action patient' (or its passive frame)."""
+        roles = self.parser.parse(sentence.split(), voice)
+        self.composer.store(roles["agent"], roles["action"], roles["patient"], polarity=polarity)
+        return roles
+
+    def hear_clause_fact(self, agent, action, clause, polarity=None):
+        """Store a fact whose patient is an embedded clause (the parser handles flat SVO; nested input parsing is
+        future work, so the clause is provided structurally here)."""
+        self.composer.store(agent, action, clause, polarity=polarity)
+
+    def what_does(self, agent, action):
+        """'what does <agent> <action>?' -> patient (concept or rendered clause) or None (abstain)."""
+        return self.composer.query_patient(agent, action)
+
+    def who_does(self, action, patient):
+        return self.composer.query_agent(action, patient)
+
+    def is_it_true(self, agent, action, patient):
+        return self.composer.ask_yes_no(agent, action, patient)
+
+    def describe(self, agent):
+        """Generation: produce a sentence about `agent` from the spiking memory ('dog go north'), or None if the agent
+        knows no fact about it (no confabulation)."""
+        return self.composer.render_fact(agent)
+
+    # --- dialogue planning (the dlPFC `elaborate`, ported from UnifiedBrainBridge.elaborate onto the merged slices) ---
+    def _assoc_graph(self):
+        """The association graph (concept -> {concept: weight}) built from the composer's OWN stored facts — identical
+        to `BrainConversationalAgent._assoc_graph` / `UnifiedBrainBridge._assoc_graph` (agent/action/patient of each
+        fact co-occur; clause patients skipped)."""
+        graph = {}
+        for fact, _ in self.composer.kb:
+            cs = [fact.get(r) for r in ("agent", "action", "patient")]
+            cs = [c for c in cs if isinstance(c, str)]
+            for x in cs:
+                for y in cs:
+                    if x != y:
+                        graph.setdefault(x, {})[y] = graph.get(x, {}).get(y, 0.0) + 1.0
+        return graph
+
+    def elaborate(self, topic):
+        """Dialogue planning on the MERGED bridge's dlPFC slice: bring up the next on-topic concept about `topic`,
+        chosen by the dlPFC spiking spreading-activation Control over the composer's own association graph. Returns an
+        associate concept, or None if `topic` is unconnected (the abstention / no-confab moat). Matches
+        `BrainConversationalAgent.elaborate` semantics and PORTS `UnifiedBrainBridge.elaborate`
+        (unified_brain_bridge.py:684-732) onto the merged-bridge dlPFC slices.
+
+        The Control is a `SpikingSpreadingController` built WITHOUT its __init__ (which would build a throwaway bridge):
+        its attributes are set by hand against the shared-slice context (`self._dlpfc_ctx`), and its OWN validated
+        `_install_graph_edges` overwrites the pre-allocated `dlpfc_loop` c2d SLOTS in place (no CSR rebuild → the
+        parser/nav gate maps are preserved). Cached, rebuilt only when the graph CONTENT changes. OU is toggled OFF for
+        the spreading-activation read (the validated dlPFC regime; OU tips the bistable attractors into spurious ON
+        states), then restored — exactly as UnifiedBrainBridge.elaborate."""
+        from research.runners.content_selection_spiking import SpikingSpreadingController
+        from research.runners.content_selection import SaidTrace
+
+        graph = self._assoc_graph()
+        if topic not in graph:
+            return None
+        # cache key = the graph CONTENT (not kb length: different fact sets can share a length -> stale Control).
+        key = tuple(sorted((k, tuple(sorted(v.items()))) for k, v in graph.items()))
+        if self._dlpfc_controller is None or self._dlpfc_graph_key != key:
+            ctrl = object.__new__(SpikingSpreadingController)
+            ctrl.graph = graph
+            ctrl._vocab = sorted(set(graph) | {a for v in graph.values() for a in v})
+            ctrl.ctx = self._dlpfc_ctx
+            ctrl.said = SaidTrace(decay=0.9)                      # the validated SpikingSpreadingController default
+            ctrl._install_graph_edges(DLPFC_EDGE_SCALE)           # overwrites the pre-allocated c2d slots IN PLACE
+            self._dlpfc_controller = ctrl
+            self._dlpfc_graph_key = key
+        prev_ou = self._merged_bridge.core_config.enable_ou_process
+        self._merged_bridge.core_config.enable_ou_process = False
+        try:
+            return self._dlpfc_controller.turn_latency([topic])
+        finally:
+            self._merged_bridge.core_config.enable_ou_process = prev_ou
 
 
 # ── the construction smoke (this increment's acceptance) ─────────────────────────────────────────────────
