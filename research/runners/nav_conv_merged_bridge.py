@@ -364,6 +364,84 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     return bridge, handles
 
 
+# ── the EPISODE-path conv finalization (nav gate (a): nav episode runs on the merged bridge) ─────────────────
+def conv_extra_regions_pathways(vocab=None):
+    """The conversational regions/pathways to APPEND to the navigation lists for the episode-path merge: the
+    parser (parse_conj 6, parse_role 3*PARSER_R) + the dlPFC regions (cortex_ctx, dlpfc_wm, both enable_nmda).
+    For the NAV GATE the dlPFC regions are present but EDGELESS (the dlpfc_loop is only for `elaborate`, not
+    needed for nav-not-regressed), so they are silent during the nav episode. Returns (extra_regions,
+    extra_pathways) for `run_moving_goal_episode(extra_regions=, extra_pathways=)`."""
+    if vocab is None:
+        from research.runners.rf_phasor_composer import DEFAULT_VOCAB
+        vocab = DEFAULT_VOCAB
+    V = len(set(vocab))
+    n_dlpfc = max(600, 60 * V)
+    parser_regions, parser_pathways = parser_regions_pathways(PARSER_R)
+    dlpfc_regions = [
+        BrainRegion(name="cortex_ctx", n_neurons=n_dlpfc, exc_fraction=1.0, internal_density=0.0, enable_nmda=True),
+        BrainRegion(name="dlpfc_wm", n_neurons=n_dlpfc, exc_fraction=1.0, internal_density=0.0, enable_nmda=True),
+    ]
+    return list(parser_regions) + list(dlpfc_regions), list(parser_pathways)
+
+
+def finalize_conv_for_nav_gate(bridge, seed=42, R=PARSER_R, n_epochs=30, train_steps=120):
+    """The `prebuilt_post_init_hook` `run_moving_goal_episode` calls AFTER its Gabor/SC post-init wiring and
+    BEFORE the episode loop. Trains the parser on the merged bridge's framework slices and freezes it, so the
+    navigation episode runs with the conversational populations frozen (the conv neurons must not perturb nav).
+
+    INDEX/MASK-BASED (the load-bearing point): the navigation post-init helpers `apply_v1_gabor_weights` +
+    `install_spiking_sc_wiring` call `set_pathway_weights(add_missing=True)`, which `tocsr()+sum_duplicates()`
+    RE-SORTS the synapse data (`sim/bridge.py:2851-2853`) and does NOT re-derive the plasticity-gate index maps
+    — so the framework-registered `parser_fixed` gate is STALE here. We therefore compute the parser synapse
+    mask DIRECTLY from the FINAL CSR (guaranteed cp_connections.data-aligned via indptr/indices) and manage
+    `cp_plasticity_rate_gain` by that mask, NOT by the stale gate name. The gain is masked so the parser's
+    Hebbian train pass (gain 1 on the parser only) cannot decay the FIXED Gabor/SC perception + navigation
+    edges (gain 0) via the ungated Hebbian decay (~1e-6/step). After training, the parser is frozen (gain 0)
+    and navigation is plastic (gain 1) for the reward-STDP episode. NO dlpfc_loop (that is for `elaborate`, a
+    follow-on; the dlPFC regions are present but edgeless → silent during nav). Returns handles for anti-cheat.
+    """
+    xp, _ = get_backend()
+    rm = bridge.region_manager
+    csr = bridge.cp_connections
+    # per-data-position (pre, post), guaranteed aligned with cp_connections.data / cp_plasticity_rate_gain
+    counts = xp.diff(csr.indptr)
+    pre = xp.repeat(xp.arange(csr.shape[0], dtype=csr.indices.dtype), counts)
+    post = csr.indices
+    pc = xp.asarray(rm.indices("parse_conj"), dtype=pre.dtype)
+    prr = xp.asarray(rm.indices("parse_role"), dtype=pre.dtype)
+    parser_mask = xp.isin(pre, pc) & xp.isin(post, prr)
+
+    if bridge.cp_plasticity_rate_gain is None:
+        bridge.set_global_plasticity_gain(1.0)
+    gain = bridge.cp_plasticity_rate_gain
+
+    conj_arr, role_arr = _parser_index_arrays(bridge, R)
+    cc = bridge.core_config
+    saved = (cc.enable_hebbian_learning, cc.enable_stdp, cc.enable_reward_modulation,
+             cc.enable_ou_process, cc.hebbian_max_weight, cc.hebbian_learning_rate)
+    # parser train: ONLY the parser plastic; Gabor/SC + nav frozen (gain 0) so the Hebbian decay can't erode
+    # them. hebbian_max_weight=400 + lr=0.005 are the validated parser-pass values; OU=20 (state allocated at
+    # build via build_with_ou) for the WTA role readout.
+    gain[:] = 0.0
+    gain[parser_mask] = 1.0
+    cc.enable_hebbian_learning = True
+    cc.enable_stdp = False
+    cc.enable_reward_modulation = False
+    cc.enable_ou_process = True
+    cc.hebbian_max_weight = 400.0
+    cc.hebbian_learning_rate = 0.005
+    try:
+        train_parser_on_slices(bridge, conj_arr, role_arr, n_epochs=n_epochs, train_steps=train_steps)
+    finally:
+        (cc.enable_hebbian_learning, cc.enable_stdp, cc.enable_reward_modulation,
+         cc.enable_ou_process, cc.hebbian_max_weight, cc.hebbian_learning_rate) = saved
+    # restore for the episode: parser FROZEN (gain 0), navigation plastic (gain 1), OU off (nav default).
+    gain[:] = 1.0
+    gain[parser_mask] = 0.0
+    cc.enable_ou_process = False
+    return {"conj_arr": conj_arr, "role_arr": role_arr, "parser_mask": parser_mask}
+
+
 # ── the parser adapter (the BrainConversationalAgent `.parser.parse(...)` surface on framework slices) ───────
 class _MergedParserAdapter:
     """Exposes the `BridgeParser` READ surface (`parse(words, voice)`) on the merged bridge's framework parser

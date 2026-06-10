@@ -3777,6 +3777,16 @@ def run_moving_goal_episode(
     # move it). The nav-gate (a) check verifies the soft-bound nav actor
     # (cortex->D1) does NOT over-grow when the ceiling is raised. NO sim/ edit.
     stdp_w_max_override=None,
+    # STEP 2a merge integration (additive; ALL default no-op => standalone nav BYTE-EQUIVALENT).
+    # extra_regions/extra_pathways: conversational regions/pathways appended to the nav lists so they share
+    #   ONE bridge. build_with_ou: build with OU on so the parser train pass's OU per-neuron state is allocated
+    #   at init (a runtime toggle does NOT allocate it). prebuilt_post_init_hook(bridge): called AFTER the
+    #   Gabor/SC post-init wiring (which rebuilds the CSR) and BEFORE the episode loop, to train+freeze the
+    #   conversational populations on the merged bridge. See research/runners/nav_conv_merged_bridge.py.
+    extra_regions=None,
+    extra_pathways=None,
+    prebuilt_post_init_hook=None,
+    build_with_ou=False,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -4102,10 +4112,21 @@ def run_moving_goal_episode(
     # check uses --stdp-w-max 400 to verify the soft-bound actor does not over-grow.
     if stdp_w_max_override is not None:
         cfg.stdp_w_max = float(stdp_w_max_override)
+    # STEP 2a merge: append the conversational regions/pathways (defaults None => no-op; standalone unchanged).
+    # Mutate IN PLACE so cfg.brain_regions / cfg.region_pathways (already bound to these list objects above)
+    # see the additions before _initialize_simulation_data reads them.
+    if extra_regions:
+        regions.extend(extra_regions)
+    if extra_pathways:
+        pathways.extend(extra_pathways)
     cfg.enable_hebbian_learning = False
     cfg.enable_homeostasis = False
     cfg.enable_short_term_plasticity = False
-    cfg.enable_ou_process = False
+    # STEP 2a merge: build with OU on so the parser train pass's OU per-neuron state is ALLOCATED at init
+    # (a runtime toggle does not allocate it). The post-init hook sets OU off for the nav episode after the
+    # parser pass. Default False => standalone nav byte-equivalent (OU stays off).
+    cfg.enable_ou_process = bool(build_with_ou)
+    cfg.ou_std_current_pA = 20.0 if build_with_ou else cfg.ou_std_current_pA
     cfg.enable_conductance_noise = False
     cfg.enable_parameter_heterogeneity = False
     cfg.enable_structural_plasticity = False  # keep synapse count fixed (per-action DA mask depends on it)
@@ -4374,6 +4395,13 @@ def run_moving_goal_episode(
                           f"'{gate_name}' open for nav training", flush=True)
             except KeyError:
                 pass  # Gate may not exist depending on enable_pfc etc.
+
+    # STEP 2a merge: the conv-finalization hook runs AFTER the Gabor/SC post-init wiring (which rebuilt the
+    # CSR via set_pathway_weights(add_missing=True), staling earlier gate-index maps) and BEFORE the episode
+    # loop -- it trains+freezes the conversational populations on the merged bridge BY INDEX. Default None =>
+    # no-op (standalone nav byte-equivalent).
+    if prebuilt_post_init_hook is not None:
+        prebuilt_post_init_hook(bridge)
 
     # Pre-cache region indices (cupy arrays for fast per-step indexing)
     region_indices_cp = {}
