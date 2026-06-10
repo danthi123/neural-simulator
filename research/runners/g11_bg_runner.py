@@ -264,6 +264,9 @@ def build_bg_brain_regions(
     place_sensors_to_place_weight: float = 28.0,   # landmark_sensors->place plastic init (de-risk lm_to_place_weight)
     place_sensors_to_place_density: float = 0.5,
     place_sensors_to_place_jitter: float = 0.6,
+    enable_critic_fs_inhibition: bool = False,  # place_fs->striosome_value GABA_A (spiking critic rate-clamp; root fix vs GIRK cap)
+    critic_fs_weight: float = 8.0,          # place_fs->striosome_value inhibitory weight (tuned in the de-risk)
+    critic_fs_density: float = 0.6,         # place_fs->striosome_value density (pooled perisomatic FS shunt)
     place_fs_weight: float = 16.0,          # place->place_fs (FS-PING excitation; de-risk value)
     place_fs_density: float = 0.4,
     fs_to_place_weight: float = 8.0,        # place_fs->place GABA_A (de-risk value)
@@ -1646,6 +1649,25 @@ def build_bg_brain_regions(
             weight_jitter=0.2, plastic=False,
             transmission_gate="place_fs_gate",
         ))
+        # (2b) FS-PING -> CRITIC feedforward inhibition (2026-06-10, the SPIKING root fix for the
+        #      over-firing critic, research 2026-06-10-N9-spiking-reward-and-critic-normalization).
+        #      The MSN-D1 critic over-fires ~125 Hz on hot place-code draws (unphysiological; MSNs
+        #      fire 1-20 Hz) -> it over-clamps the SNc -> binary delta. The biological brake is
+        #      perisomatic FS-PV feedforward inhibition (catalog B.06, Lee 2017): `place_fs` already
+        #      gamma-synchronizes the volley and SCALES with the volley size, so a hotter draw recruits
+        #      MORE FS -> MORE inhibition -> a DIVISIVE-leaning clamp that holds the critic in a
+        #      physiological rate band across draws (a SPIKING normalization, not the GIRK-cap masking
+        #      at the SNc). GABA_A (place_fs is inhibitory, exc_fraction=0). Grading of V is carried by
+        #      the WEIGHTED coincidence plateau (read-out), NOT by dividing the all-or-none plateau
+        #      (the honest hybrid: FS clamps the rate, the weighted plateau grades the value). Default
+        #      OFF => byte-equivalent. Held open via `critic_fs_gate` (always-on default).
+        if enable_critic_fs_inhibition:
+            pathways.append(RegionPathway(
+                from_region="place_fs", to_region="striosome_value",
+                density=float(critic_fs_density), weight_mean=float(critic_fs_weight),
+                weight_jitter=0.2, plastic=False,
+                transmission_gate="critic_fs_gate",
+            ))
         # (3) place -> striosome_value : PLASTIC, DA-delta-gated (gate `value_input`), Route-D
         #     coincidence_detector so the FS-PING-synchronized volley fires the MSN critic that the
         #     sparse-async code cannot. STILL plastic + DA-gated so it GRADES + LEARNS V.
@@ -3044,6 +3066,9 @@ def run_moving_goal_episode(
     place_sensors_to_place_weight: float = 28.0,
     place_sensors_to_place_density: float = 0.5,
     place_sensors_to_place_jitter: float = 0.6,
+    enable_critic_fs_inhibition: bool = False,  # place_fs->striosome_value GABA_A: spiking critic rate-clamp (root fix vs GIRK cap masking)
+    critic_fs_weight: float = 8.0,
+    critic_fs_density: float = 0.6,
     place_fs_weight: float = 16.0,
     place_fs_density: float = 0.4,
     fs_to_place_weight: float = 8.0,
@@ -3612,6 +3637,9 @@ def run_moving_goal_episode(
         place_sensors_to_place_weight=place_sensors_to_place_weight,
         place_sensors_to_place_density=place_sensors_to_place_density,
         place_sensors_to_place_jitter=place_sensors_to_place_jitter,
+        enable_critic_fs_inhibition=enable_critic_fs_inhibition,
+        critic_fs_weight=critic_fs_weight,
+        critic_fs_density=critic_fs_density,
         place_fs_weight=place_fs_weight,
         place_fs_density=place_fs_density,
         fs_to_place_weight=fs_to_place_weight,
@@ -7901,6 +7929,15 @@ def main():
                          "Restored after self-org. Requires --neural-place-selforg.")
     ap.add_argument("--n-place", type=int, default=200, help="N9 self-org place pool size.")
     ap.add_argument("--n-place-fs", type=int, default=24, help="N9 FS-PING interneuron pool size.")
+    ap.add_argument("--enable-critic-fs-inhibition", action="store_true",
+                    help="SPIKING root fix for the over-firing (~125 Hz) value critic: add a "
+                         "place_fs -> striosome_value GABA_A feedforward-inhibition pathway (the FS-PING "
+                         "pool, which scales with the volley size, divisively clamps the MSN critic into "
+                         "a physiological rate band across draws) instead of masking the over-clamp "
+                         "downstream with the GIRK cap. Grading of V comes from the WEIGHTED plateau.")
+    ap.add_argument("--critic-fs-weight", type=float, default=8.0,
+                    help="place_fs -> striosome_value inhibitory weight (tune in the de-risk).")
+    ap.add_argument("--critic-fs-density", type=float, default=0.6)
     ap.add_argument("--place-sensors-to-place-weight", type=float, default=28.0)
     ap.add_argument("--place-sensors-to-place-density", type=float, default=0.5)
     ap.add_argument("--place-sensors-to-place-jitter", type=float, default=0.6)
@@ -8316,6 +8353,9 @@ def main():
             # N9 neural place-code self-org (2026-06-09 nav deployment).
             neural_place_selforg=args.neural_place_selforg,
             deterministic_selforg=args.deterministic_selforg,
+            enable_critic_fs_inhibition=args.enable_critic_fs_inhibition,
+            critic_fs_weight=args.critic_fs_weight,
+            critic_fs_density=args.critic_fs_density,
             n_place=args.n_place,
             n_place_fs=args.n_place_fs,
             place_sensors_to_place_weight=args.place_sensors_to_place_weight,
