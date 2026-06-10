@@ -97,6 +97,10 @@ The research's primary lever (B1, `--enable-critic-homeostasis`) was wired onto 
 
 **The clean path (research §7):** make the place-code self-org **deterministic** (so draws are reproducible and any robustness claim is attributable + the R-A anti-cheat applies), THEN either (a) accept the probe-saturation and validate online via the nav A/B, or (b) add a rate-robust GABA_B / per-region synaptic scaling (B2) if the online RPE needs a graded δ at intermediate distances. The determinism is the load-bearing enabler either way — implemented next as a default-off sim/ flag (off==baseline byte-identical; the transpose-SpMV → pre-transposed-CSR swap, toggled ON only during self-org), for owner byte-review.
 
+## Phase 4 — the full neural-critic nav RUNS end-to-end (integration validated, seed 42)
+
+With the determinism edit (`--deterministic-selforg`) the full deployment runs end-to-end (NO `--stage-b-smoke`, 600-step nav, single goal): STEP-1 self-org (deterministic, diff-cos 0.0245) → STEP-2 value-train (w_near 0.2→**6.35**, w_far 0.2→1.20, **5.28×** — the critic learned V) → **the nav loop runs the online δ=r−V** (the SNc `_I_snc = tonic + gain·reward` with NO host V term; the `striosome_value` GABA_B subtracts V at the SNc membrane, `bridge.py` nav-loop ~6730-6745) → the agent **navigates** (step 500/600 pos=(30,31) goal=(30,30), **recent_dist 1.85** — at the goal); rc=0, no crash. So the N9 neural reward-prediction-error loop is deployed and FUNCTIONAL in the online nav loop — the "0 Hz substrate boundary" is fully overturned end-to-end. The nav A/B (Stage C: neural δ=r−V vs the host δ=r−V_scaffold cheat it replaces) is in flight.
+
 ## Honest residuals / next
 
 - **Multi-seed (43/44)** robustness — the place-code self-org has a known CuPy-non-deterministic drive-strength variance (here the near (30,30) field was *weaker* than far (1,1), 0.42 vs 1.21 Hz; the weight cap + clean reset still graded it, but other seeds need confirming). IN FLIGHT.
