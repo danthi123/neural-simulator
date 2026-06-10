@@ -858,11 +858,20 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
     pred_r = _snc_test(loc_sensor[near_name], snc_tonic_pa + snc_reward_gain)    # predicted (NEAR)
     far_for_gap = far_names[0]
     unpred_r = _snc_test(loc_sensor[far_for_gap], snc_tonic_pa + snc_reward_gain)  # unpredicted (FAR)
+    # OMISSION = the canonical NEGATIVE RPE (Schultz 1997): drive the cue (place ensemble) at NEAR with the
+    # SNc at TONIC only (reward OMITTED) -> the LEARNED V's GABA_B suppresses the SNc BELOW its tonic rate
+    # (delta = 0 - V < 0, the dopamine DIP). At FAR (V~0) there is no V to subtract -> the SNc stays at
+    # tonic. So omit_near < omit_far ~ tonic IS the omission dip = the NEGATIVE arm of delta = r - V (the
+    # positive arm is pred<unpred above). Together they are the full bidirectional RPE. Same gate-2e toggles.
+    omit_near = _snc_test(loc_sensor[near_name], snc_tonic_pa)       # cue at NEAR, reward OMITTED
+    omit_far = _snc_test(loc_sensor[far_for_gap], snc_tonic_pa)      # cue at FAR (no V), reward OMITTED
     bridge.core_config.gabab_propagation_strength = _saved_prop_g2e
     bridge.core_config.coincidence_weighted_drive = _saved_wd_g2e
     bridge.core_config.coincidence_k_threshold = _saved_kth_g2e
     gap_ratio = unpred_r / max(pred_r, 1e-6)
     state_specific = bool((unpred_r > 1.30 * max(pred_r, 1e-6)) and (unpred_r >= 10.0))
+    omission_dip_ratio = omit_far / max(omit_near, 1e-6)            # >1 = the SNc DIPS at the learned NEAR
+    omission_dip = bool(omit_near < 0.70 * max(omit_far, 1e-6))     # near >=30% below far = the negative RPE
 
     if verbose:
         far_str = ", ".join(f"{fn}={crit_far_each[fn]:.2f}" for fn in far_names)
@@ -876,6 +885,8 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
             f"ratio={actor_ratio:.3f} (not-perturbed => {actor_ok})")
         log(f"  [gate-2e SNc gap] predicted(NEAR)={pred_r:.2f}Hz unpredicted(FAR)={unpred_r:.2f}Hz "
             f"gap={gap_ratio:.2f} state-specific={state_specific} (lesion={lesion})")
+        log(f"  [gate-2f OMISSION dip] omit_near(NEAR,V)={omit_near:.2f}Hz omit_far(FAR,~0)={omit_far:.2f}Hz "
+            f"dip_ratio={omission_dip_ratio:.2f} negative-RPE-dip={omission_dip} (lesion={lesion})")
 
     primary = bool(fire and place_graded and weight_grew and actor_ok)
     return dict(
@@ -897,6 +908,8 @@ def run_seed(seed, *, locations, landmarks, n_bearing, n_dist, n_place, n_strio,
         actor_ratio=actor_ratio, actor_not_perturbed=actor_ok,
         snc_predicted_near_hz=pred_r, snc_unpredicted_far_hz=unpred_r,
         snc_gap_ratio=gap_ratio, snc_state_specific=state_specific,
+        snc_omit_near_hz=omit_near, snc_omit_far_hz=omit_far,
+        snc_omission_dip_ratio=omission_dip_ratio, snc_omission_dip=omission_dip,
         primary=primary,
         ou_off=(not cfg.enable_ou_process), cond_noise_off=(not cfg.enable_conductance_noise),
         global_homeo_off=(not cfg.enable_homeostasis),
