@@ -26,6 +26,9 @@ from sim.config import CoreSimConfig
 from sim.enums import NeuronModel
 from sim.regions import BrainRegion, RegionPathway
 from sim.backend import get_backend, to_host
+# Module-level (the MergedRFComposer base class needs it at class-definition time). Lightweight: rf_phasor_composer
+# only imports numpy + the already-imported sim.* substrate, so this does not slow the parser-only --microcheck path.
+from research.runners.rf_phasor_composer import RFPhasorComposer
 
 # parser ground truth (from brain_conversational_agent): conjunction index k = position*2 + voice
 # (voice 0=active, 1=passive); each k teacher-binds to one role.
@@ -193,7 +196,8 @@ def _build_dlpfc_loop_population(ctx, words):
 
 
 # ── the merged nav + parser + dlPFC bridge builder (design §2.5 FINAL FORM) ───────────────────────────────
-def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100):
+def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100,
+                                 co_resident_rf: bool = False, rf_D: int = 128):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
     §2.5 FINAL FORM.
@@ -251,7 +255,17 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         BrainRegion(name="dlpfc_wm", n_neurons=n_dlpfc, exc_fraction=1.0,
                     internal_density=0.0, enable_nmda=True),
     ]
-    union_regions = list(nav_regions) + list(parser_regions) + list(dlpfc_regions)
+    # STEP 2b: reserve a contiguous `rf` slice for the resonate-and-fire composer to run co-resident on the one
+    # bridge (the strict single-instance unification). 7*rf_D covers the largest single RF op (a 6-role bundle =
+    # (6+1)*D). internal_density=0 and NO pathways => no cp_connections out-edges into navigation, so the rf
+    # neurons' incidental Izhikevich firing between composer ops injects NOTHING into the nav cascade (the Task-1
+    # anti-cheat). enable_nmda=False keeps the slow NMDA current confined to the dlPFC slices. Appended LAST so the
+    # navigation/parser/dlPFC index bases are unchanged (the nav byte-identity is preserved).
+    rf_regions = []
+    if co_resident_rf:
+        rf_regions = [BrainRegion(name="rf", n_neurons=7 * int(rf_D), exc_fraction=1.0,
+                                  internal_density=0.0, enable_nmda=False)]
+    union_regions = list(nav_regions) + list(parser_regions) + list(dlpfc_regions) + list(rf_regions)
     union_pathways = list(nav_pathways) + list(parser_pathways)   # dlPFC loop is hand-built, NOT a pathway
 
     # 2) Merged config.
@@ -361,6 +375,10 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         "conj_arr": conj_arr,
         "role_arr": role_arr,
     }
+    if co_resident_rf:
+        handles["rf_base"] = int(rm.indices("rf")[0])
+        handles["rf_size"] = 7 * int(rf_D)
+        handles["rf_D"] = int(rf_D)
     return bridge, handles
 
 
@@ -487,6 +505,57 @@ class _MergedParserAdapter:
 
 
 # ── the agent shim (design §3 STEP 2a: the BrainConversationalAgent surface on the merged bridge) ────────────
+class MergedRFComposer(RFPhasorComposer):
+    """STEP 2b: an `RFPhasorComposer` whose RF binding ops run on a SLICE of the shared merged bridge (the strict
+    single-instance co-residence) instead of on its own per-op bridges.
+
+    Only `_resonate` is overridden — it shifts the op's local indices into the bridge's `rf` region, builds a
+    full-N complex kick (zeros off the slice), installs the full-`(N,N)` complex weights (the bind/unbind diagonals
+    are O(D) sparse, so the size is fine), kicks with `neuron_mask=rf_mask` (the owner-approved sliced `rf_kick`),
+    runs the resonate loop (which auto-respects the persisted mask via `self._rf_neuron_mask`, so the loop touches
+    only the rf slice), and reads the slice's phases. `_bind`/`_bundle`/`_unbind_phases`/`_encode`/`_render` are
+    inherited unchanged — they call this `_resonate`.
+
+    Why this is sound (the de-risks): the composer is stateless per op (re-kicks each op) and stores fact memory in
+    numpy (`self.kb`), so a navigation Izhikevich step between ops harmlessly clobbers the idle rf slice's v/u
+    (re-kicked next op); the masked write-back leaves the navigation neurons' v/u byte-untouched (the 5b coexistence
+    guarantee). The complex weights `cp_rf_w_re/im` are array-disjoint from `cp_connections`, so the navigation step
+    never corrupts the fact-binding synapses. NO further `sim/` edit. enable_spiking_cleanup co-residence is out of
+    STEP-2b scope (the numpy argmax cleanup is the validated default readout, a pure-numpy op with no bridge)."""
+
+    def __init__(self, merged_bridge, rf_base, rf_size, **kwargs):
+        if kwargs.get("enable_spiking_cleanup"):
+            raise NotImplementedError(
+                "co-resident spiking cleanup is out of STEP-2b scope; use the numpy argmax cleanup (default)")
+        super().__init__(**kwargs)
+        self._merged = merged_bridge
+        self._rf_base = int(rf_base)
+        self._rf_size = int(rf_size)
+        xp, _ = get_backend()
+        mask = xp.zeros(int(merged_bridge.core_config.num_neurons), dtype=bool)
+        mask[self._rf_base:self._rf_base + self._rf_size] = True
+        self._rf_mask = mask
+
+    def _resonate(self, n, conns, kick):
+        n = int(n)
+        if n > self._rf_size:
+            raise ValueError(
+                f"RF op needs {n} neurons but the merged rf region is {self._rf_size} "
+                f"(raise rf_D so 7*rf_D >= {n})")
+        b = self._merged
+        N = int(b.core_config.num_neurons)
+        base = self._rf_base
+        shifted = [(base + int(post), base + int(pre), w) for (post, pre, w) in conns]
+        b.rf_set_complex_weights(shifted)
+        full_kick = np.zeros(N, dtype=np.complex128)
+        kk = np.asarray(kick, dtype=np.complex128).reshape(-1)
+        full_kick[base:base + n] = kk[:n]
+        b.rf_kick(full_kick, period=self.period, lam=0.0, neuron_mask=self._rf_mask)
+        b.rf_resonate_steps(self.period + 8)
+        phases = np.asarray(b.rf_read_phases())
+        return phases[base:base + n]
+
+
 class MergedNavConvAgent:
     """STEP 2a agent shim: the `BrainConversationalAgent` surface where comprehension (the PARSER) and dialogue
     planning (the dlPFC `elaborate`) run on the MERGED nav+conv `SimulationBridge`, while fact storage/retrieval
@@ -504,17 +573,30 @@ class MergedNavConvAgent:
       * the dlPFC context `elaborate` drives is the merged bridge's (`self._dlpfc_ctx.bridge is self._merged_bridge`).
     """
 
-    def __init__(self, seed=42, vocab=None):
-        """Build the merged nav+parser+dlPFC bridge + the separate RFPhasorComposer (same seed + vocab). The composer's
-        vocab is the merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory
-        codebook share one word set."""
+    def __init__(self, seed=42, vocab=None, co_resident_composer=False):
+        """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
+        merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory codebook
+        share one word set.
+
+        co_resident_composer (STEP 2b): when True, the fact-binding composer runs CO-RESIDENT on the merged bridge's
+        own `rf` slice (the strict single-instance unification, via the owner-approved sliced `rf_kick`); when False
+        (STEP 2a default) it runs on its own separate per-op bridges."""
         self.seed = int(seed)
-        self._merged_bridge, self._handles = build_merged_nav_conv_bridge(seed=seed, vocab=vocab)
+        self.co_resident_composer = bool(co_resident_composer)
+        _D = 128
+        self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
+            seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D)
         words = self._handles["vocab"]   # the sorted merged vocab (the dlPFC + parser word set)
 
-        # The production composer on its OWN bridge(s) (STEP 2a: separate). Same seed + vocab as the merged dlPFC.
-        from research.runners.rf_phasor_composer import RFPhasorComposer
-        self.composer = RFPhasorComposer(seed=seed, D=128, vocab=words, period=200)
+        # The composer. STEP 2a default: on its OWN per-op bridges (separate). STEP 2b (co_resident_composer=True):
+        # the MergedRFComposer runs the RF binding ops on the merged bridge's own `rf` slice. Same seed + vocab as
+        # the merged dlPFC either way.
+        if self.co_resident_composer:
+            self.composer = MergedRFComposer(
+                self._merged_bridge, self._handles["rf_base"], self._handles["rf_size"],
+                seed=seed, D=_D, vocab=words, period=200)
+        else:
+            self.composer = RFPhasorComposer(seed=seed, D=_D, vocab=words, period=200)
 
         # The parser READ surface on the merged framework slices (so `self.parser.parse(...)` matches the agent's).
         self.parser = _MergedParserAdapter(self._merged_bridge, self._handles["conj_arr"], self._handles["role_arr"])
@@ -532,6 +614,11 @@ class MergedNavConvAgent:
             f"FAIL anti-cheat: 'dlpfc_wm' not on the merged bridge (regions: {sorted(region_names)[:8]}...)"
         assert self._dlpfc_ctx.bridge is self._merged_bridge, \
             "FAIL anti-cheat: elaborate's dlPFC context is NOT the merged bridge (silent standalone-dlPFC fallback)"
+        if self.co_resident_composer:
+            assert "rf" in region_names, \
+                "FAIL anti-cheat: co_resident_composer set but no 'rf' region on the merged bridge"
+            assert self.composer._merged is self._merged_bridge, \
+                "FAIL anti-cheat: the co-resident composer is not bound to the merged bridge"
 
     # --- comprehend / store / recall (mirror BrainConversationalAgent exactly) ---
     def hear(self, sentence, voice="active", polarity=None):
