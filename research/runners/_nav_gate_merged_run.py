@@ -21,6 +21,8 @@ def main():
     ap = argparse.ArgumentParser(description="STEP 2a nav gate (a): one flagship nav run, +/- conv")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--with-conv", action="store_true", help="merged bridge (append parser+dlPFC + the hook)")
+    ap.add_argument("--co-resident-rf", action="store_true",
+                    help="STEP 2b: also append the `rf` composer region (nav-not-regressed-with-rf gate)")
     ap.add_argument("--n-steps", type=int, default=1800)
     ap.add_argument("--grid-size", type=int, default=32)
     ap.add_argument("--out", type=str, required=True)
@@ -55,14 +57,15 @@ def main():
         from research.runners.nav_conv_merged_bridge import (
             conv_extra_regions_pathways, finalize_conv_for_nav_gate,
         )
-        extra_regions, extra_pathways = conv_extra_regions_pathways()
+        extra_regions, extra_pathways = conv_extra_regions_pathways(co_resident_rf=args.co_resident_rf)
 
         def hook(bridge):
             finalize_conv_for_nav_gate(bridge, seed=args.seed)
 
         kw.update(extra_regions=extra_regions, extra_pathways=extra_pathways,
                   build_with_ou=True, prebuilt_post_init_hook=hook)
-        print(f"[nav-gate(a)] seed={args.seed} MERGED (nav+parser+dlPFC) -> {args.out}", flush=True)
+        _rf = " + rf" if args.co_resident_rf else ""
+        print(f"[nav-gate(a)] seed={args.seed} MERGED (nav+parser+dlPFC{_rf}) -> {args.out}", flush=True)
     else:
         print(f"[nav-gate(a)] seed={args.seed} STANDALONE nav -> {args.out}", flush=True)
 

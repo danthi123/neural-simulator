@@ -383,12 +383,17 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
 
 
 # ── the EPISODE-path conv finalization (nav gate (a): nav episode runs on the merged bridge) ─────────────────
-def conv_extra_regions_pathways(vocab=None):
+def conv_extra_regions_pathways(vocab=None, co_resident_rf=False, rf_D=128):
     """The conversational regions/pathways to APPEND to the navigation lists for the episode-path merge: the
     parser (parse_conj 6, parse_role 3*PARSER_R) + the dlPFC regions (cortex_ctx, dlpfc_wm, both enable_nmda).
     For the NAV GATE the dlPFC regions are present but EDGELESS (the dlpfc_loop is only for `elaborate`, not
     needed for nav-not-regressed), so they are silent during the nav episode. Returns (extra_regions,
-    extra_pathways) for `run_moving_goal_episode(extra_regions=, extra_pathways=)`."""
+    extra_pathways) for `run_moving_goal_episode(extra_regions=, extra_pathways=)`.
+
+    co_resident_rf (STEP 2b): also append the `rf` composer region (7*rf_D neurons, no pathways, NMDA-off) so the
+    nav-not-regressed gate can be re-run with the rf slice present. The rf region has NO cp_connections out-edges
+    into navigation (the Task-1 anti-cheat) and is idle during the nav episode (no composer ops run mid-episode),
+    so it is provably nav-inert — this gate just confirms that empirically."""
     if vocab is None:
         from research.runners.rf_phasor_composer import DEFAULT_VOCAB
         vocab = DEFAULT_VOCAB
@@ -399,7 +404,11 @@ def conv_extra_regions_pathways(vocab=None):
         BrainRegion(name="cortex_ctx", n_neurons=n_dlpfc, exc_fraction=1.0, internal_density=0.0, enable_nmda=True),
         BrainRegion(name="dlpfc_wm", n_neurons=n_dlpfc, exc_fraction=1.0, internal_density=0.0, enable_nmda=True),
     ]
-    return list(parser_regions) + list(dlpfc_regions), list(parser_pathways)
+    rf_regions = []
+    if co_resident_rf:
+        rf_regions = [BrainRegion(name="rf", n_neurons=7 * int(rf_D), exc_fraction=1.0,
+                                  internal_density=0.0, enable_nmda=False)]
+    return list(parser_regions) + list(dlpfc_regions) + list(rf_regions), list(parser_pathways)
 
 
 def finalize_conv_for_nav_gate(bridge, seed=42, R=PARSER_R, n_epochs=30, train_steps=120):
