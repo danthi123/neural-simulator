@@ -76,6 +76,19 @@ The `--critic-gabab-propagation` sweep on 43/44 confirmed the gap fix (prop 0.00
 
 **Resolution levers (the AUTONOMOUS_STATE's two, now re-confirmed):** (1) make the self-org reproducible (cusparse/SpMV determinism on this engine — hard, no env flag; or a deterministic dense place-code self-org; or CPU self-org then transfer); (2) robustify the critic training so it learns V strongly regardless of the draw — a developmental **goal-field-adequacy gate** (re-self-org until the goal volley fires the count-plateau critic ≥K, brain-plausible goal over-representation, Hollup 2001/Dupret 2010) OR homeostatic synaptic scaling on the place→value afferent (Turrigiano, normalizes critic firing). Deep-research + the cheapest lever (the re-roll gate) are the next steps.
 
+## Draw-variance characterization (6 independent draws, same final config)
+
+| seed | STEP-1 cos/spars | w_near/w_far | crit near/far Hz | LEARNS-V | FIRE+GRADE |
+|---|---|---|---|---|---|
+| 42 | 0.031/0.041 | 3.85/0.63 | 28.8/4.6 | ✓ | ✓ |
+| 43 | 0.000/0.044 | 7.08/2.08 | 113.6/31.0 | ✓ | ✓ |
+| 44 | 0.050/0.050 | 6.61/1.29 | 118.6/38.2 | ✓ | ✓ |
+| 45 | 0.061/0.042 | 4.15/1.08 | 66.7/20.0 | ✓ | ✓ |
+| 46 | 0.029/0.044 | 0.31/8.11 | 75.4/9.9 | ✗ | ✓ |
+| 47 | 0.040/0.032 | 0.94/1.67 | 42.9/7.1 | ✗ | ✓ |
+
+**The critic's value-of-location FIRING grades 6/6** (near ≫ far at the goal on every draw) — the core value signal is robust to the non-deterministic place-code draws. The weight-ratio proxy LEARNS-V is 4/6 (46/47 draw anomalous w_far ≥ w_near, yet the firing still grades — the firing is volley+weighted-plateau driven, so the strict weight-ratio gate is a noisier proxy than the functional firing). **The residual narrows from "the whole loop is non-deterministic" to a specific operating-point problem: the critic near-rate varies 28–118 Hz across draws, and a single GABA_B propagation can't serve both ends (28 Hz → graded arithmetic shift; 118 Hz → full clamp of both SNc).** So the robust fix is to NORMALIZE the critic firing rate across draws (homeostatic intrinsic-excitability / synaptic scaling, Turrigiano; or divisive normalization, Carandini-Heeger) — then a fixed GABA_B prop gives a stable graded subtraction — OR a graceful-saturating GABA_B (Destexhe). This is what the place-code-robustness research is ranking.
+
 ## Honest residuals / next
 
 - **Multi-seed (43/44)** robustness — the place-code self-org has a known CuPy-non-deterministic drive-strength variance (here the near (30,30) field was *weaker* than far (1,1), 0.42 vs 1.21 Hz; the weight cap + clean reset still graded it, but other seeds need confirming). IN FLIGHT.
