@@ -34,8 +34,8 @@ flowchart LR
     RF -->|fact / QA / abstain| Answer
     DLPFC -->|next on-topic concept| Answer
 
-    classDef nav fill:#3b6ea51a,stroke:#3b6ea5;
-    classDef conv fill:#2f8f6b1a,stroke:#2f8f6b;
+    classDef nav fill:#e7eff7,stroke:#3b6ea5,color:#1d1d1f;
+    classDef conv fill:#e6f2ec,stroke:#2f8f6b,color:#1d1d1f;
     class Env,Body nav
     class Words,Answer conv
 ```

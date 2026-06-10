@@ -7,10 +7,37 @@ This document is the **authoritative current-state reference**.
 Update it whenever capabilities change. For the journey of how we
 got here, see `research/findings/`.
 
-**Last meaningful update:** 2026-05-14 (concept-concept semantic
-conversation validated at 90% FULL / 100% PARTIAL multi-seed via
-multi-tag cue retrieval; bug retraction for prior compose_concept
-claims documented).
+**Last meaningful update:** 2026-06-10 (see "Recent milestones (2026-06)" below).
+
+**Recent milestones (2026-06):**
+- **Conversational composition is fully spiking + opponency-free** — the
+  production conversational agent defaults to the FHRR-on-bridge
+  `RFPhasorComposer` (resonate-and-fire phasor neurons + complex synapses),
+  which escaped the rate-coded opponency SNR wall. who/what Q&A, abstention (the
+  no-confabulation moat), negation/yes-no, clauses, dialogue, generation;
+  320-concept correctness GO.
+- **Conversational pipeline consolidated onto the core sim** — comprehension (a
+  Hebbian-learned parser) + composition / fact memory / QA + dialogue planning
+  (dlPFC) run as genuine spiking on `SimulationBridge`, no bolted-on numpy
+  simulator in the path.
+- **Navigation fully biologized** — every cognitive step between sensation and
+  action is a validated neural mechanism (a spiking superior colliculus for
+  orienting, a neural reward, spiking decision / disinhibition / dopamine RPE).
+- **Navigation + Conversational merged onto ONE bridge (roadmap step 2)** — both
+  brains run as disjoint neuron-index slices on a single substrate; the
+  conversational capability matrix passes verbatim on the merged bridge (incl.
+  the no-confab moat), and the navigation episode runs on it with the
+  conversational populations byte-frozen *in vivo* under the live navigation
+  learning. See [`ARCHITECTURE_nav_conv_merge.md`](ARCHITECTURE_nav_conv_merge.md).
+  (The full 6-seed navigation gate is the final statistical rigor.)
+
+> The "At a glance" and detailed sections below predate the 2026-06 work and
+> describe the earlier multi-tag-retrieval era; the milestones above are the
+> current frontier. A full rewrite of the detailed sections is pending.
+
+**Earlier (2026-05-14):** concept-concept semantic conversation validated at 90%
+FULL / 100% PARTIAL multi-seed via multi-tag cue retrieval; bug retraction for
+prior compose_concept claims documented.
 
 ---
 
