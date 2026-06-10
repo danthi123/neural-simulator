@@ -575,6 +575,13 @@ def build_bg_brain_regions(
     visual_n_it: int = 64,
     # Cluster K v2 (2026-05-01): IT → cortex_X action-selection density
     visual_it_to_cortex_density: float = 0.5,
+    # Spiking superior colliculus (N1 orienting; 2026-06-10). A retinotopic SC sheet
+    # (sc_map) + Mexican-hat surround (sc_fs) that, fed the egocentric retinal image,
+    # produces the orienting cardinal as cortex_{N,E,S,W} firing — the spiking
+    # replacement for the host sc_orienting_cardinal_from_image reflex (N1). Requires
+    # enable_visual_cortex (uses the retina). De-risked: 2026-06-10-N1-N5-spiking-SC-derisk-RESULT.md.
+    enable_spiking_sc: bool = False,
+    n_spiking_sc_fs: int = 12,
     # Text I/O (2026-05-01)
     enable_text_io: bool = False,
     text_n_input_neurons: int = 256,
@@ -2344,6 +2351,39 @@ def build_bg_brain_regions(
             weight_jitter=0.2, plastic_internal=True,
             izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
         ))
+
+        # Spiking superior colliculus (N1 orienting; de-risked 2026-06-10). A retinotopic
+        # sheet sc_map (visual_image_size//2 per side) + a Mexican-hat surround sc_fs. Fed
+        # the egocentric retinal image (in the nav loop), it forms a single activity bump at
+        # the goal's retinal site; sc_map -> cortex_{N,E,S,W} pooling reads the orienting
+        # cardinal BY FIRING (the spiking replacement for sc_orienting_cardinal_from_image).
+        if enable_spiking_sc:
+            n_sc_side = visual_image_size // 2          # 32 -> 16
+            n_sc_map = n_sc_side * n_sc_side            # 256
+            regions.append(BrainRegion(
+                name="sc_map", n_neurons=n_sc_map, exc_fraction=1.0,
+                internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            ))
+            regions.append(BrainRegion(
+                name="sc_fs", n_neurons=int(n_spiking_sc_fs), exc_fraction=0.0,
+                internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+            ))
+            # Mexican-hat surround. CRITICAL (de-risk gotcha): these must be declared with
+            # REAL density so inject_explicit_wiring marks sc_fs INHIBITORY (sets the
+            # per-neuron trait mask). A density-0 + set_pathway_weights route leaves the mask
+            # unset -> sc_fs synapses act EXCITATORY and drive the whole map (not a bump).
+            pathways.append(RegionPathway(
+                from_region="sc_map", to_region="sc_fs",
+                density=0.5, weight_mean=4.0, weight_jitter=0.1, plastic=False,
+            ))
+            pathways.append(RegionPathway(
+                from_region="sc_fs", to_region="sc_map",
+                density=0.8, weight_mean=2.0, weight_jitter=0.1, plastic=False,
+            ))
 
         # retina → V1_simple. Plastic so STDP can refine weights from
         # whatever Gabor init we apply post-build (or from random init in
