@@ -3769,6 +3769,14 @@ def run_moving_goal_episode(
     # for the BG nav cascade.
     emit_activity: bool = False,
     emit_activity_every: int = 5,
+    # ── STEP 2a merge integration: additive override for the STDP soft-bound
+    # ceiling (cfg.stdp_w_max). Default None = the existing computed value
+    # (max(30, 25/0.20*1.2) = 150), so the standalone nav path is BYTE-EQUIVALENT
+    # when this is unused. The merge passes 400 (the 5a clip mitigation — raised
+    # above the ~300 frozen parser role-route so the ungated reward clip cannot
+    # move it). The nav-gate (a) check verifies the soft-bound nav actor
+    # (cortex->D1) does NOT over-grow when the ceiling is raised. NO sim/ edit.
+    stdp_w_max_override=None,
 ):
     """Phase B acid test: run BG circuit on G9-style moving-goal scenario.
 
@@ -4088,6 +4096,12 @@ def run_moving_goal_episode(
     _ctx_msn_density = 0.20  # R3.5 default
     _ctx_msn_weight = (25.0 / _ctx_msn_density) if _ctx_msn_density < 1.0 else 25.0
     cfg.stdp_w_max = max(30.0, _ctx_msn_weight * 1.2)
+    # STEP 2a merge integration: optional additive override of the STDP soft-bound
+    # ceiling. Default None => keep the computed value above (byte-equivalent
+    # standalone). The merge passes 400 (5a clip mitigation); the nav-gate (a)
+    # check uses --stdp-w-max 400 to verify the soft-bound actor does not over-grow.
+    if stdp_w_max_override is not None:
+        cfg.stdp_w_max = float(stdp_w_max_override)
     cfg.enable_hebbian_learning = False
     cfg.enable_homeostasis = False
     cfg.enable_short_term_plasticity = False
@@ -7231,9 +7245,47 @@ def run_moving_goal_episode(
                               for a in range(N_ACTIONS)],
         })
 
+    # ── STEP 2a merge-gate (a) probe: the max cortex_X->str_D1_X actor weight
+    #    after the run. Mirrors _mean_critic_weight's CSR read, restricted to the
+    #    four same-action cortex->D1 pathways (the navigation ACTOR). Used by the
+    #    nav-gate (a) check to verify that raising cfg.stdp_w_max (150->400, the 5a
+    #    clip mitigation) does NOT let the soft-bound actor over-grow toward 400.
+    #    Always computed (cheap, ~one CSR isin), stored in the results JSON;
+    #    PRINTED only when --stdp-w-max was passed (so default runs are unchanged).
+    def _actor_max_weight():
+        try:
+            pre_list, post_list = [], []
+            for a in ACTION_NAMES:
+                if f"cortex_{a}" in region_indices_cp and f"str_D1_{a}" in region_indices_cp:
+                    pre_list.append(region_indices_cp[f"cortex_{a}"].get())
+                    post_list.append(region_indices_cp[f"str_D1_{a}"].get())
+            if not pre_list:
+                return None
+            pre = np.concatenate(pre_list)
+            post = np.concatenate(post_list)
+            coo = bridge.cp_connections.tocoo()
+            rows = coo.row.get() if hasattr(coo.row, "get") else np.asarray(coo.row)
+            cols = coo.col.get() if hasattr(coo.col, "get") else np.asarray(coo.col)
+            data = coo.data.get() if hasattr(coo.data, "get") else np.asarray(coo.data)
+            m = np.isin(rows, pre) & np.isin(cols, post)
+            if not m.any():
+                m = np.isin(rows, post) & np.isin(cols, pre)
+            return float(data[m].max()) if m.any() else None
+        except Exception:
+            return None
+
+    _actor_w_max = _actor_max_weight()
+    if stdp_w_max_override is not None:
+        _gate_score = sum(p["final_quarter_mean_distance"] for p in phase_stats)
+        print(f"[g11 seed={seed}] NAV-GATE(a) stdp_w_max={cfg.stdp_w_max:.1f}  "
+              f"sum_finalQ={_gate_score:.4f}  mean_distance_overall={float(dist_arr.mean()):.4f}  "
+              f"actor_max_cortex_to_D1_weight={_actor_w_max}", flush=True)
+
     results = {
         "seed": seed, "n_steps": n_steps, "grid_size": grid_size,
         "start_pos": list(start_pos), "goal_pos": list(goal_pos),
+        "stdp_w_max": float(cfg.stdp_w_max),
+        "actor_max_cortex_to_D1_weight": _actor_w_max,
         "goal_schedule": [[s, list(g)] for s, g in goal_schedule_sorted],
         "goal_change_steps": goal_change_steps,
         "phase_stats": phase_stats,
@@ -7865,6 +7917,13 @@ def main():
                     help="reward_learning_rate for STDP/reward modulation "
                          "(default 0.01). Set 0.0 to freeze plasticity (diagnostic: "
                          "isolate dynamics from cumulative weight changes).")
+    ap.add_argument("--stdp-w-max", type=float, default=None,
+                    help="STEP 2a merge integration: override the STDP soft-bound "
+                         "ceiling cfg.stdp_w_max. Default None = the computed value "
+                         "(150). The merge uses 400 (the 5a clip mitigation above the "
+                         "~300 frozen parser role-route). The nav-gate (a) check runs "
+                         "the flagship at --stdp-w-max 400 vs the default 150 to verify "
+                         "the soft-bound nav actor (cortex->D1) does not over-grow.")
     ap.add_argument("--enable-tonic-da", action="store_true",
                     help="Cluster C v1 (2026-04-29): replace signed-scalar "
                          "reward modulation with a real `dopamine` "
@@ -8797,6 +8856,7 @@ def main():
             reset_losers_only=args.reset_losers_only,
             urgency_max_pA=args.urgency_max_pa,
             learning_rate=args.learning_rate,
+            stdp_w_max_override=args.stdp_w_max,
         )
         return 0
 
