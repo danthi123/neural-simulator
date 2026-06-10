@@ -1042,8 +1042,20 @@ def build_bg_brain_regions(
             izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
         ))
         # The MSN-D1 value critic. NMDA ON (the Route-D coincidence plateau reuses the Mg2+-block
-        # kernel — the per-region NMDA mask restricts it to this slice). NO homeostasis on the
-        # critic in this path (it fires from the synchronized volley through the LEARNED synapses).
+        # kernel — the per-region NMDA mask restricts it to this slice). Optional per-region INTRINSIC
+        # homeostasis (committed sim/ edit 89b8d909; Turrigiano/Desai) via --enable-critic-homeostasis:
+        # the place-code self-org is CuPy-non-deterministic (transpose-SpMV atomic scatter, research
+        # 2026-06-10-N9-placecode-reproducibility-robustness-research.md), so the volley strength —
+        # hence the critic rate — varies 28-118 Hz run-to-run, and a single GABA_B prop can't serve
+        # both (28→arithmetic, 118→clamp). Intrinsic homeostasis defends a TARGET critic rate by
+        # adapting the cell's OWN threshold to the volley strength → normalizes the readout across
+        # draws so the draw stops mattering (the research's primary lever B1). Applied ONLY to the
+        # critic here (NOT the self-org `place` pool, whose threshold-WTA is the competition — adding
+        # it there would densify/blur the code; the volley, not a weak linear afferent, supplies the
+        # critic's drive, so critic-only is the path-appropriate form — unlike the vs_place_context
+        # linear-afferent path where critic-only failed). Default OFF (byte-equivalent). Anti-cheat:
+        # the threshold is the cell's own (intrinsic, neural), and grading near≫far must SURVIVE
+        # (Stage-B re-asserts it; a 0-drive far can't cross even a lowered threshold).
         regions.append(BrainRegion(
             name="striosome_value", n_neurons=n_striosome_value,
             exc_fraction=0.0, internal_density=0.0,
@@ -1052,6 +1064,7 @@ def build_bg_brain_regions(
             izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
             syn_reversal_potential_i_override=-60.0,
             enable_nmda=True,
+            enable_homeostasis=bool(enable_critic_homeostasis),
         ))
     elif enable_neural_critic:
         # The DEDICATED DENSE place-context afferent (2026-06-09 VALIDATED redesign). A
