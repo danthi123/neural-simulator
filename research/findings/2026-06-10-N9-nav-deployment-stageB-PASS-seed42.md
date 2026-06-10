@@ -101,6 +101,18 @@ The research's primary lever (B1, `--enable-critic-homeostasis`) was wired onto 
 
 With the determinism edit (`--deterministic-selforg`) the full deployment runs end-to-end (NO `--stage-b-smoke`, 600-step nav, single goal): STEP-1 self-org (deterministic, diff-cos 0.0245) → STEP-2 value-train (w_near 0.2→**6.35**, w_far 0.2→1.20, **5.28×** — the critic learned V) → **the nav loop runs the online δ=r−V** (the SNc `_I_snc = tonic + gain·reward` with NO host V term; the `striosome_value` GABA_B subtracts V at the SNc membrane, `bridge.py` nav-loop ~6730-6745) → the agent **navigates** (step 500/600 pos=(30,31) goal=(30,30), **recent_dist 1.85** — at the goal); rc=0, no crash. So the N9 neural reward-prediction-error loop is deployed and FUNCTIONAL in the online nav loop — the "0 Hz substrate boundary" is fully overturned end-to-end. The nav A/B (Stage C: neural δ=r−V vs the host δ=r−V_scaffold cheat it replaces) is in flight.
 
+## Stage C — first nav A/B (neural δ=r−V vs host-V cheat): HONEST NEGATIVE (seed 42 directional)
+
+The deployment runs and navigates, but the spiking neural RPE **underperforms the host shortcut it replaces**:
+
+| seed | ON: neural δ=r−V (nav_sum) | OFF: host-V scaffold (nav_sum) | neural/host |
+|---|---|---|---|
+| 42 | 2.202 | 1.149 | **1.92 (92% worse)** |
+
+(nav_sum = Σ phase_stats.final_quarter_mean_distance, lower=better; both with `--enable-place-goal-readout --spiking-snc`, single goal, 1800 steps; ON adds the self-org place critic + value-train.) The agent **does navigate** with the neural critic (nav_sum 2.20, the agent reaches near the goal), but the host-V subtraction (the cheat) gives cleaner credit assignment (1.15). **This is the expected BRAIN-BASED-ONLY honest negative: the spiking substrate does not yet match the host shortcut** — and per the standing standard, the neural-underperforms-host result IS the scientific deliverable (it maps what the substrate can/can't do on its own).
+
+**Diagnosis (consistent with the rest of the arc):** the online δ quality depends on the GABA_B operating point, which is critic-rate-dependent (saturating — the unsolved robustness). On a hot draw the GABA_B clamps the SNc binary (0 at predicted / full burst at unpredicted) rather than producing a smooth graded δ ∝ r−V; the host reward_ema scaffold is a smooth analog V, so it gives better credit assignment. **Fix path (the deeper robustness, byte-review-gated):** B2 per-region synaptic scaling or B5 saturating GABA_B (Destexhe) so the neural δ is graded across the critic-rate range — then re-run the A/B. Also: full-run determinism (extend the determinism flag to the coincidence/GABA_B matvecs) for a clean multi-seed read. Seed 43 pending; anti-cheats (place-shuffle / sensor-ablation / GABA_B-lesion) not yet run.
+
 ## Honest residuals / next
 
 - **Multi-seed (43/44)** robustness — the place-code self-org has a known CuPy-non-deterministic drive-strength variance (here the near (30,30) field was *weaker* than far (1,1), 0.42 vs 1.21 Hz; the weight cap + clean reset still graded it, but other seeds need confirming). IN FLIGHT.
