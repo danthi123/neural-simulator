@@ -210,7 +210,7 @@ def install_spiking_sc_wiring(bridge, visual_image_size=32, w_ret_sc=80.0,
     rm = bridge.region_manager
     IMGW = int(visual_image_size)
     SCN = IMGW // 2                       # sc sheet side (32 -> 16)
-    ret0 = int(list(rm.indices("retina"))[0])
+    ret0 = int(list(rm.indices("sc_retina"))[0])   # the SC's own egocentric eye
     sc0 = int(list(rm.indices("sc_map"))[0])
     ctx0 = {a: int(list(rm.indices(f"cortex_{a}"))[0]) for a in ACTION_NAMES}
     n_ctx = {a: len(list(rm.indices(f"cortex_{a}"))) for a in ACTION_NAMES}
@@ -2449,6 +2449,15 @@ def build_bg_brain_regions(
         if enable_spiking_sc:
             n_sc_side = visual_image_size // 2          # 32 -> 16
             n_sc_map = n_sc_side * n_sc_side            # 256
+            # The SC's OWN egocentric eye (separate from the allocentric `retina` the
+            # visual cortex / N5 reward / learned-perception use), driven STRONG in the
+            # nav loop so the SC forms a robust bump without over-driving the visual cortex.
+            regions.append(BrainRegion(
+                name="sc_retina", n_neurons=2 * visual_image_size * visual_image_size,
+                exc_fraction=1.0, internal_density=0.0, exc_weight_mean=0.0,
+                inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            ))
             regions.append(BrainRegion(
                 name="sc_map", n_neurons=n_sc_map, exc_fraction=1.0,
                 internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
@@ -6473,6 +6482,18 @@ def run_moving_goal_episode(
                 bridge.cp_external_input_current[region_indices_cp["retina"]] = (
                     cp.asarray(drive, dtype=cp.float32)
                 )
+                # Spiking SC (N1, 2026-06-10): drive the SC's OWN egocentric eye STRONG so
+                # it forms a robust orienting bump; the framework-wired sc_map->cortex_X
+                # pooling then biases action selection SYNAPTICALLY (the spiking replacement
+                # for the host sc_orienting_cardinal_from_image current injection). The main
+                # `retina` stays allocentric for the visual cortex / N5 reward. Drive strength
+                # 2500 pA matches the de-risk operating point (tunable for the 6-seed A/B).
+                if enable_spiking_sc and "sc_retina" in region_indices_cp:
+                    _ego = render_egocentric_goal((int(x), int(y)), (int(gx), int(gy)),
+                                                  image_size=int(visual_image_size))
+                    _egd = image_to_retina_drive(_ego, drive_max_pA=2500.0)
+                    bridge.cp_external_input_current[region_indices_cp["sc_retina"]] = (
+                        cp.asarray(_egd, dtype=cp.float32))
                 # Innate superior-colliculus orienting reflex (N1 de-risk,
                 # 2026-06-07): read the goal's retinal direction from THIS
                 # rendered image alone (no coords) and inject an orienting push
