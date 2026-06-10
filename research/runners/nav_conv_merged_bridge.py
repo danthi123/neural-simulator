@@ -403,13 +403,18 @@ def finalize_conv_for_nav_gate(bridge, seed=42, R=PARSER_R, n_epochs=30, train_s
     xp, _ = get_backend()
     rm = bridge.region_manager
     csr = bridge.cp_connections
-    # per-data-position (pre, post), guaranteed aligned with cp_connections.data / cp_plasticity_rate_gain
-    counts = xp.diff(csr.indptr)
-    pre = xp.repeat(xp.arange(csr.shape[0], dtype=csr.indices.dtype), counts)
-    post = csr.indices
-    pc = xp.asarray(rm.indices("parse_conj"), dtype=pre.dtype)
-    prr = xp.asarray(rm.indices("parse_role"), dtype=pre.dtype)
-    parser_mask = xp.isin(pre, pc) & xp.isin(post, prr)
+    # per-data-position (pre, post), guaranteed aligned with cp_connections.data / cp_plasticity_rate_gain.
+    # Computed on the HOST from indptr/indices (backend-agnostic — cupy.repeat rejects an array `repeats`),
+    # then the boolean mask is pushed to the device. The indptr loop is over n_rows (a few thousand) = fast.
+    indptr_h = to_host(csr.indptr)
+    post_h = to_host(csr.indices).astype(np.int64)
+    nnz = int(post_h.shape[0])
+    pre_h = np.zeros(nnz, dtype=np.int64)
+    for r in range(int(csr.shape[0])):
+        pre_h[int(indptr_h[r]):int(indptr_h[r + 1])] = r
+    pc = np.asarray(rm.indices("parse_conj"), dtype=np.int64)
+    prr = np.asarray(rm.indices("parse_role"), dtype=np.int64)
+    parser_mask = xp.asarray(np.isin(pre_h, pc) & np.isin(post_h, prr))
 
     if bridge.cp_plasticity_rate_gain is None:
         bridge.set_global_plasticity_gain(1.0)
