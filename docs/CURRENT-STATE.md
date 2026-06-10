@@ -55,14 +55,18 @@ The simulator is a GPU-accelerated spiking neural network with:
 The agent currently solves three main tasks:
 
 1. **Gridworld navigation** (the "main task") — find a goal on a 8×8
-   to 24×24 grid using only retinal input
+   to 32×32 grid using only retinal input
 2. **Word-to-action mapping** (the "language task") — hear "north",
    move motor cortex toward north
-3. **Concept-concept semantic conversation** (2026-05-14, NEW) —
-   user types "apple", system retrieves "big" AND "cat" via
-   multi-tag engram cue retrieval. 90% FULL / 100% PARTIAL multi-seed
-   at 16-word vocab. Chat REPL with `remember`/`what is`/`forget`/`and`
-   commands. See [`research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md`](../research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md).
+3. **Conversation** — comprehend a sentence (a learned spiking
+   sentence parser), bind the words into a fact and answer who/what
+   questions about it, refuse to answer when it doesn't know, handle
+   negation and yes/no, embedded clauses, and plan what to say next —
+   all as genuine spiking neurons on the core network, correct at the
+   320-concept scale (see the 2026-06 milestones above). An earlier
+   multi-tag cue-retrieval mechanism (type "apple" → retrieves "big"
+   and "cat") is validated at 90% FULL / 100% PARTIAL multi-seed at
+   16-word vocabulary. See [`research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md`](../research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md).
 
 ---
 
@@ -70,10 +74,14 @@ The agent currently solves three main tasks:
 
 ### Navigation
 
-**Best result:** 16×16 grid, 1800-step session, **2.87 ± 0.19 mean
-Manhattan distance to goal** across 6 seeds. Agent spends ~38% of
-its time at the goal. Beats the 8×8 baseline (4.08 ± 0.49) on a 4×
-larger grid.
+**Best result:** **32×32 grid, 1800-step session, 2.57 ± 0.11 mean
+Manhattan distance to goal** across 6 seeds (the biology-grounded,
+vision-only "G v2.5 + K v2" recipe; closes 4 of the 5 original
+shortcuts). 6/6 seeds beat the 16×16 baseline on a 4× larger grid.
+Agent spends ~36% of its time at the goal. (Since this result,
+navigation's last hand-computed steps — orienting, reward/value, and
+the dopamine signal — have been progressively converted to genuine
+spiking circuits; see the 2026-06 milestones above and CLAUDE.md.)
 
 **How it works (in plain language):** the agent's "eyes" (32×32
 retina) see the gridworld image. Visual cortex extracts edges (V1),
@@ -299,9 +307,10 @@ maximum reproducibility (sets `CUBLAS_WORKSPACE_CONFIG`).
 
 ### Computational
 - 4-direction action space only (no diagonal moves)
-- Single goal at a time (no multi-goal compositional planning)
-- 8×8 to 24×24 grid sizes only
-- ~5K neurons (real brain regions have 10⁴–10⁶ each)
+- Navigation handles a goal that moves on a schedule (multi-goal
+  re-acquisition), but not multi-goal compositional *planning*
+- 8×8 to 32×32 grid sizes
+- ~5K–7K neurons per agent (real brain regions have 10⁴–10⁶ each)
 
 ### Biological
 - No developmental phases (no synaptic pruning, layer formation)
@@ -311,8 +320,16 @@ maximum reproducibility (sets `CUBLAS_WORKSPACE_CONFIG`).
 - No multi-time-scale plasticity (only fast STDP)
 
 ### Tasks
-- Vocabulary: 4 cardinal directions
-- No compositional language ("go north then east")
+- Vocabulary has scaled well past the original 4 directions: a 16-word
+  vocabulary is validated bidirectionally multi-seed, and a 320-concept
+  scale is validated for both retrieval and spiking fact composition
+  (see the 2026-06 milestones above and CLAUDE.md). The original
+  "4 cardinal directions only" limit no longer holds.
+- Compositional binding is **mixed**: binding words into a fact and
+  recalling it (the spiking composer) is validated multi-seed at the
+  320-concept scale, and engram-based composition is validated; but
+  learning verb→motor composition by growing synapse weights from
+  scratch was a documented negative (an honest boundary, not hidden).
 - No multi-modal tasks (smell, touch, sound modalities not modeled)
 - No social interaction (joint attention not implemented)
 
