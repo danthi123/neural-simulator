@@ -204,6 +204,10 @@ def build_bg_brain_regions(
     critic_cortex_it_to_value_density: float = 0.6,
     critic_value_to_snc_weight: float = 10.0,        # GABA_B inhibitory critic->SNc weight (de-risk PASS value)
     critic_value_to_snc_density: float = 0.5,
+    spiking_reward_us: bool = False,        # reward_us (PPN-like) excitatory US->SNc afferent: spiking reward burst, drops the host write
+    n_reward_us: int = 40,                  # US/reward afferent pool size (C.33: 30-50)
+    reward_us_to_snc_weight: float = 20.0,  # reward_us->snc excitatory weight (tuned so a full US volley ~ snc_reward_gain)
+    reward_us_to_snc_density: float = 0.6,
     # ── 2026-06-09 VALIDATED redesign (navfaithful-afferent-critic-homeostasis PASS) ──
     # The critic afferent is a DEDICATED DENSE `vs_place_context` region (a grid-32-tuned
     # Gaussian place code so 30-80 cells fire/location), NOT the SPARSE actor
@@ -1002,6 +1006,27 @@ def build_bg_brain_regions(
         syn_reversal_potential_i_override=-55.0,
     ))
 
+    # reward_us — the SPIKING unconditioned-stimulus (US) afferent that DRIVES the SNc reward burst
+    # (2026-06-10, the spiking-ification of the host SNc reward write; research
+    # 2026-06-10-N9-spiking-reward-and-critic-normalization, catalog C.33 PPN sensory+reward->DA).
+    # Biology: DA neurons do NOT compute reward internally — they are DRIVEN to burst by an EXCITATORY
+    # afferent (PPN/PBN glutamate; Watabe-Uchida 2012 inputome) that carries the PRIMARY (perceived)
+    # reward signal. Today the runner writes `snc += snc_reward_gain*max(0,reward)` DIRECTLY onto the
+    # DA cell (a number -> DA current with NO neuron between = the shortcut). With spiking_reward_us,
+    # this PPN-like population receives the PERCEIVED reward (the coord-free N5 approach signal, a
+    # sensory drive like the place/retina injection) and FIRES into the SNc, so the reward burst is
+    # produced by a NEURON's synapse (US->VTA), and the whole δ=r−V is synaptic (r from reward_us
+    # excitation, V from the striosome GABA_B). plastic=False: the unconditioned US->DA reflex arc is
+    # innate (only the cue->prediction learning is plastic, and that lives in the actor/critic).
+    # Default OFF => byte-equivalent (region/pathway absent). RS pyramidal = closest excitable relay.
+    if spiking_reward_us:
+        regions.append(BrainRegion(
+            name="reward_us", n_neurons=int(n_reward_us), exc_fraction=1.0,
+            internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+
     # Spiking-SNc actor-critic Stage B (2026-06-08): a dedicated neural value
     # critic. `striosome_value` is the striosome/patch state-value population
     # (Houk-Adams-Barto 1995 / catalog C.30: striosome-patch = critic V(s)).
@@ -1732,6 +1757,18 @@ def build_bg_brain_regions(
             weight_jitter=0.2, plastic=False,
             receptor="gaba_b",   # slow GIRK K+ subtraction onto the depolarized SNc
             transmission_gate="critic_snc_window",
+        ))
+
+    # reward_us -> snc : the EXCITATORY US/reward afferent (PPN->VTA glutamate, C.33). When
+    # spiking_reward_us, the SNc reward burst (the `r` term) is produced by `reward_us` FIRING into
+    # the SNc, NOT a host current write -> δ=r−V is fully synaptic (r=excitation, V=GABA_B). plastic=
+    # False (innate US->DA reflex). weight tuned so a full US volley ~= the old snc_reward_gain drive.
+    if spiking_reward_us:
+        pathways.append(RegionPathway(
+            from_region="reward_us", to_region="snc",
+            density=float(reward_us_to_snc_density),
+            weight_mean=float(reward_us_to_snc_weight),
+            weight_jitter=0.2, plastic=False,
         ))
 
     # R3.10 (2026-04-29): GPi/SNr -> snc collateral disinhibition
@@ -3003,6 +3040,16 @@ def run_moving_goal_episode(
     # When False, Stage A behavior is byte-unchanged (host _V_scaffold subtraction).
     # Validated CPU de-risk: research/findings/2026-06-08-gabab-girk-stageB-derisk-GO.md.
     enable_neural_critic: bool = False,
+    # ── 2026-06-10 spiking US/reward -> SNc (drops the host SNc reward write) ──
+    # With spiking_reward_us, a PPN-like `reward_us` population receives the PERCEIVED reward (N5's
+    # coord-free approach signal, a sensory drive) and FIRES into the SNc, so the reward burst is a
+    # NEURON's synapse (US->VTA), not a host current write. STRONGLY recommend --perceived-approach-
+    # reward so the US rides on pixels (coord-free); else a WARN (the reward is the coord default).
+    spiking_reward_us: bool = False,
+    n_reward_us: int = 40,
+    reward_us_to_snc_weight: float = 20.0,
+    reward_us_to_snc_density: float = 0.6,
+    reward_us_drive_pa: float = 1200.0,     # US-afferent drive current when the perceived reward is +1
     # ── Critic drive calibration (2026-06-08, runner-side; diagnosed by
     #    research/findings/raw/g11_bg/_placecritic_diag*.py). The smoke found the
     #    MSN-D1 striosome_value critic NEVER FIRED in nav. Root cause (decisive):
@@ -3576,6 +3623,13 @@ def run_moving_goal_episode(
         if verbose:
             print("[g11] N9 neural_place_selforg ON -> enable_convergent_upstate HARD-GATED OFF "
                   "(the position-blind A1 floor caps grading ~1.2x).", flush=True)
+    # Spiking US -> SNc coord-free guard: the reward_us afferent rides on the PERCEIVED reward.
+    # WITHOUT --perceived-approach-reward, `reward` is the coord-touched default -> the spiking US is
+    # then driven by a coordinate-derived signal (a documented residual shortcut, NOT coord-free).
+    if spiking_reward_us and not perceived_approach_reward and verbose:
+        print("[g11] WARN: --spiking-reward-us WITHOUT --perceived-approach-reward -> the US rides "
+              "on the COORD-based reward (not coord-free). Add --perceived-approach-reward for the "
+              "fully-biologized (coord-free) reward chain.", flush=True)
 
     regions, pathways = build_bg_brain_regions(
         n_cortex=100,  # 25 per action — keeps D1 firing in physiological range (~75 Hz)
@@ -3629,6 +3683,10 @@ def run_moving_goal_episode(
         enable_visual_cortex=enable_visual_cortex,
         # Spiking-SNc actor-critic Stage B: the neural value critic (2026-06-08).
         enable_neural_critic=enable_neural_critic,
+        spiking_reward_us=spiking_reward_us,
+        n_reward_us=n_reward_us,
+        reward_us_to_snc_weight=reward_us_to_snc_weight,
+        reward_us_to_snc_density=reward_us_to_snc_density,
         # N9 NEURAL PLACE-CODE SELF-ORG (2026-06-09 nav deployment) — the self-organized spiking
         # place code afferent + FS-PING + coincidence critic (replaces the host vs_place_context).
         neural_place_selforg=_neural_place_selforg,
@@ -6760,12 +6818,23 @@ def run_moving_goal_episode(
                 bridge.set_transmission_gate("critic_snc_window", 1.0)
             if spiking_snc and "snc" in region_indices_cp:
                 if enable_neural_critic:
-                    _I_snc = (
-                        float(snc_tonic_pa)
-                        + float(snc_reward_gain) * max(0.0, float(reward))
-                        # NO host -k_v*V term: the striosome_value GABA_B
-                        # inhibition subtracts V at the membrane.
-                    )
+                    if spiking_reward_us and "reward_us" in region_indices_cp:
+                        # The reward burst `r` is produced by reward_us FIRING into the SNc (the
+                        # spiking US->VTA glutamatergic afferent), NOT a host current write. Drive
+                        # reward_us with the PERCEIVED reward (coord-free with N5) so it fires through
+                        # the reward-hold -> the SNc bursts SYNAPTICALLY; the striosome GABA_B then
+                        # subtracts V at the membrane. The whole δ=r−V is now neural (r = reward_us
+                        # excitation, V = critic GABA_B). _I_snc carries ONLY tonic.
+                        bridge.cp_external_input_current[region_indices_cp["reward_us"]] = (
+                            cp.float32(float(reward_us_drive_pa) * max(0.0, float(reward))))
+                        _I_snc = float(snc_tonic_pa)
+                    else:
+                        _I_snc = (
+                            float(snc_tonic_pa)
+                            + float(snc_reward_gain) * max(0.0, float(reward))
+                            # NO host -k_v*V term: the striosome_value GABA_B
+                            # inhibition subtracts V at the membrane.
+                        )
                 else:
                     _V_scaffold = max(0.0, float(reward_ema_pre))
                     _I_snc = (
@@ -6813,6 +6882,11 @@ def run_moving_goal_episode(
             # Restore base reward_learning_rate (in case surprise-boosted)
             if enable_surprise_lr_boost:
                 bridge.core_config.reward_learning_rate = base_lr
+            # Silence the spiking US afferent between reward deliveries (it fires ONLY during the
+            # reward-hold above), so reward_us doesn't spuriously drive the SNc during the next nav
+            # integration. (The host-write path zeroes nothing here because it writes the SNc directly.)
+            if spiking_reward_us and "reward_us" in region_indices_cp:
+                bridge.cp_external_input_current[region_indices_cp["reward_us"]] = cp.float32(0.0)
 
         if verbose and progress_print_interval > 0 and (step + 1) % progress_print_interval == 0:
             recent_dist = float(np.mean(distance_log[-100:]))
@@ -7823,6 +7897,18 @@ def main():
                          "term is dropped when set. Validated CPU de-risk: "
                          "research/findings/2026-06-08-gabab-girk-stageB-derisk-GO.md "
                          "+ place-code de-risk d0416fc3.")
+    ap.add_argument("--spiking-reward-us", action="store_true",
+                    help="SPIKING reward delivery: a PPN-like `reward_us` population (excitatory "
+                         "US->VTA afferent, catalog C.33) FIRES the SNc reward burst instead of the "
+                         "host snc_reward_gain*max(0,reward) write -> the whole δ=r−V is synaptic "
+                         "(r=reward_us excitation, V=critic GABA_B). reward_us is driven by the "
+                         "PERCEIVED reward (use --perceived-approach-reward so it's coord-free). "
+                         "Requires --spiking-snc --enable-neural-critic. Default OFF=byte-equivalent.")
+    ap.add_argument("--n-reward-us", type=int, default=40)
+    ap.add_argument("--reward-us-to-snc-weight", type=float, default=20.0)
+    ap.add_argument("--reward-us-to-snc-density", type=float, default=0.6)
+    ap.add_argument("--reward-us-drive-pa", type=float, default=1200.0,
+                    help="US-afferent drive current onto reward_us when the perceived reward is +1.")
     ap.add_argument("--critic-window", action="store_true",
                     help="Stage 2 (windowed GABA_B): gate the "
                          "striosome_value->snc GABA_B current to a bounded LEAD "
@@ -8337,6 +8423,11 @@ def main():
             snc_value_gain=args.snc_value_gain,
             snc_da_sensitivity=args.snc_da_sensitivity,
             enable_neural_critic=args.enable_neural_critic,
+            spiking_reward_us=args.spiking_reward_us,
+            n_reward_us=args.n_reward_us,
+            reward_us_to_snc_weight=args.reward_us_to_snc_weight,
+            reward_us_to_snc_density=args.reward_us_to_snc_density,
+            reward_us_drive_pa=args.reward_us_drive_pa,
             enable_critic_window=args.critic_window,
             critic_lead_steps=args.critic_lead_steps,
             critic_gabab_propagation=args.critic_gabab_propagation,
