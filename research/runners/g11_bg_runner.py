@@ -5042,6 +5042,63 @@ def run_moving_goal_episode(
                   f"{near_v_first}->{near_v_last}Hz (place fields FROZEN; V FROZEN)", flush=True)
         return stats
 
+    def _n9_critic_boundary_diag(near0, far0, c_idx, ps_idx):
+        """N9 deploy diagnostic (env N9_DIAG): localize WHERE the critic read breaks at nav scale.
+        For near AND far, drive place_sensors over a read window and log the component-boundary
+        signals (systematic-debugging Phase 1):
+          - place  : `place` pool rate (is the self-org code firing a volley at all?)
+          - g_coinc: max Route-D plateau conductance on the critic (>0 => the FS-PING-synchronized
+                     volley delivered c_i>=K coincident spikes and triggered the supralinear
+                     plateau; ~0 => c_i<K, the volley is NOT coincident at nav scale)
+          - V(crit): critic membrane (rest ~ -79.6mV => no current integrated; climbing => drive arrives)
+          - critic : critic firing rate.
+        Assumes the caller has toggled the WEIGHTED plateau read-out ON (matches the real read)."""
+        p_idx = region_indices_cp.get("place")
+        gco = getattr(bridge, "cp_conductance_g_coincidence", None)
+        n_crit_n = int(c_idx.size) if hasattr(c_idx, "size") else len(c_idx)
+        n_place_n = (int(p_idx.size) if (p_idx is not None and hasattr(p_idx, "size"))
+                     else (len(p_idx) if p_idx is not None else 0))
+        _sv_wd = bool(getattr(bridge.core_config, "coincidence_weighted_drive", False))
+        _sv_kth = float(getattr(bridge.core_config, "coincidence_k_threshold", 4.0))
+
+        def _measure(px, py):
+            act = cp.asarray(_n9_render(float(px), float(py)), dtype=cp.float32)
+            bridge.cp_external_input_current[:] = cp.float32(0.0)
+            bridge.cp_external_input_current[ps_idx] = act
+            saved = bridge.core_config.reward_learning_rate
+            bridge.core_config.reward_learning_rate = 0.0
+            pspk = 0; cspk = 0; m = 0
+            gco_max = 0.0; v_max = -1e9; v_sum = 0.0
+            for t in range(120):
+                _n9_step(1)
+                if t >= 30:
+                    if p_idx is not None:
+                        pspk += int(bridge.cp_firing_states[p_idx].sum())
+                    cspk += int(bridge.cp_firing_states[c_idx].sum())
+                    if gco is not None:
+                        gco_max = max(gco_max, float(bridge.cp_conductance_g_coincidence[c_idx].max()))
+                    _vc = bridge.cp_membrane_potential_v[c_idx]
+                    v_max = max(v_max, float(_vc.max())); v_sum += float(_vc.mean())
+                    m += 1
+            bridge.core_config.reward_learning_rate = saved
+            bridge.cp_external_input_current[:] = cp.float32(0.0)
+            return (pspk / max(n_place_n, 1) / max(m * 1e-3, 1e-9),
+                    gco_max, v_sum / max(m, 1), v_max,
+                    cspk / max(n_crit_n, 1) / max(m * 1e-3, 1e-9))
+
+        # COUNT form (weight-blind; the train-time plateau): does the FS-PING volley deliver
+        # c_i>=K_train coincident spikes at nav scale AT ALL? + WEIGHTED form (the read-out grading).
+        for form, wd, kth in (("COUNT", False, float(coincidence_train_k)),
+                              ("WGHTD", True, float(coincidence_threshold))):
+            bridge.core_config.coincidence_weighted_drive = wd
+            bridge.core_config.coincidence_k_threshold = kth
+            for tag, (px, py) in (("near", near0), ("far", far0)):
+                ph, gx, vm, vmax, ch = _measure(px, py)
+                print(f"  [N9_DIAG {form} {tag}] place={ph:.2f}Hz  g_coinc(crit)max={gx:.3f}  "
+                      f"V(crit) mean={vm:.1f}mV max={vmax:.1f}mV  critic={ch:.2f}Hz", flush=True)
+        bridge.core_config.coincidence_weighted_drive = _sv_wd
+        bridge.core_config.coincidence_k_threshold = _sv_kth
+
     def _run_stage_b_smoke(vt_stats):
         """N9 Stage-B probe (design §Stage B): the load-bearing critic gate after STEP-1+STEP-2.
           LEARNS-V        : near place->striosome_value weight >= 1.5x far.
@@ -5093,6 +5150,8 @@ def run_moving_goal_episode(
         bridge.core_config.coincidence_k_threshold = float(coincidence_threshold)
         crit_near = _critic_rate(near0[0], near0[1])
         crit_far = _critic_rate(far0[0], far0[1])
+        if os.environ.get("N9_DIAG"):
+            _n9_critic_boundary_diag(near0, far0, c_idx, ps_idx)
         bridge.core_config.coincidence_weighted_drive = _saved_wd
         bridge.core_config.coincidence_k_threshold = _saved_kth
         crit_grade_ratio = crit_near / max(crit_far, 1e-3)
