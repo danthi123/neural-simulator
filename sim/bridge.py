@@ -5811,7 +5811,15 @@ class SimulationBridge:
                     _co_mat = csp.csr_matrix(
                         (_co_data, self.cp_connections.indices, self.cp_connections.indptr),
                         shape=self.cp_connections.shape)
-                    c_drive = _co_mat.T @ self.cp_prev_firing_states.astype(cp.float32)
+                    # Deterministic transpose SpMV (the same proven, owner-approved fix used on the
+                    # conductance matvec above): materialize the transpose as CSR so the per-step op is a
+                    # reproducible one-thread-per-output-row SpMV instead of the bit-non-reproducible csc
+                    # atomic scatter. Default off ⇒ `_co_matT` is just `_co_mat.T` and the matvec expression
+                    # is unchanged (byte-identical — a pure extract-to-variable refactor when the flag is off).
+                    _co_matT = _co_mat.T
+                    if getattr(cfg, "deterministic_transpose_matvec", False):
+                        _co_matT = _co_matT.tocsr()
+                    c_drive = _co_matT @ self.cp_prev_firing_states.astype(cp.float32)
                 else:
                     # No prior spikes this step -> zero coincident drive (the plateau still DECAYS below).
                     c_drive = cp.zeros_like(self.cp_conductance_g_coincidence)
@@ -5855,7 +5863,13 @@ class SimulationBridge:
                     _gb_mat = csp.csr_matrix(
                         (_gb_data, self.cp_connections.indices, self.cp_connections.indptr),
                         shape=self.cp_connections.shape)
-                    gabab_increase = (_gb_mat.T @ self.cp_prev_firing_states.astype(cp.float32)) \
+                    # Deterministic transpose SpMV (the same proven, owner-approved fix used on the
+                    # conductance matvec above). Default off ⇒ `_gb_matT` is just `_gb_mat.T` and the matvec
+                    # expression is unchanged (byte-identical — a pure extract-to-variable refactor when off).
+                    _gb_matT = _gb_mat.T
+                    if getattr(cfg, "deterministic_transpose_matvec", False):
+                        _gb_matT = _gb_matT.tocsr()
+                    gabab_increase = (_gb_matT @ self.cp_prev_firing_states.astype(cp.float32)) \
                         * cfg.gabab_propagation_strength
                     self.cp_conductance_g_gabab += gabab_increase
                     # Brain-based GIRK SATURATION (finite GABA_B/GIRK channels): cap g_gabab so a
