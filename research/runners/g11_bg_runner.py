@@ -206,7 +206,7 @@ def build_bg_brain_regions(
     critic_value_to_snc_density: float = 0.5,
     spiking_reward_us: bool = False,        # reward_us (PPN-like) excitatory US->SNc afferent: spiking reward burst, drops the host write
     n_reward_us: int = 40,                  # US/reward afferent pool size (C.33: 30-50)
-    reward_us_to_snc_weight: float = 20.0,  # reward_us->snc excitatory weight (tuned so a full US volley ~ snc_reward_gain)
+    reward_us_to_snc_weight: float = 50.0,  # reward_us->snc excitatory weight (Pavlovian de-risk: moderate SNc burst the critic GABA_B can subtract)
     reward_us_to_snc_density: float = 0.6,
     # ── 2026-06-09 VALIDATED redesign (navfaithful-afferent-critic-homeostasis PASS) ──
     # The critic afferent is a DEDICATED DENSE `vs_place_context` region (a grid-32-tuned
@@ -3047,9 +3047,9 @@ def run_moving_goal_episode(
     # reward so the US rides on pixels (coord-free); else a WARN (the reward is the coord default).
     spiking_reward_us: bool = False,
     n_reward_us: int = 40,
-    reward_us_to_snc_weight: float = 20.0,
+    reward_us_to_snc_weight: float = 50.0,
     reward_us_to_snc_density: float = 0.6,
-    reward_us_drive_pa: float = 1200.0,     # US-afferent drive current when the perceived reward is +1
+    reward_us_drive_pa: float = 250.0,      # US-afferent drive (Pavlovian de-risk: reward_us ~66Hz, SNc burst 266 vs tonic 57, V subtracts 266->86)
     # ── Critic drive calibration (2026-06-08, runner-side; diagnosed by
     #    research/findings/raw/g11_bg/_placecritic_diag*.py). The smoke found the
     #    MSN-D1 striosome_value critic NEVER FIRED in nav. Root cause (decisive):
@@ -7909,9 +7909,9 @@ def main():
                          "PERCEIVED reward (use --perceived-approach-reward so it's coord-free). "
                          "Requires --spiking-snc --enable-neural-critic. Default OFF=byte-equivalent.")
     ap.add_argument("--n-reward-us", type=int, default=40)
-    ap.add_argument("--reward-us-to-snc-weight", type=float, default=20.0)
+    ap.add_argument("--reward-us-to-snc-weight", type=float, default=50.0)
     ap.add_argument("--reward-us-to-snc-density", type=float, default=0.6)
-    ap.add_argument("--reward-us-drive-pa", type=float, default=1200.0,
+    ap.add_argument("--reward-us-drive-pa", type=float, default=250.0,
                     help="US-afferent drive current onto reward_us when the perceived reward is +1.")
     ap.add_argument("--critic-window", action="store_true",
                     help="Stage 2 (windowed GABA_B): gate the "

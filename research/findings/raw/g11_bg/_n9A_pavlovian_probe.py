@@ -68,24 +68,26 @@ def measure(b, us_drive, crit_drive, n=120, warmup=30):
     b.cp_external_input_current[isn] = xp.float32(SNC_TONIC)
     if crit_drive > 0:
         b.cp_external_input_current[icr] = xp.float32(crit_drive)
-    us_sp = sn_sp = m = 0
+    us_sp = sn_sp = cr_sp = m = 0
     for t in range(n):
         b._run_one_simulation_step()
         if t >= warmup:
             us_sp += int(b.cp_firing_states[ius].sum())
-            sn_sp += int(b.cp_firing_states[isn].sum()); m += 1
+            sn_sp += int(b.cp_firing_states[isn].sum())
+            cr_sp += int(b.cp_firing_states[icr].sum()); m += 1
     hz = lambda s, npool: s / max(npool, 1) / max(m * 1e-3, 1e-9)
-    return hz(us_sp, int(ius.size)), hz(sn_sp, int(isn.size))
+    return hz(us_sp, int(ius.size)), hz(sn_sp, int(isn.size)), hz(cr_sp, int(icr.size))
 
 
-print(f"backend={backend}  SNC_TONIC={SNC_TONIC}pA  US_DRIVE={US_DRIVE}pA")
-print(f"{'us->snc w':>10} | {'reward_us Hz':>12} | {'SNc tonic(noUS)':>15} | {'SNc +US(r)':>11} | {'SNc +US +V':>11} | burst? r-V?")
-print("-" * 90)
-for w in (20, 50, 100, 200, 400):
-    b = build(w)
-    _, snc_tonic = measure(b, 0.0, 0.0)          # no US -> tonic
-    us_hz, snc_r = measure(build(w), US_DRIVE, 0.0)   # US on -> reward burst
-    _, snc_rv = measure(build(w), US_DRIVE, 600.0)    # US on + critic V -> r-V (should shrink)
-    burst = "YES" if snc_r > snc_tonic * 1.4 else "no"
-    rv = "YES" if snc_rv < snc_r * 0.8 else "no"
-    print(f"{w:>10} | {us_hz:12.1f} | {snc_tonic:15.1f} | {snc_r:11.1f} | {snc_rv:11.1f} | {burst:>5} {rv:>5}")
+print(f"backend={backend}  SNC_TONIC={SNC_TONIC}pA  (host snc_reward_gain=400pA for ref)")
+print("Goal: a reward_us DRIVE where the SNc bursts MODERATELY above tonic AND the critic V SUBTRACTS it (r-V).")
+print(f"{'us_drive':>9} {'w':>4} | {'rew_us Hz':>9} {'critV Hz':>8} | {'SNc tonic':>9} {'SNc r':>7} {'SNc r-V':>8} | burst? r-V?")
+print("-" * 92)
+for drv in (250, 400, 600, 1200):
+    for w in (50, 150):
+        _, snc_tonic, _ = measure(build(w), 0.0, 0.0)
+        us_hz, snc_r, _ = measure(build(w), float(drv), 0.0)
+        _, snc_rv, crit_hz = measure(build(w), float(drv), 800.0)
+        burst = "YES" if snc_r > snc_tonic * 1.4 else "no"
+        rv = "YES" if snc_rv < snc_r * 0.8 else "no"
+        print(f"{drv:>9} {w:>4} | {us_hz:9.1f} {crit_hz:8.1f} | {snc_tonic:9.1f} {snc_r:7.1f} {snc_rv:8.1f} | {burst:>5} {rv:>5}")
