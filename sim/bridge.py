@@ -5610,14 +5610,32 @@ class SimulationBridge:
                     # Batched sparse matmul: stack exc/inh firing vectors into (n, 2)
                     # matrix, perform single A.T @ B (reuses CSR index traversal).
                     fired_2col = cp.stack([exc_fired_prev, inhib_fired_prev], axis=1)
-                    g_increase_2col = effective_connections_matrix.T @ fired_2col
+                    # Transpose SpMV Wᵀ@fired (source-fired → drive its targets). On CuPy `csr.T` is
+                    # a `csc_matrix` → `csc @ v` routes to `cusparse.spmv(transa=True)`, whose ATOMIC
+                    # SCATTER is bit-NON-reproducible run-to-run (FP summation-order variance;
+                    # `CUBLAS_WORKSPACE_CONFIG` pins cuBLAS only, NOT this). When
+                    # cfg.deterministic_transpose_matvec is set, materialize the transpose as a CSR
+                    # so the per-step op becomes a NON-transpose SpMV (one-thread-per-output-row,
+                    # deterministic, numerically allclose to the csc product). Default off ⇒ the
+                    # expression is the unchanged `effective_connections_matrix.T @ fired_2col`
+                    # (byte-identical). Cost (the `.tocsr()` sort) is why the runner toggles it ON
+                    # only during the place-code self-org (where reproducibility is load-bearing).
+                    _eff_cT = effective_connections_matrix.T
+                    if getattr(cfg, "deterministic_transpose_matvec", False):
+                        _eff_cT = _eff_cT.tocsr()
+                    g_increase_2col = _eff_cT @ fired_2col
                     g_e_increase = g_increase_2col[:, 0] * cfg.propagation_strength
                     g_i_increase = g_increase_2col[:, 1] * cfg.inhibitory_propagation_strength
 
                     self.cp_conductance_g_e += g_e_increase
                     self.cp_conductance_g_i += g_i_increase
                 else:
-                    g_e_increase = (effective_connections_matrix.T @ prev_fired_float) * cfg.propagation_strength
+                    # See the E/I-split branch above: deterministic transpose SpMV when
+                    # cfg.deterministic_transpose_matvec is set (default off ⇒ byte-identical).
+                    _eff_cT1 = effective_connections_matrix.T
+                    if getattr(cfg, "deterministic_transpose_matvec", False):
+                        _eff_cT1 = _eff_cT1.tocsr()
+                    g_e_increase = (_eff_cT1 @ prev_fired_float) * cfg.propagation_strength
                     self.cp_conductance_g_e += g_e_increase
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current

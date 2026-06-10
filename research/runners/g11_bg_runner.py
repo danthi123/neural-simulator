@@ -3038,6 +3038,7 @@ def run_moving_goal_episode(
     #    GATES enable_convergent_upstate OFF (the position-blind A1 floor caps grading ~1.2x).
     #    Default OFF => the enable_neural_critic path is byte-identical (host vs_place_context).
     neural_place_selforg: bool = False,
+    deterministic_selforg: bool = False,  # toggle cfg.deterministic_transpose_matvec during STEP-1 self-org (reproducible place code)
     n_place: int = 200,
     n_place_fs: int = 24,
     place_sensors_to_place_weight: float = 28.0,
@@ -4697,6 +4698,15 @@ def run_moving_goal_episode(
                 and "place_sensors" in region_indices_cp):
             return None
         t_so = time.time()
+        # Optional DETERMINISTIC self-org (2026-06-10): the place code is CuPy-non-deterministic
+        # because the per-step Wᵀ@fired is a transpose SpMV (csc atomic scatter; research
+        # 2026-06-10-N9-placecode-reproducibility-robustness-research.md). Toggle the (default-off,
+        # byte-identity-proven) cfg.deterministic_transpose_matvec ON for the self-org so the SAME
+        # seed draws the SAME place code (the anti-cheat R-A: byte-identical place code across two
+        # invocations). Restored after self-org (bounds the per-step .tocsr() cost to STEP-1).
+        _saved_detmv = getattr(bridge.core_config, "deterministic_transpose_matvec", False)
+        if deterministic_selforg:
+            bridge.core_config.deterministic_transpose_matvec = True
         # STEP-1 gate config: open the competitive landmark->place learning, freeze the value
         # arm, and hold the FS-PING inhibition CLOSED (clean threshold-WTA -> sparse, DISTINCT
         # fields; the de-risk's Stage-1 regime).
@@ -4726,9 +4736,11 @@ def run_moving_goal_episode(
         _na = float(np.linalg.norm(ens_goal)); _nb = float(np.linalg.norm(ens_far))
         diff_cos = float(np.dot(ens_goal, ens_far) / (_na * _nb)) if (_na > 0 and _nb > 0) else 1.0
         sparsity = float(0.5 * (np.mean(ens_goal > 0) + np.mean(ens_far > 0)))
+        bridge.core_config.deterministic_transpose_matvec = _saved_detmv   # restore (bound cost to STEP-1)
         if verbose:
             print(f"[g11 seed={seed}] N9 STEP-1 place self-org done ({time.time()-t_so:.0f}s): "
-                  f"diff-loc cos={diff_cos:.3f} sparsity={sparsity:.3f} (place fields FROZEN)", flush=True)
+                  f"diff-loc cos={diff_cos:.6f} sparsity={sparsity:.6f} (place fields FROZEN"
+                  f"{'; DETERMINISTIC' if deterministic_selforg else ''})", flush=True)
         return dict(diff_cos=diff_cos, sparsity=sparsity)
 
     def _run_stage_a_smoke():
@@ -7873,6 +7885,11 @@ def main():
                          "fields self-organize in a STEP-1 warm-up; the host place injection is NOT "
                          "used. HARD-GATES --enable-convergent-upstate OFF. BRAIN-BASED-ONLY: (x,y) "
                          "enters only via the egocentric landmark render. Requires --enable-neural-critic.")
+    ap.add_argument("--deterministic-selforg", action="store_true",
+                    help="Toggle cfg.deterministic_transpose_matvec (default-off, byte-identity-proven "
+                         "sim/ flag) ON during the STEP-1 place self-org so the SAME seed draws the SAME "
+                         "place code (fixes the cusparse transpose-SpMV non-determinism; anti-cheat R-A). "
+                         "Restored after self-org. Requires --neural-place-selforg.")
     ap.add_argument("--n-place", type=int, default=200, help="N9 self-org place pool size.")
     ap.add_argument("--n-place-fs", type=int, default=24, help="N9 FS-PING interneuron pool size.")
     ap.add_argument("--place-sensors-to-place-weight", type=float, default=28.0)
@@ -8288,6 +8305,7 @@ def main():
             vs_place_drive_to_value_density=args.vs_place_drive_to_value_density,
             # N9 neural place-code self-org (2026-06-09 nav deployment).
             neural_place_selforg=args.neural_place_selforg,
+            deterministic_selforg=args.deterministic_selforg,
             n_place=args.n_place,
             n_place_fs=args.n_place_fs,
             place_sensors_to_place_weight=args.place_sensors_to_place_weight,

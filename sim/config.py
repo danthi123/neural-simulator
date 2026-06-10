@@ -228,6 +228,14 @@ class CoreSimConfig:
     # toward target rate. Works across all neuron models, biologically grounded.
     enable_synaptic_scaling: bool = False
     synaptic_scaling_rate: float = 0.001  # Slow scaling rate (operates on seconds timescale)
+    # Deterministic transpose SpMV (2026-06-10): the per-step synaptic drive is Wᵀ@fired, a
+    # TRANSPOSE sparse mat-vec; on CuPy `csr.T`=csc → cusparse.spmv(transa=True) uses an atomic
+    # scatter that is bit-NON-reproducible run-to-run (CUBLAS_WORKSPACE_CONFIG pins cuBLAS only).
+    # When True, the bridge materializes the transpose as a CSR (a deterministic NON-transpose
+    # SpMV, numerically allclose). Default False ⇒ the matvec is byte-identical to before. Costs a
+    # per-step `.tocsr()`, so callers toggle it ON only where reproducibility matters (e.g. the N9
+    # place-code self-org). See research/findings/2026-06-10-N9-placecode-reproducibility-*.
+    deterministic_transpose_matvec: bool = False
     enable_watts_strogatz: bool = True
     connectivity_k: int = 10
     connectivity_p_rewire: float = 0.1
