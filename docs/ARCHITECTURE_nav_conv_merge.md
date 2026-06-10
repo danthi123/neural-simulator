@@ -1,9 +1,13 @@
-# Architecture — Navigation + Conversational on one bridge (roadmap step 2)
+# Architecture — Navigation and Conversation on one bridge (roadmap step 2)
 
-The navigation brain and the conversational brain run as **disjoint neuron-index slices on ONE
-`sim.bridge.SimulationBridge`** — one set of GPU state arrays, one per-step update loop, one timestep
-(dt = 1.0). This is the "one brain" consolidation: capability-equivalent to the two separate brains, but a
-single substrate. Builder: [`research/runners/nav_conv_merged_bridge.py`](../research/runners/nav_conv_merged_bridge.py).
+The navigation brain and the conversational brain run as **separate, non-overlapping groups of neurons on a
+single `SimulationBridge`** — one set of GPU arrays, one update loop, one timestep. This is the "one brain"
+consolidation: the same capabilities as the two separate brains, but a single substrate. Builder:
+[`research/runners/nav_conv_merged_bridge.py`](../research/runners/nav_conv_merged_bridge.py).
+
+A *bridge*, here, is one simulated network of neurons. Each function (navigating, comprehending a sentence,
+recalling a fact, planning what to say) occupies its own contiguous block of neuron indices on the shared
+bridge.
 
 ## The merged bridge
 
@@ -12,27 +16,27 @@ flowchart LR
     Env([Environment / retina]):::nav
     Words([Words / topic]):::conv
 
-    subgraph Bridge["ONE SimulationBridge · one step loop · dt = 1.0"]
+    subgraph Bridge["ONE bridge · one update loop"]
         direction TB
-        subgraph Nav["NAVIGATION — Izhikevich, plastic (reward-STDP + dopamine)"]
+        subgraph Nav["NAVIGATION — learns (spike-timing + dopamine)"]
             direction LR
-            V1[V1 Gabor] --> SC[superior colliculus] --> BG[BG cascade → motor] --> SNc[SNc dopamine RPE]
+            V1[visual cortex] --> SC[orienting<br/>superior colliculus] --> BG[action selection<br/>basal ganglia → motor] --> DA[reward<br/>dopamine]
         end
-        subgraph Conv["CONVERSATIONAL — frozen (plasticity gate = 0, the 5a isolation)"]
+        subgraph Conv["CONVERSATION — frozen (does not learn during navigation)"]
             direction LR
-            PARSER["PARSER<br/>(position × voice) → role"] --> RF["RF COMPOSER<br/>FHRR bind · facts · no-confab<br/>(STEP 2b: masked ops)"]
-            DLPFC["dlPFC<br/>working-memory loop · elaborate"]
+            PARSER["comprehension<br/>word order → who-did-what"] --> RF["composer<br/>bind words into facts<br/>recall · abstain when unknown"]
+            DLPFC["dialogue planning<br/>(prefrontal)"]
         end
     end
 
-    Body([Body / act on world]):::nav
+    Body([Body / act on the world]):::nav
     Answer([Answer / plan · or abstain]):::conv
 
-    Env -->|sensory| Nav
-    Nav -->|motor| Body
-    Words -->|language| PARSER
-    RF -->|fact / QA / abstain| Answer
-    DLPFC -->|next on-topic concept| Answer
+    Env -->|what the agent sees| Nav
+    Nav -->|which way to move| Body
+    Words -->|a sentence| PARSER
+    RF -->|a fact, an answer, or 'I don't know'| Answer
+    DLPFC -->|the next on-topic thing to say| Answer
 
     classDef nav fill:#e7eff7,stroke:#3b6ea5,color:#1d1d1f;
     classDef conv fill:#e6f2ec,stroke:#2f8f6b,color:#1d1d1f;
@@ -40,53 +44,92 @@ flowchart LR
     class Words,Answer conv
 ```
 
-**Plasticity isolation (the load-bearing property).** Navigation runs reward-modulated STDP + a global
-dopamine neuromodulator; the parser is trained by Hebbian co-firing. On the shared bridge these are global
-config flags, so the conversational populations are **frozen with a per-synapse plasticity gate held at 0.0**
-(de-risk 5a proved this isolates weight UPDATES). The one residual is the ungated global weight *clip* — a
-frozen weight outside the active rule's clip bounds gets clipped — mitigated by raising `stdp_w_max` +
-`hebbian_max_weight` above the frozen conversational weight (~300). The RF composer's binding weights are
-complex (`cp_rf_w_re`/`cp_rf_w_im`), array-disjoint from the real-valued `cp_connections`, so they are immune.
+**Why the two halves don't interfere.** Navigation learns continuously while the agent moves (it adjusts
+synapse strengths from reward and spike timing). The conversational neurons must NOT be changed by that
+learning — otherwise comprehension and memory would slowly degrade every time the agent navigated. So the
+conversational synapses are **held fixed**: their per-synapse learning rate is set to zero. We verified that
+this fully protects them — after a long navigation burst that actively rewires the navigation half, the
+conversational synapses are exactly unchanged, while the navigation synapses do change (proving the learning
+was live, not switched off). The one subtlety: a global "keep weights in range" step is applied to all
+synapses regardless of the learning rate, so the conversational synapses' fixed values must sit inside the
+allowed range — we ensure that by widening the range above the largest conversational weight.
 
-**Neuron-model coexistence.** Navigation + parser + dlPFC are Izhikevich. The RF composer is
-resonate-and-fire (a complex phasor whose state reuses the `v`/`u` arrays). They cannot share `v`/`u` in one
-step dispatch (de-risk 5b: one Izhikevich step destroys a phasor), but the composer is stateless per
-operation and stores memory in complex synapses, so the **minimal protected `sim/` edit slices the RF ops**
-(`rf_kick(..., neuron_mask=)` + `_rf_advance_one`) to the RF slice — default-off byte-identical, owner-approved.
+**Two neuron types on one bridge.** Navigation, comprehension, and dialogue planning use the standard spiking
+neuron model. The composer (the part that binds words into facts) uses a different model — a phase-based
+neuron whose state would collide with the standard model's if they shared the same internal variables. They
+can't be advanced together in the same step. The fix exploits a property of the composer: it does each
+bind/recall operation from scratch (it re-initializes each time) and stores its memory in a separate set of
+synapses, so its working state never needs to survive a navigation step. So a small, additive engine change
+lets the composer's operations touch only its own block of neurons, leaving navigation untouched — and with
+the feature off, the engine is unchanged bit-for-bit (so nothing else in the project is affected). This
+change was reviewed and approved before being relied upon.
 
-## The build arc (de-risk → edit → merge → gates)
+## How the work was built (each step verified before the next)
 
 ```mermaid
 flowchart TD
-    A[De-risk 5a<br/>plasticity isolation] -->|PASS + clip caveat| C
-    B[De-risk 5b<br/>RF vs Izhikevich] -->|KILL → sliced-RF-ops edit| C[Protected sim/ edit<br/>rf_kick neuron_mask<br/>OWNER-APPROVED]
-    C --> D[Merge design<br/>framework = wrapper around inject_explicit_wiring]
-    D --> E[Parser port<br/>risk 4.1 retired]
-    E --> F[Merged-bridge construction<br/>nav + parser + dlPFC on one bridge]
-    F --> G[Conversational gate b<br/>8/8 incl. no-confab moat ✅]
-    F --> H[Nav stdp_w_max=400 cheap-check<br/>byte-identical score ✅]
-    H --> I[Hybrid nav-episode integration<br/>+ index-based finalize hook]
-    I --> J[Nav-on-merged smoke<br/>conv byte-frozen in vivo ✅]
-    J --> K[6-seed nav gate a<br/>in flight]
-    G --> K
-    K --> L[STEP 2a complete]
-    L --> M[STEP 2b<br/>RF composer co-resident<br/>via masked ops]
-    M --> N[Step 3 true cortex<br/>deferred arc]
+    A["Check: navigation's learning<br/>cannot disturb the frozen conversation parts"] --> C
+    B["Check: the two neuron types can coexist<br/>(and the engine change is exactly inert when off)"] --> C["Minimal engine change<br/>(reviewed + approved)"]
+    C --> D["Plan the merge<br/>(reuse the existing wiring machinery)"]
+    D --> E["Port the comprehension parser<br/>onto the shared bridge"]
+    E --> F["Build the merged bridge<br/>navigation + conversation on one substrate"]
+    F --> G["Conversational acceptance check<br/>8/8, incl. 'refuses to guess' ✅"]
+    F --> H["Navigation-not-harmed check<br/>identical score ✅"]
+    H --> I["Run the navigation episode<br/>on the merged bridge"]
+    I --> J["Result: the merged bridge navigates,<br/>conversation parts stay exactly unchanged ✅"]
+    G --> K["Full 6-seed navigation check<br/>(in progress)"]
+    J --> K
+    K --> L["Step 2a complete"]
+    L --> M["Step 2b: move the composer<br/>onto the one bridge too"]
+    M --> N["Step 3: replace the composer's<br/>fixed algebra with a learned cortex<br/>(a later, separate effort)"]
 ```
 
 ## Status (2026-06-10)
 
-- STEP 2a conversational half: ✅ gate (b) green on the merged bridge (no-confab moat intact).
-- STEP 2a navigation half: ✅ single-seed smoke (merged bridge navigates, conversational populations
-  byte-frozen in vivo); the full 6-seed gate (a) is the final statistical rigor (in flight).
-- STEP 2b (RF co-resident): unblocked by the owner-approved masked-RF-ops edit.
+- Conversation on the merged bridge: ✅ the full conversational behaviour passes unchanged — comprehension,
+  fact memory, question answering, negation, embedded clauses, dialogue planning, generation, and the
+  "refuses to make up an answer it doesn't know" guarantee.
+- Navigation on the merged bridge: ✅ a single-seed run shows the merged bridge navigates while the
+  conversational neurons stay exactly unchanged during the live navigation learning. The full six-seed run
+  (confirming the navigation score is statistically unchanged) is the final check, currently running.
+- Moving the composer onto the one bridge as well (step 2b): unblocked by the approved engine change.
 
 ## Key files
 
-- Builder + hook: `research/runners/nav_conv_merged_bridge.py`
-- 6-seed gate driver: `research/runners/_nav_gate_merged_run.py`
-- The protected edit (default-off byte-identical): `sim/bridge.py` `rf_kick` / `_rf_advance_one`
+- Builder + the merge logic: `research/runners/nav_conv_merged_bridge.py`
+- Six-seed navigation check: `research/runners/_nav_gate_merged_run.py`
+- The engine change (off by default, bit-for-bit identical when off): the masked phase-neuron operations in
+  `sim/bridge.py`
 - Designs: `docs/plans/2026-06-10-nav-conv-single-instance-unification-design.md`,
   `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`,
-  `docs/plans/2026-06-10-nav-episode-integration-design.md`
+  `docs/plans/2026-06-10-nav-episode-integration-design.md`,
+  `docs/plans/2026-06-10-step2b-rf-coresident-implementation.md`
 - Tests: `tests/test_nav_conv_merged_agent.py`, `tests/test_rf_neuron_mask_coexistence.py`
+
+---
+
+## Technical details (for developers)
+
+The plain-language descriptions above map to these specifics. *Bridge* = `sim.bridge.SimulationBridge`;
+*frozen* = the per-synapse plasticity gate `cp_plasticity_rate_gain` held at 0.0; the standard neuron model is
+Izhikevich; the composer's phase-based model is resonate-and-fire (its complex state `re + i·im` reuses the
+`v`/`u` arrays, which is the collision). The composer's memory lives in complex synapse matrices
+(`cp_rf_w_re` / `cp_rf_w_im`), disjoint from the real-valued `cp_connections`. The binding scheme is FHRR
+(Fourier Holographic Reduced Representations — a vector-symbolic algebra).
+
+- **Plasticity isolation:** the gate zeroes the four weight-UPDATE paths (Hebbian potentiation/decay, STDP
+  delta, the reward eligibility→weight conversion). The one ungated path is the global weight CLIP
+  (`bridge.py:6200` Hebbian, `:6505` reward) — mitigated by `stdp_w_max` + `hebbian_max_weight` above the
+  frozen conversational weight (~300); the composer's complex weights are clip-immune.
+- **Neuron-model coexistence:** the additive engine change is an optional `neuron_mask` on `rf_kick` +
+  `_rf_advance_one` (masks all `v`/`u` writes to the resonate-and-fire slice); default `None` = whole bridge =
+  byte-identical (the 18 conversational tests pass verbatim).
+- **The merge:** the brain-region framework lowers to `inject_explicit_wiring`
+  (`bridge.py:1514-1526`), so the parser + dlPFC are appended as framework regions. The navigation-episode
+  integration is a hybrid `run_moving_goal_episode` with four additive no-op-default parameters + an
+  index-based finalization hook that runs after the V1/superior-colliculus post-init
+  `set_pathway_weights(add_missing=True)` rebuild (which re-sorts the connection matrix, stales the gate-index
+  maps, and whose Hebbian decay would erode the fixed perception weights — the hook freezes by index, not gate
+  name, and gain-masks the parser training pass).
+- **Acceptance:** `tests/test_nav_conv_merged_agent.py` (8/8 incl. the three `is None` abstention
+  assertions); the navigation gate compares the merged-vs-standalone `sum_finalQ` across 6 seeds.

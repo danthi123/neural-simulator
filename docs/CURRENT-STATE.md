@@ -10,26 +10,28 @@ got here, see `research/findings/`.
 **Last meaningful update:** 2026-06-10 (see "Recent milestones (2026-06)" below).
 
 **Recent milestones (2026-06):**
-- **Conversational composition is fully spiking + opponency-free** — the
-  production conversational agent defaults to the FHRR-on-bridge
-  `RFPhasorComposer` (resonate-and-fire phasor neurons + complex synapses),
-  which escaped the rate-coded opponency SNR wall. who/what Q&A, abstention (the
-  no-confabulation moat), negation/yes-no, clauses, dialogue, generation;
-  320-concept correctness GO.
-- **Conversational pipeline consolidated onto the core sim** — comprehension (a
-  Hebbian-learned parser) + composition / fact memory / QA + dialogue planning
-  (dlPFC) run as genuine spiking on `SimulationBridge`, no bolted-on numpy
-  simulator in the path.
-- **Navigation fully biologized** — every cognitive step between sensation and
-  action is a validated neural mechanism (a spiking superior colliculus for
-  orienting, a neural reward, spiking decision / disinhibition / dopamine RPE).
-- **Navigation + Conversational merged onto ONE bridge (roadmap step 2)** — both
-  brains run as disjoint neuron-index slices on a single substrate; the
-  conversational capability matrix passes verbatim on the merged bridge (incl.
-  the no-confab moat), and the navigation episode runs on it with the
-  conversational populations byte-frozen *in vivo* under the live navigation
-  learning. See [`ARCHITECTURE_nav_conv_merge.md`](ARCHITECTURE_nav_conv_merge.md).
-  (The full 6-seed navigation gate is the final statistical rigor.)
+- **The conversational "composer" is now fully spiking** — the part that binds
+  words into facts uses phase-based spiking neurons (a resonate-and-fire model
+  with complex-valued synapses), which sidesteps a noise barrier that the
+  earlier firing-rate version hit. It handles who/what question answering,
+  refusing to answer when it doesn't know, negation and yes/no, embedded
+  clauses, dialogue, and sentence generation; correct at the 320-concept scale.
+- **The whole conversational pipeline runs on the core simulator** —
+  comprehension (a learned sentence parser), fact memory + question answering,
+  and dialogue planning all run as genuine spiking neurons on the core network,
+  with no separate maths-only module bolted on.
+- **Navigation is fully biology-based** — every step between seeing and acting
+  is done by simulated neurons (a spiking superior colliculus for orienting, a
+  neural reward signal, and a spiking basal-ganglia decision and dopamine
+  system), with no hand-coded shortcut in between.
+- **Navigation and conversation now share one network (roadmap step 2)** — each
+  brain is its own group of neurons on a single network. The conversational
+  behaviour works unchanged on the shared network (including its refusal to make
+  up answers), and navigation runs on it while the conversational neurons stay
+  exactly unchanged during navigation's live learning. See
+  [`ARCHITECTURE_nav_conv_merge.md`](ARCHITECTURE_nav_conv_merge.md). (A
+  six-seed confirmation that the navigation score is statistically unchanged is
+  the final check, currently running.)
 
 > The "At a glance" and detailed sections below predate the 2026-06 work and
 > describe the earlier multi-tag-retrieval era; the milestones above are the
