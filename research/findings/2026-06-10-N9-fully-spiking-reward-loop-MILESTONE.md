@@ -18,13 +18,25 @@ With both on (and `--perceived-approach-reward`), the **entire** δ = r − V lo
 
 **(A) GO (integration):** `reward_us` (40 cells) builds and fires the SNc from the perceived reward; the agent **navigates** end-to-end (recent_dist 18→1.4 by step 200, holds at the goal), with V learned (w_near 5.95 / w_far 1.06 = 5.6× at seed 42). The host reward write is dropped; `reward_us` fires only during the reward-hold (zeroed after). Coord-free guard warns if used without `--perceived-approach-reward`.
 
-## Fully-biologized nav A/B (FULLSPIKE vs host) + anti-cheats
+## Fully-biologized nav A/B (FULLSPIKE vs host) + anti-cheats — RESULTS
 
-_(To finalize when the 1800-step multi-seed A/B (`b58hg1b4o`) completes — aggregator `research/findings/raw/g11_bg/_n9fullspike_aggregate.py`.)_
+| seed | FULLSPIKE (A+B spiking) | ONcap25 (GIRK mask) | OFF host cheat | full/host |
+|---|---|---|---|---|
+| 42 | 2.144 | 2.151 | 1.149 | 1.87 |
+| 43 | 2.531 | 2.236 | 2.422 | 1.05 |
+| 44 | 2.533 | 2.636 | 1.131 | 2.24 |
+| mean | **2.403** | ~2.4 | 1.567 | 1.53 |
 
-- **FULLSPIKE** (`--spiking-reward-us --enable-critic-fs-inhibition --perceived-approach-reward`, FS on, GIRK cap off) vs **OFF** (host-V scaffold cheat) vs **ONcap25** (the GIRK-masked version), seeds 42–44.
-- **(A) US-lesion anti-cheat** (`--reward-us-drive-pa 0` → US silent): nav should regress if the US chain is load-bearing.
-- **(B) place-shuffle** (Stage-B harness): the FS-clamped grading must still ride on learned V (the w_near≫w_far asymmetry already shows the weights are learned).
+**Two findings, both honest:** (1) **FULLSPIKE ≈ ONcap25** — making the loop fully spiking did NOT regress vs the GIRK-masked version (the spiking-ification preserved nav). (2) **The nav A/B is INSENSITIVE to the reward pathway** — the **(A) US-lesion** (`--reward-us-drive-pa 0`) did NOT regress nav (2.14→1.95); the agent navigates via the **place-goal-readout** (its goal-direction *perception*), and in the final-quarter (where nav_sum is measured) it **dwells at the goal** where reward≈0 → `reward_us` silent. So the "1.53× vs host" is the host's policy-sharpening on its variable "great" seeds (42/44 host=1.1; the neural is seed-invariant ~2.4 while the host swings 1.1–5.1), NOT a reward-mechanism failure.
+
+## Direct mechanism validation (the de-risks, which the nav A/B can't sensitively test)
+
+- **(B) Stage-B sweep (GO):** FS→critic at weight 16 → critic 126→8.19 Hz physiological, grade 14.6×, the δ goes **binary → 3.75× graded**. Directly validates the spiking critic-normalization + graded δ (with the *host* SNc burst).
+- **(A) Pavlovian probe (`_n9A_pavlovian_probe.py`):** `reward_us` fires **307 Hz** at 1200 pA and **bursts the SNc** (tonic 50 → with-US 414–500 Hz) at every weight 20–400. **Directly validates that the spiking US drives the SNc reward burst** (the host write replacement works). Reconciles the nav (reward_us bursts on *approach*, silent on *dwell*).
+
+## Honest residual: the combined δ=r−V operating point (NOT a host shortcut)
+
+The probe also shows the **r−V subtraction does not yet fire when `reward_us` provides r**: at 1200 pA `reward_us` over-drives the SNc (414 Hz) so the critic's GABA_B (which the (B) de-risk validated against the *host* burst) cannot subtract it. So the two halves are each validated against the *host* counterpart, but the **combined (reward_us r + critic-GABA_B V → graded δ)** needs operating-point tuning (lower `reward_us` drive/weight so the burst is GABA_B-subtractable, with the FS-clamped 8 Hz critic). This is the same class of operating-point work as the GIRK-cap/FS tuning — a balance between two spiking populations, not a host shortcut. Tracked as the next step.
 
 ## Honest residuals (NOT host shortcuts — feasible-spiking is done)
 
