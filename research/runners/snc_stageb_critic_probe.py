@@ -57,7 +57,8 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
                          strio_to_drive_weight=15.0, n_drive=40,
                          bprime_snr=False, strio_to_disinhib_weight=20.0,
                          disinhib_to_gaba_weight=20.0, gaba_to_snc_weight=6.0, n_relay=40,
-                         gabab=False, gabab_tau_decay=150.0, gabab_propagation_strength=0.105):
+                         gabab=False, gabab_tau_decay=150.0, gabab_propagation_strength=0.105,
+                         td_disinhibit=False, disinhib_tonic_weight=20.0):
     """Minimal bridge: cue (CS) -> striosome_value (GABAergic critic) -> snc (DA).
 
     cue->striosome_value is PLASTIC (the value is learned by the SNc-derived delta via
@@ -165,7 +166,48 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
                       density=0.6, weight_mean=float(cue_to_strio_weight),
                       weight_jitter=0.5, plastic=True),
     ]
-    if bprime:
+    if td_disinhibit:
+        # TD value-DERIVATIVE via DISINHIBITION (B-3, 2026-06-10 TD cue-shift design §2.2).
+        # GOAL: a value RISE (cue onset) must DISINHIBIT/excite the SNc -> a burst AT THE CUE
+        # (the bootstrap gamma*V(s') - V(s) > 0), and a value FALL (omission, expected-reward
+        # time) must add inhibition -> a dip. The B' relay alone delivers the value LEVEL
+        # (more V -> less SNc); the cue-burst needs the DERIVATIVE sign, achieved by routing the
+        # value through ONE extra inhibitory stage so a value RISE *releases* the SNc drive:
+        #
+        #   striosome_value (phasic V) --(inhib)--> disinhib --(inhib)--> snc_drive --(exc)--> snc
+        #
+        # The critic's value is intrinsically PHASIC at cue onset (MSN spike-frequency adaptation
+        # / FS-clamp: it bursts when the cue turns on, then adapts to a lower plateau) -> its
+        # transient IS the value derivative. With the disinhibition chain:
+        #   - cue onset: V transient UP -> disinhib DOWN -> snc_drive RELEASED (UP) -> SNc BURST (at the cue).
+        #   - CS->US gap: V plateaus -> disinhib steady -> snc_drive steady -> SNc ~tonic (no gap burst).
+        #   - omission (V falls at expected-reward time): V DOWN -> disinhib UP -> snc_drive DOWN -> SNc DIP.
+        # `disinhib` is a tonically-paced GABAergic relay (normal reversal so the inter-relay
+        # inhibition is strong); `snc_drive` is the tonically-paced EXC relay (default -75mV).
+        # ZERO sim/ edit -- reuses the bprime EXC-relay + the bprime_snr disinhib recipe.
+        cfg.brain_regions.append(BrainRegion(
+            name="snc_drive", n_neurons=n_drive, exc_fraction=1.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            # NO reversal override -> default -75mV (normal) so disinhib's GABA is strong on it
+        ))
+        cfg.brain_regions.append(BrainRegion(
+            name="disinhib", n_neurons=n_relay, exc_fraction=0.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_GPE_PACEMAKER.name,  # tonically-active GABAergic
+        ))
+        pathways += [
+            RegionPathway(from_region="striosome_value", to_region="disinhib",
+                          density=0.5, weight_mean=float(strio_to_disinhib_weight),
+                          weight_jitter=0.2, plastic=False),    # value inhibits the disinhibitor
+            RegionPathway(from_region="disinhib", to_region="snc_drive",
+                          density=0.5, weight_mean=float(disinhib_tonic_weight),
+                          weight_jitter=0.2, plastic=False),     # disinhibitor holds snc_drive partly off
+            RegionPathway(from_region="snc_drive", to_region="snc",
+                          density=0.6, weight_mean=float(snc_drive_to_snc_weight),
+                          weight_jitter=0.2, plastic=False),     # relay excites the SNc (full strength)
+        ]
+    elif bprime:
         # B'-DISINHIBIT-EXC (research 2026-06-08): the value subtraction is delivered via a
         # normal-reversal EXCITATORY relay, not weak GABA onto the depolarized SNc. The relay
         # `snc_drive` (exc, no reversal override -> default -75mV NORMAL reversal) is tonically
@@ -340,6 +382,33 @@ def _calibrate_da_threshold(bridge, cfg, idx_map, tonic_drives, xp, n_steps=300)
     return tonic_frac
 
 
+def _calibrate_da_baseline(bridge, cfg, idx_map, tonic_drives, xp, n_steps=400):
+    """TD-mode calibration (2026-06-10): after the threshold is set, drive the TONIC condition
+    and measure the SETTLED dopamine CONCENTRATION, then set the modulator `baseline` to it so
+    `da_signal = da_conc - baseline` is centered at ZERO at tonic. Without this, the production
+    rule (sensitivity*(rate_ema - threshold)) makes da_conc settle near 0 at tonic, far below the
+    fixed baseline (0.5) -> da_signal is constantly NEGATIVE -> pure LTD -> the critic UNLEARNS V
+    (the value cannot rise, so no migration). Centering the baseline makes a burst (rate>tonic)
+    give +da_signal (LTP) and a dip give -da_signal (LTD) — the sign the three-factor critic
+    needs to LEARN the cue value up across trials. (The threshold sets WHERE the firing-rate->
+    production crossover is; the baseline sets WHERE da_conc->da_signal crossover is. Both must
+    sit at tonic.)"""
+    bridge.cp_external_input_current[:] = 0.0
+    for region, pA in tonic_drives.items():
+        bridge.cp_external_input_current[idx_map[region]] = xp.float32(pA)
+    conc_sum = 0.0; m = 0
+    for i in range(n_steps):
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+        bridge.runtime_state.current_time_ms = (
+            bridge.runtime_state.current_time_step * bridge.core_config.dt_ms)
+        if i >= n_steps // 2:   # average over the settled second half
+            conc_sum += float(bridge.neuromodulator_manager.get_concentration("dopamine")); m += 1
+    tonic_conc = conc_sum / max(m, 1)
+    cfg.neuromodulators[0].baseline = float(tonic_conc)
+    return tonic_conc
+
+
 def _mean_pathway_weight(bridge, pre_name, post_name):
     """Mean weight of the pre->post edges in the CSR (rows=post, cols=pre)."""
     import numpy as np
@@ -364,10 +433,16 @@ def _lesion_pathway(bridge, pre_name, post_name):
     pre_set = set(int(i) for i in _idx(bridge, pre_name))
     post_set = set(int(i) for i in _idx(bridge, post_name))
     coo = bridge.cp_connections.tocoo()
-    rows = np.asarray(_host(coo.row), dtype=np.int64)   # post
-    cols = np.asarray(_host(coo.col), dtype=np.int64)   # pre
+    rows = np.asarray(_host(coo.row), dtype=np.int64)
+    cols = np.asarray(_host(coo.col), dtype=np.int64)
+    # CSR orientation is rows=post, cols=pre — but fall back to the other orientation if no
+    # edges match (so the lesion is robust to the convention, same as _mean_pathway_weight).
     mask = np.array([(r in post_set and c in pre_set) for r, c in zip(rows, cols)])
-    pre = cols[mask]; post = rows[mask]
+    if not mask.any():
+        mask = np.array([(r in pre_set and c in post_set) for r, c in zip(rows, cols)])
+        pre = rows[mask]; post = cols[mask]
+    else:
+        pre = cols[mask]; post = rows[mask]
     if len(pre) == 0:
         return 0
     return bridge.set_pathway_weights(f"{pre_name}->{post_name}(lesion)",
@@ -566,6 +641,383 @@ def run_stageb(seed, *, snc_tonic_pa=220.0, snc_reward_gain=400.0, cue_drive_pa=
     }
 
 
+# ======================================================================================
+# TD CUE-SHIFT (Pavlovian cue->reward burst MIGRATION) — B-3 zero-edit derivative probe
+# ======================================================================================
+#
+# Design: docs/plans/2026-06-10-N9-TD-cue-shift-design.md (option B-3, §2.2/§4/§5/§6).
+# Distinct from run_stageb (Rescorla-Wagner: delta = r - V). This tests the TD bootstrap
+# signature: across cue->reward learning the SNc phasic-dopamine burst MIGRATES from the
+# reward (US) onto the predictive cue (CS) — the iconic Schultz 1997 result, the one
+# canonical dopamine signature the circuit does not yet show.
+#
+# Mechanism (zero sim/ edit, runner-side only): td_disinhibit=True wires the value through a
+# disinhibition chain (striosome -> disinhib -> snc_drive -> snc) so a value RISE *releases*
+# the SNc (burst at the cue) and a value FALL adds inhibition (dip at the expected-reward
+# time). The critic's value is intrinsically phasic at cue onset (its transient IS the value
+# derivative). The trial CLOCK (CS at t0, US at t0+ISI) is the world's event timing
+# (legitimate environment/body boundary, design §2.4); every cognitive term — value, the
+# derivative, the burst, the dip — is neural.
+
+
+def _drive_timecourse(bridge, idx_map, drives, n_steps, xp, bin_steps,
+                      events=None, freeze_lr=None, cfg=None):
+    """Like _drive, but records a per-BIN SNc firing-rate TIME-COURSE so the time-of-peak is
+    measurable. `drives` is the steady drive; `events` is an optional list of
+    (start_step, end_step, {region: pA}) overrides applied within the window (so the protocol
+    can turn the CS on at t0 and the US on at t0+ISI WITHIN one continuous stepping window —
+    the cue trace and reward then co-exist in the same simulated trajectory, as in a real
+    conditioning trial). Returns (snc_rate_per_bin[list], strio_rate_per_bin[list],
+    snc_rate_hz_overall, strio_rate_hz_overall)."""
+    import numpy as np
+    bridge.cp_external_input_current[:] = 0.0
+    for region, pA in drives.items():
+        bridge.cp_external_input_current[idx_map[region]] = xp.float32(pA)
+    saved_lr = None
+    if freeze_lr is not None and cfg is not None:
+        saved_lr = cfg.reward_learning_rate
+        cfg.reward_learning_rate = float(freeze_lr)
+    snc_idx, strio_idx = idx_map["snc"], idx_map["striosome_value"]
+    n_snc = len(_host(snc_idx)); n_strio = len(_host(strio_idx))
+    events = events or []
+    snc_bins, strio_bins = [], []
+    snc_bin_spk = strio_bin_spk = 0
+    snc_total = strio_total = 0
+    for step in range(n_steps):
+        # Apply event overrides for this step (world's CS/US scheduling).
+        for (s0, s1, ev_drives) in events:
+            if s0 <= step < s1:
+                for region, pA in ev_drives.items():
+                    bridge.cp_external_input_current[idx_map[region]] = xp.float32(pA)
+            elif step == s1:
+                # Event ended this step: restore the steady drive for those regions (cue OFF / US OFF).
+                for region in ev_drives:
+                    base = drives.get(region, 0.0)
+                    bridge.cp_external_input_current[idx_map[region]] = xp.float32(base)
+        bridge._run_one_simulation_step()
+        bridge.runtime_state.current_time_step += 1
+        bridge.runtime_state.current_time_ms = (
+            bridge.runtime_state.current_time_step * bridge.core_config.dt_ms)
+        s = int(bridge.cp_firing_states[snc_idx].sum())
+        v = int(bridge.cp_firing_states[strio_idx].sum())
+        snc_bin_spk += s; strio_bin_spk += v
+        snc_total += s; strio_total += v
+        if (step + 1) % bin_steps == 0:
+            dur_s = bin_steps * bridge.core_config.dt_ms * 1e-3
+            snc_bins.append(snc_bin_spk / max(n_snc, 1) / dur_s)
+            strio_bins.append(strio_bin_spk / max(n_strio, 1) / dur_s)
+            snc_bin_spk = strio_bin_spk = 0
+    if saved_lr is not None:
+        cfg.reward_learning_rate = saved_lr
+    dur_all = n_steps * bridge.core_config.dt_ms * 1e-3
+    return (snc_bins, strio_bins,
+            snc_total / max(n_snc, 1) / dur_all,
+            strio_total / max(n_strio, 1) / dur_all)
+
+
+def _pearson_r(xs, ys):
+    """Pearson correlation; returns 0.0 on degenerate input (no variance)."""
+    import numpy as np
+    xs = np.asarray(xs, dtype=np.float64); ys = np.asarray(ys, dtype=np.float64)
+    if len(xs) < 2:
+        return 0.0
+    sx = xs.std(); sy = ys.std()
+    if sx < 1e-12 or sy < 1e-12:
+        return 0.0
+    return float(np.corrcoef(xs, ys)[0, 1])
+
+
+def run_td(seed, *, snc_reward_gain=400.0, cue_drive_pa=600.0,
+           relay_tonic_pa=300.0, disinhib_pa=100.0,
+           cue_to_strio_weight=20.0, strio_to_disinhib_weight=20.0,
+           disinhib_tonic_weight=8.0, snc_drive_to_snc_weight=6.0,
+           snc_da_sensitivity=8.0, reward_learning_rate=0.08,
+           n_train=60, n_cs_bins=6, n_isi_bins=4, n_post_bins=4,
+           bin_steps=20, lesion_cue=False, unpaired=False, verbose=True):
+    """TD cue-shift Pavlovian protocol on the spiking SNc (B-3 zero-edit derivative).
+
+    Each TRIAL = cue ON at t0 (SUSTAINED across the CS->US interval, the A-trace) ->
+    reward (US via the SNc-drive reward afferent) at t0+ISI -> inter-trial gap, ALL in one
+    continuous stepping window so the cue trace and the reward co-exist in the trajectory.
+    Learning is ON (the critic learns V from the SNc-derived dopamine). The SNc firing-rate
+    TIME-COURSE is recorded per bin every trial so the time-of-peak is measurable.
+
+    Window layout (bins), per trial:
+        [ n_cs_bins (CS only) | n_isi_bins (CS+US fires partway) | n_post_bins (post) ]
+    The CS spans the whole CS->ISI; the US fires in the FIRST `n_isi_bins` portion.
+
+    HEADLINE metric: Pearson r between TRIAL NUMBER and the SNc burst TIME-OF-PEAK (bin index
+    of the max SNc rate). Migration => the peak moves EARLIER (toward the CS, lower bin index)
+    across learning => r < 0 (negative slope). Pass bar |r| > 0.7 with the correct (earlier)
+    sign.
+
+    Anti-cheats: lesion_cue=True zeros cue->striosome (migration must vanish, US reflex
+    remains); unpaired=True decouples CS and US in time (no contingency -> no migration, no dip).
+    """
+    from sim.backend import get_backend
+    xp, _ = get_backend()
+    bridge, cfg = _build_stageb_bridge(
+        seed, snc_da_sensitivity=snc_da_sensitivity,
+        reward_learning_rate=reward_learning_rate,
+        cue_to_strio_weight=cue_to_strio_weight,
+        td_disinhibit=True, snc_drive_to_snc_weight=snc_drive_to_snc_weight,
+        strio_to_disinhib_weight=strio_to_disinhib_weight,
+        disinhib_tonic_weight=disinhib_tonic_weight, n_drive=40, n_relay=40)
+    region_names = ("cue", "striosome_value", "snc", "snc_drive", "disinhib")
+    idx_map = {n: xp.asarray(_idx(bridge, n)) for n in region_names}
+
+    # PROVENANCE / anti-cheat (3): no host TD term reaches the SNc. The SNc current is
+    # tonic(relay) + reward_us(at the relay) + synaptic disinhibition ONLY. Assert the
+    # brain-based stance the build enforces: no host reward scalar, no host value/EMA.
+    assert cfg.current_reward_signal == 0.0, "host reward scalar must be 0 (brain-based)"
+    assert cfg.reward_baseline == 0.0, "host reward baseline must be 0 (brain-based)"
+    # The SNc receives NO direct external current in the protocol (reward enters at the relay);
+    # its drive is purely synaptic (snc_drive->snc) plus whatever the disinhibition chain sets.
+    prov = {
+        "snc_gets_direct_current": False,   # reward+tonic enter at snc_drive, not snc
+        "host_reward_signal": float(cfg.current_reward_signal),
+        "host_value_term": False,           # no host V / reward_ema in this probe
+        "snc_drive_terms": "tonic(relay) + reward_us(relay) + synaptic disinhibition only",
+    }
+
+    # Calibrate the dopamine threshold to the SNc's tonic firing fraction, THEN the modulator
+    # baseline to the settled tonic da concentration (so a burst -> +da_signal=LTP, a dip ->
+    # -da_signal=LTD; without baseline-centering the critic UNLEARNS V — see _calibrate_da_baseline).
+    tonic_drives = {"snc_drive": relay_tonic_pa, "disinhib": disinhib_pa}
+    tonic_frac = _calibrate_da_threshold(bridge, cfg, idx_map, tonic_drives, xp)
+    tonic_conc = _calibrate_da_baseline(bridge, cfg, idx_map, tonic_drives, xp)
+    if verbose:
+        print(f"  [calib] SNc tonic firing fraction = {tonic_frac:.4f} -> threshold; "
+              f"tonic da conc = {tonic_conc:.4f} -> baseline (da_signal centered at tonic)")
+
+    # Per-trial window: CS-only bins, then ISI bins (CS continues; US fires in the first half),
+    # then post bins. Steps:
+    n_win_bins = n_cs_bins + n_isi_bins + n_post_bins
+    cs_start_bin = 0
+    isi_start_bin = n_cs_bins                 # US-window onset bin (the expected-reward time)
+    win_steps = n_win_bins * bin_steps
+    cs_steps = (n_cs_bins + n_isi_bins) * bin_steps     # cue sustained across CS + ISI
+    us_on_step = n_cs_bins * bin_steps                  # US turns on at ISI onset
+    us_off_step = (n_cs_bins + max(1, n_isi_bins // 2)) * bin_steps  # US fires in first half of ISI
+
+    # Steady (inter-trial floor): the relay tonic + the disinhibitor tone, NO cue, NO reward.
+    floor = {"snc_drive": relay_tonic_pa, "disinhib": disinhib_pa}
+
+    import random as _random
+    rng = _random.Random(seed)   # for the unpaired control's random US offsets (per-seed pinned)
+
+    peak_bins = []        # time-of-peak (bin index) per trial
+    cs_rates = []         # SNc rate in the CS-only window per trial
+    us_rates = []         # SNc rate in the US window per trial
+    gap_rates = []        # SNc rate in the late-CS (pre-US) bins per trial
+    v_cs_rates = []       # critic rate on the CS per trial
+    snc_tc_first = snc_tc_last = None
+
+    for t in range(n_train):
+        # Inter-trial floor (let the system settle).
+        _drive_timecourse(bridge, idx_map, floor, bin_steps * 2, xp, bin_steps)
+        # Build the trial events. CS sustained for cs_steps; US fires us_on..us_off.
+        if unpaired:
+            # ANTI-CHEAT (b): decouple CS and US timing. The US fires at a RANDOM offset
+            # unrelated to the CS (and sometimes after the cue is gone) so there is no
+            # CS->US contingency for the critic to learn.
+            jitter = rng.randint(0, max(1, n_post_bins)) * bin_steps
+            us0 = us_on_step + jitter
+            us1 = us0 + max(1, n_isi_bins // 2) * bin_steps
+        else:
+            us0, us1 = us_on_step, us_off_step
+        events = [
+            (0, cs_steps, {"cue": cue_drive_pa}),                                  # CS sustained (A-trace)
+            (us0, us1, {"snc_drive": relay_tonic_pa + snc_reward_gain}),           # US = reward at the relay
+        ]
+        snc_bins, strio_bins, snc_all, strio_all = _drive_timecourse(
+            bridge, idx_map, floor, win_steps, xp, bin_steps, events=events)
+        # Time-of-peak: the bin index of the max SNc rate over the window.
+        import numpy as np
+        peak_bin = int(np.argmax(snc_bins)) if snc_bins else 0
+        peak_bins.append(peak_bin)
+        cs_rate = float(np.mean(snc_bins[cs_start_bin:isi_start_bin])) if isi_start_bin > 0 else 0.0
+        us_rate = float(np.mean(snc_bins[isi_start_bin:isi_start_bin + max(1, n_isi_bins // 2)]))
+        gap_rate = (float(np.mean(snc_bins[max(0, isi_start_bin - 2):isi_start_bin]))
+                    if isi_start_bin >= 2 else cs_rate)
+        cs_rates.append(cs_rate); us_rates.append(us_rate); gap_rates.append(gap_rate)
+        v_cs_rates.append(float(np.mean(strio_bins[cs_start_bin:isi_start_bin])) if isi_start_bin > 0 else 0.0)
+        if t == 0:
+            snc_tc_first = list(snc_bins)
+        if t == n_train - 1:
+            snc_tc_last = list(snc_bins)
+        if verbose and (t < 3 or t % 10 == 0 or t == n_train - 1):
+            w = _mean_pathway_weight(bridge, "cue", "striosome_value")
+            print(f"  [td t={t:02d}] peak_bin={peak_bin}  CS-rate={cs_rate:6.2f}  "
+                  f"US-rate={us_rate:6.2f}Hz  V(strio)CS={v_cs_rates[-1]:6.1f}Hz  w(cue->strio)={w:.3f}")
+
+    # --- Omission test (frozen learning): CS, no US. The dip should be at the EXPECTED-reward
+    #     time (the ISI-onset bin), not the cue. ---
+    omit_events = [(0, cs_steps, {"cue": cue_drive_pa})]   # CS sustained, NO US
+    omit_bins, _, _, _ = _drive_timecourse(
+        bridge, idx_map, floor, win_steps, xp, bin_steps, events=omit_events,
+        freeze_lr=0.0, cfg=cfg)
+    # --- Baseline (frozen): floor only, no CS, no US (the tonic time-course). ---
+    base_bins, _, _, _ = _drive_timecourse(
+        bridge, idx_map, floor, win_steps, xp, bin_steps, freeze_lr=0.0, cfg=cfg)
+
+    import numpy as np
+    # HEADLINE: r between trial number and time-of-peak. Migration => peak moves EARLIER
+    # (toward the CS) => NEGATIVE slope. We report r (signed) AND the cue-ward boolean.
+    trial_idx = list(range(n_train))
+    r_migration = _pearson_r(trial_idx, peak_bins)
+    early = slice(0, max(1, n_train // 5)); late = slice(-max(1, n_train // 5), None)
+    peak_early = float(np.mean(peak_bins[early])); peak_late = float(np.mean(peak_bins[late]))
+    cs_early = float(np.mean(cs_rates[early])); cs_late = float(np.mean(cs_rates[late]))
+    us_early = float(np.mean(us_rates[early])); us_late = float(np.mean(us_rates[late]))
+    v_early = float(np.mean(v_cs_rates[early])); v_late = float(np.mean(v_cs_rates[late]))
+    gap_late = float(np.mean(gap_rates[late]))
+    tonic_rate = float(np.mean(base_bins)) if base_bins else 0.0
+
+    # Omission dip: the SNc dips below tonic AT the expected-reward bin (ISI onset), NOT at the cue.
+    omit_at_reward = float(np.mean(omit_bins[isi_start_bin:isi_start_bin + max(1, n_isi_bins // 2)])) if omit_bins else 0.0
+    omit_at_cue = float(np.mean(omit_bins[cs_start_bin:isi_start_bin])) if isi_start_bin > 0 else 0.0
+    base_at_reward = float(np.mean(base_bins[isi_start_bin:isi_start_bin + max(1, n_isi_bins // 2)])) if base_bins else 0.0
+    dip_at_reward_depth = base_at_reward - omit_at_reward
+
+    # ---- Gates (design §4.2) ----
+    # Headline: peak migrates earlier (cue-ward) with |r| > 0.7.
+    migration_r_pass = (r_migration < -0.7)
+    migration_dir_pass = (peak_late < peak_early - 0.5)   # peak moved earlier by >=~half a bin
+    # Late: burst at CS, not US (the burst TRANSFERRED, not merely shrank).
+    late_burst_at_cs = (cs_late > 1.10 * tonic_rate) and (us_late <= 1.20 * tonic_rate + 1e-6)
+    # Early: burst at US.
+    early_burst_at_us = (us_early > 1.10 * tonic_rate)
+    # No burst between cue and reward (value flat -> derivative ~ 0).
+    no_gap_burst = (gap_late <= 1.30 * tonic_rate + 1e-6)
+    # Omission dip stays at REWARD time, not the cue.
+    omission_dip_at_reward = (dip_at_reward_depth > 0) and (omit_at_reward < omit_at_cue + 1e-6)
+    # Regression guards.
+    v_learned = (v_late > 1.20 * v_early) if v_early > 1e-6 else (v_late > 1e-6)
+
+    gates = {
+        "migration_r_pass": bool(migration_r_pass),
+        "migration_dir_pass": bool(migration_dir_pass),
+        "early_burst_at_us": bool(early_burst_at_us),
+        "late_burst_at_cs": bool(late_burst_at_cs),
+        "no_gap_burst": bool(no_gap_burst),
+        "omission_dip_at_reward": bool(omission_dip_at_reward),
+        "v_learned": bool(v_learned),
+    }
+
+    return {
+        "seed": seed, "lesion_cue": lesion_cue, "unpaired": unpaired,
+        "n_train": n_train, "bin_steps": bin_steps,
+        "n_cs_bins": n_cs_bins, "n_isi_bins": n_isi_bins, "n_post_bins": n_post_bins,
+        "isi_start_bin": isi_start_bin,
+        "r_migration": r_migration,
+        "peak_bin_early": peak_early, "peak_bin_late": peak_late,
+        "cs_rate_early": cs_early, "cs_rate_late": cs_late,
+        "us_rate_early": us_early, "us_rate_late": us_late,
+        "gap_rate_late": gap_late, "tonic_rate": tonic_rate,
+        "v_cs_early_hz": v_early, "v_cs_late_hz": v_late,
+        "omit_at_reward_hz": omit_at_reward, "omit_at_cue_hz": omit_at_cue,
+        "base_at_reward_hz": base_at_reward, "dip_at_reward_depth_hz": dip_at_reward_depth,
+        "peak_bins": peak_bins,
+        "snc_tc_first": snc_tc_first, "snc_tc_last": snc_tc_last,
+        "omit_tc": list(omit_bins), "base_tc": list(base_bins),
+        "gates": gates, "provenance": prov,
+    }
+
+
+def run_td_lesion(seed, **kw):
+    """ANTI-CHEAT (a): train, then zero cue->striosome and re-measure. The migration must
+    VANISH (the SNc still bursts to the US reflex via the relay, but no cue burst, no dip).
+    Re-uses run_td's machinery but cuts the cue conduit after acquisition by re-building +
+    training, then lesioning, then a frozen test block over a few trials."""
+    from sim.backend import get_backend
+    import numpy as np
+    xp, _ = get_backend()
+    # Train normally first (short), then lesion the cue pathway and measure the time-course.
+    n_train = kw.pop("n_train", 40)
+    snc_reward_gain = kw.get("snc_reward_gain", 400.0)
+    cue_drive_pa = kw.get("cue_drive_pa", 600.0)
+    relay_tonic_pa = kw.get("relay_tonic_pa", 300.0)
+    disinhib_pa = kw.get("disinhib_pa", 100.0)
+    bin_steps = kw.get("bin_steps", 20)
+    n_cs_bins = kw.get("n_cs_bins", 6); n_isi_bins = kw.get("n_isi_bins", 4); n_post_bins = kw.get("n_post_bins", 4)
+    bridge, cfg = _build_stageb_bridge(
+        seed, snc_da_sensitivity=kw.get("snc_da_sensitivity", 8.0),
+        reward_learning_rate=kw.get("reward_learning_rate", 0.08),
+        cue_to_strio_weight=kw.get("cue_to_strio_weight", 20.0),
+        td_disinhibit=True, snc_drive_to_snc_weight=kw.get("snc_drive_to_snc_weight", 6.0),
+        strio_to_disinhib_weight=kw.get("strio_to_disinhib_weight", 20.0),
+        disinhib_tonic_weight=kw.get("disinhib_tonic_weight", 8.0), n_drive=40, n_relay=40)
+    region_names = ("cue", "striosome_value", "snc", "snc_drive", "disinhib")
+    idx_map = {n: xp.asarray(_idx(bridge, n)) for n in region_names}
+    tonic_drives = {"snc_drive": relay_tonic_pa, "disinhib": disinhib_pa}
+    _calibrate_da_threshold(bridge, cfg, idx_map, tonic_drives, xp)
+    _calibrate_da_baseline(bridge, cfg, idx_map, tonic_drives, xp)
+    n_win_bins = n_cs_bins + n_isi_bins + n_post_bins
+    win_steps = n_win_bins * bin_steps
+    cs_steps = (n_cs_bins + n_isi_bins) * bin_steps
+    us_on_step = n_cs_bins * bin_steps; us_off_step = (n_cs_bins + max(1, n_isi_bins // 2)) * bin_steps
+    isi_start_bin = n_cs_bins
+    floor = {"snc_drive": relay_tonic_pa, "disinhib": disinhib_pa}
+    # Train.
+    for _ in range(n_train):
+        _drive_timecourse(bridge, idx_map, floor, bin_steps * 2, xp, bin_steps)
+        events = [(0, cs_steps, {"cue": cue_drive_pa}),
+                  (us_on_step, us_off_step, {"snc_drive": relay_tonic_pa + snc_reward_gain})]
+        _drive_timecourse(bridge, idx_map, floor, win_steps, xp, bin_steps, events=events)
+    # LESION the cue->striosome conduit.
+    n_cut = _lesion_pathway(bridge, "cue", "striosome_value")
+    # Frozen test: predicted (CS+US) time-course + omission time-course.
+    pred_events = [(0, cs_steps, {"cue": cue_drive_pa}),
+                   (us_on_step, us_off_step, {"snc_drive": relay_tonic_pa + snc_reward_gain})]
+    pred_bins, pred_strio, _, _ = _drive_timecourse(
+        bridge, idx_map, floor, win_steps, xp, bin_steps, events=pred_events, freeze_lr=0.0, cfg=cfg)
+    omit_events = [(0, cs_steps, {"cue": cue_drive_pa})]
+    omit_bins, _, _, _ = _drive_timecourse(
+        bridge, idx_map, floor, win_steps, xp, bin_steps, events=omit_events, freeze_lr=0.0, cfg=cfg)
+    base_bins, _, _, _ = _drive_timecourse(bridge, idx_map, floor, win_steps, xp, bin_steps, freeze_lr=0.0, cfg=cfg)
+    half = max(1, n_isi_bins // 2)
+    us_rate = float(np.mean(pred_bins[isi_start_bin:isi_start_bin + half])) if pred_bins else 0.0
+    cs_rate = float(np.mean(pred_bins[0:isi_start_bin])) if isi_start_bin > 0 else 0.0
+    tonic = float(np.mean(base_bins)) if base_bins else 0.0
+    v_cs = float(np.mean(pred_strio[0:isi_start_bin])) if isi_start_bin > 0 else 0.0
+    omit_at_reward = float(np.mean(omit_bins[isi_start_bin:isi_start_bin + half])) if omit_bins else 0.0
+    base_at_reward = float(np.mean(base_bins[isi_start_bin:isi_start_bin + half])) if base_bins else 0.0
+    # EXPECTATION: cue is silenced -> V~0 -> no cue burst, no dip; the US reflex still bursts.
+    cue_silenced = (v_cs <= 1e-3)
+    no_cue_burst = (cs_rate <= 1.30 * tonic + 1e-6)
+    no_dip = (base_at_reward - omit_at_reward) <= 0.5
+    us_reflex_intact = (us_rate > 1.10 * tonic)
+    return {
+        "seed": seed, "n_cut": n_cut, "v_cs_hz": v_cs, "cs_rate": cs_rate, "us_rate": us_rate,
+        "tonic_rate": tonic, "omit_at_reward_hz": omit_at_reward, "base_at_reward_hz": base_at_reward,
+        "cue_silenced": bool(cue_silenced), "no_cue_burst": bool(no_cue_burst),
+        "no_dip": bool(no_dip), "us_reflex_intact": bool(us_reflex_intact),
+        "pred_tc": list(pred_bins), "omit_tc": list(omit_bins), "base_tc": list(base_bins),
+    }
+
+
+def _print_td_result(r):
+    print()
+    print(f"  SNc time-of-peak   : trial-early bin {r['peak_bin_early']:.2f} -> "
+          f"trial-late bin {r['peak_bin_late']:.2f}   (ISI/reward onset = bin {r['isi_start_bin']})")
+    print(f"  migration r        : {r['r_migration']:+.3f}   "
+          f"(MIGRATION = peak moves EARLIER/cue-ward => r < -0.7)")
+    print(f"  CS-window SNc rate : {r['cs_rate_early']:.2f} -> {r['cs_rate_late']:.2f} Hz   "
+          f"(tonic {r['tonic_rate']:.2f}Hz)")
+    print(f"  US-window SNc rate : {r['us_rate_early']:.2f} -> {r['us_rate_late']:.2f} Hz   "
+          f"(transferred if late US ~ tonic)")
+    print(f"  V(strio) on CS     : {r['v_cs_early_hz']:.2f} -> {r['v_cs_late_hz']:.2f} Hz   "
+          f"(learned: {r['gates']['v_learned']})")
+    print(f"  omission @ reward  : {r['omit_at_reward_hz']:.2f} Hz vs @cue {r['omit_at_cue_hz']:.2f} Hz "
+          f"vs base@reward {r['base_at_reward_hz']:.2f} Hz  (dip depth {r['dip_at_reward_depth_hz']:+.2f})")
+    g = r["gates"]
+    print(f"  gates: migration_r {g['migration_r_pass']} | dir {g['migration_dir_pass']} | "
+          f"early@US {g['early_burst_at_us']} | late@CS {g['late_burst_at_cs']} | "
+          f"no-gap-burst {g['no_gap_burst']} | omit-dip@reward {g['omission_dip_at_reward']} | "
+          f"v-learned {g['v_learned']}")
+
+
 def _print_result(r):
     print()
     print(f"  V(striosome) on CS : {r['v_cs_early_hz']:.2f} -> {r['v_cs_late_hz']:.2f} Hz   "
@@ -577,6 +1029,85 @@ def _print_result(r):
           f"(state-specific: {r['state_specific']})")
     print(f"  omission (CS,no US): {r['test_omission_hz']:.2f} Hz  vs baseline {r['test_baseline_hz']:.2f} Hz "
           f"(dip: {r['omission_dip']})")
+
+
+def _run_td_mode(args):
+    """Orchestrate the TD cue-shift probe (single seed or multi-seed), with the two anti-cheats."""
+    seeds = [int(s) for s in args.seeds.split(",")] if args.seeds else [args.seed]
+    td_kw = dict(
+        snc_reward_gain=args.snc_reward_gain, cue_drive_pa=args.cue_drive_pa,
+        relay_tonic_pa=args.relay_tonic_pa,
+        disinhib_pa=(args.disinhib_pa if args.disinhib_pa != 250.0 else 100.0),
+        cue_to_strio_weight=(args.cue_to_strio_weight if args.cue_to_strio_weight != 3.0 else 20.0),
+        strio_to_disinhib_weight=args.strio_to_disinhib_weight,
+        disinhib_tonic_weight=(args.disinhib_tonic_weight if args.disinhib_tonic_weight != 20.0 else 8.0),
+        snc_drive_to_snc_weight=args.snc_drive_to_snc_weight,
+        snc_da_sensitivity=args.snc_da_sensitivity,
+        reward_learning_rate=args.reward_learning_rate,
+        n_train=args.n_train,
+        n_cs_bins=args.td_n_cs_bins, n_isi_bins=args.td_n_isi_bins,
+        n_post_bins=args.td_n_post_bins, bin_steps=args.td_bin_steps,
+    )
+    results = []
+    for s in seeds:
+        if args.td_lesion_cue:
+            print(f"[snc-TD seed={s}] CUE-LESION anti-cheat — train then zero cue->striosome:")
+            lk = dict(td_kw); lk["unpaired"] = False
+            r = run_td_lesion(s, **lk)
+            print(f"  V(strio) on CS after lesion = {r['v_cs_hz']:.2f}Hz (cue silenced: {r['cue_silenced']})")
+            print(f"  CS-rate={r['cs_rate']:.2f}Hz  US-rate={r['us_rate']:.2f}Hz  tonic={r['tonic_rate']:.2f}Hz")
+            print(f"  omission@reward={r['omit_at_reward_hz']:.2f}Hz vs base@reward={r['base_at_reward_hz']:.2f}Hz")
+            ok = r["cue_silenced"] and r["no_cue_burst"] and r["no_dip"] and r["us_reflex_intact"]
+            print(f"  LESION anti-cheat (seed {s}): {'PASS' if ok else 'UNEXPECTED'}  "
+                  f"[cue-silenced {r['cue_silenced']}, no-cue-burst {r['no_cue_burst']}, "
+                  f"no-dip {r['no_dip']}, US-reflex-intact {r['us_reflex_intact']}]")
+            r["_mode"] = "lesion"; results.append(r); print()
+            continue
+        tag = "UNPAIRED anti-cheat" if args.td_unpaired else "TD cue-shift (burst migration)"
+        print(f"[snc-TD seed={s}] {tag} — does the SNc burst MIGRATE cue<-reward across learning?")
+        r = run_td(s, unpaired=args.td_unpaired, **td_kw)
+        _print_td_result(r)
+        g = r["gates"]
+        if args.td_unpaired:
+            # Anti-cheat (b) EXPECTATION: no contingency -> no migration, no dip.
+            no_mig = not (g["migration_r_pass"] and g["migration_dir_pass"])
+            no_dip = not g["omission_dip_at_reward"]
+            print(f"\n  UNPAIRED anti-cheat (seed {s}): {'PASS' if (no_mig and no_dip) else 'UNEXPECTED'}  "
+                  f"[no-migration {no_mig}, no-dip {no_dip}]  (decoupled CS/US => no transfer)")
+        else:
+            headline = g["migration_r_pass"] and g["migration_dir_pass"]
+            support = sum([g["early_burst_at_us"], g["late_burst_at_cs"], g["no_gap_burst"],
+                           g["omission_dip_at_reward"], g["v_learned"]])
+            verdict = ("GO" if (headline and support >= 4)
+                       else "PARTIAL" if (g["migration_dir_pass"] or support >= 3)
+                       else "NEGATIVE")
+            print(f"\n  TD migration (seed {s}): {verdict}  "
+                  f"[HEADLINE migration_r {g['migration_r_pass']} (r={r['r_migration']:+.3f}), "
+                  f"dir {g['migration_dir_pass']}; support {support}/5]")
+            r["_verdict"] = verdict
+        r["_mode"] = "td"; results.append(r); print()
+
+    if len(results) > 1 and not args.td_lesion_cue:
+        if args.td_unpaired:
+            n_ok = sum(1 for r in results
+                       if not (r["gates"]["migration_r_pass"] and r["gates"]["migration_dir_pass"]))
+            print(f"=== MULTI-SEED UNPAIRED: {n_ok}/{len(results)} show NO migration (anti-cheat holds) ===")
+        else:
+            n_go = sum(1 for r in results if r.get("_verdict") == "GO")
+            n_partial = sum(1 for r in results if r.get("_verdict") == "PARTIAL")
+            rs = ["{}={:+.3f}".format(r["seed"], r["r_migration"]) for r in results]
+            print(f"=== MULTI-SEED TD: {n_go} GO + {n_partial} PARTIAL / {len(results)} ===")
+            print("=== migration r per seed: " + ", ".join(rs) + " ===")
+            # sign-consistency: all r same (negative/cue-ward) sign + omission-dip-at-reward
+            signs = [(_r["r_migration"] < 0) for _r in results]
+            dips = [_r["gates"]["omission_dip_at_reward"] for _r in results]
+            print(f"=== sign-consistent (all cue-ward): {all(signs)} | "
+                  f"omission-dip-at-reward all seeds: {all(dips)} ===")
+
+    if args.out:
+        with open(args.out, "w") as f:
+            json.dump({"mode": "td_cue_shift", "results": results}, f, indent=2)
+        print(f"  wrote {args.out}")
 
 
 def main():
@@ -614,6 +1145,21 @@ def main():
     ap.add_argument("--strio-to-disinhib-weight", type=float, default=20.0)
     ap.add_argument("--disinhib-to-gaba-weight", type=float, default=20.0)
     ap.add_argument("--gaba-to-snc-weight", type=float, default=6.0)
+    # --- TD cue-shift (Pavlovian burst-migration) mode ---
+    ap.add_argument("--td", action="store_true",
+                    help="TD cue-shift: Pavlovian cue->reward protocol measuring whether the SNc "
+                         "burst MIGRATES from the reward onto the cue across learning (B-3 "
+                         "zero-edit value-derivative via disinhibition)")
+    ap.add_argument("--disinhib-tonic-weight", type=float, default=20.0,
+                    help="TD: disinhib->snc_drive inhibitory weight (the disinhibition stage)")
+    ap.add_argument("--td-n-cs-bins", type=int, default=6, help="TD: CS-only bins per trial window")
+    ap.add_argument("--td-n-isi-bins", type=int, default=4, help="TD: ISI bins (CS+US) per window")
+    ap.add_argument("--td-n-post-bins", type=int, default=4, help="TD: post bins per window")
+    ap.add_argument("--td-bin-steps", type=int, default=20, help="TD: sub-steps per time-course bin")
+    ap.add_argument("--td-lesion-cue", action="store_true",
+                    help="TD anti-cheat (a): train then zero cue->striosome; migration must vanish")
+    ap.add_argument("--td-unpaired", action="store_true",
+                    help="TD anti-cheat (b): decouple CS/US timing; no contingency -> no migration")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
@@ -621,6 +1167,10 @@ def main():
         run_diag(args.seed, cue_drive_pa=args.cue_drive_pa,
                  cue_to_strio_weight=args.cue_to_strio_weight,
                  strio_to_snc_weight=args.strio_to_snc_weight)
+        return
+
+    if args.td:
+        _run_td_mode(args)
         return
 
     seeds = [int(s) for s in args.seeds.split(",")] if args.seeds else [args.seed]
