@@ -72,7 +72,18 @@ The owner correctly rejected the 2/3 as a documentable residual. Root cause (sep
 | 43 | 0.0 ≪ 100 ✓ | **0.0 ≪ 32.5** → dip ✓ |
 | 44 | 71.7 ≪ 100 ✓ | **0.0 ≪ 38.3** → dip ✓ |
 
-The spiking SNc computes **δ = r − V bidirectionally**, all-synaptic: at a learned cue, an *expected* reward → little firing (δ small, pred low); an *omitted* reward → a firing **dip below tonic** (negative δ = 0 − V, omit_near ≈ 0 ≪ omit_far); an *unexpected* reward → full firing (unpred 100). This is the canonical dopamine reward-prediction-error signature (Schultz 1997). The omission dip's magnitude (omit_near → 0 at scale 2.0) reflects the strong GABA_B; it is the negative arm of the same δ = r − V. (Negative-arm lesion control — the dip must also vanish when the GABA_B is zeroed — running.)
+The spiking SNc computes **δ = r − V bidirectionally**, all-synaptic: at a learned cue, an *expected* reward → little firing (δ small, pred low); an *omitted* reward → a firing **dip below tonic** (negative δ = 0 − V, omit_near ≈ 0 ≪ omit_far); an *unexpected* reward → full firing (unpred 100). This is the canonical dopamine reward-prediction-error signature (Schultz 1997).
+
+**Both arms are lesion-confirmed (3/3):** with the GABA_B mask zeroed, the positive subtraction vanishes (pred → 100 = unpred, gap 1.00) AND the omission dip vanishes (omit_near → 42–43 ≈ omit_far 50, dip_ratio ~1.2, no dip). So the full bidirectional δ = r − V *is* the synaptic GABA_B subtraction, not a host artifact — the decisive control on the whole RPE loop.
+
+## N9 — FINAL STATUS: the reward-prediction-error loop is validated end-to-end, all-synaptic
+
+The complete N9 deliverable (the navigation reward-prediction made fully neural) is validated in the isolated de-risk:
+- **Perception (place code):** self-organized sparse-distinct spiking place fields (landmark sensors → place pool, competitive threshold-WTA), FS-gated during self-org for distinctness.
+- **Value (V):** the striosome MSN-D1 critic LEARNS V via the weighted-coincidence dendritic plateau (the approved sim/ edit) + DA-gated STDP with the correct Yagishita three-factor timing (pair-then-reward). Robust across draws (3/3 learn w_near 3.3–5.0; the owner's 2/3 challenge resolved).
+- **Reward-prediction-error (δ = r − V):** the spiking SNc fires δ bidirectionally — the GABA_B arithmetically subtracts the learned V (positive arm) and produces the omission dip (negative arm), both lesion-confirmed 3/3.
+
+No host computation in the loop (place code, value, and δ are all neurons/synapses). The remaining work is the DEPLOYMENT into the online nav loop (`docs/plans/2026-06-09-N9-nav-deployment-design.md`) — the de-risk validates the mechanism; the nav A/B is the integration test.
 
 **Honest residuals (calibration, not mechanism):** (1) seed 43's strict weight-*ratio* gate is 1.57× (its w_far grew to 2.13 — value IS learned, w_near 3.33). (2) The GABA_B scale is now critic-strength-matched: at scale 2.0 the stronger critics over-clamp (pred → 0; a scale-0.5 check de-clamps seed 42 to pred 54.2, confirming it's de-clampable arithmetic, exactly the diagnosis's "detune-down for strong critics"). The now-uniform critics (3.3–5.0) want scale ~0.5; calibrating a single scale across the residual 3.3–5.0 spread for a clean 3/3 *arithmetic* (pred > 0) band is the remaining tune.
 
