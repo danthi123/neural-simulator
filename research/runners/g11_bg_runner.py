@@ -3065,6 +3065,7 @@ def run_moving_goal_episode(
     value_train_pair_steps: int = 100,  # PAIR-phase length (de-risk pair_steps; >= the up-state warm-up)
     value_train_hold_steps: int = 40,   # ITI / REWARD sub-phase length (de-risk hold_steps)
     critic_teacher_pa: float = 300.0,   # sub-threshold phase-locked teacher on striosome_value during PAIR (de-risk 300)
+    value_train_stdp_w_max: float = 0.0,  # critic soft-bound ceiling DURING value-train (de-risk 40; 0=no override, keep nav's 150)
     stage_b_smoke: bool = False,        # N9 Stage-B probe (LEARNS-V / CRITIC FIRE+GRADE / GABA_B gap+lesion), exit pre-nav
     # ----- Critic value-acquisition WARM-UP (2026-06-09, the deadlock-breaker) -----
     # The 1800-step nav left the MSN-D1 critic SILENT (striov_rate_log all-zero, weight
@@ -4878,6 +4879,27 @@ def run_moving_goal_episode(
         if getattr(bridge, "cp_recovery_variable_u", None) is not None:
             bridge.cp_recovery_variable_u[s_idx] = cp.float32(0.0)
 
+    def _n9_reset_critic_read_state(*, gap_steps=80):
+        """Clear the critic's SLOW Route-D coincidence (NMDA-spike) plateau conductance + GABA_B +
+        reset the critic & SNc membrane/recovery, then run a brief SILENT gap, so each near/far read
+        starts from the SAME clean state (the de-risk inter-trial discipline). Without it the plateau
+        (tau~80ms) and the up-state CARRY OVER from the previous read -> the second read is contaminated
+        by the first (order-dependent, false grading). Brain-faithful: a real inter-trial silent gap."""
+        c_idx = region_indices_cp.get("striosome_value")
+        for _g in ("cp_conductance_g_coincidence", "cp_conductance_g_coincidence_rise"):
+            _arr = getattr(bridge, _g, None)
+            if _arr is not None:
+                _arr[:] = cp.float32(0.0)
+        if (c_idx is not None and getattr(bridge, "cp_membrane_potential_v", None) is not None
+                and getattr(bridge, "cp_izh_vr", None) is not None):
+            bridge.cp_membrane_potential_v[c_idx] = bridge.cp_izh_vr[c_idx]
+            if getattr(bridge, "cp_recovery_variable_u", None) is not None:
+                bridge.cp_recovery_variable_u[c_idx] = cp.float32(0.0)
+        _n9_reset_snc_subtraction_state()   # also clears g_gabab + resets SNc
+        bridge.cp_external_input_current[:] = cp.float32(0.0)
+        if gap_steps > 0:
+            _n9_step(int(gap_steps))
+
     def _n9_find_da_rule():
         """The dopamine from_region_firing_signed production rule (whose threshold gates DA-LTP)."""
         try:
@@ -4950,6 +4972,18 @@ def run_moving_goal_episode(
         saved_da_threshold = (da_rule.threshold if da_rule is not None else None)
         tonic_frac = _n9_calibrate_da_threshold(da_rule)
         saved_reward = bridge.core_config.current_reward_signal
+        # CRITIC weight ceiling (2026-06-10): the nav's global stdp_w_max (=150, sized for the
+        # actor's cortex->D1 ~125) lets the place->value soft-bound LTP run to w_near~90 -> the MSN
+        # critic SATURATES (depolarization block; GRADE inverts as the denser far ensemble out-fires
+        # the over-driven near) and the over-strong critic over-CLAMPS the SNc GABA_B to 0. The
+        # de-risk validated stdp_w_max=40 -> w_near settles in the graded ~3-6 range. Apply the
+        # de-risk ceiling DURING value-train ONLY: the actor is undriven/quiescent here (only
+        # place_sensors + snc are driven, OU off), so its cortex->D1 sees NO STDP pre-post events
+        # and is NOT collapsed by the lower soft-bound; restored after for the nav loop. value_train_
+        # stdp_w_max<=0 => no override (byte-equivalent to the prior behavior).
+        saved_w_max = bridge.core_config.stdp_w_max
+        if value_train_stdp_w_max and value_train_stdp_w_max > 0:
+            bridge.core_config.stdp_w_max = float(value_train_stdp_w_max)
         bridge.set_plasticity_gate("value_input", 1.0)        # open the critic arm
         bridge.set_plasticity_gate("landmark_to_place", 0.0)  # place fields stay FROZEN
         bridge.set_transmission_gate("place_fs_gate", 1.0)    # FS-PING volley ON for the read
@@ -5018,7 +5052,9 @@ def run_moving_goal_episode(
         if bridge.cp_eligibility_trace is not None:
             bridge.cp_eligibility_trace[:] = cp.float32(0.0)
         _n9_reset_snc_subtraction_state()
-        # RESTORE the nav's hardcoded DA threshold so the nav SNc RPE is byte-unchanged.
+        # RESTORE the actor's soft-bound ceiling + the nav's hardcoded DA threshold so the nav loop
+        # (SNc RPE + actor cortex->D1) is byte-unchanged.
+        bridge.core_config.stdp_w_max = float(saved_w_max)
         if da_rule is not None and saved_da_threshold is not None:
             da_rule.threshold = float(saved_da_threshold)
         w_near_post = _n9_mean_place_to_value_w(near_set)
@@ -5062,6 +5098,7 @@ def run_moving_goal_episode(
         _sv_kth = float(getattr(bridge.core_config, "coincidence_k_threshold", 4.0))
 
         def _measure(px, py):
+            _n9_reset_critic_read_state()   # clean state per read (no carryover between near/far)
             act = cp.asarray(_n9_render(float(px), float(py)), dtype=cp.float32)
             bridge.cp_external_input_current[:] = cp.float32(0.0)
             bridge.cp_external_input_current[ps_idx] = act
@@ -5127,6 +5164,7 @@ def run_moving_goal_episode(
 
         # ── CRITIC FIRE + GRADE (the real FIRE gate): WEIGHTED-plateau read-out toggle ──
         def _critic_rate(px, py, *, n_meas=120, warmup=30):
+            _n9_reset_critic_read_state()   # clean state per read (no near<->far plateau carryover)
             act = cp.asarray(_n9_render(float(px), float(py)), dtype=cp.float32)
             bridge.cp_external_input_current[:] = cp.float32(0.0)
             bridge.cp_external_input_current[ps_idx] = act
@@ -5160,7 +5198,7 @@ def run_moving_goal_episode(
 
         # ── GABA_B gap (delta = r - V): predicted(NEAR) < unpredicted(FAR) + lesion control ──
         def _snc_burst_rate(px, py):
-            _n9_reset_snc_subtraction_state()
+            _n9_reset_critic_read_state()   # clean critic plateau + GABA_B + SNc per read
             act = cp.asarray(_n9_render(float(px), float(py)), dtype=cp.float32)
             # LEAD: place drive (critic fires -> GABA_B onto SNc) BEFORE the reward burst.
             bridge.cp_external_input_current[:] = cp.float32(0.0)
@@ -7853,6 +7891,12 @@ def main():
                     help="N9 STEP-2 sub-threshold phase-locked TEACHER current (pA) on striosome_value during "
                          "the PAIR phase ONLY (de-risk --critic-teacher-pa 300); removed at REWARD + read-out. "
                          "Draws the weak-drive place volley into firing phase-locked so net LTP forms. 0=off.")
+    ap.add_argument("--value-train-stdp-w-max", type=float, default=0.0,
+                    help="N9 STEP-2 critic soft-bound ceiling DURING value-train ONLY (de-risk validated 40). "
+                         "The nav's global stdp_w_max=150 (sized for the actor cortex->D1 ~125) over-grows the "
+                         "place->value weight to w_near~90 -> critic saturates (GRADE inverts) + GABA_B over-clamps "
+                         "the SNc. 40 keeps w_near in the graded ~3-6 range. The actor is quiescent during value-"
+                         "train so its weights are untouched; restored to the nav ceiling after. 0=no override.")
     ap.add_argument("--stage-b-smoke", action="store_true",
                     help="N9 Stage-B probe (the load-bearing critic gate): after STEP-1 self-org + STEP-2 "
                          "value-training, measure LEARNS-V / CRITIC FIRE+GRADE (weighted plateau) / GABA_B "
@@ -8239,6 +8283,7 @@ def main():
             value_train_pair_steps=args.value_train_pair_steps,
             value_train_hold_steps=args.value_train_hold_steps,
             critic_teacher_pa=args.critic_teacher_pa,
+            value_train_stdp_w_max=args.value_train_stdp_w_max,
             stage_b_smoke=args.stage_b_smoke,
             critic_warmup_trials=args.critic_warmup_trials,
             critic_warmup_hold_steps=args.critic_warmup_hold_steps,
