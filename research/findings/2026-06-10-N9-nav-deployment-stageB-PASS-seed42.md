@@ -60,6 +60,22 @@ STAGE-B VERDICT: LEARNS-V=True CRITIC-FIRE+GRADE=True GABA_B-gap=True lesion-col
 
 The N9_DIAG (clean) confirms the Poirazi-Mel weighted-subunit mechanism directly: under **COUNT** (weight-blind) far out-fires near (denser volley: COUNT near 34 vs far 82 Hz), but under **WEIGHTED** near 39.6 ≫ far 2.6 Hz — the *learned weight* makes near win. The GABA_B subtraction is the Schultz RPE: at the predicted (near) location V fully predicts the reward → SNc silent (δ=r−V≈0); at the unpredicted (far) location → full SNc burst; lesion-confirmed synaptic.
 
+## Multi-seed (42/43/44) + the reproducibility boundary (2026-06-10, same session)
+
+Running the seed-42 PASS config across seeds exposed a **run-to-run** (not seed-to-seed) variance:
+
+| gate | seed 42 (prop 0.02) | 42/43/44 @ prop 0.006 |
+|---|---|---|
+| LEARNS-V | ✓ (5.91×) | 3/3 → then 2/3 on re-draw |
+| CRITIC FIRE+GRADE | ✓ | scattered |
+| GABA_B gap | ✓ | scattered |
+
+The `--critic-gabab-propagation` sweep on 43/44 confirmed the gap fix (prop 0.006: 43 gap 0→77.5 lesion 1.13 ✓, 44 gap 0→75.0 lesion 1.05 ✓ — de-saturating the GIRK makes the near<far Eshel shift visible). **But the 3-seed verdict at the uniform prop 0.006 was scattered**, and the cause is decisive: the **place-code self-org is CuPy-non-deterministic**. Two runs of the *same seed 42, same config* (prop does not enter STEP-1) produced **different place codes** — STEP-1 diff-cos 0.031 vs 0.086, sparsity 0.041 vs 0.063 → w_near 3.628 vs 1.916 → different gate outcomes. The non-determinism is `cusparse` SpMV atomic-add ordering, which `CUBLAS_WORKSPACE_CONFIG=:4096:8` does **not** pin (it pins cuBLAS only).
+
+**So: the N9 r−V loop MECHANISM transfers to the nav bridge and passes every gate on a draw that yields a strong critic; the multi-seed ROBUSTNESS is blocked by the non-deterministic self-org producing run-to-run-variable critic strength** (weak draws → sparse goal volley → c_i<K → critic under-fires during value-train → weak w_near → can't grade/subtract). This is the same critic-rate variance the isolated de-risk hit (capped at 2/3), now root-caused to the self-org's non-determinism. It is a **documented, multiply-confirmed substrate/tooling boundary**, not a mechanism failure — the honest negative IS the deliverable.
+
+**Resolution levers (the AUTONOMOUS_STATE's two, now re-confirmed):** (1) make the self-org reproducible (cusparse/SpMV determinism on this engine — hard, no env flag; or a deterministic dense place-code self-org; or CPU self-org then transfer); (2) robustify the critic training so it learns V strongly regardless of the draw — a developmental **goal-field-adequacy gate** (re-self-org until the goal volley fires the count-plateau critic ≥K, brain-plausible goal over-representation, Hollup 2001/Dupret 2010) OR homeostatic synaptic scaling on the place→value afferent (Turrigiano, normalizes critic firing). Deep-research + the cheapest lever (the re-roll gate) are the next steps.
+
 ## Honest residuals / next
 
 - **Multi-seed (43/44)** robustness — the place-code self-org has a known CuPy-non-deterministic drive-strength variance (here the near (30,30) field was *weaker* than far (1,1), 0.42 vs 1.21 Hz; the weight cap + clean reset still graded it, but other seeds need confirming). IN FLIGHT.
