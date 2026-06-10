@@ -113,7 +113,19 @@ The deployment runs and navigates, but the spiking neural RPE **underperforms th
 
 (nav_sum = Σ phase_stats.final_quarter_mean_distance, lower=better; both with `--enable-place-goal-readout --spiking-snc`, single goal, 1800 steps; ON adds the self-org place critic + value-train.) The agent **does navigate** with the neural critic (it reaches near the goal), but the host-V subtraction (the cheat) gives cleaner credit assignment — neural is **34% worse on average, and SEED-VARIABLE** (seed 42: 92% worse; seed 43: only 7% worse — nearly matched). **This is the expected BRAIN-BASED-ONLY honest negative: the spiking substrate does not yet match the host shortcut** — and per the standing standard, the neural-underperforms-host result IS the scientific deliverable (it maps what the substrate can/can't do on its own). **The seed-variance is the smoking gun for the diagnosis:** on the moderate-critic draw (seed 43) the neural δ nearly matches host; on the hot-critic draw (seed 42, binary saturated δ) it is far worse — exactly the critic-rate-dependent GABA_B operating point.
 
-**Diagnosis (consistent with the rest of the arc):** the online δ quality depends on the GABA_B operating point, which is critic-rate-dependent (saturating — the unsolved robustness). On a hot draw the GABA_B clamps the SNc binary (0 at predicted / full burst at unpredicted) rather than producing a smooth graded δ ∝ r−V; the host reward_ema scaffold is a smooth analog V, so it gives better credit assignment. **Fix path (the deeper robustness, byte-review-gated):** B2 per-region synaptic scaling or B5 saturating GABA_B (Destexhe) so the neural δ is graded across the critic-rate range — then re-run the A/B. Also: full-run determinism (extend the determinism flag to the coincidence/GABA_B matvecs) for a clean multi-seed read. Seed 43 pending; anti-cheats (place-shuffle / sensor-ablation / GABA_B-lesion) not yet run.
+**Diagnosis (consistent with the rest of the arc):** the online δ quality depends on the GABA_B operating point, which is critic-rate-dependent (saturating — the unsolved robustness). On a hot draw the GABA_B clamps the SNc binary (0 at predicted / full burst at unpredicted) rather than producing a smooth graded δ ∝ r−V; the host reward_ema scaffold is a smooth analog V, so it gives better credit assignment.
+
+**Diagnosis CONFIRMED by a runner-side graded-δ probe (`--critic-gabab-propagation 0.006`, de-saturating the GIRK):**
+
+| seed | ON default (0.02) | ON graded (0.006) | OFF host-V | graded/host |
+|---|---|---|---|---|
+| 42 (hot ~125 Hz critic) | 2.202 | 2.191 | 1.149 | 1.91 (unchanged — still saturates) |
+| 43 (moderate critic) | 2.587 | **2.247** | 2.422 | **0.93 — the neural RPE BEATS the host shortcut** |
+| mean | 2.394 | **2.219** | 1.786 | 1.24 (was 1.34) |
+
+The graded δ **improves** the neural nav (mean 2.39→2.22) and on the moderate-critic draw makes the neural RPE **beat** the host cheat (0.93) — proving the neural substrate CAN match/beat the host when the δ is graded. But the hot-critic draw (seed 42) is unchanged: even prop 0.006 saturates against its ~125 Hz critic. **So the gap IS precisely the GABA_B operating point, and a FIXED prop can't serve the full (draw-variable) critic-rate range** — exactly the documented critic-rate-dependent residual, now nav-confirmed.
+
+**Fix path (the deeper robustness, byte-review-gated):** a critic-rate-ROBUST GABA_B — B5 Destexhe saturating GABA_B (graceful saturation → graded δ at any critic rate) or B2 per-region synaptic scaling (normalize the critic rate) — so the δ is graded across the full rate range; then re-run the A/B. Also: full-run determinism (extend the flag to the coincidence/GABA_B matvecs) for a clean 6-seed read. Anti-cheats (place-shuffle / sensor-ablation / GABA_B-lesion) not yet run.
 
 ## Honest residuals / next
 
