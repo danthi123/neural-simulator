@@ -50,6 +50,17 @@ from collections import deque
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+# ───────────────────────────────────────────────────────────────────────
+# Phase 0 (N9 nav-deployment, 2026-06-09): pin cuBLAS determinism
+# UNCONDITIONALLY at the very top, BEFORE any cupy/numpy/sim import, so the
+# place-code self-organization under enable_neural_critic is reproducible
+# (the place-code self-org / value-LTP loop is sensitive to cuBLAS GEMM
+# non-determinism; the pin MUST precede `import cupy`). This is a no-op for
+# the flagship (no behaviour change — it only fixes the GEMM workspace), and
+# `setdefault` leaves any externally-set value intact.
+# ───────────────────────────────────────────────────────────────────────
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 # ───────────────────────────────────────────────────────────────────────
@@ -67,6 +78,47 @@ import numpy as np
 
 ACTION_NAMES = ["N", "E", "S", "W"]
 N_ACTIONS = 4
+
+# N9 neural place-code self-org (2026-06-09): number of fixed landmarks the egocentric
+# place-sensor render uses (matches the de-risk default_landmarks: 3 corner/edge beacons).
+# place_sensors size = N_PLACE_LANDMARKS * (n_place_bearing + n_place_dist).
+N_PLACE_LANDMARKS = 3
+
+
+def _n9_place_landmarks(grid_size):
+    """The 3 fixed landmark positions for the N9 egocentric place render (de-risk
+    default_landmarks: two bottom corners + a top-middle beacon). Diverse bearings/
+    distances so the self-org place code can carve distinct fields per (x,y)."""
+    g = float(grid_size) - 1.0
+    return [(0.0, 0.0), (g, 0.0), (g / 2.0, g)]
+
+
+def _n9_place_sensor_act(x, y, landmarks, n_bearing, n_dist, max_int, falloff,
+                         dist_sigma, dist_max, bexp):
+    """Egocentric landmark sensor render (the N9 legitimate body-sensing channel; VERBATIM
+    from n9_place_graded_critic_stage2_derisk.landmark_sensor_act). (x,y) enters the brain
+    ONLY here (the position-leak boundary). Per landmark: n_bearing cosine-tuned bearing
+    sensors (intensity * cos_align**bexp, distance-attenuated) + n_dist distance-tuned
+    Gaussians. Returns the concatenated (len(landmarks)*(n_bearing+n_dist),) vector."""
+    blocks = []
+    bpx = np.cos(2.0 * np.pi * np.arange(n_bearing) / n_bearing)
+    bpy = np.sin(2.0 * np.pi * np.arange(n_bearing) / n_bearing)
+    dist_centers = np.linspace(0.0, dist_max, n_dist)
+    for (lx, ly) in landmarks:
+        dx = float(lx - x); dy = float(ly - y)
+        d = (dx * dx + dy * dy) ** 0.5
+        if d < 1e-6:
+            bear = np.full(n_bearing, max_int, dtype=np.float32)
+            dist = np.full(n_dist, max_int, dtype=np.float32)
+        else:
+            bx = dx / d; by = dy / d
+            intensity = max_int / (1.0 + falloff * d)
+            cos_align = np.maximum(0.0, bpx * bx + bpy * by)
+            bear = (intensity * (cos_align ** bexp)).astype(np.float32)
+            dist = (max_int * np.exp(-(d - dist_centers) ** 2 / (2.0 * dist_sigma ** 2))).astype(np.float32)
+        blocks.append(bear.astype(np.float32))
+        blocks.append(dist.astype(np.float32))
+    return np.concatenate(blocks).astype(np.float32)
 
 
 def sc_orienting_cardinal_from_image(image):
@@ -191,6 +243,37 @@ def build_bg_brain_regions(
     enable_convergent_upstate: bool = False,
     vs_place_drive_to_value_weight: float = 28.0,   # A1 dense NON-plastic up-state weight (de-risk: ~28 fires the corner goal >=5Hz)
     vs_place_drive_to_value_density: float = 0.8,   # A1 dense convergence (many weak synapses, not one giant)
+    # ── 2026-06-09 N9 NEURAL PLACE-CODE SELF-ORG (nav deployment of the VALIDATED de-risk
+    #    research/runners/n9_place_graded_critic_stage2_derisk.py; design
+    #    docs/plans/2026-06-09-N9-nav-deployment-design.md). When neural_place_selforg=True
+    #    (only meaningful WITH enable_neural_critic), the host-Gaussian `vs_place_context`
+    #    place code (a BRAIN-BASED-ONLY shortcut) is REPLACED by a SELF-ORGANIZED spiking place
+    #    code: a dedicated `place_sensors` region (the legitimate egocentric bearing/distance
+    #    landmark render — the body-sensing channel; (x,y) enters the brain ONLY here) drives a
+    #    `place` pool (IZH2007_HIPPO_PYRAMIDAL) through a PLASTIC competitive pathway (gate
+    #    `landmark_to_place`); an FS-PING pool (`place_fs`) reciprocally wired to `place` re-times
+    #    the sparse ensemble into a coincident gamma volley (the FS->place arm gated by
+    #    `place_fs_gate`, held CLOSED during self-org for clean threshold-WTA -> sparse DISTINCT
+    #    fields, OPENED for the volley read-out). `place->striosome_value` is a Route-D
+    #    coincidence_detector so the volley fires the MSN critic that the sparse-async code can't.
+    #    Default OFF => the enable_neural_critic path is byte-identical (the host vs_place_context).
+    #    HARD-GATES enable_convergent_upstate OFF (the position-blind A1 floor caps grading ~1.2x).
+    neural_place_selforg: bool = False,
+    n_place: int = 200,                     # the self-org place pool (alias of n_vs_place_context size)
+    n_place_fs: int = 24,                   # FS-PING interneuron pool (~10-20% of n_place)
+    place_sensors_to_place_weight: float = 28.0,   # landmark_sensors->place plastic init (de-risk lm_to_place_weight)
+    place_sensors_to_place_density: float = 0.5,
+    place_sensors_to_place_jitter: float = 0.6,
+    place_fs_weight: float = 16.0,          # place->place_fs (FS-PING excitation; de-risk value)
+    place_fs_density: float = 0.4,
+    fs_to_place_weight: float = 8.0,        # place_fs->place GABA_A (de-risk value)
+    fs_to_place_density: float = 0.4,
+    coincidence_threshold: int = 12,        # Route-D readout K (de-risk readout_weighted_k ~12)
+    coincidence_train_k: float = 4.0,       # Route-D TRAIN count K (de-risk coincidence_k; MUST be >1)
+    coincidence_plateau: float = 80.0,      # Route-D plateau strength (de-risk value)
+    # N9 place-sensors egocentric render params (the legitimate sensory channel; de-risk canon).
+    n_place_bearing: int = 12,              # bearing sensors per landmark (de-risk n_bearing)
+    n_place_dist: int = 8,                  # distance sensors per landmark (de-risk n_dist)
     enable_cluster_a_closed_loop: bool = False,  # Cluster A: hyperdirect + thal->cortex
     n_gpi_per_action: int = 10,
     n_stn: int = 20,
@@ -926,7 +1009,51 @@ def build_bg_brain_regions(
     # (a dedicated region — cleaner + more additive than re-purposing the four
     # per-action str_striosome_* pools, which are Q(s,a)-shaped and action-cortex
     # driven). Mirrors the validated CPU de-risk's striosome_value recipe.
-    if enable_neural_critic:
+    if enable_neural_critic and neural_place_selforg:
+        # ═══ N9 NEURAL PLACE-CODE SELF-ORG afferent (2026-06-09 nav deployment of the de-risk
+        #     n9_place_graded_critic_stage2_derisk._build). REPLACES the host-Gaussian
+        #     vs_place_context (a BRAIN-BASED-ONLY shortcut). Three regions: ═══
+        # (1) place_sensors — the legitimate egocentric landmark sensors (bearing+distance render,
+        #     driven externally each nav step; (x,y) enters the brain ONLY here). EXC stub.
+        _n_place_sensors = int(N_PLACE_LANDMARKS) * (int(n_place_bearing) + int(n_place_dist))
+        regions.append(BrainRegion(
+            name="place_sensors", n_neurons=_n_place_sensors, exc_fraction=1.0,
+            internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+        ))
+        # (2) place — the SELF-ORGANIZING place pool (hippocampal pyramidal; competition = the
+        #     cell's own threshold WTA). NO per-region homeostasis (anti-cheat: it fires from the
+        #     LEARNED synaptic current, not a threshold collapse). Mirrors the de-risk `place`.
+        regions.append(BrainRegion(
+            name="place", n_neurons=int(n_place), exc_fraction=1.0,
+            internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_HIPPO_PYRAMIDAL.name,
+        ))
+        # (3) place_fs — the FS-PING gamma synchronizer (reciprocally wired to `place` below). The
+        #     gamma EMERGES from neurons+synapses (CORTEX_GAMMA_FS_NETWORK pattern); location-BLIND
+        #     (it sets WHEN the active place cells fire, the place code selects WHICH) so the
+        #     distinctness is preserved, not densified. Mirrors the de-risk `place_fs`.
+        regions.append(BrainRegion(
+            name="place_fs", n_neurons=int(n_place_fs), exc_fraction=0.0,
+            internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+        ))
+        # The MSN-D1 value critic. NMDA ON (the Route-D coincidence plateau reuses the Mg2+-block
+        # kernel — the per-region NMDA mask restricts it to this slice). NO homeostasis on the
+        # critic in this path (it fires from the synchronized volley through the LEARNED synapses).
+        regions.append(BrainRegion(
+            name="striosome_value", n_neurons=n_striosome_value,
+            exc_fraction=0.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
+            syn_reversal_potential_i_override=-60.0,
+            enable_nmda=True,
+        ))
+    elif enable_neural_critic:
         # The DEDICATED DENSE place-context afferent (2026-06-09 VALIDATED redesign). A
         # grid-32-tuned Gaussian place code drive-injected each nav step (wide sigma => 30-80
         # cells fire/location, the convergent-excitation up-state the SPARSE actor place code
@@ -1477,7 +1604,46 @@ def build_bg_brain_regions(
     # Anti-cheat: the afferent is a perceived-position POPULATION code (a place
     # code, not a coordinate handed to a formula); it must NOT be a
     # coordinate/goal-cell region.
-    if enable_neural_critic:
+    if enable_neural_critic and neural_place_selforg:
+        # ═══ N9 NEURAL PLACE-CODE SELF-ORG pathways (mirror the de-risk _build). The afferent is
+        #     the self-organized spiking `place` pool (NOT a host Gaussian). Anti-cheat provenance:
+        #     place fires ONLY from place_sensors (an egocentric POPULATION sense), never a
+        #     coordinate/goal-cell region. ═══
+        _critic_afferent = "place"
+        # (1) place_sensors -> place : PLASTIC competitive (the Hartley-Burgess self-org pathway,
+        #     gate `landmark_to_place`; opened during STEP-1 self-org, then FROZEN).
+        pathways.append(RegionPathway(
+            from_region="place_sensors", to_region="place",
+            density=float(place_sensors_to_place_density),
+            weight_mean=float(place_sensors_to_place_weight),
+            weight_jitter=float(place_sensors_to_place_jitter), plastic=True,
+            plasticity_gate="landmark_to_place",
+        ))
+        # (2) FS-PING reciprocal: place -> place_fs (excite the FS) + place_fs -> place (GABA_A,
+        #     transmission_gate `place_fs_gate` so it can be held CLOSED during self-org for clean
+        #     threshold-WTA -> sparse DISTINCT fields, and OPENED for the volley read-out/nav).
+        pathways.append(RegionPathway(
+            from_region="place", to_region="place_fs",
+            density=float(place_fs_density), weight_mean=float(place_fs_weight),
+            weight_jitter=0.2, plastic=False,
+        ))
+        pathways.append(RegionPathway(
+            from_region="place_fs", to_region="place",
+            density=float(fs_to_place_density), weight_mean=float(fs_to_place_weight),
+            weight_jitter=0.2, plastic=False,
+            transmission_gate="place_fs_gate",
+        ))
+        # (3) place -> striosome_value : PLASTIC, DA-delta-gated (gate `value_input`), Route-D
+        #     coincidence_detector so the FS-PING-synchronized volley fires the MSN critic that the
+        #     sparse-async code cannot. STILL plastic + DA-gated so it GRADES + LEARNS V.
+        pathways.append(RegionPathway(
+            from_region="place", to_region="striosome_value",
+            density=float(vs_place_to_value_density),
+            weight_mean=float(vs_place_to_value_weight),
+            weight_jitter=float(0.2), plastic=True, plasticity_gate="value_input",
+            coincidence_detector=True,
+        ))
+    elif enable_neural_critic:
         # 2026-06-09 VALIDATED redesign: the critic afferent is the DEDICATED DENSE
         # `vs_place_context` (built above), drive-injected each nav step with the agent's
         # perceived (x,y) as a grid-32 Gaussian place code. This is the dorsal 'where' /
@@ -1516,6 +1682,7 @@ def build_bg_brain_regions(
             weight_mean=float(vs_place_to_value_weight),
             weight_jitter=0.5, plastic=True, plasticity_gate="value_input",
         ))
+    if enable_neural_critic:
         # critic -> SNc GABA_B subtraction. transmission_gate="critic_snc_window"
         # lets the runner OPEN this route only for a ~1-tau LEAD window into the
         # reward evaluation (the de-risk's value-leads-reward constraint:
@@ -2848,6 +3015,38 @@ def run_moving_goal_episode(
     enable_convergent_upstate: bool = False,
     vs_place_drive_to_value_weight: float = 28.0,
     vs_place_drive_to_value_density: float = 0.8,
+    # ── 2026-06-09 N9 NEURAL PLACE-CODE SELF-ORG (nav deployment of the validated de-risk
+    #    n9_place_graded_critic_stage2_derisk; design docs/plans/2026-06-09-N9-nav-deployment-
+    #    design.md). When True (only meaningful WITH enable_neural_critic), the host-Gaussian
+    #    vs_place_context place code is REPLACED by a SELF-ORGANIZED spiking place code
+    #    (place_sensors -> place [+ FS-PING place_fs] -> striosome_value coincidence critic).
+    #    The STEP-1 self-org runs in _run_critic_warmup; the per-step host Gaussian injection is
+    #    NOT used in this path (place_sensors egocentric render is the only place input). HARD-
+    #    GATES enable_convergent_upstate OFF (the position-blind A1 floor caps grading ~1.2x).
+    #    Default OFF => the enable_neural_critic path is byte-identical (host vs_place_context).
+    neural_place_selforg: bool = False,
+    n_place: int = 200,
+    n_place_fs: int = 24,
+    place_sensors_to_place_weight: float = 28.0,
+    place_sensors_to_place_density: float = 0.5,
+    place_sensors_to_place_jitter: float = 0.6,
+    place_fs_weight: float = 16.0,
+    place_fs_density: float = 0.4,
+    fs_to_place_weight: float = 8.0,
+    fs_to_place_density: float = 0.4,
+    coincidence_threshold: int = 12,    # Route-D readout K (de-risk readout_weighted_k ~12)
+    coincidence_train_k: float = 4.0,   # Route-D TRAIN count K (de-risk coincidence_k)
+    coincidence_plateau: float = 80.0,  # Route-D plateau strength (de-risk value)
+    n_place_bearing: int = 12,          # bearing sensors/landmark (de-risk n_bearing)
+    n_place_dist: int = 8,              # distance sensors/landmark (de-risk n_dist)
+    selforg_steps: int = 2000,          # total STEP-1 self-org sweep steps (de-risk validated)
+    selforg_n_positions: int = 40,      # # agent positions swept during self-org
+    reward_delay_steps: int = 8,        # online: hold place active before the SNc burst (Yagishita)
+    place_sensor_max_intensity: float = 450.0,  # de-risk max_intensity
+    place_sensor_falloff: float = 0.03,         # de-risk falloff
+    place_sensor_dist_sigma: float = 4.0,       # de-risk dist_sigma
+    place_sensor_bexp: float = 4.0,             # de-risk bexp
+    stage_a_smoke: bool = False,        # N9 Stage-A cheap-first probe (FIRE/GRADED/ACTOR), exit pre-nav
     # ----- Critic value-acquisition WARM-UP (2026-06-09, the deadlock-breaker) -----
     # The 1800-step nav left the MSN-D1 critic SILENT (striov_rate_log all-zero, weight
     # frozen at 0.20). Forensic root cause (NOT the brief's "homeostasis too slow"): a
@@ -3300,6 +3499,17 @@ def run_moving_goal_episode(
             "readout_source must be 'motor', 'thal', or 'spiking_wta', "
             f"got {readout_source!r}")
 
+    # N9 nav-deployment HARD-GATE (design §4 BRAIN-BASED-ONLY audit): when the neural place-code
+    # self-org path is active, the position-blind convergent up-state (A1 floor) is DROPPED — the
+    # de-risk found it caps value-grading ~1.2x. enable_convergent_upstate is forced OFF for the
+    # rest of run_g11 (build + warm-up + nav drive) when neural_place_selforg is on.
+    _neural_place_selforg = bool(neural_place_selforg and enable_neural_critic)
+    if _neural_place_selforg and enable_convergent_upstate:
+        enable_convergent_upstate = False
+        if verbose:
+            print("[g11] N9 neural_place_selforg ON -> enable_convergent_upstate HARD-GATED OFF "
+                  "(the position-blind A1 floor caps grading ~1.2x).", flush=True)
+
     regions, pathways = build_bg_brain_regions(
         n_cortex=100,  # 25 per action — keeps D1 firing in physiological range (~75 Hz)
         enable_motor_lateral_inhibition=enable_motor_lateral_inhibition,
@@ -3352,6 +3562,23 @@ def run_moving_goal_episode(
         enable_visual_cortex=enable_visual_cortex,
         # Spiking-SNc actor-critic Stage B: the neural value critic (2026-06-08).
         enable_neural_critic=enable_neural_critic,
+        # N9 NEURAL PLACE-CODE SELF-ORG (2026-06-09 nav deployment) — the self-organized spiking
+        # place code afferent + FS-PING + coincidence critic (replaces the host vs_place_context).
+        neural_place_selforg=_neural_place_selforg,
+        n_place=n_place,
+        n_place_fs=n_place_fs,
+        place_sensors_to_place_weight=place_sensors_to_place_weight,
+        place_sensors_to_place_density=place_sensors_to_place_density,
+        place_sensors_to_place_jitter=place_sensors_to_place_jitter,
+        place_fs_weight=place_fs_weight,
+        place_fs_density=place_fs_density,
+        fs_to_place_weight=fs_to_place_weight,
+        fs_to_place_density=fs_to_place_density,
+        coincidence_threshold=coincidence_threshold,
+        coincidence_train_k=coincidence_train_k,
+        coincidence_plateau=coincidence_plateau,
+        n_place_bearing=n_place_bearing,
+        n_place_dist=n_place_dist,
         # Critic drive calibration (2026-06-08): raised place-afferent weight so the
         # learned value-of-location is well-graded (the MSN-D1->RS type swap is applied
         # to the returned region below, after build, to keep the build signature stable).
@@ -3455,6 +3682,23 @@ def run_moving_goal_episode(
         vs_place_sigma = None
         vs_place_drive_max_pA = None
 
+    # ── N9 place-sensor egocentric render precompute (the legitimate body-sensing channel). The 3
+    #    fixed landmarks + dist_max are grid-tuned; the per-step render is _n9_place_sensor_act
+    #    (VERBATIM the de-risk landmark_sensor_act). (x,y) enters the brain ONLY through this. ──
+    if _neural_place_selforg:
+        _n9_landmarks = _n9_place_landmarks(grid_size)
+        _n9_dist_max = float(grid_size) * 1.42        # de-risk dist_max (diag of the grid)
+
+        def _n9_render(px, py):
+            return _n9_place_sensor_act(
+                px, py, _n9_landmarks, int(n_place_bearing), int(n_place_dist),
+                float(place_sensor_max_intensity), float(place_sensor_falloff),
+                float(place_sensor_dist_sigma), _n9_dist_max, float(place_sensor_bexp))
+    else:
+        _n9_landmarks = None
+        _n9_dist_max = None
+        _n9_render = None
+
     # Pre-compute beacon sensor preferred directions (Item 1 Stage 1).
     # Sensors evenly distributed in 2D — for n=8: N, NE, E, SE, S, SW, W, NW.
     # Each sensor responds maximally when beacon is in its preferred direction
@@ -3538,6 +3782,22 @@ def run_moving_goal_episode(
         # failure mode). 0.02 settles g~10-20, restoring baseline 1-3 Hz +
         # burst 50-80 Hz so the value subtraction is visible, not annihilating.
         cfg.gabab_propagation_strength = 0.02
+    if _neural_place_selforg:
+        # N9 Route-D coincidence read-out (the landed b980070a dendritic plateau): the FS-PING
+        # gamma volley on `place` is read by the place->striosome_value coincidence_detector so the
+        # synchronized packet fires the MSN critic the sparse-async code cannot. Mirrors the de-risk
+        # _build (volley arm). NMDA ON (the per-region mask restricts the Mg2+-block kernel to the
+        # critic slice, which carries enable_nmda=True; the actor regions are NMDA-free). At BUILD
+        # the plateau is the strong COUNT form (coincidence_k_threshold in COUNT units = the train
+        # K) so it bootstraps the post-spike that drives DA-gated LTP; cfg.coincidence_weighted_drive
+        # stays False (the WEIGHTED Poirazi-Mel readout that GRADES with the learned weight is a
+        # READ-OUT-only toggle, applied in Phase 3 value-learning, not here).
+        cfg.enable_coincidence_detection = True
+        cfg.coincidence_k_threshold = float(coincidence_train_k)
+        cfg.coincidence_gain = 2.0
+        cfg.coincidence_plateau_strength = float(coincidence_plateau)
+        cfg.coincidence_weighted_drive = False
+        cfg.enable_nmda = True   # per-region mask -> NMDA only on the critic (enable_nmda=True there)
     cfg.enable_structural_pruning = enable_structural_pruning
     cfg.enable_d1_d2_asymmetry = enable_d1_d2_asymmetry
     # Cluster G v1 (2026-05-01): Wang 2002 NMDA-mediated PFC working memory.
@@ -3908,8 +4168,9 @@ def run_moving_goal_episode(
     # AFFERENT 2026-06-09 VALIDATED redesign: the value critic reads the DEDICATED DENSE
     # `vs_place_context` place-context code (drive-injected each nav step), NOT the SPARSE
     # actor `sensor_place_readout` (which can't fire the MSN critic). The weight reader +
-    # the instrumentation below follow this afferent.
-    _critic_afferent_region = "vs_place_context"
+    # the instrumentation below follow this afferent. N9 nav deployment: under
+    # neural_place_selforg the afferent is the SELF-ORGANIZED spiking `place` pool instead.
+    _critic_afferent_region = "place" if _neural_place_selforg else "vs_place_context"
 
     def _mean_critic_weight():
         """Mean weight of the <afferent>->striosome_value edges in the CSR.
@@ -4349,6 +4610,197 @@ def run_moving_goal_episode(
                   f"continuing without it", flush=True)
             _activity_probe = None
 
+    # ═══════════════════════════════════════════════════════════════════════════════════
+    # N9 STEP-1 PLACE-CODE SELF-ORGANIZATION (2026-06-09 nav deployment of the de-risk
+    # n9_place_graded_critic_stage2_derisk run_seed STEP-1). Before the nav loop, self-organize
+    # the spiking `place` fields from the egocentric `place_sensors` render, then FREEZE them
+    # (a stable afferent for the value critic). BRAIN-BASED-ONLY: the only host scaffolding is
+    # the agent-placement sweep (the environment) + the sensory render; the place fields emerge
+    # from neurons + synapses (competitive threshold-WTA).
+    # ═══════════════════════════════════════════════════════════════════════════════════
+    def _n9_step(n):
+        for _ in range(int(n)):
+            bridge._run_one_simulation_step()
+            bridge.runtime_state.current_time_step += 1
+            bridge.runtime_state.current_time_ms = (
+                bridge.runtime_state.current_time_step * cfg.dt_ms)
+
+    def _n9_selforg_positions():
+        """A near-square sub-grid of selforg_n_positions agent positions tiling the arena
+        (diverse egocentric sensor patterns so the place code carves distinct fields)."""
+        k = max(1, int(round(float(selforg_n_positions) ** 0.5)))
+        xs = np.linspace(0.0, grid_size - 1.0, k)
+        ys = np.linspace(0.0, grid_size - 1.0, k)
+        return [(float(px), float(py)) for px in xs for py in ys]
+
+    def _n9_place_ensemble(px, py, *, n_meas=80):
+        """Per-cell spike-count vector of the `place` pool at (px,py) (learning frozen)."""
+        p_idx = region_indices_cp["place"]
+        n = int(p_idx.size) if hasattr(p_idx, "size") else len(p_idx)
+        act = _n9_render(px, py)
+        bridge.cp_external_input_current[:] = cp.float32(0.0)
+        bridge.cp_external_input_current[region_indices_cp["place_sensors"]] = cp.asarray(act, dtype=cp.float32)
+        counts = cp.zeros(n, dtype=cp.float32)
+        saved = bridge.core_config.reward_learning_rate
+        bridge.core_config.reward_learning_rate = 0.0
+        for _ in range(int(n_meas)):
+            _n9_step(1)
+            counts += bridge.cp_firing_states[p_idx].astype(cp.float32)
+        bridge.core_config.reward_learning_rate = saved
+        bridge.cp_external_input_current[:] = cp.float32(0.0)
+        return counts.get() if hasattr(counts, "get") else np.asarray(counts)
+
+    def _run_place_selforg():
+        if not (_neural_place_selforg and "place" in region_indices_cp
+                and "place_sensors" in region_indices_cp):
+            return None
+        t_so = time.time()
+        # STEP-1 gate config: open the competitive landmark->place learning, freeze the value
+        # arm, and hold the FS-PING inhibition CLOSED (clean threshold-WTA -> sparse, DISTINCT
+        # fields; the de-risk's Stage-1 regime).
+        bridge.set_plasticity_gate("landmark_to_place", 1.0)
+        bridge.set_plasticity_gate("value_input", 0.0)
+        bridge.set_transmission_gate("place_fs_gate", 0.0)
+        positions = _n9_selforg_positions()
+        steps_each = max(1, int(selforg_steps) // max(1, len(positions)))
+        _rng = np.random.default_rng(seed)
+        order = list(positions); _rng.shuffle(order)
+        ps_idx = region_indices_cp["place_sensors"]
+        for (px, py) in order:
+            # brief silent gap (clears lingering depolarization) then drive the sensors.
+            bridge.cp_external_input_current[:] = cp.float32(0.0)
+            _n9_step(20)
+            bridge.cp_external_input_current[ps_idx] = cp.asarray(_n9_render(px, py), dtype=cp.float32)
+            _n9_step(steps_each)
+        # FREEZE the place fields (stable afferent) + OPEN the FS-PING for the volley read-out/nav.
+        bridge.set_plasticity_gate("landmark_to_place", 0.0)
+        bridge.set_transmission_gate("place_fs_gate", 1.0)
+        bridge.cp_external_input_current[:] = cp.float32(0.0)
+        # Place-code provenance (the de-risk Stage-1 gates, abridged): diff-location cosine.
+        _goal0 = goal_schedule_sorted[0][1]
+        _far = (float(grid_size) - 1.0 - float(_goal0[0]), float(grid_size) - 1.0 - float(_goal0[1]))
+        ens_goal = _n9_place_ensemble(float(_goal0[0]), float(_goal0[1]))
+        ens_far = _n9_place_ensemble(_far[0], _far[1])
+        _na = float(np.linalg.norm(ens_goal)); _nb = float(np.linalg.norm(ens_far))
+        diff_cos = float(np.dot(ens_goal, ens_far) / (_na * _nb)) if (_na > 0 and _nb > 0) else 1.0
+        sparsity = float(0.5 * (np.mean(ens_goal > 0) + np.mean(ens_far > 0)))
+        if verbose:
+            print(f"[g11 seed={seed}] N9 STEP-1 place self-org done ({time.time()-t_so:.0f}s): "
+                  f"diff-loc cos={diff_cos:.3f} sparsity={sparsity:.3f} (place fields FROZEN)", flush=True)
+        return dict(diff_cos=diff_cos, sparsity=sparsity)
+
+    def _run_stage_a_smoke():
+        """N9 Stage-A cheap-first probe (design §Stage A): FIRE / PLACE-GRADED / ACTOR-NOT-
+        PERTURBED. Drives place_sensors at the goal vs a far cell after self-org. Does NOT
+        proceed to the nav loop (caller exits).
+
+        NOTE on the FIRE gate: the de-risk's `place` code is INTENTIONALLY SPARSE + low-rate
+        (~3.65% sparsity, ~1-2 Hz; verified the de-risk's own `place` pool is 0.4-1.3 Hz at the
+        goal both at init AND after its STEP-1 self-org). So the "place >=5 Hz" reading of the
+        design's FIRE gate is a SPARSE-CODE rate that the de-risk never hits either — the load-
+        bearing FIRE gate in the de-risk is the CRITIC (striosome_value) >=5 Hz, which fires via
+        the FS-PING coincidence VOLLEY through the LEARNED place->value weight AFTER STEP-2 value-
+        training (a Phase 3 deliverable, out of Phase 1-2 scope). This probe therefore reports the
+        place rate/sparsity INFORMATIONALLY and gates Phase 1-2 on PLACE-GRADED (distinct fields)
+        + ACTOR-NOT-PERTURBED (the structural-isolation guarantee); the critic rate is reported
+        pre-value-training as a baseline."""
+        p_idx = region_indices_cp["place"]
+        c_idx = region_indices_cp["striosome_value"]
+        n_place_n = int(p_idx.size) if hasattr(p_idx, "size") else len(p_idx)
+        n_crit_n = int(c_idx.size) if hasattr(c_idx, "size") else len(c_idx)
+        _goal0 = goal_schedule_sorted[0][1]
+        _far = (float(grid_size) - 1.0 - float(_goal0[0]), float(grid_size) - 1.0 - float(_goal0[1]))
+
+        def _pool_rate(idx, npool, px, py, *, n_meas=120, warmup=30):
+            act = _n9_render(px, py)
+            bridge.cp_external_input_current[:] = cp.float32(0.0)
+            bridge.cp_external_input_current[region_indices_cp["place_sensors"]] = cp.asarray(act, dtype=cp.float32)
+            saved = bridge.core_config.reward_learning_rate
+            bridge.core_config.reward_learning_rate = 0.0
+            spk = 0; m = 0
+            for t in range(int(n_meas)):
+                _n9_step(1)
+                if t >= warmup:
+                    spk += int(bridge.cp_firing_states[idx].sum()); m += 1
+            bridge.core_config.reward_learning_rate = saved
+            bridge.cp_external_input_current[:] = cp.float32(0.0)
+            return spk / max(npool, 1) / max(m * 1e-3, 1e-9)
+
+        # place rate (informational; sparse-by-design) + critic rate (the real FIRE target, pre-V-train)
+        rate_near = _pool_rate(p_idx, n_place_n, float(_goal0[0]), float(_goal0[1]))
+        rate_far = _pool_rate(p_idx, n_place_n, _far[0], _far[1])
+        crit_near = _pool_rate(c_idx, n_crit_n, float(_goal0[0]), float(_goal0[1]))
+        # (b) PLACE-GRADED: near-vs-far place ensemble cosine (LOW => distinct fields). The
+        #     de-risk reports place_diff_cos ~0.06-0.12; "distinct" (<=~0.2) is the PASS, and a
+        #     lower value is better (the 'diff' = 1-cos is reported for the design's >=0.05 read).
+        ens_near = _n9_place_ensemble(float(_goal0[0]), float(_goal0[1]))
+        ens_far = _n9_place_ensemble(_far[0], _far[1])
+        _na = float(np.linalg.norm(ens_near)); _nb = float(np.linalg.norm(ens_far))
+        diff_cos = float(np.dot(ens_near, ens_far) / (_na * _nb)) if (_na > 0 and _nb > 0) else 1.0
+        sparsity = float(0.5 * (np.mean(ens_near > 0) + np.mean(ens_far > 0)))
+        # (c) ACTOR-NOT-PERTURBED: the added regions feed ONLY the critic (no edge to the actor
+        #     cortex/motor). Measure the actor's mean cortex firing over a short free-running
+        #     window WITH the critic regions present; the byte-level guard is that all N9 edges
+        #     are place_sensors/place/place_fs/striosome_value/snc — none touch cortex_X/motor_X.
+        #     A direct twin (critic-absent) rebuild is out of scope for the cheap probe; instead
+        #     we assert the structural isolation + report the actor's live cortex rate as a sanity
+        #     baseline (the nav-A/B in Stage C is the quantitative actor-not-perturbed test).
+        _cortex_idx = []
+        for a in ACTION_NAMES:
+            ci = region_indices_cp.get(f"cortex_{a}")
+            if ci is not None:
+                _cortex_idx.append(ci.get() if hasattr(ci, "get") else np.asarray(ci))
+        cortex_rate = float("nan")
+        if _cortex_idx:
+            cx = cp.asarray(np.concatenate(_cortex_idx), dtype=cp.int64)
+            ncx = int(cx.size)
+            bridge.cp_external_input_current[:] = cp.float32(0.0)
+            # drive place_sensors at the goal (critic active) while the actor free-runs.
+            bridge.cp_external_input_current[region_indices_cp["place_sensors"]] = (
+                cp.asarray(_n9_render(float(_goal0[0]), float(_goal0[1])), dtype=cp.float32))
+            saved = bridge.core_config.reward_learning_rate
+            bridge.core_config.reward_learning_rate = 0.0
+            spk = 0; m = 0
+            for t in range(120):
+                _n9_step(1)
+                if t >= 40:
+                    spk += int(bridge.cp_firing_states[cx].sum()); m += 1
+            bridge.core_config.reward_learning_rate = saved
+            bridge.cp_external_input_current[:] = cp.float32(0.0)
+            cortex_rate = spk / max(ncx, 1) / max(m * 1e-3, 1e-9)
+        # Structural actor-isolation assert (the load-bearing actor-not-perturbed guarantee).
+        _n9_targets = set()
+        for pw in pathways:
+            if pw.from_region in ("place_sensors", "place", "place_fs", "striosome_value"):
+                _n9_targets.add(pw.to_region)
+        _actor_touched = {t for t in _n9_targets
+                          if t.startswith("cortex_") or t.startswith("motor_")
+                          or t.startswith("str_") or t.startswith("thal_")}
+        actor_isolated = (len(_actor_touched) == 0)
+        # Phase 1-2 gates: PLACE-GRADED (distinct fields) + ACTOR-ISOLATED. FIRE (critic >=5Hz)
+        # is the Phase-3 value-training gate; reported here pre-training as a baseline.
+        place_fires = bool(rate_near >= 5.0)        # informational (sparse-by-design; de-risk ~1Hz too)
+        critic_fires = bool(crit_near >= 5.0)       # the real FIRE gate (needs Phase-3 value-train)
+        graded = bool(diff_cos <= 0.2)
+        print("=" * 72)
+        print(f"[g11 seed={seed}] N9 STAGE-A SMOKE (place self-org @ nav scale):")
+        print(f"  place sparsity={sparsity:.3f} (SPARSE-by-design; de-risk ~0.037)")
+        print(f"  (a) place rate (info) : place@near={rate_near:.2f}Hz place@far={rate_far:.2f}Hz "
+              f"(>=5Hz => {place_fires}; sparse code is ~1-2Hz, like the de-risk)")
+        print(f"      critic FIRE gate  : critic@near={crit_near:.2f}Hz (>=5Hz => {critic_fires}; "
+              f"needs Phase-3 value-train to grade)")
+        print(f"  (b) PLACE-GRADED [P1-2]: near/far ensemble cos={diff_cos:.3f} "
+              f"(diff={1.0-diff_cos:.3f}; distinct<=0.2 => {graded})")
+        print(f"  (c) ACTOR-NOT-PERTURBED[P1-2]: cortex_live={cortex_rate:.2f}Hz; N9-edges-touch-actor="
+              f"{sorted(_actor_touched) if _actor_touched else 'NONE'} (isolated => {actor_isolated})")
+        print(f"  PHASE-1-2 VERDICT: PLACE-GRADED={graded} ACTOR-ISOLATED={actor_isolated} "
+              f"(critic-FIRE deferred to Phase 3)")
+        print("=" * 72, flush=True)
+        return dict(place_rate_near=rate_near, place_rate_far=rate_far, place_sparsity=sparsity,
+                    critic_rate_near=crit_near, place_diff_cos=diff_cos,
+                    cortex_live_rate=cortex_rate, actor_isolated=actor_isolated,
+                    place_fires=place_fires, critic_fires=critic_fires, graded=graded)
+
     # ===== CRITIC VALUE-ACQUISITION WARM-UP (2026-06-09 deadlock-breaker) =====
     # Before the nav loop, seed the MSN-D1 value critic with the de-risk's VALIDATED
     # value-leads-reward protocol at the scheduled goal location(s), at the BASELINE
@@ -4482,6 +4934,18 @@ def run_moving_goal_episode(
             _da_rule.threshold = float(_saved_da_threshold)
         w_post = _mean_critic_weight()
         return (w_pre, w_post, len(goal_list))
+
+    # N9 STEP-1: self-organize the place fields BEFORE the value warm-up / nav (the value critic
+    # reads the FROZEN place code). Only runs under neural_place_selforg.
+    _selforg_stats = _run_place_selforg()
+
+    # N9 Stage-A cheap-first probe: measure FIRE / PLACE-GRADED / ACTOR-NOT-PERTURBED and exit
+    # BEFORE the nav loop (the design's cheap-first integration de-risk).
+    if stage_a_smoke and _neural_place_selforg:
+        _stage_a = _run_stage_a_smoke()
+        if _stage_a is not None:
+            _stage_a["place_selforg"] = _selforg_stats
+        return {"stage_a_smoke": _stage_a, "selforg": _selforg_stats}
 
     _warmup_stats = _run_critic_warmup()
     if _warmup_stats is not None and verbose:
@@ -5123,6 +5587,19 @@ def run_moving_goal_episode(
                 # critic into the up-state from this drive (2026-06-09 convergent-upstate, opt-in).
                 if enable_convergent_upstate and "vs_place_drive" in region_indices_cp:
                     bridge.cp_external_input_current[region_indices_cp["vs_place_drive"]] = vs_drive_cp_step
+
+        # === N9 NEURAL PLACE-CODE afferent drive (2026-06-09 nav deployment) ===
+        # In the neural_place_selforg path the host-Gaussian vs_place_context is NOT built; the
+        # critic afferent is the self-organized spiking `place` pool, which fires from the EGOCENTRIC
+        # `place_sensors` render (the ONLY place input — the host place computation is gone). (x,y)
+        # enters the brain ONLY through this legitimate sensory render. Zeroed during sleep.
+        if _neural_place_selforg and "place_sensors" in region_indices_cp:
+            ps_idx_step = region_indices_cp["place_sensors"]
+            if in_sleep:
+                bridge.cp_external_input_current[ps_idx_step] = cp.float32(0.0)
+            else:
+                _ps_act = _n9_render(float(x), float(y))
+                bridge.cp_external_input_current[ps_idx_step] = cp.asarray(_ps_act, dtype=cp.float32)
 
         # Landmark perception drive (Item 1 Stage 2, 2026-04-27).
         # Drives landmark_sensors based on agent's bearing+distance to a
@@ -6854,6 +7331,42 @@ def main():
     ap.add_argument("--vs-place-drive-to-value-density", type=float, default=0.8,
                     help="A1 up-state afferent density (dense convergence, not one giant synapse). "
                          "Default 0.8. Only with --enable-convergent-upstate.")
+    # ── N9 NEURAL PLACE-CODE SELF-ORG (2026-06-09 nav deployment of the validated de-risk) ──
+    ap.add_argument("--neural-place-selforg", action="store_true",
+                    help="N9 NEURAL place-code self-org: REPLACE the host-Gaussian vs_place_context "
+                         "with a SELF-ORGANIZED spiking place code (place_sensors egocentric render "
+                         "-> `place` pool + FS-PING `place_fs` -> striosome_value coincidence critic; "
+                         "the de-risk n9_place_graded_critic_stage2_derisk ported to nav). The place "
+                         "fields self-organize in a STEP-1 warm-up; the host place injection is NOT "
+                         "used. HARD-GATES --enable-convergent-upstate OFF. BRAIN-BASED-ONLY: (x,y) "
+                         "enters only via the egocentric landmark render. Requires --enable-neural-critic.")
+    ap.add_argument("--n-place", type=int, default=200, help="N9 self-org place pool size.")
+    ap.add_argument("--n-place-fs", type=int, default=24, help="N9 FS-PING interneuron pool size.")
+    ap.add_argument("--place-sensors-to-place-weight", type=float, default=28.0)
+    ap.add_argument("--place-sensors-to-place-density", type=float, default=0.5)
+    ap.add_argument("--place-sensors-to-place-jitter", type=float, default=0.6)
+    ap.add_argument("--place-fs-weight", type=float, default=16.0)
+    ap.add_argument("--place-fs-density", type=float, default=0.4)
+    ap.add_argument("--fs-to-place-weight", type=float, default=8.0)
+    ap.add_argument("--fs-to-place-density", type=float, default=0.4)
+    ap.add_argument("--coincidence-threshold", type=int, default=12,
+                    help="N9 Route-D READOUT K (weight units; the weighted plateau threshold).")
+    ap.add_argument("--coincidence-train-k", type=float, default=4.0,
+                    help="N9 Route-D TRAIN count K (count units; bootstraps the post-spike). MUST be >1.")
+    ap.add_argument("--coincidence-plateau", type=float, default=80.0)
+    ap.add_argument("--n-place-bearing", type=int, default=12,
+                    help="N9 egocentric bearing sensors per landmark.")
+    ap.add_argument("--n-place-dist", type=int, default=8,
+                    help="N9 egocentric distance sensors per landmark.")
+    ap.add_argument("--selforg-steps", type=int, default=2000,
+                    help="N9 STEP-1 total self-org sweep steps.")
+    ap.add_argument("--selforg-n-positions", type=int, default=40,
+                    help="N9 STEP-1 number of agent positions swept.")
+    ap.add_argument("--reward-delay-steps", type=int, default=8,
+                    help="N9 online: hold `place` active this many steps before the SNc burst (Yagishita pairing-then-DA).")
+    ap.add_argument("--stage-a-smoke", action="store_true",
+                    help="N9 Stage-A cheap-first probe: after self-org, measure FIRE / PLACE-GRADED / "
+                         "ACTOR-NOT-PERTURBED and exit BEFORE the nav loop. Requires --neural-place-selforg.")
     ap.add_argument("--critic-warmup-trials", type=int, default=0,
                     help="CRITIC VALUE-ACQUISITION WARM-UP (2026-06-09 deadlock-breaker). "
                          "Before the nav loop, run N de-risk-style reward-paired drives "
@@ -7211,6 +7724,26 @@ def main():
             enable_convergent_upstate=args.enable_convergent_upstate,
             vs_place_drive_to_value_weight=args.vs_place_drive_to_value_weight,
             vs_place_drive_to_value_density=args.vs_place_drive_to_value_density,
+            # N9 neural place-code self-org (2026-06-09 nav deployment).
+            neural_place_selforg=args.neural_place_selforg,
+            n_place=args.n_place,
+            n_place_fs=args.n_place_fs,
+            place_sensors_to_place_weight=args.place_sensors_to_place_weight,
+            place_sensors_to_place_density=args.place_sensors_to_place_density,
+            place_sensors_to_place_jitter=args.place_sensors_to_place_jitter,
+            place_fs_weight=args.place_fs_weight,
+            place_fs_density=args.place_fs_density,
+            fs_to_place_weight=args.fs_to_place_weight,
+            fs_to_place_density=args.fs_to_place_density,
+            coincidence_threshold=args.coincidence_threshold,
+            coincidence_train_k=args.coincidence_train_k,
+            coincidence_plateau=args.coincidence_plateau,
+            n_place_bearing=args.n_place_bearing,
+            n_place_dist=args.n_place_dist,
+            selforg_steps=args.selforg_steps,
+            selforg_n_positions=args.selforg_n_positions,
+            reward_delay_steps=args.reward_delay_steps,
+            stage_a_smoke=args.stage_a_smoke,
             critic_warmup_trials=args.critic_warmup_trials,
             critic_warmup_hold_steps=args.critic_warmup_hold_steps,
             critic_warmup_all_goals=not args.no_critic_warmup_all_goals,
