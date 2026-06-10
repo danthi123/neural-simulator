@@ -236,6 +236,14 @@ class CoreSimConfig:
     # per-step `.tocsr()`, so callers toggle it ON only where reproducibility matters (e.g. the N9
     # place-code self-org). See research/findings/2026-06-10-N9-placecode-reproducibility-*.
     deterministic_transpose_matvec: bool = False
+    # GABA_B / GIRK conductance saturation cap (2026-06-10): finite GIRK K+ channels => the slow
+    # GABA_B conductance cannot grow without bound. A HOT presynaptic source (e.g. an over-firing
+    # value critic, ~125 Hz) otherwise over-accumulates g_gabab and FULLY CLAMPS the downstream
+    # cell (the critic-rate-dependent over-clamp that makes the online δ=r−V binary on hot draws —
+    # nav A/B 2026-06-10-N9-nav-deployment-stageB-PASS-seed42.md). Capping g_gabab bounds the
+    # subtraction => a GRADED (Eshel arithmetic) shift at ANY presynaptic rate. 0.0 = no cap
+    # (default) => byte-identical.
+    gabab_conductance_max: float = 0.0
     enable_watts_strogatz: bool = True
     connectivity_k: int = 10
     connectivity_p_rewire: float = 0.1

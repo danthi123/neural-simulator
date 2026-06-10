@@ -3123,6 +3123,7 @@ def run_moving_goal_episode(
     # de-saturates the GABA_B so the graded near<far subtraction is VISIBLE across the seed range
     # (Eshel-2015 arithmetic shift, not the all-or-none clamp). 0=keep the cfg default (0.02).
     critic_gabab_propagation: float = 0.0,
+    critic_gabab_max: float = 0.0,   # cap g_gabab (finite GIRK channels) so a hot critic can't fully clamp the SNc (graded δ); 0=no cap
     # Surprise-boosted learning rate: when |RPE| is high (unexpected outcome),
     # temporarily boost reward_learning_rate. Models NE-like fast meta-modulation.
     enable_surprise_lr_boost: bool = False,
@@ -3825,6 +3826,9 @@ def run_moving_goal_episode(
         cfg.gabab_propagation_strength = (float(critic_gabab_propagation)
                                           if critic_gabab_propagation and critic_gabab_propagation > 0
                                           else 0.02)
+        # Brain-based GIRK saturation cap (finite channels) so a hot critic can't fully clamp the
+        # SNc -> graded online δ at any critic rate (the nav-A/B honest-negative fix). 0 = no cap.
+        cfg.gabab_conductance_max = float(critic_gabab_max)
     if _neural_place_selforg:
         # N9 Route-D coincidence read-out (the landed b980070a dendritic plateau): the FS-PING
         # gamma volley on `place` is read by the place->striosome_value coincidence_detector so the
@@ -7815,6 +7819,11 @@ def main():
                     help="GABA_B(GIRK) propagation strength onto the SNc (default 0.02). Lower it "
                          "(e.g. 0.006-0.010) to de-saturate the SNc when the critic fires hard "
                          "(strong-place-field seeds, ~120 Hz, over-clamp BOTH near+far to 0). 0=keep 0.02.")
+    ap.add_argument("--critic-gabab-max", type=float, default=0.0,
+                    help="Brain-based GIRK saturation cap on g_gabab (finite channels) so a HOT critic "
+                         "can't over-accumulate it and fully clamp the SNc -> GRADED online δ at any "
+                         "critic rate (the nav-A/B honest-negative fix; rate-robust unlike a fixed prop). "
+                         "Try ~20-30. 0=no cap (default, byte-identical).")
     ap.add_argument("--critic-neuron-type", type=str, default=None,
                     help="Override the striosome_value critic's Izhikevich type "
                          "(2026-06-08 calibration). Default None keeps the MSN-D1 "
@@ -8294,6 +8303,7 @@ def main():
             enable_critic_window=args.critic_window,
             critic_lead_steps=args.critic_lead_steps,
             critic_gabab_propagation=args.critic_gabab_propagation,
+            critic_gabab_max=args.critic_gabab_max,
             critic_neuron_type=args.critic_neuron_type,
             critic_afferent_weight=args.critic_afferent_weight,
             enable_critic_homeostasis=args.enable_critic_homeostasis,

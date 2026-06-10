@@ -5833,6 +5833,14 @@ class SimulationBridge:
                     gabab_increase = (_gb_mat.T @ self.cp_prev_firing_states.astype(cp.float32)) \
                         * cfg.gabab_propagation_strength
                     self.cp_conductance_g_gabab += gabab_increase
+                    # Brain-based GIRK SATURATION (finite GABA_B/GIRK channels): cap g_gabab so a
+                    # hot presynaptic source cannot over-accumulate it and fully CLAMP the target
+                    # (the binary-δ over-clamp on hot draws). Bounded g_gabab => a GRADED subtraction
+                    # at any rate. Default 0.0 => no cap => byte-identical (the cap branch is skipped).
+                    _gb_max = getattr(cfg, "gabab_conductance_max", 0.0)
+                    if _gb_max and _gb_max > 0.0:
+                        cp.minimum(self.cp_conductance_g_gabab, cp.float32(_gb_max),
+                                   out=self.cp_conductance_g_gabab)
                 self.cp_conductance_g_gabab, I_gabab = fused_gabab_decay_and_current(
                     self.cp_conductance_g_gabab, self._cached_decay_gabab,
                     self.cp_membrane_potential_v, self.cp_gabab_reversal_per_neuron)
