@@ -36,6 +36,17 @@ _GT = {0: "agent", 1: "patient", 2: "action", 3: "action", 4: "patient", 5: "age
 # the parser's gate name on the merged bridge (frozen to 0.0 after the train pass)
 PARSER_GATE = "parser_fixed"
 
+# dlPFC dialogue-planning loop constants. These mirror unified_brain_bridge.py:117-120 exactly so the
+# merged dlPFC slices reproduce the validated UnifiedBrainBridge dialogue-planning behaviour:
+#   DLPFC_PATTERN_SIZE      per-concept assembly size (cells per word in each dlPFC region).
+#   DLPFC_ATTRACTOR_WEIGHT  the cortex_ctx<->dlpfc_wm self-attractor weight. 30.0 is the genuinely
+#                           NMDA-dependent Wang-2002 regime (50 would be trivial AMPA ping-pong).
+#   DLPFC_FIXED_GATE        one plasticity gate over ALL dlPFC loop+graph edges, held at 0.0 so neither
+#                           the parser train pass nor a later navigation episode can drift them.
+DLPFC_PATTERN_SIZE = 50
+DLPFC_ATTRACTOR_WEIGHT = 30.0
+DLPFC_FIXED_GATE = "dlpfc_fixed"
+
 
 # ── parser as framework regions/pathways ─────────────────────────────────────────────────────────────────
 def parser_regions_pathways(R: int = PARSER_R):
@@ -120,6 +131,300 @@ def parse_on_slices(bridge, conj_arr, role_arr, words, voice="active", test_step
             for pos in range(3)}
 
 
+# ── dlPFC loop population on the framework slices ────────────────────────────────────────────────────────
+def _build_dlpfc_loop_population(ctx, words):
+    """Build the hand-wired `dlpfc_loop` synapse population on the merged-bridge dlPFC slices.
+
+    Ported VERBATIM (logic) from UnifiedBrainBridge._wire_dlpfc (unified_brain_bridge.py:641-661). The
+    framework's RegionPathway can only build a uniform region->region projection; the dlPFC needs
+    per-word-pair assembly-to-assembly BLOCK structure, so the loop edges are hand-built and injected as one
+    extra population alongside the framework plan.
+
+      c2d : cortex_ctx_A -> dlpfc_wm_B for ALL ordered (A, B) word pairs. The DIAGONAL (A==B) is the forward
+            self-attractor (weight DLPFC_ATTRACTOR_WEIGHT); the off-diagonal (A!=B) pairs are the
+            association-graph edge SLOTS, pre-allocated at weight 0 and overwritten in place at elaborate time.
+      d2c : dlpfc_wm_C -> cortex_ctx_C for all C (the backward self-attractor, weight DLPFC_ATTRACTOR_WEIGHT).
+
+    `ctx` is a `_SharedDlpfcContext` over the framework cortex_ctx/dlpfc_wm slices; its `_cpat_host`/`_dpat_host`
+    hold the per-word assembly indices already shifted to the framework slice bases. All edges are tagged
+    `plasticity_gate=DLPFC_FIXED_GATE` and `plastic=False`. Returns the population spec dict (one entry).
+    """
+    ps = DLPFC_PATTERN_SIZE
+    cpat = {w: ctx._cpat_host[w] for w in words}   # cortex_ctx assembly indices per word (framework slice)
+    dpat = {w: ctx._dpat_host[w] for w in words}   # dlpfc_wm  assembly indices per word (framework slice)
+
+    c2d_pre = []; c2d_post = []; c2d_w = []
+    for a in words:                        # cortex_A -> dlpfc_B for ALL (A, B): diagonal = self-attractor
+        preA = np.repeat(cpat[a], ps)      # (ps*ps,) each cortex_A neuron -> every dlpfc_B neuron
+        for b in words:
+            c2d_pre.append(preA)
+            c2d_post.append(np.tile(dpat[b], ps))
+            w0 = DLPFC_ATTRACTOR_WEIGHT if a == b else 0.0     # self-attractor on the diagonal, slot elsewhere
+            c2d_w.append(np.full(ps * ps, w0, dtype=np.float32))
+    d2c_pre = []; d2c_post = []; d2c_w = []
+    for c in words:                        # dlpfc_C -> cortex_C (backward self-attractor only)
+        d2c_pre.append(np.repeat(dpat[c], ps))
+        d2c_post.append(np.tile(cpat[c], ps))
+        d2c_w.append(np.full(ps * ps, DLPFC_ATTRACTOR_WEIGHT, dtype=np.float32))
+
+    pre = np.concatenate(c2d_pre + d2c_pre).astype(np.int64)
+    post = np.concatenate(c2d_post + d2c_post).astype(np.int64)
+    ww = np.concatenate(c2d_w + d2c_w).astype(np.float32)
+    return {
+        "pre_indices": pre, "post_indices": post, "initial_weights": ww,
+        "plastic": False, "plasticity_gate": DLPFC_FIXED_GATE, "conn_type": "E_TO_E", "count": int(pre.size),
+    }
+
+
+# ── the merged nav + parser + dlPFC bridge builder (design §2.5 FINAL FORM) ───────────────────────────────
+def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100):
+    """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
+    the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
+    §2.5 FINAL FORM.
+
+    Reconciliation decision (A): the framework path IS a wrapper around `inject_explicit_wiring`
+    (sim/bridge.py:1514-1526 builds `region_manager.build_wiring_plan(seed)` then injects it), so the parser
+    and dlPFC are appended as framework regions/pathways onto the navigation lists. The dlPFC loop/graph edges
+    (per-word-pair block structure the framework cannot express) go in via ONE combined injection.
+
+    Sequence:
+      1. Union the region/pathway lists: nav (build_bg_brain_regions, DEFAULT kwargs — this is the construction
+         smoke, not the flagship) + parser (parse_conj 6, parse_role 3*PARSER_R) + dlPFC (cortex_ctx, dlpfc_wm,
+         both enable_nmda=True, n_dlpfc=max(600,60*V)). Append the parse_conj->parse_role plastic pathway.
+      2. Config the merged cfg (framework on; dt=1; Izhikevich; the 5a clip mitigation stdp_w_max=400 /
+         hebbian_max_weight=400; nav-resident learning flags; homeostasis OFF and ASSERTED so the synaptic-
+         scaling clip at sim/bridge.py:6758/6760 can never slam the frozen conversational weights; NMDA on with
+         ratio 0.5). Build the bridge and _initialize_simulation_data (sets region_manager, auto-injects the
+         framework plan, builds the per-region NMDA mask confined to the dlPFC slices).
+      3. Resolve the dlPFC slice bases from the framework, build a _SharedDlpfcContext over them, and build the
+         hand-wired dlpfc_loop population on those slices.
+      4. Combined injection (the gate-safe sequence): re-inject build_wiring_plan(seed) + dlpfc_loop ONCE so the
+         rebuilt _plasticity_gate_to_synapses map INCLUDES the dlpfc_loop edges under DLPFC_FIXED_GATE. Re-apply
+         BOTH gate zeros (the parser gate is zeroed only AFTER its train pass, step 5).
+      5. Parser train pass (Hebbian temporarily on; STDP/reward off; OU=20 already on from build — see the OU
+         note below), THEN set the resting OU-off nav config and freeze parser_fixed.
+
+    Returns (bridge, handles) where handles = {region bases, the _SharedDlpfcContext, the parser index arrays,
+    the dlpfc_loop edge count, the resolved vocab} the later increments (agent shim, episode/test gates) need.
+    """
+    # Heavy imports are deferred to here so `--microcheck` (parser-only) stays fast and import-light.
+    from research.runners.g11_bg_runner import build_bg_brain_regions
+    from research.runners.unified_brain_bridge import _SharedDlpfcContext
+
+    xp, _ = get_backend()
+
+    # Vocab: default to the 16-word probe vocab (every conversational capability is validated there). The
+    # composer's DEFAULT_VOCAB is that exact 16-word probe set; sort it so the dlPFC assembly order is canonical.
+    if vocab is None:
+        from research.runners.rf_phasor_composer import DEFAULT_VOCAB
+        vocab = DEFAULT_VOCAB
+    words = sorted(vocab)
+    V = len(words)
+    n_dlpfc = max(600, 60 * V)
+
+    # 1) Region / pathway union.
+    nav_regions, nav_pathways = build_bg_brain_regions(n_cortex=n_cortex)   # DEFAULT kwargs (construction smoke)
+    parser_regions, parser_pathways = parser_regions_pathways(PARSER_R)
+    dlpfc_regions = [
+        # Both dlPFC regions opt into NMDA so the framework confines the slow NMDA current to the dlPFC slice
+        # (sim/bridge.py:1180-1189): if ANY region sets enable_nmda, the auto-mask is the union of those regions
+        # and every other neuron is NMDA-free even with the global flag on. No internal edges; the loop/graph
+        # edges are the hand-wired dlpfc_loop population (step 3/4).
+        BrainRegion(name="cortex_ctx", n_neurons=n_dlpfc, exc_fraction=1.0,
+                    internal_density=0.0, enable_nmda=True),
+        BrainRegion(name="dlpfc_wm", n_neurons=n_dlpfc, exc_fraction=1.0,
+                    internal_density=0.0, enable_nmda=True),
+    ]
+    union_regions = list(nav_regions) + list(parser_regions) + list(dlpfc_regions)
+    union_pathways = list(nav_pathways) + list(parser_pathways)   # dlPFC loop is hand-built, NOT a pathway
+
+    # 2) Merged config.
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.brain_regions = union_regions
+    cfg.region_pathways = union_pathways
+    cfg.dt_ms = 1.0
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.connections_per_neuron = 0
+    cfg.num_traits = 1
+    cfg.seed = int(seed)
+    # 5a clip mitigation: raise the rule clip bounds ABOVE the max frozen conversational real-valued weight
+    # (~300 parser role-route) so the ungated reward/Hebbian clips (sim/bridge.py:6200,6505) cannot move them.
+    cfg.stdp_w_max = 400.0
+    cfg.hebbian_max_weight = 400.0
+    # Navigation-resident learning state (the nav cascade runs reward-STDP during episodes).
+    cfg.enable_stdp = True
+    cfg.enable_reward_modulation = True
+    cfg.enable_hebbian_learning = False           # global Hebbian OFF during nav (parser is trained separately)
+    # The parser's VALIDATED Hebbian learning rate (brain_conversational_agent.py:75, microcheck reference). In
+    # effect ONLY during the parser train pass (nav keeps Hebbian off so this rate is never consulted in episodes).
+    # The CoreSimConfig default (0.0005) is 10x too low: the parse_conj->parse_role weights barely grow (most
+    # conjunctions stay near init 0.49), the role ensembles never fire on readout, and the parse degenerates.
+    cfg.hebbian_learning_rate = 0.005
+    cfg.enable_homeostasis = False                # FOOT-GUN: the synaptic-scaling clip would slam frozen weights
+    cfg.enable_short_term_plasticity = False
+    cfg.enable_structural_plasticity = False
+    # OU noise: the parser train pass REQUIRES real OU=20 (with OU off the WTA role readout is degenerate —
+    # finding 2026-06-10-merge-parser-on-framework-slices-PASS-needs-OU.md). The OU per-neuron state is allocated
+    # at _initialize_simulation_data ONLY when enable_ou_process is True at BUILD time; a later runtime toggle
+    # does NOT allocate it (verified: build-OU-off then toggle-on trains only 2/6 conjunctions; build-OU-on
+    # trains 6/6). So BUILD with OU on (state allocated), then set enable_ou_process=False for the resting
+    # navigation config AFTER the parser train pass (step 5). The OU flag is read dynamically each step, so nav
+    # episodes get OU-off and the read-time toggles in the smoke / later increments cleanly re-enable it.
+    cfg.enable_ou_process = True
+    cfg.ou_std_current_pA = 20.0
+    cfg.enable_parameter_heterogeneity = False
+    # NMDA on globally; the per-region mask (built at init from the enable_nmda regions) confines it to dlPFC.
+    cfg.enable_nmda = True
+    cfg.nmda_ratio = 0.5
+
+    bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
+                              runtime_state=RuntimeState(), gpu_config=GPUConfig())
+    bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
+    bridge._initialize_simulation_data(called_from_playback_init=False)
+
+    # The homeostasis foot-gun guard: build_bg_brain_regions / its config path must not have toggled the global
+    # flag on (only the global flag enables the [0.01,5.0] synaptic-scaling clip that would crush weight ~30/300).
+    assert cfg.enable_homeostasis is False, "global homeostasis must stay OFF (synaptic-scaling clip foot-gun)"
+
+    rm = bridge.region_manager
+
+    # 3) Resolve dlPFC slice bases and build the loop population on those slices.
+    cortex_base = rm.indices("cortex_ctx")[0]
+    dlpfc_base = rm.indices("dlpfc_wm")[0]
+    dlpfc_ctx = _SharedDlpfcContext(bridge, words, cortex_base, dlpfc_base, n_dlpfc, DLPFC_PATTERN_SIZE, seed)
+    dlpfc_loop = _build_dlpfc_loop_population(dlpfc_ctx, words)
+    n_dlpfc_loop_edges = int(dlpfc_loop["count"])
+
+    # 4) Combined injection (design §2.5 final form). Rebuild the union framework plan + ADD dlpfc_loop, then
+    #    inject ONCE. inject_explicit_wiring rebuilds cp_connections + the gate maps from scratch, so this single
+    #    re-injection produces a _plasticity_gate_to_synapses map that includes dlpfc_loop under DLPFC_FIXED_GATE.
+    #    Pass the SAME output_inhibitory_indices the auto-injection used (sim/bridge.py:1520-1525) so the nav
+    #    inhibitory neurons keep their inhibitory trait (D2 MSNs, GPe/GPi, FS pools, ...).
+    union_plan = dict(rm.build_wiring_plan(seed=int(seed)))
+    assert "dlpfc_loop" not in union_plan, "dlpfc_loop name collides with a framework population"
+    union_plan["dlpfc_loop"] = dlpfc_loop
+    inh_indices_concat = []
+    for region in rm.regions():
+        inh_indices_concat.extend(rm.inhibitory_indices(region.name))
+    bridge.inject_explicit_wiring(union_plan, output_inhibitory_indices=inh_indices_concat or None)
+
+    # Re-apply both gate zeros (the gate maps were rebuilt -> default gain 1.0). The dlPFC gate is zeroed NOW
+    # (before the parser train pass) so the parser pass cannot drift the dlPFC edges either. The parser gate is
+    # zeroed only AFTER its train pass (step 5).
+    bridge.set_plasticity_gate(DLPFC_FIXED_GATE, 0.0)
+
+    # 5) Parser train pass on the framework slices (after the FINAL injection — a later injection would reset the
+    #    trained weights). Temporarily Hebbian ON + STDP/reward OFF; OU=20 is already ON from build (the validated
+    #    condition — with OU off the WTA readout is degenerate, and OU state must be allocated at build, see above).
+    conj_arr, role_arr = _parser_index_arrays(bridge, PARSER_R)
+    cc = bridge.core_config
+    saved = (cc.enable_hebbian_learning, cc.enable_stdp, cc.enable_reward_modulation)
+    cc.enable_hebbian_learning = True
+    cc.enable_stdp = False
+    cc.enable_reward_modulation = False
+    # OU is already ON from build (state allocated); the train pass uses it directly (ou_std_current_pA=20).
+    try:
+        train_parser_on_slices(bridge, conj_arr, role_arr)
+    finally:
+        (cc.enable_hebbian_learning, cc.enable_stdp, cc.enable_reward_modulation) = saved
+    # Now set the RESTING navigation config: OU OFF (nav episodes run OU-off; the OU state stays allocated so the
+    # smoke/later increments can re-enable it per-read). The flag is read dynamically each step.
+    cc.enable_ou_process = False
+    bridge.set_plasticity_gate(PARSER_GATE, 0.0)
+
+    handles = {
+        "seed": int(seed),
+        "vocab": words,
+        "n_dlpfc": int(n_dlpfc),
+        "cortex_base": int(cortex_base),
+        "dlpfc_base": int(dlpfc_base),
+        "dlpfc_ctx": dlpfc_ctx,
+        "dlpfc_loop_edges": n_dlpfc_loop_edges,
+        "conj_arr": conj_arr,
+        "role_arr": role_arr,
+    }
+    return bridge, handles
+
+
+# ── the construction smoke (this increment's acceptance) ─────────────────────────────────────────────────
+def construction_smoke(seed: int = 42, n_cortex: int = 100, vocab=None):
+    """Build the merged bridge and assert it is structurally correct: nav + parser + dlPFC co-reside on ONE
+    bridge, both fixed gates resolve and are actually zeroed, the dlpfc_loop edge count matches, the neuron
+    count is the exact union, and the parser parses (voice-invariantly) on the FULL merged bridge.
+
+    Returns True on PASS. Raises AssertionError (caught by the CLI -> exit 1) on any failure.
+    """
+    xp, backend = get_backend()
+    print(f"[construction-smoke] backend={backend} seed={seed} n_cortex={n_cortex}")
+    bridge, h = build_merged_nav_conv_bridge(seed=seed, vocab=vocab, n_cortex=n_cortex)
+    rm = bridge.region_manager
+    cfg = bridge.core_config
+
+    n_regions = len(cfg.brain_regions)
+    n_neurons = int(cfg.num_neurons)
+    nnz = int(bridge.cp_connections.nnz)
+    print(f"[construction-smoke] {n_regions} regions, {n_neurons} neurons, {nnz} synapses "
+          f"(dlpfc_loop edges={h['dlpfc_loop_edges']}, n_dlpfc={h['n_dlpfc']})")
+
+    # (a) the homeostasis foot-gun stayed off.
+    assert cfg.enable_homeostasis is False, \
+        "FAIL: cfg.enable_homeostasis is True — the synaptic-scaling clip would crush the frozen conv weights"
+
+    # (b) both fixed gates exist in the gate map, and the dlpfc gate covers exactly the dlpfc_loop edges built.
+    gate_map = bridge._plasticity_gate_to_synapses
+    assert PARSER_GATE in gate_map, f"FAIL: '{PARSER_GATE}' not a key of _plasticity_gate_to_synapses ({list(gate_map)})"
+    assert DLPFC_FIXED_GATE in gate_map, f"FAIL: '{DLPFC_FIXED_GATE}' not a key of _plasticity_gate_to_synapses ({list(gate_map)})"
+    dlpfc_gate_size = int(bridge._plasticity_gate_indices_gpu[DLPFC_FIXED_GATE].size)
+    assert dlpfc_gate_size == h["dlpfc_loop_edges"], \
+        f"FAIL: dlpfc_fixed gate covers {dlpfc_gate_size} synapses, expected {h['dlpfc_loop_edges']} (the dlpfc_loop edges)"
+
+    # (c) the gains are ACTUALLY 0 at both gates' synapses (freeze took effect, not just registered).
+    dlpfc_idx = bridge._plasticity_gate_indices_gpu[DLPFC_FIXED_GATE]
+    parser_idx = bridge._plasticity_gate_indices_gpu[PARSER_GATE]
+    dlpfc_gains = to_host(bridge.cp_plasticity_rate_gain[dlpfc_idx])
+    parser_gains = to_host(bridge.cp_plasticity_rate_gain[parser_idx])
+    assert bool((dlpfc_gains == 0).all()), "FAIL: dlpfc_fixed plasticity gains are not all 0 after freeze"
+    assert bool((parser_gains == 0).all()), "FAIL: parser_fixed plasticity gains are not all 0 after freeze"
+
+    # (d) nav AND conv regions co-reside (proves one bridge holds both brains).
+    region_names = rm.region_indices_dict()
+    for required in ("cortex_N", "parse_conj", "parse_role", "cortex_ctx", "dlpfc_wm"):
+        assert required in region_names, \
+            f"FAIL: region '{required}' missing from the merged bridge (regions: {sorted(region_names)[:8]}...)"
+
+    # (e) the neuron count is the EXACT union: nav + parser (6 + 3*R = 126) + 2*n_dlpfc.
+    parser_total = 6 + 3 * PARSER_R
+    region_sum = sum(int(r.n_neurons) for r in cfg.brain_regions)
+    nav_total = region_sum - parser_total - 2 * h["n_dlpfc"]
+    assert n_neurons == region_sum, f"FAIL: num_neurons {n_neurons} != sum of region sizes {region_sum}"
+    assert region_sum == nav_total + parser_total + 2 * h["n_dlpfc"], "FAIL: union neuron-count arithmetic"
+    print(f"[construction-smoke] neuron union: nav={nav_total} + parser={parser_total} + "
+          f"2*dlpfc={2 * h['n_dlpfc']} == {region_sum}")
+
+    # (f) the parser parses on the FULL merged bridge (the parser readout needs OU; toggle it on for the read,
+    #     then restore the merged config's OU-off). Voice-invariance confirmed too (cheap).
+    conj_arr, role_arr = h["conj_arr"], h["role_arr"]
+    cc = bridge.core_config
+    prev_ou, prev_std = cc.enable_ou_process, cc.ou_std_current_pA
+    cc.enable_ou_process = True
+    cc.ou_std_current_pA = 20.0
+    try:
+        active = parse_on_slices(bridge, conj_arr, role_arr, ["dog", "go", "north"], voice="active")
+        passive = parse_on_slices(bridge, conj_arr, role_arr, ["north", "go", "dog"], voice="passive")
+    finally:
+        cc.enable_ou_process, cc.ou_std_current_pA = prev_ou, prev_std
+    print(f"[construction-smoke] active  parse: {active}")
+    print(f"[construction-smoke] passive parse: {passive}")
+    assert active.get("agent") == "dog", f"FAIL: active 'dog go north' agent != dog ({active})"
+    assert passive.get("agent") == "dog", f"FAIL: voice-invariance broke ('north go dog' passive agent != dog) ({passive})"
+
+    print("\n[construction-smoke] PASS - nav + parser + dlPFC co-reside on ONE framework bridge; both fixed "
+          "gates resolve and are zeroed; the parser parses voice-invariantly on the merged bridge.")
+    return True
+
+
 # ── the parser-on-framework-slices micro-check (risk 4.1) ────────────────────────────────────────────────
 def _build_parser_microcheck_bridge(seed: int, R: int, nav_stub: int, ou: float):
     """A framework bridge with [nav_stub, parse_conj, parse_role] under the MERGED config. The nav_stub forces
@@ -198,9 +503,13 @@ def microcheck(seed: int = 42, R: int = PARSER_R, nav_stub: int = 50, ou: float 
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Nav+Conv merge builder (microcheck mode for now)")
-    ap.add_argument("--microcheck", action="store_true")
+    ap = argparse.ArgumentParser(description="Nav+Conv merge builder (parser microcheck + construction smoke)")
+    ap.add_argument("--microcheck", action="store_true",
+                    help="parser-only framework bridge: validate the parser ports onto framework slices (risk 4.1)")
+    ap.add_argument("--construction-smoke", action="store_true",
+                    help="build the FULL merged nav+parser+dlPFC bridge and assert it is structurally correct")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--n-cortex", type=int, default=100, help="build_bg_brain_regions n_cortex (construction smoke)")
     ap.add_argument("--nav-stub", type=int, default=50)
     ap.add_argument("--ou", type=float, default=20.0,
                     help="OU noise pA for the parser train pass (validated: 20 PASSES, 0=off FAILS — degenerate "
@@ -208,11 +517,14 @@ def main():
     ap.add_argument("--n-epochs", type=int, default=30)
     ap.add_argument("--train-steps", type=int, default=120)
     args = ap.parse_args()
+    if args.construction_smoke:
+        ok = construction_smoke(seed=args.seed, n_cortex=args.n_cortex)
+        raise SystemExit(0 if ok else 1)
     if args.microcheck:
         ok = microcheck(seed=args.seed, nav_stub=args.nav_stub, ou=args.ou,
                         n_epochs=args.n_epochs, train_steps=args.train_steps)
         raise SystemExit(0 if ok else 1)
-    ap.error("only --microcheck is implemented so far (STEP 2a build is next)")
+    ap.error("pass --construction-smoke (full merged bridge) or --microcheck (parser-only)")
 
 
 if __name__ == "__main__":
