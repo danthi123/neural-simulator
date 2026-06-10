@@ -1,0 +1,24 @@
+{
+  "derisk": "5a_plasticity_step_isolation",
+  "backend": "cupy",
+  "seed": 42,
+  "n_neurons": 210,
+  "nnz": 1956,
+  "n_syn": {
+    "conv_frozen": 965,
+    "nav_learn": 539,
+    "parser_learn": 452
+  },
+  "conv_identical": true,
+  "conv_max_abs_delta": 0.0,
+  "nav_changed": true,
+  "nav_max_delta": 50.9103889465332,
+  "parser_changed": true,
+  "parser_max_delta": 51.42657470703125,
+  "read1": 0.15433333333333332,
+  "read2": 0.15433333333333332,
+  "read_diff": 0.0,
+  "read_match": true,
+  "dopamine_end_concentration": 0.6503882655842058,
+  "pass": true
+}

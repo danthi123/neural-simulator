@@ -82,6 +82,21 @@ weights are COMPLEX (`cp_rf_w_re` / `cp_rf_w_im`), array-disjoint from `cp_conne
 `cp_connections.data`, so the RF composer's binding weights are **immune** to this gap. Only the real-valued
 frozen conversational populations (parser role-routes, dlPFC fixed edges) are exposed.
 
+## Realistic-scale confirmation (composer-weight 300)
+
+Re-run at a composer-realistic frozen weight (`--conv-weight-mean 300`, the scale of the parser role-routes /
+dlPFC fixed edges) with the clip bounds above it (`--clip-max 600`):
+- **Weight freeze holds at scale:** conv_frozen byte-identical (max\|dw\| = 0.000) while the ungated controls
+  changed by ~51 — the gate isolates updates regardless of weight magnitude, and the clip does not bite when
+  the bounds exceed the frozen weight.
+- **Step-coexistence needs adequate reset at strong weights:** with the default 120-step read reset the conv
+  read drifted slightly (0.154 → 0.142) even though the weights were byte-identical — incomplete neuron-state
+  relaxation after the heavy burst at weight 300, not a freeze failure. With `--read-settle 400` the read is
+  byte-identical (0.154333 == 0.154333) and the full 5a PASSES. **Merge note:** the time-multiplex between
+  navigation and a conversational read needs a sufficient quiescence window before the read (longer at strong
+  weights) — exactly the design §4.5 per-slice reset/quiescence requirement, now quantified. (The RF composer
+  is immune to this: it re-kicks each op, so it carries no state across navigation.)
+
 ## Verdict
 
 **5a PASS on its load-bearing claim** (the plasticity gate isolates weight updates + step coexistence holds),
