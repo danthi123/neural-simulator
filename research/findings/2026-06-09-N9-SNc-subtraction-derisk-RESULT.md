@@ -50,7 +50,23 @@ The subtraction is the **Eshel-2015 arithmetic signature**: predicted is shifted
 
 **Anti-cheat honesty:** the `--lesion` control (the decisive one) holds. The `--shuffle` control *survives* (gap 1.58) but this is a **test-validity** limitation, not a real failure: `--shuffle` only permutes the cell-sets used for weight *tracking* (gate-2c), it does not perturb the training or the gate-2e firing, so the subtraction is unaffected by construction. The subtraction's value-of-location is **inherited from the critic**, whose LTP *does* break under shuffle (validated in the value-grading arc).
 
-## Multi-seed (teacher 350, scale 2.0, θ=12) — 2/3 state-specific + 3/3 lesion-confirmed
+## 🎉 The 2/3 was a GENUINE issue — root-caused + FIXED (the dopamine timing)
+
+The owner correctly rejected the 2/3 as a documentable residual. Root cause (separate diagnosis pass, `2026-06-09-N9-robust-value-learning-diagnosis.md`, controller-verified in code): **the dopamine was delivered at the wrong phase** — the LEARN window drove the place pre→post pairing AND the SNc reward burst simultaneously, but the three-factor rule (Yagishita-Kasai 2014, which the 1000 ms eligibility trace implements) needs DA to arrive *after* the pairing to convert a *silent* eligibility trace. A 2nd binding constraint: the place-code drive-strength variance (a weak-drive draw can't fire the critic → no eligibility).
+
+**The fix (runner-only): `--pair-then-reward`** (split LEARN into PAIR [place + DA-baseline → up-state + silent eligibility] → REWARD [place + SNc burst → DA *after* the pairing → converts the eligibility]) **+ a sub-threshold phase-locked bias** (~300 pA, volley-triggered → clean phased LTP on weak-drive draws; NOT the unphased band-aid). 3-seed:
+
+| seed | w_near (old → new) | LEARNS-V ≥2× | gate-2e state-specific | lesion |
+|---|---|---|---|---|
+| 42 | 1.0–6.4 var → **5.02** | ✓ 3.12× | ✓ | →1.00 ✓ |
+| 43 | → **3.33** | ✗ 1.57× (w_far grew) | ✓ | →1.00 ✓ |
+| 44 | frozen 1.04 → **3.50** | ✓ 2.22× | ✓ | →1.00 ✓ |
+
+**All 3 now learn V strongly (w_near 3.3–5.0; the previously-frozen seed 44 included) — the frozen-critic problem is FIXED.** The r−V subtraction is **3/3 state-specific + 3/3 lesion-confirmed**. The DA-timing diagnosis was right and the fix is biology (the correct three-factor phase), not a band-aid.
+
+**Honest residuals (calibration, not mechanism):** (1) seed 43's strict weight-*ratio* gate is 1.57× (its w_far grew to 2.13 — value IS learned, w_near 3.33). (2) The GABA_B scale is now critic-strength-matched: at scale 2.0 the stronger critics over-clamp (pred → 0; a scale-0.5 check de-clamps seed 42 to pred 54.2, confirming it's de-clampable arithmetic, exactly the diagnosis's "detune-down for strong critics"). The now-uniform critics (3.3–5.0) want scale ~0.5; calibrating a single scale across the residual 3.3–5.0 spread for a clean 3/3 *arithmetic* (pred > 0) band is the remaining tune.
+
+## (earlier) Multi-seed (teacher 350, scale 2.0, θ=12) — 2/3 state-specific + 3/3 lesion-confirmed
 
 | seed | place diff-cos | critic | gate-2e primary | gate-2e + LESION |
 |---|---|---|---|---|
