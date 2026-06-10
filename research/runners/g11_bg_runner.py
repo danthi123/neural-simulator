@@ -269,7 +269,7 @@ def build_bg_brain_regions(
     place_sensors_to_place_density: float = 0.5,
     place_sensors_to_place_jitter: float = 0.6,
     enable_critic_fs_inhibition: bool = False,  # place_fs->striosome_value GABA_A (spiking critic rate-clamp; root fix vs GIRK cap)
-    critic_fs_weight: float = 8.0,          # place_fs->striosome_value inhibitory weight (tuned in the de-risk)
+    critic_fs_weight: float = 16.0,         # place_fs->striosome_value inhibitory weight (de-risk sweet spot: critic 126->8 Hz physiological, gap 3.75x graded)
     critic_fs_density: float = 0.6,         # place_fs->striosome_value density (pooled perisomatic FS shunt)
     place_fs_weight: float = 16.0,          # place->place_fs (FS-PING excitation; de-risk value)
     place_fs_density: float = 0.4,
@@ -3114,7 +3114,7 @@ def run_moving_goal_episode(
     place_sensors_to_place_density: float = 0.5,
     place_sensors_to_place_jitter: float = 0.6,
     enable_critic_fs_inhibition: bool = False,  # place_fs->striosome_value GABA_A: spiking critic rate-clamp (root fix vs GIRK cap masking)
-    critic_fs_weight: float = 8.0,
+    critic_fs_weight: float = 16.0,
     critic_fs_density: float = 0.6,
     place_fs_weight: float = 16.0,
     place_fs_density: float = 0.4,
@@ -8021,7 +8021,7 @@ def main():
                          "pool, which scales with the volley size, divisively clamps the MSN critic into "
                          "a physiological rate band across draws) instead of masking the over-clamp "
                          "downstream with the GIRK cap. Grading of V comes from the WEIGHTED plateau.")
-    ap.add_argument("--critic-fs-weight", type=float, default=8.0,
+    ap.add_argument("--critic-fs-weight", type=float, default=16.0,
                     help="place_fs -> striosome_value inhibitory weight (tune in the de-risk).")
     ap.add_argument("--critic-fs-density", type=float, default=0.6)
     ap.add_argument("--place-sensors-to-place-weight", type=float, default=28.0)
