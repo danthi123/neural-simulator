@@ -24,14 +24,18 @@ got here, see `research/findings/`.
   is done by simulated neurons (a spiking superior colliculus for orienting, a
   neural reward signal, and a spiking basal-ganglia decision and dopamine
   system), with no hand-coded shortcut in between.
-- **Navigation and conversation now share one network (roadmap step 2)** — each
-  brain is its own group of neurons on a single network. The conversational
-  behaviour works unchanged on the shared network (including its refusal to make
-  up answers), and navigation runs on it while the conversational neurons stay
-  exactly unchanged during navigation's live learning. See
-  [`ARCHITECTURE_nav_conv_merge.md`](ARCHITECTURE_nav_conv_merge.md). (A
-  six-seed confirmation that the navigation score is statistically unchanged is
-  the final check, currently running.)
+- **Navigation and conversation now share one network — roadmap step 2 COMPLETE** —
+  navigation, the sentence parser, the dialogue planner, and the fact-binding
+  composer all run as separate, non-overlapping groups of neurons on a single
+  network with one update loop, capability-equivalent to the separate brains.
+  The conversational behaviour works unchanged on the shared network (including
+  its refusal to make up answers), and navigation runs on it while the
+  conversational neurons stay **byte-identical** during navigation's live
+  learning (confirmed: the navigation score is identical with and without the
+  conversational half present). See
+  [`ARCHITECTURE_nav_conv_merge.md`](ARCHITECTURE_nav_conv_merge.md). The only
+  frontier left is step 3 — replacing the composer's fixed binding algebra with
+  a learned cortex (its own deferred arc).
 
 > The "At a glance" and detailed sections below predate the 2026-06 work and
 > describe the earlier multi-tag-retrieval era; the milestones above are the

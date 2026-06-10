@@ -693,16 +693,20 @@ Finding: `research/findings/2026-06-04-conversational-pipeline-consolidated-onto
 Audit: `research/findings/2026-06-04-conversational-pipeline-substrate-audit.md`.
 Plan: `docs/plans/2026-06-04-consolidate-conversational-pipeline-onto-core-sim-design.md`.
 
-### 🧠 NAVIGATION + CONVERSATIONAL merged onto ONE bridge — roadmap step 2 (2026-06-10)
+### 🧠✅ NAVIGATION + CONVERSATIONAL merged onto ONE bridge — roadmap step 2 DONE (2026-06-10)
+
+**STATUS: roadmap step 2 COMPLETE (2026-06-10).** The navigation cascade, the conversational parser, the dlPFC
+dialogue planner, AND the resonate-and-fire (RF) composer now run as **disjoint neuron-index slices on ONE
+`SimulationBridge` with one step loop**, capability-equivalent to the separate brains (STEP 2a + 2b both
+COMPLETE, all acceptance gates GREEN — see the per-step bullets below). The remaining frontier is step 3 (the
+true learned cortex), deferred to its own arc.
 
 After navigation was fully biologized (every cognitive computation between sensation and action is a
 validated neural mechanism — N1 spiking superior colliculus, N5 neural reward, N6/N8/N9 spiking selection +
-disinhibition + dopamine RPE, N2/N7 defensible perception), the next arc is **consolidating the navigation
-brain and the conversational brain onto ONE `SimulationBridge`** (the owner's "one brain" directive). The
-navigation cascade, the conversational parser, the dlPFC dialogue planner, and the resonate-and-fire (RF)
-composer become **disjoint neuron-index slices on one bridge with one step loop** — capability-equivalent to
-the separate brains. Builder: `research/runners/nav_conv_merged_bridge.py` (`build_merged_nav_conv_bridge` +
-`MergedNavConvAgent`). The whole arc was de-risked cheapest-first BEFORE any protected edit:
+disinhibition + dopamine RPE, N2/N7 defensible perception), the arc was **consolidating the navigation
+brain and the conversational brain onto ONE `SimulationBridge`** (the owner's "one brain" directive). Builder:
+`research/runners/nav_conv_merged_bridge.py` (`build_merged_nav_conv_bridge` + `MergedNavConvAgent`). The whole
+arc was de-risked cheapest-first BEFORE any protected edit:
 
 - **De-risk 5a (plasticity isolation) — PASS + one characterized gap.** The per-synapse plasticity gate
   (`cp_plasticity_rate_gain=0`) isolates weight UPDATES against the full navigation stressor (reward-STDP +
@@ -722,7 +726,7 @@ the separate brains. Builder: `research/runners/nav_conv_merged_bridge.py` (`bui
   slice == a standalone RF bridge exactly, the Izhikevich slice byte-isolated). **OWNER-APPROVED** for the
   strict (RF co-resident) merge. `tests/test_rf_neuron_mask_coexistence.py`. Findings:
   `2026-06-10-unification-5b-*` + `2026-06-10-unification-sliced-RF-ops-edit-byte-review.md`.
-- **STEP 2a (merged bridge, RF composer external) — VALIDATED.** The framework path IS a wrapper around
+- **STEP 2a (merged bridge, RF composer external) — COMPLETE.** The framework path IS a wrapper around
   `inject_explicit_wiring` (`bridge.py:1514-1526`), so the parser + dlPFC are appended as framework regions.
   The conversational gate (b) passes VERBATIM on the merged bridge — `tests/test_nav_conv_merged_agent.py`
   8/8 incl. the three `is None` no-confab assertions (`what_does`/`elaborate`/`describe`). The navigation gate
@@ -733,13 +737,26 @@ the separate brains. Builder: `research/runners/nav_conv_merged_bridge.py` (`bui
   smoke PASSES**: the merged bridge navigates AND the conversational populations stay byte-frozen in vivo
   under the live navigation reward-STDP + dopamine stressor. A `stdp_w_max=400` cheap-check confirmed the
   navigation score is byte-identical to 150 (the actor is ceiling-bound, not soft-bound — over-grows to 311 —
-  but inert because the spiking WTA readout saturates). The full 6-seed navigation gate (a) is the final
-  rigor. Design: `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md` +
-  `docs/plans/2026-06-10-nav-episode-integration-design.md`. Findings: `2026-06-10-nav-on-merged-smoke-PASS-*`,
-  `2026-06-10-nav-gate-stdp-wmax-400-cheap-check-PASS.md`, `2026-06-10-merge-parser-on-framework-slices-PASS-needs-OU.md`.
-- **STEP 2b (RF composer co-resident on the one bridge)** — via the owner-approved masked RF ops (an `rf`
-  region with no `cp_connections` out-edges; the composer driven through `rf_kick(neuron_mask=rf_mask)`). The
-  strict single-instance unification.
+  but inert because the spiking WTA readout saturates). **Navigation gate (a) = PASS (GREEN_INERT):** the
+  standalone-vs-merged score is BYTE-IDENTICAL (sum 2.0, per-phase `[0.496,0.504,0.496,0.504]`) at every completed
+  seed (3/6; the remaining 3 cancelled by owner authorization to free the GPU for 2b — byte-identity is exact +
+  mechanistically seed-independent for this inertness/null gate, so 3 byte-identical = conclusive, distinct from
+  the standing 6-seed rule for variable effects). Tool: `research/runners/nav_gate2a_aggregate.py` (9 tests).
+  Design: `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md` +
+  `docs/plans/2026-06-10-nav-episode-integration-design.md`. Findings:
+  `2026-06-10-step2a-nav-gate-a-PASS-3of6-byte-identical.md`, `2026-06-10-nav-on-merged-smoke-PASS-*`.
+- **STEP 2b (RF composer co-resident on the one bridge) — COMPLETE.** Via the owner-approved masked RF ops (an
+  `rf` region with no `cp_connections` out-edges; the composer driven through `rf_kick(neuron_mask=rf_mask)`). Opt-in
+  `MergedNavConvAgent(co_resident_composer=True)` (default off = STEP-2a byte-preserved); `MergedRFComposer`
+  overrides only `_resonate` to address the rf slice. All three acceptance gates GREEN: (1) CPU bit-exactness +
+  byte-isolation `tests/test_merged_rf_composer_coresident.py` 5/5 (== standalone composer to atol 1e-9; the
+  co-resident Izhikevich slice byte-identical across the op); (2) the full conversational matrix co-resident at
+  production D=128 `tests/test_nav_conv_step2b_coresident.py` 7/7 on GPU (incl. the `is None` no-confab moat + the
+  co-residence anti-cheat); (3) nav-not-regressed-with-rf = 2.0 byte-identical (Δ=0). NO sim/ edit (beyond the
+  default-off masked op). **⇒ ROADMAP STEP 2 (consolidate nav + conversation onto ONE bridge) DONE** — nav + parser
+  + dlPFC + composer all on one `SimulationBridge`, capability-equivalent. HONEST SCOPE: a consolidation of EXISTING
+  capabilities, not a new one; the composer's exact-inverse VSA binding stays the principled idealization (= step 3).
+  Finding: `2026-06-10-step2b-rf-composer-coresident-COMPLETE.md`.
 - **Step 3 (true cortex)** — replace the composer's exact-inverse VSA algebra idealization with a learned
   spiking-cortical binding. DEFERRED to its own later arc (the deepest/highest-variance open problem).
 
