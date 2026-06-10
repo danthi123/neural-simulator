@@ -693,6 +693,58 @@ Finding: `research/findings/2026-06-04-conversational-pipeline-consolidated-onto
 Audit: `research/findings/2026-06-04-conversational-pipeline-substrate-audit.md`.
 Plan: `docs/plans/2026-06-04-consolidate-conversational-pipeline-onto-core-sim-design.md`.
 
+### 🧠 NAVIGATION + CONVERSATIONAL merged onto ONE bridge — roadmap step 2 (2026-06-10)
+
+After navigation was fully biologized (every cognitive computation between sensation and action is a
+validated neural mechanism — N1 spiking superior colliculus, N5 neural reward, N6/N8/N9 spiking selection +
+disinhibition + dopamine RPE, N2/N7 defensible perception), the next arc is **consolidating the navigation
+brain and the conversational brain onto ONE `SimulationBridge`** (the owner's "one brain" directive). The
+navigation cascade, the conversational parser, the dlPFC dialogue planner, and the resonate-and-fire (RF)
+composer become **disjoint neuron-index slices on one bridge with one step loop** — capability-equivalent to
+the separate brains. Builder: `research/runners/nav_conv_merged_bridge.py` (`build_merged_nav_conv_bridge` +
+`MergedNavConvAgent`). The whole arc was de-risked cheapest-first BEFORE any protected edit:
+
+- **De-risk 5a (plasticity isolation) — PASS + one characterized gap.** The per-synapse plasticity gate
+  (`cp_plasticity_rate_gain=0`) isolates weight UPDATES against the full navigation stressor (reward-STDP +
+  the global dopamine `scope="all"` + Hebbian) — a frozen conversational slice stays byte-identical, controls
+  change, a conversational read is unchanged across a navigation burst. THE ONE GAP: the two global weight
+  CLIPS (`bridge.py:6200` Hebbian, `:6505` reward) are UNGATED, so a frozen weight OUTSIDE the active rule's
+  clip bounds is moved by the clip. **Mitigation:** raise `stdp_w_max` + `hebbian_max_weight` above the frozen
+  conversational real-valued weight (~300); the RF composer's COMPLEX binding weights (`cp_rf_w_re/im`) are
+  array-disjoint from `cp_connections` so they are IMMUNE. Findings:
+  `2026-06-10-unification-5a-plasticity-isolation-PASS-with-clip-caveat.md`.
+- **De-risk 5b (RF vs Izhikevich) — KILL confirmed → the minimal protected edit.** RF stores its complex
+  phasor in the same `v`/`u` arrays Izhikevich uses; one Izhikevich step destroys a phasor (|z| 1.0 → 16.3).
+  But the composer is stateless-per-op (re-kicks each op) and stores memory in complex synapses, so the
+  minimal edit is to **slice the RF ops** (not a core-step-loop dual-dispatch): `rf_kick(..., neuron_mask=)`
+  + `_rf_advance_one` mask all `v`/`u` writes to the RF slice. **Default `None` = byte-identical** (18/18
+  conversational tests pass verbatim incl. the no-confab moat); validated co-residence (an RF op on a masked
+  slice == a standalone RF bridge exactly, the Izhikevich slice byte-isolated). **OWNER-APPROVED** for the
+  strict (RF co-resident) merge. `tests/test_rf_neuron_mask_coexistence.py`. Findings:
+  `2026-06-10-unification-5b-*` + `2026-06-10-unification-sliced-RF-ops-edit-byte-review.md`.
+- **STEP 2a (merged bridge, RF composer external) — VALIDATED.** The framework path IS a wrapper around
+  `inject_explicit_wiring` (`bridge.py:1514-1526`), so the parser + dlPFC are appended as framework regions.
+  The conversational gate (b) passes VERBATIM on the merged bridge — `tests/test_nav_conv_merged_agent.py`
+  8/8 incl. the three `is None` no-confab assertions (`what_does`/`elaborate`/`describe`). The navigation gate
+  (a) uses a HYBRID `run_moving_goal_episode` integration (4 additive no-op-default params + an index-based
+  `finalize_conv_for_nav_gate` hook that runs AFTER the V1/SC post-init `set_pathway_weights(add_missing=True)`
+  CSR rebuild — which re-sorts the data + stales gate-index maps + the Hebbian decay would erode the fixed
+  perception weights; the hook handles all three by masking by index, not gate name). The **nav-on-merged
+  smoke PASSES**: the merged bridge navigates AND the conversational populations stay byte-frozen in vivo
+  under the live navigation reward-STDP + dopamine stressor. A `stdp_w_max=400` cheap-check confirmed the
+  navigation score is byte-identical to 150 (the actor is ceiling-bound, not soft-bound — over-grows to 311 —
+  but inert because the spiking WTA readout saturates). The full 6-seed navigation gate (a) is the final
+  rigor. Design: `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md` +
+  `docs/plans/2026-06-10-nav-episode-integration-design.md`. Findings: `2026-06-10-nav-on-merged-smoke-PASS-*`,
+  `2026-06-10-nav-gate-stdp-wmax-400-cheap-check-PASS.md`, `2026-06-10-merge-parser-on-framework-slices-PASS-needs-OU.md`.
+- **STEP 2b (RF composer co-resident on the one bridge)** — via the owner-approved masked RF ops (an `rf`
+  region with no `cp_connections` out-edges; the composer driven through `rf_kick(neuron_mask=rf_mask)`). The
+  strict single-instance unification.
+- **Step 3 (true cortex)** — replace the composer's exact-inverse VSA algebra idealization with a learned
+  spiking-cortical binding. DEFERRED to its own later arc (the deepest/highest-variance open problem).
+
+`SIM_BACKEND=cupy` (GPU) is required for the merged-bridge runs (numpy is a tiny-smoke / CI path only).
+
 ### Path 3 LLM-callable memory (2026-05-11): BridgeMemory API
 
 **Status:** Phase 3.1.5 SHIPPED 2026-05-11. The `BridgeMemory` class

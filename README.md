@@ -378,6 +378,18 @@ work has focused on making every remaining shortcut more biologically
 faithful — for example, rebuilding the navigation action-selection
 pathway so the decision is genuinely made in spikes.
 
+Navigation is now **fully biologized** (every cognitive step between
+sensation and action is a validated neural mechanism — a spiking
+superior colliculus for orienting, a neural reward, spiking decision /
+disinhibition / dopamine), and the current arc is **consolidating the
+navigation brain and the conversational brain onto ONE bridge** — both
+running as disjoint neuron-index slices on a single substrate. The
+conversational capabilities pass verbatim on the merged bridge
+(including the no-confabulation moat), and the navigation episode runs
+on it with the conversational populations provably frozen *in vivo*
+under the live navigation learning. See
+[`docs/ARCHITECTURE_nav_conv_merge.md`](docs/ARCHITECTURE_nav_conv_merge.md).
+
 The project keeps a detailed, dated record. Each research session writes a
 findings document (including negative results — they are real findings),
 and milestones are summarized in the changelog.
