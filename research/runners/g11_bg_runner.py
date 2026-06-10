@@ -2522,41 +2522,26 @@ def build_bg_brain_regions(
                 density=0.8, weight_mean=2.0, weight_jitter=0.1, plastic=False,
             ))
 
-            # N5 Option C: the neural approach-reward (slow-channel temporal-difference of the
-            # SC bump's rostral-ward motion). sc_rostral (pools the sc_map CENTRE, wired
-            # post-init) -> sc_rostral_slow (nmda_slow lagged copy); approach_n5 = sc_rostral
-            # (AMPA "now") - approach_slow_inh (gaba_b, carrying the lagged copy) -> fires when
-            # the bump moves toward centre = the goal got closer -> drives reward_us, replacing
-            # the host sign(delta ecc). De-risked: sc_approach_td_probe.py.
+            # N5: the neural reward = the SC bump's PROXIMITY (goal-salience) signal. sc_rostral
+            # pools the sc_map CENTRE (wired post-init, broad Gaussian) so it fires graded with
+            # how central/close the goal is -> drives reward_us, replacing the host sign(delta ecc).
+            # The temporal-difference is left to the dopamine RPE (delta = r - V, the N9 critic) --
+            # the correct + more-biological actor-critic factorization. VALIDATED by the proper
+            # dopamine-RPE test (sc_n5_rpe_probe.py: neural reward -> burst on close, monotone
+            # corr -0.99, omission dip; lesion+omission anti-cheats confirm load-bearing). The
+            # earlier slow-channel temporal-difference circuit (sc_rostral_slow/approach_n5) was
+            # dropped: a compound nmda_slow+gaba_b lag (~2.5 nav-steps) + a global-gaba_b-tau
+            # collision with the N9 critic. See 2026-06-10-N5-proper-reward-RPE-test-design.md.
             if enable_spiking_sc_approach:
-                for _nm in ("sc_rostral", "sc_rostral_slow", "approach_n5"):
-                    regions.append(BrainRegion(
-                        name=_nm, n_neurons=24, exc_fraction=1.0, internal_density=0.0,
-                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
-                        plastic_internal=False,
-                        izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name))
                 regions.append(BrainRegion(
-                    name="approach_slow_inh", n_neurons=24, exc_fraction=0.0,
-                    internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
-                    weight_jitter=0.0, plastic_internal=False,
-                    izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
-                pathways += [
-                    RegionPathway(from_region="sc_rostral", to_region="sc_rostral_slow",
-                                  density=0.6, weight_mean=8.0, weight_jitter=0.1,
-                                  plastic=False, exc_receptor="nmda_slow"),     # lagged trace
-                    RegionPathway(from_region="sc_rostral", to_region="approach_n5",
-                                  density=0.6, weight_mean=14.0, weight_jitter=0.1,
-                                  plastic=False),                               # the "now" term
-                    RegionPathway(from_region="sc_rostral_slow", to_region="approach_slow_inh",
-                                  density=0.6, weight_mean=12.0, weight_jitter=0.1, plastic=False),
-                    RegionPathway(from_region="approach_slow_inh", to_region="approach_n5",
-                                  density=0.8, weight_mean=10.0, weight_jitter=0.1,
-                                  plastic=False, receptor="gaba_b"),            # minus lagged
-                ]
-                if spiking_reward_us:   # approach_n5 -> reward_us = the neural reward
+                    name="sc_rostral", n_neurons=24, exc_fraction=1.0, internal_density=0.0,
+                    exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
+                    plastic_internal=False,
+                    izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name))
+                if spiking_reward_us:   # sc_rostral (proximity) -> reward_us = the neural reward r
                     pathways.append(RegionPathway(
-                        from_region="approach_n5", to_region="reward_us",
-                        density=0.6, weight_mean=12.0, weight_jitter=0.1, plastic=False))
+                        from_region="sc_rostral", to_region="reward_us",
+                        density=0.6, weight_mean=14.0, weight_jitter=0.1, plastic=False))
 
         # retina → V1_simple. Plastic so STDP can refine weights from
         # whatever Gabor init we apply post-build (or from random init in
@@ -4135,12 +4120,9 @@ def run_moving_goal_episode(
         # Brain-based GIRK saturation cap (finite channels) so a hot critic can't fully clamp the
         # SNc -> graded online δ at any critic rate (the nav-A/B honest-negative fix). 0 = no cap.
         cfg.gabab_conductance_max = float(critic_gabab_max)
-    if enable_spiking_sc_approach:
-        # N5 Option C needs the slow channels: gaba_b (the subtractive 'minus lagged' term)
-        # + nmda_slow (the lagged rostral trace). Per-pathway routed (only the N5 pathways
-        # tagged receptor='gaba_b'/exc_receptor='nmda_slow' use them) so this is additive.
-        cfg.enable_gabab = True
-        cfg.enable_nmda_recurrent = True
+    # (N5 now uses a plain proximity reward sc_rostral->reward_us; no slow channels needed --
+    #  the temporal-difference is the dopamine RPE's job. enable_gabab is set by the neural
+    #  critic above when present.)
     if _neural_place_selforg:
         # N9 Route-D coincidence read-out (the landed b980070a dendritic plateau): the FS-PING
         # gamma volley on `place` is read by the place->striosome_value coincidence_detector so the
@@ -8000,11 +7982,12 @@ def main():
                          "sc_orienting_cardinal_from_image reflex. Requires --enable-visual-cortex. "
                          "De-risked: 2026-06-10-N1-N5-spiking-SC-derisk-RESULT.md (N1 8/8, lesion-confirmed).")
     ap.add_argument("--enable-spiking-sc-approach", action="store_true",
-                    help="N5 Option C (neural approach-reward; 2026-06-10). A slow-channel "
-                         "temporal-difference of the SC bump's rostral-ward motion "
-                         "(sc_rostral - sc_rostral_slow via gaba_b -> approach_n5) drives reward_us, "
-                         "replacing the host sign(delta eccentricity) reward. Requires "
-                         "--enable-spiking-sc + --spiking-reward-us. De-risked: sc_approach_td_probe.py.")
+                    help="N5 neural reward (2026-06-10). The SC bump's PROXIMITY/goal-salience "
+                         "signal (sc_rostral, pooling the sc_map centre) drives reward_us, replacing "
+                         "the host sign(delta eccentricity); the temporal-difference is left to the "
+                         "dopamine RPE (delta=r-V, N9). Requires --enable-spiking-sc + --spiking-reward-us. "
+                         "VALIDATED: sc_n5_rpe_probe.py (neural reward -> graded dopamine RPE, "
+                         "lesion+omission confirmed).")
     ap.add_argument("--visual-cortex-action-warmup-steps", type=int, default=600,
                     help="Cluster K v2: steps before the IT -> cortex_X "
                          "plasticity gate opens. Default 600. 0 = open from "
