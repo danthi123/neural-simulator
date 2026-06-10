@@ -762,12 +762,87 @@ def microcheck(seed: int = 42, R: int = PARSER_R, nav_stub: int = 50, ou: float 
     return passed
 
 
+# ── STEP 2a nav gate (a): run the nav episode on the MERGED bridge (single-seed smoke) ───────────────────────
+def nav_on_merged_smoke(seed=42, n_steps=400, grid_size=8, vocab=None,
+                        out="research/findings/raw/nav_gate_2a/nav_on_merged_smoke.json"):
+    """Run the navigation episode on the MERGED nav+conv bridge (via the hybrid run_moving_goal_episode hook)
+    and assert: (A1) nav + conv regions co-reside on ONE bridge; (A2) the conversational (parser) weights stay
+    BYTE-IDENTICAL across the episode (frozen under the LIVE nav reward-STDP + dopamine stressor — the 5a
+    isolation, now in vivo) + the gains are still 0; (A3) the parser still parses on the merged bridge after
+    the episode. enable_visual_cortex=True so the Gabor post-init `set_pathway_weights(add_missing=True)` CSR
+    rebuild runs (exercising the index-based finalize against the rebuilt CSR). NOT the full 6-seed gate."""
+    import os
+    import numpy as np
+    from sim.backend import to_host
+    from research.runners.g11_bg_runner import run_moving_goal_episode
+
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    extra_regions, extra_pathways = conv_extra_regions_pathways(vocab)
+    box = {}
+
+    def hook(bridge):
+        h = finalize_conv_for_nav_gate(bridge, seed=seed)
+        box["bridge"] = bridge
+        box["parser_mask"] = h["parser_mask"]
+        box["conj_arr"] = h["conj_arr"]
+        box["role_arr"] = h["role_arr"]
+        box["pre_nnz"] = int(bridge.cp_connections.nnz)
+        box["pre_conv"] = to_host(bridge.cp_connections.data[h["parser_mask"]]).copy()
+        box["n_conv"] = int(h["parser_mask"].sum())
+
+    print(f"[nav-on-merged-smoke] seed={seed} grid={grid_size} n_steps={n_steps} (enable_visual_cortex => Gabor rebuild)")
+    run_moving_goal_episode(
+        out_path=out, seed=seed, n_steps=n_steps, grid_size=grid_size,
+        enable_visual_cortex=True, visual_cortex_action_warmup_steps=min(100, max(1, n_steps // 2)),
+        stdp_w_max_override=400.0,
+        extra_regions=extra_regions, extra_pathways=extra_pathways,
+        build_with_ou=True, prebuilt_post_init_hook=hook,
+    )
+
+    bridge = box["bridge"]
+    rm = bridge.region_manager
+    region_names = rm.region_indices_dict()
+    print(f"[nav-on-merged-smoke] merged bridge: {len(bridge.core_config.brain_regions)} regions, "
+          f"{int(bridge.core_config.num_neurons)} neurons, {box['n_conv']} frozen parser synapses")
+
+    a1 = all(r in region_names for r in ("cortex_N", "parse_conj", "parse_role", "cortex_ctx", "dlpfc_wm"))
+    nnz_same = int(bridge.cp_connections.nnz) == box["pre_nnz"]
+    if nnz_same:
+        post_conv = to_host(bridge.cp_connections.data[box["parser_mask"]])
+        post_gain = to_host(bridge.cp_plasticity_rate_gain[box["parser_mask"]])
+        a2_weights = bool(np.array_equal(box["pre_conv"], post_conv))
+        a2_gains = bool((post_gain == 0).all())
+    else:
+        a2_weights = a2_gains = False  # structural plasticity changed the synapse set (should be OFF in nav)
+    cc = bridge.core_config
+    prev_ou, prev_std = cc.enable_ou_process, cc.ou_std_current_pA
+    cc.enable_ou_process = True
+    cc.ou_std_current_pA = 20.0
+    try:
+        parse = parse_on_slices(bridge, box["conj_arr"], box["role_arr"], ["dog", "go", "north"], "active")
+    finally:
+        cc.enable_ou_process, cc.ou_std_current_pA = prev_ou, prev_std
+    a3 = parse.get("agent") == "dog"
+
+    passed = a1 and a2_weights and a2_gains and a3
+    print(f"[nav-on-merged-smoke] (A1) nav+conv regions co-reside : {a1}")
+    print(f"[nav-on-merged-smoke] (A2) parser weights frozen      : {a2_weights}  gains==0: {a2_gains}  (nnz_same={nnz_same})")
+    print(f"[nav-on-merged-smoke] (A3) parser parses post-episode : {a3}  (active 'dog go north' -> {parse})")
+    print(f"\n[nav-on-merged-smoke] {'PASS' if passed else 'FAIL'} - the merged bridge navigates AND the "
+          f"conversational populations stay byte-frozen under the live nav reward-STDP stressor.")
+    return passed
+
+
 def main():
     ap = argparse.ArgumentParser(description="Nav+Conv merge builder (parser microcheck + construction smoke)")
     ap.add_argument("--microcheck", action="store_true",
                     help="parser-only framework bridge: validate the parser ports onto framework slices (risk 4.1)")
     ap.add_argument("--construction-smoke", action="store_true",
                     help="build the FULL merged nav+parser+dlPFC bridge and assert it is structurally correct")
+    ap.add_argument("--nav-on-merged-smoke", action="store_true",
+                    help="STEP 2a gate (a): run the nav episode on the merged bridge; assert nav navigates + conv frozen")
+    ap.add_argument("--n-steps", type=int, default=400, help="nav-on-merged-smoke episode length")
+    ap.add_argument("--grid-size", type=int, default=8, help="nav-on-merged-smoke grid size")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--n-cortex", type=int, default=100, help="build_bg_brain_regions n_cortex (construction smoke)")
     ap.add_argument("--nav-stub", type=int, default=50)
@@ -777,6 +852,9 @@ def main():
     ap.add_argument("--n-epochs", type=int, default=30)
     ap.add_argument("--train-steps", type=int, default=120)
     args = ap.parse_args()
+    if args.nav_on_merged_smoke:
+        ok = nav_on_merged_smoke(seed=args.seed, n_steps=args.n_steps, grid_size=args.grid_size)
+        raise SystemExit(0 if ok else 1)
     if args.construction_smoke:
         ok = construction_smoke(seed=args.seed, n_cortex=args.n_cortex)
         raise SystemExit(0 if ok else 1)
