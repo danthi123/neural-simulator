@@ -93,14 +93,29 @@ def _run_path(raw_dir: str, seed: int, arm: str) -> str:
     return os.path.join(raw_dir, f"gate6_{arm}_seed{seed}.json")
 
 
-def _load_score(raw_dir: str, seed: int, arm: str) -> Optional[float]:
-    """Load one run's score, or ``None`` if the file is not present yet."""
+def _safe_load(raw_dir: str, seed: int, arm: str):
+    """Load one run's score defensively.
+
+    Returns ``(status, value)``:
+      - ``("missing", None)``  the file is not present yet
+      - ``("ok", float)``      the file scored cleanly
+      - ``("error", message)`` the file is present but unreadable
+        (malformed JSON, or no usable ``phase_stats``)
+
+    A present-but-unreadable file is reported, not silently treated as
+    missing or as a zero score -- the verdict tool declares step 2a
+    complete, so it must refuse to render a verdict over a file it could
+    not actually read.
+    """
     path = _run_path(raw_dir, seed, arm)
     if not os.path.isfile(path):
-        return None
-    with open(path) as f:
-        data = json.load(f)
-    return score_from_data(data)
+        return ("missing", None)
+    try:
+        with open(path) as f:
+            data = json.load(f)
+        return ("ok", score_from_data(data))
+    except Exception as e:  # malformed JSON, missing phase_stats, etc.
+        return ("error", f"{type(e).__name__}: {e}")
 
 
 def aggregate_gate2a(
@@ -117,18 +132,25 @@ def aggregate_gate2a(
     seeds = list(seeds)
     rows: List[Dict] = []
     missing: List[Dict] = []
+    errors: List[Dict] = []
     standalone_scores: List[float] = []
     merged_scores: List[float] = []
     deltas: List[float] = []
 
     for seed in seeds:
-        s = _load_score(raw_dir, seed, "standalone")
-        m = _load_score(raw_dir, seed, "merged")
-        if s is None:
-            missing.append({"seed": seed, "arm": "standalone"})
-        if m is None:
-            missing.append({"seed": seed, "arm": "merged"})
-        delta = (m - s) if (s is not None and m is not None) else None
+        s_status, s = _safe_load(raw_dir, seed, "standalone")
+        m_status, m = _safe_load(raw_dir, seed, "merged")
+        for arm, status, val in (
+            ("standalone", s_status, s),
+            ("merged", m_status, m),
+        ):
+            if status == "missing":
+                missing.append({"seed": seed, "arm": arm})
+            elif status == "error":
+                errors.append({"seed": seed, "arm": arm, "message": val})
+        s_ok = s_status == "ok"
+        m_ok = m_status == "ok"
+        delta = (m - s) if (s_ok and m_ok) else None
         if delta is not None:
             standalone_scores.append(s)
             merged_scores.append(m)
@@ -136,8 +158,8 @@ def aggregate_gate2a(
         rows.append(
             {
                 "seed": seed,
-                "standalone": s,
-                "merged": m,
+                "standalone": s if s_ok else None,
+                "merged": m if m_ok else None,
                 "delta": delta,
                 "complete": delta is not None,
             }
@@ -156,6 +178,8 @@ def aggregate_gate2a(
         "seeds": seeds,
         "rows": rows,
         "missing": missing,
+        "errors": errors,
+        "n_error": len(errors),
         "n_complete": len(deltas),
         "n_expected": len(seeds),
         "standalone_mean": _mean(standalone_scores),
@@ -180,13 +204,20 @@ def verdict(
     the merged bridge navigate the same as the standalone one?
     """
     if agg["n_complete"] < agg["n_expected"]:
-        return {
-            "label": "INCOMPLETE",
-            "reason": (
-                f"{agg['n_complete']}/{agg['n_expected']} seeds complete; "
-                f"{len(agg['missing'])} run file(s) still missing"
-            ),
-        }
+        reason = (
+            f"{agg['n_complete']}/{agg['n_expected']} seeds complete; "
+            f"{len(agg['missing'])} run file(s) still missing"
+        )
+        if agg.get("n_error"):
+            bad = ", ".join(
+                f"seed{e['seed']}/{e['arm']}" for e in agg["errors"]
+            )
+            reason += (
+                f"; {agg['n_error']} present-but-unreadable file(s) "
+                f"[{bad}] -- refusing a verdict over data that could not "
+                "be read"
+            )
+        return {"label": "INCOMPLETE", "reason": reason}
 
     max_abs = agg["max_abs_delta"]
     mean_d = agg["mean_delta"]
@@ -246,6 +277,11 @@ def format_report(agg: Dict, v: Dict) -> str:
         lines.append(f"max |delta|           : {agg['max_abs_delta']:.4f}")
         lines.append(f"mean delta (m-s)      : {agg['mean_delta']:+.4f}")
     lines.append(f"complete seeds        : {agg['n_complete']}/{agg['n_expected']}")
+    if agg.get("n_error"):
+        for e in agg["errors"]:
+            lines.append(
+                f"  ! unreadable: seed{e['seed']}/{e['arm']}: {e['message']}"
+            )
     lines.append("=" * 64)
     lines.append(f"VERDICT: {v['label']}")
     lines.append(f"  {v['reason']}")

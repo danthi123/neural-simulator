@@ -113,6 +113,53 @@ def test_aggregate_regression_when_merged_worse_beyond_noise(tmp_path):
     assert v["label"] == "REGRESS", v
 
 
+def test_aggregate_corrupt_file_is_reported_not_crashed(tmp_path):
+    raw = str(tmp_path)
+    # 5 clean seeds, both arms.
+    for seed in range(42, 47):
+        _write_run(raw, seed, "standalone", [0.5, 0.5, 0.5, 0.5])
+        _write_run(raw, seed, "merged", [0.5, 0.5, 0.5, 0.5])
+    # seed 47 standalone present-but-malformed (truncated JSON); merged ok.
+    with open(os.path.join(raw, "gate6_standalone_seed47.json"), "w") as f:
+        f.write("{ this is not valid json")
+    _write_run(raw, 47, "merged", [0.5, 0.5, 0.5, 0.5])
+
+    # Must NOT raise.
+    agg = aggregate_gate2a(raw, seeds=range(42, 48))
+
+    assert agg["n_error"] == 1
+    assert agg["errors"][0]["seed"] == 47
+    assert agg["errors"][0]["arm"] == "standalone"
+    # The bad arm makes seed 47 not complete, so we do not have all 6.
+    assert agg["n_complete"] == 5
+    v = verdict(agg)
+    # A present-but-unreadable file must block a clean verdict, not be
+    # silently treated as missing or zero.
+    assert v["label"] == "INCOMPLETE", v
+    # The reason must name the offending file so it can be investigated.
+    assert "unreadable" in v["reason"].lower()
+    assert "seed47" in v["reason"]
+
+
+def test_aggregate_present_file_missing_phase_stats_is_an_error(tmp_path):
+    raw = str(tmp_path)
+    for seed in range(42, 47):
+        _write_run(raw, seed, "standalone", [0.5, 0.5, 0.5, 0.5])
+        _write_run(raw, seed, "merged", [0.5, 0.5, 0.5, 0.5])
+    # seed 47 merged present but has no phase_stats (a run that died after
+    # opening the file): valid JSON, unusable content.
+    with open(os.path.join(raw, "gate6_standalone_seed47.json"), "w") as f:
+        json.dump(_phase_stats([0.5, 0.5, 0.5, 0.5]), f)
+    with open(os.path.join(raw, "gate6_merged_seed47.json"), "w") as f:
+        json.dump({"phase_stats": []}, f)
+
+    agg = aggregate_gate2a(raw, seeds=range(42, 48))
+
+    assert agg["n_error"] == 1
+    assert agg["errors"][0]["arm"] == "merged"
+    assert verdict(agg)["label"] == "INCOMPLETE"
+
+
 def test_aggregate_small_delta_within_noise_is_green_noise(tmp_path):
     raw = str(tmp_path)
     for seed in range(42, 48):
