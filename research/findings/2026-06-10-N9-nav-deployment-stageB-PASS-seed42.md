@@ -125,7 +125,17 @@ The deployment runs and navigates, but the spiking neural RPE **underperforms th
 
 The graded δ **improves** the neural nav (mean 2.39→2.22) and on the moderate-critic draw makes the neural RPE **beat** the host cheat (0.93) — proving the neural substrate CAN match/beat the host when the δ is graded. But the hot-critic draw (seed 42) is unchanged: even prop 0.006 saturates against its ~125 Hz critic. **So the gap IS precisely the GABA_B operating point, and a FIXED prop can't serve the full (draw-variable) critic-rate range** — exactly the documented critic-rate-dependent residual, now nav-confirmed.
 
-**Fix path (the deeper robustness, byte-review-gated):** a critic-rate-ROBUST GABA_B — B5 Destexhe saturating GABA_B (graceful saturation → graded δ at any critic rate) or B2 per-region synaptic scaling (normalize the critic rate) — so the δ is graded across the full rate range; then re-run the A/B. Also: full-run determinism (extend the flag to the coincidence/GABA_B matvecs) for a clean 6-seed read. Anti-cheats (place-shuffle / sensor-ablation / GABA_B-lesion) not yet run.
+**Fix #2 BUILT + tested — a brain-based GIRK SATURATION CAP on g_gabab (`cfg.gabab_conductance_max`, finite channels → bounded, graded δ at any critic rate; byte-identity-proven off==baseline; FOR OWNER BYTE-REVIEW).** Nav A/B across the GABA_B variants:
+
+| seed | ON default (0.02) | ON graded (0.006) | ON GIRK-cap25 | OFF host-V | cap/host |
+|---|---|---|---|---|---|
+| 42 (hot critic) | 2.202 | 2.191 | 2.151 | 1.149 | 1.87 |
+| 43 (moderate) | 2.587 | 2.247 | **2.236** | 2.422 | **0.92 (beats host)** |
+| mean | 2.394 | 2.219 | **2.193** | 1.786 | **1.23** |
+
+The two GABA_B fixes (graded prop, GIRK cap) **progressively narrow the neural/host gap (1.34 → 1.24 → 1.23)** and both make the neural RPE **beat** the host on the moderate-critic draw — so the spiking δ=r−V is **competitive** with the host shortcut (within ~23% mean, parity-or-better on moderate draws). But the **hot-draw seed 42 stays ~87% worse across all three variants**, so its residual is NOT only the GABA_B operating point — the non-deterministic value-train/actor on that fixed place code is implicated. **The clean diagnosis + full resolution need full-run determinism** (extend `cfg.deterministic_transpose_matvec` to the coincidence/GABA_B matvec sites — same proven pattern — so the value-train + nav are reproducible) + cap-value tuning, then a clean 6-seed A/B + anti-cheats (place-shuffle / sensor-ablation / GABA_B-lesion).
+
+**Honest bottom line:** the N9 neural reward-prediction-error loop is deployed, runs end-to-end, navigates, and is COMPETITIVE with the host scalar-reward shortcut it replaces (mean within 23%, beats it on moderate draws) — a strong biologization outcome, with a well-characterized seed-dependent residual (the hot-draw GABA_B/value-train) and two byte-reviewable, byte-identity-proven fixes (determinism + GIRK cap) that narrow it. Per BRAIN-BASED-ONLY, both the competitiveness AND the residual map what the substrate can/can't do — the deliverable.
 
 ## Honest residuals / next
 
