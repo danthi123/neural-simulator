@@ -271,9 +271,35 @@ def install_spiking_sc_wiring(bridge, visual_image_size=32, w_ret_sc=80.0,
             n_installed += bridge.set_pathway_weights(f"sc_map_to_cortex_{a}",
                 np.asarray(pre, np.int64), np.asarray(post, np.int64),
                 np.asarray(w, np.float32), add_missing=True)
+    # N5 Option C: sc_map -> sc_rostral foveal-CENTRE pooling (broad Gaussian) so sc_rostral
+    # fires graded with how central the bump is (= how small the goal's eccentricity is). The
+    # temporal-difference (sc_rostral - lagged) downstream = "the goal got closer". Only when
+    # the N5 approach circuit is present.
+    try:
+        ros_list = list(rm.indices("sc_rostral"))
+    except Exception:
+        ros_list = []
+    if ros_list:
+        ros0 = int(ros_list[0]); n_ros = len(ros_list)
+        sig = 5.0
+        pre, post, w = [], [], []
+        for sy in range(SCN):
+            for sx in range(SCN):
+                r2 = (sx - sc_center) ** 2 + (sy - sc_center) ** 2
+                wv = float(np.exp(-r2 / (2 * sig * sig)))
+                if wv <= 0.02:
+                    continue
+                for d in range(n_ros):
+                    pre.append(sc0 + sc_idx(sy, sx)); post.append(ros0 + d)
+                    w.append(20.0 * wv)         # strong: the rostral readout must fire robustly
+        if pre:
+            n_installed += bridge.set_pathway_weights("sc_map_to_sc_rostral",
+                np.asarray(pre, np.int64), np.asarray(post, np.int64),
+                np.asarray(w, np.float32), add_missing=True)
     if verbose:
         print(f"[g11] spiking SC: installed {n_installed} synapses "
-              f"(retina->sc_map {SCN}x{SCN} + recurrent + sc_map->cortex_NESW)", flush=True)
+              f"(retina->sc_map {SCN}x{SCN} + recurrent + sc_map->cortex_NESW"
+              f"{' + sc_map->sc_rostral (N5)' if ros_list else ''})", flush=True)
     return n_installed
 
 
@@ -679,6 +705,11 @@ def build_bg_brain_regions(
     # enable_visual_cortex (uses the retina). De-risked: 2026-06-10-N1-N5-spiking-SC-derisk-RESULT.md.
     enable_spiking_sc: bool = False,
     n_spiking_sc_fs: int = 12,
+    # N5 Option C (2026-06-10): the neural approach-reward. A slow-channel temporal-difference
+    # of the SC bump's rostral-ward motion (sc_rostral - sc_rostral_slow via gaba_b) -> approach
+    # -> reward_us, replacing the host sign(delta eccentricity). Requires enable_spiking_sc +
+    # spiking_reward_us. De-risked: sc_approach_td_probe.py.
+    enable_spiking_sc_approach: bool = False,
     # Text I/O (2026-05-01)
     enable_text_io: bool = False,
     text_n_input_neurons: int = 256,
@@ -2491,6 +2522,42 @@ def build_bg_brain_regions(
                 density=0.8, weight_mean=2.0, weight_jitter=0.1, plastic=False,
             ))
 
+            # N5 Option C: the neural approach-reward (slow-channel temporal-difference of the
+            # SC bump's rostral-ward motion). sc_rostral (pools the sc_map CENTRE, wired
+            # post-init) -> sc_rostral_slow (nmda_slow lagged copy); approach_n5 = sc_rostral
+            # (AMPA "now") - approach_slow_inh (gaba_b, carrying the lagged copy) -> fires when
+            # the bump moves toward centre = the goal got closer -> drives reward_us, replacing
+            # the host sign(delta ecc). De-risked: sc_approach_td_probe.py.
+            if enable_spiking_sc_approach:
+                for _nm in ("sc_rostral", "sc_rostral_slow", "approach_n5"):
+                    regions.append(BrainRegion(
+                        name=_nm, n_neurons=24, exc_fraction=1.0, internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
+                        plastic_internal=False,
+                        izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name))
+                regions.append(BrainRegion(
+                    name="approach_slow_inh", n_neurons=24, exc_fraction=0.0,
+                    internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                    weight_jitter=0.0, plastic_internal=False,
+                    izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
+                pathways += [
+                    RegionPathway(from_region="sc_rostral", to_region="sc_rostral_slow",
+                                  density=0.6, weight_mean=8.0, weight_jitter=0.1,
+                                  plastic=False, exc_receptor="nmda_slow"),     # lagged trace
+                    RegionPathway(from_region="sc_rostral", to_region="approach_n5",
+                                  density=0.6, weight_mean=14.0, weight_jitter=0.1,
+                                  plastic=False),                               # the "now" term
+                    RegionPathway(from_region="sc_rostral_slow", to_region="approach_slow_inh",
+                                  density=0.6, weight_mean=12.0, weight_jitter=0.1, plastic=False),
+                    RegionPathway(from_region="approach_slow_inh", to_region="approach_n5",
+                                  density=0.8, weight_mean=10.0, weight_jitter=0.1,
+                                  plastic=False, receptor="gaba_b"),            # minus lagged
+                ]
+                if spiking_reward_us:   # approach_n5 -> reward_us = the neural reward
+                    pathways.append(RegionPathway(
+                        from_region="approach_n5", to_region="reward_us",
+                        density=0.6, weight_mean=12.0, weight_jitter=0.1, plastic=False))
+
         # retina → V1_simple. Plastic so STDP can refine weights from
         # whatever Gabor init we apply post-build (or from random init in
         # v1 minimal mode). Tagged so the runner can freeze it after a
@@ -3437,6 +3504,7 @@ def run_moving_goal_episode(
     # Spiking superior colliculus (N1 orienting; 2026-06-10)
     enable_spiking_sc: bool = False,
     n_spiking_sc_fs: int = 12,
+    enable_spiking_sc_approach: bool = False,   # N5 Option C (neural approach-reward)
     # Cluster K v2 (2026-05-01)
     visual_receptive_field_radius: int = 4,
     visual_v1_weight_scale: float = 10.0,
@@ -3832,6 +3900,7 @@ def run_moving_goal_episode(
         enable_visual_cortex=enable_visual_cortex,
         enable_spiking_sc=enable_spiking_sc,
         n_spiking_sc_fs=n_spiking_sc_fs,
+        enable_spiking_sc_approach=enable_spiking_sc_approach,
         # Spiking-SNc actor-critic Stage B: the neural value critic (2026-06-08).
         enable_neural_critic=enable_neural_critic,
         spiking_reward_us=spiking_reward_us,
@@ -4066,6 +4135,12 @@ def run_moving_goal_episode(
         # Brain-based GIRK saturation cap (finite channels) so a hot critic can't fully clamp the
         # SNc -> graded online δ at any critic rate (the nav-A/B honest-negative fix). 0 = no cap.
         cfg.gabab_conductance_max = float(critic_gabab_max)
+    if enable_spiking_sc_approach:
+        # N5 Option C needs the slow channels: gaba_b (the subtractive 'minus lagged' term)
+        # + nmda_slow (the lagged rostral trace). Per-pathway routed (only the N5 pathways
+        # tagged receptor='gaba_b'/exc_receptor='nmda_slow' use them) so this is additive.
+        cfg.enable_gabab = True
+        cfg.enable_nmda_recurrent = True
     if _neural_place_selforg:
         # N9 Route-D coincidence read-out (the landed b980070a dendritic plateau): the FS-PING
         # gamma volley on `place` is read by the place->striosome_value coincidence_detector so the
@@ -7014,8 +7089,16 @@ def run_moving_goal_episode(
                         # the reward-hold -> the SNc bursts SYNAPTICALLY; the striosome GABA_B then
                         # subtracts V at the membrane. The whole δ=r−V is now neural (r = reward_us
                         # excitation, V = critic GABA_B). _I_snc carries ONLY tonic.
-                        bridge.cp_external_input_current[region_indices_cp["reward_us"]] = (
-                            cp.float32(float(reward_us_drive_pa) * max(0.0, float(reward))))
+                        if enable_spiking_sc_approach and "approach_n5" in region_indices_cp:
+                            # N5 Option C: reward_us is driven SYNAPTICALLY by the approach_n5 pool
+                            # (the neural temporal-difference of the SC bump = "the goal got closer"),
+                            # NOT the host sign(delta ecc). Zero the host write; the
+                            # approach_n5 -> reward_us pathway carries the reward (the whole r term
+                            # is now neural: SC bump motion -> approach_n5 -> reward_us -> SNc).
+                            bridge.cp_external_input_current[region_indices_cp["reward_us"]] = cp.float32(0.0)
+                        else:
+                            bridge.cp_external_input_current[region_indices_cp["reward_us"]] = (
+                                cp.float32(float(reward_us_drive_pa) * max(0.0, float(reward))))
                         _I_snc = float(snc_tonic_pa)
                     else:
                         _I_snc = (
@@ -7916,6 +7999,12 @@ def main():
                          "cardinal BY NEURON FIRING -- the spiking replacement for the host "
                          "sc_orienting_cardinal_from_image reflex. Requires --enable-visual-cortex. "
                          "De-risked: 2026-06-10-N1-N5-spiking-SC-derisk-RESULT.md (N1 8/8, lesion-confirmed).")
+    ap.add_argument("--enable-spiking-sc-approach", action="store_true",
+                    help="N5 Option C (neural approach-reward; 2026-06-10). A slow-channel "
+                         "temporal-difference of the SC bump's rostral-ward motion "
+                         "(sc_rostral - sc_rostral_slow via gaba_b -> approach_n5) drives reward_us, "
+                         "replacing the host sign(delta eccentricity) reward. Requires "
+                         "--enable-spiking-sc + --spiking-reward-us. De-risked: sc_approach_td_probe.py.")
     ap.add_argument("--visual-cortex-action-warmup-steps", type=int, default=600,
                     help="Cluster K v2: steps before the IT -> cortex_X "
                          "plasticity gate opens. Default 600. 0 = open from "
@@ -8580,6 +8669,7 @@ def main():
             n_granule=args.n_granule,
             enable_visual_cortex=args.enable_visual_cortex,
             enable_spiking_sc=args.enable_spiking_sc,
+            enable_spiking_sc_approach=args.enable_spiking_sc_approach,
             visual_cortex_action_warmup_steps=args.visual_cortex_action_warmup_steps,
             visual_v1_weight_scale=args.visual_v1_weight_scale,
             visual_image_size=args.visual_image_size,
