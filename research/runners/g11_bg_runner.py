@@ -4267,8 +4267,13 @@ def run_moving_goal_episode(
         # recurrent + sc_map->cortex_{N,E,S,W} quadrant-pooling wiring (the Mexican-hat
         # sc_map<->sc_fs is framework-built). De-risked in sc_map_orienting_probe.py.
         if enable_spiking_sc:
+            # w_sc_cortex (the sc_map->cortex_X pooling strength) sets how hard the SC bump
+            # biases action selection vs the BG cascade + OU noise. The host reflex injects
+            # ~150 pA; the synaptic pooling must be strong enough to match. Sweepable via the
+            # SC_CORTEX_W env var (tuning the integration-vs-isolation gap, A/B 2026-06-10).
+            _scw = float(os.environ.get("SC_CORTEX_W", "1.0"))
             install_spiking_sc_wiring(bridge, visual_image_size=visual_image_size,
-                                      verbose=verbose)
+                                      w_sc_cortex=_scw, verbose=verbose)
 
     # Tier 2.2 (2026-05-06): open language plasticity gates for embodied
     # language training during nav. Same set of gates that were declared
