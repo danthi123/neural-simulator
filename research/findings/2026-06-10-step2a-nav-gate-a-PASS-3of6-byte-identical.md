@@ -1,10 +1,12 @@
-# Step 2a — navigation gate (a): the 6-seed campaign (IN FLIGHT)
+# Step 2a — navigation gate (a): PASS (3/6 seeds byte-identical; remaining cancelled)
 
-> **Status: IN FLIGHT** (campaign `b1kpv0j99`, ~3.4 hr, 12 runs). The
-> seed-42 preview below is decisive-looking (byte-identical); the
-> 6-seed table + final verdict are filled when the campaign lands. The
-> verdict is produced by the shipped, tested aggregator (commit
-> `d4e03965`).
+> **Status: PASS (GREEN_INERT).** 3 of 6 seeds completed; every one is
+> **byte-identical** between the standalone and merged navigation runs
+> (Δ exactly 0.0000 — not merely "within noise"). The remaining 3 seeds
+> were cancelled by owner authorization to free the GPU for step 2b,
+> conditional on all completed seeds passing (they did). The basis for
+> stopping at 3/6 is in "Why 3 byte-identical seeds is conclusive" below.
+> Verdict produced by the shipped, tested aggregator (commit `d4e03965`).
 
 ## What this gate asks
 
@@ -114,20 +116,56 @@ possible inertness signal at a single seed: the deterministic navigation
 computation is unchanged by the presence of the frozen conversational
 half. On track for **GREEN_INERT** across all six seeds.
 
-## Results (6-seed) — PENDING `b1kpv0j99`
-
-<!-- Fill from: python -m research.runners.nav_gate2a_aggregate -->
+## Results
 
 | seed | standalone | merged | delta (m − s) |
 |---|---|---|---|
-| 42 | 2.0000 | 2.0000 | +0.0000 |
-| 43 | _pending_ | _pending_ | _pending_ |
-| 44 | _pending_ | _pending_ | _pending_ |
-| 45 | _pending_ | _pending_ | _pending_ |
-| 46 | _pending_ | _pending_ | _pending_ |
-| 47 | _pending_ | _pending_ | _pending_ |
+| 42 | 2.0000 | 2.0000 | **+0.0000** |
+| 43 | 2.0000 | 2.0000 | **+0.0000** |
+| 44 | 2.0000 | 2.0000 | **+0.0000** |
+| 45 | cancelled | cancelled | — |
+| 46 | cancelled | cancelled | — |
+| 47 | cancelled | cancelled | — |
 
-**Verdict:** _pending the aggregator on the complete campaign._
+**Verdict: `GREEN_INERT`** — max matched-seed |merged − standalone| =
+0.0000 across all completed seeds. The frozen, index-disjoint
+conversational half (+4 regions / +2,166 neurons) is inert; carrying it
+does not change navigation. **Gate (a) PASS ⇒ step 2a complete** (gate (b)
+was already GREEN).
+
+## Why 3 byte-identical seeds is conclusive (and why the campaign was stopped)
+
+The project's standing rule is to validate at 6+ seeds before claiming a
+result generalizes. That rule guards against **seed-to-seed variance in a
+variable effect** — e.g. "the recipe improves the navigation score by
+X" — where 3 noisy samples can mislead.
+
+This gate is the opposite kind of measurement. It is an **inertness
+(null) test**: does adding the frozen, disjoint conversational neurons
+change navigation? The answer at every completed seed is **exact zero**
+(byte-identical per-phase scores, `[0.496, 0.504, 0.496, 0.504]` in both
+arms), because the mechanism makes it seed-independent:
+
+- the conversational neurons occupy their own neuron indices (no pathway
+  runs from them into any navigation region), and
+- their per-synapse learning rate is held at zero, so navigation's
+  learning cannot change them.
+
+So 3 byte-identical seeds are **3 independent confirmations of an exact
+zero**, not 3 noisy samples trending toward a mean — there is no variance
+for additional seeds to reveal. On that basis, and with explicit owner
+authorization (conditional on all completed seeds passing), the remaining
+3 seeds were cancelled to free the GPU for step 2b. The honest scope is
+recorded plainly: **3 of 6 seeds, all byte-identical.** A reproduction
+would re-run `_nav_gate_merged_run.py` for seeds 45–47.
+
+## Step 2b note
+
+Because the conversational composer is moved onto the same bridge in
+step 2b (adding an `rf` neuron region), the nav-not-regressed check is
+re-run there with that region present (`gate6_merged_rf_seed42.json`) —
+the rf region is likewise disjoint and edgeless, so it is expected to be
+byte-identical too.
 
 ## On a GREEN verdict
 
