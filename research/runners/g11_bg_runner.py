@@ -3047,6 +3047,25 @@ def run_moving_goal_episode(
     place_sensor_dist_sigma: float = 4.0,       # de-risk dist_sigma
     place_sensor_bexp: float = 4.0,             # de-risk bexp
     stage_a_smoke: bool = False,        # N9 Stage-A cheap-first probe (FIRE/GRADED/ACTOR), exit pre-nav
+    # ----- N9 Phase 3 STEP-2 value-training (pair-then-reward warm-up) + Stage-B smoke -----
+    # (2026-06-10) Mirrors the VALIDATED de-risk STEP-2 (n9_place_graded_critic_stage2_derisk
+    # run_seed, --pair-then-reward): on the FROZEN self-organized place fields, open the critic
+    # arm (gate `value_input`) and run de-risk-style pair_then_reward trials at the scheduled
+    # goal(s) so DA-gated STDP grows the NEAR place->striosome_value synapses (V learns). Each
+    # trial: ITI floor (SNc tonic, no place, zero eligibility) -> PAIR (place + SNc TONIC,
+    # pair_steps -> up-state + SILENT eligibility) -> REWARD (place + SNc BURST after
+    # reward_delay_steps -> DA AFTER the pairing -> converts eligibility, the Yagishita timing)
+    # -> reset g_gabab + SNc membrane. A sub-threshold phase-locked critic TEACHER
+    # (critic_teacher_pa, de-risk --critic-teacher-pa 300) on striosome_value during the PAIR
+    # phase ONLY (removed after) makes the weak-drive place volley fire the critic phase-locked.
+    # Then `value_input` is frozen for the read-out / nav. Default value_train_trials=0 => OFF
+    # (byte-equivalent; the place fields self-organize but V is never trained). Only meaningful
+    # WITH neural_place_selforg; the legacy vs_place_context warm-up is unchanged.
+    value_train_trials: int = 0,        # N9 STEP-2: pair-then-reward value-training trials per goal (de-risk 40)
+    value_train_pair_steps: int = 100,  # PAIR-phase length (de-risk pair_steps; >= the up-state warm-up)
+    value_train_hold_steps: int = 40,   # ITI / REWARD sub-phase length (de-risk hold_steps)
+    critic_teacher_pa: float = 300.0,   # sub-threshold phase-locked teacher on striosome_value during PAIR (de-risk 300)
+    stage_b_smoke: bool = False,        # N9 Stage-B probe (LEARNS-V / CRITIC FIRE+GRADE / GABA_B gap+lesion), exit pre-nav
     # ----- Critic value-acquisition WARM-UP (2026-06-09, the deadlock-breaker) -----
     # The 1800-step nav left the MSN-D1 critic SILENT (striov_rate_log all-zero, weight
     # frozen at 0.20). Forensic root cause (NOT the brief's "homeostasis too slow"): a
@@ -4801,6 +4820,381 @@ def run_moving_goal_episode(
                     cortex_live_rate=cortex_rate, actor_isolated=actor_isolated,
                     place_fires=place_fires, critic_fires=critic_fires, graded=graded)
 
+    # ═══════════════════════════════════════════════════════════════════════════════════
+    # N9 PHASE 3 — STEP-2 value-training (pair-then-reward warm-up) + Stage-B smoke.
+    # (2026-06-10) Ports the VALIDATED de-risk STEP-2 (n9_place_graded_critic_stage2_derisk
+    # run_seed --pair-then-reward) onto the FROZEN self-organized nav-scale place fields. All
+    # neural: the place ensemble fires the coincidence critic, the SNc reward burst is the
+    # teacher/US (DA), DA-gated three-factor STDP grows V; only agent placement + reward
+    # delivery is environment/body scaffolding (BRAIN-BASED-ONLY). Guarded by neural_place_selforg.
+    # ═══════════════════════════════════════════════════════════════════════════════════
+
+    def _n9_far_of(gxgy):
+        """The point-reflected 'far' location for a goal (mirror across the arena centre) —
+        the de-risk's far convention used in _run_place_selforg / _run_stage_a_smoke."""
+        return (float(grid_size) - 1.0 - float(gxgy[0]), float(grid_size) - 1.0 - float(gxgy[1]))
+
+    def _n9_active_place_set(px, py, *, n_meas=80):
+        """The set of GLOBAL `place` neuron indices that fire at (px,py) (the location's
+        active ensemble core, for per-location LTP tracking; de-risk active_set)."""
+        p_idx = region_indices_cp["place"]
+        p_host = p_idx.get() if hasattr(p_idx, "get") else np.asarray(p_idx)
+        ens = _n9_place_ensemble(float(px), float(py), n_meas=n_meas)
+        return set(int(p_host[i]) for i in np.where(np.asarray(ens) > 0)[0])
+
+    def _n9_mean_place_to_value_w(pre_subset):
+        """Mean place->striosome_value weight over a SUBSET of place pre-neurons (de-risk _mean_w).
+        Used for LEARNS-V (near vs far). Vectorized over the CSR via np.isin."""
+        if ("striosome_value" not in region_indices_cp or "place" not in region_indices_cp):
+            return 0.0
+        post = region_indices_cp["striosome_value"]
+        post = post.get() if hasattr(post, "get") else np.asarray(post)
+        pre = np.asarray(sorted(int(i) for i in pre_subset), dtype=np.int64)
+        if pre.size == 0:
+            return 0.0
+        coo = bridge.cp_connections.tocoo()
+        rows = coo.row.get() if hasattr(coo.row, "get") else np.asarray(coo.row)
+        cols = coo.col.get() if hasattr(coo.col, "get") else np.asarray(coo.col)
+        data = coo.data.get() if hasattr(coo.data, "get") else np.asarray(coo.data)
+        m = np.isin(rows, pre) & np.isin(cols, post)
+        if not m.any():
+            m = np.isin(rows, post) & np.isin(cols, pre)
+        return float(data[m].mean()) if m.any() else 0.0
+
+    def _n9_reset_snc_subtraction_state():
+        """Clear the SLOW GABA_B/GIRK conductance + reset the SNc membrane/recovery before a
+        calibration / value-train / test phase (de-risk _reset_snc_subtraction_state). The
+        residual-conductance fix: g_gabab (tau=150ms => ~150x summation) otherwise carries a
+        standing GIRK current from a hard-firing phase into the next, hyperpolarizing the SNc
+        so the DA calibration / RPE reads ~0. Zeroing it (+ the SNc V/u) makes each phase clean."""
+        s_idx = region_indices_cp.get("snc")
+        if s_idx is None:
+            return
+        if getattr(bridge, "cp_conductance_g_gabab", None) is not None:
+            bridge.cp_conductance_g_gabab[:] = cp.float32(0.0)
+        if (getattr(bridge, "cp_membrane_potential_v", None) is not None
+                and getattr(bridge, "cp_izh_vr", None) is not None):
+            bridge.cp_membrane_potential_v[s_idx] = bridge.cp_izh_vr[s_idx]
+        if getattr(bridge, "cp_recovery_variable_u", None) is not None:
+            bridge.cp_recovery_variable_u[s_idx] = cp.float32(0.0)
+
+    def _n9_find_da_rule():
+        """The dopamine from_region_firing_signed production rule (whose threshold gates DA-LTP)."""
+        try:
+            for _nm in (bridge.neuromodulator_manager._configs
+                        if bridge.neuromodulator_manager is not None else []):
+                if _nm.name == "dopamine" and _nm.production_rules:
+                    for _pr in _nm.production_rules:
+                        if _pr.rule_type == "from_region_firing_signed":
+                            return _pr
+        except Exception:
+            pass
+        return None
+
+    def _n9_calibrate_da_threshold(da_rule, *, n_steps=300):
+        """Set the DA production threshold to the SNc tonic firing FRACTION under snc_tonic_pa,
+        so a phasic reward burst -> DA>baseline -> three-factor LTP (de-risk _calibrate_da).
+        Returns the measured tonic fraction. Resets the residual GIRK first (clean read)."""
+        s_idx = region_indices_cp["snc"]
+        n_snc = int(s_idx.size) if hasattr(s_idx, "size") else len(s_idx)
+        _n9_reset_snc_subtraction_state()
+        bridge.cp_external_input_current[:] = cp.float32(0.0)
+        bridge.cp_external_input_current[s_idx] = cp.float32(snc_tonic_pa)
+        frac = 0.0; m = 0
+        for i in range(int(n_steps)):
+            _n9_step(1)
+            if i >= n_steps // 2:
+                frac += float(bridge.cp_firing_states[s_idx].sum()) / max(n_snc, 1); m += 1
+        tf = frac / max(m, 1)
+        if da_rule is not None:
+            da_rule.threshold = float(tf)
+        bridge.cp_external_input_current[:] = cp.float32(0.0)
+        if not (0.005 <= tf <= 0.15) and verbose:
+            print(f"[g11 seed={seed}]   [CALIB-WARN] SNc tonic_frac={tf:.4f} outside sane band "
+                  f"[0.005,0.15] @ {snc_tonic_pa:.0f}pA ({tf*1000:.0f}Hz) -> DA threshold may "
+                  f"mis-set (residual-GIRK / drive).", flush=True)
+        return tf
+
+    def _run_place_value_training():
+        """N9 STEP-2: pair-then-reward value-training on the FROZEN place fields (de-risk
+        run_seed --pair-then-reward loop, VERBATIM protocol). Opens `value_input`, trains the
+        place->striosome_value V at the scheduled goal(s) via DA-gated STDP, then freezes it."""
+        if not (_neural_place_selforg and value_train_trials > 0
+                and "place" in region_indices_cp
+                and "striosome_value" in region_indices_cp
+                and "snc" in region_indices_cp):
+            return None
+        t_vt = time.time()
+        ps_idx = region_indices_cp["place_sensors"]
+        c_idx = region_indices_cp["striosome_value"]
+        s_idx = region_indices_cp["snc"]
+        n_crit = int(c_idx.size) if hasattr(c_idx, "size") else len(c_idx)
+        # The goal locations to value (every distinct scheduled goal, or just the first).
+        goals = [g for _, g in goal_schedule_sorted] if critic_warmup_all_goals \
+            else [goal_schedule_sorted[0][1]]
+        seen = set(); goal_list = []
+        for g in goals:
+            if g not in seen:
+                seen.add(g); goal_list.append(g)
+        # Provenance: near/far active place sets + their pre-train weights (gate LEARNS-V).
+        near0 = goal_list[0]
+        near_set = _n9_active_place_set(near0[0], near0[1])
+        far0 = _n9_far_of(near0)
+        far_set = _n9_active_place_set(far0[0], far0[1]) - near_set
+        w_near_pre = _n9_mean_place_to_value_w(near_set)
+        w_far_pre = _n9_mean_place_to_value_w(far_set)
+        # DA-threshold calibration (the value-train phase drives the SNc tonic + a reward burst;
+        # the nav's hardcoded 0.30 wouldn't let the burst cross threshold -> no LTP gate). Restore
+        # the nav's threshold afterwards so the nav loop's SNc RPE dynamics are byte-unchanged.
+        da_rule = _n9_find_da_rule()
+        saved_da_threshold = (da_rule.threshold if da_rule is not None else None)
+        tonic_frac = _n9_calibrate_da_threshold(da_rule)
+        saved_reward = bridge.core_config.current_reward_signal
+        bridge.set_plasticity_gate("value_input", 1.0)        # open the critic arm
+        bridge.set_plasticity_gate("landmark_to_place", 0.0)  # place fields stay FROZEN
+        bridge.set_transmission_gate("place_fs_gate", 1.0)    # FS-PING volley ON for the read
+        pair_steps = int(value_train_pair_steps)
+        hold = int(value_train_hold_steps)
+        rdelay = int(reward_delay_steps)
+        near_v_first = None; near_v_last = None
+        for (wgx, wgy) in goal_list:
+            place_act = cp.asarray(_n9_render(float(wgx), float(wgy)), dtype=cp.float32)
+            for _t in range(int(value_train_trials)):
+                # (1) ITI floor: SNc tonic, no place drive, then zero eligibility (de-risk ITI).
+                bridge.core_config.current_reward_signal = 0.0
+                bridge.cp_external_input_current[:] = cp.float32(0.0)
+                bridge.cp_external_input_current[s_idx] = cp.float32(snc_tonic_pa)
+                _n9_step(hold)
+                if bridge.cp_eligibility_trace is not None:
+                    bridge.cp_eligibility_trace[:] = cp.float32(0.0)
+                # (2) PAIR: place drive ON + SNc at TONIC (DA baseline) for pair_steps. The
+                #     bistable MSN-D1 climbs into the up-state; place-pre x critic-post STDP lays
+                #     a clean, net-positive, SILENT eligibility trace (DA-baseline => ~0 weight
+                #     converted, so the trace ACCUMULATES). The sub-threshold phase-locked teacher
+                #     (critic_teacher_pa) on striosome_value fires the weak-drive volley
+                #     phase-locked; it is present ONLY in PAIR (removed at REWARD + read-out).
+                bridge.core_config.current_reward_signal = 0.0
+                bridge.cp_external_input_current[:] = cp.float32(0.0)
+                bridge.cp_external_input_current[ps_idx] = place_act
+                if critic_teacher_pa > 0.0:
+                    bridge.cp_external_input_current[c_idx] = cp.float32(critic_teacher_pa)
+                bridge.cp_external_input_current[s_idx] = cp.float32(snc_tonic_pa)
+                spk = 0; n_meas = 0
+                for _ in range(pair_steps):
+                    _n9_step(1)
+                    spk += int(bridge.cp_firing_states[c_idx].sum()); n_meas += 1
+                # (3) REWARD: place STILL ON (cell holds the up-state), teacher REMOVED; after an
+                #     ~reward_delay_steps lag (DA rises AFTER the pairing — Yagishita), inject the
+                #     SNc BURST -> DA>baseline -> converts the accumulated eligibility (robust LTP).
+                bridge.core_config.current_reward_signal = 1.0
+                bridge.cp_external_input_current[:] = cp.float32(0.0)
+                bridge.cp_external_input_current[ps_idx] = place_act
+                bridge.cp_external_input_current[s_idx] = cp.float32(snc_tonic_pa)
+                if rdelay > 0:
+                    _n9_step(rdelay)                          # pairing-then-DA lag (place still on)
+                bridge.cp_external_input_current[s_idx] = cp.float32(snc_tonic_pa + snc_reward_gain)
+                for _ in range(hold):
+                    _n9_step(1)
+                    spk += int(bridge.cp_firing_states[c_idx].sum()); n_meas += 1
+                # (4) reset the SLOW GABA_B/GIRK + SNc membrane (de-risk per-trial reset).
+                _n9_reset_snc_subtraction_state()
+                _v = spk / max(n_crit, 1) / max(n_meas * 1e-3, 1e-9)
+                if near0 == (wgx, wgy):
+                    if near_v_first is None:
+                        near_v_first = _v
+                    near_v_last = _v
+                if os.environ.get("VALUE_TRAIN_DEBUG") and (_t < 3 or _t % 10 == 0
+                                                            or _t == int(value_train_trials) - 1):
+                    wn = _n9_mean_place_to_value_w(near_set)
+                    wf = _n9_mean_place_to_value_w(far_set)
+                    da = (bridge.neuromodulator_manager.get_concentration("dopamine")
+                          if bridge.neuromodulator_manager is not None else float("nan"))
+                    print(f"[VALUE_TRAIN goal=({wgx},{wgy}) t={_t:02d}] V={_v:6.2f}Hz "
+                          f"w_near={wn:.3f} w_far={wf:.3f} (near/far {wn/max(wf,1e-6):.2f}) "
+                          f"DA={da:.3f}", flush=True)
+        bridge.set_plasticity_gate("value_input", 0.0)        # FREEZE V for the read-out / nav
+        bridge.core_config.current_reward_signal = saved_reward
+        bridge.cp_external_input_current[:] = cp.float32(0.0)
+        if bridge.cp_eligibility_trace is not None:
+            bridge.cp_eligibility_trace[:] = cp.float32(0.0)
+        _n9_reset_snc_subtraction_state()
+        # RESTORE the nav's hardcoded DA threshold so the nav SNc RPE is byte-unchanged.
+        if da_rule is not None and saved_da_threshold is not None:
+            da_rule.threshold = float(saved_da_threshold)
+        w_near_post = _n9_mean_place_to_value_w(near_set)
+        w_far_post = _n9_mean_place_to_value_w(far_set)
+        stats = dict(
+            n_goals=len(goal_list), value_train_trials=int(value_train_trials),
+            tonic_frac=float(tonic_frac), critic_teacher_pa=float(critic_teacher_pa),
+            near_set_size=len(near_set), far_set_size=len(far_set),
+            w_near_pre=float(w_near_pre), w_near_post=float(w_near_post),
+            w_far_pre=float(w_far_pre), w_far_post=float(w_far_post),
+            w_near_over_far_post=float(w_near_post / max(w_far_post, 1e-6)),
+            near_v_first_hz=(float(near_v_first) if near_v_first is not None else None),
+            near_v_last_hz=(float(near_v_last) if near_v_last is not None else None),
+            # cache the near/far sets for the Stage-B smoke (so it doesn't re-derive them).
+            _near_set=near_set, _far_set=far_set, near0=near0, far0=far0)
+        if verbose:
+            print(f"[g11 seed={seed}] N9 STEP-2 value-training done ({time.time()-t_vt:.0f}s): "
+                  f"{value_train_trials} pair-then-reward trials x {len(goal_list)} goal(s); "
+                  f"w_near {w_near_pre:.3f}->{w_near_post:.3f} w_far {w_far_pre:.3f}->{w_far_post:.3f} "
+                  f"(near/far {stats['w_near_over_far_post']:.2f}); V(near) "
+                  f"{near_v_first}->{near_v_last}Hz (place fields FROZEN; V FROZEN)", flush=True)
+        return stats
+
+    def _run_stage_b_smoke(vt_stats):
+        """N9 Stage-B probe (design §Stage B): the load-bearing critic gate after STEP-1+STEP-2.
+          LEARNS-V        : near place->striosome_value weight >= 1.5x far.
+          CRITIC FIRE+GRADE: with the WEIGHTED plateau toggled ON at read-out
+                             (coincidence_weighted_drive=True, k_threshold=coincidence_threshold),
+                             drive place_sensors at the goal -> striosome_value >=5Hz AND near >=3x far.
+          GABA_B gap (d=r-V): place@goal + SNc burst -> snc rate (predicted); place@far + SNc burst
+                             -> snc rate (unpredicted); predicted < unpredicted (learned V subtracts).
+                             + LESION control: zero g_gabab mask -> gap -> ~1.0.
+        Reports all numbers honestly; does NOT proceed to the nav loop (caller exits)."""
+        c_idx = region_indices_cp["striosome_value"]
+        s_idx = region_indices_cp["snc"]
+        ps_idx = region_indices_cp["place_sensors"]
+        n_crit = int(c_idx.size) if hasattr(c_idx, "size") else len(c_idx)
+        n_snc = int(s_idx.size) if hasattr(s_idx, "size") else len(s_idx)
+        near0 = vt_stats["near0"] if vt_stats else goal_schedule_sorted[0][1]
+        far0 = vt_stats["far0"] if vt_stats else _n9_far_of(near0)
+        near_set = vt_stats["_near_set"] if vt_stats else _n9_active_place_set(near0[0], near0[1])
+        far_set = (vt_stats["_far_set"] if vt_stats
+                   else _n9_active_place_set(far0[0], far0[1]) - near_set)
+
+        # ── LEARNS-V ──
+        w_near = _n9_mean_place_to_value_w(near_set)
+        w_far = _n9_mean_place_to_value_w(far_set)
+        learns_v = bool(w_near >= 1.5 * max(w_far, 1e-6))
+
+        # ── CRITIC FIRE + GRADE (the real FIRE gate): WEIGHTED-plateau read-out toggle ──
+        def _critic_rate(px, py, *, n_meas=120, warmup=30):
+            act = cp.asarray(_n9_render(float(px), float(py)), dtype=cp.float32)
+            bridge.cp_external_input_current[:] = cp.float32(0.0)
+            bridge.cp_external_input_current[ps_idx] = act
+            saved = bridge.core_config.reward_learning_rate
+            bridge.core_config.reward_learning_rate = 0.0
+            spk = 0; m = 0
+            for t in range(int(n_meas)):
+                _n9_step(1)
+                if t >= warmup:
+                    spk += int(bridge.cp_firing_states[c_idx].sum()); m += 1
+            bridge.core_config.reward_learning_rate = saved
+            bridge.cp_external_input_current[:] = cp.float32(0.0)
+            return spk / max(n_crit, 1) / max(m * 1e-3, 1e-9)
+
+        # READ-OUT toggle to the Poirazi-Mel WEIGHTED subunit so the LEARNED w_near (grown) fires
+        # the critic while the unlearned w_far (~init) cannot -> grading from the weight itself.
+        # k_threshold swaps to WEIGHT units (coincidence_threshold). Restored after the read.
+        _saved_wd = bool(getattr(bridge.core_config, "coincidence_weighted_drive", False))
+        _saved_kth = float(getattr(bridge.core_config, "coincidence_k_threshold", 4.0))
+        bridge.core_config.coincidence_weighted_drive = True
+        bridge.core_config.coincidence_k_threshold = float(coincidence_threshold)
+        crit_near = _critic_rate(near0[0], near0[1])
+        crit_far = _critic_rate(far0[0], far0[1])
+        bridge.core_config.coincidence_weighted_drive = _saved_wd
+        bridge.core_config.coincidence_k_threshold = _saved_kth
+        crit_grade_ratio = crit_near / max(crit_far, 1e-3)
+        critic_fire = bool(crit_near >= 5.0)
+        critic_grade = bool(crit_near >= 5.0 and crit_grade_ratio >= 3.0)
+
+        # ── GABA_B gap (delta = r - V): predicted(NEAR) < unpredicted(FAR) + lesion control ──
+        def _snc_burst_rate(px, py):
+            _n9_reset_snc_subtraction_state()
+            act = cp.asarray(_n9_render(float(px), float(py)), dtype=cp.float32)
+            # LEAD: place drive (critic fires -> GABA_B onto SNc) BEFORE the reward burst.
+            bridge.cp_external_input_current[:] = cp.float32(0.0)
+            bridge.cp_external_input_current[ps_idx] = act
+            bridge.cp_external_input_current[s_idx] = cp.float32(snc_tonic_pa)
+            _n9_step(int(critic_lead_steps))
+            # REWARD burst (place still on).
+            bridge.cp_external_input_current[s_idx] = cp.float32(snc_tonic_pa + snc_reward_gain)
+            saved = bridge.core_config.reward_learning_rate
+            bridge.core_config.reward_learning_rate = 0.0
+            spk = 0
+            for _ in range(int(value_train_hold_steps)):
+                _n9_step(1)
+                spk += int(bridge.cp_firing_states[s_idx].sum())
+            bridge.core_config.reward_learning_rate = saved
+            bridge.cp_external_input_current[:] = cp.float32(0.0)
+            return spk / max(n_snc, 1) / max(int(value_train_hold_steps) * 1e-3, 1e-9)
+
+        # The gate-2e read needs the WEIGHTED plateau too (so the critic fires DIFFERENTIALLY
+        # near>>far during the LEAD -> a differential GABA_B). Toggle around the gap reads.
+        bridge.core_config.coincidence_weighted_drive = True
+        bridge.core_config.coincidence_k_threshold = float(coincidence_threshold)
+        snc_pred = _snc_burst_rate(near0[0], near0[1])     # predicted (NEAR; V subtracts)
+        snc_unpred = _snc_burst_rate(far0[0], far0[1])     # unpredicted (FAR; no V)
+        bridge.core_config.coincidence_weighted_drive = _saved_wd
+        bridge.core_config.coincidence_k_threshold = _saved_kth
+        gap_ratio = snc_unpred / max(snc_pred, 1e-6)
+        gabab_gap = bool(snc_unpred > 1.30 * max(snc_pred, 1e-6))
+
+        # LESION control: zero the GABA_B mask -> the predicted/unpredicted gap must vanish (~1.0).
+        n_cut = 0
+        snc_pred_les = float("nan"); snc_unpred_les = float("nan"); gap_les = float("nan")
+        m_mask = getattr(bridge, "cp_gabab_synapse_mask", None)
+        if m_mask is not None:
+            _saved_mask = m_mask.copy()
+            n_cut = int((m_mask.get() if hasattr(m_mask, "get") else np.asarray(m_mask)).sum())
+            bridge.cp_gabab_synapse_mask = cp.zeros_like(m_mask)
+            if getattr(bridge, "cp_conductance_g_gabab", None) is not None:
+                bridge.cp_conductance_g_gabab[:] = cp.float32(0.0)
+            bridge.core_config.coincidence_weighted_drive = True
+            bridge.core_config.coincidence_k_threshold = float(coincidence_threshold)
+            snc_pred_les = _snc_burst_rate(near0[0], near0[1])
+            snc_unpred_les = _snc_burst_rate(far0[0], far0[1])
+            bridge.core_config.coincidence_weighted_drive = _saved_wd
+            bridge.core_config.coincidence_k_threshold = _saved_kth
+            gap_les = snc_unpred_les / max(snc_pred_les, 1e-6)
+            bridge.cp_gabab_synapse_mask = _saved_mask   # restore (clean nav, though we exit)
+            if getattr(bridge, "cp_conductance_g_gabab", None) is not None:
+                bridge.cp_conductance_g_gabab[:] = cp.float32(0.0)
+        lesion_collapses = bool(m_mask is not None and gap_les <= 1.15)
+
+        print("=" * 72)
+        print(f"[g11 seed={seed}] N9 STAGE-B SMOKE (value-learning @ nav scale):")
+        print(f"  near={tuple(round(c,1) for c in near0)} far={tuple(round(c,1) for c in far0)} "
+              f"(near_set={len(near_set)} far_set={len(far_set)} place cells)")
+        print(f"  [LEARNS-V]  w_near={w_near:.3f} w_far={w_far:.3f} (near/far "
+              f"{w_near/max(w_far,1e-6):.2f}; >=1.5x => {learns_v})")
+        print(f"  [CRITIC FIRE+GRADE] (weighted plateau, k={coincidence_threshold}) "
+              f"critic@near={crit_near:.2f}Hz critic@far={crit_far:.2f}Hz "
+              f"(>=5Hz & near>=3xfar; fire={critic_fire} grade={critic_grade})")
+        print(f"  [GABA_B gap d=r-V]  predicted(NEAR)={snc_pred:.2f}Hz unpredicted(FAR)={snc_unpred:.2f}Hz "
+              f"gap={gap_ratio:.2f} (unpred>1.3x pred => {gabab_gap})")
+        if m_mask is not None:
+            print(f"  [LESION control]    zeroed {n_cut} GABA_B synapses -> "
+                  f"pred={snc_pred_les:.2f}Hz unpred={snc_unpred_les:.2f}Hz gap={gap_les:.2f} "
+                  f"(collapses to ~1.0 => {lesion_collapses})")
+        else:
+            print(f"  [LESION control]    no GABA_B mask present (skipped)")
+        _crit_at_nav = bool(critic_fire and critic_grade)
+        print(f"  STAGE-B VERDICT: LEARNS-V={learns_v} CRITIC-FIRE+GRADE={_crit_at_nav} "
+              f"GABA_B-gap={gabab_gap} lesion-collapses={lesion_collapses}")
+        if not _crit_at_nav:
+            print(f"  [HONEST] critic does NOT fire+grade at nav scale "
+                  f"(critic@near={crit_near:.2f}Hz, near/far={crit_grade_ratio:.2f}) — "
+                  f"design §Risk 'place-code self-org at nav scale' / 'actor-critic interaction'.")
+        print("=" * 72, flush=True)
+        return dict(
+            near=list(near0), far=list(far0),
+            near_set_size=len(near_set), far_set_size=len(far_set),
+            w_near=float(w_near), w_far=float(w_far),
+            w_near_over_far=float(w_near / max(w_far, 1e-6)), learns_v=learns_v,
+            crit_near_hz=float(crit_near), crit_far_hz=float(crit_far),
+            crit_grade_ratio=float(crit_grade_ratio),
+            critic_fire=critic_fire, critic_grade=critic_grade,
+            critic_fires_and_grades_at_nav=_crit_at_nav,
+            snc_predicted_near_hz=float(snc_pred), snc_unpredicted_far_hz=float(snc_unpred),
+            snc_gap_ratio=float(gap_ratio), gabab_gap=gabab_gap,
+            lesion_n_cut=int(n_cut),
+            snc_pred_lesion_hz=(float(snc_pred_les) if m_mask is not None else None),
+            snc_unpred_lesion_hz=(float(snc_unpred_les) if m_mask is not None else None),
+            lesion_gap_ratio=(float(gap_les) if m_mask is not None else None),
+            lesion_collapses=lesion_collapses)
+
     # ===== CRITIC VALUE-ACQUISITION WARM-UP (2026-06-09 deadlock-breaker) =====
     # Before the nav loop, seed the MSN-D1 value critic with the de-risk's VALIDATED
     # value-leads-reward protocol at the scheduled goal location(s), at the BASELINE
@@ -4940,12 +5334,28 @@ def run_moving_goal_episode(
     _selforg_stats = _run_place_selforg()
 
     # N9 Stage-A cheap-first probe: measure FIRE / PLACE-GRADED / ACTOR-NOT-PERTURBED and exit
-    # BEFORE the nav loop (the design's cheap-first integration de-risk).
+    # BEFORE the nav loop (the design's cheap-first integration de-risk). Stage A is pre-STEP-2
+    # (it gates the place-code self-org alone); STEP-2 value-training + Stage B come after.
     if stage_a_smoke and _neural_place_selforg:
         _stage_a = _run_stage_a_smoke()
         if _stage_a is not None:
             _stage_a["place_selforg"] = _selforg_stats
         return {"stage_a_smoke": _stage_a, "selforg": _selforg_stats}
+
+    # N9 STEP-2 (Phase 3): pair-then-reward value-training on the FROZEN place fields. Grows the
+    # place->striosome_value V via DA-gated STDP, then freezes it. Only under neural_place_selforg
+    # (value_train_trials>0); a no-op otherwise (byte-equivalent — the legacy warm-up is below).
+    _value_train_stats = _run_place_value_training()
+
+    # N9 Stage-B smoke (the load-bearing critic gate): LEARNS-V / CRITIC FIRE+GRADE / GABA_B gap
+    # + lesion, after STEP-1+STEP-2. Exits BEFORE the nav loop (the design's Stage B de-risk).
+    if stage_b_smoke and _neural_place_selforg:
+        _stage_b = _run_stage_b_smoke(_value_train_stats)
+        # drop the cached index-set objects (not JSON-friendly) from the value-train stats blob.
+        _vt_clean = ({k: v for k, v in _value_train_stats.items() if not k.startswith("_")}
+                     if _value_train_stats is not None else None)
+        return {"stage_b_smoke": _stage_b, "value_train": _vt_clean,
+                "selforg": _selforg_stats}
 
     _warmup_stats = _run_critic_warmup()
     if _warmup_stats is not None and verbose:
@@ -7367,6 +7777,28 @@ def main():
     ap.add_argument("--stage-a-smoke", action="store_true",
                     help="N9 Stage-A cheap-first probe: after self-org, measure FIRE / PLACE-GRADED / "
                          "ACTOR-NOT-PERTURBED and exit BEFORE the nav loop. Requires --neural-place-selforg.")
+    # ── N9 Phase 3: STEP-2 pair-then-reward value-training + Stage-B smoke ──
+    ap.add_argument("--value-train-trials", type=int, default=0,
+                    help="N9 STEP-2 (Phase 3): pair-then-reward value-training trials per scheduled goal "
+                         "on the FROZEN self-org place fields (de-risk --pair-then-reward, ~40). Each trial: "
+                         "ITI floor + zero eligibility -> PAIR (place + SNc tonic, --value-train-pair-steps) "
+                         "-> REWARD (place + SNc burst after --reward-delay-steps) -> reset GABA_B/SNc. Grows "
+                         "place->striosome_value V via DA-gated STDP, then freezes it. Default 0 = OFF "
+                         "(byte-equivalent). Requires --neural-place-selforg + --enable-neural-critic.")
+    ap.add_argument("--value-train-pair-steps", type=int, default=100,
+                    help="N9 STEP-2 PAIR-phase length (steps; de-risk pair_steps=100; >= the up-state warm-up "
+                         "so the bistable MSN-D1 reaches its up-state + lays a silent eligibility trace).")
+    ap.add_argument("--value-train-hold-steps", type=int, default=40,
+                    help="N9 STEP-2 ITI / REWARD sub-phase length (steps; de-risk hold_steps=40).")
+    ap.add_argument("--critic-teacher-pa", type=float, default=300.0,
+                    help="N9 STEP-2 sub-threshold phase-locked TEACHER current (pA) on striosome_value during "
+                         "the PAIR phase ONLY (de-risk --critic-teacher-pa 300); removed at REWARD + read-out. "
+                         "Draws the weak-drive place volley into firing phase-locked so net LTP forms. 0=off.")
+    ap.add_argument("--stage-b-smoke", action="store_true",
+                    help="N9 Stage-B probe (the load-bearing critic gate): after STEP-1 self-org + STEP-2 "
+                         "value-training, measure LEARNS-V / CRITIC FIRE+GRADE (weighted plateau) / GABA_B "
+                         "gap (delta=r-V) + lesion control, and exit BEFORE the nav loop. Requires "
+                         "--neural-place-selforg (+ --value-train-trials>0 for a trained V).")
     ap.add_argument("--critic-warmup-trials", type=int, default=0,
                     help="CRITIC VALUE-ACQUISITION WARM-UP (2026-06-09 deadlock-breaker). "
                          "Before the nav loop, run N de-risk-style reward-paired drives "
@@ -7744,6 +8176,11 @@ def main():
             selforg_n_positions=args.selforg_n_positions,
             reward_delay_steps=args.reward_delay_steps,
             stage_a_smoke=args.stage_a_smoke,
+            value_train_trials=args.value_train_trials,
+            value_train_pair_steps=args.value_train_pair_steps,
+            value_train_hold_steps=args.value_train_hold_steps,
+            critic_teacher_pa=args.critic_teacher_pa,
+            stage_b_smoke=args.stage_b_smoke,
             critic_warmup_trials=args.critic_warmup_trials,
             critic_warmup_hold_steps=args.critic_warmup_hold_steps,
             critic_warmup_all_goals=not args.no_critic_warmup_all_goals,
