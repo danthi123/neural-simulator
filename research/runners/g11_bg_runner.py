@@ -3102,6 +3102,13 @@ def run_moving_goal_episode(
     # "does it run + learn" before adding windowing).
     enable_critic_window: bool = False,
     critic_lead_steps: int = 120,        # bounded OPEN-window length (steps; dt=1ms)
+    # GABA_B (GIRK) propagation strength onto the SNc (2026-06-10). The default 0.02 was tuned for a
+    # ~20-30 Hz critic (seed 42); seeds 43/44 draw STRONGER place fields -> the critic fires 120 Hz ->
+    # the slow GIRK over-accumulates and CLAMPS the SNc to 0 at BOTH near AND far (the differential
+    # delta=r-V is hidden by saturation; the lesion still shows near<far). Lowering the propagation
+    # de-saturates the GABA_B so the graded near<far subtraction is VISIBLE across the seed range
+    # (Eshel-2015 arithmetic shift, not the all-or-none clamp). 0=keep the cfg default (0.02).
+    critic_gabab_propagation: float = 0.0,
     # Surprise-boosted learning rate: when |RPE| is high (unexpected outcome),
     # temporarily boost reward_learning_rate. Models NE-like fast meta-modulation.
     enable_surprise_lr_boost: bool = False,
@@ -3801,7 +3808,9 @@ def run_moving_goal_episode(
         # -> no live burst to discriminate (the prior smoke's "SNc silenced"
         # failure mode). 0.02 settles g~10-20, restoring baseline 1-3 Hz +
         # burst 50-80 Hz so the value subtraction is visible, not annihilating.
-        cfg.gabab_propagation_strength = 0.02
+        cfg.gabab_propagation_strength = (float(critic_gabab_propagation)
+                                          if critic_gabab_propagation and critic_gabab_propagation > 0
+                                          else 0.02)
     if _neural_place_selforg:
         # N9 Route-D coincidence read-out (the landed b980070a dendritic plateau): the FS-PING
         # gamma volley on `place` is read by the place->striosome_value coincidence_detector so the
@@ -7777,6 +7786,10 @@ def main():
                          "cannot integrate across a long dwell. ~1 GABA_B tau "
                          "(150 ms); the de-risk sweet spot was 100-150. Default "
                          "120.")
+    ap.add_argument("--critic-gabab-propagation", type=float, default=0.0,
+                    help="GABA_B(GIRK) propagation strength onto the SNc (default 0.02). Lower it "
+                         "(e.g. 0.006-0.010) to de-saturate the SNc when the critic fires hard "
+                         "(strong-place-field seeds, ~120 Hz, over-clamp BOTH near+far to 0). 0=keep 0.02.")
     ap.add_argument("--critic-neuron-type", type=str, default=None,
                     help="Override the striosome_value critic's Izhikevich type "
                          "(2026-06-08 calibration). Default None keeps the MSN-D1 "
@@ -8250,6 +8263,7 @@ def main():
             enable_neural_critic=args.enable_neural_critic,
             enable_critic_window=args.critic_window,
             critic_lead_steps=args.critic_lead_steps,
+            critic_gabab_propagation=args.critic_gabab_propagation,
             critic_neuron_type=args.critic_neuron_type,
             critic_afferent_weight=args.critic_afferent_weight,
             enable_critic_homeostasis=args.enable_critic_homeostasis,
