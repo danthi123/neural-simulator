@@ -5333,8 +5333,14 @@ def run_moving_goal_episode(
             bridge.cp_external_input_current[ps_idx] = act
             bridge.cp_external_input_current[s_idx] = cp.float32(snc_tonic_pa)
             _n9_step(int(critic_lead_steps))
-            # REWARD burst (place still on).
-            bridge.cp_external_input_current[s_idx] = cp.float32(snc_tonic_pa + snc_reward_gain)
+            # REWARD burst (place still on). When spiking_reward_us, the `r` term is produced by the
+            # reward_us US afferent FIRING into the SNc (the spiking reward), NOT a host write -> this
+            # measures the FULLY-SPIKING δ=r−V (reward_us r + critic GABA_B V) in the real config.
+            if spiking_reward_us and "reward_us" in region_indices_cp:
+                bridge.cp_external_input_current[s_idx] = cp.float32(snc_tonic_pa)
+                bridge.cp_external_input_current[region_indices_cp["reward_us"]] = cp.float32(reward_us_drive_pa)
+            else:
+                bridge.cp_external_input_current[s_idx] = cp.float32(snc_tonic_pa + snc_reward_gain)
             saved = bridge.core_config.reward_learning_rate
             bridge.core_config.reward_learning_rate = 0.0
             spk = 0

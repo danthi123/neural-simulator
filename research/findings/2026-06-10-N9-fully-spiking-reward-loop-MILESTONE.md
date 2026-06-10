@@ -34,9 +34,24 @@ With both on (and `--perceived-approach-reward`), the **entire** δ = r − V lo
 - **(B) Stage-B sweep (GO):** FS→critic at weight 16 → critic 126→8.19 Hz physiological, grade 14.6×, the δ goes **binary → 3.75× graded**. Directly validates the spiking critic-normalization + graded δ (with the *host* SNc burst).
 - **(A) Pavlovian probe (`_n9A_pavlovian_probe.py`):** `reward_us` fires **307 Hz** at 1200 pA and **bursts the SNc** (tonic 50 → with-US 414–500 Hz) at every weight 20–400. **Directly validates that the spiking US drives the SNc reward burst** (the host write replacement works). Reconciles the nav (reward_us bursts on *approach*, silent on *dwell*).
 
-## Honest residual: the combined δ=r−V operating point (NOT a host shortcut)
+## ✅ The combined fully-spiking δ=r−V — VALIDATED in the real config (Stage-B GO, seed 44)
 
-The probe also shows the **r−V subtraction does not yet fire when `reward_us` provides r**: at 1200 pA `reward_us` over-drives the SNc (414 Hz) so the critic's GABA_B (which the (B) de-risk validated against the *host* burst) cannot subtract it. So the two halves are each validated against the *host* counterpart, but the **combined (reward_us r + critic-GABA_B V → graded δ)** needs operating-point tuning (lower `reward_us` drive/weight so the burst is GABA_B-subtractable, with the FS-clamped 8 Hz critic). This is the same class of operating-point work as the GIRK-cap/FS tuning — a balance between two spiking populations, not a host shortcut. Tracked as the next step.
+The Pavlovian probe found the operating point (`reward_us` at 1200 pA over-drove the SNc to ~500 Hz so V couldn't subtract; at **drive 250 / weight 50** — now the defaults — `reward_us` fires a moderate 66 Hz, the SNc bursts 266 Hz, and the critic V subtracts it 266→86). The Stage-B smoke was then extended so `reward_us` produces the reward burst (the spiking r) instead of the host injection, and run with the **full real config** (FS-clamped critic + reward_us):
+
+```
+[LEARNS-V]   w_near=1.750 w_far=0.419 (4.18x)
+[CRITIC FIRE+GRADE] critic@near=6.25Hz (physiological, FS-clamped) far=0.00Hz -> fire+grade
+[GABA_B gap d=r-V] predicted(NEAR)=22.50Hz < unpredicted(FAR)=75.00Hz = 3.33x GRADED
+[LESION] zero GABA_B -> 75/75 = 1.00 (collapses) -> the subtraction IS the synaptic GABA_B
+STAGE-B VERDICT: LEARNS-V=True CRITIC-FIRE+GRADE=True GABA_B-gap=True lesion-collapses=True  (ALL PASS)
+```
+
+**The whole δ=r−V is now produced by two spiking populations:** `r` = `reward_us` excitation onto the SNc (the spiking US burst), `V` = the FS-inhibited (physiological 6.25 Hz) critic's GABA_B subtraction — and the δ is GRADED (pred 22.5 < unpred 75, 3.33×), lesion-confirmed synaptic. The earlier over-drive is resolved by the tuned operating point. **The N9 reward-prediction-error loop is now fully spiking AND the RPE works end-to-end in the deployed config.**
+
+## Honest residuals (NOT host shortcuts)
+
+- The **nav A/B** can't sensitively measure the reward pathway (place-goal-readout + final-quarter dwelling make the US near-neutral for nav_sum) — the **Stage-B gap is the sensitive test**, and it PASSES fully-spiking.
+- **Value-train V draw-variance** + **multi-seed robustness** of the online graded δ — the same CuPy place-code non-determinism the determinism edit (byte-review pending) addresses.
 
 ## Honest residuals (NOT host shortcuts — feasible-spiking is done)
 
