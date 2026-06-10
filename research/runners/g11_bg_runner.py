@@ -199,7 +199,7 @@ def render_egocentric_goal(agent, goal, image_size=32, ppc=4, radius=2):
 
 
 def install_spiking_sc_wiring(bridge, visual_image_size=32, w_ret_sc=80.0,
-                              w_sc_rec=6.0, w_sc_cortex=1.0, verbose=False):
+                              w_sc_rec=6.0, w_sc_cortex=1.0, scramble=False, verbose=False):
     """Post-init explicit wiring for the spiking superior colliculus (N1), de-risked in
     sc_map_orienting_probe.py. Installs (via set_pathway_weights, add_missing): retina(ON)->
     sc_map retinotopic pooling (2x2 RF), sc_map short-range recurrent excitation, and
@@ -218,15 +218,23 @@ def install_spiking_sc_wiring(bridge, visual_image_size=32, w_ret_sc=80.0,
     sc_idx = lambda sy, sx: sy * SCN + sx
     ret_on = lambda py, px: py * IMGW + px           # ON channel = first IMGW*IMGW indices
 
+    # Anti-cheat lesion: scramble=True permutes the sc-site target assignment (destroys
+    # retinotopy). A scrambled-retinotopy nav must REGRESS (the de-risk lesion) -> proves the
+    # orienting is genuinely carried by the retinotopic map, not a non-retinotopic leak.
+    sc_targets = list(range(SCN * SCN))
+    if scramble:
+        sc_targets = [int(v) for v in np.random.default_rng(12345).permutation(SCN * SCN)]
+
     n_installed = 0
     # 1) retina(ON) -> sc_map retinotopic (each sc site pools its 2x2 ON block)
     pre, post, w = [], [], []
     for sy in range(SCN):
         for sx in range(SCN):
+            tgt = sc_targets[sc_idx(sy, sx)]
             for a in (0, 1):
                 for b in (0, 1):
                     pre.append(ret0 + ret_on(2 * sy + a, 2 * sx + b))
-                    post.append(sc0 + sc_idx(sy, sx))
+                    post.append(sc0 + tgt)
                     w.append(w_ret_sc)
     n_installed += bridge.set_pathway_weights("retina_to_sc_map",
         np.asarray(pre, np.int64), np.asarray(post, np.int64),
@@ -4272,8 +4280,9 @@ def run_moving_goal_episode(
             # ~150 pA; the synaptic pooling must be strong enough to match. Sweepable via the
             # SC_CORTEX_W env var (tuning the integration-vs-isolation gap, A/B 2026-06-10).
             _scw = float(os.environ.get("SC_CORTEX_W", "1.0"))
+            _scramble = os.environ.get("SC_SCRAMBLE", "0") == "1"   # anti-cheat lesion
             install_spiking_sc_wiring(bridge, visual_image_size=visual_image_size,
-                                      w_sc_cortex=_scw, verbose=verbose)
+                                      w_sc_cortex=_scw, scramble=_scramble, verbose=verbose)
 
     # Tier 2.2 (2026-05-06): open language plasticity gates for embodied
     # language training during nav. Same set of gates that were declared
