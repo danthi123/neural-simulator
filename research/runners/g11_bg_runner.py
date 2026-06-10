@@ -5111,11 +5111,10 @@ def run_moving_goal_episode(
         bridge.set_plasticity_gate("value_input", 1.0)        # open the critic arm
         bridge.set_plasticity_gate("landmark_to_place", 0.0)  # place fields stay FROZEN
         bridge.set_transmission_gate("place_fs_gate", 1.0)    # FS-PING volley ON for the read
-        # FS->critic inhibition is for the READ-OUT over-firing clamp, NOT the value-LEARNING: hold
-        # critic_fs_gate CLOSED during value-train so the critic fires freely (learns V via DA-gated
-        # STDP), then OPEN it for the read-out/nav clamp (set after value-train, below). No-op when
-        # enable_critic_fs_inhibition is off (the gate has no pathway).
-        bridge.set_transmission_gate("critic_fs_gate", 0.0)
+        # NOTE: FS->critic inhibition (critic_fs_gate) is held ON THROUGHOUT (value-train AND
+        # read-out/nav) so the critic learns AND reads V in ONE consistent CLAMPED regime — the
+        # (B) de-risk GO (gating it OFF for value-train learns a STRONGER V that then over-fires the
+        # UNGATED read-out -> binary δ; the self-consistent clamped regime grades cleanly).
         pair_steps = int(value_train_pair_steps)
         hold = int(value_train_hold_steps)
         rdelay = int(reward_delay_steps)
@@ -5176,7 +5175,6 @@ def run_moving_goal_episode(
                           f"w_near={wn:.3f} w_far={wf:.3f} (near/far {wn/max(wf,1e-6):.2f}) "
                           f"DA={da:.3f}", flush=True)
         bridge.set_plasticity_gate("value_input", 0.0)        # FREEZE V for the read-out / nav
-        bridge.set_transmission_gate("critic_fs_gate", 1.0)   # OPEN FS->critic clamp for read-out/nav
         bridge.core_config.current_reward_signal = saved_reward
         bridge.cp_external_input_current[:] = cp.float32(0.0)
         if bridge.cp_eligibility_trace is not None:
