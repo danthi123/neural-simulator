@@ -180,6 +180,95 @@ def sc_salience_offset_from_image(image, grid_size=8, image_size=32):
     return (dx, dy)
 
 
+def render_egocentric_goal(agent, goal, image_size=32, ppc=4, radius=2):
+    """ENVIRONMENT render (legitimate, channel-1 of the BRAIN-BASED-ONLY bar): the world
+    from the agent's EYE — the goal as a dim ON blob at its bearing (goal - agent) relative
+    to the foveal centre. Egocentric (the agent does not see its own eye), so a single blob
+    the spiking superior colliculus localises directly. Same (2,H,W) ON/OFF convention as
+    render_gridworld_to_image. De-risked in sc_map_orienting_probe.py."""
+    img = np.zeros((2, image_size, image_size), dtype=np.float32)
+    c = image_size // 2
+    gx = int(round(c + (goal[0] - agent[0]) * ppc))   # +x = East
+    gy = int(round(c + (goal[1] - agent[1]) * ppc))   # +y = North
+    for dy in range(-radius, radius + 1):
+        for dx in range(-radius, radius + 1):
+            px, py = gx + dx, gy + dy
+            if 0 <= px < image_size and 0 <= py < image_size:
+                img[0, py, px] = max(img[0, py, px], 0.5)
+    return img
+
+
+def install_spiking_sc_wiring(bridge, visual_image_size=32, w_ret_sc=80.0,
+                              w_sc_rec=6.0, w_sc_cortex=1.0, verbose=False):
+    """Post-init explicit wiring for the spiking superior colliculus (N1), de-risked in
+    sc_map_orienting_probe.py. Installs (via set_pathway_weights, add_missing): retina(ON)->
+    sc_map retinotopic pooling (2x2 RF), sc_map short-range recurrent excitation, and
+    sc_map->cortex_{N,E,S,W} weighted-quadrant pooling (the orienting read-out: the winning
+    cortex pool BY FIRING = the cardinal). The sc_map<->sc_fs Mexican-hat is framework-built
+    (declared with real density so sc_fs is inhibitory). Must run AFTER _initialize_simulation_data.
+    Returns the count of synapses installed."""
+    rm = bridge.region_manager
+    IMGW = int(visual_image_size)
+    SCN = IMGW // 2                       # sc sheet side (32 -> 16)
+    ret0 = int(list(rm.indices("retina"))[0])
+    sc0 = int(list(rm.indices("sc_map"))[0])
+    ctx0 = {a: int(list(rm.indices(f"cortex_{a}"))[0]) for a in ACTION_NAMES}
+    n_ctx = {a: len(list(rm.indices(f"cortex_{a}"))) for a in ACTION_NAMES}
+    sc_center = (SCN - 1) / 2.0
+    sc_idx = lambda sy, sx: sy * SCN + sx
+    ret_on = lambda py, px: py * IMGW + px           # ON channel = first IMGW*IMGW indices
+
+    n_installed = 0
+    # 1) retina(ON) -> sc_map retinotopic (each sc site pools its 2x2 ON block)
+    pre, post, w = [], [], []
+    for sy in range(SCN):
+        for sx in range(SCN):
+            for a in (0, 1):
+                for b in (0, 1):
+                    pre.append(ret0 + ret_on(2 * sy + a, 2 * sx + b))
+                    post.append(sc0 + sc_idx(sy, sx))
+                    w.append(w_ret_sc)
+    n_installed += bridge.set_pathway_weights("retina_to_sc_map",
+        np.asarray(pre, np.int64), np.asarray(post, np.int64),
+        np.asarray(w, np.float32), add_missing=True)
+    # 2) sc_map short-range recurrent excitation (radius 1)
+    pre, post, w = [], [], []
+    for sy in range(SCN):
+        for sx in range(SCN):
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    ny, nx = sy + dy, sx + dx
+                    if 0 <= ny < SCN and 0 <= nx < SCN and (dy, dx) != (0, 0):
+                        pre.append(sc0 + sc_idx(sy, sx))
+                        post.append(sc0 + sc_idx(ny, nx))
+                        w.append(w_sc_rec)
+    n_installed += bridge.set_pathway_weights("sc_map_recurrent",
+        np.asarray(pre, np.int64), np.asarray(post, np.int64),
+        np.asarray(w, np.float32), add_missing=True)
+    # 3) sc_map -> cortex_{N,E,S,W} weighted-quadrant pooling (+sx=East, +sy=North)
+    for a in ACTION_NAMES:
+        pre, post, w = [], [], []
+        for sy in range(SCN):
+            for sx in range(SCN):
+                ddx, ddy = sx - sc_center, sy - sc_center
+                wv = {"E": max(0.0, ddx), "W": max(0.0, -ddx),
+                      "N": max(0.0, ddy), "S": max(0.0, -ddy)}[a]
+                if wv <= 0.0:
+                    continue
+                for d in range(n_ctx[a]):
+                    pre.append(sc0 + sc_idx(sy, sx))
+                    post.append(ctx0[a] + d)
+                    w.append(w_sc_cortex * wv)
+        if pre:
+            n_installed += bridge.set_pathway_weights(f"sc_map_to_cortex_{a}",
+                np.asarray(pre, np.int64), np.asarray(post, np.int64),
+                np.asarray(w, np.float32), add_missing=True)
+    if verbose:
+        print(f"[g11] spiking SC: installed {n_installed} synapses "
+              f"(retina->sc_map {SCN}x{SCN} + recurrent + sc_map->cortex_NESW)", flush=True)
+    return n_installed
+
+
 def build_bg_brain_regions(
     n_cortex: int = 100,
     n_striatum_per_action: int = 50,
@@ -3328,6 +3417,9 @@ def run_moving_goal_episode(
     visual_n_v2: int = 256,
     visual_n_it: int = 64,
     visual_drive_max_pA: float = 200.0,
+    # Spiking superior colliculus (N1 orienting; 2026-06-10)
+    enable_spiking_sc: bool = False,
+    n_spiking_sc_fs: int = 12,
     # Cluster K v2 (2026-05-01)
     visual_receptive_field_radius: int = 4,
     visual_v1_weight_scale: float = 10.0,
@@ -3721,6 +3813,8 @@ def run_moving_goal_episode(
         enable_cluster_f_cerebellum=enable_cluster_f_cerebellum,
         n_granule=n_granule,
         enable_visual_cortex=enable_visual_cortex,
+        enable_spiking_sc=enable_spiking_sc,
+        n_spiking_sc_fs=n_spiking_sc_fs,
         # Spiking-SNc actor-critic Stage B: the neural value critic (2026-06-08).
         enable_neural_critic=enable_neural_critic,
         spiking_reward_us=spiking_reward_us,
@@ -4159,6 +4253,13 @@ def run_moving_goal_episode(
                       f"gate frozen until warmup", flush=True)
         except KeyError:
             pass  # No IT -> cortex_X synapses if visual cortex regions absent
+
+        # Spiking superior colliculus (N1): install the retinotopic retina->sc_map +
+        # recurrent + sc_map->cortex_{N,E,S,W} quadrant-pooling wiring (the Mexican-hat
+        # sc_map<->sc_fs is framework-built). De-risked in sc_map_orienting_probe.py.
+        if enable_spiking_sc:
+            install_spiking_sc_wiring(bridge, visual_image_size=visual_image_size,
+                                      verbose=verbose)
 
     # Tier 2.2 (2026-05-06): open language plasticity gates for embodied
     # language training during nav. Same set of gates that were declared
@@ -7769,6 +7870,14 @@ def main():
                          "Mimics real visual development (sensory critical "
                          "period -> visuomotor maturation). Compose with or "
                          "without --heuristic-single-pool / perception arc.")
+    ap.add_argument("--enable-spiking-sc", action="store_true",
+                    help="Spiking superior colliculus (N1 orienting; 2026-06-10). A "
+                         "retinotopic sc_map (16x16) + Mexican-hat sc_fs surround that, fed "
+                         "the egocentric retinal image, forms an activity bump at the goal's "
+                         "retinal site; sc_map -> cortex_{N,E,S,W} pooling reads the orienting "
+                         "cardinal BY NEURON FIRING -- the spiking replacement for the host "
+                         "sc_orienting_cardinal_from_image reflex. Requires --enable-visual-cortex. "
+                         "De-risked: 2026-06-10-N1-N5-spiking-SC-derisk-RESULT.md (N1 8/8, lesion-confirmed).")
     ap.add_argument("--visual-cortex-action-warmup-steps", type=int, default=600,
                     help="Cluster K v2: steps before the IT -> cortex_X "
                          "plasticity gate opens. Default 600. 0 = open from "
@@ -8432,6 +8541,7 @@ def main():
             enable_cluster_f_v2=args.enable_cluster_f_v2,
             n_granule=args.n_granule,
             enable_visual_cortex=args.enable_visual_cortex,
+            enable_spiking_sc=args.enable_spiking_sc,
             visual_cortex_action_warmup_steps=args.visual_cortex_action_warmup_steps,
             visual_v1_weight_scale=args.visual_v1_weight_scale,
             visual_image_size=args.visual_image_size,
