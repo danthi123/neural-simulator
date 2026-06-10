@@ -1,0 +1,13 @@
+{
+  "derisk": "5b_rf_izh_coexistence_as_is",
+  "backend": "cupy",
+  "n": 8,
+  "period": 200,
+  "seed": 42,
+  "mag0": 1.0,
+  "rf_ref_mag_mean": 0.9999999403953552,
+  "izh_after_mag_mean": 16.28055191040039,
+  "re_changed_max": 16.780073165893555,
+  "dev_from_rf_max": 16.80263328552246,
+  "kill_confirmed": true
+}
