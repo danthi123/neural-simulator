@@ -1,4 +1,6 @@
-# Semantically-structured cortex — months-scale BUILD PLAN (present-ready)
+# Semantically-structured cortex — BUILD PLAN (present-ready, ~2–4 weeks)
+
+> **Cost correction (2026-06-11):** earlier drafts said "months-scale." That was wrong — it carried over the cost of the **dendritic-substrate rewrite** (the original option-B path), which the dual/CLS route AVOIDS. This build assembles already-validated pieces; honest cost is **~2–4 weeks** (compute + integration + iteration), NOT months. The genuine months-scale work (the dendritic rewrite) is a separate, deferred path this route does not require.
 
 > **Status:** present-before-build. The entire learning + architecture path is de-risked end-to-end, fully brain-based, multi-seed at toy scale. This doc is the plan the owner approves (or redirects) BEFORE the build commits resources. It consolidates the de-risk arc (cycles 23–34) into a concrete, costed, gated build.
 
@@ -74,8 +76,11 @@ The dual / complementary-learning-systems (CLS) architecture: a graded-similarit
 
 ## Cost + decision
 
-**Cost:** months-scale — dominated by piece (ii) production-scale training runs (the 320-concept learn at multi-seed) + piece (iii) integration and full-matrix validation. Pieces (i) and the read-out are validated; the new code is the scale-up + integration glue, not new mechanisms.
+**Cost — ~2–4 weeks (honest decomposition):**
+- **Piece (ii)** — mostly GPU compute. A single-seed V=320 gate run is ~1.5–2.5 hr; the multi-seed re-confirm (3-seed gated: seed 1 gates seeds 2–3) is ~1 day of GPU. Implementation is light (the probes exist; it's parameter scaling).
+- **Piece (iii)** — the larger piece, still weeks not months: wire the learned cortex into the existing dual/CLS machinery (decorrelator + sleep-replay consolidation + familiarity gate + composer, all built), supply a real co-occurrence corpus, and validate the full conversational matrix multi-seed with the new generalization capability + the abstention moat intact. Dominated by integration iteration (pieces validated individually may surface interaction issues at scale) + multi-seed conversational-matrix compute.
+- Pieces (i) and the read-out are validated; the new work is scale-up + integration glue, not new mechanisms. My implementation-time estimates run ~2–3× high (treat as a ceiling); compute estimates are reliable.
 
-**Go/no-go (owner):** the build is justified — every mechanism risk is retired. The remaining unknowns are *engineering* (does the validated recipe hold at production scale) not *scientific* (does a brain-based mechanism for this exist). The decision is whether to commit the months-scale resources now, or run any further cheap de-risk first.
+**Go/no-go (owner):** the build is justified — every mechanism risk is retired. The remaining unknowns are *engineering* (does the validated recipe hold at production scale) not *scientific* (does a brain-based mechanism exist). The gate is NOT a months-long blank check — it is the point where work shifts from ~2-hour reversible probes (the cheap scale-checks, running now) to the **~2–4 week sustained multi-seed + integration push**. That push is worth an explicit "go" because it is a sustained effort, not because it is months.
 
 **Recommended first build step (cheap, reversible):** piece (ii)'s G1–G4 re-confirm at V=320 single-seed — the smallest run that converts "validated at toy scale" into "validated at production scale," before the full multi-seed commitment. If it holds, the build is de-risked at scale; if it reveals the strength gap, that's an honest characterization before the large spend.
