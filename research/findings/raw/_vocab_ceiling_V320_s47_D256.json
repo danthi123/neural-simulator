@@ -1,0 +1,74 @@
+{
+  "probe": "vocab_ceiling",
+  "V": 320,
+  "seed": 47,
+  "D": 256,
+  "backend": "cupy",
+  "spiking_cleanup": false,
+  "matrix": {
+    "what_qa": {
+      "correct": 4,
+      "attempted": 4
+    },
+    "who_qa": {
+      "correct": 4,
+      "attempted": 4
+    },
+    "one_attribute": {
+      "correct": 1,
+      "attempted": 1,
+      "expected": "book cup",
+      "got": "book cup"
+    },
+    "embedded_clause": {
+      "correct": 1,
+      "attempted": 1,
+      "expected": "head eye person",
+      "got": "head eye person"
+    },
+    "negation_yesno": {
+      "correct": 3,
+      "attempted": 3
+    },
+    "two_attribute": {
+      "correct": 1,
+      "attempted": 1,
+      "expected_set": [
+        "fire",
+        "moon",
+        "sun"
+      ],
+      "got": "fire sun moon"
+    },
+    "generation": {
+      "correct": 1,
+      "attempted": 1,
+      "expected": "apple river dog",
+      "got": "apple river dog"
+    },
+    "dialogue": {
+      "correct": 1,
+      "attempted": 1,
+      "topic": "apple",
+      "got": "dog",
+      "neighbors": [
+        "dog",
+        "river"
+      ]
+    },
+    "abstention": {
+      "correct": 20,
+      "attempted": 20,
+      "confabulations": []
+    },
+    "shuffled_control": {
+      "false_hits": 0,
+      "attempted": 12
+    }
+  },
+  "two_attr_D_sweep": {},
+  "verdict": "GO",
+  "abstention_pass": true,
+  "shuffled_pass": true,
+  "failing_caps": []
+}
