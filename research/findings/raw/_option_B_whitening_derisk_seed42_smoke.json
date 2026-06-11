@@ -1,0 +1,229 @@
+{
+  "probe": "option_B_whitening_derisk_probe",
+  "date": "2026-06-11",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "proj_dim": 512,
+    "deco_thresh": 0.1,
+    "repro_thresh": 0.9,
+    "repro_sigma": 0.1,
+    "comp_thresh": 0.99,
+    "fhrr_D": 256,
+    "fhrr_roles": 8,
+    "pc_iters": 4000,
+    "pc_eta": 0.01,
+    "pc_lam": 0.01,
+    "m_ratio_max": 0.5,
+    "zca_eps": 0.001,
+    "settle_steps": 400,
+    "n_trials_repro": 100,
+    "n_trials_comp": 60,
+    "repro_sweep_sigmas": [
+      0.01,
+      0.05,
+      0.1,
+      0.2
+    ]
+  },
+  "overall_verdict": "NEGATIVE",
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 16,
+      "D": 512,
+      "between_cos_mean": 0.8140877497789367,
+      "between_cos_max": 0.8754708166158995,
+      "unit_check": {
+        "between_cos_mean": 0.8140877497789367,
+        "threshold": 0.6,
+        "ok_correlated": true,
+        "status": "PASS",
+        "note": "Input codes read NATIVE (mean-centered, unit-normed) and correlated as required."
+      },
+      "similarity_structure": {
+        "off_diag_mean": 0.8140877498124294,
+        "off_diag_std": 0.03748741386536308,
+        "off_diag_min": 0.6942488219226595,
+        "off_diag_max": 0.8754708166547548,
+        "off_diag_range": 0.18122199473209533,
+        "nearest_neighbours": {
+          "apple": [
+            "stop",
+            0.8147638910844008
+          ],
+          "big": [
+            "stop",
+            0.8519998115283205
+          ],
+          "cat": [
+            "stop",
+            0.7718598570799133
+          ],
+          "cold": [
+            "west",
+            0.8644110264192061
+          ],
+          "come": [
+            "stop",
+            0.8750758472842887
+          ],
+          "dog": [
+            "look",
+            0.8265907699613094
+          ],
+          "east": [
+            "stop",
+            0.8573749365809205
+          ],
+          "go": [
+            "stop",
+            0.8754708166547548
+          ],
+          "hot": [
+            "go",
+            0.8531738054358281
+          ],
+          "look": [
+            "stop",
+            0.8626815738734823
+          ],
+          "north": [
+            "come",
+            0.8361967399747411
+          ],
+          "river": [
+            "west",
+            0.8452282766605661
+          ],
+          "small": [
+            "look",
+            0.8332907318834998
+          ],
+          "south": [
+            "stop",
+            0.8515620766572789
+          ],
+          "stop": [
+            "go",
+            0.8754708166547548
+          ],
+          "west": [
+            "stop",
+            0.8738432860965708
+          ]
+        },
+        "has_graded_structure": false,
+        "note": "Correlation is ~uniform (low spread) -> NO graded semantic similarity -> generalization needs the grounded/structured codes, not denoise64. Generalization gate FLAGGED-not-run."
+      },
+      "B3_ceiling": {
+        "RAW_floor": {
+          "label": "RAW (floor)",
+          "gate_a_decorrelation": {
+            "between_cos_mean": -0.06540120121314844,
+            "between_cos_max": 0.1699217227994613,
+            "threshold": 0.1,
+            "PASS": true
+          },
+          "gate_b_reproducibility": {
+            "mean_at_sigma01": 0.1599693397557636,
+            "min": 0.06249059857838738,
+            "std": 0.03872748300290212,
+            "sweep": {
+              "0.01": 0.9515122684901983,
+              "0.05": 0.4397580222592476,
+              "0.1": 0.1599693397557636,
+              "0.2": 0.03831480115961004
+            },
+            "sigma": 0.1,
+            "threshold": 0.9,
+            "PASS": false
+          },
+          "gate_c_composition": {
+            "recovery": 1.0,
+            "fhrr_D": 256,
+            "n_roles": 8,
+            "threshold": 0.99,
+            "PASS": true
+          },
+          "all_abc_pass": false
+        },
+        "ideal_zca": {
+          "label": "ideal ZCA C^-1/2",
+          "gate_a_decorrelation": {
+            "between_cos_mean": -0.0666598003958155,
+            "between_cos_max": 0.07660442067828371,
+            "threshold": 0.1,
+            "PASS": true
+          },
+          "gate_b_reproducibility": {
+            "mean_at_sigma01": 0.25811941966797597,
+            "min": 0.15772435936547274,
+            "std": 0.03484458640174906,
+            "sweep": {
+              "0.01": 0.22672860804622502,
+              "0.05": 0.15168124448046452,
+              "0.1": 0.25811941966797597,
+              "0.2": 0.33692077906526136
+            },
+            "sigma": 0.1,
+            "threshold": 0.9,
+            "PASS": false
+          },
+          "gate_c_composition": {
+            "recovery": 1.0,
+            "fhrr_D": 256,
+            "n_roles": 8,
+            "threshold": 0.99,
+            "PASS": true
+          },
+          "all_abc_pass": false
+        },
+        "concept_whiten": {
+          "label": "concept-whiten (Omega)",
+          "gate_a_decorrelation": {
+            "between_cos_mean": -0.06666666666652896,
+            "between_cos_max": 0.06666666666660298,
+            "threshold": 0.1,
+            "PASS": true
+          },
+          "gate_b_reproducibility": {
+            "mean_at_sigma01": 0.5984981454161294,
+            "min": -0.12440020881879409,
+            "std": 0.18595487544596842,
+            "sweep": {
+              "0.01": 0.9918089610320517,
+              "0.05": 0.8255651378696528,
+              "0.1": 0.5984981454161294,
+              "0.2": 0.47376562706918784
+            },
+            "sigma": 0.1,
+            "threshold": 0.9,
+            "PASS": false
+          },
+          "gate_c_composition": {
+            "recovery": 1.0,
+            "fhrr_D": 256,
+            "n_roles": 8,
+            "threshold": 0.99,
+            "PASS": true
+          },
+          "all_abc_pass": false
+        },
+        "generalization": {
+          "skipped": true,
+          "reason": "denoise64 lacks graded semantic similarity (uniform 0.81); generalization needs the grounded/structured codes. FLAGGED, not run."
+        }
+      },
+      "B3_ceiling_clears_abc": false,
+      "B1_learned": {
+        "ran": false
+      },
+      "b1_reaches_ceiling": false,
+      "forcing_gate": "reproducibility (b) @ sigma=0.1",
+      "verdict": "NEGATIVE"
+    }
+  ],
+  "elapsed_s": 0.6
+}
