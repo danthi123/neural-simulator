@@ -1,0 +1,232 @@
+{
+  "meta": {
+    "runner": "cortex_learned_binder_systematicity_probe",
+    "seeds": [
+      42
+    ],
+    "F_values": [
+      8
+    ],
+    "R": 4,
+    "n_splits": 2,
+    "n_epochs": 200,
+    "D_h": 64,
+    "lr": 0.005,
+    "n_pool": 2000,
+    "pattern_size": 100,
+    "proj_dim": 800,
+    "total_elapsed_s": 72.96990609169006
+  },
+  "verdicts_by_F": {
+    "8": {
+      "option_c_verdict": "MEMORIZATION",
+      "description": "Learned binder memorizes training pairs but FAILS to generalize on held-out novel combos in BOTH regimes. Binder form too weak OR the bilinear form is insufficient for this dimensionality.",
+      "correlated_regime": {
+        "held_mean": 0.25,
+        "held_std": 0.0,
+        "train_mean": 0.10714285714285714,
+        "fhrr_held_mean": 1.0,
+        "chance": 0.125,
+        "shuffled_mean": 0.25,
+        "systematic_fraction_mean": 0.0,
+        "above_2x_chance": false
+      },
+      "decorrelated_regime": {
+        "held_mean": 1.0,
+        "held_std": 0.0,
+        "train_mean": 1.0,
+        "fhrr_held_mean": 1.0,
+        "chance": 0.125,
+        "shuffled_mean": 0.75,
+        "systematic_fraction_mean": 0.5,
+        "above_2x_chance": true
+      }
+    }
+  },
+  "per_seed_per_F": [
+    {
+      "seed": 42,
+      "F": 8,
+      "R": 4,
+      "unit_check": {
+        "sparse_between_cos_mean": -0.012369419620699354,
+        "correlated_between_cos_mean": 0.8091828974883528,
+        "ok_sparse_decorrelated": true,
+        "ok_correlated": true,
+        "status": "PASS"
+      },
+      "decorrelated": {
+        "regime": "decorrelated_sparse",
+        "F": 8,
+        "R": 4,
+        "D_in": 800,
+        "D_h": 64,
+        "seed": 42,
+        "n_splits": 2,
+        "n_epochs": 200,
+        "role_cos_mean": 0.0032415152254392236,
+        "chance": 0.125,
+        "bilinear_train_acc_mean": 1.0,
+        "bilinear_held_acc_mean": 1.0,
+        "bilinear_held_acc_std": 0.0,
+        "bilinear_gap_mean": 0.0,
+        "fhrr_held_acc_mean": 1.0,
+        "shuffled_acc_mean": 0.75,
+        "n_systematic_splits": 1,
+        "n_memorization_splits": 0,
+        "n_splits_total": 2,
+        "systematic_fraction": 0.5,
+        "memorization_fraction": 0.0,
+        "elapsed_s": 38.124297857284546,
+        "splits": [
+          {
+            "split_id": 0,
+            "n_train": 28,
+            "n_held_out": 4,
+            "all_roles_in_train": true,
+            "all_fillers_in_train": true,
+            "leakage_count": 0,
+            "chance": 0.125,
+            "fhrr_train_acc": 1.0,
+            "fhrr_held_acc": 1.0,
+            "bilinear_train_acc": 1.0,
+            "bilinear_held_acc": 1.0,
+            "bilinear_gap": 0.0,
+            "shuffled_held_acc": 0.5,
+            "shuffled_drops_to_chance": false,
+            "mem_floor_train_acc": 1.0,
+            "mem_floor_held_acc": 0.0,
+            "familiarity_gap": 0.39009992519032144,
+            "abstention": {
+              "mean_conf_known_filler": 0.9257606765521327,
+              "mean_conf_novel_filler": 0.5356607513618112,
+              "familiarity_gap": 0.39009992519032144,
+              "n_known_queries": 20,
+              "n_novel_queries": 20,
+              "gap_positive": true
+            },
+            "systematic": true,
+            "memorization": false,
+            "verdict": "SYSTEMATIC"
+          },
+          {
+            "split_id": 1,
+            "n_train": 28,
+            "n_held_out": 4,
+            "all_roles_in_train": true,
+            "all_fillers_in_train": true,
+            "leakage_count": 0,
+            "chance": 0.125,
+            "fhrr_train_acc": 1.0,
+            "fhrr_held_acc": 1.0,
+            "bilinear_train_acc": 1.0,
+            "bilinear_held_acc": 1.0,
+            "bilinear_gap": 0.0,
+            "shuffled_held_acc": 1.0,
+            "shuffled_drops_to_chance": false,
+            "mem_floor_train_acc": 1.0,
+            "mem_floor_held_acc": 0.0,
+            "familiarity_gap": 0.44133864891345576,
+            "abstention": {
+              "mean_conf_known_filler": 0.9755550992860961,
+              "mean_conf_novel_filler": 0.5342164503726403,
+              "familiarity_gap": 0.44133864891345576,
+              "n_known_queries": 20,
+              "n_novel_queries": 20,
+              "gap_positive": true
+            },
+            "systematic": false,
+            "memorization": false,
+            "verdict": "PARTIAL/BOUNDARY"
+          }
+        ]
+      },
+      "correlated": {
+        "regime": "correlated_denoise64",
+        "F": 8,
+        "R": 4,
+        "D_in": 800,
+        "D_h": 64,
+        "seed": 42,
+        "n_splits": 2,
+        "n_epochs": 200,
+        "role_cos_mean": 0.0032415152254392236,
+        "chance": 0.125,
+        "bilinear_train_acc_mean": 0.10714285714285714,
+        "bilinear_held_acc_mean": 0.25,
+        "bilinear_held_acc_std": 0.0,
+        "bilinear_gap_mean": -0.14285714285714285,
+        "fhrr_held_acc_mean": 1.0,
+        "shuffled_acc_mean": 0.25,
+        "n_systematic_splits": 0,
+        "n_memorization_splits": 0,
+        "n_splits_total": 2,
+        "systematic_fraction": 0.0,
+        "memorization_fraction": 0.0,
+        "elapsed_s": 34.62648630142212,
+        "splits": [
+          {
+            "split_id": 0,
+            "n_train": 28,
+            "n_held_out": 4,
+            "all_roles_in_train": true,
+            "all_fillers_in_train": true,
+            "leakage_count": 0,
+            "chance": 0.125,
+            "fhrr_train_acc": 1.0,
+            "fhrr_held_acc": 1.0,
+            "bilinear_train_acc": 0.10714285714285714,
+            "bilinear_held_acc": 0.25,
+            "bilinear_gap": -0.14285714285714285,
+            "shuffled_held_acc": 0.25,
+            "shuffled_drops_to_chance": false,
+            "mem_floor_train_acc": 1.0,
+            "mem_floor_held_acc": 0.0,
+            "familiarity_gap": -0.00043392647223550185,
+            "abstention": {
+              "mean_conf_known_filler": 0.9398421992863148,
+              "mean_conf_novel_filler": 0.9402761257585504,
+              "familiarity_gap": -0.00043392647223550185,
+              "n_known_queries": 20,
+              "n_novel_queries": 20,
+              "gap_positive": false
+            },
+            "systematic": false,
+            "memorization": false,
+            "verdict": "PARTIAL/BOUNDARY"
+          },
+          {
+            "split_id": 1,
+            "n_train": 28,
+            "n_held_out": 4,
+            "all_roles_in_train": true,
+            "all_fillers_in_train": true,
+            "leakage_count": 0,
+            "chance": 0.125,
+            "fhrr_train_acc": 1.0,
+            "fhrr_held_acc": 1.0,
+            "bilinear_train_acc": 0.10714285714285714,
+            "bilinear_held_acc": 0.25,
+            "bilinear_gap": -0.14285714285714285,
+            "shuffled_held_acc": 0.25,
+            "shuffled_drops_to_chance": false,
+            "mem_floor_train_acc": 1.0,
+            "mem_floor_held_acc": 0.0,
+            "familiarity_gap": 0.016423332685574166,
+            "abstention": {
+              "mean_conf_known_filler": 0.9652735585980313,
+              "mean_conf_novel_filler": 0.9488502259124572,
+              "familiarity_gap": 0.016423332685574166,
+              "n_known_queries": 20,
+              "n_novel_queries": 20,
+              "gap_positive": true
+            },
+            "systematic": false,
+            "memorization": false,
+            "verdict": "PARTIAL/BOUNDARY"
+          }
+        ]
+      }
+    }
+  ]
+}
