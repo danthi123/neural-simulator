@@ -1,0 +1,69 @@
+{
+  "probe": "cortex_dg_ca3_cleanup_probe",
+  "seeds": [
+    42
+  ],
+  "overall_verdict": "NEGATIVE",
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_words": 16,
+      "D": 512,
+      "between_code_cos_raw": 0.8140877497789367,
+      "dg_between_ensemble_cos": 0.027307201988843184,
+      "ca3_between_ensemble_cos": 0.0687862828005177,
+      "test1_parity": {
+        "argmax_acc": 1.0,
+        "hopfield_raw_acc": 0.05,
+        "dg_ca3_acc": 0.08333333333333333,
+        "n": 60,
+        "chance": 0.0625,
+        "noise": 0.6
+      },
+      "test2_completion": {
+        "argmax_acc": 1.0,
+        "dg_ca3_acc": 0.1,
+        "n": 60,
+        "chance": 0.0625,
+        "keep_frac": 0.4
+      },
+      "anticheat_lesions": {
+        "ca3_recurrent_lesion_acc": 0.06666666666666667,
+        "dg_separation_lesion_acc": 0.016666666666666666,
+        "dg_between_ensemble_cos_intact": 0.027307201988843184,
+        "dg_between_ensemble_cos_lesioned": 0.06387319744563534
+      },
+      "gates": {
+        "parity": false,
+        "lifts_off_hopfield": false,
+        "completion": false,
+        "ca3_lesion_collapses": false,
+        "dg_lesion_collapse_returns": false
+      },
+      "verdict": "NEGATIVE",
+      "build": {
+        "n_lang_input": 512,
+        "n_dg": 600,
+        "n_dg_pv_basket": 180,
+        "n_ca3": 300,
+        "n_ca1": 120,
+        "n_ec": 160,
+        "ca3_recurrent_density": 0.3,
+        "ca3_recurrent_weight": 2.0,
+        "drive_pA": 220.0
+      },
+      "train_events": 4,
+      "noise": 0.6,
+      "keep_frac": 0.4
+    }
+  ],
+  "rollup": {
+    "parity_argmax": 1.0,
+    "parity_hopfield_raw": 0.05,
+    "parity_dg_ca3": 0.08333333333333333,
+    "completion_argmax": 1.0,
+    "completion_dg_ca3": 0.1,
+    "ca3_recurrent_lesion": 0.06666666666666667,
+    "dg_separation_lesion": 0.016666666666666666
+  }
+}

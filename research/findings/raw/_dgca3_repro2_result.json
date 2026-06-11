@@ -1,0 +1,13 @@
+{
+  "sparse_drive": {
+    "dg_repro_mean": 0.03802672182979087,
+    "dg_repro_min": 0.0,
+    "dg_total_spikes_mean": 15.5,
+    "dg_active_frac_mean": 0.029333333333333333
+  },
+  "graded_drive_magnitude": {
+    "dg_total_spikes_mean": 13.6875,
+    "ca3_total_spikes_mean": 14.3125
+  },
+  "ec_graded_repro_mean": 0.3008614865638891
+}

@@ -1,0 +1,14 @@
+{
+  "raw_cos": 0.8140877497789367,
+  "dg_between_cos": 0.07636922448839885,
+  "dg_fresh_read_reproducibility_mean": 0.05807150385939898,
+  "dg_fresh_read_reproducibility_min": 0.0,
+  "noisy_cue_dg_overlap_same_mean": 0.06532387613370291,
+  "noisy_cue_dg_overlap_other_mean": 0.18401286294698466,
+  "cleanup_argmax": 1.0,
+  "cleanup_hopfield_raw": 0.0625,
+  "cleanup_hopfield_dg_separated": 0.020833333333333332,
+  "n": 48,
+  "chance": 0.0625,
+  "read_steps": 200
+}

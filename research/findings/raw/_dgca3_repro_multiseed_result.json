@@ -1,0 +1,20 @@
+{
+  "43": {
+    "raw_cos": 0.7980092149074378,
+    "dg_repro_mean": 0.03347188236274007,
+    "dg_repro_min": 0.0,
+    "dg_spikes_mean": 17.375,
+    "dg_between_cos": 0.04365331235762338,
+    "noisy_same_mean": 0.06626319369104627,
+    "noisy_other_mean": 0.1859248877406115
+  },
+  "44": {
+    "raw_cos": 0.7871670170795589,
+    "dg_repro_mean": 0.041795219533090205,
+    "dg_repro_min": 0.0,
+    "dg_spikes_mean": 16.25,
+    "dg_between_cos": 0.047065705052059356,
+    "noisy_same_mean": 0.04804799706568448,
+    "noisy_other_mean": 0.15531752708712723
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "configs": [
+    {
+      "label": "baseline",
+      "ca3_w": 2.0,
+      "train_ev": 3,
+      "drive_pA": 220.0,
+      "n_steps_read": 80,
+      "disable_ou": false,
+      "ca3_reread_cos_to_stored": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "clean_cue_acc": 0.0625,
+      "mild_noise_acc": 0.15625,
+      "ca3_active_frac": 0.037
+    },
+    {
+      "label": "baseline_noOU",
+      "ca3_w": 2.0,
+      "train_ev": 3,
+      "drive_pA": 220.0,
+      "n_steps_read": 80,
+      "disable_ou": true,
+      "ca3_reread_cos_to_stored": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "clean_cue_acc": 0.0625,
+      "mild_noise_acc": 0.0625,
+      "ca3_active_frac": 0.0
+    },
+    {
+      "label": "strong_attractor",
+      "ca3_w": 5.0,
+      "train_ev": 6,
+      "drive_pA": 220.0,
+      "n_steps_read": 120,
+      "disable_ou": false,
+      "ca3_reread_cos_to_stored": [
+        0.0,
+        0.227,
+        0.089
+      ],
+      "clean_cue_acc": 0.0,
+      "mild_noise_acc": 0.03125,
+      "ca3_active_frac": 0.047
+    },
+    {
+      "label": "very_strong",
+      "ca3_w": 8.0,
+      "train_ev": 10,
+      "drive_pA": 300.0,
+      "n_steps_read": 150,
+      "disable_ou": false,
+      "ca3_reread_cos_to_stored": [
+        0.089,
+        0.028,
+        0.11
+      ],
+      "clean_cue_acc": 0.0625,
+      "mild_noise_acc": 0.0625,
+      "ca3_active_frac": 0.107
+    }
+  ]
+}

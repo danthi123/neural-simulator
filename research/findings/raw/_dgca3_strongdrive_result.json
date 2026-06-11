@@ -1,0 +1,26 @@
+[
+  {
+    "drive_pA": 600.0,
+    "steps": 300,
+    "dg_repro_mean": 0.13592788857383842,
+    "dg_repro_min": 0.016417727582577965,
+    "dg_spikes_mean": 45.5,
+    "between_dg_cos": 0.11874878071143063,
+    "argmax": 1.0,
+    "hop_raw": 0.075,
+    "hop_dg": 0.075,
+    "chance": 0.0625
+  },
+  {
+    "drive_pA": 1200.0,
+    "steps": 400,
+    "dg_repro_mean": 0.15271987748245802,
+    "dg_repro_min": 0.07822327734684298,
+    "dg_spikes_mean": 62.3125,
+    "between_dg_cos": 0.1551952006590437,
+    "argmax": 1.0,
+    "hop_raw": 0.075,
+    "hop_dg": 0.05,
+    "chance": 0.0625
+  }
+]
