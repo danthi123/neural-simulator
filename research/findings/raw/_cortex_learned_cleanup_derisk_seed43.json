@@ -1,0 +1,67 @@
+{
+  "probe": "cortex_learned_cleanup_derisk",
+  "seed": 43,
+  "proj_dim": 512,
+  "t_steps": 1000,
+  "n_words": 16,
+  "D": 512,
+  "between_code_phase_cos_raw": 0.687645822821153,
+  "between_code_phase_cos_decorr": -0.0004914153661645768,
+  "verdict": "PARTIAL",
+  "systematicity_decorr": {
+    "trained_acc": 1.0,
+    "heldout_acc_attractor": 1.0,
+    "heldout_acc_argmax": 1.0,
+    "trained_n": 240,
+    "heldout_n": 80,
+    "n_fillers": 10,
+    "n_combos": 36,
+    "chance_per_role": 0.1
+  },
+  "systematicity_raw": {
+    "trained_acc": 0.0,
+    "heldout_acc_attractor": 0.0,
+    "heldout_acc_argmax": 1.0,
+    "trained_n": 240,
+    "heldout_n": 80,
+    "n_fillers": 10,
+    "n_combos": 36,
+    "chance_per_role": 0.1
+  },
+  "cleanup_raw": {
+    "argmax_acc": 1.0,
+    "attractor_acc": 0.08,
+    "attractor_lesioned_acc": 0.065,
+    "n": 200,
+    "chance": 0.0625
+  },
+  "cleanup_decorr": {
+    "argmax_acc": 1.0,
+    "attractor_acc": 1.0,
+    "attractor_lesioned_acc": 0.065,
+    "n": 200,
+    "chance": 0.0625
+  },
+  "familiarity": {
+    "known_mean": 6.661338147750939e-17,
+    "known_max": 2.220446049250313e-16,
+    "unknown_mean": 0.9926263879174089,
+    "unknown_min": 0.9848633078524959,
+    "separation_margin": 0.9848633078524957,
+    "threshold": 0.49243165392624805,
+    "known_below_thr_frac": 1.0,
+    "unknown_above_thr_frac": 1.0,
+    "clean_separation": true,
+    "lesion_margin": -4.440892098500626e-16,
+    "lesion_collapsed": true,
+    "n_known_imprinted": 8,
+    "n_trials": 40
+  },
+  "gates": {
+    "systematicity_holds": true,
+    "attractor_ge_argmax_raw": false,
+    "attractor_ge_argmax_decorr": true,
+    "cleanup_lesion_degrades": true,
+    "familiarity_separates": true
+  }
+}
