@@ -1,0 +1,473 @@
+{
+  "summary": {
+    "verdict": "GO",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "all_gate_a": true,
+    "all_gate_b": true,
+    "all_noise_cheat_ok": true,
+    "aborted": false,
+    "elapsed_total_s": 106.9784083366394
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "unit_check": {
+        "sparse_between_cos": 0.0007894736842103659,
+        "denoise_between_cos": 0.8201224772781825,
+        "ok_sparse_decorrelated": true,
+        "ok_denoise_correlated": true,
+        "status": "PASS"
+      },
+      "parity_sparse_decorrelated": {
+        "0.0": {
+          "argmax": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.1": {
+          "argmax": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.2": {
+          "argmax": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.3": {
+          "argmax": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160
+        }
+      },
+      "parity_corr_denoise64": {
+        "0.0": {
+          "argmax": 1.0,
+          "hopfield_mf": 0.05625,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.2": {
+          "argmax": 0.61875,
+          "hopfield_mf": 0.09375,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.5": {
+          "argmax": 0.21875,
+          "hopfield_mf": 0.05,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "1.0": {
+          "argmax": 0.1375,
+          "hopfield_mf": 0.03125,
+          "chance": 0.0625,
+          "n": 160
+        }
+      },
+      "completion_sparse": {
+        "0.5": {
+          "argmax_on_partial": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160,
+          "hopfield_edge": 0.0
+        },
+        "0.35": {
+          "argmax_on_partial": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160,
+          "hopfield_edge": 0.0
+        },
+        "0.25": {
+          "argmax_on_partial": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160,
+          "hopfield_edge": 0.0
+        },
+        "0.15": {
+          "argmax_on_partial": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160,
+          "hopfield_edge": 0.0
+        }
+      },
+      "anticheat_noise_cue": {
+        "n_trials": 200,
+        "max_concept_freq": 0.09,
+        "chance": 0.0625,
+        "decisive_no_hallucination": true,
+        "concept_counts": [
+          12,
+          14,
+          14,
+          6,
+          16,
+          15,
+          13,
+          6,
+          8,
+          9,
+          14,
+          7,
+          18,
+          15,
+          15,
+          18
+        ]
+      },
+      "on_bridge": {
+        "n_pairs": 2,
+        "n_base_pass": 0,
+        "n_post_swr_pass": 1,
+        "base_pass_rate": 0.0,
+        "post_swr_pass_rate": 0.5,
+        "pairs": {
+          "c0->c1": {
+            "base_top1": false,
+            "base_rank": 1,
+            "base_margin": -0.1414213562373095,
+            "post_swr_top1": true,
+            "post_swr_rank": 0,
+            "post_swr_margin": 0.25703582577208395
+          },
+          "c2->c3": {
+            "base_top1": false,
+            "base_rank": 2,
+            "base_margin": 0.0,
+            "post_swr_top1": false,
+            "post_swr_rank": 2,
+            "post_swr_margin": 0.0
+          }
+        },
+        "elapsed_s": 31.63190484046936
+      },
+      "gate_a": true,
+      "gate_b": true,
+      "gate_b_detail": {
+        "hopfield_at_clean": 0.05625,
+        "argmax_at_clean": 1.0,
+        "chance": 0.0625,
+        "hopfield_vs_2x_chance": true,
+        "argmax_perfect": true
+      },
+      "noise_cheat_ok": true
+    },
+    "43": {
+      "seed": 43,
+      "unit_check": {
+        "sparse_between_cos": 0.00017543859649119645,
+        "denoise_between_cos": 0.804675181024955,
+        "ok_sparse_decorrelated": true,
+        "ok_denoise_correlated": true,
+        "status": "PASS"
+      },
+      "parity_sparse_decorrelated": {
+        "0.0": {
+          "argmax": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.1": {
+          "argmax": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.2": {
+          "argmax": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.3": {
+          "argmax": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160
+        }
+      },
+      "parity_corr_denoise64": {
+        "0.0": {
+          "argmax": 1.0,
+          "hopfield_mf": 0.06875,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.2": {
+          "argmax": 0.64375,
+          "hopfield_mf": 0.0625,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.5": {
+          "argmax": 0.18125,
+          "hopfield_mf": 0.0875,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "1.0": {
+          "argmax": 0.13125,
+          "hopfield_mf": 0.05,
+          "chance": 0.0625,
+          "n": 160
+        }
+      },
+      "completion_sparse": {
+        "0.5": {
+          "argmax_on_partial": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160,
+          "hopfield_edge": 0.0
+        },
+        "0.35": {
+          "argmax_on_partial": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160,
+          "hopfield_edge": 0.0
+        },
+        "0.25": {
+          "argmax_on_partial": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160,
+          "hopfield_edge": 0.0
+        },
+        "0.15": {
+          "argmax_on_partial": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160,
+          "hopfield_edge": 0.0
+        }
+      },
+      "anticheat_noise_cue": {
+        "n_trials": 200,
+        "max_concept_freq": 0.12,
+        "chance": 0.0625,
+        "decisive_no_hallucination": true,
+        "concept_counts": [
+          11,
+          20,
+          13,
+          14,
+          14,
+          10,
+          7,
+          12,
+          5,
+          5,
+          22,
+          10,
+          9,
+          11,
+          24,
+          13
+        ]
+      },
+      "on_bridge": {
+        "n_pairs": 2,
+        "n_base_pass": 1,
+        "n_post_swr_pass": 1,
+        "base_pass_rate": 0.5,
+        "post_swr_pass_rate": 0.5,
+        "pairs": {
+          "c0->c1": {
+            "base_top1": true,
+            "base_rank": 0,
+            "base_margin": 0.09128709291752768,
+            "post_swr_top1": true,
+            "post_swr_rank": 0,
+            "post_swr_margin": 0.4220714748675954
+          },
+          "c2->c3": {
+            "base_top1": false,
+            "base_rank": 2,
+            "base_margin": 0.0,
+            "post_swr_top1": false,
+            "post_swr_rank": 2,
+            "post_swr_margin": 0.0
+          }
+        },
+        "elapsed_s": 31.16890048980713
+      },
+      "gate_a": true,
+      "gate_b": true,
+      "gate_b_detail": {
+        "hopfield_at_clean": 0.06875,
+        "argmax_at_clean": 1.0,
+        "chance": 0.0625,
+        "hopfield_vs_2x_chance": true,
+        "argmax_perfect": true
+      },
+      "noise_cheat_ok": true
+    },
+    "44": {
+      "seed": 44,
+      "unit_check": {
+        "sparse_between_cos": 0.002719298245613468,
+        "denoise_between_cos": 0.7991556894768657,
+        "ok_sparse_decorrelated": true,
+        "ok_denoise_correlated": true,
+        "status": "PASS"
+      },
+      "parity_sparse_decorrelated": {
+        "0.0": {
+          "argmax": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.1": {
+          "argmax": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.2": {
+          "argmax": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.3": {
+          "argmax": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160
+        }
+      },
+      "parity_corr_denoise64": {
+        "0.0": {
+          "argmax": 1.0,
+          "hopfield_mf": 0.05,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.2": {
+          "argmax": 0.61875,
+          "hopfield_mf": 0.08125,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.5": {
+          "argmax": 0.2875,
+          "hopfield_mf": 0.0625,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "1.0": {
+          "argmax": 0.1375,
+          "hopfield_mf": 0.075,
+          "chance": 0.0625,
+          "n": 160
+        }
+      },
+      "completion_sparse": {
+        "0.5": {
+          "argmax_on_partial": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160,
+          "hopfield_edge": 0.0
+        },
+        "0.35": {
+          "argmax_on_partial": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160,
+          "hopfield_edge": 0.0
+        },
+        "0.25": {
+          "argmax_on_partial": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160,
+          "hopfield_edge": 0.0
+        },
+        "0.15": {
+          "argmax_on_partial": 1.0,
+          "hopfield_mf": 1.0,
+          "chance": 0.0625,
+          "n": 160,
+          "hopfield_edge": 0.0
+        }
+      },
+      "anticheat_noise_cue": {
+        "n_trials": 200,
+        "max_concept_freq": 0.105,
+        "chance": 0.0625,
+        "decisive_no_hallucination": true,
+        "concept_counts": [
+          12,
+          12,
+          11,
+          13,
+          11,
+          12,
+          4,
+          17,
+          21,
+          9,
+          21,
+          3,
+          9,
+          15,
+          18,
+          12
+        ]
+      },
+      "on_bridge": {
+        "n_pairs": 2,
+        "n_base_pass": 1,
+        "n_post_swr_pass": 1,
+        "base_pass_rate": 0.5,
+        "post_swr_pass_rate": 0.5,
+        "pairs": {
+          "c0->c1": {
+            "base_top1": false,
+            "base_rank": 1,
+            "base_margin": -0.17320508075688776,
+            "post_swr_top1": false,
+            "post_swr_rank": 1,
+            "post_swr_margin": -0.16329931618554522
+          },
+          "c2->c3": {
+            "base_top1": true,
+            "base_rank": 0,
+            "base_margin": 0.23734644158557197,
+            "post_swr_top1": true,
+            "post_swr_rank": 0,
+            "post_swr_margin": 0.5321064319306437
+          }
+        },
+        "elapsed_s": 33.021159172058105
+      },
+      "gate_a": true,
+      "gate_b": true,
+      "gate_b_detail": {
+        "hopfield_at_clean": 0.05,
+        "argmax_at_clean": 1.0,
+        "chance": 0.0625,
+        "hopfield_vs_2x_chance": true,
+        "argmax_perfect": true
+      },
+      "noise_cheat_ok": true
+    }
+  }
+}
