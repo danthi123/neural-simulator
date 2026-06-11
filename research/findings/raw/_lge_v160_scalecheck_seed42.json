@@ -1,0 +1,159 @@
+{
+  "summary": {
+    "consensus_verdict": "BOUNDARY",
+    "per_seed_verdict": {
+      "42": "BOUNDARY"
+    },
+    "seeds": [
+      42
+    ],
+    "backend": "cupy",
+    "cycles": 2,
+    "brain_based_note": "the learn is the project's spiking-Hebbian recurrent (LearnedAssocGraph) at the de-saturated low-cycle (cycles=2) regime. The read-out tested is FULLY BRAIN-BASED: spreading-activation diffusion through the full hub-inclusive learned W + DIVISIVE NORMALIZATION (Carandini-Heeger gain control / marginal division = the brain-based analogue of PPMI's marginal division). NO host PPMI+SVD. divisive normalization is a FIXED nonlinearity (no fit to S_true). The host-method-on-W (PPMI+SVD) is the labelled STAND-IN target; the host PPMI+SVD on RAW counts is the labelled CEILING.",
+    "residual_closed": false,
+    "generalization_holds_all_seeds": true,
+    "cosine_margin_clears_all_seeds": true,
+    "brain_based_best": {
+      "best_pearson_vs_Strue_per_seed": [
+        0.3330565527965565
+      ],
+      "best_pearson_vs_Strue_mean": 0.3330565527965565,
+      "best_second_order_margin_per_seed": [
+        0.4023556538270433
+      ],
+      "best_second_order_margin_mean": 0.4023556538270433,
+      "best_generalization_per_seed": [
+        0.97
+      ],
+      "best_generalization_mean": 0.97,
+      "best_keys_per_seed": [
+        "ch_interleave_steps2_sigma0.001_exp2.0_logclip0"
+      ],
+      "gap_to_host_method_on_W_mean": 0.36585654472327095,
+      "gap_to_ceiling_mean": 0.6221480452769943,
+      "closes_residual_per_seed": [
+        false
+      ]
+    },
+    "reference_points": {
+      "so_margin_bar": 0.1,
+      "raw_diffusion_margin_per_seed": [
+        0.035867221515058834
+      ],
+      "raw_diffusion_margin_mean": 0.035867221515058834,
+      "raw_diffusion_generalization_mean": 0.9725,
+      "host_method_on_W_standin_pearson_mean": 0.6989130975198274,
+      "host_method_on_W_standin_margin_mean": 0.5704383076256234,
+      "host_ceiling_pearson_mean": 0.9552045980735507,
+      "anti_cheat_pearson_W_vs_rawcounts_mean": 0.5560409923509109,
+      "generalization_chance": 0.25
+    },
+    "confirm_GO_full_reference": {
+      "source": "2026-06-11-learned-graded-embedding-confirm-GO_full.md (commit e6e277e3)",
+      "primary_readout": "host-method (PPMI+SVD) on the FULL hub-inclusive learned W (STAND-IN)",
+      "diffusion_brain_based_margin": 0.04,
+      "diffusion_brain_based_gen": 1.0,
+      "host_on_W_margin": 0.84,
+      "host_ceiling_margin": 0.93
+    },
+    "elapsed_total_s": 372.03774094581604
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "cycles": 2,
+      "corpus": {
+        "n_concepts": 160,
+        "n_members": 140,
+        "n_facts": 928,
+        "n_second_order_pairs": 347
+      },
+      "learn_info": {
+        "recurrent_mean": 0.192359060049057,
+        "recurrent_max": 44.77490997314453,
+        "recurrent_nnz": 29408452,
+        "n_neurons": 7300,
+        "cycles": 2,
+        "gamma": 1.0,
+        "cap": null
+      },
+      "learn_seconds": 371.7717125415802,
+      "anti_cheat_pearson_W_vs_rawcounts": 0.5560409923509109,
+      "anti_cheat_W_distinct": true,
+      "host_ceiling": {
+        "pearson_vs_Strue": 0.9552045980735507,
+        "second_order_margin": 0.6452916512463059,
+        "generalization": 1.0,
+        "is_graded": true
+      },
+      "host_method_on_W_standin": {
+        "pearson_vs_Strue": 0.6989130975198274,
+        "second_order_margin": 0.5704383076256234,
+        "generalization": 0.985
+      },
+      "raw_diffusion_baseline": {
+        "pearson_vs_Strue": 0.2778926455692719,
+        "pearson_permutedS": 0.0004974219654856159,
+        "is_graded": false,
+        "within_cos": 0.9789465979220011,
+        "between_cos": 0.9433715227426139,
+        "second_order_cos_mean": 0.9792387442576728,
+        "between_cluster_cos_mean": 0.9433715227426139,
+        "second_order_margin": 0.035867221515058834,
+        "second_order_recovered": false,
+        "generalization": 0.9725,
+        "generalization_ratio_vs_chance": 3.89
+      },
+      "brain_based_divnorm_sweep": {
+        "n_variants": 1,
+        "sweep": {
+          "ch_interleave_steps2_sigma0.001_exp2.0_logclip0": {
+            "pearson_vs_Strue": 0.3330565527965565,
+            "pearson_permutedS": -0.00020257989745583937,
+            "is_graded": true,
+            "within_cos": 0.8997558917982859,
+            "between_cos": 0.4925521992773647,
+            "second_order_cos_mean": 0.894907853104408,
+            "between_cluster_cos_mean": 0.4925521992773647,
+            "second_order_margin": 0.4023556538270433,
+            "second_order_recovered": true,
+            "generalization": 0.97,
+            "generalization_ratio_vs_chance": 3.88,
+            "closes_residual": false,
+            "passes_g1": false,
+            "passes_a1": true
+          }
+        },
+        "best_key": "ch_interleave_steps2_sigma0.001_exp2.0_logclip0",
+        "best": {
+          "pearson_vs_Strue": 0.3330565527965565,
+          "pearson_permutedS": -0.00020257989745583937,
+          "is_graded": true,
+          "within_cos": 0.8997558917982859,
+          "between_cos": 0.4925521992773647,
+          "second_order_cos_mean": 0.894907853104408,
+          "between_cluster_cos_mean": 0.4925521992773647,
+          "second_order_margin": 0.4023556538270433,
+          "second_order_recovered": true,
+          "generalization": 0.97,
+          "generalization_ratio_vs_chance": 3.88,
+          "closes_residual": false,
+          "passes_g1": false,
+          "passes_a1": true
+        },
+        "gap_to_host_method_on_W": 0.36585654472327095,
+        "gap_to_ceiling": 0.6221480452769943,
+        "margin_gap_to_host_method_on_W": 0.16808265379858012,
+        "best_g2_full": {
+          "graded_acc": 0.97,
+          "a1": true,
+          "orthogonal_acc": 0.25,
+          "a2": true,
+          "permuted_prop_acc": 0.3075,
+          "a3": true
+        },
+        "seed_closes_residual": false
+      }
+    }
+  }
+}
