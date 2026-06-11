@@ -1,0 +1,1176 @@
+{
+  "summary": {
+    "verdict": "GO",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "backend": "cupy",
+    "smoke": false,
+    "operating_point": {
+      "drive_pA": 800.0,
+      "k": 40
+    },
+    "scope_note": "cortex codes are SYNTHETIC graded; the claim is the dual/CLS ARCHITECTURE routes correctly ON-SUBSTRATE via the cortex channel (spiking encode + spiking recall identity + cortical reinstatement), NOT that the learned graded-similarity embedding is built (that is the unbuilt months-scale piece).",
+    "bars": {
+      "c2_bar": 0.7,
+      "a1_bar": 0.7,
+      "binding_bar": 0.9,
+      "decorr_bar_le": 0.1,
+      "repro_bar_ge": 0.9
+    },
+    "gates_all_seeds": {
+      "encode_cooccur_repro_and_decorr": true,
+      "cortex_roundtrip_closes": true,
+      "binding_identity": true,
+      "a1_graded_generalizes_cortex": true,
+      "a2_orthogonal_collapses_cortex": true,
+      "a3_permuted_collapses_cortex": true
+    },
+    "load_bearing": {
+      "cortex_channel_roundtrip_pearson_per_seed": [
+        0.9999999999999998,
+        0.9999999999999998,
+        1.0
+      ],
+      "cortex_channel_roundtrip_pearson_mean": 0.9999999999999999,
+      "cortex_channel_permuted_per_seed": [
+        -0.042915636659765354,
+        -0.02605536960857201,
+        -0.006139443657853494
+      ],
+      "cortex_channel_permuted_mean": -0.025036816642063617,
+      "binding_identity_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "binding_identity_mean": 1.0,
+      "generalization_graded_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "generalization_graded_mean": 1.0,
+      "generalization_orthogonal_per_seed": [
+        0.11875,
+        0.25625,
+        0.2375
+      ],
+      "generalization_orthogonal_mean": 0.2041666666666667,
+      "generalization_permuted_per_seed": [
+        0.225,
+        0.10625,
+        0.25
+      ],
+      "generalization_permuted_mean": 0.19375,
+      "generalization_chance": 0.25,
+      "hippocampal_settle_pearson_per_seed": [
+        0.14126645708212862,
+        0.1734734336259902,
+        0.2533813236983315
+      ],
+      "hippocampal_settle_pearson_mean": 0.18937373813548342,
+      "clean_decode_ceiling_per_seed": [
+        0.9999999776764069,
+        0.9999999757150508,
+        0.9999999757967515
+      ],
+      "prior_hippocampal_settle_reference_pearson": 0.189,
+      "clean_decode_ceiling_reference": 1.0
+    },
+    "elapsed_total_s": 166.939923286438
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "graded_stats": {
+        "within_cluster_cos_mean": 0.3954141253003406,
+        "within_cluster_cos_min": 0.2851200073337575,
+        "between_cluster_cos_mean": -0.0007264567434270556,
+        "between_cluster_cos_max": 0.10958408264583006,
+        "graded_margin": 0.3961405820437676,
+        "is_graded": true
+      },
+      "n_neurons": 1912,
+      "n_synapses": 264853,
+      "build_seconds": 0.5611903667449951,
+      "operating_point": {
+        "drive_pA": 800.0,
+        "k": 40
+      },
+      "encode": {
+        "dg_between_cos_mean": -0.0025069220290065575,
+        "dg_repro_mean": 0.9999999999999998,
+        "dg_sparsity": 0.06666666666666667,
+        "dg_total_spikes_mean": 1107.25,
+        "cooccur_repro_and_decorr": true
+      },
+      "binding_identity_acc": 1.0,
+      "roundtrip": {
+        "cortex_channel_pearson": 0.9999999999999998,
+        "cortex_channel_permuted": -0.042915636659765354,
+        "hippocampal_settle_pearson": 0.14126645708212862,
+        "hippocampal_settle_permuted": -0.036584693975701785,
+        "clean_decode_ceiling": 0.9999999776764069
+      },
+      "generalization_cortex_channel": {
+        "graded": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 160,
+          "accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 21,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 1,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 24,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            }
+          ]
+        },
+        "orthogonal": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 19,
+          "accuracy": 0.11875,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.475,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 21,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 1,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 24,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            }
+          ]
+        },
+        "permuted": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 36,
+          "accuracy": 0.225,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.9,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 13,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 17,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 21,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 1,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 17,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 24,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 34,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            }
+          ]
+        },
+        "chance": 0.25,
+        "orthogonal_recall_identity": 1.0
+      },
+      "gates": {
+        "encode_cooccur_repro_and_decorr": true,
+        "cortex_roundtrip_closes": true,
+        "binding_identity": true,
+        "a1_graded_generalizes_cortex": true,
+        "a2_orthogonal_collapses_cortex": true,
+        "a3_permuted_collapses_cortex": true
+      }
+    },
+    "43": {
+      "seed": 43,
+      "graded_stats": {
+        "within_cluster_cos_mean": 0.39409889431063505,
+        "within_cluster_cos_min": 0.3229548519849448,
+        "between_cluster_cos_mean": -0.002148145816377756,
+        "between_cluster_cos_max": 0.13919612295977524,
+        "graded_margin": 0.3962470401270128,
+        "is_graded": true
+      },
+      "n_neurons": 1912,
+      "n_synapses": 264323,
+      "build_seconds": 0.3413722515106201,
+      "operating_point": {
+        "drive_pA": 800.0,
+        "k": 40
+      },
+      "encode": {
+        "dg_between_cos_mean": -0.0008929094144453605,
+        "dg_repro_mean": 0.9999999999999998,
+        "dg_sparsity": 0.06666666666666667,
+        "dg_total_spikes_mean": 1115.875,
+        "cooccur_repro_and_decorr": true
+      },
+      "binding_identity_acc": 1.0,
+      "roundtrip": {
+        "cortex_channel_pearson": 0.9999999999999998,
+        "cortex_channel_permuted": -0.02605536960857201,
+        "hippocampal_settle_pearson": 0.1734734336259902,
+        "hippocampal_settle_permuted": -0.007533303664621164,
+        "clean_decode_ceiling": 0.9999999757150508
+      },
+      "generalization_cortex_channel": {
+        "graded": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 160,
+          "accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "preds": [
+            {
+              "query": 4,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 8,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 10,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 16,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 35,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 0,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 8,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 11,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 16,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 22,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 30,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 37,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            }
+          ]
+        },
+        "orthogonal": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 41,
+          "accuracy": 0.25625,
+          "chance": 0.25,
+          "ratio_vs_chance": 1.025,
+          "preds": [
+            {
+              "query": 4,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 8,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 10,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 16,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 35,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 0,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 8,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 11,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 16,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 22,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 30,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 37,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            }
+          ]
+        },
+        "permuted": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 17,
+          "accuracy": 0.10625,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.425,
+          "preds": [
+            {
+              "query": 4,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 8,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 10,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 16,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 35,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 0,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 8,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 11,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 16,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 22,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 30,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 37,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            }
+          ]
+        },
+        "chance": 0.25,
+        "orthogonal_recall_identity": 1.0
+      },
+      "gates": {
+        "encode_cooccur_repro_and_decorr": true,
+        "cortex_roundtrip_closes": true,
+        "binding_identity": true,
+        "a1_graded_generalizes_cortex": true,
+        "a2_orthogonal_collapses_cortex": true,
+        "a3_permuted_collapses_cortex": true
+      }
+    },
+    "44": {
+      "seed": 44,
+      "graded_stats": {
+        "within_cluster_cos_mean": 0.4038729449019877,
+        "within_cluster_cos_min": 0.31656712609681625,
+        "between_cluster_cos_mean": 0.0016992661114536333,
+        "between_cluster_cos_max": 0.12496493474268805,
+        "graded_margin": 0.40217367879053406,
+        "is_graded": true
+      },
+      "n_neurons": 1912,
+      "n_synapses": 264960,
+      "build_seconds": 0.3395504951477051,
+      "operating_point": {
+        "drive_pA": 800.0,
+        "k": 40
+      },
+      "encode": {
+        "dg_between_cos_mean": 0.0018886868113604112,
+        "dg_repro_mean": 0.9999999999999998,
+        "dg_sparsity": 0.06666666666666667,
+        "dg_total_spikes_mean": 1101.35,
+        "cooccur_repro_and_decorr": true
+      },
+      "binding_identity_acc": 1.0,
+      "roundtrip": {
+        "cortex_channel_pearson": 1.0,
+        "cortex_channel_permuted": -0.006139443657853494,
+        "hippocampal_settle_pearson": 0.2533813236983315,
+        "hippocampal_settle_permuted": 0.10831353874735468,
+        "clean_decode_ceiling": 0.9999999757967515
+      },
+      "generalization_cortex_channel": {
+        "graded": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 160,
+          "accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "preds": [
+            {
+              "query": 0,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 12,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 19,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 37,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 2,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 6,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 10,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 15,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 25,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 32,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 35,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            }
+          ]
+        },
+        "orthogonal": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 38,
+          "accuracy": 0.2375,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.95,
+          "preds": [
+            {
+              "query": 0,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 12,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 19,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 37,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 2,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 6,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 10,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 15,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 25,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 32,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 35,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            }
+          ]
+        },
+        "permuted": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 40,
+          "accuracy": 0.25,
+          "chance": 0.25,
+          "ratio_vs_chance": 1.0,
+          "preds": [
+            {
+              "query": 0,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 5,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 12,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 19,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 20,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 31,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 37,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 2,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 6,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 10,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 15,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 20,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 25,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 32,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 35,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            }
+          ]
+        },
+        "chance": 0.25,
+        "orthogonal_recall_identity": 1.0
+      },
+      "gates": {
+        "encode_cooccur_repro_and_decorr": true,
+        "cortex_roundtrip_closes": true,
+        "binding_identity": true,
+        "a1_graded_generalizes_cortex": true,
+        "a2_orthogonal_collapses_cortex": true,
+        "a3_permuted_collapses_cortex": true
+      }
+    }
+  }
+}
