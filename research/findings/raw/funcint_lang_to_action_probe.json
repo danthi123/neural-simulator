@@ -1,0 +1,597 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "parser_ok": true,
+      "parse": {
+        "agent": "dog",
+        "action": "go",
+        "patient": "north"
+      },
+      "per_dir": {
+        "N": {
+          "word": "north",
+          "open_rates": {
+            "N": 0.06666666666666668,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "closed_rates": {
+            "N": 0.0004166666666666667,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "open": {
+            "target_rate": 0.06666666666666668,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.06666666666666668,
+            "is_winner": true
+          },
+          "closed": {
+            "target_rate": 0.0004166666666666667,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.0004166666666666667,
+            "is_winner": false
+          }
+        },
+        "E": {
+          "word": "east",
+          "open_rates": {
+            "N": 0.0,
+            "E": 0.06652777777777777,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "closed_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "open": {
+            "target_rate": 0.06652777777777777,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.06652777777777777,
+            "is_winner": true
+          },
+          "closed": {
+            "target_rate": 0.0,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.0,
+            "is_winner": false
+          }
+        },
+        "S": {
+          "word": "south",
+          "open_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.05013888888888887,
+            "W": 0.0
+          },
+          "closed_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "open": {
+            "target_rate": 0.05013888888888887,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.05013888888888887,
+            "is_winner": true
+          },
+          "closed": {
+            "target_rate": 0.0,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.0,
+            "is_winner": false
+          }
+        },
+        "W": {
+          "word": "west",
+          "open_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.06416666666666665
+          },
+          "closed_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0001388888888888889
+          },
+          "open": {
+            "target_rate": 0.06416666666666665,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.06416666666666665,
+            "is_winner": true
+          },
+          "closed": {
+            "target_rate": 0.0001388888888888889,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.0001388888888888889,
+            "is_winner": false
+          }
+        }
+      },
+      "lesion_per_dir": {
+        "N": {
+          "target_rate": 0.0,
+          "max_other_rate": 0.0,
+          "mean_other_rate": 0.0,
+          "margin": 0.0,
+          "is_winner": false,
+          "rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          }
+        },
+        "E": {
+          "target_rate": 0.0,
+          "max_other_rate": 0.0,
+          "mean_other_rate": 0.0,
+          "margin": 0.0,
+          "is_winner": false,
+          "rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          }
+        },
+        "S": {
+          "target_rate": 0.0,
+          "max_other_rate": 0.0,
+          "mean_other_rate": 0.0,
+          "margin": 0.0,
+          "is_winner": false,
+          "rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          }
+        },
+        "W": {
+          "target_rate": 0.0,
+          "max_other_rate": 0.0,
+          "mean_other_rate": 0.0,
+          "margin": 0.0,
+          "is_winner": false,
+          "rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          }
+        }
+      },
+      "n_open_winner": 4,
+      "n_closed_winner": 0,
+      "n_lesion_winner": 0
+    },
+    {
+      "seed": 43,
+      "parser_ok": true,
+      "parse": {
+        "agent": "dog",
+        "action": "go",
+        "patient": "north"
+      },
+      "per_dir": {
+        "N": {
+          "word": "north",
+          "open_rates": {
+            "N": 0.06638888888888889,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "closed_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "open": {
+            "target_rate": 0.06638888888888889,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.06638888888888889,
+            "is_winner": true
+          },
+          "closed": {
+            "target_rate": 0.0,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.0,
+            "is_winner": false
+          }
+        },
+        "E": {
+          "word": "east",
+          "open_rates": {
+            "N": 0.0,
+            "E": 0.06708333333333333,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "closed_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "open": {
+            "target_rate": 0.06708333333333333,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.06708333333333333,
+            "is_winner": true
+          },
+          "closed": {
+            "target_rate": 0.0,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.0,
+            "is_winner": false
+          }
+        },
+        "S": {
+          "word": "south",
+          "open_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.06708333333333333,
+            "W": 0.0
+          },
+          "closed_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0004166666666666667,
+            "W": 0.0
+          },
+          "open": {
+            "target_rate": 0.06708333333333333,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.06708333333333333,
+            "is_winner": true
+          },
+          "closed": {
+            "target_rate": 0.0004166666666666667,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.0004166666666666667,
+            "is_winner": false
+          }
+        },
+        "W": {
+          "word": "west",
+          "open_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.05013888888888888
+          },
+          "closed_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0013888888888888887
+          },
+          "open": {
+            "target_rate": 0.05013888888888888,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.05013888888888888,
+            "is_winner": true
+          },
+          "closed": {
+            "target_rate": 0.0013888888888888887,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.0013888888888888887,
+            "is_winner": false
+          }
+        }
+      },
+      "lesion_per_dir": {
+        "N": {
+          "target_rate": 0.0,
+          "max_other_rate": 0.0,
+          "mean_other_rate": 0.0,
+          "margin": 0.0,
+          "is_winner": false,
+          "rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          }
+        },
+        "E": {
+          "target_rate": 0.0,
+          "max_other_rate": 0.0,
+          "mean_other_rate": 0.0,
+          "margin": 0.0,
+          "is_winner": false,
+          "rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          }
+        },
+        "S": {
+          "target_rate": 0.0,
+          "max_other_rate": 0.0,
+          "mean_other_rate": 0.0,
+          "margin": 0.0,
+          "is_winner": false,
+          "rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          }
+        },
+        "W": {
+          "target_rate": 0.0,
+          "max_other_rate": 0.0,
+          "mean_other_rate": 0.0,
+          "margin": 0.0,
+          "is_winner": false,
+          "rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          }
+        }
+      },
+      "n_open_winner": 4,
+      "n_closed_winner": 0,
+      "n_lesion_winner": 0
+    },
+    {
+      "seed": 44,
+      "parser_ok": true,
+      "parse": {
+        "agent": "dog",
+        "action": "go",
+        "patient": "north"
+      },
+      "per_dir": {
+        "N": {
+          "word": "north",
+          "open_rates": {
+            "N": 0.05833333333333334,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "closed_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "open": {
+            "target_rate": 0.05833333333333334,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.05833333333333334,
+            "is_winner": true
+          },
+          "closed": {
+            "target_rate": 0.0,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.0,
+            "is_winner": false
+          }
+        },
+        "E": {
+          "word": "east",
+          "open_rates": {
+            "N": 0.0,
+            "E": 0.06666666666666667,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "closed_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "open": {
+            "target_rate": 0.06666666666666667,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.06666666666666667,
+            "is_winner": true
+          },
+          "closed": {
+            "target_rate": 0.0,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.0,
+            "is_winner": false
+          }
+        },
+        "S": {
+          "word": "south",
+          "open_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.05000000000000001,
+            "W": 0.0
+          },
+          "closed_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          },
+          "open": {
+            "target_rate": 0.05000000000000001,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.05000000000000001,
+            "is_winner": true
+          },
+          "closed": {
+            "target_rate": 0.0,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.0,
+            "is_winner": false
+          }
+        },
+        "W": {
+          "word": "west",
+          "open_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.06277777777777778
+          },
+          "closed_rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0011111111111111111
+          },
+          "open": {
+            "target_rate": 0.06277777777777778,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.06277777777777778,
+            "is_winner": true
+          },
+          "closed": {
+            "target_rate": 0.0011111111111111111,
+            "max_other_rate": 0.0,
+            "mean_other_rate": 0.0,
+            "margin": 0.0011111111111111111,
+            "is_winner": false
+          }
+        }
+      },
+      "lesion_per_dir": {
+        "N": {
+          "target_rate": 0.0,
+          "max_other_rate": 0.0,
+          "mean_other_rate": 0.0,
+          "margin": 0.0,
+          "is_winner": false,
+          "rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          }
+        },
+        "E": {
+          "target_rate": 0.0,
+          "max_other_rate": 0.0,
+          "mean_other_rate": 0.0,
+          "margin": 0.0,
+          "is_winner": false,
+          "rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          }
+        },
+        "S": {
+          "target_rate": 0.0,
+          "max_other_rate": 0.0,
+          "mean_other_rate": 0.0,
+          "margin": 0.0,
+          "is_winner": false,
+          "rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          }
+        },
+        "W": {
+          "target_rate": 0.0,
+          "max_other_rate": 0.0,
+          "mean_other_rate": 0.0,
+          "margin": 0.0,
+          "is_winner": false,
+          "rates": {
+            "N": 0.0,
+            "E": 0.0,
+            "S": 0.0,
+            "W": 0.0
+          }
+        }
+      },
+      "n_open_winner": 4,
+      "n_closed_winner": 0,
+      "n_lesion_winner": 0
+    }
+  ],
+  "provenance": {
+    "nav_side_current_writes": [
+      "language_input <- orthogonal_drive_pattern(direction)  [legitimate sensory render: the environment presents the command word as text]"
+    ],
+    "conv_side_current_writes": [
+      "parse_conj[k=2] <- PARSER_DRIVE_PA  [conv-side: the parser comprehending the verb]"
+    ],
+    "cross_region_coupling": [
+      "couple_gate_to_indices(command_route, action_block_idx)  [transmits a 0/1 GATE STATE from the parser action-ensemble FIRING, not a value]",
+      "language_input -> cortex_X synapses (transmission_gate=command_route)  [carry the word identity the environment legitimately presented; gated by the firing-driven gate]"
+    ],
+    "no_parser_derived_value_written_to_nav_drive": true,
+    "no_cortex_or_motor_index_receives_a_python_command_copy": true
+  },
+  "verdict": {
+    "verdict": "GO",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "open_ok_all_seeds": true,
+    "closed_collapses_all_seeds": true,
+    "lesion_collapses_all_seeds": true,
+    "parser_ok_all_seeds": true,
+    "open_winners_per_seed": {
+      "42": 4,
+      "43": 4,
+      "44": 4
+    },
+    "closed_winners_per_seed": {
+      "42": 0,
+      "43": 0,
+      "44": 0
+    },
+    "lesion_winners_per_seed": {
+      "42": 0,
+      "43": 0,
+      "44": 0
+    }
+  }
+}
