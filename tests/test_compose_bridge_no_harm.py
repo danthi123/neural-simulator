@@ -1,11 +1,16 @@
-"""LOAD-BEARING no-harm: protected/validated modules byte-UNTOUCHED
-across the whole compose-bridge range (e8a99a2..HEAD); NO shipped path
-imports autograd/torch."""
+"""LOAD-BEARING no-harm: protected/validated modules have NO UNREVIEWED
+change since the last owner-byte-reviewed protected edit; NO shipped path
+imports autograd/torch.
+
+The base SHA tracks the most recent byte-approved protected edit (advanced
+from e8a99a2 to ed880244 — the approved N9 determinism-matvec cleanup —
+after the GABA_B/GIRK + determinism edits legitimately landed). Bump it
+whenever a new protected sim/ edit is byte-approved."""
 import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-_BASE = "e8a99a2"
+_BASE = "ed880244"  # last byte-reviewed protected edit (N9 determinism cleanup)
 PROTECTED = [
     "research/runners/abstention_gate.py", "tests/test_abstention_gate.py",
     "sim/td_value_critic.py", "sim/compose_temporal_bind.py",
