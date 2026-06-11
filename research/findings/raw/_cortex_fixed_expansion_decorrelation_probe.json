@@ -1,0 +1,1892 @@
+{
+  "probe": "cortex_fixed_expansion_decorrelation_probe",
+  "date": "2026-06-11",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "expansion_ratios": [
+    4.0,
+    8.0,
+    16.0
+  ],
+  "active_fracs": [
+    0.05,
+    0.1,
+    0.2
+  ],
+  "noise_sigmas": [
+    0.001,
+    0.005,
+    0.01,
+    0.05,
+    0.1,
+    0.2
+  ],
+  "verdict": "NEGATIVE",
+  "description": "Fixed expansion does NOT achieve joint GO (repro>=0.9 AND between_cos<=0.1) at any tested operating point. The repro/decorrelation tension persists. Report exact numbers in the findings doc.",
+  "go_seeds": [],
+  "stage1_any_go": false,
+  "stage2": {
+    "status": "skipped",
+    "reason": "Stage 1 NEGATIVE"
+  },
+  "per_seed": {
+    "42": {
+      "unit_check": {
+        "between_cos": 0.8201224772781825,
+        "threshold": 0.6,
+        "ok_correlated": true,
+        "status": "PASS",
+        "note": "Input codes are correlated as required (raw denoise64)."
+      },
+      "stage1_sweep": {
+        "r4.0_f0.05": {
+          "expansion_ratio": 4.0,
+          "D_in": 800,
+          "D_exp": 3200,
+          "active_frac": 0.05,
+          "decorrelation": {
+            "mean": 0.4929824561403521,
+            "max": 0.6447368421052646,
+            "std": 0.05352000529195811,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.4929824561403521,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.963421052631579,
+              "min": 0.9407894736842098,
+              "std": 0.01033208969968445,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8254605263157903,
+              "min": 0.7500000000000013,
+              "std": 0.01970293139459613,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.666118421052633,
+              "min": 0.585526315789475,
+              "std": 0.030975246461518235,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.1109210526315792,
+              "min": 0.006578947368421035,
+              "std": 0.032041837695127494,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.030065789473684223,
+              "min": -0.019736842105263275,
+              "std": 0.022565981278914845,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.006842105263157868,
+              "min": -0.03947368421052641,
+              "std": 0.02048832516688579,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.030065789473684223,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.4930, repro=0.0301 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 9.42708444145548e-05,
+            "margin_std": 0.00010148828289680065,
+            "margin_min": 1.7309416004050726e-05,
+            "activation_noise_std_at_sigma01": 0.10025499846570424,
+            "margin_over_noise": 0.0009403106663640632,
+            "interpretation": "Margin (0.000094) << noise (0.1003): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.23962736129760742
+        },
+        "r4.0_f0.1": {
+          "expansion_ratio": 4.0,
+          "D_in": 800,
+          "D_exp": 3200,
+          "active_frac": 0.1,
+          "decorrelation": {
+            "mean": 0.550202546296294,
+            "max": 0.6458333333333307,
+            "std": 0.045427088847745496,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.550202546296294,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9694097222222195,
+              "min": 0.9479166666666636,
+              "std": 0.007409676663402566,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.850312499999997,
+              "min": 0.8263888888888866,
+              "std": 0.012916433316291241,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7109374999999971,
+              "min": 0.621527777777775,
+              "std": 0.02158021726934127,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.14729166666666665,
+              "min": 0.08333333333333329,
+              "std": 0.02785657227347178,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.04215277777777775,
+              "min": -7.28583859910259e-17,
+              "std": 0.020931596965908038,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.013854166666666634,
+              "min": -0.04513888888888902,
+              "std": 0.022792672763696748,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.04215277777777775,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5502, repro=0.0422 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 6.033680924142325e-05,
+            "margin_std": 4.3557147968859906e-05,
+            "margin_min": 2.1493284846560434e-06,
+            "activation_noise_std_at_sigma01": 0.10025499846570424,
+            "margin_over_noise": 0.0006018334264047867,
+            "interpretation": "Margin (0.000060) << noise (0.1003): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.21984553337097168
+        },
+        "r4.0_f0.2": {
+          "expansion_ratio": 4.0,
+          "D_in": 800,
+          "D_exp": 3200,
+          "active_frac": 0.2,
+          "decorrelation": {
+            "mean": 0.5875813802083357,
+            "max": 0.660156250000002,
+            "std": 0.04192248017056776,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5875813802083357,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9737890625000005,
+              "min": 0.9609375000000007,
+              "std": 0.005271122176909411,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8647070312500011,
+              "min": 0.8359375000000011,
+              "std": 0.010589666519173499,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7295507812500017,
+              "min": 0.6972656250000018,
+              "std": 0.014319097206172013,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.1850585937500005,
+              "min": 0.12500000000000022,
+              "std": 0.024905790202684297,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.05658203125000003,
+              "min": -0.01171875000000016,
+              "std": 0.025910328800495923,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.01369140624999992,
+              "min": -0.03125000000000019,
+              "std": 0.021134391908978766,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.05658203125000003,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5876, repro=0.0566 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 2.809378079874302e-05,
+            "margin_std": 3.722490559267607e-05,
+            "margin_min": 8.997321620692056e-07,
+            "activation_noise_std_at_sigma01": 0.10025499846570424,
+            "margin_over_noise": 0.0002802232430143946,
+            "interpretation": "Margin (0.000028) << noise (0.1003): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.2186436653137207
+        },
+        "r8.0_f0.05": {
+          "expansion_ratio": 8.0,
+          "D_in": 800,
+          "D_exp": 6400,
+          "active_frac": 0.05,
+          "decorrelation": {
+            "mean": 0.5083059210526307,
+            "max": 0.5855263157894722,
+            "std": 0.04665752974081903,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5083059210526307,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9662828947368322,
+              "min": 0.9473684210526233,
+              "std": 0.007121919439016638,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8288815789473608,
+              "min": 0.7960526315789412,
+              "std": 0.012705887515727435,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.6696052631578907,
+              "min": 0.615131578947365,
+              "std": 0.02251461513632459,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.11447368421052684,
+              "min": 0.055921052631578955,
+              "std": 0.024466255239193598,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.031052631578947477,
+              "min": -0.006578947368421193,
+              "std": 0.019545785795978512,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.006250000000000003,
+              "min": -0.029605263157894857,
+              "std": 0.01643091282071344,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.031052631578947477,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5083, repro=0.0311 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 5.860544405248205e-05,
+            "margin_std": 8.085098368205927e-05,
+            "margin_min": 3.843721474439121e-08,
+            "activation_noise_std_at_sigma01": 0.10025499846570424,
+            "margin_over_noise": 0.0005845638117679045,
+            "interpretation": "Margin (0.000059) << noise (0.1003): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.661799430847168
+        },
+        "r8.0_f0.1": {
+          "expansion_ratio": 8.0,
+          "D_in": 800,
+          "D_exp": 6400,
+          "active_frac": 0.1,
+          "decorrelation": {
+            "mean": 0.5502170138888861,
+            "max": 0.6197916666666652,
+            "std": 0.03826878976741625,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5502170138888861,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9701215277777809,
+              "min": 0.9565972222222238,
+              "std": 0.005458654703219802,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8525520833333355,
+              "min": 0.8281250000000027,
+              "std": 0.010397131566492699,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7054687500000001,
+              "min": 0.6649305555555544,
+              "std": 0.015443340210200706,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.14824652777777683,
+              "min": 0.09201388888888817,
+              "std": 0.022697148058646643,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.041805555555555624,
+              "min": 0.0017361111111113183,
+              "std": 0.01823442384510572,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.013142361111111252,
+              "min": -0.024305555555555265,
+              "std": 0.01620500470140887,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.041805555555555624,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5502, repro=0.0418 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 2.6070667251340985e-05,
+            "margin_std": 1.7736611862334285e-05,
+            "margin_min": 5.059577717222985e-06,
+            "activation_noise_std_at_sigma01": 0.10025499846570424,
+            "margin_over_noise": 0.00026004356540885423,
+            "interpretation": "Margin (0.000026) << noise (0.1003): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.689469575881958
+        },
+        "r8.0_f0.2": {
+          "expansion_ratio": 8.0,
+          "D_in": 800,
+          "D_exp": 6400,
+          "active_frac": 0.2,
+          "decorrelation": {
+            "mean": 0.5777913411458324,
+            "max": 0.6484374999999988,
+            "std": 0.038106484807216234,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5777913411458324,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9720898437499988,
+              "min": 0.9638671874999987,
+              "std": 0.0034696978399546665,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8606640624999983,
+              "min": 0.8369140624999979,
+              "std": 0.008532362421750171,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7268457031249983,
+              "min": 0.7021484374999984,
+              "std": 0.011905490480562443,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.18704101562500144,
+              "min": 0.13183593750000092,
+              "std": 0.021769001958256002,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.05700195312500014,
+              "min": 0.004882812499999849,
+              "std": 0.02219254342368324,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.014550781249999947,
+              "min": -0.03320312500000009,
+              "std": 0.018559055818021766,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.05700195312500014,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5778, repro=0.0570 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 1.8765623007753474e-05,
+            "margin_std": 1.572873627469255e-05,
+            "margin_min": 1.630872561275698e-06,
+            "activation_noise_std_at_sigma01": 0.10025499846570424,
+            "margin_over_noise": 0.00018717892668449582,
+            "interpretation": "Margin (0.000019) << noise (0.1003): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.7189257144927979
+        },
+        "r16.0_f0.05": {
+          "expansion_ratio": 16.0,
+          "D_in": 800,
+          "D_exp": 12800,
+          "active_frac": 0.05,
+          "decorrelation": {
+            "mean": 0.5112116228070179,
+            "max": 0.5970394736842111,
+            "std": 0.04573087361701665,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5112116228070179,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9667927631578956,
+              "min": 0.9523026315789487,
+              "std": 0.005619587077019506,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8327467105263167,
+              "min": 0.8075657894736853,
+              "std": 0.011042285943626136,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.6708881578947374,
+              "min": 0.6134868421052636,
+              "std": 0.018137651998366564,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.11480263157894742,
+              "min": 0.06578947368421056,
+              "std": 0.02073934245545805,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.030164473684210536,
+              "min": -0.003289473684210545,
+              "std": 0.015448658659018948,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.0074342105263157845,
+              "min": -0.024671052631578965,
+              "std": 0.012779255989943616,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.030164473684210536,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5112, repro=0.0302 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 2.3110345056555175e-05,
+            "margin_std": 1.7495893629936804e-05,
+            "margin_min": 7.591790310776392e-07,
+            "activation_noise_std_at_sigma01": 0.10025499846570424,
+            "margin_over_noise": 0.00023051563922002718,
+            "interpretation": "Margin (0.000023) << noise (0.1003): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 2.108750104904175
+        },
+        "r16.0_f0.1": {
+          "expansion_ratio": 16.0,
+          "D_in": 800,
+          "D_exp": 12800,
+          "active_frac": 0.1,
+          "decorrelation": {
+            "mean": 0.548567708333334,
+            "max": 0.6276041666666675,
+            "std": 0.04079427829878903,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.548567708333334,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.969453125000001,
+              "min": 0.9583333333333346,
+              "std": 0.003597344133364268,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8503645833333341,
+              "min": 0.8333333333333343,
+              "std": 0.007751284086920201,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.705911458333334,
+              "min": 0.6623263888888896,
+              "std": 0.013417732710659996,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.14965277777777802,
+              "min": 0.1032986111111113,
+              "std": 0.020946596052539724,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.044027777777777895,
+              "min": 0.003472222222222261,
+              "std": 0.016959362029724104,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.012291666666666725,
+              "min": -0.021701388888888874,
+              "std": 0.01390500367212875,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.044027777777777895,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5486, repro=0.0440 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 1.7684099776659173e-05,
+            "margin_std": 1.4809977318661702e-05,
+            "margin_min": 1.4114505401396915e-06,
+            "activation_noise_std_at_sigma01": 0.10025499846570424,
+            "margin_over_noise": 0.0001763912029037859,
+            "interpretation": "Margin (0.000018) << noise (0.1003): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 2.1510095596313477
+        },
+        "r16.0_f0.2": {
+          "expansion_ratio": 16.0,
+          "D_in": 800,
+          "D_exp": 12800,
+          "active_frac": 0.2,
+          "decorrelation": {
+            "mean": 0.57838134765625,
+            "max": 0.6479492187499999,
+            "std": 0.03869496500696287,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.57838134765625,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.972041015625,
+              "min": 0.96533203125,
+              "std": 0.0028207446160914834,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8616845703125,
+              "min": 0.8466796875000002,
+              "std": 0.006923564696042091,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7280615234375,
+              "min": 0.7001953125000002,
+              "std": 0.010434207008474125,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.18736816406250006,
+              "min": 0.14257812500000008,
+              "std": 0.02135267416847835,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.057919921875000044,
+              "min": 0.00537109375000005,
+              "std": 0.020244281950483545,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.015307617187500046,
+              "min": -0.040039062499999986,
+              "std": 0.018150587108143372,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.057919921875000044,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5784, repro=0.0579 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 9.41707469213405e-06,
+            "margin_std": 8.306299675115562e-06,
+            "margin_min": 1.435674857681174e-06,
+            "activation_noise_std_at_sigma01": 0.10025499846570424,
+            "margin_over_noise": 9.39312237410443e-05,
+            "interpretation": "Margin (0.000009) << noise (0.1003): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 2.190629243850708
+        }
+      },
+      "best_op": {
+        "ratio": 16.0,
+        "active_frac": 0.2,
+        "D_exp": 12800
+      },
+      "lesion_control": {
+        "between_cos_lesion": 0.9999999999999999,
+        "repro_lesion_mean": 0.9999999999999999,
+        "discrimination_collapsed": true,
+        "verdict": "PASS",
+        "note": "Lesion collapses discrimination as expected: all expanded codes identical."
+      },
+      "cleanup_parity": {
+        "0.0": {
+          "argmax": 1.0,
+          "hopfield_mf": 0.0625,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.1": {
+          "argmax": 0.9,
+          "hopfield_mf": 0.075,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.2": {
+          "argmax": 0.51875,
+          "hopfield_mf": 0.04375,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.5": {
+          "argmax": 0.18125,
+          "hopfield_mf": 0.05625,
+          "chance": 0.0625,
+          "n": 160
+        }
+      },
+      "any_go": false,
+      "seed_elapsed_s": 94.1061463356018
+    },
+    "43": {
+      "unit_check": {
+        "between_cos": 0.804675181024955,
+        "threshold": 0.6,
+        "ok_correlated": true,
+        "status": "PASS",
+        "note": "Input codes are correlated as required (raw denoise64)."
+      },
+      "stage1_sweep": {
+        "r4.0_f0.05": {
+          "expansion_ratio": 4.0,
+          "D_in": 800,
+          "D_exp": 3200,
+          "active_frac": 0.05,
+          "decorrelation": {
+            "mean": 0.48130482456140455,
+            "max": 0.592105263157896,
+            "std": 0.05942939466245751,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.48130482456140455,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9652631578947366,
+              "min": 0.9276315789473683,
+              "std": 0.011129121291468562,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8205263157894742,
+              "min": 0.7697368421052633,
+              "std": 0.025328178388873666,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.6736184210526325,
+              "min": 0.5855263157894752,
+              "std": 0.03429764968971236,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.11348684210526344,
+              "min": 0.03947368421052638,
+              "std": 0.03227541998885639,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.02519736842105264,
+              "min": -0.026315789473684296,
+              "std": 0.02350176438829398,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.011447368421052628,
+              "min": -0.026315789473684223,
+              "std": 0.02238041474121786,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.02519736842105264,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.4813, repro=0.0252 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 8.599578983282431e-05,
+            "margin_std": 6.052139924094632e-05,
+            "margin_min": 6.949139167614082e-06,
+            "activation_noise_std_at_sigma01": 0.09966483891504153,
+            "margin_over_noise": 0.0008628498351887957,
+            "interpretation": "Margin (0.000086) << noise (0.0997): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.28346705436706543
+        },
+        "r4.0_f0.1": {
+          "expansion_ratio": 4.0,
+          "D_in": 800,
+          "D_exp": 3200,
+          "active_frac": 0.1,
+          "decorrelation": {
+            "mean": 0.5110821759259238,
+            "max": 0.635416666666664,
+            "std": 0.05997218334488195,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5110821759259238,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9671527777777754,
+              "min": 0.951388888888886,
+              "std": 0.00695173228700035,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8414583333333303,
+              "min": 0.7916666666666636,
+              "std": 0.015373908422557574,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7008333333333305,
+              "min": 0.6319444444444421,
+              "std": 0.024624494730668807,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.1496180555555555,
+              "min": 0.09027777777777776,
+              "std": 0.028557186068613346,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.03937499999999998,
+              "min": -0.031249999999999896,
+              "std": 0.02352527288909042,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.014062499999999978,
+              "min": -0.04513888888888891,
+              "std": 0.026289904817119642,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.03937499999999998,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5111, repro=0.0394 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 4.742142316534453e-05,
+            "margin_std": 4.021903977818137e-05,
+            "margin_min": 2.5440992302630527e-06,
+            "activation_noise_std_at_sigma01": 0.09966483891504153,
+            "margin_over_noise": 0.0004758089581150351,
+            "interpretation": "Margin (0.000047) << noise (0.0997): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.23466753959655762
+        },
+        "r4.0_f0.2": {
+          "expansion_ratio": 4.0,
+          "D_in": 800,
+          "D_exp": 3200,
+          "active_frac": 0.2,
+          "decorrelation": {
+            "mean": 0.5520507812500026,
+            "max": 0.666015625000002,
+            "std": 0.05004642238882703,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5520507812500026,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9713671875000006,
+              "min": 0.9589843750000009,
+              "std": 0.0050041181771085935,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8595312500000012,
+              "min": 0.8281250000000011,
+              "std": 0.011975316410224802,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7249609375000017,
+              "min": 0.6972656250000018,
+              "std": 0.015834484393124133,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.1833007812500005,
+              "min": 0.0957031250000001,
+              "std": 0.025114749772353645,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.05113281250000002,
+              "min": -0.007812500000000092,
+              "std": 0.025929350894169572,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.018085937499999934,
+              "min": -0.050781250000000264,
+              "std": 0.02574959586113387,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.05113281250000002,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5521, repro=0.0511 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 3.05206888416361e-05,
+            "margin_std": 2.170201042916686e-05,
+            "margin_min": 4.944561960047722e-07,
+            "activation_noise_std_at_sigma01": 0.09966483891504153,
+            "margin_over_noise": 0.00030623326314054423,
+            "interpretation": "Margin (0.000031) << noise (0.0997): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.24414992332458496
+        },
+        "r8.0_f0.05": {
+          "expansion_ratio": 8.0,
+          "D_in": 800,
+          "D_exp": 6400,
+          "active_frac": 0.05,
+          "decorrelation": {
+            "mean": 0.4945449561403498,
+            "max": 0.6217105263157874,
+            "std": 0.055847629548399655,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.4945449561403498,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9656578947368328,
+              "min": 0.9473684210526223,
+              "std": 0.007871676847971382,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8308223684210456,
+              "min": 0.7927631578947305,
+              "std": 0.016243839392621567,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.6746710526315748,
+              "min": 0.6118421052631564,
+              "std": 0.0231832061136149,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.11463815789473733,
+              "min": 0.06250000000000003,
+              "std": 0.025718446599641693,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.02707236842105271,
+              "min": -0.013157894736842195,
+              "std": 0.01804032662385286,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.010197368421052668,
+              "min": -0.023026315789473797,
+              "std": 0.015411456283055973,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.02707236842105271,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.4945, repro=0.0271 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 3.5004141958128784e-05,
+            "margin_std": 4.319521911171113e-05,
+            "margin_min": 5.90533502757562e-07,
+            "activation_noise_std_at_sigma01": 0.09966483891504153,
+            "margin_over_noise": 0.000351218567539316,
+            "interpretation": "Margin (0.000035) << noise (0.0997): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.6550359725952148
+        },
+        "r8.0_f0.1": {
+          "expansion_ratio": 8.0,
+          "D_in": 800,
+          "D_exp": 6400,
+          "active_frac": 0.1,
+          "decorrelation": {
+            "mean": 0.517447916666664,
+            "max": 0.6197916666666657,
+            "std": 0.05677412937113284,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.517447916666664,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9678125000000035,
+              "min": 0.9531250000000032,
+              "std": 0.005364667609909783,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8425347222222248,
+              "min": 0.8194444444444462,
+              "std": 0.01048731827120775,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7016319444444448,
+              "min": 0.6666666666666667,
+              "std": 0.01659965550503417,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.14979166666666568,
+              "min": 0.079861111111111,
+              "std": 0.02474196504130021,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.03984375000000004,
+              "min": -0.0121527777777775,
+              "std": 0.018678127101032165,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.013368055555555688,
+              "min": -0.026041666666666356,
+              "std": 0.019490118727428427,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.03984375000000004,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5174, repro=0.0398 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 3.9197098822412856e-05,
+            "margin_std": 2.653812939555883e-05,
+            "margin_min": 1.4130378692134293e-07,
+            "activation_noise_std_at_sigma01": 0.09966483891504153,
+            "margin_over_noise": 0.00039328914037008384,
+            "interpretation": "Margin (0.000039) << noise (0.0997): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.8364355564117432
+        },
+        "r8.0_f0.2": {
+          "expansion_ratio": 8.0,
+          "D_in": 800,
+          "D_exp": 6400,
+          "active_frac": 0.2,
+          "decorrelation": {
+            "mean": 0.5564941406249996,
+            "max": 0.6679687499999989,
+            "std": 0.05196234064421061,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5564941406249996,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9714746093749989,
+              "min": 0.9619140624999987,
+              "std": 0.00376526586315814,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8605761718749982,
+              "min": 0.8369140624999986,
+              "std": 0.00828393856526449,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7278515624999986,
+              "min": 0.6933593749999982,
+              "std": 0.013274699671449708,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.18568359375000143,
+              "min": 0.10546875000000043,
+              "std": 0.02294112224198481,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.053398437500000104,
+              "min": 0.009765624999999908,
+              "std": 0.020613048442995666,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.01646484374999997,
+              "min": -0.03222656250000017,
+              "std": 0.01941961259009605,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.053398437500000104,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5565, repro=0.0534 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 1.8127710680822294e-05,
+            "margin_std": 1.4037753334179227e-05,
+            "margin_min": 3.612797986919658e-07,
+            "activation_noise_std_at_sigma01": 0.09966483891504153,
+            "margin_over_noise": 0.00018188672031159577,
+            "interpretation": "Margin (0.000018) << noise (0.0997): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.894629955291748
+        },
+        "r16.0_f0.05": {
+          "expansion_ratio": 16.0,
+          "D_in": 800,
+          "D_exp": 12800,
+          "active_frac": 0.05,
+          "decorrelation": {
+            "mean": 0.4766721491228073,
+            "max": 0.6019736842105268,
+            "std": 0.05764326840073064,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.4766721491228073,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.966069078947369,
+              "min": 0.9555921052631586,
+              "std": 0.005003109965982893,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8268421052631588,
+              "min": 0.7796052631578955,
+              "std": 0.012323634618959096,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.6677302631578952,
+              "min": 0.6233552631578954,
+              "std": 0.018027666343952142,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.11527960526315793,
+              "min": 0.06743421052631583,
+              "std": 0.0219115679214816,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.026792763157894743,
+              "min": -0.0032894736842105287,
+              "std": 0.013303664176566291,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.009325657894736838,
+              "min": -0.018092105263157902,
+              "std": 0.011775798926469844,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.026792763157894743,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.4767, repro=0.0268 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 1.5591778270543626e-05,
+            "margin_std": 1.2870871302678394e-05,
+            "margin_min": 1.6448559410353614e-08,
+            "activation_noise_std_at_sigma01": 0.09966483891504153,
+            "margin_over_noise": 0.00015644211579650738,
+            "interpretation": "Margin (0.000016) << noise (0.0997): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 2.1893672943115234
+        },
+        "r16.0_f0.1": {
+          "expansion_ratio": 16.0,
+          "D_in": 800,
+          "D_exp": 12800,
+          "active_frac": 0.1,
+          "decorrelation": {
+            "mean": 0.5190031828703711,
+            "max": 0.6171875000000007,
+            "std": 0.05341067555786923,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5190031828703711,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9685416666666675,
+              "min": 0.9565972222222232,
+              "std": 0.004150576571951169,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.844236111111112,
+              "min": 0.8220486111111119,
+              "std": 0.008598851600219202,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7015538194444454,
+              "min": 0.6614583333333341,
+              "std": 0.013481825020325154,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.14933159722222247,
+              "min": 0.0972222222222224,
+              "std": 0.020297082453154383,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.039904513888888986,
+              "min": 0.0008680555555556002,
+              "std": 0.015380736859263689,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.013854166666666732,
+              "min": -0.019097222222222203,
+              "std": 0.01624257902726013,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.039904513888888986,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5190, repro=0.0399 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 1.9192860384490557e-05,
+            "margin_std": 1.9914626887863515e-05,
+            "margin_min": 2.685335391064414e-07,
+            "activation_noise_std_at_sigma01": 0.09966483891504153,
+            "margin_over_noise": 0.00019257403707498866,
+            "interpretation": "Margin (0.000019) << noise (0.0997): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 2.1329989433288574
+        },
+        "r16.0_f0.2": {
+          "expansion_ratio": 16.0,
+          "D_in": 800,
+          "D_exp": 12800,
+          "active_frac": 0.2,
+          "decorrelation": {
+            "mean": 0.5609822591145833,
+            "max": 0.6650390625000001,
+            "std": 0.04972551006925827,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5609822591145833,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9719970703125,
+              "min": 0.9653320312500001,
+              "std": 0.0024708912894628463,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.86189453125,
+              "min": 0.84228515625,
+              "std": 0.005962519884376255,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.73193359375,
+              "min": 0.7065429687499999,
+              "std": 0.010432777661363498,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.18691894531250008,
+              "min": 0.11669921875000006,
+              "std": 0.021087498056245456,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.05429687500000005,
+              "min": 0.01171875000000005,
+              "std": 0.01954442914728797,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.01774414062500005,
+              "min": -0.023437499999999955,
+              "std": 0.01718100962770793,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.05429687500000005,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5610, repro=0.0543 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 8.365946015662486e-06,
+            "margin_std": 9.784223834241562e-06,
+            "margin_min": 3.0816631725605337e-07,
+            "activation_noise_std_at_sigma01": 0.09966483891504153,
+            "margin_over_noise": 8.394079704187377e-05,
+            "interpretation": "Margin (0.000008) << noise (0.0997): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 2.1600797176361084
+        }
+      },
+      "best_op": {
+        "ratio": 16.0,
+        "active_frac": 0.2,
+        "D_exp": 12800
+      },
+      "lesion_control": {
+        "between_cos_lesion": 0.9999999999999999,
+        "repro_lesion_mean": 0.9999999999999999,
+        "discrimination_collapsed": true,
+        "verdict": "PASS",
+        "note": "Lesion collapses discrimination as expected: all expanded codes identical."
+      },
+      "cleanup_parity": {
+        "0.0": {
+          "argmax": 1.0,
+          "hopfield_mf": 0.08125,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.1": {
+          "argmax": 0.925,
+          "hopfield_mf": 0.06875,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.2": {
+          "argmax": 0.55625,
+          "hopfield_mf": 0.03125,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.5": {
+          "argmax": 0.18125,
+          "hopfield_mf": 0.05,
+          "chance": 0.0625,
+          "n": 160
+        }
+      },
+      "any_go": false,
+      "seed_elapsed_s": 94.71695184707642
+    },
+    "44": {
+      "unit_check": {
+        "between_cos": 0.7991556894768657,
+        "threshold": 0.6,
+        "ok_correlated": true,
+        "status": "PASS",
+        "note": "Input codes are correlated as required (raw denoise64)."
+      },
+      "stage1_sweep": {
+        "r4.0_f0.05": {
+          "expansion_ratio": 4.0,
+          "D_in": 800,
+          "D_exp": 3200,
+          "active_frac": 0.05,
+          "decorrelation": {
+            "mean": 0.45263157894736944,
+            "max": 0.631578947368422,
+            "std": 0.05213997381861733,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.45263157894736944,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9638157894736843,
+              "min": 0.9276315789473688,
+              "std": 0.013009026271897909,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.82296052631579,
+              "min": 0.7763157894736852,
+              "std": 0.021218405712899974,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.6628289473684222,
+              "min": 0.5855263157894746,
+              "std": 0.03228882757900311,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.10710526315789494,
+              "min": 0.026315789473684143,
+              "std": 0.029875665710776312,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.02861842105263159,
+              "min": -0.026315789473684223,
+              "std": 0.025807173705802093,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.007171052631578926,
+              "min": -0.03947368421052647,
+              "std": 0.019092440781991477,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.02861842105263159,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.4526, repro=0.0286 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 6.905835019591642e-05,
+            "margin_std": 4.127715842121576e-05,
+            "margin_min": 1.5118905564645568e-05,
+            "activation_noise_std_at_sigma01": 0.10010548172544993,
+            "margin_over_noise": 0.0006898558301195385,
+            "interpretation": "Margin (0.000069) << noise (0.1001): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.27095723152160645
+        },
+        "r4.0_f0.1": {
+          "expansion_ratio": 4.0,
+          "D_in": 800,
+          "D_exp": 3200,
+          "active_frac": 0.1,
+          "decorrelation": {
+            "mean": 0.5100115740740722,
+            "max": 0.6388888888888868,
+            "std": 0.040816912102358514,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5100115740740722,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9704861111111092,
+              "min": 0.9513888888888867,
+              "std": 0.007141306875417711,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8436458333333308,
+              "min": 0.8090277777777761,
+              "std": 0.014938265128397517,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.6989583333333307,
+              "min": 0.6493055555555534,
+              "std": 0.02144079650175405,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.1469791666666666,
+              "min": 0.08680555555555554,
+              "std": 0.02741101184928874,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.04260416666666665,
+              "min": -0.0138888888888889,
+              "std": 0.023849162502765864,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.012013888888888864,
+              "min": -0.03125000000000007,
+              "std": 0.020526795759099926,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.04260416666666665,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5100, repro=0.0426 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 6.814178876390778e-05,
+            "margin_std": 5.745489168642506e-05,
+            "margin_min": 7.569378164644369e-06,
+            "activation_noise_std_at_sigma01": 0.10010548172544993,
+            "margin_over_noise": 0.0006806998736603983,
+            "interpretation": "Margin (0.000068) << noise (0.1001): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.2999122142791748
+        },
+        "r4.0_f0.2": {
+          "expansion_ratio": 4.0,
+          "D_in": 800,
+          "D_exp": 3200,
+          "active_frac": 0.2,
+          "decorrelation": {
+            "mean": 0.5549153645833359,
+            "max": 0.6406250000000022,
+            "std": 0.03697737568561265,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5549153645833359,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9720898437500007,
+              "min": 0.9570312500000008,
+              "std": 0.00536519562520133,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8618750000000012,
+              "min": 0.8339843750000014,
+              "std": 0.011893488896240628,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7352929687500017,
+              "min": 0.6933593750000019,
+              "std": 0.017358557076674785,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.18583984375000054,
+              "min": 0.12304687500000032,
+              "std": 0.026304722014660487,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.056406250000000026,
+              "min": -0.013671875000000118,
+              "std": 0.02767555382096046,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.01544921874999993,
+              "min": -0.0371093750000002,
+              "std": 0.023881048744469852,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.056406250000000026,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5549, repro=0.0564 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 3.165530897550274e-05,
+            "margin_std": 3.0138370205277656e-05,
+            "margin_min": 2.4000560867182275e-07,
+            "activation_noise_std_at_sigma01": 0.10010548172544993,
+            "margin_over_noise": 0.00031621953592915735,
+            "interpretation": "Margin (0.000032) << noise (0.1001): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.2584502696990967
+        },
+        "r8.0_f0.05": {
+          "expansion_ratio": 8.0,
+          "D_in": 800,
+          "D_exp": 6400,
+          "active_frac": 0.05,
+          "decorrelation": {
+            "mean": 0.4755208333333325,
+            "max": 0.6217105263157863,
+            "std": 0.04491425861219543,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.4755208333333325,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9642434210526222,
+              "min": 0.9473684210526243,
+              "std": 0.0073356738243367725,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.82855263157894,
+              "min": 0.7828947368420986,
+              "std": 0.015069092949705496,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.6703289473684171,
+              "min": 0.624999999999996,
+              "std": 0.020087779150297334,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.11253289473684258,
+              "min": 0.05263157894736861,
+              "std": 0.02392646119592522,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.02868421052631587,
+              "min": -0.019736842105263157,
+              "std": 0.01686367861736276,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.00618421052631578,
+              "min": -0.029605263157894825,
+              "std": 0.015261739952285676,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.02868421052631587,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.4755, repro=0.0287 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 7.85803610930131e-05,
+            "margin_std": 8.087234613784966e-05,
+            "margin_min": 4.150911346686992e-06,
+            "activation_noise_std_at_sigma01": 0.10010548172544993,
+            "margin_over_noise": 0.0007849756051096505,
+            "interpretation": "Margin (0.000079) << noise (0.1001): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.7133238315582275
+        },
+        "r8.0_f0.1": {
+          "expansion_ratio": 8.0,
+          "D_in": 800,
+          "D_exp": 6400,
+          "active_frac": 0.1,
+          "decorrelation": {
+            "mean": 0.5194878472222196,
+            "max": 0.6354166666666662,
+            "std": 0.04052649011431216,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5194878472222196,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9691493055555594,
+              "min": 0.9565972222222258,
+              "std": 0.004822859170923671,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8445833333333358,
+              "min": 0.8194444444444474,
+              "std": 0.00943422649874544,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7001909722222226,
+              "min": 0.6631944444444449,
+              "std": 0.01641831566908525,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.14673611111111018,
+              "min": 0.07812499999999983,
+              "std": 0.02067136110064052,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.04140625000000005,
+              "min": -0.017361111111111036,
+              "std": 0.01838536748498294,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.010920138888889036,
+              "min": -0.027777777777777492,
+              "std": 0.018658623471248352,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.04140625000000005,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5195, repro=0.0414 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 4.730963506839299e-05,
+            "margin_std": 5.451307494818343e-05,
+            "margin_min": 1.0674962054660342e-06,
+            "activation_noise_std_at_sigma01": 0.10010548172544993,
+            "margin_over_noise": 0.0004725978463164701,
+            "interpretation": "Margin (0.000047) << noise (0.1001): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.9063284397125244
+        },
+        "r8.0_f0.2": {
+          "expansion_ratio": 8.0,
+          "D_in": 800,
+          "D_exp": 6400,
+          "active_frac": 0.2,
+          "decorrelation": {
+            "mean": 0.5543619791666657,
+            "max": 0.643554687499999,
+            "std": 0.03479618248785435,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5543619791666657,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.971464843749999,
+              "min": 0.9619140624999989,
+              "std": 0.0039993304645952075,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8604589843749983,
+              "min": 0.8417968749999984,
+              "std": 0.008269005125785316,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7314257812499982,
+              "min": 0.6943359374999987,
+              "std": 0.012401943891191947,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.1836523437500015,
+              "min": 0.10449218750000057,
+              "std": 0.023110437705344905,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.055107421875000145,
+              "min": 0.002929687499999916,
+              "std": 0.021494695230804977,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.01494140624999996,
+              "min": -0.029296875000000236,
+              "std": 0.021432154219701603,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.055107421875000145,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5544, repro=0.0551 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 2.0267443762950676e-05,
+            "margin_std": 1.5446576235618728e-05,
+            "margin_min": 7.207357618811694e-07,
+            "activation_noise_std_at_sigma01": 0.10010548172544993,
+            "margin_over_noise": 0.00020246087839958518,
+            "interpretation": "Margin (0.000020) << noise (0.1001): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 0.908839225769043
+        },
+        "r16.0_f0.05": {
+          "expansion_ratio": 16.0,
+          "D_in": 800,
+          "D_exp": 12800,
+          "active_frac": 0.05,
+          "decorrelation": {
+            "mean": 0.4860060307017548,
+            "max": 0.5871710526315795,
+            "std": 0.040626995294982204,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.4860060307017548,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9662664473684219,
+              "min": 0.9539473684210534,
+              "std": 0.005392605283319913,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8319078947368429,
+              "min": 0.7944078947368427,
+              "std": 0.012139896110030236,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.6742927631578952,
+              "min": 0.6332236842105269,
+              "std": 0.017214754266511367,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.11495065789473688,
+              "min": 0.06414473684210532,
+              "std": 0.020212062576532016,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.029111842105263158,
+              "min": -0.003289473684210552,
+              "std": 0.014038192673270162,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.007384868421052627,
+              "min": -0.023026315789473686,
+              "std": 0.012313565978856454,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.029111842105263158,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.4860, repro=0.0291 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 2.3264871490140306e-05,
+            "margin_std": 1.8368498592568116e-05,
+            "margin_min": 2.4524567637310146e-06,
+            "activation_noise_std_at_sigma01": 0.10010548172544993,
+            "margin_over_noise": 0.00023240357160174622,
+            "interpretation": "Margin (0.000023) << noise (0.1001): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 2.143606662750244
+        },
+        "r16.0_f0.1": {
+          "expansion_ratio": 16.0,
+          "D_in": 800,
+          "D_exp": 12800,
+          "active_frac": 0.1,
+          "decorrelation": {
+            "mean": 0.5224030671296302,
+            "max": 0.625000000000001,
+            "std": 0.036094360958921545,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5224030671296302,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9703211805555567,
+              "min": 0.95920138888889,
+              "std": 0.0028886692583111584,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8472916666666677,
+              "min": 0.8298611111111119,
+              "std": 0.007343852606322855,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7047656250000007,
+              "min": 0.6701388888888897,
+              "std": 0.012739965541759065,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.15004340277777803,
+              "min": 0.07812500000000017,
+              "std": 0.020353403957027078,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.04122395833333343,
+              "min": 0.0034722222222222615,
+              "std": 0.01574820972503825,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.010850694444444501,
+              "min": -0.023437499999999997,
+              "std": 0.015720915100134878,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.04122395833333343,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5224, repro=0.0412 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 1.4062130349688957e-05,
+            "margin_std": 1.3542225805888485e-05,
+            "margin_min": 3.155767586277003e-07,
+            "activation_noise_std_at_sigma01": 0.10010548172544993,
+            "margin_over_noise": 0.0001404731300141524,
+            "interpretation": "Margin (0.000014) << noise (0.1001): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 2.1064412593841553
+        },
+        "r16.0_f0.2": {
+          "expansion_ratio": 16.0,
+          "D_in": 800,
+          "D_exp": 12800,
+          "active_frac": 0.2,
+          "decorrelation": {
+            "mean": 0.5550740559895834,
+            "max": 0.6416015625,
+            "std": 0.034515872243150426,
+            "n_pairs": 120
+          },
+          "between_cos_clean": 0.5550740559895834,
+          "reproducibility_by_noise": {
+            "0.001": {
+              "mean": 0.9719091796875,
+              "min": 0.9658203124999998,
+              "std": 0.0026198962413830247,
+              "n_trials": 100
+            },
+            "0.005": {
+              "mean": 0.8613037109375,
+              "min": 0.8442382812500001,
+              "std": 0.006282863049231433,
+              "n_trials": 100
+            },
+            "0.01": {
+              "mean": 0.7322314453125,
+              "min": 0.7060546875000001,
+              "std": 0.010100200044898143,
+              "n_trials": 100
+            },
+            "0.05": {
+              "mean": 0.18427734375000007,
+              "min": 0.11083984375000007,
+              "std": 0.022012983825669335,
+              "n_trials": 100
+            },
+            "0.1": {
+              "mean": 0.05469238281250004,
+              "min": 0.004882812500000033,
+              "std": 0.02044954228623447,
+              "n_trials": 100
+            },
+            "0.2": {
+              "mean": 0.016005859375000046,
+              "min": -0.02587890624999995,
+              "std": 0.019852170584356777,
+              "n_trials": 100
+            }
+          },
+          "repro_at_sigma01": 0.05469238281250004,
+          "joint_criterion_met": false,
+          "joint_note": "between_cos=0.5551, repro=0.0547 -- repro below threshold",
+          "threshold_margin_analysis": {
+            "margin_mean": 8.445503249782495e-06,
+            "margin_std": 7.234309250727649e-06,
+            "margin_min": 2.5049585994363355e-07,
+            "activation_noise_std_at_sigma01": 0.10010548172544993,
+            "margin_over_noise": 8.436604174045964e-05,
+            "interpretation": "Margin (0.000008) << noise (0.1001): threshold is fragile -- small noise flips boundary units."
+          },
+          "elapsed_s": 2.1639344692230225
+        }
+      },
+      "best_op": {
+        "ratio": 4.0,
+        "active_frac": 0.2,
+        "D_exp": 3200
+      },
+      "lesion_control": {
+        "between_cos_lesion": 0.9999999999999999,
+        "repro_lesion_mean": 0.9999999999999997,
+        "discrimination_collapsed": true,
+        "verdict": "PASS",
+        "note": "Lesion collapses discrimination as expected: all expanded codes identical."
+      },
+      "cleanup_parity": {
+        "0.0": {
+          "argmax": 1.0,
+          "hopfield_mf": 0.08125,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.1": {
+          "argmax": 0.70625,
+          "hopfield_mf": 0.08125,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.2": {
+          "argmax": 0.3625,
+          "hopfield_mf": 0.06875,
+          "chance": 0.0625,
+          "n": 160
+        },
+        "0.5": {
+          "argmax": 0.16875,
+          "hopfield_mf": 0.0625,
+          "chance": 0.0625,
+          "n": 160
+        }
+      },
+      "any_go": false,
+      "seed_elapsed_s": 15.061163663864136
+    }
+  },
+  "total_elapsed_s": 203.88538789749146
+}
