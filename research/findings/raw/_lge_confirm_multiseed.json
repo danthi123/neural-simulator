@@ -1,0 +1,2037 @@
+{
+  "summary": {
+    "consensus_verdict": "GO_full",
+    "per_seed_verdict": {
+      "42": "GO_full",
+      "43": "GO_full",
+      "44": "GO_full"
+    },
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "backend": "cupy",
+    "cycles": 2,
+    "run_g4": true,
+    "brain_based_note": "the learn is the project's spiking-Hebbian recurrent (LearnedAssocGraph) at the de-saturated low-cycle (cycles=2) regime. PRIMARY read-out = host-method (PPMI+SVD) on the FULL hub-inclusive learned W -- the validated STAND-IN. The BRAIN-BASED read-out tested = spreading-activation/diffusion through the hubs on the same learned W. The host PPMI+SVD on RAW counts is the labelled CEILING ONLY (NOT the deliverable).",
+    "gates_all_seeds_primary": {
+      "g1_structure_recovered": true,
+      "g2_a1_generalizes": true,
+      "g2_a2_orthogonal_collapses": true,
+      "g2_a3_permuted_property_collapses": true,
+      "g3_cortex_roundtrip_closes": true,
+      "g3_binding_identity_clean": true,
+      "g5_permuted_cooccurrence_collapses": true,
+      "g5_beats_random_baseline": true,
+      "anti_cheat_W_distinct_from_counts": true,
+      "g4_strong_encode_compatible": true
+    },
+    "primary_load_bearing": {
+      "pearson_struct_recovery_per_seed": [
+        0.8432448856210188,
+        0.8790867353714403,
+        0.8811947022568233
+      ],
+      "pearson_struct_recovery_mean": 0.8678421077497608,
+      "second_order_margin_mean": 0.6341622014187545,
+      "generalization_graded_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "generalization_graded_mean": 1.0,
+      "cortex_channel_pearson_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "cortex_channel_pearson_mean": 1.0,
+      "binding_identity_mean": 1.0,
+      "host_ceiling_pearson_mean": 0.9408562448398285,
+      "anti_cheat_pearson_W_vs_rawcounts_per_seed": [
+        0.687116717442565,
+        0.6822262867882223,
+        0.7057885558579605
+      ],
+      "anti_cheat_pearson_W_vs_rawcounts_mean": 0.6917105200295826,
+      "generalization_chance": 0.25,
+      "g4_dg_between_cos_mean_per_seed": [
+        -0.0025069220290065575,
+        -0.0008929094144453605,
+        0.0018886868113604112
+      ],
+      "g4_dg_repro_mean_per_seed": [
+        0.9999999999999999,
+        0.9999999999999999,
+        0.9999999999999999
+      ]
+    },
+    "brain_based_readout": {
+      "best_pearson_vs_Strue_per_seed": [
+        0.48913769103210936,
+        0.5431081491316742,
+        0.633512783656755
+      ],
+      "best_pearson_vs_Strue_mean": 0.5552528746068462,
+      "best_generalization_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "best_generalization_mean": 1.0,
+      "gap_to_host_method_on_W_mean": 0.31258923314291465,
+      "gap_to_ceiling_mean": 0.38560337023298236,
+      "closes_residual_per_seed": [
+        false,
+        false,
+        false
+      ],
+      "closes_residual_all_seeds": false,
+      "best_keys_per_seed": [
+        "steps2_alpha0.5_fullcols",
+        "steps2_alpha0.5_fullcols",
+        "steps2_alpha0.5_fullcols"
+      ]
+    },
+    "recovered_recipe_reference": {
+      "source": "2026-06-11-learned-graded-embedding-desaturate-GO.md (commit 1febdd20)",
+      "cycles": 2,
+      "readout": "host-method (PPMI+SVD) on the FULL hub-inclusive learned W",
+      "seed42_pearson": 0.843,
+      "seed43_pearson": 0.879,
+      "ceiling_seed42": 0.932,
+      "ceiling_seed43": 0.95,
+      "generalization": 1.0
+    },
+    "elapsed_total_s": 192.2145130634308
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "cycles": 2,
+      "corpus": {
+        "n_concepts": 48,
+        "n_members": 40,
+        "n_facts": 280,
+        "n_second_order_pairs": 53
+      },
+      "learn_info": {
+        "recurrent_mean": 0.54094398021698,
+        "recurrent_max": 32.59922790527344,
+        "recurrent_nnz": 2400617,
+        "n_neurons": 2300,
+        "cycles": 2,
+        "gamma": 1.0,
+        "cap": null
+      },
+      "learn_seconds": 18.840107679367065,
+      "anti_cheat_pearson_W_vs_rawcounts": 0.687116717442565,
+      "host_ceiling": {
+        "pearson_vs_Strue": 0.9315755987027806,
+        "generalization": 1.0,
+        "is_graded": true
+      },
+      "random_baseline_generalization": 0.3125,
+      "primary_readout_host_method_on_W": {
+        "g1_structure_recovery": {
+          "pearson_learned_vs_Strue": 0.8432448856210188,
+          "pearson_permuted_vs_Strue": 0.07597758252412407,
+          "second_order_pairs_n": 53,
+          "second_order_cos_mean": 0.7938211663865782,
+          "between_cluster_cos_mean": 0.1705498446435714,
+          "second_order_margin": 0.6232713217430068,
+          "second_order_recovered": true
+        },
+        "g1_graded_stats": {
+          "within_cluster_cos_mean": 0.7794782660930328,
+          "within_cluster_cos_min": 0.6343365256813696,
+          "between_cluster_cos_mean": 0.1705498446435714,
+          "between_cluster_cos_max": 0.7014030215170676,
+          "graded_margin": 0.6089284214494615,
+          "is_graded": true
+        },
+        "g2_generalization": {
+          "graded": {
+            "n_heldout": 160,
+            "n_splits": 20,
+            "n_correct": 160,
+            "accuracy": 1.0,
+            "chance": 0.25,
+            "ratio_vs_chance": 4.0,
+            "preds": [
+              {
+                "query": 3,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 9,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 13,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 17,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 21,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 27,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 31,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 39,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 1,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 5,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 13,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 17,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 24,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 28,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 34,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 39,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              }
+            ]
+          },
+          "orthogonal": {
+            "n_heldout": 160,
+            "n_splits": 20,
+            "n_correct": 19,
+            "accuracy": 0.11875,
+            "chance": 0.25,
+            "ratio_vs_chance": 0.475,
+            "preds": [
+              {
+                "query": 3,
+                "true_prop": 0,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 9,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 13,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 17,
+                "true_prop": 3,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 21,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 27,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 31,
+                "true_prop": 2,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 39,
+                "true_prop": 3,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 1,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 5,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 13,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 17,
+                "true_prop": 3,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 24,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 28,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 34,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 39,
+                "true_prop": 3,
+                "pred_prop": 2,
+                "correct": false
+              }
+            ]
+          },
+          "permuted": {
+            "n_heldout": 160,
+            "n_splits": 20,
+            "n_correct": 21,
+            "accuracy": 0.13125,
+            "chance": 0.25,
+            "ratio_vs_chance": 0.525,
+            "preds": [
+              {
+                "query": 3,
+                "true_prop": 3,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 9,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 13,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 17,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 21,
+                "true_prop": 1,
+                "pred_prop": 3,
+                "correct": false
+              },
+              {
+                "query": 27,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 31,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 39,
+                "true_prop": 1,
+                "pred_prop": 3,
+                "correct": false
+              },
+              {
+                "query": 1,
+                "true_prop": 3,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 5,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 13,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 17,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 24,
+                "true_prop": 2,
+                "pred_prop": 3,
+                "correct": false
+              },
+              {
+                "query": 28,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 34,
+                "true_prop": 3,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 39,
+                "true_prop": 1,
+                "pred_prop": 3,
+                "correct": false
+              }
+            ]
+          },
+          "chance": 0.25,
+          "a1": true,
+          "a2": true,
+          "a3": true
+        },
+        "g3_cortex_channel": {
+          "binding_identity_acc": 1.0,
+          "cortex_channel_pearson": 1.0,
+          "cortex_channel_permuted": 0.005513379619325055,
+          "cortex_roundtrip_closes": true
+        },
+        "g4_strong_encode": {
+          "dg_between_cos_mean": -0.0025069220290065575,
+          "dg_repro_mean": 0.9999999999999999,
+          "dg_sparsity": 0.06666666666666667,
+          "dg_total_spikes_mean": 1141.8,
+          "decorrelated": true,
+          "reproducible": true,
+          "g4_graded_cortex_decorr_dg_coexist": true,
+          "n_neurons": 1616,
+          "n_synapses": 222714,
+          "build_seconds": 0.2848014831542969
+        },
+        "permuted_cooccurrence": {
+          "structure_recovery": {
+            "pearson_learned_vs_Strue": 0.06441007081373709,
+            "pearson_permuted_vs_Strue": 0.02485221785783115,
+            "second_order_pairs_n": 53,
+            "second_order_cos_mean": 0.34828321235879406,
+            "between_cluster_cos_mean": 0.31917412893374725,
+            "second_order_margin": 0.02910908342504681,
+            "second_order_recovered": false
+          },
+          "generalization": 0.2625,
+          "is_graded": false
+        },
+        "gates": {
+          "g1_structure_recovered": true,
+          "g2_a1_generalizes": true,
+          "g2_a2_orthogonal_collapses": true,
+          "g2_a3_permuted_property_collapses": true,
+          "g3_cortex_roundtrip_closes": true,
+          "g3_binding_identity_clean": true,
+          "g5_permuted_cooccurrence_collapses": true,
+          "g5_beats_random_baseline": true,
+          "anti_cheat_W_distinct_from_counts": true,
+          "g4_strong_encode_compatible": true
+        }
+      },
+      "brain_based_diffusion_sweep": {
+        "sweep": {
+          "steps2_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.07232697404199379,
+            "pearson_permutedS": 0.009581533744751338,
+            "is_graded": false,
+            "second_order_margin": 0.01090752244003923,
+            "second_order_recovered": false,
+            "generalization": 0.30625,
+            "generalization_ratio_vs_chance": 1.225
+          },
+          "steps2_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.48913769103210936,
+            "pearson_permutedS": 0.03313114394503947,
+            "is_graded": false,
+            "second_order_margin": 0.042713086749818774,
+            "second_order_recovered": false,
+            "generalization": 1.0,
+            "generalization_ratio_vs_chance": 4.0
+          },
+          "steps2_alpha0.7_membercols": {
+            "pearson_vs_Strue": -0.005876193322111977,
+            "pearson_permutedS": 0.008495186300929018,
+            "is_graded": false,
+            "second_order_margin": 0.0021598937803604112,
+            "second_order_recovered": false,
+            "generalization": 0.3125,
+            "generalization_ratio_vs_chance": 1.25
+          },
+          "steps2_alpha0.7_fullcols": {
+            "pearson_vs_Strue": 0.39661464081199393,
+            "pearson_permutedS": 0.024303999349923062,
+            "is_graded": false,
+            "second_order_margin": 0.006070642558197115,
+            "second_order_recovered": false,
+            "generalization": 1.0,
+            "generalization_ratio_vs_chance": 4.0
+          },
+          "steps2_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.2425807460391857,
+            "pearson_permutedS": 0.00906171790819234,
+            "is_graded": false,
+            "second_order_margin": 0.00025384495246305594,
+            "second_order_recovered": false,
+            "generalization": 0.725,
+            "generalization_ratio_vs_chance": 2.9
+          },
+          "steps2_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.2657396730812046,
+            "pearson_permutedS": 0.010425886468013398,
+            "is_graded": false,
+            "second_order_margin": 0.0001489301789259212,
+            "second_order_recovered": false,
+            "generalization": 0.9,
+            "generalization_ratio_vs_chance": 3.6
+          },
+          "steps3_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.05801409913712459,
+            "pearson_permutedS": 0.009658831529167895,
+            "is_graded": false,
+            "second_order_margin": 0.003232337915541228,
+            "second_order_recovered": false,
+            "generalization": 0.29375,
+            "generalization_ratio_vs_chance": 1.175
+          },
+          "steps3_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.44282260377063765,
+            "pearson_permutedS": 0.028658018958757962,
+            "is_graded": false,
+            "second_order_margin": 0.011729893920197965,
+            "second_order_recovered": false,
+            "generalization": 1.0,
+            "generalization_ratio_vs_chance": 4.0
+          },
+          "steps3_alpha0.7_membercols": {
+            "pearson_vs_Strue": 0.08795328010150336,
+            "pearson_permutedS": 0.008050941719838101,
+            "is_graded": false,
+            "second_order_margin": 0.0003314942168903823,
+            "second_order_recovered": false,
+            "generalization": 0.33125,
+            "generalization_ratio_vs_chance": 1.325
+          },
+          "steps3_alpha0.7_fullcols": {
+            "pearson_vs_Strue": 0.3441503674039634,
+            "pearson_permutedS": 0.018998557461409292,
+            "is_graded": false,
+            "second_order_margin": 0.0005949641996654265,
+            "second_order_recovered": false,
+            "generalization": 0.96875,
+            "generalization_ratio_vs_chance": 3.875
+          },
+          "steps3_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.2462770277762792,
+            "pearson_permutedS": 0.007711826997048784,
+            "is_graded": false,
+            "second_order_margin": 7.3629814316689135e-06,
+            "second_order_recovered": false,
+            "generalization": 0.8,
+            "generalization_ratio_vs_chance": 3.2
+          },
+          "steps3_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.24768751561442784,
+            "pearson_permutedS": 0.007613948370237077,
+            "is_graded": false,
+            "second_order_margin": 3.786583821718814e-06,
+            "second_order_recovered": false,
+            "generalization": 0.825,
+            "generalization_ratio_vs_chance": 3.3
+          },
+          "steps4_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.02735038066701357,
+            "pearson_permutedS": 0.009333432894408392,
+            "is_graded": false,
+            "second_order_margin": 0.0009447326475028328,
+            "second_order_recovered": false,
+            "generalization": 0.31875,
+            "generalization_ratio_vs_chance": 1.275
+          },
+          "steps4_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.4093187936171752,
+            "pearson_permutedS": 0.02542256395005504,
+            "is_graded": false,
+            "second_order_margin": 0.003034961489586263,
+            "second_order_recovered": false,
+            "generalization": 1.0,
+            "generalization_ratio_vs_chance": 4.0
+          },
+          "steps4_alpha0.7_membercols": {
+            "pearson_vs_Strue": 0.15352257016936136,
+            "pearson_permutedS": 0.007933340316458024,
+            "is_graded": false,
+            "second_order_margin": 5.0343804784303003e-05,
+            "second_order_recovered": false,
+            "generalization": 0.3625,
+            "generalization_ratio_vs_chance": 1.45
+          },
+          "steps4_alpha0.7_fullcols": {
+            "pearson_vs_Strue": 0.31034092937787255,
+            "pearson_permutedS": 0.01533885692459262,
+            "is_graded": false,
+            "second_order_margin": 6.117582843623293e-05,
+            "second_order_recovered": false,
+            "generalization": 0.93125,
+            "generalization_ratio_vs_chance": 3.725
+          },
+          "steps4_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.23724649958480706,
+            "pearson_permutedS": 0.006016935057024099,
+            "is_graded": false,
+            "second_order_margin": 2.0021940705383656e-07,
+            "second_order_recovered": false,
+            "generalization": 0.6625,
+            "generalization_ratio_vs_chance": 2.65
+          },
+          "steps4_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.23561360879739415,
+            "pearson_permutedS": 0.005795814298444489,
+            "is_graded": false,
+            "second_order_margin": 1.0046403731145404e-07,
+            "second_order_recovered": false,
+            "generalization": 0.675,
+            "generalization_ratio_vs_chance": 2.7
+          },
+          "steps6_alpha0.5_membercols": {
+            "pearson_vs_Strue": 0.05507903152810912,
+            "pearson_permutedS": 0.008526815957572577,
+            "is_graded": false,
+            "second_order_margin": 9.138891231552648e-05,
+            "second_order_recovered": false,
+            "generalization": 0.35,
+            "generalization_ratio_vs_chance": 1.4
+          },
+          "steps6_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.36077007512055614,
+            "pearson_permutedS": 0.020550562139599746,
+            "is_graded": false,
+            "second_order_margin": 0.00020015015281471538,
+            "second_order_recovered": false,
+            "generalization": 1.0,
+            "generalization_ratio_vs_chance": 4.0
+          },
+          "steps6_alpha0.7_membercols": {
+            "pearson_vs_Strue": 0.21332274907848822,
+            "pearson_permutedS": 0.007749405082929931,
+            "is_graded": false,
+            "second_order_margin": 9.932056971306835e-07,
+            "second_order_recovered": false,
+            "generalization": 0.45,
+            "generalization_ratio_vs_chance": 1.8
+          },
+          "steps6_alpha0.7_fullcols": {
+            "pearson_vs_Strue": 0.27262616587241406,
+            "pearson_permutedS": 0.010868840063372881,
+            "is_graded": false,
+            "second_order_margin": 7.488159368129743e-07,
+            "second_order_recovered": false,
+            "generalization": 0.91875,
+            "generalization_ratio_vs_chance": 3.675
+          },
+          "steps6_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.22311585540598053,
+            "pearson_permutedS": 0.0037691694923848397,
+            "is_graded": false,
+            "second_order_margin": 1.4866785580380792e-10,
+            "second_order_recovered": false,
+            "generalization": 0.61875,
+            "generalization_ratio_vs_chance": 2.475
+          },
+          "steps6_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.22205376785422254,
+            "pearson_permutedS": 0.003712517143239944,
+            "is_graded": false,
+            "second_order_margin": 7.452360950566117e-11,
+            "second_order_recovered": false,
+            "generalization": 0.60625,
+            "generalization_ratio_vs_chance": 2.425
+          }
+        },
+        "best_key": "steps2_alpha0.5_fullcols",
+        "best_pearson_vs_Strue": 0.48913769103210936,
+        "best_generalization": 1.0,
+        "best_second_order_margin": 0.042713086749818774,
+        "gap_to_host_method_on_W": 0.3541071945889095,
+        "gap_to_ceiling": 0.44243790767067126,
+        "closes_residual": false,
+        "best_passes_g1": false,
+        "best_passes_a1": true
+      }
+    },
+    "43": {
+      "seed": 43,
+      "cycles": 2,
+      "corpus": {
+        "n_concepts": 48,
+        "n_members": 40,
+        "n_facts": 280,
+        "n_second_order_pairs": 56
+      },
+      "learn_info": {
+        "recurrent_mean": 0.5681507587432861,
+        "recurrent_max": 34.08192443847656,
+        "recurrent_nnz": 2400129,
+        "n_neurons": 2300,
+        "cycles": 2,
+        "gamma": 1.0,
+        "cap": null
+      },
+      "learn_seconds": 16.415411710739136,
+      "anti_cheat_pearson_W_vs_rawcounts": 0.6822262867882223,
+      "host_ceiling": {
+        "pearson_vs_Strue": 0.9504352682795827,
+        "generalization": 1.0,
+        "is_graded": true
+      },
+      "random_baseline_generalization": 0.1625,
+      "primary_readout_host_method_on_W": {
+        "g1_structure_recovery": {
+          "pearson_learned_vs_Strue": 0.8790867353714403,
+          "pearson_permuted_vs_Strue": -0.004894261016370912,
+          "second_order_pairs_n": 56,
+          "second_order_cos_mean": 0.7847816638103298,
+          "between_cluster_cos_mean": 0.15520029994629428,
+          "second_order_margin": 0.6295813638640355,
+          "second_order_recovered": true
+        },
+        "g1_graded_stats": {
+          "within_cluster_cos_mean": 0.7824837092501123,
+          "within_cluster_cos_min": 0.6598711277013762,
+          "between_cluster_cos_mean": 0.15520029994629428,
+          "between_cluster_cos_max": 0.6573901468236869,
+          "graded_margin": 0.6272834093038181,
+          "is_graded": true
+        },
+        "g2_generalization": {
+          "graded": {
+            "n_heldout": 160,
+            "n_splits": 20,
+            "n_correct": 160,
+            "accuracy": 1.0,
+            "chance": 0.25,
+            "ratio_vs_chance": 4.0,
+            "preds": [
+              {
+                "query": 4,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 8,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 10,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 16,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 20,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 28,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 34,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 35,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 0,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 8,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 11,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 16,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 22,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 27,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 30,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 37,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              }
+            ]
+          },
+          "orthogonal": {
+            "n_heldout": 160,
+            "n_splits": 20,
+            "n_correct": 41,
+            "accuracy": 0.25625,
+            "chance": 0.25,
+            "ratio_vs_chance": 1.025,
+            "preds": [
+              {
+                "query": 4,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 8,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 10,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 16,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 20,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 28,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 34,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 35,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 0,
+                "true_prop": 0,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 8,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 11,
+                "true_prop": 2,
+                "pred_prop": 3,
+                "correct": false
+              },
+              {
+                "query": 16,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 22,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 27,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 30,
+                "true_prop": 2,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 37,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              }
+            ]
+          },
+          "permuted": {
+            "n_heldout": 160,
+            "n_splits": 20,
+            "n_correct": 26,
+            "accuracy": 0.1625,
+            "chance": 0.25,
+            "ratio_vs_chance": 0.65,
+            "preds": [
+              {
+                "query": 4,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 8,
+                "true_prop": 3,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 10,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 16,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 20,
+                "true_prop": 0,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 28,
+                "true_prop": 3,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 34,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 35,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 0,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 8,
+                "true_prop": 3,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 11,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 16,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 22,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 27,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 30,
+                "true_prop": 3,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 37,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              }
+            ]
+          },
+          "chance": 0.25,
+          "a1": true,
+          "a2": true,
+          "a3": true
+        },
+        "g3_cortex_channel": {
+          "binding_identity_acc": 1.0,
+          "cortex_channel_pearson": 1.0,
+          "cortex_channel_permuted": -0.034736223298934436,
+          "cortex_roundtrip_closes": true
+        },
+        "g4_strong_encode": {
+          "dg_between_cos_mean": -0.0008929094144453605,
+          "dg_repro_mean": 0.9999999999999999,
+          "dg_sparsity": 0.06666666666666667,
+          "dg_total_spikes_mean": 1097.375,
+          "decorrelated": true,
+          "reproducible": true,
+          "g4_graded_cortex_decorr_dg_coexist": true,
+          "n_neurons": 1616,
+          "n_synapses": 222559,
+          "build_seconds": 0.277493953704834
+        },
+        "permuted_cooccurrence": {
+          "structure_recovery": {
+            "pearson_learned_vs_Strue": 0.016871652189570333,
+            "pearson_permuted_vs_Strue": -0.01380563347501007,
+            "second_order_pairs_n": 56,
+            "second_order_cos_mean": 0.340899527647487,
+            "between_cluster_cos_mean": 0.32986402839014684,
+            "second_order_margin": 0.011035499257340153,
+            "second_order_recovered": false
+          },
+          "generalization": 0.3375,
+          "is_graded": false
+        },
+        "gates": {
+          "g1_structure_recovered": true,
+          "g2_a1_generalizes": true,
+          "g2_a2_orthogonal_collapses": true,
+          "g2_a3_permuted_property_collapses": true,
+          "g3_cortex_roundtrip_closes": true,
+          "g3_binding_identity_clean": true,
+          "g5_permuted_cooccurrence_collapses": true,
+          "g5_beats_random_baseline": true,
+          "anti_cheat_W_distinct_from_counts": true,
+          "g4_strong_encode_compatible": true
+        }
+      },
+      "brain_based_diffusion_sweep": {
+        "sweep": {
+          "steps2_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.15778005030000056,
+            "pearson_permutedS": 0.010253554153546944,
+            "is_graded": false,
+            "second_order_margin": 0.001072046615144373,
+            "second_order_recovered": false,
+            "generalization": 0.24375,
+            "generalization_ratio_vs_chance": 0.975
+          },
+          "steps2_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.5431081491316742,
+            "pearson_permutedS": -0.001628402522798977,
+            "is_graded": false,
+            "second_order_margin": 0.034522691860510046,
+            "second_order_recovered": false,
+            "generalization": 1.0,
+            "generalization_ratio_vs_chance": 4.0
+          },
+          "steps2_alpha0.7_membercols": {
+            "pearson_vs_Strue": -0.16831403213868362,
+            "pearson_permutedS": 0.014952944042166105,
+            "is_graded": false,
+            "second_order_margin": 7.886608842877507e-05,
+            "second_order_recovered": false,
+            "generalization": 0.21875,
+            "generalization_ratio_vs_chance": 0.875
+          },
+          "steps2_alpha0.7_fullcols": {
+            "pearson_vs_Strue": 0.5097847268990399,
+            "pearson_permutedS": -0.00153145247698837,
+            "is_graded": false,
+            "second_order_margin": 0.004429576123998302,
+            "second_order_recovered": false,
+            "generalization": 0.9875,
+            "generalization_ratio_vs_chance": 3.95
+          },
+          "steps2_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.3187657156948146,
+            "pearson_permutedS": 0.006703876196360671,
+            "is_graded": false,
+            "second_order_margin": 7.586660976144355e-05,
+            "second_order_recovered": false,
+            "generalization": 0.6625,
+            "generalization_ratio_vs_chance": 2.65
+          },
+          "steps2_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.40209005325864666,
+            "pearson_permutedS": -0.0023128058176432953,
+            "is_graded": false,
+            "second_order_margin": 6.397618063491706e-05,
+            "second_order_recovered": false,
+            "generalization": 0.93125,
+            "generalization_ratio_vs_chance": 3.725
+          },
+          "steps3_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.17018543505638428,
+            "pearson_permutedS": 0.012316796043427536,
+            "is_graded": false,
+            "second_order_margin": 0.00011786694361637373,
+            "second_order_recovered": false,
+            "generalization": 0.20625,
+            "generalization_ratio_vs_chance": 0.825
+          },
+          "steps3_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.5269316641319471,
+            "pearson_permutedS": -0.001748765463096968,
+            "is_graded": false,
+            "second_order_margin": 0.009079721105281768,
+            "second_order_recovered": false,
+            "generalization": 0.9875,
+            "generalization_ratio_vs_chance": 3.95
+          },
+          "steps3_alpha0.7_membercols": {
+            "pearson_vs_Strue": -0.11304670657817997,
+            "pearson_permutedS": 0.018103429810474057,
+            "is_graded": false,
+            "second_order_margin": 3.937434348222357e-05,
+            "second_order_recovered": false,
+            "generalization": 0.20625,
+            "generalization_ratio_vs_chance": 0.825
+          },
+          "steps3_alpha0.7_fullcols": {
+            "pearson_vs_Strue": 0.4870637712143026,
+            "pearson_permutedS": -0.0015348943651659116,
+            "is_graded": false,
+            "second_order_margin": 0.00038900506057626405,
+            "second_order_recovered": false,
+            "generalization": 0.9875,
+            "generalization_ratio_vs_chance": 3.95
+          },
+          "steps3_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.3583626561076728,
+            "pearson_permutedS": 0.0015294623414712392,
+            "is_graded": false,
+            "second_order_margin": 1.8950361516667513e-06,
+            "second_order_recovered": false,
+            "generalization": 0.85,
+            "generalization_ratio_vs_chance": 3.4
+          },
+          "steps3_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.3784459498304241,
+            "pearson_permutedS": -0.003391029951146404,
+            "is_graded": false,
+            "second_order_margin": 1.197425317900347e-06,
+            "second_order_recovered": false,
+            "generalization": 0.90625,
+            "generalization_ratio_vs_chance": 3.625
+          },
+          "steps4_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.1745178824492137,
+            "pearson_permutedS": 0.01440859316218047,
+            "is_graded": false,
+            "second_order_margin": 1.8890905887247733e-05,
+            "second_order_recovered": false,
+            "generalization": 0.2125,
+            "generalization_ratio_vs_chance": 0.85
+          },
+          "steps4_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.5176650683705514,
+            "pearson_permutedS": -0.0017478952655728716,
+            "is_graded": false,
+            "second_order_margin": 0.002253349639526836,
+            "second_order_recovered": false,
+            "generalization": 0.9875,
+            "generalization_ratio_vs_chance": 3.95
+          },
+          "steps4_alpha0.7_membercols": {
+            "pearson_vs_Strue": 0.005373284384488131,
+            "pearson_permutedS": 0.017841205226527983,
+            "is_graded": false,
+            "second_order_margin": 9.345158543228038e-06,
+            "second_order_recovered": false,
+            "generalization": 0.2125,
+            "generalization_ratio_vs_chance": 0.85
+          },
+          "steps4_alpha0.7_fullcols": {
+            "pearson_vs_Strue": 0.46364150641404245,
+            "pearson_permutedS": -0.0016592769972333889,
+            "is_graded": false,
+            "second_order_margin": 3.542206943540904e-05,
+            "second_order_recovered": false,
+            "generalization": 0.9875,
+            "generalization_ratio_vs_chance": 3.95
+          },
+          "steps4_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.3508076007501357,
+            "pearson_permutedS": -0.0008375924489593522,
+            "is_graded": false,
+            "second_order_margin": 4.0005711743340555e-08,
+            "second_order_recovered": false,
+            "generalization": 0.86875,
+            "generalization_ratio_vs_chance": 3.475
+          },
+          "steps4_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.356821709294751,
+            "pearson_permutedS": -0.004158046065612782,
+            "is_graded": false,
+            "second_order_margin": 2.3406308891082972e-08,
+            "second_order_recovered": false,
+            "generalization": 0.8625,
+            "generalization_ratio_vs_chance": 3.45
+          },
+          "steps6_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.14599907200667692,
+            "pearson_permutedS": 0.017374497971851106,
+            "is_graded": false,
+            "second_order_margin": 7.23828127768833e-06,
+            "second_order_recovered": false,
+            "generalization": 0.2125,
+            "generalization_ratio_vs_chance": 0.85
+          },
+          "steps6_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.49935142976885205,
+            "pearson_permutedS": -0.001677844734734141,
+            "is_graded": false,
+            "second_order_margin": 0.00013580980558980382,
+            "second_order_recovered": false,
+            "generalization": 0.9875,
+            "generalization_ratio_vs_chance": 3.95
+          },
+          "steps6_alpha0.7_membercols": {
+            "pearson_vs_Strue": 0.2199280092533516,
+            "pearson_permutedS": 0.010694622857986587,
+            "is_graded": false,
+            "second_order_margin": 2.3321801989606428e-07,
+            "second_order_recovered": false,
+            "generalization": 0.45,
+            "generalization_ratio_vs_chance": 1.8
+          },
+          "steps6_alpha0.7_fullcols": {
+            "pearson_vs_Strue": 0.4236165975076161,
+            "pearson_permutedS": -0.0022346788615501788,
+            "is_graded": false,
+            "second_order_margin": 3.362805528484003e-07,
+            "second_order_recovered": false,
+            "generalization": 0.94375,
+            "generalization_ratio_vs_chance": 3.775
+          },
+          "steps6_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.31901053430398535,
+            "pearson_permutedS": -0.0034012876949233157,
+            "is_graded": false,
+            "second_order_margin": 1.6205148334336172e-11,
+            "second_order_recovered": false,
+            "generalization": 0.84375,
+            "generalization_ratio_vs_chance": 3.375
+          },
+          "steps6_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.3204523650807154,
+            "pearson_permutedS": -0.005363180397292372,
+            "is_graded": false,
+            "second_order_margin": 9.220957331024238e-12,
+            "second_order_recovered": false,
+            "generalization": 0.8625,
+            "generalization_ratio_vs_chance": 3.45
+          }
+        },
+        "best_key": "steps2_alpha0.5_fullcols",
+        "best_pearson_vs_Strue": 0.5431081491316742,
+        "best_generalization": 1.0,
+        "best_second_order_margin": 0.034522691860510046,
+        "gap_to_host_method_on_W": 0.3359785862397662,
+        "gap_to_ceiling": 0.40732711914790853,
+        "closes_residual": false,
+        "best_passes_g1": false,
+        "best_passes_a1": true
+      }
+    },
+    "44": {
+      "seed": 44,
+      "cycles": 2,
+      "corpus": {
+        "n_concepts": 48,
+        "n_members": 40,
+        "n_facts": 280,
+        "n_second_order_pairs": 51
+      },
+      "learn_info": {
+        "recurrent_mean": 0.5256218910217285,
+        "recurrent_max": 41.90702438354492,
+        "recurrent_nnz": 2399675,
+        "n_neurons": 2300,
+        "cycles": 2,
+        "gamma": 1.0,
+        "cap": null
+      },
+      "learn_seconds": 16.294443607330322,
+      "anti_cheat_pearson_W_vs_rawcounts": 0.7057885558579605,
+      "host_ceiling": {
+        "pearson_vs_Strue": 0.9405578675371221,
+        "generalization": 1.0,
+        "is_graded": true
+      },
+      "random_baseline_generalization": 0.16875,
+      "primary_readout_host_method_on_W": {
+        "g1_structure_recovery": {
+          "pearson_learned_vs_Strue": 0.8811947022568233,
+          "pearson_permuted_vs_Strue": -0.04621138591486922,
+          "second_order_pairs_n": 51,
+          "second_order_cos_mean": 0.7943389982670449,
+          "between_cluster_cos_mean": 0.14470507961782372,
+          "second_order_margin": 0.6496339186492212,
+          "second_order_recovered": true
+        },
+        "g1_graded_stats": {
+          "within_cluster_cos_mean": 0.7897642587835897,
+          "within_cluster_cos_min": 0.6439235410010932,
+          "between_cluster_cos_mean": 0.14470507961782372,
+          "between_cluster_cos_max": 0.6577543926176936,
+          "graded_margin": 0.6450591791657659,
+          "is_graded": true
+        },
+        "g2_generalization": {
+          "graded": {
+            "n_heldout": 160,
+            "n_splits": 20,
+            "n_correct": 160,
+            "accuracy": 1.0,
+            "chance": 0.25,
+            "ratio_vs_chance": 4.0,
+            "preds": [
+              {
+                "query": 0,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 5,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 12,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 19,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 20,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 28,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 31,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 37,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 2,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 6,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 10,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 15,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 20,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 25,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 32,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 35,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              }
+            ]
+          },
+          "orthogonal": {
+            "n_heldout": 160,
+            "n_splits": 20,
+            "n_correct": 38,
+            "accuracy": 0.2375,
+            "chance": 0.25,
+            "ratio_vs_chance": 0.95,
+            "preds": [
+              {
+                "query": 0,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 5,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 12,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 19,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 20,
+                "true_prop": 0,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 28,
+                "true_prop": 1,
+                "pred_prop": 3,
+                "correct": false
+              },
+              {
+                "query": 31,
+                "true_prop": 2,
+                "pred_prop": 3,
+                "correct": false
+              },
+              {
+                "query": 37,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 2,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 6,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 10,
+                "true_prop": 2,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 15,
+                "true_prop": 3,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 20,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 25,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 32,
+                "true_prop": 2,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 35,
+                "true_prop": 3,
+                "pred_prop": 2,
+                "correct": false
+              }
+            ]
+          },
+          "permuted": {
+            "n_heldout": 160,
+            "n_splits": 20,
+            "n_correct": 34,
+            "accuracy": 0.2125,
+            "chance": 0.25,
+            "ratio_vs_chance": 0.85,
+            "preds": [
+              {
+                "query": 0,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 5,
+                "true_prop": 3,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 12,
+                "true_prop": 3,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 19,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 20,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 28,
+                "true_prop": 1,
+                "pred_prop": 3,
+                "correct": false
+              },
+              {
+                "query": 31,
+                "true_prop": 3,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 37,
+                "true_prop": 0,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 2,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 6,
+                "true_prop": 2,
+                "pred_prop": 3,
+                "correct": false
+              },
+              {
+                "query": 10,
+                "true_prop": 0,
+                "pred_prop": 3,
+                "correct": false
+              },
+              {
+                "query": 15,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 20,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 25,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 32,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 35,
+                "true_prop": 3,
+                "pred_prop": 0,
+                "correct": false
+              }
+            ]
+          },
+          "chance": 0.25,
+          "a1": true,
+          "a2": true,
+          "a3": true
+        },
+        "g3_cortex_channel": {
+          "binding_identity_acc": 1.0,
+          "cortex_channel_pearson": 1.0,
+          "cortex_channel_permuted": -0.02262429992095389,
+          "cortex_roundtrip_closes": true
+        },
+        "g4_strong_encode": {
+          "dg_between_cos_mean": 0.0018886868113604112,
+          "dg_repro_mean": 0.9999999999999999,
+          "dg_sparsity": 0.06666666666666667,
+          "dg_total_spikes_mean": 1126.475,
+          "decorrelated": true,
+          "reproducible": true,
+          "g4_graded_cortex_decorr_dg_coexist": true,
+          "n_neurons": 1616,
+          "n_synapses": 222541,
+          "build_seconds": 0.27851128578186035
+        },
+        "permuted_cooccurrence": {
+          "structure_recovery": {
+            "pearson_learned_vs_Strue": -0.008037174204837084,
+            "pearson_permuted_vs_Strue": -0.012746394126877805,
+            "second_order_pairs_n": 51,
+            "second_order_cos_mean": 0.31662615874657996,
+            "between_cluster_cos_mean": 0.30669300866973676,
+            "second_order_margin": 0.0099331500768432,
+            "second_order_recovered": false
+          },
+          "generalization": 0.175,
+          "is_graded": false
+        },
+        "gates": {
+          "g1_structure_recovered": true,
+          "g2_a1_generalizes": true,
+          "g2_a2_orthogonal_collapses": true,
+          "g2_a3_permuted_property_collapses": true,
+          "g3_cortex_roundtrip_closes": true,
+          "g3_binding_identity_clean": true,
+          "g5_permuted_cooccurrence_collapses": true,
+          "g5_beats_random_baseline": true,
+          "anti_cheat_W_distinct_from_counts": true,
+          "g4_strong_encode_compatible": true
+        }
+      },
+      "brain_based_diffusion_sweep": {
+        "sweep": {
+          "steps2_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.1978157425965375,
+            "pearson_permutedS": -0.005122652641025134,
+            "is_graded": false,
+            "second_order_margin": -0.004845205869669522,
+            "second_order_recovered": false,
+            "generalization": 0.23125,
+            "generalization_ratio_vs_chance": 0.925
+          },
+          "steps2_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.633512783656755,
+            "pearson_permutedS": -0.04981518039050333,
+            "is_graded": false,
+            "second_order_margin": 0.0377544138397613,
+            "second_order_recovered": false,
+            "generalization": 1.0,
+            "generalization_ratio_vs_chance": 4.0
+          },
+          "steps2_alpha0.7_membercols": {
+            "pearson_vs_Strue": -0.20901803924477594,
+            "pearson_permutedS": -0.012729623683511146,
+            "is_graded": false,
+            "second_order_margin": -0.000354038157594605,
+            "second_order_recovered": false,
+            "generalization": 0.15625,
+            "generalization_ratio_vs_chance": 0.625
+          },
+          "steps2_alpha0.7_fullcols": {
+            "pearson_vs_Strue": 0.591081091395401,
+            "pearson_permutedS": -0.05081258114201051,
+            "is_graded": false,
+            "second_order_margin": 0.004971499382444011,
+            "second_order_recovered": false,
+            "generalization": 1.0,
+            "generalization_ratio_vs_chance": 4.0
+          },
+          "steps2_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.3777687784191501,
+            "pearson_permutedS": -0.04500418028560672,
+            "is_graded": false,
+            "second_order_margin": 0.00013250293955791026,
+            "second_order_recovered": false,
+            "generalization": 0.84375,
+            "generalization_ratio_vs_chance": 3.375
+          },
+          "steps2_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.46014511128261526,
+            "pearson_permutedS": -0.04776294160449921,
+            "is_graded": false,
+            "second_order_margin": 7.777237496009448e-05,
+            "second_order_recovered": false,
+            "generalization": 0.975,
+            "generalization_ratio_vs_chance": 3.9
+          },
+          "steps3_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.2201194908507039,
+            "pearson_permutedS": -0.0074791541666137835,
+            "is_graded": false,
+            "second_order_margin": -0.001223048548704253,
+            "second_order_recovered": false,
+            "generalization": 0.21875,
+            "generalization_ratio_vs_chance": 0.875
+          },
+          "steps3_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.6140020703506857,
+            "pearson_permutedS": -0.05024086825550495,
+            "is_graded": false,
+            "second_order_margin": 0.010065125024282695,
+            "second_order_recovered": false,
+            "generalization": 0.98125,
+            "generalization_ratio_vs_chance": 3.925
+          },
+          "steps3_alpha0.7_membercols": {
+            "pearson_vs_Strue": -0.1138602087569657,
+            "pearson_permutedS": -0.025160196284020168,
+            "is_graded": false,
+            "second_order_margin": 4.9350490958888216e-05,
+            "second_order_recovered": false,
+            "generalization": 0.075,
+            "generalization_ratio_vs_chance": 0.3
+          },
+          "steps3_alpha0.7_fullcols": {
+            "pearson_vs_Strue": 0.5586022458134334,
+            "pearson_permutedS": -0.05104177525219383,
+            "is_graded": false,
+            "second_order_margin": 0.0004457142332418007,
+            "second_order_recovered": false,
+            "generalization": 0.98125,
+            "generalization_ratio_vs_chance": 3.925
+          },
+          "steps3_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.4092016077325599,
+            "pearson_permutedS": -0.044217147606983906,
+            "is_graded": false,
+            "second_order_margin": 3.2397748969126283e-06,
+            "second_order_recovered": false,
+            "generalization": 0.9625,
+            "generalization_ratio_vs_chance": 3.85
+          },
+          "steps3_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.4354246619436441,
+            "pearson_permutedS": -0.046453488191734414,
+            "is_graded": false,
+            "second_order_margin": 1.466772963865104e-06,
+            "second_order_recovered": false,
+            "generalization": 0.9625,
+            "generalization_ratio_vs_chance": 3.85
+          },
+          "steps4_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.22470150796446708,
+            "pearson_permutedS": -0.011132858214918323,
+            "is_graded": false,
+            "second_order_margin": -0.00023958685716118922,
+            "second_order_recovered": false,
+            "generalization": 0.16875,
+            "generalization_ratio_vs_chance": 0.675
+          },
+          "steps4_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.5991765821235532,
+            "pearson_permutedS": -0.05068756856358684,
+            "is_graded": false,
+            "second_order_margin": 0.0025242666707148143,
+            "second_order_recovered": false,
+            "generalization": 1.0,
+            "generalization_ratio_vs_chance": 4.0
+          },
+          "steps4_alpha0.7_membercols": {
+            "pearson_vs_Strue": 0.05049753127208652,
+            "pearson_permutedS": -0.03594030499407686,
+            "is_graded": false,
+            "second_order_margin": 1.58223774143762e-05,
+            "second_order_recovered": false,
+            "generalization": 0.16875,
+            "generalization_ratio_vs_chance": 0.675
+          },
+          "steps4_alpha0.7_fullcols": {
+            "pearson_vs_Strue": 0.5294615532912369,
+            "pearson_permutedS": -0.05061461292882577,
+            "is_graded": false,
+            "second_order_margin": 4.130012956371498e-05,
+            "second_order_recovered": false,
+            "generalization": 0.975,
+            "generalization_ratio_vs_chance": 3.9
+          },
+          "steps4_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.39874471279967555,
+            "pearson_permutedS": -0.04317389404430187,
+            "is_graded": false,
+            "second_order_margin": 6.793432250074005e-08,
+            "second_order_recovered": false,
+            "generalization": 0.9375,
+            "generalization_ratio_vs_chance": 3.75
+          },
+          "steps4_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.41313228122023976,
+            "pearson_permutedS": -0.04533714602565824,
+            "is_graded": false,
+            "second_order_margin": 2.8667559104356144e-08,
+            "second_order_recovered": false,
+            "generalization": 0.9625,
+            "generalization_ratio_vs_chance": 3.85
+          },
+          "steps6_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.16890063885055448,
+            "pearson_permutedS": -0.020378344758259684,
+            "is_graded": false,
+            "second_order_margin": 3.380572085265321e-06,
+            "second_order_recovered": false,
+            "generalization": 0.10625,
+            "generalization_ratio_vs_chance": 0.425
+          },
+          "steps6_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.5726958734883283,
+            "pearson_permutedS": -0.05112018842049323,
+            "is_graded": false,
+            "second_order_margin": 0.00015468466580192963,
+            "second_order_recovered": false,
+            "generalization": 1.0,
+            "generalization_ratio_vs_chance": 4.0
+          },
+          "steps6_alpha0.7_membercols": {
+            "pearson_vs_Strue": 0.2772011372775516,
+            "pearson_permutedS": -0.04307953502917374,
+            "is_graded": false,
+            "second_order_margin": 4.0899117137449537e-07,
+            "second_order_recovered": false,
+            "generalization": 0.46875,
+            "generalization_ratio_vs_chance": 1.875
+          },
+          "steps6_alpha0.7_fullcols": {
+            "pearson_vs_Strue": 0.484318291972739,
+            "pearson_permutedS": -0.04906022066384532,
+            "is_graded": false,
+            "second_order_margin": 4.02354384698711e-07,
+            "second_order_recovered": false,
+            "generalization": 0.975,
+            "generalization_ratio_vs_chance": 3.9
+          },
+          "steps6_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.3630971344537086,
+            "pearson_permutedS": -0.04067736229684738,
+            "is_graded": false,
+            "second_order_margin": 2.7540858482666408e-11,
+            "second_order_recovered": false,
+            "generalization": 0.875,
+            "generalization_ratio_vs_chance": 3.5
+          },
+          "steps6_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.373923603129535,
+            "pearson_permutedS": -0.04282160524232306,
+            "is_graded": false,
+            "second_order_margin": 1.1270651079087202e-11,
+            "second_order_recovered": false,
+            "generalization": 0.875,
+            "generalization_ratio_vs_chance": 3.5
+          }
+        },
+        "best_key": "steps2_alpha0.5_fullcols",
+        "best_pearson_vs_Strue": 0.633512783656755,
+        "best_generalization": 1.0,
+        "best_second_order_margin": 0.0377544138397613,
+        "gap_to_host_method_on_W": 0.24768191860006827,
+        "gap_to_ceiling": 0.3070450838803671,
+        "closes_residual": false,
+        "best_passes_g1": false,
+        "best_passes_a1": true
+      }
+    }
+  }
+}

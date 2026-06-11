@@ -1,0 +1,567 @@
+{
+  "summary": {
+    "consensus_verdict": "GO_full",
+    "per_seed_verdict": {
+      "42": "GO_full"
+    },
+    "seeds": [
+      42
+    ],
+    "backend": "numpy",
+    "cycles": 2,
+    "run_g4": false,
+    "brain_based_note": "the learn is the project's spiking-Hebbian recurrent (LearnedAssocGraph) at the de-saturated low-cycle (cycles=2) regime. PRIMARY read-out = host-method (PPMI+SVD) on the FULL hub-inclusive learned W -- the validated STAND-IN. The BRAIN-BASED read-out tested = spreading-activation/diffusion through the hubs on the same learned W. The host PPMI+SVD on RAW counts is the labelled CEILING ONLY (NOT the deliverable).",
+    "gates_all_seeds_primary": {
+      "g1_structure_recovered": true,
+      "g2_a1_generalizes": true,
+      "g2_a2_orthogonal_collapses": true,
+      "g2_a3_permuted_property_collapses": true,
+      "g3_cortex_roundtrip_closes": true,
+      "g3_binding_identity_clean": true,
+      "g5_permuted_cooccurrence_collapses": true,
+      "g5_beats_random_baseline": true,
+      "anti_cheat_W_distinct_from_counts": true,
+      "g4_strong_encode_compatible": null
+    },
+    "primary_load_bearing": {
+      "pearson_struct_recovery_per_seed": [
+        0.8739148324814381
+      ],
+      "pearson_struct_recovery_mean": 0.8739148324814381,
+      "second_order_margin_mean": 0.6561350060765682,
+      "generalization_graded_per_seed": [
+        1.0
+      ],
+      "generalization_graded_mean": 1.0,
+      "cortex_channel_pearson_per_seed": [
+        1.0
+      ],
+      "cortex_channel_pearson_mean": 1.0,
+      "binding_identity_mean": 1.0,
+      "host_ceiling_pearson_mean": 0.9315755987027806,
+      "anti_cheat_pearson_W_vs_rawcounts_per_seed": [
+        0.691931280017505
+      ],
+      "anti_cheat_pearson_W_vs_rawcounts_mean": 0.691931280017505,
+      "generalization_chance": 0.25
+    },
+    "brain_based_readout": {
+      "best_pearson_vs_Strue_per_seed": [
+        0.5025092623860552
+      ],
+      "best_pearson_vs_Strue_mean": 0.5025092623860552,
+      "best_generalization_per_seed": [
+        1.0
+      ],
+      "best_generalization_mean": 1.0,
+      "gap_to_host_method_on_W_mean": 0.3714055700953829,
+      "gap_to_ceiling_mean": 0.4290663363167254,
+      "closes_residual_per_seed": [
+        false
+      ],
+      "closes_residual_all_seeds": false,
+      "best_keys_per_seed": [
+        "steps2_alpha0.5_fullcols"
+      ]
+    },
+    "recovered_recipe_reference": {
+      "source": "2026-06-11-learned-graded-embedding-desaturate-GO.md (commit 1febdd20)",
+      "cycles": 2,
+      "readout": "host-method (PPMI+SVD) on the FULL hub-inclusive learned W",
+      "seed42_pearson": 0.843,
+      "seed43_pearson": 0.879,
+      "ceiling_seed42": 0.932,
+      "ceiling_seed43": 0.95,
+      "generalization": 1.0
+    },
+    "elapsed_total_s": 393.50183391571045
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "cycles": 2,
+      "corpus": {
+        "n_concepts": 48,
+        "n_members": 40,
+        "n_facts": 280,
+        "n_second_order_pairs": 53
+      },
+      "learn_info": {
+        "recurrent_mean": 0.5780120491981506,
+        "recurrent_max": 31.701711654663086,
+        "recurrent_nnz": 2400617,
+        "n_neurons": 2300,
+        "cycles": 2,
+        "gamma": 1.0,
+        "cap": null
+      },
+      "learn_seconds": 198.58614492416382,
+      "anti_cheat_pearson_W_vs_rawcounts": 0.691931280017505,
+      "host_ceiling": {
+        "pearson_vs_Strue": 0.9315755987027806,
+        "generalization": 1.0,
+        "is_graded": true
+      },
+      "random_baseline_generalization": 0.3125,
+      "primary_readout_host_method_on_W": {
+        "g1_structure_recovery": {
+          "pearson_learned_vs_Strue": 0.8739148324814381,
+          "pearson_permuted_vs_Strue": 0.07192866746686706,
+          "second_order_pairs_n": 53,
+          "second_order_cos_mean": 0.8156213027499662,
+          "between_cluster_cos_mean": 0.1594862966733981,
+          "second_order_margin": 0.6561350060765682,
+          "second_order_recovered": true
+        },
+        "g1_graded_stats": {
+          "within_cluster_cos_mean": 0.8005147885867402,
+          "within_cluster_cos_min": 0.5585529813168406,
+          "between_cluster_cos_mean": 0.1594862966733981,
+          "between_cluster_cos_max": 0.6829571197688422,
+          "graded_margin": 0.6410284919133421,
+          "is_graded": true
+        },
+        "g2_generalization": {
+          "graded": {
+            "n_heldout": 160,
+            "n_splits": 20,
+            "n_correct": 160,
+            "accuracy": 1.0,
+            "chance": 0.25,
+            "ratio_vs_chance": 4.0,
+            "preds": [
+              {
+                "query": 3,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 9,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 13,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 17,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 21,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 27,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 31,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 39,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 1,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 5,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 13,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 17,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 24,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 28,
+                "true_prop": 1,
+                "pred_prop": 1,
+                "correct": true
+              },
+              {
+                "query": 34,
+                "true_prop": 2,
+                "pred_prop": 2,
+                "correct": true
+              },
+              {
+                "query": 39,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              }
+            ]
+          },
+          "orthogonal": {
+            "n_heldout": 160,
+            "n_splits": 20,
+            "n_correct": 19,
+            "accuracy": 0.11875,
+            "chance": 0.25,
+            "ratio_vs_chance": 0.475,
+            "preds": [
+              {
+                "query": 3,
+                "true_prop": 0,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 9,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 13,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 17,
+                "true_prop": 3,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 21,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 27,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 31,
+                "true_prop": 2,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 39,
+                "true_prop": 3,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 1,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 5,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 13,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 17,
+                "true_prop": 3,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 24,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 28,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 34,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 39,
+                "true_prop": 3,
+                "pred_prop": 2,
+                "correct": false
+              }
+            ]
+          },
+          "permuted": {
+            "n_heldout": 160,
+            "n_splits": 20,
+            "n_correct": 40,
+            "accuracy": 0.25,
+            "chance": 0.25,
+            "ratio_vs_chance": 1.0,
+            "preds": [
+              {
+                "query": 3,
+                "true_prop": 3,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 9,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 13,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 17,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 21,
+                "true_prop": 1,
+                "pred_prop": 3,
+                "correct": false
+              },
+              {
+                "query": 27,
+                "true_prop": 2,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 31,
+                "true_prop": 2,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 39,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 1,
+                "true_prop": 3,
+                "pred_prop": 3,
+                "correct": true
+              },
+              {
+                "query": 5,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              },
+              {
+                "query": 13,
+                "true_prop": 0,
+                "pred_prop": 0,
+                "correct": true
+              },
+              {
+                "query": 17,
+                "true_prop": 1,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 24,
+                "true_prop": 2,
+                "pred_prop": 0,
+                "correct": false
+              },
+              {
+                "query": 28,
+                "true_prop": 0,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 34,
+                "true_prop": 3,
+                "pred_prop": 1,
+                "correct": false
+              },
+              {
+                "query": 39,
+                "true_prop": 1,
+                "pred_prop": 2,
+                "correct": false
+              }
+            ]
+          },
+          "chance": 0.25,
+          "a1": true,
+          "a2": true,
+          "a3": true
+        },
+        "g3_cortex_channel": {
+          "binding_identity_acc": 1.0,
+          "cortex_channel_pearson": 1.0,
+          "cortex_channel_permuted": -0.024670201272684007,
+          "cortex_roundtrip_closes": true
+        },
+        "g4_strong_encode": null,
+        "permuted_cooccurrence": {
+          "structure_recovery": {
+            "pearson_learned_vs_Strue": 0.06123156880272629,
+            "pearson_permuted_vs_Strue": -0.010027469372135462,
+            "second_order_pairs_n": 53,
+            "second_order_cos_mean": 0.3308900060429847,
+            "between_cluster_cos_mean": 0.3155459285738151,
+            "second_order_margin": 0.015344077469169604,
+            "second_order_recovered": false
+          },
+          "generalization": 0.2375,
+          "is_graded": false
+        },
+        "gates": {
+          "g1_structure_recovered": true,
+          "g2_a1_generalizes": true,
+          "g2_a2_orthogonal_collapses": true,
+          "g2_a3_permuted_property_collapses": true,
+          "g3_cortex_roundtrip_closes": true,
+          "g3_binding_identity_clean": true,
+          "g5_permuted_cooccurrence_collapses": true,
+          "g5_beats_random_baseline": true,
+          "anti_cheat_W_distinct_from_counts": true
+        }
+      },
+      "brain_based_diffusion_sweep": {
+        "sweep": {
+          "steps2_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.10182607964206614,
+            "pearson_permutedS": -0.02270900977494794,
+            "is_graded": false,
+            "second_order_margin": 0.004338594019494102,
+            "second_order_recovered": false,
+            "generalization": 0.20625,
+            "generalization_ratio_vs_chance": 0.825
+          },
+          "steps2_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.5025092623860552,
+            "pearson_permutedS": 0.024540914620441813,
+            "is_graded": false,
+            "second_order_margin": 0.04212103956948987,
+            "second_order_recovered": false,
+            "generalization": 1.0,
+            "generalization_ratio_vs_chance": 4.0
+          },
+          "steps2_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.24098121700017874,
+            "pearson_permutedS": -0.0071015463039234,
+            "is_graded": false,
+            "second_order_margin": 0.00020904365829121918,
+            "second_order_recovered": false,
+            "generalization": 0.7875,
+            "generalization_ratio_vs_chance": 3.15
+          },
+          "steps2_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.2850417949160473,
+            "pearson_permutedS": -0.003142938291131045,
+            "is_graded": false,
+            "second_order_margin": 0.00013258159548024118,
+            "second_order_recovered": false,
+            "generalization": 0.91875,
+            "generalization_ratio_vs_chance": 3.675
+          },
+          "steps4_alpha0.5_membercols": {
+            "pearson_vs_Strue": -0.06047501466620709,
+            "pearson_permutedS": -0.024020080097983617,
+            "is_graded": false,
+            "second_order_margin": 0.0005083272350128176,
+            "second_order_recovered": false,
+            "generalization": 0.14375,
+            "generalization_ratio_vs_chance": 0.575
+          },
+          "steps4_alpha0.5_fullcols": {
+            "pearson_vs_Strue": 0.42827366212254336,
+            "pearson_permutedS": 0.01651330541412962,
+            "is_graded": false,
+            "second_order_margin": 0.0029691747350962805,
+            "second_order_recovered": false,
+            "generalization": 1.0,
+            "generalization_ratio_vs_chance": 4.0
+          },
+          "steps4_alpha0.9_membercols": {
+            "pearson_vs_Strue": 0.24162766617718162,
+            "pearson_permutedS": -0.009335972098268027,
+            "is_graded": false,
+            "second_order_margin": 1.502235995598511e-07,
+            "second_order_recovered": false,
+            "generalization": 0.85625,
+            "generalization_ratio_vs_chance": 3.425
+          },
+          "steps4_alpha0.9_fullcols": {
+            "pearson_vs_Strue": 0.24639407441376238,
+            "pearson_permutedS": -0.009179095972663913,
+            "is_graded": false,
+            "second_order_margin": 7.800391321755029e-08,
+            "second_order_recovered": false,
+            "generalization": 0.85625,
+            "generalization_ratio_vs_chance": 3.425
+          }
+        },
+        "best_key": "steps2_alpha0.5_fullcols",
+        "best_pearson_vs_Strue": 0.5025092623860552,
+        "best_generalization": 1.0,
+        "best_second_order_margin": 0.04212103956948987,
+        "gap_to_host_method_on_W": 0.3714055700953829,
+        "gap_to_ceiling": 0.4290663363167254,
+        "closes_residual": false,
+        "best_passes_g1": false,
+        "best_passes_a1": true
+      }
+    }
+  }
+}
