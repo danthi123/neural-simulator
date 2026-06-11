@@ -1,0 +1,431 @@
+{
+  "probe": "cortex_storkey_ca3_cleanup_probe",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "overall_verdict": "NEGATIVE",
+  "sanity_check_passed": true,
+  "sanity_details": {
+    "at_0.14N": {
+      "P": 28,
+      "vanilla_acc": 0.9833333333333333,
+      "storkey_acc": 1.0
+    },
+    "at_0.25N": {
+      "P": 50,
+      "vanilla_acc": 0.13333333333333333,
+      "storkey_acc": 1.0
+    },
+    "at_0.35N": {
+      "P": 70,
+      "vanilla_acc": 0.0,
+      "storkey_acc": 0.7166666666666667
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 16,
+      "D": 512,
+      "between_code_cos_raw": 0.8140877497789367,
+      "test1_parity": {
+        "0.0": {
+          "argmax": 1.0,
+          "vanilla": 0.055,
+          "storkey": 0.175,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200
+        },
+        "0.1": {
+          "argmax": 1.0,
+          "vanilla": 0.065,
+          "storkey": 0.155,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200
+        },
+        "0.2": {
+          "argmax": 1.0,
+          "vanilla": 0.085,
+          "storkey": 0.14,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200
+        },
+        "0.3": {
+          "argmax": 0.89,
+          "vanilla": 0.05,
+          "storkey": 0.155,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200
+        }
+      },
+      "test2_completion": {
+        "0.5": {
+          "argmax_on_partial": 1.0,
+          "vanilla": 0.05,
+          "storkey": 0.205,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200,
+          "storkey_edge": -0.795
+        },
+        "0.35": {
+          "argmax_on_partial": 1.0,
+          "vanilla": 0.065,
+          "storkey": 0.125,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200,
+          "storkey_edge": -0.875
+        },
+        "0.25": {
+          "argmax_on_partial": 0.97,
+          "vanilla": 0.055,
+          "storkey": 0.19,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200,
+          "storkey_edge": -0.78
+        },
+        "0.15": {
+          "argmax_on_partial": 0.895,
+          "vanilla": 0.095,
+          "storkey": 0.18,
+          "pinv": 0.995,
+          "chance": 0.0625,
+          "n": 200,
+          "storkey_edge": -0.715
+        }
+      },
+      "capacity_sweep": {
+        "8": {
+          "argmax": 1.0,
+          "vanilla": 0.11,
+          "storkey": 0.24,
+          "pinv": 1.0,
+          "chance": 0.125,
+          "n": 200,
+          "flip_frac": 0.1
+        },
+        "16": {
+          "argmax": 1.0,
+          "vanilla": 0.07,
+          "storkey": 0.23,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200,
+          "flip_frac": 0.1
+        }
+      },
+      "anticheat_lesion": {
+        "intact_acc": 0.225,
+        "lesion_acc": 1.0,
+        "chance": 0.0625,
+        "collapses": false,
+        "n": 200
+      },
+      "anticheat_shuffle": {
+        "true_codebook_acc": 0.22,
+        "shuffled_codebook_acc": 0.14,
+        "chance": 0.0625,
+        "drops_to_chance": true,
+        "n": 200
+      },
+      "gates": {
+        "storkey_parity_flip01": false,
+        "storkey_parity_flip02": false,
+        "completion_edge": false,
+        "lesion_collapses": false,
+        "shuffle_collapses": true,
+        "pinv_parity": true
+      },
+      "wall_diagnosis": "LOCALITY WALL -- pinv (host ceiling) succeeds but Storkey (local rule) fails",
+      "verdict": "NEGATIVE",
+      "args": {
+        "proj_dim": 512,
+        "n_trials": 200,
+        "tol": 0.1
+      },
+      "wall_seconds": 1.8
+    },
+    {
+      "seed": 43,
+      "V": 16,
+      "D": 512,
+      "between_code_cos_raw": 0.7980092149074378,
+      "test1_parity": {
+        "0.0": {
+          "argmax": 1.0,
+          "vanilla": 0.04,
+          "storkey": 0.085,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200
+        },
+        "0.1": {
+          "argmax": 1.0,
+          "vanilla": 0.085,
+          "storkey": 0.11,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200
+        },
+        "0.2": {
+          "argmax": 1.0,
+          "vanilla": 0.07,
+          "storkey": 0.14,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200
+        },
+        "0.3": {
+          "argmax": 0.895,
+          "vanilla": 0.07,
+          "storkey": 0.155,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200
+        }
+      },
+      "test2_completion": {
+        "0.5": {
+          "argmax_on_partial": 1.0,
+          "vanilla": 0.055,
+          "storkey": 0.175,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200,
+          "storkey_edge": -0.825
+        },
+        "0.35": {
+          "argmax_on_partial": 1.0,
+          "vanilla": 0.04,
+          "storkey": 0.105,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200,
+          "storkey_edge": -0.895
+        },
+        "0.25": {
+          "argmax_on_partial": 0.985,
+          "vanilla": 0.06,
+          "storkey": 0.16,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200,
+          "storkey_edge": -0.825
+        },
+        "0.15": {
+          "argmax_on_partial": 0.915,
+          "vanilla": 0.035,
+          "storkey": 0.14,
+          "pinv": 0.99,
+          "chance": 0.0625,
+          "n": 200,
+          "storkey_edge": -0.775
+        }
+      },
+      "capacity_sweep": {
+        "8": {
+          "argmax": 1.0,
+          "vanilla": 0.13,
+          "storkey": 0.53,
+          "pinv": 1.0,
+          "chance": 0.125,
+          "n": 200,
+          "flip_frac": 0.1
+        },
+        "16": {
+          "argmax": 1.0,
+          "vanilla": 0.045,
+          "storkey": 0.145,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200,
+          "flip_frac": 0.1
+        }
+      },
+      "anticheat_lesion": {
+        "intact_acc": 0.1,
+        "lesion_acc": 1.0,
+        "chance": 0.0625,
+        "collapses": false,
+        "n": 200
+      },
+      "anticheat_shuffle": {
+        "true_codebook_acc": 0.14,
+        "shuffled_codebook_acc": 0.13,
+        "chance": 0.0625,
+        "drops_to_chance": true,
+        "n": 200
+      },
+      "gates": {
+        "storkey_parity_flip01": false,
+        "storkey_parity_flip02": false,
+        "completion_edge": false,
+        "lesion_collapses": false,
+        "shuffle_collapses": true,
+        "pinv_parity": true
+      },
+      "wall_diagnosis": "LOCALITY WALL -- pinv (host ceiling) succeeds but Storkey (local rule) fails",
+      "verdict": "NEGATIVE",
+      "args": {
+        "proj_dim": 512,
+        "n_trials": 200,
+        "tol": 0.1
+      },
+      "wall_seconds": 1.6
+    },
+    {
+      "seed": 44,
+      "V": 16,
+      "D": 512,
+      "between_code_cos_raw": 0.7871670170795589,
+      "test1_parity": {
+        "0.0": {
+          "argmax": 1.0,
+          "vanilla": 0.02,
+          "storkey": 0.19,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200
+        },
+        "0.1": {
+          "argmax": 1.0,
+          "vanilla": 0.045,
+          "storkey": 0.165,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200
+        },
+        "0.2": {
+          "argmax": 1.0,
+          "vanilla": 0.065,
+          "storkey": 0.115,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200
+        },
+        "0.3": {
+          "argmax": 0.925,
+          "vanilla": 0.085,
+          "storkey": 0.115,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200
+        }
+      },
+      "test2_completion": {
+        "0.5": {
+          "argmax_on_partial": 1.0,
+          "vanilla": 0.07,
+          "storkey": 0.12,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200,
+          "storkey_edge": -0.88
+        },
+        "0.35": {
+          "argmax_on_partial": 1.0,
+          "vanilla": 0.065,
+          "storkey": 0.13,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200,
+          "storkey_edge": -0.87
+        },
+        "0.25": {
+          "argmax_on_partial": 0.995,
+          "vanilla": 0.05,
+          "storkey": 0.16,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200,
+          "storkey_edge": -0.835
+        },
+        "0.15": {
+          "argmax_on_partial": 0.895,
+          "vanilla": 0.045,
+          "storkey": 0.12,
+          "pinv": 0.995,
+          "chance": 0.0625,
+          "n": 200,
+          "storkey_edge": -0.775
+        }
+      },
+      "capacity_sweep": {
+        "8": {
+          "argmax": 1.0,
+          "vanilla": 0.125,
+          "storkey": 0.515,
+          "pinv": 1.0,
+          "chance": 0.125,
+          "n": 200,
+          "flip_frac": 0.1
+        },
+        "16": {
+          "argmax": 1.0,
+          "vanilla": 0.085,
+          "storkey": 0.18,
+          "pinv": 1.0,
+          "chance": 0.0625,
+          "n": 200,
+          "flip_frac": 0.1
+        }
+      },
+      "anticheat_lesion": {
+        "intact_acc": 0.19,
+        "lesion_acc": 1.0,
+        "chance": 0.0625,
+        "collapses": false,
+        "n": 200
+      },
+      "anticheat_shuffle": {
+        "true_codebook_acc": 0.25,
+        "shuffled_codebook_acc": 0.12,
+        "chance": 0.0625,
+        "drops_to_chance": true,
+        "n": 200
+      },
+      "gates": {
+        "storkey_parity_flip01": false,
+        "storkey_parity_flip02": false,
+        "completion_edge": false,
+        "lesion_collapses": false,
+        "shuffle_collapses": true,
+        "pinv_parity": true
+      },
+      "wall_diagnosis": "LOCALITY WALL -- pinv (host ceiling) succeeds but Storkey (local rule) fails",
+      "verdict": "NEGATIVE",
+      "args": {
+        "proj_dim": 512,
+        "n_trials": 200,
+        "tol": 0.1
+      },
+      "wall_seconds": 1.7
+    }
+  ],
+  "rollup": {
+    "parity_flip01_argmax": 1.0,
+    "parity_flip01_vanilla": 0.065,
+    "parity_flip01_storkey": 0.14333333333333334,
+    "parity_flip01_pinv": 1.0,
+    "parity_flip02_argmax": 1.0,
+    "parity_flip02_vanilla": 0.07333333333333335,
+    "parity_flip02_storkey": 0.13166666666666668,
+    "parity_flip02_pinv": 1.0,
+    "parity_flip03_argmax": 0.9033333333333333,
+    "parity_flip03_vanilla": 0.06833333333333334,
+    "parity_flip03_storkey": 0.14166666666666666,
+    "parity_flip03_pinv": 1.0,
+    "anticheat_lesion_intact": 0.17166666666666666,
+    "anticheat_lesion_lesioned": 1.0,
+    "anticheat_shuffle_true": 0.20333333333333334,
+    "anticheat_shuffle_shuffled": 0.13
+  }
+}
