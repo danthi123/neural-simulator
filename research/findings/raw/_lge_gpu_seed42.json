@@ -1,0 +1,781 @@
+{
+  "summary": {
+    "verdict": "NEGATIVE_no_structure",
+    "seeds": [
+      42
+    ],
+    "backend": "cupy",
+    "run_g4": false,
+    "brain_based_note": "the learning rule is the project's spiking Hebbian (LearnedAssocGraph: pool->pool recurrent grows by co-fire Hebbian growth); the graded read-out is spreading activation on the learned recurrent (brain-based). The host PPMI+SVD is a labelled CEILING ONLY, NOT the deliverable.",
+    "gates_all_seeds": {
+      "g1_structure_recovered": false,
+      "g2_a1_generalizes": false,
+      "g2_a2_orthogonal_collapses": true,
+      "g2_a3_permuted_property_collapses": true,
+      "g3_cortex_roundtrip_closes": true,
+      "g3_binding_identity_clean": true,
+      "g5_permuted_cooccurrence_collapses": true,
+      "g5_beats_random_baseline": false,
+      "g4_strong_encode_compatible": null
+    },
+    "load_bearing": {
+      "pearson_struct_recovery_per_seed": [
+        -0.02432234517691018
+      ],
+      "pearson_struct_recovery_mean": -0.02432234517691018,
+      "pearson_struct_permuted_cooccurrence_per_seed": [
+        -0.001430356795649097
+      ],
+      "pearson_struct_permuted_cooccurrence_mean": -0.001430356795649097,
+      "second_order_margin_per_seed": [
+        9.722058523686794e-05
+      ],
+      "second_order_margin_mean": 9.722058523686794e-05,
+      "generalization_graded_per_seed": [
+        0.2375
+      ],
+      "generalization_graded_mean": 0.2375,
+      "generalization_orthogonal_mean": 0.11875,
+      "generalization_permuted_property_mean": 0.24375,
+      "generalization_permuted_cooccurrence_per_seed": [
+        0.2375
+      ],
+      "generalization_permuted_cooccurrence_mean": 0.2375,
+      "generalization_random_baseline_mean": 0.3125,
+      "generalization_host_ceiling_per_seed": [
+        1.0
+      ],
+      "generalization_host_ceiling_mean": 1.0,
+      "pearson_host_ceiling_mean": 0.9315755987027806,
+      "generalization_chance": 0.25,
+      "cortex_channel_pearson_per_seed": [
+        1.0
+      ],
+      "cortex_channel_pearson_mean": 1.0,
+      "binding_identity_mean": 1.0,
+      "brain_vs_host_generalization_gap": 0.7625
+    },
+    "elapsed_total_s": 269.7709970474243
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "corpus": {
+        "n_concepts": 48,
+        "n_members": 40,
+        "n_facts": 280,
+        "n_second_order_pairs": 53
+      },
+      "learn_info": {
+        "recurrent_mean": 0.9979496002197266,
+        "recurrent_max": 44.77490997314453,
+        "recurrent_nnz": 2400617,
+        "n_neurons": 2300
+      },
+      "graded_stats": {
+        "within_cluster_cos_mean": 0.9547102854645745,
+        "within_cluster_cos_min": 0.9149847982531216,
+        "between_cluster_cos_mean": 0.9557142969254839,
+        "between_cluster_cos_max": 0.9829538995127697,
+        "graded_margin": -0.0010040114609094486,
+        "is_graded": false
+      },
+      "structure_recovery": {
+        "pearson_learned_vs_Strue": -0.02432234517691018,
+        "pearson_permuted_vs_Strue": -0.0020158488751457595,
+        "second_order_pairs_n": 53,
+        "second_order_cos_mean": 0.9558115175107208,
+        "between_cluster_cos_mean": 0.9557142969254839,
+        "second_order_margin": 9.722058523686794e-05,
+        "second_order_recovered": false
+      },
+      "structure_recovery_permuted_cooccurrence": {
+        "pearson_learned_vs_Strue": -0.001430356795649097,
+        "pearson_permuted_vs_Strue": -0.0008652016523372291,
+        "second_order_pairs_n": 53,
+        "second_order_cos_mean": 0.97386626866804,
+        "between_cluster_cos_mean": 0.9737704119878663,
+        "second_order_margin": 9.585668017375593e-05,
+        "second_order_recovered": false
+      },
+      "generalization": {
+        "graded": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 38,
+          "accuracy": 0.2375,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.95,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 21,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 1,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 24,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            }
+          ]
+        },
+        "orthogonal": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 19,
+          "accuracy": 0.11875,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.475,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 21,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 1,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 24,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            }
+          ]
+        },
+        "permuted": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 39,
+          "accuracy": 0.24375,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.975,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 17,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 21,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 1,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 17,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 24,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 34,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 39,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            }
+          ]
+        },
+        "chance": 0.25,
+        "a1": false,
+        "a2": true,
+        "a3": true
+      },
+      "generalization_permuted_cooccurrence": {
+        "n_heldout": 160,
+        "n_splits": 20,
+        "n_correct": 38,
+        "accuracy": 0.2375,
+        "chance": 0.25,
+        "ratio_vs_chance": 0.95,
+        "preds": [
+          {
+            "query": 3,
+            "true_prop": 0,
+            "pred_prop": 3,
+            "correct": false
+          },
+          {
+            "query": 9,
+            "true_prop": 1,
+            "pred_prop": 3,
+            "correct": false
+          },
+          {
+            "query": 13,
+            "true_prop": 2,
+            "pred_prop": 2,
+            "correct": true
+          },
+          {
+            "query": 17,
+            "true_prop": 3,
+            "pred_prop": 2,
+            "correct": false
+          },
+          {
+            "query": 21,
+            "true_prop": 0,
+            "pred_prop": 2,
+            "correct": false
+          },
+          {
+            "query": 27,
+            "true_prop": 1,
+            "pred_prop": 2,
+            "correct": false
+          },
+          {
+            "query": 31,
+            "true_prop": 2,
+            "pred_prop": 0,
+            "correct": false
+          },
+          {
+            "query": 39,
+            "true_prop": 3,
+            "pred_prop": 2,
+            "correct": false
+          },
+          {
+            "query": 1,
+            "true_prop": 0,
+            "pred_prop": 3,
+            "correct": false
+          },
+          {
+            "query": 5,
+            "true_prop": 1,
+            "pred_prop": 3,
+            "correct": false
+          },
+          {
+            "query": 13,
+            "true_prop": 2,
+            "pred_prop": 2,
+            "correct": true
+          },
+          {
+            "query": 17,
+            "true_prop": 3,
+            "pred_prop": 3,
+            "correct": true
+          },
+          {
+            "query": 24,
+            "true_prop": 0,
+            "pred_prop": 3,
+            "correct": false
+          },
+          {
+            "query": 28,
+            "true_prop": 1,
+            "pred_prop": 1,
+            "correct": true
+          },
+          {
+            "query": 34,
+            "true_prop": 2,
+            "pred_prop": 3,
+            "correct": false
+          },
+          {
+            "query": 39,
+            "true_prop": 3,
+            "pred_prop": 3,
+            "correct": true
+          }
+        ]
+      },
+      "generalization_random_baseline": {
+        "n_heldout": 160,
+        "n_splits": 20,
+        "n_correct": 50,
+        "accuracy": 0.3125,
+        "chance": 0.25,
+        "ratio_vs_chance": 1.25,
+        "preds": [
+          {
+            "query": 3,
+            "true_prop": 0,
+            "pred_prop": 3,
+            "correct": false
+          },
+          {
+            "query": 9,
+            "true_prop": 1,
+            "pred_prop": 2,
+            "correct": false
+          },
+          {
+            "query": 13,
+            "true_prop": 2,
+            "pred_prop": 0,
+            "correct": false
+          },
+          {
+            "query": 17,
+            "true_prop": 3,
+            "pred_prop": 3,
+            "correct": true
+          },
+          {
+            "query": 21,
+            "true_prop": 0,
+            "pred_prop": 0,
+            "correct": true
+          },
+          {
+            "query": 27,
+            "true_prop": 1,
+            "pred_prop": 2,
+            "correct": false
+          },
+          {
+            "query": 31,
+            "true_prop": 2,
+            "pred_prop": 3,
+            "correct": false
+          },
+          {
+            "query": 39,
+            "true_prop": 3,
+            "pred_prop": 2,
+            "correct": false
+          },
+          {
+            "query": 1,
+            "true_prop": 0,
+            "pred_prop": 3,
+            "correct": false
+          },
+          {
+            "query": 5,
+            "true_prop": 1,
+            "pred_prop": 3,
+            "correct": false
+          },
+          {
+            "query": 13,
+            "true_prop": 2,
+            "pred_prop": 0,
+            "correct": false
+          },
+          {
+            "query": 17,
+            "true_prop": 3,
+            "pred_prop": 3,
+            "correct": true
+          },
+          {
+            "query": 24,
+            "true_prop": 0,
+            "pred_prop": 0,
+            "correct": true
+          },
+          {
+            "query": 28,
+            "true_prop": 1,
+            "pred_prop": 0,
+            "correct": false
+          },
+          {
+            "query": 34,
+            "true_prop": 2,
+            "pred_prop": 3,
+            "correct": false
+          },
+          {
+            "query": 39,
+            "true_prop": 3,
+            "pred_prop": 0,
+            "correct": false
+          }
+        ]
+      },
+      "host_ceiling": {
+        "structure_recovery": {
+          "pearson_learned_vs_Strue": 0.9315755987027806,
+          "pearson_permuted_vs_Strue": 0.05000095170862877,
+          "second_order_pairs_n": 53,
+          "second_order_cos_mean": 0.6691556905209809,
+          "between_cluster_cos_mean": 0.011943743978729555,
+          "second_order_margin": 0.6572119465422513,
+          "second_order_recovered": true
+        },
+        "graded_stats": {
+          "within_cluster_cos_mean": 0.6170641647051661,
+          "within_cluster_cos_min": 0.35894332725379463,
+          "between_cluster_cos_mean": 0.011943743978729555,
+          "between_cluster_cos_max": 0.39849603334784994,
+          "graded_margin": 0.6051204207264366,
+          "is_graded": true
+        },
+        "generalization": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 160,
+          "accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 21,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 1,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 24,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            }
+          ]
+        }
+      },
+      "cortex_channel": {
+        "binding_identity_acc": 1.0,
+        "cortex_channel_pearson": 1.0,
+        "cortex_channel_permuted": -0.07679966060342132,
+        "cortex_roundtrip_closes": true
+      },
+      "strong_encode_g4": null,
+      "gates": {
+        "g1_structure_recovered": false,
+        "g2_a1_generalizes": false,
+        "g2_a2_orthogonal_collapses": true,
+        "g2_a3_permuted_property_collapses": true,
+        "g3_cortex_roundtrip_closes": true,
+        "g3_binding_identity_clean": true,
+        "g5_permuted_cooccurrence_collapses": true,
+        "g5_beats_random_baseline": false
+      }
+    }
+  }
+}
