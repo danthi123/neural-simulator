@@ -198,6 +198,21 @@ class CoreSimConfig:
     gabab_reversal_potential: float = -90.0   # E_K (GIRK), mV
     gabab_tau_decay: float = 150.0            # slow decay (ms); GABA_B/GIRK >> GABA_A's 10 ms
     gabab_propagation_strength: float = 0.105 # per-spike conductance increment scale (mirrors inhibitory_propagation_strength)
+    # TD value-DERIVATIVE channel (B-2, 2026-06-10 N9 TD cue-shift design §2.2/§3). The
+    # bootstrap γ·V(s') − V(s) delivered to the SNc as the temporal DERIVATIVE of the GABA_B
+    # value channel, computed AT THE MEMBRANE in conductance (NOT from the critic's firing
+    # density — that is what made the B-3 zero-edit route net-depressing). Mechanism: maintain
+    # one slow leaky-EMA copy of g_gabab (decaying with td_slow_tau_ms > gabab_tau_decay); the
+    # band-passed difference (g_gabab − g_gabab_slow) is the value derivative. Delivered as a
+    # DEPOLARIZING current via E_exc (= syn_reversal_potential_e = 0 mV): a value RISE
+    # (g_gabab − g_gabab_slow > 0, with E_exc − V > 0) depolarizes the SNc → a burst at the cue;
+    # a value FALL hyperpolarizes → the omission dip; flat value → ~0. ADDITIVE on top of the
+    # existing −V GABA_B subtraction. Default OFF; byte-identical when disabled (these fields are
+    # read ONLY inside `if enable_td_value_derivative`, which is False here, so the whole block is
+    # unreached and total_input_current_pA is bit-identical). Mirrors enable_gabab exactly.
+    enable_td_value_derivative: bool = False
+    td_slow_tau_ms: float = 400.0             # slow-EMA decay of g_gabab (ms); > gabab_tau_decay (~150) so the difference is a derivative
+    td_derivative_gain: float = 1.0           # scales the conductance-derivative current onto the SNc
     propagation_strength: float = 0.05
     inhibitory_propagation_strength: float = 0.105  # Scaled for E_inh=-75mV (was 0.15 at E_inh=-70mV)
     max_synaptic_delay_ms: float = 20.0

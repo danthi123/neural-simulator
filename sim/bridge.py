@@ -240,6 +240,12 @@ class SimulationBridge:
         self.cp_conductance_g_gabab = None          # slow GABA_B/GIRK conductance (None unless enable_gabab)
         self.cp_gabab_reversal_per_neuron = None     # per-neuron E_gabab (~-90 mV on GABA_B targets)
         self.cp_gabab_synapse_mask = None            # bool per-synapse: True for GABA_B-routed synapses
+        # TD value-DERIVATIVE channel (B-2, 2026-06-10). A SINGLE leaky-EMA copy of the GABA_B
+        # value conductance above (decays slower, td_slow_tau_ms): the band-passed difference
+        # (g_gabab - g_gabab_slow) is the value derivative = the TD bootstrap, computed at the SNc
+        # membrane in conductance. None by default -> the new guarded step block is unreached and
+        # total_input_current_pA is byte-identical to today (mirror of cp_conductance_g_gabab).
+        self.cp_conductance_g_gabab_slow = None      # slow-EMA of g_gabab (None unless enable_td_value_derivative)
         # Slow-NMDA recurrent routing (2026-06-09). The EXCITATORY mirror of the GABA_B
         # arrays above: a SEPARATE slow (tau ~100 ms) NMDA conductance (dual-exp, reuses
         # fused_nmda_update_and_current with the Mg2+ block) fed ONLY by synapses of
@@ -1228,6 +1234,15 @@ class SimulationBridge:
                 # cp_gabab_synapse_mask is built in inject_explicit_wiring (needs nnz);
                 # left None here so non-wired bridges with enable_gabab are still safe.
 
+            # TD value-DERIVATIVE slow-EMA conductance (B-2, 2026-06-10). One slow leaky-integrator
+            # copy of g_gabab (allocated alongside it; the per-step block keeps it = a slower-decaying
+            # EMA of g_gabab, and the SNc current uses the difference g_gabab - g_gabab_slow = the
+            # value derivative). Guarded by cfg.enable_td_value_derivative so a default config leaves
+            # the array None and the per-step block is unreached (byte-identical). Mirrors the GABA_B
+            # alloc above; needs the GABA_B channel to be the value-conductance it differentiates.
+            if getattr(cfg, "enable_td_value_derivative", False) and n > 0:
+                self.cp_conductance_g_gabab_slow = cp.zeros(n, dtype=cp.float32)
+
             # Slow-NMDA recurrent conductance (2026-06-09). The EXCITATORY mirror of the
             # GABA_B alloc above: a second NMDA conductance (dual-exp: g + g_rise) with its
             # own slow decay, fed only by exc_receptor=="nmda_slow" synapses. Guarded by
@@ -1616,6 +1631,12 @@ class SimulationBridge:
             self._cached_decay_nmda = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_decay)) if cfg.nmda_tau_decay > 0 else 0.0
             self._cached_decay_nmda_rise = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_rise)) if cfg.nmda_tau_rise > 0 else 0.0
             self._cached_decay_gabab = float(cp.exp(-cfg.dt_ms / cfg.gabab_tau_decay)) if getattr(cfg, "gabab_tau_decay", 0) > 0 else 0.0
+            # TD value-derivative slow-EMA decay (B-2, 2026-06-10). The slower-decaying copy of
+            # g_gabab whose lag makes (g_gabab - g_gabab_slow) a derivative. Always cached (a cheap
+            # float); only USED inside the guarded `enable_td_value_derivative` block (so caching it
+            # unconditionally does not change behavior when the flag is off).
+            _td_slow_tau = getattr(cfg, "td_slow_tau_ms", 0)
+            self._cached_decay_gabab_slow = float(cp.exp(-cfg.dt_ms / _td_slow_tau)) if _td_slow_tau and _td_slow_tau > 0 else 0.0
             # Slow-NMDA recurrent dual-exp decay constants (2026-06-09). Mirror the global
             # NMDA caches above with the recurrent's own (slower) taus. Always cached
             # (cheap floats); only USED when the guarded recurrent block runs.
@@ -5885,6 +5906,32 @@ class SimulationBridge:
                     self.cp_membrane_potential_v, self.cp_gabab_reversal_per_neuron)
                 total_input_current_pA = total_input_current_pA + I_gabab
 
+                # --- B-2: TD value-DERIVATIVE current (2026-06-10 N9 TD cue-shift design §2.2) ---
+                # The bootstrap γ·V(s') − V(s) = the TEMPORAL DERIVATIVE of the value channel,
+                # computed AT THE MEMBRANE in conductance — decoupled from the critic's firing
+                # DENSITY (the B-3 zero-edit route tied the two and went net-depressing). g_gabab is
+                # the GABA_B-mask-restricted value channel (e.g. striosome_value→SNc), already
+                # incremented + decayed for this step above. g_gabab_slow is a SLOWER-decaying leaky
+                # EMA of it; the band-passed difference (g_gabab − g_gabab_slow) is the derivative.
+                # Delivered DEPOLARIZING via E_exc (= syn_reversal_potential_e = 0 mV): on a value
+                # RISE, (g_gabab − g_gabab_slow) > 0 and (E_exc − V) > 0 (V ≈ −60 mV) → positive →
+                # the SNc bursts at the cue; on a FALL → negative → hyperpolarize → the omission dip;
+                # flat value → ≈ 0. ADDITIVE on top of the existing −V GABA_B subtraction above.
+                # GUARDED: cp_conductance_g_gabab_slow is None unless enable_td_value_derivative, so
+                # with the flag default-OFF this whole block is unreached and total_input_current_pA
+                # is byte-identical to today (the cfg.td_* fields are read ONLY here).
+                if (getattr(cfg, "enable_td_value_derivative", False)
+                        and self.cp_conductance_g_gabab_slow is not None):
+                    _decay_slow = self._cached_decay_gabab_slow
+                    # Leaky integrator: g_slow tracks g_gabab with a slower time constant.
+                    self.cp_conductance_g_gabab_slow = (
+                        self.cp_conductance_g_gabab_slow * cp.float32(_decay_slow)
+                        + self.cp_conductance_g_gabab * cp.float32(1.0 - _decay_slow))
+                    I_td_deriv = (cp.float32(getattr(cfg, "td_derivative_gain", 1.0))
+                                  * (self.cp_conductance_g_gabab - self.cp_conductance_g_gabab_slow)
+                                  * (cp.float32(cfg.syn_reversal_potential_e) - self.cp_membrane_potential_v))
+                    total_input_current_pA = total_input_current_pA + I_td_deriv
+
             # --- 2.5. Update OU Process & Inject Background Noise ---
             if cfg.enable_ou_process and hasattr(self, 'cp_ou_current') and self.cp_ou_current is not None:
                 # Update OU current using exact solution: I(t+dt) = I(t)*exp(-dt/tau) + mean*(1-exp(-dt/tau)) + noise
@@ -7245,6 +7292,11 @@ class SimulationBridge:
                 self._cached_decay_nmda = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_decay)) if cfg.nmda_tau_decay > 0 else 0.0
                 self._cached_decay_nmda_rise = float(cp.exp(-cfg.dt_ms / cfg.nmda_tau_rise)) if cfg.nmda_tau_rise > 0 else 0.0
                 self._cached_decay_gabab = float(cp.exp(-cfg.dt_ms / cfg.gabab_tau_decay)) if getattr(cfg, "gabab_tau_decay", 0) > 0 else 0.0
+                # TD value-derivative slow-EMA decay (B-2, 2026-06-10) — see the matching cache in
+                # _initialize_simulation_data. Recomputed on checkpoint-load so the first step after
+                # load has it; only USED inside the guarded enable_td_value_derivative block.
+                _td_slow_tau = getattr(cfg, "td_slow_tau_ms", 0)
+                self._cached_decay_gabab_slow = float(cp.exp(-cfg.dt_ms / _td_slow_tau)) if _td_slow_tau and _td_slow_tau > 0 else 0.0
 
                 # Recompute OU step-invariant constants (cp_ou_current state is
                 # preserved; coefficients are derived from dt / tau / sigma).

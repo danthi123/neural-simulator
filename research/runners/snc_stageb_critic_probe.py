@@ -58,7 +58,19 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
                          bprime_snr=False, strio_to_disinhib_weight=20.0,
                          disinhib_to_gaba_weight=20.0, gaba_to_snc_weight=6.0, n_relay=40,
                          gabab=False, gabab_tau_decay=150.0, gabab_propagation_strength=0.105,
-                         td_disinhibit=False, disinhib_tonic_weight=20.0):
+                         td_disinhibit=False, disinhib_tonic_weight=20.0,
+                         csc=False, n_csc=8, n_csc_per=25,
+                         csc_to_strio_weight=6.0, n_csc_strio=60, n_csc_drive=40, n_csc_disinhib=40,
+                         csc_eligibility_tau_ms=None,
+                         csc_gabab_level=True, csc_strio_to_snc_weight=2.5,
+                         csc_gabab_tau_decay=60.0, csc_gabab_propagation_strength=0.105,
+                         csc_conductance_deriv=True, csc_td_slow_tau_ms=400.0,
+                         csc_td_derivative_gain=1.0, csc_gabab_conductance_max=0.0,
+                         csc_stdp_w_max=None,
+                         csc_fs_clamp=False, n_csc_fs=24, csc_to_fs_weight=20.0,
+                         csc_fs_to_strio_weight=12.0,
+                         csc_reward_relay=False, n_csc_reward_us=40,
+                         csc_reward_us_to_snc_weight=6.0, csc_strio_to_reward_us_weight=8.0):
     """Minimal bridge: cue (CS) -> striosome_value (GABAergic critic) -> snc (DA).
 
     cue->striosome_value is PLASTIC (the value is learned by the SNc-derived delta via
@@ -131,6 +143,177 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
         cfg.gabab_reversal_potential = -90.0
         cfg.gabab_tau_decay = float(gabab_tau_decay)
         cfg.gabab_propagation_strength = float(gabab_propagation_strength)
+
+    if csc:
+        # ============================================================================
+        # A-CSC — COMPLETE SERIAL COMPOUND tapped-delay cue representation
+        # (TD cue-shift design §2.1 A-CSC / §6.3 #2; Montague-Dayan-Sejnowski 1996;
+        #  Sutton-Barto Ch 12). The cue is NOT one event but a CHAIN of K time-tagged
+        # sub-state populations (csc_0 = cue@onset, csc_1 = cue@Delta, ... csc_{K-1}),
+        # EACH driving the critic striosome_value through its OWN plastic synapse.
+        # TD back-propagates value one tap per trial: the latest pre-reward sub-state's
+        # value grows first (its eligibility overlaps the reward burst), then earlier
+        # sub-states acquire value via the bootstrap (gamma*V(s_{t+1}) - V(s_t) > 0 at the
+        # value's leading edge), until csc_0 (cue onset) carries value -> the SNc burst
+        # MIGRATES from the reward onto the cue. The MULTIPLE sub-channels decouple the
+        # single-channel B-2 conflict: each sub-state's value can be non-zero independently
+        # (sparse, STDP-friendly), so the value LEVEL and the value DERIVATIVE no longer
+        # fight on one channel.
+        #
+        # Delivery (ZERO sim/ edit, reuses the B-3 disinhibition relay): the value
+        # DERIVATIVE drives the SNc via the disinhibition chain
+        #   striosome_value --(inhib)--> disinhib --(inhib)--> snc_drive --(exc)--> snc
+        # so a value RISE (the value's leading edge sweeping backward over trials)
+        # DISINHIBITS/excites the SNc -> a burst AT that sub-state's time; a value FALL
+        # (omission) adds inhibition -> the dip. The reward (US) enters at the relay.
+        # The sub-state TIME-TAGGING (which tap is active in which bin) is the world's
+        # cue-presentation timing (legitimate environment boundary, design §2.4 — same
+        # status as the sustained cue in B-3); the VALUE LEARNING, the derivative, the
+        # burst, the dip, and the credit assignment are all NEURAL.
+        #
+        # TEMPORAL CREDIT RESOLUTION (decisive for one-tap-per-trial back-propagation): the
+        # eligibility trace tau (default 1000 ms) would smear credit across the whole ~160 ms
+        # chain, crediting EVERY tap equally each trial => no migration gradient. A SHORT tau
+        # (~40 ms, comparable to ~2 bins) makes each tap's eligibility decay before the next, so
+        # the reward credits ONLY the last tap and the bootstrap-burst credits the tap just
+        # before the value-carrying one — the tap-local credit CSC needs (this IS the TD(lambda)
+        # stimulus-trace timescale; catalog C.29, Sutton-Barto Ch 12).
+        if csc_eligibility_tau_ms is not None:
+            cfg.reward_eligibility_tau_ms = float(csc_eligibility_tau_ms)
+        # FULL TD delivers the value TWICE at the SNc membrane (design §2.2 B-1):
+        #   (1) the value LEVEL as -V via the GABA_B/GIRK conductance (striosome_value -> snc,
+        #       receptor="gaba_b"): more value -> the SNc fires LESS, so the REWARD burst SHRINKS
+        #       as the reward-overlapping sub-state acquires value (the time-of-peak can then move
+        #       OFF the reward) — the Stage-B / Eshel subtraction; AND
+        #   (2) the value DERIVATIVE +dV/dt via the B-2 PROTECTED conductance-derivative edit
+        #       (enable_td_value_derivative): I_td_deriv = gain*(g_gabab - g_gabab_slow)*(E_exc - V),
+        #       the temporal derivative of the SAME GABA_B value channel computed at the membrane.
+        #       On a value JUMP UP between consecutive taps it is positive -> a burst at that tap's
+        #       onset; on a jump down -> the dip; flat -> ~0. This is the bootstrap gamma*V(s')-V(s).
+        # On a SINGLE sustained cue (1) and (2) FIGHT (the B-2 edge-vs-level wall: one channel,
+        # the derivative tracks the rising edge while the level grows). With CSC they DECOUPLE: the
+        # value is a clean per-tap STEP function V(tap_0), V(tap_1), ... ; the LEVEL is the current
+        # tap's value, the DERIVATIVE is the inter-tap difference V(tap_{k+1})-V(tap_k) — a clean
+        # up-step whose positive burst rides the value's LEADING EDGE as it back-propagates over
+        # trials (late taps acquire value first via the reward, then earlier) -> the burst MIGRATES
+        # from the reward onto the cue. The GABA_B tau is SHORT (~60 ms) so g_gabab tracks the
+        # per-tap value; td_slow_tau_ms (the EMA lag) sets the derivative window.
+        K = int(n_csc)
+        if csc_gabab_level:
+            cfg.enable_gabab = True
+            cfg.gabab_reversal_potential = -90.0
+            cfg.gabab_tau_decay = float(csc_gabab_tau_decay)
+            cfg.gabab_propagation_strength = float(csc_gabab_propagation_strength)
+            # GIRK saturation cap (existing owner-approved guardrail, cfg.gabab_conductance_max):
+            # bound g_gabab so a HOT critic (high value) cannot FULLY CLAMP the SNc to silence
+            # (the B-2 tonic-death wall). With the cap, -V is a GRADED shift at any value rate, so
+            # the reward burst SHRINKS without killing the live tonic the cue burst needs. 0 = no cap.
+            cfg.gabab_conductance_max = float(csc_gabab_conductance_max)
+        if csc_stdp_w_max is not None:
+            # Cap the per-tap weight growth so the critic stays in the SPARSE MSN band (the B-2/B-3
+            # lesson + the brief: drive the critic SPARSELY). Unbounded growth -> a HOT critic
+            # (~180 Hz) whose GABA_B doesn't decay between bins -> a sustained -V that kills the
+            # SNc tonic. A cap (~12-16) keeps the value in the graded band where -V is localized.
+            cfg.stdp_w_max = float(csc_stdp_w_max)
+        if csc_conductance_deriv:
+            # B-2 PROTECTED edit (re-applied; byte-identical when OFF, proven COMBO e728d7f1...).
+            # ON only for the CSC conductance-derivative delivery.
+            cfg.enable_td_value_derivative = True
+            cfg.td_slow_tau_ms = float(csc_td_slow_tau_ms)
+            cfg.td_derivative_gain = float(csc_td_derivative_gain)
+        regions = []
+        for k in range(K):
+            regions.append(BrainRegion(
+                name=f"csc_{k}", n_neurons=int(n_csc_per), exc_fraction=1.0,
+                internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            ))
+        regions.append(BrainRegion(
+            name="striosome_value", n_neurons=int(n_csc_strio), exc_fraction=0.0,
+            internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+            weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_STRIATAL_MSN_D1.name,
+            syn_reversal_potential_i_override=-60.0,
+        ))
+        if csc_fs_clamp:
+            # Critic FS-clamp (the production N9 mechanism): a fast-spiking interneuron pool driven
+            # FEEDFORWARD by the sub-states, inhibiting the critic. Its drive scales with the volley
+            # (divisive-leaning), so it holds the critic in the physiological MSN band (~1-30 Hz)
+            # EVEN AS the per-tap weights grow — decoupling "the weights/value grow" from "the critic
+            # fires densely." This bounds g_gabab so the -V is a graded localized subtraction (the
+            # reward burst shrinks) WITHOUT saturating to a tonic-killing clamp. catalog (Tepper PV-FSI).
+            regions.append(BrainRegion(
+                name="csc_fs", n_neurons=int(n_csc_fs), exc_fraction=0.0, internal_density=0.0,
+                exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name,
+                syn_reversal_potential_i_override=-60.0,
+            ))
+        if csc_reward_relay:
+            # REWARD RELAY (the multi-channel critic, catalog C.33 PPN->DA + striosome->RMTg/PPN
+            # inhibition): the reward r enters via an EXCITATORY relay reward_us -> snc, and the
+            # critic INHIBITS reward_us. So the reward reaching the SNc is r - V(reward-state) — the
+            # value cancels r AT the reward, the canonical δ=r-V. CRUCIALLY this localizes -V to the
+            # reward window (reward_us is silent otherwise), so the chain's value does NOT suppress
+            # the SNc tonic. With the reward handled here, the direct striosome->snc GABA_B can be
+            # WEAK (its job is only to source the conductance-derivative for the cue-shift burst),
+            # so the chain stays at a live physiological tonic and the derivative cue burst stands out.
+            regions.append(BrainRegion(
+                name="reward_us", n_neurons=int(n_csc_reward_us), exc_fraction=1.0,
+                internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
+                plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name,
+            ))
+        regions.append(BrainRegion(
+            name="snc", n_neurons=int(n_snc), exc_fraction=1.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
+            plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_DOPAMINE.name,
+            syn_reversal_potential_i_override=-55.0,
+        ))
+        cfg.brain_regions = regions
+        pathways = []
+        for k in range(K):
+            # Each sub-state -> the critic through its OWN plastic synapse (the value w_k).
+            pathways.append(RegionPathway(
+                from_region=f"csc_{k}", to_region="striosome_value",
+                density=0.6, weight_mean=float(csc_to_strio_weight),
+                weight_jitter=0.5, plastic=True))
+            if csc_fs_clamp:
+                # The sub-state ALSO drives the FS pool (feedforward), which then clamps the critic.
+                pathways.append(RegionPathway(
+                    from_region=f"csc_{k}", to_region="csc_fs",
+                    density=0.6, weight_mean=float(csc_to_fs_weight),
+                    weight_jitter=0.2, plastic=False))
+        if csc_fs_clamp:
+            pathways.append(RegionPathway(
+                from_region="csc_fs", to_region="striosome_value",
+                density=0.7, weight_mean=float(csc_fs_to_strio_weight),
+                weight_jitter=0.2, plastic=False))
+        if csc_reward_relay:
+            # reward_us -> snc (excitatory; carries r). The critic inhibits reward_us (so r - V
+            # reaches the SNc). The critic's GABA onto reward_us uses the normal reversal (-60) so it
+            # is a strong subtraction on the relay (the relay is held depolarized by the reward).
+            pathways.append(RegionPathway(
+                from_region="reward_us", to_region="snc",
+                density=0.6, weight_mean=float(csc_reward_us_to_snc_weight),
+                weight_jitter=0.2, plastic=False))
+            pathways.append(RegionPathway(
+                from_region="striosome_value", to_region="reward_us",
+                density=0.6, weight_mean=float(csc_strio_to_reward_us_weight),
+                weight_jitter=0.2, plastic=False))
+        if csc_gabab_level:
+            # The value channel: striosome_value -> snc via the slow K+ GABA_B/GIRK conductance
+            # (E_K=-90mV). This is BOTH the -V LEVEL subtraction (the I_gabab current, which shrinks
+            # the reward burst) AND the source of the conductance-derivative (g_gabab is what the
+            # B-2 edit differentiates to deliver +dV/dt). The SNc is driven directly with the tonic
+            # pacemaker + the reward (no disinhibition relay; that delivered +V level, not dV/dt).
+            pathways.append(RegionPathway(
+                from_region="striosome_value", to_region="snc",
+                density=0.6, weight_mean=float(csc_strio_to_snc_weight),
+                weight_jitter=0.2, plastic=False, receptor="gaba_b"))
+        cfg.region_pathways = pathways
+        return _finish_stageb_bridge(cfg, seed, snc_da_sensitivity)
 
     cfg.brain_regions = [
         BrainRegion(
@@ -271,8 +454,16 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
                           weight_jitter=0.2, plastic=False,
                           receptor=("gaba_b" if gabab else "gaba_a")))
     cfg.region_pathways = pathways
+    return _finish_stageb_bridge(cfg, seed, snc_da_sensitivity)
 
-    # Stage-A dopamine modulator: production = from_region_firing_signed over ['snc'].
+
+def _finish_stageb_bridge(cfg, seed, snc_da_sensitivity):
+    """Attach the Stage-A dopamine modulator (production = from_region_firing_signed over
+    ['snc']) and build + initialize the bridge. Shared by every mode (direct / bprime /
+    bprime_snr / td_disinhibit / csc) so the modulator + RNG-pinned construction are identical."""
+    from sim.bridge import SimulationBridge
+    from sim.config import RuntimeState, GPUConfig, VisualizationConfig
+    from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget, ProductionRule
     snc_tonic_firing_fraction = 0.30
     cfg.enable_neuromodulator_subsystem = True
     cfg.neuromodulators = [
@@ -287,7 +478,6 @@ def _build_stageb_bridge(seed, *, snc_da_sensitivity=8.0, reward_learning_rate=0
             )],
         )
     ]
-
     bridge = SimulationBridge(
         core_config=cfg, viz_config=VisualizationConfig(),
         runtime_state=RuntimeState(), gpu_config=GPUConfig(),
@@ -997,6 +1187,422 @@ def run_td_lesion(seed, **kw):
     }
 
 
+# ======================================================================================
+# A-CSC — COMPLETE SERIAL COMPOUND tapped-delay TD cue-shift (escalation #2; design §2.1)
+# ======================================================================================
+#
+# The cue is a CHAIN of K time-tagged sub-states (csc_0=cue@onset ... csc_{K-1}), each
+# driving the critic through its OWN plastic synapse. Sub-state k is active during bin k of
+# the trial window (the world's cue-presentation timing — legitimate, design §2.4). The
+# reward (US) fires at `reward_bin`. The value DERIVATIVE is delivered to the SNc via the
+# B-3 disinhibition relay (zero sim/ edit). TD back-propagates value one tap per trial -> the
+# burst migrates from the reward onto the cue. The MULTIPLE sub-channels decouple the B-2
+# single-channel conflict (each sub-state's value grows independently, sparse, STDP-friendly).
+
+
+def _csc_substate_weights(bridge, K):
+    """Per-sub-state value weight w_k = mean(csc_k -> striosome_value). The back-propagating
+    value profile: late taps (near reward) grow first, then earlier taps, until csc_0."""
+    return [_mean_pathway_weight(bridge, f"csc_{k}", "striosome_value") for k in range(K)]
+
+
+def run_td_csc(seed, *, snc_reward_gain=400.0, csc_drive_pa=600.0,
+               snc_tonic_pa=220.0,
+               csc_to_strio_weight=14.0,
+               snc_da_sensitivity=8.0, reward_learning_rate=0.08,
+               n_csc=8, n_csc_per=25, reward_bin=None, n_post_bins=3,
+               bin_steps=20, n_train=80, lesion_cue=False, unpaired=False,
+               us_dur_bins=1, csc_eligibility_tau_ms=40.0,
+               csc_gabab_level=True, csc_strio_to_snc_weight=2.5,
+               csc_gabab_tau_decay=60.0,
+               csc_conductance_deriv=True, csc_td_slow_tau_ms=400.0,
+               csc_td_derivative_gain=1.0, csc_gabab_conductance_max=0.0,
+               csc_critic_tonic_pa=0.0, csc_critic_teacher_pa=0.0,
+               csc_stdp_w_max=None, csc_iti_bins=2,
+               csc_fs_clamp=False, csc_to_fs_weight=20.0, csc_fs_to_strio_weight=12.0,
+               csc_reward_relay=False, csc_reward_us_to_snc_weight=6.0,
+               csc_strio_to_reward_us_weight=8.0, csc_reward_us_drive_pa=600.0,
+               verbose=True):
+    """A-CSC TD cue-shift Pavlovian protocol on the spiking SNc (escalation #2).
+
+    Each TRIAL window = K sub-state bins + n_post_bins. Sub-state k (csc_k) is driven during
+    bin k (the tapped delay = the world's cue-presentation timing). The SNc is driven DIRECTLY
+    with the tonic pacemaker + the reward (US) during `reward_bin` (default = the last sub-state
+    bin, K-1, so the reward overlaps csc_{K-1}). The value is delivered to the SNc as -V (the
+    GABA_B/GIRK level subtraction, shrinks the reward burst) + dV/dt (the B-2 conductance-
+    derivative, the bootstrap burst at the value's leading edge). Learning is ON; the critic
+    learns each sub-state's value w_k from the SNc-derived dopamine. The SNc firing-rate
+    TIME-COURSE is recorded per bin so the time-of-peak (and its migration toward the cue) is
+    measurable.
+
+    HEADLINE metric: Pearson r between TRIAL NUMBER and the SNc burst TIME-OF-PEAK. Migration
+    => the peak moves EARLIER (toward csc_0, lower bin index) across learning => r < 0. Pass
+    bar |r| > 0.7 with the correct (earlier) sign.
+
+    Anti-cheats: lesion_cue zeros every csc_k->striosome after training (migration must vanish,
+    US reflex remains); unpaired fires the US at a RANDOM bin unrelated to the chain (no
+    contingency -> no migration).
+    """
+    from sim.backend import get_backend
+    import numpy as np
+    xp, _ = get_backend()
+    K = int(n_csc)
+    if reward_bin is None:
+        reward_bin = K - 1                 # reward overlaps the last sub-state by default
+    reward_bin = int(reward_bin)
+    bridge, cfg = _build_stageb_bridge(
+        seed, snc_da_sensitivity=snc_da_sensitivity,
+        reward_learning_rate=reward_learning_rate,
+        csc=True, n_csc=K, n_csc_per=int(n_csc_per),
+        csc_to_strio_weight=csc_to_strio_weight,
+        csc_eligibility_tau_ms=csc_eligibility_tau_ms,
+        csc_gabab_level=csc_gabab_level, csc_strio_to_snc_weight=csc_strio_to_snc_weight,
+        csc_gabab_tau_decay=csc_gabab_tau_decay,
+        csc_conductance_deriv=csc_conductance_deriv,
+        csc_td_slow_tau_ms=csc_td_slow_tau_ms, csc_td_derivative_gain=csc_td_derivative_gain,
+        csc_gabab_conductance_max=csc_gabab_conductance_max, csc_stdp_w_max=csc_stdp_w_max,
+        csc_fs_clamp=csc_fs_clamp, csc_to_fs_weight=csc_to_fs_weight,
+        csc_fs_to_strio_weight=csc_fs_to_strio_weight,
+        csc_reward_relay=csc_reward_relay,
+        csc_reward_us_to_snc_weight=csc_reward_us_to_snc_weight,
+        csc_strio_to_reward_us_weight=csc_strio_to_reward_us_weight)
+    region_names = (tuple(f"csc_{k}" for k in range(K)) + ("striosome_value", "snc")
+                    + (("reward_us",) if csc_reward_relay else ()))
+    idx_map = {n: xp.asarray(_idx(bridge, n)) for n in region_names}
+
+    # PROVENANCE / anti-cheat (3): no host TD term reaches the SNc. The SNc drive is
+    # tonic + reward_us(direct) + synaptic GABA_B(-V) + the synaptic conductance-derivative(+dV/dt)
+    # ONLY (the conductance-derivative is computed AT THE MEMBRANE from g_gabab, not a host term).
+    assert cfg.current_reward_signal == 0.0, "host reward scalar must be 0 (brain-based)"
+    assert cfg.reward_baseline == 0.0, "host reward baseline must be 0 (brain-based)"
+    assert cfg.enable_td_value_derivative == bool(csc_conductance_deriv)
+    _snc_terms = ("tonic(direct) + reward_us(synaptic relay; critic inhibits it = r-V) + "
+                  "synaptic GABA_B(-V derivative source) + synaptic conductance-derivative(+dV/dt) only"
+                  if csc_reward_relay else
+                  "tonic + reward(direct at SNc) + synaptic GABA_B(-V) + synaptic conductance-derivative(+dV/dt) only")
+    prov = {
+        # With the reward relay, the reward r enters SYNAPTICALLY (reward_us->snc), not as a host
+        # write at the SNc — the only direct SNc current is the tonic pacemaker. Without the relay,
+        # the reward + tonic are the world's r/pacemaker written at the SNc.
+        "snc_gets_direct_reward": (not bool(csc_reward_relay)),
+        "reward_is_synaptic_relay": bool(csc_reward_relay),
+        "host_reward_signal": float(cfg.current_reward_signal),
+        "host_value_term": False,
+        "snc_drive_terms": _snc_terms,
+        "enable_td_value_derivative": bool(cfg.enable_td_value_derivative),
+        "enable_gabab": bool(cfg.enable_gabab),
+        "csc_substates": K, "reward_bin": reward_bin,
+        "csc_value_synapses": "each csc_k -> striosome_value is an INDEPENDENT plastic synapse (the tap value w_k)",
+    }
+
+    # The critic gets a sub-threshold tonic (csc_critic_tonic_pa) that holds it near firing
+    # threshold so a small per-tap weight produces GRADED firing (the MSN rheobase is otherwise
+    # all-or-nothing -> the value can't grow smoothly from ~0 to back-propagate). Always on the
+    # critic, including calibration (so the SNc baseline accounts for the small -V it produces).
+    crit_tonic = ({"striosome_value": csc_critic_tonic_pa} if csc_critic_tonic_pa > 0 else {})
+
+    # Calibrate the dopamine threshold + baseline at the tonic (floor) condition.
+    tonic_drives = {"snc": snc_tonic_pa, **crit_tonic}
+    tonic_frac = _calibrate_da_threshold(bridge, cfg, idx_map, tonic_drives, xp)
+    tonic_conc = _calibrate_da_baseline(bridge, cfg, idx_map, tonic_drives, xp)
+    if verbose:
+        print(f"  [calib] K={K} sub-states, reward_bin={reward_bin}; SNc tonic frac={tonic_frac:.4f} "
+              f"-> threshold; tonic da conc={tonic_conc:.4f} -> baseline")
+
+    n_win_bins = K + int(n_post_bins)
+    win_steps = n_win_bins * bin_steps
+    floor = {"snc": snc_tonic_pa, **crit_tonic}
+
+    import random as _random
+    rng = _random.Random(seed)
+
+    peak_bins = []         # time-of-peak (bin index) per trial
+    snc_per_bin_hist = []  # full per-bin SNc rate per trial (for the heat-trace)
+    v_substates_hist = []  # per-sub-state critic rate per trial
+    w_substates_hist = []  # per-sub-state value weight per trial
+    us_bin_rates = []      # SNc rate in the reward bin per trial
+    cue_bin_rates = []     # SNc rate in the cue-onset (bin 0) per trial
+    floor_rates = []       # SNc rate during the inter-trial floor (the IN-VIVO tonic the bursts ride on)
+    snc_tc_first = snc_tc_last = None
+
+    def _build_events(us_bin):
+        ev = []
+        for k in range(K):
+            # The sub-state drive; csc_critic_tonic stays on the critic via the floor (steady).
+            ev.append((k * bin_steps, (k + 1) * bin_steps, {f"csc_{k}": csc_drive_pa}))
+        us0 = us_bin * bin_steps
+        us1 = (us_bin + max(1, int(us_dur_bins))) * bin_steps
+        if csc_critic_teacher_pa > 0:
+            # CRITIC TEACHER (innate-reflex-teaches-learned-circuit): the reward (US) drives the
+            # critic to FIRE during the reward window, so the reward-overlapping sub-state forms
+            # CAUSAL eligibility -> the reward DA grows ITS value first -> the value GRADIENT
+            # (steep near the reward) seeds the back-propagation. Without it the cold-start MSN
+            # rheobase prevents any tap from firing, so no eligibility, no value, no migration.
+            # (The teacher is added to the critic tonic, so the critic crosses threshold here.)
+            ev.append((us0, us1, {"striosome_value": csc_critic_tonic_pa + csc_critic_teacher_pa}))
+        if csc_reward_relay:
+            # The reward enters at the EXCITATORY relay reward_us (which the critic inhibits ->
+            # r - V reaches the SNc). The SNc keeps its tonic only (no direct reward), so the chain's
+            # value does not suppress the SNc tonic — only the reward window is value-cancelled.
+            ev.append((us0, us1, {"reward_us": csc_reward_us_drive_pa}))
+        else:
+            ev.append((us0, us1, {"snc": snc_tonic_pa + snc_reward_gain}))   # reward direct at the SNc
+        return ev
+
+    for t in range(n_train):
+        # Inter-trial floor (settle). Long enough that the GABA_B (-V) conductance + its slow-EMA
+        # DECAY back to ~0 before the next trial, so the floor's SNc sits at the live tonic (not a
+        # residual -V suppression carried over from the chain). Record the floor SNc rate over the
+        # LAST 2 floor bins = the in-vivo tonic the trial's bursts ride on (the correct gate ref).
+        _, _, _f_snc, _ = _drive_timecourse(
+            bridge, idx_map, floor, max(2, int(csc_iti_bins)) * bin_steps, xp, bin_steps)
+        floor_rates.append(float(_f_snc))
+        if unpaired:
+            # ANTI-CHEAT (b): the US fires at a RANDOM bin unrelated to the chain.
+            us_bin = rng.randint(0, max(0, n_win_bins - 1))
+        else:
+            us_bin = reward_bin
+        events = _build_events(us_bin)
+        snc_bins, strio_bins, _, _ = _drive_timecourse(
+            bridge, idx_map, floor, win_steps, xp, bin_steps, events=events)
+        peak_bin = int(np.argmax(snc_bins)) if snc_bins else 0
+        peak_bins.append(peak_bin)
+        snc_per_bin_hist.append(list(snc_bins))
+        # Per-sub-state critic value = critic rate during that sub-state's bin.
+        v_subs = [float(strio_bins[k]) if k < len(strio_bins) else 0.0 for k in range(K)]
+        v_substates_hist.append(v_subs)
+        w_substates_hist.append(_csc_substate_weights(bridge, K))
+        us_bin_rates.append(float(snc_bins[reward_bin]) if reward_bin < len(snc_bins) else 0.0)
+        cue_bin_rates.append(float(snc_bins[0]) if snc_bins else 0.0)
+        if t == 0:
+            snc_tc_first = list(snc_bins)
+        if t == n_train - 1:
+            snc_tc_last = list(snc_bins)
+        if verbose and (t < 3 or t % 10 == 0 or t == n_train - 1):
+            wprof = w_substates_hist[-1]
+            wstr = " ".join(f"{w:.1f}" for w in wprof)
+            print(f"  [csc t={t:02d}] peak_bin={peak_bin}  cue-bin={cue_bin_rates[-1]:5.1f}  "
+                  f"US-bin={us_bin_rates[-1]:5.1f}Hz  w[k]=[{wstr}]")
+
+    # A long settle so the slow GABA_B / slow-EMA conductances from the last training trial DECAY
+    # to ~0 before the frozen test block (otherwise the residual -V ramps the measured baseline,
+    # contaminating the tonic estimate + the gate thresholds).
+    _settle_bins = max(8, int(csc_iti_bins) * 2)
+    # --- Baseline (frozen, measured FIRST): floor only -> the clean tonic time-course. ---
+    _drive_timecourse(bridge, idx_map, floor, _settle_bins * bin_steps, xp, bin_steps, freeze_lr=0.0, cfg=cfg)
+    base_bins, _, _, _ = _drive_timecourse(
+        bridge, idx_map, floor, win_steps, xp, bin_steps, freeze_lr=0.0, cfg=cfg)
+    # --- Omission test (frozen): the full chain, NO US. The dip should be at the reward bin. ---
+    _drive_timecourse(bridge, idx_map, floor, _settle_bins * bin_steps, xp, bin_steps, freeze_lr=0.0, cfg=cfg)
+    omit_events = [(k * bin_steps, (k + 1) * bin_steps, {f"csc_{k}": csc_drive_pa}) for k in range(K)]
+    omit_bins, _, _, _ = _drive_timecourse(
+        bridge, idx_map, floor, win_steps, xp, bin_steps, events=omit_events, freeze_lr=0.0, cfg=cfg)
+
+    trial_idx = list(range(n_train))
+    r_migration = _pearson_r(trial_idx, peak_bins)
+    early = slice(0, max(1, n_train // 5)); late = slice(-max(1, n_train // 5), None)
+    peak_early = float(np.mean(peak_bins[early])); peak_late = float(np.mean(peak_bins[late]))
+    cue_early = float(np.mean(cue_bin_rates[early])); cue_late = float(np.mean(cue_bin_rates[late]))
+    us_early = float(np.mean(us_bin_rates[early])); us_late = float(np.mean(us_bin_rates[late]))
+    base_rate = float(np.mean(base_bins)) if base_bins else 0.0   # bare baseline (no -V), for reporting
+    # The IN-VIVO tonic the bursts ride on = the SNc rate during the inter-trial floor (the -V-
+    # suppressed level the chain sits relative to), late in training. The bare baseline (no cue, no
+    # residual -V) over-states the tonic because nothing suppresses it there; the floor is the
+    # physiological reference for "burst above tonic" and "US transferred to tonic".
+    tonic_rate = float(np.mean(floor_rates[late])) if floor_rates else base_rate
+    # Per-sub-state value, early vs late (the back-propagation profile).
+    v_arr = np.asarray(v_substates_hist, dtype=np.float64)   # (n_train, K)
+    w_arr = np.asarray(w_substates_hist, dtype=np.float64)
+    v_sub_early = v_arr[early].mean(axis=0).tolist()
+    v_sub_late = v_arr[late].mean(axis=0).tolist()
+    w_sub_early = w_arr[early].mean(axis=0).tolist()
+    w_sub_late = w_arr[late].mean(axis=0).tolist()
+    cue_v_early = float(v_arr[early, 0].mean()); cue_v_late = float(v_arr[late, 0].mean())
+
+    half = max(1, int(us_dur_bins))
+    omit_at_reward = float(np.mean(omit_bins[reward_bin:reward_bin + half])) if omit_bins else 0.0
+    omit_at_cue = float(omit_bins[0]) if omit_bins else 0.0
+    base_at_reward = float(np.mean(base_bins[reward_bin:reward_bin + half])) if base_bins else 0.0
+    # Omission dip = the SNc at the expected-reward time falls BELOW the cue-time prediction burst
+    # (and below the in-vivo tonic): the canonical "reward not delivered -> negative prediction
+    # error AT the expected-reward time" signature.
+    dip_at_reward_depth = omit_at_cue - omit_at_reward
+    # The mid-chain GAP level (late trial) = the SNc between the cue burst and the reward (where the
+    # value is flat -> derivative ~0 -> SNc ~tonic). The transfer is complete when the US burst has
+    # shrunk to ~this gap level.
+    gap_lo = max(1, reward_bin - 3); gap_hi = max(gap_lo + 1, reward_bin - 1)
+    snc_last = snc_tc_last or []
+    gap_late = (float(np.mean(snc_last[gap_lo:gap_hi])) if len(snc_last) > gap_hi else tonic_rate)
+
+    # ---- Gates (design §4.2) ----
+    migration_r_pass = (r_migration < -0.7)
+    migration_dir_pass = (peak_late < peak_early - 0.5)
+    # Late: burst at the cue, AND the US burst has TRANSFERRED (shrunk toward the in-chain gap/tonic
+    # level), not merely shrunk a little. Reference = the in-vivo floor tonic + the mid-chain gap.
+    cue_ref = max(tonic_rate, gap_late)
+    late_burst_at_cue = (cue_late > 1.15 * cue_ref) and (us_late <= 1.40 * cue_ref + 1e-6)
+    # Early: burst at US (above the in-vivo tonic).
+    early_burst_at_us = (us_early > 1.15 * tonic_rate)
+    # Omission dip at the reward bin (below the cue-time prediction burst).
+    omission_dip_at_reward = (dip_at_reward_depth > 0) and (omit_at_reward < omit_at_cue + 1e-6)
+    # Value grows on the cue sub-state (csc_0) across learning (the prerequisite).
+    cue_value_grows = (cue_v_late > 1.20 * cue_v_early) if cue_v_early > 1e-6 else (cue_v_late > 1e-6)
+
+    gates = {
+        "migration_r_pass": bool(migration_r_pass),
+        "migration_dir_pass": bool(migration_dir_pass),
+        "early_burst_at_us": bool(early_burst_at_us),
+        "late_burst_at_cue": bool(late_burst_at_cue),
+        "omission_dip_at_reward": bool(omission_dip_at_reward),
+        "cue_value_grows": bool(cue_value_grows),
+    }
+
+    return {
+        "seed": seed, "lesion_cue": lesion_cue, "unpaired": unpaired,
+        "mode": "td_csc", "n_train": n_train, "bin_steps": bin_steps,
+        "n_csc": K, "reward_bin": reward_bin, "n_post_bins": int(n_post_bins),
+        "r_migration": r_migration,
+        "peak_bin_early": peak_early, "peak_bin_late": peak_late,
+        "cue_rate_early": cue_early, "cue_rate_late": cue_late,
+        "us_rate_early": us_early, "us_rate_late": us_late, "tonic_rate": tonic_rate,
+        "base_rate_bare_hz": base_rate, "gap_late_hz": gap_late,
+        "floor_rate_late_hz": tonic_rate,
+        "cue_v_early_hz": cue_v_early, "cue_v_late_hz": cue_v_late,
+        "v_sub_early": v_sub_early, "v_sub_late": v_sub_late,
+        "w_sub_early": w_sub_early, "w_sub_late": w_sub_late,
+        "omit_at_reward_hz": omit_at_reward, "omit_at_cue_hz": omit_at_cue,
+        "base_at_reward_hz": base_at_reward, "dip_at_reward_depth_hz": dip_at_reward_depth,
+        "peak_bins": peak_bins,
+        "snc_tc_first": snc_tc_first, "snc_tc_last": snc_tc_last,
+        "omit_tc": list(omit_bins), "base_tc": list(base_bins),
+        "gates": gates, "provenance": prov,
+    }
+
+
+def run_td_csc_lesion(seed, **kw):
+    """A-CSC ANTI-CHEAT (a): train, then zero EVERY csc_k->striosome and re-measure. The
+    migration must VANISH (the SNc still bursts to the US reflex via the relay, but no cue
+    burst, no dip). Proves the cue-time activity is the synaptic sub-state->critic conduit."""
+    from sim.backend import get_backend
+    import numpy as np
+    xp, _ = get_backend()
+    n_train = kw.pop("n_train", 60)
+    K = int(kw.get("n_csc", 8))
+    snc_reward_gain = kw.get("snc_reward_gain", 400.0)
+    csc_drive_pa = kw.get("csc_drive_pa", 600.0)
+    snc_tonic_pa = kw.get("snc_tonic_pa", 220.0)
+    bin_steps = kw.get("bin_steps", 20)
+    n_post_bins = kw.get("n_post_bins", 3)
+    us_dur_bins = kw.get("us_dur_bins", 1)
+    reward_bin = kw.get("reward_bin", None)
+    if reward_bin is None:
+        reward_bin = K - 1
+    reward_bin = int(reward_bin)
+    bridge, cfg = _build_stageb_bridge(
+        seed, snc_da_sensitivity=kw.get("snc_da_sensitivity", 8.0),
+        reward_learning_rate=kw.get("reward_learning_rate", 0.08),
+        csc=True, n_csc=K, n_csc_per=int(kw.get("n_csc_per", 25)),
+        csc_to_strio_weight=kw.get("csc_to_strio_weight", 14.0),
+        csc_eligibility_tau_ms=kw.get("csc_eligibility_tau_ms", 40.0),
+        csc_gabab_level=kw.get("csc_gabab_level", True),
+        csc_strio_to_snc_weight=kw.get("csc_strio_to_snc_weight", 2.5),
+        csc_gabab_tau_decay=kw.get("csc_gabab_tau_decay", 60.0),
+        csc_conductance_deriv=kw.get("csc_conductance_deriv", True),
+        csc_td_slow_tau_ms=kw.get("csc_td_slow_tau_ms", 400.0),
+        csc_td_derivative_gain=kw.get("csc_td_derivative_gain", 1.0),
+        csc_gabab_conductance_max=kw.get("csc_gabab_conductance_max", 0.0),
+        csc_stdp_w_max=kw.get("csc_stdp_w_max", None),
+        csc_fs_clamp=kw.get("csc_fs_clamp", False),
+        csc_to_fs_weight=kw.get("csc_to_fs_weight", 20.0),
+        csc_fs_to_strio_weight=kw.get("csc_fs_to_strio_weight", 12.0),
+        csc_reward_relay=kw.get("csc_reward_relay", False),
+        csc_reward_us_to_snc_weight=kw.get("csc_reward_us_to_snc_weight", 6.0),
+        csc_strio_to_reward_us_weight=kw.get("csc_strio_to_reward_us_weight", 8.0))
+    reward_relay = kw.get("csc_reward_relay", False)
+    reward_us_drive_pa = kw.get("csc_reward_us_drive_pa", 600.0)
+    region_names = (tuple(f"csc_{k}" for k in range(K)) + ("striosome_value", "snc")
+                    + (("reward_us",) if reward_relay else ()))
+    idx_map = {n: xp.asarray(_idx(bridge, n)) for n in region_names}
+    crit_tonic_pa = kw.get("csc_critic_tonic_pa", 0.0)
+    teacher_pa = kw.get("csc_critic_teacher_pa", 0.0)
+    crit_tonic = ({"striosome_value": crit_tonic_pa} if crit_tonic_pa > 0 else {})
+    tonic_drives = {"snc": snc_tonic_pa, **crit_tonic}
+    _calibrate_da_threshold(bridge, cfg, idx_map, tonic_drives, xp)
+    _calibrate_da_baseline(bridge, cfg, idx_map, tonic_drives, xp)
+    n_win_bins = K + int(n_post_bins)
+    win_steps = n_win_bins * bin_steps
+    floor = {"snc": snc_tonic_pa, **crit_tonic}
+
+    def _events(us_bin, teacher=True):
+        ev = [(k * bin_steps, (k + 1) * bin_steps, {f"csc_{k}": csc_drive_pa}) for k in range(K)]
+        us0 = us_bin * bin_steps; us1 = (us_bin + max(1, int(us_dur_bins))) * bin_steps
+        if reward_relay:
+            ev.append((us0, us1, {"reward_us": reward_us_drive_pa}))
+        else:
+            ev.append((us0, us1, {"snc": snc_tonic_pa + snc_reward_gain}))
+        if teacher and teacher_pa > 0:
+            ev.append((us0, us1, {"striosome_value": crit_tonic_pa + teacher_pa}))
+        return ev
+
+    iti_bins = max(2, int(kw.get("csc_iti_bins", 2)))
+    for _ in range(n_train):
+        _drive_timecourse(bridge, idx_map, floor, iti_bins * bin_steps, xp, bin_steps)
+        _drive_timecourse(bridge, idx_map, floor, win_steps, xp, bin_steps, events=_events(reward_bin))
+    # LESION every csc_k -> striosome.
+    n_cut = sum(_lesion_pathway(bridge, f"csc_{k}", "striosome_value") for k in range(K))
+    # Frozen test (NO teacher — the teacher is a training scaffold; the trained response must
+    # stand on the learned csc->critic synapses, which the lesion has cut): predicted (chain + US)
+    # + omission (chain, no US).
+    pred_bins, pred_strio, _, _ = _drive_timecourse(
+        bridge, idx_map, floor, win_steps, xp, bin_steps, events=_events(reward_bin, teacher=False),
+        freeze_lr=0.0, cfg=cfg)
+    omit_ev = [(k * bin_steps, (k + 1) * bin_steps, {f"csc_{k}": csc_drive_pa}) for k in range(K)]
+    omit_bins, _, _, _ = _drive_timecourse(
+        bridge, idx_map, floor, win_steps, xp, bin_steps, events=omit_ev, freeze_lr=0.0, cfg=cfg)
+    base_bins, _, _, _ = _drive_timecourse(bridge, idx_map, floor, win_steps, xp, bin_steps, freeze_lr=0.0, cfg=cfg)
+    half = max(1, int(us_dur_bins))
+    us_rate = float(np.mean(pred_bins[reward_bin:reward_bin + half])) if pred_bins else 0.0
+    cue_rate = float(pred_bins[0]) if pred_bins else 0.0
+    tonic = float(np.mean(base_bins)) if base_bins else 0.0
+    v_cue = float(pred_strio[0]) if pred_strio else 0.0
+    omit_at_reward = float(np.mean(omit_bins[reward_bin:reward_bin + half])) if omit_bins else 0.0
+    base_at_reward = float(np.mean(base_bins[reward_bin:reward_bin + half])) if base_bins else 0.0
+    cue_silenced = (v_cue <= 1e-3)
+    no_cue_burst = (cue_rate <= 1.30 * tonic + 1e-6)
+    no_dip = (base_at_reward - omit_at_reward) <= 0.5
+    us_reflex_intact = (us_rate > 1.10 * tonic)
+    return {
+        "seed": seed, "n_cut": n_cut, "v_cue_hz": v_cue, "cue_rate": cue_rate, "us_rate": us_rate,
+        "tonic_rate": tonic, "omit_at_reward_hz": omit_at_reward, "base_at_reward_hz": base_at_reward,
+        "cue_silenced": bool(cue_silenced), "no_cue_burst": bool(no_cue_burst),
+        "no_dip": bool(no_dip), "us_reflex_intact": bool(us_reflex_intact),
+        "pred_tc": list(pred_bins), "omit_tc": list(omit_bins), "base_tc": list(base_bins),
+    }
+
+
+def _print_td_csc_result(r):
+    print()
+    print(f"  SNc time-of-peak   : trial-early bin {r['peak_bin_early']:.2f} -> "
+          f"trial-late bin {r['peak_bin_late']:.2f}   (reward bin = {r['reward_bin']}, cue = bin 0)")
+    print(f"  migration r        : {r['r_migration']:+.3f}   "
+          f"(MIGRATION = peak moves EARLIER/cue-ward => r < -0.7)")
+    print(f"  cue-bin SNc rate   : {r['cue_rate_early']:.2f} -> {r['cue_rate_late']:.2f} Hz   "
+          f"(tonic {r['tonic_rate']:.2f}Hz)")
+    print(f"  US-bin SNc rate    : {r['us_rate_early']:.2f} -> {r['us_rate_late']:.2f} Hz   "
+          f"(transferred if late US ~ tonic)")
+    print(f"  V(strio) on cue    : {r['cue_v_early_hz']:.2f} -> {r['cue_v_late_hz']:.2f} Hz   "
+          f"(cue value grows: {r['gates']['cue_value_grows']})")
+    we = " ".join(f"{w:.1f}" for w in r["w_sub_early"])
+    wl = " ".join(f"{w:.1f}" for w in r["w_sub_late"])
+    print(f"  w[k] early -> late : [{we}] -> [{wl}]   (back-prop: late taps grow first, then earlier)")
+    print(f"  omission @ reward  : {r['omit_at_reward_hz']:.2f} Hz vs @cue {r['omit_at_cue_hz']:.2f} Hz "
+          f"vs base@reward {r['base_at_reward_hz']:.2f} Hz  (dip depth {r['dip_at_reward_depth_hz']:+.2f})")
+    g = r["gates"]
+    print(f"  gates: migration_r {g['migration_r_pass']} | dir {g['migration_dir_pass']} | "
+          f"early@US {g['early_burst_at_us']} | late@cue {g['late_burst_at_cue']} | "
+          f"omit-dip@reward {g['omission_dip_at_reward']} | cue-value-grows {g['cue_value_grows']}")
+
+
 def _print_td_result(r):
     print()
     print(f"  SNc time-of-peak   : trial-early bin {r['peak_bin_early']:.2f} -> "
@@ -1110,6 +1716,97 @@ def _run_td_mode(args):
         print(f"  wrote {args.out}")
 
 
+def _run_td_csc_mode(args):
+    """Orchestrate the A-CSC TD cue-shift probe (escalation #2), with the two anti-cheats."""
+    seeds = [int(s) for s in args.seeds.split(",")] if args.seeds else [args.seed]
+    kw = dict(
+        snc_reward_gain=args.snc_reward_gain, csc_drive_pa=args.csc_drive_pa,
+        snc_tonic_pa=args.snc_tonic_pa,
+        csc_to_strio_weight=(args.csc_to_strio_weight if args.csc_to_strio_weight != 6.0 else 14.0),
+        snc_da_sensitivity=args.snc_da_sensitivity,
+        reward_learning_rate=args.reward_learning_rate,
+        n_csc=args.csc_n, n_csc_per=args.csc_n_per,
+        reward_bin=(args.csc_reward_bin if args.csc_reward_bin >= 0 else None),
+        n_post_bins=args.csc_n_post_bins, bin_steps=args.td_bin_steps,
+        us_dur_bins=args.csc_us_dur_bins, n_train=args.n_train,
+        csc_eligibility_tau_ms=args.csc_eligibility_tau_ms,
+        csc_gabab_level=(not args.csc_no_gabab_level),
+        csc_strio_to_snc_weight=args.csc_strio_to_snc_weight,
+        csc_gabab_tau_decay=args.csc_gabab_tau_decay,
+        csc_conductance_deriv=(not args.csc_no_conductance_deriv),
+        csc_td_slow_tau_ms=args.csc_td_slow_tau_ms,
+        csc_td_derivative_gain=args.csc_td_derivative_gain,
+        csc_critic_tonic_pa=args.csc_critic_tonic_pa,
+        csc_critic_teacher_pa=args.csc_critic_teacher_pa,
+        csc_gabab_conductance_max=args.csc_gabab_conductance_max,
+        csc_stdp_w_max=(args.csc_stdp_w_max if args.csc_stdp_w_max > 0 else None),
+        csc_iti_bins=args.csc_iti_bins,
+        csc_fs_clamp=args.csc_fs_clamp,
+        csc_to_fs_weight=args.csc_to_fs_weight,
+        csc_fs_to_strio_weight=args.csc_fs_to_strio_weight,
+        csc_reward_relay=args.csc_reward_relay,
+        csc_reward_us_to_snc_weight=args.csc_reward_us_to_snc_weight,
+        csc_strio_to_reward_us_weight=args.csc_strio_to_reward_us_weight,
+        csc_reward_us_drive_pa=args.csc_reward_us_drive_pa,
+    )
+    results = []
+    for s in seeds:
+        if args.td_lesion_cue:
+            print(f"[snc-CSC seed={s}] CUE-LESION anti-cheat — train then zero ALL csc_k->striosome:")
+            r = run_td_csc_lesion(s, **kw)
+            print(f"  V(strio) on cue after lesion = {r['v_cue_hz']:.2f}Hz (cue silenced: {r['cue_silenced']})")
+            print(f"  cue-rate={r['cue_rate']:.2f}Hz  US-rate={r['us_rate']:.2f}Hz  tonic={r['tonic_rate']:.2f}Hz")
+            print(f"  omission@reward={r['omit_at_reward_hz']:.2f}Hz vs base@reward={r['base_at_reward_hz']:.2f}Hz")
+            ok = r["cue_silenced"] and r["no_cue_burst"] and r["us_reflex_intact"]
+            print(f"  CSC LESION anti-cheat (seed {s}): {'PASS' if ok else 'UNEXPECTED'}  "
+                  f"[cue-silenced {r['cue_silenced']}, no-cue-burst {r['no_cue_burst']}, "
+                  f"no-dip {r['no_dip']}, US-reflex-intact {r['us_reflex_intact']}]")
+            r["_mode"] = "csc_lesion"; results.append(r); print()
+            continue
+        tag = "UNPAIRED anti-cheat" if args.td_unpaired else "A-CSC TD cue-shift (burst migration)"
+        print(f"[snc-CSC seed={s}] {tag} — does the SNc burst MIGRATE cue<-reward across learning?")
+        r = run_td_csc(s, unpaired=args.td_unpaired, **kw)
+        _print_td_csc_result(r)
+        g = r["gates"]
+        if args.td_unpaired:
+            no_mig = not (g["migration_r_pass"] and g["migration_dir_pass"])
+            print(f"\n  UNPAIRED anti-cheat (seed {s}): {'PASS' if no_mig else 'UNEXPECTED'}  "
+                  f"[no-migration {no_mig}]  (US at random bin => no contingency => no transfer)")
+        else:
+            headline = g["migration_r_pass"] and g["migration_dir_pass"]
+            support = sum([g["early_burst_at_us"], g["late_burst_at_cue"],
+                           g["omission_dip_at_reward"], g["cue_value_grows"]])
+            verdict = ("GO" if (headline and support >= 3)
+                       else "PARTIAL" if (g["migration_dir_pass"] or support >= 2)
+                       else "NEGATIVE")
+            print(f"\n  A-CSC migration (seed {s}): {verdict}  "
+                  f"[HEADLINE migration_r {g['migration_r_pass']} (r={r['r_migration']:+.3f}), "
+                  f"dir {g['migration_dir_pass']}; support {support}/4]")
+            r["_verdict"] = verdict
+        r["_mode"] = "csc"; results.append(r); print()
+
+    if len(results) > 1 and not args.td_lesion_cue:
+        if args.td_unpaired:
+            n_ok = sum(1 for r in results
+                       if not (r["gates"]["migration_r_pass"] and r["gates"]["migration_dir_pass"]))
+            print(f"=== MULTI-SEED CSC UNPAIRED: {n_ok}/{len(results)} show NO migration (anti-cheat holds) ===")
+        else:
+            n_go = sum(1 for r in results if r.get("_verdict") == "GO")
+            n_partial = sum(1 for r in results if r.get("_verdict") == "PARTIAL")
+            rs = ["{}={:+.3f}".format(r["seed"], r["r_migration"]) for r in results]
+            print(f"=== MULTI-SEED A-CSC: {n_go} GO + {n_partial} PARTIAL / {len(results)} ===")
+            print("=== migration r per seed: " + ", ".join(rs) + " ===")
+            signs = [(_r["r_migration"] < 0) for _r in results]
+            dips = [_r["gates"]["omission_dip_at_reward"] for _r in results]
+            print(f"=== sign-consistent (all cue-ward): {all(signs)} | "
+                  f"omission-dip-at-reward all seeds: {all(dips)} ===")
+
+    if args.out:
+        with open(args.out, "w") as f:
+            json.dump({"mode": "td_csc_cue_shift", "results": results}, f, indent=2)
+        print(f"  wrote {args.out}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--seed", type=int, default=42)
@@ -1160,6 +1857,70 @@ def main():
                     help="TD anti-cheat (a): train then zero cue->striosome; migration must vanish")
     ap.add_argument("--td-unpaired", action="store_true",
                     help="TD anti-cheat (b): decouple CS/US timing; no contingency -> no migration")
+    # --- A-CSC TD cue-shift (complete-serial-compound tapped-delay) mode ---
+    ap.add_argument("--td-csc", action="store_true",
+                    help="A-CSC TD cue-shift (escalation #2): the cue is a CHAIN of K time-tagged "
+                         "sub-states, each with its OWN plastic critic synapse, so TD back-propagates "
+                         "value one tap per trial and the SNc burst MIGRATES onto the cue")
+    ap.add_argument("--csc-n", type=int, default=8, help="A-CSC: number of cue sub-states (chain length K)")
+    ap.add_argument("--csc-n-per", type=int, default=25, help="A-CSC: neurons per sub-state population")
+    ap.add_argument("--csc-drive-pa", type=float, default=600.0, help="A-CSC: per-sub-state drive (pA)")
+    ap.add_argument("--csc-to-strio-weight", type=float, default=6.0,
+                    help="A-CSC: initial csc_k->striosome plastic weight (the tap value w_k seed)")
+    ap.add_argument("--csc-reward-bin", type=int, default=-1,
+                    help="A-CSC: bin index where the US fires (default -1 => last sub-state K-1)")
+    ap.add_argument("--csc-us-dur-bins", type=int, default=1, help="A-CSC: US duration in bins")
+    ap.add_argument("--csc-n-post-bins", type=int, default=3, help="A-CSC: post bins after the chain")
+    ap.add_argument("--csc-eligibility-tau-ms", type=float, default=40.0,
+                    help="A-CSC: eligibility-trace tau (ms); SHORT (~40) for tap-local credit so "
+                         "TD back-propagates one tap per trial (default 1000ms smears credit)")
+    ap.add_argument("--csc-no-gabab-level", action="store_true",
+                    help="A-CSC: DISABLE the GABA_B -V level channel (derivative-only; ablation). "
+                         "Default ON: -V shrinks the reward burst so the peak can migrate")
+    ap.add_argument("--csc-strio-to-snc-weight", type=float, default=2.5,
+                    help="A-CSC: striosome->snc GABA_B (-V level) weight")
+    ap.add_argument("--csc-gabab-tau-decay", type=float, default=60.0,
+                    help="A-CSC: GABA_B (-V) decay tau (ms); SHORT so -V tracks the per-tap value "
+                         "(SNc tonic uses the existing --snc-tonic-pa, default 220)")
+    ap.add_argument("--csc-no-conductance-deriv", action="store_true",
+                    help="A-CSC: DISABLE the B-2 conductance-derivative +dV/dt channel (ablation: "
+                         "the bootstrap source). Default ON (the protected edit, byte-identical when OFF)")
+    ap.add_argument("--csc-td-slow-tau-ms", type=float, default=400.0,
+                    help="A-CSC: the slow-EMA tau of g_gabab (ms); the derivative = g_gabab - g_gabab_slow")
+    ap.add_argument("--csc-td-derivative-gain", type=float, default=1.0,
+                    help="A-CSC: scales the conductance-derivative (+dV/dt) current onto the SNc")
+    ap.add_argument("--csc-critic-tonic-pa", type=float, default=0.0,
+                    help="A-CSC: sub-threshold tonic on the critic (graded firing so the value can "
+                         "grow smoothly from ~0; the MSN rheobase is otherwise all-or-nothing)")
+    ap.add_argument("--csc-critic-teacher-pa", type=float, default=0.0,
+                    help="A-CSC: critic teacher current during the reward window (the US fires the "
+                         "critic so the reward-adjacent tap forms eligibility -> seeds the value "
+                         "gradient that back-propagates; innate-reflex-teaches-learned-circuit)")
+    ap.add_argument("--csc-gabab-conductance-max", type=float, default=0.0,
+                    help="A-CSC: GIRK saturation cap on g_gabab (owner-approved guardrail). Bounds "
+                         "the -V so a HOT critic can't clamp the SNc dead (keeps the tonic alive). 0=off")
+    ap.add_argument("--csc-stdp-w-max", type=float, default=0.0,
+                    help="A-CSC: cap the per-tap weight growth (stdp soft-bound) so the critic stays "
+                         "SPARSE (value in the graded MSN band, not the dense runaway). 0=use default(40)")
+    ap.add_argument("--csc-iti-bins", type=int, default=2,
+                    help="A-CSC: inter-trial floor duration in bins (long enough for the GABA_B -V to "
+                         "decay so the floor sits at the live tonic)")
+    ap.add_argument("--csc-fs-clamp", action="store_true",
+                    help="A-CSC: add the production critic FS-clamp (csc->csc_fs->critic feedforward "
+                         "inhibition) so the value stays SPARSE as weights grow (decouples value-growth "
+                         "from dense firing -> -V doesn't saturate -> tonic survives)")
+    ap.add_argument("--csc-to-fs-weight", type=float, default=20.0, help="A-CSC: csc_k->csc_fs weight")
+    ap.add_argument("--csc-fs-to-strio-weight", type=float, default=12.0, help="A-CSC: csc_fs->critic weight")
+    ap.add_argument("--csc-reward-relay", action="store_true",
+                    help="A-CSC multi-channel: route the reward via an EXCITATORY relay reward_us->snc "
+                         "that the critic INHIBITS (r-V reaches the SNc). Localizes -V to the reward "
+                         "(catalog C.33), so the chain's value doesn't suppress the SNc tonic -> the "
+                         "cue burst survives at a physiological tonic + the US fully vacates")
+    ap.add_argument("--csc-reward-us-to-snc-weight", type=float, default=6.0, help="A-CSC: reward_us->snc weight")
+    ap.add_argument("--csc-strio-to-reward-us-weight", type=float, default=8.0,
+                    help="A-CSC: critic->reward_us inhibitory weight (the -V that cancels r at the reward)")
+    ap.add_argument("--csc-reward-us-drive-pa", type=float, default=600.0,
+                    help="A-CSC: the reward drive onto reward_us (the world's r afferent)")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
@@ -1167,6 +1928,10 @@ def main():
         run_diag(args.seed, cue_drive_pa=args.cue_drive_pa,
                  cue_to_strio_weight=args.cue_to_strio_weight,
                  strio_to_snc_weight=args.strio_to_snc_weight)
+        return
+
+    if args.td_csc:
+        _run_td_csc_mode(args)
         return
 
     if args.td:
