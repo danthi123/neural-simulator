@@ -1,12 +1,18 @@
-"""LOAD-BEARING no-harm: the protected/validated modules are
-byte-UNTOUCHED across the whole TD-critic commit range (plan-base
-0150e5b..HEAD); NO shipped TD path imports autograd/torch. Self-
-contained (base SHA is a module default; no shared conftest change)."""
+"""LOAD-BEARING no-harm: the protected/validated modules have NO
+UNREVIEWED change since the last byte-reviewed protected edit; NO shipped
+TD path imports autograd/torch. Self-contained (base SHA is a module
+default; no shared conftest change).
+
+The base SHA tracks the most recent OWNER-BYTE-REVIEWED protected edit, so
+the guard means "no protected module changed since the last approval."
+Bump it whenever a new protected sim/ edit is byte-approved. (Was the plan
+commit 0150e5b; advanced to ed880244 — the approved N9 determinism-matvec
+cleanup — after the GABA_B/GIRK + determinism edits legitimately landed.)"""
 import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-_TD_BASE = "0150e5b"  # the plan commit; build started after this
+_TD_BASE = "ed880244"  # last byte-reviewed protected edit (N9 determinism cleanup)
 PROTECTED = [
     "research/runners/abstention_gate.py", "tests/test_abstention_gate.py",
     "sim/neuromodulators.py", "sim/kernels.py", "sim/bridge.py",
