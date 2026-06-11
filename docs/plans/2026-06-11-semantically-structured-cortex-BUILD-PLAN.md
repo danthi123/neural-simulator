@@ -74,6 +74,33 @@ The dual / complementary-learning-systems (CLS) architecture: a graded-similarit
 
 ---
 
+## Scaling path to large vocabulary (V=320 → V=640 → 2,048 multi-bridge)
+
+The single learned pool has a hard **quadratic memory wall** — measured live, not estimated: the learned recurrent's synapses scale as pool² (V=160 pool 7,000 → 30.7M synapses; V=320 pool 12,000 → 88.6M — 1.71× pool = 2.89× synapses ≈ N²). Consequences for one pool on a 24 GB GPU (RTX 3090):
+
+| Vocab | pool (~37 neurons/concept) | synapses | feasible single-pool? |
+|---|---|---|---|
+| V=320 | 12,000 | 88.6M (7.7 GB) | yes (in flight) |
+| V=640 | ~24,000 | ~350M (~20 GB) | yes, tight — needs exclusive GPU, ~4–6 hr/seed |
+| V=1,280 | ~48,000 | ~1.4B | no — OOM |
+| **V=2,048** | **~77,000** | **~3.6B (~40 GB)** | **no — OOM by ~16 GB; learn ~days even if it fit** |
+
+So a single-pool 2,048 run is **infeasible on this GPU** — a memory wall, not a time budget. Dropping the pool to fit memory collapses density to ~12 neurons/concept and breaks separability (it would "fail" for a density artifact, not a real ceiling — a misleading test).
+
+**The correct route — multi-bridge sparse-distributed (the project's existing production method).** The 320 tier is already 5 bridges × 64 concepts precisely to dodge this wall. The dual/CLS recipe is **per-bridge**, so it composes: **2,048 ≈ 32 bridges × 64 concepts**, each bridge tiny (64 ≪ V=160, where the recipe is already GO) and tractable. This *is* the "is the old vocabulary ceiling lifted?" test — the old architecture's per-bridge recipe + cross-bridge composition vs the new one's.
+
+**Genuine open questions for the multi-bridge route (the real work, not the per-bridge recipe):**
+1. **Within- vs cross-bridge similarity.** The learned graded embedding is *within-bridge* — cat~dog generalize only if both live in the same bridge. So the corpus must be **sharded by semantic cluster** (similar concepts grouped into the same bridge) for the generalization to be useful; cross-bridge relationships go through the existing composition/binding layer, not a shared embedding.
+2. **Cross-bridge composition at 32 bridges.** The project validated cross-bridge composition at 5 bridges (the 320 ensemble); 32 is 6.4× more — whether composition + the no-confab moat hold at that fan-out is the open question.
+3. Per-bridge graded generalization + cross-bridge composition must together deliver the full conversational matrix — the integration question piece (iii) already owns, now at multi-bridge fan-out.
+
+**Queued sequence (gated, cheap-first):**
+1. V=320 single-pool gate (3-seed gated; in flight) — confirms the recipe at the production single-pool tier.
+2. **V=640 single-pool** (one run, the last feasible single-pool point) — maps the per-pool scaling curve; confirms the recipe doesn't sag before the memory wall.
+3. **Multi-bridge 2,048** (32 × 64) — the lifted-ceiling demonstration. **Held until V=320 + V=640 confirm AND the owner green-lights the scale** (it folds into piece iii's integration + the ~2–4 week push). Compute-feasible because each bridge is small; the cost is in the cross-bridge composition + sharding design, not raw pool size.
+
+---
+
 ## Cost + decision
 
 **Cost — ~2–4 weeks (honest decomposition):**
