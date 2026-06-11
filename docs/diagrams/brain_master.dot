@@ -18,12 +18,13 @@ digraph BrainMaster {
     compound=true;
     splines=spline;
     nodesep=0.34;
-    ranksep=0.55;
+    ranksep=0.42;
     bgcolor="white";
     fontname="Helvetica";
     labelloc="t";
     fontsize=26;
-    label=<<B>Simulated-brain architecture — master map</B><BR/><FONT POINT-SIZE="13">as implemented · ONE SimulationBridge engine · two config-scoped supergroups (navigation | conversational) now consolidated on one bridge + one functional synaptic bridge · honest faithful-vs-shortcut layer</FONT><BR/> >;
+    pad="0.15,0.08";
+    label=<<B>Simulated-brain architecture — master map</B><BR/><FONT POINT-SIZE="13">as implemented · ONE SimulationBridge engine · two config-scoped supergroups (navigation | conversational) now consolidated on one bridge + one functional synaptic bridge · honest faithful-vs-shortcut layer</FONT>>;
 
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11.5, margin="0.16,0.10", penwidth=1.6];
     edge [fontname="Helvetica", fontsize=9.5, color="#34495e", penwidth=1.5];
@@ -60,7 +61,7 @@ digraph BrainMaster {
 
         // reward loop
         bg     -> reward [label="striosome→SNc", arrowhead=tee, color="#922b21"];
-        reward -> bg     [label="DA bus gates\ncorticostriatal STDP", style=dotted, color="#d98008", arrowhead=odiamond, penwidth=2.6, fontcolor="#9a6608", constraint=false];
+        reward -> bg     [label="DA bus gates\ncorticostriatal STDP", style=dotted, color="#d98008", arrowhead=odiamond, penwidth=2.6, fontcolor="#9a6608", constraint=false, weight=5, tailport=w, headport=w];
     }
 
     // ========================================================================
@@ -101,10 +102,10 @@ digraph BrainMaster {
         // -- conversational comprehend→produce --
         wernicke -> semantic [label="comprehend"];
         semantic -> broca    [label="meaning→syntax"];
-        semantic -> wernicke [label="produce", style=dashed, constraint=false];
+        semantic -> wernicke [label="produce", style=dashed, constraint=false, weight=6];
         broca    -> speech   [label="articulation"];
         concept  -> semantic [style=invis];
-        wm_conv  -> concept  [label="verb WM", style=dashed, constraint=false];
+        wm_conv  -> concept  [label="verb WM", style=dashed, constraint=false, weight=6];
         hub      -> semantic [style=invis];
     }
 
@@ -115,31 +116,34 @@ digraph BrainMaster {
     lang_in  -> wernicke [label="phono→Wernicke", lhead=cluster_conv];
     lang_in  -> concept  [label="word→pool"];
     concept  -> lang_out [label="concept→word\n(A→W)", style=dashed];
-    semantic -> lang_out [label="naming", constraint=false];
-    wernicke -> hub      [label="auditory", constraint=false];
+    semantic -> lang_out [label="naming", constraint=false, weight=5];
+    wernicke -> hub      [label="auditory", constraint=false, weight=6];
     hub      -> lang_out [label="recognition→naming"];
     visual   -> hub      [label="IT→hub", color="#2e6da4"];
 
     // navigation perception readouts come from the shared hippocampus
-    hippo  -> nav_in [label="place readout", color="#5a8a3c", constraint=false];
+    nav_in -> hippo  [label="place readout", dir=back, color="#5a8a3c", constraint=false, weight=8];
     // hippocampal consolidation into cortex (shared, both configs)
-    hippo  -> semantic [label="sleep-replay\nconsolidation", color="#5a8a3c", constraint=false];
-    hippo  -> motor    [label="CA1→motor", color="#5a8a3c", style=dashed, constraint=false];
+    hippo  -> semantic [label="sleep-replay\nconsolidation", color="#5a8a3c", constraint=false, weight=3];
+    hippo  -> motor    [label="CA1→motor", color="#5a8a3c", style=dashed, constraint=false, weight=3];
 
     // ===== THE FUNCTIONAL ONE-BRAIN BRIDGE (the single real cross-brain synapse) =====
     // language_input -> cortex_{N,E,S,W} (LEARNED word->action route), CURRENT gated by
     // command_route, opened by the parser's action-role FIRING. Spoken-instruction
     // navigation, 6/6-seed GO. The ONE validated synaptic link between the two brains.
     lang_in -> m1 [label=<<B>command_route ⊟</B>  (functional bridge)<BR/><FONT POINT-SIZE="8">learned word→action · gate opened by parser firing<BR/>spoken-instruction nav · 6/6-seed GO</FONT>>,
-                   color="#1a9850", fontcolor="#0c5a28", penwidth=3.0, style=bold, constraint=false];
+                   color="#1a9850", fontcolor="#0c5a28", penwidth=3.0, style=bold, constraint=false, weight=5, tailport=s, headport=s];
 
     // ===== RANK BANDS (horizontal layers across the three supergroups) ======
-    { rank=same; nav_in;  sc_orient; visual; hippo; lang_in; wernicke; }
-    { rank=same; m1;      concept; }
+    { rank=same; nav_in;  sc_orient; visual; lang_in; wernicke; }
+    { rank=same; m1;      concept;   hippo; }
     { rank=same; bg;      reward;  semantic; }
     { rank=same; thal;    broca;   hub; }
     { rank=same; sc;      cb;      wm_conv;  wm_nav; }
     { rank=same; motor;   lang_out; speech; }
+
+    // anchor legend to top-right via invisible edge from right-most top-rank node
+    wernicke -> leg [style=invis, constraint=false];
 
     // ===== LEGEND ==========================================================
     subgraph cluster_legend {
