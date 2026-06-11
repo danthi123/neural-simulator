@@ -10,7 +10,7 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-_BASE = "ed880244"  # last byte-reviewed protected edit (N9 determinism cleanup)
+_BASE = "c1d1a3d2"  # last byte-approved protected edit (N9 TD cue-shift A-CSC conductance-derivative; byte-proof COMBO e728d7f1, owner-directive auto-approved)
 PROTECTED = [
     "research/runners/abstention_gate.py", "tests/test_abstention_gate.py",
     "sim/td_value_critic.py", "sim/compose_temporal_bind.py",
