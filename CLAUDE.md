@@ -757,8 +757,32 @@ arc was de-risked cheapest-first BEFORE any protected edit:
   + dlPFC + composer all on one `SimulationBridge`, capability-equivalent. HONEST SCOPE: a consolidation of EXISTING
   capabilities, not a new one; the composer's exact-inverse VSA binding stays the principled idealization (= step 3).
   Finding: `2026-06-10-step2b-rf-composer-coresident-COMPLETE.md`.
-- **Step 3 (true cortex)** — replace the composer's exact-inverse VSA algebra idealization with a learned
-  spiking-cortical binding. DEFERRED to its own later arc (the deepest/highest-variance open problem).
+- **Step 3 (true cortex) — DE-RISKED to a FORK (2026-06-11); flat-cortex (A) no-confab moat validated.** The
+  arc to replace the composer's exact-inverse vector-symbolic-algebra (Fourier Holographic Reduced Representation,
+  "FHRR") idealization with a learned spiking-cortical binder was run to ground cheap-first. **Core finding:** the
+  brain's own concept codes are CORRELATED (carry semantic similarity), and **four mechanistically-distinct
+  brain-based mechanisms FAILED to decorrelate them on the point-neuron substrate** — vanilla Hopfield
+  (common-mode collapse), Storkey local covariance (locality wall: only a NON-local matrix inverse removes the
+  common mode), spiking dentate-gyrus (sub-reproducible read), and a fixed random expansion / Marr-Albus granule
+  recoding (the common mode survives the linear expansion; threshold units flip under realistic noise). All four
+  converge on the **documented Mikulasch-Priesemann point-neuron limit: decorrelation/whitening is an ANALOG /
+  pre-spike (dendritic) computation a point-neuron substrate fundamentally cannot do** (the project's prior
+  conversational whitening blocker, "Standing practice" above). Conversely, on DECORRELATED codes everything
+  works: the distributed attractor cleanup recovers 1.000, AND a LEARNED binder generalizes SYSTEMATICALLY to
+  never-seen role-filler combinations (Fodor-Pylyshyn held-out test, held-out=1.000=train, 3 seeds, leakage-
+  asserted, vs memorization-floor 0.000). **⇒ THE FORK (owner decision, `docs/plans/2026-06-11-cortex-build-plan-decorrelate-then-bind.md`):
+  (A) a semantically-FLAT cortex** (generated decorrelated codes + the validated binder + cleanup + no-confab
+  gate) is **achievable now** and already passes the full conversational matrix at V=320, but cannot generalize
+  across similar concepts; **(B) a semantically-STRUCTURED cortex** (preserve the correlated semantic codes →
+  generalization) needs the **deferred dendritic-substrate rewrite** (months-scale, Mikulasch-Priesemann-mandated)
+  — the path to a proper, biology-translatable brain analogue that generalizes. **Flat-cortex (A)'s last
+  brain-based gap closed:** the no-confab abstention moat (currently a host check) now has a VALIDATED neural
+  replacement — the learned Bogacz-Brown familiarity gate matches the host abstention decision at V=320 multi-seed
+  (agreement 168/168 every seed, **zero moat-breaches**, zero abstention-floor false-accepts; validated ALONGSIDE
+  the host, moat NOT weakened). Findings: `2026-06-11-cortex-{storkey-ca3,dg-ratekwta,fixed-expansion-decorrelation}-*.md`,
+  `2026-06-11-cortex-sparse-attractor-poscontrol-GO.md`, `2026-06-11-cortex-learned-binder-systematicity-NEGATIVE-ON-CORRELATED.md`,
+  `2026-06-11-familiarity-gate-v320-GO.md`, `2026-06-11-cortex-core-learned-binder-research.md`. The (B)
+  dendritic rewrite remains the deepest/highest-variance open problem and a deliberate owner call.
 
 `SIM_BACKEND=cupy` (GPU) is required for the merged-bridge runs (numpy is a tiny-smoke / CI path only).
 
