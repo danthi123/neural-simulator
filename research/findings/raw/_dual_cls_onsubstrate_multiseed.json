@@ -1,0 +1,1340 @@
+{
+  "summary": {
+    "verdict": "BOUNDARY_binding_fails_onsubstrate",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "backend": "cupy",
+    "smoke": false,
+    "gates_all_seeds": {
+      "dg_decorrelates": true,
+      "dg_reproducible": false,
+      "binding": false,
+      "c2_roundtrip_pearson": false,
+      "a1_graded_generalizes": false,
+      "a2_orthogonal_collapses": true,
+      "a3_permuted_collapses": true
+    },
+    "load_bearing": {
+      "dg_between_cos_at_operating_per_seed": [
+        0.5393675280406546,
+        0.2053915065808747,
+        0.16768545157586534
+      ],
+      "dg_between_cos_at_operating_mean": 0.3041481620657982,
+      "dg_between_cos_min_any_k_per_seed": [
+        0.17084480066401644,
+        0.2053915065808747,
+        0.16768545157586534
+      ],
+      "dg_between_cos_min_any_k_mean": 0.18130725294025218,
+      "dg_repro_per_seed": [
+        0.5703124999999999,
+        0.17812499999999998,
+        0.3343749999999999
+      ],
+      "dg_repro_mean": 0.3609374999999999,
+      "binding_identity_acc_per_seed": [
+        0.05,
+        0.025,
+        0.025
+      ],
+      "roundtrip_pearson_onsubstrate_per_seed": [
+        -0.0003317311759312116,
+        0.044484075393954055,
+        0.014673618946969344
+      ],
+      "roundtrip_pearson_onsubstrate_mean": 0.01960865438833073,
+      "roundtrip_pearson_permuted_per_seed": [
+        -0.00033173118130746366,
+        0.043959604469221765,
+        0.01484224114855637
+      ],
+      "roundtrip_pearson_permuted_mean": 0.019490038145490222,
+      "roundtrip_pearson_clean_dg_ceiling_per_seed": [
+        0.9999998821227234,
+        0.9999998992706086,
+        0.9999999258940496
+      ],
+      "numpy_proof_reference": 0.877,
+      "generalization_graded_per_seed": [
+        0.2625,
+        0.20625,
+        0.19375
+      ],
+      "generalization_orthogonal_per_seed": [
+        0.19375,
+        0.29375,
+        0.2125
+      ]
+    },
+    "elapsed_total_s": 574.8731091022491
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "graded_stats": {
+        "within_cluster_cos_mean": 0.3954141253003406,
+        "within_cluster_cos_min": 0.2851200073337575,
+        "between_cluster_cos_mean": -0.0007264567434270556,
+        "between_cluster_cos_max": 0.10958408264583006,
+        "graded_margin": 0.3961405820437676,
+        "is_graded": true
+      },
+      "n_neurons": 1912,
+      "n_synapses": 264853,
+      "build_seconds": 0.5918724536895752,
+      "sweep_per_k": [
+        {
+          "k": 40,
+          "dg_between_cos_mean": 0.17084480066401644,
+          "dg_between_cos_max": 0.5714287757873535,
+          "dg_repro_mean": 0.24999999999999994,
+          "dg_repro_min": 0.17499999999999996,
+          "dg_sparsity": 0.06666666666666667,
+          "dg_total_spikes_mean": 28.775,
+          "binding_identity_acc": 0.025,
+          "pearson_onsubstrate": -0.002325122957485389,
+          "pearson_permuted_baseline": -0.007543113377409405,
+          "pearson_clean_dg_ceiling": 0.999999882602759
+        },
+        {
+          "k": 80,
+          "dg_between_cos_mean": 0.5393675280406546,
+          "dg_between_cos_max": 0.7692309021949768,
+          "dg_repro_mean": 0.5703124999999999,
+          "dg_repro_min": 0.32499999999999996,
+          "dg_sparsity": 0.13333333333333333,
+          "dg_total_spikes_mean": 28.5,
+          "binding_identity_acc": 0.05,
+          "pearson_onsubstrate": -0.0003317311759312116,
+          "pearson_permuted_baseline": -0.00033173118130746366,
+          "pearson_clean_dg_ceiling": 0.9999998821227234
+        },
+        {
+          "k": 150,
+          "dg_between_cos_mean": 0.720512430025981,
+          "dg_between_cos_max": 0.8755550980567932,
+          "dg_repro_mean": 0.8016666666666666,
+          "dg_repro_min": 0.6266666666666667,
+          "dg_sparsity": 0.25,
+          "dg_total_spikes_mean": 31.1,
+          "binding_identity_acc": 0.025,
+          "pearson_onsubstrate": -0.009499025708873935,
+          "pearson_permuted_baseline": -0.009386779750875195,
+          "pearson_clean_dg_ceiling": 0.9999998352534344
+        },
+        {
+          "k": 300,
+          "dg_between_cos_mean": 0.8390506003147516,
+          "dg_between_cos_max": 0.94666588306427,
+          "dg_repro_mean": 0.9295833333333331,
+          "dg_repro_min": 0.8566666666666665,
+          "dg_sparsity": 0.5,
+          "dg_total_spikes_mean": 29.575,
+          "binding_identity_acc": 0.025,
+          "pearson_onsubstrate": -0.0036529325181628926,
+          "pearson_permuted_baseline": -0.003198567175757349,
+          "pearson_clean_dg_ceiling": 0.9999993572060565
+        }
+      ],
+      "operating_k": 80,
+      "best_decorrelating_k": 40,
+      "best_binding_k": 80,
+      "step1_dg": {
+        "dg_between_cos_mean_at_operating": 0.5393675280406546,
+        "dg_between_cos_min_any_k": 0.17084480066401644,
+        "dg_repro_mean_at_operating": 0.5703124999999999,
+        "dg_repro_min_at_operating": 0.32499999999999996,
+        "dg_sparsity_at_operating": 0.13333333333333333,
+        "dg_total_spikes_mean_at_operating": 28.5
+      },
+      "step2_binding": {
+        "identity_acc_at_operating": 0.05,
+        "identity_acc_best_any_k": 0.05,
+        "flip_frac": 0.1
+      },
+      "step3_roundtrip": {
+        "pearson_onsubstrate": -0.0003317311759312116,
+        "pearson_permuted_baseline": -0.00033173118130746366,
+        "pearson_clean_dg_decode_ceiling": 0.9999998821227234,
+        "pearson_onsubstrate_max_any_k": -0.0003317311759312116,
+        "numpy_proof_reference": 0.877
+      },
+      "step4_generalization": {
+        "graded": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 42,
+          "accuracy": 0.2625,
+          "chance": 0.25,
+          "ratio_vs_chance": 1.05,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 21,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 1,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 24,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            }
+          ]
+        },
+        "orthogonal": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 31,
+          "accuracy": 0.19375,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.775,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 21,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 1,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 24,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            }
+          ]
+        },
+        "permuted": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 37,
+          "accuracy": 0.23125,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.925,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 21,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 39,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 1,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 13,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 24,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 34,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            }
+          ]
+        },
+        "chance": 0.25
+      },
+      "gates": {
+        "dg_decorrelates": true,
+        "dg_reproducible": false,
+        "binding": false,
+        "c2_roundtrip_pearson": false,
+        "a1_graded_generalizes": false,
+        "a2_orthogonal_collapses": true,
+        "a3_permuted_collapses": true
+      }
+    },
+    "43": {
+      "seed": 43,
+      "graded_stats": {
+        "within_cluster_cos_mean": 0.39409889431063505,
+        "within_cluster_cos_min": 0.3229548519849448,
+        "between_cluster_cos_mean": -0.002148145816377756,
+        "between_cluster_cos_max": 0.13919612295977524,
+        "graded_margin": 0.3962470401270128,
+        "is_graded": true
+      },
+      "n_neurons": 1912,
+      "n_synapses": 264323,
+      "build_seconds": 0.3498353958129883,
+      "sweep_per_k": [
+        {
+          "k": 40,
+          "dg_between_cos_mean": 0.2053915065808747,
+          "dg_between_cos_max": 0.571428656578064,
+          "dg_repro_mean": 0.17812499999999998,
+          "dg_repro_min": 0.024999999999999994,
+          "dg_sparsity": 0.06666666666666667,
+          "dg_total_spikes_mean": 29.05,
+          "binding_identity_acc": 0.025,
+          "pearson_onsubstrate": 0.044484075393954055,
+          "pearson_permuted_baseline": 0.043959604469221765,
+          "pearson_clean_dg_ceiling": 0.9999998992706086
+        },
+        {
+          "k": 80,
+          "dg_between_cos_mean": 0.5732247709750365,
+          "dg_between_cos_max": 0.7836536765098572,
+          "dg_repro_mean": 0.6546874999999999,
+          "dg_repro_min": 0.3499999999999999,
+          "dg_sparsity": 0.13333333333333333,
+          "dg_total_spikes_mean": 31.125,
+          "binding_identity_acc": 0.025,
+          "pearson_onsubstrate": -0.022397600222528787,
+          "pearson_permuted_baseline": -0.022815419472280583,
+          "pearson_clean_dg_ceiling": 0.9999998962124363
+        },
+        {
+          "k": 150,
+          "dg_between_cos_mean": 0.7521022176895387,
+          "dg_between_cos_max": 0.8755546808242798,
+          "dg_repro_mean": 0.84,
+          "dg_repro_min": 0.7533333333333333,
+          "dg_sparsity": 0.25,
+          "dg_total_spikes_mean": 32.225,
+          "binding_identity_acc": 0.025,
+          "pearson_onsubstrate": 0.0375636265773558,
+          "pearson_permuted_baseline": 0.032351099612359296,
+          "pearson_clean_dg_ceiling": 0.9999998354627039
+        },
+        {
+          "k": 300,
+          "dg_between_cos_mean": 0.8859992742538452,
+          "dg_between_cos_max": 0.9533325433731079,
+          "dg_repro_mean": 0.9370833333333332,
+          "dg_repro_min": 0.8766666666666665,
+          "dg_sparsity": 0.5,
+          "dg_total_spikes_mean": 30.45,
+          "binding_identity_acc": 0.025,
+          "pearson_onsubstrate": -0.013811461532375726,
+          "pearson_permuted_baseline": -0.01215843629604759,
+          "pearson_clean_dg_ceiling": 0.999999292494939
+        }
+      ],
+      "operating_k": 40,
+      "best_decorrelating_k": 40,
+      "best_binding_k": 40,
+      "step1_dg": {
+        "dg_between_cos_mean_at_operating": 0.2053915065808747,
+        "dg_between_cos_min_any_k": 0.2053915065808747,
+        "dg_repro_mean_at_operating": 0.17812499999999998,
+        "dg_repro_min_at_operating": 0.024999999999999994,
+        "dg_sparsity_at_operating": 0.06666666666666667,
+        "dg_total_spikes_mean_at_operating": 29.05
+      },
+      "step2_binding": {
+        "identity_acc_at_operating": 0.025,
+        "identity_acc_best_any_k": 0.025,
+        "flip_frac": 0.1
+      },
+      "step3_roundtrip": {
+        "pearson_onsubstrate": 0.044484075393954055,
+        "pearson_permuted_baseline": 0.043959604469221765,
+        "pearson_clean_dg_decode_ceiling": 0.9999998992706086,
+        "pearson_onsubstrate_max_any_k": 0.044484075393954055,
+        "numpy_proof_reference": 0.877
+      },
+      "step4_generalization": {
+        "graded": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 33,
+          "accuracy": 0.20625,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.825,
+          "preds": [
+            {
+              "query": 4,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 8,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 10,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 16,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 35,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 0,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 8,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 11,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 16,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 22,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 30,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 37,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            }
+          ]
+        },
+        "orthogonal": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 47,
+          "accuracy": 0.29375,
+          "chance": 0.25,
+          "ratio_vs_chance": 1.175,
+          "preds": [
+            {
+              "query": 4,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 8,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 10,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 16,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 35,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 0,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 8,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 11,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 16,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 22,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 30,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 37,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            }
+          ]
+        },
+        "permuted": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 34,
+          "accuracy": 0.2125,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.85,
+          "preds": [
+            {
+              "query": 4,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 8,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 10,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 16,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 34,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 35,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 0,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 8,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 11,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 16,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 22,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 27,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 30,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 37,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            }
+          ]
+        },
+        "chance": 0.25
+      },
+      "gates": {
+        "dg_decorrelates": true,
+        "dg_reproducible": false,
+        "binding": false,
+        "c2_roundtrip_pearson": false,
+        "a1_graded_generalizes": false,
+        "a2_orthogonal_collapses": true,
+        "a3_permuted_collapses": true
+      }
+    },
+    "44": {
+      "seed": 44,
+      "graded_stats": {
+        "within_cluster_cos_mean": 0.4038729449019877,
+        "within_cluster_cos_min": 0.31656712609681625,
+        "between_cluster_cos_mean": 0.0016992661114536333,
+        "between_cluster_cos_max": 0.12496493474268805,
+        "graded_margin": 0.40217367879053406,
+        "is_graded": true
+      },
+      "n_neurons": 1912,
+      "n_synapses": 264960,
+      "build_seconds": 0.35561060905456543,
+      "sweep_per_k": [
+        {
+          "k": 40,
+          "dg_between_cos_mean": 0.16768545157586534,
+          "dg_between_cos_max": 0.4910716116428375,
+          "dg_repro_mean": 0.3343749999999999,
+          "dg_repro_min": 0.14999999999999997,
+          "dg_sparsity": 0.06666666666666667,
+          "dg_total_spikes_mean": 29.85,
+          "binding_identity_acc": 0.025,
+          "pearson_onsubstrate": 0.014673618946969344,
+          "pearson_permuted_baseline": 0.01484224114855637,
+          "pearson_clean_dg_ceiling": 0.9999999258940496
+        },
+        {
+          "k": 80,
+          "dg_between_cos_mean": 0.5329326039896561,
+          "dg_between_cos_max": 0.7548077702522278,
+          "dg_repro_mean": 0.6421874999999999,
+          "dg_repro_min": 0.36249999999999993,
+          "dg_sparsity": 0.13333333333333333,
+          "dg_total_spikes_mean": 29.875,
+          "binding_identity_acc": 0.025,
+          "pearson_onsubstrate": -0.006283067555706128,
+          "pearson_permuted_baseline": -0.006320988538026999,
+          "pearson_clean_dg_ceiling": 0.9999999009099796
+        },
+        {
+          "k": 150,
+          "dg_between_cos_mean": 0.7941192106558727,
+          "dg_between_cos_max": 0.8844437003135681,
+          "dg_repro_mean": 0.8533333333333333,
+          "dg_repro_min": 0.8266666666666667,
+          "dg_sparsity": 0.25,
+          "dg_total_spikes_mean": 30.125,
+          "binding_identity_acc": 0.025,
+          "pearson_onsubstrate": -0.04054257501170132,
+          "pearson_permuted_baseline": -0.044696140509716306,
+          "pearson_clean_dg_ceiling": 0.9999998212641479
+        },
+        {
+          "k": 300,
+          "dg_between_cos_mean": 0.8840505581635695,
+          "dg_between_cos_max": 0.9533325433731079,
+          "dg_repro_mean": 0.9499999999999998,
+          "dg_repro_min": 0.9399999999999998,
+          "dg_sparsity": 0.5,
+          "dg_total_spikes_mean": 28.575,
+          "binding_identity_acc": 0.025,
+          "pearson_onsubstrate": -0.0053621768307611645,
+          "pearson_permuted_baseline": -0.0050110727998445865,
+          "pearson_clean_dg_ceiling": 0.9999992982489295
+        }
+      ],
+      "operating_k": 40,
+      "best_decorrelating_k": 40,
+      "best_binding_k": 40,
+      "step1_dg": {
+        "dg_between_cos_mean_at_operating": 0.16768545157586534,
+        "dg_between_cos_min_any_k": 0.16768545157586534,
+        "dg_repro_mean_at_operating": 0.3343749999999999,
+        "dg_repro_min_at_operating": 0.14999999999999997,
+        "dg_sparsity_at_operating": 0.06666666666666667,
+        "dg_total_spikes_mean_at_operating": 29.85
+      },
+      "step2_binding": {
+        "identity_acc_at_operating": 0.025,
+        "identity_acc_best_any_k": 0.025,
+        "flip_frac": 0.1
+      },
+      "step3_roundtrip": {
+        "pearson_onsubstrate": 0.014673618946969344,
+        "pearson_permuted_baseline": 0.01484224114855637,
+        "pearson_clean_dg_decode_ceiling": 0.9999999258940496,
+        "pearson_onsubstrate_max_any_k": 0.014673618946969344,
+        "numpy_proof_reference": 0.877
+      },
+      "step4_generalization": {
+        "graded": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 31,
+          "accuracy": 0.19375,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.775,
+          "preds": [
+            {
+              "query": 0,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 12,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 19,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 37,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 2,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 6,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 10,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 15,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 25,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 32,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 35,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            }
+          ]
+        },
+        "orthogonal": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 34,
+          "accuracy": 0.2125,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.85,
+          "preds": [
+            {
+              "query": 0,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 5,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 12,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 19,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 37,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 2,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 6,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 10,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 15,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 20,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 25,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 32,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 35,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            }
+          ]
+        },
+        "permuted": {
+          "n_heldout": 160,
+          "n_splits": 20,
+          "n_correct": 51,
+          "accuracy": 0.31875,
+          "chance": 0.25,
+          "ratio_vs_chance": 1.275,
+          "preds": [
+            {
+              "query": 0,
+              "true_prop": 2,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 5,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 12,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 19,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 20,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 28,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 31,
+              "true_prop": 3,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 37,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 2,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 6,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 10,
+              "true_prop": 0,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 15,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 20,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 25,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 32,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 35,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            }
+          ]
+        },
+        "chance": 0.25
+      },
+      "gates": {
+        "dg_decorrelates": true,
+        "dg_reproducible": false,
+        "binding": false,
+        "c2_roundtrip_pearson": false,
+        "a1_graded_generalizes": false,
+        "a2_orthogonal_collapses": true,
+        "a3_permuted_collapses": true
+      }
+    }
+  }
+}
