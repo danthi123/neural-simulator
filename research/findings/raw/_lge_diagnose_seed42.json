@@ -1,0 +1,166 @@
+{
+  "summary": {
+    "seeds": [
+      42
+    ],
+    "backend": "cupy",
+    "localization_consensus": "LEARN_FAILURE",
+    "localization_per_seed": [
+      "LEARN_FAILURE"
+    ],
+    "brain_based_note": "the learned W is the project's spiking-Hebbian recurrent (LearnedAssocGraph). STAGE W reads W directly; the fix (PPMI/divisive-normalization + low-dim SVD) runs on the BRAIN-LEARNED W (anti-cheat: W distinct from raw counts). The host PPMI+SVD on RAW counts is the labelled CEILING ONLY.",
+    "per_stage_pearson_vs_Strue": {
+      "STAGE_W_mean": -0.025538191565419154,
+      "STAGE_diffusion_mean": -0.02432234517691018,
+      "STAGE_divnorm_only_mean": -0.046686453186698756,
+      "STAGE_ppmi_svd_W_mean": 0.038581352618724925,
+      "STAGE_divnorm_svd_W_mean": -0.039669477535006346,
+      "HOST_CEILING_mean": 0.9315755987027806
+    },
+    "per_stage_generalization": {
+      "STAGE_W_mean": 0.25,
+      "STAGE_diffusion_mean": 0.2375,
+      "STAGE_divnorm_only_mean": 0.31875,
+      "STAGE_ppmi_svd_W_mean": 0.2375,
+      "STAGE_divnorm_svd_W_mean": 0.26875,
+      "HOST_CEILING_mean": 1.0,
+      "random_baseline_mean": 0.3125,
+      "chance": 0.25
+    },
+    "per_stage_pearson_vs_Strue_per_seed": {
+      "STAGE_W": [
+        -0.025538191565419154
+      ],
+      "STAGE_diffusion": [
+        -0.02432234517691018
+      ],
+      "STAGE_divnorm_only": [
+        -0.046686453186698756
+      ],
+      "STAGE_ppmi_svd_W": [
+        0.038581352618724925
+      ],
+      "STAGE_divnorm_svd_W": [
+        -0.039669477535006346
+      ],
+      "HOST_CEILING": [
+        0.9315755987027806
+      ]
+    },
+    "anti_cheat": {
+      "pearson_W_vs_rawcounts_mean": 0.06229645740079375,
+      "W_distinct_from_counts_all_seeds": true
+    },
+    "elapsed_total_s": 139.35640859603882
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "corpus": {
+        "n_concepts": 48,
+        "n_members": 40,
+        "n_facts": 280,
+        "n_second_order_pairs": 53
+      },
+      "learn_info": {
+        "recurrent_mean": 0.9979496002197266,
+        "recurrent_max": 44.77490997314453,
+        "recurrent_nnz": 2400617,
+        "n_neurons": 2300
+      },
+      "learn_seconds": 139.29681158065796,
+      "stage_W": {
+        "pearson_vs_Strue": -0.025538191565419154,
+        "pearson_permutedS_baseline": -0.006823381194625451,
+        "within_cos": 0.5401718672108153,
+        "between_cos": 0.5499765329259584,
+        "graded_margin": -0.009804665715143046,
+        "is_graded": false,
+        "second_order_margin": 0.0014054114941259854,
+        "second_order_recovered": false,
+        "generalization": 0.25,
+        "generalization_ratio_vs_chance": 1.0,
+        "generalization_permutedcode_baseline": 0.2125,
+        "pearson_simW_vs_Strue": -0.025538191565419154,
+        "pearson_W_vs_rawcounts": 0.06229645740079375,
+        "W_offdiag_mean": 0.8639306202530861,
+        "W_offdiag_std": 0.23458036159401416,
+        "W_offdiag_cv": 0.271526851918992
+      },
+      "stage_diffusion": {
+        "pearson_vs_Strue": -0.02432234517691018,
+        "pearson_permutedS_baseline": -0.0020158488751457595,
+        "within_cos": 0.9547102854645745,
+        "between_cos": 0.9557142969254839,
+        "graded_margin": -0.0010040114609094486,
+        "is_graded": false,
+        "second_order_margin": 9.722058523686794e-05,
+        "second_order_recovered": false,
+        "generalization": 0.2375,
+        "generalization_ratio_vs_chance": 0.95,
+        "generalization_permutedcode_baseline": 0.19375
+      },
+      "stage_divnorm_only": {
+        "pearson_vs_Strue": -0.046686453186698756,
+        "pearson_permutedS_baseline": -0.013783030808324218,
+        "within_cos": 0.22148359032618875,
+        "between_cos": 0.2378661786933832,
+        "graded_margin": -0.016382588367194445,
+        "is_graded": false,
+        "second_order_margin": 0.00174347912958564,
+        "second_order_recovered": false,
+        "generalization": 0.31875,
+        "generalization_ratio_vs_chance": 1.275,
+        "generalization_permutedcode_baseline": 0.26875
+      },
+      "stage_ppmi_svd_W": {
+        "pearson_vs_Strue": 0.038581352618724925,
+        "pearson_permutedS_baseline": -0.019929112353211813,
+        "within_cos": 0.5003862762541524,
+        "between_cos": 0.4860993486500037,
+        "graded_margin": 0.014286927604148736,
+        "is_graded": false,
+        "second_order_margin": 0.02343330978746405,
+        "second_order_recovered": false,
+        "generalization": 0.2375,
+        "generalization_ratio_vs_chance": 0.95,
+        "generalization_permutedcode_baseline": 0.0875
+      },
+      "stage_divnorm_svd_W": {
+        "pearson_vs_Strue": -0.039669477535006346,
+        "pearson_permutedS_baseline": -0.00499851576401864,
+        "within_cos": 0.9725702097599467,
+        "between_cos": 0.9731000940603316,
+        "graded_margin": -0.0005298843003849196,
+        "is_graded": false,
+        "second_order_margin": 0.00019971567291621195,
+        "second_order_recovered": false,
+        "generalization": 0.26875,
+        "generalization_ratio_vs_chance": 1.075,
+        "generalization_permutedcode_baseline": 0.1625
+      },
+      "host_ceiling": {
+        "pearson_vs_Strue": 0.9315755987027806,
+        "generalization": 1.0,
+        "is_graded": true
+      },
+      "random_baseline_generalization": 0.3125,
+      "anti_cheat": {
+        "pearson_W_vs_rawcounts": 0.06229645740079375,
+        "W_is_distinct_from_counts": true,
+        "pearson_simPPMI_W_vs_simPPMI_counts": 0.038632703438695515
+      },
+      "localization": {
+        "verdict": "LEARN_FAILURE",
+        "detail": "STAGE W is degenerate (Pearson ~0, ungraded) AND PPMI/divisive-normalization of W does NOT recover the structure -- the Hebbian LEARN failed to capture a graded W. FIX = a different brain-based rule (predictive / contrastive-Hebbian).",
+        "W_carries_structure": false,
+        "diffusion_collapses": true,
+        "best_fix_stage": "ppmi_svd_W",
+        "best_fix_pearson_vs_Strue": 0.038581352618724925,
+        "best_fix_generalization": 0.2375,
+        "fix_recovers_structure": false,
+        "fix_generalizes": false
+      }
+    }
+  }
+}
