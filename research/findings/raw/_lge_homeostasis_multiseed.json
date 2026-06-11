@@ -1,0 +1,2922 @@
+{
+  "summary": {
+    "consensus_verdict": "MIXED_with_GO:42=GO,43=BOUNDARY,44=GO",
+    "per_seed_verdict": {
+      "42": "GO",
+      "43": "BOUNDARY",
+      "44": "GO"
+    },
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "backend": "cupy",
+    "chance": 0.25,
+    "brain_based_note": "the learned W is the project's spiking-Hebbian recurrent (LearnedAssocGraph). The HOMEOSTATIC arms are BIOLOGICAL bounded-Hebbian mechanisms applied per-cycle, pool<->pool, per-POSTSYNAPTIC-neuron (cp_connections is (pre->post); neuron j's incoming weights = the j-th COLUMN): (oja) Oja-1982 incoming-L2-norm renorm to a fixed set-point; (scaling) Turrigiano synaptic-scaling incoming-SUM renorm to a fixed set-point. Both are FIXED set-points (NOT fit to S_true). Applied runner-side (NO sim/ edits). The read-out is FIXED to the validated FULLY BRAIN-BASED divnorm recipe (the LEARN is what varies). The host PPMI+SVD on RAW counts is the labelled CEILING ONLY.",
+    "best_homeostatic_variant_per_seed": [
+      "scaling_t150.0",
+      "scaling_t150.0",
+      "scaling_t150.0"
+    ],
+    "headline_cycle_independence": {
+      "unnormalized_pearson_W_counts_per_cycle": [
+        [
+          0.7465251157510637,
+          0.7514683062711479,
+          0.7188819362824077,
+          0.364515565687285,
+          0.24304192713606132
+        ],
+        [
+          0.7389426573234252,
+          0.7244486824080286,
+          0.6657145725584577,
+          0.3021851960885165,
+          0.2741307344330413
+        ],
+        [
+          0.7203753367317469,
+          0.6563891080063263,
+          0.3244035085689363,
+          0.3222734890381043,
+          0.37095145081874203
+        ]
+      ],
+      "unnormalized_pearson_W_counts_slope_mean": -0.012215771293631892,
+      "unnormalized_bb_pearson_Strue_per_cycle": [
+        [
+          0.7068338872026235,
+          0.7197948981035969,
+          0.7116273406216728,
+          0.415958555407289,
+          0.09386945258163731
+        ],
+        [
+          0.7285378052533705,
+          0.7469334505615055,
+          0.7470948805031817,
+          0.24631346864108522,
+          0.15351937867946527
+        ],
+        [
+          0.789164204535965,
+          0.7403518135853452,
+          0.28726941478176726,
+          0.14186220947149192,
+          0.20990970877000736
+        ]
+      ],
+      "unnormalized_bb_generalization_per_cycle": [
+        [
+          0.925,
+          1.0,
+          1.0,
+          0.9,
+          0.375
+        ],
+        [
+          0.95,
+          1.0,
+          1.0,
+          0.5333333333333333,
+          0.43333333333333335
+        ],
+        [
+          1.0,
+          0.925,
+          0.5833333333333334,
+          0.5083333333333333,
+          0.6583333333333333
+        ]
+      ],
+      "best_homeo_pearson_W_counts_per_cycle": [
+        [
+          0.8539897263259321,
+          0.861678000357373,
+          0.8470289587685536,
+          0.8186018238339308,
+          0.7783629736310302
+        ],
+        [
+          0.8564371881887741,
+          0.8608105156108325,
+          0.8483678701572369,
+          0.8260201377958563,
+          0.7925041124197132
+        ],
+        [
+          0.8437291983788481,
+          0.8521231443668268,
+          0.8399671996489948,
+          0.8151311633847399,
+          0.7699689369443927
+        ]
+      ],
+      "best_homeo_pearson_W_counts_slope_mean": -0.0020473524151168525,
+      "best_homeo_bb_pearson_Strue_per_cycle": [
+        [
+          0.8093342302454074,
+          0.8183116782817964,
+          0.8047228981984872,
+          0.7564055088391766,
+          0.6554574266640588
+        ],
+        [
+          0.8515799713767247,
+          0.8617539548442052,
+          0.8395017857387612,
+          0.7792267299500002,
+          0.6651485375323094
+        ],
+        [
+          0.878223067867261,
+          0.8617773449220753,
+          0.8127056195785468,
+          0.7265677374512386,
+          0.5626954849232542
+        ]
+      ],
+      "best_homeo_bb_pearson_Strue_min_per_seed": [
+        0.6554574266640588,
+        0.6651485375323094,
+        0.5626954849232542
+      ],
+      "best_homeo_bb_generalization_per_cycle": [
+        [
+          1.0,
+          0.9416666666666667,
+          0.9416666666666667,
+          0.9416666666666667,
+          0.8333333333333334
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          0.9583333333333334,
+          0.9583333333333334
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          0.975,
+          0.8916666666666667
+        ]
+      ],
+      "best_homeo_bb_generalization_min_per_seed": [
+        0.8333333333333334,
+        0.9583333333333334,
+        0.8916666666666667
+      ],
+      "cycles": [
+        2,
+        5,
+        10,
+        20,
+        40
+      ]
+    },
+    "store_volume_holds_per_seed": [
+      true,
+      true,
+      true
+    ],
+    "gate_reconfirm_all_pass_per_seed": [
+      true,
+      false,
+      true
+    ],
+    "host_ceiling_mean": {
+      "pearson_vs_Strue": 0.9289782932241283,
+      "generalization": 1.0
+    },
+    "collapsed_baseline_reference": {
+      "source": "2026-06-11-learned-graded-embedding-diagnosis.md / confirm-GO_full.md",
+      "unnormalized_pearson_W_counts_2cyc": 0.69,
+      "unnormalized_pearson_W_counts_20cyc": 0.06,
+      "gamma095_pearson": 0.43,
+      "gamma095_gen": 0.77,
+      "recovered_recipe": "cycles=2 (hand-picked low-cycle); host-on-W +0.84; ceiling +0.93; gen 1.000"
+    },
+    "elapsed_total_s": 11725.34777879715
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "corpus": {
+        "n_concepts": 30,
+        "n_members": 24,
+        "n_facts": 120,
+        "n_second_order_pairs": 22
+      },
+      "host_ceiling": {
+        "pearson_vs_Strue": 0.9217558286229528,
+        "generalization": 1.0,
+        "second_order_margin": 0.6268896808285895
+      },
+      "random_baseline_generalization": 0.26666666666666666,
+      "variant_cycle_sweep": {
+        "unnormalized": {
+          "2": {
+            "pearson_W_vs_rawcounts": 0.7465251157510637,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7068338872026235,
+            "bb_pearson_permutedS": -0.04543490342674701,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.512107291466874,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.925,
+            "standin_pearson_vs_Strue": 0.8033871659007551,
+            "standin_second_order_margin": 0.5322955337598282,
+            "learn_info": {
+              "recurrent_mean": 0.27319565415382385,
+              "recurrent_max": 18.650487899780273,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 2,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 17.606746196746826
+          },
+          "5": {
+            "pearson_W_vs_rawcounts": 0.7514683062711479,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7197948981035969,
+            "bb_pearson_permutedS": -0.049538056050508865,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.5257053574817959,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.7974515099270907,
+            "standin_second_order_margin": 0.5338802259587316,
+            "learn_info": {
+              "recurrent_mean": 0.4995669424533844,
+              "recurrent_max": 31.338258743286133,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 5,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 32.89529585838318
+          },
+          "10": {
+            "pearson_W_vs_rawcounts": 0.7188819362824077,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7116273406216728,
+            "bb_pearson_permutedS": -0.04750301372420252,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.4964759962490069,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8261428329439737,
+            "standin_second_order_margin": 0.5619963704342422,
+            "learn_info": {
+              "recurrent_mean": 0.8690146803855896,
+              "recurrent_max": 42.517181396484375,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 62.16965293884277
+          },
+          "20": {
+            "pearson_W_vs_rawcounts": 0.364515565687285,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.415958555407289,
+            "bb_pearson_permutedS": -0.03455085157310928,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.10144189525139957,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9,
+            "standin_pearson_vs_Strue": 0.7327483487242448,
+            "standin_second_order_margin": 0.41522125166046436,
+            "learn_info": {
+              "recurrent_mean": 1.407862901687622,
+              "recurrent_max": 44.77490997314453,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 20,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 125.87317609786987
+          },
+          "40": {
+            "pearson_W_vs_rawcounts": 0.24304192713606132,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.09386945258163731,
+            "bb_pearson_permutedS": -0.0021929251422831537,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.02702505180037207,
+            "bb_second_order_recovered": false,
+            "bb_generalization": 0.375,
+            "standin_pearson_vs_Strue": 0.35451294232244307,
+            "standin_second_order_margin": 0.1509561791135519,
+            "learn_info": {
+              "recurrent_mean": 1.2766536474227905,
+              "recurrent_max": 44.77490997314453,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 40,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 247.43500590324402
+          }
+        },
+        "gamma0.95": {
+          "2": {
+            "pearson_W_vs_rawcounts": 0.6277107598040484,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.4562378040573505,
+            "bb_pearson_permutedS": -0.004937734795959332,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.287837010682768,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.7,
+            "standin_pearson_vs_Strue": 0.6693114609950508,
+            "standin_second_order_margin": 0.4198235596010083,
+            "learn_info": {
+              "recurrent_mean": 0.04246961697936058,
+              "recurrent_max": 3.6278076171875,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 2,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 13.23508882522583
+          },
+          "5": {
+            "pearson_W_vs_rawcounts": 0.6103253894262984,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.43860250899108477,
+            "bb_pearson_permutedS": -0.006120846874314009,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.2613967834478802,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.6916666666666667,
+            "standin_pearson_vs_Strue": 0.6642139731243929,
+            "standin_second_order_margin": 0.43563099801795524,
+            "learn_info": {
+              "recurrent_mean": 0.0771232545375824,
+              "recurrent_max": 7.561741352081299,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 5,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 29.978458881378174
+          },
+          "10": {
+            "pearson_W_vs_rawcounts": 0.6086545866053129,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.42922272686646806,
+            "bb_pearson_permutedS": 0.0009504862244079167,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.2523940002196271,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.6916666666666667,
+            "standin_pearson_vs_Strue": 0.6609523792315118,
+            "standin_second_order_margin": 0.4311630183452532,
+            "learn_info": {
+              "recurrent_mean": 0.12303641438484192,
+              "recurrent_max": 11.332305908203125,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 58.21431827545166
+          },
+          "20": {
+            "pearson_W_vs_rawcounts": 0.6048946326964191,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.4330287094435539,
+            "bb_pearson_permutedS": -0.0017632470564552384,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.25434201517127264,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.7083333333333334,
+            "standin_pearson_vs_Strue": 0.6564323142357429,
+            "standin_second_order_margin": 0.43296961282943663,
+            "learn_info": {
+              "recurrent_mean": 0.20151415467262268,
+              "recurrent_max": 17.629674911499023,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 20,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 116.19588899612427
+          },
+          "40": {
+            "pearson_W_vs_rawcounts": 0.6060336476781606,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.4341937803234285,
+            "bb_pearson_permutedS": -0.003045050420772222,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.2659660769123805,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.675,
+            "standin_pearson_vs_Strue": 0.6525874474823744,
+            "standin_second_order_margin": 0.42404377506693247,
+            "learn_info": {
+              "recurrent_mean": 0.32629144191741943,
+              "recurrent_max": 24.27946662902832,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 40,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 232.19469094276428
+          }
+        },
+        "oja_t15.0": {
+          "2": {
+            "pearson_W_vs_rawcounts": 0.8375151286794802,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8074911452620274,
+            "bb_pearson_permutedS": -0.04981803611658898,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.6741051903887705,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8486919641821379,
+            "standin_second_order_margin": 0.5533397324371633,
+            "learn_info": {
+              "recurrent_mean": 0.1617792546749115,
+              "recurrent_max": 5.904816150665283,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 2,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 13.167095422744751
+          },
+          "5": {
+            "pearson_W_vs_rawcounts": 0.84176573323122,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8106625995739027,
+            "bb_pearson_permutedS": -0.05025415412030214,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.6907375617025253,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.852664815139447,
+            "standin_second_order_margin": 0.5644859786356393,
+            "learn_info": {
+              "recurrent_mean": 0.17900237441062927,
+              "recurrent_max": 6.290497779846191,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 5,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 29.723797082901
+          },
+          "10": {
+            "pearson_W_vs_rawcounts": 0.8287643285914552,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7927839475672988,
+            "bb_pearson_permutedS": -0.05098017102024465,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.6640942219752506,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9416666666666667,
+            "standin_pearson_vs_Strue": 0.8476819949976874,
+            "standin_second_order_margin": 0.5574328700175837,
+            "learn_info": {
+              "recurrent_mean": 0.18608658015727997,
+              "recurrent_max": 6.101182460784912,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 57.32619667053223
+          },
+          "20": {
+            "pearson_W_vs_rawcounts": 0.80164806301812,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.736460302724808,
+            "bb_pearson_permutedS": -0.04954701099340764,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.610874561221955,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9416666666666667,
+            "standin_pearson_vs_Strue": 0.8111032050661084,
+            "standin_second_order_margin": 0.5220456574394363,
+            "learn_info": {
+              "recurrent_mean": 0.18623125553131104,
+              "recurrent_max": 6.780429840087891,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 20,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 118.20353055000305
+          },
+          "40": {
+            "pearson_W_vs_rawcounts": 0.7583905482440338,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.6322999949080517,
+            "bb_pearson_permutedS": -0.04054352759324916,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.5162560499361649,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.8083333333333333,
+            "standin_pearson_vs_Strue": 0.7545805409989238,
+            "standin_second_order_margin": 0.48732463969447426,
+            "learn_info": {
+              "recurrent_mean": 0.17926058173179626,
+              "recurrent_max": 6.963276386260986,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 40,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 230.58338689804077
+          }
+        },
+        "scaling_t150.0": {
+          "2": {
+            "pearson_W_vs_rawcounts": 0.8539897263259321,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8093342302454074,
+            "bb_pearson_permutedS": -0.04906364971034768,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7002468736390386,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8535013846637569,
+            "standin_second_order_margin": 0.5594788510430695,
+            "learn_info": {
+              "recurrent_mean": 0.1531105637550354,
+              "recurrent_max": 6.558398723602295,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 2,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 14.826818943023682
+          },
+          "5": {
+            "pearson_W_vs_rawcounts": 0.861678000357373,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8183116782817964,
+            "bb_pearson_permutedS": -0.050517331297229254,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.720992264640872,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9416666666666667,
+            "standin_pearson_vs_Strue": 0.8616540005662254,
+            "standin_second_order_margin": 0.5703872275803645,
+            "learn_info": {
+              "recurrent_mean": 0.17328521609306335,
+              "recurrent_max": 7.4691267013549805,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 5,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 33.82495617866516
+          },
+          "10": {
+            "pearson_W_vs_rawcounts": 0.8470289587685536,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8047228981984872,
+            "bb_pearson_permutedS": -0.05114629910157878,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7082640493949051,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9416666666666667,
+            "standin_pearson_vs_Strue": 0.8568367759510225,
+            "standin_second_order_margin": 0.5743792803692742,
+            "learn_info": {
+              "recurrent_mean": 0.18617409467697144,
+              "recurrent_max": 8.117587089538574,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 64.14512944221497
+          },
+          "20": {
+            "pearson_W_vs_rawcounts": 0.8186018238339308,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7564055088391766,
+            "bb_pearson_permutedS": -0.04912318821292203,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.6586133031582191,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9416666666666667,
+            "standin_pearson_vs_Strue": 0.8224326981053427,
+            "standin_second_order_margin": 0.5450966873692531,
+            "learn_info": {
+              "recurrent_mean": 0.19382135570049286,
+              "recurrent_max": 8.087072372436523,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 20,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 125.21111917495728
+          },
+          "40": {
+            "pearson_W_vs_rawcounts": 0.7783629736310302,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.6554574266640588,
+            "bb_pearson_permutedS": -0.04303734965319565,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.5574045489829663,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.8333333333333334,
+            "standin_pearson_vs_Strue": 0.7703793977915208,
+            "standin_second_order_margin": 0.49754082671959865,
+            "learn_info": {
+              "recurrent_mean": 0.19717414677143097,
+              "recurrent_max": 9.331003189086914,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 40,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 257.6634531021118
+          }
+        }
+      },
+      "cycle_independence": {
+        "unnormalized": {
+          "cycles": [
+            2,
+            5,
+            10,
+            20,
+            40
+          ],
+          "pearson_W_counts_per_cycle": [
+            0.7465251157510637,
+            0.7514683062711479,
+            0.7188819362824077,
+            0.364515565687285,
+            0.24304192713606132
+          ],
+          "pearson_W_counts_min": 0.24304192713606132,
+          "pearson_W_counts_max": 0.7514683062711479,
+          "pearson_W_counts_spread": 0.5084263791350866,
+          "pearson_W_counts_slope_per_cycle": -0.01489086766592513,
+          "bb_pearson_Strue_per_cycle": [
+            0.7068338872026235,
+            0.7197948981035969,
+            0.7116273406216728,
+            0.415958555407289,
+            0.09386945258163731
+          ],
+          "bb_pearson_Strue_min": 0.09386945258163731,
+          "bb_pearson_Strue_spread": 0.6259254455219596,
+          "bb_pearson_Strue_slope_per_cycle": -0.017575944422993855,
+          "bb_generalization_per_cycle": [
+            0.925,
+            1.0,
+            1.0,
+            0.9,
+            0.375
+          ],
+          "bb_generalization_min": 0.375,
+          "bb_second_order_margin_per_cycle": [
+            0.512107291466874,
+            0.5257053574817959,
+            0.4964759962490069,
+            0.10144189525139957,
+            0.02702505180037207
+          ],
+          "bb_second_order_margin_min": 0.02702505180037207
+        },
+        "gamma0.95": {
+          "cycles": [
+            2,
+            5,
+            10,
+            20,
+            40
+          ],
+          "pearson_W_counts_per_cycle": [
+            0.6277107598040484,
+            0.6103253894262984,
+            0.6086545866053129,
+            0.6048946326964191,
+            0.6060336476781606
+          ],
+          "pearson_W_counts_min": 0.6048946326964191,
+          "pearson_W_counts_max": 0.6277107598040484,
+          "pearson_W_counts_spread": 0.02281612710762937,
+          "pearson_W_counts_slope_per_cycle": -0.00037584812954852395,
+          "bb_pearson_Strue_per_cycle": [
+            0.4562378040573505,
+            0.43860250899108477,
+            0.42922272686646806,
+            0.4330287094435539,
+            0.4341937803234285
+          ],
+          "bb_pearson_Strue_min": 0.42922272686646806,
+          "bb_pearson_Strue_spread": 0.02701507719088242,
+          "bb_pearson_Strue_slope_per_cycle": -0.00033901222811495187,
+          "bb_generalization_per_cycle": [
+            0.7,
+            0.6916666666666667,
+            0.6916666666666667,
+            0.7083333333333334,
+            0.675
+          ],
+          "bb_generalization_min": 0.675,
+          "bb_second_order_margin_per_cycle": [
+            0.287837010682768,
+            0.2613967834478802,
+            0.2523940002196271,
+            0.25434201517127264,
+            0.2659660769123805
+          ],
+          "bb_second_order_margin_min": 0.2523940002196271
+        },
+        "oja_t15.0": {
+          "cycles": [
+            2,
+            5,
+            10,
+            20,
+            40
+          ],
+          "pearson_W_counts_per_cycle": [
+            0.8375151286794802,
+            0.84176573323122,
+            0.8287643285914552,
+            0.80164806301812,
+            0.7583905482440338
+          ],
+          "pearson_W_counts_min": 0.7583905482440338,
+          "pearson_W_counts_max": 0.84176573323122,
+          "pearson_W_counts_spread": 0.0833751849871861,
+          "pearson_W_counts_slope_per_cycle": -0.002235374414352207,
+          "bb_pearson_Strue_per_cycle": [
+            0.8074911452620274,
+            0.8106625995739027,
+            0.7927839475672988,
+            0.736460302724808,
+            0.6322999949080517
+          ],
+          "bb_pearson_Strue_min": 0.6322999949080517,
+          "bb_pearson_Strue_spread": 0.17836260466585108,
+          "bb_pearson_Strue_slope_per_cycle": -0.004866421153171097,
+          "bb_generalization_per_cycle": [
+            1.0,
+            1.0,
+            0.9416666666666667,
+            0.9416666666666667,
+            0.8083333333333333
+          ],
+          "bb_generalization_min": 0.8083333333333333,
+          "bb_second_order_margin_per_cycle": [
+            0.6741051903887705,
+            0.6907375617025253,
+            0.6640942219752506,
+            0.610874561221955,
+            0.5162560499361649
+          ],
+          "bb_second_order_margin_min": 0.5162560499361649
+        },
+        "scaling_t150.0": {
+          "cycles": [
+            2,
+            5,
+            10,
+            20,
+            40
+          ],
+          "pearson_W_counts_per_cycle": [
+            0.8539897263259321,
+            0.861678000357373,
+            0.8470289587685536,
+            0.8186018238339308,
+            0.7783629736310302
+          ],
+          "pearson_W_counts_min": 0.7783629736310302,
+          "pearson_W_counts_max": 0.861678000357373,
+          "pearson_W_counts_spread": 0.08331502672634272,
+          "pearson_W_counts_slope_per_cycle": -0.0021899622273907366,
+          "bb_pearson_Strue_per_cycle": [
+            0.8093342302454074,
+            0.8183116782817964,
+            0.8047228981984872,
+            0.7564055088391766,
+            0.6554574266640588
+          ],
+          "bb_pearson_Strue_min": 0.6554574266640588,
+          "bb_pearson_Strue_spread": 0.1628542516177376,
+          "bb_pearson_Strue_slope_per_cycle": -0.004344047660193944,
+          "bb_generalization_per_cycle": [
+            1.0,
+            0.9416666666666667,
+            0.9416666666666667,
+            0.9416666666666667,
+            0.8333333333333334
+          ],
+          "bb_generalization_min": 0.8333333333333334,
+          "bb_second_order_margin_per_cycle": [
+            0.7002468736390386,
+            0.720992264640872,
+            0.7082640493949051,
+            0.6586133031582191,
+            0.5574045489829663
+          ],
+          "bb_second_order_margin_min": 0.5574045489829663
+        }
+      },
+      "best_homeostatic_variant": "scaling_t150.0",
+      "best_homeostatic_config": {
+        "gamma": 1.0,
+        "cap": null,
+        "homeo": "scaling",
+        "homeo_target": 150.0,
+        "homeo_clip_only": true
+      },
+      "store_volume_stress": {
+        "homeostatic": {
+          "1": {
+            "pearson_W_vs_rawcounts": 0.846563608594774,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8044760366186368,
+            "bb_pearson_permutedS": -0.05129575057514283,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7069051408850988,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9416666666666667,
+            "standin_pearson_vs_Strue": 0.8604117161319281,
+            "standin_second_order_margin": 0.574069518572229,
+            "learn_info": {
+              "recurrent_mean": 0.18620692193508148,
+              "recurrent_max": 7.519221782684326,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 107.35345602035522,
+            "n_facts_stored": 120
+          },
+          "2": {
+            "pearson_W_vs_rawcounts": 0.85407274392996,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8124098324010371,
+            "bb_pearson_permutedS": -0.05140935187430166,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7249742986728923,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9416666666666667,
+            "standin_pearson_vs_Strue": 0.8581335344231548,
+            "standin_second_order_margin": 0.5717634321398944,
+            "learn_info": {
+              "recurrent_mean": 0.19499550759792328,
+              "recurrent_max": 7.913569450378418,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 206.8303701877594,
+            "n_facts_stored": 240
+          },
+          "3": {
+            "pearson_W_vs_rawcounts": 0.8589134524784034,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8213283234055373,
+            "bb_pearson_permutedS": -0.05079658483575893,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.739254627949049,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9416666666666667,
+            "standin_pearson_vs_Strue": 0.869409280573551,
+            "standin_second_order_margin": 0.5787165005974656,
+            "learn_info": {
+              "recurrent_mean": 0.19844737648963928,
+              "recurrent_max": 7.976630210876465,
+              "recurrent_nnz": 599741,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 215.02481293678284,
+            "n_facts_stored": 360
+          }
+        },
+        "unnormalized": {
+          "1": {
+            "pearson_W_vs_rawcounts": 0.7188819362824077,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7116273406216728,
+            "bb_pearson_permutedS": -0.04750301372420252,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.4964759962490069,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8261428329439737,
+            "standin_second_order_margin": 0.5619963704342422,
+            "learn_seconds": 88.40229773521423,
+            "n_facts_stored": 120
+          },
+          "2": {
+            "pearson_W_vs_rawcounts": 0.3692643238376159,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.4285380293055856,
+            "bb_pearson_permutedS": -0.020349611176560218,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.13382282474985063,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9583333333333334,
+            "standin_pearson_vs_Strue": 0.8123762769131843,
+            "standin_second_order_margin": 0.4899472647990694,
+            "learn_seconds": 160.9137406349182,
+            "n_facts_stored": 240
+          },
+          "3": {
+            "pearson_W_vs_rawcounts": 0.2917941575362924,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.2763266855649227,
+            "bb_pearson_permutedS": -0.003747274512115513,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.06904963710375123,
+            "bb_second_order_recovered": false,
+            "bb_generalization": 0.8833333333333333,
+            "standin_pearson_vs_Strue": 0.7700744839082478,
+            "standin_second_order_margin": 0.4293117744105451,
+            "learn_seconds": 243.15447402000427,
+            "n_facts_stored": 360
+          }
+        },
+        "holds": true,
+        "cycles": 10,
+        "reps_sweep": [
+          1,
+          2,
+          3
+        ]
+      },
+      "gate_reconfirm_across_cycles": {
+        "2": {
+          "pearson_W_vs_rawcounts": 0.8539897263259321,
+          "W_distinct": true,
+          "g1_pearson_vs_Strue": 0.8093342302454074,
+          "g1_second_order_margin": 0.7002468736390386,
+          "g1_is_graded": true,
+          "g1_ok": true,
+          "g2_graded_acc": 1.0,
+          "g2_a1": true,
+          "g2_a2": true,
+          "g2_a3": true,
+          "g2_orthogonal_acc": 0.15833333333333333,
+          "g2_permuted_prop_acc": 0.225,
+          "g5_permuted_cooccurrence_collapses": true,
+          "permuted_cooccurrence_pearson": -0.07638814324191365,
+          "all_gates_ok": true
+        },
+        "10": {
+          "pearson_W_vs_rawcounts": 0.8470289587685536,
+          "W_distinct": true,
+          "g1_pearson_vs_Strue": 0.8047228981984872,
+          "g1_second_order_margin": 0.7082640493949051,
+          "g1_is_graded": true,
+          "g1_ok": true,
+          "g2_graded_acc": 0.9416666666666667,
+          "g2_a1": true,
+          "g2_a2": true,
+          "g2_a3": true,
+          "g2_orthogonal_acc": 0.15833333333333333,
+          "g2_permuted_prop_acc": 0.325,
+          "g5_permuted_cooccurrence_collapses": true,
+          "permuted_cooccurrence_pearson": -0.07223615573274265,
+          "all_gates_ok": true
+        },
+        "40": {
+          "pearson_W_vs_rawcounts": 0.7783629736310302,
+          "W_distinct": true,
+          "g1_pearson_vs_Strue": 0.6554574266640588,
+          "g1_second_order_margin": 0.5574045489829663,
+          "g1_is_graded": true,
+          "g1_ok": true,
+          "g2_graded_acc": 0.8333333333333334,
+          "g2_a1": true,
+          "g2_a2": true,
+          "g2_a3": true,
+          "g2_orthogonal_acc": 0.15833333333333333,
+          "g2_permuted_prop_acc": 0.275,
+          "g5_permuted_cooccurrence_collapses": true,
+          "permuted_cooccurrence_pearson": 0.0050123771810537945,
+          "all_gates_ok": true
+        }
+      }
+    },
+    "43": {
+      "seed": 43,
+      "corpus": {
+        "n_concepts": 30,
+        "n_members": 24,
+        "n_facts": 120,
+        "n_second_order_pairs": 20
+      },
+      "host_ceiling": {
+        "pearson_vs_Strue": 0.9434629609461419,
+        "generalization": 1.0,
+        "second_order_margin": 0.6818716708102992
+      },
+      "random_baseline_generalization": 0.14166666666666666,
+      "variant_cycle_sweep": {
+        "unnormalized": {
+          "2": {
+            "pearson_W_vs_rawcounts": 0.7389426573234252,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7285378052533705,
+            "bb_pearson_permutedS": 0.0802486174604853,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.5182515990756915,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.95,
+            "standin_pearson_vs_Strue": 0.865403431917433,
+            "standin_second_order_margin": 0.5884704290288995,
+            "learn_info": {
+              "recurrent_mean": 0.2696221172809601,
+              "recurrent_max": 19.23296356201172,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 2,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 19.821549892425537
+          },
+          "5": {
+            "pearson_W_vs_rawcounts": 0.7244486824080286,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7469334505615055,
+            "bb_pearson_permutedS": 0.07537487303370712,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.5078752594717296,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.864545043890926,
+            "standin_second_order_margin": 0.6084939553932902,
+            "learn_info": {
+              "recurrent_mean": 0.5317662954330444,
+              "recurrent_max": 32.518314361572266,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 5,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 42.610363483428955
+          },
+          "10": {
+            "pearson_W_vs_rawcounts": 0.6657145725584577,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7470948805031817,
+            "bb_pearson_permutedS": 0.06589069445186593,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.45561414517539145,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8742270943583196,
+            "standin_second_order_margin": 0.6438618049034764,
+            "learn_info": {
+              "recurrent_mean": 1.0712743997573853,
+              "recurrent_max": 41.061920166015625,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 69.75733184814453
+          },
+          "20": {
+            "pearson_W_vs_rawcounts": 0.3021851960885165,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.24631346864108522,
+            "bb_pearson_permutedS": 0.008684002323001134,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.02917076129866225,
+            "bb_second_order_recovered": false,
+            "bb_generalization": 0.5333333333333333,
+            "standin_pearson_vs_Strue": 0.5790070405244645,
+            "standin_second_order_margin": 0.32496325373793056,
+            "learn_info": {
+              "recurrent_mean": 2.1101746559143066,
+              "recurrent_max": 44.77490997314453,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 20,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 106.1354341506958
+          },
+          "40": {
+            "pearson_W_vs_rawcounts": 0.2741307344330413,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.15351937867946527,
+            "bb_pearson_permutedS": -0.0011069963697879514,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.018233341018785598,
+            "bb_second_order_recovered": false,
+            "bb_generalization": 0.43333333333333335,
+            "standin_pearson_vs_Strue": 0.4080690543381702,
+            "standin_second_order_margin": 0.2064240768505165,
+            "learn_info": {
+              "recurrent_mean": 1.377734899520874,
+              "recurrent_max": 44.77490997314453,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 40,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 262.97443652153015
+          }
+        },
+        "gamma0.95": {
+          "2": {
+            "pearson_W_vs_rawcounts": 0.6131246185654972,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.44835694862181225,
+            "bb_pearson_permutedS": 0.05338732129235716,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.34205370130105306,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.7833333333333333,
+            "standin_pearson_vs_Strue": 0.6716265354002977,
+            "standin_second_order_margin": 0.4332201136369901,
+            "learn_info": {
+              "recurrent_mean": 0.03797195106744766,
+              "recurrent_max": 4.197187900543213,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 2,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 14.43368911743164
+          },
+          "5": {
+            "pearson_W_vs_rawcounts": 0.6048156140677486,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.4324903204501344,
+            "bb_pearson_permutedS": 0.05736775448994665,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.31367037388390173,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.7916666666666666,
+            "standin_pearson_vs_Strue": 0.6611987373053466,
+            "standin_second_order_margin": 0.43835764508148545,
+            "learn_info": {
+              "recurrent_mean": 0.07274360954761505,
+              "recurrent_max": 7.961067199707031,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 5,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 32.483240842819214
+          },
+          "10": {
+            "pearson_W_vs_rawcounts": 0.6008692508551354,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.4257521512306103,
+            "bb_pearson_permutedS": 0.05793399414022286,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.3018975650202794,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.8416666666666667,
+            "standin_pearson_vs_Strue": 0.6663919800451511,
+            "standin_second_order_margin": 0.4316284914217287,
+            "learn_info": {
+              "recurrent_mean": 0.12167445570230484,
+              "recurrent_max": 12.152783393859863,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 63.98519682884216
+          },
+          "20": {
+            "pearson_W_vs_rawcounts": 0.6037106788729721,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.4372077844072961,
+            "bb_pearson_permutedS": 0.06414061596607241,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.3061353065048815,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.8166666666666667,
+            "standin_pearson_vs_Strue": 0.6721921259654058,
+            "standin_second_order_margin": 0.4424660408533291,
+            "learn_info": {
+              "recurrent_mean": 0.21199975907802582,
+              "recurrent_max": 16.963031768798828,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 20,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 122.74699711799622
+          },
+          "40": {
+            "pearson_W_vs_rawcounts": 0.6116152695202132,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.4412706565513406,
+            "bb_pearson_permutedS": 0.06421498749973913,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.31374909013094954,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.8583333333333333,
+            "standin_pearson_vs_Strue": 0.6837780963870974,
+            "standin_second_order_margin": 0.4307523376820954,
+            "learn_info": {
+              "recurrent_mean": 0.3348754346370697,
+              "recurrent_max": 21.269033432006836,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 40,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 238.42033696174622
+          }
+        },
+        "oja_t15.0": {
+          "2": {
+            "pearson_W_vs_rawcounts": 0.8401066848808898,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8421752780804004,
+            "bb_pearson_permutedS": 0.07447659898779131,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.6958925163602753,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8987549642520489,
+            "standin_second_order_margin": 0.5994069513269037,
+            "learn_info": {
+              "recurrent_mean": 0.16386887431144714,
+              "recurrent_max": 5.790349006652832,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 2,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 14.397725820541382
+          },
+          "5": {
+            "pearson_W_vs_rawcounts": 0.8434570301662747,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8553406414023229,
+            "bb_pearson_permutedS": 0.07776454646503857,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7099204565538698,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8883238487446118,
+            "standin_second_order_margin": 0.5989407284562883,
+            "learn_info": {
+              "recurrent_mean": 0.18467026948928833,
+              "recurrent_max": 5.78837251663208,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 5,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 33.667999505996704
+          },
+          "10": {
+            "pearson_W_vs_rawcounts": 0.831721509879545,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8336668631455489,
+            "bb_pearson_permutedS": 0.07821001280009157,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.6829104896112453,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8715761540083921,
+            "standin_second_order_margin": 0.5836644553855806,
+            "learn_info": {
+              "recurrent_mean": 0.19065845012664795,
+              "recurrent_max": 6.293476104736328,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 39.36764979362488
+          },
+          "20": {
+            "pearson_W_vs_rawcounts": 0.8160645551415832,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7717572635936083,
+            "bb_pearson_permutedS": 0.0677488176536231,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.6154557611319685,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9583333333333334,
+            "standin_pearson_vs_Strue": 0.822733201387162,
+            "standin_second_order_margin": 0.5240440705939735,
+            "learn_info": {
+              "recurrent_mean": 0.18873780965805054,
+              "recurrent_max": 6.194464206695557,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 20,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 132.92028737068176
+          },
+          "40": {
+            "pearson_W_vs_rawcounts": 0.7863286914407017,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.6545627097830908,
+            "bb_pearson_permutedS": 0.057710912884960455,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.5191358035719303,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9583333333333334,
+            "standin_pearson_vs_Strue": 0.7664716953670728,
+            "standin_second_order_margin": 0.474005689856575,
+            "learn_info": {
+              "recurrent_mean": 0.1781417280435562,
+              "recurrent_max": 6.144643306732178,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 40,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 260.56562995910645
+          }
+        },
+        "scaling_t150.0": {
+          "2": {
+            "pearson_W_vs_rawcounts": 0.8564371881887741,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8515799713767247,
+            "bb_pearson_permutedS": 0.07125950395558434,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7292374997830935,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.9015622872231601,
+            "standin_second_order_margin": 0.6112669902302863,
+            "learn_info": {
+              "recurrent_mean": 0.15386755764484406,
+              "recurrent_max": 6.241822719573975,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 2,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 14.512215852737427
+          },
+          "5": {
+            "pearson_W_vs_rawcounts": 0.8608105156108325,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8617539548442052,
+            "bb_pearson_permutedS": 0.0736601891347817,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.744017391162751,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8839402821856395,
+            "standin_second_order_margin": 0.597436793901765,
+            "learn_info": {
+              "recurrent_mean": 0.17607669532299042,
+              "recurrent_max": 6.6711745262146,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 5,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 33.967172384262085
+          },
+          "10": {
+            "pearson_W_vs_rawcounts": 0.8483678701572369,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8395017857387612,
+            "bb_pearson_permutedS": 0.07408707247601201,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7127394125175324,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8608287529732275,
+            "standin_second_order_margin": 0.5776679559403546,
+            "learn_info": {
+              "recurrent_mean": 0.18832919001579285,
+              "recurrent_max": 6.695948600769043,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 65.68182396888733
+          },
+          "20": {
+            "pearson_W_vs_rawcounts": 0.8260201377958563,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7792267299500002,
+            "bb_pearson_permutedS": 0.07001376222483363,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.6513464702127854,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9583333333333334,
+            "standin_pearson_vs_Strue": 0.8251824132703622,
+            "standin_second_order_margin": 0.5406330357065632,
+            "learn_info": {
+              "recurrent_mean": 0.19555169343948364,
+              "recurrent_max": 7.544211387634277,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 20,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 126.42519330978394
+          },
+          "40": {
+            "pearson_W_vs_rawcounts": 0.7925041124197132,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.6651485375323094,
+            "bb_pearson_permutedS": 0.05820727935840568,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.5464223337985592,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9583333333333334,
+            "standin_pearson_vs_Strue": 0.7575916330962789,
+            "standin_second_order_margin": 0.4777588907943344,
+            "learn_info": {
+              "recurrent_mean": 0.19867263734340668,
+              "recurrent_max": 8.867688179016113,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 40,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 227.68433713912964
+          }
+        }
+      },
+      "cycle_independence": {
+        "unnormalized": {
+          "cycles": [
+            2,
+            5,
+            10,
+            20,
+            40
+          ],
+          "pearson_W_counts_per_cycle": [
+            0.7389426573234252,
+            0.7244486824080286,
+            0.6657145725584577,
+            0.3021851960885165,
+            0.2741307344330413
+          ],
+          "pearson_W_counts_min": 0.2741307344330413,
+          "pearson_W_counts_max": 0.7389426573234252,
+          "pearson_W_counts_spread": 0.4648119228903839,
+          "pearson_W_counts_slope_per_cycle": -0.0136739701313964,
+          "bb_pearson_Strue_per_cycle": [
+            0.7285378052533705,
+            0.7469334505615055,
+            0.7470948805031817,
+            0.24631346864108522,
+            0.15351937867946527
+          ],
+          "bb_pearson_Strue_min": 0.15351937867946527,
+          "bb_pearson_Strue_spread": 0.5935755018237164,
+          "bb_pearson_Strue_slope_per_cycle": -0.017658193553528597,
+          "bb_generalization_per_cycle": [
+            0.95,
+            1.0,
+            1.0,
+            0.5333333333333333,
+            0.43333333333333335
+          ],
+          "bb_generalization_min": 0.43333333333333335,
+          "bb_second_order_margin_per_cycle": [
+            0.5182515990756915,
+            0.5078752594717296,
+            0.45561414517539145,
+            0.02917076129866225,
+            0.018233341018785598
+          ],
+          "bb_second_order_margin_min": 0.018233341018785598
+        },
+        "gamma0.95": {
+          "cycles": [
+            2,
+            5,
+            10,
+            20,
+            40
+          ],
+          "pearson_W_counts_per_cycle": [
+            0.6131246185654972,
+            0.6048156140677486,
+            0.6008692508551354,
+            0.6037106788729721,
+            0.6116152695202132
+          ],
+          "pearson_W_counts_min": 0.6008692508551354,
+          "pearson_W_counts_max": 0.6131246185654972,
+          "pearson_W_counts_spread": 0.012255367710361731,
+          "pearson_W_counts_slope_per_cycle": 7.650394753279182e-05,
+          "bb_pearson_Strue_per_cycle": [
+            0.44835694862181225,
+            0.4324903204501344,
+            0.4257521512306103,
+            0.4372077844072961,
+            0.4412706565513406
+          ],
+          "bb_pearson_Strue_min": 0.4257521512306103,
+          "bb_pearson_Strue_spread": 0.02260479739120197,
+          "bb_pearson_Strue_slope_per_cycle": 6.517164819503663e-05,
+          "bb_generalization_per_cycle": [
+            0.7833333333333333,
+            0.7916666666666666,
+            0.8416666666666667,
+            0.8166666666666667,
+            0.8583333333333333
+          ],
+          "bb_generalization_min": 0.7833333333333333,
+          "bb_second_order_margin_per_cycle": [
+            0.34205370130105306,
+            0.31367037388390173,
+            0.3018975650202794,
+            0.3061353065048815,
+            0.31374909013094954
+          ],
+          "bb_second_order_margin_min": 0.3018975650202794
+        },
+        "oja_t15.0": {
+          "cycles": [
+            2,
+            5,
+            10,
+            20,
+            40
+          ],
+          "pearson_W_counts_per_cycle": [
+            0.8401066848808898,
+            0.8434570301662747,
+            0.831721509879545,
+            0.8160645551415832,
+            0.7863286914407017
+          ],
+          "pearson_W_counts_min": 0.7863286914407017,
+          "pearson_W_counts_max": 0.8434570301662747,
+          "pearson_W_counts_spread": 0.05712833872557299,
+          "pearson_W_counts_slope_per_cycle": -0.0015087956757741602,
+          "bb_pearson_Strue_per_cycle": [
+            0.8421752780804004,
+            0.8553406414023229,
+            0.8336668631455489,
+            0.7717572635936083,
+            0.6545627097830908
+          ],
+          "bb_pearson_Strue_min": 0.6545627097830908,
+          "bb_pearson_Strue_spread": 0.20077793161923208,
+          "bb_pearson_Strue_slope_per_cycle": -0.005333085649547148,
+          "bb_generalization_per_cycle": [
+            1.0,
+            1.0,
+            1.0,
+            0.9583333333333334,
+            0.9583333333333334
+          ],
+          "bb_generalization_min": 0.9583333333333334,
+          "bb_second_order_margin_per_cycle": [
+            0.6958925163602753,
+            0.7099204565538698,
+            0.6829104896112453,
+            0.6154557611319685,
+            0.5191358035719303
+          ],
+          "bb_second_order_margin_min": 0.5191358035719303
+        },
+        "scaling_t150.0": {
+          "cycles": [
+            2,
+            5,
+            10,
+            20,
+            40
+          ],
+          "pearson_W_counts_per_cycle": [
+            0.8564371881887741,
+            0.8608105156108325,
+            0.8483678701572369,
+            0.8260201377958563,
+            0.7925041124197132
+          ],
+          "pearson_W_counts_min": 0.7925041124197132,
+          "pearson_W_counts_max": 0.8608105156108325,
+          "pearson_W_counts_spread": 0.06830640319111936,
+          "pearson_W_counts_slope_per_cycle": -0.0018178333158878556,
+          "bb_pearson_Strue_per_cycle": [
+            0.8515799713767247,
+            0.8617539548442052,
+            0.8395017857387612,
+            0.7792267299500002,
+            0.6651485375323094
+          ],
+          "bb_pearson_Strue_min": 0.6651485375323094,
+          "bb_pearson_Strue_spread": 0.19660541731189585,
+          "bb_pearson_Strue_slope_per_cycle": -0.005258296658982551,
+          "bb_generalization_per_cycle": [
+            1.0,
+            1.0,
+            1.0,
+            0.9583333333333334,
+            0.9583333333333334
+          ],
+          "bb_generalization_min": 0.9583333333333334,
+          "bb_second_order_margin_per_cycle": [
+            0.7292374997830935,
+            0.744017391162751,
+            0.7127394125175324,
+            0.6513464702127854,
+            0.5464223337985592
+          ],
+          "bb_second_order_margin_min": 0.5464223337985592
+        }
+      },
+      "best_homeostatic_variant": "scaling_t150.0",
+      "best_homeostatic_config": {
+        "gamma": 1.0,
+        "cap": null,
+        "homeo": "scaling",
+        "homeo_target": 150.0,
+        "homeo_clip_only": true
+      },
+      "store_volume_stress": {
+        "homeostatic": {
+          "1": {
+            "pearson_W_vs_rawcounts": 0.8483678701572369,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8395017857387612,
+            "bb_pearson_permutedS": 0.07408707247601201,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7127394125175324,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8608287529732275,
+            "standin_second_order_margin": 0.5776679559403546,
+            "learn_info": {
+              "recurrent_mean": 0.18832919001579285,
+              "recurrent_max": 6.695948600769043,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 47.99451756477356,
+            "n_facts_stored": 120
+          },
+          "2": {
+            "pearson_W_vs_rawcounts": 0.8576909810981488,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8550860424993236,
+            "bb_pearson_permutedS": 0.07944384678470033,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7434290044122128,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9833333333333333,
+            "standin_pearson_vs_Strue": 0.8780294531345253,
+            "standin_second_order_margin": 0.5835819089034404,
+            "learn_info": {
+              "recurrent_mean": 0.1968301683664322,
+              "recurrent_max": 6.78188943862915,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 117.102956533432,
+            "n_facts_stored": 240
+          },
+          "3": {
+            "pearson_W_vs_rawcounts": 0.8628488997498103,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8633654915618969,
+            "bb_pearson_permutedS": 0.07846613677728274,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7559718669856023,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.9833333333333333,
+            "standin_pearson_vs_Strue": 0.8745293141535077,
+            "standin_second_order_margin": 0.5863252684578257,
+            "learn_info": {
+              "recurrent_mean": 0.20054160058498383,
+              "recurrent_max": 6.462487697601318,
+              "recurrent_nnz": 599096,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 219.0115921497345,
+            "n_facts_stored": 360
+          }
+        },
+        "unnormalized": {
+          "1": {
+            "pearson_W_vs_rawcounts": 0.6657145725584577,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7470948805031817,
+            "bb_pearson_permutedS": 0.06589069445186593,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.45561414517539145,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8742270943583196,
+            "standin_second_order_margin": 0.6438618049034764,
+            "learn_seconds": 72.23787951469421,
+            "n_facts_stored": 120
+          },
+          "2": {
+            "pearson_W_vs_rawcounts": 0.3333577234012331,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.40687646591947557,
+            "bb_pearson_permutedS": 0.024727430880694498,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.057876237297623256,
+            "bb_second_order_recovered": false,
+            "bb_generalization": 0.8833333333333333,
+            "standin_pearson_vs_Strue": 0.7868916087798579,
+            "standin_second_order_margin": 0.4920903648027114,
+            "learn_seconds": 139.58870816230774,
+            "n_facts_stored": 240
+          },
+          "3": {
+            "pearson_W_vs_rawcounts": 0.3001824384776742,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.26935297759204946,
+            "bb_pearson_permutedS": 0.007562997679284273,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.036885908228147524,
+            "bb_second_order_recovered": false,
+            "bb_generalization": 0.6833333333333333,
+            "standin_pearson_vs_Strue": 0.7500382152665642,
+            "standin_second_order_margin": 0.45397110219011544,
+            "learn_seconds": 179.07945036888123,
+            "n_facts_stored": 360
+          }
+        },
+        "holds": true,
+        "cycles": 10,
+        "reps_sweep": [
+          1,
+          2,
+          3
+        ]
+      },
+      "gate_reconfirm_across_cycles": {
+        "2": {
+          "pearson_W_vs_rawcounts": 0.8564371881887741,
+          "W_distinct": true,
+          "g1_pearson_vs_Strue": 0.8515799713767247,
+          "g1_second_order_margin": 0.7292374997830935,
+          "g1_is_graded": true,
+          "g1_ok": true,
+          "g2_graded_acc": 1.0,
+          "g2_a1": true,
+          "g2_a2": true,
+          "g2_a3": true,
+          "g2_orthogonal_acc": 0.14166666666666666,
+          "g2_permuted_prop_acc": 0.10833333333333334,
+          "g5_permuted_cooccurrence_collapses": false,
+          "permuted_cooccurrence_pearson": 0.003917412094223833,
+          "all_gates_ok": false
+        },
+        "10": {
+          "pearson_W_vs_rawcounts": 0.8483678701572369,
+          "W_distinct": true,
+          "g1_pearson_vs_Strue": 0.8395017857387612,
+          "g1_second_order_margin": 0.7127394125175324,
+          "g1_is_graded": true,
+          "g1_ok": true,
+          "g2_graded_acc": 1.0,
+          "g2_a1": true,
+          "g2_a2": true,
+          "g2_a3": true,
+          "g2_orthogonal_acc": 0.14166666666666666,
+          "g2_permuted_prop_acc": 0.26666666666666666,
+          "g5_permuted_cooccurrence_collapses": false,
+          "permuted_cooccurrence_pearson": 0.07211112493017509,
+          "all_gates_ok": false
+        },
+        "40": {
+          "pearson_W_vs_rawcounts": 0.7925041124197132,
+          "W_distinct": true,
+          "g1_pearson_vs_Strue": 0.6651485375323094,
+          "g1_second_order_margin": 0.5464223337985592,
+          "g1_is_graded": true,
+          "g1_ok": true,
+          "g2_graded_acc": 0.9583333333333334,
+          "g2_a1": true,
+          "g2_a2": true,
+          "g2_a3": true,
+          "g2_orthogonal_acc": 0.14166666666666666,
+          "g2_permuted_prop_acc": 0.19166666666666668,
+          "g5_permuted_cooccurrence_collapses": false,
+          "permuted_cooccurrence_pearson": 0.10454959005022896,
+          "all_gates_ok": false
+        }
+      }
+    },
+    "44": {
+      "seed": 44,
+      "corpus": {
+        "n_concepts": 30,
+        "n_members": 24,
+        "n_facts": 120,
+        "n_second_order_pairs": 20
+      },
+      "host_ceiling": {
+        "pearson_vs_Strue": 0.92171609010329,
+        "generalization": 1.0,
+        "second_order_margin": 0.7499616824577051
+      },
+      "random_baseline_generalization": 0.38333333333333336,
+      "variant_cycle_sweep": {
+        "unnormalized": {
+          "2": {
+            "pearson_W_vs_rawcounts": 0.7203753367317469,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.789164204535965,
+            "bb_pearson_permutedS": -0.07468676058589754,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.521689529857569,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.9029809840837663,
+            "standin_second_order_margin": 0.6295681856247222,
+            "learn_info": {
+              "recurrent_mean": 0.27406778931617737,
+              "recurrent_max": 17.867637634277344,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 2,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 14.787645101547241
+          },
+          "5": {
+            "pearson_W_vs_rawcounts": 0.6563891080063263,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7403518135853452,
+            "bb_pearson_permutedS": -0.06614785228957415,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.38480231493334893,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.925,
+            "standin_pearson_vs_Strue": 0.9126102558081197,
+            "standin_second_order_margin": 0.6557524187224728,
+            "learn_info": {
+              "recurrent_mean": 0.564268171787262,
+              "recurrent_max": 32.30118179321289,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 5,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 31.635948181152344
+          },
+          "10": {
+            "pearson_W_vs_rawcounts": 0.3244035085689363,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.28726941478176726,
+            "bb_pearson_permutedS": -0.005975071281960643,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.03886289589834235,
+            "bb_second_order_recovered": false,
+            "bb_generalization": 0.5833333333333334,
+            "standin_pearson_vs_Strue": 0.7292762491767107,
+            "standin_second_order_margin": 0.4703800657303166,
+            "learn_info": {
+              "recurrent_mean": 1.6258018016815186,
+              "recurrent_max": 44.770355224609375,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 42.65406107902527
+          },
+          "20": {
+            "pearson_W_vs_rawcounts": 0.3222734890381043,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.14186220947149192,
+            "bb_pearson_permutedS": -0.00925575344148416,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.03336146099903692,
+            "bb_second_order_recovered": false,
+            "bb_generalization": 0.5083333333333333,
+            "standin_pearson_vs_Strue": 0.6260204140315819,
+            "standin_second_order_margin": 0.3856804214912952,
+            "learn_info": {
+              "recurrent_mean": 1.6469647884368896,
+              "recurrent_max": 44.77490997314453,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 20,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 141.33764791488647
+          },
+          "40": {
+            "pearson_W_vs_rawcounts": 0.37095145081874203,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.20990970877000736,
+            "bb_pearson_permutedS": -0.009053000330468807,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.06568351733150946,
+            "bb_second_order_recovered": false,
+            "bb_generalization": 0.6583333333333333,
+            "standin_pearson_vs_Strue": 0.4930519515546284,
+            "standin_second_order_margin": 0.3207673419368428,
+            "learn_info": {
+              "recurrent_mean": 1.1314339637756348,
+              "recurrent_max": 44.77490997314453,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 40,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 280.9417288303375
+          }
+        },
+        "gamma0.95": {
+          "2": {
+            "pearson_W_vs_rawcounts": 0.5686459557469543,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.2933797034005496,
+            "bb_pearson_permutedS": 0.02730378765019382,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.29796041124914474,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.6833333333333333,
+            "standin_pearson_vs_Strue": 0.4957367677633708,
+            "standin_second_order_margin": 0.3396713048377026,
+            "learn_info": {
+              "recurrent_mean": 0.038424354046583176,
+              "recurrent_max": 4.251406192779541,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 2,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 14.587837934494019
+          },
+          "5": {
+            "pearson_W_vs_rawcounts": 0.5611109046512249,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.2805707202019157,
+            "bb_pearson_permutedS": 0.01825542620377639,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.27401719186607926,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.7083333333333334,
+            "standin_pearson_vs_Strue": 0.45916857259024696,
+            "standin_second_order_margin": 0.3189559267224644,
+            "learn_info": {
+              "recurrent_mean": 0.07169724255800247,
+              "recurrent_max": 6.963352680206299,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 5,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 34.125864028930664
+          },
+          "10": {
+            "pearson_W_vs_rawcounts": 0.5491033496888988,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.26804761940507205,
+            "bb_pearson_permutedS": 0.012704948970484945,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.2579178376854126,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.725,
+            "standin_pearson_vs_Strue": 0.48310854958627636,
+            "standin_second_order_margin": 0.3431248856943575,
+            "learn_info": {
+              "recurrent_mean": 0.11832363158464432,
+              "recurrent_max": 9.895051002502441,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 66.89407110214233
+          },
+          "20": {
+            "pearson_W_vs_rawcounts": 0.5405674768066393,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.25421805503135886,
+            "bb_pearson_permutedS": 0.005656785753851726,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.2373067300119428,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.7083333333333334,
+            "standin_pearson_vs_Strue": 0.48762841257638684,
+            "standin_second_order_margin": 0.3541834230553865,
+            "learn_info": {
+              "recurrent_mean": 0.19351643323898315,
+              "recurrent_max": 12.555852890014648,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 20,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 132.17756700515747
+          },
+          "40": {
+            "pearson_W_vs_rawcounts": 0.5546098525289741,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.2692046264376643,
+            "bb_pearson_permutedS": 0.009176250194407412,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.2618926338993526,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.7583333333333333,
+            "standin_pearson_vs_Strue": 0.49504722587809163,
+            "standin_second_order_margin": 0.3443680639701856,
+            "learn_info": {
+              "recurrent_mean": 0.27978742122650146,
+              "recurrent_max": 18.03273582458496,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 40,
+              "gamma": 0.95,
+              "cap": null,
+              "homeo": "none",
+              "homeo_target": 1.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 253.72557306289673
+          }
+        },
+        "oja_t15.0": {
+          "2": {
+            "pearson_W_vs_rawcounts": 0.8257748597518623,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8585794900544216,
+            "bb_pearson_permutedS": -0.07790836481563103,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.6907214157397337,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.9209805200131114,
+            "standin_second_order_margin": 0.6380136796574853,
+            "learn_info": {
+              "recurrent_mean": 0.16239097714424133,
+              "recurrent_max": 5.9662699699401855,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 2,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 14.121058940887451
+          },
+          "5": {
+            "pearson_W_vs_rawcounts": 0.8361623415607823,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8378570843479196,
+            "bb_pearson_permutedS": -0.07200266716930948,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.684002065636231,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8984336803646491,
+            "standin_second_order_margin": 0.6198297326779677,
+            "learn_info": {
+              "recurrent_mean": 0.18296918272972107,
+              "recurrent_max": 5.75750207901001,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 5,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 33.366957902908325
+          },
+          "10": {
+            "pearson_W_vs_rawcounts": 0.8256615217426336,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7812229658003889,
+            "bb_pearson_permutedS": -0.04928980039126681,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.635247824492963,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8646855459999261,
+            "standin_second_order_margin": 0.5812143813163807,
+            "learn_info": {
+              "recurrent_mean": 0.19117328524589539,
+              "recurrent_max": 5.643950939178467,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 65.71460747718811
+          },
+          "20": {
+            "pearson_W_vs_rawcounts": 0.7988578539223427,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.6729575598140405,
+            "bb_pearson_permutedS": -0.015702480376227325,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.5481283392145144,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.975,
+            "standin_pearson_vs_Strue": 0.773082113771142,
+            "standin_second_order_margin": 0.5111938987183816,
+            "learn_info": {
+              "recurrent_mean": 0.18969957530498505,
+              "recurrent_max": 6.808200359344482,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 20,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 129.53829503059387
+          },
+          "40": {
+            "pearson_W_vs_rawcounts": 0.7556237134919542,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.5192311171777162,
+            "bb_pearson_permutedS": 0.033701309594975214,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.45602734688231616,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.8416666666666667,
+            "standin_pearson_vs_Strue": 0.6555712925025795,
+            "standin_second_order_margin": 0.43880042588817186,
+            "learn_info": {
+              "recurrent_mean": 0.18224340677261353,
+              "recurrent_max": 6.888643264770508,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 40,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "oja",
+              "homeo_target": 15.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 256.22042417526245
+          }
+        },
+        "scaling_t150.0": {
+          "2": {
+            "pearson_W_vs_rawcounts": 0.8437291983788481,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.878223067867261,
+            "bb_pearson_permutedS": -0.07793305297269029,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7383583700277596,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.9229009273664576,
+            "standin_second_order_margin": 0.6458668985733259,
+            "learn_info": {
+              "recurrent_mean": 0.15066197514533997,
+              "recurrent_max": 6.374000072479248,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 2,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 14.452123880386353
+          },
+          "5": {
+            "pearson_W_vs_rawcounts": 0.8521231443668268,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8617773449220753,
+            "bb_pearson_permutedS": -0.07083867608939722,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7357922751138557,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.9017123636968383,
+            "standin_second_order_margin": 0.6224315783293413,
+            "learn_info": {
+              "recurrent_mean": 0.1735827773809433,
+              "recurrent_max": 6.938530445098877,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 5,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 33.39826583862305
+          },
+          "10": {
+            "pearson_W_vs_rawcounts": 0.8399671996489948,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8127056195785468,
+            "bb_pearson_permutedS": -0.052844175694142966,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.6874830882738594,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8533868263162895,
+            "standin_second_order_margin": 0.5825959862808576,
+            "learn_info": {
+              "recurrent_mean": 0.18722522258758545,
+              "recurrent_max": 7.616785049438477,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 66.31059741973877
+          },
+          "20": {
+            "pearson_W_vs_rawcounts": 0.8151311633847399,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.7265677374512386,
+            "bb_pearson_permutedS": -0.016782214092765126,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.6083363998968006,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.975,
+            "standin_pearson_vs_Strue": 0.7964685761964657,
+            "standin_second_order_margin": 0.5376407195677912,
+            "learn_info": {
+              "recurrent_mean": 0.19461314380168915,
+              "recurrent_max": 8.52531623840332,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 20,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 133.23116278648376
+          },
+          "40": {
+            "pearson_W_vs_rawcounts": 0.7699689369443927,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.5626954849232542,
+            "bb_pearson_permutedS": 0.03592280470219071,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.4908470915133404,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 0.8916666666666667,
+            "standin_pearson_vs_Strue": 0.685740481593389,
+            "standin_second_order_margin": 0.4560302937971896,
+            "learn_info": {
+              "recurrent_mean": 0.19652992486953735,
+              "recurrent_max": 9.788410186767578,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 40,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 340.16674423217773
+          }
+        }
+      },
+      "cycle_independence": {
+        "unnormalized": {
+          "cycles": [
+            2,
+            5,
+            10,
+            20,
+            40
+          ],
+          "pearson_W_counts_per_cycle": [
+            0.7203753367317469,
+            0.6563891080063263,
+            0.3244035085689363,
+            0.3222734890381043,
+            0.37095145081874203
+          ],
+          "pearson_W_counts_min": 0.3222734890381043,
+          "pearson_W_counts_max": 0.7203753367317469,
+          "pearson_W_counts_spread": 0.3981018476936426,
+          "pearson_W_counts_slope_per_cycle": -0.008082476083574146,
+          "bb_pearson_Strue_per_cycle": [
+            0.789164204535965,
+            0.7403518135853452,
+            0.28726941478176726,
+            0.14186220947149192,
+            0.20990970877000736
+          ],
+          "bb_pearson_Strue_min": 0.14186220947149192,
+          "bb_pearson_Strue_spread": 0.6473019950644732,
+          "bb_pearson_Strue_slope_per_cycle": -0.014853020613422425,
+          "bb_generalization_per_cycle": [
+            1.0,
+            0.925,
+            0.5833333333333334,
+            0.5083333333333333,
+            0.6583333333333333
+          ],
+          "bb_generalization_min": 0.5083333333333333,
+          "bb_second_order_margin_per_cycle": [
+            0.521689529857569,
+            0.38480231493334893,
+            0.03886289589834235,
+            0.03336146099903692,
+            0.06568351733150946
+          ],
+          "bb_second_order_margin_min": 0.03336146099903692
+        },
+        "gamma0.95": {
+          "cycles": [
+            2,
+            5,
+            10,
+            20,
+            40
+          ],
+          "pearson_W_counts_per_cycle": [
+            0.5686459557469543,
+            0.5611109046512249,
+            0.5491033496888988,
+            0.5405674768066393,
+            0.5546098525289741
+          ],
+          "pearson_W_counts_min": 0.5405674768066393,
+          "pearson_W_counts_max": 0.5686459557469543,
+          "pearson_W_counts_spread": 0.02807847894031501,
+          "pearson_W_counts_slope_per_cycle": -0.0003080518852615408,
+          "bb_pearson_Strue_per_cycle": [
+            0.2933797034005496,
+            0.2805707202019157,
+            0.26804761940507205,
+            0.25421805503135886,
+            0.2692046264376643
+          ],
+          "bb_pearson_Strue_min": 0.25421805503135886,
+          "bb_pearson_Strue_spread": 0.03916164836919073,
+          "bb_pearson_Strue_slope_per_cycle": -0.0005352457558777413,
+          "bb_generalization_per_cycle": [
+            0.6833333333333333,
+            0.7083333333333334,
+            0.725,
+            0.7083333333333334,
+            0.7583333333333333
+          ],
+          "bb_generalization_min": 0.6833333333333333,
+          "bb_second_order_margin_per_cycle": [
+            0.29796041124914474,
+            0.27401719186607926,
+            0.2579178376854126,
+            0.2373067300119428,
+            0.2618926338993526
+          ],
+          "bb_second_order_margin_min": 0.2373067300119428
+        },
+        "oja_t15.0": {
+          "cycles": [
+            2,
+            5,
+            10,
+            20,
+            40
+          ],
+          "pearson_W_counts_per_cycle": [
+            0.8257748597518623,
+            0.8361623415607823,
+            0.8256615217426336,
+            0.7988578539223427,
+            0.7556237134919542
+          ],
+          "pearson_W_counts_min": 0.7556237134919542,
+          "pearson_W_counts_max": 0.8361623415607823,
+          "pearson_W_counts_spread": 0.08053862806882806,
+          "pearson_W_counts_slope_per_cycle": -0.002074803022023388,
+          "bb_pearson_Strue_per_cycle": [
+            0.8585794900544216,
+            0.8378570843479196,
+            0.7812229658003889,
+            0.6729575598140405,
+            0.5192311171777162
+          ],
+          "bb_pearson_Strue_min": 0.5192311171777162,
+          "bb_pearson_Strue_spread": 0.3393483728767054,
+          "bb_pearson_Strue_slope_per_cycle": -0.009084597753979342,
+          "bb_generalization_per_cycle": [
+            1.0,
+            1.0,
+            1.0,
+            0.975,
+            0.8416666666666667
+          ],
+          "bb_generalization_min": 0.8416666666666667,
+          "bb_second_order_margin_per_cycle": [
+            0.6907214157397337,
+            0.684002065636231,
+            0.635247824492963,
+            0.5481283392145144,
+            0.45602734688231616
+          ],
+          "bb_second_order_margin_min": 0.45602734688231616
+        },
+        "scaling_t150.0": {
+          "cycles": [
+            2,
+            5,
+            10,
+            20,
+            40
+          ],
+          "pearson_W_counts_per_cycle": [
+            0.8437291983788481,
+            0.8521231443668268,
+            0.8399671996489948,
+            0.8151311633847399,
+            0.7699689369443927
+          ],
+          "pearson_W_counts_min": 0.7699689369443927,
+          "pearson_W_counts_max": 0.8521231443668268,
+          "pearson_W_counts_spread": 0.08215420742243407,
+          "pearson_W_counts_slope_per_cycle": -0.0021342617020719645,
+          "bb_pearson_Strue_per_cycle": [
+            0.878223067867261,
+            0.8617773449220753,
+            0.8127056195785468,
+            0.7265677374512386,
+            0.5626954849232542
+          ],
+          "bb_pearson_Strue_min": 0.5626954849232542,
+          "bb_pearson_Strue_spread": 0.31552758294400685,
+          "bb_pearson_Strue_slope_per_cycle": -0.008412598940783816,
+          "bb_generalization_per_cycle": [
+            1.0,
+            1.0,
+            1.0,
+            0.975,
+            0.8916666666666667
+          ],
+          "bb_generalization_min": 0.8916666666666667,
+          "bb_second_order_margin_per_cycle": [
+            0.7383583700277596,
+            0.7357922751138557,
+            0.6874830882738594,
+            0.6083363998968006,
+            0.4908470915133404
+          ],
+          "bb_second_order_margin_min": 0.4908470915133404
+        }
+      },
+      "best_homeostatic_variant": "scaling_t150.0",
+      "best_homeostatic_config": {
+        "gamma": 1.0,
+        "cap": null,
+        "homeo": "scaling",
+        "homeo_target": 150.0,
+        "homeo_clip_only": true
+      },
+      "store_volume_stress": {
+        "homeostatic": {
+          "1": {
+            "pearson_W_vs_rawcounts": 0.8411341830814973,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8111858558782173,
+            "bb_pearson_permutedS": -0.052606308576668696,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.6905318374710108,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8640581355268776,
+            "standin_second_order_margin": 0.5888284712839522,
+            "learn_info": {
+              "recurrent_mean": 0.187495157122612,
+              "recurrent_max": 7.39837121963501,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 117.60531878471375,
+            "n_facts_stored": 120
+          },
+          "2": {
+            "pearson_W_vs_rawcounts": 0.852770783904564,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8501967862249165,
+            "bb_pearson_permutedS": -0.05956011427193997,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7369671248694102,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8809424925581153,
+            "standin_second_order_margin": 0.6049152821951553,
+            "learn_info": {
+              "recurrent_mean": 0.1954636424779892,
+              "recurrent_max": 7.024781703948975,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 236.24710297584534,
+            "n_facts_stored": 240
+          },
+          "3": {
+            "pearson_W_vs_rawcounts": 0.8596794157031733,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.8614152644821859,
+            "bb_pearson_permutedS": -0.06281018627165606,
+            "bb_is_graded": true,
+            "bb_second_order_margin": 0.7532270834948687,
+            "bb_second_order_recovered": true,
+            "bb_generalization": 1.0,
+            "standin_pearson_vs_Strue": 0.8873881808873361,
+            "standin_second_order_margin": 0.5995802379395473,
+            "learn_info": {
+              "recurrent_mean": 0.19821083545684814,
+              "recurrent_max": 7.360723495483398,
+              "recurrent_nnz": 599278,
+              "n_neurons": 1300,
+              "cycles": 10,
+              "gamma": 1.0,
+              "cap": null,
+              "homeo": "scaling",
+              "homeo_target": 150.0,
+              "homeo_clip_only": true
+            },
+            "learn_seconds": 354.51167345046997,
+            "n_facts_stored": 360
+          }
+        },
+        "unnormalized": {
+          "1": {
+            "pearson_W_vs_rawcounts": 0.32856882583790664,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.2995515468611085,
+            "bb_pearson_permutedS": -0.004453457266342338,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.04254568265551406,
+            "bb_second_order_recovered": false,
+            "bb_generalization": 0.5916666666666667,
+            "standin_pearson_vs_Strue": 0.7257760951158814,
+            "standin_second_order_margin": 0.46625585645879514,
+            "learn_seconds": 119.21321535110474,
+            "n_facts_stored": 120
+          },
+          "2": {
+            "pearson_W_vs_rawcounts": 0.24300681148115938,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.07411724207264006,
+            "bb_pearson_permutedS": 0.01042289146944812,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.017414090686535988,
+            "bb_second_order_recovered": false,
+            "bb_generalization": 0.4666666666666667,
+            "standin_pearson_vs_Strue": 0.650260742101713,
+            "standin_second_order_margin": 0.35020965587742,
+            "learn_seconds": 243.56697821617126,
+            "n_facts_stored": 240
+          },
+          "3": {
+            "pearson_W_vs_rawcounts": 0.22335230073569057,
+            "W_distinct_from_counts": true,
+            "bb_pearson_vs_Strue": 0.05023702588735969,
+            "bb_pearson_permutedS": 0.012103234640294837,
+            "bb_is_graded": false,
+            "bb_second_order_margin": 0.013378149593144983,
+            "bb_second_order_recovered": false,
+            "bb_generalization": 0.43333333333333335,
+            "standin_pearson_vs_Strue": 0.6183844989324727,
+            "standin_second_order_margin": 0.3111322845947965,
+            "learn_seconds": 339.13514614105225,
+            "n_facts_stored": 360
+          }
+        },
+        "holds": true,
+        "cycles": 10,
+        "reps_sweep": [
+          1,
+          2,
+          3
+        ]
+      },
+      "gate_reconfirm_across_cycles": {
+        "2": {
+          "pearson_W_vs_rawcounts": 0.8437291983788481,
+          "W_distinct": true,
+          "g1_pearson_vs_Strue": 0.878223067867261,
+          "g1_second_order_margin": 0.7383583700277596,
+          "g1_is_graded": true,
+          "g1_ok": true,
+          "g2_graded_acc": 1.0,
+          "g2_a1": true,
+          "g2_a2": true,
+          "g2_a3": true,
+          "g2_orthogonal_acc": 0.19166666666666668,
+          "g2_permuted_prop_acc": 0.18333333333333332,
+          "g5_permuted_cooccurrence_collapses": true,
+          "permuted_cooccurrence_pearson": -0.02472914595368969,
+          "all_gates_ok": true
+        },
+        "10": {
+          "pearson_W_vs_rawcounts": 0.8411341830814973,
+          "W_distinct": true,
+          "g1_pearson_vs_Strue": 0.8111858558782173,
+          "g1_second_order_margin": 0.6905318374710108,
+          "g1_is_graded": true,
+          "g1_ok": true,
+          "g2_graded_acc": 1.0,
+          "g2_a1": true,
+          "g2_a2": true,
+          "g2_a3": true,
+          "g2_orthogonal_acc": 0.19166666666666668,
+          "g2_permuted_prop_acc": 0.15833333333333333,
+          "g5_permuted_cooccurrence_collapses": true,
+          "permuted_cooccurrence_pearson": 0.0004310828639875378,
+          "all_gates_ok": true
+        },
+        "40": {
+          "pearson_W_vs_rawcounts": 0.7719206140890141,
+          "W_distinct": true,
+          "g1_pearson_vs_Strue": 0.5691980433682966,
+          "g1_second_order_margin": 0.49391370929371026,
+          "g1_is_graded": true,
+          "g1_ok": true,
+          "g2_graded_acc": 0.8833333333333333,
+          "g2_a1": true,
+          "g2_a2": true,
+          "g2_a3": true,
+          "g2_orthogonal_acc": 0.19166666666666668,
+          "g2_permuted_prop_acc": 0.125,
+          "g5_permuted_cooccurrence_collapses": true,
+          "permuted_cooccurrence_pearson": 0.014802664690433615,
+          "all_gates_ok": true
+        }
+      }
+    }
+  }
+}
