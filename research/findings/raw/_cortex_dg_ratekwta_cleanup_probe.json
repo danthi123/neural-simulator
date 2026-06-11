@@ -1,0 +1,180 @@
+{
+  "probe": "cortex_dg_ratekwta_cleanup_probe",
+  "date": "2026-06-11",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "overall_verdict": "NEGATIVE",
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_words": 16,
+      "D": 512,
+      "between_code_cos_raw": 0.814,
+      "ou_on_sweep_w100": [
+        {
+          "k": 10,
+          "repro_mean": 0.05,
+          "repro_min": 0.0,
+          "sep_mean": 0.037,
+          "spikes": 16.7
+        },
+        {
+          "k": 20,
+          "repro_mean": 0.169,
+          "repro_min": 0.0,
+          "sep_mean": 0.154,
+          "spikes": 15.8
+        },
+        {
+          "k": 40,
+          "repro_mean": 0.566,
+          "repro_min": 0.5,
+          "sep_mean": 0.573,
+          "spikes": 15.9
+        },
+        {
+          "k": 80,
+          "repro_mean": 0.814,
+          "repro_min": 0.75,
+          "sep_mean": 0.792,
+          "spikes": 15.2
+        },
+        {
+          "k": 150,
+          "repro_mean": 0.903,
+          "repro_min": 0.847,
+          "sep_mean": 0.912,
+          "spikes": 15.3
+        },
+        {
+          "k": 300,
+          "repro_mean": 0.974,
+          "repro_min": 0.963,
+          "sep_mean": 0.971,
+          "spikes": 15.8
+        },
+        {
+          "k": 450,
+          "repro_mean": 0.98,
+          "repro_min": 0.942,
+          "sep_mean": 0.99,
+          "spikes": 16.5
+        }
+      ],
+      "ou_off_finding": "DG fully silent (0 spikes): OU noise is primary DG activity driver; removing it kills DG entirely",
+      "best_repro": 0.98,
+      "best_setting_k": 450,
+      "gate_sep_ok": false,
+      "verdict": "NEGATIVE"
+    },
+    {
+      "seed": 43,
+      "n_words": 16,
+      "D": 512,
+      "between_code_cos_raw": 0.798,
+      "ou_on_sweep_w100_key_k": [
+        {
+          "k": 10,
+          "repro_mean": 0.017,
+          "sep_mean": 0.032,
+          "spikes": 13.7
+        },
+        {
+          "k": 40,
+          "repro_mean": 0.575,
+          "sep_mean": 0.586,
+          "spikes": 16.2
+        },
+        {
+          "k": 80,
+          "repro_mean": 0.815,
+          "sep_mean": 0.796,
+          "spikes": 15.5
+        },
+        {
+          "k": 300,
+          "repro_mean": 0.936,
+          "sep_mean": 0.97,
+          "spikes": 16.5
+        }
+      ],
+      "best_repro": 0.936,
+      "gate_sep_ok": false,
+      "verdict": "NEGATIVE",
+      "tension_confirmed": "repro approx sep at every k (seed-stable)"
+    },
+    {
+      "seed": 44,
+      "n_words": 16,
+      "D": 512,
+      "between_code_cos_raw": 0.787,
+      "ou_on_sweep_w100_key_k": [
+        {
+          "k": 10,
+          "repro_mean": 0.0,
+          "sep_mean": 0.045,
+          "spikes": 15.1
+        },
+        {
+          "k": 40,
+          "repro_mean": 0.662,
+          "sep_mean": 0.549,
+          "spikes": 16.2
+        },
+        {
+          "k": 80,
+          "repro_mean": 0.794,
+          "sep_mean": 0.796,
+          "spikes": 15.9
+        },
+        {
+          "k": 300,
+          "repro_mean": 0.972,
+          "sep_mean": 0.967,
+          "spikes": 16.4
+        }
+      ],
+      "best_repro": 0.972,
+      "gate_sep_ok": false,
+      "verdict": "NEGATIVE",
+      "tension_confirmed": "repro approx sep at every k (seed-stable)"
+    }
+  ],
+  "rollup": {
+    "n_go": 0,
+    "n_partial": 0,
+    "n_negative": 3,
+    "best_repro_per_seed": [
+      0.98,
+      0.936,
+      0.972
+    ],
+    "mean_spikes_per_read": [
+      15.8,
+      15.5,
+      15.6
+    ],
+    "key_finding": "repro and sep are nearly equal at every k across all 3 seeds: the separation-vs-reproducibility tension closes the spiking-DG distributed-cleanup path",
+    "gate_repro_passes_at": {
+      "k": 80,
+      "repro_mean": [
+        0.814,
+        0.815,
+        0.794
+      ]
+    },
+    "gate_sep_at_repro80": {
+      "k": 80,
+      "sep_mean": [
+        0.792,
+        0.796,
+        0.796
+      ],
+      "note": "sep approx raw code cos 0.81; no decorrelation gain"
+    },
+    "ou_off": "DG fires 0 spikes at all k (OU noise is primary DG activity driver)"
+  }
+}
