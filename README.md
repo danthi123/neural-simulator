@@ -20,7 +20,8 @@ graph, no supervised labels, no symbolic optimizer.
 
 <p align="center">
   <em>The whole simulated brain, as actually implemented — one engine, two configurations
-  (navigation · conversation) sharing it, with an honest faithful-vs-shortcut layer.</em><br>
+  (navigation · conversation) sharing it and joined by one validated synaptic bridge
+  (the parser-gated <code>command_route</code>), with an honest faithful-vs-shortcut layer.</em><br>
   <strong>Full detail (zoomable):</strong>
   <a href="docs/diagrams/brain_master.svg">master map</a> ·
   <a href="docs/diagrams/brain_navigation.svg">navigation brain — every region &amp; pathway</a> ·

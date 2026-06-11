@@ -56,19 +56,19 @@
 <g id="node1" class="node">
 <title>langin</title>
 <path fill="#d6eaf8" stroke="#1f618d" stroke-width="1.7" d="M1431.36,-744.15C1431.36,-744.15 1280.64,-744.15 1280.64,-744.15 1274.64,-744.15 1268.64,-738.15 1268.64,-732.15 1268.64,-732.15 1268.64,-719.57 1268.64,-719.57 1268.64,-713.57 1274.64,-707.57 1280.64,-707.57 1280.64,-707.57 1431.36,-707.57 1431.36,-707.57 1437.36,-707.57 1443.36,-713.57 1443.36,-719.57 1443.36,-719.57 1443.36,-732.15 1443.36,-732.15 1443.36,-738.15 1437.36,-744.15 1431.36,-744.15"/>
-<text xml:space="preserve" text-anchor="start" x="1278" y="-730.13" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">language_input</text>
-<text xml:space="preserve" text-anchor="start" x="1359" y="-730.13" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(Wernicke&#45;ish)</text>
-<text xml:space="preserve" text-anchor="start" x="1282.88" y="-722.01" font-family="Helvetica,sans-Serif" font-size="8.00">token&#45;embedding input · plastic recurrent</text>
-<text xml:space="preserve" text-anchor="start" x="1285.5" y="-714.01" font-family="Helvetica,sans-Serif" font-size="8.00">⚠ token embedding host&#45;supplied</text>
+<text xml:space="preserve" text-anchor="start" x="1278" y="-730.13" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#123a55">language_input</text>
+<text xml:space="preserve" text-anchor="start" x="1359" y="-730.13" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#123a55"> &#160;(Wernicke&#45;ish)</text>
+<text xml:space="preserve" text-anchor="start" x="1282.88" y="-722.01" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#123a55">token&#45;embedding input · plastic recurrent</text>
+<text xml:space="preserve" text-anchor="start" x="1285.5" y="-714.01" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#123a55">⚠ token embedding host&#45;supplied</text>
 </g>
 <!-- wern -->
 <g id="node5" class="node">
 <title>wern</title>
 <path fill="#d6eaf8" stroke="#21618c" stroke-width="1.4" d="M586.86,-458.07C586.86,-458.07 475.14,-458.07 475.14,-458.07 469.14,-458.07 463.14,-452.07 463.14,-446.07 463.14,-446.07 463.14,-433.49 463.14,-433.49 463.14,-427.49 469.14,-421.49 475.14,-421.49 475.14,-421.49 586.86,-421.49 586.86,-421.49 592.86,-421.49 598.86,-427.49 598.86,-433.49 598.86,-433.49 598.86,-446.07 598.86,-446.07 598.86,-452.07 592.86,-458.07 586.86,-458.07"/>
-<text xml:space="preserve" text-anchor="start" x="475.5" y="-444.06" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">wernicke_pool_{i}</text>
-<text xml:space="preserve" text-anchor="start" x="567" y="-444.06" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;×N</text>
-<text xml:space="preserve" text-anchor="start" x="472.5" y="-435.93" font-family="Helvetica,sans-Serif" font-size="8.00">per&#45;concept comprehension pool</text>
-<text xml:space="preserve" text-anchor="start" x="477.75" y="-427.93" font-family="Helvetica,sans-Serif" font-size="8.00">(single&#45;pool variant: wernicke)</text>
+<text xml:space="preserve" text-anchor="start" x="475.5" y="-444.06" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#10303f">wernicke_pool_{i}</text>
+<text xml:space="preserve" text-anchor="start" x="567" y="-444.06" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#10303f"> &#160;×N</text>
+<text xml:space="preserve" text-anchor="start" x="472.5" y="-435.93" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#10303f">per&#45;concept comprehension pool</text>
+<text xml:space="preserve" text-anchor="start" x="477.75" y="-427.93" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#10303f">(single&#45;pool variant: wernicke)</text>
 </g>
 <!-- langin&#45;&gt;wern -->
 <g id="edge15" class="edge">
@@ -82,9 +82,9 @@
 <g id="node11" class="node">
 <title>noun</title>
 <path fill="#d4e6f1" stroke="#2874a6" stroke-width="1.4" d="M1617.61,-457.78C1617.61,-457.78 1504.39,-457.78 1504.39,-457.78 1498.39,-457.78 1492.39,-451.78 1492.39,-445.78 1492.39,-445.78 1492.39,-433.78 1492.39,-433.78 1492.39,-427.78 1498.39,-421.78 1504.39,-421.78 1504.39,-421.78 1617.61,-421.78 1617.61,-421.78 1623.61,-421.78 1629.61,-427.78 1629.61,-433.78 1629.61,-433.78 1629.61,-445.78 1629.61,-445.78 1629.61,-451.78 1623.61,-457.78 1617.61,-457.78"/>
-<text xml:space="preserve" text-anchor="start" x="1501.75" y="-440.06" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">noun_pool_{NAME}</text>
-<text xml:space="preserve" text-anchor="start" x="1602.25" y="-440.06" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;×4</text>
-<text xml:space="preserve" text-anchor="start" x="1520.12" y="-431.93" font-family="Helvetica,sans-Serif" font-size="8.00">apple · river · dog · cat</text>
+<text xml:space="preserve" text-anchor="start" x="1501.75" y="-440.06" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#143a54">noun_pool_{NAME}</text>
+<text xml:space="preserve" text-anchor="start" x="1602.25" y="-440.06" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#143a54"> &#160;×4</text>
+<text xml:space="preserve" text-anchor="start" x="1520.12" y="-431.93" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#143a54">apple · river · dog · cat</text>
 </g>
 <!-- langin&#45;&gt;noun -->
 <g id="edge19" class="edge">
@@ -98,9 +98,9 @@
 <g id="node12" class="node">
 <title>verb</title>
 <path fill="#d4e6f1" stroke="#2874a6" stroke-width="1.4" d="M1775.36,-457.78C1775.36,-457.78 1666.64,-457.78 1666.64,-457.78 1660.64,-457.78 1654.64,-451.78 1654.64,-445.78 1654.64,-445.78 1654.64,-433.78 1654.64,-433.78 1654.64,-427.78 1660.64,-421.78 1666.64,-421.78 1666.64,-421.78 1775.36,-421.78 1775.36,-421.78 1781.36,-421.78 1787.36,-427.78 1787.36,-433.78 1787.36,-433.78 1787.36,-445.78 1787.36,-445.78 1787.36,-451.78 1781.36,-457.78 1775.36,-457.78"/>
-<text xml:space="preserve" text-anchor="start" x="1664" y="-440.06" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">verb_pool_{NAME}</text>
-<text xml:space="preserve" text-anchor="start" x="1760" y="-440.06" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;×4</text>
-<text xml:space="preserve" text-anchor="start" x="1680.88" y="-431.93" font-family="Helvetica,sans-Serif" font-size="8.00">go · come · stop · look</text>
+<text xml:space="preserve" text-anchor="start" x="1664" y="-440.06" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#143a54">verb_pool_{NAME}</text>
+<text xml:space="preserve" text-anchor="start" x="1760" y="-440.06" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#143a54"> &#160;×4</text>
+<text xml:space="preserve" text-anchor="start" x="1680.88" y="-431.93" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#143a54">go · come · stop · look</text>
 </g>
 <!-- langin&#45;&gt;verb -->
 <g id="edge20" class="edge">
@@ -113,9 +113,9 @@
 <g id="node13" class="node">
 <title>adj</title>
 <path fill="#d4e6f1" stroke="#2874a6" stroke-width="1.4" d="M1956.36,-457.78C1956.36,-457.78 1823.64,-457.78 1823.64,-457.78 1817.64,-457.78 1811.64,-451.78 1811.64,-445.78 1811.64,-445.78 1811.64,-433.78 1811.64,-433.78 1811.64,-427.78 1817.64,-421.78 1823.64,-421.78 1823.64,-421.78 1956.36,-421.78 1956.36,-421.78 1962.36,-421.78 1968.36,-427.78 1968.36,-433.78 1968.36,-433.78 1968.36,-445.78 1968.36,-445.78 1968.36,-451.78 1962.36,-457.78 1956.36,-457.78"/>
-<text xml:space="preserve" text-anchor="start" x="1821" y="-440.06" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">adjective_pool_{NAME}</text>
-<text xml:space="preserve" text-anchor="start" x="1941" y="-440.06" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;×4</text>
-<text xml:space="preserve" text-anchor="start" x="1851.75" y="-431.93" font-family="Helvetica,sans-Serif" font-size="8.00">big · small · hot · cold</text>
+<text xml:space="preserve" text-anchor="start" x="1821" y="-440.06" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#143a54">adjective_pool_{NAME}</text>
+<text xml:space="preserve" text-anchor="start" x="1941" y="-440.06" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#143a54"> &#160;×4</text>
+<text xml:space="preserve" text-anchor="start" x="1851.75" y="-431.93" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#143a54">big · small · hot · cold</text>
 </g>
 <!-- langin&#45;&gt;adj -->
 <g id="edge21" class="edge">
@@ -128,9 +128,9 @@
 <g id="node15" class="node">
 <title>dlpfc</title>
 <path fill="#d4e6f1" stroke="#2e86c1" stroke-width="1.4" stroke-dasharray="5,2" d="M1933.23,-743.86C1933.23,-743.86 1808.77,-743.86 1808.77,-743.86 1802.77,-743.86 1796.77,-737.86 1796.77,-731.86 1796.77,-731.86 1796.77,-719.86 1796.77,-719.86 1796.77,-713.86 1802.77,-707.86 1808.77,-707.86 1808.77,-707.86 1933.23,-707.86 1933.23,-707.86 1939.23,-707.86 1945.23,-713.86 1945.23,-719.86 1945.23,-719.86 1945.23,-731.86 1945.23,-731.86 1945.23,-737.86 1939.23,-743.86 1933.23,-743.86"/>
-<text xml:space="preserve" text-anchor="start" x="1817.75" y="-726.13" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">dlpfc_verb</text>
-<text xml:space="preserve" text-anchor="start" x="1872.5" y="-726.13" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(C9 · opt)</text>
-<text xml:space="preserve" text-anchor="start" x="1806.12" y="-718.01" font-family="Helvetica,sans-Serif" font-size="8.00">holds verb context ~500 ms (NMDA)</text>
+<text xml:space="preserve" text-anchor="start" x="1817.75" y="-726.13" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#16435f">dlpfc_verb</text>
+<text xml:space="preserve" text-anchor="start" x="1872.5" y="-726.13" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#16435f"> &#160;(C9 · opt)</text>
+<text xml:space="preserve" text-anchor="start" x="1806.12" y="-718.01" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#16435f">holds verb context ~500 ms (NMDA)</text>
 </g>
 <!-- langin&#45;&gt;dlpfc -->
 <g id="edge46" class="edge">
@@ -142,9 +142,9 @@
 <!-- ec -->
 <g id="node16" class="node">
 <title>ec</title>
-<path fill="#d4efdf" stroke="#239b56" stroke-width="1.4" d="M2532.74,-743.86C2532.74,-743.86 2465.26,-743.86 2465.26,-743.86 2459.26,-743.86 2453.26,-737.86 2453.26,-731.86 2453.26,-731.86 2453.26,-719.86 2453.26,-719.86 2453.26,-713.86 2459.26,-707.86 2465.26,-707.86 2465.26,-707.86 2532.74,-707.86 2532.74,-707.86 2538.74,-707.86 2544.74,-713.86 2544.74,-719.86 2544.74,-719.86 2544.74,-731.86 2544.74,-731.86 2544.74,-737.86 2538.74,-743.86 2532.74,-743.86"/>
-<text xml:space="preserve" text-anchor="start" x="2462.62" y="-722.88" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">ec</text>
-<text xml:space="preserve" text-anchor="start" x="2474.62" y="-722.88" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(entorhinal)</text>
+<path fill="#d4efdf" stroke="#1d8049" stroke-width="1.4" d="M2532.74,-743.86C2532.74,-743.86 2465.26,-743.86 2465.26,-743.86 2459.26,-743.86 2453.26,-737.86 2453.26,-731.86 2453.26,-731.86 2453.26,-719.86 2453.26,-719.86 2453.26,-713.86 2459.26,-707.86 2465.26,-707.86 2465.26,-707.86 2532.74,-707.86 2532.74,-707.86 2538.74,-707.86 2544.74,-713.86 2544.74,-719.86 2544.74,-719.86 2544.74,-731.86 2544.74,-731.86 2544.74,-737.86 2538.74,-743.86 2532.74,-743.86"/>
+<text xml:space="preserve" text-anchor="start" x="2462.62" y="-722.88" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#0f3d23">ec</text>
+<text xml:space="preserve" text-anchor="start" x="2474.62" y="-722.88" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#0f3d23"> &#160;(entorhinal)</text>
 </g>
 <!-- langin&#45;&gt;ec -->
 <g id="edge37" class="edge">
@@ -157,10 +157,10 @@
 <!-- motor -->
 <g id="node24" class="node">
 <title>motor</title>
-<path fill="#f5b7b1" stroke="#922b21" stroke-width="1.6" d="M877.99,-56.29C877.99,-56.29 782.01,-56.29 782.01,-56.29 776.01,-56.29 770.01,-50.29 770.01,-44.29 770.01,-44.29 770.01,-32.29 770.01,-32.29 770.01,-26.29 776.01,-20.29 782.01,-20.29 782.01,-20.29 877.99,-20.29 877.99,-20.29 883.99,-20.29 889.99,-26.29 889.99,-32.29 889.99,-32.29 889.99,-44.29 889.99,-44.29 889.99,-50.29 883.99,-56.29 877.99,-56.29"/>
-<text xml:space="preserve" text-anchor="start" x="779.38" y="-38.56" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">motor_{N,E,S,W}</text>
-<text xml:space="preserve" text-anchor="start" x="862.62" y="-38.56" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;×4</text>
-<text xml:space="preserve" text-anchor="start" x="784.62" y="-30.44" font-family="Helvetica,sans-Serif" font-size="8.00">embodied direction action</text>
+<path fill="#f5b7b1" stroke="#c0392b" stroke-width="1.6" d="M877.99,-56.29C877.99,-56.29 782.01,-56.29 782.01,-56.29 776.01,-56.29 770.01,-50.29 770.01,-44.29 770.01,-44.29 770.01,-32.29 770.01,-32.29 770.01,-26.29 776.01,-20.29 782.01,-20.29 782.01,-20.29 877.99,-20.29 877.99,-20.29 883.99,-20.29 889.99,-26.29 889.99,-32.29 889.99,-32.29 889.99,-44.29 889.99,-44.29 889.99,-50.29 883.99,-56.29 877.99,-56.29"/>
+<text xml:space="preserve" text-anchor="start" x="779.38" y="-38.56" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#641e16">motor_{N,E,S,W}</text>
+<text xml:space="preserve" text-anchor="start" x="862.62" y="-38.56" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#641e16"> &#160;×4</text>
+<text xml:space="preserve" text-anchor="start" x="784.62" y="-30.44" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#641e16">embodied direction action</text>
 </g>
 <!-- langin&#45;&gt;motor -->
 <g id="edge13" class="edge">
@@ -174,17 +174,17 @@
 <g id="node2" class="node">
 <title>eccx</title>
 <path fill="#eaf2f8" stroke="#2e86c1" stroke-width="1.4" stroke-dasharray="5,2" d="M1233.11,-744.15C1233.11,-744.15 1098.89,-744.15 1098.89,-744.15 1092.89,-744.15 1086.89,-738.15 1086.89,-732.15 1086.89,-732.15 1086.89,-719.57 1086.89,-719.57 1086.89,-713.57 1092.89,-707.57 1098.89,-707.57 1098.89,-707.57 1233.11,-707.57 1233.11,-707.57 1239.11,-707.57 1245.11,-713.57 1245.11,-719.57 1245.11,-719.57 1245.11,-732.15 1245.11,-732.15 1245.11,-738.15 1239.11,-744.15 1233.11,-744.15"/>
-<text xml:space="preserve" text-anchor="start" x="1123.25" y="-730.13" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">ec_context</text>
-<text xml:space="preserve" text-anchor="start" x="1180.25" y="-730.13" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(opt)</text>
-<text xml:space="preserve" text-anchor="start" x="1121.75" y="-722.01" font-family="Helvetica,sans-Serif" font-size="8.00">positional / time&#45;cell drive</text>
-<text xml:space="preserve" text-anchor="start" x="1096.25" y="-714.01" font-family="Helvetica,sans-Serif" font-size="8.00">⚠ positional code host&#45;generated</text>
+<text xml:space="preserve" text-anchor="start" x="1123.25" y="-730.13" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#16435f">ec_context</text>
+<text xml:space="preserve" text-anchor="start" x="1180.25" y="-730.13" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#16435f"> &#160;(opt)</text>
+<text xml:space="preserve" text-anchor="start" x="1121.75" y="-722.01" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#16435f">positional / time&#45;cell drive</text>
+<text xml:space="preserve" text-anchor="start" x="1096.25" y="-714.01" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#16435f">⚠ positional code host&#45;generated</text>
 </g>
 <!-- dg -->
 <g id="node17" class="node">
 <title>dg</title>
-<path fill="#d4efdf" stroke="#239b56" stroke-width="1.4" d="M2426.99,-310.2C2426.99,-310.2 2355.01,-310.2 2355.01,-310.2 2349.01,-310.2 2343.01,-304.2 2343.01,-298.2 2343.01,-298.2 2343.01,-286.2 2343.01,-286.2 2343.01,-280.2 2349.01,-274.2 2355.01,-274.2 2355.01,-274.2 2426.99,-274.2 2426.99,-274.2 2432.99,-274.2 2438.99,-280.2 2438.99,-286.2 2438.99,-286.2 2438.99,-298.2 2438.99,-298.2 2438.99,-304.2 2432.99,-310.2 2426.99,-310.2"/>
-<text xml:space="preserve" text-anchor="start" x="2352.38" y="-289.22" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">dg</text>
-<text xml:space="preserve" text-anchor="start" x="2365.88" y="-289.22" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(separation)</text>
+<path fill="#d4efdf" stroke="#1d8049" stroke-width="1.4" d="M2426.99,-310.2C2426.99,-310.2 2355.01,-310.2 2355.01,-310.2 2349.01,-310.2 2343.01,-304.2 2343.01,-298.2 2343.01,-298.2 2343.01,-286.2 2343.01,-286.2 2343.01,-280.2 2349.01,-274.2 2355.01,-274.2 2355.01,-274.2 2426.99,-274.2 2426.99,-274.2 2432.99,-274.2 2438.99,-280.2 2438.99,-286.2 2438.99,-286.2 2438.99,-298.2 2438.99,-298.2 2438.99,-304.2 2432.99,-310.2 2426.99,-310.2"/>
+<text xml:space="preserve" text-anchor="start" x="2352.38" y="-289.22" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#0f3d23">dg</text>
+<text xml:space="preserve" text-anchor="start" x="2365.88" y="-289.22" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#0f3d23"> &#160;(separation)</text>
 </g>
 <!-- eccx&#45;&gt;dg -->
 <g id="edge36" class="edge">
@@ -198,17 +198,17 @@
 <g id="node3" class="node">
 <title>retina</title>
 <path fill="#eaf2f8" stroke="#3d6fb4" stroke-width="1.4" stroke-dasharray="5,2" d="M1050.86,-743.86C1050.86,-743.86 951.14,-743.86 951.14,-743.86 945.14,-743.86 939.14,-737.86 939.14,-731.86 939.14,-731.86 939.14,-719.86 939.14,-719.86 939.14,-713.86 945.14,-707.86 951.14,-707.86 951.14,-707.86 1050.86,-707.86 1050.86,-707.86 1056.86,-707.86 1062.86,-713.86 1062.86,-719.86 1062.86,-719.86 1062.86,-731.86 1062.86,-731.86 1062.86,-737.86 1056.86,-743.86 1050.86,-743.86"/>
-<text xml:space="preserve" text-anchor="start" x="972.12" y="-726.13" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">retina</text>
-<text xml:space="preserve" text-anchor="start" x="1001.38" y="-726.13" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(opt)</text>
-<text xml:space="preserve" text-anchor="start" x="948.5" y="-718.01" font-family="Helvetica,sans-Serif" font-size="8.00">⚠ host&#45;rendered image</text>
+<text xml:space="preserve" text-anchor="start" x="972.12" y="-726.13" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#163a59">retina</text>
+<text xml:space="preserve" text-anchor="start" x="1001.38" y="-726.13" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#163a59"> &#160;(opt)</text>
+<text xml:space="preserve" text-anchor="start" x="948.5" y="-718.01" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#163a59">⚠ host&#45;rendered image</text>
 </g>
 <!-- it -->
 <g id="node4" class="node">
 <title>it</title>
 <path fill="#eaf2f8" stroke="#3d6fb4" stroke-width="1.4" stroke-dasharray="5,2" d="M1064.61,-457.78C1064.61,-457.78 951.39,-457.78 951.39,-457.78 945.39,-457.78 939.39,-451.78 939.39,-445.78 939.39,-445.78 939.39,-433.78 939.39,-433.78 939.39,-427.78 945.39,-421.78 951.39,-421.78 951.39,-421.78 1064.61,-421.78 1064.61,-421.78 1070.61,-421.78 1076.61,-427.78 1076.61,-433.78 1076.61,-433.78 1076.61,-445.78 1076.61,-445.78 1076.61,-451.78 1070.61,-457.78 1064.61,-457.78"/>
-<text xml:space="preserve" text-anchor="start" x="948.75" y="-440.06" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">cortex_v1→v2→it</text>
-<text xml:space="preserve" text-anchor="start" x="1038.75" y="-440.06" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(opt)</text>
-<text xml:space="preserve" text-anchor="start" x="961.88" y="-431.93" font-family="Helvetica,sans-Serif" font-size="8.00">visual &quot;what&quot; stream → IT</text>
+<text xml:space="preserve" text-anchor="start" x="948.75" y="-440.06" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#163a59">cortex_v1→v2→it</text>
+<text xml:space="preserve" text-anchor="start" x="1038.75" y="-440.06" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#163a59"> &#160;(opt)</text>
+<text xml:space="preserve" text-anchor="start" x="961.88" y="-431.93" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#163a59">visual &quot;what&quot; stream → IT</text>
 </g>
 <!-- retina&#45;&gt;it -->
 <g id="edge1" class="edge">
@@ -221,10 +221,10 @@
 <g id="node9" class="node">
 <title>hub</title>
 <path fill="#d6eaf8" stroke="#1a5276" stroke-width="1.4" d="M1047.11,-310.49C1047.11,-310.49 936.89,-310.49 936.89,-310.49 930.89,-310.49 924.89,-304.49 924.89,-298.49 924.89,-298.49 924.89,-285.91 924.89,-285.91 924.89,-279.91 930.89,-273.91 936.89,-273.91 936.89,-273.91 1047.11,-273.91 1047.11,-273.91 1053.11,-273.91 1059.11,-279.91 1059.11,-285.91 1059.11,-285.91 1059.11,-298.49 1059.11,-298.49 1059.11,-304.49 1053.11,-310.49 1047.11,-310.49"/>
-<text xml:space="preserve" text-anchor="start" x="934.25" y="-296.47" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">multimodal_hub</text>
-<text xml:space="preserve" text-anchor="start" x="1017.5" y="-296.47" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(ATL)</text>
-<text xml:space="preserve" text-anchor="start" x="939.5" y="-288.35" font-family="Helvetica,sans-Serif" font-size="8.00">auditory + visual convergence</text>
-<text xml:space="preserve" text-anchor="start" x="962" y="-280.35" font-family="Helvetica,sans-Serif" font-size="8.00">(hub&#45;and&#45;spoke)</text>
+<text xml:space="preserve" text-anchor="start" x="934.25" y="-296.47" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#0c2533">multimodal_hub</text>
+<text xml:space="preserve" text-anchor="start" x="1017.5" y="-296.47" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#0c2533"> &#160;(ATL)</text>
+<text xml:space="preserve" text-anchor="start" x="939.5" y="-288.35" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#0c2533">auditory + visual convergence</text>
+<text xml:space="preserve" text-anchor="start" x="962" y="-280.35" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#0c2533">(hub&#45;and&#45;spoke)</text>
 </g>
 <!-- it&#45;&gt;hub -->
 <g id="edge33" class="edge">
@@ -237,10 +237,10 @@
 <g id="node22" class="node">
 <title>langout</title>
 <path fill="#d5f5e3" stroke="#1e8449" stroke-width="1.7" d="M1235.86,-56.58C1235.86,-56.58 1094.14,-56.58 1094.14,-56.58 1088.14,-56.58 1082.14,-50.58 1082.14,-44.58 1082.14,-44.58 1082.14,-32 1082.14,-32 1082.14,-26 1088.14,-20 1094.14,-20 1094.14,-20 1235.86,-20 1235.86,-20 1241.86,-20 1247.86,-26 1247.86,-32 1247.86,-32 1247.86,-44.58 1247.86,-44.58 1247.86,-50.58 1241.86,-56.58 1235.86,-56.58"/>
-<text xml:space="preserve" text-anchor="start" x="1091.5" y="-42.56" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">language_output</text>
-<text xml:space="preserve" text-anchor="start" x="1180" y="-42.56" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(Broca&#45;ish)</text>
-<text xml:space="preserve" text-anchor="start" x="1099.75" y="-34.44" font-family="Helvetica,sans-Serif" font-size="8.00">word&#45;pattern output (A→W readout)</text>
-<text xml:space="preserve" text-anchor="start" x="1100.5" y="-26.44" font-family="Helvetica,sans-Serif" font-size="8.00">⚠ word readout host&#45;decoded</text>
+<text xml:space="preserve" text-anchor="start" x="1091.5" y="-42.56" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#0c3d22">language_output</text>
+<text xml:space="preserve" text-anchor="start" x="1180" y="-42.56" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#0c3d22"> &#160;(Broca&#45;ish)</text>
+<text xml:space="preserve" text-anchor="start" x="1099.75" y="-34.44" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#0c3d22">word&#45;pattern output (A→W readout)</text>
+<text xml:space="preserve" text-anchor="start" x="1100.5" y="-26.44" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#0c3d22">⚠ word readout host&#45;decoded</text>
 </g>
 <!-- it&#45;&gt;langout -->
 <g id="edge32" class="edge">
@@ -254,9 +254,9 @@
 <g id="node6" class="node">
 <title>wernfs</title>
 <path fill="#d4e6f1" stroke="#1a5276" stroke-width="2.2" d="M559.74,-310.2C559.74,-310.2 438.26,-310.2 438.26,-310.2 432.26,-310.2 426.26,-304.2 426.26,-298.2 426.26,-298.2 426.26,-286.2 426.26,-286.2 426.26,-280.2 432.26,-274.2 438.26,-274.2 438.26,-274.2 559.74,-274.2 559.74,-274.2 565.74,-274.2 571.74,-280.2 571.74,-286.2 571.74,-286.2 571.74,-298.2 571.74,-298.2 571.74,-304.2 565.74,-310.2 559.74,-310.2"/>
-<text xml:space="preserve" text-anchor="start" x="435.62" y="-292.47" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">wernicke_fs_pool_{i}</text>
-<text xml:space="preserve" text-anchor="start" x="542.88" y="-292.47" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;×N</text>
-<text xml:space="preserve" text-anchor="start" x="442" y="-284.35" font-family="Helvetica,sans-Serif" font-size="8.00">cross&#45;pool WTM (sparse codes)</text>
+<text xml:space="preserve" text-anchor="start" x="435.62" y="-292.47" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#0c2533">wernicke_fs_pool_{i}</text>
+<text xml:space="preserve" text-anchor="start" x="542.88" y="-292.47" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#0c2533"> &#160;×N</text>
+<text xml:space="preserve" text-anchor="start" x="442" y="-284.35" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#0c2533">cross&#45;pool WTM (sparse codes)</text>
 </g>
 <!-- wern&#45;&gt;wernfs -->
 <g id="edge2" class="edge">
@@ -269,10 +269,10 @@
 <g id="node7" class="node">
 <title>sem</title>
 <path fill="#d6eaf8" stroke="#1a5276" stroke-width="1.7" d="M889.36,-310.49C889.36,-310.49 750.64,-310.49 750.64,-310.49 744.64,-310.49 738.64,-304.49 738.64,-298.49 738.64,-298.49 738.64,-285.91 738.64,-285.91 738.64,-279.91 744.64,-273.91 750.64,-273.91 750.64,-273.91 889.36,-273.91 889.36,-273.91 895.36,-273.91 901.36,-279.91 901.36,-285.91 901.36,-285.91 901.36,-298.49 901.36,-298.49 901.36,-304.49 895.36,-310.49 889.36,-310.49"/>
-<text xml:space="preserve" text-anchor="start" x="761.5" y="-296.47" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">semantic_cortex</text>
-<text xml:space="preserve" text-anchor="start" x="846.25" y="-296.47" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(ATL)</text>
-<text xml:space="preserve" text-anchor="start" x="763.38" y="-288.35" font-family="Helvetica,sans-Serif" font-size="8.00">sparse distributed concept store</text>
-<text xml:space="preserve" text-anchor="start" x="748" y="-280.35" font-family="Helvetica,sans-Serif" font-size="8.00">plastic recurrent attractor · 320 concepts</text>
+<text xml:space="preserve" text-anchor="start" x="761.5" y="-296.47" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#0c2533">semantic_cortex</text>
+<text xml:space="preserve" text-anchor="start" x="846.25" y="-296.47" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#0c2533"> &#160;(ATL)</text>
+<text xml:space="preserve" text-anchor="start" x="763.38" y="-288.35" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#0c2533">sparse distributed concept store</text>
+<text xml:space="preserve" text-anchor="start" x="748" y="-280.35" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#0c2533">plastic recurrent attractor · 320 concepts</text>
 </g>
 <!-- wern&#45;&gt;sem -->
 <g id="edge16" class="edge">
@@ -293,10 +293,10 @@
 <g id="node10" class="node">
 <title>broca</title>
 <path fill="#d6eaf8" stroke="#21618c" stroke-width="1.6" d="M511.61,-204.16C511.61,-204.16 386.39,-204.16 386.39,-204.16 380.39,-204.16 374.39,-198.16 374.39,-192.16 374.39,-192.16 374.39,-179.58 374.39,-179.58 374.39,-173.58 380.39,-167.58 386.39,-167.58 386.39,-167.58 511.61,-167.58 511.61,-167.58 517.61,-167.58 523.61,-173.58 523.61,-179.58 523.61,-179.58 523.61,-192.16 523.61,-192.16 523.61,-198.16 517.61,-204.16 511.61,-204.16"/>
-<text xml:space="preserve" text-anchor="start" x="418.25" y="-190.14" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">broca</text>
-<text xml:space="preserve" text-anchor="start" x="447.5" y="-190.14" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(C11)</text>
-<text xml:space="preserve" text-anchor="start" x="383.75" y="-182.02" font-family="Helvetica,sans-Serif" font-size="8.00">syntactic composition · sentence WM</text>
-<text xml:space="preserve" text-anchor="start" x="420.5" y="-174.02" font-family="Helvetica,sans-Serif" font-size="8.00">plastic recurrent</text>
+<text xml:space="preserve" text-anchor="start" x="418.25" y="-190.14" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#10303f">broca</text>
+<text xml:space="preserve" text-anchor="start" x="447.5" y="-190.14" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#10303f"> &#160;(C11)</text>
+<text xml:space="preserve" text-anchor="start" x="383.75" y="-182.02" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#10303f">syntactic composition · sentence WM</text>
+<text xml:space="preserve" text-anchor="start" x="420.5" y="-174.02" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#10303f">plastic recurrent</text>
 </g>
 <!-- wern&#45;&gt;broca -->
 <g id="edge27" class="edge">
@@ -333,8 +333,8 @@
 <g id="node8" class="node">
 <title>semfs</title>
 <path fill="#d4e6f1" stroke="#154360" stroke-width="2.2" d="M812.49,-203.87C812.49,-203.87 755.51,-203.87 755.51,-203.87 749.51,-203.87 743.51,-197.87 743.51,-191.87 743.51,-191.87 743.51,-179.87 743.51,-179.87 743.51,-173.87 749.51,-167.87 755.51,-167.87 755.51,-167.87 812.49,-167.87 812.49,-167.87 818.49,-167.87 824.49,-173.87 824.49,-179.87 824.49,-179.87 824.49,-191.87 824.49,-191.87 824.49,-197.87 818.49,-203.87 812.49,-203.87"/>
-<text xml:space="preserve" text-anchor="start" x="752.88" y="-186.14" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">semantic_fs</text>
-<text xml:space="preserve" text-anchor="start" x="752.88" y="-178.02" font-family="Helvetica,sans-Serif" font-size="8.00">winner&#45;take&#45;most</text>
+<text xml:space="preserve" text-anchor="start" x="752.88" y="-186.14" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#0a2230">semantic_fs</text>
+<text xml:space="preserve" text-anchor="start" x="752.88" y="-178.02" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#0a2230">winner&#45;take&#45;most</text>
 </g>
 <!-- sem&#45;&gt;semfs -->
 <g id="edge4" class="edge">
@@ -362,10 +362,10 @@
 <!-- langoutp -->
 <g id="node23" class="node">
 <title>langoutp</title>
-<path fill="#d4efdf" stroke="#239b56" stroke-width="1.4" d="M1414.23,-56.29C1414.23,-56.29 1283.77,-56.29 1283.77,-56.29 1277.77,-56.29 1271.77,-50.29 1271.77,-44.29 1271.77,-44.29 1271.77,-32.29 1271.77,-32.29 1271.77,-26.29 1277.77,-20.29 1283.77,-20.29 1283.77,-20.29 1414.23,-20.29 1414.23,-20.29 1420.23,-20.29 1426.23,-26.29 1426.23,-32.29 1426.23,-32.29 1426.23,-44.29 1426.23,-44.29 1426.23,-50.29 1420.23,-56.29 1414.23,-56.29"/>
-<text xml:space="preserve" text-anchor="start" x="1284.88" y="-38.56" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">lang_output_pool_{i}</text>
-<text xml:space="preserve" text-anchor="start" x="1393.62" y="-38.56" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;×N</text>
-<text xml:space="preserve" text-anchor="start" x="1281.12" y="-30.44" font-family="Helvetica,sans-Serif" font-size="8.00">per&#45;concept naming pool (+ _fs WTM)</text>
+<path fill="#d4efdf" stroke="#1d8049" stroke-width="1.4" d="M1414.23,-56.29C1414.23,-56.29 1283.77,-56.29 1283.77,-56.29 1277.77,-56.29 1271.77,-50.29 1271.77,-44.29 1271.77,-44.29 1271.77,-32.29 1271.77,-32.29 1271.77,-26.29 1277.77,-20.29 1283.77,-20.29 1283.77,-20.29 1414.23,-20.29 1414.23,-20.29 1420.23,-20.29 1426.23,-26.29 1426.23,-32.29 1426.23,-32.29 1426.23,-44.29 1426.23,-44.29 1426.23,-50.29 1420.23,-56.29 1414.23,-56.29"/>
+<text xml:space="preserve" text-anchor="start" x="1284.88" y="-38.56" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#0f3d23">lang_output_pool_{i}</text>
+<text xml:space="preserve" text-anchor="start" x="1393.62" y="-38.56" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#0f3d23"> &#160;×N</text>
+<text xml:space="preserve" text-anchor="start" x="1281.12" y="-30.44" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#0f3d23">per&#45;concept naming pool (+ _fs WTM)</text>
 </g>
 <!-- hub&#45;&gt;langoutp -->
 <g id="edge35" class="edge">
@@ -392,9 +392,9 @@
 <!-- speech -->
 <g id="node25" class="node">
 <title>speech</title>
-<path fill="#f5b7b1" stroke="#922b21" stroke-width="1.4" d="M994.11,-56.29C994.11,-56.29 925.89,-56.29 925.89,-56.29 919.89,-56.29 913.89,-50.29 913.89,-44.29 913.89,-44.29 913.89,-32.29 913.89,-32.29 913.89,-26.29 919.89,-20.29 925.89,-20.29 925.89,-20.29 994.11,-20.29 994.11,-20.29 1000.11,-20.29 1006.11,-26.29 1006.11,-32.29 1006.11,-32.29 1006.11,-44.29 1006.11,-44.29 1006.11,-50.29 1000.11,-56.29 994.11,-56.29"/>
-<text xml:space="preserve" text-anchor="start" x="923.25" y="-38.56" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">motor_speech</text>
-<text xml:space="preserve" text-anchor="start" x="930" y="-30.44" font-family="Helvetica,sans-Serif" font-size="8.00">4&#45;slot articulation</text>
+<path fill="#f5b7b1" stroke="#c0392b" stroke-width="1.4" d="M994.11,-56.29C994.11,-56.29 925.89,-56.29 925.89,-56.29 919.89,-56.29 913.89,-50.29 913.89,-44.29 913.89,-44.29 913.89,-32.29 913.89,-32.29 913.89,-26.29 919.89,-20.29 925.89,-20.29 925.89,-20.29 994.11,-20.29 994.11,-20.29 1000.11,-20.29 1006.11,-26.29 1006.11,-32.29 1006.11,-32.29 1006.11,-44.29 1006.11,-44.29 1006.11,-50.29 1000.11,-56.29 994.11,-56.29"/>
+<text xml:space="preserve" text-anchor="start" x="923.25" y="-38.56" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#641e16">motor_speech</text>
+<text xml:space="preserve" text-anchor="start" x="930" y="-30.44" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#641e16">4&#45;slot articulation</text>
 </g>
 <!-- broca&#45;&gt;speech -->
 <g id="edge30" class="edge">
@@ -425,8 +425,8 @@
 <g id="node14" class="node">
 <title>poolfs</title>
 <path fill="#d6dbdf" stroke="#566573" stroke-width="2.2" d="M1783.36,-310.2C1783.36,-310.2 1656.64,-310.2 1656.64,-310.2 1650.64,-310.2 1644.64,-304.2 1644.64,-298.2 1644.64,-298.2 1644.64,-286.2 1644.64,-286.2 1644.64,-280.2 1650.64,-274.2 1656.64,-274.2 1656.64,-274.2 1783.36,-274.2 1783.36,-274.2 1789.36,-274.2 1795.36,-280.2 1795.36,-286.2 1795.36,-286.2 1795.36,-298.2 1795.36,-298.2 1795.36,-304.2 1789.36,-310.2 1783.36,-310.2"/>
-<text xml:space="preserve" text-anchor="start" x="1660.38" y="-292.47" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">{kind}_pool_{NAME}_fs</text>
-<text xml:space="preserve" text-anchor="start" x="1654" y="-284.35" font-family="Helvetica,sans-Serif" font-size="8.00">within&#45;kind WTM (cross&#45;kind omitted)</text>
+<text xml:space="preserve" text-anchor="start" x="1660.38" y="-292.47" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#2c3539">{kind}_pool_{NAME}_fs</text>
+<text xml:space="preserve" text-anchor="start" x="1654" y="-284.35" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#2c3539">within&#45;kind WTM (cross&#45;kind omitted)</text>
 </g>
 <!-- verb&#45;&gt;poolfs -->
 <g id="edge25" class="edge">
@@ -490,8 +490,8 @@
 <g id="node18" class="node">
 <title>dgb</title>
 <path fill="#d5f5e3" stroke="#145a32" stroke-width="2.2" d="M2532.74,-457.78C2532.74,-457.78 2465.26,-457.78 2465.26,-457.78 2459.26,-457.78 2453.26,-451.78 2453.26,-445.78 2453.26,-445.78 2453.26,-433.78 2453.26,-433.78 2453.26,-427.78 2459.26,-421.78 2465.26,-421.78 2465.26,-421.78 2532.74,-421.78 2532.74,-421.78 2538.74,-421.78 2544.74,-427.78 2544.74,-433.78 2544.74,-433.78 2544.74,-445.78 2544.74,-445.78 2544.74,-451.78 2538.74,-457.78 2532.74,-457.78"/>
-<text xml:space="preserve" text-anchor="start" x="2462.62" y="-440.06" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">dg_pv_basket</text>
-<text xml:space="preserve" text-anchor="start" x="2473.12" y="-431.93" font-family="Helvetica,sans-Serif" font-size="8.00">FFi → sparsity</text>
+<text xml:space="preserve" text-anchor="start" x="2462.62" y="-440.06" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#0a3d20">dg_pv_basket</text>
+<text xml:space="preserve" text-anchor="start" x="2473.12" y="-431.93" font-family="Helvetica,sans-Serif" font-size="8.00" fill="#0a3d20">FFi → sparsity</text>
 </g>
 <!-- ec&#45;&gt;dgb -->
 <g id="edge7" class="edge">
@@ -503,9 +503,9 @@
 <!-- ca1 -->
 <g id="node20" class="node">
 <title>ca1</title>
-<path fill="#d4efdf" stroke="#239b56" stroke-width="1.4" d="M2556.49,-56.29C2556.49,-56.29 2493.51,-56.29 2493.51,-56.29 2487.51,-56.29 2481.51,-50.29 2481.51,-44.29 2481.51,-44.29 2481.51,-32.29 2481.51,-32.29 2481.51,-26.29 2487.51,-20.29 2493.51,-20.29 2493.51,-20.29 2556.49,-20.29 2556.49,-20.29 2562.49,-20.29 2568.49,-26.29 2568.49,-32.29 2568.49,-32.29 2568.49,-44.29 2568.49,-44.29 2568.49,-50.29 2562.49,-56.29 2556.49,-56.29"/>
-<text xml:space="preserve" text-anchor="start" x="2490.88" y="-35.31" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">ca1</text>
-<text xml:space="preserve" text-anchor="start" x="2508.88" y="-35.31" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(readout)</text>
+<path fill="#d4efdf" stroke="#1d8049" stroke-width="1.4" d="M2556.49,-56.29C2556.49,-56.29 2493.51,-56.29 2493.51,-56.29 2487.51,-56.29 2481.51,-50.29 2481.51,-44.29 2481.51,-44.29 2481.51,-32.29 2481.51,-32.29 2481.51,-26.29 2487.51,-20.29 2493.51,-20.29 2493.51,-20.29 2556.49,-20.29 2556.49,-20.29 2562.49,-20.29 2568.49,-26.29 2568.49,-32.29 2568.49,-32.29 2568.49,-44.29 2568.49,-44.29 2568.49,-50.29 2562.49,-56.29 2556.49,-56.29"/>
+<text xml:space="preserve" text-anchor="start" x="2490.88" y="-35.31" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#0f3d23">ca1</text>
+<text xml:space="preserve" text-anchor="start" x="2508.88" y="-35.31" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#0f3d23"> &#160;(readout)</text>
 </g>
 <!-- ec&#45;&gt;ca1 -->
 <g id="edge9" class="edge">
@@ -517,9 +517,9 @@
 <!-- ca3 -->
 <g id="node19" class="node">
 <title>ca3</title>
-<path fill="#d4efdf" stroke="#239b56" stroke-width="1.4" d="M2437.99,-203.87C2437.99,-203.87 2342.01,-203.87 2342.01,-203.87 2336.01,-203.87 2330.01,-197.87 2330.01,-191.87 2330.01,-191.87 2330.01,-179.87 2330.01,-179.87 2330.01,-173.87 2336.01,-167.87 2342.01,-167.87 2342.01,-167.87 2437.99,-167.87 2437.99,-167.87 2443.99,-167.87 2449.99,-173.87 2449.99,-179.87 2449.99,-179.87 2449.99,-191.87 2449.99,-191.87 2449.99,-197.87 2443.99,-203.87 2437.99,-203.87"/>
-<text xml:space="preserve" text-anchor="start" x="2339.38" y="-182.89" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50">ca3</text>
-<text xml:space="preserve" text-anchor="start" x="2357.38" y="-182.89" font-family="Helvetica,sans-Serif" font-size="10.50"> &#160;(autoassociator)</text>
+<path fill="#d4efdf" stroke="#1d8049" stroke-width="1.4" d="M2437.99,-203.87C2437.99,-203.87 2342.01,-203.87 2342.01,-203.87 2336.01,-203.87 2330.01,-197.87 2330.01,-191.87 2330.01,-191.87 2330.01,-179.87 2330.01,-179.87 2330.01,-173.87 2336.01,-167.87 2342.01,-167.87 2342.01,-167.87 2437.99,-167.87 2437.99,-167.87 2443.99,-167.87 2449.99,-173.87 2449.99,-179.87 2449.99,-179.87 2449.99,-191.87 2449.99,-191.87 2449.99,-197.87 2443.99,-203.87 2437.99,-203.87"/>
+<text xml:space="preserve" text-anchor="start" x="2339.38" y="-182.89" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.50" fill="#0f3d23">ca3</text>
+<text xml:space="preserve" text-anchor="start" x="2357.38" y="-182.89" font-family="Helvetica,sans-Serif" font-size="10.50" fill="#0f3d23"> &#160;(autoassociator)</text>
 </g>
 <!-- dg&#45;&gt;ca3 -->
 <g id="edge10" class="edge">

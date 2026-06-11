@@ -2,7 +2,7 @@
 //  NAVIGATION BRAIN — exhaustive as-implemented graph
 //  build_bg_brain_regions()  (research/runners/g11_bg_runner.py)
 //  Source spec: research/findings/2026-06-09-brain-architecture-flowchart-spec.md §2,§3
-//  Render: dot -Tpng -Gdpi=150 brain_navigation.dot -o brain_navigation.png
+//  Render: dot -Tpng -Gdpi=140 brain_navigation.dot -o brain_navigation.png
 //          dot -Tsvg          brain_navigation.dot -o brain_navigation.svg
 //
 //  EVERY region TYPE and EVERY distinct pathway TYPE. Per-action pools are
@@ -61,6 +61,26 @@ digraph NavigationBrain {
     }
 
     // ====================================================================
+    //  C5 (N1) — SPIKING SUPERIOR COLLICULUS  (retinotopic orienting reflex)
+    //  Distinct from the sel/commit decision accumulator (also C5, below):
+    //  this is the orienting BUMP that reads the goal's retinal site and
+    //  pools it into a cardinal — the spiking replacement for the host reflex.
+    // ====================================================================
+    subgraph cluster_sc_orient {
+        label=<<B>Superior colliculus — orienting</B>  (C5 · N1 · --enable-spiking-sc)>;
+        style="rounded,filled,dashed"; color="#7d3c98"; fillcolor="#f5eef8"; fontcolor="#6c3483"; fontsize=13; margin=12;
+        scret  [label=<<B>sc_retina</B><BR/><FONT POINT-SIZE="8.5">SC's own egocentric eye<BR/>⚠ host-rendered retinal image</FONT>>, style="rounded,filled,dashed", fillcolor="#f4ecf7", color="#7d3c98"];
+        scmap  [label=<<B>sc_map</B><BR/><FONT POINT-SIZE="8.5">retinotopic sheet · single bump<BR/>at the goal's retinal site</FONT>>, fillcolor="#e8daef", color="#6c3483", penwidth=1.6];
+        scfs   [label=<<B>sc_fs</B><BR/><FONT POINT-SIZE="8.5">Mexican-hat surround (sharpens bump)</FONT>>, fillcolor="#ebdef0", color="#4a235a", penwidth=2.2];
+        scros  [label=<<B>sc_rostral</B>  (opt · N5)<BR/><FONT POINT-SIZE="8.5">pools bump CENTRE → proximity (the reward r)</FONT>>, style="rounded,filled,dashed", fillcolor="#f4ecf7", color="#6c3483"];
+        scret -> scmap [label="retinotopic pool\n(2×2 RF)"];
+        scmap -> scmap [label="⟲ short-range exc", color="#1e8449", penwidth=1.5, fontcolor="#1e8449"];
+        scmap -> scfs  [label="drive surround"];
+        scfs  -> scmap [label="surround ⊣ (bump)", arrowhead=tee, color="#922b21"];
+        scmap -> scros [label="centre pool", style=dashed];
+    }
+
+    // ====================================================================
     //  C2 — SENSORIMOTOR CORTEX  (M1 channels)
     // ====================================================================
     subgraph cluster_cortex {
@@ -100,11 +120,15 @@ digraph NavigationBrain {
     //  C6 — REWARD & DOPAMINE (midbrain)
     // ====================================================================
     subgraph cluster_reward {
-        label=<<B>Reward &amp; dopamine</B>  (C6 · spiking actor-critic)>;
+        label=<<B>Reward &amp; dopamine</B>  (C6 · spiking actor-critic · δ=r−V in neurons)>;
         style="rounded,filled"; color="#b9770e"; fillcolor="#fef9e7"; fontcolor="#9a7d0a"; fontsize=13; margin=12;
-        snc    [label=<<B>snc</B>  (A9 dopamine)<BR/><FONT POINT-SIZE="8.5">E_GABA=−55, no KCC2<BR/>FIRING = RPE δ=r−V<BR/>⚠ A9+VTA collapsed · global scalar</FONT>>, fillcolor="#f9e79f", color="#b9770e", penwidth=1.8];
-        vcrit  [label=<<B>striosome_value</B>  (opt)<BR/><FONT POINT-SIZE="8.5">MSN-D1 value critic V(s)<BR/>per-region homeostasis</FONT>>, style="rounded,filled,dashed", fillcolor="#fdebd0", color="#7e3300", penwidth=2.2];
-        vplace [label=<<B>vs_place_context</B>  (opt)<BR/><FONT POINT-SIZE="8.5">dense grid-32 place afferent<BR/>⚠ host-rendered place code</FONT>>, style="rounded,filled,dashed", fillcolor="#fdebd0", color="#ca6f1e"];
+        snc    [label=<<B>snc</B>  (A9 dopamine)<BR/><FONT POINT-SIZE="8.5">E_GABA=−55, no KCC2<BR/>FIRING = RPE δ=r−V<BR/>⚠ A9+VTA collapsed · global scalar</FONT>>, fillcolor="#f9e79f", color="#b9770e", fontcolor="#5b3a10", penwidth=1.8];
+        rus    [label=<<B>reward_us</B>  (opt · N5)<BR/><FONT POINT-SIZE="8.5">PPN-like US afferent → SNc burst<BR/>FIRES the reward r (drops the host write)</FONT>>, style="rounded,filled,dashed", fillcolor="#fdebd0", color="#9a6608"];
+        vcrit  [label=<<B>striosome_value</B>  (opt)<BR/><FONT POINT-SIZE="8.5">MSN-D1 value critic V(s)<BR/>per-region homeostasis</FONT>>, style="rounded,filled,dashed", fillcolor="#fdebd0", color="#7e3300", fontcolor="#4a1f00", penwidth=2.2];
+        placecode [label=<<B>place</B>  (opt · N9)<BR/><FONT POINT-SIZE="8.5">self-organized spiking place code<BR/>(place_sensors → place ⟲) → the critic afferent</FONT>>, style="rounded,filled,dashed", fillcolor="#fdebd0", color="#9a6608"];
+        placefs[label=<<B>place_fs</B>  (opt · N9)<BR/><FONT POINT-SIZE="8.5">FS-PING clamp → critic rate-normalize</FONT>>, style="rounded,filled,dashed", fillcolor="#fceee0", color="#7e3300", penwidth=2.2];
+        placecode -> placefs [label="drive FS"];
+        placefs -> placecode [label="γ-clamp ⊣", arrowhead=tee, color="#922b21"];
     }
 
     // ====================================================================
@@ -118,10 +142,11 @@ digraph NavigationBrain {
     }
 
     // ====================================================================
-    //  C5 — SUPERIOR COLLICULUS / orienting (accumulate → commit)
+    //  C5 — DECISION ACCUMULATOR → COMMIT  (the spiking-WTA action readout)
+    //  (the SC ORIENTING reflex is the separate cluster_sc_orient, above)
     // ====================================================================
     subgraph cluster_sc {
-        label=<<B>Superior colliculus / orienting</B>  (C5 · --readout-source spiking_wta)>;
+        label=<<B>SC accumulate → commit</B>  (C5 · spiking-WTA readout · --readout-source spiking_wta)>;
         style="rounded,filled,dashed"; color="#7d3c98"; fillcolor="#f5eef8"; fontcolor="#7d3c98"; fontsize=13; margin=12;
         sel    [label=<<B>sel_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">NMDA accumulator (Wang-2002)<BR/>soft-WTA α&lt;1</FONT>>, fillcolor="#e8daef", color="#6c3483", penwidth=1.6];
         selFS  [label=<<B>sel_FS_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">structured cross-pool WTA</FONT>>, fillcolor="#ebdef0", color="#4a235a", penwidth=2.2];
@@ -189,6 +214,7 @@ digraph NavigationBrain {
     beacon   -> goal   [label="beacon_to_goal", fontcolor="#1f618d", style=dashed];
     landmark -> place  [label="landmark_to_place", fontcolor="#1f618d", style=dashed];
     it       -> cortex [label="visual→action\nvisual_cortex_action (gated)", color="#3d6fb4", fontcolor="#3d6fb4"];
+    scmap    -> cortex [label="ORIENT → cardinal\nsc_map→cortex (winner BY FIRING)", color="#7d3c98", fontcolor="#6c3483", penwidth=1.8];
     dlpfc    -> cortex [label="WM bias\ndlpfc_wm_pathways", fontcolor="#1f618d"];
     goal     -> dlpfc  [label="goal→WM\ndlpfc_wm_pathways", fontcolor="#1f618d"];
 
@@ -214,11 +240,14 @@ digraph NavigationBrain {
     cortex -> stn [label="HYPERDIRECT (opt)\nNambu fast stop", color="#1e8449", style=dashed, constraint=false];
     gpi  -> thal [label="BG OUTPUT gate\n(tonic ⊣; D1 silence releases)", arrowhead=tee, color="#922b21", penwidth=2.4];
 
-    // -- 3B/3D reward drive + value subtraction --
+    // -- 3B/3D reward drive + value subtraction (the spiking actor-critic δ=r−V) --
     strio  -> snc  [label="striosome→SNc\n(drives phasic DA)", arrowhead=tee, color="#922b21"];
     strio  -> gpi  [label="patch→SNr", arrowhead=tee, color="#cd6155", style=dashed, constraint=false];
     gpi    -> snc  [label="SNr→SNc collateral\n(disinhibition)", arrowhead=tee, color="#cd6155", style=dashed, constraint=false];
-    vplace -> vcrit[label="learn V(s)\nvalue_input", fontcolor="#9a7d0a"];
+    scros  -> rus  [label="proximity → reward r\n(N5 neural reward)", style=dashed, fontcolor="#9a6608", constraint=false];
+    rus    -> snc  [label="US→SNc  r  (excitatory)\nspiking reward burst", penwidth=2.0, fontcolor="#9a6608"];
+    placecode -> vcrit[label="learn V(s)\nvalue_input (coincidence)", fontcolor="#9a7d0a"];
+    placefs-> vcrit[label="FS-PING clamp\n(critic rate-normalize)", arrowhead=tee, color="#922b21", style=dashed, constraint=false];
     vcrit  -> snc  [label="VALUE SUBTRACTION  r−V\nGABA_B/GIRK ⊟critic_snc_window", arrowhead=tee, color="#7d3c98", style=dashed, penwidth=2.6, fontcolor="#7d3c98"];
 
     // -- DA modulatory broadcast (NOT a synapse) --
@@ -289,8 +318,8 @@ digraph NavigationBrain {
     }
 
     // -- rank guidance: pin the perception→action spine top→bottom ----------
-    { rank=min;  retina; place; goal; sensory; beacon; landmark; }
-    { rank=same; cortex; cortexFS; }
+    { rank=min;  retina; place; goal; sensory; beacon; landmark; scret; }
+    { rank=same; cortex; cortexFS; scmap; scfs; }
     { rank=same; d1; d2; strio; fsi; }
     { rank=same; gpe; arky; gpi; stn; }
     { rank=same; thal; trn; }

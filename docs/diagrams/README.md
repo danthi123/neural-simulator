@@ -11,10 +11,20 @@ assemble almost the entire architecture, gated by opt-in flags. The diagrams
 reflect the **maximal** configuration (every flag on); a given run builds a
 subset.
 
+The two supergroups are now (a) **consolidated** — navigation, the conversational
+parser, the dlPFC, and the resonate-and-fire composer run as disjoint slices on
+*one* `SimulationBridge` — and (b) joined by **one validated functional synapse**:
+the `command_route` transmission gate on a learned `language_input → cortex_{N,E,S,W}`
+route, opened by the conversational parser's firing, so a spoken instruction steers
+the navigation body (spoken-instruction navigation, 6/6-seed GO). That bridge is
+drawn on the master map; the two detail graphs stay scoped to their own builder
+(`command_route` is added by the spoken-instruction runner on top of the navigation
+builder, so it is not part of either exhaustive per-builder graph).
+
 | Diagram | What it shows | Files |
 |---|---|---|
-| **Master map** | Cluster-level overview: the 12 subsystems, the main signal arteries, the two config-scoped supergroups on one engine, the honesty legend. Start here. | [`brain_master.svg`](brain_master.svg) · [`.png`](brain_master.png) · [`.dot`](brain_master.dot) |
-| **Navigation brain** | Exhaustive: every region + every distinct pathway of `build_bg_brain_regions()` — the basal-ganglia action-selection cascade, spiking-SNc actor-critic + neural value critic, thalamus/TRN, superior colliculus, cerebellum, hippocampus, dlPFC. | [`brain_navigation.svg`](brain_navigation.svg) · [`.png`](brain_navigation.png) · [`.dot`](brain_navigation.dot) |
+| **Master map** | Cluster-level overview: the 12 subsystems, the main signal arteries, the two config-scoped supergroups on one engine, the one validated cross-brain synaptic bridge (the parser-gated `command_route`), the honesty legend. Start here. | [`brain_master.svg`](brain_master.svg) · [`.png`](brain_master.png) · [`.dot`](brain_master.dot) |
+| **Navigation brain** | Exhaustive: every region + every distinct pathway of `build_bg_brain_regions()` — the basal-ganglia action-selection cascade, the spiking superior-colliculus orienting reflex (sc_retina→sc_map→cortex), the spiking actor-critic (reward_us → SNc; striosome value critic → SNc via GABA_B), thalamus/TRN, the accumulate→commit decision layer, cerebellum, hippocampus, dlPFC. | [`brain_navigation.svg`](brain_navigation.svg) · [`.png`](brain_navigation.png) · [`.dot`](brain_navigation.dot) |
 | **Conversational brain** | Exhaustive: every region + every distinct pathway of `build_biological_brain_regions()` — language I/O, Wernicke pools, semantic cortex, Broca, concept pools, multimodal hub, hippocampal consolidation, dlPFC verb working memory. | [`brain_conversational.svg`](brain_conversational.svg) · [`.png`](brain_conversational.png) · [`.dot`](brain_conversational.dot) |
 
 > The two detail graphs are **dense by design** — the goal was every distinct
