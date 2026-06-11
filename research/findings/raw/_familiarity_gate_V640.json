@@ -1,0 +1,156 @@
+{
+  "probe": "familiarity_gate_v320_validation",
+  "V": 640,
+  "D": 128,
+  "n_facts": 60,
+  "abstention_floor_per_query_type": 24,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "verdict": "GO",
+  "multiseed_total_floor_false_accepts": 0,
+  "mean_separation_margin": 0.5598701771054294,
+  "gates": {
+    "all_zero_false_accepts": true,
+    "robust_threshold_window": true,
+    "lesion_collapses": true,
+    "perfect_agreement_at_midpoint": true,
+    "abstention_floor_size_ok": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 640,
+      "D": 128,
+      "n_facts": 60,
+      "n_known_cues": 120,
+      "n_unknown_cues": 48,
+      "n_unknown_ap": 24,
+      "n_unknown_aa": 24,
+      "between_code_phase_cos": {
+        "mean": -5.828246525042755e-05,
+        "max": 0.23010935501032476,
+        "min": -0.2661067003480534
+      },
+      "novelty_host_accept_mean": -4.625929269271486e-17,
+      "novelty_host_accept_max": 2.220446049250313e-16,
+      "novelty_host_abstain_mean": 0.7399545997257784,
+      "novelty_host_abstain_min": 0.5730925546704846,
+      "separation_margin": 0.5730925546704844,
+      "threshold_midpoint": 0.2865462773352424,
+      "confusion_at_midpoint": {
+        "host_accept_gate_accept": 120,
+        "host_accept_gate_abstain": 0,
+        "host_abstain_gate_accept": 0,
+        "host_abstain_gate_abstain": 48,
+        "n": 168,
+        "n_agree": 168,
+        "agreement": 1.0
+      },
+      "abstention_floor_n": 48,
+      "abstention_floor_false_accepts_at_midpoint": 0,
+      "agreement_at_midpoint": 1.0,
+      "threshold_window": {
+        "lo": 0.01054258801688633,
+        "hi": 0.5693527529118735,
+        "width": 0.5588101648949871,
+        "exists": true,
+        "n_thresholds": 54
+      },
+      "lesion_margin": -1.1102230246251565e-16,
+      "lesion_collapsed": true,
+      "lesion_known_mean": 0.9999999999998228,
+      "lesion_unknown_mean": 0.9999999999998231
+    },
+    {
+      "seed": 43,
+      "V": 640,
+      "D": 128,
+      "n_facts": 60,
+      "n_known_cues": 120,
+      "n_unknown_cues": 48,
+      "n_unknown_ap": 24,
+      "n_unknown_aa": 24,
+      "between_code_phase_cos": {
+        "mean": 0.000333040312777101,
+        "max": 0.2524494103430026,
+        "min": -0.2504938746957758
+      },
+      "novelty_host_accept_mean": -3.8857805861880476e-17,
+      "novelty_host_accept_max": 2.220446049250313e-16,
+      "novelty_host_abstain_mean": 0.7265980252899643,
+      "novelty_host_abstain_min": 0.5619270337487573,
+      "separation_margin": 0.5619270337487571,
+      "threshold_midpoint": 0.28096351687437876,
+      "confusion_at_midpoint": {
+        "host_accept_gate_accept": 120,
+        "host_accept_gate_abstain": 0,
+        "host_abstain_gate_accept": 0,
+        "host_abstain_gate_abstain": 48,
+        "n": 168,
+        "n_agree": 168,
+        "agreement": 1.0
+      },
+      "abstention_floor_n": 48,
+      "abstention_floor_false_accepts_at_midpoint": 0,
+      "agreement_at_midpoint": 1.0,
+      "threshold_window": {
+        "lo": 0.010278532422756493,
+        "hi": 0.5550937508288624,
+        "width": 0.5448152184061059,
+        "exists": true,
+        "n_thresholds": 54
+      },
+      "lesion_margin": -1.1102230246251565e-16,
+      "lesion_collapsed": true,
+      "lesion_known_mean": 0.9999999999998228,
+      "lesion_unknown_mean": 0.9999999999998231
+    },
+    {
+      "seed": 44,
+      "V": 640,
+      "D": 128,
+      "n_facts": 60,
+      "n_known_cues": 120,
+      "n_unknown_cues": 48,
+      "n_unknown_ap": 24,
+      "n_unknown_aa": 24,
+      "between_code_phase_cos": {
+        "mean": -0.0009124260439740802,
+        "max": 0.21652384013235287,
+        "min": -0.2464128101683762
+      },
+      "novelty_host_accept_mean": -3.8857805861880476e-17,
+      "novelty_host_accept_max": 2.220446049250313e-16,
+      "novelty_host_abstain_mean": 0.739884555774102,
+      "novelty_host_abstain_min": 0.544590942897047,
+      "separation_margin": 0.5445909428970468,
+      "threshold_midpoint": 0.2722954714485236,
+      "confusion_at_midpoint": {
+        "host_accept_gate_accept": 120,
+        "host_accept_gate_abstain": 0,
+        "host_abstain_gate_accept": 0,
+        "host_abstain_gate_abstain": 48,
+        "n": 168,
+        "n_agree": 168,
+        "agreement": 1.0
+      },
+      "abstention_floor_n": 48,
+      "abstention_floor_false_accepts_at_midpoint": 0,
+      "agreement_at_midpoint": 1.0,
+      "threshold_window": {
+        "lo": 0.010539486212226064,
+        "hi": 0.5375637968235403,
+        "width": 0.5270243106113142,
+        "exists": true,
+        "n_thresholds": 51
+      },
+      "lesion_margin": -2.220446049250313e-16,
+      "lesion_collapsed": true,
+      "lesion_known_mean": 0.9999999999998228,
+      "lesion_unknown_mean": 0.9999999999998231
+    }
+  ]
+}
