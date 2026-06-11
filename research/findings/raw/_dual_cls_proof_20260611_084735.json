@@ -1,0 +1,330 @@
+{
+  "summary": {
+    "verdict": "GO",
+    "seeds": [
+      42
+    ],
+    "gates_all_seeds": {
+      "a1": true,
+      "a2": true,
+      "a3": true,
+      "b": true,
+      "c1": true,
+      "c2": true
+    },
+    "probe_a_mean": {
+      "graded_acc": 1.0,
+      "orthogonal_acc": 0.0,
+      "permuted_acc": 0.125,
+      "chance": 0.25
+    },
+    "probe_c_load_bearing_pearson": {
+      "best_at_binding_and_identity_per_seed": [
+        0.891311773667273
+      ],
+      "best_at_binding_and_identity_mean": 0.891311773667273,
+      "best_any_binding_viable_per_seed": [
+        0.891311773667273
+      ],
+      "best_any_binding_viable_mean": 0.891311773667273
+    },
+    "elapsed_total_s": 17.633483409881592
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "graded_stats": {
+        "within_cluster_cos_mean": 0.39463129741450365,
+        "within_cluster_cos_min": 0.2817596586246392,
+        "between_cluster_cos_mean": -0.0011694013237009639,
+        "between_cluster_cos_max": 0.18116196062328532,
+        "graded_margin": 0.3958006987382046,
+        "is_graded": true
+      },
+      "orthogonal_stats": {
+        "within_cluster_cos_mean": -0.0006578947368419731,
+        "within_cluster_cos_min": -0.04210526315788607,
+        "between_cluster_cos_mean": 0.0005864661654134091,
+        "between_cluster_cos_max": 0.10526315789471499,
+        "graded_margin": -0.0012443609022553823,
+        "is_graded": false
+      },
+      "probe_a": {
+        "graded": {
+          "n_heldout": 8,
+          "n_correct": 8,
+          "accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            },
+            {
+              "query": 21,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 1,
+              "correct": true
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 2,
+              "correct": true
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 3,
+              "correct": true
+            }
+          ]
+        },
+        "orthogonal": {
+          "n_heldout": 8,
+          "n_correct": 0,
+          "accuracy": 0.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.0,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 0,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 17,
+              "true_prop": 3,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 21,
+              "true_prop": 0,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            }
+          ]
+        },
+        "permuted": {
+          "n_heldout": 8,
+          "n_correct": 1,
+          "accuracy": 0.125,
+          "chance": 0.25,
+          "ratio_vs_chance": 0.5,
+          "preds": [
+            {
+              "query": 3,
+              "true_prop": 3,
+              "pred_prop": 2,
+              "correct": false
+            },
+            {
+              "query": 9,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 13,
+              "true_prop": 0,
+              "pred_prop": 0,
+              "correct": true
+            },
+            {
+              "query": 17,
+              "true_prop": 1,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 21,
+              "true_prop": 1,
+              "pred_prop": 3,
+              "correct": false
+            },
+            {
+              "query": 27,
+              "true_prop": 2,
+              "pred_prop": 0,
+              "correct": false
+            },
+            {
+              "query": 31,
+              "true_prop": 2,
+              "pred_prop": 1,
+              "correct": false
+            },
+            {
+              "query": 39,
+              "true_prop": 1,
+              "pred_prop": 2,
+              "correct": false
+            }
+          ]
+        },
+        "a1": true,
+        "a2": true,
+        "a3": true,
+        "chance": 0.25
+      },
+      "probe_b": {
+        "gate_a": true,
+        "gate_b": true,
+        "noise_cheat_ok": true,
+        "hopfield_parity_p_le_0p2": {
+          "0.0": 1.0,
+          "0.1": 1.0,
+          "0.2": 1.0
+        },
+        "binding_pass": true
+      },
+      "probe_c": {
+        "sweep": [
+          {
+            "n_pool": 2000,
+            "pattern_size": 400,
+            "flip_frac": 0.1,
+            "expansion_cos_mean": 0.021650641025638667,
+            "expansion_cos_max": 0.35937499999996,
+            "binding_viable": true,
+            "identity_acc": 0.6,
+            "n_identity": 24,
+            "N": 40,
+            "pearson_S_Sround": 0.7501566679832639,
+            "pearson_permuted_baseline": -0.05307383165473733
+          },
+          {
+            "n_pool": 2000,
+            "pattern_size": 200,
+            "flip_frac": 0.1,
+            "expansion_cos_mean": 0.019458689458686534,
+            "expansion_cos_max": 0.29444444444440065,
+            "binding_viable": true,
+            "identity_acc": 0.75,
+            "n_identity": 30,
+            "N": 40,
+            "pearson_S_Sround": 0.7390145127924133,
+            "pearson_permuted_baseline": -0.056447324657959395
+          },
+          {
+            "n_pool": 2000,
+            "pattern_size": 100,
+            "flip_frac": 0.1,
+            "expansion_cos_mean": 0.014885290148444995,
+            "expansion_cos_max": 0.25263157894731686,
+            "binding_viable": true,
+            "identity_acc": 0.625,
+            "n_identity": 25,
+            "N": 40,
+            "pearson_S_Sround": 0.6923621218448843,
+            "pearson_permuted_baseline": -0.05994364621459197
+          },
+          {
+            "n_pool": 4000,
+            "pattern_size": 100,
+            "flip_frac": 0.1,
+            "expansion_cos_mean": 0.011847468770543443,
+            "expansion_cos_max": 0.24102564102559343,
+            "binding_viable": true,
+            "identity_acc": 0.825,
+            "n_identity": 33,
+            "N": 40,
+            "pearson_S_Sround": 0.7954803926805095,
+            "pearson_permuted_baseline": -0.03715477244278196
+          },
+          {
+            "n_pool": 8000,
+            "pattern_size": 100,
+            "flip_frac": 0.1,
+            "expansion_cos_mean": 0.008919182083737289,
+            "expansion_cos_max": 0.17974683544300205,
+            "binding_viable": true,
+            "identity_acc": 1.0,
+            "n_identity": 40,
+            "N": 40,
+            "pearson_S_Sround": 0.891311773667273,
+            "pearson_permuted_baseline": -0.06220370769850413
+          }
+        ],
+        "c1": true,
+        "c2": true,
+        "best_pearson_at_binding_identity": 0.891311773667273,
+        "best_point": {
+          "n_pool": 8000,
+          "pattern_size": 100,
+          "identity_acc": 1.0,
+          "pearson": 0.891311773667273,
+          "expansion_cos_mean": 0.008919182083737289
+        },
+        "best_pearson_any_binding_viable": 0.891311773667273
+      },
+      "gates": {
+        "a1": true,
+        "a2": true,
+        "a3": true,
+        "b": true,
+        "c1": true,
+        "c2": true
+      }
+    }
+  }
+}
