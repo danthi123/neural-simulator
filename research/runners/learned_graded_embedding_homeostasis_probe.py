@@ -623,8 +623,14 @@ def run_seed(seed: int, args) -> dict:
             perm_grad = codebook_similarity_stats(perm_codes, labels)
             perm_gen = float(run_generalization(perm_codes, labels, props, nclu, pclu, seed,
                                                 args.k_neighbours)["accuracy"])
+            # G5 robust (fixed 2026-06-12): gate on the permuted 2nd-order MARGIN threshold, NOT the
+            # bare `not perm_grad["is_graded"]` boolean. The is_graded flag is a within>between cosine
+            # COIN-FLIP on a structureless permuted matrix (it spuriously flipped seed-43 to BOUNDARY
+            # even though the permuted Pearson + margin both collapsed) -- the margin (< so_margin_bar)
+            # is the robust structureless test.
             g5_permco = bool(abs(perm_rec["pearson_learned_vs_Strue"]) < args.g1_bar * 0.6
-                             and not perm_grad["is_graded"] and perm_gen <= 1.5 * chance)
+                             and perm_rec["second_order_margin"] < args.so_margin_bar
+                             and perm_gen <= 1.5 * chance)
             gates_ok = bool(g1_ok and gen["a1"] and gen["a2"] and gen["a3"] and g5_permco and W_distinct)
             gate_reconfirm[str(cyc)] = {
                 "pearson_W_vs_rawcounts": pearson_W_counts,
