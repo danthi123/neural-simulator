@@ -550,32 +550,36 @@ def _strip_shard(name):
 # ===========================================================================
 def cross_bridge_eval(graded_bridges, cross_facts, seed, args, permuted=False):
     """graded_bridges: {shard -> GradedBridge}. cross_facts: list of (cue_full,
-    target_full) namespaced concept pairs. If permuted, the target each cue binds to
-    is SHUFFLED (the M7 anti-cheat). Returns the recall stats."""
+    target_full) namespaced concept pairs.
+
+    Always STORES the TRUE facts (only on the permuted=False / M3 call; the permuted=True /
+    M7 call REUSES the M3-stored bridges so it tests the SAME stored links). The M7 anti-cheat
+    scores recall against a RANDOM WRONG target (a concept != the true target, in the SAME
+    target bridge): a genuine cross-bridge link retrieves the TRUE target specifically, so a
+    wrong target ranks ~median (signal/floor ~1x, top-2 ~ chance) and the control COLLAPSES.
+
+    (FIXED 2026-06-12: the earlier version permuted the STORED cue->target mapping AND scored
+    that same permuted mapping on the shared bridges -> it trivially recalled what it stored ->
+    could NOT collapse by construction, so it was not a valid control. The correct test keeps
+    the stored mapping TRUE and asks whether a cue retrieves a WRONG target -- it must not.)"""
     rng = np.random.RandomState(seed * 99 + (7 if permuted else 0))
     facts = list(cross_facts)
-    if permuted:
-        targets = [t for (_c, t) in facts]
-        perm = rng.permutation(len(targets))
-        # ensure the permutation actually deranges (no cue keeps its true target) when possible
-        if len(targets) > 1 and all(perm[i] == i for i in range(len(targets))):
-            perm = np.roll(perm, 1)
-        facts = [(facts[i][0], targets[perm[i]]) for i in range(len(facts))]
 
-    results = []
-    for (cue_full, tgt_full) in facts:
-        cue_shard, cue_local = _strip_shard(cue_full)
-        tgt_shard, tgt_local = _strip_shard(tgt_full)
-        if cue_shard not in graded_bridges or tgt_shard not in graded_bridges:
-            continue
-        tag = f"{cue_full}__{tgt_full}"
-        # store the fact in BOTH bridges (V-tag distributed key-value: each bridge
-        # imprints its own concept's pattern under the shared tag name).
-        graded_bridges[cue_shard].encode_tag(tag, [cue_local])
-        graded_bridges[tgt_shard].encode_tag(tag, [tgt_local])
+    # store the TRUE facts ONCE (the M3 / permuted=False call). M7 reuses these stored bridges.
+    if not permuted:
+        for (cue_full, tgt_full) in facts:
+            cue_shard, cue_local = _strip_shard(cue_full)
+            tgt_shard, tgt_local = _strip_shard(tgt_full)
+            if cue_shard not in graded_bridges or tgt_shard not in graded_bridges:
+                continue
+            tag = f"{cue_full}__{tgt_full}"
+            # V-tag distributed key-value: each bridge imprints its own concept's pattern
+            # under the shared tag name.
+            graded_bridges[cue_shard].encode_tag(tag, [cue_local])
+            graded_bridges[tgt_shard].encode_tag(tag, [tgt_local])
 
-    # recall: for each TRUE cross-bridge fact, find tags containing the cue, stim them,
-    # read the target bridge's recall vector, check the target concept.
+    # recall: for each TRUE cross-bridge fact, find tags containing the cue, stim them, read the
+    # target bridge's recall vector. M3 scores the TRUE target; M7 scores a RANDOM WRONG target.
     n_top1 = n_top2 = 0
     margins = []
     signal_vs_floor = []
@@ -595,18 +599,26 @@ def cross_bridge_eval(graded_bridges, cross_facts, seed, args, permuted=False):
         for t in matches:
             agg += tgt_bridge.recall_rates(t)
         order = np.argsort(-agg)
-        tgt_idx = tgt_bridge.idx[tgt_local]
-        rank = int(np.where(order == tgt_idx)[0][0])
+        true_idx = tgt_bridge.idx[tgt_local]
+        # M7 anti-cheat: score a RANDOM WRONG concept in the SAME target bridge (not the true
+        # target). A real link retrieves the true target, so a wrong target ranks ~median.
+        if permuted:
+            wrong_choices = [i for i in range(len(tgt_bridge.concepts)) if i != true_idx]
+            score_idx = int(rng.choice(wrong_choices)) if wrong_choices else true_idx
+        else:
+            score_idx = true_idx
+        rank = int(np.where(order == score_idx)[0][0])
         n_top1 += int(rank == 0)
         n_top2 += int(rank <= 1)
-        # noise floor = mean of the non-top, non-target rates; signal = target rate
-        sig = float(agg[tgt_idx])
+        # noise floor = median rate; signal = the SCORED concept's rate
+        sig = float(agg[score_idx])
         floor = float(np.median(agg)) if agg.size else 0.0
-        best_other = float(max((agg[i] for i in range(len(agg)) if i != tgt_idx), default=0.0))
+        best_other = float(max((agg[i] for i in range(len(agg)) if i != score_idx), default=0.0))
         margins.append(sig - best_other)
         signal_vs_floor.append(sig / (floor + 1e-9))
-        detail.append({"cue": cue_full, "target": tgt_full, "rank": rank,
-                       "target_rate": sig, "noise_floor": floor, "best_other": best_other})
+        detail.append({"cue": cue_full, "target": tgt_full, "scored_idx": int(score_idx),
+                       "rank": rank, "scored_rate": sig, "noise_floor": floor,
+                       "best_other": best_other})
 
     n = len(detail)
     top2_frac = (n_top2 / n) if n else 0.0
