@@ -1,0 +1,2662 @@
+{
+  "aggregate": {
+    "seeds": [
+      "42",
+      "43",
+      "44"
+    ],
+    "mode": "full",
+    "precondition": {
+      "M1_all_GO": true,
+      "M1_no_NEGATIVE": true,
+      "A2_collapses": true,
+      "A3_collapses": true,
+      "M2_all_GO": true,
+      "M2_no_NEGATIVE": true,
+      "G5_robust_collapses": true,
+      "M6_random_shard_collapses": true
+    },
+    "cross": {
+      "M3_all_GO": true,
+      "M3_no_NEGATIVE": true,
+      "M7_permuted_collapses": true
+    },
+    "moat": {
+      "M4_moat_intact": true,
+      "M4_lesion_collapses": true
+    },
+    "verdict": "GO"
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "mode": "full",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles",
+        "tools",
+        "clothes",
+        "furniture",
+        "plants",
+        "weather"
+      ],
+      "per_bridge_gates": [
+        {
+          "shard": "animals",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 127.41147255897522,
+          "recurrent_mean": 0.3395093083381653,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.8128849136869721,
+          "pearson_W_vs_rawcounts": 0.7760179430563741,
+          "second_order_margin": 0.5071162279505224,
+          "is_graded": true,
+          "within_cos": 0.885031438764919,
+          "between_cos": 0.3799989834600889,
+          "m2_band": "GO",
+          "generalization": 0.9875,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.95,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.2,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.015193526836077859,
+          "permuted_pearson_vs_Strue": 0.031194007540648615,
+          "permuted_generalization": 0.2375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "foods",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 119.25376725196838,
+          "recurrent_mean": 0.34303346276283264,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.8066023314813054,
+          "pearson_W_vs_rawcounts": 0.769614363779639,
+          "second_order_margin": 0.49634087607139865,
+          "is_graded": true,
+          "within_cos": 0.8926135538909136,
+          "between_cos": 0.397193695168228,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.15625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.00877018865775625,
+          "permuted_pearson_vs_Strue": 0.013587193902966511,
+          "permuted_generalization": 0.3375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "vehicles",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 119.41573286056519,
+          "recurrent_mean": 0.33819422125816345,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7896719135874046,
+          "pearson_W_vs_rawcounts": 0.7748831166099225,
+          "second_order_margin": 0.5053690176608281,
+          "is_graded": true,
+          "within_cos": 0.8849339276291243,
+          "between_cos": 0.38260016581102124,
+          "m2_band": "GO",
+          "generalization": 0.99375,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.975,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.0625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.009664583282356823,
+          "permuted_pearson_vs_Strue": 0.024071737347928664,
+          "permuted_generalization": 0.2625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "tools",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 118.6021978855133,
+          "recurrent_mean": 0.33473098278045654,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7391275174169848,
+          "pearson_W_vs_rawcounts": 0.7735429787155595,
+          "second_order_margin": 0.47885290619159454,
+          "is_graded": true,
+          "within_cos": 0.8744189681902333,
+          "between_cos": 0.39396262741558213,
+          "m2_band": "GO",
+          "generalization": 0.9875,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.95,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.11875,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.012467847169024854,
+          "permuted_pearson_vs_Strue": 0.027900737413961787,
+          "permuted_generalization": 0.3625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "clothes",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 122.72370719909668,
+          "recurrent_mean": 0.33693715929985046,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7830683668288744,
+          "pearson_W_vs_rawcounts": 0.7698162791909251,
+          "second_order_margin": 0.4924658207543627,
+          "is_graded": true,
+          "within_cos": 0.8855440655194097,
+          "between_cos": 0.39436298579227175,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.16875,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.012140328282750856,
+          "permuted_pearson_vs_Strue": 0.02306394244823251,
+          "permuted_generalization": 0.275,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "furniture",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 127.14135003089905,
+          "recurrent_mean": 0.34106385707855225,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7787839148722652,
+          "pearson_W_vs_rawcounts": 0.7814377869546933,
+          "second_order_margin": 0.4990732251619332,
+          "is_graded": true,
+          "within_cos": 0.8833897654369645,
+          "between_cos": 0.3813590993992514,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.1875,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.007196118206516666,
+          "permuted_pearson_vs_Strue": 0.014539708615128011,
+          "permuted_generalization": 0.2375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "plants",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 123.57168865203857,
+          "recurrent_mean": 0.33786725997924805,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7870423851434447,
+          "pearson_W_vs_rawcounts": 0.7800995080524029,
+          "second_order_margin": 0.5061957701160353,
+          "is_graded": true,
+          "within_cos": 0.8870277653931804,
+          "between_cos": 0.37964847091989773,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.1875,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.006019651168352347,
+          "permuted_pearson_vs_Strue": 0.013497988874254123,
+          "permuted_generalization": 0.29375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "weather",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 131.3625934123993,
+          "recurrent_mean": 0.3405776619911194,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.774185501626424,
+          "pearson_W_vs_rawcounts": 0.7752109217071548,
+          "second_order_margin": 0.4922152117996425,
+          "is_graded": true,
+          "within_cos": 0.8854413085873265,
+          "between_cos": 0.39370313548248076,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.15625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.009409709696086233,
+          "permuted_pearson_vs_Strue": 0.01874653758525753,
+          "permuted_generalization": 0.3125,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        }
+      ],
+      "m6_random_shard": {
+        "n_random_members": 64,
+        "n_facts": 5,
+        "random_shard_generalization": 0.2125,
+        "chance": 0.25,
+        "m6_collapses_to_chance": true
+      },
+      "cross_facts": [
+        [
+          "tools.c3_m0",
+          "clothes.c1_m0"
+        ],
+        [
+          "weather.c0_m4",
+          "plants.c6_m4"
+        ],
+        [
+          "foods.c2_m4",
+          "vehicles.c1_m6"
+        ],
+        [
+          "tools.c2_m0",
+          "furniture.c3_m2"
+        ],
+        [
+          "furniture.c7_m0",
+          "vehicles.c6_m7"
+        ],
+        [
+          "plants.c3_m0",
+          "foods.c5_m2"
+        ],
+        [
+          "clothes.c0_m2",
+          "foods.c6_m3"
+        ],
+        [
+          "vehicles.c0_m1",
+          "tools.c1_m6"
+        ],
+        [
+          "vehicles.c1_m5",
+          "foods.c4_m3"
+        ],
+        [
+          "tools.c2_m1",
+          "weather.c6_m0"
+        ],
+        [
+          "plants.c2_m3",
+          "clothes.c4_m5"
+        ],
+        [
+          "weather.c4_m4",
+          "animals.c5_m1"
+        ],
+        [
+          "furniture.c7_m7",
+          "tools.c0_m4"
+        ],
+        [
+          "clothes.c7_m0",
+          "tools.c7_m0"
+        ],
+        [
+          "plants.c4_m3",
+          "weather.c6_m3"
+        ],
+        [
+          "tools.c1_m0",
+          "furniture.c3_m4"
+        ],
+        [
+          "animals.c5_m0",
+          "weather.c3_m3"
+        ],
+        [
+          "furniture.c5_m1",
+          "tools.c1_m2"
+        ],
+        [
+          "weather.c4_m7",
+          "animals.c7_m4"
+        ],
+        [
+          "vehicles.c0_m2",
+          "foods.c4_m5"
+        ],
+        [
+          "animals.c7_m4",
+          "furniture.c0_m0"
+        ],
+        [
+          "foods.c1_m5",
+          "clothes.c2_m7"
+        ],
+        [
+          "weather.c0_m7",
+          "foods.c1_m3"
+        ],
+        [
+          "tools.c4_m5",
+          "clothes.c2_m4"
+        ]
+      ],
+      "m3_cross_bridge": {
+        "permuted": false,
+        "n_cross_facts": 24,
+        "top1_fraction": 1.0,
+        "top2_fraction": 1.0,
+        "mean_signal_vs_floor": 20.284737818512998,
+        "mean_margin": 1549.2083333333333,
+        "detail": [
+          {
+            "cue": "tools.c3_m0",
+            "target": "clothes.c1_m0",
+            "scored_idx": 16,
+            "rank": 0,
+            "scored_rate": 1695.0,
+            "noise_floor": 90.5,
+            "best_other": 252.0
+          },
+          {
+            "cue": "weather.c0_m4",
+            "target": "plants.c6_m4",
+            "scored_idx": 60,
+            "rank": 0,
+            "scored_rate": 1540.0,
+            "noise_floor": 92.0,
+            "best_other": 211.0
+          },
+          {
+            "cue": "foods.c2_m4",
+            "target": "vehicles.c1_m6",
+            "scored_idx": 22,
+            "rank": 0,
+            "scored_rate": 1880.0,
+            "noise_floor": 109.5,
+            "best_other": 336.0
+          },
+          {
+            "cue": "tools.c2_m0",
+            "target": "furniture.c3_m2",
+            "scored_idx": 34,
+            "rank": 0,
+            "scored_rate": 1783.0,
+            "noise_floor": 84.0,
+            "best_other": 279.0
+          },
+          {
+            "cue": "furniture.c7_m0",
+            "target": "vehicles.c6_m7",
+            "scored_idx": 63,
+            "rank": 0,
+            "scored_rate": 2027.0,
+            "noise_floor": 112.0,
+            "best_other": 312.0
+          },
+          {
+            "cue": "plants.c3_m0",
+            "target": "foods.c5_m2",
+            "scored_idx": 50,
+            "rank": 0,
+            "scored_rate": 1766.0,
+            "noise_floor": 100.5,
+            "best_other": 229.0
+          },
+          {
+            "cue": "clothes.c0_m2",
+            "target": "foods.c6_m3",
+            "scored_idx": 59,
+            "rank": 0,
+            "scored_rate": 1814.0,
+            "noise_floor": 75.5,
+            "best_other": 196.0
+          },
+          {
+            "cue": "vehicles.c0_m1",
+            "target": "tools.c1_m6",
+            "scored_idx": 22,
+            "rank": 0,
+            "scored_rate": 1809.0,
+            "noise_floor": 89.5,
+            "best_other": 206.0
+          },
+          {
+            "cue": "vehicles.c1_m5",
+            "target": "foods.c4_m3",
+            "scored_idx": 43,
+            "rank": 0,
+            "scored_rate": 1895.0,
+            "noise_floor": 76.5,
+            "best_other": 194.0
+          },
+          {
+            "cue": "tools.c2_m1",
+            "target": "weather.c6_m0",
+            "scored_idx": 56,
+            "rank": 0,
+            "scored_rate": 1881.0,
+            "noise_floor": 88.5,
+            "best_other": 190.0
+          },
+          {
+            "cue": "plants.c2_m3",
+            "target": "clothes.c4_m5",
+            "scored_idx": 45,
+            "rank": 0,
+            "scored_rate": 2097.0,
+            "noise_floor": 91.0,
+            "best_other": 441.0
+          },
+          {
+            "cue": "weather.c4_m4",
+            "target": "animals.c5_m1",
+            "scored_idx": 49,
+            "rank": 0,
+            "scored_rate": 1818.0,
+            "noise_floor": 98.0,
+            "best_other": 266.0
+          },
+          {
+            "cue": "furniture.c7_m7",
+            "target": "tools.c0_m4",
+            "scored_idx": 12,
+            "rank": 0,
+            "scored_rate": 1726.0,
+            "noise_floor": 104.5,
+            "best_other": 403.0
+          },
+          {
+            "cue": "clothes.c7_m0",
+            "target": "tools.c7_m0",
+            "scored_idx": 64,
+            "rank": 0,
+            "scored_rate": 1945.0,
+            "noise_floor": 89.5,
+            "best_other": 236.0
+          },
+          {
+            "cue": "plants.c4_m3",
+            "target": "weather.c6_m3",
+            "scored_idx": 59,
+            "rank": 0,
+            "scored_rate": 1788.0,
+            "noise_floor": 80.0,
+            "best_other": 186.0
+          },
+          {
+            "cue": "tools.c1_m0",
+            "target": "furniture.c3_m4",
+            "scored_idx": 36,
+            "rank": 0,
+            "scored_rate": 1816.0,
+            "noise_floor": 92.0,
+            "best_other": 356.0
+          },
+          {
+            "cue": "animals.c5_m0",
+            "target": "weather.c3_m3",
+            "scored_idx": 35,
+            "rank": 0,
+            "scored_rate": 1874.0,
+            "noise_floor": 91.0,
+            "best_other": 339.0
+          },
+          {
+            "cue": "furniture.c5_m1",
+            "target": "tools.c1_m2",
+            "scored_idx": 18,
+            "rank": 0,
+            "scored_rate": 1791.0,
+            "noise_floor": 72.0,
+            "best_other": 269.0
+          },
+          {
+            "cue": "weather.c4_m7",
+            "target": "animals.c7_m4",
+            "scored_idx": 68,
+            "rank": 0,
+            "scored_rate": 1714.0,
+            "noise_floor": 97.5,
+            "best_other": 244.0
+          },
+          {
+            "cue": "vehicles.c0_m2",
+            "target": "foods.c4_m5",
+            "scored_idx": 45,
+            "rank": 0,
+            "scored_rate": 2026.0,
+            "noise_floor": 83.5,
+            "best_other": 398.0
+          },
+          {
+            "cue": "animals.c7_m4",
+            "target": "furniture.c0_m0",
+            "scored_idx": 8,
+            "rank": 0,
+            "scored_rate": 1751.0,
+            "noise_floor": 83.0,
+            "best_other": 238.0
+          },
+          {
+            "cue": "foods.c1_m5",
+            "target": "clothes.c2_m7",
+            "scored_idx": 31,
+            "rank": 0,
+            "scored_rate": 1814.0,
+            "noise_floor": 98.0,
+            "best_other": 517.0
+          },
+          {
+            "cue": "weather.c0_m7",
+            "target": "foods.c1_m3",
+            "scored_idx": 19,
+            "rank": 0,
+            "scored_rate": 1780.0,
+            "noise_floor": 87.0,
+            "best_other": 193.0
+          },
+          {
+            "cue": "tools.c4_m5",
+            "target": "clothes.c2_m4",
+            "scored_idx": 28,
+            "rank": 0,
+            "scored_rate": 1870.0,
+            "noise_floor": 105.5,
+            "best_other": 228.0
+          }
+        ]
+      },
+      "m7_permuted_mapping": {
+        "permuted": true,
+        "n_cross_facts": 24,
+        "top1_fraction": 0.0,
+        "top2_fraction": 0.0,
+        "mean_signal_vs_floor": 1.1832955976785389,
+        "mean_margin": -1669.5833333333333,
+        "detail": [
+          {
+            "cue": "tools.c3_m0",
+            "target": "clothes.c1_m0",
+            "scored_idx": 8,
+            "rank": 11,
+            "scored_rate": 130.0,
+            "noise_floor": 84.5,
+            "best_other": 1617.0
+          },
+          {
+            "cue": "weather.c0_m4",
+            "target": "plants.c6_m4",
+            "scored_idx": 0,
+            "rank": 29,
+            "scored_rate": 83.0,
+            "noise_floor": 73.0,
+            "best_other": 1173.0
+          },
+          {
+            "cue": "foods.c2_m4",
+            "target": "vehicles.c1_m6",
+            "scored_idx": 58,
+            "rank": 11,
+            "scored_rate": 158.0,
+            "noise_floor": 104.5,
+            "best_other": 1794.0
+          },
+          {
+            "cue": "tools.c2_m0",
+            "target": "furniture.c3_m2",
+            "scored_idx": 15,
+            "rank": 51,
+            "scored_rate": 53.0,
+            "noise_floor": 84.5,
+            "best_other": 1726.0
+          },
+          {
+            "cue": "furniture.c7_m0",
+            "target": "vehicles.c6_m7",
+            "scored_idx": 6,
+            "rank": 10,
+            "scored_rate": 199.0,
+            "noise_floor": 106.5,
+            "best_other": 1944.0
+          },
+          {
+            "cue": "plants.c3_m0",
+            "target": "foods.c5_m2",
+            "scored_idx": 56,
+            "rank": 38,
+            "scored_rate": 90.0,
+            "noise_floor": 96.0,
+            "best_other": 1751.0
+          },
+          {
+            "cue": "clothes.c0_m2",
+            "target": "foods.c6_m3",
+            "scored_idx": 70,
+            "rank": 67,
+            "scored_rate": 15.0,
+            "noise_floor": 75.0,
+            "best_other": 1800.0
+          },
+          {
+            "cue": "vehicles.c0_m1",
+            "target": "tools.c1_m6",
+            "scored_idx": 66,
+            "rank": 17,
+            "scored_rate": 122.0,
+            "noise_floor": 87.5,
+            "best_other": 1782.0
+          },
+          {
+            "cue": "vehicles.c1_m5",
+            "target": "foods.c4_m3",
+            "scored_idx": 35,
+            "rank": 2,
+            "scored_rate": 180.0,
+            "noise_floor": 73.5,
+            "best_other": 1846.0
+          },
+          {
+            "cue": "tools.c2_m1",
+            "target": "weather.c6_m0",
+            "scored_idx": 20,
+            "rank": 15,
+            "scored_rate": 141.0,
+            "noise_floor": 88.0,
+            "best_other": 1838.0
+          },
+          {
+            "cue": "plants.c2_m3",
+            "target": "clothes.c4_m5",
+            "scored_idx": 41,
+            "rank": 12,
+            "scored_rate": 163.0,
+            "noise_floor": 91.0,
+            "best_other": 2062.0
+          },
+          {
+            "cue": "weather.c4_m4",
+            "target": "animals.c5_m1",
+            "scored_idx": 29,
+            "rank": 39,
+            "scored_rate": 88.0,
+            "noise_floor": 93.0,
+            "best_other": 1687.0
+          },
+          {
+            "cue": "furniture.c7_m7",
+            "target": "tools.c0_m4",
+            "scored_idx": 29,
+            "rank": 13,
+            "scored_rate": 167.0,
+            "noise_floor": 102.5,
+            "best_other": 1688.0
+          },
+          {
+            "cue": "clothes.c7_m0",
+            "target": "tools.c7_m0",
+            "scored_idx": 49,
+            "rank": 27,
+            "scored_rate": 106.0,
+            "noise_floor": 90.5,
+            "best_other": 1929.0
+          },
+          {
+            "cue": "plants.c4_m3",
+            "target": "weather.c6_m3",
+            "scored_idx": 8,
+            "rank": 13,
+            "scored_rate": 133.0,
+            "noise_floor": 79.5,
+            "best_other": 1762.0
+          },
+          {
+            "cue": "tools.c1_m0",
+            "target": "furniture.c3_m4",
+            "scored_idx": 5,
+            "rank": 37,
+            "scored_rate": 86.0,
+            "noise_floor": 91.0,
+            "best_other": 1769.0
+          },
+          {
+            "cue": "animals.c5_m0",
+            "target": "weather.c3_m3",
+            "scored_idx": 31,
+            "rank": 18,
+            "scored_rate": 142.0,
+            "noise_floor": 95.0,
+            "best_other": 1866.0
+          },
+          {
+            "cue": "furniture.c5_m1",
+            "target": "tools.c1_m2",
+            "scored_idx": 31,
+            "rank": 49,
+            "scored_rate": 60.0,
+            "noise_floor": 71.5,
+            "best_other": 1753.0
+          },
+          {
+            "cue": "weather.c4_m7",
+            "target": "animals.c7_m4",
+            "scored_idx": 44,
+            "rank": 44,
+            "scored_rate": 72.0,
+            "noise_floor": 90.5,
+            "best_other": 1668.0
+          },
+          {
+            "cue": "vehicles.c0_m2",
+            "target": "foods.c4_m5",
+            "scored_idx": 29,
+            "rank": 39,
+            "scored_rate": 71.0,
+            "noise_floor": 81.0,
+            "best_other": 1991.0
+          },
+          {
+            "cue": "animals.c7_m4",
+            "target": "furniture.c0_m0",
+            "scored_idx": 14,
+            "rank": 19,
+            "scored_rate": 108.0,
+            "noise_floor": 80.0,
+            "best_other": 1704.0
+          },
+          {
+            "cue": "foods.c1_m5",
+            "target": "clothes.c2_m7",
+            "scored_idx": 58,
+            "rank": 38,
+            "scored_rate": 92.0,
+            "noise_floor": 99.5,
+            "best_other": 1812.0
+          },
+          {
+            "cue": "weather.c0_m7",
+            "target": "foods.c1_m3",
+            "scored_idx": 23,
+            "rank": 64,
+            "scored_rate": 25.0,
+            "noise_floor": 85.5,
+            "best_other": 1771.0
+          },
+          {
+            "cue": "tools.c4_m5",
+            "target": "clothes.c2_m4",
+            "scored_idx": 26,
+            "rank": 65,
+            "scored_rate": 42.0,
+            "noise_floor": 104.0,
+            "best_other": 1863.0
+          }
+        ]
+      },
+      "m3_band": "GO",
+      "m7_collapses": true,
+      "m4_moat": {
+        "n_stored_facts": 24,
+        "n_known_cues": 24,
+        "n_unknown_cues": 24,
+        "novelty_known_max": 1.1102230246251565e-16,
+        "novelty_unknown_min": 0.4485834196532599,
+        "separation_margin": 0.44858341965325976,
+        "threshold": 0.22429170982663,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": 0.0,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      }
+    },
+    "43": {
+      "seed": 43,
+      "mode": "full",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles",
+        "tools",
+        "clothes",
+        "furniture",
+        "plants",
+        "weather"
+      ],
+      "per_bridge_gates": [
+        {
+          "shard": "animals",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 117.67762780189514,
+          "recurrent_mean": 0.3403984010219574,
+          "recurrent_nnz": 3456094,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7641615277414193,
+          "pearson_W_vs_rawcounts": 0.7894869777155553,
+          "second_order_margin": 0.5256164171637169,
+          "is_graded": true,
+          "within_cos": 0.8782854172213046,
+          "between_cos": 0.35406920516756124,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.25625,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.34375,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.0038547451705208124,
+          "permuted_pearson_vs_Strue": 0.007518374982720463,
+          "permuted_generalization": 0.20625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "foods",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 118.4679605960846,
+          "recurrent_mean": 0.3459339439868927,
+          "recurrent_nnz": 3456094,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7626952693177466,
+          "pearson_W_vs_rawcounts": 0.7876923412814228,
+          "second_order_margin": 0.5209435573317485,
+          "is_graded": true,
+          "within_cos": 0.8713501629625092,
+          "between_cos": 0.35118519652712427,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.25625,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.10625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.007677995831426143,
+          "permuted_pearson_vs_Strue": 0.013439988175207971,
+          "permuted_generalization": 0.23125,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "vehicles",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 117.89972567558289,
+          "recurrent_mean": 0.3459157943725586,
+          "recurrent_nnz": 3456094,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7748367429234301,
+          "pearson_W_vs_rawcounts": 0.7945419505225667,
+          "second_order_margin": 0.521773287701762,
+          "is_graded": true,
+          "within_cos": 0.8654498989165706,
+          "between_cos": 0.34386384435316625,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.25625,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.1875,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.006934754474239052,
+          "permuted_pearson_vs_Strue": 0.012052718813956337,
+          "permuted_generalization": 0.2375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "tools",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 122.87268280982971,
+          "recurrent_mean": 0.34087374806404114,
+          "recurrent_nnz": 3456094,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.8211844424308299,
+          "pearson_W_vs_rawcounts": 0.7899627531771173,
+          "second_order_margin": 0.5381456580284542,
+          "is_graded": true,
+          "within_cos": 0.8970515458807495,
+          "between_cos": 0.36047806889251977,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.25625,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.20625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.00785180677817246,
+          "permuted_pearson_vs_Strue": 0.01322529864912049,
+          "permuted_generalization": 0.25625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "clothes",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 119.73814940452576,
+          "recurrent_mean": 0.3436945676803589,
+          "recurrent_nnz": 3456094,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7879646433399258,
+          "pearson_W_vs_rawcounts": 0.7900065285788231,
+          "second_order_margin": 0.5308712881224988,
+          "is_graded": true,
+          "within_cos": 0.8772897306428079,
+          "between_cos": 0.34636926423706765,
+          "m2_band": "GO",
+          "generalization": 0.9625,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.85,
+          "orthogonal_acc": 0.25625,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.18125,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.005914023845451921,
+          "permuted_pearson_vs_Strue": 0.021852740148676324,
+          "permuted_generalization": 0.25625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "furniture",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 120.07015800476074,
+          "recurrent_mean": 0.3426768481731415,
+          "recurrent_nnz": 3456094,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7663639371686567,
+          "pearson_W_vs_rawcounts": 0.7997630573924909,
+          "second_order_margin": 0.5315541036451279,
+          "is_graded": true,
+          "within_cos": 0.8767953495018165,
+          "between_cos": 0.3448786562586328,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.25625,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.3125,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.010381906749929865,
+          "permuted_pearson_vs_Strue": -0.009802455985292285,
+          "permuted_generalization": 0.225,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "plants",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 115.65827918052673,
+          "recurrent_mean": 0.3458326458930969,
+          "recurrent_nnz": 3456094,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7843113366394195,
+          "pearson_W_vs_rawcounts": 0.7898053216385184,
+          "second_order_margin": 0.5282765432307703,
+          "is_graded": true,
+          "within_cos": 0.878729784403199,
+          "between_cos": 0.35167470209727114,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.25625,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.275,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.002641602465815074,
+          "permuted_pearson_vs_Strue": 0.007259868867126844,
+          "permuted_generalization": 0.125,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "weather",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 116.62883138656616,
+          "recurrent_mean": 0.3453761041164398,
+          "recurrent_nnz": 3456094,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7864097167344477,
+          "pearson_W_vs_rawcounts": 0.7927686131818118,
+          "second_order_margin": 0.5307877682701028,
+          "is_graded": true,
+          "within_cos": 0.8786652949175789,
+          "between_cos": 0.348474629345419,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.25625,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.05625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.0008831692698208493,
+          "permuted_pearson_vs_Strue": 0.004107130900323189,
+          "permuted_generalization": 0.25625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        }
+      ],
+      "m6_random_shard": {
+        "n_random_members": 64,
+        "n_facts": 7,
+        "random_shard_generalization": 0.35,
+        "chance": 0.25,
+        "m6_collapses_to_chance": true
+      },
+      "cross_facts": [
+        [
+          "furniture.c7_m2",
+          "vehicles.c2_m5"
+        ],
+        [
+          "plants.c2_m2",
+          "tools.c0_m2"
+        ],
+        [
+          "animals.c6_m4",
+          "furniture.c3_m1"
+        ],
+        [
+          "furniture.c3_m6",
+          "tools.c1_m7"
+        ],
+        [
+          "plants.c6_m4",
+          "weather.c5_m6"
+        ],
+        [
+          "weather.c1_m7",
+          "tools.c4_m0"
+        ],
+        [
+          "weather.c0_m6",
+          "foods.c4_m0"
+        ],
+        [
+          "animals.c4_m0",
+          "tools.c4_m1"
+        ],
+        [
+          "weather.c5_m0",
+          "animals.c2_m7"
+        ],
+        [
+          "animals.c0_m5",
+          "plants.c3_m3"
+        ],
+        [
+          "furniture.c0_m0",
+          "foods.c1_m5"
+        ],
+        [
+          "foods.c3_m1",
+          "plants.c2_m2"
+        ],
+        [
+          "furniture.c7_m4",
+          "plants.c0_m1"
+        ],
+        [
+          "tools.c2_m5",
+          "clothes.c1_m7"
+        ],
+        [
+          "furniture.c4_m6",
+          "foods.c7_m3"
+        ],
+        [
+          "plants.c1_m3",
+          "tools.c2_m1"
+        ],
+        [
+          "animals.c6_m7",
+          "furniture.c6_m4"
+        ],
+        [
+          "plants.c5_m0",
+          "vehicles.c1_m4"
+        ],
+        [
+          "foods.c7_m4",
+          "plants.c1_m1"
+        ],
+        [
+          "clothes.c2_m7",
+          "weather.c3_m4"
+        ],
+        [
+          "furniture.c0_m6",
+          "vehicles.c2_m1"
+        ],
+        [
+          "tools.c2_m3",
+          "animals.c3_m6"
+        ],
+        [
+          "weather.c7_m6",
+          "plants.c2_m2"
+        ],
+        [
+          "vehicles.c2_m4",
+          "foods.c2_m3"
+        ]
+      ],
+      "m3_cross_bridge": {
+        "permuted": false,
+        "n_cross_facts": 24,
+        "top1_fraction": 1.0,
+        "top2_fraction": 1.0,
+        "mean_signal_vs_floor": 19.698604879655775,
+        "mean_margin": 1556.8333333333333,
+        "detail": [
+          {
+            "cue": "furniture.c7_m2",
+            "target": "vehicles.c2_m5",
+            "scored_idx": 29,
+            "rank": 0,
+            "scored_rate": 1939.0,
+            "noise_floor": 104.0,
+            "best_other": 224.0
+          },
+          {
+            "cue": "plants.c2_m2",
+            "target": "tools.c0_m2",
+            "scored_idx": 10,
+            "rank": 0,
+            "scored_rate": 1590.0,
+            "noise_floor": 80.0,
+            "best_other": 227.0
+          },
+          {
+            "cue": "animals.c6_m4",
+            "target": "furniture.c3_m1",
+            "scored_idx": 33,
+            "rank": 0,
+            "scored_rate": 1710.0,
+            "noise_floor": 108.0,
+            "best_other": 209.0
+          },
+          {
+            "cue": "furniture.c3_m6",
+            "target": "tools.c1_m7",
+            "scored_idx": 23,
+            "rank": 0,
+            "scored_rate": 1771.0,
+            "noise_floor": 80.0,
+            "best_other": 182.0
+          },
+          {
+            "cue": "plants.c6_m4",
+            "target": "weather.c5_m6",
+            "scored_idx": 54,
+            "rank": 0,
+            "scored_rate": 1777.0,
+            "noise_floor": 92.5,
+            "best_other": 207.0
+          },
+          {
+            "cue": "weather.c1_m7",
+            "target": "tools.c4_m0",
+            "scored_idx": 40,
+            "rank": 0,
+            "scored_rate": 1991.0,
+            "noise_floor": 98.5,
+            "best_other": 251.0
+          },
+          {
+            "cue": "weather.c0_m6",
+            "target": "foods.c4_m0",
+            "scored_idx": 40,
+            "rank": 0,
+            "scored_rate": 2014.0,
+            "noise_floor": 125.5,
+            "best_other": 298.0
+          },
+          {
+            "cue": "animals.c4_m0",
+            "target": "tools.c4_m1",
+            "scored_idx": 41,
+            "rank": 0,
+            "scored_rate": 1695.0,
+            "noise_floor": 83.0,
+            "best_other": 246.0
+          },
+          {
+            "cue": "weather.c5_m0",
+            "target": "animals.c2_m7",
+            "scored_idx": 31,
+            "rank": 0,
+            "scored_rate": 1990.0,
+            "noise_floor": 88.0,
+            "best_other": 277.0
+          },
+          {
+            "cue": "animals.c0_m5",
+            "target": "plants.c3_m3",
+            "scored_idx": 35,
+            "rank": 0,
+            "scored_rate": 1775.0,
+            "noise_floor": 79.5,
+            "best_other": 208.0
+          },
+          {
+            "cue": "furniture.c0_m0",
+            "target": "foods.c1_m5",
+            "scored_idx": 21,
+            "rank": 0,
+            "scored_rate": 1972.0,
+            "noise_floor": 109.5,
+            "best_other": 331.0
+          },
+          {
+            "cue": "foods.c3_m1",
+            "target": "plants.c2_m2",
+            "scored_idx": 26,
+            "rank": 0,
+            "scored_rate": 1760.0,
+            "noise_floor": 93.0,
+            "best_other": 233.0
+          },
+          {
+            "cue": "furniture.c7_m4",
+            "target": "plants.c0_m1",
+            "scored_idx": 9,
+            "rank": 0,
+            "scored_rate": 1906.0,
+            "noise_floor": 99.0,
+            "best_other": 185.0
+          },
+          {
+            "cue": "tools.c2_m5",
+            "target": "clothes.c1_m7",
+            "scored_idx": 23,
+            "rank": 0,
+            "scored_rate": 1705.0,
+            "noise_floor": 75.0,
+            "best_other": 186.0
+          },
+          {
+            "cue": "furniture.c4_m6",
+            "target": "foods.c7_m3",
+            "scored_idx": 67,
+            "rank": 0,
+            "scored_rate": 1827.0,
+            "noise_floor": 88.5,
+            "best_other": 262.0
+          },
+          {
+            "cue": "plants.c1_m3",
+            "target": "tools.c2_m1",
+            "scored_idx": 25,
+            "rank": 0,
+            "scored_rate": 1670.0,
+            "noise_floor": 73.0,
+            "best_other": 182.0
+          },
+          {
+            "cue": "animals.c6_m7",
+            "target": "furniture.c6_m4",
+            "scored_idx": 60,
+            "rank": 0,
+            "scored_rate": 1681.0,
+            "noise_floor": 92.0,
+            "best_other": 209.0
+          },
+          {
+            "cue": "plants.c5_m0",
+            "target": "vehicles.c1_m4",
+            "scored_idx": 20,
+            "rank": 0,
+            "scored_rate": 1643.0,
+            "noise_floor": 94.5,
+            "best_other": 235.0
+          },
+          {
+            "cue": "foods.c7_m4",
+            "target": "plants.c1_m1",
+            "scored_idx": 17,
+            "rank": 0,
+            "scored_rate": 1946.0,
+            "noise_floor": 99.0,
+            "best_other": 233.0
+          },
+          {
+            "cue": "clothes.c2_m7",
+            "target": "weather.c3_m4",
+            "scored_idx": 36,
+            "rank": 0,
+            "scored_rate": 1817.0,
+            "noise_floor": 87.0,
+            "best_other": 242.0
+          },
+          {
+            "cue": "furniture.c0_m6",
+            "target": "vehicles.c2_m1",
+            "scored_idx": 25,
+            "rank": 0,
+            "scored_rate": 1683.0,
+            "noise_floor": 95.0,
+            "best_other": 196.0
+          },
+          {
+            "cue": "tools.c2_m3",
+            "target": "animals.c3_m6",
+            "scored_idx": 38,
+            "rank": 0,
+            "scored_rate": 1694.0,
+            "noise_floor": 87.5,
+            "best_other": 236.0
+          },
+          {
+            "cue": "weather.c7_m6",
+            "target": "plants.c2_m2",
+            "scored_idx": 26,
+            "rank": 0,
+            "scored_rate": 1718.0,
+            "noise_floor": 95.5,
+            "best_other": 276.0
+          },
+          {
+            "cue": "vehicles.c2_m4",
+            "target": "foods.c2_m3",
+            "scored_idx": 27,
+            "rank": 0,
+            "scored_rate": 1652.0,
+            "noise_floor": 76.0,
+            "best_other": 227.0
+          }
+        ]
+      },
+      "m7_permuted_mapping": {
+        "permuted": true,
+        "n_cross_facts": 24,
+        "top1_fraction": 0.0,
+        "top2_fraction": 0.041666666666666664,
+        "mean_signal_vs_floor": 1.1102351049719437,
+        "mean_margin": -1627.4583333333333,
+        "detail": [
+          {
+            "cue": "furniture.c7_m2",
+            "target": "vehicles.c2_m5",
+            "scored_idx": 13,
+            "rank": 1,
+            "scored_rate": 205.0,
+            "noise_floor": 97.5,
+            "best_other": 1828.0
+          },
+          {
+            "cue": "plants.c2_m2",
+            "target": "tools.c0_m2",
+            "scored_idx": 24,
+            "rank": 48,
+            "scored_rate": 64.0,
+            "noise_floor": 79.5,
+            "best_other": 1563.0
+          },
+          {
+            "cue": "animals.c6_m4",
+            "target": "furniture.c3_m1",
+            "scored_idx": 8,
+            "rank": 40,
+            "scored_rate": 92.0,
+            "noise_floor": 102.0,
+            "best_other": 1620.0
+          },
+          {
+            "cue": "furniture.c3_m6",
+            "target": "tools.c1_m7",
+            "scored_idx": 24,
+            "rank": 12,
+            "scored_rate": 126.0,
+            "noise_floor": 76.5,
+            "best_other": 1747.0
+          },
+          {
+            "cue": "plants.c6_m4",
+            "target": "weather.c5_m6",
+            "scored_idx": 27,
+            "rank": 30,
+            "scored_rate": 91.0,
+            "noise_floor": 84.0,
+            "best_other": 1689.0
+          },
+          {
+            "cue": "weather.c1_m7",
+            "target": "tools.c4_m0",
+            "scored_idx": 70,
+            "rank": 48,
+            "scored_rate": 68.0,
+            "noise_floor": 95.0,
+            "best_other": 1963.0
+          },
+          {
+            "cue": "weather.c0_m6",
+            "target": "foods.c4_m0",
+            "scored_idx": 36,
+            "rank": 35,
+            "scored_rate": 123.0,
+            "noise_floor": 122.0,
+            "best_other": 1916.0
+          },
+          {
+            "cue": "animals.c4_m0",
+            "target": "tools.c4_m1",
+            "scored_idx": 28,
+            "rank": 17,
+            "scored_rate": 115.0,
+            "noise_floor": 83.5,
+            "best_other": 1701.0
+          },
+          {
+            "cue": "weather.c5_m0",
+            "target": "animals.c2_m7",
+            "scored_idx": 63,
+            "rank": 3,
+            "scored_rate": 224.0,
+            "noise_floor": 84.5,
+            "best_other": 1900.0
+          },
+          {
+            "cue": "animals.c0_m5",
+            "target": "plants.c3_m3",
+            "scored_idx": 64,
+            "rank": 41,
+            "scored_rate": 75.0,
+            "noise_floor": 79.0,
+            "best_other": 1748.0
+          },
+          {
+            "cue": "furniture.c0_m0",
+            "target": "foods.c1_m5",
+            "scored_idx": 64,
+            "rank": 58,
+            "scored_rate": 66.0,
+            "noise_floor": 106.0,
+            "best_other": 1935.0
+          },
+          {
+            "cue": "foods.c3_m1",
+            "target": "plants.c2_m2",
+            "scored_idx": 43,
+            "rank": 45,
+            "scored_rate": 68.0,
+            "noise_floor": 80.5,
+            "best_other": 1591.0
+          },
+          {
+            "cue": "furniture.c7_m4",
+            "target": "plants.c0_m1",
+            "scored_idx": 7,
+            "rank": 30,
+            "scored_rate": 110.0,
+            "noise_floor": 99.5,
+            "best_other": 1902.0
+          },
+          {
+            "cue": "tools.c2_m5",
+            "target": "clothes.c1_m7",
+            "scored_idx": 65,
+            "rank": 51,
+            "scored_rate": 47.0,
+            "noise_floor": 58.5,
+            "best_other": 1357.0
+          },
+          {
+            "cue": "furniture.c4_m6",
+            "target": "foods.c7_m3",
+            "scored_idx": 56,
+            "rank": 67,
+            "scored_rate": 21.0,
+            "noise_floor": 86.5,
+            "best_other": 1792.0
+          },
+          {
+            "cue": "plants.c1_m3",
+            "target": "tools.c2_m1",
+            "scored_idx": 7,
+            "rank": 28,
+            "scored_rate": 86.0,
+            "noise_floor": 73.5,
+            "best_other": 1656.0
+          },
+          {
+            "cue": "animals.c6_m7",
+            "target": "furniture.c6_m4",
+            "scored_idx": 8,
+            "rank": 16,
+            "scored_rate": 127.0,
+            "noise_floor": 87.0,
+            "best_other": 1605.0
+          },
+          {
+            "cue": "plants.c5_m0",
+            "target": "vehicles.c1_m4",
+            "scored_idx": 46,
+            "rank": 57,
+            "scored_rate": 54.0,
+            "noise_floor": 98.0,
+            "best_other": 1643.0
+          },
+          {
+            "cue": "foods.c7_m4",
+            "target": "plants.c1_m1",
+            "scored_idx": 45,
+            "rank": 25,
+            "scored_rate": 114.0,
+            "noise_floor": 97.0,
+            "best_other": 1912.0
+          },
+          {
+            "cue": "clothes.c2_m7",
+            "target": "weather.c3_m4",
+            "scored_idx": 46,
+            "rank": 63,
+            "scored_rate": 35.0,
+            "noise_floor": 85.0,
+            "best_other": 1759.0
+          },
+          {
+            "cue": "furniture.c0_m6",
+            "target": "vehicles.c2_m1",
+            "scored_idx": 26,
+            "rank": 4,
+            "scored_rate": 169.0,
+            "noise_floor": 92.5,
+            "best_other": 1668.0
+          },
+          {
+            "cue": "tools.c2_m3",
+            "target": "animals.c3_m6",
+            "scored_idx": 17,
+            "rank": 68,
+            "scored_rate": 16.0,
+            "noise_floor": 84.0,
+            "best_other": 1631.0
+          },
+          {
+            "cue": "weather.c7_m6",
+            "target": "plants.c2_m2",
+            "scored_idx": 58,
+            "rank": 9,
+            "scored_rate": 150.0,
+            "noise_floor": 90.5,
+            "best_other": 1640.0
+          },
+          {
+            "cue": "vehicles.c2_m4",
+            "target": "foods.c2_m3",
+            "scored_idx": 55,
+            "rank": 23,
+            "scored_rate": 100.0,
+            "noise_floor": 74.5,
+            "best_other": 1639.0
+          }
+        ]
+      },
+      "m3_band": "GO",
+      "m7_collapses": true,
+      "m4_moat": {
+        "n_stored_facts": 23,
+        "n_known_cues": 23,
+        "n_unknown_cues": 24,
+        "novelty_known_max": 2.220446049250313e-16,
+        "novelty_unknown_min": 0.4689897795676874,
+        "separation_margin": 0.46898977956768717,
+        "threshold": 0.2344948897838438,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": -2.220446049250313e-16,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      }
+    },
+    "44": {
+      "seed": 44,
+      "mode": "full",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles",
+        "tools",
+        "clothes",
+        "furniture",
+        "plants",
+        "weather"
+      ],
+      "per_bridge_gates": [
+        {
+          "shard": "animals",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 116.75104022026062,
+          "recurrent_mean": 0.3509413003921509,
+          "recurrent_nnz": 3456623,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.768375963071721,
+          "pearson_W_vs_rawcounts": 0.7756166437717227,
+          "second_order_margin": 0.5223423264567248,
+          "is_graded": true,
+          "within_cos": 0.8872140683511974,
+          "between_cos": 0.365200549118286,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.375,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.175,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.004090246682108223,
+          "permuted_pearson_vs_Strue": -0.010292900801069366,
+          "permuted_generalization": 0.26875,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "foods",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 122.68840980529785,
+          "recurrent_mean": 0.3500131070613861,
+          "recurrent_nnz": 3456623,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7683040628082687,
+          "pearson_W_vs_rawcounts": 0.7912440811756116,
+          "second_order_margin": 0.5306822057027668,
+          "is_graded": true,
+          "within_cos": 0.8835256260939283,
+          "between_cos": 0.3508547519891657,
+          "m2_band": "GO",
+          "generalization": 0.975,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.9,
+          "orthogonal_acc": 0.375,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.275,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.0008828136274020293,
+          "permuted_pearson_vs_Strue": -0.010233077799562593,
+          "permuted_generalization": 0.23125,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "vehicles",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 120.57776165008545,
+          "recurrent_mean": 0.35172536969184875,
+          "recurrent_nnz": 3456623,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7653684035613647,
+          "pearson_W_vs_rawcounts": 0.7968977929714659,
+          "second_order_margin": 0.537344679493675,
+          "is_graded": true,
+          "within_cos": 0.8794829269188452,
+          "between_cos": 0.34011268213299584,
+          "m2_band": "GO",
+          "generalization": 0.99375,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.975,
+          "orthogonal_acc": 0.375,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.28125,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.006892717107650326,
+          "permuted_pearson_vs_Strue": -0.0040483797108204515,
+          "permuted_generalization": 0.2625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "tools",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 114.60820126533508,
+          "recurrent_mean": 0.3535292148590088,
+          "recurrent_nnz": 3456623,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7622375685454971,
+          "pearson_W_vs_rawcounts": 0.798688513811262,
+          "second_order_margin": 0.5436184107086051,
+          "is_graded": true,
+          "within_cos": 0.8790252132360018,
+          "between_cos": 0.3359547074648686,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.375,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.175,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.01308217909147566,
+          "permuted_pearson_vs_Strue": -0.023681958139653025,
+          "permuted_generalization": 0.275,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "clothes",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 122.89443635940552,
+          "recurrent_mean": 0.3503010869026184,
+          "recurrent_nnz": 3456623,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7634895553603459,
+          "pearson_W_vs_rawcounts": 0.797268681919836,
+          "second_order_margin": 0.5401195449272044,
+          "is_graded": true,
+          "within_cos": 0.8836797979454738,
+          "between_cos": 0.34268095820741673,
+          "m2_band": "GO",
+          "generalization": 0.98125,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.925,
+          "orthogonal_acc": 0.375,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.2375,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.012576081732622618,
+          "permuted_pearson_vs_Strue": -0.020547195644331755,
+          "permuted_generalization": 0.325,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "furniture",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 117.62528944015503,
+          "recurrent_mean": 0.34936055541038513,
+          "recurrent_nnz": 3456623,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7506171856575495,
+          "pearson_W_vs_rawcounts": 0.7977811810473413,
+          "second_order_margin": 0.534727792361096,
+          "is_graded": true,
+          "within_cos": 0.8807526033018701,
+          "between_cos": 0.34559898534949196,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.375,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.21875,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.008032513332581231,
+          "permuted_pearson_vs_Strue": -0.026718043602116163,
+          "permuted_generalization": 0.15625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "plants",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 114.69102597236633,
+          "recurrent_mean": 0.3502029776573181,
+          "recurrent_nnz": 3456623,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.774093830076012,
+          "pearson_W_vs_rawcounts": 0.789432161235646,
+          "second_order_margin": 0.5392415653250262,
+          "is_graded": true,
+          "within_cos": 0.8862060133589311,
+          "between_cos": 0.34849653432488,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.375,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.275,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.00837975941890337,
+          "permuted_pearson_vs_Strue": -0.02081890913974041,
+          "permuted_generalization": 0.21875,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "weather",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 119.75683498382568,
+          "recurrent_mean": 0.34876886010169983,
+          "recurrent_nnz": 3456623,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7621612633984786,
+          "pearson_W_vs_rawcounts": 0.7936508188320934,
+          "second_order_margin": 0.5370271636948138,
+          "is_graded": true,
+          "within_cos": 0.8753900794994489,
+          "between_cos": 0.34094885055344804,
+          "m2_band": "GO",
+          "generalization": 0.9625,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.85,
+          "orthogonal_acc": 0.375,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.1875,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.010461682280059822,
+          "permuted_pearson_vs_Strue": -0.017126000485984623,
+          "permuted_generalization": 0.25625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        }
+      ],
+      "m6_random_shard": {
+        "n_random_members": 64,
+        "n_facts": 1,
+        "random_shard_generalization": 0.1,
+        "chance": 0.25,
+        "m6_collapses_to_chance": true
+      },
+      "cross_facts": [
+        [
+          "animals.c5_m0",
+          "furniture.c2_m3"
+        ],
+        [
+          "clothes.c0_m4",
+          "furniture.c7_m6"
+        ],
+        [
+          "tools.c7_m4",
+          "clothes.c3_m0"
+        ],
+        [
+          "vehicles.c3_m1",
+          "plants.c3_m7"
+        ],
+        [
+          "foods.c6_m7",
+          "tools.c4_m7"
+        ],
+        [
+          "animals.c3_m5",
+          "furniture.c0_m7"
+        ],
+        [
+          "animals.c3_m7",
+          "vehicles.c1_m4"
+        ],
+        [
+          "vehicles.c6_m1",
+          "plants.c4_m1"
+        ],
+        [
+          "vehicles.c2_m7",
+          "plants.c3_m2"
+        ],
+        [
+          "tools.c1_m7",
+          "weather.c6_m0"
+        ],
+        [
+          "vehicles.c4_m3",
+          "clothes.c1_m1"
+        ],
+        [
+          "tools.c2_m1",
+          "plants.c1_m1"
+        ],
+        [
+          "weather.c2_m7",
+          "clothes.c5_m0"
+        ],
+        [
+          "furniture.c0_m7",
+          "clothes.c0_m0"
+        ],
+        [
+          "foods.c6_m4",
+          "clothes.c6_m0"
+        ],
+        [
+          "plants.c4_m0",
+          "vehicles.c4_m2"
+        ],
+        [
+          "tools.c7_m2",
+          "clothes.c0_m2"
+        ],
+        [
+          "plants.c7_m4",
+          "tools.c2_m4"
+        ],
+        [
+          "tools.c0_m3",
+          "plants.c0_m2"
+        ],
+        [
+          "animals.c5_m2",
+          "plants.c1_m0"
+        ],
+        [
+          "foods.c2_m2",
+          "plants.c5_m7"
+        ],
+        [
+          "clothes.c4_m7",
+          "foods.c0_m7"
+        ],
+        [
+          "animals.c2_m0",
+          "tools.c0_m0"
+        ],
+        [
+          "tools.c1_m1",
+          "weather.c4_m5"
+        ]
+      ],
+      "m3_cross_bridge": {
+        "permuted": false,
+        "n_cross_facts": 24,
+        "top1_fraction": 1.0,
+        "top2_fraction": 1.0,
+        "mean_signal_vs_floor": 24.1862668674093,
+        "mean_margin": 1644.0833333333333,
+        "detail": [
+          {
+            "cue": "animals.c5_m0",
+            "target": "furniture.c2_m3",
+            "scored_idx": 27,
+            "rank": 0,
+            "scored_rate": 2025.0,
+            "noise_floor": 99.0,
+            "best_other": 200.0
+          },
+          {
+            "cue": "clothes.c0_m4",
+            "target": "furniture.c7_m6",
+            "scored_idx": 70,
+            "rank": 0,
+            "scored_rate": 1816.0,
+            "noise_floor": 68.0,
+            "best_other": 217.0
+          },
+          {
+            "cue": "tools.c7_m4",
+            "target": "clothes.c3_m0",
+            "scored_idx": 32,
+            "rank": 0,
+            "scored_rate": 1838.0,
+            "noise_floor": 80.0,
+            "best_other": 217.0
+          },
+          {
+            "cue": "vehicles.c3_m1",
+            "target": "plants.c3_m7",
+            "scored_idx": 39,
+            "rank": 0,
+            "scored_rate": 1790.0,
+            "noise_floor": 74.5,
+            "best_other": 165.0
+          },
+          {
+            "cue": "foods.c6_m7",
+            "target": "tools.c4_m7",
+            "scored_idx": 47,
+            "rank": 0,
+            "scored_rate": 1967.0,
+            "noise_floor": 84.5,
+            "best_other": 211.0
+          },
+          {
+            "cue": "animals.c3_m5",
+            "target": "furniture.c0_m7",
+            "scored_idx": 15,
+            "rank": 0,
+            "scored_rate": 1830.0,
+            "noise_floor": 76.5,
+            "best_other": 223.0
+          },
+          {
+            "cue": "animals.c3_m7",
+            "target": "vehicles.c1_m4",
+            "scored_idx": 20,
+            "rank": 0,
+            "scored_rate": 1811.0,
+            "noise_floor": 73.5,
+            "best_other": 193.0
+          },
+          {
+            "cue": "vehicles.c6_m1",
+            "target": "plants.c4_m1",
+            "scored_idx": 41,
+            "rank": 0,
+            "scored_rate": 1872.0,
+            "noise_floor": 78.0,
+            "best_other": 207.0
+          },
+          {
+            "cue": "vehicles.c2_m7",
+            "target": "plants.c3_m2",
+            "scored_idx": 34,
+            "rank": 0,
+            "scored_rate": 1934.0,
+            "noise_floor": 79.5,
+            "best_other": 241.0
+          },
+          {
+            "cue": "tools.c1_m7",
+            "target": "weather.c6_m0",
+            "scored_idx": 56,
+            "rank": 0,
+            "scored_rate": 1803.0,
+            "noise_floor": 77.5,
+            "best_other": 200.0
+          },
+          {
+            "cue": "vehicles.c4_m3",
+            "target": "clothes.c1_m1",
+            "scored_idx": 17,
+            "rank": 0,
+            "scored_rate": 1926.0,
+            "noise_floor": 85.0,
+            "best_other": 215.0
+          },
+          {
+            "cue": "tools.c2_m1",
+            "target": "plants.c1_m1",
+            "scored_idx": 17,
+            "rank": 0,
+            "scored_rate": 1810.0,
+            "noise_floor": 74.0,
+            "best_other": 158.0
+          },
+          {
+            "cue": "weather.c2_m7",
+            "target": "clothes.c5_m0",
+            "scored_idx": 48,
+            "rank": 0,
+            "scored_rate": 2060.0,
+            "noise_floor": 91.5,
+            "best_other": 257.0
+          },
+          {
+            "cue": "furniture.c0_m7",
+            "target": "clothes.c0_m0",
+            "scored_idx": 8,
+            "rank": 0,
+            "scored_rate": 1914.0,
+            "noise_floor": 73.0,
+            "best_other": 193.0
+          },
+          {
+            "cue": "foods.c6_m4",
+            "target": "clothes.c6_m0",
+            "scored_idx": 56,
+            "rank": 0,
+            "scored_rate": 1886.0,
+            "noise_floor": 90.0,
+            "best_other": 246.0
+          },
+          {
+            "cue": "plants.c4_m0",
+            "target": "vehicles.c4_m2",
+            "scored_idx": 42,
+            "rank": 0,
+            "scored_rate": 1715.0,
+            "noise_floor": 87.0,
+            "best_other": 214.0
+          },
+          {
+            "cue": "tools.c7_m2",
+            "target": "clothes.c0_m2",
+            "scored_idx": 10,
+            "rank": 0,
+            "scored_rate": 1800.0,
+            "noise_floor": 74.0,
+            "best_other": 255.0
+          },
+          {
+            "cue": "plants.c7_m4",
+            "target": "tools.c2_m4",
+            "scored_idx": 28,
+            "rank": 0,
+            "scored_rate": 1851.0,
+            "noise_floor": 69.5,
+            "best_other": 267.0
+          },
+          {
+            "cue": "tools.c0_m3",
+            "target": "plants.c0_m2",
+            "scored_idx": 10,
+            "rank": 0,
+            "scored_rate": 1864.0,
+            "noise_floor": 62.0,
+            "best_other": 238.0
+          },
+          {
+            "cue": "animals.c5_m2",
+            "target": "plants.c1_m0",
+            "scored_idx": 16,
+            "rank": 0,
+            "scored_rate": 1834.0,
+            "noise_floor": 83.0,
+            "best_other": 186.0
+          },
+          {
+            "cue": "foods.c2_m2",
+            "target": "plants.c5_m7",
+            "scored_idx": 55,
+            "rank": 0,
+            "scored_rate": 1792.0,
+            "noise_floor": 69.0,
+            "best_other": 160.0
+          },
+          {
+            "cue": "clothes.c4_m7",
+            "target": "foods.c0_m7",
+            "scored_idx": 15,
+            "rank": 0,
+            "scored_rate": 1737.0,
+            "noise_floor": 69.5,
+            "best_other": 206.0
+          },
+          {
+            "cue": "animals.c2_m0",
+            "target": "tools.c0_m0",
+            "scored_idx": 8,
+            "rank": 0,
+            "scored_rate": 1815.0,
+            "noise_floor": 69.0,
+            "best_other": 176.0
+          },
+          {
+            "cue": "tools.c1_m1",
+            "target": "weather.c4_m5",
+            "scored_idx": 45,
+            "rank": 0,
+            "scored_rate": 1831.0,
+            "noise_floor": 70.5,
+            "best_other": 218.0
+          }
+        ]
+      },
+      "m7_permuted_mapping": {
+        "permuted": true,
+        "n_cross_facts": 24,
+        "top1_fraction": 0.0,
+        "top2_fraction": 0.0,
+        "mean_signal_vs_floor": 0.9379058420086261,
+        "mean_margin": -1731.7916666666667,
+        "detail": [
+          {
+            "cue": "animals.c5_m0",
+            "target": "furniture.c2_m3",
+            "scored_idx": 10,
+            "rank": 56,
+            "scored_rate": 56.0,
+            "noise_floor": 98.0,
+            "best_other": 1985.0
+          },
+          {
+            "cue": "clothes.c0_m4",
+            "target": "furniture.c7_m6",
+            "scored_idx": 45,
+            "rank": 42,
+            "scored_rate": 51.0,
+            "noise_floor": 68.0,
+            "best_other": 1775.0
+          },
+          {
+            "cue": "tools.c7_m4",
+            "target": "clothes.c3_m0",
+            "scored_idx": 49,
+            "rank": 11,
+            "scored_rate": 126.0,
+            "noise_floor": 77.5,
+            "best_other": 1845.0
+          },
+          {
+            "cue": "vehicles.c3_m1",
+            "target": "plants.c3_m7",
+            "scored_idx": 53,
+            "rank": 35,
+            "scored_rate": 76.0,
+            "noise_floor": 74.5,
+            "best_other": 1794.0
+          },
+          {
+            "cue": "foods.c6_m7",
+            "target": "tools.c4_m7",
+            "scored_idx": 45,
+            "rank": 5,
+            "scored_rate": 177.0,
+            "noise_floor": 80.5,
+            "best_other": 1898.0
+          },
+          {
+            "cue": "animals.c3_m5",
+            "target": "furniture.c0_m7",
+            "scored_idx": 22,
+            "rank": 9,
+            "scored_rate": 132.0,
+            "noise_floor": 73.0,
+            "best_other": 1775.0
+          },
+          {
+            "cue": "animals.c3_m7",
+            "target": "vehicles.c1_m4",
+            "scored_idx": 6,
+            "rank": 53,
+            "scored_rate": 57.0,
+            "noise_floor": 67.5,
+            "best_other": 1672.0
+          },
+          {
+            "cue": "vehicles.c6_m1",
+            "target": "plants.c4_m1",
+            "scored_idx": 13,
+            "rank": 15,
+            "scored_rate": 108.0,
+            "noise_floor": 76.5,
+            "best_other": 1873.0
+          },
+          {
+            "cue": "vehicles.c2_m7",
+            "target": "plants.c3_m2",
+            "scored_idx": 62,
+            "rank": 22,
+            "scored_rate": 96.0,
+            "noise_floor": 77.5,
+            "best_other": 1882.0
+          },
+          {
+            "cue": "tools.c1_m7",
+            "target": "weather.c6_m0",
+            "scored_idx": 71,
+            "rank": 42,
+            "scored_rate": 68.0,
+            "noise_floor": 76.5,
+            "best_other": 1721.0
+          },
+          {
+            "cue": "vehicles.c4_m3",
+            "target": "clothes.c1_m1",
+            "scored_idx": 1,
+            "rank": 10,
+            "scored_rate": 145.0,
+            "noise_floor": 82.0,
+            "best_other": 1874.0
+          },
+          {
+            "cue": "tools.c2_m1",
+            "target": "plants.c1_m1",
+            "scored_idx": 20,
+            "rank": 29,
+            "scored_rate": 74.0,
+            "noise_floor": 71.5,
+            "best_other": 1751.0
+          },
+          {
+            "cue": "weather.c2_m7",
+            "target": "clothes.c5_m0",
+            "scored_idx": 53,
+            "rank": 62,
+            "scored_rate": 36.0,
+            "noise_floor": 88.0,
+            "best_other": 2008.0
+          },
+          {
+            "cue": "furniture.c0_m7",
+            "target": "clothes.c0_m0",
+            "scored_idx": 49,
+            "rank": 45,
+            "scored_rate": 59.0,
+            "noise_floor": 71.5,
+            "best_other": 1886.0
+          },
+          {
+            "cue": "foods.c6_m4",
+            "target": "clothes.c6_m0",
+            "scored_idx": 46,
+            "rank": 68,
+            "scored_rate": 33.0,
+            "noise_floor": 88.5,
+            "best_other": 1885.0
+          },
+          {
+            "cue": "plants.c4_m0",
+            "target": "vehicles.c4_m2",
+            "scored_idx": 63,
+            "rank": 64,
+            "scored_rate": 41.0,
+            "noise_floor": 85.5,
+            "best_other": 1652.0
+          },
+          {
+            "cue": "tools.c7_m2",
+            "target": "clothes.c0_m2",
+            "scored_idx": 70,
+            "rank": 59,
+            "scored_rate": 40.0,
+            "noise_floor": 72.0,
+            "best_other": 1778.0
+          },
+          {
+            "cue": "plants.c7_m4",
+            "target": "tools.c2_m4",
+            "scored_idx": 4,
+            "rank": 49,
+            "scored_rate": 57.0,
+            "noise_floor": 70.0,
+            "best_other": 1834.0
+          },
+          {
+            "cue": "tools.c0_m3",
+            "target": "plants.c0_m2",
+            "scored_idx": 35,
+            "rank": 53,
+            "scored_rate": 42.0,
+            "noise_floor": 60.5,
+            "best_other": 1848.0
+          },
+          {
+            "cue": "animals.c5_m2",
+            "target": "plants.c1_m0",
+            "scored_idx": 62,
+            "rank": 68,
+            "scored_rate": 16.0,
+            "noise_floor": 80.0,
+            "best_other": 1784.0
+          },
+          {
+            "cue": "foods.c2_m2",
+            "target": "plants.c5_m7",
+            "scored_idx": 59,
+            "rank": 51,
+            "scored_rate": 47.0,
+            "noise_floor": 68.5,
+            "best_other": 1787.0
+          },
+          {
+            "cue": "clothes.c4_m7",
+            "target": "foods.c0_m7",
+            "scored_idx": 16,
+            "rank": 60,
+            "scored_rate": 26.0,
+            "noise_floor": 59.5,
+            "best_other": 1454.0
+          },
+          {
+            "cue": "animals.c2_m0",
+            "target": "tools.c0_m0",
+            "scored_idx": 25,
+            "rank": 65,
+            "scored_rate": 27.0,
+            "noise_floor": 64.5,
+            "best_other": 1742.0
+          },
+          {
+            "cue": "tools.c1_m1",
+            "target": "weather.c4_m5",
+            "scored_idx": 44,
+            "rank": 16,
+            "scored_rate": 99.0,
+            "noise_floor": 68.0,
+            "best_other": 1749.0
+          }
+        ]
+      },
+      "m3_band": "GO",
+      "m7_collapses": true,
+      "m4_moat": {
+        "n_stored_facts": 24,
+        "n_known_cues": 24,
+        "n_unknown_cues": 24,
+        "novelty_known_max": 2.220446049250313e-16,
+        "novelty_unknown_min": 0.4692095457522891,
+        "separation_margin": 0.4692095457522889,
+        "threshold": 0.23460477287614467,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": -1.1102230246251565e-16,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      }
+    }
+  },
+  "args": {
+    "mode": "full",
+    "seeds": "42,43,44",
+    "seed": null,
+    "n_bridges": 8,
+    "concepts_per_bridge": 64,
+    "target_per_sub": 8,
+    "n_pool": 2400,
+    "pattern_size": 100,
+    "homeo": "oja",
+    "homeo_target": 40.0,
+    "cycles": 10,
+    "bracket_setpoint": false,
+    "setpoint_bracket": [
+      20.0,
+      40.0,
+      80.0
+    ],
+    "n_props": 4,
+    "hub_facts_per_member": 6,
+    "bridge_facts": 8,
+    "triplet_facts_per_cluster": 4,
+    "readout_divnorm": "ch",
+    "readout_order": "interleave",
+    "readout_sigma": 0.001,
+    "readout_exponent": 2.0,
+    "readout_log_clip": false,
+    "diffusion_alpha": 0.5,
+    "diffusion_steps": 2,
+    "n_cross_facts": 24,
+    "encoding_steps": 100,
+    "teacher_pA": 500.0,
+    "top_k": 150,
+    "drive_pA": 1500.0,
+    "drive_steps": 100,
+    "moat_D": 128,
+    "moat_floor": 24,
+    "g1_bar": 0.5,
+    "a1_bar": 0.7,
+    "so_margin_bar": 0.1,
+    "k_neighbours": 3,
+    "out": "research/findings/raw/_multibridge_fanout8_full.json",
+    "_seed_for_g5": 44
+  }
+}
