@@ -1,0 +1,412 @@
+{
+  "aggregate": {
+    "seeds": [
+      "42"
+    ],
+    "mode": "full",
+    "route": "per-bridge",
+    "cortex_source": "synthetic",
+    "b1_bar": 0.7,
+    "x_bar": 0.7,
+    "gate_A": {
+      "all_pass": true,
+      "per_seed": [
+        true
+      ],
+      "any_abstention_breach": false,
+      "criterion": "every bridge's within-bridge matrix passes (>=5/6 + moat)"
+    },
+    "gate_B": {
+      "b1_per_seed_per_bridge": {
+        "42": {
+          "animals": 1.0,
+          "foods": 1.0,
+          "vehicles": 1.0
+        }
+      },
+      "b1_all_GO": true,
+      "b1_above_chance": true,
+      "b1_boundary_band": false,
+      "b2_zero_false_accepts": true,
+      "chance": 0.25,
+      "C1_collapses": false,
+      "C4_collapses": true
+    },
+    "gate_X": {
+      "x_pb_ok": true,
+      "vtag_present": false,
+      "x_vtag_recall_ok": null,
+      "x_vtag_band_ok": null,
+      "cx_collapses": null,
+      "C3_moat_intact": true,
+      "C3_lesion_collapses": true,
+      "x_abstention_breach": false,
+      "x_primary_ok": true
+    },
+    "verdict": "NEGATIVE",
+    "cost": {
+      "route": "A",
+      "per_bridge_composer_D": 96,
+      "n_bridges": 3,
+      "per_bridge_cost": {
+        "animals": {
+          "label": "routeA[animals]",
+          "D": 96,
+          "cleanup_argmax_width": 8,
+          "n_codebook_entries": 15,
+          "codebook_bytes": 11520,
+          "codebook_MB": 0.012,
+          "per_bind_rf_neurons": 192,
+          "per_bundle_rf_neurons": 384,
+          "cleanup_float_ops": 768
+        },
+        "foods": {
+          "label": "routeA[foods]",
+          "D": 96,
+          "cleanup_argmax_width": 8,
+          "n_codebook_entries": 15,
+          "codebook_bytes": 11520,
+          "codebook_MB": 0.012,
+          "per_bind_rf_neurons": 192,
+          "per_bundle_rf_neurons": 384,
+          "cleanup_float_ops": 768
+        },
+        "vehicles": {
+          "label": "routeA[vehicles]",
+          "D": 96,
+          "cleanup_argmax_width": 8,
+          "n_codebook_entries": 15,
+          "codebook_bytes": 11520,
+          "codebook_MB": 0.012,
+          "per_bind_rf_neurons": 192,
+          "per_bundle_rf_neurons": 384,
+          "cleanup_float_ops": 768
+        }
+      },
+      "total_codebook_bytes": 34560,
+      "total_codebook_MB": 0.035,
+      "per_bind_rf_neurons": 192,
+      "per_bundle_rf_neurons": 384,
+      "cleanup_argmax_width": 8,
+      "vocabulary_independent_per_op": true
+    }
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "mode": "full",
+      "route": "per-bridge",
+      "cortex_source": "synthetic",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles"
+      ],
+      "union_n_concepts": 24,
+      "cortex_build_seconds": 0.0,
+      "graded_stats": {
+        "animals": {
+          "within_cluster_cos_mean": 0.431377030370062,
+          "within_cluster_cos_min": 0.33267547568986955,
+          "between_cluster_cos_mean": -0.05790434256947412,
+          "between_cluster_cos_max": 0.06771304110648696,
+          "graded_margin": 0.4892813729395361,
+          "is_graded": true
+        },
+        "foods": {
+          "within_cluster_cos_mean": 0.431377030370062,
+          "within_cluster_cos_min": 0.33267547568986955,
+          "between_cluster_cos_mean": -0.05790434256947412,
+          "between_cluster_cos_max": 0.06771304110648696,
+          "graded_margin": 0.4892813729395361,
+          "is_graded": true
+        },
+        "vehicles": {
+          "within_cluster_cos_mean": 0.431377030370062,
+          "within_cluster_cos_min": 0.33267547568986955,
+          "between_cluster_cos_mean": -0.05790434256947412,
+          "between_cluster_cos_max": 0.06771304110648696,
+          "graded_margin": 0.4892813729395361,
+          "is_graded": true
+        }
+      },
+      "gate_A": {
+        "per_bridge": {
+          "animals": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "animals.c1_m0 animals.c0_m1",
+              "clause": "animals.c1_m1 animals.c0_m1 animals.c0_m2"
+            }
+          },
+          "foods": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "foods.c1_m0 foods.c0_m1",
+              "clause": "foods.c1_m1 foods.c0_m1 foods.c0_m2"
+            }
+          },
+          "vehicles": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "vehicles.c1_m0 vehicles.c0_m1",
+              "clause": "vehicles.c1_m1 vehicles.c0_m1 vehicles.c0_m2"
+            }
+          }
+        },
+        "n_bridges_pass": 3,
+        "n_bridges": 3,
+        "all_bridges_pass": true,
+        "any_abstention_breach": false
+      },
+      "gate_B": {
+        "animals": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 8,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 2,
+          "per_sub": 4,
+          "n_props": 4
+        },
+        "foods": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 8,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 2,
+          "per_sub": 4,
+          "n_props": 4
+        },
+        "vehicles": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 8,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 2,
+          "per_sub": 4,
+          "n_props": 4
+        }
+      },
+      "anticheat_C1": {
+        "animals": {
+          "b1_permuted": 0.575,
+          "chance": 0.25,
+          "collapses": false
+        },
+        "foods": {
+          "b1_permuted": 0.575,
+          "chance": 0.25,
+          "collapses": false
+        },
+        "vehicles": {
+          "b1_permuted": 0.575,
+          "chance": 0.25,
+          "collapses": false
+        }
+      },
+      "anticheat_C4": {
+        "b1_random_shard": 0.0,
+        "chance": 0.25,
+        "collapses": true,
+        "n_random_members": 8
+      },
+      "cross_facts": [
+        [
+          "vehicles.c1_m1",
+          "animals.c1_m3"
+        ],
+        [
+          "foods.c0_m3",
+          "vehicles.c0_m1"
+        ],
+        [
+          "foods.c0_m0",
+          "vehicles.c0_m2"
+        ],
+        [
+          "vehicles.c0_m0",
+          "animals.c1_m0"
+        ],
+        [
+          "vehicles.c1_m0",
+          "foods.c1_m0"
+        ],
+        [
+          "foods.c0_m0",
+          "vehicles.c0_m0"
+        ]
+      ],
+      "gate_X_pb": {
+        "n_bridges_exercised": 3,
+        "what_acc": 1.0,
+        "who_acc": 1.0,
+        "abstention_probes": 6,
+        "abstention_breaches": 0
+      },
+      "gate_X_vtag": null,
+      "anticheat_C3": {
+        "n_stored_facts": 5,
+        "n_known_cues": 5,
+        "n_unknown_cues": 8,
+        "novelty_known_max": 0.0,
+        "novelty_unknown_min": 0.6403946605675583,
+        "separation_margin": 0.6403946605675583,
+        "threshold": 0.32019733028377917,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": 0.0,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      },
+      "cost": {
+        "route": "A",
+        "per_bridge_composer_D": 96,
+        "n_bridges": 3,
+        "per_bridge_cost": {
+          "animals": {
+            "label": "routeA[animals]",
+            "D": 96,
+            "cleanup_argmax_width": 8,
+            "n_codebook_entries": 15,
+            "codebook_bytes": 11520,
+            "codebook_MB": 0.012,
+            "per_bind_rf_neurons": 192,
+            "per_bundle_rf_neurons": 384,
+            "cleanup_float_ops": 768
+          },
+          "foods": {
+            "label": "routeA[foods]",
+            "D": 96,
+            "cleanup_argmax_width": 8,
+            "n_codebook_entries": 15,
+            "codebook_bytes": 11520,
+            "codebook_MB": 0.012,
+            "per_bind_rf_neurons": 192,
+            "per_bundle_rf_neurons": 384,
+            "cleanup_float_ops": 768
+          },
+          "vehicles": {
+            "label": "routeA[vehicles]",
+            "D": 96,
+            "cleanup_argmax_width": 8,
+            "n_codebook_entries": 15,
+            "codebook_bytes": 11520,
+            "codebook_MB": 0.012,
+            "per_bind_rf_neurons": 192,
+            "per_bundle_rf_neurons": 384,
+            "cleanup_float_ops": 768
+          }
+        },
+        "total_codebook_bytes": 34560,
+        "total_codebook_MB": 0.035,
+        "per_bind_rf_neurons": 192,
+        "per_bundle_rf_neurons": 384,
+        "cleanup_argmax_width": 8,
+        "vocabulary_independent_per_op": true
+      },
+      "timings_seconds": {
+        "gate_A": 2.22,
+        "gate_B": 17.69,
+        "gate_X_pb": 0.49,
+        "anticheat_C3": 2.29
+      }
+    }
+  },
+  "args": {
+    "mode": "full",
+    "composer": "per-bridge",
+    "seeds": "42",
+    "seed": null,
+    "cortex": "synthetic",
+    "smoke": true,
+    "skip_vtag": true,
+    "n_bridges": 3,
+    "concepts_per_bridge": 8,
+    "target_per_sub": 4,
+    "n_pool": 300,
+    "pattern_size": 30,
+    "homeo": "oja",
+    "homeo_target": 40.0,
+    "cycles": 2,
+    "synthetic_dim": 96,
+    "residual_frac": 0.55,
+    "n_props": 4,
+    "hub_facts_per_member": 6,
+    "bridge_facts": 8,
+    "triplet_facts_per_cluster": 4,
+    "readout_divnorm": "ch",
+    "readout_order": "interleave",
+    "readout_sigma": 0.001,
+    "readout_exponent": 2.0,
+    "readout_log_clip": false,
+    "diffusion_alpha": 0.5,
+    "diffusion_steps": 2,
+    "D": 128,
+    "per_bridge_D": 96,
+    "D_sweep": null,
+    "b_conv_splits": 2,
+    "n_cross_facts": 6,
+    "encoding_steps": 100,
+    "teacher_pA": 500.0,
+    "top_k": 150,
+    "drive_pA": 1500.0,
+    "drive_steps": 100,
+    "moat_D": 128,
+    "moat_floor": 8,
+    "a1_bar": 0.7,
+    "x_bar": 0.7,
+    "k_neighbours": 3,
+    "g1_bar": 0.5,
+    "so_margin_bar": 0.1,
+    "out": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\_phase1_composer_routeA_smoke_seed42.json",
+    "D_gen": 128
+  },
+  "adaptations": "A1) PerBridgeCortexAgent: a {shard: RFPhasorComposer} dict (each over its 64-concept shard vocab + shared aux) + a word->shard router, replacing the ensemble's ONE union composer; within-shard facts bind in the agent-word's shard's composer, cross-shard facts go to the V-tag layer (route A does NOT bind them generatively); each shard gets its own moat (the per-bridge abstention surface). A2) route A's Gate A runs the single-shard gate_A_matrix on EACH shard's OWN cortex codebook so the clause's 3 words live in ONE shard (within-bridge clause); the ensemble's interleaved cross-bridge clause is route B's matrix. A3) route A's Gate X is the V-tag IDENTITY layer (gate_X_vtag) + X-pb (a per-bridge-composer within-bridge fact-recall plumbing check on CPU, so route A's dispatch is exercised even when --skip-vtag drops the GPU V-tag layer); route B's Gate X is the generative X-conv. A4) per-route COST logging (composer D(s), codebook bytes, per-op RF bridge neuron counts, cleanup argmax width, wall-clock per gate; route B also logs the V=512 D/concept ratio for the 2,048 extrapolation)."
+}
