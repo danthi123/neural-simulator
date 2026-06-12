@@ -82,7 +82,7 @@ The single learned pool has a hard **quadratic memory wall** — measured live, 
 | Vocab | pool (~37 neurons/concept) | synapses | feasible single-pool? |
 |---|---|---|---|
 | V=320 | 12,000 | 88.6M (7.7 GB) | yes (in flight) |
-| V=640 | ~24,000 | ~350M (~20 GB) | yes, tight — needs exclusive GPU, ~4–6 hr/seed |
+| V=640 | ~24,000 | ~354M | **NO — OOMs at the synapse install** (empirically, 2026-06-11: pinned-memory pool exhausted transferring 354M synapses host→device, before any compute) |
 | V=1,280 | ~48,000 | ~1.4B | no — OOM |
 | **V=2,048** | **~77,000** | **~3.6B (~40 GB)** | **no — OOM by ~16 GB; learn ~days even if it fit** |
 
@@ -97,8 +97,8 @@ So a single-pool 2,048 run is **infeasible on this GPU** — a memory wall, not 
 
 **Queued sequence (gated, cheap-first):**
 1. V=320 single-pool gate (3-seed gated; in flight) — confirms the recipe at the production single-pool tier.
-2. **V=640 single-pool** (one run, the last feasible single-pool point) — maps the per-pool scaling curve; confirms the recipe doesn't sag before the memory wall.
-3. **Multi-bridge 2,048** (32 × 64) — the lifted-ceiling demonstration. **Held until V=320 + V=640 confirm AND the owner green-lights the scale** (it folds into piece iii's integration + the ~2–4 week push). Compute-feasible because each bridge is small; the cost is in the cross-bridge composition + sharding design, not raw pool size.
+2. ~~V=640 single-pool~~ **— SCRATCHED (2026-06-11): clean-density V=640 OOMs at the synapse install (354M synapses); the single-pool memory wall is ~V=320–450, not V=640.** The single-pool scaling curve completes at **V=160 +0.977 → V=320 +0.991** (both near/above ceiling, improving) — sufficient single-pool evidence; a feasible (lower-density) V=640 would confound scale with density and is not worth it. **Pre-build multi-seed confirmation runs at V=320** (the production single-pool tier) instead.
+3. **Multi-bridge 2,048** (32 × 64) — the lifted-ceiling demonstration AND now the only path past the production tier. **Held until the V=320 multi-seed confirms AND the owner green-lights the scale** (it folds into piece iii's integration + the ~2–4 week push). Compute-feasible because each bridge is small (64 concepts); the cost is in the cross-bridge composition + semantic-cluster sharding, not raw pool size. **Design the cheap-first multi-bridge de-risk before building (standing practice).**
 
 ---
 
