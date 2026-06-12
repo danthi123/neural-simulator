@@ -1,0 +1,1342 @@
+{
+  "aggregate": {
+    "seeds": [
+      "42",
+      "43",
+      "44"
+    ],
+    "mode": "full",
+    "precondition": {
+      "M1_all_GO": true,
+      "M1_no_NEGATIVE": true,
+      "A2_collapses": true,
+      "A3_collapses": true,
+      "M2_all_GO": true,
+      "M2_no_NEGATIVE": true,
+      "G5_robust_collapses": true,
+      "M6_random_shard_collapses": true
+    },
+    "cross": {
+      "M3_all_GO": true,
+      "M3_no_NEGATIVE": true,
+      "M7_permuted_collapses": false
+    },
+    "moat": {
+      "M4_moat_intact": true,
+      "M4_lesion_collapses": true
+    },
+    "verdict": "BOUNDARY"
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "mode": "full",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles"
+      ],
+      "setpoint_bracket": {
+        "20.0": {
+          "generalization": 0.95,
+          "pearson_sim_vs_Strue": 0.6716767454721817,
+          "second_order_margin": 0.44353785347031793,
+          "m1_band": "GO",
+          "m2_band": "GO"
+        },
+        "40.0": {
+          "generalization": 0.9875,
+          "pearson_sim_vs_Strue": 0.8128849136869721,
+          "second_order_margin": 0.5071162279505224,
+          "m1_band": "GO",
+          "m2_band": "GO"
+        },
+        "80.0": {
+          "generalization": 1.0,
+          "pearson_sim_vs_Strue": 0.8143285299154215,
+          "second_order_margin": 0.42271129105569116,
+          "m1_band": "GO",
+          "m2_band": "GO"
+        }
+      },
+      "per_bridge_gates": [
+        {
+          "shard": "animals",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 112.70074772834778,
+          "recurrent_mean": 0.3395093083381653,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.8128849136869721,
+          "pearson_W_vs_rawcounts": 0.7760179430563741,
+          "second_order_margin": 0.5071162279505224,
+          "is_graded": true,
+          "within_cos": 0.885031438764919,
+          "between_cos": 0.3799989834600889,
+          "m2_band": "GO",
+          "generalization": 0.9875,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.95,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.2,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.015193526836077859,
+          "permuted_pearson_vs_Strue": 0.031194007540648615,
+          "permuted_generalization": 0.2375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "foods",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 116.95433282852173,
+          "recurrent_mean": 0.34303346276283264,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.8066023314813054,
+          "pearson_W_vs_rawcounts": 0.769614363779639,
+          "second_order_margin": 0.49634087607139865,
+          "is_graded": true,
+          "within_cos": 0.8926135538909136,
+          "between_cos": 0.397193695168228,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.15625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.00877018865775625,
+          "permuted_pearson_vs_Strue": 0.013587193902966511,
+          "permuted_generalization": 0.3375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "vehicles",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 115.15053939819336,
+          "recurrent_mean": 0.33819422125816345,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7896719135874046,
+          "pearson_W_vs_rawcounts": 0.7748831166099225,
+          "second_order_margin": 0.5053690176608281,
+          "is_graded": true,
+          "within_cos": 0.8849339276291243,
+          "between_cos": 0.38260016581102124,
+          "m2_band": "GO",
+          "generalization": 0.99375,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.975,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.0625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.009664583282356823,
+          "permuted_pearson_vs_Strue": 0.024071737347928664,
+          "permuted_generalization": 0.2625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        }
+      ],
+      "m6_random_shard": {
+        "n_random_members": 64,
+        "n_facts": 11,
+        "random_shard_generalization": 0.3125,
+        "chance": 0.25,
+        "m6_collapses_to_chance": true
+      },
+      "cross_facts": [
+        [
+          "vehicles.c6_m5",
+          "animals.c2_m7"
+        ],
+        [
+          "foods.c5_m3",
+          "vehicles.c6_m1"
+        ],
+        [
+          "foods.c1_m0",
+          "vehicles.c2_m2"
+        ],
+        [
+          "vehicles.c5_m0",
+          "animals.c6_m4"
+        ],
+        [
+          "vehicles.c0_m4",
+          "foods.c6_m4"
+        ],
+        [
+          "foods.c7_m0",
+          "vehicles.c3_m0"
+        ],
+        [
+          "vehicles.c3_m3",
+          "foods.c6_m0"
+        ],
+        [
+          "foods.c1_m6",
+          "animals.c7_m1"
+        ],
+        [
+          "foods.c5_m0",
+          "vehicles.c2_m5"
+        ],
+        [
+          "foods.c2_m0",
+          "animals.c3_m2"
+        ],
+        [
+          "animals.c2_m4",
+          "foods.c7_m5"
+        ],
+        [
+          "foods.c7_m0",
+          "vehicles.c6_m7"
+        ]
+      ],
+      "m3_cross_bridge": {
+        "permuted": false,
+        "n_cross_facts": 12,
+        "top1_fraction": 0.9166666666666666,
+        "top2_fraction": 1.0,
+        "mean_signal_vs_floor": 17.753060550670654,
+        "mean_margin": 1330.0833333333333,
+        "detail": [
+          {
+            "cue": "vehicles.c6_m5",
+            "target": "animals.c2_m7",
+            "rank": 0,
+            "target_rate": 1914.0,
+            "noise_floor": 123.0,
+            "best_other": 314.0
+          },
+          {
+            "cue": "foods.c5_m3",
+            "target": "vehicles.c6_m1",
+            "rank": 0,
+            "target_rate": 1925.0,
+            "noise_floor": 95.5,
+            "best_other": 207.0
+          },
+          {
+            "cue": "foods.c1_m0",
+            "target": "vehicles.c2_m2",
+            "rank": 0,
+            "target_rate": 2051.0,
+            "noise_floor": 144.0,
+            "best_other": 498.0
+          },
+          {
+            "cue": "vehicles.c5_m0",
+            "target": "animals.c6_m4",
+            "rank": 0,
+            "target_rate": 1581.0,
+            "noise_floor": 86.5,
+            "best_other": 203.0
+          },
+          {
+            "cue": "vehicles.c0_m4",
+            "target": "foods.c6_m4",
+            "rank": 0,
+            "target_rate": 1604.0,
+            "noise_floor": 91.0,
+            "best_other": 263.0
+          },
+          {
+            "cue": "foods.c7_m0",
+            "target": "vehicles.c3_m0",
+            "rank": 1,
+            "target_rate": 1699.0,
+            "noise_floor": 178.0,
+            "best_other": 2015.0
+          },
+          {
+            "cue": "vehicles.c3_m3",
+            "target": "foods.c6_m0",
+            "rank": 0,
+            "target_rate": 1876.0,
+            "noise_floor": 82.0,
+            "best_other": 170.0
+          },
+          {
+            "cue": "foods.c1_m6",
+            "target": "animals.c7_m1",
+            "rank": 0,
+            "target_rate": 1736.0,
+            "noise_floor": 76.0,
+            "best_other": 195.0
+          },
+          {
+            "cue": "foods.c5_m0",
+            "target": "vehicles.c2_m5",
+            "rank": 0,
+            "target_rate": 2035.0,
+            "noise_floor": 103.5,
+            "best_other": 278.0
+          },
+          {
+            "cue": "foods.c2_m0",
+            "target": "animals.c3_m2",
+            "rank": 0,
+            "target_rate": 1832.0,
+            "noise_floor": 82.5,
+            "best_other": 305.0
+          },
+          {
+            "cue": "animals.c2_m4",
+            "target": "foods.c7_m5",
+            "rank": 0,
+            "target_rate": 2098.0,
+            "noise_floor": 114.0,
+            "best_other": 295.0
+          },
+          {
+            "cue": "foods.c7_m0",
+            "target": "vehicles.c6_m7",
+            "rank": 0,
+            "target_rate": 1978.0,
+            "noise_floor": 170.0,
+            "best_other": 1625.0
+          }
+        ]
+      },
+      "m7_permuted_mapping": {
+        "permuted": true,
+        "n_cross_facts": 12,
+        "top1_fraction": 0.9166666666666666,
+        "top2_fraction": 1.0,
+        "mean_signal_vs_floor": 18.257255146149557,
+        "mean_margin": 905.0,
+        "detail": [
+          {
+            "cue": "vehicles.c6_m5",
+            "target": "foods.c6_m0",
+            "rank": 0,
+            "target_rate": 1779.0,
+            "noise_floor": 90.5,
+            "best_other": 175.0
+          },
+          {
+            "cue": "foods.c5_m3",
+            "target": "animals.c7_m1",
+            "rank": 0,
+            "target_rate": 1664.0,
+            "noise_floor": 74.5,
+            "best_other": 188.0
+          },
+          {
+            "cue": "foods.c1_m0",
+            "target": "vehicles.c6_m7",
+            "rank": 0,
+            "target_rate": 2093.0,
+            "noise_floor": 248.0,
+            "best_other": 2074.0
+          },
+          {
+            "cue": "vehicles.c5_m0",
+            "target": "foods.c7_m5",
+            "rank": 0,
+            "target_rate": 1780.0,
+            "noise_floor": 83.5,
+            "best_other": 182.0
+          },
+          {
+            "cue": "vehicles.c0_m4",
+            "target": "vehicles.c2_m2",
+            "rank": 0,
+            "target_rate": 2080.0,
+            "noise_floor": 222.0,
+            "best_other": 1747.0
+          },
+          {
+            "cue": "foods.c7_m0",
+            "target": "animals.c6_m4",
+            "rank": 0,
+            "target_rate": 1601.0,
+            "noise_floor": 78.0,
+            "best_other": 173.0
+          },
+          {
+            "cue": "vehicles.c3_m3",
+            "target": "animals.c3_m2",
+            "rank": 0,
+            "target_rate": 1743.0,
+            "noise_floor": 77.5,
+            "best_other": 256.0
+          },
+          {
+            "cue": "foods.c1_m6",
+            "target": "vehicles.c6_m1",
+            "rank": 0,
+            "target_rate": 1953.0,
+            "noise_floor": 90.0,
+            "best_other": 213.0
+          },
+          {
+            "cue": "foods.c5_m0",
+            "target": "animals.c2_m7",
+            "rank": 0,
+            "target_rate": 1736.0,
+            "noise_floor": 72.0,
+            "best_other": 283.0
+          },
+          {
+            "cue": "foods.c2_m0",
+            "target": "vehicles.c2_m5",
+            "rank": 0,
+            "target_rate": 2025.0,
+            "noise_floor": 90.0,
+            "best_other": 247.0
+          },
+          {
+            "cue": "animals.c2_m4",
+            "target": "vehicles.c3_m0",
+            "rank": 0,
+            "target_rate": 1585.0,
+            "noise_floor": 74.5,
+            "best_other": 189.0
+          },
+          {
+            "cue": "foods.c7_m0",
+            "target": "foods.c6_m4",
+            "rank": 1,
+            "target_rate": 1666.0,
+            "noise_floor": 310.5,
+            "best_other": 5118.0
+          }
+        ]
+      },
+      "m3_band": "GO",
+      "m7_collapses": false,
+      "m4_moat": {
+        "n_stored_facts": 11,
+        "n_known_cues": 11,
+        "n_unknown_cues": 24,
+        "novelty_known_max": 1.1102230246251565e-16,
+        "novelty_unknown_min": 0.5333635909942724,
+        "separation_margin": 0.5333635909942723,
+        "threshold": 0.2666817954971363,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": 0.0,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      }
+    },
+    "43": {
+      "seed": 43,
+      "mode": "full",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles"
+      ],
+      "setpoint_bracket": {
+        "20.0": {
+          "generalization": 0.99375,
+          "pearson_sim_vs_Strue": 0.6395641962104184,
+          "second_order_margin": 0.4596285908146928,
+          "m1_band": "GO",
+          "m2_band": "GO"
+        },
+        "40.0": {
+          "generalization": 1.0,
+          "pearson_sim_vs_Strue": 0.7641615277414193,
+          "second_order_margin": 0.5256164171637169,
+          "m1_band": "GO",
+          "m2_band": "GO"
+        },
+        "80.0": {
+          "generalization": 0.725,
+          "pearson_sim_vs_Strue": 0.23810969503741194,
+          "second_order_margin": 0.05414454790714107,
+          "m1_band": "GO",
+          "m2_band": "NEGATIVE"
+        }
+      },
+      "per_bridge_gates": [
+        {
+          "shard": "animals",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 117.75859689712524,
+          "recurrent_mean": 0.3403984010219574,
+          "recurrent_nnz": 3456094,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7641615277414193,
+          "pearson_W_vs_rawcounts": 0.7894869777155553,
+          "second_order_margin": 0.5256164171637169,
+          "is_graded": true,
+          "within_cos": 0.8782854172213046,
+          "between_cos": 0.35406920516756124,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.25625,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.34375,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.0038547451705208124,
+          "permuted_pearson_vs_Strue": 0.007518374982720463,
+          "permuted_generalization": 0.20625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "foods",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 114.3511552810669,
+          "recurrent_mean": 0.3459339439868927,
+          "recurrent_nnz": 3456094,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7626952693177466,
+          "pearson_W_vs_rawcounts": 0.7876923412814228,
+          "second_order_margin": 0.5209435573317485,
+          "is_graded": true,
+          "within_cos": 0.8713501629625092,
+          "between_cos": 0.35118519652712427,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.25625,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.10625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.007677995831426143,
+          "permuted_pearson_vs_Strue": 0.013439988175207971,
+          "permuted_generalization": 0.23125,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "vehicles",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 117.95387434959412,
+          "recurrent_mean": 0.3459157943725586,
+          "recurrent_nnz": 3456094,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7748367429234301,
+          "pearson_W_vs_rawcounts": 0.7945419505225667,
+          "second_order_margin": 0.521773287701762,
+          "is_graded": true,
+          "within_cos": 0.8654498989165706,
+          "between_cos": 0.34386384435316625,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.25625,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.1875,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.006934754474239052,
+          "permuted_pearson_vs_Strue": 0.012052718813956337,
+          "permuted_generalization": 0.2375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        }
+      ],
+      "m6_random_shard": {
+        "n_random_members": 64,
+        "n_facts": 10,
+        "random_shard_generalization": 0.3625,
+        "chance": 0.25,
+        "m6_collapses_to_chance": true
+      },
+      "cross_facts": [
+        [
+          "animals.c6_m4",
+          "foods.c0_m7"
+        ],
+        [
+          "foods.c7_m2",
+          "vehicles.c2_m5"
+        ],
+        [
+          "foods.c4_m7",
+          "vehicles.c0_m5"
+        ],
+        [
+          "foods.c3_m5",
+          "animals.c0_m1"
+        ],
+        [
+          "animals.c6_m5",
+          "foods.c2_m2"
+        ],
+        [
+          "animals.c6_m4",
+          "foods.c1_m4"
+        ],
+        [
+          "animals.c6_m5",
+          "foods.c6_m4"
+        ],
+        [
+          "vehicles.c4_m4",
+          "animals.c4_m2"
+        ],
+        [
+          "foods.c6_m5",
+          "vehicles.c0_m4"
+        ],
+        [
+          "animals.c2_m3",
+          "foods.c5_m2"
+        ],
+        [
+          "vehicles.c0_m1",
+          "foods.c4_m3"
+        ],
+        [
+          "vehicles.c6_m4",
+          "foods.c5_m6"
+        ]
+      ],
+      "m3_cross_bridge": {
+        "permuted": false,
+        "n_cross_facts": 12,
+        "top1_fraction": 0.8333333333333334,
+        "top2_fraction": 1.0,
+        "mean_signal_vs_floor": 16.677641780962254,
+        "mean_margin": 1027.6666666666667,
+        "detail": [
+          {
+            "cue": "animals.c6_m4",
+            "target": "foods.c0_m7",
+            "rank": 0,
+            "target_rate": 1996.0,
+            "noise_floor": 198.5,
+            "best_other": 1765.0
+          },
+          {
+            "cue": "foods.c7_m2",
+            "target": "vehicles.c2_m5",
+            "rank": 0,
+            "target_rate": 1926.0,
+            "noise_floor": 102.5,
+            "best_other": 221.0
+          },
+          {
+            "cue": "foods.c4_m7",
+            "target": "vehicles.c0_m5",
+            "rank": 0,
+            "target_rate": 1854.0,
+            "noise_floor": 108.0,
+            "best_other": 260.0
+          },
+          {
+            "cue": "foods.c3_m5",
+            "target": "animals.c0_m1",
+            "rank": 0,
+            "target_rate": 1920.0,
+            "noise_floor": 90.5,
+            "best_other": 215.0
+          },
+          {
+            "cue": "animals.c6_m5",
+            "target": "foods.c2_m2",
+            "rank": 1,
+            "target_rate": 1812.0,
+            "noise_floor": 185.0,
+            "best_other": 1954.0
+          },
+          {
+            "cue": "animals.c6_m4",
+            "target": "foods.c1_m4",
+            "rank": 1,
+            "target_rate": 1730.0,
+            "noise_floor": 184.0,
+            "best_other": 1945.0
+          },
+          {
+            "cue": "animals.c6_m5",
+            "target": "foods.c6_m4",
+            "rank": 0,
+            "target_rate": 1953.0,
+            "noise_floor": 183.0,
+            "best_other": 1775.0
+          },
+          {
+            "cue": "vehicles.c4_m4",
+            "target": "animals.c4_m2",
+            "rank": 0,
+            "target_rate": 1807.0,
+            "noise_floor": 101.5,
+            "best_other": 280.0
+          },
+          {
+            "cue": "foods.c6_m5",
+            "target": "vehicles.c0_m4",
+            "rank": 0,
+            "target_rate": 1410.0,
+            "noise_floor": 58.0,
+            "best_other": 220.0
+          },
+          {
+            "cue": "animals.c2_m3",
+            "target": "foods.c5_m2",
+            "rank": 0,
+            "target_rate": 1676.0,
+            "noise_floor": 86.0,
+            "best_other": 244.0
+          },
+          {
+            "cue": "vehicles.c0_m1",
+            "target": "foods.c4_m3",
+            "rank": 0,
+            "target_rate": 1747.0,
+            "noise_floor": 78.0,
+            "best_other": 275.0
+          },
+          {
+            "cue": "vehicles.c6_m4",
+            "target": "foods.c5_m6",
+            "rank": 0,
+            "target_rate": 1856.0,
+            "noise_floor": 97.5,
+            "best_other": 201.0
+          }
+        ]
+      },
+      "m7_permuted_mapping": {
+        "permuted": true,
+        "n_cross_facts": 12,
+        "top1_fraction": 0.8333333333333334,
+        "top2_fraction": 1.0,
+        "mean_signal_vs_floor": 12.603071077626828,
+        "mean_margin": 399.1666666666667,
+        "detail": [
+          {
+            "cue": "animals.c6_m4",
+            "target": "foods.c2_m2",
+            "rank": 1,
+            "target_rate": 1802.0,
+            "noise_floor": 289.5,
+            "best_other": 2021.0
+          },
+          {
+            "cue": "foods.c7_m2",
+            "target": "foods.c6_m4",
+            "rank": 0,
+            "target_rate": 1920.0,
+            "noise_floor": 184.0,
+            "best_other": 1912.0
+          },
+          {
+            "cue": "foods.c4_m7",
+            "target": "foods.c0_m7",
+            "rank": 0,
+            "target_rate": 1978.0,
+            "noise_floor": 180.0,
+            "best_other": 1951.0
+          },
+          {
+            "cue": "foods.c3_m5",
+            "target": "vehicles.c2_m5",
+            "rank": 0,
+            "target_rate": 1904.0,
+            "noise_floor": 91.0,
+            "best_other": 201.0
+          },
+          {
+            "cue": "animals.c6_m5",
+            "target": "vehicles.c0_m5",
+            "rank": 0,
+            "target_rate": 1881.0,
+            "noise_floor": 85.0,
+            "best_other": 244.0
+          },
+          {
+            "cue": "animals.c6_m4",
+            "target": "foods.c1_m4",
+            "rank": 0,
+            "target_rate": 1777.0,
+            "noise_floor": 265.5,
+            "best_other": 1727.0
+          },
+          {
+            "cue": "animals.c6_m5",
+            "target": "foods.c5_m2",
+            "rank": 0,
+            "target_rate": 2037.0,
+            "noise_floor": 242.5,
+            "best_other": 2009.0
+          },
+          {
+            "cue": "vehicles.c4_m4",
+            "target": "animals.c0_m1",
+            "rank": 0,
+            "target_rate": 1936.0,
+            "noise_floor": 188.0,
+            "best_other": 1678.0
+          },
+          {
+            "cue": "foods.c6_m5",
+            "target": "foods.c4_m3",
+            "rank": 0,
+            "target_rate": 1891.0,
+            "noise_floor": 211.5,
+            "best_other": 1812.0
+          },
+          {
+            "cue": "animals.c2_m3",
+            "target": "foods.c5_m6",
+            "rank": 0,
+            "target_rate": 1940.0,
+            "noise_floor": 184.0,
+            "best_other": 1805.0
+          },
+          {
+            "cue": "vehicles.c0_m1",
+            "target": "animals.c4_m2",
+            "rank": 0,
+            "target_rate": 1671.0,
+            "noise_floor": 67.0,
+            "best_other": 218.0
+          },
+          {
+            "cue": "vehicles.c6_m4",
+            "target": "vehicles.c0_m4",
+            "rank": 1,
+            "target_rate": 1458.0,
+            "noise_floor": 136.0,
+            "best_other": 1827.0
+          }
+        ]
+      },
+      "m3_band": "GO",
+      "m7_collapses": false,
+      "m4_moat": {
+        "n_stored_facts": 10,
+        "n_known_cues": 10,
+        "n_unknown_cues": 24,
+        "novelty_known_max": 3.3306690738754696e-16,
+        "novelty_unknown_min": 0.5296946282050213,
+        "separation_margin": 0.529694628205021,
+        "threshold": 0.26484731410251083,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": -1.1102230246251565e-16,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      }
+    },
+    "44": {
+      "seed": 44,
+      "mode": "full",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles"
+      ],
+      "setpoint_bracket": {
+        "20.0": {
+          "generalization": 0.98125,
+          "pearson_sim_vs_Strue": 0.623400060835355,
+          "second_order_margin": 0.4407628564771438,
+          "m1_band": "GO",
+          "m2_band": "GO"
+        },
+        "40.0": {
+          "generalization": 1.0,
+          "pearson_sim_vs_Strue": 0.768375963071721,
+          "second_order_margin": 0.5223423264567248,
+          "m1_band": "GO",
+          "m2_band": "GO"
+        },
+        "80.0": {
+          "generalization": 1.0,
+          "pearson_sim_vs_Strue": 0.7789011492639182,
+          "second_order_margin": 0.508848874354519,
+          "m1_band": "GO",
+          "m2_band": "GO"
+        }
+      },
+      "per_bridge_gates": [
+        {
+          "shard": "animals",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 119.31450724601746,
+          "recurrent_mean": 0.3509413003921509,
+          "recurrent_nnz": 3456623,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.768375963071721,
+          "pearson_W_vs_rawcounts": 0.7756166437717227,
+          "second_order_margin": 0.5223423264567248,
+          "is_graded": true,
+          "within_cos": 0.8872140683511974,
+          "between_cos": 0.365200549118286,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.375,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.175,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.004090246682108223,
+          "permuted_pearson_vs_Strue": -0.010292900801069366,
+          "permuted_generalization": 0.26875,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "foods",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 117.27147936820984,
+          "recurrent_mean": 0.3500131070613861,
+          "recurrent_nnz": 3456623,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7683040628082687,
+          "pearson_W_vs_rawcounts": 0.7912440811756116,
+          "second_order_margin": 0.5306822057027668,
+          "is_graded": true,
+          "within_cos": 0.8835256260939283,
+          "between_cos": 0.3508547519891657,
+          "m2_band": "GO",
+          "generalization": 0.975,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.9,
+          "orthogonal_acc": 0.375,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.275,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.0008828136274020293,
+          "permuted_pearson_vs_Strue": -0.010233077799562593,
+          "permuted_generalization": 0.23125,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "vehicles",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 118.32939672470093,
+          "recurrent_mean": 0.35172536969184875,
+          "recurrent_nnz": 3456623,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7653684035613647,
+          "pearson_W_vs_rawcounts": 0.7968977929714659,
+          "second_order_margin": 0.537344679493675,
+          "is_graded": true,
+          "within_cos": 0.8794829269188452,
+          "between_cos": 0.34011268213299584,
+          "m2_band": "GO",
+          "generalization": 0.99375,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.975,
+          "orthogonal_acc": 0.375,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.28125,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.006892717107650326,
+          "permuted_pearson_vs_Strue": -0.0040483797108204515,
+          "permuted_generalization": 0.2625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        }
+      ],
+      "m6_random_shard": {
+        "n_random_members": 64,
+        "n_facts": 10,
+        "random_shard_generalization": 0.35,
+        "chance": 0.25,
+        "m6_collapses_to_chance": true
+      },
+      "cross_facts": [
+        [
+          "vehicles.c1_m3",
+          "animals.c2_m4"
+        ],
+        [
+          "vehicles.c3_m7",
+          "animals.c5_m0"
+        ],
+        [
+          "vehicles.c6_m7",
+          "foods.c4_m1"
+        ],
+        [
+          "foods.c5_m0",
+          "animals.c5_m5"
+        ],
+        [
+          "foods.c1_m5",
+          "vehicles.c2_m5"
+        ],
+        [
+          "animals.c0_m0",
+          "vehicles.c5_m6"
+        ],
+        [
+          "vehicles.c7_m4",
+          "animals.c3_m0"
+        ],
+        [
+          "foods.c3_m1",
+          "animals.c6_m5"
+        ],
+        [
+          "vehicles.c3_m1",
+          "foods.c3_m7"
+        ],
+        [
+          "vehicles.c7_m4",
+          "foods.c5_m0"
+        ],
+        [
+          "foods.c1_m6",
+          "animals.c6_m7"
+        ],
+        [
+          "animals.c4_m6",
+          "vehicles.c2_m1"
+        ]
+      ],
+      "m3_cross_bridge": {
+        "permuted": false,
+        "n_cross_facts": 12,
+        "top1_fraction": 1.0,
+        "top2_fraction": 1.0,
+        "mean_signal_vs_floor": 23.824069174631806,
+        "mean_margin": 1641.5833333333333,
+        "detail": [
+          {
+            "cue": "vehicles.c1_m3",
+            "target": "animals.c2_m4",
+            "rank": 0,
+            "target_rate": 1883.0,
+            "noise_floor": 74.0,
+            "best_other": 229.0
+          },
+          {
+            "cue": "vehicles.c3_m7",
+            "target": "animals.c5_m0",
+            "rank": 0,
+            "target_rate": 2168.0,
+            "noise_floor": 103.5,
+            "best_other": 315.0
+          },
+          {
+            "cue": "vehicles.c6_m7",
+            "target": "foods.c4_m1",
+            "rank": 0,
+            "target_rate": 1908.0,
+            "noise_floor": 79.5,
+            "best_other": 213.0
+          },
+          {
+            "cue": "foods.c5_m0",
+            "target": "animals.c5_m5",
+            "rank": 0,
+            "target_rate": 1765.0,
+            "noise_floor": 66.5,
+            "best_other": 202.0
+          },
+          {
+            "cue": "foods.c1_m5",
+            "target": "vehicles.c2_m5",
+            "rank": 0,
+            "target_rate": 1774.0,
+            "noise_floor": 75.0,
+            "best_other": 304.0
+          },
+          {
+            "cue": "animals.c0_m0",
+            "target": "vehicles.c5_m6",
+            "rank": 0,
+            "target_rate": 1693.0,
+            "noise_floor": 69.0,
+            "best_other": 198.0
+          },
+          {
+            "cue": "vehicles.c7_m4",
+            "target": "animals.c3_m0",
+            "rank": 0,
+            "target_rate": 1826.0,
+            "noise_floor": 77.0,
+            "best_other": 225.0
+          },
+          {
+            "cue": "foods.c3_m1",
+            "target": "animals.c6_m5",
+            "rank": 0,
+            "target_rate": 1917.0,
+            "noise_floor": 87.0,
+            "best_other": 214.0
+          },
+          {
+            "cue": "vehicles.c3_m1",
+            "target": "foods.c3_m7",
+            "rank": 0,
+            "target_rate": 1785.0,
+            "noise_floor": 73.0,
+            "best_other": 165.0
+          },
+          {
+            "cue": "vehicles.c7_m4",
+            "target": "foods.c5_m0",
+            "rank": 0,
+            "target_rate": 2082.0,
+            "noise_floor": 85.0,
+            "best_other": 234.0
+          },
+          {
+            "cue": "foods.c1_m6",
+            "target": "animals.c6_m7",
+            "rank": 0,
+            "target_rate": 1800.0,
+            "noise_floor": 74.5,
+            "best_other": 215.0
+          },
+          {
+            "cue": "animals.c4_m6",
+            "target": "vehicles.c2_m1",
+            "rank": 0,
+            "target_rate": 1928.0,
+            "noise_floor": 88.0,
+            "best_other": 316.0
+          }
+        ]
+      },
+      "m7_permuted_mapping": {
+        "permuted": true,
+        "n_cross_facts": 12,
+        "top1_fraction": 0.8333333333333334,
+        "top2_fraction": 1.0,
+        "mean_signal_vs_floor": 20.46119647904322,
+        "mean_margin": 1007.5833333333334,
+        "detail": [
+          {
+            "cue": "vehicles.c1_m3",
+            "target": "foods.c3_m7",
+            "rank": 0,
+            "target_rate": 1790.0,
+            "noise_floor": 74.5,
+            "best_other": 167.0
+          },
+          {
+            "cue": "vehicles.c3_m7",
+            "target": "foods.c5_m0",
+            "rank": 0,
+            "target_rate": 1950.0,
+            "noise_floor": 80.0,
+            "best_other": 223.0
+          },
+          {
+            "cue": "vehicles.c6_m7",
+            "target": "foods.c4_m1",
+            "rank": 0,
+            "target_rate": 1838.0,
+            "noise_floor": 66.5,
+            "best_other": 208.0
+          },
+          {
+            "cue": "foods.c5_m0",
+            "target": "animals.c5_m0",
+            "rank": 0,
+            "target_rate": 2228.0,
+            "noise_floor": 159.5,
+            "best_other": 1738.0
+          },
+          {
+            "cue": "foods.c1_m5",
+            "target": "animals.c5_m5",
+            "rank": 0,
+            "target_rate": 1607.0,
+            "noise_floor": 60.0,
+            "best_other": 188.0
+          },
+          {
+            "cue": "animals.c0_m0",
+            "target": "vehicles.c2_m1",
+            "rank": 0,
+            "target_rate": 2034.0,
+            "noise_floor": 158.5,
+            "best_other": 1647.0
+          },
+          {
+            "cue": "vehicles.c7_m4",
+            "target": "vehicles.c2_m5",
+            "rank": 1,
+            "target_rate": 1895.0,
+            "noise_floor": 211.5,
+            "best_other": 3469.0
+          },
+          {
+            "cue": "foods.c3_m1",
+            "target": "animals.c6_m5",
+            "rank": 0,
+            "target_rate": 1903.0,
+            "noise_floor": 81.0,
+            "best_other": 210.0
+          },
+          {
+            "cue": "vehicles.c3_m1",
+            "target": "animals.c2_m4",
+            "rank": 0,
+            "target_rate": 1882.0,
+            "noise_floor": 79.0,
+            "best_other": 243.0
+          },
+          {
+            "cue": "vehicles.c7_m4",
+            "target": "animals.c3_m0",
+            "rank": 0,
+            "target_rate": 1786.0,
+            "noise_floor": 78.0,
+            "best_other": 211.0
+          },
+          {
+            "cue": "foods.c1_m6",
+            "target": "vehicles.c5_m6",
+            "rank": 0,
+            "target_rate": 1692.0,
+            "noise_floor": 69.5,
+            "best_other": 195.0
+          },
+          {
+            "cue": "animals.c4_m6",
+            "target": "animals.c6_m7",
+            "rank": 1,
+            "target_rate": 1877.0,
+            "noise_floor": 151.5,
+            "best_other": 1892.0
+          }
+        ]
+      },
+      "m3_band": "GO",
+      "m7_collapses": false,
+      "m4_moat": {
+        "n_stored_facts": 11,
+        "n_known_cues": 11,
+        "n_unknown_cues": 24,
+        "novelty_known_max": 0.0,
+        "novelty_unknown_min": 0.55615277620626,
+        "separation_margin": 0.55615277620626,
+        "threshold": 0.27807638810313,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": 0.0,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      }
+    }
+  },
+  "args": {
+    "mode": "full",
+    "seeds": "42,43,44",
+    "seed": null,
+    "n_bridges": 3,
+    "concepts_per_bridge": 64,
+    "target_per_sub": 8,
+    "n_pool": 2400,
+    "pattern_size": 100,
+    "homeo": "oja",
+    "homeo_target": 40.0,
+    "cycles": 10,
+    "bracket_setpoint": true,
+    "setpoint_bracket": [
+      20.0,
+      40.0,
+      80.0
+    ],
+    "n_props": 4,
+    "hub_facts_per_member": 6,
+    "bridge_facts": 8,
+    "triplet_facts_per_cluster": 4,
+    "readout_divnorm": "ch",
+    "readout_order": "interleave",
+    "readout_sigma": 0.001,
+    "readout_exponent": 2.0,
+    "readout_log_clip": false,
+    "diffusion_alpha": 0.5,
+    "diffusion_steps": 2,
+    "n_cross_facts": 12,
+    "encoding_steps": 100,
+    "teacher_pA": 500.0,
+    "top_k": 150,
+    "drive_pA": 1500.0,
+    "drive_steps": 100,
+    "moat_D": 128,
+    "moat_floor": 24,
+    "g1_bar": 0.5,
+    "a1_bar": 0.7,
+    "so_margin_bar": 0.1,
+    "k_neighbours": 3,
+    "out": "research/findings/raw/_multibridge_graded_derisk_full.json",
+    "_seed_for_g5": 44
+  }
+}
