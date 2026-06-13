@@ -1,0 +1,1016 @@
+{
+  "aggregate": {
+    "seeds": [
+      "42"
+    ],
+    "mode": "full",
+    "route": "per-bridge",
+    "cortex_source": "learned",
+    "b1_bar": 0.7,
+    "x_bar": 0.7,
+    "gate_A": {
+      "all_pass": true,
+      "per_seed": [
+        true
+      ],
+      "any_abstention_breach": false,
+      "criterion": "every bridge's within-bridge matrix passes (>=5/6 + moat)"
+    },
+    "gate_B": {
+      "b1_per_seed_per_bridge": {
+        "42": {
+          "animals": 0.9875,
+          "foods": 1.0,
+          "vehicles": 0.99375,
+          "tools": 0.9875,
+          "clothes": 1.0,
+          "furniture": 1.0,
+          "plants": 1.0,
+          "weather": 1.0
+        }
+      },
+      "b1_all_GO": true,
+      "b1_above_chance": true,
+      "b1_boundary_band": false,
+      "b2_zero_false_accepts": true,
+      "chance": 0.25,
+      "C1_collapses": true,
+      "C4_collapses": true
+    },
+    "gate_X": {
+      "x_pb_ok": true,
+      "vtag_present": true,
+      "x_vtag_recall_ok": true,
+      "x_vtag_band_ok": true,
+      "cx_collapses": true,
+      "C3_moat_intact": true,
+      "C3_lesion_collapses": true,
+      "x_abstention_breach": false,
+      "x_primary_ok": true
+    },
+    "verdict": "GO",
+    "cost": {
+      "route": "A",
+      "per_bridge_composer_D": 256,
+      "n_bridges": 8,
+      "per_bridge_cost": {
+        "animals": {
+          "label": "routeA[animals]",
+          "D": 256,
+          "cleanup_argmax_width": 64,
+          "n_codebook_entries": 71,
+          "codebook_bytes": 145408,
+          "codebook_MB": 0.145,
+          "per_bind_rf_neurons": 512,
+          "per_bundle_rf_neurons": 1024,
+          "cleanup_float_ops": 16384
+        },
+        "foods": {
+          "label": "routeA[foods]",
+          "D": 256,
+          "cleanup_argmax_width": 64,
+          "n_codebook_entries": 71,
+          "codebook_bytes": 145408,
+          "codebook_MB": 0.145,
+          "per_bind_rf_neurons": 512,
+          "per_bundle_rf_neurons": 1024,
+          "cleanup_float_ops": 16384
+        },
+        "vehicles": {
+          "label": "routeA[vehicles]",
+          "D": 256,
+          "cleanup_argmax_width": 64,
+          "n_codebook_entries": 71,
+          "codebook_bytes": 145408,
+          "codebook_MB": 0.145,
+          "per_bind_rf_neurons": 512,
+          "per_bundle_rf_neurons": 1024,
+          "cleanup_float_ops": 16384
+        },
+        "tools": {
+          "label": "routeA[tools]",
+          "D": 256,
+          "cleanup_argmax_width": 64,
+          "n_codebook_entries": 71,
+          "codebook_bytes": 145408,
+          "codebook_MB": 0.145,
+          "per_bind_rf_neurons": 512,
+          "per_bundle_rf_neurons": 1024,
+          "cleanup_float_ops": 16384
+        },
+        "clothes": {
+          "label": "routeA[clothes]",
+          "D": 256,
+          "cleanup_argmax_width": 64,
+          "n_codebook_entries": 71,
+          "codebook_bytes": 145408,
+          "codebook_MB": 0.145,
+          "per_bind_rf_neurons": 512,
+          "per_bundle_rf_neurons": 1024,
+          "cleanup_float_ops": 16384
+        },
+        "furniture": {
+          "label": "routeA[furniture]",
+          "D": 256,
+          "cleanup_argmax_width": 64,
+          "n_codebook_entries": 71,
+          "codebook_bytes": 145408,
+          "codebook_MB": 0.145,
+          "per_bind_rf_neurons": 512,
+          "per_bundle_rf_neurons": 1024,
+          "cleanup_float_ops": 16384
+        },
+        "plants": {
+          "label": "routeA[plants]",
+          "D": 256,
+          "cleanup_argmax_width": 64,
+          "n_codebook_entries": 71,
+          "codebook_bytes": 145408,
+          "codebook_MB": 0.145,
+          "per_bind_rf_neurons": 512,
+          "per_bundle_rf_neurons": 1024,
+          "cleanup_float_ops": 16384
+        },
+        "weather": {
+          "label": "routeA[weather]",
+          "D": 256,
+          "cleanup_argmax_width": 64,
+          "n_codebook_entries": 71,
+          "codebook_bytes": 145408,
+          "codebook_MB": 0.145,
+          "per_bind_rf_neurons": 512,
+          "per_bundle_rf_neurons": 1024,
+          "cleanup_float_ops": 16384
+        }
+      },
+      "total_codebook_bytes": 1163264,
+      "total_codebook_MB": 1.163,
+      "per_bind_rf_neurons": 512,
+      "per_bundle_rf_neurons": 1024,
+      "cleanup_argmax_width": 64,
+      "vocabulary_independent_per_op": true
+    }
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "mode": "full",
+      "route": "per-bridge",
+      "cortex_source": "learned",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles",
+        "tools",
+        "clothes",
+        "furniture",
+        "plants",
+        "weather"
+      ],
+      "union_n_concepts": 512,
+      "cortex_build_seconds": 1581.4,
+      "graded_stats": {
+        "animals": {
+          "within_cluster_cos_mean": 0.885031438764919,
+          "within_cluster_cos_min": 0.6798451856015494,
+          "between_cluster_cos_mean": 0.3799989834600889,
+          "between_cluster_cos_max": 0.8621390989379483,
+          "graded_margin": 0.50503245530483,
+          "is_graded": true
+        },
+        "foods": {
+          "within_cluster_cos_mean": 0.8926135538909136,
+          "within_cluster_cos_min": 0.6936414190293941,
+          "between_cluster_cos_mean": 0.397193695168228,
+          "between_cluster_cos_max": 0.7732261834660765,
+          "graded_margin": 0.49541985872268557,
+          "is_graded": true
+        },
+        "vehicles": {
+          "within_cluster_cos_mean": 0.8849339276291243,
+          "within_cluster_cos_min": 0.6564304387817503,
+          "between_cluster_cos_mean": 0.38260016581102124,
+          "between_cluster_cos_max": 0.8212296062123133,
+          "graded_margin": 0.502333761818103,
+          "is_graded": true
+        },
+        "tools": {
+          "within_cluster_cos_mean": 0.8744189681902333,
+          "within_cluster_cos_min": 0.4027561602232947,
+          "between_cluster_cos_mean": 0.39396262741558213,
+          "between_cluster_cos_max": 0.8775986340274893,
+          "graded_margin": 0.4804563407746512,
+          "is_graded": true
+        },
+        "clothes": {
+          "within_cluster_cos_mean": 0.8855440655194097,
+          "within_cluster_cos_min": 0.6884409418045244,
+          "between_cluster_cos_mean": 0.39436298579227175,
+          "between_cluster_cos_max": 0.8234643800217392,
+          "graded_margin": 0.4911810797271379,
+          "is_graded": true
+        },
+        "furniture": {
+          "within_cluster_cos_mean": 0.8842979835220872,
+          "within_cluster_cos_min": 0.5685564572610827,
+          "between_cluster_cos_mean": 0.38080484524400393,
+          "between_cluster_cos_max": 0.8090453414762584,
+          "graded_margin": 0.5034931382780833,
+          "is_graded": true
+        },
+        "plants": {
+          "within_cluster_cos_mean": 0.8870277653931804,
+          "within_cluster_cos_min": 0.5182643645026033,
+          "between_cluster_cos_mean": 0.37964847091989773,
+          "between_cluster_cos_max": 0.7923765042270668,
+          "graded_margin": 0.5073792944732827,
+          "is_graded": true
+        },
+        "weather": {
+          "within_cluster_cos_mean": 0.8854413085873265,
+          "within_cluster_cos_min": 0.6580445984190021,
+          "between_cluster_cos_mean": 0.39370313548248076,
+          "between_cluster_cos_max": 0.7552327329782219,
+          "graded_margin": 0.49173817310484574,
+          "is_graded": true
+        }
+      },
+      "gate_A": {
+        "per_bridge": {
+          "animals": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "animals.c0_m4 animals.c0_m1",
+              "clause": "animals.c0_m5 animals.c0_m1 animals.c0_m2"
+            }
+          },
+          "foods": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "foods.c0_m4 foods.c0_m1",
+              "clause": "foods.c0_m5 foods.c0_m1 foods.c0_m2"
+            }
+          },
+          "vehicles": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "vehicles.c0_m4 vehicles.c0_m1",
+              "clause": "vehicles.c0_m5 vehicles.c0_m1 vehicles.c0_m2"
+            }
+          },
+          "tools": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "tools.c0_m4 tools.c0_m1",
+              "clause": "tools.c0_m5 tools.c0_m1 tools.c0_m2"
+            }
+          },
+          "clothes": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "clothes.c0_m4 clothes.c0_m1",
+              "clause": "clothes.c0_m5 clothes.c0_m1 clothes.c0_m2"
+            }
+          },
+          "furniture": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "furniture.c0_m4 furniture.c0_m1",
+              "clause": "furniture.c0_m5 furniture.c0_m1 furniture.c0_m2"
+            }
+          },
+          "plants": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "plants.c0_m4 plants.c0_m1",
+              "clause": "plants.c0_m5 plants.c0_m1 plants.c0_m2"
+            }
+          },
+          "weather": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "weather.c0_m4 weather.c0_m1",
+              "clause": "weather.c0_m5 weather.c0_m1 weather.c0_m2"
+            }
+          }
+        },
+        "n_bridges_pass": 8,
+        "n_bridges": 8,
+        "all_bridges_pass": true,
+        "any_abstention_breach": false
+      },
+      "gate_B": {
+        "animals": {
+          "b1_accuracy": 0.9875,
+          "chance": 0.25,
+          "ratio_vs_chance": 3.95,
+          "b1_conv_accuracy": 0.984375,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "foods": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "vehicles": {
+          "b1_accuracy": 0.99375,
+          "chance": 0.25,
+          "ratio_vs_chance": 3.975,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "tools": {
+          "b1_accuracy": 0.9875,
+          "chance": 0.25,
+          "ratio_vs_chance": 3.95,
+          "b1_conv_accuracy": 0.984375,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "clothes": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "furniture": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "plants": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "weather": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        }
+      },
+      "anticheat_C1": {
+        "animals": {
+          "b1_permuted": 0.2,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "foods": {
+          "b1_permuted": 0.15625,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "vehicles": {
+          "b1_permuted": 0.0625,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "tools": {
+          "b1_permuted": 0.11875,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "clothes": {
+          "b1_permuted": 0.16875,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "furniture": {
+          "b1_permuted": 0.1875,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "plants": {
+          "b1_permuted": 0.1875,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "weather": {
+          "b1_permuted": 0.15625,
+          "chance": 0.25,
+          "collapses": true
+        }
+      },
+      "anticheat_C4": {
+        "b1_random_shard": 0.15625,
+        "chance": 0.25,
+        "collapses": true,
+        "n_random_members": 64
+      },
+      "cross_facts": [
+        [
+          "tools.c3_m0",
+          "clothes.c1_m0"
+        ],
+        [
+          "weather.c0_m4",
+          "plants.c6_m4"
+        ],
+        [
+          "foods.c2_m4",
+          "vehicles.c1_m6"
+        ],
+        [
+          "tools.c2_m0",
+          "furniture.c3_m2"
+        ],
+        [
+          "furniture.c7_m0",
+          "vehicles.c6_m7"
+        ],
+        [
+          "plants.c3_m0",
+          "foods.c5_m2"
+        ],
+        [
+          "clothes.c0_m2",
+          "foods.c6_m3"
+        ],
+        [
+          "vehicles.c0_m1",
+          "tools.c1_m6"
+        ],
+        [
+          "vehicles.c1_m5",
+          "foods.c4_m3"
+        ],
+        [
+          "tools.c2_m1",
+          "weather.c6_m0"
+        ],
+        [
+          "plants.c2_m3",
+          "clothes.c4_m5"
+        ],
+        [
+          "weather.c4_m4",
+          "animals.c5_m1"
+        ]
+      ],
+      "gate_X_pb": {
+        "n_bridges_exercised": 8,
+        "what_acc": 1.0,
+        "who_acc": 1.0,
+        "abstention_probes": 16,
+        "abstention_breaches": 0
+      },
+      "gate_X_vtag": {
+        "m3": {
+          "permuted": false,
+          "n_cross_facts": 12,
+          "top1_fraction": 1.0,
+          "top2_fraction": 1.0,
+          "mean_signal_vs_floor": 20.023684588289495,
+          "mean_margin": 1549.25,
+          "detail": [
+            {
+              "cue": "tools.c3_m0",
+              "target": "clothes.c1_m0",
+              "scored_idx": 16,
+              "rank": 0,
+              "scored_rate": 1684.0,
+              "noise_floor": 89.0,
+              "best_other": 247.0
+            },
+            {
+              "cue": "weather.c0_m4",
+              "target": "plants.c6_m4",
+              "scored_idx": 60,
+              "rank": 0,
+              "scored_rate": 1542.0,
+              "noise_floor": 95.5,
+              "best_other": 220.0
+            },
+            {
+              "cue": "foods.c2_m4",
+              "target": "vehicles.c1_m6",
+              "scored_idx": 22,
+              "rank": 0,
+              "scored_rate": 1873.0,
+              "noise_floor": 110.5,
+              "best_other": 331.0
+            },
+            {
+              "cue": "tools.c2_m0",
+              "target": "furniture.c3_m2",
+              "scored_idx": 34,
+              "rank": 0,
+              "scored_rate": 1740.0,
+              "noise_floor": 79.5,
+              "best_other": 260.0
+            },
+            {
+              "cue": "furniture.c7_m0",
+              "target": "vehicles.c6_m7",
+              "scored_idx": 63,
+              "rank": 0,
+              "scored_rate": 2024.0,
+              "noise_floor": 111.0,
+              "best_other": 310.0
+            },
+            {
+              "cue": "plants.c3_m0",
+              "target": "foods.c5_m2",
+              "scored_idx": 50,
+              "rank": 0,
+              "scored_rate": 1768.0,
+              "noise_floor": 98.0,
+              "best_other": 219.0
+            },
+            {
+              "cue": "clothes.c0_m2",
+              "target": "foods.c6_m3",
+              "scored_idx": 59,
+              "rank": 0,
+              "scored_rate": 1794.0,
+              "noise_floor": 74.5,
+              "best_other": 194.0
+            },
+            {
+              "cue": "vehicles.c0_m1",
+              "target": "tools.c1_m6",
+              "scored_idx": 22,
+              "rank": 0,
+              "scored_rate": 1777.0,
+              "noise_floor": 87.5,
+              "best_other": 212.0
+            },
+            {
+              "cue": "vehicles.c1_m5",
+              "target": "foods.c4_m3",
+              "scored_idx": 43,
+              "rank": 0,
+              "scored_rate": 1883.0,
+              "noise_floor": 74.5,
+              "best_other": 191.0
+            },
+            {
+              "cue": "tools.c2_m1",
+              "target": "weather.c6_m0",
+              "scored_idx": 56,
+              "rank": 0,
+              "scored_rate": 1864.0,
+              "noise_floor": 91.0,
+              "best_other": 193.0
+            },
+            {
+              "cue": "plants.c2_m3",
+              "target": "clothes.c4_m5",
+              "scored_idx": 45,
+              "rank": 0,
+              "scored_rate": 2052.0,
+              "noise_floor": 93.0,
+              "best_other": 440.0
+            },
+            {
+              "cue": "weather.c4_m4",
+              "target": "animals.c5_m1",
+              "scored_idx": 49,
+              "rank": 0,
+              "scored_rate": 1655.0,
+              "noise_floor": 92.5,
+              "best_other": 248.0
+            }
+          ]
+        },
+        "cx_permuted": {
+          "permuted": true,
+          "n_cross_facts": 12,
+          "top1_fraction": 0.0,
+          "top2_fraction": 0.0,
+          "mean_signal_vs_floor": 1.3114523728150853,
+          "mean_margin": -1509.1666666666667,
+          "detail": [
+            {
+              "cue": "tools.c3_m0",
+              "target": "clothes.c1_m0",
+              "scored_idx": 8,
+              "rank": 13,
+              "scored_rate": 119.0,
+              "noise_floor": 82.5,
+              "best_other": 1587.0
+            },
+            {
+              "cue": "weather.c0_m4",
+              "target": "plants.c6_m4",
+              "scored_idx": 0,
+              "rank": 30,
+              "scored_rate": 83.0,
+              "noise_floor": 73.5,
+              "best_other": 1191.0
+            },
+            {
+              "cue": "foods.c2_m4",
+              "target": "vehicles.c1_m6",
+              "scored_idx": 58,
+              "rank": 10,
+              "scored_rate": 163.0,
+              "noise_floor": 111.5,
+              "best_other": 1798.0
+            },
+            {
+              "cue": "tools.c2_m0",
+              "target": "furniture.c3_m2",
+              "scored_idx": 15,
+              "rank": 52,
+              "scored_rate": 41.0,
+              "noise_floor": 61.0,
+              "best_other": 1372.0
+            },
+            {
+              "cue": "furniture.c7_m0",
+              "target": "vehicles.c6_m7",
+              "scored_idx": 6,
+              "rank": 10,
+              "scored_rate": 199.0,
+              "noise_floor": 107.5,
+              "best_other": 1927.0
+            },
+            {
+              "cue": "plants.c3_m0",
+              "target": "foods.c5_m2",
+              "scored_idx": 56,
+              "rank": 38,
+              "scored_rate": 90.0,
+              "noise_floor": 95.5,
+              "best_other": 1742.0
+            },
+            {
+              "cue": "clothes.c0_m2",
+              "target": "foods.c6_m3",
+              "scored_idx": 70,
+              "rank": 67,
+              "scored_rate": 15.0,
+              "noise_floor": 73.5,
+              "best_other": 1770.0
+            },
+            {
+              "cue": "vehicles.c0_m1",
+              "target": "tools.c1_m6",
+              "scored_idx": 66,
+              "rank": 21,
+              "scored_rate": 96.0,
+              "noise_floor": 72.0,
+              "best_other": 1403.0
+            },
+            {
+              "cue": "vehicles.c1_m5",
+              "target": "foods.c4_m3",
+              "scored_idx": 35,
+              "rank": 2,
+              "scored_rate": 182.0,
+              "noise_floor": 75.0,
+              "best_other": 1843.0
+            },
+            {
+              "cue": "tools.c2_m1",
+              "target": "weather.c6_m0",
+              "scored_idx": 20,
+              "rank": 13,
+              "scored_rate": 108.0,
+              "noise_floor": 66.0,
+              "best_other": 1418.0
+            },
+            {
+              "cue": "plants.c2_m3",
+              "target": "clothes.c4_m5",
+              "scored_idx": 41,
+              "rank": 12,
+              "scored_rate": 151.0,
+              "noise_floor": 88.5,
+              "best_other": 1986.0
+            },
+            {
+              "cue": "weather.c4_m4",
+              "target": "animals.c5_m1",
+              "scored_idx": 29,
+              "rank": 43,
+              "scored_rate": 68.0,
+              "noise_floor": 73.0,
+              "best_other": 1388.0
+            }
+          ]
+        },
+        "band": "GO",
+        "cx_collapses": true
+      },
+      "anticheat_C3": {
+        "n_stored_facts": 12,
+        "n_known_cues": 12,
+        "n_unknown_cues": 20,
+        "novelty_known_max": 0.0,
+        "novelty_unknown_min": 0.4926003121358329,
+        "separation_margin": 0.4926003121358329,
+        "threshold": 0.24630015606791644,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": 0.0,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      },
+      "cost": {
+        "route": "A",
+        "per_bridge_composer_D": 256,
+        "n_bridges": 8,
+        "per_bridge_cost": {
+          "animals": {
+            "label": "routeA[animals]",
+            "D": 256,
+            "cleanup_argmax_width": 64,
+            "n_codebook_entries": 71,
+            "codebook_bytes": 145408,
+            "codebook_MB": 0.145,
+            "per_bind_rf_neurons": 512,
+            "per_bundle_rf_neurons": 1024,
+            "cleanup_float_ops": 16384
+          },
+          "foods": {
+            "label": "routeA[foods]",
+            "D": 256,
+            "cleanup_argmax_width": 64,
+            "n_codebook_entries": 71,
+            "codebook_bytes": 145408,
+            "codebook_MB": 0.145,
+            "per_bind_rf_neurons": 512,
+            "per_bundle_rf_neurons": 1024,
+            "cleanup_float_ops": 16384
+          },
+          "vehicles": {
+            "label": "routeA[vehicles]",
+            "D": 256,
+            "cleanup_argmax_width": 64,
+            "n_codebook_entries": 71,
+            "codebook_bytes": 145408,
+            "codebook_MB": 0.145,
+            "per_bind_rf_neurons": 512,
+            "per_bundle_rf_neurons": 1024,
+            "cleanup_float_ops": 16384
+          },
+          "tools": {
+            "label": "routeA[tools]",
+            "D": 256,
+            "cleanup_argmax_width": 64,
+            "n_codebook_entries": 71,
+            "codebook_bytes": 145408,
+            "codebook_MB": 0.145,
+            "per_bind_rf_neurons": 512,
+            "per_bundle_rf_neurons": 1024,
+            "cleanup_float_ops": 16384
+          },
+          "clothes": {
+            "label": "routeA[clothes]",
+            "D": 256,
+            "cleanup_argmax_width": 64,
+            "n_codebook_entries": 71,
+            "codebook_bytes": 145408,
+            "codebook_MB": 0.145,
+            "per_bind_rf_neurons": 512,
+            "per_bundle_rf_neurons": 1024,
+            "cleanup_float_ops": 16384
+          },
+          "furniture": {
+            "label": "routeA[furniture]",
+            "D": 256,
+            "cleanup_argmax_width": 64,
+            "n_codebook_entries": 71,
+            "codebook_bytes": 145408,
+            "codebook_MB": 0.145,
+            "per_bind_rf_neurons": 512,
+            "per_bundle_rf_neurons": 1024,
+            "cleanup_float_ops": 16384
+          },
+          "plants": {
+            "label": "routeA[plants]",
+            "D": 256,
+            "cleanup_argmax_width": 64,
+            "n_codebook_entries": 71,
+            "codebook_bytes": 145408,
+            "codebook_MB": 0.145,
+            "per_bind_rf_neurons": 512,
+            "per_bundle_rf_neurons": 1024,
+            "cleanup_float_ops": 16384
+          },
+          "weather": {
+            "label": "routeA[weather]",
+            "D": 256,
+            "cleanup_argmax_width": 64,
+            "n_codebook_entries": 71,
+            "codebook_bytes": 145408,
+            "codebook_MB": 0.145,
+            "per_bind_rf_neurons": 512,
+            "per_bundle_rf_neurons": 1024,
+            "cleanup_float_ops": 16384
+          }
+        },
+        "total_codebook_bytes": 1163264,
+        "total_codebook_MB": 1.163,
+        "per_bind_rf_neurons": 512,
+        "per_bundle_rf_neurons": 1024,
+        "cleanup_argmax_width": 64,
+        "vocabulary_independent_per_op": true
+      },
+      "timings_seconds": {
+        "gate_A": 160.42,
+        "gate_B": 21304.37,
+        "gate_X_pb": 23.89,
+        "gate_X_vtag": 966.32,
+        "anticheat_C3": 154.49
+      }
+    }
+  },
+  "args": {
+    "mode": "full",
+    "composer": "per-bridge",
+    "seeds": "42",
+    "seed": null,
+    "cortex": "learned",
+    "smoke": false,
+    "skip_vtag": false,
+    "n_bridges": 8,
+    "concepts_per_bridge": 64,
+    "target_per_sub": 8,
+    "n_pool": 2400,
+    "pattern_size": 100,
+    "homeo": "oja",
+    "homeo_target": 40.0,
+    "cycles": 10,
+    "synthetic_dim": 256,
+    "residual_frac": 0.55,
+    "n_props": 4,
+    "hub_facts_per_member": 6,
+    "bridge_facts": 8,
+    "triplet_facts_per_cluster": 4,
+    "readout_divnorm": "ch",
+    "readout_order": "interleave",
+    "readout_sigma": 0.001,
+    "readout_exponent": 2.0,
+    "readout_log_clip": false,
+    "diffusion_alpha": 0.5,
+    "diffusion_steps": 2,
+    "D": 512,
+    "per_bridge_D": 256,
+    "D_sweep": null,
+    "b_conv_splits": 8,
+    "n_cross_facts": 12,
+    "encoding_steps": 100,
+    "teacher_pA": 500.0,
+    "top_k": 150,
+    "drive_pA": 1500.0,
+    "drive_steps": 100,
+    "moat_D": 128,
+    "moat_floor": 20,
+    "a1_bar": 0.7,
+    "x_bar": 0.7,
+    "k_neighbours": 3,
+    "g1_bar": 0.5,
+    "so_margin_bar": 0.1,
+    "out": "research/findings/raw/_phase1_composer_routeA_512_seed42.json",
+    "D_gen": 512
+  },
+  "adaptations": "A1) PerBridgeCortexAgent: a {shard: RFPhasorComposer} dict (each over its 64-concept shard vocab + shared aux) + a word->shard router, replacing the ensemble's ONE union composer; within-shard facts bind in the agent-word's shard's composer, cross-shard facts go to the V-tag layer (route A does NOT bind them generatively); each shard gets its own moat (the per-bridge abstention surface). A2) route A's Gate A runs the single-shard gate_A_matrix on EACH shard's OWN cortex codebook so the clause's 3 words live in ONE shard (within-bridge clause); the ensemble's interleaved cross-bridge clause is route B's matrix. A3) route A's Gate X is the V-tag IDENTITY layer (gate_X_vtag) + X-pb (a per-bridge-composer within-bridge fact-recall plumbing check on CPU, so route A's dispatch is exercised even when --skip-vtag drops the GPU V-tag layer); route B's Gate X is the generative X-conv. A4) per-route COST logging (composer D(s), codebook bytes, per-op RF bridge neuron counts, cleanup argmax width, wall-clock per gate; route B also logs the V=512 D/concept ratio for the 2,048 extrapolation)."
+}
