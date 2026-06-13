@@ -716,7 +716,7 @@ arc was de-risked cheapest-first BEFORE any protected edit:
   (`cp_plasticity_rate_gain=0`) isolates weight UPDATES against the full navigation stressor (reward-STDP +
   the global dopamine `scope="all"` + Hebbian) — a frozen conversational slice stays byte-identical, controls
   change, a conversational read is unchanged across a navigation burst. THE ONE GAP: the two global weight
-  CLIPS (`bridge.py:6200` Hebbian, `:6505` reward) are UNGATED, so a frozen weight OUTSIDE the active rule's
+  CLIPS (`bridge.py:6261` Hebbian, `:6566` reward) are UNGATED, so a frozen weight OUTSIDE the active rule's
   clip bounds is moved by the clip. **Mitigation:** raise `stdp_w_max` + `hebbian_max_weight` above the frozen
   conversational real-valued weight (~300); the RF composer's COMPLEX binding weights (`cp_rf_w_re/im`) are
   array-disjoint from `cp_connections` so they are IMMUNE. Findings:
@@ -731,7 +731,7 @@ arc was de-risked cheapest-first BEFORE any protected edit:
   strict (RF co-resident) merge. `tests/test_rf_neuron_mask_coexistence.py`. Findings:
   `2026-06-10-unification-5b-*` + `2026-06-10-unification-sliced-RF-ops-edit-byte-review.md`.
 - **STEP 2a (merged bridge, RF composer external) — COMPLETE.** The framework path IS a wrapper around
-  `inject_explicit_wiring` (`bridge.py:1514-1526`), so the parser + dlPFC are appended as framework regions.
+  `inject_explicit_wiring` (`bridge.py:2196`), so the parser + dlPFC are appended as framework regions.
   The conversational gate (b) passes VERBATIM on the merged bridge — `tests/test_nav_conv_merged_agent.py`
   8/8 incl. the three `is None` no-confab assertions (`what_does`/`elaborate`/`describe`). The navigation gate
   (a) uses a HYBRID `run_moving_goal_episode` integration (4 additive no-op-default params + an index-based
