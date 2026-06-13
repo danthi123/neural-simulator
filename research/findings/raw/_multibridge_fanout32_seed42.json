@@ -1,0 +1,3360 @@
+{
+  "aggregate": {
+    "seeds": [
+      "42"
+    ],
+    "mode": "full",
+    "precondition": {
+      "M1_all_GO": true,
+      "M1_no_NEGATIVE": true,
+      "A2_collapses": true,
+      "A3_collapses": true,
+      "M2_all_GO": true,
+      "M2_no_NEGATIVE": true,
+      "G5_robust_collapses": true,
+      "M6_random_shard_collapses": true
+    },
+    "cross": {
+      "M3_all_GO": true,
+      "M3_no_NEGATIVE": true,
+      "M7_permuted_collapses": true
+    },
+    "moat": {
+      "M4_moat_intact": true,
+      "M4_lesion_collapses": true
+    },
+    "verdict": "GO"
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "mode": "full",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles",
+        "tools",
+        "clothes",
+        "furniture",
+        "plants",
+        "weather",
+        "body_parts",
+        "colors",
+        "emotions",
+        "jobs",
+        "sports",
+        "instruments",
+        "buildings",
+        "countries",
+        "drinks",
+        "fruits",
+        "metals",
+        "insects",
+        "birds",
+        "fish",
+        "flowers",
+        "trees",
+        "shapes",
+        "materials",
+        "toys",
+        "gems",
+        "planets",
+        "languages",
+        "dances",
+        "vegetables"
+      ],
+      "per_bridge_gates": [
+        {
+          "shard": "animals",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 142.43027901649475,
+          "recurrent_mean": 0.3395093083381653,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.8128849136869721,
+          "pearson_W_vs_rawcounts": 0.7760179430563741,
+          "second_order_margin": 0.5071162279505224,
+          "is_graded": true,
+          "within_cos": 0.885031438764919,
+          "between_cos": 0.3799989834600889,
+          "m2_band": "GO",
+          "generalization": 0.9875,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.95,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.2,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.015193526836077859,
+          "permuted_pearson_vs_Strue": 0.031194007540648615,
+          "permuted_generalization": 0.2375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "foods",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 136.78010058403015,
+          "recurrent_mean": 0.34303346276283264,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.8066023314813054,
+          "pearson_W_vs_rawcounts": 0.769614363779639,
+          "second_order_margin": 0.49634087607139865,
+          "is_graded": true,
+          "within_cos": 0.8926135538909136,
+          "between_cos": 0.397193695168228,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.15625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.00877018865775625,
+          "permuted_pearson_vs_Strue": 0.013587193902966511,
+          "permuted_generalization": 0.3375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "vehicles",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 135.6581392288208,
+          "recurrent_mean": 0.33819422125816345,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7896719135874046,
+          "pearson_W_vs_rawcounts": 0.7748831166099225,
+          "second_order_margin": 0.5053690176608281,
+          "is_graded": true,
+          "within_cos": 0.8849339276291243,
+          "between_cos": 0.38260016581102124,
+          "m2_band": "GO",
+          "generalization": 0.99375,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.975,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.0625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.009664583282356823,
+          "permuted_pearson_vs_Strue": 0.024071737347928664,
+          "permuted_generalization": 0.2625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "tools",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 135.58757996559143,
+          "recurrent_mean": 0.33477023243904114,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7398662439315815,
+          "pearson_W_vs_rawcounts": 0.774005442241751,
+          "second_order_margin": 0.4795318639344904,
+          "is_graded": true,
+          "within_cos": 0.8743767175914579,
+          "between_cos": 0.3932691082859782,
+          "m2_band": "GO",
+          "generalization": 0.9875,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.95,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.10625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.012467847169024854,
+          "permuted_pearson_vs_Strue": 0.027900737413961787,
+          "permuted_generalization": 0.3625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "clothes",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 125.65784621238708,
+          "recurrent_mean": 0.33693715929985046,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7830683668288744,
+          "pearson_W_vs_rawcounts": 0.7698162791909251,
+          "second_order_margin": 0.4924658207543627,
+          "is_graded": true,
+          "within_cos": 0.8855440655194097,
+          "between_cos": 0.39436298579227175,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.16875,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.012140328282750856,
+          "permuted_pearson_vs_Strue": 0.02306394244823251,
+          "permuted_generalization": 0.275,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "furniture",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 135.7181441783905,
+          "recurrent_mean": 0.3409251868724823,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7813728247660101,
+          "pearson_W_vs_rawcounts": 0.7815594501485714,
+          "second_order_margin": 0.5005705155567183,
+          "is_graded": true,
+          "within_cos": 0.8842979835220872,
+          "between_cos": 0.38080484524400393,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.1875,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.007196118206516666,
+          "permuted_pearson_vs_Strue": 0.014539708615128011,
+          "permuted_generalization": 0.2375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "plants",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 125.92781925201416,
+          "recurrent_mean": 0.33786725997924805,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7870423851434447,
+          "pearson_W_vs_rawcounts": 0.7800995080524029,
+          "second_order_margin": 0.5061957701160353,
+          "is_graded": true,
+          "within_cos": 0.8870277653931804,
+          "between_cos": 0.37964847091989773,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.1875,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.00717506917905314,
+          "permuted_pearson_vs_Strue": 0.016892037810513745,
+          "permuted_generalization": 0.2875,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "weather",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 118.36708521842957,
+          "recurrent_mean": 0.3405776619911194,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.774185501626424,
+          "pearson_W_vs_rawcounts": 0.7752109217071548,
+          "second_order_margin": 0.4922152117996425,
+          "is_graded": true,
+          "within_cos": 0.8854413085873265,
+          "between_cos": 0.39370313548248076,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.15625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.009409709696086233,
+          "permuted_pearson_vs_Strue": 0.01874653758525753,
+          "permuted_generalization": 0.3125,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "body_parts",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 116.81769967079163,
+          "recurrent_mean": 0.34016478061676025,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7313425659953587,
+          "pearson_W_vs_rawcounts": 0.773469948500949,
+          "second_order_margin": 0.4785668182034818,
+          "is_graded": true,
+          "within_cos": 0.8744573925884301,
+          "between_cos": 0.3963759105443011,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.19375,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.0034023017849975218,
+          "permuted_pearson_vs_Strue": 0.017398849270330537,
+          "permuted_generalization": 0.225,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "colors",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 121.41533470153809,
+          "recurrent_mean": 0.3426178991794586,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7884235083014246,
+          "pearson_W_vs_rawcounts": 0.7753190288180072,
+          "second_order_margin": 0.4922689795664246,
+          "is_graded": true,
+          "within_cos": 0.883720420760653,
+          "between_cos": 0.39151785940308775,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.175,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.004683232158995021,
+          "permuted_pearson_vs_Strue": 0.011872627778481071,
+          "permuted_generalization": 0.31875,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "emotions",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 118.09683108329773,
+          "recurrent_mean": 0.3398362994194031,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7959959212461141,
+          "pearson_W_vs_rawcounts": 0.7761728835512683,
+          "second_order_margin": 0.49763421149271175,
+          "is_graded": true,
+          "within_cos": 0.8819973250717948,
+          "between_cos": 0.3845751441438509,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.24375,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.0055319710440975695,
+          "permuted_pearson_vs_Strue": 0.01517579337991269,
+          "permuted_generalization": 0.2875,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "jobs",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 118.00625348091125,
+          "recurrent_mean": 0.34018221497535706,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.8057485991754618,
+          "pearson_W_vs_rawcounts": 0.7689902660803494,
+          "second_order_margin": 0.5008148603208872,
+          "is_graded": true,
+          "within_cos": 0.8838987607090187,
+          "between_cos": 0.3863985104490243,
+          "m2_band": "GO",
+          "generalization": 0.99375,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.975,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.225,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.014188877026012597,
+          "permuted_pearson_vs_Strue": 0.029121707802729935,
+          "permuted_generalization": 0.30625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "sports",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 118.85110878944397,
+          "recurrent_mean": 0.3382564187049866,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7248111415136114,
+          "pearson_W_vs_rawcounts": 0.7721369521965759,
+          "second_order_margin": 0.47167216877209256,
+          "is_graded": true,
+          "within_cos": 0.8759202449614819,
+          "between_cos": 0.4016886869416582,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.2625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.007285348837508698,
+          "permuted_pearson_vs_Strue": 0.022851857614775088,
+          "permuted_generalization": 0.29375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "instruments",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 117.24959301948547,
+          "recurrent_mean": 0.34027016162872314,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7814927147363667,
+          "pearson_W_vs_rawcounts": 0.7689874498094469,
+          "second_order_margin": 0.4886150284022181,
+          "is_graded": true,
+          "within_cos": 0.884510508983456,
+          "between_cos": 0.39590014382917166,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.2,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.0018532731952888848,
+          "permuted_pearson_vs_Strue": 0.01741406624782892,
+          "permuted_generalization": 0.36875,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "buildings",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 116.91270995140076,
+          "recurrent_mean": 0.3391558825969696,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7647034368735344,
+          "pearson_W_vs_rawcounts": 0.7767600361279473,
+          "second_order_margin": 0.49263168838581967,
+          "is_graded": true,
+          "within_cos": 0.8812219915619287,
+          "between_cos": 0.387944560747377,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.09375,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.01769289689379544,
+          "permuted_pearson_vs_Strue": 0.041779299292960884,
+          "permuted_generalization": 0.35,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "countries",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 117.86145353317261,
+          "recurrent_mean": 0.3424609303474426,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7676200901823319,
+          "pearson_W_vs_rawcounts": 0.7753281369771582,
+          "second_order_margin": 0.49083456416039173,
+          "is_graded": true,
+          "within_cos": 0.8821604637815998,
+          "between_cos": 0.3931023632397066,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.31875,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.01151988213328943,
+          "permuted_pearson_vs_Strue": 0.015477896459718542,
+          "permuted_generalization": 0.36875,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "drinks",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 117.80985879898071,
+          "recurrent_mean": 0.3378139138221741,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7812600005910014,
+          "pearson_W_vs_rawcounts": 0.779495344606189,
+          "second_order_margin": 0.49842897642395123,
+          "is_graded": true,
+          "within_cos": 0.8783505319009608,
+          "between_cos": 0.38057048966055806,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.15625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.013750125303039637,
+          "permuted_pearson_vs_Strue": 0.020610206030165095,
+          "permuted_generalization": 0.33125,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "fruits",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 118.67319965362549,
+          "recurrent_mean": 0.3386216461658478,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7776371084687785,
+          "pearson_W_vs_rawcounts": 0.7649983192097981,
+          "second_order_margin": 0.4869095136143717,
+          "is_graded": true,
+          "within_cos": 0.8845971646294757,
+          "between_cos": 0.39956452191525055,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.25,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.0035392829164838935,
+          "permuted_pearson_vs_Strue": 0.024694279478082264,
+          "permuted_generalization": 0.225,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "metals",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 117.76822090148926,
+          "recurrent_mean": 0.33713892102241516,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7782923426989212,
+          "pearson_W_vs_rawcounts": 0.7711602202088531,
+          "second_order_margin": 0.4882804370347812,
+          "is_graded": true,
+          "within_cos": 0.8839817030419128,
+          "between_cos": 0.3946360645504009,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.25625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.003037798940892497,
+          "permuted_pearson_vs_Strue": 0.007626918418894807,
+          "permuted_generalization": 0.31875,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "insects",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 122.02281069755554,
+          "recurrent_mean": 0.3402509391307831,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7876615514668034,
+          "pearson_W_vs_rawcounts": 0.776622083487452,
+          "second_order_margin": 0.5056706740847197,
+          "is_graded": true,
+          "within_cos": 0.8938573667488348,
+          "between_cos": 0.3900997521872697,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.275,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.011502408917999293,
+          "permuted_pearson_vs_Strue": 0.022778399211305887,
+          "permuted_generalization": 0.30625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "birds",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 123.54596185684204,
+          "recurrent_mean": 0.33946508169174194,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7767082800751712,
+          "pearson_W_vs_rawcounts": 0.7741473634525463,
+          "second_order_margin": 0.48820565205557437,
+          "is_graded": true,
+          "within_cos": 0.8860821728477843,
+          "between_cos": 0.39724821578865394,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.1625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.013644791517677446,
+          "permuted_pearson_vs_Strue": 0.01727094446402948,
+          "permuted_generalization": 0.3,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "fish",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 121.13104891777039,
+          "recurrent_mean": 0.3410521149635315,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.794896307170622,
+          "pearson_W_vs_rawcounts": 0.7673443339360326,
+          "second_order_margin": 0.4884384733490524,
+          "is_graded": true,
+          "within_cos": 0.8899906096513409,
+          "between_cos": 0.40365227419006616,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.2125,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.011328631105854359,
+          "permuted_pearson_vs_Strue": 0.02626272153135844,
+          "permuted_generalization": 0.28125,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "flowers",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 122.81832981109619,
+          "recurrent_mean": 0.3409655690193176,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7988770111431736,
+          "pearson_W_vs_rawcounts": 0.7791753812387131,
+          "second_order_margin": 0.5089573674480021,
+          "is_graded": true,
+          "within_cos": 0.8827683580474897,
+          "between_cos": 0.37507188146429166,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.30625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.009803162760811737,
+          "permuted_pearson_vs_Strue": 0.04149928052295438,
+          "permuted_generalization": 0.25625,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "trees",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 119.48714852333069,
+          "recurrent_mean": 0.34009620547294617,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7606826500263408,
+          "pearson_W_vs_rawcounts": 0.7723644217604215,
+          "second_order_margin": 0.49013348670529666,
+          "is_graded": true,
+          "within_cos": 0.8767277640872937,
+          "between_cos": 0.3883023053916892,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.2375,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.007012503855301708,
+          "permuted_pearson_vs_Strue": 0.02023181207370071,
+          "permuted_generalization": 0.24375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "shapes",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 120.34210348129272,
+          "recurrent_mean": 0.3400861620903015,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.774153029856596,
+          "pearson_W_vs_rawcounts": 0.773298147192381,
+          "second_order_margin": 0.49347960111079275,
+          "is_graded": true,
+          "within_cos": 0.8861334062166534,
+          "between_cos": 0.3948064546285131,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.14375,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.015324388049747242,
+          "permuted_pearson_vs_Strue": 0.032554936625296696,
+          "permuted_generalization": 0.275,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "materials",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 120.39987802505493,
+          "recurrent_mean": 0.34003952145576477,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7930149811862522,
+          "pearson_W_vs_rawcounts": 0.7768901939338988,
+          "second_order_margin": 0.5043031651684267,
+          "is_graded": true,
+          "within_cos": 0.8910024801915493,
+          "between_cos": 0.38633827995055015,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.175,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": -0.0019686567545728756,
+          "permuted_pearson_vs_Strue": 0.012247527327912172,
+          "permuted_generalization": 0.24375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "toys",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 118.69941520690918,
+          "recurrent_mean": 0.3448660969734192,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7590406818894943,
+          "pearson_W_vs_rawcounts": 0.7758778599008642,
+          "second_order_margin": 0.48419412927556277,
+          "is_graded": true,
+          "within_cos": 0.868263781216198,
+          "between_cos": 0.38497361795976953,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.19375,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.00603619512711169,
+          "permuted_pearson_vs_Strue": 0.02781019809597605,
+          "permuted_generalization": 0.24375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "gems",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 121.63932585716248,
+          "recurrent_mean": 0.3367066979408264,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7785029059867803,
+          "pearson_W_vs_rawcounts": 0.7733058814795691,
+          "second_order_margin": 0.49305362789722873,
+          "is_graded": true,
+          "within_cos": 0.884990713890848,
+          "between_cos": 0.3936025458698912,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.20625,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.009149146239276651,
+          "permuted_pearson_vs_Strue": 0.019691566249794276,
+          "permuted_generalization": 0.36875,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "planets",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 120.54810166358948,
+          "recurrent_mean": 0.33735325932502747,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7327976872550671,
+          "pearson_W_vs_rawcounts": 0.7728861042949546,
+          "second_order_margin": 0.47659354910182566,
+          "is_graded": true,
+          "within_cos": 0.8726206710490645,
+          "between_cos": 0.3953435392855827,
+          "m2_band": "GO",
+          "generalization": 0.975,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.9,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.1125,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.014324851211887119,
+          "permuted_pearson_vs_Strue": 0.02702777978057744,
+          "permuted_generalization": 0.375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "languages",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 119.52972793579102,
+          "recurrent_mean": 0.34233248233795166,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7925214261918606,
+          "pearson_W_vs_rawcounts": 0.7656406739819229,
+          "second_order_margin": 0.4919802463423956,
+          "is_graded": true,
+          "within_cos": 0.8820191840294572,
+          "between_cos": 0.39108641114631976,
+          "m2_band": "GO",
+          "generalization": 0.98125,
+          "gen_chance": 0.25,
+          "gen_ratio": 3.925,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.2125,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.010556760481741256,
+          "permuted_pearson_vs_Strue": 0.02526478985140721,
+          "permuted_generalization": 0.28125,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "dances",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 118.03908777236938,
+          "recurrent_mean": 0.33737897872924805,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7837246569540262,
+          "pearson_W_vs_rawcounts": 0.7755595248038741,
+          "second_order_margin": 0.4984027387262601,
+          "is_graded": true,
+          "within_cos": 0.8795267466728627,
+          "between_cos": 0.3838685958482951,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.34375,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.0057848368717172555,
+          "permuted_pearson_vs_Strue": 0.0055564295477268846,
+          "permuted_generalization": 0.28125,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        },
+        {
+          "shard": "vegetables",
+          "n_concepts": 64,
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_facts": 424,
+          "learn_seconds": 121.37468314170837,
+          "recurrent_mean": 0.3354574143886566,
+          "recurrent_nnz": 3456100,
+          "n_neurons": 2700,
+          "pearson_sim_vs_Strue": 0.7437781547631337,
+          "pearson_W_vs_rawcounts": 0.7719423501520034,
+          "second_order_margin": 0.48898142626814417,
+          "is_graded": true,
+          "within_cos": 0.8746979027510821,
+          "between_cos": 0.3871838980130789,
+          "m2_band": "GO",
+          "generalization": 1.0,
+          "gen_chance": 0.25,
+          "gen_ratio": 4.0,
+          "orthogonal_acc": 0.2,
+          "a2_collapses": true,
+          "permuted_prop_acc": 0.19375,
+          "a3_collapses": true,
+          "a1_generalizes": true,
+          "m1_band": "GO",
+          "permuted_second_order_margin": 0.011852812966621273,
+          "permuted_pearson_vs_Strue": 0.01417850034013533,
+          "permuted_generalization": 0.24375,
+          "g5_collapses_robust": true,
+          "g5_margin_ok": true,
+          "g5_pearson_ok": true,
+          "g5_gen_ok": true
+        }
+      ],
+      "m6_random_shard": {
+        "n_random_members": 64,
+        "n_facts": 1,
+        "random_shard_generalization": 0.35,
+        "chance": 0.25,
+        "m6_collapses_to_chance": true
+      },
+      "cross_facts": [
+        [
+          "materials.c4_m4",
+          "plants.c7_m6"
+        ],
+        [
+          "dances.c7_m4",
+          "gems.c0_m2"
+        ],
+        [
+          "buildings.c3_m2",
+          "tools.c5_m4"
+        ],
+        [
+          "vehicles.c5_m1",
+          "clothes.c3_m2"
+        ],
+        [
+          "vegetables.c0_m6",
+          "gems.c1_m5"
+        ],
+        [
+          "toys.c1_m1",
+          "languages.c3_m5"
+        ],
+        [
+          "languages.c0_m7",
+          "trees.c7_m7"
+        ],
+        [
+          "metals.c3_m1",
+          "colors.c2_m6"
+        ],
+        [
+          "languages.c4_m1",
+          "jobs.c5_m0"
+        ],
+        [
+          "body_parts.c2_m6",
+          "gems.c0_m7"
+        ],
+        [
+          "buildings.c6_m7",
+          "drinks.c2_m0"
+        ],
+        [
+          "vegetables.c6_m4",
+          "tools.c7_m0"
+        ],
+        [
+          "buildings.c3_m0",
+          "plants.c2_m1"
+        ],
+        [
+          "materials.c6_m0",
+          "flowers.c6_m6"
+        ],
+        [
+          "fruits.c1_m5",
+          "weather.c6_m6"
+        ],
+        [
+          "insects.c5_m6",
+          "toys.c7_m6"
+        ],
+        [
+          "animals.c4_m3",
+          "plants.c0_m2"
+        ],
+        [
+          "flowers.c5_m1",
+          "animals.c3_m5"
+        ],
+        [
+          "insects.c5_m7",
+          "shapes.c6_m6"
+        ],
+        [
+          "buildings.c5_m7",
+          "colors.c6_m5"
+        ],
+        [
+          "fish.c3_m5",
+          "colors.c3_m6"
+        ],
+        [
+          "birds.c0_m5",
+          "plants.c2_m2"
+        ],
+        [
+          "materials.c2_m2",
+          "drinks.c4_m5"
+        ],
+        [
+          "plants.c7_m2",
+          "clothes.c1_m0"
+        ],
+        [
+          "gems.c4_m2",
+          "buildings.c2_m0"
+        ],
+        [
+          "jobs.c7_m3",
+          "insects.c0_m3"
+        ],
+        [
+          "countries.c5_m6",
+          "clothes.c4_m5"
+        ],
+        [
+          "gems.c3_m7",
+          "buildings.c3_m1"
+        ],
+        [
+          "languages.c5_m0",
+          "weather.c1_m2"
+        ],
+        [
+          "colors.c6_m4",
+          "shapes.c3_m1"
+        ],
+        [
+          "instruments.c0_m1",
+          "gems.c3_m5"
+        ],
+        [
+          "languages.c6_m6",
+          "drinks.c4_m0"
+        ],
+        [
+          "planets.c6_m4",
+          "weather.c7_m0"
+        ],
+        [
+          "languages.c3_m0",
+          "vegetables.c7_m3"
+        ],
+        [
+          "birds.c1_m0",
+          "fruits.c2_m2"
+        ],
+        [
+          "weather.c5_m3",
+          "body_parts.c2_m4"
+        ],
+        [
+          "jobs.c5_m7",
+          "shapes.c2_m7"
+        ],
+        [
+          "tools.c4_m4",
+          "languages.c5_m4"
+        ],
+        [
+          "planets.c7_m6",
+          "fish.c4_m6"
+        ],
+        [
+          "furniture.c0_m1",
+          "foods.c6_m6"
+        ],
+        [
+          "jobs.c5_m1",
+          "vegetables.c4_m3"
+        ],
+        [
+          "flowers.c6_m1",
+          "fish.c5_m1"
+        ],
+        [
+          "insects.c0_m3",
+          "animals.c7_m0"
+        ],
+        [
+          "body_parts.c7_m7",
+          "shapes.c5_m5"
+        ],
+        [
+          "weather.c2_m3",
+          "emotions.c0_m0"
+        ],
+        [
+          "sports.c2_m6",
+          "plants.c1_m2"
+        ],
+        [
+          "gems.c2_m5",
+          "trees.c6_m4"
+        ],
+        [
+          "tools.c4_m0",
+          "colors.c3_m6"
+        ],
+        [
+          "foods.c4_m3",
+          "vegetables.c4_m4"
+        ],
+        [
+          "colors.c0_m5",
+          "jobs.c5_m0"
+        ],
+        [
+          "shapes.c5_m0",
+          "materials.c6_m6"
+        ],
+        [
+          "animals.c4_m7",
+          "insects.c3_m0"
+        ],
+        [
+          "weather.c6_m4",
+          "countries.c2_m5"
+        ],
+        [
+          "fish.c5_m4",
+          "trees.c3_m0"
+        ],
+        [
+          "sports.c1_m0",
+          "languages.c6_m1"
+        ],
+        [
+          "animals.c4_m1",
+          "shapes.c5_m0"
+        ],
+        [
+          "body_parts.c2_m4",
+          "clothes.c1_m4"
+        ],
+        [
+          "animals.c5_m6",
+          "body_parts.c2_m7"
+        ],
+        [
+          "plants.c1_m4",
+          "fish.c7_m4"
+        ],
+        [
+          "body_parts.c2_m4",
+          "clothes.c2_m2"
+        ],
+        [
+          "weather.c4_m0",
+          "birds.c0_m0"
+        ],
+        [
+          "planets.c0_m2",
+          "weather.c6_m3"
+        ],
+        [
+          "materials.c0_m5",
+          "body_parts.c3_m7"
+        ],
+        [
+          "trees.c5_m2",
+          "insects.c3_m7"
+        ],
+        [
+          "fish.c6_m3",
+          "foods.c4_m4"
+        ],
+        [
+          "clothes.c0_m0",
+          "trees.c2_m1"
+        ],
+        [
+          "drinks.c2_m0",
+          "foods.c7_m0"
+        ],
+        [
+          "plants.c1_m6",
+          "materials.c6_m1"
+        ],
+        [
+          "fruits.c3_m0",
+          "gems.c1_m0"
+        ],
+        [
+          "colors.c5_m5",
+          "sports.c2_m6"
+        ],
+        [
+          "toys.c6_m3",
+          "instruments.c4_m2"
+        ],
+        [
+          "fish.c0_m5",
+          "fruits.c2_m5"
+        ],
+        [
+          "materials.c6_m7",
+          "body_parts.c2_m1"
+        ],
+        [
+          "instruments.c0_m5",
+          "fish.c4_m3"
+        ],
+        [
+          "drinks.c1_m7",
+          "insects.c6_m5"
+        ],
+        [
+          "drinks.c3_m4",
+          "metals.c6_m4"
+        ],
+        [
+          "jobs.c2_m4",
+          "emotions.c4_m7"
+        ],
+        [
+          "tools.c4_m5",
+          "languages.c6_m1"
+        ],
+        [
+          "sports.c6_m6",
+          "dances.c0_m7"
+        ],
+        [
+          "birds.c3_m0",
+          "flowers.c7_m5"
+        ],
+        [
+          "birds.c5_m5",
+          "emotions.c6_m4"
+        ],
+        [
+          "tools.c7_m1",
+          "sports.c3_m0"
+        ],
+        [
+          "body_parts.c2_m7",
+          "instruments.c0_m6"
+        ],
+        [
+          "drinks.c5_m3",
+          "clothes.c5_m1"
+        ],
+        [
+          "shapes.c2_m6",
+          "vehicles.c3_m5"
+        ],
+        [
+          "fish.c6_m0",
+          "furniture.c3_m2"
+        ],
+        [
+          "languages.c3_m2",
+          "emotions.c0_m6"
+        ],
+        [
+          "gems.c0_m3",
+          "fish.c1_m4"
+        ],
+        [
+          "body_parts.c0_m7",
+          "animals.c5_m5"
+        ],
+        [
+          "vegetables.c2_m1",
+          "toys.c5_m0"
+        ],
+        [
+          "weather.c7_m6",
+          "birds.c7_m6"
+        ],
+        [
+          "weather.c5_m7",
+          "gems.c4_m3"
+        ],
+        [
+          "dances.c5_m1",
+          "toys.c3_m5"
+        ],
+        [
+          "buildings.c3_m2",
+          "vehicles.c7_m2"
+        ],
+        [
+          "materials.c2_m0",
+          "birds.c4_m1"
+        ],
+        [
+          "furniture.c5_m1",
+          "toys.c4_m4"
+        ]
+      ],
+      "m3_cross_bridge": {
+        "permuted": false,
+        "n_cross_facts": 96,
+        "top1_fraction": 0.9895833333333334,
+        "top2_fraction": 1.0,
+        "mean_signal_vs_floor": 20.947265911156233,
+        "mean_margin": 1482.5208333333333,
+        "detail": [
+          {
+            "cue": "materials.c4_m4",
+            "target": "plants.c7_m6",
+            "scored_idx": 70,
+            "rank": 0,
+            "scored_rate": 1695.0,
+            "noise_floor": 91.5,
+            "best_other": 245.0
+          },
+          {
+            "cue": "dances.c7_m4",
+            "target": "gems.c0_m2",
+            "scored_idx": 10,
+            "rank": 0,
+            "scored_rate": 1889.0,
+            "noise_floor": 80.5,
+            "best_other": 211.0
+          },
+          {
+            "cue": "buildings.c3_m2",
+            "target": "tools.c5_m4",
+            "scored_idx": 52,
+            "rank": 0,
+            "scored_rate": 1663.0,
+            "noise_floor": 107.0,
+            "best_other": 485.0
+          },
+          {
+            "cue": "vehicles.c5_m1",
+            "target": "clothes.c3_m2",
+            "scored_idx": 34,
+            "rank": 0,
+            "scored_rate": 1750.0,
+            "noise_floor": 75.0,
+            "best_other": 320.0
+          },
+          {
+            "cue": "vegetables.c0_m6",
+            "target": "gems.c1_m5",
+            "scored_idx": 21,
+            "rank": 0,
+            "scored_rate": 1772.0,
+            "noise_floor": 89.0,
+            "best_other": 206.0
+          },
+          {
+            "cue": "toys.c1_m1",
+            "target": "languages.c3_m5",
+            "scored_idx": 37,
+            "rank": 0,
+            "scored_rate": 1742.0,
+            "noise_floor": 61.0,
+            "best_other": 224.0
+          },
+          {
+            "cue": "languages.c0_m7",
+            "target": "trees.c7_m7",
+            "scored_idx": 71,
+            "rank": 0,
+            "scored_rate": 2056.0,
+            "noise_floor": 115.5,
+            "best_other": 350.0
+          },
+          {
+            "cue": "metals.c3_m1",
+            "target": "colors.c2_m6",
+            "scored_idx": 30,
+            "rank": 0,
+            "scored_rate": 1678.0,
+            "noise_floor": 86.5,
+            "best_other": 178.0
+          },
+          {
+            "cue": "languages.c4_m1",
+            "target": "jobs.c5_m0",
+            "scored_idx": 48,
+            "rank": 0,
+            "scored_rate": 1637.0,
+            "noise_floor": 106.5,
+            "best_other": 762.0
+          },
+          {
+            "cue": "body_parts.c2_m6",
+            "target": "gems.c0_m7",
+            "scored_idx": 15,
+            "rank": 0,
+            "scored_rate": 1721.0,
+            "noise_floor": 85.0,
+            "best_other": 263.0
+          },
+          {
+            "cue": "buildings.c6_m7",
+            "target": "drinks.c2_m0",
+            "scored_idx": 24,
+            "rank": 0,
+            "scored_rate": 1880.0,
+            "noise_floor": 95.5,
+            "best_other": 261.0
+          },
+          {
+            "cue": "vegetables.c6_m4",
+            "target": "tools.c7_m0",
+            "scored_idx": 64,
+            "rank": 0,
+            "scored_rate": 1918.0,
+            "noise_floor": 89.5,
+            "best_other": 293.0
+          },
+          {
+            "cue": "buildings.c3_m0",
+            "target": "plants.c2_m1",
+            "scored_idx": 25,
+            "rank": 0,
+            "scored_rate": 1846.0,
+            "noise_floor": 106.5,
+            "best_other": 254.0
+          },
+          {
+            "cue": "materials.c6_m0",
+            "target": "flowers.c6_m6",
+            "scored_idx": 62,
+            "rank": 0,
+            "scored_rate": 1736.0,
+            "noise_floor": 71.5,
+            "best_other": 246.0
+          },
+          {
+            "cue": "fruits.c1_m5",
+            "target": "weather.c6_m6",
+            "scored_idx": 62,
+            "rank": 0,
+            "scored_rate": 1753.0,
+            "noise_floor": 78.5,
+            "best_other": 207.0
+          },
+          {
+            "cue": "insects.c5_m6",
+            "target": "toys.c7_m6",
+            "scored_idx": 70,
+            "rank": 0,
+            "scored_rate": 1734.0,
+            "noise_floor": 76.5,
+            "best_other": 253.0
+          },
+          {
+            "cue": "animals.c4_m3",
+            "target": "plants.c0_m2",
+            "scored_idx": 10,
+            "rank": 0,
+            "scored_rate": 1816.0,
+            "noise_floor": 73.0,
+            "best_other": 186.0
+          },
+          {
+            "cue": "flowers.c5_m1",
+            "target": "animals.c3_m5",
+            "scored_idx": 37,
+            "rank": 0,
+            "scored_rate": 1715.0,
+            "noise_floor": 59.0,
+            "best_other": 195.0
+          },
+          {
+            "cue": "insects.c5_m7",
+            "target": "shapes.c6_m6",
+            "scored_idx": 62,
+            "rank": 0,
+            "scored_rate": 1720.0,
+            "noise_floor": 76.0,
+            "best_other": 223.0
+          },
+          {
+            "cue": "buildings.c5_m7",
+            "target": "colors.c6_m5",
+            "scored_idx": 61,
+            "rank": 0,
+            "scored_rate": 1633.0,
+            "noise_floor": 88.5,
+            "best_other": 197.0
+          },
+          {
+            "cue": "fish.c3_m5",
+            "target": "colors.c3_m6",
+            "scored_idx": 38,
+            "rank": 0,
+            "scored_rate": 1941.0,
+            "noise_floor": 85.5,
+            "best_other": 259.0
+          },
+          {
+            "cue": "birds.c0_m5",
+            "target": "plants.c2_m2",
+            "scored_idx": 26,
+            "rank": 0,
+            "scored_rate": 2108.0,
+            "noise_floor": 129.0,
+            "best_other": 279.0
+          },
+          {
+            "cue": "materials.c2_m2",
+            "target": "drinks.c4_m5",
+            "scored_idx": 45,
+            "rank": 0,
+            "scored_rate": 2049.0,
+            "noise_floor": 100.0,
+            "best_other": 492.0
+          },
+          {
+            "cue": "plants.c7_m2",
+            "target": "clothes.c1_m0",
+            "scored_idx": 16,
+            "rank": 0,
+            "scored_rate": 1717.0,
+            "noise_floor": 87.0,
+            "best_other": 257.0
+          },
+          {
+            "cue": "gems.c4_m2",
+            "target": "buildings.c2_m0",
+            "scored_idx": 24,
+            "rank": 0,
+            "scored_rate": 1838.0,
+            "noise_floor": 94.0,
+            "best_other": 265.0
+          },
+          {
+            "cue": "jobs.c7_m3",
+            "target": "insects.c0_m3",
+            "scored_idx": 11,
+            "rank": 0,
+            "scored_rate": 1558.0,
+            "noise_floor": 61.0,
+            "best_other": 170.0
+          },
+          {
+            "cue": "countries.c5_m6",
+            "target": "clothes.c4_m5",
+            "scored_idx": 45,
+            "rank": 0,
+            "scored_rate": 1973.0,
+            "noise_floor": 85.0,
+            "best_other": 473.0
+          },
+          {
+            "cue": "gems.c3_m7",
+            "target": "buildings.c3_m1",
+            "scored_idx": 33,
+            "rank": 0,
+            "scored_rate": 1872.0,
+            "noise_floor": 92.5,
+            "best_other": 269.0
+          },
+          {
+            "cue": "languages.c5_m0",
+            "target": "weather.c1_m2",
+            "scored_idx": 18,
+            "rank": 0,
+            "scored_rate": 1799.0,
+            "noise_floor": 80.0,
+            "best_other": 210.0
+          },
+          {
+            "cue": "colors.c6_m4",
+            "target": "shapes.c3_m1",
+            "scored_idx": 33,
+            "rank": 0,
+            "scored_rate": 1852.0,
+            "noise_floor": 77.5,
+            "best_other": 241.0
+          },
+          {
+            "cue": "instruments.c0_m1",
+            "target": "gems.c3_m5",
+            "scored_idx": 37,
+            "rank": 0,
+            "scored_rate": 1725.0,
+            "noise_floor": 60.0,
+            "best_other": 188.0
+          },
+          {
+            "cue": "languages.c6_m6",
+            "target": "drinks.c4_m0",
+            "scored_idx": 40,
+            "rank": 0,
+            "scored_rate": 1905.0,
+            "noise_floor": 104.5,
+            "best_other": 440.0
+          },
+          {
+            "cue": "planets.c6_m4",
+            "target": "weather.c7_m0",
+            "scored_idx": 64,
+            "rank": 0,
+            "scored_rate": 1955.0,
+            "noise_floor": 82.5,
+            "best_other": 276.0
+          },
+          {
+            "cue": "languages.c3_m0",
+            "target": "vegetables.c7_m3",
+            "scored_idx": 67,
+            "rank": 0,
+            "scored_rate": 1771.0,
+            "noise_floor": 87.0,
+            "best_other": 237.0
+          },
+          {
+            "cue": "birds.c1_m0",
+            "target": "fruits.c2_m2",
+            "scored_idx": 26,
+            "rank": 0,
+            "scored_rate": 2065.0,
+            "noise_floor": 143.5,
+            "best_other": 594.0
+          },
+          {
+            "cue": "weather.c5_m3",
+            "target": "body_parts.c2_m4",
+            "scored_idx": 28,
+            "rank": 0,
+            "scored_rate": 1899.0,
+            "noise_floor": 99.0,
+            "best_other": 329.0
+          },
+          {
+            "cue": "jobs.c5_m7",
+            "target": "shapes.c2_m7",
+            "scored_idx": 31,
+            "rank": 0,
+            "scored_rate": 1947.0,
+            "noise_floor": 98.0,
+            "best_other": 313.0
+          },
+          {
+            "cue": "tools.c4_m4",
+            "target": "languages.c5_m4",
+            "scored_idx": 52,
+            "rank": 0,
+            "scored_rate": 1785.0,
+            "noise_floor": 108.0,
+            "best_other": 354.0
+          },
+          {
+            "cue": "planets.c7_m6",
+            "target": "fish.c4_m6",
+            "scored_idx": 46,
+            "rank": 0,
+            "scored_rate": 1664.0,
+            "noise_floor": 85.0,
+            "best_other": 271.0
+          },
+          {
+            "cue": "furniture.c0_m1",
+            "target": "foods.c6_m6",
+            "scored_idx": 62,
+            "rank": 0,
+            "scored_rate": 1757.0,
+            "noise_floor": 84.0,
+            "best_other": 313.0
+          },
+          {
+            "cue": "jobs.c5_m1",
+            "target": "vegetables.c4_m3",
+            "scored_idx": 43,
+            "rank": 0,
+            "scored_rate": 1933.0,
+            "noise_floor": 99.0,
+            "best_other": 305.0
+          },
+          {
+            "cue": "flowers.c6_m1",
+            "target": "fish.c5_m1",
+            "scored_idx": 49,
+            "rank": 0,
+            "scored_rate": 1855.0,
+            "noise_floor": 95.0,
+            "best_other": 248.0
+          },
+          {
+            "cue": "insects.c0_m3",
+            "target": "animals.c7_m0",
+            "scored_idx": 64,
+            "rank": 0,
+            "scored_rate": 1965.0,
+            "noise_floor": 79.0,
+            "best_other": 251.0
+          },
+          {
+            "cue": "body_parts.c7_m7",
+            "target": "shapes.c5_m5",
+            "scored_idx": 53,
+            "rank": 0,
+            "scored_rate": 1964.0,
+            "noise_floor": 92.0,
+            "best_other": 217.0
+          },
+          {
+            "cue": "weather.c2_m3",
+            "target": "emotions.c0_m0",
+            "scored_idx": 8,
+            "rank": 0,
+            "scored_rate": 1683.0,
+            "noise_floor": 86.0,
+            "best_other": 253.0
+          },
+          {
+            "cue": "sports.c2_m6",
+            "target": "plants.c1_m2",
+            "scored_idx": 18,
+            "rank": 0,
+            "scored_rate": 1729.0,
+            "noise_floor": 73.5,
+            "best_other": 285.0
+          },
+          {
+            "cue": "gems.c2_m5",
+            "target": "trees.c6_m4",
+            "scored_idx": 60,
+            "rank": 0,
+            "scored_rate": 1656.0,
+            "noise_floor": 82.5,
+            "best_other": 252.0
+          },
+          {
+            "cue": "tools.c4_m0",
+            "target": "colors.c3_m6",
+            "scored_idx": 38,
+            "rank": 0,
+            "scored_rate": 1512.0,
+            "noise_floor": 67.5,
+            "best_other": 232.0
+          },
+          {
+            "cue": "foods.c4_m3",
+            "target": "vegetables.c4_m4",
+            "scored_idx": 44,
+            "rank": 0,
+            "scored_rate": 1743.0,
+            "noise_floor": 67.5,
+            "best_other": 246.0
+          },
+          {
+            "cue": "colors.c0_m5",
+            "target": "jobs.c5_m0",
+            "scored_idx": 48,
+            "rank": 0,
+            "scored_rate": 1386.0,
+            "noise_floor": 75.5,
+            "best_other": 319.0
+          },
+          {
+            "cue": "shapes.c5_m0",
+            "target": "materials.c6_m6",
+            "scored_idx": 62,
+            "rank": 0,
+            "scored_rate": 1720.0,
+            "noise_floor": 75.0,
+            "best_other": 218.0
+          },
+          {
+            "cue": "animals.c4_m7",
+            "target": "insects.c3_m0",
+            "scored_idx": 32,
+            "rank": 0,
+            "scored_rate": 1682.0,
+            "noise_floor": 84.0,
+            "best_other": 194.0
+          },
+          {
+            "cue": "weather.c6_m4",
+            "target": "countries.c2_m5",
+            "scored_idx": 29,
+            "rank": 0,
+            "scored_rate": 1868.0,
+            "noise_floor": 96.0,
+            "best_other": 255.0
+          },
+          {
+            "cue": "fish.c5_m4",
+            "target": "trees.c3_m0",
+            "scored_idx": 32,
+            "rank": 0,
+            "scored_rate": 1637.0,
+            "noise_floor": 82.5,
+            "best_other": 164.0
+          },
+          {
+            "cue": "sports.c1_m0",
+            "target": "languages.c6_m1",
+            "scored_idx": 57,
+            "rank": 0,
+            "scored_rate": 1914.0,
+            "noise_floor": 77.5,
+            "best_other": 200.0
+          },
+          {
+            "cue": "animals.c4_m1",
+            "target": "shapes.c5_m0",
+            "scored_idx": 48,
+            "rank": 0,
+            "scored_rate": 1721.0,
+            "noise_floor": 86.5,
+            "best_other": 383.0
+          },
+          {
+            "cue": "body_parts.c2_m4",
+            "target": "clothes.c1_m4",
+            "scored_idx": 20,
+            "rank": 1,
+            "scored_rate": 1773.0,
+            "noise_floor": 197.5,
+            "best_other": 2245.0
+          },
+          {
+            "cue": "animals.c5_m6",
+            "target": "body_parts.c2_m7",
+            "scored_idx": 31,
+            "rank": 0,
+            "scored_rate": 1929.0,
+            "noise_floor": 115.0,
+            "best_other": 294.0
+          },
+          {
+            "cue": "plants.c1_m4",
+            "target": "fish.c7_m4",
+            "scored_idx": 68,
+            "rank": 0,
+            "scored_rate": 1744.0,
+            "noise_floor": 93.5,
+            "best_other": 233.0
+          },
+          {
+            "cue": "body_parts.c2_m4",
+            "target": "clothes.c2_m2",
+            "scored_idx": 26,
+            "rank": 0,
+            "scored_rate": 2136.0,
+            "noise_floor": 191.0,
+            "best_other": 1706.0
+          },
+          {
+            "cue": "weather.c4_m0",
+            "target": "birds.c0_m0",
+            "scored_idx": 8,
+            "rank": 0,
+            "scored_rate": 1840.0,
+            "noise_floor": 82.5,
+            "best_other": 280.0
+          },
+          {
+            "cue": "planets.c0_m2",
+            "target": "weather.c6_m3",
+            "scored_idx": 59,
+            "rank": 0,
+            "scored_rate": 1828.0,
+            "noise_floor": 86.5,
+            "best_other": 254.0
+          },
+          {
+            "cue": "materials.c0_m5",
+            "target": "body_parts.c3_m7",
+            "scored_idx": 39,
+            "rank": 0,
+            "scored_rate": 1808.0,
+            "noise_floor": 86.0,
+            "best_other": 206.0
+          },
+          {
+            "cue": "trees.c5_m2",
+            "target": "insects.c3_m7",
+            "scored_idx": 39,
+            "rank": 0,
+            "scored_rate": 1842.0,
+            "noise_floor": 89.0,
+            "best_other": 215.0
+          },
+          {
+            "cue": "fish.c6_m3",
+            "target": "foods.c4_m4",
+            "scored_idx": 44,
+            "rank": 0,
+            "scored_rate": 1782.0,
+            "noise_floor": 69.0,
+            "best_other": 248.0
+          },
+          {
+            "cue": "clothes.c0_m0",
+            "target": "trees.c2_m1",
+            "scored_idx": 25,
+            "rank": 0,
+            "scored_rate": 1755.0,
+            "noise_floor": 91.5,
+            "best_other": 211.0
+          },
+          {
+            "cue": "drinks.c2_m0",
+            "target": "foods.c7_m0",
+            "scored_idx": 64,
+            "rank": 0,
+            "scored_rate": 1888.0,
+            "noise_floor": 85.0,
+            "best_other": 235.0
+          },
+          {
+            "cue": "plants.c1_m6",
+            "target": "materials.c6_m1",
+            "scored_idx": 57,
+            "rank": 0,
+            "scored_rate": 1863.0,
+            "noise_floor": 71.0,
+            "best_other": 202.0
+          },
+          {
+            "cue": "fruits.c3_m0",
+            "target": "gems.c1_m0",
+            "scored_idx": 16,
+            "rank": 0,
+            "scored_rate": 1708.0,
+            "noise_floor": 94.5,
+            "best_other": 269.0
+          },
+          {
+            "cue": "colors.c5_m5",
+            "target": "sports.c2_m6",
+            "scored_idx": 30,
+            "rank": 0,
+            "scored_rate": 1622.0,
+            "noise_floor": 83.5,
+            "best_other": 172.0
+          },
+          {
+            "cue": "toys.c6_m3",
+            "target": "instruments.c4_m2",
+            "scored_idx": 42,
+            "rank": 0,
+            "scored_rate": 1967.0,
+            "noise_floor": 107.0,
+            "best_other": 378.0
+          },
+          {
+            "cue": "fish.c0_m5",
+            "target": "fruits.c2_m5",
+            "scored_idx": 29,
+            "rank": 0,
+            "scored_rate": 1927.0,
+            "noise_floor": 90.0,
+            "best_other": 276.0
+          },
+          {
+            "cue": "materials.c6_m7",
+            "target": "body_parts.c2_m1",
+            "scored_idx": 25,
+            "rank": 0,
+            "scored_rate": 1777.0,
+            "noise_floor": 79.0,
+            "best_other": 196.0
+          },
+          {
+            "cue": "instruments.c0_m5",
+            "target": "fish.c4_m3",
+            "scored_idx": 43,
+            "rank": 0,
+            "scored_rate": 1908.0,
+            "noise_floor": 80.5,
+            "best_other": 221.0
+          },
+          {
+            "cue": "drinks.c1_m7",
+            "target": "insects.c6_m5",
+            "scored_idx": 61,
+            "rank": 0,
+            "scored_rate": 1653.0,
+            "noise_floor": 93.0,
+            "best_other": 266.0
+          },
+          {
+            "cue": "drinks.c3_m4",
+            "target": "metals.c6_m4",
+            "scored_idx": 60,
+            "rank": 0,
+            "scored_rate": 1454.0,
+            "noise_floor": 74.5,
+            "best_other": 423.0
+          },
+          {
+            "cue": "jobs.c2_m4",
+            "target": "emotions.c4_m7",
+            "scored_idx": 47,
+            "rank": 0,
+            "scored_rate": 1965.0,
+            "noise_floor": 93.5,
+            "best_other": 297.0
+          },
+          {
+            "cue": "tools.c4_m5",
+            "target": "languages.c6_m1",
+            "scored_idx": 57,
+            "rank": 0,
+            "scored_rate": 1542.0,
+            "noise_floor": 63.0,
+            "best_other": 167.0
+          },
+          {
+            "cue": "sports.c6_m6",
+            "target": "dances.c0_m7",
+            "scored_idx": 15,
+            "rank": 0,
+            "scored_rate": 1717.0,
+            "noise_floor": 78.5,
+            "best_other": 198.0
+          },
+          {
+            "cue": "birds.c3_m0",
+            "target": "flowers.c7_m5",
+            "scored_idx": 69,
+            "rank": 0,
+            "scored_rate": 1817.0,
+            "noise_floor": 93.0,
+            "best_other": 206.0
+          },
+          {
+            "cue": "birds.c5_m5",
+            "target": "emotions.c6_m4",
+            "scored_idx": 60,
+            "rank": 0,
+            "scored_rate": 1639.0,
+            "noise_floor": 104.5,
+            "best_other": 599.0
+          },
+          {
+            "cue": "tools.c7_m1",
+            "target": "sports.c3_m0",
+            "scored_idx": 32,
+            "rank": 0,
+            "scored_rate": 1596.0,
+            "noise_floor": 81.5,
+            "best_other": 170.0
+          },
+          {
+            "cue": "body_parts.c2_m7",
+            "target": "instruments.c0_m6",
+            "scored_idx": 14,
+            "rank": 0,
+            "scored_rate": 1599.0,
+            "noise_floor": 65.0,
+            "best_other": 143.0
+          },
+          {
+            "cue": "drinks.c5_m3",
+            "target": "clothes.c5_m1",
+            "scored_idx": 49,
+            "rank": 0,
+            "scored_rate": 1785.0,
+            "noise_floor": 93.0,
+            "best_other": 236.0
+          },
+          {
+            "cue": "shapes.c2_m6",
+            "target": "vehicles.c3_m5",
+            "scored_idx": 37,
+            "rank": 0,
+            "scored_rate": 1646.0,
+            "noise_floor": 62.0,
+            "best_other": 182.0
+          },
+          {
+            "cue": "fish.c6_m0",
+            "target": "furniture.c3_m2",
+            "scored_idx": 34,
+            "rank": 0,
+            "scored_rate": 1810.0,
+            "noise_floor": 75.5,
+            "best_other": 272.0
+          },
+          {
+            "cue": "languages.c3_m2",
+            "target": "emotions.c0_m6",
+            "scored_idx": 14,
+            "rank": 0,
+            "scored_rate": 1593.0,
+            "noise_floor": 71.0,
+            "best_other": 156.0
+          },
+          {
+            "cue": "gems.c0_m3",
+            "target": "fish.c1_m4",
+            "scored_idx": 20,
+            "rank": 0,
+            "scored_rate": 1775.0,
+            "noise_floor": 89.0,
+            "best_other": 242.0
+          },
+          {
+            "cue": "body_parts.c0_m7",
+            "target": "animals.c5_m5",
+            "scored_idx": 53,
+            "rank": 0,
+            "scored_rate": 1894.0,
+            "noise_floor": 85.5,
+            "best_other": 198.0
+          },
+          {
+            "cue": "vegetables.c2_m1",
+            "target": "toys.c5_m0",
+            "scored_idx": 48,
+            "rank": 0,
+            "scored_rate": 1836.0,
+            "noise_floor": 112.5,
+            "best_other": 722.0
+          },
+          {
+            "cue": "weather.c7_m6",
+            "target": "birds.c7_m6",
+            "scored_idx": 70,
+            "rank": 0,
+            "scored_rate": 1748.0,
+            "noise_floor": 71.0,
+            "best_other": 232.0
+          },
+          {
+            "cue": "weather.c5_m7",
+            "target": "gems.c4_m3",
+            "scored_idx": 43,
+            "rank": 0,
+            "scored_rate": 2004.0,
+            "noise_floor": 93.5,
+            "best_other": 322.0
+          },
+          {
+            "cue": "dances.c5_m1",
+            "target": "toys.c3_m5",
+            "scored_idx": 37,
+            "rank": 0,
+            "scored_rate": 1712.0,
+            "noise_floor": 69.0,
+            "best_other": 216.0
+          },
+          {
+            "cue": "buildings.c3_m2",
+            "target": "vehicles.c7_m2",
+            "scored_idx": 66,
+            "rank": 0,
+            "scored_rate": 1903.0,
+            "noise_floor": 90.5,
+            "best_other": 212.0
+          },
+          {
+            "cue": "materials.c2_m0",
+            "target": "birds.c4_m1",
+            "scored_idx": 41,
+            "rank": 0,
+            "scored_rate": 1891.0,
+            "noise_floor": 94.5,
+            "best_other": 237.0
+          },
+          {
+            "cue": "furniture.c5_m1",
+            "target": "toys.c4_m4",
+            "scored_idx": 44,
+            "rank": 0,
+            "scored_rate": 1734.0,
+            "noise_floor": 71.5,
+            "best_other": 242.0
+          }
+        ]
+      },
+      "m7_permuted_mapping": {
+        "permuted": true,
+        "n_cross_facts": 96,
+        "top1_fraction": 0.0,
+        "top2_fraction": 0.020833333333333332,
+        "mean_signal_vs_floor": 1.1181835084424454,
+        "mean_margin": -1645.25,
+        "detail": [
+          {
+            "cue": "materials.c4_m4",
+            "target": "plants.c7_m6",
+            "scored_idx": 8,
+            "rank": 23,
+            "scored_rate": 111.0,
+            "noise_floor": 93.0,
+            "best_other": 1665.0
+          },
+          {
+            "cue": "dances.c7_m4",
+            "target": "gems.c0_m2",
+            "scored_idx": 0,
+            "rank": 30,
+            "scored_rate": 83.0,
+            "noise_floor": 78.0,
+            "best_other": 1871.0
+          },
+          {
+            "cue": "buildings.c3_m2",
+            "target": "tools.c5_m4",
+            "scored_idx": 58,
+            "rank": 27,
+            "scored_rate": 116.0,
+            "noise_floor": 96.5,
+            "best_other": 1480.0
+          },
+          {
+            "cue": "vehicles.c5_m1",
+            "target": "clothes.c3_m2",
+            "scored_idx": 15,
+            "rank": 46,
+            "scored_rate": 59.0,
+            "noise_floor": 75.0,
+            "best_other": 1715.0
+          },
+          {
+            "cue": "vegetables.c0_m6",
+            "target": "gems.c1_m5",
+            "scored_idx": 6,
+            "rank": 28,
+            "scored_rate": 95.0,
+            "noise_floor": 90.5,
+            "best_other": 1770.0
+          },
+          {
+            "cue": "toys.c1_m1",
+            "target": "languages.c3_m5",
+            "scored_idx": 56,
+            "rank": 69,
+            "scored_rate": 15.0,
+            "noise_floor": 58.5,
+            "best_other": 1675.0
+          },
+          {
+            "cue": "languages.c0_m7",
+            "target": "trees.c7_m7",
+            "scored_idx": 69,
+            "rank": 71,
+            "scored_rate": 7.0,
+            "noise_floor": 114.5,
+            "best_other": 2026.0
+          },
+          {
+            "cue": "metals.c3_m1",
+            "target": "colors.c2_m6",
+            "scored_idx": 66,
+            "rank": 17,
+            "scored_rate": 111.0,
+            "noise_floor": 81.5,
+            "best_other": 1636.0
+          },
+          {
+            "cue": "languages.c4_m1",
+            "target": "jobs.c5_m0",
+            "scored_idx": 35,
+            "rank": 47,
+            "scored_rate": 73.0,
+            "noise_floor": 84.0,
+            "best_other": 1237.0
+          },
+          {
+            "cue": "body_parts.c2_m6",
+            "target": "gems.c0_m7",
+            "scored_idx": 21,
+            "rank": 33,
+            "scored_rate": 88.0,
+            "noise_floor": 83.5,
+            "best_other": 1716.0
+          },
+          {
+            "cue": "buildings.c6_m7",
+            "target": "drinks.c2_m0",
+            "scored_idx": 42,
+            "rank": 71,
+            "scored_rate": 2.0,
+            "noise_floor": 92.0,
+            "best_other": 1833.0
+          },
+          {
+            "cue": "vegetables.c6_m4",
+            "target": "tools.c7_m0",
+            "scored_idx": 29,
+            "rank": 9,
+            "scored_rate": 156.0,
+            "noise_floor": 83.0,
+            "best_other": 1846.0
+          },
+          {
+            "cue": "buildings.c3_m0",
+            "target": "plants.c2_m1",
+            "scored_idx": 29,
+            "rank": 13,
+            "scored_rate": 161.0,
+            "noise_floor": 107.0,
+            "best_other": 1847.0
+          },
+          {
+            "cue": "materials.c6_m0",
+            "target": "flowers.c6_m6",
+            "scored_idx": 49,
+            "rank": 48,
+            "scored_rate": 53.0,
+            "noise_floor": 68.0,
+            "best_other": 1631.0
+          },
+          {
+            "cue": "fruits.c1_m5",
+            "target": "weather.c6_m6",
+            "scored_idx": 8,
+            "rank": 10,
+            "scored_rate": 119.0,
+            "noise_floor": 76.5,
+            "best_other": 1709.0
+          },
+          {
+            "cue": "insects.c5_m6",
+            "target": "toys.c7_m6",
+            "scored_idx": 5,
+            "rank": 69,
+            "scored_rate": 17.0,
+            "noise_floor": 71.5,
+            "best_other": 1707.0
+          },
+          {
+            "cue": "animals.c4_m3",
+            "target": "plants.c0_m2",
+            "scored_idx": 32,
+            "rank": 34,
+            "scored_rate": 75.0,
+            "noise_floor": 74.0,
+            "best_other": 1788.0
+          },
+          {
+            "cue": "flowers.c5_m1",
+            "target": "animals.c3_m5",
+            "scored_idx": 30,
+            "rank": 64,
+            "scored_rate": 21.0,
+            "noise_floor": 60.0,
+            "best_other": 1699.0
+          },
+          {
+            "cue": "insects.c5_m7",
+            "target": "shapes.c6_m6",
+            "scored_idx": 44,
+            "rank": 13,
+            "scored_rate": 112.0,
+            "noise_floor": 74.5,
+            "best_other": 1691.0
+          },
+          {
+            "cue": "buildings.c5_m7",
+            "target": "colors.c6_m5",
+            "scored_idx": 29,
+            "rank": 9,
+            "scored_rate": 147.0,
+            "noise_floor": 88.0,
+            "best_other": 1603.0
+          },
+          {
+            "cue": "fish.c3_m5",
+            "target": "colors.c3_m6",
+            "scored_idx": 13,
+            "rank": 21,
+            "scored_rate": 102.0,
+            "noise_floor": 80.0,
+            "best_other": 1823.0
+          },
+          {
+            "cue": "birds.c0_m5",
+            "target": "plants.c2_m2",
+            "scored_idx": 58,
+            "rank": 49,
+            "scored_rate": 89.0,
+            "noise_floor": 128.0,
+            "best_other": 2083.0
+          },
+          {
+            "cue": "materials.c2_m2",
+            "target": "drinks.c4_m5",
+            "scored_idx": 22,
+            "rank": 9,
+            "scored_rate": 175.0,
+            "noise_floor": 94.5,
+            "best_other": 2002.0
+          },
+          {
+            "cue": "plants.c7_m2",
+            "target": "clothes.c1_m0",
+            "scored_idx": 27,
+            "rank": 45,
+            "scored_rate": 66.0,
+            "noise_floor": 85.0,
+            "best_other": 1697.0
+          },
+          {
+            "cue": "gems.c4_m2",
+            "target": "buildings.c2_m0",
+            "scored_idx": 47,
+            "rank": 24,
+            "scored_rate": 103.0,
+            "noise_floor": 88.0,
+            "best_other": 1777.0
+          },
+          {
+            "cue": "jobs.c7_m3",
+            "target": "insects.c0_m3",
+            "scored_idx": 54,
+            "rank": 26,
+            "scored_rate": 77.0,
+            "noise_floor": 57.0,
+            "best_other": 1554.0
+          },
+          {
+            "cue": "countries.c5_m6",
+            "target": "clothes.c4_m5",
+            "scored_idx": 27,
+            "rank": 10,
+            "scored_rate": 158.0,
+            "noise_floor": 82.5,
+            "best_other": 1898.0
+          },
+          {
+            "cue": "gems.c3_m7",
+            "target": "buildings.c3_m1",
+            "scored_idx": 18,
+            "rank": 6,
+            "scored_rate": 165.0,
+            "noise_floor": 85.0,
+            "best_other": 1779.0
+          },
+          {
+            "cue": "languages.c5_m0",
+            "target": "weather.c1_m2",
+            "scored_idx": 58,
+            "rank": 48,
+            "scored_rate": 66.0,
+            "noise_floor": 80.0,
+            "best_other": 1780.0
+          },
+          {
+            "cue": "colors.c6_m4",
+            "target": "shapes.c3_m1",
+            "scored_idx": 13,
+            "rank": 27,
+            "scored_rate": 88.0,
+            "noise_floor": 76.5,
+            "best_other": 1837.0
+          },
+          {
+            "cue": "instruments.c0_m1",
+            "target": "gems.c3_m5",
+            "scored_idx": 10,
+            "rank": 25,
+            "scored_rate": 70.0,
+            "noise_floor": 59.0,
+            "best_other": 1711.0
+          },
+          {
+            "cue": "languages.c6_m6",
+            "target": "drinks.c4_m0",
+            "scored_idx": 33,
+            "rank": 15,
+            "scored_rate": 159.0,
+            "noise_floor": 103.5,
+            "best_other": 1870.0
+          },
+          {
+            "cue": "planets.c6_m4",
+            "target": "weather.c7_m0",
+            "scored_idx": 55,
+            "rank": 60,
+            "scored_rate": 36.0,
+            "noise_floor": 81.0,
+            "best_other": 1950.0
+          },
+          {
+            "cue": "languages.c3_m0",
+            "target": "vegetables.c7_m3",
+            "scored_idx": 14,
+            "rank": 51,
+            "scored_rate": 57.0,
+            "noise_floor": 80.0,
+            "best_other": 1727.0
+          },
+          {
+            "cue": "birds.c1_m0",
+            "target": "fruits.c2_m2",
+            "scored_idx": 16,
+            "rank": 2,
+            "scored_rate": 303.0,
+            "noise_floor": 139.0,
+            "best_other": 1961.0
+          },
+          {
+            "cue": "weather.c5_m3",
+            "target": "body_parts.c2_m4",
+            "scored_idx": 55,
+            "rank": 42,
+            "scored_rate": 87.0,
+            "noise_floor": 98.5,
+            "best_other": 1897.0
+          },
+          {
+            "cue": "jobs.c5_m7",
+            "target": "shapes.c2_m7",
+            "scored_idx": 41,
+            "rank": 61,
+            "scored_rate": 35.0,
+            "noise_floor": 97.5,
+            "best_other": 1950.0
+          },
+          {
+            "cue": "tools.c4_m4",
+            "target": "languages.c5_m4",
+            "scored_idx": 10,
+            "rank": 57,
+            "scored_rate": 63.0,
+            "noise_floor": 103.0,
+            "best_other": 1763.0
+          },
+          {
+            "cue": "planets.c7_m6",
+            "target": "fish.c4_m6",
+            "scored_idx": 20,
+            "rank": 57,
+            "scored_rate": 44.0,
+            "noise_floor": 83.5,
+            "best_other": 1645.0
+          },
+          {
+            "cue": "furniture.c0_m1",
+            "target": "foods.c6_m6",
+            "scored_idx": 0,
+            "rank": 36,
+            "scored_rate": 81.0,
+            "noise_floor": 81.0,
+            "best_other": 1726.0
+          },
+          {
+            "cue": "jobs.c5_m1",
+            "target": "vegetables.c4_m3",
+            "scored_idx": 38,
+            "rank": 14,
+            "scored_rate": 146.0,
+            "noise_floor": 98.5,
+            "best_other": 1908.0
+          },
+          {
+            "cue": "flowers.c6_m1",
+            "target": "fish.c5_m1",
+            "scored_idx": 9,
+            "rank": 13,
+            "scored_rate": 147.0,
+            "noise_floor": 93.5,
+            "best_other": 1818.0
+          },
+          {
+            "cue": "insects.c0_m3",
+            "target": "animals.c7_m0",
+            "scored_idx": 34,
+            "rank": 8,
+            "scored_rate": 144.0,
+            "noise_floor": 78.5,
+            "best_other": 1930.0
+          },
+          {
+            "cue": "body_parts.c7_m7",
+            "target": "shapes.c5_m5",
+            "scored_idx": 55,
+            "rank": 22,
+            "scored_rate": 107.0,
+            "noise_floor": 89.0,
+            "best_other": 1934.0
+          },
+          {
+            "cue": "weather.c2_m3",
+            "target": "emotions.c0_m0",
+            "scored_idx": 69,
+            "rank": 57,
+            "scored_rate": 47.0,
+            "noise_floor": 81.0,
+            "best_other": 1551.0
+          },
+          {
+            "cue": "sports.c2_m6",
+            "target": "plants.c1_m2",
+            "scored_idx": 63,
+            "rank": 57,
+            "scored_rate": 48.0,
+            "noise_floor": 72.5,
+            "best_other": 1702.0
+          },
+          {
+            "cue": "gems.c2_m5",
+            "target": "trees.c6_m4",
+            "scored_idx": 36,
+            "rank": 67,
+            "scored_rate": 28.0,
+            "noise_floor": 76.0,
+            "best_other": 1608.0
+          },
+          {
+            "cue": "tools.c4_m0",
+            "target": "colors.c3_m6",
+            "scored_idx": 4,
+            "rank": 13,
+            "scored_rate": 104.0,
+            "noise_floor": 65.5,
+            "best_other": 1507.0
+          },
+          {
+            "cue": "foods.c4_m3",
+            "target": "vegetables.c4_m4",
+            "scored_idx": 59,
+            "rank": 19,
+            "scored_rate": 99.0,
+            "noise_floor": 67.0,
+            "best_other": 1718.0
+          },
+          {
+            "cue": "colors.c0_m5",
+            "target": "jobs.c5_m0",
+            "scored_idx": 31,
+            "rank": 2,
+            "scored_rate": 188.0,
+            "noise_floor": 67.5,
+            "best_other": 1258.0
+          },
+          {
+            "cue": "shapes.c5_m0",
+            "target": "materials.c6_m6",
+            "scored_idx": 29,
+            "rank": 3,
+            "scored_rate": 159.0,
+            "noise_floor": 70.0,
+            "best_other": 1620.0
+          },
+          {
+            "cue": "animals.c4_m7",
+            "target": "insects.c3_m0",
+            "scored_idx": 60,
+            "rank": 70,
+            "scored_rate": 20.0,
+            "noise_floor": 82.5,
+            "best_other": 1644.0
+          },
+          {
+            "cue": "weather.c6_m4",
+            "target": "countries.c2_m5",
+            "scored_idx": 22,
+            "rank": 16,
+            "scored_rate": 106.0,
+            "noise_floor": 78.5,
+            "best_other": 1586.0
+          },
+          {
+            "cue": "fish.c5_m4",
+            "target": "trees.c3_m0",
+            "scored_idx": 64,
+            "rank": 14,
+            "scored_rate": 114.0,
+            "noise_floor": 78.5,
+            "best_other": 1580.0
+          },
+          {
+            "cue": "sports.c1_m0",
+            "target": "languages.c6_m1",
+            "scored_idx": 31,
+            "rank": 1,
+            "scored_rate": 196.0,
+            "noise_floor": 76.0,
+            "best_other": 1884.0
+          },
+          {
+            "cue": "animals.c4_m1",
+            "target": "shapes.c5_m0",
+            "scored_idx": 19,
+            "rank": 16,
+            "scored_rate": 119.0,
+            "noise_floor": 83.0,
+            "best_other": 1643.0
+          },
+          {
+            "cue": "body_parts.c2_m4",
+            "target": "clothes.c1_m4",
+            "scored_idx": 11,
+            "rank": 28,
+            "scored_rate": 211.0,
+            "noise_floor": 195.5,
+            "best_other": 2233.0
+          },
+          {
+            "cue": "animals.c5_m6",
+            "target": "body_parts.c2_m7",
+            "scored_idx": 36,
+            "rank": 49,
+            "scored_rate": 84.0,
+            "noise_floor": 114.5,
+            "best_other": 1927.0
+          },
+          {
+            "cue": "plants.c1_m4",
+            "target": "fish.c7_m4",
+            "scored_idx": 1,
+            "rank": 1,
+            "scored_rate": 234.0,
+            "noise_floor": 90.0,
+            "best_other": 1714.0
+          },
+          {
+            "cue": "body_parts.c2_m4",
+            "target": "clothes.c2_m2",
+            "scored_idx": 45,
+            "rank": 59,
+            "scored_rate": 134.0,
+            "noise_floor": 192.0,
+            "best_other": 2127.0
+          },
+          {
+            "cue": "weather.c4_m0",
+            "target": "birds.c0_m0",
+            "scored_idx": 40,
+            "rank": 56,
+            "scored_rate": 49.0,
+            "noise_floor": 84.5,
+            "best_other": 1802.0
+          },
+          {
+            "cue": "planets.c0_m2",
+            "target": "weather.c6_m3",
+            "scored_idx": 18,
+            "rank": 61,
+            "scored_rate": 40.0,
+            "noise_floor": 83.0,
+            "best_other": 1814.0
+          },
+          {
+            "cue": "materials.c0_m5",
+            "target": "body_parts.c3_m7",
+            "scored_idx": 49,
+            "rank": 68,
+            "scored_rate": 24.0,
+            "noise_floor": 84.5,
+            "best_other": 1786.0
+          },
+          {
+            "cue": "trees.c5_m2",
+            "target": "insects.c3_m7",
+            "scored_idx": 66,
+            "rank": 15,
+            "scored_rate": 123.0,
+            "noise_floor": 87.0,
+            "best_other": 1820.0
+          },
+          {
+            "cue": "fish.c6_m3",
+            "target": "foods.c4_m4",
+            "scored_idx": 58,
+            "rank": 33,
+            "scored_rate": 75.0,
+            "noise_floor": 68.5,
+            "best_other": 1766.0
+          },
+          {
+            "cue": "clothes.c0_m0",
+            "target": "trees.c2_m1",
+            "scored_idx": 22,
+            "rank": 42,
+            "scored_rate": 77.0,
+            "noise_floor": 91.5,
+            "best_other": 1756.0
+          },
+          {
+            "cue": "drinks.c2_m0",
+            "target": "foods.c7_m0",
+            "scored_idx": 44,
+            "rank": 44,
+            "scored_rate": 60.0,
+            "noise_floor": 81.5,
+            "best_other": 1870.0
+          },
+          {
+            "cue": "plants.c1_m6",
+            "target": "materials.c6_m1",
+            "scored_idx": 63,
+            "rank": 8,
+            "scored_rate": 136.0,
+            "noise_floor": 69.0,
+            "best_other": 1766.0
+          },
+          {
+            "cue": "fruits.c3_m0",
+            "target": "gems.c1_m0",
+            "scored_idx": 21,
+            "rank": 33,
+            "scored_rate": 98.0,
+            "noise_floor": 90.5,
+            "best_other": 1665.0
+          },
+          {
+            "cue": "colors.c5_m5",
+            "target": "sports.c2_m6",
+            "scored_idx": 44,
+            "rank": 13,
+            "scored_rate": 114.0,
+            "noise_floor": 77.5,
+            "best_other": 1542.0
+          },
+          {
+            "cue": "toys.c6_m3",
+            "target": "instruments.c4_m2",
+            "scored_idx": 51,
+            "rank": 43,
+            "scored_rate": 87.0,
+            "noise_floor": 99.5,
+            "best_other": 1853.0
+          },
+          {
+            "cue": "fish.c0_m5",
+            "target": "fruits.c2_m5",
+            "scored_idx": 45,
+            "rank": 35,
+            "scored_rate": 89.0,
+            "noise_floor": 85.0,
+            "best_other": 1890.0
+          },
+          {
+            "cue": "materials.c6_m7",
+            "target": "body_parts.c2_m1",
+            "scored_idx": 22,
+            "rank": 34,
+            "scored_rate": 84.0,
+            "noise_floor": 79.0,
+            "best_other": 1761.0
+          },
+          {
+            "cue": "instruments.c0_m5",
+            "target": "fish.c4_m3",
+            "scored_idx": 6,
+            "rank": 55,
+            "scored_rate": 43.0,
+            "noise_floor": 77.5,
+            "best_other": 1847.0
+          },
+          {
+            "cue": "drinks.c1_m7",
+            "target": "insects.c6_m5",
+            "scored_idx": 9,
+            "rank": 27,
+            "scored_rate": 110.0,
+            "noise_floor": 92.5,
+            "best_other": 1628.0
+          },
+          {
+            "cue": "drinks.c3_m4",
+            "target": "metals.c6_m4",
+            "scored_idx": 49,
+            "rank": 4,
+            "scored_rate": 134.0,
+            "noise_floor": 65.0,
+            "best_other": 1228.0
+          },
+          {
+            "cue": "jobs.c2_m4",
+            "target": "emotions.c4_m7",
+            "scored_idx": 57,
+            "rank": 16,
+            "scored_rate": 131.0,
+            "noise_floor": 90.0,
+            "best_other": 1929.0
+          },
+          {
+            "cue": "tools.c4_m5",
+            "target": "languages.c6_m1",
+            "scored_idx": 25,
+            "rank": 41,
+            "scored_rate": 56.0,
+            "noise_floor": 62.5,
+            "best_other": 1544.0
+          },
+          {
+            "cue": "sports.c6_m6",
+            "target": "dances.c0_m7",
+            "scored_idx": 1,
+            "rank": 15,
+            "scored_rate": 94.0,
+            "noise_floor": 65.0,
+            "best_other": 1343.0
+          },
+          {
+            "cue": "birds.c3_m0",
+            "target": "flowers.c7_m5",
+            "scored_idx": 42,
+            "rank": 53,
+            "scored_rate": 50.0,
+            "noise_floor": 86.0,
+            "best_other": 1680.0
+          },
+          {
+            "cue": "birds.c5_m5",
+            "target": "emotions.c6_m4",
+            "scored_idx": 23,
+            "rank": 48,
+            "scored_rate": 66.0,
+            "noise_floor": 100.5,
+            "best_other": 1607.0
+          },
+          {
+            "cue": "tools.c7_m1",
+            "target": "sports.c3_m0",
+            "scored_idx": 52,
+            "rank": 50,
+            "scored_rate": 55.0,
+            "noise_floor": 77.5,
+            "best_other": 1519.0
+          },
+          {
+            "cue": "body_parts.c2_m7",
+            "target": "instruments.c0_m6",
+            "scored_idx": 40,
+            "rank": 42,
+            "scored_rate": 57.0,
+            "noise_floor": 63.5,
+            "best_other": 1558.0
+          },
+          {
+            "cue": "drinks.c5_m3",
+            "target": "clothes.c5_m1",
+            "scored_idx": 50,
+            "rank": 29,
+            "scored_rate": 107.0,
+            "noise_floor": 93.5,
+            "best_other": 1781.0
+          },
+          {
+            "cue": "shapes.c2_m6",
+            "target": "vehicles.c3_m5",
+            "scored_idx": 33,
+            "rank": 4,
+            "scored_rate": 142.0,
+            "noise_floor": 57.0,
+            "best_other": 1570.0
+          },
+          {
+            "cue": "fish.c6_m0",
+            "target": "furniture.c3_m2",
+            "scored_idx": 44,
+            "rank": 32,
+            "scored_rate": 64.0,
+            "noise_floor": 60.5,
+            "best_other": 1438.0
+          },
+          {
+            "cue": "languages.c3_m2",
+            "target": "emotions.c0_m6",
+            "scored_idx": 58,
+            "rank": 42,
+            "scored_rate": 60.0,
+            "noise_floor": 69.0,
+            "best_other": 1553.0
+          },
+          {
+            "cue": "gems.c0_m3",
+            "target": "fish.c1_m4",
+            "scored_idx": 62,
+            "rank": 60,
+            "scored_rate": 40.0,
+            "noise_floor": 89.5,
+            "best_other": 1762.0
+          },
+          {
+            "cue": "body_parts.c0_m7",
+            "target": "animals.c5_m5",
+            "scored_idx": 15,
+            "rank": 55,
+            "scored_rate": 47.0,
+            "noise_floor": 83.0,
+            "best_other": 1811.0
+          },
+          {
+            "cue": "vegetables.c2_m1",
+            "target": "toys.c5_m0",
+            "scored_idx": 27,
+            "rank": 53,
+            "scored_rate": 80.0,
+            "noise_floor": 109.0,
+            "best_other": 1779.0
+          },
+          {
+            "cue": "weather.c7_m6",
+            "target": "birds.c7_m6",
+            "scored_idx": 13,
+            "rank": 44,
+            "scored_rate": 57.0,
+            "noise_floor": 71.0,
+            "best_other": 1726.0
+          },
+          {
+            "cue": "weather.c5_m7",
+            "target": "gems.c4_m3",
+            "scored_idx": 31,
+            "rank": 24,
+            "scored_rate": 118.0,
+            "noise_floor": 88.0,
+            "best_other": 1985.0
+          },
+          {
+            "cue": "dances.c5_m1",
+            "target": "toys.c3_m5",
+            "scored_idx": 60,
+            "rank": 45,
+            "scored_rate": 54.0,
+            "noise_floor": 67.5,
+            "best_other": 1686.0
+          },
+          {
+            "cue": "buildings.c3_m2",
+            "target": "vehicles.c7_m2",
+            "scored_idx": 22,
+            "rank": 9,
+            "scored_rate": 148.0,
+            "noise_floor": 84.5,
+            "best_other": 1840.0
+          },
+          {
+            "cue": "materials.c2_m0",
+            "target": "birds.c4_m1",
+            "scored_idx": 55,
+            "rank": 22,
+            "scored_rate": 121.0,
+            "noise_floor": 92.5,
+            "best_other": 1873.0
+          },
+          {
+            "cue": "furniture.c5_m1",
+            "target": "toys.c4_m4",
+            "scored_idx": 49,
+            "rank": 48,
+            "scored_rate": 59.0,
+            "noise_floor": 70.0,
+            "best_other": 1728.0
+          }
+        ]
+      },
+      "m3_band": "GO",
+      "m7_collapses": true,
+      "m4_moat": {
+        "n_stored_facts": 91,
+        "n_known_cues": 91,
+        "n_unknown_cues": 20,
+        "novelty_known_max": 2.220446049250313e-16,
+        "novelty_unknown_min": 0.25126947030872326,
+        "separation_margin": 0.25126947030872304,
+        "threshold": 0.12563473515436174,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": -1.1102230246251565e-16,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      }
+    }
+  },
+  "args": {
+    "mode": "full",
+    "seeds": "42",
+    "seed": null,
+    "n_bridges": 32,
+    "concepts_per_bridge": 64,
+    "target_per_sub": 8,
+    "n_pool": 2400,
+    "pattern_size": 100,
+    "homeo": "oja",
+    "homeo_target": 40.0,
+    "cycles": 10,
+    "bracket_setpoint": false,
+    "setpoint_bracket": [
+      20.0,
+      40.0,
+      80.0
+    ],
+    "n_props": 4,
+    "hub_facts_per_member": 6,
+    "bridge_facts": 8,
+    "triplet_facts_per_cluster": 4,
+    "readout_divnorm": "ch",
+    "readout_order": "interleave",
+    "readout_sigma": 0.001,
+    "readout_exponent": 2.0,
+    "readout_log_clip": false,
+    "diffusion_alpha": 0.5,
+    "diffusion_steps": 2,
+    "n_cross_facts": 96,
+    "encoding_steps": 100,
+    "teacher_pA": 500.0,
+    "top_k": 150,
+    "drive_pA": 1500.0,
+    "drive_steps": 100,
+    "moat_D": 128,
+    "moat_floor": 20,
+    "g1_bar": 0.5,
+    "a1_bar": 0.7,
+    "so_margin_bar": 0.1,
+    "k_neighbours": 3,
+    "out": "research/findings/raw/_multibridge_fanout32_seed42.json",
+    "_seed_for_g5": 42
+  }
+}
