@@ -114,16 +114,27 @@ the project's history.
 
 ### `research/findings/` — chronological session findings
 
-Date-stamped scientific findings. Latest at the top of `INDEX.md`.
+Date-stamped scientific findings. Latest at the top of
+[`research/findings/INDEX.md`](../research/findings/INDEX.md) — start there;
+its "At a glance" table is the running milestone spine.
 
-Particularly important docs:
-- `2026-05-02-text-io-BREAKTHROUGH-v2.md` — primary text I/O finding
-- `2026-05-02-text-io-formal-writeup.md` — paper-style writeup
-- `2026-05-02-FINAL-overnight-summary.md` — most recent overnight
-- `2026-05-02-project-status-summary.md` — comprehensive snapshot
-- `2026-05-01-cluster-k-v2-breakthrough.md` — visual cortex breakthrough
-- `2026-05-01-cluster-g-nmda-breakthrough.md` — PFC NMDA breakthrough
-- `2026-04-27-NEW-BEST-4cheats-closed.md` — perception arc completion
+For the single most-current state (the next concrete step the autonomous
+work is on), see
+[`research/findings/AUTONOMOUS_STATE.md`](../research/findings/AUTONOMOUS_STATE.md).
+It is dense and internal — the README and `CURRENT-STATE.md` are the
+plain-language versions.
+
+A few landmark findings worth knowing about:
+- `2026-04-27-NEW-BEST-4cheats-closed.md` — navigation: closing the
+  perception shortcuts (the navigation flagship)
+- `2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md` — the first
+  real concept-to-concept retrieval result
+- `2026-05-16-G20-failure-mechanism-FINAL-SYNTHESIS.md` — the
+  distributed ~320-concept memory (continual + won't-confabulate)
+- `2026-06-11-familiarity-gate-v320-GO.md` — the "learned cortex"
+  arc forks (flat vs meaning-structured cortex)
+- `2026-06-13-phase1-32bridge-fanout-derisk-GO.md` — scaling the
+  learned cortex to ~2,048 concepts de-risked (production build in progress)
 
 **Read these if:** you want the chronological story of how the project
 evolved.

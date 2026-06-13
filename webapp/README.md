@@ -140,6 +140,10 @@ pip install -r webapp/requirements.txt
 | `GET /api/runs/launch/{run_id}` | Poll status |
 | `WS  /ws/runs/{run_id}` | Stream stdout + parsed progress events |
 | `GET /api/info` | Repo paths, presets, phase status |
+| `GET /api/capability-status` | Current headline capability + validation pillars (from `capability_status.json`) |
+
+(Additional endpoints back the Lineages / bridge-memory / synapse-tiering /
+LLM-chat panels — see `server.py` for the full list.)
 
 ## Architecture
 
@@ -176,9 +180,11 @@ traversal is blocked by routing + handler. Tested.
 python -m pytest tests/test_webapp_server.py -v
 ```
 
-16 endpoint smoke tests covering: info, runs listing, findings listing,
+68 endpoint smoke tests covering: info, runs listing, findings listing,
 path-traversal protection, launcher 404 paths, WebSocket-stream parsing,
-the experiments endpoint, and filename → experiment detection.
+the experiments endpoint, filename → experiment detection, the lineage /
+bridge-memory / synapse-tiering / LLM-chat endpoints, and the
+capability-status endpoint shape.
 
 ## Persistent state
 

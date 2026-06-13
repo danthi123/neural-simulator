@@ -7,7 +7,7 @@ This document is the **authoritative current-state reference**.
 Update it whenever capabilities change. For the journey of how we
 got here, see `research/findings/`.
 
-**Last meaningful update:** 2026-06-10 (see "Recent milestones (2026-06)" below).
+**Last meaningful update:** 2026-06-13 (see "Recent milestones (2026-06)" below).
 
 **Recent milestones (2026-06):**
 - **The conversational "composer" is now fully spiking** — the part that binds
@@ -35,7 +35,20 @@ got here, see `research/findings/`.
   conversational half present). See
   [`ARCHITECTURE_nav_conv_merge.md`](ARCHITECTURE_nav_conv_merge.md). The only
   frontier left is step 3 — replacing the composer's fixed binding algebra with
-  a learned cortex (its own deferred arc).
+  a learned cortex.
+- **Step 3 (the learned cortex) is now active — mid-build (2026-06-13).** The
+  fact-binding "composer" above uses a fixed, exact mathematical rule
+  (a vector-binding scheme) as a stand-in for cortex. Step 3 replaces it with a
+  *learned* model cortex whose internal codes carry meaning-similarity (so
+  similar concepts sit close together), which is what would let the system
+  answer about a never-seen concept by analogy to a similar known one. The
+  recent work **de-risked scaling this to about 2,048 concepts** spread across
+  32 small spiking sub-networks (cross-network fact-binding and the
+  "won't make things up" guarantee both hold at that scale, multi-seed), chose
+  the production design, and is **now building and validating the full
+  system** — not finished. A side question (learning concept similarity from
+  *raw* text rather than a curated scheme) came back inconclusive and is a
+  logged follow-up. Reported as in-progress.
 
 > The "At a glance" and detailed sections below predate the 2026-06 work and
 > describe the earlier multi-tag-retrieval era; the milestones above are the

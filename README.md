@@ -35,6 +35,7 @@ graph, no supervised labels, no symbolic optimizer.
 [Architecture](#architecture) ·
 [Performance & hardware](#performance--hardware) ·
 [Status & limits](#whats-known-to-work-what-isnt) ·
+[Glossary](#glossary) ·
 [Docs](#documentation--further-reading)
 
 ---
@@ -383,13 +384,27 @@ Navigation is now **fully biology-based** — every step between seeing
 and acting is done by simulated neurons (a spiking superior colliculus
 for orienting toward the goal, a neural reward signal, and a spiking
 basal-ganglia decision and dopamine system), with no hand-coded
-shortcut in between. The current work **puts the navigation brain and
+shortcut in between. An earlier milestone **put the navigation brain and
 the conversational brain on a single network** — each as its own group
 of neurons. The conversational behaviour works unchanged on the shared
 network (including its refusal to make up answers it doesn't know), and
 the navigation runs on it while the conversational neurons stay exactly
 unchanged during navigation's live learning. See
 [`docs/ARCHITECTURE_nav_conv_merge.md`](docs/ARCHITECTURE_nav_conv_merge.md).
+
+**What's in progress now (mid-build).** The memory system above stores
+concepts as *separate* patterns — it cannot, for example, answer a
+question about a never-seen concept by reasoning from a *similar* one it
+does know. That requires a model cortex whose internal codes preserve
+**meaning-similarity** (so "lion" and "tiger" sit close together), learned
+from experience rather than hand-assigned. The recent work de-risked
+scaling such a learned cortex to about **2,048 concepts** spread across
+many small spiking sub-networks, settled on a production design, and is
+**now building it** — training and validating the full system, not
+finished. One open sub-question — whether the network can learn concept
+similarity from *raw* text versus a curated scheme — came back
+inconclusive and is a logged follow-up. This is reported as work in
+progress, not a completed result.
 
 The project keeps a detailed, dated record. Each research session writes a
 findings document (including negative results — they are real findings),
@@ -443,7 +458,7 @@ neural-simulator/
 ├── docs/                  ← biology, current state, roadmap, guides
 ├── webapp/                ← FastAPI dashboard
 ├── simulation_profiles/   ← 47 brain-region JSON profiles
-└── tests/                 ← pytest suite (279 files)
+└── tests/                 ← pytest suite (287 files)
 ```
 
 ---
@@ -501,6 +516,25 @@ If you use this simulator in research, please cite the repository:
 
 We are not trying to compete with GPT. We are trying to understand **how
 much of intelligence emerges from biology alone.**
+
+---
+
+## Glossary
+
+A few terms recur in this project's documentation. In plain language:
+
+| Term | What it means |
+|---|---|
+| **Spike / firing** | A neuron's brief electrical pulse — the basic unit of activity. The whole brain "computes" by which neurons spike, when. |
+| **Plasticity** | How connections (synapses) change strength as the network learns. Here it is local and timing-based, not gradient descent. |
+| **STDP** (spike-timing-dependent plasticity) | The specific rule used: connections strengthen when the sending neuron fires just *before* the receiver, and weaken when the order reverses. |
+| **Catastrophic forgetting** | The usual failure mode where a network learning something new overwrites what it already knew. Avoiding it is a core goal here. |
+| **Anti-confabulation ("won't make things up")** | The system's measured refusal to answer ("I don't know") when asked about something it was never taught, instead of inventing a wrong answer. |
+| **Composition / binding** | Combining separate concepts into a structured fact ("the dog ate the apple" = who-did-what), and later pulling them back apart, all in spikes. |
+| **The cortex (model)** | The part of the system that stores concepts. The current effort is to make its internal codes carry *meaning-similarity*, learned from experience. |
+| **Multi-seed** | A result re-run with several different random starting seeds, so it isn't a one-off fluke. Claims here are reported with the seeds used. |
+| **Findings doc** | A dated write-up of one research session's result — including negative ones — kept under `research/findings/`. |
+| **GO / NO-GO / NEGATIVE / RETRACTED** | Verdict labels on a result: it works / it doesn't / a clear negative finding / a previously claimed result withdrawn after a control failed. |
 
 ---
 

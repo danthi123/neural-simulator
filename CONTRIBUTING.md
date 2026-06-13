@@ -6,9 +6,10 @@ Thank you for considering contributing to this project! This document provides g
 
 ### Prerequisites
 
-- Python 3.8+
-- NVIDIA GPU with CUDA 11.x or 12.x
-- CUDA Toolkit installed
+- Python 3.10+
+- NVIDIA GPU with CUDA 11.x or 12.x (optional — the engine also runs on
+  CPU via NumPy; set `SIM_BACKEND=numpy`)
+- CUDA Toolkit installed (only needed for the GPU path)
 - Git
 
 ### Installation
@@ -359,7 +360,7 @@ black neural-simulator.py sim/ experiment/ tests/
 
 ```
 neural-simulator.py            # GUI host + main entry point (2.2K lines)
-sim/                           # Core engine package (42 modules, ~18K lines)
+sim/                           # Core engine package (42 modules, ~20K lines)
   __init__.py                  # public API: SimulationBridge, configs, enums
   bridge.py                    # SimulationBridge — GPU state + step loop
   config.py                    # @dataclass configs (CoreSimConfig etc.)
@@ -379,8 +380,8 @@ ui/                            # DearPyGUI panels / callbacks / layout / plots
 experiment/                    # ExperimentEngine + StimulusManager + Readout + Training
 experiments/                   # YAML configs for autonomous sweeps
 research/
-  runners/                     # 210 headless runners (g1..g11 + cluster + text + k_v2 + chat_*_demo + perf_benchmark + multibridge_chat + g20_multibridge + g20_sparse + generator + order_intrinsic + mode-unification + nested_composition/phasor_chat/gated_compose + unified_agent_benchmark/spiking_unified_agent arc)
-  findings/                    # session-by-session findings (578 markdown docs)
+  runners/                     # 350+ headless experiment scripts (navigation g1..g11, conversation/chat, consolidation, the multi-bridge "model cortex" arc, the language generator, …); each runs via `python -m research.runners.<name>`
+  findings/                    # session-by-session findings (750+ markdown docs)
   findings/raw/                # raw JSON output per gate run
   datasets/                    # synthetic datasets (e.g. tiny_patterns.npz)
   experiment_runner.py         # YAML-driven sweep orchestrator
@@ -390,7 +391,7 @@ docs/
   SCIENCE_ROADMAP.md           # validation pillars + gate progression
   plans/                       # per-feature design docs (paired with findings)
 webapp/                        # FastAPI dashboard (server.py + static/)
-tests/                         # 268 test files
+tests/                         # 287 test files
   test_determinism.py          # RNG determinism (init + step)
   test_kernels_cpu.py          # CPU validation of fused kernels
   test_experiment_system.py    # experiment engine + stimulus manager

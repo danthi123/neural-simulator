@@ -81,34 +81,38 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
-sim/                    # 42 modules (+ __init__.py), ~18K lines — core engine
-  bridge.py             # 6828 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate)
-  config.py             #  760 lines — all @dataclass configs
-  enums.py              #  825 lines — NeuronType (50+ presets), enums, default param managers
+sim/                    # 42 modules (+ __init__.py), ~20K lines — core engine
+  bridge.py             # 7704 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate)
+  config.py             #  884 lines — all @dataclass configs
+  enums.py              #  830 lines — NeuronType (50+ presets), enums, default param managers
   connectivity.py       #  999 lines — spatial/WS/motif connection generators (backend-pluggable)
-  kernels.py            #  326 lines — fused @fuse() neuron + plasticity kernels (cupy/numpy)
+  kernels.py            #  365 lines — fused @fuse() neuron + plasticity kernels (cupy/numpy)
   profiles.py           #  432 lines — NEURAL_STRUCTURE_PROFILES + CONNECTIVITY_MOTIFS dicts
-  regions.py            #  612 lines — BrainRegion + RegionPathway (incl. transmission_gate) + RegionManager
-  neuromodulators.py    # 1052 lines — declarative neuromodulator subsystem
+  regions.py            #  693 lines — BrainRegion + RegionPathway (incl. transmission_gate) + RegionManager
+  neuromodulators.py    # 1114 lines — declarative neuromodulator subsystem
   data_bus.py           #   95 lines — DataChannel pub/sub for streaming sim data
   replicas.py           #  243 lines — replicated wiring (multi-bridge support)
-  text_embeddings.py    #  205 lines — token embeddings for language regions (2026-05-01)
+  text_embeddings.py    #  273 lines — token embeddings for language regions (2026-05-01)
   visual_cortex.py      #  310 lines — Gabor RFs + retina rendering (Cluster K v2, 2026-05-01)
   bioparameter.py       #  231 lines — biological parameter helpers
-  progress.py           #  147 lines — universal [PROGRESS] event format (2026-05-04)
+  progress.py           #  214 lines — universal [PROGRESS] event format (2026-05-04)
   lineage.py            #  538 lines — BridgeLineage persistent continuous-learning + growth-log + shard export (2026-05-11)
   auto_growth.py        #  357 lines — TierPromoter + weight-transfer (auto-growth Phase A, 2026-05-11)
   backend.py            #  415 lines — pluggable xp abstraction + device helpers + RNG state (cupy/numpy, 2026-05-11)
   synapse_storage.py    #  415 lines — TieredSynapseStore + idle/pressure eviction (tiering Phase 3+4, 2026-05-11)
-  bridge_memory.py      #  487 lines — BridgeMemory LLM-callable memory wrapper (Path 3 Phase 3.1.6, 2026-05-11)
-  llm_memory_orchestrator.py #  ~440 lines — MockLLM + LLMMemoryOrchestrator tool-use loop, 5 tool schemas (Phase 3.2, 2026-05-11)
-  llm_adapters.py       #  ~190 lines — OllamaLLM + LlamaCppLLM stub adapters (Phase 3.3 scaffold, 2026-05-11)
+  bridge_memory.py      #  721 lines — BridgeMemory LLM-callable memory wrapper (Path 3 Phase 3.1.6, 2026-05-11)
+  llm_memory_orchestrator.py #  452 lines — MockLLM + LLMMemoryOrchestrator tool-use loop, 5 tool schemas (Phase 3.2, 2026-05-11)
+  llm_adapters.py       #  204 lines — OllamaLLM + LlamaCppLLM stub adapters (Phase 3.3 scaffold, 2026-05-11)
+  # (plus ~20 newer modules from the language-generation + learned-cortex arc:
+  #  surrogate_grad / bptt_snn / bptt_snn_gpu / char_tokenizer / bpe_tokenizer /
+  #  tiny_transformer / ngram_* / td_value_critic / predictive_coding /
+  #  dendritic_* / compose_temporal_bind / song_hvc / activity_probe / …)
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 210 headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/generator_S-D-E-F-G/mode-unification/content_selection+content_selection_spiking+dialogue_agent/nested_composition+phasor_associative_memory+phasor_chat+gated_compose/unified_agent_benchmark+spiking_unified_agent/etc) for research
-research/findings/      # session-by-session findings docs (595 files)
-tests/                  # 271 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, mode-unification, content-selection/dialogue, nested-composition, transmission-gate/gated-compose, unified-agent-benchmark/spiking-unified-agent, core-sim-composition + brain-conversational-agent, etc.)
+research/runners/       # 350+ headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/generator_S-D-E-F-G/mode-unification/content_selection+content_selection_spiking+dialogue_agent/nested_composition+phasor_associative_memory+phasor_chat+gated_compose/unified_agent_benchmark+spiking_unified_agent/multibridge_graded_derisk+cortex_conversation_ensemble+phase1_composer_ab/etc) for research
+research/findings/      # session-by-session findings docs (750+ files)
+tests/                  # 287 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, mode-unification, content-selection/dialogue, nested-composition, transmission-gate/gated-compose, unified-agent-benchmark/spiking-unified-agent, core-sim-composition + brain-conversational-agent, learned-graded cortex, etc.)
 ```
 
 ### Thread Model
@@ -118,10 +122,10 @@ tests/                  # 271 test files (determinism, runners, kernels, plastic
 
 ### Key Classes
 
-**SimulationBridge** (`sim/bridge.py:208`): Central simulation orchestrator
+**SimulationBridge** (`sim/bridge.py:210`): Central simulation orchestrator
 - Manages all GPU state arrays (CuPy)
-- Simulation stepping (`_run_one_simulation_step` at line 4776)
-- Initialization (`_initialize_simulation_data` at line 883)
+- Simulation stepping (`_run_one_simulation_step` at line 5456)
+- Initialization (`_initialize_simulation_data` at line 1002)
 - Recording/playback to HDF5
 - Checkpoint save/restore
 - Profiling and performance monitoring
@@ -136,10 +140,10 @@ tests/                  # 271 test files (determinism, runners, kernels, plastic
   - HH numerical stability: dt auto-adjusts to 0.05ms when HH model selected
   - **Per-gate Q10**: `hh_q10_m=3.0`, `hh_q10_h=hh_q10_n=1.5` (fixed 2026-04-25 — uniform Q10=3 over-compressed dynamics at 37°C; see Phase A below)
   - **STDP bounds gotcha**: `stdp_w_max=2.0` default. The STDP rule is **soft-bound** (`Δw_LTP = A_plus * (w_max - w) * exp(...)`) so when `weight_mean > stdp_w_max`, every "LTP" event is strongly negative and weights collapse to w_max within ms. Set `cfg.stdp_w_max` above your design weights (e.g. cortex→D1 in Phase B uses `weight_mean=25` → set `stdp_w_max=30`).
-- `VisualizationConfig` (line 376): OpenGL rendering and camera parameters
-- `RuntimeState` (line 396): Mutable execution state (running, paused, time tracking)
-- `GPUConfig` (line 411): GPU features, memory management, recording modes
-- Experiment configs (lines 440–619): `StimulusPattern`, `StimulusChannel`, `NeuronGroup`, `ReadoutConfig`, `TrainingConfig`, `ExperimentPhase`, `ExperimentConfig`
+- `VisualizationConfig` (line 500): OpenGL rendering and camera parameters
+- `RuntimeState` (line 520): Mutable execution state (running, paused, time tracking)
+- `GPUConfig` (line 535): GPU features, memory management, recording modes
+- Experiment configs (lines 648–845): `StimulusPattern`, `StimulusChannel`, `NeuronGroup`, `ReadoutConfig`, `TrainingConfig`, `ExperimentPhase`, `ExperimentConfig`
 
 ### GPU Array Naming Conventions
 - `cp_*`: CuPy GPU arrays (e.g., `cp_membrane_potential_v`, `cp_firing_states`)
