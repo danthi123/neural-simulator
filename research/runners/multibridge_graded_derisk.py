@@ -144,8 +144,16 @@ from research.runners.concept_pool_sparse_distributed import (  # noqa: E402
 # super-clusters are dissimilar by construction so cross-bridge is pure
 # identity composition.
 # ===========================================================================
+# 32 semantic super-categories (each a bridge of mutually-similar concepts). The first 8 are the
+# validated set; the next 24 extend to the 32-bridge fan-out de-risk (the de-risk synthesizes a
+# per-shard graded structure, so these are cluster STAND-IN labels for the mechanism test, NOT the
+# curated production-vocab assignment, which is g20_vocab_spec_2048 / Phase-1 sharding).
 SHARD_NAMES = ["animals", "foods", "vehicles", "tools", "clothes", "furniture",
-               "plants", "weather"]
+               "plants", "weather", "body_parts", "colors", "emotions", "jobs",
+               "sports", "instruments", "buildings", "countries", "drinks", "fruits",
+               "metals", "insects", "birds", "fish", "flowers", "trees",
+               "shapes", "materials", "toys", "gems", "planets", "languages",
+               "dances", "vegetables"]
 
 
 def _factor_subclusters(n_concepts: int, target_per_sub: int = 8) -> tuple:
