@@ -1,0 +1,1401 @@
+{
+  "aggregate": {
+    "seeds": [
+      "42",
+      "43",
+      "44"
+    ],
+    "mode": "full",
+    "cortex_source": "learned",
+    "b1_bar": 0.7,
+    "gate_A": {
+      "all_pass": true,
+      "per_seed": [
+        true,
+        true,
+        true
+      ],
+      "any_abstention_breach": false
+    },
+    "gate_B": {
+      "b1_per_seed_per_bridge": {
+        "42": {
+          "animals": 0.9875,
+          "foods": 1.0,
+          "vehicles": 0.99375
+        },
+        "43": {
+          "animals": 1.0,
+          "foods": 1.0,
+          "vehicles": 1.0
+        },
+        "44": {
+          "animals": 1.0,
+          "foods": 0.975,
+          "vehicles": 0.99375
+        }
+      },
+      "b1_all_GO": true,
+      "b1_above_chance": true,
+      "b1_boundary_band": false,
+      "b2_zero_false_accepts": true,
+      "chance": 0.25,
+      "C1_collapses": true,
+      "C4_collapses": true
+    },
+    "gate_X": {
+      "x_conv_ok": true,
+      "vtag_present": true,
+      "x_vtag_recall_ok": true,
+      "x_vtag_band_ok": true,
+      "cx_collapses": true,
+      "C3_moat_intact": true,
+      "C3_lesion_collapses": true
+    },
+    "verdict": "GO"
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "mode": "full",
+      "cortex_source": "learned",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles"
+      ],
+      "graded_stats": {
+        "animals": {
+          "within_cluster_cos_mean": 0.885031438764919,
+          "within_cluster_cos_min": 0.6798451856015494,
+          "between_cluster_cos_mean": 0.3799989834600889,
+          "between_cluster_cos_max": 0.8621390989379483,
+          "graded_margin": 0.50503245530483,
+          "is_graded": true
+        },
+        "foods": {
+          "within_cluster_cos_mean": 0.8926135538909136,
+          "within_cluster_cos_min": 0.6936414190293941,
+          "between_cluster_cos_mean": 0.397193695168228,
+          "between_cluster_cos_max": 0.7732261834660765,
+          "graded_margin": 0.49541985872268557,
+          "is_graded": true
+        },
+        "vehicles": {
+          "within_cluster_cos_mean": 0.8849339276291243,
+          "within_cluster_cos_min": 0.6564304387817503,
+          "between_cluster_cos_mean": 0.38260016581102124,
+          "between_cluster_cos_max": 0.8212296062123133,
+          "graded_margin": 0.502333761818103,
+          "is_graded": true
+        }
+      },
+      "gate_A": {
+        "cells": {
+          "what_does": true,
+          "who_does": true,
+          "abstention": true,
+          "negation": true,
+          "one_attribute": true,
+          "clause": true,
+          "abstention_battery_breaches": 0
+        },
+        "n_cells_pass": 6,
+        "moat_holds": true,
+        "rendered": {
+          "one_attribute": "foods.c0_m1 foods.c0_m0",
+          "clause": "vehicles.c0_m1 foods.c0_m0 vehicles.c0_m0"
+        }
+      },
+      "gate_B": {
+        "animals": {
+          "b1_accuracy": 0.9875,
+          "chance": 0.25,
+          "ratio_vs_chance": 3.95,
+          "b1_conv_accuracy": 0.984375,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "foods": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "vehicles": {
+          "b1_accuracy": 0.99375,
+          "chance": 0.25,
+          "ratio_vs_chance": 3.975,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        }
+      },
+      "anticheat_C1": {
+        "animals": {
+          "b1_permuted": 0.2,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "foods": {
+          "b1_permuted": 0.15625,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "vehicles": {
+          "b1_permuted": 0.0625,
+          "chance": 0.25,
+          "collapses": true
+        }
+      },
+      "anticheat_C4": {
+        "b1_random_shard": 0.29375,
+        "chance": 0.25,
+        "collapses": true,
+        "n_random_members": 64
+      },
+      "cross_facts": [
+        [
+          "vehicles.c6_m5",
+          "animals.c2_m7"
+        ],
+        [
+          "foods.c5_m3",
+          "vehicles.c6_m1"
+        ],
+        [
+          "foods.c1_m0",
+          "vehicles.c2_m2"
+        ],
+        [
+          "vehicles.c5_m0",
+          "animals.c6_m4"
+        ],
+        [
+          "vehicles.c0_m4",
+          "foods.c6_m4"
+        ],
+        [
+          "foods.c7_m0",
+          "vehicles.c3_m0"
+        ],
+        [
+          "vehicles.c3_m3",
+          "foods.c6_m0"
+        ],
+        [
+          "foods.c1_m6",
+          "animals.c7_m1"
+        ],
+        [
+          "foods.c5_m0",
+          "vehicles.c2_m5"
+        ],
+        [
+          "foods.c2_m0",
+          "animals.c3_m2"
+        ],
+        [
+          "animals.c2_m4",
+          "foods.c7_m5"
+        ],
+        [
+          "foods.c7_m0",
+          "vehicles.c6_m7"
+        ]
+      ],
+      "gate_X_conv": {
+        "n_stored": 11,
+        "what_acc": 1.0,
+        "who_acc": 1.0,
+        "abstention_probes": 15,
+        "abstention_breaches": 0
+      },
+      "gate_X_vtag": {
+        "m3": {
+          "permuted": false,
+          "n_cross_facts": 12,
+          "top1_fraction": 0.9166666666666666,
+          "top2_fraction": 1.0,
+          "mean_signal_vs_floor": 17.753060550670654,
+          "mean_margin": 1330.0833333333333,
+          "detail": [
+            {
+              "cue": "vehicles.c6_m5",
+              "target": "animals.c2_m7",
+              "scored_idx": 31,
+              "rank": 0,
+              "scored_rate": 1914.0,
+              "noise_floor": 123.0,
+              "best_other": 314.0
+            },
+            {
+              "cue": "foods.c5_m3",
+              "target": "vehicles.c6_m1",
+              "scored_idx": 57,
+              "rank": 0,
+              "scored_rate": 1925.0,
+              "noise_floor": 95.5,
+              "best_other": 207.0
+            },
+            {
+              "cue": "foods.c1_m0",
+              "target": "vehicles.c2_m2",
+              "scored_idx": 26,
+              "rank": 0,
+              "scored_rate": 2051.0,
+              "noise_floor": 144.0,
+              "best_other": 498.0
+            },
+            {
+              "cue": "vehicles.c5_m0",
+              "target": "animals.c6_m4",
+              "scored_idx": 60,
+              "rank": 0,
+              "scored_rate": 1581.0,
+              "noise_floor": 86.5,
+              "best_other": 203.0
+            },
+            {
+              "cue": "vehicles.c0_m4",
+              "target": "foods.c6_m4",
+              "scored_idx": 60,
+              "rank": 0,
+              "scored_rate": 1604.0,
+              "noise_floor": 91.0,
+              "best_other": 263.0
+            },
+            {
+              "cue": "foods.c7_m0",
+              "target": "vehicles.c3_m0",
+              "scored_idx": 32,
+              "rank": 1,
+              "scored_rate": 1699.0,
+              "noise_floor": 178.0,
+              "best_other": 2015.0
+            },
+            {
+              "cue": "vehicles.c3_m3",
+              "target": "foods.c6_m0",
+              "scored_idx": 56,
+              "rank": 0,
+              "scored_rate": 1876.0,
+              "noise_floor": 82.0,
+              "best_other": 170.0
+            },
+            {
+              "cue": "foods.c1_m6",
+              "target": "animals.c7_m1",
+              "scored_idx": 65,
+              "rank": 0,
+              "scored_rate": 1736.0,
+              "noise_floor": 76.0,
+              "best_other": 195.0
+            },
+            {
+              "cue": "foods.c5_m0",
+              "target": "vehicles.c2_m5",
+              "scored_idx": 29,
+              "rank": 0,
+              "scored_rate": 2035.0,
+              "noise_floor": 103.5,
+              "best_other": 278.0
+            },
+            {
+              "cue": "foods.c2_m0",
+              "target": "animals.c3_m2",
+              "scored_idx": 34,
+              "rank": 0,
+              "scored_rate": 1832.0,
+              "noise_floor": 82.5,
+              "best_other": 305.0
+            },
+            {
+              "cue": "animals.c2_m4",
+              "target": "foods.c7_m5",
+              "scored_idx": 69,
+              "rank": 0,
+              "scored_rate": 2098.0,
+              "noise_floor": 114.0,
+              "best_other": 295.0
+            },
+            {
+              "cue": "foods.c7_m0",
+              "target": "vehicles.c6_m7",
+              "scored_idx": 63,
+              "rank": 0,
+              "scored_rate": 1978.0,
+              "noise_floor": 170.0,
+              "best_other": 1625.0
+            }
+          ]
+        },
+        "cx_permuted": {
+          "permuted": true,
+          "n_cross_facts": 12,
+          "top1_fraction": 0.0,
+          "top2_fraction": 0.0,
+          "mean_signal_vs_floor": 1.1264340853167183,
+          "mean_margin": -1732.9166666666667,
+          "detail": [
+            {
+              "cue": "vehicles.c6_m5",
+              "target": "animals.c2_m7",
+              "scored_idx": 8,
+              "rank": 11,
+              "scored_rate": 193.0,
+              "noise_floor": 123.0,
+              "best_other": 1952.0
+            },
+            {
+              "cue": "foods.c5_m3",
+              "target": "vehicles.c6_m1",
+              "scored_idx": 0,
+              "rank": 14,
+              "scored_rate": 134.0,
+              "noise_floor": 92.0,
+              "best_other": 1900.0
+            },
+            {
+              "cue": "foods.c1_m0",
+              "target": "vehicles.c2_m2",
+              "scored_idx": 58,
+              "rank": 56,
+              "scored_rate": 83.0,
+              "noise_floor": 140.0,
+              "best_other": 2027.0
+            },
+            {
+              "cue": "vehicles.c5_m0",
+              "target": "animals.c6_m4",
+              "scored_idx": 15,
+              "rank": 17,
+              "scored_rate": 126.0,
+              "noise_floor": 86.5,
+              "best_other": 1553.0
+            },
+            {
+              "cue": "vehicles.c0_m4",
+              "target": "foods.c6_m4",
+              "scored_idx": 6,
+              "rank": 2,
+              "scored_rate": 233.0,
+              "noise_floor": 88.0,
+              "best_other": 1526.0
+            },
+            {
+              "cue": "foods.c7_m0",
+              "target": "vehicles.c3_m0",
+              "scored_idx": 56,
+              "rank": 52,
+              "scored_rate": 143.0,
+              "noise_floor": 170.5,
+              "best_other": 1955.0
+            },
+            {
+              "cue": "vehicles.c3_m3",
+              "target": "foods.c6_m0",
+              "scored_idx": 70,
+              "rank": 24,
+              "scored_rate": 101.0,
+              "noise_floor": 80.0,
+              "best_other": 1849.0
+            },
+            {
+              "cue": "foods.c1_m6",
+              "target": "animals.c7_m1",
+              "scored_idx": 66,
+              "rank": 26,
+              "scored_rate": 83.0,
+              "noise_floor": 73.0,
+              "best_other": 1674.0
+            },
+            {
+              "cue": "foods.c5_m0",
+              "target": "vehicles.c2_m5",
+              "scored_idx": 36,
+              "rank": 53,
+              "scored_rate": 74.0,
+              "noise_floor": 101.5,
+              "best_other": 1993.0
+            },
+            {
+              "cue": "foods.c2_m0",
+              "target": "animals.c3_m2",
+              "scored_idx": 20,
+              "rank": 53,
+              "scored_rate": 52.0,
+              "noise_floor": 81.0,
+              "best_other": 1812.0
+            },
+            {
+              "cue": "animals.c2_m4",
+              "target": "foods.c7_m5",
+              "scored_idx": 41,
+              "rank": 67,
+              "scored_rate": 35.0,
+              "noise_floor": 113.0,
+              "best_other": 2026.0
+            },
+            {
+              "cue": "foods.c7_m0",
+              "target": "vehicles.c6_m7",
+              "scored_idx": 29,
+              "rank": 47,
+              "scored_rate": 144.0,
+              "noise_floor": 164.5,
+              "best_other": 1929.0
+            }
+          ]
+        },
+        "band": "GO",
+        "cx_collapses": true
+      },
+      "anticheat_C3": {
+        "n_stored_facts": 11,
+        "n_known_cues": 11,
+        "n_unknown_cues": 20,
+        "novelty_known_max": 1.1102230246251565e-16,
+        "novelty_unknown_min": 0.5333635909942724,
+        "separation_margin": 0.5333635909942723,
+        "threshold": 0.2666817954971363,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": 0.0,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      }
+    },
+    "43": {
+      "seed": 43,
+      "mode": "full",
+      "cortex_source": "learned",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles"
+      ],
+      "graded_stats": {
+        "animals": {
+          "within_cluster_cos_mean": 0.8782854172213046,
+          "within_cluster_cos_min": 0.6815349640275847,
+          "between_cluster_cos_mean": 0.35406920516756124,
+          "between_cluster_cos_max": 0.8226352920086399,
+          "graded_margin": 0.5242162120537434,
+          "is_graded": true
+        },
+        "foods": {
+          "within_cluster_cos_mean": 0.8713501629625092,
+          "within_cluster_cos_min": 0.5885758396789728,
+          "between_cluster_cos_mean": 0.35118519652712427,
+          "between_cluster_cos_max": 0.7870104135855548,
+          "graded_margin": 0.5201649664353849,
+          "is_graded": true
+        },
+        "vehicles": {
+          "within_cluster_cos_mean": 0.8654498989165706,
+          "within_cluster_cos_min": 0.5797458915159681,
+          "between_cluster_cos_mean": 0.34386384435316625,
+          "between_cluster_cos_max": 0.7753512423019359,
+          "graded_margin": 0.5215860545634043,
+          "is_graded": true
+        }
+      },
+      "gate_A": {
+        "cells": {
+          "what_does": true,
+          "who_does": true,
+          "abstention": true,
+          "negation": true,
+          "one_attribute": true,
+          "clause": true,
+          "abstention_battery_breaches": 0
+        },
+        "n_cells_pass": 6,
+        "moat_holds": true,
+        "rendered": {
+          "one_attribute": "foods.c0_m1 foods.c0_m0",
+          "clause": "vehicles.c0_m1 foods.c0_m0 vehicles.c0_m0"
+        }
+      },
+      "gate_B": {
+        "animals": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "foods": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "vehicles": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        }
+      },
+      "anticheat_C1": {
+        "animals": {
+          "b1_permuted": 0.34375,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "foods": {
+          "b1_permuted": 0.10625,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "vehicles": {
+          "b1_permuted": 0.1875,
+          "chance": 0.25,
+          "collapses": true
+        }
+      },
+      "anticheat_C4": {
+        "b1_random_shard": 0.30625,
+        "chance": 0.25,
+        "collapses": true,
+        "n_random_members": 64
+      },
+      "cross_facts": [
+        [
+          "animals.c6_m4",
+          "foods.c0_m7"
+        ],
+        [
+          "foods.c7_m2",
+          "vehicles.c2_m5"
+        ],
+        [
+          "foods.c4_m7",
+          "vehicles.c0_m5"
+        ],
+        [
+          "foods.c3_m5",
+          "animals.c0_m1"
+        ],
+        [
+          "animals.c6_m5",
+          "foods.c2_m2"
+        ],
+        [
+          "animals.c6_m4",
+          "foods.c1_m4"
+        ],
+        [
+          "animals.c6_m5",
+          "foods.c6_m4"
+        ],
+        [
+          "vehicles.c4_m4",
+          "animals.c4_m2"
+        ],
+        [
+          "foods.c6_m5",
+          "vehicles.c0_m4"
+        ],
+        [
+          "animals.c2_m3",
+          "foods.c5_m2"
+        ],
+        [
+          "vehicles.c0_m1",
+          "foods.c4_m3"
+        ],
+        [
+          "vehicles.c6_m4",
+          "foods.c5_m6"
+        ]
+      ],
+      "gate_X_conv": {
+        "n_stored": 10,
+        "what_acc": 1.0,
+        "who_acc": 1.0,
+        "abstention_probes": 15,
+        "abstention_breaches": 0
+      },
+      "gate_X_vtag": {
+        "m3": {
+          "permuted": false,
+          "n_cross_facts": 12,
+          "top1_fraction": 0.9166666666666666,
+          "top2_fraction": 1.0,
+          "mean_signal_vs_floor": 16.84926426558168,
+          "mean_margin": 1030.4166666666667,
+          "detail": [
+            {
+              "cue": "animals.c6_m4",
+              "target": "foods.c0_m7",
+              "scored_idx": 15,
+              "rank": 0,
+              "scored_rate": 2051.0,
+              "noise_floor": 203.5,
+              "best_other": 1766.0
+            },
+            {
+              "cue": "foods.c7_m2",
+              "target": "vehicles.c2_m5",
+              "scored_idx": 29,
+              "rank": 0,
+              "scored_rate": 1926.0,
+              "noise_floor": 102.5,
+              "best_other": 221.0
+            },
+            {
+              "cue": "foods.c4_m7",
+              "target": "vehicles.c0_m5",
+              "scored_idx": 13,
+              "rank": 0,
+              "scored_rate": 1854.0,
+              "noise_floor": 108.0,
+              "best_other": 260.0
+            },
+            {
+              "cue": "foods.c3_m5",
+              "target": "animals.c0_m1",
+              "scored_idx": 9,
+              "rank": 0,
+              "scored_rate": 1920.0,
+              "noise_floor": 90.5,
+              "best_other": 215.0
+            },
+            {
+              "cue": "animals.c6_m5",
+              "target": "foods.c2_m2",
+              "scored_idx": 26,
+              "rank": 0,
+              "scored_rate": 1918.0,
+              "noise_floor": 178.0,
+              "best_other": 1898.0
+            },
+            {
+              "cue": "animals.c6_m4",
+              "target": "foods.c1_m4",
+              "scored_idx": 20,
+              "rank": 1,
+              "scored_rate": 1742.0,
+              "noise_floor": 191.5,
+              "best_other": 1962.0
+            },
+            {
+              "cue": "animals.c6_m5",
+              "target": "foods.c6_m4",
+              "scored_idx": 60,
+              "rank": 0,
+              "scored_rate": 1884.0,
+              "noise_floor": 178.5,
+              "best_other": 1875.0
+            },
+            {
+              "cue": "vehicles.c4_m4",
+              "target": "animals.c4_m2",
+              "scored_idx": 42,
+              "rank": 0,
+              "scored_rate": 1807.0,
+              "noise_floor": 101.5,
+              "best_other": 280.0
+            },
+            {
+              "cue": "foods.c6_m5",
+              "target": "vehicles.c0_m4",
+              "scored_idx": 12,
+              "rank": 0,
+              "scored_rate": 1410.0,
+              "noise_floor": 58.0,
+              "best_other": 220.0
+            },
+            {
+              "cue": "animals.c2_m3",
+              "target": "foods.c5_m2",
+              "scored_idx": 50,
+              "rank": 0,
+              "scored_rate": 1673.0,
+              "noise_floor": 88.0,
+              "best_other": 227.0
+            },
+            {
+              "cue": "vehicles.c0_m1",
+              "target": "foods.c4_m3",
+              "scored_idx": 43,
+              "rank": 0,
+              "scored_rate": 1809.0,
+              "noise_floor": 76.5,
+              "best_other": 300.0
+            },
+            {
+              "cue": "vehicles.c6_m4",
+              "target": "foods.c5_m6",
+              "scored_idx": 54,
+              "rank": 0,
+              "scored_rate": 1836.0,
+              "noise_floor": 93.0,
+              "best_other": 241.0
+            }
+          ]
+        },
+        "cx_permuted": {
+          "permuted": true,
+          "n_cross_facts": 12,
+          "top1_fraction": 0.0,
+          "top2_fraction": 0.0,
+          "mean_signal_vs_floor": 1.2225044674893082,
+          "mean_margin": -1660.5,
+          "detail": [
+            {
+              "cue": "animals.c6_m4",
+              "target": "foods.c0_m7",
+              "scored_idx": 13,
+              "rank": 57,
+              "scored_rate": 125.0,
+              "noise_floor": 194.0,
+              "best_other": 1963.0
+            },
+            {
+              "cue": "foods.c7_m2",
+              "target": "vehicles.c2_m5",
+              "scored_idx": 23,
+              "rank": 13,
+              "scored_rate": 144.0,
+              "noise_floor": 99.5,
+              "best_other": 1853.0
+            },
+            {
+              "cue": "foods.c4_m7",
+              "target": "vehicles.c0_m5",
+              "scored_idx": 8,
+              "rank": 31,
+              "scored_rate": 112.0,
+              "noise_floor": 104.0,
+              "best_other": 1814.0
+            },
+            {
+              "cue": "foods.c3_m5",
+              "target": "animals.c0_m1",
+              "scored_idx": 24,
+              "rank": 54,
+              "scored_rate": 57.0,
+              "noise_floor": 88.0,
+              "best_other": 1821.0
+            },
+            {
+              "cue": "animals.c6_m5",
+              "target": "foods.c2_m2",
+              "scored_idx": 28,
+              "rank": 29,
+              "scored_rate": 192.0,
+              "noise_floor": 173.5,
+              "best_other": 1887.0
+            },
+            {
+              "cue": "animals.c6_m4",
+              "target": "foods.c1_m4",
+              "scored_idx": 70,
+              "rank": 44,
+              "scored_rate": 181.0,
+              "noise_floor": 193.0,
+              "best_other": 1929.0
+            },
+            {
+              "cue": "animals.c6_m5",
+              "target": "foods.c6_m4",
+              "scored_idx": 36,
+              "rank": 10,
+              "scored_rate": 228.0,
+              "noise_floor": 169.0,
+              "best_other": 1880.0
+            },
+            {
+              "cue": "vehicles.c4_m4",
+              "target": "animals.c4_m2",
+              "scored_idx": 28,
+              "rank": 44,
+              "scored_rate": 76.0,
+              "noise_floor": 90.5,
+              "best_other": 1701.0
+            },
+            {
+              "cue": "foods.c6_m5",
+              "target": "vehicles.c0_m4",
+              "scored_idx": 63,
+              "rank": 7,
+              "scored_rate": 117.0,
+              "noise_floor": 57.5,
+              "best_other": 1400.0
+            },
+            {
+              "cue": "animals.c2_m3",
+              "target": "foods.c5_m2",
+              "scored_idx": 64,
+              "rank": 61,
+              "scored_rate": 48.0,
+              "noise_floor": 87.0,
+              "best_other": 1664.0
+            },
+            {
+              "cue": "vehicles.c0_m1",
+              "target": "foods.c4_m3",
+              "scored_idx": 64,
+              "rank": 14,
+              "scored_rate": 125.0,
+              "noise_floor": 76.5,
+              "best_other": 1801.0
+            },
+            {
+              "cue": "vehicles.c6_m4",
+              "target": "foods.c5_m6",
+              "scored_idx": 42,
+              "rank": 2,
+              "scored_rate": 216.0,
+              "noise_floor": 90.0,
+              "best_other": 1834.0
+            }
+          ]
+        },
+        "band": "GO",
+        "cx_collapses": true
+      },
+      "anticheat_C3": {
+        "n_stored_facts": 10,
+        "n_known_cues": 10,
+        "n_unknown_cues": 20,
+        "novelty_known_max": 3.3306690738754696e-16,
+        "novelty_unknown_min": 0.5296946282050213,
+        "separation_margin": 0.529694628205021,
+        "threshold": 0.26484731410251083,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": -1.1102230246251565e-16,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      }
+    },
+    "44": {
+      "seed": 44,
+      "mode": "full",
+      "cortex_source": "learned",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles"
+      ],
+      "graded_stats": {
+        "animals": {
+          "within_cluster_cos_mean": 0.8872140683511974,
+          "within_cluster_cos_min": 0.5973764488903386,
+          "between_cluster_cos_mean": 0.365200549118286,
+          "between_cluster_cos_max": 0.8598936087297544,
+          "graded_margin": 0.5220135192329114,
+          "is_graded": true
+        },
+        "foods": {
+          "within_cluster_cos_mean": 0.8835256260939283,
+          "within_cluster_cos_min": 0.5154467510777723,
+          "between_cluster_cos_mean": 0.3508547519891657,
+          "between_cluster_cos_max": 0.8678494692745135,
+          "graded_margin": 0.5326708741047625,
+          "is_graded": true
+        },
+        "vehicles": {
+          "within_cluster_cos_mean": 0.8794829269188452,
+          "within_cluster_cos_min": 0.5134945485215197,
+          "between_cluster_cos_mean": 0.34011268213299584,
+          "between_cluster_cos_max": 0.8544608331005663,
+          "graded_margin": 0.5393702447858494,
+          "is_graded": true
+        }
+      },
+      "gate_A": {
+        "cells": {
+          "what_does": true,
+          "who_does": true,
+          "abstention": true,
+          "negation": true,
+          "one_attribute": true,
+          "clause": true,
+          "abstention_battery_breaches": 0
+        },
+        "n_cells_pass": 6,
+        "moat_holds": true,
+        "rendered": {
+          "one_attribute": "foods.c0_m1 foods.c0_m0",
+          "clause": "vehicles.c0_m1 foods.c0_m0 vehicles.c0_m0"
+        }
+      },
+      "gate_B": {
+        "animals": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "foods": {
+          "b1_accuracy": 0.975,
+          "chance": 0.25,
+          "ratio_vs_chance": 3.9,
+          "b1_conv_accuracy": 0.953125,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "vehicles": {
+          "b1_accuracy": 0.99375,
+          "chance": 0.25,
+          "ratio_vs_chance": 3.975,
+          "b1_conv_accuracy": 0.96875,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        }
+      },
+      "anticheat_C1": {
+        "animals": {
+          "b1_permuted": 0.175,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "foods": {
+          "b1_permuted": 0.275,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "vehicles": {
+          "b1_permuted": 0.28125,
+          "chance": 0.25,
+          "collapses": true
+        }
+      },
+      "anticheat_C4": {
+        "b1_random_shard": 0.18125,
+        "chance": 0.25,
+        "collapses": true,
+        "n_random_members": 64
+      },
+      "cross_facts": [
+        [
+          "vehicles.c1_m3",
+          "animals.c2_m4"
+        ],
+        [
+          "vehicles.c3_m7",
+          "animals.c5_m0"
+        ],
+        [
+          "vehicles.c6_m7",
+          "foods.c4_m1"
+        ],
+        [
+          "foods.c5_m0",
+          "animals.c5_m5"
+        ],
+        [
+          "foods.c1_m5",
+          "vehicles.c2_m5"
+        ],
+        [
+          "animals.c0_m0",
+          "vehicles.c5_m6"
+        ],
+        [
+          "vehicles.c7_m4",
+          "animals.c3_m0"
+        ],
+        [
+          "foods.c3_m1",
+          "animals.c6_m5"
+        ],
+        [
+          "vehicles.c3_m1",
+          "foods.c3_m7"
+        ],
+        [
+          "vehicles.c7_m4",
+          "foods.c5_m0"
+        ],
+        [
+          "foods.c1_m6",
+          "animals.c6_m7"
+        ],
+        [
+          "animals.c4_m6",
+          "vehicles.c2_m1"
+        ]
+      ],
+      "gate_X_conv": {
+        "n_stored": 11,
+        "what_acc": 1.0,
+        "who_acc": 1.0,
+        "abstention_probes": 15,
+        "abstention_breaches": 0
+      },
+      "gate_X_vtag": {
+        "m3": {
+          "permuted": false,
+          "n_cross_facts": 12,
+          "top1_fraction": 1.0,
+          "top2_fraction": 1.0,
+          "mean_signal_vs_floor": 23.959300892602045,
+          "mean_margin": 1646.5,
+          "detail": [
+            {
+              "cue": "vehicles.c1_m3",
+              "target": "animals.c2_m4",
+              "scored_idx": 28,
+              "rank": 0,
+              "scored_rate": 1883.0,
+              "noise_floor": 74.0,
+              "best_other": 229.0
+            },
+            {
+              "cue": "vehicles.c3_m7",
+              "target": "animals.c5_m0",
+              "scored_idx": 48,
+              "rank": 0,
+              "scored_rate": 2168.0,
+              "noise_floor": 103.5,
+              "best_other": 315.0
+            },
+            {
+              "cue": "vehicles.c6_m7",
+              "target": "foods.c4_m1",
+              "scored_idx": 41,
+              "rank": 0,
+              "scored_rate": 1908.0,
+              "noise_floor": 79.5,
+              "best_other": 213.0
+            },
+            {
+              "cue": "foods.c5_m0",
+              "target": "animals.c5_m5",
+              "scored_idx": 53,
+              "rank": 0,
+              "scored_rate": 1765.0,
+              "noise_floor": 66.5,
+              "best_other": 202.0
+            },
+            {
+              "cue": "foods.c1_m5",
+              "target": "vehicles.c2_m5",
+              "scored_idx": 29,
+              "rank": 0,
+              "scored_rate": 1770.0,
+              "noise_floor": 70.5,
+              "best_other": 301.0
+            },
+            {
+              "cue": "animals.c0_m0",
+              "target": "vehicles.c5_m6",
+              "scored_idx": 54,
+              "rank": 0,
+              "scored_rate": 1692.0,
+              "noise_floor": 67.5,
+              "best_other": 199.0
+            },
+            {
+              "cue": "vehicles.c7_m4",
+              "target": "animals.c3_m0",
+              "scored_idx": 32,
+              "rank": 0,
+              "scored_rate": 1826.0,
+              "noise_floor": 77.0,
+              "best_other": 225.0
+            },
+            {
+              "cue": "foods.c3_m1",
+              "target": "animals.c6_m5",
+              "scored_idx": 61,
+              "rank": 0,
+              "scored_rate": 1917.0,
+              "noise_floor": 87.0,
+              "best_other": 214.0
+            },
+            {
+              "cue": "vehicles.c3_m1",
+              "target": "foods.c3_m7",
+              "scored_idx": 39,
+              "rank": 0,
+              "scored_rate": 1785.0,
+              "noise_floor": 73.0,
+              "best_other": 165.0
+            },
+            {
+              "cue": "vehicles.c7_m4",
+              "target": "foods.c5_m0",
+              "scored_idx": 48,
+              "rank": 0,
+              "scored_rate": 2082.0,
+              "noise_floor": 85.0,
+              "best_other": 234.0
+            },
+            {
+              "cue": "foods.c1_m6",
+              "target": "animals.c6_m7",
+              "scored_idx": 63,
+              "rank": 0,
+              "scored_rate": 1800.0,
+              "noise_floor": 74.5,
+              "best_other": 215.0
+            },
+            {
+              "cue": "animals.c4_m6",
+              "target": "vehicles.c2_m1",
+              "scored_idx": 25,
+              "rank": 0,
+              "scored_rate": 2004.0,
+              "noise_floor": 93.0,
+              "best_other": 330.0
+            }
+          ]
+        },
+        "cx_permuted": {
+          "permuted": true,
+          "n_cross_facts": 12,
+          "top1_fraction": 0.0,
+          "top2_fraction": 0.08333333333333333,
+          "mean_signal_vs_floor": 1.1822411152873,
+          "mean_margin": -1760.5833333333333,
+          "detail": [
+            {
+              "cue": "vehicles.c1_m3",
+              "target": "animals.c2_m4",
+              "scored_idx": 10,
+              "rank": 23,
+              "scored_rate": 107.0,
+              "noise_floor": 78.5,
+              "best_other": 1887.0
+            },
+            {
+              "cue": "vehicles.c3_m7",
+              "target": "animals.c5_m0",
+              "scored_idx": 45,
+              "rank": 14,
+              "scored_rate": 148.0,
+              "noise_floor": 105.0,
+              "best_other": 2156.0
+            },
+            {
+              "cue": "vehicles.c6_m7",
+              "target": "foods.c4_m1",
+              "scored_idx": 49,
+              "rank": 37,
+              "scored_rate": 73.0,
+              "noise_floor": 75.0,
+              "best_other": 1869.0
+            },
+            {
+              "cue": "foods.c5_m0",
+              "target": "animals.c5_m5",
+              "scored_idx": 52,
+              "rank": 36,
+              "scored_rate": 65.0,
+              "noise_floor": 65.5,
+              "best_other": 1730.0
+            },
+            {
+              "cue": "foods.c1_m5",
+              "target": "vehicles.c2_m5",
+              "scored_idx": 46,
+              "rank": 58,
+              "scored_rate": 33.0,
+              "noise_floor": 68.5,
+              "best_other": 1710.0
+            },
+            {
+              "cue": "animals.c0_m0",
+              "target": "vehicles.c5_m6",
+              "scored_idx": 21,
+              "rank": 10,
+              "scored_rate": 115.0,
+              "noise_floor": 66.5,
+              "best_other": 1664.0
+            },
+            {
+              "cue": "vehicles.c7_m4",
+              "target": "animals.c3_m0",
+              "scored_idx": 6,
+              "rank": 1,
+              "scored_rate": 221.0,
+              "noise_floor": 74.0,
+              "best_other": 1801.0
+            },
+            {
+              "cue": "foods.c3_m1",
+              "target": "animals.c6_m5",
+              "scored_idx": 13,
+              "rank": 69,
+              "scored_rate": 27.0,
+              "noise_floor": 87.0,
+              "best_other": 1908.0
+            },
+            {
+              "cue": "vehicles.c3_m1",
+              "target": "foods.c3_m7",
+              "scored_idx": 62,
+              "rank": 50,
+              "scored_rate": 46.0,
+              "noise_floor": 72.0,
+              "best_other": 1775.0
+            },
+            {
+              "cue": "vehicles.c7_m4",
+              "target": "foods.c5_m0",
+              "scored_idx": 71,
+              "rank": 25,
+              "scored_rate": 99.0,
+              "noise_floor": 82.0,
+              "best_other": 1993.0
+            },
+            {
+              "cue": "foods.c1_m6",
+              "target": "animals.c6_m7",
+              "scored_idx": 1,
+              "rank": 47,
+              "scored_rate": 57.0,
+              "noise_floor": 71.5,
+              "best_other": 1770.0
+            },
+            {
+              "cue": "animals.c4_m6",
+              "target": "vehicles.c2_m1",
+              "scored_idx": 19,
+              "rank": 18,
+              "scored_rate": 120.0,
+              "noise_floor": 92.5,
+              "best_other": 1975.0
+            }
+          ]
+        },
+        "band": "GO",
+        "cx_collapses": true
+      },
+      "anticheat_C3": {
+        "n_stored_facts": 11,
+        "n_known_cues": 11,
+        "n_unknown_cues": 20,
+        "novelty_known_max": 0.0,
+        "novelty_unknown_min": 0.55615277620626,
+        "separation_margin": 0.55615277620626,
+        "threshold": 0.27807638810313,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": 0.0,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      }
+    }
+  },
+  "args": {
+    "mode": "full",
+    "seeds": "42,43,44",
+    "seed": null,
+    "cortex": "learned",
+    "smoke": false,
+    "skip_vtag": false,
+    "n_bridges": 3,
+    "concepts_per_bridge": 64,
+    "target_per_sub": 8,
+    "n_pool": 2400,
+    "pattern_size": 100,
+    "homeo": "oja",
+    "homeo_target": 40.0,
+    "cycles": 10,
+    "synthetic_dim": 256,
+    "residual_frac": 0.55,
+    "n_props": 4,
+    "hub_facts_per_member": 6,
+    "bridge_facts": 8,
+    "triplet_facts_per_cluster": 4,
+    "readout_divnorm": "ch",
+    "readout_order": "interleave",
+    "readout_sigma": 0.001,
+    "readout_exponent": 2.0,
+    "readout_log_clip": false,
+    "diffusion_alpha": 0.5,
+    "diffusion_steps": 2,
+    "D": 512,
+    "b_conv_splits": 8,
+    "n_cross_facts": 12,
+    "encoding_steps": 100,
+    "teacher_pA": 500.0,
+    "top_k": 150,
+    "drive_pA": 1500.0,
+    "drive_steps": 100,
+    "moat_D": 128,
+    "moat_floor": 20,
+    "a1_bar": 0.7,
+    "x_bar": 0.7,
+    "k_neighbours": 3,
+    "g1_bar": 0.5,
+    "so_margin_bar": 0.1,
+    "out": "research/findings/raw/_cortex_conversation_ensemble_D512_full.json"
+  },
+  "adaptations": "1) EnsembleCortexAgent holds a {shard: CortexCodebook} dict + ONE RFPhasorComposer over the UNION vocab with every shard's DG-decorrelated phases merged into grounded_codes (so within-shard AND cross-shard SVO facts both bind). 2) the within-bridge graded fallback reads the AGENT-word's shard's cortex (a word->shard map keeps generalization within-bridge). 3) Gate X (cross-bridge) is SEPARATE from Gate B: it uses the spiking V-tag layer (GradedBridge/cross_bridge_eval, IDENTITY recall) + the conversational X-conv (cross facts stored as SVO, queried exactly) -- NOT the graded fallback (which is within-bridge only). 4) the CPU smoke uses synthetic per-shard cortex and SKIPS the live-spiking V-tag Gate X (--skip-vtag); X-conv runs on CPU so the cross-bridge plumbing is still exercised end-to-end."
+}

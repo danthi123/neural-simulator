@@ -1,0 +1,119 @@
+{
+  "aggregate": {
+    "seeds": [
+      "42"
+    ],
+    "mode": "matrix",
+    "cortex_source": "learned",
+    "b1_bar": 0.7,
+    "gate_A": {
+      "all_pass": true,
+      "per_seed": [
+        true
+      ],
+      "any_abstention_breach": false
+    },
+    "verdict": null
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "mode": "matrix",
+      "cortex_source": "learned",
+      "shards": [
+        "animals",
+        "foods",
+        "vehicles"
+      ],
+      "graded_stats": {
+        "animals": {
+          "within_cluster_cos_mean": 0.885031438764919,
+          "within_cluster_cos_min": 0.6798451856015494,
+          "between_cluster_cos_mean": 0.3799989834600889,
+          "between_cluster_cos_max": 0.8621390989379483,
+          "graded_margin": 0.50503245530483,
+          "is_graded": true
+        },
+        "foods": {
+          "within_cluster_cos_mean": 0.8926135538909136,
+          "within_cluster_cos_min": 0.6936414190293941,
+          "between_cluster_cos_mean": 0.397193695168228,
+          "between_cluster_cos_max": 0.7732261834660765,
+          "graded_margin": 0.49541985872268557,
+          "is_graded": true
+        },
+        "vehicles": {
+          "within_cluster_cos_mean": 0.8849339276291243,
+          "within_cluster_cos_min": 0.6564304387817503,
+          "between_cluster_cos_mean": 0.38260016581102124,
+          "between_cluster_cos_max": 0.8212296062123133,
+          "graded_margin": 0.502333761818103,
+          "is_graded": true
+        }
+      },
+      "gate_A": {
+        "cells": {
+          "what_does": true,
+          "who_does": true,
+          "abstention": true,
+          "negation": true,
+          "one_attribute": true,
+          "clause": true,
+          "abstention_battery_breaches": 0
+        },
+        "n_cells_pass": 6,
+        "moat_holds": true,
+        "rendered": {
+          "one_attribute": "foods.c0_m1 foods.c0_m0",
+          "clause": "vehicles.c0_m1 foods.c0_m0 vehicles.c0_m0"
+        }
+      }
+    }
+  },
+  "args": {
+    "mode": "matrix",
+    "seeds": "42",
+    "seed": null,
+    "cortex": "learned",
+    "smoke": false,
+    "skip_vtag": false,
+    "n_bridges": 3,
+    "concepts_per_bridge": 64,
+    "target_per_sub": 8,
+    "n_pool": 2400,
+    "pattern_size": 100,
+    "homeo": "oja",
+    "homeo_target": 40.0,
+    "cycles": 10,
+    "synthetic_dim": 256,
+    "residual_frac": 0.55,
+    "n_props": 4,
+    "hub_facts_per_member": 6,
+    "bridge_facts": 8,
+    "triplet_facts_per_cluster": 4,
+    "readout_divnorm": "ch",
+    "readout_order": "interleave",
+    "readout_sigma": 0.001,
+    "readout_exponent": 2.0,
+    "readout_log_clip": false,
+    "diffusion_alpha": 0.5,
+    "diffusion_steps": 2,
+    "D": 512,
+    "b_conv_splits": 8,
+    "n_cross_facts": 12,
+    "encoding_steps": 100,
+    "teacher_pA": 500.0,
+    "top_k": 150,
+    "drive_pA": 1500.0,
+    "drive_steps": 100,
+    "moat_D": 128,
+    "moat_floor": 20,
+    "a1_bar": 0.7,
+    "x_bar": 0.7,
+    "k_neighbours": 3,
+    "g1_bar": 0.5,
+    "so_margin_bar": 0.1,
+    "out": "research/findings/raw/_cortex_ensemble_matrix_D512.json"
+  },
+  "adaptations": "1) EnsembleCortexAgent holds a {shard: CortexCodebook} dict + ONE RFPhasorComposer over the UNION vocab with every shard's DG-decorrelated phases merged into grounded_codes (so within-shard AND cross-shard SVO facts both bind). 2) the within-bridge graded fallback reads the AGENT-word's shard's cortex (a word->shard map keeps generalization within-bridge). 3) Gate X (cross-bridge) is SEPARATE from Gate B: it uses the spiking V-tag layer (GradedBridge/cross_bridge_eval, IDENTITY recall) + the conversational X-conv (cross facts stored as SVO, queried exactly) -- NOT the graded fallback (which is within-bridge only). 4) the CPU smoke uses synthetic per-shard cortex and SKIPS the live-spiking V-tag Gate X (--skip-vtag); X-conv runs on CPU so the cross-bridge plumbing is still exercised end-to-end."
+}
