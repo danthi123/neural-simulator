@@ -32,17 +32,28 @@ The deep-research pass sharpened the question: the dendrite is NOT a whitening f
 
 ## Honest scope + what D1 does NOT show
 D1 is a **rate-level numpy** de-risk — exactly the scope the deep-research §(e) specified for the cheap-first gate. It establishes the *principle*: per-compartment normalization recovers structure a single-soma point neuron provably cannot, on the project's faithful failing case, multi-seed, with the point-neuron control failing on the identical pipeline. It does **not** yet establish:
-1. **The spiking substrate.** D1's units are rate; the real test is a spiking two-compartment neuron facing the σ=0.1 reproducibility noise floor that killed prior attempts (D1's reproducibility is on clean rate codes, 0.999). That is D2.
+1. **The spiking substrate.** D1's units are rate. The **D1.5 follow-on (below) now partially retires this** — a finite Poisson spike read of the residual SURVIVES the spiking-noise floor multi-seed. The fuller test (a spiking two-compartment neuron with membrane dynamics, gains learned from spikes) is D2.
 2. **The full pipeline.** D1 checks structure recovery + held-out generalization + not-collapsed, but not the bind/unbind composition the cortex ultimately needs. That is D2.
 3. **It is a per-hub gain, not the full Mikulasch-Priesemann lateral-balance.** The per-compartment divisive gain is the cleanest faithful mechanism for the common-hub-domination failure (and the literal local-vs-global point); the fuller per-compartment lateral inhibition is the on-substrate target.
 
 So D1 = GO **for the cheap-first decision it exists to make**: the dendritic substrate is the principled escape worth building, and the months-scale D2 is now justified to investigate.
+
+## D1.5 follow-on (spiking-noise robustness) = SURVIVES (multi-seed)
+**Runner:** `research/runners/dendritic_d1p5_spiking_noise_derisk.py`; **raw:** `_dendritic_d1p5_multiseed.json`. The biggest risk to carrying D1's rate-level GO to the substrate is the **spiking-noise floor** — the σ=0.1 / finite-spike reproducibility wall that buried the dentate-gyrus-kWTA and fixed-expansion attempts (the input-driven signal sank below the spike noise). D1.5 reads each concept's residual as a finite **Poisson spike count**, swept from noisy (50 spikes) to clean (6400), and asks whether the dendritic advantage holds at the noise floor.
+
+| spike budget | DEND struct | DEND repro | PN struct | PN repro |
+|---|---|---|---|---|
+| 100 | +0.35–0.38 | 0.33 | +0.01–0.03 | 0.33 |
+| 800 | +0.78–0.82 | 0.80 | +0.00–0.02 | 0.80 |
+| 3200 (repro≈0.94) | +0.81–0.85 | 0.94 | +0.00–0.02 | 0.94 |
+
+**Verdict: SURVIVES, all seeds.** The decisive pattern: the **point-neuron control fails at EVERY spike budget** (−0.008 to +0.046) — it is structurally incapable, not noise-limited — while the dendritic structure recovery degrades *gracefully* with noise and stays far above it, clearing the structure bar (+0.835) at the reproducibility floor. Unlike the five prior attempts, whose signal vanished into the spike noise, the per-compartment gain raises the category signal's SNR (by down-weighting the dominant common hubs) so it clears the floor. **Honest caveat:** the gains are still learned from clean rate and the read is a Poisson spike count — a full spiking two-compartment neuron with membrane dynamics + gains learned from spikes is D2. But the specific "does the structure survive a spike read" risk that killed the priors is retired at the toy level.
 
 ## Implication + recommendation (owner decision)
 The arc's fork (`docs/plans/2026-06-11-cortex-build-plan-decorrelate-then-bind.md`) is now resolved on both sides:
 - **(A) flat cortex** — DELIVERED at 2,048 concepts (curated similarity; cannot generalize across similar concepts).
 - **(B) structured cortex** (learns similarity from experience → generalizes) — the point-neuron substrate **cannot** do it (Option-C mechanism negative), and **a dendritic per-compartment normalization can** (D1 GO, at the rate level).
 
-**Recommendation:** present the **D2 on-substrate two-compartment build** to the owner as the warranted next step, with eyes open about the cost and risk: ~**1.5–2 months**, a protected edit on the hottest code path (a new two-compartment `NeuronModel`, byte-identity-when-off discipline per the `fused_coincidence_plateau` precedent), and the honest precedent that a *prior* dendritic arc terminated in a sound-instrument VOID on a different question (`2026-05-18-dendritic-fairscale-SOUND-instrument-VOID`). D1's GO is the strongest cheap evidence to date that this one is worth it, but the months-scale commit is the owner's call — **not started autonomously.** A sensible intermediate step, cheaper than the full D2, is a spiking single-neuron two-compartment probe that faces the σ-noise floor on the D1 toy before committing the full bridge `NeuronModel` (a "D1.5").
+**Recommendation:** present the **D2 on-substrate two-compartment build** to the owner as the warranted next step, with eyes open about the cost and risk: ~**1.5–2 months**, a protected edit on the hottest code path (a new two-compartment `NeuronModel`, byte-identity-when-off discipline per the `fused_coincidence_plateau` precedent), and the honest precedent that a *prior* dendritic arc terminated in a sound-instrument VOID on a different question (`2026-05-18-dendritic-fairscale-SOUND-instrument-VOID`). D1's GO **plus D1.5's SURVIVES** is the strongest cheap evidence to date that this one is worth it (the rate-level structure recovery AND its persistence through the spiking-noise floor that killed the priors are both demonstrated), but the months-scale commit is the owner's call — **not started autonomously.** The next sensible intermediate, cheaper than the full D2, is an **on-substrate** spiking single-neuron two-compartment probe (real membrane dynamics, gains learned from spikes) on the D1 toy, before committing the full bridge `NeuronModel`.
 
 NO `sim/` edits in D1. No banking — the GO is reported with its rate-level scope explicit; the spiking + composition risks are D2's to retire.
