@@ -1,0 +1,136 @@
+{
+  "verdict": "MECHANISM_WALL",
+  "why": "data carries it (L1 PPMI +0.453) but the spiking-Hebbian LEARN loses it (L2 PPMI -0.089, cosine -0.103 < lose-bar 0.15). The point-neuron learn cannot preserve the paradigmatic (common-mode-bearing) structure -> the Stage-B null is a CLEAN mechanism negative; Option C needs the dendritic substrate (the Mikulasch-Priesemann point-neuron limit).",
+  "seed": 42,
+  "backend": "numpy",
+  "smoke": true,
+  "taxonomy_size": "4x3",
+  "taxonomy_categories": [
+    "animals",
+    "family",
+    "actions",
+    "places"
+  ],
+  "corpus": "tinystories.txt",
+  "n_targets": 12,
+  "n_context_hubs": 60,
+  "n_concepts": 72,
+  "n_facts": 3038,
+  "n_second_order_pairs": 0,
+  "learn_info": {
+    "recurrent_mean": 0.06592894345521927,
+    "recurrent_max": 0.9883421659469604,
+    "recurrent_nnz": 95908,
+    "n_neurons": 700,
+    "cycles": 2,
+    "gamma": 1.0,
+    "cap": null,
+    "homeo": "oja",
+    "homeo_target": 2.0,
+    "homeo_clip_only": true
+  },
+  "pearson_W_vs_rawcounts": 0.24580923986251832,
+  "lens_operating_point": {
+    "svd_dim": 100,
+    "alpha": 0.75
+  },
+  "levels": {
+    "L1_raw_counts_hub_profile": {
+      "cosine_pearson": 0.21962186781438064,
+      "cosine_margin": 0.04613030404235452,
+      "cosine_nn_same": 0.3333333333333333,
+      "ppmisvd_pearson": 0.4533011000277654,
+      "ppmisvd_margin": 0.16520970875349503,
+      "ppmisvd_nn_same": 0.5833333333333334
+    },
+    "L2_learned_W_hub_profile": {
+      "cosine_pearson": -0.10253668441360686,
+      "cosine_margin": -0.0026439305648890965,
+      "cosine_nn_same": 0.25,
+      "ppmisvd_pearson": -0.08884788204775818,
+      "ppmisvd_margin": -0.0327439802726876,
+      "ppmisvd_nn_same": 0.08333333333333333
+    },
+    "L2b_learned_W_full_column": {
+      "cosine_pearson": -0.05770571970031238,
+      "cosine_margin": -0.001193236661513719,
+      "cosine_nn_same": 0.3333333333333333,
+      "ppmisvd_pearson": -0.09616330401438714,
+      "ppmisvd_margin": -0.03285042634879279,
+      "ppmisvd_nn_same": 0.16666666666666666
+    },
+    "L3_divnorm_readout_default_pearson": -0.145922963861712,
+    "L3_divnorm_readout_default_second_order_margin": -0.14230860422346148
+  },
+  "readout_sweep": {
+    "best": {
+      "pearson": -0.05876500390361136,
+      "variant": {
+        "steps": 4,
+        "alpha": 0.5,
+        "sigma": 0.1,
+        "exponent": 2.0,
+        "order": "interleave"
+      },
+      "margin": -0.9193256617684094
+    },
+    "top5": [
+      {
+        "steps": 4,
+        "alpha": 0.5,
+        "sigma": 0.1,
+        "exponent": 2.0,
+        "order": "interleave",
+        "pearson": -0.05876500390361136,
+        "second_order_margin": -0.9193256617684094
+      },
+      {
+        "steps": 4,
+        "alpha": 0.5,
+        "sigma": 0.001,
+        "exponent": 2.0,
+        "order": "interleave",
+        "pearson": -0.07721548920995651,
+        "second_order_margin": -0.7330791035458573
+      },
+      {
+        "steps": 2,
+        "alpha": 0.5,
+        "sigma": 0.1,
+        "exponent": 2.0,
+        "order": "interleave",
+        "pearson": -0.10529114133662623,
+        "second_order_margin": -0.4431727633658761
+      },
+      {
+        "steps": 2,
+        "alpha": 0.5,
+        "sigma": 0.001,
+        "exponent": 2.0,
+        "order": "interleave",
+        "pearson": -0.145922963861712,
+        "second_order_margin": -0.14230860422346148
+      }
+    ],
+    "n_variants": 4
+  },
+  "bars": {
+    "data_bar": 0.25,
+    "keep_bar": 0.35,
+    "lose_bar": 0.15,
+    "recover_bar": 0.3
+  },
+  "config": {
+    "window": 2,
+    "n_context_hubs": 60,
+    "repeat_cap": 40,
+    "max_bytes": 300000,
+    "n_pool": 400,
+    "pattern_size": 20,
+    "cycles": 2,
+    "homeo": "oja",
+    "homeo_target": 2.0
+  },
+  "note": "DIAGNOSTIC, not a brain-based deliverable. The host PPMI+SVD lens is a measurement instrument applied identically to the raw counts (L1) and the learned W (L2) so the comparison is apples-to-apples; L2-under-PPMI is the documented host-method-on-W stand-in (+0.84 on the SYNTHETIC decorrelated toy). The decisive number is L2: high -> read-out problem (fixable); ~0 -> the learn lost it (the point-neuron mechanism wall, consistent with the Stage-B null).",
+  "elapsed_total_s": 112.2106785774231
+}
