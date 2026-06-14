@@ -54,6 +54,7 @@ from research.runners.dendritic_d1_learn_graded_structure_derisk import (  # noq
     build_concept_hub_counts, _cos_sim, _pearson_vs_Strue, heldout_generalization, effective_rank,
 )
 from research.runners.option_c_paradigmatic_host_precheck import ppmi_svd_sim, score  # noqa: E402
+from sim.backend import to_host  # noqa: E402  (backend-safe device->host: passthrough on numpy, .get() on cupy)
 
 
 def _build_cortex_bridge(n_hub, n_readout, seed, enable_gain, sigma, alpha, readout_density):
@@ -112,7 +113,7 @@ def _present(bridge, hub_idx, readout_idx, drive_vec, drive_scale, window, settl
             # read the readout's EXCITATORY CONDUCTANCE (the gain-normalized summed hub input -- the linear,
             # gain-affected dendritic quantity; the spiking-threshold read is a Phase-3 concern handled by
             # the dual/CLS cleanup). This is the direct measure of whether the gain shapes the code.
-            ge = np.asarray(bridge.cp_conductance_g_e)[readout_idx].astype(np.float64)
+            ge = np.asarray(to_host(bridge.cp_conductance_g_e))[readout_idx].astype(np.float64)
             acc += ge
             nstep += 1
     bridge.cp_external_input_current[:] = 0.0
