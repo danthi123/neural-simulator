@@ -1,0 +1,352 @@
+{
+  "verdict": "SURVIVES",
+  "why": "at the spiking-noise floor (dendritic reproducibility >= 0.9), the dendritic per-compartment structure recovery holds (mean +0.835) and exceeds the point-neuron (mean +0.010) by the required margin, all seeds. The per-compartment SNR boost clears the spike-noise floor that buried the five prior point-neuron attempts -> D2's biggest risk (does the rate-level GO carry to spikes?) is retired at the toy level; the D2 build case strengthens.",
+  "detail": {
+    "survive_all": true,
+    "host_all": true,
+    "floor_budgets": [
+      3200,
+      3200,
+      3200
+    ],
+    "dend_struct_at_floor_mean": 0.8346078774208922,
+    "pn_struct_at_floor_mean": 0.009675367339734219
+  },
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "seeds": "42,43,44",
+    "n_cat": 8,
+    "per_cat": 8,
+    "n_common": 200,
+    "n_sig_per_cat": 12,
+    "lam_common": 40.0,
+    "lam_sig": 4.0,
+    "lam_bg": 0.3,
+    "epochs": 12,
+    "eta": 0.05,
+    "sigma": 1.0,
+    "host_svd": 50,
+    "host_alpha": 0.75,
+    "budgets": [
+      50,
+      100,
+      200,
+      400,
+      800,
+      1600,
+      3200,
+      6400
+    ],
+    "structure_bar": 0.3,
+    "contrast_bar": 0.3,
+    "pn_fail_bar": 0.12,
+    "repro_bar": 0.9,
+    "host_bar": 0.3,
+    "out": "research/findings/raw/_dendritic_d1p5_multiseed.json"
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "host_ceiling_pearson": 0.956855789326476,
+      "host_carries": true,
+      "sweep": [
+        {
+          "budget": 50,
+          "dend_struct": 0.2101078643139175,
+          "dend_repro": 0.2004849911211608,
+          "dend_gen": 0.65625,
+          "pn_struct": 0.006289503248373465,
+          "pn_repro": 0.2052697152049916,
+          "pn_gen": 0.171875,
+          "chance": 0.125
+        },
+        {
+          "budget": 100,
+          "dend_struct": 0.367032374573795,
+          "dend_repro": 0.35026168939090907,
+          "dend_gen": 0.890625,
+          "pn_struct": 0.015245671388851306,
+          "pn_repro": 0.34123836929733653,
+          "pn_gen": 0.140625,
+          "chance": 0.125
+        },
+        {
+          "budget": 200,
+          "dend_struct": 0.5446000905961327,
+          "dend_repro": 0.501225499790566,
+          "dend_gen": 0.984375,
+          "pn_struct": 0.025795769125085414,
+          "pn_repro": 0.5021740295538456,
+          "pn_gen": 0.15625,
+          "chance": 0.125
+        },
+        {
+          "budget": 400,
+          "dend_struct": 0.7290682975335057,
+          "dend_repro": 0.674481503630583,
+          "dend_gen": 1.0,
+          "pn_struct": -0.007584063536119532,
+          "pn_repro": 0.6692592195020719,
+          "pn_gen": 0.109375,
+          "chance": 0.125
+        },
+        {
+          "budget": 800,
+          "dend_struct": 0.8219997035462939,
+          "dend_repro": 0.8042382286261663,
+          "dend_gen": 1.0,
+          "pn_struct": 0.009509181241396901,
+          "pn_repro": 0.7984912821210237,
+          "pn_gen": 0.171875,
+          "chance": 0.125
+        },
+        {
+          "budget": 1600,
+          "dend_struct": 0.8297813177930445,
+          "dend_repro": 0.8915543940687422,
+          "dend_gen": 1.0,
+          "pn_struct": -0.0067675060709989875,
+          "pn_repro": 0.8914005840831571,
+          "pn_gen": 0.140625,
+          "chance": 0.125
+        },
+        {
+          "budget": 3200,
+          "dend_struct": 0.8463557640942716,
+          "dend_repro": 0.9428522826593736,
+          "dend_gen": 1.0,
+          "pn_struct": 0.021863011094190383,
+          "pn_repro": 0.9411154252741756,
+          "pn_gen": 0.21875,
+          "chance": 0.125
+        },
+        {
+          "budget": 6400,
+          "dend_struct": 0.8564515117507217,
+          "dend_repro": 0.9701585926907469,
+          "dend_gen": 1.0,
+          "pn_struct": 0.046065682920629555,
+          "pn_repro": 0.9700373930841025,
+          "pn_gen": 0.296875,
+          "chance": 0.125
+        }
+      ],
+      "floor_row": {
+        "budget": 3200,
+        "dend_struct": 0.8463557640942716,
+        "dend_repro": 0.9428522826593736,
+        "dend_gen": 1.0,
+        "pn_struct": 0.021863011094190383,
+        "pn_repro": 0.9411154252741756,
+        "pn_gen": 0.21875,
+        "chance": 0.125
+      },
+      "survives": true,
+      "chance": 0.125
+    },
+    "43": {
+      "seed": 43,
+      "host_ceiling_pearson": 0.9568592976429929,
+      "host_carries": true,
+      "sweep": [
+        {
+          "budget": 50,
+          "dend_struct": 0.23669409447959625,
+          "dend_repro": 0.21775105110261198,
+          "dend_gen": 0.71875,
+          "pn_struct": 0.023619993737554367,
+          "pn_repro": 0.21327427937654636,
+          "pn_gen": 0.125,
+          "chance": 0.125
+        },
+        {
+          "budget": 100,
+          "dend_struct": 0.3474177084915948,
+          "dend_repro": 0.33821388423753135,
+          "dend_gen": 0.90625,
+          "pn_struct": 0.02500729942238364,
+          "pn_repro": 0.32474813095015154,
+          "pn_gen": 0.15625,
+          "chance": 0.125
+        },
+        {
+          "budget": 200,
+          "dend_struct": 0.5673964002362533,
+          "dend_repro": 0.506097133839054,
+          "dend_gen": 1.0,
+          "pn_struct": 0.029893327634935265,
+          "pn_repro": 0.5067411003586089,
+          "pn_gen": 0.265625,
+          "chance": 0.125
+        },
+        {
+          "budget": 400,
+          "dend_struct": 0.7185781534194887,
+          "dend_repro": 0.6728270104990622,
+          "dend_gen": 1.0,
+          "pn_struct": 0.00193058557199025,
+          "pn_repro": 0.6621246545075532,
+          "pn_gen": 0.140625,
+          "chance": 0.125
+        },
+        {
+          "budget": 800,
+          "dend_struct": 0.7806796905227713,
+          "dend_repro": 0.8036130886952552,
+          "dend_gen": 1.0,
+          "pn_struct": 0.0014102422784550172,
+          "pn_repro": 0.8026338555370134,
+          "pn_gen": 0.109375,
+          "chance": 0.125
+        },
+        {
+          "budget": 1600,
+          "dend_struct": 0.7885735811478708,
+          "dend_repro": 0.8902796804483286,
+          "dend_gen": 1.0,
+          "pn_struct": 0.005415873163584121,
+          "pn_repro": 0.8889601982872019,
+          "pn_gen": 0.109375,
+          "chance": 0.125
+        },
+        {
+          "budget": 3200,
+          "dend_struct": 0.8085437173233977,
+          "dend_repro": 0.9428875397759884,
+          "dend_gen": 1.0,
+          "pn_struct": 0.0035187120646295216,
+          "pn_repro": 0.9412190465449952,
+          "pn_gen": 0.1875,
+          "chance": 0.125
+        },
+        {
+          "budget": 6400,
+          "dend_struct": 0.8181908509165267,
+          "dend_repro": 0.9705272033550008,
+          "dend_gen": 1.0,
+          "pn_struct": -0.0023208087071936523,
+          "pn_repro": 0.9702276824260279,
+          "pn_gen": 0.125,
+          "chance": 0.125
+        }
+      ],
+      "floor_row": {
+        "budget": 3200,
+        "dend_struct": 0.8085437173233977,
+        "dend_repro": 0.9428875397759884,
+        "dend_gen": 1.0,
+        "pn_struct": 0.0035187120646295216,
+        "pn_repro": 0.9412190465449952,
+        "pn_gen": 0.1875,
+        "chance": 0.125
+      },
+      "survives": true,
+      "chance": 0.125
+    },
+    "44": {
+      "seed": 44,
+      "host_ceiling_pearson": 0.9637273276883815,
+      "host_carries": true,
+      "sweep": [
+        {
+          "budget": 50,
+          "dend_struct": 0.2510908202102416,
+          "dend_repro": 0.2006621130411972,
+          "dend_gen": 0.78125,
+          "pn_struct": -0.0064899566107659585,
+          "pn_repro": 0.20916294462294888,
+          "pn_gen": 0.171875,
+          "chance": 0.125
+        },
+        {
+          "budget": 100,
+          "dend_struct": 0.37787805387970697,
+          "dend_repro": 0.32906660041633967,
+          "dend_gen": 0.890625,
+          "pn_struct": 0.011337160812575214,
+          "pn_repro": 0.3492377115394317,
+          "pn_gen": 0.1875,
+          "chance": 0.125
+        },
+        {
+          "budget": 200,
+          "dend_struct": 0.5773093477250191,
+          "dend_repro": 0.4998969314489845,
+          "dend_gen": 1.0,
+          "pn_struct": 0.029226394220684446,
+          "pn_repro": 0.5039404048556602,
+          "pn_gen": 0.171875,
+          "chance": 0.125
+        },
+        {
+          "budget": 400,
+          "dend_struct": 0.6874061493406232,
+          "dend_repro": 0.6673604320906361,
+          "dend_gen": 1.0,
+          "pn_struct": 0.02762358772686867,
+          "pn_repro": 0.6699641495098003,
+          "pn_gen": 0.1875,
+          "chance": 0.125
+        },
+        {
+          "budget": 800,
+          "dend_struct": 0.7950424179715182,
+          "dend_repro": 0.7986510836082775,
+          "dend_gen": 1.0,
+          "pn_struct": 0.017856247187565767,
+          "pn_repro": 0.8014057655351268,
+          "pn_gen": 0.171875,
+          "chance": 0.125
+        },
+        {
+          "budget": 1600,
+          "dend_struct": 0.8140487720251927,
+          "dend_repro": 0.8899990362041067,
+          "dend_gen": 1.0,
+          "pn_struct": 0.002428727922912828,
+          "pn_repro": 0.889495006618447,
+          "pn_gen": 0.1875,
+          "chance": 0.125
+        },
+        {
+          "budget": 3200,
+          "dend_struct": 0.8489241508450072,
+          "dend_repro": 0.9412542751358399,
+          "dend_gen": 1.0,
+          "pn_struct": 0.0036443788603827527,
+          "pn_repro": 0.9409556691846361,
+          "pn_gen": 0.15625,
+          "chance": 0.125
+        },
+        {
+          "budget": 6400,
+          "dend_struct": 0.8322821106868781,
+          "dend_repro": 0.9697962544407872,
+          "dend_gen": 1.0,
+          "pn_struct": 0.025337921282427827,
+          "pn_repro": 0.9698536691470334,
+          "pn_gen": 0.21875,
+          "chance": 0.125
+        }
+      ],
+      "floor_row": {
+        "budget": 3200,
+        "dend_struct": 0.8489241508450072,
+        "dend_repro": 0.9412542751358399,
+        "dend_gen": 1.0,
+        "pn_struct": 0.0036443788603827527,
+        "pn_repro": 0.9409556691846361,
+        "pn_gen": 0.15625,
+        "chance": 0.125
+      },
+      "survives": true,
+      "chance": 0.125
+    }
+  },
+  "note": "DIAGNOSTIC follow-on to D1: tests whether the rate-level per-compartment advantage survives a finite Poisson spike read (the spiking-noise floor that killed the five prior point-neuron NEGATIVEs). NO sim/ edits. Informs the D2 go/no-go.",
+  "elapsed_total_s": 0.6868753433227539
+}
