@@ -1,0 +1,121 @@
+{
+  "verdict": "SURVIVES",
+  "why": "under REAL conductance-based shunting-inhibition membrane dynamics (settled + noisy), the per-compartment shunting recovers the structure (mean +0.842) and generalizes WHILE the global-shunting point-neuron fails (+0.045), all seeds, membrane converged. The biophysical divisive-normalization mechanism D2 would build is validated at the toy level -> the D2 case is maximally de-risked cheaply; the months-scale build remains owner-gated.",
+  "detail": {
+    "dendritic_pearson_mean": 0.8419963851282102,
+    "point_neuron_pearson_mean": 0.044564222901505746,
+    "structure_all": true,
+    "pn_fails_all": true,
+    "settles_all": true,
+    "generalize_all": true
+  },
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "seeds": "42,43,44",
+    "n_cat": 8,
+    "per_cat": 8,
+    "n_common": 200,
+    "n_sig_per_cat": 12,
+    "lam_common": 40.0,
+    "lam_sig": 4.0,
+    "lam_bg": 0.3,
+    "epochs": 12,
+    "eta": 0.05,
+    "host_svd": 50,
+    "host_alpha": 0.75,
+    "g_leak": 1.0,
+    "steps": 60,
+    "dt": 0.2,
+    "noise": 0.05,
+    "structure_bar": 0.3,
+    "pn_fail_bar": 0.12,
+    "host_bar": 0.3,
+    "gen_margin": 0.05,
+    "gen_contrast_margin": 0.3,
+    "conv_bar": 0.05,
+    "out": "research/findings/raw/_dendritic_d1p6_multiseed.json"
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "host_ceiling_pearson": 0.956855789326476,
+      "chance": 0.125,
+      "dendritic": {
+        "pearson": 0.86131074286019,
+        "generalization": 1.0,
+        "repro": 0.9997787190446374,
+        "eff_rank": 23.838489547610266,
+        "settle_conv": 0.029280416887630667
+      },
+      "point_neuron": {
+        "pearson": 0.04631483685152297,
+        "generalization": 0.265625,
+        "settle_conv": 0.024922896322554698
+      },
+      "gates": {
+        "structure_contrast": true,
+        "point_neuron_fails": true,
+        "host_ceiling_carries": true,
+        "generalize_contrast": true,
+        "membrane_settles": true,
+        "not_collapsed": true
+      }
+    },
+    "43": {
+      "seed": 43,
+      "host_ceiling_pearson": 0.9568592976429929,
+      "chance": 0.125,
+      "dendritic": {
+        "pearson": 0.8240219186715245,
+        "generalization": 1.0,
+        "repro": 0.9997873473009582,
+        "eff_rank": 23.139151465905904,
+        "settle_conv": 0.029209068469906844
+      },
+      "point_neuron": {
+        "pearson": 0.03376642310210473,
+        "generalization": 0.234375,
+        "settle_conv": 0.024749385966247886
+      },
+      "gates": {
+        "structure_contrast": true,
+        "point_neuron_fails": true,
+        "host_ceiling_carries": true,
+        "generalize_contrast": true,
+        "membrane_settles": true,
+        "not_collapsed": true
+      }
+    },
+    "44": {
+      "seed": 44,
+      "host_ceiling_pearson": 0.9637273276883815,
+      "chance": 0.125,
+      "dendritic": {
+        "pearson": 0.8406564938529157,
+        "generalization": 1.0,
+        "repro": 0.9997804911664816,
+        "eff_rank": 23.11214062641656,
+        "settle_conv": 0.02884386447766489
+      },
+      "point_neuron": {
+        "pearson": 0.05361140875088953,
+        "generalization": 0.234375,
+        "settle_conv": 0.024750586090913483
+      },
+      "gates": {
+        "structure_contrast": true,
+        "point_neuron_fails": true,
+        "host_ceiling_carries": true,
+        "generalize_contrast": true,
+        "membrane_settles": true,
+        "not_collapsed": true
+      }
+    }
+  },
+  "note": "DIAGNOSTIC: realizes the per-compartment divisive gain as conductance-based shunting inhibition on a settled, noisy leaky membrane (the biophysics D2 would build). NO sim/ edits. Last cheap rung before the owner-gated D2.",
+  "elapsed_total_s": 0.33518505096435547
+}
