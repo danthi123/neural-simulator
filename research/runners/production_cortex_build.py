@@ -71,15 +71,34 @@ def build_curated_bridge_corpus(cluster_name: str, n_concepts: int, seed: int, a
     # build the rename map: synthetic members are sub-major (c0_m0..c0_m{per_sub-1}, c1_m0, ...),
     # so member index k -> sub = k // per_sub, pos = k % per_sub (consistent with corpus['labels']).
     pfx = f"{cluster_name}."
+    # two parallel relabelings of the synthetic structure onto the real words:
+    #  - `rename` -> NAMESPACED (cluster.word), the globally-unique cross-bridge / composer vocab;
+    #  - `local_rename` -> UN-namespaced (word), used for `_local` so the within-bridge learn AND the
+    #    V-tag's GradedBridge idx (`gate_X_vtag` builds it from `_local["concepts"]`) match the local
+    #    names the cross-bridge facts strip to (`mammals.hyena` -> `hyena`). A synthetic `_local` here was
+    #    the cause of the gate_X_vtag `KeyError: 'hyena'` (idx had `c{N}_m{M}`, the cross-facts had real words).
     rename = {f"hub{c}": f"{pfx}__hub{c}" for c in range(n_sub)}
+    local_rename = {f"hub{c}": f"__hub{c}" for c in range(n_sub)}
     for k, m in enumerate(corpus["members"]):
         s, i = k // per_sub, k % per_sub
         assert int(corpus["labels"][k]) == s, "build_toy_cooccurrence members not sub-major"
         rename[m] = pfx + real_by_sub[s][i]
+        local_rename[m] = real_by_sub[s][i]
 
     concepts = [rename[c] for c in corpus["concepts"]]
     members = [rename[m] for m in corpus["members"]]
     facts = [tuple(rename[c] for c in f) for f in corpus["facts"]]
+    # `_local`: the SAME structure with REAL un-namespaced names (the learn is name-agnostic/positional, so
+    # the graded codes are unchanged; the cortex codebook is keyed off the namespaced top-level `members`).
+    local = {
+        "concepts": [local_rename[c] for c in corpus["concepts"]],
+        "members": [local_rename[m] for m in corpus["members"]],
+        "hubs": [local_rename[h] for h in corpus["hubs"]],
+        "labels": corpus["labels"], "S_true": corpus["S_true"],
+        "second_order_pairs": corpus["second_order_pairs"],
+        "facts": [tuple(local_rename[c] for c in f) for f in corpus["facts"]],
+        "member_index": {local_rename[m]: i for i, m in enumerate(corpus["members"])},
+    }
     return {
         "shard": cluster_name, "n_sub": n_sub, "per_sub": per_sub,
         "concepts": concepts, "members": members,
@@ -87,7 +106,7 @@ def build_curated_bridge_corpus(cluster_name: str, n_concepts: int, seed: int, a
         "second_order_pairs": corpus["second_order_pairs"],
         "facts": facts, "n_facts": len(facts),
         "member_index": {m: i for i, m in enumerate(members)},
-        "_local": corpus,
+        "_local": local,
     }
 
 
