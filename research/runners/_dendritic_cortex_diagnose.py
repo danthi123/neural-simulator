@@ -17,9 +17,13 @@ def main():
     C, labels, S_true, _ = build_concept_hub_counts(8, 8, 200, 12, 40.0, 4.0, 0.3, seed)
     Nc, n_hub = C.shape
     n_common = 200  # the first n_common hubs are the COMMON (high-freq) ones; the rest are category-signal
-    # presence drive
-    C_drive = (C > 1.5).astype(np.float64)
-    drive_scale, window, settle, warmup, alpha, sigma = 20.0, 20, 6, 6, 0.002, 0.05
+    raw = "--raw" in sys.argv
+    drive_scale = float([a for a in sys.argv if a.replace('.', '').isdigit()][0]) if any(
+        a.replace('.', '').isdigit() for a in sys.argv) else (3.0 if raw else 20.0)
+    # RAW count drive (the common-mode-dominated regime where the gain MATTERS) vs PRESENCE (binary).
+    C_drive = C if raw else (C > 1.5).astype(np.float64)
+    window, settle, warmup, alpha, sigma = 20, 6, 8, 0.002, 0.05
+    print(f"[drive={'RAW counts' if raw else 'presence'} scale={drive_scale} alpha={alpha} warmup={warmup}]")
 
     bridge, hub_idx, ro_idx = _build_cortex_bridge(n_hub, 200, seed, True, sigma, alpha, 0.1)
     hub_idx = np.asarray(hub_idx); ro_idx = np.asarray(ro_idx)

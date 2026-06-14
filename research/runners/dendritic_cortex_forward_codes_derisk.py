@@ -76,6 +76,9 @@ def _build_cortex_bridge(n_hub, n_readout, seed, enable_gain, sigma, alpha, read
     cfg.seed = seed
     cfg.ou_seed = seed
     cfg.heterogeneity_seed = seed
+    # the concept code must reflect the DRIVE-driven firing only -- spontaneous OU noise would give every
+    # hub a baseline firing rate that swamps the per-hub co-occurrence marginal the gain normalizes by.
+    cfg.enable_ou_process = False
     cfg.enable_dendritic_divisive_gain = enable_gain
     cfg.dendritic_divisive_sigma = sigma
     cfg.dendritic_gain_ema_alpha = alpha
@@ -162,7 +165,14 @@ def run_seed(seed, args):
     # with the hub, count > threshold) puts ALL co-occurring hubs -- common AND rare -- above threshold so
     # they fire; the dendritic gain then down-weights the high-marginal common hubs, leaving the category
     # structure. (--raw-drive keeps the raw counts for comparison.)
-    if args.raw_drive:
+    if args.drive_baseline > 0:
+        # BASELINE-OFFSET RAW drive: co-occurring hubs (count > threshold) are driven by (count + baseline)
+        # so the COMMON-MODE MAGNITUDE is kept (common count >> category) AND the low-count category hubs are
+        # lifted above rheobase so they FIRE (readable). This is the regime where the gain's D1-level value
+        # lives (common-mode-dominated) without the rheobase silencing the category signal -- the faithful
+        # bridge analogue of D1's raw-count test.
+        C_drive = np.where(C > args.presence_threshold, C + args.drive_baseline, 0.0)
+    elif args.raw_drive:
         C_drive = C
     else:
         C_drive = (C > args.presence_threshold).astype(np.float64)
@@ -258,6 +268,9 @@ def main():
                    help="drive hubs by RAW counts (saturates common hubs + silences rare ones -- the diagnosed problem); default = PRESENCE drive")
     p.add_argument("--presence-threshold", type=float, default=1.5,
                    help="count > this => the concept co-occurs with the hub (presence drive)")
+    p.add_argument("--drive-baseline", type=float, default=0.0,
+                   help="if >0: BASELINE-OFFSET RAW drive (count+baseline for co-occurring hubs) -- keeps the "
+                        "common-mode magnitude while lifting category hubs above rheobase (the gain's regime)")
     p.add_argument("--window", type=int, default=20); p.add_argument("--settle", type=int, default=6)
     p.add_argument("--warmup", type=int, default=2, help="warm-up passes over all concepts (EMA convergence)")
     # gain
