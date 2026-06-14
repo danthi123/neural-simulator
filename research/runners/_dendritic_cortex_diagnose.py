@@ -17,12 +17,19 @@ def main():
     C, labels, S_true, _ = build_concept_hub_counts(8, 8, 200, 12, 40.0, 4.0, 0.3, seed)
     Nc, n_hub = C.shape
     n_common = 200  # the first n_common hubs are the COMMON (high-freq) ones; the rest are category-signal
+    baseline = float(sys.argv[sys.argv.index("--baseline") + 1]) if "--baseline" in sys.argv else 0.0
     raw = "--raw" in sys.argv
-    drive_scale = float([a for a in sys.argv if a.replace('.', '').isdigit()][0]) if any(
-        a.replace('.', '').isdigit() for a in sys.argv) else (3.0 if raw else 20.0)
-    # RAW count drive (the common-mode-dominated regime where the gain MATTERS) vs PRESENCE (binary).
-    C_drive = C if raw else (C > 1.5).astype(np.float64)
-    window, settle, warmup, alpha, sigma = 20, 6, 8, 0.002, 0.05
+    nums = [a for a in sys.argv if a.replace('.', '').isdigit()]
+    drive_scale = float(nums[0]) if nums else (3.0 if (raw or baseline) else 20.0)
+    # BASELINE-RAW (the gain's faithful regime: common-mode magnitude + category hubs above rheobase) /
+    # RAW count / PRESENCE (binary).
+    if baseline > 0:
+        C_drive = np.where(C > 0.5, C + baseline, 0.0)
+    elif raw:
+        C_drive = C
+    else:
+        C_drive = (C > 1.5).astype(np.float64)
+    window, settle, warmup, alpha, sigma = 30, 6, 10, 0.002, 0.002
     print(f"[drive={'RAW counts' if raw else 'presence'} scale={drive_scale} alpha={alpha} warmup={warmup}]")
 
     bridge, hub_idx, ro_idx = _build_cortex_bridge(n_hub, 200, seed, True, sigma, alpha, 0.1)
