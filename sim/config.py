@@ -213,6 +213,21 @@ class CoreSimConfig:
     enable_td_value_derivative: bool = False
     td_slow_tau_ms: float = 400.0             # slow-EMA decay of g_gabab (ms); > gabab_tau_decay (~150) so the difference is a derivative
     td_derivative_gain: float = 1.0           # scales the conductance-derivative current onto the SNc
+    # DENDRITIC per-presynaptic-source DIVISIVE GAIN (D2 Phase 1, 2026-06-14). The on-substrate
+    # realization of the de-risked (D1/D1.5/D1.6/D1.7) per-input divisive normalization a dendritic
+    # compartment performs per branch: each presynaptic source's spike is scaled by a bounded gain
+    # g_i = sigma / (sigma + a_i), where a_i is that source's own firing-rate EMA (cp_dendritic_source_
+    # activity, a dedicated slow EMA decoupled from homeostasis). A high-frequency COMMON source
+    # (large a_i) is suppressed toward 0; a rare INFORMATIVE source (a_i ~ 0) passes near 1 -- the
+    # PPMI-marginal / Carandini-Heeger divisive-normalization the point-neuron soma provably cannot do
+    # (a single global gain), realized at the synaptic input. The gain is in (0,1] (pure suppression,
+    # never amplifies -> cannot destabilize the hot path). Applied to the presynaptic firing vector
+    # BEFORE the excitatory/inhibitory conductance matvec. Default OFF; byte-identical when disabled
+    # (cp_dendritic_source_activity stays None, so the gain block AND the EMA-update block are unreached
+    # and the step is bit-identical). Mirrors enable_gabab / enable_coincidence_detection exactly.
+    enable_dendritic_divisive_gain: bool = False
+    dendritic_divisive_sigma: float = 0.05    # the (0,1] gain's semi-saturation: g = sigma/(sigma + activity_ema); ~ a typical firing-rate EMA
+    dendritic_gain_ema_alpha: float = 0.01    # per-source activity EMA rate (tau ~100 steps; the slow marginal the gain normalizes by)
     propagation_strength: float = 0.05
     inhibitory_propagation_strength: float = 0.105  # Scaled for E_inh=-75mV (was 0.15 at E_inh=-70mV)
     max_synaptic_delay_ms: float = 20.0

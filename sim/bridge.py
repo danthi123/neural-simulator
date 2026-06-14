@@ -329,6 +329,7 @@ class SimulationBridge:
 
         self.cp_neuron_firing_thresholds = None
         self.cp_neuron_activity_ema = None
+        self.cp_dendritic_source_activity = None   # per-source firing EMA for the dendritic divisive gain (None unless enable_dendritic_divisive_gain)
 
         # Per-neuron GABA_A reversal potential (mV). Defaults to a uniform
         # cfg.syn_reversal_potential_i; regions may override via
@@ -1269,6 +1270,12 @@ class SimulationBridge:
             self.cp_refractory_timers = cp.zeros(n, dtype=cp.int32)
             self.cp_neuron_activity_ema = cp.zeros(n, dtype=cp.float32) 
             self.cp_viz_activity_timers = cp.zeros(n, dtype=cp.int32) 
+
+            # Dendritic per-presynaptic-source divisive gain (D2 Phase 1): a dedicated per-source firing
+            # EMA, allocated only when the feature is on. Left None otherwise so the gain block + the
+            # EMA-update block in _run_one_simulation_step are unreached and the step is byte-identical.
+            if getattr(cfg, "enable_dendritic_divisive_gain", False) and n > 0:
+                self.cp_dendritic_source_activity = cp.zeros(n, dtype=cp.float32)
 
             self.cp_synapse_pulse_timers = cp.array([], dtype=cp.int32)
             self.cp_synapse_pulse_progress = cp.array([], dtype=cp.float32)
@@ -5640,6 +5647,22 @@ class SimulationBridge:
             if effective_connections_matrix.nnz > 0 and _prev_any:
                 prev_fired_float = self.cp_prev_firing_states.astype(cp.float32)
 
+                # --- DENDRITIC per-presynaptic-source DIVISIVE GAIN (D2 Phase 1; guarded, default OFF) ---
+                # Scale each presynaptic source's spike by a bounded gain g_i = sigma/(sigma + a_i), where
+                # a_i is that source's own firing-rate EMA: a high-frequency COMMON source is suppressed
+                # toward 0, a rare INFORMATIVE source passes near 1 -- the per-input divisive normalization
+                # a dendritic compartment does per branch (PPMI-marginal analogue), realized at the synaptic
+                # input. The gain is in (0,1] (pure suppression, never amplifies). Applied to prev_fired_float
+                # BEFORE both the E/I-split and non-inhibitory conductance matvecs below (the coincidence /
+                # GABA_B / NMDA blocks re-cast from cp_prev_firing_states, so they are unaffected -- the gain
+                # is scoped to the main excitatory/inhibitory drive). GUARDED: cp_dendritic_source_activity is
+                # None unless enable_dendritic_divisive_gain, so this is skipped and prev_fired_float is
+                # byte-identical when off.
+                if self.cp_dendritic_source_activity is not None:
+                    _dend_sigma = cp.float32(getattr(cfg, "dendritic_divisive_sigma", 0.05))
+                    _dend_gain = _dend_sigma / (_dend_sigma + self.cp_dendritic_source_activity)
+                    prev_fired_float = prev_fired_float * _dend_gain
+
                 if cfg.enable_inhibitory_neurons and self.cp_traits is not None:
                     # Cache inhibitory neuron mask — traits don't change during simulation.
                     if self._cached_inhibitory_mask is None:
@@ -6769,6 +6792,16 @@ class SimulationBridge:
             # (step 3 above) only USES the adapted thresholds for masked neurons;
             # the adapted thresholds of unmasked neurons are computed-but-unused
             # (harmless). When the global flag is on, behavior is unchanged.
+            # Dendritic divisive gain (D2 Phase 1): update the per-source firing EMA, decoupled from
+            # homeostasis so the gain works without it. a_i <- (1-alpha)*a_i + alpha*fired_i (this step's
+            # firing); the gain at the top of the NEXT step reads this EMA. GUARDED: cp_dendritic_source_
+            # activity is None unless enable_dendritic_divisive_gain, so this is skipped and byte-identical.
+            if self.cp_dendritic_source_activity is not None:
+                _dga = cp.float32(getattr(cfg, "dendritic_gain_ema_alpha", 0.01))
+                self.cp_dendritic_source_activity = (
+                    (cp.float32(1.0) - _dga) * self.cp_dendritic_source_activity
+                    + _dga * fired_this_step.astype(cp.float32))
+
             _homeostasis_active = (cfg.enable_homeostasis
                                    or self.cp_homeostasis_neuron_mask is not None)
             if _homeostasis_gated and _homeostasis_active and self.cp_neuron_firing_thresholds is not None:
