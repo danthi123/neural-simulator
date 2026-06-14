@@ -1,0 +1,547 @@
+{
+  "verdict": "SURVIVES",
+  "why": "a genuine SPIKING LIF soma preserves the per-compartment advantage: at a common threshold the dendritic spike-count code recovers the structure (mean +0.976, reproducible, not clipped-silent) and beats the point-neuron (-0.012) which the same threshold leaves common-mode-dominated, all seeds. The somatic threshold does NOT clip the signal (the per-hub normalization makes the category hubs salient) -> Phase 0 PASSES; the protected on-bridge two-compartment build (Phase 1) is warranted.",
+  "detail": {
+    "survive_all": true,
+    "host_all": true,
+    "dend_struct_at_best_mean": 0.9761095574091789,
+    "pn_struct_at_best_mean": -0.01243265357406047,
+    "best_thresholds": [
+      1.2,
+      1.2,
+      1.2
+    ]
+  },
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "seeds": "42,43,44",
+    "n_cat": 8,
+    "per_cat": 8,
+    "n_common": 200,
+    "n_sig_per_cat": 12,
+    "lam_common": 40.0,
+    "lam_sig": 4.0,
+    "lam_bg": 0.3,
+    "epochs": 12,
+    "eta": 0.05,
+    "host_svd": 50,
+    "host_alpha": 0.75,
+    "g_leak": 1.0,
+    "leak": 1.0,
+    "T": 200,
+    "dt": 0.1,
+    "noise": 0.02,
+    "thresholds": [
+      0.1,
+      0.2,
+      0.3,
+      0.5,
+      0.8,
+      1.2
+    ],
+    "structure_bar": 0.3,
+    "pn_fail_bar": 0.12,
+    "host_bar": 0.3,
+    "repro_bar": 0.9,
+    "gen_contrast_margin": 0.3,
+    "max_silent": 0.1,
+    "out": "research/findings/raw/_dendritic_d1p7_multiseed.json"
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "host_ceiling_pearson": 0.956855789326476,
+      "host_carries": true,
+      "chance": 0.125,
+      "sweep": [
+        {
+          "threshold": 0.1,
+          "dend": {
+            "pearson": 0.8829550731417773,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 42.66317671819007,
+            "offdiag": 0.8334277542678531,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": 0.0888179904735135,
+            "gen": 0.328125,
+            "chance": 0.125,
+            "eff_rank": 52.13699729730512,
+            "offdiag": 0.9924954707793973,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9997377220783885,
+          "dend_struct": 0.8829550731417773,
+          "pn_struct": 0.0888179904735135
+        },
+        {
+          "threshold": 0.2,
+          "dend": {
+            "pearson": 0.9156569367990683,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 25.94835299661046,
+            "offdiag": 0.7866737798177357,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": 0.01723240578461526,
+            "gen": 0.28125,
+            "chance": 0.125,
+            "eff_rank": 50.553119446376705,
+            "offdiag": 0.9911978519597328,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9998714936817488,
+          "dend_struct": 0.9156569367990683,
+          "pn_struct": 0.01723240578461526
+        },
+        {
+          "threshold": 0.3,
+          "dend": {
+            "pearson": 0.8710715376363122,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 25.215828141921506,
+            "offdiag": 0.7450700595910769,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": -0.018556639215188093,
+            "gen": 0.09375,
+            "chance": 0.125,
+            "eff_rank": 53.52250936166561,
+            "offdiag": 0.9623400634265066,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9998857854333676,
+          "dend_struct": 0.8710715376363122,
+          "pn_struct": -0.018556639215188093
+        },
+        {
+          "threshold": 0.5,
+          "dend": {
+            "pearson": 0.8865952240798243,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 24.137804249548992,
+            "offdiag": 0.7016981325815341,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": -0.00790751162591636,
+            "gen": 0.15625,
+            "chance": 0.125,
+            "eff_rank": 53.67403325141957,
+            "offdiag": 0.9667410459937916,
+            "silent": 0.0
+          },
+          "dend_repro": 0.999830659471495,
+          "dend_struct": 0.8865952240798243,
+          "pn_struct": -0.00790751162591636
+        },
+        {
+          "threshold": 0.8,
+          "dend": {
+            "pearson": 0.9311306624106057,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 28.608046754861444,
+            "offdiag": 0.4574046505948809,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": -0.0064155252444176025,
+            "gen": 0.140625,
+            "chance": 0.125,
+            "eff_rank": 53.65945547137785,
+            "offdiag": 0.9445719328994207,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9995316973269482,
+          "dend_struct": 0.9311306624106057,
+          "pn_struct": -0.0064155252444176025
+        },
+        {
+          "threshold": 1.2,
+          "dend": {
+            "pearson": 0.9764890521990021,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 26.125488108969517,
+            "offdiag": 0.07796615176680652,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": -0.011464810751309529,
+            "gen": 0.09375,
+            "chance": 0.125,
+            "eff_rank": 53.81656410842406,
+            "offdiag": 0.7601672386138646,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9993392895450861,
+          "dend_struct": 0.9764890521990021,
+          "pn_struct": -0.011464810751309529
+        }
+      ],
+      "best": {
+        "threshold": 1.2,
+        "dend": {
+          "pearson": 0.9764890521990021,
+          "gen": 1.0,
+          "chance": 0.125,
+          "eff_rank": 26.125488108969517,
+          "offdiag": 0.07796615176680652,
+          "silent": 0.0
+        },
+        "pn": {
+          "pearson": -0.011464810751309529,
+          "gen": 0.09375,
+          "chance": 0.125,
+          "eff_rank": 53.81656410842406,
+          "offdiag": 0.7601672386138646,
+          "silent": 0.0
+        },
+        "dend_repro": 0.9993392895450861,
+        "dend_struct": 0.9764890521990021,
+        "pn_struct": -0.011464810751309529
+      },
+      "survives": true
+    },
+    "43": {
+      "seed": 43,
+      "host_ceiling_pearson": 0.9568592976429929,
+      "host_carries": true,
+      "chance": 0.125,
+      "sweep": [
+        {
+          "threshold": 0.1,
+          "dend": {
+            "pearson": 0.8656611069450862,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 43.01534223072122,
+            "offdiag": 0.8330254761932053,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": 0.0846622486283714,
+            "gen": 0.40625,
+            "chance": 0.125,
+            "eff_rank": 52.47083689037305,
+            "offdiag": 0.9927849969372818,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9997435086203144,
+          "dend_struct": 0.8656611069450862,
+          "pn_struct": 0.0846622486283714
+        },
+        {
+          "threshold": 0.2,
+          "dend": {
+            "pearson": 0.8973092847710512,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 25.556962557670552,
+            "offdiag": 0.7829061420874579,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": 0.006912911818633503,
+            "gen": 0.171875,
+            "chance": 0.125,
+            "eff_rank": 50.42721089530501,
+            "offdiag": 0.9908405264916974,
+            "silent": 0.0
+          },
+          "dend_repro": 0.999870743964288,
+          "dend_struct": 0.8973092847710512,
+          "pn_struct": 0.006912911818633503
+        },
+        {
+          "threshold": 0.3,
+          "dend": {
+            "pearson": 0.8484521740638882,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 24.8864471701081,
+            "offdiag": 0.7441359093303945,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": -0.022970311451635254,
+            "gen": 0.109375,
+            "chance": 0.125,
+            "eff_rank": 53.760186291196064,
+            "offdiag": 0.9623764612131073,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9998783688582583,
+          "dend_struct": 0.8484521740638882,
+          "pn_struct": -0.022970311451635254
+        },
+        {
+          "threshold": 0.5,
+          "dend": {
+            "pearson": 0.8532708245292416,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 23.300561855322847,
+            "offdiag": 0.6921168543077624,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": -0.03064301659724902,
+            "gen": 0.109375,
+            "chance": 0.125,
+            "eff_rank": 53.541661992249715,
+            "offdiag": 0.9661133361145214,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9998312909952585,
+          "dend_struct": 0.8532708245292416,
+          "pn_struct": -0.03064301659724902
+        },
+        {
+          "threshold": 0.8,
+          "dend": {
+            "pearson": 0.9176927625781414,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 27.502085561257815,
+            "offdiag": 0.45350091066223935,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": -0.022239047477907035,
+            "gen": 0.078125,
+            "chance": 0.125,
+            "eff_rank": 53.53895113562129,
+            "offdiag": 0.9437298504052654,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9995465251764172,
+          "dend_struct": 0.9176927625781414,
+          "pn_struct": -0.022239047477907035
+        },
+        {
+          "threshold": 1.2,
+          "dend": {
+            "pearson": 0.9722207663622738,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 24.739328705023652,
+            "offdiag": 0.0797206803133975,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": -0.021263696849008615,
+            "gen": 0.125,
+            "chance": 0.125,
+            "eff_rank": 53.49626385756176,
+            "offdiag": 0.7529287582033909,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9993855978064726,
+          "dend_struct": 0.9722207663622738,
+          "pn_struct": -0.021263696849008615
+        }
+      ],
+      "best": {
+        "threshold": 1.2,
+        "dend": {
+          "pearson": 0.9722207663622738,
+          "gen": 1.0,
+          "chance": 0.125,
+          "eff_rank": 24.739328705023652,
+          "offdiag": 0.0797206803133975,
+          "silent": 0.0
+        },
+        "pn": {
+          "pearson": -0.021263696849008615,
+          "gen": 0.125,
+          "chance": 0.125,
+          "eff_rank": 53.49626385756176,
+          "offdiag": 0.7529287582033909,
+          "silent": 0.0
+        },
+        "dend_repro": 0.9993855978064726,
+        "dend_struct": 0.9722207663622738,
+        "pn_struct": -0.021263696849008615
+      },
+      "survives": true
+    },
+    "44": {
+      "seed": 44,
+      "host_ceiling_pearson": 0.9637273276883815,
+      "host_carries": true,
+      "chance": 0.125,
+      "sweep": [
+        {
+          "threshold": 0.1,
+          "dend": {
+            "pearson": 0.8795053272072872,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 42.32589277559399,
+            "offdiag": 0.8325654762060573,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": 0.07383550123749694,
+            "gen": 0.203125,
+            "chance": 0.125,
+            "eff_rank": 52.369799449092305,
+            "offdiag": 0.9926310081598277,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9997511879083789,
+          "dend_struct": 0.8795053272072872,
+          "pn_struct": 0.07383550123749694
+        },
+        {
+          "threshold": 0.2,
+          "dend": {
+            "pearson": 0.9272970495576487,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 25.737927989231828,
+            "offdiag": 0.7867964706605851,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": 0.007315963114265333,
+            "gen": 0.140625,
+            "chance": 0.125,
+            "eff_rank": 50.25366406930194,
+            "offdiag": 0.9911145556980908,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9998735076950691,
+          "dend_struct": 0.9272970495576487,
+          "pn_struct": 0.007315963114265333
+        },
+        {
+          "threshold": 0.3,
+          "dend": {
+            "pearson": 0.8490635232510267,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 24.38558112104262,
+            "offdiag": 0.7491108377198746,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": -0.01088012494402858,
+            "gen": 0.125,
+            "chance": 0.125,
+            "eff_rank": 53.73819518958254,
+            "offdiag": 0.9619496455693681,
+            "silent": 0.0
+          },
+          "dend_repro": 0.999882293922814,
+          "dend_struct": 0.8490635232510267,
+          "pn_struct": -0.01088012494402858
+        },
+        {
+          "threshold": 0.5,
+          "dend": {
+            "pearson": 0.8694081090891786,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 23.349823345710863,
+            "offdiag": 0.6889625804349064,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": -0.0008998131321972482,
+            "gen": 0.125,
+            "chance": 0.125,
+            "eff_rank": 53.42179108613391,
+            "offdiag": 0.966263420052588,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9998368307046149,
+          "dend_struct": 0.8694081090891786,
+          "pn_struct": -0.0008998131321972482
+        },
+        {
+          "threshold": 0.8,
+          "dend": {
+            "pearson": 0.9185538625586721,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 27.761208797641793,
+            "offdiag": 0.45575221557827256,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": -0.0028117596287503543,
+            "gen": 0.15625,
+            "chance": 0.125,
+            "eff_rank": 53.52617998686546,
+            "offdiag": 0.9435957130675798,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9995470389703173,
+          "dend_struct": 0.9185538625586721,
+          "pn_struct": -0.0028117596287503543
+        },
+        {
+          "threshold": 1.2,
+          "dend": {
+            "pearson": 0.979618853666261,
+            "gen": 1.0,
+            "chance": 0.125,
+            "eff_rank": 24.967642314907714,
+            "offdiag": 0.08034976943314517,
+            "silent": 0.0
+          },
+          "pn": {
+            "pearson": -0.004569453121863262,
+            "gen": 0.1875,
+            "chance": 0.125,
+            "eff_rank": 53.52896798870559,
+            "offdiag": 0.7569931549441399,
+            "silent": 0.0
+          },
+          "dend_repro": 0.9993838036893922,
+          "dend_struct": 0.979618853666261,
+          "pn_struct": -0.004569453121863262
+        }
+      ],
+      "best": {
+        "threshold": 1.2,
+        "dend": {
+          "pearson": 0.979618853666261,
+          "gen": 1.0,
+          "chance": 0.125,
+          "eff_rank": 24.967642314907714,
+          "offdiag": 0.08034976943314517,
+          "silent": 0.0
+        },
+        "pn": {
+          "pearson": -0.004569453121863262,
+          "gen": 0.1875,
+          "chance": 0.125,
+          "eff_rank": 53.52896798870559,
+          "offdiag": 0.7569931549441399,
+          "silent": 0.0
+        },
+        "dend_repro": 0.9993838036893922,
+        "dend_struct": 0.979618853666261,
+        "pn_struct": -0.004569453121863262
+      },
+      "survives": true
+    }
+  },
+  "note": "D2 Phase 0: a full spiking two-compartment numpy neuron (dendritic shunting -> LIF soma, spike-count code). The last non-protected gate before the protected on-bridge two-compartment NeuronModel edit (Phase 1).",
+  "elapsed_total_s": 6.990105390548706
+}
