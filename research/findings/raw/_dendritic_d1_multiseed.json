@@ -1,0 +1,168 @@
+{
+  "verdict": "GO",
+  "why": "a PER-HUB dendritic gain LEARNS the category structure (mean Pearson +0.845, host ceiling +0.959) AND generalizes to held-out members, WHILE the point-neuron single-global-gain control gives ~0 (+0.052); all controls clean (permuted + lesion collapse, gains converge + track hub frequency). The dendritic compartment is the substrate-level enabler of the per-input normalization a point neuron provably lacks -> the D2 on-substrate build is warranted (present cost to owner).",
+  "detail": {
+    "dendritic_pearson_mean": 0.8445496643183117,
+    "point_neuron_pearson_mean": 0.05233118814151327,
+    "host_ceiling_pearson_mean": 0.9591474715526168,
+    "structure_contrast_all": true,
+    "point_neuron_fails_all": true,
+    "host_carries_all": true,
+    "controls_clean_all": true,
+    "generalize_all": true
+  },
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "smoke": false,
+  "config": {
+    "seeds": "42,43,44",
+    "smoke": false,
+    "n_cat": 8,
+    "per_cat": 8,
+    "n_common": 200,
+    "n_sig_per_cat": 12,
+    "lam_common": 40.0,
+    "lam_sig": 4.0,
+    "lam_bg": 0.3,
+    "epochs": 12,
+    "eta": 0.05,
+    "sigma": 1.0,
+    "noise": 0.1,
+    "host_svd": 50,
+    "host_alpha": 0.75,
+    "structure_bar": 0.3,
+    "pn_fail_bar": 0.12,
+    "host_bar": 0.3,
+    "gen_margin": 0.05,
+    "gen_contrast_margin": 0.3,
+    "repro_bar": 0.9,
+    "out": "research/findings/raw/_dendritic_d1_multiseed.json"
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "n_concepts": 64,
+      "n_hubs": 296,
+      "chance": 0.125,
+      "raw_pearson": 0.052937905462208855,
+      "host_ceiling_pearson": 0.956855789326476,
+      "dendritic": {
+        "pearson": 0.863232005563777,
+        "generalization": 1.0,
+        "repro": 0.99874770904119,
+        "eff_rank": 23.838203737128374,
+        "offdiag_cos": 0.7384313056214228,
+        "gain_freq_corr": 0.9995191756489133,
+        "gains_converge": true
+      },
+      "point_neuron": {
+        "pearson": 0.052937905462210395,
+        "generalization": 0.28125,
+        "repro": 0.9997537456592714,
+        "g": 27.261355454829168
+      },
+      "anti_cheat": {
+        "permuted_similarity_pearson": -0.005015332902902305,
+        "lesion_pearson": 0.052937905462210576
+      },
+      "gates": {
+        "structure_contrast": true,
+        "point_neuron_fails": true,
+        "host_ceiling_carries": true,
+        "generalize_contrast": true,
+        "reproduce": true,
+        "not_collapsed": true,
+        "permuted_similarity_collapses": true,
+        "lesion_collapses": true,
+        "gains_converge": true,
+        "gain_tracks_frequency": true,
+        "s_true_independent": true
+      }
+    },
+    "43": {
+      "seed": 43,
+      "n_concepts": 64,
+      "n_hubs": 296,
+      "chance": 0.125,
+      "raw_pearson": 0.040771120804226985,
+      "host_ceiling_pearson": 0.9568592976429929,
+      "dendritic": {
+        "pearson": 0.8273720541946006,
+        "generalization": 1.0,
+        "repro": 0.9987365871305388,
+        "eff_rank": 23.152125201656244,
+        "offdiag_cos": 0.7311580676627569,
+        "gain_freq_corr": 0.9995335589339374,
+        "gains_converge": true
+      },
+      "point_neuron": {
+        "pearson": 0.040771120804228095,
+        "generalization": 0.234375,
+        "repro": 0.9997553161350589,
+        "g": 27.27631263197717
+      },
+      "anti_cheat": {
+        "permuted_similarity_pearson": -0.001014063199712583,
+        "lesion_pearson": 0.04077112080422837
+      },
+      "gates": {
+        "structure_contrast": true,
+        "point_neuron_fails": true,
+        "host_ceiling_carries": true,
+        "generalize_contrast": true,
+        "reproduce": true,
+        "not_collapsed": true,
+        "permuted_similarity_collapses": true,
+        "lesion_collapses": true,
+        "gains_converge": true,
+        "gain_tracks_frequency": true,
+        "s_true_independent": true
+      }
+    },
+    "44": {
+      "seed": 44,
+      "n_concepts": 64,
+      "n_hubs": 296,
+      "chance": 0.125,
+      "raw_pearson": 0.06328453815810399,
+      "host_ceiling_pearson": 0.9637273276883815,
+      "dendritic": {
+        "pearson": 0.8430449331965575,
+        "generalization": 1.0,
+        "repro": 0.9987937903401163,
+        "eff_rank": 23.058380308738528,
+        "offdiag_cos": 0.7338996642627948,
+        "gain_freq_corr": 0.9995963067965236,
+        "gains_converge": true
+      },
+      "point_neuron": {
+        "pearson": 0.06328453815810131,
+        "generalization": 0.265625,
+        "repro": 0.999757447814551,
+        "g": 27.27124777890771
+      },
+      "anti_cheat": {
+        "permuted_similarity_pearson": 0.0038326006776023577,
+        "lesion_pearson": 0.06328453815810295
+      },
+      "gates": {
+        "structure_contrast": true,
+        "point_neuron_fails": true,
+        "host_ceiling_carries": true,
+        "generalize_contrast": true,
+        "reproduce": true,
+        "not_collapsed": true,
+        "permuted_similarity_collapses": true,
+        "lesion_collapses": true,
+        "gains_converge": true,
+        "gain_tracks_frequency": true,
+        "s_true_independent": true
+      }
+    }
+  },
+  "note": "DIAGNOSTIC cheap-first de-risk D1 (afternoon CPU/numpy, NO sim/ edits). The contrast IS the result: a dendritic GO counts only against a point-neuron NEGATIVE on the IDENTICAL counts/mechanism/seeds, with the host ceiling confirming the data carries it. The dendritic per-hub gain is the local implementation of PPMI's per-input normalization that a single-soma point neuron provably cannot deliver. Gates the months-scale on-substrate D2 build.",
+  "elapsed_total_s": 0.09474682807922363
+}
