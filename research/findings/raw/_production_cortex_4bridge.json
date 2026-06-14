@@ -1,0 +1,744 @@
+{
+  "aggregate": {
+    "seeds": [
+      "42"
+    ],
+    "mode": "full",
+    "route": "per-bridge",
+    "cortex_source": "learned",
+    "b1_bar": 0.7,
+    "x_bar": 0.7,
+    "gate_A": {
+      "all_pass": true,
+      "per_seed": [
+        true
+      ],
+      "any_abstention_breach": false,
+      "criterion": "every bridge's within-bridge matrix passes (>=5/6 + moat)"
+    },
+    "gate_B": {
+      "b1_per_seed_per_bridge": {
+        "42": {
+          "mammals": 0.9875,
+          "birds": 1.0,
+          "fish_reptiles": 0.99375,
+          "insects": 0.9875
+        }
+      },
+      "b1_all_GO": true,
+      "b1_above_chance": true,
+      "b1_boundary_band": false,
+      "b2_zero_false_accepts": true,
+      "chance": 0.25,
+      "C1_collapses": true,
+      "C4_collapses": true
+    },
+    "gate_X": {
+      "x_pb_ok": true,
+      "vtag_present": true,
+      "x_vtag_recall_ok": true,
+      "x_vtag_band_ok": true,
+      "cx_collapses": true,
+      "C3_moat_intact": true,
+      "C3_lesion_collapses": true,
+      "x_abstention_breach": false,
+      "x_primary_ok": true
+    },
+    "verdict": "GO",
+    "cost": {
+      "route": "A",
+      "per_bridge_composer_D": 256,
+      "n_bridges": 4,
+      "per_bridge_cost": {
+        "mammals": {
+          "label": "routeA[mammals]",
+          "D": 256,
+          "cleanup_argmax_width": 64,
+          "n_codebook_entries": 71,
+          "codebook_bytes": 145408,
+          "codebook_MB": 0.145,
+          "per_bind_rf_neurons": 512,
+          "per_bundle_rf_neurons": 1024,
+          "cleanup_float_ops": 16384
+        },
+        "birds": {
+          "label": "routeA[birds]",
+          "D": 256,
+          "cleanup_argmax_width": 64,
+          "n_codebook_entries": 71,
+          "codebook_bytes": 145408,
+          "codebook_MB": 0.145,
+          "per_bind_rf_neurons": 512,
+          "per_bundle_rf_neurons": 1024,
+          "cleanup_float_ops": 16384
+        },
+        "fish_reptiles": {
+          "label": "routeA[fish_reptiles]",
+          "D": 256,
+          "cleanup_argmax_width": 64,
+          "n_codebook_entries": 71,
+          "codebook_bytes": 145408,
+          "codebook_MB": 0.145,
+          "per_bind_rf_neurons": 512,
+          "per_bundle_rf_neurons": 1024,
+          "cleanup_float_ops": 16384
+        },
+        "insects": {
+          "label": "routeA[insects]",
+          "D": 256,
+          "cleanup_argmax_width": 64,
+          "n_codebook_entries": 71,
+          "codebook_bytes": 145408,
+          "codebook_MB": 0.145,
+          "per_bind_rf_neurons": 512,
+          "per_bundle_rf_neurons": 1024,
+          "cleanup_float_ops": 16384
+        }
+      },
+      "total_codebook_bytes": 581632,
+      "total_codebook_MB": 0.582,
+      "per_bind_rf_neurons": 512,
+      "per_bundle_rf_neurons": 1024,
+      "cleanup_argmax_width": 64,
+      "vocabulary_independent_per_op": true
+    }
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "mode": "full",
+      "route": "per-bridge",
+      "cortex_source": "learned",
+      "shards": [
+        "mammals",
+        "birds",
+        "fish_reptiles",
+        "insects"
+      ],
+      "union_n_concepts": 256,
+      "cortex_build_seconds": 456.8,
+      "graded_stats": {
+        "mammals": {
+          "within_cluster_cos_mean": 0.885031438764919,
+          "within_cluster_cos_min": 0.6798451856015494,
+          "between_cluster_cos_mean": 0.3799989834600889,
+          "between_cluster_cos_max": 0.8621390989379483,
+          "graded_margin": 0.50503245530483,
+          "is_graded": true
+        },
+        "birds": {
+          "within_cluster_cos_mean": 0.8926135538909136,
+          "within_cluster_cos_min": 0.6936414190293941,
+          "between_cluster_cos_mean": 0.397193695168228,
+          "between_cluster_cos_max": 0.7732261834660765,
+          "graded_margin": 0.49541985872268557,
+          "is_graded": true
+        },
+        "fish_reptiles": {
+          "within_cluster_cos_mean": 0.8849339276291243,
+          "within_cluster_cos_min": 0.6564304387817503,
+          "between_cluster_cos_mean": 0.38260016581102124,
+          "between_cluster_cos_max": 0.8212296062123133,
+          "graded_margin": 0.502333761818103,
+          "is_graded": true
+        },
+        "insects": {
+          "within_cluster_cos_mean": 0.8743767175914579,
+          "within_cluster_cos_min": 0.40479861457799915,
+          "between_cluster_cos_mean": 0.3932691082859782,
+          "between_cluster_cos_max": 0.8772493361239169,
+          "graded_margin": 0.48110760930547963,
+          "is_graded": true
+        }
+      },
+      "gate_A": {
+        "per_bridge": {
+          "mammals": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "mammals.hamster mammals.cat",
+              "clause": "mammals.ferret mammals.cat mammals.kitten"
+            }
+          },
+          "birds": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "birds.tern birds.goose",
+              "clause": "birds.heron birds.goose birds.swan"
+            }
+          },
+          "fish_reptiles": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "fish_reptiles.carp fish_reptiles.salmon",
+              "clause": "fish_reptiles.perch fish_reptiles.salmon fish_reptiles.trout"
+            }
+          },
+          "insects": {
+            "cells": {
+              "what_does": true,
+              "who_does": true,
+              "abstention": true,
+              "negation": true,
+              "one_attribute": true,
+              "clause": true,
+              "abstention_battery_breaches": 0
+            },
+            "n_cells_pass": 6,
+            "moat_holds": true,
+            "rendered": {
+              "one_attribute": "insects.bumblebee insects.wasp",
+              "clause": "insects.sawfly insects.wasp insects.hornet"
+            }
+          }
+        },
+        "n_bridges_pass": 4,
+        "n_bridges": 4,
+        "all_bridges_pass": true,
+        "any_abstention_breach": false
+      },
+      "gate_B": {
+        "mammals": {
+          "b1_accuracy": 0.9875,
+          "chance": 0.25,
+          "ratio_vs_chance": 3.95,
+          "b1_conv_accuracy": 0.984375,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "birds": {
+          "b1_accuracy": 1.0,
+          "chance": 0.25,
+          "ratio_vs_chance": 4.0,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "fish_reptiles": {
+          "b1_accuracy": 0.99375,
+          "chance": 0.25,
+          "ratio_vs_chance": 3.975,
+          "b1_conv_accuracy": 1.0,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        },
+        "insects": {
+          "b1_accuracy": 0.9875,
+          "chance": 0.25,
+          "ratio_vs_chance": 3.95,
+          "b1_conv_accuracy": 0.984375,
+          "b2": {
+            "floor_n": 64,
+            "false_accepts": 0,
+            "abstains_all": true
+          },
+          "n_sub": 8,
+          "per_sub": 8,
+          "n_props": 4
+        }
+      },
+      "anticheat_C1": {
+        "mammals": {
+          "b1_permuted": 0.2,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "birds": {
+          "b1_permuted": 0.15625,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "fish_reptiles": {
+          "b1_permuted": 0.0625,
+          "chance": 0.25,
+          "collapses": true
+        },
+        "insects": {
+          "b1_permuted": 0.10625,
+          "chance": 0.25,
+          "collapses": true
+        }
+      },
+      "anticheat_C4": {
+        "b1_random_shard": 0.21875,
+        "chance": 0.25,
+        "collapses": true,
+        "n_random_members": 64
+      },
+      "cross_facts": [
+        [
+          "mammals.hyena",
+          "insects.bee"
+        ],
+        [
+          "insects.cockroach",
+          "mammals.horse"
+        ],
+        [
+          "insects.dragonfly",
+          "mammals.moose"
+        ],
+        [
+          "fish_reptiles.carp",
+          "birds.hummingbird"
+        ],
+        [
+          "birds.crow",
+          "fish_reptiles.lizard"
+        ],
+        [
+          "birds.vulture",
+          "fish_reptiles.haddock"
+        ],
+        [
+          "insects.dragonfly",
+          "fish_reptiles.sturgeon"
+        ],
+        [
+          "birds.eagle",
+          "mammals.giraffe"
+        ],
+        [
+          "mammals.panther",
+          "birds.seagull"
+        ],
+        [
+          "birds.penguin",
+          "fish_reptiles.constrictor"
+        ],
+        [
+          "insects.midge",
+          "fish_reptiles.eel"
+        ],
+        [
+          "fish_reptiles.eel",
+          "birds.cuckoo"
+        ]
+      ],
+      "gate_X_pb": {
+        "n_bridges_exercised": 4,
+        "what_acc": 1.0,
+        "who_acc": 1.0,
+        "abstention_probes": 8,
+        "abstention_breaches": 0
+      },
+      "gate_X_vtag": {
+        "m3": {
+          "permuted": false,
+          "n_cross_facts": 12,
+          "top1_fraction": 1.0,
+          "top2_fraction": 1.0,
+          "mean_signal_vs_floor": 20.10301903758348,
+          "mean_margin": 1560.25,
+          "detail": [
+            {
+              "cue": "mammals.hyena",
+              "target": "insects.bee",
+              "scored_idx": 8,
+              "rank": 0,
+              "scored_rate": 1745.0,
+              "noise_floor": 77.0,
+              "best_other": 283.0
+            },
+            {
+              "cue": "insects.cockroach",
+              "target": "mammals.horse",
+              "scored_idx": 16,
+              "rank": 0,
+              "scored_rate": 1708.0,
+              "noise_floor": 109.0,
+              "best_other": 251.0
+            },
+            {
+              "cue": "insects.dragonfly",
+              "target": "mammals.moose",
+              "scored_idx": 60,
+              "rank": 0,
+              "scored_rate": 1555.0,
+              "noise_floor": 70.5,
+              "best_other": 232.0
+            },
+            {
+              "cue": "fish_reptiles.carp",
+              "target": "birds.hummingbird",
+              "scored_idx": 60,
+              "rank": 0,
+              "scored_rate": 1628.0,
+              "noise_floor": 99.0,
+              "best_other": 336.0
+            },
+            {
+              "cue": "birds.crow",
+              "target": "fish_reptiles.lizard",
+              "scored_idx": 56,
+              "rank": 0,
+              "scored_rate": 1877.0,
+              "noise_floor": 92.5,
+              "best_other": 224.0
+            },
+            {
+              "cue": "birds.vulture",
+              "target": "fish_reptiles.haddock",
+              "scored_idx": 22,
+              "rank": 0,
+              "scored_rate": 1793.0,
+              "noise_floor": 82.0,
+              "best_other": 207.0
+            },
+            {
+              "cue": "insects.dragonfly",
+              "target": "fish_reptiles.sturgeon",
+              "scored_idx": 29,
+              "rank": 0,
+              "scored_rate": 1976.0,
+              "noise_floor": 102.5,
+              "best_other": 229.0
+            },
+            {
+              "cue": "birds.eagle",
+              "target": "mammals.giraffe",
+              "scored_idx": 34,
+              "rank": 0,
+              "scored_rate": 1897.0,
+              "noise_floor": 82.0,
+              "best_other": 285.0
+            },
+            {
+              "cue": "mammals.panther",
+              "target": "birds.seagull",
+              "scored_idx": 69,
+              "rank": 0,
+              "scored_rate": 2094.0,
+              "noise_floor": 112.0,
+              "best_other": 255.0
+            },
+            {
+              "cue": "birds.penguin",
+              "target": "fish_reptiles.constrictor",
+              "scored_idx": 63,
+              "rank": 0,
+              "scored_rate": 2034.0,
+              "noise_floor": 103.5,
+              "best_other": 318.0
+            },
+            {
+              "cue": "insects.midge",
+              "target": "fish_reptiles.eel",
+              "scored_idx": 32,
+              "rank": 0,
+              "scored_rate": 1661.0,
+              "noise_floor": 83.0,
+              "best_other": 203.0
+            },
+            {
+              "cue": "fish_reptiles.eel",
+              "target": "birds.cuckoo",
+              "scored_idx": 50,
+              "rank": 0,
+              "scored_rate": 1750.0,
+              "noise_floor": 81.5,
+              "best_other": 172.0
+            }
+          ]
+        },
+        "cx_permuted": {
+          "permuted": true,
+          "n_cross_facts": 12,
+          "top1_fraction": 0.0,
+          "top2_fraction": 0.0,
+          "mean_signal_vs_floor": 1.002400129648586,
+          "mean_margin": -1658.0,
+          "detail": [
+            {
+              "cue": "mammals.hyena",
+              "target": "insects.bee",
+              "scored_idx": 9,
+              "rank": 7,
+              "scored_rate": 116.0,
+              "noise_floor": 60.5,
+              "best_other": 1349.0
+            },
+            {
+              "cue": "insects.cockroach",
+              "target": "mammals.horse",
+              "scored_idx": 0,
+              "rank": 63,
+              "scored_rate": 47.0,
+              "noise_floor": 107.0,
+              "best_other": 1689.0
+            },
+            {
+              "cue": "insects.dragonfly",
+              "target": "mammals.moose",
+              "scored_idx": 57,
+              "rank": 22,
+              "scored_rate": 96.0,
+              "noise_floor": 68.5,
+              "best_other": 1500.0
+            },
+            {
+              "cue": "fish_reptiles.carp",
+              "target": "birds.hummingbird",
+              "scored_idx": 15,
+              "rank": 19,
+              "scored_rate": 121.0,
+              "noise_floor": 98.0,
+              "best_other": 1585.0
+            },
+            {
+              "cue": "birds.crow",
+              "target": "fish_reptiles.lizard",
+              "scored_idx": 6,
+              "rank": 63,
+              "scored_rate": 53.0,
+              "noise_floor": 90.5,
+              "best_other": 1828.0
+            },
+            {
+              "cue": "birds.vulture",
+              "target": "fish_reptiles.haddock",
+              "scored_idx": 56,
+              "rank": 49,
+              "scored_rate": 64.0,
+              "noise_floor": 74.5,
+              "best_other": 1747.0
+            },
+            {
+              "cue": "insects.dragonfly",
+              "target": "fish_reptiles.sturgeon",
+              "scored_idx": 70,
+              "rank": 70,
+              "scored_rate": 5.0,
+              "noise_floor": 101.0,
+              "best_other": 1956.0
+            },
+            {
+              "cue": "birds.eagle",
+              "target": "mammals.giraffe",
+              "scored_idx": 66,
+              "rank": 51,
+              "scored_rate": 55.0,
+              "noise_floor": 78.5,
+              "best_other": 1832.0
+            },
+            {
+              "cue": "mammals.panther",
+              "target": "birds.seagull",
+              "scored_idx": 35,
+              "rank": 3,
+              "scored_rate": 206.0,
+              "noise_floor": 109.5,
+              "best_other": 2040.0
+            },
+            {
+              "cue": "birds.penguin",
+              "target": "fish_reptiles.constrictor",
+              "scored_idx": 20,
+              "rank": 54,
+              "scored_rate": 73.0,
+              "noise_floor": 100.0,
+              "best_other": 2024.0
+            },
+            {
+              "cue": "insects.midge",
+              "target": "fish_reptiles.eel",
+              "scored_idx": 42,
+              "rank": 40,
+              "scored_rate": 72.0,
+              "noise_floor": 84.0,
+              "best_other": 1630.0
+            },
+            {
+              "cue": "fish_reptiles.eel",
+              "target": "birds.cuckoo",
+              "scored_idx": 29,
+              "rank": 17,
+              "scored_rate": 116.0,
+              "noise_floor": 84.5,
+              "best_other": 1740.0
+            }
+          ]
+        },
+        "band": "GO",
+        "cx_collapses": true
+      },
+      "anticheat_C3": {
+        "n_stored_facts": 11,
+        "n_known_cues": 11,
+        "n_unknown_cues": 20,
+        "novelty_known_max": 0.0,
+        "novelty_unknown_min": 0.5387447679040994,
+        "separation_margin": 0.5387447679040994,
+        "threshold": 0.2693723839520497,
+        "agreement": 1.0,
+        "host_abstain_gate_accept": 0,
+        "abstention_floor_false_accepts": 0,
+        "lesion_margin": 0.0,
+        "lesion_collapsed": true,
+        "m4_moat_intact": true
+      },
+      "cost": {
+        "route": "A",
+        "per_bridge_composer_D": 256,
+        "n_bridges": 4,
+        "per_bridge_cost": {
+          "mammals": {
+            "label": "routeA[mammals]",
+            "D": 256,
+            "cleanup_argmax_width": 64,
+            "n_codebook_entries": 71,
+            "codebook_bytes": 145408,
+            "codebook_MB": 0.145,
+            "per_bind_rf_neurons": 512,
+            "per_bundle_rf_neurons": 1024,
+            "cleanup_float_ops": 16384
+          },
+          "birds": {
+            "label": "routeA[birds]",
+            "D": 256,
+            "cleanup_argmax_width": 64,
+            "n_codebook_entries": 71,
+            "codebook_bytes": 145408,
+            "codebook_MB": 0.145,
+            "per_bind_rf_neurons": 512,
+            "per_bundle_rf_neurons": 1024,
+            "cleanup_float_ops": 16384
+          },
+          "fish_reptiles": {
+            "label": "routeA[fish_reptiles]",
+            "D": 256,
+            "cleanup_argmax_width": 64,
+            "n_codebook_entries": 71,
+            "codebook_bytes": 145408,
+            "codebook_MB": 0.145,
+            "per_bind_rf_neurons": 512,
+            "per_bundle_rf_neurons": 1024,
+            "cleanup_float_ops": 16384
+          },
+          "insects": {
+            "label": "routeA[insects]",
+            "D": 256,
+            "cleanup_argmax_width": 64,
+            "n_codebook_entries": 71,
+            "codebook_bytes": 145408,
+            "codebook_MB": 0.145,
+            "per_bind_rf_neurons": 512,
+            "per_bundle_rf_neurons": 1024,
+            "cleanup_float_ops": 16384
+          }
+        },
+        "total_codebook_bytes": 581632,
+        "total_codebook_MB": 0.582,
+        "per_bind_rf_neurons": 512,
+        "per_bundle_rf_neurons": 1024,
+        "cleanup_argmax_width": 64,
+        "vocabulary_independent_per_op": true
+      },
+      "timings_seconds": {
+        "gate_A": 53.87,
+        "gate_B": 8889.27,
+        "gate_X_pb": 11.7,
+        "gate_X_vtag": 475.98,
+        "anticheat_C3": 129.62
+      }
+    }
+  },
+  "args": {
+    "mode": "full",
+    "composer": "per-bridge",
+    "seeds": "42",
+    "seed": null,
+    "cortex": "learned",
+    "smoke": false,
+    "skip_vtag": false,
+    "n_bridges": 4,
+    "concepts_per_bridge": 64,
+    "target_per_sub": 8,
+    "n_pool": 2400,
+    "pattern_size": 100,
+    "homeo": "oja",
+    "homeo_target": 40.0,
+    "cycles": 10,
+    "synthetic_dim": 256,
+    "residual_frac": 0.55,
+    "n_props": 4,
+    "hub_facts_per_member": 6,
+    "bridge_facts": 8,
+    "triplet_facts_per_cluster": 4,
+    "readout_divnorm": "ch",
+    "readout_order": "interleave",
+    "readout_sigma": 0.001,
+    "readout_exponent": 2.0,
+    "readout_log_clip": false,
+    "diffusion_alpha": 0.5,
+    "diffusion_steps": 2,
+    "D": 512,
+    "per_bridge_D": 256,
+    "D_sweep": null,
+    "b_conv_splits": 8,
+    "n_cross_facts": 12,
+    "encoding_steps": 100,
+    "teacher_pA": 500.0,
+    "top_k": 150,
+    "drive_pA": 1500.0,
+    "drive_steps": 100,
+    "moat_D": 128,
+    "moat_floor": 20,
+    "a1_bar": 0.7,
+    "x_bar": 0.7,
+    "k_neighbours": 3,
+    "g1_bar": 0.5,
+    "so_margin_bar": 0.1,
+    "out": "research/findings/raw/_production_cortex_4bridge.json",
+    "D_gen": 512
+  },
+  "adaptations": "A1) PerBridgeCortexAgent: a {shard: RFPhasorComposer} dict (each over its 64-concept shard vocab + shared aux) + a word->shard router, replacing the ensemble's ONE union composer; within-shard facts bind in the agent-word's shard's composer, cross-shard facts go to the V-tag layer (route A does NOT bind them generatively); each shard gets its own moat (the per-bridge abstention surface). A2) route A's Gate A runs the single-shard gate_A_matrix on EACH shard's OWN cortex codebook so the clause's 3 words live in ONE shard (within-bridge clause); the ensemble's interleaved cross-bridge clause is route B's matrix. A3) route A's Gate X is the V-tag IDENTITY layer (gate_X_vtag) + X-pb (a per-bridge-composer within-bridge fact-recall plumbing check on CPU, so route A's dispatch is exercised even when --skip-vtag drops the GPU V-tag layer); route B's Gate X is the generative X-conv. A4) per-route COST logging (composer D(s), codebook bytes, per-op RF bridge neuron counts, cleanup argmax width, wall-clock per gate; route B also logs the V=512 D/concept ratio for the 2,048 extrapolation)."
+}

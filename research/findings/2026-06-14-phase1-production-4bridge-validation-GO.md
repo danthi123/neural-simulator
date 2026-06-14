@@ -1,0 +1,28 @@
+# Phase 1 production build — 4-bridge cheap validation: GO (curated Option-B substrate, learned-graded cortex, route A) — the curated pipeline produces a meaningful conversational cortex + cross-bridge composition + the no-confab moat at production fidelity; the 32-bridge production run is launched
+
+**Date:** 2026-06-14. **Runner:** `research/runners/production_cortex_build.py` (`--mode full --composer per-bridge --cortex learned --n-bridges 4 --per-bridge-D 256`, commit `4b27c5bb`). **Backend:** `SIM_BACKEND=cupy` (GPU). **Raw:** `research/findings/raw/_production_cortex_4bridge.json` + `.log`. **Scope:** 4 real curated bridges (mammals / birds / fish_reptiles / insects) × 64 = 256 concepts, seed 42, the REAL learned-graded cortex. **Plan:** `docs/plans/2026-06-13-phase1-production-build-plan.md`.
+
+> **Verdict: GO.** The production build's cheap-validation gate passes at production fidelity: on 4 REAL curated bridges with the actual learned-graded cortex (not synthetic), the within-bridge conversational matrix passes 4/4 (6/6 cells each), within-bridge generalization is MEANINGFUL and near-perfect (0.988–1.000, ≈4× chance) with both controls collapsing, the cross-bridge V-tag identity composition works (M3 signal/floor 20.10×), the cross-bridge anti-cheat collapses, and the no-confab moat is intact (zero breaches). ⇒ **the curated Option-B pipeline produces a working, meaningful conversational cortex at production fidelity → the 32-bridge / 2,048-concept production run is launched** (`bwrd4vvlu`, in flight).
+
+## Results (4 curated bridges × 64 = 256 concepts, learned cortex, seed 42)
+
+| Gate | Result |
+|---|---|
+| **GATE A — within-bridge conversational matrix** (per bridge; who/what, abstention, negation, one-attribute, clause) | **4/4 bridges pass, 6/6 cells each**, moat holds, zero abstention breaches (mammals / birds / fish_reptiles / insects). |
+| **GATE B — within-bridge generalization** (meaningful `cat≈dog` inference, per bridge) | **0.988 / 1.000 / 0.994 / 0.988** (≈4× chance, all 4 bridges); B2 moat 0 false-accepts; C1 permuted-similarity collapses (0.062–0.200) + C4 random-shard collapses → the generalization is genuinely **meaning-driven**, not an artifact. |
+| **GATE X — cross-bridge V-tag identity composition** | **M3 TRUE top2=1.00, top1=1.00, signal/floor 20.10× [GO]** (matches the 32-bridge fan-out's ~20×); **Cx anti-cheat (score a WRONG target) collapses** (top2=0.00); `x_vtag_recall_ok` + `x_vtag_band_ok` True. |
+| **moat (C3)** over cross-bridge facts | agreement **1.000**, host-abstain/gate-accept **0**, floor-false-accepts **0**, lesion-collapses=True → **moat-intact=True**. |
+| **VERDICT** | `>>> ROUTE PER-BRIDGE VERDICT: GO <<<` |
+
+## What this validates (the load-bearing Option-B question)
+The per-bridge G1/G2 gate is label-AGNOSTIC (it recovers whatever sub-cluster structure the corpus encodes regardless of the words), so it cannot tell whether Option B's curated similarity is MEANINGFUL — only the conversational matrix + generalization can. This run is that validator, at production fidelity: the curated within-cluster sub-taxonomy (`g20_subtaxonomy_2048`, e.g. mammals → pets / big_cats / …) feeds `build_curated_bridge_corpus` → the learned-graded cortex → a cortex whose generalization is **meaningful** (`dog≈cat` via the curated pets group, `lion≈tiger` via big_cats), confirmed by the 0.988–1.000 generalization with the similarity-scrambling controls collapsing. The cross-bridge V-tag + the moat — the mechanism the 32-bridge fan-out validated on synthetic corpora — also hold on the REAL curated learned bridges.
+
+## The bug found + fixed on the way (honest)
+The first 4-bridge run passed the within-bridge gates but threw `gate_X_vtag KeyError: 'hyena'`: `gate_X_vtag` builds the cross-bridge `GradedBridge` index from `bc["_local"]["concepts"]`, which `build_curated_bridge_corpus` had left as the synthetic `c{N}_m{M}` placeholder names, while the cross-bridge facts use the real namespaced words (`mammals.hyena` → stripped `hyena`). A self-inflicted naming mismatch in the new corpus builder, NOT a V-tag failure. Fixed (`4b27c5bb`): `_local` now carries the real un-namespaced names. Safe because the cortex codebook is keyed off the namespaced top-level `members` (not `_local`) and the learn is name-agnostic/positional, so the within-bridge graded codes + gates are byte-unchanged (they re-passed identically). NO `sim/` edits.
+
+## Honest scope
+- **4 bridges / seed 42** — the cheap-first validation before the expensive 32-bridge run (now in flight). The within-bridge result is near-saturated and the mechanism is multi-seed-validated (fan-out GO 42/43/44), so single-seed at 4 bridges is strong evidence; the 32-bridge run + multi-seed is the production confirmation.
+- **Option B's similarity is host-CURATED** (the agent's *structured* experience + a brain-based learn) — a principled stepping-stone, NOT learned-from-raw-experience (Option C, the logged follow-on which was INCONCLUSIVE on the cheap real-text setup). The binding mechanism + the moat are validated-spiking; the curation is the residual idealization, documented.
+
+## Conclusion + next
+The curated Option-B production pipeline is validated GO at production fidelity (within-bridge meaningful conversation + generalization + cross-bridge identity + the no-confab moat, on real learned-graded bridges). **The 32-bridge / 2,048-concept production run is launched** (`_production_cortex_32bridge.json`) — the deliverable: the first 2,048-concept conversational brain analogue on the learned-graded cortex. On its GO → the production finding + multi-seed. No `sim/` edits. No banking — the V-tag bug was diagnosed + fixed + re-confirmed before the GO.
