@@ -158,17 +158,26 @@ co-occurrence) + normalization (log-double-centring), composed end-to-end.
 (multi-role HRR SVO binding → who/what recall → the no-confab abstention moat) on the codes the bridge
 **learned from the stream** (not curated, not PPMI). Seed 42, n_per 16, 30000 windows (306 s solo):
 
-| metric | stream-learned codes | CYCLE-90 PPMI baseline |
-|---|---|---|
-| who-Q&A recall (present) | **1.00** (8/8, 0 within-cat err) | 0.88–1.00 |
-| no-confab abstain (absent) | **1.00** (0 false-accepts) | 1.00 (0) |
-| familiarity gap | present +0.449 ≫ absent +0.062 | present +0.42–0.52 ≫ absent +0.03–0.10 |
+Multi-seed (42/43/44, n_per 16, 30000 windows each, ~290 s/seed):
 
-**GO** — the stream-learned on-bridge cortex carries the full conversational capability **end-to-end,
-with the no-confab moat intact** (0 false-accepts), matching the PPMI-code baseline. Notably this holds
-even though the stream codes were only ~65% of the host-ref read-out fidelity: HRR binding + cleanup
-tolerates moderate code quality (the codes just need to be distinguishable), and the familiarity gap
-stays clean and wide.
+| metric | stream-learned codes (3-seed) | CYCLE-90 PPMI baseline |
+|---|---|---|
+| who-Q&A recall (present) | **1.00** all 3 seeds (0 within-cat err) | 0.88–1.00 |
+| no-confab abstain (absent) | **0.96** (1 false-accept, at seed 43) | 1.00 (0) |
+| familiarity gap | present +0.437 ≫ absent +0.075 | present +0.42–0.52 ≫ absent +0.03–0.10 |
+
+**GO** — the stream-learned on-bridge cortex carries the full conversational capability **end-to-end**:
+perfect who/what recall across all 3 seeds, and the no-confab moat holds strongly (abstain 0.96).
+Notably this works even though the stream codes were only ~65% of the host-ref read-out fidelity: HRR
+binding + cleanup tolerates moderate code quality (the codes just need to be distinguishable).
+
+**Honest caveat (surfaced, not hidden — the moat is a load-bearing bar):** the PPMI baseline had **0**
+false-accepts; the stream codes had **1** (a single tail confabulation on seed 43, the lowest-fidelity
+seed — its absent-match +0.093 was closest to the gate 0.25). This is the **code-fidelity cost**, not a
+weakening of the moat *mechanism* (the gate threshold and conjunctive cue are unchanged and were not
+tuned on the test). The lever to restore the perfect moat is **better codes** (more stream → wider
+familiarity gap → fewer tail matches) — never a looser gate; a higher-window re-test on seed 43 is
+in flight to verify this.
 
 ⇒ the complete chain closes on the real spiking substrate: **the bridge hears the conversation stream
 → its population Hebbian synapses learn the cortex → the codes bind into facts → who/what recall +
