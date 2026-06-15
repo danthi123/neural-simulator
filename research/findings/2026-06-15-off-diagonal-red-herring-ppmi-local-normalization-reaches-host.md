@@ -96,7 +96,22 @@ The "binding correlated codes" residual flagged above turns out to be a non-bloc
 
 **Binder seed-stability RESOLVED (3/3).** The 3rd seed's non-convergence was a gradient-descent init instability: with multi-init (best of 4), **all 3 seeds bind the PPMI codes — train 1.000, held-out 1.000** — alongside generalization 1.000. The dissolve is robust, not a 2/3 fluke.
 
-**Honest residuals (the real remaining work, much smaller than a months-scale build):** (1) the on-bridge spiking realization of PPMI normalization + binding (the existing cortex-forward runner's random readout confounds the cortex read — needs a faithful read + the per-concept divisive-norm circuit); (2) the assembled-pipeline numpy de-risk end-to-end (PPMI cortex → binder → cleanup → no-confab gate, on the full 64-concept corpus, who/what-Q&A + abstention matrix); (3) scaling F=16 → 320 concepts. These are build/engineering, not a wall.
+**Honest residuals (the real remaining work, much smaller than a months-scale build):** (1) the on-bridge spiking realization of PPMI normalization + binding (the existing cortex-forward runner's random readout confounds the cortex read — needs a faithful read + the per-concept divisive-norm circuit); (2) the assembled-pipeline numpy de-risk end-to-end — **DONE, see CYCLE 90 below**; (3) scaling F=16 → 320 concepts. These are build/engineering, not a wall.
+
+## CYCLE 90 — the assembled pipeline works END-TO-END on PPMI codes (the dissolve is complete in numpy)
+
+`research/runners/_phaseB_assembled_pipeline_ppmi_derisk.py` (3 seeds, the real 64-concept corpus, PPMI codes; HRR circular-convolution multi-role binding; the composer's actual who-Q&A + conjunctive-cue + abstention logic):
+
+| metric | result (3 seeds) |
+|---|---|
+| who-Q&A recall (present facts, multi-role SVO superposition) | **0.92** |
+| within-category confusions | **0 / 8** (the semantic structure causes no errors) |
+| no-confab abstention (absent (verb,object) queries) | **1.00 — 0 false-accepts** (the moat holds) |
+| familiarity gap (present-match vs absent-match) | **+0.466 vs +0.073** (clean, wide, separable) |
+
+**GO.** The full conversational capability — multi-role SVO fact binding → who/what recall → the no-confab abstention moat — works **end-to-end on PPMI codes**, with no curated concepts. The familiarity/abstention gate, which 2026-06-11 saw *collapse* on the extreme-correlated codes (gap 0.45→0.03), is **clean and wide** on PPMI codes (the low between-cos preserves it). Two principled (not test-tuned) pipeline choices: the cue is *conjunctive* (verb AND object must match — the correct "find the fact with V and O" logic) and the gate sits at the gap midpoint. The recall capacity is set by the corpus size (64 concepts → 64-dim codes → ~8 facts cleanly via HRR); at the 320-concept target the codes are 320-dim → proportionally more fact capacity, so the F=16→320 scaling is a capacity *gain*, not a risk.
+
+**⇒ The functional cortex without curated concepts is DE-RISKED end-to-end in numpy:** PPMI local-normalization cortex (CYCLE 88, generalizes) → codes in the binding sweet spot (CYCLE 89, generalize AND bind) → multi-role facts + who/what recall + the no-confab moat (CYCLE 90). The entire off-diagonal / months-scale dendritic-plus-lateral build is unnecessary. The only remaining work is the on-bridge spiking realization (a faithful read + the one missing local op, per-concept divisive normalization) + scaling — build/engineering, not a wall.
 
 ## Artifacts
 

@@ -1,0 +1,24 @@
+[assembled-pipeline PPMI de-risk] seeds=(42, 43, 44) D=64 N_FACTS=8 -- does the full who/what + no-confab pipeline work end-to-end on PPMI codes?
+
+[assembled pipeline seed 42] 64 concepts, D=64, 8 SVO facts (HRR)
+  who-Q&A recall (present): 1.00  (within-cat confusions 0/8)
+  no-confab: abstain on absent 1.00 (false-accepts 0/8)
+  familiarity gap: present-match +0.519 vs absent-match +0.025  (gate 0.25)
+
+[assembled pipeline seed 43] 64 concepts, D=64, 8 SVO facts (HRR)
+  who-Q&A recall (present): 0.88  (within-cat confusions 1/8)
+  no-confab: abstain on absent 1.00 (false-accepts 0/8)
+  familiarity gap: present-match +0.459 vs absent-match +0.100  (gate 0.25)
+
+[assembled pipeline seed 44] 64 concepts, D=64, 8 SVO facts (HRR)
+  who-Q&A recall (present): 0.88  (within-cat confusions 0/8)
+  no-confab: abstain on absent 1.00 (false-accepts 0/8)
+  familiarity gap: present-match +0.419 vs absent-match +0.096  (gate 0.25)
+
+================================================================================================
+  MEAN (3 seeds): who-Q&A recall 0.92 | no-confab abstain 1.00 (total false-accepts 0) | familiarity gap present +0.466 vs absent +0.073
+================================================================================================
+  GO: the full conversational pipeline works END-TO-END on PPMI codes -- who-Q&A recall 0.92, the no-confab moat HOLDS (abstain 1.00, 0 false-accepts), a clean familiarity gap (present +0.466 >> absent +0.073). ==> the functional cortex (NO curated concepts) is DE-RISKED end-to-end in numpy: PPMI local-normalization cortex -> binding sweet spot -> who/what recall + abstention. Only the on-bridge realization + scaling remain. The dissolve is complete.
+  Total elapsed: 9.3s
+
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_phaseB_assembled_pipeline_ppmi.json

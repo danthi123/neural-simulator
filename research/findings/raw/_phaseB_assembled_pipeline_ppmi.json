@@ -1,0 +1,40 @@
+{
+  "recall": 0.9166666666666666,
+  "abstain": 1.0,
+  "false_accepts": 0,
+  "conf_present": 0.4656572564336614,
+  "conf_absent": 0.07345935218325134,
+  "gap": 0.39219790425041007,
+  "per_seed": [
+    {
+      "seed": 42,
+      "recall": 1.0,
+      "abstain": 1.0,
+      "false_accept": 0,
+      "within_cat_err": 0,
+      "conf_present": 0.518663273423871,
+      "conf_absent": 0.02480291190609367
+    },
+    {
+      "seed": 43,
+      "recall": 0.875,
+      "abstain": 1.0,
+      "false_accept": 0,
+      "within_cat_err": 1,
+      "conf_present": 0.4594746174564658,
+      "conf_absent": 0.09993919394258319
+    },
+    {
+      "seed": 44,
+      "recall": 0.875,
+      "abstain": 1.0,
+      "false_accept": 0,
+      "within_cat_err": 0,
+      "conf_present": 0.4188338784206474,
+      "conf_absent": 0.09563595070107717
+    }
+  ],
+  "D": 64,
+  "n_facts": 8,
+  "gate": 0.25
+}
