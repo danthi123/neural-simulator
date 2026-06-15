@@ -166,7 +166,18 @@ def run_seed(seed, args):
     # with the hub, count > threshold) puts ALL co-occurring hubs -- common AND rare -- above threshold so
     # they fire; the dendritic gain then down-weights the high-marginal common hubs, leaving the category
     # structure. (--raw-drive keeps the raw counts for comparison.)
-    if args.log_drive:
+    if getattr(args, "ppmi_drive", False):
+        # PPMI DRIVE (CYCLE-88 finding): the per-concept + per-hub marginal-normalized log-ratio reaches host
+        # (+0.50) AND generalizes (0.86) in numpy, where log-drive plateaus (+0.155). PPMI =
+        # ReLU(log(count*T/(row*col))) -- all-LOCAL marginal normalization (per-hub = input_mean_adapt; per-
+        # concept = Carandini-Heeger divisive norm; log = Weber-Fechner; ReLU = threshold). This DECISIVE test:
+        # does the spiking bridge PRESERVE the PPMI structure (vs the prior log-drive +0.155)? The per-concept
+        # + per-hub normalizations are host-computed here as the cheap-first de-risk; a GO greenlights their
+        # neural realization (the per-hub already exists as input_mean_adapt; the per-concept = a divisive-norm
+        # circuit).
+        from research.runners.learned_graded_cortex_fair_test import ppmi_matrix
+        C_drive = ppmi_matrix(C, args.host_alpha)
+    elif args.log_drive:
         # LOGARITHMIC (Weber-Fechner) input compression: drive ~ log1p(count). Compresses the wide-dynamic-
         # range count vector (130x) into a ~5x range so BOTH the high-count common hubs AND the low-count
         # category hubs fire in a representable band (neither saturates nor falls below rheobase) -- the
@@ -286,6 +297,10 @@ def main():
     p.add_argument("--log-drive", action="store_true",
                    help="LOGARITHMIC (Weber-Fechner) input compression: drive ~ log1p(count) -- compresses the "
                         "wide-dynamic-range counts so both common AND category hubs fire (the threshold-silencing fix)")
+    p.add_argument("--ppmi-drive", action="store_true",
+                   help="PPMI drive (CYCLE-88): per-concept + per-hub marginal-normalized log-ratio. Reaches host "
+                        "(+0.50) + generalizes in numpy where log-drive plateaus (+0.155). DECISIVE bridge test: "
+                        "does the spiking substrate PRESERVE the PPMI structure?")
     p.add_argument("--window", type=int, default=20); p.add_argument("--settle", type=int, default=6)
     p.add_argument("--warmup", type=int, default=2, help="warm-up passes over all concepts (EMA convergence)")
     # gain
