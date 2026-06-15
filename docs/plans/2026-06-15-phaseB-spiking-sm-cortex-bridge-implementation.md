@@ -91,7 +91,16 @@ workable band. **Step 4 — run, expect pass. Step 5 — commit.**
 
 ---
 
-### Task 3: HARD GATE — the trained cortex recovers structure (learning + centering + STDP, all at once)
+> **Roadblock note (CYCLE 60, 2026-06-15):** Task 2's mechanical attempt revealed the deeper Task-3 problem
+> is NOT just centering — naive hub-drive-only STDP **net-depresses** and **silences** the cortex (the
+> silent-target / STDP-depression trap; risk #2). Task 3 must therefore incorporate a **competitive-STDP**
+> mechanism so the cortex FIRES and DIFFERENTIATES without collapsing — per the deep-research
+> (`2026-06-15-bridge-competitive-stdp-deep-research.md`): expect lateral-inhibition winner-take-all (FS
+> interneurons) + per-neuron adaptive thresholds/homeostasis + a firing-enabling coupling (NOT a
+> content-injecting teacher — that would be a cheat) + possibly phasic drive. The builder gains an FS/WTA
+> region + adaptive-threshold config; `read_codes`/`train_sm_cortex` stay.
+
+### Task 3: HARD GATE — the trained cortex recovers structure (competitive STDP: fire + differentiate + centering, all at once)
 
 **Files:** modify `research/runners/spiking_sm_cortex.py`; test `tests/test_spiking_sm_cortex.py`.
 
