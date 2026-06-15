@@ -9,7 +9,12 @@ os.environ["SIM_BACKEND"] = "numpy"  # CPU-only, set BEFORE importing the runner
 import numpy as np
 import pytest
 
-from research.runners.dendritic_d1_learn_graded_structure_derisk import effective_rank
+from research.runners.dendritic_d1_learn_graded_structure_derisk import (
+    _cos_sim,
+    _pearson_vs_Strue,
+    build_concept_hub_counts,
+    effective_rank,
+)
 from research.runners.spiking_sm_cortex import (
     build_sm_cortex_bridge,
     encode_drive,
@@ -56,12 +61,17 @@ def test_build_and_encode():
 
 
 @pytest.mark.xfail(
-    reason="Task-2 BLOCKER (rigorously isolated 2026-06-15): naive hub-drive-only STDP NET-DEPRESSES the "
-    "plastic hub->cortex weights (the silent-target / STDP-depression trap) -> the cortex is silent at read "
-    "time so codes.sum()==0. The train/read MACHINERY is correct (weights DO move; a no-train read fires); "
-    "the fix is the competitive-STDP mechanism (lateral-inhibition WTA + adaptive thresholds, Diehl-Cook) "
-    "under deep research (2026-06-15-bridge-competitive-stdp-deep-research.md). Remove this xfail when the "
-    "Task-3 competitive mechanism lands and the cortex fires at read.",
+    reason="Stays XFAIL under the DEFAULT builder (no C1a WTA / co-fire). Root cause re-diagnosed in Task 3 "
+    "(2026-06-15): the Task-2 collapse was NOT a net-depression -- the deeper cause is that "
+    "bridge._run_one_simulation_step() does NOT advance current_time_ms, so every spike was stamped t=0, "
+    "delta_t==0, and STDP was a total NO-OP (weights frozen exactly, not depressed). Task 3 fixes that at "
+    "the runner level (train/read now advance the clock via _step_with_time -- NO sim/ edit). But the "
+    "DEFAULT weight_mean=0.05 hub->cortex pathway is FAR too weak to ever fire the cortex (0 cortex spikes "
+    "-> STDP has no post-spike to pair -> weights still do not move AND codes.sum()==0). Firing the cortex "
+    "needs the C1a regime (strong hub weight + WTA + co-fire), which test_trained_cortex_recovers_structure "
+    "exercises. So this default-builder smoke remains XFAIL; the C1a path is validated (cortex fires, STDP "
+    "engages, weights rise) in the HARD GATE test's collapse-guard. See "
+    "2026-06-15-bridge-competitive-stdp-deep-research.md.",
     strict=False,
 )
 def test_train_read_machinery():
@@ -69,8 +79,9 @@ def test_train_read_machinery():
     returns a non-degenerate [Nc x n_cortex] spike-count code matrix with the cortex actually firing.
 
     Tiny synthetic case (16 concepts x 80 hubs, n_cortex=32) so it runs in a few seconds on numpy.
-    NO structure claim here -- only that the train/read plumbing works. Currently XFAIL: the cortex is
-    silenced by the STDP-depression trap before read (see the marker above).
+    NO structure claim here -- only that the train/read plumbing works. Stays XFAIL under the DEFAULT
+    builder: the weak (weight_mean=0.05) hub->cortex pathway never fires the cortex without the C1a
+    WTA + co-fire regime, so codes.sum()==0 and STDP (now correctly clocked) has no post-spike to pair.
     """
     n_concepts, n_hub, n_cortex = 16, 80, 32
 
@@ -108,3 +119,160 @@ def test_train_read_machinery():
 
     # read_codes must RESTORE the gate to full plasticity afterward.
     assert bridge._plasticity_gate_values["hub_to_cortex"] == 1.0
+
+
+# ---------------------------------------------------------------------------
+# Task 3 (option C1a) HARD GATE: competitive-STDP (WTA + fast homeostasis + co-fire).
+# ---------------------------------------------------------------------------
+def _build_synth_64():
+    """The synthetic 64-concept case with a STRONG common mode (host PPMI+SVD ceiling ~0.96).
+
+    n_cat=8, per_cat=8, n_common=200 (the common mode that swamps raw profiles), n_sig_per_cat=12.
+    Mirrors the calibration in dendritic_d1_learn_graded_structure_derisk / the deep-research (a real
+    host ceiling: raw-profile Pearson ~0.05, PPMI+SVD ceiling ~0.96). Returns (C, labels, S_true).
+    """
+    C, labels, S_true, _hub_freq = build_concept_hub_counts(
+        n_cat=8, per_cat=8, n_common=200, n_sig_per_cat=12,
+        lam_common=40.0, lam_sig=4.0, lam_bg=0.3, seed=42,
+    )
+    return C, labels, S_true
+
+
+# C1a tuned recipe (frozen after the tuning grid in this session). All config/runner-level; NO sim/ edits.
+_C1A = dict(
+    n_cortex=128,
+    seed=42,
+    # WTA: cortex with 20% inhibitory neurons + dense internal E->I->E + strong inhibition.
+    cortex_exc_fraction=0.8,
+    cortex_internal_density=0.5,
+    cortex_inh_weight_mean=6.0,
+    # fast adaptive-threshold homeostasis (Diehl-Cook theta): ~100x the slow nav defaults.
+    homeostasis_ema_alpha=0.05,
+    homeostasis_threshold_adapt_rate=0.03,
+    # training / read protocol
+    n_epochs=8,
+    drive_scale=12.0,
+    cofire_pA=4.0,
+    window=40,
+    settle=8,
+)
+
+
+def _read_c1a(bridge, C_drive, hub_idx, cortex_idx):
+    return read_codes(
+        bridge, C_drive, hub_idx, cortex_idx,
+        drive_scale=_C1A["drive_scale"], window=_C1A["window"], settle=_C1A["settle"],
+    )
+
+
+@pytest.mark.xfail(
+    reason="Task-3 HARD GATE C1a outcome = PARTIAL/COLLAPSE (honest, decision-relevant; 2026-06-15). The "
+    "C1a competitive-STDP machinery WORKS and is validated by this test's own collapse-guard: the cortex "
+    "FIRES (silent_frac~0.12 < 0.5, eff_rank~13.5 > 1.0) and the hub->cortex STDP ENGAGES (mean weight "
+    "trajectory RISES 0.05->0.46, NOT a geometric decay to the floor) -- this CURES the Task-2 silent-target "
+    "trap. Root cause of the Task-2 collapse was found + fixed at the runner level (NO sim/ edit): "
+    "bridge._run_one_simulation_step() does NOT advance current_time_ms, so every spike was stamped t=0, "
+    "delta_t==0, and STDP was a total NO-OP; the train/read loops now advance the clock (_step_with_time). "
+    "BUT the structure is NOT recovered: trained Pearson(cos(codes),S_true) ~ -0.07 (NEGATIVE), it does NOT "
+    "beat the random-projection control (margin ~ -0.07 < +0.10), and a 36-cell tuning grid "
+    "(weight_mean/drive/cofire/inhibition) + a 24-epoch run never reached positive structure -- the spiking "
+    "hub->cortex transformation DESTROYS the input's category structure (which IS present: rate-level "
+    "log-input cosine Pearson +0.89). This is the deep-research's pre-registered risk #1/#2/#6 outcome "
+    "(2026-06-15-bridge-competitive-stdp-deep-research.md): point-neuron WTA cannot remove the common mode "
+    "at the spike level (Mikulasch-Priesemann), so C1a alone under-recovers -> a guarded sim/ edit (C1b: "
+    "post-triggered STDP or synaptic-scaling renormalization) is warranted, a CONTROLLER decision. The "
+    "permuted control is clean (~0). The collapse-guard + random-proj + permuted assertions below are all "
+    "real; the test xfails ONLY on the structure bar.",
+    strict=False,
+)
+def test_trained_cortex_recovers_structure():
+    """HARD GATE (C1a): WTA + fast homeostasis + a non-specific co-fire drive let the bridge cortex
+    LEARN, UNSUPERVISED, a code that recovers the synthetic category structure, beating an untrained
+    random-projection, WITHOUT collapsing to silence.
+
+    Multi-check (the contrast IS the result):
+      (a) structure:   Pearson(cos(codes), S_true)         >= +0.30
+      (b) load-bearing: trained - random_proj               >= +0.10
+      (c) NOT-silent:   mean(codes.sum(1)==0) < 0.5  AND  effective_rank(codes) > 1.0
+      (d) permuted:     Pearson(cos(codes), S_perm)         ~ 0  (|.| <= 0.15)
+
+    Unsupervised: the ONLY concept-specific signal is the hub drive (the environment's sensory input);
+    the co-fire drive is UNIFORM across cortex neurons (carries no per-concept info). No per-concept
+    target code is EVER injected.
+    """
+    C, labels, S_true = _build_synth_64()
+    C_drive = encode_drive(C)  # log1p Weber-Fechner compression
+    n_hub = C.shape[1]
+
+    # --- TRAINED cortex (C1a: WTA + fast homeostasis + co-fire) ---
+    bridge, hub_idx, cortex_idx = build_sm_cortex_bridge(
+        n_hub=n_hub, n_cortex=_C1A["n_cortex"], seed=_C1A["seed"],
+        cortex_exc_fraction=_C1A["cortex_exc_fraction"],
+        cortex_internal_density=_C1A["cortex_internal_density"],
+        cortex_inh_weight_mean=_C1A["cortex_inh_weight_mean"],
+        homeostasis_ema_alpha=_C1A["homeostasis_ema_alpha"],
+        homeostasis_threshold_adapt_rate=_C1A["homeostasis_threshold_adapt_rate"],
+    )
+    hub_idx = np.asarray(hub_idx)
+    cortex_idx = np.asarray(cortex_idx)
+
+    w_traj = train_sm_cortex(
+        bridge, C_drive, hub_idx, cortex_idx,
+        n_epochs=_C1A["n_epochs"], drive_scale=_C1A["drive_scale"],
+        window=_C1A["window"], settle=_C1A["settle"],
+        cofire_pA=_C1A["cofire_pA"], record_weight_trajectory=True,
+    )
+    codes = _read_c1a(bridge, C_drive, hub_idx, cortex_idx)
+
+    # --- UNTRAINED random-projection control on the IDENTICAL pipeline (learning load-bearing) ---
+    # A fresh C1a bridge built but NOT trained -> its hub->cortex weights are the random init; read
+    # codes through the same WTA+homeostasis read pipeline. If "structure" survived an untrained
+    # projection, it would be a projection artifact, not learning.
+    rp_bridge, rp_hub, rp_cortex = build_sm_cortex_bridge(
+        n_hub=n_hub, n_cortex=_C1A["n_cortex"], seed=_C1A["seed"] + 1000,
+        cortex_exc_fraction=_C1A["cortex_exc_fraction"],
+        cortex_internal_density=_C1A["cortex_internal_density"],
+        cortex_inh_weight_mean=_C1A["cortex_inh_weight_mean"],
+        homeostasis_ema_alpha=_C1A["homeostasis_ema_alpha"],
+        homeostasis_threshold_adapt_rate=_C1A["homeostasis_threshold_adapt_rate"],
+    )
+    rp_codes = _read_c1a(rp_bridge, C_drive, np.asarray(rp_hub), np.asarray(rp_cortex))
+
+    # --- metrics ---
+    pearson = _pearson_vs_Strue(_cos_sim(codes), S_true)
+    rp_pearson = _pearson_vs_Strue(_cos_sim(rp_codes), S_true)
+    silent_frac = float(np.mean(codes.sum(1) == 0))
+    eff_rank = effective_rank(codes)
+    rng = np.random.RandomState(20260615)
+    perm = rng.permutation(labels)
+    S_perm = (perm[:, None] == perm[None, :]).astype(np.float64)
+    perm_pearson = _pearson_vs_Strue(_cos_sim(codes), S_perm)
+
+    print(
+        f"\n[C1a HARD GATE] structure Pearson={pearson:+.3f}  random-proj Pearson={rp_pearson:+.3f}  "
+        f"(margin {pearson - rp_pearson:+.3f})  silent_frac={silent_frac:.3f}  eff_rank={eff_rank:.1f}  "
+        f"permuted={perm_pearson:+.3f}",
+        flush=True,
+    )
+    if w_traj is not None:
+        head = w_traj[:3]
+        tail = w_traj[-3:]
+        print(
+            f"[C1a HARD GATE] hub->cortex mean-weight trajectory: start {head} ... end {tail} "
+            f"(min {min(w_traj):.3f}, max {max(w_traj):.3f}) -- a collapse-to-floor would geometric-decay",
+            flush=True,
+        )
+
+    # (c) NOT-SILENT collapse-guard (the new load-bearing anti-cheat) -- assert FIRST so a silence
+    # failure reports the cured/not-cured state distinctly from a structure shortfall.
+    assert silent_frac < 0.5, f"cortex mostly silent: {silent_frac:.3f} of concepts have no cortex spikes"
+    assert eff_rank > 1.0, f"codes degenerate (effective rank {eff_rank:.2f} <= 1)"
+    # (a) structure
+    assert pearson >= 0.30, f"structure Pearson {pearson:+.3f} < +0.30"
+    # (b) learning load-bearing vs random projection
+    assert pearson - rp_pearson >= 0.10, (
+        f"learning not load-bearing: trained {pearson:+.3f} vs random-proj {rp_pearson:+.3f} "
+        f"(margin {pearson - rp_pearson:+.3f} < +0.10)"
+    )
+    # (d) permuted control ~ 0
+    assert abs(perm_pearson) <= 0.15, f"permuted Pearson {perm_pearson:+.3f} not ~0 (code-overlap meaning-independent?)"
