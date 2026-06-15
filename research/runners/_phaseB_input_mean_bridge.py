@@ -88,6 +88,10 @@ def build_input_mean_bridge(
     gain=1.0,
     adapt=True,         # if False, NO region is flagged -> the POINT / no-centering control (m never exists).
     stdp_w_max=2000.0,
+    enable_ei=False,    # E/I signed projection: add an INHIBITORY hub->cortex pathway alongside the excitatory
+                        # one so cortex drive = g_e(W_exc) - g_i(W_inh) = SIGNED (the de-risked fix for the
+                        # excitatory-only projection-sign collapse, _phaseB_projection_sign_derisk.py).
+    ei_inh_weight=None, # inhibitory hub->cortex weight (default = w_mean); tune to balance g_e vs g_i.
 ):
     """Build the per-hub-adapting ON/OFF cortex bridge. Returns (bridge, idx_dict).
 
@@ -118,6 +122,26 @@ def build_input_mean_bridge(
         RegionPathway(from_region="hub_off", to_region="cortex_off", density=hub_to_cortex_density,
                       weight_mean=w_mean, weight_jitter=w_jitter, plastic=True, plasticity_gate="proj_off"),
     ]
+    if enable_ei:
+        # E/I signed projection: INHIBITORY hub copies (same drive + same input-mean adaptation as the
+        # excitatory hubs -> they fire ~ relu(x-m) too) project an INDEPENDENT random inhibitory weight set
+        # to the cortex, so each cortex neuron's effective receptive field = W_exc - W_inh = SIGNED. This is
+        # the biologically-canonical E/I-balanced random projection that carries the axis-0-centered signal a
+        # purely-excitatory (Dale's-law) projection collapses (_phaseB_projection_sign_derisk.py: exc-only
+        # +0.04 -> E/I +0.26-0.30). exc_fraction=0.0 = an all-inhibitory population (projects g_i).
+        wi = float(w_mean if ei_inh_weight is None else ei_inh_weight)
+        cfg.brain_regions += [
+            BrainRegion(name="hub_on_inh", n_neurons=n_hub, exc_fraction=0.0, internal_density=0.0,
+                        plastic_internal=False, input_mean_adapt=bool(adapt)),
+            BrainRegion(name="hub_off_inh", n_neurons=n_hub, exc_fraction=0.0, internal_density=0.0,
+                        plastic_internal=False, input_mean_adapt=bool(adapt)),
+        ]
+        cfg.region_pathways += [
+            RegionPathway(from_region="hub_on_inh", to_region="cortex_on", density=hub_to_cortex_density,
+                          weight_mean=wi, weight_jitter=w_jitter, plastic=False),
+            RegionPathway(from_region="hub_off_inh", to_region="cortex_off", density=hub_to_cortex_density,
+                          weight_mean=wi, weight_jitter=w_jitter, plastic=False),
+        ]
 
     cfg.dt = 1.0
     cfg.dt_ms = 1.0
@@ -161,13 +185,19 @@ def _set_onoff_drive(bridge, idx, drive_row, drive_scale):
     drive = (np.asarray(drive_row, np.float64) * float(drive_scale)).astype(np.float32)
     bridge.cp_external_input_current[:] = 0.0
     is_cupy = type(bridge.cp_external_input_current).__module__.startswith("cupy")
-    on_i = np.asarray(idx["hub_on"]); off_i = np.asarray(idx["hub_off"])
-    if is_cupy:
-        bridge.cp_external_input_current[xp.asarray(on_i)] = xp.asarray(drive)
-        bridge.cp_external_input_current[xp.asarray(off_i)] = xp.asarray(-drive)
-    else:
-        bridge.cp_external_input_current[on_i] = drive
-        bridge.cp_external_input_current[off_i] = -drive
+    # Every ON hub (hub_on AND, with E/I, hub_on_inh) gets +drive; every OFF hub gets -drive. The inhibitory
+    # copies receive the IDENTICAL drive + input-mean adaptation as their excitatory counterparts -> they
+    # fire ~ relu(x-m) too, and project g_i (the E/I signed projection).
+    for key in ("hub_on", "hub_on_inh"):
+        if key in idx:
+            ii = np.asarray(idx[key])
+            bridge.cp_external_input_current[xp.asarray(ii) if is_cupy else ii] = (
+                xp.asarray(drive) if is_cupy else drive)
+    for key in ("hub_off", "hub_off_inh"):
+        if key in idx:
+            ii = np.asarray(idx[key])
+            bridge.cp_external_input_current[xp.asarray(ii) if is_cupy else ii] = (
+                xp.asarray(-drive) if is_cupy else -drive)
 
 
 def _freeze_all_gates(bridge, value):
@@ -302,7 +332,8 @@ def run_seed(seed, args, C, labels, S_true):
     t0 = time.time()
 
     bp = dict(n_hub=n_hub, n_cortex=args.n_cortex, hub_to_cortex_density=args.density, w_mean=args.w_mean,
-              gain=args.gain)
+              gain=args.gain, enable_ei=bool(getattr(args, "enable_ei", False)),
+              ei_inh_weight=getattr(args, "ei_inh_weight", None))
     rp = dict(drive_scale=args.drive_scale, window=args.window, settle=args.settle)
     # STREAMING uses a (possibly shorter) window -- the EMA just needs each presentation's mean drive, not a
     # long spike-count read -- with the slow per-step alpha matched to THAT window (alpha was derived from the
@@ -413,6 +444,12 @@ def main():
                         "rate is unchanged.")
     p.add_argument("--settle", type=int, default=8)
     p.add_argument("--gain", type=float, default=1.0)
+    p.add_argument("--enable-ei", action="store_true",
+                   help="E/I signed projection: add an inhibitory hub->cortex pathway alongside the excitatory "
+                        "one (cortex drive = g_e - g_i = signed) -- the de-risked fix for the excitatory-only "
+                        "projection-sign collapse.")
+    p.add_argument("--ei-inh-weight", type=float, default=None,
+                   help="inhibitory hub->cortex weight_mean (default = --w-mean); tune to balance g_e vs g_i.")
     p.add_argument("--host-gain", type=float, default=500.0)
     p.add_argument("--epochs", type=int, default=12, help="streaming epochs (the EMA convergence horizon)")
     p.add_argument("--alpha", type=float, default=None,
