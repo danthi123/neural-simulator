@@ -188,6 +188,19 @@ no-confab bar is intact end-to-end on the stream-learned cortex.
 → its population Hebbian synapses learn the cortex → the codes bind into facts → who/what recall +
 the abstention moat.** No preprocessing, no curated concepts.
 
+## Next-arc cheap-first: 320-concept stream-scaling feasibility
+
+A cheap CPU de-risk of scaling the stream cortex from 64 to the 320-concept production tier: **feasible
+on frequency, gated on the semantic taxonomy.** TinyStories has 7948 distinct word types; **633 content
+words at freq ≥ 200, 284 of the existing g20 320-vocab (89%) above the proven learnability floor**
+(freq ≥ 50; the 64-tier's least-frequent concept fired 48×); the g20 vocab is 98% corpus-present (only
+4 never appear: false/narrow/north/south). So frequency is **not** the limiter. The limiter is a
+**320-word *semantic* taxonomy** for the `S_true` ground truth: the 8×8 taxonomy's categories are
+semantic (animal/food/…), but g20's are grammatical (noun/verb/adj/spatial/functional) — a different
+structure. ⇒ scaling needs a curated 40×8 corpus-grounded *semantic* taxonomy (the categorizable
+subset of the ~633 frequent content words), then the (long) GPU stream-run. This is the next arc's
+opening task; deferred from this long session's tail to avoid a rushed heavy build.
+
 Runner: `research/runners/_phaseB_stdp_cooccurrence_derisk.py` (GPU; CuPy; `--n-per` for the
 population). Raw: `research/findings/raw/_phaseB_stdp_cooccurrence.json`,
 `_phaseB_hebbian_cooc_6seed.log`, `_phaseB_hebbian_pop_sweep.log`.
