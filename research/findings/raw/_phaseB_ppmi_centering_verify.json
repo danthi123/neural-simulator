@@ -1,0 +1,102 @@
+{
+  "host": 0.44192576313430393,
+  "ppmi_centered": 0.518,
+  "ppmi_uncentered": 0.502,
+  "log_centered": 0.17899999999999996,
+  "col_only": 0.17899999999999996,
+  "row_only": 0.53,
+  "online_centering": 0.51,
+  "batch_centering": 0.518,
+  "generalization": 0.859375,
+  "chance": 0.125,
+  "permuted": -0.008666666666666668,
+  "per_seed": [
+    {
+      "seed": 42,
+      "host": 0.44192576313430393,
+      "grid": {
+        "raw": [
+          0.197,
+          0.166
+        ],
+        "log": [
+          0.124,
+          0.179
+        ],
+        "ppmi": [
+          0.502,
+          0.518
+        ]
+      },
+      "ppmi_pieces": {
+        "log_only": 0.183,
+        "col_only(per-hub)": 0.179,
+        "row_only(per-concept)": 0.53,
+        "ppmi_full": 0.518
+      },
+      "online": 0.509,
+      "batch": 0.518,
+      "gen": 0.859375,
+      "chance": 0.125,
+      "permuted": -0.034
+    },
+    {
+      "seed": 43,
+      "host": 0.44192576313430393,
+      "grid": {
+        "raw": [
+          0.197,
+          0.166
+        ],
+        "log": [
+          0.124,
+          0.179
+        ],
+        "ppmi": [
+          0.502,
+          0.518
+        ]
+      },
+      "ppmi_pieces": {
+        "log_only": 0.183,
+        "col_only(per-hub)": 0.179,
+        "row_only(per-concept)": 0.53,
+        "ppmi_full": 0.518
+      },
+      "online": 0.511,
+      "batch": 0.518,
+      "gen": 0.859375,
+      "chance": 0.125,
+      "permuted": -0.009
+    },
+    {
+      "seed": 44,
+      "host": 0.44192576313430393,
+      "grid": {
+        "raw": [
+          0.197,
+          0.166
+        ],
+        "log": [
+          0.124,
+          0.179
+        ],
+        "ppmi": [
+          0.502,
+          0.518
+        ]
+      },
+      "ppmi_pieces": {
+        "log_only": 0.183,
+        "col_only(per-hub)": 0.179,
+        "row_only(per-concept)": 0.53,
+        "ppmi_full": 0.518
+      },
+      "online": 0.51,
+      "batch": 0.518,
+      "gen": 0.859375,
+      "chance": 0.125,
+      "permuted": 0.017
+    }
+  ]
+}

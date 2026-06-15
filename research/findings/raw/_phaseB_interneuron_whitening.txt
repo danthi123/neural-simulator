@@ -1,0 +1,35 @@
+[interneuron whitening de-risk] seeds=(42, 43, 44) M=64 P-sweep=(4, 8, 16, 32) -- does a small interneuron population (count=rank) reach the off-diagonal ceiling on REAL where the somatic lateral collapses?
+
+[interneuron seed 42] 64c x 500h | host +0.442 | offline ZCA rank-8 +0.497 | diagonal(centering) +0.518 | somatic SM +0.336 | raw projection +0.321
+    P=  4 interneurons: +0.321 (eff-rank 33.2)
+    P=  8 interneurons: +0.321 (eff-rank 33.2)
+    P= 16 interneurons: +0.321 (eff-rank 33.2)
+    P= 32 interneurons: +0.321 (eff-rank 33.2)
+    [anti-cheat] best P=4: lesion(L=0) +0.321 (= raw +0.321); permuted -0.016
+
+[interneuron seed 43] 64c x 500h | host +0.442 | offline ZCA rank-8 +0.497 | diagonal(centering) +0.518 | somatic SM +0.344 | raw projection +0.287
+    P=  4 interneurons: +0.287 (eff-rank 32.8)
+    P=  8 interneurons: +0.287 (eff-rank 32.8)
+    P= 16 interneurons: +0.287 (eff-rank 32.8)
+    P= 32 interneurons: +0.287 (eff-rank 32.8)
+    [anti-cheat] best P=4: lesion(L=0) +0.287 (= raw +0.287); permuted +0.007
+
+[interneuron seed 44] 64c x 500h | host +0.442 | offline ZCA rank-8 +0.497 | diagonal(centering) +0.518 | somatic SM +0.334 | raw projection +0.267
+    P=  4 interneurons: +0.267 (eff-rank 32.8)
+    P=  8 interneurons: +0.267 (eff-rank 32.8)
+    P= 16 interneurons: +0.267 (eff-rank 32.8)
+    P= 32 interneurons: +0.267 (eff-rank 32.8)
+    [anti-cheat] best P=4: lesion(L=0) +0.267 (= raw +0.267); permuted +0.007
+
+================================================================================================
+  MEAN (3 seeds): host +0.442 | offline ZCA rank-8 +0.497 | diagonal +0.518 | somatic SM +0.338 | raw projection +0.291
+    P=  4 interneurons: +0.292 (eff-rank 32.9)
+    P=  8 interneurons: +0.292 (eff-rank 32.9)
+    P= 16 interneurons: +0.292 (eff-rank 32.9)
+    P= 32 interneurons: +0.292 (eff-rank 32.9)
+  anti-cheat: lesion(L=0) +0.291 (= raw +0.291); permuted -0.001
+================================================================================================
+  NEGATIVE: even the interneuron net (best P=4, +0.292) does NOT clearly beat the somatic SM (+0.338) -- the interneuron-count-as-rank mechanism doesn't crack the off-diagonal on real either; escalate to the dendritic predictive-coding spec (the deep-research in flight).
+  Total elapsed: 26.3s
+
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_phaseB_interneuron_whitening.json

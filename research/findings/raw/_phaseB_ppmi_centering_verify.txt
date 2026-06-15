@@ -1,0 +1,39 @@
+[PPMI+centering SKEPTICAL verify] seeds=(42, 43, 44) -- is the +0.518 (PPMI+centering, local) real, online, generalizing -- meaning the off-diagonal is NOT the wall?
+
+[ppmi-centering verify seed 42] 64c x 500h | host PPMI+SVD +0.442
+    raw  : uncentered +0.197 | centered +0.166
+    log  : uncentered +0.124 | centered +0.179
+    ppmi : uncentered +0.502 | centered +0.518
+    PPMI pieces (centered): log_only +0.183 | col_only(per-hub) +0.179 | row_only(per-concept) +0.530 | ppmi_full +0.518
+    online running-mean centering(PPMI) +0.509 vs batch +0.518
+    centered-PPMI generalization 0.859 (chance 0.125)
+    [anti-cheat] permuted -0.034 (~0)
+
+[ppmi-centering verify seed 43] 64c x 500h | host PPMI+SVD +0.442
+    raw  : uncentered +0.197 | centered +0.166
+    log  : uncentered +0.124 | centered +0.179
+    ppmi : uncentered +0.502 | centered +0.518
+    PPMI pieces (centered): log_only +0.183 | col_only(per-hub) +0.179 | row_only(per-concept) +0.530 | ppmi_full +0.518
+    online running-mean centering(PPMI) +0.511 vs batch +0.518
+    centered-PPMI generalization 0.859 (chance 0.125)
+    [anti-cheat] permuted -0.009 (~0)
+
+[ppmi-centering verify seed 44] 64c x 500h | host PPMI+SVD +0.442
+    raw  : uncentered +0.197 | centered +0.166
+    log  : uncentered +0.124 | centered +0.179
+    ppmi : uncentered +0.502 | centered +0.518
+    PPMI pieces (centered): log_only +0.183 | col_only(per-hub) +0.179 | row_only(per-concept) +0.530 | ppmi_full +0.518
+    online running-mean centering(PPMI) +0.510 vs batch +0.518
+    centered-PPMI generalization 0.859 (chance 0.125)
+    [anti-cheat] permuted +0.017 (~0)
+
+================================================================================================
+  MEAN (3 seeds): host +0.442
+  PPMI centered +0.518 (uncentered +0.502) | log centered +0.179
+  PPMI pieces (centered): col-only(per-hub) +0.179 | row-only(per-concept) +0.530
+  online running-mean centering +0.510 vs batch +0.518 | generalization 0.859 (chance 0.125) | permuted -0.009
+================================================================================================
+  GO (the off-diagonal is NOT the wall): PPMI + per-feature CENTERING reaches +0.518 >= host +0.442 -- HIGHER than the whitened rank-8 ZCA (+0.497) -- with ONLINE-LOCAL running-mean centering matching the batch (+0.510 vs +0.518), real generalization (0.859 vs chance 0.125), permuted-clean (-0.009). ==> the functional cortex needs LOCAL NORMALIZATION (a PPMI-equivalent encoding: log + per-hub + per-concept marginal subtraction, all local) + per-feature centering (the shipped input_mean_adapt) -- NOT the off-diagonal cross-neuron decorrelation, NOT a dendrite-plus-lateral build. The whitening pursuit OVER-processed; the prior bridge +0.155 was a LOG-input artifact. The build = a PPMI-equivalent point-neuron encoding on the bridge. MAJOR simplification -- verify next on the bridge with PPMI-shaped drive.
+  Total elapsed: 8.4s
+
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_phaseB_ppmi_centering_verify.json
