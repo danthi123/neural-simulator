@@ -2484,7 +2484,8 @@ class SimulationBridge:
 
         # GRADED (analog, non-spiking) per-synapse routing mask (2026-06-15). True for synapses of any
         # pathway tagged graded=True; the per-step graded block drives those synapses from the SOURCE's
-        # continuous activity (normalized g_e), not its spikes, and removes them from the spike matvec.
+        # continuous MEMBRANE potential a_cont = clip((v-rest)/scale,0,1), not its spikes, and removes them
+        # from the spike matvec.
         # Aligned with cp_connections.data order via the same (pre, post)-sorted `keyed` list (graded is
         # keyed[8]). Built only when at least one pathway sets graded=True (NO config flag -- the pathway
         # flag alone is the opt-in, like the transmission_gate precedent; else None -> the new step block

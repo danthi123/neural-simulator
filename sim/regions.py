@@ -705,8 +705,8 @@ class RegionManager:
             # AMPA component KEPT (plateau is additive). Default False = no coincidence routing.
             "coincidence_detector": bool(getattr(pw, "coincidence_detector", False)),
             # Per-pathway GRADED (analog, non-spiking) transmission flag (2026-06-15): True => this pathway's
-            # synapses transmit from the SOURCE's continuous activity (normalized g_e), not its spikes (the
-            # retina's horizontal-cell graded release). Default False = spike-mediated (byte-identical).
+            # synapses transmit from the SOURCE's continuous MEMBRANE potential, a_cont = clip((v-rest)/scale,0,1),
+            # not its spikes (the retina's horizontal-cell graded release). Default False = spike-mediated (byte-identical).
             "graded": bool(getattr(pw, "graded", False)),
         }
 
