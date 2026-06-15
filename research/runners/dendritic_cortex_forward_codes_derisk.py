@@ -204,14 +204,17 @@ def run_seed(seed, args):
           f"eff-rank={dend_rank:.1f}  silent={dend_silent:.2f}  ({time.time()-t0:.1f}s)", flush=True)
     print(f"  [POINT-NEURON OFF]   Pearson={pn_p:+.3f}  gen={pn_gen:.3f}", flush=True)
 
-    # anti-cheats
+    # anti-cheats. ONE shuffle of the labels (the prior code shuffled twice -> not a valid permuted-label
+    # matrix); both the dendritic AND the point-neuron codes are scored against it (must collapse to ~0).
     rng = np.random.RandomState(seed * 2718281 + 3)
-    S_perm = (rng.permutation(labels)[:, None] == rng.permutation(labels)[None, :]).astype(np.float64)
-    dend_perm = _pearson_vs_Strue(_cos_sim(dend_codes), S_true if False else S_perm)
+    perm = rng.permutation(labels)
+    S_perm = (perm[:, None] == perm[None, :]).astype(np.float64)
+    dend_perm = _pearson_vs_Strue(_cos_sim(dend_codes), S_perm)
+    pn_perm = _pearson_vs_Strue(_cos_sim(pn_codes), S_perm)
     lesion_codes = codes_for(enable_gain=True, sigma=1e6)   # gain ~1 -> collapses to point-neuron
     lesion_p = _pearson_vs_Strue(_cos_sim(lesion_codes), S_true)
-    print(f"  [anti-cheat] permuted-S Pearson={dend_perm:+.3f} (~0)  lesion(sigma=1e6) Pearson={lesion_p:+.3f} "
-          f"(-> ~point-neuron {pn_p:+.3f})", flush=True)
+    print(f"  [anti-cheat] dend permuted-S={dend_perm:+.3f}  PN permuted-S={pn_perm:+.3f} (both ~0)  "
+          f"lesion(sigma=1e6) Pearson={lesion_p:+.3f} (-> ~point-neuron {pn_p:+.3f})", flush=True)
 
     point_neuron_fails = abs(pn_p) <= args.pn_fail_bar
     host_carries = host_pearson >= args.host_bar
@@ -226,7 +229,8 @@ def run_seed(seed, args):
     return {"seed": seed, "n_concepts": Nc, "n_hub": n_hub, "host_ceiling_pearson": host_pearson,
             "host_carries": bool(host_carries), "dend_pearson": dend_p, "pn_pearson": pn_p,
             "dend_gen": dend_gen, "pn_gen": pn_gen, "chance": chance,
-            "permuted_pearson": dend_perm, "lesion_pearson": lesion_p, "gates": gates}
+            "permuted_pearson": dend_perm, "pn_permuted_pearson": pn_perm,
+            "lesion_pearson": lesion_p, "gates": gates}
 
 
 def decide_verdict(per_seed, seeds, args):
