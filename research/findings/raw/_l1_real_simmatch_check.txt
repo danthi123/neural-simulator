@@ -1,0 +1,24 @@
+[L1 fair-test] seeds=[42] smoke=False real_corpus=True n_hub=500 k=64 epochs=150 reach_frac=0.7
+
+================================================================================================
+  L1 FAIR-TEST (seed 42)  --  PPMI-input + similarity-matching vs host PPMI+SVD
+================================================================================================
+  64 concepts x 500 hubs;  HOST PPMI+SVD(k=50,a=0.75)=+0.442  (margin +0.124, nn-same 0.734)
+  reference: cos(PPMI rows) full-rank=+0.502  |  offline PPMI+PCA(k=64)=+0.518  (the OFFLINE similarity-matching optimum ~= host)
+  [arms: online similarity-matching (k=64, 150 epochs) + faithful saturating control]
+    [SIMMATCH_PPMI   ] Pearson(S,S_true)=+0.296  gen=0.703 (chance 0.125)  offdiag-cos=+0.949  eff-rank=4.8
+    [simmatch convergence] ep30:+0.310  ep60:+0.345  ep90:+0.338  ep120:+0.319  ep150:+0.296
+    [SIMMATCH_RAW    ] Pearson(S,S_true)=+0.194  gen=0.547 (chance 0.125)  offdiag-cos=+0.992  eff-rank=2.3
+    [SIMMATCH_LOG    ] Pearson(S,S_true)=+0.088  gen=0.250 (chance 0.125)  offdiag-cos=+1.000  eff-rank=1.2
+    [A_SAT_RAW       ] Pearson(S,S_true)=+0.000  gen=0.188 (chance 0.125)  offdiag-cos=+1.000  eff-rank=1.0
+    [saturation signature] Pearson(|W|-profile, count-profile)=+0.000  (uniform blob ~ small)
+  [anti-cheat] SIMMATCH_PPMI permuted-similarity Pearson=-0.025 (~0)
+  [seed 42 gates] {'host_carries': True, 'A_saturating_fails': True, 'simmatch_reaches_ceiling': False, 'simmatch_generalizes': True, 'permuted_collapses': True, 'input_lesion_collapses': True, 'rule_lesion_collapses': True}
+
+================================================================================================
+  VERDICT: BOUNDARY
+  online similarity-matching on PPMI BEATS the saturating + input-lesion controls (SIMMATCH_PPMI +0.296 vs A_SAT +0.000, raw +0.194) but FALLS SHORT of the host ceiling (67% of +0.442; offline PPMI+PCA optimum +0.518) -> right input + rule, an online-convergence (or input-brain-plausibility) gap; the deeper spiking/dendritic build is warranted WITH A SHARP TARGET (the +0.146 shortfall). HOST +0.442 | PPMI+PCA(offline) +0.518 | SIMMATCH_PPMI +0.296 (67% of host, gen 0.703) | SIMMATCH_RAW +0.194 | A_SAT +0.000
+================================================================================================
+  Total elapsed: 7.9s
+
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_l1_fair_real_20260615_081856.json
