@@ -128,6 +128,18 @@ This is the honest scope of the remaining on-bridge work: the *numpy de-risk is 
 
 **Scaling confirmed — the population code reaches host.** The faithful read climbs cleanly with population size: **1 neuron 20% → 16 neurons 66% → 32 neurons 83% of numpy PPMI** (+0.417), which is **94% of host (+0.442)** at 32 neurons/dim + window 80 (seed 42). So the spiking substrate carries the PPMI code to essentially host fidelity with a sufficient population — the on-bridge cortex is **confirmed**, not just viable. The graded structure the single-neuron rate code lost is fully recovered by population averaging (the brain's standard for graded values). The on-bridge realization's hardest unknown (does the spiking substrate carry the code?) is answered YES; the rest (neural per-concept normalization, binder wiring, scaling) is standard build.
 
+## CYCLE 92 — the per-concept divisive primitive is SHIPPED (byte-clean); but the on-bridge PPMI *computation* from raw counts needs a LOG-DOMAIN circuit (honest negative)
+
+With edits approved, I built + committed the **per-concept divisive-normalization primitive** (`sim/`: `cfg.enable_input_divisive_norm` + `BrainRegion.input_divisive_norm` + a guarded per-step block, Carandini-Heeger `r_i = x_i/(σ + g·mean_j x_j)`), mirroring the shipped `input_mean_adapt` exactly — **default-off byte-identical, verified by 12/12 byte-identity A/B tests**, diff reviewed. It is a sound, byte-clean building block.
+
+But the **functional** on-bridge test (`_phaseB_neural_norm_cortex_derisk.py`: drive *raw counts*, normalize neurally, population-read) is an honest **negative**: host-PPMI ceiling +0.330, raw-no-norm floor +0.113, **+divisive-only −0.064, +divisive+input_mean −0.074** — the on-substrate normalization *hurts*. Root cause (clear, not a tuning miss): the primitive divides in the **current** domain, but PPMI's normalizations are **log-subtractive** — they must happen *after* a log compression — and the Izhikevich f-I is not log-like enough to convert a current-space divide into the log-ratio. (My numpy +0.339 approximation had the per-concept divide *pre-log* and the per-hub subtraction *post-log*; on the bridge both ops were pre-f-I, the wrong order, and the f-I isn't the `log1p(·×scale)` numpy used.)
+
+**Honest scope, restated precisely:**
+- The numpy de-risk is **complete** (cortex + binding + pipeline + no-confab moat, CYCLES 88–90).
+- The substrate **carries** a PPMI code at host fidelity (population read 94%, CYCLE 91). ✓
+- The substrate **computing** PPMI from raw experience is **not yet realized** — it needs the normalizations in the **log domain**: a log compression of the drive first (a log-shaped f-I / dendritic Weber-Fechner compression, or a log readout), *then* the per-hub (`input_mean_adapt`) + per-concept subtractions in the firing/log domain. That is focused circuit-design (the next step), not knob-tuning.
+- A pragmatic interim (a BRAIN-BASED-ONLY *boundary judgment* for the owner): since the substrate carries a host-PPMI code at 94%, host-rendering the PPMI normalization as part of *sensory input rendering* would unblock the binder-wiring + scaling while the log-domain circuit is designed — provided we judge corpus-statistics normalization to be "sensory rendering" (host-ok) rather than "perception" (must be neural). I'm surfacing that judgment rather than deciding it silently.
+
 ## Artifacts
 
 - `research/runners/_phaseB_ppmi_centering_verify_derisk.py` + `research/findings/raw/_phaseB_ppmi_centering_verify.{json,txt}` (the skeptical verification + decomposition)

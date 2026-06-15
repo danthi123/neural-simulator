@@ -1,0 +1,29 @@
+{
+  "host": 0.44192576313430393,
+  "ppmi_ceiling": 0.3296199952928424,
+  "raw_floor": 0.11334931119667477,
+  "neural": -0.06360624481755064,
+  "per_seed": [
+    {
+      "seed": 42,
+      "host": 0.44192576313430393,
+      "ppmi_ceiling": 0.3296199952928424,
+      "raw_floor": 0.11334931119667477,
+      "div_only": -0.06360624481755064,
+      "neural": -0.07373361931689129
+    }
+  ],
+  "config": {
+    "seeds": "42",
+    "n_hub": 500,
+    "n_pop": 16,
+    "drive_scale": 50.0,
+    "raw_scale": 4.0,
+    "window": 50,
+    "settle": 8,
+    "warmup": 2,
+    "ima_alpha": 0.05,
+    "idn_sigma": 1.0,
+    "idn_gain": 1.0
+  }
+}
