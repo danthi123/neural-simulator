@@ -1,0 +1,22 @@
+[dendritic REAL-corpus de-risk] seeds=(42, 43, 44) n_hub=500 -- does the dendritic per-compartment gain recover AND continually-learn the REAL (hard) structure (host +0.44)?
+
+[dendritic REAL seed 42] 64c x 500h | host +0.442 | best sigma 5.0
+  DENDRITIC batch +0.215 (49% of host) | sequence final +0.251 (117% of batch) | curve +0.00 +0.43 +0.41 +0.32 +0.29 +0.27 +0.27 +0.25
+  old-set retention +0.49 +0.44 +0.32 +0.27 +0.31 +0.28  | POINT-global +0.197 | permuted -0.008
+
+[dendritic REAL seed 43] 64c x 500h | host +0.442 | best sigma 2.0
+  DENDRITIC batch +0.220 (50% of host) | sequence final +0.274 (124% of batch) | curve +0.00 +0.44 +0.44 +0.32 +0.29 +0.26 +0.27 +0.27
+  old-set retention +0.51 +0.43 +0.32 +0.26 +0.32 +0.30  | POINT-global +0.197 | permuted +0.023
+
+[dendritic REAL seed 44] 64c x 500h | host +0.442 | best sigma 5.0
+  DENDRITIC batch +0.214 (48% of host) | sequence final +0.252 (118% of batch) | curve +0.00 +0.43 +0.41 +0.32 +0.29 +0.27 +0.27 +0.25
+  old-set retention +0.49 +0.44 +0.32 +0.27 +0.31 +0.28  | POINT-global +0.197 | permuted -0.009
+
+================================================================================================
+  MEAN (3 seeds): host +0.442 | DENDRITIC batch +0.216 (49% of host) | sequence final +0.259 (120% of batch, old-set end +0.289) | POINT-global +0.197 | permuted +0.002
+  reference: point-neuron SM on real ~+0.35 (CYCLE 81); dendritic synthetic seq 90%-of-batch (CYCLE 84)
+================================================================================================
+  REAL-WEAK: the dendritic per-hub gain does NOT clearly recover the REAL structure (batch +0.216 vs point +0.197) -- the real corpus is harder than the synthetic the D1 GO used; the per-hub diagonal gain alone is insufficient on the noisy real co-occurrence.
+  Total elapsed: 8.2s
+
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_phaseB_dendritic_real.json

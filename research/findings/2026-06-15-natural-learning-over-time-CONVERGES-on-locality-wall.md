@@ -142,9 +142,34 @@ The whole arc concluded the missing piece is the **(B) dendritic substrate** —
 
 **⇒ The complete, constructive answer to the owner.** "What could we be missing?" — on the **point-neuron** substrate, a learning *mechanism* is not the missing piece (replay/homeostasis/timescale/nonnegativity all tested, all plateau at the locality wall). The missing piece is the **substrate**: a dendritic per-compartment normalization. And that substrate — already validated and built through D2 Phase 2 — is not only the structure-recovery answer but a **natural continual learner that learns over time without catastrophic forgetting and without replay**. The owner's question is answered *on the working substrate*, and it strengthens the case for D2 Phase 3 (the dendritic cortex is both the right representation AND a natural over-time learner).
 
+## CYCLE 85 — the honest real-corpus tempering: the dendritic per-hub gain is the DIAGONAL escape (great on diagonal-separable structure, WEAK on the real corpus's off-diagonal)
+
+The CYCLE-84 loop-closer used the **synthetic** corpus (where the D1 GO was validated, host +0.96). The synthetic structure is *purely diagonal-separable* — common hubs vs category-signal hubs distinguished by frequency, exactly what a per-hub divisive gain handles. The **real** TinyStories corpus (host +0.44) is the actual target. `research/runners/_phaseB_dendritic_real_derisk.py` (the validated D1 per-hub gain on `build_real_corpus`, small sigma sweep, 3 seeds):
+
+| arm (real corpus) | Pearson (3-seed) | note |
+|---|---|---|
+| host PPMI+SVD | +0.442 | ceiling |
+| **DENDRITIC per-hub gain (batch)** | **+0.216** | only **49% of host** |
+| DENDRITIC sequence (continual) | +0.259 | continual is fine (120% of its own batch) — but the batch is low |
+| point-global control | +0.197 | the dendritic gain **barely beats it** (+0.019) |
+| (reference) point-neuron SM on real | ~+0.35 | the dendritic gain is *below* even this |
+
+**REAL-WEAK.** On the real corpus the dendritic per-hub divisive gain reaches only +0.216 (49% of host) and barely clears the point-neuron global control. The continual-learning property holds (the sequence keeps its batch level), but the batch itself is low — so "learns the structure over time" is hollow when the structure recovered is weak.
+
+**Why (the honest mechanism, reconciling both arcs):** a per-hub *divisive* gain `x/(σ+g)` is **diagonal** (per-feature) normalization. It is NOT PPMI: PPMI normalizes by a **log-subtractive** ratio (`log x − log row − log col`), and the cross-neuron decorrelation that reaches host is **off-diagonal**. The synthetic corpus's structure is recoverable by the diagonal alone (frequency-separable), so the dendritic gain shines there (+0.845). The real corpus has off-diagonal structure the diagonal gain cannot reach. This lands exactly where my own _phaseB off-diagonal de-risk (CYCLE 73) already put it: the diagonal mechanisms (subtractive centering +0.307, divisive gain +0.216) all reach ~+0.22–0.31 on real; the full low-rank whitening reaches host +0.44; the **+0.31 → +0.44 gap is the off-diagonal cross-neuron decorrelation**, which neither the point-neuron SM (plateaus +0.35) nor the dendritic per-hub gain (+0.22) provides.
+
+**⇒ The complete, honest, balanced answer (corrected for the real target):**
+- The owner's instinct is right and the over-training walk-back stands (the stable point-neuron SM peak is ~+0.35, not +0.296).
+- On the **point-neuron** substrate, a learning *mechanism* is not the missing piece (replay/homeostasis/timescale/nonnegativity all plateau at the diagonal-only ~+0.35).
+- The **dendritic per-compartment gain** is the **diagonal escape**: it recovers + continually-learns *diagonal-separable* (synthetic/curated) structure beautifully and naturally over time — which is the regime the shipped curated cortex lives in — but on the **real** noisy corpus it reaches only ~+0.22 (49% of host), barely above the point-neuron control.
+- The genuine open frontier for a *learned, generalizing, real-experience* cortex is the **off-diagonal cross-neuron decorrelation** — and that is precisely the deep piece both arcs keep landing on (the Mikulasch-Priesemann non-local computation; the D2 two-compartment build, still owner-gated and NOT started). The simple per-hub gain is necessary but **not sufficient** on the real corpus; D2 would need to realize the off-diagonal, not just the diagonal.
+
+So the case for D2 is honestly **qualified**: the dendritic substrate clears the diagonal half cleanly and is a natural continual learner *there*, but the real-experience cortex needs the off-diagonal too — the months-scale build is warranted *for the artificial-life / biology-translatable goal*, with eyes open that the diagonal-only per-hub gain (the cheaply-validated piece) is one half of the operation.
+
 ## Artifacts
 
-- `research/runners/_phaseB_dendritic_continual_derisk.py` + `research/findings/raw/_phaseB_dendritic_continual.{json,txt}` (CYCLE 84, the loop-closer)
+- `research/runners/_phaseB_dendritic_real_derisk.py` + `research/findings/raw/_phaseB_dendritic_real.{json,txt}` (CYCLE 85, the honest real-corpus tempering)
+- `research/runners/_phaseB_dendritic_continual_derisk.py` + `research/findings/raw/_phaseB_dendritic_continual.{json,txt}` (CYCLE 84, the synthetic loop-closer)
 - `research/runners/_phaseB_timescale_convergence_derisk.py` + `research/findings/raw/_phaseB_timescale_convergence.{json,txt}`
 - `research/runners/_phaseB_nonnegative_sm_derisk.py` + `research/findings/raw/_phaseB_nonnegative_sm.{json,txt}`
 - `research/runners/_phaseB_continual_separable_derisk.py` + `research/findings/raw/_phaseB_continual_separable.{json,txt}` (CYCLE 82, the 2-phase constructive complement)
