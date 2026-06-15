@@ -62,55 +62,61 @@ returns `log1p(max(C_row,0))`.
 
 ---
 
-### Task 2: HARD GATE — neural common-mode removal (the centering)
+> **Plan correction (2026-06-15, controller):** the centering's value is only revealed *through the
+> learner* (uncentered → the learner saturates to a uniform blob; centered → it recovers the structure — the
+> L1 finding). A forward-pass-with-random-projection cannot isolate it (the random projection caps at ~+0.17
+> regardless of centering). So Task 2 builds the train/read *machinery* (mechanical test), and Task 3 is the
+> combined HARD structure + centering + STDP gate (which needs the trained learner). The centering mechanism
+> is discovered within Task 3 (try the bridge's native homeostasis + threshold + warm-up first; add explicit
+> subtractive inhibition only if needed).
+
+### Task 2: The train / read machinery (mechanical test)
 
 **Files:** modify `research/runners/spiking_sm_cortex.py`; test `tests/test_spiking_sm_cortex.py`.
 
-**Step 1 — failing test.** `test_centering_recovers_structure_forward` (numpy smoke, synthetic 64-concept
-counts with a strong common mode): with a **fixed random** hub→cortex projection (learning OFF, isolating
-the input path), driving the hubs WITH the subtractive-inhibition front-end enabled yields cortex codes whose
-`Pearson(cos(codes), S_true)` clears a bar (e.g. ≥ +0.30) AND clearly exceeds the same pipeline with
-centering OFF. (This mirrors Phase-A: centering is the load-bearing op; verify a *neural* mechanism realizes
-it.)
+**Step 1 — failing test.** `test_train_read_machinery` (numpy smoke, tiny synthetic 16-concept counts):
+`train_sm_cortex(bridge, C_drive, hub_idx, cortex_idx, n_epochs=2, ...)` runs without error; afterward the
+hub→cortex weights have **changed from their initialization** (STDP did something — compare a weight snapshot
+before/after) and `read_codes(bridge, C_drive, hub_idx, cortex_idx, ...)` returns an `[Nc × n_cortex]` array
+that is **non-degenerate** (not all-zero; `effective_rank(codes) > 1`). No structure claim yet — purely "the
+pipeline runs and produces non-trivial codes."
 
-**Step 2 — run, expect fail.**
-
-**Step 3 — implement** `subtractive_inhibition`: a global (or per-hub) inhibitory mechanism subtracting the
-slow population-mean hub drive — first try the bridge's existing **homeostatic threshold adaptation** (each
-hub's running-activity baseline), warmed up over an all-concepts pass; if that under-performs the numpy
-`center_cols`, add an explicit inhibitory interneuron pool (existing inhibitory region) that pools the hubs
-and subtracts the mean. No host mean-subtraction in the code path (that would be a shortcut — it must be
-neural).
-
-**Step 4 — run, expect pass.** **HARD GATE:** if no neural mechanism clears the bar, STOP — write the
-finding (the centering cannot be realized neurally on the bridge cheaply), propagate to both remotes, and
-surface to the owner before proceeding.
-
-**Step 5 — commit.**
+**Step 2 — run, expect fail. Step 3 — implement** `train_sm_cortex` (present each concept: set the centered
+log+gain drive on the hubs, run a settle+window so cortex fires, STDP potentiates co-active hub→cortex pairs;
+weights bounded by `stdp_w_max` + homeostasis = the firing-rate ceiling) + `read_codes` (freeze plasticity
+via `bridge.set_plasticity_gate("hub_to_cortex", 0.0)`, present each concept, accumulate cortex spike counts
+— or `cp_conductance_g_e` — over the readout window; restore the gate after). Reuse the `_present` drive/step
+pattern from `dendritic_cortex_forward_codes_derisk.py`. Tune drive_scale/window so cortex fires in a
+workable band. **Step 4 — run, expect pass. Step 5 — commit.**
 
 ---
 
-### Task 3: HARD GATE — bridge STDP realizes bounded-Hebbian structure extraction
+### Task 3: HARD GATE — the trained cortex recovers structure (learning + centering + STDP, all at once)
 
 **Files:** modify `research/runners/spiking_sm_cortex.py`; test `tests/test_spiking_sm_cortex.py`.
 
-**Step 1 — failing test.** `test_learned_codes_recover_structure` (numpy smoke, 64-concept synthetic):
-`train_sm_cortex(bridge, C, n_epochs)` presents each concept (centered, log+gain+threshold drive) so the
-plastic hub→cortex STDP grows; then `read_codes(bridge, C)` returns cortex spike-count codes whose
-`Pearson(cos(codes), S_true)` clears a bar (≥ +0.30) AND beats an untrained random-projection control on the
-identical pipeline by ≥ +0.10 (learning load-bearing).
+**Step 1 — failing test.** `test_trained_cortex_recovers_structure` (numpy smoke, synthetic 64-concept counts
+with a STRONG common mode, calibrated so the host PPMI+SVD ceiling is real, e.g. via
+`build_concept_hub_counts`): after `train_sm_cortex`, `read_codes` gives codes whose
+`Pearson(cos(codes), S_true)` (a) clears ≥ +0.30, (b) beats an **untrained random-projection** control on the
+identical pipeline by ≥ +0.10 (learning load-bearing), and (c) is materially better than the **centering-off**
+variant (common-mode removal disabled) — confirming the centering is load-bearing, the L1 mechanism.
 
 **Step 2 — run, expect fail.**
 
-**Step 3 — implement** `train_sm_cortex` (present-and-learn loop: drive hubs, run the integration window so
-cortex fires, STDP potentiates co-active hub→cortex pairs; homeostasis + `stdp_w_max` bound the weights =
-the firing-rate ceiling) + `read_codes` (freeze plasticity via the `hub_to_cortex` gate, present each
-concept, accumulate cortex spike counts over the readout window). Tune drive_scale / window / epochs so
-cortex fires in a workable band (not silent, not saturated).
+**Step 3 — implement the centering** (discover the mechanism): first try the bridge's NATIVE common-mode
+removal — homeostatic threshold adaptation + the spike threshold + an all-concepts warm-up pass (per CYCLE-50:
+threshold + temporal integration provide common-mode robustness). If that under-recovers, add an explicit
+**subtractive-inhibition** front-end: a global inhibitory interneuron pool (an existing inhibitory region)
+that pools the hub drive and feeds back inhibition ∝ the slow population-mean (predictive-coding / feedforward
+inhibition). **No host mean-subtraction in the code path** — the centering must be neural (a host `X.mean(0)`
+subtraction on the drive would be a shortcut; the dendritic gain's /marginal is already neural). Expose a
+`centering=` switch so the centering-off control in the test is a real ablation.
 
-**Step 4 — run, expect pass.** **HARD GATE:** if the bridge STDP cannot extract the structure (codes ≈
-random), STOP — write the finding (the bridge rate→spike learning gap is the wall; localize: STDP timing vs
-the bounded-Hebbian rate rule), propagate, surface to the owner. This is the riskiest gate (proposal risk #2).
+**Step 4 — run, expect pass.** **HARD GATE:** if the trained cortex cannot recover the synthetic structure
+above the controls, STOP — write the finding (localize: is it the bridge STDP not realizing the bounded-Hebbian
+extraction = proposal risk #2, or the centering not realizable neurally?), propagate to both remotes, surface
+to the owner before any GPU real-corpus run. This is the riskiest, most decision-relevant gate of Phase B.
 
 **Step 5 — commit.**
 
