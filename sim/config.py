@@ -397,6 +397,32 @@ class CoreSimConfig:
     # a aᵀ each step; >0 averages over ~1/(1-decay) steps for a smoother target).
     graded_lateral_coact_ema: float = 0.0
 
+    # ─── Slow per-hub INPUT-MEAN adaptation (axis-0 per-feature centering, 2026-06-15) ──────
+    # The SEPARABLE diagonal/DC half of whitening (per-feature mean-centering = subtractive
+    # spike-frequency adaptation / point-neuron predictive coding; Lee, Dora, Mejias, Bohte &
+    # Pennartz 2024, PMC11045951). Each FLAGGED neuron maintains a SLOW EMA m of its OWN pre-
+    # threshold input drive and subtracts gain*m from that drive BEFORE the threshold:
+    #   adapted = raw_drive - gain*m;  m <- (1-alpha)*m + alpha*raw_drive   (causal: subtract
+    # the CURRENT m, THEN update m from raw_drive). raw_drive = the neuron's own synaptic +
+    # external input current (on-substrate, NOT a host-precomputed x-mean -- BRAIN-BASED-ONLY).
+    # This is the per-FEATURE (axis-0) centering the L1 learned cortex needs (the common-mode
+    # POOL does the WRONG axis-1 per-concept removal; CYCLE-69). The numpy mechanism is 6-seed
+    # GO (+0.311; clean-mean +0.311, spiking-mean +0.298). Default OFF -> when no region sets
+    # BrainRegion.input_mean_adapt=True, cp_input_mean_ema / cp_input_mean_adapt_mask stay None,
+    # the new step block is unreached, and total_input_current_pA is byte-identical to today.
+    # Requires enable_brain_region_framework=True (the mask is built from region membership).
+    # See research/findings/2026-06-15-slow-perhub-mean-primitive-deep-research.md (Option A) +
+    # docs/plans/2026-06-15-analog-substrate-learned-cortex-build-plan.md (Phase 2).
+    enable_input_mean_adapt: bool = False
+    # PER-STEP EMA rate alpha. SLOW: the mean must span many concept PRESENTATIONS (not steps).
+    # The runner sets this from the presentation length (e.g. alpha_per_presentation ~0.02-0.05
+    # divided by steps-per-presentation -> a tiny per-step value). 0.0 (default) freezes the EMA
+    # (m never moves) -- the runner uses this to FREEZE adaptation before the read-out phase.
+    input_mean_adapt_alpha: float = 0.0
+    # Subtraction strength: the effective input current of a flagged neuron becomes
+    # raw_drive - gain*m. 1.0 = subtract the full running mean (the validated numpy op).
+    input_mean_adapt_gain: float = 1.0
+
     # ─── Synapse tiering (Phase 3 Strategy B, 2026-05-11) ──────────
     # Activity-tracked TieredSynapseStore mirrors the per-pathway CSRs
     # alongside the monolithic cp_connections. Foundation for Phase 4

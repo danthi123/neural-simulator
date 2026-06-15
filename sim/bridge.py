@@ -279,6 +279,19 @@ class SimulationBridge:
         # inject_explicit_wiring iff >=1 pathway sets graded=True (no config flag). See
         # 2026-06-15-analog-substrate-learned-cortex-build-plan.md (Phase 1).
         self.cp_graded_synapse_mask = None                # bool per-synapse: True for graded-routed synapses
+        # Slow per-hub INPUT-MEAN adaptation (axis-0 per-feature centering, 2026-06-15). The SEPARABLE
+        # diagonal/DC half of whitening: each FLAGGED neuron maintains a SLOW EMA of its OWN pre-threshold
+        # input drive (synaptic + external current) and subtracts gain*EMA from that drive BEFORE the
+        # threshold (subtractive spike-frequency adaptation / point-neuron predictive coding; Lee/Pennartz
+        # 2024, PMC11045951). cp_input_mean_ema holds the per-neuron running mean m; cp_input_mean_adapt_mask
+        # is the per-neuron boolean of WHICH neurons adapt (built from BrainRegion.input_mean_adapt, mirroring
+        # the cp_nmda_neuron_mask / cp_homeostasis_neuron_mask pattern). BOTH None by default -> the new step
+        # block is unreached, total_input_current_pA is byte-identical to today. Allocated in
+        # _initialize_simulation_data ONLY when cfg.enable_input_mean_adapt AND >=1 region sets
+        # input_mean_adapt=True. See research/findings/2026-06-15-slow-perhub-mean-primitive-deep-research.md
+        # (Option A) + 2026-06-15-analog-substrate-learned-cortex-build-plan.md (Phase 2).
+        self.cp_input_mean_ema = None                     # per-neuron slow EMA m of own input drive (None unless flagged region)
+        self.cp_input_mean_adapt_mask = None              # bool per-neuron: True for input-mean-adapting neurons
         # Cluster G v2 (2026-05-01): per-neuron NMDA mask (1.0 for neurons
         # in regions with BrainRegion.enable_nmda=True, 0.0 otherwise).
         # When None, NMDA applies globally per cfg.enable_nmda — backward
@@ -1229,6 +1242,31 @@ class SimulationBridge:
                         f"Homeostasis per-region mask: {len(homeo_regions)} regions enabled "
                         f"({sum(int(r.n_neurons) for r in homeo_regions)} neurons)",
                     )
+
+                # Slow per-hub INPUT-MEAN adaptation mask (2026-06-15): mirrors the NMDA /
+                # homeostasis masks above. Boolean per-neuron, True for neurons in regions with
+                # BrainRegion.input_mean_adapt=True. Built ONLY if cfg.enable_input_mean_adapt
+                # AND >=1 region opts in; otherwise BOTH cp_input_mean_ema and
+                # cp_input_mean_adapt_mask are left None so default configs are byte-identical
+                # (the per-step input-mean block is unreached). cp_input_mean_ema is the per-
+                # neuron running mean m (zeros at init -> the first step subtracts 0, the EMA
+                # warms up over the slow alpha). Built here (not inject_explicit_wiring) because
+                # it is per-NEURON (n is known), like the NMDA/homeostasis masks.
+                if getattr(cfg, "enable_input_mean_adapt", False):
+                    ima_regions = [r for r in self.region_manager.regions()
+                                   if getattr(r, "input_mean_adapt", False)]
+                    if ima_regions:
+                        ima_mask = cp.zeros(n, dtype=cp.bool_)
+                        for r in ima_regions:
+                            idx = list(self.region_manager.indices(r.name))
+                            if idx:
+                                ima_mask[cp.asarray(idx, dtype=cp.int64)] = True
+                        self.cp_input_mean_adapt_mask = ima_mask
+                        self.cp_input_mean_ema = cp.zeros(n, dtype=cp.float32)
+                        self._log_console(
+                            f"Input-mean-adapt per-region mask: {len(ima_regions)} regions enabled "
+                            f"({sum(int(r.n_neurons) for r in ima_regions)} neurons)",
+                        )
 
             # GABA_B -> GIRK slow K+ inhibitory conductance (2026-06-08). The NMDA
             # pattern inverted: a second inhibitory conductance with its own slow
@@ -5821,6 +5859,37 @@ class SimulationBridge:
                     self.cp_conductance_g_e += (_WgT1 @ _a_cont) * cfg.propagation_strength
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
+
+            # ── Slow per-hub INPUT-MEAN adaptation (axis-0 per-feature centering, 2026-06-15;
+            # subtractive spike-frequency adaptation / point-neuron predictive coding). For each
+            # FLAGGED neuron, subtract a SLOW running mean of its OWN pre-threshold input drive
+            # (raw = synaptic + external current, the input not the spikes) from that drive BEFORE
+            # the threshold, then update the mean from raw: adapted = raw - gain*m; m <- (1-alpha)*m
+            # + alpha*raw (CAUSAL -- subtract the CURRENT m, THEN update m from raw, matching the
+            # numpy probe adapted = x - m; m = (1-a)m + a*x). This is the SEPARABLE diagonal/DC half
+            # of whitening (per-FEATURE centering) the L1 learned cortex needs -- a per-neuron self-
+            # prediction, NOT the cross-neuron decorrelation the Mikulasch-Priesemann limit forbids.
+            # The EMA integrates the bridge's OWN neuronal input current (on-substrate, BRAIN-BASED-
+            # ONLY -- NOT a host-precomputed x-mean). The per-neuron mask routes BOTH the subtraction
+            # AND the EMA update so UNFLAGGED neurons are untouched (mask_f=0 => no current change,
+            # m never moves). alpha is SLOW (the mean spans many concept presentations; the runner
+            # sets alpha from the presentation length and sets alpha=0 to FREEZE the mean before the
+            # read-out). GUARDED NO-OP: cp_input_mean_ema is None for every run that doesn't set
+            # cfg.enable_input_mean_adapt + a region with input_mean_adapt=True, so this whole block
+            # is unreached and total_input_current_pA is byte-identical when off.
+            if self.cp_input_mean_ema is not None:
+                _ima_alpha = cp.float32(getattr(cfg, "input_mean_adapt_alpha", 0.0))
+                _ima_gain = cp.float32(getattr(cfg, "input_mean_adapt_gain", 1.0))
+                _ima_mask_f = self.cp_input_mean_adapt_mask.astype(cp.float32)
+                _ima_raw = total_input_current_pA  # the neuron's own pre-threshold input drive
+                # (a) subtract this neuron's slow mean (masked: unflagged neurons unchanged).
+                total_input_current_pA = (
+                    total_input_current_pA - _ima_mask_f * _ima_gain * self.cp_input_mean_ema)
+                # (b) update the slow EMA from raw AFTER the subtraction read (causal/lagged), masked
+                # so unflagged entries never move: m <- m + mask*alpha*(raw - m).
+                self.cp_input_mean_ema = (
+                    self.cp_input_mean_ema
+                    + _ima_mask_f * _ima_alpha * (_ima_raw - self.cp_input_mean_ema))
 
             # ── Graded LGN decorrelation (2026-06-06): GRADED pre-spike pairwise
             # lateral inhibition on the flagged region's SUB-THRESHOLD analog

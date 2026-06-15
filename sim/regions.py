@@ -187,6 +187,23 @@ class BrainRegion:
     # are set). See docs/plans/2026-06-06-graded-lgn-decorrelation-design.md.
     graded_lateral: bool = False
 
+    # Slow per-hub INPUT-MEAN adaptation (axis-0 per-feature centering, 2026-06-15). When True
+    # AND cfg.enable_input_mean_adapt is True, this region's neurons each subtract a SLOW running
+    # mean of their OWN pre-threshold input drive (synaptic + external current) from that drive,
+    # BEFORE the spike threshold: adapted = raw_drive - gain*m; m <- (1-alpha)*m + alpha*raw_drive
+    # (causal -- subtract the current m, then update from raw_drive). This is the SEPARABLE
+    # diagonal/DC half of whitening (per-FEATURE mean-centering = subtractive spike-frequency
+    # adaptation / point-neuron predictive coding; Lee/Pennartz 2024, PMC11045951) -- the per-
+    # feature centering the L1 learned cortex needs (a common-mode pool does the WRONG axis-1
+    # per-concept removal). Mirrors BrainRegion.enable_nmda / enable_homeostasis: the bridge
+    # builds a per-neuron boolean mask cp_input_mean_adapt_mask from the regions that set this,
+    # and only those neurons adapt. Default False: zero effect on every existing region/run (the
+    # new code is a guarded no-op -- cp_input_mean_ema stays None -- unless BOTH this flag and the
+    # global cfg.enable_input_mean_adapt are set). See
+    # research/findings/2026-06-15-slow-perhub-mean-primitive-deep-research.md (Option A) +
+    # docs/plans/2026-06-15-analog-substrate-learned-cortex-build-plan.md (Phase 2).
+    input_mean_adapt: bool = False
+
 
 @dataclass
 class RegionPathway:
