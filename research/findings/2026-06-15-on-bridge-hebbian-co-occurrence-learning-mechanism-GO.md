@@ -152,6 +152,28 @@ it works.
 is **realized on the real spiking substrate**: representation (population) + learning (Hebbian
 co-occurrence) + normalization (log-double-centring), composed end-to-end.
 
+## The conversation on the stream-learned codes — GO, the moat holds
+
+`_phaseB_onbridge_stream_conversation_derisk.py` runs the **exact CYCLE-90 conversational pipeline**
+(multi-role HRR SVO binding → who/what recall → the no-confab abstention moat) on the codes the bridge
+**learned from the stream** (not curated, not PPMI). Seed 42, n_per 16, 30000 windows (306 s solo):
+
+| metric | stream-learned codes | CYCLE-90 PPMI baseline |
+|---|---|---|
+| who-Q&A recall (present) | **1.00** (8/8, 0 within-cat err) | 0.88–1.00 |
+| no-confab abstain (absent) | **1.00** (0 false-accepts) | 1.00 (0) |
+| familiarity gap | present +0.449 ≫ absent +0.062 | present +0.42–0.52 ≫ absent +0.03–0.10 |
+
+**GO** — the stream-learned on-bridge cortex carries the full conversational capability **end-to-end,
+with the no-confab moat intact** (0 false-accepts), matching the PPMI-code baseline. Notably this holds
+even though the stream codes were only ~65% of the host-ref read-out fidelity: HRR binding + cleanup
+tolerates moderate code quality (the codes just need to be distinguishable), and the familiarity gap
+stays clean and wide.
+
+⇒ the complete chain closes on the real spiking substrate: **the bridge hears the conversation stream
+→ its population Hebbian synapses learn the cortex → the codes bind into facts → who/what recall +
+the abstention moat.** No preprocessing, no curated concepts.
+
 Runner: `research/runners/_phaseB_stdp_cooccurrence_derisk.py` (GPU; CuPy; `--n-per` for the
 population). Raw: `research/findings/raw/_phaseB_stdp_cooccurrence.json`,
 `_phaseB_hebbian_cooc_6seed.log`, `_phaseB_hebbian_pop_sweep.log`.

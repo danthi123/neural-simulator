@@ -1,0 +1,21 @@
+{
+  "recall": 1.0,
+  "abstain": 1.0,
+  "false_accepts": 0,
+  "conf_present": 0.448624899612925,
+  "conf_absent": 0.06234653459148831,
+  "gap": 0.3862783650214367,
+  "per_seed": [
+    {
+      "recall": 1.0,
+      "abstain": 1.0,
+      "false_accept": 0,
+      "within_cat_err": 0,
+      "conf_present": 0.448624899612925,
+      "conf_absent": 0.06234653459148831,
+      "seed": 42,
+      "gap": 0.3862783650214367,
+      "n_windows": 30000
+    }
+  ]
+}
