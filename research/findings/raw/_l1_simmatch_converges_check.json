@@ -1,0 +1,63 @@
+{
+  "verdict": "EXACT_SIMMATCH_CONVERGES_CAVEAT_CLOSED",
+  "why": "the exact Pehlevan-Chklovskii similarity-matching rule reaches +0.515 ('centered + settle40 + fast-lateral', de-saturated offdiag -0.012, gen 0.776, perm -0.007) ~= Oja (+0.481) -> the +0.29 was under-convergence (un-centered common mode + under-settled loop), NOT a rule limit -> the L1 GO holds for the owner's NAMED rule; caveat 4 closed.",
+  "best": {
+    "label": "centered + settle40 + fast-lateral",
+    "pearson_mean": 0.5154754455410084,
+    "pearson_seeds": [
+      0.5167371552299612,
+      0.5114636511754276,
+      0.5182255302176366
+    ],
+    "offdiag_mean": -0.011790924050858666,
+    "gen_mean": 0.7760416666666666,
+    "perm_mean": -0.0073809332287819995
+  },
+  "offline_pca": 0.5234292736807535,
+  "oja_ref": 0.481,
+  "results": [
+    {
+      "label": "centered + settle40 + fast-lateral",
+      "pearson_mean": 0.5154754455410084,
+      "pearson_seeds": [
+        0.5167371552299612,
+        0.5114636511754276,
+        0.5182255302176366
+      ],
+      "offdiag_mean": -0.011790924050858666,
+      "gen_mean": 0.7760416666666666,
+      "perm_mean": -0.0073809332287819995
+    },
+    {
+      "label": "centered + settle60 + faster-lateral + lr-decay",
+      "pearson_mean": 0.47139896503871626,
+      "pearson_seeds": [
+        0.46951920034791966,
+        0.4761009227289391,
+        0.46857677203929
+      ],
+      "offdiag_mean": -0.014534509116028063,
+      "gen_mean": 0.7760416666666666,
+      "perm_mean": -0.007966624135548517
+    },
+    {
+      "label": "centered + low-lr + settle60 + lr-decay",
+      "pearson_mean": 0.44905654789005883,
+      "pearson_seeds": [
+        0.4470714448858029,
+        0.45420071309268584,
+        0.4458974856916878
+      ],
+      "offdiag_mean": -0.014726486211346956,
+      "gen_mean": 0.7708333333333334,
+      "perm_mean": -0.008288660427941692
+    }
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_hub": 2000,
+  "k": 64
+}

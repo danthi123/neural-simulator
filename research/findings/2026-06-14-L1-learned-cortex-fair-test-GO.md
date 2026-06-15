@@ -91,9 +91,35 @@ identified:
    recoverable, so the learned cortex would have moderate ("cat is somewhat like dog"), not perfect,
    generalization. Real, but honest about magnitude.
 3. **Small scale.** 64 concepts. Scaling to the 2,048-concept tier is part of the build, not yet shown.
-4. **Oja, not the exact Pehlevan rule.** Oja is squarely in the owner's L1 class (online local Hebbian
-   PCA) and is the robustly-convergent member; the specific Pehlevan-Chklovskii rule under-converged here
-   (fixable — it is provably equivalent in the limit), a cheap follow-on to confirm.
+4. ~~**Oja, not the exact Pehlevan rule.**~~ **CLOSED (same cycle).** The exact Pehlevan-Chklovskii
+   similarity-matching rule (the owner's *named* L1 rule), with the same fixes (centered input + a
+   properly-settled fixed point + faster lateral), reaches **+0.515** multi-seed = 98% of the offline
+   optimum, *above* Oja, de-saturated (offdiag −0.012), permuted clean (−0.007). The +0.29 was definitively
+   under-convergence, not a rule limit. `_l1_simmatch_converges_check.py`.
+
+## Follow-on de-risks (same cycle, both GO)
+
+**(a) Spiking-input axis — GO and graceful** (`_l1_spiking_oja_smoke.py`). The single highest-variance
+unknown before a spiking build is this project's recurring rate→spike loss. Delivering the PPMI input as
+**Poisson spike counts** (re-sampled per epoch for realistic trial-to-trial noise, and at test time),
+sweeping the spike budget:
+
+| spike budget | ~spikes/hub/concept | spiking-Oja Pearson | gen | controls (sat / perm) |
+|---|---|---|---|---|
+| gain 3 | ~2 | +0.377 (78% of rate) | 0.812 | +0.000 / −0.009 |
+| gain 10 | ~6 | +0.430 (89%) | 0.859 | +0.000 / +0.011 |
+| gain 100 | ~63 | +0.475 (99%) | 0.854 | +0.000 / +0.000 |
+
+At **biologically-reasonable spike counts (~2–6 spikes/hub/concept)** the structure largely survives
+(78–89% of the rate ceiling), controls clean at every budget. The rate→spike loss on the **input axis** —
+historically this project's wall (threshold-silencing) — is **graceful given log-PPMI input**, not fatal.
+(The *learning*-spiking gap — spike-timing-driven Hebbian — is kept exact here and is the build-time follow-on.)
+
+**(b) Common-mode removal is the enabling operation.** The fix that converged both Oja and the exact
+Pehlevan rule was **centering** (subtract the column mean = remove the common mode). This is the *same*
+whitening/common-mode theme the project has hit 5+ times — and it is brain-plausible as a slow
+**subtractive-inhibition EMA** (feedforward inhibition). The local online rule *can* extract the structure,
+**given** common-mode removal; without it the dominant common mode saturates the codes.
 
 ## Files
 - `research/runners/learned_graded_cortex_fair_test.py` — the fair test (true PPMI + SVD-grade reference +

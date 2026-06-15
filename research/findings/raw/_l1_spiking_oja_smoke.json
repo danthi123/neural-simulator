@@ -1,0 +1,99 @@
+{
+  "verdict": "SPIKING_INPUT_SURVIVES_GO",
+  "why": "at spike budget gain=100.0 (~125772 spikes/concept) spiking-Oja reaches +0.475 = 99% of the rate ceiling (+0.481), generalizes 0.854, controls clean (sat +0.000, perm +0.000) -> the learned structure SURVIVES the input being spikes; the spiking build is de-risked on the INPUT axis (the learning-spiking gap is the follow-on).",
+  "best": {
+    "spike_gain": 100.0,
+    "mean_spikes_per_concept": 125771.69791666667,
+    "pearson_mean": 0.47450587439693787,
+    "pearson_seeds": [
+      0.4766367457217444,
+      0.47497583283052797,
+      0.4719050446385411
+    ],
+    "gen_mean": 0.8541666666666666,
+    "sat_mean": 0.0,
+    "perm_mean": 0.0001361457550779673,
+    "chance": 0.125
+  },
+  "rate_ceiling": 0.481,
+  "offline_pca": 0.5234292736807535,
+  "results": [
+    {
+      "spike_gain": 1.0,
+      "mean_spikes_per_concept": 1257.3958333333333,
+      "pearson_mean": 0.2290846787735543,
+      "pearson_seeds": [
+        0.21222543248684497,
+        0.2383875259055167,
+        0.23664107792830116
+      ],
+      "gen_mean": 0.5833333333333334,
+      "sat_mean": 0.0,
+      "perm_mean": 0.0009642243371962509,
+      "chance": 0.125
+    },
+    {
+      "spike_gain": 3.0,
+      "mean_spikes_per_concept": 3769.4479166666665,
+      "pearson_mean": 0.37715533830751347,
+      "pearson_seeds": [
+        0.3642273990487414,
+        0.3998916115961117,
+        0.36734700427768735
+      ],
+      "gen_mean": 0.8125,
+      "sat_mean": 0.0,
+      "perm_mean": -0.009411880519135371,
+      "chance": 0.125
+    },
+    {
+      "spike_gain": 10.0,
+      "mean_spikes_per_concept": 12575.713541666666,
+      "pearson_mean": 0.42956423161368146,
+      "pearson_seeds": [
+        0.43751025173200825,
+        0.42473119020129896,
+        0.42645125290773733
+      ],
+      "gen_mean": 0.859375,
+      "sat_mean": 0.0,
+      "perm_mean": 0.011135728502383648,
+      "chance": 0.125
+    },
+    {
+      "spike_gain": 30.0,
+      "mean_spikes_per_concept": 37751.671875,
+      "pearson_mean": 0.4620669094754686,
+      "pearson_seeds": [
+        0.46199724827260846,
+        0.4665949460177844,
+        0.4576085341360128
+      ],
+      "gen_mean": 0.859375,
+      "sat_mean": 0.0,
+      "perm_mean": 0.003307360375718866,
+      "chance": 0.125
+    },
+    {
+      "spike_gain": 100.0,
+      "mean_spikes_per_concept": 125771.69791666667,
+      "pearson_mean": 0.47450587439693787,
+      "pearson_seeds": [
+        0.4766367457217444,
+        0.47497583283052797,
+        0.4719050446385411
+      ],
+      "gen_mean": 0.8541666666666666,
+      "sat_mean": 0.0,
+      "perm_mean": 0.0001361457550779673,
+      "chance": 0.125
+    }
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_hub": 2000,
+  "k": 64
+}
