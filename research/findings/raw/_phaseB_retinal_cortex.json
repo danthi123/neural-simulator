@@ -1,0 +1,42 @@
+{
+  "verdict": "NEGATIVE_or_PARTIAL",
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "host": 0.956855789326476,
+      "onoff": 0.13916587084131815,
+      "onoff_gen": 0.421875,
+      "point": 0.13160982958445408,
+      "point_gen": 0.46875,
+      "permuted": -0.0034897018338583773,
+      "chance": 0.125,
+      "gates": {
+        "structure": false,
+        "generalizes": true,
+        "beats_point": false,
+        "permuted_collapses": true,
+        "host_carries": true
+      }
+    }
+  },
+  "config": {
+    "smoke": true,
+    "real": false,
+    "seeds": "42",
+    "n_hub": 500,
+    "n_cortex": 128,
+    "density": 0.5,
+    "w_mean": 400.0,
+    "cm_size": 40,
+    "hub_to_cm_weight": 1.0,
+    "cm_scale": 1.0,
+    "drive_scale": 40.0,
+    "window": 1000,
+    "gi_scale": 1.0,
+    "cm_bias_pA": 0.0,
+    "ppmi_input": false,
+    "input_for_drive": "log",
+    "step1": true,
+    "out": "research/findings/raw/_phaseB_retinal_cortex.json"
+  }
+}
