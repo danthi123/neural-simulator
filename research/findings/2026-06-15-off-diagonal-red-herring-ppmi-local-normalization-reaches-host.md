@@ -94,7 +94,9 @@ The "binding correlated codes" residual flagged above turns out to be a non-bloc
 
 **⇒ The whole representation-vs-binding tension that motivated the months-scale dendritic-plus-lateral build is DISSOLVED.** The functional cortex is: **PPMI local normalization** (CYCLE 88, generalizes, no curated concepts) → its codes are already in the **binding sweet spot** (CYCLE 89) → the existing binder + cleanup + no-confab gate operate on them. No off-diagonal decorrelation, no dendritic rewrite.
 
-**Honest residuals (the real remaining work, much smaller than a months-scale build):** (1) the binder's seed-stability (the 3rd seed's non-convergence — a training/init fix, not architectural); (2) the on-bridge spiking realization of PPMI normalization + binding (the existing cortex-forward runner's random readout confounds the cortex read — needs a faithful read + the per-concept divisive-norm circuit); (3) scaling F=16 → 320 concepts. These are build/engineering, not a wall.
+**Binder seed-stability RESOLVED (3/3).** The 3rd seed's non-convergence was a gradient-descent init instability: with multi-init (best of 4), **all 3 seeds bind the PPMI codes — train 1.000, held-out 1.000** — alongside generalization 1.000. The dissolve is robust, not a 2/3 fluke.
+
+**Honest residuals (the real remaining work, much smaller than a months-scale build):** (1) the on-bridge spiking realization of PPMI normalization + binding (the existing cortex-forward runner's random readout confounds the cortex read — needs a faithful read + the per-concept divisive-norm circuit); (2) the assembled-pipeline numpy de-risk end-to-end (PPMI cortex → binder → cleanup → no-confab gate, on the full 64-concept corpus, who/what-Q&A + abstention matrix); (3) scaling F=16 → 320 concepts. These are build/engineering, not a wall.
 
 ## Artifacts
 
