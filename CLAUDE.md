@@ -788,6 +788,34 @@ arc was de-risked cheapest-first BEFORE any protected edit:
   `2026-06-11-familiarity-gate-v320-GO.md`, `2026-06-11-cortex-core-learned-binder-research.md`. The (B)
   dendritic rewrite remains the deepest/highest-variance open problem and a deliberate owner call.
 
+- **UPDATE (2026-06-15) — the GENERALIZING learned cortex is achievable WITHOUT the (B) dendritic rewrite,
+  and is REALIZED on the spiking substrate, learned from the conversation stream.** The fork's (B) framing
+  ("decorrelate the correlated codes → needs the dendritic rewrite") was superseded by the CYCLE-88 reframe:
+  the off-diagonal decorrelation was a **red herring**. A generalizing cortex needs **feedforward LOCAL
+  normalization** (PPMI = log + per-hub + per-concept mean-subtraction + threshold, all local ops), NOT
+  cross-neuron decorrelation (which would *destroy* generalization). PPMI codes reach host (+0.518) AND
+  generalize (held-out 0.86), land in the binding sweet spot, and pass the full who/what + no-confab pipeline
+  (CYCLE 88-90, numpy). The biology-faithful **online STREAM** version — a cortex that hears the corpus
+  word-by-word (online Hebbian co-occurrence + running-frequency, NO preprocessing, NO global matrix) —
+  reaches the target (CYCLE 94, +0.513). And it is now **realized ON THE REAL SPIKING SUBSTRATE** (CYCLE
+  95-96): rate-Hebbian co-occurrence learning (6-seed `corr(M,C) +0.686`; STDP is the WRONG rule — measured
+  656k events / 0 weight change at `delta_t≈0`, because symmetric co-occurrence has no pre→post order) +
+  the **population code** (lifts the single-neuron read-out from 47% → **100-108%** of host-ref, the
+  documented rate-code-wall lift) + the full conversation on the **stream-learned** codes (3-seed who/what
+  recall **1.00**; no-confab moat **0.96** — 1 tail false-accept on the lowest-fidelity seed = the
+  code-fidelity cost, NOT a moat-mechanism weakening; the lever is more stream → wider familiarity gap,
+  never a looser gate). HONEST SCOPE: validated at 64 concepts; the on-bridge absolute fidelity is
+  window-budget-bounded (a wall-clock cap, not a substrate limit — `corr(M,C) 0.885` shows faithful
+  learning). The **320-concept stream-scaling** (needs a corpus-grounded 320-word taxonomy) and the
+  **on-bridge log-domain normalization CIRCUIT** (the read-out double-centring is currently a host-side
+  scaffold; CYCLE 93b builds it as per-concept feedforward inhibition + per-hub adaptation, POST-f-I) are
+  the remaining build. ⇒ a generalizing, biology-faithful, **learned-from-conversation** cortex on the
+  point-neuron substrate (with population coding); the months-scale dendritic rewrite is NOT required for
+  this generalizing cortex. Finding:
+  `research/findings/2026-06-15-on-bridge-hebbian-co-occurrence-learning-mechanism-GO.md` (+ the CYCLE
+  88-94 PPMI/stream findings: `2026-06-15-off-diagonal-red-herring-ppmi-local-normalization-reaches-host.md`,
+  `2026-06-15-biology-faithful-online-stream-cortex-reaches-target.md`).
+
 `SIM_BACKEND=cupy` (GPU) is required for the merged-bridge runs (numpy is a tiny-smoke / CI path only).
 
 ### Path 3 LLM-callable memory (2026-05-11): BridgeMemory API
