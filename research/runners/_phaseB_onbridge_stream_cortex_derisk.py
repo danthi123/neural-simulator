@@ -106,11 +106,6 @@ def run_seed(seed, stories, vocab, cat_ids, a):
     tgt_row = {w: i for i, w in enumerate(targets)}
     keep = target_set | set(hubs)
 
-    # Host reference: the log-double-centre of the BATCH co-occurrence counts (the read-out ceiling).
-    from research.runners.learned_graded_cortex_fair_test import build_real_corpus
-    C, _, _ = build_real_corpus(seed, n_hub)
-    host_ref = _pearson_vs_Strue(_cos_sim(double_center(np.log1p(C * 100.0))), S_true)
-
     bridge, hub_region, tgt_region = build_stream_bridge(Nt, n_hub, n_per, seed)
     xp = bridge._cp if hasattr(bridge, "_cp") else None
     n_hub_neurons, n_tgt_neurons = n_hub * n_per, Nt * n_per
@@ -133,6 +128,10 @@ def run_seed(seed, stories, vocab, cat_ids, a):
 
     # STREAM: hear the stories in a seeded order; slide a working-memory window; co-activate each window's
     # target + context-hub populations. Stop after the window budget (enough co-activation to learn M).
+    # C_stream is the host-side count of EXACTLY the windows the bridge sees -- the REFERENCE only (it is NOT
+    # used to drive the bridge; the bridge learns M in its synapses from the co-activation). corr(M, C_stream)
+    # is then the apples-to-apples learning fidelity, and host_ref its log-double-centre ceiling.
+    C_stream = np.zeros((Nt, n_hub), dtype=np.float64)
     story_order = rng.permutation(len(stories))
     n_windows = 0
     t_stream = time.time()
@@ -147,10 +146,15 @@ def run_seed(seed, stories, vocab, cat_ids, a):
             hub_ids = [hub_idx[w] for w in win if w in hub_idx]
             if tgt_ids and hub_ids:
                 present_window(tgt_ids, hub_ids)
+                for t in tgt_ids:          # reference count of this window's (target, hub) co-occurrences
+                    for h in hub_ids:
+                        C_stream[t, h] += 1.0
                 n_windows += 1
                 if n_windows >= a.max_windows:
                     break
     bridge.cp_external_input_current[:] = 0.0
+    C = C_stream
+    host_ref = _pearson_vs_Strue(_cos_sim(double_center(np.log1p(C * 100.0))), S_true)
 
     # READ: population block-mean of the learned hub->target weights -> M[target, hub], then log-double-centre.
     W = np.asarray(to_host(bridge.cp_connections.todense())).astype(np.float64)
