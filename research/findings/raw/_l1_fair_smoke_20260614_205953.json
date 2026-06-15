@@ -1,0 +1,279 @@
+{
+  "verdict": "GO",
+  "why": "online similarity-matching on PPMI input REACHES the host ceiling on real data (SIMMATCH_PPMI +0.941 = 98% of host +0.959, generalizes 1.000) WHILE the faithful saturating control fails (+0.116) and the input lesion (raw +0.011) trails; controls clean. ==> the brain-based learned cortex is VIABLE (PPMI-input + similarity-matching, both brain-plausible); escalate to the weeks-scale SPIKING similarity-matching build (Pehlevan 2019). The dendritic D2 rewrite is OFF the critical path. HOST +0.959 | PPMI+PCA(offline) +0.971 | SIMMATCH_PPMI +0.941 (98% of host, gen 1.000) | SIMMATCH_RAW +0.011 | A_SAT +0.116",
+  "detail": {
+    "host_mean": 0.9591474715526168,
+    "simmatch_ppmi_mean": 0.9412922750770275,
+    "simmatch_raw_mean": 0.011106827657494987,
+    "a_sat_mean": 0.11634459457703905,
+    "ppmi_pca_offline_mean": 0.970778073846858,
+    "simmatch_gen_mean": 1.0,
+    "reach_fraction_of_host": 0.9813843053282659,
+    "host_carries_all": true,
+    "a_fails_all": true,
+    "reaches_all": true,
+    "generalize_all": true,
+    "controls_all": true
+  },
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "smoke": true,
+  "real_corpus": false,
+  "config": {
+    "seeds": "42,43,44",
+    "smoke": true,
+    "real_corpus": false,
+    "window": 2,
+    "n_hub": 2000,
+    "n_cat": 8,
+    "per_cat": 8,
+    "n_common": 200,
+    "n_sig_per_cat": 12,
+    "lam_common": 40.0,
+    "lam_sig": 4.0,
+    "lam_bg": 0.3,
+    "k": 64,
+    "epochs": 60,
+    "lr_ff": 0.01,
+    "lr_m": 0.01,
+    "settle_steps": 30,
+    "lr_sat": 0.02,
+    "host_svd": 50,
+    "host_alpha": 0.75,
+    "structure_bar": 0.3,
+    "a_fail_bar": 0.15,
+    "host_bar": 0.3,
+    "gen_margin": 0.1,
+    "reach_frac": 0.7,
+    "lesion_gap": 0.1,
+    "out": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\_l1_fair_smoke_20260614_205953.json"
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "n_concepts": 64,
+      "n_hub": 296,
+      "svd_dim": 50,
+      "host_ceiling": 0.956855789326476,
+      "host_margin": 0.49000051578609516,
+      "host_nn_same": 1.0,
+      "ppmi_cos_fullrank": 0.9666929387467788,
+      "ppmi_pca_offline": 0.9694888877997524,
+      "chance": 0.125,
+      "SIMMATCH_PPMI": {
+        "pearson": 0.9235901390688427,
+        "gen": 1.0,
+        "chance": 0.125,
+        "offdiag": 0.4590309008139559,
+        "eff_rank": 8.140703551044773
+      },
+      "SIMMATCH_RAW": {
+        "pearson": 0.01425228396094748,
+        "gen": 0.203125,
+        "chance": 0.125,
+        "offdiag": 0.9847710457210536,
+        "eff_rank": 16.926408206267276
+      },
+      "SIMMATCH_LOG": {
+        "pearson": 0.4301628838626917,
+        "gen": 0.9375,
+        "chance": 0.125,
+        "offdiag": 0.999830604340899,
+        "eff_rank": 13.713777294748793
+      },
+      "A_SAT_RAW": {
+        "pearson": 0.11086522166184166,
+        "gen": 0.265625,
+        "chance": 0.125,
+        "offdiag": 0.9999999999674426,
+        "eff_rank": 1.0001508001066515
+      },
+      "saturation_pearson_w_counts": 0.18839085444675113,
+      "simmatch_permuted_pearson": 0.00014299792436078053,
+      "simmatch_traj": [
+        [
+          12,
+          0.8361851218772698
+        ],
+        [
+          24,
+          0.8862204376798368
+        ],
+        [
+          36,
+          0.9090832498841623
+        ],
+        [
+          48,
+          0.9192325792562182
+        ],
+        [
+          60,
+          0.9235901390688427
+        ]
+      ],
+      "reach_target": 0.6697990525285331,
+      "gates": {
+        "host_carries": true,
+        "A_saturating_fails": true,
+        "simmatch_reaches_ceiling": true,
+        "simmatch_generalizes": true,
+        "permuted_collapses": true,
+        "input_lesion_collapses": true,
+        "rule_lesion_collapses": true
+      }
+    },
+    "43": {
+      "seed": 43,
+      "n_concepts": 64,
+      "n_hub": 296,
+      "svd_dim": 50,
+      "host_ceiling": 0.9568592976429929,
+      "host_margin": 0.49785879364840635,
+      "host_nn_same": 1.0,
+      "ppmi_cos_fullrank": 0.9658753474881949,
+      "ppmi_pca_offline": 0.9680352166132734,
+      "chance": 0.125,
+      "SIMMATCH_PPMI": {
+        "pearson": 0.9458064632017382,
+        "gen": 1.0,
+        "chance": 0.125,
+        "offdiag": 0.4680082639352074,
+        "eff_rank": 8.200420581397179
+      },
+      "SIMMATCH_RAW": {
+        "pearson": -0.003221549533369042,
+        "gen": 0.140625,
+        "chance": 0.125,
+        "offdiag": 0.9996667883751139,
+        "eff_rank": 16.449209881238136
+      },
+      "SIMMATCH_LOG": {
+        "pearson": 0.49004241223467343,
+        "gen": 1.0,
+        "chance": 0.125,
+        "offdiag": 0.9949073314312942,
+        "eff_rank": 13.367941369301315
+      },
+      "A_SAT_RAW": {
+        "pearson": 0.11800644263943297,
+        "gen": 0.265625,
+        "chance": 0.125,
+        "offdiag": 0.9999999999948117,
+        "eff_rank": 1.000028198649522
+      },
+      "saturation_pearson_w_counts": 0.11476016480259797,
+      "simmatch_permuted_pearson": 0.040437562294633654,
+      "simmatch_traj": [
+        [
+          12,
+          0.8793933658553753
+        ],
+        [
+          24,
+          0.9233224448929893
+        ],
+        [
+          36,
+          0.9393509421634265
+        ],
+        [
+          48,
+          0.9450305081396285
+        ],
+        [
+          60,
+          0.9458064632017382
+        ]
+      ],
+      "reach_target": 0.669801508350095,
+      "gates": {
+        "host_carries": true,
+        "A_saturating_fails": true,
+        "simmatch_reaches_ceiling": true,
+        "simmatch_generalizes": true,
+        "permuted_collapses": true,
+        "input_lesion_collapses": true,
+        "rule_lesion_collapses": true
+      }
+    },
+    "44": {
+      "seed": 44,
+      "n_concepts": 64,
+      "n_hub": 296,
+      "svd_dim": 50,
+      "host_ceiling": 0.9637273276883815,
+      "host_margin": 0.5050162597980677,
+      "host_nn_same": 1.0,
+      "ppmi_cos_fullrank": 0.9726894129841646,
+      "ppmi_pca_offline": 0.9748101171275483,
+      "chance": 0.125,
+      "SIMMATCH_PPMI": {
+        "pearson": 0.9544802229605015,
+        "gen": 1.0,
+        "chance": 0.125,
+        "offdiag": 0.4599148657900535,
+        "eff_rank": 8.035664183115141
+      },
+      "SIMMATCH_RAW": {
+        "pearson": 0.02228974854490652,
+        "gen": 0.25,
+        "chance": 0.125,
+        "offdiag": 0.9808404195590423,
+        "eff_rank": 17.22217188172265
+      },
+      "SIMMATCH_LOG": {
+        "pearson": 0.48210737749000376,
+        "gen": 1.0,
+        "chance": 0.125,
+        "offdiag": 0.9827331133069188,
+        "eff_rank": 12.901684463385058
+      },
+      "A_SAT_RAW": {
+        "pearson": 0.12016211942984253,
+        "gen": 0.3125,
+        "chance": 0.125,
+        "offdiag": 0.9999999999854811,
+        "eff_rank": 1.0000870376327229
+      },
+      "saturation_pearson_w_counts": 0.16338529768084573,
+      "simmatch_permuted_pearson": 0.002458339664506464,
+      "simmatch_traj": [
+        [
+          12,
+          0.8763217650272535
+        ],
+        [
+          24,
+          0.9202623136187508
+        ],
+        [
+          36,
+          0.9398603115381773
+        ],
+        [
+          48,
+          0.9507030347481339
+        ],
+        [
+          60,
+          0.9544802229605015
+        ]
+      ],
+      "reach_target": 0.674609129381867,
+      "gates": {
+        "host_carries": true,
+        "A_saturating_fails": true,
+        "simmatch_reaches_ceiling": true,
+        "simmatch_generalizes": true,
+        "permuted_collapses": true,
+        "input_lesion_collapses": true,
+        "rule_lesion_collapses": true
+      }
+    }
+  },
+  "note": "Owner-directed 'better-resourced de-risk first': true PPMI input (host-matched) + SVD-grade low-rank (offline PPMI+PCA reference) + converged online similarity-matching (Pehlevan-Chklovskii) + a faithful truly-saturating Hebbian control, on the real Option-C TinyStories corpus. Resolves whether L1 reaches the host ceiling on real data. NO sim/ edits. PPMI-as-input is brain-plausible (log=dendritic, /marginal=Phase-1 divisive gain, max=threshold); a GO greenlights the spiking similarity-matching build, it does not claim it is built."
+}
