@@ -166,7 +166,14 @@ def run_seed(seed, args):
     # with the hub, count > threshold) puts ALL co-occurring hubs -- common AND rare -- above threshold so
     # they fire; the dendritic gain then down-weights the high-marginal common hubs, leaving the category
     # structure. (--raw-drive keeps the raw counts for comparison.)
-    if args.drive_baseline > 0:
+    if args.log_drive:
+        # LOGARITHMIC (Weber-Fechner) input compression: drive ~ log1p(count). Compresses the wide-dynamic-
+        # range count vector (130x) into a ~5x range so BOTH the high-count common hubs AND the low-count
+        # category hubs fire in a representable band (neither saturates nor falls below rheobase) -- the
+        # sensory-systems answer to the threshold-silencing limit. A biologically-grounded, gain-independent
+        # cheap fix: does it let the POINT-NEURON cortex recover a strong graded code from faithful counts?
+        C_drive = np.log1p(np.maximum(C, 0.0))
+    elif args.drive_baseline > 0:
         # BASELINE-OFFSET RAW drive: co-occurring hubs (count > threshold) are driven by (count + baseline)
         # so the COMMON-MODE MAGNITUDE is kept (common count >> category) AND the low-count category hubs are
         # lifted above rheobase so they FIRE (readable). This is the regime where the gain's D1-level value
@@ -272,6 +279,9 @@ def main():
     p.add_argument("--drive-baseline", type=float, default=0.0,
                    help="if >0: BASELINE-OFFSET RAW drive (count+baseline for co-occurring hubs) -- keeps the "
                         "common-mode magnitude while lifting category hubs above rheobase (the gain's regime)")
+    p.add_argument("--log-drive", action="store_true",
+                   help="LOGARITHMIC (Weber-Fechner) input compression: drive ~ log1p(count) -- compresses the "
+                        "wide-dynamic-range counts so both common AND category hubs fire (the threshold-silencing fix)")
     p.add_argument("--window", type=int, default=20); p.add_argument("--settle", type=int, default=6)
     p.add_argument("--warmup", type=int, default=2, help="warm-up passes over all concepts (EMA convergence)")
     # gain
