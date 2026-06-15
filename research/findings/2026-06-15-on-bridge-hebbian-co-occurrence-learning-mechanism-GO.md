@@ -85,11 +85,12 @@ the population lift *inside this runner* is the immediate next compose step.
 - **Compose:** Hebbian co-occurrence learning (this) + population code (CYCLE 91) + log-domain
   normalization (CYCLE 93b) = the full on-bridge biology-faithful stream cortex.
 
-## Multi-seed mechanism confirmation (seeds 42–47)
+## Multi-seed mechanism confirmation (seeds 42–47) — GO
 
-The mechanism holds across seeds (6-seed run, 15 epochs × 30 steps): corr(M,C) per seed 42–44 =
-+0.696 / +0.658 / +0.681, all permuted-clean (−0.011 / −0.027 / +0.007). The single-neuron normalized
-code stays in the wall-bounded ~0.17–0.22 band, as expected.
+The mechanism holds robustly across all 6 seeds (15 epochs × 30 steps): **mean corr(M,C) +0.686**
+(range [+0.658, +0.718]), **permuted-clean (mean −0.009)**. The single-neuron normalized code stays
+in the wall-bounded ~0.19–0.26 band (mean +0.207, 60% of host-ref), as expected — the population lift
+below is what carries it to host.
 
 ## The population lift — CONFIRMED: the composition reaches host fidelity (added same cycle)
 
