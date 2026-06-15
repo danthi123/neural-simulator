@@ -1,0 +1,52 @@
+{
+  "verdict": "AXES_COMPOSE_END_TO_END_SPIKING_GO",
+  "why": "the full spiking pipeline recovers the structure end-to-end (bounded_Hebbian +0.545 = 106% of rate, gen 0.708, permuted clean), and learning is load-bearing (vs random-proj +0.121). NOTABLE: the anti-Hebbian lateral HURTS under end-to-end spike noise (bounded-Hebbian +0.545 > full-SM +0.386) -> the spiking build can likely DROP the lateral (the highest-risk protected edit) and use subtractive-inhibition centering + a homeostatically-bounded Hebbian feedforward instead -- a SIMPLER build. ==> the four axes COMPOSE in full spikes; common-mode removal (subtractive inhibition) is the load-bearing op. Strongest pre-bridge artifact; Phase B (bridge) owner-gated.",
+  "arms": {
+    "full_SM (lateral)": {
+      "pearson_mean": 0.38628381521840516,
+      "pearson_seeds": [
+        0.4250435197253834,
+        0.38746583147425234,
+        0.3463420944555798
+      ],
+      "gen_mean": 0.6927083333333334,
+      "perm_mean": 0.0011964922925613178,
+      "chance": 0.125
+    },
+    "bounded_Hebbian (no lateral)": {
+      "pearson_mean": 0.5451262748158119,
+      "pearson_seeds": [
+        0.5863195090270592,
+        0.5260871680600947,
+        0.5229721473602817
+      ],
+      "gen_mean": 0.7083333333333334,
+      "perm_mean": -0.01011413621470408,
+      "chance": 0.125
+    },
+    "random_proj (no learning)": {
+      "pearson_mean": 0.12118666223983059,
+      "pearson_seeds": [
+        0.15339414491929995,
+        0.09989487341619126,
+        0.11027096838400052
+      ],
+      "gen_mean": 0.375,
+      "perm_mean": 0.013467998254354284,
+      "chance": 0.125
+    }
+  },
+  "best_learner": 0.5451262748158119,
+  "best_name": "bounded_Hebbian",
+  "lateral_helps": false,
+  "learning_loadbearing": true,
+  "rate_ceiling": 0.515,
+  "offline_pca": 0.5234292736807535,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_hub": 2000,
+  "k": 64
+}

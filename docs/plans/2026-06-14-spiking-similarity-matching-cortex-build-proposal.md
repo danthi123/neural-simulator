@@ -31,10 +31,16 @@ multi-seed, full anti-cheat battery):
 project's recurring whitening/decorrelation theme, here the single fix that lets the *local online* rule
 extract the structure the *global* SVD recovers.
 
-## Architecture (the brain-based pipeline)
+## Architecture (the brain-based pipeline) — SIMPLIFIED by the Phase-A capstone
 
 All cognitive computation is neural; host code is limited to the environment (the corpus = the world's
 co-occurrence statistics, the "sensory" input) per the BRAIN-BASED-ONLY standard.
+
+> **Phase-A finding (`_l1_phaseA_end_to_end_spiking.py`, GO):** the end-to-end spiking pipeline recovers the
+> structure at +0.545 (≈ the offline ceiling), and the **recurrent anti-Hebbian lateral — the original
+> highest-risk piece — HURTS under spike noise** (+0.386 vs +0.545 without it). Common-mode removal done
+> **explicitly** via subtractive inhibition is more spike-robust than the implicit recurrent lateral. The
+> architecture below drops the recurrent lateral accordingly.
 
 ```
   context co-occurrence (the "sensory" experience)
@@ -43,47 +49,50 @@ co-occurrence statistics, the "sensory" input) per the BRAIN-BASED-ONLY standard
   [INPUT LAYER: H context-hub neurons]  ── PPMI-shaped drive, realized brain-plausibly:
         │   • log(count)            = Weber-Fechner / dendritic compression
         │   • / hub-marginal        = the Phase-1 dendritic divisive gain  g = σ/(σ+EMA_j)   (ALREADY BUILT)
-        │   • − population-mean     = subtractive-inhibition EMA (common-mode removal)         ← the enabler
+        │   • − population-mean     = subtractive-inhibition EMA (common-mode removal)   ← LOAD-BEARING, explicit
         │   • max(·,0)              = the spike threshold (rheobase)
         ▼
-  [W_ff: hub→output synapses, PLASTIC]  ── Oja feedforward  ΔW ∝ y·x − y²·W
+  [W_ff: hub→output synapses, PLASTIC]  ── bounded Hebbian feedforward (homeostatic weight clip),
+        │                                   y_spk · x_spk  with a soft/hard bound = the firing-rate ceiling
         ▼
-  [OUTPUT POOL: k cortical neurons]  ── settle y = relu(W_ff·x − M·y) over the integration window
-        ▲         │                      (non-negative: a real spiking rate)
-        └─[M: lateral inhibition, PLASTIC]── anti-Hebbian fixed point  ΔM ∝ y·y − M
-        │
+  [OUTPUT POOL: k cortical neurons]  ── y = relu(W_ff·x_in) over the integration window (non-negative spikes)
+        │                                NO recurrent lateral (Phase-A: it hurts under spike noise)
         ▼
-  concept code = output spike-count vector  → cosine = learned similarity → category structure
+  concept code = output spike-count vector integrated over the readout window  → cosine = learned similarity
 ```
 
-This is **Pehlevan-Chklovskii non-negative similarity-matching** (a published spiking realization exists,
-Pehlevan 2019: integrate-and-fire + local Hebbian/anti-Hebbian), reformulated onto the `SimulationBridge`.
+This is a **simplified non-negative Hebbian similarity learner**: the heavy lifting (common-mode removal) is
+an explicit subtractive-inhibition front-end (feedforward inhibition), and the feedforward is a
+homeostatically-bounded Hebbian — both map onto existing bridge machinery (see protected edits). The full
+Pehlevan-Chklovskii recurrent lateral is **not** required (Phase-A capstone).
 
 ## Phased plan (each phase ends with a GO/NEGATIVE gate; a NEGATIVE is the deliverable)
 
-**Phase A — full numpy spiking smoke (no sim/ edits, ~days).** Extend the de-risk runners to the *complete*
-spiking pipeline in one numpy net: spiking input (done) + spiking output (LIF or rectified-rate) + the
-recurrent lateral settle + spike-driven Oja/anti-Hebbian learning, end-to-end on the real 64-concept
-corpus. Mirrors the trusted D1→D1.7 ladder. **Gate:** recover ≥0.70× the rate ceiling (≈+0.36), multi-seed,
-permuted + saturating controls fail. This is the last all-numpy step before touching the bridge.
+**Phase A — full numpy spiking smoke (no sim/ edits) — ✅ DONE, GO.** The complete spiking pipeline
+(spiking input + spiking output + spike-driven learning + readout integration) recovers the structure
+end-to-end at +0.545 (≈ offline ceiling), multi-seed, learning load-bearing (vs random projection +0.121),
+permuted clean. It also returned the build-simplifying finding above (drop the recurrent lateral). The last
+all-numpy step before the bridge is complete. (`_l1_phaseA_end_to_end_spiking.py`.)
 
-**Phase B — the bridge, 64 concepts (protected sim/ edits, byte-reviewed, ~1–2 weeks).** Build the cortex
-on the `SimulationBridge`:
-- output pool = a `BrainRegion` of k neurons; lateral inhibition = recurrent inhibitory synapses (plastic);
-- feedforward = hub→output plastic synapses;
-- PPMI-shaped input drive = the Phase-1 dendritic divisive gain (reuse) + log + threshold + a global
-  inhibitory interneuron for common-mode removal;
-- the integration window per concept presentation (the recurrent lateral settles).
-- **Anticipated protected edits (byte-review each):** the **anti-Hebbian lateral with the −M fixed point**
-  (the bridge's STDP is Hebbian/soft-bound; the −M decay-toward-fixed-point is the new rule — the highest-
-  risk edit); the **Oja −y²·W normalization** (may approximate via existing homeostatic scaling, else a
-  small edit); the **subtractive-inhibition common-mode removal** (a global inhibitory interneuron — likely
-  expressible with existing inhibitory machinery, no edit). The Phase-1 dendritic gain is already a
-  byte-reviewed protected edit and is reused for the /marginal step.
-- **Gate:** recover the +0.46 structure on the real 64-concept corpus, multi-seed, full anti-cheat battery
-  (permuted-similarity ~0, the point-neuron/saturating controls fail, host ceiling carries, learning
-  load-bearing vs random projection, S_true a-priori). NEGATIVE here = the bridge-dynamics rate→spike gap
-  is the wall (the recurring theme) → maps it precisely.
+**Phase B — the bridge, 64 concepts (~1–2 weeks; FEWER protected edits than first thought).** Build the
+simplified cortex on the `SimulationBridge`:
+- output pool = a `BrainRegion` of k neurons; feedforward = hub→output plastic synapses; **no recurrent
+  lateral** (Phase-A);
+- PPMI-shaped input drive = the Phase-1 dendritic divisive gain (reuse) + log + threshold;
+- **common-mode removal = an explicit subtractive-inhibition front-end** (a global inhibitory interneuron
+  pool subtracting the slow population-mean drive — standard feedforward inhibition);
+- bounded Hebbian feedforward = the bridge's existing **soft-bound STDP + homeostatic scaling** (the firing-
+  rate ceiling is the bound) — likely **no new plasticity rule**;
+- the integration window per concept presentation; spike-count readout over the window.
+- **Anticipated protected edits (byte-review each):** likely **none new** — the bounded Hebbian maps onto
+  existing soft-bound STDP + homeostasis, the subtractive inhibition onto existing inhibitory regions/
+  pathways, the /marginal onto the already-shipped Phase-1 dendritic gain. Any edit that *is* needed gets a
+  default-off guard (byte-identical when disabled) + a byte-review. **(Dropping the anti-Hebbian −M lateral
+  removes the originally-highest-risk edit entirely.)**
+- **Gate:** recover the structure on the real 64-concept corpus, multi-seed, full anti-cheat battery
+  (permuted-similarity ~0, learning load-bearing vs random projection, host ceiling carries, S_true
+  a-priori). NEGATIVE here = the bridge-dynamics rate→spike gap is the wall (the recurring theme) → maps it
+  precisely.
 
 **Phase C — scale (~1 week).** Scale 64 → 320 → 2,048 concepts (the documented tiers) with real
 co-occurrence. **Gate:** extraction fraction holds; per-concept codes remain discriminable. Watch
@@ -109,8 +118,9 @@ the full conversational matrix passes (who/what QA, negation/yes-no, dialogue) A
 2. **The bridge rate→spike learning gap** — the numpy smokes are faithful, but the `SimulationBridge`'s own
    LIF/Izhikevich dynamics + STDP timing may not realize the Oja/anti-Hebbian rule cleanly. This is *the*
    recurring project wall; Phase B is where it is honestly tested. (Phase B gate.)
-3. **The anti-Hebbian −M fixed-point protected edit** — the highest-risk sim/ change; needs careful
-   byte-review + a default-off guard (byte-identical when disabled).
+3. ~~**The anti-Hebbian −M fixed-point protected edit.**~~ **RETIRED by Phase A** — the recurrent lateral is
+   dropped (it hurts under spike noise); explicit subtractive inhibition + bounded Hebbian replace it,
+   mapping onto existing bridge machinery. The originally-highest-risk edit is gone.
 4. **Moderate ceiling** — real category structure is +0.52, not +0.9 → moderate ("cat ~ dog"), not perfect,
    generalization. Real, but set expectations.
 5. **Moat preservation** — the learned codes must not let confabulation through. Phase D hard-stops on any

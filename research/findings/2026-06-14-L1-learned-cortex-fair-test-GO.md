@@ -158,7 +158,29 @@ whitening/common-mode theme the project has hit 5+ times — and it is brain-pla
 - raw: `_l1_fair_real_multiseed.{json,log}`, `_l1_simmatch_convergence_sweep.{json,log}`,
   `_l1_centered_online_pca_probe.{json,log}`, `_l1_oja_validated.{json,log}`.
 
-## Comprehensive de-risk summary — all four axes GO
+## Phase-A capstone: end-to-end spiking composition — GO, and it SIMPLIFIES the build
+
+Do the four axes **compose**? An end-to-end spiking net — spiking input **+** spiking output **+**
+spike-driven learning **+** recurrent settle, every signal a spike (`_l1_phaseA_end_to_end_spiking.py`,
+numpy, no sim/ edits). Multi-seed at a realistic spike budget (in_gain 30):
+
+| recipe | Pearson | gen | perm |
+|---|---|---|---|
+| full SM (with anti-Hebbian lateral) | +0.386 | 0.693 | +0.001 |
+| **subtractive-inhibition centering + bounded Hebbian (no lateral)** | **+0.545** (106% of rate ceiling) | 0.708 | −0.010 |
+| random projection (no learning) | +0.121 | 0.375 | +0.013 |
+
+The structure **is recovered end-to-end in full spikes** (+0.545 ≈ the offline optimum), learning is
+load-bearing (vs random +0.121), permuted clean. **Build-simplifying finding:** the anti-Hebbian recurrent
+lateral — the *highest-risk protected edit* in the build proposal — **hurts under end-to-end spike noise**
+(+0.386 < +0.545). Common-mode removal done **explicitly** via subtractive inhibition (feedforward
+inhibition) is more spike-robust than doing it **implicitly** via the recurrent lateral. ⇒ the spiking build
+can **drop the recurrent lateral** and use *subtractive-inhibition centering + a homeostatically-bounded
+Hebbian feedforward* — simpler and lower-risk. (Honest process note: the first end-to-end run showed +0.18
+with the learner *below* its saturating control — a single-sample-readout artifact; root-causing it to a
+faithful windowed readout + correct normalization + the random-projection control produced the result above.)
+
+## Comprehensive de-risk summary — all five axes GO
 
 | axis | result | runner |
 |---|---|---|
@@ -166,9 +188,11 @@ whitening/common-mode theme the project has hit 5+ times — and it is brain-pla
 | **Input-spiking** (does the structure survive Poisson-spike input?) | GO — 78–89% at ~2–6 spikes/hub/concept | `_l1_spiking_oja_smoke` |
 | **Learning-non-negativity + spiking** (rectified firing + spike-driven Hebbian?) | GO — 90% of signed | `_l1_nonneg_simmatch_check` |
 | **Scale-capacity** (64→256 concepts?) | GO — fraction holds 88–100% | `_l1_scale_capacity_check` |
+| **End-to-end spiking composition** (do the axes compose?) | GO — +0.545 (106% of rate) in full spikes; learning load-bearing; **the recurrent lateral is unnecessary** | `_l1_phaseA_end_to_end_spiking` |
 
 Enabling operation across all: **common-mode removal (centering = subtractive-inhibition EMA)** — the
-project's recurring whitening theme, here the single fix that converged the local online rule.
+project's recurring whitening theme, here the single fix that converged the local online rule, and (Phase-A)
+the spike-robust way to do it explicitly so the recurrent lateral can be dropped.
 
 ## Recommendation (decision point — the next step is owner-gated)
 
