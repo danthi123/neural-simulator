@@ -82,13 +82,13 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
 sim/                    # 42 modules (+ __init__.py), ~20K lines — core engine
-  bridge.py             # 7704 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate)
-  config.py             #  884 lines — all @dataclass configs
+  bridge.py             # 7919 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate, graded inhibition, input-mean adaptation)
+  config.py             #  925 lines — all @dataclass configs
   enums.py              #  830 lines — NeuronType (50+ presets), enums, default param managers
   connectivity.py       #  999 lines — spatial/WS/motif connection generators (backend-pluggable)
   kernels.py            #  365 lines — fused @fuse() neuron + plasticity kernels (cupy/numpy)
   profiles.py           #  432 lines — NEURAL_STRUCTURE_PROFILES + CONNECTIVITY_MOTIFS dicts
-  regions.py            #  693 lines — BrainRegion + RegionPathway (incl. transmission_gate) + RegionManager
+  regions.py            #  733 lines — BrainRegion + RegionPathway (incl. transmission_gate, graded, input_mean_adapt) + RegionManager
   neuromodulators.py    # 1114 lines — declarative neuromodulator subsystem
   data_bus.py           #   95 lines — DataChannel pub/sub for streaming sim data
   replicas.py           #  243 lines — replicated wiring (multi-bridge support)
