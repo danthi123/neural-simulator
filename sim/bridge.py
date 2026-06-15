@@ -292,6 +292,7 @@ class SimulationBridge:
         # (Option A) + 2026-06-15-analog-substrate-learned-cortex-build-plan.md (Phase 2).
         self.cp_input_mean_ema = None                     # per-neuron slow EMA m of own input drive (None unless flagged region)
         self.cp_input_mean_adapt_mask = None              # bool per-neuron: True for input-mean-adapting neurons
+        self.cp_input_divisive_mask = None                # bool per-neuron: True for per-concept divisive-norm neurons (None unless flagged region)
         # Cluster G v2 (2026-05-01): per-neuron NMDA mask (1.0 for neurons
         # in regions with BrainRegion.enable_nmda=True, 0.0 otherwise).
         # When None, NMDA applies globally per cfg.enable_nmda — backward
@@ -1266,6 +1267,26 @@ class SimulationBridge:
                         self._log_console(
                             f"Input-mean-adapt per-region mask: {len(ima_regions)} regions enabled "
                             f"({sum(int(r.n_neurons) for r in ima_regions)} neurons)",
+                        )
+
+                # Per-concept DIVISIVE normalization mask (2026-06-15): mirrors the input-mean
+                # mask above. Built ONLY if cfg.enable_input_divisive_norm AND >=1 region sets
+                # BrainRegion.input_divisive_norm=True; otherwise cp_input_divisive_mask stays
+                # None so default configs are byte-identical (the per-step divisive block is
+                # unreached). Per-NEURON (n is known here), like the input-mean / NMDA masks.
+                if getattr(cfg, "enable_input_divisive_norm", False):
+                    idn_regions = [r for r in self.region_manager.regions()
+                                   if getattr(r, "input_divisive_norm", False)]
+                    if idn_regions:
+                        idn_mask = cp.zeros(n, dtype=cp.bool_)
+                        for r in idn_regions:
+                            idx = list(self.region_manager.indices(r.name))
+                            if idx:
+                                idn_mask[cp.asarray(idx, dtype=cp.int64)] = True
+                        self.cp_input_divisive_mask = idn_mask
+                        self._log_console(
+                            f"Input-divisive-norm per-region mask: {len(idn_regions)} regions enabled "
+                            f"({sum(int(r.n_neurons) for r in idn_regions)} neurons)",
                         )
 
             # GABA_B -> GIRK slow K+ inhibitory conductance (2026-06-08). The NMDA
@@ -5859,6 +5880,28 @@ class SimulationBridge:
                     self.cp_conductance_g_e += (_WgT1 @ _a_cont) * cfg.propagation_strength
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
+
+            # ── Per-concept DIVISIVE input normalization (Carandini-Heeger, 2026-06-15): for each
+            # FLAGGED neuron, divide its pre-threshold input by (sigma + gain*MEAN input over the
+            # flagged set): r_i = x_i / (sigma + gain*mean_j x_j). The mean is over the flagged
+            # neurons (one normalization pool = the concept's total drive for THIS presentation), so
+            # a high-drive concept is down-scaled relative to a low-drive one -- PPMI's per-concept
+            # (row-marginal) normalization realized as a feedforward divisive-gain circuit; the
+            # neuron's log-ish f-I then makes it the log-ratio. Applied BEFORE input_mean_adapt so the
+            # per-hub centering operates on the divisively-normalized drive. The per-neuron mask routes
+            # the division so UNFLAGGED neurons are byte-untouched. GUARDED NO-OP: cp_input_divisive_mask
+            # is None unless cfg.enable_input_divisive_norm + a region sets input_divisive_norm=True,
+            # so this block is unreached and total_input_current_pA is byte-identical when off.
+            if self.cp_input_divisive_mask is not None:
+                _idn_sigma = cp.float32(getattr(cfg, "input_divisive_sigma", 1.0))
+                _idn_gain = cp.float32(getattr(cfg, "input_divisive_gain", 1.0))
+                _idn_mask_f = self.cp_input_divisive_mask.astype(cp.float32)
+                _idn_n = cp.maximum(cp.sum(_idn_mask_f), cp.float32(1.0))
+                _idn_mean = cp.sum(_idn_mask_f * total_input_current_pA) / _idn_n
+                _idn_divisor = _idn_sigma + _idn_gain * _idn_mean
+                total_input_current_pA = (
+                    total_input_current_pA * (1.0 - _idn_mask_f)
+                    + _idn_mask_f * total_input_current_pA / _idn_divisor)
 
             # ── Slow per-hub INPUT-MEAN adaptation (axis-0 per-feature centering, 2026-06-15;
             # subtractive spike-frequency adaptation / point-neuron predictive coding). For each

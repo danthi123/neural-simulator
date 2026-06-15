@@ -203,6 +203,12 @@ class BrainRegion:
     # research/findings/2026-06-15-slow-perhub-mean-primitive-deep-research.md (Option A) +
     # docs/plans/2026-06-15-analog-substrate-learned-cortex-build-plan.md (Phase 2).
     input_mean_adapt: bool = False
+    # Per-concept DIVISIVE input normalization (Carandini-Heeger, 2026-06-15): when True AND
+    # cfg.enable_input_divisive_norm, this region's neurons divide their pre-threshold input by
+    # (sigma + gain*mean input over the flagged set) -- PPMI's per-concept normalization as a
+    # feedforward divisive-gain circuit. Guarded no-op unless BOTH this flag and the global
+    # cfg.enable_input_divisive_norm are set (cp_input_divisive_mask stays None otherwise).
+    input_divisive_norm: bool = False
 
 
 @dataclass

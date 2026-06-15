@@ -423,6 +423,21 @@ class CoreSimConfig:
     # raw_drive - gain*m. 1.0 = subtract the full running mean (the validated numpy op).
     input_mean_adapt_gain: float = 1.0
 
+    # ─── Per-concept DIVISIVE input normalization (Carandini-Heeger, 2026-06-15) ───
+    # For each FLAGGED neuron, divide its pre-threshold input by (sigma + gain*MEAN input over the
+    # flagged set): r_i = x_i / (sigma + gain*mean_j x_j). A feedforward divisive-gain circuit that
+    # realizes PPMI's per-concept (row-marginal) normalization -- the canonical cortical normalization
+    # by total pool drive. Composes with input_mean_adapt (per-hub subtractive) + the neuron's log-ish
+    # f-I to approximate PPMI on the bridge (validated load-bearing in numpy: +0.158 -> +0.339 on the
+    # real corpus). GUARDED: unless enable_input_divisive_norm AND a region sets
+    # BrainRegion.input_divisive_norm=True, cp_input_divisive_mask stays None and the per-step block is
+    # unreached, so total_input_current_pA is byte-identical to today.
+    enable_input_divisive_norm: bool = False
+    # Semi-saturation constant sigma (keeps the divisor bounded away from 0 when the pool is quiet).
+    input_divisive_sigma: float = 1.0
+    # Divisive strength on the mean term.
+    input_divisive_gain: float = 1.0
+
     # ─── Synapse tiering (Phase 3 Strategy B, 2026-05-11) ──────────
     # Activity-tracked TieredSynapseStore mirrors the per-pathway CSRs
     # alongside the monolithic cp_connections. Foundation for Phase 4
