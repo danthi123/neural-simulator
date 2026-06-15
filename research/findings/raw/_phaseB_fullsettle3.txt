@@ -1,0 +1,18 @@
+
+[anti-Hebbian lateral seed 42] 64c x 500h; host=+0.442 | random (no lateral) +0.277 (eff-rank 44.2)
+  BEST one-step lateral: Pearson=+0.295 (beta=0.2, lam=0.02, gen=0.703, eff-rank=44.3) vs random +0.277
+  BEST FULL-SETTLE lateral: Pearson=+0.289 (beta=0.2, lam=0.3, gen=0.703, eff-rank=44.2) vs one-step +0.295 vs random +0.277
+  [anti-cheat] permuted=-0.052 (~0)
+
+[anti-Hebbian lateral seed 43] 64c x 500h; host=+0.442 | random (no lateral) +0.301 (eff-rank 44.1)
+  BEST one-step lateral: Pearson=+0.326 (beta=0.5, lam=0.02, gen=0.734, eff-rank=43.9) vs random +0.301
+  BEST FULL-SETTLE lateral: Pearson=+0.329 (beta=0.05, lam=0.3, gen=0.656, eff-rank=44.0) vs one-step +0.326 vs random +0.301
+  [anti-cheat] permuted=-0.007 (~0)
+
+[anti-Hebbian lateral seed 44] 64c x 500h; host=+0.442 | random (no lateral) +0.342 (eff-rank 44.0)
+  BEST one-step lateral: Pearson=+0.350 (beta=0.2, lam=0.02, gen=0.766, eff-rank=44.1) vs random +0.342
+  BEST FULL-SETTLE lateral: Pearson=+0.350 (beta=0.05, lam=0.1, gen=0.734, eff-rank=44.3) vs one-step +0.350 vs random +0.342
+  [anti-cheat] permuted=+0.011 (~0)
+
+  MEAN (3 seeds): host +0.442 | random(no lateral) +0.307 | one-step lateral +0.324 (eff-rank 44.1) | FULL-SETTLE +0.323 (eff-rank 44.2) | permuted -0.016
+  PARTIAL: the lateral helps (+0.324 > random +0.307) but by <+0.06 -- the one-step approximation is weak; a full recurrent settle (y=(I+M)^-1 a) may be needed before the bridge.
