@@ -166,8 +166,33 @@ The CYCLE-84 loop-closer used the **synthetic** corpus (where the D1 GO was vali
 
 So the case for D2 is honestly **qualified**: the dendritic substrate clears the diagonal half cleanly and is a natural continual learner *there*, but the real-experience cortex needs the off-diagonal too — the months-scale build is warranted *for the artificial-life / biology-translatable goal*, with eyes open that the diagonal-only per-hub gain (the cheaply-validated piece) is one half of the operation.
 
+## CYCLE 87 — the off-diagonal cheap path is EXHAUSTED: the deep-research's own top option (O1) is falsified
+
+The off-diagonal deep-research (`2026-06-15-offdiagonal-decorrelation-local-mechanism-deep-research.md`) delivered a decisive, well-sourced scope: (1) **D2-as-designed does NOT address the off-diagonal** — the per-hub divisive gain `r = D·x` (D diagonal) is *mathematically* incapable of removing cross-feature correlations, so it caps at the measured 49%-of-host on real and fixing its Phase-2 NEGATIVE cannot raise it; (2) the Mikulasch-Priesemann limit forbids the *off-diagonal* specifically (verified vs PNAS 2021); (3) every biologically-plausible off-diagonal decorrelator is a *recurrent* cross-neuron lateral, and pure whitening *over*-whitens (confirming the full-ZCA collapse) → the target is **low-rank**; (4) top option **O1** = a low-rank, full-settle inhibitory-interneuron lateral in point neurons (the project's `graded_lateral` made low-rank).
+
+I ran O1's cheap de-risk (`research/runners/_phaseB_lowrank_lateral_derisk.py`, the validated online SM lateral at a low-rank bottleneck k ∈ {8,12,16,32} on the real PPMI corpus, 3 seeds):
+
+| k (bottleneck) | offline ZCA rank-k | **online low-rank lateral (peak)** | eff-rank |
+|---|---|---|---|
+| 8 | +0.497 | **+0.198** | **1.1** (collapsed to rank-1!) |
+| 12 | +0.484 | +0.188 | 1.7 |
+| 16 | +0.439 | +0.200 | 2.3 |
+| 32 | +0.277 | +0.274 | 5.1 |
+| — | — | (k=64 SM, CYCLE 81: +0.35) | 3–4 |
+| diagonal-gain control | — | +0.215 | — |
+
+**BOUNDARY/NEGATIVE — O1 falsified.** Forcing low rank made it *worse*: at k=8 the online lateral collapses to eff-rank 1.1 (rank-1), reaching only +0.198 while the offline rank-8 ZCA hits +0.497. No bottleneck beats even the k=64 SM (+0.35). The online local mechanisms cannot hit the rank-8 sweet spot — a *fixed*-W lateral *over*-whitens (rank-44, +0.32, CYCLE 73), a *learned*-W lateral *collapses* (rank 1–4), and only the offline non-local SVD selects exactly the top-8. The structure is reachable offline (+0.497) but **no tested online local realization converges to it**.
+
+**⇒ The complete, decisive, honest conclusion (the cheap autonomous de-risk is now genuinely exhausted):**
+- The **diagonal** half is solved locally (point-neuron subtractive adaptation / dendritic divisive gain), caps ~+0.22–0.31 on real.
+- The **off-diagonal** half is the wall: reachable only by a non-local offline operation (+0.497); the in-progress D2 diagonal-gain build is *mathematically incapable* of it; the point-neuron recurrent lateral *plateaus/collapses* (does not converge to the low-rank optimum); so **no tested local online mechanism reaches host on the real corpus.**
+- The only remaining biological route is the **deeper Mikulasch-Priesemann dendritic-PLUS-lateral architecture** (dendritic compartments *carrying* the recurrent cross-neuron inhibition — strictly *more* than the current diagonal-only D2), which is the honest deep frontier: months-scale, high-variance, owner-gated.
+- **Decision for the owner:** (a) the current D2 build, as specified, will not crack the real corpus (diagonal-only) — do not continue Phase 2 expecting it to; (b) the pragmatic product answer is the shipped curated 2,048-concept cortex (the separable regime where the diagonal mechanism works *and* learns over time cleanly, CYCLE 84); (c) the real-experience generalizing cortex needs the deep dendritic-plus-lateral build, reserved for the artificial-life / biology-translatable goal, eyes open that it is the genuine hard frontier (not a near-term gate).
+
 ## Artifacts
 
+- `research/runners/_phaseB_lowrank_lateral_derisk.py` + `research/findings/raw/_phaseB_lowrank_lateral.{json,txt}` (CYCLE 87, O1 falsified — cheap point-neuron off-diagonal path exhausted)
+- `research/findings/2026-06-15-offdiagonal-decorrelation-local-mechanism-deep-research.md` (CYCLE 86, the off-diagonal deep-research scope)
 - `research/runners/_phaseB_dendritic_real_derisk.py` + `research/findings/raw/_phaseB_dendritic_real.{json,txt}` (CYCLE 85, the honest real-corpus tempering)
 - `research/runners/_phaseB_dendritic_continual_derisk.py` + `research/findings/raw/_phaseB_dendritic_continual.{json,txt}` (CYCLE 84, the synthetic loop-closer)
 - `research/runners/_phaseB_timescale_convergence_derisk.py` + `research/findings/raw/_phaseB_timescale_convergence.{json,txt}`

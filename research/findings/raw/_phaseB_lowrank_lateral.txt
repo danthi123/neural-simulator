@@ -1,0 +1,31 @@
+[low-rank lateral O1 de-risk] seeds=(42, 43, 44) n_hub=500 -- can a LOW-RANK point-neuron lateral reach the off-diagonal ceiling (rank-8 ZCA ~+0.44) on the REAL corpus, beating the diagonal +0.22 and the k=64 SM +0.35?
+
+[low-rank lateral seed 42] 64c x 500h | host +0.442 | diagonal-gain control +0.215 (the D2-as-designed ceiling)
+    k=  8: offline ZCA rank-k +0.497 | online low-rank lateral +0.170 (peak +0.170, eff-rank 1.1)
+    k= 12: offline ZCA rank-k +0.484 | online low-rank lateral +0.079 (peak +0.083, eff-rank 1.7)
+    k= 16: offline ZCA rank-k +0.439 | online low-rank lateral +0.094 (peak +0.139, eff-rank 2.2)
+    k= 32: offline ZCA rank-k +0.277 | online low-rank lateral +0.190 (peak +0.243, eff-rank 5.0)
+
+[low-rank lateral seed 43] 64c x 500h | host +0.442 | diagonal-gain control +0.215 (the D2-as-designed ceiling)
+    k=  8: offline ZCA rank-k +0.497 | online low-rank lateral +0.214 (peak +0.214, eff-rank 1.1)
+    k= 12: offline ZCA rank-k +0.484 | online low-rank lateral +0.262 (peak +0.262, eff-rank 1.4)
+    k= 16: offline ZCA rank-k +0.439 | online low-rank lateral +0.264 (peak +0.264, eff-rank 2.4)
+    k= 32: offline ZCA rank-k +0.277 | online low-rank lateral +0.298 (peak +0.314, eff-rank 6.0)
+
+[low-rank lateral seed 44] 64c x 500h | host +0.442 | diagonal-gain control +0.215 (the D2-as-designed ceiling)
+    k=  8: offline ZCA rank-k +0.497 | online low-rank lateral +0.209 (peak +0.209, eff-rank 1.2)
+    k= 12: offline ZCA rank-k +0.484 | online low-rank lateral +0.218 (peak +0.218, eff-rank 2.0)
+    k= 16: offline ZCA rank-k +0.439 | online low-rank lateral +0.177 (peak +0.196, eff-rank 2.5)
+    k= 32: offline ZCA rank-k +0.277 | online low-rank lateral +0.228 (peak +0.264, eff-rank 4.3)
+
+================================================================================================
+  MEAN (3 seeds): host +0.442 | diagonal-gain control +0.215 | reference k=64 SM ~+0.35 (CYCLE 81)
+    k=  8: offline ZCA +0.497 | online low-rank lateral +0.198 (peak +0.198, eff-rank 1.1)
+    k= 12: offline ZCA +0.484 | online low-rank lateral +0.187 (peak +0.188, eff-rank 1.7)
+    k= 16: offline ZCA +0.439 | online low-rank lateral +0.178 (peak +0.200, eff-rank 2.3)
+    k= 32: offline ZCA +0.277 | online low-rank lateral +0.239 (peak +0.274, eff-rank 5.1)
+================================================================================================
+  BOUNDARY/NEGATIVE: even the LOW-RANK online lateral (k=32, peak +0.274) does NOT clearly beat the k=64 SM (+0.35) toward the rank-8 ZCA (+0.497) -- the point-neuron lateral plateaus even when bottlenecked to low rank. ==> the off-diagonal genuinely needs MORE than a point-neuron lateral (the deeper Mikulasch-Priesemann dendritic-PLUS-lateral build) -- the cheap point-neuron path is exhausted; the honest deep frontier. (Offline rank-8 ZCA +0.497 proves the structure IS reachable, so this is a CONVERGENCE/substrate limit, not a data limit.)
+  Total elapsed: 26.4s
+
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_phaseB_lowrank_lateral.json
