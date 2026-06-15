@@ -71,6 +71,7 @@ def run_seed(seed, n_hub=500, k=128, gain=500.0, n_epochs=8):
     Xw = Xn - Xn.mean(0, keepdims=True)
     W = rng.randn(k, n_hub) / np.sqrt(n_hub)
     A = (W @ Xw.T).T                            # the projected activity (the "cortex g_e"), signed
+    Nc = A.shape[0]
 
     def p_of(Y):
         code = onoff_code(Y, gain, rng)
@@ -92,8 +93,40 @@ def run_seed(seed, n_hub=500, k=128, gain=500.0, n_epochs=8):
                 best = (p, (beta, lam, g, er))
     bp, (bb, bl, bg, ber) = best
     out["best"] = {"pearson": round(bp, 3), "beta": bb, "lam": bl, "gen": round(bg, 3), "eff_rank": round(ber, 1)}
-    print(f"  BEST lateral: Pearson={bp:+.3f} (beta={bb}, lam={bl}, gen={bg:.3f}, eff-rank={ber:.1f}) "
+    print(f"  BEST one-step lateral: Pearson={bp:+.3f} (beta={bb}, lam={bl}, gen={bg:.3f}, eff-rank={ber:.1f}) "
           f"vs random {p_rand:+.3f}", flush=True)
+    # FULL RECURRENT SETTLE (research option d): y = (I+M)^-1 a, learning M WITH the settled output.
+    best_settle = (-9, None)
+    Ik = np.eye(k)
+    for beta in (0.05, 0.2, 0.5):
+        for lam in (0.1, 0.3):
+            Mset = np.zeros((k, k)); diverged = False
+            for _ep in range(n_epochs):
+                for c in rng.permutation(Nc):
+                    a = A[c]
+                    try:
+                        y = np.linalg.solve(Ik + Mset, a)                  # full settle
+                    except np.linalg.LinAlgError:
+                        diverged = True; break
+                    Mset += 0.004 * (np.outer(y, y) - beta * Ik) - lam * Mset  # lower lr keeps M bounded
+                    np.fill_diagonal(Mset, 0.0)
+                    nrm = np.linalg.norm(Mset)                              # spectral-ish guard: rescale if large
+                    if nrm > 0.8:
+                        Mset *= 0.8 / nrm
+                if diverged:
+                    break
+            if diverged:
+                continue
+            Yset = np.array([np.linalg.solve(Ik + Mset, A[c]) for c in range(Nc)])
+            ps, gs, ers = p_of(Yset)
+            if ps > best_settle[0]:
+                best_settle = (ps, (beta, lam, gs, ers))
+    if best_settle[1] is None:
+        best_settle = (p_rand, (0.0, 0.0, g_rand, er_rand))  # all diverged -> fall back to random for the print
+    pset, (sb_, sl_, sg_, ser_) = best_settle
+    out["settle"] = {"pearson": round(pset, 3), "beta": sb_, "lam": sl_, "eff_rank": round(ser_, 1)}
+    print(f"  BEST FULL-SETTLE lateral: Pearson={pset:+.3f} (beta={sb_}, lam={sl_}, gen={sg_:.3f}, "
+          f"eff-rank={ser_:.1f}) vs one-step {bp:+.3f} vs random {p_rand:+.3f}", flush=True)
     # anti-cheat: permuted-label on the best lateral code.
     M = learn_lateral(A, bb, bl, lr=0.02, n_epochs=n_epochs, seed=seed); Y = A - (M @ A.T).T
     code = onoff_code(Y, gain, rng)
@@ -109,10 +142,17 @@ def main():
     def m(f): return float(np.mean([f(r) for r in rows]))
     host = m(lambda r: r["host"]); rand = m(lambda r: r["random"])
     best = m(lambda r: r["best"]["pearson"]); perm = m(lambda r: r["permuted"])
-    er = m(lambda r: r["best"]["eff_rank"])
-    print(f"\n  MEAN (3 seeds): host {host:+.3f} | random(no lateral) {rand:+.3f} | "
-          f"BEST anti-Hebbian lateral {best:+.3f} (eff-rank {er:.1f}) | permuted {perm:+.3f}", flush=True)
-    if best >= rand + 0.06 and perm <= 0.10:
+    er = m(lambda r: r["best"]["eff_rank"]); settle = m(lambda r: r["settle"]["pearson"])
+    settle_er = m(lambda r: r["settle"]["eff_rank"])
+    print(f"\n  MEAN (3 seeds): host {host:+.3f} | random(no lateral) {rand:+.3f} | one-step lateral "
+          f"{best:+.3f} (eff-rank {er:.1f}) | FULL-SETTLE {settle:+.3f} (eff-rank {settle_er:.1f}) | "
+          f"permuted {perm:+.3f}", flush=True)
+    if settle >= rand + 0.06 and settle > best + 0.03:
+        print(f"  GO (full settle is the fix): the FULL-SETTLE lateral ({settle:+.3f}) materially beats the "
+              f"one-step ({best:+.3f}) AND random ({rand:+.3f}) toward host ({host:+.3f}) => the bridge needs the "
+              f"FULL RECURRENT SETTLE (multiple graded_lateral steps per read, not one-step) -- the (A) build.",
+              flush=True)
+    elif best >= rand + 0.06 and perm <= 0.10:
         print(f"  GO: the anti-Hebbian LATERAL beats the random projection ({best:+.3f} vs {rand:+.3f}) toward "
               f"host ({host:+.3f}), eff-rank {er:.1f} (no rank-1 collapse), permuted-clean ({perm:+.3f}). => the "
               f"SM lateral IS the fix; BUILD it on the bridge via graded_lateral on the cortex (+ tune lambda). "
