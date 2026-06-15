@@ -125,6 +125,31 @@ magnitude — already shipped for the composer) is exactly the kind of code that
 low-magnitude differential where rate coding cannot. A phase-coded cortex is the project-grounded candidate
 for the deep frontier (medium/large build, owner-gated), distinct from full dendrites.
 
+## ✅ PATH FORWARD (CYCLE 66): the RETINAL escape — analog center-surround whitening + ON/OFF cells + high spike budget — is a marginally-validated brain-based escape. Phase coding is OUT.
+
+Two escape de-risks (numpy, real corpus): **(1) phase coding — NEGATIVE.** A unit-magnitude phasor projection
+is *worse* than rate (+0.12 vs +0.23) — phasors are for binding discrete symbols, not preserving a
+continuous similarity, and don't fit (`_phaseB_phasor_derisk.py`). **(2) the RETINAL mechanism — marginal GO.**
+The rate→spike wall is the *whitening-vs-magnitude* tension (the real whitened structure is a signed,
+low-magnitude differential rate coding can't carry). The retina solves exactly this: analog center-surround
+**whitening** (remove the common mode pre-spike) + **ON/OFF cells** (split the signed signal into two
+non-negative spiking populations). `_phaseB_onoff_whitened_derisk.py` — the **spike-budget sweep on real**:
+g20 +0.205 → g100 +0.296 → g500 +0.321 → **g2000 +0.327, gen 0.766** (host +0.442). So with analog whitening
++ ON/OFF + enough spikes, the spiking code **clears the +0.30 structure bar and generalizes (0.77)** on real —
+above bar, below the full-precision ceiling, saturating ~+0.33 (a residual precision gap). **The precision
+wall is partly a spike-budget issue, and the retinal mechanism is a genuine brain-based escape** — the most
+hopeful result of the arc. (Learning adds nothing over the random ON/OFF projection here — the structure is
+in the *representation* the retinal front-end builds, captured by any similarity-preserving readout.)
+
+**The build (the call, CYCLE 66):** realize the retinal+cortical stack on the bridge — a **center-surround
+whitening front-end** (within-hub lateral inhibition: each hub minus its neighborhood mean = the common-mode
+removal, the input-locus the prior cortex-locus cm-pool got wrong) + **ON/OFF cortex cells** (two populations
+on the signed whitened drive) + a **high spike budget** (long readout window / dense firing). Brain-canonical
+(Kandel retina), cheaper than full multi-compartment dendrites, and the numpy de-risk clears the bar. Risk:
+the residual +0.33-vs-+0.44 gap + the bridge's own projection loss (real g_e +0.175) — the bridge build must
+match the numpy +0.33; a NEGATIVE there is the honest boundary. **This supersedes the "ship-and-park" lean:
+there is a validated brain-based path to build.**
+
 ---
 
 **Final localization (CYCLE 63, the last probe `_phaseB_homeo_off_readout.py`):** the spike-readout loss is **NOT homeostasis equalization** — with homeostasis OFF the cortex spike code is still ≈ 0 (−0.09..+0.01) while g_e stays +0.40..+0.57. So the loss is robust across drive × window × homeostasis × density × gain (≈ 11 probes total). **The honest, well-localized status:** the category structure lives in the cortex analog g_e (+0.45) but does **not survive the spike-count code**, because the category signal is a *weak perturbation on a large common mode* and removing that common mode **before** the spiking threshold is the point-neuron-hard analog whitening (the Mikulasch-Priesemann theme — my CYCLE-62 instinct about the *mechanism* was right; my claim that it's the *projection*/needs-dendrites was wrong — it is the **spike-count readout of an un-whitened weak signal**). Faithful spike-based transmission needs the common mode removed pre-threshold (whitening) or a richer code/microcircuit (predictive coding, Jang 2024). The analog g_e proves the structure is recoverable *in principle*; the spike transmission is the genuine open boundary. **This is owner-decision territory** (medium build) — the solo cheap-first probing is exhausted.
