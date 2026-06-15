@@ -304,6 +304,14 @@ def run_seed(seed, args, C, labels, S_true):
     bp = dict(n_hub=n_hub, n_cortex=args.n_cortex, hub_to_cortex_density=args.density, w_mean=args.w_mean,
               gain=args.gain)
     rp = dict(drive_scale=args.drive_scale, window=args.window, settle=args.settle)
+    # STREAMING uses a (possibly shorter) window -- the EMA just needs each presentation's mean drive, not a
+    # long spike-count read -- with the slow per-step alpha matched to THAT window (alpha was derived from the
+    # READ window in main; rescale it so the per-PRESENTATION rate is the same regardless of stream window).
+    sw = int(getattr(args, "stream_window", 0)) or int(args.window)
+    rp_stream = dict(drive_scale=args.drive_scale, window=sw, settle=args.settle)
+    alpha_stream = float(args.alpha) * (args.settle + args.window) / (args.settle + sw)
+    fast_stream = (float(args.fast_alpha) * (args.settle + args.window) / (args.settle + sw)
+                   if args.fast_alpha else 0.0)
 
     # host axis references (axis-0 substrate ceiling, axis-0 signed ceiling, axis-1 cm-pool, point).
     bref, idxref = build_input_mean_bridge(seed=seed, alpha=0.0, adapt=True, **bp)
@@ -313,8 +321,8 @@ def run_seed(seed, args, C, labels, S_true):
           f"={p_a0_sig:+.3f}  axis-1 cm-pool={p_a1:+.3f}  point={p_pt_host:+.3f}", flush=True)
 
     # --- the NEURAL per-hub-adapted code: stream (adapt) -> freeze -> read. ---
-    bA, idxA = build_input_mean_bridge(seed=seed, alpha=args.alpha, adapt=True, **bp)
-    stream_adapt(bA, idxA, C_drive, n_epochs=args.epochs, seed=seed, **rp)
+    bA, idxA = build_input_mean_bridge(seed=seed, alpha=alpha_stream, adapt=True, **bp)
+    stream_adapt(bA, idxA, C_drive, n_epochs=args.epochs, seed=seed, **rp_stream)
     # confirm the primitive actually converged (on-substrate, not host): record the per-hub EMA magnitude.
     from sim.backend import to_host as _toh
     ema = _toh(bA.cp_input_mean_ema)
@@ -329,9 +337,9 @@ def run_seed(seed, args, C, labels, S_true):
     # --- the FAST-alpha control (slow-alpha load-bearing): a too-fast EMA tracks the LAST concept, not the
     #     cross-concept mean -> must do WORSE than the slow-alpha adapt. ---
     code_fast = None
-    if args.fast_alpha and args.fast_alpha > 0:
-        bF, idxF = build_input_mean_bridge(seed=seed, alpha=args.fast_alpha, adapt=True, **bp)
-        stream_adapt(bF, idxF, C_drive, n_epochs=args.epochs, seed=seed, **rp)
+    if fast_stream and fast_stream > 0:
+        bF, idxF = build_input_mean_bridge(seed=seed, alpha=fast_stream, adapt=True, **bp)
+        stream_adapt(bF, idxF, C_drive, n_epochs=args.epochs, seed=seed, **rp_stream)
         bF.core_config.input_mean_adapt_alpha = 0.0
         code_fast = read_onoff_codes(bF, idxF, C_drive, **rp)
 
@@ -398,7 +406,11 @@ def main():
     p.add_argument("--density", type=float, default=0.5)
     p.add_argument("--w-mean", type=float, default=400.0)
     p.add_argument("--drive-scale", type=float, default=40.0)
-    p.add_argument("--window", type=int, default=1000)
+    p.add_argument("--window", type=int, default=1000, help="READ window (cortex spike-count quality)")
+    p.add_argument("--stream-window", type=int, default=0,
+                   help="STREAMING window per presentation (0 = same as --window). Shorter keeps the EMA "
+                        "convergence cheap; the slow per-step alpha is auto-rescaled so the per-presentation "
+                        "rate is unchanged.")
     p.add_argument("--settle", type=int, default=8)
     p.add_argument("--gain", type=float, default=1.0)
     p.add_argument("--host-gain", type=float, default=500.0)

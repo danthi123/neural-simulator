@@ -1,0 +1,57 @@
+{
+  "verdict": "NEGATIVE",
+  "mean": {
+    "adapt": 0.03405231561141852,
+    "axis0_substrate": 0.04545070923188802,
+    "axis0_signed": 0.29405180017689553,
+    "axis1_cmpool": 0.2415672966369529,
+    "point": 0.052346280371279814,
+    "fast": 0.037556235525360866,
+    "permuted": -0.01824801075930243
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "host": 0.44192576313430393,
+      "axis0_substrate": 0.04545070923188802,
+      "axis0_signed": 0.29405180017689553,
+      "axis1_cmpool": 0.2415672966369529,
+      "point_host": 0.05810739223539855,
+      "adapt": 0.03405231561141852,
+      "adapt_gen": 0.15625,
+      "point": 0.052346280371279814,
+      "fast": 0.037556235525360866,
+      "permuted": -0.01824801075930243,
+      "ema_on": 54.77974840481642,
+      "chance": 0.125,
+      "gates": {
+        "near_axis0_substrate": true,
+        "clears_bar": false,
+        "beats_cmpool": false,
+        "beats_point": false,
+        "permuted_collapses": true,
+        "slow_loadbearing": false
+      },
+      "elapsed_s": 239.0
+    }
+  },
+  "config": {
+    "smoke": false,
+    "real": true,
+    "seeds": "42",
+    "n_hub": 500,
+    "n_cortex": 128,
+    "density": 0.5,
+    "w_mean": 400.0,
+    "drive_scale": 40.0,
+    "window": 200,
+    "stream_window": 30,
+    "settle": 8,
+    "gain": 1.0,
+    "host_gain": 500.0,
+    "epochs": 8,
+    "alpha": 0.00014423076923076922,
+    "fast_alpha": 0.0038461538461538464,
+    "out": "research/findings/raw/_phaseB_input_mean_bridge_gpusmoke.json"
+  }
+}
