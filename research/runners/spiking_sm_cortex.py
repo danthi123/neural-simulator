@@ -53,6 +53,8 @@ def build_sm_cortex_bridge(
     homeostasis_ema_alpha=None,
     homeostasis_threshold_adapt_rate=None,
     homeostasis_target_rate=None,
+    enable_homeostasis=True,  # CYCLE 63: homeostasis EQUALIZES cortex firing rates -> erases the g_e-magnitude
+                              # structure in the spike count. Set False to test if the spike code then tracks g_e.
     stdp_w_max=30.0,
     # --- Task 3 CENTERING (common-mode removal) knobs. ALL default to OFF so existing callers /
     #     tests are byte-preserved. The corrected diagnosis (2026-06-15): the spiking hub->cortex
@@ -188,7 +190,7 @@ def build_sm_cortex_bridge(
 
     # the learning rules: STDP (Hebbian timing rule) + homeostasis (intrinsic excitability regulation).
     cfg.enable_stdp = True
-    cfg.enable_homeostasis = True
+    cfg.enable_homeostasis = bool(enable_homeostasis)
     # Task 3 (C1a) fast adaptive-threshold homeostasis: override the SLOW navigation defaults
     # (ema_alpha=0.0002 ~5s, adapt_rate=0.0005) on THIS bridge's cfg ONLY when given, so the Diehl-Cook
     # theta equalizes per-concept firing rates within the run. None = leave the (slow) defaults (Task-1/2).
