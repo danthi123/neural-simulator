@@ -1,0 +1,64 @@
+Phase-B Task-3 HARD GATE attempt 2 — CENTERING (common-mode removal) results (CPU/numpy, NO sim/ edits)
+========================================================================================================
+Gate target: trained cortex Pearson(cos(codes), S_true) >= +0.30, beat random-proj by >= +0.10, NOT silent.
+Synthetic 64-concept case: 200 common hubs (Poisson lam=40, the swamping common mode) + 8 cat x 12 sig hubs.
+Rate-level log-input cosine ceiling: +0.891 (the structure the input carries).
+
+LOCALIZATION (_phaseB_task3_localize_destroyer.py): the threshold is NOT the destroyer; the common mode is.
+  rate-level log-input cosine Pearson vs S_true = +0.891
+  spike-count code Pearson  = -0.074  (silent_frac=0.125, eff_rank=13.5)
+  g_e (pre-threshold) code  = -0.063  (eff_rank=7.2)
+  => g_e already LOW: the COMMON MODE survives into the analog drive. Centering is the required op.
+
+READ-SPARSITY CONTROL (_phaseB_task3_readstrength.py): a denser/non-silent readout does NOT recover -- worse.
+  read ds=12  win=40 : Pearson=-0.074  silent=0.12  eff_rank=13.5  mean_spk/neuron=5.4
+  read ds=12  win=120: Pearson=-0.121  silent=0.00  eff_rank=15.7  mean_spk/neuron=22.5
+  read ds=30  win=40 : Pearson=-0.118  silent=0.02  eff_rank=17.6  mean_spk/neuron=7.8
+  read ds=30  win=120: Pearson=-0.145  silent=0.00  eff_rank=16.0  mean_spk/neuron=24.7
+  read ds=60  win=40 : Pearson=-0.129  silent=0.00  eff_rank=21.3  mean_spk/neuron=8.0
+  read ds=60  win=120: Pearson=-0.129  silent=0.00  eff_rank=16.3  mean_spk/neuron=24.0
+
+MECHANISM 3 — stronger dendritic divisive gain (smaller sigma) (_phaseB_task3_centering_sweep.py): NEGATIVE
+  no-WTA baseline (exc=1.0,dens=0.0) : Pearson=-0.106  silent=0.156  eff_rank=14.3
+  no-WTA sigma=0.02                  : Pearson=-0.094  silent=0.188  eff_rank=13.1
+  no-WTA sigma=0.01                  : Pearson=-0.089  silent=0.234  eff_rank=12.2
+  no-WTA sigma=0.005                 : Pearson=-0.095  silent=0.188  eff_rank=12.4
+  => divisive != subtractive; down-weighting common hubs does not remove the common mode.
+
+MECHANISM 2 — enable_synaptic_scaling (Turrigiano per-neuron renorm) (_phaseB_task3_centering_sweep.py): NEGATIVE
+  no-WTA synscale rate=0.001 : Pearson=-0.094  silent=0.125  eff_rank=14.0
+  no-WTA synscale rate=0.01  : Pearson=-0.092  silent=0.156  eff_rank=13.7
+  no-WTA synscale rate=0.05  : Pearson=-0.093  silent=0.125  eff_rank=13.5
+  => a per-neuron RATE homeostat scales common+signal alike; cannot SEPARATE the common mode.
+
+MECHANISM 1 — feedforward subtractive-inhibition cm pool (_phaseB_task3_cm_gate.py): DIRECTIONAL, INSUFFICIENT
+  (no-WTA, gain OFF sigma=1e9, n_cm=200, 8 epochs, ds=30; ON vs centering-OFF [cm->cortex w=0])
+  w_hubcm=5  w_cmcx=20 bias=0   : ON P=-0.085 (sil=0.30)        OFF P=-0.115  margin=+0.030
+  w_hubcm=5  w_cmcx=40 bias=0   : ON P=-0.065 (sil=0.47)        OFF P=-0.115  margin=+0.050
+  w_hubcm=10 w_cmcx=20 bias=0   : ON P=-0.054 (sil=0.33, ALIVE) OFF P=-0.118  margin=+0.064   <- best valid
+  w_hubcm=10 w_cmcx=40 bias=0   : ON P=-0.038 (sil=0.59, FAILS collapse-guard, eff_rank 6.9)  margin=+0.080
+  w_hubcm=5  w_cmcx=6  bias=50  : ON P=+0.000 (sil=1.00 SILENCED)  OFF P=-0.121  (illusory margin)
+  (coarse: cm_bias 200-300 -> ON P=+0.000, sil=1.00 fully silenced for every cm->cortex weight tried)
+  => stronger cm improves structure (-0.085 -> -0.038) but silent_frac rises in lock-step (0.30 -> 0.59);
+     the best config that keeps the cortex ALIVE is ~-0.054. A scalar (rank-1) uniform inhibition removes
+     signal and common mode together -> no Goldilocks zone -> caps an order of magnitude below the +0.30 gate.
+
+MECHANISM 1b — PLASTIC cm->cortex (inhibitory STDP) (_phaseB_task3_cm_gate.py --mode plastic): RUNS AWAY
+  w_hubcm=5  w_cmcx=6  bias=50  : ON P=+0.000 (sil=1.00)  OFF P=+0.000 (sil=1.00)
+  w_hubcm=5  w_cmcx=6  bias=100 : ON P=+0.000 (sil=1.00)  OFF P=+0.000 (sil=1.00)
+  w_hubcm=5  w_cmcx=12 bias=100 : ON P=+0.000 (sil=1.00)  OFF P=+0.000 (sil=1.00)
+  w_hubcm=10 w_cmcx=6  bias=50  : ON P=+0.000 (sil=1.00)  OFF P=+0.000 (sil=1.00)
+  => inhibitory STDP grows cm->cortex unboundedly -> full silence; the spike-fragile learned-lateral
+     failure the L1 Phase-A capstone already found (the project DROPPED the recurrent lateral).
+
+cm-pool FIRING DIAGNOSTIC (_phaseB_task3_cm_diag.py): the cm pool fires SPARSELY + INCONSISTENTLY across
+  concepts even at gain-OFF + high drive (e.g. ds=60 w_hubcm=10: cm_fire/step per concept [c0,c8,c16] =
+  [5.1, 0.3, 0.2]) -- a thresholded spiking pool is a poor common-mode estimator (concept-dependent), the
+  point-neuron limit in action.
+
+CONCLUSION: WALL. The point-neuron spiking substrate can do only a SCALAR (rank-1) common-mode subtraction;
+the L1 op is a PER-DIMENSION analog centering (x - col_mean BEFORE the projection) a uniform spiking
+inhibitory pool structurally cannot reproduce = the Mikulasch-Priesemann analog-whitening wall. The gate
+test stays honestly xfail'd on the structure bar. Controller fork: a guarded sim/ C1b edit (per-cortex-
+neuron post-triggered / incoming-weight centering) vs the honest NEGATIVE.
+See research/findings/2026-06-15-phaseB-task3-centering-RESULT.md.

@@ -54,6 +54,33 @@ def build_sm_cortex_bridge(
     homeostasis_threshold_adapt_rate=None,
     homeostasis_target_rate=None,
     stdp_w_max=30.0,
+    # --- Task 3 CENTERING (common-mode removal) knobs. ALL default to OFF so existing callers /
+    #     tests are byte-preserved. The corrected diagnosis (2026-06-15): the spiking hub->cortex
+    #     transform DESTROYS the input's category structure because the COMMON MODE survives into the
+    #     cortex drive (g_e-cos == spike-cos == -0.07; the spiking threshold is NOT the destroyer).
+    #     The fix is the L1-validated centering = common-mode removal (NOT the WTA). ---
+    # (2) Turrigiano synaptic scaling (per-postsynaptic-neuron multiplicative weight renormalization):
+    #     a CONFIG FLAG, not a sim/ edit. Renormalizes each cortex neuron's incoming weights toward the
+    #     target firing rate -> a neuron over-driven by the common mode scales its weights DOWN.
+    enable_synaptic_scaling=False,
+    synaptic_scaling_rate=0.001,
+    # (1) Feedforward subtractive-inhibition "common-mode" pool (the L1-faithful CENTERING). An ALL-
+    #     INHIBITORY cm region (exc_fraction=0.0 -> the framework sets EVERY cm neuron's trait inhibitory
+    #     -> their outgoing synapses route through the inhibitory conductance g_i). Two pathways:
+    #       hub -> cm  : EXCITATORY, dense, ~uniform weights  -> cm activity tracks the mean/total hub
+    #                    drive = the common mode (every concept connects to the 200 common hubs).
+    #       cm -> cortex: the cm neurons being inhibitory deliver INHIBITION to the cortex; dense, strong,
+    #                    TUNABLE -> the cortex receives (hub->cortex excitation) - (cm inhibition prop to
+    #                    common-mode) = the CENTERED drive (canonical feedforward common-mode rejection).
+    #     n_cm=0 (default) => the cm pool is NOT added (byte-identical 2-region build).
+    n_cm=0,
+    hub_to_cm_density=1.0,
+    hub_to_cm_weight=0.05,
+    hub_to_cm_jitter=0.0,
+    cm_to_cortex_density=1.0,
+    cm_to_cortex_weight=6.0,
+    cm_to_cortex_jitter=0.0,
+    cm_to_cortex_plastic=False,
 ):
     """Build a 2-region similarity-matching cortex bridge.
 
@@ -114,6 +141,36 @@ def build_sm_cortex_bridge(
         ),
     ]
 
+    # --- Task 3 CENTERING (1): the feedforward subtractive-inhibition "common-mode" pool. ---
+    # An all-inhibitory cm region: exc_fraction=0.0 -> RegionManager puts EVERY cm neuron in the
+    # inhibitory set -> inject_explicit_wiring flips their trait to inhibitory (output_inhibitory_indices)
+    # -> their outgoing (cm->cortex) synapses add to cp_conductance_g_i (the inhibitory channel),
+    # delivering INHIBITION. hub->cm is excitatory (hub neurons are excitatory). The cm pool is a PURE
+    # input layer (internal_density=0.0, plastic_internal=False -> no within-cm wiring). Both pathways are
+    # FIXED (plastic=False): the centering subtraction is a fixed feedforward circuit, NOT learned -- only
+    # the hub->cortex projection learns (the L1 "bounded Hebbian" arm).
+    if n_cm and int(n_cm) > 0:
+        cfg.brain_regions.append(
+            BrainRegion(name="cm", n_neurons=int(n_cm), exc_fraction=0.0, internal_density=0.0,
+                        plastic_internal=False)
+        )
+        cfg.region_pathways.append(
+            RegionPathway(from_region="hub", to_region="cm",
+                          density=hub_to_cm_density, weight_mean=hub_to_cm_weight,
+                          weight_jitter=hub_to_cm_jitter, plastic=False)
+        )
+        # cm->cortex: FIXED by default (a fixed feedforward common-mode subtraction). Opt-in plastic
+        # (cm_to_cortex_plastic=True, gate "cm_to_cortex") -> the INHIBITORY STDP can learn each cortex
+        # neuron's OWN common-mode susceptibility (cm-pre-before-cortex-post potentiates the inhibitory
+        # weight onto exactly the cortex neurons that the common mode over-drives) -> a LEARNED, per-cortex-
+        # neuron centering rather than a uniform one. Gate-tagged so the read can freeze it.
+        cfg.region_pathways.append(
+            RegionPathway(from_region="cm", to_region="cortex",
+                          density=cm_to_cortex_density, weight_mean=cm_to_cortex_weight,
+                          weight_jitter=cm_to_cortex_jitter, plastic=bool(cm_to_cortex_plastic),
+                          plasticity_gate=("cm_to_cortex" if cm_to_cortex_plastic else None))
+        )
+
     cfg.dt = 1.0
     cfg.dt_ms = 1.0  # keep dt_ms == dt: the per-step time advance (the STDP delta_t clock) uses dt_ms.
     cfg.seed = seed
@@ -141,6 +198,12 @@ def build_sm_cortex_bridge(
         cfg.homeostasis_threshold_adapt_rate = float(homeostasis_threshold_adapt_rate)
     if homeostasis_target_rate is not None:
         cfg.homeostasis_target_rate = float(homeostasis_target_rate)
+    # Task 3 CENTERING (2): Turrigiano synaptic scaling (per-postsynaptic-neuron multiplicative weight
+    # renormalization toward homeostasis_target_rate). A CONFIG FLAG (no sim/ edit). Default OFF =
+    # byte-preserved. Requires homeostasis active (the bridge gates synaptic scaling on _homeostasis_active),
+    # which the C1a recipe already sets. Applied per-step (bridge.py:6819) to the excitatory weights.
+    cfg.enable_synaptic_scaling = bool(enable_synaptic_scaling)
+    cfg.synaptic_scaling_rate = float(synaptic_scaling_rate)
     # structural plasticity (synaptogenesis) is NOT part of the similarity-matching learn (the hub->cortex
     # topology is fixed; only the WEIGHTS learn) AND it triggers a pre-existing capacity bug on a plasticity-
     # gated pathway (cp_plasticity_rate_gain isn't resized when the synapse nnz grows -> IndexError at
@@ -173,13 +236,19 @@ def build_sm_cortex_bridge(
     return bridge, hub_idx, cortex_idx
 
 
-def _set_hub_drive(bridge, hub_idx, drive_row, drive_scale, cortex_idx=None, cofire_pA=0.0):
+def _set_hub_drive(bridge, hub_idx, drive_row, drive_scale, cortex_idx=None, cofire_pA=0.0,
+                   cm_idx=None, cm_bias_pA=0.0):
     """Set bridge.cp_external_input_current on hub_idx to drive_row * drive_scale (zero elsewhere).
 
     When ``cofire_pA > 0`` AND ``cortex_idx`` is given, ALSO add a UNIFORM ``cofire_pA`` depolarizing
     current to EVERY cortex neuron (the C1a non-specific co-fire teaching drive). The same flat value is
     added for every cortex neuron and every concept, so it carries NO per-concept information (the only
     concept-specific signal is the hub drive, set by the environment) -- legitimately unsupervised.
+
+    When ``cm_bias_pA > 0`` AND ``cm_idx`` is given, ALSO add a UNIFORM ``cm_bias_pA`` tonic depolarizing
+    current to EVERY cm (common-mode) neuron, so the cm pool sits near threshold and fires sensitively in
+    proportion to the pooled common-mode hub drive (a tonically-active interneuron). The same flat value
+    for every cm neuron and every concept -> carries NO per-concept info (concept-agnostic; legitimate).
 
     Handles the cupy/numpy split: on cupy the per-index assignment needs an xp array (mirrors
     dendritic_cortex_forward_codes_derisk._present)."""
@@ -200,6 +269,12 @@ def _set_hub_drive(bridge, hub_idx, drive_row, drive_scale, cortex_idx=None, cof
             bridge.cp_external_input_current[xp.asarray(cortex_idx)] += float(cofire_pA)
         else:
             bridge.cp_external_input_current[cortex_idx] += float(cofire_pA)
+    if cm_bias_pA and cm_idx is not None:
+        cm_idx = np.asarray(cm_idx)
+        if is_cupy:
+            bridge.cp_external_input_current[xp.asarray(cm_idx)] += float(cm_bias_pA)
+        else:
+            bridge.cp_external_input_current[cm_idx] += float(cm_bias_pA)
 
 
 def _step_with_time(bridge):
@@ -243,6 +318,8 @@ def train_sm_cortex(
     window=20,
     settle=6,
     cofire_pA=0.0,
+    cm_idx=None,
+    cm_bias_pA=0.0,
     record_weight_trajectory=False,
 ):
     """Train the plastic hub->cortex projection by presenting each concept's drive (plasticity ON).
@@ -272,7 +349,8 @@ def train_sm_cortex(
     for _ in range(int(n_epochs)):
         for i in range(Nc):
             _set_hub_drive(bridge, hub_idx, C_drive[i], drive_scale,
-                           cortex_idx=cortex_idx, cofire_pA=cofire_pA)
+                           cortex_idx=cortex_idx, cofire_pA=cofire_pA,
+                           cm_idx=cm_idx, cm_bias_pA=cm_bias_pA)
             for _t in range(int(settle) + int(window)):
                 _step_with_time(bridge)
             bridge.cp_external_input_current[:] = 0.0
@@ -292,6 +370,8 @@ def read_codes(
     drive_scale=12.0,
     window=20,
     settle=6,
+    cm_idx=None,
+    cm_bias_pA=0.0,
 ):
     """Read the per-concept cortex spike-count codes with plasticity FROZEN.
 
@@ -299,6 +379,9 @@ def read_codes(
     perturb the learned weights, then for each concept presents its drive (same protocol as training)
     and accumulates the cortex region's SPIKE COUNTS over the `window` steps (summing
     bridge.cp_firing_states[cortex_idx] each step after `settle`). Restores the gate to 1.0 afterward.
+
+    When ``cm_bias_pA > 0`` AND ``cm_idx`` is given, the same UNIFORM tonic cm bias used in training is
+    applied to the cm pool during the read (so the centering subtraction is active at read time too).
 
     Returns an [Nc x n_cortex] numpy array of per-concept cortex spike-count codes.
     """
@@ -308,10 +391,15 @@ def read_codes(
     Nc = int(np.asarray(C_drive).shape[0])
     codes = np.zeros((Nc, cortex_idx.size), dtype=np.float64)
 
-    bridge.set_plasticity_gate("hub_to_cortex", 0.0)
+    # Freeze EVERY plastic gate present (hub_to_cortex always; cm_to_cortex when the cm pool is plastic)
+    # so the read perturbs no learned weight; restore them all afterward.
+    gate_names = list(getattr(bridge, "_plasticity_gate_values", {}).keys()) or ["hub_to_cortex"]
+    for g in gate_names:
+        bridge.set_plasticity_gate(g, 0.0)
     try:
         for i in range(Nc):
-            _set_hub_drive(bridge, hub_idx, C_drive[i], drive_scale)
+            _set_hub_drive(bridge, hub_idx, C_drive[i], drive_scale,
+                           cm_idx=cm_idx, cm_bias_pA=cm_bias_pA)
             acc = np.zeros(cortex_idx.size, dtype=np.float64)
             for t in range(int(settle) + int(window)):
                 _step_with_time(bridge)
@@ -321,7 +409,8 @@ def read_codes(
             codes[i] = acc
             bridge.cp_external_input_current[:] = 0.0
     finally:
-        bridge.set_plasticity_gate("hub_to_cortex", 1.0)
+        for g in gate_names:
+            bridge.set_plasticity_gate(g, 1.0)
     return codes
 
 

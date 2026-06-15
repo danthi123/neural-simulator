@@ -138,7 +138,15 @@ def _build_synth_64():
     return C, labels, S_true
 
 
-# C1a tuned recipe (frozen after the tuning grid in this session). All config/runner-level; NO sim/ edits.
+# C1a tuned recipe (frozen after the tuning grid). All config/runner-level; NO sim/ edits.
+# NOTE (attempt 2, 2026-06-15): the gate stays xfail. The corrected fix = CENTERING (common-mode removal).
+# The three brain-based centering mechanisms (feedforward subtractive-inhibition cm pool / synaptic scaling /
+# stronger dendritic gain) are all available in build_sm_cortex_bridge (default-off) and were swept in
+# research/findings/raw/_phaseB_task3_cm_gate.py + _phaseB_task3_centering_sweep.py: the cm pool is the best
+# (it nudges structure -0.115 -> ~-0.05, margin ~+0.06) but a UNIFORM spiking inhibition can only do a
+# SCALAR subtraction, not the L1 per-dimension centering -> the gate stays NEGATIVE (the Mikulasch-
+# Priesemann wall). The fast WTA recipe below is what this gate test runs (so CI stays ~16s); the cm-pool
+# arm is exercised by the raw sweep + documented in 2026-06-15-phaseB-task3-centering-RESULT.md.
 _C1A = dict(
     n_cortex=128,
     seed=42,
@@ -165,24 +173,62 @@ def _read_c1a(bridge, C_drive, hub_idx, cortex_idx):
     )
 
 
+def _read_ge_codes_c1a(bridge, C_drive, hub_idx, cortex_idx):
+    """Read the per-concept cortex code from the PRE-THRESHOLD analog conductance cp_conductance_g_e
+    (plasticity frozen), same drive/window as the spike read. The localization instrument: if g_e-cos ~
+    spike-cos, the destroyer is the common mode in the analog drive (not the spike threshold)."""
+    from sim.backend import to_host
+    from research.runners.spiking_sm_cortex import _set_hub_drive, _step_with_time
+
+    cortex_idx = np.asarray(cortex_idx)
+    Nc = int(np.asarray(C_drive).shape[0])
+    ds, win, settle = _C1A["drive_scale"], _C1A["window"], _C1A["settle"]
+    codes = np.zeros((Nc, cortex_idx.size), dtype=np.float64)
+    gate_names = list(getattr(bridge, "_plasticity_gate_values", {}).keys()) or ["hub_to_cortex"]
+    for g in gate_names:
+        bridge.set_plasticity_gate(g, 0.0)
+    try:
+        for i in range(Nc):
+            _set_hub_drive(bridge, hub_idx, C_drive[i], ds)
+            acc = np.zeros(cortex_idx.size, dtype=np.float64)
+            for t in range(int(settle) + int(win)):
+                _step_with_time(bridge)
+                if t >= int(settle):
+                    acc += np.asarray(to_host(bridge.cp_conductance_g_e))[cortex_idx].astype(np.float64)
+            codes[i] = acc
+            bridge.cp_external_input_current[:] = 0.0
+    finally:
+        for g in gate_names:
+            bridge.set_plasticity_gate(g, 1.0)
+    return codes
+
+
 @pytest.mark.xfail(
-    reason="Task-3 HARD GATE C1a outcome = PARTIAL/COLLAPSE (honest, decision-relevant; 2026-06-15). The "
-    "C1a competitive-STDP machinery WORKS and is validated by this test's own collapse-guard: the cortex "
-    "FIRES (silent_frac~0.12 < 0.5, eff_rank~13.5 > 1.0) and the hub->cortex STDP ENGAGES (mean weight "
-    "trajectory RISES 0.05->0.46, NOT a geometric decay to the floor) -- this CURES the Task-2 silent-target "
-    "trap. Root cause of the Task-2 collapse was found + fixed at the runner level (NO sim/ edit): "
-    "bridge._run_one_simulation_step() does NOT advance current_time_ms, so every spike was stamped t=0, "
-    "delta_t==0, and STDP was a total NO-OP; the train/read loops now advance the clock (_step_with_time). "
-    "BUT the structure is NOT recovered: trained Pearson(cos(codes),S_true) ~ -0.07 (NEGATIVE), it does NOT "
-    "beat the random-projection control (margin ~ -0.07 < +0.10), and a 36-cell tuning grid "
-    "(weight_mean/drive/cofire/inhibition) + a 24-epoch run never reached positive structure -- the spiking "
-    "hub->cortex transformation DESTROYS the input's category structure (which IS present: rate-level "
-    "log-input cosine Pearson +0.89). This is the deep-research's pre-registered risk #1/#2/#6 outcome "
-    "(2026-06-15-bridge-competitive-stdp-deep-research.md): point-neuron WTA cannot remove the common mode "
-    "at the spike level (Mikulasch-Priesemann), so C1a alone under-recovers -> a guarded sim/ edit (C1b: "
-    "post-triggered STDP or synaptic-scaling renormalization) is warranted, a CONTROLLER decision. The "
-    "permuted control is clean (~0). The collapse-guard + random-proj + permuted assertions below are all "
-    "real; the test xfails ONLY on the structure bar.",
+    reason="Task-3 HARD GATE = WALL after the CENTERING (common-mode removal) attempt (honest, decision-"
+    "relevant; 2026-06-15, attempt 2). The C1a competitive-STDP machinery WORKS (collapse-guard below: cortex "
+    "FIRES silent~0.12<0.5, eff_rank~13.5>1; hub->cortex STDP RISES 0.05->0.46, no floor-decay -- the Task-2 "
+    "silent-target trap is CURED by the _step_with_time clock fix, NO sim/ edit). The corrected diagnosis was "
+    "LOCALIZED on the bridge: the cortex g_e (pre-threshold ANALOG conductance) code already has "
+    "Pearson(cos,S_true)~-0.063 == the spike-count code ~-0.074, so the spiking THRESHOLD is NOT the "
+    "destroyer -- the COMMON MODE survives into the analog drive (the 200 high-freq common hubs swamp the "
+    "cortex). The input carries the structure (rate-level log-input cosine +0.89). The L1-validated fix is "
+    "CENTERING = common-mode removal (2026-06-14-L1-GO; subtractive-inhibition + bounded Hebbian). Three "
+    "brain-based centering mechanisms were tried (ALL framework/config/runner-level, NO sim/ edits): "
+    "(1) a feedforward subtractive-inhibition all-inhibitory cm pool (hub->cm exc + inhibitory cm->cortex = "
+    "(hub excitation)-(cm inhibition prop to common mode)) -> BEST result, but it only nudges -0.115 "
+    "(centering-OFF) -> ~-0.065 (margin +0.05) and STRONGER cm SILENCES the cortex (silent->1.0); "
+    "(2) enable_synaptic_scaling (Turrigiano per-neuron renorm) -> -0.092 (no margin: a rate homeostat scales "
+    "common+signal alike, cannot SEPARATE the common mode); (3) stronger dendritic divisive gain (sigma "
+    "0.02->0.005) -> -0.089 (divisive != subtractive). A read-sparsity control (denser non-silent codes) gets "
+    "WORSE (-0.12..-0.15), ruling out a readout artifact. ==> the point-neuron spiking substrate can do only "
+    "a SCALAR (rank-1, ~uniform) common-mode subtraction; the L1 op is a PER-DIMENSION analog centering "
+    "(x - col_mean BEFORE the projection) that a uniform spiking inhibitory pool structurally cannot "
+    "reproduce -- the deep-research's pre-registered risk #1/#2/#6 = the Mikulasch-Priesemann analog-whitening "
+    "wall (2026-06-15-bridge-competitive-stdp-deep-research.md; 2026-06-15-phaseB-task3-centering-RESULT.md). "
+    "A guarded sim/ edit (C1b: a per-cortex-neuron post-triggered / learned-subtractive rule with anti-runaway "
+    "normalization) is now the CONTROLLER decision vs the honest NEGATIVE. The permuted control is clean (~0). "
+    "The collapse-guard + random-proj + permuted assertions below are all real; the test xfails ONLY on the "
+    "structure bar (a).",
     strict=False,
 )
 def test_trained_cortex_recovers_structure():
@@ -247,6 +293,24 @@ def test_trained_cortex_recovers_structure():
     perm = rng.permutation(labels)
     S_perm = (perm[:, None] == perm[None, :]).astype(np.float64)
     perm_pearson = _pearson_vs_Strue(_cos_sim(codes), S_perm)
+
+    # --- LOCALIZATION instrument (attempt-2 centering finding, 2026-06-15): read the SAME trained bridge's
+    # cortex code from the PRE-THRESHOLD analog conductance g_e (plasticity frozen). If g_e-cos ~ spike-cos
+    # (both ~ -0.07), the spiking THRESHOLD is not the destroyer -- the COMMON MODE survives into the analog
+    # drive -> centering (common-mode removal) is the required op, but a uniform spiking inhibitory pool can
+    # only do a scalar (rank-1) subtraction, not the L1 per-dimension centering (the Mikulasch-Priesemann
+    # wall). See research/findings/2026-06-15-phaseB-task3-centering-RESULT.md. This is a PRINT (the
+    # decision-relevant localization), not an assertion. log-input cosine = the ceiling the input carries.
+    log_input_pearson = _pearson_vs_Strue(_cos_sim(C_drive), S_true)
+    ge_codes = _read_ge_codes_c1a(bridge, C_drive, hub_idx, cortex_idx)
+    ge_pearson = _pearson_vs_Strue(_cos_sim(ge_codes), S_true)
+    print(
+        f"\n[Task-3 localization] log-input(ceiling)={log_input_pearson:+.3f}  "
+        f"cortex g_e(pre-threshold)={ge_pearson:+.3f}  cortex spike-code={pearson:+.3f}  "
+        f"=> threshold NOT the destroyer; common mode survives into the analog drive (centering needed; "
+        f"a uniform spiking inhibition does only a SCALAR subtraction -> WALL).",
+        flush=True,
+    )
 
     print(
         f"\n[C1a HARD GATE] structure Pearson={pearson:+.3f}  random-proj Pearson={rp_pearson:+.3f}  "
