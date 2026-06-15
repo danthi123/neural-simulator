@@ -205,18 +205,25 @@ def _freeze_all_gates(bridge, value):
         bridge.set_plasticity_gate(g, value)
 
 
-def stream_adapt(bridge, idx, C_drive, *, n_epochs, drive_scale, window, settle, seed):
+def stream_adapt(bridge, idx, C_drive, *, n_epochs, drive_scale, window, settle, seed,
+                 learn_projection=False):
     """STREAM the concepts SHUFFLED over n_epochs with adaptation ON (cfg alpha as set at build).
 
     For each epoch, a fresh shuffled order; for each concept present its (signed) ON/OFF drive and run
     settle+window steps so the bridge's per-hub input-mean EMA integrates that concept's drive. The EMA is
     the bridge's own state (cp_input_mean_ema) -- it converges to each hub's CROSS-CONCEPT mean (axis-0).
-    No read here (pure adaptation warm-up). During streaming the read-out projection plasticity gate is held
-    CLOSED (we are NOT learning the read-out; only the per-hub mean adapts), so the random projection stays
-    fixed and the only thing learned is the per-hub input mean -- isolating the whitening op."""
+    No read here.
+
+    learn_projection=False (default): the read-out projection plasticity gate is held CLOSED so the random
+    projection stays fixed and the ONLY thing learned is the per-hub input mean -- isolating the whitening op
+    (the +0.155 random-projection gate). learn_projection=True (PHASE 3): the projection gates stay OPEN so
+    STDP LEARNS the hub->cortex weights on the (input-mean-centered + E/I-projected) input -- the L1 similarity-
+    matching realized as bounded-Hebbian STDP, which learns the LOW-RANK principal subspace (the off-diagonal
+    de-risk: low-rank whitening reaches host +0.44, where the random projection caps at +0.31). The input-mean
+    primitive (the centering) keeps adapting throughout; STDP learns the projection ON the centered drive."""
     rng = np.random.RandomState(seed * 100003 + 7)
     Nc = int(np.asarray(C_drive).shape[0])
-    _freeze_all_gates(bridge, 0.0)  # freeze the read-out projection: ONLY the input-mean primitive adapts
+    _freeze_all_gates(bridge, 0.0 if not learn_projection else 1.0)  # PHASE 3: leave the projection PLASTIC
     try:
         for _ep in range(int(n_epochs)):
             order = rng.permutation(Nc)
@@ -353,7 +360,8 @@ def run_seed(seed, args, C, labels, S_true):
 
     # --- the NEURAL per-hub-adapted code: stream (adapt) -> freeze -> read. ---
     bA, idxA = build_input_mean_bridge(seed=seed, alpha=alpha_stream, adapt=True, **bp)
-    stream_adapt(bA, idxA, C_drive, n_epochs=args.epochs, seed=seed, **rp_stream)
+    stream_adapt(bA, idxA, C_drive, n_epochs=args.epochs, seed=seed,
+                 learn_projection=bool(getattr(args, "learn_projection", False)), **rp_stream)
     # confirm the primitive actually converged (on-substrate, not host): record the per-hub EMA magnitude.
     from sim.backend import to_host as _toh
     ema = _toh(bA.cp_input_mean_ema)
@@ -452,6 +460,11 @@ def main():
                    help="inhibitory hub->cortex weight_mean (default = --w-mean); tune to balance g_e vs g_i.")
     p.add_argument("--host-gain", type=float, default=500.0)
     p.add_argument("--epochs", type=int, default=12, help="streaming epochs (the EMA convergence horizon)")
+    p.add_argument("--learn-projection", action="store_true",
+                   help="PHASE 3: leave the hub->cortex projection PLASTIC during streaming so STDP learns the "
+                        "low-rank principal subspace (vs the default frozen random projection). The off-diagonal "
+                        "de-risk shows low-rank learning reaches host +0.44 where the random projection caps "
+                        "~+0.31.")
     p.add_argument("--alpha", type=float, default=None,
                    help="PER-STEP EMA rate during streaming. Default: derived from epochs+window so the "
                         "per-PRESENTATION rate ~0.03 (alpha_step = 0.03 / (settle+window)).")
