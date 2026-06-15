@@ -293,6 +293,25 @@ class RegionPathway:
     # above. See 2026-06-09-coincidence-substrate-upgrade-design.md.
     coincidence_detector: bool = False
 
+    # graded (2026-06-15): when True, this pathway transmits with GRADED (analog, non-spiking) release --
+    # the retina's horizontal/bipolar-cell mechanism. The per-step conductance increment on the target uses
+    # the SOURCE neuron's CONTINUOUS activity -- a saturating sub-threshold readout of its membrane potential,
+    # a_cont = clip((v - rest)/scale, 0, 1) (the same analog signal the graded_lateral mechanism uses; the
+    # cm pool's depolarization tracks the population mean it must subtract) -- INSTEAD of its binary
+    # cp_firing_states, so the source drives the target in proportion to its graded membrane state, bypassing
+    # the spike threshold. The E/I routing is unchanged (an inhibitory source's graded drive feeds g_i, an
+    # excitatory source's feeds g_e), with the same propagation scaling as the spike path. Motivation: a
+    # SPIKING inhibitory pool cannot linearly track the population mean (depolarization block makes its spikes
+    # anti-track the mean), so spike-mediated inhibition cannot do the common-mode removal (whitening) a
+    # learned cortex needs -- but the source's analog membrane DOES track the mean. Requires no config flag: the
+    # per-synapse graded mask (cp_graded_synapse_mask) is built iff at least one pathway sets graded=True;
+    # otherwise it is None and the new step block is unreached -> byte-identical routing. The graded-routed
+    # synapses are REMOVED from the spike matvec (they transmit gradedly, not on spikes), mirroring the
+    # exc_receptor=="nmda_slow" AMPA-suppression precedent. Default False. See catalog E.05 (center-surround)
+    # + Kandel retina (horizontal/bipolar graded potentials) + 2026-06-15-analog-substrate-learned-cortex
+    # -build-plan.md (Phase 1).
+    graded: bool = False
+
     # Cluster E v1 (2026-04-29): distance-dependent connection probability.
     # When set AND both source and target regions have coordinate_dim > 0,
     # connections are sampled with Gaussian-weighted probability:
@@ -685,6 +704,10 @@ class RegionManager:
             # per-postsynaptic-neuron NMDA-spike subunit (a supralinear plateau on >=K coincident inputs);
             # AMPA component KEPT (plateau is additive). Default False = no coincidence routing.
             "coincidence_detector": bool(getattr(pw, "coincidence_detector", False)),
+            # Per-pathway GRADED (analog, non-spiking) transmission flag (2026-06-15): True => this pathway's
+            # synapses transmit from the SOURCE's continuous activity (normalized g_e), not its spikes (the
+            # retina's horizontal-cell graded release). Default False = spike-mediated (byte-identical).
+            "graded": bool(getattr(pw, "graded", False)),
         }
 
     def _has_coords(self, region_name: str) -> bool:

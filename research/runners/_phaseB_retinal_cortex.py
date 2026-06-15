@@ -84,6 +84,7 @@ def build_retinal_bridge(
     enable_divisive_gain=False,
     stdp_w_max=2000.0,
     enable_whitening=True,
+    graded_cm=False,
 ):
     """Build the retinal ON/OFF cortex bridge. Returns (bridge, idx_dict, meta).
 
@@ -133,10 +134,14 @@ def build_retinal_bridge(
                       weight_mean=float(hub_to_cm_weight), weight_jitter=0.0, plastic=False),
         # the WHITENING subtractions: cm_i INHIBITS cortex_on, cm_e EXCITES cortex_off. Dense; weights are
         # OVERWRITTEN post-build with the matched (rowsum) pattern. plastic=False (fixed feedforward circuit).
+        # graded=graded_cm: when True these transmit from the cm pools' CONTINUOUS (graded) membrane state
+        # (the retina's horizontal cells), NOT their spikes -- the depol-block-free whitening the build plan
+        # targets. The matched rowsum weights are still installed post-build (set_pathway_weights); the graded
+        # path scales them by the source's analog activity instead of its binary spike.
         RegionPathway(from_region="cm_i", to_region="cortex_on", density=1.0,
-                      weight_mean=1.0, weight_jitter=0.0, plastic=False),
+                      weight_mean=1.0, weight_jitter=0.0, plastic=False, graded=bool(graded_cm)),
         RegionPathway(from_region="cm_e", to_region="cortex_off", density=1.0,
-                      weight_mean=1.0, weight_jitter=0.0, plastic=False),
+                      weight_mean=1.0, weight_jitter=0.0, plastic=False, graded=bool(graded_cm)),
     ]
 
     cfg.dt = 1.0
@@ -346,7 +351,7 @@ def run_seed(seed, args, C, labels, S_true):
     bp = dict(n_hub=n_hub, n_cortex=args.n_cortex, hub_to_cortex_density=args.density,
               w_on_mean=args.w_mean, w_off_mean=args.w_mean, cm_size=args.cm_size,
               hub_to_cm_weight=args.hub_to_cm_weight, cm_to_cortex_scale=args.cm_scale,
-              enable_homeostasis=False)
+              enable_homeostasis=False, graded_cm=args.graded_cm)
     rp = dict(drive_scale=args.drive_scale, window=args.window, settle=8, cm_bias_pA=args.cm_bias_pA)
 
     t0 = time.time()
@@ -418,6 +423,10 @@ def main():
     p.add_argument("--ppmi-input", action="store_true", help="use PPMI rows for the host-ceiling print")
     p.add_argument("--input-for-drive", default="log", choices=["log", "ppmi"],
                    help="encode the bridge hub drive as log1p counts (default) or PPMI rows")
+    p.add_argument("--graded-cm", action="store_true",
+                   help="wire the cm->cortex pathways as GRADED (analog, non-spiking) -- the retina's "
+                        "horizontal cells (RegionPathway graded=True). Without it the cm pools transmit on "
+                        "SPIKES (the depol-block-limited baseline ~+0.14).")
     p.add_argument("--step1", action="store_true", help="run+print the Step-1 whitening front-end check")
     p.add_argument("--out", default="research/findings/raw/_phaseB_retinal_cortex.json")
     args = p.parse_args()

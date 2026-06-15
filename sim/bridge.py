@@ -268,6 +268,17 @@ class SimulationBridge:
         self.cp_conductance_g_coincidence = None          # slow coincidence-plateau conductance (None unless enable_coincidence_detection + a routed pathway)
         self.cp_conductance_g_coincidence_rise = None     # dual-exp rise component
         self.cp_coincidence_synapse_mask = None           # bool per-synapse: True for coincidence_detector-routed synapses
+        # Graded (analog, non-spiking) transmission routing (2026-06-15). The retina's horizontal-cell
+        # mechanism: True for synapses of any pathway tagged graded=True. For those synapses the per-step
+        # conductance increment is driven by the SOURCE neuron's CONTINUOUS activity (a saturating sub-
+        # threshold readout of its membrane potential, clip((v-rest)/scale,0,1)) instead of cp_firing_states
+        # (the spike threshold is bypassed), and those synapses are
+        # REMOVED from the spike matvec (they transmit gradedly, not on spikes) -- mirroring the nmda_slow
+        # AMPA-suppression precedent. None by default -> the new graded step block is unreached, the spike
+        # matvec is unmasked, and the conductances are byte-identical to today. Built in
+        # inject_explicit_wiring iff >=1 pathway sets graded=True (no config flag). See
+        # 2026-06-15-analog-substrate-learned-cortex-build-plan.md (Phase 1).
+        self.cp_graded_synapse_mask = None                # bool per-synapse: True for graded-routed synapses
         # Cluster G v2 (2026-05-01): per-neuron NMDA mask (1.0 for neurons
         # in regions with BrainRegion.enable_nmda=True, 0.0 otherwise).
         # When None, NMDA applies globally per cfg.enable_nmda — backward
@@ -2240,12 +2251,14 @@ class SimulationBridge:
         all_receptors = []  # receptor string per synapse ("gaba_a" default | "gaba_b" -> slow GIRK)
         all_exc_receptors = []  # exc_receptor per synapse ("ampa" default | "nmda_slow" -> slow recurrent NMDA)
         all_coincidence = []  # coincidence_detector bool per synapse (True -> dendritic-coincidence subunit)
+        all_graded = []  # graded bool per synapse (True -> analog/non-spiking transmission from source g_e)
         any_fixed = False
         any_gated = False
         any_trans_gated = False
         any_gabab = False  # any synapse routed through the GABA_B/GIRK conductance
         any_nmda_slow = False  # any synapse routed through the slow-NMDA recurrent conductance
         any_coincidence = False  # any synapse routed through the dendritic-coincidence plateau
+        any_graded = False  # any synapse routed through the graded (analog) transmission path
         for name, group in wiring_plan.items():
             if not isinstance(group, dict) or "pre_indices" not in group:
                 continue
@@ -2255,6 +2268,7 @@ class SimulationBridge:
             receptor = (group.get("receptor", None) or "gaba_a")
             exc_receptor = (group.get("exc_receptor", None) or "ampa")
             coincidence_flag = bool(group.get("coincidence_detector", False))
+            graded_flag = bool(group.get("graded", False))
             if not plastic_flag:
                 any_fixed = True
             if gate_name:
@@ -2267,6 +2281,8 @@ class SimulationBridge:
                 any_nmda_slow = True
             if coincidence_flag:
                 any_coincidence = True
+            if graded_flag:
+                any_graded = True
             n_syn = len(group["pre_indices"])
             all_pre.extend(group["pre_indices"])
             all_post.extend(group["post_indices"])
@@ -2277,6 +2293,7 @@ class SimulationBridge:
             all_receptors.extend([receptor] * n_syn)
             all_exc_receptors.extend([exc_receptor] * n_syn)
             all_coincidence.extend([coincidence_flag] * n_syn)
+            all_graded.extend([graded_flag] * n_syn)
 
         if len(all_pre) == 0:
             self._log_console("inject_explicit_wiring: no synapses in plan.", "warning")
@@ -2311,17 +2328,20 @@ class SimulationBridge:
         # reads add one trailing `_`.)
         # (coincidence appended 2026-06-09 for the dendritic-coincidence subunit -- the index-based
         # coincidence read below uses t[7]; the destructuring reads add one more trailing `_`.)
-        if any_fixed or any_gated or any_trans_gated or any_gabab or any_nmda_slow or any_coincidence:
+        # (graded appended 2026-06-15 for the analog/non-spiking transmission routing -- the index-based
+        # graded read below uses t[8]; the destructuring reads add one more trailing `_`.)
+        if (any_fixed or any_gated or any_trans_gated or any_gabab or any_nmda_slow
+                or any_coincidence or any_graded):
             keyed = sorted(
                 zip(all_pre, all_post, all_plastic, all_gates, all_trans_gates,
-                    all_receptors, all_exc_receptors, all_coincidence),
+                    all_receptors, all_exc_receptors, all_coincidence, all_graded),
                 key=lambda t: (t[0], t[1]),
             )
         else:
             keyed = None
 
         if any_fixed:
-            sorted_plastic = np.asarray([p for _, _, p, _, _, _, _, _ in keyed], dtype=np.bool_)
+            sorted_plastic = np.asarray([p for _, _, p, _, _, _, _, _, _ in keyed], dtype=np.bool_)
             self.cp_synapse_plastic_mask = cp.asarray(sorted_plastic)
         else:
             self.cp_synapse_plastic_mask = None
@@ -2330,7 +2350,7 @@ class SimulationBridge:
         # Allocate cp_plasticity_rate_gain only if any synapse is gated; otherwise
         # leave None and the plasticity update paths skip gain multiplication.
         if any_gated:
-            sorted_gates = [g for _, _, _, g, _, _, _, _ in keyed]
+            sorted_gates = [g for _, _, _, g, _, _, _, _, _ in keyed]
             gate_to_indices: Dict[str, List[int]] = {}
             for syn_idx, gname in enumerate(sorted_gates):
                 if gname:
@@ -2362,7 +2382,7 @@ class SimulationBridge:
         # applied to effective_synaptic_strength in the step. Default 1.0 (open); runners call
         # set_transmission_gate(name, value) to open/close at runtime.
         if any_trans_gated:
-            sorted_trans = [tg for _, _, _, _, tg, _, _, _ in keyed]
+            sorted_trans = [tg for _, _, _, _, tg, _, _, _, _ in keyed]
             tgate_to_indices: Dict[str, List[int]] = {}
             for syn_idx, tgname in enumerate(sorted_trans):
                 if tgname:
@@ -2461,6 +2481,25 @@ class SimulationBridge:
             if self.cp_conductance_g_coincidence is None and n > 0:
                 self.cp_conductance_g_coincidence = cp.zeros(n, dtype=cp.float32)
                 self.cp_conductance_g_coincidence_rise = cp.zeros(n, dtype=cp.float32)
+
+        # GRADED (analog, non-spiking) per-synapse routing mask (2026-06-15). True for synapses of any
+        # pathway tagged graded=True; the per-step graded block drives those synapses from the SOURCE's
+        # continuous activity (normalized g_e), not its spikes, and removes them from the spike matvec.
+        # Aligned with cp_connections.data order via the same (pre, post)-sorted `keyed` list (graded is
+        # keyed[8]). Built only when at least one pathway sets graded=True (NO config flag -- the pathway
+        # flag alone is the opt-in, like the transmission_gate precedent; else None -> the new step block
+        # is unreached, the spike matvec is unmasked, and routing is byte-identical). Capacity-sized; new
+        # (grown) synapses default to False = spike-mediated. NO extra conductance array (the graded drive
+        # feeds the existing g_e/g_i) and NO per-neuron reversal (E_inh/E_e unchanged).
+        if any_graded and keyed is not None:
+            # keyed is (pre, post, plastic, gate, trans_gate, receptor, exc_receptor, coincidence, graded)
+            # in the SAME (pre,post)-sorted order as cp_connections.data -- so the mask aligns synapse-for-
+            # synapse. (post_np is INSERTION order and must NOT be used here.)
+            sorted_graded = [t[8] for t in keyed]
+            gr_mask_host = np.fromiter(
+                (bool(gd) for gd in sorted_graded), dtype=np.bool_, count=nnz)
+            self.cp_graded_synapse_mask = cp.zeros(self._synapse_capacity, dtype=cp.bool_)
+            self.cp_graded_synapse_mask[:nnz] = cp.asarray(gr_mask_host)
 
         # Cluster B.1 (2026-04-28): tag D2-targeting synapses with sign=-1.
         # D1-targeting + everything else stays at +1 (default). The reward-
@@ -5624,6 +5663,30 @@ class SimulationBridge:
                     shape=self.cp_connections.shape,
                 )
 
+            # GRADED (analog, non-spiking) transmission SPLIT (2026-06-15; the retina's horizontal cells).
+            # For graded=True pathways the conductance increment is driven by the SOURCE's CONTINUOUS
+            # activity, not its spikes. Here we capture the routed synapses' (STP/transmission-gated) data
+            # for the graded matvec (applied AFTER the spike matvec below), then ZERO those entries in the
+            # spike matrix so they do NOT also transmit on spikes. Mirrors the nmda_slow AMPA-suppression
+            # split above. GUARDED NO-OP: cp_graded_synapse_mask is None for every run that doesn't set a
+            # graded pathway, so effective_connections_matrix is unchanged and the matvec is byte-identical;
+            # _graded_src_data stays None. (The mask is grown to the live nnz with FALSE padding via
+            # _ensure_gate_capacity, like the GABA_B/nmda_slow masks.)
+            _graded_src_data = None
+            if self.cp_graded_synapse_mask is not None and self.cp_connections.nnz > 0:
+                _g_nnz = self.cp_connections.nnz
+                _g_mask_f = self._ensure_gate_capacity(
+                    "cp_graded_synapse_mask", _g_nnz, fill=False, dtype=cp.bool_
+                )[:_g_nnz].astype(cp.float32)
+                # Source weights for the graded increment: routed synapses' current (gated) weights.
+                _graded_src_data = effective_connections_matrix.data * _g_mask_f
+                # Spike matrix: zero the graded synapses (they transmit gradedly, not on spikes).
+                _spike_data = effective_connections_matrix.data * (1.0 - _g_mask_f)
+                effective_connections_matrix = csp.csr_matrix(
+                    (_spike_data, self.cp_connections.indices, self.cp_connections.indptr),
+                    shape=self.cp_connections.shape,
+                )
+
             if _profiling: _backend_synchronize(); _prof['t_stp'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 2. Synaptic Conductance Update & Current Calculation ---
             decay_e = self._cached_decay_e
@@ -5706,6 +5769,55 @@ class SimulationBridge:
                         _eff_cT1 = _eff_cT1.tocsr()
                     g_e_increase = (_eff_cT1 @ prev_fired_float) * cfg.propagation_strength
                     self.cp_conductance_g_e += g_e_increase
+
+            # GRADED (analog, non-spiking) transmission INCREMENT (2026-06-15; the retina's horizontal
+            # cells). For graded=True pathways the conductance increment is driven by the SOURCE neuron's
+            # CONTINUOUS activity a_cont = clip((v - rest)/scale, 0, 1) -- a saturating sub-threshold readout
+            # of the membrane potential (the same analog signal the graded_lateral mechanism uses), NOT the
+            # binary spike. This bypasses the spike threshold: a SPIKING inhibitory pool cannot linearly
+            # track the population mean (depol block makes its spikes anti-track it), but its graded membrane
+            # state can -- the common-mode removal (whitening) a learned cortex needs. The E/I routing is the
+            # SAME as the spike path (an inhibitory source's graded drive feeds g_i with
+            # inhibitory_propagation_strength; an excitatory source's feeds g_e with propagation_strength),
+            # so a graded inhibitory pathway delivers inhibition treated identically to a spike-mediated one,
+            # only continuous-valued. Runs every step (independent of _prev_any: the graded source is active
+            # even with no spikes). GUARDED NO-OP: _graded_src_data is None unless a graded pathway exists, so
+            # this whole block is unreached and the conductances are byte-identical when off.
+            if _graded_src_data is not None and self.cp_connections.nnz > 0:
+                _gr_rest = cp.float32(getattr(cfg, "graded_source_rest_mV", -65.0))
+                _gr_scale = cp.float32(getattr(cfg, "graded_source_scale_mV", 15.0)) or cp.float32(1.0)
+                _a_cont = cp.clip(
+                    (self.cp_membrane_potential_v - _gr_rest) * (cp.float32(1.0) / _gr_scale),
+                    0.0, 1.0,
+                ).astype(cp.float32)
+                _Wg = csp.csr_matrix(
+                    (_graded_src_data, self.cp_connections.indices, self.cp_connections.indptr),
+                    shape=self.cp_connections.shape,
+                )
+                if cfg.enable_inhibitory_neurons and self.cp_traits is not None:
+                    # E/I split on the SOURCE, identical to the spike path's exc/inhib_fired_prev.
+                    _is_inh = self._cached_inhibitory_mask
+                    if _is_inh is None:
+                        _inh_idx = getattr(cfg, "inhibitory_trait_indices", None)
+                        if _inh_idx:
+                            _is_inh = cp.isin(self.cp_traits, cp.asarray(_inh_idx, dtype=cp.int32))
+                        else:
+                            _is_inh = (self.cp_traits == cfg.inhibitory_trait_index)
+                        self._cached_inhibitory_mask = _is_inh
+                    _a_exc = _a_cont * (~_is_inh)
+                    _a_inh = _a_cont * _is_inh
+                    _a_2col = cp.stack([_a_exc, _a_inh], axis=1)
+                    _WgT = _Wg.T
+                    if getattr(cfg, "deterministic_transpose_matvec", False):
+                        _WgT = _WgT.tocsr()
+                    _g2 = _WgT @ _a_2col
+                    self.cp_conductance_g_e += _g2[:, 0] * cfg.propagation_strength
+                    self.cp_conductance_g_i += _g2[:, 1] * cfg.inhibitory_propagation_strength
+                else:
+                    _WgT1 = _Wg.T
+                    if getattr(cfg, "deterministic_transpose_matvec", False):
+                        _WgT1 = _WgT1.tocsr()
+                    self.cp_conductance_g_e += (_WgT1 @ _a_cont) * cfg.propagation_strength
 
             total_input_current_pA = synaptic_current_I_syn_pA + self.cp_external_input_current
 
