@@ -92,6 +92,12 @@ def build_input_mean_bridge(
                         # one so cortex drive = g_e(W_exc) - g_i(W_inh) = SIGNED (the de-risked fix for the
                         # excitatory-only projection-sign collapse, _phaseB_projection_sign_derisk.py).
     ei_inh_weight=None, # inhibitory hub->cortex weight (default = w_mean); tune to balance g_e vs g_i.
+    graded_lateral=False,      # PHASE 3 SM lateral: the cortex's recurrent ANTI-HEBBIAN lateral M (the
+                               # Pehlevan-Chklovskii decorrelation half of similarity-matching, ALREADY on the
+                               # bridge as graded_lateral, dM ~ <aa^T>-I-lambda*M on ANALOG membrane). Prevents
+                               # the Hebbian rank-1 collapse the learned (STDP) projection suffers. Flag cortex_on.
+    graded_lateral_lambda=None,  # the M decay; RAISE it for PARTIAL/low-rank whitening (full ZCA target=I
+                                 # over-whitens -> collapses; the +0.44 regime is partial whitening).
 ):
     """Build the per-hub-adapting ON/OFF cortex bridge. Returns (bridge, idx_dict).
 
@@ -112,7 +118,7 @@ def build_input_mean_bridge(
         BrainRegion(name="hub_off", n_neurons=n_hub, exc_fraction=1.0, internal_density=0.0,
                     input_mean_adapt=bool(adapt)),
         BrainRegion(name="cortex_on", n_neurons=n_cortex, exc_fraction=1.0, internal_density=0.0,
-                    weight_jitter=0.0, plastic_internal=False),
+                    weight_jitter=0.0, plastic_internal=False, graded_lateral=bool(graded_lateral)),
         BrainRegion(name="cortex_off", n_neurons=n_cortex, exc_fraction=1.0, internal_density=0.0,
                     weight_jitter=0.0, plastic_internal=False),
     ]
@@ -167,6 +173,10 @@ def build_input_mean_bridge(
     cfg.enable_structural_plasticity = False
     cfg.enable_hebbian_learning = False
     cfg.stdp_w_max = float(stdp_w_max)
+    # PHASE 3 SM lateral: the cortex's recurrent anti-Hebbian decorrelation (graded_lateral). Default OFF.
+    cfg.enable_graded_lateral = bool(graded_lateral)
+    if graded_lateral_lambda is not None:
+        cfg.graded_lateral_lambda = float(graded_lateral_lambda)
 
     rt = RuntimeState()
     rt.actual_seed_used = seed
@@ -346,7 +356,9 @@ def run_seed(seed, args, C, labels, S_true):
     bp = dict(n_hub=n_hub, n_cortex=args.n_cortex, hub_to_cortex_density=args.density, w_mean=args.w_mean,
               gain=args.gain, enable_ei=bool(getattr(args, "enable_ei", False)),
               ei_inh_weight=getattr(args, "ei_inh_weight", None),
-              stdp_w_max=float(getattr(args, "stdp_w_max", 2000.0)))
+              stdp_w_max=float(getattr(args, "stdp_w_max", 2000.0)),
+              graded_lateral=bool(getattr(args, "graded_lateral", False)),
+              graded_lateral_lambda=getattr(args, "graded_lateral_lambda", None))
     rp = dict(drive_scale=args.drive_scale, window=args.window, settle=args.settle)
     # STREAMING uses a (possibly shorter) window -- the EMA just needs each presentation's mean drive, not a
     # long spike-count read -- with the slow per-step alpha matched to THAT window (alpha was derived from the
@@ -471,6 +483,12 @@ def main():
                         "LTP quickly and DISTRIBUTES the learning across cortex neurons -- preventing the "
                         "Hebbian rank-1 collapse (all neurons learning the top component) seen at the loose "
                         "default 2000 (eff-rank 1.5). The CLAUDE.md STDP soft-bound gotcha.")
+    p.add_argument("--graded-lateral", action="store_true",
+                   help="PHASE 3 SM lateral: enable the cortex's recurrent anti-Hebbian decorrelation "
+                        "(graded_lateral on cortex_on) -- the L1 similarity-matching half plain STDP lacks; "
+                        "prevents the Hebbian rank-1 collapse. Use WITH --learn-projection.")
+    p.add_argument("--graded-lateral-lambda", type=float, default=None,
+                   help="graded_lateral M decay; RAISE for PARTIAL (low-rank) whitening (full ZCA over-whitens).")
     p.add_argument("--learn-projection", action="store_true",
                    help="PHASE 3: leave the hub->cortex projection PLASTIC during streaming so STDP learns the "
                         "low-rank principal subspace (vs the default frozen random projection). The off-diagonal "
