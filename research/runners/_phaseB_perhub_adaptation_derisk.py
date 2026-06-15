@@ -85,12 +85,22 @@ def run_seed(seed, n_hub=500, k=128, gain=500.0, n_epochs=12):
           f"(gain {gain}, {n_epochs} epochs)  | batch axis-0={p_a0:+.3f}  axis-1={p_a1:+.3f}", flush=True)
 
     out = {"seed": seed, "host": host_p, "axis0_batch": p_a0, "axis1_batch": p_a1, "chance": ch, "adapt": {}}
+    best_code = None; best_p = -9
     for alpha in (0.02, 0.05, 0.1, 0.2, 0.5):
         code = stream_adapt_codes(Xn, W, alpha, gain, n_epochs, seed)
         p, (g, _) = p_of(code)
         out["adapt"][alpha] = p
+        if p > best_p:
+            best_p, best_code = p, code
         print(f"  [per-hub adapt alpha={alpha:4.2f}] Pearson={p:+.3f}  gen={g:.3f} "
               f"(=> {100*p/max(1e-9,p_a0):.0f}% of batch axis-0)", flush=True)
+    # ANTI-CHEAT: permuted-label control on the best per-hub-adapted code. Real structure => collapses to ~0.
+    rng = np.random.RandomState(seed * 7919 + 3); perm = rng.permutation(labels)
+    S_perm = (perm[:, None] == perm[None, :]).astype(np.float64)
+    perm_p = _pearson_vs_Strue(_cos_sim(best_code), S_perm)
+    out["permuted"] = perm_p
+    print(f"  [anti-cheat permuted-label] best-adapt vs SHUFFLED labels = {perm_p:+.3f} (real structure => ~0)",
+          flush=True)
     return out
 
 
@@ -104,8 +114,9 @@ def main():
         if m > best:
             best, best_alpha = m, alpha
     host = np.mean([r["host"] for r in rows])
+    perm = np.mean([r.get("permuted", 0.0) for r in rows])
     print(f"\n  MEAN ({len(seeds)} seeds): host {host:+.3f} | batch axis-0 {a0:+.3f} | batch axis-1 {a1:+.3f} | "
-          f"BEST per-hub adapt {best:+.3f} (alpha={best_alpha})", flush=True)
+          f"BEST per-hub adapt {best:+.3f} (alpha={best_alpha}) | permuted {perm:+.3f} (anti-cheat ~0)", flush=True)
     if best >= 0.30 and best >= a0 - 0.05:
         print(f"  GO: per-hub ADAPTATION recovers axis-0 ({best:+.3f} ~= batch {a0:+.3f}, clears +0.30) -> the "
               f"corrected bridge architecture = per-hub adaptation (intrinsic), NOT a common-mode pool.",
