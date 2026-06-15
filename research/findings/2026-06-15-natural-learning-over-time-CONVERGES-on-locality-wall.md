@@ -87,8 +87,24 @@ Two routes landing on the same fork is itself a high-confidence deliverable: it 
 - `learn_simmatch` is reused by import (the arc's own validated L1 machinery), NOT re-implemented — the only new code is the timescale sweep harness and the one-line `relu` for NSM.
 - NO `sim/` edits. CPU/numpy (small matrices). The probe verdict-prose in `_phaseB_nonnegative_sm_derisk.py` over-stated "recoverable" in the NSM_EVEN branch; the correct reading is in this doc (k-means +0.217 = NOT cleanly separable).
 
+## CYCLE 82 — the constructive complement: in the VIABLE (separable) regime, natural learning over time WORKS
+
+The CYCLE-81 probes are on the *hard* raw corpus. The honest complement is the *viable* regime (curated/separable concepts, where the same brain-rule reaches +0.93 — the shipped 2,048-concept cortex). There, the owner's "learn naturally over time" question becomes two concrete, **function-grounded** (retention, not Pearson-to-offline-PCA) tests. `research/runners/_phaseB_continual_separable_derisk.py` (the validated `learn_simmatch` rule, inlined to thread `(W,M)` across continual phases + a bounded-M numerical guard; PPMI input; 3 seeds; 8 categories × 8 concepts).
+
+| question | result (3-seed) | verdict |
+|---|---|---|
+| **Q1 stability over long continual training** | peak +0.944 → end +0.927 (400 epochs), eff-rank ~7 | **STABLE** (no over-training degrade) |
+| **Q2 catastrophic forgetting** (train cats 0–3, then cats 4–7 disjoint, re-read 0–3) | phase-1 +0.986 → +0.852 after phase-2; **retention 0.86** | **NO catastrophic forgetting** (graceful) |
+| — new concepts learned (phase-2) | +0.969 | learns the new set fine |
+| — interleaved control (no-forget upper bound) | +0.976 | replay recovers retention to ~0.98 |
+
+**Two clean positives:** (1) the online SM is **stable over long continual time** in the viable regime — the over-training degrade on the *raw* corpus (peak +0.35 → +0.26) is a **corpus-hardness symptom** (the rule amplifies noise dims when the structure is weak/overlapping), NOT an intrinsic flaw of the rule's natural-learning regime; on clean separable structure it holds its +0.93 plateau and recovers the right dimensionality (eff-rank ~7 ≈ 8 categories). (2) continual-disjoint learning causes only **graceful** forgetting (retention 0.86, well above the 0.80 bar) — and the interleaved arm (+0.976) shows the project's **already-validated** complementary-learning-systems / SWR replay machinery is exactly the tool to close the residual.
+
+**⇒ The complete, balanced answer to the owner:** on the **hard / correlated** regime, natural-learning mechanisms hit the point-neuron locality wall (→ the (B) dendritic substrate, the deep frontier). On the **viable / separable** regime, **natural learning over time already works** — stable, retains old concepts, and the mild forgetting is closed by the project's validated replay-consolidation. So "we can't stop here" is right in two complementary ways: the viable regime is a **constructive positive that ships with the curated cortex**, and the hard-regime frontier has a **sharply-localized** missing piece (the non-local dendritic computation), not a missing learning trick.
+
 ## Artifacts
 
 - `research/runners/_phaseB_timescale_convergence_derisk.py` + `research/findings/raw/_phaseB_timescale_convergence.{json,txt}`
 - `research/runners/_phaseB_nonnegative_sm_derisk.py` + `research/findings/raw/_phaseB_nonnegative_sm.{json,txt}`
+- `research/runners/_phaseB_continual_separable_derisk.py` + `research/findings/raw/_phaseB_continual_separable.{json,txt}` (CYCLE 82, the constructive complement)
 - Converges with: `docs/plans/2026-06-11-cortex-build-plan-decorrelate-then-bind.md` (the (A)/(B) fork), `2026-06-15-phaseB-spiking-cortex-WALL-rate-to-spike.md`, AUTONOMOUS_STATE.md CYCLE 80→81.

@@ -1,0 +1,22 @@
+[continual separable de-risk] seeds=(42, 43, 44) -- does the online SM learn STABLY over time + retain old concepts when new ones are added, in the VIABLE separable regime?
+
+[continual seed 42] 64 separable concepts (8 cat x 8), 296 hubs
+  Q1 stability(all,400ep): traj [(80, 0.929, 7.4), (160, 0.931, 6.9), (240, 0.93, 6.9), (320, 0.929, 6.9), (400, 0.926, 6.9)]  peak=+0.931 end=+0.926  [STABLE]
+  Q2 forgetting: phase1 pre=+0.986 -> post-phase2=+0.856  retention=0.87  (phase2 learned=+0.981; interleaved-control phase1=+0.977)
+
+[continual seed 43] 64 separable concepts (8 cat x 8), 296 hubs
+  Q1 stability(all,400ep): traj [(80, 0.945, 7.4), (160, 0.934, 6.9), (240, 0.922, 6.9), (320, 0.919, 6.8), (400, 0.915, 6.8)]  peak=+0.945 end=+0.915  [STABLE]
+  Q2 forgetting: phase1 pre=+0.992 -> post-phase2=+0.846  retention=0.85  (phase2 learned=+0.964; interleaved-control phase1=+0.973)
+
+[continual seed 44] 64 separable concepts (8 cat x 8), 296 hubs
+  Q1 stability(all,400ep): traj [(80, 0.957, 7.4), (160, 0.952, 7.0), (240, 0.949, 7.0), (320, 0.943, 7.0), (400, 0.941, 6.9)]  peak=+0.957 end=+0.941  [STABLE]
+  Q2 forgetting: phase1 pre=+0.993 -> post-phase2=+0.855  retention=0.86  (phase2 learned=+0.963; interleaved-control phase1=+0.979)
+
+================================================================================================
+  MEAN (3 seeds): Q1 peak +0.944 -> end +0.927 [ALL STABLE]
+  Q2 forgetting: retention 0.86 (phase1 post-phase2 +0.852 vs interleaved +0.976); phase2 learned +0.969
+================================================================================================
+  STABLE+NO-FORGET: the online SM in the viable separable regime is STABLE over long training (peak +0.944 ~ end +0.927) AND retains the first concept-set after continual-disjoint training (retention 0.86 >= 0.80). ==> natural learning over time WORKS in the regime where the brain-rule works; ships with the curated 2,048-concept cortex. A clean constructive positive.
+  Total elapsed: 16.8s
+
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_phaseB_continual_separable.json
