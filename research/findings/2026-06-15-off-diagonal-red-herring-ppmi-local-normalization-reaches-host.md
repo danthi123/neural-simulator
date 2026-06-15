@@ -124,6 +124,8 @@ With edits approved, the on-bridge realization started cheap-first: the faithful
 
 This is the honest scope of the remaining on-bridge work: the *numpy de-risk is complete* (cortex + binding + pipeline + no-confab moat all GO on PPMI codes), and the on-bridge realization is a known engineering path (the right spiking encoding) — not the months-scale dendritic wall, which remains unnecessary.
 
+**Population coding resolves it (the encoding question is answered).** Giving each PPMI dimension a small *population* (group-averaged firing rate = finer resolution, the brain's standard for graded values) lifts the on-bridge faithful read from 20% (1 neuron) to **+0.330 — 66% of numpy PPMI (75% of host) — at 16 neurons/dimension** (seed 42, drive-scale 50; silent 0.00; vs log-drive +0.064). The single-neuron→16-neuron trend (20%→66%) shows fidelity scales with population size, so the spiking substrate *does* carry the PPMI code — the CYCLE-88 null was the random-readout confound plus single-neuron resolution, exactly as diagnosed. **⇒ the on-bridge cortex path is viable with a population-rate code** (the most brain-faithful encoding for a graded value); the remaining tuning (more neurons/dim, window, drive scale) climbs toward host, and the neural per-concept normalization + the binder wiring are the next build steps. No phase/RF pivot required, no dendritic wall.
+
 ## Artifacts
 
 - `research/runners/_phaseB_ppmi_centering_verify_derisk.py` + `research/findings/raw/_phaseB_ppmi_centering_verify.{json,txt}` (the skeptical verification + decomposition)
