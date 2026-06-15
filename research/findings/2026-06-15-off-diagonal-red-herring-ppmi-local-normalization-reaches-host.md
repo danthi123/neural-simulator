@@ -113,6 +113,17 @@ The "binding correlated codes" residual flagged above turns out to be a non-bloc
 
 **⇒ The functional cortex without curated concepts is DE-RISKED end-to-end in numpy:** PPMI local-normalization cortex (CYCLE 88, generalizes) → codes in the binding sweet spot (CYCLE 89, generalize AND bind) → multi-role facts + who/what recall + the no-confab moat (CYCLE 90). The entire off-diagonal / months-scale dendritic-plus-lateral build is unnecessary. The only remaining work is the on-bridge spiking realization (a faithful read + the one missing local op, per-concept divisive normalization) + scaling — build/engineering, not a wall.
 
+## CYCLE 91 — on-bridge realization begins: the single-neuron rate read hits the documented rate-code wall (the encoding is the design decision)
+
+With edits approved, the on-bridge realization started cheap-first: the faithful-read de-risk (`_phaseB_ppmi_bridge_faithful_read_derisk.py`, GPU) drives the hub layer with host-computed PPMI and reads the hub layer's **own firing rate** as the code (removing the CYCLE-88 random-readout confound). Result (seed 42, drive-scale sweep {12, 25, 50, 120}): the spiking single-neuron firing-rate code **peaks at +0.102 (20% of numpy PPMI +0.50) at drive-scale 50**, and falls off either side — too-low drive silences half the concepts (+−0.02, silent 0.48 at scale 12), too-high saturates the rate (+0.04 at scale 120). So tuning helps (4%→20%) but the graded PPMI structure mostly does not survive a single-neuron rate code (20% ≪ the ≥70% gate).
+
+**This is the documented rate-coded SNR wall, not a new wall.** The project already established (the conversational opponency arc) that rate codes physically cannot preserve fine graded structure — which is exactly why the production composer pivoted to **phase-coded resonate-and-fire (RF) phasors** (info in PHASE, not rate). So the on-bridge PPMI code needs a structure-preserving spiking encoding, and the path is already in the codebase:
+
+- **Encoding options (the design decision):** (a) **population rate** — represent each PPMI value by a small population (finer resolution than one neuron; the project's standard for graded values); (b) **phase / RF** — encode the PPMI vector as RF phasors and bind via the existing RF-FHRR composer (the project's established answer to the rate-code wall); (c) a **structure-preserving readout** — the random 0.1-density readout destroys structure, so a learned/PCA-equivalent readout (or reading the hub population directly) is required.
+- The CYCLE-90 numpy pipeline used the graded PPMI vectors directly (HRR); the on-bridge realization must carry that graded structure through a spiking code — the encoding is the next focused design step, and it reuses existing infrastructure (RF phasors / population pools), not a new mechanism.
+
+This is the honest scope of the remaining on-bridge work: the *numpy de-risk is complete* (cortex + binding + pipeline + no-confab moat all GO on PPMI codes), and the on-bridge realization is a known engineering path (the right spiking encoding) — not the months-scale dendritic wall, which remains unnecessary.
+
 ## Artifacts
 
 - `research/runners/_phaseB_ppmi_centering_verify_derisk.py` + `research/findings/raw/_phaseB_ppmi_centering_verify.{json,txt}` (the skeptical verification + decomposition)
