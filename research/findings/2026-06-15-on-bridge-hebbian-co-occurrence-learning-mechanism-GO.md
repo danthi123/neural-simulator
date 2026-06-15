@@ -198,8 +198,18 @@ words at freq ≥ 200, 284 of the existing g20 320-vocab (89%) above the proven 
 **320-word *semantic* taxonomy** for the `S_true` ground truth: the 8×8 taxonomy's categories are
 semantic (animal/food/…), but g20's are grammatical (noun/verb/adj/spatial/functional) — a different
 structure. ⇒ scaling needs a curated 40×8 corpus-grounded *semantic* taxonomy (the categorizable
-subset of the ~633 frequent content words), then the (long) GPU stream-run. This is the next arc's
-opening task; deferred from this long session's tail to avoid a rushed heavy build.
+subset of the ~633 frequent content words), then the (long) GPU stream-run.
+
+**320-SCALING VALIDATED (seed 42, GO).** The 40×8 = 320-word semantic taxonomy was curated
+(`research/runners/stream_taxonomy_320.py`, all freq ≥ 50, clean semantic categories, independently
+verified) and the stream cortex learned all 320 concepts from the corpus on a 9920-neuron /
+24.6M-synapse bridge (150000 windows, ~96 min, ~469 windows/concept = the same per-concept budget as
+the 64-run). At the production 320-concept tier: who-Q&A recall **1.00** (8/8, 0 within-cat), no-confab
+abstain **1.00 (0 false-accepts)**, familiarity gap present +0.468 ≫ absent +0.050 — the full
+conversational capability holds **perfectly at 5× the concepts** (cleaner than the reduced-budget
+64-run). ⇒ the biology-faithful stream cortex **scales to the production tier on the spiking
+substrate**. Multi-seed (the project standard) is a ~5 hr commitment (~96 min/seed); seed 42 is a clean
+GO. Codes cached at `_phaseB_stream_codes_320_seed42.npy` (HRR re-tests instant).
 
 Runner: `research/runners/_phaseB_stdp_cooccurrence_derisk.py` (GPU; CuPy; `--n-per` for the
 population). Raw: `research/findings/raw/_phaseB_stdp_cooccurrence.json`,
