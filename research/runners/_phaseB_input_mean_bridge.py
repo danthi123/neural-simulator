@@ -345,7 +345,8 @@ def run_seed(seed, args, C, labels, S_true):
 
     bp = dict(n_hub=n_hub, n_cortex=args.n_cortex, hub_to_cortex_density=args.density, w_mean=args.w_mean,
               gain=args.gain, enable_ei=bool(getattr(args, "enable_ei", False)),
-              ei_inh_weight=getattr(args, "ei_inh_weight", None))
+              ei_inh_weight=getattr(args, "ei_inh_weight", None),
+              stdp_w_max=float(getattr(args, "stdp_w_max", 2000.0)))
     rp = dict(drive_scale=args.drive_scale, window=args.window, settle=args.settle)
     # STREAMING uses a (possibly shorter) window -- the EMA just needs each presentation's mean drive, not a
     # long spike-count read -- with the slow per-step alpha matched to THAT window (alpha was derived from the
@@ -465,6 +466,11 @@ def main():
                    help="inhibitory hub->cortex weight_mean (default = --w-mean); tune to balance g_e vs g_i.")
     p.add_argument("--host-gain", type=float, default=500.0)
     p.add_argument("--epochs", type=int, default=12, help="streaming epochs (the EMA convergence horizon)")
+    p.add_argument("--stdp-w-max", type=float, default=2000.0,
+                   help="STDP soft-bound cap. PHASE 3: a TIGHT bound (just above the w_mean init) saturates "
+                        "LTP quickly and DISTRIBUTES the learning across cortex neurons -- preventing the "
+                        "Hebbian rank-1 collapse (all neurons learning the top component) seen at the loose "
+                        "default 2000 (eff-rank 1.5). The CLAUDE.md STDP soft-bound gotcha.")
     p.add_argument("--learn-projection", action="store_true",
                    help="PHASE 3: leave the hub->cortex projection PLASTIC during streaming so STDP learns the "
                         "low-rank principal subspace (vs the default frozen random projection). The off-diagonal "
