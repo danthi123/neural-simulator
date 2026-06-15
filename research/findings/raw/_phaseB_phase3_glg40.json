@@ -1,0 +1,64 @@
+{
+  "verdict": "PARTIAL_beats_point_below_substrate_ceiling",
+  "mean": {
+    "adapt": 0.09974911289614889,
+    "axis0_substrate": 0.04545070923188802,
+    "axis0_signed": 0.29405180017689553,
+    "axis1_cmpool": 0.2415672966369529,
+    "point": 0.027796022983245502,
+    "fast": 0.07428024720613068,
+    "permuted": -0.015782346953885716
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "host": 0.44192576313430393,
+      "axis0_substrate": 0.04545070923188802,
+      "axis0_signed": 0.29405180017689553,
+      "axis1_cmpool": 0.2415672966369529,
+      "point_host": 0.05810739223539855,
+      "adapt": 0.09974911289614889,
+      "adapt_gen": 0.203125,
+      "point": 0.027796022983245502,
+      "fast": 0.07428024720613068,
+      "permuted": -0.015782346953885716,
+      "ema_on": 55.82678799427007,
+      "chance": 0.125,
+      "gates": {
+        "near_axis0_substrate": true,
+        "clears_bar": false,
+        "beats_cmpool": false,
+        "beats_point": true,
+        "permuted_collapses": true,
+        "slow_loadbearing": false
+      },
+      "elapsed_s": 324.4
+    }
+  },
+  "config": {
+    "smoke": false,
+    "real": true,
+    "seeds": "42",
+    "n_hub": 500,
+    "n_cortex": 128,
+    "density": 0.5,
+    "w_mean": 400.0,
+    "drive_scale": 40.0,
+    "window": 200,
+    "stream_window": 30,
+    "settle": 8,
+    "gain": 1.0,
+    "enable_ei": true,
+    "ei_inh_weight": 200.0,
+    "host_gain": 500.0,
+    "epochs": 12,
+    "stdp_w_max": 550.0,
+    "graded_lateral": true,
+    "graded_lateral_lambda": 0.05,
+    "graded_lateral_gain": 40.0,
+    "learn_projection": true,
+    "alpha": 0.00014423076923076922,
+    "fast_alpha": 0.0038461538461538464,
+    "out": "research/findings/raw/_phaseB_phase3_glg40.json"
+  }
+}
