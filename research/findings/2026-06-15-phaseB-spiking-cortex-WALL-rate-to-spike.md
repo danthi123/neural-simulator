@@ -201,3 +201,22 @@ integration challenge; the cm-pool's bridge realization already lost half (host 
 so per-hub adaptation's spiking realization could similarly lose. The numpy mechanism is GO; the *bridge*
 realization is the next gate. NO `sim/` edits in the diagnosis (the two probes are pure numpy). Honest NEGATIVE
 (cm-pool on real) + a validated corrected mechanism (per-hub adaptation) = the deliverable.
+
+**The cheapest bridge mechanism (existing homeostasis) is RULED OUT (CYCLE 70).** `_phaseB_homeostatic_centering_derisk.py`
+(3 seeds, real): the bridge's homeostasis drives each hub to a target *rate*, so its threshold sits at the
+**(1−rate) PERCENTILE** of the drive, not the mean — it is **not faithful mean-subtraction**. Best numpy
+ceiling **+0.290** (at target rate 0.25, 90% of the ideal axis-0 mean +0.307) — **below the +0.30 bar even
+ideally** (and the bridge spiking realization would lose more). So only a **faithful slow per-hub INPUT-mean
+subtraction** clears the bar (the ideal axis-0 +0.307), and the existing per-neuron mechanisms don't provide it:
+homeostasis is a percentile; spike-frequency adaptation / STP depression are output-driven and within-
+presentation (tau ~100ms–1s, but the needed mean spans *many* concept presentations). **⇒ the faithful axis-0
+realization needs a dedicated slow per-hub input-mean primitive (a per-feature *predictive* subtraction =
+Mikulasch-Priesemann / point-neuron predictive coding, Jang 2024).** This is a NEW bridge mechanism → per the
+standing deep-research-at-roadblock directive a read-only research pass is scoping it
+(`2026-06-15-slow-perhub-mean-primitive-deep-research.md`, in flight): is there a CHEAP point-neuron primitive
+(a guarded default-off slow-input-mean `sim/` edit) or does faithful axis-0 genuinely need multi-compartment
+dendrites (the months-scale owner-gated piece)? **The convergent honest status:** the real category structure
+is *moderate* (host +0.44), so the best achievable whitened spiking code is *marginal* (~+0.30) even ideally;
+the point-neuron bridge realizations explored (cm-pool, homeostasis) all land below it; the mechanism (per-hub
+adaptation) is correct but its faithful realization is the slow-analog-integration wall again — to be scoped
+cheap-first before any sim/ commit.
