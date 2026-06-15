@@ -1,0 +1,26 @@
+[nonnegative-SM de-risk] seeds=(42, 43, 44) n_hub=500 k=64 regime lr_ff=0.005 lr_m=0.1 settle=40 epochs=400 -- does the brain-faithful NONNEGATIVE rate rule (clustering) beat the signed LINEAR (PCA) rule on the CATEGORICAL target?
+
+[NSM seed 42] 64c x 500h, 8 categories | host +0.442 | offline PCA +0.518 | offline k-means(8) +0.210 (the CATEGORICAL ceiling)
+  LINEAR_SM (PCA, signed) : Pearson=+0.268  eff-rank=3.3   traj +0.33  +0.34  +0.30  +0.27
+  NSM (clustering, relu>=0): Pearson=+0.247  eff-rank=3.3   traj +0.32  +0.33  +0.28  +0.25
+  [anti-cheat] NSM permuted=+0.020 (~0)
+
+[NSM seed 43] 64c x 500h, 8 categories | host +0.442 | offline PCA +0.518 | offline k-means(8) +0.227 (the CATEGORICAL ceiling)
+  LINEAR_SM (PCA, signed) : Pearson=+0.276  eff-rank=4.1   traj +0.36  +0.34  +0.31  +0.28
+  NSM (clustering, relu>=0): Pearson=+0.230  eff-rank=5.0   traj +0.31  +0.30  +0.27  +0.23
+  [anti-cheat] NSM permuted=-0.007 (~0)
+
+[NSM seed 44] 64c x 500h, 8 categories | host +0.442 | offline PCA +0.518 | offline k-means(8) +0.214 (the CATEGORICAL ceiling)
+  LINEAR_SM (PCA, signed) : Pearson=+0.257  eff-rank=2.9   traj +0.36  +0.33  +0.28  +0.26
+  NSM (clustering, relu>=0): Pearson=+0.277  eff-rank=4.2   traj +0.34  +0.34  +0.30  +0.28
+  [anti-cheat] NSM permuted=+0.005 (~0)
+
+================================================================================================
+  MEAN (3 seeds): host +0.442 | offline PCA +0.518 | offline k-means +0.217 (CATEGORICAL ceiling)
+  LINEAR_SM (PCA)   +0.267  eff-rank 3.4
+  NSM (clustering)  +0.251  eff-rank 4.1
+================================================================================================
+  NSM_EVEN: NSM ~= LINEAR_SM (+0.251 vs +0.267) -- nonnegativity alone does NOT unlock the categorical structure online (the local rule still can't separate the categories, even though offline k-means +0.217 shows they're recoverable) ==> the online-local-vs-offline separation gap stands (the point-neuron locality wall, the (B) fork).
+  Total elapsed: 40.2s
+
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_phaseB_nonnegative_sm.json
