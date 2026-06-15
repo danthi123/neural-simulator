@@ -1,0 +1,223 @@
+{
+  "host_mean": 0.44192576313430393,
+  "offline_mean": 0.5180767212362785,
+  "offline_rank_mean": 53.01,
+  "baseline_pearson": 0.2623,
+  "best_pearson": 0.27603333333333335,
+  "best_label": "20:1 + deeper-settle + longer (consolidation regime)",
+  "lift": 0.013733333333333375,
+  "frac_of_offline": 0.5328039690234282,
+  "per_seed": [
+    {
+      "seed": 42,
+      "host": 0.44192576313430393,
+      "offline": 0.5180767212362785,
+      "offline_rank": 53.01,
+      "configs": [
+        {
+          "label": "1:1 baseline (fair_test default)",
+          "lr_ff": 0.01,
+          "lr_m": 0.01,
+          "ratio": 1.0,
+          "settle": 30,
+          "epochs": 200,
+          "pearson": 0.264,
+          "eff_rank": 3.14,
+          "peak": 0.3426,
+          "stable": false
+        },
+        {
+          "label": "5:1 lateral-faster",
+          "lr_ff": 0.01,
+          "lr_m": 0.05,
+          "ratio": 5.0,
+          "settle": 30,
+          "epochs": 200,
+          "pearson": 0.2697,
+          "eff_rank": 3.27,
+          "peak": 0.3464,
+          "stable": false
+        },
+        {
+          "label": "10:1 lateral-faster",
+          "lr_ff": 0.01,
+          "lr_m": 0.1,
+          "ratio": 10.0,
+          "settle": 30,
+          "epochs": 200,
+          "pearson": 0.2725,
+          "eff_rank": 3.43,
+          "peak": 0.3471,
+          "stable": false
+        },
+        {
+          "label": "20:1 lateral-faster + stable-ff + long (natural-over-time)",
+          "lr_ff": 0.005,
+          "lr_m": 0.1,
+          "ratio": 20.0,
+          "settle": 40,
+          "epochs": 400,
+          "pearson": 0.2684,
+          "eff_rank": 3.28,
+          "peak": 0.3406,
+          "stable": false
+        },
+        {
+          "label": "20:1 + deeper-settle + longer (consolidation regime)",
+          "lr_ff": 0.003,
+          "lr_m": 0.06,
+          "ratio": 20.0,
+          "settle": 50,
+          "epochs": 600,
+          "pearson": 0.2784,
+          "eff_rank": 3.55,
+          "peak": 0.3518,
+          "stable": false
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "host": 0.44192576313430393,
+      "offline": 0.5180767212362785,
+      "offline_rank": 53.01,
+      "configs": [
+        {
+          "label": "1:1 baseline (fair_test default)",
+          "lr_ff": 0.01,
+          "lr_m": 0.01,
+          "ratio": 1.0,
+          "settle": 30,
+          "epochs": 200,
+          "pearson": 0.2734,
+          "eff_rank": 3.91,
+          "peak": 0.3547,
+          "stable": false
+        },
+        {
+          "label": "5:1 lateral-faster",
+          "lr_ff": 0.01,
+          "lr_m": 0.05,
+          "ratio": 5.0,
+          "settle": 30,
+          "epochs": 200,
+          "pearson": 0.2751,
+          "eff_rank": 3.93,
+          "peak": 0.3575,
+          "stable": false
+        },
+        {
+          "label": "10:1 lateral-faster",
+          "lr_ff": 0.01,
+          "lr_m": 0.1,
+          "ratio": 10.0,
+          "settle": 30,
+          "epochs": 200,
+          "pearson": 0.2753,
+          "eff_rank": 3.9,
+          "peak": 0.3601,
+          "stable": false
+        },
+        {
+          "label": "20:1 lateral-faster + stable-ff + long (natural-over-time)",
+          "lr_ff": 0.005,
+          "lr_m": 0.1,
+          "ratio": 20.0,
+          "settle": 40,
+          "epochs": 400,
+          "pearson": 0.2759,
+          "eff_rank": 4.1,
+          "peak": 0.3593,
+          "stable": false
+        },
+        {
+          "label": "20:1 + deeper-settle + longer (consolidation regime)",
+          "lr_ff": 0.003,
+          "lr_m": 0.06,
+          "ratio": 20.0,
+          "settle": 50,
+          "epochs": 600,
+          "pearson": 0.2876,
+          "eff_rank": 4.38,
+          "peak": 0.359,
+          "stable": false
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "host": 0.44192576313430393,
+      "offline": 0.5180767212362785,
+      "offline_rank": 53.01,
+      "configs": [
+        {
+          "label": "1:1 baseline (fair_test default)",
+          "lr_ff": 0.01,
+          "lr_m": 0.01,
+          "ratio": 1.0,
+          "settle": 30,
+          "epochs": 200,
+          "pearson": 0.2495,
+          "eff_rank": 2.91,
+          "peak": 0.3515,
+          "stable": false
+        },
+        {
+          "label": "5:1 lateral-faster",
+          "lr_ff": 0.01,
+          "lr_m": 0.05,
+          "ratio": 5.0,
+          "settle": 30,
+          "epochs": 200,
+          "pearson": 0.2525,
+          "eff_rank": 2.95,
+          "peak": 0.3544,
+          "stable": false
+        },
+        {
+          "label": "10:1 lateral-faster",
+          "lr_ff": 0.01,
+          "lr_m": 0.1,
+          "ratio": 10.0,
+          "settle": 30,
+          "epochs": 200,
+          "pearson": 0.255,
+          "eff_rank": 2.87,
+          "peak": 0.3538,
+          "stable": false
+        },
+        {
+          "label": "20:1 lateral-faster + stable-ff + long (natural-over-time)",
+          "lr_ff": 0.005,
+          "lr_m": 0.1,
+          "ratio": 20.0,
+          "settle": 40,
+          "epochs": 400,
+          "pearson": 0.2569,
+          "eff_rank": 2.87,
+          "peak": 0.3558,
+          "stable": false
+        },
+        {
+          "label": "20:1 + deeper-settle + longer (consolidation regime)",
+          "lr_ff": 0.003,
+          "lr_m": 0.06,
+          "ratio": 20.0,
+          "settle": 50,
+          "epochs": 600,
+          "pearson": 0.2621,
+          "eff_rank": 3.36,
+          "peak": 0.3576,
+          "stable": false
+        }
+      ]
+    }
+  ],
+  "configs": [
+    "1:1 baseline (fair_test default)",
+    "5:1 lateral-faster",
+    "10:1 lateral-faster",
+    "20:1 lateral-faster + stable-ff + long (natural-over-time)",
+    "20:1 + deeper-settle + longer (consolidation regime)"
+  ]
+}

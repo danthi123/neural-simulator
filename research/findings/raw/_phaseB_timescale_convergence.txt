@@ -1,0 +1,50 @@
+[timescale-convergence de-risk] seeds=(42, 43, 44) n_hub=500 k=64 -- does lr_m>>lr_ff (the SM theory's required timescale separation) close the online +0.348 -> offline +0.518 gap?
+
+[timescale seed 42] 64c x 500h | host PPMI+SVD=+0.442 | offline PPMI+PCA(k=64)=+0.518 (eff-rank 53.0)
+  [1:1 baseline (fair_test default)                    ] Pearson=+0.264  eff-rank= 3.1  [OVER-TRAINED(peak +0.343)]
+      traj: ep40:+0.328  ep80:+0.343  ep120:+0.319  ep160:+0.289  ep200:+0.264
+  [5:1 lateral-faster                                  ] Pearson=+0.270  eff-rank= 3.3  [OVER-TRAINED(peak +0.346)]
+      traj: ep40:+0.331  ep80:+0.346  ep120:+0.323  ep160:+0.290  ep200:+0.270
+  [10:1 lateral-faster                                 ] Pearson=+0.273  eff-rank= 3.4  [OVER-TRAINED(peak +0.347)]
+      traj: ep40:+0.330  ep80:+0.347  ep120:+0.324  ep160:+0.288  ep200:+0.273
+  [20:1 lateral-faster + stable-ff + long (natural-over-time)] Pearson=+0.268  eff-rank= 3.3  [OVER-TRAINED(peak +0.341)]
+      traj: ep80:+0.333  ep160:+0.341  ep240:+0.325  ep320:+0.294  ep400:+0.268
+  [20:1 + deeper-settle + longer (consolidation regime)] Pearson=+0.278  eff-rank= 3.5  [OVER-TRAINED(peak +0.352)]
+      traj: ep120:+0.325  ep240:+0.352  ep360:+0.332  ep480:+0.306  ep600:+0.278
+
+[timescale seed 43] 64c x 500h | host PPMI+SVD=+0.442 | offline PPMI+PCA(k=64)=+0.518 (eff-rank 53.0)
+  [1:1 baseline (fair_test default)                    ] Pearson=+0.273  eff-rank= 3.9  [OVER-TRAINED(peak +0.355)]
+      traj: ep40:+0.353  ep80:+0.355  ep120:+0.328  ep160:+0.299  ep200:+0.273
+  [5:1 lateral-faster                                  ] Pearson=+0.275  eff-rank= 3.9  [OVER-TRAINED(peak +0.358)]
+      traj: ep40:+0.356  ep80:+0.358  ep120:+0.331  ep160:+0.301  ep200:+0.275
+  [10:1 lateral-faster                                 ] Pearson=+0.275  eff-rank= 3.9  [OVER-TRAINED(peak +0.360)]
+      traj: ep40:+0.354  ep80:+0.360  ep120:+0.333  ep160:+0.300  ep200:+0.275
+  [20:1 lateral-faster + stable-ff + long (natural-over-time)] Pearson=+0.276  eff-rank= 4.1  [OVER-TRAINED(peak +0.359)]
+      traj: ep80:+0.359  ep160:+0.353  ep240:+0.327  ep320:+0.303  ep400:+0.276
+  [20:1 + deeper-settle + longer (consolidation regime)] Pearson=+0.288  eff-rank= 4.4  [OVER-TRAINED(peak +0.359)]
+      traj: ep120:+0.351  ep240:+0.359  ep360:+0.341  ep480:+0.314  ep600:+0.288
+
+[timescale seed 44] 64c x 500h | host PPMI+SVD=+0.442 | offline PPMI+PCA(k=64)=+0.518 (eff-rank 53.0)
+  [1:1 baseline (fair_test default)                    ] Pearson=+0.249  eff-rank= 2.9  [OVER-TRAINED(peak +0.351)]
+      traj: ep40:+0.351  ep80:+0.348  ep120:+0.310  ep160:+0.275  ep200:+0.249
+  [5:1 lateral-faster                                  ] Pearson=+0.253  eff-rank= 2.9  [OVER-TRAINED(peak +0.354)]
+      traj: ep40:+0.354  ep80:+0.352  ep120:+0.312  ep160:+0.281  ep200:+0.253
+  [10:1 lateral-faster                                 ] Pearson=+0.255  eff-rank= 2.9  [OVER-TRAINED(peak +0.354)]
+      traj: ep40:+0.354  ep80:+0.353  ep120:+0.308  ep160:+0.284  ep200:+0.255
+  [20:1 lateral-faster + stable-ff + long (natural-over-time)] Pearson=+0.257  eff-rank= 2.9  [OVER-TRAINED(peak +0.356)]
+      traj: ep80:+0.356  ep160:+0.355  ep240:+0.314  ep320:+0.280  ep400:+0.257
+  [20:1 + deeper-settle + longer (consolidation regime)] Pearson=+0.262  eff-rank= 3.4  [OVER-TRAINED(peak +0.358)]
+      traj: ep120:+0.350  ep240:+0.358  ep360:+0.328  ep480:+0.287  ep600:+0.262
+
+================================================================================================
+  MEAN (3 seeds): host +0.442 | offline PPMI+PCA +0.518 (eff-rank 53.0)
+  [1:1 baseline (fair_test default)                    ] ratio    1:1  Pearson=+0.262  eff-rank=3.3
+  [5:1 lateral-faster                                  ] ratio    5:1  Pearson=+0.266  eff-rank=3.4
+  [10:1 lateral-faster                                 ] ratio   10:1  Pearson=+0.268  eff-rank=3.4
+  [20:1 lateral-faster + stable-ff + long (natural-over-time)] ratio   20:1  Pearson=+0.267  eff-rank=3.4
+  [20:1 + deeper-settle + longer (consolidation regime)] ratio   20:1  Pearson=+0.276  eff-rank=3.8
+================================================================================================
+  PLATEAUS: even timescale-separated + stable + long, the SM plateaus (+0.276 at 20:1 + deeper-settle + longer (consolidation regime), baseline +0.262) below offline +0.518 (53%). ==> the residual is the genuine online-LOCAL-vs-offline-GLOBAL gap (the point-neuron locality wall == the 2026-06-11 cortex-fork (B) dendritic path). The natural-learning angle CONVERGES with the existing fork: replay/homeostasis stabilize + un-do over-training, but the last ~3 of 8 PCs need a non-local (dendritic) computation a point-neuron local rule cannot do.
+  Total elapsed: 71.7s
+
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_phaseB_timescale_convergence.json
