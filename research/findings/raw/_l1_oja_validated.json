@@ -1,0 +1,71 @@
+{
+  "verdict": "GO_LEARNING_EXTRACTS",
+  "why": "Oja online local PCA on PPMI reaches +0.481 (92% of offline +0.523, beating host +0.323), generalizes 0.875, controls clean, AND the learning is load-bearing (adds +0.312 over random projection).",
+  "gates": {
+    "host_carries": true,
+    "A_saturating_fails": true,
+    "learner_reaches_ceiling": true,
+    "generalizes": true,
+    "permuted_collapses": true,
+    "input_lesion_collapses": true
+  },
+  "all_go": true,
+  "learning_loadbearing": true,
+  "learning_adds_over_random": 0.31198951869986136,
+  "offline_pca": 0.5234292736807535,
+  "host_ppmi_svd": 0.3225088876236224,
+  "ppmi_cos": 0.48523670063113405,
+  "oja_ppmi": {
+    "pearson_mean": 0.481481406610278,
+    "pearson_seeds": [
+      0.48412817111162776,
+      0.47574334216390685,
+      0.4845727065552993
+    ],
+    "offdiag_mean": -0.015580683321243164,
+    "gen_mean": 0.875,
+    "chance": 0.125
+  },
+  "oja_raw": {
+    "pearson_mean": 0.2130925346903304,
+    "pearson_seeds": [
+      0.21209799033256588,
+      0.21243058029969233,
+      0.214749033438733
+    ],
+    "offdiag_mean": 0.5655097511264667,
+    "gen_mean": 0.5729166666666666,
+    "chance": 0.125
+  },
+  "random_proj": {
+    "pearson_mean": 0.16949188791041667,
+    "pearson_seeds": [
+      0.21852559519347325,
+      0.15261403780478092,
+      0.1373360307329958
+    ],
+    "offdiag_mean": 0.12757685619379397,
+    "gen_mean": 0.5,
+    "chance": 0.125
+  },
+  "faithful_saturating": {
+    "pearson_mean": -0.0006005352788598041,
+    "pearson_seeds": [
+      -0.0009247114873889214,
+      0.0,
+      -0.0008768943491904909
+    ],
+    "offdiag_mean": 0.9999999999997938,
+    "gen_mean": 0.109375,
+    "chance": 0.125
+  },
+  "permuted_mean": -0.0002642652504548972,
+  "reach_fraction": 0.9198595317844983,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_hub": 2000,
+  "k": 64
+}

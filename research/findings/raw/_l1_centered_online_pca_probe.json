@@ -1,0 +1,56 @@
+{
+  "verdict": "COMMON_MODE_WAS_THE_WALL_L1_FLIPS",
+  "why": "CENTERED online Oja-PCA reaches +0.481 = 92% of the offline optimum +0.523 (vs un-centered +0.443) -> the online plateau was the UN-REMOVED COMMON MODE, not the rule. L1 flips toward GO/BOUNDARY: a brain-plausible online PCA rule CAN extract the real structure GIVEN common-mode removal (subtractive-inhibition EMA, itself brain-based). The learned cortex path is the online rule + a subtractive-inhibition front-end.",
+  "offline_pca": 0.5234292736807535,
+  "ppmi_cos_uncentered": 0.48523670063113405,
+  "ppmi_cos_centered": 0.5234292736807535,
+  "arms": {
+    "oja_ppmi_uncentered": {
+      "pearson_mean": 0.4431237999766602,
+      "pearson_seeds": [
+        0.44433493666321233,
+        0.44280134277175387,
+        0.44223512049501434
+      ],
+      "offdiag_mean": 0.1502300980796766,
+      "gen_mean": 0.8541666666666666
+    },
+    "oja_ppmi_CENTERED": {
+      "pearson_mean": 0.481481406610278,
+      "pearson_seeds": [
+        0.48412817111162776,
+        0.47574334216390685,
+        0.4845727065552993
+      ],
+      "offdiag_mean": -0.015580683321243164,
+      "gen_mean": 0.875
+    },
+    "oja_raw_uncentered": {
+      "pearson_mean": 0.2130925346903304,
+      "pearson_seeds": [
+        0.21209799033256588,
+        0.21243058029969233,
+        0.214749033438733
+      ],
+      "offdiag_mean": 0.5655097511264667,
+      "gen_mean": 0.5729166666666666
+    },
+    "oja_raw_CENTERED": {
+      "pearson_mean": 0.18346711595241463,
+      "pearson_seeds": [
+        0.18319235957297217,
+        0.18352921241941794,
+        0.18367977586485382
+      ],
+      "offdiag_mean": 0.0008310419499673681,
+      "gen_mean": 0.484375
+    }
+  },
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_hub": 2000,
+  "k": 64
+}

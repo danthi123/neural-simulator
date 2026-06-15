@@ -1,0 +1,170 @@
+{
+  "verdict": "PLATEAU_IS_A_WALL_NEGATIVE",
+  "why": "NO online config clears Pearson +0.40 (best 'k64 + low lr_ff=0.003' +0.292, offdiag +0.855) while the offline optimum is +0.523 -> the online brain-based rule genuinely cannot carve the weak real structure -> the L1 NEGATIVE is solid; ship the flat 2,048-concept cortex.",
+  "best": {
+    "label": "k64 + low lr_ff=0.003",
+    "k": 64,
+    "epochs": 300,
+    "lr_ff0": 0.003,
+    "lr_m": 0.01,
+    "settle": 30,
+    "lr_decay": 0.0,
+    "pearson_mean": 0.29151114514823967,
+    "pearson_seeds": [
+      0.28324586692367937,
+      0.27911678067032264,
+      0.312170787850717
+    ],
+    "offdiag_mean": 0.854674698398585,
+    "gen_mean": 0.6770833333333334
+  },
+  "offline_pca_best": {
+    "pearson": 0.5234292736807535,
+    "k": 64
+  },
+  "offline_pca_k64": 0.5234292736807535,
+  "results": [
+    {
+      "label": "baseline (reproduce +0.29)",
+      "k": 64,
+      "epochs": 200,
+      "lr_ff0": 0.01,
+      "lr_m": 0.01,
+      "settle": 30,
+      "lr_decay": 0.0,
+      "pearson_mean": 0.2902862953140985,
+      "pearson_seeds": [
+        0.26315717681382744,
+        0.27976301566069295,
+        0.327938693467775
+      ],
+      "offdiag_mean": 0.969267805019112,
+      "gen_mean": 0.6614583333333334
+    },
+    {
+      "label": "k64 + LR-DECAY",
+      "k": 64,
+      "epochs": 300,
+      "lr_ff0": 0.01,
+      "lr_m": 0.01,
+      "settle": 30,
+      "lr_decay": 0.05,
+      "pearson_mean": 0.2580185141947553,
+      "pearson_seeds": [
+        0.2506561208020068,
+        0.25118662552751486,
+        0.2722127962547442
+      ],
+      "offdiag_mean": 0.7543833502292632,
+      "gen_mean": 0.6927083333333334
+    },
+    {
+      "label": "k64 + low lr_ff=0.003",
+      "k": 64,
+      "epochs": 300,
+      "lr_ff0": 0.003,
+      "lr_m": 0.01,
+      "settle": 30,
+      "lr_decay": 0.0,
+      "pearson_mean": 0.29151114514823967,
+      "pearson_seeds": [
+        0.28324586692367937,
+        0.27911678067032264,
+        0.312170787850717
+      ],
+      "offdiag_mean": 0.854674698398585,
+      "gen_mean": 0.6770833333333334
+    },
+    {
+      "label": "k32 + LR-DECAY",
+      "k": 32,
+      "epochs": 300,
+      "lr_ff0": 0.01,
+      "lr_m": 0.01,
+      "settle": 30,
+      "lr_decay": 0.05,
+      "pearson_mean": 0.1980725598265911,
+      "pearson_seeds": [
+        0.19698412306442964,
+        0.2116399597675437,
+        0.1855935966477999
+      ],
+      "offdiag_mean": 0.8578274785193155,
+      "gen_mean": 0.53125
+    },
+    {
+      "label": "k16 + LR-DECAY + settle40",
+      "k": 16,
+      "epochs": 300,
+      "lr_ff0": 0.01,
+      "lr_m": 0.01,
+      "settle": 40,
+      "lr_decay": 0.05,
+      "pearson_mean": 0.14199065127943428,
+      "pearson_seeds": [
+        0.15970563352051595,
+        0.17457618430816393,
+        0.09169013600962296
+      ],
+      "offdiag_mean": 0.9101225795007425,
+      "gen_mean": 0.3958333333333333
+    },
+    {
+      "label": "k16 + low lr_ff=0.003 + settle40",
+      "k": 16,
+      "epochs": 300,
+      "lr_ff0": 0.003,
+      "lr_m": 0.01,
+      "settle": 40,
+      "lr_decay": 0.0,
+      "pearson_mean": 0.15879415130567437,
+      "pearson_seeds": [
+        0.19116648347279283,
+        0.19535173203146958,
+        0.08986423841276069
+      ],
+      "offdiag_mean": 0.9795743743678366,
+      "gen_mean": 0.4427083333333333
+    },
+    {
+      "label": "k8  + LR-DECAY + settle50",
+      "k": 8,
+      "epochs": 400,
+      "lr_ff0": 0.01,
+      "lr_m": 0.01,
+      "settle": 50,
+      "lr_decay": 0.05,
+      "pearson_mean": 0.11920908049435137,
+      "pearson_seeds": [
+        0.07616502061547994,
+        0.14512247653766255,
+        0.13633974432991167
+      ],
+      "offdiag_mean": 0.9688578912530339,
+      "gen_mean": 0.390625
+    },
+    {
+      "label": "k8  + low lr_ff + fast lateral",
+      "k": 8,
+      "epochs": 400,
+      "lr_ff0": 0.003,
+      "lr_m": 0.02,
+      "settle": 50,
+      "lr_decay": 0.0,
+      "pearson_mean": 0.18201102272600345,
+      "pearson_seeds": [
+        0.14425143261481707,
+        0.2044624595767455,
+        0.19731917598644783
+      ],
+      "offdiag_mean": 0.9997720581582317,
+      "gen_mean": 0.5
+    }
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_hub": 2000
+}
