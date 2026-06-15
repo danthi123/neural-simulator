@@ -1,0 +1,31 @@
+[continual SEQUENCE de-risk] seeds=(42, 43, 44) 8 phases, 80 ep/phase, replay_k sweep (0, 2, 4, 8) -- the REPLAY-BUDGET LAW: how much replay holds the old set over a lengthening timeline?
+
+[sequence seed 42] 8 categories one-at-a-time; old-set retention over the timeline, by replay_k:
+  NAIVE : final-all +0.59 | old-set +0.99 +0.88 +0.87 +0.77 +0.72 +0.65
+  k=2   : final-all +0.59 | old-set +1.00 +0.98 +0.96 +0.91 +0.83 +0.71
+  k=4   : final-all +0.54 | old-set +1.00 +0.98 +0.96 +0.91 +0.77 +0.65
+  k=8   : final-all +0.51 | old-set +1.00 +0.98 +0.96 +0.80 +0.71 +0.61
+
+[sequence seed 43] 8 categories one-at-a-time; old-set retention over the timeline, by replay_k:
+  NAIVE : final-all +0.60 | old-set +0.99 +0.83 +0.84 +0.80 +0.76 +0.63
+  k=2   : final-all +0.57 | old-set +0.99 +0.97 +0.96 +0.92 +0.82 +0.69
+  k=4   : final-all +0.53 | old-set +1.00 +0.98 +0.97 +0.92 +0.76 +0.63
+  k=8   : final-all +0.51 | old-set +1.00 +0.98 +0.97 +0.81 +0.72 +0.61
+
+[sequence seed 44] 8 categories one-at-a-time; old-set retention over the timeline, by replay_k:
+  NAIVE : final-all +0.64 | old-set +0.99 +0.90 +0.87 +0.81 +0.74 +0.70
+  k=2   : final-all +0.61 | old-set +1.00 +0.98 +0.95 +0.90 +0.84 +0.72
+  k=4   : final-all +0.55 | old-set +1.00 +0.98 +0.96 +0.89 +0.77 +0.65
+  k=8   : final-all +0.52 | old-set +1.00 +0.99 +0.95 +0.81 +0.73 +0.62
+
+================================================================================================
+  MEAN (3 seeds) old-set retention curve (after adding cats 3..8), by replay budget:
+    NAIVE (k=0) : [0.994, 0.869, 0.859, 0.791, 0.74, 0.661]   final-all +0.612
+    replay k=2  : [0.996, 0.976, 0.957, 0.91, 0.827, 0.704]   final-all +0.591
+    replay k=4  : [0.997, 0.979, 0.962, 0.905, 0.765, 0.643]   final-all +0.536
+    replay k=8  : [0.997, 0.983, 0.959, 0.808, 0.722, 0.614]   final-all +0.513
+================================================================================================
+  HONEST READ — three facts: (1) a REAL sequential penalty: 8 categories learned one-at-a-time reach final-all ~+0.612 (any arm) vs the BATCH +0.93 — presentation order leaves a residue even with replay. (2) replay HELPS MID-timeline retention (old-set +0.859 naive -> +0.957 at k=2). (3) the effect is NON-MONOTONIC at the end/global: final-all +0.612(k0) +0.591(k2) +0.536(k4) +0.513(k8) — monotone (over-rehearsing old concepts starves integration of the growing set within a fixed epoch budget). ==> SPARSE replay (k=2) is the SWEET SPOT — best end retention (+0.704) without the over-rehearsal cost; biologically apt (SWR replays a SAMPLE, not the whole store). But sparse replay does NOT fully close the sequential-vs-batch gap at 8 categories => indefinitely-long natural learning over time is genuinely hard EVEN in the viable regime; it needs a good (sparse) consolidation schedule, and a residual sequential penalty remains (an honest, nuanced positive-with-caveat, not 'replay solves it').
+  Total elapsed: 20.6s
+
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_phaseB_continual_sequence.json

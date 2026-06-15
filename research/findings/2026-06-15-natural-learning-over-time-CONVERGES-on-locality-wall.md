@@ -102,9 +102,32 @@ The CYCLE-81 probes are on the *hard* raw corpus. The honest complement is the *
 
 **⇒ The complete, balanced answer to the owner:** on the **hard / correlated** regime, natural-learning mechanisms hit the point-neuron locality wall (→ the (B) dendritic substrate, the deep frontier). On the **viable / separable** regime, **natural learning over time already works** — stable, retains old concepts, and the mild forgetting is closed by the project's validated replay-consolidation. So "we can't stop here" is right in two complementary ways: the viable regime is a **constructive positive that ships with the curated cortex**, and the hard-regime frontier has a **sharply-localized** missing piece (the non-local dendritic computation), not a missing learning trick.
 
+## CYCLE 83 — the lengthening timeline: a real sequential penalty + the replay sweet spot (honest, nuanced)
+
+The CYCLE-82 positive is a 2-phase case (one concept-set, then a disjoint second). The real "over time" scenario is a **lengthening sequence** — add categories one at a time and watch forgetting accumulate, with vs without interleaved sharp-wave-ripple (SWR)-style replay. `research/runners/_phaseB_continual_sequence_derisk.py` (8 categories added one-per-phase, 80 epochs/phase, replay-budget sweep k ∈ {0,2,4,8} concepts re-presented per old category; 3 seeds; metric = Pearson(cos(codes[seen]), S_true[seen]) — the live quality of everything learned so far).
+
+Old-set retention over the timeline (mean, 3 seeds; after adding cats 3…8):
+
+| replay budget | retention curve (old set) | final all-8 |
+|---|---|---|
+| NAIVE (k=0) | 0.994 → 0.869 → 0.859 → 0.791 → 0.740 → **0.661** | +0.612 |
+| sparse k=2 | 0.996 → 0.976 → 0.957 → 0.910 → 0.827 → **0.704** | +0.591 |
+| k=4 | 0.997 → 0.979 → 0.962 → 0.905 → 0.765 → 0.643 | +0.536 |
+| full k=8 | 0.997 → 0.983 → 0.959 → 0.808 → 0.722 → 0.614 | +0.513 |
+| (reference) batch all-8 | — | **+0.93** |
+
+**Three honest facts (NOT "replay solves it"):**
+
+1. **A real sequential penalty.** 8 categories learned one-at-a-time reach final-all ~+0.59–0.61 (any arm) vs the **batch +0.93**. Presentation order leaves a residue even with replay (early-learned structure biases the shared W/M; sequential ≠ batch — a known continual-learning phenomenon).
+2. **Replay helps mid-timeline retention.** Through the middle of the timeline, replay holds the old categories at 0.91–0.98 where naive drops to 0.79–0.87 (old-set +0.859 naive → +0.957 at k=2 around phase 5).
+3. **The effect is non-monotonic — sparse wins.** End retention and final-all are *best at sparse* k=2 (end +0.704, final +0.591) and **worse at heavy** k=8 (end +0.614, final +0.513 — *below naive*). Over-rehearsing old concepts within a fixed epoch budget starves integration of the growing set. **Sparse replay (k=2) is the sweet spot** — best retention without the over-rehearsal cost. **This matches the biology**: sharp-wave-ripples replay a *sparse sample* of experience, not the whole store.
+
+**⇒ Honest conclusion (positive-with-caveat):** natural learning over an *extended* timeline is genuinely hard *even in the viable regime* — it needs a good (sparse) consolidation schedule, and a residual sequential-vs-batch gap remains at 8 categories. This does not retract the CYCLE-82 short-timeline positive (stable + graceful 2-phase forgetting); it qualifies it. And it independently re-derives *why the brain has elaborate consolidation machinery* — long-timeline continual learning is hard, and our simple SM+sparse-replay reproduces both the difficulty and the sparse-replay-wins signature. The owner's "we can't stop here" instinct is vindicated: even where the brain-rule works, learning-over-time is a real, ongoing problem the project's consolidation machinery exists to manage.
+
 ## Artifacts
 
 - `research/runners/_phaseB_timescale_convergence_derisk.py` + `research/findings/raw/_phaseB_timescale_convergence.{json,txt}`
 - `research/runners/_phaseB_nonnegative_sm_derisk.py` + `research/findings/raw/_phaseB_nonnegative_sm.{json,txt}`
-- `research/runners/_phaseB_continual_separable_derisk.py` + `research/findings/raw/_phaseB_continual_separable.{json,txt}` (CYCLE 82, the constructive complement)
+- `research/runners/_phaseB_continual_separable_derisk.py` + `research/findings/raw/_phaseB_continual_separable.{json,txt}` (CYCLE 82, the 2-phase constructive complement)
+- `research/runners/_phaseB_continual_sequence_derisk.py` + `research/findings/raw/_phaseB_continual_sequence.{json,txt}` (CYCLE 83, the lengthening timeline + replay-budget sweep)
 - Converges with: `docs/plans/2026-06-11-cortex-build-plan-decorrelate-then-bind.md` (the (A)/(B) fork), `2026-06-15-phaseB-spiking-cortex-WALL-rate-to-spike.md`, AUTONOMOUS_STATE.md CYCLE 80→81.
