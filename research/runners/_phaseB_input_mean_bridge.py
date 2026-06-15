@@ -136,11 +136,16 @@ def build_input_mean_bridge(
             BrainRegion(name="hub_off_inh", n_neurons=n_hub, exc_fraction=0.0, internal_density=0.0,
                         plastic_internal=False, input_mean_adapt=bool(adapt)),
         ]
+        # The inhibitory hub->cortex pathways are PLASTIC + gated ("proj_*_inh") so PHASE 3 (--learn-projection,
+        # which un-freezes ALL gates) learns BOTH the excitatory AND the inhibitory side -- maintaining the E/I
+        # BALANCE. Learning only the excitatory side (the prior plastic=False) unbalanced the E/I back toward
+        # the excitatory-only collapse (the naive-thaw NEGATIVE, +0.060). Default (frozen gates) = the fixed
+        # random E/I projection (+0.155). plastic=True is INERT until a gate opens.
         cfg.region_pathways += [
             RegionPathway(from_region="hub_on_inh", to_region="cortex_on", density=hub_to_cortex_density,
-                          weight_mean=wi, weight_jitter=w_jitter, plastic=False),
+                          weight_mean=wi, weight_jitter=w_jitter, plastic=True, plasticity_gate="proj_on_inh"),
             RegionPathway(from_region="hub_off_inh", to_region="cortex_off", density=hub_to_cortex_density,
-                          weight_mean=wi, weight_jitter=w_jitter, plastic=False),
+                          weight_mean=wi, weight_jitter=w_jitter, plastic=True, plasticity_gate="proj_off_inh"),
         ]
 
     cfg.dt = 1.0
