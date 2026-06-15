@@ -24,25 +24,36 @@ whitening/decorrelation is an analog / pre-spike computation a point neuron cann
 
 ## The plan (phased; each phase = cheap-first numpy de-risk → bridge build → gate; a NEGATIVE at any phase is the deliverable)
 
-### Phase 1 — graded inhibition (the retina's horizontal cells) for the whitening. **De-risk DONE; needs one guarded `sim/` edit.**
-The cm pool's **analog g_e already tracks the population mean (+0.71)** — it's the *spike* readout that
-corrupts it (depol block). The retina solves exactly this with **graded (non-spiking) inhibition**
-(horizontal cells release transmitter proportional to their *graded* membrane potential, not spikes). Build:
-a **graded synaptic transmission mode** — a source region's continuous activity (its normalized g_e /
-membrane) drives a graded inhibitory current on the target, bypassing the spike threshold. **`sim/` edit**
-(the bridge's transmission is spike-mediated): a default-OFF, byte-reviewed `graded_inhibition` pathway flag
-(`RegionPathway(graded=True)` → the per-step inhibitory current uses the source's continuous state, not
-`cp_firing_states`). Byte-identical when unused. **Gate:** the graded-inhibition whitened drive matches the
-host whitening (neural ≈ host +0.25, vs the spiking cm's +0.14). Brain-grounded: Kandel retina (horizontal/
-bipolar graded potentials); catalog E.05 (center-surround).
+### Phase 1 — graded inhibition (the retina's horizontal cells). **BUILT + verified byte-identical (CYCLE 68); but the cm-POOL architecture it serves whitens on the WRONG AXIS → superseded by Phase 2.**
+The graded synaptic transmission mode is SHIPPED on main (both remotes): a default-OFF, byte-reviewed
+`RegionPathway(graded=True)` → the per-step inhibitory current uses the source's continuous membrane
+`a_cont = clip((v−rest)/scale,0,1)`, not `cp_firing_states` (commits `dec311f4` + `cbcc8f85`; true pre/post
+A/B byte-identity proof; 6/6 graded tests pass). It is a real, validated brain mechanism (Kandel retina,
+catalog E.05). **BUT** the cm-pool gate on the REAL corpus is NEGATIVE (CYCLE 69): the graded-whitened ON/OFF
+cortex code = +0.051 (below the no-whitening control +0.065). **Airtight diagnosis (numpy, real):** the
+common-mode POOL does **per-CONCEPT (axis-1)** whitening (it fires ~ each concept's mean over hubs), but the
+structure needs **per-FEATURE (axis-0)** centering (subtract each hub's mean across concepts). Even a *perfect*
+axis-1 pool caps at +0.255 < the +0.30 bar (`_phaseB_whitening_axis_probe.py`). The graded edit is not wasted
+— it is the transmission mode for the corrected Phase-2 mechanism — but the cm-POOL itself is the wrong
+architecture for this whitening.
 
-### Phase 2 — analog/graded projection precision. **De-risk first (numpy), then build.**
-The hub→cortex spiking projection loses the diffuse structure (g_e +0.175 vs numpy +0.23). The fix is
-higher-precision transmission: either (a) the same graded mode on the feedforward pathway (graded hub
-activity → graded cortex drive, full-precision), or (b) a large spike budget + population averaging (the
-readout sweep showed this recovers toward +0.33). **De-risk:** does a graded hub→cortex projection's g_e
-match the numpy random projection (+0.23) on real? **Gate:** the bridge projection preserves the diffuse
-structure to within the numpy reference.
+### Phase 2 — per-hub ADAPTATION (axis-0 per-feature centering), NOT a common-mode pool. **Numpy mechanism = 6-seed GO; the bridge realization is the next de-risk.**
+The fix for the wrong whitening axis: each hub subtracts its **own** slow running mean (intrinsic spike-
+frequency adaptation / slow AHP / synaptic depression = a per-neuron high-pass = the Mikulasch-Priesemann
+per-neuron predictive-coding form of whitening) — this is **per-FEATURE (axis-0)** centering, the L1 load-
+bearing op, and it's MORE biological than a pool (every real neuron adapts to its own mean).
+`_phaseB_perhub_adaptation_derisk.py` (**6 seeds**, real, host +0.442): per-hub adaptation recovers axis-0 =
+**+0.311** at a slow rate (α=0.02–0.05; 96–108% of the batch axis-0 ideal; clears +0.30; gen ~0.70), vs the
+cm-pool axis-1 +0.246. The slow time-constant is load-bearing (α=0.5 → +0.17 — the adaptation must span many
+concept presentations, not one). **The bridge-realization de-risk (next):** realize a *slow per-hub mean* on
+the point-neuron bridge — cheap-first via the existing homeostasis (per-neuron rate EMA + threshold) on the
+hubs in a streaming protocol; if that doesn't recover axis-0 in spikes, a per-hub slow feedback-inhibition
+shadow (1-to-1, reusing the Phase-1 graded mode) or a guarded slow-adaptation `sim/` primitive. **Gate:** the
+bridge per-hub-adapted cortex code recovers axis-0 (≈ the numpy +0.31) on real, beats the cm-pool + the point
+control + permuted-clean. **Risk:** the slow per-hub mean is itself the Mikulasch-Priesemann slow-analog-
+integration challenge on a point substrate (the cm-pool's bridge realization already lost half: host axis-1
++0.246 → neural +0.138), so the spiking realization could lose — a NEGATIVE there maps the wall deeper and is
+the deliverable.
 
 ### Phase 3 — the learned analog cortex + the real-corpus gate.
 With Phases 1–2 (graded whitening + graded/high-precision projection), add the bounded-Hebbian learning and

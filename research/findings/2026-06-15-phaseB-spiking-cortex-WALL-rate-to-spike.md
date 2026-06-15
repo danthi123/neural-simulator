@@ -153,3 +153,51 @@ there is a validated brain-based path to build.**
 ---
 
 **Final localization (CYCLE 63, the last probe `_phaseB_homeo_off_readout.py`):** the spike-readout loss is **NOT homeostasis equalization** — with homeostasis OFF the cortex spike code is still ≈ 0 (−0.09..+0.01) while g_e stays +0.40..+0.57. So the loss is robust across drive × window × homeostasis × density × gain (≈ 11 probes total). **The honest, well-localized status:** the category structure lives in the cortex analog g_e (+0.45) but does **not survive the spike-count code**, because the category signal is a *weak perturbation on a large common mode* and removing that common mode **before** the spiking threshold is the point-neuron-hard analog whitening (the Mikulasch-Priesemann theme — my CYCLE-62 instinct about the *mechanism* was right; my claim that it's the *projection*/needs-dendrites was wrong — it is the **spike-count readout of an un-whitened weak signal**). Faithful spike-based transmission needs the common mode removed pre-threshold (whitening) or a richer code/microcircuit (predictive coding, Jang 2024). The analog g_e proves the structure is recoverable *in principle*; the spike transmission is the genuine open boundary. **This is owner-decision territory** (medium build) — the solo cheap-first probing is exhausted.
+
+---
+
+## ✅ Phase 1 LANDED + ⛔ Phase 2 cm-POOL gate = NEGATIVE on real, with an airtight DIAGNOSIS + a 6-seed-GO FIX (CYCLE 68–69, 2026-06-15)
+
+**Phase 1 (graded inhibition) is BUILT, verified byte-identical, and on main (both remotes).** The retina's
+horizontal-cell mechanism — a `RegionPathway(graded=True)` whose per-step inhibitory conductance is driven by
+the source's *continuous membrane* `a_cont = clip((v−rest)/scale,0,1)` instead of its binary spikes — is a
+minimal, default-OFF, guarded `sim/` edit (commit `dec311f4` + comment fix `cbcc8f85`). Trust-but-verified to
+ground: a **true pre/post A/B** (a fresh golden captured on the parent commit in an isolated worktree is
+byte-identical, atol=0, to the committed golden the regression test asserts against) proves the non-graded path
+is byte-identical; the 4 pre-existing `test_regions` numpy failures are identical on the parent (not introduced);
+6/6 graded tests pass incl. the function test (graded g_i scales with the source's continuous depolarization —
+the property a depol-block-limited spiking pool cannot do).
+
+**But the Phase-2 cm-POOL gate on the REAL corpus is NEGATIVE** (`_phaseB_retinal_cortex --real --graded-cm
+--cm-bias-pA 300 --window 1000`, seed 42): the ON/OFF graded-whitened cortex code = **+0.051** (gen 0.203,
+eff-rank 2.1) — it does **not even beat the no-whitening POINT control (+0.065)** and collapses to near-rank-1.
+The Step-1 graded-whitening front-end on real reaches only **+0.138** (host axis-1 reference +0.246; neural~host
+align +0.111) — far below the synthetic-smoke +0.316 the front-end hit. Synthetic (strong/concentrated) worked;
+real (weak/diffuse) does not — again.
+
+**The airtight DIAGNOSIS (two cheap numpy probes, real corpus, the load-bearing finding):**
+1. **The common-mode POOL whitens on the WRONG AXIS.** `_phaseB_whitening_axis_probe.py` (3 seeds, host
+   +0.442): the L1 / retinal-reference centering is **per-FEATURE** (axis-0: subtract each hub's mean across
+   concepts) = **+0.323**, clears +0.30. The bridge's cm pool (hub_e drives it densely ⇒ it fires ~ each
+   *concept's* mean over hubs) does **per-CONCEPT** removal (axis-1) = **+0.255**, below the bar. An
+   *instantaneous* pool can only do axis-1 (it has no per-hub cross-concept memory). ⇒ even a *perfect* graded
+   cm pool is capped ≈0.07 below the bar for an **architectural** reason — the retinal cm-pool escape cannot
+   clear +0.30 on real no matter how the graded transmission is tuned.
+2. **Per-hub ADAPTATION is the correct mechanism, and it's MORE biological.** `_phaseB_perhub_adaptation_derisk.py`
+   (**6 seeds** — the project standard): each hub subtracting its *own* slow running mean (intrinsic spike-
+   frequency adaptation / slow AHP / synaptic depression = a per-neuron high-pass = the Mikulasch-Priesemann
+   *per-neuron predictive-coding* form of whitening) **recovers axis-0**: best **+0.311** at a slow rate
+   (α=0.02–0.05; mean over 6 seeds, 96–108% of the batch axis-0 ideal, clears +0.30, gen ~0.70), vs the cm-pool
+   axis-1 +0.246. The slow time-constant matters (α=0.5 collapses to +0.17 — the adaptation must span *many*
+   concept presentations, not one).
+
+**⇒ The Phase-2 PIVOT: replace the common-mode POOL with per-hub ADAPTATION.** The cm-pool (the heart of the
+CYCLE-66 retinal-escape design) does the wrong whitening axis; per-hub adaptation does the right one and is the
+more faithful biology (every real neuron adapts to its own mean). The graded-inhibition Phase-1 edit is **not
+wasted** — per-hub adaptation realized as a *slow per-hub feedback inhibition* uses the same graded-transmission
+mode. **The open risk** (the next de-risk): the bridge realization of per-hub adaptation needs a *slow per-hub
+mean* (spanning many concepts) on a point-neuron substrate — itself the Mikulasch-Priesemann slow-analog-
+integration challenge; the cm-pool's bridge realization already lost half (host axis-1 +0.246 → neural +0.138),
+so per-hub adaptation's spiking realization could similarly lose. The numpy mechanism is GO; the *bridge*
+realization is the next gate. NO `sim/` edits in the diagnosis (the two probes are pure numpy). Honest NEGATIVE
+(cm-pool on real) + a validated corrected mechanism (per-hub adaptation) = the deliverable.
