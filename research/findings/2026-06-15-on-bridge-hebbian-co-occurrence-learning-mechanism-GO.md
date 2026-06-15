@@ -106,6 +106,7 @@ steps):
 | 1 (single) | +0.674 | +0.162 | 47% |
 | 8 | +0.900 | +0.345 | **100%** |
 | 16 | +0.932 | +0.354 | **103%** |
+| 32 | +0.947 | +0.371 | **108%** |
 
 So the single-neuron ~50% plateau was indeed the documented rate-code SNR wall, and the population
 code lifts the **Hebbian-learned** cortex to the host reference — now demonstrated in the *learning*
