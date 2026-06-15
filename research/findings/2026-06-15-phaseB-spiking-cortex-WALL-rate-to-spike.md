@@ -220,3 +220,44 @@ is *moderate* (host +0.44), so the best achievable whitened spiking code is *mar
 the point-neuron bridge realizations explored (cm-pool, homeostasis) all land below it; the mechanism (per-hub
 adaptation) is correct but its faithful realization is the slow-analog-integration wall again — to be scoped
 cheap-first before any sim/ commit.
+
+## ✅ The slow-input-mean primitive is BUILT + verified; the bridge gate RE-LOCALIZES the wall to the PROJECTION SIGN, and the E/I fix is de-risked GO (CYCLE 71–72, 2026-06-15)
+
+**The fork was resolved by deep research: a CHEAP point-neuron primitive, NOT dendrites.** The op `x_h −
+slow_mean(x_h)` is the **separable per-neuron diagonal/DC half of whitening** (per-feature mean-centering =
+subtractive spike-frequency adaptation; point-neuron predictive coding — **Lee, Dora, Mejias, Bohte & Pennartz
+2024, PMC11045951**, NOT the prior docs' mis-attributed "Jang"), which the Mikulasch-Priesemann limit does NOT
+forbid (that is the *cross-neuron* off-diagonal decorrelation). Corroborated by the axis probe (per-feature
+mean-centering is a separable scalar op that clears the bar; the residual +0.13-to-host is the off-diagonal
+half we don't need). **D0 de-risk GO:** a per-hub EMA of the noisy *Poisson-spiking* drive recovers +0.298 =
+96% of the clean-mean (`_phaseB_spiking_mean_derisk.py`) — the spiking input-mean is not the wall.
+
+**Option A SHIPPED (verified byte-identical, on main both remotes).** `cfg.enable_input_mean_adapt` +
+`BrainRegion.input_mean_adapt` → a per-neuron `cp_input_mean_ema` slow EMA of the neuron's own pre-threshold
+input current, subtracted from that current before the threshold (`adapted = raw − gain·m; m ← m + mask·α·(raw
+− m)`), guarded default-off. **True pre/post A/B byte-identity** (fresh golden at the pre-edit parent ≡ committed
+golden, atol=0); 6/6 tests pass incl. the function tests (EMA converges to a steady input; adaptation drops
+firing over time). It is the correct, biologically-canonical, on-substrate axis-0 centering — banked.
+
+**But the bridge gate (real seed 42) = NEGATIVE (+0.045) — and it RE-LOCALIZES the wall to the PROJECTION
+SIGN.** The on-substrate per-hub-adapted ON/OFF cortex code = +0.045 (≈ point +0.052; the EMA *did* track the
+mean, `ema_on=54.8`, so the primitive is exercised). The gate's own host references isolate why, airtight:
+
+| projection × centering (host, real, axis-0) | Pearson |
+|---|---|
+| **non-neg bridge W** (excitatory-only) | **+0.045 — COLLAPSES** |
+| **signed Gaussian W** (the numpy de-risks' `rng.randn`) | **+0.294** |
+| non-neg bridge W × axis-1 (cm-pool) | +0.242 |
+
+`_phaseB_projection_sign_derisk.py` (3 seeds) CONFIRMS + de-risks the fix: signed +0.316 | **non-neg(exc)
++0.041 (collapse)** | **E/I (W_exc−W_inh) +0.289** | **E/I realistic 25%-inhibitory +0.301**. ⇒ **the bridge's
+EXCITATORY (Dale's-law, non-negative) hub→cortex projection cannot carry the axis-0-centered (signed, zero-mean)
+signal** — a positive-weighted random projection produces correlated, low-rank outputs. **Every numpy de-risk
+hid this by using a SIGNED `rng.randn` projection** (biologically illegal for excitatory synapses); the bridge
+exposed it. (And the cm-pool axis-1 "partly worked" precisely because it is the projection-*compatible* wrong
+axis.) **The fix is biologically canonical: a SIGNED effective projection via E/I balance** — an INHIBITORY
+hub→cortex pathway alongside the excitatory one (cortex drive = g_e − g_i = signed), de-risked to recover the
+signed level (+0.29–0.30). **The input-mean primitive is the (banked, shipped) axis-0 centering; the E/I signed
+projection is the next bridge build** (config/wiring — the bridge supports inhibitory pathways natively; likely
+NO new `sim/` edit). The honest NEGATIVE precisely re-localized the wall (axis ✓, centering-primitive ✓, spiking
+input-mean ✓ → the *projection sign* was the missing piece) and handed a de-risked next step — the deliverable.
