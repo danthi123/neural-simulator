@@ -176,8 +176,13 @@ false-accepts; the stream codes had **1** (a single tail confabulation on seed 4
 seed — its absent-match +0.093 was closest to the gate 0.25). This is the **code-fidelity cost**, not a
 weakening of the moat *mechanism* (the gate threshold and conjunctive cue are unchanged and were not
 tuned on the test). The lever to restore the perfect moat is **better codes** (more stream → wider
-familiarity gap → fewer tail matches) — never a looser gate; a higher-window re-test on seed 43 is
-in flight to verify this.
+familiarity gap → fewer tail matches) — never a looser gate.
+
+**Confirmed:** re-running seed 43 at **70000 windows** (vs 30000) restores the moat to **abstain 1.00
+(0 false-accepts)** with recall still 1.00 — the absent-match drops +0.093 → +0.065 (wider gap, present
++0.449). So the single 30000-window false-accept was indeed the **code-fidelity cost, not a
+moat-mechanism weakness**: more stream widens the familiarity gap and the moat holds perfectly. The
+no-confab bar is intact end-to-end on the stream-learned cortex.
 
 ⇒ the complete chain closes on the real spiking substrate: **the bridge hears the conversation stream
 → its population Hebbian synapses learn the cortex → the codes bind into facts → who/what recall +

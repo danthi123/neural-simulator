@@ -804,7 +804,8 @@ arc was de-risked cheapest-first BEFORE any protected edit:
   documented rate-code-wall lift) + the full conversation on the **stream-learned** codes (3-seed who/what
   recall **1.00**; no-confab moat **0.96** — 1 tail false-accept on the lowest-fidelity seed = the
   code-fidelity cost, NOT a moat-mechanism weakening; the lever is more stream → wider familiarity gap,
-  never a looser gate). HONEST SCOPE: validated at 64 concepts; the on-bridge absolute fidelity is
+  never a looser gate — CONFIRMED: seed 43 at 70000 windows restores the moat to abstain 1.00 / 0
+  false-accepts). HONEST SCOPE: validated at 64 concepts; the on-bridge absolute fidelity is
   window-budget-bounded (a wall-clock cap, not a substrate limit — `corr(M,C) 0.885` shows faithful
   learning). The **320-concept stream-scaling** (needs a corpus-grounded 320-word taxonomy) and the
   **on-bridge log-domain normalization CIRCUIT** (the read-out double-centring is currently a host-side
