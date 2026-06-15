@@ -113,6 +113,18 @@ product; the faithful spiking-from-real-experience cortex needs a substrate that
 structure (the deep frontier — dendrites / predictive-coding / a different code) — a genuine owner-strategic
 call, not cheaply closable. **The spike-readout-sparsity fix + the dense regime are banked** (real, reusable).
 
+**The deep WHY (the mechanism that explains the whole arc):** the synthetic *uncentered* code survives the
+spiking (random dense +0.32) but the real *whitened* PPMI code does not (+0.075), because **rate-coded
+spiking encodes in firing-rate MAGNITUDE, and whitening REMOVES the magnitude** — the real category signal,
+once the common mode is removed (the whitening the real structure requires), is a low-magnitude differential
+that a point neuron's firing rate cannot carry. This is the fundamental **whitening-vs-spiking-magnitude
+tension**: the real structure needs whitening (analog, magnitude-removing) but the spiking needs magnitude.
+Consistent with Mikulasch-Priesemann (whitening is an analog/pre-spike computation). **The escape route worth
+flagging:** **PHASE coding** (the project's `RESONATE_AND_FIRE` phasor neurons — info in PHASE, not rate
+magnitude — already shipped for the composer) is exactly the kind of code that could carry a whitened,
+low-magnitude differential where rate coding cannot. A phase-coded cortex is the project-grounded candidate
+for the deep frontier (medium/large build, owner-gated), distinct from full dendrites.
+
 ---
 
 **Final localization (CYCLE 63, the last probe `_phaseB_homeo_off_readout.py`):** the spike-readout loss is **NOT homeostasis equalization** — with homeostasis OFF the cortex spike code is still ≈ 0 (−0.09..+0.01) while g_e stays +0.40..+0.57. So the loss is robust across drive × window × homeostasis × density × gain (≈ 11 probes total). **The honest, well-localized status:** the category structure lives in the cortex analog g_e (+0.45) but does **not survive the spike-count code**, because the category signal is a *weak perturbation on a large common mode* and removing that common mode **before** the spiking threshold is the point-neuron-hard analog whitening (the Mikulasch-Priesemann theme — my CYCLE-62 instinct about the *mechanism* was right; my claim that it's the *projection*/needs-dendrites was wrong — it is the **spike-count readout of an un-whitened weak signal**). Faithful spike-based transmission needs the common mode removed pre-threshold (whitening) or a richer code/microcircuit (predictive coding, Jang 2024). The analog g_e proves the structure is recoverable *in principle*; the spike transmission is the genuine open boundary. **This is owner-decision territory** (medium build) — the solo cheap-first probing is exhausted.
