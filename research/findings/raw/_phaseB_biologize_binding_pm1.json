@@ -1,0 +1,49 @@
+{
+  "recall": 0.9166666666666666,
+  "moat_false_accepts": 2,
+  "moat_margin": 0.8341804344719064,
+  "per_factset": [
+    {
+      "seed": 42,
+      "recall": 0.875,
+      "moat_fa": 0,
+      "nov_present": -5.551115123125783e-17,
+      "nov_absent": 0.8821703215611709
+    },
+    {
+      "seed": 43,
+      "recall": 0.875,
+      "moat_fa": 0,
+      "nov_present": -1.3877787807814457e-16,
+      "nov_absent": 0.8479102412217034
+    },
+    {
+      "seed": 44,
+      "recall": 0.875,
+      "moat_fa": 1,
+      "nov_present": -1.3877787807814457e-17,
+      "nov_absent": 0.7356674995208825
+    },
+    {
+      "seed": 45,
+      "recall": 0.875,
+      "moat_fa": 0,
+      "nov_present": -1.1102230246251565e-16,
+      "nov_absent": 0.8230185389690257
+    },
+    {
+      "seed": 46,
+      "recall": 1.0,
+      "moat_fa": 1,
+      "nov_present": -3.469446951953614e-16,
+      "nov_absent": 0.797042477060556
+    },
+    {
+      "seed": 47,
+      "recall": 1.0,
+      "moat_fa": 0,
+      "nov_present": 2.914335439641036e-16,
+      "nov_absent": 0.9192735284980987
+    }
+  ]
+}
