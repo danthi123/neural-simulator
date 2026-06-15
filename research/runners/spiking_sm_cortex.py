@@ -42,6 +42,7 @@ def build_sm_cortex_bridge(
     weight_jitter=0.02,
     sigma=0.05,
     alpha=0.05,
+    enable_hebbian_learning=False,
 ):
     """Build a 2-region similarity-matching cortex bridge.
 
@@ -95,6 +96,11 @@ def build_sm_cortex_bridge(
     # the learning rules: STDP (Hebbian timing rule) + homeostasis (intrinsic excitability regulation).
     cfg.enable_stdp = True
     cfg.enable_homeostasis = True
+    # Hebbian learning carries a per-sub-step weight DECAY (~1e-5) that, over the 100K+ steps of Phase-B
+    # training, collapses STDP-grown weights to the ~0.05 floor (CLAUDE.md text-IO fix #1; every g* / Tier-1
+    # learning recipe sets this False and relies on STDP). Default OFF so the learned hub->cortex weights
+    # survive extended training; opt-in only.
+    cfg.enable_hebbian_learning = enable_hebbian_learning
     # soft-bound STDP collapses weights when weight_mean > stdp_w_max (CLAUDE.md gotcha). Raise the cap
     # well above the design weight (weight_mean ~ 0.05) so STDP can grow/adjust without clipping.
     cfg.stdp_w_max = 30.0
