@@ -47,14 +47,18 @@ def _count_fired(bridge, idx):
 
 
 def build_assoc_bridge(n_target, n_hub, seed, a):
+    """Two-region bridge. n_per neurons PER CONCEPT (population code): hub has n_hub concepts x n_per
+    neurons, target has n_target concepts x n_per. Returns the bridge + per-concept neuron-index blocks
+    (hub_blocks[h], tgt_blocks[t]). n_per=1 reproduces the single-neuron-per-concept case."""
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion, RegionPathway
+    n_per = a.n_per
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = [
-        BrainRegion(name="hub", n_neurons=n_hub, exc_fraction=1.0, internal_density=0.0),
-        BrainRegion(name="target", n_neurons=n_target, exc_fraction=1.0, internal_density=0.0),
+        BrainRegion(name="hub", n_neurons=n_hub * n_per, exc_fraction=1.0, internal_density=0.0),
+        BrainRegion(name="target", n_neurons=n_target * n_per, exc_fraction=1.0, internal_density=0.0),
     ]
     # hub -> target plastic pathway. Start near the floor (the numpy online cortex's M starts at ~0);
     # the co-occurrence is LEARNED by Hebbian potentiation, and double-centering removes the constant init.
@@ -80,7 +84,11 @@ def build_assoc_bridge(n_target, n_hub, seed, a):
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt,
                               gpu_config=GPUConfig())
     bridge._initialize_simulation_data()
-    return bridge, np.asarray(bridge.region_manager.indices("hub")), np.asarray(bridge.region_manager.indices("target"))
+    hub_region = np.asarray(bridge.region_manager.indices("hub"))      # contiguous block of n_hub*n_per
+    tgt_region = np.asarray(bridge.region_manager.indices("target"))   # contiguous block of n_target*n_per
+    hub_blocks = hub_region.reshape(n_hub, n_per)                      # hub concept h -> its n_per neurons
+    tgt_blocks = tgt_region.reshape(n_target, n_per)                   # target concept t -> its n_per neurons
+    return bridge, hub_region, tgt_region, hub_blocks, tgt_blocks
 
 
 def run_seed(seed, a):
@@ -88,56 +96,63 @@ def run_seed(seed, a):
     labels = np.asarray(labels)
     Nt, n_hub = C.shape
     host_ref = _pearson_vs_Strue(_cos_sim(double_center(np.log1p(C * 100.0))), S_true)   # the target structure
-    bridge, hub_idx, tgt_idx = build_assoc_bridge(Nt, n_hub, seed, a)
+    bridge, hub_region, tgt_region, hub_blocks, tgt_blocks = build_assoc_bridge(Nt, n_hub, seed, a)
+    n_per = a.n_per
     xp = bridge._cp if hasattr(bridge, "_cp") else None
+
+    def block_mean_M(Wfull):
+        """Population read: average the (n_per x n_per) weight sub-block per (hub-concept, target-concept)
+        pair -> M[target, hub]. n_per=1 is the single-neuron read. Population averaging cancels the
+        per-synapse spiking noise (the documented single-neuron rate-code wall lift, CYCLE 91)."""
+        blk = Wfull[np.ix_(hub_region, tgt_region)]              # (n_hub*n_per, n_target*n_per), concept-major
+        blk = blk.reshape(n_hub, n_per, Nt, n_per).mean(axis=(1, 3))   # (n_hub, n_target)
+        return blk.T                                            # (n_target, n_hub)
+
     W0 = np.asarray(to_host(bridge.cp_connections.todense())).astype(np.float64)
-    M0 = W0[np.ix_(hub_idx, tgt_idx)].T   # the hub->target block at INIT (before any STDP)
+    M0 = block_mean_M(W0)                                       # the population co-occurrence at INIT
     _ev0 = int(getattr(bridge, "_mock_total_plasticity_events", 0))
 
-    def drive(vec_hub, vec_tgt):
-        bridge.cp_external_input_current[:] = 0.0
-        h = (np.asarray(vec_hub, np.float64)).astype(np.float32)
-        t = (np.asarray(vec_tgt, np.float64)).astype(np.float32)
-        bridge.cp_external_input_current[hub_idx] = xp.asarray(h) if xp is not None else h
-        bridge.cp_external_input_current[tgt_idx] = xp.asarray(t) if xp is not None else t
+    # Full-region drive vectors (length = region size). The hub region is concept-major, so a per-concept
+    # value broadcasts across that concept's n_per neurons via np.repeat.
+    n_hub_neurons = n_hub * n_per
+    n_tgt_neurons = Nt * n_per
 
-    # TRAINING: present each target's SCENE -- co-activate the target + its co-occurring hubs (binary presence,
-    # so STDP strengthens hub->target proportional to HOW OFTEN each hub co-fires with the target = the
-    # co-occurrence). Present repeatedly (the "stream" of that target's contexts).
+    def drive(hub_per_concept, tgt_concept):
+        bridge.cp_external_input_current[:] = 0.0
+        hub_full = np.repeat(np.asarray(hub_per_concept, np.float64), n_per).astype(np.float32)
+        tgt_full = np.zeros(n_tgt_neurons, np.float32)
+        tgt_full[tgt_blocks[tgt_concept] - tgt_region[0]] = a.tgt_scale   # this concept's whole population
+        bridge.cp_external_input_current[hub_region] = xp.asarray(hub_full) if xp is not None else hub_full
+        bridge.cp_external_input_current[tgt_region] = xp.asarray(tgt_full) if xp is not None else tgt_full
+
+    # TRAINING: present each concept's SCENE -- co-activate that concept's target population + the hub
+    # populations it co-occurs with, hub drive GRADED by the true count C[t]. Repeated co-firing accumulates
+    # Hebbian weight proportional to co-occurrence frequency.
     diag = {"hub": 0, "tgt": 0}
     for _ep in range(a.epochs):
         order = np.random.RandomState(seed * 7 + _ep).permutation(Nt)
         for _si, t in enumerate(order):
-            # GRADED hub drive: the more a hub co-occurs with target t, the stronger its drive -> the more
-            # it fires -> the more Hebbian coincidence events -> the higher its learned weight. This makes
-            # the learned M track the GRADED co-occurrence count C[t] (not just binary presence).
             cvec = C[t].astype(np.float64)
             cmax = cvec.max() if cvec.max() > 0 else 1.0
-            hub_drive = (cvec / cmax) * a.hub_scale
-            tgt_drive = np.zeros(Nt); tgt_drive[t] = a.tgt_scale
+            hub_per_concept = (cvec / cmax) * a.hub_scale       # graded drive per hub-concept
             first = (_ep == 0 and _si == 0)
-            # Co-activate the hubs AND the target TOGETHER, sustained: the Hebbian rule potentiates synapses
-            # whose pre fired at t-1 AND post fired at t -- a built-in 1-step coincidence detector. No fragile
-            # pre/post separation needed (that was the STDP requirement). Repeated co-firing across the scene
-            # accumulates weight proportional to the co-firing frequency.
-            drive(hub_drive, tgt_drive)
+            # Co-activate hub + target populations TOGETHER, sustained: Hebbian potentiates synapses whose
+            # pre fired at t-1 AND post fired at t (built-in 1-step coincidence detector). No pre/post split.
+            drive(hub_per_concept, t)
             for _ in range(a.scene_steps):
                 bridge._run_one_simulation_step()
                 if first:
-                    diag["hub"] += _count_fired(bridge, hub_idx)
-                    diag["tgt"] += _count_fired(bridge, tgt_idx)
+                    diag["hub"] += _count_fired(bridge, hub_region)
+                    diag["tgt"] += _count_fired(bridge, tgt_region)
     bridge.cp_external_input_current[:] = 0.0
     print(f"  [firing diag, first scene] hub spikes {diag['hub']}, target spikes {diag['tgt']} over "
-          f"{a.scene_steps} co-drive steps (want both > 0 so the Hebbian coincidence fires)", flush=True)
+          f"{a.scene_steps} co-drive steps (n_per={n_per}; want both > 0 so the Hebbian coincidence fires)",
+          flush=True)
 
-    # READ the learned weights DIRECTLY from cp_connections. Orientation: cp_connections is W[pre, post] (the
-    # hub->target weights live in the W[hub_idx, tgt_idx] block, confirmed by diagnostic). Transpose to
-    # M[target, hub] = the target's learned hub-association row. (extract_per_pathway_csrs returns the
-    # transposed/empty block here -- a convention mismatch; read cp_connections directly.)
+    # READ the learned weights (population-averaged per concept-pair) from cp_connections (W[pre, post]).
     W = np.asarray(to_host(bridge.cp_connections.todense())).astype(np.float64)
-    M = W[np.ix_(hub_idx, tgt_idx)].T                                 # (n_target, n_hub) learned co-occurrence
+    M = block_mean_M(W)                                         # (n_target, n_hub) learned co-occurrence
     nonzero = float((M > 0).mean())
-    # DECISIVE: did the plasticity actually MOVE the hub->target weights off their init? (mean/max |M - M0|)
     dW = M - M0
     _ev1 = int(getattr(bridge, "_mock_total_plasticity_events", 0))
     print(f"  [weight-change] mean|M-M0| {np.abs(dW).mean():.4f} | max|M-M0| {np.abs(dW).max():.4f} | "
@@ -151,9 +166,9 @@ def run_seed(seed, a):
     perm_p = _pearson_vs_Strue(_cos_sim(code), Sp)
     # how well M matches the true co-occurrence C (the learning fidelity):
     mc = float(np.corrcoef(M.flatten(), C.flatten())[0, 1]) if M.std() > 0 else 0.0
-    print(f"\n[Hebbian co-occurrence seed {seed}] {Nt}t x {n_hub}h | host-ref (log-double-center C) {host_ref:+.3f}",
-          flush=True)
-    print(f"  Hebbian-learned M (single-neuron/concept): nonzero {nonzero:.2f} | corr(M,C) {mc:+.3f} | "
+    print(f"\n[Hebbian co-occurrence seed {seed}] {Nt}t x {n_hub}h | n_per={n_per} | "
+          f"host-ref (log-double-center C) {host_ref:+.3f}", flush=True)
+    print(f"  Hebbian-learned M ({n_per} neurons/concept): nonzero {nonzero:.2f} | corr(M,C) {mc:+.3f} | "
           f"normalized code {p:+.3f} (gen {gen:.2f}/ch {ch:.2f}) | permuted {perm_p:+.3f}", flush=True)
     return {"seed": seed, "host_ref": host_ref, "stdp": p, "gen": gen, "corr_MC": mc, "nonzero": nonzero,
             "permuted": perm_p}
@@ -163,6 +178,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--seeds", default="42")
     p.add_argument("--n-hub", type=int, default=300)
+    p.add_argument("--n-per", type=int, default=1, help="neurons per concept (population code; 1 = single-neuron)")
     p.add_argument("--epochs", type=int, default=3)
     p.add_argument("--scene-steps", type=int, default=12)
     p.add_argument("--hub-scale", type=float, default=250.0)
