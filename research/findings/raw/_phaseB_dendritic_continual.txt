@@ -1,0 +1,28 @@
+[dendritic continual de-risk] seeds=(42, 43, 44) -- does the DENDRITIC substrate (D1 GO, recovers structure) ALSO learn naturally over time without catastrophic forgetting?
+
+[dendritic continual seed 42] 8 cat x 8, 296 hubs
+  DENDRITIC batch (ceiling)   : +0.832
+  DENDRITIC sequence (1-at-a-time): final-all +0.759 | structure curve +0.00 +0.96 +0.83 +0.79 +0.78 +0.79 +0.77 +0.76
+  DENDRITIC old-set retention : +0.97 +0.94 +0.93 +0.93 +0.91 +0.90
+  POINT-global control (seq)  : +0.053 (must ~0)  | permuted(dendritic) -0.000
+
+[dendritic continual seed 43] 8 cat x 8, 296 hubs
+  DENDRITIC batch (ceiling)   : +0.838
+  DENDRITIC sequence (1-at-a-time): final-all +0.764 | structure curve +0.00 +0.93 +0.86 +0.81 +0.81 +0.81 +0.78 +0.76
+  DENDRITIC old-set retention : +0.97 +0.96 +0.96 +0.95 +0.92 +0.91
+  POINT-global control (seq)  : +0.041 (must ~0)  | permuted(dendritic) +0.036
+
+[dendritic continual seed 44] 8 cat x 8, 296 hubs
+  DENDRITIC batch (ceiling)   : +0.854
+  DENDRITIC sequence (1-at-a-time): final-all +0.757 | structure curve +0.00 +0.92 +0.81 +0.78 +0.79 +0.77 +0.77 +0.76
+  DENDRITIC old-set retention : +0.95 +0.94 +0.93 +0.92 +0.91 +0.89
+  POINT-global control (seq)  : +0.063 (must ~0)  | permuted(dendritic) +0.003
+
+================================================================================================
+  MEAN (3 seeds): DENDRITIC batch-ceiling +0.841 | DENDRITIC sequence final-all +0.760 (= 90% of batch) | old-set retention end +0.898 | POINT-global control +0.052 | permuted +0.013
+  vs the CYCLE-83 POINT-NEURON SM sequence: final +0.59 (= 64% of its batch +0.93), old-set -> 0.66
+================================================================================================
+  DENDRITIC-LEARNS-OVER-TIME: the dendritic substrate reaches 90% of its batch ceiling over a SEQUENTIAL one-at-a-time timeline (+0.760 vs batch +0.841) AND holds old categories (retention +0.898) -- DRAMATICALLY better than the point-neuron SM (64% of batch, old-set 0.66). The point-global control stays ~0 (+0.052, per-compartment gain load-bearing). ==> THE LOOP CLOSES: the substrate that RECOVERS structure (D1 GO) ALSO learns naturally over time without catastrophic forgetting -- because the per-hub gains are stable per-hub frequency statistics, not competing per-concept weights. The D2 dendritic cortex is both the right build AND a natural continual learner; the owner's question is answered ON the working substrate.
+  Total elapsed: 0.1s
+
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_phaseB_dendritic_continual.json

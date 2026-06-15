@@ -124,8 +124,27 @@ Old-set retention over the timeline (mean, 3 seeds; after adding cats 3…8):
 
 **⇒ Honest conclusion (positive-with-caveat):** natural learning over an *extended* timeline is genuinely hard *even in the viable regime* — it needs a good (sparse) consolidation schedule, and a residual sequential-vs-batch gap remains at 8 categories. This does not retract the CYCLE-82 short-timeline positive (stable + graceful 2-phase forgetting); it qualifies it. And it independently re-derives *why the brain has elaborate consolidation machinery* — long-timeline continual learning is hard, and our simple SM+sparse-replay reproduces both the difficulty and the sparse-replay-wins signature. The owner's "we can't stop here" instinct is vindicated: even where the brain-rule works, learning-over-time is a real, ongoing problem the project's consolidation machinery exists to manage.
 
+## CYCLE 84 — the loop closes: the DENDRITIC substrate (the answer) IS a natural continual learner
+
+The whole arc concluded the missing piece is the **(B) dendritic substrate** — and that substrate is not hypothetical: the project's D-arc already validated it cheaply (D1 GO: a per-compartment divisive gain recovers category structure +0.845 vs the point-neuron's +0.052; D1.5/D1.6/D1.7 hardened it through spiking-noise + conductance-shunting + a spiking two-compartment) and built it through D2 Phase 0/1/2 (the two-compartment neuron is on the bridge; the learned graded embedding exists), with only D2 Phase 3 (the dual/CLS pipeline + conversational gates) pending. The natural question that closes the loop: does the substrate that *recovers* structure *also* learn it **naturally over time** without catastrophic forgetting?
+
+`research/runners/_phaseB_dendritic_continual_derisk.py` (reuse-by-import of the validated dendritic D1 machinery; the per-hub gain `g_h += eta*(x_h − g_h)`; synthetic separable corpus; 3 seeds; directly comparable to the CYCLE-83 point-neuron SM sequence):
+
+| substrate | sequential (1-at-a-time) final-all | of batch | old-set retention | replay needed? |
+|---|---|---|---|---|
+| **DENDRITIC** (per-compartment gain) | **+0.760** | **90%** (batch +0.841) | **+0.898** | **no** |
+| point-neuron SM (CYCLE 83) | +0.59 | 64% (batch +0.93) | 0.66 | helps, doesn't fully close |
+| point-global control | +0.052 (~0) | — | — | — (per-compartment gain is load-bearing) |
+
+**DENDRITIC-LEARNS-OVER-TIME (3 seeds, clean).** The dendritic substrate keeps **90% of its batch ceiling over a sequential one-at-a-time timeline** and holds old categories at **0.90 retention** — dramatically better than the point-neuron SM (64%, 0.66) — and it needs **no replay at all**. The point-global control stays ~0 (the per-compartment gain is load-bearing); permuted ~0.
+
+**Why (the mechanism, biology-grounded):** the dendritic per-hub gains converge to each hub's **marginal frequency** — slowly-varying *global statistics per hub*, shared across all concepts, NOT per-concept weights that compete for a shared capacity. The common hubs stay high-frequency (stay down-weighted), each category's distinct signal hubs are handled *independently* by their own compartment, so categories don't interfere. Per-hub independence ⇒ natural continual learning. (Contrast the point-neuron SM, where every concept competes for the shared `(W,M)` → sequential collapse + forgetting.)
+
+**⇒ The complete, constructive answer to the owner.** "What could we be missing?" — on the **point-neuron** substrate, a learning *mechanism* is not the missing piece (replay/homeostasis/timescale/nonnegativity all tested, all plateau at the locality wall). The missing piece is the **substrate**: a dendritic per-compartment normalization. And that substrate — already validated and built through D2 Phase 2 — is not only the structure-recovery answer but a **natural continual learner that learns over time without catastrophic forgetting and without replay**. The owner's question is answered *on the working substrate*, and it strengthens the case for D2 Phase 3 (the dendritic cortex is both the right representation AND a natural over-time learner).
+
 ## Artifacts
 
+- `research/runners/_phaseB_dendritic_continual_derisk.py` + `research/findings/raw/_phaseB_dendritic_continual.{json,txt}` (CYCLE 84, the loop-closer)
 - `research/runners/_phaseB_timescale_convergence_derisk.py` + `research/findings/raw/_phaseB_timescale_convergence.{json,txt}`
 - `research/runners/_phaseB_nonnegative_sm_derisk.py` + `research/findings/raw/_phaseB_nonnegative_sm.{json,txt}`
 - `research/runners/_phaseB_continual_separable_derisk.py` + `research/findings/raw/_phaseB_continual_separable.{json,txt}` (CYCLE 82, the 2-phase constructive complement)
