@@ -47,7 +47,15 @@ GATE = 0.25      # a-priori conjunctive-cue gate (CYCLE 90): present min ~0.4, a
 
 def stream_learn_codes(seed, stories, vocab, cat_ids, a):
     """Stream the corpus window-by-window into the population bridge; the bridge's Hebbian synapses learn the
-    co-occurrence M; return the per-concept normalized code (log-double-centred population block-mean)."""
+    co-occurrence M; return the per-concept normalized code (log-double-centred population block-mean).
+    Optional codes cache (--codes-npy): if the file exists, load the codes (skip the ~9-min re-stream); else
+    stream + save. Lets the (instant) HRR re-tests reuse a single stream-learning."""
+    cache = getattr(a, "codes_npy", None)
+    if cache:
+        cpath = cache.replace("SEED", str(seed))
+        if os.path.exists(cpath):
+            print(f"  [codes cache] loading stream-learned codes from {cpath} (skipping the re-stream)", flush=True)
+            return np.load(cpath), 0, 0.0
     rng = np.random.RandomState(seed)
     targets = list(vocab); target_set = set(targets); Nt = len(targets)
     n_hub, n_per = a.n_hub, a.n_per
@@ -95,6 +103,10 @@ def stream_learn_codes(seed, stories, vocab, cat_ids, a):
     blk = W[np.ix_(hub_region, tgt_region)].reshape(n_hub, n_per, Nt, n_per).mean(axis=(1, 3))
     code = double_center(np.log1p(blk.T * 100.0))                # (Nt, n_hub) stream-learned concept codes
     code = code / (np.linalg.norm(code, axis=1, keepdims=True) + 1e-12)
+    if cache:
+        cpath = cache.replace("SEED", str(seed))
+        np.save(cpath, code)
+        print(f"  [codes cache] saved stream-learned codes to {cpath}", flush=True)
     return code, n_windows, time.time() - t0
 
 
@@ -168,6 +180,8 @@ def main():
     p.add_argument("--max-windows", type=int, default=30000)
     p.add_argument("--hub-scale", type=float, default=250.0)
     p.add_argument("--tgt-scale", type=float, default=1200.0)
+    p.add_argument("--codes-npy", default=None,
+                   help="cache path (use SEED as a placeholder) — stream once + save, reload to skip re-streaming")
     a = p.parse_args()
     os.environ.setdefault("SIM_BACKEND", "cupy")
     t0 = time.time()
