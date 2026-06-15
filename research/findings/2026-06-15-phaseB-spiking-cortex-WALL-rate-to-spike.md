@@ -293,3 +293,43 @@ caveat:** the bridge spiking realization adds losses (the diagonal lost numpy +0
 learned bridge cortex may also be marginal; but it is the validated direction, owner-approved, and the honest
 result (a GO toward host, or a characterized marginal) is the deliverable. Two verified brain-based `sim/`
 primitives shipped this arc (graded inhibition + input-mean adaptation), both byte-clean + reusable.
+
+## ⛳ ARC CONVERGENCE (CYCLE 74–78): the learned-cortex bridge realization hits the "question the approach" threshold; the missing piece is precisely identified (the SM lateral) but its spiking joint-dynamics realization is the deep open piece
+
+The Phase-3 learned cortex (thaw the projection so STDP learns the low-rank subspace) was debugged through **five
+diagnosed fixes, none beating the random projection (+0.155):** naive STDP thaw **+0.060** (unbalanced the E/I) →
+E/I-plasticity **+0.092** (Hebbian **rank-1 collapse**, eff-rank 1.5) → tight STDP bound **+0.131** (eff-rank 4.8,
+collapse broken but still < random) → `graded_lateral` **+0.025** (the LGN-default gain *over-suppressed* the
+cortex) → tuned lower gain **+0.100** (over-suppression fixed, but eff-rank stayed 2.9 — *no decorrelation*).
+
+**A deep-research scope (`2026-06-15-L1-SM-on-spiking-deep-research.md`) correctly diagnosed it:** plain
+feedforward STDP is only the **W (Hebbian)** half of similarity-matching; the missing half is the recurrent
+**anti-Hebbian LATERAL M that decorrelates the outputs** (Pehlevan-Chklovskii; the project's `graded_lateral`
+IS exactly that rule — `ΔM ∝ ⟨aaᵀ⟩ − I − λM` on analog membrane — verified). But the **bridge realization does
+not converge:** `graded_lateral` even tuned doesn't raise the eff-rank or beat random. Likely causes (the deep
+open piece): it flags only **one** cortex region (`cortex_on`; `cortex_off` uncovered); it's a **one-step**
+lateral, not the full recurrent settle `y=(I+M)⁻¹·a`; and the compound ON/OFF + E/I + STDP-W + centering +
+analog-M joint dynamics don't settle to the SM fixed point in the streaming window.
+
+**⇒ Per the systematic-debugging iron law (3+ fixes → question the architecture, not more fixes), the cheap
+autonomous de-risk is EXHAUSTED. The honest, comprehensive convergence of the whole spiking-cortex arc
+(CYCLES 59–78):**
+- The spiking **whitening FRONT-END is BUILT + SHIPPED**: per-feature mean-centering (`input_mean_adapt`,
+  byte-clean) + a signed projection (E/I balance) — **marginal (+0.155 on real ≈ 35% of host +0.44)**, but every
+  mechanism correct + biologically canonical.
+- **Two verified byte-clean reusable brain-based `sim/` primitives** shipped (graded inhibition = retinal
+  horizontal cells; input-mean adaptation = subtractive spike-frequency adaptation / point-neuron predictive
+  coding) — true pre/post A/B byte-identity each.
+- The learned-cortex **ESCAPE** (the low-rank L1 SM that reaches host +0.44–0.48 in numpy) has its **missing
+  piece precisely identified + verified on-substrate** (the SM recurrent anti-Hebbian lateral = `graded_lateral`),
+  but its **bridge realization (the joint W+M spiking dynamics) does NOT converge** in the cheap configs = the
+  deep, genuinely-unsolved-this-session open piece.
+- **Months-scale dendrites are shown UNNECESSARY** — the SM lateral (not dendrites) is the path.
+
+**The owner-strategic juncture (the cheap de-risk being exhausted):** **(A)** the deep SM-lateral realization —
+a single merged cortex region (so the lateral covers the whole readout) + the FULL recurrent settle + a simpler
+signed-projection architecture + careful joint-rate tuning (a days-scale fresh-focus redesign, de-risk the
+full-settle SM in numpy first); vs **(B)** accept the precise characterization + the shipped flat 2,048-concept
+curated cortex as the honest delivered conversational state. The precise characterization — *what the
+point-neuron substrate can and cannot do for L1, localized to one convergent dynamical piece* — IS the
+deliverable (the owner's standard: honest negatives under strict biology).
