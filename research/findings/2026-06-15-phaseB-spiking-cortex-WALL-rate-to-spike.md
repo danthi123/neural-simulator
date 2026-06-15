@@ -41,3 +41,25 @@ L1's load-bearing op is **common-mode removal (centering / whitening)** — a **
 - The protected set stayed **byte-empty** — the entire Phase-B gate was zero-`sim/`-edit.
 
 The honest NEGATIVE IS the deliverable: it maps the rate→spike wall precisely and tells the owner the spiking learned cortex requires the dendritic substrate, saving a months-scale build from the wrong (point-neuron) premise.
+
+---
+
+## ⚠️ REFINEMENT (same night, CYCLE 63) — the wall is the SPIKE-COUNT READOUT of a common-mode-buried weak signal; I over-claimed "the projection needs dendrites." It is a BOUNDARY, not a clean WALL.
+
+A follow-on deep-research (`2026-06-15-spiking-whitening-cheapest-mechanism-research.md`) flagged that the 6 probes centered at/after the **cortex**, whereas L1 centers the **input per-hub before the projection**, and argued the months-scale substrate is likely unnecessary. Four more free probes (no `sim/` edits) localized it precisely and **partly overturn, partly confirm** the WALL:
+
+| measurement (clean bridge, strong drive ds40, untrained random W) | result |
+|---|---|
+| bridge cortex **g_e (analog conductance)** cosine | **+0.45 to +0.57** — the projection PRESERVES the structure |
+| bridge cortex **spike-count** code cosine | **≈ 0** (−0.04..+0.05) across ds{20,40,80,120} × window{150,300}, 60–136 spikes/concept |
+| numpy (rate) projection of the hub codes | +0.34 (input-centering ≈ output-centering +0.338 ≈ +0.341 — the **locus does NOT matter**) |
+| g_e **per-neuron-centered** | +0.001 (dense) — the g_e structure is **common-mode-correlated / weak**, centering removes it |
+
+**The corrected localization:**
+1. The earlier "g_e −0.06" was the **weak-drive (ds12) regime** (hubs under-firing, ~0.15 spk/hub). At strong drive the **analog path is fine** — the hub→cortex projection preserves the structure (g_e +0.45). So the projection does **not** need dendrites — I over-claimed that.
+2. But the category signal is a **weak perturbation on a large common mode** (200 common hubs vs 12/category); it sits in the g_e weakly (+0.45 uncentered, ~0 centered), and the **spike-count readout robustly loses it** — the spiking threshold saturates on the common mode, burying the weak category signal. This is the common-mode problem manifesting **at the spike readout**, not the projection.
+3. The research's input-vs-output **locus** reframe did **not** rescue it on the bridge (numpy: input ≈ output ≈ +0.34; bridge spike readout: both ≈ 0). So the fix is **not** simply "center at the input."
+
+**Honest status = BOUNDARY** (not the clean WALL above, not "just engineering"): the structure lives in the analog path; transmitting the **common-mode-buried weak category signal through a spike-count code** is the genuine open problem, and removing the common mode cleanly is the point-neuron-hard whitening (the Mikulasch-Priesemann theme — my original WALL was directionally right about the *mechanism*, wrong that it's the projection). The **untested** cheaper-than-dendrites candidate is **predictive coding with per-error-unit interneurons** (Jang et al. 2024, PMC11045951 — demonstrated in single-compartment AdEx POINT neurons, ρ>0.8: a per-dimension prediction-subtraction microcircuit, richer than the rank-1 pool that failed). The FHRR phase-coding escape does **not** apply (different common mode).
+
+**Refined fork for the owner:** (A′) a **predictive-coding microcircuit** (per-dimension common-mode prediction+subtraction in point neurons — Jang 2024; a medium build, cheaper than dendrites, untested here); (B) ship the flat curated cortex (delivered) + bank L1; (C) the minimal single-extra-compartment dendrite (now looks like the *fallback*, not the lead). New localization probes: `_phaseB_input_centering_derisk.py`, `_phaseB_projection_isolation.py`, `_phaseB_cortex_readout.py`.
