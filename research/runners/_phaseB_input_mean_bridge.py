@@ -98,6 +98,9 @@ def build_input_mean_bridge(
                                # the Hebbian rank-1 collapse the learned (STDP) projection suffers. Flag cortex_on.
     graded_lateral_lambda=None,  # the M decay; RAISE it for PARTIAL/low-rank whitening (full ZCA target=I
                                  # over-whitens -> collapses; the +0.44 regime is partial whitening).
+    graded_lateral_gain=None,    # the lateral inhibition strength (pA). The LGN default (300) OVER-SUPPRESSES
+                                 # this cortex (silent rises, eff-rank stays low = inhibits not decorrelates);
+                                 # LOWER it so the lateral gently decorrelates instead of silencing.
 ):
     """Build the per-hub-adapting ON/OFF cortex bridge. Returns (bridge, idx_dict).
 
@@ -177,6 +180,8 @@ def build_input_mean_bridge(
     cfg.enable_graded_lateral = bool(graded_lateral)
     if graded_lateral_lambda is not None:
         cfg.graded_lateral_lambda = float(graded_lateral_lambda)
+    if graded_lateral_gain is not None:
+        cfg.graded_lateral_gain_pA = float(graded_lateral_gain)
 
     rt = RuntimeState()
     rt.actual_seed_used = seed
@@ -358,7 +363,8 @@ def run_seed(seed, args, C, labels, S_true):
               ei_inh_weight=getattr(args, "ei_inh_weight", None),
               stdp_w_max=float(getattr(args, "stdp_w_max", 2000.0)),
               graded_lateral=bool(getattr(args, "graded_lateral", False)),
-              graded_lateral_lambda=getattr(args, "graded_lateral_lambda", None))
+              graded_lateral_lambda=getattr(args, "graded_lateral_lambda", None),
+              graded_lateral_gain=getattr(args, "graded_lateral_gain", None))
     rp = dict(drive_scale=args.drive_scale, window=args.window, settle=args.settle)
     # STREAMING uses a (possibly shorter) window -- the EMA just needs each presentation's mean drive, not a
     # long spike-count read -- with the slow per-step alpha matched to THAT window (alpha was derived from the
@@ -489,6 +495,9 @@ def main():
                         "prevents the Hebbian rank-1 collapse. Use WITH --learn-projection.")
     p.add_argument("--graded-lateral-lambda", type=float, default=None,
                    help="graded_lateral M decay; RAISE for PARTIAL (low-rank) whitening (full ZCA over-whitens).")
+    p.add_argument("--graded-lateral-gain", type=float, default=None,
+                   help="graded_lateral inhibition strength (pA); LOWER than the LGN default 300 so the lateral "
+                        "decorrelates instead of over-suppressing the cortex (the diagnosed +0.025 NEGATIVE).")
     p.add_argument("--learn-projection", action="store_true",
                    help="PHASE 3: leave the hub->cortex projection PLASTIC during streaming so STDP learns the "
                         "low-rank principal subspace (vs the default frozen random projection). The off-diagonal "
