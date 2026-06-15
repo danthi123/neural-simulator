@@ -1,0 +1,33 @@
+{
+  "verdict": "NEGATIVE_or_PARTIAL",
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "host": 0.44192576313430393,
+      "learned": 0.05805901640880533,
+      "learned_gen": 0.234375,
+      "random": 0.07422644307249923,
+      "random_gen": 0.1875,
+      "permuted": 0.00822662404406911,
+      "chance": 0.125,
+      "gates": {
+        "structure": false,
+        "permuted_collapses": true,
+        "generalizes": true,
+        "learning_load_bearing": false,
+        "host_carries": true
+      }
+    }
+  },
+  "config": {
+    "seeds": "42",
+    "n_hub": 500,
+    "n_cortex": 128,
+    "weight_mean": 400.0,
+    "drive_scale": 40.0,
+    "window": 1000,
+    "train_window": 200,
+    "epochs": 8,
+    "out": "research/findings/raw/_phaseB_real_dense_gate.json"
+  }
+}

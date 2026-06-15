@@ -86,8 +86,32 @@ clearly load-bearing** over a dense random projection (random already generalize
 category structure is in the uncentered input, captured by any similarity-preserving dense readout). Whether
 STDP adds genuine "learned cortex" value (generalization the random projection lacks) needs the **REAL
 corpus** — where L1 showed learning IS load-bearing (learned +0.48 vs random +0.17). The real-corpus dense
-bridge gate (GPU) is the decisive GO confirmation, and it is the natural Task-4. **Net: the build is
-re-opened; the spike-readout is solved by dense firing; the learned-cortex value is the real-corpus question.**
+bridge gate (GPU) is the decisive GO confirmation, and it is the natural Task-4.
+
+### ⛔ THE REAL-CORPUS GATE = NEGATIVE (CYCLE 65, GPU): the dense-readout fix was REAL but INSUFFICIENT. The spiking substrate loses the *weak/diffuse* real structure even with whitened input.
+
+`_phaseB_real_dense_gate` (GPU, n_hub 500, host +0.442): **LEARNED +0.058 / gen 0.234, RANDOM +0.074, permuted
++0.008** — the dense spiking cortex (learned *or* random) does **not** recover the real structure (+0.06 vs
+host +0.44). `_phaseB_real_ppmi_input` pins it airtight: PPMI input *has* the structure (input cos **+0.502**)
+but the bridge dense cortex code is **+0.075 (PPMI) / +0.051 (log)** — **both ≈ 0**. So even with the
+whitened (PPMI) input AND the dense-readout fix, the bridge's **spiking hub→cortex transform loses the real
+category structure.** Synthetic worked (+0.40) because its structure is strong/concentrated (host +0.96); the
+**real** structure is weak/diffuse (host +0.44) and the spiking substrate loses it.
+
+**FINAL honest synthesis (the whole night's arc):** (1) The L1 *rate* recipe is GO (+0.545). (2) The
+dense-firing readout fix is real — spike-count sparsity was a config issue, and it lets the spiking cortex
+recover *strong/concentrated* (synthetic) structure (+0.40). (3) **But on the REAL corpus the spiking
+learned cortex FAILS (+0.06 vs +0.44), even with PPMI input + dense readout** — the point-neuron spiking
+substrate loses the *weak, diffuse* real category structure that the rate recipe recovers. This is the
+genuine **rate→spike wall, confirmed on the real (hard) data** — my CYCLE-62 instinct (a real rate→spike
+wall) was right; the CYCLE-64 dense crack was a real-but-insufficient sub-fix; the precise truth is the
+spiking substrate cannot preserve the weak/diffuse real structure. **Whipsaw, honestly:** WALL (62,
+over-claimed localization) → readout-crack (64, synthetic-only) → real-corpus NEGATIVE (65, the wall holds
+on real data). **Net for the owner:** the spiking learned cortex realizes L1 on strong/concentrated structure
+but **NOT on the real weak/diffuse corpus**; the flat 2,048-concept curated cortex remains the conversational
+product; the faithful spiking-from-real-experience cortex needs a substrate that preserves weak/diffuse
+structure (the deep frontier — dendrites / predictive-coding / a different code) — a genuine owner-strategic
+call, not cheaply closable. **The spike-readout-sparsity fix + the dense regime are banked** (real, reusable).
 
 ---
 
