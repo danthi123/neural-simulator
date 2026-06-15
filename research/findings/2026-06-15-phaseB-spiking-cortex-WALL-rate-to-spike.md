@@ -64,4 +64,31 @@ A follow-on deep-research (`2026-06-15-spiking-whitening-cheapest-mechanism-rese
 
 **Refined fork for the owner:** (A′) a **predictive-coding microcircuit** (per-dimension common-mode prediction+subtraction in point neurons — Jang 2024; a medium build, cheaper than dendrites, untested here); (B) ship the flat curated cortex (delivered) + bank L1; (C) the minimal single-extra-compartment dendrite (now looks like the *fallback*, not the lead). New localization probes: `_phaseB_input_centering_derisk.py`, `_phaseB_projection_isolation.py`, `_phaseB_cortex_readout.py`.
 
+## ✅ THE BOUNDARY CRACKS (CYCLE 64) — it was spike-count SPARSITY, config-level; NOT the fundamental wall. The build RE-OPENS.
+
+`_phaseB_dense_firing_readout.py` + `_phaseB_dense_gate.py`: across all ~11 prior probes the cortex fired
+only **~1 spike/neuron** — a spike count that sparse is binary-ish and cannot encode the graded g_e. With
+**DENSE firing** (~15 spikes/neuron: stronger coupling weight_mean 200–800 + longer window + homeostasis off)
+the cortex **spike-count code reaches +0.42** (tracking g_e +0.67), monotonically rising with firing density.
+The rigorous dense-regime gate (LEARNED cortex + full battery): **LEARNED +0.401, gen 0.906, permuted −0.002
+(clean)**; random-proj +0.323/gen 0.953. ⇒ **the category structure DOES transmit through the spiking cortex
+when it fires densely enough** — the WALL/BOUNDARY was **spike-count SPARSITY**, a config-level issue, NOT the
+Mikulasch-Priesemann wall, NOT the projection, NOT centering, NOT dendrites.
+
+**HONEST whipsaw + lesson:** CYCLE 62 declared an "airtight WALL / needs dendrites" after 6 attempts **all in
+a sparse-firing regime** (weight_mean 80 + homeostasis on → ~1 spike/neuron) — a **premature WALL claim**.
+The thorough localization (the analog g_e carries the structure +0.45; the spike readout was just too sparse)
+cracked it. Lesson: don't claim a fundamental WALL before exhausting the cheap readout/regime knobs — the
+"airtight" was an artifact of one un-swept axis (firing density).
+
+**The one remaining honest caveat (the real test):** on this SYNTHETIC data the STDP *learning* is **not
+clearly load-bearing** over a dense random projection (random already generalizes 0.95 — the synthetic
+category structure is in the uncentered input, captured by any similarity-preserving dense readout). Whether
+STDP adds genuine "learned cortex" value (generalization the random projection lacks) needs the **REAL
+corpus** — where L1 showed learning IS load-bearing (learned +0.48 vs random +0.17). The real-corpus dense
+bridge gate (GPU) is the decisive GO confirmation, and it is the natural Task-4. **Net: the build is
+re-opened; the spike-readout is solved by dense firing; the learned-cortex value is the real-corpus question.**
+
+---
+
 **Final localization (CYCLE 63, the last probe `_phaseB_homeo_off_readout.py`):** the spike-readout loss is **NOT homeostasis equalization** — with homeostasis OFF the cortex spike code is still ≈ 0 (−0.09..+0.01) while g_e stays +0.40..+0.57. So the loss is robust across drive × window × homeostasis × density × gain (≈ 11 probes total). **The honest, well-localized status:** the category structure lives in the cortex analog g_e (+0.45) but does **not survive the spike-count code**, because the category signal is a *weak perturbation on a large common mode* and removing that common mode **before** the spiking threshold is the point-neuron-hard analog whitening (the Mikulasch-Priesemann theme — my CYCLE-62 instinct about the *mechanism* was right; my claim that it's the *projection*/needs-dendrites was wrong — it is the **spike-count readout of an un-whitened weak signal**). Faithful spike-based transmission needs the common mode removed pre-threshold (whitening) or a richer code/microcircuit (predictive coding, Jang 2024). The analog g_e proves the structure is recoverable *in principle*; the spike transmission is the genuine open boundary. **This is owner-decision territory** (medium build) — the solo cheap-first probing is exhausted.
