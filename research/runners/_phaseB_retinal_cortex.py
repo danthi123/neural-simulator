@@ -241,23 +241,28 @@ def _freeze_all_gates(bridge, value):
 
 
 def read_onoff_codes(bridge, idx, C_drive, *, drive_scale, window, settle, cm_bias_pA=0.0):
-    """Per-concept concat(cortex_on, cortex_off) SPIKE-COUNT code, plasticity frozen."""
-    from sim.backend import to_host
+    """Per-concept concat(cortex_on, cortex_off) SPIKE-COUNT code, plasticity frozen.
+
+    Accumulates the cortex spike counts ON-DEVICE (one D->H sync per concept, not per step) so window=1000
+    on GPU isn't bottlenecked by a per-step host transfer."""
+    from sim.backend import get_backend, to_host
+    xp, _ = get_backend()
     on_idx = np.asarray(idx["cortex_on"]); off_idx = np.asarray(idx["cortex_off"])
+    co_idx = np.concatenate([on_idx, off_idx])
+    is_cupy = type(bridge.cp_external_input_current).__module__.startswith("cupy")
+    co_dev = xp.asarray(co_idx) if is_cupy else co_idx
     Nc = int(np.asarray(C_drive).shape[0])
-    codes = np.zeros((Nc, on_idx.size + off_idx.size), dtype=np.float64)
+    codes = np.zeros((Nc, co_idx.size), dtype=np.float64)
     _freeze_all_gates(bridge, 0.0)
     try:
         for i in range(Nc):
             _set_drive(bridge, idx, C_drive[i], drive_scale, cm_bias_pA=cm_bias_pA)
-            acc = np.zeros(on_idx.size + off_idx.size, dtype=np.float64)
+            acc = xp.zeros(co_idx.size, dtype=xp.float32)
             for t in range(int(settle) + int(window)):
                 _step_with_time(bridge)
                 if t >= int(settle):
-                    fired = np.asarray(to_host(bridge.cp_firing_states))
-                    acc[:on_idx.size] += fired[on_idx].astype(np.float64)
-                    acc[on_idx.size:] += fired[off_idx].astype(np.float64)
-            codes[i] = acc
+                    acc += bridge.cp_firing_states[co_dev].astype(xp.float32)
+            codes[i] = np.asarray(to_host(acc)).astype(np.float64)
             bridge.cp_external_input_current[:] = 0.0
     finally:
         _freeze_all_gates(bridge, 1.0)
@@ -270,22 +275,24 @@ def read_analog_whitened(bridge, idx, C_drive, *, drive_scale, window, settle, g
     This is the WHITENING front-end readout (Step 1): cortex_on receives hub_e excitation (g_e) MINUS the
     cm_i common-mode inhibition (g_i). g_e - g_i is the analog signed whitened drive, BEFORE the spiking
     threshold splits it into ON/OFF. Confirm its structure matches the host-whitened drive."""
-    from sim.backend import to_host
+    from sim.backend import get_backend, to_host
+    xp, _ = get_backend()
     on_idx = np.asarray(idx["cortex_on"])
+    is_cupy = type(bridge.cp_external_input_current).__module__.startswith("cupy")
+    on_dev = xp.asarray(on_idx) if is_cupy else on_idx
     Nc = int(np.asarray(C_drive).shape[0])
     codes = np.zeros((Nc, on_idx.size), dtype=np.float64)
     _freeze_all_gates(bridge, 0.0)
     try:
         for i in range(Nc):
             _set_drive(bridge, idx, C_drive[i], drive_scale, cm_bias_pA=cm_bias_pA)
-            acc = np.zeros(on_idx.size, dtype=np.float64)
+            acc = xp.zeros(on_idx.size, dtype=xp.float32)
             for t in range(int(settle) + int(window)):
                 _step_with_time(bridge)
                 if t >= int(settle):
-                    ge = np.asarray(to_host(bridge.cp_conductance_g_e))[on_idx]
-                    gi = np.asarray(to_host(bridge.cp_conductance_g_i))[on_idx]
-                    acc += (ge - float(gi_scale) * gi).astype(np.float64)
-            codes[i] = acc / max(1, int(window))
+                    acc += (bridge.cp_conductance_g_e[on_dev]
+                            - xp.float32(gi_scale) * bridge.cp_conductance_g_i[on_dev])
+            codes[i] = np.asarray(to_host(acc)).astype(np.float64) / max(1, int(window))
             bridge.cp_external_input_current[:] = 0.0
     finally:
         _freeze_all_gates(bridge, 1.0)
