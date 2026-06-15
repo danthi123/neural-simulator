@@ -1,0 +1,95 @@
+{
+  "verdict": "NEGATIVE",
+  "why": "even log+simmatch does not beat the saturating control on the point neuron (TEST +0.076 vs A +0.096) -> the gap is deeper than input-encoding+learning-rule -> ship the flat 2,048-concept cortex (Option A) / the dendritic build for the artificial-life goal.",
+  "detail": {
+    "A_mean": 0.09632844579748412,
+    "B_mean": 0.07615745155978049,
+    "C_mean": 0.15891900042701124,
+    "TEST_mean": 0.0756719340405576,
+    "TEST_gen": 0.265625,
+    "structure_all": false,
+    "A_fails_all": true,
+    "generalize_all": false,
+    "controls_all": false
+  },
+  "seeds": [
+    42
+  ],
+  "smoke": false,
+  "real_corpus": true,
+  "config": {
+    "seeds": "42",
+    "smoke": false,
+    "real_corpus": true,
+    "marginal_norm": false,
+    "n_cat": 8,
+    "per_cat": 8,
+    "n_common": 200,
+    "n_sig_per_cat": 12,
+    "lam_common": 40.0,
+    "lam_sig": 4.0,
+    "lam_bg": 0.3,
+    "n_hub": 500,
+    "k": 64,
+    "epochs": 30,
+    "lr_ff": 0.01,
+    "lr_m": 0.01,
+    "settle_steps": 20,
+    "lr_sat": 0.01,
+    "nonneg": false,
+    "host_svd": 50,
+    "host_alpha": 0.75,
+    "structure_bar": 0.3,
+    "a_fail_bar": 0.15,
+    "host_bar": 0.3,
+    "gen_margin": 0.1,
+    "out": "research/findings/raw/_log_simmatch_real_seed42.json"
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "n_concepts": 64,
+      "n_hub": 500,
+      "host_ceiling": 0.44192576313430393,
+      "chance": 0.125,
+      "A_raw_sat": {
+        "pearson": 0.09632844579748412,
+        "gen": 0.375,
+        "chance": 0.125,
+        "offdiag": 0.9999738586502739,
+        "eff_rank": 1.0149904317223517
+      },
+      "B_log_sat": {
+        "pearson": 0.07615745155978049,
+        "gen": 0.34375,
+        "chance": 0.125,
+        "offdiag": 0.9999893903597232,
+        "eff_rank": 1.0132069519866578
+      },
+      "C_raw_sim": {
+        "pearson": 0.15891900042701124,
+        "gen": 0.515625,
+        "chance": 0.125,
+        "offdiag": 0.9580814084975142,
+        "eff_rank": 14.490670694288522
+      },
+      "TEST_log_sim": {
+        "pearson": 0.0756719340405576,
+        "gen": 0.265625,
+        "chance": 0.125,
+        "offdiag": 0.9787777488531817,
+        "eff_rank": 15.70819826619807
+      },
+      "test_permuted_pearson": -0.001860490150731179,
+      "gates": {
+        "test_structure_vs_A": false,
+        "A_saturating_fails": true,
+        "host_ceiling_carries": true,
+        "test_generalizes": false,
+        "permuted_collapses": true,
+        "learning_rule_lesion_collapses": false
+      }
+    }
+  },
+  "note": "Deep-research \u00a7(e) de-risk: log-compressed input + similarity-matching (Pehlevan-Chklovskii fixed-point) learn vs the project's saturating-Hebbian control, on the point neuron. GO \u21d2 the dendritic D2 build is off the critical path. NO sim/ edits."
+}
