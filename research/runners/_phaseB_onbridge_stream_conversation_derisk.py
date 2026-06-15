@@ -182,15 +182,21 @@ def main():
     p.add_argument("--tgt-scale", type=float, default=1200.0)
     p.add_argument("--codes-npy", default=None,
                    help="cache path (use SEED as a placeholder) — stream once + save, reload to skip re-streaming")
+    p.add_argument("--taxonomy", default="8x8", choices=["8x8", "40x8"],
+                   help="8x8 = 64 concepts (default); 40x8 = the 320-concept corpus-grounded scaling taxonomy")
     a = p.parse_args()
     os.environ.setdefault("SIM_BACKEND", "cupy")
     t0 = time.time()
     seeds = [int(s) for s in a.seeds.split(",")]
     print(f"[on-bridge stream CONVERSATION] seeds={seeds} n_per={a.n_per} -- does who/what recall + the no-confab "
           f"moat work on codes the SPIKING BRIDGE learned from the corpus stream?", flush=True)
-    vocab, cat_ids, _ = taxonomy_to_vocab_categories(TAXONOMY_8x8)
+    if a.taxonomy == "40x8":
+        from research.runners.stream_taxonomy_320 import TAXONOMY_40x8
+        vocab, cat_ids, _ = taxonomy_to_vocab_categories(TAXONOMY_40x8)
+    else:
+        vocab, cat_ids, _ = taxonomy_to_vocab_categories(TAXONOMY_8x8)
     stories = load_token_stream()
-    print(f"  loaded {len(stories)} stories; vocab {len(vocab)} concepts", flush=True)
+    print(f"  loaded {len(stories)} stories; vocab {len(vocab)} concepts ({a.taxonomy})", flush=True)
     rows = [run_seed(s, stories, vocab, cat_ids, a) for s in seeds]
 
     def m(k):
