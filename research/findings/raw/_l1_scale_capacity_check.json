@@ -1,0 +1,67 @@
+{
+  "verdict": "SCALE_CAPACITY_HOLDS_GO",
+  "why": "the extraction fraction stays high as categories grow (['96%', '100%', '88%'], min 88%, drop +8%) -> the online nonneg rule has capacity headroom to scale; no scale wall at this range. With all FOUR axes (rule, input-spiking, learning-nonneg, scale) GO at the smoke level, the L1 spiking similarity-matching cortex is comprehensively de-risked -- only the bridge assembly + real-data-noise-at-2048 remain the build itself.",
+  "fractions": [
+    0.9577202147791913,
+    1.0027930858219802,
+    0.8758640897370009
+  ],
+  "results": [
+    {
+      "n_cat": 8,
+      "n_concepts": 64,
+      "k": 32,
+      "learner_pearson": 0.4206144002190264,
+      "learner_seeds": [
+        0.36021207659799376,
+        0.5401493551025108,
+        0.36148176895657447
+      ],
+      "offline_pca": 0.4391829615040566,
+      "host_ppmi_svd": 0.40368120499490656,
+      "extraction_fraction": 0.9577202147791913,
+      "gen_mean": 0.6510416666666666,
+      "perm_mean": 0.006998299559428476,
+      "chance": 0.125
+    },
+    {
+      "n_cat": 16,
+      "n_concepts": 128,
+      "k": 40,
+      "learner_pearson": 0.517517608798154,
+      "learner_seeds": [
+        0.5277590143592746,
+        0.5258231214566526,
+        0.4989706905785349
+      ],
+      "offline_pca": 0.5160761637820325,
+      "host_ppmi_svd": 0.4036050726986146,
+      "extraction_fraction": 1.0027930858219802,
+      "gen_mean": 0.8177083333333334,
+      "perm_mean": 0.0016994360243587656,
+      "chance": 0.0625
+    },
+    {
+      "n_cat": 32,
+      "n_concepts": 256,
+      "k": 56,
+      "learner_pearson": 0.397842214740602,
+      "learner_seeds": [
+        0.37531980765854495,
+        0.3953804500549545,
+        0.4228263865083066
+      ],
+      "offline_pca": 0.4542282523080306,
+      "host_ppmi_svd": 0.35509705306733313,
+      "extraction_fraction": 0.8758640897370009,
+      "gen_mean": 0.703125,
+      "perm_mean": -0.0016874535995121812,
+      "chance": 0.03125
+    }
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ]
+}

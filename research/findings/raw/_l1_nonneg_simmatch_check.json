@@ -1,0 +1,45 @@
+{
+  "verdict": "NONNEG_SURVIVES_LEARNING_SPIKING_DERISKED",
+  "why": "the brain-correct NONNEGATIVE similarity-matching preserves the structure (nonneg-rate +0.461, nonneg+spike +0.466 vs signed +0.515, 90%), permuted clean -> the learning-spiking axis is de-risked; non-negativity (rectified firing) does NOT break the learner. ALL THREE axes (rule, input-spiking, learning-nonneg/spiking) GO at the rate/spike-smoke level -> the spiking build is comprehensively de-risked (scale + the bridge assembly remain the build itself).",
+  "arms": {
+    "SIGNED (reference)": {
+      "pearson_mean": 0.5154754455410084,
+      "pearson_seeds": [
+        0.5167371552299612,
+        0.5114636511754276,
+        0.5182255302176366
+      ],
+      "gen_mean": 0.7760416666666666,
+      "perm_mean": -0.0073809332287819995
+    },
+    "NONNEG rate": {
+      "pearson_mean": 0.46087890313362784,
+      "pearson_seeds": [
+        0.5039068878835015,
+        0.46046769185740727,
+        0.4182621296599748
+      ],
+      "gen_mean": 0.7239583333333334,
+      "perm_mean": -0.0019069990868082764
+    },
+    "NONNEG + spike output": {
+      "pearson_mean": 0.46630721971451133,
+      "pearson_seeds": [
+        0.5063309415795412,
+        0.46321566967833605,
+        0.42937504788565695
+      ],
+      "gen_mean": 0.71875,
+      "perm_mean": -0.0009400784231597716
+    }
+  },
+  "signed_ref": 0.5154754455410084,
+  "offline_pca": 0.5234292736807535,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_hub": 2000,
+  "k": 64
+}

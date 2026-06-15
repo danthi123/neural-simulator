@@ -115,7 +115,35 @@ At **biologically-reasonable spike counts (~2–6 spikes/hub/concept)** the stru
 historically this project's wall (threshold-silencing) — is **graceful given log-PPMI input**, not fatal.
 (The *learning*-spiking gap — spike-timing-driven Hebbian — is kept exact here and is the build-time follow-on.)
 
-**(b) Common-mode removal is the enabling operation.** The fix that converged both Oja and the exact
+**(b) Learning-spiking + non-negativity axis — GO** (`_l1_nonneg_simmatch_check.py`). Real spiking neurons
+emit **non-negative** spike counts; the signed Oja/Pehlevan decorrelation relies on negative output
+correlations a rectified rate lacks. The brain-correct **non-negative** similarity-matching (rectified
+output + lateral inhibition — Pehlevan's NSM):
+
+| variant | Pearson | gen | perm |
+|---|---|---|---|
+| SIGNED (reference) | +0.515 | 0.776 | −0.007 |
+| NONNEG rate | +0.461 (90%) | 0.724 | −0.002 |
+| NONNEG + spike output (Poisson on the Hebbian terms) | +0.466 (90%) | 0.719 | −0.001 |
+
+Non-negativity costs only ~10%, and the full spike-driven output barely changes it (+0.461→+0.466). The
+learning-spiking axis is de-risked: rectified firing does **not** break the learner.
+
+**(c) Scale-capacity axis — GO** (`_l1_scale_capacity_check.py`). Online local rules can degrade as the
+number of categories grows. At realistic difficulty (synthetic tuned to host ~+0.40), the non-negative
+online rule's extraction fraction (learner / offline PCA) **holds across 64→256 concepts**:
+
+| concepts | learner | offline | host | fraction | gen |
+|---|---|---|---|---|---|
+| 64 (8 cat) | +0.421 | +0.439 | +0.404 | 96% | 0.651 |
+| 128 (16 cat) | +0.518 | +0.516 | +0.404 | 100% | 0.818 |
+| 256 (32 cat) | +0.398 | +0.454 | +0.355 | 88% | 0.703 |
+
+The fraction stays ≥88% (min) with no collapse trend, and the learner matches/beats the host's own
+`ppmi_svd_sim` at every scale. Capacity headroom is present in this range. (Real-data-noise at the full
+2048 scale remains a build concern, not cheaply testable.)
+
+**(d) Common-mode removal is the enabling operation.** The fix that converged both Oja and the exact
 Pehlevan rule was **centering** (subtract the column mean = remove the common mode). This is the *same*
 whitening/common-mode theme the project has hit 5+ times — and it is brain-plausible as a slow
 **subtractive-inhibition EMA** (feedforward inhibition). The local online rule *can* extract the structure,
@@ -130,11 +158,29 @@ whitening/common-mode theme the project has hit 5+ times — and it is brain-pla
 - raw: `_l1_fair_real_multiseed.{json,log}`, `_l1_simmatch_convergence_sweep.{json,log}`,
   `_l1_centered_online_pca_probe.{json,log}`, `_l1_oja_validated.{json,log}`.
 
+## Comprehensive de-risk summary — all four axes GO
+
+| axis | result | runner |
+|---|---|---|
+| **Rule** (does a brain-based online learner reach the ceiling?) | GO — Oja +0.481, exact Pehlevan +0.515 = ~98% of offline +0.523, beats host +0.323, learning load-bearing | `learned_graded_cortex_fair_test`, `_l1_oja_validated`, `_l1_simmatch_converges_check` |
+| **Input-spiking** (does the structure survive Poisson-spike input?) | GO — 78–89% at ~2–6 spikes/hub/concept | `_l1_spiking_oja_smoke` |
+| **Learning-non-negativity + spiking** (rectified firing + spike-driven Hebbian?) | GO — 90% of signed | `_l1_nonneg_simmatch_check` |
+| **Scale-capacity** (64→256 concepts?) | GO — fraction holds 88–100% | `_l1_scale_capacity_check` |
+
+Enabling operation across all: **common-mode removal (centering = subtractive-inhibition EMA)** — the
+project's recurring whitening theme, here the single fix that converged the local online rule.
+
 ## Recommendation (decision point — the next step is owner-gated)
 
-The cheap-first de-risk the owner asked for is **resolved: GO**. The natural escalation is the **weeks-scale
-spiking similarity-matching build** (the artificial-life learned-cortex frontier). Because (a) the spiking
-realization is the genuine high-variance unknown and (b) the owner gated the big build, the recommended
-cheapest next de-risks before that commit are: confirm the exact Pehlevan-Chklovskii rule converges (closes
-caveat 4), and a small **spiking-Oja smoke** on PPMI input (directly attacks the rate→spike risk). The flat
+The cheap-first de-risk the owner asked for is **resolved: GO**, and comprehensively so — every numpy/smoke
+axis is positive. The only remaining unknowns are **the bridge assembly** (a spiking similarity-matching
+network on the `SimulationBridge` — real LIF/rate neurons, lateral-inhibition synapses, PPMI-shaped spiking
+input via dendritic-log + the Phase-1 divisive gain + threshold) and **real-data-noise at the full 2,048
+scale**. These *are* the **weeks-scale owner-gated build** — not cheaply de-riskable.
+
+**Recommendation:** the evidence supports committing to the spiking similarity-matching learned-cortex
+build as the artificial-life / biology-translatable frontier; a concrete build proposal accompanies this
+finding (`docs/plans/2026-06-14-spiking-similarity-matching-cortex-build-proposal.md`). The flat
 2,048-concept curated cortex (Option A, delivered) remains the shipped conversational product in parallel.
+**The build itself is owner-gated** — this finding + the proposal are for the owner's steer; the build is
+not started autonomously.
