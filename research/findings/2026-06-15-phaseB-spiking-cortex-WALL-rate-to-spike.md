@@ -261,3 +261,35 @@ signed level (+0.29–0.30). **The input-mean primitive is the (banked, shipped)
 projection is the next bridge build** (config/wiring — the bridge supports inhibitory pathways natively; likely
 NO new `sim/` edit). The honest NEGATIVE precisely re-localized the wall (axis ✓, centering-primitive ✓, spiking
 input-mean ✓ → the *projection sign* was the missing piece) and handed a de-risked next step — the deliverable.
+
+## ✅ The E/I projection ESCAPES the collapse on the bridge; the off-diagonal de-risk RE-FRAMES the marginality as a RANDOM-PROJECTION artifact → the escape is the LEARNED cortex (CYCLE 73, 2026-06-15)
+
+**The E/I signed projection works on the bridge.** `_phaseB_input_mean_bridge --enable-ei` (inhibitory hub
+copies `hub_on_inh`/`hub_off_inh` — same drive + input-mean adaptation — projecting independent inhibitory
+weights so the cortex's effective receptive field = W_exc − W_inh = signed), real seed 42, ei_inh_weight sweep:
+the on-substrate per-hub-adapted E/I cortex code = **+0.155** (best wi=200) — **beats the excitatory-only
+collapse +0.045 by 3.4×**, beats point, permuted-clean (−0.015), slow-α load-bearing. So the E/I escape is REAL
+on the bridge, but lossy below the numpy E/I ceiling (~+0.26) and the +0.30 bar (the FS-inhibitory-hub g_e − g_i
+spiking realization costs ~+0.10 more — the compounding-spiking-loss theme).
+
+**The off-diagonal de-risk is the load-bearing re-frame.** `_phaseB_offdiagonal_derisk.py` (3 seeds, real, host
++0.442): centering-only (the diagonal) +0.307; **full ZCA whitening COLLAPSES −0.012** (over-whitening amplifies
+noise dimensions); **ZCA rank-8 (low-rank denoise + whiten) = +0.437 ≈ host**; rank-16 +0.382. ⇒ **the
++0.31→+0.44 gap IS closeable — but by LOW-RANK decorrelation** (keep the top ~8 semantic components, whiten
+those), NOT full whitening (collapses) and NOT the existing `graded_lateral` (full whitening → would collapse).
+**Low-rank whitening of the centered input is EXACTLY what the LEARNED L1 cortex does** (Oja/Pehlevan online
+PCA), which the arc's very first de-risks already validated at +0.48.
+
+**⇒ THE WHOLE-ARC RE-FRAME (the hopeful synthesis):** the marginality (+0.155 bridge / +0.31 numpy diagonal) is
+the **RANDOM frozen projection** used to *isolate* the whitening; the escape is the **LEARNED low-rank
+projection** — the L1 cortex, which IS the owner-approved spiking-cortex build, **NOT the months-scale dendritic
+piece** (the off-diagonal de-risk shows low-rank LEARNING suffices; full analog cross-neuron whitening/dendrites
+is unnecessary AND would over-whiten). **The whitening FRONT-END is now complete + validated on the bridge:**
+per-feature mean-centering (the input-mean primitive, SHIPPED byte-clean — subtractive spike-frequency
+adaptation) + a signed projection (E/I balance, confirmed escapes the collapse on the bridge). **The next build
+= Phase 3: the LEARNED cortex** (thaw the hub→cortex projection; STDP/L1 learns the low-rank principal subspace)
+on top of the centering + E/I projection — the de-risked escape from the random-projection marginality. **Honest
+caveat:** the bridge spiking realization adds losses (the diagonal lost numpy +0.31 → bridge +0.155), so the
+learned bridge cortex may also be marginal; but it is the validated direction, owner-approved, and the honest
+result (a GO toward host, or a characterized marginal) is the deliverable. Two verified brain-based `sim/`
+primitives shipped this arc (graded inhibition + input-mean adaptation), both byte-clean + reusable.
