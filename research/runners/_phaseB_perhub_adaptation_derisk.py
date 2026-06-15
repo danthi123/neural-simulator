@@ -95,7 +95,7 @@ def run_seed(seed, n_hub=500, k=128, gain=500.0, n_epochs=12):
 
 
 def main():
-    seeds = [42, 43, 44]
+    seeds = [42, 43, 44, 45, 46, 47]
     rows = [run_seed(s) for s in seeds]
     a0 = np.mean([r["axis0_batch"] for r in rows]); a1 = np.mean([r["axis1_batch"] for r in rows])
     best_alpha = None; best = -9
