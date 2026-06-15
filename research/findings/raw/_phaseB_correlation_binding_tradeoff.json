@@ -1,0 +1,213 @@
+{
+  "betas": [
+    0.0,
+    0.3,
+    0.5,
+    0.7,
+    0.85,
+    0.95
+  ],
+  "chance_semantic": 0.25,
+  "per_seed": [
+    {
+      "seed": 42,
+      "chance": 0.25,
+      "rows": [
+        {
+          "beta": 0.0,
+          "between_cos": 0.008,
+          "semantic_pearson": -0.024,
+          "gen": 0.312,
+          "bind_train": 1.0,
+          "bind_heldout": 1.0
+        },
+        {
+          "beta": 0.3,
+          "between_cos": 0.067,
+          "semantic_pearson": 0.518,
+          "gen": 0.938,
+          "bind_train": 1.0,
+          "bind_heldout": 1.0
+        },
+        {
+          "beta": 0.5,
+          "between_cos": 0.117,
+          "semantic_pearson": 0.797,
+          "gen": 1.0,
+          "bind_train": 1.0,
+          "bind_heldout": 1.0
+        },
+        {
+          "beta": 0.7,
+          "between_cos": 0.169,
+          "semantic_pearson": 0.912,
+          "gen": 1.0,
+          "bind_train": 1.0,
+          "bind_heldout": 1.0
+        },
+        {
+          "beta": 0.85,
+          "between_cos": 0.207,
+          "semantic_pearson": 0.952,
+          "gen": 1.0,
+          "bind_train": 0.783,
+          "bind_heldout": 0.25
+        },
+        {
+          "beta": 0.95,
+          "between_cos": 0.23,
+          "semantic_pearson": 0.971,
+          "gen": 1.0,
+          "bind_train": 0.233,
+          "bind_heldout": 0.5
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "chance": 0.25,
+      "rows": [
+        {
+          "beta": 0.0,
+          "between_cos": -0.017,
+          "semantic_pearson": 0.099,
+          "gen": 0.312,
+          "bind_train": 1.0,
+          "bind_heldout": 1.0
+        },
+        {
+          "beta": 0.3,
+          "between_cos": 0.042,
+          "semantic_pearson": 0.788,
+          "gen": 1.0,
+          "bind_train": 1.0,
+          "bind_heldout": 1.0
+        },
+        {
+          "beta": 0.5,
+          "between_cos": 0.074,
+          "semantic_pearson": 0.913,
+          "gen": 1.0,
+          "bind_train": 0.967,
+          "bind_heldout": 1.0
+        },
+        {
+          "beta": 0.7,
+          "between_cos": 0.104,
+          "semantic_pearson": 0.962,
+          "gen": 1.0,
+          "bind_train": 1.0,
+          "bind_heldout": 1.0
+        },
+        {
+          "beta": 0.85,
+          "between_cos": 0.126,
+          "semantic_pearson": 0.979,
+          "gen": 1.0,
+          "bind_train": 0.433,
+          "bind_heldout": 0.25
+        },
+        {
+          "beta": 0.95,
+          "between_cos": 0.14,
+          "semantic_pearson": 0.984,
+          "gen": 1.0,
+          "bind_train": 0.267,
+          "bind_heldout": 0.5
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "chance": 0.25,
+      "rows": [
+        {
+          "beta": 0.0,
+          "between_cos": -0.006,
+          "semantic_pearson": -0.121,
+          "gen": 0.125,
+          "bind_train": 1.0,
+          "bind_heldout": 1.0
+        },
+        {
+          "beta": 0.3,
+          "between_cos": 0.034,
+          "semantic_pearson": 0.721,
+          "gen": 1.0,
+          "bind_train": 1.0,
+          "bind_heldout": 1.0
+        },
+        {
+          "beta": 0.5,
+          "between_cos": 0.071,
+          "semantic_pearson": 0.892,
+          "gen": 1.0,
+          "bind_train": 1.0,
+          "bind_heldout": 0.5
+        },
+        {
+          "beta": 0.7,
+          "between_cos": 0.112,
+          "semantic_pearson": 0.954,
+          "gen": 1.0,
+          "bind_train": 0.867,
+          "bind_heldout": 0.75
+        },
+        {
+          "beta": 0.85,
+          "between_cos": 0.144,
+          "semantic_pearson": 0.973,
+          "gen": 1.0,
+          "bind_train": 0.683,
+          "bind_heldout": 0.0
+        },
+        {
+          "beta": 0.95,
+          "between_cos": 0.168,
+          "semantic_pearson": 0.979,
+          "gen": 1.0,
+          "bind_train": 0.3,
+          "bind_heldout": 0.0
+        }
+      ]
+    }
+  ],
+  "curve": {
+    "0.00": {
+      "between_cos": -0.005,
+      "semantic_pearson": -0.015333333333333329,
+      "gen": 0.24966666666666668,
+      "bind_heldout": 1.0
+    },
+    "0.30": {
+      "between_cos": 0.04766666666666667,
+      "semantic_pearson": 0.6756666666666667,
+      "gen": 0.9793333333333333,
+      "bind_heldout": 1.0
+    },
+    "0.50": {
+      "between_cos": 0.08733333333333333,
+      "semantic_pearson": 0.8673333333333333,
+      "gen": 1.0,
+      "bind_heldout": 0.8333333333333334
+    },
+    "0.70": {
+      "between_cos": 0.12833333333333333,
+      "semantic_pearson": 0.9426666666666668,
+      "gen": 1.0,
+      "bind_heldout": 0.9166666666666666
+    },
+    "0.85": {
+      "between_cos": 0.159,
+      "semantic_pearson": 0.968,
+      "gen": 1.0,
+      "bind_heldout": 0.16666666666666666
+    },
+    "0.95": {
+      "between_cos": 0.17933333333333334,
+      "semantic_pearson": 0.9780000000000001,
+      "gen": 1.0,
+      "bind_heldout": 0.3333333333333333
+    }
+  }
+}

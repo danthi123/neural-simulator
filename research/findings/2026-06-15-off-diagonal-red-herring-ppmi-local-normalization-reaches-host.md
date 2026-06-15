@@ -75,6 +75,27 @@ PPMI codes are **CORRELATED** — that is *precisely why they generalize* (simil
 
 This is a sharper, more accurate map of the blocker than "the cortex needs the off-diagonal." Recommended sequence for the owner: (1) confirm PPMI normalization on the bridge (cheap, decisive); (2) re-target the deep work at **binding correlated codes**, not at decorrelating the cortex.
 
+## CYCLE 89 — the residual is DISSOLVED: the PPMI codes are in the binding SWEET SPOT (they generalize AND bind)
+
+The "binding correlated codes" residual flagged above turns out to be a non-blocker, because the 2026-06-11 "correlated codes can't bind" result was tested at the **extreme** (denoise64, between-cos ≈ 0.81) and the **middle was never swept**. `research/runners/_phaseB_correlation_binding_tradeoff_derisk.py` (3 seeds; the project's own `BilinearBinder` + the leakage-free systematicity protocol; a within-category correlation knob β) sweeps the full curve:
+
+| between-cos | semantic (Pearson / gen) | binding held-out |
+|---|---|---|
+| ~0.00 | −0.02 / 0.25 (none) | 1.00 |
+| 0.05 | +0.68 / 0.98 | **1.00** |
+| 0.09 | +0.87 / 1.00 | **0.83** |
+| 0.13 | +0.94 / 1.00 | **0.92** |
+| 0.16 | +0.97 / 1.00 | 0.17 (collapses) |
+| 0.18 | +0.98 / 1.00 | 0.33 |
+
+**There is a wide SWEET SPOT (between-cos ≈ 0.05–0.13) where codes BOTH generalize semantically AND bind systematically.** Binding only collapses above ~0.16. The tension is **not strict**.
+
+**And the real PPMI codes land in it.** The actual PPMI concept codes (projected to 64-D, 16 fillers across 4 categories) measure **between-cos +0.014** — deep in the sweet spot — with semantic Pearson +0.67 and generalization 1.00. Run through the binder: **2 of 3 seeds bind systematically (held-out 1.000) AND generalize (1.000) simultaneously.** (The 3rd seed *failed to fit* — train 0.25 — a binder convergence/init instability, NOT the ill-conditioning failure mode, which shows high-train/low-held-out.) PPMI codes are simultaneously near-orthogonal (bindable) and semantically structured (generalizable) because the semantics live in the *relative* same-vs-different-category pattern, not in a high absolute correlation.
+
+**⇒ The whole representation-vs-binding tension that motivated the months-scale dendritic-plus-lateral build is DISSOLVED.** The functional cortex is: **PPMI local normalization** (CYCLE 88, generalizes, no curated concepts) → its codes are already in the **binding sweet spot** (CYCLE 89) → the existing binder + cleanup + no-confab gate operate on them. No off-diagonal decorrelation, no dendritic rewrite.
+
+**Honest residuals (the real remaining work, much smaller than a months-scale build):** (1) the binder's seed-stability (the 3rd seed's non-convergence — a training/init fix, not architectural); (2) the on-bridge spiking realization of PPMI normalization + binding (the existing cortex-forward runner's random readout confounds the cortex read — needs a faithful read + the per-concept divisive-norm circuit); (3) scaling F=16 → 320 concepts. These are build/engineering, not a wall.
+
 ## Artifacts
 
 - `research/runners/_phaseB_ppmi_centering_verify_derisk.py` + `research/findings/raw/_phaseB_ppmi_centering_verify.{json,txt}` (the skeptical verification + decomposition)

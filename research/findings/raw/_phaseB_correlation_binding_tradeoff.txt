@@ -1,0 +1,39 @@
+[correlation-binding tradeoff de-risk] seeds=(42, 43, 44) C=4 per-cat=4 R=4 -- is there a code-correlation SWEET SPOT (semantic generalization AND binding)?
+
+[corr-binding tradeoff seed 42]  (beta: within-category correlation knob)
+  beta=0.00: between-cos +0.008 | SEMANTIC Pearson -0.024 (gen 0.31/ch 0.25) | BIND train 1.00 held-out 1.00
+  beta=0.30: between-cos +0.067 | SEMANTIC Pearson +0.518 (gen 0.94/ch 0.25) | BIND train 1.00 held-out 1.00
+  beta=0.50: between-cos +0.117 | SEMANTIC Pearson +0.797 (gen 1.00/ch 0.25) | BIND train 1.00 held-out 1.00
+  beta=0.70: between-cos +0.169 | SEMANTIC Pearson +0.912 (gen 1.00/ch 0.25) | BIND train 1.00 held-out 1.00
+  beta=0.85: between-cos +0.207 | SEMANTIC Pearson +0.952 (gen 1.00/ch 0.25) | BIND train 0.78 held-out 0.25
+  beta=0.95: between-cos +0.230 | SEMANTIC Pearson +0.971 (gen 1.00/ch 0.25) | BIND train 0.23 held-out 0.50
+
+[corr-binding tradeoff seed 43]  (beta: within-category correlation knob)
+  beta=0.00: between-cos -0.017 | SEMANTIC Pearson +0.099 (gen 0.31/ch 0.25) | BIND train 1.00 held-out 1.00
+  beta=0.30: between-cos +0.042 | SEMANTIC Pearson +0.788 (gen 1.00/ch 0.25) | BIND train 1.00 held-out 1.00
+  beta=0.50: between-cos +0.074 | SEMANTIC Pearson +0.913 (gen 1.00/ch 0.25) | BIND train 0.97 held-out 1.00
+  beta=0.70: between-cos +0.104 | SEMANTIC Pearson +0.962 (gen 1.00/ch 0.25) | BIND train 1.00 held-out 1.00
+  beta=0.85: between-cos +0.126 | SEMANTIC Pearson +0.979 (gen 1.00/ch 0.25) | BIND train 0.43 held-out 0.25
+  beta=0.95: between-cos +0.140 | SEMANTIC Pearson +0.984 (gen 1.00/ch 0.25) | BIND train 0.27 held-out 0.50
+
+[corr-binding tradeoff seed 44]  (beta: within-category correlation knob)
+  beta=0.00: between-cos -0.006 | SEMANTIC Pearson -0.121 (gen 0.12/ch 0.25) | BIND train 1.00 held-out 1.00
+  beta=0.30: between-cos +0.034 | SEMANTIC Pearson +0.721 (gen 1.00/ch 0.25) | BIND train 1.00 held-out 1.00
+  beta=0.50: between-cos +0.071 | SEMANTIC Pearson +0.892 (gen 1.00/ch 0.25) | BIND train 1.00 held-out 0.50
+  beta=0.70: between-cos +0.112 | SEMANTIC Pearson +0.954 (gen 1.00/ch 0.25) | BIND train 0.87 held-out 0.75
+  beta=0.85: between-cos +0.144 | SEMANTIC Pearson +0.973 (gen 1.00/ch 0.25) | BIND train 0.68 held-out 0.00
+  beta=0.95: between-cos +0.168 | SEMANTIC Pearson +0.979 (gen 1.00/ch 0.25) | BIND train 0.30 held-out 0.00
+
+================================================================================================
+  MEAN (3 seeds)  [binding chance = nearest-of-16 ~ 0.06; semantic chance 0.25]
+  beta=0.00: between-cos -0.005 | SEMANTIC -0.015 (gen 0.25) | BIND held-out 1.00
+  beta=0.30: between-cos +0.048 | SEMANTIC +0.676 (gen 0.98) | BIND held-out 1.00  <<< SWEET SPOT (semantic AND binding)
+  beta=0.50: between-cos +0.087 | SEMANTIC +0.867 (gen 1.00) | BIND held-out 0.83  <<< SWEET SPOT (semantic AND binding)
+  beta=0.70: between-cos +0.128 | SEMANTIC +0.943 (gen 1.00) | BIND held-out 0.92  <<< SWEET SPOT (semantic AND binding)
+  beta=0.85: between-cos +0.159 | SEMANTIC +0.968 (gen 1.00) | BIND held-out 0.17
+  beta=0.95: between-cos +0.179 | SEMANTIC +0.978 (gen 1.00) | BIND held-out 0.33
+================================================================================================
+  SWEET SPOT FOUND (the tension is NOT strict): at beta=0.30 the codes BOTH generalize semantically (Pearson +0.676) AND bind systematically (held-out 1.00). ==> a moderately-correlated code generalizes across similar concepts AND supports systematic binding -> the functional cortex is reachable WITHOUT decorrelating away the semantics. The build target = codes at this correlation level (the CYCLE-88 PPMI codes' regime, if their between-cos lands near beta=0.30).
+  Total elapsed: 112.9s
+
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_phaseB_correlation_binding_tradeoff.json
