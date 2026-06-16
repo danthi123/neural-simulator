@@ -833,9 +833,21 @@ arc was de-risked cheapest-first BEFORE any protected edit:
   binding primitive** (= the production composer binding the learned codes; binding-by-coincidence /
   dendritic-multiplication is a STRUCTURAL neural primitive — not a host shortcut, and not learnable from
   scratch on point neurons). Finding:
-  `2026-06-16-onsubstrate-learned-binder-single-attr-GO-bundling-NEGATIVE.md`. The remaining honest residual in
-  the conversational pipeline is **sentence GENERATION** (the recollection→sentence formatting is still a host
-  template; deep-research scoping the brain-based de-templating is underway).
+  `2026-06-16-onsubstrate-learned-binder-single-attr-GO-bundling-NEGATIVE.md`.
+  (3) **Sentence GENERATION de-templating (CYCLE 104-105):** the last conversational-output host shortcut — the
+  word-ordering f-string `f"{agent} {action} {patient}"` — is now de-risked + wired to a NEURAL mechanism, opt-in.
+  Deep-research (controller-verified) re-framed it as serial-order PRODUCTION (a prior closed-loop HVC generator
+  failed only because its self-comprehension JUDGE couldn't read order; the fix = the stored fact as an external
+  order-teacher). Cheap-first de-risk GO both phases, 6/6 seeds: a **rate-coded competitive-queuing serial-order
+  generator** (Grossberg/Bullock-Rhodes; catalog G.07/H.19) — the frame's primacy gradient = graded current →
+  per-pool spiking RATE ranking = the emission order — beats the permuted-order + no-learning anti-cheat controls.
+  Wired into `BrainConversationalAgent(enable_neural_render=True)` (default OFF, byte-identical): `describe()`'s
+  word order is now produced by the spiking CQ read-out, NOT a host literal, with the no-confab moat preserved
+  (`test_neural_render_describe` GPU GATE PASS). HONEST SCOPE: the SVO frame's ordering is neural (= what the
+  f-string did); the remaining host orders (embedded-clause render, adjective-noun, dialogue replies) and
+  MULTI-FRAME order-learning (different orders per frame = real syntax) are bounded follow-ons. Findings:
+  `2026-06-16-sentence-generation-biologization-deep-research.md`, `2026-06-16-sentence-generation-serial-order-cheap-first-GO.md`.
+  Runners: `neural_serial_order_renderer.py`, `_phaseB_serial_order_{cq,spiking}_derisk.py`.
 
 `SIM_BACKEND=cupy` (GPU) is required for the merged-bridge runs (numpy is a tiny-smoke / CI path only).
 
