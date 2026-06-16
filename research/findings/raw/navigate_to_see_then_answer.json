@@ -1,0 +1,469 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "chance": 0.25,
+      "object_layout": {
+        "1,2": "apple",
+        "3,2": "cat",
+        "5,2": "dog",
+        "7,2": "river"
+      },
+      "route_train_stats": {
+        "route_weight_on_diag_mean": 8.163035691755997,
+        "route_weight_off_diag_mean": 0.6747620711842227,
+        "route_weight_max": 15.585027694702148,
+        "n_train_trials": 240
+      },
+      "readout_region": "sel",
+      "coupled": {
+        "n_encountered": 3,
+        "n_recall_correct": 3,
+        "recall_acc": 1.0,
+        "spurious_tags": [],
+        "encountered": [
+          "apple",
+          "cat",
+          "dog"
+        ],
+        "per_obj_top1": {
+          "apple": "apple",
+          "river": null,
+          "dog": "dog",
+          "cat": "cat"
+        },
+        "n_moves": 5,
+        "reached_all_waypoints": true
+      },
+      "isolated_nav": {
+        "n_encountered": 0,
+        "n_recall_correct": 0,
+        "recall_acc": 0.0,
+        "spurious_tags": [],
+        "encountered": [],
+        "per_obj_top1": {
+          "apple": null,
+          "river": null,
+          "dog": null,
+          "cat": null
+        },
+        "n_tags": 0,
+        "n_moves": 7
+      },
+      "isolated_perception": {
+        "n_encountered": 0,
+        "n_recall_correct": 0,
+        "recall_acc": 0.0,
+        "spurious_tags": [],
+        "encountered": [],
+        "per_obj_top1": {
+          "apple": null,
+          "river": null,
+          "dog": null,
+          "cat": null
+        },
+        "n_tags": 0,
+        "has_body": false
+      },
+      "lesion": {
+        "n_encountered": 3,
+        "n_recall_correct": 0,
+        "recall_acc": 0.0,
+        "spurious_tags": [],
+        "encountered": [
+          "apple",
+          "cat",
+          "dog"
+        ],
+        "per_obj_top1": {
+          "apple": "dog",
+          "river": null,
+          "dog": "apple",
+          "cat": "apple"
+        },
+        "n_lesioned_synapses": 42025
+      },
+      "scramble": {
+        "n_encountered": 3,
+        "n_recall_correct": 3,
+        "recall_acc": 1.0,
+        "spurious_tags": [],
+        "encountered": [
+          "river",
+          "dog",
+          "cat"
+        ],
+        "per_obj_top1": {
+          "apple": null,
+          "river": "river",
+          "dog": "dog",
+          "cat": "cat"
+        },
+        "specificity_ok": true
+      },
+      "provenance": {
+        "perception_side_current_writes": [
+          "cortex_it <- orthogonal_drive_pattern(object) DURING the live encounter  [legitimate sensory render: the environment presents the perceived object as the agent arrives at its cell]"
+        ],
+        "body_side_current_writes": [
+          "cascade tonic pacemakers (GPe/GPi/STN/SNc/thal) + cortex_{steer} bias toward the next route waypoint  [body/environment scaffolding: the agent's trajectory + intrinsic drive; the MOVE is the neural sel/motor winner]"
+        ],
+        "recall_side_current_writes": [
+          "stimulate_tag(seen_<obj>)  [drives the TAGGED neurons = the perceived cortex_it ensemble, NOT a copied percept vector; language_output is NEVER driven at recall]"
+        ],
+        "engram_region_filter": "cortex_it",
+        "every_tag_is_a_cortex_it_subset": true,
+        "no_percept_vector_copied_into_recall_drive": true,
+        "recall_is_neural_reactivation_not_python_lookup": true,
+        "tags": [
+          {
+            "tag": "seen_apple",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_cat",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_dog",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 43,
+      "backend": "cupy",
+      "chance": 0.25,
+      "object_layout": {
+        "1,2": "river",
+        "3,2": "dog",
+        "5,2": "cat",
+        "7,2": "apple"
+      },
+      "route_train_stats": {
+        "route_weight_on_diag_mean": 8.445756807424804,
+        "route_weight_off_diag_mean": 0.6762120364032767,
+        "route_weight_max": 16.502986907958984,
+        "n_train_trials": 240
+      },
+      "readout_region": "sel",
+      "coupled": {
+        "n_encountered": 3,
+        "n_recall_correct": 3,
+        "recall_acc": 1.0,
+        "spurious_tags": [],
+        "encountered": [
+          "river",
+          "dog",
+          "cat"
+        ],
+        "per_obj_top1": {
+          "apple": null,
+          "river": "river",
+          "dog": "dog",
+          "cat": "cat"
+        },
+        "n_moves": 5,
+        "reached_all_waypoints": true
+      },
+      "isolated_nav": {
+        "n_encountered": 0,
+        "n_recall_correct": 0,
+        "recall_acc": 0.0,
+        "spurious_tags": [],
+        "encountered": [],
+        "per_obj_top1": {
+          "apple": null,
+          "river": null,
+          "dog": null,
+          "cat": null
+        },
+        "n_tags": 0,
+        "n_moves": 5
+      },
+      "isolated_perception": {
+        "n_encountered": 0,
+        "n_recall_correct": 0,
+        "recall_acc": 0.0,
+        "spurious_tags": [],
+        "encountered": [],
+        "per_obj_top1": {
+          "apple": null,
+          "river": null,
+          "dog": null,
+          "cat": null
+        },
+        "n_tags": 0,
+        "has_body": false
+      },
+      "lesion": {
+        "n_encountered": 3,
+        "n_recall_correct": 0,
+        "recall_acc": 0.0,
+        "spurious_tags": [],
+        "encountered": [
+          "river",
+          "dog",
+          "cat"
+        ],
+        "per_obj_top1": {
+          "apple": null,
+          "river": "apple",
+          "dog": "apple",
+          "cat": "apple"
+        },
+        "n_lesioned_synapses": 42025
+      },
+      "scramble": {
+        "n_encountered": 3,
+        "n_recall_correct": 3,
+        "recall_acc": 1.0,
+        "spurious_tags": [],
+        "encountered": [
+          "apple",
+          "cat",
+          "dog"
+        ],
+        "per_obj_top1": {
+          "apple": "apple",
+          "river": null,
+          "dog": "dog",
+          "cat": "cat"
+        },
+        "specificity_ok": true
+      },
+      "provenance": {
+        "perception_side_current_writes": [
+          "cortex_it <- orthogonal_drive_pattern(object) DURING the live encounter  [legitimate sensory render: the environment presents the perceived object as the agent arrives at its cell]"
+        ],
+        "body_side_current_writes": [
+          "cascade tonic pacemakers (GPe/GPi/STN/SNc/thal) + cortex_{steer} bias toward the next route waypoint  [body/environment scaffolding: the agent's trajectory + intrinsic drive; the MOVE is the neural sel/motor winner]"
+        ],
+        "recall_side_current_writes": [
+          "stimulate_tag(seen_<obj>)  [drives the TAGGED neurons = the perceived cortex_it ensemble, NOT a copied percept vector; language_output is NEVER driven at recall]"
+        ],
+        "engram_region_filter": "cortex_it",
+        "every_tag_is_a_cortex_it_subset": true,
+        "no_percept_vector_copied_into_recall_drive": true,
+        "recall_is_neural_reactivation_not_python_lookup": true,
+        "tags": [
+          {
+            "tag": "seen_river",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_dog",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_cat",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 44,
+      "backend": "cupy",
+      "chance": 0.25,
+      "object_layout": {
+        "1,2": "river",
+        "3,2": "cat",
+        "5,2": "apple",
+        "7,2": "dog"
+      },
+      "route_train_stats": {
+        "route_weight_on_diag_mean": 7.98408112191998,
+        "route_weight_off_diag_mean": 0.6112417712520989,
+        "route_weight_max": 17.331445693969727,
+        "n_train_trials": 240
+      },
+      "readout_region": "sel",
+      "coupled": {
+        "n_encountered": 3,
+        "n_recall_correct": 3,
+        "recall_acc": 1.0,
+        "spurious_tags": [],
+        "encountered": [
+          "river",
+          "cat",
+          "apple"
+        ],
+        "per_obj_top1": {
+          "apple": "apple",
+          "river": "river",
+          "dog": null,
+          "cat": "cat"
+        },
+        "n_moves": 5,
+        "reached_all_waypoints": true
+      },
+      "isolated_nav": {
+        "n_encountered": 0,
+        "n_recall_correct": 0,
+        "recall_acc": 0.0,
+        "spurious_tags": [],
+        "encountered": [],
+        "per_obj_top1": {
+          "apple": null,
+          "river": null,
+          "dog": null,
+          "cat": null
+        },
+        "n_tags": 0,
+        "n_moves": 8
+      },
+      "isolated_perception": {
+        "n_encountered": 0,
+        "n_recall_correct": 0,
+        "recall_acc": 0.0,
+        "spurious_tags": [],
+        "encountered": [],
+        "per_obj_top1": {
+          "apple": null,
+          "river": null,
+          "dog": null,
+          "cat": null
+        },
+        "n_tags": 0,
+        "has_body": false
+      },
+      "lesion": {
+        "n_encountered": 3,
+        "n_recall_correct": 0,
+        "recall_acc": 0.0,
+        "spurious_tags": [],
+        "encountered": [
+          "river",
+          "cat",
+          "apple"
+        ],
+        "per_obj_top1": {
+          "apple": "apple",
+          "river": "apple",
+          "dog": null,
+          "cat": "apple"
+        },
+        "n_lesioned_synapses": 42025
+      },
+      "scramble": {
+        "n_encountered": 3,
+        "n_recall_correct": 3,
+        "recall_acc": 1.0,
+        "spurious_tags": [],
+        "encountered": [
+          "dog",
+          "apple",
+          "cat"
+        ],
+        "per_obj_top1": {
+          "apple": "apple",
+          "river": null,
+          "dog": "dog",
+          "cat": "cat"
+        },
+        "specificity_ok": true
+      },
+      "provenance": {
+        "perception_side_current_writes": [
+          "cortex_it <- orthogonal_drive_pattern(object) DURING the live encounter  [legitimate sensory render: the environment presents the perceived object as the agent arrives at its cell]"
+        ],
+        "body_side_current_writes": [
+          "cascade tonic pacemakers (GPe/GPi/STN/SNc/thal) + cortex_{steer} bias toward the next route waypoint  [body/environment scaffolding: the agent's trajectory + intrinsic drive; the MOVE is the neural sel/motor winner]"
+        ],
+        "recall_side_current_writes": [
+          "stimulate_tag(seen_<obj>)  [drives the TAGGED neurons = the perceived cortex_it ensemble, NOT a copied percept vector; language_output is NEVER driven at recall]"
+        ],
+        "engram_region_filter": "cortex_it",
+        "every_tag_is_a_cortex_it_subset": true,
+        "no_percept_vector_copied_into_recall_drive": true,
+        "recall_is_neural_reactivation_not_python_lookup": true,
+        "tags": [
+          {
+            "tag": "seen_river",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_cat",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_apple",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          }
+        ]
+      }
+    }
+  ],
+  "verdict": {
+    "verdict": "GO",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "chance": 0.25,
+    "coupled_recalls_encountered_all_seeds": true,
+    "avg_coupled_recall_acc": 1.0,
+    "isolated_nav_no_recall_all_seeds": true,
+    "isolated_perception_no_recall_all_seeds": true,
+    "lesion_collapses_all_seeds": true,
+    "scramble_specificity_all_seeds": true,
+    "provenance_clean_all_seeds": true,
+    "coupled_recall_per_seed": {
+      "42": "3/3",
+      "43": "3/3",
+      "44": "3/3"
+    },
+    "lesion_recall_per_seed": {
+      "42": "0/3",
+      "43": "0/3",
+      "44": "0/3"
+    },
+    "encountered_per_seed": {
+      "42": [
+        "apple",
+        "cat",
+        "dog"
+      ],
+      "43": [
+        "river",
+        "dog",
+        "cat"
+      ],
+      "44": [
+        "river",
+        "cat",
+        "apple"
+      ]
+    },
+    "scramble_encountered_per_seed": {
+      "42": [
+        "river",
+        "dog",
+        "cat"
+      ],
+      "43": [
+        "apple",
+        "cat",
+        "dog"
+      ],
+      "44": [
+        "dog",
+        "apple",
+        "cat"
+      ]
+    }
+  }
+}
