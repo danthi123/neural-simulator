@@ -1,0 +1,54 @@
+{
+  "backend": "cupy",
+  "boundary_alpha": 0.95,
+  "blocks": [
+    {
+      "alpha": 0.95,
+      "mean_code_sim": 0.9828327876456165,
+      "mean_clean": 1.0,
+      "mean_floor": 0.5,
+      "per_seed_clean": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "tolerated": true
+    },
+    {
+      "alpha": 0.98,
+      "mean_code_sim": 0.9992141724238789,
+      "mean_clean": 0.5277777777777778,
+      "mean_floor": 0.3055555555555556,
+      "per_seed_clean": [
+        0.6666666666666666,
+        0.5833333333333334,
+        0.3333333333333333
+      ],
+      "tolerated": false
+    },
+    {
+      "alpha": 0.99,
+      "mean_code_sim": 0.9999739218482069,
+      "mean_clean": 0.3055555555555556,
+      "mean_floor": 0.19444444444444442,
+      "per_seed_clean": [
+        0.4166666666666667,
+        0.4166666666666667,
+        0.08333333333333333
+      ],
+      "tolerated": false
+    },
+    {
+      "alpha": 1.0,
+      "mean_code_sim": 1.0,
+      "mean_clean": 0.2777777777777778,
+      "mean_floor": 0.19444444444444442,
+      "per_seed_clean": [
+        0.3333333333333333,
+        0.4166666666666667,
+        0.08333333333333333
+      ],
+      "tolerated": false
+    }
+  ]
+}

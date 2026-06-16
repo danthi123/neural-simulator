@@ -135,14 +135,45 @@ meaningful live-perception codes = a production composer composing *what the age
 `_step3_grounded_codes_production_composer.json` D=512, `_step3_grounded_codes_production_composer_6seed.json`
 D=2048.)
 
+## CORRELATED-percept boundary map — the compose algebra tolerates correlation up to code-sim ≈0.98
+
+`_step3_correlated_percept_boundary.py` (GPU, 3 seeds): sweep a shared-common-mode fraction α in each object's
+percept at constant total drive (α=0 orthogonal → α=1 all objects identical), measure held-out compose vs the
+induced mean pairwise CODE similarity:
+
+| α | mean code-sim | held-out clean | status |
+|---|---------------|----------------|--------|
+| 0.00 | 0.020 | 1.000 | tolerated |
+| 0.25 | 0.145 | 1.000 | tolerated |
+| 0.50 | 0.409 | 1.000 | tolerated |
+| 0.75 | 0.719 | 1.000 | tolerated |
+| 0.90 | 0.928 | 1.000 | tolerated |
+| 0.95 | 0.983 | 1.000 | tolerated |
+| 0.98 | 0.999 | 0.528 | degraded |
+| 0.99–1.0 | 1.000 | ~0.29 | degraded (codes identical) |
+
+**The compose algebra is robust to percept/code correlation up to code-sim ≈0.98** — it breaks only when codes are
+~99.9% identical (degenerate). Mechanism: the random role-binding decorrelates the bind/unbind cross-terms, so
+cleanup only needs the diagonal self-similarity (1.0) to beat the off-diagonal by more than the cross-term noise
+(~1/√D ≈ 0.022 at D=2048); that margin survives until codes are nearly degenerate. This is *more robust than the
+flat-distinct framing implied* — the shared-grounded-codes route does not require decorrelated codes for the
+COMPOSE operation to work.
+
+**Crucial caveat (do not over-read):** this maps the robustness of the **compose/recovery operation** to correlated
+codes. It does NOT establish that correlated codes buy **generalization across similar concepts** (transferring
+knowledge from "dog" to "cat" because their codes are similar) — that is a *separate* capability and is the actual
+job of the dendritic / option-B / PPMI-structured-cortex frontier (CLAUDE.md step-3 fork; CYCLE 88's "decorrelation
+is a red herring; generalization needs PPMI local normalization"). "The algebra tolerates correlation" ≠
+"correlation provides generalization." Only the former is shown here; the latter remains the gated frontier.
+
 ## What remains (owner-gated)
 
 1. **Integration build:** wire the grounded-code map onto the merged nav+conv bridge (`nav_conv_merged_bridge.py`)
    so the *navigate-to-see* agent can **compose** a perceived-object fact in-episode (not just recall) — a GPU
    build on the merged substrate.
-2. **Semantically-correlated cortex:** the dendritic / option-B frontier (CLAUDE.md step-3 fork) — needed only for
-   generalizing across *similar* concepts (the correlated regime), a months-scale arc. The
-   `_step3_correlated_percept_boundary.py` run maps exactly where the flat-distinct approach gives way to this.
+2. **Semantically-structured cortex (generalization):** the dendritic / option-B / PPMI frontier (CLAUDE.md step-3
+   fork) — needed for *generalizing across similar concepts*, NOT for compose-robustness (which the boundary map
+   shows tolerates correlation). A months-scale arc.
 
 ## BRAIN-BASED-ONLY accounting
 

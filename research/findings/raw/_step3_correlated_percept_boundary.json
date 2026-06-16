@@ -1,0 +1,66 @@
+{
+  "backend": "cupy",
+  "boundary_alpha": 0.9,
+  "blocks": [
+    {
+      "alpha": 0.0,
+      "mean_code_sim": 0.020304798707093848,
+      "mean_clean": 1.0,
+      "mean_floor": 0.5,
+      "per_seed_clean": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "tolerated": true
+    },
+    {
+      "alpha": 0.25,
+      "mean_code_sim": 0.14482061033716712,
+      "mean_clean": 1.0,
+      "mean_floor": 0.5,
+      "per_seed_clean": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "tolerated": true
+    },
+    {
+      "alpha": 0.5,
+      "mean_code_sim": 0.4087864364485551,
+      "mean_clean": 1.0,
+      "mean_floor": 0.5,
+      "per_seed_clean": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "tolerated": true
+    },
+    {
+      "alpha": 0.75,
+      "mean_code_sim": 0.7186107292328275,
+      "mean_clean": 1.0,
+      "mean_floor": 0.5,
+      "per_seed_clean": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "tolerated": true
+    },
+    {
+      "alpha": 0.9,
+      "mean_code_sim": 0.9280173374589494,
+      "mean_clean": 1.0,
+      "mean_floor": 0.5,
+      "per_seed_clean": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "tolerated": true
+    }
+  ]
+}
