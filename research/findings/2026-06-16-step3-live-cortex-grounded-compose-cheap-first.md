@@ -1,12 +1,15 @@
-# Step-3 cheap-first de-risk — do LIVE `cortex_it` RATE-derived grounded codes COMPOSE (not just recall)? **GO (mechanism, 4-object scope)**
+# Step-3 cheap-first de-risk — do LIVE `cortex_it` RATE-derived grounded codes COMPOSE (not just recall)? **GO — scales to 32 objects**
 
 **Date:** 2026-06-16
-**Runner:** `research/runners/_step3_live_cortex_grounded_compose_probe.py`
-**Raw:** `research/findings/raw/_step3_live_cortex_grounded_compose.json`
+**Runners:** `research/runners/_step3_live_cortex_grounded_compose_probe.py` (cheap-first, 4 objects, CPU) +
+`research/runners/_step3_live_cortex_grounded_compose_scale.py` (scaled stress, 8/16/32 objects, GPU)
+**Raw:** `research/findings/raw/_step3_live_cortex_grounded_compose.json` +
+`research/findings/raw/_step3_live_cortex_grounded_compose_scale.json`
 **Scoping (controller-verified):** `research/findings/2026-06-16-step3-compose-perceived-content-scoping.md`
 **Precedent (verified):** `research/runners/_visual_grounded_composition_probe.py` (grounded V1-matrix phasor codes compose)
-**Verdict:** **GO at the mechanism level** — 3 seeds (42/43/44), CPU `SIM_BACKEND=numpy` (512-neuron bridge,
-~1 s/seed = the tiny-smoke carve-out). Exit 0.
+**Verdict:** **GO** — the mechanism (3 seeds, CPU cheap-first) AND the scaled stress (8/16/32 objects, 3 seeds,
+GPU `SIM_BACKEND=cupy`) both pass. The live-spiking-rate grounding is NOT a 4-object artifact: it holds to 32
+objects (chance 0.031) where cleanup is non-trivial.
 
 ---
 
@@ -75,13 +78,33 @@ percept enters the bundling algebra cleanly.
   OR `b`, so the recall baseline gets one slot right by partial overlap. The floor being non-trivial makes the
   held-out ≫ floor gap a genuine separation, not an artifact of a degenerate baseline.
 
-## NEXT (the obvious stress, GPU)
+## SCALED STRESS (GPU) — DONE, holds to 32 objects
 
-Scale the object vocabulary to 16–32 objects, where cleanup over the codebook is non-trivial, and test whether the
-live `cortex_it` rate code (still 256 neurons) keeps the grounded phasor codes separable. If it holds, the shared-
-grounded-codes route is de-risked at a realistic vocabulary; if it degrades, that localizes the limit to the rate
-code's capacity at fixed neuron count (→ population code / more `cortex_it` neurons / a learned projection) — an
-honest map either way. Run on GPU (`SIM_BACKEND=cupy`).
+`_step3_live_cortex_grounded_compose_scale.py` (GPU `SIM_BACKEND=cupy`, 3 seeds, the SAME 256-neuron `cortex_it`
+substrate, adaptive percept sparsity so `n_active < stride = 256/n_objects` keeps the percepts separable; the
+corrupt test re-reads a live noisy percept, sampled to ≤48 held-out pairs to bound stepping; clean + floor on ALL
+held-out pairs):
+
+| objects | n_active | chance | held-out clean | held-out corrupt | recall floor | verdict |
+|---------|----------|--------|----------------|------------------|--------------|---------|
+| 8       | 16       | 0.125  | 1.000          | 1.000            | 0.500        | GO      |
+| 16      | 8        | 0.062  | 1.000          | 1.000            | 0.500        | GO      |
+| 32      | 4        | 0.031  | 1.000          | 0.924 (.896/.979/.896) | 0.500  | GO      |
+
+**The grounding is NOT a 4-object artifact.** At 32 objects (chance 0.031 — cleanup over 32 codes is genuinely
+non-trivial), with only **4 active neurons** per percept, the live spiking rate code still grounds phasor codes
+that clean up perfectly (1.000) and generalize to held-out (never-composed) facts far above the recall floor
+(0.500). The only degradation is a small, graceful corrupt dip at 32 objects (0.924, still ≫ the 0.80 gate): with
+only 4 active neurons the 15% percept dropout occasionally removes one, but 3 of 4 still separate the object among
+32. ⇒ the shared-grounded-codes route — a LIVE `cortex_it` spiking rate code through a fixed projection into the
+validated bundling algebra — is de-risked at a realistic vocabulary on the real spiking substrate.
+
+**Honest regime note:** the percepts here are orthogonal (disjoint bands), which is FAITHFUL to how the navigation
+perception actually renders objects (flat-distinct object codes — the same regime as the deployed nav substrate and
+the V=320 flat-distinct composition tier), NOT hand-imposed to make the test easy. It validates the FLAT-DISTINCT
+regime (the deployed one). The semantically-CORRELATED regime (similar objects share code structure → generalize
+across similar concepts) is the separate, deferred dendritic / option-B frontier (CLAUDE.md step-3 fork), not in
+scope here.
 
 ## BRAIN-BASED-ONLY accounting
 
