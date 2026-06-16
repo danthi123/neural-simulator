@@ -1,0 +1,133 @@
+{
+  "seed": 43,
+  "backend": "cupy",
+  "verdict": "NO-GO",
+  "elapsed_s": 231.46202659606934,
+  "chance_compose": 0.25,
+  "object_layout": {
+    "1,2": "river",
+    "3,2": "dog",
+    "5,2": "cat",
+    "7,2": "apple"
+  },
+  "byte_identity": true,
+  "byte_detail": {
+    "gen_present": true,
+    "appended_last": true,
+    "only_gen_past_cortex_it": true,
+    "cortex_it_after_rf": true,
+    "perc_base": 3436,
+    "cortex_it_tail": 3435,
+    "rf_tail": 3179,
+    "fact_last": 7483,
+    "n_neurons": 7484
+  },
+  "n_grounded": 3,
+  "grounded": [
+    "river",
+    "dog",
+    "cat"
+  ],
+  "nav_ok": true,
+  "n_moves": 5,
+  "reached_all_waypoints": true,
+  "compose_clean": 1.0,
+  "compose_floor": 0.5,
+  "n_held_out": 3,
+  "compose_go": true,
+  "gen": {
+    "n_cat": 4,
+    "chance": 0.25,
+    "held_out": [
+      1,
+      6,
+      9,
+      13
+    ],
+    "h5_concept_cat_acc": 0.5,
+    "h5_margin": 0.8079166666666667,
+    "h6_hybrid_recall_acc": 0.5,
+    "heldout_win_fire": 2.17,
+    "novel_win_fire": 1.0,
+    "gate_thresh": 1.3019999999999998,
+    "novel_familiar": false,
+    "novel_recall": null,
+    "gen_moat_abstains": true,
+    "h5_ok": true,
+    "h6_ok": true,
+    "answers": [
+      {
+        "true_cat": 0,
+        "keyed_cat": 0,
+        "recall": "cat"
+      },
+      {
+        "true_cat": 1,
+        "keyed_cat": 0,
+        "recall": "cat"
+      },
+      {
+        "true_cat": 2,
+        "keyed_cat": 2,
+        "recall": "cat"
+      },
+      {
+        "true_cat": 3,
+        "keyed_cat": 0,
+        "recall": "cat"
+      }
+    ]
+  },
+  "gen_go": true,
+  "no_regression": {
+    "parse_ok": false,
+    "what_ok": false,
+    "who_ok": false,
+    "moat_ok": true,
+    "desc_ok": false,
+    "describe": null,
+    "moat_what": null,
+    "moat_describe": null
+  },
+  "conv_ok": false,
+  "compose_moat_ok": true,
+  "compose_moat_abstain": [
+    1,
+    1
+  ],
+  "compose_moat_absent": [
+    [
+      "dog",
+      "near"
+    ]
+  ],
+  "compose_pos_recall": 1,
+  "compose_stored": [
+    [
+      "river",
+      "chase",
+      "dog"
+    ],
+    [
+      "cat",
+      "near",
+      "river"
+    ]
+  ],
+  "gen_moat_abstains": true,
+  "conv_moat_ok": true,
+  "moat_ok_all": true,
+  "moat_breach": false,
+  "lesion_compose": 0.16666666666666666,
+  "lesion_ok": true,
+  "iso_perception_grounded": 0,
+  "iso_ok": true,
+  "provenance": {
+    "grounded_code_is_live_rate_projection": true,
+    "composer_bound_to_merged_bridge": true,
+    "rf_complex_weights_allocated_after_store": true,
+    "perception_side_write": "cortex_it <- orthogonal_drive_pattern(object) DURING arrival [sensory render]",
+    "ground_write": "composer.concepts[o] = angle(M @ live_cortex_it_rate) [the only write into the percept code]"
+  },
+  "go": false
+}
