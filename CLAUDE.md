@@ -923,19 +923,29 @@ the conversation PPMI cortex's generalizing codes). Scoping `2026-06-16-generali
 - **on-substrate A GO** (`_genfrontier_onsubstrate_convergence_derisk.py`, `2026-06-16-generalization-onsubstrate-convergence.md`):
   the convergence is NEURAL — population-Hebbian co-activation of a structured-perception region + a concept region
   on a real `SimulationBridge` transfers category-generalization on SPIKES (held-out cat-acc 0.92, flat 0.17,
-  derangement collapses, moat intact). Honest residual (the rate-code-wall): the point-neuron concept assembly can't
-  spike from perception alone, so its response is read as graded population depolarization + the population lift
-  (n_per 12→100 took cat-acc 0→0.92) — the downstream SPIKING propagation to the who/what+moat pipeline is the
-  live-task build's piece.
+  derangement collapses, moat intact). (First read as graded population depolarization because the point-neuron
+  concept assembly can't spike from perception alone — the rate-code-wall — RESOLVED by the next de-risk.)
+- **graded-propagation GO** (`_genfrontier_graded_propagation_derisk.py`, `2026-06-16-generalization-graded-propagation.md`):
+  the rate-code residual is RESOLVED — with **NMDA on the concept region** (the slow NMDA conductance temporally
+  integrates the sparse perception drive past threshold), the converged concept assembly now **SPIKES** (146/cue,
+  real `cp_firing_states`) category-correctly for a held-out NOVEL-perceived cue — spike-based cat-acc 0.92 (=the
+  graded read, now neural), flat 0.25, derangement collapses, moat intact (controller-reproduced on GPU). The
+  concept→readout wiring is block-diagonal FIXED (category structure is LEARNED, not smuggled). ⇒ the novel-
+  perception response is now SYNAPTICALLY readable (the who/what+moat pipeline reads the concept's own spikes).
+  Honest bounded follow-on: a SECOND downstream relay hop loses fidelity (read-out region's own read 0.25).
 - **Decisive call confirmed + EXTENDED to perception:** the months-scale dendritic rewrite is NOT required —
   generalization needs LOCAL normalization (the conversation PPMI cortex) + similarity from shared features (the
   visual hierarchy) + Hebbian convergence, all point-neuron/feedforward. ATL convergence-zone biology
   (Patterson-Lambon Ralph hub-and-spoke; Garagnani-Pulvermüller 2018 spiking precedent).
-- **NEXT (the capstone, full reign):** the LIVE-TASK A+B build on the merged bridge — co-activate the visual-
-  hierarchy perception code (B) + the conversation cortex (A) when the agent perceives an object whose word streams,
-  commit shared assemblies, and test generalization to NOVEL similar perceived objects + the who/what matrix + the
-  no-confab moat. The one real piece to solve: propagating the converged graded concept code downstream (spiking
-  read-out / graded transmission — documented rate-code-wall fixes).
+- **⇒ the generalization MECHANISM is comprehensively de-risked (all 4 pieces GO, multi-seed, anti-cheated, NO
+  `sim/` edit). NEXT = the LIVE-TASK CAPSTONE integration** (the end-to-end demonstration, like
+  `navigate_to_compose_then_answer.py` was for compose): wire the 4 validated pieces — a real SHAPE render →
+  Gabor/V1 structured perception (B) → perception→concept NMDA Hebbian convergence co-activated with the streaming
+  word (A + graded-prop, so the concept SPIKES for a novel similar object) → the who/what + no-confab moat pipeline
+  answers/generalizes. All ingredients de-risked; the capstone is the assembly. Integration subtleties: connect the
+  Gabor shape render to the convergence's perception input, and the converged concept spikes to the pipeline's
+  concept representation. Stage it (single-seed integration smoke → who/what+moat on the generalized concept →
+  multi-seed). Reuse-by-import.
 
 ### Path 3 LLM-callable memory (2026-05-11): BridgeMemory API
 
