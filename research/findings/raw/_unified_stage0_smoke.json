@@ -1,0 +1,106 @@
+{
+  "verdict": "GO",
+  "seed": 43,
+  "chance": 0.25,
+  "h5_concept_cat_acc": 1.0,
+  "h6_hybrid_recall_acc": 1.0,
+  "concept_spikes_per_cue": 283.25,
+  "fact_spikes_per_cue": 186.5,
+  "parser_byte_stable": true,
+  "parser_correct": true,
+  "moat_abstains": true,
+  "result": {
+    "seed": 43,
+    "held_out": [
+      0,
+      3,
+      4,
+      6
+    ],
+    "chance": 0.25,
+    "parser": {
+      "parse_before": {
+        "agent": "dog",
+        "action": "chase",
+        "patient": "cat"
+      },
+      "parse_after": {
+        "agent": "dog",
+        "action": "chase",
+        "patient": "cat"
+      },
+      "roles_before": [
+        "agent",
+        "action",
+        "patient"
+      ],
+      "roles_after": [
+        "agent",
+        "action",
+        "patient"
+      ],
+      "byte_stable": true,
+      "correct": true
+    },
+    "h5_concept_cat_acc": 1.0,
+    "h6_hybrid_recall_acc": 1.0,
+    "concept_spikes_per_cue": 283.25,
+    "fact_spikes_per_cue": 186.5,
+    "heldout_win_fire": 1.9093749999999998,
+    "moat": {
+      "novel_keyed_cat": 3,
+      "novel_win_fire": 1.1375,
+      "gate_thresh": 1.145625,
+      "novel_familiar": false,
+      "novel_recall": null,
+      "moat_abstains": true,
+      "fam_contrast_ok": true
+    },
+    "answers": [
+      {
+        "true_cat": 0,
+        "keyed_cat": 0,
+        "recall": "cat",
+        "concept_cat_means": [
+          2.5,
+          0.2875,
+          0.3875,
+          0.1375
+        ]
+      },
+      {
+        "true_cat": 1,
+        "keyed_cat": 1,
+        "recall": "cat",
+        "concept_cat_means": [
+          1.0375,
+          1.6625,
+          0.35,
+          0.2625
+        ]
+      },
+      {
+        "true_cat": 2,
+        "keyed_cat": 2,
+        "recall": "cat",
+        "concept_cat_means": [
+          0.5875,
+          0.9125,
+          1.8125,
+          0.4375
+        ]
+      },
+      {
+        "true_cat": 3,
+        "keyed_cat": 3,
+        "recall": "cat",
+        "concept_cat_means": [
+          0.4875,
+          0.5875,
+          1.05,
+          1.6625
+        ]
+      }
+    ]
+  }
+}
