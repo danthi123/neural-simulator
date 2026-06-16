@@ -107,13 +107,19 @@ MOAT_ABSENT = [("river", "chase"), ("apple", "near")]
 
 
 # ── the merged nav-body + perception(cortex_it) + co-resident composer bridge ────────────────────────────────
-def build_compose_bridge(seed: int = 42, with_body: bool = True):
+def build_compose_bridge(seed: int = 42, with_body: bool = True, co_resident_generalization: bool = False):
     """Build the merged nav+conv bridge WITH the bare cortex_it perception region + the co-resident RF composer, and
     construct the navsee-style navigation handles (readout/cortex/tonic) against it + the fixed grounded-code map.
 
     with_body=True : the full nav cascade selects moves (spiking-WTA sel_X). with_body=False is the ISOLATED-PERCEPTION
                      control: no sel_X/cortex steer -> the cascade cannot move the agent, so it never ARRIVES at an
                      object cell -> nothing is grounded in-episode -> nothing composes.
+    co_resident_generalization=True (STAGE 2, additive default-off): ALSO append the Stage-1 generalization stack
+                     (structured-perception gen_perception -> NMDA gen_concept -> gen_fact + the trained-then-frozen
+                     rate-Hebbian convergence) so the SAME live bridge can generalize a novel similar perceived object
+                     to its category. Default False keeps the validated compose-perceived 6-seed path byte-identical
+                     (the gen regions are appended LAST, after rf + cortex_it, so all nav/parser/dlPFC/rf/cortex_it
+                     index bases are unchanged). handles["gen"] is present only when True.
 
     Returns (bridge, composer, handles, proj).
     """
@@ -125,7 +131,8 @@ def build_compose_bridge(seed: int = 42, with_body: bool = True):
     # the nav/parser/dlPFC index bases are byte-unchanged; cortex_it is the very last region).
     bridge, handles = build_merged_nav_conv_bridge(
         seed=seed, vocab=vocab, n_cortex=100, co_resident_rf=True, rf_D=D,
-        co_resident_perception=True, enable_spiking_wta_readout=with_body)
+        co_resident_perception=True, enable_spiking_wta_readout=with_body,
+        co_resident_generalization=co_resident_generalization)
     rm = bridge.region_manager
     region_names = set(rm.region_indices_dict())
 
