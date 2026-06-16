@@ -889,13 +889,31 @@ unit phasor, so the percept enters the validated bind/bundle/unbind/cleanup alge
   generalization."
 
 ⇒ the rate-vs-phasor wall is **dissolved for perceived-object facts** via shared grounded codes, on the live
-spiking substrate, drop-in to the production composer, moat intact. **OWNER-GATED next builds:** (1) the
-**integration build** — wire the grounded-code map onto the merged nav+conv bridge so navigate-to-see *composes*
-perceived-object facts in-episode (scoped + controller-verified in
-`2026-06-16-step3-integration-build-scoping.md`: one additive `co_resident_perception` kwarg on
-`build_merged_nav_conv_bridge`, NO `sim/` edit, cheap-first smoke gate, 4 anti-cheats; T0 of that plan is the
-first build step); (2) the dendritic/PPMI **generalization** frontier (months-scale). No `sim/` edit anywhere in
-the step-3 de-risk arc (reuse-by-import).
+spiking substrate, drop-in to the production composer, moat intact.
+
+**🎯 INTEGRATION BUILD DONE — "the agent COMPOSES what it perceives" on ONE brain, 6-seed GO (2026-06-16).**
+`research/runners/navigate_to_compose_then_answer.py` (finding `2026-06-16-navigate-to-compose-then-answer.md`):
+a LIVE merged nav+conv bridge episode where the agent NAVIGATES (the BG cascade selects each move neurally),
+PERCEIVES + GROUNDS each encountered object IN-EPISODE (`composer.concepts[o] = angle(M @ live_cortex_it_rate)`),
+COMPOSES a novel held-out perceived-object fact on the co-resident `rf` slice, then answers a who/what query +
+ABSTAINS on unstored. 6 seeds (42/43/44/100/101/102), GPU: held-out compose **1.000 ≫ mem-floor 0.444** (chance
+0.250) every seed, no-confab moat abstains 6/6 + a stored fact retrieves 6/6, **LESION (grounding severed) collapses
+the compose** (→ 0.167/0.000), ISO-perception (no body) grounds 0, byte-identity holds. This upgrades the (B)
+navigate-to-see RECALL milestone to **COMPOSE** on one bridge (nav cascade + parser + dlPFC + `rf` composer +
+perception all co-resident). NO `sim/` edit anywhere in the step-3 arc — two additive default-False RUNNER builder
+kwargs (`co_resident_perception`, `enable_spiking_wta_readout`); regression `test_merged_rf_composer_coresident`
+5/5 + `test_nav_conv_step2b_coresident` 7/7. HONEST SCOPE: flat-distinct OBJECT facts via the FIXED FHRR algebra
+(not a learned bind); NOT generalization across SIMILAR concepts (the separate frontier below).
+
+**NEXT FRONTIER — GENERALIZATION across SIMILAR concepts (scoped 2026-06-16, dendritic NOT required).**
+`research/findings/2026-06-16-generalization-frontier-scoping.md` (deep-research, controller-verified): the
+conversation cortex already generalizes (the PPMI stream cortex, on-bridge); the perception side does not (flat-
+distinct codes). Top option = **cross-modal Hebbian UNIFICATION** (co-activate perception + the conversation cortex
+when the agent perceives X while "X" streams → one shared concept assembly → perception inherits the generalizing
+codes + true multimodal grounding; ATL convergence-zone biology, Garagnani-Pulvermüller 2018 spiking precedent).
+Decisive call: the months-scale dendritic rewrite is NOT required (generalization needs LOCAL normalization, the
+OPPOSITE of the dendritic decorrelation; the conversation side is the on-bridge existence proof). Cheap-first +
+anti-cheats specified in the doc.
 
 ### Path 3 LLM-callable memory (2026-05-11): BridgeMemory API
 

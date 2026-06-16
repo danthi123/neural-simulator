@@ -53,7 +53,26 @@ now the perception region all co-resident.
 | ISO-perception (no body → no encounter) | 0 grounded → no compose |
 | T0 byte-identity (cortex_it after rf) | True |
 
-**6-seed validation (seeds 42/43/44/100/101/102, GPU):** _<PENDING — fill after T4>_
+**6-seed validation (seeds 42/43/44/100/101/102, GPU): GO on all 6.**
+
+| seed | grounded in-episode | held-out compose | mem-floor | LESION | moat | pos | ISO | byte-id |
+|------|---------------------|------------------|-----------|--------|------|-----|-----|---------|
+| 42   | 3 | 1.000 | 0.500 | 0.167 | 1/1 | 1 | 0 | True |
+| 43   | 3 | 1.000 | 0.500 | 0.167 | 1/1 | 1 | 0 | True |
+| 44   | 3 | 1.000 | 0.333 | 0.167 | 1/1 | 1 | 0 | True |
+| 100  | 3 | 1.000 | 0.500 | 0.167 | 1/1 | 1 | 0 | True |
+| 101  | 3 | 1.000 | 0.500 | 0.000 | 1/1 | 1 | 0 | True |
+| 102  | 3 | 1.000 | 0.333 | 0.000 | 1/1 | 1 | 0 | True |
+| **mean** | **3** | **1.000** | **0.444** | **0.111** | **6/6** | **6/6** | **0** | **True** |
+
+Every seed: grounds the 3 objects on its (seed-randomized) route in-episode, composes held-out perceived-object
+facts at 1.000 ≫ the memorization floor (mean 0.444, all ≫ chance 0.250), the no-confab moat abstains (6/6) while a
+stored fact still retrieves (6/6), **lesioning the grounding collapses the compose** (to 0.167 or 0.000 — far below
+the un-lesioned 1.000), no body → 0 grounded, and the byte-identity holds. Raw:
+`navigate_to_compose_then_answer_6seed.json`. (Honest note: the fixed corridor route passes 3 of the 4 placed
+objects, so the agent grounds 3/4 — a body-trajectory scaffold, not a perception limit; ≥2 grounded is the gate, met
+on every seed. The 4-object vocabulary makes the absolute compose a ceiling, as in the de-risks — the discriminating
+signals are held-out ≫ floor + the lesion collapse + the moat, all of which hold 6/6.)
 
 ## Anti-cheats (all required; all pass)
 
