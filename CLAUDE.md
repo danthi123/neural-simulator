@@ -938,14 +938,20 @@ the conversation PPMI cortex's generalizing codes). Scoping `2026-06-16-generali
   visual hierarchy) + Hebbian convergence, all point-neuron/feedforward. ATL convergence-zone biology
   (Patterson-Lambon Ralph hub-and-spoke; Garagnani-Pulvermüller 2018 spiking precedent).
 - **⇒ the generalization MECHANISM is comprehensively de-risked (all 4 pieces GO, multi-seed, anti-cheated, NO
-  `sim/` edit). NEXT = the LIVE-TASK CAPSTONE integration** (the end-to-end demonstration, like
-  `navigate_to_compose_then_answer.py` was for compose): wire the 4 validated pieces — a real SHAPE render →
-  Gabor/V1 structured perception (B) → perception→concept NMDA Hebbian convergence co-activated with the streaming
-  word (A + graded-prop, so the concept SPIKES for a novel similar object) → the who/what + no-confab moat pipeline
-  answers/generalizes. All ingredients de-risked; the capstone is the assembly. Integration subtleties: connect the
-  Gabor shape render to the convergence's perception input, and the converged concept spikes to the pipeline's
-  concept representation. Stage it (single-seed integration smoke → who/what+moat on the generalized concept →
-  multi-seed). Reuse-by-import.
+  `sim/` edit). THE CAPSTONE (end-to-end demonstration) — honest status:**
+  - **Stage 1 (vision→concept) = GO** (`_genfrontier_capstone_vision_to_concept_derisk.py`,
+    `2026-06-16-generalization-capstone-vision-to-concept.md`): a NOVEL object, perceived through the real Gabor/V1
+    front end (a shape → top-K structure-preserving perception drive), makes its CONCEPT neurons SPIKE in the
+    correct category (cat-acc 0.75, 3× chance, 3 seeds, flat baseline at chance, derangement collapses, moat
+    intact). **Generalization from pixels to spiking concepts — DEMONSTRATED.**
+  - **Stage 2 (verbalize) = honest BOUNDARY + hybrid path** (`_genfrontier_capstone_verbalize_derisk.py`,
+    `2026-06-16-generalization-capstone-verbalize.md`): the FULLY-SPIKING fact-tag recall (option a) is NEGATIVE
+    (cat-acc at chance + the spiking familiarity-gate moat breached — the runner correctly refused to weaken the
+    moat); the HYBRID (option b — the spiking concept keys the VALIDATED `RFPhasorComposer` recall + its intact
+    moat) reaches 0.75. The concept spikes carry the category info; the boundary is the fully-spiking associative
+    WTA recall + abstention gate at point-neuron scale. Does NOT undermine the generalization (stage 1 demonstrates
+    it). **Bounded follow-ons:** multi-seed the hybrid (capstone-completion path); OR fact-tag lateral inhibition +
+    the Bogacz-Brown familiarity gate to complete the fully-spiking version. Reuse-by-import, NO `sim/` edit.
 
 ### Path 3 LLM-callable memory (2026-05-11): BridgeMemory API
 
