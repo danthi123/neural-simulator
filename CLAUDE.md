@@ -905,15 +905,37 @@ kwargs (`co_resident_perception`, `enable_spiking_wta_readout`); regression `tes
 5/5 + `test_nav_conv_step2b_coresident` 7/7. HONEST SCOPE: flat-distinct OBJECT facts via the FIXED FHRR algebra
 (not a learned bind); NOT generalization across SIMILAR concepts (the separate frontier below).
 
-**NEXT FRONTIER — GENERALIZATION across SIMILAR concepts (scoped 2026-06-16, dendritic NOT required).**
-`research/findings/2026-06-16-generalization-frontier-scoping.md` (deep-research, controller-verified): the
-conversation cortex already generalizes (the PPMI stream cortex, on-bridge); the perception side does not (flat-
-distinct codes). Top option = **cross-modal Hebbian UNIFICATION** (co-activate perception + the conversation cortex
-when the agent perceives X while "X" streams → one shared concept assembly → perception inherits the generalizing
-codes + true multimodal grounding; ATL convergence-zone biology, Garagnani-Pulvermüller 2018 spiking precedent).
-Decisive call: the months-scale dendritic rewrite is NOT required (generalization needs LOCAL normalization, the
-OPPOSITE of the dendritic decorrelation; the conversation side is the on-bridge existence proof). Cheap-first +
-anti-cheats specified in the doc.
+**🎯 GENERALIZATION across SIMILAR concepts — DE-RISKED END-TO-END on the point-neuron substrate (2026-06-16),
+dendritic NOT required.** The honest open boundary of the compose-perceived arc (it uses flat-distinct codes, so it
+can't treat "dog"/"cat" as related) is now de-risked via **cross-modal Hebbian unification** (perception inherits
+the conversation PPMI cortex's generalizing codes). Scoping `2026-06-16-generalization-frontier-scoping.md`
+(deep-research, controller-verified) → three GO de-risks, all multi-seed, all anti-cheated, NO `sim/` edit:
+- **cheap-first GO** (`_genfrontier_crossmodal_unify_derisk.py`, `2026-06-16-generalization-crossmodal-unify-cheap-first.md`):
+  cross-modal convergence transfers the word cortex's category-generalization to perception — held-out (never-
+  converged) concepts land in their correct category 1.00 (chance 0.25) — but ONLY with similarity-structured
+  perception input (**Option B is the PREREQUISITE**: flat-distinct → chance). Category-derangement control
+  collapses; moat survives.
+- **Option B GO** (`_genfrontier_optionB_visual_similarity_derisk.py`, `2026-06-16-generalization-optionB-visual-similarity.md`):
+  legitimate sensory rendering (object shapes with shared visual features → the existing Gabor/V1 bank
+  `sim.visual_cortex.build_v1_simple_weights`) produces similarity-structured perception codes — within-cat 0.86 vs
+  between-cat 0.08 (flat baseline 0.0), **RSA pixel-provenance r=0.99** (label-free; the structure is VISUAL, not
+  injected). ⇒ NO learned projection needed; the visual hierarchy supplies the structure.
+- **on-substrate A GO** (`_genfrontier_onsubstrate_convergence_derisk.py`, `2026-06-16-generalization-onsubstrate-convergence.md`):
+  the convergence is NEURAL — population-Hebbian co-activation of a structured-perception region + a concept region
+  on a real `SimulationBridge` transfers category-generalization on SPIKES (held-out cat-acc 0.92, flat 0.17,
+  derangement collapses, moat intact). Honest residual (the rate-code-wall): the point-neuron concept assembly can't
+  spike from perception alone, so its response is read as graded population depolarization + the population lift
+  (n_per 12→100 took cat-acc 0→0.92) — the downstream SPIKING propagation to the who/what+moat pipeline is the
+  live-task build's piece.
+- **Decisive call confirmed + EXTENDED to perception:** the months-scale dendritic rewrite is NOT required —
+  generalization needs LOCAL normalization (the conversation PPMI cortex) + similarity from shared features (the
+  visual hierarchy) + Hebbian convergence, all point-neuron/feedforward. ATL convergence-zone biology
+  (Patterson-Lambon Ralph hub-and-spoke; Garagnani-Pulvermüller 2018 spiking precedent).
+- **NEXT (the capstone, full reign):** the LIVE-TASK A+B build on the merged bridge — co-activate the visual-
+  hierarchy perception code (B) + the conversation cortex (A) when the agent perceives an object whose word streams,
+  commit shared assemblies, and test generalization to NOVEL similar perceived objects + the who/what matrix + the
+  no-confab moat. The one real piece to solve: propagating the converged graded concept code downstream (spiking
+  read-out / graded transmission — documented rate-code-wall fixes).
 
 ### Path 3 LLM-callable memory (2026-05-11): BridgeMemory API
 
