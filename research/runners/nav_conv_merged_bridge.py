@@ -54,6 +54,20 @@ DLPFC_ATTRACTOR_WEIGHT = 30.0
 DLPFC_EDGE_SCALE = 60.0
 DLPFC_FIXED_GATE = "dlpfc_fixed"
 
+# ── generalization stack constants (STAGE 1, additive default-off) ────────────────────────────────────────
+# The generalization stack appended LAST (after rf + cortex_it) so the nav/parser/dlPFC/rf/cortex_it index
+# bases stay BYTE-UNCHANGED. Reuse-by-import the validated de-risk machinery (Gabor/V1 vision → top-K → the
+# rate-Hebbian convergence → the NMDA concept assembly → the convergent concept→fact tags). N_CAT/N_PER_CAT/F
+# are the de-risk's 4-category × 4-exemplar = 16-concept layout; the perception region is the V1-complex
+# feature dimension (one perception neuron per V1-complex cell). Distinct region names (`gen_*`) so they never
+# collide with the navigation `cortex_it` perception region or anything else on the merged bridge.
+GEN_PERCEPTION = "gen_perception"
+GEN_CONCEPT = "gen_concept"
+GEN_FACT = "gen_fact"
+# the generalization convergence gate (perception→concept edges); frozen after the convergence train pass, the
+# same trained-then-frozen discipline as the parser. The convergent concept→fact edges are plastic=False.
+GEN_CONV_GATE = "gen_convergence_fixed"
+
 
 # ── parser as framework regions/pathways ─────────────────────────────────────────────────────────────────
 def parser_regions_pathways(R: int = PARSER_R):
@@ -195,11 +209,206 @@ def _build_dlpfc_loop_population(ctx, words):
     }
 
 
+# ── generalization stack: regions, exact edges, and the trained-then-frozen convergence (STAGE 1) ──────────
+def _generalization_regions_pathways(gen_n_concept_per: int, gen_n_fact_per: int):
+    """The generalization stack's three framework regions + two pathways (declared so the framework takes the
+    clean wiring branch at init; their exact all-to-all / convergent block-diagonal edges are OVERWRITTEN in the
+    union_plan before the combined injection, the same pattern dlpfc_loop uses).
+
+      gen_perception : N_V1_COMPLEX cells (one perception neuron per V1-complex feature) — the structured-perception
+                       region that receives the Gabor/V1 top-K drive. internal_density=0, NMDA off.
+      gen_concept    : F × gen_n_concept_per population blocks, enable_nmda=True (the slow NMDA conductance
+                       integrates the sparse perception drive to SPIKES — the documented rate-code-wall lift).
+      gen_fact       : N_CAT × gen_n_fact_per fact-tag blocks, enable_nmda=True (the concept spikes drive the
+                       fact tags synaptically; the H6-hybrid reads which concept-category spiked).
+    Both pathways are declared so build_wiring_plan emits clean entries; those entries are then replaced.
+    """
+    from research.runners._genfrontier_capstone_vision_to_concept_derisk import N_V1_COMPLEX
+    from research.runners._genfrontier_onsubstrate_convergence_derisk import N_CAT, F
+    regions = [
+        BrainRegion(name=GEN_PERCEPTION, n_neurons=int(N_V1_COMPLEX), exc_fraction=1.0, internal_density=0.0),
+        BrainRegion(name=GEN_CONCEPT, n_neurons=F * int(gen_n_concept_per), exc_fraction=1.0,
+                    internal_density=0.0, enable_nmda=True),
+        BrainRegion(name=GEN_FACT, n_neurons=N_CAT * int(gen_n_fact_per), exc_fraction=1.0,
+                    internal_density=0.0, enable_nmda=True),
+    ]
+    pathways = [
+        # perception → concept: all-to-all, plastic, near-floor init (the rate-Hebbian convergence the LEARN pass
+        # grows). Tagged GEN_CONV_GATE so it can be isolated/frozen (the trained-then-frozen discipline).
+        RegionPathway(from_region=GEN_PERCEPTION, to_region=GEN_CONCEPT, density=1.0,
+                      weight_mean=0.05, weight_jitter=0.0, plastic=True, plasticity_gate=GEN_CONV_GATE),
+        # concept → fact: convergent block (every concept block of category c → fact-tag block c), FIXED.
+        RegionPathway(from_region=GEN_CONCEPT, to_region=GEN_FACT, density=1.0,
+                      weight_mean=30.0, weight_jitter=0.0, plastic=False),
+    ]
+    return regions, pathways
+
+
+def _build_generalization_edges(rm, gen_n_concept_per: int, gen_n_fact_per: int, fact_weight: float = 30.0):
+    """The EXACT generalization edges, keyed by the build_wiring_plan entry names so they OVERWRITE the framework's
+    uniform versions in the union_plan (the dlpfc_loop insertion pattern). Returns
+    (edge_overrides, gen_handles) where edge_overrides maps the two plan keys to their precise edge dicts and
+    gen_handles holds the resolved region index arrays + per-block reshapes (for training + the spike read)."""
+    from research.runners._genfrontier_capstone_vision_to_concept_derisk import N_V1_COMPLEX
+    from research.runners._genfrontier_onsubstrate_convergence_derisk import N_CAT, N_PER_CAT, F
+
+    perc_region = np.asarray(rm.indices(GEN_PERCEPTION), dtype=np.int64)
+    conc_region = np.asarray(rm.indices(GEN_CONCEPT), dtype=np.int64)
+    fact_region = np.asarray(rm.indices(GEN_FACT), dtype=np.int64)
+    conc_blocks = conc_region.reshape(F, int(gen_n_concept_per))
+    fact_blocks = fact_region.reshape(N_CAT, int(gen_n_fact_per))
+    cat_ids = np.repeat(np.arange(N_CAT), N_PER_CAT)
+
+    # (1) gen_perception → gen_concept: all-to-all, plastic, near-floor init (the convergence the LEARN pass grows).
+    pc_pre = np.repeat(perc_region, conc_region.shape[0])
+    pc_post = np.tile(conc_region, perc_region.shape[0])
+    pc_w = np.full(pc_pre.shape[0], 0.05, np.float32)
+    # (2) gen_concept → gen_fact: convergent block (every concept block of category c → fact-tag block c), FIXED.
+    fc_pre_l, fc_post_l = [], []
+    for i in range(F):
+        c = int(cat_ids[i])
+        pre_b = conc_blocks[i]
+        post_b = fact_blocks[c]
+        fc_pre_l.append(np.repeat(pre_b, post_b.shape[0]))
+        fc_post_l.append(np.tile(post_b, pre_b.shape[0]))
+    fc_pre = np.concatenate(fc_pre_l)
+    fc_post = np.concatenate(fc_post_l)
+    fc_w = np.full(fc_pre.shape[0], float(fact_weight), np.float32)
+
+    edge_overrides = {
+        f"pathway_{GEN_PERCEPTION}_to_{GEN_CONCEPT}": {
+            "pre_indices": pc_pre.astype(np.int64).tolist(),
+            "post_indices": pc_post.astype(np.int64).tolist(),
+            "initial_weights": pc_w.tolist(),
+            "plastic": True, "plasticity_gate": GEN_CONV_GATE, "conn_type": "E_TO_MIX",
+        },
+        f"pathway_{GEN_CONCEPT}_to_{GEN_FACT}": {
+            "pre_indices": fc_pre.astype(np.int64).tolist(),
+            "post_indices": fc_post.astype(np.int64).tolist(),
+            "initial_weights": fc_w.tolist(),
+            "plastic": False, "conn_type": "E_TO_MIX",
+        },
+    }
+    gen_handles = {
+        "perc_region": perc_region, "conc_region": conc_region, "fact_region": fact_region,
+        "conc_blocks": conc_blocks, "fact_blocks": fact_blocks, "cat_ids": cat_ids,
+        "n_concept_per": int(gen_n_concept_per), "n_fact_per": int(gen_n_fact_per),
+        "n_v1_complex": int(N_V1_COMPLEX), "N_CAT": int(N_CAT), "N_PER_CAT": int(N_PER_CAT), "F": int(F),
+        "perc_base": int(perc_region[0]), "conc_base": int(conc_region[0]), "fact_base": int(fact_region[0]),
+        "perc_last": int(perc_region[-1]), "fact_last": int(fact_region[-1]),
+    }
+    return edge_overrides, gen_handles
+
+
+def _gen_vision_sets_and_split(seed: int):
+    """Render the de-risk's object SHAPES, encode through the REAL Gabor/V1 front end, convert to top-K structured
+    perception sets, and produce the leakage-free held-out/train split — VERBATIM from the vision→concept de-risk
+    (reuse-by-import). Returns (vis_sets, held_out, train, cat_ids, structure_margin, structure_preserved)."""
+    from research.runners._genfrontier_optionB_visual_similarity_derisk import (
+        build_shape_set, build_gabor_response_matrix, encode_v1, pool_v1_to_complex, within_between_margin,
+    )
+    from research.runners._genfrontier_capstone_vision_to_concept_derisk import (
+        vision_to_perception_sets, active_set_overlap_margin, N_V1_COMPLEX,
+    )
+    from research.runners._genfrontier_onsubstrate_convergence_derisk import N_CAT, N_PER_CAT, F
+    from sim.visual_cortex import RETINA_SIZE
+
+    GEN_TOP_K = 60
+    GEN_MIN_SET_MARGIN = 0.05
+    cat_ids = np.repeat(np.arange(N_CAT), N_PER_CAT)
+    rng = np.random.default_rng(seed)
+    rng_split = np.random.default_rng(seed * 31 + 5)
+    held_out = [int(rng_split.choice(np.where(cat_ids == c)[0])) for c in range(N_CAT)]
+    train = [i for i in range(F) if i not in held_out]
+    assert not (set(train) & set(held_out)), "leakage: gen train and held-out overlap"
+
+    images, labels, _meta = build_shape_set(N_CAT, N_PER_CAT, rng, image_size=RETINA_SIZE)
+    assert np.array_equal(labels, cat_ids), "shape labels must match the concept category layout"
+    W = build_gabor_response_matrix()
+    v1 = encode_v1(images, W)
+    it_like = pool_v1_to_complex(v1)
+    assert it_like.shape[1] == N_V1_COMPLEX
+    vis_sets = vision_to_perception_sets(it_like, GEN_TOP_K)
+    _, _, set_margin = active_set_overlap_margin(vis_sets, N_V1_COMPLEX, cat_ids)
+    structure_preserved = bool(set_margin > GEN_MIN_SET_MARGIN)
+    return vis_sets, held_out, train, cat_ids, float(set_margin), structure_preserved, W, GEN_TOP_K
+
+
+def _train_merged_convergence(bridge, gen_handles, vis_sets, train, *, epochs=20, scene_steps=16,
+                              perc_scale=300.0, conc_scale=600.0, hebbian_rate=0.05, hebbian_max=20.0,
+                              nmda_ratio=2.0, seed=42):
+    """Train the perception→concept rate-Hebbian convergence ON THE MERGED BRIDGE, ISOLATED from the navigation
+    reward-STDP + the global dopamine (scope="all") + the parser, via the cp_plasticity_rate_gain INDEX MASK (the
+    finalize_conv_for_nav_gate discipline): only the gen_perception→gen_concept synapses are plastic (gain 1);
+    EVERYTHING else (nav, parser, dlPFC, concept→fact) is frozen (gain 0) so the Hebbian decay cannot erode it.
+
+    Runs after the parser train pass (so the parser weights are final) and freezes the convergence afterward
+    (gain 0). The NMDA-ratio / Hebbian knobs are the de-risk's validated convergence values (the convergence GO
+    config); nav keeps Hebbian OFF in episodes, so these are consulted ONLY during this pass.
+    """
+    xp, _ = get_backend()
+    cc = bridge.core_config
+    rm = bridge.region_manager
+    csr = bridge.cp_connections
+    # the per-data-position (pre, post), guaranteed aligned with cp_connections.data / cp_plasticity_rate_gain
+    # (computed on the HOST from indptr/indices — the finalize_conv_for_nav_gate pattern, backend-agnostic).
+    indptr_h = to_host(csr.indptr)
+    post_h = to_host(csr.indices).astype(np.int64)
+    nnz = int(post_h.shape[0])
+    pre_h = np.zeros(nnz, dtype=np.int64)
+    for r in range(int(csr.shape[0])):
+        pre_h[int(indptr_h[r]):int(indptr_h[r + 1])] = r
+    perc = gen_handles["perc_region"]
+    conc = gen_handles["conc_region"]
+    conv_mask = xp.asarray(np.isin(pre_h, perc) & np.isin(post_h, conc))
+
+    if bridge.cp_plasticity_rate_gain is None:
+        bridge.set_global_plasticity_gain(1.0)
+    gain = bridge.cp_plasticity_rate_gain
+
+    saved = (cc.enable_hebbian_learning, cc.enable_stdp, cc.enable_reward_modulation, cc.enable_ou_process,
+             cc.hebbian_learning_rate, cc.hebbian_max_weight, cc.hebbian_min_weight, cc.hebbian_weight_decay,
+             cc.nmda_ratio)
+    saved_gain = gain.copy()
+    # convergence train: ONLY the perception→concept edges plastic; nav/parser/dlPFC/concept→fact frozen (gain 0).
+    gain[:] = 0.0
+    gain[conv_mask] = 1.0
+    cc.enable_hebbian_learning = True
+    cc.enable_stdp = False
+    cc.enable_reward_modulation = False
+    cc.enable_ou_process = False                  # the convergence de-risk trains OU-off (controlled co-activation)
+    cc.hebbian_learning_rate = float(hebbian_rate)
+    cc.hebbian_max_weight = float(hebbian_max)
+    cc.hebbian_min_weight = 0.0
+    cc.hebbian_weight_decay = 0.00001
+    cc.nmda_ratio = float(nmda_ratio)
+
+    class _A:                                     # the de-risk's train_convergence reads these off `a`
+        pass
+    a = _A()
+    a.epochs = int(epochs); a.scene_steps = int(scene_steps)
+    a.perc_scale = float(perc_scale); a.conc_scale = float(conc_scale); a.seed_base = int(seed)
+    from research.runners._genfrontier_onsubstrate_convergence_derisk import train_convergence
+    try:
+        diag = train_convergence(bridge, xp, perc, conc, gen_handles["conc_blocks"], vis_sets, train, a)
+    finally:
+        (cc.enable_hebbian_learning, cc.enable_stdp, cc.enable_reward_modulation, cc.enable_ou_process,
+         cc.hebbian_learning_rate, cc.hebbian_max_weight, cc.hebbian_min_weight, cc.hebbian_weight_decay,
+         cc.nmda_ratio) = saved
+        # freeze the convergence: restore the prior gain everywhere, then hold the gen_perception→gen_concept
+        # edges at gain 0 (the trained-then-frozen discipline — nav episodes must not erode the convergence).
+        gain[:] = saved_gain
+        gain[conv_mask] = 0.0
+    return {"conv_mask": conv_mask, "train_diag": diag}
+
+
 # ── the merged nav + parser + dlPFC bridge builder (design §2.5 FINAL FORM) ───────────────────────────────
 def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100,
                                  co_resident_rf: bool = False, rf_D: int = 128,
                                  co_resident_perception: bool = False,
-                                 enable_spiking_wta_readout: bool = False):
+                                 enable_spiking_wta_readout: bool = False,
+                                 co_resident_generalization: bool = False,
+                                 gen_n_concept_per: int = 100, gen_n_fact_per: int = 100):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
     §2.5 FINAL FORM.
@@ -286,9 +495,23 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     if co_resident_perception:
         perception_regions = [BrainRegion(name="cortex_it", n_neurons=256, exc_fraction=0.8,
                                           internal_density=0.0, enable_nmda=False)]
+    # STAGE 1 (co_resident_generalization, additive default-off): the GENERALIZATION STACK — a structured-perception
+    # region (Gabor/V1 top-K), an NMDA `gen_concept` region, an NMDA `gen_fact` tag region, the plastic rate-Hebbian
+    # gen_perception→gen_concept convergence pathway, and the FIXED convergent gen_concept→gen_fact pathway. Appended
+    # LAST (after rf + cortex_it) so the navigation/parser/dlPFC/rf/cortex_it index bases are BYTE-UNCHANGED (the
+    # STEP-2a/2b byte-identity is preserved). The gen regions have internal_density=0 and NO cp_connections out-edges
+    # into navigation (only gen_perception→gen_concept→gen_fact, all within the stack), so they are nav-inert. The
+    # NMDA per-region mask auto-expands to include gen_concept + gen_fact (so the slow NMDA conductance lets the
+    # concept assembly SPIKE), while the navigation/parser/rf slices stay NMDA-free. The convergence is trained
+    # then frozen (gain-masked) after the parser pass (step 5b below). Default False = STEP-2b byte-preserved.
+    generalization_regions, generalization_pathways = [], []
+    if co_resident_generalization:
+        generalization_regions, generalization_pathways = _generalization_regions_pathways(
+            gen_n_concept_per, gen_n_fact_per)
     union_regions = (list(nav_regions) + list(parser_regions) + list(dlpfc_regions)
-                     + list(rf_regions) + list(perception_regions))
-    union_pathways = list(nav_pathways) + list(parser_pathways)   # dlPFC loop is hand-built, NOT a pathway
+                     + list(rf_regions) + list(perception_regions) + list(generalization_regions))
+    union_pathways = (list(nav_pathways) + list(parser_pathways)
+                      + list(generalization_pathways))   # dlPFC loop is hand-built, NOT a pathway
 
     # 2) Merged config.
     cfg = CoreSimConfig()
@@ -357,6 +580,17 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     union_plan = dict(rm.build_wiring_plan(seed=int(seed)))
     assert "dlpfc_loop" not in union_plan, "dlpfc_loop name collides with a framework population"
     union_plan["dlpfc_loop"] = dlpfc_loop
+    # STAGE 1: OVERWRITE the generalization pathways' framework-uniform entries with the EXACT all-to-all
+    # (perception→concept) + convergent block-diagonal (concept→fact) edges (the dlpfc_loop insertion pattern).
+    # The framework declared both pathways (so the clean wiring branch ran + the plan keys exist); the precise
+    # structure is installed here in the SAME single inject_explicit_wiring below.
+    gen_handles = None
+    if co_resident_generalization:
+        gen_edges, gen_handles = _build_generalization_edges(rm, gen_n_concept_per, gen_n_fact_per)
+        for plan_key, edge in gen_edges.items():
+            assert plan_key in union_plan, \
+                f"FAIL: generalization plan key {plan_key!r} not in the union plan ({sorted(union_plan)[:12]}...)"
+            union_plan[plan_key] = edge
     inh_indices_concat = []
     for region in rm.regions():
         inh_indices_concat.extend(rm.inhibitory_indices(region.name))
@@ -386,6 +620,22 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     cc.enable_ou_process = False
     bridge.set_plasticity_gate(PARSER_GATE, 0.0)
 
+    # 5b) STAGE 1 generalization convergence train pass (after the parser pass — a later injection would reset
+    #     the trained weights, and the parser must already be final). The perception→concept rate-Hebbian
+    #     convergence is trained ISOLATED from nav/parser/dlPFC via the cp_plasticity_rate_gain index mask, then
+    #     FROZEN (gain 0). The vision sets + leakage-free split are the de-risk's exact Gabor/V1 pipeline.
+    gen_extra = {}
+    if co_resident_generalization:
+        (vis_sets, gen_held_out, gen_train, gen_cat_ids, gen_set_margin, gen_structure_preserved,
+         gen_W, gen_top_k) = _gen_vision_sets_and_split(int(seed))
+        train_meta = _train_merged_convergence(bridge, gen_handles, vis_sets, gen_train, seed=int(seed))
+        gen_extra = {
+            "vis_sets": vis_sets, "gen_held_out": gen_held_out, "gen_train": gen_train,
+            "gen_cat_ids": gen_cat_ids, "gen_set_margin": gen_set_margin,
+            "gen_structure_preserved": gen_structure_preserved, "gen_W": gen_W, "gen_top_k": gen_top_k,
+            "gen_conv_mask": train_meta["conv_mask"], "gen_train_diag": train_meta["train_diag"],
+        }
+
     handles = {
         "seed": int(seed),
         "vocab": words,
@@ -401,6 +651,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         handles["rf_base"] = int(rm.indices("rf")[0])
         handles["rf_size"] = 7 * int(rf_D)
         handles["rf_D"] = int(rf_D)
+    if co_resident_generalization:
+        handles["gen"] = dict(gen_handles, **gen_extra)
     return bridge, handles
 
 
