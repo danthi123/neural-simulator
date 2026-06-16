@@ -1,0 +1,717 @@
+{
+  "summary": {
+    "seed": 42,
+    "backend": "cupy",
+    "gen_off_any_collision": false,
+    "gen_on_any_collision": true,
+    "chase_gen_off_default": false,
+    "chase_gen_on_default": true,
+    "chase_gen_off_long": false,
+    "chase_gen_on_long": true,
+    "interpretation": {
+      "gen_specific": true,
+      "long_settle_resolves": false,
+      "note": "structural (longer settle does not resolve) -> investigate weights/wiring"
+    }
+  },
+  "results": [
+    {
+      "gen": false,
+      "results": [
+        {
+          "sentence": "dog chase cat",
+          "settle": "default",
+          "reset": 60,
+          "test_steps": 80,
+          "trials": [
+            {
+              "decoded": [
+                "agent",
+                "action",
+                "patient"
+              ],
+              "collision": false,
+              "has_action": true,
+              "rates": [
+                {
+                  "agent": 1.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 1.175,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 1.2
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "action",
+                "patient"
+              ],
+              "collision": false,
+              "has_action": true,
+              "rates": [
+                {
+                  "agent": 2.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 1.175,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 1.2
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "action",
+                "patient"
+              ],
+              "collision": false,
+              "has_action": true,
+              "rates": [
+                {
+                  "agent": 2.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 1.175,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 1.2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sentence": "dog chase cat",
+          "settle": "long",
+          "reset": 200,
+          "test_steps": 160,
+          "trials": [
+            {
+              "decoded": [
+                "agent",
+                "action",
+                "patient"
+              ],
+              "collision": false,
+              "has_action": true,
+              "rates": [
+                {
+                  "agent": 3.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 3.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 3.275
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "action",
+                "patient"
+              ],
+              "collision": false,
+              "has_action": true,
+              "rates": [
+                {
+                  "agent": 3.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 3.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 3.275
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "action",
+                "patient"
+              ],
+              "collision": false,
+              "has_action": true,
+              "rates": [
+                {
+                  "agent": 3.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 3.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 3.275
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sentence": "dog go north",
+          "settle": "default",
+          "reset": 60,
+          "test_steps": 80,
+          "trials": [
+            {
+              "decoded": [
+                "agent",
+                "action",
+                "patient"
+              ],
+              "collision": false,
+              "has_action": true,
+              "rates": [
+                {
+                  "agent": 2.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 1.175,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 1.2
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "action",
+                "patient"
+              ],
+              "collision": false,
+              "has_action": true,
+              "rates": [
+                {
+                  "agent": 2.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 1.175,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 1.2
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "action",
+                "patient"
+              ],
+              "collision": false,
+              "has_action": true,
+              "rates": [
+                {
+                  "agent": 2.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 1.175,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 1.2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sentence": "dog go north",
+          "settle": "long",
+          "reset": 200,
+          "test_steps": 160,
+          "trials": [
+            {
+              "decoded": [
+                "agent",
+                "action",
+                "patient"
+              ],
+              "collision": false,
+              "has_action": true,
+              "rates": [
+                {
+                  "agent": 3.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 3.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 3.275
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "action",
+                "patient"
+              ],
+              "collision": false,
+              "has_action": true,
+              "rates": [
+                {
+                  "agent": 3.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 3.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 3.275
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "action",
+                "patient"
+              ],
+              "collision": false,
+              "has_action": true,
+              "rates": [
+                {
+                  "agent": 3.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 3.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 3.275
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "gen": true,
+      "results": [
+        {
+          "sentence": "dog chase cat",
+          "settle": "default",
+          "reset": 60,
+          "test_steps": 80,
+          "trials": [
+            {
+              "decoded": [
+                "agent",
+                "agent",
+                "agent"
+              ],
+              "collision": true,
+              "has_action": false,
+              "rates": [
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "agent",
+                "agent"
+              ],
+              "collision": true,
+              "has_action": false,
+              "rates": [
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "agent",
+                "agent"
+              ],
+              "collision": true,
+              "has_action": false,
+              "rates": [
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sentence": "dog chase cat",
+          "settle": "long",
+          "reset": 200,
+          "test_steps": 160,
+          "trials": [
+            {
+              "decoded": [
+                "agent",
+                "agent",
+                "agent"
+              ],
+              "collision": true,
+              "has_action": false,
+              "rates": [
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "agent",
+                "agent"
+              ],
+              "collision": true,
+              "has_action": false,
+              "rates": [
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "agent",
+                "agent"
+              ],
+              "collision": true,
+              "has_action": false,
+              "rates": [
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sentence": "dog go north",
+          "settle": "default",
+          "reset": 60,
+          "test_steps": 80,
+          "trials": [
+            {
+              "decoded": [
+                "agent",
+                "agent",
+                "agent"
+              ],
+              "collision": true,
+              "has_action": false,
+              "rates": [
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "agent",
+                "agent"
+              ],
+              "collision": true,
+              "has_action": false,
+              "rates": [
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "agent",
+                "agent"
+              ],
+              "collision": true,
+              "has_action": false,
+              "rates": [
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sentence": "dog go north",
+          "settle": "long",
+          "reset": 200,
+          "test_steps": 160,
+          "trials": [
+            {
+              "decoded": [
+                "agent",
+                "agent",
+                "agent"
+              ],
+              "collision": true,
+              "has_action": false,
+              "rates": [
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "agent",
+                "agent"
+              ],
+              "collision": true,
+              "has_action": false,
+              "rates": [
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                }
+              ]
+            },
+            {
+              "decoded": [
+                "agent",
+                "agent",
+                "agent"
+              ],
+              "collision": true,
+              "has_action": false,
+              "rates": [
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                },
+                {
+                  "agent": 0.0,
+                  "action": 0.0,
+                  "patient": 0.0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
