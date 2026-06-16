@@ -1,0 +1,67 @@
+{
+  "verdict": "GO",
+  "backend": "cupy",
+  "mean_clean": 1.0,
+  "mean_floor": 0.5,
+  "results": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "chance": 0.25,
+      "object_layout": {
+        "1,2": "apple",
+        "3,2": "cat",
+        "5,2": "dog",
+        "7,2": "river"
+      },
+      "n_grounded": 3,
+      "grounded": [
+        "apple",
+        "cat",
+        "dog"
+      ],
+      "compose_clean": 1.0,
+      "compose_floor": 0.5,
+      "n_held_out": 3,
+      "moat_ok": 1,
+      "moat_tot": 1,
+      "pos_recall": 1,
+      "moat_absent": [
+        [
+          "apple",
+          "near"
+        ]
+      ],
+      "stored": [
+        [
+          "apple",
+          "chase",
+          "cat"
+        ],
+        [
+          "dog",
+          "near",
+          "apple"
+        ]
+      ],
+      "lesion_compose": 0.16666666666666666,
+      "byte_identity": true,
+      "iso_perception_grounded": 0,
+      "provenance": {
+        "grounded_code_is_live_rate_projection": true,
+        "composer_bound_to_merged_bridge": true,
+        "rf_complex_weights_allocated_after_store": true,
+        "perception_side_write": "cortex_it <- orthogonal_drive_pattern(object) DURING arrival [sensory render]",
+        "ground_write": "composer.concepts[o] = angle(M @ live_cortex_it_rate) [the only write into the percept code]"
+      },
+      "compose_go": true,
+      "moat_ok_all": true,
+      "moat_breach": false,
+      "lesion_ok": true,
+      "iso_ok": true,
+      "go": true,
+      "n_moves": 5,
+      "reached_all_waypoints": true
+    }
+  ]
+}

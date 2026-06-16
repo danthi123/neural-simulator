@@ -198,7 +198,8 @@ def _build_dlpfc_loop_population(ctx, words):
 # ── the merged nav + parser + dlPFC bridge builder (design §2.5 FINAL FORM) ───────────────────────────────
 def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100,
                                  co_resident_rf: bool = False, rf_D: int = 128,
-                                 co_resident_perception: bool = False):
+                                 co_resident_perception: bool = False,
+                                 enable_spiking_wta_readout: bool = False):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
     §2.5 FINAL FORM.
@@ -244,7 +245,16 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     n_dlpfc = max(600, 60 * V)
 
     # 1) Region / pathway union.
-    nav_regions, nav_pathways = build_bg_brain_regions(n_cortex=n_cortex)   # DEFAULT kwargs (construction smoke)
+    # enable_spiking_wta_readout (additive, default False = byte-preserved): forward into build_bg_brain_regions so
+    # the merged cascade can OPTIONALLY include the spiking-WTA selection layer `sel_{N,E,S,W}` (+ sel_FS) that
+    # navigate_to_see_then_answer.build_navsee_bridge uses (line 167-168). When False (the default for every existing
+    # gate), the cascade is the DEFAULT motor_X-only readout — STEP-2a/2b byte-identity preserved (the index bases of
+    # nav/parser/dlPFC/rf/cortex_it are unchanged because the sel_X regions are only appended when this is True). The
+    # STEP-3 behavioral runner sets it True so `_cascade_select_move` reads the validated sel_X winner (matching the
+    # navsee selection quality); the default motor_X fallback also selects moves (Step-1 de-risk: 4/4 clear winners),
+    # so this kwarg is a selection-quality upgrade, not a requirement.
+    nav_regions, nav_pathways = build_bg_brain_regions(
+        n_cortex=n_cortex, enable_spiking_wta_readout=enable_spiking_wta_readout)
     parser_regions, parser_pathways = parser_regions_pathways(PARSER_R)
     dlpfc_regions = [
         # Both dlPFC regions opt into NMDA so the framework confines the slow NMDA current to the dlPFC slice
