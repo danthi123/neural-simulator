@@ -1,7 +1,7 @@
 # The unified embodied agent — Stage 2 GO (one bridge: navigate + compose + generalize + converse)
 
 **Date:** 2026-06-16
-**Status:** STAGE 2 = GO (single-seed 42). Stage 3 (6-seed validation) running.
+**Status:** STAGE 2 = GO (single-seed 42). Stage 3 (6-seed) = HONEST PARTIAL — the integration + all three moats are robust across seeds, but the generalization capability is seed-variable (the documented vision-noise; needs the population-code lever).
 **Runner:** `research/runners/navigate_unified_episode.py` (reuse-by-import; NO `sim/` edit).
 
 ## What Stage 2 demonstrates
@@ -55,6 +55,23 @@ read-robustness follow-on. The capability itself is proven intact (weights byte-
   `cp_plasticity_rate_gain`, owner-approved; unit test + 27/27 GPU conversational regression; byte-identical default).
 - **Stage 1 — GO**: the generalization stack co-resident on the merged bridge, no regression.
 - **Stage 2 — GO**: the unified embodied agent (this doc).
+
+## Stage 3 — the 6-seed validation (honest partial)
+
+| seed | verdict | byte-id | compose | H5 / H6 | moat (cmp/gen/conv) | note |
+|---|---|---|---|---|---|---|
+| 42 | **GO** | True | 1.000 | 0.75 / 0.75 | 1/1/1 | |
+| 44 | **GO** | True | 1.000 | 0.50 / 0.50 | 1/1/1 | generalization at 2× chance |
+| 100 | NO-GO | True | 1.000 | 0.25 / 0.25 | 1/1/1 | generalization at CHANCE (vision noise) |
+| 101 | NO-GO | True | 1.000 | 0.25 / 0.25 | 1/1/1 | generalization at CHANCE (vision noise) |
+| 43, 102 | (re-running) | — | — | — | — | first run hit the dt=1.0 parse tie (now handled) |
+
+**The honest reading:**
+- **The integration is robust across every seed** — byte-identity True on all, COMPOSE 1.000 on all, NAV grounds its objects, and **the no-confab moat NEVER breaches** (0 breaches across all completed seeds: compose / generalization / conversation all abstain correctly). The hard discipline — never confabulate — holds seed-to-seed.
+- **The generalization sub-capability (H5/H6) is seed-variable**: 0.75 (42), 0.50 (44), 0.25 = chance (100, 101). This is exactly the scoping doc's pre-registered vision-noise watch ("H5/H6 ~0.75, a seed may dip — report per-seed, never loosen the moat").
+- **Two seeds (43, 102) hit the dt=1.0 parser read-tie** (the positional WTA read occasionally ties, dropping a role key). The no-regression check now records this as a parse failure instead of crashing (a documented, separate fragility).
+
+⇒ **Stage 2's integration is demonstrated and robust; the generalization capability is not yet 6-seed robust.** The pre-registered fix (never the gate) is the **population-code lever** — more `gen_n_concept_per` so the concept assembly's category read is reliable across seeds — plus a more robust positional parse read (longer settle / graceful tie handling). These are bounded follow-ons; the integration + the moat are the achievement.
 
 ## Reproduce
 
