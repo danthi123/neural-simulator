@@ -1,0 +1,91 @@
+{
+  "verdict": "GO",
+  "chance": 0.25,
+  "structured_cat_acc": 0.9166666666666666,
+  "structured_margin": 1.3667328806493544,
+  "flat_cat_acc": 0.16666666666666666,
+  "flat_margin": -0.020272769713739095,
+  "permuted_cat_acc": 0.0,
+  "permuted_margin": -0.1183109565140189,
+  "moat_intact": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "held_out": [
+        0,
+        6,
+        10,
+        14
+      ],
+      "structured": {
+        "cat_acc": 1.0,
+        "margin": 1.3737497491082045
+      },
+      "flat": {
+        "cat_acc": 0.0,
+        "margin": -0.00721774896737927
+      },
+      "permuted": {
+        "cat_acc": 0.0,
+        "margin": -0.124267456915774
+      },
+      "moat": {
+        "heldout_familiarity": 1.5858752294436815,
+        "novel_familiarity": 0.5666572443836453,
+        "moat_ok": true
+      }
+    },
+    {
+      "seed": 43,
+      "held_out": [
+        1,
+        6,
+        9,
+        13
+      ],
+      "structured": {
+        "cat_acc": 1.0,
+        "margin": 1.3171510264929693
+      },
+      "flat": {
+        "cat_acc": 0.25,
+        "margin": -0.027455951666447227
+      },
+      "permuted": {
+        "cat_acc": 0.0,
+        "margin": -0.11489537809070323
+      },
+      "moat": {
+        "heldout_familiarity": 1.4659496727592591,
+        "novel_familiarity": 0.7226178090936426,
+        "moat_ok": true
+      }
+    },
+    {
+      "seed": 44,
+      "held_out": [
+        2,
+        4,
+        9,
+        13
+      ],
+      "structured": {
+        "cat_acc": 0.75,
+        "margin": 1.4092978663468894
+      },
+      "flat": {
+        "cat_acc": 0.25,
+        "margin": -0.0261446085073908
+      },
+      "permuted": {
+        "cat_acc": 0.0,
+        "margin": -0.11577003453557949
+      },
+      "moat": {
+        "heldout_familiarity": 1.7128908130094125,
+        "novel_familiarity": 0.32856868464061234,
+        "moat_ok": true
+      }
+    }
+  ]
+}
