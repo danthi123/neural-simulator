@@ -817,6 +817,26 @@ arc was de-risked cheapest-first BEFORE any protected edit:
   88-94 PPMI/stream findings: `2026-06-15-off-diagonal-red-herring-ppmi-local-normalization-reaches-host.md`,
   `2026-06-15-biology-faithful-online-stream-cortex-reaches-target.md`).
 
+- **UPDATE (2026-06-16) — biologization sweep COMPLETE + the "learned bind" capability map is SETTLED.**
+  (1) The conversational pipeline's four cognitive pieces are biologized/de-risked: the no-confab **moat**
+  (learned Bogacz-Brown familiarity gate), **cleanup** (spiking NEF, 0.96), the **binding operation** (±1
+  coincidence on the learned codes, 0.92), and **read-out normalization** (neural spike-frequency adaptation +
+  feedforward inhibition = 96% of host). Finding: `2026-06-16-biologization-sweep-conversational-pipeline.md`.
+  (2) The **learned-bind** frontier (replace the fixed FHRR algebra with a cortex that LEARNS to bind) now has
+  a complete, multi-seed capability map: a learned role-filler bind generalizes **single-attribute** bindings
+  and is validated on **real LIF spikes** (on-bridge held-out 0.833 = 100% of the numpy reference), but
+  multi-attribute **bundling** (a fact = a superposition of bindings) is **not learnable from scratch** on the
+  point-neuron substrate — additive has no inverse (0.193), a learned *linear* inverse cannot be a reciprocal
+  (0.056, breaks even single-attribute), while a **fixed ±1 self-inverse bind bundles 0.989** on the same
+  harness (positive control). ⇒ the conversational bind = **learned representations** (codes + single-attribute
+  binding, both substrate-validated) flowing through a **fixed, biology-grounded coincidence/multiplicative
+  binding primitive** (= the production composer binding the learned codes; binding-by-coincidence /
+  dendritic-multiplication is a STRUCTURAL neural primitive — not a host shortcut, and not learnable from
+  scratch on point neurons). Finding:
+  `2026-06-16-onsubstrate-learned-binder-single-attr-GO-bundling-NEGATIVE.md`. The remaining honest residual in
+  the conversational pipeline is **sentence GENERATION** (the recollection→sentence formatting is still a host
+  template; deep-research scoping the brain-based de-templating is underway).
+
 `SIM_BACKEND=cupy` (GPU) is required for the merged-bridge runs (numpy is a tiny-smoke / CI path only).
 
 ### Path 3 LLM-callable memory (2026-05-11): BridgeMemory API
