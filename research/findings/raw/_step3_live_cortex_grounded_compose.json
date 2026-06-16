@@ -1,0 +1,42 @@
+{
+  "mean_held_out_clean": 1.0,
+  "mean_held_out_corrupt": 1.0,
+  "mean_mem_floor": 0.5,
+  "chance": 0.25,
+  "verdict": "GO",
+  "per_seed": [
+    {
+      "seed": 42,
+      "held_out_compose_clean": 1.0,
+      "held_out_compose_corrupt": 1.0,
+      "held_out_mem_floor": 0.5,
+      "memorized_compose_clean": 1.0,
+      "memorized_mem_floor": 1.0,
+      "chance": 0.25,
+      "n_held_out": 6,
+      "n_memorized": 6
+    },
+    {
+      "seed": 43,
+      "held_out_compose_clean": 1.0,
+      "held_out_compose_corrupt": 1.0,
+      "held_out_mem_floor": 0.5,
+      "memorized_compose_clean": 1.0,
+      "memorized_mem_floor": 1.0,
+      "chance": 0.25,
+      "n_held_out": 6,
+      "n_memorized": 6
+    },
+    {
+      "seed": 44,
+      "held_out_compose_clean": 1.0,
+      "held_out_compose_corrupt": 1.0,
+      "held_out_mem_floor": 0.5,
+      "memorized_compose_clean": 1.0,
+      "memorized_mem_floor": 1.0,
+      "chance": 0.25,
+      "n_held_out": 6,
+      "n_memorized": 6
+    }
+  ]
+}
