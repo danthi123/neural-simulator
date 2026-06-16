@@ -1,0 +1,45 @@
+{
+  "held": 0.8888888888888888,
+  "train": 0.9425925925925925,
+  "chance": 0.0625,
+  "mem_floor": 0.0,
+  "fhrr": 1.0,
+  "shuffled": 0.4166666666666667,
+  "n_systematic": 7,
+  "n_splits": 9,
+  "per_seed": [
+    {
+      "seed": 42,
+      "train": 0.9055555555555556,
+      "held": 0.75,
+      "chance": 0.0625,
+      "mem_floor": 0.0,
+      "fhrr": 1.0,
+      "shuffled": 0.4166666666666667,
+      "n_sys": 2,
+      "n_splits": 3
+    },
+    {
+      "seed": 43,
+      "train": 1.0,
+      "held": 1.0,
+      "chance": 0.0625,
+      "mem_floor": 0.0,
+      "fhrr": 1.0,
+      "shuffled": 0.5,
+      "n_sys": 2,
+      "n_splits": 3
+    },
+    {
+      "seed": 44,
+      "train": 0.9222222222222222,
+      "held": 0.9166666666666666,
+      "chance": 0.0625,
+      "mem_floor": 0.0,
+      "fhrr": 1.0,
+      "shuffled": 0.3333333333333333,
+      "n_sys": 3,
+      "n_splits": 3
+    }
+  ]
+}
