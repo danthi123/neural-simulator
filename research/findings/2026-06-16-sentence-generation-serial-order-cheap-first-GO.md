@@ -32,7 +32,8 @@ other frame's order on the same fact must NOT match).
 
 | Test | Frames | True vs permuted vs CROSS-frame | No-learning | Verdict |
 |---|---|---|---|---|
-| multi-frame | F0=[agent,action,patient], F1=[patient,agent,action] | **1.000 vs 0.333 vs 0.000** (6/6) | 0.410 < perm 0.833 | **GO** |
+| multi-frame (numpy) | F0=[agent,action,patient], F1=[patient,agent,action] | **1.000 vs 0.333 vs 0.000** (6/6) | 0.410 < perm 0.833 | **GO** |
+| multi-frame (SPIKING substrate) | same | **0.991 vs 0.343 vs 0.005** (6/6) | — | **GO** |
 
 The cross-frame score of **0.000** is decisive: the same fact is ordered *differently* under F0 vs F1, so the
 mechanism is genuinely **frame-conditioned** (not one fixed order). ⇒ the substrate can learn frame-dependent
