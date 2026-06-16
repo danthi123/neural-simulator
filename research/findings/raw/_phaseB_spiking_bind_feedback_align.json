@@ -1,0 +1,26 @@
+{
+  "feedback_align": 0.5277777777777778,
+  "exact": 0.8055555555555555,
+  "mem_floor": 0.0,
+  "chance": 0.0625,
+  "per_seed": [
+    {
+      "seed": 42,
+      "feedback_align": 0.9166666666666666,
+      "exact": 0.8333333333333334,
+      "mem_floor": 0.0
+    },
+    {
+      "seed": 43,
+      "feedback_align": 0.08333333333333333,
+      "exact": 0.9166666666666666,
+      "mem_floor": 0.0
+    },
+    {
+      "seed": 44,
+      "feedback_align": 0.5833333333333334,
+      "exact": 0.6666666666666666,
+      "mem_floor": 0.0
+    }
+  ]
+}
