@@ -136,11 +136,9 @@ def train_parser_on_slices(bridge, conj_arr, role_arr, n_epochs: int = 30, train
 PARSER_READ_SETTLE = 60
 
 
-def role_of_on_slices(bridge, conj_arr, role_arr, position: int, voice="active",
-                      test_steps: int = 80, drive: float = 2500.0, reset: int = PARSER_READ_SETTLE):
-    """Port of BridgeParser.role_of: drive the (position, voice) conjunction ALONE; the role ensemble that
-    fires most is the learned role. `reset` is the pre-read quiescence window (design risk 4.3): a longer settle
-    self-quiesces the merged bridge from any prior drive before the read, so the WTA readout is stable."""
+def _rates_on_slices(bridge, conj_arr, role_arr, position, voice, test_steps, drive, reset):
+    """Drive the (position, voice) conjunction ALONE and return the per-role accumulated firing rates. `reset` is the
+    pre-read quiescence window (design risk 4.3): a longer settle self-quiesces the merged bridge before the read."""
     xp, _ = get_backend()
     n = bridge.core_config.num_neurons
     k = position * 2 + (0 if voice in (0, "active") else 1)
@@ -154,14 +152,36 @@ def role_of_on_slices(bridge, conj_arr, role_arr, position: int, voice="active",
         for r in ROLES:
             rates[r] += float(to_host(bridge.cp_firing_states[role_arr[r]].astype(xp.float64).mean()))
     bridge.cp_external_input_current[:] = 0.0
+    return rates
+
+
+def role_of_on_slices(bridge, conj_arr, role_arr, position: int, voice="active",
+                      test_steps: int = 80, drive: float = 2500.0, reset: int = PARSER_READ_SETTLE):
+    """Port of BridgeParser.role_of: drive the (position, voice) conjunction ALONE; the role ensemble that fires most
+    is the learned role. (Single-position argmax read; `parse_on_slices` uses the distinct-assignment read below.)"""
+    rates = _rates_on_slices(bridge, conj_arr, role_arr, position, voice, test_steps, drive, reset)
     return max(rates, key=rates.get)
 
 
 def parse_on_slices(bridge, conj_arr, role_arr, words, voice="active", test_steps: int = 80, drive: float = 2500.0,
                     reset: int = PARSER_READ_SETTLE):
+    """Robust 3-word SVO parse: read EACH position's full per-role rate vector, then assign positions to DISTINCT
+    roles (greedy by rate). This GUARANTEES all three roles (agent/action/patient) appear -- eliminating the dt=1.0
+    WTA read-tie where two positions would otherwise decode to the SAME role (dropping a key, crashing the unsafe
+    roles[...] access; the Stage-3 seeds 43/102 failure mode). For a clean read this is identical to the
+    per-position argmax; under a tie it picks the distinct assignment maximizing total rate."""
     assert len(words) == 3, "this minimal parser handles 3-word SVO sentences"
-    return {role_of_on_slices(bridge, conj_arr, role_arr, pos, voice, test_steps, drive, reset): words[pos]
-            for pos in range(3)}
+    vecs = [_rates_on_slices(bridge, conj_arr, role_arr, pos, voice, test_steps, drive, reset) for pos in range(3)]
+    # greedy distinct assignment: take the highest (position, role) rate, fix it, remove that position + role, repeat.
+    triples = sorted(((vecs[p][r], p, r) for p in range(3) for r in ROLES), key=lambda t: t[0], reverse=True)
+    pos_role, used_pos, used_role = {}, set(), set()
+    for _rate, p, r in triples:
+        if p in used_pos or r in used_role:
+            continue
+        pos_role[p] = r
+        used_pos.add(p)
+        used_role.add(r)
+    return {pos_role[pos]: words[pos] for pos in range(3)}
 
 
 # ── dlPFC loop population on the framework slices ────────────────────────────────────────────────────────
