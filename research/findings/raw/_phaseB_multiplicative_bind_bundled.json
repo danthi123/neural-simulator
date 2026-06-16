@@ -1,0 +1,27 @@
+{
+  "single_held": 0.08333333333333333,
+  "bundle_train": 0.07016046589401419,
+  "bundle_held": 0.05555555555555555,
+  "chance": 0.0625,
+  "additive_bundled_held": 0.193,
+  "per_seed": [
+    {
+      "seed": 42,
+      "single_held": 0.0,
+      "bundle_train": 0.06500487945527535,
+      "bundle_held": 0.16666666666666666
+    },
+    {
+      "seed": 43,
+      "single_held": 0.08333333333333333,
+      "bundle_train": 0.08419653874748033,
+      "bundle_held": 0.0
+    },
+    {
+      "seed": 44,
+      "single_held": 0.16666666666666666,
+      "bundle_train": 0.06127997947928691,
+      "bundle_held": 0.0
+    }
+  ]
+}
