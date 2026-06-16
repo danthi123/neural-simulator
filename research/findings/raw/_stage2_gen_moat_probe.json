@@ -1,0 +1,228 @@
+{
+  "verdict": {
+    "best_statistic": "winfire",
+    "best_separates": true,
+    "winfire_separates": true,
+    "note": "absolute win-fire already separates here (the breach may be seed/gate-fraction specific)"
+  },
+  "summary": {
+    "winfire": {
+      "held_out_min": 1.0125,
+      "held_out_mean": 1.6225,
+      "novel_max": 0.9825,
+      "novel_mean": 0.2479,
+      "separates": true,
+      "gap_worstknown_minus_bestnovel": 0.03
+    },
+    "margin": {
+      "held_out_min": 0.5125,
+      "held_out_mean": 0.8087,
+      "novel_max": 0.8008,
+      "novel_mean": 0.2075,
+      "separates": false,
+      "gap_worstknown_minus_bestnovel": -0.2883
+    },
+    "margin_ratio": {
+      "held_out_min": 1.355,
+      "held_out_mean": 2.4093,
+      "novel_max": 250000000.0,
+      "novel_mean": 42500001.5863,
+      "separates": false,
+      "gap_worstknown_minus_bestnovel": -249999998.645
+    },
+    "peakedness": {
+      "held_out_min": 1.2446,
+      "held_out_mean": 1.7316,
+      "novel_max": 4.0,
+      "novel_mean": 2.1475,
+      "separates": false,
+      "gap_worstknown_minus_bestnovel": -2.7554
+    },
+    "zscore": {
+      "held_out_min": 0.9696,
+      "held_out_mean": 1.4836,
+      "novel_max": 1.7321,
+      "novel_mean": 1.0454,
+      "separates": false,
+      "gap_worstknown_minus_bestnovel": -0.7624
+    }
+  },
+  "held_out": [
+    {
+      "j": 0,
+      "true_cat": 0,
+      "keyed": 0,
+      "catmean": [
+        2.29,
+        2.025,
+        1.0625,
+        1.9825
+      ],
+      "stats": {
+        "winfire": 2.29,
+        "margin": 0.5999999999999999,
+        "margin_ratio": 1.3550295849970238,
+        "peakedness": 1.2445652167149102,
+        "zscore": 0.9696285972910028
+      }
+    },
+    {
+      "j": 6,
+      "true_cat": 1,
+      "keyed": 1,
+      "catmean": [
+        1.0,
+        2.01,
+        0.3125,
+        0.8725
+      ],
+      "stats": {
+        "winfire": 2.01,
+        "margin": 1.2816666666666663,
+        "margin_ratio": 2.7597253966685686,
+        "peakedness": 1.9165673402464196,
+        "zscore": 1.56997308694065
+      }
+    },
+    {
+      "j": 10,
+      "true_cat": 2,
+      "keyed": 1,
+      "catmean": [
+        0.5,
+        1.0125,
+        0.5,
+        0.5
+      ],
+      "stats": {
+        "winfire": 1.0125,
+        "margin": 0.5125,
+        "margin_ratio": 2.02499999595,
+        "peakedness": 1.6119402959411895,
+        "zscore": 1.7320507997639991
+      }
+    },
+    {
+      "j": 14,
+      "true_cat": 3,
+      "keyed": 3,
+      "catmean": [
+        0.25,
+        0.51,
+        0.25,
+        1.1775
+      ],
+      "stats": {
+        "winfire": 1.1775,
+        "margin": 0.8408333333333333,
+        "margin_ratio": 3.4975247420865596,
+        "peakedness": 2.1531428532056816,
+        "zscore": 1.6628286695357566
+      }
+    }
+  ],
+  "novel": [
+    {
+      "k": 0,
+      "keyed": 3,
+      "catmean": [
+        0.04,
+        0.505,
+        0.0,
+        0.9825
+      ],
+      "stats": {
+        "winfire": 0.9825,
+        "margin": 0.8008333333333334,
+        "margin_ratio": 5.408256850963724,
+        "peakedness": 2.572831417157888,
+        "zscore": 1.50318730108381
+      }
+    },
+    {
+      "k": 1,
+      "keyed": 0,
+      "catmean": [
+        0.25,
+        0.005,
+        0.0,
+        0.1775
+      ],
+      "stats": {
+        "winfire": 0.25,
+        "margin": 0.18916666666666668,
+        "margin_ratio": 4.109588973541004,
+        "peakedness": 2.312138706939758,
+        "zscore": 1.305136649952935
+      }
+    },
+    {
+      "k": 2,
+      "keyed": 0,
+      "catmean": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "stats": {
+        "winfire": 0.0,
+        "margin": 0.0,
+        "margin_ratio": 0.0,
+        "peakedness": 0.0,
+        "zscore": 0.0
+      }
+    },
+    {
+      "k": 3,
+      "keyed": 1,
+      "catmean": [
+        0.0,
+        0.005,
+        0.0,
+        0.0
+      ],
+      "stats": {
+        "winfire": 0.005,
+        "margin": 0.005,
+        "margin_ratio": 5000000.0,
+        "peakedness": 3.99999680000256,
+        "zscore": 1.7320500075692469
+      }
+    },
+    {
+      "k": 4,
+      "keyed": 0,
+      "catmean": [
+        0.25,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "stats": {
+        "winfire": 0.25,
+        "margin": 0.25,
+        "margin_ratio": 249999999.99999997,
+        "peakedness": 3.999999936000001,
+        "zscore": 1.7320507915688776
+      }
+    },
+    {
+      "k": 5,
+      "keyed": 0,
+      "catmean": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "stats": {
+        "winfire": 0.0,
+        "margin": 0.0,
+        "margin_ratio": 0.0,
+        "peakedness": 0.0,
+        "zscore": 0.0
+      }
+    }
+  ]
+}
