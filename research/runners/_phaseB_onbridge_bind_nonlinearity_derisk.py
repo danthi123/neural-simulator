@@ -118,6 +118,9 @@ def run_seed(codes, seed):
 
 
 def main():
+    import argparse
+    p = argparse.ArgumentParser(); p.add_argument("--seeds", default="42,43,44"); a = p.parse_args()
+    seeds = [int(s) for s in a.seeds.split(",")]
     os.environ.setdefault("SIM_BACKEND", "cupy")
     t0 = time.time()
     codes_path = os.path.join(_REPO, "research", "findings", "raw", "_phaseB_stream_codes_320_seed42.npy")
@@ -128,12 +131,12 @@ def main():
     codes = codes / (np.linalg.norm(codes, axis=1, keepdims=True) + 1e-12)
     print(f"[on-bridge bind-nonlinearity de-risk] does the REAL LIF spiking ON/OFF (vs numpy relu) preserve the "
           f"learned bind on the substrate?", flush=True)
-    rows = [run_seed(codes, s) for s in (42, 43, 44)]
+    rows = [run_seed(codes, s) for s in seeds]
 
     def m(k):
         return float(np.mean([r[k] for r in rows]))
     ob, nn, mf = m("onbridge"), m("numpy"), m("mem_floor")
-    print(f"\n{'='*94}\n  MEAN (3 seeds): ON-BRIDGE held-out {ob:.3f} | numpy reference {nn:.3f} | mem-floor {mf:.3f}"
+    print(f"\n{'='*94}\n  MEAN ({len(seeds)} seeds): ON-BRIDGE held-out {ob:.3f} | numpy reference {nn:.3f} | mem-floor {mf:.3f}"
           f" | chance {1.0/F:.3f}", flush=True)
     print(f"{'='*94}", flush=True)
     if ob >= mf + 0.25 and ob >= 0.75 * nn:
