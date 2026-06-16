@@ -1,4 +1,6 @@
-# Navigate-to-see-then-answer — the (B) PERCEPTION→MEMORY behavioral task on ONE brain: **GO (3/3 seeds)**
+# Navigate-to-see-then-answer — the (B) PERCEPTION→MEMORY behavioral task on ONE brain: **GO (6/6 seeds)**
+
+> **6-seed confirmation (2026-06-16, controller):** extended to seeds 42/43/44/100/101/102 (`navigate_to_see_then_answer_6seed.json`) — COUPLED recall **3/3 every seed**, LESION **0/3 every seed**, ISOLATED-NAV/ISOLATED-PERCEPTION no recall, SCRAMBLE specificity tracks the layout, provenance clean — all 6 seeds. The original 3-seed result was also controller-reproduced independently (== the build subagent's numbers). The milestone meets the 6-seed standing-rigor rule.
 
 **Date:** 2026-06-16
 **Runner:** `research/runners/navigate_to_see_then_answer.py`
