@@ -208,8 +208,16 @@ the 64-run). At the production 320-concept tier: who-Q&A recall **1.00** (8/8, 0
 abstain **1.00 (0 false-accepts)**, familiarity gap present +0.468 ≫ absent +0.050 — the full
 conversational capability holds **perfectly at 5× the concepts** (cleaner than the reduced-budget
 64-run). ⇒ the biology-faithful stream cortex **scales to the production tier on the spiking
-substrate**. Multi-seed (the project standard) is a ~5 hr commitment (~96 min/seed); seed 42 is a clean
-GO. Codes cached at `_phaseB_stream_codes_320_seed42.npy` (HRR re-tests instant).
+substrate**. Codes cached at `_phaseB_stream_codes_320_seed42.npy` (HRR re-tests instant).
+
+**320 MULTI-SEED CONFIRMED (42/43/44).** Seeds 43/44 (150000 windows each): who-Q&A recall **1.00 both**,
+host-threshold abstain 0.88 (seed 43, 1 tail false-accept) / 1.00 (seed 44), wide clean gaps (+0.464 vs
++0.064; +0.427 vs +0.038). Combined 3-seed: **recall 1.00 every seed**; host moat 1.00/0.88/1.00 (one
+seed-variable tail at seed 43 — the same fidelity tail as the 64-run, restored by more stream). Notable
+convergence: the **biologized** moat (the learned Bogacz-Brown familiarity gate, validated on these same
+320 codes) had **0 false-accepts** with a +0.87 margin — i.e. biologizing the moat made it *cleaner* than
+the host threshold it replaces. ⇒ the 320-concept stream cortex is multi-seed GO on recall and the moat
+holds (cleaner under the learned gate).
 
 Runner: `research/runners/_phaseB_stdp_cooccurrence_derisk.py` (GPU; CuPy; `--n-per` for the
 population). Raw: `research/findings/raw/_phaseB_stdp_cooccurrence.json`,
