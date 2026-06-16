@@ -851,6 +851,52 @@ arc was de-risked cheapest-first BEFORE any protected edit:
 
 `SIM_BACKEND=cupy` (GPU) is required for the merged-bridge runs (numpy is a tiny-smoke / CI path only).
 
+### 🧠🔗 Cross-region "one brain" FUNCTIONAL interaction + step-3 COMPOSE-PERCEIVED-CONTENT de-risked (2026-06-16)
+
+**Roadmap step 2 merged nav + conversation onto one bridge but they were CO-LOCATED, not interacting** (owner
+challenge [[project_one_brain_substrate_vs_functional]]). The cross-region SYNAPTIC interaction (the real "one
+brain") is now BUILT both directions, all milestones 6-seed GO + controller-verified
+(`docs/plans/2026-06-10-functional-integration-one-brain-design.md`):
+- **(A) LANGUAGE→ACTION — 6-seed GO** (`spoken_instruction_nav.py`, `2026-06-10-spoken-instruction-nav-GO.md`): the
+  parser's FIRING opens a synaptic `command_route` gate → the learned word→action route steers the nav body; the
+  spoken command is the only goal ⇒ the route is load-bearing + lesion-confirmed.
+- **(B) PERCEPTION→MEMORY — 6-seed GO** (`navigate_to_see_then_answer.py`,
+  `2026-06-16-navigate-to-see-then-answer.md`): the **navigate-to-see-then-answer** behavioral task — the agent
+  navigates a gridworld (the BG cascade selecting each move NEURALLY), PERCEIVES objects rendered into `cortex_it`
+  live in-episode, engram-tags them, and afterward RECALLS what it saw via neural reactivation through a TRAINED
+  `cortex_it→language_output` route. COUPLED recall 3/3 every seed, LESION 0/3, isolated controls collapse,
+  scramble specificity tracks the layout, provenance clean. HONEST SCOPE: this is RECALL, not composition.
+
+**Step-3 = COMPOSE perceived content (dissolve the rate-vs-phasor wall) — COMPREHENSIVELY DE-RISKED, GO**
+(`2026-06-16-step3-live-cortex-grounded-compose-cheap-first.md`). The (B) recall can say "I saw the apple" but
+cannot algebraically bind a perceived apple into a NEW fact (the navigation perception is a RATE code; the composer
+is a PHASOR code). The fix (per the controller-verified scoping `2026-06-16-step3-compose-perceived-content-scoping.md`)
+is **shared grounded codes**: a fixed complex projection maps a LIVE `cortex_it` spiking firing-rate vector into a
+unit phasor, so the percept enters the validated bind/bundle/unbind/cleanup algebra. Results (all this session):
+- **cheap-first GO** (`_step3_live_cortex_grounded_compose_probe.py`, 3 seeds, CPU): live rate → grounded phasor →
+  compose; held-out (never-composed) facts recover **1.000** vs a recall baseline's **0.500** memorization floor
+  (compose GENERALIZES; a lookup does not).
+- **scaled 6-seed GO** (`_step3_..._scale.py`, GPU): holds to 32 objects (chance 0.031, only 4 active neurons) —
+  clean 1.000, corrupt 0.92. NOT a small-vocab artifact.
+- **production-composer drop-in, 6-seed GO @ D=2048** (`_step3_grounded_codes_production_composer_derisk.py`, GPU):
+  the SAME live-perception grounded codes drop into the deployed `RFPhasorComposer` (real 3-way SVO `store`/`query`
+  + the no-confab moat) — recall 6/6, moat-abstain 3/3, parity-vs-random every seed. Closes the composer's
+  documented "producing *meaningful* grounded codes is the open problem" boundary FOR PERCEIVED OBJECTS.
+- **correlation boundary mapped** (`_step3_correlated_percept_boundary.py`): the compose algebra TOLERATES code
+  correlation up to code-sim **≈0.98** (the role-binding decorrelates the cross-terms). CAVEAT recorded: this is
+  compose-ROBUSTNESS to correlation, **NOT** generalization-across-similar-concepts (the separate dendritic/PPMI
+  job; "decorrelation is a red herring", CYCLE 88). "Algebra tolerates correlation" ≠ "correlation buys
+  generalization."
+
+⇒ the rate-vs-phasor wall is **dissolved for perceived-object facts** via shared grounded codes, on the live
+spiking substrate, drop-in to the production composer, moat intact. **OWNER-GATED next builds:** (1) the
+**integration build** — wire the grounded-code map onto the merged nav+conv bridge so navigate-to-see *composes*
+perceived-object facts in-episode (scoped + controller-verified in
+`2026-06-16-step3-integration-build-scoping.md`: one additive `co_resident_perception` kwarg on
+`build_merged_nav_conv_bridge`, NO `sim/` edit, cheap-first smoke gate, 4 anti-cheats; T0 of that plan is the
+first build step); (2) the dendritic/PPMI **generalization** frontier (months-scale). No `sim/` edit anywhere in
+the step-3 de-risk arc (reuse-by-import).
+
 ### Path 3 LLM-callable memory (2026-05-11): BridgeMemory API
 
 **Status:** Phase 3.1.5 SHIPPED 2026-05-11. The `BridgeMemory` class
