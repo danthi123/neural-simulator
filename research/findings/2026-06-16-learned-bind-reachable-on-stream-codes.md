@@ -55,5 +55,22 @@ Step 3 (a cortex that learns to bind) is **reachable** on the stream cortex's ow
 de-risk of the deepest deferred frontier. Recommended next: scope + build the on-substrate spiking learned
 binder (per the standing deep-research/cheap-first practice).
 
-Runner: `research/runners/_phaseB_learned_bind_streamcodes_derisk.py`.
-Raw: `research/findings/raw/_phaseB_learned_bind_streamcodes.json`.
+## Follow-on (CYCLE 99): the rate-code read-noise risk is RETIRED
+
+The deep-research scoping (`2026-06-16-onsubstrate-learned-binder-deep-research-scoping.md`) flagged the
+single biggest risk of the *spiking* realization: finite-population read noise (~1/√n_per) on the bound
+vector + unbind estimate could collapse the systematic generalization toward the memorization floor. It also
+verified the de-risked binder is **additive** (`tanh(role·W_R + filler·W_F)`), so the spiking realization
+needs only existing point-neuron primitives (two synaptic projections + a saturating nonlinearity +
+population reads) — dendritic multiplication is the route to a *stronger* binder, not a prerequisite.
+
+The cheap-first (`_phaseB_learned_bind_ratenoise_derisk.py`, train clean / score held-out under swept read
+noise, 3 seeds) **retires the risk**: held-out is **flat** across the sweep — 0.778 (clean) → 0.773
+(noise 0.20 ≈ n_per 25) → 0.764 (noise 0.30 ≈ n_per 11), all ≫ memorization floor 0.000. So the rate-code
+wall does **not** break the learned binding; the spiking binder (surrogate-BPTT / local three-factor, unified
+by e-prop) is worth building.
+
+Runner: `research/runners/_phaseB_learned_bind_streamcodes_derisk.py`,
+`research/runners/_phaseB_learned_bind_ratenoise_derisk.py`.
+Raw: `research/findings/raw/_phaseB_learned_bind_streamcodes.json`,
+`_phaseB_learned_bind_ratenoise.json`.
