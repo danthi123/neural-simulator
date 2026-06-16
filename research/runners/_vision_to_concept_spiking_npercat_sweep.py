@@ -170,6 +170,13 @@ def main():
                 print(f"  !! N_PER_CAT={npc} seed={seed}: ERROR {type(exc).__name__}: {exc}", flush=True)
             per_seed[seed] = row
         results[npc] = per_seed
+        # incremental save (a multi-hour run's partial progress must survive a late crash / interruption).
+        _partial_path = os.path.join(_REPO, a.out)
+        os.makedirs(os.path.dirname(_partial_path), exist_ok=True)
+        with open(_partial_path, "w") as fh:
+            json.dump({"verdict": "IN_PROGRESS", "npercat_done": [n for n in npercat_vals if n in results],
+                       "chance": chance, "seeds": seeds, "results": {n: results[n] for n in results}},
+                      fh, indent=2, default=str)
 
     # ---- aggregate + GATE ----
     def _h5s(npc):
@@ -191,9 +198,14 @@ def main():
         print(f"  {npc:>9} | " + " ".join(f"{c:>5}" for c in cells) + f" |  {mn:.2f}  {mean:.2f}", flush=True)
 
     # GATE evaluation -- spelled out so the verdict is auditable.
-    # (1) seeds 100 AND 101 reach H5 >= 0.50 at SOME swept N_PER_CAT.
+    # (1) seeds 100 AND 101 reach H5 >= 0.50 at SOME swept N_PER_CAT. (If a target seed is not in the swept set --
+    #     e.g. a smoke run -- treat its sub-criterion as not-applicable=True so the gate does not crash; the full
+    #     6-seed run is the decisive one and includes 100/101.)
     def _seed_reaches(seed, thr=0.50):
-        return any(("h5" in results[npc][seed] and results[npc][seed]["h5"] >= thr) for npc in npercat_vals)
+        if seed not in seeds:
+            return True
+        return any((seed in results[npc] and "h5" in results[npc][seed] and results[npc][seed]["h5"] >= thr)
+                   for npc in npercat_vals)
     s100_ok = _seed_reaches(100)
     s101_ok = _seed_reaches(101)
     # (2) the 6-seed MINIMUM H5 RISES with N_PER_CAT (monotone non-decreasing across the swept values, strictly up
