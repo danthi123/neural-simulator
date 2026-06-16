@@ -156,6 +156,12 @@ def build_compose_bridge(seed: int = 42, with_body: bool = True, co_resident_gen
         "grounded_objects": [],          # the objects grounded in-episode (provenance: filled by _perceive_and_ground)
     }
 
+    # STAGE 2: surface the generalization handles (the build returns them in `handles["gen"]` only when
+    # co_resident_generalization=True) so the unified-episode runner can run the H5/H6 generalization check on this
+    # SAME live bridge. Absent (and h has no "gen" key) for the default compose-perceived path -> byte-preserved.
+    if co_resident_generalization and isinstance(handles, dict) and "gen" in handles:
+        h["gen"] = handles["gen"]
+
     # the navigation body's readout + tonic-pacemaker handles (MIRRORS navsee build_navsee_bridge lines 280-305).
     if with_body and all(f"sel_{a}" in region_names for a in ACTION_NAMES):
         h["readout_region"] = "sel"
