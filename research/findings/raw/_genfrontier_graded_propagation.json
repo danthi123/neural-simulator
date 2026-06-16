@@ -1,0 +1,133 @@
+{
+  "verdict": "GO",
+  "candidate": "nmda",
+  "chance": 0.25,
+  "concept_spikes_per_cue": 145.91666666666666,
+  "readout_spikes_per_cue": 265.5,
+  "structured_concept_cat_acc": 0.9166666666666666,
+  "structured_concept_margin": 0.14618055555555556,
+  "structured_readout_cat_acc": 0.25,
+  "flat_concept_cat_acc": 0.25,
+  "permuted_concept_cat_acc": 0.08333333333333333,
+  "permuted_concept_margin": -0.02013888888888889,
+  "moat_intact": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "held_out": [
+        0,
+        6,
+        10,
+        14
+      ],
+      "candidate": "nmda",
+      "structured": {
+        "concept_cat_acc": 1.0,
+        "concept_margin": 0.11791666666666667,
+        "readout_cat_acc": 0.0,
+        "readout_margin": -0.09854166666666667,
+        "concept_spikes_per_cue": 131.5,
+        "readout_spikes_per_cue": 284.25
+      },
+      "flat": {
+        "concept_cat_acc": 0.25,
+        "concept_margin": -0.007083333333333335,
+        "readout_cat_acc": 0.0,
+        "readout_margin": -0.08187499999999998,
+        "concept_spikes_per_cue": 17.5,
+        "readout_spikes_per_cue": 245.25
+      },
+      "permuted": {
+        "concept_cat_acc": 0.0,
+        "concept_margin": -0.026250000000000006,
+        "readout_cat_acc": 0.25,
+        "readout_margin": 0.06229166666666667,
+        "concept_spikes_per_cue": 136.5,
+        "readout_spikes_per_cue": 255.25
+      },
+      "moat": {
+        "heldout_familiarity": 0.2575,
+        "novel_familiarity": 0.08499999999999999,
+        "moat_ok": true
+      }
+    },
+    {
+      "seed": 43,
+      "held_out": [
+        1,
+        6,
+        9,
+        13
+      ],
+      "candidate": "nmda",
+      "structured": {
+        "concept_cat_acc": 1.0,
+        "concept_margin": 0.17333333333333334,
+        "readout_cat_acc": 0.5,
+        "readout_margin": 0.08,
+        "concept_spikes_per_cue": 168.0,
+        "readout_spikes_per_cue": 265.0
+      },
+      "flat": {
+        "concept_cat_acc": 0.5,
+        "concept_margin": 0.015833333333333335,
+        "readout_cat_acc": 0.5,
+        "readout_margin": 0.10125000000000002,
+        "concept_spikes_per_cue": 25.0,
+        "readout_spikes_per_cue": 212.5
+      },
+      "permuted": {
+        "concept_cat_acc": 0.25,
+        "concept_margin": -0.00874999999999999,
+        "readout_cat_acc": 0.75,
+        "readout_margin": 0.06541666666666664,
+        "concept_spikes_per_cue": 159.5,
+        "readout_spikes_per_cue": 257.5
+      },
+      "moat": {
+        "heldout_familiarity": 0.32562500000000005,
+        "novel_familiarity": 0.08,
+        "moat_ok": true
+      }
+    },
+    {
+      "seed": 44,
+      "held_out": [
+        2,
+        4,
+        9,
+        13
+      ],
+      "candidate": "nmda",
+      "structured": {
+        "concept_cat_acc": 0.75,
+        "concept_margin": 0.14729166666666665,
+        "readout_cat_acc": 0.25,
+        "readout_margin": 0.025625000000000023,
+        "concept_spikes_per_cue": 138.25,
+        "readout_spikes_per_cue": 247.25
+      },
+      "flat": {
+        "concept_cat_acc": 0.0,
+        "concept_margin": 0.003541666666666667,
+        "readout_cat_acc": 0.25,
+        "readout_margin": 0.011875000000000021,
+        "concept_spikes_per_cue": 19.75,
+        "readout_spikes_per_cue": 230.75
+      },
+      "permuted": {
+        "concept_cat_acc": 0.0,
+        "concept_margin": -0.02541666666666667,
+        "readout_cat_acc": 0.5,
+        "readout_margin": -0.010208333333333323,
+        "concept_spikes_per_cue": 134.5,
+        "readout_spikes_per_cue": 249.25
+      },
+      "moat": {
+        "heldout_familiarity": 0.25875000000000004,
+        "novel_familiarity": 0.07,
+        "moat_ok": true
+      }
+    }
+  ]
+}
