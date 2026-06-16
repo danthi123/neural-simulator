@@ -120,7 +120,13 @@ def _conversational_no_regression(agent):
     # ("dog go north") that tests/test_nav_conv_step2b_coresident.py validates -- the canonical no-regression
     # definition. (The earlier "dog chase cat" used "chase", which is the generalization-test ACTION_WORD and is
     # NOT in the composer's DEFAULT_VOCAB, so composer.store raised KeyError once the parser was fixed.)
-    roles = agent.hear("dog go north")
+    try:
+        roles = agent.hear("dog go north")
+    except KeyError:
+        # the positional parser can TIE at dt=1.0 (two positions decode to the same role -> a role key is missing);
+        # a robust no-regression check records this as a parse failure (the documented dt=1.0 read fragility) instead
+        # of crashing the whole seed. hear() evaluates roles["action"] before storing, so there is no partial store.
+        roles = {}
     parse_ok = bool(roles.get("agent") == "dog" and roles.get("action") == "go"
                     and roles.get("patient") == "north")
     # who/what recall over the stored fact.
