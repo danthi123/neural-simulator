@@ -1,8 +1,8 @@
 {
   "seed": 43,
   "backend": "cupy",
-  "verdict": "NO-GO",
-  "elapsed_s": 231.46202659606934,
+  "verdict": "GO",
+  "elapsed_s": 251.36067056655884,
   "chance_compose": 0.25,
   "object_layout": {
     "1,2": "river",
@@ -45,11 +45,11 @@
       13
     ],
     "h5_concept_cat_acc": 0.5,
-    "h5_margin": 0.8079166666666667,
+    "h5_margin": 0.6895833333333333,
     "h6_hybrid_recall_acc": 0.5,
-    "heldout_win_fire": 2.17,
+    "heldout_win_fire": 2.1399999999999997,
     "novel_win_fire": 1.0,
-    "gate_thresh": 1.3019999999999998,
+    "gate_thresh": 1.2839999999999998,
     "novel_familiar": false,
     "novel_recall": null,
     "gen_moat_abstains": true,
@@ -80,16 +80,16 @@
   },
   "gen_go": true,
   "no_regression": {
-    "parse_ok": false,
-    "what_ok": false,
-    "who_ok": false,
+    "parse_ok": true,
+    "what_ok": true,
+    "who_ok": true,
     "moat_ok": true,
-    "desc_ok": false,
-    "describe": null,
+    "desc_ok": true,
+    "describe": "dog go north",
     "moat_what": null,
     "moat_describe": null
   },
-  "conv_ok": false,
+  "conv_ok": true,
   "compose_moat_ok": true,
   "compose_moat_abstain": [
     1,
@@ -129,5 +129,5 @@
     "perception_side_write": "cortex_it <- orthogonal_drive_pattern(object) DURING arrival [sensory render]",
     "ground_write": "composer.concepts[o] = angle(M @ live_cortex_it_rate) [the only write into the percept code]"
   },
-  "go": false
+  "go": true
 }

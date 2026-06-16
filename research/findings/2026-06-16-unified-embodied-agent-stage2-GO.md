@@ -1,7 +1,7 @@
 # The unified embodied agent — Stage 2 GO (one bridge: navigate + compose + generalize + converse)
 
 **Date:** 2026-06-16
-**Status:** STAGE 2 = GO (seeds 42, 44). Stage 3 (6-seed) = HONEST PARTIAL (2/6 GO, 0 moat breaches) — the integration + all three no-confab moats are robust across every seed; the 4 NO-GOs split into two seed-variable fragilities: the parser dt=1.0 read-tie (43, 102 — generalization fine/perfect) and generalization-at-chance (100, 101 — vision noise). Both have pre-registered fixes (robust parse read; population-code lever) — never the gate.
+**Status:** STAGE 2 = GO. Stage 3 (6-seed) = **4/6 GO, 0 moat breaches** after the distinct-role-assignment parse fix. The integration, the no-confab moat, navigation, compose, conversation, AND the parse are robust across all 6 seeds; the only remaining misses (100, 101) are the inherent seed-variance of the point-neuron vision→concept generalization (gen_concept fires strongly but keys the wrong category — H5 at chance) — the documented capstone-fidelity open frontier, not a bug, not closable by loosening any gate.
 **Runner:** `research/runners/navigate_unified_episode.py` (reuse-by-import; NO `sim/` edit).
 
 ## What Stage 2 demonstrates
@@ -58,24 +58,24 @@ read-robustness follow-on. The capability itself is proven intact (weights byte-
 
 ## Stage 3 — the 6-seed validation (honest partial)
 
-| seed | verdict | byte-id | compose | H5 / H6 | moat (cmp/gen/conv) | failure mode |
-|---|---|---|---|---|---|---|
-| 42 | **GO** | True | 1.000 | 0.75 / 0.75 | 1/1/1 | — |
-| 44 | **GO** | True | 1.000 | 0.50 / 0.50 | 1/1/1 | — |
-| 43 | NO-GO | True | 1.000 | 0.50 / 0.50 | 1/1/1 | **parse** dt=1.0 read-tie (generalization fine) |
-| 102 | NO-GO | True | 1.000 | **1.00 / 1.00** | 1/1/1 | **parse** dt=1.0 read-tie (generalization PERFECT) |
-| 100 | NO-GO | True | 1.000 | 0.25 / 0.25 | 1/1/1 | **generalization** at chance (vision noise) |
-| 101 | NO-GO | True | 1.000 | 0.25 / 0.25 | 1/1/1 | **generalization** at chance (vision noise) |
+**After the distinct-role-assignment parse fix (commit, conv-regression GREEN 15/15):**
 
-**Aggregate: 2/6 GO, 0 MOAT breaches, byte-identity True + COMPOSE 1.000 on all 6. H5 mean 0.542 (range 0.25–1.00).**
+| seed | verdict | byte-id | compose | H5 / H6 | parse | moat (cmp/gen/conv) | note |
+|---|---|---|---|---|---|---|---|
+| 42 | **GO** | True | 1.000 | 0.75 / 0.75 | ok | 1/1/1 | — |
+| 43 | **GO** | True | 1.000 | 0.50 / 0.50 | ok | 1/1/1 | flipped GO by the parse fix |
+| 44 | **GO** | True | 1.000 | 0.50 / 0.50 | ok | 1/1/1 | — |
+| 102 | **GO** | True | 1.000 | **1.00 / 1.00** | ok | 1/1/1 | flipped GO by the parse fix (gen perfect) |
+| 100 | NO-GO | True | 1.000 | 0.25 / 0.25 | ok | 1/1/1 | generalization at chance |
+| 101 | NO-GO | True | 1.000 | 0.25 / 0.25 | ok | 1/1/1 | generalization at chance |
+
+**Aggregate: 4/6 GO, 0 MOAT breaches, byte-identity + COMPOSE 1.000 + parse_ok on ALL 6. H5 mean 0.542 (range 0.25–1.00).**
 
 **The honest reading:**
-- **The integration is robust across every seed** — byte-identity True on all, COMPOSE 1.000 on all, NAV grounds its objects, and **the no-confab moat NEVER breaches** (0/6: compose / generalization / conversation all abstain correctly). The hard discipline — never confabulate — holds seed-to-seed.
-- **The 4 NO-GOs split into TWO distinct seed-variable fragilities:**
-  1. **The parser dt=1.0 read-tie** (43, 102): the positional WTA read occasionally ties, dropping a role key → the conversational check fails. Generalization at these seeds was fine (0.50) and even **perfect (1.00 at seed 102)** — so the parse tie, not generalization, sank them. The no-regression check now records this gracefully instead of crashing.
-  2. **Generalization at chance** (100, 101): H5/H6 = 0.25. The scoping doc's pre-registered vision-noise watch. (But seed 102's H5/H6 = 1.00 proves the generalization *can* be perfect — it is variable, not weak.)
+- **The integration, the no-confab moat, AND the parse are now robust across every seed** — byte-identity True on all 6, COMPOSE 1.000 on all, parse_ok on all (the distinct-role-assignment read eliminated the dt=1.0 tie that sank 43/102), and the moat NEVER breaches (0/6). The hard discipline — never confabulate — holds seed-to-seed.
+- **The ONLY remaining failure mode is generalization-at-chance at 100/101.** Critically, this is NOT a firing or read-noise issue: the gen_concept fires *strongly* at those seeds (held-out win-fire 1.88 / 1.31) but assigns the **wrong category** (H5 exactly at chance 0.25 = random). It is the **inherent seed-variance of the point-neuron vision→concept generalization** — the documented capstone fidelity (~0.75 with seed dips; seed 102 here is a perfect 1.00). The population-code lever (read-side) would not fix a wrong *generalization*; closing this needs more discriminative structured perception (the vision→concept fidelity arc), a separate, deeper follow-on.
 
-⇒ **Stage 2's integration + no-confab moat are demonstrated and robust; two sub-capabilities (parse, generalization) are seed-variable.** Pre-registered fixes (never the gate): (1) a more robust positional parse read — longer settle / graceful tie handling — likely flips 43 + 102 to GO (their generalization already passes); (2) the **population-code lever** (more `gen_n_concept_per`) for a reliable concept-category read at 100/101. Both bounded follow-ons; the integration + the moat are the achievement.
+⇒ **The unified embodied agent's INTEGRATION, no-confab MOAT, navigation, compose, conversation, and parse are 6-seed robust (4/6 GO; the 2 misses are purely the inherent generalization seed-variance). The generalization sub-capability's per-seed fidelity is the documented open frontier — not a bug, and not closable by loosening any gate.**
 
 ## Reproduce
 

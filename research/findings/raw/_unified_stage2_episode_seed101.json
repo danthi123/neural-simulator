@@ -2,7 +2,7 @@
   "seed": 101,
   "backend": "cupy",
   "verdict": "NO-GO",
-  "elapsed_s": 218.7292881011963,
+  "elapsed_s": 247.99658107757568,
   "chance_compose": 0.25,
   "object_layout": {
     "1,2": "dog",
@@ -45,11 +45,11 @@
       14
     ],
     "h5_concept_cat_acc": 0.25,
-    "h5_margin": 0.06958333333333336,
+    "h5_margin": 0.0604166666666667,
     "h6_hybrid_recall_acc": 0.25,
-    "heldout_win_fire": 1.30625,
+    "heldout_win_fire": 1.29375,
     "novel_win_fire": 0.5,
-    "gate_thresh": 0.78375,
+    "gate_thresh": 0.77625,
     "novel_familiar": false,
     "novel_recall": null,
     "gen_moat_abstains": true,

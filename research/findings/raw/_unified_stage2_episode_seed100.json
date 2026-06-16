@@ -2,7 +2,7 @@
   "seed": 100,
   "backend": "cupy",
   "verdict": "NO-GO",
-  "elapsed_s": 223.14420413970947,
+  "elapsed_s": 243.53691339492798,
   "chance_compose": 0.25,
   "object_layout": {
     "1,2": "dog",
@@ -45,7 +45,7 @@
       13
     ],
     "h5_concept_cat_acc": 0.25,
-    "h5_margin": 0.30687499999999995,
+    "h5_margin": 0.27020833333333333,
     "h6_hybrid_recall_acc": 0.25,
     "heldout_win_fire": 1.875,
     "novel_win_fire": 1.0,

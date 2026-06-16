@@ -1,8 +1,8 @@
 {
   "seed": 102,
   "backend": "cupy",
-  "verdict": "NO-GO",
-  "elapsed_s": 214.8980484008789,
+  "verdict": "GO",
+  "elapsed_s": 254.25704860687256,
   "chance_compose": 0.25,
   "object_layout": {
     "1,2": "dog",
@@ -45,7 +45,7 @@
       12
     ],
     "h5_concept_cat_acc": 1.0,
-    "h5_margin": 0.7008333333333333,
+    "h5_margin": 0.7024999999999999,
     "h6_hybrid_recall_acc": 1.0,
     "heldout_win_fire": 1.1675,
     "novel_win_fire": 0.25,
@@ -80,16 +80,16 @@
   },
   "gen_go": true,
   "no_regression": {
-    "parse_ok": false,
-    "what_ok": false,
-    "who_ok": false,
+    "parse_ok": true,
+    "what_ok": true,
+    "who_ok": true,
     "moat_ok": true,
-    "desc_ok": false,
-    "describe": null,
+    "desc_ok": true,
+    "describe": "dog go north",
     "moat_what": null,
     "moat_describe": null
   },
-  "conv_ok": false,
+  "conv_ok": true,
   "compose_moat_ok": true,
   "compose_moat_abstain": [
     1,
@@ -129,5 +129,5 @@
     "perception_side_write": "cortex_it <- orthogonal_drive_pattern(object) DURING arrival [sensory render]",
     "ground_write": "composer.concepts[o] = angle(M @ live_cortex_it_rate) [the only write into the percept code]"
   },
-  "go": false
+  "go": true
 }
