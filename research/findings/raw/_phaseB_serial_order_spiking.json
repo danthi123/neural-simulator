@@ -1,0 +1,67 @@
+{
+  "true": 1.0,
+  "perm": 0.3333333333333333,
+  "n_pass": 6,
+  "ctrl_true": 0.20833333333333337,
+  "ctrl_perm": 1.0,
+  "aggregate_gate": {
+    "true_score": 1.0,
+    "best_perm_score": 0.3333333333333333,
+    "pct_over_permuted": 200.00000000000003,
+    "gate_cleared": true,
+    "margin_required_pct": 10.0,
+    "abs_floor": 0.5,
+    "gate": true,
+    "GATE": "PASS"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "true": 1.0,
+      "perm": 0.3333333333333333,
+      "gate": true,
+      "ctrl_true": 0.25000000000000006,
+      "ctrl_perm": 1.0
+    },
+    {
+      "seed": 43,
+      "true": 1.0,
+      "perm": 0.3333333333333333,
+      "gate": true,
+      "ctrl_true": 0.16666666666666666,
+      "ctrl_perm": 1.0
+    },
+    {
+      "seed": 44,
+      "true": 1.0,
+      "perm": 0.3333333333333333,
+      "gate": true,
+      "ctrl_true": 0.16666666666666666,
+      "ctrl_perm": 1.0
+    },
+    {
+      "seed": 45,
+      "true": 1.0,
+      "perm": 0.3333333333333333,
+      "gate": true,
+      "ctrl_true": 0.2222222222222222,
+      "ctrl_perm": 1.0
+    },
+    {
+      "seed": 46,
+      "true": 1.0,
+      "perm": 0.3333333333333333,
+      "gate": true,
+      "ctrl_true": 0.22222222222222224,
+      "ctrl_perm": 1.0
+    },
+    {
+      "seed": 47,
+      "true": 1.0,
+      "perm": 0.3333333333333333,
+      "gate": true,
+      "ctrl_true": 0.22222222222222224,
+      "ctrl_perm": 1.0
+    }
+  ]
+}
