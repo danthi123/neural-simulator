@@ -390,7 +390,13 @@ def _train_merged_convergence(bridge, gen_handles, vis_sets, train, *, epochs=20
     a.perc_scale = float(perc_scale); a.conc_scale = float(conc_scale); a.seed_base = int(seed)
     from research.runners._genfrontier_onsubstrate_convergence_derisk import train_convergence
     try:
-        diag = train_convergence(bridge, xp, perc, conc, gen_handles["conc_blocks"], vis_sets, train, a)
+        # train_convergence rebases perception indices by `- perc_region[0]` (it expects GLOBAL perc indices;
+        # standalone the perception region sat at base 0 so it was a no-op). On the MERGED bridge gen_perception is
+        # appended LAST (base > 0) and vis_sets are built LOCAL (0..N_V1_COMPLEX-1) → globalize so the rebase recovers
+        # the correct local indices. (conc_blocks are already GLOBAL: conc_region.reshape.)
+        perc_base = int(np.asarray(perc)[0])
+        vis_sets_g = [np.asarray(vs, dtype=np.int64) + perc_base for vs in vis_sets]
+        diag = train_convergence(bridge, xp, perc, conc, gen_handles["conc_blocks"], vis_sets_g, train, a)
     finally:
         (cc.enable_hebbian_learning, cc.enable_stdp, cc.enable_reward_modulation, cc.enable_ou_process,
          cc.hebbian_learning_rate, cc.hebbian_max_weight, cc.hebbian_min_weight, cc.hebbian_weight_decay,

@@ -89,9 +89,12 @@ def _read_gen_spikes(bridge, gen, perc_idx, xp):
     gen_fact (per CATEGORY block) SPIKES over the read window (cp_firing_states). Returns
     (conc_per_block[F], fact_per_block[N_CAT], conc_total, fact_total)."""
     a = _ReadArgs()
+    # read_heldout_spikes rebases perception indices by `- perc_region[0]` (expects GLOBAL); perc_idx (vis_sets /
+    # novel_set) are LOCAL 0-based V1-complex indices → globalize so the rebase recovers the correct local indices.
+    perc_idx_g = np.asarray(perc_idx, dtype=np.int64) + int(np.asarray(gen["perc_region"])[0])
     return read_heldout_spikes(
         bridge, xp, gen["perc_region"], gen["conc_region"], gen["fact_region"],
-        gen["conc_blocks"], gen["fact_blocks"], perc_idx, a.perc_scale, a.read_steps)
+        gen["conc_blocks"], gen["fact_blocks"], perc_idx_g, a.perc_scale, a.read_steps)
 
 
 def _category_of_concept_spikes(conc_per_block, cat_ids, n_cat):
