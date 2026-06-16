@@ -331,11 +331,17 @@ class RFPhasorComposer:
                 return "yes" if self.unbind(comp, "polarity", self.pol_words) == "AFFIRM" else "no"
         return "unknown"
 
-    def render_fact(self, agent):
+    def render_fact(self, agent, order_fn=None):
         """Generation: render a full stored sentence whose agent matches `agent` -- e.g. 'dog go north' (an
         attributed patient 'big apple' or a nested clause renders too). The action + patient are DECODED from the
         RF unbind (not the stored labels); None if no fact's agent matches (the no-confab moat -- no invented
-        sentence about an unknown subject)."""
+        sentence about an unknown subject).
+
+        `order_fn` (opt-in, default None = the host f-string): a callable n -> a permutation of range(n) that
+        produces the word ORDER. When set, the slot order comes from the de-risked spiking competitive-queuing
+        serial-order generator (NeuralSerialOrderRenderer) instead of the host literal -- the cognitive ordering
+        is then neural; only the final join (the body's emission) is host. The moat is unaffected: abstention
+        (return None) happens BEFORE any ordering."""
         for fact, comp in self._iter_facts():
             if self.unbind(comp, "agent") == agent:
                 ac = self.unbind(comp, "action")
@@ -343,6 +349,9 @@ class RFPhasorComposer:
                 adjs = [self.unbind(comp, r) for r in ("attribute", "attribute2") if r in fact]
                 if adjs:
                     pt = " ".join(adjs + [pt])
+                words = [agent, ac, pt]
+                if order_fn is not None:
+                    return " ".join(words[i] for i in order_fn(len(words)))   # neural serial-order
                 return f"{agent} {ac} {pt}"
         return None
 

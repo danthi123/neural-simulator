@@ -458,14 +458,21 @@ class CoreSimComposer:
                 return "yes" if self.unbind(bound, "polarity", self.pol_words) == "AFFIRM" else "no"
         return "unknown"
 
-    def render_fact(self, agent):
+    def render_fact(self, agent, order_fn=None):
         """Generation: render a full stored sentence whose agent matches `agent` -- e.g. 'dog go north' -- with the
         action + patient DECODED from the spiking unbind (not the stored labels). None if no fact's agent matches
-        (the no-confab moat: the agent does not invent a sentence about an unknown subject)."""
+        (the no-confab moat: the agent does not invent a sentence about an unknown subject).
+
+        `order_fn` (opt-in, default None = the host f-string): a callable n -> a permutation of range(n) that
+        produces the word ORDER via the de-risked spiking serial-order generator (the cognitive ordering is then
+        neural; only the final join is host). The moat is unaffected: abstention happens BEFORE any ordering."""
         for fact, stored in self.kb:
             bound = self._get_bound(stored)
             if self.unbind(bound, "agent") == agent:
                 action = self.unbind(bound, "action")
                 patient = self._render_filler(bound, "patient", fact["patient"])
+                words = [agent, action, patient]
+                if order_fn is not None:
+                    return " ".join(words[i] for i in order_fn(len(words)))   # neural serial-order
                 return f"{agent} {action} {patient}"
         return None

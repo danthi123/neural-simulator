@@ -150,7 +150,7 @@ class BrainConversationalAgent:
 
     def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None, composer_kind="rf",
                  enable_spiking_cleanup=False, enable_substrate_store=False, grounded_codes=None,
-                 enable_learned_assoc=False):
+                 enable_learned_assoc=False, enable_neural_render=False):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -189,6 +189,13 @@ class BrainConversationalAgent:
             vocab = self.composer.words if hasattr(self.composer, "words") else (
                 sorted(concepts.keys()) if isinstance(concepts, dict) else None)
             self._learned_assoc = LearnedAssocGraph(list(vocab), seed=seed)
+        # (sentence-generation de-templating, opt-in) route describe()'s word ORDERING through the de-risked spiking
+        # competitive-queuing serial-order generator instead of the host f-string. Default OFF = the f-string (the
+        # production suite byte-preserved). The no-confab moat is unaffected (render_fact abstains BEFORE ordering).
+        self._neural_render = None
+        if enable_neural_render:
+            from research.runners.neural_serial_order_renderer import NeuralSerialOrderRenderer
+            self._neural_render = NeuralSerialOrderRenderer(seed=seed)
 
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO statement and store it. `sentence` is 'agent action patient' (or its passive frame)."""
@@ -215,7 +222,10 @@ class BrainConversationalAgent:
 
     def describe(self, agent):
         """Generation: produce a sentence about `agent` from the spiking memory ('dog go north'), or None if the
-        agent knows no fact about it (no confabulation)."""
+        agent knows no fact about it (no confabulation). With enable_neural_render, the word ORDER is produced by
+        the de-risked spiking competitive-queuing serial-order generator instead of the host f-string."""
+        if self._neural_render is not None:
+            return self.composer.render_fact(agent, order_fn=lambda n: self._neural_render.order(list(range(n))))
         return self.composer.render_fact(agent)
 
     # --- dialogue planning (what to say next) ---

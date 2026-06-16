@@ -124,6 +124,24 @@ def test_substrate_store_agent_qa():
     assert ag.what_does("river", "look") is None         # no-confab moat preserved
 
 
+def test_neural_render_describe():
+    """Sentence-generation de-templating (CYCLE 105 Step 2): enable_neural_render routes describe()'s word
+    ORDERING through the de-risked spiking competitive-queuing serial-order generator (NeuralSerialOrderRenderer)
+    instead of the host f-string `f"{agent} {action} {patient}"`. The recalled sentence + the no-confab moat must
+    be IDENTICAL to the f-string default (the order is now produced by spiking rate ranking, not a host literal).
+    GPU-only (the ordering runs on a spiking bridge; the BridgeParser is GPU-validated)."""
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("the neural renderer + BridgeParser are GPU-validated")
+    try:
+        ag = BrainConversationalAgent(seed=42, enable_neural_render=True)
+    except FileNotFoundError:
+        pytest.skip("denoise64 concept-code cache not present")
+    ag.hear("dog go north")
+    assert ag.describe("dog") == "dog go north"          # word order produced by the spiking CQ read-out
+    assert ag.describe("river") is None                  # no-confab moat preserved (abstain BEFORE ordering)
+
+
 def test_learned_assoc_graph_agent():
     """Cheat-D conversion at the AGENT level: enable_learned_assoc makes dialogue planning (elaborate) spread over a
     SUBSTRATE-LEARNED association graph -- a sparse Hebbian recurrent (the CA3 autoassociator / _D_sparse_heteroassoc
