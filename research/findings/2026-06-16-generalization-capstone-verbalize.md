@@ -3,8 +3,9 @@
 **Date:** 2026-06-16
 **Runner:** `research/runners/_genfrontier_capstone_verbalize_derisk.py`
 **Raw:** `research/findings/raw/_genfrontier_capstone_verbalize.json`
-**Verdict:** **NEGATIVE for the fully-spiking recall (option a)** — single-seed (42), GPU; the runner correctly
-refused to weaken the no-confab moat to manufacture a GO. The hybrid (option b) reaches 0.75 (the path forward).
+**Verdict:** **NEGATIVE for the fully-spiking recall (option a); the HYBRID (option b) reaches 0.92 (3-seed) — the
+capstone-completion path.** 3 seeds (42/43/44), GPU; the runner correctly refused to weaken the no-confab moat to
+manufacture a GO.
 
 ---
 
@@ -25,20 +26,27 @@ Two designs (both reuse stage-1's vision→concept pipeline verbatim):
   `RFPhasorComposer` recall by that category's concept code (the recall is the validated phasor mechanism, keyed by
   the genuinely-spiking concept).
 
-## Result (single seed 42, GPU)
+## Result (3 seeds 42/43/44, GPU)
 
 | measure | option (a) fully-spiking | option (b) hybrid |
 |---------|--------------------------|-------------------|
-| fact-recall category accuracy | **0.25 (= chance)** | **0.75** |
-| flat-distinct baseline | 0.25 | — |
+| fact-recall category accuracy (mean) | **0.17 (≈ chance 0.25)** — per-seed 0.25/0.00/0.25 | **0.92** — per-seed 0.75/1.00/1.00 |
+| flat-distinct baseline | 0.17 | — |
 | category-derangement | 0.50 | — |
-| no-confab moat | **BREACH (confabulated)** — novel win-fire 1.30 > held-out 0.92 | (uses the validated, intact moat) |
-| concept spikes/cue → fact-tag spikes/cue | 118 → 122 | — |
+| no-confab moat | **BREACH (confabulated) all 3 seeds** | (uses the validated, intact moat) |
 
-**Honest NEGATIVE for option (a):** the fully-spiking fact-tag recall does NOT cleanly generalize (cat-acc at
-chance) AND its spiking familiarity gate is too loose (a no-category object confabulated a fact — the moat
-breached). The runner correctly reported this as NEGATIVE rather than loosening the gate's calibration to force a
-pass. **The moat is never weakened to manufacture a GO.**
+**Honest NEGATIVE for option (a) — robust at 3 seeds:** the fully-spiking fact-tag recall does NOT cleanly
+generalize (cat-acc ≈ chance) AND its spiking familiarity gate is too loose (a no-category object confabulates a
+fact — the moat breaches every seed). The runner correctly reported NEGATIVE rather than loosening the gate's
+calibration to force a pass. **The moat is never weakened to manufacture a GO.**
+
+**The HYBRID (option b) is strong — 0.92 at 3 seeds (0.75/1.00/1.00):** the spiking concept-category (stage 1),
+used to key the VALIDATED `RFPhasorComposer` recall, recovers the matched category's fact at 0.92. ⇒ **the capstone
+is achievable via the hybrid:** perceive a novel object → its concept neurons spike for the right category → that
+spiking concept keys the validated recall → the agent recalls the matched category's fact, with the validated
+(intact) no-confab moat. Both parts are brain-based (the generalization is the spiking concept; the recall is the
+validated composer); the host only routes WHICH concept spiked to the composer (a brain-to-brain handoff, as the
+merged bridge routes elsewhere).
 
 ## Why this is the honest boundary (and what it does NOT undermine)
 
