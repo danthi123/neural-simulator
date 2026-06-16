@@ -6506,7 +6506,22 @@ class SimulationBridge:
                             self.cp_connections.data *= (1.0 - gated_decay)
                         else:
                             self.cp_connections.data *= (1.0 - cfg.hebbian_weight_decay)
-                    cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight, out=self.cp_connections.data)
+                    # Per-pathway plasticity gain: GATE the clip the same way the decay is gated above. A FROZEN
+                    # pathway (gain 0) has its weights explicitly managed (e.g. a fixed conversational read-out near
+                    # 50, or a learned parser conj->role edge at ~40-60) and MUST NOT be clipped to a possibly-
+                    # temporarily-lowered hebbian_max_weight: a sub-routine training ONE pathway can lower
+                    # hebbian_max_weight for its own potentiation, and the un-gated clip would then crush EVERY other
+                    # (frozen) pathway down to that bound (the recurring foot-gun — it silenced the co-resident
+                    # conversational parser when a generalization-convergence pass set hebbian_max_weight=20). Clip
+                    # ONLY gain>0 synapses; leave frozen weights verbatim. Uniform gain (all 1.0) reproduces the
+                    # un-gated clip exactly; gain is None (the default for non-gated configs) takes the byte-
+                    # identical else branch. Operand sizing mirrors the gated decay directly above (proven-correct).
+                    if self.cp_plasticity_rate_gain is not None:
+                        _clipped_data = cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight)
+                        _active_syn = self.cp_plasticity_rate_gain > 0.0
+                        self.cp_connections.data[_active_syn] = _clipped_data[_active_syn]
+                    else:
+                        cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight, out=self.cp_connections.data)
                     if num_potentiation_events > 0: self._mock_total_plasticity_events += num_potentiation_events
             
             # --- 4b. C2: STDP (Spike-Timing-Dependent Plasticity) ---
@@ -6808,10 +6823,20 @@ class SimulationBridge:
                             weight_updates = weight_updates * tan_gate
                     self.cp_connections.data += weight_updates
                     
-                    # Clip to bounds (use STDP bounds if STDP is enabled, otherwise Hebbian bounds)
+                    # Clip to bounds (use STDP bounds if STDP is enabled, otherwise Hebbian bounds).
                     w_min = cfg.stdp_w_min if cfg.enable_stdp else cfg.hebbian_min_weight
                     w_max = cfg.stdp_w_max if cfg.enable_stdp else cfg.hebbian_max_weight
-                    cp.clip(self.cp_connections.data, w_min, w_max, out=self.cp_connections.data)
+                    # GATE the clip by plasticity gain (mirrors the Hebbian-clip fix above): a FROZEN pathway (gain 0)
+                    # must NOT be clipped to a possibly-temporarily-lowered w_max — this is the "5a characterized gap"
+                    # (the reward/STDP clip was the one ungated operation that could move a frozen weight outside the
+                    # active rule's clip bounds). Clip ONLY gain>0 synapses; uniform gain reproduces the un-gated clip;
+                    # gain None (the default) takes the byte-identical else branch.
+                    if self.cp_plasticity_rate_gain is not None:
+                        _clipped_rw = cp.clip(self.cp_connections.data, w_min, w_max)
+                        _active_rw = self.cp_plasticity_rate_gain > 0.0
+                        self.cp_connections.data[_active_rw] = _clipped_rw[_active_rw]
+                    else:
+                        cp.clip(self.cp_connections.data, w_min, w_max, out=self.cp_connections.data)
                     
                     # Count significant updates
                     significant_updates = cp.sum(cp.abs(weight_updates) > 1e-6)
@@ -7072,11 +7097,18 @@ class SimulationBridge:
                         self.cp_connections.data[:] = self.cp_connections.data * effective_scales
                     else:
                         self.cp_connections.data[:] = self.cp_connections.data * post_scales
-                    # Enforce weight bounds
-                    if cfg.enable_hebbian_learning:
-                        cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight, out=self.cp_connections.data)
+                    # Enforce weight bounds. GATE by plasticity gain (mirrors the Hebbian/reward clip fixes, and is
+                    # consistent with the gain-gated synaptic SCALING directly above): a FROZEN pathway (gain 0) keeps
+                    # its weights verbatim instead of being clipped to these homeostatic bounds. gain None (the
+                    # default) takes the byte-identical un-gated clip.
+                    _hw_min = cfg.hebbian_min_weight if cfg.enable_hebbian_learning else 0.01
+                    _hw_max = cfg.hebbian_max_weight if cfg.enable_hebbian_learning else 5.0
+                    if self.cp_plasticity_rate_gain is not None:
+                        _clipped_hs = cp.clip(self.cp_connections.data, _hw_min, _hw_max)
+                        _active_hs = self.cp_plasticity_rate_gain > 0.0
+                        self.cp_connections.data[_active_hs] = _clipped_hs[_active_hs]
                     else:
-                        cp.clip(self.cp_connections.data, 0.01, 5.0, out=self.cp_connections.data)
+                        cp.clip(self.cp_connections.data, _hw_min, _hw_max, out=self.cp_connections.data)
 
             if _profiling: _backend_synchronize(); _prof['t_homeo'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
             # --- 6. Prepare for Next Step & Record Frame ---
