@@ -1,0 +1,113 @@
+{
+  "seed": 42,
+  "backend": "cupy",
+  "verdict": "GO",
+  "chance": 0.25,
+  "elapsed_s": 2172.0812079906464,
+  "byte_identity": true,
+  "bases_unchanged": true,
+  "appended_last": true,
+  "base_n_neurons": 4276,
+  "stage1_n_neurons": 8324,
+  "bases": {
+    "rf": [
+      3124,
+      3124
+    ],
+    "parse_conj": [
+      958,
+      958
+    ],
+    "cortex_it": [
+      4020,
+      4020
+    ],
+    "cortex_N": [
+      0,
+      0
+    ]
+  },
+  "vision_structure_margin": 0.5277777314186096,
+  "vision_structure_preserved": true,
+  "gen_train_diag": {
+    "perc": 43,
+    "conc": 100
+  },
+  "held_out": [
+    0,
+    6,
+    10,
+    14
+  ],
+  "h5_concept_cat_acc": 0.75,
+  "h5_margin": 0.7666666666666667,
+  "concept_spikes_per_cue": 1882.0,
+  "fact_spikes_per_cue": 6522.75,
+  "h6_hybrid_recall_acc": 0.75,
+  "moat": {
+    "heldout_win_fire": 1.94,
+    "novel_win_fire": 1.0,
+    "gate_thresh": 1.164,
+    "novel_familiar": false,
+    "novel_recall": null,
+    "moat_abstains": true,
+    "fam_contrast_ok": true
+  },
+  "no_regression": {
+    "parse_ok": true,
+    "what_ok": true,
+    "who_ok": true,
+    "moat_ok": true,
+    "desc_ok": true,
+    "describe": "dog go north",
+    "moat_what": null,
+    "moat_describe": null
+  },
+  "conv_ok": true,
+  "answers": [
+    {
+      "true_cat": 0,
+      "keyed_cat": 0,
+      "recall": "cat",
+      "cat_means": [
+        3.0,
+        2.155,
+        0.81,
+        2.5
+      ]
+    },
+    {
+      "true_cat": 1,
+      "keyed_cat": 1,
+      "recall": "cat",
+      "cat_means": [
+        1.25,
+        2.005,
+        0.31,
+        0.52
+      ]
+    },
+    {
+      "true_cat": 2,
+      "keyed_cat": 1,
+      "recall": "cat",
+      "cat_means": [
+        0.75,
+        1.2550000000000001,
+        0.5,
+        0.25
+      ]
+    },
+    {
+      "true_cat": 3,
+      "keyed_cat": 3,
+      "recall": "cat",
+      "cat_means": [
+        0.5,
+        1.0150000000000001,
+        0.5,
+        1.5
+      ]
+    }
+  ]
+}
