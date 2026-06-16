@@ -1,0 +1,1142 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "n_objects": 4,
+      "chance": 0.25,
+      "train_stats": {
+        "route_weight_on_diag_mean": 7.879899230505505,
+        "route_weight_off_diag_mean": 0.6316214140963043,
+        "route_weight_max": 16.927837371826172,
+        "n_train_trials": 240
+      },
+      "encode_stats": {
+        "apple": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "river": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "dog": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "cat": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        }
+      },
+      "per_obj": {
+        "apple": {
+          "scores": {
+            "apple": 0.9080209781428906,
+            "river": 0.009558115559398849,
+            "dog": 0.028674346678196544,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.9080209781428906,
+          "perceived_score": 0.9080209781428906,
+          "margin": 0.879346631464694,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "river": {
+          "scores": {
+            "apple": 0.009370791384433646,
+            "river": 0.8527420159834619,
+            "dog": 0.06559553969103553,
+            "cat": 0.009370791384433646
+          },
+          "top1": "river",
+          "top1_score": 0.8527420159834619,
+          "perceived_score": 0.8527420159834619,
+          "margin": 0.7871464762924264,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "dog": {
+          "scores": {
+            "apple": 0.009084904502122583,
+            "river": 0.0,
+            "dog": 0.9266602592165034,
+            "cat": 0.02725471350636775
+          },
+          "top1": "dog",
+          "top1_score": 0.9266602592165034,
+          "perceived_score": 0.9266602592165034,
+          "margin": 0.8994055457101356,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "cat": {
+          "scores": {
+            "apple": 0.060789178835512166,
+            "river": 0.0,
+            "dog": 0.017368336810146334,
+            "cat": 0.8771010089123898
+          },
+          "top1": "cat",
+          "top1_score": 0.8771010089123898,
+          "perceived_score": 0.8771010089123898,
+          "margin": 0.8163118300768777,
+          "top1_is_perceived": true,
+          "correct": true
+        }
+      },
+      "lesion_per_obj": {
+        "apple": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": true,
+          "correct": false
+        },
+        "river": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        },
+        "dog": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        },
+        "cat": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        }
+      },
+      "n_recall_correct": 4,
+      "n_lesion_correct": 0,
+      "provenance": {
+        "perception_side_current_writes": [
+          "cortex_it <- orthogonal_drive_pattern(object)  [legitimate sensory render: the environment presents the perceived object]"
+        ],
+        "recall_side_current_writes": [
+          "stimulate_tag(seen_<obj>)  [drives the TAGGED neurons = the perceived cortex_it ensemble, NOT a copied percept vector]"
+        ],
+        "engram_region_filter": "cortex_it",
+        "every_tag_is_a_cortex_it_subset": true,
+        "no_percept_vector_copied_into_recall_drive": true,
+        "tags": [
+          {
+            "tag": "seen_apple",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_river",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_dog",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_cat",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 43,
+      "n_objects": 4,
+      "chance": 0.25,
+      "train_stats": {
+        "route_weight_on_diag_mean": 8.837133196674495,
+        "route_weight_off_diag_mean": 0.6285862634341194,
+        "route_weight_max": 17.714874267578125,
+        "n_train_trials": 240
+      },
+      "encode_stats": {
+        "apple": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "river": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "dog": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "cat": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        }
+      },
+      "per_obj": {
+        "apple": {
+          "scores": {
+            "apple": 0.8440209039232314,
+            "river": 0.00870124643219826,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.8440209039232314,
+          "perceived_score": 0.8440209039232314,
+          "margin": 0.8353196574910331,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "river": {
+          "scores": {
+            "apple": 0.008534859251816553,
+            "river": 0.8620207844334719,
+            "dog": 0.10241831102179863,
+            "cat": 0.0
+          },
+          "top1": "river",
+          "top1_score": 0.8620207844334719,
+          "perceived_score": 0.8620207844334719,
+          "margin": 0.7596024734116732,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "dog": {
+          "scores": {
+            "apple": 0.024643202837607292,
+            "river": 0.0,
+            "dog": 0.8625120993162553,
+            "cat": 0.016428801891738194
+          },
+          "top1": "dog",
+          "top1_score": 0.8625120993162553,
+          "perceived_score": 0.8625120993162553,
+          "margin": 0.837868896478648,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "cat": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.009360112416423833,
+            "cat": 0.8611303423109926
+          },
+          "top1": "cat",
+          "top1_score": 0.8611303423109926,
+          "perceived_score": 0.8611303423109926,
+          "margin": 0.8517702298945687,
+          "top1_is_perceived": true,
+          "correct": true
+        }
+      },
+      "lesion_per_obj": {
+        "apple": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": true,
+          "correct": false
+        },
+        "river": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        },
+        "dog": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        },
+        "cat": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        }
+      },
+      "n_recall_correct": 4,
+      "n_lesion_correct": 0,
+      "provenance": {
+        "perception_side_current_writes": [
+          "cortex_it <- orthogonal_drive_pattern(object)  [legitimate sensory render: the environment presents the perceived object]"
+        ],
+        "recall_side_current_writes": [
+          "stimulate_tag(seen_<obj>)  [drives the TAGGED neurons = the perceived cortex_it ensemble, NOT a copied percept vector]"
+        ],
+        "engram_region_filter": "cortex_it",
+        "every_tag_is_a_cortex_it_subset": true,
+        "no_percept_vector_copied_into_recall_drive": true,
+        "tags": [
+          {
+            "tag": "seen_apple",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_river",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_dog",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_cat",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 44,
+      "n_objects": 4,
+      "chance": 0.25,
+      "train_stats": {
+        "route_weight_on_diag_mean": 7.922989298294891,
+        "route_weight_off_diag_mean": 0.6476994281370951,
+        "route_weight_max": 17.714874267578125,
+        "n_train_trials": 240
+      },
+      "encode_stats": {
+        "apple": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "river": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "dog": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "cat": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        }
+      },
+      "per_obj": {
+        "apple": {
+          "scores": {
+            "apple": 0.8859255569070021,
+            "river": 0.03769895986838307,
+            "dog": 0.009424739967095768,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.8859255569070021,
+          "perceived_score": 0.8859255569070021,
+          "margin": 0.848226597038619,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "river": {
+          "scores": {
+            "apple": 0.04273250633945567,
+            "river": 0.897382633128569,
+            "dog": 0.010683126584863917,
+            "cat": 0.0
+          },
+          "top1": "river",
+          "top1_score": 0.897382633128569,
+          "perceived_score": 0.897382633128569,
+          "margin": 0.8546501267891133,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "dog": {
+          "scores": {
+            "apple": 0.027313388953197338,
+            "river": 0.0,
+            "dog": 0.9377596873931087,
+            "cat": 0.0
+          },
+          "top1": "dog",
+          "top1_score": 0.9377596873931087,
+          "perceived_score": 0.9377596873931087,
+          "margin": 0.9104462984399113,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "cat": {
+          "scores": {
+            "apple": 0.021657404032416252,
+            "river": 0.06497221209724877,
+            "dog": 0.0,
+            "cat": 0.8229813532318176
+          },
+          "top1": "cat",
+          "top1_score": 0.8229813532318176,
+          "perceived_score": 0.8229813532318176,
+          "margin": 0.7580091411345689,
+          "top1_is_perceived": true,
+          "correct": true
+        }
+      },
+      "lesion_per_obj": {
+        "apple": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": true,
+          "correct": false
+        },
+        "river": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        },
+        "dog": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        },
+        "cat": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        }
+      },
+      "n_recall_correct": 4,
+      "n_lesion_correct": 0,
+      "provenance": {
+        "perception_side_current_writes": [
+          "cortex_it <- orthogonal_drive_pattern(object)  [legitimate sensory render: the environment presents the perceived object]"
+        ],
+        "recall_side_current_writes": [
+          "stimulate_tag(seen_<obj>)  [drives the TAGGED neurons = the perceived cortex_it ensemble, NOT a copied percept vector]"
+        ],
+        "engram_region_filter": "cortex_it",
+        "every_tag_is_a_cortex_it_subset": true,
+        "no_percept_vector_copied_into_recall_drive": true,
+        "tags": [
+          {
+            "tag": "seen_apple",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_river",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_dog",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_cat",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 100,
+      "n_objects": 4,
+      "chance": 0.25,
+      "train_stats": {
+        "route_weight_on_diag_mean": 8.655886159642325,
+        "route_weight_off_diag_mean": 0.7209822747030358,
+        "route_weight_max": 16.927837371826172,
+        "n_train_trials": 240
+      },
+      "encode_stats": {
+        "apple": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "river": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "dog": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "cat": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        }
+      },
+      "per_obj": {
+        "apple": {
+          "scores": {
+            "apple": 0.8769475492617821,
+            "river": 0.048719308292321226,
+            "dog": 0.034799505923086595,
+            "cat": 0.04175940710770391
+          },
+          "top1": "apple",
+          "top1_score": 0.8769475492617821,
+          "perceived_score": 0.8769475492617821,
+          "margin": 0.8282282409694609,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "river": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.8737386731109515,
+            "dog": 0.0,
+            "cat": 0.030837835521562995
+          },
+          "top1": "river",
+          "top1_score": 0.8737386731109515,
+          "perceived_score": 0.8737386731109515,
+          "margin": 0.8429008375893885,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "dog": {
+          "scores": {
+            "apple": 0.00885962387517759,
+            "river": 0.026578871625532772,
+            "dog": 0.8593835158922264,
+            "cat": 0.026578871625532772
+          },
+          "top1": "dog",
+          "top1_score": 0.8593835158922264,
+          "perceived_score": 0.8593835158922264,
+          "margin": 0.8328046442666936,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "cat": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.009479631170699901,
+            "dog": 0.018959262341399802,
+            "cat": 0.8436871741922912
+          },
+          "top1": "cat",
+          "top1_score": 0.8436871741922912,
+          "perceived_score": 0.8436871741922912,
+          "margin": 0.8247279118508914,
+          "top1_is_perceived": true,
+          "correct": true
+        }
+      },
+      "lesion_per_obj": {
+        "apple": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": true,
+          "correct": false
+        },
+        "river": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        },
+        "dog": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        },
+        "cat": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        }
+      },
+      "n_recall_correct": 4,
+      "n_lesion_correct": 0,
+      "provenance": {
+        "perception_side_current_writes": [
+          "cortex_it <- orthogonal_drive_pattern(object)  [legitimate sensory render: the environment presents the perceived object]"
+        ],
+        "recall_side_current_writes": [
+          "stimulate_tag(seen_<obj>)  [drives the TAGGED neurons = the perceived cortex_it ensemble, NOT a copied percept vector]"
+        ],
+        "engram_region_filter": "cortex_it",
+        "every_tag_is_a_cortex_it_subset": true,
+        "no_percept_vector_copied_into_recall_drive": true,
+        "tags": [
+          {
+            "tag": "seen_apple",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_river",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_dog",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_cat",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 101,
+      "n_objects": 4,
+      "chance": 0.25,
+      "train_stats": {
+        "route_weight_on_diag_mean": 8.531571513516445,
+        "route_weight_off_diag_mean": 0.656948205063891,
+        "route_weight_max": 18.425172805786133,
+        "n_train_trials": 240
+      },
+      "encode_stats": {
+        "apple": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "river": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "dog": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "cat": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        }
+      },
+      "per_obj": {
+        "apple": {
+          "scores": {
+            "apple": 0.8367116747257697,
+            "river": 0.027890389157525657,
+            "dog": 0.027890389157525657,
+            "cat": 0.046483981929209425
+          },
+          "top1": "apple",
+          "top1_score": 0.8367116747257697,
+          "perceived_score": 0.8367116747257697,
+          "margin": 0.7902276927965602,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "river": {
+          "scores": {
+            "apple": 0.016545319677242598,
+            "river": 0.9099925822483429,
+            "dog": 0.0,
+            "cat": 0.016545319677242598
+          },
+          "top1": "river",
+          "top1_score": 0.9099925822483429,
+          "perceived_score": 0.9099925822483429,
+          "margin": 0.8934472625711003,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "dog": {
+          "scores": {
+            "apple": 0.04003203834259516,
+            "river": 0.04803844601111419,
+            "dog": 0.8726984358685745,
+            "cat": 0.0
+          },
+          "top1": "dog",
+          "top1_score": 0.8726984358685745,
+          "perceived_score": 0.8726984358685745,
+          "margin": 0.8246599898574604,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "cat": {
+          "scores": {
+            "apple": 0.008221616055688613,
+            "river": 0.016443232111377225,
+            "dog": 0.0,
+            "cat": 0.8879345340143703
+          },
+          "top1": "cat",
+          "top1_score": 0.8879345340143703,
+          "perceived_score": 0.8879345340143703,
+          "margin": 0.8714913019029931,
+          "top1_is_perceived": true,
+          "correct": true
+        }
+      },
+      "lesion_per_obj": {
+        "apple": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": true,
+          "correct": false
+        },
+        "river": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        },
+        "dog": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        },
+        "cat": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        }
+      },
+      "n_recall_correct": 4,
+      "n_lesion_correct": 0,
+      "provenance": {
+        "perception_side_current_writes": [
+          "cortex_it <- orthogonal_drive_pattern(object)  [legitimate sensory render: the environment presents the perceived object]"
+        ],
+        "recall_side_current_writes": [
+          "stimulate_tag(seen_<obj>)  [drives the TAGGED neurons = the perceived cortex_it ensemble, NOT a copied percept vector]"
+        ],
+        "engram_region_filter": "cortex_it",
+        "every_tag_is_a_cortex_it_subset": true,
+        "no_percept_vector_copied_into_recall_drive": true,
+        "tags": [
+          {
+            "tag": "seen_apple",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_river",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_dog",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_cat",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 102,
+      "n_objects": 4,
+      "chance": 0.25,
+      "train_stats": {
+        "route_weight_on_diag_mean": 9.105455320423134,
+        "route_weight_off_diag_mean": 0.6532706366956864,
+        "route_weight_max": 17.331445693969727,
+        "n_train_trials": 240
+      },
+      "encode_stats": {
+        "apple": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "river": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "dog": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        },
+        "cat": {
+          "n_tagged": 26,
+          "window_ms": 140.0
+        }
+      },
+      "per_obj": {
+        "apple": {
+          "scores": {
+            "apple": 0.9200239764919536,
+            "river": 0.02555622156922093,
+            "dog": 0.034074962092294575,
+            "cat": 0.008518740523073644
+          },
+          "top1": "apple",
+          "top1_score": 0.9200239764919536,
+          "perceived_score": 0.9200239764919536,
+          "margin": 0.885949014399659,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "river": {
+          "scores": {
+            "apple": 0.013414060573343194,
+            "river": 0.898742058413994,
+            "dog": 0.0,
+            "cat": 0.06036327258004437
+          },
+          "top1": "river",
+          "top1_score": 0.898742058413994,
+          "perceived_score": 0.898742058413994,
+          "margin": 0.8383787858339496,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "dog": {
+          "scores": {
+            "apple": 0.02400422505029795,
+            "river": 0.0,
+            "dog": 0.9001584393861731,
+            "cat": 0.0
+          },
+          "top1": "dog",
+          "top1_score": 0.9001584393861731,
+          "perceived_score": 0.9001584393861731,
+          "margin": 0.8761542143358751,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "cat": {
+          "scores": {
+            "apple": 0.03391409172608092,
+            "river": 0.006782818345216184,
+            "dog": 0.027131273380864736,
+            "cat": 0.8682007481876716
+          },
+          "top1": "cat",
+          "top1_score": 0.8682007481876716,
+          "perceived_score": 0.8682007481876716,
+          "margin": 0.8342866564615906,
+          "top1_is_perceived": true,
+          "correct": true
+        }
+      },
+      "lesion_per_obj": {
+        "apple": {
+          "scores": {
+            "apple": 0.1961161346057795,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.1961161346057795,
+          "perceived_score": 0.1961161346057795,
+          "margin": 0.1961161346057795,
+          "top1_is_perceived": true,
+          "correct": true
+        },
+        "river": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        },
+        "dog": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        },
+        "cat": {
+          "scores": {
+            "apple": 0.0,
+            "river": 0.0,
+            "dog": 0.0,
+            "cat": 0.0
+          },
+          "top1": "apple",
+          "top1_score": 0.0,
+          "perceived_score": 0.0,
+          "margin": 0.0,
+          "top1_is_perceived": false,
+          "correct": false
+        }
+      },
+      "n_recall_correct": 4,
+      "n_lesion_correct": 1,
+      "provenance": {
+        "perception_side_current_writes": [
+          "cortex_it <- orthogonal_drive_pattern(object)  [legitimate sensory render: the environment presents the perceived object]"
+        ],
+        "recall_side_current_writes": [
+          "stimulate_tag(seen_<obj>)  [drives the TAGGED neurons = the perceived cortex_it ensemble, NOT a copied percept vector]"
+        ],
+        "engram_region_filter": "cortex_it",
+        "every_tag_is_a_cortex_it_subset": true,
+        "no_percept_vector_copied_into_recall_drive": true,
+        "tags": [
+          {
+            "tag": "seen_apple",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_river",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_dog",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          },
+          {
+            "tag": "seen_cat",
+            "n_tagged": 26,
+            "all_in_cortex_it": true
+          }
+        ]
+      }
+    }
+  ],
+  "verdict": {
+    "verdict": "GO",
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "recall_ge3_all_seeds": true,
+    "lesion_collapses_all_seeds": true,
+    "avg_recall_correct": 4.0,
+    "chance": 0.25,
+    "recall_correct_per_seed": {
+      "42": 4,
+      "43": 4,
+      "44": 4,
+      "100": 4,
+      "101": 4,
+      "102": 4
+    },
+    "lesion_correct_per_seed": {
+      "42": 0,
+      "43": 0,
+      "44": 0,
+      "100": 0,
+      "101": 0,
+      "102": 1
+    },
+    "route_on_off_diag_per_seed": {
+      "42": {
+        "on": 7.879899230505505,
+        "off": 0.6316214140963043
+      },
+      "43": {
+        "on": 8.837133196674495,
+        "off": 0.6285862634341194
+      },
+      "44": {
+        "on": 7.922989298294891,
+        "off": 0.6476994281370951
+      },
+      "100": {
+        "on": 8.655886159642325,
+        "off": 0.7209822747030358
+      },
+      "101": {
+        "on": 8.531571513516445,
+        "off": 0.656948205063891
+      },
+      "102": {
+        "on": 9.105455320423134,
+        "off": 0.6532706366956864
+      }
+    },
+    "provenance_all_seeds": true
+  }
+}
