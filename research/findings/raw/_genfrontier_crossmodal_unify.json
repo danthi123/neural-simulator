@@ -1,0 +1,77 @@
+{
+  "verdict": "GO",
+  "structured_margin": 0.9532293046084895,
+  "structured_cat_acc": 1.0,
+  "flat_margin": 0.0023527536692252433,
+  "permuted_margin": -0.3311368799809508,
+  "moat_intact": true,
+  "chance_cat": 0.25,
+  "per_seed": [
+    {
+      "seed": 42,
+      "flat": {
+        "heldout_margin": 0.0006914646981395335,
+        "heldout_cat_acc": 0.5,
+        "heldout_own_acc": 0.0,
+        "permuted_margin": 0.0024411266875531985,
+        "between_cat_cos": 3.126116263999871e-17
+      },
+      "structured": {
+        "heldout_margin": 0.9353929202819309,
+        "heldout_cat_acc": 1.0,
+        "heldout_own_acc": 0.0,
+        "permuted_margin": -0.32063935575675195,
+        "between_cat_cos": 0.04778457588520985
+      },
+      "moat": {
+        "heldout_familiarity": 0.9570277932582243,
+        "novel_familiarity": 0.2936910148586579,
+        "moat_ok": true
+      }
+    },
+    {
+      "seed": 43,
+      "flat": {
+        "heldout_margin": 0.00026106654537909563,
+        "heldout_cat_acc": 0.0,
+        "heldout_own_acc": 0.0,
+        "permuted_margin": -0.000855490195455323,
+        "between_cat_cos": 2.884881280621846e-17
+      },
+      "structured": {
+        "heldout_margin": 0.94142721006307,
+        "heldout_cat_acc": 1.0,
+        "heldout_own_acc": 0.0,
+        "permuted_margin": -0.33360413477748246,
+        "between_cat_cos": 0.04110151599013725
+      },
+      "moat": {
+        "heldout_familiarity": 0.9488590893414537,
+        "novel_familiarity": 0.5546062303799528,
+        "moat_ok": true
+      }
+    },
+    {
+      "seed": 44,
+      "flat": {
+        "heldout_margin": 0.0061057297641571,
+        "heldout_cat_acc": 0.75,
+        "heldout_own_acc": 0.0,
+        "permuted_margin": 0.0007020604994321705,
+        "between_cat_cos": 3.2973298570715404e-17
+      },
+      "structured": {
+        "heldout_margin": 0.9828677834804678,
+        "heldout_cat_acc": 1.0,
+        "heldout_own_acc": 0.0,
+        "permuted_margin": -0.3391671494086179,
+        "between_cat_cos": 0.054142945204109394
+      },
+      "moat": {
+        "heldout_familiarity": 0.950248622331742,
+        "novel_familiarity": 0.594161359433784,
+        "moat_ok": true
+      }
+    }
+  ]
+}
