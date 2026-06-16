@@ -116,15 +116,18 @@ def _build_composer(seed, n_cat):
 def _conversational_no_regression(agent):
     """Reuse the merged-agent surface: comprehend (parser) + store + who/what recall + the no-confab moat. Returns
     a dict of booleans. The agent is the MergedNavConvAgent on the SAME co_resident_generalization=True bridge."""
-    # comprehension + store (the parser runs on the merged framework slices).
-    roles = agent.hear("dog chase cat")
-    parse_ok = bool(roles.get("agent") == "dog" and roles.get("action") == "chase"
-                    and roles.get("patient") == "cat")
+    # comprehension + store (the parser runs on the merged framework slices). Use the SHIPPED in-vocab sentence
+    # ("dog go north") that tests/test_nav_conv_step2b_coresident.py validates -- the canonical no-regression
+    # definition. (The earlier "dog chase cat" used "chase", which is the generalization-test ACTION_WORD and is
+    # NOT in the composer's DEFAULT_VOCAB, so composer.store raised KeyError once the parser was fixed.)
+    roles = agent.hear("dog go north")
+    parse_ok = bool(roles.get("agent") == "dog" and roles.get("action") == "go"
+                    and roles.get("patient") == "north")
     # who/what recall over the stored fact.
-    what_ok = bool(agent.what_does("dog", "chase") == "cat")
-    who_ok = bool(agent.who_does("chase", "cat") == "dog")
-    # the no-confab moat: an unstored (agent, action) query must abstain (None).
-    moat_what = agent.what_does("river", "chase")          # river never stored as a chaser
+    what_ok = bool(agent.what_does("dog", "go") == "north")
+    who_ok = bool(agent.who_does("go", "north") == "dog")
+    # the no-confab moat: an unstored (agent, action) query must abstain (None) -- the shipped moat words.
+    moat_what = agent.what_does("river", "look")           # river never stored as a looker
     moat_describe = agent.describe("river")                # river has no known fact
     moat_ok = bool(moat_what is None and moat_describe is None)
     # a positive describe (the stored fact renders, so the moat is not trivially abstaining on everything).
