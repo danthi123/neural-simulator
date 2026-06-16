@@ -162,6 +162,27 @@ def _byte_identity_stage1_form(bridge, h):
     }
 
 
+def _reset_bridge_for_clean_read(bridge, settle: int = 60):
+    """Return the bridge to a CLEAN baseline before the gen read. The nav episode + the compose RF ops perturb the
+    bridge's global dynamic state and COMPRESS the gen_concept firing ~2x (measured: post-episode win-fire 0.805 vs a
+    FRESH-bridge 1.623 -- `_stage2_gen_moat_probe`). Stage-1 reads the gen capability on a FRESH bridge, so match that
+    here: zero external current, reset membrane + recovery + firing to rest, settle briefly so the residual decays.
+    This is a METHODOLOGY fix (measure the gen response from a clean baseline) -- NOT a moat/gate change. Safe: the
+    compose/moat sub-scores are already captured BEFORE this; the downstream conv-agent + iso build their own bridges
+    and the lesion re-kicks the composer RF per-op, so clearing this episode bridge's transient state does not affect
+    them."""
+    bridge.cp_external_input_current[:] = 0.0
+    if getattr(bridge, "cp_membrane_potential_v", None) is not None:
+        bridge.cp_membrane_potential_v[:] = -65.0
+    for _attr in ("cp_recovery_variable_u", "cp_firing_states"):
+        _a = getattr(bridge, _attr, None)
+        if _a is not None:
+            _a[:] = 0
+    for _ in range(settle):
+        bridge._run_one_simulation_step()
+    bridge.cp_external_input_current[:] = 0.0
+
+
 # ── (iii) the generalization check on the SAME unified bridge (H5 + H6-hybrid + the generalization moat) ──
 def _gen_check(bridge, h, seed, xp):
     """Run the Stage-1 generalization check (H5: a held-out NOVEL structured-perception cue drives the gen_concept
@@ -175,6 +196,8 @@ def _gen_check(bridge, h, seed, xp):
     validated hybrid, NOT a host shortcut; the spiking concept-category is the brain's read, the composer recall is the
     validated FHRR algebra). The moat familiarity gate is the Stage-1 gate (held-out vs novel best-category firing)."""
     gen = h["gen"]
+    # read the gen capability from a CLEAN baseline (undo the episode's ~2x compression; the legitimate gen-moat fix).
+    _reset_bridge_for_clean_read(bridge)
     n_cat = int(gen["N_CAT"])
     chance = 1.0 / n_cat
     cat_ids = gen["gen_cat_ids"]
