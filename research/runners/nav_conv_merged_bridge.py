@@ -197,7 +197,8 @@ def _build_dlpfc_loop_population(ctx, words):
 
 # ── the merged nav + parser + dlPFC bridge builder (design §2.5 FINAL FORM) ───────────────────────────────
 def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100,
-                                 co_resident_rf: bool = False, rf_D: int = 128):
+                                 co_resident_rf: bool = False, rf_D: int = 128,
+                                 co_resident_perception: bool = False):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
     §2.5 FINAL FORM.
@@ -265,7 +266,18 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     if co_resident_rf:
         rf_regions = [BrainRegion(name="rf", n_neurons=7 * int(rf_D), exc_fraction=1.0,
                                   internal_density=0.0, enable_nmda=False)]
-    union_regions = list(nav_regions) + list(parser_regions) + list(dlpfc_regions) + list(rf_regions)
+    # STEP-3 (compose perceived content): an optional BARE `cortex_it` perception region so the navigation
+    # perception's live spiking rate code can be read OFF the merged bridge (co-resident with the whole stack) and
+    # grounded into a composer concept code. internal_density=0 + NO pathways => no cp_connections out-edges into
+    # navigation (like `rf`), and appended AFTER `rf` so the navigation/parser/dlPFC/rf index bases are byte-unchanged
+    # (the STEP-2a/2b byte-identity is preserved). Default False = STEP-2b byte-preserved. 256 neurons + exc_fraction
+    # 0.8 match the de-risk's validated cortex_it (`funcint_perception_to_memory_probe.build_probe_bridge`).
+    perception_regions = []
+    if co_resident_perception:
+        perception_regions = [BrainRegion(name="cortex_it", n_neurons=256, exc_fraction=0.8,
+                                          internal_density=0.0, enable_nmda=False)]
+    union_regions = (list(nav_regions) + list(parser_regions) + list(dlpfc_regions)
+                     + list(rf_regions) + list(perception_regions))
     union_pathways = list(nav_pathways) + list(parser_pathways)   # dlPFC loop is hand-built, NOT a pathway
 
     # 2) Merged config.

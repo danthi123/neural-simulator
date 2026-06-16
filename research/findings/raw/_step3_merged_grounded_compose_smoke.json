@@ -1,0 +1,49 @@
+{
+  "verdict": "GO",
+  "mean_clean": 1.0,
+  "mean_floor": 0.5,
+  "per_seed": [
+    {
+      "seed": 42,
+      "clean": 1.0,
+      "floor": 0.5,
+      "chance": 0.25,
+      "moat_ok": 2,
+      "moat_tot": 2,
+      "pos": 1,
+      "go": true,
+      "breach": false,
+      "n_neurons": 2768,
+      "it_base": 2512,
+      "rf_base": 2064
+    },
+    {
+      "seed": 43,
+      "clean": 1.0,
+      "floor": 0.5,
+      "chance": 0.25,
+      "moat_ok": 2,
+      "moat_tot": 2,
+      "pos": 1,
+      "go": true,
+      "breach": false,
+      "n_neurons": 2768,
+      "it_base": 2512,
+      "rf_base": 2064
+    },
+    {
+      "seed": 44,
+      "clean": 1.0,
+      "floor": 0.5,
+      "chance": 0.25,
+      "moat_ok": 2,
+      "moat_tot": 2,
+      "pos": 1,
+      "go": true,
+      "breach": false,
+      "n_neurons": 2768,
+      "it_base": 2512,
+      "rf_base": 2064
+    }
+  ]
+}
