@@ -23,6 +23,23 @@ Both controls behave correctly: the **permuted-order control** (same concept mul
 
 The planning-layer **primacy gradient** is realized as **graded external current** into the (driven, non-attractor) concept pools of one fact — the highest-primacy role gets the most current. The spiking **rate tracks the drive**, so the per-pool rate **ranking = the emission order** (rate-coded competitive queuing — robust, not delicate first-spike latency). Read each pool's rate, order the fillers by rate, emit. Iterative emission uses inhibition-of-return (the project's `SaidTrace`, spiking). No host loop orders the words.
 
+## Multi-frame extension (CYCLE 106): the seed of syntax
+
+The phase-A/B de-risk validated a single FIXED frame (SVO). A follow-on asked whether the mechanism can learn
+DISTINCT orders for DISTINCT frames (the seed of syntax) and keep them separate. `_phaseB_serial_order_multiframe_derisk.py`
+gives each frame its own learned primacy gradient `prim[frame][role]` and adds a **cross-frame control** (the
+other frame's order on the same fact must NOT match).
+
+| Test | Frames | True vs permuted vs CROSS-frame | No-learning | Verdict |
+|---|---|---|---|---|
+| multi-frame | F0=[agent,action,patient], F1=[patient,agent,action] | **1.000 vs 0.333 vs 0.000** (6/6) | 0.410 < perm 0.833 | **GO** |
+
+The cross-frame score of **0.000** is decisive: the same fact is ordered *differently* under F0 vs F1, so the
+mechanism is genuinely **frame-conditioned** (not one fixed order). ⇒ the substrate can learn frame-dependent
+serial order — distinct orders for distinct reply frames (statement vs who/what vs yes-no vs "X and Y associated"),
+and the route toward active/passive voice. Wiring `FrameCQ` into the agent's distinct reply frames is the
+integration follow-on.
+
 ## Honest scope
 
 - **De-risked GO:** the SERIAL-ORDERING step — the core of what the f-string does — runs on neurons (graded current → rate ranking → order), with the anti-cheat controls confirming it is order-from-gradient, validated 6/6 on the spiking substrate. This is sufficient to replace the **fixed SVO frame** the current composer uses.
