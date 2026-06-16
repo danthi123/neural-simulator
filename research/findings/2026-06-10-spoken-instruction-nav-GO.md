@@ -63,9 +63,21 @@ SCRAMBLE collapses vs-commanded while vs-spoken stays ~1.0 — all seeds.
   produces behavior.
 - Provenance: no Python copies the parsed direction into the navigation drive (the gate is opened by firing).
 
+## 6-seed confirmation (42–47) — the flagged follow-on, now banked
+
+The 3-seed A/B above (42/43/44) extends to **6 seeds**; seeds 45/46/47 (`research/findings/raw/spoken_instruction_nav_seed454647.json`, GPU) pass the gate decisively:
+
+| seed | COUPLED (acc-vs-commanded) | ISOLATED-NAV | LESION | SCRAMBLE (vs-commanded) |
+|---|---|---|---|---|
+| 45 | **1.000** | 0.281 | 0.000 | 0.00 |
+| 46 | **1.000** | 0.094 | 0.031 | 0.00 |
+| 47 | **1.000** | 0.281 | 0.000 | 0.00 |
+
+All 6 seeds (42–47): COUPLED follows every command (1.000), ISOLATED-NAV at chance (≤0.40), LESION collapses to ≤0.03 (the `command_route` synapses are load-bearing — cutting them kills the behavior even with the parser firing), SCRAMBLE 0.00 vs-commanded (the body tracks the actual spoken word). **Language→action functional integration is 6-seed GO.**
+
 ## Honest scope + what's next
 
-Scope: 3-seed (the 6-seed rigor is the immediate follow-on); the gating + learned route are both
+Scope: 6-seed confirmed (42–47); the gating + learned route are both
 project-validated primitives composed here for the first time. This is **interaction by gating a nav-native
 channel** — it routes *around* the central cross-code problem (the nav perception is a rate code, the composer a
 phasor code; they're not commensurable). The deeper interaction — **perception→memory** (what the agent perceives
