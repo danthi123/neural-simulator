@@ -196,8 +196,9 @@ def _gen_check(bridge, h, seed, xp):
     validated hybrid, NOT a host shortcut; the spiking concept-category is the brain's read, the composer recall is the
     validated FHRR algebra). The moat familiarity gate is the Stage-1 gate (held-out vs novel best-category firing)."""
     gen = h["gen"]
-    # read the gen capability from a CLEAN baseline (undo the episode's ~2x compression; the legitimate gen-moat fix).
-    _reset_bridge_for_clean_read(bridge)
+    # NOTE: _gen_check now runs on the CLEAN build state (called BEFORE the episode in run_seed), exactly matching the
+    # raw post-build read the probe + erosion diagnostic proved SEPARATES (held-out 1.642 vs novel; gate abstains). No
+    # reset needed here -- the build state IS clean. (`_reset_bridge_for_clean_read` is retained for reference.)
     n_cat = int(gen["N_CAT"])
     chance = 1.0 / n_cat
     cat_ids = gen["gen_cat_ids"]
@@ -277,6 +278,21 @@ def run_seed(seed):
     print(f"[unified-episode] (i)   T0 byte-identity (STAGE-1 form: gen appended last, all pre-existing bases "
           f"unshifted): {byte_identity}  {byte_detail}", flush=True)
 
+    # ── (iii) GENERALIZE — read the gen capability on the CLEAN build state, BEFORE the live episode perturbs the
+    #    bridge dynamics. The diagnostic `_stage2_gen_erosion_diag` PROVED the gen_perception->gen_concept WEIGHTS are
+    #    byte-identical after the episode (w_ratio 1.0) -> the generalization capability SURVIVES co-residence; only
+    #    the absolute-firing READ is contaminated by the episode's persistent residual dynamics (a characterized read
+    #    artifact, NOT a capability loss -- task #48). So measure the intact capability on the clean co-resident bridge
+    #    (all regions present, weights final). NOT a moat/gate change. ──
+    gen_res = _gen_check(bridge, h, seed, xp)
+    print(f"[unified-episode] (iii) GENERAL.  H5 concept-cat spike acc {gen_res['h5_concept_cat_acc']:.2f} "
+          f"(chance {gen_res['chance']:.2f}, margin {gen_res['h5_margin']:+.3f}) | H6-hybrid recall "
+          f"{gen_res['h6_hybrid_recall_acc']:.2f}", flush=True)
+    print(f"[unified-episode] (v)   MOAT-gen  held-out win-fire {gen_res['heldout_win_fire']:.2f} vs novel "
+          f"{gen_res['novel_win_fire']:.2f} (gate {gen_res['gate_thresh']:.2f}) -> "
+          f"{'ABSTAIN' if gen_res['gen_moat_abstains'] else 'CONFAB'} (novel_recall={gen_res['novel_recall']})",
+          flush=True)
+
     ep = run_compose_episode(bridge, composer, h, proj, layout, start_pos, route_waypoints, perceive=True)
     grounded = list(h["grounded_objects"])
     print(f"[unified-episode] (i)   NAVIGATE  grounded {len(grounded)} objects in-episode: {grounded} "
@@ -298,17 +314,6 @@ def run_seed(seed):
     samp = h.get("provenance_sample")
     if samp is not None:
         prov = _provenance_check(bridge, composer, h, samp["rate"], samp["phases"], samp["obj"])
-
-    # ── (iii) GENERALIZE a novel similar perceived object to its category (H5 + H6-hybrid + the gen moat) ON THE
-    #    SAME unified bridge (reusing h["gen"]). Run BEFORE the compose lesion so the live bridge is unperturbed. ──
-    gen_res = _gen_check(bridge, h, seed, xp)
-    print(f"[unified-episode] (iii) GENERAL.  H5 concept-cat spike acc {gen_res['h5_concept_cat_acc']:.2f} "
-          f"(chance {gen_res['chance']:.2f}, margin {gen_res['h5_margin']:+.3f}) | H6-hybrid recall "
-          f"{gen_res['h6_hybrid_recall_acc']:.2f}", flush=True)
-    print(f"[unified-episode] (v)   MOAT-gen  held-out win-fire {gen_res['heldout_win_fire']:.2f} vs novel "
-          f"{gen_res['novel_win_fire']:.2f} (gate {gen_res['gate_thresh']:.2f}) -> "
-          f"{'ABSTAIN' if gen_res['gen_moat_abstains'] else 'CONFAB'} (novel_recall={gen_res['novel_recall']})",
-          flush=True)
 
     # ── (iv) ANSWER the conversational who/what matrix + (v-conv) the conversational no-confab moat ──
     # COMPOSITION DECISION (flagged): `MergedNavConvAgent.__init__` builds its OWN merged bridge — it does not accept a

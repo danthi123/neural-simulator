@@ -1,0 +1,11 @@
+{
+  "gen_wsum_build": 551305.956,
+  "gen_wsum_episode": 551305.956,
+  "w_ratio": 1.0,
+  "firing_build_mean": 1.642,
+  "firing_episode_mean": 0.799,
+  "f_ratio": 0.486,
+  "weights_eroded": false,
+  "firing_dropped": true,
+  "mechanism": "(B) a PERSISTENT VARIABLE (weights ~unchanged but firing dropped) -> fuller reset / isolate"
+}
