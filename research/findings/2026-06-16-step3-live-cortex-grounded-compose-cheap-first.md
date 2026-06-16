@@ -109,6 +109,41 @@ regime (the deployed one). The semantically-CORRELATED regime (similar objects s
 across similar concepts) is the separate, deferred dendritic / option-B frontier (CLAUDE.md step-3 fork), not in
 scope here.
 
+## PRODUCTION-COMPOSER drop-in (the integration-readiness check) — GO, 6-seed, moat intact
+
+`_step3_grounded_codes_production_composer_derisk.py`: the cheap-first/scaled probes composed grounded codes in a
+*mini-algebra* (my own roles + cleanup). This closes the last cheap gap before any gated build by feeding the SAME
+live-`cortex_it`-rate-derived codes into the ACTUAL production `RFPhasorComposer` — its real `store` /
+`query_patient` / `query_agent` / no-confab moat, on the real **3-way SVO bundle** (agent+action+patient), not a
+2-role toy. (`RFPhasorComposer.__init__` already exposes a `grounded_codes={word: phases}` interface, documented as
+"validated == random at parity" but with "producing *meaningful* grounded codes ... the open problem." The step-3
+arc produced the meaningful codes; this is interface × meaningful-codes.)
+
+Facts stored over PERCEIVED objects (every agent + patient a live-perception grounded code; verbs are native codes):
+`(dog, chase, cat)`, `(apple, near, river)`, `(cat, see, dog)`.
+
+| D | seeds | grounded recall (patient+agent) | moat-abstain (unstored query → None) | parity vs random codes | verdict |
+|---|-------|----------------------------------|--------------------------------------|------------------------|---------|
+| 512  | 3 (CPU) | 6/6 every seed | 3/3 every seed | True every seed | GO |
+| 2048 (production) | 6 (GPU) | 6/6 every seed | 3/3 every seed | True every seed | **GO** |
+
+⇒ the navigation perception's live spiking-rate codes **drop into the deployed conversational composer as grounded
+concept codes**: it composes the 3-way SVO fact, recalls both patient and agent, and **abstains** (returns `None`)
+on every unstored query — the no-confab moat intact, behavior identical to the random-code baseline. The composer's
+documented "meaningful grounded codes" open boundary is **closed for perceived objects**: the grounding interface ×
+meaningful live-perception codes = a production composer composing *what the agent saw*. (Raw:
+`_step3_grounded_codes_production_composer.json` D=512, `_step3_grounded_codes_production_composer_6seed.json`
+D=2048.)
+
+## What remains (owner-gated)
+
+1. **Integration build:** wire the grounded-code map onto the merged nav+conv bridge (`nav_conv_merged_bridge.py`)
+   so the *navigate-to-see* agent can **compose** a perceived-object fact in-episode (not just recall) — a GPU
+   build on the merged substrate.
+2. **Semantically-correlated cortex:** the dendritic / option-B frontier (CLAUDE.md step-3 fork) — needed only for
+   generalizing across *similar* concepts (the correlated regime), a months-scale arc. The
+   `_step3_correlated_percept_boundary.py` run maps exactly where the flat-distinct approach gives way to this.
+
 ## BRAIN-BASED-ONLY accounting
 
 The grounded code is a LIVE spiking rate read (`cp_firing_states` over the read window) on a real bridge — the

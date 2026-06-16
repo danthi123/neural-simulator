@@ -1,0 +1,139 @@
+{
+  "verdict": "GO",
+  "backend": "cupy",
+  "D": 2048,
+  "per_seed": [
+    {
+      "seed": 42,
+      "D": 2048,
+      "recall_ok": 6,
+      "recall_tot": 6,
+      "moat_ok": 3,
+      "moat_tot": 3,
+      "baseline_recall_ok": 6,
+      "parity": true,
+      "go": true,
+      "grounded_answers": {
+        "dog-chase->patient": "cat",
+        "chase-cat->agent": "dog",
+        "apple-near->patient": "river",
+        "near-river->agent": "apple",
+        "cat-see->patient": "dog",
+        "see-dog->agent": "cat",
+        "ABSENT river-chase->patient": null,
+        "ABSENT apple-see->patient": null,
+        "ABSENT dog-near->patient": null
+      }
+    },
+    {
+      "seed": 43,
+      "D": 2048,
+      "recall_ok": 6,
+      "recall_tot": 6,
+      "moat_ok": 3,
+      "moat_tot": 3,
+      "baseline_recall_ok": 6,
+      "parity": true,
+      "go": true,
+      "grounded_answers": {
+        "dog-chase->patient": "cat",
+        "chase-cat->agent": "dog",
+        "apple-near->patient": "river",
+        "near-river->agent": "apple",
+        "cat-see->patient": "dog",
+        "see-dog->agent": "cat",
+        "ABSENT river-chase->patient": null,
+        "ABSENT apple-see->patient": null,
+        "ABSENT dog-near->patient": null
+      }
+    },
+    {
+      "seed": 44,
+      "D": 2048,
+      "recall_ok": 6,
+      "recall_tot": 6,
+      "moat_ok": 3,
+      "moat_tot": 3,
+      "baseline_recall_ok": 6,
+      "parity": true,
+      "go": true,
+      "grounded_answers": {
+        "dog-chase->patient": "cat",
+        "chase-cat->agent": "dog",
+        "apple-near->patient": "river",
+        "near-river->agent": "apple",
+        "cat-see->patient": "dog",
+        "see-dog->agent": "cat",
+        "ABSENT river-chase->patient": null,
+        "ABSENT apple-see->patient": null,
+        "ABSENT dog-near->patient": null
+      }
+    },
+    {
+      "seed": 100,
+      "D": 2048,
+      "recall_ok": 6,
+      "recall_tot": 6,
+      "moat_ok": 3,
+      "moat_tot": 3,
+      "baseline_recall_ok": 6,
+      "parity": true,
+      "go": true,
+      "grounded_answers": {
+        "dog-chase->patient": "cat",
+        "chase-cat->agent": "dog",
+        "apple-near->patient": "river",
+        "near-river->agent": "apple",
+        "cat-see->patient": "dog",
+        "see-dog->agent": "cat",
+        "ABSENT river-chase->patient": null,
+        "ABSENT apple-see->patient": null,
+        "ABSENT dog-near->patient": null
+      }
+    },
+    {
+      "seed": 101,
+      "D": 2048,
+      "recall_ok": 6,
+      "recall_tot": 6,
+      "moat_ok": 3,
+      "moat_tot": 3,
+      "baseline_recall_ok": 6,
+      "parity": true,
+      "go": true,
+      "grounded_answers": {
+        "dog-chase->patient": "cat",
+        "chase-cat->agent": "dog",
+        "apple-near->patient": "river",
+        "near-river->agent": "apple",
+        "cat-see->patient": "dog",
+        "see-dog->agent": "cat",
+        "ABSENT river-chase->patient": null,
+        "ABSENT apple-see->patient": null,
+        "ABSENT dog-near->patient": null
+      }
+    },
+    {
+      "seed": 102,
+      "D": 2048,
+      "recall_ok": 6,
+      "recall_tot": 6,
+      "moat_ok": 3,
+      "moat_tot": 3,
+      "baseline_recall_ok": 6,
+      "parity": true,
+      "go": true,
+      "grounded_answers": {
+        "dog-chase->patient": "cat",
+        "chase-cat->agent": "dog",
+        "apple-near->patient": "river",
+        "near-river->agent": "apple",
+        "cat-see->patient": "dog",
+        "see-dog->agent": "cat",
+        "ABSENT river-chase->patient": null,
+        "ABSENT apple-see->patient": null,
+        "ABSENT dog-near->patient": null
+      }
+    }
+  ]
+}
