@@ -1,0 +1,158 @@
+{
+  "overall": "GO",
+  "backend": "cupy",
+  "blocks": [
+    {
+      "n_objects": 16,
+      "verdict": "GO",
+      "mean_clean": 1.0,
+      "mean_corrupt": 1.0,
+      "mean_floor": 0.5,
+      "chance": 0.0625,
+      "per_seed": [
+        {
+          "seed": 42,
+          "n_objects": 16,
+          "n_active": 8,
+          "clean": 1.0,
+          "corrupt": 1.0,
+          "mem_floor": 0.5,
+          "chance": 0.0625,
+          "n_held_out": 120,
+          "n_corrupt_sample": 48
+        },
+        {
+          "seed": 43,
+          "n_objects": 16,
+          "n_active": 8,
+          "clean": 1.0,
+          "corrupt": 1.0,
+          "mem_floor": 0.5,
+          "chance": 0.0625,
+          "n_held_out": 120,
+          "n_corrupt_sample": 48
+        },
+        {
+          "seed": 44,
+          "n_objects": 16,
+          "n_active": 8,
+          "clean": 1.0,
+          "corrupt": 1.0,
+          "mem_floor": 0.5,
+          "chance": 0.0625,
+          "n_held_out": 120,
+          "n_corrupt_sample": 48
+        },
+        {
+          "seed": 100,
+          "n_objects": 16,
+          "n_active": 8,
+          "clean": 1.0,
+          "corrupt": 1.0,
+          "mem_floor": 0.5,
+          "chance": 0.0625,
+          "n_held_out": 120,
+          "n_corrupt_sample": 48
+        },
+        {
+          "seed": 101,
+          "n_objects": 16,
+          "n_active": 8,
+          "clean": 1.0,
+          "corrupt": 1.0,
+          "mem_floor": 0.5,
+          "chance": 0.0625,
+          "n_held_out": 120,
+          "n_corrupt_sample": 48
+        },
+        {
+          "seed": 102,
+          "n_objects": 16,
+          "n_active": 8,
+          "clean": 1.0,
+          "corrupt": 1.0,
+          "mem_floor": 0.5,
+          "chance": 0.0625,
+          "n_held_out": 120,
+          "n_corrupt_sample": 48
+        }
+      ]
+    },
+    {
+      "n_objects": 32,
+      "verdict": "GO",
+      "mean_clean": 1.0,
+      "mean_corrupt": 0.920138888888889,
+      "mean_floor": 0.5,
+      "chance": 0.03125,
+      "per_seed": [
+        {
+          "seed": 42,
+          "n_objects": 32,
+          "n_active": 4,
+          "clean": 1.0,
+          "corrupt": 0.8958333333333334,
+          "mem_floor": 0.5,
+          "chance": 0.03125,
+          "n_held_out": 496,
+          "n_corrupt_sample": 48
+        },
+        {
+          "seed": 43,
+          "n_objects": 32,
+          "n_active": 4,
+          "clean": 1.0,
+          "corrupt": 0.9791666666666666,
+          "mem_floor": 0.5,
+          "chance": 0.03125,
+          "n_held_out": 496,
+          "n_corrupt_sample": 48
+        },
+        {
+          "seed": 44,
+          "n_objects": 32,
+          "n_active": 4,
+          "clean": 1.0,
+          "corrupt": 0.8958333333333334,
+          "mem_floor": 0.5,
+          "chance": 0.03125,
+          "n_held_out": 496,
+          "n_corrupt_sample": 48
+        },
+        {
+          "seed": 100,
+          "n_objects": 32,
+          "n_active": 4,
+          "clean": 1.0,
+          "corrupt": 0.9375,
+          "mem_floor": 0.5,
+          "chance": 0.03125,
+          "n_held_out": 496,
+          "n_corrupt_sample": 48
+        },
+        {
+          "seed": 101,
+          "n_objects": 32,
+          "n_active": 4,
+          "clean": 1.0,
+          "corrupt": 0.875,
+          "mem_floor": 0.5,
+          "chance": 0.03125,
+          "n_held_out": 496,
+          "n_corrupt_sample": 48
+        },
+        {
+          "seed": 102,
+          "n_objects": 32,
+          "n_active": 4,
+          "clean": 1.0,
+          "corrupt": 0.9375,
+          "mem_floor": 0.5,
+          "chance": 0.03125,
+          "n_held_out": 496,
+          "n_corrupt_sample": 48
+        }
+      ]
+    }
+  ]
+}

@@ -80,16 +80,19 @@ percept enters the bundling algebra cleanly.
 
 ## SCALED STRESS (GPU) — DONE, holds to 32 objects
 
-`_step3_live_cortex_grounded_compose_scale.py` (GPU `SIM_BACKEND=cupy`, 3 seeds, the SAME 256-neuron `cortex_it`
+`_step3_live_cortex_grounded_compose_scale.py` (GPU `SIM_BACKEND=cupy`, the SAME 256-neuron `cortex_it`
 substrate, adaptive percept sparsity so `n_active < stride = 256/n_objects` keeps the percepts separable; the
 corrupt test re-reads a live noisy percept, sampled to ≤48 held-out pairs to bound stepping; clean + floor on ALL
-held-out pairs):
+held-out pairs). 3-seed first (8/16/32), then **6-seed confirmation** (16/32, seeds 42/43/44/100/101/102):
 
-| objects | n_active | chance | held-out clean | held-out corrupt | recall floor | verdict |
-|---------|----------|--------|----------------|------------------|--------------|---------|
-| 8       | 16       | 0.125  | 1.000          | 1.000            | 0.500        | GO      |
-| 16      | 8        | 0.062  | 1.000          | 1.000            | 0.500        | GO      |
-| 32      | 4        | 0.031  | 1.000          | 0.924 (.896/.979/.896) | 0.500  | GO      |
+| objects | n_active | chance | held-out clean | held-out corrupt | recall floor | verdict | seeds |
+|---------|----------|--------|----------------|------------------|--------------|---------|-------|
+| 8       | 16       | 0.125  | 1.000          | 1.000            | 0.500        | GO      | 3 |
+| 16      | 8        | 0.062  | 1.000          | 1.000            | 0.500        | GO      | **6** |
+| 32      | 4        | 0.031  | 1.000          | 0.920 (.875–.979)| 0.500        | GO      | **6** |
+
+(6-seed raw: `research/findings/raw/_step3_live_cortex_grounded_compose_scale_6seed.json` — n16 clean/corrupt 1.000
+every seed; n32 clean 1.000 every seed, corrupt per-seed {.896,.979,.896,.938,.875,.938}, all ≥ the 0.80 gate.)
 
 **The grounding is NOT a 4-object artifact.** At 32 objects (chance 0.031 — cleanup over 32 codes is genuinely
 non-trivial), with only **4 active neurons** per percept, the live spiking rate code still grounds phasor codes
