@@ -72,8 +72,8 @@ def parser_weight_mag(bridge, conj_arr, role_arr, xp):
     pre_h = np.zeros(nnz, dtype=np.int64)
     for r in range(int(csr.shape[0])):
         pre_h[int(indptr_h[r]):int(indptr_h[r + 1])] = r
-    all_conj = np.concatenate([np.asarray(conj_arr[k], dtype=np.int64) for k in sorted(conj_arr)])
-    all_role = np.concatenate([np.asarray(role_arr[r], dtype=np.int64) for r in role_arr])
+    all_conj = np.asarray(to_host(conj_arr), dtype=np.int64)                 # the 6 conjunction indices (flat array)
+    all_role = np.concatenate([np.asarray(to_host(role_arr[r]), dtype=np.int64) for r in role_arr])
     mask = np.isin(pre_h, all_conj) & np.isin(post_h, all_role)
     return {"n_edges": int(mask.sum()), "sum_abs": float(np.abs(data_h[mask]).sum()),
             "mean_abs": float(np.abs(data_h[mask]).mean()) if mask.sum() else 0.0,

@@ -1,0 +1,125 @@
+{
+  "seed": 42,
+  "backend": "cupy",
+  "reproduce": [
+    {
+      "pos": 0,
+      "win": "agent",
+      "rates": {
+        "agent": 0.0,
+        "action": 0.0,
+        "patient": 0.0
+      }
+    },
+    {
+      "pos": 1,
+      "win": "agent",
+      "rates": {
+        "agent": 0.0,
+        "action": 0.0,
+        "patient": 0.0
+      }
+    },
+    {
+      "pos": 2,
+      "win": "agent",
+      "rates": {
+        "agent": 0.0,
+        "action": 0.0,
+        "patient": 0.0
+      }
+    }
+  ],
+  "freerun_firing": {
+    "parse_conj": 0.0056,
+    "parse_role": 0.0,
+    "gen_perception": 0.0,
+    "gen_concept": 0.0,
+    "gen_fact": 0.05,
+    "dlpfc_wm": 0.0,
+    "cortex_ctx": 0.0,
+    "motor_N": 0.0,
+    "snc": 0.0,
+    "rf": 0.0
+  },
+  "parser_weights": {
+    "n_edges": 720,
+    "sum_abs": 5007.96084690094,
+    "mean_abs": 6.955501176251305,
+    "max_abs": 20.0
+  },
+  "driven_pos1": {
+    "conj_fire": 20.0,
+    "rates": {
+      "agent": 0.0,
+      "action": 0.0,
+      "patient": 0.0
+    }
+  },
+  "ou_on_read": [
+    {
+      "pos": 0,
+      "win": "agent",
+      "rates": {
+        "agent": 0.0,
+        "action": 0.0,
+        "patient": 0.0
+      }
+    },
+    {
+      "pos": 1,
+      "win": "agent",
+      "rates": {
+        "agent": 0.0,
+        "action": 0.0,
+        "patient": 0.0
+      }
+    },
+    {
+      "pos": 2,
+      "win": "agent",
+      "rates": {
+        "agent": 0.0,
+        "action": 0.0,
+        "patient": 0.0
+      }
+    }
+  ],
+  "hard_reset_read": [
+    {
+      "pos": 0,
+      "win": "agent",
+      "rates": {
+        "agent": 0.0,
+        "action": 0.0,
+        "patient": 0.0
+      }
+    },
+    {
+      "pos": 1,
+      "win": "agent",
+      "rates": {
+        "agent": 0.0,
+        "action": 0.0,
+        "patient": 0.0
+      }
+    },
+    {
+      "pos": 2,
+      "win": "agent",
+      "rates": {
+        "agent": 0.0,
+        "action": 0.0,
+        "patient": 0.0
+      }
+    }
+  ],
+  "interpretation": {
+    "role_silent_default": true,
+    "conj_fires_under_drive": true,
+    "trained_weights_present": true,
+    "ou_rescues": false,
+    "hard_reset_rescues": false,
+    "diagnosis": "structural suppression: weights present + conj fires but role silent even after reset"
+  }
+}
