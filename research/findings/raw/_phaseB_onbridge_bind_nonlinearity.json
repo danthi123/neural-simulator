@@ -1,0 +1,26 @@
+{
+  "onbridge": 0.8333333333333334,
+  "numpy": 0.8333333333333334,
+  "mem_floor": 0.0,
+  "chance": 0.0625,
+  "per_seed": [
+    {
+      "seed": 42,
+      "onbridge": 0.75,
+      "numpy": 0.75,
+      "mem_floor": 0.0
+    },
+    {
+      "seed": 43,
+      "onbridge": 0.75,
+      "numpy": 0.75,
+      "mem_floor": 0.0
+    },
+    {
+      "seed": 44,
+      "onbridge": 1.0,
+      "numpy": 1.0,
+      "mem_floor": 0.0
+    }
+  ]
+}

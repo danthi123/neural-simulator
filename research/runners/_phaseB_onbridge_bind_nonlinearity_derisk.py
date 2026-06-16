@@ -36,6 +36,7 @@ from research.runners.cortex_learned_binder_systematicity_probe import (  # noqa
 from research.runners._phaseB_spiking_bind_onoff_derisk import OnOffRateBinder  # noqa: E402
 
 R, F, N_SPLITS, N_EPOCHS, D_H, LR = 4, 16, 2, 500, 64, 0.005   # 2 splits (GPU bridge per combo is the cost)
+N_PER = 16                # neurons per bind dim (population code; the CYCLE-91 lift so SNR isn't the limiter)
 DRIVE_SCALE = 400.0       # pA per unit relu(h); calibrated so rates span the ~linear LIF band
 RUN_STEPS = 60            # readout window (rate = spikes / RUN_STEPS)
 
@@ -46,9 +47,12 @@ def build_bind_bridge(d_h, seed):
     from sim.regions import BrainRegion
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
-    cfg.brain_regions = [                                # two driven populations, no internal wiring
-        BrainRegion(name="bind_pos", n_neurons=d_h, exc_fraction=1.0, internal_density=0.0),
-        BrainRegion(name="bind_neg", n_neurons=d_h, exc_fraction=1.0, internal_density=0.0),
+    cfg.brain_regions = [                                # two driven populations (N_PER neurons per bind dim)
+        BrainRegion(name="bind_pos", n_neurons=d_h * N_PER, exc_fraction=1.0, internal_density=0.0),
+        BrainRegion(name="bind_neg", n_neurons=d_h * N_PER, exc_fraction=1.0, internal_density=0.0),
+        # inert anchor: NEVER driven -> stays silent -> zero influence on the ON/OFF channels. Its only job is
+        # to make the wiring plan NON-EMPTY (an all-zero-synapse plan hits a latent bridge init-fallback bug).
+        BrainRegion(name="_anchor", n_neurons=4, exc_fraction=1.0, internal_density=1.0),
     ]
     cfg.region_pathways = []
     cfg.dt = 1.0
@@ -64,20 +68,21 @@ def build_bind_bridge(d_h, seed):
 
 def lif_onoff(bridge, pos_idx, neg_idx, h, scale):
     """Drive bind_pos with relu(h), bind_neg with relu(-h); read per-neuron spike RATES = the spiking ON/OFF."""
-    xp = bridge._cp if hasattr(bridge, "_cp") else np
-    on = np.maximum(h, 0.0) * scale
-    off = np.maximum(-h, 0.0) * scale
-    cur = np.zeros(int(bridge.core_config.num_neurons), np.float32)
-    cur[pos_idx] = on.astype(np.float32)
-    cur[neg_idx] = off.astype(np.float32)
-    bridge.cp_external_input_current[:] = xp.asarray(cur) if xp is not None else cur
+    xp = bridge._cp if hasattr(bridge, "_cp") else None       # the proven CYCLE-95 pattern (per-region slice set)
+    on = (np.repeat(np.maximum(h, 0.0) * scale, N_PER)).astype(np.float32)   # each dim's N_PER neurons get its drive
+    off = (np.repeat(np.maximum(-h, 0.0) * scale, N_PER)).astype(np.float32)
+    bridge.cp_external_input_current[:] = 0.0
+    bridge.cp_external_input_current[pos_idx] = xp.asarray(on) if xp is not None else on
+    bridge.cp_external_input_current[neg_idx] = xp.asarray(off) if xp is not None else off
     counts = np.zeros(int(bridge.core_config.num_neurons), np.float64)
     for _ in range(RUN_STEPS):
         bridge._run_one_simulation_step()
         counts += np.asarray(to_host(bridge.cp_firing_states)).astype(np.float64)
     bridge.cp_external_input_current[:] = 0.0
     rate = counts / RUN_STEPS
-    return np.concatenate([rate[pos_idx], rate[neg_idx]])      # [2*D_h] spiking ON/OFF bound
+    on_rate = rate[pos_idx].reshape(-1, N_PER).mean(1)        # per-dim population-averaged rate
+    off_rate = rate[neg_idx].reshape(-1, N_PER).mean(1)
+    return np.concatenate([on_rate, off_rate])                # [2*D_h] spiking ON/OFF bound
 
 
 def run_seed(codes, seed):
