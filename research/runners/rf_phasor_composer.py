@@ -145,14 +145,20 @@ class RFPhasorComposer:
         bounds = [self._bind(self.roles[r], self._filler_phases(fact[r])) for r in ROLES if r in fact]
         return self._bundle(bounds) if len(bounds) > 1 else bounds[0]
 
-    def _render(self, comp_phases, role, stored):
+    def _render(self, comp_phases, role, stored, order_fn=None):
         """Render `role`'s filler from a composite, FROM THE RF UNBIND. `stored` (a word or Clause) ROUTES
-        flat-cleanup vs recursive clause-decode; the content is decoded from the substrate, not the stored labels."""
+        flat-cleanup vs recursive clause-decode; the content is decoded from the substrate, not the stored labels.
+        `order_fn` (opt-in, default None = the host f-string): when set, the inner clause's SVO word order is
+        produced by the de-risked spiking serial-order generator instead of the host literal (the generation path
+        passes it; the Q&A path leaves it None)."""
         rec = self._unbind_phases(comp_phases, role)
         if _is_clause(stored):
             a = self._cleanup(self._unbind_phases(rec, "agent"))
             ac = self._cleanup(self._unbind_phases(rec, "action"))
             pt = self._cleanup(self._unbind_phases(rec, "patient"))
+            words = [a, ac, pt]
+            if order_fn is not None:
+                return " ".join(words[i] for i in order_fn(len(words)))   # neural serial-order (inner clause)
             return f"{a} {ac} {pt}"
         return self._cleanup(rec)
 
@@ -345,13 +351,13 @@ class RFPhasorComposer:
         for fact, comp in self._iter_facts():
             if self.unbind(comp, "agent") == agent:
                 ac = self.unbind(comp, "action")
-                pt = self._render(comp, "patient", fact["patient"])
+                pt = self._render(comp, "patient", fact["patient"], order_fn=order_fn)   # inner clause neural too
                 adjs = [self.unbind(comp, r) for r in ("attribute", "attribute2") if r in fact]
                 if adjs:
                     pt = " ".join(adjs + [pt])
                 words = [agent, ac, pt]
                 if order_fn is not None:
-                    return " ".join(words[i] for i in order_fn(len(words)))   # neural serial-order
+                    return " ".join(words[i] for i in order_fn(len(words)))   # neural serial-order (outer SVO)
                 return f"{agent} {ac} {pt}"
         return None
 

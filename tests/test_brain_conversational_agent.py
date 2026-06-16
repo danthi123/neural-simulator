@@ -142,6 +142,23 @@ def test_neural_render_describe():
     assert ag.describe("river") is None                  # no-confab moat preserved (abstain BEFORE ordering)
 
 
+def test_neural_render_clause():
+    """CYCLE 107: enable_neural_render also de-templates the GENERATION (describe) path's nested-CLAUSE order --
+    the inner clause's SVO order ('cat go south') is produced by the spiking CQ, not a host f-string, AND the outer
+    'dog look <clause>' order is neural. The Q&A path (query_patient/what_does) is intentionally left host for this
+    step (a separate follow-on). The no-confab moat must hold. GPU-only."""
+    from sim.backend import is_gpu_backend
+    if not is_gpu_backend():
+        pytest.skip("the neural renderer + BridgeParser are GPU-validated")
+    try:
+        ag = BrainConversationalAgent(seed=42, enable_neural_render=True)
+    except FileNotFoundError:
+        pytest.skip("denoise64 concept-code cache not present")
+    ag.hear_clause_fact("dog", "look", Clause("cat", "go", "south"))
+    assert ag.describe("dog") == "dog look cat go south"     # outer SVO + inner clause BOTH neural-ordered
+    assert ag.describe("river") is None                       # no-confab moat preserved (abstain before ordering)
+
+
 def test_learned_assoc_graph_agent():
     """Cheat-D conversion at the AGENT level: enable_learned_assoc makes dialogue planning (elaborate) spread over a
     SUBSTRATE-LEARNED association graph -- a sparse Hebbian recurrent (the CA3 autoassociator / _D_sparse_heteroassoc
