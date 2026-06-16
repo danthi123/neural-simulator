@@ -70,7 +70,24 @@ noise, 3 seeds) **retires the risk**: held-out is **flat** across the sweep — 
 wall does **not** break the learned binding; the spiking binder (surrogate-BPTT / local three-factor, unified
 by e-prop) is worth building.
 
-Runner: `research/runners/_phaseB_learned_bind_streamcodes_derisk.py`,
-`research/runners/_phaseB_learned_bind_ratenoise_derisk.py`.
-Raw: `research/findings/raw/_phaseB_learned_bind_streamcodes.json`,
-`_phaseB_learned_bind_ratenoise.json`.
+## Follow-on (CYCLE 100-101): the SPIKING binder — single-rate fails, ON/OFF carries it
+
+Realizing the spiking binder (surrogate-gradient, the additive bind), two cheap-firsts on the systematicity
+protocol (stream codes, 3 seeds):
+- **#2 single non-negative rate (sigmoid) — NEGATIVE.** Held-out collapses to **0.083** (vs tanh baseline
+  0.750, floor 0.000): a single rate channel loses the **sign** the additive bind needs (the sigmoid clusters
+  near 0.5).
+- **#2b ON/OFF opponency rate coding — GO.** A signed value → two non-negative rate channels (ON=relu(h),
+  OFF=relu(−h); the substrate's standard signed coding, used in the NEF cleanup / FHRR / biologization). With
+  read noise + surrogate backward (`d_h = d_ON·1[h>0] − d_OFF·1[h<0]`), held-out **0.806** — **107% of the tanh
+  baseline** (0.750), ≫ floor 0.000.
+
+⇒ the spiking learned binder is **viable**: the additive bind realized with ON/OFF rate coding + surrogate-
+gradient + finite-population read noise carries systematic generalization. The single-rate collapse was a
+representational mistake (lost sign), not a substrate wall. Next: the brain-faithful *local* learning rule
+(feedback alignment / three-factor / e-prop, no weight transport), then the full on-bridge LIF realization.
+
+Runners: `_phaseB_learned_bind_streamcodes_derisk.py`, `_phaseB_learned_bind_ratenoise_derisk.py`,
+`_phaseB_spiking_bind_derisk.py`, `_phaseB_spiking_bind_onoff_derisk.py`.
+Raw: `research/findings/raw/_phaseB_learned_bind_streamcodes.json`, `_phaseB_learned_bind_ratenoise.json`,
+`_phaseB_spiking_bind.json`, `_phaseB_spiking_bind_onoff.json`.
