@@ -71,9 +71,38 @@ Builds gen-OFF and gen-ON; under the **same** conj drive measures parse_role's m
 - driven state: **v_max 34.8** (spikes past the +30 threshold), **role_fire 0.38**, conj_fire 20.0.
 - **metric caveat:** `g_e`/`g_i` both read **0.0 even while parse_role is firing** — the conj→role current is not surfaced through `cp_conductance_g_e` (delivered via a different path or consumed within the step before the read). ⇒ the decisive gen-ON metrics are **parse_role v_max** (does it reach +30?) and the **inhibitory-edge count**, NOT g_e/g_i.
 
-Code-reading has already ruled out a wiring difference (gen edges confined; gen adds no inhibitory neurons → inhibitory-index set unchanged) and current-path gating (no STP, no `nm_gain`, no transmission gate). Prediction: gen-ON shows the **same** 720-exc/0-inh wiring but **v_max < 30** → a global/size-dependent suppression of parse_role's effective drive. **(gen-ON numbers + the confirmed mechanism + the targeted fix slot in here once diag3 lands.)**
+**NOTE — build slowdown:** diag3's gen-OFF build took **445 s** vs ~44 s in diag1 for the same bridge (≈10×). Root-caused to **sustained desktop GPU contention** (nvidia-smi: 97–99% util, ~6 GB, from non-python Electron/browser graphics contexts — the user's own GPU work, not a CuPy leak). Every GPU run is ~10× slow while this persists.
 
-**NOTE — build slowdown:** diag3's gen-OFF build took **445 s** vs ~44 s in diag1 for the same bridge (≈10×). Likely GPU memory-pool fragmentation / leaked bridges across the repeated diag runs (or desktop contention). Ensure a clean GPU before the Stage-1 re-run.
+## CPU wiring check — the suppression is NOT a wiring bug (`_unified_stage1_wiring_check.py`, no GPU)
+
+parse_role's incoming edges are fixed at injection time, so the wiring question is answerable by the union wiring plan alone — a pure CPU computation (`RegionManager.initialize` + `build_wiring_plan`), instant and immune to the GPU contention. Result (seed 42):
+
+| build | edges into parse_role | exc / inh | pre-region |
+|---|---|---|---|
+| gen-OFF | 720 | 720 / 0 | parse_conj |
+| gen-ON | 720 | 720 / 0 | parse_conj |
+
+`conj_role_wiring_identical = true`, no extra edges, no inhibitory edges. ⇒ **the parser silence is NOT a wiring bug.** Combined with diag3's weight sums it becomes a **weight-magnitude** bug:
+- gen-OFF parse_role incoming sum_w = **12417** over 720 edges → mean **17.2** (and a strong tail; v_max 34.8 → fires).
+- gen-ON conj→role sum = **5008** → mean **6.96**, **max EXACTLY 20.0**.
+
+## ROOT CAUSE — the UNGATED Hebbian weight clip (`sim/bridge.py:6509`)
+
+The per-step Hebbian block gates the weight **decay** by `cp_plasticity_rate_gain` (line 6505: a frozen pathway at gain 0 does **not** decay), but the immediately-following **clip** is **ungated**:
+
+```python
+cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight, out=...)   # line 6509 — EVERY weight
+```
+
+`_train_merged_convergence` temporarily lowers `hebbian_max_weight → 20.0` for the gen perception→concept Hebbian. During its 320 Hebbian-on steps, the ungated clip crushes the **frozen** parser's load-bearing conj→role edges (legitimately ~40–60 — the strong edges that drive the role ensembles) down to ≤20. **Smoking gun:** diag2's gen-ON conj→role **max = exactly 20.0**; clipping the strong tail collapses the mean 17.2 → 6.96, dropping parse_role below its tight firing margin (gen-OFF v_max 34.8, only ~5 mV over threshold) → silence.
+
+This is the **same** ungated-clip foot-gun the unification 5a de-risk documented (mitigated for nav/parser by `stdp_w_max = hebbian_max_weight = 400`) — but the convergence pass re-lowers `hebbian_max` to 20, re-exposing it for the frozen pathways.
+
+## THE FIX (runner-side, no `sim/` edit, default-off-safe)
+
+In `_train_merged_convergence`: snapshot `bridge.cp_connections.data` before the pass; in the `finally`, byte-restore every **non-`conv_mask`** synapse (parser, nav, dlPFC, concept→fact). Only the gen perception→concept edges (`conv_mask`) legitimately train; everything else is restored verbatim, so the parser keeps its strong conj→role edges and its firing margin. The pass only runs when `co_resident_generalization=True`, so the shipped byte-identity path is untouched.
+
+**GPU behavioral confirmation:** re-run `_unified_stage1_parser_diag` on the fixed builder (expect gen-ON now parses both sentences identically to gen-OFF; conj→role max restored > 20), then the full `_unified_stage1_merged.py` no-regression gate. (Slow under the current desktop GPU contention.)
 
 ## Why this matters (honest framing)
 

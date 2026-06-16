@@ -1,0 +1,30 @@
+{
+  "verdict": {
+    "conj_role_wiring_identical": true,
+    "extra_edges_into_role_on_gen": 0,
+    "inhibitory_edges_appeared_on_gen": false,
+    "diagnosis": "WIRING IDENTICAL -> the suppression is a DYNAMIC/size effect, not wiring (parser silence is NOT a wiring bug)"
+  },
+  "gen_off": {
+    "n_total_neurons": 4276,
+    "parse_role_base": 964,
+    "parse_conj_base": 958,
+    "n_into_role": 720,
+    "n_exc": 720,
+    "n_inh": 0,
+    "by_pre_region": {
+      "parse_conj": 720
+    }
+  },
+  "gen_on": {
+    "n_total_neurons": 8324,
+    "parse_role_base": 964,
+    "parse_conj_base": 958,
+    "n_into_role": 720,
+    "n_exc": 720,
+    "n_inh": 0,
+    "by_pre_region": {
+      "parse_conj": 720
+    }
+  }
+}

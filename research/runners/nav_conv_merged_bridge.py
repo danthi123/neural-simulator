@@ -370,6 +370,15 @@ def _train_merged_convergence(bridge, gen_handles, vis_sets, train, *, epochs=20
              cc.hebbian_learning_rate, cc.hebbian_max_weight, cc.hebbian_min_weight, cc.hebbian_weight_decay,
              cc.nmda_ratio)
     saved_gain = gain.copy()
+    # Snapshot ALL weights so the FROZEN (non-convergence) pathways can be byte-restored afterward. The Hebbian
+    # weight DECAY is gain-gated (sim/bridge.py:6505 -> gain 0 = no decay), BUT the [hebbian_min,hebbian_max]
+    # CLIP (sim/bridge.py:6509) is UNGATED: it runs every Hebbian step on EVERY weight. Because this pass lowers
+    # hebbian_max_weight to `hebbian_max` (=20) for the gen edges, that ungated clip would crush the frozen
+    # parser's load-bearing conj->role edges (legit ~40-60, the strong edges that drive the role ensembles) down
+    # to <=20 -- silencing parse_role on the merged bridge (the Stage-1 parser-silence bug; diag2 measured the
+    # gen-ON conj->role max at exactly 20.0). Only the gen_perception->gen_concept edges (conv_mask) legitimately
+    # train here; everything else (parser, nav, dlPFC, concept->fact) is restored verbatim in the finally below.
+    saved_weights = bridge.cp_connections.data.copy()
     # convergence train: ONLY the perception→concept edges plastic; nav/parser/dlPFC/concept→fact frozen (gain 0).
     gain[:] = 0.0
     gain[conv_mask] = 1.0
@@ -405,6 +414,12 @@ def _train_merged_convergence(bridge, gen_handles, vis_sets, train, *, epochs=20
         # edges at gain 0 (the trained-then-frozen discipline — nav episodes must not erode the convergence).
         gain[:] = saved_gain
         gain[conv_mask] = 0.0
+        # Undo the UNGATED-clip damage (sim/bridge.py:6509) to every FROZEN pathway: restore all non-convergence
+        # synapses to their pre-pass values. The convergence legitimately changed ONLY the gen_perception->gen_concept
+        # edges (conv_mask); the parser's strong conj->role edges (and nav/dlPFC/concept->fact) must be byte-identical
+        # to before this pass, so parse_role keeps its firing margin on the merged bridge.
+        _restore = ~conv_mask
+        bridge.cp_connections.data[_restore] = saved_weights[_restore]
     return {"conv_mask": conv_mask, "train_diag": diag}
 
 
