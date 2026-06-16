@@ -211,7 +211,11 @@ class BrainConversationalAgent:
         self.composer.store(agent, action, clause, polarity=polarity)
 
     def what_does(self, agent, action):
-        """'what does <agent> <action>?' -> patient (concept or rendered clause) or None (abstain)."""
+        """'what does <agent> <action>?' -> patient (concept or rendered clause) or None (abstain). With
+        enable_neural_render, an inner-clause patient's word ORDER is produced by the spiking serial-order
+        generator (the moat is unaffected: abstention returns None before any rendering)."""
+        if self._neural_render is not None:
+            return self.composer.query_patient(agent, action, order_fn=lambda n: self._neural_render.order(list(range(n))))
         return self.composer.query_patient(agent, action)
 
     def who_does(self, action, patient):

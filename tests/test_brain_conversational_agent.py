@@ -155,8 +155,10 @@ def test_neural_render_clause():
     except FileNotFoundError:
         pytest.skip("denoise64 concept-code cache not present")
     ag.hear_clause_fact("dog", "look", Clause("cat", "go", "south"))
-    assert ag.describe("dog") == "dog look cat go south"     # outer SVO + inner clause BOTH neural-ordered
+    assert ag.describe("dog") == "dog look cat go south"     # GENERATION: outer SVO + inner clause BOTH neural-ordered
     assert ag.describe("river") is None                       # no-confab moat preserved (abstain before ordering)
+    assert ag.what_does("dog", "look") == "cat go south"     # Q&A path: inner clause neural-ordered too
+    assert ag.what_does("river", "look") is None              # no-confab moat preserved on the Q&A path
 
 
 def test_learned_assoc_graph_agent():

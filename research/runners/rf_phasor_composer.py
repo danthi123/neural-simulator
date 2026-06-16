@@ -315,13 +315,15 @@ class RFPhasorComposer:
                 return self.unbind(comp, "agent")
         return None
 
-    def query_patient(self, agent, action):
+    def query_patient(self, agent, action, order_fn=None):
         """'what does <agent> <action>?' -> the patient of the matching fact (an attributed entity 'big apple' if
         the fact bound an ATTRIBUTE); None if no match (abstention). The stored structure only routes the rendering;
-        the words are decoded from the RF unbind."""
+        the words are decoded from the RF unbind. `order_fn` (opt-in, default None = host f-string): when set, an
+        inner CLAUSE patient's SVO order is produced by the de-risked spiking serial-order generator. The moat is
+        unaffected: abstention (return None) happens BEFORE any rendering."""
         for fact, comp in self._iter_facts():
             if self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action:
-                noun = self._render(comp, "patient", fact["patient"])   # a word OR a recursive Clause
+                noun = self._render(comp, "patient", fact["patient"], order_fn=order_fn)   # word OR recursive Clause
                 adjs = [self.unbind(comp, r) for r in ("attribute", "attribute2") if r in fact]
                 if adjs:
                     return " ".join(adjs + [noun])    # 'big apple' / 'big hot apple'
