@@ -1,0 +1,23 @@
+{
+  "bundle_train": 0.268795090076464,
+  "bundle_held": 0.19265271765271766,
+  "chance": 0.0625,
+  "single_pair_held": 0.206,
+  "per_seed": [
+    {
+      "seed": 42,
+      "bundle_train": 0.2712732236195208,
+      "bundle_held": 0.19246031746031744
+    },
+    {
+      "seed": 43,
+      "bundle_train": 0.2593649643987645,
+      "bundle_held": 0.20454545454545456
+    },
+    {
+      "seed": 44,
+      "bundle_train": 0.27574708221110683,
+      "bundle_held": 0.18095238095238098
+    }
+  ]
+}
