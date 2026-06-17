@@ -1,10 +1,11 @@
 # Consolidation GO — the production conversational agent talks with the codes it LEARNED FROM CONVERSATION (320-concept stream cortex), end-to-end on one agent
 
 **Date:** 2026-06-17
-**Status:** **GO.** 3/3 seeds on the host-readout stream codes + 1/1 on the fully-brain-based neural-readout
-codes (seed 42). The loop closes: learn word meanings from a conversation stream → converse using them through
-the production agent. No new mechanism — this is the assembly of validated pieces the CYCLE-119 plan named as
-the reuse-heavy runner-up frontier.
+**Status:** **GO.** 3/3 seeds on the host-readout stream codes + **3/3 on the fully-brain-based neural-readout
+codes** (seeds 42/43/44; the third-seed hardening completed 2026-06-17 once the neural codes finished streaming).
+The loop closes: learn word meanings from a conversation stream → converse using them through the production
+agent. No new mechanism — this is the assembly of validated pieces the CYCLE-119 plan named as the reuse-heavy
+runner-up frontier.
 
 ## What was separate, and is joined here
 
