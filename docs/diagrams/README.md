@@ -106,10 +106,21 @@ Requires Graphviz (`dot`). On Windows: `winget install Graphviz.Graphviz`.
 ```bash
 cd docs/diagrams
 for f in brain_master brain_navigation brain_conversational; do
-  dot -Tsvg          "$f.dot" -o "$f.svg"
-  dot -Tpng -Gdpi=140 "$f.dot" -o "$f.png"
+  dot -Tsvg              "$f.dot" -o "$f.svg"   # SVG: viewers do per-glyph font fallback
+  dot -Tpng:gdiplus -Gdpi=140 "$f.dot" -o "$f.png"   # Windows: gdiplus for symbol glyphs
 done
 ```
+
+**Font note (important).** The diagrams use box-drawing and symbol glyphs (⚠ ⊣ ━ ▶
+⊟ ⟲ ◆ …) in `Helvetica`, which Arial-on-Windows lacks. The default Cairo PNG
+renderer leaves them as empty boxes showing the code point (e.g. `26A0`, `2501`)
+unless a Unicode-complete fallback font (e.g. *DejaVu Sans*) is available to
+fontconfig. Two fixes: on **Windows**, render PNGs with `-Tpng:gdiplus` (GDI+ does
+per-glyph font-linking, so only the missing symbols substitute and the Helvetica
+body text is preserved — used above); on **Linux/macOS**, the default
+`-Tpng`/Cairo works once *DejaVu Sans* is installed (it ships with most Graphviz
+packages). The SVGs name `Helvetica` and rely on the viewer's own font fallback,
+so they render correctly in browsers regardless.
 
 The `.dot` sources are the source of truth; edit them and re-render. They are
 authored from the as-implemented extraction spec (linked above), which in turn
