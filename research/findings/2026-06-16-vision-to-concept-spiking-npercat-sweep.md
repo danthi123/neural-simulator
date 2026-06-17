@@ -78,9 +78,39 @@ GPU comparison at the same config), then (b) recover the merged 100/101 generali
 is still wanted, strengthen the abstention discrimination ALONGSIDE it and re-validate the moat holds. The dendritic
 rewrite is explicitly NOT implicated (a fidelity/co-residence gap, not a substrate-mechanism gap). NO `sim/` edit.
 
+## UPDATE (same day) — co-residence CONFIRMED + localized (zero new GPU), moat-safe lever in flight
+
+The redirection above was upgraded from hypothesis to **proven cause** by a cheap-first analysis of EXISTING data:
+
+1. **Identical held-out split.** The merged Stage-3 uses the SAME `seed*31+5` split as the standalone capstone —
+   seed 100 held_out `[1,6,9,13]`, seed 101 `[3,7,8,14]`, seed 42 `[0,6,10,14]` in BOTH. So the gap is NOT the split
+   (the scoping's original split-margin idea is ruled out for the standalone-vs-merged gap).
+2. **Identical training config.** `_train_merged_convergence` trains the merged gen convergence at the same
+   epochs=20 / hebbian_max=20 / perc=300 / conc=600 / OU-off / STDP-off / reward-off (isolated by the
+   `cp_plasticity_rate_gain` mask) as the standalone. Ruled out.
+3. **Identical read method.** The merged `_read_gen_spikes` calls the standalone's OWN `read_heldout_spikes`, and
+   `_category_of_concept_spikes` is the same raw category-mean. OU is off in BOTH reads. Ruled out.
+4. **Seed 42 is byte-identical (0.75) in both; only 100/101 collapse (0.75→0.25).**
+
+⇒ the ONLY remaining difference is the merged `gen_concept`'s **per-index neuron heterogeneity**: it sits at global
+indices ~8000+ and draws a different Izhikevich a/b/c/d jitter than the standalone's base-2048, which tips the
+**marginal** 100/101 category read (standalone margins were thin: +0.077 / +0.100). This is a co-residence effect,
+not a vision/exemplar/split limit.
+
+**The moat-safe fix = the POPULATION-CODE lever** (more `gen_n_concept_per` → the category-mean averages over more
+heterogeneous neurons → lower read variance → the thin-but-real 100/101 margin wins again), which — crucially —
+does NOT broaden the category cores, so it preserves the moat (unlike the exemplar lever). Probe IN FLIGHT:
+`research/runners/_unified_gen_popcode_lever_probe.py` (seeds 100/101/42 × `gen_n_concept_per` ∈ {100, 300} on the
+MERGED bridge; GATE = 100/101 recover H5 ≥ 0.50 at n=300 + the no-confab MOAT abstains every cell, HARD STOP on any
+breach). GO ⇒ set `gen_n_concept_per=300` in `build_compose_bridge` + re-validate Stage-3 toward clean 6/6.
+NEGATIVE ⇒ the compression is a systematic heterogeneity bias (route to per-region heterogeneity control or accept
+seed-variance). NO `sim/` edit either way.
+
 ## Reproduce
 
 ```bash
 SIM_BACKEND=cupy python -u -m research.runners._vision_to_concept_spiking_npercat_sweep \
     --npercat 4,8,12 --seeds 42,43,44,100,101,102
+# the co-residence localization + moat-safe lever test:
+SIM_BACKEND=cupy python -u -m research.runners._unified_gen_popcode_lever_probe --seeds 100,101,42 --nconcept 100,300
 ```
