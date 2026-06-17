@@ -1,0 +1,15 @@
+{
+  "D": 512,
+  "resonate_steps": 208,
+  "n_neurons": 1024,
+  "parts_ms": {
+    "conns_build": 0.04996061325073242,
+    "rf_set_complex_weights": 3.63885760307312,
+    "rf_kick": 0.14998912811279297,
+    "rf_resonate_steps": 162.26415038108826,
+    "rf_read_phases": 0.05008578300476074
+  },
+  "sum_ms": 166.15304350852966,
+  "full_bind_ms": 167.95573830604553,
+  "dominant": "rf_resonate_steps"
+}
