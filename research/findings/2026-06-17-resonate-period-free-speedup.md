@@ -1,10 +1,11 @@
 # Free latency lever: the resonate window shortens 208 → 40 steps with no accuracy loss (6.2× fewer steps)
 
 **Date:** 2026-06-17 (the resonator-paper bonus lever, on top of the CYCLE-152 batched scan)
-**Status:** **GO (validated lever).** The composer's resonate window can drop from `period=200` (208 steps) to
-`period=32` (40 steps) — **6.2× fewer steps, ~3.9× faster/query** — with who/what recall AND the no-confab moat
-still at full accuracy (3 seeds). Free: a constructor knob, NO `sim/` edit. Adoption (changing the default) is
-gated on re-running the full conversational suite at the shorter window.
+**Status:** **PARTIAL — real for FLAT queries, but clause-bounded (adoption at period=48 reverted).** The resonate
+window drops 208→40 steps with **flat** who/what + the no-confab moat at full accuracy (the sweep below). BUT the
+full-suite adoption gate found **period=48 breaks embedded clauses** (`test_embedded_clause` fails) — the recursive
+clause unbind needs more phase resolution — so the agent default **stays 200**. A clause-safe period (likely
+~100–128, still a ~1.6–2× win) is a bounded follow-on, gated on the FULL suite. Free knob, NO `sim/` edit.
 **Runner:** `research/runners/_phaseB_resonate_period_sweep.py` · **Raw:** `research/findings/raw/_resonate_period_sweep.json`
 
 ## Why
@@ -40,6 +41,18 @@ where our `RFPhasorComposer` runs **208** resonate steps per op. The op cost is 
   re-running the full conversational suite at the shorter window (and the `test_rf_*` golden outputs assume 208,
   so those goldens move). Recommend `period=48` (a safe margin above the 32 cliff) for the adoption, pending that
   re-validation. Until then it is a validated knob, not the default.
+
+## Adoption attempt — clause boundary (reverted to 200)
+
+The agent-level adoption (set `BrainConversationalAgent`'s composer `period=48`, leaving the low-level
+`RFPhasorComposer` default at 200 so `test_rf_*` goldens stay intact) was gated on the full conversational suite:
+**1 failed, 74 passed** — `test_brain_conversational_agent::test_embedded_clause` fails at period=48. Reverted to
+200. The lesson sharpens the finding: the period sweep tested only **flat** who/what, but a **recursive clause**
+(a clause bound as a filler, then unbound to recover its inner SVO) involves a deeper nested unbind with more
+bundle cross-talk, so it needs a longer resonate window for a faithful phase read than a flat query does. The
+**embedded-clause test is the binding constraint** for any period adoption — a clause-safe threshold (sweep the
+clause test, expect ~100–128) would still give a ~1.6–2× win and must pass the FULL suite, not just flat queries.
+(This is also a clean reason the default stayed conservative at 208.)
 
 ## Reproduce
 ```bash

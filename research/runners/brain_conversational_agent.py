@@ -174,6 +174,12 @@ class BrainConversationalAgent:
             vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
             # enable_spiking_cleanup (opt-in): route cleanup through the fully-on-bridge spiking path (matched filter
             # on the complex synapse + Izhikevich WTA). == numpy at parity multi-seed; default OFF = numpy fast path.
+            # period STAYS 200: the resonate-window shortening (2026-06-17-resonate-period-free-speedup.md) is real
+            # for FLAT who/what (full accuracy at period>=32), but period=48 BREAKS embedded clauses
+            # (test_embedded_clause fails) -- the recursive-clause unbind (a clause bound as a filler -> deeper
+            # nesting + more bundle cross-talk) needs more phase resolution than flat queries. A period adoption is
+            # gated on the FULL conversational suite (the clause test is the binding constraint); the clause-safe
+            # threshold (likely ~100-128, still a ~1.6-2x win) is a bounded follow-on sweep.
             self.composer = RFPhasorComposer(seed=seed, D=128, vocab=vocab, period=200,
                                              enable_spiking_cleanup=enable_spiking_cleanup,
                                              enable_substrate_store=enable_substrate_store,
