@@ -95,7 +95,7 @@ def main():
         for n in nconcepts:
             try:
                 r = _run_cell(seed, n)
-                h5 = float(r["h5_concept_cat_acc"]); moat = bool(r["moat_abstains"])
+                h5 = float(r["h5_concept_cat_acc"]); moat = bool(r["gen_moat_abstains"])
                 results[seed][n] = r
                 if not moat:
                     moat_breaches.append((seed, n, r["heldout_win_fire"], r["novel_win_fire"]))

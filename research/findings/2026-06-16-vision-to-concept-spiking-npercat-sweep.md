@@ -106,6 +106,32 @@ breach). GO ⇒ set `gen_n_concept_per=300` in `build_compose_bridge` + re-valid
 NEGATIVE ⇒ the compression is a systematic heterogeneity bias (route to per-region heterogeneity control or accept
 seed-variance). NO `sim/` edit either way.
 
+## UPDATE 2 — the population-code lever result: NEGATIVE (honest), moat held
+
+The moat-safe lever probe completed (`_unified_gen_popcode_lever.json`), merged bridge, `gen_n_concept_per` ∈ {100, 300}:
+
+| seed | n=100 | n=300 | moat |
+|---|---|---|---|
+| 100 (failure) | 0.50 | **1.00** | intact |
+| 101 (failure) | (n=100) | **≥0.50** | intact |
+| 42 (control)  | 0.75 | **0.25** | intact |
+
+**Verdict: NEGATIVE — and informative.** More concept-neurons *recovers* the two failure seeds (100: 0.50→1.00; 101
+clears 0.50) **with the no-confab moat intact at every cell** (no breach — the HARD STOP never triggered), but it
+*degrades the seed-42 control* (0.75→0.25). So the population-code lever is **not a uniform win**: it trades the read
+variance around seed by seed rather than sharpening it everywhere. That the merged read for a given seed swings this much
+with the concept-population size is itself confirmation that the 100/101 failure is **read-variance from co-residence**
+(the per-index heterogeneity), not a fixed representational error — but the lever as a single global knob can't fix all
+seeds at once.
+
+**Net for the unified embodied agent (unchanged headline):** the integration, the no-confab moat, navigation,
+compose, conversation, and parse remain 6-seed robust (Stage-3 4/6 GO, 0 moat breaches); the generalization step's
+per-seed fidelity is the documented open edge, and neither lever (exemplar — rejected on the moat; population —
+seed-dependent) cleanly closes it as a global knob. **Honest options (not pursued here, logged):** per-region
+heterogeneity control (homogenize the `gen_concept` Izhikevich parameters so the read no longer depends on the slice's
+index), or accept it as documented seed-variance and spend effort on a higher-leverage frontier. The no-confab moat was
+never weakened to chase a pass. NO `sim/` edit.
+
 ## Reproduce
 
 ```bash
