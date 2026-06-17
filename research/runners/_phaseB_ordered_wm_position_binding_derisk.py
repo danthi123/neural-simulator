@@ -56,6 +56,10 @@ if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
 from research.runners.rf_phasor_composer import RFPhasorComposer
+# OrderedPositionWM is now the promoted PRODUCTION module (research/runners/ordered_position_wm.py); this de-risk
+# imports it to keep a single source of truth. The de-risk preserves its FROZEN pre-registration verbatim by
+# constructing it with the pre-registered D / n_slots / match_threshold below (so its numbers are unchanged).
+from research.runners.ordered_position_wm import OrderedPositionWM as _OrderedPositionWM
 
 # =====================================================================
 # Pre-registered constants (frozen; never tuned to a result).
@@ -77,50 +81,18 @@ MATCH_THRESHOLD = 0.15
 
 # ---------------------------------------------------------------------
 # The order-encoded WM realized on the spiking RF phasor substrate.
+# This de-risk's class is now a thin wrapper that PINS the promoted production OrderedPositionWM to the FROZEN
+# pre-registration (D_PHASOR / N_SLOTS / the frozen MATCH_THRESHOLD 0.15), so the de-risk's numbers are unchanged
+# while the implementation lives in research/runners/ordered_position_wm.py (single source of truth).
 # ---------------------------------------------------------------------
-class OrderedPositionWM(RFPhasorComposer):
-    """An order-encoded working memory: N gamma-slot POSITION phasors (roles `pos0..pos{N-1}`); a held ordered
-    sequence is encoded as the BUNDLE of bind(item_k, position_k), all on the resonate-and-fire substrate the
-    parent composer is built on. Read slot k via the parent's spiking unbind + cleanup, gated by the familiarity
-    moat. Distinct, never-used position phasors (`emptyslot`, `scrambled`) probe the moat."""
+class OrderedPositionWM(_OrderedPositionWM):
+    """Frozen-pre-registration view of the production OrderedPositionWM: D=D_PHASOR (256), n_slots=N_SLOTS (7),
+    and the pinned frozen familiarity threshold MATCH_THRESHOLD (0.15) -- NO calibration (so this de-risk keeps
+    reporting BOUNDARY honestly against the literal pre-registered threshold)."""
 
     def __init__(self, seed=42, D=D_PHASOR, vocab=None, n_slots=N_SLOTS):
         vocab = vocab if vocab is not None else [f"w{i}" for i in range(N_VOCAB)]
-        super().__init__(seed=seed, D=D, vocab=vocab)
-        self.n_slots = int(n_slots)
-        # Deterministic per-seed position phasors, added to the composer's role set (the SAME machinery as SVO
-        # role vectors -- the roles dict is extensible by design). Drawn from a dedicated stream so they are
-        # disjoint from the concept/role draws.
-        prng = np.random.default_rng(seed + 1000)
-        for k in range(self.n_slots):
-            self.roles[f"pos{k}"] = prng.uniform(0.0, 1.0, self.D)
-        # Two never-bound position phasors for the moat (an unused slot, and a fully-unrelated phasor).
-        self.roles["emptyslot"] = prng.uniform(0.0, 1.0, self.D)
-        self.roles["scrambled"] = prng.uniform(0.0, 1.0, self.D)
-
-    def encode_sequence(self, item_words):
-        """Encode an ordered K-item sequence (a list of vocab words) as the bundle of (item, position) bindings,
-        on the spiking RF substrate. item_words[k] is bound to slot k."""
-        bounds = [self._bind(self.roles[f"pos{k}"], self.concepts[item_words[k]])
-                  for k in range(len(item_words))]
-        return self._bundle(bounds) if len(bounds) > 1 else bounds[0]
-
-    def _match_strength(self, rec_phases):
-        """Familiarity signal: the max phase-cosine similarity of a recovered phasor to any stored vocab concept.
-        This is the `cleanup_separated` match-strength gate -- computed BEFORE identification."""
-        return max(float(np.mean(np.cos(2.0 * np.pi * (rec_phases - self.concepts[w]))))
-                   for w in self.words)
-
-    def read_slot(self, composite_phases, slot_key, gate=True):
-        """Read the item at `slot_key` (e.g. 'pos1' or the moat probes 'emptyslot'/'scrambled') from a composite,
-        on the spiking substrate: unbind by the position phasor, then the familiarity gate -> abstain (None) if
-        the recovered phasor matches no stored concept, else cleanup to the nearest concept. Returns
-        (word_or_None, match_strength)."""
-        rec = self._unbind_phases(composite_phases, slot_key)   # spiking RF unbind (conj diagonal complex synapse)
-        match = self._match_strength(rec)
-        if gate and match < MATCH_THRESHOLD:
-            return None, match                                  # ABSTAIN -- no-confab moat
-        return self._cleanup(rec), match                        # spiking/numpy cleanup -> nearest concept
+        super().__init__(seed=seed, D=D, vocab=vocab, n_slots=n_slots, match_threshold=MATCH_THRESHOLD)
 
 
 # ---------------------------------------------------------------------
