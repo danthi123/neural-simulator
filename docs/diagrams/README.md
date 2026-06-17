@@ -13,17 +13,36 @@ subset.
 
 The two supergroups are now (a) **consolidated** — navigation, the conversational
 parser, the dlPFC, and the resonate-and-fire composer run as disjoint slices on
-*one* `SimulationBridge` — and (b) joined by **one validated functional synapse**:
-the `command_route` transmission gate on a learned `language_input → cortex_{N,E,S,W}`
-route, opened by the conversational parser's firing, so a spoken instruction steers
-the navigation body (spoken-instruction navigation, 6/6-seed GO). That bridge is
-drawn on the master map; the two detail graphs stay scoped to their own builder
-(`command_route` is added by the spoken-instruction runner on top of the navigation
-builder, so it is not part of either exhaustive per-builder graph).
+*one* `SimulationBridge` — and (b) joined by **three validated functional cross-brain
+routes** (each 6/6-seed GO), all drawn on the master map:
+
+- **(A) language → action** — the `command_route` transmission gate on a learned
+  `language_input → cortex_{N,E,S,W}` route, opened by the conversational parser's
+  firing, so a spoken instruction steers the navigation body (spoken-instruction
+  navigation).
+- **(B) perception → memory (recall)** — a perceived object's `cortex_it` ("what"
+  stream) ensemble is engram-tagged in-episode, then neural reactivation reads it
+  through a trained `cortex_it → language_output` route (`it_to_lang`), recalling
+  what was seen (navigate-to-see-then-answer). This is RECALL, not composition.
+- **(C) compose-perceived** — the LIVE `cortex_it` spiking *rate* of a perceived
+  object is mapped by a fixed complex projection M into a unit *phasor* (⚠ host
+  arithmetic on the substrate's own live rate), so the percept enters the composer's
+  bind/bundle/unbind algebra — dissolving the rate-vs-phasor wall for perceived-object
+  facts (navigate-to-compose-then-answer).
+
+The master map also draws a co-resident, opt-in **generalization stack**
+(`gen_perception` → `gen_concept` (NMDA) → `gen_fact`): a novel object perceived
+through the Gabor/V1 front end is recognised by *category*, the path to generalize
+across *similar* concepts on the point-neuron substrate (no dendritic rewrite needed).
+
+These cross-brain routes and the generalization stack are added by specific runners
+**on top of** a builder (`nav_conv_merged_bridge.py`, the `navigate_to_*` runners, the
+`_genfrontier_*` de-risks), so they appear only on the master map; the two exhaustive
+detail graphs stay scoped to a single builder's own region/pathway output.
 
 | Diagram | What it shows | Files |
 |---|---|---|
-| **Master map** | Cluster-level overview: the 12 subsystems, the main signal arteries, the two config-scoped supergroups on one engine, the one validated cross-brain synaptic bridge (the parser-gated `command_route`), the honesty legend. Start here. | [`brain_master.svg`](brain_master.svg) · [`.png`](brain_master.png) · [`.dot`](brain_master.dot) |
+| **Master map** | Cluster-level overview: the 12 subsystems, the main signal arteries, the two config-scoped supergroups on one engine, the **three** validated cross-brain functional routes (A language→action via the parser-gated `command_route`; B perception→memory recall via `cortex_it → language_output`; C compose-perceived via the live-rate→phasor grounded code), the co-resident generalization stack (`gen_perception → gen_concept → gen_fact`), the honesty legend. Start here. | [`brain_master.svg`](brain_master.svg) · [`.png`](brain_master.png) · [`.dot`](brain_master.dot) |
 | **Navigation brain** | Exhaustive: every region + every distinct pathway of `build_bg_brain_regions()` — the basal-ganglia action-selection cascade, the spiking superior-colliculus orienting reflex (sc_retina→sc_map→cortex), the spiking actor-critic (reward_us → SNc; striosome value critic → SNc via GABA_B), thalamus/TRN, the accumulate→commit decision layer, cerebellum, hippocampus, dlPFC. | [`brain_navigation.svg`](brain_navigation.svg) · [`.png`](brain_navigation.png) · [`.dot`](brain_navigation.dot) |
 | **Conversational brain** | Exhaustive: every region + every distinct pathway of `build_biological_brain_regions()` — language I/O, Wernicke pools, semantic cortex, Broca, concept pools, multimodal hub, hippocampal consolidation, dlPFC verb working memory. | [`brain_conversational.svg`](brain_conversational.svg) · [`.png`](brain_conversational.png) · [`.dot`](brain_conversational.dot) |
 

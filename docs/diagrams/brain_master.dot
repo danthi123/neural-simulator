@@ -9,8 +9,19 @@
 //  The whole brain is ONE SimulationBridge engine assembled per-config from a
 //  declarative region/pathway grammar; "navigation" and "conversational" are
 //  two alternative configurations of that one substrate. They now also share
-//  ONE running bridge (consolidation) AND functionally interact through ONE
-//  validated synaptic route — the command_route language->action bridge.
+//  ONE running bridge (consolidation) AND functionally interact through THREE
+//  validated cross-brain synaptic routes (all 6/6-seed GO):
+//    (A) command_route        language -> action  (spoken-instruction nav)
+//    (B) cortex_it->lang_out  perception -> memory RECALL (navigate-to-see)
+//    (C) grounded code         compose-perceived  (navigate-to-compose; the
+//                              live cortex_it rate is projected to a phasor the
+//                              composer binds — dissolving the rate↔phasor wall)
+//  Plus a co-resident, opt-in GENERALIZATION stack (gen_perception ->
+//  gen_concept(NMDA) -> gen_fact) that lets a NOVEL perceived object be
+//  recognised by category, the path to generalize across SIMILAR concepts on
+//  the point-neuron substrate. These cross-brain routes + the gen stack are
+//  added by specific runners ON TOP of a builder, not part of either builder's
+//  own exhaustive per-region graph.
 // ============================================================================
 digraph BrainMaster {
     rankdir=TB;
@@ -24,7 +35,7 @@ digraph BrainMaster {
     labelloc="t";
     fontsize=26;
     pad="0.15,0.08";
-    label=<<B>Simulated-brain architecture — master map</B><BR/><FONT POINT-SIZE="13">as implemented · ONE SimulationBridge engine · two config-scoped supergroups (navigation | conversational) now consolidated on one bridge + one functional synaptic bridge · honest faithful-vs-shortcut layer</FONT>>;
+    label=<<B>Simulated-brain architecture — master map</B><BR/><FONT POINT-SIZE="13">as implemented · ONE SimulationBridge engine · two config-scoped supergroups (navigation | conversational) consolidated on one bridge + THREE functional cross-brain synaptic bridges (A language→action · B perception→memory · C compose-perceived) + a co-resident generalization stack · honest faithful-vs-shortcut layer</FONT>>;
 
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11.5, margin="0.16,0.10", penwidth=1.6];
     edge [fontname="Helvetica", fontsize=9.5, color="#34495e", penwidth=1.5];
@@ -110,6 +121,26 @@ digraph BrainMaster {
     }
 
     // ========================================================================
+    //  GENERALIZATION stack  (perceive a NOVEL object → recognise its category)
+    //  Co-resident opt-in, appended by nav_conv_merged_bridge / the genfrontier
+    //  runners on top of a builder (NOT part of either per-builder graph). The
+    //  one path to generalize across SIMILAR concepts on the point-neuron
+    //  substrate (no dendritic rewrite): local structure + Hebbian convergence.
+    // ========================================================================
+    subgraph cluster_gen {
+        labelloc="t"; labeljust="l";
+        label=<<B>GENERALIZATION stack</B>  ·  co-resident opt-in (merged bridge / genfrontier runners)  ·  novel-object → category>;
+        style="rounded,filled,dashed"; color="#7d6608"; fillcolor="#fcf8ee"; fontcolor="#6a5407"; fontsize=15; penwidth=2.0; margin=14;
+
+        gen_perc [label=<<B>gen_perception</B>  (structured)<BR/>Gabor/V1 top-K · similarity-structured<BR/><FONT POINT-SIZE="8.5">visual features → shared-feature codes</FONT>>, style="rounded,filled,dashed", fillcolor="#d4e6f1", color="#2e6da4", fontcolor="#163a59"];
+        gen_conc [label=<<B>gen_concept</B>  (NMDA ⟲)<BR/>per-concept assemblies · slow NMDA<BR/><FONT POINT-SIZE="8.5">integrates sparse drive → SPIKES (rate-code lift)</FONT>>, style="rounded,filled,dashed", fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
+        gen_fact [label=<<B>gen_fact</B>  (category tags, NMDA)<BR/>convergent block per category<BR/><FONT POINT-SIZE="8.5">downstream synaptic read of which category spiked</FONT>>, style="rounded,filled,dashed", fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
+
+        gen_perc -> gen_conc [label=<<B>convergence ⊟</B><BR/><FONT POINT-SIZE="8">learned (rate-Hebbian) · gen_convergence_fixed</FONT>>, color="#1a9850", fontcolor="#0c5a28", penwidth=2.2];
+        gen_conc -> gen_fact [label="convergent block\n(category fixed)"];
+    }
+
+    // ========================================================================
     //  CROSS-SUPERGROUP arteries (drawn AFTER the clusters)
     // ========================================================================
     // shared language_input feeds both the conversational stack and (the bridge) navigation
@@ -127,18 +158,38 @@ digraph BrainMaster {
     hippo  -> semantic [label="sleep-replay\nconsolidation", color="#5a8a3c", constraint=false, weight=3];
     hippo  -> motor    [label="CA1→motor", color="#5a8a3c", style=dashed, constraint=false, weight=3];
 
-    // ===== THE FUNCTIONAL ONE-BRAIN BRIDGE (the single real cross-brain synapse) =====
-    // language_input -> cortex_{N,E,S,W} (LEARNED word->action route), CURRENT gated by
-    // command_route, opened by the parser's action-role FIRING. Spoken-instruction
-    // navigation, 6/6-seed GO. The ONE validated synaptic link between the two brains.
-    lang_in -> m1 [label=<<B>command_route ⊟</B>  (functional bridge)<BR/><FONT POINT-SIZE="8">learned word→action · gate opened by parser firing<BR/>spoken-instruction nav · 6/6-seed GO</FONT>>,
+    // GENERALIZATION stack is fed by the visual ventral stream's Gabor/V1 (structured perception)
+    visual -> gen_perc [label="Gabor/V1 → structured\nperception (top-K)", color="#2e6da4", style=dashed, constraint=false, weight=4];
+    // the generalizing concept→fact spikes KEY the composer's recall + no-confab moat (the verbalize
+    // capstone HYBRID: the spiking concept-category keys the validated RFPhasorComposer → naming)
+    gen_fact -> semantic [label="category keys composer recall\n(verbalize capstone, hybrid)", color="#7d6608", style=dashed, constraint=false, weight=2];
+
+    // ===== THE FUNCTIONAL CROSS-BRAIN BRIDGES (real cross-region synaptic interaction) =====
+    // (A) LANGUAGE→ACTION. language_input -> cortex_{N,E,S,W} (LEARNED word->action route),
+    // CURRENT gated by command_route, opened by the parser's action-role FIRING. Spoken-
+    // instruction navigation, 6/6-seed GO. The first validated synaptic link between the brains.
+    lang_in -> m1 [label=<<B>command_route ⊟</B>  (A · language→action)<BR/><FONT POINT-SIZE="8">learned word→action · gate opened by parser firing<BR/>spoken-instruction nav · 6/6-seed GO</FONT>>,
                    color="#1a9850", fontcolor="#0c5a28", penwidth=3.0, style=bold, constraint=false, weight=5, tailport=s, headport=s];
+
+    // (B) PERCEPTION→MEMORY (recall). A perceived object's cortex_it (IT "what") ensemble is
+    // engram-tagged in-episode; later neural reactivation reads it through a TRAINED
+    // cortex_it -> language_output route (it_to_lang) → "I saw the apple". navigate-to-see-
+    // then-answer, 6/6-seed GO. RECALL (not compose).
+    visual -> lang_out [label=<<B>cortex_it → language_output</B>  (B · perception→memory)<BR/><FONT POINT-SIZE="8">trained route + engram reactivation · navigate-to-see · 6/6-seed GO<BR/>RECALL of a perceived object (it_to_lang)</FONT>>,
+                   color="#1a9850", fontcolor="#0c5a28", penwidth=2.6, style=bold, constraint=false, weight=2, tailport=s, headport=s];
+
+    // (C) COMPOSE-PERCEIVED. The LIVE cortex_it spiking RATE of a perceived object is mapped by
+    // a FIXED complex projection M into a unit PHASOR (⚠ host arithmetic on the substrate's own
+    // live rate) → the percept enters the composer's bind/bundle/unbind algebra. Dissolves the
+    // rate-vs-phasor wall for perceived-object facts. navigate-to-compose-then-answer, 6/6-seed GO.
+    visual -> concept [label=<<B>grounded code ⚠</B>  (C · compose-perceived)<BR/><FONT POINT-SIZE="8">live cortex_it rate → fixed complex projection M → phasor<BR/>dissolves rate↔phasor wall · navigate-to-compose · 6/6-seed GO</FONT>>,
+                   color="#1a9850", fontcolor="#0c5a28", penwidth=2.6, style="bold,dashed", constraint=false, weight=2, tailport=e, headport=w];
 
     // ===== RANK BANDS (horizontal layers across the three supergroups) ======
     { rank=same; nav_in;  sc_orient; visual; lang_in; wernicke; }
-    { rank=same; m1;      concept;   hippo; }
-    { rank=same; bg;      reward;  semantic; }
-    { rank=same; thal;    broca;   hub; }
+    { rank=same; m1;      concept;   hippo;   gen_perc; }
+    { rank=same; bg;      reward;  semantic;  gen_conc; }
+    { rank=same; thal;    broca;   hub;       gen_fact; }
     { rank=same; sc;      cb;      wm_conv;  wm_nav; }
     { rank=same; motor;   lang_out; speech; }
 
@@ -154,13 +205,17 @@ digraph BrainMaster {
             <TR><TD ALIGN="RIGHT" BGCOLOR="#fdebd0" WIDTH="22"> </TD><TD ALIGN="LEFT">NAVIGATION  (build_bg_brain_regions)</TD></TR>
             <TR><TD ALIGN="RIGHT" BGCOLOR="#d4e6f1" WIDTH="22"> </TD><TD ALIGN="LEFT">SHARED type, built by both configs</TD></TR>
             <TR><TD ALIGN="RIGHT" BGCOLOR="#d6eaf8" WIDTH="22"> </TD><TD ALIGN="LEFT">CONVERSATIONAL  (build_biological_brain_regions)</TD></TR>
+            <TR><TD ALIGN="RIGHT" BGCOLOR="#fcf8ee" WIDTH="22"> </TD><TD ALIGN="LEFT">GENERALIZATION stack — co-resident opt-in, runner-added</TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2"> </TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2"><B>signal nature</B>  (arrow points downstream)</TD></TR>
             <TR><TD ALIGN="RIGHT">──▶</TD><TD ALIGN="LEFT">excitatory (glutamate, AMPA+NMDA)</TD></TR>
             <TR><TD ALIGN="RIGHT"><FONT COLOR="#922b21">──⊣</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#922b21">fast inhibition (GABA_A, Cl⁻)</FONT></TD></TR>
             <TR><TD ALIGN="RIGHT"><FONT COLOR="#7d3c98">- -⊣</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#7d3c98">slow inhibition (GABA_B / GIRK K⁺) — the one signature edge</FONT></TD></TR>
             <TR><TD ALIGN="RIGHT"><FONT COLOR="#d98008">····◆</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#d98008">neuromodulator broadcast (dopamine)</FONT></TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1a9850"><B>━━▶</B></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1a9850"><B>command_route ⊟ — the functional one-brain bridge (spoken-instruction nav)</B></FONT></TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><FONT COLOR="#1a9850"><B>━━▶ functional cross-brain bridges (each 6/6-seed GO; runner-added):</B></FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1a9850"><B>━━▶</B></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1a9850"><B>A</B> command_route ⊟ — language → action (spoken-instruction nav)</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1a9850"><B>━━▶</B></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1a9850"><B>B</B> cortex_it→language_output — perception → memory RECALL (navigate-to-see)</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1a9850"><B>━ ▶</B></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1a9850"><B>C ⚠</B> grounded code — compose-perceived (live rate → phasor; navigate-to-compose)</FONT></TD></TR>
             <TR><TD ALIGN="RIGHT">- -</TD><TD ALIGN="LEFT">weaker / feedback / opt-in pathway</TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2"> </TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2"><B>honesty</B>   (full detail: the per-region graphs + spec §6)</TD></TR>
@@ -169,7 +224,9 @@ digraph BrainMaster {
             <TR><TD ALIGN="RIGHT">⊟</TD><TD ALIGN="LEFT">runtime gate (transmission / plasticity); gate name in the label</TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2">substrate-wide: point neurons · 1-step delay · GABA_A-default · global-scalar</TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2">neuromodulators · Izhikevich-default · forward-Euler (SH-1..SH-14, spec §6)</TD></TR>
-            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>CORE</B> (always built) = BG cascade + Tier-1 language→motor; rest opt-in</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>CORE</B> (always built) = BG cascade + Tier-1 language→motor; rest opt-in.</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2">The A/B/C bridges + the generalization stack are added by specific runners</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2">ON TOP of a builder (not in either exhaustive per-builder detail graph).</TD></TR>
           </TABLE>>];
     }
 }
