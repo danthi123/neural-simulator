@@ -1,0 +1,286 @@
+{
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "pass_bar": 5,
+  "D": 128,
+  "n_reconsolidate_correct": 6,
+  "n_c1_boundary": 6,
+  "n_c2_moat": 6,
+  "n_c3": 6,
+  "n_arms_separated": 6,
+  "n_baseline_ok": 6,
+  "pe_same_mean": 0.47951609386896404,
+  "pe_diff_mean": 1.0032842209017236,
+  "pe_labile_mean": 0.7414001573853438,
+  "base_facts": [
+    [
+      "dog",
+      "go",
+      "north"
+    ],
+    [
+      "cat",
+      "run",
+      "south"
+    ],
+    [
+      "bird",
+      "fly",
+      "east"
+    ],
+    [
+      "fish",
+      "swim",
+      "west"
+    ]
+  ],
+  "correction": [
+    "dog",
+    "go",
+    "south"
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "pe_labile": 0.7338869399091794,
+      "pe_same": 0.4775695966880571,
+      "pe_diff": 0.9902042831303016,
+      "baseline_ok": true,
+      "recon_pe": 0.9654588539796417,
+      "c1_restate_pe": 0.40555544783496733,
+      "reconsolidate_pass": true,
+      "naive_fails": true,
+      "overwrite_passes_main": true,
+      "donothing_fails": true,
+      "c1_boundary_ok": true,
+      "c2_moat_ok": true,
+      "c3_ok": true,
+      "arms_separated": true,
+      "arms": {
+        "reconsolidate": {
+          "q_corr": "south",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        },
+        "naive_append": {
+          "q_corr": "north",
+          "n_doggo": 2,
+          "q_untouched": "south"
+        },
+        "overwrite_always": {
+          "q_corr": "south",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        },
+        "do_nothing": {
+          "q_corr": "north",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "pe_labile": 0.7406347129316289,
+      "pe_same": 0.4990441057528505,
+      "pe_diff": 0.9822253201104071,
+      "baseline_ok": true,
+      "recon_pe": 1.0066944374916706,
+      "c1_restate_pe": 0.4382898488659037,
+      "reconsolidate_pass": true,
+      "naive_fails": true,
+      "overwrite_passes_main": true,
+      "donothing_fails": true,
+      "c1_boundary_ok": true,
+      "c2_moat_ok": true,
+      "c3_ok": true,
+      "arms_separated": true,
+      "arms": {
+        "reconsolidate": {
+          "q_corr": "south",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        },
+        "naive_append": {
+          "q_corr": "north",
+          "n_doggo": 2,
+          "q_untouched": "south"
+        },
+        "overwrite_always": {
+          "q_corr": "south",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        },
+        "do_nothing": {
+          "q_corr": "north",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "pe_labile": 0.7584866874312977,
+      "pe_same": 0.4979339044971193,
+      "pe_diff": 1.0190394703654762,
+      "baseline_ok": true,
+      "recon_pe": 1.007097283878463,
+      "c1_restate_pe": 0.4427152574405653,
+      "reconsolidate_pass": true,
+      "naive_fails": true,
+      "overwrite_passes_main": true,
+      "donothing_fails": true,
+      "c1_boundary_ok": true,
+      "c2_moat_ok": true,
+      "c3_ok": true,
+      "arms_separated": true,
+      "arms": {
+        "reconsolidate": {
+          "q_corr": "south",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        },
+        "naive_append": {
+          "q_corr": "north",
+          "n_doggo": 2,
+          "q_untouched": "south"
+        },
+        "overwrite_always": {
+          "q_corr": "south",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        },
+        "do_nothing": {
+          "q_corr": "north",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        }
+      }
+    },
+    {
+      "seed": 100,
+      "pe_labile": 0.7529170788702622,
+      "pe_same": 0.5051356660636326,
+      "pe_diff": 1.0006984916768917,
+      "baseline_ok": true,
+      "recon_pe": 1.0460371720730703,
+      "c1_restate_pe": 0.4137510625191487,
+      "reconsolidate_pass": true,
+      "naive_fails": true,
+      "overwrite_passes_main": true,
+      "donothing_fails": true,
+      "c1_boundary_ok": true,
+      "c2_moat_ok": true,
+      "c3_ok": true,
+      "arms_separated": true,
+      "arms": {
+        "reconsolidate": {
+          "q_corr": "south",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        },
+        "naive_append": {
+          "q_corr": "north",
+          "n_doggo": 2,
+          "q_untouched": "south"
+        },
+        "overwrite_always": {
+          "q_corr": "south",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        },
+        "do_nothing": {
+          "q_corr": "north",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        }
+      }
+    },
+    {
+      "seed": 101,
+      "pe_labile": 0.7483555695710945,
+      "pe_same": 0.4796848663793462,
+      "pe_diff": 1.0170262727628427,
+      "baseline_ok": true,
+      "recon_pe": 0.9780330944908533,
+      "c1_restate_pe": 0.4855722796131079,
+      "reconsolidate_pass": true,
+      "naive_fails": true,
+      "overwrite_passes_main": true,
+      "donothing_fails": true,
+      "c1_boundary_ok": true,
+      "c2_moat_ok": true,
+      "c3_ok": true,
+      "arms_separated": true,
+      "arms": {
+        "reconsolidate": {
+          "q_corr": "south",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        },
+        "naive_append": {
+          "q_corr": "north",
+          "n_doggo": 2,
+          "q_untouched": "south"
+        },
+        "overwrite_always": {
+          "q_corr": "south",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        },
+        "do_nothing": {
+          "q_corr": "north",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        }
+      }
+    },
+    {
+      "seed": 102,
+      "pe_labile": 0.7141199555986005,
+      "pe_same": 0.41772842383277914,
+      "pe_diff": 1.0105114873644219,
+      "baseline_ok": true,
+      "recon_pe": 0.9635493641483213,
+      "c1_restate_pe": 0.4149151834253133,
+      "reconsolidate_pass": true,
+      "naive_fails": true,
+      "overwrite_passes_main": true,
+      "donothing_fails": true,
+      "c1_boundary_ok": true,
+      "c2_moat_ok": true,
+      "c3_ok": true,
+      "arms_separated": true,
+      "arms": {
+        "reconsolidate": {
+          "q_corr": "south",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        },
+        "naive_append": {
+          "q_corr": "north",
+          "n_doggo": 2,
+          "q_untouched": "south"
+        },
+        "overwrite_always": {
+          "q_corr": "south",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        },
+        "do_nothing": {
+          "q_corr": "north",
+          "n_doggo": 1,
+          "q_untouched": "south"
+        }
+      }
+    }
+  ]
+}
