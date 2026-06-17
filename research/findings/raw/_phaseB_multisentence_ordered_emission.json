@@ -1,0 +1,2218 @@
+{
+  "params": {
+    "D_wm": 128,
+    "facts": [
+      [
+        "dog",
+        "ran",
+        "north"
+      ],
+      [
+        "cat",
+        "saw",
+        "river"
+      ],
+      [
+        "bird",
+        "ate",
+        "worm"
+      ],
+      [
+        "fox",
+        "found",
+        "den"
+      ],
+      [
+        "frog",
+        "crossed",
+        "road"
+      ],
+      [
+        "hawk",
+        "chased",
+        "mouse"
+      ]
+    ],
+    "topics": [
+      "dog",
+      "cat",
+      "bird",
+      "fox",
+      "frog",
+      "hawk"
+    ],
+    "unknown_topic": "owl",
+    "loads": [
+      2,
+      3
+    ],
+    "n_slots": 7,
+    "n_trials_emission": 40,
+    "n_trials_order": 40,
+    "n_trials_noconfab": 30,
+    "backend": "numpy"
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "emission": {
+        "2": {
+          "ordered_emission_accuracy": 1.0,
+          "n_trials": 40,
+          "examples": [
+            {
+              "topic_sequence": [
+                "dog",
+                "bird"
+              ],
+              "expected": [
+                "dog ran north",
+                "bird ate worm"
+              ],
+              "emitted": [
+                "dog ran north",
+                "bird ate worm"
+              ],
+              "read_topics": [
+                "dog",
+                "bird"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "dog",
+                "bird"
+              ],
+              "expected": [
+                "dog ran north",
+                "bird ate worm"
+              ],
+              "emitted": [
+                "dog ran north",
+                "bird ate worm"
+              ],
+              "read_topics": [
+                "dog",
+                "bird"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "bird",
+                "fox"
+              ],
+              "expected": [
+                "bird ate worm",
+                "fox found den"
+              ],
+              "emitted": [
+                "bird ate worm",
+                "fox found den"
+              ],
+              "read_topics": [
+                "bird",
+                "fox"
+              ],
+              "correct": true
+            }
+          ]
+        },
+        "3": {
+          "ordered_emission_accuracy": 1.0,
+          "n_trials": 40,
+          "examples": [
+            {
+              "topic_sequence": [
+                "bird",
+                "hawk",
+                "frog"
+              ],
+              "expected": [
+                "bird ate worm",
+                "hawk chased mouse",
+                "frog crossed road"
+              ],
+              "emitted": [
+                "bird ate worm",
+                "hawk chased mouse",
+                "frog crossed road"
+              ],
+              "read_topics": [
+                "bird",
+                "hawk",
+                "frog"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "bird",
+                "fox",
+                "dog"
+              ],
+              "expected": [
+                "bird ate worm",
+                "fox found den",
+                "dog ran north"
+              ],
+              "emitted": [
+                "bird ate worm",
+                "fox found den",
+                "dog ran north"
+              ],
+              "read_topics": [
+                "bird",
+                "fox",
+                "dog"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "hawk",
+                "cat",
+                "fox"
+              ],
+              "expected": [
+                "hawk chased mouse",
+                "cat saw river",
+                "fox found den"
+              ],
+              "emitted": [
+                "hawk chased mouse",
+                "cat saw river",
+                "fox found den"
+              ],
+              "read_topics": [
+                "hawk",
+                "cat",
+                "fox"
+              ],
+              "correct": true
+            }
+          ]
+        }
+      },
+      "order_control": {
+        "order_control_accuracy": 1.0,
+        "n_trials": 40,
+        "n_nontrivial_perms": 30,
+        "examples": [
+          {
+            "seq": [
+              "frog",
+              "hawk"
+            ],
+            "perm": [
+              1,
+              0
+            ],
+            "pseq": [
+              "hawk",
+              "frog"
+            ],
+            "base_emitted": [
+              "frog crossed road",
+              "hawk chased mouse"
+            ],
+            "permuted_emitted": [
+              "hawk chased mouse",
+              "frog crossed road"
+            ],
+            "expected_permuted": [
+              "hawk chased mouse",
+              "frog crossed road"
+            ],
+            "correct": true
+          },
+          {
+            "seq": [
+              "cat",
+              "hawk"
+            ],
+            "perm": [
+              1,
+              0
+            ],
+            "pseq": [
+              "hawk",
+              "cat"
+            ],
+            "base_emitted": [
+              "cat saw river",
+              "hawk chased mouse"
+            ],
+            "permuted_emitted": [
+              "hawk chased mouse",
+              "cat saw river"
+            ],
+            "expected_permuted": [
+              "hawk chased mouse",
+              "cat saw river"
+            ],
+            "correct": true
+          },
+          {
+            "seq": [
+              "hawk",
+              "dog",
+              "cat"
+            ],
+            "perm": [
+              2,
+              1,
+              0
+            ],
+            "pseq": [
+              "cat",
+              "dog",
+              "hawk"
+            ],
+            "base_emitted": [
+              "hawk chased mouse",
+              "dog ran north",
+              "cat saw river"
+            ],
+            "permuted_emitted": [
+              "cat saw river",
+              "dog ran north",
+              "hawk chased mouse"
+            ],
+            "expected_permuted": [
+              "cat saw river",
+              "dog ran north",
+              "hawk chased mouse"
+            ],
+            "correct": true
+          }
+        ]
+      },
+      "no_confab": {
+        "unknown_abstain_accuracy": 1.0,
+        "known_slots_correct_accuracy": 1.0,
+        "both_accuracy": 1.0,
+        "n_trials": 30,
+        "examples": [
+          {
+            "seq": [
+              "owl",
+              "cat",
+              "fox"
+            ],
+            "unknown_pos": 0,
+            "emitted": [
+              null,
+              "cat saw river",
+              "fox found den"
+            ],
+            "read_topics": [
+              "owl",
+              "cat",
+              "fox"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          },
+          {
+            "seq": [
+              "fox",
+              "frog",
+              "owl"
+            ],
+            "unknown_pos": 2,
+            "emitted": [
+              "fox found den",
+              "frog crossed road",
+              null
+            ],
+            "read_topics": [
+              "fox",
+              "frog",
+              "owl"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          },
+          {
+            "seq": [
+              "hawk",
+              "fox",
+              "owl"
+            ],
+            "unknown_pos": 2,
+            "emitted": [
+              "hawk chased mouse",
+              "fox found den",
+              null
+            ],
+            "read_topics": [
+              "hawk",
+              "fox",
+              "owl"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          }
+        ]
+      },
+      "single_sentence_regression": {
+        "single_sentence_accuracy": 1.0,
+        "n": 6,
+        "details": {
+          "dog": {
+            "expected": "dog ran north",
+            "got": "dog ran north",
+            "correct": true
+          },
+          "cat": {
+            "expected": "cat saw river",
+            "got": "cat saw river",
+            "correct": true
+          },
+          "bird": {
+            "expected": "bird ate worm",
+            "got": "bird ate worm",
+            "correct": true
+          },
+          "fox": {
+            "expected": "fox found den",
+            "got": "fox found den",
+            "correct": true
+          },
+          "frog": {
+            "expected": "frog crossed road",
+            "got": "frog crossed road",
+            "correct": true
+          },
+          "hawk": {
+            "expected": "hawk chased mouse",
+            "got": "hawk chased mouse",
+            "correct": true
+          }
+        }
+      },
+      "emission_pass": true,
+      "order_pass": true,
+      "no_confab_pass": true,
+      "regression_pass": true,
+      "seed_full_pass": true
+    },
+    "43": {
+      "seed": 43,
+      "emission": {
+        "2": {
+          "ordered_emission_accuracy": 1.0,
+          "n_trials": 40,
+          "examples": [
+            {
+              "topic_sequence": [
+                "fox",
+                "frog"
+              ],
+              "expected": [
+                "fox found den",
+                "frog crossed road"
+              ],
+              "emitted": [
+                "fox found den",
+                "frog crossed road"
+              ],
+              "read_topics": [
+                "fox",
+                "frog"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "frog",
+                "hawk"
+              ],
+              "expected": [
+                "frog crossed road",
+                "hawk chased mouse"
+              ],
+              "emitted": [
+                "frog crossed road",
+                "hawk chased mouse"
+              ],
+              "read_topics": [
+                "frog",
+                "hawk"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "cat",
+                "hawk"
+              ],
+              "expected": [
+                "cat saw river",
+                "hawk chased mouse"
+              ],
+              "emitted": [
+                "cat saw river",
+                "hawk chased mouse"
+              ],
+              "read_topics": [
+                "cat",
+                "hawk"
+              ],
+              "correct": true
+            }
+          ]
+        },
+        "3": {
+          "ordered_emission_accuracy": 1.0,
+          "n_trials": 40,
+          "examples": [
+            {
+              "topic_sequence": [
+                "frog",
+                "bird",
+                "cat"
+              ],
+              "expected": [
+                "frog crossed road",
+                "bird ate worm",
+                "cat saw river"
+              ],
+              "emitted": [
+                "frog crossed road",
+                "bird ate worm",
+                "cat saw river"
+              ],
+              "read_topics": [
+                "frog",
+                "bird",
+                "cat"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "dog",
+                "cat",
+                "fox"
+              ],
+              "expected": [
+                "dog ran north",
+                "cat saw river",
+                "fox found den"
+              ],
+              "emitted": [
+                "dog ran north",
+                "cat saw river",
+                "fox found den"
+              ],
+              "read_topics": [
+                "dog",
+                "cat",
+                "fox"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "cat",
+                "fox",
+                "bird"
+              ],
+              "expected": [
+                "cat saw river",
+                "fox found den",
+                "bird ate worm"
+              ],
+              "emitted": [
+                "cat saw river",
+                "fox found den",
+                "bird ate worm"
+              ],
+              "read_topics": [
+                "cat",
+                "fox",
+                "bird"
+              ],
+              "correct": true
+            }
+          ]
+        }
+      },
+      "order_control": {
+        "order_control_accuracy": 1.0,
+        "n_trials": 40,
+        "n_nontrivial_perms": 28,
+        "examples": [
+          {
+            "seq": [
+              "fox",
+              "frog"
+            ],
+            "perm": [
+              0,
+              1
+            ],
+            "pseq": [
+              "fox",
+              "frog"
+            ],
+            "base_emitted": [
+              "fox found den",
+              "frog crossed road"
+            ],
+            "permuted_emitted": [
+              "fox found den",
+              "frog crossed road"
+            ],
+            "expected_permuted": [
+              "fox found den",
+              "frog crossed road"
+            ],
+            "correct": true
+          },
+          {
+            "seq": [
+              "frog",
+              "hawk",
+              "bird"
+            ],
+            "perm": [
+              1,
+              0,
+              2
+            ],
+            "pseq": [
+              "hawk",
+              "frog",
+              "bird"
+            ],
+            "base_emitted": [
+              "frog crossed road",
+              "hawk chased mouse",
+              "bird ate worm"
+            ],
+            "permuted_emitted": [
+              "hawk chased mouse",
+              "frog crossed road",
+              "bird ate worm"
+            ],
+            "expected_permuted": [
+              "hawk chased mouse",
+              "frog crossed road",
+              "bird ate worm"
+            ],
+            "correct": true
+          },
+          {
+            "seq": [
+              "dog",
+              "hawk",
+              "bird"
+            ],
+            "perm": [
+              2,
+              1,
+              0
+            ],
+            "pseq": [
+              "bird",
+              "hawk",
+              "dog"
+            ],
+            "base_emitted": [
+              "dog ran north",
+              "hawk chased mouse",
+              "bird ate worm"
+            ],
+            "permuted_emitted": [
+              "bird ate worm",
+              "hawk chased mouse",
+              "dog ran north"
+            ],
+            "expected_permuted": [
+              "bird ate worm",
+              "hawk chased mouse",
+              "dog ran north"
+            ],
+            "correct": true
+          }
+        ]
+      },
+      "no_confab": {
+        "unknown_abstain_accuracy": 1.0,
+        "known_slots_correct_accuracy": 1.0,
+        "both_accuracy": 1.0,
+        "n_trials": 30,
+        "examples": [
+          {
+            "seq": [
+              "frog",
+              "bird",
+              "owl"
+            ],
+            "unknown_pos": 2,
+            "emitted": [
+              "frog crossed road",
+              "bird ate worm",
+              null
+            ],
+            "read_topics": [
+              "frog",
+              "bird",
+              "owl"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          },
+          {
+            "seq": [
+              "bird",
+              "frog",
+              "owl"
+            ],
+            "unknown_pos": 2,
+            "emitted": [
+              "bird ate worm",
+              "frog crossed road",
+              null
+            ],
+            "read_topics": [
+              "bird",
+              "frog",
+              "owl"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          },
+          {
+            "seq": [
+              "owl",
+              "dog",
+              "frog"
+            ],
+            "unknown_pos": 0,
+            "emitted": [
+              null,
+              "dog ran north",
+              "frog crossed road"
+            ],
+            "read_topics": [
+              "owl",
+              "dog",
+              "frog"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          }
+        ]
+      },
+      "single_sentence_regression": {
+        "single_sentence_accuracy": 1.0,
+        "n": 6,
+        "details": {
+          "dog": {
+            "expected": "dog ran north",
+            "got": "dog ran north",
+            "correct": true
+          },
+          "cat": {
+            "expected": "cat saw river",
+            "got": "cat saw river",
+            "correct": true
+          },
+          "bird": {
+            "expected": "bird ate worm",
+            "got": "bird ate worm",
+            "correct": true
+          },
+          "fox": {
+            "expected": "fox found den",
+            "got": "fox found den",
+            "correct": true
+          },
+          "frog": {
+            "expected": "frog crossed road",
+            "got": "frog crossed road",
+            "correct": true
+          },
+          "hawk": {
+            "expected": "hawk chased mouse",
+            "got": "hawk chased mouse",
+            "correct": true
+          }
+        }
+      },
+      "emission_pass": true,
+      "order_pass": true,
+      "no_confab_pass": true,
+      "regression_pass": true,
+      "seed_full_pass": true
+    },
+    "44": {
+      "seed": 44,
+      "emission": {
+        "2": {
+          "ordered_emission_accuracy": 1.0,
+          "n_trials": 40,
+          "examples": [
+            {
+              "topic_sequence": [
+                "cat",
+                "hawk"
+              ],
+              "expected": [
+                "cat saw river",
+                "hawk chased mouse"
+              ],
+              "emitted": [
+                "cat saw river",
+                "hawk chased mouse"
+              ],
+              "read_topics": [
+                "cat",
+                "hawk"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "bird",
+                "cat"
+              ],
+              "expected": [
+                "bird ate worm",
+                "cat saw river"
+              ],
+              "emitted": [
+                "bird ate worm",
+                "cat saw river"
+              ],
+              "read_topics": [
+                "bird",
+                "cat"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "cat",
+                "hawk"
+              ],
+              "expected": [
+                "cat saw river",
+                "hawk chased mouse"
+              ],
+              "emitted": [
+                "cat saw river",
+                "hawk chased mouse"
+              ],
+              "read_topics": [
+                "cat",
+                "hawk"
+              ],
+              "correct": true
+            }
+          ]
+        },
+        "3": {
+          "ordered_emission_accuracy": 1.0,
+          "n_trials": 40,
+          "examples": [
+            {
+              "topic_sequence": [
+                "dog",
+                "frog",
+                "fox"
+              ],
+              "expected": [
+                "dog ran north",
+                "frog crossed road",
+                "fox found den"
+              ],
+              "emitted": [
+                "dog ran north",
+                "frog crossed road",
+                "fox found den"
+              ],
+              "read_topics": [
+                "dog",
+                "frog",
+                "fox"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "bird",
+                "frog",
+                "cat"
+              ],
+              "expected": [
+                "bird ate worm",
+                "frog crossed road",
+                "cat saw river"
+              ],
+              "emitted": [
+                "bird ate worm",
+                "frog crossed road",
+                "cat saw river"
+              ],
+              "read_topics": [
+                "bird",
+                "frog",
+                "cat"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "hawk",
+                "dog",
+                "bird"
+              ],
+              "expected": [
+                "hawk chased mouse",
+                "dog ran north",
+                "bird ate worm"
+              ],
+              "emitted": [
+                "hawk chased mouse",
+                "dog ran north",
+                "bird ate worm"
+              ],
+              "read_topics": [
+                "hawk",
+                "dog",
+                "bird"
+              ],
+              "correct": true
+            }
+          ]
+        }
+      },
+      "order_control": {
+        "order_control_accuracy": 1.0,
+        "n_trials": 40,
+        "n_nontrivial_perms": 28,
+        "examples": [
+          {
+            "seq": [
+              "bird",
+              "cat",
+              "frog"
+            ],
+            "perm": [
+              0,
+              1,
+              2
+            ],
+            "pseq": [
+              "bird",
+              "cat",
+              "frog"
+            ],
+            "base_emitted": [
+              "bird ate worm",
+              "cat saw river",
+              "frog crossed road"
+            ],
+            "permuted_emitted": [
+              "bird ate worm",
+              "cat saw river",
+              "frog crossed road"
+            ],
+            "expected_permuted": [
+              "bird ate worm",
+              "cat saw river",
+              "frog crossed road"
+            ],
+            "correct": true
+          },
+          {
+            "seq": [
+              "dog",
+              "frog"
+            ],
+            "perm": [
+              1,
+              0
+            ],
+            "pseq": [
+              "frog",
+              "dog"
+            ],
+            "base_emitted": [
+              "dog ran north",
+              "frog crossed road"
+            ],
+            "permuted_emitted": [
+              "frog crossed road",
+              "dog ran north"
+            ],
+            "expected_permuted": [
+              "frog crossed road",
+              "dog ran north"
+            ],
+            "correct": true
+          },
+          {
+            "seq": [
+              "bird",
+              "hawk",
+              "dog"
+            ],
+            "perm": [
+              2,
+              0,
+              1
+            ],
+            "pseq": [
+              "dog",
+              "bird",
+              "hawk"
+            ],
+            "base_emitted": [
+              "bird ate worm",
+              "hawk chased mouse",
+              "dog ran north"
+            ],
+            "permuted_emitted": [
+              "dog ran north",
+              "bird ate worm",
+              "hawk chased mouse"
+            ],
+            "expected_permuted": [
+              "dog ran north",
+              "bird ate worm",
+              "hawk chased mouse"
+            ],
+            "correct": true
+          }
+        ]
+      },
+      "no_confab": {
+        "unknown_abstain_accuracy": 1.0,
+        "known_slots_correct_accuracy": 1.0,
+        "both_accuracy": 1.0,
+        "n_trials": 30,
+        "examples": [
+          {
+            "seq": [
+              "dog",
+              "owl",
+              "frog"
+            ],
+            "unknown_pos": 1,
+            "emitted": [
+              "dog ran north",
+              null,
+              "frog crossed road"
+            ],
+            "read_topics": [
+              "dog",
+              "owl",
+              "frog"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          },
+          {
+            "seq": [
+              "fox",
+              "owl",
+              "cat"
+            ],
+            "unknown_pos": 1,
+            "emitted": [
+              "fox found den",
+              null,
+              "cat saw river"
+            ],
+            "read_topics": [
+              "fox",
+              "owl",
+              "cat"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          },
+          {
+            "seq": [
+              "cat",
+              "owl",
+              "frog"
+            ],
+            "unknown_pos": 1,
+            "emitted": [
+              "cat saw river",
+              null,
+              "frog crossed road"
+            ],
+            "read_topics": [
+              "cat",
+              "owl",
+              "frog"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          }
+        ]
+      },
+      "single_sentence_regression": {
+        "single_sentence_accuracy": 1.0,
+        "n": 6,
+        "details": {
+          "dog": {
+            "expected": "dog ran north",
+            "got": "dog ran north",
+            "correct": true
+          },
+          "cat": {
+            "expected": "cat saw river",
+            "got": "cat saw river",
+            "correct": true
+          },
+          "bird": {
+            "expected": "bird ate worm",
+            "got": "bird ate worm",
+            "correct": true
+          },
+          "fox": {
+            "expected": "fox found den",
+            "got": "fox found den",
+            "correct": true
+          },
+          "frog": {
+            "expected": "frog crossed road",
+            "got": "frog crossed road",
+            "correct": true
+          },
+          "hawk": {
+            "expected": "hawk chased mouse",
+            "got": "hawk chased mouse",
+            "correct": true
+          }
+        }
+      },
+      "emission_pass": true,
+      "order_pass": true,
+      "no_confab_pass": true,
+      "regression_pass": true,
+      "seed_full_pass": true
+    },
+    "100": {
+      "seed": 100,
+      "emission": {
+        "2": {
+          "ordered_emission_accuracy": 1.0,
+          "n_trials": 40,
+          "examples": [
+            {
+              "topic_sequence": [
+                "dog",
+                "fox"
+              ],
+              "expected": [
+                "dog ran north",
+                "fox found den"
+              ],
+              "emitted": [
+                "dog ran north",
+                "fox found den"
+              ],
+              "read_topics": [
+                "dog",
+                "fox"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "bird",
+                "frog"
+              ],
+              "expected": [
+                "bird ate worm",
+                "frog crossed road"
+              ],
+              "emitted": [
+                "bird ate worm",
+                "frog crossed road"
+              ],
+              "read_topics": [
+                "bird",
+                "frog"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "cat",
+                "frog"
+              ],
+              "expected": [
+                "cat saw river",
+                "frog crossed road"
+              ],
+              "emitted": [
+                "cat saw river",
+                "frog crossed road"
+              ],
+              "read_topics": [
+                "cat",
+                "frog"
+              ],
+              "correct": true
+            }
+          ]
+        },
+        "3": {
+          "ordered_emission_accuracy": 1.0,
+          "n_trials": 40,
+          "examples": [
+            {
+              "topic_sequence": [
+                "fox",
+                "frog",
+                "bird"
+              ],
+              "expected": [
+                "fox found den",
+                "frog crossed road",
+                "bird ate worm"
+              ],
+              "emitted": [
+                "fox found den",
+                "frog crossed road",
+                "bird ate worm"
+              ],
+              "read_topics": [
+                "fox",
+                "frog",
+                "bird"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "bird",
+                "cat",
+                "frog"
+              ],
+              "expected": [
+                "bird ate worm",
+                "cat saw river",
+                "frog crossed road"
+              ],
+              "emitted": [
+                "bird ate worm",
+                "cat saw river",
+                "frog crossed road"
+              ],
+              "read_topics": [
+                "bird",
+                "cat",
+                "frog"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "dog",
+                "fox",
+                "hawk"
+              ],
+              "expected": [
+                "dog ran north",
+                "fox found den",
+                "hawk chased mouse"
+              ],
+              "emitted": [
+                "dog ran north",
+                "fox found den",
+                "hawk chased mouse"
+              ],
+              "read_topics": [
+                "dog",
+                "fox",
+                "hawk"
+              ],
+              "correct": true
+            }
+          ]
+        }
+      },
+      "order_control": {
+        "order_control_accuracy": 1.0,
+        "n_trials": 40,
+        "n_nontrivial_perms": 24,
+        "examples": [
+          {
+            "seq": [
+              "hawk",
+              "cat"
+            ],
+            "perm": [
+              0,
+              1
+            ],
+            "pseq": [
+              "hawk",
+              "cat"
+            ],
+            "base_emitted": [
+              "hawk chased mouse",
+              "cat saw river"
+            ],
+            "permuted_emitted": [
+              "hawk chased mouse",
+              "cat saw river"
+            ],
+            "expected_permuted": [
+              "hawk chased mouse",
+              "cat saw river"
+            ],
+            "correct": true
+          },
+          {
+            "seq": [
+              "bird",
+              "fox"
+            ],
+            "perm": [
+              0,
+              1
+            ],
+            "pseq": [
+              "bird",
+              "fox"
+            ],
+            "base_emitted": [
+              "bird ate worm",
+              "fox found den"
+            ],
+            "permuted_emitted": [
+              "bird ate worm",
+              "fox found den"
+            ],
+            "expected_permuted": [
+              "bird ate worm",
+              "fox found den"
+            ],
+            "correct": true
+          },
+          {
+            "seq": [
+              "cat",
+              "dog",
+              "fox"
+            ],
+            "perm": [
+              0,
+              2,
+              1
+            ],
+            "pseq": [
+              "cat",
+              "fox",
+              "dog"
+            ],
+            "base_emitted": [
+              "cat saw river",
+              "dog ran north",
+              "fox found den"
+            ],
+            "permuted_emitted": [
+              "cat saw river",
+              "fox found den",
+              "dog ran north"
+            ],
+            "expected_permuted": [
+              "cat saw river",
+              "fox found den",
+              "dog ran north"
+            ],
+            "correct": true
+          }
+        ]
+      },
+      "no_confab": {
+        "unknown_abstain_accuracy": 1.0,
+        "known_slots_correct_accuracy": 1.0,
+        "both_accuracy": 1.0,
+        "n_trials": 30,
+        "examples": [
+          {
+            "seq": [
+              "hawk",
+              "owl",
+              "bird"
+            ],
+            "unknown_pos": 1,
+            "emitted": [
+              "hawk chased mouse",
+              null,
+              "bird ate worm"
+            ],
+            "read_topics": [
+              "hawk",
+              "owl",
+              "bird"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          },
+          {
+            "seq": [
+              "cat",
+              "owl",
+              "bird"
+            ],
+            "unknown_pos": 1,
+            "emitted": [
+              "cat saw river",
+              null,
+              "bird ate worm"
+            ],
+            "read_topics": [
+              "cat",
+              "owl",
+              "bird"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          },
+          {
+            "seq": [
+              "owl",
+              "hawk",
+              "fox"
+            ],
+            "unknown_pos": 0,
+            "emitted": [
+              null,
+              "hawk chased mouse",
+              "fox found den"
+            ],
+            "read_topics": [
+              "owl",
+              "hawk",
+              "fox"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          }
+        ]
+      },
+      "single_sentence_regression": {
+        "single_sentence_accuracy": 1.0,
+        "n": 6,
+        "details": {
+          "dog": {
+            "expected": "dog ran north",
+            "got": "dog ran north",
+            "correct": true
+          },
+          "cat": {
+            "expected": "cat saw river",
+            "got": "cat saw river",
+            "correct": true
+          },
+          "bird": {
+            "expected": "bird ate worm",
+            "got": "bird ate worm",
+            "correct": true
+          },
+          "fox": {
+            "expected": "fox found den",
+            "got": "fox found den",
+            "correct": true
+          },
+          "frog": {
+            "expected": "frog crossed road",
+            "got": "frog crossed road",
+            "correct": true
+          },
+          "hawk": {
+            "expected": "hawk chased mouse",
+            "got": "hawk chased mouse",
+            "correct": true
+          }
+        }
+      },
+      "emission_pass": true,
+      "order_pass": true,
+      "no_confab_pass": true,
+      "regression_pass": true,
+      "seed_full_pass": true
+    },
+    "101": {
+      "seed": 101,
+      "emission": {
+        "2": {
+          "ordered_emission_accuracy": 1.0,
+          "n_trials": 40,
+          "examples": [
+            {
+              "topic_sequence": [
+                "dog",
+                "hawk"
+              ],
+              "expected": [
+                "dog ran north",
+                "hawk chased mouse"
+              ],
+              "emitted": [
+                "dog ran north",
+                "hawk chased mouse"
+              ],
+              "read_topics": [
+                "dog",
+                "hawk"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "dog",
+                "fox"
+              ],
+              "expected": [
+                "dog ran north",
+                "fox found den"
+              ],
+              "emitted": [
+                "dog ran north",
+                "fox found den"
+              ],
+              "read_topics": [
+                "dog",
+                "fox"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "dog",
+                "bird"
+              ],
+              "expected": [
+                "dog ran north",
+                "bird ate worm"
+              ],
+              "emitted": [
+                "dog ran north",
+                "bird ate worm"
+              ],
+              "read_topics": [
+                "dog",
+                "bird"
+              ],
+              "correct": true
+            }
+          ]
+        },
+        "3": {
+          "ordered_emission_accuracy": 1.0,
+          "n_trials": 40,
+          "examples": [
+            {
+              "topic_sequence": [
+                "fox",
+                "cat",
+                "frog"
+              ],
+              "expected": [
+                "fox found den",
+                "cat saw river",
+                "frog crossed road"
+              ],
+              "emitted": [
+                "fox found den",
+                "cat saw river",
+                "frog crossed road"
+              ],
+              "read_topics": [
+                "fox",
+                "cat",
+                "frog"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "dog",
+                "hawk",
+                "cat"
+              ],
+              "expected": [
+                "dog ran north",
+                "hawk chased mouse",
+                "cat saw river"
+              ],
+              "emitted": [
+                "dog ran north",
+                "hawk chased mouse",
+                "cat saw river"
+              ],
+              "read_topics": [
+                "dog",
+                "hawk",
+                "cat"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "cat",
+                "hawk",
+                "fox"
+              ],
+              "expected": [
+                "cat saw river",
+                "hawk chased mouse",
+                "fox found den"
+              ],
+              "emitted": [
+                "cat saw river",
+                "hawk chased mouse",
+                "fox found den"
+              ],
+              "read_topics": [
+                "cat",
+                "hawk",
+                "fox"
+              ],
+              "correct": true
+            }
+          ]
+        }
+      },
+      "order_control": {
+        "order_control_accuracy": 1.0,
+        "n_trials": 40,
+        "n_nontrivial_perms": 26,
+        "examples": [
+          {
+            "seq": [
+              "dog",
+              "cat"
+            ],
+            "perm": [
+              0,
+              1
+            ],
+            "pseq": [
+              "dog",
+              "cat"
+            ],
+            "base_emitted": [
+              "dog ran north",
+              "cat saw river"
+            ],
+            "permuted_emitted": [
+              "dog ran north",
+              "cat saw river"
+            ],
+            "expected_permuted": [
+              "dog ran north",
+              "cat saw river"
+            ],
+            "correct": true
+          },
+          {
+            "seq": [
+              "hawk",
+              "dog",
+              "frog"
+            ],
+            "perm": [
+              1,
+              0,
+              2
+            ],
+            "pseq": [
+              "dog",
+              "hawk",
+              "frog"
+            ],
+            "base_emitted": [
+              "hawk chased mouse",
+              "dog ran north",
+              "frog crossed road"
+            ],
+            "permuted_emitted": [
+              "dog ran north",
+              "hawk chased mouse",
+              "frog crossed road"
+            ],
+            "expected_permuted": [
+              "dog ran north",
+              "hawk chased mouse",
+              "frog crossed road"
+            ],
+            "correct": true
+          },
+          {
+            "seq": [
+              "dog",
+              "cat"
+            ],
+            "perm": [
+              0,
+              1
+            ],
+            "pseq": [
+              "dog",
+              "cat"
+            ],
+            "base_emitted": [
+              "dog ran north",
+              "cat saw river"
+            ],
+            "permuted_emitted": [
+              "dog ran north",
+              "cat saw river"
+            ],
+            "expected_permuted": [
+              "dog ran north",
+              "cat saw river"
+            ],
+            "correct": true
+          }
+        ]
+      },
+      "no_confab": {
+        "unknown_abstain_accuracy": 1.0,
+        "known_slots_correct_accuracy": 1.0,
+        "both_accuracy": 1.0,
+        "n_trials": 30,
+        "examples": [
+          {
+            "seq": [
+              "hawk",
+              "owl",
+              "fox"
+            ],
+            "unknown_pos": 1,
+            "emitted": [
+              "hawk chased mouse",
+              null,
+              "fox found den"
+            ],
+            "read_topics": [
+              "hawk",
+              "owl",
+              "fox"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          },
+          {
+            "seq": [
+              "fox",
+              "bird",
+              "owl"
+            ],
+            "unknown_pos": 2,
+            "emitted": [
+              "fox found den",
+              "bird ate worm",
+              null
+            ],
+            "read_topics": [
+              "fox",
+              "bird",
+              "owl"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          },
+          {
+            "seq": [
+              "cat",
+              "frog",
+              "owl"
+            ],
+            "unknown_pos": 2,
+            "emitted": [
+              "cat saw river",
+              "frog crossed road",
+              null
+            ],
+            "read_topics": [
+              "cat",
+              "frog",
+              "owl"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          }
+        ]
+      },
+      "single_sentence_regression": {
+        "single_sentence_accuracy": 1.0,
+        "n": 6,
+        "details": {
+          "dog": {
+            "expected": "dog ran north",
+            "got": "dog ran north",
+            "correct": true
+          },
+          "cat": {
+            "expected": "cat saw river",
+            "got": "cat saw river",
+            "correct": true
+          },
+          "bird": {
+            "expected": "bird ate worm",
+            "got": "bird ate worm",
+            "correct": true
+          },
+          "fox": {
+            "expected": "fox found den",
+            "got": "fox found den",
+            "correct": true
+          },
+          "frog": {
+            "expected": "frog crossed road",
+            "got": "frog crossed road",
+            "correct": true
+          },
+          "hawk": {
+            "expected": "hawk chased mouse",
+            "got": "hawk chased mouse",
+            "correct": true
+          }
+        }
+      },
+      "emission_pass": true,
+      "order_pass": true,
+      "no_confab_pass": true,
+      "regression_pass": true,
+      "seed_full_pass": true
+    },
+    "102": {
+      "seed": 102,
+      "emission": {
+        "2": {
+          "ordered_emission_accuracy": 1.0,
+          "n_trials": 40,
+          "examples": [
+            {
+              "topic_sequence": [
+                "fox",
+                "bird"
+              ],
+              "expected": [
+                "fox found den",
+                "bird ate worm"
+              ],
+              "emitted": [
+                "fox found den",
+                "bird ate worm"
+              ],
+              "read_topics": [
+                "fox",
+                "bird"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "frog",
+                "bird"
+              ],
+              "expected": [
+                "frog crossed road",
+                "bird ate worm"
+              ],
+              "emitted": [
+                "frog crossed road",
+                "bird ate worm"
+              ],
+              "read_topics": [
+                "frog",
+                "bird"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "hawk",
+                "cat"
+              ],
+              "expected": [
+                "hawk chased mouse",
+                "cat saw river"
+              ],
+              "emitted": [
+                "hawk chased mouse",
+                "cat saw river"
+              ],
+              "read_topics": [
+                "hawk",
+                "cat"
+              ],
+              "correct": true
+            }
+          ]
+        },
+        "3": {
+          "ordered_emission_accuracy": 1.0,
+          "n_trials": 40,
+          "examples": [
+            {
+              "topic_sequence": [
+                "bird",
+                "dog",
+                "hawk"
+              ],
+              "expected": [
+                "bird ate worm",
+                "dog ran north",
+                "hawk chased mouse"
+              ],
+              "emitted": [
+                "bird ate worm",
+                "dog ran north",
+                "hawk chased mouse"
+              ],
+              "read_topics": [
+                "bird",
+                "dog",
+                "hawk"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "frog",
+                "fox",
+                "dog"
+              ],
+              "expected": [
+                "frog crossed road",
+                "fox found den",
+                "dog ran north"
+              ],
+              "emitted": [
+                "frog crossed road",
+                "fox found den",
+                "dog ran north"
+              ],
+              "read_topics": [
+                "frog",
+                "fox",
+                "dog"
+              ],
+              "correct": true
+            },
+            {
+              "topic_sequence": [
+                "frog",
+                "hawk",
+                "bird"
+              ],
+              "expected": [
+                "frog crossed road",
+                "hawk chased mouse",
+                "bird ate worm"
+              ],
+              "emitted": [
+                "frog crossed road",
+                "hawk chased mouse",
+                "bird ate worm"
+              ],
+              "read_topics": [
+                "frog",
+                "hawk",
+                "bird"
+              ],
+              "correct": true
+            }
+          ]
+        }
+      },
+      "order_control": {
+        "order_control_accuracy": 1.0,
+        "n_trials": 40,
+        "n_nontrivial_perms": 28,
+        "examples": [
+          {
+            "seq": [
+              "bird",
+              "dog"
+            ],
+            "perm": [
+              1,
+              0
+            ],
+            "pseq": [
+              "dog",
+              "bird"
+            ],
+            "base_emitted": [
+              "bird ate worm",
+              "dog ran north"
+            ],
+            "permuted_emitted": [
+              "dog ran north",
+              "bird ate worm"
+            ],
+            "expected_permuted": [
+              "dog ran north",
+              "bird ate worm"
+            ],
+            "correct": true
+          },
+          {
+            "seq": [
+              "dog",
+              "cat",
+              "bird"
+            ],
+            "perm": [
+              0,
+              2,
+              1
+            ],
+            "pseq": [
+              "dog",
+              "bird",
+              "cat"
+            ],
+            "base_emitted": [
+              "dog ran north",
+              "cat saw river",
+              "bird ate worm"
+            ],
+            "permuted_emitted": [
+              "dog ran north",
+              "bird ate worm",
+              "cat saw river"
+            ],
+            "expected_permuted": [
+              "dog ran north",
+              "bird ate worm",
+              "cat saw river"
+            ],
+            "correct": true
+          },
+          {
+            "seq": [
+              "cat",
+              "hawk"
+            ],
+            "perm": [
+              1,
+              0
+            ],
+            "pseq": [
+              "hawk",
+              "cat"
+            ],
+            "base_emitted": [
+              "cat saw river",
+              "hawk chased mouse"
+            ],
+            "permuted_emitted": [
+              "hawk chased mouse",
+              "cat saw river"
+            ],
+            "expected_permuted": [
+              "hawk chased mouse",
+              "cat saw river"
+            ],
+            "correct": true
+          }
+        ]
+      },
+      "no_confab": {
+        "unknown_abstain_accuracy": 1.0,
+        "known_slots_correct_accuracy": 1.0,
+        "both_accuracy": 1.0,
+        "n_trials": 30,
+        "examples": [
+          {
+            "seq": [
+              "owl",
+              "bird",
+              "fox"
+            ],
+            "unknown_pos": 0,
+            "emitted": [
+              null,
+              "bird ate worm",
+              "fox found den"
+            ],
+            "read_topics": [
+              "owl",
+              "bird",
+              "fox"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          },
+          {
+            "seq": [
+              "hawk",
+              "cat",
+              "owl"
+            ],
+            "unknown_pos": 2,
+            "emitted": [
+              "hawk chased mouse",
+              "cat saw river",
+              null
+            ],
+            "read_topics": [
+              "hawk",
+              "cat",
+              "owl"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          },
+          {
+            "seq": [
+              "owl",
+              "cat",
+              "hawk"
+            ],
+            "unknown_pos": 0,
+            "emitted": [
+              null,
+              "cat saw river",
+              "hawk chased mouse"
+            ],
+            "read_topics": [
+              "owl",
+              "cat",
+              "hawk"
+            ],
+            "unknown_abstained": true,
+            "knowns_correct": true
+          }
+        ]
+      },
+      "single_sentence_regression": {
+        "single_sentence_accuracy": 1.0,
+        "n": 6,
+        "details": {
+          "dog": {
+            "expected": "dog ran north",
+            "got": "dog ran north",
+            "correct": true
+          },
+          "cat": {
+            "expected": "cat saw river",
+            "got": "cat saw river",
+            "correct": true
+          },
+          "bird": {
+            "expected": "bird ate worm",
+            "got": "bird ate worm",
+            "correct": true
+          },
+          "fox": {
+            "expected": "fox found den",
+            "got": "fox found den",
+            "correct": true
+          },
+          "frog": {
+            "expected": "frog crossed road",
+            "got": "frog crossed road",
+            "correct": true
+          },
+          "hawk": {
+            "expected": "hawk chased mouse",
+            "got": "hawk chased mouse",
+            "correct": true
+          }
+        }
+      },
+      "emission_pass": true,
+      "order_pass": true,
+      "no_confab_pass": true,
+      "regression_pass": true,
+      "seed_full_pass": true
+    }
+  },
+  "aggregate": {
+    "emission_means": {
+      "2": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "pass": true
+      },
+      "3": {
+        "mean": 1.0,
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "pass": true
+      }
+    },
+    "order_control_mean": 1.0,
+    "unknown_abstain_mean": 1.0,
+    "no_confab_both_mean": 1.0,
+    "single_sentence_regression_mean": 1.0,
+    "n_emission_pass": 6,
+    "n_order_pass": 6,
+    "n_no_confab_pass": 6,
+    "n_regression_pass": 6,
+    "n_full_pass": 6,
+    "k2_pass_seeds": 6,
+    "k3_pass_seeds": 6,
+    "n_seeds": 6,
+    "verdict": "GO"
+  },
+  "example_transcript": {
+    "seed": 42,
+    "topic_sequence": [
+      "bird",
+      "hawk",
+      "frog"
+    ],
+    "expected": [
+      "bird ate worm",
+      "hawk chased mouse",
+      "frog crossed road"
+    ],
+    "emitted": [
+      "bird ate worm",
+      "hawk chased mouse",
+      "frog crossed road"
+    ],
+    "read_topics": [
+      "bird",
+      "hawk",
+      "frog"
+    ],
+    "correct": true
+  }
+}
