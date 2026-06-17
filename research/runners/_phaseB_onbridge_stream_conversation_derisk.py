@@ -40,9 +40,16 @@ from research.runners._phaseB_onbridge_stream_cortex_derisk import (  # noqa: E4
 from research.runners._phaseB_assembled_pipeline_ppmi_derisk import hrr_bind, hrr_unbind, _cos  # noqa: E402
 from research.runners.option_c_real_cooccurrence_derisk import TAXONOMY_8x8, taxonomy_to_vocab_categories  # noqa: E402
 from research.runners.option_c_stageB_fair_test import STOPLIST  # noqa: E402
+from research.runners._phaseB_biologize_moat_streamcodes_derisk import RealAntiHebbianFamiliarity  # noqa: E402
 
 N_FACTS = 8
 GATE = 0.25      # a-priori conjunctive-cue gate (CYCLE 90): present min ~0.4, absent min ~0.1; midpoint
+# HARDENED brain-based moat (2026-06-16): the learned Bogacz-Brown familiarity gate (catalog D.04) replaces the
+# fixed host threshold above. It is the production default (--moat learned) because it is strictly cleaner on the
+# stream codes — it closes the seed-43 false-accept the fixed threshold left (0 vs 1) with a much wider, a-priori-
+# separable novelty margin (+0.88 vs ~+0.4), and it is a LEARNED neural signal (lesionable), not host arithmetic.
+# See `_phaseB_harden_320_learned_moat_derisk.py` (recall 1.00, 0 false-accepts all 3 seeds, lesion collapses).
+NOV_GATE = 0.5   # the learned gate's a-priori novelty threshold (unit-norm midpoint; NOT tuned on the test)
 
 
 def stream_learn_codes(seed, stories, vocab, cat_ids, a):
@@ -110,8 +117,14 @@ def stream_learn_codes(seed, stories, vocab, cat_ids, a):
     return code, n_windows, time.time() - t0
 
 
-def run_conversation(codes, labels, seed):
-    """The EXACT CYCLE-90 HRR who-Q&A + no-confab pipeline, on whatever per-concept codes arrive."""
+def run_conversation(codes, labels, seed, moat="learned"):
+    """The EXACT CYCLE-90 HRR who-Q&A + no-confab pipeline, on whatever per-concept codes arrive.
+
+    moat="learned" (HARDENED default): the ACCEPT/ABSTAIN decision is the LEARNED Bogacz-Brown familiarity gate
+    (a learned anti-Hebbian projector imprinted on the stored facts' verb+object composites; abstain when the
+    query's novelty >= NOV_GATE). moat="host": the original fixed conjunctive-cue threshold (conf >= GATE). The
+    reported conf_present/conf_absent are always the host confidence (so the familiarity-gap metric stays
+    comparable across both moats)."""
     Nc, D = codes.shape
     rng = np.random.default_rng(seed * 17 + 3)
     R_a = rng.standard_normal(D) / np.sqrt(D)
@@ -124,6 +137,9 @@ def run_conversation(codes, labels, seed):
     bound = np.array([hrr_bind(R_a, codes[i]) + hrr_bind(R_v, codes[j]) + hrr_bind(R_o, codes[k])
                       for i, j, k in facts])
 
+    def composite(verb, obj):                        # the partial-fact cue the learned gate reads
+        return hrr_bind(R_v, codes[verb]) + hrr_bind(R_o, codes[obj])
+
     def cue_match(verb, obj):
         scores = []
         for F in bound:
@@ -133,10 +149,20 @@ def run_conversation(codes, labels, seed):
         scores = np.array(scores)
         return int(np.argmax(scores)), float(scores.max())
 
+    # the HARDENED moat: a learned familiarity gate imprinted on the STORED facts' (verb,object) composites.
+    gate = None
+    if moat == "learned":
+        gate = RealAntiHebbianFamiliarity()
+        for _, v, o in facts:
+            gate.imprint(composite(v, o))
+
+    def accept(verb, obj, conf):
+        return (gate.novelty(composite(verb, obj)) < NOV_GATE) if moat == "learned" else (conf >= GATE)
+
     recall_ok, within_cat_err, conf_present = 0, 0, []
     for (i, j, k), F in zip(facts, bound):
         bf, conf = cue_match(j, k); conf_present.append(conf)
-        if conf >= GATE:
+        if accept(j, k, conf):
             pred = int(np.argmax(_cos(hrr_unbind(bound[bf], R_a), codes)))
             recall_ok += int(pred == i)
             if pred != i and labels[pred] == labels[i]:
@@ -151,16 +177,16 @@ def run_conversation(codes, labels, seed):
             continue
         n_absent += 1
         _, conf = cue_match(v, o); conf_absent.append(conf)
-        fa += int(conf >= GATE)
+        fa += int(accept(v, o, conf))
     abstain = 1.0 - fa / max(n_absent, 1)
     return {"recall": recall, "abstain": abstain, "false_accept": fa, "within_cat_err": within_cat_err,
-            "conf_present": float(np.mean(conf_present)), "conf_absent": float(np.mean(conf_absent))}
+            "conf_present": float(np.mean(conf_present)), "conf_absent": float(np.mean(conf_absent)), "moat": moat}
 
 
 def run_seed(seed, stories, vocab, cat_ids, a):
     labels = np.asarray(cat_ids)
     codes, n_windows, secs = stream_learn_codes(seed, stories, vocab, cat_ids, a)
-    r = run_conversation(codes, labels, seed)
+    r = run_conversation(codes, labels, seed, moat=getattr(a, "moat", "learned"))
     gap = r["conf_present"] - r["conf_absent"]
     print(f"\n[on-bridge stream conversation seed {seed}] {codes.shape[0]} concepts x {codes.shape[1]}D | "
           f"{n_windows} stream windows ({secs:.0f}s) | n_per={a.n_per}", flush=True)
@@ -184,6 +210,9 @@ def main():
                    help="cache path (use SEED as a placeholder) — stream once + save, reload to skip re-streaming")
     p.add_argument("--taxonomy", default="8x8", choices=["8x8", "40x8"],
                    help="8x8 = 64 concepts (default); 40x8 = the 320-concept corpus-grounded scaling taxonomy")
+    p.add_argument("--moat", default="learned", choices=["learned", "host"],
+                   help="abstention moat: 'learned' = the hardened brain-based familiarity gate (default, closes "
+                        "the seed-43 false-accept); 'host' = the original fixed conjunctive-cue threshold")
     a = p.parse_args()
     os.environ.setdefault("SIM_BACKEND", "cupy")
     t0 = time.time()

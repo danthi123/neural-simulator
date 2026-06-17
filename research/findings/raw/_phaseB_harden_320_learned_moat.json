@@ -1,0 +1,49 @@
+{
+  "verdict": "GO",
+  "recall": 1.0,
+  "fa_learned": 0,
+  "fa_host": 1,
+  "nov_margin": 0.8817459652621312,
+  "lesion_margin": 3.552713678800501e-15,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_concepts": 320,
+      "recall_learned": 1.0,
+      "recall_host": 1.0,
+      "fa_learned": 0,
+      "fa_host": 0,
+      "n_absent": 8,
+      "nov_present": 4.163336342344337e-17,
+      "nov_absent": 0.8729257866573612,
+      "nov_margin": 0.8729257866573612,
+      "lesion_margin": -8.881784197001252e-15
+    },
+    {
+      "seed": 43,
+      "n_concepts": 320,
+      "recall_learned": 1.0,
+      "recall_host": 1.0,
+      "fa_learned": 0,
+      "fa_host": 1,
+      "n_absent": 8,
+      "nov_present": 5.551115123125783e-17,
+      "nov_absent": 0.8887204292081912,
+      "nov_margin": 0.8887204292081912,
+      "lesion_margin": 1.5765166949677223e-14
+    },
+    {
+      "seed": 44,
+      "n_concepts": 320,
+      "recall_learned": 1.0,
+      "recall_host": 1.0,
+      "fa_learned": 0,
+      "fa_host": 0,
+      "n_absent": 8,
+      "nov_present": 2.7755575615628914e-17,
+      "nov_absent": 0.8835916799208414,
+      "nov_margin": 0.8835916799208414,
+      "lesion_margin": 3.774758283725532e-15
+    }
+  ]
+}
