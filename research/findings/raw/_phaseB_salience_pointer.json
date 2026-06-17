@@ -1,0 +1,101 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "boosts": {
+        "1.0": {
+          "nat_cat": 0.0338,
+          "nat_bird": 0.3312,
+          "nat_boost_wins": true,
+          "ord_cat": 0.0,
+          "ord_bird": 0.3275,
+          "ord_boost_wins": false,
+          "both": false
+        },
+        "2.0": {
+          "nat_cat": 0.115,
+          "nat_bird": 0.3312,
+          "nat_boost_wins": true,
+          "ord_cat": 0.3025,
+          "ord_bird": 0.3438,
+          "ord_boost_wins": false,
+          "both": false
+        },
+        "4.0": {
+          "nat_cat": 0.0825,
+          "nat_bird": 0.32,
+          "nat_boost_wins": true,
+          "ord_cat": 0.3125,
+          "ord_bird": 0.325,
+          "ord_boost_wins": false,
+          "both": false
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "boosts": {
+        "1.0": {
+          "nat_cat": 0.42,
+          "nat_bird": 0.225,
+          "nat_boost_wins": false,
+          "ord_cat": 0.1138,
+          "ord_bird": 0.2838,
+          "ord_boost_wins": false,
+          "both": false
+        },
+        "2.0": {
+          "nat_cat": 0.225,
+          "nat_bird": 0.315,
+          "nat_boost_wins": true,
+          "ord_cat": 0.2162,
+          "ord_bird": 0.31,
+          "ord_boost_wins": false,
+          "both": false
+        },
+        "4.0": {
+          "nat_cat": 0.3162,
+          "nat_bird": 0.3175,
+          "nat_boost_wins": false,
+          "ord_cat": 0.3237,
+          "ord_bird": 0.3187,
+          "ord_boost_wins": false,
+          "both": false
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "boosts": {
+        "1.0": {
+          "nat_cat": 0.315,
+          "nat_bird": 0.335,
+          "nat_boost_wins": false,
+          "ord_cat": 0.3225,
+          "ord_bird": 0.335,
+          "ord_boost_wins": false,
+          "both": false
+        },
+        "2.0": {
+          "nat_cat": 0.3225,
+          "nat_bird": 0.3425,
+          "nat_boost_wins": false,
+          "ord_cat": 0.3212,
+          "ord_bird": 0.3362,
+          "ord_boost_wins": false,
+          "both": false
+        },
+        "4.0": {
+          "nat_cat": 0.34,
+          "nat_bird": 0.33,
+          "nat_boost_wins": false,
+          "ord_cat": 0.345,
+          "ord_bird": 0.3438,
+          "ord_boost_wins": false,
+          "both": false
+        }
+      }
+    }
+  ],
+  "go_boost": null
+}

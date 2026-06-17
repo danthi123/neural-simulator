@@ -43,12 +43,33 @@ re-driving the recent one once (REFRESH) creates the gradient on only 1/3.
   by raw memory strength; it uses attention/saliency). That is the right next de-risk if multi-referent dialogue
   is pursued.
 
+## Follow-up — the salience-boost mechanism is ALSO NEGATIVE; the requirement is WTA inhibition
+
+The natural next mechanism — an attentional **salience boost** on the foregrounded referent (drive it harder so
+it wins) — was de-risked directly (`_phaseB_salience_pointer_derisk.py`, 3 seeds, boosts 1×/2×/4×). **Also
+NEGATIVE.** Even a **4× drive boost** on the foregrounded referent does not reliably make it dominate: the
+order-control never passes (e.g. seed 42, 4× boost: the boosted `cat` 0.31 still loses to the normal `bird` 0.33).
+The decisive observation: **whichever concept has the stronger *intrinsic* attractor (seed-dependent random
+pattern) wins regardless of recency OR drive** — `bird` wins on seed 42 whether it is written first or second,
+boosted or not. The set-hold is robust to drive asymmetry because the per-concept attractors are **independent**
+(no cross-referent coupling), so a boost only adds activity; it does not suppress the competitor.
+
+⇒ The precise requirement is **winner-take-all lateral inhibition between the referent attractors** — *biased
+competition* (Desimone & Duncan 1995, *Annu. Rev. Neurosci.*): the attended/salient referent must **suppress** the
+others, not merely out-drive them. Biology: attentional selection is competitive (mutual inhibition among the
+candidates), exactly the mechanism the plain independent-attractor loop lacks. That is a real WM-wiring build
+(install inhibitory cross-connections between concept patterns + a salience signal that biases the competition),
+not a parameter tweak — the clear, precisely-specified next mechanism whenever multi-referent dialogue is
+prioritized.
+
 ## Where this leaves multi-turn dialogue
 
 - **GO:** single-referent anaphora across turns (production `MultiTurnAgent`).
-- **Mapped boundary:** multi-referent disambiguation needs an added attention/salience pointer (this finding).
+- **Mapped boundary (2 converging NEGATIVEs):** multi-referent disambiguation needs **winner-take-all biased
+  competition** (lateral inhibition between referent attractors + a salience bias) — NOT recency (NEGATIVE) and
+  NOT a salience boost alone (NEGATIVE). A real, biologically-grounded WM-wiring build, precisely specified.
 
-An honest boundary that names the exact missing mechanism is the deliverable.
+Two honest negatives that converge on the exact missing mechanism are the deliverable.
 
 ## Reproduce
 
