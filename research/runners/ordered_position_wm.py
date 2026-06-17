@@ -102,6 +102,10 @@ class OrderedPositionWM(RFPhasorComposer):
     def encode_sequence(self, item_words):
         """Encode an ordered K-item sequence (a list of vocab words) as the bundle of (item, position) bindings on
         the spiking RF substrate. ``item_words[k]`` is bound to slot k. Returns the composite phasor (phases)."""
+        if not item_words:
+            raise ValueError("encode_sequence requires at least one item (empty sequence has no composite).")
+        if len(item_words) > self.n_slots:
+            raise ValueError(f"sequence length {len(item_words)} exceeds n_slots {self.n_slots}.")
         bounds = [self._bind(self.roles[f"pos{k}"], self.concepts[item_words[k]])
                   for k in range(len(item_words))]
         return self._bundle(bounds) if len(bounds) > 1 else bounds[0]
@@ -146,7 +150,11 @@ class OrderedPositionWM(RFPhasorComposer):
             idx = list(rng.choice(len(cand), size=used_load, replace=False))
             items = [cand[i] for i in idx]
             comp = self.encode_sequence(items)
-            real.append(self._match_strength(self._unbind_phases(comp, "pos0"), cand))
+            # Groundable = the match of EVERY real used slot (not just slot 0). Later slots carry more bundle
+            # cross-talk, so reading only slot 0 over-estimates the floor and risks false-abstaining a real
+            # later-slot read at higher loads; measuring all used slots takes the worst (min) -> the true floor.
+            for k in range(used_load):
+                real.append(self._match_strength(self._unbind_phases(comp, f"pos{k}"), cand))
             ungrnd.append(self._match_strength(self._unbind_phases(comp, "emptyslot"), cand))
             ungrnd.append(self._match_strength(self._unbind_phases(comp, "scrambled"), cand))
         real_min = float(np.min(real))
