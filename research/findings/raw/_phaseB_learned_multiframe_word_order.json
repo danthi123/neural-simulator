@@ -1,0 +1,68 @@
+{
+  "verdict": "GO",
+  "n_seeds": 3,
+  "n_go": 3,
+  "frames": {
+    "SVO": [
+      0,
+      1,
+      2
+    ],
+    "VSO": [
+      1,
+      0,
+      2
+    ]
+  },
+  "svo": 1.0,
+  "vso": 1.0,
+  "select": 1.0,
+  "permuted_frame": 0.3333333333333333,
+  "lesion": 0.32407407407407407,
+  "moat": 1.0,
+  "chance_order_baseline": 0.3333333333333333,
+  "permframe_collapsed": true,
+  "lesion_collapsed": true,
+  "svo_unregressed": true,
+  "pass_order_bar": 0.9,
+  "pass_select_bar": 0.9,
+  "example": {
+    "svo": "dog ran north",
+    "vso": "ran dog north"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "svo": 1.0,
+      "vso": 1.0,
+      "vso_perm_order": 0.3333333333333333,
+      "select": 1.0,
+      "permuted_frame": 0.3333333333333333,
+      "lesion": 0.3333333333333333,
+      "moat": 1.0,
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "svo": 1.0,
+      "vso": 1.0,
+      "vso_perm_order": 0.3333333333333333,
+      "select": 1.0,
+      "permuted_frame": 0.3333333333333333,
+      "lesion": 0.4166666666666667,
+      "moat": 1.0,
+      "seed_go": true
+    },
+    {
+      "seed": 44,
+      "svo": 1.0,
+      "vso": 1.0,
+      "vso_perm_order": 0.3333333333333333,
+      "select": 1.0,
+      "permuted_frame": 0.3333333333333333,
+      "lesion": 0.22222222222222224,
+      "moat": 1.0,
+      "seed_go": true
+    }
+  ]
+}
