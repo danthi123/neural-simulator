@@ -1,0 +1,172 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "natural": {
+        "bird_attended": 0.3,
+        "cat_other": 0.0037,
+        "ratio": 80.0,
+        "dominates": true
+      },
+      "order_ctrl": {
+        "cat_attended": 0.0,
+        "bird_other": 0.315,
+        "ratio": 0.0,
+        "flips": false
+      },
+      "suppression": {
+        "cat_with_inhib": 0.0037,
+        "cat_no_inhib_baseline": 0.1725,
+        "drop": 0.1687,
+        "suppressed": true
+      },
+      "no_spurious": {
+        "empty_wm_bird_attended": 0.0262,
+        "holds": true
+      },
+      "all_pass": false
+    },
+    {
+      "seed": 43,
+      "natural": {
+        "bird_attended": 0.0,
+        "cat_other": 0.0288,
+        "ratio": 0.0,
+        "dominates": false
+      },
+      "order_ctrl": {
+        "cat_attended": 0.0,
+        "bird_other": 0.1925,
+        "ratio": 0.0,
+        "flips": false
+      },
+      "suppression": {
+        "cat_with_inhib": 0.0288,
+        "cat_no_inhib_baseline": 0.01,
+        "drop": -0.0188,
+        "suppressed": false
+      },
+      "no_spurious": {
+        "empty_wm_bird_attended": 0.0462,
+        "holds": true
+      },
+      "all_pass": false
+    },
+    {
+      "seed": 44,
+      "natural": {
+        "bird_attended": 0.2838,
+        "cat_other": 0.0362,
+        "ratio": 7.828,
+        "dominates": true
+      },
+      "order_ctrl": {
+        "cat_attended": 0.0,
+        "bird_other": 0.3925,
+        "ratio": 0.0,
+        "flips": false
+      },
+      "suppression": {
+        "cat_with_inhib": 0.0362,
+        "cat_no_inhib_baseline": 0.0187,
+        "drop": -0.0175,
+        "suppressed": false
+      },
+      "no_spurious": {
+        "empty_wm_bird_attended": 0.0825,
+        "holds": false
+      },
+      "all_pass": false
+    },
+    {
+      "seed": 100,
+      "natural": {
+        "bird_attended": 0.315,
+        "cat_other": 0.2137,
+        "ratio": 1.474,
+        "dominates": false
+      },
+      "order_ctrl": {
+        "cat_attended": 0.0,
+        "bird_other": 0.4025,
+        "ratio": 0.0,
+        "flips": false
+      },
+      "suppression": {
+        "cat_with_inhib": 0.2137,
+        "cat_no_inhib_baseline": 0.2362,
+        "drop": 0.0225,
+        "suppressed": false
+      },
+      "no_spurious": {
+        "empty_wm_bird_attended": 0.0325,
+        "holds": true
+      },
+      "all_pass": false
+    },
+    {
+      "seed": 101,
+      "natural": {
+        "bird_attended": 0.0,
+        "cat_other": 0.005,
+        "ratio": 0.0,
+        "dominates": false
+      },
+      "order_ctrl": {
+        "cat_attended": 0.0,
+        "bird_other": 0.0013,
+        "ratio": 0.0,
+        "flips": false
+      },
+      "suppression": {
+        "cat_with_inhib": 0.005,
+        "cat_no_inhib_baseline": 0.225,
+        "drop": 0.22,
+        "suppressed": true
+      },
+      "no_spurious": {
+        "empty_wm_bird_attended": 0.0312,
+        "holds": true
+      },
+      "all_pass": false
+    },
+    {
+      "seed": 102,
+      "natural": {
+        "bird_attended": 0.0,
+        "cat_other": 0.18,
+        "ratio": 0.0,
+        "dominates": false
+      },
+      "order_ctrl": {
+        "cat_attended": 0.0,
+        "bird_other": 0.0737,
+        "ratio": 0.0,
+        "flips": false
+      },
+      "suppression": {
+        "cat_with_inhib": 0.18,
+        "cat_no_inhib_baseline": 0.2362,
+        "drop": 0.0562,
+        "suppressed": true
+      },
+      "no_spurious": {
+        "empty_wm_bird_attended": 0.0387,
+        "holds": true
+      },
+      "all_pass": false
+    }
+  ],
+  "knobs": {
+    "inhib_weight": 2.0,
+    "salience_pA": 300.0
+  },
+  "counts": {
+    "natural_dominance": 2,
+    "order_flip": 0,
+    "suppression": 3,
+    "no_spurious": 5,
+    "all_pass": 0,
+    "n_seeds": 6
+  }
+}
