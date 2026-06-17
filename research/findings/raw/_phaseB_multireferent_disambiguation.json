@@ -1,0 +1,66 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "natural": {
+        "cat": 0.0338,
+        "bird_recent": 0.3312,
+        "recent_wins": true
+      },
+      "order_ctrl": {
+        "cat_recent": 0.0,
+        "bird": 0.3275,
+        "recent_wins": false
+      },
+      "refresh": {
+        "cat": 0.0737,
+        "bird_recent": 0.3162,
+        "recent_wins": true
+      },
+      "natural_go": false,
+      "refresh_go": true
+    },
+    {
+      "seed": 43,
+      "natural": {
+        "cat": 0.42,
+        "bird_recent": 0.225,
+        "recent_wins": false
+      },
+      "order_ctrl": {
+        "cat_recent": 0.1138,
+        "bird": 0.2838,
+        "recent_wins": false
+      },
+      "refresh": {
+        "cat": 0.2637,
+        "bird_recent": 0.275,
+        "recent_wins": false
+      },
+      "natural_go": false,
+      "refresh_go": false
+    },
+    {
+      "seed": 44,
+      "natural": {
+        "cat": 0.315,
+        "bird_recent": 0.335,
+        "recent_wins": false
+      },
+      "order_ctrl": {
+        "cat_recent": 0.3225,
+        "bird": 0.335,
+        "recent_wins": false
+      },
+      "refresh": {
+        "cat": 0.3237,
+        "bird_recent": 0.335,
+        "recent_wins": false
+      },
+      "natural_go": false,
+      "refresh_go": false
+    }
+  ],
+  "natural_go_seeds": 0,
+  "refresh_go_seeds": 1
+}
