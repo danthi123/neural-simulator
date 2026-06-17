@@ -1,0 +1,60 @@
+{
+  "verdict": "GO",
+  "D_h": 256,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "ob_held": 0.96875,
+  "nn_held": 0.9895833333333334,
+  "mem_floor": 0.0,
+  "chance": 0.0625,
+  "per_seed": [
+    {
+      "seed": 42,
+      "ob_held": 1.0,
+      "ob_train": 0.995575221238938,
+      "nn_held": 1.0,
+      "mem_floor": 0.0
+    },
+    {
+      "seed": 43,
+      "ob_held": 0.9375,
+      "ob_train": 0.9910714285714286,
+      "nn_held": 1.0,
+      "mem_floor": 0.0
+    },
+    {
+      "seed": 44,
+      "ob_held": 1.0,
+      "ob_train": 1.0,
+      "nn_held": 1.0,
+      "mem_floor": 0.0
+    },
+    {
+      "seed": 100,
+      "ob_held": 0.875,
+      "ob_train": 0.9955357142857143,
+      "nn_held": 0.9375,
+      "mem_floor": 0.0
+    },
+    {
+      "seed": 101,
+      "ob_held": 1.0,
+      "ob_train": 1.0,
+      "nn_held": 1.0,
+      "mem_floor": 0.0
+    },
+    {
+      "seed": 102,
+      "ob_held": 1.0,
+      "ob_train": 0.9873949579831933,
+      "nn_held": 1.0,
+      "mem_floor": 0.0
+    }
+  ]
+}
