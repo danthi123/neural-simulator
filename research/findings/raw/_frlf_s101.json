@@ -1,0 +1,49 @@
+{
+  "verdict": "GO",
+  "seeds": [
+    101
+  ],
+  "n_seeds": 1,
+  "pass_bar": 1,
+  "n_pass": 1,
+  "n_beats_baselines": 1,
+  "frlf_bundled_held": 0.7272727272727272,
+  "frlf_single_held": 0.8333333333333334,
+  "frlf_bundle_train": 0.8748649534199994,
+  "learned_linear_bundled_held": 0.12037037037037036,
+  "learned_linear_single_held": 0.08333333333333333,
+  "additive_bundled_held": 0.18803418803418803,
+  "fixed_pm1_bundled": 0.975,
+  "chance": 0.0625,
+  "permuted_role_bheld": 0.0,
+  "lesion_sum_bheld": 0.0,
+  "moat_conf_known": 0.8749157155209146,
+  "moat_conf_novel": 0.4782541427553472,
+  "moat_separation_gap": 0.3966615727655674,
+  "moat_ok": true,
+  "moat_breaches_at_midgap": 20,
+  "systematicity_ok": true,
+  "controls_collapse": true,
+  "ref_prior": {
+    "learned_linear": 0.056,
+    "additive": 0.193,
+    "fixed_pm1": 0.989
+  },
+  "per_seed": [
+    {
+      "seed": 101,
+      "frlf_single": 0.8333333333333334,
+      "frlf_btrain": 0.8748649534199994,
+      "frlf_bheld": 0.7272727272727272,
+      "frlf_perm_bheld": 0.0,
+      "frlf_lesion_bheld": 0.0,
+      "abst_known": 0.8749157155209146,
+      "abst_novel": 0.4782541427553472,
+      "abst_breach": 20,
+      "learned_linear_single": 0.08333333333333333,
+      "learned_linear_bheld": 0.12037037037037036,
+      "additive_bheld": 0.18803418803418803,
+      "fixed_pm1_bheld": 0.975
+    }
+  ]
+}
