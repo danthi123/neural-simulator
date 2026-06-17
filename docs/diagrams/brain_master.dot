@@ -35,7 +35,7 @@ digraph BrainMaster {
     labelloc="t";
     fontsize=26;
     pad="0.15,0.08";
-    label=<<B>Simulated-brain architecture — master map</B><BR/><FONT POINT-SIZE="13">as implemented · ONE SimulationBridge engine · two config-scoped supergroups (navigation | conversational) consolidated on one bridge + THREE functional cross-brain synaptic bridges (A language→action · B perception→memory · C compose-perceived) + a co-resident generalization stack · honest faithful-vs-shortcut layer</FONT>>;
+    label=<<B>Simulated-brain architecture — master map</B><BR/><FONT POINT-SIZE="13">as implemented · ONE SimulationBridge engine · two config-scoped supergroups (navigation | conversational)<BR/>consolidated on one bridge + THREE functional cross-brain synaptic bridges<BR/>(A language→action · B perception→memory · C compose-perceived)<BR/>+ a co-resident generalization stack · honest faithful-vs-shortcut layer</FONT>>;
 
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11.5, margin="0.16,0.10", penwidth=1.6];
     edge [fontname="Helvetica", fontsize=9.5, color="#34495e", penwidth=1.5];
@@ -50,11 +50,11 @@ digraph BrainMaster {
 
         nav_in [label=<<B>Perception readouts</B>  (C7p)<BR/>place · goal · sensory · beacon · landmark<BR/><FONT POINT-SIZE="8.5">⌂ host-rendered codes (environment input)</FONT>>, fillcolor="#fdebd0", color="#ca6f1e", fontcolor="#5b3a10"];
         sc_orient [label=<<B>Superior colliculus</B>  (C5 · N1)<BR/>sc_retina → sc_map ⟲ ⊣ sc_fs (Mexican-hat)<BR/><FONT POINT-SIZE="8.5">retinotopic orienting bump → cortex (spiking)</FONT>>, fillcolor="#e8daef", color="#7d3c98", fontcolor="#3e1f4d"];
-        m1     [label=<<B>Sensorimotor cortex</B>  (C2)<BR/>cortex_N/E/S/W (×4) — M1 channels<BR/><FONT POINT-SIZE="8.5">⚠ labeled-line per-action split</FONT>>, fillcolor="#e8e1f2", color="#5b4a8a", fontcolor="#2c2547"];
-        bg     [label=<<B>Basal ganglia cascade</B>  (C3)<BR/>direct D1 ⊣ · indirect D2→GPe→STN<BR/>hyperdirect · PV-FSI · striosome (×4)<BR/><FONT POINT-SIZE="8.5"><B>action-selection heart · learning site</B></FONT>>, fillcolor="#f5cba7", color="#a04000", fontcolor="#5a2400"];
+        m1     [group="spine", label=<<B>Sensorimotor cortex</B>  (C2)<BR/>cortex_N/E/S/W (×4) — M1 channels<BR/><FONT POINT-SIZE="8.5">⚠ labeled-line per-action split</FONT>>, fillcolor="#e8e1f2", color="#5b4a8a", fontcolor="#2c2547"];
+        bg     [group="spine", label=<<B>Basal ganglia cascade</B>  (C3)<BR/>direct D1 ⊣ · indirect D2→GPe→STN<BR/>hyperdirect · PV-FSI · striosome (×4)<BR/><FONT POINT-SIZE="8.5"><B>action-selection heart · learning site</B></FONT>>, fillcolor="#f5cba7", color="#a04000", fontcolor="#5a2400"];
         reward [label=<<B>Reward &amp; dopamine</B>  (C6)<BR/>reward_us (r) ▶ <B>SNc</B> · striosome → SNc<BR/>value critic V(s) ⊣<FONT COLOR="#7d3c98"><B>(GABA_B)</B></FONT>→ SNc · δ=r−V<BR/><FONT POINT-SIZE="8.5">spiking actor-critic</FONT>>, fillcolor="#fdebd0", color="#b9770e", fontcolor="#5b3a10"];
-        thal   [label=<<B>Thalamus + TRN</B>  (C4)<BR/>thal_X (×4) · reticular WTA<BR/><FONT POINT-SIZE="8.5">GPi silence releases the relay</FONT>>, fillcolor="#d0ece7", color="#148f77", fontcolor="#0a4034"];
-        sc     [label=<<B>SC accumulate → commit</B>  (C5)<BR/>sel_X (NMDA) → commit_X (×4)<BR/><FONT POINT-SIZE="8.5">Wang-2002 decision · all-or-none</FONT>>, fillcolor="#e8daef", color="#7d3c98", fontcolor="#3e1f4d"];
+        thal   [group="spine", label=<<B>Thalamus + TRN</B>  (C4)<BR/>thal_X (×4) · reticular WTA<BR/><FONT POINT-SIZE="8.5">GPi silence releases the relay</FONT>>, fillcolor="#d0ece7", color="#148f77", fontcolor="#0a4034"];
+        sc     [group="spine", label=<<B>SC accumulate → commit</B>  (C5)<BR/>sel_X (NMDA) → commit_X (×4)<BR/><FONT POINT-SIZE="8.5">Wang-2002 decision · all-or-none</FONT>>, fillcolor="#e8daef", color="#7d3c98", fontcolor="#3e1f4d"];
         cb     [label=<<B>Cerebellum</B>  (C8)<BR/>mossy→granule→Purkinje ⊣ DCN<BR/><FONT POINT-SIZE="8.5">Marr-Albus-Ito · opt-in</FONT>>, fillcolor="#d4e6f1", color="#2e6da4", fontcolor="#163a59"];
         wm_nav [label=<<B>dlPFC working memory</B>  (C9)<BR/>goal latch (NMDA)>, fillcolor="#d4e6f1", color="#2e86c1", fontcolor="#16435f"];
 
@@ -72,7 +72,14 @@ digraph BrainMaster {
 
         // reward loop
         bg     -> reward [label="striosome→SNc", arrowhead=tee, color="#922b21"];
-        reward -> bg     [label="DA bus gates\ncorticostriatal STDP", style=dotted, color="#d98008", arrowhead=odiamond, penwidth=2.6, fontcolor="#9a6608", constraint=false, weight=5, tailport=w, headport=w];
+        reward -> bg     [label="DA bus gates\ncorticostriatal STDP", style=dotted, color="#d98008", arrowhead=odiamond, penwidth=2.6, fontcolor="#9a6608", constraint=false, weight=5];
+
+        // keep NAV to ~2 columns: stack the flank nodes (orient / WM / reward /
+        // cerebellum) into one side column beside the spine (visual ordering
+        // only — content unchanged) so the cluster is a narrow strip.
+        sc_orient -> wm_nav [style=invis, weight=30];
+        wm_nav    -> reward [style=invis, weight=30];
+        reward    -> cb     [style=invis, weight=30];
     }
 
     // ========================================================================
@@ -86,12 +93,16 @@ digraph BrainMaster {
         visual [label=<<B>Visual ventral stream</B>  (C1)<BR/>retina→V1→V2→IT<BR/><FONT POINT-SIZE="8.5">"what" object stream · opt-in</FONT>>, fillcolor="#d4e6f1", color="#2e6da4", fontcolor="#163a59"];
         hippo  [label=<<B>Hippocampal formation</B>  (C7)<BR/>EC→DG ⊣ CA3 ⟲ →CA1<BR/><FONT POINT-SIZE="8.5">separation · completion · replay</FONT>>, fillcolor="#d9ead3", color="#5a8a3c", fontcolor="#2c4a1c"];
         lang_in[label=<<B>Language input</B>  (C11)<BR/>language_input<BR/><FONT POINT-SIZE="8.5">⌂ token embedding (host I/O)</FONT>>, fillcolor="#d4e6f1", color="#2471a3", fontcolor="#123a55"];
-        motor  [label=<<B>Motor output</B>  (C10)<BR/>motor_N/E/S/W (×4)<BR/><FONT POINT-SIZE="8.5">the body acts on which pool fires</FONT>>, fillcolor="#f5b7b1", color="#c0392b", fontcolor="#641e16"];
+        motor  [group="spine", label=<<B>Motor output</B>  (C10)<BR/>motor_N/E/S/W (×4)<BR/><FONT POINT-SIZE="8.5">the body acts on which pool fires</FONT>>, fillcolor="#f5b7b1", color="#c0392b", fontcolor="#641e16"];
         lang_out[label=<<B>Language output</B>  (C11)<BR/>language_output<BR/><FONT POINT-SIZE="8.5">⌂ word readout (host I/O)</FONT>>, fillcolor="#d4e6f1", color="#2471a3", fontcolor="#123a55"];
 
-        visual -> hippo [style=invis];   // column glue
-        lang_in -> motor [style=invis];
-        motor  -> lang_out [style=invis];
+        // compact 2-column block (visual ordering only — content unchanged):
+        // col-A visual→hippo · col-B lang_in→motor→lang_out. motor sits
+        // mid-column so the spine sc→motor→wernicke runs straight through it;
+        // SHARED stays SHORT so it stacks cleanly under NAVIGATION.
+        visual  -> hippo    [style=invis, weight=30];
+        lang_in -> motor    [style=invis, weight=30];
+        motor   -> lang_out [style=invis, weight=30];
     }
 
     // ========================================================================
@@ -102,22 +113,26 @@ digraph BrainMaster {
         label=<<B>CONVERSATIONAL supergroup</B>  ·  build_biological_brain_regions()  ·  the language brain>;
         style="rounded,filled"; color="#2471a3"; fillcolor="#f3f8fc"; fontcolor="#1a5276"; fontsize=15; penwidth=2.0; margin=14;
 
-        wernicke [label=<<B>Wernicke pools</B>  (C11)<BR/>comprehension · cross-pool WTA>, fillcolor="#d6eaf8", color="#2e86c1", fontcolor="#163a59"];
+        wernicke [group="spine", label=<<B>Wernicke pools</B>  (C11)<BR/>comprehension · cross-pool WTA>, fillcolor="#d6eaf8", color="#2e86c1", fontcolor="#163a59"];
         concept  [label=<<B>Concept pools</B>  (C12)<BR/>noun · verb · adjective (×4 each)<BR/><FONT POINT-SIZE="8.5">Pulvermüller word ensembles</FONT>>, fillcolor="#d4e6f1", color="#2874a6", fontcolor="#143a54"];
-        semantic [label=<<B>Semantic cortex (ATL)</B>  (C11)<BR/>sparse distributed concept store<BR/><FONT POINT-SIZE="8.5">plastic attractor · 320 concepts</FONT>>, fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
-        broca    [label=<<B>Broca</B>  (C11)<BR/>syntax · sentence WM>, fillcolor="#d6eaf8", color="#2e86c1", fontcolor="#163a59"];
+        semantic [group="spine", label=<<B>Semantic cortex (ATL)</B>  (C11)<BR/>sparse distributed concept store<BR/><FONT POINT-SIZE="8.5">plastic attractor · 320 concepts</FONT>>, fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
+        broca    [group="spine", label=<<B>Broca</B>  (C11)<BR/>syntax · sentence WM>, fillcolor="#d6eaf8", color="#2e86c1", fontcolor="#163a59"];
         hub      [label=<<B>Multimodal hub (ATL)</B>  (C11)<BR/>auditory + visual convergence>, fillcolor="#d6eaf8", color="#2e86c1", fontcolor="#163a59"];
         wm_conv  [label=<<B>dlPFC verb WM</B>  (C9)<BR/>holds verb ~500 ms>, fillcolor="#d4e6f1", color="#2e86c1", fontcolor="#16435f"];
-        speech   [label=<<B>motor_speech</B>  (C10)<BR/>articulation>, fillcolor="#f5b7b1", color="#c0392b", fontcolor="#641e16"];
+        speech   [group="spine", label=<<B>motor_speech</B>  (C10)<BR/>articulation>, fillcolor="#f5b7b1", color="#c0392b", fontcolor="#641e16"];
 
         // -- conversational comprehend→produce --
         wernicke -> semantic [label="comprehend"];
         semantic -> broca    [label="meaning→syntax"];
         semantic -> wernicke [label="produce", style=dashed, constraint=false, weight=6];
         broca    -> speech   [label="articulation"];
-        concept  -> semantic [style=invis];
-        wm_conv  -> concept  [label="verb WM", style=dashed, constraint=false, weight=6];
-        hub      -> semantic [style=invis];
+        wm_conv  -> concept  [label="verb WM", style=dashed, constraint=false, weight=0];
+        // keep CONV to ~2 columns: stack the flank nodes (concept / hub /
+        // verb-WM) into one side column beside the spine (visual ordering only
+        // — content unchanged) so the cluster is a narrow strip.
+        concept -> hub     [style=invis, weight=30];
+        hub     -> wm_conv [style=invis, weight=30];
+        wernicke -> concept [style=invis, weight=30];
     }
 
     // ========================================================================
@@ -132,9 +147,9 @@ digraph BrainMaster {
         label=<<B>GENERALIZATION stack</B>  ·  co-resident opt-in (merged bridge / genfrontier runners)  ·  novel-object → category>;
         style="rounded,filled,dashed"; color="#7d6608"; fillcolor="#fcf8ee"; fontcolor="#6a5407"; fontsize=15; penwidth=2.0; margin=14;
 
-        gen_perc [label=<<B>gen_perception</B>  (structured)<BR/>Gabor/V1 top-K · similarity-structured<BR/><FONT POINT-SIZE="8.5">visual features → shared-feature codes</FONT>>, style="rounded,filled,dashed", fillcolor="#d4e6f1", color="#2e6da4", fontcolor="#163a59"];
-        gen_conc [label=<<B>gen_concept</B>  (NMDA ⟲)<BR/>per-concept assemblies · slow NMDA<BR/><FONT POINT-SIZE="8.5">integrates sparse drive → SPIKES (rate-code lift)</FONT>>, style="rounded,filled,dashed", fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
-        gen_fact [label=<<B>gen_fact</B>  (category tags, NMDA)<BR/>convergent block per category<BR/><FONT POINT-SIZE="8.5">downstream synaptic read of which category spiked</FONT>>, style="rounded,filled,dashed", fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
+        gen_perc [group="spine", label=<<B>gen_perception</B>  (structured)<BR/>Gabor/V1 top-K · similarity-structured<BR/><FONT POINT-SIZE="8.5">visual features → shared-feature codes</FONT>>, style="rounded,filled,dashed", fillcolor="#d4e6f1", color="#2e6da4", fontcolor="#163a59"];
+        gen_conc [group="spine", label=<<B>gen_concept</B>  (NMDA ⟲)<BR/>per-concept assemblies · slow NMDA<BR/><FONT POINT-SIZE="8.5">integrates sparse drive → SPIKES (rate-code lift)</FONT>>, style="rounded,filled,dashed", fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
+        gen_fact [group="spine", label=<<B>gen_fact</B>  (category tags, NMDA)<BR/>convergent block per category<BR/><FONT POINT-SIZE="8.5">downstream synaptic read of which category spiked</FONT>>, style="rounded,filled,dashed", fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
 
         gen_perc -> gen_conc [label=<<B>convergence ⊟</B><BR/><FONT POINT-SIZE="8">learned (rate-Hebbian) · gen_convergence_fixed</FONT>>, color="#1a9850", fontcolor="#0c5a28", penwidth=2.2];
         gen_conc -> gen_fact [label="convergent block\n(category fixed)"];
@@ -142,59 +157,71 @@ digraph BrainMaster {
 
     // ========================================================================
     //  CROSS-SUPERGROUP arteries (drawn AFTER the clusters)
+    //  All marked constraint=false so they are DRAWN but do not pull the
+    //  vertically-stacked clusters sideways.
     // ========================================================================
     // shared language_input feeds both the conversational stack and (the bridge) navigation
-    lang_in  -> wernicke [label="phono→Wernicke", lhead=cluster_conv];
-    lang_in  -> concept  [label="word→pool"];
-    concept  -> lang_out [label="concept→word\n(A→W)", style=dashed];
-    semantic -> lang_out [label="naming", constraint=false, weight=5];
-    wernicke -> hub      [label="auditory", constraint=false, weight=6];
-    hub      -> lang_out [label="recognition→naming"];
-    visual   -> hub      [label="IT→hub", color="#2e6da4"];
+    //  constraint=false + weight=0 → these are DRAWN but exert NO pull on node
+    //  X-placement (otherwise they staircase the clusters apart). Cluster
+    //  X-alignment is instead enforced by the explicit left/center/right rail
+    //  ladder below.
+    lang_in  -> wernicke [label="phono→Wernicke", lhead=cluster_conv, constraint=false, weight=0];
+    lang_in  -> concept  [label="word→pool", constraint=false, weight=0];
+    concept  -> lang_out [label="concept→word\n(A→W)", style=dashed, constraint=false, weight=0];
+    semantic -> lang_out [label="naming", constraint=false, weight=0];
+    wernicke -> hub      [label="auditory", constraint=false, weight=0];
+    hub      -> lang_out [label="recognition→naming", constraint=false, weight=0];
+    visual   -> hub      [label="IT→hub", color="#2e6da4", constraint=false, weight=0];
 
     // navigation perception readouts come from the shared hippocampus
-    nav_in -> hippo  [label="place readout", dir=back, color="#5a8a3c", constraint=false, weight=8];
+    nav_in -> hippo  [label="place readout", dir=back, color="#5a8a3c", constraint=false, weight=0];
     // hippocampal consolidation into cortex (shared, both configs)
-    hippo  -> semantic [label="sleep-replay\nconsolidation", color="#5a8a3c", constraint=false, weight=3];
-    hippo  -> motor    [label="CA1→motor", color="#5a8a3c", style=dashed, constraint=false, weight=3];
+    hippo  -> semantic [label="sleep-replay\nconsolidation", color="#5a8a3c", constraint=false, weight=0];
+    hippo  -> motor    [label="CA1→motor", color="#5a8a3c", style=dashed, constraint=false, weight=0];
 
     // GENERALIZATION stack is fed by the visual ventral stream's Gabor/V1 (structured perception)
-    visual -> gen_perc [label="Gabor/V1 → structured\nperception (top-K)", color="#2e6da4", style=dashed, constraint=false, weight=4];
+    visual -> gen_perc [label="Gabor/V1 → structured\nperception (top-K)", color="#2e6da4", style=dashed, constraint=false, weight=0];
     // the generalizing concept→fact spikes KEY the composer's recall + no-confab moat (the verbalize
     // capstone HYBRID: the spiking concept-category keys the validated RFPhasorComposer → naming)
-    gen_fact -> semantic [label="category keys composer recall\n(verbalize capstone, hybrid)", color="#7d6608", style=dashed, constraint=false, weight=2];
+    gen_fact -> semantic [label="category keys composer recall\n(verbalize capstone, hybrid)", color="#7d6608", style=dashed, constraint=false, weight=0];
 
     // ===== THE FUNCTIONAL CROSS-BRAIN BRIDGES (real cross-region synaptic interaction) =====
     // (A) LANGUAGE→ACTION. language_input -> cortex_{N,E,S,W} (LEARNED word->action route),
     // CURRENT gated by command_route, opened by the parser's action-role FIRING. Spoken-
     // instruction navigation, 6/6-seed GO. The first validated synaptic link between the brains.
     lang_in -> m1 [label=<<B>command_route ⊟</B>  (A · language→action)<BR/><FONT POINT-SIZE="8">learned word→action · gate opened by parser firing<BR/>spoken-instruction nav · 6/6-seed GO</FONT>>,
-                   color="#1a9850", fontcolor="#0c5a28", penwidth=3.0, style=bold, constraint=false, weight=5, tailport=s, headport=s];
+                   color="#1a9850", fontcolor="#0c5a28", penwidth=3.0, style=bold, constraint=false, weight=0];
 
     // (B) PERCEPTION→MEMORY (recall). A perceived object's cortex_it (IT "what") ensemble is
     // engram-tagged in-episode; later neural reactivation reads it through a TRAINED
     // cortex_it -> language_output route (it_to_lang) → "I saw the apple". navigate-to-see-
     // then-answer, 6/6-seed GO. RECALL (not compose).
     visual -> lang_out [label=<<B>cortex_it → language_output</B>  (B · perception→memory)<BR/><FONT POINT-SIZE="8">trained route + engram reactivation · navigate-to-see · 6/6-seed GO<BR/>RECALL of a perceived object (it_to_lang)</FONT>>,
-                   color="#1a9850", fontcolor="#0c5a28", penwidth=2.6, style=bold, constraint=false, weight=2, tailport=s, headport=s];
+                   color="#1a9850", fontcolor="#0c5a28", penwidth=2.6, style=bold, constraint=false, weight=0];
 
     // (C) COMPOSE-PERCEIVED. The LIVE cortex_it spiking RATE of a perceived object is mapped by
     // a FIXED complex projection M into a unit PHASOR (⚠ host arithmetic on the substrate's own
     // live rate) → the percept enters the composer's bind/bundle/unbind algebra. Dissolves the
     // rate-vs-phasor wall for perceived-object facts. navigate-to-compose-then-answer, 6/6-seed GO.
     visual -> concept [label=<<B>grounded code ⚠</B>  (C · compose-perceived)<BR/><FONT POINT-SIZE="8">live cortex_it rate → fixed complex projection M → phasor<BR/>dissolves rate↔phasor wall · navigate-to-compose · 6/6-seed GO</FONT>>,
-                   color="#1a9850", fontcolor="#0c5a28", penwidth=2.6, style="bold,dashed", constraint=false, weight=2, tailport=e, headport=w];
+                   color="#1a9850", fontcolor="#0c5a28", penwidth=2.6, style="bold,dashed", constraint=false, weight=0];
 
-    // ===== RANK BANDS (horizontal layers across the three supergroups) ======
-    { rank=same; nav_in;  sc_orient; visual; lang_in; wernicke; }
-    { rank=same; m1;      concept;   hippo;   gen_perc; }
-    { rank=same; bg;      reward;  semantic;  gen_conc; }
-    { rank=same; thal;    broca;   hub;       gen_fact; }
-    { rank=same; sc;      cb;      wm_conv;  wm_nav; }
-    { rank=same; motor;   lang_out; speech; }
-
-    // anchor legend to top-right via invisible edge from right-most top-rank node
-    wernicke -> leg [style=invis, constraint=false];
+    // ===== VERTICAL STACKING of the four supergroups =======================
+    //  Instead of pinning nodes from DIFFERENT clusters side by side (which
+    //  forced the old super-wide layout), the four supergroups are chained into
+    //  ONE straight vertical SPINE (functional order: NAVIGATION → SHARED →
+    //  CONVERSATIONAL → GENERALIZATION → legend) via a high-weight invisible
+    //  rail through each cluster's group="spine" node. Each cluster's own
+    //  internal edges keep it a vertical pipeline; its non-spine nodes flank
+    //  the spine, so the whole map is a narrow scrollable ribbon.
+    //  Spine chain (real + rail): m1→bg→thal→sc (NAV, real) ─sc→motor (real)─
+    //  motor→wernicke→semantic→broca→speech (CONV, real) → gen_perc→gen_conc→
+    //  gen_fact (GEN, real) → leg.
+    //  The bottom→top rails (sc/cb → visual/lang_in, etc.) push each WHOLE
+    //  cluster below the previous one (not merely beside it).
+    motor    -> wernicke [style=invis, weight=80];   // SHARED spine → CONVERSATIONAL spine
+    speech   -> gen_perc [style=invis, weight=80];   // CONVERSATIONAL spine → GENERALIZATION spine
+    gen_fact -> leg      [style=invis, weight=80];    // GENERALIZATION spine → legend
 
     // ===== LEGEND ==========================================================
     subgraph cluster_legend {

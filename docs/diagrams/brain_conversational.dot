@@ -16,13 +16,13 @@ digraph ConversationalBrain {
     compound=true;
     newrank=true;
     splines=spline;
-    nodesep=0.34;
-    ranksep=0.66;
+    nodesep=0.28;
+    ranksep=0.62;
     bgcolor="white";
     fontname="Helvetica";
     labelloc="t";
     fontsize=24;
-    label=<<B>Conversational brain — every region &amp; pathway, as implemented</B><BR/><FONT POINT-SIZE="12">build_biological_brain_regions() · concept pools collapsed ×4-names · comprehend→produce · signal nature + plasticity + result-quality encoded</FONT><BR/> >;
+    label=<<B>Conversational brain — every region &amp; pathway, as implemented</B><BR/><FONT POINT-SIZE="12">build_biological_brain_regions() · concept pools collapsed ×4-names · comprehend→produce<BR/>signal nature + plasticity + result-quality encoded</FONT><BR/> >;
 
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10.5,
           margin="0.13,0.07", penwidth=1.4, color="#2471a3", fillcolor="#ebf5fb"];
@@ -125,8 +125,10 @@ digraph ConversationalBrain {
     //  =============================  EDGES  ============================
     // ====================================================================
     // -- Tier-1 embodied binding (always built, the CORE) --
-    langin -> motor   [label="word→action\nlanguage_input_to_motor  (Tier 1)", penwidth=2.2, fontcolor="#1f618d"];
-    motor  -> langout [label="action→word\nmotor_to_language_output  (A→W)", penwidth=1.8, fontcolor="#1e8449"];
+    //  constraint=false: drawn but not rank-defining, so this parallel
+    //  langin→motor→langout shortcut does not stretch the layout flat.
+    langin -> motor   [label="word→action\nlanguage_input_to_motor  (Tier 1)", penwidth=2.2, fontcolor="#1f618d", constraint=false];
+    motor  -> langout [label="action→word\nmotor_to_language_output  (A→W)", penwidth=1.8, fontcolor="#1e8449", constraint=false];
 
     // -- comprehension chain --
     langin -> wern  [label="phono→Wernicke\nlang_to_wernicke_pool_i", fontcolor="#1f618d"];
@@ -135,9 +137,11 @@ digraph ConversationalBrain {
     wern   -> langout [label="naming\n{pool}_to_lang_out", fontcolor="#1e8449", constraint=false];
 
     // -- concept pools (Tier-1 recipe) --
-    langin -> noun  [label="word→pool\nlanguage_input_to_noun_pool", fontcolor="#1f618d"];
-    langin -> verb  [label="language_input_to_verb_pool", fontcolor="#1f618d"];
-    langin -> adj   [label="language_input_to_adjective_pool", fontcolor="#1f618d"];
+    //  constraint=false: the pools are stacked BELOW Wernicke by the wern→noun
+    //  rail, so these word→pool fans are drawn but not rank-defining.
+    langin -> noun  [label="word→pool\nlanguage_input_to_noun_pool", fontcolor="#1f618d", constraint=false];
+    langin -> verb  [label="language_input_to_verb_pool", fontcolor="#1f618d", constraint=false];
+    langin -> adj   [label="language_input_to_adjective_pool", fontcolor="#1f618d", constraint=false];
     noun -> langout [label="concept→word (A→W)\n{kind}_pool_to_language_output", fontcolor="#1e8449", constraint=false];
     verb -> langout [label="", fontcolor="#1e8449", constraint=false];
     adj  -> langout [label="", fontcolor="#1e8449", constraint=false];
@@ -145,22 +149,26 @@ digraph ConversationalBrain {
     poolfs -> verb  [label="within-kind WTM", arrowhead=tee, color="#922b21"];
 
     // -- syntax / production --
-    wern -> broca [label="wernicke_to_broca", fontcolor="#1f618d"];
-    sem  -> broca [label="semantic_to_broca", fontcolor="#1f618d"];
+    //  Broca is a compact side cluster fed from Wernicke/semantic; these feeds
+    //  are constraint=false so Broca does not stretch the spine clusters.
+    wern -> broca [label="wernicke_to_broca", fontcolor="#1f618d", constraint=false];
+    sem  -> broca [label="semantic_to_broca", fontcolor="#1f618d", constraint=false];
     broca -> broca [label="⟲ sentence WM", color="#1e8449", penwidth=1.6];
-    broca -> speech [label="articulation\nbroca_to_motor_speech", fontcolor="#1e8449"];
+    broca -> speech [label="articulation\nbroca_to_motor_speech", fontcolor="#1e8449", constraint=false];
     broca -> eccx [label="broca_to_ec_context", style=dashed, constraint=false];
 
     // -- multimodal hub --
     it   -> langout [label="image→word\nit_to_language_output", color="#3d6fb4", constraint=false];
-    it   -> hub  [label="it_to_hub", color="#3d6fb4"];
+    it   -> hub  [label="it_to_hub", color="#3d6fb4", constraint=false];
     wern -> hub  [label="wernicke_pool_i_to_hub", constraint=false];
-    hub  -> langoutp [label="recognition→naming\nhub_to_lang_pool_i", fontcolor="#1e8449"];
+    hub  -> langoutp [label="recognition→naming\nhub_to_lang_pool_i", fontcolor="#1e8449", constraint=false];
 
     // -- episodic positional binding --
     eccx -> dg [label="ec_context_to_dg\n(word×position)", style=dashed, constraint=false];
 
     // -- hippocampal entry + consolidation (the KEY no-forgetting bridge) --
+    //  constraint=false: drawn but not rank-defining (the hippocampus is a
+    //  compact side cluster that bridges back to the spine).
     langin -> ec  [label="lang_to_ec\n(cortex→hippo entry)", fontcolor="#1f618d", constraint=false];
     ca1 -> sem    [label="ca1_to_semantic\n(engrams→durable meaning · KEY)", color="#1e8449", penwidth=2.0, fontcolor="#1e8449", constraint=false];
     ca1 -> motor  [label="ca1_to_motor\n(sleep-replay consolidation)", color="#1e8449", style=dashed, constraint=false];
@@ -199,13 +207,44 @@ digraph ConversationalBrain {
           </TABLE>>];
     }
 
-    // -- rank guidance: comprehend (top) → produce (bottom) -----------------
-    //    (hippocampus left as a coherent side-loop cluster, not forced into ranks)
-    { rank=min;  langin; retina; eccx; }
-    { rank=same; wern; noun; verb; adj; it; }
-    { rank=same; sem; hub; }
-    { rank=max;  langout; langoutp; motor; speech; }
-    // invisible anchors keeping the produce band at the bottom
-    sem   -> langout [style=invis, weight=20];
-    broca -> speech  [style=invis, weight=20];
+    // ======================================================================
+    //  VERTICAL STACKING: comprehend (top) → produce (bottom)
+    //  The old cross-cluster { rank=same; ... } rows pinned nodes from
+    //  DIFFERENT clusters side by side (wern|noun|verb|adj|it on one row, etc.)
+    //  — that horizontal interleaving was the main width cause. Instead each
+    //  cluster lays out as its own compact strip and the strips are chained
+    //  TOP→BOTTOM into a tall scrollable ribbon (input → Wernicke → semantic →
+    //  output), with the concept pools / Broca / dlPFC / hippocampus tucked
+    //  beside the stages they connect to.
+    //  -- keep each multi-node cluster a NARROW vertical strip (≤2 columns) --
+    //  concept pools as one column (noun→verb→adj; poolfs is already tied to
+    //  verb by the real WTA loop, so it is NOT chained here)
+    noun -> verb [style=invis, weight=40];
+    verb -> adj  [style=invis, weight=40];
+    //  output: keep the four output nodes together as one compact block
+    //  (langout→langoutp column, langout→motor→speech column)
+    langout -> langoutp [style=invis, weight=40];
+    langout -> motor    [style=invis, weight=40];
+    motor   -> speech   [style=invis, weight=40];
+
+    // -- DEEPEN the graph into a tall ribbon ------------------------------
+    //  The comprehend→produce path is intrinsically SHALLOW (~5 ranks) with
+    //  many regions parallel on each rank — that is what made it wide. These
+    //  invisible high-weight rails push the CORE clusters onto SUCCESSIVE ranks
+    //  (a deep vertical chain) instead of side by side:
+    //    input → Wernicke → concept-pools → semantic → output.
+    //  Real edges keep their meaning; only layout depth changes. Broca /
+    //  hippocampus / dlPFC stay compact side clusters (constraint=false bridges).
+    wern  -> noun    [style=invis, weight=80];   // pools BELOW Wernicke (not beside)
+    adj   -> sem     [style=invis, weight=80];   // semantic BELOW pools
+    sem   -> langout [style=invis, weight=80];   // output BELOW semantic
+    hub   -> langout [style=invis, weight=40];   // hub sits with semantic, feeds output
+    //  APPEND the hippocampus as a compact column BELOW the output block (its
+    //  consolidation edges to sem/langout then run up the side as feedback,
+    //  instead of reserving a wide mid-graph routing gap to the right).
+    langoutp -> ec [style=invis, weight=80];
+
+    // anchor the LEGEND to the very bottom (full-width block under the diagram)
+    ca1     -> leg [style=invis, weight=80];
+    speech  -> leg [style=invis, weight=40];
 }

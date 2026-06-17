@@ -15,13 +15,13 @@ digraph NavigationBrain {
     compound=true;
     newrank=true;
     splines=spline;
-    nodesep=0.34;
-    ranksep=0.70;
+    nodesep=0.28;
+    ranksep=0.55;
     bgcolor="white";
     fontname="Helvetica";
     labelloc="t";
     fontsize=24;
-    label=<<B>Navigation brain — every region &amp; pathway, as implemented</B><BR/><FONT POINT-SIZE="12">build_bg_brain_regions() · per-action pools collapsed ×4 (N/E/S/W) · signal nature + direction + plasticity + gating encoded · faithful-vs-shortcut flagged</FONT><BR/> >;
+    label=<<B>Navigation brain — every region &amp; pathway, as implemented</B><BR/><FONT POINT-SIZE="12">build_bg_brain_regions() · per-action pools collapsed ×4 (N/E/S/W)<BR/>signal nature + direction + plasticity + gating encoded · faithful-vs-shortcut flagged</FONT><BR/> >;
 
     // node default: excitatory cortical-type. Inhibitory & opt-in override per node.
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10.5,
@@ -318,17 +318,54 @@ digraph NavigationBrain {
           </TABLE>>];
     }
 
-    // -- rank guidance: pin the perception→action spine top→bottom ----------
-    { rank=min;  retina; place; goal; sensory; beacon; landmark; scret; }
-    { rank=same; cortex; cortexFS; scmap; scfs; }
-    { rank=same; d1; d2; strio; fsi; }
-    { rank=same; gpe; arky; gpi; stn; }
-    { rank=same; thal; trn; }
-    { rank=same; sel; selFS; commit; opn; }
-    { rank=same; motor; motorFS; motorpop; }
-    { rank=max;  body; }
-    // invisible anchors to keep the side-modules from pulling motor sideways
-    commit -> motor [style=invis, weight=20];
-    thal   -> motor [style=invis, weight=20];
-    motor  -> body  [style=invis, weight=20];
+    // ======================================================================
+    //  VERTICAL STACKING of the perception→action spine + side loops
+    //  The old cross-cluster { rank=same; ... } rows pinned nodes from
+    //  DIFFERENT clusters side by side — that horizontal interleaving was the
+    //  main width cause. Instead each cluster lays out as its own compact
+    //  block, and the blocks are chained TOP→BOTTOM into a tall scrollable
+    //  ribbon via invisible high-weight rails (bottom node of one cluster →
+    //  top node of the next), in functional order:
+    //    inputs → SC-orient → cortex → striatum → pallidum → thalamus →
+    //    SC-decision → motor → body, with reward / cerebellum / hippocampus /
+    //    dlPFC tucked beside the stages they connect to.
+    //  Within-cluster rank hints keep each block to ~2 columns (not the old
+    //  4-7-wide rows).
+    //  -- keep each multi-node cluster a NARROW vertical strip (≤2 columns) --
+    //  These are invisible ORDERING edges (content unchanged); they stop the
+    //  per-cluster nodes from spreading across a wide row.
+    //  inputs: readout fan as a vertical column; visual chain is its own column
+    place    -> goal     [style=invis, weight=40];
+    goal     -> sensory  [style=invis, weight=40];
+    sensory  -> beacon   [style=invis, weight=40];
+    beacon   -> landmark [style=invis, weight=40];
+    //  striatum: two short columns (d1→strio, d2→fsi)
+    d1 -> strio [style=invis, weight=40];
+    d2 -> fsi   [style=invis, weight=40];
+    //  pallidum: two short columns (gpe→gpi, arky→stn)
+    gpe  -> gpi [style=invis, weight=40];
+    arky -> stn [style=invis, weight=40];
+    //  reward: single column (snc→rus→vcrit→placecode→placefs)
+    snc   -> rus       [style=invis, weight=40];
+    rus   -> vcrit     [style=invis, weight=40];
+    vcrit -> placecode [style=invis, weight=40];
+    //  SC-decision: two short columns (sel→commit, selFS→opn)
+    sel   -> commit [style=invis, weight=40];
+    selFS -> opn    [style=invis, weight=40];
+    //  motor: column (motor→motorFS→motorpop)
+    motor   -> motorFS  [style=invis, weight=40];
+    motorFS -> motorpop [style=invis, weight=40];
+
+    // -- inter-cluster stacking rails (perception→action spine, top→bottom) --
+    it     -> cortex [style=invis, weight=80];   // inputs (visual chain bottom) → cortex
+    scros  -> cortex [style=invis, weight=20];   // SC-orient → cortex
+    cortex -> d1     [style=invis, weight=80];    // cortex → striatum (also a real edge)
+    fsi    -> gpe    [style=invis, weight=80];    // striatum → pallidum
+    gpi    -> thal   [style=invis, weight=80];    // pallidum → thalamus (also a real edge)
+    thal   -> sel    [style=invis, weight=80];    // thalamus → SC-decision
+    commit -> motor  [style=invis, weight=80];    // SC-decision → motor
+    motor  -> body   [style=invis, weight=80];    // motor → body
+
+    // anchor the LEGEND to the very bottom (full-width block under the diagram)
+    body -> leg [style=invis, weight=80];
 }
