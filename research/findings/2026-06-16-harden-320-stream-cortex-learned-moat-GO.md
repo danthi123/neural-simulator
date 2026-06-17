@@ -53,13 +53,25 @@ MEAN (3 seeds): who-Q&A recall 1.00 | no-confab abstain 1.00 (total false-accept
 the abstention decision made by a **learned neural familiarity gate**, not a host threshold. The seed-43
 loose end is closed without weakening — in fact strengthening — the no-fabrication guarantee.
 
-## Next — piece 2: the on-brain read-out normalization
+## Piece 2 — the on-brain read-out normalization: cheap-first GO
 
-The per-concept code is currently read out with a host-side `double_center(log1p(·))` normalization. The
-brain-based replacement (CYCLE 93b: per-hub spike-frequency adaptation + per-concept feedforward inhibition,
-de-risked at ~96% of host) needs folding into the code derivation — which requires re-deriving the codes with
-the on-brain circuit (the cached `.npy` are post-host-normalization), i.e. a re-stream. That is the remaining
-"fully brain-based" piece. NO `sim/` edit in piece 1.
+The per-concept code was read out with a host `double_center(log1p(·))`. The brain-based replacement (per-hub
+spike-frequency **adaptation** + per-concept **feedforward inhibition**, with rate-coded-pool noise on the
+subtracted means; de-risked at 96% of host structure) is now wired into the code derivation as `--readout-norm
+neural` (default `host` preserves the cached-code path). Because that 96% is not 100%, the open question was
+whether the slightly-different code still carries the *conversation*.
+
+**Cheap-first (CPU, the corpus co-occurrence proxy, 6 seeds — `_phaseB_harden_320_neural_readout_derisk.py`):**
+
+```
+MEAN (6 seeds): recall HOST 1.00 | NEURAL 1.00 | no-norm 0.35 || moat false-accepts NEURAL 0 (host 0)  ==> GO
+```
+
+The fully-on-brain read-out carries the conversation **identically to host** — recall 1.00 (≥ host every seed),
+the learned moat abstains with 0 false-accepts — and the normalization is load-bearing (no-norm recall collapses
+to 0.35). ⇒ the last host scaffold in the read-out is removable. The **single-seed 320 re-stream** with
+`--readout-norm neural` (the production-scale confirmation on the REAL stream-learned matrix, ~96 min GPU) is the
+remaining step; multi-seed 320 is a follow-on. NO `sim/` edit anywhere in the hardening.
 
 ## Reproduce
 

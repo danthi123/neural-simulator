@@ -108,7 +108,16 @@ def stream_learn_codes(seed, stories, vocab, cat_ids, a):
     bridge.cp_external_input_current[:] = 0.0
     W = np.asarray(to_host(bridge.cp_connections.todense())).astype(np.float64)
     blk = W[np.ix_(hub_region, tgt_region)].reshape(n_hub, n_per, Nt, n_per).mean(axis=(1, 3))
-    code = double_center(np.log1p(blk.T * 100.0))                # (Nt, n_hub) stream-learned concept codes
+    L = np.log1p(blk.T * 100.0)                                  # the f-I / Weber-Fechner read-out (pre-centre)
+    # READ-OUT NORMALIZATION. "host" = host double-centring. "neural" (the hardened, fully-on-brain read-out) =
+    # the two real cortical gain-control ops with rate-coded-pool noise on the subtracted means: per-hub
+    # spike-frequency ADAPTATION + per-concept FEEDFORWARD INHIBITION (de-risked at 96% of host, 6 seeds —
+    # `_phaseB_biologize_readout_norm_derisk.py`). No host arithmetic in the 'neural' read-out.
+    if getattr(a, "readout_norm", "host") == "neural":
+        from research.runners._phaseB_biologize_readout_norm_derisk import neural_norm
+        code = neural_norm(L, np.random.RandomState(seed * 911 + 7))
+    else:
+        code = double_center(L)                                  # (Nt, n_hub) stream-learned concept codes
     code = code / (np.linalg.norm(code, axis=1, keepdims=True) + 1e-12)
     if cache:
         cpath = cache.replace("SEED", str(seed))
@@ -213,6 +222,10 @@ def main():
     p.add_argument("--moat", default="learned", choices=["learned", "host"],
                    help="abstention moat: 'learned' = the hardened brain-based familiarity gate (default, closes "
                         "the seed-43 false-accept); 'host' = the original fixed conjunctive-cue threshold")
+    p.add_argument("--readout-norm", default="host", choices=["host", "neural"],
+                   help="read-out normalization: 'host' = double-centring (default; matches the cached codes); "
+                        "'neural' = the fully-on-brain per-hub adaptation + per-concept feedforward inhibition "
+                        "(re-derives the codes, so use WITHOUT --codes-npy / a fresh stream)")
     a = p.parse_args()
     os.environ.setdefault("SIM_BACKEND", "cupy")
     t0 = time.time()

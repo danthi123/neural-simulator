@@ -1,0 +1,189 @@
+{
+  "verdict": "GO",
+  "host_recall": 1.0,
+  "neural_recall": 1.0,
+  "nonorm_recall": 0.3541666666666667,
+  "neural_false_accepts": 0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "host": {
+        "recall": 1.0,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 0,
+        "conf_present": 0.47549611823731597,
+        "conf_absent": 0.032337486827691046,
+        "moat": "learned"
+      },
+      "neural": {
+        "recall": 1.0,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 0,
+        "conf_present": 0.47311778998560566,
+        "conf_absent": 0.05271051891363001,
+        "moat": "learned"
+      },
+      "nonorm": {
+        "recall": 0.5,
+        "abstain": 0.875,
+        "false_accept": 1,
+        "within_cat_err": 0,
+        "conf_present": -0.34427818437121,
+        "conf_absent": -0.38552644748708653,
+        "moat": "learned"
+      }
+    },
+    {
+      "seed": 43,
+      "host": {
+        "recall": 1.0,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 0,
+        "conf_present": 0.4541694193678691,
+        "conf_absent": 0.04188245458746211,
+        "moat": "learned"
+      },
+      "neural": {
+        "recall": 1.0,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 0,
+        "conf_present": 0.4550238068126708,
+        "conf_absent": 0.05184254675329824,
+        "moat": "learned"
+      },
+      "nonorm": {
+        "recall": 0.375,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 1,
+        "conf_present": -0.07002750697239239,
+        "conf_absent": -0.11214255871348938,
+        "moat": "learned"
+      }
+    },
+    {
+      "seed": 44,
+      "host": {
+        "recall": 1.0,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 0,
+        "conf_present": 0.4245834080137141,
+        "conf_absent": 0.03150045035875617,
+        "moat": "learned"
+      },
+      "neural": {
+        "recall": 1.0,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 0,
+        "conf_present": 0.4323996074594562,
+        "conf_absent": 0.05229416870086645,
+        "moat": "learned"
+      },
+      "nonorm": {
+        "recall": 0.625,
+        "abstain": 0.0,
+        "false_accept": 8,
+        "within_cat_err": 0,
+        "conf_present": 0.8361361341277334,
+        "conf_absent": 0.8029027791692233,
+        "moat": "learned"
+      }
+    },
+    {
+      "seed": 45,
+      "host": {
+        "recall": 1.0,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 0,
+        "conf_present": 0.46445910883551195,
+        "conf_absent": 0.03233625717792764,
+        "moat": "learned"
+      },
+      "neural": {
+        "recall": 1.0,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 0,
+        "conf_present": 0.4658626386440372,
+        "conf_absent": 0.043616702935629095,
+        "moat": "learned"
+      },
+      "nonorm": {
+        "recall": 0.5,
+        "abstain": 0.875,
+        "false_accept": 1,
+        "within_cat_err": 1,
+        "conf_present": 0.14014106360898781,
+        "conf_absent": 0.05292665022716678,
+        "moat": "learned"
+      }
+    },
+    {
+      "seed": 46,
+      "host": {
+        "recall": 1.0,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 0,
+        "conf_present": 0.46509345211490455,
+        "conf_absent": 0.03959178386951144,
+        "moat": "learned"
+      },
+      "neural": {
+        "recall": 1.0,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 0,
+        "conf_present": 0.47254217186885095,
+        "conf_absent": 0.051008275346603946,
+        "moat": "learned"
+      },
+      "nonorm": {
+        "recall": 0.0,
+        "abstain": 0.25,
+        "false_accept": 6,
+        "within_cat_err": 4,
+        "conf_present": -0.4598316469484438,
+        "conf_absent": -0.4893217053665192,
+        "moat": "learned"
+      }
+    },
+    {
+      "seed": 47,
+      "host": {
+        "recall": 1.0,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 0,
+        "conf_present": 0.4444668820074869,
+        "conf_absent": 0.03432676759210343,
+        "moat": "learned"
+      },
+      "neural": {
+        "recall": 1.0,
+        "abstain": 1.0,
+        "false_accept": 0,
+        "within_cat_err": 0,
+        "conf_present": 0.4468018437772794,
+        "conf_absent": 0.05572555024641056,
+        "moat": "learned"
+      },
+      "nonorm": {
+        "recall": 0.125,
+        "abstain": 0.0,
+        "false_accept": 8,
+        "within_cat_err": 0,
+        "conf_present": 0.8101517740680027,
+        "conf_absent": 0.7825957117537594,
+        "moat": "learned"
+      }
+    }
+  ]
+}
