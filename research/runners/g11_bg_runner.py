@@ -3142,6 +3142,18 @@ def run_moving_goal_episode(
     # salience approach reward (Schultz reward-fn-2; Berridge wanting; phototaxis).
     # Use with --enable-visual-cortex. Takes precedence over sensed/Manhattan reward.
     perceived_approach_reward: bool = False,
+    # Homeostatic agent hook (2026-06-17). Default None = byte-identical (no
+    # behavior change for any existing caller; guarded below). When set to a
+    # callable, it is invoked once per trial AFTER the natural reward is
+    # finalized, as: gated_reward, new_goal = homeostatic_hook(reward, x, y,
+    # gx, gy, step, dist_after). The hook lets a drive (e.g. a self-generated
+    # hunger signal) GATE the reward (reward *= hunger) and relocate the goal
+    # (food) on an "eat" event (dist_after == 0), so the validated BG-cascade +
+    # value-critic learner can be reused for a homeostatic agent WITHOUT a fork
+    # or any re-derivation of the tuned drive/readout/reward loop. Returning
+    # new_goal != None reassigns (gx, gy) and logs a goal change. See
+    # research/runners/_homeostatic_g11bg_reuse_probe.py.
+    homeostatic_hook=None,
     # Cue-following reflex (Item 1 Stage 3, 2026-04-27).
     # Replaces the heuristic with a hand-tuned innate reflex that computes
     # cortex drive from beacon sensor activations. Models a real animal's
@@ -6941,6 +6953,18 @@ def run_moving_goal_episode(
                 print(f"[g11 seed={seed}] step {step}: INTERACTIVE REWARD "
                       f"injection {manual_reward_injection:+.2f} -> reward={reward:+.2f}",
                       flush=True)
+        # Homeostatic agent hook (2026-06-17). Default None = byte-identical:
+        # `None is not None` is False, so this is a no-op for every existing
+        # caller. When set, the hook gates the reward by a self-generated drive
+        # (reward *= hunger) and may relocate the goal (food) on an eat event.
+        # Reusing the validated learner for a homeostatic agent, no fork.
+        if homeostatic_hook is not None:
+            reward, _homeo_new_goal = homeostatic_hook(
+                float(reward), int(x), int(y), int(gx), int(gy), int(step), int(dist_after))
+            reward = float(reward)
+            if _homeo_new_goal is not None:
+                gx, gy = int(_homeo_new_goal[0]), int(_homeo_new_goal[1])
+                goal_change_steps.append(step)
         reward_log.append(float(reward))
 
         # Cluster F v1: climbing-fiber teaching signal. When the just-completed
