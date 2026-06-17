@@ -260,6 +260,54 @@ class RFPhasorComposer:
     def unbind(self, composite_phases, role, words=None):
         return self._cleanup(self._unbind_phases(composite_phases, role), words)
 
+    # --- batched query fast-path (the O(K) store-scan -> ONE launch; perf, answer-identical) ---
+    def _can_batch_scan(self):
+        """Batched scan applies on the numpy-kb fast path (no substrate-store) with the numpy matched-filter
+        cleanup (no spiking-cleanup). Otherwise the per-fact loop is used (answer-identical either way)."""
+        return bool(self.kb) and not self.enable_substrate_store and not self.enable_spiking_cleanup
+
+    def _unbind_all_phases(self, comps, role):
+        """Batched substrate unbind: unbind `role` from ALL K stored composites in ONE resonate over a
+        block-diagonal bridge of K isolated 2D-blocks. Each block is an exact copy of the single `_unbind_phases`
+        wiring (no cross-block coupling), so the result equals K separate unbinds EXACTLY -- but pays the 208-step
+        launch overhead ONCE instead of K times (the "batch many tiny ops into one launch" fix for the O(K) query
+        scan; the resonator-network matched-filter pattern, 2026-06-17-snn-vsa-gpu-optimization-literature.md).
+        Returns (K, D) recovered phases."""
+        K, D = len(comps), self.D
+        if K == 0:
+            return np.zeros((0, D))
+        zr_conj = np.conj(self._to_phasor(self.roles[role]))                  # [D] conj role phasor
+        n = 2 * K * D
+        conns = [(i * 2 * D + D + k, i * 2 * D + k, zr_conj[k]) for i in range(K) for k in range(D)]
+        kick = np.zeros(n, dtype=np.complex128)
+        for i in range(K):
+            kick[i * 2 * D:i * 2 * D + D] = self._to_phasor(comps[i])
+        out = self._resonate(n, conns, kick)                                 # [n] phases
+        return np.stack([out[i * 2 * D + D:i * 2 * D + 2 * D] for i in range(K)])   # (K, D)
+
+    def _cleanup_all(self, rec, words=None):
+        """Batched matched-filter cleanup (the resonator C·Cᵀ): nearest concept per row of (K, D). Returns K words.
+        sims = Re(rec_phasor @ conj(codebook_phasor)ᵀ) (= the single `_cleanup`'s mean-cos up to the /D constant,
+        so argmax is IDENTICAL). One matmul over the whole codebook instead of a per-word loop."""
+        words = words if words is not None else self.words
+        if len(rec) == 0:
+            return []
+        rec_z = np.exp(2j * np.pi * np.asarray(rec))                         # (K, D)
+        cb = np.stack([np.exp(2j * np.pi * self.concepts[w]) for w in words])  # (V, D)
+        sims = (rec_z @ np.conj(cb).T).real                                  # (K, V)
+        return [words[int(j)] for j in np.argmax(sims, axis=1)]
+
+    def _scan_first_match(self, **cue_roles):
+        """First stored-fact index whose cue roles ALL match (batched unbind+cleanup over the whole store), or None
+        -- the batched equivalent of the per-fact match loop (first-match semantics preserved)."""
+        comps = [comp for _f, comp in self.kb]
+        mask = np.ones(len(comps), dtype=bool)
+        for role, val in cue_roles.items():
+            words = self._cleanup_all(self._unbind_all_phases(comps, role))
+            mask &= np.fromiter((w == val for w in words), dtype=bool, count=len(words))
+        idx = np.where(mask)[0]
+        return int(idx[0]) if len(idx) else None
+
     # --- conversational API (mirrors CoreSimComposer; the no-confab moat preserved) ---
     def store(self, agent, action, patient, polarity=None):
         fact = {"agent": agent, "action": action}
@@ -380,7 +428,11 @@ class RFPhasorComposer:
             yield fact, (self._retrieve_substrate(handle) if self.enable_substrate_store else handle)
 
     def query_agent(self, action, patient):
-        """'who <action> <patient>?' -> the agent of the matching fact; None if no fact matches (abstention)."""
+        """'who <action> <patient>?' -> the agent of the matching fact; None if no fact matches (abstention).
+        Batched store scan on the fast path (answer-identical to the per-fact loop)."""
+        if self._can_batch_scan():
+            i = self._scan_first_match(action=action, patient=patient)
+            return self.unbind(self.kb[i][1], "agent") if i is not None else None
         for fact, comp in self._iter_facts():
             if self.unbind(comp, "action") == action and self.unbind(comp, "patient") == patient:
                 return self.unbind(comp, "agent")
@@ -391,7 +443,16 @@ class RFPhasorComposer:
         the fact bound an ATTRIBUTE); None if no match (abstention). The stored structure only routes the rendering;
         the words are decoded from the RF unbind. `order_fn` (opt-in, default None = host f-string): when set, an
         inner CLAUSE patient's SVO order is produced by the de-risked spiking serial-order generator. The moat is
-        unaffected: abstention (return None) happens BEFORE any rendering."""
+        unaffected: abstention (return None) happens BEFORE any rendering. The store scan is BATCHED on the fast
+        path (one resonate over all facts; answer-identical to the per-fact loop below)."""
+        if self._can_batch_scan():
+            i = self._scan_first_match(agent=agent, action=action)
+            if i is None:
+                return None
+            fact, comp = self.kb[i]
+            noun = self._render(comp, "patient", fact["patient"], order_fn=order_fn)
+            adjs = [self.unbind(comp, r) for r in ("attribute", "attribute2") if r in fact]
+            return " ".join(adjs + [noun]) if adjs else noun
         for fact, comp in self._iter_facts():
             if self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action:
                 noun = self._render(comp, "patient", fact["patient"], order_fn=order_fn)   # word OR recursive Clause
@@ -418,7 +479,12 @@ class RFPhasorComposer:
 
     def ask_yes_no(self, agent, action, patient):
         """'does <agent> <action> <patient>?' -> 'yes'/'no'/'unknown' via the bound AFFIRM/NEGATE polarity tag.
-        Matches the full SVO; 'unknown' (abstention) when no stored fact matches."""
+        Matches the full SVO; 'unknown' (abstention) when no stored fact matches. Batched scan on the fast path."""
+        if self._can_batch_scan():
+            i = self._scan_first_match(agent=agent, action=action, patient=patient)
+            if i is None:
+                return "unknown"
+            return "yes" if self.unbind(self.kb[i][1], "polarity", self.pol_words) == "AFFIRM" else "no"
         for fact, comp in self._iter_facts():
             if (self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action
                     and self.unbind(comp, "patient") == patient):
