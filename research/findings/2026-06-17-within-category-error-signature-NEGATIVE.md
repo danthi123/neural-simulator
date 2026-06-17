@@ -42,26 +42,30 @@ The structured codes carry a WEAK residual within-category bias (~5% vs 2.2% cha
 far below the "semantically sensible confusion" hypothesis (which would predict tens of percent). It does not
 clear the pre-registered GATE (≥20% absolute and ≥2.5× the controls). **NEGATIVE.**
 
-## Why it matters — the negative SHARPENS the generalization claim
+## Why it matters — the negative, with the CORRECTED mechanism (a small-margin structure overwhelmed by noise)
 
 The decisive sub-result is **raw_struct ≈ structured (5.0% ≈ 5.2%)**: removing the role-binding entirely does NOT
-recover a strong within-category bias. So the binding is NOT washing out the structure — **the structure was
-never in the raw nearest-neighbor geometry of the codes.** An isotropic perturbation of a code lands nearest a
-*random* other code ~98% of the time, not a category neighbor.
+recover a strong within-category bias, so the binding is not the cause.
 
-This reconciles cleanly with the generalization arc (`2026-06-16-generalization-*`), where category generalization
-was strong (held-out category accuracy **0.92**): there, the category was extracted by a LEARNED block-diagonal
-category read-out + NMDA temporal integration — a **learned projection onto a category-read-out direction**, not
-raw cosine distance over the full 300-dim code. So:
+**Correction (substantiated `2026-06-17`, `_genfrontier_learned_vs_raw_category_readout.py`).** My first
+explanation here — "the structure was never in the raw nearest-neighbor geometry" — was WRONG, and a direct check
+on the same 320 codes falsified it. Leave-one-out nearest-neighbour category accuracy is **~21% (8.4× the 2.5%
+chance)**: the category structure IS present in the raw geometry. A learned linear read-out recovers only modestly
+more (**~26%**), and the deranged-label control sits at chance (~2.3%). So the correct mechanism is:
 
-> The cortex codes' generalization lives in a LEARNED read-out subspace (a category direction a downstream region
-> learns to read), NOT in raw code proximity. The conversational binder's cleanup is raw-nearest-neighbor, so its
-> recall errors are near-random — NOT semantically biased.
+> The 320 stream codes carry REAL category structure in raw proximity (kNN 21%), but it is **SMALL-MARGIN**: a
+> same-category code sits at phase-cosine ~0.13 from the true code, versus 1.0 for the true code itself. The
+> read-out noise required to produce a binder recall error (recall pushed below ~0.6) is large enough to
+> overwhelm that thin margin, so the wrong pick lands near-random (~5% within-category, ~2.3× chance). The
+> structure is there; the noise that causes errors simply dwarfs it.
 
-This prevents a tempting overclaim ("the agent confuses dog↔cat like a person would") that the data do not
-support, and it precisely localizes generalization: it is a property of a *learned read-out*, demonstrated in the
-perception→concept pathway, and it does NOT automatically express itself as semantic structure in the
-conversational binder's error pattern.
+This still prevents the tempting overclaim ("the agent confuses dog↔cat like a person would") — the conversational
+binder's recall errors are NOT meaningfully semantic — but for the right reason: a real-but-thin category margin
+swamped by error-inducing noise, NOT an absence of structure. It also tempers the "learned read-out" framing: a
+linear read-out (26%) barely beats raw (21%) on these codes, so generalization is not uniquely a "learned
+direction" here. The strong perception→concept generalization (held-out cat-acc **0.92**,
+`2026-06-16-generalization-*`) came from a richer pathway — NMDA temporal integration + a block-diagonal category
+read-out over **similarity-structured perception input** — not a linear read-out on these stream codes.
 
 ## Honest scope / what this is not
 

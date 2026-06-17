@@ -1,0 +1,27 @@
+{
+  "chance": 0.025,
+  "raw_mean": 0.21145833333333333,
+  "learned_mean": 0.25729166666666664,
+  "deranged_mean": 0.02291666666666667,
+  "verdict": "NOT-SUBSTANTIATED",
+  "rows": [
+    {
+      "seed": 42,
+      "raw_knn": 0.21875,
+      "learned": 0.2875,
+      "deranged": 0.034375
+    },
+    {
+      "seed": 43,
+      "raw_knn": 0.2125,
+      "learned": 0.25,
+      "deranged": 0.01875
+    },
+    {
+      "seed": 44,
+      "raw_knn": 0.203125,
+      "learned": 0.234375,
+      "deranged": 0.015625
+    }
+  ]
+}

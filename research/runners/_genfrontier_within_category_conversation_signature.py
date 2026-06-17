@@ -173,12 +173,13 @@ def main():
         mr = np.nanmean([ps["regime"]["random"] for ps in per_seed])
         print(f"  NEGATIVE ({go_seeds}/{len(per_seed)} seeds): the within-category error signature is WEAK — "
               f"bound {100*ms:.1f}% vs raw-no-bind {100*mw:.1f}% vs random {100*mr:.1f}% vs chance {100*chance:.1f}%. "
-              "Crucially RAW (no-binding) ~ BOUND, so the role-binding does NOT wash out the structure — it was "
-              "never in the raw nearest-neighbor geometry. The cortex codes' generalization is carried by a "
-              "LEARNED category-readout direction (perception->concept arc: held-out cat-acc 0.92), NOT by raw "
-              "code proximity; so the conversational binder's cleanup errors are near-random, not semantically "
-              "biased. Honest negative that SHARPENS the claim: generalization lives in a learned readout "
-              "subspace, not in conversational recall errors. (No overclaim of 'dog<->cat confusion'.)", flush=True)
+              "RAW (no-binding) ~ BOUND, so the role-binding is not the cause. CORRECTED mechanism (see "
+              "_genfrontier_learned_vs_raw_category_readout.py): the codes DO carry category structure in raw "
+              "proximity (kNN cat-acc ~21%, 8.4x chance) but it is SMALL-MARGIN (same-cat cosine ~0.13); the "
+              "read-out noise that causes a binder error overwhelms that thin margin, so the wrong pick is "
+              "near-random. The conversational binder's recall errors are NOT meaningfully semantic — a real-but-"
+              "thin margin swamped by noise, NOT an absence of structure. (No overclaim of 'dog<->cat confusion'.)",
+              flush=True)
     else:
         print("  NO CODES — run the 320 stream cortex first.", flush=True)
     print(f"  [saved] {a.out}\n{'='*100}", flush=True)
