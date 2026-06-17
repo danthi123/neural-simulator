@@ -22,11 +22,20 @@ validated, so the full brain-based homeostatic agent is an *integration* of vali
 
 `_homeostatic_spiking_reward_plasticity_derisk.py` tried to show the link DIRECTLY: co-fire cue→motor (tag
 eligibility), apply the neural reward, then probe whether cue alone evokes MORE motor firing (rewarded vs
-unrewarded vs lesion). Across four tuning iterations (pathway strength 2→20, cue-leads-motor LTP timing, learning
-rate 0.05→0.15, STDP frozen during the probe so the read-out does not corrupt the weights, an ×8 reward gain), the
-cue→motor strength **decreased in all three conditions alike** (rewarded Δ ≈ unrewarded ≈ lesion ≈ −0.015) — the
-**baseline STDP depression from the training co-fire dominated the small reward-modulated component**, and the
-neural reward (a small concentration delta, r ≈ 0.03) could not produce a clean contrast.
+unrewarded vs lesion). Across **five** tuning iterations (pathway strength 2→20, learning rate 0.05→0.15, STDP
+frozen during the probe so the read-out does not corrupt the weights, an ×8 reward gain, an explicit
+cue-leads-motor temporal offset for clean LTP timing, and a full-magnitude reward **r = 0.22**), the cue→motor
+strength **decreased in all three conditions alike** (rewarded Δ ≈ unrewarded ≈ lesion ≈ −0.015) — no contrast,
+even with a large reward and LTP-favourable timing.
+
+**Why (the mechanism, now understood, `sim/bridge.py:6642`):** the eligibility trace IS the *signed* STDP
+weight-change, and the direct STDP applies that same change every step. With high initial weights (needed so the
+motor responds measurably to the cue) the soft-bound STDP is **LTD-dominant**, so the eligibility goes negative;
+the positive reward then multiplies a negative eligibility and **deepens** the depression rather than reversing
+it. Low initial weights would let STDP potentiate, but then the motor does not respond to the cue and the
+functional read-out is at the floor — the classic silent-motor-trap tension. The nav loop resolves exactly this
+with machinery the toy lacks (motor-exploration spikes, BG-cascade disinhibition for credit assignment, and
+tuned STDP/reward parameters). Five attempts conclusively confirm the toy is the wrong vehicle.
 
 This is **not a new finding** — it is the exact reward-modulated-learning balance challenge the project already
 confronted and solved with the navigation machinery (the "silent-motor trap" arc, the BG cascade, eligibility-

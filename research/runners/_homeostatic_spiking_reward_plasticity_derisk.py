@@ -126,33 +126,40 @@ def run_condition(seed, mode):
 
     # TRAIN: repeat co-fire(cue+motor) [tags eligibility] -> set the neural reward -> let it apply.
     for _ in range(40):
-        # 1) co-fire with cue LEADING motor (pre-before-post -> LTP-favorable STDP eligibility on cue->motor)
-        for _ in range(15):
-            bridge.cp_external_input_current[:] = 0.0
-            bridge.cp_external_input_current[xp.asarray(cue)] = 400.0      # cue drives first/stronger
-            bridge.cp_external_input_current[xp.asarray(motor)] = 220.0    # motor follows (post lags pre)
-            bridge._run_one_simulation_step()
+        # 1) co-fire with cue clearly LEADING motor: drive cue alone for a few ms (cue spikes), THEN add motor so
+        #    the motor spikes a few ms AFTER the cue -> delta_t = t_post - t_pre > 0 -> clean LTP (POSITIVE
+        #    eligibility on cue->motor). A simultaneous drive (the earlier version) gave net-LTD timing.
+        for _ in range(12):
+            for _ in range(3):                        # cue leads
+                bridge.cp_external_input_current[:] = 0.0
+                bridge.cp_external_input_current[xp.asarray(cue)] = 400.0
+                bridge._run_one_simulation_step()
+            for _ in range(3):                        # motor follows (post lags pre -> LTP)
+                bridge.cp_external_input_current[:] = 0.0
+                bridge.cp_external_input_current[xp.asarray(cue)] = 400.0
+                bridge.cp_external_input_current[xp.asarray(motor)] = 350.0
+                bridge._run_one_simulation_step()
         # 2) compute the NEURAL reward as the drive-reduction. Hungry (agrp driven) -> conc up; then "eat"
         #    (agrp off) -> conc decays -> r = conc_before - conc_after > 0 (rewarded). For unrewarded/lesion, the
         #    agrp is never driven, so there is no drive to reduce -> r ≈ 0.
         if mode == "rewarded":
-            for _ in range(120):                    # build the drive (hungry) -> a meaningful hunger conc
+            for _ in range(250):                    # build the drive (hungry) -> a full hunger conc
                 bridge.cp_external_input_current[:] = 0.0
-                bridge.cp_external_input_current[xp.asarray(agrp)] = 300.0
+                bridge.cp_external_input_current[xp.asarray(agrp)] = 400.0
                 bridge._run_one_simulation_step()
             c_before = _conc(bridge)
-            for _ in range(60):                     # eat: agrp off -> drive decays
+            for _ in range(120):                    # eat: agrp off -> drive decays fully
                 bridge.cp_external_input_current[:] = 0.0
                 bridge._run_one_simulation_step()
             c_after = _conc(bridge)
             r = max(0.0, c_before - c_after)
         elif mode == "lesion":
-            for _ in range(180):                    # drive frozen: agrp never driven -> no drive, no reduction
+            for _ in range(370):                    # drive frozen: agrp never driven -> no drive, no reduction
                 bridge.cp_external_input_current[:] = 0.0
                 bridge._run_one_simulation_step()
             r = 0.0
         else:  # unrewarded: same elapsed time, no reward
-            for _ in range(180):
+            for _ in range(370):
                 bridge.cp_external_input_current[:] = 0.0
                 bridge._run_one_simulation_step()
             r = 0.0
