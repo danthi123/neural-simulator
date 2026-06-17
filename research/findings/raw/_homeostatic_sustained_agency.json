@@ -1,0 +1,100 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "drive": {
+        "band_occupancy": 1.0,
+        "min_energy": 0.955,
+        "mean_energy": 0.99915,
+        "crash_frac": 0.0
+      },
+      "lesion": {
+        "band_occupancy": 0.9793333333333333,
+        "min_energy": 0.05499999999999923,
+        "mean_energy": 0.8023699999999999,
+        "crash_frac": 0.0026666666666666666
+      },
+      "go": true
+    },
+    {
+      "seed": 43,
+      "drive": {
+        "band_occupancy": 1.0,
+        "min_energy": 0.8649999999999999,
+        "mean_energy": 0.99734,
+        "crash_frac": 0.0
+      },
+      "lesion": {
+        "band_occupancy": 0.86,
+        "min_energy": 0.0,
+        "mean_energy": 0.694943333333333,
+        "crash_frac": 0.06866666666666667
+      },
+      "go": true
+    },
+    {
+      "seed": 44,
+      "drive": {
+        "band_occupancy": 1.0,
+        "min_energy": 0.955,
+        "mean_energy": 0.99902,
+        "crash_frac": 0.0
+      },
+      "lesion": {
+        "band_occupancy": 0.8253333333333334,
+        "min_energy": 0.0,
+        "mean_energy": 0.6775966666666665,
+        "crash_frac": 0.098
+      },
+      "go": true
+    },
+    {
+      "seed": 100,
+      "drive": {
+        "band_occupancy": 1.0,
+        "min_energy": 0.9249999999999999,
+        "mean_energy": 0.99864,
+        "crash_frac": 0.0
+      },
+      "lesion": {
+        "band_occupancy": 0.7513333333333333,
+        "min_energy": 0.0,
+        "mean_energy": 0.6253666666666665,
+        "crash_frac": 0.16066666666666668
+      },
+      "go": true
+    },
+    {
+      "seed": 101,
+      "drive": {
+        "band_occupancy": 1.0,
+        "min_energy": 0.955,
+        "mean_energy": 0.9993500000000001,
+        "crash_frac": 0.0
+      },
+      "lesion": {
+        "band_occupancy": 0.758,
+        "min_energy": 0.0,
+        "mean_energy": 0.5967066666666663,
+        "crash_frac": 0.12533333333333332
+      },
+      "go": true
+    },
+    {
+      "seed": 102,
+      "drive": {
+        "band_occupancy": 1.0,
+        "min_energy": 0.7149999999999997,
+        "mean_energy": 0.9963399999999999,
+        "crash_frac": 0.0
+      },
+      "lesion": {
+        "band_occupancy": 0.8133333333333334,
+        "min_energy": 0.0,
+        "mean_energy": 0.6517399999999997,
+        "crash_frac": 0.13066666666666665
+      },
+      "go": true
+    }
+  ]
+}
