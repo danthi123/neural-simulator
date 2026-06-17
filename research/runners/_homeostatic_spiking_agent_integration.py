@@ -28,13 +28,13 @@ _REPO = os.path.normpath(os.path.join(_HERE, "..", ".."))
 if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
-L = 5              # corridor positions 0..L-1; food at 0
+L = 5              # corridor positions 0..L-1; food at 0 (overridable via --L)
 N_PLACE = 40       # neurons per place cell
 N_MOTOR = 40
 N_DRIVE = 50
 
 
-def build_agent(seed):
+def build_agent(seed, elig_tau=500.0):
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion, RegionPathway
@@ -59,7 +59,7 @@ def build_agent(seed):
     cfg.stdp_w_min = 0.0
     cfg.stdp_w_max = 30.0
     cfg.reward_learning_rate = 0.08
-    cfg.reward_eligibility_tau_ms = 500.0
+    cfg.reward_eligibility_tau_ms = float(elig_tau)   # long -> the sparse eating-reward credits the whole path
     cfg.reward_baseline = 0.0
     cfg.current_reward_signal = 0.0
     rs = NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name
@@ -103,8 +103,12 @@ def main():
     ap.add_argument("--trials", type=int, default=120)
     ap.add_argument("--deplete", type=float, default=0.015)   # slower -> time to reach food + learn before starving
     ap.add_argument("--refill", type=float, default=0.6)
+    ap.add_argument("--L", type=int, default=5)              # shorter corridor -> easier path credit-assignment
+    ap.add_argument("--elig-tau", type=float, default=500.0)
     ap.add_argument("--out", default="research/findings/raw/_homeostatic_spiking_agent_integration.json")
     a = ap.parse_args()
+    global L
+    L = int(a.L)
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
@@ -114,7 +118,7 @@ def main():
 
     print("[spiking homeostatic agent] wiring smoke: place+motor+drive on one bridge; reward = neural "
           "drive-reduction (no host distance term).\n", flush=True)
-    bridge, cfg = build_agent(a.seed)
+    bridge, cfg = build_agent(a.seed, elig_tau=a.elig_tau)
     rng = np.random.default_rng(a.seed)
     idx = {r: np.asarray(bridge.region_manager.indices(r), dtype=np.int64)
            for r in [f"place{p}" for p in range(L)] + ["motor_a", "motor_b", "agrp"]}

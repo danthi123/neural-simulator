@@ -51,6 +51,19 @@ late) — the standard fix — improved it but did not make it robust: 2/3 seeds
 the *last* action before eating; the eligibility trace (τ 500 ms) reaches only a few steps back, so earlier moves
 get weak/delayed credit and the policy converges slowly and inconsistently.
 
+**Second tuning attempt — short corridor + long eligibility (the Monte-Carlo credit-spreading fix) — also fails,
+decisively.** Hypothesis: a shorter path (L=3) + a long eligibility trace (τ 2000 ms) would let the eating-reward
+credit the whole short path at once. Result (3 seeds, 200 trials): still inconsistent (seed 44 learns 0.35→0.75;
+42 flat 0.30; 43 drops 0.60→0.50), with *high* food-reaches (20–30, easy survival) but no robust learned
+preference. The long eligibility actually *hurts* — in the short corridor the agent oscillates near food, so the
+long trace credits the back-and-forth wandering (toward AND away moves) indiscriminately, adding credit noise.
+
+**This decisively establishes the diagnosis:** the missing ingredient is **value bootstrapping** (a TD critic —
+the dopamine reward-prediction-error spreading value backward over states), NOT eligibility/corridor tuning. The
+minimal reward-modulated-STDP actor credits recent co-firing without a value estimate, so it cannot do multi-step
+credit assignment regardless of trace length. The validated nav loop has exactly this (the spiking SNc dopamine
+RPE + the critic) — which is why it converges and the minimal actor cannot.
+
 **Honest conclusion:** robust spiking-RL convergence from a sparse intrinsic reward is the genuine hard problem —
 exactly what the project's **navigation arc** needed its full machinery (the basal-ganglia cascade for credit
 assignment + careful multi-cycle tuning) to solve. A minimal `place→motor` actor under-delivers on it. The
