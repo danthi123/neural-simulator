@@ -7,9 +7,49 @@ This document is the **authoritative current-state reference**.
 Update it whenever capabilities change. For the journey of how we
 got here, see `research/findings/`.
 
-**Last meaningful update:** 2026-06-13 (see "Recent milestones (2026-06)" below).
+**Last meaningful update:** 2026-06-16 (see "Recent milestones (2026-06)" below).
 
 **Recent milestones (2026-06):**
+- **The unified embodied agent — one brain that navigates, perceives, composes,
+  and converses (2026-06-16).** A *single* network (one update loop) in which
+  navigation, perception, fact-composition, and conversation all run as
+  distinct groups of neurons. In one continuous run the agent navigates a grid
+  from simulated vision, perceives the objects it passes, **binds a perceived
+  object into a new fact**, answers a who/what question about it, and **abstains**
+  on anything it never saw. Validated first on a single random seed, then across
+  six: the integration, the no-fabrication guarantee, navigation,
+  fact-composition, conversation, and sentence-parsing all hold on every seed
+  (four are a full pass; the two misses are a per-seed fidelity wobble in the
+  *generalization* step only — see below — diagnosed as a side-effect of
+  co-locating the circuits, fix under test, and never a lapse in the
+  no-fabrication guarantee). Sources:
+  [`2026-06-16-unified-embodied-agent-stage2-GO.md`](../research/findings/2026-06-16-unified-embodied-agent-stage2-GO.md),
+  [`2026-06-16-navigate-to-compose-then-answer.md`](../research/findings/2026-06-16-navigate-to-compose-then-answer.md).
+- **The two brains genuinely interact through synapses (not just co-located).**
+  A spoken command can steer the navigating body (six-seed pass), and the agent
+  can navigate to **see** an object and afterward **recall** what it saw
+  (six-seed pass) — the first real cross-region "one brain" interactions, both
+  with decisive lesion controls. Sources:
+  [`2026-06-10-spoken-instruction-nav-GO.md`](../research/findings/2026-06-10-spoken-instruction-nav-GO.md),
+  [`2026-06-16-navigate-to-see-then-answer.md`](../research/findings/2026-06-16-navigate-to-see-then-answer.md).
+- **It generalizes across similar concepts (2026-06-16).** A *novel* object,
+  perceived through the simulated visual system (retina → edge-detectors),
+  makes its concept-neurons fire for the correct *category* (about 3× chance),
+  and the agent can then recall a fact about the matched category and answer.
+  The mechanism was de-risked four independent ways; the heavier biological
+  rewrite (modelling neuronal dendrites) people assumed was required turned out
+  **not** to be needed — plain point-neurons with local learning suffice. The
+  biology is convergence-zone / hub-and-spoke semantic memory (Patterson &
+  Lambon Ralph; spiking precedent Garagnani & Pulvermüller 2018). Sources:
+  [`2026-06-16-generalization-capstone-vision-to-concept.md`](../research/findings/2026-06-16-generalization-capstone-vision-to-concept.md),
+  [`2026-06-16-generalization-capstone-verbalize.md`](../research/findings/2026-06-16-generalization-capstone-verbalize.md).
+- **The conversational pipeline's cognitive steps are now neural, not
+  off-brain shortcuts (2026-06-16).** The four core steps — the no-fabrication
+  ("won't confabulate") gate, memory cleanup, concept-binding, and output
+  normalization — each have a validated spiking/neural mechanism. Notably the
+  neural no-fabrication gate is *cleaner* than the host check it replaced (zero
+  false-accepts on the same codes). Source:
+  [`2026-06-16-biologization-sweep-conversational-pipeline.md`](../research/findings/2026-06-16-biologization-sweep-conversational-pipeline.md).
 - **The conversational "composer" is now fully spiking** — the part that binds
   words into facts uses phase-based spiking neurons (a resonate-and-fire model
   with complex-valued synapses), which sidesteps a noise barrier that the
@@ -30,25 +70,29 @@ got here, see `research/findings/`.
   network with one update loop, capability-equivalent to the separate brains.
   The conversational behaviour works unchanged on the shared network (including
   its refusal to make up answers), and navigation runs on it while the
-  conversational neurons stay **byte-identical** during navigation's live
-  learning (confirmed: the navigation score is identical with and without the
-  conversational half present). See
-  [`ARCHITECTURE_nav_conv_merge.md`](ARCHITECTURE_nav_conv_merge.md). The only
-  frontier left is step 3 — replacing the composer's fixed binding algebra with
-  a learned cortex.
-- **Step 3 (the learned cortex) is now active — mid-build (2026-06-13).** The
+  conversational neurons stay **exactly unchanged** during navigation's live
+  learning (confirmed: the navigation score is identical to the bit with and
+  without the conversational half present). The two halves now also **interact
+  through synapses** (the spoken-command and navigate-to-see milestones above),
+  and the **unified embodied agent** above runs all of it together in one live
+  episode. See [`ARCHITECTURE_nav_conv_merge.md`](ARCHITECTURE_nav_conv_merge.md).
+- **Step 3 (the learned cortex) is now active — mid-build (2026-06-15).** The
   fact-binding "composer" above uses a fixed, exact mathematical rule
   (a vector-binding scheme) as a stand-in for cortex. Step 3 replaces it with a
   *learned* model cortex whose internal codes carry meaning-similarity (so
-  similar concepts sit close together), which is what would let the system
-  answer about a never-seen concept by analogy to a similar known one. The
-  recent work **de-risked scaling this to about 2,048 concepts** spread across
-  32 small spiking sub-networks (cross-network fact-binding and the
-  "won't make things up" guarantee both hold at that scale, multi-seed), chose
-  the production design, and is **now building and validating the full
-  system** — not finished. A side question (learning concept similarity from
-  *raw* text rather than a curated scheme) came back inconclusive and is a
-  logged follow-up. Reported as in-progress.
+  similar concepts sit close together), which is what lets the system answer
+  about a never-seen concept by analogy to a similar known one (the
+  generalization milestone above). This is now real on the spiking network at
+  about **64 concepts**, and — importantly — **learned from a conversation
+  stream**: the network simply hears words in context (no pre-processing of the
+  text), learns their co-occurrence with a plain local learning rule, and then
+  carries the full who/what conversation plus the no-fabrication guarantee. A
+  blocker once feared here — having to strip the natural correlations out of the
+  concept codes — turned out to be a *red herring*; the fix was simple local
+  normalization plus online learning. The remaining build is scaling this
+  learned-from-conversation cortex to the **320-concept** production tier.
+  Reported as in-progress. Source:
+  [`2026-06-15-on-bridge-hebbian-co-occurrence-learning-mechanism-GO.md`](../research/findings/2026-06-15-on-bridge-hebbian-co-occurrence-learning-mechanism-GO.md).
 
 > The "At a glance" and detailed sections below predate the 2026-06 work and
 > describe the earlier multi-tag-retrieval era; the milestones above are the
@@ -67,9 +111,11 @@ The simulator is a GPU-accelerated spiking neural network with:
 - ~175,000 synapses with multiple plasticity rules (STDP, STP, Hebbian, homeostasis, reward-modulated)
 - Real-time 3D visualization
 - Biology-grounded models: Izhikevich-2007, Hodgkin-Huxley, AdEx
-- ~375 biological mechanisms catalogued from Kandel + 12 specialty texts
+- over 300 biological mechanisms catalogued from Kandel + 12 specialty texts
 
-The agent currently solves three main tasks:
+The agent solves three main tasks — and, as of the 2026-06 unified-agent
+milestone above, runs all three **together on one network** in a single live
+episode (navigate → perceive → compose a fact → converse):
 
 1. **Gridworld navigation** (the "main task") — find a goal on a 8×8
    to 32×32 grid using only retinal input

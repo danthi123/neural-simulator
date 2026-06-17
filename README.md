@@ -53,6 +53,39 @@ graph, no supervised labels, no symbolic optimizer.
 
 ## What it does today
 
+**One brain that does it all at once.** The headline result is a *single*
+simulated brain — one network, one update loop — in which navigation,
+perception, memory, fact-composition, and conversation all run as distinct
+groups of neurons sharing the same engine. In one continuous run it
+**navigates** a grid from simulated vision, **perceives** the objects it
+passes, **builds a new fact** about a perceived object, **answers questions**
+about it, and **refuses to answer** about anything it never saw. This was
+shown first on one random starting configuration and then re-run across six.
+The integration itself, the refusal-to-fabricate guarantee, navigation,
+fact-composition, conversation, and sentence-parsing all hold up on every one
+of the six (four are a clean full pass; the two misses are a known per-run
+fidelity wobble in the *generalization* step only — see below — diagnosed and
+with a fix under test, never a failure of the no-fabrication guarantee).
+Findings:
+[`navigate-to-compose-then-answer`](research/findings/2026-06-16-navigate-to-compose-then-answer.md),
+[`unified-embodied-agent`](research/findings/2026-06-16-unified-embodied-agent-stage2-GO.md).
+
+**It generalizes across similar things.** Shown a *novel* object through its
+simulated eyes (retina → edge-detectors), it can fire the concept-neurons for
+the right *category* — recognizing a never-seen shape as belonging with the
+ones it knows — then recall a fact about that category and answer. In short:
+it can reason about something it has never seen from a *similar* thing it has.
+The mechanism was de-risked four independent ways, and the end-to-end demo
+works. A pleasant surprise: the heavier biological machinery many assumed
+this would need (modelling the branching input structure of single neurons,
+called *dendrites*) turned out **not** to be required — plain point-neurons
+with local learning suffice. The biology this draws on is *convergence-zone*
+or *hub-and-spoke* semantic memory, where a hub region binds together the
+sensory "spokes" of a concept (Patterson & Lambon Ralph; spiking precedent in
+Garagnani & Pulvermüller 2018). Findings:
+[`vision-to-concept`](research/findings/2026-06-16-generalization-capstone-vision-to-concept.md),
+[`verbalize`](research/findings/2026-06-16-generalization-capstone-verbalize.md).
+
 **A trustworthy continual memory.** You can teach it word–concept facts
 ("apple is big", "the dog ate the apple"); it recalls them on cue and —
 the genuinely hard part — keeps old memories intact while learning new
@@ -216,6 +249,8 @@ result does not hold up — is itself part of the contribution.
 | **Learn from reward** | Dopamine modulates spike-timing plasticity | ✅ Working |
 | **Hold a goal in mind** | Prefrontal working memory keeps firing after input stops (NMDA bistability) | ✅ Working |
 | **Remember word–concept facts** | Distributed cortical word-ensembles; sparse scattered recall; tagged engram ensembles | ✅ Working — ~320 concepts, multi-seed |
+| **Compose facts about what it sees** | Perceived objects are bound into new who-did-what facts, in spikes | ✅ Working — one network, six seeds |
+| **Generalize to similar things** | A novel object's concept-neurons fire for the right *category* (hub-and-spoke semantic memory) | ✅ Working — vision→concept demonstrated; per-run fidelity is the open edge |
 | **Not forget while learning more** | Hippocampus→cortex transfer with sleep replay (McClelland 1995) | ✅ Working — no catastrophic forgetting |
 | **Know what it doesn't know** | A recall-confidence threshold; it abstains below it | ✅ Working — refuses to confabulate |
 | **Speak in its own words** | Its own spiking net, trained by surrogate-gradient learning on local text | ⚠️ Early — foundation proven, not yet fluent |
@@ -278,7 +313,7 @@ OpenGL 3D rendering    lock-free     spike + plasticity kernels
 camera / interaction     queues      recording / checkpointing
 ```
 
-The engine lives in `sim/` (42 modules). The central object is the
+The engine lives in `sim/` (43 modules). The central object is the
 **`SimulationBridge`**, which owns all neuron and synapse state as GPU
 arrays and advances the network one millisecond-scale step at a time:
 synaptic currents → background noise → neuron model update → plasticity →
@@ -329,13 +364,26 @@ NVIDIA RTX 3090, 24 GB):
 
 ### Working (validated, multi-seed where stated)
 
+- **One unified brain** — navigation, perception, fact-composition, and
+  conversation run together as distinct neuron groups on one network in a
+  single live run; validated across six random seeds (the integration,
+  the no-fabrication guarantee, navigation, composition, conversation, and
+  sentence-parsing all hold on every seed).
+- **Cross-region interaction** — the conversational and navigation halves
+  genuinely connect through synapses: a spoken command steers the body,
+  and the agent can navigate to see an object then recall it (each
+  six-seed).
 - **Continual memory** — ~320 concepts across a five-part cortex; new
   learning does not erase old memories.
 - **Trustworthy recall** — abstains ("I don't know") instead of
   confabulating on untaught queries, with a measured confidence gap.
 - **Compositional facts** — binds concepts into who-did-what facts,
-  attributes, and nested clauses, and answers who/what/yes-no questions
-  (including negation), computed in spiking neurons.
+  attributes, and nested clauses (including facts about *perceived*
+  objects), and answers who/what/yes-no questions (including negation),
+  computed in spiking neurons.
+- **Generalize across similar concepts** — a novel object seen through the
+  simulated visual system fires its concept-neurons for the correct
+  *category* (about 3× chance); per-run fidelity is the one open edge.
 - **Navigation** — reaches a goal from simulated vision only, no
   coordinate or distance shortcuts.
 - **Own-network text learning (foundation)** — the system's own spiking
@@ -386,25 +434,40 @@ for orienting toward the goal, a neural reward signal, and a spiking
 basal-ganglia decision and dopamine system), with no hand-coded
 shortcut in between. An earlier milestone **put the navigation brain and
 the conversational brain on a single network** — each as its own group
-of neurons. The conversational behaviour works unchanged on the shared
-network (including its refusal to make up answers it doesn't know), and
-the navigation runs on it while the conversational neurons stay exactly
+of neurons — and the two now genuinely **interact through synapses**, not
+merely sit side by side: a *spoken command* can steer the navigating
+body (six-seed pass), and the agent can navigate to **see** an object and
+afterward **recall** what it saw (six-seed pass). The most recent
+milestone goes further still — the *unified embodied agent* above, where
+navigating, perceiving, composing a new fact, and conversing all run
+together on the one network in a single live run. The conversational
+behaviour (including its refusal to make up answers it doesn't know)
+works unchanged throughout, and the conversational neurons stay exactly
 unchanged during navigation's live learning. See
-[`docs/ARCHITECTURE_nav_conv_merge.md`](docs/ARCHITECTURE_nav_conv_merge.md).
+[`docs/ARCHITECTURE_nav_conv_merge.md`](docs/ARCHITECTURE_nav_conv_merge.md)
+and the findings
+[`spoken-instruction-nav`](research/findings/2026-06-10-spoken-instruction-nav-GO.md),
+[`navigate-to-see-then-answer`](research/findings/2026-06-16-navigate-to-see-then-answer.md).
 
-**What's in progress now (mid-build).** The memory system above stores
-concepts as *separate* patterns — it cannot, for example, answer a
-question about a never-seen concept by reasoning from a *similar* one it
-does know. That requires a model cortex whose internal codes preserve
+**What's in progress now (mid-build).** The trustworthy memory above
+stores concepts as *separate* patterns. The generalization capability
+described earlier — answering about a never-seen thing via a *similar*
+known one — needs a model cortex whose internal codes carry
 **meaning-similarity** (so "lion" and "tiger" sit close together), learned
-from experience rather than hand-assigned. The recent work de-risked
-scaling such a learned cortex to about **2,048 concepts** spread across
-many small spiking sub-networks, settled on a production design, and is
-**now building it** — training and validating the full system, not
-finished. One open sub-question — whether the network can learn concept
-similarity from *raw* text versus a curated scheme — came back
-inconclusive and is a logged follow-up. This is reported as work in
-progress, not a completed result.
+from experience rather than hand-assigned. This is now real: a
+generalizing, biology-faithful cortex that **learns word meanings from a
+conversation stream** — simply hearing words in context, with no
+pre-processing of the text — is realized on the spiking network at about
+**64 concepts** (it learns the word co-occurrence with a plain local
+learning rule, then carries the full who/what conversation plus the
+no-fabrication guarantee). A blocker once feared here — having to strip
+out the natural correlations between concept codes — turned out to be a
+*red herring*: the fix was simple local normalization plus online
+learning, not the heavy machinery it seemed to demand. The remaining
+build is scaling this learned-from-conversation cortex to the
+**320-concept** production tier. Reported as work in progress, not a
+finished result. Source:
+[`on-bridge-hebbian-co-occurrence-learning`](research/findings/2026-06-15-on-bridge-hebbian-co-occurrence-learning-mechanism-GO.md).
 
 The project keeps a detailed, dated record. Each research session writes a
 findings document (including negative results — they are real findings),
@@ -446,7 +509,7 @@ neural-simulator/
 ├── neural-simulator.py    ← GUI host + main entry point
 ├── benchmark.py           ← GPU throughput benchmark
 ├── run_benchmarks.py      ← biological validation suite
-├── sim/                   ← engine (42 modules)
+├── sim/                   ← engine (43 modules)
 ├── viz/                   ← 3D OpenGL rendering
 ├── ui/                    ← DearPyGUI controls
 ├── experiment/            ← stimulus, groups, readout, training
@@ -458,7 +521,7 @@ neural-simulator/
 ├── docs/                  ← biology, current state, roadmap, guides
 ├── webapp/                ← FastAPI dashboard
 ├── simulation_profiles/   ← 47 brain-region JSON profiles
-└── tests/                 ← pytest suite (287 files)
+└── tests/                 ← pytest suite (293 files)
 ```
 
 ---

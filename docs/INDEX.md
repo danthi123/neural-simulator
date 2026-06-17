@@ -135,6 +135,13 @@ A few landmark findings worth knowing about:
   arc forks (flat vs meaning-structured cortex)
 - `2026-06-13-phase1-32bridge-fanout-derisk-GO.md` — scaling the
   learned cortex to ~2,048 concepts de-risked (production build in progress)
+- `2026-06-15-on-bridge-hebbian-co-occurrence-learning-mechanism-GO.md` —
+  a generalizing cortex that learns word meanings from a conversation
+  stream, realized on the spiking network (~64 concepts)
+- `2026-06-16-navigate-to-compose-then-answer.md` +
+  `2026-06-16-unified-embodied-agent-stage2-GO.md` — the unified embodied
+  agent: one network navigates, perceives, composes a fact, and converses
+  (six seeds)
 
 **Read these if:** you want the chronological story of how the project
 evolved.
@@ -150,7 +157,7 @@ Each is invocable via `python -m research.runners.<name>`.
 
 ### `references/feature-catalog.md`
 
-(On `catalog-build` branch) Encyclopedia of ~375 biological mechanisms
+(On `catalog-build` branch) Encyclopedia of over 300 biological mechanisms
 with citations. Each entry: biological description + sim status + cluster
 assignment.
 
