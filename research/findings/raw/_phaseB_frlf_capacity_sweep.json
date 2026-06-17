@@ -1,0 +1,258 @@
+{
+  "verdict": "RE_OPEN_BUILD",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "dims": [
+    64,
+    128,
+    256
+  ],
+  "pass_bar": 5,
+  "by_dim": {
+    "64": {
+      "frlf_bheld": 0.60335898669232,
+      "fixed_pm1_bheld": 0.9930555555555555,
+      "frlf_single": 0.8055555555555557,
+      "gap_to_ceiling": 0.38969656886323545,
+      "n_near_parity": 0,
+      "per_seed": [
+        0.5019841269841271,
+        0.393939393939394,
+        0.6666666666666666,
+        0.6064814814814815,
+        0.7272727272727272,
+        0.7238095238095239
+      ]
+    },
+    "128": {
+      "frlf_bheld": 0.8322851531184865,
+      "fixed_pm1_bheld": 1.0,
+      "frlf_single": 0.8888888888888888,
+      "gap_to_ceiling": 0.16771484688151353,
+      "n_near_parity": 3,
+      "per_seed": [
+        0.6468253968253969,
+        0.7765151515151515,
+        1.0,
+        1.0,
+        0.7037037037037037,
+        0.8666666666666667
+      ]
+    },
+    "256": {
+      "frlf_bheld": 0.9876543209876543,
+      "fixed_pm1_bheld": 1.0,
+      "frlf_single": 1.0,
+      "gap_to_ceiling": 0.012345679012345678,
+      "n_near_parity": 6,
+      "per_seed": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.9259259259259259,
+        1.0
+      ]
+    }
+  },
+  "trajectory": {
+    "frlf_first": 0.60335898669232,
+    "frlf_last": 0.9876543209876543,
+    "gap_first": 0.38969656886323545,
+    "gap_last": 0.012345679012345678,
+    "near_parity_last": 6
+  },
+  "ab_reference": {
+    "D_h": 64,
+    "frlf_bheld": 0.603,
+    "fixed_pm1": 0.993
+  },
+  "per_seed_rows": [
+    {
+      "seed": 42,
+      "D_h": 64,
+      "frlf_bheld": 0.5019841269841271,
+      "frlf_single": 0.6666666666666666,
+      "frlf_btrain": 0.6163939531720156,
+      "frlf_lesion_bheld": 0.1111111111111111,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.4980158730158729
+    },
+    {
+      "seed": 43,
+      "D_h": 64,
+      "frlf_bheld": 0.393939393939394,
+      "frlf_single": 0.6666666666666666,
+      "frlf_btrain": 0.6986804741210825,
+      "frlf_lesion_bheld": 0.030303030303030304,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.606060606060606
+    },
+    {
+      "seed": 44,
+      "D_h": 64,
+      "frlf_bheld": 0.6666666666666666,
+      "frlf_single": 0.8333333333333334,
+      "frlf_btrain": 0.831909708862383,
+      "frlf_lesion_bheld": 0.09523809523809523,
+      "fixed_pm1_bheld": 0.9833333333333333,
+      "gap_to_ceiling": 0.31666666666666665
+    },
+    {
+      "seed": 100,
+      "D_h": 64,
+      "frlf_bheld": 0.6064814814814815,
+      "frlf_single": 0.8333333333333334,
+      "frlf_btrain": 0.8327413952413952,
+      "frlf_lesion_bheld": 0.10416666666666667,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.3935185185185185
+    },
+    {
+      "seed": 101,
+      "D_h": 64,
+      "frlf_bheld": 0.7272727272727272,
+      "frlf_single": 0.8333333333333334,
+      "frlf_btrain": 0.8748649534199994,
+      "frlf_lesion_bheld": 0.0,
+      "fixed_pm1_bheld": 0.975,
+      "gap_to_ceiling": 0.2477272727272728
+    },
+    {
+      "seed": 102,
+      "D_h": 64,
+      "frlf_bheld": 0.7238095238095239,
+      "frlf_single": 1.0,
+      "frlf_btrain": 0.8733839394986772,
+      "frlf_lesion_bheld": 0.0,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.2761904761904761
+    },
+    {
+      "seed": 42,
+      "D_h": 128,
+      "frlf_bheld": 0.6468253968253969,
+      "frlf_single": 0.6666666666666666,
+      "frlf_btrain": 0.6514470172481351,
+      "frlf_lesion_bheld": 0.041666666666666664,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.35317460317460314
+    },
+    {
+      "seed": 43,
+      "D_h": 128,
+      "frlf_bheld": 0.7765151515151515,
+      "frlf_single": 1.0,
+      "frlf_btrain": 0.8712046745303627,
+      "frlf_lesion_bheld": 0.09722222222222221,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.2234848484848485
+    },
+    {
+      "seed": 44,
+      "D_h": 128,
+      "frlf_bheld": 1.0,
+      "frlf_single": 1.0,
+      "frlf_btrain": 1.0,
+      "frlf_lesion_bheld": 0.0,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.0
+    },
+    {
+      "seed": 100,
+      "D_h": 128,
+      "frlf_bheld": 1.0,
+      "frlf_single": 1.0,
+      "frlf_btrain": 0.9970238095238096,
+      "frlf_lesion_bheld": 0.0,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.0
+    },
+    {
+      "seed": 101,
+      "D_h": 128,
+      "frlf_bheld": 0.7037037037037037,
+      "frlf_single": 0.75,
+      "frlf_btrain": 0.7207207207207208,
+      "frlf_lesion_bheld": 0.037037037037037035,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.2962962962962963
+    },
+    {
+      "seed": 102,
+      "D_h": 128,
+      "frlf_bheld": 0.8666666666666667,
+      "frlf_single": 0.9166666666666666,
+      "frlf_btrain": 0.9420289855072465,
+      "frlf_lesion_bheld": 0.3333333333333333,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.1333333333333333
+    },
+    {
+      "seed": 42,
+      "D_h": 256,
+      "frlf_bheld": 1.0,
+      "frlf_single": 1.0,
+      "frlf_btrain": 1.0,
+      "frlf_lesion_bheld": 0.0,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.0
+    },
+    {
+      "seed": 43,
+      "D_h": 256,
+      "frlf_bheld": 1.0,
+      "frlf_single": 1.0,
+      "frlf_btrain": 1.0,
+      "frlf_lesion_bheld": 0.07196969696969698,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.0
+    },
+    {
+      "seed": 44,
+      "D_h": 256,
+      "frlf_bheld": 1.0,
+      "frlf_single": 1.0,
+      "frlf_btrain": 1.0,
+      "frlf_lesion_bheld": 0.047619047619047616,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.0
+    },
+    {
+      "seed": 100,
+      "D_h": 256,
+      "frlf_bheld": 1.0,
+      "frlf_single": 1.0,
+      "frlf_btrain": 1.0,
+      "frlf_lesion_bheld": 0.041666666666666664,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.0
+    },
+    {
+      "seed": 101,
+      "D_h": 256,
+      "frlf_bheld": 0.9259259259259259,
+      "frlf_single": 1.0,
+      "frlf_btrain": 0.9969969969969971,
+      "frlf_lesion_bheld": 0.030303030303030304,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.07407407407407407
+    },
+    {
+      "seed": 102,
+      "D_h": 256,
+      "frlf_bheld": 1.0,
+      "frlf_single": 1.0,
+      "frlf_btrain": 1.0,
+      "frlf_lesion_bheld": 0.0,
+      "fixed_pm1_bheld": 1.0,
+      "gap_to_ceiling": 0.0
+    }
+  ]
+}
