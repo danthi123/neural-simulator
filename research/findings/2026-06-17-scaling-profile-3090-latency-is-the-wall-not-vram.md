@@ -64,6 +64,22 @@ In leverage order:
 
 Stacked, a turn plausibly drops **~0.8 s → ~10–25 ms = real-time**, no hardware change.
 
+### Proof-of-speedup prototype (DONE) — CUDA-graph gives 11× per op, demonstrated
+
+`research/runners/_phaseB_resonate_cudagraph_prototype.py` (raw `_resonate_cudagraph_prototype.json`):
+- A naive CUDA-graph capture of the loop **fails** — CuPy cannot capture cuBLAS/cuSPARSE matvec calls in a graph
+  ("calling cuBLAS API during stream capture is currently unsupported"). The bridge stores the RF weights as a
+  sparse CSR (`cp_rf_w_re @ z` = cuSPARSE), so the production op hits the same wall.
+- **The fix that works:** the composer's bind/unbind weights are a near-diagonal permutation (post-neuron `D+k`
+  ← pre-neuron `k` × phase), so the matvec is an **elementwise gather-scale** — no library call, fully
+  graph-capturable. With that, capturing the 208-step loop as ONE graph and replaying gives **107 ms → 9.8 ms
+  per op = 11×, measured** (n=1024). The residual 9.8 ms is the actual 208-step compute; a further single-kernel
+  fusion (or shorter period) shrinks it more, and the KB-scan batching (lever 2) compounds on top.
+- ⇒ the production fix is **justified and de-risked**: refactor `_rf_advance_one` to a graph-able form (diagonal
+  elementwise synapse for the structured composer weights, the per-step counter as a device scalar, pre-allocated
+  scratch) + a graphed `rf_resonate_steps` fast path. This is a protected `sim/` edit (byte-reviewed; the
+  `tests/test_rf_*` suite asserts bit-identical RF dynamics; default-preserving for non-diagonal/general weights).
+
 ## Verdict (local vs cloud)
 
 - **Local-only is viable for a small-LLM-scale conversational agent on the 3090** — VRAM fits it, and the latency
