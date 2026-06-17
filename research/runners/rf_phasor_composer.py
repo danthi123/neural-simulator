@@ -330,6 +330,21 @@ class RFPhasorComposer:
                 return noun
         return None
 
+    def query_chain(self, cue, actions):
+        """Multi-hop relational reasoning: follow a chain of stored facts. Each hop matches the current concept as
+        the AGENT under the hop's action and reads the PATIENT, which becomes the next hop's cue --
+        query_chain('dog', ['eat', 'eat']) over {dog eat cat, cat eat mouse} -> 'mouse'. Returns the terminal
+        concept, or None (abstain) the moment any hop has no matching fact -- so the no-confab moat holds at EVERY
+        hop and a broken or over-run chain never confabulates. The cleanup re-discretizes the intermediate concept
+        each hop, so retrieval error does NOT compound across hops. De-risked GO 3 seeds x 3 D (controls -- leaky
+        spreading, permuted-relation, between-hop re-cue lesion -- all collapse): 2026-06-17-multihop-query-chain-GO.md."""
+        x = cue
+        for action in actions:
+            x = self.query_patient(x, action)
+            if x is None:
+                return None
+        return x
+
     def ask_yes_no(self, agent, action, patient):
         """'does <agent> <action> <patient>?' -> 'yes'/'no'/'unknown' via the bound AFFIRM/NEGATE polarity tag.
         Matches the full SVO; 'unknown' (abstention) when no stored fact matches."""

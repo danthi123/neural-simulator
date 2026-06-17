@@ -224,6 +224,13 @@ class BrainConversationalAgent:
     def is_it_true(self, agent, action, patient):
         return self.composer.ask_yes_no(agent, action, patient)
 
+    def reason_chain(self, cue, actions):
+        """Multi-hop relational reasoning: chain stored facts, each hop's patient becoming the next hop's agent
+        cue. reason_chain('dog', ['eat', 'eat']) -> 'mouse' over {dog eat cat, cat eat mouse}; None (abstain) the
+        moment any hop has no matching fact (the no-confab moat holds at EVERY hop). Delegates to the composer's
+        query_chain -- de-risked GO 3 seeds x 3 D, every anti-cheat collapsing (2026-06-17-multihop-query-chain-GO.md)."""
+        return self.composer.query_chain(cue, actions)
+
     def describe(self, agent):
         """Generation: produce a sentence about `agent` from the spiking memory ('dog go north'), or None if the
         agent knows no fact about it (no confabulation). With enable_neural_render, the word ORDER is produced by
