@@ -34,6 +34,10 @@ from research.runners.ordered_position_wm import OrderedPositionWM
 
 _ANAPHORS = {"it", "that", "them", "they", "this"}
 
+# Surface pronoun emitted for a recurring (singular) subject in narrate(). The matching anaphor "it" is in
+# _ANAPHORS, so the emitted pronoun is the same token the agent resolves on the substrate.
+_NARRATE_PRONOUN = "it"
+
 
 class MultiTurnAgentV2:
     """Multi-turn dialogue with an order-encoded (gamma-slot position-binding) discourse buffer on the validated
@@ -162,3 +166,160 @@ class MultiTurnAgentV2:
         """'describe <agent|it>' -> a generated sentence about the (possibly pronoun-resolved) subject, or None."""
         a = self._resolve(agent_word)
         return self.agent.describe(a) if a is not None else None
+
+    # --- multi-sentence narration (ordered emission + cross-sentence coherence) -----------------
+    def narrate(self, topics, return_details=False):
+        """Produce a COHERENT MULTI-SENTENCE narration of an ordered list of topics, on the spiking substrate.
+
+        This composes two separately-validated, multi-seed-GO mechanisms (NO new mechanism; reuse-by-import):
+          * ORDERED EMISSION (2026-06-17-multisentence-ordered-emission-derisk.md, 6/6): hold the topics in the
+            order-encoded WM (each topic bound to a successive gamma-slot POSITION phasor on the resonate-and-fire
+            substrate), then emit one sentence per slot IN SLOT ORDER -- so re-ordering `topics` re-orders the
+            output (the order is order-encoded, not a fixed storage order).
+          * CROSS-SENTENCE COHERENCE (2026-06-17-cross-sentence-coherence-derisk.md, 6/6): when a topic RECURS as
+            a later subject, render it as a PRONOUN ("it") and RESOLVE the pronoun (validated by-slot slot-anaphora,
+            `referent_at(antecedent_slot)`) back to the correct ANTECEDENT referent -- the antecedent = the EARLIEST
+            slot that referent was introduced at, NOT the most-recent slot.
+
+        For each topic (a subject the agent has a stored fact about), in order: on the FIRST mention, render the
+        full-noun sentence via the validated `describe` path (neural word order when `enable_neural_render=True`);
+        on a RECURRENCE, emit a pronominalized sentence whose pronoun resolves on the substrate to the antecedent.
+        Each sentence's object is then introduced into the same order-encoded WM, so the buffer holds the full
+        surface-order referent stream (and the antecedent slots stay addressable).
+
+        The no-confab moat holds: a topic with NO stored fact -> the slot ABSTAINS (no sentence, no confabulation);
+        the slot is skipped in the surface string. (A topic that the WM read does not even ground -- the familiarity
+        gate -- is also skipped.)
+
+        Args:
+            topics: an ordered list of topic words (subjects the agent may have stored facts about). A topic that
+                is not a referent the buffer can hold is skipped.
+            return_details: if True, also return the per-sentence structured detail list (subject, whether it was
+                pronominalized, the antecedent slot, the substrate-resolved antecedent, and the rendered text) --
+                used by the test/control harness and for transcripts. Default False -> returns just the joined
+                surface string.
+
+        Returns:
+            the coherent multi-sentence surface string (e.g. "dog ran north. bird ate worm. then it ran north.");
+            empty string if no topic produced a sentence. If `return_details=True`, returns
+            ``(surface_string, sentences)`` where ``sentences`` is the per-sentence detail list.
+
+        Existing MultiTurnAgentV2 capabilities (multi-referent resolution, single-referent anaphora, the Q&A /
+        reason-chain paths) are untouched; narrate() uses a FRESH discourse buffer per call (it saves + restores the
+        agent's standing discourse window/composite), so a narration does not perturb an in-progress dialogue."""
+        narration = _CoherentNarration(self)
+        sentences = narration.emit(list(topics))
+        surface = _join_sentences(sentences)
+        if return_details:
+            return surface, sentences
+        return surface
+
+
+def _join_sentences(sentences):
+    """Join the per-sentence detail dicts into the surface narration string, skipping abstained (None-text) slots.
+    Each rendered sentence is terminated with a period; an all-abstain narration yields the empty string."""
+    texts = [d["text"] for d in sentences if d.get("text")]
+    if not texts:
+        return ""
+    return ". ".join(texts) + "."
+
+
+class _CoherentNarration:
+    """The production cross-sentence-coherence loop, lifted verbatim from the validated de-risk
+    (`research/runners/_phaseB_cross_sentence_coherence_derisk.py`, class `CoherentDiscourse`, GO 6/6).
+
+    It drives a MultiTurnAgentV2's order-encoded discourse buffer (`agent._window` / `agent._composite` /
+    `agent.wm`) on the spiking RF substrate: accumulate referents in surface order as each topic is processed,
+    tracking `_slot_of[referent]` = the EARLIEST gamma-slot each referent occupied (its ANTECEDENT slot). A
+    recurring subject is pronominalized and resolved by reading its antecedent slot
+    (`agent.referent_at(antecedent_slot)`, a familiarity-gated spiking unbind); a first mention is the validated
+    full-noun `describe` path. A topic with no stored fact ABSTAINS (no sentence). NO new mechanism; reuse only.
+
+    narrate() uses a FRESH buffer per call: the agent's standing discourse window/composite are SAVED on entry and
+    RESTORED on exit, so a narration is side-effect-free with respect to an in-progress multi-turn dialogue.
+    """
+
+    def __init__(self, agent):
+        self.agent = agent
+        # Save the agent's standing discourse state so narration is side-effect-free for in-progress dialogue.
+        self._saved_window = list(agent._window)
+        self._saved_composite = agent._composite
+        self._reset_discourse()
+
+    def _reset_discourse(self):
+        """Start a fresh discourse buffer for this narration: empty WM window + antecedent-slot bookkeeping."""
+        self.agent._window = []
+        self.agent._composite = None
+        self._slot_of = {}                 # referent -> earliest gamma-slot it occupied (its antecedent slot)
+
+    def _restore(self):
+        """Restore the agent's standing discourse state (called after emission); narration leaves no trace."""
+        self.agent._window = self._saved_window
+        self.agent._composite = self._saved_composite
+
+    def _introduce(self, referent):
+        """Append a referent to the order-encoded discourse buffer (re-encoding the position-binding composite on
+        the RF substrate), recording its EARLIEST slot. Mirrors MultiTurnAgentV2._write_referent (same spiking
+        encode) but also tracks the antecedent slot so a later recurrence can be resolved BY that slot. Non-referent
+        / over-capacity inputs are ignored (the WM holds at most n_slots; an over-cap referent is not bound)."""
+        if not (isinstance(referent, str) and referent in self.agent.referents):
+            return
+        if len(self.agent._window) >= self.agent.wm.n_slots:
+            return                          # gamma-slot ceiling: do not exceed the ordered-WM capacity
+        slot = len(self.agent._window)      # the slot this referent will occupy (pre-append window length)
+        self.agent._window.append(referent)
+        if referent not in self._slot_of:
+            self._slot_of[referent] = slot
+        self.agent._composite = self.agent.wm.encode_sequence(self.agent._window)
+
+    def _fact_for(self, subject):
+        """The agent's stored (subject, verb, object) fact for `subject`, or None if the agent knows no fact about
+        it. Read from the composer's own flat fact memory (the validated store) -- this is the no-confab probe:
+        None => the topic abstains (no sentence)."""
+        for fact, _ in self.agent.agent.composer.kb:
+            if fact.get("agent") == subject and isinstance(fact.get("patient"), str):
+                return (subject, fact.get("action"), fact.get("patient"))
+        return None
+
+    def emit(self, topics):
+        """Emit one sentence per topic IN ORDER (the validated coherence loop). For each topic's fact (s, v, o):
+        if `s` was introduced at an earlier slot (recurs), emit a PRONOUN and RESOLVE it via the antecedent slot on
+        the spiking substrate; else render the full-noun sentence (validated `describe`). The object is introduced
+        into the order-encoded buffer after the sentence. A topic with NO stored fact ABSTAINS (text=None). Returns
+        the per-sentence detail list. Always restores the agent's standing discourse state on exit."""
+        try:
+            self._reset_discourse()
+            out = []
+            for topic in topics:
+                if not isinstance(topic, str):
+                    continue
+                fact = self._fact_for(topic)
+                if fact is None:
+                    # No-confab moat: a topic the agent has no fact about -> abstain (no sentence, no confabulation).
+                    out.append({"subject": topic, "pronominalized": False, "antecedent_slot": None,
+                                "resolved_antecedent": None, "true_antecedent": None,
+                                "resolved_correct": None, "abstained": True, "text": None})
+                    continue
+                (subj, verb, obj) = fact
+                recurs = subj in self._slot_of                 # already introduced at an earlier slot?
+                if recurs:
+                    antecedent_slot = self._slot_of[subj]
+                    # RESOLVE the pronoun on the spiking substrate: read the antecedent's gamma slot (familiarity-
+                    # gated spiking unbind). This is the validated MultiTurnAgentV2 by-slot resolution.
+                    resolved = self.agent.referent_at(antecedent_slot)
+                    text = f"then {_NARRATE_PRONOUN} {verb} {obj}"   # the pronominalized, coherent sentence
+                    out.append({"subject": subj, "pronominalized": True, "antecedent_slot": antecedent_slot,
+                                "resolved_antecedent": resolved, "true_antecedent": subj,
+                                "resolved_correct": (resolved == subj), "abstained": False, "text": text})
+                else:
+                    # First mention -> full noun, rendered by the validated single-sentence describe path.
+                    sentence = self.agent.agent.describe(subj)
+                    out.append({"subject": subj, "pronominalized": False, "antecedent_slot": None,
+                                "resolved_antecedent": None, "true_antecedent": None,
+                                "resolved_correct": None, "abstained": (sentence is None), "text": sentence})
+                    self._introduce(subj)                      # introduce the subject AFTER its full-noun mention
+                # The object is part of the surface discourse stream (held at a slot), introduced after the sentence.
+                self._introduce(obj)
+            return out
+        finally:
+            self._restore()
