@@ -306,6 +306,31 @@ Sparse-matvec reordering (the graph-data-structure libraries, honest placement):
 
 ---
 
+## 6b. Addendum — Renner/Frady/Sommer Loihi resonator paper (owner-supplied arXiv:2208.12880, read in full)
+
+The owner supplied the open arXiv version of the otherwise-paywalled Nature MI resonator paper. Read in full; it
+sharpens three of the recommendations above (synthesis only; no paper text reproduced):
+
+- **Confirms the bottleneck-2 batching recommendation (§3.1) at the algorithm level.** The resonator does its
+  combinatorial search by **superposition + a single codebook matched-filter** — each module's update is
+  `f( C·Cᵀ · ( s ⊙ unbind-of-all-other-factors ) )`, where `C·Cᵀ` is one matmul against the *whole* codebook and
+  `f(x)=x/|x|` is the phasor-normalize cleanup. There is **no per-candidate loop** — the parallel search lives in
+  the superposition + one matched-filter matmul. This is exactly our "stack all stored composites, one batched
+  unbind + one codebook cleanup" plan; the canonical VSA inference engine is built this way. Strong precedent.
+- **The 208-step resonate window may be shortenable (a cheap extra latency lever).** Their spike-timing phase code
+  on Loihi represents a phasor with a **T=16-timestep cycle**; our composer runs a **208-step** resonate window per
+  op. Worth a cheap probe: does a much shorter `period` still give a faithful phase read on our resonate-and-fire
+  substrate? If so, it multiplies directly with the graph/fusion wins (fewer steps to fuse/scan) — and it's a
+  one-line knob to test against `test_rf_*` golden outputs.
+- **Neuromorphic hardware is an ENERGY play, not a SPEED play — honest placement.** On Loihi the resonator is
+  *slower* than a CPU but **orders of magnitude more energy-efficient** (their Fig. 6). So for our *latency* goal on
+  the 3090, the graph + batch + (later) parallel-scan fixes are the right levers; neuromorphic silicon (Loihi/etc.)
+  would only matter if energy/embedding became the objective, not wall-clock. This refines, not contradicts, §2.
+- **Bonus (deeper arc):** their iterative factorization (each module unbinds all *other* factors, converges in a
+  few iterations via the superposition→sharpening dynamic) is the efficient method **if/when** the composer needs
+  genuine multi-factor factorization (the F≥2 attribute case that is currently a numpy reference) — the resonator
+  network is the principled, parallel way to do it, and it's the same FHRR substrate we run.
+
 ## 7. Trust-but-verify — claims/numbers the controller should double-check
 
 - **"CUDA graphs cannot capture cuSPARSE/cuBLAS" is too strong as stated.** NVIDIA forums indicate cuBLAS *is* capturable in
