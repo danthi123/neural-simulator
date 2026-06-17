@@ -199,11 +199,14 @@ def run_one(seed, mode, n_steps, grid_size, deplete, refill, verbose=False,
     # drives the cortex), so lesioning the drive could not change behaviour; with
     # the heuristic simply off, it is the documented cold-start NEGATIVE (no
     # teacher). The innate-reflex-teaches-a-learned-circuit arc resolves both.
-    # Teach with the reflex for ~the first third, wean over the next quarter, so
-    # the final ~40% of the run is pure reward-LEARNED perceptual navigation
-    # (the window where the drive is load-bearing: lesion -> no learned policy).
-    reflex_wean_start = int(0.35 * n_steps)
-    reflex_wean_steps = int(0.25 * n_steps)
+    # Match the VALIDATED Rank-2 learned-perception schedule (2026-06-08, 6-seed
+    # GO): teach with the reflex for the first ~1/3, wean over the next ~1/6, so
+    # the final ~50% is pure reward-LEARNED perceptual navigation. At n_steps
+    # 6000 this is wean-start ~2000, wean-steps ~1000 (the validated values). The
+    # learned perception needs this long teaching window to consolidate; weaning
+    # early (the CYCLE-132 first attempt at 525) is the documented cold-start.
+    reflex_wean_start = int(0.33 * n_steps)
+    reflex_wean_steps = int(0.17 * n_steps)
     if goal_pos is None:
         gc = max(1, grid_size - 2)
         goal_pos = (gc, gc)
@@ -222,15 +225,27 @@ def run_one(seed, mode, n_steps, grid_size, deplete, refill, verbose=False,
         start_pos=start_pos,
         goal_pos=goal_pos,
         goal_schedule=None,                 # fixed start goal; the hook relocates food on eat
-        # --- perception arc (navigation becomes reward-LEARNED) ---
+        # --- perception arc (navigation becomes reward-LEARNED), matching the
+        #     VALIDATED Rank-2 production config (2026-06-08, 6-seed GO) ---
         enable_visual_cortex=True,
+        visual_cortex_action_warmup_steps=600,
         sc_orienting_reflex=True,           # innate image-based teacher (no coords)
         sc_reflex_strength=800.0,
-        learned_perception_from_vision=True,  # the durable learned dorsal read-out
+        enable_learned_perception=True,     # the cold-start learnable sensory->cortex map
+        learned_perception_from_vision=True,  # re-sourced from the image salience offset
         sc_reflex_wean_start=reflex_wean_start,
         sc_reflex_wean_steps=reflex_wean_steps,
         heuristic_strength=0.0,             # the coordinate heuristic is OFF (reflex replaces it)
-        perceived_approach_reward=True,     # coordinate-free reward (image eccentricity), drive-gated by the hook
+        # --- validated N8 (genuine BG disinhibition) + N6 (spiking-WTA readout)
+        #     action-selection back-end (REQUIRED for the learned perception to
+        #     select clean actions; omitting it was the CYCLE-132 config bug) ---
+        genuine_thal_disinhibition=True,
+        genuine_gpi_tonic_pA=1300.0,
+        genuine_thal_tonic_pA=750.0,
+        readout_source="spiking_wta",
+        urgency_max_pA=180.0,
+        enable_pfc=True,                    # dlPFC working-memory module
+        enable_pfc_nmda=True,
         # --- validated basal-ganglia cascade refinements ---
         enable_d1_d2_asymmetry=True,
         enable_striatal_fsis=True,
