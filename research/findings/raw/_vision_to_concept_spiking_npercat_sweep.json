@@ -1,0 +1,302 @@
+{
+  "verdict": "NEGATIVE",
+  "chance": 0.25,
+  "npercat": [
+    4,
+    8,
+    12
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_concept_per": 100,
+  "epochs": 20,
+  "read_steps": 80,
+  "top_k": 60,
+  "gate": {
+    "seed100_reaches_0.50": true,
+    "seed101_reaches_0.50": true,
+    "min_h5_rises": true,
+    "controls_ok_at_best": false,
+    "moat_intact": false,
+    "moat_breaches": [
+      [
+        8,
+        42,
+        0.235625,
+        0.175
+      ],
+      [
+        8,
+        100,
+        0.2025,
+        0.14500000000000002
+      ],
+      [
+        8,
+        102,
+        0.17375000000000002,
+        0.145
+      ]
+    ],
+    "best_npercat": 12
+  },
+  "min_h5_per_npercat": {
+    "4": 0.5,
+    "8": 0.75,
+    "12": NaN
+  },
+  "results": {
+    "4": {
+      "42": {
+        "h5": 0.75,
+        "h5_margin": 0.06625,
+        "concept_spikes_per_cue": 80.5,
+        "flat": 0.25,
+        "permuted_margin": -0.021875000000000006,
+        "moat_ok": true,
+        "heldout_familiarity": 0.12375,
+        "novel_familiarity": 0.045000000000000005,
+        "structure_preserved": true,
+        "set_margin": 0.5277777314186096,
+        "held_out": [
+          0,
+          6,
+          10,
+          14
+        ]
+      },
+      "43": {
+        "h5": 0.5,
+        "h5_margin": 0.09333333333333332,
+        "concept_spikes_per_cue": 171.0,
+        "flat": 0.25,
+        "permuted_margin": -0.01958333333333333,
+        "moat_ok": true,
+        "heldout_familiarity": 0.226875,
+        "novel_familiarity": 0.14750000000000002,
+        "structure_preserved": true,
+        "set_margin": 0.5529513875953853,
+        "held_out": [
+          1,
+          6,
+          9,
+          13
+        ]
+      },
+      "44": {
+        "h5": 1.0,
+        "h5_margin": 0.17895833333333336,
+        "concept_spikes_per_cue": 138.25,
+        "flat": 0.0,
+        "permuted_margin": -0.024375000000000008,
+        "moat_ok": true,
+        "heldout_familiarity": 0.23500000000000001,
+        "novel_familiarity": 0.095,
+        "structure_preserved": true,
+        "set_margin": 0.6465277671813965,
+        "held_out": [
+          2,
+          4,
+          9,
+          13
+        ]
+      },
+      "100": {
+        "h5": 0.75,
+        "h5_margin": 0.07666666666666666,
+        "concept_spikes_per_cue": 94.0,
+        "flat": 0.0,
+        "permuted_margin": -0.020624999999999998,
+        "moat_ok": true,
+        "heldout_familiarity": 0.135,
+        "novel_familiarity": 0.07750000000000001,
+        "structure_preserved": true,
+        "set_margin": 0.48194441199302673,
+        "held_out": [
+          1,
+          6,
+          9,
+          13
+        ]
+      },
+      "101": {
+        "h5": 0.75,
+        "h5_margin": 0.1,
+        "concept_spikes_per_cue": 86.0,
+        "flat": 0.0,
+        "permuted_margin": -0.008124999999999999,
+        "moat_ok": true,
+        "heldout_familiarity": 0.17062500000000003,
+        "novel_familiarity": 0.065,
+        "structure_preserved": true,
+        "set_margin": 0.46875,
+        "held_out": [
+          3,
+          7,
+          8,
+          14
+        ]
+      },
+      "102": {
+        "h5": 0.5,
+        "h5_margin": 0.07458333333333333,
+        "concept_spikes_per_cue": 106.5,
+        "flat": 0.0,
+        "permuted_margin": -0.016875000000000008,
+        "moat_ok": true,
+        "heldout_familiarity": 0.13437500000000002,
+        "novel_familiarity": 0.0725,
+        "structure_preserved": true,
+        "set_margin": 0.45833332277834415,
+        "held_out": [
+          2,
+          6,
+          9,
+          12
+        ]
+      }
+    },
+    "8": {
+      "42": {
+        "h5": 1.0,
+        "h5_margin": 0.13760416666666667,
+        "concept_spikes_per_cue": 461.75,
+        "flat": 0.25,
+        "permuted_margin": 0.002708333333333323,
+        "moat_ok": false,
+        "heldout_familiarity": 0.235625,
+        "novel_familiarity": 0.175,
+        "structure_preserved": true,
+        "set_margin": 0.5377975702285767,
+        "held_out": [
+          1,
+          13,
+          20,
+          29
+        ]
+      },
+      "43": {
+        "h5": 1.0,
+        "h5_margin": 0.11093750000000001,
+        "concept_spikes_per_cue": 466.75,
+        "flat": 0.0,
+        "permuted_margin": -0.012187500000000004,
+        "moat_ok": true,
+        "heldout_familiarity": 0.2453125,
+        "novel_familiarity": 0.12,
+        "structure_preserved": true,
+        "set_margin": 0.5438987612724304,
+        "held_out": [
+          2,
+          13,
+          19,
+          26
+        ]
+      },
+      "44": {
+        "h5": 0.75,
+        "h5_margin": 0.1823958333333333,
+        "concept_spikes_per_cue": 566.25,
+        "flat": 0.25,
+        "permuted_margin": -0.02583333333333335,
+        "moat_ok": true,
+        "heldout_familiarity": 0.32906250000000004,
+        "novel_familiarity": 0.135,
+        "structure_preserved": true,
+        "set_margin": 0.6436818308429793,
+        "held_out": [
+          4,
+          8,
+          19,
+          27
+        ]
+      },
+      "100": {
+        "h5": 1.0,
+        "h5_margin": 0.09187499999999998,
+        "concept_spikes_per_cue": 412.5,
+        "flat": 0.25,
+        "permuted_margin": -0.014687499999999992,
+        "moat_ok": false,
+        "heldout_familiarity": 0.2025,
+        "novel_familiarity": 0.14500000000000002,
+        "structure_preserved": true,
+        "set_margin": 0.47198035253677517,
+        "held_out": [
+          3,
+          12,
+          18,
+          27
+        ]
+      },
+      "101": {
+        "h5": 1.0,
+        "h5_margin": 0.11479166666666667,
+        "concept_spikes_per_cue": 457.5,
+        "flat": 0.25,
+        "permuted_margin": -0.009687500000000005,
+        "moat_ok": true,
+        "heldout_familiarity": 0.224375,
+        "novel_familiarity": 0.13875,
+        "structure_preserved": true,
+        "set_margin": 0.5018228848930448,
+        "held_out": [
+          6,
+          14,
+          17,
+          28
+        ]
+      },
+      "102": {
+        "h5": 0.75,
+        "h5_margin": 0.08562499999999999,
+        "concept_spikes_per_cue": 389.5,
+        "flat": 0.25,
+        "permuted_margin": 0.0028125000000000025,
+        "moat_ok": false,
+        "heldout_familiarity": 0.17375000000000002,
+        "novel_familiarity": 0.145,
+        "structure_preserved": true,
+        "set_margin": 0.4662387790158391,
+        "held_out": [
+          4,
+          13,
+          18,
+          25
+        ]
+      }
+    },
+    "12": {
+      "42": {
+        "error": "AssertionError: flat baseline needs 2880 <= 2048 perception neurons",
+        "traceback": "Traceback (most recent call last):\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_vision_to_concept_spiking_npercat_sweep.py\", line 147, in main\n    out = capstone_mod.run_seed(seed, ca)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_genfrontier_capstone_vision_to_concept_derisk.py\", line 235, in run_seed\n    flat_sets = flat_distinct_sets_like(vis_sets, N_V1_COMPLEX, seed * 19 + 3)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_genfrontier_capstone_vision_to_concept_derisk.py\", line 143, in flat_distinct_sets_like\n    assert total <= n_perc, f\"flat baseline needs {total} <= {n_perc} perception neurons\"\n           ^^^^^^^^^^^^^^^\nAssertionError: flat baseline needs 2880 <= 2048 perception neurons\n"
+      },
+      "43": {
+        "error": "AssertionError: flat baseline needs 2880 <= 2048 perception neurons",
+        "traceback": "Traceback (most recent call last):\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_vision_to_concept_spiking_npercat_sweep.py\", line 147, in main\n    out = capstone_mod.run_seed(seed, ca)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_genfrontier_capstone_vision_to_concept_derisk.py\", line 235, in run_seed\n    flat_sets = flat_distinct_sets_like(vis_sets, N_V1_COMPLEX, seed * 19 + 3)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_genfrontier_capstone_vision_to_concept_derisk.py\", line 143, in flat_distinct_sets_like\n    assert total <= n_perc, f\"flat baseline needs {total} <= {n_perc} perception neurons\"\n           ^^^^^^^^^^^^^^^\nAssertionError: flat baseline needs 2880 <= 2048 perception neurons\n"
+      },
+      "44": {
+        "error": "AssertionError: flat baseline needs 2880 <= 2048 perception neurons",
+        "traceback": "Traceback (most recent call last):\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_vision_to_concept_spiking_npercat_sweep.py\", line 147, in main\n    out = capstone_mod.run_seed(seed, ca)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_genfrontier_capstone_vision_to_concept_derisk.py\", line 235, in run_seed\n    flat_sets = flat_distinct_sets_like(vis_sets, N_V1_COMPLEX, seed * 19 + 3)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_genfrontier_capstone_vision_to_concept_derisk.py\", line 143, in flat_distinct_sets_like\n    assert total <= n_perc, f\"flat baseline needs {total} <= {n_perc} perception neurons\"\n           ^^^^^^^^^^^^^^^\nAssertionError: flat baseline needs 2880 <= 2048 perception neurons\n"
+      },
+      "100": {
+        "error": "AssertionError: flat baseline needs 2880 <= 2048 perception neurons",
+        "traceback": "Traceback (most recent call last):\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_vision_to_concept_spiking_npercat_sweep.py\", line 147, in main\n    out = capstone_mod.run_seed(seed, ca)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_genfrontier_capstone_vision_to_concept_derisk.py\", line 235, in run_seed\n    flat_sets = flat_distinct_sets_like(vis_sets, N_V1_COMPLEX, seed * 19 + 3)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_genfrontier_capstone_vision_to_concept_derisk.py\", line 143, in flat_distinct_sets_like\n    assert total <= n_perc, f\"flat baseline needs {total} <= {n_perc} perception neurons\"\n           ^^^^^^^^^^^^^^^\nAssertionError: flat baseline needs 2880 <= 2048 perception neurons\n"
+      },
+      "101": {
+        "error": "AssertionError: flat baseline needs 2880 <= 2048 perception neurons",
+        "traceback": "Traceback (most recent call last):\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_vision_to_concept_spiking_npercat_sweep.py\", line 147, in main\n    out = capstone_mod.run_seed(seed, ca)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_genfrontier_capstone_vision_to_concept_derisk.py\", line 235, in run_seed\n    flat_sets = flat_distinct_sets_like(vis_sets, N_V1_COMPLEX, seed * 19 + 3)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_genfrontier_capstone_vision_to_concept_derisk.py\", line 143, in flat_distinct_sets_like\n    assert total <= n_perc, f\"flat baseline needs {total} <= {n_perc} perception neurons\"\n           ^^^^^^^^^^^^^^^\nAssertionError: flat baseline needs 2880 <= 2048 perception neurons\n"
+      },
+      "102": {
+        "error": "AssertionError: flat baseline needs 2880 <= 2048 perception neurons",
+        "traceback": "Traceback (most recent call last):\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_vision_to_concept_spiking_npercat_sweep.py\", line 147, in main\n    out = capstone_mod.run_seed(seed, ca)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_genfrontier_capstone_vision_to_concept_derisk.py\", line 235, in run_seed\n    flat_sets = flat_distinct_sets_like(vis_sets, N_V1_COMPLEX, seed * 19 + 3)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"E:\\Documents\\Projects\\sim\\research\\runners\\_genfrontier_capstone_vision_to_concept_derisk.py\", line 143, in flat_distinct_sets_like\n    assert total <= n_perc, f\"flat baseline needs {total} <= {n_perc} perception neurons\"\n           ^^^^^^^^^^^^^^^\nAssertionError: flat baseline needs 2880 <= 2048 perception neurons\n"
+      }
+    }
+  }
+}
