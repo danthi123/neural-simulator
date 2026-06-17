@@ -1,0 +1,33 @@
+{
+  "_note": "Reconstructed from the captured stdout of the original run (task bu13e0xih, 3 seeds, ~3.7h CPU). The computation completed for all 3 seeds; the process then crashed on a Windows cp1252 UnicodeEncodeError in the verdict print (the unicode chars) BEFORE json.dump, so the original artifact was never written. The encoding bug is fixed in the runner (sys.stdout.reconfigure utf-8); a future run reproduces this. Numbers are exact from the captured output.",
+  "verdict": "NEGATIVE",
+  "host": 0.442,
+  "zca8": 0.524,
+  "sm": 0.264,
+  "sm_rank": 3.3,
+  "diag": 0.216,
+  "gains_whiten": 0.519,
+  "gains_rank": 53.2,
+  "dend_balance": 0.482,
+  "dend_rank": 37.2,
+  "mech_peak": 0.519,
+  "gates": {
+    "host_carries": true,
+    "somatic_falls_short": true,
+    "diagonal_falls_short": true,
+    "rank_ok": false,
+    "beats_collapse": false,
+    "anticheat_ok": false
+  },
+  "anti_cheat": {
+    "perm": -0.006,
+    "lesion": 0.519,
+    "rawinput": 0.402,
+    "heldout_gen": 0.86
+  },
+  "per_seed": [
+    {"seed": 42, "host": 0.442, "zca8": 0.524, "sm": 0.266, "sm_rank": 3.2, "diag": 0.214, "A_p": 0.519, "A_rank": 53.2, "A_K": 8, "B_p": 0.485, "B_rank": 43.2, "B_k": 64, "perm": -0.007, "lesion": 0.519, "rawinput": 0.402, "A_gen": 0.86},
+    {"seed": 43, "host": 0.442, "zca8": 0.524, "sm": 0.275, "sm_rank": 3.9, "diag": 0.220, "A_p": 0.519, "A_rank": 53.2, "A_K": 8, "B_p": 0.486, "B_rank": 25.8, "B_k": 32, "perm": 0.003, "lesion": 0.519, "rawinput": 0.402, "A_gen": 0.86},
+    {"seed": 44, "host": 0.442, "zca8": 0.524, "sm": 0.251, "sm_rank": 2.9, "diag": 0.214, "A_p": 0.519, "A_rank": 53.2, "A_K": 8, "B_p": 0.476, "B_rank": 42.7, "B_k": 64, "perm": -0.014, "lesion": 0.519, "rawinput": 0.402, "A_gen": 0.86}
+  ]
+}

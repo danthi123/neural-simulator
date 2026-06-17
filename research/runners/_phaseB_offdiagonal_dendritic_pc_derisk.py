@@ -191,6 +191,12 @@ def run_seed(seed, n_hub=500, sm_k=64):
 
 def main():
     os.environ.setdefault("SIM_BACKEND", "numpy")
+    # Windows cp1252 stdout crashes on the unicode in the verdict prints (≈ ⇒ → —) when redirected to a file,
+    # which previously aborted BEFORE json.dump -> no artifact. Force utf-8 (replace on any residual).
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
     t0 = time.time()
     print("[off-diagonal dendritic-PC de-risk] can an ONLINE LOCAL error-gated / fixed-frame-gain decorrelator "
           "reach the off-diagonal residual (diagonal ~+0.31, somatic ~+0.35 -> host +0.44, offline ZCA +0.49) on "
