@@ -185,10 +185,20 @@ def run_one(seed, mode, n_steps, grid_size, deplete, refill, verbose=False,
             out_dir="research/findings/raw", goal_pos=None, start_pos=(1, 1)):
     from research.runners.g11_bg_runner import run_moving_goal_episode
 
-    wean_start = int(0.4 * n_steps)
-    wean_steps = int(0.3 * n_steps)
+    # The SC-orienting-reflex perception arc: an INNATE image-based teacher
+    # (superior colliculus orienting reflex) drives navigation early, then is
+    # WEANED so the reward-LEARNED dorsal perception carries navigation. This is
+    # the config where the drive-gated reward is genuinely load-bearing -- with a
+    # coordinate heuristic on, navigation is reward-INDEPENDENT (it directly
+    # drives the cortex), so lesioning the drive could not change behaviour; with
+    # the heuristic simply off, it is the documented cold-start NEGATIVE (no
+    # teacher). The innate-reflex-teaches-a-learned-circuit arc resolves both.
+    # Teach with the reflex for ~the first third, wean over the next quarter, so
+    # the final ~40% of the run is pure reward-LEARNED perceptual navigation
+    # (the window where the drive is load-bearing: lesion -> no learned policy).
+    reflex_wean_start = int(0.35 * n_steps)
+    reflex_wean_steps = int(0.25 * n_steps)
     if goal_pos is None:
-        # A reachable starting food cell near the far corner, valid for the grid.
         gc = max(1, grid_size - 2)
         goal_pos = (gc, gc)
 
@@ -198,8 +208,6 @@ def run_one(seed, mode, n_steps, grid_size, deplete, refill, verbose=False,
     os.makedirs(out_dir, exist_ok=True)
     out_path = os.path.join(out_dir, f"_homeo_g11bg_reuse_{mode}_seed{seed}.json")
 
-    # Validated "A+E single-pool" learner config (CLAUDE.md flagship recipe),
-    # heuristic WEANED so the learned policy must carry navigation post-wean.
     run_moving_goal_episode(
         out_path=out_path,
         seed=seed,
@@ -208,24 +216,31 @@ def run_one(seed, mode, n_steps, grid_size, deplete, refill, verbose=False,
         start_pos=start_pos,
         goal_pos=goal_pos,
         goal_schedule=None,                 # fixed start goal; the hook relocates food on eat
+        # --- perception arc (navigation becomes reward-LEARNED) ---
+        enable_visual_cortex=True,
+        sc_orienting_reflex=True,           # innate image-based teacher (no coords)
+        sc_reflex_strength=800.0,
+        learned_perception_from_vision=True,  # the durable learned dorsal read-out
+        sc_reflex_wean_start=reflex_wean_start,
+        sc_reflex_wean_steps=reflex_wean_steps,
+        heuristic_strength=0.0,             # the coordinate heuristic is OFF (reflex replaces it)
+        perceived_approach_reward=True,     # coordinate-free reward (image eccentricity), drive-gated by the hook
+        # --- validated basal-ganglia cascade refinements ---
         enable_d1_d2_asymmetry=True,
         enable_striatal_fsis=True,
         enable_cluster_a_closed_loop=True,
         enable_cluster_e_topography=True,
         enable_bg_lateral_inhibition=True,
-        heuristic_single_pool=True,
-        heuristic_wean_start=wean_start,
-        heuristic_wean_steps=wean_steps,
         homeostatic_hook=body.hook,
         verbose=verbose,
         progress_print_interval=max(1, n_steps // 6),
     )
 
-    summ = body.summary(n_steps=n_steps, wean_start=wean_start)
+    summ = body.summary(n_steps=n_steps, wean_start=reflex_wean_start)
     side = os.path.join(out_dir, f"_homeo_g11bg_reuse_{mode}_seed{seed}.homeo.json")
     with open(side, "w") as f:
         json.dump({"seed": seed, "config": {"n_steps": n_steps, "grid_size": grid_size,
-                  "wean_start": wean_start, "wean_steps": wean_steps,
+                  "reflex_wean_start": reflex_wean_start, "reflex_wean_steps": reflex_wean_steps,
                   "deplete": deplete, "refill": refill}, "summary": summ}, f, indent=2)
     print(f"[homeo-reuse seed={seed} mode={mode}] {json.dumps(summ)}", flush=True)
     return summ
@@ -251,8 +266,8 @@ def main():
         # is tiny: 60 steps, grid 5 => seconds). This is the project's GPU-only
         # nav loop; "numpy for smoke" applies to backend-agnostic runners, not
         # this one.
-        print("[homeo-reuse] SMOKE: tiny GPU mechanics check (hook fires on the validated learner)", flush=True)
-        summ = run_one(seed=args.seed, mode="intact", n_steps=60, grid_size=5,
+        print("[homeo-reuse] SMOKE: GPU mechanics check (perception arc + hook fires)", flush=True)
+        summ = run_one(seed=args.seed, mode="intact", n_steps=180, grid_size=8,
                        deplete=0.02, refill=0.6, verbose=True)
         ok = summ["n_eats"] >= 0  # mechanics: it ran + hook produced a summary
         print(f"[homeo-reuse] SMOKE {'OK' if ok else 'FAIL'}: ran the validated learner with the "
