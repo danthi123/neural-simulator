@@ -1,0 +1,61 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "readout": "host",
+      "n_facts": 8,
+      "recall": 1.0,
+      "abstain": 1.0,
+      "false_accept": 0,
+      "within_cat_err": 0,
+      "grounded_mean_sim": 0.11527076880929495,
+      "grounded_max_sim": 0.5380759000709181,
+      "yes_no_ok": true,
+      "describe": "dog eat apple",
+      "describe_ok": true,
+      "elaborate": "apple",
+      "elaborate_ok": true,
+      "go": true,
+      "moat_breach": false,
+      "breaches": []
+    },
+    {
+      "seed": 43,
+      "readout": "host",
+      "n_facts": 8,
+      "recall": 1.0,
+      "abstain": 1.0,
+      "false_accept": 0,
+      "within_cat_err": 0,
+      "grounded_mean_sim": 0.09976805819293051,
+      "grounded_max_sim": 0.5135404948812614,
+      "yes_no_ok": true,
+      "describe": "dog eat apple",
+      "describe_ok": true,
+      "elaborate": "apple",
+      "elaborate_ok": true,
+      "go": true,
+      "moat_breach": false,
+      "breaches": []
+    },
+    {
+      "seed": 44,
+      "readout": "host",
+      "n_facts": 8,
+      "recall": 1.0,
+      "abstain": 1.0,
+      "false_accept": 0,
+      "within_cat_err": 0,
+      "grounded_mean_sim": 0.11380284462181649,
+      "grounded_max_sim": 0.4191997910580255,
+      "yes_no_ok": true,
+      "describe": "dog eat apple",
+      "describe_ok": true,
+      "elaborate": "apple",
+      "elaborate_ok": true,
+      "go": true,
+      "moat_breach": false,
+      "breaches": []
+    }
+  ]
+}
