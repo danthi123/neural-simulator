@@ -67,9 +67,13 @@ Stacked, a turn plausibly drops **~0.8 s → ~10–25 ms = real-time**, no hardw
 ### Proof-of-speedup prototype (DONE) — CUDA-graph gives 11× per op, demonstrated
 
 `research/runners/_phaseB_resonate_cudagraph_prototype.py` (raw `_resonate_cudagraph_prototype.json`):
-- A naive CUDA-graph capture of the loop **fails** — CuPy cannot capture cuBLAS/cuSPARSE matvec calls in a graph
-  ("calling cuBLAS API during stream capture is currently unsupported"). The bridge stores the RF weights as a
-  sparse CSR (`cp_rf_w_re @ z` = cuSPARSE), so the production op hits the same wall.
+- A naive CUDA-graph capture of the loop **fails** — CuPy raises "calling cuBLAS API during stream capture is
+  currently unsupported", and the bridge stores the RF weights as a sparse CSR (`cp_rf_w_re @ z` = cuSPARSE), so
+  the production op hits the same wall. **Precise framing** (per the optimization-literature review,
+  `2026-06-17-snn-vsa-gpu-optimization-literature.md`): this is a **CuPy capture-path** limitation (the
+  library call's device-host sync during capture), *not* a categorical CUDA-graph limitation — NVIDIA's own
+  forums note cuBLAS is graph-capturable in most C++ cases (exceptions: host-buffer output / host-pointer scalar
+  mode). The fix below is unaffected either way: don't put the library call in the graph at all.
 - **The fix that works:** the composer's bind/unbind weights are a near-diagonal permutation (post-neuron `D+k`
   ← pre-neuron `k` × phase), so the matvec is an **elementwise gather-scale** — no library call, fully
   graph-capturable. With that, capturing the 208-step loop as ONE graph and replaying gives **107 ms → 9.8 ms
