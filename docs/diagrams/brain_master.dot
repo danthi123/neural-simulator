@@ -48,7 +48,7 @@ digraph BrainMaster {
         label=<<B>NAVIGATION supergroup</B>  ·  build_bg_brain_regions()  ·  the action-selection brain>;
         style="rounded,filled"; color="#b9770e"; fillcolor="#fffaf2"; fontcolor="#9a6608"; fontsize=15; penwidth=2.0; margin=14;
 
-        nav_in [label=<<B>Perception readouts</B>  (C7p)<BR/>place · goal · sensory · beacon · landmark<BR/><FONT POINT-SIZE="8.5">⚠ host-rendered codes (environment input)</FONT>>, fillcolor="#fdebd0", color="#ca6f1e", fontcolor="#5b3a10"];
+        nav_in [label=<<B>Perception readouts</B>  (C7p)<BR/>place · goal · sensory · beacon · landmark<BR/><FONT POINT-SIZE="8.5">⌂ host-rendered codes (environment input)</FONT>>, fillcolor="#fdebd0", color="#ca6f1e", fontcolor="#5b3a10"];
         sc_orient [label=<<B>Superior colliculus</B>  (C5 · N1)<BR/>sc_retina → sc_map ⟲ ⊣ sc_fs (Mexican-hat)<BR/><FONT POINT-SIZE="8.5">retinotopic orienting bump → cortex (spiking)</FONT>>, fillcolor="#e8daef", color="#7d3c98", fontcolor="#3e1f4d"];
         m1     [label=<<B>Sensorimotor cortex</B>  (C2)<BR/>cortex_N/E/S/W (×4) — M1 channels<BR/><FONT POINT-SIZE="8.5">⚠ labeled-line per-action split</FONT>>, fillcolor="#e8e1f2", color="#5b4a8a", fontcolor="#2c2547"];
         bg     [label=<<B>Basal ganglia cascade</B>  (C3)<BR/>direct D1 ⊣ · indirect D2→GPe→STN<BR/>hyperdirect · PV-FSI · striosome (×4)<BR/><FONT POINT-SIZE="8.5"><B>action-selection heart · learning site</B></FONT>>, fillcolor="#f5cba7", color="#a04000", fontcolor="#5a2400"];
@@ -85,9 +85,9 @@ digraph BrainMaster {
 
         visual [label=<<B>Visual ventral stream</B>  (C1)<BR/>retina→V1→V2→IT<BR/><FONT POINT-SIZE="8.5">"what" object stream · opt-in</FONT>>, fillcolor="#d4e6f1", color="#2e6da4", fontcolor="#163a59"];
         hippo  [label=<<B>Hippocampal formation</B>  (C7)<BR/>EC→DG ⊣ CA3 ⟲ →CA1<BR/><FONT POINT-SIZE="8.5">separation · completion · replay</FONT>>, fillcolor="#d9ead3", color="#5a8a3c", fontcolor="#2c4a1c"];
-        lang_in[label=<<B>Language input</B>  (C11)<BR/>language_input<BR/><FONT POINT-SIZE="8.5">⚠ token embedding (host I/O)</FONT>>, fillcolor="#d4e6f1", color="#2471a3", fontcolor="#123a55"];
+        lang_in[label=<<B>Language input</B>  (C11)<BR/>language_input<BR/><FONT POINT-SIZE="8.5">⌂ token embedding (host I/O)</FONT>>, fillcolor="#d4e6f1", color="#2471a3", fontcolor="#123a55"];
         motor  [label=<<B>Motor output</B>  (C10)<BR/>motor_N/E/S/W (×4)<BR/><FONT POINT-SIZE="8.5">the body acts on which pool fires</FONT>>, fillcolor="#f5b7b1", color="#c0392b", fontcolor="#641e16"];
-        lang_out[label=<<B>Language output</B>  (C11)<BR/>language_output<BR/><FONT POINT-SIZE="8.5">⚠ word readout (host I/O)</FONT>>, fillcolor="#d4e6f1", color="#2471a3", fontcolor="#123a55"];
+        lang_out[label=<<B>Language output</B>  (C11)<BR/>language_output<BR/><FONT POINT-SIZE="8.5">⌂ word readout (host I/O)</FONT>>, fillcolor="#d4e6f1", color="#2471a3", fontcolor="#123a55"];
 
         visual -> hippo [style=invis];   // column glue
         lang_in -> motor [style=invis];
@@ -219,8 +219,8 @@ digraph BrainMaster {
             <TR><TD ALIGN="RIGHT">- -</TD><TD ALIGN="LEFT">weaker / feedback / opt-in pathway</TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2"> </TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2"><B>honesty</B>   (full detail: the per-region graphs + spec §6)</TD></TR>
-            <TR><TD ALIGN="RIGHT">⚠</TD><TD ALIGN="LEFT">host-rendered input = environment/body (legitimate)</TD></TR>
-            <TR><TD ALIGN="RIGHT">⚠</TD><TD ALIGN="LEFT">phenomenological / collapsed stand-in (a documented shortcut)</TD></TR>
+            <TR><TD ALIGN="RIGHT">⌂</TD><TD ALIGN="LEFT">host-rendered input / decoded output = environment/body boundary (LEGITIMATE, not a shortcut)</TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#b9770e">⚠</FONT></TD><TD ALIGN="LEFT">phenomenological / collapsed stand-in, or host-computed cognition (a documented SHORTCUT)</TD></TR>
             <TR><TD ALIGN="RIGHT">⊟</TD><TD ALIGN="LEFT">runtime gate (transmission / plasticity); gate name in the label</TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2">substrate-wide: point neurons · 1-step delay · GABA_A-default · global-scalar</TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2">neuromodulators · Izhikevich-default · forward-Euler (SH-1..SH-14, spec §6)</TD></TR>

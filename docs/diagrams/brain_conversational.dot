@@ -34,9 +34,9 @@ digraph ConversationalBrain {
     subgraph cluster_input {
         label=<<B>Input</B>   (language · visual ventral stream · episodic context)>;
         style="rounded,filled"; color="#2471a3"; fillcolor="#eaf2f8"; fontcolor="#1f618d"; fontsize=13; margin=12;
-        langin  [label=<<B>language_input</B>  (Wernicke-ish)<BR/><FONT POINT-SIZE="8.5">token-embedding input · plastic recurrent<BR/>⚠ token embedding host-supplied</FONT>>, fillcolor="#d6eaf8", color="#1f618d", fontcolor="#123a55", penwidth=1.7];
-        eccx    [label=<<B>ec_context</B>  (opt)<BR/><FONT POINT-SIZE="8.5">positional / time-cell drive<BR/>⚠ positional code host-generated</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#2e86c1", fontcolor="#16435f"];
-        retina  [label=<<B>retina</B>  (opt)<BR/><FONT POINT-SIZE="8.5">⚠ host-rendered image</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4", fontcolor="#163a59"];
+        langin  [label=<<B>language_input</B>  (Wernicke-ish)<BR/><FONT POINT-SIZE="8.5">token-embedding input · plastic recurrent<BR/>⌂ token embedding host-supplied</FONT>>, fillcolor="#d6eaf8", color="#1f618d", fontcolor="#123a55", penwidth=1.7];
+        eccx    [label=<<B>ec_context</B>  (opt)<BR/><FONT POINT-SIZE="8.5">positional / time-cell drive<BR/>⌂ positional code host-generated</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#2e86c1", fontcolor="#16435f"];
+        retina  [label=<<B>retina</B>  (opt)<BR/><FONT POINT-SIZE="8.5">⌂ host-rendered image</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4", fontcolor="#163a59"];
         it      [label=<<B>cortex_v1→v2→it</B>  (opt)<BR/><FONT POINT-SIZE="8.5">visual "what" stream → IT</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4", fontcolor="#163a59"];
         retina -> it [label="V1 Gabor → V2 → IT", color="#3d6fb4"];
     }
@@ -115,7 +115,7 @@ digraph ConversationalBrain {
     subgraph cluster_output {
         label=<<B>Output</B>  (C10/C11 · naming · articulation · embodied action)>;
         style="rounded,filled"; color="#239b56"; fillcolor="#eafaf1"; fontcolor="#1e8449"; fontsize=13; margin=12;
-        langout [label=<<B>language_output</B>  (Broca-ish)<BR/><FONT POINT-SIZE="8.5">word-pattern output (A→W readout)<BR/>⚠ word readout host-decoded</FONT>>, fillcolor="#d5f5e3", color="#1e8449", fontcolor="#0c3d22", penwidth=1.7];
+        langout [label=<<B>language_output</B>  (Broca-ish)<BR/><FONT POINT-SIZE="8.5">word-pattern output (A→W readout)<BR/>⌂ word readout host-decoded</FONT>>, fillcolor="#d5f5e3", color="#1e8449", fontcolor="#0c3d22", penwidth=1.7];
         langoutp[label=<<B>lang_output_pool_{i}</B>  ×N<BR/><FONT POINT-SIZE="8.5">per-concept naming pool (+ _fs WTM)</FONT>>, fillcolor="#d4efdf", color="#1d8049", fontcolor="#0f3d23"];
         motor   [label=<<B>motor_{N,E,S,W}</B>  ×4<BR/><FONT POINT-SIZE="8.5">embodied direction action</FONT>>, fillcolor="#f5b7b1", color="#c0392b", fontcolor="#641e16", penwidth=1.6];
         speech  [label=<<B>motor_speech</B><BR/><FONT POINT-SIZE="8.5">4-slot articulation</FONT>>, fillcolor="#f5b7b1", color="#c0392b", fontcolor="#641e16"];
@@ -193,8 +193,8 @@ digraph ConversationalBrain {
             <TR><TD ALIGN="RIGHT"><FONT COLOR="#909497">✗ ┄</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#909497">composition pathway present STRUCTURALLY but a NEGATIVE / BOUNDARY</FONT></TD></TR>
             <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT"><FONT COLOR="#909497">result (v12/v15/v16/v18) — NOT a working capability</FONT></TD></TR>
             <TR><TD ALIGN="RIGHT">×4/×N</TD><TD ALIGN="LEFT">per-concept template (×4 names per kind; ×N pools)</TD></TR>
-            <TR><TD ALIGN="RIGHT">⚠</TD><TD ALIGN="LEFT">host I/O boundary (token embedding in / word readout out) ·</TD></TR>
-            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT">substrate-wide shortcuts SH-1..SH-14 (see spec §6)</TD></TR>
+            <TR><TD ALIGN="RIGHT">⌂</TD><TD ALIGN="LEFT">host I/O boundary (token embedding in / word readout out) = LEGITIMATE env/body</TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#b9770e">⚠</FONT></TD><TD ALIGN="LEFT">documented SHORTCUT (collapsed/host-computed) · substrate-wide reductions SH-1..SH-14 (spec §6)</TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2"><B>CORE</B> (always built) = language_input → motor_X (Tier-1 binding) + its A→W reciprocal</TD></TR>
           </TABLE>>];
     }

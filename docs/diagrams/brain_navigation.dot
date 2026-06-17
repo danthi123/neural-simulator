@@ -36,19 +36,19 @@ digraph NavigationBrain {
     edge [fontname="Helvetica", fontsize=9, color="#5d6d7e", penwidth=1.3, arrowsize=0.8];
 
     // ====================================================================
-    //  C7p + C1 — PERCEPTION INPUTS  (host-rendered = environment; ⚠ shortcut codes)
+    //  C7p + C1 — PERCEPTION INPUTS  (⌂ retina/image = environment render, legitimate; ⚠ place/goal/beacon/landmark = host-computed shortcut codes)
     // ====================================================================
     subgraph cluster_inputs {
         label=<<B>Perception inputs</B>   (C7p readouts ·  C1 visual ventral stream)>;
         style="rounded,filled"; color="#ca6f1e"; fillcolor="#fef5e7"; fontcolor="#9a7d0a"; fontsize=13; margin=12;
 
-        place    [label=<<B>sensor_place_readout</B><BR/><FONT POINT-SIZE="8.5">sparse place cells (agent x,y)<BR/>⚠ host-rendered</FONT>>, fillcolor="#fdebd0", color="#ca6f1e"];
-        goal     [label=<<B>ppc_goal_input</B><BR/><FONT POINT-SIZE="8.5">goal (gx,gy) context<BR/>⚠ host-rendered</FONT>>, fillcolor="#fdebd0", color="#ca6f1e"];
-        sensory  [label=<<B>sensory</B>  (opt)<BR/><FONT POINT-SIZE="8.5">7×7 relative (dx,dy)<BR/>⚠ host-rendered</FONT>>, style="rounded,filled,dashed", fillcolor="#fef9e7", color="#ca6f1e"];
-        beacon   [label=<<B>beacon_sensors</B>  (opt)<BR/><FONT POINT-SIZE="8.5">8 beacon-intensity dirs<BR/>⚠ host-rendered</FONT>>, style="rounded,filled,dashed", fillcolor="#fef9e7", color="#ca6f1e"];
-        landmark [label=<<B>landmark_sensors</B>  (opt)<BR/><FONT POINT-SIZE="8.5">8 (dist,bearing)<BR/>⚠ host-rendered</FONT>>, style="rounded,filled,dashed", fillcolor="#fef9e7", color="#ca6f1e"];
+        place    [label=<<B>sensor_place_readout</B><BR/><FONT POINT-SIZE="8.5">sparse place cells (agent x,y)<BR/>⚠ host-computed code</FONT>>, fillcolor="#fdebd0", color="#ca6f1e"];
+        goal     [label=<<B>ppc_goal_input</B><BR/><FONT POINT-SIZE="8.5">goal (gx,gy) context<BR/>⚠ host-computed code</FONT>>, fillcolor="#fdebd0", color="#ca6f1e"];
+        sensory  [label=<<B>sensory</B>  (opt)<BR/><FONT POINT-SIZE="8.5">7×7 relative (dx,dy)<BR/>⚠ host-computed code</FONT>>, style="rounded,filled,dashed", fillcolor="#fef9e7", color="#ca6f1e"];
+        beacon   [label=<<B>beacon_sensors</B>  (opt)<BR/><FONT POINT-SIZE="8.5">8 beacon-intensity dirs<BR/>⚠ host-computed code</FONT>>, style="rounded,filled,dashed", fillcolor="#fef9e7", color="#ca6f1e"];
+        landmark [label=<<B>landmark_sensors</B>  (opt)<BR/><FONT POINT-SIZE="8.5">8 (dist,bearing)<BR/>⚠ host-computed code</FONT>>, style="rounded,filled,dashed", fillcolor="#fef9e7", color="#ca6f1e"];
 
-        retina   [label=<<B>retina</B>  (opt)<BR/><FONT POINT-SIZE="8.5">2×32×32 ON/OFF<BR/>⚠ host-rendered image</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4"];
+        retina   [label=<<B>retina</B>  (opt)<BR/><FONT POINT-SIZE="8.5">2×32×32 ON/OFF<BR/>⌂ host-rendered image</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4"];
         v1s      [label=<<B>cortex_v1_simple</B><BR/><FONT POINT-SIZE="8.5">Gabor RF (Hubel-Wiesel)</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4"];
         v1c      [label=<<B>cortex_v1_complex</B><BR/><FONT POINT-SIZE="8.5">phase-pooled ⚠ rate≈max-pool</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4"];
         v2       [label=<<B>cortex_v2</B><BR/><FONT POINT-SIZE="8.5">higher-order features</FONT>>, style="rounded,filled,dashed", fillcolor="#eaf2f8", color="#3d6fb4"];
@@ -69,7 +69,7 @@ digraph NavigationBrain {
     subgraph cluster_sc_orient {
         label=<<B>Superior colliculus — orienting</B>  (C5 · N1 · --enable-spiking-sc)>;
         style="rounded,filled,dashed"; color="#7d3c98"; fillcolor="#f5eef8"; fontcolor="#6c3483"; fontsize=13; margin=12;
-        scret  [label=<<B>sc_retina</B><BR/><FONT POINT-SIZE="8.5">SC's own egocentric eye<BR/>⚠ host-rendered retinal image</FONT>>, style="rounded,filled,dashed", fillcolor="#f4ecf7", color="#7d3c98"];
+        scret  [label=<<B>sc_retina</B><BR/><FONT POINT-SIZE="8.5">SC's own egocentric eye<BR/>⌂ host-rendered retinal image</FONT>>, style="rounded,filled,dashed", fillcolor="#f4ecf7", color="#7d3c98"];
         scmap  [label=<<B>sc_map</B><BR/><FONT POINT-SIZE="8.5">retinotopic sheet · single bump<BR/>at the goal's retinal site</FONT>>, fillcolor="#e8daef", color="#6c3483", penwidth=1.6];
         scfs   [label=<<B>sc_fs</B><BR/><FONT POINT-SIZE="8.5">Mexican-hat surround (sharpens bump)</FONT>>, fillcolor="#ebdef0", color="#4a235a", penwidth=2.2];
         scros  [label=<<B>sc_rostral</B>  (opt · N5)<BR/><FONT POINT-SIZE="8.5">pools bump CENTRE → proximity (the reward r)</FONT>>, style="rounded,filled,dashed", fillcolor="#f4ecf7", color="#6c3483"];
@@ -311,9 +311,10 @@ digraph NavigationBrain {
             <TR><TD ALIGN="RIGHT">┄</TD><TD ALIGN="LEFT">dashed border / edge = opt-in (flag-gated) or weaker/feedback</TD></TR>
             <TR><TD ALIGN="RIGHT">⊟</TD><TD ALIGN="LEFT">runtime gate (transmission / plasticity) · gate name in label</TD></TR>
             <TR><TD ALIGN="RIGHT">×4</TD><TD ALIGN="LEFT">per-action template (N/E/S/W); cross-action arcs shown once, labelled</TD></TR>
-            <TR><TD ALIGN="RIGHT">⚠</TD><TD ALIGN="LEFT">documented shortcut (host-rendered input = legitimate environment/body;</TD></TR>
-            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT">collapsed/phenomenological stand-in = a reduction). Substrate-wide: point</TD></TR>
-            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT">neurons · 1-step delay · Izhikevich-default (SH-1..SH-14, see spec §6)</TD></TR>
+            <TR><TD ALIGN="RIGHT">⌂</TD><TD ALIGN="LEFT">host-rendered input / decoded output = environment/body boundary (LEGITIMATE)</TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#b9770e">⚠</FONT></TD><TD ALIGN="LEFT">documented SHORTCUT: collapsed/phenomenological stand-in OR host-computed code</TD></TR>
+            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT">(e.g. place/goal coords). Substrate-wide: point neurons · 1-step delay ·</TD></TR>
+            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT">Izhikevich-default (SH-1..SH-14, see spec §6)</TD></TR>
           </TABLE>>];
     }
 

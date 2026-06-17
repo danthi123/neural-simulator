@@ -72,9 +72,8 @@ and labelled (e.g. "cross-action WTA (X→Y≠X)").
 - **Solid border** = always built (the CORE). **Thick border** = an inhibitory region (low excitatory fraction).
 - **Dashed border / edge** = opt-in (flag-gated), or a weaker / feedback pathway.
 - **⊟** on an edge = a runtime gate (transmission or plasticity); the gate name is in the label.
-- **⚠** = a documented **shortcut**. Two kinds, distinguished:
-  - *host-rendered input* (sensory codes drawn by the environment) — **legitimate**: the world renders the agent's input, the body acts on its output.
-  - *collapsed / phenomenological stand-in* (e.g. GPi+SNr merged, A9+VTA merged, per-action cortex labeling, a 250-cell cerebellar granule layer) — a genuine reduction.
+- **⌂** = the **host I/O boundary** — host-rendered sensory input (raw pixels: retina/image) or host-decoded motor output (which word/action the body emitted). This is **legitimate, not a shortcut**: under the brain-based-only standard the world is allowed to render the agent's input and the body to act on its output. (Distinguished from ⚠ with its own glyph precisely so a legitimate boundary is never read as a cheat.)
+- **⚠** = a documented **shortcut** — a genuine reduction, of two sub-kinds: a *collapsed / phenomenological stand-in* (GPi+SNr merged, A9+VTA merged, per-action cortex labeling, a 250-cell cerebellar granule layer), or *host-computed cognition* (e.g. the place/goal **coordinate** codes handed to the navigator — the agent is given its position instead of perceiving it). Both are things the brain itself is meant to do.
 - **✗ gray dashed** (conversational graph) = a composition pathway that is present **structurally** but is a **NEGATIVE / BOUNDARY** result (v12/v15/v16/v18) — wired, but **not a working capability**.
 
 ### Substrate-wide shortcuts (apply almost everywhere — annotated once)
