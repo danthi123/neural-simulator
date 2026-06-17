@@ -1,0 +1,70 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "persistent": {
+        "referent": "cat",
+        "answer": "fish",
+        "specificity": 574.0
+      },
+      "reset": {
+        "referent": null,
+        "answer": null
+      },
+      "lesion": {
+        "referent": "worm",
+        "answer": null
+      },
+      "empty_moat": {
+        "referent": null,
+        "answer": null
+      },
+      "go": true,
+      "moat_ok": true
+    },
+    {
+      "seed": 43,
+      "persistent": {
+        "referent": "cat",
+        "answer": "fish",
+        "specificity": 296250000.0
+      },
+      "reset": {
+        "referent": null,
+        "answer": null
+      },
+      "lesion": {
+        "referent": null,
+        "answer": null
+      },
+      "empty_moat": {
+        "referent": null,
+        "answer": null
+      },
+      "go": true,
+      "moat_ok": true
+    },
+    {
+      "seed": 44,
+      "persistent": {
+        "referent": "cat",
+        "answer": "fish",
+        "specificity": 1749.99
+      },
+      "reset": {
+        "referent": null,
+        "answer": null
+      },
+      "lesion": {
+        "referent": null,
+        "answer": null
+      },
+      "empty_moat": {
+        "referent": null,
+        "answer": null
+      },
+      "go": true,
+      "moat_ok": true
+    }
+  ]
+}
