@@ -33,6 +33,7 @@ from research.runners.brain_conversational_agent import BrainConversationalAgent
 from research.runners.ordered_position_wm import OrderedPositionWM
 
 _ANAPHORS = {"it", "that", "them", "they", "this"}
+_CORRECTION_MARKERS = {"actually", "no", "wait", "correction"}   # optional leading cue for a reconsolidation turn
 
 # Surface pronoun emitted for a recurring (singular) subject in narrate(). The matching anaphor "it" is in
 # _ANAPHORS, so the emitted pronoun is the same token the agent resolves on the substrate.
@@ -126,6 +127,27 @@ class MultiTurnAgentV2:
         self._write_referent(roles.get("agent"))
         self._write_referent(roles.get("patient"))
         return roles
+
+    def correct(self, sentence, voice="active"):
+        """RECONSOLIDATION turn (the opt-in reconsolidation entry point; `hear` stays append-only and byte-identical).
+        A corrective utterance -- 'actually <agent> <action> <new_patient>' -- reactivates the cued fact and updates
+        its patient IN PLACE (no contradictory duplicate), gated by the prediction error: a re-statement re-stabilizes
+        unchanged, and a NEVER-stored cue ABSTAINS (the no-confab moat -- update a reactivated trace, never fabricate a
+        missing one). A leading correction marker (actually/no/wait) is optional; an anaphor agent ('actually it went
+        south') resolves from the discourse buffer. Returns the composer's update result {action, wrote, pe}. De-risked
+        6/6 multi-seed: research/findings/2026-06-17-reconsolidation-update-derisk-GO.md."""
+        words = [w for w in sentence.split() if w]
+        if words and words[0].lower() in _CORRECTION_MARKERS:
+            words = words[1:]
+        roles = self.agent.parser.parse(words, voice)
+        agent = self._resolve(roles["agent"])               # resolve an agent pronoun from the discourse buffer
+        if agent is None:
+            return {"action": "abstain", "wrote": False, "pe": None, "reason": "unresolved_pronoun"}
+        res = self.agent.composer.update_on_mismatch(agent, roles["action"], roles["patient"])
+        if res.get("wrote"):                                 # foreground the corrected fact's referents (like hear)
+            self._write_referent(agent)
+            self._write_referent(roles["patient"])
+        return res
 
     def what_does(self, agent_word, action):
         """'what does <agent|it> <action>?' -> patient or None. Resolves a pronoun agent from the most-recent

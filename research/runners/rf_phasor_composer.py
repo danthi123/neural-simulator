@@ -279,6 +279,77 @@ class RFPhasorComposer:
         comp = self._encode(fact)
         self.kb.append((fact, self._store_substrate(comp) if self.enable_substrate_store else comp))
 
+    # --- reconsolidation: prediction-error-gated in-place fact update (Option A; additive, store/query unchanged) ---
+    def _find_cued_fact(self, agent, action):
+        """Reactivation: the FIRST stored fact whose CUE roles (agent+action) match, by the substrate unbind +
+        cleanup. Returns (kb_index, fact, composite) or None (no trace to reactivate -> abstain)."""
+        for i, (fact, handle) in enumerate(self.kb):
+            comp = self._retrieve_substrate(handle) if self.enable_substrate_store else handle
+            if self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action:
+                return i, fact, comp
+        return None
+
+    def _patient_prediction_error(self, comp, patient_word):
+        """PE = 1 - phase-cos(recovered patient phasor, the asserted patient's code). ~0 when the asserted filler
+        matches the stored one (a re-statement); ~1 on a mismatch (a correction)."""
+        rec = self._unbind_phases(comp, "patient")
+        return 1.0 - float(np.mean(np.cos(2.0 * np.pi * (rec - self.concepts[patient_word]))))
+
+    def _calibrate_pe_labile(self):
+        """Frozen labilization gate = the midpoint of the measured same-vs-different prediction-error distributions
+        over the CURRENT facts (each fact's PE against its OWN stored patient = 'same'; against other facts'
+        patients = 'different'). The data's own separation point -- NOT tuned to a downstream probe (the
+        calibrate_threshold rule). 0.5 fallback when too few distinct facts exist to calibrate."""
+        facts = []
+        for fact, handle in self.kb:
+            p = fact.get("patient")
+            if isinstance(p, str):
+                comp = self._retrieve_substrate(handle) if self.enable_substrate_store else handle
+                facts.append((comp, p))
+        same, diff = [], []
+        for comp, p in facts:
+            same.append(self._patient_prediction_error(comp, p))
+            for _comp2, p2 in facts:
+                if p2 != p:
+                    diff.append(self._patient_prediction_error(comp, p2))
+        if not same or not diff:
+            return 0.5
+        return 0.5 * (float(np.mean(same)) + float(np.mean(diff)))
+
+    def update_on_mismatch(self, agent, action, new_patient, pe_labile=None):
+        """RECONSOLIDATION: a corrective utterance ('actually, <agent> <action> <new_patient>') reactivates the
+        cued fact and -- ONLY if the new filler carries a prediction error above the labilization gate -- rewrites
+        that fact's patient IN PLACE (no contradictory duplicate). A fully-predicted re-statement re-stabilizes
+        unchanged; a NEVER-stored cue ABSTAINS (the no-confab moat: a reactivated trace is updated, a missing one
+        is not fabricated). ADDITIVE -- store()/query_*() are unchanged, so any caller that never invokes this
+        keeps the append-only path byte-for-byte; the agent-level opt-in is where 'default-off' lives.
+
+        pe_labile=None -> auto-calibrate the gate from the current facts (the validated midpoint rule); else use
+        the supplied gate. Returns {action: abstain|rewrite|restabilize, wrote: bool, pe: float|None}. Nader 2000;
+        Osan-Tort-Amaral 2011 mismatch-gated attractor update; Sevenster 2013 prediction-error necessity. De-risked
+        6/6 multi-seed: research/findings/2026-06-17-reconsolidation-update-derisk-GO.md."""
+        found = self._find_cued_fact(agent, action)
+        if found is None:
+            return {"action": "abstain", "wrote": False, "pe": None}     # no trace -> no update, no fabrication
+        idx, fact, comp = found
+        gate = self._calibrate_pe_labile() if pe_labile is None else float(pe_labile)
+        pe = self._patient_prediction_error(comp, new_patient)
+        if pe >= gate:
+            f2 = dict(fact); f2["patient"] = new_patient
+            comp2 = self._encode(f2)
+            self.kb[idx] = (f2, self._store_substrate(comp2) if self.enable_substrate_store else comp2)
+            return {"action": "rewrite", "wrote": True, "pe": pe}
+        return {"action": "restabilize", "wrote": False, "pe": pe}        # PE below the gate -> re-stabilize
+
+    def count_facts(self, agent, action):
+        """Number of stored facts whose cue roles (agent+action) match -- 1 after a reconsolidation update, 2 if a
+        correction was naively appended. Used by the reconsolidation tests + the correction-turn hook."""
+        return sum(1 for fact, handle in self.kb
+                   if self.unbind(self._retrieve_substrate(handle) if self.enable_substrate_store else handle,
+                                  "agent") == agent
+                   and self.unbind(self._retrieve_substrate(handle) if self.enable_substrate_store else handle,
+                                   "action") == action)
+
     def _store_substrate(self, comp_phases):
         """Hold the bound composite in the SUBSTRATE: a persistent (1+D) RF bridge whose trigger(neuron 0) ->
         readout(1..D) complex weights carry the composite phasor. The composite lives in the synaptic weights
