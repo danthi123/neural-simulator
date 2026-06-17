@@ -849,6 +849,34 @@ arc was de-risked cheapest-first BEFORE any protected edit:
   `2026-06-16-sentence-generation-biologization-deep-research.md`, `2026-06-16-sentence-generation-serial-order-cheap-first-GO.md`.
   Runners: `neural_serial_order_renderer.py`, `_phaseB_serial_order_{cq,spiking}_derisk.py`.
 
+- **UPDATE (2026-06-17) — the conversational arc is COMPREHENSIVELY COMPLETE: consolidation + multi-hop reasoning
+  (production) + multi-turn dialogue (production), all reuse-by-import, NO `sim/` edit, the no-confab moat never
+  weakened.** (1) **Consolidation GO** — the production conversational agent (`consolidated_320_conversation_demo.py`,
+  `BrainConversationalAgent` + `RFPhasorComposer`) now converses end-to-end on the **320 codes the cortex LEARNED
+  FROM CONVERSATION** (the fully-brain-based stream cortex): recall 1.00, 0 false-accepts, yes/no, neural-ordered
+  describe, dialogue-plan — 3-seed host read-out + 2-seed fully-brain-based neural read-out (3rd streaming). The
+  loop closes: learn word meanings by listening → converse using them. `tests/test_consolidated_320_conversation.py`.
+  Finding: `2026-06-17-consolidated-320-production-conversation-GO.md`. (2) **Multi-hop reasoning = PRODUCTION**
+  (`RFPhasorComposer.query_chain` / `BrainConversationalAgent.reason_chain`): the role-structured pointer-chase
+  iterates the validated `query_patient` (match agent+action, read patient, abstain on miss → no-confab moat at
+  EVERY hop), handles MIXED-relation chains. De-risked **unanimous 3-seed × 3-D GO** (2-hop chase 1.00 vs spreading
+  floor ~0.08, permuted 0.00, lesion 0.00, moat intact, holds through 4 hops — the cleanup re-discretizes between
+  hops so error doesn't compound) with all 5 anti-cheats foregrounding the 2026-05-14 transitive-inference
+  RETRACTION. `tests/test_multihop_query_chain.py`. Findings: `2026-06-17-multihop-reasoning-multiturn-dialogue-scoping.md`,
+  `-multihop-query-chain-GO.md`. (3) **Multi-turn dialogue = PRODUCTION** (`multi_turn_agent.py` `MultiTurnAgent` +
+  `multi_turn_conversation_demo.py`): a persistent `SpikingLoopContextBuffer` holds discourse referents across
+  turns → a turn-2 pronoun ("it") resolves to the held concept (de-risked GO 3-seed: reset/lesion break it,
+  empty-WM abstains) + a multi-hop chain's intermediate is carried in the SAME loop. `tests/test_multi_turn_agent.py`.
+  Finding: `2026-06-17-multiturn-anaphora-derisk-GO.md`. (4) **Two honest negatives that sharpen the map:** recall
+  errors under noise are NEAR-random not within-category (the codes' category margin is thin, swamped by noise —
+  `2026-06-17-within-category-error-signature-NEGATIVE.md`, incl. a same-session self-correction of an overstated
+  mechanism); and multi-REFERENT disambiguation (which of several held referents a bare pronoun binds) needs
+  **winner-take-all biased-competition inhibition** between referent attractors — NOT recency, NOT a salience
+  boost (two converging NEGATIVEs, `2026-06-17-multireferent-disambiguation-NEGATIVE.md`) — the precise, specified
+  next mechanism whenever multi-referent dialogue is prioritized. **⇒ the full conversational stack on the
+  validated substrate: parse · store · recall · abstain · negate/yes-no · generate (neural word order) ·
+  dialogue-plan · learn-from-conversation · multi-hop-reason · multi-turn-anaphora.**
+
 `SIM_BACKEND=cupy` (GPU) is required for the merged-bridge runs (numpy is a tiny-smoke / CI path only).
 
 ### 🧠🔗 Cross-region "one brain" FUNCTIONAL interaction + step-3 COMPOSE-PERCEIVED-CONTENT de-risked (2026-06-16)
