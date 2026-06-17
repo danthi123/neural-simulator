@@ -1,0 +1,1366 @@
+{
+  "params": {
+    "D_wm": 128,
+    "facts": [
+      [
+        "dog",
+        "ran",
+        "north"
+      ],
+      [
+        "cat",
+        "saw",
+        "river"
+      ],
+      [
+        "bird",
+        "ate",
+        "worm"
+      ],
+      [
+        "fox",
+        "found",
+        "den"
+      ],
+      [
+        "frog",
+        "crossed",
+        "road"
+      ],
+      [
+        "hawk",
+        "chased",
+        "mouse"
+      ]
+    ],
+    "subjects": [
+      "dog",
+      "cat",
+      "bird",
+      "fox",
+      "frog",
+      "hawk"
+    ],
+    "objects": [
+      "den",
+      "mouse",
+      "north",
+      "river",
+      "road",
+      "worm"
+    ],
+    "absent_referent": "owl",
+    "pronoun": "it",
+    "n_slots": 7,
+    "n_trials_coherence": 40,
+    "n_trials_order": 40,
+    "n_trials_distinct": 40,
+    "n_trials_noconfab": 30,
+    "backend": "numpy"
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "calibrated_threshold": 0.3332,
+      "coherence": {
+        "coherence_accuracy": 1.0,
+        "n_trials": 40,
+        "examples": [
+          {
+            "order": [
+              "dog",
+              "bird",
+              "dog"
+            ],
+            "surface": "dog ran north. bird ate worm. then it ran north.",
+            "recurring_subject": "dog",
+            "resolved_antecedent": "dog",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "dog",
+              "bird",
+              "dog"
+            ],
+            "surface": "dog ran north. bird ate worm. then it ran north.",
+            "recurring_subject": "dog",
+            "resolved_antecedent": "dog",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "bird",
+              "fox",
+              "bird"
+            ],
+            "surface": "bird ate worm. fox found den. then it ate worm.",
+            "recurring_subject": "bird",
+            "resolved_antecedent": "bird",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "hawk",
+              "fox",
+              "hawk"
+            ],
+            "surface": "hawk chased mouse. fox found den. then it chased mouse.",
+            "recurring_subject": "hawk",
+            "resolved_antecedent": "hawk",
+            "antecedent_slot": 0,
+            "correct": true
+          }
+        ]
+      },
+      "order_control": {
+        "order_control_accuracy": 1.0,
+        "n_trials": 40,
+        "n_flips_observed": 40,
+        "examples": [
+          {
+            "pair": [
+              "bird",
+              "fox"
+            ],
+            "discourseA_recurs": "bird",
+            "resolvedA": "bird",
+            "discourseB_recurs": "fox",
+            "resolvedB": "fox",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "hawk",
+              "frog"
+            ],
+            "discourseA_recurs": "hawk",
+            "resolvedA": "hawk",
+            "discourseB_recurs": "frog",
+            "resolvedB": "frog",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "fox",
+              "bird"
+            ],
+            "discourseA_recurs": "fox",
+            "resolvedA": "fox",
+            "discourseB_recurs": "bird",
+            "resolvedB": "bird",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "fox",
+              "cat"
+            ],
+            "discourseA_recurs": "fox",
+            "resolvedA": "fox",
+            "discourseB_recurs": "cat",
+            "resolvedB": "cat",
+            "flipped": true,
+            "correct": true
+          }
+        ]
+      },
+      "distinct_referent": {
+        "distinct_referent_accuracy": 1.0,
+        "n_trials": 40,
+        "examples": [
+          {
+            "order": [
+              "hawk",
+              "cat",
+              "bird"
+            ],
+            "surface": "hawk chased mouse. cat saw river. bird ate worm.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "bird",
+              "cat",
+              "frog"
+            ],
+            "surface": "bird ate worm. cat saw river. frog crossed road.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "cat",
+              "fox",
+              "frog"
+            ],
+            "surface": "cat saw river. fox found den. frog crossed road.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "frog",
+              "hawk",
+              "fox"
+            ],
+            "surface": "frog crossed road. hawk chased mouse. fox found den.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          }
+        ]
+      },
+      "no_confab": {
+        "unknown_abstain_accuracy": 1.0,
+        "n_trials": 30,
+        "examples": [
+          {
+            "seeded_subject": "dog",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0255,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "frog",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.1035,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "dog",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0255,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "bird",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0525,
+            "abstained": true
+          }
+        ]
+      },
+      "coherence_pass": true,
+      "order_pass": true,
+      "distinct_pass": true,
+      "no_confab_pass": true,
+      "seed_full_pass": true
+    },
+    "43": {
+      "seed": 43,
+      "calibrated_threshold": 0.3043,
+      "coherence": {
+        "coherence_accuracy": 1.0,
+        "n_trials": 40,
+        "examples": [
+          {
+            "order": [
+              "fox",
+              "frog",
+              "fox"
+            ],
+            "surface": "fox found den. frog crossed road. then it found den.",
+            "recurring_subject": "fox",
+            "resolved_antecedent": "fox",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "frog",
+              "hawk",
+              "frog"
+            ],
+            "surface": "frog crossed road. hawk chased mouse. then it crossed road.",
+            "recurring_subject": "frog",
+            "resolved_antecedent": "frog",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "cat",
+              "hawk",
+              "cat"
+            ],
+            "surface": "cat saw river. hawk chased mouse. then it saw river.",
+            "recurring_subject": "cat",
+            "resolved_antecedent": "cat",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "cat",
+              "hawk",
+              "cat"
+            ],
+            "surface": "cat saw river. hawk chased mouse. then it saw river.",
+            "recurring_subject": "cat",
+            "resolved_antecedent": "cat",
+            "antecedent_slot": 0,
+            "correct": true
+          }
+        ]
+      },
+      "order_control": {
+        "order_control_accuracy": 1.0,
+        "n_trials": 40,
+        "n_flips_observed": 40,
+        "examples": [
+          {
+            "pair": [
+              "bird",
+              "hawk"
+            ],
+            "discourseA_recurs": "bird",
+            "resolvedA": "bird",
+            "discourseB_recurs": "hawk",
+            "resolvedB": "hawk",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "cat",
+              "bird"
+            ],
+            "discourseA_recurs": "cat",
+            "resolvedA": "cat",
+            "discourseB_recurs": "bird",
+            "resolvedB": "bird",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "dog",
+              "cat"
+            ],
+            "discourseA_recurs": "dog",
+            "resolvedA": "dog",
+            "discourseB_recurs": "cat",
+            "resolvedB": "cat",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "hawk",
+              "frog"
+            ],
+            "discourseA_recurs": "hawk",
+            "resolvedA": "hawk",
+            "discourseB_recurs": "frog",
+            "resolvedB": "frog",
+            "flipped": true,
+            "correct": true
+          }
+        ]
+      },
+      "distinct_referent": {
+        "distinct_referent_accuracy": 1.0,
+        "n_trials": 40,
+        "examples": [
+          {
+            "order": [
+              "frog",
+              "bird",
+              "hawk"
+            ],
+            "surface": "frog crossed road. bird ate worm. hawk chased mouse.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "frog",
+              "bird",
+              "hawk"
+            ],
+            "surface": "frog crossed road. bird ate worm. hawk chased mouse.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "hawk",
+              "dog",
+              "cat"
+            ],
+            "surface": "hawk chased mouse. dog ran north. cat saw river.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "frog",
+              "fox",
+              "cat"
+            ],
+            "surface": "frog crossed road. fox found den. cat saw river.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          }
+        ]
+      },
+      "no_confab": {
+        "unknown_abstain_accuracy": 1.0,
+        "n_trials": 30,
+        "examples": [
+          {
+            "seeded_subject": "bird",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.1232,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "hawk",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.1233,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "frog",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.1062,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "hawk",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.1233,
+            "abstained": true
+          }
+        ]
+      },
+      "coherence_pass": true,
+      "order_pass": true,
+      "distinct_pass": true,
+      "no_confab_pass": true,
+      "seed_full_pass": true
+    },
+    "44": {
+      "seed": 44,
+      "calibrated_threshold": 0.2893,
+      "coherence": {
+        "coherence_accuracy": 1.0,
+        "n_trials": 40,
+        "examples": [
+          {
+            "order": [
+              "cat",
+              "hawk",
+              "cat"
+            ],
+            "surface": "cat saw river. hawk chased mouse. then it saw river.",
+            "recurring_subject": "cat",
+            "resolved_antecedent": "cat",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "bird",
+              "cat",
+              "bird"
+            ],
+            "surface": "bird ate worm. cat saw river. then it ate worm.",
+            "recurring_subject": "bird",
+            "resolved_antecedent": "bird",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "cat",
+              "hawk",
+              "cat"
+            ],
+            "surface": "cat saw river. hawk chased mouse. then it saw river.",
+            "recurring_subject": "cat",
+            "resolved_antecedent": "cat",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "hawk",
+              "fox",
+              "hawk"
+            ],
+            "surface": "hawk chased mouse. fox found den. then it chased mouse.",
+            "recurring_subject": "hawk",
+            "resolved_antecedent": "hawk",
+            "antecedent_slot": 0,
+            "correct": true
+          }
+        ]
+      },
+      "order_control": {
+        "order_control_accuracy": 1.0,
+        "n_trials": 40,
+        "n_flips_observed": 40,
+        "examples": [
+          {
+            "pair": [
+              "dog",
+              "hawk"
+            ],
+            "discourseA_recurs": "dog",
+            "resolvedA": "dog",
+            "discourseB_recurs": "hawk",
+            "resolvedB": "hawk",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "cat",
+              "bird"
+            ],
+            "discourseA_recurs": "cat",
+            "resolvedA": "cat",
+            "discourseB_recurs": "bird",
+            "resolvedB": "bird",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "frog",
+              "cat"
+            ],
+            "discourseA_recurs": "frog",
+            "resolvedA": "frog",
+            "discourseB_recurs": "cat",
+            "resolvedB": "cat",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "frog",
+              "bird"
+            ],
+            "discourseA_recurs": "frog",
+            "resolvedA": "frog",
+            "discourseB_recurs": "bird",
+            "resolvedB": "bird",
+            "flipped": true,
+            "correct": true
+          }
+        ]
+      },
+      "distinct_referent": {
+        "distinct_referent_accuracy": 1.0,
+        "n_trials": 40,
+        "examples": [
+          {
+            "order": [
+              "dog",
+              "hawk",
+              "fox"
+            ],
+            "surface": "dog ran north. hawk chased mouse. fox found den.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "frog",
+              "dog",
+              "bird"
+            ],
+            "surface": "frog crossed road. dog ran north. bird ate worm.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "frog",
+              "cat",
+              "hawk"
+            ],
+            "surface": "frog crossed road. cat saw river. hawk chased mouse.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "bird",
+              "frog",
+              "dog"
+            ],
+            "surface": "bird ate worm. frog crossed road. dog ran north.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          }
+        ]
+      },
+      "no_confab": {
+        "unknown_abstain_accuracy": 1.0,
+        "n_trials": 30,
+        "examples": [
+          {
+            "seeded_subject": "hawk",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0448,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "fox",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0964,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "frog",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0801,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "fox",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0964,
+            "abstained": true
+          }
+        ]
+      },
+      "coherence_pass": true,
+      "order_pass": true,
+      "distinct_pass": true,
+      "no_confab_pass": true,
+      "seed_full_pass": true
+    },
+    "100": {
+      "seed": 100,
+      "calibrated_threshold": 0.3338,
+      "coherence": {
+        "coherence_accuracy": 0.975,
+        "n_trials": 40,
+        "examples": [
+          {
+            "order": [
+              "dog",
+              "fox",
+              "dog"
+            ],
+            "surface": "dog ran north. fox found den. then it ran north.",
+            "recurring_subject": "dog",
+            "resolved_antecedent": "dog",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "bird",
+              "frog",
+              "bird"
+            ],
+            "surface": "bird ate worm. frog crossed road. then it ate worm.",
+            "recurring_subject": "bird",
+            "resolved_antecedent": "bird",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "cat",
+              "frog",
+              "cat"
+            ],
+            "surface": "cat saw river. frog crossed road. then it saw river.",
+            "recurring_subject": "cat",
+            "resolved_antecedent": "cat",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "hawk",
+              "bird",
+              "hawk"
+            ],
+            "surface": "hawk chased mouse. bird ate worm. then it chased mouse.",
+            "recurring_subject": "hawk",
+            "resolved_antecedent": "hawk",
+            "antecedent_slot": 0,
+            "correct": true
+          }
+        ]
+      },
+      "order_control": {
+        "order_control_accuracy": 0.825,
+        "n_trials": 40,
+        "n_flips_observed": 40,
+        "examples": [
+          {
+            "pair": [
+              "fox",
+              "cat"
+            ],
+            "discourseA_recurs": "fox",
+            "resolvedA": "fox",
+            "discourseB_recurs": "cat",
+            "resolvedB": "cat",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "cat",
+              "dog"
+            ],
+            "discourseA_recurs": "cat",
+            "resolvedA": "cat",
+            "discourseB_recurs": "dog",
+            "resolvedB": "dog",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "fox",
+              "frog"
+            ],
+            "discourseA_recurs": "fox",
+            "resolvedA": "fox",
+            "discourseB_recurs": "frog",
+            "resolvedB": "frog",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "bird",
+              "hawk"
+            ],
+            "discourseA_recurs": "bird",
+            "resolvedA": "bird",
+            "discourseB_recurs": "hawk",
+            "resolvedB": "hawk",
+            "flipped": true,
+            "correct": true
+          }
+        ]
+      },
+      "distinct_referent": {
+        "distinct_referent_accuracy": 1.0,
+        "n_trials": 40,
+        "examples": [
+          {
+            "order": [
+              "dog",
+              "bird",
+              "frog"
+            ],
+            "surface": "dog ran north. bird ate worm. frog crossed road.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "cat",
+              "frog",
+              "fox"
+            ],
+            "surface": "cat saw river. frog crossed road. fox found den.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "cat",
+              "frog",
+              "fox"
+            ],
+            "surface": "cat saw river. frog crossed road. fox found den.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "hawk",
+              "frog",
+              "fox"
+            ],
+            "surface": "hawk chased mouse. frog crossed road. fox found den.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          }
+        ]
+      },
+      "no_confab": {
+        "unknown_abstain_accuracy": 1.0,
+        "n_trials": 30,
+        "examples": [
+          {
+            "seeded_subject": "dog",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0764,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "cat",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0982,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "hawk",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0638,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "frog",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0824,
+            "abstained": true
+          }
+        ]
+      },
+      "coherence_pass": true,
+      "order_pass": true,
+      "distinct_pass": true,
+      "no_confab_pass": true,
+      "seed_full_pass": true
+    },
+    "101": {
+      "seed": 101,
+      "calibrated_threshold": 0.3271,
+      "coherence": {
+        "coherence_accuracy": 1.0,
+        "n_trials": 40,
+        "examples": [
+          {
+            "order": [
+              "dog",
+              "hawk",
+              "dog"
+            ],
+            "surface": "dog ran north. hawk chased mouse. then it ran north.",
+            "recurring_subject": "dog",
+            "resolved_antecedent": "dog",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "dog",
+              "fox",
+              "dog"
+            ],
+            "surface": "dog ran north. fox found den. then it ran north.",
+            "recurring_subject": "dog",
+            "resolved_antecedent": "dog",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "dog",
+              "bird",
+              "dog"
+            ],
+            "surface": "dog ran north. bird ate worm. then it ran north.",
+            "recurring_subject": "dog",
+            "resolved_antecedent": "dog",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "frog",
+              "cat",
+              "frog"
+            ],
+            "surface": "frog crossed road. cat saw river. then it crossed road.",
+            "recurring_subject": "frog",
+            "resolved_antecedent": "frog",
+            "antecedent_slot": 0,
+            "correct": true
+          }
+        ]
+      },
+      "order_control": {
+        "order_control_accuracy": 1.0,
+        "n_trials": 40,
+        "n_flips_observed": 40,
+        "examples": [
+          {
+            "pair": [
+              "hawk",
+              "frog"
+            ],
+            "discourseA_recurs": "hawk",
+            "resolvedA": "hawk",
+            "discourseB_recurs": "frog",
+            "resolvedB": "frog",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "fox",
+              "dog"
+            ],
+            "discourseA_recurs": "fox",
+            "resolvedA": "fox",
+            "discourseB_recurs": "dog",
+            "resolvedB": "dog",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "cat",
+              "dog"
+            ],
+            "discourseA_recurs": "cat",
+            "resolvedA": "cat",
+            "discourseB_recurs": "dog",
+            "resolvedB": "dog",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "frog",
+              "dog"
+            ],
+            "discourseA_recurs": "frog",
+            "resolvedA": "frog",
+            "discourseB_recurs": "dog",
+            "resolvedB": "dog",
+            "flipped": true,
+            "correct": true
+          }
+        ]
+      },
+      "distinct_referent": {
+        "distinct_referent_accuracy": 1.0,
+        "n_trials": 40,
+        "examples": [
+          {
+            "order": [
+              "bird",
+              "fox",
+              "frog"
+            ],
+            "surface": "bird ate worm. fox found den. frog crossed road.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "cat",
+              "bird",
+              "frog"
+            ],
+            "surface": "cat saw river. bird ate worm. frog crossed road.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "cat",
+              "fox",
+              "bird"
+            ],
+            "surface": "cat saw river. fox found den. bird ate worm.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "hawk",
+              "bird",
+              "cat"
+            ],
+            "surface": "hawk chased mouse. bird ate worm. cat saw river.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          }
+        ]
+      },
+      "no_confab": {
+        "unknown_abstain_accuracy": 1.0,
+        "n_trials": 30,
+        "examples": [
+          {
+            "seeded_subject": "hawk",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.1121,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "dog",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.1355,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "dog",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.1355,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "dog",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.1355,
+            "abstained": true
+          }
+        ]
+      },
+      "coherence_pass": true,
+      "order_pass": true,
+      "distinct_pass": true,
+      "no_confab_pass": true,
+      "seed_full_pass": true
+    },
+    "102": {
+      "seed": 102,
+      "calibrated_threshold": 0.3207,
+      "coherence": {
+        "coherence_accuracy": 1.0,
+        "n_trials": 40,
+        "examples": [
+          {
+            "order": [
+              "fox",
+              "bird",
+              "fox"
+            ],
+            "surface": "fox found den. bird ate worm. then it found den.",
+            "recurring_subject": "fox",
+            "resolved_antecedent": "fox",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "frog",
+              "bird",
+              "frog"
+            ],
+            "surface": "frog crossed road. bird ate worm. then it crossed road.",
+            "recurring_subject": "frog",
+            "resolved_antecedent": "frog",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "hawk",
+              "cat",
+              "hawk"
+            ],
+            "surface": "hawk chased mouse. cat saw river. then it chased mouse.",
+            "recurring_subject": "hawk",
+            "resolved_antecedent": "hawk",
+            "antecedent_slot": 0,
+            "correct": true
+          },
+          {
+            "order": [
+              "dog",
+              "bird",
+              "dog"
+            ],
+            "surface": "dog ran north. bird ate worm. then it ran north.",
+            "recurring_subject": "dog",
+            "resolved_antecedent": "dog",
+            "antecedent_slot": 0,
+            "correct": true
+          }
+        ]
+      },
+      "order_control": {
+        "order_control_accuracy": 1.0,
+        "n_trials": 40,
+        "n_flips_observed": 40,
+        "examples": [
+          {
+            "pair": [
+              "dog",
+              "frog"
+            ],
+            "discourseA_recurs": "dog",
+            "resolvedA": "dog",
+            "discourseB_recurs": "frog",
+            "resolvedB": "frog",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "hawk",
+              "dog"
+            ],
+            "discourseA_recurs": "hawk",
+            "resolvedA": "hawk",
+            "discourseB_recurs": "dog",
+            "resolvedB": "dog",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "hawk",
+              "cat"
+            ],
+            "discourseA_recurs": "hawk",
+            "resolvedA": "hawk",
+            "discourseB_recurs": "cat",
+            "resolvedB": "cat",
+            "flipped": true,
+            "correct": true
+          },
+          {
+            "pair": [
+              "dog",
+              "bird"
+            ],
+            "discourseA_recurs": "dog",
+            "resolvedA": "dog",
+            "discourseB_recurs": "bird",
+            "resolvedB": "bird",
+            "flipped": true,
+            "correct": true
+          }
+        ]
+      },
+      "distinct_referent": {
+        "distinct_referent_accuracy": 1.0,
+        "n_trials": 40,
+        "examples": [
+          {
+            "order": [
+              "bird",
+              "hawk",
+              "cat"
+            ],
+            "surface": "bird ate worm. hawk chased mouse. cat saw river.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "cat",
+              "hawk",
+              "fox"
+            ],
+            "surface": "cat saw river. hawk chased mouse. fox found den.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "bird",
+              "dog",
+              "fox"
+            ],
+            "surface": "bird ate worm. dog ran north. fox found den.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          },
+          {
+            "order": [
+              "bird",
+              "dog",
+              "hawk"
+            ],
+            "surface": "bird ate worm. dog ran north. hawk chased mouse.",
+            "no_pronoun": true,
+            "full_noun_correct": true,
+            "correct": true
+          }
+        ]
+      },
+      "no_confab": {
+        "unknown_abstain_accuracy": 1.0,
+        "n_trials": 30,
+        "examples": [
+          {
+            "seeded_subject": "dog",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.1037,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "cat",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.1308,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "hawk",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0869,
+            "abstained": true
+          },
+          {
+            "seeded_subject": "hawk",
+            "occupied_slots": 2,
+            "empty_slot_probed": "emptyslot",
+            "resolved": null,
+            "match_strength": 0.0869,
+            "abstained": true
+          }
+        ]
+      },
+      "coherence_pass": true,
+      "order_pass": true,
+      "distinct_pass": true,
+      "no_confab_pass": true,
+      "seed_full_pass": true
+    }
+  },
+  "aggregate": {
+    "coherence_mean": 0.9958333333333332,
+    "coherence_per_seed": [
+      1.0,
+      1.0,
+      1.0,
+      0.975,
+      1.0,
+      1.0
+    ],
+    "order_control_mean": 0.9708333333333333,
+    "order_per_seed": [
+      1.0,
+      1.0,
+      1.0,
+      0.825,
+      1.0,
+      1.0
+    ],
+    "distinct_referent_mean": 1.0,
+    "distinct_per_seed": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "unknown_abstain_mean": 1.0,
+    "no_confab_per_seed": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "n_coherence_pass": 6,
+    "n_order_pass": 6,
+    "n_distinct_pass": 6,
+    "n_no_confab_pass": 6,
+    "n_full_pass": 6,
+    "n_seeds": 6,
+    "go_thresh": 5,
+    "verdict": "GO"
+  },
+  "example_transcript": {
+    "seed": 42,
+    "order": [
+      "dog",
+      "bird",
+      "dog"
+    ],
+    "surface": "dog ran north. bird ate worm. then it ran north.",
+    "recurring_subject": "dog",
+    "resolved_antecedent": "dog",
+    "antecedent_slot": 0,
+    "correct": true
+  }
+}
