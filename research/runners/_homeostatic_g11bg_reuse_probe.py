@@ -129,6 +129,12 @@ class HomeostaticBody:
         true_hunger = self._hunger_from_energy()
         if self.mode == "intact":
             hunger = true_hunger
+        elif self.mode == "ungated":
+            # Isolation control: FULL reward, no drive-gating (hunger == 1). If
+            # this sustains post-wean but intact does not, the drive-gating is
+            # starving the perception learning; if this ALSO crashes, the
+            # perception arc itself is not forming learned nav in this regime.
+            hunger = 1.0
         elif self.mode == "lesion":
             # Drive lesioned -> no intrinsic reward -> no learned policy.
             hunger = 0.0
@@ -249,7 +255,7 @@ def run_one(seed, mode, n_steps, grid_size, deplete, refill, verbose=False,
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--mode", choices=["intact", "lesion", "yoke"], default="intact")
+    ap.add_argument("--mode", choices=["intact", "ungated", "lesion", "yoke"], default="intact")
     ap.add_argument("--n-steps", type=int, default=1800)
     ap.add_argument("--grid-size", type=int, default=8)
     ap.add_argument("--deplete", type=float, default=0.004)

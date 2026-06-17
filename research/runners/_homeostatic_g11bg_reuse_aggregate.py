@@ -31,7 +31,7 @@ except Exception:
     pass
 
 RAW = "research/findings/raw"
-MODES = ["intact", "lesion", "yoke"]
+MODES = ["intact", "ungated", "lesion", "yoke"]
 
 
 def _load(mode, seed):
@@ -87,8 +87,30 @@ def main():
               f"min_E_post={a['min_energy_post']:.3f}  mean_E_post={a['mean_energy_post']:.3f}  "
               f"crashes={a['crashes']:.1f}")
 
-    # Verdict (needs all three modes present).
-    if all(m in agg for m in MODES):
+    # Isolation diagnostic: intact (drive-gated) vs ungated (full reward).
+    # Disentangles "drive-gating starves learning" from "perception arc does not
+    # form learned nav in this regime regardless of the drive".
+    if "intact" in agg and "ungated" in agg:
+        I, U = agg["intact"], agg["ungated"]
+        print("\n--- ISOLATION (intact drive-gated vs ungated full-reward) ---")
+        print(f"  intact  min_E_post={I['min_energy_post']:.3f}  mean_E_post={I['mean_energy_post']:.3f}")
+        print(f"  ungated min_E_post={U['min_energy_post']:.3f}  mean_E_post={U['mean_energy_post']:.3f}")
+        intact_sustains = I["min_energy_post"] > 0.30
+        ungated_sustains = U["min_energy_post"] > 0.30
+        if ungated_sustains and not intact_sustains:
+            print("  ==> DRIVE-GATING STARVES LEARNING: full reward sustains, gated does not.")
+            print("      Fix is cheap: boost the gated-reward gain so the homeostatic reward")
+            print("      stays a strong learning signal.")
+        elif not ungated_sustains and not intact_sustains:
+            print("  ==> PERCEPTION-ARC COLD-START: even FULL reward does not sustain post-wean.")
+            print("      The learned perceptual nav is not forming in this (relocating-food,")
+            print("      single-episode) regime -- needs longer teaching / later wean / a")
+            print("      fixed->relocating food curriculum, not a drive-gating fix.")
+        elif intact_sustains:
+            print("  ==> intact sustains post-wean (proceed to the lesion/yoke load-bearing test).")
+
+    # Verdict (needs the load-bearing modes present).
+    if all(m in agg for m in ["intact", "lesion", "yoke"]):
         I, L, Y = agg["intact"], agg["lesion"], agg["yoke"]
         ctrl_eat = max(L["eat_rate_post"], Y["eat_rate_post"])
         ctrl_minE = max(L["min_energy_post"], Y["min_energy_post"])
