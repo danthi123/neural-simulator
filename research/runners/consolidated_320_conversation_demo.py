@@ -25,10 +25,12 @@ mechanism -- every piece is already validated; this is the assembly + a capabili
 THE INTERESTING SCIENCE. The cortex codes are SEMANTICALLY STRUCTURED (they carry category similarity -- that
 is what lets the cortex generalize). The production binder prefers decorrelated codes, but the role-binding
 decorrelates the cross-terms (tolerant to code-similarity up to ~0.98 per
-research/runners/_step3_correlated_percept_boundary.py). So the prediction is: recall holds, and whatever recall
-errors occur are WITHIN-CATEGORY (dog -> cat), the generalization signature -- never random. Abstention is
-structurally safe regardless of code correlation, because the production moat is RELATIONAL (it abstains on
-whether the fact was stored, not on code geometry).
+research/runners/_step3_correlated_percept_boundary.py), so recall stays perfect. Abstention is structurally
+safe regardless of code correlation, because the production moat is RELATIONAL (it abstains on whether the fact
+was stored, not on code geometry). (A follow-up tested whether recall ERRORS under noise are within-category --
+they are NOT; they are near-random, because the category margin in the codes is thin and swamped by the noise
+that causes errors. See 2026-06-17-within-category-error-signature-NEGATIVE.md. So this runner reports
+within_cat_err for completeness, but does not claim a within-category error signature.)
 
 GATE (per seed): recall == 1.0 on every stored fact (who AND what), abstain == 1.0 on the unstored set (ZERO
 false-accepts -- a single false-accept is a MOAT BREACH = HARD STOP), yes/no correct, describe() returns a
@@ -233,8 +235,10 @@ def main():
         print(f"  GO ({n_go}/{len(results)} seeds): the PRODUCTION conversational agent converses end-to-end on the "
               "codes it LEARNED FROM CONVERSATION — recall 1.00, abstain 1.00 (0 false-accepts), yes/no, "
               "neural-ordered describe, on-topic elaborate. The loop closes: learn word meanings from a "
-              "conversation stream -> converse using them through the production agent. Recall errors (if any) are "
-              "WITHIN-CATEGORY (the generalization signature), abstention is structurally safe (relational moat).",
+              "conversation stream -> converse using them through the production agent. Abstention is structurally "
+              "safe (the relational host moat is code-independent). (Note: recall errors under noise are NEAR-RANDOM, "
+              "not semantically biased -- the codes' category structure is real but thin-margin; see "
+              "2026-06-17-within-category-error-signature-NEGATIVE.md.)",
               flush=True)
     elif results:
         print(f"  PARTIAL ({n_go}/{len(results)} seeds GO): localize — recall under code correlation (within-cat "
