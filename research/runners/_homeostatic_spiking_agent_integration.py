@@ -105,6 +105,7 @@ def main():
     ap.add_argument("--refill", type=float, default=0.6)
     ap.add_argument("--L", type=int, default=5)              # shorter corridor -> easier path credit-assignment
     ap.add_argument("--elig-tau", type=float, default=500.0)
+    ap.add_argument("--critic", type=int, default=0)         # 1 = TD value critic (RPE teaching signal); 0 = raw reward
     ap.add_argument("--out", default="research/findings/raw/_homeostatic_spiking_agent_integration.json")
     a = ap.parse_args()
     global L
@@ -153,6 +154,12 @@ def main():
     # bounded learning episode
     E = 1.0
     DEPLETE, REFILL = a.deplete, a.refill
+    # TD value critic (host, cheap-first test of the value-bootstrapping fix; the brain-based version is the
+    # spiking SNc dopamine RPE that g11_bg already has). V[place] bootstraps -> the actor learns from the RPE
+    # (r + gamma*V(s') - V(s)), so value spreads backward over the path and every step gets credit.
+    V = np.zeros(L)
+    GAMMA_TD, ALPHA_V = 0.9, 0.3
+    use_critic = (a.critic == 1)
     times, toward_choices = [], []
     reward_provenance_ok = True
     pos = L - 1
@@ -176,10 +183,17 @@ def main():
             bridge.cp_external_input_current[xp.asarray(idx["agrp"])] = 400.0 * max(0.0, 1.0 - E)
             bridge._run_one_simulation_step()
         c_after = conc()
-        r = c_before - c_after            # > 0 when eating reduced a real deficit; sourced from spikes, no host distance
-        if "x" in str(r):                 # (sanity placeholder; r is a float from the modulator)
-            reward_provenance_ok = False
-        cfg.current_reward_signal = float(max(0.0, r)) * 6.0
+        r = max(0.0, c_before - c_after)  # primary reward = drive reduction; sourced from spikes, no host distance
+        # value bootstrapping: feed the actor the reward-PREDICTION-ERROR, not the raw (sparse) reward, so the
+        # critic spreads value backward over the path. (host TD here = cheap-first; the spiking-SNc RPE is the
+        # brain-based realization, already validated in g11_bg.)
+        if use_critic:
+            rpe = r + GAMMA_TD * V[new_pos] - V[pos]
+            V[pos] += ALPHA_V * rpe
+            teach = rpe
+        else:
+            teach = r
+        cfg.current_reward_signal = float(teach) * 6.0
         for _ in range(10):               # apply reward to the eligible place->motor synapses
             bridge.cp_external_input_current[:] = 0.0
             bridge._run_one_simulation_step()

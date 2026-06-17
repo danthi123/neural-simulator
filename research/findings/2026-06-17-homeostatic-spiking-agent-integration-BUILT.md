@@ -58,11 +58,18 @@ credit the whole short path at once. Result (3 seeds, 200 trials): still inconsi
 preference. The long eligibility actually *hurts* — in the short corridor the agent oscillates near food, so the
 long trace credits the back-and-forth wandering (toward AND away moves) indiscriminately, adding credit noise.
 
-**This decisively establishes the diagnosis:** the missing ingredient is **value bootstrapping** (a TD critic —
-the dopamine reward-prediction-error spreading value backward over states), NOT eligibility/corridor tuning. The
-minimal reward-modulated-STDP actor credits recent co-firing without a value estimate, so it cannot do multi-step
-credit assignment regardless of trace length. The validated nav loop has exactly this (the spiking SNc dopamine
-RPE + the critic) — which is why it converges and the minimal actor cannot.
+**Third tuning attempt — add a TD value-critic (the value-bootstrapping fix) — helps but still not robust.** A host
+TD critic (`V[place]`, feed the actor the reward-prediction-error `r + γV(s′) − V(s)` instead of the raw sparse
+reward — a cheap-first stand-in for the spiking-SNc RPE g11_bg already has) was added (`--critic 1`). It *helps*
+(seed 43 → 0.75) but is still inconsistent (seed 42 flat 0.40, seed 44 0.55) at 3 seeds.
+
+**This decisively establishes the diagnosis (3 distinct fixes tested):** robust convergence needs **two** things
+the minimal actor lacks — (1) **value bootstrapping** (a TD/dopamine-RPE critic, which credit-assignment over the
+path requires) AND (2) **clean action selection** (the basal-ganglia cascade's disinhibition-based winner-take-all;
+the minimal `argmax` over two noisy motor pools is itself a ceiling on the measurable preference). The host critic
+supplies (1) partially and lifts 1/3 seeds, but without (2) the spiking action selection stays noisy. The
+validated nav loop (`g11_bg`) has BOTH — the spiking SNc dopamine RPE + the BG-cascade action selection — which is
+why it converges robustly and a minimal `place→motor` actor (with any patch) cannot.
 
 **Honest conclusion:** robust spiking-RL convergence from a sparse intrinsic reward is the genuine hard problem —
 exactly what the project's **navigation arc** needed its full machinery (the basal-ganglia cascade for credit

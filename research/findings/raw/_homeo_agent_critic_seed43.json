@@ -1,0 +1,10 @@
+{
+  "seed": 43,
+  "trials": 150,
+  "toward_early": 0.6,
+  "toward_late": 0.75,
+  "n_food_reaches": 12,
+  "wiring_ok": true,
+  "reward_provenance_ok": true,
+  "final_energy": 0.97
+}
