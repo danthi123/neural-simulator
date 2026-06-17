@@ -69,9 +69,22 @@ MEAN (6 seeds): recall HOST 1.00 | NEURAL 1.00 | no-norm 0.35 || moat false-acce
 
 The fully-on-brain read-out carries the conversation **identically to host** — recall 1.00 (≥ host every seed),
 the learned moat abstains with 0 false-accepts — and the normalization is load-bearing (no-norm recall collapses
-to 0.35). ⇒ the last host scaffold in the read-out is removable. The **single-seed 320 re-stream** with
-`--readout-norm neural` (the production-scale confirmation on the REAL stream-learned matrix, ~96 min GPU) is the
-remaining step; multi-seed 320 is a follow-on. NO `sim/` edit anywhere in the hardening.
+to 0.35). ⇒ the last host scaffold in the read-out is removable.
+
+**PRODUCTION CONFIRMATION — GO (single-seed 320, REAL stream-learned matrix).** The single-seed 320 re-stream
+(`--readout-norm neural --moat learned`, 150 000 windows, ~84 min GPU) re-learned the codes from the corpus
+stream and applied the on-brain read-out + the learned moat on the REAL learned matrix:
+
+```
+[seed 42] who-Q&A recall 1.00 | no-confab abstain 1.00 (0 false-accepts) | familiarity gap present +0.467 vs absent +0.067  ==> GO
+```
+
+⇒ **the 320-concept cortex is now FULLY brain-based end-to-end** (seed 42): it learns its concept meanings from a
+conversation stream (population-Hebbian co-occurrence), reads them out with two real cortical gain-control ops
+(per-hub adaptation + per-concept feedforward inhibition) instead of host arithmetic, binds and recalls facts, and
+abstains via a *learned* familiarity gate — no host computation in the cognitive path. Multi-seed 320 (43/44) on
+the neural read-out is a bounded follow-on (~3 GPU hr; the cheap-first already showed the read-out + gate carry
+all seeds). NO `sim/` edit anywhere in the hardening.
 
 ## Reproduce
 
