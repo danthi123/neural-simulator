@@ -41,8 +41,24 @@ remapped per seed (the agent must learn which motor reaches food).
 - **Demonstrated:** the brain-based homeostatic agent is BUILT, composes on one spiking bridge, is brain-faithful
   (neural drive + neural reward, no host term), and is functionally self-maintaining.
 - **Not yet:** a robust, multi-seed, strongly-converged policy-learning GO (the toward-choice is weak/variable).
-  The focused follow-on is the reward/learning-rate/exploration tuning + the full gate (the 4 anti-cheats:
-  lesion → no learning + crash; yoke → no learning; reward-provenance ✓ here; remapped-action ✓ here) at ≥6 seeds.
+
+**Tuning attempt — exploration annealing (the right mechanism, marginal gain).** The first build's flat
+toward-choice was largely because **motor exploration was always-on**, swamping the learned signal during action
+selection. Adding an **exploration-decay schedule** (explore early to discover food, exploit the learned weights
+late) — the standard fix — improved it but did not make it robust: 2/3 seeds weakly rise (42: 0.35→**0.60**, 44:
+0.40→**0.60**) while seed 43 **anti-learns** (0.45→0.30). 0.60 is still weak (not ~0.9). The deeper bottleneck is
+**credit assignment over a multi-step path**: the drive-reduction reward arrives at food and clearly credits only
+the *last* action before eating; the eligibility trace (τ 500 ms) reaches only a few steps back, so earlier moves
+get weak/delayed credit and the policy converges slowly and inconsistently.
+
+**Honest conclusion:** robust spiking-RL convergence from a sparse intrinsic reward is the genuine hard problem —
+exactly what the project's **navigation arc** needed its full machinery (the basal-ganglia cascade for credit
+assignment + careful multi-cycle tuning) to solve. A minimal `place→motor` actor under-delivers on it. The
+**right path to a robust GO** is to drop the homeostatic reward into the **already-validated navigation learning
+loop** (the BG cascade), rather than tune the minimal actor — a substantial dedicated effort. The full gate (the
+4 anti-cheats: lesion → no learning + crash; yoke → no learning; reward-provenance ✓; remapped-action ✓) attaches
+to that build.
+
 - **NO `sim/` edit** — reuses the brain-region framework, the neuromodulator subsystem, and the three-factor
   learning path. The integration is additive runner code.
 

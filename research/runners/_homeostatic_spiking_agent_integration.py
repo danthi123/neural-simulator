@@ -127,18 +127,19 @@ def main():
         except Exception:
             return 0.0
 
-    def step_present(pos, deficit, explore=True, drive_steps=12):
-        """One decision: drive place(pos) + agrp(deficit) + motor exploration; read which motor fires more."""
+    def step_present(pos, deficit, explore_prob=0.5, drive_steps=12):
+        """One decision: drive place(pos) + agrp(deficit) + motor exploration; read which motor fires more.
+        explore_prob DECAYS over trials: high early (discover food), low late (let the LEARNED place->motor
+        weights drive the action, so a converged policy can show through instead of being swamped by exploration)."""
         a_spk = b_spk = 0
         for _ in range(drive_steps):
             bridge.cp_external_input_current[:] = 0.0
             bridge.cp_external_input_current[xp.asarray(idx[f"place{pos}"])] = 350.0
             bridge.cp_external_input_current[xp.asarray(idx["agrp"])] = 400.0 * max(0.0, deficit)
-            if explore:                     # motor-exploration: independent random drive so both can fire
-                if rng.random() < 0.5:
-                    bridge.cp_external_input_current[xp.asarray(idx["motor_a"])] = 250.0
-                if rng.random() < 0.5:
-                    bridge.cp_external_input_current[xp.asarray(idx["motor_b"])] = 250.0
+            if rng.random() < explore_prob:     # motor-exploration (decaying): independent random drive
+                bridge.cp_external_input_current[xp.asarray(idx["motor_a"])] = 250.0
+            if rng.random() < explore_prob:
+                bridge.cp_external_input_current[xp.asarray(idx["motor_b"])] = 250.0
             bridge._run_one_simulation_step()
             fs = bridge.cp_firing_states
             a_spk += int(B.to_host(fs[xp.asarray(idx["motor_a"])]).sum())
@@ -155,8 +156,9 @@ def main():
     for trial in range(a.trials):
         deficit = 1.0 - E
         c_before = conc()
-        a_spk, b_spk = step_present(pos, deficit)
-        action = 0 if a_spk >= b_spk else 1
+        explore_prob = max(0.05, 0.6 * (1.0 - trial / a.trials))   # anneal exploration: explore early, exploit late
+        a_spk, b_spk = step_present(pos, deficit, explore_prob=explore_prob)
+        action = 0 if a_spk > b_spk else (1 if b_spk > a_spk else int(rng.integers(2)))
         toward = (action == toward_action)
         toward_choices.append(int(toward))
         new_pos = max(0, pos - 1) if toward else min(L - 1, pos + 1)
