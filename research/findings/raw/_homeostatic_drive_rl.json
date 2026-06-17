@@ -1,0 +1,196 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "real": {
+        "corr_deficit_drive": 0.9482322701261049,
+        "time_early": 18.68,
+        "time_late": 7.66,
+        "learn_drop": 0.589935760139725,
+        "approach_hungry": 0.8365138137282826,
+        "approach_sated": 0.8656716417910447
+      },
+      "lesion": {
+        "corr_deficit_drive": 0.0,
+        "time_early": 31.16,
+        "time_late": 32.12,
+        "learn_drop": -0.030808729138934163,
+        "approach_hungry": 0.5078994035144285,
+        "approach_sated": 0.5547445255474452
+      },
+      "yoke": {
+        "corr_deficit_drive": -0.02444759341804878,
+        "time_early": 34.62,
+        "time_late": 40.0,
+        "learn_drop": -0.15540150201746394,
+        "approach_hungry": 0.46565264115069854,
+        "approach_sated": 0.5934959349593496
+      },
+      "check1_corr": true,
+      "check4_learn_vs_controls": true,
+      "real_late": 7.66,
+      "lesion_late": 32.12,
+      "yoke_late": 40.0
+    },
+    {
+      "seed": 43,
+      "real": {
+        "corr_deficit_drive": 0.9461261607619227,
+        "time_early": 25.58,
+        "time_late": 7.84,
+        "learn_drop": 0.693510555094077,
+        "approach_hungry": 0.7920868890612878,
+        "approach_sated": 0.927007299270073
+      },
+      "lesion": {
+        "corr_deficit_drive": 0.0,
+        "time_early": 31.3,
+        "time_late": 33.38,
+        "learn_drop": -0.06645367411928269,
+        "approach_hungry": 0.50379767291532,
+        "approach_sated": 0.4966442953020134
+      },
+      "yoke": {
+        "corr_deficit_drive": -0.003226872346045516,
+        "time_early": 29.24,
+        "time_late": 30.42,
+        "learn_drop": -0.04035567715320272,
+        "approach_hungry": 0.5028835063437139,
+        "approach_sated": 0.7543859649122807
+      },
+      "check1_corr": true,
+      "check4_learn_vs_controls": true,
+      "real_late": 7.84,
+      "lesion_late": 33.38,
+      "yoke_late": 30.42
+    },
+    {
+      "seed": 44,
+      "real": {
+        "corr_deficit_drive": 0.9534810393131311,
+        "time_early": 10.3,
+        "time_late": 7.42,
+        "learn_drop": 0.2796116504582902,
+        "approach_hungry": 0.9233000322268772,
+        "approach_sated": 0.9172932330827067
+      },
+      "lesion": {
+        "corr_deficit_drive": 0.0,
+        "time_early": 32.32,
+        "time_late": 33.5,
+        "learn_drop": -0.03650990098896937,
+        "approach_hungry": 0.4958974759709307,
+        "approach_sated": 0.46511627906976744
+      },
+      "yoke": {
+        "corr_deficit_drive": 0.002406474291714324,
+        "time_early": 25.38,
+        "time_late": 23.84,
+        "learn_drop": 0.06067769897318052,
+        "approach_hungry": 0.5789857716161985,
+        "approach_sated": 0.7931034482758621
+      },
+      "check1_corr": true,
+      "check4_learn_vs_controls": true,
+      "real_late": 7.42,
+      "lesion_late": 33.5,
+      "yoke_late": 23.84
+    },
+    {
+      "seed": 100,
+      "real": {
+        "corr_deficit_drive": 0.9500669372273504,
+        "time_early": 25.1,
+        "time_late": 7.56,
+        "learn_drop": 0.6988047808486533,
+        "approach_hungry": 0.7684845306764552,
+        "approach_sated": 0.946969696969697
+      },
+      "lesion": {
+        "corr_deficit_drive": 0.0,
+        "time_early": 30.1,
+        "time_late": 34.16,
+        "learn_drop": -0.1348837209257512,
+        "approach_hungry": 0.5007955449482896,
+        "approach_sated": 0.5378787878787878
+      },
+      "yoke": {
+        "corr_deficit_drive": -0.0065003287561450065,
+        "time_early": 36.68,
+        "time_late": 38.8,
+        "learn_drop": -0.0577971646658179,
+        "approach_hungry": 0.4742507550530473,
+        "approach_sated": 0.7063492063492064
+      },
+      "check1_corr": true,
+      "check4_learn_vs_controls": true,
+      "real_late": 7.56,
+      "lesion_late": 34.16,
+      "yoke_late": 38.8
+    },
+    {
+      "seed": 101,
+      "real": {
+        "corr_deficit_drive": 0.9568305102885806,
+        "time_early": 9.42,
+        "time_late": 8.08,
+        "learn_drop": 0.1422505307704617,
+        "approach_hungry": 0.93419740777667,
+        "approach_sated": 0.9407894736842105
+      },
+      "lesion": {
+        "corr_deficit_drive": 0.0,
+        "time_early": 30.24,
+        "time_late": 32.44,
+        "learn_drop": -0.07275132274891694,
+        "approach_hungry": 0.5043711112861305,
+        "approach_sated": 0.4642857142857143
+      },
+      "yoke": {
+        "corr_deficit_drive": 0.007250564855503316,
+        "time_early": 25.92,
+        "time_late": 29.0,
+        "learn_drop": -0.1188271604892427,
+        "approach_hungry": 0.6344415281423156,
+        "approach_sated": 0.8796992481203008
+      },
+      "check1_corr": true,
+      "check4_learn_vs_controls": true,
+      "real_late": 8.08,
+      "lesion_late": 32.44,
+      "yoke_late": 29.0
+    },
+    {
+      "seed": 102,
+      "real": {
+        "corr_deficit_drive": 0.9573258443739812,
+        "time_early": 8.46,
+        "time_late": 7.82,
+        "learn_drop": 0.07565011819436766,
+        "approach_hungry": 0.9274645565446752,
+        "approach_sated": 0.8823529411764706
+      },
+      "lesion": {
+        "corr_deficit_drive": 0.0,
+        "time_early": 31.64,
+        "time_late": 33.2,
+        "learn_drop": -0.049304677621703465,
+        "approach_hungry": 0.4912799750856431,
+        "approach_sated": 0.5284552845528455
+      },
+      "yoke": {
+        "corr_deficit_drive": -0.044990325482278416,
+        "time_early": 39.72,
+        "time_late": 34.86,
+        "learn_drop": 0.12235649546519747,
+        "approach_hungry": 0.42202081235313865,
+        "approach_sated": 0.6181818181818182
+      },
+      "check1_corr": true,
+      "check4_learn_vs_controls": true,
+      "real_late": 7.82,
+      "lesion_late": 33.2,
+      "yoke_late": 34.86
+    }
+  ]
+}
