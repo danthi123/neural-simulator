@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-06-17 — Closing the conversational loop: the agent talks with the words it learned by listening
+
+### The production agent converses using the meanings it learned from conversation
+
+- **Consolidation (3-of-3 seeds, plus the fully-brain-based read-out).** Two halves of the system had never been run together. One half is a "cortex" that learns what 320 everyday words mean purely by listening to a stream of sentences (it strengthens connections between words that occur together — no dictionary, no labels). The other half is the production conversational agent that parses sentences, remembers who-did-what facts, answers questions, says "I don't know" when it has no fact, handles yes/no and negation, generates a spoken sentence (word order produced by spiking neurons), and decides what to bring up next. This release feeds the learned word-meanings straight into the production agent and runs a full multi-turn conversation on them: it recalls every fact perfectly, refuses to invent answers it was never told (zero fabrications, every seed), and gets yes/no, generation, and topic-association right — on the codes it learned by listening, not on hand-made ones. It is an assembly of already-validated parts rather than a brand-new ability, but it is the first time the loop closes end-to-end on one agent. Finding: `2026-06-17-consolidated-320-production-conversation-GO.md`.
+
+### An honest negative — and a same-day self-correction
+
+- **"Does the agent confuse similar words?" — No (and the first explanation was wrong).** A natural question: because the learned word-codes carry meaning (dog and cat are near each other), when the agent's read-out is made noisy and it slips up, does it confuse *similar* words (dog↔cat) rather than random ones? Across three seeds the answer is no — its mistakes are essentially random, not semantically sensible (about 2.3× chance, far below what a "confuses-similar-things" story predicts). The first write-up explained this by claiming the similarity structure simply isn't present in the raw codes. A direct check run the same night **falsified that claim**: the structure *is* there (a word's nearest neighbour is the same category about 8× more often than chance), it is just a *thin* margin that the noise needed to cause a mistake easily swamps. The negative result stands; the explanation was corrected in the same session rather than left to stand. This is the kind of self-check the project relies on (the same discipline that once caught a year of misleading "successes"). Findings: `2026-06-17-within-category-error-signature-NEGATIVE.md` (with the correction inline).
+
 ## [Unreleased] — 2026-06-16 — The unified embodied agent: one brain navigates, perceives, composes, and converses; cross-region interaction; generalization across similar concepts
 
 ### One brain that does it all at once
