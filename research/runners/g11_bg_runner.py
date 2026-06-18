@@ -4388,8 +4388,40 @@ def run_moving_goal_episode(
             # validates multi-seed. Override via SC_CORTEX_W.
             _scw = float(os.environ.get("SC_CORTEX_W", "18.0"))
             _scramble = os.environ.get("SC_SCRAMBLE", "0") == "1"   # anti-cheat lesion
+            # TRUE-ONE-BRAIN #2 het-off operating point: the standalone-tuned w_ret_sc=80/w_sc_rec=6
+            # STARVE the SC bump on the heterogeneity-OFF merged bridge (the documented "standalone
+            # organ fires ~6-10x weaker co-resident" boundary, 2026-06-18-merged-limbic-core-lift.md):
+            # sc_map fires ~2Hz and reward_us never crosses threshold. SC_RET_SC / SC_REC override the
+            # retina->sc_map and sc_map recurrent weights; the de-risk's merged-tuned op-point is
+            # 160/12 (corr(ecc,reward_us)=-0.81, SNc burst 1.45x, lesion collapses). Env-var-gated so
+            # the standalone-nav default (env unset => 80/6) is BYTE-IDENTICAL.
+            _w_ret_sc = float(os.environ.get("SC_RET_SC", "80.0"))
+            _w_sc_rec = float(os.environ.get("SC_REC", "6.0"))
             install_spiking_sc_wiring(bridge, visual_image_size=visual_image_size,
+                                      w_ret_sc=_w_ret_sc, w_sc_rec=_w_sc_rec,
                                       w_sc_cortex=_scw, scramble=_scramble, verbose=verbose)
+            # TRUE-ONE-BRAIN #2: boost sc_rostral->reward_us to the het-off op-point (the build's
+            # declared 14.0 is too weak co-resident; the de-risk used 40.0). Default unset => leave the
+            # built 14.0 (byte-identical). Only meaningful with enable_spiking_sc_approach (sc_rostral
+            # + the sc_rostral->reward_us pathway exist).
+            _ros_us = os.environ.get("SC_ROS_US", "")
+            if _ros_us and enable_spiking_sc_approach and "sc_rostral" in [r.name for r in regions] \
+                    and spiking_reward_us:
+                try:
+                    rm_sc = bridge.region_manager
+                    _ros = np.asarray(list(rm_sc.indices("sc_rostral")), dtype=np.int64)
+                    _us = np.asarray(list(rm_sc.indices("reward_us")), dtype=np.int64)
+                    _pre = np.repeat(_ros, _us.shape[0]).astype(np.int64)
+                    _post = np.tile(_us, _ros.shape[0]).astype(np.int64)
+                    bridge.set_pathway_weights(
+                        "sc_rostral_to_reward_us", _pre, _post,
+                        np.full(_pre.size, float(_ros_us), np.float32), add_missing=True)
+                    if verbose:
+                        print(f"[g11 seed={seed}] N5 reward: boosted sc_rostral->reward_us to "
+                              f"{float(_ros_us)} ({_pre.size} synapses)", flush=True)
+                except Exception as _e:
+                    if verbose:
+                        print(f"[g11 seed={seed}] N5 reward: sc_rostral->reward_us boost skipped ({_e})", flush=True)
 
     # Tier 2.2 (2026-05-06): open language plasticity gates for embodied
     # language training during nav. Same set of gates that were declared
@@ -6619,7 +6651,11 @@ def run_moving_goal_episode(
                 if enable_spiking_sc and "sc_retina" in region_indices_cp:
                     _ego = render_egocentric_goal((int(x), int(y)), (int(gx), int(gy)),
                                                   image_size=int(visual_image_size))
-                    _egd = image_to_retina_drive(_ego, drive_max_pA=2500.0)
+                    # TRUE-ONE-BRAIN #2 het-off op-point: 2500 pA STARVES the SC bump on the het-off
+                    # merged bridge; the de-risk used 3500. SC_RET_DRIVE overrides; default unset =>
+                    # 2500 (byte-identical to the standalone nav).
+                    _ret_drive = float(os.environ.get("SC_RET_DRIVE", "2500.0"))
+                    _egd = image_to_retina_drive(_ego, drive_max_pA=_ret_drive)
                     bridge.cp_external_input_current[region_indices_cp["sc_retina"]] = (
                         cp.asarray(_egd, dtype=cp.float32))
                 # Innate superior-colliculus orienting reflex (N1 de-risk,
@@ -7137,12 +7173,17 @@ def run_moving_goal_episode(
                         # the reward-hold -> the SNc bursts SYNAPTICALLY; the striosome GABA_B then
                         # subtracts V at the membrane. The whole δ=r−V is now neural (r = reward_us
                         # excitation, V = critic GABA_B). _I_snc carries ONLY tonic.
-                        if enable_spiking_sc_approach and "approach_n5" in region_indices_cp:
-                            # N5 Option C: reward_us is driven SYNAPTICALLY by the approach_n5 pool
-                            # (the neural temporal-difference of the SC bump = "the goal got closer"),
-                            # NOT the host sign(delta ecc). Zero the host write; the
-                            # approach_n5 -> reward_us pathway carries the reward (the whole r term
-                            # is now neural: SC bump motion -> approach_n5 -> reward_us -> SNc).
+                        if enable_spiking_sc_approach and "sc_rostral" in region_indices_cp:
+                            # N5 (TRUE-ONE-BRAIN #2): reward_us is driven SYNAPTICALLY by the
+                            # sc_rostral PROXIMITY pool (the SC bump's goal-salience / how
+                            # central+close the goal is), NOT the host sign(delta ecc). Zero the
+                            # host write; the sc_rostral -> reward_us pathway (built at :2541-2544)
+                            # carries the reward r (the whole r term is now neural: SC retina ->
+                            # sc_map -> sc_rostral -> reward_us -> SNc; the temporal-difference
+                            # delta=r-V is left to the dopamine RPE critic). NOTE: the older
+                            # approach_n5 (slow-channel TD) region was dropped per :2532, so this
+                            # branch previously checked a region that never exists -> the host write
+                            # at the `else` always won (latent bug). Now sc_rostral carries r.
                             bridge.cp_external_input_current[region_indices_cp["reward_us"]] = cp.float32(0.0)
                         else:
                             bridge.cp_external_input_current[region_indices_cp["reward_us"]] = (
