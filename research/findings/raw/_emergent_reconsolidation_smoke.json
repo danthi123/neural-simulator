@@ -1,0 +1,18 @@
+{
+  "go": 1,
+  "n": 1,
+  "results": [
+    {
+      "seed": 42,
+      "K": 8,
+      "baseline_ok": true,
+      "n_corrections": 8,
+      "rewrite_ok": 8,
+      "no_duplicate_ok": 8,
+      "isolation_ok": 8,
+      "restabilize_ok": true,
+      "moat_ok": true,
+      "go": true
+    }
+  ]
+}
