@@ -1,0 +1,31 @@
+{
+  "verdict": "GO",
+  "seeds": [
+    42
+  ],
+  "dims": [
+    64
+  ],
+  "n_facts": 5,
+  "qpatient": 1.0,
+  "qagent": 1.0,
+  "host_p": 1.0,
+  "host_a": 1.0,
+  "moat_abstain": 1.0,
+  "present_answers": 1.0,
+  "lesion_collapse": 1.0,
+  "per_row": [
+    {
+      "seed": 42,
+      "D": 64,
+      "n_facts": 5,
+      "qpatient": 1.0,
+      "qagent": 1.0,
+      "host_p": 1.0,
+      "host_a": 1.0,
+      "moat_abstain": 1,
+      "present_answers": 1,
+      "lesion_collapse": 1
+    }
+  ]
+}
