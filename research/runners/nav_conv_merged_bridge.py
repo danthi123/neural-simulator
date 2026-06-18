@@ -1012,7 +1012,8 @@ class MergedNavConvAgent:
       * the dlPFC context `elaborate` drives is the merged bridge's (`self._dlpfc_ctx.bridge is self._merged_bridge`).
     """
 
-    def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_limbic=False):
+    def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_limbic=False,
+                 co_resident_nav_critic=False):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
         merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory codebook
         share one word set.
@@ -1027,10 +1028,14 @@ class MergedNavConvAgent:
         # (the conversational gate b is unaffected). When True, the moat-no-regression check verifies the shared
         # DA modulator (threshold-0, neutral-at-rest) does not perturb the parser/conversational comprehension.
         self.co_resident_limbic = bool(co_resident_limbic)
+        # co_resident_nav_critic (CYCLE 209): lift the FULL nav reward/critic (vs the minimal limbic organ) onto the
+        # merged bridge; the moat check verifies the DA-over-snc modulator does not perturb conversation.
+        self.co_resident_nav_critic = bool(co_resident_nav_critic)
         _D = 128
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
             seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,
-            co_resident_limbic=self.co_resident_limbic)
+            co_resident_limbic=self.co_resident_limbic,
+            co_resident_nav_critic=self.co_resident_nav_critic)
         words = self._handles["vocab"]   # the sorted merged vocab (the dlPFC + parser word set)
 
         # The composer. STEP 2a default: on its OWN per-op bridges (separate). STEP 2b (co_resident_composer=True):

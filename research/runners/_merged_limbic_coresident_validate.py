@@ -258,6 +258,7 @@ def main():
     ap.add_argument("--smoke", action="store_true", help="tiny numpy build+arithmetic only (skip the 2nd build)")
     ap.add_argument("--diag", action="store_true", help="instrument per-region limbic rates on the merged bridge")
     ap.add_argument("--moat", action="store_true", help="moat-no-regression: conversation survives the shared DA modulator")
+    ap.add_argument("--nav-critic", action="store_true", help="use the FULL nav reward/critic (co_resident_nav_critic) instead of the minimal limbic organ")
     ap.add_argument("--sweep", action="store_true", help="systematic operating-point search (one build, drive grid)")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
@@ -313,7 +314,10 @@ def main():
         # gate b asserts. PASS = recall correct AND the moat abstains on an unheard cue (the parser/composer survive
         # the modulator's presence).
         from research.runners.nav_conv_merged_bridge import MergedNavConvAgent
-        ag = MergedNavConvAgent(seed=args.seed, co_resident_composer=True, co_resident_limbic=True)
+        if args.nav_critic:   # the FULL nav reward/critic (CYCLE 209) instead of the minimal limbic organ
+            ag = MergedNavConvAgent(seed=args.seed, co_resident_composer=True, co_resident_nav_critic=True)
+        else:
+            ag = MergedNavConvAgent(seed=args.seed, co_resident_composer=True, co_resident_limbic=True)
         ag.hear("dog go north")   # vocab words (the conversational gate's validated sentence)
         recall = ag.what_does("dog", "go")
         unheard = ag.what_does("river", "look")   # never stored -> the moat must abstain (None)
