@@ -195,10 +195,11 @@ def main():
                     help="neural = the fully-brain-based read-out codes (seed 42 only so far); "
                          "host = the host double-centring read-out codes (seeds 42/43/44 available)")
     ap.add_argument("--out", default="research/findings/raw/_consolidated_320_conversation.json")
-    ap.add_argument("--composer", choices=["rf", "onebrain"], default="rf",
-                    help="rf = the production numpy composer / test oracle (default); onebrain = the integrated "
-                         "one-brain composer (the whole pipeline on ONE spiking bridge) -- opt-in for the 320-scale "
-                         "validation that gates making it the production default")
+    ap.add_argument("--composer", choices=["rf", "onebrain"], default="onebrain",
+                    help="onebrain = the integrated one-brain composer (the whole who/what pipeline on ONE persistent "
+                         "spiking bridge, no host round-trips between ops) -- the PRODUCTION DEFAULT (320-scale GO 3/3 "
+                         "seeds 2026-06-18: recall 1.00, abstain 1.00, 0 false-accepts); needs SIM_BACKEND=cupy. "
+                         "rf = the RFPhasorComposer (the TEST ORACLE + the numpy-CPU path).")
     a = ap.parse_args()
 
     vocab, cat_ids, _ = taxonomy_to_vocab_categories(TAXONOMY_40x8)

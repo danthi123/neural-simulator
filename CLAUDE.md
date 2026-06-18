@@ -814,12 +814,19 @@ voice-invariant) · the cue-matching scan · A3 (the integrated composer) · the
   - CI guard `tests/test_one_brain_composer_agent.py` is now **11 tests** (core matrix/moat · negation · describe/reason ·
     batched==per-block · clause parity · agent-clause · reconsolidation parity · grounded-codes drop-in · multi-turn
     correction · multi-turn anaphora), all GREEN with the masked megakernel default-on.
-  - **REMAINING before the production-default flip:** a real **320-concept-scale onebrain run** (the consolidated demo on
-    the stream-learned codes — onebrain at V=320 is ~54K neurons, plausible but unvalidated) → then make `onebrain` the
-    documented agent/demo default, with rf kept as the TEST ORACLE the parity tests assert against. The bind stays the
-    exact-inverse FHRR idealization (the genuine learned-cortex bind is the separate step-3 frontier). Optional lower
-    priority: attributed entities (adj+noun, NOT on the agent's critical path — the parser feeds flat SVO); A4
-    (fully-spiking WTA selection, off the critical path — the host argmax read-out is brain-based-compliant).
+  - **320-SCALE GO 3/3 → the PRODUCTION-DEFAULT FLIP DONE (CYCLE 190, 2026-06-18).** The consolidated-320 demo on the
+    stream-learned cortex codes, `--composer onebrain` (onebrain at V=320 ≈ 54K neurons), is **3/3 GO** (seeds
+    42/43/44): recall 1.00, abstain 1.00 with **0 false-accepts** (the no-confab moat holds at 320 concepts), yes/no,
+    neural-ordered describe, on-topic elaborate — the WHOLE conversational turn on ONE spiking brain, on the codes it
+    LEARNED FROM CONVERSATION. So **`consolidated_320_conversation_demo` now defaults to `--composer onebrain`** (the
+    flagship production conversation is fully-spiking-one-brain; needs `SIM_BACKEND=cupy`); **rf is retained as the
+    TEST ORACLE + the numpy-CPU path** (`--composer rf`). NOT flipped (deliberate, safe): the library constructor
+    defaults (`BrainConversationalAgent`/`MultiTurnAgent` `composer_kind="rf"`) + the CPU transcript demo — flipping
+    those would force GPU on every default agent and break numpy-CPU portability. The bind stays the exact-inverse FHRR
+    idealization (the genuine learned-cortex bind = the separate step-3 frontier). Optional lower-priority follow-ons
+    (NOT on the agent's critical path): attributed entities (adj+noun — the parser feeds flat SVO); A4 (fully-spiking
+    WTA selection — the host argmax read-out is brain-based-compliant). Finding:
+    `2026-06-18-onebrain-320-scale-production-GO.md`.
 - Findings: `2026-06-18-one-brain-{multirole-coherence,multifact-store-GAP-A,parser-frontend,composer-A3,agent-wired}-GO.md`,
   `2026-06-18-production-one-brain-composer-scoping.md`, `2026-06-18-onebrain-gapB-parser-frontend-scoping.md`; the A5
   cleanup arc is logged in `research/findings/AUTONOMOUS_STATE.md` (CYCLE 186-189).
