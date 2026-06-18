@@ -36,9 +36,11 @@ from research.runners.rf_phasor_composer import RFPhasorComposer
 ROLES3 = ["agent", "action", "patient"]
 
 
-def build_coresident_bridge(seed, n_total):
+def build_coresident_bridge(seed, n_total, enable_rf_cudagraph=False):
     """An Izhikevich bridge (Hebbian ON for the parser); the RF region has no cp_connections wiring (its memory is in
-    cp_rf_w_re/im), so global Hebbian has nothing to touch there."""
+    cp_rf_w_re/im), so global Hebbian has nothing to touch there. `enable_rf_cudagraph` (A5 lever 3): route the RF
+    resonate through the masked megakernel (one CUDA launch/step instead of ~15-20) -- the resonate is ~83% of a query
+    (the profile), so this closes the residual gap vs the rf reference. Default off = the loop (byte-identical)."""
     cfg = CoreSimConfig()
     cfg.num_neurons = n_total
     cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
@@ -51,6 +53,7 @@ def build_coresident_bridge(seed, n_total):
     for f in ("enable_short_term_plasticity", "enable_structural_plasticity", "enable_homeostasis",
               "enable_reward_modulation", "enable_watts_strogatz"):
         setattr(cfg, f, False)
+    cfg.enable_rf_cudagraph = bool(enable_rf_cudagraph)
     cfg.ou_std_current_pA = 20.0
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                          runtime_state=RuntimeState(), gpu_config=GPUConfig())
@@ -64,9 +67,11 @@ class OneBrainComposer:
     blocks. API mirrors `RFPhasorComposer` for the conversational agent (`store`/`hear`/`query_patient`/`query_agent`/
     `ask_yes_no`; `kb` bookkeeping)."""
 
-    def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200, enable_batched=True):
+    def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200, enable_batched=True,
+                 enable_rf_cudagraph=True):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         self.enable_batched = bool(enable_batched)       # A5 lever 1: read ALL blocks in 3 windows (7.3x); per-block=oracle
+        self.enable_rf_cudagraph = bool(enable_rf_cudagraph)   # A5 lever 3: masked megakernel for the resonate (GPU only)
         self.comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, period=period)
         self.words = list(self.comp.words)              # the cleanup codebook = the composer's ACTUAL vocab
         self.V = len(self.words)
@@ -85,7 +90,7 @@ class OneBrainComposer:
         self.bat_q_base = self.c_base + self.cb
         self.bat_c_base = self.bat_q_base + self.k_max * 4 * D
         self.n_total = self.bat_c_base + self.k_max * self.cb
-        self.b = build_coresident_bridge(seed, self.n_total)
+        self.b = build_coresident_bridge(seed, self.n_total, enable_rf_cudagraph=self.enable_rf_cudagraph)
         self.parser = BridgeParser(seed=seed, R=self.R, shared_bridge=self.b, index_offset=0)   # wires+trains [0:P]
         self.rf_mask = np.zeros(self.n_total, dtype=bool); self.rf_mask[self.P:self.n_total] = True
         self.kb = []          # bookkeeping: list of (fact_dict, None) -- the agent's _assoc_graph reads fact dicts;
