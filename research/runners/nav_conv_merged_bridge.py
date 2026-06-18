@@ -450,7 +450,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  enable_spiking_wta_readout: bool = False,
                                  co_resident_generalization: bool = False,
                                  gen_n_concept_per: int = 100, gen_n_fact_per: int = 100,
-                                 co_resident_limbic: bool = False):
+                                 co_resident_limbic: bool = False,
+                                 _global_het_test: bool = False):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
     §2.5 FINAL FORM.
@@ -636,7 +637,10 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     # episodes get OU-off and the read-time toggles in the smoke / later increments cleanly re-enable it.
     cfg.enable_ou_process = True
     cfg.ou_std_current_pA = 20.0
-    cfg.enable_parameter_heterogeneity = False
+    # Default OFF for nav/conv determinism. _global_het_test=True is a DE-RISK hook ONLY (does heterogeneity
+    # restore the merged limbic arithmetic? — if so, the per-region-het increment is the right fix); it perturbs
+    # nav/conv determinism so it is never a production path.
+    cfg.enable_parameter_heterogeneity = bool(_global_het_test)
     # NMDA on globally; the per-region mask (built at init from the enable_nmda regions) confines it to dlPFC.
     cfg.enable_nmda = True
     cfg.nmda_ratio = 0.5

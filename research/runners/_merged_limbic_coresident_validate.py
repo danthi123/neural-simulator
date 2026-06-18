@@ -268,7 +268,9 @@ def main():
         from research.runners.nav_conv_merged_bridge import build_merged_nav_conv_bridge
         from research.runners._limbic_core_rpe_battery_derisk import _drive, _settle
         xp, _ = get_backend()
-        b, _h = build_merged_nav_conv_bridge(seed=args.seed, co_resident_limbic=True)
+        het = os.environ.get("MERGED_HET_TEST") == "1"   # de-risk: does heterogeneity restore the arithmetic?
+        b, _h = build_merged_nav_conv_bridge(seed=args.seed, co_resident_limbic=True, _global_het_test=het)
+        print(f"  (global heterogeneity test: {het})")
         idx = _limbic_idx_map(b, xp)
         cc = b.core_config
         cc.enable_ou_process = True; cc.ou_std_current_pA = 100.0
@@ -302,13 +304,13 @@ def main():
         # the modulator's presence).
         from research.runners.nav_conv_merged_bridge import MergedNavConvAgent
         ag = MergedNavConvAgent(seed=args.seed, co_resident_composer=True, co_resident_limbic=True)
-        ag.hear("dog eat apple")
-        recall = ag.what_does("dog", "eat")
-        unheard = ag.what_does("cat", "see")   # never stored -> the moat must abstain (None)
-        recall_ok = (recall == "apple")
+        ag.hear("dog go north")   # vocab words (the conversational gate's validated sentence)
+        recall = ag.what_does("dog", "go")
+        unheard = ag.what_does("river", "look")   # never stored -> the moat must abstain (None)
+        recall_ok = (recall == "north")
         moat_ok = (unheard is None)
-        print(f"  (D) moat-no-regression WITH limbic co-resident: recall what_does('dog','eat')={recall!r} "
-              f"(==apple: {recall_ok}) | unheard what_does('cat','see')={unheard!r} (abstains: {moat_ok})")
+        print(f"  (D) moat-no-regression WITH limbic co-resident: recall what_does('dog','go')={recall!r} "
+              f"(==north: {recall_ok}) | unheard what_does('river','look')={unheard!r} (abstains: {moat_ok})")
         verdict = "GO" if (recall_ok and moat_ok) else "REGRESSION"
         print(f"\n  MOAT (seed {args.seed}): {verdict}  [the shared DA modulator does not perturb conversation]")
         if args.out:

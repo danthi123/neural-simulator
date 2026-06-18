@@ -1,0 +1,8 @@
+{
+  "mode": "merged_limbic_moat",
+  "seed": 42,
+  "recall": "north",
+  "recall_ok": true,
+  "moat_ok": true,
+  "verdict": "GO"
+}

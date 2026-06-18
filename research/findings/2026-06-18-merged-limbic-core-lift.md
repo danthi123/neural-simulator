@@ -41,7 +41,7 @@ NO new `sim/` edit (the GABA_B/GIRK conductance is the already-shipped, owner-ap
 | (A) nav-inertness (limbic out-edges into navigation) | **PASS** (0 out-edges; only intra-slice edges) |
 | (B) default-off byte-preserved (limbic absent + non-limbic bases unchanged) | **PASS** |
 | (C) the spiking δ=r−V mechanism works co-resident | **PASS** (diag: reward burst fires; cue+US snc ≪ US snc — the GABA_B subtracts) |
-| (D) moat-no-regression (conversation survives the shared DA modulator) | **in flight** (the production path is byte-safe via (B) default-off; (D) confirms the OPT-IN path; the threshold-0 modulator is neutral-at-rest so it cannot suppress the parser plasticity) |
+| (D) moat-no-regression (conversation survives the shared DA modulator) | **GO** — WITH the limbic core + the shared DA modulator co-resident: `what_does('dog','go')=='north'` (recall correct) AND `what_does('river','look') is None` (the no-confab moat abstains). The threshold-0 modulator does not perturb the parser/conversation. |
 
 ## The operating-point re-calibration (systematic-debugging, three factors)
 
@@ -70,11 +70,23 @@ US-alone 82, gap 2.29) but the burst ratio fails (1.66×, the SNc tonic ~50 vs t
 raising the cue→striosome weight to clear the cold MSN (→40) BREAKS the subtraction (the cue
 over-drives → pred ≫ unpred, gap 0.2–0.4 in every config) and the het-off f-I is razor-steep (the SNc
 tonic flips 0→172 Hz between tonic 160 and 210 pA). So the full multi-gate arithmetic is a genuine
-**heterogeneity-dependence boundary** on the het-off determinism config — not another knob (the
-systematic-debugging "question the architecture" point). The committed lift keeps the **validated
-10/10/10 weights**; the clean fix is INCREMENT #2 = **per-region heterogeneity** for the limbic slice
-(restores the het-on operating point, GO 6/6, without touching nav/conv determinism), OR the GIRK
-saturation cap (the nav deployment's validated fix), OR on-merge critic learning.
+boundary on the merged config (the systematic-debugging "question the architecture" point). The
+committed lift keeps the **validated 10/10/10 weights**.
+
+**The per-region-heterogeneity hypothesis was DE-RISKED and FALSIFIED.** A controlled test built the
+merged bridge with global heterogeneity ON (the `_global_het_test` hook) and re-ran the sweep: it STILL
+finds NO clean operating point (burst maxes ~2.84×, never ≥3×; gap ~1.0, the value subtraction GONE) at
+the SAME 10/10/10 weights that give gap **3.0 standalone**. So **heterogeneity is NOT the fix** — a
+deeper **merged-config factor breaks the limbic arithmetic regardless of het**: the SNc's effective
+synaptic response is ~6-10× weaker on the merged bridge (the diag: each reward_us spike moves the SNc
++33 Hz vs +312 standalone; the SNc caps ~100 Hz vs 362), and the GABA_B value subtraction collapses with
+it. The cause is an unpinned global-config interaction (NOT the NMDA-ratio — AMPA is applied fully to
+non-NMDA neurons per `bridge.py:6083`; NOT a synaptic-strength setting — none differs in the merge
+builder). ⇒ the real increment is to **root-cause the merged-config transmission difference** (a deeper
+instrumentation pass on the SNc's synaptic-vs-direct-current response in the full network), OR to use
+**on-merge critic LEARNING** (which adapts the weights to the merged operating point rather than
+transplanting fixed standalone weights), OR to run the limbic slice in a **separate config regime**. NOT
+per-region het.
 
 ## Honest scope / increment #2
 
@@ -85,9 +97,10 @@ byte-preserved) and confirms the δ=r−V mechanism co-resident. The remaining i
 - routing the **reward source** from the navigation (N5) so the limbic core reads a nav-driven reward
   (roadmap #2);
 - the shared **DA gating the nav actor** + (later) the conversational salience (roadmap #6);
-- a **per-region heterogeneity** option (a small `sim/` analogue of the per-region NMDA mask) OR the
-  GIRK saturation cap, to give the limbic slice its het-on operating point without breaking nav/conv
-  determinism.
+- **root-causing the merged-config transmission factor** (the SNc's ~6-10× weaker synaptic response in
+  the full network) — the de-risked NEGATIVE on per-region heterogeneity means the operating-point fix is
+  this, NOT het. On-merge critic LEARNING (which adapts to whatever the merged operating point is) is the
+  most likely path, since it sidesteps transplanting fixed standalone weights.
 
 ## Reproduce
 
