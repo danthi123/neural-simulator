@@ -1,0 +1,330 @@
+[limbic-core seed=42] reward_us -> snc <- striosome_value(GABA_B): Schultz RPE battery
+[2026-06-18 13:42:01][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-18 13:42:01][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-18 13:42:01][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 170 total neurons, 3 pathways.
+[2026-06-18 13:42:01][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-18 13:42:01][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 170 neurons...
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Region 'cue' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Generating 3D neuron positions for 170 neurons...
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3044 synapses across 3 populations.
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Initializing eligibility traces for 3044 synapses (capacity: 4566, dtype: float32)...
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Initializing STDP state for 170 neurons...
+[2026-06-18 13:42:02][INFO] SIM_BRIDGE: Simulation data initialized for 170 neurons (3D). Synapses: 3044. GPU memory: 26.0GB/51.2GB (50.8%)
+  [acq t=00] US-burst= 82.50Hz  V(strio)= 22.08Hz  DA=0.248
+  [acq t=01] US-burst=  0.00Hz  V(strio)=  5.42Hz  DA=0.328
+  [acq t=02] US-burst=  0.83Hz  V(strio)=  5.83Hz  DA=0.374
+  [acq t=10] US-burst= 41.67Hz  V(strio)=  4.17Hz  DA=0.440
+  [acq t=20] US-burst= 56.67Hz  V(strio)=  3.75Hz  DA=0.469
+  [acq t=30] US-burst= 28.33Hz  V(strio)=  3.33Hz  DA=0.452
+  [acq t=39] US-burst=  5.00Hz  V(strio)=  7.50Hz  DA=0.434
+  V(strio) on CS  : 6.67 -> 6.51 Hz (learned: False)
+  tonic / unpred  : 66.7 / 250.0 Hz (burst 3.75x; >=3x: True)
+  predicted (CS+US): 83.3 Hz  (shrinks >=50% vs unpred: True; gap unpred/pred 3.00)
+  omission (CS,noUS): 7.5 Hz  (dip < tonic 66.7: True)
+  graded (US mag)  : [101.7, 147.5, 191.7, 236.7]  corr=+1.00 (>=+0.8: True)
+  RPE battery (seed 42): 4/4 core [burst True, graded True, dip True, pred-shrink True]
+
+[limbic-core seed=43] reward_us -> snc <- striosome_value(GABA_B): Schultz RPE battery
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 170 total neurons, 3 pathways.
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 170 neurons...
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Region 'cue' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Generating 3D neuron positions for 170 neurons...
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3094 synapses across 3 populations.
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Initializing eligibility traces for 3094 synapses (capacity: 4641, dtype: float32)...
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Initializing STDP state for 170 neurons...
+[2026-06-18 13:42:03][INFO] SIM_BRIDGE: Simulation data initialized for 170 neurons (3D). Synapses: 3094. GPU memory: 26.0GB/51.2GB (50.8%)
+  [acq t=00] US-burst= 88.33Hz  V(strio)= 14.58Hz  DA=0.248
+  [acq t=01] US-burst=  5.00Hz  V(strio)=  3.33Hz  DA=0.328
+  [acq t=02] US-burst=  7.50Hz  V(strio)=  3.33Hz  DA=0.374
+  [acq t=10] US-burst=  4.17Hz  V(strio)=  3.75Hz  DA=0.440
+  [acq t=20] US-burst=  1.67Hz  V(strio)=  9.58Hz  DA=0.425
+  [acq t=30] US-burst=  0.00Hz  V(strio)= 12.50Hz  DA=0.422
+  [acq t=39] US-burst= 39.17Hz  V(strio)= 19.58Hz  DA=0.449
+  V(strio) on CS  : 4.90 -> 18.02 Hz (learned: True)
+  tonic / unpred  : 55.0 / 217.5 Hz (burst 3.95x; >=3x: True)
+  predicted (CS+US): 74.2 Hz  (shrinks >=50% vs unpred: True; gap unpred/pred 2.93)
+  omission (CS,noUS): 6.7 Hz  (dip < tonic 55.0: True)
+  graded (US mag)  : [103.3, 133.3, 164.2, 209.2]  corr=+0.99 (>=+0.8: True)
+  RPE battery (seed 43): 4/4 core [burst True, graded True, dip True, pred-shrink True]
+
+[limbic-core seed=44] reward_us -> snc <- striosome_value(GABA_B): Schultz RPE battery
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 170 total neurons, 3 pathways.
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 170 neurons...
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Region 'cue' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Generating 3D neuron positions for 170 neurons...
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3016 synapses across 3 populations.
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Initializing eligibility traces for 3016 synapses (capacity: 4524, dtype: float32)...
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Initializing STDP state for 170 neurons...
+[2026-06-18 13:42:04][INFO] SIM_BRIDGE: Simulation data initialized for 170 neurons (3D). Synapses: 3016. GPU memory: 26.0GB/51.2GB (50.7%)
+  [acq t=00] US-burst= 87.50Hz  V(strio)= 11.25Hz  DA=0.245
+  [acq t=01] US-burst= 25.83Hz  V(strio)=  2.92Hz  DA=0.328
+  [acq t=02] US-burst= 25.83Hz  V(strio)=  5.00Hz  DA=0.380
+  [acq t=10] US-burst= 82.50Hz  V(strio)=  1.25Hz  DA=0.470
+  [acq t=20] US-burst= 70.83Hz  V(strio)=  3.75Hz  DA=0.490
+  [acq t=30] US-burst= 60.00Hz  V(strio)=  3.33Hz  DA=0.479
+  [acq t=39] US-burst= 58.33Hz  V(strio)=  2.92Hz  DA=0.486
+  V(strio) on CS  : 4.27 -> 2.76 Hz (learned: False)
+  tonic / unpred  : 45.8 / 208.3 Hz (burst 4.55x; >=3x: True)
+  predicted (CS+US): 92.5 Hz  (shrinks >=50% vs unpred: True; gap unpred/pred 2.25)
+  omission (CS,noUS): 12.5 Hz  (dip < tonic 45.8: True)
+  graded (US mag)  : [90.0, 129.2, 175.8, 213.3]  corr=+1.00 (>=+0.8: True)
+  RPE battery (seed 44): 4/4 core [burst True, graded True, dip True, pred-shrink True]
+
+[limbic-core seed=100] reward_us -> snc <- striosome_value(GABA_B): Schultz RPE battery
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 170 total neurons, 3 pathways.
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: RNG initialized with seed: 100
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 170 neurons...
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Region 'cue' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Generating 3D neuron positions for 170 neurons...
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3039 synapses across 3 populations.
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Initializing eligibility traces for 3039 synapses (capacity: 4558, dtype: float32)...
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Initializing STDP state for 170 neurons...
+[2026-06-18 13:42:05][INFO] SIM_BRIDGE: Simulation data initialized for 170 neurons (3D). Synapses: 3039. GPU memory: 26.0GB/51.2GB (50.8%)
+  [acq t=00] US-burst= 78.33Hz  V(strio)= 15.83Hz  DA=0.244
+  [acq t=01] US-burst=  0.83Hz  V(strio)=  6.25Hz  DA=0.326
+  [acq t=02] US-burst=  0.83Hz  V(strio)=  7.50Hz  DA=0.374
+  [acq t=10] US-burst=  0.83Hz  V(strio)=  8.75Hz  DA=0.435
+  [acq t=20] US-burst= 30.83Hz  V(strio)= 19.58Hz  DA=0.444
+  [acq t=30] US-burst= 70.83Hz  V(strio)= 18.33Hz  DA=0.547
+  [acq t=39] US-burst= 88.33Hz  V(strio)= 20.00Hz  DA=0.523
+  V(strio) on CS  : 8.23 -> 17.55 Hz (learned: True)
+  tonic / unpred  : 38.3 / 190.0 Hz (burst 4.96x; >=3x: True)
+  predicted (CS+US): 58.3 Hz  (shrinks >=50% vs unpred: True; gap unpred/pred 3.26)
+  omission (CS,noUS): 13.3 Hz  (dip < tonic 38.3: True)
+  graded (US mag)  : [80.8, 115.8, 152.5, 190.8]  corr=+1.00 (>=+0.8: True)
+  RPE battery (seed 100): 4/4 core [burst True, graded True, dip True, pred-shrink True]
+
+[limbic-core seed=101] reward_us -> snc <- striosome_value(GABA_B): Schultz RPE battery
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 170 total neurons, 3 pathways.
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: RNG initialized with seed: 101
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 170 neurons...
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Region 'cue' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Generating 3D neuron positions for 170 neurons...
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3008 synapses across 3 populations.
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Initializing eligibility traces for 3008 synapses (capacity: 4512, dtype: float32)...
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Initializing STDP state for 170 neurons...
+[2026-06-18 13:42:06][INFO] SIM_BRIDGE: Simulation data initialized for 170 neurons (3D). Synapses: 3008. GPU memory: 26.0GB/51.2GB (50.7%)
+  [acq t=00] US-burst=102.50Hz  V(strio)=  7.92Hz  DA=0.246
+  [acq t=01] US-burst= 41.67Hz  V(strio)=  3.33Hz  DA=0.331
+  [acq t=02] US-burst= 31.67Hz  V(strio)=  3.75Hz  DA=0.384
+  [acq t=10] US-burst= 54.17Hz  V(strio)=  3.33Hz  DA=0.469
+  [acq t=20] US-burst= 36.67Hz  V(strio)=  2.08Hz  DA=0.463
+  [acq t=30] US-burst= 21.67Hz  V(strio)=  4.17Hz  DA=0.462
+  [acq t=39] US-burst= 23.33Hz  V(strio)=  3.33Hz  DA=0.458
+  V(strio) on CS  : 3.96 -> 3.70 Hz (learned: False)
+  tonic / unpred  : 57.5 / 217.5 Hz (burst 3.78x; >=3x: True)
+  predicted (CS+US): 95.8 Hz  (shrinks >=50% vs unpred: True; gap unpred/pred 2.27)
+  omission (CS,noUS): 4.2 Hz  (dip < tonic 57.5: True)
+  graded (US mag)  : [81.7, 128.3, 172.5, 205.8]  corr=+1.00 (>=+0.8: True)
+  RPE battery (seed 101): 4/4 core [burst True, graded True, dip True, pred-shrink True]
+
+[limbic-core seed=102] reward_us -> snc <- striosome_value(GABA_B): Schultz RPE battery
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 170 total neurons, 3 pathways.
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: RNG initialized with seed: 102
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 170 neurons...
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Region 'cue' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Generating 3D neuron positions for 170 neurons...
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3051 synapses across 3 populations.
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Initializing eligibility traces for 3051 synapses (capacity: 4576, dtype: float32)...
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Initializing STDP state for 170 neurons...
+[2026-06-18 13:42:07][INFO] SIM_BRIDGE: Simulation data initialized for 170 neurons (3D). Synapses: 3051. GPU memory: 26.0GB/51.2GB (50.7%)
+  [acq t=00] US-burst= 69.17Hz  V(strio)= 16.25Hz  DA=0.245
+  [acq t=01] US-burst=  5.83Hz  V(strio)=  6.67Hz  DA=0.326
+  [acq t=02] US-burst= 11.67Hz  V(strio)=  2.92Hz  DA=0.374
+  [acq t=10] US-burst= 15.00Hz  V(strio)=  5.42Hz  DA=0.443
+  [acq t=20] US-burst= 10.83Hz  V(strio)=  7.50Hz  DA=0.446
+  [acq t=30] US-burst=  0.00Hz  V(strio)=  8.75Hz  DA=0.439
+  [acq t=39] US-burst=  5.83Hz  V(strio)= 12.92Hz  DA=0.433
+  V(strio) on CS  : 6.67 -> 12.45 Hz (learned: True)
+  tonic / unpred  : 49.2 / 213.3 Hz (burst 4.34x; >=3x: True)
+  predicted (CS+US): 61.7 Hz  (shrinks >=50% vs unpred: True; gap unpred/pred 3.46)
+  omission (CS,noUS): 5.0 Hz  (dip < tonic 49.2: True)
+  graded (US mag)  : [94.2, 123.3, 182.5, 210.0]  corr=+0.99 (>=+0.8: True)
+  RPE battery (seed 102): 4/4 core [burst True, graded True, dip True, pred-shrink True]
+
+=== LESION ANTI-CHEATS ===
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 170 total neurons, 3 pathways.
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 170 neurons...
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Region 'cue' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Generating 3D neuron positions for 170 neurons...
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3044 synapses across 3 populations.
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Initializing eligibility traces for 3044 synapses (capacity: 4566, dtype: float32)...
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Initializing STDP state for 170 neurons...
+[2026-06-18 13:42:08][INFO] SIM_BRIDGE: Simulation data initialized for 170 neurons (3D). Synapses: 3044. GPU memory: 26.0GB/51.2GB (50.7%)
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 170 total neurons, 3 pathways.
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 170 neurons...
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Region 'cue' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Generating 3D neuron positions for 170 neurons...
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3044 synapses across 3 populations.
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Initializing eligibility traces for 3044 synapses (capacity: 4566, dtype: float32)...
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Initializing STDP state for 170 neurons...
+[2026-06-18 13:42:09][INFO] SIM_BRIDGE: Simulation data initialized for 170 neurons (3D). Synapses: 3044. GPU memory: 26.0GB/51.2GB (50.7%)
+  seed 42: reward-lesion unpred=59.2Hz vs tonic=62.5Hz (vanishes <=15%: True) | critic-lesion gap=1.00 (collapses <=1.2: True)
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 170 total neurons, 3 pathways.
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 170 neurons...
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Region 'cue' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Generating 3D neuron positions for 170 neurons...
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3094 synapses across 3 populations.
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Initializing eligibility traces for 3094 synapses (capacity: 4641, dtype: float32)...
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Initializing STDP state for 170 neurons...
+[2026-06-18 13:42:10][INFO] SIM_BRIDGE: Simulation data initialized for 170 neurons (3D). Synapses: 3094. GPU memory: 26.1GB/51.2GB (50.9%)
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 170 total neurons, 3 pathways.
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 170 neurons...
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Region 'cue' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Generating 3D neuron positions for 170 neurons...
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3094 synapses across 3 populations.
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Initializing eligibility traces for 3094 synapses (capacity: 4641, dtype: float32)...
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Initializing STDP state for 170 neurons...
+[2026-06-18 13:42:11][INFO] SIM_BRIDGE: Simulation data initialized for 170 neurons (3D). Synapses: 3094. GPU memory: 26.0GB/51.2GB (50.7%)
+  seed 43: reward-lesion unpred=60.0Hz vs tonic=54.2Hz (vanishes <=15%: True) | critic-lesion gap=1.00 (collapses <=1.2: True)
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 170 total neurons, 3 pathways.
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 170 neurons...
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Region 'cue' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Generating 3D neuron positions for 170 neurons...
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3016 synapses across 3 populations.
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Initializing eligibility traces for 3016 synapses (capacity: 4524, dtype: float32)...
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Initializing STDP state for 170 neurons...
+[2026-06-18 13:42:12][INFO] SIM_BRIDGE: Simulation data initialized for 170 neurons (3D). Synapses: 3016. GPU memory: 26.0GB/51.2GB (50.7%)
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 170 total neurons, 3 pathways.
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 170 neurons...
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Region 'cue' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Generating 3D neuron positions for 170 neurons...
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3016 synapses across 3 populations.
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Initializing eligibility traces for 3016 synapses (capacity: 4524, dtype: float32)...
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Initializing STDP state for 170 neurons...
+[2026-06-18 13:42:13][INFO] SIM_BRIDGE: Simulation data initialized for 170 neurons (3D). Synapses: 3016. GPU memory: 26.0GB/51.2GB (50.7%)
+  seed 44: reward-lesion unpred=47.5Hz vs tonic=44.2Hz (vanishes <=15%: True) | critic-lesion gap=0.95 (collapses <=1.2: True)
+
+=== MULTI-SEED: 6/6 PASS all 4 core gates ===
+  burst_on_us   : 6/6
+  graded        : 6/6
+  omission_dip  : 6/6
+  pred_shrink   : 6/6
+  reward-lesion vanishes: 3/3 | critic-lesion gap-collapses: 3/3
+  wrote research/findings/raw/_limbic_core_rpe_battery_6seed.json
