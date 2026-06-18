@@ -1,0 +1,94 @@
+{
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "dims": [
+    64,
+    128
+  ],
+  "qpatient": 1.0,
+  "qagent": 1.0,
+  "yesno": 1.0,
+  "host_p": 1.0,
+  "host_a": 1.0,
+  "host_y": 1.0,
+  "moat_q": 1.0,
+  "moat_yn": 1.0,
+  "per_row": [
+    {
+      "seed": 42,
+      "D": 64,
+      "qpatient": 1.0,
+      "qagent": 1.0,
+      "yesno": 1.0,
+      "host_p": 1.0,
+      "host_a": 1.0,
+      "host_y": 1.0,
+      "moat_q": 1,
+      "moat_yn": 1
+    },
+    {
+      "seed": 42,
+      "D": 128,
+      "qpatient": 1.0,
+      "qagent": 1.0,
+      "yesno": 1.0,
+      "host_p": 1.0,
+      "host_a": 1.0,
+      "host_y": 1.0,
+      "moat_q": 1,
+      "moat_yn": 1
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "qpatient": 1.0,
+      "qagent": 1.0,
+      "yesno": 1.0,
+      "host_p": 1.0,
+      "host_a": 1.0,
+      "host_y": 1.0,
+      "moat_q": 1,
+      "moat_yn": 1
+    },
+    {
+      "seed": 43,
+      "D": 128,
+      "qpatient": 1.0,
+      "qagent": 1.0,
+      "yesno": 1.0,
+      "host_p": 1.0,
+      "host_a": 1.0,
+      "host_y": 1.0,
+      "moat_q": 1,
+      "moat_yn": 1
+    },
+    {
+      "seed": 44,
+      "D": 64,
+      "qpatient": 1.0,
+      "qagent": 1.0,
+      "yesno": 1.0,
+      "host_p": 1.0,
+      "host_a": 1.0,
+      "host_y": 1.0,
+      "moat_q": 1,
+      "moat_yn": 1
+    },
+    {
+      "seed": 44,
+      "D": 128,
+      "qpatient": 1.0,
+      "qagent": 1.0,
+      "yesno": 1.0,
+      "host_p": 1.0,
+      "host_a": 1.0,
+      "host_y": 1.0,
+      "moat_q": 1,
+      "moat_yn": 1
+    }
+  ]
+}
