@@ -1,0 +1,696 @@
+{
+  "mode": "value_train",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "verdict": "BOUNDARY",
+  "delta_gaps": [
+    1.2789115646258502,
+    1.3247232472324724,
+    1.36231884057971,
+    1.2913669064748203,
+    1.2832167832167831,
+    1.3615384615384616
+  ],
+  "trained_crit_grades": [
+    1.698529411764706,
+    1.8608695652173912,
+    2.4747474747474745,
+    1.8362068965517244,
+    2.056910569105691,
+    2.1891891891891895
+  ],
+  "untrained_crit_grades": [
+    0.5060975609756099,
+    0.7542372881355933,
+    0.5833333333333334,
+    0.7101449275362319,
+    0.625,
+    0.5241935483870968
+  ],
+  "go_all": false,
+  "untrained_flat": true,
+  "lesion_collapses_all": false,
+  "moat_holds_all": true,
+  "results": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "near": [
+        6.0,
+        6.0
+      ],
+      "far": [
+        1.0,
+        1.0
+      ],
+      "w_afferent_init": 0.18906569480895996,
+      "untrained": {
+        "tag": "untrained",
+        "crit_near_hz": 11.527777777777779,
+        "crit_far_hz": 22.777777777777775,
+        "crit_grade_ratio": 0.5060975609756099,
+        "snc_predicted_near_hz": 82.08333333333333,
+        "snc_unpredicted_far_hz": 79.16666666666667,
+        "snc_pred_trials": [
+          81.2,
+          81.2,
+          80.0,
+          85.0,
+          85.0,
+          80.0
+        ],
+        "snc_unpred_trials": [
+          80.0,
+          75.0,
+          81.2,
+          80.0,
+          78.8,
+          80.0
+        ],
+        "delta_gap": 0.9644670050761422
+      },
+      "value_train": {
+        "tonic_frac": 0.03133333333333333,
+        "w_near_pre": 0.18906569480895996,
+        "w_near_post": 3.864989995956421,
+        "w_grew": 20.442576850664377
+      },
+      "trained": {
+        "tag": "trained",
+        "crit_near_hz": 32.083333333333336,
+        "crit_far_hz": 18.88888888888889,
+        "crit_grade_ratio": 1.698529411764706,
+        "snc_predicted_near_hz": 61.25,
+        "snc_unpredicted_far_hz": 78.33333333333333,
+        "snc_pred_trials": [
+          61.2,
+          63.7,
+          63.7,
+          61.2,
+          60.0,
+          57.5
+        ],
+        "snc_unpred_trials": [
+          78.8,
+          78.8,
+          78.8,
+          76.2,
+          77.5,
+          80.0
+        ],
+        "delta_gap": 1.2789115646258502
+      },
+      "go_gate": {
+        "critic_fires": true,
+        "learned_flip": true,
+        "v_graded": true,
+        "delta_graded": false,
+        "trained_grade": 1.698529411764706,
+        "untrained_grade": 0.5060975609756099
+      },
+      "lesion": {
+        "n_cut": 395,
+        "tag": "lesion",
+        "crit_near_hz": 30.000000000000004,
+        "crit_far_hz": 15.555555555555555,
+        "crit_grade_ratio": 1.9285714285714288,
+        "snc_predicted_near_hz": 74.79166666666667,
+        "snc_unpredicted_far_hz": 85.0,
+        "snc_pred_trials": [
+          80.0,
+          80.0,
+          73.8,
+          67.5,
+          75.0,
+          72.5
+        ],
+        "snc_unpred_trials": [
+          86.2,
+          83.8,
+          83.8,
+          81.2,
+          87.5,
+          87.5
+        ],
+        "delta_gap": 1.1364902506963788,
+        "lesion_collapses": true
+      },
+      "moat": {
+        "positive": "north",
+        "negative": null,
+        "moat_holds": true
+      }
+    },
+    {
+      "seed": 43,
+      "backend": "cupy",
+      "near": [
+        6.0,
+        6.0
+      ],
+      "far": [
+        1.0,
+        1.0
+      ],
+      "w_afferent_init": 0.18931162357330322,
+      "untrained": {
+        "tag": "untrained",
+        "crit_near_hz": 12.361111111111112,
+        "crit_far_hz": 16.38888888888889,
+        "crit_grade_ratio": 0.7542372881355933,
+        "snc_predicted_near_hz": 81.25,
+        "snc_unpredicted_far_hz": 77.70833333333333,
+        "snc_pred_trials": [
+          80.0,
+          82.5,
+          80.0,
+          83.8,
+          78.8,
+          82.5
+        ],
+        "snc_unpred_trials": [
+          77.5,
+          78.8,
+          77.5,
+          76.2,
+          78.8,
+          77.5
+        ],
+        "delta_gap": 0.9564102564102563
+      },
+      "value_train": {
+        "tonic_frac": 0.02733333333333334,
+        "w_near_pre": 0.18931162357330322,
+        "w_near_post": 3.9528958797454834,
+        "w_grew": 20.880365426768872
+      },
+      "trained": {
+        "tag": "trained",
+        "crit_near_hz": 29.72222222222222,
+        "crit_far_hz": 15.972222222222223,
+        "crit_grade_ratio": 1.8608695652173912,
+        "snc_predicted_near_hz": 56.458333333333336,
+        "snc_unpredicted_far_hz": 74.79166666666667,
+        "snc_pred_trials": [
+          57.5,
+          57.5,
+          53.8,
+          58.8,
+          56.2,
+          55.0
+        ],
+        "snc_unpred_trials": [
+          73.8,
+          75.0,
+          72.5,
+          75.0,
+          72.5,
+          80.0
+        ],
+        "delta_gap": 1.3247232472324724
+      },
+      "go_gate": {
+        "critic_fires": true,
+        "learned_flip": true,
+        "v_graded": true,
+        "delta_graded": true,
+        "trained_grade": 1.8608695652173912,
+        "untrained_grade": 0.7542372881355933
+      },
+      "lesion": {
+        "n_cut": 380,
+        "tag": "lesion",
+        "crit_near_hz": 29.02777777777778,
+        "crit_far_hz": 15.000000000000002,
+        "crit_grade_ratio": 1.9351851851851851,
+        "snc_predicted_near_hz": 72.29166666666667,
+        "snc_unpredicted_far_hz": 85.20833333333333,
+        "snc_pred_trials": [
+          71.2,
+          76.2,
+          73.8,
+          68.8,
+          71.2,
+          72.5
+        ],
+        "snc_unpred_trials": [
+          85.0,
+          86.2,
+          86.2,
+          85.0,
+          83.8,
+          85.0
+        ],
+        "delta_gap": 1.1786743515850142,
+        "lesion_collapses": false
+      },
+      "moat": {
+        "positive": "north",
+        "negative": null,
+        "moat_holds": true
+      }
+    },
+    {
+      "seed": 44,
+      "backend": "cupy",
+      "near": [
+        6.0,
+        6.0
+      ],
+      "far": [
+        1.0,
+        1.0
+      ],
+      "w_afferent_init": 0.19004693627357483,
+      "untrained": {
+        "tag": "untrained",
+        "crit_near_hz": 11.666666666666668,
+        "crit_far_hz": 20.0,
+        "crit_grade_ratio": 0.5833333333333334,
+        "snc_predicted_near_hz": 80.83333333333333,
+        "snc_unpredicted_far_hz": 79.79166666666667,
+        "snc_pred_trials": [
+          82.5,
+          80.0,
+          80.0,
+          83.8,
+          81.2,
+          77.5
+        ],
+        "snc_unpred_trials": [
+          80.0,
+          80.0,
+          78.8,
+          81.2,
+          80.0,
+          78.8
+        ],
+        "delta_gap": 0.9871134020618558
+      },
+      "value_train": {
+        "tonic_frac": 0.02733333333333334,
+        "w_near_pre": 0.19004693627357483,
+        "w_near_post": 3.8890364170074463,
+        "w_grew": 20.46355754669537
+      },
+      "trained": {
+        "tag": "trained",
+        "crit_near_hz": 34.02777777777778,
+        "crit_far_hz": 13.750000000000002,
+        "crit_grade_ratio": 2.4747474747474745,
+        "snc_predicted_near_hz": 57.5,
+        "snc_unpredicted_far_hz": 78.33333333333333,
+        "snc_pred_trials": [
+          60.0,
+          56.2,
+          60.0,
+          55.0,
+          60.0,
+          53.8
+        ],
+        "snc_unpred_trials": [
+          78.8,
+          76.2,
+          78.8,
+          76.2,
+          81.2,
+          78.8
+        ],
+        "delta_gap": 1.36231884057971
+      },
+      "go_gate": {
+        "critic_fires": true,
+        "learned_flip": true,
+        "v_graded": true,
+        "delta_graded": true,
+        "trained_grade": 2.4747474747474745,
+        "untrained_grade": 0.5833333333333334
+      },
+      "lesion": {
+        "n_cut": 388,
+        "tag": "lesion",
+        "crit_near_hz": 26.527777777777782,
+        "crit_far_hz": 16.38888888888889,
+        "crit_grade_ratio": 1.6186440677966103,
+        "snc_predicted_near_hz": 72.91666666666667,
+        "snc_unpredicted_far_hz": 84.58333333333333,
+        "snc_pred_trials": [
+          73.8,
+          73.8,
+          70.0,
+          68.8,
+          71.2,
+          80.0
+        ],
+        "snc_unpred_trials": [
+          81.2,
+          82.5,
+          88.8,
+          85.0,
+          87.5,
+          82.5
+        ],
+        "delta_gap": 1.16,
+        "lesion_collapses": false
+      },
+      "moat": {
+        "positive": "north",
+        "negative": null,
+        "moat_holds": true
+      }
+    },
+    {
+      "seed": 100,
+      "backend": "cupy",
+      "near": [
+        6.0,
+        6.0
+      ],
+      "far": [
+        1.0,
+        1.0
+      ],
+      "w_afferent_init": 0.19185441732406616,
+      "untrained": {
+        "tag": "untrained",
+        "crit_near_hz": 13.611111111111112,
+        "crit_far_hz": 19.166666666666668,
+        "crit_grade_ratio": 0.7101449275362319,
+        "snc_predicted_near_hz": 81.25,
+        "snc_unpredicted_far_hz": 74.16666666666667,
+        "snc_pred_trials": [
+          81.2,
+          83.8,
+          80.0,
+          81.2,
+          81.2,
+          80.0
+        ],
+        "snc_unpred_trials": [
+          73.8,
+          73.8,
+          73.8,
+          75.0,
+          73.8,
+          75.0
+        ],
+        "delta_gap": 0.9128205128205129
+      },
+      "value_train": {
+        "tonic_frac": 0.028666666666666677,
+        "w_near_pre": 0.19185441732406616,
+        "w_near_post": 3.773732900619507,
+        "w_grew": 19.66977332737249
+      },
+      "trained": {
+        "tag": "trained",
+        "crit_near_hz": 29.583333333333336,
+        "crit_far_hz": 16.11111111111111,
+        "crit_grade_ratio": 1.8362068965517244,
+        "snc_predicted_near_hz": 57.916666666666664,
+        "snc_unpredicted_far_hz": 74.79166666666667,
+        "snc_pred_trials": [
+          60.0,
+          60.0,
+          56.2,
+          52.5,
+          60.0,
+          58.8
+        ],
+        "snc_unpred_trials": [
+          77.5,
+          75.0,
+          77.5,
+          71.2,
+          73.8,
+          73.8
+        ],
+        "delta_gap": 1.2913669064748203
+      },
+      "go_gate": {
+        "critic_fires": true,
+        "learned_flip": true,
+        "v_graded": true,
+        "delta_graded": false,
+        "trained_grade": 1.8362068965517244,
+        "untrained_grade": 0.7101449275362319
+      },
+      "lesion": {
+        "n_cut": 405,
+        "tag": "lesion",
+        "crit_near_hz": 29.444444444444443,
+        "crit_far_hz": 17.63888888888889,
+        "crit_grade_ratio": 1.669291338582677,
+        "snc_predicted_near_hz": 74.375,
+        "snc_unpredicted_far_hz": 82.5,
+        "snc_pred_trials": [
+          76.2,
+          72.5,
+          71.2,
+          75.0,
+          72.5,
+          78.8
+        ],
+        "snc_unpred_trials": [
+          82.5,
+          82.5,
+          78.8,
+          81.2,
+          83.8,
+          86.2
+        ],
+        "delta_gap": 1.1092436974789917,
+        "lesion_collapses": true
+      },
+      "moat": {
+        "positive": "north",
+        "negative": null,
+        "moat_holds": true
+      }
+    },
+    {
+      "seed": 101,
+      "backend": "cupy",
+      "near": [
+        6.0,
+        6.0
+      ],
+      "far": [
+        1.0,
+        1.0
+      ],
+      "w_afferent_init": 0.18845069408416748,
+      "untrained": {
+        "tag": "untrained",
+        "crit_near_hz": 12.5,
+        "crit_far_hz": 20.0,
+        "crit_grade_ratio": 0.625,
+        "snc_predicted_near_hz": 81.04166666666667,
+        "snc_unpredicted_far_hz": 77.08333333333333,
+        "snc_pred_trials": [
+          81.2,
+          80.0,
+          82.5,
+          82.5,
+          80.0,
+          80.0
+        ],
+        "snc_unpred_trials": [
+          78.8,
+          76.2,
+          77.5,
+          75.0,
+          78.8,
+          76.2
+        ],
+        "delta_gap": 0.9511568123393315
+      },
+      "value_train": {
+        "tonic_frac": 0.028000000000000008,
+        "w_near_pre": 0.18845069408416748,
+        "w_near_post": 3.7809531688690186,
+        "w_grew": 20.0633549653064
+      },
+      "trained": {
+        "tag": "trained",
+        "crit_near_hz": 35.13888888888889,
+        "crit_far_hz": 17.083333333333336,
+        "crit_grade_ratio": 2.056910569105691,
+        "snc_predicted_near_hz": 59.583333333333336,
+        "snc_unpredicted_far_hz": 76.45833333333333,
+        "snc_pred_trials": [
+          58.8,
+          58.8,
+          58.8,
+          67.5,
+          55.0,
+          58.8
+        ],
+        "snc_unpred_trials": [
+          73.8,
+          75.0,
+          78.8,
+          82.5,
+          72.5,
+          76.2
+        ],
+        "delta_gap": 1.2832167832167831
+      },
+      "go_gate": {
+        "critic_fires": true,
+        "learned_flip": true,
+        "v_graded": true,
+        "delta_graded": false,
+        "trained_grade": 2.056910569105691,
+        "untrained_grade": 0.625
+      },
+      "lesion": {
+        "n_cut": 382,
+        "tag": "lesion",
+        "crit_near_hz": 29.72222222222222,
+        "crit_far_hz": 18.333333333333332,
+        "crit_grade_ratio": 1.6212121212121213,
+        "snc_predicted_near_hz": 74.16666666666667,
+        "snc_unpredicted_far_hz": 85.625,
+        "snc_pred_trials": [
+          75.0,
+          73.8,
+          73.8,
+          67.5,
+          75.0,
+          80.0
+        ],
+        "snc_unpred_trials": [
+          85.0,
+          86.2,
+          86.2,
+          86.2,
+          83.8,
+          86.2
+        ],
+        "delta_gap": 1.1544943820224718,
+        "lesion_collapses": false
+      },
+      "moat": {
+        "positive": "north",
+        "negative": null,
+        "moat_holds": true
+      }
+    },
+    {
+      "seed": 102,
+      "backend": "cupy",
+      "near": [
+        6.0,
+        6.0
+      ],
+      "far": [
+        1.0,
+        1.0
+      ],
+      "w_afferent_init": 0.1868719607591629,
+      "untrained": {
+        "tag": "untrained",
+        "crit_near_hz": 9.027777777777779,
+        "crit_far_hz": 17.222222222222225,
+        "crit_grade_ratio": 0.5241935483870968,
+        "snc_predicted_near_hz": 80.83333333333333,
+        "snc_unpredicted_far_hz": 76.25,
+        "snc_pred_trials": [
+          82.5,
+          82.5,
+          80.0,
+          78.8,
+          81.2,
+          80.0
+        ],
+        "snc_unpred_trials": [
+          76.2,
+          77.5,
+          75.0,
+          76.2,
+          77.5,
+          75.0
+        ],
+        "delta_gap": 0.943298969072165
+      },
+      "value_train": {
+        "tonic_frac": 0.030666666666666672,
+        "w_near_pre": 0.1868719607591629,
+        "w_near_post": 3.881075859069824,
+        "w_grew": 20.76863668205249
+      },
+      "trained": {
+        "tag": "trained",
+        "crit_near_hz": 33.75,
+        "crit_far_hz": 15.416666666666666,
+        "crit_grade_ratio": 2.1891891891891895,
+        "snc_predicted_near_hz": 54.166666666666664,
+        "snc_unpredicted_far_hz": 73.75,
+        "snc_pred_trials": [
+          57.5,
+          52.5,
+          53.8,
+          57.5,
+          51.2,
+          52.5
+        ],
+        "snc_unpred_trials": [
+          73.8,
+          73.8,
+          72.5,
+          73.8,
+          73.8,
+          75.0
+        ],
+        "delta_gap": 1.3615384615384616
+      },
+      "go_gate": {
+        "critic_fires": true,
+        "learned_flip": true,
+        "v_graded": true,
+        "delta_graded": true,
+        "trained_grade": 2.1891891891891895,
+        "untrained_grade": 0.5241935483870968
+      },
+      "lesion": {
+        "n_cut": 408,
+        "tag": "lesion",
+        "crit_near_hz": 31.805555555555554,
+        "crit_far_hz": 15.416666666666666,
+        "crit_grade_ratio": 2.063063063063063,
+        "snc_predicted_near_hz": 71.45833333333333,
+        "snc_unpredicted_far_hz": 83.54166666666667,
+        "snc_pred_trials": [
+          73.8,
+          70.0,
+          71.2,
+          71.2,
+          71.2,
+          71.2
+        ],
+        "snc_unpred_trials": [
+          83.8,
+          85.0,
+          81.2,
+          86.2,
+          81.2,
+          83.8
+        ],
+        "delta_gap": 1.1690962099125366,
+        "lesion_collapses": false
+      },
+      "moat": {
+        "positive": "north",
+        "negative": null,
+        "moat_holds": true
+      }
+    }
+  ]
+}

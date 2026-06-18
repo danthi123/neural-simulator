@@ -452,6 +452,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  gen_n_concept_per: int = 100, gen_n_fact_per: int = 100,
                                  co_resident_limbic: bool = False,
                                  co_resident_nav_critic: bool = False,
+                                 nav_critic_convergent_upstate: bool = False,
+                                 nav_critic_homeostasis_mask: str = "all3",
                                  _global_het_test: bool = False):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
@@ -515,14 +517,29 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     assert not (co_resident_limbic and co_resident_nav_critic), \
         "co_resident_limbic (minimal organ) and co_resident_nav_critic (full nav critic) are mutually exclusive"
     if co_resident_nav_critic:
+        # nav_critic_convergent_upstate (the value-train A1 up-state arm, CYCLE 209 value-train build): forward
+        # enable_convergent_upstate to build_bg_brain_regions so the dense NON-plastic vs_place_drive->striosome_value
+        # arm is wired (sums past the MSN-D1 rheobase at the goal from init -> breaks the LTP bootstrap), and the
+        # PLASTIC vs_place_context->striosome_value STDP learns V on top. Default False = byte-identical to the
+        # op-map build (no vs_place_drive region/pathway). The op-map de-risk drove vs_place_context DIRECTLY at the
+        # MSN rheobase (the trained-V proxy); the value-train needs the up-state arm to fire the critic so the STDP
+        # has a post-spike to pair with at the INIT weight 0.20.
         nav_regions, nav_pathways = build_bg_brain_regions(
             n_cortex=n_cortex, enable_spiking_wta_readout=enable_spiking_wta_readout,
-            enable_neural_critic=True, spiking_reward_us=True, enable_critic_homeostasis=True)
-        # POST-HOC mask: snc + reward_us are built WITHOUT enable_homeostasis (g11_bg_runner.py:1133-1142/:1158-1163),
-        # so the f-I-restoring per-region homeostasis must be set on them here (the de-risk's load-bearing step:
-        # SNc reward-burst 446 Hz / 5.47x vs the broken 111 Hz / 3.53x).
+            enable_neural_critic=True, spiking_reward_us=True, enable_critic_homeostasis=True,
+            enable_convergent_upstate=bool(nav_critic_convergent_upstate))
+        # POST-HOC homeostasis mask: snc + reward_us are built WITHOUT enable_homeostasis (g11_bg_runner.py:
+        # 1133-1142/:1158-1163). The "all3" set (the original op-map default) ALSO masks snc + reward_us -> the SNc
+        # SATURATES (~435 Hz, no GABA_B headroom). The op-map de-risk (2026-06-18-navcritic-valuetrain-opmap-derisk.md
+        # §1) found the RECOMMENDED op-point is the "critic_only" mask: ONLY striosome_value gets the per-region
+        # homeostasis boost; snc + reward_us stay at vpeak (non-saturated ~97 Hz burst, gap ~19). reward_us STILL
+        # bursts the SNc from vpeak (the US->DA reflex doesn't need the f-I boost), and the homeostasis mask is
+        # f-I-IRRELEVANT for the MSN-D1 critic anyway (its rheobase is vt=-25mV, not threshold-set, §2) — so
+        # "critic_only" ~= no critic homeostasis at all + the SNc at its native Stage-B f-I.
+        _mask_names = (("striosome_value",) if nav_critic_homeostasis_mask == "critic_only"
+                       else ("snc", "reward_us", "striosome_value"))
         for _r in nav_regions:
-            if _r.name in ("snc", "reward_us", "striosome_value"):
+            if _r.name in _mask_names:
                 _r.enable_homeostasis = True
     else:
         nav_regions, nav_pathways = build_bg_brain_regions(
