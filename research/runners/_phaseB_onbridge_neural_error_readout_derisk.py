@@ -41,10 +41,17 @@ from research.runners._phaseB_onsubstrate_readout_bridge_derisk import (  # noqa
 
 R, F, N_SPLITS = 4, 16, 3
 N_EVAL_FACTS = 40
-# (target-est) is O(0.06) (unit-norm filler codes), so the drive must be large to reach the LIF firing band: the
-# onb precedent used ~400 pA for O(1) inputs -> ~6400 pA for O(0.06). cal then matches the error magnitude.
-ERR_DRIVE = 6400.0    # pA per unit (target-est)
+# TONIC OPPONENT coding (the diagnostic fix): a RECTIFIED ON/OFF error (relu) leaves small errors in the LIF
+# dead-zone -> the SIGN is near-chance for the many tiny per-output errors (corr 0.83 but sign 0.55), so the delta
+# rule learns the wrong direction on ~half the outputs -> no convergence. Instead both ON and OFF error neurons get
+# a TONIC BASELINE (always firing), and the error MODULATES them oppositely: on=BASELINE+diff*gain, off=BASELINE-
+# diff*gain -> ON_rate-OFF_rate tracks the SIGNED error LINEARLY THROUGH ZERO (no dead-zone). This is how the brain
+# codes signed values (opponent populations around a tonic rate; the inferior olive's tonic-modulated error).
+ERR_BASELINE = 500.0  # pA tonic drive to both ON and OFF error neurons (mid f-I band -> always firing)
+ERR_DRIVE = 2500.0    # pA per unit (target-est) MODULATION (kept < BASELINE so both neurons stay firing: max|diff|~0.15*2500=375 < 500)
 ERR_WINDOW = 20       # readout window for the error population (rate = spikes / window)
+N_ERR = 8             # error neurons per output per ON/OFF (population-coded -> ~sqrt(N) less Poisson noise -> clean
+                      # sign on the many small per-output errors; the inferior olive uses a POPULATION, not 1 cell)
 
 
 def build_error_bridge(d_in, seed):
@@ -59,7 +66,7 @@ def build_error_bridge(d_in, seed):
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = [
-        BrainRegion(name="err", n_neurons=2 * d_in, exc_fraction=1.0, internal_density=0.0),
+        BrainRegion(name="err", n_neurons=2 * d_in * N_ERR, exc_fraction=1.0, internal_density=0.0),
         BrainRegion(name="_anchor", n_neurons=4, exc_fraction=1.0, internal_density=1.0),
     ]
     cfg.region_pathways = []
@@ -80,9 +87,13 @@ def neural_error(b, err_idx, target, est, d_in, cal):
     import sim.backend as _bk
     xp, _ = _bk.get_backend()
     diff = (target - est)
-    on = np.maximum(diff, 0.0) * ERR_DRIVE
-    off = np.maximum(-diff, 0.0) * ERR_DRIVE
-    drive = np.concatenate([on, off]).astype(np.float32)        # [2*D_in], err region order ON then OFF
+    # tonic opponent code: both fire at BASELINE, the error modulates ON up / OFF down -> ON-OFF tracks signed diff
+    # linearly through zero (no rectification dead-zone, so small-error SIGN is preserved).
+    on = np.clip(ERR_BASELINE + diff * ERR_DRIVE, 0.0, None)
+    off = np.clip(ERR_BASELINE - diff * ERR_DRIVE, 0.0, None)
+    # population-coded: each output's N_ERR ON (and OFF) neurons get the same drive; layout = [ON block, OFF block],
+    # output j's neurons at [j*N_ERR:(j+1)*N_ERR]. Average the N_ERR rates -> ~sqrt(N_ERR) less Poisson noise.
+    drive = np.concatenate([np.repeat(on, N_ERR), np.repeat(off, N_ERR)]).astype(np.float32)
     b.cp_external_input_current[:] = 0.0
     b.cp_external_input_current[err_idx] = xp.asarray(drive)
     counts = np.zeros(int(b.core_config.num_neurons), np.float64)
@@ -91,7 +102,8 @@ def neural_error(b, err_idx, target, est, d_in, cal):
         counts += np.asarray(to_host(b.cp_firing_states)).astype(np.float64)
     b.cp_external_input_current[:] = 0.0
     rate = counts[err_idx] / ERR_WINDOW
-    on_r, off_r = rate[:d_in], rate[d_in:]
+    on_r = rate[:d_in * N_ERR].reshape(d_in, N_ERR).mean(1)      # population-averaged ON rate per output
+    off_r = rate[d_in * N_ERR:].reshape(d_in, N_ERR).mean(1)
     return (on_r - off_r) * cal                                 # signed neural error [D_in]
 
 
