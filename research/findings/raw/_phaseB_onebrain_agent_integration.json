@@ -1,0 +1,27 @@
+{
+  "verdict": "GO",
+  "seeds": [
+    42
+  ],
+  "what": 1.0,
+  "who": 1.0,
+  "yesno": 1.0,
+  "ref_what": 1.0,
+  "ref_who": 1.0,
+  "ref_yesno": 1.0,
+  "moat_w": 1.0,
+  "moat_y": 1.0,
+  "per_row": [
+    {
+      "seed": 42,
+      "what": 1.0,
+      "who": 1.0,
+      "yesno": 1.0,
+      "ref_what": 1.0,
+      "ref_who": 1.0,
+      "ref_yesno": 1.0,
+      "moat_w": 1,
+      "moat_y": 1
+    }
+  ]
+}

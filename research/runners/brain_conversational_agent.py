@@ -164,11 +164,18 @@ class BrainConversationalAgent:
         `composer` (optional) = an externally-constructed composer instance, overriding `composer_kind`. The agent
         delegates all fact storage/retrieval to the composer; the parser + dialogue-planning are composer-agnostic."""
         self.seed = int(seed)
-        self.parser = BridgeParser(seed=seed)
         if composer is not None:
             self.composer = composer
         elif composer_kind == "rate":
             self.composer = CoreSimComposer(seed=seed, proj_dim=proj_dim, concepts=concepts)
+        elif composer_kind == "onebrain":
+            # the production OneBrainComposer: the WHOLE who/what pipeline (comprehend -> store -> query -> abstain) on
+            # ONE persistent co-resident bridge, no host round-trips between ops. It carries its OWN on-bridge parser,
+            # so `hear()` below delegates comprehension to it (one parser on the one brain). Affirmative-fact scope
+            # (negation = a follow-on). See 2026-06-18-one-brain-composer-A3-GO.md.
+            from research.runners.one_brain_composer import OneBrainComposer
+            vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
+            self.composer = OneBrainComposer(seed=seed, D=128, vocab=vocab)
         else:
             from research.runners.rf_phasor_composer import RFPhasorComposer
             vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
@@ -188,6 +195,10 @@ class BrainConversationalAgent:
                                              enable_substrate_store=enable_substrate_store,
                                              grounded_codes=grounded_codes,
                                              enable_rf_cudagraph=enable_rf_cudagraph)
+        # The agent's own comprehension parser -- built ONLY when the composer does not carry its own. The
+        # OneBrainComposer carries an on-bridge parser (it has `hear`), so for it there is ONE parser on the one brain
+        # and the agent's separate parser is skipped; the rf / rate / external paths build the agent parser as before.
+        self.parser = None if hasattr(self.composer, "hear") else BridgeParser(seed=seed)
         self._dlpfc = None              # dialogue-planning Control: built lazily, cached, rebuilt only when the graph changes
         self._dlpfc_key = None
         # (cheat-D conversion, opt-in) the dialogue-planning association graph LEARNED in the substrate (a sparse
@@ -208,9 +219,17 @@ class BrainConversationalAgent:
             self._neural_render = NeuralSerialOrderRenderer(seed=seed)
 
     def hear(self, sentence, voice="active", polarity=None):
-        """Comprehend an SVO statement and store it. `sentence` is 'agent action patient' (or its passive frame)."""
-        roles = self.parser.parse(sentence.split(), voice)
-        self.composer.store(roles["agent"], roles["action"], roles["patient"], polarity=polarity)
+        """Comprehend an SVO statement and store it. `sentence` is 'agent action patient' (or its passive frame).
+
+        When the composer carries its OWN on-bridge parser (the OneBrainComposer: comprehension + storage on ONE
+        persistent bridge), `hear()` DELEGATES comprehension to it -- one parser on the one brain, the parse result
+        flowing operand->bind as spikes, not via the agent's separate parser. Otherwise the agent's parser comprehends
+        and the composer stores the resolved roles (the rf / rate default path, byte-unchanged)."""
+        if hasattr(self.composer, "hear"):
+            roles = self.composer.hear(sentence, voice, polarity=polarity)
+        else:
+            roles = self.parser.parse(sentence.split(), voice)
+            self.composer.store(roles["agent"], roles["action"], roles["patient"], polarity=polarity)
         if self._learned_assoc is not None:                  # learn the concept co-occurrence in the substrate
             self._learned_assoc.store_fact([roles["agent"], roles["action"], roles["patient"]])
         return roles
