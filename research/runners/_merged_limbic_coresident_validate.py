@@ -284,6 +284,7 @@ def main():
         cc = b.core_config
         cc.enable_ou_process = True; cc.ou_std_current_pA = 100.0
         cc.reward_learning_rate = 0.0
+        cc.homeostasis_threshold_adapt_rate = 0.0   # freeze the homeostatic threshold so the sweep isn't drift-contaminated
 
         def meas(drives):
             _settle(b, xp)
