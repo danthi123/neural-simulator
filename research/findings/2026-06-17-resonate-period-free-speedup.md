@@ -1,11 +1,14 @@
 # Free latency lever: the resonate window shortens 208 → 40 steps with no accuracy loss (6.2× fewer steps)
 
 **Date:** 2026-06-17 (the resonator-paper bonus lever, on top of the CYCLE-152 batched scan)
-**Status:** **PARTIAL — real for FLAT queries, but clause-bounded (adoption at period=48 reverted).** The resonate
-window drops 208→40 steps with **flat** who/what + the no-confab moat at full accuracy (the sweep below). BUT the
-full-suite adoption gate found **period=48 breaks embedded clauses** (`test_embedded_clause` fails) — the recursive
-clause unbind needs more phase resolution — so the agent default **stays 200**. A clause-safe period (likely
-~100–128, still a ~1.6–2× win) is a bounded follow-on, gated on the FULL suite. Free knob, NO `sim/` edit.
+**Status:** **BOUNDARY — real for FLAT queries only; the production agent keeps period=200.** The resonate window
+drops 208→40 steps with **flat** who/what + the moat at full accuracy. BUT the recursive **embedded clause** (a
+clause bound as a filler → a double unbind) needs the FULL window: the clause-safe sweep
+(`_phaseB_clause_period_sweep.py`) shows clause accuracy 0.0 (p48) → 0.67 (p64) → 0.83 (p100–160) → **only 1.0 at
+period=200**. So there is **no clause-safe shorter period** — the agent default correctly stays 200, and the
+period lever is adoptable only for **clause-free** use. (⇒ the resonate-latency lever for the full agent must be
+making each step cheaper — the CUDA-graph/fusion refactor — not fewer steps.) Free knob where applicable, NO
+`sim/` edit.
 **Runner:** `research/runners/_phaseB_resonate_period_sweep.py` · **Raw:** `research/findings/raw/_resonate_period_sweep.json`
 
 ## Why
