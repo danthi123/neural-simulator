@@ -70,7 +70,7 @@ def build_limbic_core(seed, *, n_cue=40, n_strio=60, n_reward_us=40, n_snc=30,
                       cue_to_strio_weight=10.0, reward_us_to_snc_weight=10.0,
                       strio_to_snc_weight=10.0, gabab_prop=0.22, gabab_tau_decay=150.0,
                       gabab_conductance_max=0.0, reward_learning_rate=0.08,
-                      snc_da_sensitivity=8.0):
+                      snc_da_sensitivity=8.0, enable_heterogeneity=True):
     """Build the minimal reward_us -> snc <- striosome_value(GABA_B) limbic organ.
 
     cue->striosome_value is PLASTIC (the value V learned by the SNc-derived DA delta via the
@@ -101,6 +101,9 @@ def build_limbic_core(seed, *, n_cue=40, n_strio=60, n_reward_us=40, n_snc=30,
     cfg.enable_reward_modulation = True
     cfg.enable_short_term_plasticity = False   # depressing cortico-striatal STP starves the critic
     cfg.enable_structural_plasticity = False
+    # Heterogeneity (default ON, biological). The merged "one brain" runs it OFF for nav/conv determinism, so a
+    # co-resident validation can disable it here to MATCH the merged operating point (the het-off controlled test).
+    cfg.enable_parameter_heterogeneity = bool(enable_heterogeneity)
     cfg.reward_learning_rate = float(reward_learning_rate)
     cfg.current_reward_signal = 0.0            # BRAIN-BASED: the SNc FIRING is the signal, not a host scalar
     cfg.reward_baseline = 0.0

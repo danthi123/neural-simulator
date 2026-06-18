@@ -449,7 +449,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  co_resident_perception: bool = False,
                                  enable_spiking_wta_readout: bool = False,
                                  co_resident_generalization: bool = False,
-                                 gen_n_concept_per: int = 100, gen_n_fact_per: int = 100):
+                                 gen_n_concept_per: int = 100, gen_n_fact_per: int = 100,
+                                 co_resident_limbic: bool = False):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
     §2.5 FINAL FORM.
@@ -549,10 +550,55 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     if co_resident_generalization:
         generalization_regions, generalization_pathways = _generalization_regions_pathways(
             gen_n_concept_per, gen_n_fact_per)
+    # SHARED LIMBIC CORE (co_resident_limbic, additive default-off): the validated reward/value/dopamine
+    # organ (finding 2026-06-18-limbic-core-rpe-battery-GO.md, the Schultz RPE battery 6/6) as a co-resident
+    # slice — the highest-leverage TRUE-ONE-BRAIN consolidation step (the merged bridge otherwise has NO limbic
+    # core: build_bg_brain_regions is called with default kwargs). limbic_reward_us (PPN-like US afferent) ->
+    # limbic_snc (DOPAMINE) <- limbic_striosome (GABAergic MSN-D1 value critic; -V via the GABA_B/GIRK K+
+    # conductance); delta=r-V is the limbic_snc FIRING. limbic_cue is the generic state input (a later increment
+    # wires it to the nav place code / conversational salience). ALL limbic_-prefixed (zero name collision with
+    # the nav cascade) + internal_density=0; the only out-edges are WITHIN the slice (limbic_cue->striosome,
+    # reward_us->snc, striosome->snc) so the slice is nav-inert (no cp_connections edges into navigation, like
+    # rf/cortex_it). Appended LAST so the nav/parser/dlPFC/rf/cortex_it/gen index bases are BYTE-UNCHANGED (the
+    # STEP-2a/2b byte-identity is preserved). Default False = byte-preserved.
+    limbic_regions, limbic_pathways = [], []
+    if co_resident_limbic:
+        from sim.enums import NeuronType as _NT
+        _RS = _NT.IZH2007_RS_CORTICAL_PYRAMIDAL.name
+        limbic_regions = [
+            BrainRegion(name="limbic_cue", n_neurons=40, exc_fraction=1.0, internal_density=0.0,
+                        plastic_internal=False, izh_neuron_type=_RS, enable_nmda=False),
+            BrainRegion(name="limbic_striosome", n_neurons=60, exc_fraction=0.0, internal_density=0.0,
+                        plastic_internal=False, izh_neuron_type=_NT.IZH2007_STRIATAL_MSN_D1.name,
+                        syn_reversal_potential_i_override=-60.0, enable_nmda=False),
+            BrainRegion(name="limbic_reward_us", n_neurons=40, exc_fraction=1.0, internal_density=0.0,
+                        plastic_internal=False, izh_neuron_type=_RS, enable_nmda=False),
+            BrainRegion(name="limbic_snc", n_neurons=30, exc_fraction=1.0, internal_density=0.0,
+                        plastic_internal=False, izh_neuron_type=_NT.IZH2007_DOPAMINE.name,
+                        syn_reversal_potential_i_override=-55.0, enable_nmda=False),
+        ]
+        # The de-risk-validated weights (the standalone organ's het-on operating point, GO 6/6). The MERGED bridge
+        # runs heterogeneity OFF for nav/conv determinism, which makes the point-neuron limbic dynamics all-or-
+        # nothing/chaotic (a razor-steep f-I + a finicky GABA_B operating point — finding
+        # 2026-06-18-merged-limbic-core-lift.md): at these weights the value subtraction works co-resident (the diag:
+        # cue+US snc ≪ US-alone snc) but the FULL multi-gate arithmetic (burst≥3× AND subtraction together) does not
+        # robustly reproduce het-off. Raising the cue→striosome weight to fire the cold MSN harder BREAKS the
+        # subtraction (the cue over-drives → pred≫unpred). ⇒ keep the VALIDATED 10/10/10; the clean fix is
+        # INCREMENT #2 = per-region heterogeneity for the limbic slice (a small additive sim/ analogue of the
+        # per-region NMDA mask) → restores the het-on operating point WITHOUT touching nav/conv determinism.
+        limbic_pathways = [
+            RegionPathway(from_region="limbic_cue", to_region="limbic_striosome", density=0.6,
+                          weight_mean=10.0, weight_jitter=0.5, plastic=True, plasticity_gate="limbic_value"),
+            RegionPathway(from_region="limbic_reward_us", to_region="limbic_snc", density=0.6,
+                          weight_mean=10.0, weight_jitter=0.2, plastic=False),
+            RegionPathway(from_region="limbic_striosome", to_region="limbic_snc", density=0.5,
+                          weight_mean=10.0, weight_jitter=0.2, plastic=False, receptor="gaba_b"),
+        ]
     union_regions = (list(nav_regions) + list(parser_regions) + list(dlpfc_regions)
-                     + list(rf_regions) + list(perception_regions) + list(generalization_regions))
+                     + list(rf_regions) + list(perception_regions) + list(generalization_regions)
+                     + list(limbic_regions))
     union_pathways = (list(nav_pathways) + list(parser_pathways)
-                      + list(generalization_pathways))   # dlPFC loop is hand-built, NOT a pathway
+                      + list(generalization_pathways) + list(limbic_pathways))   # dlPFC loop is hand-built, NOT a pathway
 
     # 2) Merged config.
     cfg = CoreSimConfig()
@@ -594,6 +640,31 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     # NMDA on globally; the per-region mask (built at init from the enable_nmda regions) confines it to dlPFC.
     cfg.enable_nmda = True
     cfg.nmda_ratio = 0.5
+
+    # SHARED LIMBIC CORE config (co_resident_limbic): (a) enable the GABA_B/GIRK conductance (the already-shipped
+    # owner-approved edit; ONLY the limbic_striosome->limbic_snc pathway is tagged receptor="gaba_b", so this is
+    # additive/zero-effect for every other synapse) at the validated operating point (prop 0.22); (b) register the
+    # `dopamine` signed-firing neuromodulator over [limbic_snc] = the SHARED dopamine broadcast. THRESHOLD 0.0 makes
+    # it NEUTRAL-AT-REST: da_signal = sensitivity*(rate_ema - 0) >= 0, so a quiescent limbic_snc (during the parser
+    # train pass + conversational ops, when the limbic slice is undriven) gives da_signal=0 -> da=baseline ->
+    # plasticity-rate multiplier ~1.0 -> it CANNOT suppress the parser/conversational/nav plasticity (a positive
+    # threshold would: a silent SNc -> negative da_signal -> LTD on everything). The LTD/DA-omission-dip half (the
+    # signed teaching signal for the critic's V-unlearning) is an increment-#2 concern (the on-merge critic-learning
+    # + nav-reward routing), calibrated there with a tonic-driven limbic_snc. Both ONLY when co_resident_limbic ->
+    # default-off byte-preserved (the merge otherwise has enable_gabab=False + zero neuromodulators).
+    if co_resident_limbic:
+        cfg.enable_gabab = True
+        cfg.gabab_reversal_potential = -90.0
+        cfg.gabab_tau_decay = 150.0
+        cfg.gabab_propagation_strength = 0.22
+        cfg.gabab_conductance_max = 0.0
+        from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget, ProductionRule
+        cfg.enable_neuromodulator_subsystem = True
+        cfg.neuromodulators = [NeuromodulatorConfig(
+            name="dopamine", baseline=0.5, decay_tau_ms=200.0, concentration_min=0.0, concentration_max=2.0,
+            targets=[ModulatorTarget(target_type="plasticity_rate", scope="all", sensitivity=+1.0)],
+            production_rules=[ProductionRule(rule_type="from_region_firing_signed", sensitivity=8.0,
+                                             threshold=0.0, window_ms=200.0, source_regions=["limbic_snc"])])]
 
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
@@ -694,6 +765,11 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         handles["rf_D"] = int(rf_D)
     if co_resident_generalization:
         handles["gen"] = dict(gen_handles, **gen_extra)
+    if co_resident_limbic:
+        # The limbic-slice base indices (for the on-merge RPE-battery validation + the later increments that
+        # drive limbic_cue/limbic_reward_us and read limbic_snc/limbic_striosome).
+        handles["limbic"] = {n: {"base": int(rm.indices(n)[0]), "size": len(list(rm.indices(n)))}
+                             for n in ("limbic_cue", "limbic_striosome", "limbic_reward_us", "limbic_snc")}
     return bridge, handles
 
 
@@ -897,7 +973,7 @@ class MergedNavConvAgent:
       * the dlPFC context `elaborate` drives is the merged bridge's (`self._dlpfc_ctx.bridge is self._merged_bridge`).
     """
 
-    def __init__(self, seed=42, vocab=None, co_resident_composer=False):
+    def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_limbic=False):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
         merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory codebook
         share one word set.
@@ -907,9 +983,15 @@ class MergedNavConvAgent:
         (STEP 2a default) it runs on its own separate per-op bridges."""
         self.seed = int(seed)
         self.co_resident_composer = bool(co_resident_composer)
+        # co_resident_limbic (TRUE ONE BRAIN item #1): also lift the shared reward/value/dopamine limbic core
+        # onto the merged bridge (the limbic_ slice + the `dopamine` modulator). Default False = byte-preserved
+        # (the conversational gate b is unaffected). When True, the moat-no-regression check verifies the shared
+        # DA modulator (threshold-0, neutral-at-rest) does not perturb the parser/conversational comprehension.
+        self.co_resident_limbic = bool(co_resident_limbic)
         _D = 128
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
-            seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D)
+            seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,
+            co_resident_limbic=self.co_resident_limbic)
         words = self._handles["vocab"]   # the sorted merged vocab (the dlPFC + parser word set)
 
         # The composer. STEP 2a default: on its OWN per-op bridges (separate). STEP 2b (co_resident_composer=True):
