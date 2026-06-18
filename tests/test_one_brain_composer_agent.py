@@ -15,6 +15,7 @@ absent (like the other on-brain agent tests).
 """
 import os
 
+import numpy as np
 import pytest
 
 os.environ.setdefault("SIM_BACKEND", "cupy")
@@ -170,6 +171,27 @@ def test_onebrain_reconsolidation_parity():
     # (3) the moat: a NEVER-stored cue abstains (no fabricated trace)
     rm = c.update_on_mismatch("bird", "go", "west")
     assert rm["action"] == "abstain" and c.count_facts("bird", "go") == 0, "moat breach: unstored cue not abstained"
+
+
+def test_onebrain_grounded_codes_passthrough():
+    """Production drop-in: OneBrainComposer(grounded_codes=...) uses the LEARNED-from-conversation concept codes (the
+    same path the rf composer takes), not fresh random ones -- so onebrain is a true drop-in for the production
+    conversational pipeline (e.g. the 320 stream-learned cortex codes). Gate: the overridden codes land in the
+    cleanup codebook AND a fact stored with them queries == the RFPhasorComposer oracle built with the same codes."""
+    from research.runners.one_brain_composer import OneBrainComposer
+    from research.runners.rf_phasor_composer import RFPhasorComposer
+    rng = np.random.default_rng(7)
+    grounded = {w: rng.uniform(0.0, 1.0, 64) for w in ("dog", "go", "north")}    # learned codes for a few words
+    try:
+        c = OneBrainComposer(seed=42, D=64, vocab=VOCAB, grounded_codes=grounded)
+        oracle = RFPhasorComposer(seed=42, D=64, vocab=VOCAB, grounded_codes=grounded)
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    for w in grounded:                                                            # the learned codes propagate
+        assert np.allclose(c.comp.concepts[w], grounded[w]), f"grounded code for {w!r} did not propagate"
+    c.store("dog", "go", "north"); oracle.store("dog", "go", "north")            # a fact built on the learned codes
+    assert c.query_patient("dog", "go") == oracle.query_patient("dog", "go") == "north", \
+        "a fact stored on grounded codes must query == the oracle == truth"
 
 
 def test_onebrain_multiturn_correction():

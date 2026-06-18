@@ -175,7 +175,7 @@ class BrainConversationalAgent:
             # (negation = a follow-on). See 2026-06-18-one-brain-composer-A3-GO.md.
             from research.runners.one_brain_composer import OneBrainComposer
             vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
-            self.composer = OneBrainComposer(seed=seed, D=128, vocab=vocab)
+            self.composer = OneBrainComposer(seed=seed, D=128, vocab=vocab, grounded_codes=grounded_codes)
         else:
             from research.runners.rf_phasor_composer import RFPhasorComposer
             vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None

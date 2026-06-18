@@ -71,11 +71,14 @@ class OneBrainComposer:
     `ask_yes_no`; `kb` bookkeeping)."""
 
     def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200, enable_batched=True,
-                 enable_rf_cudagraph=True):
+                 enable_rf_cudagraph=True, grounded_codes=None):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         self.enable_batched = bool(enable_batched)       # A5 lever 1: read ALL blocks in 3 windows (7.3x); per-block=oracle
         self.enable_rf_cudagraph = bool(enable_rf_cudagraph)   # A5 lever 3: masked megakernel for the resonate (GPU only)
-        self.comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, period=period)
+        # grounded_codes (optional word->phases): the learned-from-conversation concept codes (e.g. the 320 stream-learned
+        # cortex). Passed to the inner RFPhasorComposer, which overrides its random codes for those words -> the cleanup
+        # codebook + the binding both use the learned codes (production parity with the rf composer's grounded path).
+        self.comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, period=period, grounded_codes=grounded_codes)
         self.words = list(self.comp.words)              # the cleanup codebook = the composer's ACTUAL vocab
         self.V = len(self.words)
         self.R = 40; self.P = 6 + 3 * self.R; self.k_max = int(k_max)

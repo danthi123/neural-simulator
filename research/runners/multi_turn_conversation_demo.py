@@ -28,9 +28,15 @@ def _say(who, text):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--composer", choices=["rf", "onebrain"], default="rf",
+                    help="rf = the production numpy composer / test oracle (default); onebrain = the integrated "
+                         "one-brain composer (the whole pipeline on ONE spiking bridge; wants SIM_BACKEND=cupy)")
+    a = ap.parse_args()
     print("\n=== multi-turn conversation on the brain (MultiTurnAgent) ===\n", flush=True)
     agent = MultiTurnAgent(referent_concepts=NOUNS, concepts={w: None for w in VOCAB},
-                           seed=42, enable_neural_render=True)
+                           seed=42, enable_neural_render=True, composer_kind=a.composer)
     c = agent.agent.composer
     # a small food-web the agent is told about (separate affirmative facts; the AFFIRM tag is the slot the
     # yes/no path reads -- a declarative statement is affirmative).

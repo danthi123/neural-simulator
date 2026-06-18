@@ -781,7 +781,8 @@ voice-invariant) · the cue-matching scan · A3 (the integrated composer) · the
 - **`BrainConversationalAgent(composer_kind="onebrain")`** — the agent's `hear()` DELEGATES comprehension to the composer
   (ONE parser on the one brain). The full core interface (hear · what/who · yes-no/negation · describe · reason ·
   elaborate) == the rf reference agent == ground truth, **multi-seed**, moat intact. ADDITIVE wiring: the rf/rate default
-  is byte-unchanged (regression GREEN). CI guard `tests/test_one_brain_composer_agent.py` (4 tests).
+  is byte-unchanged (regression GREEN). CI guard `tests/test_one_brain_composer_agent.py` (11 tests — see the A5
+  cleanup bullet below; the richer features clauses/reconsolidation/multi-turn are now at parity too).
 - **SPEED — A5 levers 1+3 DONE (onebrain is now FASTER than the rf reference): 96 ms/query vs rf 416 ms (~4.3×),
   answer-identical, CI-guarded.** The full speed arc: 2680 (reconstruct-per-block) → 605 (lever 1, the batched scan:
   read ALL K stored blocks in 3 resonate windows, composer-layer, no `sim/` edit) → 96 ms (lever 3, the
@@ -792,16 +793,36 @@ voice-invariant) · the cue-matching scan · A3 (the integrated composer) · the
   default (GPU-only, loop fallback). **GATE:** `tests/test_rf_megakernel.py` 4/4 (incl. the masked golden) +
   `tests/test_one_brain_composer_agent.py` 5/5 (answer-identical with the megakernel). Findings: the CYCLE 181/185
   commits + `docs/plans/2026-06-18-onebrain-A5-speed-cleanup-design.md`.
-- **HONEST SCOPE + what remains:** a FUNCTIONAL integration of the EXISTING who/what capabilities (the bind stays the
-  exact-inverse FHRR idealization — the genuine learned-cortex bind is the separate step-3 frontier). The
-  `OneBrainComposer` covers the CORE interface (hear · what/who · yes-no/negation · describe · reason · elaborate) at rf
-  parity + faster; it does NOT yet cover the rf composer's RICHER features (recursive embedded CLAUSES, RECONSOLIDATION,
-  MULTI-TURN anaphora). So the **A5 CLEANUP** (make onebrain the agent DEFAULT → deprecate-then-retire the legacy numpy
-  production runtime, KEEPING numpy as the TEST ORACLE) is gated on FIRST bringing those richer features to parity on
-  the onebrain path — a bounded follow-on arc, not a big-bang deletion. + A4 (optional fully-spiking WTA selection, off
-  the critical path — the host argmax read-out is brain-based-compliant).
+- **A5 CLEANUP — feature parity ACHIEVED at the validated scale (CYCLE 186-189, 2026-06-18); the production-default
+  flip is gated only on a 320-scale run.** The richer rf-composer features are now at parity on the onebrain path, all
+  multi-seed/GPU-gated, NO `sim/` edit (reuse-by-import), the no-confab moat never weakened:
+  - **recursive embedded CLAUSES** (a fact whose patient is an SVO clause → a 2-level register→register unbind, the
+    intermediate composite RE-KICKED as a clean unit phasor per hop == the numpy oracle's fresh-kick-per-hop). CYCLE 186.
+  - **RECONSOLIDATION** (`update_on_mismatch` + `count_facts`): a correction reactivates the cued block, computes a
+    PHASE-level prediction error vs an auto-calibrated labilization gate, and rewrites the fact IN PLACE (no duplicate);
+    a re-statement restabilizes; a never-stored cue abstains. `_store_composite` factored into `_compose_phases` + a
+    block-major `_write_block` (replace-or-append). CYCLE 187.
+  - **AGENT-LEVEL validation:** a parser-agnostic `BrainConversationalAgent.parse` (the agent's own parser is None on
+    the onebrain path — the composer carries the one parser) + `composer_kind` plumbed through `MultiTurnAgentV2` /
+    `MultiTurnAgent`; the correction-turn (pronoun-cued 'actually it go south') + multi-turn anaphora both pass on the
+    onebrain path; the default rf path is byte-unregressed (`test_reconsolidation_update` + `test_multi_turn_agent`
+    18/18). CYCLE 188.
+  - **production drop-in:** `OneBrainComposer(grounded_codes=...)` passes the learned-from-conversation codes through to
+    the inner composer (== the rf grounded path), so onebrain uses the SAME codes the production conversation depends on;
+    the two production demos (`consolidated_320_conversation_demo`, `multi_turn_conversation_demo`) get a `--composer
+    {rf,onebrain}` opt-in (default rf = the oracle / numpy-CPU path). CYCLE 189.
+  - CI guard `tests/test_one_brain_composer_agent.py` is now **11 tests** (core matrix/moat · negation · describe/reason ·
+    batched==per-block · clause parity · agent-clause · reconsolidation parity · grounded-codes drop-in · multi-turn
+    correction · multi-turn anaphora), all GREEN with the masked megakernel default-on.
+  - **REMAINING before the production-default flip:** a real **320-concept-scale onebrain run** (the consolidated demo on
+    the stream-learned codes — onebrain at V=320 is ~54K neurons, plausible but unvalidated) → then make `onebrain` the
+    documented agent/demo default, with rf kept as the TEST ORACLE the parity tests assert against. The bind stays the
+    exact-inverse FHRR idealization (the genuine learned-cortex bind is the separate step-3 frontier). Optional lower
+    priority: attributed entities (adj+noun, NOT on the agent's critical path — the parser feeds flat SVO); A4
+    (fully-spiking WTA selection, off the critical path — the host argmax read-out is brain-based-compliant).
 - Findings: `2026-06-18-one-brain-{multirole-coherence,multifact-store-GAP-A,parser-frontend,composer-A3,agent-wired}-GO.md`,
-  `2026-06-18-production-one-brain-composer-scoping.md`, `2026-06-18-onebrain-gapB-parser-frontend-scoping.md`.
+  `2026-06-18-production-one-brain-composer-scoping.md`, `2026-06-18-onebrain-gapB-parser-frontend-scoping.md`; the A5
+  cleanup arc is logged in `research/findings/AUTONOMOUS_STATE.md` (CYCLE 186-189).
 
 - **Step 3 (true cortex) — DE-RISKED to a FORK (2026-06-11); flat-cortex (A) no-confab moat validated.** The
   arc to replace the composer's exact-inverse vector-symbolic-algebra (Fourier Holographic Reduced Representation,

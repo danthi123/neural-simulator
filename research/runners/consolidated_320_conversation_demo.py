@@ -102,15 +102,17 @@ ABSENT_WHO = [("eat", "ball"), ("play", "apple"), ("run", "tree"), ("sleep", "pa
 NEG_FACT = ("fish", "eat", "cake")
 
 
-def run_seed(seed, codes, vocab, cat_ids, readout):
+def run_seed(seed, codes, vocab, cat_ids, readout, composer_kind="rf"):
     label = {w: c for w, c in zip(vocab, cat_ids)}
     proj = _projection(D, codes.shape[1], seed)
     grounded = {vocab[i]: grounded_phases(codes[i], proj) for i in range(len(vocab))}
     concepts = {vocab[i]: codes[i] for i in range(len(vocab))}  # sets the full 320-word vocabulary
 
-    # the PRODUCTION agent, on the stream-learned codes, with neural word-order generation.
+    # the PRODUCTION agent, on the stream-learned codes, with neural word-order generation. composer_kind="onebrain"
+    # routes the WHOLE who/what pipeline onto ONE persistent co-resident spiking bridge (the validated one-brain path);
+    # default "rf" = the production numpy composer / test oracle. The grounded codes pass through to either composer.
     agent = BrainConversationalAgent(seed=seed, concepts=concepts, grounded_codes=grounded,
-                                     enable_neural_render=True)
+                                     enable_neural_render=True, composer_kind=composer_kind)
 
     # grounded-code structure carried (mean off-diagonal phase-cosine over the words used in the demo).
     used = sorted({w for f in FACTS for w in f})
@@ -193,6 +195,10 @@ def main():
                     help="neural = the fully-brain-based read-out codes (seed 42 only so far); "
                          "host = the host double-centring read-out codes (seeds 42/43/44 available)")
     ap.add_argument("--out", default="research/findings/raw/_consolidated_320_conversation.json")
+    ap.add_argument("--composer", choices=["rf", "onebrain"], default="rf",
+                    help="rf = the production numpy composer / test oracle (default); onebrain = the integrated "
+                         "one-brain composer (the whole pipeline on ONE spiking bridge) -- opt-in for the 320-scale "
+                         "validation that gates making it the production default")
     a = ap.parse_args()
 
     vocab, cat_ids, _ = taxonomy_to_vocab_categories(TAXONOMY_40x8)
@@ -209,7 +215,7 @@ def main():
             continue
         codes = np.load(cpath)
         codes = codes / (np.linalg.norm(codes, axis=1, keepdims=True) + 1e-12)
-        r = run_seed(seed, codes, vocab, cat_ids, a.readout)
+        r = run_seed(seed, codes, vocab, cat_ids, a.readout, composer_kind=a.composer)
         results.append(r)
         tag = "GO" if r["go"] else ("MOAT_BREACH" if r["moat_breach"] else "NEGATIVE")
         print(f"  [seed {seed}] recall {r['recall']:.2f} | abstain {r['abstain']:.2f} "
