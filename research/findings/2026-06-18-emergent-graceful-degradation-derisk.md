@@ -94,11 +94,56 @@ the response is spiking (host only lesions + reads the cleanup membrane argmax).
 control for the GO re-test: the structured-vs-distributed lesion contrast (zero whole-fact
 blocks vs random synapses) to further pin the within-fact distributedness.
 
+## The fix — a confidence/familiarity gate on the cue read-out (CYCLE 193)
+
+Built the motivated fix: an opt-in `OneBrainComposer(confidence_gate=g)` (default 0.0 = OFF =
+byte-identical, guarded by `> 0.0`; the read-path refactor is equivalent at gate 0). The cleanup
+is a matched filter, so a CONFIDENT (familiar) block's winner dominates — a large normalized
+margin `(peak − runner_up) / peak` — while a noise-dominated (heavily-damaged) block's cleanup is
+flat (a small margin). When `g > 0`, a block whose CUE-role (agent + action) margin falls below
+`g` is **blanked in the read path**, so every consumer naturally ABSTAINS on it (no broad
+refactor; the gate lives entirely in `_read_block` / `_read_all_blocks` + `_margin`).
+
+Threshold chosen non-arbitrarily by bracketing (D=64 seed 42): `g=0.15` is clearly below the
+intact margins (~0.5+) and above the noise margins (~0); `g=0.30` over-blanks (hurts the
+functional regime). At **D=128 multi-seed, `g=0.15`** preserves the functional regime exactly
+(lesion plateau 0.60–0.70, unchanged from ungated) and **substantially improves the failure
+mode**: most moat leaks close, confab is reduced (seed 42 lesion+noise GO, seed 43 dropout GO,
+seed 44 noise GO).
+
+But a **residual confabulation tail (~0.12–0.25) persists at ≥90% destruction**, and the
+disambiguation run settles its nature: **`g=0.30` does NOT close the residual** (same confab at
+the same extreme levels) **AND it hurts the functional regime** (lesion plateau → 0.40). So the
+residual is **NOT gate-too-low — it is confident-WRONG reads**: at near-total destruction the
+noise-corrupted reconstruction aligns *confidently* (high margin) with a *wrong* concept, which a
+margin-based confidence gate cannot catch by construction.
+
+### Conclusion (graceful degradation)
+
+- **Robustness: GO** — recall 1.00 to ~70% synaptic loss (multi-seed); a genuinely robust
+  distributed population code.
+- **Graceful failure mode: substantially achieved** — the confidence gate (`g=0.15`, opt-in)
+  preserves the functional regime AND closes the flat-uncertain confabulations + moat leaks, so
+  lost recall in the degrading regime turns into abstention with a calibrated moat.
+- **Residual boundary (honest, mechanistically distinct):** confident-wrong reads at ≥90%
+  destruction — a deeper limit that a confidence gate cannot fix; it needs a different mechanism
+  (an **attractor cleanup** that settles the reconstruction toward a stored pattern before the
+  read-out, or cross-validation across multiple reconstructions — the "attractor-cleanup ladder").
+  At ≥90% synapse destruction the tissue is essentially obliterated, so this is the substrate's
+  graceful-failure limit, not a routine-operation flaw. It is the next mechanism, not a blocker.
+
+Production default stays `confidence_gate=0.0` (byte-identical); `0.15` is the recommended
+opt-in for damage-robustness. The 12-test CI guard passes at the default.
+
 ## Reproduce
 
 ```bash
+# the boundary (bare cue-match):
 SIM_BACKEND=cupy python -m research.runners._emergent_graceful_degradation_derisk \
     --seeds 42 43 44 --D 128 --out research/findings/raw/_emergent_graceful_degradation.json
+# the fix (confidence gate -- closes the flat-uncertain failures, preserves the regime):
+SIM_BACKEND=cupy python -m research.runners._emergent_graceful_degradation_derisk \
+    --seeds 42 43 44 --D 128 --confidence-gate 0.15 --out research/findings/raw/_emergent_graceful_gated.json
 ```
 Runner: `research/runners/_emergent_graceful_degradation_derisk.py`. Scoping:
 `2026-06-18-emergent-one-brain-features-research.md`.

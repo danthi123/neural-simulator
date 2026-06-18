@@ -1,0 +1,205 @@
+{
+  "go_seeds": 1,
+  "n_seeds": 1,
+  "results": [
+    {
+      "seed": 42,
+      "D": 64,
+      "sweeps": {
+        "lesion": [
+          {
+            "level": 0.0,
+            "recall": 1.0,
+            "abstain": 0.0,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.2,
+            "recall": 1.0,
+            "abstain": 0.0,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.4,
+            "recall": 1.0,
+            "abstain": 0.0,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.6,
+            "recall": 0.625,
+            "abstain": 0.25,
+            "confab": 0.125,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.7,
+            "recall": 0.25,
+            "abstain": 0.75,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.8,
+            "recall": 0.375,
+            "abstain": 0.625,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.9,
+            "recall": 0.0,
+            "abstain": 1.0,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.95,
+            "recall": 0.0,
+            "abstain": 0.875,
+            "confab": 0.125,
+            "moat_false_accept": 0.0
+          }
+        ],
+        "noise": [
+          {
+            "level": 0.0,
+            "recall": 1.0,
+            "abstain": 0.0,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.3,
+            "recall": 1.0,
+            "abstain": 0.0,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.6,
+            "recall": 0.875,
+            "abstain": 0.125,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.9,
+            "recall": 0.375,
+            "abstain": 0.625,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 1.2,
+            "recall": 0.5,
+            "abstain": 0.5,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 1.5,
+            "recall": 0.0,
+            "abstain": 1.0,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          }
+        ],
+        "dropout": [
+          {
+            "level": 0.0,
+            "recall": 1.0,
+            "abstain": 0.0,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.2,
+            "recall": 1.0,
+            "abstain": 0.0,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.4,
+            "recall": 0.75,
+            "abstain": 0.25,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.6,
+            "recall": 1.0,
+            "abstain": 0.0,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.7,
+            "recall": 0.5,
+            "abstain": 0.375,
+            "confab": 0.125,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.8,
+            "recall": 0.0,
+            "abstain": 0.875,
+            "confab": 0.125,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.9,
+            "recall": 0.0,
+            "abstain": 1.0,
+            "confab": 0.0,
+            "moat_false_accept": 0.0
+          },
+          {
+            "level": 0.95,
+            "recall": 0.0,
+            "abstain": 0.875,
+            "confab": 0.125,
+            "moat_false_accept": 0.0
+          }
+        ]
+      },
+      "verdicts": {
+        "lesion": {
+          "go": true,
+          "p0_ok": true,
+          "confab_ok": true,
+          "moat_ok": true,
+          "reaches_falloff": true,
+          "no_cliff": true,
+          "has_intermediate": true,
+          "plateau_until": 0.4
+        },
+        "noise": {
+          "go": true,
+          "p0_ok": true,
+          "confab_ok": true,
+          "moat_ok": true,
+          "reaches_falloff": true,
+          "no_cliff": true,
+          "has_intermediate": true,
+          "plateau_until": 0.3
+        },
+        "dropout": {
+          "go": true,
+          "p0_ok": true,
+          "confab_ok": true,
+          "moat_ok": true,
+          "reaches_falloff": true,
+          "no_cliff": true,
+          "has_intermediate": true,
+          "plateau_until": 0.6
+        }
+      },
+      "all_graceful": true
+    }
+  ]
+}

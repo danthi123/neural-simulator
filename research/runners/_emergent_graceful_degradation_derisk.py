@@ -53,8 +53,8 @@ CONFAB_MAX = 0.15    # confabulation must stay at/below this at every level (los
 MOAT_MAX = 0.05      # the HARD guard: moat false-accept must stay ~0 at every level
 
 
-def _build(seed, D):
-    c = OneBrainComposer(seed=seed, D=D, vocab=VOCAB)
+def _build(seed, D, confidence_gate=0.0):
+    c = OneBrainComposer(seed=seed, D=D, vocab=VOCAB, confidence_gate=confidence_gate)
     for (a, v, p) in FACTS:
         c.store(a, v, p)
     return c
@@ -151,8 +151,8 @@ def _verdict(rows):
             "has_intermediate": bool(has_intermediate), "plateau_until": float(plateau_until)}
 
 
-def run_seed(seed, D):
-    c = _build(seed, D)
+def run_seed(seed, D, confidence_gate=0.0):
+    c = _build(seed, D, confidence_gate=confidence_gate)
     rng = np.random.default_rng(seed)
     # The distributed phasor store is EXTREMELY robust (a matched-filter cleanup over a D-dim code tolerates large
     # synaptic loss), so the sweep must reach HIGH damage to capture the graceful fall-off region (recall is flat 1.0
@@ -174,14 +174,19 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
     ap.add_argument("--D", type=int, default=128)
+    ap.add_argument("--confidence-gate", type=float, default=0.0,
+                    help="0.0 = the bare cue-match (the boundary); > 0 enables the familiarity/confidence gate on the "
+                         "cue read-out (blank a noise-dominated block -> abstain), expected to close the extreme-damage "
+                         "confabulation/moat-leak tail WITHOUT hurting the functional regime.")
     ap.add_argument("--out", default="research/findings/raw/_emergent_graceful_degradation.json")
     a = ap.parse_args()
-    print(f"[graceful-degradation] one-brain loop under lesion/noise/dropout (D={a.D}); "
+    print(f"[graceful-degradation] one-brain loop under lesion/noise/dropout (D={a.D}, "
+          f"confidence_gate={a.confidence_gate}); "
           f"GO = graceful fall-off + lost-recall->abstain (confab<={CONFAB_MAX}) + moat-never-leaks (<={MOAT_MAX})\n",
           flush=True)
     results = []
     for seed in a.seeds:
-        r = run_seed(seed, a.D)
+        r = run_seed(seed, a.D, confidence_gate=a.confidence_gate)
         results.append(r)
         for kind in ("lesion", "noise", "dropout"):
             curve = " ".join(f"{row['level']:.2f}:{row['recall']:.2f}/{row['confab']:.2f}/{row['moat_false_accept']:.2f}"

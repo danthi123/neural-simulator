@@ -235,6 +235,27 @@ def test_onebrain_multiturn_anaphora():
     assert a.what_does("it", "eat") == "fish", "turn-2 'it' -> cat -> (cat eat fish)"
 
 
+def test_onebrain_confidence_gate_preserves_intact():
+    """The familiarity/confidence gate (the graceful-degradation fix, 2026-06-18-emergent-graceful-degradation-derisk):
+    a `confidence_gate > 0` blanks a NOISE-DOMINATED (low cleanup-margin) block so a damaged store abstains instead of
+    confabulating. The SAFETY property pinned here: on an INTACT store the gate must NOT change the answers (intact
+    reconstructions have a high margin, well above the gate) -- recall + the no-confab moat are preserved -- so enabling
+    the gate is safe. (The damaged-store abstention is exercised by the de-risk runner.)"""
+    from research.runners.one_brain_composer import OneBrainComposer
+    facts = [("dog", "go", "north"), ("cat", "come", "east"), ("bird", "look", "south")]
+    try:
+        c = OneBrainComposer(seed=42, D=64, vocab=VOCAB, confidence_gate=0.15)
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    for (a, v, p) in facts:
+        c.store(a, v, p)
+    for (a, v, p) in facts:                                            # intact reads are confident -> NOT blanked
+        assert c.query_patient(a, v) == p, f"the gate must not blank a confident intact read for {(a, v)}"
+        assert c.ask_yes_no(a, v, p) == "yes"
+    assert c.query_patient("apple", "stop") is None, "moat intact under the gate: an unstored cue still abstains"
+    assert c.ask_yes_no("cat", "go", "west") in ("unknown", "no")
+
+
 def test_onebrain_batched_equals_per_block():
     """A5 lever 1: the BATCHED read (default, read all blocks in 3 windows) == the per-block oracle (enable_batched
     toggled off) on the production OneBrainComposer -- answer-identical, just faster (the de-risk: 7.3x)."""

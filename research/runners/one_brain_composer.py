@@ -71,10 +71,17 @@ class OneBrainComposer:
     `ask_yes_no`; `kb` bookkeeping)."""
 
     def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200, enable_batched=True,
-                 enable_rf_cudagraph=True, grounded_codes=None):
+                 enable_rf_cudagraph=True, grounded_codes=None, confidence_gate=0.0):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         self.enable_batched = bool(enable_batched)       # A5 lever 1: read ALL blocks in 3 windows (7.3x); per-block=oracle
         self.enable_rf_cudagraph = bool(enable_rf_cudagraph)   # A5 lever 3: masked megakernel for the resonate (GPU only)
+        # confidence_gate (default 0.0 = OFF = byte-identical): a familiarity/confidence gate on the cue read-out. The
+        # cleanup is a matched filter; a CONFIDENT block's winner dominates (a large normalized margin), a noise-
+        # dominated (heavily-damaged) block's cleanup is flat (a small margin). When > 0, a block whose CUE-role
+        # (agent/action) margin falls below the gate is BLANKED in the read path, so every consumer naturally ABSTAINS
+        # on it -- converting the extreme-damage confabulation/moat-leak tail (the cue-match abstention's boundary,
+        # 2026-06-18-emergent-graceful-degradation-derisk.md) into abstention = a CALIBRATED moat, no broad refactor.
+        self.confidence_gate = float(confidence_gate)
         # grounded_codes (optional word->phases): the learned-from-conversation concept codes (e.g. the 320 stream-learned
         # cortex). Passed to the inner RFPhasorComposer, which overrides its random codes for those words -> the cleanup
         # codebook + the binding both use the learned codes (production parity with the rf composer's grounded path).
@@ -164,6 +171,14 @@ class OneBrainComposer:
         self._write_block(i, self._compose_phases(fillers, roles))
 
     # --- query (cue-matching scan; reconstruct ONCE per block, read all 4 roles in PARALLEL) ---
+    @staticmethod
+    def _margin(scores):
+        """Normalized decisiveness of a cleanup read-out = (peak - runner_up) / (peak + eps). ~1 when one concept
+        dominates (a confident, familiar read), ~0 when the scores are flat (a noise-dominated, unfamiliar read).
+        The confidence_gate compares the min of the agent+action cue-role margins against it."""
+        s = np.sort(np.maximum(np.asarray(scores, dtype=float), 0.0))[::-1]
+        return float((s[0] - s[1]) / (s[0] + 1e-9)) if s.size >= 2 and s[0] > 0.0 else 0.0
+
     def _read_block(self, block_idx):
         """Reconstruct block_idx + unbind all 4 roles IN PARALLEL (one settle, no phase drift). The 3 main roles clean
         up against the main vocab; the polarity role cleans up against the 2-word polarity codebook (a separate small
@@ -189,12 +204,12 @@ class OneBrainComposer:
             clean += [(self.c_base + 3 * V + j, self.q_base + 3 * D + k, complex(cc[k])) for k in range(D)]
         b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
         mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
-        out = []
-        for ri in range(3):
-            scores = np.maximum(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], 0.0)
-            out.append(self.words[int(np.argmax(scores))])
+        scores = [np.maximum(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], 0.0) for ri in range(3)]
+        out = [self.words[int(np.argmax(s))] for s in scores]
         pol_scores = np.maximum(mem[self.c_base + 3 * V:self.c_base + 3 * V + NP], 0.0)
         out.append(self.pol_words[int(np.argmax(pol_scores))])
+        if self.confidence_gate > 0.0 and min(self._margin(scores[0]), self._margin(scores[1])) < self.confidence_gate:
+            return (None, None, None, None)               # an unfamiliar (noise-dominated) block -> blank -> abstain
         return tuple(out)            # (agent, action, patient, polarity)
 
     def _read_all_blocks(self):
@@ -238,9 +253,14 @@ class OneBrainComposer:
         out = []
         for i in range(n):
             cblk = self.bat_c_base + i * self.cb
-            row = [self.words[int(np.argmax(np.maximum(mem[cblk + ri * V:cblk + (ri + 1) * V], 0.0)))] for ri in range(3)]
+            sa = np.maximum(mem[cblk + 0 * V:cblk + 1 * V], 0.0)            # the agent + action cue-role read-outs
+            sv = np.maximum(mem[cblk + 1 * V:cblk + 2 * V], 0.0)
+            row = [self.words[int(np.argmax(sa))], self.words[int(np.argmax(sv))],
+                   self.words[int(np.argmax(np.maximum(mem[cblk + 2 * V:cblk + 3 * V], 0.0)))]]
             ps = np.maximum(mem[cblk + 3 * V:cblk + 3 * V + NP], 0.0)
             row.append(self.pol_words[int(np.argmax(ps))])
+            if self.confidence_gate > 0.0 and min(self._margin(sa), self._margin(sv)) < self.confidence_gate:
+                row = [None, None, None, None]            # an unfamiliar (noise-dominated) block -> blank -> abstain
             out.append(tuple(row))
         return out
 
