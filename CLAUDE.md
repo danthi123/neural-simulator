@@ -761,6 +761,36 @@ arc was de-risked cheapest-first BEFORE any protected edit:
   + dlPFC + composer all on one `SimulationBridge`, capability-equivalent. HONEST SCOPE: a consolidation of EXISTING
   capabilities, not a new one; the composer's exact-inverse VSA binding stays the principled idealization (= step 3).
   Finding: `2026-06-10-step2b-rf-composer-coresident-COMPLETE.md`.
+
+### 🧠🎉 THE REAL "one brain" — the whole who/what conversational turn FUNCTIONALLY INTEGRATED on ONE persistent bridge (2026-06-18)
+
+**Roadmap step 2 (above) only CO-LOCATED nav+conv as disjoint slices (zero cross-talk); the owner's "everything in one
+brain" goal meant FUNCTIONAL integration — the whole conversational pipeline as ONE persistent interacting spiking loop,
+ops handing off as spikes through synapses, NO host round-trips between ops** (memory `project_one_brain_integrated_pipeline_and_cleanup`).
+That is now BUILT + validated for the who/what conversational core. Built cheapest-first from 6 multi-seed GO de-risks
+(CYCLE 172-179): 4-role phase coherence · GAP A (persistent multi-fact synapse-store to **K=32**, register-reset-safe,
+zero cross-talk) · GAP B (the **parser front-end** — comprehension is synaptic, the parser's firing selects each bind,
+voice-invariant) · the cue-matching scan · A3 (the integrated composer) · the agent wiring + negation + richer caps.
+
+- **`research/runners/one_brain_composer.py` (`OneBrainComposer`)** — an `RFPhasorComposer` API-sibling holding the whole
+  pipeline on ONE persistent co-resident `SimulationBridge`: a `BridgeParser` slice (Izhikevich) + resonate-and-fire work
+  registers + a **persistent fact-store in complex synapses** + cleanup, all masked-co-resident. `hear(sentence,voice)`
+  comprehends (the on-bridge parser) → the parser's role firing selects each word's bind → bundle → append a store block;
+  `query_patient`/`query_agent`/`ask_yes_no` (yes/no/unknown via a 4th **polarity** role = negation) / `render_fact`
+  (describe) / `query_chain` (multi-hop reason) all run the cue-matching scan; the **no-confab moat** abstains throughout.
+- **`BrainConversationalAgent(composer_kind="onebrain")`** — the agent's `hear()` DELEGATES comprehension to the composer
+  (ONE parser on the one brain). The full core interface (hear · what/who · yes-no/negation · describe · reason ·
+  elaborate) == the rf reference agent == ground truth, **multi-seed**, moat intact. ADDITIVE wiring: the rf/rate default
+  is byte-unchanged (regression GREEN). CI guard `tests/test_one_brain_composer_agent.py` (4 tests).
+- **HONEST SCOPE:** a FUNCTIONAL integration of the EXISTING who/what capabilities (the bind stays the exact-inverse FHRR
+  idealization — the genuine learned-cortex bind is the separate step-3 frontier). What remains = **A5** (megakernel the
+  masked persistent loop for speed-competitiveness → make onebrain a documented option → once competitive, retire the
+  legacy numpy production runtime, KEEPING numpy as the TEST ORACLE) — a deep `sim/` edit (the megakernel currently bails
+  on a neuron_mask) for fresh focus, NOT a marathon-tail rush. + A4 (optional fully-spiking WTA selection, off the
+  critical path — the host argmax read-out is brain-based-compliant).
+- Findings: `2026-06-18-one-brain-{multirole-coherence,multifact-store-GAP-A,parser-frontend,composer-A3,agent-wired}-GO.md`,
+  `2026-06-18-production-one-brain-composer-scoping.md`, `2026-06-18-onebrain-gapB-parser-frontend-scoping.md`.
+
 - **Step 3 (true cortex) — DE-RISKED to a FORK (2026-06-11); flat-cortex (A) no-confab moat validated.** The
   arc to replace the composer's exact-inverse vector-symbolic-algebra (Fourier Holographic Reduced Representation,
   "FHRR") idealization with a learned spiking-cortical binder was run to ground cheap-first. **Core finding:** the
