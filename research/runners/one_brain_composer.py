@@ -123,14 +123,15 @@ class OneBrainComposer:
         self._store_composite([agent, action, patient, pol], ROLES3 + ["polarity"])
         self.kb.append(({"agent": agent, "action": action, "patient": patient, "polarity": pol}, None))
 
-    def _store_composite(self, fillers, roles):
+    def _compose_phases(self, fillers, roles):
+        """Bind each (role, filler) + bundle -> the composite phasor PHASES, via the work registers (fill_* -> bound_*
+        -> acc). `_filler_phases` handles BOTH a concept word (its code) AND a recursive Clause (its bound composite),
+        so a clause patient is the same path -- the patient role binds the clause's composite. Shared by the initial
+        store AND the reconsolidation in-place rewrite (the only difference is which block the result is written to)."""
         comp, b, D, P, Pd = self.comp, self.b, self.D, self.P, self.period
-        nr = len(roles)
         binds, bundle = [], []
         kick = np.zeros(self.n_total, dtype=np.complex128)
-        for i in range(nr):
-            # `_filler_phases` handles BOTH a concept word (its code) AND a recursive Clause (its bound composite),
-            # so binding a clause patient is the same store path -- the patient role binds the clause's composite.
+        for i in range(len(roles)):
             zr = comp._to_phasor(comp.roles[roles[i]]); zf = comp._to_phasor(comp._filler_phases(fillers[i]))
             kick[P + i * D:P + (i + 1) * D] = zf                                                  # fill_i at block i
             binds += [(P + (4 + i) * D + k, P + i * D + k, complex(zr[k])) for k in range(D)]     # bound_i at block 4+i
@@ -139,12 +140,25 @@ class OneBrainComposer:
         b.rf_set_complex_weights(binds); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
         b.rf_set_complex_weights(bundle); b.rf_resonate_steps(Pd + 8)
-        zc = comp._to_phasor(np.asarray(b.rf_read_phases())[P + 8 * D:P + 9 * D])
+        return comp._to_phasor(np.asarray(b.rf_read_phases())[P + 8 * D:P + 9 * D])
+
+    def _write_block(self, i, zc):
+        """Write block i's persistent trigger->readout store weights (the composite `zc`). store_conns is block-major
+        (block i = the i-th D-run), so an existing block is REPLACED in place (reconsolidation) and a new one is
+        APPENDED (initial store) -- the slice math is exact either way."""
+        D = self.D
+        trig = self.store_base + i * self.block
+        block_conns = [(trig + 1 + k, trig, complex(zc[k])) for k in range(D)]
+        if i * D < len(self.store_conns):
+            self.store_conns[i * D:(i + 1) * D] = block_conns       # in-place rewrite (reconsolidation)
+        else:
+            self.store_conns += block_conns                         # append (a new fact)
+
+    def _store_composite(self, fillers, roles):
         i = len(self.kb)
         if i >= self.k_max:
             raise RuntimeError(f"OneBrainComposer store full: k_max={self.k_max} reached (shard or raise k_max)")
-        trig = self.store_base + i * self.block
-        self.store_conns += [(trig + 1 + k, trig, complex(zc[k])) for k in range(D)]
+        self._write_block(i, self._compose_phases(fillers, roles))
 
     # --- query (cue-matching scan; reconstruct ONCE per block, read all 4 roles in PARALLEL) ---
     def _read_block(self, block_idx):
@@ -326,3 +340,81 @@ class OneBrainComposer:
             if current is None:
                 return None
         return current
+
+    # --- reconsolidation: prediction-error-gated in-place fact update (== the rf composer's update_on_mismatch) ---
+    def _recovered_patient_phases(self, block_idx):
+        """Reconstruct block_idx + unbind the patient role -> the RAW recovered patient phases (NOT cleaned up to a
+        word). The reconsolidation prediction error compares these against an asserted patient's code."""
+        comp, b, D, Pd = self.comp, self.b, self.D, self.period
+        b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+        trig = self.store_base + block_idx * self.block
+        kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
+        b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
+        b.rf_resonate_steps(Pd + 8)
+        zc = np.conj(comp._to_phasor(comp.roles["patient"]))
+        unbind = [(self.q_base + 2 * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]      # patient -> Q[2]
+        b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
+        return np.asarray(b.rf_read_phases())[self.q_base + 2 * D:self.q_base + 3 * D]
+
+    def _patient_prediction_error(self, block_idx, patient_word):
+        """PE = 1 - phase-cos(recovered patient phasor, the asserted patient's code). ~0 when the asserted filler
+        matches the stored one (a re-statement); ~1 on a mismatch (a correction). == the rf composer's measure."""
+        rec = self._recovered_patient_phases(block_idx)
+        return 1.0 - float(np.mean(np.cos(2.0 * np.pi * (rec - self.comp.concepts[patient_word]))))
+
+    def _calibrate_pe_labile(self):
+        """Frozen labilization gate = the midpoint of the same-vs-different prediction-error distributions over the
+        CURRENT facts (each fact's PE against its OWN stored patient = 'same'; against other facts' patients =
+        'different'). The data's own separation point -- NOT tuned to a downstream probe. 0.5 fallback when too few
+        distinct facts exist to calibrate. == the rf composer's _calibrate_pe_labile (string-patient facts only)."""
+        idxs = [i for i, (fact, _) in enumerate(self.kb) if isinstance(fact.get("patient"), str)]
+        recs = {i: self._recovered_patient_phases(i) for i in idxs}
+        pats = {i: self.kb[i][0]["patient"] for i in idxs}
+
+        def pe(rec, word):
+            return 1.0 - float(np.mean(np.cos(2.0 * np.pi * (rec - self.comp.concepts[word]))))
+        same, diff = [], []
+        for i in idxs:
+            same.append(pe(recs[i], pats[i]))
+            for j in idxs:
+                if pats[j] != pats[i]:
+                    diff.append(pe(recs[i], pats[j]))
+        if not same or not diff:
+            return 0.5
+        return 0.5 * (float(np.mean(same)) + float(np.mean(diff)))
+
+    def _find_cued_block(self, agent, action):
+        """The FIRST stored block whose cue roles (agent+action) match (the batched read), or None (no trace to
+        reactivate -> abstain). Returns the block/kb index."""
+        for i, (wa, wv, _wp, _pol) in enumerate(self._read_blocks()):
+            if wa == agent and wv == action:
+                return i
+        return None
+
+    def update_on_mismatch(self, agent, action, new_patient, pe_labile=None):
+        """RECONSOLIDATION: a corrective utterance ('actually, <agent> <action> <new_patient>') reactivates the cued
+        fact and -- ONLY if the new filler carries a prediction error above the labilization gate -- rewrites that
+        fact's patient IN PLACE (no contradictory duplicate). A fully-predicted re-statement re-stabilizes unchanged;
+        a NEVER-stored cue ABSTAINS (the no-confab moat: a reactivated trace is updated, a missing one is not
+        fabricated). The in-place rewrite re-composes the fact (new patient) and OVERWRITES the same store block.
+        ADDITIVE -- store/query are unchanged. pe_labile=None -> auto-calibrate from the current facts. Returns
+        {action: abstain|rewrite|restabilize, wrote: bool, pe: float|None}. == the rf composer (Nader 2000;
+        Osan-Tort-Amaral 2011; de-risked 6/6: 2026-06-17-reconsolidation-update-derisk-GO.md)."""
+        idx = self._find_cued_block(agent, action)
+        if idx is None:
+            return {"action": "abstain", "wrote": False, "pe": None}    # no trace -> no update, no fabrication
+        gate = self._calibrate_pe_labile() if pe_labile is None else float(pe_labile)
+        pe = self._patient_prediction_error(idx, new_patient)
+        if pe >= gate:
+            f2 = dict(self.kb[idx][0]); f2["patient"] = new_patient
+            zc = self._compose_phases([f2["agent"], f2["action"], f2["patient"], f2.get("polarity", "AFFIRM")],
+                                      ROLES3 + ["polarity"])
+            self._write_block(idx, zc)
+            self.kb[idx] = (f2, None)
+            return {"action": "rewrite", "wrote": True, "pe": pe}
+        return {"action": "restabilize", "wrote": False, "pe": pe}      # PE below the gate -> re-stabilize unchanged
+
+    def count_facts(self, agent, action):
+        """Number of stored facts whose cue roles (agent+action) match -- 1 after a reconsolidation update, 2 if a
+        correction was naively appended. Used by the reconsolidation tests + the correction-turn hook."""
+        return sum(1 for (wa, wv, _wp, _pol) in self._read_blocks() if wa == agent and wv == action)

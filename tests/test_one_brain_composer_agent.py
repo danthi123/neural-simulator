@@ -141,6 +141,37 @@ def test_onebrain_agent_clause_fact():
     assert a.what_does("bird", "go") is None, "moat breach: unknown agent not abstained"
 
 
+def test_onebrain_reconsolidation_parity():
+    """Reconsolidation (prediction-error-gated in-place fact update) on the OneBrainComposer == the RFPhasorComposer
+    numpy oracle. A corrective utterance reactivates the cued fact and -- only above the labilization gate --
+    REWRITES the patient in place (no contradictory duplicate); a re-statement restabilizes; a never-stored cue
+    abstains (the no-confab moat). The in-place rewrite re-composes the fact and overwrites the same store block.
+    Brings the rf composer's reconsolidation to parity on the one-brain path (toward retiring the numpy runtime)."""
+    from research.runners.one_brain_composer import OneBrainComposer
+    from research.runners.rf_phasor_composer import RFPhasorComposer
+    facts = [("dog", "go", "north"), ("cat", "come", "east")]
+    try:
+        c = OneBrainComposer(seed=42, D=64, vocab=VOCAB)
+        oracle = RFPhasorComposer(seed=42, D=64, vocab=VOCAB)
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    for (a, v, p) in facts:
+        c.store(a, v, p); oracle.store(a, v, p)
+    # (1) a CORRECTION ('actually, dog go south') -> rewrite in place (== oracle), no duplicate
+    r = c.update_on_mismatch("dog", "go", "south")
+    ro = oracle.update_on_mismatch("dog", "go", "south")
+    assert r["action"] == ro["action"] == "rewrite", f"correction must rewrite: onebrain {r} vs oracle {ro}"
+    assert c.query_patient("dog", "go") == "south", "rewritten fact must read the new patient"
+    assert c.count_facts("dog", "go") == 1, "rewrite must not append a contradictory duplicate"
+    # (2) a RE-STATEMENT ('cat come east' again) -> PE below the gate -> restabilize unchanged
+    r2 = c.update_on_mismatch("cat", "come", "east")
+    assert r2["action"] == "restabilize", f"a re-statement must restabilize, not rewrite: {r2}"
+    assert c.query_patient("cat", "come") == "east" and c.count_facts("cat", "come") == 1
+    # (3) the moat: a NEVER-stored cue abstains (no fabricated trace)
+    rm = c.update_on_mismatch("bird", "go", "west")
+    assert rm["action"] == "abstain" and c.count_facts("bird", "go") == 0, "moat breach: unstored cue not abstained"
+
+
 def test_onebrain_batched_equals_per_block():
     """A5 lever 1: the BATCHED read (default, read all blocks in 3 windows) == the per-block oracle (enable_batched
     toggled off) on the production OneBrainComposer -- answer-identical, just faster (the de-risk: 7.3x)."""
