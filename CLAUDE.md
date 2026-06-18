@@ -782,12 +782,24 @@ voice-invariant) · the cue-matching scan · A3 (the integrated composer) · the
   (ONE parser on the one brain). The full core interface (hear · what/who · yes-no/negation · describe · reason ·
   elaborate) == the rf reference agent == ground truth, **multi-seed**, moat intact. ADDITIVE wiring: the rf/rate default
   is byte-unchanged (regression GREEN). CI guard `tests/test_one_brain_composer_agent.py` (4 tests).
-- **HONEST SCOPE:** a FUNCTIONAL integration of the EXISTING who/what capabilities (the bind stays the exact-inverse FHRR
-  idealization — the genuine learned-cortex bind is the separate step-3 frontier). What remains = **A5** (megakernel the
-  masked persistent loop for speed-competitiveness → make onebrain a documented option → once competitive, retire the
-  legacy numpy production runtime, KEEPING numpy as the TEST ORACLE) — a deep `sim/` edit (the megakernel currently bails
-  on a neuron_mask) for fresh focus, NOT a marathon-tail rush. + A4 (optional fully-spiking WTA selection, off the
-  critical path — the host argmax read-out is brain-based-compliant).
+- **SPEED — A5 levers 1+3 DONE (onebrain is now FASTER than the rf reference): 96 ms/query vs rf 416 ms (~4.3×),
+  answer-identical, CI-guarded.** The full speed arc: 2680 (reconstruct-per-block) → 605 (lever 1, the batched scan:
+  read ALL K stored blocks in 3 resonate windows, composer-layer, no `sim/` edit) → 96 ms (lever 3, the
+  masked-megakernel `sim/` edit, CYCLE 185). Lever 3 makes the RF resonate megakernel (`cfg.enable_rf_cudagraph`) honor
+  a `neuron_mask` (it used to bail to the per-step loop with a mask, so the co-resident composer couldn't use it; the
+  resonate is ~83% of a query). ADDITIVE + default-preserving (`use_mask==0` short-circuits to the byte-identical
+  no-mask path); the masked writeback == the masked `_rf_advance_one` loop; `OneBrainComposer(enable_rf_cudagraph=True)`
+  default (GPU-only, loop fallback). **GATE:** `tests/test_rf_megakernel.py` 4/4 (incl. the masked golden) +
+  `tests/test_one_brain_composer_agent.py` 5/5 (answer-identical with the megakernel). Findings: the CYCLE 181/185
+  commits + `docs/plans/2026-06-18-onebrain-A5-speed-cleanup-design.md`.
+- **HONEST SCOPE + what remains:** a FUNCTIONAL integration of the EXISTING who/what capabilities (the bind stays the
+  exact-inverse FHRR idealization — the genuine learned-cortex bind is the separate step-3 frontier). The
+  `OneBrainComposer` covers the CORE interface (hear · what/who · yes-no/negation · describe · reason · elaborate) at rf
+  parity + faster; it does NOT yet cover the rf composer's RICHER features (recursive embedded CLAUSES, RECONSOLIDATION,
+  MULTI-TURN anaphora). So the **A5 CLEANUP** (make onebrain the agent DEFAULT → deprecate-then-retire the legacy numpy
+  production runtime, KEEPING numpy as the TEST ORACLE) is gated on FIRST bringing those richer features to parity on
+  the onebrain path — a bounded follow-on arc, not a big-bang deletion. + A4 (optional fully-spiking WTA selection, off
+  the critical path — the host argmax read-out is brain-based-compliant).
 - Findings: `2026-06-18-one-brain-{multirole-coherence,multifact-store-GAP-A,parser-frontend,composer-A3,agent-wired}-GO.md`,
   `2026-06-18-production-one-brain-composer-scoping.md`, `2026-06-18-onebrain-gapB-parser-frontend-scoping.md`.
 
