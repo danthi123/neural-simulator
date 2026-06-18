@@ -70,11 +70,15 @@ class OneBrainComposer:
         self.words = list(self.comp.words)              # the cleanup codebook = the composer's ACTUAL vocab
         self.V = len(self.words)
         self.R = 40; self.P = 6 + 3 * self.R; self.k_max = int(k_max)
-        self.store_base = self.P + 7 * D
+        self.pol_words = list(self.comp.pol_words)                   # ["AFFIRM","NEGATE"] -- cleaned up SEPARATELY from
+        self.NP = len(self.pol_words)                                # the main vocab (a 2-word polarity codebook)
+        # 4 fillable roles ALWAYS bound: agent, action, patient, polarity (default AFFIRM) -> yes/no/negation. The
+        # 4-role coherence is GO, so the 4th bind is within the substrate's per-fact capacity.
+        self.store_base = self.P + 9 * D                            # work: fill_0..3 (4) + bound_0..3 (4) + acc (1) = 9
         self.block = 1 + D
-        self.q_base = self.store_base + self.k_max * self.block      # Q_agent/action/patient at q_base + {0,1,2}*D
-        self.c_base = self.q_base + 3 * D                            # 3 V-concept cleanup blocks
-        self.n_total = self.c_base + 3 * self.V
+        self.q_base = self.store_base + self.k_max * self.block      # 4 Q regs: agent/action/patient/polarity
+        self.c_base = self.q_base + 4 * D                            # cleanup: 3 V-blocks (main roles) + 1 NP-block (pol)
+        self.n_total = self.c_base + 3 * self.V + self.NP
         self.b = build_coresident_bridge(seed, self.n_total)
         self.parser = BridgeParser(seed=seed, R=self.R, shared_bridge=self.b, index_offset=0)   # wires+trains [0:P]
         self.rf_mask = np.zeros(self.n_total, dtype=bool); self.rf_mask[self.P:self.n_total] = True
@@ -83,71 +87,86 @@ class OneBrainComposer:
         self.store_conns = []
 
     # --- comprehend + store ---
+    def _pol(self, polarity):
+        return polarity if polarity in self.pol_words else "AFFIRM"
+
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO sentence with the on-bridge parser (its role firing selects each bind) + store the fact.
-        `polarity` is accepted for API parity but ignored (affirmative-fact scope; negation is a follow-on)."""
+        `polarity` (AFFIRM default / NEGATE) is bound as a 4th role -> `ask_yes_no` returns yes/no/unknown."""
         words = sentence.split() if isinstance(sentence, str) else list(sentence)
         roles = [self.parser.role_of(pos, voice) for pos in range(3)]
         fact = {roles[i]: words[i] for i in range(3)}
-        self._store_composite([fact.get(r) for r in ROLES3], ROLES3)
+        pol = self._pol(polarity)
+        self._store_composite([fact.get(r) for r in ROLES3] + [pol], ROLES3 + ["polarity"])
+        fact["polarity"] = pol
         self.kb.append((fact, None))
         return fact
 
     def store(self, agent, action, patient, polarity=None):
         """Store a fact whose roles are already resolved (API parity with RFPhasorComposer; used when the caller's
-        parser comprehends). Binds agent/action/patient with their fixed role phasors."""
-        self._store_composite([agent, action, patient], ROLES3)
-        self.kb.append(({"agent": agent, "action": action, "patient": patient}, None))
+        parser comprehends). Binds agent/action/patient + the polarity tag (AFFIRM default)."""
+        pol = self._pol(polarity)
+        self._store_composite([agent, action, patient, pol], ROLES3 + ["polarity"])
+        self.kb.append(({"agent": agent, "action": action, "patient": patient, "polarity": pol}, None))
 
     def _store_composite(self, fillers, roles):
         comp, b, D, P, Pd = self.comp, self.b, self.D, self.P, self.period
+        nr = len(roles)
         binds, bundle = [], []
         kick = np.zeros(self.n_total, dtype=np.complex128)
-        for i in range(3):
+        for i in range(nr):
             zr = comp._to_phasor(comp.roles[roles[i]]); zf = comp._to_phasor(comp.concepts[fillers[i]])
-            kick[P + i * D:P + (i + 1) * D] = zf
-            binds += [(P + (3 + i) * D + k, P + i * D + k, complex(zr[k])) for k in range(D)]
-            bundle += [(P + 6 * D + k, P + (3 + i) * D + k, 1.0) for k in range(D)]
+            kick[P + i * D:P + (i + 1) * D] = zf                                                  # fill_i at block i
+            binds += [(P + (4 + i) * D + k, P + i * D + k, complex(zr[k])) for k in range(D)]     # bound_i at block 4+i
+            bundle += [(P + 8 * D + k, P + (4 + i) * D + k, 1.0) for k in range(D)]               # acc at block 8
         b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
         b.rf_set_complex_weights(binds); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
         b.rf_set_complex_weights(bundle); b.rf_resonate_steps(Pd + 8)
-        zc = comp._to_phasor(np.asarray(b.rf_read_phases())[P + 6 * D:P + 7 * D])
+        zc = comp._to_phasor(np.asarray(b.rf_read_phases())[P + 8 * D:P + 9 * D])
         i = len(self.kb)
         if i >= self.k_max:
             raise RuntimeError(f"OneBrainComposer store full: k_max={self.k_max} reached (shard or raise k_max)")
         trig = self.store_base + i * self.block
         self.store_conns += [(trig + 1 + k, trig, complex(zc[k])) for k in range(D)]
 
-    # --- query (cue-matching scan; reconstruct ONCE per block, read all 3 roles in PARALLEL) ---
+    # --- query (cue-matching scan; reconstruct ONCE per block, read all 4 roles in PARALLEL) ---
     def _read_block(self, block_idx):
-        comp, b, D, Pd, V = self.comp, self.b, self.D, self.period, self.V
+        """Reconstruct block_idx + unbind all 4 roles IN PARALLEL (one settle, no phase drift). The 3 main roles clean
+        up against the main vocab; the polarity role cleans up against the 2-word polarity codebook (a separate small
+        block). Returns (agent, action, patient, polarity)."""
+        comp, b, D, Pd, V, NP = self.comp, self.b, self.D, self.period, self.V, self.NP
         b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
         trig = self.store_base + block_idx * self.block
         kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
         b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
         unbind = []
-        for ri, role in enumerate(ROLES3):
+        for ri, role in enumerate(ROLES3 + ["polarity"]):
             zc = np.conj(comp._to_phasor(comp.roles[role]))
             unbind += [(self.q_base + ri * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
         b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
         clean = []
-        for ri in range(3):
+        for ri in range(3):                                              # 3 main roles -> the main vocab codebook
             for j in range(V):
                 cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
                 clean += [(self.c_base + ri * V + j, self.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
+        for j in range(NP):                                              # polarity role -> the 2-word polarity codebook
+            cc = np.conj(comp._to_phasor(comp.concepts[self.pol_words[j]]))
+            clean += [(self.c_base + 3 * V + j, self.q_base + 3 * D + k, complex(cc[k])) for k in range(D)]
         b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
         mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
         out = []
         for ri in range(3):
             scores = np.maximum(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], 0.0)
             out.append(self.words[int(np.argmax(scores))])
-        return tuple(out)            # (agent, action, patient)
+        pol_scores = np.maximum(mem[self.c_base + 3 * V:self.c_base + 3 * V + NP], 0.0)
+        out.append(self.pol_words[int(np.argmax(pol_scores))])
+        return tuple(out)            # (agent, action, patient, polarity)
 
     def _scan(self, cue, answer_idx):
         for i in range(len(self.kb)):
-            wa, wv, wp = self._read_block(i)
+            wa, wv, wp, _pol = self._read_block(i)
             got = {"agent": wa, "action": wv, "patient": wp}
             if all(got[role] == want for role, want in cue.items()):
                 return (wa, wv, wp)[answer_idx]
@@ -160,8 +179,10 @@ class OneBrainComposer:
         return self._scan({"action": action, "patient": patient}, 0)
 
     def ask_yes_no(self, agent, action, patient):
+        """yes / no / unknown: the first fact matching the full SVO answers by its polarity tag (AFFIRM -> yes,
+        NEGATE -> no); no matching fact -> 'unknown' (the no-confab moat)."""
         for i in range(len(self.kb)):
-            wa, wv, wp = self._read_block(i)
+            wa, wv, wp, wpol = self._read_block(i)
             if wa == agent and wv == action and wp == patient:
-                return "yes"
+                return "yes" if wpol == "AFFIRM" else "no"
         return "unknown"

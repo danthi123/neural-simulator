@@ -48,8 +48,10 @@ def test_onebrain_agent_matrix_and_moat():
     assert a.what_does("dog", "go") == "north"
     assert a.who_does("go", "north") == "dog"
     assert a.what_does("cat", "come") == "east"
-    # voice-invariant comprehension: the passively-heard fact queries back
-    assert a.who_does("stop", "river") == "river" or a.what_does("river", "stop") == "river"
+    # voice-invariant comprehension: the passively-heard "west stop river" stores (agent=river, action=stop,
+    # patient=west) -- the passive frame flips 1st<->3rd -- so it queries back as river-stop-west
+    assert a.what_does("river", "stop") == "west"
+    assert a.who_does("stop", "west") == "river"
     # affirmative yes/no
     assert a.is_it_true("dog", "go", "north") == "yes"
     assert a.is_it_true("bird", "look", "south") == "yes"
@@ -57,6 +59,24 @@ def test_onebrain_agent_matrix_and_moat():
     # the no-confab moat: an unheard cue abstains (what_does -> None), an unheard fact abstains (is_it_true -> unknown)
     assert a.what_does("apple", "stop") is None, "moat breach: unstored cue not abstained"
     assert a.is_it_true("cat", "go", "west") in ("unknown", "no"), "moat breach: unstored fact not abstained"
+
+
+def test_onebrain_negation_yes_no():
+    """Negation: a fact heard with polarity='NEGATE' (a bound 4th polarity role) -> is_it_true 'no'; an affirmative
+    fact -> 'yes'; an unstored fact -> 'unknown' (the moat). who/what read the stored subject-verb-object regardless of
+    polarity (only the yes/no answer flips), matching the rf composer's semantics."""
+    from research.runners.brain_conversational_agent import BrainConversationalAgent
+    try:
+        a = BrainConversationalAgent(seed=42, composer_kind="onebrain", concepts={w: None for w in VOCAB})
+        a.hear("dog go north", polarity="AFFIRM")
+        a.hear("cat come east", polarity="NEGATE")     # asserts: cat does NOT come east
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    assert a.is_it_true("dog", "go", "north") == "yes", "affirmative fact must answer yes"
+    assert a.is_it_true("cat", "come", "east") == "no", "negated fact must answer no"
+    assert a.is_it_true("dog", "go", "south") == "unknown", "moat breach: unstored fact not abstained"
+    # who/what still read the stored SVO of the negated fact (only the polarity/yes-no flips)
+    assert a.what_does("cat", "come") == "east"
 
 
 def test_onebrain_default_path_unaffected():
