@@ -451,6 +451,7 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  co_resident_generalization: bool = False,
                                  gen_n_concept_per: int = 100, gen_n_fact_per: int = 100,
                                  co_resident_limbic: bool = False,
+                                 co_resident_nav_critic: bool = False,
                                  _global_het_test: bool = False):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
@@ -505,8 +506,27 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     # STEP-3 behavioral runner sets it True so `_cascade_select_move` reads the validated sel_X winner (matching the
     # navsee selection quality); the default motor_X fallback also selects moves (Step-1 de-risk: 4/4 clear winners),
     # so this kwarg is a selection-quality upgrade, not a requirement.
-    nav_regions, nav_pathways = build_bg_brain_regions(
-        n_cortex=n_cortex, enable_spiking_wta_readout=enable_spiking_wta_readout)
+    # co_resident_nav_critic (CYCLE 209, the FULL nav reward/critic limbic organ — the real consolidation
+    # target, de-risked 2026-06-18-organ-lift-homeo-generalize-derisk.md): lift build_bg_brain_regions' validated
+    # spiking critic (striosome_value MSN-D1 + GABA_B->snc) + the reward_us US-afferent onto the merged bridge.
+    # The CYCLE-208 per-region-homeostasis enabler restores the SNc f-I (the existing enable_critic_homeostasis
+    # masks only the afferent+critic, so snc+reward_us are masked POST-HOC below). Mutually exclusive with the
+    # 4-region minimal co_resident_limbic organ (two DA pools + two scope=all broadcasts would double-count).
+    assert not (co_resident_limbic and co_resident_nav_critic), \
+        "co_resident_limbic (minimal organ) and co_resident_nav_critic (full nav critic) are mutually exclusive"
+    if co_resident_nav_critic:
+        nav_regions, nav_pathways = build_bg_brain_regions(
+            n_cortex=n_cortex, enable_spiking_wta_readout=enable_spiking_wta_readout,
+            enable_neural_critic=True, spiking_reward_us=True, enable_critic_homeostasis=True)
+        # POST-HOC mask: snc + reward_us are built WITHOUT enable_homeostasis (g11_bg_runner.py:1133-1142/:1158-1163),
+        # so the f-I-restoring per-region homeostasis must be set on them here (the de-risk's load-bearing step:
+        # SNc reward-burst 446 Hz / 5.47x vs the broken 111 Hz / 3.53x).
+        for _r in nav_regions:
+            if _r.name in ("snc", "reward_us", "striosome_value"):
+                _r.enable_homeostasis = True
+    else:
+        nav_regions, nav_pathways = build_bg_brain_regions(
+            n_cortex=n_cortex, enable_spiking_wta_readout=enable_spiking_wta_readout)
     parser_regions, parser_pathways = parser_regions_pathways(PARSER_R)
     dlpfc_regions = [
         # Both dlPFC regions opt into NMDA so the framework confines the slow NMDA current to the dlPFC slice
@@ -668,19 +688,22 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     # signed teaching signal for the critic's V-unlearning) is an increment-#2 concern (the on-merge critic-learning
     # + nav-reward routing), calibrated there with a tonic-driven limbic_snc. Both ONLY when co_resident_limbic ->
     # default-off byte-preserved (the merge otherwise has enable_gabab=False + zero neuromodulators).
-    if co_resident_limbic:
+    # (Also applies to co_resident_nav_critic — the FULL nav critic — with the DA source re-pointed to the nav SNc
+    # `snc` instead of the minimal organ's `limbic_snc`, per the CYCLE-209 integration plan.)
+    if co_resident_limbic or co_resident_nav_critic:
         cfg.enable_gabab = True
         cfg.gabab_reversal_potential = -90.0
         cfg.gabab_tau_decay = 150.0
         cfg.gabab_propagation_strength = 0.22
         cfg.gabab_conductance_max = 0.0
+        _da_source = ["snc"] if co_resident_nav_critic else ["limbic_snc"]
         from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget, ProductionRule
         cfg.enable_neuromodulator_subsystem = True
         cfg.neuromodulators = [NeuromodulatorConfig(
             name="dopamine", baseline=0.5, decay_tau_ms=200.0, concentration_min=0.0, concentration_max=2.0,
             targets=[ModulatorTarget(target_type="plasticity_rate", scope="all", sensitivity=+1.0)],
             production_rules=[ProductionRule(rule_type="from_region_firing_signed", sensitivity=8.0,
-                                             threshold=0.0, window_ms=200.0, source_regions=["limbic_snc"])])]
+                                             threshold=0.0, window_ms=200.0, source_regions=_da_source)])]
 
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
