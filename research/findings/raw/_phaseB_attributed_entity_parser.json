@@ -1,0 +1,83 @@
+{
+  "attr_acc": 0.9930555555555557,
+  "flat_acc": 1.0,
+  "flat_only_control": 0.0,
+  "seeds_go": 6,
+  "go": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "attr_acc": 1.0,
+      "flat_acc": 1.0,
+      "moat_ok": true
+    },
+    {
+      "seed": 43,
+      "attr_acc": 1.0,
+      "flat_acc": 1.0,
+      "moat_ok": true
+    },
+    {
+      "seed": 44,
+      "attr_acc": 0.9583333333333334,
+      "flat_acc": 1.0,
+      "moat_ok": true
+    },
+    {
+      "seed": 45,
+      "attr_acc": 1.0,
+      "flat_acc": 1.0,
+      "moat_ok": true
+    },
+    {
+      "seed": 46,
+      "attr_acc": 1.0,
+      "flat_acc": 1.0,
+      "moat_ok": true
+    },
+    {
+      "seed": 47,
+      "attr_acc": 1.0,
+      "flat_acc": 1.0,
+      "moat_ok": true
+    }
+  ],
+  "flat_only": [
+    {
+      "seed": 42,
+      "attr_acc": 0.0,
+      "flat_acc": 1.0,
+      "moat_ok": true
+    },
+    {
+      "seed": 43,
+      "attr_acc": 0.0,
+      "flat_acc": 1.0,
+      "moat_ok": true
+    },
+    {
+      "seed": 44,
+      "attr_acc": 0.0,
+      "flat_acc": 1.0,
+      "moat_ok": true
+    },
+    {
+      "seed": 45,
+      "attr_acc": 0.0,
+      "flat_acc": 1.0,
+      "moat_ok": true
+    },
+    {
+      "seed": 46,
+      "attr_acc": 0.0,
+      "flat_acc": 1.0,
+      "moat_ok": true
+    },
+    {
+      "seed": 47,
+      "attr_acc": 0.0,
+      "flat_acc": 1.0,
+      "moat_ok": true
+    }
+  ]
+}
