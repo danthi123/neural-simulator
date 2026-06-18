@@ -1,0 +1,203 @@
+{
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "dims": [
+    64,
+    128
+  ],
+  "roles": [
+    2,
+    3,
+    4
+  ],
+  "per_R": {
+    "2": {
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.016666666666666666
+    },
+    "3": {
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.044444444444444446
+    },
+    "4": {
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.03333333333333333
+    }
+  },
+  "max_reach": 4,
+  "vocab_size": 20,
+  "per_row": [
+    {
+      "seed": 42,
+      "D": 64,
+      "R": 2,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.0
+    },
+    {
+      "seed": 42,
+      "D": 128,
+      "R": 2,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.0
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "R": 2,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.1
+    },
+    {
+      "seed": 43,
+      "D": 128,
+      "R": 2,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.0
+    },
+    {
+      "seed": 44,
+      "D": 64,
+      "R": 2,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.0
+    },
+    {
+      "seed": 44,
+      "D": 128,
+      "R": 2,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.0
+    },
+    {
+      "seed": 42,
+      "D": 64,
+      "R": 3,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.0
+    },
+    {
+      "seed": 42,
+      "D": 128,
+      "R": 3,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.06666666666666667
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "R": 3,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.06666666666666667
+    },
+    {
+      "seed": 43,
+      "D": 128,
+      "R": 3,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.06666666666666667
+    },
+    {
+      "seed": 44,
+      "D": 64,
+      "R": 3,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.0
+    },
+    {
+      "seed": 44,
+      "D": 128,
+      "R": 3,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.06666666666666667
+    },
+    {
+      "seed": 42,
+      "D": 64,
+      "R": 4,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.05
+    },
+    {
+      "seed": 42,
+      "D": 128,
+      "R": 4,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.05
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "R": 4,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.05
+    },
+    {
+      "seed": 43,
+      "D": 128,
+      "R": 4,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.0
+    },
+    {
+      "seed": 44,
+      "D": 64,
+      "R": 4,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.0
+    },
+    {
+      "seed": 44,
+      "D": 128,
+      "R": 4,
+      "ob_truth": 1.0,
+      "ob_host": 1.0,
+      "host_truth": 1.0,
+      "rand_truth": 0.05
+    }
+  ]
+}
