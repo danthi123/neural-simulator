@@ -1,0 +1,26 @@
+{
+  "mode": "merged_limbic_validate",
+  "seed": 42,
+  "arithmetic": {
+    "base_hz": 95.0,
+    "unpredicted_hz": 293.3333333333333,
+    "predicted_hz": 218.33333333333331,
+    "burst_ratio": 3.087719298245614,
+    "gap_ratio": 1.3435114503816794,
+    "corr_mag": 0.8951328942021107,
+    "graded_hz": [
+      0.0,
+      211.66666666666666,
+      247.5,
+      280.0
+    ],
+    "reward_lesion_unpred_hz": 38.333333333333336,
+    "reward_vanishes": false,
+    "n_reward_edges": 712,
+    "gabab_lesion_gap": 2.2039473684210527,
+    "gap_collapses": false,
+    "n_gabab_syn": 923,
+    "pass_core": false
+  },
+  "verdict": "PARTIAL"
+}

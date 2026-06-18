@@ -566,17 +566,29 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     if co_resident_limbic:
         from sim.enums import NeuronType as _NT
         _RS = _NT.IZH2007_RS_CORTICAL_PYRAMIDAL.name
+        # enable_homeostasis=True PER-REGION (the merged-config operating-point fix, root-caused 2026-06-18 by the
+        # deep-research subagent): the standalone limbic organ was pinned with the CoreSimConfig DEFAULT
+        # enable_homeostasis=True, which lowers the spike threshold from vpeak (+35mV) to the homeostatic threshold
+        # (~-42mV) — a large f-I gain. The merged bridge keeps GLOBAL enable_homeostasis OFF (the synaptic-scaling
+        # foot-gun would crush the frozen conversational weights), so a standalone-tuned organ fires ~6-10x weaker
+        # co-resident and its GABA_B arithmetic collapses. The fix uses the ALREADY-SHIPPED per-region homeostasis
+        # mask (sim/bridge.py:1227-1245 builds cp_homeostasis_neuron_mask from regions with enable_homeostasis=True;
+        # :6320-6323 the threshold-select gives the masked neurons the adapted threshold + everyone else vpeak) —
+        # so ONLY the limbic slice gets the low threshold, the conversational/nav slices stay at vpeak (byte-
+        # unchanged), and the synaptic-scaling clip (gated by the SEPARATE cfg.enable_synaptic_scaling, OFF here)
+        # never runs → the frozen-weight foot-gun is NOT triggered. NO sim/ edit (the scaffold exists). SYSTEMIC:
+        # this is the general fix for lifting any standalone-tuned spiking organ onto the het-off merged bridge.
         limbic_regions = [
             BrainRegion(name="limbic_cue", n_neurons=40, exc_fraction=1.0, internal_density=0.0,
-                        plastic_internal=False, izh_neuron_type=_RS, enable_nmda=False),
+                        plastic_internal=False, izh_neuron_type=_RS, enable_nmda=False, enable_homeostasis=True),
             BrainRegion(name="limbic_striosome", n_neurons=60, exc_fraction=0.0, internal_density=0.0,
                         plastic_internal=False, izh_neuron_type=_NT.IZH2007_STRIATAL_MSN_D1.name,
-                        syn_reversal_potential_i_override=-60.0, enable_nmda=False),
+                        syn_reversal_potential_i_override=-60.0, enable_nmda=False, enable_homeostasis=True),
             BrainRegion(name="limbic_reward_us", n_neurons=40, exc_fraction=1.0, internal_density=0.0,
-                        plastic_internal=False, izh_neuron_type=_RS, enable_nmda=False),
+                        plastic_internal=False, izh_neuron_type=_RS, enable_nmda=False, enable_homeostasis=True),
             BrainRegion(name="limbic_snc", n_neurons=30, exc_fraction=1.0, internal_density=0.0,
                         plastic_internal=False, izh_neuron_type=_NT.IZH2007_DOPAMINE.name,
-                        syn_reversal_potential_i_override=-55.0, enable_nmda=False),
+                        syn_reversal_potential_i_override=-55.0, enable_nmda=False, enable_homeostasis=True),
         ]
         # The de-risk-validated weights (the standalone organ's het-on operating point, GO 6/6). The MERGED bridge
         # runs heterogeneity OFF for nav/conv determinism, which makes the point-neuron limbic dynamics all-or-

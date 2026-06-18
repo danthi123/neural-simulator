@@ -135,7 +135,7 @@ def validate_structure(seed=42, vocab=None):
     return b_on
 
 
-def validate_arithmetic(bridge, *, snc_tonic_pa=220.0, us_drive_pa=600.0, cue_drive_pa=600.0, hold_steps=40):
+def validate_arithmetic(bridge, *, snc_tonic_pa=160.0, us_drive_pa=400.0, cue_drive_pa=800.0, hold_steps=40):
     """(C) the spiking RPE arithmetic on the merged-bridge limbic slice (no learning; the GABA_B
     value subtraction is exercised by driving limbic_cue at the init critic weight)."""
     import numpy as np
@@ -154,6 +154,14 @@ def validate_arithmetic(bridge, *, snc_tonic_pa=220.0, us_drive_pa=600.0, cue_dr
     _ou_saved = (cc.enable_ou_process, cc.ou_std_current_pA)
     cc.enable_ou_process = True
     cc.ou_std_current_pA = 100.0
+    # FREEZE the per-region homeostasis threshold during the frozen test (the analogue of freeze_lr for learning):
+    # the limbic neurons fire hard during the bursts, so the homeostatic threshold ADAPTS across the ~10
+    # measurement windows, drifting the SNc operating point and contaminating the later (lesion) reads relative to
+    # the early baseline. Pinning the adapt rate to 0 holds the f-I boost constant so every condition + lesion is
+    # measured at the same operating point. (Biologically, homeostasis is a slow regulator; freezing it for a
+    # short probe is faithful — the threshold would be ~constant over a few hundred ms anyway.)
+    _hadapt_saved = cc.homeostasis_threshold_adapt_rate
+    cc.homeostasis_threshold_adapt_rate = 0.0
 
     def measure(drives):
         _settle(bridge, xp)
@@ -199,6 +207,7 @@ def validate_arithmetic(bridge, *, snc_tonic_pa=220.0, us_drive_pa=600.0, cue_dr
           f"| GABA_B-lesion gap {gap_cl:.2f} (collapses <=1.2: {gap_collapses}, {n_cl} syn)")
     res["pass_core"] = bool(burst_ok and graded_ok and subtract_ok and reward_vanishes and gap_collapses)
     cc.enable_ou_process, cc.ou_std_current_pA = _ou_saved   # restore the resting-nav config
+    cc.homeostasis_threshold_adapt_rate = _hadapt_saved
     return res
 
 
