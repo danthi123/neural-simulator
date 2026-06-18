@@ -5553,11 +5553,92 @@ class SimulationBridge:
         `_run_one_simulation_step` machinery (conductance / plasticity / recording / engram / gate couplings / stats),
         none of which the RF/FHRR substrate uses. The composer's per-op resonate window calls this instead of looping
         `_run_one_simulation_step`, eliminating the dominant per-step overhead at 320-concept scale. Assumes
-        rf_kick() was called (else a no-op)."""
+        rf_kick() was called (else a no-op).
+
+        Opt-in MEGAKERNEL fast path (`cfg.enable_rf_cudagraph`, default off): one custom CUDA kernel does the WHOLE
+        step (complex sparse matvec + rotate/decay + crossing + writes, one thread per neuron), collapsing the
+        ~15-20 CuPy kernels/step into 1 -- the launch-bound latency fix (2026-06-17-resonate-cudagraph-refactor-
+        design.md). Default-off -> byte-identical to the per-step loop; GPU-only (numpy backend falls back); the
+        no-mask composer bridges only (co-resident masked bridges use the loop)."""
         if getattr(self, "cp_rf_prev_im", None) is None:
+            return
+        if (getattr(self.core_config, "enable_rf_cudagraph", False) and is_gpu_backend()
+                and getattr(self, "cp_rf_w_re", None) is not None
+                and getattr(self, "_rf_neuron_mask", None) is None):
+            self._rf_resonate_steps_megakernel(int(n_steps))
             return
         for _ in range(int(n_steps)):
             self._rf_advance_one()
+
+    # Custom CUDA kernel: one thread per neuron does the entire resonate step (complex CSR matvec + dynamics),
+    # in float32 to match the membrane dtype, with the matvec accumulated in double (== the cuSPARSE path cast to
+    # float32 on the add). Reads `_in`, writes `_out` (double-buffered so the matvec sees a consistent pre-step
+    # state); prev_im / fired / spike_step are per-neuron in-place (no cross-thread races).
+    _RF_MEGASTEP_SRC = r"""
+    extern "C" __global__ void rf_megastep(
+        const float* re_in, const float* im_in, float* re_out, float* im_out,
+        float* prev_im, bool* fired, long long* spike_step,
+        const int* indptr, const int* indices, const double* w_re, const double* w_im,
+        const int n, const long long counter, const float decay, const float cosw,
+        const float sinw, const float floor2) {
+      int i = blockDim.x * blockIdx.x + threadIdx.x;
+      if (i >= n) return;
+      double mv_re = 0.0, mv_im = 0.0;
+      int s = indptr[i], e = indptr[i+1];
+      for (int j = s; j < e; ++j) {
+        int c = indices[j];
+        double wr = w_re[j], wi = w_im[j];
+        double zr = (double)re_in[c], zi = (double)im_in[c];
+        mv_re += wr*zr - wi*zi;
+        mv_im += wr*zi + wi*zr;
+      }
+      float ri = re_in[i], ii = im_in[i];
+      float re_new = (decay * (ri*cosw - ii*sinw)) + (float)mv_re;
+      float im_new = (decay * (ri*sinw + ii*cosw)) + (float)mv_im;
+      float mag2 = re_new*re_new + im_new*im_new;
+      bool crossed = (!fired[i]) && (prev_im[i] < 0.0f) && (im_new >= 0.0f) && (mag2 > floor2);
+      if (crossed) { spike_step[i] = counter; fired[i] = true; }
+      re_out[i] = re_new; im_out[i] = im_new; prev_im[i] = im_new;
+    }
+    """
+
+    def _rf_resonate_steps_megakernel(self, n_steps):
+        """Run `n_steps` via the fused megakernel (one launch/step). Double-buffers the (re, im) state so each
+        step's matvec reads a consistent pre-step state; copies the final state back into the canonical
+        cp_membrane_potential_v / cp_recovery_variable_u so callers see the right arrays."""
+        kern = getattr(SimulationBridge, "_rf_megastep_kernel", None)
+        if kern is None:
+            kern = cp.RawKernel(self._RF_MEGASTEP_SRC, "rf_megastep")
+            SimulationBridge._rf_megastep_kernel = kern
+        n = int(self.core_config.num_neurons)
+        wre = self.cp_rf_w_re                                  # cupyx CSR (same pattern as cp_rf_w_im)
+        indptr = wre.indptr.astype(cp.int32, copy=False)
+        indices = wre.indices.astype(cp.int32, copy=False)
+        w_re_d = wre.data.astype(cp.float64, copy=False)
+        w_im_d = self.cp_rf_w_im.data.astype(cp.float64, copy=False)
+        a_re = self.cp_membrane_potential_v.astype(cp.float32, copy=True)   # double-buffer scratch
+        a_im = self.cp_recovery_variable_u.astype(cp.float32, copy=True)
+        b_re = cp.empty_like(a_re); b_im = cp.empty_like(a_im)
+        prev_im = self.cp_rf_prev_im
+        fired = self.cp_rf_fired
+        spike_step = self.cp_rf_spike_step
+        decay = cp.float32(np.exp(getattr(self, "_rf_lambda", -3.0e-4)))
+        omega = float(getattr(self, "_rf_omega", 2.0 * np.pi / 1000.0))
+        cosw = cp.float32(np.cos(omega)); sinw = cp.float32(np.sin(omega))
+        floor2 = cp.float32(float(getattr(self, "_rf_floor", 1.0e-3)) ** 2)
+        threads = 128
+        blocks = (n + threads - 1) // threads
+        counter = int(getattr(self, "_rf_counter", 0))
+        for _ in range(int(n_steps)):
+            counter += 1
+            kern((blocks,), (threads,),
+                 (a_re, a_im, b_re, b_im, prev_im, fired, spike_step, indptr, indices, w_re_d, w_im_d,
+                  cp.int32(n), cp.int64(counter), decay, cosw, sinw, floor2))
+            a_re, b_re = b_re, a_re
+            a_im, b_im = b_im, a_im
+        self._rf_counter = counter
+        self.cp_membrane_potential_v[:] = a_re                # final state back into the canonical arrays
+        self.cp_recovery_variable_u[:] = a_im
 
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""

@@ -172,6 +172,11 @@ class CoreSimConfig:
     # research/findings/2026-06-09-coincidence-substrate-upgrade-design.md.
     enable_coincidence_detection: bool = False
     coincidence_k_threshold: float = 6.0        # # of synchronous clustered inputs to trigger the plateau (biology: 10-50 synapses; scaled to fan-in)
+    # Opt-in RF resonate megakernel fast path (perf, default OFF -> byte-identical to the per-step loop). One custom
+    # CUDA kernel does the whole resonate step (complex sparse matvec + dynamics), collapsing ~15-20 CuPy kernels/
+    # step into 1 -- the launch-bound conversational-latency fix. GPU-only; numpy backend + masked bridges fall back
+    # to the loop. See docs/plans/2026-06-17-resonate-cudagraph-refactor-design.md.
+    enable_rf_cudagraph: bool = False
     coincidence_gain: float = 2.0               # sigmoid slope of the all-or-none switch (~0.88/0.12 at K+/-1)
     coincidence_plateau_strength: float = 80.0  # per-step plateau conductance increment scale (the regenerative NMDA-spike drive)
     coincidence_tau_decay_ms: float = 80.0      # plateau duration (Major-Larkum-Schiller NMDA spike 50-100ms)

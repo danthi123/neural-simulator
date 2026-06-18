@@ -60,10 +60,14 @@ def _build_rf_bridge(n, seed=42):
 
 class RFPhasorComposer:
     def __init__(self, seed=42, D=64, vocab=None, period=200, enable_spiking_cleanup=False,
-                 enable_substrate_store=False, grounded_codes=None):
+                 enable_substrate_store=False, grounded_codes=None, enable_rf_cudagraph=False):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
+        # (perf, opt-in) route the per-op resonate window through the fused RF megakernel (one CUDA kernel/step)
+        # instead of the ~15-kernel/step loop. Default OFF -> the validated loop path. == loop at the phase-read
+        # tolerance (tests/test_rf_megakernel.py). See docs/plans/2026-06-17-resonate-cudagraph-refactor-design.md.
+        self._enable_rf_cudagraph = bool(enable_rf_cudagraph)
         # (cheat-C conversion, opt-in) hold each fact's bound composite in the SUBSTRATE (per-fact trigger->readout
         # complex weights) instead of a numpy array in self.kb; retrieve via firing. Default OFF: numpy kb fast path.
         self.enable_substrate_store = bool(enable_substrate_store)
@@ -104,6 +108,7 @@ class RFPhasorComposer:
         b = self._bridge_cache.get(n)
         if b is None:
             b = _build_rf_bridge(n, self.seed)
+            b.core_config.enable_rf_cudagraph = self._enable_rf_cudagraph   # opt-in megakernel resonate fast path
             self._bridge_cache[n] = b
         b.rf_set_complex_weights(conns)   # (c-opt) builds the sparse complex weights FRESH each op -> replaces; no reset needed
         b.rf_kick(kick, period=self.period, lam=0.0)
