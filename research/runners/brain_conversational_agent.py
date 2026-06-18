@@ -150,7 +150,8 @@ class BrainConversationalAgent:
 
     def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None, composer_kind="rf",
                  enable_spiking_cleanup=False, enable_substrate_store=False, grounded_codes=None,
-                 enable_learned_assoc=False, enable_neural_render=False, enable_rf_cudagraph=False):
+                 enable_learned_assoc=False, enable_neural_render=False, enable_rf_cudagraph=False,
+                 enable_attributed=False):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -217,6 +218,14 @@ class BrainConversationalAgent:
         if enable_neural_render:
             from research.runners.neural_serial_order_renderer import NeuralSerialOrderRenderer
             self._neural_render = NeuralSerialOrderRenderer(seed=seed)
+        # (richer-syntax #1, opt-in) attributed-entity comprehension ('dog eat big red apple'): a neural
+        # AttributedBridgeParser (from-start x from-END x voice conjunction, parse-in-spikes) parses 'S V adj* N'
+        # on its own bridge; `hear_attributed` routes the parsed (adjs, noun) to the composer's ready attribute
+        # roles. Default OFF = byte-identical. Validated end-to-end 6/6 (2026-06-18-neural-attributed-endtoend-GO.md).
+        self._attr_parser = None
+        if enable_attributed:
+            from research.runners.attributed_parser import AttributedBridgeParser
+            self._attr_parser = AttributedBridgeParser(seed=seed)
 
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO statement and store it. `sentence` is 'agent action patient' (or its passive frame).
@@ -238,6 +247,20 @@ class BrainConversationalAgent:
         """Store a fact whose patient is an embedded clause (the parser handles flat SVO; nested input parsing is
         future work, so the clause is provided structurally here)."""
         self.composer.store(agent, action, clause, polarity=polarity)
+
+    def hear_attributed(self, sentence, voice="active", polarity=None):
+        """Comprehend an attributed-entity sentence ('dog eat big red apple') with the NEURAL attributed parser
+        (parse-in-spikes) and store it -- the parsed (adjective(s), noun) is routed to the composer's ready
+        attribute/attribute2 roles, so `what_does('dog','eat')` -> 'big red apple'. Requires enable_attributed=True.
+        Returns the parsed {role: word}. (Richer-syntax #1; the production hear() auto-routing is a follow-on.)"""
+        assert self._attr_parser is not None, "hear_attributed needs BrainConversationalAgent(enable_attributed=True)"
+        words = sentence.split() if isinstance(sentence, str) else list(sentence)
+        roles = self._attr_parser.parse(words, voice)
+        adjs = [roles[r] for r in ("attribute", "attribute2") if r in roles]
+        noun = roles.get("patient")
+        patient = (adjs, noun) if adjs else noun
+        self.composer.store(roles.get("agent"), roles.get("action"), patient, polarity=polarity)
+        return roles
 
     def parse(self, words, voice="active"):
         """Comprehend an SVO into {agent, action, patient}, using whichever parser the agent has: its OWN parser (the

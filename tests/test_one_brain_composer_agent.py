@@ -256,6 +256,28 @@ def test_onebrain_confidence_gate_preserves_intact():
     assert c.ask_yes_no("cat", "go", "west") in ("unknown", "no")
 
 
+def test_agent_attributed_comprehension():
+    """Richer-syntax #1 PRODUCTION integration: BrainConversationalAgent(enable_attributed=True) comprehends an
+    attributed-entity sentence ('dog eat big red apple') via the NEURAL attributed parser (parse-in-spikes) and
+    routes the (adjs, noun) to the composer's ready attribute roles, so what_does('dog','eat') -> 'big red apple'.
+    Also asserts default-off is byte-identical (enable_attributed=False -> no attributed parser)."""
+    from research.runners.brain_conversational_agent import BrainConversationalAgent
+    avocab = ["dog", "cat", "apple", "river", "eat", "see", "big", "red", "small", "hot"]
+    try:
+        a = BrainConversationalAgent(seed=42, composer_kind="rf", concepts={w: None for w in avocab},
+                                     enable_attributed=True)
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    a.hear_attributed("dog eat big red apple")            # neural attributed parse -> composer.store((adjs,noun))
+    assert a.what_does("dog", "eat") == "big red apple", "attributed patient must round-trip through the agent"
+    a.hear_attributed("cat see small apple")              # 1-adjective attributed
+    assert a.what_does("cat", "see") == "small apple"
+    assert a.what_does("river", "eat") is None, "moat: an unheard cue abstains"
+    # default-off: no attributed parser built (byte-identical path)
+    b = BrainConversationalAgent(seed=42, composer_kind="rf", concepts={w: None for w in avocab})
+    assert b._attr_parser is None, "enable_attributed defaults OFF (no attributed parser, byte-identical)"
+
+
 def test_onebrain_batched_equals_per_block():
     """A5 lever 1: the BATCHED read (default, read all blocks in 3 windows) == the per-block oracle (enable_batched
     toggled off) on the production OneBrainComposer -- answer-identical, just faster (the de-risk: 7.3x)."""
