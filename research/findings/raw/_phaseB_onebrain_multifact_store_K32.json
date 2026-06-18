@@ -1,0 +1,93 @@
+{
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "dims": [
+    64,
+    128
+  ],
+  "n_facts": 32,
+  "n_unused": 3,
+  "recall_truth": 1.0,
+  "recall_host": 1.0,
+  "lesion_recall": 0.0,
+  "intact_after_lesion": 1.0,
+  "moat_sep": 1.0,
+  "per_row": [
+    {
+      "seed": 42,
+      "D": 64,
+      "n_facts": 32,
+      "recall_truth": 1.0,
+      "recall_host": 1.0,
+      "lesion_recall": 0,
+      "intact_after_lesion": 1,
+      "moat_sep": 1,
+      "stored_peak_min": 1362742.25,
+      "unused_peak_max": 0.0
+    },
+    {
+      "seed": 42,
+      "D": 128,
+      "n_facts": 32,
+      "recall_truth": 1.0,
+      "recall_host": 1.0,
+      "lesion_recall": 0,
+      "intact_after_lesion": 1,
+      "moat_sep": 1,
+      "stored_peak_min": 2888801.5,
+      "unused_peak_max": 0.0
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "n_facts": 32,
+      "recall_truth": 1.0,
+      "recall_host": 1.0,
+      "lesion_recall": 0,
+      "intact_after_lesion": 1,
+      "moat_sep": 1,
+      "stored_peak_min": 1398700.125,
+      "unused_peak_max": 0.0
+    },
+    {
+      "seed": 43,
+      "D": 128,
+      "n_facts": 32,
+      "recall_truth": 1.0,
+      "recall_host": 1.0,
+      "lesion_recall": 0,
+      "intact_after_lesion": 1,
+      "moat_sep": 1,
+      "stored_peak_min": 2838741.5,
+      "unused_peak_max": 0.0
+    },
+    {
+      "seed": 44,
+      "D": 64,
+      "n_facts": 32,
+      "recall_truth": 1.0,
+      "recall_host": 1.0,
+      "lesion_recall": 0,
+      "intact_after_lesion": 1,
+      "moat_sep": 1,
+      "stored_peak_min": 1271862.125,
+      "unused_peak_max": 0.0
+    },
+    {
+      "seed": 44,
+      "D": 128,
+      "n_facts": 32,
+      "recall_truth": 1.0,
+      "recall_host": 1.0,
+      "lesion_recall": 0,
+      "intact_after_lesion": 1,
+      "moat_sep": 1,
+      "stored_peak_min": 2907376.25,
+      "unused_peak_max": 0.0
+    }
+  ]
+}
