@@ -1,0 +1,80 @@
+{
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "dims": [
+    64,
+    128
+  ],
+  "self": 1.0,
+  "host": 1.0,
+  "voice_inv": 1.0,
+  "moat_sep": 1.0,
+  "permuted_collapse": 1.0,
+  "lesion_collapse": 1.0,
+  "per_row": [
+    {
+      "seed": 42,
+      "D": 64,
+      "self": 1.0,
+      "host": 1.0,
+      "voice_inv": 1.0,
+      "moat_sep": 1,
+      "peak_bound": 492861344.0,
+      "peak_absent": 161358320.0
+    },
+    {
+      "seed": 42,
+      "D": 128,
+      "self": 1.0,
+      "host": 1.0,
+      "voice_inv": 1.0,
+      "moat_sep": 1,
+      "peak_bound": 973439232.0,
+      "peak_absent": 264447632.0
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "self": 1.0,
+      "host": 1.0,
+      "voice_inv": 1.0,
+      "moat_sep": 1,
+      "peak_bound": 498013280.0,
+      "peak_absent": 125296248.0
+    },
+    {
+      "seed": 43,
+      "D": 128,
+      "self": 1.0,
+      "host": 1.0,
+      "voice_inv": 1.0,
+      "moat_sep": 1,
+      "peak_bound": 912381504.0,
+      "peak_absent": 183587712.0
+    },
+    {
+      "seed": 44,
+      "D": 64,
+      "self": 1.0,
+      "host": 1.0,
+      "voice_inv": 1.0,
+      "moat_sep": 1,
+      "peak_bound": 432213536.0,
+      "peak_absent": 143009168.0
+    },
+    {
+      "seed": 44,
+      "D": 128,
+      "self": 1.0,
+      "host": 1.0,
+      "voice_inv": 1.0,
+      "moat_sep": 1,
+      "peak_bound": 1000033536.0,
+      "peak_absent": 164876928.0
+    }
+  ]
+}
