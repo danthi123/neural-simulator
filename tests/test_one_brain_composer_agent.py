@@ -96,6 +96,51 @@ def test_onebrain_describe_and_reason():
     assert a.reason_chain("dog", ["go", "come"]) is None, "moat: no (cat, come) fact -> abstain at hop 2"
 
 
+def test_onebrain_clause_parity_with_rf_oracle():
+    """Recursive embedded clause: a fact whose patient is an SVO clause ('dog go (cat look south)') stores + decodes on
+    the OneBrainComposer == the RFPhasorComposer numpy oracle == ground truth, via BOTH query_patient (the decoded
+    inner clause sentence) AND render_fact (the outer fact with the inner clause filling the patient slot). This brings
+    the rf composer's recursive-clause feature to parity on the one-brain path (toward retiring the legacy numpy
+    production runtime while keeping numpy as the oracle). The on-bridge decode is a chained register->register unbind
+    (outer patient -> a Q register -> the 3 clause roles -> cleanup)."""
+    from research.runners.one_brain_composer import OneBrainComposer
+    from research.runners.rf_phasor_composer import RFPhasorComposer, Clause
+    clause = Clause(agent="cat", action="look", patient="south")   # all of dog/go/cat/look/south are in VOCAB
+    try:
+        c = OneBrainComposer(seed=42, D=64, vocab=VOCAB)
+        oracle = RFPhasorComposer(seed=42, D=64, vocab=VOCAB)       # same seed/D/period -> identical codes
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    c.store("dog", "go", clause)
+    oracle.store("dog", "go", clause)
+    # query_patient: the decoded inner clause sentence
+    got = c.query_patient("dog", "go")
+    assert got == oracle.query_patient("dog", "go") == "cat look south", \
+        f"clause query_patient {got!r} != oracle {oracle.query_patient('dog', 'go')!r} != truth 'cat look south'"
+    # render_fact: the outer fact with the clause in the patient slot
+    gotr = c.render_fact("dog")
+    assert gotr == oracle.render_fact("dog") == "dog go cat look south", \
+        f"clause render_fact {gotr!r} != oracle {oracle.render_fact('dog')!r} != truth 'dog go cat look south'"
+    # the no-confab moat still holds for an unstored cue (abstain before any clause decode)
+    assert c.query_patient("apple", "stop") is None, "moat breach: unstored cue not abstained"
+
+
+def test_onebrain_agent_clause_fact():
+    """The agent path: hear_clause_fact stores an embedded-clause fact on the OneBrainComposer; what_does decodes the
+    inner clause + describe renders the outer fact; an unknown agent still abstains (the moat). Uses the agent's own
+    core_sim_composition.Clause (a DISTINCT namedtuple from the rf module's -- the duck-typed _is_clause spans both)."""
+    from research.runners.brain_conversational_agent import BrainConversationalAgent
+    from research.runners.core_sim_composition import Clause
+    try:
+        a = BrainConversationalAgent(seed=42, composer_kind="onebrain", concepts={w: None for w in VOCAB})
+        a.hear_clause_fact("dog", "go", Clause(agent="cat", action="look", patient="south"))
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    assert a.what_does("dog", "go") == "cat look south", "agent must decode the embedded clause patient"
+    assert a.describe("dog") == "dog go cat look south", "agent must render the outer fact with the inner clause"
+    assert a.what_does("bird", "go") is None, "moat breach: unknown agent not abstained"
+
+
 def test_onebrain_batched_equals_per_block():
     """A5 lever 1: the BATCHED read (default, read all blocks in 3 windows) == the per-block oracle (enable_batched
     toggled off) on the production OneBrainComposer -- answer-identical, just faster (the de-risk: 7.3x)."""

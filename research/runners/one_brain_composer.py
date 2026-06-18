@@ -16,8 +16,11 @@ Assembled from the validated GO pieces of the Phase-2 arc (each de-risked multi-
 The parser (Izhikevich, voltage in v/u) and the resonate-and-fire composer registers (a complex phasor in v/u)
 co-reside as disjoint slices on ONE bridge (the merged-bridge regime), the resonate-and-fire ops masked to their slice.
 
-HONEST SCOPE: this first cut handles AFFIRMATIVE facts (who / what / affirmative yes-no). Negation (a bound polarity
-tag = a 4th role) + the richer agent capabilities (`render_fact`/`query_chain`/`elaborate`) are bounded follow-ons.
+SCOPE (the A5 cleanup arc brings the rf composer's features to parity here so onebrain can be the documented default
+and the legacy numpy production runtime can retire, numpy kept as the test oracle): who / what / affirmative & negated
+yes-no (a bound polarity tag = a 4th role) / generation (`render_fact`) / multi-hop (`query_chain`) / recursive
+embedded CLAUSES (a fact whose patient is an SVO clause -> a 2-level unbind). Bounded follow-ons still on the numpy
+oracle only: reconsolidation (`update_on_mismatch`), multi-turn anaphora, attributed entities (adj+noun).
 
 NO sim/ edit (reuse-by-import: BridgeParser + RFPhasorComposer + the masked rf_kick). GPU for real use (the parser
 trains on the bridge); numpy is the test oracle.
@@ -31,7 +34,7 @@ from sim.config import CoreSimConfig
 from sim.enums import NeuronModel
 from sim.backend import to_host
 from research.runners.brain_conversational_agent import BridgeParser
-from research.runners.rf_phasor_composer import RFPhasorComposer
+from research.runners.rf_phasor_composer import RFPhasorComposer, _is_clause
 
 ROLES3 = ["agent", "action", "patient"]
 
@@ -126,7 +129,9 @@ class OneBrainComposer:
         binds, bundle = [], []
         kick = np.zeros(self.n_total, dtype=np.complex128)
         for i in range(nr):
-            zr = comp._to_phasor(comp.roles[roles[i]]); zf = comp._to_phasor(comp.concepts[fillers[i]])
+            # `_filler_phases` handles BOTH a concept word (its code) AND a recursive Clause (its bound composite),
+            # so binding a clause patient is the same store path -- the patient role binds the clause's composite.
+            zr = comp._to_phasor(comp.roles[roles[i]]); zf = comp._to_phasor(comp._filler_phases(fillers[i]))
             kick[P + i * D:P + (i + 1) * D] = zf                                                  # fill_i at block i
             binds += [(P + (4 + i) * D + k, P + i * D + k, complex(zr[k])) for k in range(D)]     # bound_i at block 4+i
             bundle += [(P + 8 * D + k, P + (4 + i) * D + k, 1.0) for k in range(D)]               # acc at block 8
@@ -235,8 +240,55 @@ class OneBrainComposer:
                 return (wa, wv, wp)[answer_idx]
         return None
 
+    def _decode_clause(self, block_idx, order_fn=None):
+        """Recursive clause decode (== the rf composer's `_render`): reconstruct the outer fact, unbind the OUTER
+        patient role to recover the embedded CLAUSE composite, then unbind the clause's 3 roles + cleanup ->
+        'agent action patient'. The decode is TWO unbind hops; like the numpy oracle (`_unbind_phases` kicks a fresh
+        unit phasor each hop), the intermediate clause composite is READ OUT and RE-KICKED as a clean unit phasor
+        before the 2nd hop -- chaining the resonate through an unbind-DRIVEN register (instead of a kicked one)
+        degrades its magnitude and the deeper unbind reads the wrong filler (the agent slot fails first)."""
+        comp, b, D, Pd, V = self.comp, self.b, self.D, self.period, self.V
+        # hop 1: reconstruct the outer block (kick) + unbind the OUTER patient -> the embedded clause composite in Q[3]
+        b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+        trig = self.store_base + block_idx * self.block
+        kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
+        b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
+        b.rf_resonate_steps(Pd + 8)
+        zc = np.conj(comp._to_phasor(comp.roles["patient"]))
+        outer = [(self.q_base + 3 * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
+        b.rf_set_complex_weights(outer); b.rf_resonate_steps(Pd + 8)
+        clause_phases = np.asarray(b.rf_read_phases())[self.q_base + 3 * D:self.q_base + 4 * D]
+        # hop 2: RE-KICK the clause composite as a clean unit phasor (== the oracle's fresh per-hop kick), then unbind
+        # the 3 clause roles IN PARALLEL from Q[3] -> Q[0..2] + cleanup against the main vocab
+        b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+        kick2 = np.zeros(self.n_total, dtype=np.complex128)
+        kick2[self.q_base + 3 * D:self.q_base + 4 * D] = comp._to_phasor(clause_phases)
+        inner = []
+        for ri, role in enumerate(ROLES3):
+            zcr = np.conj(comp._to_phasor(comp.roles[role]))
+            inner += [(self.q_base + ri * D + k, self.q_base + 3 * D + k, complex(zcr[k])) for k in range(D)]
+        b.rf_set_complex_weights(inner); b.rf_kick(kick2, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
+        b.rf_resonate_steps(Pd + 8)
+        clean = []
+        for ri in range(3):
+            for j in range(V):
+                cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
+                clean += [(self.c_base + ri * V + j, self.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
+        b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
+        mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
+        words = [self.words[int(np.argmax(np.maximum(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], 0.0)))]
+                 for ri in range(3)]
+        order = order_fn(3) if order_fn is not None else [0, 1, 2]
+        return " ".join(words[o] for o in order)
+
     def query_patient(self, agent, action, order_fn=None):
-        return self._scan({"agent": agent, "action": action}, 2)
+        """patient (a concept word) OR, when the stored fact's patient is an embedded CLAUSE, the recursively-decoded
+        clause sentence. Matches agent+action via the batched read, then routes on the kb-stored patient type."""
+        for i, (wa, wv, wp, _pol) in enumerate(self._read_blocks()):
+            if wa == agent and wv == action:
+                stored = self.kb[i][0].get("patient") if i < len(self.kb) else None
+                return self._decode_clause(i, order_fn=order_fn) if _is_clause(stored) else wp
+        return None
 
     def query_agent(self, action, patient):
         return self._scan({"action": action, "patient": patient}, 0)
@@ -252,11 +304,14 @@ class OneBrainComposer:
     def render_fact(self, agent, order_fn=None):
         """Generation (for the agent's `describe`): 'agent action patient' decoded from the first stored fact whose
         agent matches, or None (the no-confab moat -- no invented sentence about an unknown subject). The action +
-        patient are DECODED from the on-bridge unbind (not the stored labels). `order_fn` (opt-in) -> the word order
-        (the spiking serial-order renderer); default = subject-verb-object."""
-        for (wa, wv, wp, _pol) in self._read_blocks():
+        patient are DECODED from the on-bridge unbind (not the stored labels). When the matched fact's patient is an
+        embedded CLAUSE, the patient slot is the recursively-decoded clause ('dog see cat go south'). `order_fn`
+        (opt-in) -> the word order (the spiking serial-order renderer); default = subject-verb-object."""
+        for i, (wa, wv, wp, _pol) in enumerate(self._read_blocks()):
             if wa == agent:
-                words = [wa, wv, wp]
+                stored = self.kb[i][0].get("patient") if i < len(self.kb) else None
+                pt = self._decode_clause(i, order_fn=order_fn) if _is_clause(stored) else wp
+                words = [wa, wv, pt]
                 order = order_fn(3) if order_fn is not None else [0, 1, 2]
                 return " ".join(words[o] for o in order)
         return None
