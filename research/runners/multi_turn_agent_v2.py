@@ -57,10 +57,12 @@ class MultiTurnAgentV2:
     """
 
     def __init__(self, referent_concepts, concepts=None, grounded_codes=None, seed=42,
-                 wm_n_slots=7, enable_neural_render=False):
+                 wm_n_slots=7, enable_neural_render=False, composer_kind="rf"):
         self.seed = int(seed)
+        # composer_kind passes through to the inner agent: "rf" (default, the production numpy composer) or
+        # "onebrain" (the integrated one-brain composer -- the cleanup arc validates correction + anaphora on it).
         self.agent = BrainConversationalAgent(seed=seed, concepts=concepts, grounded_codes=grounded_codes,
-                                              enable_neural_render=enable_neural_render)
+                                              enable_neural_render=enable_neural_render, composer_kind=composer_kind)
         self.referents = list(referent_concepts)
         # The discourse buffer shares the composer's concept codes: same seed, same D (=128, the agent composer's
         # D), same vocab (the composer's sorted vocab). A slot read cleans up against the referent subset only, so
@@ -139,7 +141,7 @@ class MultiTurnAgentV2:
         words = [w for w in sentence.split() if w]
         if words and words[0].lower() in _CORRECTION_MARKERS:
             words = words[1:]
-        roles = self.agent.parser.parse(words, voice)
+        roles = self.agent.parse(words, voice)              # parser-agnostic: the agent's own parser OR the onebrain one
         agent = self._resolve(roles["agent"])               # resolve an agent pronoun from the discourse buffer
         if agent is None:
             return {"action": "abstain", "wrote": False, "pe": None, "reason": "unresolved_pronoun"}

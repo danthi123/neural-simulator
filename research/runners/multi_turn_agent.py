@@ -30,10 +30,13 @@ class MultiTurnAgent:
     phasor codes (e.g. the 320 stream-learned cortex codes). Everything else mirrors BrainConversationalAgent."""
 
     def __init__(self, referent_concepts, concepts=None, grounded_codes=None, seed=42,
-                 wm_n=600, wm_pattern_size=40, enable_neural_render=False, spec_threshold=1.5):
+                 wm_n=600, wm_pattern_size=40, enable_neural_render=False, spec_threshold=1.5,
+                 composer_kind="rf"):
         self.seed = int(seed)
+        # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
+        # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
         self.agent = BrainConversationalAgent(seed=seed, concepts=concepts, grounded_codes=grounded_codes,
-                                              enable_neural_render=enable_neural_render)
+                                              enable_neural_render=enable_neural_render, composer_kind=composer_kind)
         self.referents = list(referent_concepts)
         self.wm = SpikingLoopContextBuffer(self.referents, n=wm_n, pattern_size=wm_pattern_size,
                                            seed=seed, enable_ou=False)

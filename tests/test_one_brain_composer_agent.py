@@ -172,6 +172,47 @@ def test_onebrain_reconsolidation_parity():
     assert rm["action"] == "abstain" and c.count_facts("bird", "go") == 0, "moat breach: unstored cue not abstained"
 
 
+def test_onebrain_multiturn_correction():
+    """AGENT-LEVEL reconsolidation on the onebrain path: MultiTurnAgentV2(composer_kind="onebrain") parses a
+    correction turn through the ONE on-bridge parser (the agent's own parser is None on this path -> the
+    parser-agnostic agent.parse falls back to the composer's), resolves a pronoun agent from the discourse buffer,
+    and rewrites the cued fact IN PLACE; a never-stored correction abstains (the no-confab moat). Validates the
+    correction + pronoun + moat wiring end-to-end on the one brain (toward making onebrain the agent default)."""
+    from research.runners.multi_turn_agent_v2 import MultiTurnAgentV2
+    cvocab = ["dog", "cat", "bird", "elephant", "go", "run", "fly", "north", "south", "east", "west"]
+    referents = ["dog", "cat", "bird", "elephant"]
+    try:
+        a = MultiTurnAgentV2(referent_concepts=referents, concepts={w: None for w in cvocab},
+                             seed=42, composer_kind="onebrain")
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    a.hear("dog go north")                            # foregrounds 'dog' (north is not a referent)
+    res = a.correct("actually it go south")           # 'it' -> dog (the discourse buffer) -> rewrite in place
+    assert res["wrote"] is True and res["action"] == "rewrite", f"pronoun correction must resolve + rewrite: {res}"
+    assert a.what_does("dog", "go") == "south", "the corrected fact must read the new patient"
+    assert a.agent.composer.count_facts("dog", "go") == 1, "no contradictory duplicate"
+    rm = a.correct("actually elephant fly west")      # a never-stored subject -> abstain (the moat)
+    assert rm["action"] == "abstain" and rm["wrote"] is False, "moat breach: never-stored correction not abstained"
+
+
+def test_onebrain_multiturn_anaphora():
+    """AGENT-LEVEL multi-turn anaphora on the onebrain path: MultiTurnAgent(composer_kind="onebrain") writes a
+    discourse referent on turn 1, and a turn-2 pronoun ('it') resolves to it for the onebrain query (the cross-turn
+    spiking WM + the onebrain composer together). The empty-WM moat is a WM property independent of composer kind
+    (it abstains BEFORE any composer query), so it is covered by the rf MultiTurnAgent test, not re-run here."""
+    from research.runners.multi_turn_agent import MultiTurnAgent
+    nouns = ["dog", "cat", "fish", "bird"]
+    cvocab = nouns + ["chase", "eat"]
+    try:
+        a = MultiTurnAgent(referent_concepts=nouns, concepts={w: None for w in cvocab}, seed=42,
+                           composer_kind="onebrain")
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    a.agent.composer.store("cat", "eat", "fish")      # the fact the turn-2 answer needs
+    a.hear("dog chase cat")                           # turn 1: writes the object referent 'cat' to the WM
+    assert a.what_does("it", "eat") == "fish", "turn-2 'it' -> cat -> (cat eat fish)"
+
+
 def test_onebrain_batched_equals_per_block():
     """A5 lever 1: the BATCHED read (default, read all blocks in 3 windows) == the per-block oracle (enable_batched
     toggled off) on the production OneBrainComposer -- answer-identical, just faster (the de-risk: 7.3x)."""

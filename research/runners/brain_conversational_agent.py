@@ -239,6 +239,16 @@ class BrainConversationalAgent:
         future work, so the clause is provided structurally here)."""
         self.composer.store(agent, action, clause, polarity=polarity)
 
+    def parse(self, words, voice="active"):
+        """Comprehend an SVO into {agent, action, patient}, using whichever parser the agent has: its OWN parser (the
+        rf / rate / external paths) OR the composer's on-bridge parser (the OneBrainComposer carries the one parser on
+        the one brain). A single comprehension entry point so callers (e.g. a correction turn) don't depend on which
+        composer is wired -- `self.parser` is None on the onebrain path."""
+        parser = self.parser if self.parser is not None else getattr(self.composer, "parser", None)
+        if parser is None:
+            raise RuntimeError("BrainConversationalAgent has no parser (composer carries neither a parser nor hear)")
+        return parser.parse(list(words), voice)
+
     def what_does(self, agent, action):
         """'what does <agent> <action>?' -> patient (concept or rendered clause) or None (abstain). With
         enable_neural_render, an inner-clause patient's word ORDER is produced by the spiking serial-order
