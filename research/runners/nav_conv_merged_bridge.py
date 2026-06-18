@@ -454,6 +454,7 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  co_resident_nav_critic: bool = False,
                                  nav_critic_convergent_upstate: bool = False,
                                  nav_critic_homeostasis_mask: str = "all3",
+                                 nav_critic_spiking_sc: bool = False,
                                  _global_het_test: bool = False):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
@@ -524,10 +525,29 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         # op-map build (no vs_place_drive region/pathway). The op-map de-risk drove vs_place_context DIRECTLY at the
         # MSN rheobase (the trained-V proxy); the value-train needs the up-state arm to fire the critic so the STDP
         # has a post-spike to pair with at the INIT weight 0.20.
+        # nav_critic_spiking_sc (TRUE ONE BRAIN roadmap #2 — the NEURAL reward `r` SOURCE, default-off):
+        # also build the spiking superior colliculus chain (sc_retina -> sc_map -> sc_fs Mexican-hat ->
+        # sc_rostral) + the sc_rostral->reward_us pathway (g11_bg_runner.py:2488/2535/2541), so the reward `r`
+        # the SNc bursts on is produced SYNAPTICALLY by the SC bump's proximity/goal-salience (the N5 approach
+        # reward), retiring the host sign(Manhattan) formula that currently drives reward_us (g11_bg_runner.py:
+        # 7148). The sc_map->sc_rostral foveal-centre proximity readout + retina->sc_map retinotopy are wired
+        # POST-INIT by install_spiking_sc_wiring (it uses set_pathway_weights, add_missing); the de-risk /
+        # episode hook calls it after build. The SC chain is self-contained on its OWN sc_retina (does NOT
+        # require enable_visual_cortex for the region build — that flag is for the deployed nav-loop retina).
+        # Default False = byte-identical to the value-train build (no sc_* regions). N5 validated standalone by
+        # sc_n5_rpe_probe.py (corr(distance, SNc)=-0.99, omission dip, lesion sc_rostral->reward_us collapses).
+        # SCOPE NOTE (roadmap #2): the SC region build (g11_bg_runner.py:2488 `if enable_spiking_sc:`) is NESTED
+        # inside `if enable_visual_cortex:` (:2428) — so the SC chain (sc_retina/sc_map/sc_fs/sc_rostral) ONLY
+        # builds when enable_visual_cortex=True. ⇒ nav_critic_spiking_sc forwards BOTH flags: the full vision
+        # hierarchy (retina/V1/V2/cortex_it) AND the SC chain. (cortex_it is also the critic's perceived-state
+        # afferent, so this is consistent with the value-train critic.)
         nav_regions, nav_pathways = build_bg_brain_regions(
             n_cortex=n_cortex, enable_spiking_wta_readout=enable_spiking_wta_readout,
             enable_neural_critic=True, spiking_reward_us=True, enable_critic_homeostasis=True,
-            enable_convergent_upstate=bool(nav_critic_convergent_upstate))
+            enable_convergent_upstate=bool(nav_critic_convergent_upstate),
+            enable_visual_cortex=bool(nav_critic_spiking_sc),
+            enable_spiking_sc=bool(nav_critic_spiking_sc),
+            enable_spiking_sc_approach=bool(nav_critic_spiking_sc))
         # POST-HOC homeostasis mask: snc + reward_us are built WITHOUT enable_homeostasis (g11_bg_runner.py:
         # 1133-1142/:1158-1163). The "all3" set (the original op-map default) ALSO masks snc + reward_us -> the SNc
         # SATURATES (~435 Hz, no GABA_B headroom). The op-map de-risk (2026-06-18-navcritic-valuetrain-opmap-derisk.md
@@ -1030,7 +1050,7 @@ class MergedNavConvAgent:
     """
 
     def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_limbic=False,
-                 co_resident_nav_critic=False):
+                 co_resident_nav_critic=False, nav_critic_spiking_sc=False):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
         merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory codebook
         share one word set.
@@ -1048,11 +1068,16 @@ class MergedNavConvAgent:
         # co_resident_nav_critic (CYCLE 209): lift the FULL nav reward/critic (vs the minimal limbic organ) onto the
         # merged bridge; the moat check verifies the DA-over-snc modulator does not perturb conversation.
         self.co_resident_nav_critic = bool(co_resident_nav_critic)
+        # nav_critic_spiking_sc (TRUE ONE BRAIN roadmap #2): also lift the spiking SC chain so the nav reward `r`
+        # is the SYNAPTIC SC-proximity (sc_rostral->reward_us), retiring the host Manhattan formula. Default
+        # False = byte-preserved. Only meaningful with co_resident_nav_critic (it builds reward_us + the critic).
+        self.nav_critic_spiking_sc = bool(nav_critic_spiking_sc)
         _D = 128
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
             seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,
             co_resident_limbic=self.co_resident_limbic,
-            co_resident_nav_critic=self.co_resident_nav_critic)
+            co_resident_nav_critic=self.co_resident_nav_critic,
+            nav_critic_spiking_sc=self.nav_critic_spiking_sc)
         words = self._handles["vocab"]   # the sorted merged vocab (the dlPFC + parser word set)
 
         # The composer. STEP 2a default: on its OWN per-op bridges (separate). STEP 2b (co_resident_composer=True):
