@@ -1,0 +1,30 @@
+{
+  "verdict": "GO",
+  "seeds": [
+    42
+  ],
+  "dims": [
+    64
+  ],
+  "n_facts": 4,
+  "n_unused": 2,
+  "recall_truth": 1.0,
+  "recall_host": 1.0,
+  "lesion_recall": 0.0,
+  "intact_after_lesion": 1.0,
+  "moat_sep": 1.0,
+  "per_row": [
+    {
+      "seed": 42,
+      "D": 64,
+      "n_facts": 4,
+      "recall_truth": 1.0,
+      "recall_host": 1.0,
+      "lesion_recall": 0,
+      "intact_after_lesion": 1,
+      "moat_sep": 1,
+      "stored_peak_min": 1393919.5,
+      "unused_peak_max": 0.0
+    }
+  ]
+}
