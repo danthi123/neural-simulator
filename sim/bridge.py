@@ -5558,14 +5558,14 @@ class SimulationBridge:
         Opt-in MEGAKERNEL fast path (`cfg.enable_rf_cudagraph`, default off): one custom CUDA kernel does the WHOLE
         step (complex sparse matvec + rotate/decay + crossing + writes, one thread per neuron), collapsing the
         ~15-20 CuPy kernels/step into 1 -- the launch-bound latency fix (2026-06-17-resonate-cudagraph-refactor-
-        design.md). Default-off -> byte-identical to the per-step loop; GPU-only (numpy backend falls back); the
-        no-mask composer bridges only (co-resident masked bridges use the loop)."""
+        design.md). Default-off -> byte-identical to the per-step loop; GPU-only (numpy backend falls back). Honors a
+        co-residence `_rf_neuron_mask` (A5 lever 3, 2026-06-18): the kernel writes only the masked (RF) neurons, so
+        co-resident masked bridges use the megakernel too (== the masked loop)."""
         if getattr(self, "cp_rf_prev_im", None) is None:
             return
         if (getattr(self.core_config, "enable_rf_cudagraph", False) and is_gpu_backend()
-                and getattr(self, "cp_rf_w_re", None) is not None
-                and getattr(self, "_rf_neuron_mask", None) is None):
-            self._rf_resonate_steps_megakernel(int(n_steps))
+                and getattr(self, "cp_rf_w_re", None) is not None):
+            self._rf_resonate_steps_megakernel(int(n_steps))   # masked or unmasked (the kernel honors _rf_neuron_mask)
             return
         for _ in range(int(n_steps)):
             self._rf_advance_one()
@@ -5574,13 +5574,20 @@ class SimulationBridge:
     # in float32 to match the membrane dtype, with the matvec accumulated in double (== the cuSPARSE path cast to
     # float32 on the add). Reads `_in`, writes `_out` (double-buffered so the matvec sees a consistent pre-step
     # state); prev_im / fired / spike_step are per-neuron in-place (no cross-thread races).
+    # `mask` / `use_mask` (co-residence, 2026-06-18 -- A5 lever 3): when use_mask==1, write the advanced state + spike
+    # trackers back ONLY for masked (RF) neurons; a non-masked (co-resident Izhikevich) neuron carries its INPUT state
+    # to the output unchanged (re_out=re_in, no prev_im/fired/spike_step touch) -- EXACTLY what the masked
+    # `_rf_advance_one` loop does (bridge.py masked write), so the megakernel matches the loop with a mask too. With
+    # use_mask==0 the `||` short-circuits before mask[i], and the writeback is the original unconditional write =>
+    # BYTE-IDENTICAL to the prior no-mask megakernel. The matvec is unchanged: cp_rf_w has 0 weight for non-RF
+    # presynaptics, so a non-masked neuron's (voltage) state never enters an RF neuron's matvec.
     _RF_MEGASTEP_SRC = r"""
     extern "C" __global__ void rf_megastep(
         const float* re_in, const float* im_in, float* re_out, float* im_out,
         float* prev_im, bool* fired, long long* spike_step,
         const int* indptr, const int* indices, const double* w_re, const double* w_im,
         const int n, const long long counter, const float decay, const float cosw,
-        const float sinw, const float floor2) {
+        const float sinw, const float floor2, const bool* mask, const int use_mask) {
       int i = blockDim.x * blockIdx.x + threadIdx.x;
       if (i >= n) return;
       double mv_re = 0.0, mv_im = 0.0;
@@ -5597,8 +5604,12 @@ class SimulationBridge:
       float im_new = (decay * (ri*sinw + ii*cosw)) + (float)mv_im;
       float mag2 = re_new*re_new + im_new*im_new;
       bool crossed = (!fired[i]) && (prev_im[i] < 0.0f) && (im_new >= 0.0f) && (mag2 > floor2);
-      if (crossed) { spike_step[i] = counter; fired[i] = true; }
-      re_out[i] = re_new; im_out[i] = im_new; prev_im[i] = im_new;
+      if (use_mask == 0 || mask[i]) {
+        if (crossed) { spike_step[i] = counter; fired[i] = true; }
+        re_out[i] = re_new; im_out[i] = im_new; prev_im[i] = im_new;
+      } else {
+        re_out[i] = re_in[i]; im_out[i] = im_in[i];
+      }
     }
     """
 
@@ -5626,6 +5637,11 @@ class SimulationBridge:
         omega = float(getattr(self, "_rf_omega", 2.0 * np.pi / 1000.0))
         cosw = cp.float32(np.cos(omega)); sinw = cp.float32(np.sin(omega))
         floor2 = cp.float32(float(getattr(self, "_rf_floor", 1.0e-3)) ** 2)
+        # co-residence mask (A5 lever 3): when set, the kernel writes only the masked (RF) neurons (the rest carry
+        # their state unchanged), matching the masked `_rf_advance_one` loop. None => use_mask=0 => byte-identical.
+        _mask = getattr(self, "_rf_neuron_mask", None)
+        use_mask = cp.int32(0 if _mask is None else 1)
+        mask_arg = _mask if _mask is not None else cp.zeros(1, dtype=cp.bool_)   # dummy (short-circuited when use_mask==0)
         threads = 128
         blocks = (n + threads - 1) // threads
         counter = int(getattr(self, "_rf_counter", 0))
@@ -5633,7 +5649,7 @@ class SimulationBridge:
             counter += 1
             kern((blocks,), (threads,),
                  (a_re, a_im, b_re, b_im, prev_im, fired, spike_step, indptr, indices, w_re_d, w_im_d,
-                  cp.int32(n), cp.int64(counter), decay, cosw, sinw, floor2))
+                  cp.int32(n), cp.int64(counter), decay, cosw, sinw, floor2, mask_arg, use_mask))
             a_re, b_re = b_re, a_re
             a_im, b_im = b_im, a_im
         self._rf_counter = counter
