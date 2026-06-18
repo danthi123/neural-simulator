@@ -41,6 +41,10 @@ from research.runners._phaseB_onsubstrate_readout_bridge_derisk import (  # noqa
 
 R, F, N_SPLITS = 4, 16, 3
 N_EVAL_FACTS = 40
+# the spiking error has residual noise (sign ~0.85, not 1.0), so the read-out learning rate must be LOW (the
+# numpy neural-error de-risk converged at ~0.02; the on-bridge host-error read-out used 0.5 because it was EXACT)
+# -- a high lr lets the per-step noise random-walk the weights. Lower lr + more passes = the noisy-LMS fix.
+NEURAL_LR = 0.08
 # TONIC OPPONENT coding (the diagnostic fix): a RECTIFIED ON/OFF error (relu) leaves small errors in the LIF
 # dead-zone -> the SIGN is near-chance for the many tiny per-output errors (corr 0.83 but sign 0.55), so the delta
 # rule learns the wrong direction on ~half the outputs -> no convergence. Instead both ON and OFF error neurons get
@@ -95,13 +99,16 @@ def neural_error(b, err_idx, target, est, d_in, cal):
     # output j's neurons at [j*N_ERR:(j+1)*N_ERR]. Average the N_ERR rates -> ~sqrt(N_ERR) less Poisson noise.
     drive = np.concatenate([np.repeat(on, N_ERR), np.repeat(off, N_ERR)]).astype(np.float32)
     b.cp_external_input_current[:] = 0.0
+    err_gpu = xp.asarray(err_idx)
     b.cp_external_input_current[err_idx] = xp.asarray(drive)
-    counts = np.zeros(int(b.core_config.num_neurons), np.float64)
+    # accumulate the error neurons' spikes ON the device (one D2H transfer at the end), NOT to_host every step:
+    # the per-step host transfer of the whole firing-state vector was the dominant cost (~window*train_steps syncs).
+    counts_err = xp.zeros(int(err_gpu.shape[0]), dtype=xp.float64)
     for _ in range(ERR_WINDOW):
         b._run_one_simulation_step()
-        counts += np.asarray(to_host(b.cp_firing_states)).astype(np.float64)
+        counts_err += b.cp_firing_states[err_gpu].astype(xp.float64)
     b.cp_external_input_current[:] = 0.0
-    rate = counts[err_idx] / ERR_WINDOW
+    rate = np.asarray(to_host(counts_err)) / ERR_WINDOW
     on_r = rate[:d_in * N_ERR].reshape(d_in, N_ERR).mean(1)      # population-averaged ON rate per output
     off_r = rate[d_in * N_ERR:].reshape(d_in, N_ERR).mean(1)
     return (on_r - off_r) * cal                                 # signed neural error [D_in]
@@ -118,6 +125,7 @@ def run_seed(codes, seed, two_dh, d_h, n_passes=N_PASSES):
     W_F = rngF.standard_normal((d_in, d_h)) / np.sqrt(d_in)
 
     b, inp, out, pre_of, post_of = build_readout_bridge(two_dh, d_in, seed)
+    b.core_config.reward_learning_rate = NEURAL_LR        # LOW lr for the noisy spiking error (noisy-LMS fix)
     eb, err = build_error_bridge(d_in, seed)              # separate error-population bridge (the inferior olive)
     # calibrate the error-population gain: neural-error magnitude ~ host-error magnitude on a sample
     cal = [1.0]
