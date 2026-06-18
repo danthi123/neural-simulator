@@ -64,8 +64,9 @@ class OneBrainComposer:
     blocks. API mirrors `RFPhasorComposer` for the conversational agent (`store`/`hear`/`query_patient`/`query_agent`/
     `ask_yes_no`; `kb` bookkeeping)."""
 
-    def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200):
+    def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200, enable_batched=True):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
+        self.enable_batched = bool(enable_batched)       # A5 lever 1: read ALL blocks in 3 windows (7.3x); per-block=oracle
         self.comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, period=period)
         self.words = list(self.comp.words)              # the cleanup codebook = the composer's ACTUAL vocab
         self.V = len(self.words)
@@ -76,9 +77,14 @@ class OneBrainComposer:
         # 4-role coherence is GO, so the 4th bind is within the substrate's per-fact capacity.
         self.store_base = self.P + 9 * D                            # work: fill_0..3 (4) + bound_0..3 (4) + acc (1) = 9
         self.block = 1 + D
-        self.q_base = self.store_base + self.k_max * self.block      # 4 Q regs: agent/action/patient/polarity
-        self.c_base = self.q_base + 4 * D                            # cleanup: 3 V-blocks (main roles) + 1 NP-block (pol)
-        self.n_total = self.c_base + 3 * self.V + self.NP
+        self.q_base = self.store_base + self.k_max * self.block      # PER-BLOCK (oracle): 4 Q regs agent/action/patient/pol
+        self.c_base = self.q_base + 4 * D                            # PER-BLOCK cleanup: 3 V-blocks + 1 NP-block
+        self.cb = 3 * self.V + self.NP                              # cleanup neurons per block (3 main roles + polarity)
+        # BATCHED region (A5 lever 1): K_max x (4 Q regs + cb cleanup) so all blocks read in one pass (additive -- the
+        # per-block region above is unchanged = the correctness oracle).
+        self.bat_q_base = self.c_base + self.cb
+        self.bat_c_base = self.bat_q_base + self.k_max * 4 * D
+        self.n_total = self.bat_c_base + self.k_max * self.cb
         self.b = build_coresident_bridge(seed, self.n_total)
         self.parser = BridgeParser(seed=seed, R=self.R, shared_bridge=self.b, index_offset=0)   # wires+trains [0:P]
         self.rf_mask = np.zeros(self.n_total, dtype=bool); self.rf_mask[self.P:self.n_total] = True
@@ -164,9 +170,61 @@ class OneBrainComposer:
         out.append(self.pol_words[int(np.argmax(pol_scores))])
         return tuple(out)            # (agent, action, patient, polarity)
 
+    def _read_all_blocks(self):
+        """A5 lever 1 (BATCHED): read ALL stored blocks in 3 resonate windows -- fire EVERY trigger (the readouts
+        reconstruct in parallel, the validated per-block isolation, zero cross-talk) -> block-diagonal unbind (each
+        block's 4 roles into the batched Q region) -> block-diagonal cleanup -> read all. == the per-block loop
+        (de-risk `_phaseB_onebrain_batched_scan_derisk.py`: 6/6 answer-identical, 7.3x). Returns [(a,v,p,pol)] per block."""
+        comp, b, D, Pd, V, NP = self.comp, self.b, self.D, self.period, self.V, self.NP
+        n = len(self.kb)
+        if n == 0:
+            return []
+        b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+        kick = np.zeros(self.n_total, dtype=np.complex128)
+        for i in range(n):
+            kick[self.store_base + i * self.block] = 1.0                       # fire EVERY stored trigger
+        b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
+        b.rf_resonate_steps(Pd + 8)
+        roles = ROLES3 + ["polarity"]
+        unbind = []
+        for i in range(n):
+            trig = self.store_base + i * self.block
+            for ri, role in enumerate(roles):
+                zc = np.conj(comp._to_phasor(comp.roles[role]))
+                qreg = self.bat_q_base + (i * 4 + ri) * D
+                unbind += [(qreg + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
+        b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
+        clean = []
+        for i in range(n):
+            cblk = self.bat_c_base + i * self.cb
+            for ri in range(3):
+                qreg = self.bat_q_base + (i * 4 + ri) * D
+                for j in range(V):
+                    cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
+                    clean += [(cblk + ri * V + j, qreg + k, complex(cc[k])) for k in range(D)]
+            qreg_p = self.bat_q_base + (i * 4 + 3) * D
+            for j in range(NP):
+                cc = np.conj(comp._to_phasor(comp.concepts[self.pol_words[j]]))
+                clean += [(cblk + 3 * V + j, qreg_p + k, complex(cc[k])) for k in range(D)]
+        b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
+        mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
+        out = []
+        for i in range(n):
+            cblk = self.bat_c_base + i * self.cb
+            row = [self.words[int(np.argmax(np.maximum(mem[cblk + ri * V:cblk + (ri + 1) * V], 0.0)))] for ri in range(3)]
+            ps = np.maximum(mem[cblk + 3 * V:cblk + 3 * V + NP], 0.0)
+            row.append(self.pol_words[int(np.argmax(ps))])
+            out.append(tuple(row))
+        return out
+
+    def _read_blocks(self):
+        """All stored blocks' (a,v,p,pol): the BATCHED read (default, A5 lever 1) or the per-block loop (the oracle)."""
+        if self.enable_batched:
+            return self._read_all_blocks()
+        return [self._read_block(i) for i in range(len(self.kb))]
+
     def _scan(self, cue, answer_idx):
-        for i in range(len(self.kb)):
-            wa, wv, wp, _pol = self._read_block(i)
+        for (wa, wv, wp, _pol) in self._read_blocks():
             got = {"agent": wa, "action": wv, "patient": wp}
             if all(got[role] == want for role, want in cue.items()):
                 return (wa, wv, wp)[answer_idx]
@@ -181,8 +239,7 @@ class OneBrainComposer:
     def ask_yes_no(self, agent, action, patient):
         """yes / no / unknown: the first fact matching the full SVO answers by its polarity tag (AFFIRM -> yes,
         NEGATE -> no); no matching fact -> 'unknown' (the no-confab moat)."""
-        for i in range(len(self.kb)):
-            wa, wv, wp, wpol = self._read_block(i)
+        for (wa, wv, wp, wpol) in self._read_blocks():
             if wa == agent and wv == action and wp == patient:
                 return "yes" if wpol == "AFFIRM" else "no"
         return "unknown"
@@ -192,8 +249,7 @@ class OneBrainComposer:
         agent matches, or None (the no-confab moat -- no invented sentence about an unknown subject). The action +
         patient are DECODED from the on-bridge unbind (not the stored labels). `order_fn` (opt-in) -> the word order
         (the spiking serial-order renderer); default = subject-verb-object."""
-        for i in range(len(self.kb)):
-            wa, wv, wp, _pol = self._read_block(i)
+        for (wa, wv, wp, _pol) in self._read_blocks():
             if wa == agent:
                 words = [wa, wv, wp]
                 order = order_fn(3) if order_fn is not None else [0, 1, 2]

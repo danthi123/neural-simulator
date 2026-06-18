@@ -96,6 +96,30 @@ def test_onebrain_describe_and_reason():
     assert a.reason_chain("dog", ["go", "come"]) is None, "moat: no (cat, come) fact -> abstain at hop 2"
 
 
+def test_onebrain_batched_equals_per_block():
+    """A5 lever 1: the BATCHED read (default, read all blocks in 3 windows) == the per-block oracle (enable_batched
+    toggled off) on the production OneBrainComposer -- answer-identical, just faster (the de-risk: 7.3x)."""
+    from research.runners.one_brain_composer import OneBrainComposer
+    facts = [("dog", "go", "north"), ("cat", "come", "east"), ("bird", "look", "south")]
+    try:
+        c = OneBrainComposer(seed=42, D=64, vocab=VOCAB)
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    for (a, v, p) in facts:
+        c.store(a, v, p)                                  # store() resolves roles directly (no parser needed)
+    for (a, v, p) in facts:
+        c.enable_batched = True
+        bat = (c.query_patient(a, v), c.query_agent(v, p), c.ask_yes_no(a, v, p))
+        c.enable_batched = False
+        per = (c.query_patient(a, v), c.query_agent(v, p), c.ask_yes_no(a, v, p))
+        assert bat == per == (p, a, "yes"), f"batched {bat} != per-block {per} != truth for {(a, v, p)}"
+    # moat parity (absent cue)
+    c.enable_batched = True
+    assert c.query_patient("apple", "stop") is None
+    c.enable_batched = False
+    assert c.query_patient("apple", "stop") is None
+
+
 def test_onebrain_default_path_unaffected():
     """The additive wiring must not change the default ('rf') agent: it has no `hear` on its composer, so it builds the
     agent's own parser and uses parse+store (the byte-unchanged path). A construction smoke (no GPU run needed)."""
