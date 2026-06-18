@@ -38,12 +38,13 @@ overhead. **Honest agent-level standing: onebrain 605 ms vs rf 413 ms = 1.5× (d
 parity.** The residual 1.5× is NOT yet attributed — it is some mix of (a) the per-query batched-CSR build (the
 O(K·V·D) Python list-build → `np.fromiter` in `rf_set_complex_weights`), (b) the on-bridge reconstruct (onebrain fires
 triggers + reconstructs from synapses; rf reads its numpy kb directly), and (c) the un-fused resonate (rf has the
-adopted megakernel; onebrain's masked co-resident loop does NOT — that is exactly what lever 3 adds). **A5 session step
-0.5 = PROFILE the onebrain query breakdown** to attribute the residual before optimizing: if (a) dominates → precompute
-the fixed unbind/cleanup conns (cheap, no `sim/` edit — the role phasors + codebook are fixed; better still, precompute
-the CSR matrices and install them directly to bypass the per-query `np.fromiter`); if (b)/(c) dominate → lever 3 (the
-masked-megakernel) is the bigger lever. Do NOT speculatively precompute without the profile. The per-block scan stays
-the correctness oracle behind a flag.
+adopted megakernel; onebrain's masked co-resident loop does NOT — that is exactly what lever 3 adds). **A5 session step 0.5 = PROFILE — DONE (`_phaseB_onebrain_query_profile.py`), DECISIVE:** the per-query breakdown is
+**resonate 449 ms (83%)**, csr_install 63 ms (12%), conns_build 27 ms (5%), kick/read ~0. ⇒ **the RESONATE dominates;
+the host-side conns/CSR build is only 17%.** So the cheap precompute is MARGINAL (saves ≤~17%) and is **ruled out** — the
+residual 1.5× vs rf is the **un-fused resonate loop** (rf's resonate runs through the ADOPTED megakernel
+`enable_rf_cudagraph`; onebrain's masked co-resident loop does NOT — the megakernel bails on a mask). **⇒ LEVER 3 (the
+masked-megakernel) IS the real lever and the ONLY one worth building** — it brings onebrain's resonate to rf's
+megakernel'd level → ~parity. The per-block scan stays the correctness oracle behind a flag.
 
 **Lever 2 — INDEXED STORE (host-side routing; optional).** A cue→block index so a query reconstructs only the candidate
 block(s), O(K)→O(1) reconstructs. NOTE: the FHRR-faithful form is the superposition-search (fire-all, lever 1), so lever
