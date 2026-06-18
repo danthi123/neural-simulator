@@ -30,14 +30,20 @@ the rf path's batched scan + adopted megakernel. The probe re-runs after each le
 
 **Lever 1 — BATCHED SCAN (no `sim/` edit; do FIRST) — DE-RISKED GO (2026-06-18).** Replace reconstruct-per-block with
 ONE resonate over a block-diagonal layout: fire ALL K triggers at once → the K readout blocks reconstruct in parallel →
-a resident block-diagonal unbind (each block's roles, tiled) → block-diagonal cleanup → read all K×roles. **Result
-(`_phaseB_onebrain_batched_scan_derisk.py`, 6/6 at K=8): == the per-block loop == ground truth (answer-identical), 7.3×
-faster** (~350 → ~48 ms/fact). 7.3× > the 5.6× onebrain-vs-rf gap, so this lever ALONE makes the one-brain composer
-competitive with (≈ faster than) the rf reference. **Integration note:** the unbind + cleanup conns are FIXED (the role
-phasors + the codebook don't change per query — only the store/trigger conns change per fact), so the production
-integration should PRECOMPUTE the fixed unbind/cleanup conns lists once (avoid the per-query Python list-build, which is
-the O(K·V·D) cost that would otherwise offset the win at large K) and the query just fires the triggers + reads. The
-per-block scan stays the correctness oracle behind a flag.
+a resident block-diagonal unbind (each block's roles, tiled) → block-diagonal cleanup → read all K×roles. **Result (`_phaseB_onebrain_batched_scan_derisk.py`, 6/6 at K=8): == the per-block loop == ground truth
+(answer-identical), 7.3× faster on the pure SCAN** (~350 → ~48 ms/fact). INTEGRATED into the production composer
+(`enable_batched=True` default, CI-green) the AGENT-LEVEL `what_does` is **2680 → 605 ms/query (4.4×)** — less than the
+pure 7.3× because the per-query batched-CSR build (the O(K·V·D) Python list-build of the unbind/cleanup conns) adds
+overhead. **Honest agent-level standing: onebrain 605 ms vs rf 413 ms = 1.5× (down from 5.6×) — COMPARABLE, not yet at
+parity.** The residual 1.5× is NOT yet attributed — it is some mix of (a) the per-query batched-CSR build (the
+O(K·V·D) Python list-build → `np.fromiter` in `rf_set_complex_weights`), (b) the on-bridge reconstruct (onebrain fires
+triggers + reconstructs from synapses; rf reads its numpy kb directly), and (c) the un-fused resonate (rf has the
+adopted megakernel; onebrain's masked co-resident loop does NOT — that is exactly what lever 3 adds). **A5 session step
+0.5 = PROFILE the onebrain query breakdown** to attribute the residual before optimizing: if (a) dominates → precompute
+the fixed unbind/cleanup conns (cheap, no `sim/` edit — the role phasors + codebook are fixed; better still, precompute
+the CSR matrices and install them directly to bypass the per-query `np.fromiter`); if (b)/(c) dominate → lever 3 (the
+masked-megakernel) is the bigger lever. Do NOT speculatively precompute without the profile. The per-block scan stays
+the correctness oracle behind a flag.
 
 **Lever 2 — INDEXED STORE (host-side routing; optional).** A cue→block index so a query reconstructs only the candidate
 block(s), O(K)→O(1) reconstructs. NOTE: the FHRR-faithful form is the superposition-search (fire-all, lever 1), so lever
