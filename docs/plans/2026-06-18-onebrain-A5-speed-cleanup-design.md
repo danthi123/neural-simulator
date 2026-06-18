@@ -28,12 +28,16 @@ the rf path's batched scan + adopted megakernel. The probe re-runs after each le
 
 ## The levers (cheap-first; each individually verifiable, answer-identical, the moat preserved)
 
-**Lever 1 — BATCHED SCAN (no `sim/` edit; do FIRST).** Replace reconstruct-per-block with ONE resonate over a
-block-diagonal layout: fire ALL K triggers at once → the K readout blocks reconstruct in parallel → a resident
-block-diagonal unbind (the cued role's conj, tiled per block) → the K per-block recovered registers → the shared cleanup.
-This is the resident form of `RFPhasorComposer._unbind_all_phases` (`rf_phasor_composer.py:274`, already validated
-answer-identical for the rf path). Collapses O(K) resonate windows → O(1). **Gate:** answer-identical to the per-block
-scan (the A3 oracle) + the moat, 3 seeds × 2 D. Expected the biggest single win (K× fewer launches).
+**Lever 1 — BATCHED SCAN (no `sim/` edit; do FIRST) — DE-RISKED GO (2026-06-18).** Replace reconstruct-per-block with
+ONE resonate over a block-diagonal layout: fire ALL K triggers at once → the K readout blocks reconstruct in parallel →
+a resident block-diagonal unbind (each block's roles, tiled) → block-diagonal cleanup → read all K×roles. **Result
+(`_phaseB_onebrain_batched_scan_derisk.py`, 6/6 at K=8): == the per-block loop == ground truth (answer-identical), 7.3×
+faster** (~350 → ~48 ms/fact). 7.3× > the 5.6× onebrain-vs-rf gap, so this lever ALONE makes the one-brain composer
+competitive with (≈ faster than) the rf reference. **Integration note:** the unbind + cleanup conns are FIXED (the role
+phasors + the codebook don't change per query — only the store/trigger conns change per fact), so the production
+integration should PRECOMPUTE the fixed unbind/cleanup conns lists once (avoid the per-query Python list-build, which is
+the O(K·V·D) cost that would otherwise offset the win at large K) and the query just fires the triggers + reads. The
+per-block scan stays the correctness oracle behind a flag.
 
 **Lever 2 — INDEXED STORE (host-side routing; optional).** A cue→block index so a query reconstructs only the candidate
 block(s), O(K)→O(1) reconstructs. NOTE: the FHRR-faithful form is the superposition-search (fire-all, lever 1), so lever
