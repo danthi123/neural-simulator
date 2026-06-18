@@ -46,7 +46,9 @@ def _handoff(b, comp, role_phases, filler_phases, period, mode="single", permute
     """register->register bind->unbind on ONE persistent bridge. Returns the recovered phases [D] from unbound[2D:3D]."""
     D = comp.D
     zr = comp._to_phasor(role_phases)
-    zr_un = comp._to_phasor(role_phases[::-1] if permute_role else role_phases)   # permuted role for the unbind synapse
+    # anti-cheat: unbind with a genuinely DIFFERENT role ("action" vs the bound "agent") -- a clean scramble (role
+    # reversal was too weak: conj(role[D-1-k])*role[k] can coincidentally preserve recovery for some seeds).
+    zr_un = comp._to_phasor(comp.roles["action"] if permute_role else role_phases)
     zf = comp._to_phasor(filler_phases)
     bind = [] if lesion else [(D + k, k, complex(zr[k])) for k in range(D)]        # filler -> bound (sever = lesion)
     unbind = [(2 * D + k, D + k, complex(np.conj(zr_un[k]))) for k in range(D)]    # bound -> unbound
