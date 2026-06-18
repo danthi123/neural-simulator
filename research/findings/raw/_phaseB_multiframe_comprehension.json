@@ -1,0 +1,110 @@
+{
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "native_SVO": 1.0,
+  "nonnative": 1.0,
+  "permuted": 0.22222222222222224,
+  "lesion": 0.24074074074074073,
+  "n_comp": 6,
+  "n_moat": 6,
+  "chance": 0.3333333333333333,
+  "per_seed": [
+    {
+      "seed": 42,
+      "native_SVO": 1.0,
+      "nonnative": 1.0,
+      "permuted": 0.2222222222222222,
+      "lesion": 0.2222222222222222,
+      "mean_margin": 5.0888888888888895,
+      "lesion_margin": 0.0,
+      "moat_ok": true,
+      "per_frame": {
+        "SVO": 1.0,
+        "VSO": 1.0,
+        "OSV": 1.0
+      }
+    },
+    {
+      "seed": 43,
+      "native_SVO": 1.0,
+      "nonnative": 1.0,
+      "permuted": 0.2222222222222222,
+      "lesion": 0.2222222222222222,
+      "mean_margin": 5.730555555555555,
+      "lesion_margin": 0.0,
+      "moat_ok": true,
+      "per_frame": {
+        "SVO": 1.0,
+        "VSO": 1.0,
+        "OSV": 1.0
+      }
+    },
+    {
+      "seed": 44,
+      "native_SVO": 1.0,
+      "nonnative": 1.0,
+      "permuted": 0.2222222222222222,
+      "lesion": 0.2222222222222222,
+      "mean_margin": 5.45,
+      "lesion_margin": 0.0,
+      "moat_ok": true,
+      "per_frame": {
+        "SVO": 1.0,
+        "VSO": 1.0,
+        "OSV": 1.0
+      }
+    },
+    {
+      "seed": 100,
+      "native_SVO": 1.0,
+      "nonnative": 1.0,
+      "permuted": 0.2222222222222222,
+      "lesion": 0.2222222222222222,
+      "mean_margin": 6.127777777777776,
+      "lesion_margin": 0.0,
+      "moat_ok": true,
+      "per_frame": {
+        "SVO": 1.0,
+        "VSO": 1.0,
+        "OSV": 1.0
+      }
+    },
+    {
+      "seed": 101,
+      "native_SVO": 1.0,
+      "nonnative": 1.0,
+      "permuted": 0.2222222222222222,
+      "lesion": 0.2222222222222222,
+      "mean_margin": 4.119444444444444,
+      "lesion_margin": 0.0,
+      "moat_ok": true,
+      "per_frame": {
+        "SVO": 1.0,
+        "VSO": 1.0,
+        "OSV": 1.0
+      }
+    },
+    {
+      "seed": 102,
+      "native_SVO": 1.0,
+      "nonnative": 1.0,
+      "permuted": 0.2222222222222222,
+      "lesion": 0.3333333333333333,
+      "mean_margin": 5.288888888888888,
+      "lesion_margin": 0.0,
+      "moat_ok": true,
+      "per_frame": {
+        "SVO": 1.0,
+        "VSO": 1.0,
+        "OSV": 1.0
+      }
+    }
+  ]
+}
