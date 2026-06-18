@@ -1,0 +1,57 @@
+{
+  "single_held": 0.8333333333333334,
+  "bundle_train": 0.6975316532403498,
+  "bundle_held": 0.6392015392015392,
+  "lesion_sum_held": 0.08174603174603175,
+  "chance": 0.0625,
+  "additive_bundled": 0.193,
+  "learned_linear_bundled": 0.056,
+  "fixed_both_bundled": 0.989,
+  "go": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "single_held": 0.75,
+      "bundle_train": 0.5398521192361435,
+      "bundle_held": 0.5158730158730159,
+      "lesion": false
+    },
+    {
+      "seed": 43,
+      "single_held": 0.8333333333333334,
+      "bundle_train": 0.7707241153342071,
+      "bundle_held": 0.6969696969696969,
+      "lesion": false
+    },
+    {
+      "seed": 44,
+      "single_held": 0.9166666666666666,
+      "bundle_train": 0.7820187251506989,
+      "bundle_held": 0.7047619047619048,
+      "lesion": false
+    }
+  ],
+  "lesion": [
+    {
+      "seed": 42,
+      "single_held": 0.25,
+      "bundle_train": 0.2007318258773778,
+      "bundle_held": 0.08333333333333333,
+      "lesion": true
+    },
+    {
+      "seed": 43,
+      "single_held": 0.25,
+      "bundle_train": 0.20962766242824185,
+      "bundle_held": 0.0,
+      "lesion": true
+    },
+    {
+      "seed": 44,
+      "single_held": 0.08333333333333333,
+      "bundle_train": 0.18445555983070414,
+      "bundle_held": 0.1619047619047619,
+      "lesion": true
+    }
+  ]
+}
