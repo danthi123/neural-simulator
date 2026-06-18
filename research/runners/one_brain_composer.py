@@ -186,3 +186,27 @@ class OneBrainComposer:
             if wa == agent and wv == action and wp == patient:
                 return "yes" if wpol == "AFFIRM" else "no"
         return "unknown"
+
+    def render_fact(self, agent, order_fn=None):
+        """Generation (for the agent's `describe`): 'agent action patient' decoded from the first stored fact whose
+        agent matches, or None (the no-confab moat -- no invented sentence about an unknown subject). The action +
+        patient are DECODED from the on-bridge unbind (not the stored labels). `order_fn` (opt-in) -> the word order
+        (the spiking serial-order renderer); default = subject-verb-object."""
+        for i in range(len(self.kb)):
+            wa, wv, wp, _pol = self._read_block(i)
+            if wa == agent:
+                words = [wa, wv, wp]
+                order = order_fn(3) if order_fn is not None else [0, 1, 2]
+                return " ".join(words[o] for o in order)
+        return None
+
+    def query_chain(self, cue, actions):
+        """Multi-hop relational reasoning (for the agent's `reason_chain`): `cue` is the starting agent; each action's
+        patient becomes the next hop's agent cue. None (abstain) the moment any hop has no matching fact -- the
+        no-confab moat holds at EVERY hop (it iterates query_patient, which already abstains on a miss)."""
+        current = cue
+        for action in actions:
+            current = self.query_patient(current, action)
+            if current is None:
+                return None
+        return current

@@ -79,6 +79,23 @@ def test_onebrain_negation_yes_no():
     assert a.what_does("cat", "come") == "east"
 
 
+def test_onebrain_describe_and_reason():
+    """The richer caps via the agent: `describe` (generation -- render the stored fact for an agent, None on an unknown
+    agent = no confabulation) and `reason_chain` (multi-hop -- each action's patient becomes the next hop's agent,
+    abstaining the moment a hop has no fact)."""
+    from research.runners.brain_conversational_agent import BrainConversationalAgent
+    try:
+        a = BrainConversationalAgent(seed=42, composer_kind="onebrain", concepts={w: None for w in VOCAB})
+        a.hear("dog go cat")        # dog -go-> cat
+        a.hear("cat go north")      # cat -go-> north
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    assert a.describe("dog") == "dog go cat", "describe must render the stored fact"
+    assert a.describe("bird") is None, "moat breach: describe must not confabulate an unknown agent"
+    assert a.reason_chain("dog", ["go", "go"]) == "north", "multi-hop: dog -go-> cat -go-> north"
+    assert a.reason_chain("dog", ["go", "come"]) is None, "moat: no (cat, come) fact -> abstain at hop 2"
+
+
 def test_onebrain_default_path_unaffected():
     """The additive wiring must not change the default ('rf') agent: it has no `hear` on its composer, so it builds the
     agent's own parser and uses parse+store (the byte-unchanged path). A construction smoke (no GPU run needed)."""
