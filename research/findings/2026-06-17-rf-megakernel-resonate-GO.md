@@ -37,17 +37,42 @@ State is **double-buffered** (`re_in`/`re_out` swap each step) so the matvec rea
 - **Answer-identical end-to-end:** a composer with `enable_rf_cudagraph=True` returns the SAME who/what answers as
   the loop composer AND the ground truth, with the no-confab moat consistent (abstention preserved). The cleanup
   is argmax, so the tiny float32 phase differences never change an answer.
-- **~17× faster:** query 798.9 ms → 46.1 ms (the megakernel collapses the per-step launches AND compounds with the
-  CYCLE-152 batched scan). **Contention-skewed** (measured while a game shared the GPU); the clean quiet-GPU number
-  is the follow-up, but the order is decisive and exceeds the 11× prototype (which only graphed; this also fuses
-  the matvec + element-wise into one kernel).
+- **~24× faster (clean quiet-GPU):** query 856.5 ms → 36.3 ms (`_phaseB_megakernel_clean_speedup.py`, RTX 3090,
+  no contention). The megakernel collapses the per-step launches AND compounds with the CYCLE-152 batched scan.
+  This **exceeds** the earlier 17× (which was contention-skewed by concurrent gaming) and the 11× graph-only
+  prototype — the megakernel also fuses the matvec + element-wise into one kernel, so on a clean GPU (where the
+  loop is purely launch-bound) the win is larger, not smaller.
+
+## ADOPTION GATE — PASSED (2026-06-17)
+
+The pre-registered full-conversational-suite adoption gate is GREEN. `_phaseB_megakernel_conversation_validation.py`
+(SIM_BACKEND=cupy) builds a LOOP agent and a MEGAKERNEL agent at the same seed, hears the same facts (incl. a
+**recursive embedded clause** `dog see (cat go south)` + two chain facts), and runs the WHOLE conversational stack:
+
+| op | loop | megakernel | expect |
+|---|---|---|---|
+| what(dog, go) | north | north | north |
+| who(go, north) | dog | dog | dog |
+| is_it_true(cat, come, south) | yes | yes | yes |
+| is_it_true(river, look, west) [NEGATE] | no | no | no |
+| is_it_true(apple, stop, east) [unstored] | unknown | unknown | unknown |
+| what(dog, see) [**embedded clause**] | cat go south | cat go south | cat go south |
+| what(bird, fly) [**abstain**] | None | None | None |
+| query_chain(dog, [eat, swim]) [**multi-hop**] | river | river | river |
+
+**8/8 answer-identical (megakernel == loop == ground truth)** — including the embedded clause (the exact case that
+killed the period-shortening lever, `2026-06-17-resonate-period-free-speedup.md`) and the no-confab abstention
+(moat preserved). ⇒ the megakernel is safe to adopt for real-time conversation. **The agent now exposes a
+default-OFF opt-in:** `BrainConversationalAgent(..., enable_rf_cudagraph=True)` passes through to the composer
+(GPU-only; default OFF keeps the loop path byte-identical for tests/numpy). Flip it on for the real-time
+conversation path; leave it off everywhere else.
 
 ## Honest scope + next
 
-- **Default OFF.** The production agent does not yet opt in — flip `enable_rf_cudagraph` (composer/agent) only
-  after the FULL conversational suite passes with it on (incl. `test_embedded_clause`, multi-turn, reconsolidation)
-  and a clean quiet-GPU speedup is banked. The bridge-level + end-to-end checks here are the foundation; the
-  full-suite-on gate is the adoption step.
+- **Default OFF — adoption gate now PASSED (see above).** The full conversational suite is answer-identical with
+  the megakernel on (8/8 ops incl. embedded clause + multi-hop + abstention) and a clean quiet-GPU 24× is banked.
+  The agent exposes the default-off `enable_rf_cudagraph` opt-in; the real-time conversation path can flip it on.
+  Bridge-level default stays OFF so tests/numpy are byte-identical.
 - **CUDA-graph capture is now a smaller follow-on** (design doc step 3): the megakernel already reduces the op to
   208 launches (1/step); graph-capturing that loop removes the residual per-step launch overhead for a final
   increment on top of the 17×. Optional — the megakernel alone is the bulk of the win.

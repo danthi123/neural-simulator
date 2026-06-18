@@ -150,7 +150,7 @@ class BrainConversationalAgent:
 
     def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None, composer_kind="rf",
                  enable_spiking_cleanup=False, enable_substrate_store=False, grounded_codes=None,
-                 enable_learned_assoc=False, enable_neural_render=False):
+                 enable_learned_assoc=False, enable_neural_render=False, enable_rf_cudagraph=False):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -180,10 +180,14 @@ class BrainConversationalAgent:
             # nesting + more bundle cross-talk) needs more phase resolution than flat queries. A period adoption is
             # gated on the FULL conversational suite (the clause test is the binding constraint); the clause-safe
             # threshold (likely ~100-128, still a ~1.6-2x win) is a bounded follow-on sweep.
+            # enable_rf_cudagraph (opt-in, GPU-only): route the resonate step through the fused RF megakernel
+            # (1 CUDA launch/step instead of ~15). Default OFF = byte-identical loop path; validated answer-identical
+            # across the full conversational stack incl. embedded clauses (2026-06-17-rf-megakernel-resonate-GO.md).
             self.composer = RFPhasorComposer(seed=seed, D=128, vocab=vocab, period=200,
                                              enable_spiking_cleanup=enable_spiking_cleanup,
                                              enable_substrate_store=enable_substrate_store,
-                                             grounded_codes=grounded_codes)
+                                             grounded_codes=grounded_codes,
+                                             enable_rf_cudagraph=enable_rf_cudagraph)
         self._dlpfc = None              # dialogue-planning Control: built lazily, cached, rebuilt only when the graph changes
         self._dlpfc_key = None
         # (cheat-D conversion, opt-in) the dialogue-planning association graph LEARNED in the substrate (a sparse
