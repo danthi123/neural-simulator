@@ -1,0 +1,58 @@
+{
+  "selection": 1.0,
+  "end_to_end": 1.0,
+  "permuted": 0.22222222222222224,
+  "lesion": 0.3333333333333333,
+  "go": true,
+  "seeds_go": 6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "selection": 1.0,
+      "end_to_end": 1.0,
+      "permuted": 0.2222222222222222,
+      "lesion": 0.3333333333333333,
+      "moat": true
+    },
+    {
+      "seed": 43,
+      "selection": 1.0,
+      "end_to_end": 1.0,
+      "permuted": 0.2222222222222222,
+      "lesion": 0.3333333333333333,
+      "moat": true
+    },
+    {
+      "seed": 44,
+      "selection": 1.0,
+      "end_to_end": 1.0,
+      "permuted": 0.2222222222222222,
+      "lesion": 0.3333333333333333,
+      "moat": true
+    },
+    {
+      "seed": 100,
+      "selection": 1.0,
+      "end_to_end": 1.0,
+      "permuted": 0.2222222222222222,
+      "lesion": 0.3333333333333333,
+      "moat": true
+    },
+    {
+      "seed": 101,
+      "selection": 1.0,
+      "end_to_end": 1.0,
+      "permuted": 0.2222222222222222,
+      "lesion": 0.3333333333333333,
+      "moat": true
+    },
+    {
+      "seed": 102,
+      "selection": 1.0,
+      "end_to_end": 1.0,
+      "permuted": 0.2222222222222222,
+      "lesion": 0.3333333333333333,
+      "moat": true
+    }
+  ]
+}
