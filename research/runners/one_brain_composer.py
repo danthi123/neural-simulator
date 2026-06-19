@@ -32,11 +32,31 @@ import numpy as np
 from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
 from sim.config import CoreSimConfig
 from sim.enums import NeuronModel
-from sim.backend import to_host
+from sim.backend import to_host, get_backend, get_sparse_module
 from research.runners.brain_conversational_agent import BridgeParser
 from research.runners.rf_phasor_composer import RFPhasorComposer, _is_clause
 
 ROLES3 = ["agent", "action", "patient"]
+
+
+def _build_complex_csr(n_total, connections):
+    """Build the (cp_rf_w_re, cp_rf_w_im) device CSR pair from a `(post, pre, complex_w)` connection list -- the SAME
+    construction `SimulationBridge.rf_set_complex_weights` performs (np.fromiter -> backend sparse csr_matrix), pulled
+    out so the OneBrainComposer can build a QUERY-INVARIANT operator ONCE and reuse the device handles across queries
+    instead of rebuilding from a fresh tuple list every read (the measured 72%-of-a-query weight-rebuild cost; the
+    latency-arc scoping). Backend-agnostic (cupy on GPU, scipy on numpy) so the A/B + test parity holds on both paths.
+    Returns (W_re, W_im) ready to assign to b.cp_rf_w_re / b.cp_rf_w_im."""
+    xp, _name = get_backend()
+    csp = get_sparse_module()
+    m = len(connections)
+    rows = np.fromiter((int(post) for (post, pre, w) in connections), dtype=np.int32, count=m)
+    cols = np.fromiter((int(pre) for (post, pre, w) in connections), dtype=np.int32, count=m)
+    w_re = np.fromiter((float(complex(w).real) for (post, pre, w) in connections), dtype=np.float64, count=m)
+    w_im = np.fromiter((float(complex(w).imag) for (post, pre, w) in connections), dtype=np.float64, count=m)
+    r = xp.asarray(rows); c = xp.asarray(cols)
+    W_re = csp.csr_matrix((xp.asarray(w_re), (r, c)), shape=(n_total, n_total))
+    W_im = csp.csr_matrix((xp.asarray(w_im), (r, c)), shape=(n_total, n_total))
+    return W_re, W_im
 
 
 def build_coresident_bridge(seed, n_total, enable_rf_cudagraph=False):
@@ -71,10 +91,21 @@ class OneBrainComposer:
     `ask_yes_no`; `kb` bookkeeping)."""
 
     def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200, enable_batched=True,
-                 enable_rf_cudagraph=True, grounded_codes=None, confidence_gate=0.0):
+                 enable_rf_cudagraph=True, grounded_codes=None, confidence_gate=0.0, enable_csr_cache=True):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         self.enable_batched = bool(enable_batched)       # A5 lever 1: read ALL blocks in 3 windows (7.3x); per-block=oracle
         self.enable_rf_cudagraph = bool(enable_rf_cudagraph)   # A5 lever 3: masked megakernel for the resonate (GPU only)
+        # enable_csr_cache (default ON, A5 lever 4 / the latency-arc top increment): cache the QUERY-INVARIANT unbind +
+        # cleanup complex-weight CSRs (keyed by n_facts + the fixed block layout) and the store CSR (keyed by a store-
+        # dirty flag), so the batched read reuses the device matrices instead of rebuilding ~100k-240k tuples + two
+        # fresh csr_matrix constructions + H2D EVERY query (the measured ~72%-of-a-query cost). ANSWER-IDENTICAL (the
+        # reused CSR VALUES are the same; only WHEN they're built changes -- the matvec/dynamics are byte-unchanged).
+        # Invalidated on exactly the layout-changing ops: a `store` grows n_facts (new unbind/clean cache key) and a
+        # `store`/reconsolidation rewrites store_conns (store CSR dirty). Toggle off for the A/B + numpy parity.
+        self.enable_csr_cache = bool(enable_csr_cache)
+        self._csr_cache = {}          # n_facts -> ((Ure,Uim), (Cre,Cim)) for the batched unbind + cleanup operators
+        self._store_csr = None        # (Sre, Sim) for store_conns; rebuilt only when _store_dirty
+        self._store_dirty = True      # store_conns changed since the last build (a write happened) -> rebuild the CSR
         # confidence_gate (default 0.0 = OFF = byte-identical): a familiarity/confidence gate on the cue read-out. The
         # cleanup is a matched filter; a CONFIDENT block's winner dominates (a large normalized margin), a noise-
         # dominated (heavily-damaged) block's cleanup is flat (a small margin). When > 0, a block whose CUE-role
@@ -163,6 +194,7 @@ class OneBrainComposer:
             self.store_conns[i * D:(i + 1) * D] = block_conns       # in-place rewrite (reconsolidation)
         else:
             self.store_conns += block_conns                         # append (a new fact)
+        self._store_dirty = True       # store_conns changed -> the cached store CSR is stale (both store + reconsolidation)
 
     def _store_composite(self, fillers, roles):
         i = len(self.kb)
@@ -212,15 +244,74 @@ class OneBrainComposer:
             return (None, None, None, None)               # an unfamiliar (noise-dominated) block -> blank -> abstain
         return tuple(out)            # (agent, action, patient, polarity)
 
+    def _build_batched_unbind_clean(self, n):
+        """Build the QUERY-INVARIANT batched unbind + cleanup connection lists for `n` blocks and convert them to device
+        CSR pairs. These depend ONLY on (n, the role/concept codebooks, the fixed block layout) -- never on the stored
+        fact content (that lives in store_conns) -- so for a fixed store size they are byte-IDENTICAL every query. Built
+        once per n and cached in self._csr_cache[n]. Returns ((Ure,Uim),(Cre,Cim))."""
+        comp, D, V, NP = self.comp, self.D, self.V, self.NP
+        roles = ROLES3 + ["polarity"]
+        unbind = []
+        for i in range(n):
+            trig = self.store_base + i * self.block
+            for ri, role in enumerate(roles):
+                zc = np.conj(comp._to_phasor(comp.roles[role]))
+                qreg = self.bat_q_base + (i * 4 + ri) * D
+                unbind += [(qreg + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
+        clean = []
+        for i in range(n):
+            cblk = self.bat_c_base + i * self.cb
+            for ri in range(3):
+                qreg = self.bat_q_base + (i * 4 + ri) * D
+                for j in range(V):
+                    cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
+                    clean += [(cblk + ri * V + j, qreg + k, complex(cc[k])) for k in range(D)]
+            qreg_p = self.bat_q_base + (i * 4 + 3) * D
+            for j in range(NP):
+                cc = np.conj(comp._to_phasor(comp.concepts[self.pol_words[j]]))
+                clean += [(cblk + 3 * V + j, qreg_p + k, complex(cc[k])) for k in range(D)]
+        return (_build_complex_csr(self.n_total, unbind), _build_complex_csr(self.n_total, clean))
+
+    def _store_csr_cached(self):
+        """The store_conns CSR pair, (re)built only when _store_dirty (a write since the last build). A query never
+        changes store_conns, so this is built once per store/reconsolidation and reused across all subsequent reads."""
+        if self.enable_csr_cache and not self._store_dirty and self._store_csr is not None:
+            return self._store_csr
+        self._store_csr = _build_complex_csr(self.n_total, self.store_conns)
+        self._store_dirty = False
+        return self._store_csr
+
     def _read_all_blocks(self):
         """A5 lever 1 (BATCHED): read ALL stored blocks in 3 resonate windows -- fire EVERY trigger (the readouts
         reconstruct in parallel, the validated per-block isolation, zero cross-talk) -> block-diagonal unbind (each
         block's 4 roles into the batched Q region) -> block-diagonal cleanup -> read all. == the per-block loop
-        (de-risk `_phaseB_onebrain_batched_scan_derisk.py`: 6/6 answer-identical, 7.3x). Returns [(a,v,p,pol)] per block."""
+        (de-risk `_phaseB_onebrain_batched_scan_derisk.py`: 6/6 answer-identical, 7.3x). Returns [(a,v,p,pol)] per block.
+
+        A5 lever 4 (CSR cache, default on): the store CSR is reused across queries (rebuilt only on a write), and the
+        unbind + cleanup CSRs (query-INVARIANT, keyed by n) are built once and installed by direct cp_rf_w_re/im
+        assignment instead of rebuilt from fresh tuple lists per query. ANSWER-IDENTICAL -- the reused CSRs hold the
+        same values; the dynamics + the megakernel matvec are byte-unchanged. enable_csr_cache=False = the stock path."""
         comp, b, D, Pd, V, NP = self.comp, self.b, self.D, self.period, self.V, self.NP
         n = len(self.kb)
         if n == 0:
             return []
+        if self.enable_csr_cache:
+            if n not in self._csr_cache:
+                self._csr_cache[n] = self._build_batched_unbind_clean(n)       # query-invariant: build once per n
+            (Ure, Uim), (Cre, Cim) = self._csr_cache[n]
+            Sre, Sim = self._store_csr_cached()                                # rebuilt only when store changed
+            b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+            kick = np.zeros(self.n_total, dtype=np.complex128)
+            for i in range(n):
+                kick[self.store_base + i * self.block] = 1.0                   # fire EVERY stored trigger
+            b.cp_rf_w_re, b.cp_rf_w_im = Sre, Sim                              # install the cached store operator
+            b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
+            b.rf_resonate_steps(Pd + 8)
+            b.cp_rf_w_re, b.cp_rf_w_im = Ure, Uim; b.rf_resonate_steps(Pd + 8)  # cached unbind
+            b.cp_rf_w_re, b.cp_rf_w_im = Cre, Cim; b.rf_resonate_steps(1)       # cached cleanup
+            mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
+            return self._decode_batched_mem(mem, n)
+        # --- stock path (cache off): rebuild every CSR from fresh tuple lists each query ---
         b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
         kick = np.zeros(self.n_total, dtype=np.complex128)
         for i in range(n):
@@ -250,6 +341,12 @@ class OneBrainComposer:
                 clean += [(cblk + 3 * V + j, qreg_p + k, complex(cc[k])) for k in range(D)]
         b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
         mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
+        return self._decode_batched_mem(mem, n)
+
+    def _decode_batched_mem(self, mem, n):
+        """Decode the batched cleanup membrane read-out into [(agent,action,patient,polarity)] per block (the argmax +
+        confidence-gate logic, shared by the cached + stock batched paths so they are answer-identical by construction)."""
+        V, NP = self.V, self.NP
         out = []
         for i in range(n):
             cblk = self.bat_c_base + i * self.cb
