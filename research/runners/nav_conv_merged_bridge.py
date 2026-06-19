@@ -455,6 +455,7 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  nav_critic_convergent_upstate: bool = False,
                                  nav_critic_homeostasis_mask: str = "all3",
                                  nav_critic_spiking_sc: bool = False,
+                                 nav_critic_place_selforg: bool = False,
                                  _global_het_test: bool = False):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
@@ -517,6 +518,22 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     # 4-region minimal co_resident_limbic organ (two DA pools + two scope=all broadcasts would double-count).
     assert not (co_resident_limbic and co_resident_nav_critic), \
         "co_resident_limbic (minimal organ) and co_resident_nav_critic (full nav critic) are mutually exclusive"
+    # nav_critic_place_selforg (TRUE ONE BRAIN roadmap #5 — retire the host-Gaussian vs_place_context afferent for
+    # the SELF-ORGANIZED spiking `place` code): forward neural_place_selforg=True into build_bg_brain_regions so the
+    # critic's position afferent becomes the self-org hippocampal `place` pool (place_sensors -> place threshold-WTA
+    # + place_fs FS-PING -> the PLASTIC place->striosome_value coincidence_detector pathway, g11_bg_runner.py:1175/
+    # :1783) instead of the host-Gaussian vs_place_context (g11_bg_runner.py:1841 `elif enable_neural_critic:`).
+    # DUAL VALUE: (a) retires a host shortcut (the position code becomes self-organized spiking place cells); (b) the
+    # coincidence-volley fires the MSN-D1 critic from the LEARNED code WITHOUT the position-BLIND up-state bootstrap
+    # that capped the CYCLE-211/214 value-train delta ~1.3 -> so it CAN lift the delta. MUTUALLY EXCLUSIVE with
+    # nav_critic_convergent_upstate: the up-state arm is vs_place_context-specific (the self-org branch has no
+    # vs_place_drive region/pathway), and g11_bg_runner.py:3853 HARD-GATES enable_convergent_upstate OFF whenever
+    # neural_place_selforg is on (the position-blind A1 floor caps grading) -- so co-requesting both is a config error.
+    # Default False = byte-identical to the vs_place_context value-train build.
+    assert not (nav_critic_place_selforg and nav_critic_convergent_upstate), \
+        ("nav_critic_place_selforg (self-org place afferent) and nav_critic_convergent_upstate (vs_place_context "
+         "up-state arm) are mutually exclusive: the up-state arm has no vs_place_drive in the self-org branch and "
+         "g11_bg_runner hard-gates enable_convergent_upstate OFF under neural_place_selforg.")
     if co_resident_nav_critic:
         # nav_critic_convergent_upstate (the value-train A1 up-state arm, CYCLE 209 value-train build): forward
         # enable_convergent_upstate to build_bg_brain_regions so the dense NON-plastic vs_place_drive->striosome_value
@@ -545,6 +562,7 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
             n_cortex=n_cortex, enable_spiking_wta_readout=enable_spiking_wta_readout,
             enable_neural_critic=True, spiking_reward_us=True, enable_critic_homeostasis=True,
             enable_convergent_upstate=bool(nav_critic_convergent_upstate),
+            neural_place_selforg=bool(nav_critic_place_selforg),
             enable_visual_cortex=bool(nav_critic_spiking_sc),
             enable_spiking_sc=bool(nav_critic_spiking_sc),
             enable_spiking_sc_approach=bool(nav_critic_spiking_sc))
@@ -1050,7 +1068,8 @@ class MergedNavConvAgent:
     """
 
     def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_limbic=False,
-                 co_resident_nav_critic=False, nav_critic_spiking_sc=False):
+                 co_resident_nav_critic=False, nav_critic_spiking_sc=False,
+                 nav_critic_place_selforg=False):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
         merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory codebook
         share one word set.
@@ -1072,12 +1091,19 @@ class MergedNavConvAgent:
         # is the SYNAPTIC SC-proximity (sc_rostral->reward_us), retiring the host Manhattan formula. Default
         # False = byte-preserved. Only meaningful with co_resident_nav_critic (it builds reward_us + the critic).
         self.nav_critic_spiking_sc = bool(nav_critic_spiking_sc)
+        # nav_critic_place_selforg (TRUE ONE BRAIN roadmap #5): swap the critic's host-Gaussian vs_place_context
+        # position afferent for the SELF-ORGANIZED spiking `place` code (place_sensors -> place threshold-WTA +
+        # place_fs FS-PING -> plastic coincidence place->striosome_value). Default False = byte-preserved. Only
+        # meaningful with co_resident_nav_critic (it builds the critic). The moat check verifies the self-org place
+        # afferent + the DA-over-snc modulator do not perturb the parser/conversational comprehension.
+        self.nav_critic_place_selforg = bool(nav_critic_place_selforg)
         _D = 128
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
             seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,
             co_resident_limbic=self.co_resident_limbic,
             co_resident_nav_critic=self.co_resident_nav_critic,
-            nav_critic_spiking_sc=self.nav_critic_spiking_sc)
+            nav_critic_spiking_sc=self.nav_critic_spiking_sc,
+            nav_critic_place_selforg=self.nav_critic_place_selforg)
         words = self._handles["vocab"]   # the sorted merged vocab (the dlPFC + parser word set)
 
         # The composer. STEP 2a default: on its OWN per-op bridges (separate). STEP 2b (co_resident_composer=True):
