@@ -1,0 +1,314 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "held_out": true,
+  "n_per_cond": 16,
+  "learn_mode": "install",
+  "has_controls": false,
+  "n_go": 5,
+  "n": 6,
+  "overall_GO": true,
+  "total_moat_breaches": 0,
+  "results": [
+    {
+      "seed": 42,
+      "learn_mode": "install",
+      "weights_learned": {
+        "position": 6.0,
+        "animacy": 20.0,
+        "verbfit": 20.0,
+        "lexbias": 2.0
+      },
+      "abstain_margin": 20.0,
+      "multicue_battery": {
+        "drop_verb": 0.9375,
+        "scramble": 1.0,
+        "object_front": 0.875,
+        "_mean": 0.9167,
+        "_mean_posdeg": 0.9375
+      },
+      "position_only_battery": {
+        "drop_verb": 1.0,
+        "scramble": 0.5625,
+        "object_front": 0.0,
+        "_mean": 0.5208,
+        "_mean_posdeg": 0.2812
+      },
+      "lesion_battery": {
+        "drop_verb": 1.0,
+        "scramble": 0.5625,
+        "object_front": 0.0,
+        "_mean": 0.5208,
+        "_mean_posdeg": 0.2812
+      },
+      "clean_multicue": 0.875,
+      "clean_position_only": 0.875,
+      "moat": {
+        "breaches": 0,
+        "n": 16,
+        "abstain_rate": 1.0
+      },
+      "sem_pos_spread": 14.0,
+      "weight_signature_ok": true,
+      "gates": {
+        "multicue_ge_0.80": true,
+        "position_only_collapses_le_0.45": true,
+        "lesion_collapses_near_position": true,
+        "clean_unregressed": true,
+        "moat_zero_breach": true
+      },
+      "seed_GO": true
+    },
+    {
+      "seed": 43,
+      "learn_mode": "install",
+      "weights_learned": {
+        "position": 6.0,
+        "animacy": 20.0,
+        "verbfit": 20.0,
+        "lexbias": 2.0
+      },
+      "abstain_margin": 20.0,
+      "multicue_battery": {
+        "drop_verb": 1.0,
+        "scramble": 1.0,
+        "object_front": 0.9375,
+        "_mean": 0.9375,
+        "_mean_posdeg": 0.9375
+      },
+      "position_only_battery": {
+        "drop_verb": 1.0,
+        "scramble": 0.625,
+        "object_front": 0.0,
+        "_mean": 0.5417,
+        "_mean_posdeg": 0.3125
+      },
+      "lesion_battery": {
+        "drop_verb": 1.0,
+        "scramble": 0.625,
+        "object_front": 0.0,
+        "_mean": 0.5417,
+        "_mean_posdeg": 0.3125
+      },
+      "clean_multicue": 0.875,
+      "clean_position_only": 0.875,
+      "moat": {
+        "breaches": 0,
+        "n": 16,
+        "abstain_rate": 1.0
+      },
+      "sem_pos_spread": 14.0,
+      "weight_signature_ok": true,
+      "gates": {
+        "multicue_ge_0.80": true,
+        "position_only_collapses_le_0.45": true,
+        "lesion_collapses_near_position": true,
+        "clean_unregressed": true,
+        "moat_zero_breach": true
+      },
+      "seed_GO": true
+    },
+    {
+      "seed": 44,
+      "learn_mode": "install",
+      "weights_learned": {
+        "position": 6.0,
+        "animacy": 20.0,
+        "verbfit": 20.0,
+        "lexbias": 2.0
+      },
+      "abstain_margin": 20.0,
+      "multicue_battery": {
+        "drop_verb": 1.0,
+        "scramble": 1.0,
+        "object_front": 0.75,
+        "_mean": 0.9167,
+        "_mean_posdeg": 0.9062
+      },
+      "position_only_battery": {
+        "drop_verb": 1.0,
+        "scramble": 0.5625,
+        "object_front": 0.0,
+        "_mean": 0.5208,
+        "_mean_posdeg": 0.2812
+      },
+      "lesion_battery": {
+        "drop_verb": 1.0,
+        "scramble": 0.5625,
+        "object_front": 0.0,
+        "_mean": 0.5208,
+        "_mean_posdeg": 0.2812
+      },
+      "clean_multicue": 0.875,
+      "clean_position_only": 0.875,
+      "moat": {
+        "breaches": 0,
+        "n": 16,
+        "abstain_rate": 1.0
+      },
+      "sem_pos_spread": 14.0,
+      "weight_signature_ok": true,
+      "gates": {
+        "multicue_ge_0.80": true,
+        "position_only_collapses_le_0.45": true,
+        "lesion_collapses_near_position": true,
+        "clean_unregressed": true,
+        "moat_zero_breach": true
+      },
+      "seed_GO": true
+    },
+    {
+      "seed": 45,
+      "learn_mode": "install",
+      "weights_learned": {
+        "position": 6.0,
+        "animacy": 20.0,
+        "verbfit": 20.0,
+        "lexbias": 2.0
+      },
+      "abstain_margin": 20.0,
+      "multicue_battery": {
+        "drop_verb": 1.0,
+        "scramble": 0.9375,
+        "object_front": 0.9375,
+        "_mean": 0.875,
+        "_mean_posdeg": 0.9375
+      },
+      "position_only_battery": {
+        "drop_verb": 1.0,
+        "scramble": 0.5625,
+        "object_front": 0.0,
+        "_mean": 0.5208,
+        "_mean_posdeg": 0.2812
+      },
+      "lesion_battery": {
+        "drop_verb": 1.0,
+        "scramble": 0.5625,
+        "object_front": 0.0,
+        "_mean": 0.5208,
+        "_mean_posdeg": 0.2812
+      },
+      "clean_multicue": 0.875,
+      "clean_position_only": 0.875,
+      "moat": {
+        "breaches": 0,
+        "n": 16,
+        "abstain_rate": 1.0
+      },
+      "sem_pos_spread": 14.0,
+      "weight_signature_ok": true,
+      "gates": {
+        "multicue_ge_0.80": true,
+        "position_only_collapses_le_0.45": true,
+        "lesion_collapses_near_position": true,
+        "clean_unregressed": true,
+        "moat_zero_breach": true
+      },
+      "seed_GO": true
+    },
+    {
+      "seed": 46,
+      "learn_mode": "install",
+      "weights_learned": {
+        "position": 6.0,
+        "animacy": 20.0,
+        "verbfit": 20.0,
+        "lexbias": 2.0
+      },
+      "abstain_margin": 20.0,
+      "multicue_battery": {
+        "drop_verb": 1.0,
+        "scramble": 1.0,
+        "object_front": 0.4375,
+        "_mean": 0.7292,
+        "_mean_posdeg": 0.6875
+      },
+      "position_only_battery": {
+        "drop_verb": 0.9375,
+        "scramble": 0.5,
+        "object_front": 0.0,
+        "_mean": 0.5,
+        "_mean_posdeg": 0.25
+      },
+      "lesion_battery": {
+        "drop_verb": 1.0,
+        "scramble": 0.5,
+        "object_front": 0.0,
+        "_mean": 0.5,
+        "_mean_posdeg": 0.25
+      },
+      "clean_multicue": 0.875,
+      "clean_position_only": 0.9375,
+      "moat": {
+        "breaches": 0,
+        "n": 16,
+        "abstain_rate": 1.0
+      },
+      "sem_pos_spread": 14.0,
+      "weight_signature_ok": true,
+      "gates": {
+        "multicue_ge_0.80": false,
+        "position_only_collapses_le_0.45": true,
+        "lesion_collapses_near_position": true,
+        "clean_unregressed": true,
+        "moat_zero_breach": true
+      },
+      "seed_GO": false
+    },
+    {
+      "seed": 47,
+      "learn_mode": "install",
+      "weights_learned": {
+        "position": 6.0,
+        "animacy": 20.0,
+        "verbfit": 20.0,
+        "lexbias": 2.0
+      },
+      "abstain_margin": 20.0,
+      "multicue_battery": {
+        "drop_verb": 1.0,
+        "scramble": 1.0,
+        "object_front": 0.9375,
+        "_mean": 0.9583,
+        "_mean_posdeg": 0.9688
+      },
+      "position_only_battery": {
+        "drop_verb": 1.0,
+        "scramble": 0.5625,
+        "object_front": 0.0,
+        "_mean": 0.5208,
+        "_mean_posdeg": 0.2812
+      },
+      "lesion_battery": {
+        "drop_verb": 1.0,
+        "scramble": 0.5625,
+        "object_front": 0.0,
+        "_mean": 0.5208,
+        "_mean_posdeg": 0.2812
+      },
+      "clean_multicue": 0.875,
+      "clean_position_only": 0.875,
+      "moat": {
+        "breaches": 0,
+        "n": 16,
+        "abstain_rate": 1.0
+      },
+      "sem_pos_spread": 14.0,
+      "weight_signature_ok": true,
+      "gates": {
+        "multicue_ge_0.80": true,
+        "position_only_collapses_le_0.45": true,
+        "lesion_collapses_near_position": true,
+        "clean_unregressed": true,
+        "moat_zero_breach": true
+      },
+      "seed_GO": true
+    }
+  ]
+}
