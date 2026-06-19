@@ -21,7 +21,7 @@ digraph NavigationBrain {
     fontname="Helvetica";
     labelloc="t";
     fontsize=24;
-    label=<<B>Navigation brain — every region &amp; pathway, as implemented</B><BR/><FONT POINT-SIZE="12">build_bg_brain_regions() · per-action pools collapsed ×4 (N/E/S/W)<BR/>signal nature + direction + plasticity + gating encoded · faithful-vs-shortcut flagged</FONT><BR/> >;
+    label=<<B>Navigation brain — every region &amp; pathway, as implemented</B><BR/><FONT POINT-SIZE="12">the action-selection brain (one half of the shared "one brain") · per-direction pools collapsed ×4 (N/E/S/W)<BR/>the move now EMERGES from a spiking race (accumulate → commit) by DEFAULT — the hand-coded shortcut is retired<BR/>signal nature + direction + learning + gating shown · faithful-vs-shortcut flagged (see legend)</FONT><BR/> >;
 
     // node default: excitatory cortical-type. Inhibitory & opt-in override per node.
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10.5,
@@ -142,16 +142,20 @@ digraph NavigationBrain {
     }
 
     // ====================================================================
-    //  C5 — DECISION ACCUMULATOR → COMMIT  (the spiking-WTA action readout)
+    //  C5 — DECISION: ACCUMULATE → COMMIT  (the spiking action read-out)
+    //  DEFAULT-ON as of 2026-06-19 (2026-06-19-spiking-decision-default-on-GO):
+    //  the move EMERGES from this spiking race; the host Python argmax read-out
+    //  is RETIRED (kept only as the opt-in motor/thal oracle). 6/6-seed GO,
+    //  within 25% of the host floor (1.16x), 100% commit-burst.
     //  (the SC ORIENTING reflex is the separate cluster_sc_orient, above)
     // ====================================================================
     subgraph cluster_sc {
-        label=<<B>SC accumulate → commit</B>  (C5 · spiking-WTA readout · --readout-source spiking_wta)>;
-        style="rounded,filled,dashed"; color="#7d3c98"; fillcolor="#f5eef8"; fontcolor="#7d3c98"; fontsize=13; margin=12;
-        sel    [label=<<B>sel_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">NMDA accumulator (Wang-2002)<BR/>soft-WTA α&lt;1</FONT>>, fillcolor="#e8daef", color="#6c3483", penwidth=1.6];
-        selFS  [label=<<B>sel_FS_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">structured cross-pool WTA</FONT>>, fillcolor="#ebdef0", color="#4a235a", penwidth=2.2];
-        commit [label=<<B>commit_{X}</B>  ×4<BR/><FONT POINT-SIZE="8.5">SC saccade burst · all-or-none</FONT>>, fillcolor="#e8daef", color="#6c3483", penwidth=1.6];
-        opn    [label=<<B>commit_OPN</B>  (opt)<BR/><FONT POINT-SIZE="8.5">omnipause · tonic gate</FONT>>, fillcolor="#ebdef0", color="#4a235a", penwidth=2.2];
+        label=<<B>The DECISION — accumulate → commit</B>  (C5 · <B>DEFAULT</B>: the move emerges from the spiking race)>;
+        style="rounded,filled"; color="#7d3c98"; fillcolor="#f5eef8"; fontcolor="#7d3c98"; fontsize=13; penwidth=2.4; margin=12;
+        sel    [label=<<B>Evidence accumulator</B>  ×4<BR/><FONT POINT-SIZE="8.5">builds up support for each direction (slow NMDA)<BR/>winner-take-most (Wang-2002)</FONT>>, fillcolor="#e3d4ef", color="#6c3483", penwidth=2.0];
+        selFS  [label=<<B>Cross-direction inhibition</B>  ×4<BR/><FONT POINT-SIZE="8.5">the leader suppresses the others</FONT>>, fillcolor="#ebdef0", color="#4a235a", penwidth=2.2];
+        commit [label=<<B>Commit burst</B>  ×4<BR/><FONT POINT-SIZE="8.5">an all-or-none burst PICKS the move<BR/>(superior-colliculus saccade analogue, Lo-Wang)</FONT>>, fillcolor="#e3d4ef", color="#6c3483", penwidth=2.0];
+        opn    [label=<<B>Hold-until-a-winner gate</B>  (opt)<BR/><FONT POINT-SIZE="8.5">keeps all bursts silent until one direction wins (omnipause)</FONT>>, fillcolor="#ebdef0", color="#4a235a", penwidth=2.2];
     }
 
     // ====================================================================
@@ -258,19 +262,19 @@ digraph NavigationBrain {
     thal -> cortex [label="thalamo-cortical\nfeedback (opt, Cluster A)", color="#117a65", style=dashed, constraint=false];
 
     // -- 3B / 3E thalamus → motor & → accumulator --
-    thal -> motor [label="thal→motor", penwidth=2.0];
-    thal -> sel   [label="relay→accumulator\n(read-only tap)"];
+    thal -> motor [label="relay → motor\n(host-argmax oracle path, opt-in)", style=dashed, penwidth=1.6];
+    thal -> sel   [label="relay feeds the decision\n(read-only tap)"];
     thal -> trn   [label="relay collateral (opt)"];
 
-    // -- 3E SC accumulate → commit --
-    sel    -> sel    [label="NMDA-recur ⟲\nevidence integration", color="#1e8449", penwidth=2.0, fontcolor="#1e8449"];
-    sel    -> selFS  [label="recruit interneuron"];
-    selFS  -> sel    [label="cross-pool WTA\n(Y≠X)", arrowhead=tee, color="#922b21"];
-    sel    -> commit [label="ramp fires burst"];
+    // -- 3E the spiking decision: accumulate → commit (DEFAULT) --
+    sel    -> sel    [label="builds up evidence ⟲\n(slow NMDA)", color="#1e8449", penwidth=2.0, fontcolor="#1e8449"];
+    sel    -> selFS  [label="recruit inhibition"];
+    selFS  -> sel    [label="suppress the\nother directions", arrowhead=tee, color="#922b21"];
+    sel    -> commit [label="leader fires the burst"];
     commit -> commit [label="all-or-none ⟲", color="#1e8449", penwidth=1.6];
-    opn    -> commit [label="omnipause hold", arrowhead=tee, color="#922b21"];
-    commit -> motor  [label="commit→act"];
-    trn    -> thal   [label="TRN reciprocal WTA\n(Y≠X)", arrowhead=tee, color="#922b21", style=dashed, constraint=false];
+    opn    -> commit [label="hold until a winner", arrowhead=tee, color="#922b21"];
+    commit -> motor  [label="commit PICKS the move\n(DEFAULT)", penwidth=2.2, color="#6c3483", fontcolor="#4a235a"];
+    trn    -> thal   [label="reticular reciprocal inhibition\n(Y≠X)", arrowhead=tee, color="#922b21", style=dashed, constraint=false];
 
     // -- 3F cerebellar side loop --
     place   -> mossy [label="state→MF", color="#5d6d7e", constraint=false];
