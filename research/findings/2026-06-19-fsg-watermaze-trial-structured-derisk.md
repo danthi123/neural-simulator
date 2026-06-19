@@ -57,11 +57,49 @@ python -X utf8 -m research.runners._fsg_watermaze_derisk \
 
 ## Results
 
-(RESULTS_PENDING — populated after the GPU smoke completes.)
+**Process note:** the first delegated runs were misread as "crashed" by a hand-rolled `tasklist`
+process-waiter (a false signal on Windows) → duplicate concurrent runs contended the GPU. Corrected by
+running ONE clean tracked job. The runner itself is fine (the tiny smoke ran clean). LESSON: these long
+moving-goal GPU de-risks (~0.3 s/step) are controller-owned via the tracked background mechanism, not a
+hand-rolled waiter.
 
-## Verdict
+**Clean tracked run (`_fsg_2goal_clean.json`, seed 42, 12 trials × 2 goals × {reward ON, lesion}, grid-8;
+random-walk floor 5.52; lower = closer to goal):**
 
-(VERDICT_PENDING)
+| condition | early-trial dist | late-trial dist | learn Δ | end_pos |
+|---|---|---|---|---|
+| goal (1,6) reward ON | 6.0 | **6.67** | −0.67 (worse) | [7,6] (dist 6) |
+| goal (1,6) reward OFF (lesion) | 7.0 | 6.67 | — | [7,7] |
+| goal (6,1) reward ON | 6.67 | **6.67** | 0.0 (flat) | [5,6] (dist 6) |
+| goal (6,1) reward OFF (lesion) | 6.0 | 6.33 | — | [6,7] |
+
+**No learning at either goal:** reward-ON's late distance stays ~6.7 (near the floor), does NOT decrease,
+and is **no better than the reward-OFF lesion**; both lesion curves are flat, goal-independent, at the
+random floor. `n_goals_learned_and_converged = 0/2`, `n_goals_on_beats_lesion = 0/2`.
+
+**The CYCLE-241 4-trial smoke "early 7 → late 2 learning" was a small-sample artifact** — the 4-trial
+"late" averaged a SINGLE trial that happened to land near the goal. The 12-trial run's 3-trial "late"
+average shows the learning was not real. The rigor (more trials + the ≥2-goal distinct-policy
+requirement) caught the false positive. Smoke positive RETRACTED.
+
+## Verdict — NEGATIVE → the dendrite is the clearly-proposed obvious unlocker
+
+The point-neuron F-S-G spiking actor-critic does NOT form the hidden-goal place→action map even with the
+proper trial-structured protocol. This is the **3rd rigorous hit** on the actor-critic credit-assignment
+wall (2026-05-05 global-scalar W→A + the single-phase advantage de-risk + this trial-structured run).
+
+**HONEST CAVEAT:** 1 seed, 12 trials, and the failure is INTERTWINED with the **#5 place-selectivity
+boundary** (`2026-06-19-place-code-sparsify-default-BOUNDARY.md`: the place code is not location-selective
+enough at nav scale — so the actor may fail because it cannot tell places apart, i.e. the place INPUT, not
+only the credit-assignment RULE). But BOTH #5 (graded, selective place fields) and the credit-assignment
+rule are the SAME point-neuron analog-computation limit, and BOTH point at the dendrite (apical-basal /
+graded dendritic computation). A single dendritic-substrate build would address both.
+
+**⇒ The fork resolves toward the DENDRITE** (`feedback_dendritic_substrate_fair_game` — "propose it
+clearly the moment it's the obvious unlocker"). This is a months-scale, OWNER-SCOPED arc (the D2 Phase 0-2
+two-compartment-neuron + learned-graded-cortex infrastructure already exists; Phase 3 is pending,
+`docs/plans/2026-05-05-dendritic-learning-design.md`). Proposed to the owner, NOT unilaterally started; the
+unblocked high-leverage alternative is the conversational-scaling primary (task #55).
 
 ## Artifacts
 
