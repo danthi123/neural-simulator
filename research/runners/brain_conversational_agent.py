@@ -151,7 +151,8 @@ class BrainConversationalAgent:
     def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None, composer_kind="rf",
                  enable_spiking_cleanup=False, enable_substrate_store=False, grounded_codes=None,
                  enable_learned_assoc=False, enable_neural_render=False, enable_rf_cudagraph=False,
-                 enable_attributed=False, enable_multiframe=False):
+                 enable_attributed=False, enable_multiframe=False,
+                 enable_multicue_competition=False, multicue_verbs=None):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -244,6 +245,45 @@ class BrainConversationalAgent:
         # onebrain SVO path is unchanged). Validated GO 6/6 (2026-06-18-frame-selection-GO.md). Built lazily.
         self.enable_multiframe = bool(enable_multiframe)
         self._frame_parser = None
+        # (robust-comprehension wire-in, opt-in) multi-cue role COMPETITION: route hear()'s AGENT/PATIENT decision
+        # through the validated SPIKING multi-cue role-competition (MultiCueRoleParser -- de-risk
+        # 2026-06-19-multicue-competition-spiking-derisk.md, GO), so DEGRADED English (object-fronted / scrambled
+        # word order) still assigns roles correctly where the position-only BridgeParser collapses. Default OFF =
+        # byte-identical (the parser is never even constructed; the existing tests pass verbatim). Requires
+        # `multicue_verbs` (the known-verb set the lexical front-end uses to find the sentence's verb). The
+        # no-confab moat is preserved end-to-end (the composer's Q&A still abstains on any unstored fact, and the
+        # parser's parse_decisive exposes the content gate for an ambiguous sentence). Built lazily/cached.
+        # WIRED: the validated spiking role-competition INFERENCE (install-path validities). DEFERRED: continual
+        # on-substrate validity LEARNING (seed-variable, documented) + neuralizing the learner's reward.
+        self.enable_multicue_competition = bool(enable_multicue_competition)
+        self._multicue_verbs = set(multicue_verbs) if multicue_verbs else None
+        self._multicue_parser = None
+        if enable_multicue_competition and self._multicue_verbs is None:
+            raise ValueError("enable_multicue_competition=True needs multicue_verbs=<known-verb set> "
+                             "(the lexical front-end that finds the sentence's verb)")
+
+    def _ensure_multicue_parser(self):
+        """Lazily build + cache the spiking MultiCueRoleParser (one bridge build, install-path validities)."""
+        if self._multicue_parser is None:
+            from research.runners.multicue_role_parser import MultiCueRoleParser
+            self._multicue_parser = MultiCueRoleParser(known_verbs=self._multicue_verbs, seed=self.seed)
+        return self._multicue_parser
+
+    def hear_multicue(self, sentence, voice="active", polarity=None):
+        """Comprehend a (possibly DEGRADED-order) transitive sentence with the SPIKING multi-cue role-competition
+        and store the resolved fact, so an object-fronted 'apple eat dog' assigns the SAME agent (dog) / patient
+        (apple) as canonical 'dog eat apple' -- where the position-only parser would invert them. The verb is
+        identified lexically from `multicue_verbs`; the noun roles are the spiking WTA decision. Returns the parsed
+        {role: word}. Requires enable_multicue_competition=True. The no-confab moat is unaffected (composer Q&A
+        abstains on any unstored fact)."""
+        assert self.enable_multicue_competition, \
+            "hear_multicue needs BrainConversationalAgent(enable_multicue_competition=True, multicue_verbs=...)"
+        words = sentence.split() if isinstance(sentence, str) else list(sentence)
+        roles = self._ensure_multicue_parser().parse(words, voice)
+        self.composer.store(roles.get("agent"), roles.get("action"), roles.get("patient"), polarity=polarity)
+        if self._learned_assoc is not None:
+            self._learned_assoc.store_fact([roles.get("agent"), roles.get("action"), roles.get("patient")])
+        return roles
 
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO statement and store it. `sentence` is 'agent action patient' (or its passive frame).
@@ -251,7 +291,14 @@ class BrainConversationalAgent:
         When the composer carries its OWN on-bridge parser (the OneBrainComposer: comprehension + storage on ONE
         persistent bridge), `hear()` DELEGATES comprehension to it -- one parser on the one brain, the parse result
         flowing operand->bind as spikes, not via the agent's separate parser. Otherwise the agent's parser comprehends
-        and the composer stores the resolved roles (the rf / rate default path, byte-unchanged)."""
+        and the composer stores the resolved roles (the rf / rate default path, byte-unchanged).
+
+        When enable_multicue_competition is ON, hear() routes the AGENT/PATIENT decision through the SPIKING
+        multi-cue role-competition (robust to degraded word order) instead of the position-only parser -- so the
+        production turn entry point comprehends scrambled / object-fronted input correctly. Default OFF =
+        byte-identical (the multicue parser is never built; this branch is skipped)."""
+        if self.enable_multicue_competition:
+            return self.hear_multicue(sentence, voice, polarity=polarity)
         if hasattr(self.composer, "hear"):
             roles = self.composer.hear(sentence, voice, polarity=polarity)
         else:
