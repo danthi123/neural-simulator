@@ -5110,9 +5110,15 @@ def run_moving_goal_episode(
         # STEP-1 gate config: open the competitive landmark->place learning, freeze the value
         # arm, and hold the FS-PING inhibition CLOSED (clean threshold-WTA -> sparse, DISTINCT
         # fields; the de-risk's Stage-1 regime).
+        # SPARSIFY (2026-06-19, #5): the FS-PING can instead be held OPEN during self-org so the
+        # fields are carved WITH recurrent feedback inhibition (the canonical Hartley-Burgess
+        # place-field formation mechanism) -> sparser, better-separated learned weights that match
+        # the FS-open read-out regime the value-train uses. Env-gated, default-off (byte-identical
+        # when unset): N5_SPARSIFY_FS_DURING_SELFORG=1.
+        _sparsify_fs_selforg = bool(int(os.environ.get("N5_SPARSIFY_FS_DURING_SELFORG", "0")))
         bridge.set_plasticity_gate("landmark_to_place", 1.0)
         bridge.set_plasticity_gate("value_input", 0.0)
-        bridge.set_transmission_gate("place_fs_gate", 0.0)
+        bridge.set_transmission_gate("place_fs_gate", 1.0 if _sparsify_fs_selforg else 0.0)
         positions = _n9_selforg_positions()
         steps_each = max(1, int(selforg_steps) // max(1, len(positions)))
         _rng = np.random.default_rng(seed)

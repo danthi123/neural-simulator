@@ -1,0 +1,67 @@
+{
+  "overrides": {
+    "place_sensors_to_place_weight": 10,
+    "coincidence_threshold": 6,
+    "critic_gabab_max": 12
+  },
+  "result": {
+    "stage_b_smoke": {
+      "near": [
+        6,
+        6
+      ],
+      "far": [
+        1.0,
+        1.0
+      ],
+      "near_set_size": 15,
+      "far_set_size": 5,
+      "w_near": 2.2458229064941406,
+      "w_far": 1.1732579469680786,
+      "w_near_over_far": 1.9141765988440764,
+      "learns_v": true,
+      "crit_near_hz": 10.416666666666668,
+      "crit_far_hz": 11.666666666666668,
+      "crit_grade_ratio": 0.8928571428571429,
+      "critic_fire": true,
+      "critic_grade": false,
+      "critic_fires_and_grades_at_nav": false,
+      "snc_predicted_near_hz": 47.5,
+      "snc_unpredicted_far_hz": 45.0,
+      "snc_gap_ratio": 0.9473684210526315,
+      "gabab_gap": false,
+      "lesion_n_cut": 426,
+      "snc_pred_lesion_hz": 87.5,
+      "snc_unpred_lesion_hz": 87.5,
+      "lesion_gap_ratio": 1.0,
+      "lesion_collapses": true
+    },
+    "value_train": {
+      "n_goals": 4,
+      "value_train_trials": 40,
+      "tonic_frac": 0.05333333333333334,
+      "critic_teacher_pa": 300.0,
+      "near_set_size": 15,
+      "far_set_size": 5,
+      "w_near_pre": 0.19899916648864746,
+      "w_near_post": 2.2458229064941406,
+      "w_far_pre": 0.19636662304401398,
+      "w_far_post": 1.1732579469680786,
+      "w_near_over_far_post": 1.9141765988440764,
+      "near_v_first_hz": 0.0,
+      "near_v_last_hz": 0.0,
+      "near0": [
+        6,
+        6
+      ],
+      "far0": [
+        1.0,
+        1.0
+      ]
+    },
+    "selforg": {
+      "diff_cos": 0.21938173472881317,
+      "sparsity": 0.0625
+    }
+  }
+}
