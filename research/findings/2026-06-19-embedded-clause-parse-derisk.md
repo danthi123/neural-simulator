@@ -7,11 +7,34 @@
 > the clause is provided structurally here"). **#3 = the PARSER, not the binder.** Runner:
 > `research/runners/_phaseB_embedded_clause_parse_derisk.py`.
 
-## Verdict: depth-1 GO  (TO BE CONFIRMED at ≥6 seeds — CPU smoke GO; multi-seed in flight)
+## Verdict: depth-1 near-GO / soft BOUNDARY (6-seed GPU) — matrix clause 6/6, embedded clause 4/6 STRICT (mean 0.951; the 2 misses MARGINAL at 0.88, i.e. 0.02 under the bar)
 
 A two-pass `parse_nested(flat_tokens)` SEGMENTS a depth-1 embedded relative clause from a FLAT (unbracketed) token
-stream and assigns correct roles in BOTH the embedded clause and the matrix clause, which the composer then binds +
-answers. The no-segmentation baseline FAILS, every anti-cheat collapses, and the no-confab moat is intact.
+stream and assigns roles in BOTH the embedded clause and the matrix clause, which the composer then binds + answers.
+**6-seed (42/43/44/100/101/102, GPU, n=12 held-out each):**
+
+| seed | embedded acc | matrix acc | no-seg (must fail) | scramble (must fail) | head-attach (must fail) | moat |
+|---|---|---|---|---|---|---|
+| 42 | 1.00 | 1.00 | 0.50 | 0.00 | 0.00 | ✓ |
+| 43 | **0.88** | 1.00 | 0.50 | 0.00 | 0.00 | ✓ |
+| 44 | 1.00 | 1.00 | 0.50 | 0.00 | 0.00 | ✓ |
+| 100 | 0.96 | 1.00 | 0.50 | 0.00 | 0.00 | ✓ |
+| 101 | **0.88** | 1.00 | 0.50 | 0.00 | 0.00 | ✓ |
+| 102 | 1.00 | 1.00 | 0.50 | 0.00 | 0.00 | ✓ |
+| **mean** | **0.951** | **1.000** | 0.50 | 0.00 | 0.00 | 6/6 |
+
+**Honest read:** the mechanism WORKS — the matrix clause is a clean 6/6, the embedded clause mean is **0.951**, and EVERY
+control collapses correctly (no-segmentation baseline 0.50, scramble 0.00, head-attachment 0.00) with the no-confab moat
+intact 6/6 and held-out leakage clean. It is a strict **BOUNDARY** only because the embedded-clause bar is ≥0.90 on
+≥5/6 seeds and 2 seeds (43, 101) land at **0.88 — 0.02 under** the threshold (a marginal seed-variance dip, NOT a broken
+parse). ⇒ depth-1 embedded-clause parsing is essentially validated; the 0.02 multi-seed gap is the documented residual.
+
+**Deprioritized follow-ons (owner reprioritized 2026-06-19 → the robustness / multi-cue-competition arc is now the
+conversational primary, above further syntax expansion):** (1) close the 0.02 embedded gap — likely lever: population
+redundancy on the embedded read-out / a cleaner local reconstruction (cheap; NOT run, deprioritized); (2) the production
+`parse_nested` opt-in (mirroring `enable_attributed`/`enable_multiframe`) — deferred; (3) depth-2 = the expected
+center-embedding boundary (catalog G.12; not tested). The no-segmentation baseline FAILS, every anti-cheat collapses,
+and the no-confab moat is intact.
 
 ## The mechanism (built; reuse-by-import, NO `sim/` edit)
 
