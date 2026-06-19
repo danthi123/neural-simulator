@@ -715,12 +715,14 @@ arc was de-risked cheapest-first BEFORE any protected edit:
 - **De-risk 5a (plasticity isolation) — PASS + one characterized gap.** The per-synapse plasticity gate
   (`cp_plasticity_rate_gain=0`) isolates weight UPDATES against the full navigation stressor (reward-STDP +
   the global dopamine `scope="all"` + Hebbian) — a frozen conversational slice stays byte-identical, controls
-  change, a conversational read is unchanged across a navigation burst. THE ONE GAP: the two global weight
-  CLIPS (`bridge.py:6261` Hebbian, `:6566` reward) are UNGATED, so a frozen weight OUTSIDE the active rule's
-  clip bounds is moved by the clip. **Mitigation:** raise `stdp_w_max` + `hebbian_max_weight` above the frozen
-  conversational real-valued weight (~300); the RF composer's COMPLEX binding weights (`cp_rf_w_re/im`) are
-  array-disjoint from `cp_connections` so they are IMMUNE. Findings:
-  `2026-06-10-unification-5a-plasticity-isolation-PASS-with-clip-caveat.md`.
+  change, a conversational read is unchanged across a navigation burst. THE ONE GAP (since CLOSED in code): the
+  two global weight CLIPS were UNGATED, so a frozen weight OUTSIDE the active rule's clip bounds was moved by the
+  clip. **SUBSEQUENTLY FIXED** — the Hebbian / reward / homeostatic clips are now **gated by plasticity gain**
+  (`bridge.py:6673`/`6990`/`7253`: the `_active_syn`/`_active_rw`/`_active_hs` masked-clip paths clip only
+  plastic synapses, so a frozen synapse keeps its weight verbatim). The original mitigation (raise `stdp_w_max` +
+  `hebbian_max_weight` above the frozen conversational real-valued weight ~300) is now belt-and-suspenders; the RF
+  composer's COMPLEX binding weights (`cp_rf_w_re/im`) are array-disjoint from `cp_connections` so they are IMMUNE
+  regardless. Findings: `2026-06-10-unification-5a-plasticity-isolation-PASS-with-clip-caveat.md`.
 - **De-risk 5b (RF vs Izhikevich) — KILL confirmed → the minimal protected edit.** RF stores its complex
   phasor in the same `v`/`u` arrays Izhikevich uses; one Izhikevich step destroys a phasor (|z| 1.0 → 16.3).
   But the composer is stateless-per-op (re-kicks each op) and stores memory in complex synapses, so the
