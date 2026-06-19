@@ -3154,6 +3154,31 @@ def run_moving_goal_episode(
     # new_goal != None reassigns (gx, gy) and logs a goal change. See
     # research/runners/_homeostatic_g11bg_reuse_probe.py.
     homeostatic_hook=None,
+    # Hidden-goal (Morris-water-maze analogue) diagnostic (2026-06-19). Default
+    # False = byte-identical to every existing caller. When True, the goal's
+    # coordinates are NOT fed into the brain anywhere: the ppc_goal_input goal
+    # drive (gx,gy → goal cells) is zeroed each step (the place drive (x,y →
+    # sensor_place_readout) stays — own-position self-knowledge is legitimate).
+    # Combined with --heuristic-strength 0 (no goal-direction teacher) and no
+    # cue-reflex / SC-orienting / learned-perception, the ONLY goal-related
+    # signal reaching the agent is the SCALAR reward (distance-decreased → +1).
+    # The agent must therefore learn the goal's location via reward → value →
+    # dopamine → corticostriatal STDP — i.e. the spiking reward/value/dopamine
+    # limbic core must be BEHAVIORALLY LOAD-BEARING. This is the harder task the
+    # 2026-06-19 scoping flagged: on the visible/orient-solvable gridworld the
+    # limbic core is GREEN_INERT (validated but inert). See the load-bearing
+    # diagnostic finding. NO sim/ edit; suppression is a runner-side drive zero.
+    hidden_goal: bool = False,
+    # Reward lesion (the load-bearing anti-cheat, 2026-06-19). Default False =
+    # byte-identical. When True, the natural reward is FORCED to 0 every step
+    # (after the natural computation), so NO learning signal reaches dopamine /
+    # the value critic / corticostriatal plasticity. The owner standard
+    # (validate_signal_by_its_function): the reward lesion must collapse the
+    # BEHAVIOR (the nav score), not merely the SNc/reward-pop firing. If the
+    # agent still solves the hidden goal with reward lesioned, the task is not
+    # reward-load-bearing. Applied AFTER manual_reward_injection / the
+    # homeostatic hook so it is an unconditional clamp.
+    lesion_reward: bool = False,
     # Cue-following reflex (Item 1 Stage 3, 2026-04-27).
     # Replaces the heuristic with a hand-tuned innate reflex that computes
     # cortex drive from beacon sensor activations. Models a real animal's
@@ -6468,6 +6493,8 @@ def run_moving_goal_episode(
             bridge.cp_external_input_current[region_indices_cp["sensor_place_readout"]] = cp.asarray(place_drive, dtype=cp.float32)
             goal_dsq = (hippo_pref_x - replay_gx) ** 2 + (hippo_pref_y - replay_gy) ** 2
             goal_drive = hippocampus_drive_max_pA * np.exp(-goal_dsq / (2.0 * hippocampus_drive_sigma ** 2))
+            if hidden_goal:
+                goal_drive = goal_drive * 0.0  # hidden-goal: no goal coords into the brain
             bridge.cp_external_input_current[region_indices_cp["ppc_goal_input"]] = cp.asarray(goal_drive, dtype=cp.float32)
             # Cluster D v2: also drive CA3 directly. The existing replay
             # injects into sensor_place_readout / ppc_goal_input but neither
@@ -6515,6 +6542,12 @@ def run_moving_goal_episode(
                 # beacon → goal_cells pathway must learn to drive them
                 # from sensor patterns.
                 pass  # goal_cells gets only the plastic beacon→goal drive
+            elif hidden_goal:
+                # Hidden-goal diagnostic: the goal's coordinates must NOT enter
+                # the brain. Zero the goal-cell drive (the place drive above
+                # stays — own position is legitimate). The agent must learn the
+                # goal location from the scalar reward alone (limbic core).
+                bridge.cp_external_input_current[region_indices_cp["ppc_goal_input"]] = cp.float32(0.0)
             else:
                 goal_dsq = (hippo_pref_x - float(gx)) ** 2 + (hippo_pref_y - float(gy)) ** 2
                 goal_drive = hippocampus_drive_max_pA * np.exp(-goal_dsq / (2.0 * hippocampus_drive_sigma ** 2))
@@ -7013,6 +7046,11 @@ def run_moving_goal_episode(
             if _homeo_new_goal is not None:
                 gx, gy = int(_homeo_new_goal[0]), int(_homeo_new_goal[1])
                 goal_change_steps.append(step)
+        # Reward lesion (load-bearing anti-cheat, 2026-06-19): unconditional clamp
+        # to 0 so no learning signal reaches dopamine / value critic / corticostriatal
+        # plasticity. Must collapse the BEHAVIOR if the reward is load-bearing.
+        if lesion_reward:
+            reward = 0.0
         reward_log.append(float(reward))
 
         # Cluster F v1: climbing-fiber teaching signal. When the just-completed
@@ -8564,6 +8602,15 @@ def main():
                     help="Phase 2 plasticity gain for hippo→cortex (default 1.0 = full plasticity).")
     ap.add_argument("--heuristic-strength", type=float, default=1.0,
                     help="Heuristic cortex drive strength multiplier (default 1.0). 0.0 disables heuristic.")
+    ap.add_argument("--hidden-goal", action="store_true",
+                    help="Hidden-goal (Morris-water-maze analogue) diagnostic: the goal's coordinates are NOT fed "
+                         "into the brain (ppc_goal_input goal drive zeroed; the own-position place drive stays). "
+                         "Use with --heuristic-strength 0 + no cue-reflex/SC-orienting so the agent must learn the "
+                         "goal location from the scalar reward alone (the limbic core must be load-bearing).")
+    ap.add_argument("--lesion-reward", action="store_true",
+                    help="Reward lesion (load-bearing anti-cheat): force reward=0 every step so no learning signal "
+                         "reaches dopamine / value critic / corticostriatal plasticity. Must collapse the nav score "
+                         "if the reward is behaviorally load-bearing.")
     ap.add_argument("--heuristic-decay-after-step", type=int, default=-1,
                     help="Step after which heuristic_strength changes to --post-curriculum-heuristic-strength (default -1 = no decay).")
     ap.add_argument("--post-curriculum-heuristic-strength", type=float, default=0.0,
@@ -8917,6 +8964,8 @@ def main():
             curriculum_phase2_cortex_gain=args.curriculum_phase2_cortex_gain,
             curriculum_phase2_hippo_gain=args.curriculum_phase2_hippo_gain,
             heuristic_strength=args.heuristic_strength,
+            hidden_goal=args.hidden_goal,
+            lesion_reward=args.lesion_reward,
             heuristic_decay_after_step=args.heuristic_decay_after_step,
             post_curriculum_heuristic_strength=args.post_curriculum_heuristic_strength,
             heuristic_wean_start=args.heuristic_wean_start,
