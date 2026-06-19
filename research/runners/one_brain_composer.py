@@ -491,14 +491,13 @@ class OneBrainComposer:
         order = order_fn(3) if order_fn is not None else [0, 1, 2]
         return " ".join(words[o] for o in order)
 
-    def _attributed_patient(self, i, wp):
+    def _attributed_patient(self, i, wp, got):
         """The patient word with its (single) attribute prepended, when this fact stored one -- 'big apple'. The
-        attribute word is DECODED from the on-bridge unbind (got["attribute"]); the kb dict only ROUTES whether to
-        join it (a plain fact has no 'attribute' key -> the bare noun). Single-attribute only (the 2-factor path the
-        de-risk validated 100% on the learned codes)."""
+        attribute word is DECODED from the on-bridge unbind (got["attribute"], already in the read row passed by the
+        caller); the kb dict only ROUTES whether to join it (a plain fact has no 'attribute' key -> the bare noun).
+        Single-attribute only (the 2-factor path the de-risk validated 100% on the learned codes)."""
         if not self.enable_attributed or i >= len(self.kb) or "attribute" not in self.kb[i][0]:
             return wp
-        got = self._read_blocks()[i]
         adj = got.get("attribute")
         return f"{adj} {wp}" if adj is not None else wp
 
@@ -511,7 +510,7 @@ class OneBrainComposer:
                 stored = self.kb[i][0].get("patient") if i < len(self.kb) else None
                 if _is_clause(stored):
                     return self._decode_clause(i, order_fn=order_fn)
-                return self._attributed_patient(i, got.get("patient"))
+                return self._attributed_patient(i, got.get("patient"), got)
         return None
 
     def query_agent(self, action, patient):
@@ -536,7 +535,7 @@ class OneBrainComposer:
             if got.get("agent") == agent:
                 stored = self.kb[i][0].get("patient") if i < len(self.kb) else None
                 wp = got.get("patient")
-                pt = self._decode_clause(i, order_fn=order_fn) if _is_clause(stored) else self._attributed_patient(i, wp)
+                pt = self._decode_clause(i, order_fn=order_fn) if _is_clause(stored) else self._attributed_patient(i, wp, got)
                 words = [got.get("agent"), got.get("action"), pt]
                 order = order_fn(3) if order_fn is not None else [0, 1, 2]
                 return " ".join(words[o] for o in order)
