@@ -3415,6 +3415,19 @@ def run_moving_goal_episode(
     critic_warmup_hold_steps: int = 40,        # steps per warm-up sub-phase (de-risk used 40)
     critic_warmup_all_goals: bool = True,      # warm up at EVERY scheduled goal (multi-goal)
                                                # vs only the first goal
+    # Trial-structured protocol (2026-06-19, the F-S-G water-maze de-risk). Default 0 =
+    # OFF (byte-identical: a single continuous episode from start_pos, the legacy path).
+    # When > 0, the agent is RESET to a fresh RANDOM start every `trial_reset_steps`
+    # steps WHILE the learned weights persist across trials (no plasticity reset). This
+    # makes the single persistent bridge run the Fremaux-Sprekeler-Gerstner (2013) spiking
+    # actor-critic's proper training: the place->action map is learned over MANY reset
+    # trials at the SAME hidden goal, and the learning curve = per-trial final distance.
+    # The reset positions are drawn from `trial_reset_seed` (independent of the main seed
+    # so the start sequence is controllable + reproducible) with Manhattan >= 3 from the
+    # goal (a non-trivial trial). The per-trial final distance is recorded in
+    # results["trial_final_distances"]. NO sim/ edit; purely a runner-side position reset.
+    trial_reset_steps: int = 0,
+    trial_reset_seed: int = 12345,
     # Stage 2 windowed GABA_B (2026-06-08 redesign): gate the striosome_value->snc
     # GABA_B current to a bounded LEAD window into each reward evaluation so the
     # slow conductance pre-builds ~1 tau before reward but does NOT integrate
@@ -5948,7 +5961,28 @@ def run_moving_goal_episode(
     # before any reward feedback exists).
     current_gating_strength = 1.0
     visual_cortex_action_gate_opened = False
+    # Trial-structured protocol bookkeeping (2026-06-19 F-S-G de-risk; only active
+    # when trial_reset_steps > 0). `_trial_rng` draws fresh random starts; we record
+    # each trial's final Manhattan distance to the goal (the learning curve).
+    _trial_rng = np.random.default_rng(int(trial_reset_seed)) if trial_reset_steps > 0 else None
+    trial_final_distances = []
     for step in range(n_steps):
+        # ----- Trial-structured reset (2026-06-19 F-S-G water-maze de-risk) -----
+        # At each trial boundary (every trial_reset_steps steps, after the first trial),
+        # record the just-finished trial's final distance to the goal, then teleport the
+        # agent to a fresh RANDOM start (Manhattan >= 3 from the goal). Learned weights
+        # persist (no plasticity reset) -> the place->action map is learned over many
+        # reset trials at the SAME hidden goal. Default OFF (trial_reset_steps == 0).
+        if trial_reset_steps > 0 and step > 0 and (step % trial_reset_steps == 0):
+            trial_final_distances.append(int(abs(x - gx) + abs(y - gy)))
+            # Fresh random start, Manhattan >= 3 from the goal (a non-trivial trial).
+            for _att in range(200):
+                _sx = int(_trial_rng.integers(0, grid_size))
+                _sy = int(_trial_rng.integers(0, grid_size))
+                if abs(_sx - gx) + abs(_sy - gy) >= 3:
+                    break
+            x, y = _sx, _sy
+            trajectory.append((x, y))  # mark the teleport in the trajectory
         # ----- Stage 2 windowed critic->SNc GABA_B gate (2026-06-08 redesign) -----
         # Managed at the NAV-STEP granularity (one nav step = n_stim_steps sub-steps
         # = ~100 ms ≈ 0.67 GABA_B tau). In WINDOWED mode, run a sawtooth: OPEN the
@@ -7351,6 +7385,11 @@ def run_moving_goal_episode(
             time.sleep(trial_sleep_ms / 1000.0)
 
     elapsed = time.time() - t0
+    # Trial-structured protocol: record the FINAL trial's end distance (the loop's
+    # boundary reset only fires at the START of each subsequent trial, so the last
+    # trial's distance is appended here). Only populated when trial_reset_steps > 0.
+    if trial_reset_steps > 0:
+        trial_final_distances.append(int(abs(x - gx) + abs(y - gy)))
     dist_arr = np.asarray(distance_log[1:])
     quarters = [float(dist_arr[i*len(dist_arr)//4:(i+1)*len(dist_arr)//4].mean())
                 for i in range(4)]
@@ -7460,6 +7499,11 @@ def run_moving_goal_episode(
         },
         "action_log": action_log, "reward_log": reward_log,
         "distance_log": distance_log,
+        # Trial-structured protocol (2026-06-19 F-S-G de-risk): per-trial final
+        # Manhattan distance to the goal (the learning curve). Empty unless
+        # trial_reset_steps > 0.
+        "trial_reset_steps": int(trial_reset_steps),
+        "trial_final_distances": trial_final_distances,
         # Spiking-SNc Stage A (2026-06-08): per-trial SNc spike count over the
         # reward-hold window (the spiking reward-prediction error, read from
         # cp_firing_states). Empty unless --spiking-snc. V = host reward_ema
