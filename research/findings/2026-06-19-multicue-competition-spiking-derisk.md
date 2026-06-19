@@ -133,9 +133,16 @@ faked.
 ## 6. Honesty notes (scope + status)
 
 - **GO on the headline robustness** (the spiking role-competition WTA carries degraded English where position-only
-  collapses, cues load-bearing, moat intact) — **install path 5/6 seeds; error-gated path GO seed 42**, multi-seed
-  error-gated in-flight (the on-substrate three-factor learning is ~30–80 s/seed; the GPU command + `--out` are
-  handed to the controller to poll).
+  collapses, cues load-bearing, moat intact) — **install path 5/6 seeds; error-gated path GO seed 42** (and a 1-seed
+  WITH-controls run: NO-LEARN 0.85 and PERMUTE 0.05 both collapse vs MULTICUE 1.00 — the controls behave correctly).
+  The error-gated **6-seed WITH-controls** run is **in-flight on CPU** (background `--out
+  research/findings/raw/_phaseB_multicue_competition_spiking_errorgated.json`); poll command:
+  `SIM_BACKEND=numpy python -m research.runners._phaseB_multicue_competition_spiking_derisk --seeds 42,43,44,45,46,47
+  --learn-mode error_gated --n-per-cond 16 --epochs 20 --train-steps 18 --out
+  research/findings/raw/_phaseB_multicue_competition_spiking_errorgated.json`.
+- **Performance note (useful for follow-on):** for this **tiny 200-neuron** bridge the per-step Python loop is
+  **launch-bound**, so **CPU (numpy) is ~9× faster than GPU** here (one error-gated seed: ~30 s CPU vs 268 s GPU).
+  Run the error-gated learner on CPU; GPU only pays off once the bridge is large (the production wire-in scale).
 - **What is spike-learned vs installed is reported explicitly (§3).** The headline GO does not *depend* on a faked
   learning loop: it holds with the validated validities installed (the GO-bar's explicit fallback) AND with
   on-substrate three-factor learning (the stronger brain-based result).
