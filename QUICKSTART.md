@@ -19,14 +19,23 @@ to teleport the goal; watch the brain reorient.
 
 ## Requirements
 
-- **Python 3.8+**
-- **NVIDIA GPU** with CUDA support (RTX 3090 ideal; runs on smaller GPUs)
+- **Python 3.10+**
+- **NVIDIA GPU** with CUDA support (RTX 3090 ideal; runs on smaller GPUs) —
+  optional; the engine also runs on the CPU via NumPy (see below)
 - **CuPy** matching your CUDA version (`pip install cupy-cuda12x` or
   `cupy-cuda11x`)
 - ~6 GB GPU memory for default configurations
 
-If you don't have CUDA, you can browse the code and read findings docs,
-but the simulator itself needs GPU.
+**No NVIDIA GPU?** The engine also runs on the CPU — set one environment
+variable and it swaps its GPU array library (CuPy) for NumPy with no code
+change. It is slower (roughly 4–50× depending on the workload) but
+numerically equivalent, and the headless demos all work:
+
+```bash
+SIM_BACKEND=numpy python -m research.runners.chat_demo --seed 43
+```
+
+The live 3D GUI (`python neural-simulator.py`) still needs a GPU.
 
 ## Four things to try
 
@@ -47,7 +56,10 @@ python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --d
 ```
 
 Takes ~10 min on RTX 3090. Agent should reach mean Manhattan distance
-~3 (validated 2.87 ± 0.19 across 6 seeds, ~38% of timesteps at goal).
+~3 (validated 2.97 ± 0.12 on the 16×16 grid, ~38% of timesteps at goal).
+The move decision is made in spikes by default — the action emerges from a
+race between competing neural populations, not an off-brain shortcut. (Use
+`--readout-source motor` to swap in the old shortcut as a baseline.)
 
 ### 2. The text-to-action experiment (under investigation)
 
