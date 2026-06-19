@@ -273,9 +273,11 @@ def test_agent_attributed_comprehension():
     a.hear_attributed("cat see small apple")              # 1-adjective attributed
     assert a.what_does("cat", "see") == "small apple"
     assert a.what_does("river", "eat") is None, "moat: an unheard cue abstains"
-    # default-off: no attributed parser built (byte-identical path)
-    b = BrainConversationalAgent(seed=42, composer_kind="rf", concepts={w: None for w in avocab})
-    assert b._attr_parser is None, "enable_attributed defaults OFF (no attributed parser, byte-identical)"
+    # explicit opt-OUT (enable_attributed is now DEFAULT-ON after the 2026-06-19 default-on consolidation): with the
+    # flag explicitly off, no attributed parser is built -> the byte-identical opt-out path still works.
+    b = BrainConversationalAgent(seed=42, composer_kind="rf", concepts={w: None for w in avocab},
+                                 enable_attributed=False)
+    assert b._attr_parser is None, "enable_attributed=False opt-out: no attributed parser (byte-identical)"
 
 
 def test_onebrain_batched_equals_per_block():

@@ -150,8 +150,8 @@ class BrainConversationalAgent:
 
     def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None, composer_kind="rf",
                  enable_spiking_cleanup=False, enable_substrate_store=False, grounded_codes=None,
-                 enable_learned_assoc=False, enable_neural_render=False, enable_rf_cudagraph=False,
-                 enable_attributed=False, enable_multiframe=False,
+                 enable_learned_assoc=False, enable_neural_render=True, enable_rf_cudagraph=False,
+                 enable_attributed=True, enable_multiframe=True,
                  enable_multicue_competition=False, multicue_verbs=None):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.

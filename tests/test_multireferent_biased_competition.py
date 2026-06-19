@@ -81,9 +81,11 @@ def test_biased_competition_moat_content_silent_abstains():
 
 
 def test_flag_off_buffer_not_built_and_anaphora_unchanged():
-    """Flag default-OFF: the biased-competition buffer is never constructed, and single-referent anaphora answers
-    exactly as the plain agent (byte-identical path). The full byte-identity guard is test_multi_turn_agent.py."""
-    a = MultiTurnAgent(referent_concepts=NOUNS, concepts={w: None for w in VOCAB}, seed=SEED)  # flag default OFF
+    """Flag explicit-OFF (the opt-OUT path; biased competition is now DEFAULT-ON after the 2026-06-19 default-on
+    consolidation): the biased-competition buffer is never constructed, and single-referent anaphora answers exactly
+    as the plain agent (byte-identical path). The full byte-identity guard is test_multi_turn_agent.py."""
+    a = MultiTurnAgent(referent_concepts=NOUNS, concepts={w: None for w in VOCAB}, seed=SEED,
+                       enable_biased_competition=False)        # explicit opt-OUT (the default is now ON)
     assert a.enable_biased_competition is False
     assert a.bcw is None                                     # buffer never built when the flag is off
     a.agent.composer.store("cat", "eat", "fish")

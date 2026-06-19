@@ -45,8 +45,8 @@ class MultiTurnAgent:
     phasor codes (e.g. the 320 stream-learned cortex codes). Everything else mirrors BrainConversationalAgent."""
 
     def __init__(self, referent_concepts, concepts=None, grounded_codes=None, seed=42,
-                 wm_n=600, wm_pattern_size=40, enable_neural_render=False, spec_threshold=1.5,
-                 composer_kind="rf", enable_biased_competition=False,
+                 wm_n=600, wm_pattern_size=40, enable_neural_render=True, spec_threshold=1.5,
+                 composer_kind="rf", enable_biased_competition=True,
                  biased_competition_bias_pA=2500.0, biased_competition_spec_threshold=1.3,
                  biased_competition_window=20):
         self.seed = int(seed)
