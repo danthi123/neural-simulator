@@ -380,8 +380,8 @@ ui/                            # DearPyGUI panels / callbacks / layout / plots
 experiment/                    # ExperimentEngine + StimulusManager + Readout + Training
 experiments/                   # YAML configs for autonomous sweeps
 research/
-  runners/                     # 460+ headless experiment scripts (navigation g1..g11, conversation/chat, consolidation, the multi-bridge "model cortex" arc, the language generator, …); each runs via `python -m research.runners.<name>`
-  findings/                    # session-by-session findings (800+ markdown docs)
+  runners/                     # 560+ headless experiment scripts (navigation g1..g11, conversation/chat, consolidation, the multi-bridge "model cortex" arc, the language generator, …); each runs via `python -m research.runners.<name>`
+  findings/                    # session-by-session findings (900+ markdown docs)
   findings/raw/                # raw JSON output per gate run
   datasets/                    # synthetic datasets (e.g. tiny_patterns.npz)
   experiment_runner.py         # YAML-driven sweep orchestrator
@@ -391,7 +391,7 @@ docs/
   SCIENCE_ROADMAP.md           # validation pillars + gate progression
   plans/                       # per-feature design docs (paired with findings)
 webapp/                        # FastAPI dashboard (server.py + static/)
-tests/                         # 293 test files
+tests/                         # 303 test files
   test_determinism.py          # RNG determinism (init + step)
   test_kernels_cpu.py          # CPU validation of fused kernels
   test_experiment_system.py    # experiment engine + stimulus manager
