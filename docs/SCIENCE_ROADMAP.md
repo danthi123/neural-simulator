@@ -8,7 +8,7 @@ who wants the mechanism and the evidence, and a contributor who wants to
 know what to build next. Each item is stated plainly first; the technical
 detail and the linked write-up follow.
 
-**Last updated:** 2026-06-16
+**Last updated:** 2026-06-19
 
 > If you only read one paragraph: this project is trying to build
 > **artificial life with a real, biologically translatable brain** — a
@@ -138,9 +138,17 @@ configuration). The decision of *where to step* is made by a simulated
 basal-ganglia circuit (the brain's "action selector," where competing options
 race and the winner is released), a neural reward signal, and a spiking
 orienting reflex — i.e. *in neurons*, with no off-brain shortcut between
-seeing and acting.
-→ navigation arc summarized in the [Appendix](#appendix-the-historical-foundation);
-flagship recipe and the full cheat-closure history live in `CLAUDE.md`.
+seeing and acting. As of June 2026 the move-decision is **made in spikes by
+default**: an accumulator integrates the evidence and the race ends on an
+all-or-none committing burst, retiring the last off-brain "pick the best
+option" step (kept only as an optional baseline). This is a *genuine* neural
+decision at an honest, reported cost — about 16% more steps than the shortcut
+(the irreducible price the simple-neuron substrate pays to make the decision
+itself a spike, validated across six seeds).
+→ `research/findings/2026-06-19-spiking-decision-default-on-GO.md`; the
+navigation arc is summarized in the
+[Appendix](#appendix-the-historical-foundation), and the flagship recipe and
+full cheat-closure history live in `CLAUDE.md`.
 
 ### It holds a continual, trustworthy memory — *Done*
 
@@ -176,10 +184,25 @@ Beyond storing single words, it combines them into structured facts ("who did
 what to whom," attributes, yes/no including **negation**, and even nested
 clauses like "the dog sees the cat chase the ball") and answers questions
 about them. The binding and unbinding are computed by **spiking neurons**,
-not a lookup table.
+not a lookup table. The full conversational stack is now comprehensively
+complete and consolidated into one production agent: it also **reasons across
+several facts** (multi-step chaining — "dog eats cat, cat eats mouse" → "what
+does the thing the dog eats, eat?" → "mouse"), **tracks referents across
+turns** (a later "it" resolves to the right thing), understands a **described
+object** ("the dog ate the big apple" → "big apple"), and handles **flexible
+word orders** beyond plain subject-verb-object — all validated at the
+320-concept scale with zero fabrications. (The engine that does this was also
+sped up 10–20×.) One honest boundary stays open: a *two*-attribute object
+("big red ball") is not yet reliable on the learned codes.
 → consolidation onto the core network:
 `research/findings/2026-06-04-conversational-pipeline-consolidated-onto-core-sim.md`;
-recursive nesting: `research/findings/2026-06-03-recursive-clause-nesting-RESOLVES-depth3-capacity.md`.
+recursive nesting: `research/findings/2026-06-03-recursive-clause-nesting-RESOLVES-depth3-capacity.md`;
+multi-hop reasoning + multi-turn memory:
+`research/findings/2026-06-17-multihop-query-chain-GO.md`,
+`research/findings/2026-06-17-multiturn-anaphora-derisk-GO.md`;
+described-object + flexible word order, and the 10–20× speedup:
+`research/findings/2026-06-19-consolidation-attr-multiframe.md`,
+`research/findings/2026-06-19-latency-csr-cache-GO.md`.
 
 ### One network does all of it — *Done*
 
