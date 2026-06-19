@@ -152,7 +152,8 @@ class BrainConversationalAgent:
                  enable_spiking_cleanup=False, enable_substrate_store=False, grounded_codes=None,
                  enable_learned_assoc=False, enable_neural_render=True, enable_rf_cudagraph=False,
                  enable_attributed=True, enable_multiframe=True,
-                 enable_multicue_competition=False, multicue_verbs=None):
+                 enable_multicue_competition=False, multicue_verbs=None,
+                 enable_case_competition=False, case_verbs=None, case_lexicon=None):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -261,6 +262,54 @@ class BrainConversationalAgent:
         if enable_multicue_competition and self._multicue_verbs is None:
             raise ValueError("enable_multicue_competition=True needs multicue_verbs=<known-verb set> "
                              "(the lexical front-end that finds the sentence's verb)")
+        # (cross-language wire-in, Phase-2, opt-in) case-marking role COMPETITION: route hear()'s AGENT/PATIENT
+        # decision through the validated CASE-aware spiking multi-cue competition (CaseAwareRoleParser -- de-risk
+        # 2026-06-19-case-cue-crosslanguage-derisk.md, GO), so a FREE-word-order CASE-MARKED sentence (Japanese-
+        # style ga/wo) reads thematic roles by the case PARTICLE where the position-only BridgeParser (and even the
+        # Phase-1 multicue parser on a case-free toy) cannot. EXTENDS the multicue path with a fifth `case` cue;
+        # its install-path validity is HIGH in a case language (case dominant, position low). Default OFF =
+        # byte-identical (the parser is never constructed). Requires `case_verbs` (the known-verb set the lexical
+        # front-end uses to find the verb); `case_lexicon` (optional) overrides the default isolating-particle map
+        # (ga->nom, wo->acc). The no-confab moat is preserved end-to-end (an UNMARKED ambiguous sentence -- case
+        # silent + animacy ties + symmetric verb -- is reported non-decisive by parse_decisive so the caller
+        # ABSTAINS). WIRED: the validated CASE-aware spiking competition INFERENCE (install-path case-language
+        # validities). DEFERRED: continual on-substrate cue-validity LEARNING (the cross-linguistic dissociation,
+        # seed-variable -- Tier 1 item 2) + neuralizing the learner's reward; fused/portmanteau case (Phase 3).
+        # Built lazily/cached. enable_multicue_competition takes precedence if BOTH are set (they are alternative
+        # comprehension front-ends; case is the case-language one).
+        self.enable_case_competition = bool(enable_case_competition)
+        self._case_verbs = set(case_verbs) if case_verbs else None
+        self._case_lexicon = dict(case_lexicon) if case_lexicon else None
+        self._case_parser = None
+        if enable_case_competition and self._case_verbs is None:
+            raise ValueError("enable_case_competition=True needs case_verbs=<known-verb set> "
+                             "(the lexical front-end that finds the sentence's verb)")
+
+    def _ensure_case_parser(self):
+        """Lazily build + cache the CASE-aware spiking CaseAwareRoleParser (one bridge build, install-path
+        case-language validities + the isolating-particle case lexicon)."""
+        if self._case_parser is None:
+            from research.runners.case_aware_role_parser import CaseAwareRoleParser
+            self._case_parser = CaseAwareRoleParser(known_verbs=self._case_verbs,
+                                                    case_lexicon=self._case_lexicon, seed=self.seed)
+        return self._case_parser
+
+    def hear_case(self, sentence, voice="active", polarity=None, markers=None):
+        """Comprehend a (possibly FREE-word-order) CASE-MARKED transitive sentence with the CASE-aware spiking
+        multi-cue role-competition and store the resolved fact, so an object-fronted 'wolf wo dog ga chase'
+        assigns the SAME agent (dog) / patient (wolf) as canonical 'dog ga wolf wo chase' -- the case PARTICLE
+        overrides word position. The verb is identified lexically from `case_verbs`; each noun's case particle is
+        pulled from the surface tokens (or supplied via `markers`). Returns the parsed {role: word}. Requires
+        enable_case_competition=True. The no-confab moat is unaffected (composer Q&A abstains on any unstored
+        fact)."""
+        assert self.enable_case_competition, \
+            "hear_case needs BrainConversationalAgent(enable_case_competition=True, case_verbs=...)"
+        words = sentence.split() if isinstance(sentence, str) else list(sentence)
+        roles = self._ensure_case_parser().parse(words, voice, markers=markers)
+        self.composer.store(roles.get("agent"), roles.get("action"), roles.get("patient"), polarity=polarity)
+        if self._learned_assoc is not None:
+            self._learned_assoc.store_fact([roles.get("agent"), roles.get("action"), roles.get("patient")])
+        return roles
 
     def _ensure_multicue_parser(self):
         """Lazily build + cache the spiking MultiCueRoleParser (one bridge build, install-path validities)."""
@@ -295,10 +344,14 @@ class BrainConversationalAgent:
 
         When enable_multicue_competition is ON, hear() routes the AGENT/PATIENT decision through the SPIKING
         multi-cue role-competition (robust to degraded word order) instead of the position-only parser -- so the
-        production turn entry point comprehends scrambled / object-fronted input correctly. Default OFF =
-        byte-identical (the multicue parser is never built; this branch is skipped)."""
+        production turn entry point comprehends scrambled / object-fronted input correctly. When
+        enable_case_competition is ON (and multicue is OFF), hear() routes through the CASE-aware competition so a
+        free-word-order CASE-MARKED sentence (ga/wo) reads roles by the case particle. Default OFF (both) =
+        byte-identical (neither parser is built; both branches are skipped)."""
         if self.enable_multicue_competition:
             return self.hear_multicue(sentence, voice, polarity=polarity)
+        if self.enable_case_competition:
+            return self.hear_case(sentence, voice, polarity=polarity)
         if hasattr(self.composer, "hear"):
             roles = self.composer.hear(sentence, voice, polarity=polarity)
         else:
