@@ -1,0 +1,40 @@
+{
+  "runs": [
+    {
+      "r_migration": -0.676727137406244,
+      "peak_early": 5.666666666666667,
+      "peak_late": 1.0,
+      "cue_v_early": 22.361111111111114,
+      "cue_v_late": 92.5,
+      "cue_rate_early": 70.83333333333333,
+      "cue_rate_late": 82.5,
+      "us_rate_early": 148.61111111111111,
+      "us_rate_late": 81.94444444444443,
+      "tonic_rate": 1.736111111111111,
+      "w_sub_late_max": 26.048364639282227,
+      "support": 3,
+      "gates": {
+        "migration_r_pass": false,
+        "migration_dir_pass": true,
+        "early_burst_at_us": true,
+        "late_burst_at_cue": false,
+        "omission_dip_at_reward": true,
+        "cue_value_grows": true
+      },
+      "migration_r_pass": false,
+      "migration_dir_pass": true,
+      "label": "P2d4b:td_derivative_gain=2.5,td_fs_to_strio_weight=20.0,td_gabab_conductance_max=0.0,td_gabab_prop=0.04,td_stdp_w_max=60,td_to_fs_weight=30.0",
+      "op": {
+        "td_stdp_w_max": 60,
+        "td_gabab_conductance_max": 0.0,
+        "td_derivative_gain": 2.5,
+        "td_to_fs_weight": 30.0,
+        "td_fs_to_strio_weight": 20.0,
+        "td_gabab_prop": 0.04
+      },
+      "seed": 42,
+      "n_train": 30,
+      "wall_s": 402.0
+    }
+  ]
+}
