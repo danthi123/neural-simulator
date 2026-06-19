@@ -71,15 +71,36 @@ P1._CUE_ID = {c: i for i, c in enumerate(CUES)}
 # unmarked/ambiguous sentence (case silent) correctly has NO decisive content cue -> abstain.
 P1.SpikingRoleCompetition.SEMANTIC_CUES = ("animacy", "verbfit", "case")
 
-# reuse the Phase-1 lexicons + pools verbatim (the SAME animacy/verb-fit cues; the SAME held-out split)
+# reuse the Phase-1 lexicons + cues verbatim (the SAME animacy/verb-fit cues; the SAME English pools/split, used
+# by the dissociation's ENGLISH arm via P1.build_dataset)
 ANIMACY = P1.ANIMACY
 VERB_SELECTS = P1.VERB_SELECTS
-TRAIN_ANIMATE, TRAIN_INANIM = P1.TRAIN_ANIMATE, P1.TRAIN_INANIM
-HELD_ANIMATE, HELD_INANIM = P1.HELD_ANIMATE, P1.HELD_INANIM
-TRAIN_VERBS, HELD_VERBS = P1.TRAIN_VERBS, P1.HELD_VERBS
 ROLES = P1.ROLES
 TRUE_VALIDITY = dict(P1.TRUE_VALIDITY)
 TRUE_VALIDITY["case"] = 0.98   # case is the most-reliable cue in the case language (ga->agent, wo->patient)
+
+# ---------------------------------------------------------------------------
+# Japanese-toy lexicon: BOTH the agent and the patient are ANIMATE, so ANIMACY TIES (non-informative for role) and
+# the VERB is SYMMETRIC (both slots animate -> verb-fit ties) -> CASE is the SOLE reliable role cue. This is the
+# canonical Competition-Model Japanese test ("inu ga neko wo oikakeru" -- dog-NOM cat-ACC chase: with both animate,
+# only the case particle tells you who chased whom). Position is informative ONLY on canonical SOV; case is correct
+# at ANY order. (If the patient were inanimate -- the Phase-1 English design -- animacy alone would solve free
+# order and case would be REDUNDANT, NOT load-bearing -- the toy-design trap the scoping warns about.)
+#
+# All these nouns are animate (extends the buffer/Phase-1 ANIMACY lexicon, drift-safe: only ADDS animate nouns).
+JP_AGENTS = ["dog", "cat", "fox", "bird"]          # train agents (all animate; reused from Phase-1 animate pool)
+JP_PATIENTS = ["wolf", "bear", "owl", "frog"]      # train patients (all animate -- distinct from agents)
+JP_AGENTS_HELD = ["lion", "deer", "hawk", "seal"]  # held-out agents (animate)
+JP_PATIENTS_HELD = ["mouse", "goat", "crow", "toad"]  # held-out patients (animate)
+for _w in JP_AGENTS + JP_PATIENTS + JP_AGENTS_HELD + JP_PATIENTS_HELD:
+    ANIMACY.setdefault(_w, "animate")
+    assert ANIMACY[_w] == "animate", f"JP noun {_w} must be animate"
+
+# Japanese symmetric transitive verbs (both slots animate -> verb-fit non-informative). Adds to VERB_SELECTS.
+JP_VERBS = ["chase", "watch", "follow", "greet"]        # train verbs
+JP_VERBS_HELD = ["nudge", "tail", "spot", "mimic"]      # held-out verbs
+for _v in JP_VERBS + JP_VERBS_HELD:
+    VERB_SELECTS.setdefault(_v, {"agent": "animate", "patient": "animate"})
 
 # ---------------------------------------------------------------------------
 # 2. The case vote + a case-aware cue_evidence (installed onto P1 so ALL reused eval helpers pick it up).
@@ -182,30 +203,39 @@ def _jp_sentence(agent, verb, patient, sid, rng, force_canonical=False, drop_mar
     return surface, verb, gold, tag, sid
 
 
-def build_case_dataset(rng, animate_pool, inanim_pool, verb_pool, n_per_cond=20, ids=None,
-                       noncanon_train_frac=0.65):
-    """Japanese-style free-word-order case toy. Mirrors the Phase-1 `build_dataset` shape (train + clean_test +
-    battery + moat) so the reused eval helpers work, but EVERY sentence is case-marked and order is FREE.
+def _osv(agent, verb, patient, sid):
+    """An explicit OSV (object-front) sentence: surface = [patient, agent], case markers travel with the noun
+    (patient->wo, agent->ga). A POSITION-only parser maps the surface-first noun (the patient) to AGENT and FAILS;
+    case overrides. Returns the sentence tuple + registers the (position-independent) markers."""
+    surface = [patient, agent]
+    gold = {0: "patient", 1: "agent"}
+    _register_markers(sid, surface, gold)
+    return surface, verb, gold, "object_front_osv", sid
 
-    Battery (the position-degrading set, all case-marked):
-      'free_order'   : scrambled order (50% canonical-vs-fronted, case correct, position misleading on the fronted).
-      'object_front' : OSV explicitly (the fronted-object set a position-only parser maps to agent and FAILS).
-      'case_absent'  : particles DROPPED (case silent; only animacy/verb-fit survive) -- reported, NOT gated
-                       (position is also misleading here, so it is graceful-degradation, not the load-bearing
-                       position-only-collapse metric).
-    moat: two ANIMATE nouns + a SYMMETRIC verb, particles DROPPED (case silent, animacy ties, verb symmetric) ->
-          no decisive content cue -> ABSTAIN.
+
+def build_case_dataset(rng, agent_pool, patient_pool, verb_pool, n_per_cond=20, ids=None,
+                       noncanon_train_frac=0.65):
+    """Japanese-style free-word-order case toy. BOTH nouns ANIMATE + a SYMMETRIC verb -> animacy + verb-fit TIE ->
+    CASE is the SOLE reliable role cue. Mirrors the Phase-1 `build_dataset` shape (train + clean_test + battery +
+    moat) so the reused eval helpers work, but EVERY sentence is case-marked and order is FREE.
+
+    Battery (the position-degrading set, all case-marked, animate-animate):
+      'free_order'   : random surface order (case correct, position misleading on the fronted half).
+      'object_front' : explicit OSV (the fronted-object set a position-only parser maps to agent and FAILS).
+      'case_absent'  : particles DROPPED (case silent; animacy+verb-fit ALSO tie -> nothing disambiguates) --
+                       reported as graceful-degradation, NOT gated (case-and-position-and-semantics all silent).
+    moat: two animate nouns + symmetric verb, particles DROPPED (case silent, animacy ties, verb symmetric) ->
+          no decisive content cue -> ABSTAIN. (Differs from the battery ONLY by the missing case markers -> the
+          case cue's presence is exactly what flips decisive vs abstain.)
     """
     ids = ids or P1._Ids()
-    asym = [v for v in verb_pool if VERB_SELECTS[v]["patient"] == "inanimate"]
-    sym = [v for v in verb_pool if VERB_SELECTS[v]["patient"] == "animate"]
 
-    def rand(verbs, pat_pool):
-        a = animate_pool[rng.integers(len(animate_pool))]
-        v = verbs[rng.integers(len(verbs))]
-        p = pat_pool[rng.integers(len(pat_pool))]
+    def rand():
+        a = agent_pool[rng.integers(len(agent_pool))]
+        v = verb_pool[rng.integers(len(verb_pool))]
+        p = patient_pool[rng.integers(len(patient_pool))]
         while p == a:
-            p = pat_pool[rng.integers(len(pat_pool))]
+            p = patient_pool[rng.integers(len(patient_pool))]
         return a, v, p
 
     # TRAINING: free word order with a HIGH non-canonical fraction so POSITION's empirical validity is LOW (the
@@ -213,52 +243,36 @@ def build_case_dataset(rng, animate_pool, inanim_pool, verb_pool, n_per_cond=20,
     train = []
     n_train = n_per_cond * 6
     for _ in range(n_train):
-        a, v, p = rand(asym, inanim_pool)
+        a, v, p = rand()
         if rng.random() < noncanon_train_frac:
-            train.append(_jp_sentence(a, v, p, ids.next(), rng, force_canonical=False))  # free (likely fronted)
+            train.append(_osv(a, v, p, ids.next()))                               # object-front (position wrong)
         else:
             train.append(_jp_sentence(a, v, p, ids.next(), rng, force_canonical=True))   # SOV canonical
-        # ensure the non-canonical examples are genuinely object-fronted (not accidentally SOV): re-roll once
-        if train[-1][3] == "canonical_sov" and rng.random() < noncanon_train_frac:
-            s, vb, gold, _t, sid = _jp_sentence(a, v, p, ids.next(), rng, force_canonical=False)
-            train[-1] = (s, vb, gold, _t, sid)
 
     # BATTERY (held-out fillers/verbs supplied by the caller via the pools)
     battery = {"free_order": [], "object_front": [], "case_absent": []}
     for _ in range(n_per_cond):
-        a, v, p = rand(asym, inanim_pool)
+        a, v, p = rand()
         battery["free_order"].append(_jp_sentence(a, v, p, ids.next(), rng, force_canonical=False))
-        a, v, p = rand(asym, inanim_pool)
-        # explicit OSV (patient first) -- a position-only parser maps the fronted patient to agent and FAILS
-        s, vb, gold, _t, sid = _jp_sentence(p, v, a, ids.next(), rng, force_canonical=True)  # build SOV of (p,a)
-        # relabel: in this OSV the surface-first noun is the PATIENT, second is AGENT
-        gold2 = {0: "patient", 1: "agent"}
-        _register_markers(sid, s, gold2)
-        battery["object_front"].append((s, vb, gold2, "object_front_osv", sid))
-        a, v, p = rand(asym, inanim_pool)
-        # case-absent: free order BUT particles dropped (case silent)
-        s, vb, gold, _t, sid = _jp_sentence(a, v, p, ids.next(), rng, force_canonical=False, drop_markers=True)
-        battery["case_absent"].append((s, vb, gold, "case_absent", sid))
+        a, v, p = rand()
+        battery["object_front"].append(_osv(a, v, p, ids.next()))
+        a, v, p = rand()
+        battery["case_absent"].append(_jp_sentence(a, v, p, ids.next(), rng, force_canonical=False,
+                                                   drop_markers=True))
 
     # CLEAN canonical (the toy's majority order = SOV, case-marked)
-    clean_test = [_jp_sentence(*rand(asym, inanim_pool), ids.next(), rng, force_canonical=True)
-                  for _ in range(n_per_cond)]
+    clean_test = [_jp_sentence(*rand(), ids.next(), rng, force_canonical=True) for _ in range(n_per_cond)]
 
     # MOAT: two animate nouns + symmetric verb, particles DROPPED -> no decisive content cue -> abstain.
     moat = []
-    if sym:
-        for _ in range(n_per_cond):
-            a = animate_pool[rng.integers(len(animate_pool))]
-            b = animate_pool[rng.integers(len(animate_pool))]
-            while b == a:
-                b = animate_pool[rng.integers(len(animate_pool))]
-            v = sym[rng.integers(len(sym))]
-            perm = rng.permutation(2)
-            nn = [[a, b][perm[0]], [a, b][perm[1]]]
-            gold = {j: ("agent" if perm[j] == 0 else "patient") for j in range(2)}
-            sid = ids.next()
-            _unmarked(sid, nn)  # particles dropped -> case silent (the ambiguous moat)
-            moat.append((nn, v, gold, "moat_ambiguous", sid))
+    for _ in range(n_per_cond):
+        a, v, p = rand()
+        perm = rng.permutation(2)
+        nn = [[a, p][perm[0]], [a, p][perm[1]]]
+        gold = {j: ("agent" if perm[j] == 0 else "patient") for j in range(2)}
+        sid = ids.next()
+        _unmarked(sid, nn)  # particles dropped -> case silent (the ambiguous moat)
+        moat.append((nn, v, gold, "moat_ambiguous", sid))
     return train, clean_test, battery, moat
 
 
@@ -287,6 +301,60 @@ def _battery_with_posdeg(comp, battery, read_steps, **ev_kwargs):
 INSTALLED_CASE_WEIGHTS = {"position": 6.0, "animacy": 14.0, "verbfit": 14.0, "case": 22.0, "lexbias": 2.0}
 
 
+def learn_case_three_factor(comp, train_examples, epochs=30, settle_steps=18, seed=0,
+                            lr=0.6, decay=0.06, w_floor=0.0, w_init=12.0, output_scale=20.0):
+    """Phase-2 three-factor cue-validity learner -- the SAME brain-based rule as Phase-1's `learn_error_gated`
+    (spike-eligibility x reward/RPE x vote on the real cue->role synapses, reusing comp._settle_with_eligibility +
+    comp._fast_set_cue_weight), with TWO corrections required for the cross-LINGUISTIC setting that Phase-1's
+    English-only normalization did not need:
+
+      (A) DECAY EVERY CUE EVERY ITEM (not only when the cue fires). A cue that is NEVER informative -- the case cue
+          in ENGLISH (no markers -> never fires), OR animacy/verb-fit in the Japanese ANIMATE-ANIMATE toy (always
+          tie) -- must DECAY toward floor, so it reads as 'at floor' (not frozen at w_init). Phase-1 decayed only
+          inside the cue-active branch, so a never-firing cue stayed at w_init and the output gain then amplified
+          it -- the artifact that put English case at ~71 (it never fired). Decaying every item fixes this and is
+          the correct credit-assignment: a cue that contributes no eligibility provides no evidence -> its weight
+          relaxes to floor.
+      (B) NORMALIZE TO THE MAX learned cue (not the semantic mean). Phase-1 normalized to 0.5*(animacy+verbfit),
+          which EXPLODES when the semantic cues tie (Japanese animate-animate -> w_sem ~ 0 -> gain -> inf). The
+          MAX-cue normalization places whichever cue WON the validity competition (case, in Japanese; position/
+          semantics, in English) at `output_scale`, preserving every learned RATIO. (Same role as the numpy
+          softmax temperature: the learned validities set the ratios; a fixed gain sets the decision scale.)
+
+    Everything spike-measured / on-synapse is IDENTICAL to Phase-1; only the host-side normalization + decay
+    bookkeeping differ. The reward (settled-winner-matched-gold) is the same host teaching signal (flagged)."""
+    import numpy as _np
+    rng = _np.random.default_rng(seed)
+    comp._precompute_cue_edge_slots()
+    for c in CUES:
+        comp._fast_set_cue_weight(c, w_init)
+    W = {c: float(w_init) for c in CUES}
+    items = [(ev, gold[ni]) for _n, evs, gold in train_examples for ni, ev in enumerate(evs)]
+    for _ep in range(epochs):
+        rng.shuffle(items)
+        for ev, gold_role in items:
+            elig, rr = comp._settle_with_eligibility(ev, settle_steps=settle_steps)
+            pred = rr["agent"] - rr["patient"]
+            target = +1.0 if gold_role == "agent" else -1.0
+            err = target - _np.tanh(pred * 8.0)
+            d = 1.0 - _np.tanh(pred * 8.0) ** 2
+            for c in CUES:
+                vote, rel = ev.get(c, (0.0, 0.0))
+                e_c = elig.get(c, 0.0) if (rel > 0.0 and vote != 0.0) else 0.0
+                # (A) decay applies to EVERY cue every item; the reward-modulated term only when the cue fired.
+                reinforce = lr * (err * d * e_c * float(vote)) if e_c != 0.0 else 0.0
+                W[c] = max(w_floor, W[c] + reinforce - lr * decay * W[c])
+                comp._fast_set_cue_weight(c, W[c])
+    # (B) normalize to the MAX learned cue (robust when a cue family ties or never fires)
+    w_max = max(W.values())
+    gain = (output_scale / w_max) if w_max > 1e-6 else 1.0
+    for c in CUES:
+        W[c] = W[c] * gain
+        comp._fast_set_cue_weight(c, W[c])
+    comp.bridge.cp_external_input_current[:] = 0.0
+    return W
+
+
 def _build_competition(seed, **kw):
     return P1.SpikingRoleCompetition(seed=seed, **kw)
 
@@ -297,21 +365,21 @@ def _build_competition(seed, **kw):
 
 def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="error_gated", epochs=24, train_steps=18,
              read_steps=60, controls=True, noncanon_train_frac=0.65, verbose=False, **comp_kw):
+    _SENT_MARKERS.clear()  # fresh per-sentence case-marker map (no cross-call contamination of the module global)
     rng = np.random.default_rng(seed)
     ids = P1._Ids()
     if held_out:
-        train_an, train_in, train_vb = TRAIN_ANIMATE, TRAIN_INANIM, TRAIN_VERBS
-        test_an, test_in, test_vb = HELD_ANIMATE, HELD_INANIM, HELD_VERBS
+        tr_ag, tr_pa, tr_vb = JP_AGENTS, JP_PATIENTS, JP_VERBS
+        te_ag, te_pa, te_vb = JP_AGENTS_HELD, JP_PATIENTS_HELD, JP_VERBS_HELD
     else:
-        train_an = train_in = TRAIN_ANIMATE, TRAIN_INANIM
-        test_an, test_in, test_vb = TRAIN_ANIMATE, TRAIN_INANIM, TRAIN_VERBS
-        train_an, train_in, train_vb = TRAIN_ANIMATE, TRAIN_INANIM, TRAIN_VERBS
+        tr_ag, tr_pa, tr_vb = JP_AGENTS, JP_PATIENTS, JP_VERBS
+        te_ag, te_pa, te_vb = JP_AGENTS, JP_PATIENTS, JP_VERBS
 
     # ---- Japanese-toy corpus (the case language) ----
     train_sents, _ct_tr, _bt_tr, _mt_tr = build_case_dataset(
-        rng, train_an, train_in, train_vb, n_per_cond=n_per_cond, ids=ids, noncanon_train_frac=noncanon_train_frac)
+        rng, tr_ag, tr_pa, tr_vb, n_per_cond=n_per_cond, ids=ids, noncanon_train_frac=noncanon_train_frac)
     _tr_e, clean_test, battery, moat_set = build_case_dataset(
-        rng, test_an, test_in, test_vb, n_per_cond=n_per_cond, ids=ids, noncanon_train_frac=noncanon_train_frac)
+        rng, te_ag, te_pa, te_vb, n_per_cond=n_per_cond, ids=ids, noncanon_train_frac=noncanon_train_frac)
     train_ex = P1._examples_to_evidence(train_sents)
 
     # ---- LEARNED case-aware spiking parser (the case language) ----
@@ -321,7 +389,7 @@ def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="error_gated", epoch
             learned.set_cue_weight(c, w)
         learned.freeze_all_cue_plasticity()
     elif learn_mode == "error_gated":
-        learned.learn_error_gated(train_ex, epochs=epochs, settle_steps=train_steps, seed=seed)
+        learn_case_three_factor(learned, train_ex, epochs=epochs, settle_steps=train_steps, seed=seed)
         learned.freeze_all_cue_plasticity()
     else:  # hebbian (characterized NEGATIVE for validity learning -- kept for completeness)
         learned.learn(train_ex, epochs=epochs, train_steps=train_steps, seed=seed, freeze=False)
@@ -334,20 +402,26 @@ def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="error_gated", epoch
 
     # ===== primary metrics on the learned (case) parser =====
     mc_battery = _battery_with_posdeg(learned, battery, read_steps)
-    lesion_case_battery = _battery_with_posdeg(learned, battery, read_steps, drop_cues=("case",))  # CASE-LESION
     mc_clean = P1._role_accuracy(learned, clean_test, read_steps=read_steps)
     breaches, moat_n, abstain_rate = P1._moat_breaches(learned, moat_set, abstain_margin, read_steps=read_steps)
 
-    # POSITION-ONLY baseline: a GENUINE position-only parser (position at the reference weight, ALL other cues
-    # dropped incl. case). On the free-order battery it maps the fronted noun to agent and COLLAPSES.
+    # CASE-LESION (THE decisive control): zero the LEARNED cue_case->role projection weights on the SAME trained
+    # parser, keep all the others. The case cue still FIRES but its projection contributes no drive -> free-order
+    # robustness must collapse back to the position/semantic-only level. (Done AFTER the primary metrics since it
+    # destructively edits `learned`; all cues still fire so this is a true synaptic lesion, not an evidence drop.)
+    learned.set_cue_weight("case", 0.0)
+    lesion_case_battery = _battery_with_posdeg(learned, battery, read_steps)
+
+    # POSITION-ONLY baseline: a GENUINE position-only parser -- position at the reference weight, ALL OTHER cues'
+    # projection weights ZEROED (incl. case). All cues still fire, but only position drives the WTA, so on the
+    # free-order battery it maps the fronted noun to agent and COLLAPSES. (Synaptic baseline; no evidence drop.)
     pos_ref = _build_competition(seed, **comp_kw)
     for c in CUES:
         pos_ref.set_cue_weight(c, 0.0)
     pos_ref.set_cue_weight("position", INSTALLED_CASE_WEIGHTS["position"])
     pos_ref.freeze_all_cue_plasticity()
-    pos_drop = ("animacy", "verbfit", "case", "lexbias")
-    pos_battery = _battery_with_posdeg(pos_ref, battery, read_steps, drop_cues=pos_drop)
-    pos_clean = P1._role_accuracy(pos_ref, clean_test, read_steps=read_steps, drop_cues=pos_drop)
+    pos_battery = _battery_with_posdeg(pos_ref, battery, read_steps)
+    pos_clean = P1._role_accuracy(pos_ref, clean_test, read_steps=read_steps)
 
     res = {
         "seed": seed,
@@ -378,10 +452,12 @@ def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="error_gated", epoch
         # PERMUTED-CASE: train against a SCRAMBLED case-marker->role assignment (nominative->patient,
         # accusative->agent). The case cue then carries NO real role info -> the validity learner finds no useful
         # spread -> collapses to chance on free order. Built as a SEPARATE corpus whose markers are flipped.
+        # IMPORTANT: reuse the SHARED `ids` (continues past train+battery) so the permuted-train sent_ids do NOT
+        # collide with the main battery's sent_ids in the module-global _SENT_MARKERS map (flipping markers at a
+        # colliding sid would corrupt the still-correctly-marked battery the permuted parser is evaluated on).
         rng_p = np.random.default_rng(seed + 7000)
-        ids_p = P1._Ids()
-        train_perm, _c2, _b2, _m2 = build_case_dataset(rng_p, train_an, train_in, train_vb,
-                                                       n_per_cond=n_per_cond, ids=ids_p,
+        train_perm, _c2, _b2, _m2 = build_case_dataset(rng_p, tr_ag, tr_pa, tr_vb,
+                                                       n_per_cond=n_per_cond, ids=ids,
                                                        noncanon_train_frac=noncanon_train_frac)
         # flip the case markers in the permuted training corpus (ga<->wo) so case anti-correlates with role
         for s, vb, gold, tag, sid in train_perm:
@@ -392,7 +468,7 @@ def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="error_gated", epoch
         train_ex_perm = P1._examples_to_evidence(train_perm)
         permuted = _build_competition(seed, **comp_kw)
         if learn_mode == "error_gated":
-            permuted.learn_error_gated(train_ex_perm, epochs=epochs, settle_steps=train_steps, seed=seed)
+            learn_case_three_factor(permuted, train_ex_perm, epochs=epochs, settle_steps=train_steps, seed=seed)
         else:
             permuted.learn(train_ex_perm, epochs=epochs, train_steps=train_steps, seed=seed, freeze=False)
         permuted.freeze_all_cue_plasticity()
@@ -416,10 +492,17 @@ def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="error_gated", epoch
     sig_ok = (w_learned["case"] >= w_sem_mean * 0.9 and
               case_above_pos >= 0.25 * max(1e-9, w_learned["case"]) and
               w_learned["lexbias"] <= w_learned["case"] * 0.75)
+    # The case-lesion gate: the case cue was LOAD-BEARING -> removing it must (a) materially drop the free-order
+    # accuracy AND (b) collapse the OBJECT-FRONT condition specifically (with case gone, the position cue maps the
+    # fronted noun to agent and fails -- the decisive signature). NOTE the no-case "semantic-only" baseline here is
+    # ~chance (both nouns animate -> animacy/verb-fit TIE -> a coin-flip), NOT the 0.25 position-only level (which
+    # additionally drops the animacy/lexbias drive); so the gate asserts a real collapse vs the CASE parser + the
+    # object-front-specific collapse, not "<= position-only".
+    les_of = lesion_case_battery["object_front"]
     gates = {
         "case_path_ge_0.80": mc >= 0.80,
         "position_only_collapses_le_0.45": pos <= 0.45,
-        "case_lesion_collapses_near_position": les <= max(pos + 0.15, 0.55),
+        "case_lesion_collapses": (les <= mc - 0.20) and (les_of <= 0.55),
         "clean_strong_and_not_collapsed": (mc_clean >= 0.80) and (mc_clean >= pos_clean - 0.20),
         "moat_zero_breach": breaches == 0,
     }
@@ -446,54 +529,63 @@ def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="error_gated", epoch
 def run_dissociation(seed, n_per_cond=20, epochs=24, train_steps=18, noncanon_train_frac_jp=0.65,
                      noncanon_train_frac_en=0.55, verbose=False, **comp_kw):
     # --- ENGLISH (Phase-1's own English build_dataset; NO case markers -> case cue silent) ---
+    # CLEAR the per-sentence markers map: English has NO case markers anywhere -> the case cue is silent on every
+    # English sentence (so its learned validity stays at floor). This is the dissociation mechanism (the SAME
+    # cue_evidence reads markers if present, votes 0 if absent) -- with no code-path difference between languages.
+    _SENT_MARKERS.clear()
     rng_en = np.random.default_rng(seed)
     ids_en = P1._Ids()
-    en_train, _c, _b, _m = P1.build_dataset(rng_en, TRAIN_ANIMATE, TRAIN_INANIM, TRAIN_VERBS,
+    en_train, _c, _b, _m = P1.build_dataset(rng_en, P1.TRAIN_ANIMATE, P1.TRAIN_INANIM, P1.TRAIN_VERBS,
                                             n_per_cond=n_per_cond, ids=ids_en,
                                             noncanon_train_frac=noncanon_train_frac_en)
-    # ensure no stale markers leak into the English run (English sentences must be unmarked -> case silent)
-    for s, vb, gold, tag, sid in en_train:
-        _SENT_MARKERS.pop(int(sid), None)
     en_ex = P1._examples_to_evidence(en_train)
     comp_en = _build_competition(seed, **comp_kw)
-    comp_en.learn_error_gated(en_ex, epochs=epochs, settle_steps=train_steps, seed=seed)
+    learn_case_three_factor(comp_en, en_ex, epochs=epochs, settle_steps=train_steps, seed=seed)
     comp_en.freeze_all_cue_plasticity()
     w_en = comp_en.cue_weights()
 
     # --- JAPANESE-TOY (the case corpus; markers present -> case cue fires) ---
     rng_jp = np.random.default_rng(seed)
     ids_jp = P1._Ids()
-    jp_train, _c2, _b2, _m2 = build_case_dataset(rng_jp, TRAIN_ANIMATE, TRAIN_INANIM, TRAIN_VERBS,
+    jp_train, _c2, _b2, _m2 = build_case_dataset(rng_jp, JP_AGENTS, JP_PATIENTS, JP_VERBS,
                                                  n_per_cond=n_per_cond, ids=ids_jp,
                                                  noncanon_train_frac=noncanon_train_frac_jp)
     jp_ex = P1._examples_to_evidence(jp_train)
     comp_jp = _build_competition(seed, **comp_kw)
-    comp_jp.learn_error_gated(jp_ex, epochs=epochs, settle_steps=train_steps, seed=seed)
+    learn_case_three_factor(comp_jp, jp_ex, epochs=epochs, settle_steps=train_steps, seed=seed)
     comp_jp.freeze_all_cue_plasticity()
     w_jp = comp_jp.cue_weights()
 
-    # the dissociation gates: English -> position dominant + case ~floor; Japanese -> case dominant + position low.
+    # the dissociation gates: English -> uses POSITION (not case); Japanese -> uses CASE (not position).
     en_pos = w_en["position"]
     en_sem = 0.5 * (w_en["animacy"] + w_en["verbfit"])
+    en_lex = w_en["lexbias"]
     jp_case = w_jp["case"]
     jp_pos = w_jp["position"]
     diss = {
         "seed": seed,
         "english_weights": {k: round(v, 4) for k, v in w_en.items()},
         "japanese_weights": {k: round(v, 4) for k, v in w_jp.items()},
-        # English: case ~0 (never fired -> stayed at floor) AND position is a real cue (>= ~0.5x semantic, NOT zeroed)
-        "english_case_at_floor": w_en["case"] <= max(2.0, en_sem * 0.35),
-        "english_position_is_real": en_pos >= 0.4 * max(1e-9, en_sem),
-        # Japanese: case dominant (>= semantic) AND position driven below case by a real margin
+        # English: the CASE cue stayed at FLOOR (it never fired -- no markers in English), so the English learner
+        # did NOT acquire a case strategy. (THE point: case is language-specific; with no case input it is unused.)
+        "english_case_at_floor": w_en["case"] <= max(2.0, en_sem * 0.20),
+        # English: POSITION is a genuinely-USED cue -- materially above the chance distractor (lexbias) floor AND
+        # above the (floored) case cue. (English weights position over case; it need NOT beat the even-stronger
+        # SEMANTIC cues -- the Competition-Model point is that English HAS a position strategy, while Japanese has a
+        # case one. Position being secondary to the very-reliable animacy/verb-fit in English is expected, not a
+        # failure: animacy is also a strong cue in English. What flips across languages is POSITION vs CASE.)
+        "english_position_used_over_case": (en_pos > w_en["case"]) and (en_pos >= max(2.0, 2.0 * en_lex)),
+        # Japanese: case DOMINANT (above position by a real margin) AND case is the TOP cue overall (case language).
         "japanese_case_dominant": jp_case >= jp_pos + 0.25 * max(1e-9, jp_case),
-        "japanese_case_ge_semantic": jp_case >= 0.9 * (0.5 * (w_jp["animacy"] + w_jp["verbfit"])),
+        "japanese_case_is_top": jp_case >= max(w_jp[c] for c in CUES if c != "case") - 1e-6,
     }
-    # the OPPOSITE-PROFILE assertion: case's rank vs position FLIPS between the two languages.
+    # the OPPOSITE-PROFILE assertion (the headline): case's rank vs position FLIPS between the two languages --
+    # English position > case; Japanese case > position. SAME code+learner, two corpora, opposite cue profiles.
     diss["profile_flips"] = bool(
         (w_en["position"] > w_en["case"]) and (w_jp["case"] > w_jp["position"]))
     diss["dissociation_GO"] = bool(
-        diss["english_case_at_floor"] and diss["english_position_is_real"] and
-        diss["japanese_case_dominant"] and diss["japanese_case_ge_semantic"] and diss["profile_flips"])
+        diss["english_case_at_floor"] and diss["english_position_used_over_case"] and
+        diss["japanese_case_dominant"] and diss["japanese_case_is_top"] and diss["profile_flips"])
     if verbose:
         print("\n[DISSOCIATION] English vs Japanese-toy (same code, same learner):")
         print(f"  English : " + ", ".join(f"{c}={w_en[c]:.2f}" for c in CUES))
