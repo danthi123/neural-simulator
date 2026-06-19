@@ -7,9 +7,45 @@ This document is the **authoritative current-state reference**.
 Update it whenever capabilities change. For the journey of how we
 got here, see `research/findings/`.
 
-**Last meaningful update:** 2026-06-16 (see "Recent milestones (2026-06)" below).
+**Last meaningful update:** 2026-06-19 (see "Recent milestones (2026-06)" below).
 
 **Recent milestones (2026-06):**
+- **The navigation move-decision is now made in spikes — by default (2026-06-19).**
+  On the one shared brain, the choice of which way to step now *emerges* from a
+  race between competing neural populations (a working-memory-style accumulator
+  that integrates evidence, ending when the winner fires an all-or-none
+  committing burst) — the old off-brain "pick the best option" step is retired,
+  kept only as an optional baseline. Validated across six random seeds on a
+  32×32 grid: the spiking decision terminates on the neural burst 100% of the
+  time (never falling back to the shortcut) and costs about **16% more steps**
+  than the shortcut — a genuine, reported cost of doing the decision in neurons,
+  not a number that was hidden. The conversational half is untouched by this
+  (its neurons stay exactly unchanged, so the "won't make things up" guarantee
+  is preserved by construction). Source:
+  [`2026-06-19-spiking-decision-default-on-GO.md`](../research/findings/2026-06-19-spiking-decision-default-on-GO.md).
+- **The conversational engine is now 10–20× faster (2026-06-19).** Answering a
+  question used to rebuild a large internal table from scratch every single
+  query; that table actually never changes between queries, so it is now built
+  once and reused. A question now returns in under a tenth of a second on a
+  desktop GPU (a flat ~9.5 ms regardless of how many facts are stored), and the
+  speed-up grows with the size of the knowledge base. The answers are identical
+  to before, and the "won't make things up" guarantee is bit-for-bit unchanged.
+  Source: [`2026-06-19-latency-csr-cache-GO.md`](../research/findings/2026-06-19-latency-csr-cache-GO.md).
+- **The conversational stack is comprehensively complete (2026-06-17), and a
+  few richer skills were folded into the one production agent (2026-06-18/19).**
+  The agent now parses sentences, stores facts, recalls them, abstains on what
+  it was never told, handles yes/no and negation, generates word-ordered
+  replies, plans dialogue, **reasons across several facts** (multi-step
+  chaining), **tracks referents across turns** (resolving a later "it"), and
+  — newly consolidated — understands **described objects** ("the dog ate the big
+  apple" → "big apple") and **flexible word orders** (not just plain
+  subject-verb-object). The whole loop runs on the codes the system **learned
+  from conversation**, validated at the 320-concept scale (multi-seed, with zero
+  fabrications). One honest boundary stays open: an object with *two* attributes
+  ("big red ball") is not yet reliable on the learned codes. Sources:
+  [`2026-06-17-multihop-query-chain-GO.md`](../research/findings/2026-06-17-multihop-query-chain-GO.md),
+  [`2026-06-17-multiturn-anaphora-derisk-GO.md`](../research/findings/2026-06-17-multiturn-anaphora-derisk-GO.md),
+  [`2026-06-19-consolidation-attr-multiframe.md`](../research/findings/2026-06-19-consolidation-attr-multiframe.md).
 - **The unified embodied agent — one brain that navigates, perceives, composes,
   and converses (2026-06-16).** A *single* network (one update loop) in which
   navigation, perception, fact-composition, and conversation all run as
@@ -142,9 +178,10 @@ Manhattan distance to goal** across 6 seeds (the biology-grounded,
 vision-only "G v2.5 + K v2" recipe; closes 4 of the 5 original
 shortcuts). 6/6 seeds beat the 16×16 baseline on a 4× larger grid.
 Agent spends ~36% of its time at the goal. (Since this result,
-navigation's last hand-computed steps — orienting, reward/value, and
-the dopamine signal — have been progressively converted to genuine
-spiking circuits; see the 2026-06 milestones above and CLAUDE.md.)
+navigation's last hand-computed steps — orienting, reward/value, the
+dopamine signal, and now the move-decision itself — have all been
+converted to genuine spiking circuits, the spiking decision being the
+default; see the 2026-06 milestones above and CLAUDE.md.)
 
 **How it works (in plain language):** the agent's "eyes" (32×32
 retina) see the gridworld image. Visual cortex extracts edges (V1),
