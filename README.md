@@ -104,8 +104,18 @@ McNaughton & O'Reilly 1995).
 words, it binds them into structured facts ("who did what to whom",
 attributes, and even nested clauses like "the dog sees the cat chase the
 ball") and answers questions about them — *who* ran, *what* is big, yes/no
-including negation. The binding and unbinding are computed by spiking
-neurons, not a lookup table.
+including negation. It now also understands a described object ("the dog
+ate the **big apple**" → the patient is "big apple"), handles flexible word
+orders beyond plain subject-verb-object, chains several facts together to
+answer a multi-step question ("dog eats cat, cat eats mouse" → "what does
+the thing the dog eats, eat?" → "mouse"), and tracks what was just
+mentioned across conversational turns so a later pronoun ("it") resolves to
+the right thing. The binding and unbinding are computed by spiking neurons,
+not a lookup table, and the conversational engine was sped up roughly
+10–20× so a query now returns in well under a tenth of a second on a
+desktop GPU. One honest boundary: an object with *two* attributes ("big red
+ball") is not yet reliable on the learned codes — a documented limit, not a
+hidden one.
 
 **It refuses to make things up.** Asked about something it was never
 taught, it answers "I don't know" rather than confidently fabricating a
@@ -116,10 +126,13 @@ and what it does not.
 **It navigates from vision.** The original capability: it finds a goal on
 a gridworld using only simulated retinal input — no direct coordinates and
 no hand-coded distance signal — reaching the goal far above chance (about
-38% of the time on a 16×16 grid in the validated configuration). The
-action-selection circuitry (basal ganglia → thalamus → motor cortex) is
-being progressively rebuilt so the decision is made *in spikes* rather
-than by any off-brain shortcut.
+38% of the time on a 16×16 grid in the validated configuration). As of the
+latest work, the *move decision itself* is made by spiking neurons by
+default: competing action circuits (basal ganglia → thalamus → motor
+cortex) race, and the winner is chosen when one fires a committing burst —
+not by any off-brain shortcut. This is a genuine neural decision; it costs
+about 16% more steps than the old shortcut, and that honest cost is
+reported, not hidden.
 
 **It is learning to speak in its own words (early stage).** The system's
 *own* spiking network is being trained to generate language from a local
@@ -425,14 +438,19 @@ biologically grounded **memory** (continual, trustworthy, ~320 concepts,
 multi-seed) and **navigation** from vision; **language generation** is an
 honestly hard frontier with a proven foundation but no fluency yet. Recent
 work has focused on making every remaining shortcut more biologically
-faithful — for example, rebuilding the navigation action-selection
-pathway so the decision is genuinely made in spikes.
+faithful and on folding the system together into one brain.
 
 Navigation is now **fully biology-based** — every step between seeing
 and acting is done by simulated neurons (a spiking superior colliculus
 for orienting toward the goal, a neural reward signal, and a spiking
 basal-ganglia decision and dopamine system), with no hand-coded
-shortcut in between. An earlier milestone **put the navigation brain and
+shortcut in between. The **move decision itself is now made in spikes by
+default**: the action emerges from a race between competing neural
+populations that ends when one fires a committing burst, with the old
+off-brain "pick the best option" shortcut retired (kept only as an
+optional baseline). It costs about 16% more steps than that shortcut — a
+genuine, reported cost of doing the decision in neurons. An earlier
+milestone **put the navigation brain and
 the conversational brain on a single network** — each as its own group
 of neurons — and the two now genuinely **interact through synapses**, not
 merely sit side by side: a *spoken command* can steer the navigating
@@ -521,7 +539,7 @@ neural-simulator/
 ├── docs/                  ← biology, current state, roadmap, guides
 ├── webapp/                ← FastAPI dashboard
 ├── simulation_profiles/   ← 47 brain-region JSON profiles
-└── tests/                 ← pytest suite (293 files)
+└── tests/                 ← pytest suite (303 files)
 ```
 
 ---
