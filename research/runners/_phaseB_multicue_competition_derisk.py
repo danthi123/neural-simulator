@@ -49,15 +49,19 @@ import numpy as np
 # Extended with disjoint TRAIN vs HELD-OUT filler/verb pools so role correctness is vocab-agnostic.
 # ---------------------------------------------------------------------------
 
-# Animacy lexicon (animate nouns can be agents; inanimate nouns are typically patients of agentive verbs).
-ANIMACY = {
+# Animacy lexicon -- REUSE-BY-IMPORT: start from the buffer's ANIMACY (the production referent-disambiguation
+# lexicon) and EXTEND it with disjoint train/held-out fillers. The assertion pins reuse fidelity (the overlap
+# must agree, else a silent drift would corrupt the cue values).
+from research.runners.biased_competition_buffer import ANIMACY as _BUF_ANIMACY  # noqa: E402
+
+ANIMACY = dict(_BUF_ANIMACY)
+ANIMACY.update({
     # --- animate (agents) ---
-    "dog": "animate", "cat": "animate", "fox": "animate", "bird": "animate",
     "wolf": "animate", "bear": "animate", "owl": "animate", "frog": "animate",
     # --- inanimate (patients) ---
-    "ball": "inanimate", "apple": "inanimate", "rock": "inanimate", "book": "inanimate",
     "stick": "inanimate", "bone": "inanimate", "leaf": "inanimate", "cup": "inanimate",
-}
+})
+assert all(ANIMACY[n] == _BUF_ANIMACY[n] for n in _BUF_ANIMACY), "ANIMACY drifted from buffer lexicon"
 
 # Verb selectional restriction: an agentive verb's AGENT slot prefers an animate filler; its PATIENT slot
 # prefers (or at least tolerates) an inanimate filler. `agent`/`patient` = which animacy each slot selects for.
@@ -124,11 +128,15 @@ TRUE_VALIDITY = {"animacy": 0.90, "verbfit": 0.90, "lexbias": 0.50}
 POSITION_NOISE = 0.0
 
 
+_CUE_ID = {c: i for i, c in enumerate(CUES)}  # stable integer key per cue (Python's str hash() is salted!)
+
+
 def _det_unit(sent_id, cue, noun_index):
     """Deterministic uniform(0,1) keyed on (sentence, cue, noun) so a sentence's noisy votes are STABLE across
-    every parser/control that sees it (the corruption is a property of the INPUT, identical for all readers)."""
-    h = hash((int(sent_id), cue, int(noun_index))) & 0xFFFFFFFF
-    return (np.random.default_rng(h).random())
+    every parser/control AND across PROCESSES (Python's builtin str hash() is per-process salted -> NOT
+    reproducible; we key the RNG on a stable integer mix instead, so multi-seed runs are byte-reproducible)."""
+    key = (int(sent_id) * 97 + _CUE_ID[cue]) * 31 + int(noun_index)
+    return float(np.random.default_rng(key & 0xFFFFFFFF).random())
 
 
 def _maybe_flip(vote, validity, sent_id, cue, noun_index):

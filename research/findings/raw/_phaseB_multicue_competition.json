@@ -17,10 +17,10 @@
     {
       "seed": 42,
       "weights_learned": {
-        "position": 0.3994,
-        "animacy": 0.6391,
-        "verbfit": 0.8208,
-        "lexbias": 0.1046
+        "position": 0.3747,
+        "animacy": 0.7344,
+        "verbfit": 0.7499,
+        "lexbias": 0.0077
       },
       "weights_frozen": {
         "position": 0.5,
@@ -29,16 +29,16 @@
         "lexbias": 0.5
       },
       "weights_permuted": {
-        "position": 0.7052,
-        "animacy": 0.0145,
-        "verbfit": 0.0,
+        "position": 0.7101,
+        "animacy": 0.0,
+        "verbfit": 0.0783,
         "lexbias": 0.0
       },
-      "abstain_margin": 0.82081,
+      "abstain_margin": 0.74993,
       "multicue_battery": {
         "drop_verb": 1.0,
-        "scramble": 0.95,
-        "object_front": 0.95,
+        "scramble": 1.0,
+        "object_front": 0.9,
         "_mean": 0.9667,
         "_mean_posdeg": 0.95
       },
@@ -51,10 +51,10 @@
       },
       "nolearn_battery": {
         "drop_verb": 1.0,
-        "scramble": 0.8,
-        "object_front": 0.525,
-        "_mean": 0.775,
-        "_mean_posdeg": 0.6625
+        "scramble": 0.775,
+        "object_front": 0.475,
+        "_mean": 0.75,
+        "_mean_posdeg": 0.625
       },
       "lesion_battery": {
         "drop_verb": 1.0,
@@ -91,10 +91,10 @@
     {
       "seed": 43,
       "weights_learned": {
-        "position": 0.2677,
-        "animacy": 0.7199,
-        "verbfit": 0.8028,
-        "lexbias": 0.0691
+        "position": 0.4706,
+        "animacy": 0.6734,
+        "verbfit": 0.8431,
+        "lexbias": 0.0
       },
       "weights_frozen": {
         "position": 0.5,
@@ -103,18 +103,18 @@
         "lexbias": 0.5
       },
       "weights_permuted": {
-        "position": 0.5056,
-        "animacy": 0.1617,
-        "verbfit": 0.0,
+        "position": 0.5329,
+        "animacy": 0.0,
+        "verbfit": 0.0985,
         "lexbias": 0.0
       },
-      "abstain_margin": 0.8028,
+      "abstain_margin": 0.84309,
       "multicue_battery": {
         "drop_verb": 1.0,
         "scramble": 1.0,
-        "object_front": 0.95,
-        "_mean": 0.9833,
-        "_mean_posdeg": 0.975
+        "object_front": 0.9,
+        "_mean": 0.9667,
+        "_mean_posdeg": 0.95
       },
       "position_only_battery": {
         "drop_verb": 1.0,
@@ -125,10 +125,10 @@
       },
       "nolearn_battery": {
         "drop_verb": 1.0,
-        "scramble": 0.85,
-        "object_front": 0.525,
-        "_mean": 0.7917,
-        "_mean_posdeg": 0.6875
+        "scramble": 0.8,
+        "object_front": 0.475,
+        "_mean": 0.7583,
+        "_mean_posdeg": 0.6375
       },
       "lesion_battery": {
         "drop_verb": 1.0,
@@ -165,10 +165,10 @@
     {
       "seed": 44,
       "weights_learned": {
-        "position": 0.1824,
-        "animacy": 0.9506,
-        "verbfit": 0.5233,
-        "lexbias": 0.0
+        "position": 0.2652,
+        "animacy": 0.7885,
+        "verbfit": 0.7673,
+        "lexbias": 0.1149
       },
       "weights_frozen": {
         "position": 0.5,
@@ -177,16 +177,16 @@
         "lexbias": 0.5
       },
       "weights_permuted": {
-        "position": 0.2858,
-        "animacy": 0.0,
-        "verbfit": 0.1344,
-        "lexbias": 0.0131
+        "position": 0.2299,
+        "animacy": 0.1336,
+        "verbfit": 0.0,
+        "lexbias": 0.0
       },
-      "abstain_margin": 0.95055,
+      "abstain_margin": 0.78851,
       "multicue_battery": {
         "drop_verb": 1.0,
-        "scramble": 0.95,
-        "object_front": 0.95,
+        "scramble": 1.0,
+        "object_front": 0.9,
         "_mean": 0.9667,
         "_mean_posdeg": 0.95
       },
@@ -199,10 +199,10 @@
       },
       "nolearn_battery": {
         "drop_verb": 1.0,
-        "scramble": 0.75,
-        "object_front": 0.525,
-        "_mean": 0.7583,
-        "_mean_posdeg": 0.6375
+        "scramble": 0.725,
+        "object_front": 0.475,
+        "_mean": 0.7333,
+        "_mean_posdeg": 0.6
       },
       "lesion_battery": {
         "drop_verb": 1.0,
@@ -239,10 +239,10 @@
     {
       "seed": 45,
       "weights_learned": {
-        "position": 0.3259,
-        "animacy": 0.8064,
-        "verbfit": 0.7129,
-        "lexbias": 0.0
+        "position": 0.0495,
+        "animacy": 0.6892,
+        "verbfit": 0.8654,
+        "lexbias": 0.1147
       },
       "weights_frozen": {
         "position": 0.5,
@@ -251,18 +251,18 @@
         "lexbias": 0.5
       },
       "weights_permuted": {
-        "position": 0.6271,
-        "animacy": 0.0248,
-        "verbfit": 0.0,
-        "lexbias": 0.1447
+        "position": 0.5872,
+        "animacy": 0.0,
+        "verbfit": 0.0467,
+        "lexbias": 0.02
       },
-      "abstain_margin": 0.80639,
+      "abstain_margin": 0.86543,
       "multicue_battery": {
-        "drop_verb": 1.0,
-        "scramble": 0.925,
-        "object_front": 0.95,
-        "_mean": 0.9583,
-        "_mean_posdeg": 0.9375
+        "drop_verb": 0.925,
+        "scramble": 1.0,
+        "object_front": 0.9,
+        "_mean": 0.9417,
+        "_mean_posdeg": 0.95
       },
       "position_only_battery": {
         "drop_verb": 1.0,
@@ -273,17 +273,17 @@
       },
       "nolearn_battery": {
         "drop_verb": 1.0,
-        "scramble": 0.825,
-        "object_front": 0.525,
-        "_mean": 0.7833,
-        "_mean_posdeg": 0.675
+        "scramble": 0.675,
+        "object_front": 0.475,
+        "_mean": 0.7167,
+        "_mean_posdeg": 0.575
       },
       "lesion_battery": {
-        "drop_verb": 1.0,
+        "drop_verb": 0.7,
         "scramble": 0.45,
-        "object_front": 0.0,
-        "_mean": 0.4833,
-        "_mean_posdeg": 0.225
+        "object_front": 0.1,
+        "_mean": 0.4167,
+        "_mean_posdeg": 0.275
       },
       "permuted_battery": {
         "drop_verb": 1.0,
@@ -313,9 +313,9 @@
     {
       "seed": 46,
       "weights_learned": {
-        "position": 0.4428,
-        "animacy": 0.7551,
-        "verbfit": 0.6866,
+        "position": 0.3861,
+        "animacy": 0.917,
+        "verbfit": 0.5567,
         "lexbias": 0.0
       },
       "weights_frozen": {
@@ -325,16 +325,16 @@
         "lexbias": 0.5
       },
       "weights_permuted": {
-        "position": 0.8102,
+        "position": 0.7851,
         "animacy": 0.0,
-        "verbfit": 0.0146,
+        "verbfit": 0.0942,
         "lexbias": 0.0
       },
-      "abstain_margin": 0.75508,
+      "abstain_margin": 0.91702,
       "multicue_battery": {
         "drop_verb": 1.0,
-        "scramble": 0.95,
-        "object_front": 0.95,
+        "scramble": 1.0,
+        "object_front": 0.9,
         "_mean": 0.9667,
         "_mean_posdeg": 0.95
       },
@@ -347,10 +347,10 @@
       },
       "nolearn_battery": {
         "drop_verb": 1.0,
-        "scramble": 0.825,
-        "object_front": 0.525,
-        "_mean": 0.7833,
-        "_mean_posdeg": 0.675
+        "scramble": 0.775,
+        "object_front": 0.475,
+        "_mean": 0.75,
+        "_mean_posdeg": 0.625
       },
       "lesion_battery": {
         "drop_verb": 1.0,
@@ -387,10 +387,10 @@
     {
       "seed": 47,
       "weights_learned": {
-        "position": 0.4254,
-        "animacy": 0.6832,
-        "verbfit": 0.7934,
-        "lexbias": 0.0246
+        "position": 0.4075,
+        "animacy": 0.8182,
+        "verbfit": 0.6386,
+        "lexbias": 0.1155
       },
       "weights_frozen": {
         "position": 0.5,
@@ -399,18 +399,18 @@
         "lexbias": 0.5
       },
       "weights_permuted": {
-        "position": 0.4855,
+        "position": 0.5017,
         "animacy": 0.0,
         "verbfit": 0.0,
-        "lexbias": 0.0465
+        "lexbias": 0.0
       },
-      "abstain_margin": 0.79344,
+      "abstain_margin": 0.81821,
       "multicue_battery": {
         "drop_verb": 1.0,
-        "scramble": 0.975,
-        "object_front": 0.95,
-        "_mean": 0.975,
-        "_mean_posdeg": 0.9625
+        "scramble": 1.0,
+        "object_front": 0.9,
+        "_mean": 0.9667,
+        "_mean_posdeg": 0.95
       },
       "position_only_battery": {
         "drop_verb": 1.0,
@@ -421,10 +421,10 @@
       },
       "nolearn_battery": {
         "drop_verb": 1.0,
-        "scramble": 0.875,
-        "object_front": 0.525,
-        "_mean": 0.8,
-        "_mean_posdeg": 0.7
+        "scramble": 0.725,
+        "object_front": 0.475,
+        "_mean": 0.7333,
+        "_mean_posdeg": 0.6
       },
       "lesion_battery": {
         "drop_verb": 1.0,
