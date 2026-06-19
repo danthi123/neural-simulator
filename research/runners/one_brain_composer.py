@@ -91,8 +91,15 @@ class OneBrainComposer:
     `ask_yes_no`; `kb` bookkeeping)."""
 
     def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200, enable_batched=True,
-                 enable_rf_cudagraph=True, grounded_codes=None, confidence_gate=0.0, enable_csr_cache=True):
+                 enable_rf_cudagraph=True, grounded_codes=None, confidence_gate=0.0, enable_csr_cache=True,
+                 enable_attributed=False, enable_multiframe=False):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
+        # enable_multiframe (richer-syntax #2, default OFF = byte-identical): build a FrameParser (verb-position ->
+        # frame selection + position x frame -> role, both neural) so `hear_multiframe(sentence, verbs)` comprehends a
+        # sentence in an AUTO-SELECTED word-order frame (SVO/VSO/OSV). The default `hear` (the on-bridge SVO/passive
+        # BridgeParser) is untouched. Lazily built on first use to keep construction byte-identical when unused.
+        self.enable_multiframe = bool(enable_multiframe)
+        self._frame_parser = None
         self.enable_batched = bool(enable_batched)       # A5 lever 1: read ALL blocks in 3 windows (7.3x); per-block=oracle
         self.enable_rf_cudagraph = bool(enable_rf_cudagraph)   # A5 lever 3: masked megakernel for the resonate (GPU only)
         # enable_csr_cache (default ON, A5 lever 4 / the latency-arc top increment): cache the QUERY-INVARIANT unbind +
@@ -122,17 +129,31 @@ class OneBrainComposer:
         self.R = 40; self.P = 6 + 3 * self.R; self.k_max = int(k_max)
         self.pol_words = list(self.comp.pol_words)                   # ["AFFIRM","NEGATE"] -- cleaned up SEPARATELY from
         self.NP = len(self.pol_words)                                # the main vocab (a 2-word polarity codebook)
-        # 4 fillable roles ALWAYS bound: agent, action, patient, polarity (default AFFIRM) -> yes/no/negation. The
-        # 4-role coherence is GO, so the 4th bind is within the substrate's per-fact capacity.
-        self.store_base = self.P + 9 * D                            # work: fill_0..3 (4) + bound_0..3 (4) + acc (1) = 9
+        # The fillable roles ALWAYS bound. Default = 4 (agent, action, patient, polarity[AFFIRM]) -> yes/no/negation;
+        # the 4-role coherence is GO, so the 4th bind is within the substrate's per-fact capacity. With
+        # `enable_attributed` (richer-syntax #1, default OFF = byte-identical), a 5th ATTRIBUTE role is bound so a
+        # single-attribute entity ("big apple") stores + recalls -- the 2-factor (one bind / one unbind) path, which
+        # HOLDS 100% on the production LEARNED 320 codes (2026-06-19-resonator-on-learned-codes-derisk.md). The TWO-
+        # attribute (F=3 resonator) path is DELIBERATELY NOT added: it degrades to ~29% on the correlated learned
+        # codes (same de-risk) and stays the documented boundary. `bind_roles` is the binding order (polarity LAST so
+        # the existing flat layout is preserved when n_roles=4); `main_roles` is the subset cleaned against the main
+        # vocab (every role except polarity, which uses the 2-word polarity codebook).
+        self.enable_attributed = bool(enable_attributed)
+        self.bind_roles = (["agent", "action", "patient", "attribute", "polarity"] if self.enable_attributed
+                           else ["agent", "action", "patient", "polarity"])
+        self.n_roles = len(self.bind_roles)
+        self.main_roles = [r for r in self.bind_roles if r != "polarity"]   # cleaned vs the main vocab (3 or 4)
+        self.n_main = len(self.main_roles)
+        # work registers: fill_0..n-1 (n) + bound_0..n-1 (n) + acc (1) = 2*n+1 D-blocks. Default n=4 -> 9*D (byte-equal).
+        self.store_base = self.P + (2 * self.n_roles + 1) * D
         self.block = 1 + D
-        self.q_base = self.store_base + self.k_max * self.block      # PER-BLOCK (oracle): 4 Q regs agent/action/patient/pol
-        self.c_base = self.q_base + 4 * D                            # PER-BLOCK cleanup: 3 V-blocks + 1 NP-block
-        self.cb = 3 * self.V + self.NP                              # cleanup neurons per block (3 main roles + polarity)
-        # BATCHED region (A5 lever 1): K_max x (4 Q regs + cb cleanup) so all blocks read in one pass (additive -- the
-        # per-block region above is unchanged = the correctness oracle).
+        self.q_base = self.store_base + self.k_max * self.block      # PER-BLOCK (oracle): n_roles Q regs (one per role)
+        self.c_base = self.q_base + self.n_roles * D                 # PER-BLOCK cleanup: n_main V-blocks + 1 NP-block
+        self.cb = self.n_main * self.V + self.NP                    # cleanup neurons per block (main roles + polarity)
+        # BATCHED region (A5 lever 1): K_max x (n_roles Q regs + cb cleanup) so all blocks read in one pass (additive --
+        # the per-block region above is unchanged = the correctness oracle).
         self.bat_q_base = self.c_base + self.cb
-        self.bat_c_base = self.bat_q_base + self.k_max * 4 * D
+        self.bat_c_base = self.bat_q_base + self.k_max * self.n_roles * D
         self.n_total = self.bat_c_base + self.k_max * self.cb
         self.b = build_coresident_bridge(seed, self.n_total, enable_rf_cudagraph=self.enable_rf_cudagraph)
         self.parser = BridgeParser(seed=seed, R=self.R, shared_bridge=self.b, index_offset=0)   # wires+trains [0:P]
@@ -145,43 +166,87 @@ class OneBrainComposer:
     def _pol(self, polarity):
         return polarity if polarity in self.pol_words else "AFFIRM"
 
+    def _resolve_patient(self, patient):
+        """Split a patient operand into (noun, attribute). A bare concept word -> (word, None). An attributed entity
+        (adjs, noun) tuple -> (noun, the FIRST adjective) when the composer is attribute-enabled; the single-attribute
+        (2-factor) path is the HOLDING one on the learned codes -- a 2nd adjective is dropped (the documented F=3 two-
+        attribute boundary, ~29% on learned codes, deliberately not bound here). A Clause patient is returned as-is
+        (noun=the Clause, attribute=None) so the recursive-clause path is unchanged."""
+        if _is_clause(patient) or not isinstance(patient, tuple):
+            return patient, None
+        adjs, noun = patient                                    # (adj(s), noun)
+        adjs = list(adjs) if isinstance(adjs, (tuple, list)) else [adjs]
+        return noun, (adjs[0] if adjs else None)
+
+    def _store_fact(self, agent, action, patient, polarity):
+        """Compose + store one fact (the single _store_composite path for hear()/store()). When attribute-enabled and
+        the patient is an attributed entity, the attribute role is bound (single-attribute); otherwise the flat 4-role
+        path (byte-identical). Only the roles the fact ACTUALLY has are bound (a plain fact stays a 4-way bundle even
+        on the attribute-enabled composer -> no extra crosstalk), in self.bind_roles order. The read path always
+        unbinds the full bind_roles set; an un-bound role's unbind is noise the kb dict ignores (no "attribute" key ->
+        the attribute is not joined into the answer). Returns the fact dict appended to kb."""
+        pol = self._pol(polarity)
+        noun, attr = self._resolve_patient(patient) if self.enable_attributed else (patient, None)
+        fact = {"agent": agent, "action": action, "patient": noun, "polarity": pol}
+        if self.enable_attributed and attr is not None:
+            fact["attribute"] = attr
+        roles = [r for r in self.bind_roles if r in fact]       # bind only present roles, in canonical order
+        self._store_composite([fact[r] for r in roles], roles)
+        return fact
+
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO sentence with the on-bridge parser (its role firing selects each bind) + store the fact.
-        `polarity` (AFFIRM default / NEGATE) is bound as a 4th role -> `ask_yes_no` returns yes/no/unknown."""
+        `polarity` (AFFIRM default / NEGATE) is bound as a role -> `ask_yes_no` returns yes/no/unknown."""
         words = sentence.split() if isinstance(sentence, str) else list(sentence)
         roles = [self.parser.role_of(pos, voice) for pos in range(3)]
-        fact = {roles[i]: words[i] for i in range(3)}
-        pol = self._pol(polarity)
-        self._store_composite([fact.get(r) for r in ROLES3] + [pol], ROLES3 + ["polarity"])
-        fact["polarity"] = pol
+        rmap = {roles[i]: words[i] for i in range(3)}
+        fact = self._store_fact(rmap.get("agent"), rmap.get("action"), rmap.get("patient"), polarity)
+        self.kb.append((fact, None))
+        return fact
+
+    def hear_multiframe(self, sentence, verbs, polarity=None):
+        """Comprehend a sentence in an AUTO-SELECTED word-order frame (SVO/VSO/OSV) via the neural FrameParser, then
+        store the resolved fact. `verbs` is the known-verb set (the lexical front end the frame selector uses to find
+        the verb position). Requires enable_multiframe=True. Returns the parsed fact dict. Same store path as hear()
+        (so it also handles an attributed patient when attribute-enabled)."""
+        assert self.enable_multiframe, "hear_multiframe needs OneBrainComposer(enable_multiframe=True)"
+        if self._frame_parser is None:
+            from research.runners.frame_parser import FrameParser
+            self._frame_parser = FrameParser(seed=self.seed)
+        words = sentence.split() if isinstance(sentence, str) else list(sentence)
+        rmap = self._frame_parser.parse(words, verbs)
+        fact = self._store_fact(rmap.get("agent"), rmap.get("action"), rmap.get("patient"), polarity)
         self.kb.append((fact, None))
         return fact
 
     def store(self, agent, action, patient, polarity=None):
         """Store a fact whose roles are already resolved (API parity with RFPhasorComposer; used when the caller's
-        parser comprehends). Binds agent/action/patient + the polarity tag (AFFIRM default)."""
-        pol = self._pol(polarity)
-        self._store_composite([agent, action, patient, pol], ROLES3 + ["polarity"])
-        self.kb.append(({"agent": agent, "action": action, "patient": patient, "polarity": pol}, None))
+        parser comprehends). Binds agent/action/patient + the polarity tag (AFFIRM default). When attribute-enabled,
+        an attributed-entity patient `(adjs, noun)` binds the single-attribute role too -> 'big apple'."""
+        fact = self._store_fact(agent, action, patient, polarity)
+        self.kb.append((fact, None))
 
     def _compose_phases(self, fillers, roles):
         """Bind each (role, filler) + bundle -> the composite phasor PHASES, via the work registers (fill_* -> bound_*
         -> acc). `_filler_phases` handles BOTH a concept word (its code) AND a recursive Clause (its bound composite),
         so a clause patient is the same path -- the patient role binds the clause's composite. Shared by the initial
-        store AND the reconsolidation in-place rewrite (the only difference is which block the result is written to)."""
+        store AND the reconsolidation in-place rewrite (the only difference is which block the result is written to).
+        The work layout is fill_0..n-1 (blocks 0..n-1), bound_0..n-1 (blocks n..2n-1), acc (block 2n) -- n = the number
+        of roles passed (4 default, 5 with the attribute role); for n=4 the block math is identical to before."""
         comp, b, D, P, Pd = self.comp, self.b, self.D, self.P, self.period
+        n = len(roles); acc = 2 * n                                                               # acc at block 2n
         binds, bundle = [], []
         kick = np.zeros(self.n_total, dtype=np.complex128)
-        for i in range(len(roles)):
+        for i in range(n):
             zr = comp._to_phasor(comp.roles[roles[i]]); zf = comp._to_phasor(comp._filler_phases(fillers[i]))
             kick[P + i * D:P + (i + 1) * D] = zf                                                  # fill_i at block i
-            binds += [(P + (4 + i) * D + k, P + i * D + k, complex(zr[k])) for k in range(D)]     # bound_i at block 4+i
-            bundle += [(P + 8 * D + k, P + (4 + i) * D + k, 1.0) for k in range(D)]               # acc at block 8
+            binds += [(P + (n + i) * D + k, P + i * D + k, complex(zr[k])) for k in range(D)]     # bound_i at block n+i
+            bundle += [(P + acc * D + k, P + (n + i) * D + k, 1.0) for k in range(D)]             # acc at block 2n
         b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
         b.rf_set_complex_weights(binds); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
         b.rf_set_complex_weights(bundle); b.rf_resonate_steps(Pd + 8)
-        return comp._to_phasor(np.asarray(b.rf_read_phases())[P + 8 * D:P + 9 * D])
+        return comp._to_phasor(np.asarray(b.rf_read_phases())[P + acc * D:P + (acc + 1) * D])
 
     def _write_block(self, i, zc):
         """Write block i's persistent trigger->readout store weights (the composite `zc`). store_conns is block-major
@@ -212,9 +277,10 @@ class OneBrainComposer:
         return float((s[0] - s[1]) / (s[0] + 1e-9)) if s.size >= 2 and s[0] > 0.0 else 0.0
 
     def _read_block(self, block_idx):
-        """Reconstruct block_idx + unbind all 4 roles IN PARALLEL (one settle, no phase drift). The 3 main roles clean
-        up against the main vocab; the polarity role cleans up against the 2-word polarity codebook (a separate small
-        block). Returns (agent, action, patient, polarity)."""
+        """Reconstruct block_idx + unbind all roles IN PARALLEL (one settle, no phase drift). The main roles (agent,
+        action, patient, +attribute when enabled) clean up against the main vocab; the polarity role cleans up against
+        the 2-word polarity codebook. Returns a dict {role: word} for the bind_roles (attribute present only on the
+        attribute-enabled composer; its value is noise for a plain fact and the caller ignores it via the kb dict)."""
         comp, b, D, Pd, V, NP = self.comp, self.b, self.D, self.period, self.V, self.NP
         b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
         trig = self.store_base + block_idx * self.block
@@ -222,54 +288,58 @@ class OneBrainComposer:
         b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
         unbind = []
-        for ri, role in enumerate(ROLES3 + ["polarity"]):
+        for ri, role in enumerate(self.bind_roles):
             zc = np.conj(comp._to_phasor(comp.roles[role]))
             unbind += [(self.q_base + ri * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
         b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
         clean = []
-        for ri in range(3):                                              # 3 main roles -> the main vocab codebook
+        for ri, role in enumerate(self.main_roles):                     # main roles -> the main vocab codebook
             for j in range(V):
                 cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
                 clean += [(self.c_base + ri * V + j, self.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
-        for j in range(NP):                                              # polarity role -> the 2-word polarity codebook
+        pol_ri = self.bind_roles.index("polarity")                      # polarity role -> the 2-word polarity codebook
+        for j in range(NP):
             cc = np.conj(comp._to_phasor(comp.concepts[self.pol_words[j]]))
-            clean += [(self.c_base + 3 * V + j, self.q_base + 3 * D + k, complex(cc[k])) for k in range(D)]
+            clean += [(self.c_base + self.n_main * V + j, self.q_base + pol_ri * D + k, complex(cc[k]))
+                      for k in range(D)]
         b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
         mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
-        scores = [np.maximum(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], 0.0) for ri in range(3)]
-        out = [self.words[int(np.argmax(s))] for s in scores]
-        pol_scores = np.maximum(mem[self.c_base + 3 * V:self.c_base + 3 * V + NP], 0.0)
-        out.append(self.pol_words[int(np.argmax(pol_scores))])
+        scores = [np.maximum(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], 0.0) for ri in range(self.n_main)]
+        out = {role: self.words[int(np.argmax(scores[ri]))] for ri, role in enumerate(self.main_roles)}
+        pol_scores = np.maximum(mem[self.c_base + self.n_main * V:self.c_base + self.n_main * V + NP], 0.0)
+        out["polarity"] = self.pol_words[int(np.argmax(pol_scores))]
         if self.confidence_gate > 0.0 and min(self._margin(scores[0]), self._margin(scores[1])) < self.confidence_gate:
-            return (None, None, None, None)               # an unfamiliar (noise-dominated) block -> blank -> abstain
-        return tuple(out)            # (agent, action, patient, polarity)
+            return {role: None for role in self.bind_roles}   # an unfamiliar (noise-dominated) block -> blank -> abstain
+        return out
 
     def _build_batched_unbind_clean(self, n):
         """Build the QUERY-INVARIANT batched unbind + cleanup connection lists for `n` blocks and convert them to device
         CSR pairs. These depend ONLY on (n, the role/concept codebooks, the fixed block layout) -- never on the stored
         fact content (that lives in store_conns) -- so for a fixed store size they are byte-IDENTICAL every query. Built
-        once per n and cached in self._csr_cache[n]. Returns ((Ure,Uim),(Cre,Cim))."""
+        once per n and cached in self._csr_cache[n]. Returns ((Ure,Uim),(Cre,Cim)). Iterates self.bind_roles /
+        self.main_roles so the layout follows n_roles (4 default, 5 with the attribute role)."""
         comp, D, V, NP = self.comp, self.D, self.V, self.NP
-        roles = ROLES3 + ["polarity"]
+        nr, nm = self.n_roles, self.n_main
+        pol_ri = self.bind_roles.index("polarity")
         unbind = []
         for i in range(n):
             trig = self.store_base + i * self.block
-            for ri, role in enumerate(roles):
+            for ri, role in enumerate(self.bind_roles):
                 zc = np.conj(comp._to_phasor(comp.roles[role]))
-                qreg = self.bat_q_base + (i * 4 + ri) * D
+                qreg = self.bat_q_base + (i * nr + ri) * D
                 unbind += [(qreg + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
         clean = []
         for i in range(n):
             cblk = self.bat_c_base + i * self.cb
-            for ri in range(3):
-                qreg = self.bat_q_base + (i * 4 + ri) * D
+            for ri in range(nm):                                          # main roles -> the main vocab codebook
+                qreg = self.bat_q_base + (i * nr + ri) * D
                 for j in range(V):
                     cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
                     clean += [(cblk + ri * V + j, qreg + k, complex(cc[k])) for k in range(D)]
-            qreg_p = self.bat_q_base + (i * 4 + 3) * D
+            qreg_p = self.bat_q_base + (i * nr + pol_ri) * D              # polarity role -> the polarity codebook
             for j in range(NP):
                 cc = np.conj(comp._to_phasor(comp.concepts[self.pol_words[j]]))
-                clean += [(cblk + 3 * V + j, qreg_p + k, complex(cc[k])) for k in range(D)]
+                clean += [(cblk + nm * V + j, qreg_p + k, complex(cc[k])) for k in range(D)]
         return (_build_complex_csr(self.n_total, unbind), _build_complex_csr(self.n_total, clean))
 
     def _store_csr_cached(self):
@@ -318,60 +388,61 @@ class OneBrainComposer:
             kick[self.store_base + i * self.block] = 1.0                       # fire EVERY stored trigger
         b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
-        roles = ROLES3 + ["polarity"]
+        nr, nm = self.n_roles, self.n_main
+        pol_ri = self.bind_roles.index("polarity")
         unbind = []
         for i in range(n):
             trig = self.store_base + i * self.block
-            for ri, role in enumerate(roles):
+            for ri, role in enumerate(self.bind_roles):
                 zc = np.conj(comp._to_phasor(comp.roles[role]))
-                qreg = self.bat_q_base + (i * 4 + ri) * D
+                qreg = self.bat_q_base + (i * nr + ri) * D
                 unbind += [(qreg + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
         b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
         clean = []
         for i in range(n):
             cblk = self.bat_c_base + i * self.cb
-            for ri in range(3):
-                qreg = self.bat_q_base + (i * 4 + ri) * D
+            for ri in range(nm):
+                qreg = self.bat_q_base + (i * nr + ri) * D
                 for j in range(V):
                     cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
                     clean += [(cblk + ri * V + j, qreg + k, complex(cc[k])) for k in range(D)]
-            qreg_p = self.bat_q_base + (i * 4 + 3) * D
+            qreg_p = self.bat_q_base + (i * nr + pol_ri) * D
             for j in range(NP):
                 cc = np.conj(comp._to_phasor(comp.concepts[self.pol_words[j]]))
-                clean += [(cblk + 3 * V + j, qreg_p + k, complex(cc[k])) for k in range(D)]
+                clean += [(cblk + nm * V + j, qreg_p + k, complex(cc[k])) for k in range(D)]
         b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
         mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
         return self._decode_batched_mem(mem, n)
 
     def _decode_batched_mem(self, mem, n):
-        """Decode the batched cleanup membrane read-out into [(agent,action,patient,polarity)] per block (the argmax +
-        confidence-gate logic, shared by the cached + stock batched paths so they are answer-identical by construction)."""
-        V, NP = self.V, self.NP
+        """Decode the batched cleanup membrane read-out into a list of {role: word} dicts per block (the argmax +
+        confidence-gate logic, shared by the cached + stock batched paths so they are answer-identical by
+        construction). The main roles read off their V-block; polarity reads the NP-block after them. The agent +
+        action margins drive the confidence gate."""
+        V, NP, nm = self.V, self.NP, self.n_main
         out = []
         for i in range(n):
             cblk = self.bat_c_base + i * self.cb
-            sa = np.maximum(mem[cblk + 0 * V:cblk + 1 * V], 0.0)            # the agent + action cue-role read-outs
-            sv = np.maximum(mem[cblk + 1 * V:cblk + 2 * V], 0.0)
-            row = [self.words[int(np.argmax(sa))], self.words[int(np.argmax(sv))],
-                   self.words[int(np.argmax(np.maximum(mem[cblk + 2 * V:cblk + 3 * V], 0.0)))]]
-            ps = np.maximum(mem[cblk + 3 * V:cblk + 3 * V + NP], 0.0)
-            row.append(self.pol_words[int(np.argmax(ps))])
-            if self.confidence_gate > 0.0 and min(self._margin(sa), self._margin(sv)) < self.confidence_gate:
-                row = [None, None, None, None]            # an unfamiliar (noise-dominated) block -> blank -> abstain
-            out.append(tuple(row))
+            scores = [np.maximum(mem[cblk + ri * V:cblk + (ri + 1) * V], 0.0) for ri in range(nm)]
+            row = {role: self.words[int(np.argmax(scores[ri]))] for ri, role in enumerate(self.main_roles)}
+            ps = np.maximum(mem[cblk + nm * V:cblk + nm * V + NP], 0.0)
+            row["polarity"] = self.pol_words[int(np.argmax(ps))]
+            if self.confidence_gate > 0.0 and min(self._margin(scores[0]), self._margin(scores[1])) < self.confidence_gate:
+                row = {role: None for role in self.bind_roles}   # an unfamiliar (noise-dominated) block -> blank -> abstain
+            out.append(row)
         return out
 
     def _read_blocks(self):
-        """All stored blocks' (a,v,p,pol): the BATCHED read (default, A5 lever 1) or the per-block loop (the oracle)."""
+        """All stored blocks as {role: word} dicts: the BATCHED read (default, A5 lever 1) or the per-block loop (the
+        oracle). Each dict has agent/action/patient/polarity (+attribute on the attribute-enabled composer)."""
         if self.enable_batched:
             return self._read_all_blocks()
         return [self._read_block(i) for i in range(len(self.kb))]
 
-    def _scan(self, cue, answer_idx):
-        for (wa, wv, wp, _pol) in self._read_blocks():
-            got = {"agent": wa, "action": wv, "patient": wp}
-            if all(got[role] == want for role, want in cue.items()):
-                return (wa, wv, wp)[answer_idx]
+    def _scan(self, cue, answer_role):
+        for got in self._read_blocks():
+            if all(got.get(role) == want for role, want in cue.items()):
+                return got.get(answer_role)
         return None
 
     def _decode_clause(self, block_idx, order_fn=None):
@@ -382,25 +453,30 @@ class OneBrainComposer:
         before the 2nd hop -- chaining the resonate through an unbind-DRIVEN register (instead of a kicked one)
         degrades its magnitude and the deeper unbind reads the wrong filler (the agent slot fails first)."""
         comp, b, D, Pd, V = self.comp, self.b, self.D, self.period, self.V
-        # hop 1: reconstruct the outer block (kick) + unbind the OUTER patient -> the embedded clause composite in Q[3]
+        # Q register holding the recovered outer patient (= the clause composite). Reuse the POLARITY Q slot as scratch
+        # (clause decode never reads polarity), which is valid for both the 4-role default (pol at index 3, == the old
+        # hardcoded Q[3]) and the 5-role attribute layout (pol at index 4) -- always inside the per-block Q region, so
+        # it never clobbers the cleanup region at c_base.
+        pq = self.bind_roles.index("polarity")                             # the polarity Q slot, reused as scratch
+        # hop 1: reconstruct the outer block (kick) + unbind the OUTER patient -> the embedded clause composite in Q[pq]
         b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
         trig = self.store_base + block_idx * self.block
         kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
         b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
         zc = np.conj(comp._to_phasor(comp.roles["patient"]))
-        outer = [(self.q_base + 3 * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
+        outer = [(self.q_base + pq * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
         b.rf_set_complex_weights(outer); b.rf_resonate_steps(Pd + 8)
-        clause_phases = np.asarray(b.rf_read_phases())[self.q_base + 3 * D:self.q_base + 4 * D]
+        clause_phases = np.asarray(b.rf_read_phases())[self.q_base + pq * D:self.q_base + (pq + 1) * D]
         # hop 2: RE-KICK the clause composite as a clean unit phasor (== the oracle's fresh per-hop kick), then unbind
-        # the 3 clause roles IN PARALLEL from Q[3] -> Q[0..2] + cleanup against the main vocab
+        # the 3 clause roles IN PARALLEL from Q[pq] -> Q[0..2] + cleanup against the main vocab
         b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
         kick2 = np.zeros(self.n_total, dtype=np.complex128)
-        kick2[self.q_base + 3 * D:self.q_base + 4 * D] = comp._to_phasor(clause_phases)
+        kick2[self.q_base + pq * D:self.q_base + (pq + 1) * D] = comp._to_phasor(clause_phases)
         inner = []
         for ri, role in enumerate(ROLES3):
             zcr = np.conj(comp._to_phasor(comp.roles[role]))
-            inner += [(self.q_base + ri * D + k, self.q_base + 3 * D + k, complex(zcr[k])) for k in range(D)]
+            inner += [(self.q_base + ri * D + k, self.q_base + pq * D + k, complex(zcr[k])) for k in range(D)]
         b.rf_set_complex_weights(inner); b.rf_kick(kick2, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
         clean = []
@@ -415,37 +491,53 @@ class OneBrainComposer:
         order = order_fn(3) if order_fn is not None else [0, 1, 2]
         return " ".join(words[o] for o in order)
 
+    def _attributed_patient(self, i, wp):
+        """The patient word with its (single) attribute prepended, when this fact stored one -- 'big apple'. The
+        attribute word is DECODED from the on-bridge unbind (got["attribute"]); the kb dict only ROUTES whether to
+        join it (a plain fact has no 'attribute' key -> the bare noun). Single-attribute only (the 2-factor path the
+        de-risk validated 100% on the learned codes)."""
+        if not self.enable_attributed or i >= len(self.kb) or "attribute" not in self.kb[i][0]:
+            return wp
+        got = self._read_blocks()[i]
+        adj = got.get("attribute")
+        return f"{adj} {wp}" if adj is not None else wp
+
     def query_patient(self, agent, action, order_fn=None):
         """patient (a concept word) OR, when the stored fact's patient is an embedded CLAUSE, the recursively-decoded
-        clause sentence. Matches agent+action via the batched read, then routes on the kb-stored patient type."""
-        for i, (wa, wv, wp, _pol) in enumerate(self._read_blocks()):
-            if wa == agent and wv == action:
+        clause sentence; an attributed patient ('big apple') prepends the decoded attribute. Matches agent+action via
+        the batched read, then routes on the kb-stored patient type."""
+        for i, got in enumerate(self._read_blocks()):
+            if got.get("agent") == agent and got.get("action") == action:
                 stored = self.kb[i][0].get("patient") if i < len(self.kb) else None
-                return self._decode_clause(i, order_fn=order_fn) if _is_clause(stored) else wp
+                if _is_clause(stored):
+                    return self._decode_clause(i, order_fn=order_fn)
+                return self._attributed_patient(i, got.get("patient"))
         return None
 
     def query_agent(self, action, patient):
-        return self._scan({"action": action, "patient": patient}, 0)
+        return self._scan({"action": action, "patient": patient}, "agent")
 
     def ask_yes_no(self, agent, action, patient):
         """yes / no / unknown: the first fact matching the full SVO answers by its polarity tag (AFFIRM -> yes,
         NEGATE -> no); no matching fact -> 'unknown' (the no-confab moat)."""
-        for (wa, wv, wp, wpol) in self._read_blocks():
-            if wa == agent and wv == action and wp == patient:
-                return "yes" if wpol == "AFFIRM" else "no"
+        for got in self._read_blocks():
+            if got.get("agent") == agent and got.get("action") == action and got.get("patient") == patient:
+                return "yes" if got.get("polarity") == "AFFIRM" else "no"
         return "unknown"
 
     def render_fact(self, agent, order_fn=None):
         """Generation (for the agent's `describe`): 'agent action patient' decoded from the first stored fact whose
         agent matches, or None (the no-confab moat -- no invented sentence about an unknown subject). The action +
         patient are DECODED from the on-bridge unbind (not the stored labels). When the matched fact's patient is an
-        embedded CLAUSE, the patient slot is the recursively-decoded clause ('dog see cat go south'). `order_fn`
-        (opt-in) -> the word order (the spiking serial-order renderer); default = subject-verb-object."""
-        for i, (wa, wv, wp, _pol) in enumerate(self._read_blocks()):
-            if wa == agent:
+        embedded CLAUSE, the patient slot is the recursively-decoded clause ('dog see cat go south'); an attributed
+        patient renders as 'big apple'. `order_fn` (opt-in) -> the word order (the spiking serial-order renderer);
+        default = subject-verb-object."""
+        for i, got in enumerate(self._read_blocks()):
+            if got.get("agent") == agent:
                 stored = self.kb[i][0].get("patient") if i < len(self.kb) else None
-                pt = self._decode_clause(i, order_fn=order_fn) if _is_clause(stored) else wp
-                words = [wa, wv, pt]
+                wp = got.get("patient")
+                pt = self._decode_clause(i, order_fn=order_fn) if _is_clause(stored) else self._attributed_patient(i, wp)
+                words = [got.get("agent"), got.get("action"), pt]
                 order = order_fn(3) if order_fn is not None else [0, 1, 2]
                 return " ".join(words[o] for o in order)
         return None
@@ -506,8 +598,8 @@ class OneBrainComposer:
     def _find_cued_block(self, agent, action):
         """The FIRST stored block whose cue roles (agent+action) match (the batched read), or None (no trace to
         reactivate -> abstain). Returns the block/kb index."""
-        for i, (wa, wv, _wp, _pol) in enumerate(self._read_blocks()):
-            if wa == agent and wv == action:
+        for i, got in enumerate(self._read_blocks()):
+            if got.get("agent") == agent and got.get("action") == action:
                 return i
         return None
 
@@ -527,9 +619,9 @@ class OneBrainComposer:
         pe = self._patient_prediction_error(idx, new_patient)
         if pe >= gate:
             f2 = dict(self.kb[idx][0]); f2["patient"] = new_patient
-            zc = self._compose_phases([f2["agent"], f2["action"], f2["patient"], f2.get("polarity", "AFFIRM")],
-                                      ROLES3 + ["polarity"])
-            self._write_block(idx, zc)
+            f2.setdefault("polarity", "AFFIRM")
+            roles = [r for r in self.bind_roles if r in f2]              # recompose only the roles the fact has
+            self._write_block(idx, self._compose_phases([f2[r] for r in roles], roles))
             self.kb[idx] = (f2, None)
             return {"action": "rewrite", "wrote": True, "pe": pe}
         return {"action": "restabilize", "wrote": False, "pe": pe}      # PE below the gate -> re-stabilize unchanged
@@ -537,4 +629,4 @@ class OneBrainComposer:
     def count_facts(self, agent, action):
         """Number of stored facts whose cue roles (agent+action) match -- 1 after a reconsolidation update, 2 if a
         correction was naively appended. Used by the reconsolidation tests + the correction-turn hook."""
-        return sum(1 for (wa, wv, _wp, _pol) in self._read_blocks() if wa == agent and wv == action)
+        return sum(1 for got in self._read_blocks() if got.get("agent") == agent and got.get("action") == action)

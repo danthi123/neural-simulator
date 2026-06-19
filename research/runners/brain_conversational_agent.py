@@ -151,7 +151,7 @@ class BrainConversationalAgent:
     def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None, composer_kind="rf",
                  enable_spiking_cleanup=False, enable_substrate_store=False, grounded_codes=None,
                  enable_learned_assoc=False, enable_neural_render=False, enable_rf_cudagraph=False,
-                 enable_attributed=False):
+                 enable_attributed=False, enable_multiframe=False):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -176,7 +176,14 @@ class BrainConversationalAgent:
             # (negation = a follow-on). See 2026-06-18-one-brain-composer-A3-GO.md.
             from research.runners.one_brain_composer import OneBrainComposer
             vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
-            self.composer = OneBrainComposer(seed=seed, D=128, vocab=vocab, grounded_codes=grounded_codes)
+            # enable_attributed / enable_multiframe (richer-syntax consolidation, default OFF = byte-identical) pass
+            # through to the production OneBrainComposer: single-attribute entities ('big apple', the 2-factor path
+            # validated 100% on the learned 320 codes) + auto-selected multi-frame comprehension. The F=3 two-attribute
+            # path is deliberately NOT wired (it degrades to ~29% on the correlated learned codes -- the documented
+            # boundary, 2026-06-19-resonator-on-learned-codes-derisk.md).
+            self.composer = OneBrainComposer(seed=seed, D=128, vocab=vocab, grounded_codes=grounded_codes,
+                                             enable_attributed=enable_attributed,
+                                             enable_multiframe=enable_multiframe)
         else:
             from research.runners.rf_phasor_composer import RFPhasorComposer
             vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
@@ -218,14 +225,25 @@ class BrainConversationalAgent:
         if enable_neural_render:
             from research.runners.neural_serial_order_renderer import NeuralSerialOrderRenderer
             self._neural_render = NeuralSerialOrderRenderer(seed=seed)
-        # (richer-syntax #1, opt-in) attributed-entity comprehension ('dog eat big red apple'): a neural
+        # (richer-syntax #1, opt-in) attributed-entity comprehension ('dog eat big apple'): a neural
         # AttributedBridgeParser (from-start x from-END x voice conjunction, parse-in-spikes) parses 'S V adj* N'
-        # on its own bridge; `hear_attributed` routes the parsed (adjs, noun) to the composer's ready attribute
-        # roles. Default OFF = byte-identical. Validated end-to-end 6/6 (2026-06-18-neural-attributed-endtoend-GO.md).
+        # on its own bridge; `hear_attributed` routes the parsed (adjs, noun) to the composer's attribute role.
+        # Default OFF = byte-identical. Validated end-to-end 6/6 (2026-06-18-neural-attributed-endtoend-GO.md).
+        # On the onebrain path the composer is also built with enable_attributed=True (above), so its store()/query
+        # bind + read the single-attribute role -- single-attribute ('big apple') HOLDS 100% on the learned 320 codes;
+        # the F=3 two-attribute path is NOT wired (it degrades to ~29% on the correlated learned codes -- the
+        # documented boundary, 2026-06-19-resonator-on-learned-codes-derisk.md).
+        self.enable_attributed = bool(enable_attributed)
         self._attr_parser = None
         if enable_attributed:
             from research.runners.attributed_parser import AttributedBridgeParser
             self._attr_parser = AttributedBridgeParser(seed=seed)
+        # (richer-syntax #2, opt-in) multi-frame comprehension: a neural FrameParser (verb-position -> frame selection +
+        # position x frame -> role) comprehends a sentence in an AUTO-SELECTED word-order frame (SVO/VSO/OSV).
+        # `hear_multiframe(sentence, verbs)` routes through it; default OFF = byte-identical (the native BridgeParser /
+        # onebrain SVO path is unchanged). Validated GO 6/6 (2026-06-18-frame-selection-GO.md). Built lazily.
+        self.enable_multiframe = bool(enable_multiframe)
+        self._frame_parser = None
 
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO statement and store it. `sentence` is 'agent action patient' (or its passive frame).
@@ -260,6 +278,23 @@ class BrainConversationalAgent:
         noun = roles.get("patient")
         patient = (adjs, noun) if adjs else noun
         self.composer.store(roles.get("agent"), roles.get("action"), patient, polarity=polarity)
+        return roles
+
+    def hear_multiframe(self, sentence, verbs, polarity=None):
+        """Comprehend a sentence in an AUTO-SELECTED word-order frame (SVO/VSO/OSV) with the NEURAL FrameParser
+        (verb-position -> frame selection + position x frame -> role, both spiking) and store the resolved fact, so
+        'ran dog north' (VSO) and 'north dog ran' (OSV) answer who/what just like the native 'dog ran north' (SVO).
+        `verbs` is the agent's known-verb set (the lexical front end the frame selector uses to find the verb).
+        Requires enable_multiframe=True. Returns the parsed {role: word}. (Richer-syntax #2.)"""
+        assert self.enable_multiframe, "hear_multiframe needs BrainConversationalAgent(enable_multiframe=True)"
+        if self._frame_parser is None:
+            from research.runners.frame_parser import FrameParser
+            self._frame_parser = FrameParser(seed=self.seed)
+        words = sentence.split() if isinstance(sentence, str) else list(sentence)
+        roles = self._frame_parser.parse(words, verbs)
+        self.composer.store(roles.get("agent"), roles.get("action"), roles.get("patient"), polarity=polarity)
+        if self._learned_assoc is not None:
+            self._learned_assoc.store_fact([roles.get("agent"), roles.get("action"), roles.get("patient")])
         return roles
 
     def parse(self, words, voice="active"):
