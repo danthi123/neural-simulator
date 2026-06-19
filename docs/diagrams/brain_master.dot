@@ -35,7 +35,7 @@ digraph BrainMaster {
     labelloc="t";
     fontsize=26;
     pad="0.15,0.08";
-    label=<<B>Simulated-brain architecture — master map</B><BR/><FONT POINT-SIZE="13">as implemented · ONE SimulationBridge engine · two config-scoped supergroups (navigation | conversational)<BR/>consolidated on one bridge + THREE functional cross-brain synaptic bridges<BR/>(A language→action · B perception→memory · C compose-perceived)<BR/>+ a co-resident generalization stack · honest faithful-vs-shortcut layer</FONT>>;
+    label=<<B>Simulated-brain architecture — master map</B><BR/><FONT POINT-SIZE="13.5">ONE brain (one network, one update loop): a NAVIGATION half and a CONVERSATION half as separate groups of neurons on the same substrate<BR/><FONT POINT-SIZE="12">they interact through THREE validated synaptic routes — A: a spoken word steers the body · B: navigate to SEE an object then RECALL it · C: bind a PERCEIVED object into a new fact<BR/>navigation decides which way to move by a spiking race (no hand-coded shortcut) · conversation answers "I don't know" rather than inventing (the no-confabulation safeguard)<BR/>honest map of the code, including its simplifications (faithful-vs-shortcut layer)</FONT></FONT>>;
 
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11.5, margin="0.16,0.10", penwidth=1.6];
     edge [fontname="Helvetica", fontsize=9.5, color="#34495e", penwidth=1.5];
@@ -48,31 +48,31 @@ digraph BrainMaster {
         label=<<B>NAVIGATION supergroup</B>  ·  build_bg_brain_regions()  ·  the action-selection brain>;
         style="rounded,filled"; color="#b9770e"; fillcolor="#fffaf2"; fontcolor="#9a6608"; fontsize=15; penwidth=2.0; margin=14;
 
-        nav_in [label=<<B>Perception readouts</B>  (C7p)<BR/>place · goal · sensory · beacon · landmark<BR/><FONT POINT-SIZE="8.5">⌂ host-rendered codes (environment input)</FONT>>, fillcolor="#fdebd0", color="#ca6f1e", fontcolor="#5b3a10"];
-        sc_orient [label=<<B>Superior colliculus</B>  (C5 · N1)<BR/>sc_retina → sc_map ⟲ ⊣ sc_fs (Mexican-hat)<BR/><FONT POINT-SIZE="8.5">retinotopic orienting bump → cortex (spiking)</FONT>>, fillcolor="#e8daef", color="#7d3c98", fontcolor="#3e1f4d"];
-        m1     [group="spine", label=<<B>Sensorimotor cortex</B>  (C2)<BR/>cortex_N/E/S/W (×4) — M1 channels<BR/><FONT POINT-SIZE="8.5">⚠ labeled-line per-action split</FONT>>, fillcolor="#e8e1f2", color="#5b4a8a", fontcolor="#2c2547"];
-        bg     [group="spine", label=<<B>Basal ganglia cascade</B>  (C3)<BR/>direct D1 ⊣ · indirect D2→GPe→STN<BR/>hyperdirect · PV-FSI · striosome (×4)<BR/><FONT POINT-SIZE="8.5"><B>action-selection heart · learning site</B></FONT>>, fillcolor="#f5cba7", color="#a04000", fontcolor="#5a2400"];
-        reward [label=<<B>Reward &amp; dopamine</B>  (C6)<BR/>reward_us (r) ▶ <B>SNc</B> · striosome → SNc<BR/>value critic V(s) ⊣<FONT COLOR="#7d3c98"><B>(GABA_B)</B></FONT>→ SNc · δ=r−V<BR/><FONT POINT-SIZE="8.5">spiking actor-critic</FONT>>, fillcolor="#fdebd0", color="#b9770e", fontcolor="#5b3a10"];
-        thal   [group="spine", label=<<B>Thalamus + TRN</B>  (C4)<BR/>thal_X (×4) · reticular WTA<BR/><FONT POINT-SIZE="8.5">GPi silence releases the relay</FONT>>, fillcolor="#d0ece7", color="#148f77", fontcolor="#0a4034"];
-        sc     [group="spine", label=<<B>SC accumulate → commit</B>  (C5)<BR/>sel_X (NMDA) → commit_X (×4)<BR/><FONT POINT-SIZE="8.5">Wang-2002 decision · all-or-none</FONT>>, fillcolor="#e8daef", color="#7d3c98", fontcolor="#3e1f4d"];
-        cb     [label=<<B>Cerebellum</B>  (C8)<BR/>mossy→granule→Purkinje ⊣ DCN<BR/><FONT POINT-SIZE="8.5">Marr-Albus-Ito · opt-in</FONT>>, fillcolor="#d4e6f1", color="#2e6da4", fontcolor="#163a59"];
-        wm_nav [label=<<B>dlPFC working memory</B>  (C9)<BR/>goal latch (NMDA)>, fillcolor="#d4e6f1", color="#2e86c1", fontcolor="#16435f"];
+        nav_in [label=<<B>Perception read-outs</B>  (C7p)<BR/>place · goal · sensory · beacon · landmark<BR/><FONT POINT-SIZE="8.5">⌂ sensory input the world renders for the agent</FONT>>, fillcolor="#fdebd0", color="#ca6f1e", fontcolor="#5b3a10"];
+        sc_orient [label=<<B>Orienting (superior colliculus)</B>  (C5)<BR/>a spiking "look-here" bump → cortex<BR/><FONT POINT-SIZE="8.5">retinotopic, lateral-inhibition map (Mexican-hat)</FONT>>, fillcolor="#e8daef", color="#7d3c98", fontcolor="#3e1f4d"];
+        m1     [group="spine", label=<<B>Motor cortex</B>  (C2)<BR/>one pool per direction — N/E/S/W (×4)<BR/><FONT POINT-SIZE="8.5">⚠ one-line-per-action split (stand-in)</FONT>>, fillcolor="#e8e1f2", color="#5b4a8a", fontcolor="#2c2547"];
+        bg     [group="spine", label=<<B>Basal ganglia — action selection</B>  (C3)<BR/>direct "go" ⊣ · indirect "no-go" · hyperdirect<BR/>(×4 per direction)<BR/><FONT POINT-SIZE="8.5"><B>the decision heart · where it learns</B></FONT>>, fillcolor="#f5cba7", color="#a04000", fontcolor="#5a2400"];
+        reward [label=<<B>Reward &amp; dopamine</B>  (C6)<BR/>reward neurons ▶ <B>dopamine cells</B><BR/>value estimate ⊣<FONT COLOR="#7d3c98"><B>(slow inhib.)</B></FONT> → dopamine · error = reward − value<BR/><FONT POINT-SIZE="8.5">spiking actor-critic (all neural)</FONT>>, fillcolor="#fdebd0", color="#b9770e", fontcolor="#5b3a10"];
+        thal   [group="spine", label=<<B>Thalamus (relay) + reticular gate</B>  (C4)<BR/>relay per direction (×4)<BR/><FONT POINT-SIZE="8.5">basal-ganglia silence releases the relay</FONT>>, fillcolor="#d0ece7", color="#148f77", fontcolor="#0a4034"];
+        sc     [group="spine", label=<<B>Spiking decision — accumulate → commit</B>  (C5)<BR/>evidence builds up → an all-or-none "commit" burst picks the move (×4)<BR/><FONT POINT-SIZE="8.5"><B>DEFAULT: the move emerges from the spiking race</B> (Wang-2002 + Lo-Wang)<BR/>the hand-coded argmax is RETIRED · 6/6-seed GO · 100% commit-burst</FONT>>, fillcolor="#e3d4ef", color="#7d3c98", fontcolor="#3e1f4d", penwidth=2.4];
+        cb     [label=<<B>Cerebellum</B>  (C8)<BR/>sparse coding → Purkinje ⊣ deep nucleus<BR/><FONT POINT-SIZE="8.5">Marr-Albus-Ito · opt-in</FONT>>, fillcolor="#d4e6f1", color="#2e6da4", fontcolor="#163a59"];
+        wm_nav [label=<<B>Working memory (prefrontal)</B>  (C9)<BR/>holds the goal (self-sustaining activity)>, fillcolor="#d4e6f1", color="#2e86c1", fontcolor="#16435f"];
 
         // -- navigation perception→action spine (kept inside the cluster) --
-        nav_in -> m1   [label="learned\npos→action"];
+        nav_in -> m1   [label="learned\nplace→action"];
         nav_in -> sc_orient [label="retinal\nimage", style=dashed, color="#7d3c98"];
-        sc_orient -> m1 [label="orient→cortex\n(bump→cardinal)", color="#7d3c98"];
-        m1     -> bg   [label="corticostriatal\n(DA-gated STDP)", penwidth=2.4];
-        bg     -> thal [label="GPi ⊣ thal\n(disinhibition)", arrowhead=tee, color="#922b21", penwidth=2.4];
-        thal   -> sc   [label="relay→accumulator"];
-        sc     -> motor[label="commit→act"];
-        thal   -> motor[label="thal→motor", penwidth=2.2];
-        cb     -> motor[label="DCN→motor", color="#2e6da4"];
-        wm_nav -> m1   [label="WM bias", style=dashed];
+        sc_orient -> m1 [label="look-here bump\n→ direction", color="#7d3c98"];
+        m1     -> bg   [label="cortex→striatum\n(dopamine-gated learning)", penwidth=2.4];
+        bg     -> thal [label="silence the gate\n(release the relay)", arrowhead=tee, color="#922b21", penwidth=2.4];
+        thal   -> sc   [label="relay → decision"];
+        sc     -> motor[label="commit fires\n→ the move", penwidth=2.2];
+        thal   -> motor[label="relay → motor\n(host-argmax oracle path)", style=dashed, penwidth=1.6];
+        cb     -> motor[label="cerebellum → motor", color="#2e6da4"];
+        wm_nav -> m1   [label="goal bias", style=dashed];
 
         // reward loop
-        bg     -> reward [label="striosome→SNc", arrowhead=tee, color="#922b21"];
-        reward -> bg     [label="DA bus gates\ncorticostriatal STDP", style=dotted, color="#d98008", arrowhead=odiamond, penwidth=2.6, fontcolor="#9a6608", constraint=false, weight=5];
+        bg     -> reward [label="state → dopamine cells", arrowhead=tee, color="#922b21"];
+        reward -> bg     [label="dopamine signal\nreinforces what just fired", style=dotted, color="#d98008", arrowhead=odiamond, penwidth=2.6, fontcolor="#9a6608", constraint=false, weight=5];
 
         // keep NAV to ~2 columns: stack the flank nodes (orient / WM / reward /
         // cerebellum) into one side column beside the spine (visual ordering
@@ -90,15 +90,15 @@ digraph BrainMaster {
         label=<<B>SHARED region types</B>  ·  built (as the same type) by BOTH configs>;
         style="rounded,filled"; color="#566573"; fillcolor="#f4f6f7"; fontcolor="#34495e"; fontsize=15; penwidth=2.0; margin=14;
 
-        visual [label=<<B>Visual ventral stream</B>  (C1)<BR/>retina→V1→V2→IT<BR/><FONT POINT-SIZE="8.5">"what" object stream · opt-in</FONT>>, fillcolor="#d4e6f1", color="#2e6da4", fontcolor="#163a59"];
-        hippo  [label=<<B>Hippocampal formation</B>  (C7)<BR/>EC→DG ⊣ CA3 ⟲ →CA1<BR/><FONT POINT-SIZE="8.5">separation · completion · replay</FONT>>, fillcolor="#d9ead3", color="#5a8a3c", fontcolor="#2c4a1c"];
-        lang_in[label=<<B>Language input</B>  (C11)<BR/>language_input<BR/><FONT POINT-SIZE="8.5">⌂ token embedding (host I/O)</FONT>>, fillcolor="#d4e6f1", color="#2471a3", fontcolor="#123a55"];
-        motor  [group="spine", label=<<B>Motor output</B>  (C10)<BR/>motor_N/E/S/W (×4)<BR/><FONT POINT-SIZE="8.5">the body acts on which pool fires</FONT>>, fillcolor="#f5b7b1", color="#c0392b", fontcolor="#641e16"];
-        lang_out[label=<<B>Language output</B>  (C11)<BR/>language_output<BR/><FONT POINT-SIZE="8.5">⌂ word readout (host I/O)</FONT>>, fillcolor="#d4e6f1", color="#2471a3", fontcolor="#123a55"];
+        visual [label=<<B>Vision — "what is it" stream</B>  (C1)<BR/>retina → edges (V1) → shapes (V2) → objects (IT)<BR/><FONT POINT-SIZE="8.5">recognises objects · opt-in</FONT>>, fillcolor="#d4e6f1", color="#2e6da4", fontcolor="#163a59"];
+        hippo  [label=<<B>Hippocampus (memory)</B>  (C7)<BR/>entorhinal → dentate ⊣ CA3 ⟲ → CA1<BR/><FONT POINT-SIZE="8.5">separates · completes · replays during "sleep"</FONT>>, fillcolor="#d9ead3", color="#5a8a3c", fontcolor="#2c4a1c"];
+        lang_in[label=<<B>Words in (hearing)</B>  (C11)<BR/>language input region<BR/><FONT POINT-SIZE="8.5">⌂ word encoding (input boundary)</FONT>>, fillcolor="#d4e6f1", color="#2471a3", fontcolor="#123a55"];
+        motor  [group="spine", label=<<B>Motor output</B>  (C10)<BR/>one pool per direction — N/E/S/W (×4)<BR/><FONT POINT-SIZE="8.5">the body moves the way the firing pool says</FONT>>, fillcolor="#f5b7b1", color="#c0392b", fontcolor="#641e16"];
+        lang_out[label=<<B>Words out (speaking)</B>  (C11)<BR/>language output region<BR/><FONT POINT-SIZE="8.5">⌂ word read-out (output boundary)</FONT>>, fillcolor="#d4e6f1", color="#2471a3", fontcolor="#123a55"];
 
         // compact 2-column block (visual ordering only — content unchanged):
         // col-A visual→hippo · col-B lang_in→motor→lang_out. motor sits
-        // mid-column so the spine sc→motor→wernicke runs straight through it;
+        // mid-column so the spine sc→motor→conversation runs straight through it;
         // SHARED stays SHORT so it stacks cleanly under NAVIGATION.
         visual  -> hippo    [style=invis, weight=30];
         lang_in -> motor    [style=invis, weight=30];
@@ -110,29 +110,29 @@ digraph BrainMaster {
     // ========================================================================
     subgraph cluster_conv {
         labelloc="t"; labeljust="l";
-        label=<<B>CONVERSATIONAL supergroup</B>  ·  build_biological_brain_regions()  ·  the language brain>;
+        label=<<B>CONVERSATION supergroup</B>  ·  the production pipeline (OneBrainComposer)  ·  the language brain>;
         style="rounded,filled"; color="#2471a3"; fillcolor="#f3f8fc"; fontcolor="#1a5276"; fontsize=15; penwidth=2.0; margin=14;
 
-        wernicke [group="spine", label=<<B>Wernicke pools</B>  (C11)<BR/>comprehension · cross-pool WTA>, fillcolor="#d6eaf8", color="#2e86c1", fontcolor="#163a59"];
-        concept  [label=<<B>Concept pools</B>  (C12)<BR/>noun · verb · adjective (×4 each)<BR/><FONT POINT-SIZE="8.5">Pulvermüller word ensembles</FONT>>, fillcolor="#d4e6f1", color="#2874a6", fontcolor="#143a54"];
-        semantic [group="spine", label=<<B>Semantic cortex (ATL)</B>  (C11)<BR/>sparse distributed concept store<BR/><FONT POINT-SIZE="8.5">plastic attractor · 320 concepts</FONT>>, fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
-        broca    [group="spine", label=<<B>Broca</B>  (C11)<BR/>syntax · sentence WM>, fillcolor="#d6eaf8", color="#2e86c1", fontcolor="#163a59"];
-        hub      [label=<<B>Multimodal hub (ATL)</B>  (C11)<BR/>auditory + visual convergence>, fillcolor="#d6eaf8", color="#2e86c1", fontcolor="#163a59"];
-        wm_conv  [label=<<B>dlPFC verb WM</B>  (C9)<BR/>holds verb ~500 ms>, fillcolor="#d4e6f1", color="#2e86c1", fontcolor="#16435f"];
-        speech   [group="spine", label=<<B>motor_speech</B>  (C10)<BR/>articulation>, fillcolor="#f5b7b1", color="#c0392b", fontcolor="#641e16"];
+        cortex320 [group="spine", label=<<B>Learned word-meaning cortex</B>  (C11)<BR/>320 concepts · <B>learned from a conversation stream</B><BR/><FONT POINT-SIZE="8.5">similar words sit close together (so it can generalize)</FONT>>, fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f", penwidth=1.8];
+        parser   [group="spine", label=<<B>Comprehension — sentence parser</B>  (C11)<BR/>word order → who-did-what (agent / action / patient)<BR/><FONT POINT-SIZE="8.5">voice-invariant · flexible frames (S-V-O / V-S-O / O-S-V, auto-picked)</FONT>>, fillcolor="#d6eaf8", color="#2e86c1", fontcolor="#163a59", penwidth=1.8];
+        composer [group="spine", label=<<B>Composer — bind words into a fact</B>  (C11)<BR/>phase-based "resonate-and-fire" neurons + complex synapses<BR/><FONT POINT-SIZE="8.5">handles attributes ("big apple"), negation, embedded clauses · ~10–20× faster<BR/>⚠ binding rule is fixed algebra (stand-in for a learned cortex — step 3)</FONT>>, fillcolor="#d6eaf8", color="#2874a6", fontcolor="#143a54", penwidth=2.0];
+        store    [label=<<B>Fact store</B>  (in synapses)<BR/>each fact = a pattern written into complex synapses<BR/><FONT POINT-SIZE="8.5">persistent · holds many facts</FONT>>, fillcolor="#d4e6f1", color="#21618c", fontcolor="#10303f"];
+        recall   [group="spine", label=<<B>Recall &amp; answer</B>  ·  <B>no-confabulation safeguard</B><BR/>who/what · yes-no · multi-hop reasoning · multi-turn dialogue<BR/><FONT POINT-SIZE="8.5"><B>answers "I don't know" rather than inventing</B> (learned familiarity gate)</FONT>>, fillcolor="#d6eaf8", color="#1a5276", fontcolor="#0c2533", penwidth=2.2];
+        dlg      [label=<<B>Dialogue planning (prefrontal)</B>  (C9)<BR/>picks the next on-topic thing to say<BR/><FONT POINT-SIZE="8.5">self-sustaining working memory</FONT>>, fillcolor="#d4e6f1", color="#2e86c1", fontcolor="#16435f"];
+        produce  [group="spine", label=<<B>Reply — word-ordered output</B>  (C10/C11)<BR/>a spiking "say-this-first" ranking orders the words<BR/><FONT POINT-SIZE="8.5">competitive-queuing serial order (not a host template)</FONT>>, fillcolor="#d6eaf8", color="#2e86c1", fontcolor="#163a59"];
 
-        // -- conversational comprehend→produce --
-        wernicke -> semantic [label="comprehend"];
-        semantic -> broca    [label="meaning→syntax"];
-        semantic -> wernicke [label="produce", style=dashed, constraint=false, weight=6];
-        broca    -> speech   [label="articulation"];
-        wm_conv  -> concept  [label="verb WM", style=dashed, constraint=false, weight=0];
-        // keep CONV to ~2 columns: stack the flank nodes (concept / hub /
-        // verb-WM) into one side column beside the spine (visual ordering only
-        // — content unchanged) so the cluster is a narrow strip.
-        concept -> hub     [style=invis, weight=30];
-        hub     -> wm_conv [style=invis, weight=30];
-        wernicke -> concept [style=invis, weight=30];
+        // -- conversational production pipeline (top→bottom) --
+        cortex320 -> parser  [label="word meanings"];
+        parser    -> composer[label="who-did-what\n→ bind"];
+        composer  -> store   [label="write the fact", arrowhead=normal];
+        store     -> recall  [label="look up / match a cue", constraint=false, weight=6];
+        composer  -> recall  [label="unbind\n+ clean up"];
+        recall    -> produce [label="answer\n(or abstain)"];
+        dlg       -> produce [label="next thing\nto say", style=dashed, constraint=false, weight=0];
+        // keep CONV to a narrow strip: tuck the flank nodes (store / dialogue)
+        // beside the spine (visual ordering only — content unchanged).
+        store -> dlg [style=invis, weight=30];
+        recall -> store [style=invis, weight=30];
     }
 
     // ========================================================================
@@ -144,15 +144,15 @@ digraph BrainMaster {
     // ========================================================================
     subgraph cluster_gen {
         labelloc="t"; labeljust="l";
-        label=<<B>GENERALIZATION stack</B>  ·  co-resident opt-in (merged bridge / genfrontier runners)  ·  novel-object → category>;
+        label=<<B>GENERALIZATION</B>  ·  recognise a NOVEL object by its category, then answer about it  ·  co-resident opt-in>;
         style="rounded,filled,dashed"; color="#7d6608"; fillcolor="#fcf8ee"; fontcolor="#6a5407"; fontsize=15; penwidth=2.0; margin=14;
 
-        gen_perc [group="spine", label=<<B>gen_perception</B>  (structured)<BR/>Gabor/V1 top-K · similarity-structured<BR/><FONT POINT-SIZE="8.5">visual features → shared-feature codes</FONT>>, style="rounded,filled,dashed", fillcolor="#d4e6f1", color="#2e6da4", fontcolor="#163a59"];
-        gen_conc [group="spine", label=<<B>gen_concept</B>  (NMDA ⟲)<BR/>per-concept assemblies · slow NMDA<BR/><FONT POINT-SIZE="8.5">integrates sparse drive → SPIKES (rate-code lift)</FONT>>, style="rounded,filled,dashed", fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
-        gen_fact [group="spine", label=<<B>gen_fact</B>  (category tags, NMDA)<BR/>convergent block per category<BR/><FONT POINT-SIZE="8.5">downstream synaptic read of which category spiked</FONT>>, style="rounded,filled,dashed", fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
+        gen_perc [group="spine", label=<<B>Structured perception</B><BR/>seen through the edge-detectors (V1)<BR/><FONT POINT-SIZE="8.5">similar shapes → similar codes</FONT>>, style="rounded,filled,dashed", fillcolor="#d4e6f1", color="#2e6da4", fontcolor="#163a59"];
+        gen_conc [group="spine", label=<<B>Concept neurons</B>  ⟲<BR/>fire for the matching <B>category</B><BR/><FONT POINT-SIZE="8.5">slow integration lets a faint percept reach firing</FONT>>, style="rounded,filled,dashed", fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
+        gen_fact [group="spine", label=<<B>Which category fired</B><BR/>readable by downstream neurons<BR/><FONT POINT-SIZE="8.5">→ recall a fact about that category</FONT>>, style="rounded,filled,dashed", fillcolor="#d6eaf8", color="#21618c", fontcolor="#10303f"];
 
-        gen_perc -> gen_conc [label=<<B>convergence ⊟</B><BR/><FONT POINT-SIZE="8">learned (rate-Hebbian) · gen_convergence_fixed</FONT>>, color="#1a9850", fontcolor="#0c5a28", penwidth=2.2];
-        gen_conc -> gen_fact [label="convergent block\n(category fixed)"];
+        gen_perc -> gen_conc [label=<<B>learned link</B>  ⊟<BR/><FONT POINT-SIZE="8">"fire-together-wire-together"</FONT>>, color="#1a9850", fontcolor="#0c5a28", penwidth=2.2];
+        gen_conc -> gen_fact [label="category\n(fixed wiring)"];
     }
 
     // ========================================================================
@@ -165,45 +165,41 @@ digraph BrainMaster {
     //  X-placement (otherwise they staircase the clusters apart). Cluster
     //  X-alignment is instead enforced by the explicit left/center/right rail
     //  ladder below.
-    lang_in  -> wernicke [label="phono→Wernicke", lhead=cluster_conv, constraint=false, weight=0];
-    lang_in  -> concept  [label="word→pool", constraint=false, weight=0];
-    concept  -> lang_out [label="concept→word\n(A→W)", style=dashed, constraint=false, weight=0];
-    semantic -> lang_out [label="naming", constraint=false, weight=0];
-    wernicke -> hub      [label="auditory", constraint=false, weight=0];
-    hub      -> lang_out [label="recognition→naming", constraint=false, weight=0];
-    visual   -> hub      [label="IT→hub", color="#2e6da4", constraint=false, weight=0];
+    lang_in  -> cortex320 [label="words → meanings", lhead=cluster_conv, constraint=false, weight=0];
+    produce  -> lang_out  [label="spoken reply", style=dashed, constraint=false, weight=0];
+    recall   -> lang_out  [label="answer / 'I don't know'", constraint=false, weight=0];
+    // (the visual ventral stream's link INTO the composer is the labelled (C) bridge below)
 
     // navigation perception readouts come from the shared hippocampus
     nav_in -> hippo  [label="place readout", dir=back, color="#5a8a3c", constraint=false, weight=0];
     // hippocampal consolidation into cortex (shared, both configs)
-    hippo  -> semantic [label="sleep-replay\nconsolidation", color="#5a8a3c", constraint=false, weight=0];
-    hippo  -> motor    [label="CA1→motor", color="#5a8a3c", style=dashed, constraint=false, weight=0];
+    hippo  -> cortex320 [label="sleep-replay\nconsolidation", color="#5a8a3c", constraint=false, weight=0];
+    hippo  -> motor     [label="memory → motor", color="#5a8a3c", style=dashed, constraint=false, weight=0];
 
     // GENERALIZATION stack is fed by the visual ventral stream's Gabor/V1 (structured perception)
-    visual -> gen_perc [label="Gabor/V1 → structured\nperception (top-K)", color="#2e6da4", style=dashed, constraint=false, weight=0];
-    // the generalizing concept→fact spikes KEY the composer's recall + no-confab moat (the verbalize
-    // capstone HYBRID: the spiking concept-category keys the validated RFPhasorComposer → naming)
-    gen_fact -> semantic [label="category keys composer recall\n(verbalize capstone, hybrid)", color="#7d6608", style=dashed, constraint=false, weight=0];
+    visual -> gen_perc [label="edge-detectors →\nstructured perception", color="#2e6da4", style=dashed, constraint=false, weight=0];
+    // the generalizing concept→fact spikes KEY the composer's recall + no-confab safeguard (the verbalize
+    // capstone HYBRID: the spiking concept-category keys the validated phasor composer → naming)
+    gen_fact -> recall [label="recognised category\n→ recall a fact about it", color="#7d6608", style=dashed, constraint=false, weight=0];
 
     // ===== THE FUNCTIONAL CROSS-BRAIN BRIDGES (real cross-region synaptic interaction) =====
     // (A) LANGUAGE→ACTION. language_input -> cortex_{N,E,S,W} (LEARNED word->action route),
-    // CURRENT gated by command_route, opened by the parser's action-role FIRING. Spoken-
-    // instruction navigation, 6/6-seed GO. The first validated synaptic link between the brains.
-    lang_in -> m1 [label=<<B>command_route ⊟</B>  (A · language→action)<BR/><FONT POINT-SIZE="8">learned word→action · gate opened by parser firing<BR/>spoken-instruction nav · 6/6-seed GO</FONT>>,
+    // gated by command_route, opened by the parser's action-role FIRING. Spoken-instruction
+    // navigation, 6/6-seed GO. The first validated synaptic link between the brains.
+    lang_in -> m1 [label=<<B>A · a spoken word steers the body</B>  ⊟<BR/><FONT POINT-SIZE="8">learned word→action route · opened by comprehension · 6/6-seed GO</FONT>>,
                    color="#1a9850", fontcolor="#0c5a28", penwidth=3.0, style=bold, constraint=false, weight=0];
 
-    // (B) PERCEPTION→MEMORY (recall). A perceived object's cortex_it (IT "what") ensemble is
-    // engram-tagged in-episode; later neural reactivation reads it through a TRAINED
-    // cortex_it -> language_output route (it_to_lang) → "I saw the apple". navigate-to-see-
-    // then-answer, 6/6-seed GO. RECALL (not compose).
-    visual -> lang_out [label=<<B>cortex_it → language_output</B>  (B · perception→memory)<BR/><FONT POINT-SIZE="8">trained route + engram reactivation · navigate-to-see · 6/6-seed GO<BR/>RECALL of a perceived object (it_to_lang)</FONT>>,
+    // (B) PERCEPTION→MEMORY (recall). A perceived object's IT ("what") ensemble is engram-tagged
+    // in-episode; later neural reactivation reads it through a TRAINED IT -> language_output route
+    // -> "I saw the apple". navigate-to-see-then-answer, 6/6-seed GO. RECALL (not compose).
+    visual -> lang_out [label=<<B>B · see an object, later RECALL it</B><BR/><FONT POINT-SIZE="8">vision → words route + memory tag · navigate-to-see · 6/6-seed GO</FONT>>,
                    color="#1a9850", fontcolor="#0c5a28", penwidth=2.6, style=bold, constraint=false, weight=0];
 
-    // (C) COMPOSE-PERCEIVED. The LIVE cortex_it spiking RATE of a perceived object is mapped by
-    // a FIXED complex projection M into a unit PHASOR (⚠ host arithmetic on the substrate's own
-    // live rate) → the percept enters the composer's bind/bundle/unbind algebra. Dissolves the
-    // rate-vs-phasor wall for perceived-object facts. navigate-to-compose-then-answer, 6/6-seed GO.
-    visual -> concept [label=<<B>grounded code ⚠</B>  (C · compose-perceived)<BR/><FONT POINT-SIZE="8">live cortex_it rate → fixed complex projection M → phasor<BR/>dissolves rate↔phasor wall · navigate-to-compose · 6/6-seed GO</FONT>>,
+    // (C) COMPOSE-PERCEIVED. The LIVE IT spiking RATE of a perceived object is mapped by a FIXED
+    // complex projection into a unit PHASOR (host arithmetic on the substrate's own live rate),
+    // so the percept enters the composer's bind/recall algebra. Dissolves the rate-vs-phasor
+    // mismatch for perceived-object facts. navigate-to-compose-then-answer, 6/6-seed GO.
+    visual -> composer [label=<<B>C · bind a PERCEIVED object into a new fact</B>  ⚠<BR/><FONT POINT-SIZE="8">a seen object's firing → a code the composer can bind · navigate-to-compose · 6/6-seed GO</FONT>>,
                    color="#1a9850", fontcolor="#0c5a28", penwidth=2.6, style="bold,dashed", constraint=false, weight=0];
 
     // ===== VERTICAL STACKING of the four supergroups =======================
@@ -215,45 +211,45 @@ digraph BrainMaster {
     //  internal edges keep it a vertical pipeline; its non-spine nodes flank
     //  the spine, so the whole map is a narrow scrollable ribbon.
     //  Spine chain (real + rail): m1→bg→thal→sc (NAV, real) ─sc→motor (real)─
-    //  motor→wernicke→semantic→broca→speech (CONV, real) → gen_perc→gen_conc→
-    //  gen_fact (GEN, real) → leg.
-    //  The bottom→top rails (sc/cb → visual/lang_in, etc.) push each WHOLE
-    //  cluster below the previous one (not merely beside it).
-    motor    -> wernicke [style=invis, weight=80];   // SHARED spine → CONVERSATIONAL spine
-    speech   -> gen_perc [style=invis, weight=80];   // CONVERSATIONAL spine → GENERALIZATION spine
-    gen_fact -> leg      [style=invis, weight=80];    // GENERALIZATION spine → legend
+    //  motor→cortex320→parser→composer→recall→produce (CONV, real) → gen_perc→
+    //  gen_conc→gen_fact (GEN, real) → leg.
+    //  The bottom→top rails push each WHOLE cluster below the previous one
+    //  (not merely beside it).
+    motor    -> cortex320 [style=invis, weight=80];   // SHARED spine → CONVERSATION spine
+    produce  -> gen_perc  [style=invis, weight=80];   // CONVERSATION spine → GENERALIZATION spine
+    gen_fact -> leg       [style=invis, weight=80];    // GENERALIZATION spine → legend
 
     // ===== LEGEND ==========================================================
     subgraph cluster_legend {
         label=""; style="rounded,filled"; color="#566573"; fillcolor="#ffffff"; penwidth=1.6; margin=10;
         leg [shape=plaintext, fillcolor="white", label=<
           <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="3">
-            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>How to read this map — node fill = which config builds it</B></TD></TR>
-            <TR><TD ALIGN="RIGHT" BGCOLOR="#fdebd0" WIDTH="22"> </TD><TD ALIGN="LEFT">NAVIGATION  (build_bg_brain_regions)</TD></TR>
-            <TR><TD ALIGN="RIGHT" BGCOLOR="#d4e6f1" WIDTH="22"> </TD><TD ALIGN="LEFT">SHARED type, built by both configs</TD></TR>
-            <TR><TD ALIGN="RIGHT" BGCOLOR="#d6eaf8" WIDTH="22"> </TD><TD ALIGN="LEFT">CONVERSATIONAL  (build_biological_brain_regions)</TD></TR>
-            <TR><TD ALIGN="RIGHT" BGCOLOR="#fcf8ee" WIDTH="22"> </TD><TD ALIGN="LEFT">GENERALIZATION stack — co-resident opt-in, runner-added</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>How to read this map — box colour = which half builds it</B></TD></TR>
+            <TR><TD ALIGN="RIGHT" BGCOLOR="#fdebd0" WIDTH="22"> </TD><TD ALIGN="LEFT">NAVIGATION half</TD></TR>
+            <TR><TD ALIGN="RIGHT" BGCOLOR="#d4e6f1" WIDTH="22"> </TD><TD ALIGN="LEFT">SHARED — used by both halves</TD></TR>
+            <TR><TD ALIGN="RIGHT" BGCOLOR="#d6eaf8" WIDTH="22"> </TD><TD ALIGN="LEFT">CONVERSATION half</TD></TR>
+            <TR><TD ALIGN="RIGHT" BGCOLOR="#fcf8ee" WIDTH="22"> </TD><TD ALIGN="LEFT">GENERALIZATION — co-resident, opt-in</TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2"> </TD></TR>
-            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>signal nature</B>  (arrow points downstream)</TD></TR>
-            <TR><TD ALIGN="RIGHT">──▶</TD><TD ALIGN="LEFT">excitatory (glutamate, AMPA+NMDA)</TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#922b21">──⊣</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#922b21">fast inhibition (GABA_A, Cl⁻)</FONT></TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#7d3c98">- -⊣</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#7d3c98">slow inhibition (GABA_B / GIRK K⁺) — the one signature edge</FONT></TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#d98008">····◆</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#d98008">neuromodulator broadcast (dopamine)</FONT></TD></TR>
-            <TR><TD ALIGN="LEFT" COLSPAN="2"><FONT COLOR="#1a9850"><B>━━▶ functional cross-brain bridges (each 6/6-seed GO; runner-added):</B></FONT></TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1a9850"><B>━━▶</B></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1a9850"><B>A</B> command_route ⊟ — language → action (spoken-instruction nav)</FONT></TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1a9850"><B>━━▶</B></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1a9850"><B>B</B> cortex_it→language_output — perception → memory RECALL (navigate-to-see)</FONT></TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1a9850"><B>━ ▶</B></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1a9850"><B>C ⚠</B> grounded code — compose-perceived (live rate → phasor; navigate-to-compose)</FONT></TD></TR>
-            <TR><TD ALIGN="RIGHT">- -</TD><TD ALIGN="LEFT">weaker / feedback / opt-in pathway</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>what each arrow carries</B>  (it points downstream)</TD></TR>
+            <TR><TD ALIGN="RIGHT">──▶</TD><TD ALIGN="LEFT">excitation — "fire more" (glutamate)</TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#922b21">──⊣</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#922b21">fast inhibition — "fire less" (GABA-A)</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#7d3c98">- -⊣</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#7d3c98">slow inhibition (GABA-B) — the one signature "value subtraction" edge</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#d98008">····◆</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#d98008">dopamine — a reinforcement signal sprayed widely (not a wire)</FONT></TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><FONT COLOR="#1a9850"><B>━━▶ the two halves interact through these routes (each 6/6-seed GO):</B></FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1a9850"><B>━━▶</B></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1a9850"><B>A</B> a spoken word steers the moving body</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1a9850"><B>━━▶</B></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1a9850"><B>B</B> navigate to SEE an object, then RECALL what was seen</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1a9850"><B>━ ▶</B></FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1a9850"><B>C</B> bind a PERCEIVED object into a new fact</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT">- -</TD><TD ALIGN="LEFT">weaker / feedback / optional pathway</TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2"> </TD></TR>
-            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>honesty</B>   (full detail: the per-region graphs + spec §6)</TD></TR>
-            <TR><TD ALIGN="RIGHT">⌂</TD><TD ALIGN="LEFT">host-rendered input / decoded output = environment/body boundary (LEGITIMATE, not a shortcut)</TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#b9770e">⚠</FONT></TD><TD ALIGN="LEFT">phenomenological / collapsed stand-in, or host-computed cognition (a documented SHORTCUT)</TD></TR>
-            <TR><TD ALIGN="RIGHT">⊟</TD><TD ALIGN="LEFT">runtime gate (transmission / plasticity); gate name in the label</TD></TR>
-            <TR><TD ALIGN="LEFT" COLSPAN="2">substrate-wide: point neurons · 1-step delay · GABA_A-default · global-scalar</TD></TR>
-            <TR><TD ALIGN="LEFT" COLSPAN="2">neuromodulators · Izhikevich-default · forward-Euler (SH-1..SH-14, spec §6)</TD></TR>
-            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>CORE</B> (always built) = BG cascade + Tier-1 language→motor; rest opt-in.</TD></TR>
-            <TR><TD ALIGN="LEFT" COLSPAN="2">The A/B/C bridges + the generalization stack are added by specific runners</TD></TR>
-            <TR><TD ALIGN="LEFT" COLSPAN="2">ON TOP of a builder (not in either exhaustive per-builder detail graph).</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>honesty markers</B>   (full detail: the two detail diagrams + the spec)</TD></TR>
+            <TR><TD ALIGN="RIGHT">⌂</TD><TD ALIGN="LEFT">input/output boundary — the world renders what the agent senses, the body acts on its output (LEGITIMATE, not a shortcut)</TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#b9770e">⚠</FONT></TD><TD ALIGN="LEFT">a documented SHORTCUT — a simplified stand-in, or a step still done by host maths instead of neurons</TD></TR>
+            <TR><TD ALIGN="RIGHT">⊟</TD><TD ALIGN="LEFT">a switchable gate that opens/closes a route at run time</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>no-confabulation safeguard</B> = the conversation answers "I don't know" instead of guessing</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2">simplifications everywhere: point neurons (no dendrites) · one-step delays · simplified</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2">neuron + synapse models (the full list SH-1…SH-14 is in the spec)</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>ONE brain</B> = nav + conversation on one network, one update loop. The conversation half is held</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2">frozen during navigation so its memory can't drift; the A/B/C routes + generalization are opt-in add-ons.</TD></TR>
           </TABLE>>];
     }
 }
