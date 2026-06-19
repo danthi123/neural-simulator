@@ -6,12 +6,14 @@
 **Runner:** `research/runners/_phaseB_multicue_competition_spiking_derisk.py`
 **Raw:** `research/findings/raw/_phaseB_multicue_competition_spiking_install.json` (install path, 6 seeds),
 `research/findings/raw/_phaseB_multicue_competition_spiking_errorgated.json` (error-gated path, GPU).
-**Verdict:** **GO.** The multi-cue role-competition is realized as real spiking neurons on a `SimulationBridge`
-(re-pointed biased-competition WTA over thematic ROLES + plastic cue→role projections), and it makes thematic-role
-assignment **robust to degraded English (scrambled / object-fronted)** where a position-only spiking baseline
-collapses, with the cues **load-bearing** (lesion collapses) and the no-confab **moat intact (0 breaches)**. The cue
-validities are realized BOTH as (a) the validated validities **installed** into the spiking WTA [5/6 seeds GO], AND
-(b) **learned ON the substrate** by a **three-factor** rule (spike-eligibility × reward × vote) [GO].
+**Verdict:** **GO (carried by the install path, 5/6 seeds).** The multi-cue role-competition is realized as real
+spiking neurons on a `SimulationBridge` (re-pointed biased-competition WTA over thematic ROLES + plastic cue→role
+projections), and it makes thematic-role assignment **robust to degraded English (scrambled / object-fronted)**
+where a position-only spiking baseline collapses, with the cues **load-bearing** (lesion collapses) and the
+no-confab **moat intact (0 breaches on every seed)**. The cue validities are realized BOTH as (a) the validated
+validities **installed** into the spiking WTA [**5/6 seeds GO** — the robust headline], AND (b) **learned ON the
+substrate** by a **three-factor** rule (spike-eligibility × reward × vote) [GO on the seeds where it learns the
+spread; seed-variable robustness at the spiking scale — an honest boundary on the *learning*, not the mechanism].
 
 **The load-bearing honest finding:** plain **Hebbian co-firing** (the v16 rule the scoping named) does **NOT** learn
 the cue validities — it computes co-occurrence, not error-corrected validity, so it cannot down-weight a
@@ -66,16 +68,22 @@ Per-degradation (mean): scramble **0.990** vs pos-only 0.562; object-front **0.8
 drop-verb 0.990 vs 0.990 (position not degraded). Clean canonical (no-regression): multicue 0.875 vs pos-only 0.885.
 
 ### 2b. ERROR-GATED path — validities LEARNED on the substrate (the brain-based deliverable)
-On-substrate three-factor learning (seed 42, GPU/CPU):
+On-substrate three-factor learning (seed 42, fixed controls):
 ```
  seed | MULTICUE | POS-ONLY |  LESION | moat_br | sig | GO
-   42 |    0.929 |    0.321 |   0.321 |       0 |   Y | GO
+   42 |    0.875 |    0.188 |   0.188 |       0 |   Y | GO
 ```
-Per-degradation: scramble **1.000** vs pos-only 0.643; object-front **0.929** vs pos-only **0.000**.
-**Learned cue→role weights: position=4.69 < animacy=20.4, verbfit=19.6, distractor lexbias=2.2** — the genuine
+Per-degradation (seed 42): scramble **1.000**; object-front **0.875–0.929** vs pos-only **0.000**.
+**Learned cue→role weights: position=4.7 < animacy=20.4, verbfit=19.6, distractor lexbias=2.2** — the genuine
 validity signature, LEARNED on the substrate (the spiking analogue of the numpy `w_position 0.34 << w_animacy
-0.76`). Clean canonical: multicue 0.857 vs pos-only 0.786 (unregressed).
-[multi-seed error-gated: in-flight — see §6.]
+0.76`); the WTA settles correctly, position-only collapses, moat intact.
+[multi-seed error-gated: in-flight — see §6. The on-substrate three-factor learning is **seed-VARIABLE** in how
+hard it down-weights position (it depends on the random non-canonical training draw), which at the spiking
+operating scale creates a real clean-canonical-vs-object-front trade-off — so it is GO on the seeds where it
+learns the spread well (e.g. 42, 44) and a BOUNDARY on others. The numpy delta-rule was clean 6/6 because it has
+no operating-point friction; the substrate adds it. The **install path is the robust multi-seed GO**; the
+error-gated path is the honest demonstration that on-substrate three-factor learning **does** produce the validity
+signature, with documented seed variance in robustness.]
 
 ---
 
@@ -98,7 +106,7 @@ validity signature, LEARNED on the substrate (the spiking analogue of the numpy 
 
 | Control | Result | What it proves |
 |---|---|---|
-| **POSITION-ONLY baseline** (drop animacy+verbfit) | **0.281** (object-front 0.000) | THE LOAD-BEARING control: the battery genuinely degrades position; the win is the ADDED CUES carrying degraded input, not a generically better parser. |
+| **POSITION-ONLY baseline** — a GENUINE position-only parser (position at the reference weight, other cues dropped) | **0.281** (object-front **0.000**) | THE LOAD-BEARING control: the battery genuinely degrades position; the win is the ADDED CUES carrying degraded input, not a generically better parser. (Built as a dedicated reference parser — NOT the multi-cue learner with its cues zeroed, which after error-gated learning has a tiny learned position weight → near-silent sel pools → a tie-broken index-default artifact, not a real position parser. The fix made this control collapse cleanly to ~0.10–0.28 / object-front 0.000 on every seed.) |
 | **CUE-LESION** (zero animacy+verbfit cue→role weights, keep position) | **0.281–0.321** (≈ position-only) | The semantic cues are **load-bearing**: removing them collapses robustness to the position-only level. |
 | **no-confab MOAT** (two animate nouns + symmetric verb, scrambled → no decisive cue) | **0/N breaches**, abstain 1.00 | The moat is **not weakened**: when the cues genuinely tie, the spiking parser ABSTAINS (the semantic-contrast gate, computed from the learned weights, falls below the calibrated margin). |
 | **Learned-weight SIGNATURE** (error-gated path) | position 4.7 << semantic ~20, distractor ~0 | Cue-validity learning ON THE SUBSTRATE: the high-co-occurrence-but-unreliable cue is down-weighted, the chance cue zeroed. (A REAL spread — the gate requires ≥0.25× the semantic magnitude, so a trivial ε-ordering does not pass.) |
@@ -162,11 +170,15 @@ faked.
 ## 7. Verdict + recommended next step
 
 **GO.** The brain-based multi-cue competition is robust to degraded English on the spiking substrate — the role
-WTA + plastic cue→role projections carry scrambled/object-fronted input at ≥0.90 where a position-only spiking
-parser collapses to ~0.28, with the cues load-bearing (lesion collapses) and the no-confab moat intact (0
-breaches). The cue validities are realized both **installed** (5/6 seeds) and **learned on the substrate** by a
-**three-factor** rule (GO; the genuinely brain-based deliverable, with the documented honest finding that **plain
-Hebbian co-firing is NOT the right rule** — the error/reward term is load-bearing).
+WTA + plastic cue→role projections carry scrambled/object-fronted input at ~0.90 (MULTICUE mean 0.896) where a
+position-only spiking parser collapses to ~0.28 (object-front 0.000), with the cues load-bearing (lesion
+collapses) and the no-confab moat intact (**0 breaches on every seed, both paths**). The verdict is carried by the
+**install path: 5/6 seeds GO** (validated validities in the spiking WTA — the GO-bar's explicit fallback). The cue
+validities are ALSO **learned on the substrate** by a **three-factor** rule (GO on the seeds where it learns the
+spread, e.g. 42/44, with the genuine signature position 4.7 << semantic ~20, distractor → 0; **seed-variable**
+robustness at the spiking scale — an honest BOUNDARY on the *learning robustness*, not the mechanism). The
+documented honest finding stands: **plain Hebbian co-firing is NOT the right rule** for validity learning (the
+error/reward term is load-bearing).
 
 **Recommend:**
 1. **Production wire-in** — promote behind a default-OFF opt-in (`MultiTurnAgent` / parser `enable_attributed`-style
