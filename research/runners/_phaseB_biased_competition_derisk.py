@@ -96,19 +96,25 @@ def content_bias_target(candidates, query_verb):
 # Subclasses the validated SpikingLoopContextBuffer's holding mechanism.
 # ---------------------------------------------------------------------------
 class BiasedCompetitionContextBuffer:
-    """Adds WTA biased competition to the held referents. Builds the loop bridge with one all-inhibitory FS
-    region per referent, then installs assembly-targeted mutual-inhibition synapses + per-referent attractors.
+    """Adds WTA biased competition to the held referents, as a READ-OUT TAP layer (faithful reuse of the
+    navigation sel_X/sel_FS_X Wong-Wang accumulator WTA; g11_bg_runner.py). The held referents stay in the
+    cortex_ctx<->dlpfc_wm loop unchanged; the competition is between per-referent ACCUMULATOR pools:
 
-    REUSE: the per-concept outer-product attractors (c2d/d2c) + the read() (per-assembly cortex firing) are
-    the SpikingLoopContextBuffer mechanism, replicated here. NEW: the FS regions + the cross-referent
-    inhibition + the bias() injector.
+      cortex_assembly[X] --(ff evidence)--> sel_X (NMDA-slow recurrent, alpha<1) --> sel_FS_X --(inh)--> sel_Y!=X
 
-    competition=False (default) -> no FS wiring installed == the plain SpikingLoopContextBuffer (the salience
-    baseline substrate). competition=True -> the mutual inhibition is wired; bias() then steers it.
+    The accumulator integrates each referent's held firing; the selective inhibition makes the leader suppress
+    the others (the SUPPRESSION a salience boost could never produce); the small CONTENT bias is injected into
+    the favored sel_X so the recurrence amplifies the small content asymmetry into a clean winner. The sel
+    layer is a pure tap — no sel_X -> cortex projection — so the held attractors are unperturbed (exactly the
+    navigation design where sel reads thal but never projects back). The winner is READ from the sel pools.
+
+    competition=False -> no sel layer (== the plain SpikingLoopContextBuffer holding; the salience baseline
+    substrate). competition=True -> the accumulator WTA is wired; bias() steers it.
     """
 
     def __init__(self, concepts, n=600, pattern_size=40, attractor_weight=50.0,
-                 fs_per_referent=20, ref_to_fs_weight=8.0, fs_to_ref_weight=14.0,
+                 n_sel=20, n_sel_fs=10, ref_to_sel_weight=12.0, sel_recurrent_weight=0.35,
+                 sel_recurrent_density=0.5, sel_to_fs_weight=20.0, fs_to_sel_weight=5.0,
                  seed=42, enable_ou=False, competition=True, verbose=False):
         import sim.backend as B
         from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
@@ -120,6 +126,7 @@ class BiasedCompetitionContextBuffer:
         self.concepts = list(concepts)
         self.competition = bool(competition)
         self._psize = pattern_size
+        self._held = []   # discourse-referent registry (which referents were introduced via update())
 
         def loop_reg(name):
             return BrainRegion(name=name, n_neurons=n, exc_fraction=0.8, internal_density=0.0,
@@ -130,9 +137,16 @@ class BiasedCompetitionContextBuffer:
         regions = [loop_reg("cortex_ctx"), loop_reg("dlpfc_wm")]
         if self.competition:
             for c in self.concepts:
-                # All-inhibitory FS pool (exc_fraction=0.0 -> every neuron inhibitory -> out-synapses -> g_i).
+                # ACCUMULATE pool: excitatory, NMDA-slow recurrent self-excitation (Wang-2002 integrator);
+                # soft-WTA gain alpha<1 (Rutishauser) -> ramps/holds under evidence+bias, never self-ignites.
                 regions.append(BrainRegion(
-                    name=f"ref_FS_{c}", n_neurons=fs_per_referent, exc_fraction=0.0,
+                    name=f"sel_{c}", n_neurons=n_sel, exc_fraction=1.0,
+                    internal_density=sel_recurrent_density, exc_weight_mean=sel_recurrent_weight,
+                    inh_weight_mean=0.0, weight_jitter=0.2, plastic_internal=False, enable_nmda=True,
+                    izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name))
+                # Selective inhibitory interneuron: driven only by sel_X, inhibits only sel_Y!=X (Rutishauser).
+                regions.append(BrainRegion(
+                    name=f"sel_FS_{c}", n_neurons=n_sel_fs, exc_fraction=0.0,
                     internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
                     plastic_internal=False,
                     izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
@@ -140,7 +154,29 @@ class BiasedCompetitionContextBuffer:
         cfg = CoreSimConfig()
         cfg.enable_brain_region_framework = True
         cfg.brain_regions = regions
-        cfg.region_pathways = []  # cross-region edges installed by hand below (assembly-targeted)
+        pathways = [
+            # loop pathways at weight 0 (matching build_loop_wm_bridge with loop_weight=0): SEED a non-empty
+            # CSR so the per-concept attractors + the sel wiring can be installed via set_pathway_weights.
+            RegionPathway(from_region="cortex_ctx", to_region="dlpfc_wm", density=0.05,
+                          weight_mean=0.0, weight_jitter=0.2, plastic=False),
+            RegionPathway(from_region="dlpfc_wm", to_region="cortex_ctx", density=0.05,
+                          weight_mean=0.0, weight_jitter=0.2, plastic=False),
+        ]
+        if self.competition:
+            # sel_X -> sel_FS_X (exc: the winning accumulator recruits its interneuron).
+            for c in self.concepts:
+                pathways.append(RegionPathway(from_region=f"sel_{c}", to_region=f"sel_FS_{c}",
+                                              density=1.0, weight_mean=sel_to_fs_weight, weight_jitter=0.2,
+                                              plastic=False))
+            # sel_FS_X -> sel_Y!=X (inh: gentle cross-pool suppression; symmetric over-inhibition is unstable).
+            for X in self.concepts:
+                for Y in self.concepts:
+                    if X == Y:
+                        continue
+                    pathways.append(RegionPathway(from_region=f"sel_FS_{X}", to_region=f"sel_{Y}",
+                                                  density=1.0, weight_mean=fs_to_sel_weight, weight_jitter=0.2,
+                                                  plastic=False))
+        cfg.region_pathways = pathways
         cfg.dt_ms = 0.5
         cfg.seed = seed
         cfg.enable_nmda = True
@@ -178,44 +214,37 @@ class BiasedCompetitionContextBuffer:
                                             post_indices=np.tile(cpat, pattern_size).astype(np.int64),
                                             weights=ww_attr, add_missing=True)
 
+        self._sel_idx = {}
         if self.competition:
-            self._wire_mutual_inhibition(rm, ref_to_fs_weight, fs_to_ref_weight)
+            self._sel_idx = {c: np.asarray(rm.indices(f"sel_{c}"), dtype=np.int64) for c in self.concepts}
+            self._wire_assembly_to_sel(rm, cpat_by_concept={c: self.B.to_host(self._cpat[c]).astype(np.int64)
+                                                            for c in self.concepts},
+                                       ref_to_sel_weight=ref_to_sel_weight)
+            self._n_sel = n_sel
 
         if verbose:
             print(f"[biased-competition buffer] {len(self.concepts)} referents, competition={self.competition}, "
-                  f"FS/referent={fs_per_referent}", flush=True)
+                  f"sel/referent={n_sel}", flush=True)
 
-    def _wire_mutual_inhibition(self, rm, ref_to_fs_weight, fs_to_ref_weight):
-        """Install, per referent X: cortex_assembly[X] -> ref_FS_X (excitatory) and ref_FS_X ->
-        cortex_assembly[Y!=X] (inhibitory; the FS neurons are inhibitory so the edge routes to g_i).
-        Rutishauser selective inhibition: driven only by X, inhibits only the others."""
-        cpat_h = {c: self.B.to_host(self._cpat[c]).astype(np.int64) for c in self.concepts}
-        fs_idx = {c: np.asarray(rm.indices(f"ref_FS_{c}"), dtype=np.int64) for c in self.concepts}
+    def _wire_assembly_to_sel(self, rm, cpat_by_concept, ref_to_sel_weight):
+        """cortex_assembly[X] -> sel_X (all-to-all, excitatory FEED-FORWARD EVIDENCE: the held referent's
+        firing drives its accumulator). Read-only: there is NO sel_X -> cortex projection, so the held
+        attractors are byte-unperturbed by the competition."""
         for X in self.concepts:
-            aX = cpat_h[X]
-            fX = fs_idx[X]
-            # cortex_assembly[X] -> ref_FS_X (all-to-all, excitatory)
-            pre = np.repeat(aX, fX.size).astype(np.int64)
-            post = np.tile(fX, aX.size).astype(np.int64)
-            w = np.full(pre.size, np.float32(ref_to_fs_weight), np.float32)
-            self.bridge.set_pathway_weights("ref2fs", pre_indices=pre, post_indices=post, weights=w,
+            aX = cpat_by_concept[X]
+            sX = self._sel_idx[X]
+            pre = np.repeat(aX, sX.size).astype(np.int64)
+            post = np.tile(sX, aX.size).astype(np.int64)
+            w = np.full(pre.size, np.float32(ref_to_sel_weight), np.float32)
+            self.bridge.set_pathway_weights("ref2sel", pre_indices=pre, post_indices=post, weights=w,
                                             add_missing=True)
-            # ref_FS_X -> cortex_assembly[Y!=X] (all-to-all, inhibitory via inhibitory pre-neuron)
-            for Y in self.concepts:
-                if Y == X:
-                    continue
-                aY = cpat_h[Y]
-                pre2 = np.repeat(fX, aY.size).astype(np.int64)
-                post2 = np.tile(aY, fX.size).astype(np.int64)
-                w2 = np.full(pre2.size, np.float32(fs_to_ref_weight), np.float32)
-                self.bridge.set_pathway_weights("fs2ref", pre_indices=pre2, post_indices=post2, weights=w2,
-                                                add_missing=True)
 
     # ---- holding (reused from SpikingLoopContextBuffer) ----
     def update(self, concepts, drive_pA=2500.0, stim=40, settle=15):
         for c in concepts:
             if c not in self._cpat:
                 continue
+            self._held.append(c)   # discourse-referent registry (which referents were introduced)
             drv = self._cpat[c]
             for _ in range(stim):
                 self.bridge.cp_external_input_current[:] = 0.0
@@ -225,39 +254,84 @@ class BiasedCompetitionContextBuffer:
             for _ in range(settle):
                 self.bridge._run_one_simulation_step()
 
-    def read(self, window=20, bias_concept=None, bias_pA=0.0):
-        """Decode the held set over a no-drive window. If bias_concept is set, inject a SMALL feed-forward
-        bias current into that concept's cortex assembly during the window (the content top-down bias). The
-        mutual inhibition (always active, driven by the assemblies' own firing) amplifies the bias into a
-        suppressive winner."""
-        bias_idx = None
-        if bias_concept is not None and bias_pA > 0.0 and bias_concept in self._cpat:
-            bias_idx = self._cpat[bias_concept]
-        acc = {c: 0.0 for c in self.concepts}
+    def read(self, window=20, bias_concept=None, bias_pA=0.0, redrive_pA=2200.0):
+        """Read the pronoun-resolution competition over a window.
+
+        WITHOUT competition (the salience-baseline substrate): the plain per-assembly cortex firing read,
+        no re-presentation — exactly the SpikingLoopContextBuffer behavior.
+
+        WITH competition (biased competition): the held discourse referents (the registry) are RE-PRESENTED
+        as co-active competitors during the read (a retrieval cue gently re-drives their cortex assemblies —
+        the biology of biased competition, where the competing stimuli are simultaneously present; without
+        re-presentation the substrate's destructive single-winner hold means only the strongest intrinsic
+        attractor is active and there is nothing to arbitrate). The co-active assemblies feed their sel_X
+        accumulators; a SMALL content bias is injected into the favored sel_X; the selective inhibition +
+        recurrence amplify the small content asymmetry into a SUPPRESSIVE winner. The per-sel firing IS the
+        competition read; the per-assembly firing is the moat gate (a referent must be re-presentable above
+        held_floor — empty registry -> no re-presentation -> nothing held -> abstain).
+
+        Returns {"sel": {c: rate}, "held": {c: assembly_rate}}."""
+        if not self.competition:
+            acc = {c: 0.0 for c in self.concepts}
+            bias_idx = (self._cpat[bias_concept] if bias_concept in self._cpat and bias_pA > 0.0 else None)
+            for _ in range(window):
+                self.bridge.cp_external_input_current[:] = 0.0
+                if bias_idx is not None:
+                    self.bridge.cp_external_input_current[bias_idx] = np.float32(bias_pA)
+                self.bridge._run_one_simulation_step()
+                fs = self.bridge.cp_firing_states
+                for c in self.concepts:
+                    acc[c] += float(self.B.to_host(fs[self._cpat[c]]).sum())
+            held = {c: acc[c] / (self._psize * window) for c in self.concepts}
+            return {"sel": dict(held), "held": held}
+        # competition: re-present the held referents (co-active competitors) + bias the favored sel pool.
+        held_set = sorted(set(self._held))
+        re_idx = None
+        if held_set:
+            re_idx = self.xp.asarray(np.concatenate(
+                [self.B.to_host(self._cpat[c]).astype(np.int64) for c in held_set]))
+        bias_sel = (self._sel_idx[bias_concept] if (bias_concept in self._sel_idx and bias_pA > 0.0) else None)
+        sel_acc = {c: 0.0 for c in self.concepts}
+        held_acc = {c: 0.0 for c in self.concepts}
         for _ in range(window):
             self.bridge.cp_external_input_current[:] = 0.0
-            if bias_idx is not None:
-                self.bridge.cp_external_input_current[bias_idx] = np.float32(bias_pA)
+            if re_idx is not None:
+                self.bridge.cp_external_input_current[re_idx] = np.float32(redrive_pA)
+            if bias_sel is not None:
+                self.bridge.cp_external_input_current[bias_sel] = np.float32(bias_pA)
             self.bridge._run_one_simulation_step()
             fs = self.bridge.cp_firing_states
             for c in self.concepts:
-                acc[c] += float(self.B.to_host(fs[self._cpat[c]]).sum())
-        return {c: acc[c] / (self._psize * window) for c in self.concepts}
+                sel_acc[c] += float(self.B.to_host(fs[self._sel_idx[c]]).sum())
+                held_acc[c] += float(self.B.to_host(fs[self._cpat[c]]).sum())
+        return {"sel": {c: sel_acc[c] / (self._n_sel * window) for c in self.concepts},
+                "held": {c: held_acc[c] / (self._psize * window) for c in self.concepts}}
 
 
-def resolve_referent(rates, spec_threshold=1.3):
-    """Top assembly resolves IFF it leads the runner-up by >= spec_threshold (else None = abstain — the
-    no-confab moat: a tie or an empty WM produces no confabulated antecedent)."""
-    if not rates:
+def resolve_referent(read, spec_threshold=1.3, held_floor=0.08):
+    """Resolve the pronoun to the winning referent IFF (1) the competition (sel) winner leads the runner-up
+    by >= spec_threshold AND (2) that winner is ACTUALLY HELD in WM (its cortex assembly fires above
+    held_floor). Else None = abstain — the no-confab moat: an empty WM (nothing held -> the bias cannot
+    confabulate an antecedent) or a tie (no clear sel winner) produces None.
+
+    Accepts either the structured read ({"sel":..., "held":...}) or a bare rates dict (treated as both)."""
+    if not read:
         return None
-    items = sorted(rates.items(), key=lambda kv: kv[1], reverse=True)
+    if "sel" in read and "held" in read:
+        sel, held = read["sel"], read["held"]
+    else:
+        sel = held = read
+    items = sorted(sel.items(), key=lambda kv: kv[1], reverse=True)
     top_c, top_r = items[0]
     if top_r <= 1e-6:
-        return None  # empty WM -> nothing held -> abstain
+        return None
     runner = items[1][1] if len(items) > 1 else 0.0
-    if runner <= 1e-9:
-        return top_c
-    return top_c if top_r >= spec_threshold * runner else None
+    if runner > 1e-9 and top_r < spec_threshold * runner:
+        return None  # no decisive competition winner -> tie -> abstain
+    # moat gate: the winner must be a referent actually held in WM (assembly active).
+    if held.get(top_c, 0.0) < held_floor:
+        return None
+    return top_c
 
 
 # ---------------------------------------------------------------------------
@@ -274,6 +348,28 @@ def _favored(candidates, verb):
     return content_bias_target(candidates, verb)
 
 
+def _disp(read):
+    """Compact display of a structured read: {concept: (sel_rate, held_rate)}."""
+    if isinstance(read, dict) and "sel" in read:
+        return {c: [round(read["sel"][c], 4), round(read["held"][c], 4)] for c in read["sel"]}
+    return {c: round(v, 4) for c, v in read.items()}
+
+
+def resolve_pronoun(w, verb, candidates, bias_pA, spec_threshold, window, lesion=False):
+    """The full pronoun-resolution decision. (1) The CONTENT bias selects which held referent matches the
+    pronoun+verb; if content is SILENT (no/ambiguous match) -> abstain (None) — the no-confab moat refuses
+    to pick by intrinsic strength. (2) Else run the biased competition (re-present + bias the favored sel)
+    and resolve the WTA winner (gated on the moat held-floor). lesion=True keeps the competition but DROPS
+    the bias (bias_pA=0) -> the WTA reverts to the intrinsic winner -> the content control is broken."""
+    fav = content_bias_target(candidates, verb)
+    if fav is None:
+        return None, None, {}   # content silent -> abstain (moat)
+    rates = w.read(window=window, bias_concept=(None if lesion else fav),
+                   bias_pA=(0.0 if lesion else bias_pA))
+    resolved = resolve_referent(rates, spec_threshold)
+    return resolved, fav, rates
+
+
 def run_seed(seed, bias_pA, spec_threshold, window, verbose=False):
     cat, ball = PAIR
 
@@ -285,66 +381,48 @@ def run_seed(seed, bias_pA, spec_threshold, window, verbose=False):
 
     # --- GO arm: biased competition, BOTH write-orders, on the {cat, ball} pair ---
     # query "eat" selects animate -> favored = cat ; query "roll" selects inanimate -> favored = ball.
-    def trial(order, verb):
+    def trial(order, verb, lesion=False):
         cands = [cat, ball]
-        fav = _favored(cands, verb)
         w = buf(cands, competition=True)
         w.update([order[0]]); w.update([order[1]])
-        rates = w.read(window=window, bias_concept=fav, bias_pA=bias_pA)
-        resolved = resolve_referent(rates, spec_threshold)
-        return {"order": list(order), "verb": verb, "favored": fav,
-                "rates": {k: round(v, 4) for k, v in rates.items()},
-                "resolved": resolved, "correct": bool(resolved == fav)}
+        resolved, fav, rates = resolve_pronoun(w, verb, cands, bias_pA, spec_threshold, window, lesion=lesion)
+        return {"order": list(order), "verb": verb, "favored": fav, "rates": _disp(rates),
+                "resolved": resolved, "correct": bool(resolved == fav and fav is not None)}
 
     out["bc_cat_first_eat"] = trial((cat, ball), "eat")    # favored cat, cat written first
-    out["bc_ball_first_eat"] = trial((ball, cat), "eat")   # favored cat, ball written first (recency favors cat? no: order flips)
+    out["bc_ball_first_eat"] = trial((ball, cat), "eat")   # favored cat, ball written first -> if recency, ball would win
     out["bc_cat_first_roll"] = trial((cat, ball), "roll")  # FEATURE-FLIP: favored ball, cat written first
     out["bc_ball_first_roll"] = trial((ball, cat), "roll") # FEATURE-FLIP: favored ball, ball written first
     out["go_arm"] = bool(out["bc_cat_first_eat"]["correct"] and out["bc_ball_first_eat"]["correct"]
                          and out["bc_cat_first_roll"]["correct"] and out["bc_ball_first_roll"]["correct"])
 
-    # --- LESION: competition present, bias REMOVED (bias_pA=0). Must NOT resolve to the favored referent. ---
-    def lesion_trial(order, verb):
-        cands = [cat, ball]
-        fav = _favored(cands, verb)
-        w = buf(cands, competition=True)
-        w.update([order[0]]); w.update([order[1]])
-        rates = w.read(window=window, bias_concept=None, bias_pA=0.0)  # NO bias
-        resolved = resolve_referent(rates, spec_threshold)
-        return {"order": list(order), "verb": verb, "favored": fav,
-                "rates": {k: round(v, 4) for k, v in rates.items()},
-                "resolved": resolved, "favored_won": bool(resolved == fav)}
-    les_a = lesion_trial((cat, ball), "eat")
-    les_b = lesion_trial((cat, ball), "roll")  # same WM, OPPOSITE favored: an unbiased winner can't be right for both
+    # --- LESION: competition present, bias REMOVED. For the SAME held WM {cat,ball}, the unbiased WTA picks
+    # the SAME intrinsic winner regardless of verb -> it cannot match BOTH opposite favoreds (eat->cat,
+    # roll->ball) -> >=1 is wrong -> the bias is load-bearing. ---
+    les_a = trial((cat, ball), "eat", lesion=True)
+    les_b = trial((cat, ball), "roll", lesion=True)
     out["lesion_eat"] = les_a
     out["lesion_roll"] = les_b
-    # lesion PASSES (bias is load-bearing) iff removing the bias breaks the content control: the favored
-    # referent does NOT reliably win. The decisive check: for the SAME held WM, the unbiased read produces
-    # the SAME winner for both verbs -> it cannot match both opposite favoreds -> >=1 is wrong.
-    out["lesion_breaks"] = bool(not (les_a["favored_won"] and les_b["favored_won"]))
+    out["lesion_breaks"] = bool(not (les_a["correct"] and les_b["correct"]))
 
-    # --- MOAT: empty WM -> abstain ; tie (two equally-biased, equal-intrinsic) -> abstain ---
-    w_empty = buf([cat, ball], competition=True)  # nothing written
-    empty_rates = w_empty.read(window=window, bias_concept=cat, bias_pA=bias_pA)
-    out["moat_empty"] = {"rates": {k: round(v, 4) for k, v in empty_rates.items()},
-                         "resolved": resolve_referent(empty_rates, spec_threshold)}
-    # tie: hold both, bias BOTH equally (content silent -> bias_for returns None -> no bias) -> abstain
-    w_tie = buf([cat, ball], competition=True)
-    w_tie.update([cat]); w_tie.update([ball])
-    tie_rates = w_tie.read(window=window, bias_concept=None, bias_pA=0.0)
-    tie_resolved = resolve_referent(tie_rates, spec_threshold)
-    out["moat_tie"] = {"rates": {k: round(v, 4) for k, v in tie_rates.items()}, "resolved": tie_resolved}
-    out["moat_intact"] = bool(out["moat_empty"]["resolved"] is None and tie_resolved is None)
+    # --- MOAT: (a) empty WM -> abstain ; (b) content-silent query (verb with no selectional restriction, OR
+    # two same-feature candidates) -> abstain (the agent refuses to pick by intrinsic strength). ---
+    w_empty = buf([cat, ball], competition=True)  # nothing written (empty registry)
+    er, ef, erates = resolve_pronoun(w_empty, "eat", [cat, ball], bias_pA, spec_threshold, window)
+    out["moat_empty"] = {"rates": _disp(erates), "resolved": er}
+    # content-silent: a verb with no selectional restriction -> favored None -> abstain
+    w_sil = buf([cat, ball], competition=True); w_sil.update([cat]); w_sil.update([ball])
+    sr, sf, srates = resolve_pronoun(w_sil, "see", [cat, ball], bias_pA, spec_threshold, window)  # 'see' not in VERB_SELECTS
+    out["moat_silent"] = {"rates": _disp(srates), "resolved": sr, "favored": sf}
+    out["moat_intact"] = bool(er is None and sr is None)
 
     # --- 3-referent scale check (one compatible + two incompatible): {cat(animate), ball, river(inanimate)} ---
     three = [cat, ball, "river"]
-    fav3 = _favored(three, "eat")  # animate -> cat (the only animate of the three)
     w3 = buf(three, competition=True)
-    w3.update([ball]); w3.update(["river"]); w3.update([cat])   # cat written last but bias is content not recency
-    rates3 = w3.read(window=window, bias_concept=fav3, bias_pA=bias_pA)
-    res3 = resolve_referent(rates3, spec_threshold)
-    out["three_ref"] = {"favored": fav3, "rates": {k: round(v, 4) for k, v in rates3.items()},
-                        "resolved": res3, "correct": bool(res3 == fav3)}
+    w3.update([ball]); w3.update(["river"]); w3.update([cat])   # cat written last but bias is content, not recency
+    res3, fav3, rates3 = resolve_pronoun(w3, "eat", three, bias_pA, spec_threshold, window)  # animate -> cat
+    out["three_ref"] = {"favored": fav3, "rates": _disp(rates3),
+                        "resolved": res3, "correct": bool(res3 == fav3 and fav3 is not None)}
 
     return out
 
@@ -423,7 +501,7 @@ def main():
               flush=True)
         print(f"            lesion: eat->{r['lesion_eat']['resolved']} roll->{r['lesion_roll']['resolved']} "
               f"(breaks={r['lesion_breaks']}) | moat empty->{r['moat_empty']['resolved']} "
-              f"tie->{r['moat_tie']['resolved']} (intact={r['moat_intact']}) | "
+              f"silent->{r['moat_silent']['resolved']} (intact={r['moat_intact']}) | "
               f"3ref->{r['three_ref']['resolved']}({'OK' if r['three_ref']['correct'] else 'X'})", flush=True)
         print(f"            baselines on {PAIR}: recency_resolves={bl['recency']['resolves']} "
               f"salience4x_resolves={bl['salience_4x']['resolves']}", flush=True)
