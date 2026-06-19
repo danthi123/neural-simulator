@@ -463,6 +463,7 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  td_strio_to_snc_weight: float = 1.5,
                                  td_gabab_prop: float = 0.105, td_gabab_conductance_max: float = 0.0,
                                  td_stdp_w_max: float = 0.0,
+                                 td_derivative_gain: float = 1.0, td_slow_tau_ms: float = 130.0,
                                  _global_het_test: bool = False):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
@@ -863,8 +864,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         # GRADED shift at any critic rate, so the reward burst shrinks WITHOUT killing the tonic. 0 = no cap (off).
         cfg.gabab_conductance_max = float(td_gabab_conductance_max)
         cfg.enable_td_value_derivative = True          # the B-2 protected edit (byte-identical when OFF)
-        cfg.td_slow_tau_ms = 130.0                     # the locked --csc-td-slow-tau-ms
-        cfg.td_derivative_gain = 1.0                   # the locked --csc-td-derivative-gain
+        cfg.td_slow_tau_ms = float(td_slow_tau_ms)     # the locked --csc-td-slow-tau-ms (130; tunable co-resident)
+        cfg.td_derivative_gain = float(td_derivative_gain)   # the locked --csc-td-derivative-gain (1.0; raise co-resident to lift the cue burst)
         cfg.reward_eligibility_tau_ms = 40.0           # SHORT (tap-local credit; the locked --csc-eligibility-tau-ms)
         from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget, ProductionRule
         cfg.enable_neuromodulator_subsystem = True

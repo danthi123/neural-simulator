@@ -101,6 +101,7 @@ RECIPE = dict(
 OP = dict(
     td_csc_to_strio_weight=14.0, td_to_fs_weight=16.0, td_fs_to_strio_weight=10.0,
     td_strio_to_snc_weight=1.5, td_gabab_prop=0.105, td_gabab_conductance_max=0.0, td_stdp_w_max=0.0,
+    td_derivative_gain=1.0, td_slow_tau_ms=130.0,
 )
 
 
@@ -109,46 +110,64 @@ def _idx_arr(bridge, name, xp):
     return xp.asarray(np.asarray(bridge.region_manager.indices(name), dtype=np.int64))
 
 
-def _build(seed, td_csc_n=8, vocab=None, op=None):
-    """Build the merged nav+conv bridge WITH the co-resident A-CSC TD cue-shift slice."""
+def _build(seed, td_csc_n=8, vocab=None, op=None, global_het_test=False):
+    """Build the merged nav+conv bridge WITH the co-resident A-CSC TD cue-shift slice. global_het_test=True is a
+    DIAGNOSTIC hook ONLY (turns on global parameter heterogeneity, perturbing nav/conv determinism) to test whether
+    the standalone's het-ON operating point restores the migration co-resident — if so, the named BOUNDARY fix is
+    per-region heterogeneity for the td slice (a small additive sim/ analogue of the per-region NMDA mask)."""
     t0 = time.time()
     op = dict(OP, **(op or {}))
     bridge, handles = build_merged_nav_conv_bridge(
-        seed=int(seed), vocab=vocab, co_resident_td_cueshift=True, td_csc_n=int(td_csc_n), **op)
+        seed=int(seed), vocab=vocab, co_resident_td_cueshift=True, td_csc_n=int(td_csc_n),
+        _global_het_test=bool(global_het_test), **op)
     return bridge, handles, time.time() - t0
 
 
 def _clip_td_value_weights(bridge, K, w_max):
-    """Re-clip ONLY the td_csc_k->td_striosome (td_value-gated) synapses to w_max in the CSR data array. This enforces
-    the standalone CSC bridge's per-tap weight cap (stdp_w_max=40) co-resident, where the GLOBAL stdp_w_max is pinned at
-    400 for the conversational weights. A weight-BOUND, NOT a host computation of value/reward/delta — the cue-shift
-    (value learning, the derivative, the burst, the credit) stays 100% neural. No-op when w_max<=0."""
+    """Re-clip ONLY the td_csc_k->td_striosome (td_value-gated) synapses to w_max via bridge.set_pathway_weights (the
+    same (pre,post)->CSR mapper _lesion_pathway uses, so it is orientation-safe and writes the LIVE CSR the matvec +
+    STDP read). This enforces the standalone CSC bridge's per-tap weight cap (stdp_w_max=40) co-resident, where the
+    GLOBAL stdp_w_max is pinned at 400 for the conversational weights. A weight-BOUND, NOT a host computation of
+    value/reward/delta — the cue-shift (value learning, the derivative, the burst, the credit) stays 100% neural.
+    No-op when w_max<=0. Returns the number of edges clamped (for verification)."""
     if w_max is None or w_max <= 0:
-        return
+        return 0
     import numpy as np
     from research.runners.snc_stageb_critic_probe import _host
-    pre = set()
+    pre_set, post_set = set(), set(int(i) for i in bridge.region_manager.indices("td_striosome"))
     for k in range(K):
-        pre |= set(int(i) for i in bridge.region_manager.indices(f"td_csc_{k}"))
-    post = set(int(i) for i in bridge.region_manager.indices("td_striosome"))
+        pre_set |= set(int(i) for i in bridge.region_manager.indices(f"td_csc_{k}"))
     coo = bridge.cp_connections.tocoo()
-    rows = np.asarray(_host(coo.row), dtype=np.int64)   # CSR rows = post
-    cols = np.asarray(_host(coo.col), dtype=np.int64)   # cols = pre
-    mask = np.fromiter(((r in post and c in pre) for r, c in zip(rows, cols)), dtype=bool, count=len(rows))
+    rows = np.asarray(_host(coo.row), dtype=np.int64)
+    cols = np.asarray(_host(coo.col), dtype=np.int64)
+    data = np.asarray(_host(coo.data), dtype=np.float32)
+    # CSR orientation is rows=post, cols=pre — fall back to the other orientation if no edges match (orientation-safe,
+    # exactly like _mean_pathway_weight / _lesion_pathway, which DO find these edges).
+    mask = np.fromiter(((r in post_set and c in pre_set) for r, c in zip(rows, cols)), dtype=bool, count=len(rows))
+    if mask.any():
+        pre = cols[mask]; post = rows[mask]
+    else:
+        mask = np.fromiter(((r in pre_set and c in post_set) for r, c in zip(rows, cols)), dtype=bool, count=len(rows))
+        pre = rows[mask]; post = cols[mask]
     if not mask.any():
-        return
-    # Clamp in the live CSR data (the same array the matvec + STDP read).
-    data = bridge.cp_connections.data
-    from sim.backend import get_backend
-    xp, _ = get_backend()
-    d_host = np.asarray(_host(data)).copy()
-    over = mask & (d_host > w_max)
-    if over.any():
-        d_host[over] = w_max
-        bridge.cp_connections.data[...] = xp.asarray(d_host, dtype=data.dtype)
+        return 0
+    vals = data[mask].copy()
+    over = vals > w_max
+    if not over.any():
+        return 0
+    vals[over] = w_max
+    # Write ALL matched edges at their (clamped) current value — set_pathway_weights maps (pre,post)->CSR position.
+    # Defensive: if STDP has mid-run made any (pre,post) pair un-writable, degrade gracefully (the GIRK cap + FS-clamp
+    # are the primary, robust levers; this host weight-clip is a secondary belt-and-suspenders).
+    try:
+        bridge.set_pathway_weights("td_value(clip)", pre, post, vals.astype(np.float32))
+    except Exception:
+        return -1
+    return int(over.sum())
 
 
-def run_td_csc_merged(seed, *, lesion_cue=False, unpaired=False, verbose=True, td_csc_n=8, op=None):
+def run_td_csc_merged(seed, *, lesion_cue=False, unpaired=False, verbose=True, td_csc_n=8, op=None, n_train_override=0,
+                      global_het_test=False):
     """The A-CSC TD cue-shift Pavlovian protocol on the MERGED-bridge td_ slice. Mirrors
     snc_stageb_critic_probe.run_td_csc, but the bridge is build_merged_nav_conv_bridge's, the
     regions are td_-prefixed, and the calibrations/timecourses use the td slice indices."""
@@ -157,7 +176,7 @@ def run_td_csc_merged(seed, *, lesion_cue=False, unpaired=False, verbose=True, t
     xp, _ = get_backend()
     K = int(td_csc_n)
     reward_bin = K - 1
-    bridge, handles, build_s = _build(seed, td_csc_n=K, op=op)
+    bridge, handles, build_s = _build(seed, td_csc_n=K, op=op, global_het_test=global_het_test)
     w_clip = float(handles.get("td_stdp_w_max", 0.0) or 0.0)
     if verbose:
         print(f"  [build] merged bridge in {build_s:.0f}s; num_neurons={bridge.core_config.num_neurons}; "
@@ -204,7 +223,7 @@ def run_td_csc_merged(seed, *, lesion_cue=False, unpaired=False, verbose=True, t
     n_post_bins = RECIPE["n_post_bins"]
     us_dur_bins = RECIPE["us_dur_bins"]
     iti_bins = RECIPE["csc_iti_bins"]
-    n_train = RECIPE["n_train"]
+    n_train = int(n_train_override) if n_train_override and n_train_override > 0 else RECIPE["n_train"]
 
     # Calibrate the dopamine threshold + baseline at the tonic (floor) condition (snc + critic tonic).
     tonic_drives = {"td_snc": snc_tonic_pa, **crit_tonic}
@@ -247,7 +266,9 @@ def run_td_csc_merged(seed, *, lesion_cue=False, unpaired=False, verbose=True, t
             bridge, idx_map, floor, win_steps, xp, bin_steps, events=events)
         # Enforce the per-tap weight cap (the standalone's sparse-critic bound; co-resident the global stdp_w_max=400
         # would let the critic run away -> -V saturates -> td_snc dies -> no migration). No-op when w_clip<=0.
-        _clip_td_value_weights(bridge, K, w_clip)
+        _n_clamped = _clip_td_value_weights(bridge, K, w_clip)
+        if verbose and t == 0 and w_clip > 0:
+            print(f"  [clip] w_clip={w_clip}: clamped {_n_clamped} td_value edges after trial 0")
         peak_bin = int(np.argmax(snc_bins)) if snc_bins else 0
         peak_bins.append(peak_bin)
         snc_per_bin_hist.append(list(snc_bins))
@@ -457,6 +478,14 @@ def main():
     ap.add_argument("--td-to-fs-weight", type=float, default=16.0, help="td_csc_k->td_fs (FS-clamp drive) weight")
     ap.add_argument("--td-fs-to-strio-weight", type=float, default=10.0, help="td_fs->td_striosome (FS-clamp) weight")
     ap.add_argument("--td-csc-to-strio-weight", type=float, default=14.0, help="td_csc_k->td_striosome init weight")
+    ap.add_argument("--td-derivative-gain", type=float, default=1.0,
+                    help="B-2 conductance-derivative gain (the bootstrap +dV/dt). RAISE co-resident to lift the cue burst "
+                         "so the peak migrates (the merged GIRK cap throttles the derivative; a higher gain compensates)")
+    ap.add_argument("--td-slow-tau-ms", type=float, default=130.0, help="td conductance-derivative slow-EMA tau (ms)")
+    ap.add_argument("--n-train", type=int, default=0, help="override n_train (0 = recipe default 50; use ~30 for faster op-point search)")
+    ap.add_argument("--global-het-test", action="store_true",
+                    help="DIAGNOSTIC: turn on global parameter heterogeneity (perturbs nav/conv determinism) to test "
+                         "whether the standalone's het-ON operating point restores migration co-resident")
     ap.add_argument("--lesion", action="store_true", help="anti-cheat: cue-pathway lesion (migration must vanish, US reflex survives)")
     ap.add_argument("--unpaired", action="store_true", help="anti-cheat: unpaired timing (no migration)")
     ap.add_argument("--moat-only", action="store_true", help="run ONLY consolidation gate (1) the moat")
@@ -467,7 +496,8 @@ def main():
     seeds = [int(s) for s in args.seeds.split(",")] if args.seeds else [args.seed]
     op = dict(td_csc_to_strio_weight=args.td_csc_to_strio_weight, td_to_fs_weight=args.td_to_fs_weight,
               td_fs_to_strio_weight=args.td_fs_to_strio_weight, td_gabab_prop=args.td_gabab_prop,
-              td_gabab_conductance_max=args.td_gabab_cmax, td_stdp_w_max=args.td_stdp_w_max)
+              td_gabab_conductance_max=args.td_gabab_cmax, td_stdp_w_max=args.td_stdp_w_max,
+              td_derivative_gain=args.td_derivative_gain, td_slow_tau_ms=args.td_slow_tau_ms)
 
     if args.moat_only:
         rs = [run_moat_gate(s) for s in seeds]
@@ -488,7 +518,7 @@ def main():
     for s in seeds:
         if args.lesion:
             print(f"[merged-CSC seed={s}] CUE-LESION anti-cheat — train then zero ALL td_csc_k->td_striosome:")
-            r = run_td_csc_merged(s, lesion_cue=True, td_csc_n=args.td_csc_n, op=op)
+            r = run_td_csc_merged(s, lesion_cue=True, td_csc_n=args.td_csc_n, op=op, n_train_override=args.n_train)
             print(f"  V(strio) on cue after lesion = {r['lesion_v_cue_hz']:.2f}Hz (cue silenced: {r['cue_silenced']})")
             print(f"  cue-rate={r['lesion_cue_rate_hz']:.2f}Hz  US-rate={r['lesion_us_rate_hz']:.2f}Hz  "
                   f"tonic={r['lesion_tonic_hz']:.2f}Hz")
@@ -500,7 +530,7 @@ def main():
             continue
         if args.unpaired:
             print(f"[merged-CSC seed={s}] UNPAIRED anti-cheat — US at a random bin (no contingency):")
-            r = run_td_csc_merged(s, unpaired=True, td_csc_n=args.td_csc_n, op=op)
+            r = run_td_csc_merged(s, unpaired=True, td_csc_n=args.td_csc_n, op=op, n_train_override=args.n_train)
             _print(r)
             g = r["gates"]
             no_mig = not (g["migration_r_pass"] and g["migration_dir_pass"])
@@ -509,7 +539,8 @@ def main():
             r["_mode"] = "unpaired"; results.append(r); print()
             continue
         print(f"[merged-CSC seed={s}] A-CSC TD cue-shift on the MERGED 'one brain' — does the burst MIGRATE?")
-        r = run_td_csc_merged(s, td_csc_n=args.td_csc_n, op=op)
+        r = run_td_csc_merged(s, td_csc_n=args.td_csc_n, op=op, n_train_override=args.n_train,
+                              global_het_test=args.global_het_test)
         _print(r)
         verdict, support = _verdict(r["gates"], r["r_migration"])
         print(f"\n  A-CSC migration (seed {s}): {verdict}  [HEADLINE migration_r {r['gates']['migration_r_pass']} "
