@@ -1003,6 +1003,21 @@ kwargs (`co_resident_perception`, `enable_spiking_wta_readout`); regression `tes
 5/5 + `test_nav_conv_step2b_coresident` 7/7. HONEST SCOPE: flat-distinct OBJECT facts via the FIXED FHRR algebra
 (not a learned bind); NOT generalization across SIMILAR concepts (the separate frontier below).
 
+**🧠⚡ The merged "one brain" nav action-decision is now FULLY-SPIKING by DEFAULT (2026-06-19, roadmap #4 default-on).**
+Per the owner's brain-based-purity directive, `run_moving_goal_episode`'s LIBRARY defaults are flipped to the
+validated spiking config — `readout_source="spiking_wta"`, `sel_recurrent_weight=0.3`, `n_sel_per_action=n_commit_per_action=40`,
+`urgency_max_pA=180.0` — so the action EMERGES from the spiking competition (Wang-2002 accumulator + Lo-Wang
+commit-burst threshold-crossing), the host Python argmax RETIRED. Validated 6-seed grid-32/1800 at **1.16× host
+(within the 25% deploy bar), 100% commit-burst** (zero argmax fallback) — down from the CYCLE-216 ~1.7× boundary via
+two levers (Usher-McClelland accumulator LEAK + finite-size-noise N-scaling; the ~16% residual = the irreducible
+commit-timing/finite-size floor, the honest BRAIN-BASED-ONLY deliverable). **The CLI `--readout-source` default stays
+`"motor"`** so every documented standalone benchmark reproduces unchanged; `motor`/`thal` = the opt-in host-argmax
+ORACLE (the tuned levers are inert under them). NO `sim/` edit (runner-only default flip); the spiking read-out is
+array-disjoint from the parser/composer so the conversational no-confab moat is preserved by construction
+(`test_nav_conv_merged_agent` 8/8 + `test_nav_conv_step2b_coresident` 7/7 pass with the new default). #4 was the one
+cleanly-engineering-closable boundary (#5 place-code + #3 cue-shift = honest substrate/op-point boundaries). Finding:
+`research/findings/2026-06-19-spiking-decision-default-on-GO.md`.
+
 **🎯 GENERALIZATION across SIMILAR concepts — DE-RISKED END-TO-END on the point-neuron substrate (2026-06-16),
 dendritic NOT required.** The honest open boundary of the compose-perceived arc (it uses flat-distinct codes, so it
 can't treat "dog"/"cat" as related) is now de-risked via **cross-modal Hebbian unification** (perception inherits

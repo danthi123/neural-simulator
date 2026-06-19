@@ -3687,7 +3687,13 @@ def run_moving_goal_episode(
     # multi-goal run. Reading thal is the combined N8+N6 fix's cheap test:
     # "is the weak motor SIGNAL the whole problem?". Default "motor"
     # (backward-compatible). See research/findings/2026-06-06-N8N6-*.
-    readout_source: str = "motor",
+    # DEFAULT-ON 2026-06-19 (CYCLE 235): the fully-spiking commit-burst decision is now the LIBRARY default
+    # (the merged "one brain" navigates fully-spiking) — validated 6-seed grid-32 at 1.16x host with 100%
+    # commit-burst (2026-06-19-spiking-decision-default-on-GO.md). "motor"/"thal" = the opt-in host-argmax
+    # ORACLE; the CLI --readout-source still defaults to "motor" so the documented standalone benchmarks
+    # reproduce unchanged. The tuned levers below (sel_recurrent_weight 0.3 + n_sel/n_commit 40) are the
+    # cost-reduction winners and are inert under "motor"/"thal" (the sel/commit layer is only built for spiking_wta).
+    readout_source: str = "spiking_wta",
     # TRN-style thalamic lateral inhibition (2026-06-06, N8+N6) — a biological
     # WTA on the thalamic relay (the clean genuine-disinhibition signal). See
     # build_bg_brain_regions for the mechanism. Combine with readout_source="thal".
@@ -3700,7 +3706,7 @@ def run_moving_goal_episode(
     # than a host argmax. Built when readout_source="spiking_wta". See
     # build_bg_brain_regions for the mechanism + why it differs from the prior
     # (failed) motor/TRN WTAs.
-    n_sel_per_action: int = 20,
+    n_sel_per_action: int = 40,   # DEFAULT-ON 2026-06-19: N-scaled accumulator pool (finite-size-noise lever, 20->40 -> 1.16x host)
     n_sel_fs_per_action: int = 10,
     thal_to_sel_weight: float = 30.0,
     sel_to_sel_fs_weight: float = 20.0,
@@ -3711,9 +3717,9 @@ def run_moving_goal_episode(
     # recurrent gain (alpha<1 soft-WTA), the commit threshold, and the OPN
     # tonic inhibition. Active only when readout_source="spiking_wta".
     sel_recurrent_density: float = 0.5,
-    sel_recurrent_weight: float = 1.0,
+    sel_recurrent_weight: float = 0.3,   # DEFAULT-ON 2026-06-19: leak/forgetting (Usher-McClelland; 1.0->0.3 cuts the cross-trial NMDA hysteresis = the dominant cost)
     enable_commit_burst: bool = True,
-    n_commit_per_action: int = 20,
+    n_commit_per_action: int = 40,   # DEFAULT-ON 2026-06-19: N-scaled commit pool (grown in lockstep with n_sel_per_action)
     n_commit_opn: int = 20,
     sel_to_commit_weight: float = 22.0,
     commit_recurrent_density: float = 0.5,
@@ -3766,7 +3772,7 @@ def run_moving_goal_episode(
     # argmax lean). Phases 0-1 reach the host-argmax reference (0.60/0.50); the
     # residual cost stays in the goal-change phases 2-3 (cross-trial NMDA hysteresis,
     # which the loser-only reset does not fix). RECOMMENDED value: 180.
-    urgency_max_pA: float = 0.0,
+    urgency_max_pA: float = 180.0,   # DEFAULT-ON 2026-06-19: the Cisek collapsing bound (REQUIRED for spiking_wta -> 100% commit-burst, no silent-commit fallback)
     thal_fs_to_thal_weight: float = 20.0,
     # ── Live brain-activity streaming (frontend-revamp Phase 1, 2026-06-08) ──
     # docs/plans/2026-06-08-frontend-revamp-design.md §3.4. Default OFF: when
