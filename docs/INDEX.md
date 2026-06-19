@@ -142,6 +142,10 @@ A few landmark findings worth knowing about:
   `2026-06-16-unified-embodied-agent-stage2-GO.md` — the unified embodied
   agent: one network navigates, perceives, composes a fact, and converses
   (six seeds)
+- `2026-06-19-spiking-decision-default-on-GO.md` — the navigation
+  move-decision is now made in spikes by default (six seeds, honest ~16% cost)
+- `2026-06-19-latency-csr-cache-GO.md` — the conversational engine sped up
+  10–20× (answers identical, "won't make things up" guarantee unchanged)
 
 **Read these if:** you want the chronological story of how the project
 evolved.
