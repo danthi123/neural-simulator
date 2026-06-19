@@ -73,17 +73,44 @@ Verdict logic: **tracking** = reward-ON end-pos NEAR the goal (<=2 Manhattan) AN
 the floor, at >=2/3 locations, with DISTINCT end positions across goals (the anti-cheat); the lesion
 (if run) at/above floor and goal-independent.
 
-## Results (smoke IN FLIGHT -- this section is filled by the run)
+## Results (controller-owned full multi-goal run; the subagent overran on a partial single-goal smoke)
 
-<!-- PENDING: filled after the 1-seed GPU smoke completes. -->
+Full 3-goal de-risk (`--goals "6,6;1,6;6,1" --also-lesion`, seed 42, 1500 steps, grid-8; random-walk
+floor ~5.52; LOWER `sum_finalQ` = better; `end_dist` = Manhattan from the goal):
 
-## Verdict
+| goal | reward_ON `sum_finalQ` / end_dist | LESION `sum_finalQ` / end_dist |
+|---|---|---|
+| (6,6) | 4.40 / 6 | 1.60 / 1  — the NE fixed-drift corner (CONFOUNDED: the structural bias drifts here) |
+| (1,6) | 5.36 / 5 | 5.36 / 5  — IDENTICAL (reward does nothing) |
+| (6,1) | 7.85 / 10 | 6.59 / 6  — reward WORSE than the lesion |
 
-<!-- PENDING. GO (point-neuron actor-critic solves hidden-goal place->action learning; the limbic
-core is now LOAD-BEARING => Option B unblocked) vs honest NEGATIVE (the point-neuron actor-critic
-does NOT form the map even with advantage routing + (a)(b)(c) => the dendrite / apical-basal credit
-assignment is the clearly-proposed obvious unlocker, per feedback_dendritic_substrate_fair_game +
-the 2026-05-05 verdict + docs/plans/2026-05-05-dendritic-learning-design.md). -->
+**The advantage-routed actor does NOT track any goal** (reward_ON end-dist 5-10; it never reaches near
+a goal it must LEARN), and **reward_ON <= LESION at every goal**. The away-from-drift goals (1,6)/(6,1)
+are the clean signal (the (6,6) drift coincidence is confounded). Even the canonical fix — the
+already-routed advantage delta = r - V (a far better credit signal than the raw reward that failed
+2026-05-05) — does not form the place->action map on point neurons in this config.
+
+## Verdict — PRELIMINARY NEGATIVE (point-neuron path NOT yet exhaustively ruled out) -> the DENDRITE-decision juncture
+
+**Preliminary NEGATIVE:** the advantage-routed point-neuron actor-critic did not solve hidden-goal
+place->action learning here. This is the **3rd independent hit on the actor-critic credit-assignment
+wall** (2026-05-05 global-scalar W->A verdict + Step 1 limbic-not-load-bearing + this), the project's
+deepest learning wall, where the dendrite (apical-basal credit assignment) is the named unlocker
+(`feedback_dendritic_substrate_fair_game`, `docs/plans/2026-05-05-dendritic-learning-design.md`).
+
+**HONEST CAVEAT — the point-neuron path is NOT exhaustively ruled out:** this probe ran ONE long
+static-goal phase, NOT a **trial-structured protocol** (the F-S-G water-maze learns the place->action
+map over MANY reset trials), and it did not confirm **cascade SYMMETRIZATION** (the (6,6) lesion
+drifting to (7,6) ~ goal shows the structural NE-bias persists, masking any weak learning signal). A
+CLEAN point-neuron verdict therefore requires the proper trial-structured actor-critic training + a
+symmetrized cascade — which is itself the deep "make the limbic core load-bearing" build (the remaining
+must-try-first point-neuron step per the dendrite memory).
+
+**=> Genuine OWNER-SCOPED FORK (surfaced):** (A) the DENDRITE arc (months-scale; D2 Phase 0-2 infra
+exists, Phase 3 pending); (B) the remaining POINT-NEURON attempt (trial-structured actor-critic
+training + symmetrized cascade — the cheaper rigor step); (C) PIVOT to the conversational-scaling
+primary (task #55 — UNBLOCKED, substrate exercised, not gated by this wall). Controller-default absent
+redirect (per never-idle): (C), deep-research-first; (A) is proposed, not unilaterally started.
 
 ## Artifacts
 
