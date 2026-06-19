@@ -108,7 +108,21 @@ default `motor` = the historical host-argmax gate, byte-preserved).
 (Appended after the GPU run. The comparison config is a CHEAPER grid-8 / short multi-goal episode — not the
 grid-32/1800-step flagship — to get the read-out deltas fast within budget.)
 
-<!-- GPU_COMPARISON_RESULTS -->
+**RESULT (GPU, 2 seeds 42/43, grid-8, 400 steps, urgency 180):**
+
+| seed | motor (host argmax) | thal (host argmax) | spiking-WTA + urgency 180 | spiking decision-path |
+|---|---|---|---|---|
+| 42 | 2.0 | 2.0 | 4.20 | **primary 400 / fallback 0 / random 0** |
+| 43 | 2.0 | 2.0 | 2.72 | **primary 400 / fallback 0 / random 0** |
+| **mean** | **2.0** | **2.0** | **3.46** | — |
+
+`delta_spiking−motor = +1.46`, `delta_spiking−thal = +1.46` (score is final-quarter summed distance — LOWER is better; host/thal both hit the 2.0 optimal floor).
+
+**Two findings, both load-bearing:**
+1. **The fully-spiking action-decision is GENUINELY ACHIEVED (the positive core).** Every one of the 400 steps decided via the **`commit_X` all-or-none burst (primary path)** — `decision_path_counts = {primary:400, fallback:0, random:0}` on BOTH seeds. ZERO falls back to the host argmax, ZERO random. So the Cisek urgency bound (180) WORKS: it eliminates the silent-commit→argmax fallback, and the decision IS the spiking termination event (the brain-based-only target — the host argmax is genuinely retired, not a hidden tie-break). Moat intact, runner-only, NO `sim/` edit.
+2. **It navigates WORSE — the documented substrate BOUNDARY.** The spiking decision costs **+1.46** (mean 3.46 vs the host/thal 2.0 floor, ~1.7×). The urgency bound NARROWED the historical gap substantially (standalone was ~6× worse, 14.7 vs 2.3; here ~1.7×) but did NOT close it. Per the BRAIN-BASED-ONLY standard, this honest negative — a clean spiking decision that navigates worse than the host shortcut — IS the scientific deliverable (it maps the cost the point-neuron substrate pays to make the decision itself a spike).
+
+The gap is consistent (both seeds show it; host/thal are exactly 2.0 = optimal) and clearly above noise, so per the pre-registered rule this is an **honest BOUNDARY at few-seed → STOP** (do NOT fake a 6-seed pass). The residual ~1.5× cost is the commit-burst's timing/selectivity vs the clean argmax — a depth-tuning frontier (commit threshold, accumulator dynamics), NOT closed by the urgency lever alone.
 
 ---
 
