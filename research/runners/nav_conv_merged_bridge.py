@@ -1216,16 +1216,38 @@ class MergedNavConvAgent:
 
     def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_limbic=False,
                  co_resident_nav_critic=False, nav_critic_spiking_sc=False,
-                 nav_critic_place_selforg=False, co_resident_td_cueshift=False):
+                 nav_critic_place_selforg=False, co_resident_td_cueshift=False,
+                 enable_da_salience_gate=False, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
         merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory codebook
         share one word set.
 
         co_resident_composer (STEP 2b): when True, the fact-binding composer runs CO-RESIDENT on the merged bridge's
         own `rf` slice (the strict single-instance unification, via the owner-approved sliced `rf_kick`); when False
-        (STEP 2a default) it runs on its own separate per-op bridges."""
+        (STEP 2a default) it runs on its own separate per-op bridges.
+
+        enable_da_salience_gate (TRUE ONE BRAIN roadmap #6 — the spiking-DA -> composer precision gate, de-risked
+        6/6 GO: 2026-06-18-DA-composer-precision-derisk-GO.md): when True, before each conversational READ op the
+        agent reads the SHARED spiking-SNc dopamine off ITS OWN merged bridge
+        (`self._merged_bridge.neuromodulator_manager.get_concentration("dopamine")` — the same DA the BG actor /
+        limbic core learns from, produced by the spiking SNc on the merged bridge via `co_resident_limbic` /
+        `co_resident_nav_critic` / `co_resident_td_cueshift`), maps it CLAMPED-TO-SHARPEN onto the composer's
+        cue-role CONFIDENCE GATE (`g_eff = clip(g0, g_cap, g0 + k*(DA - DA_baseline))`, the de-risk's `da_to_gate`),
+        and ABSTAINS on a noise-dominated cue read (`min(margin(agent), margin(action)) < g_eff`). A higher gate =>
+        STRICTER abstention, so this can ONLY TIGHTEN the no-confab moat, never loosen it (moat-safe by
+        construction). Default False = byte-identical (the read path is unchanged); DA at/below baseline => g_eff =
+        g0 => the gate floor => also a no-op (only a SALIENT/high-DA turn raises the gate). NO `sim/` edit
+        (composer-runner-layer read of a spike-derived scalar; the gate reuses the composer's own cleanup primitives
+        + `OneBrainComposer._margin`). `da_gate_g0`/`da_gate_k`/`da_gate_cap` = the de-risk's validated 0.06/2.0/0.25
+        (the inverted-U ceiling). The hook is meaningful only when a `dopamine` modulator is present on the merged
+        bridge (a limbic/critic/TD slice is co-resident); without one DA reads as baseline => g_eff = g0 => no-op."""
         self.seed = int(seed)
         self.co_resident_composer = bool(co_resident_composer)
+        # --- DA salience-gate (roadmap #6) state (default-off = byte-identical read path) ---
+        self.enable_da_salience_gate = bool(enable_da_salience_gate)
+        self._da_gate_g0 = float(da_gate_g0)
+        self._da_gate_k = float(da_gate_k)
+        self._da_gate_cap = float(da_gate_cap)
         # co_resident_td_cueshift (TRUE ONE BRAIN roadmap #3): also lift the A-CSC TD cue-shift slice onto the merged
         # bridge (the td_ slice + the `dopamine`-over-td_snc modulator). Default False = byte-preserved. When True the
         # moat-no-regression check verifies the shared TD DA broadcast does not perturb conversational comprehension.
@@ -1290,6 +1312,59 @@ class MergedNavConvAgent:
             assert self.composer._merged is self._merged_bridge, \
                 "FAIL anti-cheat: the co-resident composer is not bound to the merged bridge"
 
+    # --- DA salience-gate (roadmap #6): the spiking-SNc dopamine -> composer cue-role confidence gate ---
+    def _da_confidence_gate(self):
+        """Read the SHARED spiking-SNc dopamine off the merged bridge and map it (CLAMPED-TO-SHARPEN, the de-risk's
+        `da_to_gate`) onto the composer's cue-role confidence gate `g_eff`. SAFE: if no `dopamine` modulator is on
+        the merged bridge (no limbic/critic/TD slice co-resident), DA reads as baseline => `g_eff = g0` (the gate
+        floor = a no-op). The map can ONLY raise the gate above `g0` (DA above baseline) -> the moat can only tighten
+        (moat-safe by construction). Returns `g_eff`."""
+        from research.runners._da_composer_salience_cleanup_derisk import da_to_gate   # reuse the de-risk map VERBATIM
+        g0 = self._da_gate_g0
+        nm = getattr(self._merged_bridge, "neuromodulator_manager", None)
+        if nm is None:
+            return g0                                    # no neuromodulator subsystem -> the gate floor (no-op)
+        try:
+            da = float(nm.get_concentration("dopamine"))
+            da_baseline = float(nm._config_by_name("dopamine").baseline)
+        except (KeyError, AttributeError):
+            return g0                                    # no `dopamine` modulator present -> the gate floor (no-op)
+        return da_to_gate(da, da_baseline, g0, self._da_gate_k, g_cap=self._da_gate_cap)
+
+    def _gated_out(self, match_fn, g_eff):
+        """The de-risk's gate, applied to THIS agent's composer reads (no `sim/`/composer edit, reuse-by-import): is
+        the FIRST stored block matching the cue (`match_fn(agent, action, patient)`) NOISE-DOMINATED at the operating
+        gate `g_eff`? Returns True iff a matching block exists but its CUE-ROLE cleanup is below the gate
+        (`min(margin(agent_scores), margin(action_scores)) < g_eff`, the EXACT quantity the de-risk gates on) -> the
+        agent abstains (the salience-gated precision tail). Returns False (do NOT gate) when `g_eff <= g0` (the
+        no-modulation floor: BYTE-IDENTICAL), when no block matches (the composer abstains anyway -> the moat is
+        unchanged), or when the matched read is decisive. Reuses the composer's OWN cleanup primitives
+        (`_unbind_phases` + the matched filter == `_cleanup`'s cosine scores) + `OneBrainComposer._margin`."""
+        if g_eff <= self._da_gate_g0 + 1e-12:
+            return False                                 # the gate floor -> no modulation -> byte-identical read path
+        from research.runners.one_brain_composer import OneBrainComposer    # the EXACT margin function under de-risk
+        comp = self.composer
+        for fact, composite in comp._iter_facts():       # the same cue-matching scan the composer's query_* uses
+            sa = self._role_cleanup_scores(composite, "agent")
+            sv = self._role_cleanup_scores(composite, "action")
+            sp = self._role_cleanup_scores(composite, "patient")
+            wa = comp.words[int(np.argmax(sa))]
+            wv = comp.words[int(np.argmax(sv))]
+            wp = comp.words[int(np.argmax(sp))]
+            if match_fn(wa, wv, wp):                     # the FIRST matching block (first-match semantics preserved)
+                return bool(min(OneBrainComposer._margin(sa), OneBrainComposer._margin(sv)) < g_eff)
+        return False                                     # no match -> the composer abstains; the moat is unchanged
+
+    def _role_cleanup_scores(self, composite, role):
+        """The composer's matched-filter cleanup scores for `role` from a stored composite -- IDENTICAL (up to the
+        argmax-irrelevant /D) to `RFPhasorComposer._cleanup`'s `cos(rec - concepts[w])` over the vocab. Reuses the
+        composer's `_unbind_phases` (the on-substrate RF unbind); rectified (the NEF-cleanup off-target-zero
+        convention) so the margin is the de-risk's `(peak - runner_up)/peak`."""
+        comp = self.composer
+        rec = comp._unbind_phases(composite, role)
+        sims = np.array([float(np.mean(np.cos(2.0 * np.pi * (rec - comp.concepts[w])))) for w in comp.words])
+        return np.maximum(sims, 0.0)
+
     # --- comprehend / store / recall (mirror BrainConversationalAgent exactly) ---
     def hear(self, sentence, voice="active", polarity=None):
         """Comprehend an SVO statement and store it. `sentence` is 'agent action patient' (or its passive frame)."""
@@ -1303,18 +1378,31 @@ class MergedNavConvAgent:
         self.composer.store(agent, action, clause, polarity=polarity)
 
     def what_does(self, agent, action):
-        """'what does <agent> <action>?' -> patient (concept or rendered clause) or None (abstain)."""
+        """'what does <agent> <action>?' -> patient (concept or rendered clause) or None (abstain). When the DA
+        salience gate is on, a high-DA (salient) turn ABSTAINS on a noise-dominated cue read (moat-safe sharpening)."""
+        if self.enable_da_salience_gate and self._gated_out(
+                lambda wa, wv, _wp: wa == agent and wv == action, self._da_confidence_gate()):
+            return None
         return self.composer.query_patient(agent, action)
 
     def who_does(self, action, patient):
+        if self.enable_da_salience_gate and self._gated_out(
+                lambda _wa, wv, wp: wv == action and wp == patient, self._da_confidence_gate()):
+            return None
         return self.composer.query_agent(action, patient)
 
     def is_it_true(self, agent, action, patient):
+        if self.enable_da_salience_gate and self._gated_out(
+                lambda wa, wv, wp: wa == agent and wv == action and wp == patient, self._da_confidence_gate()):
+            return "unknown"
         return self.composer.ask_yes_no(agent, action, patient)
 
     def describe(self, agent):
         """Generation: produce a sentence about `agent` from the spiking memory ('dog go north'), or None if the agent
-        knows no fact about it (no confabulation)."""
+        knows no fact about it (no confabulation). The DA salience gate abstains on a noise-dominated subject read."""
+        if self.enable_da_salience_gate and self._gated_out(
+                lambda wa, _wv, _wp: wa == agent, self._da_confidence_gate()):
+            return None
         return self.composer.render_fact(agent)
 
     # --- dialogue planning (the dlPFC `elaborate`, ported from UnifiedBrainBridge.elaborate onto the merged slices) ---
