@@ -193,7 +193,7 @@ def main():
     for t in sorted(means, key=lambda t: means[t]):
         frac = summary["decision_path_frac_by_tag"].get(t, {})
         pf = f"  primary={frac.get('primary', 0):.2f} fallback={frac.get('fallback', 0):.2f}" if frac else ""
-        dv = f"  Δvs_motor={deltas[t]:+.4f}" if t in deltas else ""
+        dv = f"  d_vs_motor={deltas[t]:+.4f}" if t in deltas else ""
         print(f"  {t:>34}: mean {means[t]:.4f} (n={len(by_tag[t])}){dv}{pf}")
     print(f"\n[wrote {args.summary_out}]")
     return 0
