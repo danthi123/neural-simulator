@@ -109,10 +109,23 @@ class EmbeddedClauseParser:
     # --- the neural per-span role read-out (cached; one spiking read per (n, voice, position)) ---
     def _span_roles(self, n, voice=0):
         """The structural roles the spiking parser reads out for an n-word SVO span (n in 2..3). Cached so a repeated
-        span shape reuses the spiking read. n=3 -> [agent, action, patient]; n=2 -> [agent, action] (intransitive)."""
+        span shape reuses the spiking read. n=3 -> [agent, action, patient].
+
+        n=2 (an INTRANSITIVE matrix clause 'dog run' = subject + verb) is read from the parser's TRAINED 3-slot SVO
+        frame's first two positions -- role_of(0, 2)=agent (the matrix subject, from-start 0) and role_of(1, 1)=action
+        (the matrix verb, from-start 1). The AttributedBridgeParser teacher only trains frames n in {3,4,5}, so a raw
+        n=2 read (from-end {1,0}, conj_index 2/6) is UNTRAINED and returns garbage; reading the matrix subject/verb as
+        positions 0/1 of the SVO frame uses only TRAINED conjunctions and is the structurally-correct mapping (an
+        intransitive clause's subject + verb occupy the same agent/action role positions as a transitive clause's). A
+        fully-trained intransitive frame is a bounded follow-on (add n=2 to the teacher set)."""
         key = (n, voice)
         if key not in self._role_cache:
-            self._role_cache[key] = self.role_parser.parse_roles(n, voice=voice)
+            if n == 2:
+                # read the agent+action positions of the trained 3-slot frame (the matrix subject + verb)
+                self._role_cache[key] = [self.role_parser.role_of(0, 2, voice=voice),
+                                         self.role_parser.role_of(1, 1, voice=voice)]
+            else:
+                self._role_cache[key] = self.role_parser.parse_roles(n, voice=voice)
         return self._role_cache[key]
 
     def _hold_head(self, head):

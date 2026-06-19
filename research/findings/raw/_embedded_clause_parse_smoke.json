@@ -1,0 +1,30 @@
+{
+  "backend": "numpy",
+  "seeds": [
+    42
+  ],
+  "n_heldout": 4,
+  "results": [
+    {
+      "seed": 42,
+      "n": 8,
+      "emb_acc": 1.0,
+      "mat_acc": 1.0,
+      "seg_fail": 0,
+      "flat_baseline_acc": 0.5,
+      "scram_acc": 0.0,
+      "head_attach_acc": 0.0,
+      "leakage": 0,
+      "moat_ok": true,
+      "secs": 6.6
+    }
+  ],
+  "n_emb_pass": 1,
+  "n_mat_pass": 1,
+  "no_seg_baseline_fails": true,
+  "scram_fails": true,
+  "head_attach_fails": true,
+  "moat_all": true,
+  "leakage_clean": true,
+  "verdict": "GO"
+}
