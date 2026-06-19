@@ -38,6 +38,25 @@ def main():
                     help="action-selection read-out (roadmap #4: spiking_wta = the commit-burst IS the decision)")
     ap.add_argument("--urgency-max-pa", type=float, default=0.0,
                     help="Cisek collapsing-bound urgency peak pA (spiking_wta only; RECOMMENDED 180)")
+    # Roadmap #4 COST-REDUCTION levers (CYCLE 228 brain-based-purity arc). The +1.46 (~1.7x) spiking-decision
+    # cost localizes to the goal-change phases (cross-trial NMDA hysteresis: the stale winner lingers). These
+    # tune the accumulate-then-commit competition; ALL default to run_moving_goal_episode's own defaults, so
+    # unspecified == byte-identical to the historical gate. Active only under --readout-source spiking_wta
+    # (inert otherwise). Sweep the deep-research-ranked subset to lower the cost toward default-on.
+    ap.add_argument("--n-sel-per-action", type=int, default=20,
+                    help="#4: accumulator pool size per action (more neurons -> cleaner competition)")
+    ap.add_argument("--n-commit-per-action", type=int, default=20,
+                    help="#4: commit-burst pool size per action")
+    ap.add_argument("--sel-recurrent-weight", type=float, default=1.0,
+                    help="#4: Wang attractor self-excitation gain (lower -> less cross-trial hysteresis)")
+    ap.add_argument("--sel-fs-to-sel-weight", type=float, default=5.0,
+                    help="#4: cross-pool selective-inhibition strength (lateral inhibition)")
+    ap.add_argument("--thal-to-sel-weight", type=float, default=30.0,
+                    help="#4: clean-thalamus fresh-evidence drive to the accumulator (override stale winner)")
+    ap.add_argument("--sel-to-commit-weight", type=float, default=22.0,
+                    help="#4: accumulator->commit drive (commit-threshold proxy)")
+    ap.add_argument("--reset-losers-only", action="store_true",
+                    help="#4: surgical hysteresis removal (reset NMDA on losing pools each trial)")
     args = ap.parse_args()
 
     from research.runners.g11_bg_runner import run_moving_goal_episode
@@ -68,6 +87,14 @@ def main():
         # run_moving_goal_episode). Default motor = the deployed host-argmax read-out (the historical gate).
         readout_source=args.readout_source,
         urgency_max_pA=args.urgency_max_pa,
+        # #4 cost-reduction levers (default == run_moving_goal_episode defaults -> byte-identical when unset).
+        n_sel_per_action=args.n_sel_per_action,
+        n_commit_per_action=args.n_commit_per_action,
+        sel_recurrent_weight=args.sel_recurrent_weight,
+        sel_fs_to_sel_weight=args.sel_fs_to_sel_weight,
+        thal_to_sel_weight=args.thal_to_sel_weight,
+        sel_to_commit_weight=args.sel_to_commit_weight,
+        reset_losers_only=args.reset_losers_only,
     )
     if args.with_conv:
         from research.runners.nav_conv_merged_bridge import (
