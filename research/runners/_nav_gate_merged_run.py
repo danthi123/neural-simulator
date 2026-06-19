@@ -26,6 +26,18 @@ def main():
     ap.add_argument("--n-steps", type=int, default=1800)
     ap.add_argument("--grid-size", type=int, default=32)
     ap.add_argument("--out", type=str, required=True)
+    # Roadmap #4 (fully-spiking motor read-out): which spiking pool drives the action selection.
+    #   motor      = host argmax over motor_X spike counts (the deployed default / the N6 cheat).
+    #   thal       = host argmax over the cleanly-selective thalamus (biologized SOURCE, best historically).
+    #   spiking_wta= the ACCUMULATE-THEN-COMMIT layer: each commit_X burst threshold-crossing IS the
+    #                decision (the host argmax merely OBSERVES which commit pool bursted -> a tie-break of
+    #                last resort). Combine with --urgency-max-pa 180 (the recommended Cisek collapsing bound)
+    #                so even a weak late release crosses the bound (eliminates the silent-commit fallback).
+    # All three already wired through run_moving_goal_episode; this just exposes them on the merged-gate runner.
+    ap.add_argument("--readout-source", choices=["motor", "thal", "spiking_wta"], default="motor",
+                    help="action-selection read-out (roadmap #4: spiking_wta = the commit-burst IS the decision)")
+    ap.add_argument("--urgency-max-pa", type=float, default=0.0,
+                    help="Cisek collapsing-bound urgency peak pA (spiking_wta only; RECOMMENDED 180)")
     args = ap.parse_args()
 
     from research.runners.g11_bg_runner import run_moving_goal_episode
@@ -52,6 +64,10 @@ def main():
         enable_visual_cortex=True,
         visual_cortex_action_warmup_steps=600,
         stdp_w_max_override=400.0,
+        # Roadmap #4: the read-out source + the collapsing-bound urgency (both already threaded through
+        # run_moving_goal_episode). Default motor = the deployed host-argmax read-out (the historical gate).
+        readout_source=args.readout_source,
+        urgency_max_pA=args.urgency_max_pa,
     )
     if args.with_conv:
         from research.runners.nav_conv_merged_bridge import (
