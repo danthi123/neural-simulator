@@ -1,0 +1,149 @@
+{
+  "D": 2048,
+  "n_facts": 8,
+  "agent_seeds": [
+    42,
+    43,
+    44
+  ],
+  "vocab": {
+    "nouns": [
+      "dog",
+      "cat",
+      "bird",
+      "fish",
+      "ball",
+      "toy",
+      "book",
+      "doll",
+      "house",
+      "park",
+      "room",
+      "garden"
+    ],
+    "verbs": [
+      "run",
+      "jump",
+      "walk",
+      "play",
+      "take",
+      "put",
+      "give",
+      "hold"
+    ],
+    "adjs": [
+      "red",
+      "blue",
+      "green",
+      "big",
+      "small",
+      "little",
+      "hot",
+      "cold"
+    ]
+  },
+  "clean": {
+    "flat": [
+      [
+        8,
+        8
+      ],
+      [
+        8,
+        8
+      ],
+      [
+        8,
+        8
+      ]
+    ],
+    "one_attr": [
+      [
+        8,
+        8
+      ],
+      [
+        8,
+        8
+      ],
+      [
+        8,
+        8
+      ]
+    ],
+    "two_attr": [
+      [
+        8,
+        8
+      ],
+      [
+        8,
+        8
+      ],
+      [
+        8,
+        8
+      ]
+    ]
+  },
+  "learned": {
+    "flat": [
+      [
+        8,
+        8
+      ],
+      [
+        8,
+        8
+      ],
+      [
+        8,
+        8
+      ]
+    ],
+    "one_attr": [
+      [
+        8,
+        8
+      ],
+      [
+        8,
+        8
+      ],
+      [
+        8,
+        8
+      ]
+    ],
+    "two_attr": [
+      [
+        4,
+        8
+      ],
+      [
+        1,
+        8
+      ],
+      [
+        2,
+        8
+      ]
+    ]
+  },
+  "correlation": {
+    "42": {
+      "grounded_offdiag_cos_mean": 0.158979966201125,
+      "grounded_offdiag_cos_max": 0.5318028339253321
+    },
+    "43": {
+      "grounded_offdiag_cos_mean": 0.16217405824384207,
+      "grounded_offdiag_cos_max": 0.5075749451812274
+    },
+    "44": {
+      "grounded_offdiag_cos_mean": 0.14767454878096273,
+      "grounded_offdiag_cos_max": 0.4294407552272009
+    }
+  },
+  "chance_two_attr_pct": 0.2976190476190476,
+  "verdict_two_attr": "PARTIAL_DEGRADE"
+}
