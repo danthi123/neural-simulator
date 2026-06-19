@@ -1,0 +1,37 @@
+{
+  "runs": [
+    {
+      "r_migration": -0.4765072842910822,
+      "peak_early": 2.6666666666666665,
+      "peak_late": 1.0,
+      "cue_v_early": 71.66666666666667,
+      "cue_v_late": 339.58333333333326,
+      "cue_rate_early": 22.777777777777775,
+      "cue_rate_late": 0.0,
+      "us_rate_early": 26.666666666666668,
+      "us_rate_late": 0.0,
+      "tonic_rate": 0.0,
+      "w_sub_late_max": 59.409942626953125,
+      "support": 3,
+      "gates": {
+        "migration_r_pass": false,
+        "migration_dir_pass": true,
+        "early_burst_at_us": true,
+        "late_burst_at_cue": false,
+        "omission_dip_at_reward": true,
+        "cue_value_grows": true
+      },
+      "migration_r_pass": false,
+      "migration_dir_pass": true,
+      "label": "P1d1_clip:td_derivative_gain=1.0,td_gabab_conductance_max=0.0,td_stdp_w_max=60",
+      "op": {
+        "td_stdp_w_max": 60,
+        "td_gabab_conductance_max": 0.0,
+        "td_derivative_gain": 1.0
+      },
+      "seed": 42,
+      "n_train": 30,
+      "wall_s": 401.5
+    }
+  ]
+}
