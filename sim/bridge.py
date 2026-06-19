@@ -307,6 +307,19 @@ class SimulationBridge:
         # when the global flag is off. Built like cp_nmda_neuron_mask in
         # _initialize_simulation_data after region init.
         self.cp_homeostasis_neuron_mask = None
+        # Per-region parameter HETEROGENEITY mask (2026-06-18): bool per-neuron,
+        # True for neurons in regions with BrainRegion.enable_heterogeneity=True,
+        # else False. Built like cp_nmda_neuron_mask / cp_homeostasis_neuron_mask
+        # in _initialize_simulation_data after region init, ONLY if >=1 region
+        # opts in; otherwise left None. When None (default — no region opts in),
+        # parameter heterogeneity applies globally per
+        # cfg.enable_parameter_heterogeneity (byte-identical to legacy: the
+        # _apply_parameter_heterogeneity call gate and the cp.where in that
+        # method are both skipped). When set, _apply_parameter_heterogeneity is
+        # invoked even when the global flag is OFF, and (in that global-OFF case)
+        # the jittered samples are written ONLY to masked neurons via cp.where —
+        # unmasked neurons keep their deterministic per-region preset values.
+        self.cp_heterogeneity_neuron_mask = None
         # Graded LGN decorrelation (2026-06-06): per-region dense plastic lateral
         # matrix M (K x K) for the region flagged with BrainRegion.graded_lateral
         # when cfg.enable_graded_lateral is True. None (default) = no graded
@@ -1244,6 +1257,29 @@ class SimulationBridge:
                         f"({sum(int(r.n_neurons) for r in homeo_regions)} neurons)",
                     )
 
+                # Per-region parameter HETEROGENEITY mask (2026-06-18): mirrors the
+                # NMDA / homeostasis masks above. Boolean per-neuron, True for
+                # neurons in regions with BrainRegion.enable_heterogeneity=True.
+                # Built ONLY if >=1 region opts in (enable_heterogeneity is True,
+                # not None/False); otherwise left None so default configs are
+                # byte-identical (the _apply_parameter_heterogeneity call gate +
+                # the cp.where in that method are both skipped). Built here (before
+                # the heterogeneity call at the B2 step below) because it is
+                # per-NEURON (n is known), like the NMDA/homeostasis masks.
+                het_regions = [r for r in self.region_manager.regions()
+                               if getattr(r, "enable_heterogeneity", None) is True]
+                if het_regions:
+                    het_mask = cp.zeros(n, dtype=cp.bool_)
+                    for r in het_regions:
+                        idx = list(self.region_manager.indices(r.name))
+                        if idx:
+                            het_mask[cp.asarray(idx, dtype=cp.int64)] = True
+                    self.cp_heterogeneity_neuron_mask = het_mask
+                    self._log_console(
+                        f"Heterogeneity per-region mask: {len(het_regions)} regions enabled "
+                        f"({sum(int(r.n_neurons) for r in het_regions)} neurons)",
+                    )
+
                 # Slow per-hub INPUT-MEAN adaptation mask (2026-06-15): mirrors the NMDA /
                 # homeostasis masks above. Boolean per-neuron, True for neurons in regions with
                 # BrainRegion.input_mean_adapt=True. Built ONLY if cfg.enable_input_mean_adapt
@@ -1574,8 +1610,16 @@ class SimulationBridge:
             if self.region_manager is not None:
                 self._apply_per_region_neuron_types(cfg, n)
 
-            # B2: Apply parameter heterogeneity if enabled
-            if cfg.enable_parameter_heterogeneity and n > 0:
+            # B2: Apply parameter heterogeneity if enabled. Also invoked when a
+            # per-region heterogeneity mask exists (>=1 region set
+            # enable_heterogeneity=True) even if the global flag is OFF — in that
+            # case _apply_parameter_heterogeneity writes the jittered samples ONLY
+            # to the masked neurons (cp.where), leaving everyone else at their
+            # deterministic per-region presets. When no region opts in
+            # (cp_heterogeneity_neuron_mask is None), this is byte-identical to
+            # the legacy gate (only the global flag matters).
+            if (cfg.enable_parameter_heterogeneity
+                    or self.cp_heterogeneity_neuron_mask is not None) and n > 0:
                 self._apply_parameter_heterogeneity(cfg, n)
             
             # B4: Initialize OU process state if enabled
@@ -2028,8 +2072,20 @@ class SimulationBridge:
                 self._log_console(f"Unknown distribution type '{dist_type}' for {param_name}", "warning")
                 continue
             
-            # Apply heterogeneity
-            target_array[:] = samples
+            # Apply heterogeneity. Three cases (mirrors the per-region
+            # homeostasis-mask semantics: global flag wins, else mask restricts):
+            #   1. global het ON  -> apply to ALL neurons (legacy byte-identical).
+            #   2. global het OFF + per-region mask set -> apply jittered samples
+            #      ONLY to the masked (enable_heterogeneity=True) neurons; every
+            #      other neuron keeps its deterministic per-region preset value.
+            #   3. (no mask, global OFF) -> this method is never called (gated at
+            #      the B2 call site), so this branch is unreachable in that case.
+            # Case 1 is bit-for-bit the old `target_array[:] = samples`.
+            if cfg.enable_parameter_heterogeneity or self.cp_heterogeneity_neuron_mask is None:
+                target_array[:] = samples
+            else:
+                target_array[:] = cp.where(
+                    self.cp_heterogeneity_neuron_mask, samples, target_array)
             applied_count += 1
         
         # Restore RNG state

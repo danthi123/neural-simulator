@@ -1,0 +1,14 @@
+{
+  "mode": "nav_byte",
+  "results": [
+    {
+      "seed": 42,
+      "bases_preserved": true,
+      "td_appended_last": true,
+      "n_neurons_off": 2904,
+      "n_neurons_on": 3258,
+      "n_mismatch": 0,
+      "nav_byte_identical": true
+    }
+  ]
+}

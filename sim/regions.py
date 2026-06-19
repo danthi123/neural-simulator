@@ -132,6 +132,35 @@ class BrainRegion:
     # See research/findings/2026-06-08-navfaithful-derisk-FAIL-homeostasis-confound.md.
     enable_homeostasis: bool = False
 
+    # Per-region parameter HETEROGENEITY enable (2026-06-18). Mirrors
+    # enable_homeostasis / enable_nmda exactly. When True, this region's
+    # neurons receive per-neuron jittered parameter samples (the
+    # cfg.heterogeneity_distributions draws — the het-ON graded band) EVEN
+    # WHEN the global cfg.enable_parameter_heterogeneity is False. When None
+    # (default), this region follows the global flag: global ON => jittered
+    # like every other neuron (legacy); global OFF => this region's neurons
+    # keep their deterministic per-region preset values (set by
+    # _apply_per_region_neuron_types). enable_heterogeneity=True is therefore
+    # the per-region complement of the global flag, used to give ONE critic
+    # region the het-ON graded operating band without perturbing the het-OFF
+    # determinism that the merged nav/conv eval relies on.
+    #
+    # Motivation (merged-bridge TD cue-shift consolidation, roadmap #3): the
+    # merged het-OFF config (5a stdp_w_max=400 conv-weight clip + per-region
+    # homeostasis low threshold) forces the td_striosome MSN-D1 critic ~6x
+    # hotter than the standalone's het-ON config -> V SATURATES instead of
+    # grading -> the TD peak stays stuck @ reward (migration r=-0.43, not the
+    # r<-0.7 GO bar). The --global-het-test diagnostic confirmed het-ON
+    # restores the graded critic + value-growth + reward-shrink + dip. A
+    # per-region heterogeneity mask gives the critic the het-ON graded band
+    # WITHOUT perturbing the het-OFF nav/conv determinism. Biology source:
+    # cell-type-specific intrinsic parameter heterogeneity (Marder & Goaillard
+    # 2006; Tripathy 2013) is a real, deterministic-per-seed property; applying
+    # it to one cell population while another stays homogeneous is biologically
+    # legitimate. See research/findings/2026-06-18-merged-TD-cueshift-
+    # consolidation-BOUNDARY.md.
+    enable_heterogeneity: Optional[bool] = None
+
     # Cluster C v2 (2026-04-29): per-action DA compartmentalization.
     # When a region is action-specific (cortex_X, str_D1_X, str_D2_X,
     # gpi_X, thal_X, motor_X, etc), this is the action index in [0, N-1]

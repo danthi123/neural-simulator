@@ -723,21 +723,40 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         from sim.enums import NeuronType as _NT
         _RS = _NT.IZH2007_RS_CORTICAL_PYRAMIDAL.name
         K = int(td_csc_n)
+        # enable_heterogeneity=True is the merged-config OPERATING-POINT fix for roadmap #3 (2026-06-18,
+        # the BOUNDARY root-cause). The standalone A-CSC organ was tuned with the CoreSimConfig DEFAULT
+        # enable_parameter_heterogeneity=True (per-neuron jittered izh_a/b/d/C => a GRADED MSN-D1 f-I band);
+        # the merged bridge keeps GLOBAL het OFF (nav/conv determinism), which — combined with the 5a
+        # stdp_w_max=400 clip + the per-region homeostasis low threshold — drives the HOMOGENEOUS td_striosome
+        # critic ~6x hotter than the standalone => V SATURATES (clamps the dopamine -V flat) => the TD peak
+        # stays stuck @ reward (migration r=-0.43, not the r<-0.7 GO bar). The --global-het-test diagnostic
+        # CONFIRMED that het-ON restores the graded critic + value-growth + reward-shrink + dip. The already-
+        # shipped per-region HETEROGENEITY mask (sim/bridge.py: cp_heterogeneity_neuron_mask, built from
+        # regions with enable_heterogeneity=True; the cp.where in _apply_parameter_heterogeneity) gives ONLY
+        # the td slice the het-ON graded band while nav/conv stay deterministic (cfg.enable_parameter_
+        # heterogeneity stays False => the mask restricts the jitter to these neurons; everyone else keeps
+        # their deterministic per-region presets => the nav/conv builds are byte-unchanged). See
+        # research/findings/2026-06-18-merged-TD-cueshift-consolidation-BOUNDARY.md.
         td_regions = [BrainRegion(name=f"td_csc_{k}", n_neurons=int(td_csc_n_per), exc_fraction=1.0,
                                   internal_density=0.0, plastic_internal=False, izh_neuron_type=_RS,
-                                  enable_nmda=False, enable_homeostasis=True) for k in range(K)]
+                                  enable_nmda=False, enable_homeostasis=True, enable_heterogeneity=True)
+                      for k in range(K)]
         td_regions += [
             BrainRegion(name="td_striosome", n_neurons=60, exc_fraction=0.0, internal_density=0.0,
                         plastic_internal=False, izh_neuron_type=_NT.IZH2007_STRIATAL_MSN_D1.name,
-                        syn_reversal_potential_i_override=-60.0, enable_nmda=False, enable_homeostasis=True),
+                        syn_reversal_potential_i_override=-60.0, enable_nmda=False,
+                        enable_homeostasis=True, enable_heterogeneity=True),
             BrainRegion(name="td_fs", n_neurons=24, exc_fraction=0.0, internal_density=0.0,
                         plastic_internal=False, izh_neuron_type=_NT.IZH2007_FS_CORTICAL_INTERNEURON.name,
-                        syn_reversal_potential_i_override=-60.0, enable_nmda=False, enable_homeostasis=True),
+                        syn_reversal_potential_i_override=-60.0, enable_nmda=False,
+                        enable_homeostasis=True, enable_heterogeneity=True),
             BrainRegion(name="td_reward_us", n_neurons=40, exc_fraction=1.0, internal_density=0.0,
-                        plastic_internal=False, izh_neuron_type=_RS, enable_nmda=False, enable_homeostasis=True),
+                        plastic_internal=False, izh_neuron_type=_RS, enable_nmda=False,
+                        enable_homeostasis=True, enable_heterogeneity=True),
             BrainRegion(name="td_snc", n_neurons=30, exc_fraction=1.0, internal_density=0.0,
                         plastic_internal=False, izh_neuron_type=_NT.IZH2007_DOPAMINE.name,
-                        syn_reversal_potential_i_override=-55.0, enable_nmda=False, enable_homeostasis=True),
+                        syn_reversal_potential_i_override=-55.0, enable_nmda=False,
+                        enable_homeostasis=True, enable_heterogeneity=True),
         ]
         # The locked production-recipe weights (the standalone GO config, finding §production recipe):
         # csc_to_strio 14.0 (the recipe TEXT says "--csc-to-strio-weight 6.0", but _run_td_csc_mode resolves
