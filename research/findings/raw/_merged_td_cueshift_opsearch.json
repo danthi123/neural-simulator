@@ -1,0 +1,20 @@
+{
+  "_meta": {
+    "task": "roadmap #3 — merged-bridge A-CSC TD cue-shift op-point search (het-mask shipped)",
+    "GO_bar": "migration r < -0.7 (more negative = stronger cue-ward migration)",
+    "anchor_diagnosis": "anchor (het-mask, --td-stdp-w-max OFF, GIRK 0.5, gain 1) seed 42 n_train30: r=-0.459 dir=True support=1/4. The per-tap critic weights RUN AWAY to ~329 (V(strio) ~362 Hz, vs standalone sparse ~70 Hz) because the merged global stdp_w_max=400 removes the per-tap cap. The het-mask alone does NOT cap weights. PRIMARY lever = --td-stdp-w-max (re-clip the td_value synapses to the standalone's 40)."
+  },
+  "runs": [
+    {
+      "label": "anchor:het-mask,GIRK0.5,gain1,no-clip (reproduce CYCLE224)",
+      "op": {"td_gabab_conductance_max": 0.5, "td_derivative_gain": 1.0, "td_stdp_w_max": 0.0},
+      "seed": 42, "n_train": 30,
+      "r_migration": -0.459, "peak_early": 6.33, "peak_late": 3.50,
+      "cue_v_early": 74.86, "cue_v_late": 361.67,
+      "cue_rate_early": 67.22, "cue_rate_late": 53.06,
+      "us_rate_early": 67.78, "us_rate_late": 69.44, "tonic_rate": 64.97,
+      "w_sub_late_max": 326.3, "support": 1,
+      "migration_r_pass": false, "migration_dir_pass": true
+    }
+  ]
+}
