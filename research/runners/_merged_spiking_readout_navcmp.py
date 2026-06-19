@@ -130,12 +130,15 @@ def main():
     spiking_arms = []  # list of lever_kwargs dicts
     if args.sweep:
         if "=" not in args.sweep:
-            raise SystemExit("--sweep must be KEY=v1,v2,...")
+            raise SystemExit("--sweep must be KEY[+KEY2...]=v1,v2,...")
         skey, svals = args.sweep.split("=", 1)
-        skey = skey.strip()
+        # "+"-joined keys are swept TOGETHER to the same value (e.g. n_sel_per_action+n_commit_per_action=20,40,80
+        # = the plan's paired N-scaling, the accumulator + commit pools grown in lockstep).
+        skeys = [k.strip() for k in skey.split("+") if k.strip()]
         for sv in svals.split(","):
             if sv.strip():
-                spiking_arms.append({**fixed_levers, skey: _coerce(sv)})
+                val = _coerce(sv)
+                spiking_arms.append({**fixed_levers, **{k: val for k in skeys}})
     else:
         spiking_arms.append(dict(fixed_levers))
 
