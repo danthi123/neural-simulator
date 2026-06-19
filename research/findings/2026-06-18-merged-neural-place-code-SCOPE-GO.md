@@ -58,6 +58,23 @@ kwarg). The `else`/non-self-org path and every existing default are byte-unchang
 | `striosome_value` array-disjoint from `parse_role` | ✅ |
 | plastic `place→striosome_value` pathway present | ✅ |
 
+### Pathway-level verification (numpy CPU) — the self-org critic is structurally CORRECT, not just region-present
+
+| pathway | plastic | plasticity_gate | transmission_gate | coincidence_detector |
+|---|---|---|---|---|
+| `place_sensors → place` | True | `landmark_to_place` | — | False |
+| `place → place_fs` (FS-PING excite) | False | — | — | False |
+| `place_fs → place` (FS-PING GABA_A) | False | — | `place_fs_gate` | False |
+| `place → striosome_value` (the value afferent) | True | `value_input` | — | **True** |
+| `striosome_value → snc` (the δ=r−V GABA_B route) | False | — | `critic_snc_window` | False |
+| up-state arm `vs_place_drive → striosome_value` | **ABSENT** | — | — | — |
+
+This is the decisive structural difference from the `vs_place_context` value-train critic: the self-org branch
+has **NO up-state arm**. The cold MSN-D1 is fired by the FS-PING-synchronized place volley through the
+`coincidence_detector=True` `place→striosome_value` pathway, which is **position-SELECTIVE** (the learned place
+code), not the position-BLIND dense up-state that floored the CYCLE-211 δ at ~1.3. So the δ *can* lift past that
+cap — this is exactly the mechanistic premise of item #5's value (b), now confirmed wired on the merged bridge.
+
 ## Moat check (numpy CPU, via `MergedNavConvAgent`) — PASS
 
 With the self-org place critic co-resident:
@@ -78,12 +95,27 @@ slices stay array-disjoint, and the no-confab moat is intact. This alone is a TR
 The load-bearing question for value (b): does the self-org `place→striosome_value` coincidence-volley fire
 the MSN-D1 critic AND yield a δ=r−V gap ABOVE the CYCLE-212 ~1.3 cap (the position-blind-bootstrap ceiling)?
 
-Protocol to port (NESTED CLOSURES in `g11_bg_runner.py` run_seed — not importable, must be mirrored, as the
-`vs_place_context` value-train build did):
-- STEP-1 `_run_place_selforg` (`g11_bg_runner.py` ~self-org runner): self-organize the place fields.
-- STEP-2 `_run_place_value_training` (`:5716`): DA-gated STDP grows V on `place→striosome_value`.
-- Stage-B `_run_stage_b_smoke` (`:5893` self-org branch): the RPE battery / δ measurement.
-- Anti-cheat: lesion `place→striosome_value` → δ must collapse; moat intact.
+**Engineering note for whoever picks this up — the δ probe for #5 is a DIFFERENT protocol from the
+`vs_place_context` value-train (`_merged_navcritic_valuetrain.py`), NOT a 2-kwarg swap.** The `vs_place_context`
+template drives the place code as a host-rendered Gaussian **directly into the afferent region**
+(`_vs_drive → cp_external_input_current[vs_place_context]`) — but for the self-org critic the place code must be
+**self-organized FIRST** (STEP-1) and the drive enters via `place_sensors` (bearing+distance render), with the
+critic fired by the FS-PING **coincidence volley** through `place→striosome_value`, not a Gaussian current. So
+the three STEP closures must be ported in their **self-org form**, not the `vs_place_context` form.
+
+**KEY SHORTCUT FOUND (use this):** `run_g11` in `g11_bg_runner.py` ALREADY has a standalone `stage_b_smoke`
+path (`:5874-5899`) that runs `_run_place_selforg` → `_run_place_value_training` → `_run_stage_b_smoke` and
+**returns the δ measurement, exiting before the nav loop** — i.e. the exact STEP-1+STEP-2+Stage-B δ probe is
+already implemented for the STANDALONE g11 bridge (validated by `n9_place_graded_critic_stage2_derisk.py`). The
+cheapest merged-bridge port is therefore EITHER (a) a thin runner that calls the three self-org closures'
+*logic* against the merged bridge (mirroring how `_merged_navcritic_valuetrain.run_value_train` ported
+`_run_place_value_training`), OR (b) — much cheaper if it works — confirm the standalone g11 Stage-B δ on the
+self-org critic is unchanged when the conv slices are appended, since they are array-disjoint with zero
+out-edges into the critic (the composition smoke above already proves disjointness). Option (b) is the
+recommended cheap-first next move: run `n9_place_graded_critic_stage2_derisk` (or `run_g11 --stage-b-smoke
+--neural-place-selforg`) standalone for the baseline δ, then the merged equivalent, and compare. Anti-cheat:
+lesion `place→striosome_value` (or the `striosome_value→snc` GABA_B `cp_gabab_synapse_mask`) → δ must collapse;
+moat intact (already PASS above).
 
 **AUDIT FLAG (from the prompt + g11 comments):** the self-org place code is CuPy-non-deterministic
 (transpose-SpMV atomic scatter — `sim/bridge.py` ~5771/5812 coincidence/GABA_B matvec; research
@@ -95,4 +127,20 @@ flag a byte-level diff for controller review BEFORE making it.
 
 ## Files
 
-- `research/runners/nav_conv_merged_bridge.py` — the builder edit (this commit).
+- `research/runners/nav_conv_merged_bridge.py` — the builder edit: `nav_critic_place_selforg` kwarg on
+  `build_merged_nav_conv_bridge` + `MergedNavConvAgent`, the mutual-exclusivity assert, `neural_place_selforg`
+  forwarded into `build_bg_brain_regions`. Additive, default-off = byte-identical.
+- `research/runners/g11_bg_runner.py` — UNCHANGED (consumed): `:1175`/`:1783` self-org region+pathway branches,
+  `:3853` the `enable_convergent_upstate` hard-gate, `:5874-5899` the standalone `stage_b_smoke` δ path,
+  `--neural-place-selforg` / `--stage-b-smoke` CLI flags.
+- `research/runners/_merged_navcritic_valuetrain.py` — UNCHANGED; the `vs_place_context` value-train TEMPLATE
+  the δ-probe port would mirror (but in the self-org form — see the engineering note above).
+- The numpy CPU smoke evidence (transient logs, not committed): `research/findings/raw/_smoke_place_selforg*.log`.
+
+## Verdict (one line)
+
+**SCOPE-GO** — the self-org spiking `place` critic composes correctly on the merged "one brain" bridge
+(regions + pathways + `coincidence_detector` + moat all verified, host `vs_place_context` retired, no up-state
+arm), retiring a host position-code shortcut. The δ-lift GPU probe (value (b)) is the cheap follow-on, with the
+recommended cheapest-first path (re-use the standalone g11 `stage_b_smoke`, compare standalone-vs-merged δ on the
+disjoint self-org critic) documented above.
