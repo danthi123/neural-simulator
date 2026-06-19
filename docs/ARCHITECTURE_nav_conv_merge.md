@@ -77,22 +77,34 @@ flowchart TD
     F --> H["Navigation-not-harmed check<br/>identical score ✅"]
     H --> I["Run the navigation episode<br/>on the merged bridge"]
     I --> J["Result: the merged bridge navigates,<br/>conversation parts stay exactly unchanged ✅"]
-    G --> K["Full 6-seed navigation check<br/>(in progress)"]
+    G --> K["Multi-seed navigation check<br/>(byte-identical score ✅)"]
     J --> K
-    K --> L["Step 2a complete"]
-    L --> M["Step 2b: move the composer<br/>onto the one bridge too"]
-    M --> N["Step 3: replace the composer's<br/>fixed algebra with a learned cortex<br/>(a later, separate effort)"]
+    K --> L["Step 2a complete ✅"]
+    L --> M["Step 2b: composer moved<br/>onto the one bridge too ✅"]
+    M --> P["Make the move-decision<br/>fully spiking by default ✅"]
+    P --> N["Step 3: replace the composer's<br/>fixed algebra with a learned cortex<br/>(a later, separate effort)"]
 ```
 
-## Status (2026-06-10)
+## Status (2026-06-19) — roadmap step 2 COMPLETE
 
 - Conversation on the merged bridge: ✅ the full conversational behaviour passes unchanged — comprehension,
   fact memory, question answering, negation, embedded clauses, dialogue planning, generation, and the
   "refuses to make up an answer it doesn't know" guarantee.
-- Navigation on the merged bridge: ✅ a single-seed run shows the merged bridge navigates while the
-  conversational neurons stay exactly unchanged during the live navigation learning. The full six-seed run
-  (confirming the navigation score is statistically unchanged) is the final check, currently running.
-- Moving the composer onto the one bridge as well (step 2b): unblocked by the approved engine change.
+- Navigation on the merged bridge: ✅ the merged bridge navigates while the conversational neurons stay
+  **exactly unchanged** during the live navigation learning — confirmed byte-for-byte identical across the
+  completed seeds (the navigation score is the same with or without the conversational half present).
+- Step 2a (merge with the composer external) and step 2b (the composer moved onto the *one* bridge too, via
+  the approved masked engine change): ✅ both **complete**. Navigation + the comprehension parser + the
+  dialogue planner + the fact-binding composer now all run as separate, non-overlapping groups of neurons on
+  one bridge, capability-equivalent to the separate brains.
+- The navigation **move-decision is now made in spikes by default** (2026-06-19): an accumulator integrates
+  the evidence and the choice is taken when the winner fires an all-or-none committing burst, retiring the
+  off-brain "pick the best option" step. Validated across six seeds (the decision terminates on the neural
+  burst 100% of the time, at an honest ~16% cost over the shortcut). Because this read-out uses its own
+  neurons, disjoint from the parser and composer, the "refuses to make up an answer" guarantee is preserved
+  by construction. Finding: `research/findings/2026-06-19-spiking-decision-default-on-GO.md`.
+- Step 3 (replacing the composer's fixed binding algebra with a *learned* model cortex) is the remaining
+  frontier, a later, separate effort.
 
 ## Key files
 
@@ -118,14 +130,18 @@ Izhikevich; the composer's phase-based model is resonate-and-fire (its complex s
 (Fourier Holographic Reduced Representations — a vector-symbolic algebra).
 
 - **Plasticity isolation:** the gate zeroes the four weight-UPDATE paths (Hebbian potentiation/decay, STDP
-  delta, the reward eligibility→weight conversion). The one ungated path is the global weight CLIP
-  (`bridge.py:6200` Hebbian, `:6505` reward) — mitigated by `stdp_w_max` + `hebbian_max_weight` above the
-  frozen conversational weight (~300); the composer's complex weights are clip-immune.
+  delta, the reward eligibility→weight conversion). The global "keep weights in range" CLIP steps (Hebbian
+  ~`bridge.py:6673`, reward ~`:6988`, homeostatic ~`:7260`) are now **also gated by plasticity gain**, so a
+  frozen synapse (gain 0) is left at its exact value rather than clipped — with uniform gain reproducing the
+  old un-gated clip byte-for-byte. (As a belt-and-suspenders measure, `stdp_w_max` + `hebbian_max_weight` are
+  still set above the frozen conversational weight, ~300; the composer's complex weights are clip-immune
+  regardless.)
 - **Neuron-model coexistence:** the additive engine change is an optional `neuron_mask` on `rf_kick` +
   `_rf_advance_one` (masks all `v`/`u` writes to the resonate-and-fire slice); default `None` = whole bridge =
   byte-identical (the 18 conversational tests pass verbatim).
 - **The merge:** the brain-region framework lowers to `inject_explicit_wiring`
-  (`bridge.py:1514-1526`), so the parser + dlPFC are appended as framework regions. The navigation-episode
+  (defined at `bridge.py:2329`, invoked from the framework path at `bridge.py:1659`), so the parser + dlPFC
+  are appended as framework regions. The navigation-episode
   integration is a hybrid `run_moving_goal_episode` with four additive no-op-default parameters + an
   index-based finalization hook that runs after the V1/superior-colliculus post-init
   `set_pathway_weights(add_missing=True)` rebuild (which re-sorts the connection matrix, stales the gate-index
