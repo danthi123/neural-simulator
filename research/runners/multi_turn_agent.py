@@ -58,6 +58,10 @@ class MultiTurnAgent:
         self.wm = SpikingLoopContextBuffer(self.referents, n=wm_n, pattern_size=wm_pattern_size,
                                            seed=seed, enable_ou=False)
         self._spec = float(spec_threshold)
+        # Agent-owned discourse-referent registry (the plain SpikingLoopContextBuffer does NOT track which
+        # referents were introduced; the biased-competition path needs the held SET to know when >=2 referents
+        # are co-present). Appended in _write_referent; mirrors exactly what is written into the WM loop(s).
+        self._referent_history = []
 
         # --- multi-referent biased-competition (opt-in, default OFF) -------------------------------------------
         self.enable_biased_competition = bool(enable_biased_competition)
@@ -83,6 +87,7 @@ class MultiTurnAgent:
         referents compete during a pronoun query."""
         if isinstance(ref, str) and ref in self.referents:
             self.wm.update([ref])
+            self._referent_history.append(ref)
             if self.bcw is not None:
                 self.bcw.update([ref])
 
@@ -99,9 +104,9 @@ class MultiTurnAgent:
         return (top if spec > self._spec else None), spec
 
     def _held_set(self):
-        """The set of referents currently held in the WM registry (deduplicated, preserving the plain-WM source
-        of truth -- the biased-competition buffer mirrors the same writes)."""
-        return sorted(set(self.wm._held)) if hasattr(self.wm, "_held") else []
+        """The set of referents introduced into the discourse (deduplicated). The agent-owned registry is the
+        source of truth (the plain WM buffer mirrors the same writes but does not expose a registry)."""
+        return sorted(set(self._referent_history))
 
     def _resolve_biased(self, query_verb):
         """Resolve a pronoun over the held referents via WTA biased competition steered by the query verb's
