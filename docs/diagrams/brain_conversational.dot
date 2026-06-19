@@ -22,11 +22,49 @@ digraph ConversationalBrain {
     fontname="Helvetica";
     labelloc="t";
     fontsize=24;
-    label=<<B>Conversational brain — every region &amp; pathway, as implemented</B><BR/><FONT POINT-SIZE="12">build_biological_brain_regions() · concept pools collapsed ×4-names · comprehend→produce<BR/>signal nature + plasticity + result-quality encoded</FONT><BR/> >;
+    label=<<B>Conversational brain — the production pipeline + the region inventory</B><BR/><FONT POINT-SIZE="12.5"><B>TOP:</B> the production conversation (OneBrainComposer) — comprehend → bind into a fact → recall &amp; answer (with the no-confabulation safeguard) → reply<BR/><FONT POINT-SIZE="11"><B>BELOW:</B> the underlying region inventory built by build_biological_brain_regions() (a reference) · concept pools collapsed ×4 names · signal nature + learning shown</FONT></FONT><BR/> >;
 
     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10.5,
           margin="0.13,0.07", penwidth=1.4, color="#2471a3", fillcolor="#ebf5fb"];
     edge [fontname="Helvetica", fontsize=9, color="#5d6d7e", penwidth=1.3, arrowsize=0.8];
+
+    // ====================================================================
+    //  ★ PRODUCTION CONVERSATIONAL PIPELINE  (OneBrainComposer)
+    //  This is what actually runs the production conversation today. It runs on
+    //  the shared "one brain" (a learned 320-concept cortex + an on-bridge
+    //  sentence parser + a resonate-and-fire phasor composer holding a fact
+    //  store). The region inventory BELOW (build_biological_brain_regions) is
+    //  the earlier builder's exhaustive region map, kept as a reference.
+    //  Refs: 2026-06-18-onebrain-320-scale-production-GO,
+    //        2026-06-19-consolidation-attr-multiframe,
+    //        2026-06-19-latency-csr-cache-GO (the ~10-20x speedup).
+    // ====================================================================
+    subgraph cluster_pipeline {
+        labelloc="t"; labeljust="l";
+        label=<<B>★ PRODUCTION CONVERSATION</B>  ·  the pipeline that actually runs (OneBrainComposer, on the shared "one brain")>;
+        style="rounded,filled"; color="#1a5276"; fillcolor="#eaf4fb"; fontcolor="#154360"; fontsize=15; penwidth=2.4; margin=14;
+
+        pp_in   [label=<<B>Words in</B><BR/><FONT POINT-SIZE="8.5">a sentence (e.g. "the dog eats a big apple")</FONT>>, fillcolor="#e8eef3", color="#5d6d7e", fontcolor="#283747"];
+        pp_cortex [group="pp", label=<<B>Learned word-meaning cortex</B><BR/>320 concepts · <B>learned from a conversation stream</B><BR/><FONT POINT-SIZE="8.5">hears words in context, picks up their meaning · similar words end up close together</FONT>>, fillcolor="#d6eaf8", color="#1a5276", fontcolor="#0c2533", penwidth=1.9];
+        pp_parse [group="pp", label=<<B>Comprehension — sentence parser</B><BR/>word order → who-did-what (agent · action · patient)<BR/><FONT POINT-SIZE="8.5">same answer for "dog chases cat" / "cat is chased by dog" (voice-invariant)<BR/>flexible word orders, auto-detected (subject-verb-object · verb-subject-object · object-subject-verb)</FONT>>, fillcolor="#d6eaf8", color="#2471a3", fontcolor="#10303f", penwidth=1.9];
+        pp_bind [group="pp", label=<<B>Composer — bind the words into a fact</B><BR/>phase-based "resonate-and-fire" neurons + complex-valued synapses<BR/><FONT POINT-SIZE="8.5">attributed objects ("big apple") · negation / yes-no · embedded clauses · <B>~10–20× faster</B> than before<BR/>⚠ the binding rule is fixed algebra — a stand-in for a learned cortex (the open "step 3")</FONT>>, fillcolor="#d6eaf8", color="#2874a6", fontcolor="#143a54", penwidth=2.1];
+        pp_store [label=<<B>Fact store</B>  (held in synapses)<BR/><FONT POINT-SIZE="8.5">each fact = a pattern written into complex synapses<BR/>persistent · holds many facts</FONT>>, fillcolor="#d4e6f1", color="#1a5276", fontcolor="#10303f"];
+        pp_recall [group="pp", label=<<B>Recall &amp; answer</B>   ·   <B>NO-CONFABULATION SAFEGUARD</B><BR/>who / what · yes-no &amp; negation · multi-hop reasoning · multi-turn dialogue<BR/><FONT POINT-SIZE="8.5"><B>answers "I don't know" rather than inventing</B> — a learned familiarity check<BR/>(reconstruct a stored fact, unbind the roles, clean up, match the question's cue)</FONT>>, fillcolor="#d6eaf8", color="#154360", fontcolor="#0a2230", penwidth=2.3];
+        pp_dlg  [label=<<B>Dialogue planning (prefrontal)</B><BR/>picks the next on-topic thing to say<BR/><FONT POINT-SIZE="8.5">self-sustaining working-memory loop</FONT>>, fillcolor="#d4e6f1", color="#2471a3", fontcolor="#16435f"];
+        pp_out  [group="pp", label=<<B>Reply — word-ordered output</B><BR/>a spiking "say-this-first" ranking orders the words<BR/><FONT POINT-SIZE="8.5">competitive-queuing serial order (not a fixed host template)</FONT>>, fillcolor="#d6eaf8", color="#2471a3", fontcolor="#10303f", penwidth=1.7];
+
+        pp_in     -> pp_cortex [label="words"];
+        pp_cortex -> pp_parse  [label="meanings"];
+        pp_parse  -> pp_bind   [label="who-did-what"];
+        pp_bind   -> pp_store  [label="write the fact"];
+        pp_store  -> pp_recall [label="look up / match a cue", constraint=false, weight=6];
+        pp_bind   -> pp_recall [label="unbind\n+ clean up"];
+        pp_recall -> pp_out    [label="answer\n(or abstain)"];
+        pp_dlg    -> pp_out    [label="next thing to say", style=dashed, constraint=false, weight=0];
+        // tuck the two flank nodes (store / dialogue) beside the spine
+        pp_store -> pp_dlg [style=invis, weight=30];
+        pp_recall -> pp_store [style=invis, weight=30];
+    }
 
     // ====================================================================
     //  INPUT — language + visual (host I/O boundary) + episodic context
@@ -189,21 +227,25 @@ digraph ConversationalBrain {
         label=""; style="rounded,filled"; color="#566573"; fillcolor="#fbfcfc"; margin=10;
         leg [shape=plaintext, fillcolor="white", label=<
           <TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2" CELLPADDING="3">
-            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>SIGNAL NATURE</B>  (arrow points downstream)</TD></TR>
-            <TR><TD ALIGN="RIGHT">──▶</TD><TD ALIGN="LEFT">excitatory — glutamate (AMPA, +NMDA share)</TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#922b21">──⊣</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#922b21">fast inhibition — GABA_A (cross-pool / within-kind WTM)</FONT></TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1e8449">──▶</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1e8449">recurrent ⟲ / hippocampal consolidation into cortex</FONT></TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#3d6fb4">──▶</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#3d6fb4">visual ("what" stream) input</FONT></TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>TWO LAYERS in this diagram</B></TD></TR>
+            <TR><TD ALIGN="RIGHT"><B>★</B></TD><TD ALIGN="LEFT"><B>top</B> = the PRODUCTION conversation that actually runs (parser → composer → recall &amp; answer → reply)</TD></TR>
+            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT"><B>below</B> = the underlying region inventory of build_biological_brain_regions() — a reference map; not all of it is on the production path</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>no-confabulation safeguard</B> = the answer step says "I don't know" instead of guessing (a learned familiarity check)</TD></TR>
             <TR><TD ALIGN="LEFT" COLSPAN="2"> </TD></TR>
-            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>NODE / EDGE STATUS</B></TD></TR>
-            <TR><TD ALIGN="RIGHT">▭</TD><TD ALIGN="LEFT">solid = always built (CORE) · <B>thick</B> border = inhibitory region</TD></TR>
-            <TR><TD ALIGN="RIGHT">┄</TD><TD ALIGN="LEFT">dashed border = opt-in (flag-gated) · dashed edge = weaker/feedback</TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#909497">✗ ┄</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#909497">composition pathway present STRUCTURALLY but a NEGATIVE / BOUNDARY</FONT></TD></TR>
-            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT"><FONT COLOR="#909497">result (v12/v15/v16/v18) — NOT a working capability</FONT></TD></TR>
-            <TR><TD ALIGN="RIGHT">×4/×N</TD><TD ALIGN="LEFT">per-concept template (×4 names per kind; ×N pools)</TD></TR>
-            <TR><TD ALIGN="RIGHT">⌂</TD><TD ALIGN="LEFT">host I/O boundary (token embedding in / word readout out) = LEGITIMATE env/body</TD></TR>
-            <TR><TD ALIGN="RIGHT"><FONT COLOR="#b9770e">⚠</FONT></TD><TD ALIGN="LEFT">documented SHORTCUT (collapsed/host-computed) · substrate-wide reductions SH-1..SH-14 (spec §6)</TD></TR>
-            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>CORE</B> (always built) = language_input → motor_X (Tier-1 binding) + its A→W reciprocal</TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>WHAT EACH ARROW CARRIES</B>  (it points downstream)</TD></TR>
+            <TR><TD ALIGN="RIGHT">──▶</TD><TD ALIGN="LEFT">excitation — "fire more" (glutamate)</TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#922b21">──⊣</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#922b21">fast inhibition — "fire less" (a pool suppresses its rivals, GABA-A)</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#1e8449">──▶</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#1e8449">self-sustaining loop ⟲ / memory consolidation into cortex (during "sleep")</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#3d6fb4">──▶</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#3d6fb4">vision ("what is it" stream) input</FONT></TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"> </TD></TR>
+            <TR><TD ALIGN="LEFT" COLSPAN="2"><B>BOX / ARROW STATUS</B></TD></TR>
+            <TR><TD ALIGN="RIGHT">▭</TD><TD ALIGN="LEFT">solid = always built · <B>thick</B> border = an inhibitory ("fire less") region</TD></TR>
+            <TR><TD ALIGN="RIGHT">┄</TD><TD ALIGN="LEFT">dashed border = optional (flag-gated) · dashed arrow = weaker / feedback</TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#909497">✗ ┄</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="#909497">a pathway that is WIRED but did NOT work (a negative / boundary result), kept for honesty —</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT"> </TD><TD ALIGN="LEFT"><FONT COLOR="#909497">NOT a working capability (the earlier verb→motor composition attempts)</FONT></TD></TR>
+            <TR><TD ALIGN="RIGHT">×4/×N</TD><TD ALIGN="LEFT">drawn once, stands for several copies (×4 names per kind; ×N pools)</TD></TR>
+            <TR><TD ALIGN="RIGHT">⌂</TD><TD ALIGN="LEFT">input/output boundary (words in / words out) = LEGITIMATE, not a shortcut</TD></TR>
+            <TR><TD ALIGN="RIGHT"><FONT COLOR="#b9770e">⚠</FONT></TD><TD ALIGN="LEFT">a documented SHORTCUT (a simplified stand-in, or a step still done by host maths). Simplifications SH-1…SH-14 are in the spec.</TD></TR>
           </TABLE>>];
     }
 
@@ -226,6 +268,12 @@ digraph ConversationalBrain {
     langout -> langoutp [style=invis, weight=40];
     langout -> motor    [style=invis, weight=40];
     motor   -> speech   [style=invis, weight=40];
+
+    // -- the production pipeline (top) sits ABOVE the region inventory -----
+    //  push the builder graph's entry (langin) below the production pipeline
+    //  so the whole region-inventory map stacks UNDER it (the title + legend
+    //  explain the two-layer structure).
+    pp_out -> langin [style=invis, weight=80];
 
     // -- DEEPEN the graph into a tall ribbon ------------------------------
     //  The comprehend→produce path is intrinsically SHALLOW (~5 ranks) with

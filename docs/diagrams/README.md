@@ -11,6 +11,16 @@ assemble almost the entire architecture, gated by opt-in flags. The diagrams
 reflect the **maximal** configuration (every flag on); a given run builds a
 subset.
 
+Two current-state headlines the diagrams now show: **(1)** navigation decides
+which way to move by a **spiking race** (an evidence accumulator → an all-or-none
+commit burst) — this is the **default**, and the old hand-coded `argmax`
+read-out is retired (kept only as an opt-in oracle); **(2)** the conversational
+diagram now foregrounds the **production pipeline** (`OneBrainComposer`) — a
+learned-from-conversation 320-concept cortex, a sentence parser, a
+resonate-and-fire phasor composer with a persistent fact store, and a
+**no-confabulation safeguard** (the answer step says "I don't know" instead of
+guessing) — above the earlier builder's region inventory.
+
 The two supergroups are now (a) **consolidated** — navigation, the conversational
 parser, the dlPFC, and the resonate-and-fire composer run as disjoint slices on
 *one* `SimulationBridge` — and (b) joined by **three validated functional cross-brain
@@ -42,9 +52,9 @@ detail graphs stay scoped to a single builder's own region/pathway output.
 
 | Diagram | What it shows | Files |
 |---|---|---|
-| **Master map** | Cluster-level overview: the 12 subsystems, the main signal arteries, the two config-scoped supergroups on one engine, the **three** validated cross-brain functional routes (A language→action via the parser-gated `command_route`; B perception→memory recall via `cortex_it → language_output`; C compose-perceived via the live-rate→phasor grounded code), the co-resident generalization stack (`gen_perception → gen_concept → gen_fact`), the honesty legend. Start here. | [`brain_master.svg`](brain_master.svg) · [`.png`](brain_master.png) · [`.dot`](brain_master.dot) |
-| **Navigation brain** | Exhaustive: every region + every distinct pathway of `build_bg_brain_regions()` — the basal-ganglia action-selection cascade, the spiking superior-colliculus orienting reflex (sc_retina→sc_map→cortex), the spiking actor-critic (reward_us → SNc; striosome value critic → SNc via GABA_B), thalamus/TRN, the accumulate→commit decision layer, cerebellum, hippocampus, dlPFC. | [`brain_navigation.svg`](brain_navigation.svg) · [`.png`](brain_navigation.png) · [`.dot`](brain_navigation.dot) |
-| **Conversational brain** | Exhaustive: every region + every distinct pathway of `build_biological_brain_regions()` — language I/O, Wernicke pools, semantic cortex, Broca, concept pools, multimodal hub, hippocampal consolidation, dlPFC verb working memory. | [`brain_conversational.svg`](brain_conversational.svg) · [`.png`](brain_conversational.png) · [`.dot`](brain_conversational.dot) |
+| **Master map** | Cluster-level overview, in plain language: the **one brain** (navigation + conversation as separate neuron groups on one network, one update loop), the main signal arteries, the navigation **spiking decision** (the move emerges from a spiking race — now the default, the host shortcut retired), the production **conversational pipeline** (learned word-meaning cortex → sentence parser → composer + fact store → recall & answer with the **no-confabulation safeguard** → reply), the **three** validated cross-brain routes (A a spoken word steers the body; B navigate to *see* then *recall*; C bind a *perceived* object into a fact), the co-resident generalization stack, the honesty legend. Start here. | [`brain_master.svg`](brain_master.svg) · [`.png`](brain_master.png) · [`.dot`](brain_master.dot) |
+| **Navigation brain** | Exhaustive: every region + every distinct pathway of `build_bg_brain_regions()` — the basal-ganglia action-selection cascade, the spiking superior-colliculus orienting reflex (sc_retina→sc_map→cortex), the spiking actor-critic (reward_us → SNc; striosome value critic → SNc via GABA_B), thalamus/TRN, **the accumulate→commit decision layer — now the DEFAULT read-out (the move emerges from the spiking race; the host argmax is retired, kept as the opt-in oracle)**, cerebellum, hippocampus, dlPFC. | [`brain_navigation.svg`](brain_navigation.svg) · [`.png`](brain_navigation.png) · [`.dot`](brain_navigation.dot) |
+| **Conversational brain** | **Two layers.** *Top* — the **production conversation pipeline** (`OneBrainComposer`, on the shared one brain): a learned-from-conversation 320-concept cortex → an on-bridge sentence parser (who-did-what; flexible word orders) → a resonate-and-fire phasor composer that binds words into facts (attributed objects, negation, embedded clauses; ~10–20× faster) + a persistent fact store → recall & answer with the no-confabulation safeguard → a word-ordered spiking reply + dialogue planning. *Below* — the underlying **region inventory** of `build_biological_brain_regions()` (a reference: language I/O, Wernicke pools, semantic cortex, Broca, concept pools, multimodal hub, hippocampal consolidation, dlPFC verb working memory; not all of it is on the production path). | [`brain_conversational.svg`](brain_conversational.svg) · [`.png`](brain_conversational.png) · [`.dot`](brain_conversational.dot) |
 
 > The two detail graphs are **dense by design** — the goal was every distinct
 > pathway drawn separately, not bundled. Open the **SVG** to zoom; the master

@@ -1,12 +1,69 @@
 # Simulated-brain architecture flowchart — complete as-implemented SPEC
 
-**Date:** 2026-06-09
+**Date:** 2026-06-09 (current-state addendum 2026-06-19 — see §0 below)
 **Type:** read-only deep-extraction / layout plan (no code changed, no jobs run)
 **Purpose:** the complete structured inventory + Graphviz layout plan for the ENTIRE
 simulated brain — every region, every distinct pathway, signal direction, receptor /
 nature, plasticity, gating — AS ACTUALLY IMPLEMENTED in the code, with an honesty layer
 distinguishing faithful models from documented shortcuts. A visual-design agent renders
 this into the diagram.
+
+---
+
+## 0. CURRENT-STATE ADDENDUM (2026-06-19) — what changed since the original spec
+
+The §1–§8 inventory below is the per-region/per-pathway ground truth of the **two
+builders** and is still accurate. But the headline architecture has moved on, and the
+**rendered diagrams (`docs/diagrams/*.svg`) now reflect this addendum, not just §1–§8.**
+Four things to depict that the original spec predates:
+
+1. **ONE brain (consolidation), not two alternative configs.** Navigation, the
+   conversational sentence-parser, the dialogue planner, and the fact-binding composer now
+   run as **disjoint neuron-index slices on ONE running `SimulationBridge` with one update
+   loop** (roadmap step 2 COMPLETE; `nav_conv_merged_bridge.py`). The conversational
+   slices are held frozen (per-synapse learning rate = 0) so navigation's live learning
+   cannot disturb them — verified byte-identical across a navigation burst. The two halves
+   also **interact through synapses** via three validated cross-brain routes (A
+   language→action, B perception→memory recall, C compose-perceived), all 6/6-seed GO. The
+   master map already draws these.
+
+2. **The navigation action-decision is fully spiking BY DEFAULT** (2026-06-19,
+   `2026-06-19-spiking-decision-default-on-GO.md`). The move now EMERGES from the spiking
+   competition (`sel_X` evidence accumulator → `commit_X` all-or-none burst, Wang-2002 +
+   Lo-Wang/superior-colliculus). The **host Python argmax read-out is retired** (kept only
+   as an opt-in oracle). 6-seed grid-32: within 25% of the host floor (1.16×), commit-burst
+   fires the decision 100% of the time. So the `SC accumulate → commit` cluster (C5) is no
+   longer a dashed opt-in experiment — it is the **default decision path** (the navigation
+   detail graph and the master spine reflect this).
+
+3. **The production conversational pipeline is the `OneBrainComposer`** — a learned-from-
+   conversation 320-concept cortex → an on-bridge sentence parser (word-order → who-did-
+   what, voice-invariant) → a **resonate-and-fire phasor composer** that binds words into
+   facts and holds a persistent **fact store in complex synapses** → cue-matching recall /
+   answer → a spiking serial-order read-out for word-ordered replies. Its hallmark is the
+   **no-confabulation safeguard** (a learned familiarity gate: answers "I don't know" rather
+   than inventing). The `build_biological_brain_regions` Wernicke/semantic/Broca/concept-
+   pool stack in §2–§3 is the **earlier** builder's region inventory and stays drawn as the
+   exhaustive conversational detail graph (a reference), but the conversational diagram now
+   foregrounds the production pipeline above it. Capabilities to surface: who/what Q&A,
+   yes-no + negation, **attributed objects** ("big apple"), **flexible sentence frames**
+   (subject-verb-object / verb-subject-object / object-subject-verb, auto-selected),
+   embedded clauses, multi-hop reasoning, multi-turn dialogue, sentence generation, and
+   learning word meanings from a conversation stream (2026-06-18/19 consolidation:
+   `2026-06-18-onebrain-320-scale-production-GO.md`, `2026-06-19-consolidation-attr-multiframe.md`).
+
+4. **The composer is ~10–20× faster** (2026-06-18 masked-megakernel + 2026-06-19 latency
+   CSR cache: `2026-06-18-onebrain-A5-speed-cleanup-design.md`, `2026-06-19-latency-csr-cache-GO.md`).
+   A query that took ~400 ms now runs in ~100 ms or less — fast enough for interactive use.
+
+**Honest scope (carry into the diagrams):** the composer's bind is still a fixed, exactly-
+invertible vector-symbolic algebra (FHRR) standing in for a learned cortex; replacing it
+with a genuinely learned cortical binder is the separate, still-open **step 3** (the learned
+320-concept stream cortex above is real and feeds the composer the codes, but the bind
+operation itself remains the idealization). The F=3 **two-attribute** ("big red ball") decode
+is a documented boundary (not shipped). These stay marked.
+
+---
 
 ## How to read this spec
 
