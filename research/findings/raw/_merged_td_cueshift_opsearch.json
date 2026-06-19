@@ -990,5 +990,50 @@
       "n_train": 30,
       "wall_s": 426.9
     }
-  ]
+  ],
+  "_verdict": {
+    "outcome": "BOUNDARY",
+    "best_migration_r": -0.719,
+    "best_op_point": {
+      "td_stdp_w_max": 60,
+      "td_gabab_conductance_max": 0.0,
+      "td_derivative_gain": 2.0,
+      "td_to_fs_weight": 30.0,
+      "td_fs_to_strio_weight": 20.0,
+      "td_gabab_prop": 0.04,
+      "td_slow_tau_ms": 250.0,
+      "n_train": 30,
+      "seed": 42
+    },
+    "best_op_support": "3/4 (early@US, omit-dip, cue-value-grows; late@cue FALSE)",
+    "why_boundary": "r<-0.7 reached (r=-0.719) BUT the cue-pathway LESION anti-cheat does NOT discriminate on the merged bridge: after zeroing every td_csc_k->td_striosome value-conduit edge, the cue-bin SNc rate STAYS ~66 Hz (standalone GO: drops to ~tonic). no_cue_burst=False at EVERY op-point tested (tau250 tonic 1Hz, gain2/tau130 tonic 6Hz, gain1/tau130 tonic 33Hz) \u2014 so the cue-bin burst is NOT abolished by cutting the learned value, meaning the migration is NOT cleanly value-driven (the 2026-05-14 transitive-inference RETRACTION lesson). The unpaired control PASSES (r=+0.015). The migration r<-0.7 is achieved by the US-burst COLLAPSE (223->88, value-dependent) + a learning-independent cue-onset transient (lesion-surviving) landing the peak cue-ward, NOT by a value-driven cue burst that the lesion would remove.",
+    "anti_cheats": {
+      "unpaired_s42": {
+        "r": 0.015,
+        "verdict": "PASS (no migration when CS/US unpaired)"
+      },
+      "lesion_tau250_s42": {
+        "cue_silenced": true,
+        "us_reflex_intact": true,
+        "no_cue_burst": false,
+        "cue_rate_hz": 65.0,
+        "tonic_hz": 1.22,
+        "verdict": "UNEXPECTED (cue burst survives value-conduit lesion)"
+      },
+      "lesion_gain2_tau130_s42": {
+        "no_cue_burst": false,
+        "cue_rate_hz": 66.67,
+        "tonic_hz": 6.25,
+        "verdict": "UNEXPECTED"
+      },
+      "lesion_gain1_tau130_s42": {
+        "no_cue_burst": false,
+        "cue_rate_hz": 66.67,
+        "tonic_hz": 32.81,
+        "verdict": "UNEXPECTED (even with healthy tonic)"
+      }
+    },
+    "landscape": "slow_tau MONOTONE lifts r: 130->-0.539, 160->-0.658, 200->-0.689, 250->-0.719. GIRK cap HURTS (throttles the derivative cue burst: 0.5->+0.17, 0.3->-0.31). per-tap clip 40-60 keeps weights bounded (run-away gone). FS 30/20 is the sweet spot (cools V to a graded 22->92 band); FS>=40/30 over-clamps (V starts 102-155, critic cannot grade, tonic dies). gabab_prop 0.04 + FS 30/20 keeps SNc alive. n_train=50 REGRESSES (-0.55) vs n30 (measurement-window effect). Core tension: r<-0.7 needs strong derivative (long tau) which drives td_snc tonic near-silent late.",
+    "nav_conv_merged_bridge_byte_identical": true
+  }
 }
