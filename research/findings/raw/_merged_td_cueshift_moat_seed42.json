@@ -1,0 +1,12 @@
+{
+  "mode": "moat",
+  "results": [
+    {
+      "seed": 42,
+      "moat_stored": "north",
+      "moat_stored_ok": true,
+      "moat_abstain_ok": true,
+      "moat_intact": true
+    }
+  ]
+}

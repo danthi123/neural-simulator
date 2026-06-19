@@ -456,6 +456,13 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  nav_critic_homeostasis_mask: str = "all3",
                                  nav_critic_spiking_sc: bool = False,
                                  nav_critic_place_selforg: bool = False,
+                                 co_resident_td_cueshift: bool = False,
+                                 td_csc_n: int = 8, td_csc_n_per: int = 25,
+                                 td_csc_to_strio_weight: float = 14.0,
+                                 td_to_fs_weight: float = 16.0, td_fs_to_strio_weight: float = 10.0,
+                                 td_strio_to_snc_weight: float = 1.5,
+                                 td_gabab_prop: float = 0.105, td_gabab_conductance_max: float = 0.0,
+                                 td_stdp_w_max: float = 0.0,
                                  _global_het_test: bool = False):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
@@ -518,6 +525,17 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     # 4-region minimal co_resident_limbic organ (two DA pools + two scope=all broadcasts would double-count).
     assert not (co_resident_limbic and co_resident_nav_critic), \
         "co_resident_limbic (minimal organ) and co_resident_nav_critic (full nav critic) are mutually exclusive"
+    # co_resident_td_cueshift (TRUE ONE BRAIN roadmap #3, the A-CSC TD cue-shift CONSOLIDATION onto the one brain
+    # — finding 2026-06-10-N9-TD-cue-shift-A-CSC-GO.md, migration r -0.80/-0.77/-0.89): lift the validated
+    # complete-serial-compound TD machinery (the tapped-delay cue chain + the multi-channel reward relay + the
+    # B-2 conductance-derivative + the FS-clamp) onto the merged bridge as a co-resident td_-prefixed slice, so the
+    # one brain computes delta = r + gamma*V(s') - V(s) (TEMPORAL-difference, the burst MIGRATES onto the cue) on
+    # top of the R-W delta=r-V the limbic/nav-critic organs already supply. It registers its OWN `dopamine`
+    # signed-firing modulator over [td_snc], so it is MUTUALLY EXCLUSIVE with co_resident_limbic / co_resident_nav_critic
+    # (two scope=all DA broadcasts off two SNc pools would double-count the plasticity-rate modulation).
+    assert not (co_resident_td_cueshift and (co_resident_limbic or co_resident_nav_critic)), \
+        ("co_resident_td_cueshift (A-CSC TD cue-shift) registers its own dopamine modulator over [td_snc] and is "
+         "mutually exclusive with co_resident_limbic / co_resident_nav_critic (one DA broadcast per merged bridge)")
     # nav_critic_place_selforg (TRUE ONE BRAIN roadmap #5 — retire the host-Gaussian vs_place_context afferent for
     # the SELF-ORGANIZED spiking `place` code): forward neural_place_selforg=True into build_bg_brain_regions so the
     # critic's position afferent becomes the self-org hippocampal `place` pool (place_sensors -> place threshold-WTA
@@ -682,11 +700,74 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
             RegionPathway(from_region="limbic_striosome", to_region="limbic_snc", density=0.5,
                           weight_mean=10.0, weight_jitter=0.2, plastic=False, receptor="gaba_b"),
         ]
+
+    # A-CSC TD CUE-SHIFT SLICE (co_resident_td_cueshift, additive default-off): the validated complete-serial-compound
+    # TD machinery (snc_stageb_critic_probe.py --td-csc, GO 3/3 r=-0.80/-0.77/-0.89) as a td_-prefixed co-resident slice.
+    # Regions: td_csc_0..td_csc_{K-1} (the tapped-delay cue, each its OWN plastic synapse onto the critic) + td_striosome
+    # (the GABAergic MSN-D1 value critic) + td_fs (the production FS-clamp, holds the critic sparse as the per-tap
+    # weights grow) + td_reward_us (the excitatory reward relay the critic inhibits => r-V at td_snc, localizing -V to
+    # the reward window) + td_snc (DOPAMINE). Pathways: td_csc_k->td_striosome plastic (the tap value w_k, gated
+    # `td_value` so it can be frozen for the byte-isolation checks); td_csc_k->td_fs + td_fs->td_striosome (the clamp);
+    # td_reward_us->td_snc exc + td_striosome->td_reward_us inhib (the relay r-V); td_striosome->td_snc GABA_B (the -V
+    # level + the conductance-derivative source). ALL td_-prefixed (zero name collision) + internal_density=0; the only
+    # out-edges are WITHIN the slice, so the slice is nav-inert (no cp_connections edges into navigation, like rf/limbic).
+    # Per-region enable_homeostasis=True is the merged-config operating-point fix (the limbic-core-lift lesson): the
+    # standalone A-CSC organ was tuned with the CoreSimConfig default enable_homeostasis=True (vpeak->~-42mV threshold,
+    # a large f-I gain); the merged bridge keeps GLOBAL homeostasis OFF (the synaptic-scaling foot-gun), so the already-
+    # shipped per-region homeostasis mask (sim/bridge.py:1227-1245/:6320) gives ONLY the td slice the low threshold while
+    # nav/conv stay at vpeak (byte-unchanged) and the synaptic-scaling clip (gated by the SEPARATE enable_synaptic_scaling,
+    # OFF here) never runs. Appended LAST so the nav/parser/dlPFC/rf/cortex_it/gen/limbic index bases are BYTE-UNCHANGED.
+    td_regions, td_pathways = [], []
+    if co_resident_td_cueshift:
+        from sim.enums import NeuronType as _NT
+        _RS = _NT.IZH2007_RS_CORTICAL_PYRAMIDAL.name
+        K = int(td_csc_n)
+        td_regions = [BrainRegion(name=f"td_csc_{k}", n_neurons=int(td_csc_n_per), exc_fraction=1.0,
+                                  internal_density=0.0, plastic_internal=False, izh_neuron_type=_RS,
+                                  enable_nmda=False, enable_homeostasis=True) for k in range(K)]
+        td_regions += [
+            BrainRegion(name="td_striosome", n_neurons=60, exc_fraction=0.0, internal_density=0.0,
+                        plastic_internal=False, izh_neuron_type=_NT.IZH2007_STRIATAL_MSN_D1.name,
+                        syn_reversal_potential_i_override=-60.0, enable_nmda=False, enable_homeostasis=True),
+            BrainRegion(name="td_fs", n_neurons=24, exc_fraction=0.0, internal_density=0.0,
+                        plastic_internal=False, izh_neuron_type=_NT.IZH2007_FS_CORTICAL_INTERNEURON.name,
+                        syn_reversal_potential_i_override=-60.0, enable_nmda=False, enable_homeostasis=True),
+            BrainRegion(name="td_reward_us", n_neurons=40, exc_fraction=1.0, internal_density=0.0,
+                        plastic_internal=False, izh_neuron_type=_RS, enable_nmda=False, enable_homeostasis=True),
+            BrainRegion(name="td_snc", n_neurons=30, exc_fraction=1.0, internal_density=0.0,
+                        plastic_internal=False, izh_neuron_type=_NT.IZH2007_DOPAMINE.name,
+                        syn_reversal_potential_i_override=-55.0, enable_nmda=False, enable_homeostasis=True),
+        ]
+        # The locked production-recipe weights (the standalone GO config, finding §production recipe):
+        # csc_to_strio 14.0 (the recipe TEXT says "--csc-to-strio-weight 6.0", but _run_td_csc_mode resolves
+        # `args.csc_to_strio_weight if != 6.0 else 14.0` -> the documented 6.0 is the default-sentinel and the GO
+        # run actually used 14.0; VERIFIED by re-deriving the arg logic), strio_to_snc(GABA_B -V level) 1.5,
+        # reward_us_to_snc 8, strio_to_reward_us 10, to_fs 16, fs_to_strio 10. (The drives + the conductance-
+        # derivative gain are the runner's, not wiring.)
+        for k in range(K):
+            td_pathways.append(RegionPathway(from_region=f"td_csc_{k}", to_region="td_striosome",
+                                             density=0.6, weight_mean=float(td_csc_to_strio_weight), weight_jitter=0.5,
+                                             plastic=True, plasticity_gate="td_value"))
+            td_pathways.append(RegionPathway(from_region=f"td_csc_{k}", to_region="td_fs",
+                                             density=0.6, weight_mean=float(td_to_fs_weight), weight_jitter=0.2,
+                                             plastic=False))
+        td_pathways += [
+            RegionPathway(from_region="td_fs", to_region="td_striosome", density=0.7,
+                          weight_mean=float(td_fs_to_strio_weight), weight_jitter=0.2, plastic=False),
+            RegionPathway(from_region="td_reward_us", to_region="td_snc", density=0.6,
+                          weight_mean=8.0, weight_jitter=0.2, plastic=False),
+            RegionPathway(from_region="td_striosome", to_region="td_reward_us", density=0.6,
+                          weight_mean=10.0, weight_jitter=0.2, plastic=False),
+            RegionPathway(from_region="td_striosome", to_region="td_snc", density=0.6,
+                          weight_mean=float(td_strio_to_snc_weight), weight_jitter=0.2, plastic=False,
+                          receptor="gaba_b"),
+        ]
     union_regions = (list(nav_regions) + list(parser_regions) + list(dlpfc_regions)
                      + list(rf_regions) + list(perception_regions) + list(generalization_regions)
-                     + list(limbic_regions))
+                     + list(limbic_regions) + list(td_regions))
     union_pathways = (list(nav_pathways) + list(parser_pathways)
-                      + list(generalization_pathways) + list(limbic_pathways))   # dlPFC loop is hand-built, NOT a pathway
+                      + list(generalization_pathways) + list(limbic_pathways)
+                      + list(td_pathways))   # dlPFC loop is hand-built, NOT a pathway
 
     # 2) Merged config.
     cfg = CoreSimConfig()
@@ -759,6 +840,39 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
             targets=[ModulatorTarget(target_type="plasticity_rate", scope="all", sensitivity=+1.0)],
             production_rules=[ProductionRule(rule_type="from_region_firing_signed", sensitivity=8.0,
                                              threshold=0.0, window_ms=200.0, source_regions=_da_source)])]
+
+    # A-CSC TD CUE-SHIFT config (co_resident_td_cueshift): (a) the GABA_B/GIRK conductance (already-shipped edit; ONLY
+    # td_striosome->td_snc is tagged receptor="gaba_b") with the SHORT per-tap tau (40ms, so g_gabab tracks each tap's
+    # value); (b) the B-2 PROTECTED conductance-derivative edit (enable_td_value_derivative; byte-identical when OFF,
+    # COMBO e728d7f1...) at slow-EMA tau 130ms — the bootstrap +dV/dt source; (c) the SHORT eligibility tau 40ms so TD
+    # back-propagates one tap per trial (the CoreSimConfig default 1000ms smears credit across the chain -> no
+    # migration); (d) the `dopamine` signed-firing modulator over [td_snc] = the SHARED DA broadcast (threshold 0 =>
+    # neutral-at-rest, so a quiescent td_snc during the parser train pass + conversational ops gives da_signal=0 ->
+    # plasticity-rate ~1.0 -> it CANNOT suppress parser/conversational/nav plasticity). All ONLY when
+    # co_resident_td_cueshift -> default-off byte-preserved (the merge otherwise has enable_gabab=False, eligibility
+    # tau 1000ms, enable_td_value_derivative False, zero neuromodulators).
+    if co_resident_td_cueshift:
+        cfg.enable_gabab = True
+        cfg.gabab_reversal_potential = -90.0
+        cfg.gabab_tau_decay = 40.0                     # SHORT: -V tracks the per-tap value (the standalone csc_gabab_tau_decay)
+        cfg.gabab_propagation_strength = float(td_gabab_prop)         # the standalone csc default 0.105 (tunable co-resident)
+        # GIRK saturation cap (the owner-approved guardrail): bound g_gabab so a HOT critic cannot FULLY CLAMP td_snc
+        # to silence (the B-2 tonic-death wall). The merged config pins stdp_w_max=400 (the 5a conversational-weight
+        # clip mitigation), which REMOVES the per-tap weight cap (40) the standalone CSC bridge used -> the critic can
+        # run away, its GABA_B -V saturates, and td_snc dies. The GIRK cap is the co-resident fix: a bounded -V is a
+        # GRADED shift at any critic rate, so the reward burst shrinks WITHOUT killing the tonic. 0 = no cap (off).
+        cfg.gabab_conductance_max = float(td_gabab_conductance_max)
+        cfg.enable_td_value_derivative = True          # the B-2 protected edit (byte-identical when OFF)
+        cfg.td_slow_tau_ms = 130.0                     # the locked --csc-td-slow-tau-ms
+        cfg.td_derivative_gain = 1.0                   # the locked --csc-td-derivative-gain
+        cfg.reward_eligibility_tau_ms = 40.0           # SHORT (tap-local credit; the locked --csc-eligibility-tau-ms)
+        from sim.neuromodulators import NeuromodulatorConfig, ModulatorTarget, ProductionRule
+        cfg.enable_neuromodulator_subsystem = True
+        cfg.neuromodulators = [NeuromodulatorConfig(
+            name="dopamine", baseline=0.5, decay_tau_ms=200.0, concentration_min=0.0, concentration_max=2.0,
+            targets=[ModulatorTarget(target_type="plasticity_rate", scope="all", sensitivity=+1.0)],
+            production_rules=[ProductionRule(rule_type="from_region_firing_signed", sensitivity=8.0,
+                                             threshold=0.30, window_ms=200.0, source_regions=["td_snc"])])]
 
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
@@ -864,6 +978,19 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         # drive limbic_cue/limbic_reward_us and read limbic_snc/limbic_striosome).
         handles["limbic"] = {n: {"base": int(rm.indices(n)[0]), "size": len(list(rm.indices(n)))}
                              for n in ("limbic_cue", "limbic_striosome", "limbic_reward_us", "limbic_snc")}
+    if co_resident_td_cueshift:
+        # The TD-slice base indices (for the on-merge A-CSC cue-shift battery: drive td_csc_k / td_reward_us, read
+        # td_snc / td_striosome per bin for the migration time-course).
+        _td_names = tuple(f"td_csc_{k}" for k in range(int(td_csc_n))) + (
+            "td_striosome", "td_fs", "td_reward_us", "td_snc")
+        handles["td"] = {n: {"base": int(rm.indices(n)[0]), "size": len(list(rm.indices(n)))}
+                         for n in _td_names}
+        handles["td_csc_n"] = int(td_csc_n)
+        # The per-tap weight cap the runner enforces on the td_value-gated synapses (the standalone CSC bridge used
+        # stdp_w_max=40 to keep the critic SPARSE; the merged bridge pins the GLOBAL stdp_w_max=400 for the
+        # conversational weights, so the runner re-clips ONLY the td_value synapses to this LOCAL cap per trial — a
+        # weight-BOUND, not a host computation of value/reward/delta, so the cue-shift stays 100% neural). 0 = no clip.
+        handles["td_stdp_w_max"] = float(td_stdp_w_max)
     return bridge, handles
 
 
@@ -1069,7 +1196,7 @@ class MergedNavConvAgent:
 
     def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_limbic=False,
                  co_resident_nav_critic=False, nav_critic_spiking_sc=False,
-                 nav_critic_place_selforg=False):
+                 nav_critic_place_selforg=False, co_resident_td_cueshift=False):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
         merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory codebook
         share one word set.
@@ -1079,6 +1206,10 @@ class MergedNavConvAgent:
         (STEP 2a default) it runs on its own separate per-op bridges."""
         self.seed = int(seed)
         self.co_resident_composer = bool(co_resident_composer)
+        # co_resident_td_cueshift (TRUE ONE BRAIN roadmap #3): also lift the A-CSC TD cue-shift slice onto the merged
+        # bridge (the td_ slice + the `dopamine`-over-td_snc modulator). Default False = byte-preserved. When True the
+        # moat-no-regression check verifies the shared TD DA broadcast does not perturb conversational comprehension.
+        self.co_resident_td_cueshift = bool(co_resident_td_cueshift)
         # co_resident_limbic (TRUE ONE BRAIN item #1): also lift the shared reward/value/dopamine limbic core
         # onto the merged bridge (the limbic_ slice + the `dopamine` modulator). Default False = byte-preserved
         # (the conversational gate b is unaffected). When True, the moat-no-regression check verifies the shared
@@ -1103,7 +1234,8 @@ class MergedNavConvAgent:
             co_resident_limbic=self.co_resident_limbic,
             co_resident_nav_critic=self.co_resident_nav_critic,
             nav_critic_spiking_sc=self.nav_critic_spiking_sc,
-            nav_critic_place_selforg=self.nav_critic_place_selforg)
+            nav_critic_place_selforg=self.nav_critic_place_selforg,
+            co_resident_td_cueshift=self.co_resident_td_cueshift)
         words = self._handles["vocab"]   # the sorted merged vocab (the dlPFC + parser word set)
 
         # The composer. STEP 2a default: on its OWN per-op bridges (separate). STEP 2b (co_resident_composer=True):
