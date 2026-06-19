@@ -82,7 +82,7 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
 sim/                    # 42 modules (+ __init__.py), ~20K lines — core engine
-  bridge.py             # 8091 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate, graded inhibition, input-mean adaptation)
+  bridge.py             # 8147 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate, graded inhibition, input-mean adaptation)
   config.py             #  945 lines — all @dataclass configs
   enums.py              #  830 lines — NeuronType (50+ presets), enums, default param managers
   connectivity.py       #  999 lines — spatial/WS/motif connection generators (backend-pluggable)
@@ -124,8 +124,8 @@ tests/                  # 303 test files (determinism, runners, kernels, plastic
 
 **SimulationBridge** (`sim/bridge.py:210`): Central simulation orchestrator
 - Manages all GPU state arrays (CuPy)
-- Simulation stepping (`_run_one_simulation_step` at line 5659)
-- Initialization (`_initialize_simulation_data` at line 1028)
+- Simulation stepping (`_run_one_simulation_step` at line 5715)
+- Initialization (`_initialize_simulation_data` at line 1041)
 - Recording/playback to HDF5
 - Checkpoint save/restore
 - Profiling and performance monitoring
@@ -140,9 +140,9 @@ tests/                  # 303 test files (determinism, runners, kernels, plastic
   - HH numerical stability: dt auto-adjusts to 0.05ms when HH model selected
   - **Per-gate Q10**: `hh_q10_m=3.0`, `hh_q10_h=hh_q10_n=1.5` (fixed 2026-04-25 — uniform Q10=3 over-compressed dynamics at 37°C; see Phase A below)
   - **STDP bounds gotcha**: `stdp_w_max=2.0` default. The STDP rule is **soft-bound** (`Δw_LTP = A_plus * (w_max - w) * exp(...)`) so when `weight_mean > stdp_w_max`, every "LTP" event is strongly negative and weights collapse to w_max within ms. Set `cfg.stdp_w_max` above your design weights (e.g. cortex→D1 in Phase B uses `weight_mean=25` → set `stdp_w_max=30`).
-- `VisualizationConfig` (line 500): OpenGL rendering and camera parameters
-- `RuntimeState` (line 520): Mutable execution state (running, paused, time tracking)
-- `GPUConfig` (line 535): GPU features, memory management, recording modes
+- `VisualizationConfig` (line 561): OpenGL rendering and camera parameters
+- `RuntimeState` (line 581): Mutable execution state (running, paused, time tracking)
+- `GPUConfig` (line 596): GPU features, memory management, recording modes
 - Experiment configs (lines 648–845): `StimulusPattern`, `StimulusChannel`, `NeuronGroup`, `ReadoutConfig`, `TrainingConfig`, `ExperimentPhase`, `ExperimentConfig`
 
 ### GPU Array Naming Conventions
