@@ -29,14 +29,17 @@ def _goal_schedule(gs, n_steps):
     return [(0, far), (q, far_west), (2 * q, sw), (3 * q, far_se)]
 
 
-def run_one(seed, readout_source, urgency_max_pa, n_steps, grid_size, out_dir):
+def run_one(seed, readout_source, urgency_max_pa, n_steps, grid_size, out_dir, lever_kwargs=None):
     from research.runners.g11_bg_runner import run_moving_goal_episode
     from research.runners.nav_conv_merged_bridge import (
         conv_extra_regions_pathways, finalize_conv_for_nav_gate,
     )
 
+    lever_kwargs = dict(lever_kwargs or {})
     os.makedirs(out_dir, exist_ok=True)
-    tag = f"{readout_source}{('_u%g' % urgency_max_pa) if urgency_max_pa else ''}"
+    # Tag the spiking_wta arm by its #4 cost-reduction levers so each sweep point's JSON + row is distinct.
+    lever_tag = "".join(f"_{k}{v}" for k, v in sorted(lever_kwargs.items()))
+    tag = f"{readout_source}{('_u%g' % urgency_max_pa) if urgency_max_pa else ''}{lever_tag}"
     out = os.path.join(out_dir, f"navcmp_merged_{tag}_seed{seed}.json")
 
     extra_regions, extra_pathways = conv_extra_regions_pathways()
@@ -44,8 +47,8 @@ def run_one(seed, readout_source, urgency_max_pa, n_steps, grid_size, out_dir):
     def hook(bridge):
         finalize_conv_for_nav_gate(bridge, seed=seed)
 
-    print(f"[navcmp] seed={seed} readout={readout_source} urgency={urgency_max_pa} grid={grid_size} "
-          f"n_steps={n_steps} -> {out}", flush=True)
+    print(f"[navcmp] seed={seed} readout={readout_source} urgency={urgency_max_pa} levers={lever_kwargs} "
+          f"grid={grid_size} n_steps={n_steps} -> {out}", flush=True)
     run_moving_goal_episode(
         out_path=out, seed=seed, n_steps=n_steps, grid_size=grid_size,
         goal_schedule=_goal_schedule(grid_size, n_steps),
@@ -61,6 +64,7 @@ def run_one(seed, readout_source, urgency_max_pa, n_steps, grid_size, out_dir):
         urgency_max_pA=urgency_max_pa,
         extra_regions=extra_regions, extra_pathways=extra_pathways,
         build_with_ou=True, prebuilt_post_init_hook=hook,
+        **lever_kwargs,
     )
     with open(out) as f:
         data = json.load(f)
@@ -69,58 +73,128 @@ def run_one(seed, readout_source, urgency_max_pa, n_steps, grid_size, out_dir):
     dpc = data.get("decision_path_counts") or data.get("_decision_path_counts")
     print(f"[navcmp] seed={seed} {tag}: score={score:.4f}  decision_path={dpc}", flush=True)
     return {"seed": seed, "readout_source": readout_source, "urgency_max_pA": urgency_max_pa,
-            "tag": tag, "score": score, "decision_path_counts": dpc, "out": out}
+            "lever_kwargs": lever_kwargs, "tag": tag, "score": score,
+            "decision_path_counts": dpc, "out": out}
+
+
+def _coerce(v):
+    """Coerce a CLI lever value string to int / float / bool / str (for run_moving_goal_episode kwargs)."""
+    s = str(v).strip()
+    low = s.lower()
+    if low in ("true", "1", "yes", "on") and not s.replace(".", "", 1).isdigit():
+        return True
+    if low in ("false", "0", "no", "off") and low in ("false", "no", "off"):
+        return False
+    try:
+        return int(s)
+    except ValueError:
+        pass
+    try:
+        return float(s)
+    except ValueError:
+        return s
+
+
+def _parse_levers(lever_list):
+    """['reset_losers_only=1', 'thal_to_sel_weight=40'] -> {'reset_losers_only': True, 'thal_to_sel_weight': 40}."""
+    out = {}
+    for item in (lever_list or []):
+        if "=" not in item:
+            raise SystemExit(f"--lever must be KEY=VALUE (got {item!r})")
+        k, v = item.split("=", 1)
+        out[k.strip()] = _coerce(v)
+    return out
 
 
 def main():
-    ap = argparse.ArgumentParser(description="roadmap #4 cheap few-seed merged nav read-out comparison")
+    ap = argparse.ArgumentParser(description="roadmap #4 cheap few-seed merged nav read-out comparison + lever sweep")
     ap.add_argument("--seeds", default="42,43", help="comma-separated seeds")
     ap.add_argument("--n-steps", type=int, default=600)
     ap.add_argument("--grid-size", type=int, default=8)
     ap.add_argument("--urgency-max-pa", type=float, default=180.0)
     ap.add_argument("--out-dir", default="research/findings/raw/nav_gate_2a")
     ap.add_argument("--summary-out", default="research/findings/raw/nav_gate_2a/_navcmp_summary.json")
+    # #4 cost-reduction sweep (CYCLE 228). --sweep KEY=v1,v2,... runs one spiking_wta arm per value of the
+    # given run_moving_goal_episode kwarg (e.g. sel_recurrent_weight=1.0,0.7,0.5,0.3 = the ROUND-1 leak sweep).
+    # --lever KEY=VAL (repeatable) applies a FIXED lever to every spiking_wta arm (e.g. reset_losers_only=1).
+    # --no-baselines skips the motor/thal baselines (re-use a prior run's baselines). All inert without spiking_wta.
+    ap.add_argument("--sweep", default=None, help="KEY=v1,v2,... — one spiking_wta arm per value (the swept lever)")
+    ap.add_argument("--lever", action="append", default=[], help="KEY=VAL fixed lever on all spiking_wta arms (repeatable)")
+    ap.add_argument("--no-baselines", action="store_true", help="skip motor/thal baselines (spiking_wta arms only)")
     args = ap.parse_args()
 
     seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
-    # the three arms: motor (host argmax), thal (biologized argmax SOURCE), spiking_wta (+urgency = fully-spiking).
-    arms = [("motor", 0.0), ("thal", 0.0), ("spiking_wta", args.urgency_max_pa)]
+    fixed_levers = _parse_levers(args.lever)
+
+    # Build the spiking_wta arm list: either the swept lever's values, or a single base arm.
+    spiking_arms = []  # list of lever_kwargs dicts
+    if args.sweep:
+        if "=" not in args.sweep:
+            raise SystemExit("--sweep must be KEY=v1,v2,...")
+        skey, svals = args.sweep.split("=", 1)
+        skey = skey.strip()
+        for sv in svals.split(","):
+            if sv.strip():
+                spiking_arms.append({**fixed_levers, skey: _coerce(sv)})
+    else:
+        spiking_arms.append(dict(fixed_levers))
+
+    # arms = (readout_source, urgency, lever_kwargs)
+    arms = []
+    if not args.no_baselines:
+        arms.append(("motor", 0.0, {}))
+        arms.append(("thal", 0.0, {}))
+    for lk in spiking_arms:
+        arms.append(("spiking_wta", args.urgency_max_pa, lk))
+
     rows = []
     for seed in seeds:
-        for readout_source, urg in arms:
+        for readout_source, urg, lk in arms:
             try:
-                rows.append(run_one(seed, readout_source, urg, args.n_steps, args.grid_size, args.out_dir))
+                rows.append(run_one(seed, readout_source, urg, args.n_steps, args.grid_size, args.out_dir,
+                                    lever_kwargs=lk))
             except Exception as e:
-                print(f"[navcmp] seed={seed} {readout_source} FAILED: {type(e).__name__}: {e}", flush=True)
+                print(f"[navcmp] seed={seed} {readout_source} {lk} FAILED: {type(e).__name__}: {e}", flush=True)
                 rows.append({"seed": seed, "readout_source": readout_source, "urgency_max_pA": urg,
-                             "tag": readout_source, "score": None, "error": f"{type(e).__name__}: {e}"})
+                             "lever_kwargs": lk, "tag": readout_source, "score": None,
+                             "error": f"{type(e).__name__}: {e}"})
 
-    # per-source mean + deltas
-    by_tag = {}
+    # per-tag mean + ANTI-CHEAT decision-path fractions (the win must come from the commit burst = `primary`,
+    # not the sel-lean argmax fallback). A config that lowers SUM by raising fallback% is rejected.
+    by_tag, dpc_by_tag = {}, {}
     for r in rows:
         if r.get("score") is not None:
             by_tag.setdefault(r["tag"], []).append(r["score"])
+            dpc = r.get("decision_path_counts") or {}
+            tot = sum(dpc.values()) if dpc else 0
+            if tot:
+                acc = dpc_by_tag.setdefault(r["tag"], {"primary": 0, "fallback": 0, "random": 0, "tot": 0})
+                for k in ("primary", "fallback", "random"):
+                    acc[k] += dpc.get(k, 0)
+                acc["tot"] += tot
     means = {t: mean(v) for t, v in by_tag.items()}
-    spk_tag = f"spiking_wta_u{args.urgency_max_pa:g}" if args.urgency_max_pa else "spiking_wta"
+    motor_mean = means.get("motor")
+    deltas = {t: (means[t] - motor_mean) for t in means if motor_mean is not None}
     summary = {
         "seeds": seeds, "n_steps": args.n_steps, "grid_size": args.grid_size,
-        "urgency_max_pA": args.urgency_max_pa, "rows": rows, "means_by_tag": means,
-        "delta_spiking_minus_motor": (means.get(spk_tag) - means["motor"]) if (spk_tag in means and "motor" in means) else None,
-        "delta_spiking_minus_thal": (means.get(spk_tag) - means["thal"]) if (spk_tag in means and "thal" in means) else None,
+        "urgency_max_pA": args.urgency_max_pa, "sweep": args.sweep, "fixed_levers": fixed_levers,
+        "rows": rows, "means_by_tag": means, "deltas_vs_motor": deltas,
+        "decision_path_frac_by_tag": {
+            t: {k: acc[k] / acc["tot"] for k in ("primary", "fallback", "random")}
+            for t, acc in dpc_by_tag.items()},
     }
     os.makedirs(os.path.dirname(args.summary_out), exist_ok=True)
     with open(args.summary_out, "w") as f:
         json.dump(summary, f, indent=2)
 
-    print("\n" + "=" * 64)
-    print("roadmap #4 merged nav read-out comparison (LOWER score = better)")
-    print("=" * 64)
-    for t in ("motor", "thal", spk_tag):
-        if t in means:
-            print(f"  {t:>18}: mean score {means[t]:.4f}  (n={len(by_tag[t])})")
-    print("-" * 64)
-    print(f"  spiking_wta - motor : {summary['delta_spiking_minus_motor']}")
-    print(f"  spiking_wta - thal  : {summary['delta_spiking_minus_thal']}")
+    print("\n" + "=" * 78)
+    print("roadmap #4 merged nav read-out sweep (LOWER score = better; primary% = anti-cheat)")
+    print("=" * 78)
+    for t in sorted(means, key=lambda t: means[t]):
+        frac = summary["decision_path_frac_by_tag"].get(t, {})
+        pf = f"  primary={frac.get('primary', 0):.2f} fallback={frac.get('fallback', 0):.2f}" if frac else ""
+        dv = f"  Δvs_motor={deltas[t]:+.4f}" if t in deltas else ""
+        print(f"  {t:>34}: mean {means[t]:.4f} (n={len(by_tag[t])}){dv}{pf}")
     print(f"\n[wrote {args.summary_out}]")
     return 0
 
