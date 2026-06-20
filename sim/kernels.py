@@ -278,6 +278,46 @@ def fused_coincidence_plateau(g, g_rise, decay, decay_rise, v, E_e, mg_conc,
     return g_new, g_rise_new, I
 
 @fuse()
+def fused_graded_dendritic_plateau(g, g_rise, decay, decay_rise, v, E_e, mg_conc,
+                                   c_weighted, center, slope, plateau_strength):
+    """GRADED dendritic-plateau READ-OUT (Stage 1) -- the SMOOTH, non-saturating sibling of
+    fused_coincidence_plateau. The dendrite's ONE genuine unlock (de-risk A GO): a GRADED ANALOG
+    read-out of a distributed code (Mikulasch-Priesemann) the point-neuron soma provably cannot be
+    (sub-rheobase 0, or all-or-none saturated -- never the graded middle).
+
+    Identical kinetics to fused_coincidence_plateau (dual-exponential g_slow - g_rise; Jahr-Stevens
+    voltage-dependent Mg2+ block -> a regenerative, self-limiting NMDA-spike-like current toward
+    E_e = 0 mV). The ONLY difference is the transfer function on the per-neuron drive:
+      * fused_coincidence_plateau: a STEEP all-or-none switch  1/(1+exp(-gain*(c-k_thresh)))  with
+        gain ~2 (~0.88/0.12 at K+/-1) -- a binary subunit (the value snaps 0/1; the graded middle is LOST).
+      * here (graded): a GENTLE, CENTERED logistic  V = 1/(1+exp(-slope*(c_weighted-center)))  with a
+        SMALL slope (~0.33 = 1/dend_slope) -- so V varies smoothly and non-saturatingly across the
+        active range of c_weighted (the WEIGHTED coincident drive Sum_j w_eff_j*x_j, the learned
+        place->value synaptic value). A high-value (NEAR) ensemble gives a high-but-not-saturated V,
+        a mid-value ensemble an intermediate V, a low-value (FAR) ensemble a low V -> the continuum
+        V(near) > V(mid) > V(far) the all-or-none switch cannot express.
+
+    This is the on-substrate realization of the Stage-0 numpy value read-out V = sigmoid((v_basal-
+    theta)/slope) (`_dendrite_deriskA_graded_plateau_readout.py`), produced by the spiking-bridge
+    dendrite (c_weighted is the on-bridge restricted matvec of the learned routed synapses against the
+    prior firing). Called ONLY from the guarded graded-plateau block in
+    bridge._run_one_simulation_step, so its presence is byte-inert when cfg.enable_graded_dendritic_
+    plateau is False (the block is unreached and this kernel is never invoked)."""
+    # GRADED, CENTERED, non-saturating logistic on the WEIGHTED coincident drive (the analog read-out).
+    V = 1.0 / (1.0 + cp.exp(-slope * (c_weighted - center)))
+    g_inc = plateau_strength * V
+    # Dual-exponential plateau (g_slow - g_rise), mirroring fused_coincidence_plateau / NMDA kinetics.
+    g_new = g * decay + g_inc
+    g_rise_new = g_rise * decay_rise + g_inc
+    g_eff = g_new - g_rise_new
+    g_eff = cp.maximum(g_eff, 0.0)
+    # Voltage-dependent Mg2+ block (Jahr & Stevens 1990) -- regenerative as V depolarizes.
+    mg_block = 1.0 / (1.0 + (mg_conc / 3.57) * cp.exp(-0.062 * v))
+    # Plateau current (conductance form: driving force toward E_e = 0 mV).
+    I = g_eff * mg_block * (E_e - v)
+    return g_new, g_rise_new, I
+
+@fuse()
 def fused_stp_decay_recovery(u, x, dt, tau_f, tau_d):
     """Fused kernel for STP u and x variable decay/recovery."""
     # Ensure tau_f and tau_d are not zero to prevent division by zero.

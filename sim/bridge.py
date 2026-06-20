@@ -89,6 +89,7 @@ from sim.kernels import (fused_izhikevich_legacy_dynamics_update,
                          fused_gabab_decay_and_current,
                          fused_nmda_update_and_current,
                          fused_coincidence_plateau,
+                         fused_graded_dendritic_plateau,
                          fused_stp_decay_recovery,
                          fused_homeostasis_update,
                          fused_stdp_weight_update,
@@ -268,6 +269,17 @@ class SimulationBridge:
         self.cp_conductance_g_coincidence = None          # slow coincidence-plateau conductance (None unless enable_coincidence_detection + a routed pathway)
         self.cp_conductance_g_coincidence_rise = None     # dual-exp rise component
         self.cp_coincidence_synapse_mask = None           # bool per-synapse: True for coincidence_detector-routed synapses
+        # GRADED dendritic-plateau READ-OUT (Stage 1, 2026-06-20). The SMOOTH/non-saturating sibling of
+        # the coincidence arrays above: a SEPARATE slow (tau ~80 ms) plateau conductance (dual-exp,
+        # reuses fused_graded_dendritic_plateau with the same Mg2+ block) whose increment is a GENTLE
+        # CENTERED logistic of the per-step WEIGHTED coincident drive (the learned place->value synaptic
+        # value) -- so the plateau GRADES with value (V(near) > V(mid) > V(far)) where the all-or-none
+        # switch snaps 0/1. Fed by the SAME coincidence_detector-routed mask (cp_coincidence_synapse_mask
+        # -- NO new wiring). All None by default -> the new per-neuron graded block is unreached, the new
+        # kernel is never called, and total_input_current_pA is byte-identical to today (mirrors the
+        # coincidence/nmda_recurrent/gabab guarding). See 2026-06-20-dendrite-stage1-onbridge-graded-plateau.md.
+        self.cp_conductance_g_graded_plateau = None       # slow graded-plateau conductance (None unless enable_graded_dendritic_plateau + a routed pathway)
+        self.cp_conductance_g_graded_plateau_rise = None  # dual-exp rise component
         # Graded (analog, non-spiking) transmission routing (2026-06-15). The retina's horizontal-cell
         # mechanism: True for synapses of any pathway tagged graded=True. For those synapses the per-step
         # conductance increment is driven by the SOURCE neuron's CONTINUOUS activity (a saturating sub-
@@ -1373,6 +1385,17 @@ class SimulationBridge:
                 self.cp_conductance_g_coincidence = cp.zeros(n, dtype=cp.float32)
                 self.cp_conductance_g_coincidence_rise = cp.zeros(n, dtype=cp.float32)
 
+            # GRADED dendritic-plateau READ-OUT (Stage 1, 2026-06-20). The SMOOTH sibling of the
+            # coincidence alloc above: a per-neuron plateau conductance (dual-exp: g + g_rise) with its
+            # own slow ~80ms decay, driven by a GENTLE logistic of the WEIGHTED coincident drive. Guarded
+            # by cfg.enable_graded_dendritic_plateau so a default config leaves both arrays None and the
+            # per-step block is unreached (byte-identical). The routing mask is the coincidence_detector
+            # mask built in inject_explicit_wiring (needs nnz); left None here so non-wired bridges with
+            # enable_graded_dendritic_plateau are still safe. The plateau reversal is E_e (= 0 mV).
+            if getattr(cfg, "enable_graded_dendritic_plateau", False) and n > 0:
+                self.cp_conductance_g_graded_plateau = cp.zeros(n, dtype=cp.float32)
+                self.cp_conductance_g_graded_plateau_rise = cp.zeros(n, dtype=cp.float32)
+
             self.cp_refractory_timers = cp.zeros(n, dtype=cp.int32)
             self.cp_neuron_activity_ema = cp.zeros(n, dtype=cp.float32) 
             self.cp_viz_activity_timers = cp.zeros(n, dtype=cp.int32) 
@@ -1772,6 +1795,14 @@ class SimulationBridge:
             _coinc_tr = getattr(cfg, "coincidence_tau_rise_ms", 2.0)
             self._cached_decay_coincidence = float(cp.exp(-cfg.dt_ms / _coinc_td)) if _coinc_td > 0 else 0.0
             self._cached_decay_coincidence_rise = float(cp.exp(-cfg.dt_ms / _coinc_tr)) if _coinc_tr > 0 else 0.0
+            # GRADED dendritic-plateau dual-exp decay constants (Stage 1, 2026-06-20). Mirror the
+            # coincidence caches above with the graded plateau's own (slow ~80ms) taus. Always cached
+            # (cheap floats, read by no other code path); only USED when the guarded graded block runs,
+            # so caching them does not change total_input_current_pA (byte-identical when the flag is off).
+            _grad_td = getattr(cfg, "graded_plateau_tau_decay_ms", 80.0)
+            _grad_tr = getattr(cfg, "graded_plateau_tau_rise_ms", 2.0)
+            self._cached_decay_graded_plateau = float(cp.exp(-cfg.dt_ms / _grad_td)) if _grad_td > 0 else 0.0
+            self._cached_decay_graded_plateau_rise = float(cp.exp(-cfg.dt_ms / _grad_tr)) if _grad_tr > 0 else 0.0
             _BASE_HH_TEMP = 6.3
             self._cached_hh_phi = cfg.hh_q10_factor ** ((cfg.hh_temperature_celsius - _BASE_HH_TEMP) / 10.0)
             # Per-gate phi values (Session "fix-bugs" — see HH temperature bug findings)
@@ -6258,6 +6289,63 @@ class SimulationBridge:
                     cp.float32(getattr(cfg, "coincidence_gain", 2.0)),
                     cp.float32(getattr(cfg, "coincidence_plateau_strength", 80.0)))
                 total_input_current_pA = total_input_current_pA + I_coincidence
+
+            # --- 2.3a-ter. GRADED dendritic-plateau READ-OUT (Stage 1, 2026-06-20). The SMOOTH, non-
+            # saturating sibling of the all-or-none coincidence block above -- the dendrite's ONE genuine
+            # unlock (de-risk A GO): a GRADED ANALOG read-out of a distributed code (Mikulasch-Priesemann)
+            # the point-neuron soma provably cannot be (sub-rheobase 0, or all-or-none saturated). For each
+            # routed post neuron, the per-step WEIGHTED coincident drive c_w = Sum_j (w_eff_j * x_j) (the
+            # learned place->value synaptic value -- the SAME restricted matvec the coincidence block uses,
+            # always WEIGHTED here since a VALUE read-out is the point) passes through a GENTLE CENTERED
+            # logistic V = 1/(1+exp(-slope*(c_w-center))) scaled to a regenerative Mg2+-self-limiting plateau
+            # current -- so the plateau GRADES with value (V(near) > V(mid) > V(far)) where the all-or-none
+            # switch snaps 0/1. This is the on-substrate realization of the Stage-0 numpy value read-out
+            # sigmoid((v_basal-theta)/slope), produced by the spiking bridge dendrite. Routed by the SAME
+            # coincidence_detector mask (NO new wiring). GUARDED: cp_conductance_g_graded_plateau /
+            # cp_coincidence_synapse_mask are None for every run that doesn't set enable_graded_dendritic_
+            # plateau + a routed pathway, so this whole block is skipped, fused_graded_dendritic_plateau is
+            # never called, and total_input_current_pA is byte-identical. Mutually exclusive with the
+            # coincidence block in practice (the runner sets one), but composes safely if both are on (each
+            # adds its own additive current). See 2026-06-20-dendrite-stage1-onbridge-graded-plateau.md.
+            if (getattr(cfg, "enable_graded_dendritic_plateau", False)
+                    and self.cp_conductance_g_graded_plateau is not None
+                    and self.cp_coincidence_synapse_mask is not None):
+                if self.cp_connections.nnz > 0 and _prev_any:
+                    _gp_nnz = self.cp_connections.nnz
+                    # WEIGHTED coincident drive on the routed (coincidence_detector) synapses: the effective
+                    # per-synapse weight (STP + neuromod + transmission gates, row-aligned with
+                    # cp_connections) masked to those synapses @ prev_firing = Sum_j w_eff_j*x_j (the learned
+                    # place->value depolarization). Mask grown to the live nnz with FALSE padding (the
+                    # GABA_B/coincidence mask-growth idiom).
+                    _gp_mask_f = self._ensure_gate_capacity(
+                        "cp_coincidence_synapse_mask", _gp_nnz, fill=False, dtype=cp.bool_
+                    )[:_gp_nnz].astype(cp.float32)
+                    _gp_data = effective_connections_matrix.data[:_gp_nnz] * _gp_mask_f
+                    _gp_mat = csp.csr_matrix(
+                        (_gp_data, self.cp_connections.indices, self.cp_connections.indptr),
+                        shape=self.cp_connections.shape)
+                    # Deterministic transpose SpMV (the same proven, owner-approved fix used above). Default
+                    # off => `_gp_matT` is just `_gp_mat.T` (byte-identical extract-to-variable refactor).
+                    _gp_matT = _gp_mat.T
+                    if getattr(cfg, "deterministic_transpose_matvec", False):
+                        _gp_matT = _gp_matT.tocsr()
+                    c_weighted = _gp_matT @ self.cp_prev_firing_states.astype(cp.float32)
+                else:
+                    # No prior spikes this step -> zero weighted drive (the plateau still DECAYS below).
+                    c_weighted = cp.zeros_like(self.cp_conductance_g_graded_plateau)
+                (self.cp_conductance_g_graded_plateau,
+                 self.cp_conductance_g_graded_plateau_rise,
+                 I_graded_plateau) = fused_graded_dendritic_plateau(
+                    self.cp_conductance_g_graded_plateau,
+                    self.cp_conductance_g_graded_plateau_rise,
+                    self._cached_decay_graded_plateau, self._cached_decay_graded_plateau_rise,
+                    self.cp_membrane_potential_v, cfg.syn_reversal_potential_e,  # E = E_e = 0 mV
+                    cfg.nmda_mg_concentration,
+                    c_weighted,  # WEIGHTED coincident sum (the learned place->value depolarization)
+                    cp.float32(getattr(cfg, "graded_plateau_center", 8.0)),    # the logistic center (WEIGHT units)
+                    cp.float32(getattr(cfg, "graded_plateau_slope", 0.33)),    # the SMOOTH (gentle) logistic slope
+                    cp.float32(getattr(cfg, "graded_plateau_strength", 80.0)))
+                total_input_current_pA = total_input_current_pA + I_graded_plateau
 
             # --- 2.3b. GABA_B -> GIRK slow K+ inhibition (metabotropic; E_K ~ -90 mV) ---
             # The NMDA pattern inverted: a second, slow (tau ~150 ms), hyperpolarizing

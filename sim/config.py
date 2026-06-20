@@ -195,6 +195,33 @@ class CoreSimConfig:
     # verified by the jitter anti-cheat). coincidence_k_threshold is then read in WEIGHT units (the runner
     # re-tunes it). Default False => the validated COUNT form runs unchanged (byte-identical to today).
     coincidence_weighted_drive: bool = False
+    # GRADED dendritic-plateau READ-OUT (Stage 1, 2026-06-20; the SMOOTH/non-saturating sibling of the
+    # all-or-none enable_coincidence_detection above). De-risk A (Stage 0, GO 6/6 seeds,
+    # 2026-06-20-dendrite-derisk-A-graded-plateau-readout.md) proved the dendrite's ONE genuine unlock
+    # is the GRADED ANALOG read-out of a distributed code (Mikulasch-Priesemann): the nav value-critic
+    # delta=r-V needs a graded value V the point-neuron soma provably cannot express (LINEAR=sub-rheobase
+    # 0 Hz flat delta~1.0; all-or-none PLATEAU over-clamps delta~0.0). When True AND a pathway sets
+    # coincidence_detector=True (the SAME per-synapse routing mask the coincidence block uses -- NO new
+    # wiring), each routed postsynaptic neuron forms a GRADED dendritic plateau: its per-step WEIGHTED
+    # coincident drive c_w = Sum_j (w_eff_j * x_j) (the learned place->value synaptic value, the Poirazi-
+    # Brannon-Mel weighted subunit) passes through a SMOOTH, CENTERED, non-saturating logistic
+    # V = 1/(1+exp(-slope*(c_w - center))) scaled to a regenerative Mg2+-self-limiting plateau current --
+    # so the plateau GRADES with the learned value (V(near) > V(mid) > V(far): the continuum the
+    # all-or-none switch snaps to 0/1). This is the on-substrate realization of the Stage-0 numpy
+    # sigmoid((v_basal-theta)/slope) value read-out, produced by the spiking bridge dendrite. It is the
+    # GRADED-transfer sibling of fused_coincidence_plateau (same dual-exp Mg-block kinetics, same routing
+    # mask, same E_e reversal), differing ONLY in the transfer function (gentle logistic vs the steep
+    # all-or-none switch). MUTUALLY EXCLUSIVE with enable_coincidence_detection in practice (the runner
+    # sets one). Default False => no graded plateau conductance is allocated, the new per-neuron graded
+    # block is unreached, the new kernel is never called, and total_input_current_pA is BYTE-IDENTICAL to
+    # today (mirrors enable_coincidence_detection / enable_gabab / enable_dendritic_divisive_gain exactly).
+    # The center/slope/strength operating point matches the Stage-0 de-risk (dend_theta=8, dend_slope=3).
+    enable_graded_dendritic_plateau: bool = False
+    graded_plateau_center: float = 8.0          # the logistic center c_w (WEIGHT units) -- the half-max value point (Stage-0 dend_theta)
+    graded_plateau_slope: float = 0.33          # the SMOOTH logistic slope (~1/dend_slope; gentle => non-saturating across the active range, the graded middle)
+    graded_plateau_strength: float = 80.0       # per-step plateau conductance increment scale at V->1 (the regenerative NMDA-spike drive; matches coincidence_plateau_strength)
+    graded_plateau_tau_decay_ms: float = 80.0   # plateau duration (Major-Larkum-Schiller NMDA spike 50-100ms; matches coincidence_tau_decay_ms)
+    graded_plateau_tau_rise_ms: float = 2.0     # plateau rise (ms)
     # GABA_B -> GIRK slow K+ inhibitory conductance (metabotropic). Default OFF;
     # byte-identical when disabled. E_gabab is the POTASSIUM reversal (~-90 mV),
     # independent of the chloride gradient, so it strongly hyperpolarizes KCC2-lacking
