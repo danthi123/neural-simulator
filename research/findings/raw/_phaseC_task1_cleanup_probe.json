@@ -1,0 +1,149 @@
+{
+  "seed": 42,
+  "dim": 64,
+  "n_words": 12,
+  "words": [
+    "bird",
+    "cat",
+    "dog",
+    "fox",
+    "go",
+    "moon",
+    "north",
+    "river",
+    "run",
+    "see",
+    "sun",
+    "tree"
+  ],
+  "block0_agent": {
+    "label": "block0/agent (truth=dog)",
+    "peak": 1310428.375,
+    "runner_up": 332509.125,
+    "peak_word": "dog",
+    "runner_word": "run",
+    "ratio": 3.9410298138434547,
+    "raw_min": 0.0,
+    "raw_max": 1310428.375,
+    "top5": [
+      [
+        "dog",
+        1310428.4
+      ],
+      [
+        "run",
+        332509.1
+      ],
+      [
+        "fox",
+        205674.2
+      ],
+      [
+        "north",
+        169302.3
+      ],
+      [
+        "bird",
+        159556.9
+      ]
+    ]
+  },
+  "block0_action": {
+    "label": "block0/action (truth=go)",
+    "peak": 1328744.0,
+    "runner_up": 394169.28125,
+    "peak_word": "go",
+    "runner_word": "fox",
+    "ratio": 3.370998358335414,
+    "raw_min": 0.0,
+    "raw_max": 1328744.0,
+    "top5": [
+      [
+        "go",
+        1328744.0
+      ],
+      [
+        "fox",
+        394169.3
+      ],
+      [
+        "bird",
+        359168.2
+      ],
+      [
+        "sun",
+        211074.1
+      ],
+      [
+        "cat",
+        114946.9
+      ]
+    ]
+  },
+  "block1_agent": {
+    "label": "block1/agent (truth=cat)",
+    "peak": 1097489.25,
+    "runner_up": 528259.8125,
+    "peak_word": "cat",
+    "runner_word": "tree",
+    "ratio": 2.0775558239157177,
+    "raw_min": 0.0,
+    "raw_max": 1097489.25,
+    "top5": [
+      [
+        "cat",
+        1097489.2
+      ],
+      [
+        "tree",
+        528259.8
+      ],
+      [
+        "moon",
+        170041.7
+      ],
+      [
+        "dog",
+        153911.7
+      ],
+      [
+        "go",
+        136769.8
+      ]
+    ]
+  },
+  "block1_action": {
+    "label": "block1/action (truth=run)",
+    "peak": 910188.6875,
+    "runner_up": 331275.4375,
+    "peak_word": "run",
+    "runner_word": "bird",
+    "ratio": 2.7475284445137893,
+    "raw_min": 0.0,
+    "raw_max": 910188.6875,
+    "top5": [
+      [
+        "run",
+        910188.7
+      ],
+      [
+        "bird",
+        331275.4
+      ],
+      [
+        "moon",
+        202645.1
+      ],
+      [
+        "river",
+        154749.4
+      ],
+      [
+        "see",
+        128984.5
+      ]
+    ]
+  },
+  "both_suprathreshold_vs_izh_30mV": true,
+  "gpu": true
+}

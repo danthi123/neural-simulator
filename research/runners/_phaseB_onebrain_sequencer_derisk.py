@@ -51,7 +51,7 @@ from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
 from sim.config import CoreSimConfig
 from sim.enums import NeuronModel
 from sim.regions import BrainRegion, RegionPathway
-from sim.backend import to_host
+from sim.backend import to_host, from_host
 from research.runners.one_brain_composer import OneBrainComposer
 from research.runners.unified_brain_bridge import couple_gate_to_indices
 
@@ -284,6 +284,7 @@ def run_sequencer(sb, meta, cue_agent_idx, cue_action_idx, blocks_scores, settle
                 if dX[w] > 0:
                     cur[idx(f"d{bi}X_{w}")] = dX[w]
     acc = np.zeros(sb.core_config.num_neurons, dtype=np.float64)
+    cur = from_host(cur)                                 # match bridge backend (numpy build -> cupy under SIM_BACKEND=cupy)
     for _ in range(settle):
         sb.cp_external_input_current[:] = cur            # hold the cue + decoded drive across the settle
         sb._run_one_simulation_step()

@@ -1,0 +1,897 @@
+{
+  "summary": {
+    "n": 3,
+    "optB_go": 3,
+    "optA1_go": 0,
+    "optA2_go": 0,
+    "optA_go": 0,
+    "optA1_moat": 0,
+    "optA2_moat": 0,
+    "verdict": "OPTION-B (HONEST NEGATIVE): the fixed on-bridge projection (a1 + a2) walls -> the result->sequencer DATA hand-off stays a host read; the CONTROL (match + answer/abstain) is on-substrate (Phase B GO). Moat NEVER weakened (a fixed projection that washes the match out either abstains or breaks the moat; we report the boundary, not a softer moat).",
+    "gpu": true
+  },
+  "results": [
+    {
+      "seed": 42,
+      "D": 64,
+      "rows": [
+        {
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "host": "north",
+          "optB_sub": "north",
+          "optB_decision": "ans0",
+          "optB_rates": {
+            "m0": 0.24833333333333335,
+            "m1": 0.0,
+            "f0": "True",
+            "f1": "False"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.201,
+            "m1": 0.225,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              11
+            ],
+            [
+              12,
+              12
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.201,
+            "m1": 0.204,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ]
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "host": "river",
+          "optB_sub": "river",
+          "optB_decision": "ans1",
+          "optB_rates": {
+            "m0": 0.0,
+            "m1": 0.2138888888888889,
+            "f0": "False",
+            "f1": "True"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.214,
+            "m1": 0.217,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.233,
+            "m1": 0.217,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ]
+        },
+        {
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "host": null,
+          "optB_sub": null,
+          "optB_decision": "abstain",
+          "optB_rates": {
+            "m0": 0.0,
+            "m1": 0.006666666666666667,
+            "f0": "False",
+            "f1": "False"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.241,
+            "m1": 0.225,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.241,
+            "m1": 0.212,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ]
+        },
+        {
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "host": null,
+          "optB_sub": null,
+          "optB_decision": "abstain",
+          "optB_rates": {
+            "m0": 0.0,
+            "m1": 0.013333333333333334,
+            "f0": "False",
+            "f1": "False"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.217,
+            "m1": 0.225,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.219,
+            "m1": 0.221,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ]
+        },
+        {
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "host": null,
+          "optB_sub": null,
+          "optB_decision": "abstain",
+          "optB_rates": {
+            "m0": 0.06333333333333332,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.219,
+            "m1": 0.233,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.233,
+            "m1": 0.193,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ]
+        }
+      ],
+      "gain": 0.0006867983150929558,
+      "peak0": 1310428.375,
+      "optB_eq_host": true,
+      "optB_moat_ok": true,
+      "optB_decisive": true,
+      "optB_true_m": [
+        0.24833333333333335,
+        0.2138888888888889
+      ],
+      "optA1_eq_host": false,
+      "optA1_moat_ok": false,
+      "optA1_decisive": true,
+      "optA1_true_m": [
+        0.225,
+        0.217
+      ],
+      "optA2_eq_host": false,
+      "optA2_moat_ok": false,
+      "optA2_decisive": true,
+      "optA2_true_m": [
+        0.204,
+        0.233
+      ],
+      "lesion_fails_safe": true,
+      "lesion_decisions": [
+        "abstain",
+        "abstain"
+      ]
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "rows": [
+        {
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "host": "north",
+          "optB_sub": "north",
+          "optB_decision": "ans0",
+          "optB_rates": {
+            "m0": 0.2122222222222222,
+            "m1": 0.0,
+            "f0": "True",
+            "f1": "False"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.233,
+            "m1": 0.21,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              11,
+              10
+            ],
+            [
+              12,
+              12
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.233,
+            "m1": 0.216,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              11,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ]
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "host": "river",
+          "optB_sub": "river",
+          "optB_decision": "ans1",
+          "optB_rates": {
+            "m0": 0.0,
+            "m1": 0.20833333333333334,
+            "f0": "False",
+            "f1": "True"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.226,
+            "m1": 0.238,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.242,
+            "m1": 0.238,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ]
+        },
+        {
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "host": null,
+          "optB_sub": null,
+          "optB_decision": "abstain",
+          "optB_rates": {
+            "m0": 0.01388888888888889,
+            "m1": 0.011666666666666665,
+            "f0": "False",
+            "f1": "False"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.218,
+            "m1": 0.21,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.238,
+            "m1": 0.216,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ]
+        },
+        {
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "host": null,
+          "optB_sub": null,
+          "optB_decision": "abstain",
+          "optB_rates": {
+            "m0": 0.043333333333333335,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.221,
+            "m1": 0.252,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.218,
+            "m1": 0.249,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ]
+        },
+        {
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "host": null,
+          "optB_sub": null,
+          "optB_decision": "abstain",
+          "optB_rates": {
+            "m0": 0.02333333333333333,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.247,
+            "m1": 0.229,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.229,
+            "m1": 0.227,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ]
+        }
+      ],
+      "gain": 0.0007095697504108114,
+      "peak0": 1268374.25,
+      "optB_eq_host": true,
+      "optB_moat_ok": true,
+      "optB_decisive": true,
+      "optB_true_m": [
+        0.2122222222222222,
+        0.20833333333333334
+      ],
+      "optA1_eq_host": false,
+      "optA1_moat_ok": false,
+      "optA1_decisive": true,
+      "optA1_true_m": [
+        0.233,
+        0.238
+      ],
+      "optA2_eq_host": false,
+      "optA2_moat_ok": false,
+      "optA2_decisive": true,
+      "optA2_true_m": [
+        0.233,
+        0.242
+      ],
+      "lesion_fails_safe": true,
+      "lesion_decisions": [
+        "abstain",
+        "abstain"
+      ]
+    },
+    {
+      "seed": 44,
+      "D": 64,
+      "rows": [
+        {
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "host": "north",
+          "optB_sub": "north",
+          "optB_decision": "ans0",
+          "optB_rates": {
+            "m0": 0.16055555555555553,
+            "m1": 0.0,
+            "f0": "True",
+            "f1": "False"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.182,
+            "m1": 0.24,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              12
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.182,
+            "m1": 0.0,
+            "f0": "True",
+            "f1": "False"
+          },
+          "optA2_decoded_lit": [
+            [
+              1,
+              2
+            ],
+            [
+              6,
+              1
+            ]
+          ]
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "host": "river",
+          "optB_sub": "river",
+          "optB_decision": "ans1",
+          "optB_rates": {
+            "m0": 0.03833333333333333,
+            "m1": 0.2338888888888889,
+            "f0": "False",
+            "f1": "True"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.226,
+            "m1": 0.318,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              12
+            ],
+            [
+              12,
+              11
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.166,
+            "m1": 0.318,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ]
+        },
+        {
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "host": null,
+          "optB_sub": null,
+          "optB_decision": "abstain",
+          "optB_rates": {
+            "m0": 0.0,
+            "m1": 0.10333333333333333,
+            "f0": "False",
+            "f1": "False"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.206,
+            "m1": 0.24,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              11
+            ],
+            [
+              12,
+              11
+            ]
+          ],
+          "optA2_sub": null,
+          "optA2_decision": "abstain",
+          "optA2_rates": {
+            "m0": 0.058,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "optA2_decoded_lit": [
+            [
+              2,
+              12
+            ],
+            [
+              1,
+              12
+            ]
+          ]
+        },
+        {
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "host": null,
+          "optB_sub": null,
+          "optB_decision": "abstain",
+          "optB_rates": {
+            "m0": 0.0,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.214,
+            "m1": 0.223,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              11
+            ],
+            [
+              12,
+              11
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.238,
+            "m1": 0.226,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              2,
+              12
+            ],
+            [
+              2,
+              12
+            ]
+          ]
+        },
+        {
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "host": null,
+          "optB_sub": null,
+          "optB_decision": "abstain",
+          "optB_rates": {
+            "m0": 0.033888888888888885,
+            "m1": 0.0077777777777777776,
+            "f0": "False",
+            "f1": "False"
+          },
+          "optA1_sub": "north",
+          "optA1_decision": "ans0",
+          "optA1_rates": {
+            "m0": 0.204,
+            "m1": 0.255,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA1_decoded_lit": [
+            [
+              12,
+              11
+            ],
+            [
+              12,
+              11
+            ]
+          ],
+          "optA2_sub": "north",
+          "optA2_decision": "ans0",
+          "optA2_rates": {
+            "m0": 0.299,
+            "m1": 0.235,
+            "f0": "True",
+            "f1": "True"
+          },
+          "optA2_decoded_lit": [
+            [
+              2,
+              12
+            ],
+            [
+              2,
+              12
+            ]
+          ]
+        }
+      ],
+      "gain": 0.0009073362102192143,
+      "peak0": 991914.5625,
+      "optB_eq_host": true,
+      "optB_moat_ok": true,
+      "optB_decisive": false,
+      "optB_true_m": [
+        0.16055555555555553,
+        0.2338888888888889
+      ],
+      "optA1_eq_host": false,
+      "optA1_moat_ok": false,
+      "optA1_decisive": true,
+      "optA1_true_m": [
+        0.24,
+        0.318
+      ],
+      "optA2_eq_host": false,
+      "optA2_moat_ok": false,
+      "optA2_decisive": false,
+      "optA2_true_m": [
+        0.182,
+        0.318
+      ],
+      "lesion_fails_safe": true,
+      "lesion_decisions": [
+        "abstain",
+        "abstain"
+      ]
+    }
+  ]
+}
