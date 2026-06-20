@@ -1,0 +1,990 @@
+{
+  "summary": {
+    "n": 6,
+    "eq_host_n": 6,
+    "correct_n": 6,
+    "moat_n": 6,
+    "total_false_accepts": 0,
+    "seq_lesion_safe_n": 6,
+    "store_lesion_collapse_n": 6,
+    "permuted_rule_inverts_n": 6,
+    "permuted_store_carries_n": 6,
+    "go_n": 6,
+    "verdict": "GO",
+    "gpu": false
+  },
+  "results": [
+    {
+      "seed": 42,
+      "D": 64,
+      "rows": [
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "want": "north",
+          "loop": "north",
+          "host": "north",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "want": "river",
+          "loop": "river",
+          "host": "river",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "go",
+            "north"
+          ],
+          "kind": "blk0-present",
+          "want": "dog",
+          "loop": "dog",
+          "host": "dog",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "run",
+            "river"
+          ],
+          "kind": "blk1-present",
+          "want": "cat",
+          "loop": "cat",
+          "host": "cat",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "go",
+            "tree"
+          ],
+          "kind": "absent-patient",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "see",
+            "north"
+          ],
+          "kind": "absent-action",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "run",
+            "north"
+          ],
+          "kind": "cross-no-block",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        }
+      ],
+      "eq_all": true,
+      "correct_all": true,
+      "moat_ok": true,
+      "false_accepts": 0,
+      "lesion_fails_safe": true,
+      "lesion_answers": [
+        null,
+        null
+      ],
+      "store_lesion_collapses": true,
+      "store_lesion_answers": [
+        null,
+        null
+      ],
+      "permuted_inverts": true,
+      "permuted_answers": [
+        "river",
+        "north"
+      ],
+      "permuted_store_carries": true,
+      "permuted_store_read": [
+        "fox",
+        "see",
+        "tree"
+      ],
+      "go": true
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "rows": [
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "want": "north",
+          "loop": "north",
+          "host": "north",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "want": "river",
+          "loop": "river",
+          "host": "river",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "go",
+            "north"
+          ],
+          "kind": "blk0-present",
+          "want": "dog",
+          "loop": "dog",
+          "host": "dog",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "run",
+            "river"
+          ],
+          "kind": "blk1-present",
+          "want": "cat",
+          "loop": "cat",
+          "host": "cat",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "go",
+            "tree"
+          ],
+          "kind": "absent-patient",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "see",
+            "north"
+          ],
+          "kind": "absent-action",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "run",
+            "north"
+          ],
+          "kind": "cross-no-block",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        }
+      ],
+      "eq_all": true,
+      "correct_all": true,
+      "moat_ok": true,
+      "false_accepts": 0,
+      "lesion_fails_safe": true,
+      "lesion_answers": [
+        null,
+        null
+      ],
+      "store_lesion_collapses": true,
+      "store_lesion_answers": [
+        null,
+        null
+      ],
+      "permuted_inverts": true,
+      "permuted_answers": [
+        "river",
+        "north"
+      ],
+      "permuted_store_carries": true,
+      "permuted_store_read": [
+        "fox",
+        "see",
+        "tree"
+      ],
+      "go": true
+    },
+    {
+      "seed": 44,
+      "D": 64,
+      "rows": [
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "want": "north",
+          "loop": "north",
+          "host": "north",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "want": "river",
+          "loop": "river",
+          "host": "river",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "go",
+            "north"
+          ],
+          "kind": "blk0-present",
+          "want": "dog",
+          "loop": "dog",
+          "host": "dog",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "run",
+            "river"
+          ],
+          "kind": "blk1-present",
+          "want": "cat",
+          "loop": "cat",
+          "host": "cat",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "go",
+            "tree"
+          ],
+          "kind": "absent-patient",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "see",
+            "north"
+          ],
+          "kind": "absent-action",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "run",
+            "north"
+          ],
+          "kind": "cross-no-block",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        }
+      ],
+      "eq_all": true,
+      "correct_all": true,
+      "moat_ok": true,
+      "false_accepts": 0,
+      "lesion_fails_safe": true,
+      "lesion_answers": [
+        null,
+        null
+      ],
+      "store_lesion_collapses": true,
+      "store_lesion_answers": [
+        null,
+        null
+      ],
+      "permuted_inverts": true,
+      "permuted_answers": [
+        "river",
+        "north"
+      ],
+      "permuted_store_carries": true,
+      "permuted_store_read": [
+        "fox",
+        "see",
+        "tree"
+      ],
+      "go": true
+    },
+    {
+      "seed": 45,
+      "D": 64,
+      "rows": [
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "want": "north",
+          "loop": "north",
+          "host": "north",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "want": "river",
+          "loop": "river",
+          "host": "river",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "go",
+            "north"
+          ],
+          "kind": "blk0-present",
+          "want": "dog",
+          "loop": "dog",
+          "host": "dog",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "run",
+            "river"
+          ],
+          "kind": "blk1-present",
+          "want": "cat",
+          "loop": "cat",
+          "host": "cat",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "go",
+            "tree"
+          ],
+          "kind": "absent-patient",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "see",
+            "north"
+          ],
+          "kind": "absent-action",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "run",
+            "north"
+          ],
+          "kind": "cross-no-block",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        }
+      ],
+      "eq_all": true,
+      "correct_all": true,
+      "moat_ok": true,
+      "false_accepts": 0,
+      "lesion_fails_safe": true,
+      "lesion_answers": [
+        null,
+        null
+      ],
+      "store_lesion_collapses": true,
+      "store_lesion_answers": [
+        null,
+        null
+      ],
+      "permuted_inverts": true,
+      "permuted_answers": [
+        "river",
+        "north"
+      ],
+      "permuted_store_carries": true,
+      "permuted_store_read": [
+        "fox",
+        "see",
+        "tree"
+      ],
+      "go": true
+    },
+    {
+      "seed": 46,
+      "D": 64,
+      "rows": [
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "want": "north",
+          "loop": "north",
+          "host": "north",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "want": "river",
+          "loop": "river",
+          "host": "river",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "go",
+            "north"
+          ],
+          "kind": "blk0-present",
+          "want": "dog",
+          "loop": "dog",
+          "host": "dog",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "run",
+            "river"
+          ],
+          "kind": "blk1-present",
+          "want": "cat",
+          "loop": "cat",
+          "host": "cat",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "go",
+            "tree"
+          ],
+          "kind": "absent-patient",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "see",
+            "north"
+          ],
+          "kind": "absent-action",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "run",
+            "north"
+          ],
+          "kind": "cross-no-block",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        }
+      ],
+      "eq_all": true,
+      "correct_all": true,
+      "moat_ok": true,
+      "false_accepts": 0,
+      "lesion_fails_safe": true,
+      "lesion_answers": [
+        null,
+        null
+      ],
+      "store_lesion_collapses": true,
+      "store_lesion_answers": [
+        null,
+        null
+      ],
+      "permuted_inverts": true,
+      "permuted_answers": [
+        "river",
+        "north"
+      ],
+      "permuted_store_carries": true,
+      "permuted_store_read": [
+        "fox",
+        "see",
+        "tree"
+      ],
+      "go": true
+    },
+    {
+      "seed": 47,
+      "D": 64,
+      "rows": [
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "want": "north",
+          "loop": "north",
+          "host": "north",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "want": "river",
+          "loop": "river",
+          "host": "river",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "what",
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "go",
+            "north"
+          ],
+          "kind": "blk0-present",
+          "want": "dog",
+          "loop": "dog",
+          "host": "dog",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "run",
+            "river"
+          ],
+          "kind": "blk1-present",
+          "want": "cat",
+          "loop": "cat",
+          "host": "cat",
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "go",
+            "tree"
+          ],
+          "kind": "absent-patient",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "see",
+            "north"
+          ],
+          "kind": "absent-action",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        },
+        {
+          "q": "who",
+          "cue": [
+            "run",
+            "north"
+          ],
+          "kind": "cross-no-block",
+          "want": null,
+          "loop": null,
+          "host": null,
+          "loop_eq_host": true,
+          "loop_correct": true
+        }
+      ],
+      "eq_all": true,
+      "correct_all": true,
+      "moat_ok": true,
+      "false_accepts": 0,
+      "lesion_fails_safe": true,
+      "lesion_answers": [
+        null,
+        null
+      ],
+      "store_lesion_collapses": true,
+      "store_lesion_answers": [
+        null,
+        null
+      ],
+      "permuted_inverts": true,
+      "permuted_answers": [
+        "river",
+        "north"
+      ],
+      "permuted_store_carries": true,
+      "permuted_store_read": [
+        "fox",
+        "see",
+        "tree"
+      ],
+      "go": true
+    }
+  ]
+}
