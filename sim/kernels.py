@@ -302,9 +302,21 @@ def fused_graded_dendritic_plateau(g, g_rise, decay, decay_rise, v, E_e, mg_conc
     dendrite (c_weighted is the on-bridge restricted matvec of the learned routed synapses against the
     prior firing). Called ONLY from the guarded graded-plateau block in
     bridge._run_one_simulation_step, so its presence is byte-inert when cfg.enable_graded_dendritic_
-    plateau is False (the block is unreached and this kernel is never invoked)."""
-    # GRADED, CENTERED, non-saturating logistic on the WEIGHTED coincident drive (the analog read-out).
-    V = 1.0 / (1.0 + cp.exp(-slope * (c_weighted - center)))
+    plateau is False (the block is unreached and this kernel is never invoked).
+
+    NO-DRIVE FLOOR SUBTRACTION (biologically: no synaptic drive => no NMDA plateau): a bare logistic has
+    a non-zero left-tail value at c_weighted=0 (sigmoid(-slope*center) > 0), so an UNDRIVEN neuron (a
+    target with NO routed coincident input, c_weighted=0) would still accumulate a resting plateau
+    conductance over the slow ~80ms tau and depolarize -- physiologically wrong (an NMDA spike requires
+    real clustered drive) and, on-bridge, it would flood non-target neurons (e.g. the downstream SNc) with
+    a resting current. We subtract that c_weighted=0 floor so V(0)=0 exactly: an undriven neuron gets ZERO
+    plateau, the graded MIDDLE is preserved (the relative grading of driven c_weighted is unchanged up to
+    the floor shift), and the on-bridge plateau is injected ONLY where there is actual coincident value
+    drive. The floor is recomputed in-kernel from (slope, center) -- no extra parameter."""
+    # GRADED, CENTERED, non-saturating logistic on the WEIGHTED coincident drive (the analog read-out),
+    # with the no-drive (c_weighted=0) floor subtracted so V(0)=0 (no input -> no NMDA plateau).
+    floor = 1.0 / (1.0 + cp.exp(slope * center))   # = sigmoid(-slope*center) = V at c_weighted=0
+    V = cp.maximum(1.0 / (1.0 + cp.exp(-slope * (c_weighted - center))) - floor, 0.0)
     g_inc = plateau_strength * V
     # Dual-exponential plateau (g_slow - g_rise), mirroring fused_coincidence_plateau / NMDA kinetics.
     g_new = g * decay + g_inc
