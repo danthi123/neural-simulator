@@ -106,7 +106,7 @@ selection-stage count, independent of the read-out:
 | BASELINE (no fix) | 60990 | 50203 | **+10787** | 54772 | 57908 | −3136 | N,N,N,N |
 | FIX1 (tie-break) | 54596 | 45040 | **+9556** | 58648 | 60729 | −2081 | N,W,W,E |
 | FIX1+2 (+ sel homeo) | 56084 | 46973 | **+9111** | 57068 | 67721 | −10653 | W,N,W,W |
-| FIX1+3 (opponent-axis) | ~58000 | ~48000 | **~+10800** | — | — | — | N,N,N,N |
+| FIX1+3 (opponent-axis) | 59088 | 48151 | **+10937** | 53649 | 55005 | −1356 | N,N,N,N |
 
 - **The N-S surplus (~+9000 to +10800) is present in EVERY arm**, including the ones that track the goal
   (FIX1, FIX1+2). It is a structural property of the spiking selection pools, NOT a read-out artifact.
@@ -172,6 +172,30 @@ remove a persistent DIFFERENTIAL drive; the indicated mechanism is differential/
   fraction surfaced per arm.
 
 NO `sim/` edit (reuse-by-import + a read-out formula). The default-off path is byte-identical.
+
+(The `g11_bg_runner.py` FIX-3 edit was swept into HEAD `aa82ebab` by a concurrent job's broad `git add`; the
+de-risk runner CLI plumbing + the FIX13 arm JSON were committed separately. The edit is intact and
+default-off byte-identical regardless of which commit captured it.)
+
+---
+
+## EXACT commands
+
+```bash
+# FIX1+3 (tie-break + opponent-axis push-pull) — the NEGATIVE
+SIM_BACKEND=cupy python -m research.runners._nav_sc_popvector_readout_derisk \
+    --arms sc_popvector --seed 42 --n-steps 1800 --grid-size 32 --warmup-steps 600 \
+    --sc-cortex-w 18 --divnorm-sigma 5 --divnorm-gain 0.02 --fix1 --fix3 \
+    --out research/findings/raw/nav_gate_2a/cascade_debias/fix13/scpv_summary_FIX13_s42.json
+
+# SCRAM(FIX1+3) — the retinotopy lesion control
+SIM_BACKEND=cupy python -m research.runners._nav_sc_popvector_readout_derisk \
+    --arms sc_popvector_scr --seed 42 --n-steps 1800 --grid-size 32 --warmup-steps 600 \
+    --sc-cortex-w 18 --divnorm-sigma 5 --divnorm-gain 0.02 --fix1 --fix3 \
+    --out research/findings/raw/nav_gate_2a/cascade_debias/scram_fix13/scpv_summary_SCRAM_FIX13_s42.json
+```
+
+(FIX1 / HOST / SCRAM(FIX1) reference arms: see `2026-06-20-cascade-north-bias-FIX.md` §EXACT commands.)
 
 ---
 
