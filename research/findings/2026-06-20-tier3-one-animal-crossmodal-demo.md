@@ -148,4 +148,4 @@ Raw result: `research/findings/raw/_one_animal_crossmodal.json` (`n_go: 3 / 3`).
 - `f0eec00b` — deterministic on-bridge moat/recall pass (1× not reps) → ~3× faster multi-seed (answer-identical).
 - `8a49c78a` — statistically-sound controls (yoke DA cached once = deficit-independent null `rise=0`; lesion
   averaged to a clean baseline).
-- `<final>` — the 3/3 GO numbers in this finding.
+- `9d2f978d` — the 3/3 GO numbers in this finding.
