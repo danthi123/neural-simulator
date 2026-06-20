@@ -1,0 +1,254 @@
+{
+  "arms": [
+    {
+      "arm": "host",
+      "sc_cortex_w": null,
+      "seed": 42,
+      "grid_size": 8,
+      "n_steps": 480,
+      "warmup_steps": 100,
+      "with_conv": false,
+      "per_phase_finalQ": [
+        0.49557522123893805,
+        0.5
+      ],
+      "per_phase_firstQ": [
+        0.9642857142857143,
+        3.0
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          58,
+          172,
+          53,
+          167
+        ],
+        [
+          0,
+          13,
+          0,
+          17
+        ]
+      ],
+      "phase0_finalQ": 0.49557522123893805,
+      "post_change_finalQ": [
+        0.5
+      ],
+      "post_change_finalQ_sum": 0.5,
+      "gate_score": 0.995575221238938,
+      "motor_sustain_frac": 1.0,
+      "late_motor_sustain_frac": 1.0,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scdrive_host_seed42.json"
+    },
+    {
+      "arm": "sc_w18",
+      "sc_cortex_w": 18.0,
+      "seed": 42,
+      "grid_size": 8,
+      "n_steps": 480,
+      "warmup_steps": 100,
+      "with_conv": false,
+      "per_phase_finalQ": [
+        1.2920353982300885,
+        2.125
+      ],
+      "per_phase_firstQ": [
+        4.098214285714286,
+        6.428571428571429
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          150,
+          115,
+          105,
+          80
+        ],
+        [
+          12,
+          5,
+          3,
+          10
+        ]
+      ],
+      "phase0_finalQ": 1.2920353982300885,
+      "post_change_finalQ": [
+        2.125
+      ],
+      "post_change_finalQ_sum": 2.125,
+      "gate_score": 3.4170353982300883,
+      "motor_sustain_frac": 0.9479166666666666,
+      "late_motor_sustain_frac": 0.975,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scdrive_sc_seed42.json"
+    },
+    {
+      "arm": "sc_w60",
+      "sc_cortex_w": 60.0,
+      "seed": 42,
+      "grid_size": 8,
+      "n_steps": 480,
+      "warmup_steps": 100,
+      "with_conv": false,
+      "per_phase_finalQ": [
+        1.7256637168141593,
+        1.75
+      ],
+      "per_phase_firstQ": [
+        4.803571428571429,
+        6.714285714285714
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          112,
+          162,
+          43,
+          133
+        ],
+        [
+          11,
+          6,
+          5,
+          8
+        ]
+      ],
+      "phase0_finalQ": 1.7256637168141593,
+      "post_change_finalQ": [
+        1.75
+      ],
+      "post_change_finalQ_sum": 1.75,
+      "gate_score": 3.475663716814159,
+      "motor_sustain_frac": 0.8958333333333334,
+      "late_motor_sustain_frac": 0.8416666666666667,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scdrive_sc_seed42.json"
+    },
+    {
+      "arm": "sc_w150",
+      "sc_cortex_w": 150.0,
+      "seed": 42,
+      "grid_size": 8,
+      "n_steps": 480,
+      "warmup_steps": 100,
+      "with_conv": false,
+      "per_phase_finalQ": [
+        1.6106194690265487,
+        1.75
+      ],
+      "per_phase_firstQ": [
+        2.982142857142857,
+        5.857142857142857
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          121,
+          117,
+          105,
+          107
+        ],
+        [
+          8,
+          7,
+          6,
+          9
+        ]
+      ],
+      "phase0_finalQ": 1.6106194690265487,
+      "post_change_finalQ": [
+        1.75
+      ],
+      "post_change_finalQ_sum": 1.75,
+      "gate_score": 3.360619469026549,
+      "motor_sustain_frac": 0.9729166666666667,
+      "late_motor_sustain_frac": 1.0,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scdrive_sc_seed42.json"
+    }
+  ],
+  "verdict": {
+    "host_phase0_finalQ": 0.49557522123893805,
+    "host_post_change_finalQ_sum": 0.5,
+    "sweep_post_change_finalQ_sum": [
+      [
+        18.0,
+        2.125
+      ],
+      [
+        60.0,
+        1.75
+      ],
+      [
+        150.0,
+        1.75
+      ]
+    ],
+    "sweep_gate": [
+      [
+        18.0,
+        3.4170353982300883
+      ],
+      [
+        60.0,
+        3.475663716814159
+      ],
+      [
+        150.0,
+        3.360619469026549
+      ]
+    ],
+    "sweep_late_sustain": [
+      [
+        18.0,
+        0.975
+      ],
+      [
+        60.0,
+        0.8416666666666667
+      ],
+      [
+        150.0,
+        1.0
+      ]
+    ],
+    "post_change_improves_with_drive": true,
+    "best_sc_post_change": 1.75,
+    "host_over_best_sc_ratio": 0.2857142857142857,
+    "NOTE": "GO if the strong-drive sc arm's post_change_finalQ approaches host (ratio ~1) AND late_sustain recovers; HONEST-NEGATIVE if it does not -- then classify: re-TARGETING (stays high / action counts favor the old phase winner) vs op-FLOOR (strong arm REGRESSES / non-monotone)."
+  }
+}
