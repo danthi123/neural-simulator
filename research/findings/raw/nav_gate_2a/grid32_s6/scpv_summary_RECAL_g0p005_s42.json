@@ -1,0 +1,133 @@
+{
+  "arms": [
+    {
+      "arm": "sc_popvector",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 5.0,
+      "divnorm_gain": 0.005,
+      "per_phase_finalQ": [
+        0.6283185840707964,
+        19.946902654867255,
+        48.743362831858406,
+        39.45132743362832
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          236,
+          76,
+          90,
+          48
+        ],
+        [
+          226,
+          79,
+          58,
+          87
+        ],
+        [
+          231,
+          81,
+          55,
+          83
+        ],
+        [
+          204,
+          93,
+          63,
+          90
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.524,
+          "E": 0.169,
+          "S": 0.2,
+          "W": 0.107
+        },
+        {
+          "N": 0.502,
+          "E": 0.176,
+          "S": 0.129,
+          "W": 0.193
+        },
+        {
+          "N": 0.513,
+          "E": 0.18,
+          "S": 0.122,
+          "W": 0.184
+        },
+        {
+          "N": 0.453,
+          "E": 0.207,
+          "S": 0.14,
+          "W": 0.2
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "N",
+        "N",
+        "N",
+        "N"
+      ],
+      "phase0_finalQ": 0.6283185840707964,
+      "post_change_finalQ": [
+        19.946902654867255,
+        48.743362831858406,
+        39.45132743362832
+      ],
+      "post_change_finalQ_sum": 108.14159292035399,
+      "gate_score": 108.76991150442478,
+      "motor_sustain_frac": 0.4633333333333333,
+      "late_motor_sustain_frac": 0.41,
+      "episode_json": "research/findings/raw/nav_gate_2a/grid32_s6\\scpv_sc_popvector_seed42.json"
+    }
+  ],
+  "verdict": {
+    "host_phase0_finalQ": null,
+    "host_post_change_finalQ_sum": null,
+    "ramp_post_change_finalQ_sum": null,
+    "popvector_post_change_finalQ_sum": 108.14159292035399,
+    "scramble_post_change_finalQ_sum": null,
+    "host_tracking": null,
+    "ramp_tracking": null,
+    "popvector_tracking": {
+      "dominant_per_phase": [
+        "N",
+        "N",
+        "N",
+        "N"
+      ],
+      "n_distinct_dominant": 1,
+      "has_W_dominant_phase": false,
+      "has_E_dominant_phase": false,
+      "tracks_goal": false
+    },
+    "scramble_tracking": null,
+    "ramp_late_sustain": null,
+    "popvector_late_sustain": 0.41,
+    "NOTE": "GO (#6 CONVERTS) if popvector_tracking.tracks_goal is True AND popvector_post_change approaches host (host_over_popvector_post_ratio ~1, vs the ramp's ~0.01) AND the SCRAMBLE lesion collapses (scramble_tracking.tracks_goal False / much worse finalQ). HONEST NEGATIVE otherwise -- report whether popvector still does NOT track (under-selective) or a deeper issue."
+  }
+}
