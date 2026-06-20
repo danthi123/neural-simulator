@@ -199,6 +199,7 @@ class SpikingRoleCompetition:
                  sel_to_fs_weight=18.0, fs_to_sel_weight=3.0,
                  cue_to_role_init=4.0, cue_drive_pA=3500.0, role_teacher_pA=2600.0,
                  hebbian_lr=0.02, hebbian_max=60.0,
+                 with_snc=False, n_snc=40,
                  verbose=False):
         import sim.backend as B
         from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
@@ -211,6 +212,8 @@ class SpikingRoleCompetition:
         self.cue_drive_pA = float(cue_drive_pA)
         self.role_teacher_pA = float(role_teacher_pA)
         self._cue_init = float(cue_to_role_init)
+        self.with_snc = bool(with_snc)
+        self.n_snc = int(n_snc)
         self.verbose = verbose
 
         # ---- regions ----
@@ -237,6 +240,23 @@ class SpikingRoleCompetition:
                     internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
                     plastic_internal=False,
                     izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name))
+
+        # OPTIONAL spiking SNc dopamine pool (Part 2: NEURALIZE the reward). A standalone IZH2007_DOPAMINE
+        # population driven each training item by I_snc = tonic + reward_gain*target - value_gain*pred, so its
+        # WINDOWED FIRING RATE encodes the RPE delta = (gold target) - (the WTA's predicted role contrast):
+        # bursts above tonic when more agent-evidence is needed, dips below on over-prediction. The error-gated
+        # learner reads (snc_rate - tonic_rate) as the spiking reward/RPE signal that GATES the third factor,
+        # replacing the host `target - tanh(pred*8)` scalar. (Reuses the nav g11 spiking-SNc pattern:
+        # I_snc = snc_tonic + reward_gain*r - value_gain*V, RPE = firing-rate deviation from tonic. The
+        # gold->target map stays the legitimate host teaching boundary, exactly as the nav reward_us rides on the
+        # perceived reward.) No internal/pathway wiring -- driven by external current, read for firing, like the
+        # nav SNc. Default OFF => byte-identical to the host-reward learner.
+        if self.with_snc:
+            regions.append(BrainRegion(
+                name="snc", n_neurons=self.n_snc, exc_fraction=1.0,
+                internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
+                plastic_internal=False,
+                izh_neuron_type=NeuronType.IZH2007_DOPAMINE.name))
 
         cfg = CoreSimConfig()
         cfg.enable_brain_region_framework = True
@@ -291,6 +311,7 @@ class SpikingRoleCompetition:
         self._sel_idx = {r: np.asarray(rm.indices(f"sel_{r}"), dtype=np.int64) for r in ROLES}
         self._cue_idx = {(c, sgn): np.asarray(rm.indices(f"cue_{c}_{sgn}"), dtype=np.int64)
                          for c in CUES for sgn in ("pos", "neg")}
+        self._snc_idx = (np.asarray(rm.indices("snc"), dtype=np.int64) if self.with_snc else None)
         self._n = self.bridge.core_config.num_neurons
 
         if verbose:
@@ -435,7 +456,8 @@ class SpikingRoleCompetition:
 
     def learn_error_gated(self, train_examples, epochs=30, settle_steps=24, seed=0,
                           lr=0.6, decay=0.04, w_floor=0.0, w_init=12.0, output_sem_scale=20.0,
-                          w_cap=None):
+                          w_cap=None, reward_source="host",
+                          snc_tonic_pa=2000.0, snc_reward_gain=1200.0, snc_value_gain=1200.0, snc_window=30):
         """BRAIN-BASED THREE-FACTOR cue-validity learning (the rule plain Hebbian co-firing CANNOT do -- see the
         finding). For each training sentence-noun: (1) settle the cue-driven WTA on the substrate (NO teacher) and
         MEASURE each cue population's spiking ELIGIBILITY (its firing during the settle) -- a genuine spike-based
@@ -446,10 +468,23 @@ class SpikingRoleCompetition:
         term is exactly what plain Hebbian lacks; the distractor's error averages to ~0 and the decay zeros it;
         position is pushed DOWN by its errors on the non-canonical minority -> w_position << w_semantic. The
         ELIGIBILITY is spike-measured; the reward gate is the three-factor neuromodulatory signal (Schultz-1998
-        dopamine-as-RPE); the weight update is on real synapses. (The reward computation -- did the spiking winner
-        match gold -- is the host teaching signal, the legitimate environment/body boundary, exactly as the nav
-        reward-RPE scaffolds; see the finding for what is spike-measured vs host-gated.)"""
+        dopamine-as-RPE); the weight update is on real synapses.
+
+        `reward_source`:
+          'host'        -> the RPE = `target - tanh(pred*8)` is a HOST scalar (the gold->reward map AND the r-V
+                           subtraction are both host). This is Part-1's learner.
+          'spiking_rpe' -> Part-2 NEURALIZATION: the r - V subtraction + the RPE magnitude are computed by a
+                           SPIKING SNc dopamine pool (I_snc = tonic + reward_gain*target - value_gain*pred; the RPE
+                           = its windowed firing-rate deviation from tonic), reusing the nav g11 spiking-SNc
+                           pattern. The gold->target map STAYS the host teaching boundary (exactly as the nav
+                           reward_us rides on the perceived reward); what moves to spikes is the REWARD COMPUTATION
+                           (the dopamine pool's firing IS the RPE). The eligibility was already spike-measured, so
+                           with 'spiking_rpe' the eligibility AND the reward are both neural."""
         rng = np.random.default_rng(seed)
+        if reward_source == "spiking_rpe":
+            if not self.with_snc:
+                raise ValueError("reward_source='spiking_rpe' requires the bridge built with with_snc=True")
+            self._calibrate_snc_tonic(snc_tonic_pa=snc_tonic_pa, snc_window=snc_window)
         self._precompute_cue_edge_slots()
         # A per-weight CAP keeps a pathological positive-feedback loop bounded (on PERMUTED data the random gold can
         # keep "agreeing" with position's high eligibility, so its error term never averages out and the small
@@ -470,9 +505,17 @@ class SpikingRoleCompetition:
                 elig, rr = self._settle_with_eligibility(ev, settle_steps=settle_steps)
                 pred = rr["agent"] - rr["patient"]                      # spiking role-pool contrast
                 target = +1.0 if gold_role == "agent" else -1.0
-                # (3) reward/error (RPE): bound the contrast to a comparable scale
-                err = target - np.tanh(pred * 8.0)
-                d = 1.0 - np.tanh(pred * 8.0) ** 2                       # d tanh (gradient shape)
+                # (3) reward/error (RPE):
+                if reward_source == "spiking_rpe":
+                    # NEURAL: the SNc dopamine pool's firing-rate deviation IS the RPE (r - V computed in spikes).
+                    err = self._snc_rpe(target, pred, snc_tonic_pa=snc_tonic_pa,
+                                        snc_reward_gain=snc_reward_gain, snc_value_gain=snc_value_gain,
+                                        snc_window=snc_window)
+                    d = 1.0                                              # the DA firing already carries the shape
+                else:
+                    # HOST: bound the contrast to a comparable scale (Part-1 learner).
+                    err = target - np.tanh(pred * 8.0)
+                    d = 1.0 - np.tanh(pred * 8.0) ** 2                   # d tanh (gradient shape)
                 # (4) reward-modulated weight delta per cue: eligibility (spike) x error (reward) x vote (sign)
                 for c, (vote, rel) in ev.items():
                     if rel <= 0.0 or vote == 0.0:
@@ -499,6 +542,51 @@ class SpikingRoleCompetition:
             self._fast_set_cue_weight(c, W[c])
         self.bridge.cp_external_input_current[:] = 0.0
         return W
+
+    # ---- Part 2: the SPIKING REWARD/RPE (the SNc dopamine pool's firing replaces the host `err` scalar) ----
+    def _calibrate_snc_tonic(self, snc_tonic_pa=2000.0, snc_window=30):
+        """Measure the SNc pool's TONIC firing rate (per-neuron spikes/window) under the pacemaker drive ALONE
+        (target=pred=0). The RPE is read as the firing-rate DEVIATION from this tonic, so a deviation of 0 means
+        prediction matched reward (no learning), >0 = under-predicted (reinforce), <0 = over-predicted."""
+        self._reset(steps=6)
+        cur = self.xp.zeros(self._n, dtype=self.xp.float32)
+        cur[self._snc_idx] = float(snc_tonic_pa)
+        self.bridge.cp_external_input_current[:] = cur
+        tot = 0.0
+        for _ in range(snc_window):
+            self.bridge._run_one_simulation_step()
+            tot += float(self.B.to_host(self.bridge.cp_firing_states[self._snc_idx]).sum())
+        self.bridge.cp_external_input_current[:] = 0.0
+        self._snc_tonic_rate = tot / (self._snc_idx.size * snc_window)
+        return self._snc_tonic_rate
+
+    def _snc_rpe(self, target, pred, snc_tonic_pa=2000.0, snc_reward_gain=1200.0, snc_value_gain=1200.0,
+                snc_window=30):
+        """NEURAL reward/RPE: drive the SNc dopamine pool with I_snc = tonic + reward_gain*target -
+        value_gain*pred and return its windowed firing-rate DEVIATION from tonic (the spiking delta = r - V). The
+        gold->target map is the host teaching boundary; the r - V SUBTRACTION + the RPE magnitude are computed by
+        the dopamine pool's FIRING (not the host `target - tanh(pred*8)`). `target` in {-1,+1} (gold), `pred` =
+        the spiking role-pool contrast (already spike-derived). Returns a signed scalar ~ in [-1, +1]."""
+        self._reset(steps=4)
+        cur = self.xp.zeros(self._n, dtype=self.xp.float32)
+        # signed reward afferent (target up/down) + signed value subtraction (prediction). pred is bounded to a
+        # comparable scale (same tanh shaping the host used, but here it only sets the DRIVE; the RPE itself is the
+        # dopamine pool's firing response, which is what becomes neural).
+        drive = float(snc_tonic_pa) + float(snc_reward_gain) * float(target) - float(snc_value_gain) * float(
+            np.tanh(pred * 8.0))
+        cur[self._snc_idx] = drive
+        self.bridge.cp_external_input_current[:] = cur
+        tot = 0.0
+        for _ in range(snc_window):
+            self.bridge._run_one_simulation_step()
+            tot += float(self.B.to_host(self.bridge.cp_firing_states[self._snc_idx]).sum())
+        self.bridge.cp_external_input_current[:] = 0.0
+        rate = tot / (self._snc_idx.size * snc_window)
+        tonic = getattr(self, "_snc_tonic_rate", 0.0)
+        # normalize the deviation by the tonic headroom so the spiking RPE lands on a ~[-1,+1] scale comparable to
+        # the host `err` (so lr/decay carry over). The SIGN + the graded magnitude both come from the DA firing.
+        denom = max(1e-3, tonic if tonic > 1e-3 else 1.0)
+        return (rate - tonic) / denom
 
     def _settle_with_eligibility(self, ev, settle_steps=24):
         """Drive the cue votes, settle the WTA, and return (eligibility, role_rates) where eligibility[c] = the
@@ -775,7 +863,7 @@ def _build_competition(seed, **kw):
 
 def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="hebbian", epochs=8, train_steps=40,
              read_steps=60, controls=True, noncanon_train_frac=None, hard_battery=False, posdeg_mult=1,
-             verbose=False, **comp_kw):
+             reward_source="host", verbose=False, **comp_kw):
     """One seed. `learn_mode`:
         'hebbian'  -> the brain-based default: the cue->role weights are LEARNED on the substrate by Hebbian
                       co-firing (the load-bearing claim; NO-LEARN/PERMUTE controls guard it).
@@ -807,16 +895,24 @@ def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="hebbian", epochs=8,
                                                          hard_battery=hard_battery, posdeg_mult=posdeg_mult)
     train_ex = _examples_to_evidence(train_sents)
 
+    # the spiking-RPE reward (Part 2) needs the SNc dopamine pool on the bridge.
+    needs_snc = (learn_mode == "error_gated" and reward_source == "spiking_rpe")
+    comp_kw_snc = dict(comp_kw)
+    if needs_snc:
+        comp_kw_snc["with_snc"] = True
+
     # ---- LEARNED multi-cue spiking parser ----
-    learned = _build_competition(seed, verbose=verbose, **comp_kw)
+    learned = _build_competition(seed, verbose=verbose, **comp_kw_snc)
     if learn_mode == "install":
         for c, w in INSTALLED_CUE_WEIGHTS.items():
             learned.set_cue_weight(c, w)
         learned.freeze_all_cue_plasticity()
     elif learn_mode == "error_gated":
         # BRAIN-BASED three-factor validity learning (spike-eligibility x reward x vote): learns the validity
-        # SPREAD that plain Hebbian co-firing cannot (position pushed below semantics, distractor zeroed).
-        learned.learn_error_gated(train_ex, epochs=epochs, settle_steps=train_steps, seed=seed)
+        # SPREAD that plain Hebbian co-firing cannot (position pushed below semantics, distractor zeroed). With
+        # reward_source='spiking_rpe' the reward term is the SNc dopamine pool's firing (Part 2 neuralization).
+        learned.learn_error_gated(train_ex, epochs=epochs, settle_steps=train_steps, seed=seed,
+                                  reward_source=reward_source)
         learned.freeze_all_cue_plasticity()
     else:  # "hebbian" -- the plain v16 co-firing rule (CHARACTERIZED HONEST NEGATIVE for validity learning)
         learned.learn(train_ex, epochs=epochs, train_steps=train_steps, seed=seed, freeze=False)
@@ -851,6 +947,7 @@ def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="hebbian", epochs=8,
     res = {
         "seed": seed,
         "learn_mode": learn_mode,
+        "reward_source": reward_source,
         "weights_learned": {k: round(v, 4) for k, v in w_learned.items()},
         "abstain_margin": round(abstain_margin, 5),
         "multicue_battery": {k: round(v, 4) for k, v in mc_battery.items()},
@@ -888,9 +985,10 @@ def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="hebbian", epochs=8,
         np.random.default_rng(seed + 9000).shuffle(perm_targets)
         permute_map = dict(zip(perm_nouns, perm_targets))
         train_ex_perm = _examples_to_evidence(train_sents, permute_map=permute_map)
-        permuted = _build_competition(seed, **comp_kw)
+        permuted = _build_competition(seed, **comp_kw_snc)
         if learn_mode == "error_gated":
-            permuted.learn_error_gated(train_ex_perm, epochs=epochs, settle_steps=train_steps, seed=seed)
+            permuted.learn_error_gated(train_ex_perm, epochs=epochs, settle_steps=train_steps, seed=seed,
+                                       reward_source=reward_source)
         else:
             permuted.learn(train_ex_perm, epochs=epochs, train_steps=train_steps, seed=seed, freeze=False)
         permuted.freeze_all_cue_plasticity()
@@ -956,6 +1054,9 @@ def main():
                     help="install=validated weights installed into the spiking WTA (headline GO); "
                          "error_gated=brain-based three-factor on-substrate validity learning; "
                          "hebbian=plain v16 co-firing (characterized NEGATIVE for validity learning)")
+    ap.add_argument("--reward-source", choices=("host", "spiking_rpe"), default="host",
+                    help="error_gated reward term: host=`target-tanh(pred)` scalar (Part 1); "
+                         "spiking_rpe=the SNc dopamine pool's firing IS the RPE (Part 2 neuralization).")
     ap.add_argument("--no-controls", action="store_true",
                     help="skip the NO-LEARN + PERMUTE control bridges (fast smoke)")
     ap.add_argument("--no-held-out", action="store_true", help="train==test fillers (diagnostic)")
@@ -979,7 +1080,8 @@ def main():
         r = run_seed(s, n_per_cond=args.n_per_cond, held_out=held_out, learn_mode=args.learn_mode,
                      epochs=args.epochs, train_steps=args.train_steps, read_steps=args.read_steps,
                      controls=controls, noncanon_train_frac=args.noncanon_train_frac,
-                     hard_battery=args.hard_battery, posdeg_mult=args.posdeg_mult, verbose=args.smoke)
+                     hard_battery=args.hard_battery, posdeg_mult=args.posdeg_mult,
+                     reward_source=args.reward_source, verbose=args.smoke)
         results.append(r)
         print(f"[seed {s}] done: GO={r['seed_GO']}", flush=True)
 
