@@ -92,6 +92,39 @@ commits to N every step. **The signed push-pull amplifies the very structural N-
 randomizing away.** This is exactly the margin-amplification failure mode the scoping flagged ("it
 re-biases").
 
+### The surplus is STRUCTURAL across ALL arms (the clincher that it's upstream of the read-out)
+
+The TOTAL commit-count axis surplus (whole-episode, all 1800 steps) across the arms — this is the raw
+selection-stage count, independent of the read-out:
+
+| arm | total N | total S | **N−S surplus** | total E | total W | E−W | dom |
+|---|---|---|---|---|---|---|---|
+| BASELINE (no fix) | 60990 | 50203 | **+10787** | 54772 | 57908 | −3136 | N,N,N,N |
+| FIX1 (tie-break) | 54596 | 45040 | **+9556** | 58648 | 60729 | −2081 | N,W,W,E |
+| FIX1+2 (+ sel homeo) | 56084 | 46973 | **+9111** | 57068 | 67721 | −10653 | W,N,W,W |
+| FIX1+3 (opponent-axis) | ~58000 | ~48000 | **~+10800** | — | — | — | N,N,N,N |
+
+- **The N-S surplus (~+9000 to +10800) is present in EVERY arm**, including the ones that track the goal
+  (FIX1, FIX1+2). It is a structural property of the spiking selection pools, NOT a read-out artifact.
+- **FIX 1 "works" by NOT reading the surplus as decisive** — it randomizes the near-ties, so the systematic
+  N-over-S count never becomes a hard N at the read-out (the surplus is still +9556, but the dom tracks
+  because the read-out ignores it on ties). It MASKS, it does not REMOVE.
+- **FIX 2 (per-pool homeostasis at the sel stage) barely dented it** (−9%: +9556 → +9111) — the per-region
+  threshold-adapt does NOT equalize the N-S count offset, which is why FIX1+2 did not improve the score over
+  FIX1. (FIX1+2's E−W = −10653 shows the homeostasis perturbed the E-W axis, not removed the N-S surplus.)
+- **FIX 3 reads the surplus as decisive** and re-biases. ⇒ The surplus lives UPSTREAM of the read-out, at the
+  spiking selection stage, and is NOT removed by per-pool homeostasis. This is the precise, confirmed deeper
+  sub-blocker the deep-research scoping must target.
+
+**Verified rig facts (controller-checkable):** the rig uses `sc_popvector_readout=True` (line 161 of the
+de-risk runner) — the SYMMETRIC pop-vector cosine decode, so the deployed half-plane-ramp's S-suppression
+asymmetry (`max(0,−sy_offset)` darkening cortex_S) is NOT the active source here. The rig also uses
+`enable_cluster_e_topography=True` (line 121) — the N corner is placed at the geometric TOP of the unit
+square (N=(0.5,1.0), S=(0.5,0.0)); whether this topographic prior, the shared-STN→GPi common baseline, or the
+SC→cortex drive is the dominant source of the +9000 N-S count surplus is the precise question for the gated
+deep-research scoping (a single-region firing-rate probe down the cortex→str→GPi→thal→sel chain would
+localize it).
+
 ---
 
 ## The FIX-3 edit summary
