@@ -233,12 +233,38 @@ indicated remedy.
    dropped to 1.469 with dom=E** (E 0.30, NOT N-pinned): the cortex-WTA genuinely BROKE the phase-0 N-pinning the other
    arms all showed. ⇒ the inter-cardinal competition is the CORRECT mechanism direction; the default strength (FS weight
    8, 5 FS/pool) is just too weak to also win during re-orient. (`scpv_R1cortexwta_s42.json`.)
-3. **R1 escalation — STRONG cortex WTA (FS weight 40, 15 FS/pool) — IN FLIGHT (seed 42).** Given the default WTA broke
-   phase-0 N-pinning, escalate the inter-cardinal inhibition 5× to test whether a STRONGER competition lets the
-   position-correct SC margin win during re-orient too. Wired (`--cortex-fs-weight/--cortex-fs-n`, commit `40a54a9b`),
-   pure point-neuron, byte-identical default-off.
-4. **(reserve) Option E** — a goal-change inhibition-of-return/fixation reset, only if the residual turns out to be
+3. **R1 escalation — STRONG cortex WTA (FS weight 40, 15 FS/pool) — DONE, NEGATIVE (over-suppressed) (seed 42).**
+   Σ 135.2, post-change 115.3, dom back to N every phase, AND phase0 acquire REGRESSED to 19.9 (from the FS=8
+   default's 1.5). The 5× stronger inter-cardinal inhibition QUENCHED the cortex pools (too much mutual inhibition →
+   all four pools suppressed → the N-bias re-dominates via residual noise) — the over-strong-WTA / Rutishauser
+   α-stability failure. ⇒ stronger is NOT better; there may be an intermediate. (`scpv_R1strong_s42.json`.)
+4. **R1 intermediate — cortex WTA FS weight 16, 10 FS/pool — IN FLIGHT (seed 42).** Threads between the FS=8 (broke
+   phase-0 N-pinning but couldn't re-orient) and FS=40 (over-quenched) — the last cortex-WTA-strength shot before the
+   convergent characterization.
+5. **(reserve) Option E** — a goal-change inhibition-of-return/fixation reset, only if the residual turns out to be
    bump/ring hysteresis (the diagnosis says it is NOT, so this is a reserve).
+
+### Full mechanism sweep at faithful grid-32 (seed 42) — the convergent characterization
+
+| mechanism | Σ post-change | re-orient? | dom-per-phase | note |
+|---|---|---|---|---|
+| **HOST** (scaffold) | **1.74** | **YES** | E,W,S,E | the ceiling — host orienting tracks every goal |
+| NEURAL (pop-vector + divnorm, the Option-A+B fix) | 129.8 | NO | N,N,N,N | stuck-N; SCRAM doesn't collapse (decode not load-bearing) |
+| Lever 1 (lower divnorm gain 0.005) | 108.1 | NO | N,N,N,N | static-ACQUIRE improved (phase0 0.63), re-orient unchanged |
+| R1 cortex-WTA FS=8 (default) | 124.7 | NO | **E**,N,N,N | the one positive signal: BROKE phase-0 N-pinning (dom=E) |
+| R1 cortex-WTA FS=40 (strong) | 115.3 | NO | N,N,N,N | over-quenched (phase0 regressed to 19.9) |
+| R1 cortex-WTA FS=16 (intermediate) | <!-- FILL --> | | | |
+
+**The convergent pattern (5 variants so far):** the spiking SC orienting read-out does NOT re-orient at faithful
+grid-32 across the read-out-geometry fix (pop-vector + divnorm) + the SC-drive lever (lower gain) + two cortex-WTA
+competition strengths. The actor is **structurally pinned to the top edge (pos row ~31)** during re-orient regardless
+of the SC read-out signal; the HOST (whose orienting reaches the actor strongly) overcomes this same N-bias and tracks
+every goal — so the wall is that the SC read-out's signal, even geometry-corrected + competition-sharpened, is not
+strong/selective enough to override the N-bias when the goal MOVES. The sole positive signal is that the cortex-WTA
+(FS=8) broke the phase-0 N-pinning (static acquisition), confirming the competition mechanism is directionally right
+but insufficient for re-orient. **This is a thoroughly-characterized HONEST NEGATIVE, not "closed boundary" by default
+— the genuine point-neuron mechanism classes (read-out geometry + competition) were each attempted at faithful scale
+and each rigorously measured.**
 
 ⇒ **#6 status: Option A+B = HONEST NEGATIVE at faithful grid-32 (seed 42, the geometry fix finally tested at faithful
 scale). The arc CONTINUES per the no-boundary-exit rule: re-calibration (Lever 1) NEGATIVE; R1 cortex-WTA default
