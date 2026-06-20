@@ -1,0 +1,102 @@
+{
+  "item": "burndown_9_critic_graded_readout",
+  "deterministic_regime": true,
+  "grid_size": 32,
+  "lead_ms": 150.0,
+  "host_ref_delta": 1.3,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "per_seed": {
+    "42": {
+      "linear": {
+        "delta": 1.0,
+        "near_burst": 100.0,
+        "far_burst": 100.0,
+        "critic_rate_hz": 0.0,
+        "above_floor": true,
+        "v_near_far_ratio": 0.0,
+        "w_near_far_ratio": 0.9778545490847473,
+        "lesion_delta": 1.0,
+        "lesion_far_burst": 100.0,
+        "lesion_collapses": true
+      },
+      "plateau": {
+        "delta": 0.0,
+        "near_burst": 0.0,
+        "far_burst": 0.0,
+        "critic_rate_hz": 219.375,
+        "above_floor": false,
+        "v_near_far_ratio": 5.318181818181818,
+        "w_near_far_ratio": 77.08372822107087,
+        "lesion_delta": 0.7222222222222222,
+        "lesion_far_burst": 43.333333333333336,
+        "lesion_collapses": true
+      }
+    },
+    "43": {
+      "linear": {
+        "delta": 1.0,
+        "near_burst": 100.0,
+        "far_burst": 100.0,
+        "critic_rate_hz": 0.0,
+        "above_floor": true,
+        "v_near_far_ratio": 0.0,
+        "w_near_far_ratio": 0.9922560587161345,
+        "lesion_delta": 1.0,
+        "lesion_far_burst": 100.0,
+        "lesion_collapses": true
+      },
+      "plateau": {
+        "delta": 0.0,
+        "near_burst": 0.0,
+        "far_burst": 0.0,
+        "critic_rate_hz": 192.60416666666666,
+        "above_floor": false,
+        "v_near_far_ratio": 2.407552083333333,
+        "w_near_far_ratio": 71.40829573563192,
+        "lesion_delta": 0.7352941176470588,
+        "lesion_far_burst": 41.666666666666664,
+        "lesion_collapses": true
+      }
+    },
+    "44": {
+      "linear": {
+        "delta": 1.0,
+        "near_burst": 100.0,
+        "far_burst": 100.0,
+        "critic_rate_hz": 0.0,
+        "above_floor": true,
+        "v_near_far_ratio": 0.0,
+        "w_near_far_ratio": 0.997144828489145,
+        "lesion_delta": 1.0,
+        "lesion_far_burst": 100.0,
+        "lesion_collapses": true
+      },
+      "plateau": {
+        "delta": 0.0,
+        "near_burst": 0.0,
+        "far_burst": 0.0,
+        "critic_rate_hz": 175.57291666666666,
+        "above_floor": false,
+        "v_near_far_ratio": 3.728982300884956,
+        "w_near_far_ratio": 67.77935893071314,
+        "lesion_delta": 1.156862745098039,
+        "lesion_far_burst": 49.166666666666664,
+        "lesion_collapses": false
+      }
+    }
+  },
+  "median_linear_delta": 1.0,
+  "median_plateau_delta": 0.0,
+  "median_linear_critic_hz": 0.0,
+  "median_plateau_critic_hz": 192.60416666666666,
+  "linear_above_floor": 3,
+  "plateau_above_floor": 0,
+  "linear_lesion_collapses": 3,
+  "plateau_lesion_collapses": 2,
+  "verdict": "CHARACTERIZED",
+  "verdict_note": "the LINEAR graded-rate read-out cannot fire the point-neuron MSN critic from the place code at faithful scale (critic 0.00Hz, above-floor 3/3) -- linear synaptic summation is sub-rheobase on the point neuron; the all-or-none coincidence plateau exists precisely to fire it. So the read-out form is a genuine fork (graded=can't-fire vs plateau=fires-but-saturates), and the residual delta floor is the deferred DENDRITIC field-carving (b), not a clean read-out swap."
+}
