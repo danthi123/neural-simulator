@@ -5,12 +5,13 @@
 > redundancy on the embedded read-out**. This closes it. Runner (additive edit, NO `sim/` edit):
 > `research/runners/_phaseB_embedded_clause_parse_derisk.py` (`--readout-redundancy N`).
 
-## Verdict: GO — the redundancy lever lifts the 0.88 marginal seeds to ≥0.90; depth-1 embedded-clause parsing is now a clean multi-seed GO
+## Verdict: GO (6/6 seeds, GPU + CPU) — the redundancy lever lifts the 0.88 marginal seeds to 1.000; depth-1 embedded-clause parsing is now a clean multi-seed GO
 
-The two marginal seeds (43, 101) that landed at **0.875** at R=1 lift to **1.000** at R=3 (R = independent phasor
-populations, majority-vote per embedded slot), with **every anti-cheat control still collapsed** (no-segmentation
-0.500, scramble 0.000, head-attachment 0.000) and the **no-confab moat intact**. Recommend `--readout-redundancy 3`
-as the de-risk default for depth-1 embedded-clause parsing.
+The two marginal seeds (43, 101) that landed at **0.88/0.875** at R=1 lift to **1.000** at R=3 (R = independent
+phasor populations, majority-vote per embedded slot) on BOTH the GPU 6-seed run (all 6 seeds 1.000) and the CPU
+check, with **every anti-cheat control still collapsed** (no-segmentation 0.500, scramble 0.000, head-attachment
+0.000) and the **no-confab moat intact 6/6**. The prior near-GO (embedded mean 0.951, 4-of-6 strict) is now a clean
+embedded 6/6 at 1.000. Recommend `--readout-redundancy 3` as the de-risk default for depth-1 embedded-clause parsing.
 
 ## The mechanism (the named lever; reuse-by-import, NO `sim/` edit)
 
@@ -47,9 +48,26 @@ The CPU numpy path reproduces the GPU `0.88` marginal dip as `0.875` (21/24) and
 (seeds 43, 101 are the two documented marginal seeds; seed 42 confirms R=1 == R=3 where the read-out was already
 clean. R=1 verdict on {43,101} = BOUNDARY → R=3 verdict = GO.)
 
-### Multi-seed (GPU/cupy, seeds 42,43,44,100,101,102; 12 subj + 12 obj held-out relatives/seed), R=3
+### Multi-seed (GPU/cupy, seeds 42,43,44,100,101,102; 12 subj + 12 obj held-out relatives/seed), R=3 — GO 6/6
 
-<!-- GPU_MULTISEED_TABLE -->
+The CPU lift reproduces on the real GPU substrate: **all 6 seeds at 1.000**, both documented marginal seeds (43, 101)
+lifted from 0.88 → 1.000, every control collapsed, moat intact.
+
+| seed | embedded acc | matrix acc | no-seg (must fail) | scramble (must fail) | head-attach (must fail) | moat | secs |
+|---|---|---|---|---|---|---|---|
+| 42  | 1.000 | 1.000 | 0.500 | 0.000 | 0.000 | ✓ | 391.8 |
+| 43  | **1.000** (was 0.88) | 1.000 | 0.500 | 0.000 | 0.000 | ✓ | 388.7 |
+| 44  | 1.000 | 1.000 | 0.500 | 0.000 | 0.000 | ✓ | 387.5 |
+| 100 | 1.000 (was 0.96) | 1.000 | 0.500 | 0.000 | 0.000 | ✓ | 399.6 |
+| 101 | **1.000** (was 0.88) | 1.000 | 0.500 | 0.000 | 0.000 | ✓ | 421.8 |
+| 102 | 1.000 | 1.000 | 0.500 | 0.000 | 0.000 | ✓ | 410.2 |
+| **mean** | **1.000** | **1.000** | 0.500 | 0.000 | 0.000 | 6/6 | — |
+
+Verdict line from the run: `embedded roles ≥0.90: 6/6 seeds   matrix roles ≥0.90: 6/6 seeds`; NO-SEGMENTATION
+baseline FAILS (all); scramble FAILS (all); permuted-head FAILS (all); moat intact (all); leakage clean (all);
+**==> depth-1 GO**. (Compare the prior near-GO: embedded mean 0.951 / 4-of-6 strict at R=1; the redundancy lever
+takes embedded to a clean 6/6 at 1.000.) Per-seed wall ~390–420 s at R=3 (GPU; R=3 triples the read-out cost). JSON:
+`research/findings/raw/_embedded_clause_redundancy_multiseed.json`.
 
 ## The controls all still collapse (a "success" without these is an artifact)
 

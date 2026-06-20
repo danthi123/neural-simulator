@@ -1,0 +1,101 @@
+{
+  "backend": "cupy",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_heldout": 12,
+  "readout_redundancy": 3,
+  "results": [
+    {
+      "seed": 42,
+      "n": 24,
+      "emb_acc": 1.0,
+      "mat_acc": 1.0,
+      "seg_fail": 0,
+      "flat_baseline_acc": 0.5,
+      "scram_acc": 0.0,
+      "head_attach_acc": 0.0,
+      "leakage": 0,
+      "moat_ok": true,
+      "secs": 391.8
+    },
+    {
+      "seed": 43,
+      "n": 24,
+      "emb_acc": 1.0,
+      "mat_acc": 1.0,
+      "seg_fail": 0,
+      "flat_baseline_acc": 0.5,
+      "scram_acc": 0.0,
+      "head_attach_acc": 0.0,
+      "leakage": 0,
+      "moat_ok": true,
+      "secs": 388.7
+    },
+    {
+      "seed": 44,
+      "n": 24,
+      "emb_acc": 1.0,
+      "mat_acc": 1.0,
+      "seg_fail": 0,
+      "flat_baseline_acc": 0.5,
+      "scram_acc": 0.0,
+      "head_attach_acc": 0.0,
+      "leakage": 0,
+      "moat_ok": true,
+      "secs": 387.5
+    },
+    {
+      "seed": 100,
+      "n": 24,
+      "emb_acc": 1.0,
+      "mat_acc": 1.0,
+      "seg_fail": 0,
+      "flat_baseline_acc": 0.5,
+      "scram_acc": 0.0,
+      "head_attach_acc": 0.0,
+      "leakage": 0,
+      "moat_ok": true,
+      "secs": 399.6
+    },
+    {
+      "seed": 101,
+      "n": 24,
+      "emb_acc": 1.0,
+      "mat_acc": 1.0,
+      "seg_fail": 0,
+      "flat_baseline_acc": 0.5,
+      "scram_acc": 0.0,
+      "head_attach_acc": 0.0,
+      "leakage": 0,
+      "moat_ok": true,
+      "secs": 421.8
+    },
+    {
+      "seed": 102,
+      "n": 24,
+      "emb_acc": 1.0,
+      "mat_acc": 1.0,
+      "seg_fail": 0,
+      "flat_baseline_acc": 0.5,
+      "scram_acc": 0.0,
+      "head_attach_acc": 0.0,
+      "leakage": 0,
+      "moat_ok": true,
+      "secs": 410.2
+    }
+  ],
+  "n_emb_pass": 6,
+  "n_mat_pass": 6,
+  "no_seg_baseline_fails": true,
+  "scram_fails": true,
+  "head_attach_fails": true,
+  "moat_all": true,
+  "leakage_clean": true,
+  "verdict": "GO"
+}
