@@ -1,0 +1,636 @@
+{
+  "summary": {
+    "n": 6,
+    "eq_n": 6,
+    "moat_n": 6,
+    "lesion_n": 6,
+    "permuted_n": 6,
+    "verdict": "GO"
+  },
+  "results": [
+    {
+      "seed": 42,
+      "D": 64,
+      "rows": [
+        {
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "host": "north",
+          "sub": "north",
+          "decision": "ans0",
+          "rates": {
+            "m0": 0.252,
+            "m1": 0.0,
+            "f0": "True",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "host": "river",
+          "sub": "river",
+          "decision": "ans1",
+          "rates": {
+            "m0": 0.098,
+            "m1": 0.228,
+            "f0": "False",
+            "f1": "True"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.074,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.007,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        }
+      ],
+      "eq_all": true,
+      "moat_ok": true,
+      "false_accepts": 0,
+      "lesion_fails_safe": true,
+      "lesion_decisions": [
+        "abstain",
+        "abstain"
+      ],
+      "permuted_inverts": true,
+      "permuted_decisions": [
+        "ans1",
+        "ans0"
+      ]
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "rows": [
+        {
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "host": "north",
+          "sub": "north",
+          "decision": "ans0",
+          "rates": {
+            "m0": 0.264,
+            "m1": 0.0,
+            "f0": "True",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "host": "river",
+          "sub": "river",
+          "decision": "ans1",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.29,
+            "f0": "False",
+            "f1": "True"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.014,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        }
+      ],
+      "eq_all": true,
+      "moat_ok": true,
+      "false_accepts": 0,
+      "lesion_fails_safe": true,
+      "lesion_decisions": [
+        "abstain",
+        "abstain"
+      ],
+      "permuted_inverts": true,
+      "permuted_decisions": [
+        "ans1",
+        "ans0"
+      ]
+    },
+    {
+      "seed": 44,
+      "D": 64,
+      "rows": [
+        {
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "host": "north",
+          "sub": "north",
+          "decision": "ans0",
+          "rates": {
+            "m0": 0.233,
+            "m1": 0.0,
+            "f0": "True",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "host": "river",
+          "sub": "river",
+          "decision": "ans1",
+          "rates": {
+            "m0": 0.013,
+            "m1": 0.232,
+            "f0": "False",
+            "f1": "True"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.051,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        }
+      ],
+      "eq_all": true,
+      "moat_ok": true,
+      "false_accepts": 0,
+      "lesion_fails_safe": true,
+      "lesion_decisions": [
+        "abstain",
+        "abstain"
+      ],
+      "permuted_inverts": true,
+      "permuted_decisions": [
+        "ans1",
+        "ans0"
+      ]
+    },
+    {
+      "seed": 45,
+      "D": 64,
+      "rows": [
+        {
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "host": "north",
+          "sub": "north",
+          "decision": "ans0",
+          "rates": {
+            "m0": 0.244,
+            "m1": 0.0,
+            "f0": "True",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "host": "river",
+          "sub": "river",
+          "decision": "ans1",
+          "rates": {
+            "m0": 0.008,
+            "m1": 0.218,
+            "f0": "False",
+            "f1": "True"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.006,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        }
+      ],
+      "eq_all": true,
+      "moat_ok": true,
+      "false_accepts": 0,
+      "lesion_fails_safe": true,
+      "lesion_decisions": [
+        "abstain",
+        "abstain"
+      ],
+      "permuted_inverts": true,
+      "permuted_decisions": [
+        "ans1",
+        "ans0"
+      ]
+    },
+    {
+      "seed": 46,
+      "D": 64,
+      "rows": [
+        {
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "host": "north",
+          "sub": "north",
+          "decision": "ans0",
+          "rates": {
+            "m0": 0.184,
+            "m1": 0.0,
+            "f0": "True",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "host": "river",
+          "sub": "river",
+          "decision": "ans1",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.266,
+            "f0": "False",
+            "f1": "True"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.016,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.005,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        }
+      ],
+      "eq_all": true,
+      "moat_ok": true,
+      "false_accepts": 0,
+      "lesion_fails_safe": true,
+      "lesion_decisions": [
+        "abstain",
+        "abstain"
+      ],
+      "permuted_inverts": true,
+      "permuted_decisions": [
+        "ans1",
+        "ans0"
+      ]
+    },
+    {
+      "seed": 47,
+      "D": 64,
+      "rows": [
+        {
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "blk0-present",
+          "host": "north",
+          "sub": "north",
+          "decision": "ans0",
+          "rates": {
+            "m0": 0.192,
+            "m1": 0.0,
+            "f0": "True",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "blk1-present",
+          "host": "river",
+          "sub": "river",
+          "decision": "ans1",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.219,
+            "f0": "False",
+            "f1": "True"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "absent-agent",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "absent-action",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        },
+        {
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "cross-no-block",
+          "host": null,
+          "sub": null,
+          "decision": "abstain",
+          "rates": {
+            "m0": 0.0,
+            "m1": 0.0,
+            "f0": "False",
+            "f1": "False"
+          },
+          "match_host_eq": true
+        }
+      ],
+      "eq_all": true,
+      "moat_ok": true,
+      "false_accepts": 0,
+      "lesion_fails_safe": true,
+      "lesion_decisions": [
+        "abstain",
+        "abstain"
+      ],
+      "permuted_inverts": true,
+      "permuted_decisions": [
+        "ans1",
+        "ans0"
+      ]
+    }
+  ]
+}
