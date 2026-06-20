@@ -1,0 +1,208 @@
+{
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "dims": [
+    64,
+    128
+  ],
+  "K": 8,
+  "all_recall_eq_host": true,
+  "syn_correct_eq_host": true,
+  "mean_syn_ok": 1.0,
+  "mean_host_ok": 1.0,
+  "mean_lesion": 0.0,
+  "permuted_follows_all": true,
+  "moat_total_breaches": 0,
+  "per_row": [
+    {
+      "seed": 42,
+      "D": 64,
+      "K": 8,
+      "eq_patient": 8,
+      "eq_agent": 8,
+      "eq_yes": 8,
+      "ok_patient": 8,
+      "ok_agent": 8,
+      "ok_yes": 8,
+      "host_ok_patient": 8,
+      "moat_breaches": 0,
+      "moat_patient": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "moat_yes": [
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "lesion_ok": 0,
+      "perm_follows": 1,
+      "perm_q": [
+        "cat",
+        "go",
+        "river"
+      ]
+    },
+    {
+      "seed": 42,
+      "D": 128,
+      "K": 8,
+      "eq_patient": 8,
+      "eq_agent": 8,
+      "eq_yes": 8,
+      "ok_patient": 8,
+      "ok_agent": 8,
+      "ok_yes": 8,
+      "host_ok_patient": 8,
+      "moat_breaches": 0,
+      "moat_patient": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "moat_yes": [
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "lesion_ok": 0,
+      "perm_follows": 1,
+      "perm_q": [
+        "cat",
+        "go",
+        "river"
+      ]
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "K": 8,
+      "eq_patient": 8,
+      "eq_agent": 8,
+      "eq_yes": 8,
+      "ok_patient": 8,
+      "ok_agent": 8,
+      "ok_yes": 8,
+      "host_ok_patient": 8,
+      "moat_breaches": 0,
+      "moat_patient": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "moat_yes": [
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "lesion_ok": 0,
+      "perm_follows": 1,
+      "perm_q": [
+        "cat",
+        "go",
+        "river"
+      ]
+    },
+    {
+      "seed": 43,
+      "D": 128,
+      "K": 8,
+      "eq_patient": 8,
+      "eq_agent": 8,
+      "eq_yes": 8,
+      "ok_patient": 8,
+      "ok_agent": 8,
+      "ok_yes": 8,
+      "host_ok_patient": 8,
+      "moat_breaches": 0,
+      "moat_patient": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "moat_yes": [
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "lesion_ok": 0,
+      "perm_follows": 1,
+      "perm_q": [
+        "cat",
+        "go",
+        "river"
+      ]
+    },
+    {
+      "seed": 44,
+      "D": 64,
+      "K": 8,
+      "eq_patient": 8,
+      "eq_agent": 8,
+      "eq_yes": 8,
+      "ok_patient": 8,
+      "ok_agent": 8,
+      "ok_yes": 8,
+      "host_ok_patient": 8,
+      "moat_breaches": 0,
+      "moat_patient": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "moat_yes": [
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "lesion_ok": 0,
+      "perm_follows": 1,
+      "perm_q": [
+        "cat",
+        "go",
+        "river"
+      ]
+    },
+    {
+      "seed": 44,
+      "D": 128,
+      "K": 8,
+      "eq_patient": 8,
+      "eq_agent": 8,
+      "eq_yes": 8,
+      "ok_patient": 8,
+      "ok_agent": 8,
+      "ok_yes": 8,
+      "host_ok_patient": 8,
+      "moat_breaches": 0,
+      "moat_patient": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "moat_yes": [
+        "unknown",
+        "unknown",
+        "unknown"
+      ],
+      "lesion_ok": 0,
+      "perm_follows": 1,
+      "perm_q": [
+        "cat",
+        "go",
+        "river"
+      ]
+    }
+  ]
+}
