@@ -72,22 +72,58 @@ Chosen operating point for the grid-32 verdict: **`sigma=5, gain=0.02`**.
 
 ## THE FAITHFUL GRID-32 VERDICT (seed 42/43/44, n=1800, warmup-600)
 
-Per-phase `final_quarter_mean_distance` (lower = better; the goal MOVES each phase so phases 1–3 are re-orients):
+Per-phase `final_quarter_mean_distance` (lower = better; the goal MOVES each phase so phases 1–3 are re-orients).
+The goal schedule: phase0 NE `(30,30)`, phase1 far-W `(1,30)`, phase2 SW `(1,1)`, phase3 SE `(30,1)`. Seed 42:
 
-<!-- FILL: the grid-32 per-phase finalQ table for HOST / NEURAL / SCRAM / (RAMP), 3 seeds -->
+| arm | phase0 (acquire, NE) | phase1 (re-orient, far-W) | phase2 (re-orient, SW) | phase3 (re-orient, SE) | Σ all | Σ post-change | dom-cardinal per phase |
+|---|---|---|---|---|---|---|---|
+| **HOST** (scaffold) | 0.496 (dom **E**) | 0.540 (dom **W**) | 0.549 (dom **S**) | 0.646 (dom **E**) | **2.230** | **1.735** | E, W, S, E → **tracks goal every phase** |
+| **NEURAL** (popvector σ=5 g=0.02) | 16.850 (dom **N**) | 29.159 (dom **N**) | 59.257 (dom **N**) | 41.372 (dom **N**) | **146.6** | **129.8** | N, N, N, N → **STUCK-N, goal-invariant** |
+| **SCRAM** (popvector + scramble lesion) | 24.522 (dom **N**) | 4.973 (dom **N**) | 48.903 (dom **N**) | 32.531 (dom **N**) | **110.9** | **86.4** | N, N, N, N → **STUCK-N** |
 
-**Re-orient discriminator:** NEURAL is GO iff (a) NEURAL RE-ORIENTS — sum ≈ HOST (within ~25%), post-change phases LOW
-not stuck, the per-phase dominant cardinal TRACKS the goal (W-heavy for the far-west goal, E-heavy for the SE goal);
-AND (b) SCRAM COLLAPSES at grid-32 (materially worse, post-change phases stuck, dominant cardinal goal-invariant). If
-SCRAM ≈ NEURAL the decode is NOT load-bearing.
+**The verdict (seed 42, the decisive faithful-scale read):** NEURAL is an **HONEST NEGATIVE**. At faithful grid-32 the
+calibrated population-vector decode + bump-mass divnorm + the #4 WTA ring **does NOT re-orient**: Σ = 146.6 vs HOST
+2.23 (**~66× worse**), post-change Σ = 129.8 vs HOST 1.74 (**~75× worse**), and the dominant cardinal is **stuck-N
+(N ~0.49–0.50) in EVERY phase regardless of where the goal is** — the EXACT stuck-N signature the original NEGATIVE
+documented (`2026-06-20-nav-sc-drive-reorient-derisk.md`). **The grid-8 calibration's apparent tracking
+(`sigma=5,gain=0.02` → dom `[N→W]`) was the documented false-GO scale — it does NOT survive the faithful grid-32
+confirm.**
 
-<!-- FILL: the verdict (CLOSED / next-mechanism-in-flight) -->
+**Mechanistic diagnosis (from the NEURAL episode's `commit_counts` + `decision_path_counts`):** `decision_path_counts
+= {primary: 1800, fallback: 0}` (the #4 WTA always commits), but the four `sel_X`/`commit_X` accumulators **saturate
+together at the `n_commit_per_action=40` ceiling nearly every step** (`[40,40,40,40]` is the dominant pattern) — the
+WTA ring is NOT discriminating a winner. The corrected cosine geometry + divnorm produces only a TINY directional
+margin at grid-32 (the far-goal blob is dim/small in the 16×16 `sc_map`, so the pop-vector signal is weak), and that
+margin is **SWAMPED** by the cascade's structural N-bias + the actor's vision drive before the WTA can amplify it. This
+is the scoping's predicted Option-B failure mode (`…scoping.md:172-173`: "the competition is far enough downstream
+that the un-sharpened `cortex_X` margin is already swamped by the N-bias before it reaches `sel_X`"). It is a SWAMPING /
+under-selectivity residual, NOT a bump-attractor hysteresis (the SC bump re-renders fresh every step, so Option E's
+reset is not the indicated remedy).
+
+### The SCRAM anti-cheat — the decisive clincher (NOT a collapse)
+
+**The lesion does NOT collapse relative to NEURAL — and that is what settles the verdict.** SCRAM (scrambled
+retinotopy) is stuck-N (Σ 110.9), but **NEURAL (Σ 146.6) is actually WORSE than SCRAM**. The discriminator the task
+specifies is: *"at grid-32 the lesion MUST clearly collapse — if SCRAM ≈ NEURAL, the decode is NOT load-bearing."*
+Here SCRAM ≈ NEURAL (both stuck-N, both ~75× the host, NEURAL marginally worse) ⇒ **the retinotopic pop-vector decode
+is NOT carrying the orienting at grid-32.** Destroying the retinotopy does not make things meaningfully worse because
+the actor is N-stuck regardless of what the SC read-out says — the SC contribution is being swamped before it can
+steer the action. This is a clean, unambiguous HONEST NEGATIVE for Option A+B.
 
 ---
 
 ## Anti-cheat table
 
-<!-- FILL: the anti-cheat results table -->
+| anti-cheat | requirement | result | pass? |
+|---|---|---|---|
+| Host positive control | host re-orients (centroid+argmax position decode), anchors the SC arm's gap | HOST Σ 2.23, post-change 1.74, dom tracks goal every phase | ✅ (host ceiling established) |
+| Re-orient-after-change metric (NOT static hold) | the fix must move the re-orient metric (phases 1–3), not just acquisition | NEURAL post-change 129.8 vs HOST 1.74 (~75×) — re-orient NOT moved | ✅ measured (NEGATIVE) |
+| Per-phase action distribution tracks the goal | dom-cardinal must shift W-heavy↔E-heavy across phases | NEURAL N ~0.49–0.50 EVERY phase (goal-invariant stuck-N) | ✅ measured (NEGATIVE) |
+| Retinotopy-scramble LESION collapses | SCRAM must regress materially below NEURAL (proves the decode is load-bearing) | SCRAM Σ 110.9 ≈ NEURAL Σ 146.6 (NEURAL even worse) — NO collapse | ✅ measured (decode NOT load-bearing) |
+| Matched drive (SC_CORTEX_W=18 across SC arms) | any lift attributable to GEOMETRY, not covert drive | NEURAL/SCRAM/RAMP all at SC_CORTEX_W=18 | ✅ |
+| Perception NOT stripped | `enable_visual_cortex` on, warmup-600 honored | on for all arms | ✅ |
+| Regime fidelity = grid-32 (NOT grid-8) | the verdict is grid-32/1800/warmup-600 | all 3 arms at grid-32/1800/warmup-600 | ✅ (grid-8 was the false-GO; see below) |
+| No-confab moat untouched | the SC read-out (`cp_*` nav state) is array-disjoint from the composer's complex `cp_rf_w_*` synapses | no conversational regions in these nav runs; moat by construction unaffected | ✅ |
 
 ---
 
@@ -134,4 +170,39 @@ sweep, NOT the geometry fix, whose grid-32 confirm was the empty FILL placeholde
 (`scpv_host/sc_ramp/sc_popvector/sc_popvector_scr_seed42.json`, Jun 20 13:57–14:12) are **all `grid_size=8`** — the
 documented false-GO scale (2 phases only). This doc supersedes those with the genuine grid-32 geometry-fix verdict.
 
-<!-- FILL: closing summary -->
+## VERDICT + the next mechanism (a boundary is NOT an exit)
+
+**The faithful grid-32 verdict for Option A+B (pop-vector cosine read-out + bump-mass divnorm + the #4 WTA ring) is an
+HONEST NEGATIVE, seed 42:** NEURAL does NOT re-orient (Σ 146.6 vs HOST 2.23, ~66×; stuck-N every phase), and the
+SCRAM lesion does NOT collapse relative to NEURAL (SCRAM 110.9 ≈ NEURAL 146.6) — i.e. the retinotopic decode is not
+load-bearing at faithful scale. The genuine point-neuron mechanism (the one the build abandoned mid-way) has now been
+finished, calibrated, and tested at faithful grid-32. **This is NOT "closed boundary."** Per the owner's HARD rule the
+arc continues to the next mechanism — the host orienting scaffold STAYS in place until a spiking organ re-orients.
+
+**Why it fails (diagnosis, load-bearing):** SWAMPING / under-selectivity, not hysteresis. The corrected cosine geometry
+produces a position-correct but TINY directional margin at grid-32 (a far goal-blob is dim/small in the 16×16
+`sc_map`); the #4 `sel_X` WTA ring sits far enough downstream that the cascade's structural N-bias + the actor's vision
+drive swamp that margin before it can win (the `commit_counts` show all four `sel_X` pools saturating together at the
+40-ceiling). The bump itself re-renders fresh each step (NOT stuck), so a goal-change reset (Option E) is NOT the
+indicated remedy.
+
+**The next mechanisms, in flight / queued (the scoping's Option-B-failure remedies):**
+1. **Re-calibration at faithful scale (Lever 1, gain=0.005; Lever 2, SC_CORTEX_W=80)** — the grid-8 calibration band
+   does not transfer; test whether STRENGTHENING the SC margin's influence at grid-32 (less divnorm attenuation /
+   stronger geometry-correct drive) lets the position-correct read-out track. (Note: the scoping warns the drive knob
+   alone may just uniformly over-saturate; this is the cheap screen before the distinct mechanism below.)
+2. **R1 — inter-cardinal cortex WTA (`--cortex-wta`, `enable_cortex_lateral_inhibition`)** — the mechanistically
+   DISTINCT remedy: add FS WTA competition DIRECTLY between `cortex_N/E/S/W` so the small SC margin is sharpened
+   EARLY (before the downstream `sel_X` N-bias swamps it), exactly the scoping's prescribed Option-B fix
+   (`…scoping.md:172-173`). Wired into the probe (`--cortex-wta`, commit `f95e86eb`), pure point-neuron, default-off.
+3. **(reserve) Option E** — a goal-change inhibition-of-return/fixation reset, only if the residual turns out to be
+   bump/ring hysteresis (the diagnosis says it is NOT, so this is a reserve).
+
+⇒ **#6 status: Option A+B = HONEST NEGATIVE at faithful grid-32 (seed 42, the geometry fix finally tested at faithful
+scale); the next mechanism (R1 cortex-WTA, after the cheap re-calibration screen) is in flight.** The prior "closed
+honest-negative" ledger row was premature (it cited the drive-knob's grid-32 sweep, not the geometry fix, whose grid-32
+confirm was an empty FILL); the prior subagents' arm files were all `grid_size=8` (the documented false-GO scale).
+This doc supersedes them with the genuine faithful-scale geometry-fix verdict + the continuing next-mechanism arc.
+
+_GPU (`SIM_BACKEND=cupy`). Every result JSON committed the moment it landed (anti-rest). grid-32 IS the verdict, never
+grid-8. The no-confab moat is untouched (the nav SC read-out is array-disjoint from the composer's complex synapses)._
