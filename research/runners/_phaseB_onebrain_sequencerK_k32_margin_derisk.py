@@ -229,12 +229,22 @@ def _cleanup_mode_counts(score_sb, V, bscores, input_gain, retreat, peak_mult=1.
     return dict(exact=exact, extra=extra, miss=miss, total=2 * len(bscores))
 
 
-def run_seed_K(seed, D, K, input_gain, sigma, gain, retreat, peak_mults, host_fallback_above=None):
+def run_seed_K(seed, D, K, input_gain, sigma, gain, retreat, peak_mults, host_fallback_above=None,
+               match_thresh=0.15):
     """Run one seed at store size K with the chosen retreat. Build the composer + K facts, read each block's cleanup
     scores, build the K-way sequencer + the score bridge (divnorm or WTA), and check the substrate decision == host
     + moat + lesion + permuted, with the decoded-line drive computed at the nominal peak (pm=1.0). Also runs the
     per-query-peak sweep on the cleanup-mode counts (the S5 robustness: counts must match across pm). The NO-DIVNORM
     raw control is run on the same battery to show the normalization load-bearing.
+
+    `match_thresh` (RETREAT 0 -- the threshold/drive-margin re-calibration, the cheapest UNTRIED fix): the production
+    rule fires block b iff its spiking match pool rate m{b} > match_thresh. The committed S2 run fixed this at the K=2
+    op-point 0.15; at K=32 the larger priority-WTA inhibitory fabric pulls the WINNER's own match pool down (seed-43
+    cue (sun,hop) read m4=0.116 while ALL 31 other blocks read EXACTLY 0.000 -> over-abstention, the SAFE direction).
+    Because the no-match floor is exactly 0.000 at K=32 (the divnorm killed all cross-block leak), lowering the
+    threshold into the open (0.000, 0.116) margin (e.g. 0.06-0.08) ADMITS the correct match WITHOUT any false-accept
+    (the off-target are far below). The MOAT is the hard gate -- if lowering the threshold admits ANY false-accept at
+    any seed, R0 is REJECTED for R1 (the WTA). NOT a moat-relevant axis when the no-match floor is exactly zero.
 
     `host_fallback_above`: if set and K > it, the runner uses the host `_scan` ABOVE this K (the honest characterized
     partial conversion: on-bridge to K<=K*, host above). Default None = pure on-bridge at all K."""
@@ -278,9 +288,9 @@ def run_seed_K(seed, D, K, input_gain, sigma, gain, retreat, peak_mults, host_fa
             raw_blk = host_blk
             dec_raw, rates_raw = dec, {}
         else:
-            dec, rates = run_sequencerK_with_drive(sb, meta, ca, cx, drives)
+            dec, rates = run_sequencerK_with_drive(sb, meta, ca, cx, drives, match_thresh=match_thresh)
             sub_blk = decision_to_block(dec, K)
-            dec_raw, rates_raw = run_sequencerK_with_drive(sb, meta, ca, cx, raw_drives)
+            dec_raw, rates_raw = run_sequencerK_with_drive(sb, meta, ca, cx, raw_drives, match_thresh=match_thresh)
             raw_blk = decision_to_block(dec_raw, K)
         rows.append(dict(cue=(qa, qx), kind=kind, host=patient_of(c, host_blk), sub=patient_of(c, sub_blk),
                          decision=dec, host_block=host_blk, sub_block=sub_blk, rates=rates,
@@ -298,7 +308,8 @@ def run_seed_K(seed, D, K, input_gain, sigma, gain, retreat, peak_mults, host_fa
     les = []
     if not use_host:
         for (a, x, p) in facts:
-            dec_l, _ = run_sequencerK_with_drive(sb, meta, word_idx[a], word_idx[x], drives, lesion=True)
+            dec_l, _ = run_sequencerK_with_drive(sb, meta, word_idx[a], word_idx[x], drives, lesion=True,
+                                                 match_thresh=match_thresh)
             les.append(dec_l)
         lesion_fails_safe = all(d == "abstain" for d in les)
     else:
@@ -310,7 +321,8 @@ def run_seed_K(seed, D, K, input_gain, sigma, gain, retreat, peak_mults, host_fa
     perm_ok = True
     if not use_host:
         for i, (a, x, p) in enumerate(facts):
-            dec_p, _ = run_sequencerK_with_drive(sb, meta, word_idx[a], word_idx[x], drives, permute=True)
+            dec_p, _ = run_sequencerK_with_drive(sb, meta, word_idx[a], word_idx[x], drives, permute=True,
+                                                 match_thresh=match_thresh)
             perm_decs.append(dec_p)
             if dec_p != f"ans{(i + 1) % K}":
                 perm_ok = False
@@ -354,6 +366,11 @@ def main():
                     help="per-query peak multipliers (the S5 robustness control: span >= 1 order of magnitude)")
     ap.add_argument("--host-fallback-above", type=int, default=None,
                     help="if set, use the host _scan ABOVE this K (the honest characterized partial conversion K*)")
+    ap.add_argument("--match-thresh", type=float, default=0.15,
+                    help="RETREAT 0: the production-rule match threshold (m{b} > thresh fires block b). The committed "
+                         "S2 run fixed the K=2 op-point 0.15; at K=32 the winner dipped to 0.116 vs all-others-0.000 "
+                         "-> lower into the open (0,0.116) margin (e.g. 0.06-0.08) to admit the correct match with "
+                         "ZERO false-accept risk (no-match floor is exactly 0.000). The moat is the hard gate.")
     ap.add_argument("--out", default="research/findings/raw/_phaseB_onebrain_sequencerK_k32_margin.json")
     args = ap.parse_args()
     seeds = [int(s) for s in args.seeds.split(",")]
@@ -365,14 +382,14 @@ def main():
               and off_guard["off_eq_off"] and off_guard["on_differs_from_off"])
     print(f"OFF==byte-identical guard: {off_guard} -> {'PASS' if off_ok else 'FAIL'}", flush=True)
     print(f"retreat={args.retreat} gain={args.gain} sigma={args.sigma} input_gain={args.input_gain} "
-          f"host_fallback_above={args.host_fallback_above}", flush=True)
+          f"match_thresh={args.match_thresh} host_fallback_above={args.host_fallback_above}", flush=True)
 
     all_results = {}
     for K in ks:
         results = []
         for s in seeds:
             r = run_seed_K(s, args.dim, K, args.input_gain, args.sigma, args.gain, args.retreat, peak_mults,
-                           host_fallback_above=args.host_fallback_above)
+                           host_fallback_above=args.host_fallback_above, match_thresh=args.match_thresh)
             results.append(r)
             eq = "==host" if r["eq_all"] else "!=host"
             moat = "moat-OK" if r["moat_ok"] else f"MOAT-BREACH(fa={r['false_accepts']})"
@@ -431,7 +448,7 @@ def main():
         json.dump(dict(summary=dict(per_K=summary, off_guard=off_guard, off_ok=off_ok, verdict=verdict,
                                     k_star=k_star, first_break_K=first_break_K, retreat=args.retreat,
                                     gpu=is_gpu_backend(), input_gain=args.input_gain, sigma=args.sigma,
-                                    gain=args.gain, peak_mults=peak_mults,
+                                    gain=args.gain, match_thresh=args.match_thresh, peak_mults=peak_mults,
                                     host_fallback_above=args.host_fallback_above),
                        results=all_results), f, indent=2, default=str)
     print(f"wrote {args.out}", flush=True)
