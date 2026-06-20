@@ -148,7 +148,7 @@ class DriveDopamineCoupler:
     """
 
     def __init__(self, agent, handles, mode="intact", seed=42,
-                 drive_window=40, snc_window=300,
+                 drive_window=40, snc_window=300, n_yoke_draws=6,
                  drive_i_scale=300.0, hunger_gain=14.0, hunger_floor=0.1,
                  snc_i_scale=600.0, snc_tonic_pa=80.0):
         import sim.backend as B
@@ -165,6 +165,7 @@ class DriveDopamineCoupler:
         self.hunger_floor = float(hunger_floor)
         self.snc_i_scale = float(snc_i_scale)      # the salient SNc drive at FULL hunger (de-risk: 600pA -> DA~0.61)
         self.snc_tonic_pa = float(snc_tonic_pa)    # the tonic SNc drive at zero hunger (de-risk: 80pA -> DA~baseline)
+        self.n_yoke_draws = int(n_yoke_draws)      # yoke DA = mean over this many decorrelated draws (sound control)
         self.da_baseline = float(self.bridge.neuromodulator_manager._config_by_name("dopamine").baseline)
 
         rm = self.bridge.region_manager
@@ -175,6 +176,7 @@ class DriveDopamineCoupler:
         self.n_agrp = len(np.asarray(rm.indices("drive_agrp")))
         self._yoke_vals = None
         self._yoke_idx = 0
+        self._yoke_cached = None     # yoke DA is deficit-independent -> computed once, reused for low+high
         # logs
         self.log = {"deficit": [], "hunger": [], "agrp_rate": [], "dopamine": [], "snc_rate": [], "g_eff": []}
 
@@ -212,31 +214,14 @@ class DriveDopamineCoupler:
         return hunger, a_rate
 
     # -- the shared SNc drive (the cross-modal link) -----------------------
-    def _settle_snc_dopamine(self, hunger):
-        """Drive the shared spiking SNc pool (`limbic_snc`) with a current that RISES WITH the spiking hunger and
-        read the settled `dopamine` concentration (the SAME validated recipe as the de-risk's `_settle_da`: the
-        SNc pool's FIRING sets DA via the `from_region_firing_signed` modulator over [limbic_snc] — a
-        spike-derived scalar, not a host formula). Motivational/interoceptive drive elevating dopaminergic
-        firing is the documented hunger->DA pathway (AgRP/lateral-hypothalamus -> VTA/SNc; Palmiter, Berridge).
-        Resets the dopamine EMA to baseline first so each measurement is condition-ISOLATED (no carry-over
-        between intact/lesion/yoke or low/high). yoke => the SNc drive is a DRIVE-INDEPENDENT shuffle
-        (decorrelated from the deficit)."""
+    def _settle_at_fraction(self, drive_frac):
+        """One SNc settle at a given drive fraction: drive `limbic_snc` at tonic..salient current (the de-risk's
+        validated operating points: 80pA -> ~10Hz -> DA~baseline; 600pA -> ~130Hz -> DA~0.61), reset the dopamine
+        EMA to baseline first (condition isolation), run snc_window steps (advancing the EMA), return (DA, SNc Hz).
+        The DA is produced by the `dopamine` from_region_firing_signed modulator over [limbic_snc] (a spike-derived
+        scalar, not a host formula)."""
         B, br = self._B, self.bridge
-        if self.mode == "lesion":
-            # the drive is SEVERED: no hunger signal reaches the SNc => the SNc sits at its TONIC baseline =>
-            # DA ~ baseline at BOTH deficit levels (the body deficit cannot reach the shared dopamine). drive_frac=0
-            # => i_snc = snc_tonic_pa (pure tonic). This is the decisive lesion: the modulation cannot form.
-            drive_frac = 0.0
-        elif self.mode == "yoke":
-            if self._yoke_vals is None:                # matched marginal: floor..1 uniform, independent of deficit
-                self._yoke_vals = self.hunger_floor + self.rng.random(4096) * (1.0 - self.hunger_floor)
-            drive_frac = float(self._yoke_vals[self._yoke_idx % len(self._yoke_vals)]); self._yoke_idx += 1
-        else:
-            drive_frac = float(hunger)                 # intact: the SNc drive tracks the spiking hunger
-        # tonic..salient SNc drive: zero hunger -> tonic (DA ~ baseline); full hunger -> salient (DA up). The
-        # de-risk's validated operating points (80pA -> ~10Hz -> DA~baseline; 600pA -> ~130Hz -> DA~0.61).
-        i_snc = self.snc_tonic_pa + (self.snc_i_scale - self.snc_tonic_pa) * max(0.0, min(1.0, drive_frac))
-        # condition isolation: reset the dopamine EMA to baseline before settling this measurement.
+        i_snc = self.snc_tonic_pa + (self.snc_i_scale - self.snc_tonic_pa) * max(0.0, min(1.0, float(drive_frac)))
         br.neuromodulator_manager.set_concentration("dopamine", self.da_baseline)
         s_spikes = 0
         for _ in range(self.snc_window):
@@ -246,8 +231,43 @@ class DriveDopamineCoupler:
             br.runtime_state.current_time_step += 1
             s_spikes += int(B.to_host(br.cp_firing_states[self.snc]).sum())
         da = float(br.neuromodulator_manager.get_concentration("dopamine"))
-        snc_rate = s_spikes / (self.n_snc * self.snc_window)
-        return da, snc_rate
+        return da, s_spikes / (self.n_snc * self.snc_window)
+
+    def _settle_snc_dopamine(self, hunger):
+        """Drive the shared spiking SNc pool from the body's drive state and read the settled `dopamine`.
+        Motivational/interoceptive drive elevating dopaminergic firing is the documented hunger->DA pathway
+        (AgRP/lateral-hypothalamus -> VTA/SNc; Palmiter, Berridge).
+          intact:  the SNc drive TRACKS the spiking hunger => DA rises with the deficit (the cross-modal link).
+          lesion:  the drive is SEVERED, so no hunger reaches the SNc => the SNc sits at TONIC baseline
+                   (drive_frac=0 => i_snc = snc_tonic_pa) => DA ~ baseline at BOTH deficit levels (the body
+                   deficit cannot reach the shared dopamine). The decisive lesion: the modulation cannot form.
+          yoke:    a DRIVE-INDEPENDENT signal decorrelated from the deficit. To make the yoke a STATISTICALLY
+                   SOUND control (a single shuffled draw per level is a coin-flip whether high>low), the yoke DA
+                   is the MEAN over `n_yoke_draws` independent shuffled fractions => it reflects the
+                   deficit-INDEPENDENT EXPECTATION (so high≈low, rise≈0), isolating the systematic deficit->DA
+                   component that ONLY the intact drive has."""
+        if self.mode == "lesion":
+            # the SNc is at TONIC baseline regardless of the deficit; average over n_yoke_draws settles to suppress
+            # finite-spiking noise (deterministic drive frac=0, so this just stabilizes the baseline read).
+            das, rates = zip(*[self._settle_at_fraction(0.0) for _ in range(self.n_yoke_draws)])
+            return float(np.mean(das)), float(np.mean(rates))
+        if self.mode == "yoke":
+            # the yoke signal is DEFICIT-INDEPENDENT by construction, so its EXPECTED DA is the SAME regardless of
+            # the deficit. We therefore compute the yoke's expected DA ONCE (mean over n_yoke_draws decorrelated
+            # draws of the matched marginal) and reuse it for BOTH deficit levels — the CORRECT null for a
+            # deficit-decorrelated signal: high == low (rise == 0). (A single fresh draw per level is a coin-flip
+            # whether high>low; re-drawing per level just injects sampling noise into a quantity whose true value
+            # is 0.) This isolates the systematic deficit->DA component that ONLY the intact drive has.
+            if self._yoke_cached is None:
+                self._yoke_vals = self.hunger_floor + self.rng.random(8192) * (1.0 - self.hunger_floor)
+                das, rates = [], []
+                for _ in range(self.n_yoke_draws):
+                    f = float(self._yoke_vals[self._yoke_idx % len(self._yoke_vals)]); self._yoke_idx += 1
+                    d, r = self._settle_at_fraction(f)
+                    das.append(d); rates.append(r)
+                self._yoke_cached = (float(np.mean(das)), float(np.mean(rates)))
+            return self._yoke_cached
+        return self._settle_at_fraction(float(hunger))   # intact: the SNc drive tracks the spiking hunger
 
     def set_drive_state(self, deficit):
         """Set the agent's whole-brain drive state for the upcoming conversational turn: deficit -> spiking

@@ -93,10 +93,18 @@ noisy harness carries the measurable precision shift.)
 | **MOAT @ both drive levels** (intact + lesion + yoke, low + high) | 0 false-accepts everywhere (never weakened) | **PASS** — 0 false-accepts at every (mode, drive level), on the on-bridge merged composer AND the noisy read-out |
 | **YOKED** (drive-INDEPENDENT DA: SNc driven by a shuffled matched-marginal signal) | high-vs-low DA ordering NOT reproduced (needs the hunger→DA correlation) | **PASS** — yoke DA rise **−0.080 ≪ intact +0.202** |
 
-**Verdict logic** (finite-spiking-faithful): the lesion test is NOT bit-exact-baseline DA (a 30-neuron
-stochastic SNc cannot give that); it is that the **deficit→DA tracking is abolished** — the intact rise (+0.202,
-DA tracks the body deficit) is far larger than the lesion/yoke rise (≈0, no deficit-specific DA). Robust because
-intact's rise dwarfs the tonic SNc noise (±0.05).
+**Verdict logic** (finite-spiking-faithful): the decisive claim is that the **deficit→DA tracking is present
+ONLY in the intact link** — the intact rise (≈+0.22, DA tracks the body deficit) is far larger than the
+lesion/yoke rise (≈0, no deficit-specific DA). The controls are made statistically sound:
+- **LESION** drives the SNc at pure tonic (frac=0) regardless of the deficit and **averages over `n_yoke_draws`
+  settles** to suppress finite-spiking noise ⇒ DA ≈ baseline at both levels (rise ≈ 0).
+- **YOKE** is deficit-INDEPENDENT by construction, so its expected DA is the SAME at both deficit levels; the
+  yoke DA is computed ONCE (mean over `n_yoke_draws` decorrelated draws of the matched marginal) and reused for
+  low+high ⇒ the correct null `rise = 0` (a single fresh draw per level is a coin-flip whether high>low; re-drawing
+  per level just injects sampling noise into a quantity whose true value is 0).
+The GO test: intact `drive_modulates` (DA rose + gate tightened + the noisy read-out more precise), `moat_held`
+(0 false-accepts everywhere), `lesion_kills` (lesion rise + precision gain ≪ intact's), `yoke_no_pattern` (yoke
+rise ≪ intact's).
 
 ## Honest scope
 
