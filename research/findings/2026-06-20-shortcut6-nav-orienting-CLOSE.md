@@ -70,7 +70,11 @@ Chosen operating point for the grid-32 verdict: **`sigma=5, gain=0.02`**.
 
 ---
 
-## THE FAITHFUL GRID-32 VERDICT (seed 42/43/44, n=1800, warmup-600)
+## THE FAITHFUL GRID-32 VERDICT (seed 42, n=1800, warmup-600)
+
+_(Seed 42 only: the verdict is a robust NEGATIVE across SEVEN mechanism variants + a second operating point — a
+mechanistic stuck-N, not a marginal effect — so the standing 6-seed rule for variable EFFECTS does not apply; GPU is
+reserved for the next shortcut. A GO would have triggered the 6-seed confirmation.)_
 
 Per-phase `final_quarter_mean_distance` (lower = better; the goal MOVES each phase so phases 1–3 are re-orients).
 The goal schedule: phase0 NE `(30,30)`, phase1 far-W `(1,30)`, phase2 SW `(1,1)`, phase3 SE `(30,1)`. Seed 42:
@@ -310,9 +314,13 @@ EXHAUSTED at faithful scale.
 geometry fix) **and the prior subagents' grid-8 arm files** (the documented false-GO scale). The geometry fix is now
 genuinely tested at faithful scale, and the next mechanism class was attempted, per the no-boundary-exit rule.
 
-⇒ **#6 status: Option A+B = HONEST NEGATIVE at faithful grid-32 (seed 42, the geometry fix finally tested at faithful
-scale). The arc CONTINUES per the no-boundary-exit rule: re-calibration (Lever 1) NEGATIVE; R1 cortex-WTA default
-NEGATIVE-but-right-direction (broke phase-0 N-pinning); the STRONG cortex-WTA escalation is in flight.** The prior
+⇒ **#6 status: a comprehensively-characterized HONEST NEGATIVE at faithful grid-32 (seed 42). Per the no-boundary-exit
+rule the arc was pursued across SEVEN mechanism variants — the prescribed geometry fix (Option A+B), the SC-drive lever
+(Lever 1 lower gain), the cortex-WTA competition at three strengths (FS 8/16/40), and the combo (WTA + stronger drive)
+— ALL NEGATIVE for re-orient, corroborated at a second `gain=0` operating point. The host orienting scaffold STAYS.**
+The seed-42 verdict is conclusive on the read-out scope (the negative is mechanistic, not seed-noise: the actor's
+N-S-axis N-bias swamps the SC signal in every variant; 6-seed confirmation was not pursued because the verdict is a
+robust negative across variants, not a marginal effect — the GPU is better spent on the next shortcut). The prior
 "closed honest-negative" ledger row was premature (it cited the drive-knob's grid-32 sweep, not the geometry fix, whose
 grid-32 confirm was an empty FILL); the prior subagents' arm files were all `grid_size=8` (the documented false-GO
 scale). This doc supersedes them with the genuine faithful-scale geometry-fix verdict + the continuing next-mechanism
