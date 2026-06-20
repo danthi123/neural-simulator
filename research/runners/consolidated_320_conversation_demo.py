@@ -102,7 +102,7 @@ ABSENT_WHO = [("eat", "ball"), ("play", "apple"), ("run", "tree"), ("sleep", "pa
 NEG_FACT = ("fish", "eat", "cake")
 
 
-def run_seed(seed, codes, vocab, cat_ids, readout, composer_kind="rf"):
+def run_seed(seed, codes, vocab, cat_ids, readout, composer_kind="rf", spiking_cleanup=True):
     label = {w: c for w, c in zip(vocab, cat_ids)}
     proj = _projection(D, codes.shape[1], seed)
     grounded = {vocab[i]: grounded_phases(codes[i], proj) for i in range(len(vocab))}
@@ -111,8 +111,15 @@ def run_seed(seed, codes, vocab, cat_ids, readout, composer_kind="rf"):
     # the PRODUCTION agent, on the stream-learned codes, with neural word-order generation. composer_kind="onebrain"
     # routes the WHOLE who/what pipeline onto ONE persistent co-resident spiking bridge (the validated one-brain path);
     # default "rf" = the production numpy composer / test oracle. The grounded codes pass through to either composer.
+    # spiking_cleanup (burndown #1, default ON for the flagship one-brain path): the cleanup SELECTION (the winner-pick
+    # over the matched-filter membrane) is a fully-on-substrate spiking Izhikevich WTA -- the host argmax retired, so the
+    # WHOLE conversational turn (parse -> bind -> store -> unbind -> select -> abstain) is brain-based on one bridge.
+    # == host-argmax answers + moat 0-FA (tests/test_onebrain_spiking_cleanup.py). `--no-spiking-cleanup` is the escape.
+    # Applied to the onebrain (production) path only; rf stays its host-argmax oracle / numpy-CPU default.
+    use_spiking_cleanup = bool(spiking_cleanup) and composer_kind == "onebrain"
     agent = BrainConversationalAgent(seed=seed, concepts=concepts, grounded_codes=grounded,
-                                     enable_neural_render=True, composer_kind=composer_kind)
+                                     enable_neural_render=True, composer_kind=composer_kind,
+                                     enable_spiking_cleanup=use_spiking_cleanup)
 
     # grounded-code structure carried (mean off-diagonal phase-cosine over the words used in the demo).
     used = sorted({w for f in FACTS for w in f})
@@ -200,6 +207,12 @@ def main():
                          "spiking bridge, no host round-trips between ops) -- the PRODUCTION DEFAULT (320-scale GO 3/3 "
                          "seeds 2026-06-18: recall 1.00, abstain 1.00, 0 false-accepts); needs SIM_BACKEND=cupy. "
                          "rf = the RFPhasorComposer (the TEST ORACLE + the numpy-CPU path).")
+    ap.add_argument("--no-spiking-cleanup", dest="spiking_cleanup", action="store_false",
+                    help="DISABLE the fully-on-substrate spiking cleanup SELECTION (burndown #1) and fall back to the "
+                         "host argmax over the matched-filter membrane. Default ON: the cleanup winner-pick is a "
+                         "spiking Izhikevich WTA (== host answers + moat 0-FA, tests/test_onebrain_spiking_cleanup.py), "
+                         "so the whole conversational turn is brain-based. The escape is for the numpy-CPU / oracle path.")
+    ap.set_defaults(spiking_cleanup=True)
     a = ap.parse_args()
 
     vocab, cat_ids, _ = taxonomy_to_vocab_categories(TAXONOMY_40x8)
@@ -216,7 +229,8 @@ def main():
             continue
         codes = np.load(cpath)
         codes = codes / (np.linalg.norm(codes, axis=1, keepdims=True) + 1e-12)
-        r = run_seed(seed, codes, vocab, cat_ids, a.readout, composer_kind=a.composer)
+        r = run_seed(seed, codes, vocab, cat_ids, a.readout, composer_kind=a.composer,
+                     spiking_cleanup=a.spiking_cleanup)
         results.append(r)
         tag = "GO" if r["go"] else ("MOAT_BREACH" if r["moat_breach"] else "NEGATIVE")
         print(f"  [seed {seed}] recall {r['recall']:.2f} | abstain {r['abstain']:.2f} "

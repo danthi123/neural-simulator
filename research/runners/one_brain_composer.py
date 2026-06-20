@@ -92,8 +92,18 @@ class OneBrainComposer:
 
     def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200, enable_batched=True,
                  enable_rf_cudagraph=True, grounded_codes=None, confidence_gate=0.0, enable_csr_cache=True,
-                 enable_attributed=False, enable_multiframe=False):
+                 enable_attributed=False, enable_multiframe=False, enable_spiking_cleanup=False):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
+        # enable_spiking_cleanup (burndown #1, default OFF = byte-identical = the numpy-CPU + test-oracle path): make
+        # the cleanup SELECTION fully on-substrate. The matched FILTER is ALREADY on the co-resident bridge (the
+        # complex-synapse `clean` matvec -> the rectified membrane `scores`); the residual host op was the WINNER-PICK
+        # (`self.words[int(np.argmax(scores))]`). When ON, `_select` routes each role's scores through a spiking
+        # Izhikevich WTA (input-normalized drive -> firing -> argmax-over-FIRING = a readout of the spiking competition,
+        # NOT a host argmax over the membrane) -- the SAME validated NEF-cleanup Stage-2 as RFPhasorComposer._spiking_
+        # cleanup (Stewart-Tang-Eliasmith; == numpy argmax multi-seed @ D=2048, 2026-06-05-composer-cleanup-NEF-GO.md).
+        # The no-confab moat is preserved by construction: the confidence_gate margin + the cue-match abstention read
+        # the SAME `scores`, and the WTA picks the same winner the argmax did, so every abstention is unchanged.
+        self.enable_spiking_cleanup = bool(enable_spiking_cleanup)
         # enable_multiframe (richer-syntax #2, default OFF = byte-identical): build a FrameParser (verb-position ->
         # frame selection + position x frame -> role, both neural) so `hear_multiframe(sentence, verbs)` comprehends a
         # sentence in an AUTO-SELECTED word-order frame (SVO/VSO/OSV). The default `hear` (the on-bridge SVO/passive
@@ -276,6 +286,46 @@ class OneBrainComposer:
         s = np.sort(np.maximum(np.asarray(scores, dtype=float), 0.0))[::-1]
         return float((s[0] - s[1]) / (s[0] + 1e-9)) if s.size >= 2 and s[0] > 0.0 else 0.0
 
+    def _spiking_select(self, scores, words):
+        """Burndown #1 -- the cleanup SELECTION in SPIKES. `scores` are the rectified matched-filter membrane values
+        (one per candidate in `words`), ALREADY computed on the co-resident bridge's complex-synapse cleanup. Stage 2
+        (the SELECTION) is the validated NEF spiking WTA (== RFPhasorComposer._spiking_cleanup's Stage 2): input-
+        normalize the scores -> drive a cached Izhikevich concept bank (reused from the inner RFPhasorComposer, keyed by
+        candidate count) -> integrate firing over the cleanup window -> winner = argmax-over-FIRING (a readout of the
+        spiking competition, the body-read of which neuron won, NOT a host argmax over the membrane). Off-target
+        concepts get ZERO normalized drive (rectified scores) so they stay silent -> a clean WTA ('off-target emits zero
+        spikes', Stewart-Tang-Eliasmith). Degenerate fallbacks (zero peak / zero firing) read the argmax of the same
+        non-negative scores -- the same value the host path would return -- so a silent competition never confabulates."""
+        comp = self.comp
+        scores = np.maximum(np.asarray(scores, dtype=float), 0.0)
+        V = len(words)
+        peak = float(scores.max()) if V else 0.0
+        if peak <= 1e-9:
+            return words[int(np.argmax(scores))]
+        drive = (scores / peak) * comp._cleanup_drive_pA
+        bank = comp._izh_bank(V)
+        bank.cp_membrane_potential_v[:] = bank._cleanup_v0     # reset to resting -> each cleanup is independent
+        bank.cp_recovery_variable_u[:] = bank._cleanup_u0
+        import sim.backend as _b
+        xp, _ = _b.get_backend()
+        bank.cp_external_input_current[:] = xp.asarray(drive, dtype=bank.cp_external_input_current.dtype)
+        firing = np.zeros(V)
+        for _ in range(comp._cleanup_window):
+            bank._run_one_simulation_step()
+            firing += np.asarray(to_host(bank.cp_firing_states)).astype(float)
+        bank.cp_external_input_current[:] = 0.0
+        if float(firing.max()) <= 0.0:
+            return words[int(np.argmax(scores))]
+        return words[int(np.argmax(firing))]
+
+    def _select(self, scores, words):
+        """Pick the winning concept from a role's matched-filter scores. Default (enable_spiking_cleanup=False): the
+        byte-identical host argmax (the numpy-CPU + test-oracle path). When ON: the fully-on-substrate spiking WTA
+        (`_spiking_select`). The single dispatch the three cleanup read sites share (per-block, batched, clause)."""
+        if self.enable_spiking_cleanup:
+            return self._spiking_select(scores, words)
+        return words[int(np.argmax(np.asarray(scores, dtype=float)))]
+
     def _read_block(self, block_idx):
         """Reconstruct block_idx + unbind all roles IN PARALLEL (one settle, no phase drift). The main roles (agent,
         action, patient, +attribute when enabled) clean up against the main vocab; the polarity role cleans up against
@@ -305,9 +355,9 @@ class OneBrainComposer:
         b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
         mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
         scores = [np.maximum(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], 0.0) for ri in range(self.n_main)]
-        out = {role: self.words[int(np.argmax(scores[ri]))] for ri, role in enumerate(self.main_roles)}
+        out = {role: self._select(scores[ri], self.words) for ri, role in enumerate(self.main_roles)}
         pol_scores = np.maximum(mem[self.c_base + self.n_main * V:self.c_base + self.n_main * V + NP], 0.0)
-        out["polarity"] = self.pol_words[int(np.argmax(pol_scores))]
+        out["polarity"] = self._select(pol_scores, self.pol_words)
         if self.confidence_gate > 0.0 and min(self._margin(scores[0]), self._margin(scores[1])) < self.confidence_gate:
             return {role: None for role in self.bind_roles}   # an unfamiliar (noise-dominated) block -> blank -> abstain
         return out
@@ -424,9 +474,9 @@ class OneBrainComposer:
         for i in range(n):
             cblk = self.bat_c_base + i * self.cb
             scores = [np.maximum(mem[cblk + ri * V:cblk + (ri + 1) * V], 0.0) for ri in range(nm)]
-            row = {role: self.words[int(np.argmax(scores[ri]))] for ri, role in enumerate(self.main_roles)}
+            row = {role: self._select(scores[ri], self.words) for ri, role in enumerate(self.main_roles)}
             ps = np.maximum(mem[cblk + nm * V:cblk + nm * V + NP], 0.0)
-            row["polarity"] = self.pol_words[int(np.argmax(ps))]
+            row["polarity"] = self._select(ps, self.pol_words)
             if self.confidence_gate > 0.0 and min(self._margin(scores[0]), self._margin(scores[1])) < self.confidence_gate:
                 row = {role: None for role in self.bind_roles}   # an unfamiliar (noise-dominated) block -> blank -> abstain
             out.append(row)
@@ -486,7 +536,7 @@ class OneBrainComposer:
                 clean += [(self.c_base + ri * V + j, self.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
         b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
         mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
-        words = [self.words[int(np.argmax(np.maximum(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], 0.0)))]
+        words = [self._select(np.maximum(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], 0.0), self.words)
                  for ri in range(3)]
         order = order_fn(3) if order_fn is not None else [0, 1, 2]
         return " ".join(words[o] for o in order)

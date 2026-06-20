@@ -183,9 +183,13 @@ class BrainConversationalAgent:
             # validated 100% on the learned 320 codes) + auto-selected multi-frame comprehension. The F=3 two-attribute
             # path is deliberately NOT wired (it degrades to ~29% on the correlated learned codes -- the documented
             # boundary, 2026-06-19-resonator-on-learned-codes-derisk.md).
+            # enable_spiking_cleanup (burndown #1) passes through too: the cleanup SELECTION (the winner-pick over the
+            # matched-filter membrane) becomes a fully-on-substrate spiking Izhikevich WTA instead of a host argmax.
+            # Default OFF here = byte-identical (the numpy-CPU + test-oracle path); the production demo opts it ON.
             self.composer = OneBrainComposer(seed=seed, D=128, vocab=vocab, grounded_codes=grounded_codes,
                                              enable_attributed=enable_attributed,
-                                             enable_multiframe=enable_multiframe)
+                                             enable_multiframe=enable_multiframe,
+                                             enable_spiking_cleanup=enable_spiking_cleanup)
         else:
             from research.runners.rf_phasor_composer import RFPhasorComposer
             vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
