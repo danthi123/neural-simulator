@@ -1,0 +1,195 @@
+{
+  "demo": "R1_imperfect_english",
+  "seed": 42,
+  "n_imperfect": 4,
+  "multi_cue_parse_correct": 4,
+  "order_only_parse_correct": 0,
+  "multi_cue_answer_correct": 4,
+  "order_only_answer_correct": 0,
+  "canonical_control_multicue_correct": true,
+  "canonical_control_orderonly_correct": true,
+  "moat_held": true,
+  "moat_detail": {
+    "order_only_unknown_agent": null,
+    "multi_cue_unknown_agent": null,
+    "order_only_unknown_verb": null,
+    "multi_cue_unknown_verb": null
+  },
+  "demo_pass": true,
+  "per_sentence": [
+    {
+      "sentence": "apple eat dog",
+      "degradation": "object-fronted (patient first)",
+      "ground_truth": {
+        "agent": "dog",
+        "patient": "apple"
+      },
+      "order_only": {
+        "parsed_agent": "apple",
+        "parsed_patient": "dog",
+        "parsed_action": "eat",
+        "who_does": null,
+        "what_does": null,
+        "parse_correct": false,
+        "answer_correct": false
+      },
+      "order_only_static": {
+        "agent": "apple",
+        "action": "eat",
+        "patient": "dog"
+      },
+      "multi_cue": {
+        "parsed_agent": "dog",
+        "parsed_patient": "apple",
+        "parsed_action": "eat",
+        "who_does": "dog",
+        "what_does": "apple",
+        "parse_correct": true,
+        "answer_correct": true
+      }
+    },
+    {
+      "sentence": "ball kick cat",
+      "degradation": "object-fronted (patient first)",
+      "ground_truth": {
+        "agent": "cat",
+        "patient": "ball"
+      },
+      "order_only": {
+        "parsed_agent": "ball",
+        "parsed_patient": "cat",
+        "parsed_action": "kick",
+        "who_does": null,
+        "what_does": null,
+        "parse_correct": false,
+        "answer_correct": false
+      },
+      "order_only_static": {
+        "agent": "ball",
+        "action": "kick",
+        "patient": "cat"
+      },
+      "multi_cue": {
+        "parsed_agent": "cat",
+        "parsed_patient": "ball",
+        "parsed_action": "kick",
+        "who_does": "cat",
+        "what_does": "ball",
+        "parse_correct": true,
+        "answer_correct": true
+      }
+    },
+    {
+      "sentence": "bone dog bite",
+      "degradation": "scrambled + dropped function words (verb last)",
+      "ground_truth": {
+        "agent": "dog",
+        "patient": "bone"
+      },
+      "order_only": {
+        "parsed_agent": "bone",
+        "parsed_patient": "bite",
+        "parsed_action": "dog",
+        "who_does": null,
+        "what_does": null,
+        "parse_correct": false,
+        "answer_correct": false
+      },
+      "order_only_static": {
+        "agent": "bone",
+        "action": "dog",
+        "patient": "bite"
+      },
+      "multi_cue": {
+        "parsed_agent": "dog",
+        "parsed_patient": "bone",
+        "parsed_action": "bite",
+        "who_does": "dog",
+        "what_does": "bone",
+        "parse_correct": true,
+        "answer_correct": true
+      }
+    },
+    {
+      "sentence": "rock fox push",
+      "degradation": "scrambled + dropped function words (verb last)",
+      "ground_truth": {
+        "agent": "fox",
+        "patient": "rock"
+      },
+      "order_only": {
+        "parsed_agent": "rock",
+        "parsed_patient": "push",
+        "parsed_action": "fox",
+        "who_does": null,
+        "what_does": null,
+        "parse_correct": false,
+        "answer_correct": false
+      },
+      "order_only_static": {
+        "agent": "rock",
+        "action": "fox",
+        "patient": "push"
+      },
+      "multi_cue": {
+        "parsed_agent": "fox",
+        "parsed_patient": "rock",
+        "parsed_action": "push",
+        "who_does": "fox",
+        "what_does": "rock",
+        "parse_correct": true,
+        "answer_correct": true
+      }
+    }
+  ],
+  "transcript": [
+    "============================================================================================",
+    "R1 -- IMPERFECT-ENGLISH COMPREHENSION: multi-cue Competition-Model parser vs order-only parser",
+    "============================================================================================",
+    "Ground truth for every item: an ANIMATE agent acts on an INANIMATE patient.",
+    "The order-only parser assigns roles by WORD POSITION alone, so degraded order -> inverted roles.",
+    "The multi-cue parser COMPETES position against animacy + verb-fit (learned validity) -> robust.",
+    "",
+    "INPUT: \"apple eat dog\"   [object-fronted (patient first)]",
+    "   ground truth        :  agent=dog    patient=apple",
+    "   order-only parser   :  agent=apple  patient=dog    -> WRONG (roles inverted)",
+    "   multi-cue parser    :  agent=dog    patient=apple  -> CORRECT",
+    "   behavioral readout  :  who_does(\"apple\")?  order-only=None   multi-cue=dog      (truth=dog)",
+    "",
+    "INPUT: \"ball kick cat\"   [object-fronted (patient first)]",
+    "   ground truth        :  agent=cat    patient=ball",
+    "   order-only parser   :  agent=ball   patient=cat    -> WRONG (roles inverted)",
+    "   multi-cue parser    :  agent=cat    patient=ball   -> CORRECT",
+    "   behavioral readout  :  who_does(\"ball\")?  order-only=None   multi-cue=cat      (truth=cat)",
+    "",
+    "INPUT: \"bone dog bite\"   [scrambled + dropped function words (verb last)]",
+    "   ground truth        :  agent=dog    patient=bone",
+    "   order-only parser   :  agent=bone   patient=bite   -> WRONG (roles inverted)",
+    "   multi-cue parser    :  agent=dog    patient=bone   -> CORRECT",
+    "   behavioral readout  :  who_does(\"bone\")?  order-only=None   multi-cue=dog      (truth=dog)",
+    "",
+    "INPUT: \"rock fox push\"   [scrambled + dropped function words (verb last)]",
+    "   ground truth        :  agent=fox    patient=rock",
+    "   order-only parser   :  agent=rock   patient=push   -> WRONG (roles inverted)",
+    "   multi-cue parser    :  agent=fox    patient=rock   -> CORRECT",
+    "   behavioral readout  :  who_does(\"rock\")?  order-only=None   multi-cue=fox      (truth=fox)",
+    "",
+    "--------------------------------------------------------------------------------------------",
+    "CANONICAL CONTROL: \"wolf carry stick\" (native SVO)  -> multi-cue parse CORRECT, order-only parse CORRECT  (the multi-cue parser does not break the native case)",
+    "",
+    "--------------------------------------------------------------------------------------------",
+    "NO-CONFAB MOAT (an UNKNOWN-subject / unstored-relation query must abstain -> None):",
+    "   what_does(\"stick\", \"carry\")  order-only=None   multi-cue=None    (both must be None)",
+    "   who_does(\"chase\", \"bird\") order-only=None   multi-cue=None    (both must be None)",
+    "   -> moat HELD (zero confabulation, both agents)",
+    "",
+    "============================================================================================",
+    "SUMMARY",
+    "   multi-cue parser  : 4/4 imperfect sentences comprehended CORRECTLY (behavioral who/what 4/4)",
+    "   order-only parser : 0/4 imperfect sentences comprehended CORRECTLY (behavioral who/what 0/4)",
+    "   canonical control : multi-cue PASS (native word order not broken)",
+    "   no-confab moat    : HELD in BOTH agents",
+    "   -> DEMO PASS: multi-cue (4/4) beats order-only (0/4) on imperfect English, moat intact",
+    "============================================================================================"
+  ]
+}

@@ -363,6 +363,12 @@ def get_run_impl(name: str) -> JSONResponse:
 
 
 PRESETS: dict[str, list[str]] = {
+    # R1 (2026-06-20) -- side-by-side SHOWCASE of the validated robust multi-cue Competition-Model parser:
+    # it comprehends IMPERFECT / non-canonical English (object-fronted, scrambled, dropped function words)
+    # where the default ORDER-ONLY parser inverts the roles, with the no-confab moat held in BOTH. Scripted +
+    # deterministic; the runner takes only --seed + --out (both injected by the launcher), so no extra args.
+    # See research/findings/2026-06-20-R1-imperfect-english-demo.md.
+    "imperfect_english_demo": [],
     "flagship": [
         "--moving-goal",
         "--enable-place-goal-readout", "--learned-perception", "--enable-dlpfc-wm",
@@ -1237,6 +1243,8 @@ PRESET_RUNNERS: dict[str, str] = {
     # Semantic memory + cue retrieval (2026-05-14 corrected after bug fix)
     "engram_stim_recall":    "research.runners.compose_concept_engram",
     "multitag_cue_recall":   "research.runners.multitag_eval",
+    # R1 robust-comprehension showcase (2026-06-20): multi-cue vs order-only parser on imperfect English.
+    "imperfect_english_demo": "research.runners.imperfect_english_demo",
     # phase_2_* presets removed -- cortex_pretraining lives on path-f-hybrid only.
 }
 
