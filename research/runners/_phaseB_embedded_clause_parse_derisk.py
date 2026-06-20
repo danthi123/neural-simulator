@@ -270,11 +270,73 @@ def _make_sentences(rng, n, kind):
     return out
 
 
+# ---------------------------------------------------------------------------
+# POPULATION-REDUNDANCY lever on the embedded read-out (the named lever to lift the 0.88 marginal seeds).
+# The 2-level embedded unbind+cleanup (`query_patient` -> `_render` -> `_cleanup`) is the noisiest step: the embedded
+# clause sits a SECOND unbind down (the matrix patient IS the embedded composite), so it accumulates the phasor
+# round-trip phase-jitter twice before the cleanup argmax -- on 2 of 6 seeds the jitter tips one of the 3 embedded
+# slots past its codebook neighbour (0.88, the 0.02-under-bar dip). The fix is the documented spike-native robustness
+# rung (c) "population redundancy + attractor cleanup": encode the SAME fact into R INDEPENDENT phasor populations
+# (distinct per-replica codebooks, the seed offset = a different sub-population) and MAJORITY-VOTE the decoded
+# embedded clause per role across the R replicas. The per-replica phase-noise is independent, so the vote averages
+# it out and the marginal slot recovers -- a redundant cortical read-out, not a config change to the algebra.
+class RedundantEmbeddedReadout:
+    """R independent `RFPhasorComposer` replicas (same D + vocab; phasor codes drawn from distinct seeds). store() the
+    same nested fact into every replica; query_patient() decodes the embedded clause in each replica and majority-votes
+    the (agent, action, patient) per slot. R=1 is a pass-through to a single composer (byte-identical to the existing
+    path). Reuse-by-import: each replica is a stock `RFPhasorComposer`; NO sim/ edit."""
+
+    def __init__(self, seed=42, D=128, vocab=None, n_replicas=1):
+        self.n_replicas = max(1, int(n_replicas))
+        # distinct seeds -> independent phasor codebooks (the seed offset 1000 keeps the replica codes well-separated
+        # from one another AND from any other composer in the run); the matrix-clause parse is unchanged (it reads the
+        # parser, not the composer), so redundancy only touches the embedded read-out.
+        self.comps = [RFPhasorComposer(seed=seed + 1000 * i, D=D, vocab=vocab) for i in range(self.n_replicas)]
+
+    @property
+    def kb(self):
+        return self.comps[0].kb
+
+    @kb.setter
+    def kb(self, v):
+        for c in self.comps:
+            c.kb = list(v) if isinstance(v, list) else v   # reset every replica's store (per-sentence isolation)
+
+    def store(self, agent, action, patient, polarity=None):
+        for c in self.comps:
+            c.store(agent, action, patient, polarity=polarity)
+
+    def query_patient(self, agent, action):
+        """Decode the embedded clause in each replica, majority-vote per word slot. A replica that abstains (None,
+        the moat) contributes no vote; if EVERY replica abstains the vote is None (the moat is preserved -- a missing
+        fact is never voted into existence)."""
+        decoded = [c.query_patient(agent, action) for c in self.comps]
+        votes = [d for d in decoded if d is not None]
+        if not votes:
+            return None                                    # all replicas abstain -> abstain (moat preserved)
+        if self.n_replicas == 1:
+            return votes[0]
+        # vote per slot of the "agent action patient" string (each replica decodes the same 3-slot clause)
+        split = [v.split() for v in votes]
+        n_slots = max(len(s) for s in split)
+        out = []
+        for j in range(n_slots):
+            from collections import Counter
+            col = Counter(s[j] for s in split if j < len(s))
+            out.append(col.most_common(1)[0][0])
+        return " ".join(out)
+
+    def query_agent(self, action, patient):               # delegated (used only by the moat probe below)
+        return self.comps[0].query_agent(action, patient)
+
+
 def _store_and_query(comp, parsed):
     """Store the parsed nested fact via the composer + read BOTH clauses back through the composer's existing decode.
     Returns (emb_pred, mat_pred) where emb_pred is the decoded embedded 'agent action patient' (or None) and mat_pred
     is the decoded matrix patient/predicate answer. The composer's `query_patient` returns the recursively-decoded
-    clause when the stored patient is a Clause (the no-confab moat returns None on a miss)."""
+    clause when the stored patient is a Clause (the no-confab moat returns None on a miss). `comp` is a single
+    `RFPhasorComposer` (the default path) OR a `RedundantEmbeddedReadout` (the population-redundancy lever); both
+    expose store()/query_patient() identically."""
     matrix = parsed["matrix"]
     emb = parsed["embedded"]
     m_agent, m_action, m_patient = matrix
@@ -288,13 +350,20 @@ def _store_and_query(comp, parsed):
     return None, (m_agent, m_action)
 
 
-def _eval_seed(seed, n_heldout=12, verbose=False):
+def _eval_seed(seed, n_heldout=12, verbose=False, readout_redundancy=1):
     """One seed: build the parser + composer, parse + store + query a held-out set of subject- AND object-relatives,
-    score embedded-clause roles + matrix-clause roles, run all anti-cheat controls. Returns a result dict."""
+    score embedded-clause roles + matrix-clause roles, run all anti-cheat controls. Returns a result dict.
+
+    readout_redundancy>1 wraps the composer in `RedundantEmbeddedReadout` (R independent phasor populations, majority
+    vote per embedded slot) -- the population-redundancy lever for the embedded read-out. R=1 == the single-composer
+    path byte-identically (the wrapper is a pass-through). The matrix-clause parse + all controls are UNCHANGED."""
     t0 = time.time()
     rng = np.random.default_rng(seed)
     parser = EmbeddedClauseParser(seed=seed)
-    comp = RFPhasorComposer(seed=seed, D=128, vocab=VOCAB)
+    if readout_redundancy > 1:
+        comp = RedundantEmbeddedReadout(seed=seed, D=128, vocab=VOCAB, n_replicas=readout_redundancy)
+    else:
+        comp = RFPhasorComposer(seed=seed, D=128, vocab=VOCAB)
 
     subj = _make_sentences(rng, n_heldout, "subj")
     objr = _make_sentences(rng, n_heldout, "obj")
@@ -396,6 +465,9 @@ def main():
     ap.add_argument("--seeds", type=str, default="42,43,44,100,101,102")
     ap.add_argument("--smoke", action="store_true", help="1-seed CPU smoke (a few depth-1 relatives, verbose)")
     ap.add_argument("--n-heldout", type=int, default=12)
+    ap.add_argument("--readout-redundancy", type=int, default=1,
+                    help="R independent phasor populations, majority-vote the embedded read-out (population-redundancy "
+                         "lever). 1 = the single-composer path (byte-identical). 3 lifts the 0.88 marginal seeds.")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
@@ -409,10 +481,11 @@ def main():
         seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
         n_heldout = args.n_heldout
 
-    print(f"[embedded-clause-parse] backend={backend} seeds={seeds} n_heldout(per kind)={n_heldout}")
+    print(f"[embedded-clause-parse] backend={backend} seeds={seeds} n_heldout(per kind)={n_heldout} "
+          f"readout_redundancy={args.readout_redundancy}")
     results = []
     for s in seeds:
-        r = _eval_seed(s, n_heldout=n_heldout, verbose=args.smoke)
+        r = _eval_seed(s, n_heldout=n_heldout, verbose=args.smoke, readout_redundancy=args.readout_redundancy)
         results.append(r)
         print(f"  seed {s:3d}: emb_acc={r['emb_acc']:.3f} mat_acc={r['mat_acc']:.3f}  "
               f"seg_fail={r['seg_fail']}  NO-SEG-baseline={r['flat_baseline_acc']:.3f}  "
@@ -443,7 +516,8 @@ def main():
     verdict = "GO" if frac_go else ("BOUNDARY" if (n_emb >= 1 or n_mat >= 1) and no_seg_fails else "NEGATIVE")
     print(f"  ==> depth-1 {verdict}")
 
-    payload = dict(backend=backend, seeds=seeds, n_heldout=n_heldout, results=results,
+    payload = dict(backend=backend, seeds=seeds, n_heldout=n_heldout,
+                   readout_redundancy=args.readout_redundancy, results=results,
                    n_emb_pass=n_emb, n_mat_pass=n_mat, no_seg_baseline_fails=no_seg_fails,
                    scram_fails=scram_fails, head_attach_fails=head_fails, moat_all=moat_all,
                    leakage_clean=leak_clean, verdict=verdict)
