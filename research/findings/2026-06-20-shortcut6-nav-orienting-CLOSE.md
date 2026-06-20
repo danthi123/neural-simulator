@@ -176,6 +176,19 @@ SIM_BACKEND=cupy python -m research.runners._nav_sc_popvector_readout_derisk \
     --arms sc_popvector_scr --seed 42 --n-steps 1800 --grid-size 32 --warmup-steps 600 \
     --sc-cortex-w 18 --divnorm-sigma 5 --divnorm-gain 0.02 \
     --out research/findings/raw/nav_gate_2a/grid32_s6/scpv_summary_SCRAM_s42.json
+
+# --- Next mechanisms (after Option A+B's NEGATIVE) ---
+# Re-calibration Lever 1 (lower divnorm gain → stronger SC margin)  [DONE: NEGATIVE]
+SIM_BACKEND=cupy python -m research.runners._nav_sc_popvector_readout_derisk \
+    --arms sc_popvector --seed 42 --n-steps 1800 --grid-size 32 --warmup-steps 600 \
+    --sc-cortex-w 18 --divnorm-sigma 5 --divnorm-gain 0.005 \
+    --out research/findings/raw/nav_gate_2a/grid32_s6/scpv_summary_RECAL_g0p005_s42.json
+
+# R1 — inter-cardinal cortex WTA (sharpen the SC margin EARLY)  [IN FLIGHT]
+SIM_BACKEND=cupy python -m research.runners._nav_sc_popvector_readout_derisk \
+    --arms sc_popvector --seed 42 --n-steps 1800 --grid-size 32 --warmup-steps 600 \
+    --sc-cortex-w 18 --divnorm-sigma 5 --divnorm-gain 0.02 --cortex-wta \
+    --out research/findings/raw/nav_gate_2a/grid32_s6/scpv_summary_R1cortexwta_s42.json
 ```
 
 (The probe `_nav_sc_popvector_readout_derisk.py` IS the faithful harness — it imports `run_moving_goal_episode` and
@@ -209,15 +222,17 @@ drive swamp that margin before it can win (the `commit_counts` show all four `se
 40-ceiling). The bump itself re-renders fresh each step (NOT stuck), so a goal-change reset (Option E) is NOT the
 indicated remedy.
 
-**The next mechanisms, in flight / queued (the scoping's Option-B-failure remedies):**
-1. **Re-calibration at faithful scale (Lever 1, gain=0.005; Lever 2, SC_CORTEX_W=80)** — the grid-8 calibration band
-   does not transfer; test whether STRENGTHENING the SC margin's influence at grid-32 (less divnorm attenuation /
-   stronger geometry-correct drive) lets the position-correct read-out track. (Note: the scoping warns the drive knob
-   alone may just uniformly over-saturate; this is the cheap screen before the distinct mechanism below.)
-2. **R1 — inter-cardinal cortex WTA (`--cortex-wta`, `enable_cortex_lateral_inhibition`)** — the mechanistically
-   DISTINCT remedy: add FS WTA competition DIRECTLY between `cortex_N/E/S/W` so the small SC margin is sharpened
-   EARLY (before the downstream `sel_X` N-bias swamps it), exactly the scoping's prescribed Option-B fix
-   (`…scoping.md:172-173`). Wired into the probe (`--cortex-wta`, commit `f95e86eb`), pure point-neuron, default-off.
+**The next mechanisms (the scoping's Option-B-failure remedies):**
+1. **Re-calibration at faithful scale (Lever 1, gain=0.005) — DONE, NEGATIVE (seed 42).** Σ 108.8, post-change 108.1,
+   stuck-N every phase. The lower gain DID improve static ACQUIRE (phase0 0.628, near host) but **could not RE-ORIENT**
+   (post-change unchanged-catastrophic) — the exact static-hold-vs-re-orient split the scoping predicted: more SC drive
+   holds a fixed bias better but cannot track a *moved* goal. ⇒ "more SC drive" is the wrong lever; the missing piece is
+   COMPETITION. (`scpv_RECAL_g0p005_s42.json`.)
+2. **R1 — inter-cardinal cortex WTA (`--cortex-wta`, `enable_cortex_lateral_inhibition`) — IN FLIGHT (seed 42).** The
+   mechanistically DISTINCT remedy: add FS WTA competition DIRECTLY between `cortex_N/E/S/W` (4 `cortex_FS_X` pools, the
+   pop-vector geometry at sigma=5/gain=0.02) so the small position-correct SC margin is sharpened EARLY, before the
+   downstream `sel_X` N-bias swamps it — exactly the scoping's prescribed Option-B fix (`…scoping.md:172-173`). Wired
+   into the probe (`--cortex-wta`, commit `f95e86eb`), pure point-neuron, default-off.
 3. **(reserve) Option E** — a goal-change inhibition-of-return/fixation reset, only if the residual turns out to be
    bump/ring hysteresis (the diagnosis says it is NOT, so this is a reserve).
 
