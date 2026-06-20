@@ -1,0 +1,282 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "go": true,
+      "check1_corr_drive_neural": true,
+      "corr_deficit_drive_sweep": 0.9903189833578685,
+      "corr_deficit_drive_lived": 0.9562339237179031,
+      "check2_self_directed_survival": true,
+      "check3_persistence_across_reset": true,
+      "survival": {
+        "band_occupancy": 1.0,
+        "min_energy": 0.955,
+        "mean_energy": 0.99915,
+        "crash_frac": 0.0
+      },
+      "lesion_survival": {
+        "band_occupancy": 0.9793333333333333,
+        "min_energy": 0.05499999999999923,
+        "mean_energy": 0.8023699999999999,
+        "crash_frac": 0.0026666666666666666
+      },
+      "yoke_survival": {
+        "band_occupancy": 0.4093333333333333,
+        "min_energy": 0.0,
+        "mean_energy": 0.33096333333333317,
+        "crash_frac": 0.5013333333333333
+      },
+      "persistence": {
+        "energy_ok": true,
+        "drive_ok": true,
+        "pos_ok": true,
+        "t_ok": true,
+        "policy_ok": true,
+        "energy_at_save": 1.0,
+        "t_at_save": 1500
+      },
+      "anti_cheats": {
+        "lesion_minE": 0.05499999999999923,
+        "yoke_minE": 0.0,
+        "no_persistence_differs": true,
+        "persisted_resume_minE": 0.985,
+        "cold_resume_minE": 0.48999999999999955,
+        "saved_policy_nontrivial": true,
+        "cold_start_blank": true,
+        "reward_provenance_ok": true
+      }
+    },
+    {
+      "seed": 43,
+      "go": true,
+      "check1_corr_drive_neural": true,
+      "corr_deficit_drive_sweep": 0.9903189833578685,
+      "corr_deficit_drive_lived": 0.9730345801732858,
+      "check2_self_directed_survival": true,
+      "check3_persistence_across_reset": true,
+      "survival": {
+        "band_occupancy": 1.0,
+        "min_energy": 0.8649999999999999,
+        "mean_energy": 0.99734,
+        "crash_frac": 0.0
+      },
+      "lesion_survival": {
+        "band_occupancy": 0.86,
+        "min_energy": 0.0,
+        "mean_energy": 0.694943333333333,
+        "crash_frac": 0.06866666666666667
+      },
+      "yoke_survival": {
+        "band_occupancy": 0.074,
+        "min_energy": 0.0,
+        "mean_energy": 0.06501333333333333,
+        "crash_frac": 0.9173333333333333
+      },
+      "persistence": {
+        "energy_ok": true,
+        "drive_ok": true,
+        "pos_ok": true,
+        "t_ok": true,
+        "policy_ok": true,
+        "energy_at_save": 0.985,
+        "t_at_save": 1500
+      },
+      "anti_cheats": {
+        "lesion_minE": 0.0,
+        "yoke_minE": 0.0,
+        "no_persistence_differs": true,
+        "persisted_resume_minE": 0.985,
+        "cold_resume_minE": 0.38499999999999945,
+        "saved_policy_nontrivial": true,
+        "cold_start_blank": true,
+        "reward_provenance_ok": true
+      }
+    },
+    {
+      "seed": 44,
+      "go": true,
+      "check1_corr_drive_neural": true,
+      "corr_deficit_drive_sweep": 0.9903189833578685,
+      "corr_deficit_drive_lived": 0.9426994311448075,
+      "check2_self_directed_survival": true,
+      "check3_persistence_across_reset": true,
+      "survival": {
+        "band_occupancy": 1.0,
+        "min_energy": 0.955,
+        "mean_energy": 0.99902,
+        "crash_frac": 0.0
+      },
+      "lesion_survival": {
+        "band_occupancy": 0.8253333333333334,
+        "min_energy": 0.0,
+        "mean_energy": 0.6775966666666665,
+        "crash_frac": 0.098
+      },
+      "yoke_survival": {
+        "band_occupancy": 0.0006666666666666666,
+        "min_energy": 0.0,
+        "mean_energy": 0.0020999999999999986,
+        "crash_frac": 0.9906666666666667
+      },
+      "persistence": {
+        "energy_ok": true,
+        "drive_ok": true,
+        "pos_ok": true,
+        "t_ok": true,
+        "policy_ok": true,
+        "energy_at_save": 1.0,
+        "t_at_save": 1500
+      },
+      "anti_cheats": {
+        "lesion_minE": 0.0,
+        "yoke_minE": 0.0,
+        "no_persistence_differs": true,
+        "persisted_resume_minE": 0.985,
+        "cold_resume_minE": 0.6699999999999997,
+        "saved_policy_nontrivial": true,
+        "cold_start_blank": true,
+        "reward_provenance_ok": true
+      }
+    },
+    {
+      "seed": 100,
+      "go": true,
+      "check1_corr_drive_neural": true,
+      "corr_deficit_drive_sweep": 0.9903189833578685,
+      "corr_deficit_drive_lived": 0.9588585892148556,
+      "check2_self_directed_survival": true,
+      "check3_persistence_across_reset": true,
+      "survival": {
+        "band_occupancy": 1.0,
+        "min_energy": 0.9249999999999999,
+        "mean_energy": 0.99864,
+        "crash_frac": 0.0
+      },
+      "lesion_survival": {
+        "band_occupancy": 0.7513333333333333,
+        "min_energy": 0.0,
+        "mean_energy": 0.6253666666666665,
+        "crash_frac": 0.16066666666666668
+      },
+      "yoke_survival": {
+        "band_occupancy": 0.244,
+        "min_energy": 0.0,
+        "mean_energy": 0.20466666666666658,
+        "crash_frac": 0.682
+      },
+      "persistence": {
+        "energy_ok": true,
+        "drive_ok": true,
+        "pos_ok": true,
+        "t_ok": true,
+        "policy_ok": true,
+        "energy_at_save": 1.0,
+        "t_at_save": 1500
+      },
+      "anti_cheats": {
+        "lesion_minE": 0.0,
+        "yoke_minE": 0.0,
+        "no_persistence_differs": true,
+        "persisted_resume_minE": 0.985,
+        "cold_resume_minE": 0.47499999999999953,
+        "saved_policy_nontrivial": true,
+        "cold_start_blank": true,
+        "reward_provenance_ok": true
+      }
+    },
+    {
+      "seed": 101,
+      "go": true,
+      "check1_corr_drive_neural": true,
+      "corr_deficit_drive_sweep": 0.9903189833578685,
+      "corr_deficit_drive_lived": 0.9558282818162147,
+      "check2_self_directed_survival": true,
+      "check3_persistence_across_reset": true,
+      "survival": {
+        "band_occupancy": 1.0,
+        "min_energy": 0.955,
+        "mean_energy": 0.9993500000000001,
+        "crash_frac": 0.0
+      },
+      "lesion_survival": {
+        "band_occupancy": 0.758,
+        "min_energy": 0.0,
+        "mean_energy": 0.5967066666666663,
+        "crash_frac": 0.12533333333333332
+      },
+      "yoke_survival": {
+        "band_occupancy": 0.2786666666666667,
+        "min_energy": 0.0,
+        "mean_energy": 0.23644999999999988,
+        "crash_frac": 0.6146666666666667
+      },
+      "persistence": {
+        "energy_ok": true,
+        "drive_ok": true,
+        "pos_ok": true,
+        "t_ok": true,
+        "policy_ok": true,
+        "energy_at_save": 1.0,
+        "t_at_save": 1500
+      },
+      "anti_cheats": {
+        "lesion_minE": 0.0,
+        "yoke_minE": 0.0,
+        "no_persistence_differs": true,
+        "persisted_resume_minE": 0.985,
+        "cold_resume_minE": 0.48999999999999955,
+        "saved_policy_nontrivial": true,
+        "cold_start_blank": true,
+        "reward_provenance_ok": true
+      }
+    },
+    {
+      "seed": 102,
+      "go": true,
+      "check1_corr_drive_neural": true,
+      "corr_deficit_drive_sweep": 0.9903189833578685,
+      "corr_deficit_drive_lived": 0.834492492828372,
+      "check2_self_directed_survival": true,
+      "check3_persistence_across_reset": true,
+      "survival": {
+        "band_occupancy": 1.0,
+        "min_energy": 0.7149999999999997,
+        "mean_energy": 0.9963399999999999,
+        "crash_frac": 0.0
+      },
+      "lesion_survival": {
+        "band_occupancy": 0.8133333333333334,
+        "min_energy": 0.0,
+        "mean_energy": 0.6517399999999997,
+        "crash_frac": 0.13066666666666665
+      },
+      "yoke_survival": {
+        "band_occupancy": 0.8226666666666667,
+        "min_energy": 0.0,
+        "mean_energy": 0.7468199999999998,
+        "crash_frac": 0.13266666666666665
+      },
+      "persistence": {
+        "energy_ok": true,
+        "drive_ok": true,
+        "pos_ok": true,
+        "t_ok": true,
+        "policy_ok": true,
+        "energy_at_save": 1.0,
+        "t_at_save": 1500
+      },
+      "anti_cheats": {
+        "lesion_minE": 0.0,
+        "yoke_minE": 0.0,
+        "no_persistence_differs": true,
+        "persisted_resume_minE": 0.985,
+        "cold_resume_minE": 0.8799999999999999,
+        "saved_policy_nontrivial": true,
+        "cold_start_blank": true,
+        "reward_provenance_ok": true
+      }
+    }
+  ],
+  "n_go": 6,
+  "n_seeds": 6
+}
