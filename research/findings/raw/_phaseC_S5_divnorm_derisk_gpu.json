@@ -1,0 +1,2759 @@
+{
+  "summary": {
+    "n": 3,
+    "div_go": 3,
+    "div_decisive": 2,
+    "div_moat": 3,
+    "div_fa_total": 0,
+    "host_go": 3,
+    "host_decisive": 2,
+    "raw_fails_sweep": 3,
+    "lesion": 3,
+    "off_guard": {
+      "off_mask_none": true,
+      "on_mask_not_none": true,
+      "off_eq_off": true,
+      "on_differs_from_off": true
+    },
+    "off_ok": true,
+    "verdict": "OPTION-4-GO across the per-query-peak sweep: the on-bridge input_divisive_norm primitive + a placed threshold (the Izhikevich rheobase) reproduces the host decision (==host, moat 0-FA) at a FIXED operating point across peaks spanning >=1 order of magnitude. The host scores.max() read is RETIRED; S5 closes with ZERO new sim/ code. Positive control (host-norm) GO, negative control (raw) fails the sweep (normalization is load-bearing), lesion fails safe. (NB: the Phase-B sequencer `decisive` m>=0.20 diagnostic dipped on 1/3 seed(s) under this backend \u2014 a SHARED sequencer-health margin, present in the host-norm control too (2/3); NOT an S5 gate, the ==host decision + moat are intact)",
+    "gpu": true,
+    "input_gain": 1.0,
+    "sigma": 1.0,
+    "gain": 0.05,
+    "peak_mults": [
+      0.1,
+      1.0,
+      10.0
+    ]
+  },
+  "results": [
+    {
+      "seed": 42,
+      "D": 64,
+      "input_gain": 1.0,
+      "sigma": 1.0,
+      "gain": 0.05,
+      "peak_mults": [
+        0.1,
+        1.0,
+        10.0
+      ],
+      "per_peak": {
+        "0.1": {
+          "rows": [
+            {
+              "cue": [
+                "dog",
+                "go"
+              ],
+              "kind": "blk0-present",
+              "host": "north",
+              "div_sub": "north",
+              "div_dec": "ans0",
+              "div_rates": {
+                "m0": 0.248,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "north",
+              "host_dec": "ans0",
+              "host_rates": {
+                "m0": 0.201,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.201,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "cat",
+                "run"
+              ],
+              "kind": "blk1-present",
+              "host": "river",
+              "div_sub": "river",
+              "div_dec": "ans1",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.212,
+                "f0": "False",
+                "f1": "True"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "river",
+              "host_dec": "ans1",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.217,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_sub": "river",
+              "raw_dec": "ans1",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.217,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "fox",
+                "go"
+              ],
+              "kind": "absent-agent",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.007,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.241,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "see"
+              ],
+              "kind": "absent-action",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "river",
+              "raw_dec": "ans1",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.225,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "run"
+              ],
+              "kind": "cross-no-block",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "river",
+              "raw_dec": "ans1",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.233,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            }
+          ],
+          "div": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.248,
+              0.212
+            ],
+            "n_fa": 0
+          },
+          "host": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.201,
+              0.217
+            ],
+            "n_fa": 0
+          },
+          "raw": {
+            "eq_host": false,
+            "moat_ok": false,
+            "decisive": true,
+            "true_m": [
+              0.201,
+              0.217
+            ],
+            "n_fa": 3
+          }
+        },
+        "1.0": {
+          "rows": [
+            {
+              "cue": [
+                "dog",
+                "go"
+              ],
+              "kind": "blk0-present",
+              "host": "north",
+              "div_sub": "north",
+              "div_dec": "ans0",
+              "div_rates": {
+                "m0": 0.218,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "north",
+              "host_dec": "ans0",
+              "host_rates": {
+                "m0": 0.201,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.201,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "cat",
+                "run"
+              ],
+              "kind": "blk1-present",
+              "host": "river",
+              "div_sub": "river",
+              "div_dec": "ans1",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.212,
+                "f0": "False",
+                "f1": "True"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "river",
+              "host_dec": "ans1",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.217,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_sub": "river",
+              "raw_dec": "ans1",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.217,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "fox",
+                "go"
+              ],
+              "kind": "absent-agent",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.007,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.241,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "see"
+              ],
+              "kind": "absent-action",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "river",
+              "raw_dec": "ans1",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.225,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "run"
+              ],
+              "kind": "cross-no-block",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "river",
+              "raw_dec": "ans1",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.233,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            }
+          ],
+          "div": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.218,
+              0.212
+            ],
+            "n_fa": 0
+          },
+          "host": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.201,
+              0.217
+            ],
+            "n_fa": 0
+          },
+          "raw": {
+            "eq_host": false,
+            "moat_ok": false,
+            "decisive": true,
+            "true_m": [
+              0.201,
+              0.217
+            ],
+            "n_fa": 3
+          }
+        },
+        "10.0": {
+          "rows": [
+            {
+              "cue": [
+                "dog",
+                "go"
+              ],
+              "kind": "blk0-present",
+              "host": "north",
+              "div_sub": "north",
+              "div_dec": "ans0",
+              "div_rates": {
+                "m0": 0.218,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "north",
+              "host_dec": "ans0",
+              "host_rates": {
+                "m0": 0.201,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.201,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "cat",
+                "run"
+              ],
+              "kind": "blk1-present",
+              "host": "river",
+              "div_sub": "river",
+              "div_dec": "ans1",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.212,
+                "f0": "False",
+                "f1": "True"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "river",
+              "host_dec": "ans1",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.217,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_sub": "river",
+              "raw_dec": "ans1",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.217,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "fox",
+                "go"
+              ],
+              "kind": "absent-agent",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.007,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.241,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "see"
+              ],
+              "kind": "absent-action",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "river",
+              "raw_dec": "ans1",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.225,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "run"
+              ],
+              "kind": "cross-no-block",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "river",
+              "raw_dec": "ans1",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.233,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  6,
+                  6
+                ],
+                [
+                  7,
+                  8
+                ]
+              ]
+            }
+          ],
+          "div": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.218,
+              0.212
+            ],
+            "n_fa": 0
+          },
+          "host": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.201,
+              0.217
+            ],
+            "n_fa": 0
+          },
+          "raw": {
+            "eq_host": false,
+            "moat_ok": false,
+            "decisive": true,
+            "true_m": [
+              0.201,
+              0.217
+            ],
+            "n_fa": 3
+          }
+        }
+      },
+      "lesion_fails_safe": true,
+      "lesion_decisions": [
+        "abstain",
+        "abstain"
+      ],
+      "div_go_all": true,
+      "div_decisive_all": true,
+      "div_moat_all": true,
+      "div_fa_all": 0,
+      "host_go_all": true,
+      "host_decisive_all": true,
+      "raw_fails_sweep": true,
+      "raw_s5_all": false
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "input_gain": 1.0,
+      "sigma": 1.0,
+      "gain": 0.05,
+      "peak_mults": [
+        0.1,
+        1.0,
+        10.0
+      ],
+      "per_peak": {
+        "0.1": {
+          "rows": [
+            {
+              "cue": [
+                "dog",
+                "go"
+              ],
+              "kind": "blk0-present",
+              "host": "north",
+              "div_sub": "north",
+              "div_dec": "ans0",
+              "div_rates": {
+                "m0": 0.212,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "north",
+              "host_dec": "ans0",
+              "host_rates": {
+                "m0": 0.233,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.233,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "cat",
+                "run"
+              ],
+              "kind": "blk1-present",
+              "host": "river",
+              "div_sub": "river",
+              "div_dec": "ans1",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.223,
+                "f0": "False",
+                "f1": "True"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "river",
+              "host_dec": "ans1",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.238,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_sub": "river",
+              "raw_dec": "ans1",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.238,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "fox",
+                "go"
+              ],
+              "kind": "absent-agent",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.012,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.218,
+                "m1": 0.21,
+                "f0": "True",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "see"
+              ],
+              "kind": "absent-action",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.043,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.221,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "run"
+              ],
+              "kind": "cross-no-block",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.023,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": null,
+              "raw_dec": "abstain",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            }
+          ],
+          "div": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.212,
+              0.223
+            ],
+            "n_fa": 0
+          },
+          "host": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.233,
+              0.238
+            ],
+            "n_fa": 0
+          },
+          "raw": {
+            "eq_host": false,
+            "moat_ok": false,
+            "decisive": true,
+            "true_m": [
+              0.233,
+              0.238
+            ],
+            "n_fa": 2
+          }
+        },
+        "1.0": {
+          "rows": [
+            {
+              "cue": [
+                "dog",
+                "go"
+              ],
+              "kind": "blk0-present",
+              "host": "north",
+              "div_sub": "north",
+              "div_dec": "ans0",
+              "div_rates": {
+                "m0": 0.212,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "north",
+              "host_dec": "ans0",
+              "host_rates": {
+                "m0": 0.233,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.233,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "cat",
+                "run"
+              ],
+              "kind": "blk1-present",
+              "host": "river",
+              "div_sub": "river",
+              "div_dec": "ans1",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.223,
+                "f0": "False",
+                "f1": "True"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "river",
+              "host_dec": "ans1",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.238,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_sub": "river",
+              "raw_dec": "ans1",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.238,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "fox",
+                "go"
+              ],
+              "kind": "absent-agent",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.012,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.218,
+                "m1": 0.21,
+                "f0": "True",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "see"
+              ],
+              "kind": "absent-action",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.043,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.221,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "run"
+              ],
+              "kind": "cross-no-block",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.023,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": null,
+              "raw_dec": "abstain",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            }
+          ],
+          "div": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.212,
+              0.223
+            ],
+            "n_fa": 0
+          },
+          "host": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.233,
+              0.238
+            ],
+            "n_fa": 0
+          },
+          "raw": {
+            "eq_host": false,
+            "moat_ok": false,
+            "decisive": true,
+            "true_m": [
+              0.233,
+              0.238
+            ],
+            "n_fa": 2
+          }
+        },
+        "10.0": {
+          "rows": [
+            {
+              "cue": [
+                "dog",
+                "go"
+              ],
+              "kind": "blk0-present",
+              "host": "north",
+              "div_sub": "north",
+              "div_dec": "ans0",
+              "div_rates": {
+                "m0": 0.212,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "north",
+              "host_dec": "ans0",
+              "host_rates": {
+                "m0": 0.233,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.233,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "cat",
+                "run"
+              ],
+              "kind": "blk1-present",
+              "host": "river",
+              "div_sub": "river",
+              "div_dec": "ans1",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.223,
+                "f0": "False",
+                "f1": "True"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "river",
+              "host_dec": "ans1",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.238,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_sub": "river",
+              "raw_dec": "ans1",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.238,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "fox",
+                "go"
+              ],
+              "kind": "absent-agent",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.012,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.218,
+                "m1": 0.21,
+                "f0": "True",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "see"
+              ],
+              "kind": "absent-action",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.043,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.221,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "run"
+              ],
+              "kind": "cross-no-block",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.023,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": null,
+              "raw_dec": "abstain",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  5,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ]
+              ]
+            }
+          ],
+          "div": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.212,
+              0.223
+            ],
+            "n_fa": 0
+          },
+          "host": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.233,
+              0.238
+            ],
+            "n_fa": 0
+          },
+          "raw": {
+            "eq_host": false,
+            "moat_ok": false,
+            "decisive": true,
+            "true_m": [
+              0.233,
+              0.238
+            ],
+            "n_fa": 2
+          }
+        }
+      },
+      "lesion_fails_safe": true,
+      "lesion_decisions": [
+        "abstain",
+        "abstain"
+      ],
+      "div_go_all": true,
+      "div_decisive_all": true,
+      "div_moat_all": true,
+      "div_fa_all": 0,
+      "host_go_all": true,
+      "host_decisive_all": true,
+      "raw_fails_sweep": true,
+      "raw_s5_all": false
+    },
+    {
+      "seed": 44,
+      "D": 64,
+      "input_gain": 1.0,
+      "sigma": 1.0,
+      "gain": 0.05,
+      "peak_mults": [
+        0.1,
+        1.0,
+        10.0
+      ],
+      "per_peak": {
+        "0.1": {
+          "rows": [
+            {
+              "cue": [
+                "dog",
+                "go"
+              ],
+              "kind": "blk0-present",
+              "host": "north",
+              "div_sub": "north",
+              "div_dec": "ans0",
+              "div_rates": {
+                "m0": 0.161,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "north",
+              "host_dec": "ans0",
+              "host_rates": {
+                "m0": 0.182,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.182,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "cat",
+                "run"
+              ],
+              "kind": "blk1-present",
+              "host": "river",
+              "div_sub": "river",
+              "div_dec": "ans1",
+              "div_rates": {
+                "m0": 0.038,
+                "m1": 0.234,
+                "f0": "False",
+                "f1": "True"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "river",
+              "host_dec": "ans1",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.318,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.226,
+                "m1": 0.318,
+                "f0": "True",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "fox",
+                "go"
+              ],
+              "kind": "absent-agent",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.097,
+                "m1": 0.103,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": null,
+              "raw_dec": "abstain",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "see"
+              ],
+              "kind": "absent-action",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.214,
+                "m1": 0.223,
+                "f0": "True",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "run"
+              ],
+              "kind": "cross-no-block",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.034,
+                "m1": 0.008,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.204,
+                "m1": 0.255,
+                "f0": "True",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            }
+          ],
+          "div": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": false,
+            "true_m": [
+              0.161,
+              0.234
+            ],
+            "n_fa": 0
+          },
+          "host": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": false,
+            "true_m": [
+              0.182,
+              0.318
+            ],
+            "n_fa": 0
+          },
+          "raw": {
+            "eq_host": false,
+            "moat_ok": false,
+            "decisive": false,
+            "true_m": [
+              0.182,
+              0.318
+            ],
+            "n_fa": 2
+          }
+        },
+        "1.0": {
+          "rows": [
+            {
+              "cue": [
+                "dog",
+                "go"
+              ],
+              "kind": "blk0-present",
+              "host": "north",
+              "div_sub": "north",
+              "div_dec": "ans0",
+              "div_rates": {
+                "m0": 0.234,
+                "m1": 0.029,
+                "f0": "True",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "north",
+              "host_dec": "ans0",
+              "host_rates": {
+                "m0": 0.182,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.182,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "cat",
+                "run"
+              ],
+              "kind": "blk1-present",
+              "host": "river",
+              "div_sub": "river",
+              "div_dec": "ans1",
+              "div_rates": {
+                "m0": 0.038,
+                "m1": 0.234,
+                "f0": "False",
+                "f1": "True"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "river",
+              "host_dec": "ans1",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.318,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.226,
+                "m1": 0.318,
+                "f0": "True",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "fox",
+                "go"
+              ],
+              "kind": "absent-agent",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.097,
+                "m1": 0.103,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": null,
+              "raw_dec": "abstain",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "see"
+              ],
+              "kind": "absent-action",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.214,
+                "m1": 0.223,
+                "f0": "True",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "run"
+              ],
+              "kind": "cross-no-block",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.034,
+                "m1": 0.008,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.204,
+                "m1": 0.255,
+                "f0": "True",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            }
+          ],
+          "div": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.234,
+              0.234
+            ],
+            "n_fa": 0
+          },
+          "host": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": false,
+            "true_m": [
+              0.182,
+              0.318
+            ],
+            "n_fa": 0
+          },
+          "raw": {
+            "eq_host": false,
+            "moat_ok": false,
+            "decisive": false,
+            "true_m": [
+              0.182,
+              0.318
+            ],
+            "n_fa": 2
+          }
+        },
+        "10.0": {
+          "rows": [
+            {
+              "cue": [
+                "dog",
+                "go"
+              ],
+              "kind": "blk0-present",
+              "host": "north",
+              "div_sub": "north",
+              "div_dec": "ans0",
+              "div_rates": {
+                "m0": 0.234,
+                "m1": 0.029,
+                "f0": "True",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "north",
+              "host_dec": "ans0",
+              "host_rates": {
+                "m0": 0.182,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.182,
+                "m1": 0.0,
+                "f0": "True",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "cat",
+                "run"
+              ],
+              "kind": "blk1-present",
+              "host": "river",
+              "div_sub": "river",
+              "div_dec": "ans1",
+              "div_rates": {
+                "m0": 0.038,
+                "m1": 0.234,
+                "f0": "False",
+                "f1": "True"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": "river",
+              "host_dec": "ans1",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.318,
+                "f0": "False",
+                "f1": "True"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.226,
+                "m1": 0.318,
+                "f0": "True",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "fox",
+                "go"
+              ],
+              "kind": "absent-agent",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.097,
+                "m1": 0.103,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": null,
+              "raw_dec": "abstain",
+              "raw_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "see"
+              ],
+              "kind": "absent-action",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.214,
+                "m1": 0.223,
+                "f0": "True",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            },
+            {
+              "cue": [
+                "dog",
+                "run"
+              ],
+              "kind": "cross-no-block",
+              "host": null,
+              "div_sub": null,
+              "div_dec": "abstain",
+              "div_rates": {
+                "m0": 0.034,
+                "m1": 0.008,
+                "f0": "False",
+                "f1": "False"
+              },
+              "div_lit": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "host_sub": null,
+              "host_dec": "abstain",
+              "host_rates": {
+                "m0": 0.0,
+                "m1": 0.0,
+                "f0": "False",
+                "f1": "False"
+              },
+              "raw_sub": "north",
+              "raw_dec": "ans0",
+              "raw_rates": {
+                "m0": 0.204,
+                "m1": 0.255,
+                "f0": "True",
+                "f1": "True"
+              },
+              "raw_lit": [
+                [
+                  8,
+                  7
+                ],
+                [
+                  5,
+                  8
+                ]
+              ]
+            }
+          ],
+          "div": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": true,
+            "true_m": [
+              0.234,
+              0.234
+            ],
+            "n_fa": 0
+          },
+          "host": {
+            "eq_host": true,
+            "moat_ok": true,
+            "decisive": false,
+            "true_m": [
+              0.182,
+              0.318
+            ],
+            "n_fa": 0
+          },
+          "raw": {
+            "eq_host": false,
+            "moat_ok": false,
+            "decisive": false,
+            "true_m": [
+              0.182,
+              0.318
+            ],
+            "n_fa": 2
+          }
+        }
+      },
+      "lesion_fails_safe": true,
+      "lesion_decisions": [
+        "abstain",
+        "abstain"
+      ],
+      "div_go_all": true,
+      "div_decisive_all": false,
+      "div_moat_all": true,
+      "div_fa_all": 0,
+      "host_go_all": true,
+      "host_decisive_all": false,
+      "raw_fails_sweep": true,
+      "raw_s5_all": false
+    }
+  ]
+}
