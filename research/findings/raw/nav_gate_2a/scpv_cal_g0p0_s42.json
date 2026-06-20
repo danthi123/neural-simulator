@@ -1,0 +1,93 @@
+{
+  "arms": [
+    {
+      "arm": "sc_popvector",
+      "seed": 42,
+      "grid_size": 8,
+      "n_steps": 480,
+      "warmup_steps": 240,
+      "with_conv": false,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 1.0,
+      "divnorm_gain": 0.0,
+      "per_phase_finalQ": [
+        0.8672566371681416,
+        1.0
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          145,
+          114,
+          107,
+          84
+        ],
+        [
+          6,
+          8,
+          5,
+          11
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.322,
+          "E": 0.253,
+          "S": 0.238,
+          "W": 0.187
+        },
+        {
+          "N": 0.2,
+          "E": 0.267,
+          "S": 0.167,
+          "W": 0.367
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W"
+      ],
+      "phase0_finalQ": 0.8672566371681416,
+      "post_change_finalQ": [
+        1.0
+      ],
+      "post_change_finalQ_sum": 1.0,
+      "gate_score": 1.8672566371681416,
+      "motor_sustain_frac": 0.9770833333333333,
+      "late_motor_sustain_frac": 1.0,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scpv_sc_popvector_seed42.json"
+    }
+  ],
+  "verdict": {
+    "host_phase0_finalQ": null,
+    "host_post_change_finalQ_sum": null,
+    "ramp_post_change_finalQ_sum": null,
+    "popvector_post_change_finalQ_sum": 1.0,
+    "scramble_post_change_finalQ_sum": null,
+    "host_tracking": null,
+    "ramp_tracking": null,
+    "popvector_tracking": {
+      "dominant_per_phase": [
+        "N",
+        "W"
+      ],
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": false,
+      "tracks_goal": true
+    },
+    "scramble_tracking": null,
+    "ramp_late_sustain": null,
+    "popvector_late_sustain": 1.0,
+    "NOTE": "GO (#6 CONVERTS) if popvector_tracking.tracks_goal is True AND popvector_post_change approaches host (host_over_popvector_post_ratio ~1, vs the ramp's ~0.01) AND the SCRAMBLE lesion collapses (scramble_tracking.tracks_goal False / much worse finalQ). HONEST NEGATIVE otherwise -- report whether popvector still does NOT track (under-selective) or a deeper issue."
+  }
+}
