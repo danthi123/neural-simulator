@@ -94,7 +94,8 @@ class SpikingDriveBody:
     """
 
     def __init__(self, seed, grid_size, mode="intact", deplete=0.02, refill=0.6, start_energy=1.0,
-                 drive_window=120, drive_i_scale=300.0, hunger_gain=14.0, hunger_floor=0.1):
+                 drive_window=120, drive_i_scale=300.0, hunger_gain=14.0, hunger_floor=0.1,
+                 drive_read_every=1):
         self.rng = np.random.default_rng(seed + 777)
         self.grid_size = int(grid_size)
         self.mode = mode
@@ -102,6 +103,13 @@ class SpikingDriveBody:
         self.refill = float(refill)
         self.energy = float(start_energy)
         self.drive_window = int(drive_window)
+        # drive_read_every: sample the SPIKING hunger every Nth living step (reuse the cached value otherwise),
+        # ALWAYS re-reading on an "eat" (the deficit jumps). Biologically faithful — the hypothalamic AgRP/POMC
+        # drive integrates over seconds, not per-millisecond-step — and it cuts the drive-read GPU cost N-fold
+        # (the drive read is `drive_window` extra bridge steps; at window 40 over 1800 nav steps it dominates).
+        self.drive_read_every = max(1, int(drive_read_every))
+        self._hunger_cache = None
+        self._arate_cache = 0.0
         self.drive_i_scale = float(drive_i_scale)
         self.hunger_gain = float(hunger_gain)
         self.hunger_floor = float(hunger_floor)
@@ -166,14 +174,30 @@ class SpikingDriveBody:
             new_goal = self._relocate_food(x, y, gx, gy)
 
         deficit = 1.0 - self.energy
+        # sample the SPIKING drive every Nth living step (reuse the cache otherwise), ALWAYS re-reading on an eat
+        # (the deficit just jumped). Cuts the drive-read GPU cost N-fold; biologically faithful (slow hypothalamic
+        # integration). The cadence is identical across modes (lesion/yoke read on the same schedule).
+        do_read = (self._hunger_cache is None or on_food or (len(self.energy_log) % self.drive_read_every == 0))
         if self.mode == "lesion":
-            hunger, a_rate = self._spiking_hunger_from_deficit(deficit, lesion=True)
+            # the drive is LESIONED: zero the interoceptive current (drive_agrp silent, a_rate≈0 — logged to prove
+            # the silence) AND remove the drive's contribution to the reward entirely (hunger=0 → reward=0). This is
+            # the validated reuse-probe lesion semantics (the drive is the load-bearing signal; lesioning it removes
+            # the intrinsic reward, not merely attenuates it — a floored 10% gate would still let the BG cascade
+            # learn, which would CONFOUND the discriminator). With no learning signal the learned policy never forms
+            # post-wean → the agent starves. (Reading a_rate from the silenced pool is the brain-based provenance.)
+            if do_read:
+                _h, self._arate_cache = self._spiking_hunger_from_deficit(deficit, lesion=True)
+            a_rate = self._arate_cache
+            hunger = 0.0
+            self._hunger_cache = 0.0
         else:
-            hunger, a_rate = self._spiking_hunger_from_deficit(deficit, lesion=False)
+            if do_read:
+                self._hunger_cache, self._arate_cache = self._spiking_hunger_from_deficit(deficit, lesion=False)
+            hunger, a_rate = self._hunger_cache, self._arate_cache
             if self.mode == "yoke":
                 # decorrelated hunger: a deterministic shuffle of the spiking-hunger marginal (same drive pressure,
-                # no info about the deficit). Still RUN the spiking drive (per-step compute matches intact), discard
-                # its value, replay the shuffle.
+                # no info about the deficit). The spiking drive is still RUN on the same schedule (per-step compute
+                # matches intact), its value discarded, the shuffle replayed.
                 if self._yoke_vals is None:
                     self._yoke_vals = self.hunger_floor + self.rng.random(4096) * (1.0 - self.hunger_floor)
                 hunger = float(self._yoke_vals[self._yoke_idx % len(self._yoke_vals)]); self._yoke_idx += 1
@@ -304,7 +328,7 @@ def _run_living_segment(body, *, seed, n_steps, grid_size, goal_pos, start_pos, 
 
 
 def run_seed(seed, root, *, mode="intact", n_steps=900, grid_size=8, deplete=0.02, refill=0.6,
-             drive_window=120, verbose=False):
+             drive_window=120, drive_read_every=1, verbose=False):
     """One seed/mode: build the merged bridge with the co-resident SPIKING drive (via the episode), live a
     segment, PERSIST the body, reload + resume a second segment, measure survival + the corr gate + the moat."""
     gc = max(1, grid_size - 2)
@@ -313,7 +337,7 @@ def run_seed(seed, root, *, mode="intact", n_steps=900, grid_size=8, deplete=0.0
     wean_start = int(0.33 * n_steps)
 
     body = SpikingDriveBody(seed=seed, grid_size=grid_size, mode=mode, deplete=deplete, refill=refill,
-                            drive_window=drive_window)
+                            drive_window=drive_window, drive_read_every=drive_read_every)
     # segment 1 (fresh life): teach with the SC reflex then wean, so the drive-gated reward is load-bearing.
     box1 = _run_living_segment(body, seed=seed, n_steps=seg_steps, grid_size=grid_size,
                                goal_pos=goal_pos, start_pos=start_pos,
@@ -385,6 +409,9 @@ def main():
     ap.add_argument("--deplete", type=float, default=0.02)
     ap.add_argument("--refill", type=float, default=0.6)
     ap.add_argument("--drive-window", type=int, default=120)
+    ap.add_argument("--drive-read-every", type=int, default=1,
+                    help="sample the spiking hunger every Nth living step (reuse cache; re-read on eat) — cuts the "
+                         "drive-read GPU cost N-fold (biologically faithful: slow hypothalamic integration)")
     ap.add_argument("--modes", nargs="+", default=["intact", "lesion", "yoke"])
     ap.add_argument("--out", default="research/findings/raw/_tier3_spiking_living_loop.json")
     ap.add_argument("--keep-lineage", action="store_true")
@@ -419,7 +446,8 @@ def main():
             modes = {}
             for mode in a.modes:
                 r = run_seed(seed, root, mode=mode, n_steps=a.n_steps, grid_size=a.grid_size,
-                             deplete=a.deplete, refill=a.refill, drive_window=a.drive_window)
+                             deplete=a.deplete, refill=a.refill, drive_window=a.drive_window,
+                             drive_read_every=a.drive_read_every)
                 modes[mode] = r
                 s = r["summary"]
                 print(f"  [seed {seed} {mode}] corr {s['corr_deficit_agrp_lived']:+.2f} | eats {s['n_eats']} "
