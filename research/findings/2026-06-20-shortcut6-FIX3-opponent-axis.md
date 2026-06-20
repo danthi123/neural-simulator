@@ -120,10 +120,37 @@ selection-stage count, independent of the read-out:
 de-risk runner) — the SYMMETRIC pop-vector cosine decode, so the deployed half-plane-ramp's S-suppression
 asymmetry (`max(0,−sy_offset)` darkening cortex_S) is NOT the active source here. The rig also uses
 `enable_cluster_e_topography=True` (line 121) — the N corner is placed at the geometric TOP of the unit
-square (N=(0.5,1.0), S=(0.5,0.0)); whether this topographic prior, the shared-STN→GPi common baseline, or the
-SC→cortex drive is the dominant source of the +9000 N-S count surplus is the precise question for the gated
-deep-research scoping (a single-region firing-rate probe down the cortex→str→GPi→thal→sel chain would
-localize it).
+square (N=(0.5,1.0), S=(0.5,0.0)).
+
+### LOCALIZED — the surplus is AMPLIFIED at the sel_X accumulators (the precise deep-research target)
+
+Tracing the whole-episode N-S surplus backward down the cascade stages (all from the FIX1+3 raw JSON, free
+on CPU — the decisive localization):
+
+| cascade stage | total N−S | N−S as % of stage total | note |
+|---|---|---|---|
+| `thal_counts` (GPi→thal disinhibition output) | **+1233** | ~11% (N 11500 / S 10267) | a SMALL thalamic N-over-S lead |
+| `sel_counts` (Wang-2002 NMDA accumulators) | **+10999** | ~22% (N 56205 / S 45206) | the surplus EXPLODES ~9× here |
+| `commit_counts` (Lo-Wang commit burst) | +10937 | ~21% | inherits sel's surplus |
+| `motor_counts` (the body) | +379 | small (the read-out has already chosen) | downstream of the decision |
+
+**The amplification happens AT the sel layer.** The thalamus carries only a small N-over-S lead (+1233,
+~11%), but the `sel_X` accumulators amplify it ~9× into a large selection-stage surplus (+10999, ~22%). This
+is mechanistically expected: NMDA-recurrent integrators are *winner-amplifying by design* (an accumulator's
+positive feedback compounds a small persistent lead over the integration window). So the residual is
+precisely: **a small persistent thalamic N-bias (+1233) is amplified by the sel accumulators into a large
+selection surplus that no read-out reorganization can undo.**
+
+**This sharpens the gated deep-research target to a precise two-part question:** (1) WHERE does the small
+persistent thalamic N-over-S lead (+1233) come from — the SC→cortex drive, the cortex→str→GPi→thal cascade,
+the shared-STN→GPi common baseline, or the cluster-E topographic prior (a single-region firing-rate probe
+down the chain localizes it); and (2) can the accumulator amplification be made DIFFERENTIAL — subtract the
+N-S common-mode BEFORE the sel integration (a baseline-subtraction / divisive-norm at the thal→sel input),
+OR opponent-pair the accumulators (N and S sel pools mutually inhibit so they integrate the DIFFERENCE, not
+each their own absolute lead) — so the accumulator amplifies the position-bearing differential rather than
+the structural common-mode. (Note: FIX 2's per-pool homeostasis acted at the sel pools but barely dented the
+surplus — because it regulates each pool's baseline INDEPENDENTLY toward a common target, which does not
+remove a persistent DIFFERENTIAL drive; the indicated mechanism is differential/opponent, not per-pool.)
 
 ---
 
@@ -179,17 +206,27 @@ stage — no read-out reorganization can fix a contaminated count surplus the re
 
 **Per the owner's HARD rule (no boundary → stop) and the task directive (FIX 3 NEGATIVE → do NOT grind
 variants → recommend a focused deep-research scoping), the next gated step is a deep-research scoping of the
-N-S surplus / SC-margin-resolution problem.** The precise question: *why do the commit/sel pools carry a
-goal-invariant ~2800 N-over-S surplus, and what removes it at the spiking selection stage* (candidates the
-scoping should rank: (a) the SC far-blob resolution at grid-32 — a dim/small far goal-blob in the 16×16
-`sc_map` gives a tiny E-W margin that the N-S structural surplus swamps → sharper SC RF / more SC neurons /
-foveation; (b) the source of the N-S surplus itself — is it the `sc_map→cortex` half-plane geometry, the
-sel_X/commit_X accumulator wiring, or a residual cluster-A/E topographic prior that favors the N corner; (c)
-per-axis baseline subtraction at the selection stage — a homeostatic / divisive-norm operation that removes
-the common-mode N-S offset BEFORE the axis comparison, so the opponent-axis sees only the differential
-position signal). The deep-research gate fires here under condition (a) (a confirmed boundary + the next move
-is a mechanism to overcome it) and (f) (≥2 distinct read-out approaches — FIX 1 partial, FIX 3 + margin-amp
-NEGATIVE — to the same goal).
+N-S-surplus SOURCE + the differential-selection remedy.** The cascade-stage localization above sharpens this
+to a precise TWO-PART target:
+- **(1) The source of the small persistent thalamic N-over-S lead (+1233, ~11%).** Probe single-region
+  firing rates down the cortex→str→GPi→thal chain to localize it: the SC→cortex pop-vector drive, the shared
+  STN→GPi common baseline, or the cluster-E topographic prior (N at the geometric top). Verified NOT the
+  half-plane S-suppression (the rig uses the symmetric popvector decode).
+- **(2) Making the sel-accumulator amplification DIFFERENTIAL.** The sel accumulators amplify the thalamic
+  lead ~9× (winner-amplifying NMDA integrators). FIX 2's per-pool homeostasis barely dented the surplus
+  (−9%) because per-pool baseline regulation does not remove a persistent DIFFERENTIAL drive. The indicated
+  mechanisms are differential/opponent: (a) baseline-subtraction / divisive-norm at the thal→sel INPUT (so
+  the accumulator integrates the position-bearing differential, not the structural common-mode); (b)
+  opponent-pair the sel accumulators (N↔S, E↔W mutual inhibition at the accumulator stage, so they integrate
+  the DIFFERENCE — the SC opponent push-pull realized at the INTEGRATOR, not the read-out where it failed);
+  (c) the SC far-blob SNR at grid-32 (sharper RF / more SC neurons / foveation) if the source-(1) lead turns
+  out to be irreducible. The scoping should rank these and prescribe the cheap-first de-risk.
+
+The deep-research gate fires here under condition (a) (a confirmed boundary + the next move is a mechanism to
+overcome it) and (f) (≥2 distinct read-out approaches — FIX 1 partial, FIX 2 ~null, FIX 3 + margin-amp
+NEGATIVE — to the same goal). A preliminary read-only scoping (this session) confirmed the candidate sources
+above and that the remedy must be differential (per-pool homeostasis is insufficient); the proper gated
+scoping with controller verification is the next step.
 
 **#6 status: re-orient stays PARTIAL** (the FIX-1 state remains the best: dom tracks the goal, the SC decode
 is load-bearing — SCRAM collapses 3/3, far-W reached at host-level finalQ — but the post-change Σ 59–83 ≫
