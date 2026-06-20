@@ -88,8 +88,14 @@ def _action_frac(counts):
 
 
 def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv,
-            sc_cortex_w, divnorm_sigma, divnorm_gain):
-    """arm_name in {'host','sc_ramp','sc_popvector','sc_popvector_scr'}."""
+            sc_cortex_w, divnorm_sigma, divnorm_gain, cortex_wta=False):
+    """arm_name in {'host','sc_ramp','sc_popvector','sc_popvector_scr'}.
+
+    cortex_wta (the R1 'sharpen-earlier' next mechanism after the Option-A+B HONEST NEGATIVE): add
+    per-cardinal FS interneuron WTA competition DIRECTLY between cortex_N/E/S/W
+    (enable_cortex_lateral_inhibition) so the small position-correct SC pop-vector margin can win
+    BEFORE the cascade N-bias swamps it at the downstream sel_X ring (the scoping's Option-B failure
+    remedy). Pure point-neuron (LIF FS cross-inhibition). Default False = byte-identical."""
     from research.runners.g11_bg_runner import run_moving_goal_episode
 
     out_path = os.path.join(out_dir, f"scpv_{arm_name}_seed{seed}.json")
@@ -106,6 +112,8 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
         visual_cortex_action_warmup_steps=warmup_steps,
         stdp_w_max_override=400.0,
     )
+    if cortex_wta:
+        kw["enable_cortex_lateral_inhibition"] = True   # R1: inter-cardinal cortex WTA
 
     # reset the per-run SC env knobs so a prior arm doesn't leak.
     os.environ.pop("SC_CORTEX_W", None)
@@ -222,6 +230,10 @@ def main():
                     help="MATCHED sc_map->cortex drive across the SC arms (default 18 = the deployed/NEGATIVE level).")
     ap.add_argument("--divnorm-sigma", type=float, default=1.0)
     ap.add_argument("--divnorm-gain", type=float, default=1.0)
+    ap.add_argument("--cortex-wta", action="store_true",
+                    help="R1 next mechanism: add inter-cardinal FS WTA between cortex_N/E/S/W "
+                         "(enable_cortex_lateral_inhibition) to sharpen the SC margin EARLIER, "
+                         "before the sel_X ring's N-bias swamping. Applies to the SC arms.")
     ap.add_argument("--with-conv", action="store_true",
                     help="merged bridge (the NEGATIVE config). Off = standalone nav SC (faster smoke).")
     ap.add_argument("--no-host", action="store_true", help="skip the host positive control.")
@@ -248,7 +260,8 @@ def main():
     for arm in arms:
         summaries.append(run_arm(arm, args.seed, args.n_steps, args.grid_size, warmup,
                                  out_dir, args.with_conv, args.sc_cortex_w,
-                                 args.divnorm_sigma, args.divnorm_gain))
+                                 args.divnorm_sigma, args.divnorm_gain,
+                                 cortex_wta=args.cortex_wta))
 
     by = {s["arm"]: s for s in summaries}
     host = by.get("host")
