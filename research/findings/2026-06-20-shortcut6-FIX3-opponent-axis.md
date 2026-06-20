@@ -1,9 +1,13 @@
 # Shortcut #6 — FIX 3 opponent-axis push-pull (2026-06-20)
 
 **VERDICT: FIX 3 is NEGATIVE — it RE-BIASES to N.** The margin-SNR residual is now a CONFIRMED deeper
-structural sub-blocker (a persistent N-S surplus at the commit/selection pools), not a tie-resolution
-artifact. The next gated step is a focused **deep-research scoping of the SC-margin / N-S-surplus**, NOT more
-read-out variants. #6 re-orient stays PARTIAL (the FIX-1 state: dom tracks, SCRAM collapses, but the
+structural sub-blocker, localized: a small persistent thalamic N-over-S lead (commit-count N−S = +1233, ~11%)
+is **amplified ~9× by the Wang-2002 sel_X accumulators** (sel N−S = +10999, ~22%) — the winner-amplifying
+NMDA integrators compound the lead into a large selection-stage surplus that no read-out reorganization can
+undo. FIX 1 MASKS it (randomizes near-ties), FIX 2 barely dents it (−9%), FIX 3 reads it as decisive and
+re-biases. The next gated step is a focused **deep-research scoping of (1) the thalamic-lead SOURCE + (2) a
+DIFFERENTIAL selection remedy** (baseline-subtract / opponent-pair the accumulators), NOT more read-out
+variants. #6 re-orient stays PARTIAL (the FIX-1 state remains best: dom tracks, SCRAM collapses, but the
 post-change Σ is well above HOST).
 
 
