@@ -1,8 +1,12 @@
 # Burndown #1 CLOSED — the production OneBrainComposer's cleanup SELECTION is now a fully-on-substrate spiking WTA (2026-06-20)
 
-**Verdict: GO (CPU-validated; GPU CI-guard confirm in flight). The host `np.argmax`-over-membrane word-selection in the
-SHIPPED `OneBrainComposer` is RETIRED — replaced by the validated spiking Izhikevich WTA, ANSWER-IDENTICAL to the host
-argmax, moat 0 false-accepts, default-OFF byte-identical, NO `sim/` edit.**
+**Verdict: GO (CPU + GPU validated). The host `np.argmax`-over-membrane word-selection in the SHIPPED
+`OneBrainComposer` is RETIRED — replaced by the validated spiking Izhikevich WTA, ANSWER-IDENTICAL to the host argmax,
+moat 0 false-accepts, default-OFF byte-identical, NO `sim/` edit.**
+
+**Both gates GREEN on the production CuPy substrate AND CPU/numpy:**
+- new guard `tests/test_onebrain_spiking_cleanup.py` — **4/4 GPU** (345s) + 4/4 CPU (61s).
+- existing `tests/test_one_brain_composer_agent.py` (the default-OFF byte-identity guard) — **13/13 GPU** (976s).
 
 ## The shortcut (burndown #1, the single most-surprising one)
 
@@ -59,10 +63,11 @@ End-to-end through the agent (CPU): `BrainConversationalAgent(composer_kind="one
 
 The standalone `rf` composer `_spiking_cleanup` == numpy parity was re-confirmed on CPU too (the mechanism this reuses).
 
-**GPU CI-guard confirm (in flight / for the controller):** the existing `tests/test_one_brain_composer_agent.py`
-(11 tests, GPU-only) must stay green — these construct the agent with the DEFAULT (host-argmax) path, so they validate
-the default-OFF byte-identity end-to-end on GPU. (First run reported exit 0 before the summary flushed; a clean re-run is
-in progress — see the command below.)
+**GPU confirms (DONE):** the new guard `tests/test_onebrain_spiking_cleanup.py` passes **4/4 on the production CuPy
+substrate** (the spiking WTA conversion holds in vivo on GPU, not just CPU). The existing
+`tests/test_one_brain_composer_agent.py` passes **13/13 on GPU** — these construct the agent with the DEFAULT
+(host-argmax) path + compare onebrain vs the rf oracle for clause/reconsolidation/grounded-codes, so they validate the
+default-OFF byte-identity end-to-end on GPU. (The inventory said "11"; the file has 13 tests, all green.)
 
 ## Latency cost (the reason the library default stays OFF)
 
