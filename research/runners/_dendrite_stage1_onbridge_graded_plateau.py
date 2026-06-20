@@ -230,10 +230,10 @@ def _ensemble_global_indices_xy(bridge, place_vec, region_name, frac=0.25):
 def run_onbridge(seed, *, grid_size=32,
                  p_near_xy=(26.571, 26.571), p_mid_xy=(21.0, 21.0), p_far_xy=(4.429, 4.429),
                  vs_place_sigma=4.0, vs_place_drive_pa=800.0,
-                 snc_tonic_pa=180.0, snc_reward_gain=300.0,
+                 snc_tonic_pa=180.0, snc_reward_gain=420.0,
                  hold_steps=40, n_train=40, lead_steps=150,
-                 dend_subtract_scale=450.0,
-                 graded_center=1.5, graded_slope=1.0,
+                 dend_subtract_scale=1200.0, n_snc=120,
+                 graded_center=1.5, graded_slope=1.0, graded_strength=80.0,
                  plateau_lesion=False, subtract_lesion=False,
                  allornone=False, verbose=True):
     """Train the ON-BRIDGE graded-plateau value read-out (location-selective LTP of the routed value
@@ -249,8 +249,9 @@ def run_onbridge(seed, *, grid_size=32,
 
     graded_on = (not plateau_lesion) and (not allornone)
     bridge, cfg = _build_onbridge_critic(
-        seed, grid_size=grid_size, graded_plateau=graded_on, allornone_plateau=allornone,
-        graded_center=graded_center, graded_slope=graded_slope)
+        seed, grid_size=grid_size, n_snc=int(n_snc), graded_plateau=graded_on,
+        allornone_plateau=allornone, graded_center=graded_center, graded_slope=graded_slope,
+        graded_strength=graded_strength)
     _assert_deterministic_regime(cfg)   # anti-cheat (d) BEFORE anything runs
 
     snc_idx = xp.asarray(_idx(bridge, "snc")); n_snc = len(_host(snc_idx))
@@ -396,13 +397,22 @@ def run_onbridge(seed, *, grid_size=32,
                 subtract_lesion=bool(subtract_lesion))
 
 
-def _seed_all(seed, lead_steps, n_train, host_ref_delta, verbose=True):
-    """Run the ON-BRIDGE graded arm + its lesions + the two point-neuron controls for one seed."""
+def _seed_all(seed, lead_steps, n_train, host_ref_delta, verbose=True, *, calib=None):
+    """Run the ON-BRIDGE graded arm + its lesions + the two point-neuron controls for one seed.
+
+    `calib` (dict): the SNc-burst CALIBRATION knobs forwarded to run_onbridge so EVERY arm (the graded
+    read-out, the plateau-off lesion, the all-or-none control, the subtract lesion) uses the SAME SNc
+    population resolution + subtraction scale + reward drive -- only the plateau form / subtraction
+    on-off differs. This isolates the read-out (Stage 1) from the calibration: the validated defaults
+    (dend_subtract_scale=1200, n_snc=120, snc_reward_gain=420) place the graded V's subtraction so far
+    lands in the 100-Hz SNc bin and near in the 75-Hz bin (delta=far/near~1.33), the burst-level display
+    of the continuum V carries -- the 2026-06-20-dendrite-stage1-snc-calibration deliverable."""
+    calib = dict(calib or {})
     out = {}
-    rg = run_onbridge(seed, lead_steps=lead_steps, n_train=n_train, verbose=verbose)
-    rl = run_onbridge(seed, lead_steps=lead_steps, n_train=n_train, plateau_lesion=True, verbose=False)
-    ra = run_onbridge(seed, lead_steps=lead_steps, n_train=n_train, allornone=True, verbose=verbose)
-    rs = run_onbridge(seed, lead_steps=lead_steps, n_train=n_train, subtract_lesion=True, verbose=False)
+    rg = run_onbridge(seed, lead_steps=lead_steps, n_train=n_train, verbose=verbose, **calib)
+    rl = run_onbridge(seed, lead_steps=lead_steps, n_train=n_train, plateau_lesion=True, verbose=False, **calib)
+    ra = run_onbridge(seed, lead_steps=lead_steps, n_train=n_train, allornone=True, verbose=verbose, **calib)
+    rs = run_onbridge(seed, lead_steps=lead_steps, n_train=n_train, subtract_lesion=True, verbose=False, **calib)
     out["onbridge"] = dict(
         delta=rg["delta"], near_burst=rg["near_burst"], mid_burst=rg["mid_burst"], far_burst=rg["far_burst"],
         v_onbridge_near=rg["v_onbridge_near"], v_onbridge_mid=rg["v_onbridge_mid"], v_onbridge_far=rg["v_onbridge_far"],
@@ -435,17 +445,37 @@ def main():
     ap.add_argument("--n-train", type=int, default=40)
     ap.add_argument("--host-ref-delta", type=float, default=1.3)
     ap.add_argument("--host-ceiling-tol", type=float, default=0.30)
+    # === the SNc-burst CALIBRATION knobs (2026-06-20 deliverable; runner/config-side, NO sim/ edit) ===
+    # The validated defaults make the small graded V DISPLAY in the SNc burst: a denser SNc population
+    # (n_snc) + a large value-scaled subtraction (dend_subtract_scale) at a base reward drive
+    # (snc_reward_gain) so V_far lands in the 100-Hz SNc bin and V_near in the 75-Hz bin (delta~1.33).
+    ap.add_argument("--n-snc", type=int, default=120,
+                    help="SNc population size (finer burst resolution; default 120, was 30)")
+    ap.add_argument("--dend-subtract-scale", type=float, default=1200.0,
+                    help="pA per unit V subtracted at the SNc (the dominant calibration lever; default 1200)")
+    ap.add_argument("--snc-reward-gain", type=float, default=420.0,
+                    help="reward burst drive above tonic (base = tonic + this; default 420 -> base 600)")
+    ap.add_argument("--graded-center", type=float, default=1.5,
+                    help="graded-plateau logistic center in c_w units (default 1.5)")
+    ap.add_argument("--graded-slope", type=float, default=1.0,
+                    help="graded-plateau logistic slope (default 1.0; keep V graded, do NOT saturate)")
+    ap.add_argument("--graded-strength", type=float, default=80.0,
+                    help="graded-plateau per-step conductance scale (default 80; V read is strength-invariant)")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
     seeds = [int(s) for s in args.seeds.split(",")] if args.seeds else [args.seed]
     lead_steps = int(round(args.lead_ms / 1.0))
+    calib = dict(n_snc=int(args.n_snc), dend_subtract_scale=float(args.dend_subtract_scale),
+                 snc_reward_gain=float(args.snc_reward_gain), graded_center=float(args.graded_center),
+                 graded_slope=float(args.graded_slope), graded_strength=float(args.graded_strength))
 
     per_seed = {}
     for s in seeds:
         print(f"\n##### DENDRITE STAGE 1 (ON-BRIDGE) seed={s} (lead {args.lead_ms:.0f}ms, grid-32, "
-              f"deterministic, on-bridge GRADED dendritic plateau) #####")
-        per_seed[s] = _seed_all(s, lead_steps, args.n_train, args.host_ref_delta, verbose=True)
+              f"deterministic, on-bridge GRADED dendritic plateau; n_snc={args.n_snc}, "
+              f"subtract={args.dend_subtract_scale:.0f}, reward_gain={args.snc_reward_gain:.0f}) #####")
+        per_seed[s] = _seed_all(s, lead_steps, args.n_train, args.host_ref_delta, verbose=True, calib=calib)
         p = per_seed[s]
         print(f"  [seed {s}] ON-BRIDGE delta(far/near)={p['onbridge']['delta']:.2f} "
               f"(near={p['onbridge']['near_burst']:.1f} mid={p['onbridge']['mid_burst']:.1f} "
@@ -553,6 +583,7 @@ def main():
                 sim_edit_flag="enable_graded_dendritic_plateau", sim_edit_commit="d69cc0ab",
                 deterministic_regime=True, grid_size=32, lead_ms=args.lead_ms,
                 host_ref_delta=args.host_ref_delta, host_ceiling_tol=args.host_ceiling_tol,
+                calibration=calib,
                 seeds=seeds, per_seed={str(s): per_seed[s] for s in seeds},
                 median_onbridge_delta=ob_d, median_linear_delta=lin_d, median_plateau_delta=plat_d,
                 onbridge_ge_host=ob_ge_host, onbridge_le_ceiling=ob_le_ceil,
