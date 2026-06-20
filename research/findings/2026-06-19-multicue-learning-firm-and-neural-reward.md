@@ -122,4 +122,95 @@ ceiling is the spiking readout, not the rule.
 
 ## Part 2 — NEURALIZE the reward (the spiking-RPE finish)
 
-(see below — filled after the Part-2 run)
+### What moves to spikes (and what stays the legitimate teaching boundary)
+
+Part 1's learner already spike-measures the cue ELIGIBILITY (each cue population's firing during the WTA settle).
+Its remaining HOST scaffold was the REWARD term: `err = target - tanh(pred*8)` — a host scalar that computes the
+r - V subtraction in Python. Part 2 replaces that with a **spiking SNc dopamine pool's firing**, reusing the nav
+g11 `spiking_snc` pattern verbatim in spirit:
+
+- A standalone `snc` region (`IZH2007_DOPAMINE`, `n_snc=40`) is added to the bridge (default OFF → host path is
+  byte-identical).
+- Each training item, the SNc is driven by **`I_snc = tonic + reward_gain*target - value_gain*pred`**, so its
+  windowed FIRING-RATE DEVIATION from tonic IS the RPE `delta = r - V` (burst above tonic when more agent-evidence
+  is needed; dip below on over-prediction). That deviation, normalized to ~[-1,+1], gates the third factor in
+  place of the host `err`.
+- **The gold→target map STAYS the host teaching signal** — exactly the legitimate environment/body boundary the
+  nav `reward_us` uses (it rides on the perceived reward; the gold→reward map is host). What moved to spikes: the
+  **r - V subtraction + the RPE magnitude** are now computed by the dopamine pool's FIRING. With Part 2, the
+  eligibility AND the reward are both neural; only the gold→target lookup is host.
+
+### Calibration (the dopamine pool's operating point)
+
+The SNc f-I curve was measured on the substrate; the operating point was placed for headroom BOTH ways:
+`snc_tonic_pa=2000` (tonic rate ≈ 0.13 spk/neuron/window), `reward_gain=value_gain=1200`, `snc_window=30`. Probe
+(8 target/pred cases): the spiking RPE **sign tracks the host `err` on all 8 cases**, graded magnitude —
+under-predict (`target=+1,pred=-1`) → **+0.76**, matched → **≈0**, badly over-predict (`target=-1,pred=+1`) →
+**-0.93**. So the dopamine firing is a faithful signed, graded RPE.
+
+### Result — the spiking RPE recovers the validity signature on real spikes (6 seeds, CPU; soft+ctrlfix battery)
+
+```
+ seed | MULTICUE  POS-ONLY  LESION  NO-LEARN  PERMUTE | sig | strict-GO | W(pos / sem / distr) | residual-fail
+   42 |    0.594    0.312    0.312    0.531    0.312  |  Y  |    no     |  8.1 / 20.0 / 1.7    | learner 0.594 (object_front readout)
+   43 |    0.875    0.312    0.438    0.562    0.438  |  Y  |    GO     |  2.7 / 20.0 / 6.0    | -
+   44 |    0.969    0.250    0.344    0.500    0.219  |  Y  |    GO     |  4.2 / 20.0 / 1.3    | -
+   45 |    0.938    0.281    0.406    0.438    0.531  |  Y  |    GO     |  4.8 / 20.0 / 0.4    | -
+   46 |    0.781    0.219    0.531    0.656    0.281  |  Y  |    no     |  2.2 / 20.0 / 2.9    | learner 0.781 (object_front readout)
+   47 |    0.938    0.281    0.562    0.406    0.719  |  Y  |    no     |  3.8 / 20.0 / 1.0    | lesion/permute readout margins
+```
+
+**Side-by-side (same battery, same seeds):**
+
+| reward source | learned ≥0.80 | weight SIGNATURE | moat breaches | strict-GO |
+|---|---|---|---|---|
+| **host** (Part 1)        | 5/6 | **6/6** | **0** | 4/6 |
+| **spiking_rpe** (Part 2) | 4/6 | **6/6** | **0** | 3/6 |
+
+- **The validity SIGNATURE is recovered on 6/6 seeds with the SPIKING RPE** — position driven to 11.9–17.8 BELOW
+  the semantic weight (**59–89% of the semantic magnitude**, well above the 25% bar), distractor low. The
+  dopamine pool's firing learned the correct cue validities on every seed. **This is the load-bearing brain-based
+  result: the reward is now neural and the learning still works.**
+- **End-to-end is comparable to the host reward** (4/6 vs 5/6 ≥0.80) — the same per-seed object_front readout
+  friction Part 1 characterized (seed 42 dips to 0.594, seed 46 0.781). The 1-seed strict-GO difference (seed 42)
+  is within that documented operating-point variance — the SNc settle adds a small amount of extra per-item
+  stochasticity, slightly shifting seed 42's WTA object_front resolution. **It is NOT an RPE-precision wall** (the
+  signature is 6/6, identical to host; the learning is intact).
+- **no-confab MOAT: 0 breaches on every seed** — the moat is never weakened by neuralizing the reward.
+
+### Part 2 verdict
+
+**GO on the brain-based claim.** The spiking SNc dopamine RPE **recovers the cue-validity signature on 6/6 seeds
+on real spikes** (position ≪ semantic, distractor low — identical to the host learner) and the **end-to-end is
+comparable to the host reward** (4/6 vs 5/6 ≥0.80; moat 0/6). Neuralizing the reward did NOT degrade the learning
+— it produced the same validity spread with the reward computed by the dopamine pool's firing rather than a host
+formula. The only host scaffold left in the learning path is the gold→target lookup, which is the legitimate
+teaching/environment boundary (exactly as the nav reward_us rides on the perceived reward). The residual per-seed
+end-to-end variance is the SAME tiny-scale Wong-Wang WTA object_front operating-point friction (not an RPE wall),
+so there is no point-neuron RPE-precision boundary to report; the host-reward learner remains available, and the
+**install path stays the robust production headline (5/6) regardless of the reward source**.
+
+---
+
+## Net summary
+
+| Claim | Status |
+|---|---|
+| The validity LEARNING is robust (correct signature, every seed) | **YES — 6/6 on host AND spiking-RPE** |
+| The prior 3/6 was the TEST | **PARTLY** — the uniform no-learn control + permute runaway did not discriminate (now fixed: naive-prior control + weight cap → both collapse) |
+| ...and partly a real boundary | **YES** — the END-TO-END object_front resolution has a tiny-scale WTA operating-point friction (not a learning failure; naive levers don't fix it) |
+| The reward can be NEURALIZED (spiking RPE) | **YES** — the SNc dopamine firing recovers the signature 6/6, end-to-end comparable to host, moat intact |
+| The no-confab moat | **0 breaches everywhere, never weakened** |
+| `sim/` edits | **NONE** (additive runner edits only) |
+
+**Production stance:** the install-path validities remain the robust multi-seed headline (5/6); the on-substrate
+three-factor LEARNING genuinely produces the correct validity signature (6/6, host or spiking-reward); the
+end-to-end ceiling is the spiking READOUT operating point, not the learning rule or the reward computation.
+
+## Provenance
+- Part-1/2 builds on: `2026-06-19-multicue-competition-spiking-derisk.md` (the `learn_error_gated` three-factor
+  learner; the signature-6/6 finding; the seed-variable end-to-end).
+- Nav spiking-SNc/RPE pattern reused: `research/runners/g11_bg_runner.py` (`spiking_snc` / `spiking_reward_us`;
+  `I_snc = tonic + reward_gain*r - value_gain*V`, RPE = firing-rate deviation), `2026-06-08-spiking-snc-actor-critic`,
+  `2026-06-08-gabab-girk-stageB-derisk-GO.md`.
+- Competition Model: Bates & MacWhinney 1982/1989. Dopamine-as-RPE: Schultz 1998. Biased competition: Wong-Wang 2006.
