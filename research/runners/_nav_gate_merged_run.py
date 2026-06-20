@@ -73,6 +73,15 @@ def main():
     ap.add_argument("--scramble-sc", action="store_true",
                     help="#2 anti-cheat: scramble the sc_retina->sc_map retinotopy (decisive lesion; must REGRESS). "
                          "Sets SC_SCRAMBLE=1 in-process.")
+    # 2026-06-20 loop-closure de-risk: the reentrant thal_X->cortex_X self-sustain arc (catalog A.05,
+    # enable_cluster_a_closed_loop) is ON by default in this runner (line in kw below) and WAS ON in the
+    # spiking-SC NO-GO. This flag LESIONS it (sets the flag False) so the controller can run the faithful
+    # grid-32/1800 closed-loop A/B (ON vs OFF) that the deep-research recommends — the decisive scale test of
+    # whether closing the loop changes the actor-silence. Default False => arc stays ON => byte-identical to
+    # every existing caller (the STEP-2a gate + the SC deploy A/B).
+    ap.add_argument("--no-closed-loop", action="store_true",
+                    help="LESION the reentrant thal->cortex arc (enable_cluster_a_closed_loop=False). "
+                         "Default off = arc ON (byte-identical to the existing gate). For the loop-closure A/B.")
     args = ap.parse_args()
 
     from research.runners.g11_bg_runner import run_moving_goal_episode
@@ -93,7 +102,7 @@ def main():
         goal_schedule=goal_schedule,
         enable_d1_d2_asymmetry=True,
         enable_striatal_fsis=True,
-        enable_cluster_a_closed_loop=True,
+        enable_cluster_a_closed_loop=not args.no_closed_loop,  # A.05 reentrant arc; --no-closed-loop LESIONS it
         enable_cluster_e_topography=True,
         enable_pfc_nmda=True,
         enable_visual_cortex=True,
