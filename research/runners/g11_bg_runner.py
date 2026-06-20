@@ -381,6 +381,18 @@ def build_bg_brain_regions(
     vs_place_to_value_weight: float = 0.2,   # vs_place_context->striosome_value plastic INIT weight (de-risk PASS: STDP grows 0.20->0.58)
     vs_place_to_value_density: float = 0.5,
     enable_critic_homeostasis: bool = False, # per-region homeostasis on vs_place_context + striosome_value
+    # ── 2026-06-20 DENDRITE VALUE CRITIC (shortcut #9 host-RETIRED deploy) ──
+    # When True (only meaningful WITH enable_neural_critic, and NOT neural_place_selforg which
+    # already routes the value through a coincidence_detector), the value-learner pathway
+    # vs_place_context->striosome_value is tagged coincidence_detector=True so the critic's
+    # value-of-location V is computed by the VALIDATED graded dendritic plateau (the on-substrate
+    # analog value read-out the point-neuron MSN-D1 rate provably cannot be; 2026-06-20-dendrite-
+    # stage1-snc-calibration.md, δ=1.33 6/6). The downstream neural GABA_B->SNc subtraction is
+    # UNCHANGED — the brain still does r-V. The config knobs (enable_coincidence_detection +
+    # enable_graded_dendritic_plateau + the calibrated graded_plateau_* + a high coincidence_k so
+    # the GRADED form is active) are set in run_moving_goal_episode's cfg block. Default False =>
+    # the enable_neural_critic point-neuron critic path is BYTE-IDENTICAL.
+    dendrite_critic: bool = False,
     # ── 2026-06-09 CONVERGENT-EXCITATION UP-STATE (the faithful, homeostasis-free critic-firing
     #    mechanism; research/findings/2026-06-09-N9-faithful-value-cell-design.md Option A) ──
     # Splits the critic afferent into TWO DISTINCT regions (the RegionManager keys pathways by
@@ -1908,11 +1920,16 @@ def build_bg_brain_regions(
             ))
         # A2 (or the sole afferent when enable_convergent_upstate=False) — the PLASTIC value
         # learner. DA-delta-gated STDP sculpts V(s) on top of the (A1-fired, when enabled) cell.
+        # 2026-06-20 (shortcut #9 deploy): with --dendrite-critic, this value-computing pathway is
+        # a coincidence_detector so the critic's V(s) is the VALIDATED graded dendritic plateau
+        # (riding on the routed synapses), not the point-neuron MSN-D1 rate. Default False =
+        # byte-identical (the same plastic rate-coded pathway).
         pathways.append(RegionPathway(
             from_region=_critic_afferent, to_region="striosome_value",
             density=float(vs_place_to_value_density),
             weight_mean=float(vs_place_to_value_weight),
             weight_jitter=0.5, plastic=True, plasticity_gate="value_input",
+            coincidence_detector=bool(dendrite_critic),
         ))
     if enable_neural_critic:
         # critic -> SNc GABA_B subtraction. transmission_gate="critic_snc_window"
@@ -3365,6 +3382,17 @@ def run_moving_goal_episode(
     n_vs_place_context: int = 200,             # dense dedicated place-context afferent size
     vs_place_to_value_weight: float = 0.2,     # vs_place_context->striosome_value plastic INIT weight (STDP grows V up)
     vs_place_to_value_density: float = 0.5,
+    # ── 2026-06-20 DENDRITE VALUE CRITIC (shortcut #9 host-RETIRED deploy) ──
+    # When True (with --enable-neural-critic, NOT --neural-place-selforg), the critic's value-of-
+    # location V is computed by the VALIDATED graded dendritic plateau instead of the point-neuron
+    # MSN-D1 rate (2026-06-20-dendrite-stage1-snc-calibration.md). The neural GABA_B->SNc value
+    # subtraction is unchanged. Default False = byte-identical point-neuron critic. The graded
+    # knobs are the validated calibration (NO sim/ edit).
+    dendrite_critic: bool = False,
+    dendrite_critic_coincidence_k: float = 50.0,   # high => all-or-none plateau OFF, GRADED form active
+    dendrite_critic_graded_center: float = 1.5,    # validated logistic center (c_w units)
+    dendrite_critic_graded_slope: float = 1.0,     # validated smooth (non-saturating) slope
+    dendrite_critic_graded_strength: float = 80.0, # validated per-step plateau conductance scale
     # ── 2026-06-09 CONVERGENT-EXCITATION UP-STATE (homeostasis-free critic firing; Option A). ──
     # Adds a DISTINCT dense NON-plastic `vs_place_drive` afferent (the B.02 up-state arm) alongside
     # `vs_place_context` (the plastic value learner). When on, the runner injects the SAME grid-32
@@ -3625,6 +3653,24 @@ def run_moving_goal_episode(
     # Env-var SC_SEL_HOMEO=1 also enables it. Existing primitive, NO sim/ edit (a region flag set BEFORE
     # the bridge is built). research/findings/2026-06-20-cascade-north-bias-scoping.md (FIX 2b).
     sc_sel_homeostasis: bool = False,
+    # Cascade North-bias FIX 3 (2026-06-20): OPPONENT-AXIS push-pull read-out. The four cardinals form
+    # two natural opponent axes (N<->S, E<->W). Instead of a flat 4-way argmax among near-tied pools (where
+    # a faint position-correct SC margin on ONE axis is a sub-threshold contributor lost in the global race
+    # and the N-first ordering decides), the decision is a SIGNED push-pull per axis: axis_NS = count[N] -
+    # count[S], axis_EW = count[E] - count[W]; pick the axis with the larger |signed margin|, then the sign
+    # within that axis. A faint W-over-E surplus (far-W goal) becomes a DECISIVE axis winner rather than a
+    # weak 4-way contender. Biology: the superior-colliculus motor map's opponent/push-pull organization
+    # (distinct populations encode OPPOSING movement directions with balanced E/I preventing a directional
+    # bias; Nature Comms 2023, Comms Biol 2025; catalog H.25) + the project's E-cluster ON/OFF opponency.
+    # When BOTH axes' |margin| <= sc_opponent_axis_eps (a genuine tie), fall through to the FIX-1 tie-break
+    # draw if on (else the N-first ordering) -- so FIX 3 sharpens the weak-but-nonzero per-axis margins that
+    # FIX 1's whole-set tie-break could not resolve. Default OFF => byte-identical (the flat argmax path is
+    # unchanged). Env-var SC_OPPONENT_AXIS=1 also enables it. PURE READ-OUT, NO sim/ edit (it reads the same
+    # sel_X/commit_X counts the flat argmax reads). Reported: the fraction of decisions decided by an axis
+    # margin vs falling through to the tie-break (an anti-cheat: a GO needs the axis margin load-bearing).
+    # research/findings/2026-06-20-cascade-north-bias-scoping.md (FIX 3).
+    sc_opponent_axis: bool = False,
+    sc_opponent_axis_eps: int = 0,             # axis tie tolerance (counts): tie if |axis margin| <= eps
     # Cluster K v2 (2026-05-01)
     visual_receptive_field_radius: int = 4,
     visual_v1_weight_scale: float = 10.0,
@@ -4084,6 +4130,7 @@ def run_moving_goal_episode(
         n_vs_place_context=n_vs_place_context,
         vs_place_to_value_weight=vs_place_to_value_weight,
         vs_place_to_value_density=vs_place_to_value_density,
+        dendrite_critic=bool(dendrite_critic),   # shortcut #9 host-RETIRED: graded dendrite value
         enable_convergent_upstate=enable_convergent_upstate,
         vs_place_drive_to_value_weight=vs_place_drive_to_value_weight,
         vs_place_drive_to_value_density=vs_place_drive_to_value_density,
@@ -4364,6 +4411,32 @@ def run_moving_goal_episode(
         cfg.coincidence_plateau_strength = float(coincidence_plateau)
         cfg.coincidence_weighted_drive = False
         cfg.enable_nmda = True   # per-region mask -> NMDA only on the critic (enable_nmda=True there)
+    if dendrite_critic and enable_neural_critic and not _neural_place_selforg:
+        # SHORTCUT #9 host-RETIRED deploy (2026-06-20): the critic's value-of-location V is now
+        # computed by the VALIDATED graded dendritic plateau (2026-06-20-dendrite-stage1-snc-
+        # calibration.md, δ=1.33 = host 1.30, 6/6 seeds, V graded, all anti-cheats green) instead
+        # of the point-neuron MSN-D1 rate. The vs_place_context->striosome_value pathway was tagged
+        # coincidence_detector=True (build_bg_brain_regions), routing its synapses into the
+        # coincidence mask; the graded plateau then reads that WEIGHTED coincident drive (the
+        # Poirazi-Mel analog read-out that grades with the LEARNED value weight) and adds a graded
+        # plateau current onto striosome_value. The downstream neural GABA_B->SNc subtraction is
+        # UNCHANGED, so the brain still does r-V; only the V *computation* moved from a point-neuron
+        # rate to the dendritic plateau. Calibrated knobs from the validated de-risk (NO sim/ edit;
+        # the params already exist from d69cc0ab). A high coincidence_k_threshold keeps the
+        # ALL-OR-NONE plateau OFF so the GRADED form is the active value read-out (the de-risk
+        # pattern: coincidence_weighted_drive=True reads the same weighted drive).
+        cfg.enable_coincidence_detection = True
+        cfg.coincidence_k_threshold = float(dendrite_critic_coincidence_k)
+        cfg.coincidence_gain = 2.0
+        cfg.coincidence_weighted_drive = True
+        cfg.coincidence_plateau_strength = 0.0   # all-or-none plateau OFF; graded form carries V
+        cfg.enable_graded_dendritic_plateau = True
+        cfg.graded_plateau_center = float(dendrite_critic_graded_center)
+        cfg.graded_plateau_slope = float(dendrite_critic_graded_slope)
+        cfg.graded_plateau_strength = float(dendrite_critic_graded_strength)
+        cfg.graded_plateau_tau_decay_ms = 80.0
+        cfg.graded_plateau_tau_rise_ms = 2.0
+        cfg.enable_nmda = True   # per-region mask -> NMDA only on the critic slice (Mg2+ block)
     cfg.enable_structural_pruning = enable_structural_pruning
     cfg.enable_d1_d2_asymmetry = enable_d1_d2_asymmetry
     # Cluster G v1 (2026-05-01): Wang 2002 NMDA-mediated PFC working memory.
@@ -6108,6 +6181,11 @@ def run_moving_goal_episode(
     _tie_break_rng = np.random.default_rng(seed * 50_021)
     _tie_break_count = 0
     _decision_total = 0
+    # Cascade North-bias FIX 3 (2026-06-20): opponent-axis push-pull read-out flag + instrumentation.
+    # _opp_axis_count = decisions decided by a signed axis margin (vs falling through to the tie-break on a
+    # genuine both-axes tie). Default-off configs never enter the opponent-axis branch -> byte-identical.
+    _sc_opponent_axis = bool(sc_opponent_axis) or (os.environ.get("SC_OPPONENT_AXIS", "0") == "1")
+    _opp_axis_count = 0
     # Track current gating_strength (used for DA-gated WTA across the whole trial,
     # not just the reward-hold sub-step). Initialized to 1.0 (full WTA on first trial
     # before any reward feedback exists).
@@ -7135,7 +7213,21 @@ def run_moving_goal_episode(
         # the persistent _tie_break_rng (Wang-2002 decision noise), NOT the N-first ordering -> removes
         # the deterministic-N degeneracy. nonlocal _tie_break_count tallies tie-resolved decisions.
         def _argmax_action(counts):
-            nonlocal _tie_break_count
+            nonlocal _tie_break_count, _opp_axis_count
+            # FIX 3 (opponent-axis push-pull): tried FIRST when on. Compute the signed margin per opponent
+            # axis (N-S, E-W); if EITHER axis has a margin beyond sc_opponent_axis_eps, the decision is the
+            # sign of the LARGER-|margin| axis (a faint position-correct 1-D surplus becomes a decisive
+            # winner). Only when BOTH axes are within eps (a genuine tie) do we fall through to the FIX-1
+            # tie-break / N-first ordering below. ACTION_NAMES = ["N","E","S","W"] -> idx N=0,E=1,S=2,W=3.
+            if _sc_opponent_axis:
+                _ns = counts["N"] - counts["S"]      # +N / -S
+                _ew = counts["E"] - counts["W"]      # +E / -W
+                if abs(_ns) > sc_opponent_axis_eps or abs(_ew) > sc_opponent_axis_eps:
+                    _opp_axis_count += 1
+                    if abs(_ns) >= abs(_ew):
+                        return 0 if _ns > 0 else 2   # N or S
+                    return 1 if _ew > 0 else 3       # E or W
+                # both axes tied -> fall through to the tie-break / flat ordering.
             if not _sc_tie_break:
                 return max(range(N_ACTIONS), key=lambda i: counts[ACTION_NAMES[i]])
             _vals = [counts[ACTION_NAMES[i]] for i in range(N_ACTIONS)]
@@ -7659,6 +7751,14 @@ def run_moving_goal_episode(
         "tie_break_fraction": (float(_tie_break_count) / float(_decision_total)
                                if _decision_total > 0 else 0.0),
         "sc_sel_homeostasis": bool(_sc_sel_homeo),
+        # Cascade North-bias FIX 3 instrumentation (2026-06-20): how many decisions the opponent-axis
+        # push-pull read-out decided by a signed axis margin (the anti-cheat that the axis margin is
+        # load-bearing -- a GO needs the per-axis margin deciding, not a fall-through to the tie-break).
+        "sc_opponent_axis": bool(_sc_opponent_axis),
+        "sc_opponent_axis_eps": int(sc_opponent_axis_eps),
+        "opponent_axis_count": int(_opp_axis_count),
+        "opponent_axis_fraction": (float(_opp_axis_count) / float(_decision_total)
+                                   if _decision_total > 0 else 0.0),
         "reset_losers_only": bool(reset_losers_only),
         "urgency_max_pA": float(urgency_max_pA),
         "readout_source": _readout_source,
@@ -8694,6 +8794,26 @@ def main():
     ap.add_argument("--vs-place-to-value-density", type=float, default=0.5,
                     help="Density of the vs_place_context->striosome_value afferent "
                          "(--enable-critic-homeostasis). Default 0.5 (de-risk value).")
+    ap.add_argument("--dendrite-critic", action="store_true",
+                    help="SHORTCUT #9 host-RETIRED deploy (2026-06-20): compute the value critic's "
+                         "value-of-location V with the VALIDATED graded dendritic plateau (the "
+                         "on-substrate analog value read-out the point-neuron MSN-D1 rate provably "
+                         "cannot be; 2026-06-20-dendrite-stage1-snc-calibration.md, δ=1.33 = host "
+                         "1.30, 6/6 seeds). Tags the vs_place_context->striosome_value pathway as a "
+                         "coincidence_detector + enables the graded plateau (calibrated knobs). The "
+                         "neural GABA_B->SNc value subtraction is UNCHANGED. Requires "
+                         "--enable-neural-critic; ignored under --neural-place-selforg (which already "
+                         "routes the value through a coincidence_detector). Default OFF = the "
+                         "point-neuron critic path is byte-identical. NO sim/ edit.")
+    ap.add_argument("--dendrite-critic-coincidence-k", type=float, default=50.0,
+                    help="coincidence_k_threshold for --dendrite-critic. High (default 50) keeps the "
+                         "all-or-none plateau OFF so the GRADED value read-out is active.")
+    ap.add_argument("--dendrite-critic-graded-center", type=float, default=1.5,
+                    help="graded_plateau_center for --dendrite-critic (validated 1.5).")
+    ap.add_argument("--dendrite-critic-graded-slope", type=float, default=1.0,
+                    help="graded_plateau_slope for --dendrite-critic (validated 1.0, non-saturating).")
+    ap.add_argument("--dendrite-critic-graded-strength", type=float, default=80.0,
+                    help="graded_plateau_strength for --dendrite-critic (validated 80).")
     ap.add_argument("--enable-convergent-upstate", action="store_true",
                     help="CONVERGENT-EXCITATION UP-STATE (2026-06-09, homeostasis-free critic firing; "
                          "design Option A). Adds a DISTINCT dense NON-plastic `vs_place_drive` afferent "
@@ -9162,6 +9282,11 @@ def main():
             n_vs_place_context=args.n_vs_place_context,
             vs_place_to_value_weight=args.vs_place_to_value_weight,
             vs_place_to_value_density=args.vs_place_to_value_density,
+            dendrite_critic=args.dendrite_critic,
+            dendrite_critic_coincidence_k=args.dendrite_critic_coincidence_k,
+            dendrite_critic_graded_center=args.dendrite_critic_graded_center,
+            dendrite_critic_graded_slope=args.dendrite_critic_graded_slope,
+            dendrite_critic_graded_strength=args.dendrite_critic_graded_strength,
             enable_convergent_upstate=args.enable_convergent_upstate,
             vs_place_drive_to_value_weight=args.vs_place_drive_to_value_weight,
             vs_place_drive_to_value_density=args.vs_place_drive_to_value_density,
