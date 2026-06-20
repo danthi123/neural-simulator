@@ -3247,6 +3247,12 @@ def run_moving_goal_episode(
     verbose: bool = True,
     enable_motor_lateral_inhibition: bool = False,
     enable_cortex_lateral_inhibition: bool = False,
+    # Cortex-WTA strength knobs (exposed for the #6 R1 escalation: a STRONGER inter-cardinal
+    # cortex FS competition to overcome the cascade N-bias swamping). Defaults == the builder
+    # defaults so this is byte-identical when enable_cortex_lateral_inhibition is off.
+    n_cortex_fs_per_action: int = 5,
+    cortex_to_fs_weight: float = 20.0,
+    fs_to_cortex_weight: float = 8.0,
     enable_per_action_da_targeting: bool = False,
     enable_adaptive_per_action_da: bool = False,
     adaptive_da_ema_decay: float = 0.9,  # ~tau=10 trials (used for positive reward)
@@ -3980,6 +3986,9 @@ def run_moving_goal_episode(
         commit_recurrent_weight=commit_recurrent_weight,
         opn_to_commit_weight=opn_to_commit_weight,
         enable_cortex_lateral_inhibition=enable_cortex_lateral_inhibition,
+        n_cortex_fs_per_action=n_cortex_fs_per_action,
+        cortex_to_fs_weight=cortex_to_fs_weight,
+        fs_to_cortex_weight=fs_to_cortex_weight,
         enable_learned_perception=enable_learned_perception,
         enable_hippocampus=enable_hippocampus,
         n_hippocampus_per_layer=n_hippocampus_per_layer,

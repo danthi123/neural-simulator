@@ -88,7 +88,8 @@ def _action_frac(counts):
 
 
 def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv,
-            sc_cortex_w, divnorm_sigma, divnorm_gain, cortex_wta=False):
+            sc_cortex_w, divnorm_sigma, divnorm_gain, cortex_wta=False,
+            cortex_fs_weight=8.0, cortex_fs_n=5):
     """arm_name in {'host','sc_ramp','sc_popvector','sc_popvector_scr'}.
 
     cortex_wta (the R1 'sharpen-earlier' next mechanism after the Option-A+B HONEST NEGATIVE): add
@@ -114,6 +115,8 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
     )
     if cortex_wta:
         kw["enable_cortex_lateral_inhibition"] = True   # R1: inter-cardinal cortex WTA
+        kw["fs_to_cortex_weight"] = float(cortex_fs_weight)   # R1 escalation: WTA strength
+        kw["n_cortex_fs_per_action"] = int(cortex_fs_n)
 
     # reset the per-run SC env knobs so a prior arm doesn't leak.
     os.environ.pop("SC_CORTEX_W", None)
@@ -234,6 +237,11 @@ def main():
                     help="R1 next mechanism: add inter-cardinal FS WTA between cortex_N/E/S/W "
                          "(enable_cortex_lateral_inhibition) to sharpen the SC margin EARLIER, "
                          "before the sel_X ring's N-bias swamping. Applies to the SC arms.")
+    ap.add_argument("--cortex-fs-weight", type=float, default=8.0,
+                    help="R1 escalation: fs_to_cortex inhibitory weight (builder default 8). "
+                         "Raise to make the inter-cardinal WTA STRONGER. Only with --cortex-wta.")
+    ap.add_argument("--cortex-fs-n", type=int, default=5,
+                    help="R1 escalation: n_cortex_fs_per_action (builder default 5). Only with --cortex-wta.")
     ap.add_argument("--with-conv", action="store_true",
                     help="merged bridge (the NEGATIVE config). Off = standalone nav SC (faster smoke).")
     ap.add_argument("--no-host", action="store_true", help="skip the host positive control.")
@@ -261,7 +269,9 @@ def main():
         summaries.append(run_arm(arm, args.seed, args.n_steps, args.grid_size, warmup,
                                  out_dir, args.with_conv, args.sc_cortex_w,
                                  args.divnorm_sigma, args.divnorm_gain,
-                                 cortex_wta=args.cortex_wta))
+                                 cortex_wta=args.cortex_wta,
+                                 cortex_fs_weight=args.cortex_fs_weight,
+                                 cortex_fs_n=args.cortex_fs_n))
 
     by = {s["arm"]: s for s in summaries}
     host = by.get("host")
