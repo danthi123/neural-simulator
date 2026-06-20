@@ -3596,6 +3596,35 @@ def run_moving_goal_episode(
     sc_popvector_readout: bool = False,
     sc_popvector_divnorm_sigma: float = 1.0,   # Carandini-Heeger semi-saturation sigma on cortex_X
     sc_popvector_divnorm_gain: float = 1.0,    # divisive strength on the four-cardinal mean term
+    # Cascade North-bias FIX 1 (2026-06-20): tie-aware STOCHASTIC action read-out. The host reads the
+    # spiking decision with `max(range(N), key=...)` (:7073), and Python's max returns the FIRST index
+    # on ties, so with ACTION_NAMES=["N","E","S","W"] every K-way tie deterministically resolves to N
+    # (index 0). The #6 trace showed the sel_X/commit_X accumulators SATURATE TOGETHER at the ceiling
+    # ([40,40,40,40]) nearly every step -> the N-first tie-break becomes the de-facto policy, swamping
+    # the SC orienting signal (a structural North-bias). When True, a K-way tie (>=2 actions within
+    # `sc_tie_break_eps` counts of the leader) is broken by a UNIFORM draw among the tied set using the
+    # persistent per-episode action_rng (Wang-2002 finite-size decision noise breaks genuine ties;
+    # 2026-06-19-spiking-decision-default-on-GO.md), NOT the N-first ordering. This is a host READ of a
+    # genuine spiking tie -> a fair read is the correct, non-cheating thing to do (not a new mechanism).
+    # Default OFF => byte-identical (the N-first max() reproduces unchanged). Env-var SC_TIE_BREAK=1 also
+    # enables it. PURE READ-OUT, NO sim/ edit. Reported: the fraction of decisions resolved by the tie
+    # draw (an anti-cheat: a GO needs the decision driven by the SC MARGIN, few ties, not lucky draws on
+    # full [40,40,40,40] ties). research/findings/2026-06-20-cascade-north-bias-scoping.md (FIX 1).
+    sc_tie_break_stochastic: bool = False,
+    sc_tie_break_eps: int = 0,                 # tie tolerance (counts): tied = count >= leader - eps
+    # Cascade North-bias FIX 2 (2026-06-20): per-pool baseline EQUALIZATION at the selection stage. The
+    # all-saturate-at-40 ties (the source of the FIX-1-relevant tie regime) arise because the four sel_X
+    # accumulators have no mechanism driving their baseline firing toward a common target -- they all pin
+    # at the ceiling. When True, flag the four sel_{N,E,S,W} pools BrainRegion.enable_homeostasis=True so
+    # each independently regulates its baseline firing rate toward a common target (per-region threshold-
+    # adapt, sim/bridge.py:1254-1266; Turrigiano scaling / homeostatic AIS plasticity, catalog I.01).
+    # Distinct from the global cfg.enable_homeostasis (held OFF for the deterministic regime) -- this is
+    # the per-region mask, which fires independently of the global flag (bridge.py:6464). Stacks on FIX 1
+    # to convert "unbiased" into "selective" when FIX 1 alone leaves residual bias. Default OFF =>
+    # byte-identical (no region opts in, the per-region homeostasis mask is None, the step is unchanged).
+    # Env-var SC_SEL_HOMEO=1 also enables it. Existing primitive, NO sim/ edit (a region flag set BEFORE
+    # the bridge is built). research/findings/2026-06-20-cascade-north-bias-scoping.md (FIX 2b).
+    sc_sel_homeostasis: bool = False,
     # Cluster K v2 (2026-05-01)
     visual_receptive_field_radius: int = 4,
     visual_v1_weight_scale: float = 10.0,
@@ -4110,6 +4139,27 @@ def run_moving_goal_episode(
         for _r in regions:
             if _r.name in ("cortex_N", "cortex_E", "cortex_S", "cortex_W"):
                 _r.input_divisive_norm = True
+
+    # Cascade North-bias FIX 2 (2026-06-20): per-pool baseline equalization at the SELECTION stage.
+    # Flag the four sel_{N,E,S,W} accumulators BrainRegion.enable_homeostasis=True so each independently
+    # regulates its baseline firing rate toward a common target (per-region threshold-adapt; not pooled
+    # like the divisive norm, so it composes with the cortex_X bump-mass norm above). This equalizes the
+    # all-saturate-at-40 ties at their source -> the winner is decided by SC evidence, not a structural
+    # advantage. Master switch = the sc_sel_homeostasis kwarg OR the SC_SEL_HOMEO env var. The per-region
+    # mask fires independently of the global cfg.enable_homeostasis (held OFF for the deterministic
+    # regime). Default OFF => byte-identical (no sel pool opts in, the homeostasis mask is None). NO sim/
+    # edit (an existing region flag set BEFORE the bridge is built).
+    _sc_sel_homeo = bool(sc_sel_homeostasis) or (os.environ.get("SC_SEL_HOMEO", "0") == "1")
+    if _sc_sel_homeo:
+        _sel_names = {f"sel_{a}" for a in ACTION_NAMES}
+        _n_flagged = 0
+        for _r in regions:
+            if _r.name in _sel_names:
+                _r.enable_homeostasis = True
+                _n_flagged += 1
+        if verbose:
+            print(f"[g11 seed={seed}] FIX 2: per-region homeostasis on {_n_flagged} sel_X pools "
+                  f"(baseline equalization at the selection stage)", flush=True)
 
     # Pre-compute sensory neuron preferred (dx, dy) — 7x7 grid covering [-3, 3]²
     if enable_learned_perception:
@@ -6048,6 +6098,16 @@ def run_moving_goal_episode(
               f"(deadlock-breaker; baseline homeostasis preserves place-selectivity)", flush=True)
 
     t0 = time.time()
+    # Cascade North-bias FIX 1 (2026-06-20): a persistent per-episode action RNG for the tie-aware
+    # stochastic read-out (distinct prime offset from the per-step all-silent fallback RNG at :7079,
+    # which uses seed*10000+step). Only consulted when sc_tie_break_stochastic is on AND a tie occurs;
+    # default-off configs never touch it -> byte-identical. _tie_break_count tracks how many decisions
+    # the tie draw resolved (the anti-cheat: a GO needs the decision driven by the SC margin, not by
+    # lucky draws on full ties).
+    _sc_tie_break = bool(sc_tie_break_stochastic) or (os.environ.get("SC_TIE_BREAK", "0") == "1")
+    _tie_break_rng = np.random.default_rng(seed * 50_021)
+    _tie_break_count = 0
+    _decision_total = 0
     # Track current gating_strength (used for DA-gated WTA across the whole trial,
     # not just the reward-hold sub-step). Initialized to 1.0 (full WTA on first trial
     # before any reward feedback exists).
@@ -7069,15 +7129,32 @@ def run_moving_goal_episode(
         else:
             _primary = motor_counts
             _fallback = None
+        # Cascade North-bias FIX 1 (2026-06-20): tie-aware argmax. Default (sc_tie_break off) is the
+        # EXACT N-first `max(range(N), key=...)` -> byte-identical. When on, a K-way tie (>=2 actions
+        # within sc_tie_break_eps of the leader) is resolved by a uniform draw among the tied set via
+        # the persistent _tie_break_rng (Wang-2002 decision noise), NOT the N-first ordering -> removes
+        # the deterministic-N degeneracy. nonlocal _tie_break_count tallies tie-resolved decisions.
+        def _argmax_action(counts):
+            nonlocal _tie_break_count
+            if not _sc_tie_break:
+                return max(range(N_ACTIONS), key=lambda i: counts[ACTION_NAMES[i]])
+            _vals = [counts[ACTION_NAMES[i]] for i in range(N_ACTIONS)]
+            _lead = max(_vals)
+            _tied = [i for i in range(N_ACTIONS) if _vals[i] >= _lead - sc_tie_break_eps]
+            if len(_tied) > 1:
+                _tie_break_count += 1
+                return int(_tied[int(_tie_break_rng.integers(0, len(_tied)))])
+            return _tied[0]
         if max(_primary.values()) > 0:
-            action_idx = max(range(N_ACTIONS), key=lambda i: _primary[ACTION_NAMES[i]])
+            action_idx = _argmax_action(_primary)
             _decision_path = "primary"  # commit burst fired (the spiking decision)
         elif _fallback is not None and max(_fallback.values()) > 0:
-            action_idx = max(range(N_ACTIONS), key=lambda i: _fallback[ACTION_NAMES[i]])
+            action_idx = _argmax_action(_fallback)
             _decision_path = "fallback"  # silent commit → sel-lean (argmax residual)
         else:
             action_idx = int(np.random.default_rng(seed * 10000 + step).integers(0, N_ACTIONS))
             _decision_path = "random"  # both silent
+        _decision_total += 1
         # N6 guard: track which arm of the fallback chain made each decision so the
         # commit-fire-rate / silent-commit-fallback-rate can be reported (a GO needs
         # the commit firing reliably, not quietly leaning on the argmax fallback).
@@ -7572,6 +7649,16 @@ def run_moving_goal_episode(
         "accum_trace": accum_trace_log,
         "use_commit_readout": bool(_use_commit),
         "decision_path_counts": dict(_decision_path_counts),
+        # Cascade North-bias FIX 1 instrumentation (2026-06-20): how many decisions the tie-aware
+        # stochastic read-out resolved by a uniform draw (the anti-cheat that catches a random-walk win
+        # masquerading as re-orient: a GO needs the decision driven by the SC margin -> few ties).
+        "sc_tie_break_stochastic": bool(_sc_tie_break),
+        "sc_tie_break_eps": int(sc_tie_break_eps),
+        "tie_break_count": int(_tie_break_count),
+        "decision_total": int(_decision_total),
+        "tie_break_fraction": (float(_tie_break_count) / float(_decision_total)
+                               if _decision_total > 0 else 0.0),
+        "sc_sel_homeostasis": bool(_sc_sel_homeo),
         "reset_losers_only": bool(reset_losers_only),
         "urgency_max_pA": float(urgency_max_pA),
         "readout_source": _readout_source,

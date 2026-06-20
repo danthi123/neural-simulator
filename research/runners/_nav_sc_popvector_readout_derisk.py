@@ -89,14 +89,21 @@ def _action_frac(counts):
 
 def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv,
             sc_cortex_w, divnorm_sigma, divnorm_gain, cortex_wta=False,
-            cortex_fs_weight=8.0, cortex_fs_n=5):
+            cortex_fs_weight=8.0, cortex_fs_n=5, fix1=False, fix2=False,
+            tie_break_eps=0):
     """arm_name in {'host','sc_ramp','sc_popvector','sc_popvector_scr'}.
 
     cortex_wta (the R1 'sharpen-earlier' next mechanism after the Option-A+B HONEST NEGATIVE): add
     per-cardinal FS interneuron WTA competition DIRECTLY between cortex_N/E/S/W
     (enable_cortex_lateral_inhibition) so the small position-correct SC pop-vector margin can win
     BEFORE the cascade N-bias swamps it at the downstream sel_X ring (the scoping's Option-B failure
-    remedy). Pure point-neuron (LIF FS cross-inhibition). Default False = byte-identical."""
+    remedy). Pure point-neuron (LIF FS cross-inhibition). Default False = byte-identical.
+
+    fix1 (Cascade North-bias FIX 1): tie-aware STOCHASTIC action read-out -- a K-way tie among the
+    sel_X/commit_X accumulators is broken by a uniform draw, NOT the N-first max() ordering (which
+    deterministically resolves [40,40,40,40] ties to N). Removes the host tie-break shortcut.
+    fix2 (Cascade North-bias FIX 2): per-region homeostasis on the four sel_X pools -- baseline
+    equalization at the selection stage so the all-saturate-at-40 ties are reduced at the source."""
     from research.runners.g11_bg_runner import run_moving_goal_episode
 
     out_path = os.path.join(out_dir, f"scpv_{arm_name}_seed{seed}.json")
@@ -117,6 +124,11 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
         kw["enable_cortex_lateral_inhibition"] = True   # R1: inter-cardinal cortex WTA
         kw["fs_to_cortex_weight"] = float(cortex_fs_weight)   # R1 escalation: WTA strength
         kw["n_cortex_fs_per_action"] = int(cortex_fs_n)
+    if fix1:
+        kw["sc_tie_break_stochastic"] = True            # FIX 1: tie-aware stochastic read-out
+        kw["sc_tie_break_eps"] = int(tie_break_eps)
+    if fix2:
+        kw["sc_sel_homeostasis"] = True                 # FIX 2: per-pool baseline equalization
 
     # reset the per-run SC env knobs so a prior arm doesn't leak.
     os.environ.pop("SC_CORTEX_W", None)
@@ -198,6 +210,11 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
     summary = {
         "arm": arm_name, "seed": seed, "grid_size": grid_size, "n_steps": n_steps,
         "warmup_steps": warmup_steps, "with_conv": with_conv,
+        "fix1_tie_break": bool(results.get("sc_tie_break_stochastic", False)),
+        "fix2_sel_homeostasis": bool(results.get("sc_sel_homeostasis", False)),
+        "tie_break_count": int(results.get("tie_break_count", 0)),
+        "decision_total": int(results.get("decision_total", 0)),
+        "tie_break_fraction": float(results.get("tie_break_fraction", 0.0)),
         "sc_cortex_w": (float(sc_cortex_w) if arm_name != "host" else None),
         "divnorm_sigma": (float(divnorm_sigma) if arm_name in ("sc_popvector", "sc_popvector_scr") else None),
         "divnorm_gain": (float(divnorm_gain) if arm_name in ("sc_popvector", "sc_popvector_scr") else None),
@@ -219,6 +236,9 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
           f"gate={gate} late_sustain={late_sustain:.3f}", flush=True)
     print(f"[sc-pv] arm={arm_name} per-phase dominant cardinal: {per_phase_dom}", flush=True)
     print(f"[sc-pv] arm={arm_name} per-phase action frac: {per_phase_frac}", flush=True)
+    print(f"[sc-pv] arm={arm_name} FIX1={summary['fix1_tie_break']} FIX2={summary['fix2_sel_homeostasis']} "
+          f"tie_break_fraction={summary['tie_break_fraction']:.4f} "
+          f"({summary['tie_break_count']}/{summary['decision_total']})", flush=True)
     return summary
 
 
@@ -242,6 +262,15 @@ def main():
                          "Raise to make the inter-cardinal WTA STRONGER. Only with --cortex-wta.")
     ap.add_argument("--cortex-fs-n", type=int, default=5,
                     help="R1 escalation: n_cortex_fs_per_action (builder default 5). Only with --cortex-wta.")
+    ap.add_argument("--fix1", action="store_true",
+                    help="Cascade North-bias FIX 1: tie-aware STOCHASTIC action read-out (break K-way "
+                         "ties by a uniform draw, NOT the N-first max() ordering). Applies to the SC arms.")
+    ap.add_argument("--fix2", action="store_true",
+                    help="Cascade North-bias FIX 2: per-region homeostasis on the four sel_X pools "
+                         "(baseline equalization at the selection stage). Applies to the SC arms. "
+                         "Stack with --fix1 if FIX 1 alone leaves residual bias.")
+    ap.add_argument("--tie-break-eps", type=int, default=0,
+                    help="FIX 1 tie tolerance (counts): an action is 'tied' if its count >= leader - eps.")
     ap.add_argument("--with-conv", action="store_true",
                     help="merged bridge (the NEGATIVE config). Off = standalone nav SC (faster smoke).")
     ap.add_argument("--no-host", action="store_true", help="skip the host positive control.")
@@ -271,7 +300,9 @@ def main():
                                  args.divnorm_sigma, args.divnorm_gain,
                                  cortex_wta=args.cortex_wta,
                                  cortex_fs_weight=args.cortex_fs_weight,
-                                 cortex_fs_n=args.cortex_fs_n))
+                                 cortex_fs_n=args.cortex_fs_n,
+                                 fix1=args.fix1, fix2=args.fix2,
+                                 tie_break_eps=args.tie_break_eps))
 
     by = {s["arm"]: s for s in summaries}
     host = by.get("host")
@@ -307,6 +338,10 @@ def main():
         "scramble_tracking": _track(scr),
         "ramp_late_sustain": (ramp["late_motor_sustain_frac"] if ramp else None),
         "popvector_late_sustain": (pv["late_motor_sustain_frac"] if pv else None),
+        "popvector_fix1": (pv["fix1_tie_break"] if pv else None),
+        "popvector_fix2": (pv["fix2_sel_homeostasis"] if pv else None),
+        "popvector_tie_break_fraction": (pv["tie_break_fraction"] if pv else None),
+        "scramble_tie_break_fraction": (scr["tie_break_fraction"] if scr else None),
     }
     # host_over_popvector ratio on the post-change re-orient (>= ~1 means popvector approaches host).
     if host and pv:
