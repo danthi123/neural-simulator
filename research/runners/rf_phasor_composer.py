@@ -60,10 +60,33 @@ def _build_rf_bridge(n, seed=42):
 
 class RFPhasorComposer:
     def __init__(self, seed=42, D=64, vocab=None, period=200, enable_spiking_cleanup=False,
-                 enable_substrate_store=False, grounded_codes=None, enable_rf_cudagraph=False):
+                 enable_substrate_store=False, grounded_codes=None, enable_rf_cudagraph=False,
+                 encoding_gain_fn=None):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
+        # (Tier-2 #6, opt-in, DEFAULT-OFF = byte-identical) DOPAMINE-GATED ENCODING STRENGTH (Lisman-Grace
+        # hippocampal-VTA loop; Kandel D.16 -- dopamine gates the entry of information into LONG-TERM memory, making a
+        # trace STABLE vs degradable). encoding_gain_fn: an optional callable () -> float read AT STORE TIME (the
+        # shared `dopamine` concentration in deployment; a probe value in the de-risk). When set, the fact's composite
+        # phasor written into the SUBSTRATE store weights (_store_substrate) is multiplied by this per-fact gain `g`.
+        # Because the RF phase read-out has a hard MAGNITUDE FLOOR (sim/bridge.py:5589 `_rf_mag2 > _rf_floor2` -- a
+        # readout neuron whose |Z| decays below the floor never spikes -> reads phase 0 = garbage), a higher-gain
+        # (rewarded) fact reconstructs ABOVE the floor under common read damage where a unit-gain (neutral) fact
+        # degrades BELOW it -> the rewarded fact wins the cue-match scan. NOT a vacuous global gain: the floor is the
+        # nonlinearity that makes it differential. None -> g=1.0 for every fact -> the byte-identical unit-magnitude
+        # write. Applies to the substrate store (enable_substrate_store=True); the numpy-kb fast path stores phases
+        # (no magnitude), so the gain is recorded but only the substrate read exercises the floor.
+        self.encoding_gain_fn = encoding_gain_fn
+        # (Tier-2 #6 de-risk knobs, DEFAULT-PRESERVING) common READ DAMAGE applied at substrate retrieve so the
+        # graceful-degradation knee can be reached (where a unit-gain fact starts to fail). _retrieve_lam: the decay
+        # lambda used by _retrieve_substrate's rf_kick (more negative = faster magnitude decay over the read window =
+        # the trace-degradation analogue, Kandel D.16). _retrieve_kick_mag: the trigger kick magnitude at retrieve
+        # (scales every readout's magnitude in common -> directly probes the floor). _retrieve_floor: the RF floor at
+        # retrieve. Defaults (lam=0.0, kick_mag=1.0, floor=1e-3) reproduce the current _retrieve_substrate EXACTLY.
+        self._retrieve_lam = 0.0
+        self._retrieve_kick_mag = 1.0
+        self._retrieve_floor = 1.0e-3
         # (perf, opt-in) route the per-op resonate window through the fused RF megakernel (one CUDA kernel/step)
         # instead of the ~15-kernel/step loop. Default OFF -> the validated loop path. == loop at the phase-read
         # tolerance (tests/test_rf_megakernel.py). See docs/plans/2026-06-17-resonate-cudagraph-refactor-design.md.
@@ -410,7 +433,10 @@ class RFPhasorComposer:
         holds this bridge handle, not the composite. Validated == numpy store at parity (Phase-2 de-risk GO)."""
         D = self.D
         zc = self._to_phasor(comp_phases)
-        conns = [(1 + k, 0, zc[k]) for k in range(D)]
+        # (Tier-2 #6) DA-gated encoding strength: scale the stored composite magnitude by the per-fact gain `g` read
+        # from the dopamine signal at store time. g=1.0 (encoding_gain_fn=None) -> the byte-identical unit-mag write.
+        g = 1.0 if self.encoding_gain_fn is None else float(self.encoding_gain_fn())
+        conns = [(1 + k, 0, complex(g) * zc[k]) for k in range(D)]
         b = _build_rf_bridge(1 + D, self.seed)
         b.rf_set_complex_weights(conns)
         return b
@@ -420,8 +446,8 @@ class RFPhasorComposer:
         the composite IN PHASE (the magnitude-invariant RF phase readout)."""
         D = self.D
         kick = np.zeros(1 + D, dtype=np.complex128)
-        kick[0] = 1.0
-        b.rf_kick(kick, period=self.period, lam=0.0)
+        kick[0] = complex(self._retrieve_kick_mag)   # common read damage: scale the trigger (default 1.0 = unchanged)
+        b.rf_kick(kick, period=self.period, lam=self._retrieve_lam, floor=self._retrieve_floor)
         b.rf_resonate_steps(self.period + 8)
         return np.asarray(b.rf_read_phases())[1:1 + D]
 
