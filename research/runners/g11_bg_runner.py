@@ -199,14 +199,37 @@ def render_egocentric_goal(agent, goal, image_size=32, ppc=4, radius=2):
 
 
 def install_spiking_sc_wiring(bridge, visual_image_size=32, w_ret_sc=80.0,
-                              w_sc_rec=6.0, w_sc_cortex=1.0, scramble=False, verbose=False):
+                              w_sc_rec=6.0, w_sc_cortex=1.0, scramble=False,
+                              popvector=False, verbose=False):
     """Post-init explicit wiring for the spiking superior colliculus (N1), de-risked in
     sc_map_orienting_probe.py. Installs (via set_pathway_weights, add_missing): retina(ON)->
     sc_map retinotopic pooling (2x2 RF), sc_map short-range recurrent excitation, and
     sc_map->cortex_{N,E,S,W} weighted-quadrant pooling (the orienting read-out: the winning
     cortex pool BY FIRING = the cardinal). The sc_map<->sc_fs Mexican-hat is framework-built
     (declared with real density so sc_fs is inhibitory). Must run AFTER _initialize_simulation_data.
-    Returns the count of synapses installed."""
+    Returns the count of synapses installed.
+
+    READ-OUT GEOMETRY (the #6 SC orienting fix, 2026-06-20). Two read-out weight formulas for
+    stage 3 (sc_map -> cortex_{N,E,S,W}); popvector selects which:
+      - popvector=False (DEFAULT, the deployed read-out): the signed half-plane LINEAR RAMP
+        wv = max(0, +/-ddx) / max(0, +/-ddy). An UN-normalized weighted SUM of the activity-
+        weighted coordinate -- NOT a position decode. Provably position-INVARIANT in the deployed
+        regime (the 2026-06-20-nav-sc-drive-reorient-derisk.md stuck-N NEGATIVE): it omits the
+        bump-mass normalization that turns "weighted mass" into "where", so a bigger/brighter bump
+        lifts all four cardinal sums together and the winner's MARGIN does not widen with the bump
+        position. Kept default so the documented SC op-point reproduces byte-identical.
+      - popvector=True (the #6 BUILD, 2026-06-20-nav-readout-geometry-deep-research.md Option A):
+        the SC's CANONICAL population-VECTOR / spike-vector decode (Goossens-Van Opstal SC;
+        Georgopoulos H.17; catalog H.25/E.03). Each sc_map site (sx,sy) has a PREFERRED DIRECTION
+        unit vector u = (ddx,ddy)/|(ddx,ddy)| (its retinotopic bearing from the foveal centre); the
+        weight into cardinal a is the COSINE PROJECTION max(0, u_hat_a . u_site) -- a bounded
+        cosine-tuned weight in [0,1] (E:+x_hat W:-x_hat N:+y_hat S:-y_hat), NOT the unbounded ramp.
+        This is the position-decode half; the BUMP-MASS NORMALIZATION half is supplied by flagging
+        the four cortex_{N,E,S,W} pools input_divisive_norm=True (run_moving_goal_episode does this
+        when sc_popvector_readout=True), so each cardinal's drive is divided by (sigma + gain*mean
+        over the four cardinals) -> "where" not "mass". PURE POINT-NEURON (a feedforward weighted
+        sum of preferred-vector cosines on LIF point neurons + the existing Carandini-Heeger divisive
+        primitive); NO dendrite, NO sim/ edit (a weight-formula change + an existing-primitive flag)."""
     rm = bridge.region_manager
     IMGW = int(visual_image_size)
     SCN = IMGW // 2                       # sc sheet side (32 -> 16)
@@ -253,14 +276,28 @@ def install_spiking_sc_wiring(bridge, visual_image_size=32, w_ret_sc=80.0,
     n_installed += bridge.set_pathway_weights("sc_map_recurrent",
         np.asarray(pre, np.int64), np.asarray(post, np.int64),
         np.asarray(w, np.float32), add_missing=True)
-    # 3) sc_map -> cortex_{N,E,S,W} weighted-quadrant pooling (+sx=East, +sy=North)
+    # 3) sc_map -> cortex_{N,E,S,W} read-out (+sx=East, +sy=North). popvector selects the geometry.
+    # The cardinal AXIS unit vectors (the population-vector decode's reference directions).
+    _card_axis = {"E": (1.0, 0.0), "W": (-1.0, 0.0), "N": (0.0, 1.0), "S": (0.0, -1.0)}
     for a in ACTION_NAMES:
         pre, post, w = [], [], []
         for sy in range(SCN):
             for sx in range(SCN):
                 ddx, ddy = sx - sc_center, sy - sc_center
-                wv = {"E": max(0.0, ddx), "W": max(0.0, -ddx),
-                      "N": max(0.0, ddy), "S": max(0.0, -ddy)}[a]
+                if popvector:
+                    # POPULATION-VECTOR (cosine projection of the site's preferred-direction unit
+                    # vector onto the cardinal axis). max(0, u_hat_a . u_site); the centre site
+                    # (|u|=0) contributes 0 (no preferred direction), as the ramp's wv<=0 does.
+                    _mag = float(np.hypot(ddx, ddy))
+                    if _mag <= 0.0:
+                        continue
+                    _ux, _uy = ddx / _mag, ddy / _mag
+                    _ax, _ay = _card_axis[a]
+                    wv = max(0.0, _ux * _ax + _uy * _ay)   # cosine in [0, 1]
+                else:
+                    # signed half-plane LINEAR RAMP (the deployed read-out; default).
+                    wv = {"E": max(0.0, ddx), "W": max(0.0, -ddx),
+                          "N": max(0.0, ddy), "S": max(0.0, -ddy)}[a]
                 if wv <= 0.0:
                     continue
                 for d in range(n_ctx[a]):
@@ -3540,6 +3577,19 @@ def run_moving_goal_episode(
     enable_spiking_sc: bool = False,
     n_spiking_sc_fs: int = 12,
     enable_spiking_sc_approach: bool = False,   # N5 Option C (neural approach-reward)
+    # #6 SC orienting read-out fix (2026-06-20). When True (only meaningful WITH enable_spiking_sc),
+    # the sc_map -> cortex_X read-out uses the population-VECTOR (cosine preferred-direction) decode
+    # instead of the half-plane LINEAR RAMP, AND the four cortex_X pools are flagged
+    # input_divisive_norm=True (bump-mass normalization). Together these turn the position-INVARIANT
+    # weighted-mass read-out (the 2026-06-20 stuck-N NEGATIVE) into a position decode that TRACKS the
+    # goal's retinal bearing -> the actor re-orients after a goal change. Default OFF => the deployed
+    # ramp read-out is byte-identical (the documented SC op-point reproduces unchanged). Env-var
+    # SC_POPVECTOR=1 also enables it (parallels SC_CORTEX_W / SC_SCRAMBLE). PURE POINT-NEURON, NO
+    # sim/ edit (a runner read-out-weight formula + the existing Carandini-Heeger divisive primitive).
+    # research/findings/2026-06-20-nav-readout-geometry-deep-research.md (Option A) + -burndown-6-*.
+    sc_popvector_readout: bool = False,
+    sc_popvector_divnorm_sigma: float = 1.0,   # Carandini-Heeger semi-saturation sigma on cortex_X
+    sc_popvector_divnorm_gain: float = 1.0,    # divisive strength on the four-cardinal mean term
     # Cluster K v2 (2026-05-01)
     visual_receptive_field_radius: int = 4,
     visual_v1_weight_scale: float = 10.0,
@@ -4036,6 +4086,22 @@ def run_moving_goal_episode(
                 _r.izh_neuron_type = str(critic_neuron_type)
                 break
 
+    # #6 SC orienting read-out fix (2026-06-20): bump-mass normalization half. Master switch =
+    # the sc_popvector_readout kwarg OR the SC_POPVECTOR env var (parallels SC_CORTEX_W/SC_SCRAMBLE).
+    # When ON, flag the four cortex_{N,E,S,W} pools input_divisive_norm=True so each cardinal's drive
+    # is divided by (sigma + gain * mean over the four cardinals) — the Carandini-Heeger divisive-gain
+    # primitive (sim/bridge.py:6048, GUARDED NO-OP when cfg.enable_input_divisive_norm is off). The
+    # cortex_X pools are the ONLY flagged neurons in this runner, so the divisive pool == the union of
+    # the four cardinal pools == the total SC-driven cardinal drive (exactly the bump mass). Combined
+    # with the population-vector cosine read-out (install_spiking_sc_wiring popvector=True), this turns
+    # the position-INVARIANT weighted-mass read-out into a position decode. NO sim/ edit (a region flag
+    # + an existing cfg flag, both mutated BEFORE the bridge is built, the build signature untouched).
+    _sc_popvector = bool(sc_popvector_readout) or (os.environ.get("SC_POPVECTOR", "0") == "1")
+    if enable_spiking_sc and _sc_popvector:
+        for _r in regions:
+            if _r.name in ("cortex_N", "cortex_E", "cortex_S", "cortex_W"):
+                _r.input_divisive_norm = True
+
     # Pre-compute sensory neuron preferred (dx, dy) — 7x7 grid covering [-3, 3]²
     if enable_learned_perception:
         sensory_pref = []
@@ -4178,6 +4244,15 @@ def run_moving_goal_episode(
     cfg.enable_hebbian_learning = False
     cfg.enable_homeostasis = False
     cfg.enable_short_term_plasticity = False
+    # #6 SC orienting read-out fix (2026-06-20): enable the Carandini-Heeger divisive primitive when
+    # the population-vector read-out is on (a cortex_X region was flagged input_divisive_norm=True
+    # above). GUARDED: cp_input_divisive_mask is built ONLY if cfg.enable_input_divisive_norm AND >=1
+    # region sets input_divisive_norm=True (sim/bridge.py:1313), so when _sc_popvector is off this
+    # whole path is byte-identical to today. sigma/gain are the bump-mass normalization op-point.
+    if enable_spiking_sc and _sc_popvector:
+        cfg.enable_input_divisive_norm = True
+        cfg.input_divisive_sigma = float(sc_popvector_divnorm_sigma)
+        cfg.input_divisive_gain = float(sc_popvector_divnorm_gain)
     # STEP 2a merge: build with OU on so the parser train pass's OU per-neuron state is ALLOCATED at init
     # (a runtime toggle does not allocate it). The post-init hook sets OU off for the nav episode after the
     # parser pass. Default False => standalone nav byte-equivalent (OU stays off).
@@ -4441,9 +4516,17 @@ def run_moving_goal_episode(
             # the standalone-nav default (env unset => 80/6) is BYTE-IDENTICAL.
             _w_ret_sc = float(os.environ.get("SC_RET_SC", "80.0"))
             _w_sc_rec = float(os.environ.get("SC_REC", "6.0"))
+            # #6 read-out fix (2026-06-20): population-vector cosine decode (the position-decode half;
+            # the bump-mass normalization half = the cortex_X input_divisive_norm flag set above).
+            # _sc_popvector was resolved (kwarg OR SC_POPVECTOR env) before the cfg block.
             install_spiking_sc_wiring(bridge, visual_image_size=visual_image_size,
                                       w_ret_sc=_w_ret_sc, w_sc_rec=_w_sc_rec,
-                                      w_sc_cortex=_scw, scramble=_scramble, verbose=verbose)
+                                      w_sc_cortex=_scw, scramble=_scramble,
+                                      popvector=_sc_popvector, verbose=verbose)
+            if verbose and _sc_popvector:
+                print(f"[g11 seed={seed}] #6 SC read-out: POPULATION-VECTOR (cosine) + cortex_X "
+                      f"divisive-norm (sigma={cfg.input_divisive_sigma}, gain={cfg.input_divisive_gain})",
+                      flush=True)
             # TRUE-ONE-BRAIN #2: boost sc_rostral->reward_us to the het-off op-point (the build's
             # declared 14.0 is too weak co-resident; the de-risk used 40.0). Default unset => leave the
             # built 14.0 (byte-identical). Only meaningful with enable_spiking_sc_approach (sc_rostral
@@ -8234,6 +8317,22 @@ def main():
                          "dopamine RPE (delta=r-V, N9). Requires --enable-spiking-sc + --spiking-reward-us. "
                          "VALIDATED: sc_n5_rpe_probe.py (neural reward -> graded dopamine RPE, "
                          "lesion+omission confirmed).")
+    ap.add_argument("--sc-popvector-readout", action="store_true",
+                    help="#6 SC orienting read-out fix (2026-06-20). Replace the position-INVARIANT "
+                         "half-plane LINEAR-RAMP sc_map->cortex_X read-out with the SC's canonical "
+                         "population-VECTOR (cosine preferred-direction) decode + bump-mass divisive "
+                         "normalization on the four cortex_X pools (input_divisive_norm). Turns the "
+                         "stuck-N weighted-mass read-out (the 2026-06-20 NEGATIVE) into a position "
+                         "decode that TRACKS the goal -> the actor re-orients after a goal change. "
+                         "Requires --enable-spiking-sc. PURE POINT-NEURON, NO sim/ edit. Default OFF "
+                         "= the deployed ramp (byte-identical). research/findings/2026-06-20-nav-"
+                         "readout-geometry-deep-research.md (Option A).")
+    ap.add_argument("--sc-popvector-divnorm-sigma", type=float, default=1.0,
+                    help="Carandini-Heeger semi-saturation sigma for the #6 cortex_X divisive norm "
+                         "(default 1.0). Only with --sc-popvector-readout.")
+    ap.add_argument("--sc-popvector-divnorm-gain", type=float, default=1.0,
+                    help="Divisive strength on the four-cardinal mean for the #6 cortex_X divisive "
+                         "norm (default 1.0). Only with --sc-popvector-readout.")
     ap.add_argument("--visual-cortex-action-warmup-steps", type=int, default=600,
                     help="Cluster K v2: steps before the IT -> cortex_X "
                          "plasticity gate opens. Default 600. 0 = open from "
@@ -8908,6 +9007,9 @@ def main():
             enable_visual_cortex=args.enable_visual_cortex,
             enable_spiking_sc=args.enable_spiking_sc,
             enable_spiking_sc_approach=args.enable_spiking_sc_approach,
+            sc_popvector_readout=args.sc_popvector_readout,
+            sc_popvector_divnorm_sigma=args.sc_popvector_divnorm_sigma,
+            sc_popvector_divnorm_gain=args.sc_popvector_divnorm_gain,
             visual_cortex_action_warmup_steps=args.visual_cortex_action_warmup_steps,
             visual_v1_weight_scale=args.visual_v1_weight_scale,
             visual_image_size=args.visual_image_size,
