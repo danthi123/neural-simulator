@@ -1,0 +1,480 @@
+{
+  "arms": [
+    {
+      "arm": "host",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "sc_cortex_w": null,
+      "divnorm_sigma": null,
+      "divnorm_gain": null,
+      "per_phase_finalQ": [
+        0.5309734513274337,
+        0.5398230088495575,
+        0.8141592920353983,
+        0.5575221238938053
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          84,
+          171,
+          55,
+          140
+        ],
+        [
+          63,
+          147,
+          64,
+          176
+        ],
+        [
+          17,
+          194,
+          45,
+          194
+        ],
+        [
+          42,
+          198,
+          42,
+          168
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.187,
+          "E": 0.38,
+          "S": 0.122,
+          "W": 0.311
+        },
+        {
+          "N": 0.14,
+          "E": 0.327,
+          "S": 0.142,
+          "W": 0.391
+        },
+        {
+          "N": 0.038,
+          "E": 0.431,
+          "S": 0.1,
+          "W": 0.431
+        },
+        {
+          "N": 0.093,
+          "E": 0.44,
+          "S": 0.093,
+          "W": 0.373
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "E",
+        "W",
+        "E",
+        "E"
+      ],
+      "phase0_finalQ": 0.5309734513274337,
+      "post_change_finalQ": [
+        0.5398230088495575,
+        0.8141592920353983,
+        0.5575221238938053
+      ],
+      "post_change_finalQ_sum": 1.9115044247787611,
+      "gate_score": 2.442477876106195,
+      "motor_sustain_frac": 1.0,
+      "late_motor_sustain_frac": 1.0,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scpv_host_seed42.json"
+    },
+    {
+      "arm": "sc_ramp",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": null,
+      "divnorm_gain": null,
+      "per_phase_finalQ": [
+        1.3008849557522124,
+        25.938053097345133,
+        58.69911504424779,
+        38.415929203539825
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          184,
+          114,
+          79,
+          73
+        ],
+        [
+          202,
+          98,
+          59,
+          91
+        ],
+        [
+          216,
+          102,
+          64,
+          68
+        ],
+        [
+          223,
+          75,
+          69,
+          83
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.409,
+          "E": 0.253,
+          "S": 0.176,
+          "W": 0.162
+        },
+        {
+          "N": 0.449,
+          "E": 0.218,
+          "S": 0.131,
+          "W": 0.202
+        },
+        {
+          "N": 0.48,
+          "E": 0.227,
+          "S": 0.142,
+          "W": 0.151
+        },
+        {
+          "N": 0.496,
+          "E": 0.167,
+          "S": 0.153,
+          "W": 0.184
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "N",
+        "N",
+        "N",
+        "N"
+      ],
+      "phase0_finalQ": 1.3008849557522124,
+      "post_change_finalQ": [
+        25.938053097345133,
+        58.69911504424779,
+        38.415929203539825
+      ],
+      "post_change_finalQ_sum": 123.05309734513276,
+      "gate_score": 124.35398230088495,
+      "motor_sustain_frac": 0.4672222222222222,
+      "late_motor_sustain_frac": 0.42444444444444446,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scpv_sc_ramp_seed42.json"
+    },
+    {
+      "arm": "sc_popvector",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 1.0,
+      "divnorm_gain": 0.0,
+      "per_phase_finalQ": [
+        17.4070796460177,
+        26.946902654867255,
+        57.24778761061947,
+        33.94690265486726
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          219,
+          97,
+          54,
+          80
+        ],
+        [
+          228,
+          94,
+          67,
+          61
+        ],
+        [
+          201,
+          96,
+          66,
+          87
+        ],
+        [
+          217,
+          101,
+          58,
+          74
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.487,
+          "E": 0.216,
+          "S": 0.12,
+          "W": 0.178
+        },
+        {
+          "N": 0.507,
+          "E": 0.209,
+          "S": 0.149,
+          "W": 0.136
+        },
+        {
+          "N": 0.447,
+          "E": 0.213,
+          "S": 0.147,
+          "W": 0.193
+        },
+        {
+          "N": 0.482,
+          "E": 0.224,
+          "S": 0.129,
+          "W": 0.164
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "N",
+        "N",
+        "N",
+        "N"
+      ],
+      "phase0_finalQ": 17.4070796460177,
+      "post_change_finalQ": [
+        26.946902654867255,
+        57.24778761061947,
+        33.94690265486726
+      ],
+      "post_change_finalQ_sum": 118.14159292035399,
+      "gate_score": 135.5486725663717,
+      "motor_sustain_frac": 0.41555555555555557,
+      "late_motor_sustain_frac": 0.4022222222222222,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scpv_sc_popvector_seed42.json"
+    },
+    {
+      "arm": "sc_popvector_scr",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 1.0,
+      "divnorm_gain": 0.0,
+      "per_phase_finalQ": [
+        5.424778761061947,
+        21.486725663716815,
+        40.991150442477874,
+        33.469026548672566
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          218,
+          90,
+          63,
+          79
+        ],
+        [
+          218,
+          95,
+          49,
+          88
+        ],
+        [
+          205,
+          99,
+          46,
+          100
+        ],
+        [
+          216,
+          103,
+          54,
+          77
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.484,
+          "E": 0.2,
+          "S": 0.14,
+          "W": 0.176
+        },
+        {
+          "N": 0.484,
+          "E": 0.211,
+          "S": 0.109,
+          "W": 0.196
+        },
+        {
+          "N": 0.456,
+          "E": 0.22,
+          "S": 0.102,
+          "W": 0.222
+        },
+        {
+          "N": 0.48,
+          "E": 0.229,
+          "S": 0.12,
+          "W": 0.171
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "N",
+        "N",
+        "N",
+        "N"
+      ],
+      "phase0_finalQ": 5.424778761061947,
+      "post_change_finalQ": [
+        21.486725663716815,
+        40.991150442477874,
+        33.469026548672566
+      ],
+      "post_change_finalQ_sum": 95.94690265486724,
+      "gate_score": 101.3716814159292,
+      "motor_sustain_frac": 0.4361111111111111,
+      "late_motor_sustain_frac": 0.41888888888888887,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scpv_sc_popvector_scr_seed42.json"
+    }
+  ],
+  "verdict": {
+    "host_phase0_finalQ": 0.5309734513274337,
+    "host_post_change_finalQ_sum": 1.9115044247787611,
+    "ramp_post_change_finalQ_sum": 123.05309734513276,
+    "popvector_post_change_finalQ_sum": 118.14159292035399,
+    "scramble_post_change_finalQ_sum": 95.94690265486724,
+    "host_tracking": {
+      "dominant_per_phase": [
+        "E",
+        "W",
+        "E",
+        "E"
+      ],
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": true,
+      "tracks_goal": true
+    },
+    "ramp_tracking": {
+      "dominant_per_phase": [
+        "N",
+        "N",
+        "N",
+        "N"
+      ],
+      "n_distinct_dominant": 1,
+      "has_W_dominant_phase": false,
+      "has_E_dominant_phase": false,
+      "tracks_goal": false
+    },
+    "popvector_tracking": {
+      "dominant_per_phase": [
+        "N",
+        "N",
+        "N",
+        "N"
+      ],
+      "n_distinct_dominant": 1,
+      "has_W_dominant_phase": false,
+      "has_E_dominant_phase": false,
+      "tracks_goal": false
+    },
+    "scramble_tracking": {
+      "dominant_per_phase": [
+        "N",
+        "N",
+        "N",
+        "N"
+      ],
+      "n_distinct_dominant": 1,
+      "has_W_dominant_phase": false,
+      "has_E_dominant_phase": false,
+      "tracks_goal": false
+    },
+    "ramp_late_sustain": 0.42444444444444446,
+    "popvector_late_sustain": 0.4022222222222222,
+    "host_over_popvector_post_ratio": 0.016179775280898877,
+    "popvector_over_ramp_post_improvement": 1.0415730337078652,
+    "NOTE": "GO (#6 CONVERTS) if popvector_tracking.tracks_goal is True AND popvector_post_change approaches host (host_over_popvector_post_ratio ~1, vs the ramp's ~0.01) AND the SCRAMBLE lesion collapses (scramble_tracking.tracks_goal False / much worse finalQ). HONEST NEGATIVE otherwise -- report whether popvector still does NOT track (under-selective) or a deeper issue."
+  }
+}

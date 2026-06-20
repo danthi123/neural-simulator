@@ -100,6 +100,29 @@ that the un-sharpened `cortex_X` margin is already swamped by the N-bias before 
 under-selectivity residual, NOT a bump-attractor hysteresis (the SC bump re-renders fresh every step, so Option E's
 reset is not the indicated remedy).
 
+### Independent corroboration at a SECOND operating point — pure cosine (`gain=0`), grid-32 seed 42
+
+A parallel run reached the SAME negative at the OTHER end of the calibration band, ruling out "a different divnorm
+calibration would have worked." Per its own grid-8 bracket (`scpv_cal_{g0p0,g0p05,g0p2}_s42.json`), the divisive `gain`
+must be ~0 (pure cosine) — a NON-zero shared divisor `σ+gain·mean` crushes the cosine geometry's relative margin (it is
+identical across the four cardinals, so it adds no competition while shrinking the signal). At grid-8 phase-1 the
+`gain=0` arm appeared to track (dom flipped N→W) — but that is exactly the false-GO scale (phase-1 ~30 actions). The
+faithful grid-32 verdict (`scpv_VERDICT_g32_s42.json`, `gain=0, σ=1`):
+
+| arm | post-change finalQ sum | dom per phase | tracks? | late_sustain |
+|---|---|---|---|---|
+| HOST | **1.91** | E, **W**, E, E | **YES** | 1.000 |
+| RAMP (the NEGATIVE) | 123.05 | N, N, N, N | NO | 0.424 |
+| **NEURAL popvector (gain=0, pure cosine)** | **118.14** | **N, N, N, N** | **NO** | 0.402 |
+| SCRAM (lesion) | 95.95 | N, N, N, N | NO | — |
+
+`host_over_popvector_post_ratio = 0.0162` (~62× worse); `popvector_over_ramp = 1.04` (≈ identical to the ramp). The
+pure-cosine arm (the MAXIMAL-geometry, MINIMAL-divnorm limit — i.e. the end-point the "Lever 1 gain→0" recalibration
+screen approaches) is **just as stuck-N as the ramp**. ⇒ the negative is NOT a single-calibration artifact; neither the
+`σ=5,gain=0.02` operating point NOR the `gain=0` pure-cosine limit re-orients at grid-32. **This also answers the
+Lever-1/2 recalibration screen: weakening the divnorm to its limit does not help — the residual is competition
+(swamping), not attenuation, which points directly at R1.**
+
 ### The SCRAM anti-cheat — the decisive clincher (NOT a collapse)
 
 **The lesion does NOT collapse relative to NEURAL — and that is what settles the verdict.** SCRAM (scrambled
