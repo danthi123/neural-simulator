@@ -451,6 +451,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  co_resident_generalization: bool = False,
                                  gen_n_concept_per: int = 100, gen_n_fact_per: int = 100,
                                  co_resident_limbic: bool = False,
+                                 co_resident_drive: bool = False,
+                                 drive_n_pool: int = 60,
                                  co_resident_nav_critic: bool = False,
                                  nav_critic_convergent_upstate: bool = False,
                                  nav_critic_homeostasis_mask: str = "all3",
@@ -702,6 +704,42 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                           weight_mean=10.0, weight_jitter=0.2, plastic=False, receptor="gaba_b"),
         ]
 
+    # INTEROCEPTIVE DRIVE SLICE (co_resident_drive, additive default-off): the validated 2-pool SPIKING hunger drive
+    # (hypothalamic AgRP=hunger / POMC=satiety; catalog O.05/O.06; finding 2026-06-17-homeostatic-spiking-drive-
+    # mechanism-GO.md, GO 6/6 corr(deficit,AgRP)>=0.9) lifted as actual CO-RESIDENT neurons on the merged bridge — the
+    # Tier-3 living-loop primitive (the rate-proxy persistent living loop is GO 6/6, 2026-06-20-tier3-persistent-living-
+    # loop-derisk.md; this realizes its DRIVE in spikes on the shared substrate). drive_agrp ∝ the body's energy DEFICIT
+    # (an interoceptive current — the legitimate body→sensory boundary), drive_pomc ∝ the surplus; the SPIKING hunger =
+    # drive_agrp firing rate read off `cp_firing_states` (NOT a host deficit value), which gates the validated BG-cascade
+    # reward via run_moving_goal_episode(homeostatic_hook=...) → an INTRINSIC drive-reduction reward (Keramati-Gutkin).
+    # The pools are DRIVEN by external interoceptive current + READ by firing rate, so they need NO internal pathways and
+    # NO neuromodulator (reading the firing directly is fully brain-based — the firing IS the drive signal — and avoids a
+    # second scope=all plasticity-rate modulator colliding with the nav DA broadcast). ALL drive_-prefixed (zero name
+    # collision with the nav cascade / limbic / td / rf) + internal_density=0; ZERO out-edges anywhere (no pathways at
+    # all), so the slice is maximally nav-inert (no cp_connections edges into navigation, like rf/cortex_it). enable_
+    # homeostasis=True PER-REGION (the merged-config operating-point fix, the limbic-core-lift lesson): the standalone
+    # drive was tuned with the CoreSimConfig default enable_homeostasis=True (vpeak->~-42mV threshold, the f-I gain that
+    # makes the deficit current cross threshold); the merged bridge keeps GLOBAL homeostasis OFF (the synaptic-scaling
+    # foot-gun), so the already-shipped per-region homeostasis mask (sim/bridge.py:1227-1245/:6320) gives ONLY the drive
+    # slice the low threshold while nav/conv stay at vpeak (byte-unchanged) and the synaptic-scaling clip (gated by the
+    # SEPARATE cfg.enable_synaptic_scaling, OFF here) never runs. Appended LAST so the nav/parser/dlPFC/rf/cortex_it/gen/
+    # limbic index bases are BYTE-UNCHANGED. Default False = byte-preserved. Compatible with co_resident_nav_critic /
+    # co_resident_limbic / co_resident_td_cueshift (the drive adds NO DA broadcast — it only reads firing — so it cannot
+    # double-count any of their dopamine modulators).
+    drive_regions, drive_pathways = [], []
+    if co_resident_drive:
+        from sim.enums import NeuronType as _NT
+        _RS = _NT.IZH2007_RS_CORTICAL_PYRAMIDAL.name
+        drive_regions = [
+            BrainRegion(name="drive_agrp", n_neurons=int(drive_n_pool), exc_fraction=1.0, internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+                        izh_neuron_type=_RS, enable_nmda=False, enable_homeostasis=True),
+            BrainRegion(name="drive_pomc", n_neurons=int(drive_n_pool), exc_fraction=1.0, internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+                        izh_neuron_type=_RS, enable_nmda=False, enable_homeostasis=True),
+        ]
+        drive_pathways = []                              # no out-edges: the slice is driven by current + read by firing
+
     # A-CSC TD CUE-SHIFT SLICE (co_resident_td_cueshift, additive default-off): the validated complete-serial-compound
     # TD machinery (snc_stageb_critic_probe.py --td-csc, GO 3/3 r=-0.80/-0.77/-0.89) as a td_-prefixed co-resident slice.
     # Regions: td_csc_0..td_csc_{K-1} (the tapped-delay cue, each its OWN plastic synapse onto the critic) + td_striosome
@@ -784,10 +822,10 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         ]
     union_regions = (list(nav_regions) + list(parser_regions) + list(dlpfc_regions)
                      + list(rf_regions) + list(perception_regions) + list(generalization_regions)
-                     + list(limbic_regions) + list(td_regions))
+                     + list(limbic_regions) + list(td_regions) + list(drive_regions))
     union_pathways = (list(nav_pathways) + list(parser_pathways)
                       + list(generalization_pathways) + list(limbic_pathways)
-                      + list(td_pathways))   # dlPFC loop is hand-built, NOT a pathway
+                      + list(td_pathways) + list(drive_pathways))   # dlPFC loop is hand-built, NOT a pathway
 
     # 2) Merged config.
     cfg = CoreSimConfig()
@@ -998,6 +1036,11 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         # drive limbic_cue/limbic_reward_us and read limbic_snc/limbic_striosome).
         handles["limbic"] = {n: {"base": int(rm.indices(n)[0]), "size": len(list(rm.indices(n)))}
                              for n in ("limbic_cue", "limbic_striosome", "limbic_reward_us", "limbic_snc")}
+    if co_resident_drive:
+        # The drive-slice base indices (for the on-merge living loop: drive drive_agrp/drive_pomc ∝ the body
+        # deficit/surplus each step, read drive_agrp firing as the spiking hunger that gates the reward).
+        handles["drive"] = {n: {"base": int(rm.indices(n)[0]), "size": len(list(rm.indices(n)))}
+                            for n in ("drive_agrp", "drive_pomc")}
     if co_resident_td_cueshift:
         # The TD-slice base indices (for the on-merge A-CSC cue-shift battery: drive td_csc_k / td_reward_us, read
         # td_snc / td_striosome per bin for the migration time-course).
@@ -1015,7 +1058,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
 
 
 # ── the EPISODE-path conv finalization (nav gate (a): nav episode runs on the merged bridge) ─────────────────
-def conv_extra_regions_pathways(vocab=None, co_resident_rf=False, rf_D=128):
+def conv_extra_regions_pathways(vocab=None, co_resident_rf=False, rf_D=128,
+                                co_resident_drive=False, drive_n_pool=60):
     """The conversational regions/pathways to APPEND to the navigation lists for the episode-path merge: the
     parser (parse_conj 6, parse_role 3*PARSER_R) + the dlPFC regions (cortex_ctx, dlpfc_wm, both enable_nmda).
     For the NAV GATE the dlPFC regions are present but EDGELESS (the dlpfc_loop is only for `elaborate`, not
@@ -1025,7 +1069,17 @@ def conv_extra_regions_pathways(vocab=None, co_resident_rf=False, rf_D=128):
     co_resident_rf (STEP 2b): also append the `rf` composer region (7*rf_D neurons, no pathways, NMDA-off) so the
     nav-not-regressed gate can be re-run with the rf slice present. The rf region has NO cp_connections out-edges
     into navigation (the Task-1 anti-cheat) and is idle during the nav episode (no composer ops run mid-episode),
-    so it is provably nav-inert — this gate just confirms that empirically."""
+    so it is provably nav-inert — this gate just confirms that empirically.
+
+    co_resident_drive (Tier-3 SPIKING living loop): also append the 2-pool SPIKING interoceptive drive slice
+    (`drive_agrp`=hunger / `drive_pomc`=satiety; hypothalamic AgRP/POMC, catalog O.05/O.06; mechanism GO
+    2026-06-17-homeostatic-spiking-drive-mechanism-GO.md) so it is genuinely CO-RESIDENT on the SAME bridge the
+    agent navigates. The pools have ZERO out-edges (driven by interoceptive current, read by firing rate), so the
+    slice is maximally nav-inert (like rf). enable_homeostasis=True PER-REGION = the merged-config operating-point
+    fix (the limbic-core-lift lesson): the already-shipped per-region homeostasis mask (sim/bridge.py:1227-1245/
+    :6320) gives ONLY the drive slice the low spike threshold while nav/conv stay at vpeak (byte-unchanged), and
+    the synaptic-scaling clip (gated by the SEPARATE enable_synaptic_scaling, OFF here) never runs. Default
+    False = byte-preserved (the nav gate's extra-region list is unchanged)."""
     if vocab is None:
         from research.runners.rf_phasor_composer import DEFAULT_VOCAB
         vocab = DEFAULT_VOCAB
@@ -1040,7 +1094,20 @@ def conv_extra_regions_pathways(vocab=None, co_resident_rf=False, rf_D=128):
     if co_resident_rf:
         rf_regions = [BrainRegion(name="rf", n_neurons=7 * int(rf_D), exc_fraction=1.0,
                                   internal_density=0.0, enable_nmda=False)]
-    return list(parser_regions) + list(dlpfc_regions) + list(rf_regions), list(parser_pathways)
+    drive_regions = []
+    if co_resident_drive:
+        from sim.enums import NeuronType as _NT
+        _RS = _NT.IZH2007_RS_CORTICAL_PYRAMIDAL.name
+        drive_regions = [
+            BrainRegion(name="drive_agrp", n_neurons=int(drive_n_pool), exc_fraction=1.0, internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+                        izh_neuron_type=_RS, enable_nmda=False, enable_homeostasis=True),
+            BrainRegion(name="drive_pomc", n_neurons=int(drive_n_pool), exc_fraction=1.0, internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+                        izh_neuron_type=_RS, enable_nmda=False, enable_homeostasis=True),
+        ]
+    return (list(parser_regions) + list(dlpfc_regions) + list(rf_regions) + list(drive_regions),
+            list(parser_pathways))
 
 
 def finalize_conv_for_nav_gate(bridge, seed=42, R=PARSER_R, n_epochs=30, train_steps=120):
