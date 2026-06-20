@@ -6,13 +6,15 @@
 **Raw:** `research/findings/raw/_one_animal_crossmodal.json`
 **Backend:** `SIM_BACKEND=cupy` (the merged bridge with the co-resident RF composer is GPU-only).
 
-> ## VERDICT: **ONE-ANIMAL GO** — seed 42 GO (all 4 gates); 3-seed (42/43/44) confirm IN FLIGHT.
+> ## VERDICT: **ONE-ANIMAL GO — 3/3 seeds (42/43/44), all 4 gates.**
 > The SAME shared spiking interoceptive DRIVE that motivates nav-survival ALSO modulates CONVERSATION through
-> the shared dopamine (Route A): hunger raises the shared spiking-SNc DA (+0.202), Route A tightens the recall
-> gate (g_eff 0.110→0.250) and the validated noisy read-out is more precise under hunger (cue-error
-> 0.120→0.026, error -73%); the no-confab MOAT holds at BOTH drive levels (0 false-accepts everywhere); the
-> drive-LESION abolishes the deficit→DA tracking (rise -0.052 ≪ intact +0.202) and the precision gain; a yoked
-> drive-INDEPENDENT DA does NOT reproduce the drive pattern (rise -0.080 ≪ intact). NO `sim/` edit.
+> the shared dopamine (Route A): hunger raises the shared spiking-SNc DA (+0.20/+0.22/+0.22 across seeds), Route A
+> tightens the recall gate (g_eff 0.11→0.25, to the inverted-U cap) and the validated noisy read-out is more
+> precise under hunger (cue-error 0.120→0.026 / 0.133→0.057 / 0.057→0.000); the no-confab MOAT holds at BOTH
+> drive levels (0 false-accepts everywhere, every seed); the drive-LESION abolishes the deficit→DA tracking
+> (rise ≈−0.013 ≪ intact +0.22) and the precision gain (→0); a yoked drive-INDEPENDENT DA does NOT reproduce the
+> pattern (rise = 0, deficit-independent by construction). NO `sim/` edit — one limbic core moves BOTH halves of
+> the animal, the deepest "one self".
 
 ---
 
@@ -72,26 +74,29 @@ Two faithful conversational read-outs, both at the drive-set gate:
 
 _(Filled from `research/findings/raw/_one_animal_crossmodal.json`.)_
 
-### High-drive vs low-drive conversational modulation (intact, seed 42)
+### High-drive vs low-drive conversational modulation (intact) — 3 seeds
 
-| seed | DA low→high | g_eff low→high | NOISY cue-err low→high | NOISY answered-margin low→high | moat (low,high) |
-|------|-------------|----------------|------------------------|--------------------------------|-----------------|
-| 42 | **0.525 → 0.727** (+0.202) | **0.110 → 0.250** (tightens to the inverted-U cap) | **0.120 → 0.026** (−73%, the precision gain) | 0.371 → 0.429 (more decisive) | (0, 0) |
+| seed | DA low→high (rise) | g_eff low→high | NOISY cue-err low→high | NOISY answered-margin low→high | moat |
+|------|--------------------|----------------|------------------------|--------------------------------|------|
+| 42 | 0.525 → 0.727 (**+0.202**) | 0.110 → 0.250 | **0.120 → 0.026** | 0.371 → 0.429 | (0,0) |
+| 43 | 0.528 → 0.753 (**+0.225**) | 0.117 → 0.250 | **0.133 → 0.057** | 0.391 → 0.449 | (0,0) |
+| 44 | 0.525 → 0.747 (**+0.221**) | 0.110 → 0.250 | **0.057 → 0.000** | 0.443 → 0.487 | (0,0) |
 
-The body's hunger (HIGH drive) raises the shared spiking-SNc dopamine, Route A reads that SAME dopamine off the
-merged bridge and tightens the conversational recall gate, and on the validated noisy read-out the answered reads
-become markedly MORE PRECISE (cue-role error roughly quartered) while staying decisive — the same internal drive
-moving the conversation half. (The on-bridge merged composer's own reads are high-margin at D=128/K=3, so the
-gate changes the DA/g_eff but not THOSE reads — the on-bridge composer carries the co-residence + moat proof; the
-noisy harness carries the measurable precision shift.)
+The body's hunger (HIGH drive) raises the shared spiking-SNc dopamine (≈+0.22 every seed), Route A reads that
+SAME dopamine off the merged bridge and tightens the conversational recall gate (to the inverted-U cap), and on
+the validated noisy read-out the answered reads become markedly MORE PRECISE (cue-role error roughly quartered or
+eliminated) while staying decisive (mean answered margin rises) — the same internal drive moving the conversation
+half. (The on-bridge merged composer's own reads are high-margin at D=128/K=3, so the gate changes the DA/g_eff
+but not THOSE reads — the on-bridge composer carries the co-residence + moat proof; the noisy harness carries the
+measurable precision shift.)
 
-### Anti-cheat table (seed 42)
+### Anti-cheat table (all 3 seeds)
 
 | control | expectation | result |
 |---------|-------------|--------|
-| **DRIVE-LESION** (zero the interoceptive drive → drive_agrp silent → no SNc hunger drive) | the deficit→DA tracking + the precision gain VANISH | **PASS** — lesion DA rise **−0.052 ≪ intact +0.202** (deficit can't reach DA when severed); lesion precision gain −0.104 ≪ intact +0.094 |
-| **MOAT @ both drive levels** (intact + lesion + yoke, low + high) | 0 false-accepts everywhere (never weakened) | **PASS** — 0 false-accepts at every (mode, drive level), on the on-bridge merged composer AND the noisy read-out |
-| **YOKED** (drive-INDEPENDENT DA: SNc driven by a shuffled matched-marginal signal) | high-vs-low DA ordering NOT reproduced (needs the hunger→DA correlation) | **PASS** — yoke DA rise **−0.080 ≪ intact +0.202** |
+| **DRIVE-LESION** (zero the interoceptive drive → drive_agrp silent → no SNc hunger drive) | the deficit→DA tracking + the precision gain VANISH | **PASS 3/3** — lesion DA flat (≈0.51→0.50, rise **−0.012/−0.014/−0.013 ≪ intact +0.22**); g_eff unchanged (0.060→0.060); lesion precision gain **0.000** vs intact +0.094/+0.076/+0.057 |
+| **MOAT @ both drive levels** (intact + lesion + yoke, low + high) | 0 false-accepts everywhere (never weakened) | **PASS 3/3** — 0 false-accepts at every (mode, drive level), on the on-bridge merged composer AND the noisy read-out |
+| **YOKED** (drive-INDEPENDENT DA, decorrelated from the deficit) | high-vs-low ordering NOT reproduced (needs the hunger→DA correlation) | **PASS 3/3** — yoke DA identical low==high (deficit-independent ⇒ rise **0.000**) every seed |
 
 **Verdict logic** (finite-spiking-faithful): the decisive claim is that the **deficit→DA tracking is present
 ONLY in the intact link** — the intact rise (≈+0.22, DA tracks the body deficit) is far larger than the
@@ -135,6 +140,12 @@ SIM_BACKEND=cupy python -m research.runners.one_animal_crossmodal_demo --seeds 4
 SIM_BACKEND=cupy python -m research.runners.one_animal_crossmodal_demo --smoke   # tiny mechanics check
 ```
 
+Raw result: `research/findings/raw/_one_animal_crossmodal.json` (`n_go: 3 / 3`).
+
 ## Commits
 
-_(TBD)_
+- `c7a3da35` — the runner + finding (seed 42 GO; the cross-modal link + the on-bridge moat + Route A).
+- `f0eec00b` — deterministic on-bridge moat/recall pass (1× not reps) → ~3× faster multi-seed (answer-identical).
+- `8a49c78a` — statistically-sound controls (yoke DA cached once = deficit-independent null `rise=0`; lesion
+  averaged to a clean baseline).
+- `<final>` — the 3/3 GO numbers in this finding.
