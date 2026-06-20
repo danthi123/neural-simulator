@@ -16,8 +16,16 @@ deferral is ONLY legitimate for a true dendritic-substrate limit (the owner's ca
 > **FHRR-B** — are now **OPEN**, being pushed to the spiking bar (protected edits + dendrite included) BEFORE any
 > further capability work. **#9 is IN FLIGHT** (the dendrite graded value read-out: Stage-1 `sim/` edit
 > byte-reviewed clean + the end-to-end SNc-δ calibration). The Tier-3 capability results stay committed but are
-> **PARKED**. Genuinely-spiking-closed (unaffected): #1, #5, #7, #8, #12, #4; #2/#10 legit. "Closed" is now
-> reserved for ACTUALLY-pushed-to-spiking, or an earned limit only AFTER the real dendritic attempt.
+> **PARKED**. Genuinely-spiking-closed (unaffected): #1, #5, #7, #8, #12, #4; #2/#10 legit.
+>
+> **HARDENED (2026-06-20, owner CYCLE 329):** NO boundary-classifying-as-closed at all. A boundary is a prompt to
+> do MORE research + try NEW mechanisms until past it — never a stop. "Closed" = CONVERTED-TO-SPIKING, host op
+> RETIRED. This arc does not end until ALL shortcuts are spiking; full focus, however long. Re-opened: #6, #9, #3,
+> FHRR-B (+ the #4/#5b performance residuals). **First payoff — #6 was NOT a real boundary:** the
+> `2026-06-20-shortcut6-nav-orienting-spiking-scoping.md` re-examination (commit `2761b981`) found the genuine
+> point-neuron fix (position-coding pop-vector decode + bump-mass divisive-norm + the #4 WTA ring) was abandoned
+> mid-build at a mis-calibrated op-point and never run to faithful grid-32; the "closed" verdict cited the wrong
+> knob's sweep. Re-classified "closed honest-negative" → **finishable point-neuron BUILD** (in flight).
 
 | # | Shortcut | Status | How |
 |---|---|---|---|
