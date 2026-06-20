@@ -1,0 +1,126 @@
+{
+  "per_seed": [
+    {
+      "seed": 42,
+      "modes": {
+        "intact": {
+          "seed": 42,
+          "mode": "intact",
+          "summary": {
+            "mode": "intact",
+            "n_eats": 9,
+            "eats_pre_wean": 6,
+            "eats_post_wean": 3,
+            "eat_rate_pre": 0.010101010101010102,
+            "eat_rate_post": 0.0024875621890547263,
+            "post_pre_eat_rate_ratio": 0.24626865671641787,
+            "min_energy_post_wean": 0.0,
+            "mean_energy_post_wean": 0.13501492537313423,
+            "n_crash_steps": 915,
+            "corr_deficit_agrp_lived": 0.9951045037475932,
+            "mean_agrp_rate": 0.06019861111111112,
+            "mean_reward_gated": 0.004504166666666667
+          },
+          "persist_ok": true,
+          "no_persistence_differs": true,
+          "persist_detail": {
+            "checked": true,
+            "energy_at_save": 0.0,
+            "persisted_resume_energy": 0.0,
+            "cold_resume_energy": 1.0
+          },
+          "moat": {
+            "has_drive": true,
+            "n_conv": 720,
+            "parser_byte_frozen": true,
+            "parser_parses": true,
+            "active_agent": "dog",
+            "passive_agent": "dog"
+          },
+          "moat_held": true,
+          "reward_provenance_ok": true
+        },
+        "lesion": {
+          "seed": 42,
+          "mode": "lesion",
+          "summary": {
+            "mode": "lesion",
+            "n_eats": 10,
+            "eats_pre_wean": 10,
+            "eats_post_wean": 0,
+            "eat_rate_pre": 0.016835016835016835,
+            "eat_rate_post": 0.0,
+            "post_pre_eat_rate_ratio": 0.0,
+            "min_energy_post_wean": 0.0,
+            "mean_energy_post_wean": 0.034149253731343254,
+            "n_crash_steps": 1092,
+            "corr_deficit_agrp_lived": 0.0,
+            "mean_agrp_rate": 0.0,
+            "mean_reward_gated": 0.0
+          },
+          "persist_ok": true,
+          "no_persistence_differs": true,
+          "persist_detail": {
+            "checked": false
+          },
+          "moat": {
+            "has_drive": true,
+            "n_conv": 720,
+            "parser_byte_frozen": true,
+            "parser_parses": true,
+            "active_agent": "dog",
+            "passive_agent": "dog"
+          },
+          "moat_held": true,
+          "reward_provenance_ok": true
+        },
+        "yoke": {
+          "seed": 42,
+          "mode": "yoke",
+          "summary": {
+            "mode": "yoke",
+            "n_eats": 13,
+            "eats_pre_wean": 9,
+            "eats_post_wean": 4,
+            "eat_rate_pre": 0.015151515151515152,
+            "eat_rate_post": 0.003316749585406302,
+            "post_pre_eat_rate_ratio": 0.21890547263681592,
+            "min_energy_post_wean": 0.0,
+            "mean_energy_post_wean": 0.21192703150912093,
+            "n_crash_steps": 759,
+            "corr_deficit_agrp_lived": 0.9947412888169973,
+            "mean_agrp_rate": 0.056674074074074085,
+            "mean_reward_gated": 0.02566149269985153
+          },
+          "persist_ok": true,
+          "no_persistence_differs": true,
+          "persist_detail": {
+            "checked": false
+          },
+          "moat": {
+            "has_drive": true,
+            "n_conv": 720,
+            "parser_byte_frozen": true,
+            "parser_parses": true,
+            "active_agent": "dog",
+            "passive_agent": "dog"
+          },
+          "moat_held": true,
+          "reward_provenance_ok": true
+        }
+      },
+      "verdict": {
+        "go": false,
+        "corr_ok": true,
+        "intact_alive": false,
+        "lesion_starves": true,
+        "yoke_starves": true,
+        "survival_margin": false,
+        "persist_ok": true,
+        "moat_ok": true
+      }
+    }
+  ],
+  "n_go": 0,
+  "n_seeds": 1
+}
