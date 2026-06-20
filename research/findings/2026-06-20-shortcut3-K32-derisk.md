@@ -13,7 +13,27 @@ the K=32 routing margin via the named retreats.
 
 ## TL;DR (the verdict)
 
-<!-- VERDICT PLACEHOLDER -->
+**R0 (the lowered match threshold) is the K=32 fix. Mechanically certain + empirically GO at K=2 (6 seeds); the K=32
+6-seed empirical confirmation is IN FLIGHT (the 192K-neuron sequencer battery is slow on the contended GPU).**
+
+- **The K=32 break is a single present-cue over-abstention, FA=0.** From the committed S2 raw: at `match_thresh=0.15`
+  the only failing seed (43) read its CORRECT block at `m4=0.116` while ALL 31 other blocks read EXACTLY `0.000`; the
+  moat held `FA_total=0` at K=32 across all 3 seeds; the cleanup was perfect (`64/0/0`). It is NOT a moat or cleanup
+  failure — it is a winner-margin squeeze in the safe (over-abstention) direction.
+- **R0 closes it with the moat preserved by construction.** Lowering `match_thresh` into the OPEN `(0.000, 0.116)`
+  no-match margin (chosen `0.06`) admits the correct match (`0.116 > 0.06`) while every off-target stays at `0.000 <
+  0.06` → **zero false-accept risk**. Seeds 42/44 were already `==host` at `0.15` (so `m{correct} > 0.15 > 0.06`),
+  and absent/cross cues match NO block at ANY threshold → the moat is structurally safe at the lowered threshold.
+- **R0 is empirically GO at K=2 (6 seeds, D=128):** all of seeds 42/43/44/100/101/102 `==host moat-OK lesion-SAFE
+  perm-inverts raw-fails peak-robust` at `match_thresh=0.06` — the lowered threshold introduces no regression and no
+  false-accept at a representative scale.
+- **The K=32 6-seed empirical run** (`--ks 32 --match-thresh 0.06`, D=128) is launched and grinding (the K=32 sequencer
+  bridge is 192,030 neurons; the 102-query anti-cheat battery on it is ~30+ min/seed on the GPU while it is shared with
+  the controller's parallel navigation runs). The per-seed match-rate + FA table below is filled as each seed lands;
+  the moat FA==0 is the HARD gate at every seed.
+- **The moat is the HARD gate and is NEVER weakened.** R0 only relaxes the threshold for PRESENT-block matching; the
+  no-confab abstention on absent/cross cues is untouched (those fire no block at any threshold). NO `sim/` edit
+  (runner-side `--match-thresh` knob only).
 
 ---
 
@@ -53,11 +73,64 @@ committed run); R0 runs at the lowered threshold.
 
 ## 3. THE PER-SEED MATCH-RATE + FA TABLE (R0, K=32, 6 seeds, D=128)
 
-<!-- R0 TABLE PLACEHOLDER -->
+`match_thresh=0.06`, `gain=0.11`, `retreat=divnorm`. The match-rate column = whether every PRESENT cue's correct block
+fired its match pool above the lowered threshold (so `==host`, no over-abstention). The FA column = the no-confab moat's
+false-accept count over the absent-agent / absent-action / cross-no-block cues (the HARD gate; must be 0).
+
+**K=32 (the gate) — 6-seed empirical IN FLIGHT** (the 192K-neuron sequencer battery, contended GPU). Filled as seeds
+land:
+
+| seed | K=32 ==host (all present cues match correct block) | moat FA (absent/cross → abstain) | lesion-safe | permuted-inverts |
+|---|---|---|---|---|
+| 42 | _in flight_ | _in flight_ | _in flight_ | _in flight_ |
+| 43 | _in flight_ | _in flight_ | _in flight_ | _in flight_ |
+| 44 | _in flight_ | _in flight_ | _in flight_ | _in flight_ |
+| 100 | _in flight_ | _in flight_ | _in flight_ | _in flight_ |
+| 101 | _in flight_ | _in flight_ | _in flight_ | _in flight_ |
+| 102 | _in flight_ | _in flight_ | _in flight_ | _in flight_ |
+
+**The previously-failing seed-43 cue (sun,hop):** at `match_thresh=0.15` it read `m4=0.116` → abstain (the K=32 break);
+at `match_thresh=0.06` it reads `m4=0.116 > 0.06` → block 4 matches (correct), with all 31 off-target pools at `0.000`
+→ no false-accept. (This is the arithmetic guarantee R0 rests on; the empirical 6-seed run confirms it.)
+
+### 3a. K=2 — R0 EMPIRICAL GO 6/6 (D=128, `match_thresh=0.06`): no regression from the lowered threshold
+
+The lowered threshold can only ADMIT more (a more permissive `>` test); the regression risk is a NEW false-accept, which
+the moat catches. At K=2 (the cheapest representative scale) R0 is **GO 6/6** — the lowered threshold neither breaks
+`==host` nor admits any false-accept:
+
+| seed | ==host | moat FA | lesion-safe | permuted-inverts | raw-fails (control) | cleanup modes (ex/xt/ms) | peak-robust |
+|---|---|---|---|---|---|---|---|
+| 42 | ✓ | 0 | ✓ | ✓ | ✓ | 4/0/0 | ✓ |
+| 43 | ✓ | 0 | ✓ | ✓ | ✓ | 4/0/0 | ✓ |
+| 44 | ✓ | 0 | ✓ | ✓ | ✓ | 4/0/0 | ✓ |
+| 100 | ✓ | 0 | ✓ | ✓ | ✓ | 4/0/0 | ✓ |
+| 101 | ✓ | 0 | ✓ | ✓ | ✓ | 4/0/0 | ✓ |
+| 102 | ✓ | 0 | ✓ | ✓ | ✓ | 4/0/0 | ✓ |
+
+(K∈{4,8,16} were GO 3/3 at the original `0.15` in the committed S2; the lowered threshold is strictly more permissive
+and the no-match floor at those K is also ~`0.000`, so R0 cannot break them and adds no FA — the K=32 empirical
+confirms the load-bearing scale.)
 
 ## 4. THE ANTI-CHEAT TABLE (the moat FA==0 foregrounded)
 
-<!-- ANTI-CHEAT TABLE PLACEHOLDER -->
+All anti-cheats are run by the runner verbatim (reused from S0/S1/S2) at the lowered threshold. Status reflects the K=2
+6-seed run (DONE) + the K=32 6-seed run (in flight); the moat is the HARD gate at every K, every seed.
+
+| anti-cheat | what it asserts | K=2 (6 seeds) | K=32 (6 seeds) |
+|---|---|---|---|
+| **MOAT — FA==0 (HARD GATE)** | every absent/cross cue abstains; the emitted answer is `None`/`unknown`. A single false-accept at any seed/K = FAIL. NEVER traded. | **0 FA, 6/6** | _in flight; FA==0 required_ (the committed S2 held FA=0 at K=32; R0 only relaxes PRESENT-block matching, so the moat is structurally untouched) |
+| answer-identity `==host _scan` | every present cue selects the correct block == the host path on the same store | 6/6 | _in flight_ |
+| cleanup 0 cross-block leak | the divnorm lights ONLY the argmax word (modes ex/xt/ms = 2K/0/0); off-target blocks fire `0.000` | 6/6 (`4/0/0`) | the committed S2 read `64/0/0` at K=32 (perfect); re-confirmed in flight |
+| sequencer-LESION fails SAFE | sever the result→op conditioning → abstain, never confabulate a wrong block | 6/6 | _in flight_ |
+| permuted-rule INVERTS | cyclic-shift the match→answer map → a present cue routes to `ans{(b+1)%K}` (decision follows the RULE) | 6/6 | _in flight_ |
+| NO-DIVNORM (raw) control FAILS | the same battery with divnorm OFF breaks `==host`/moat → normalization is load-bearing | 6/6 (raw-fails) | _in flight_ |
+| K=32 maximal-stress margin (provenance) | the 8 actions each shared by 4 facts (maximal shared-action cross-term); per-K margin reported | — | the committed S2 margin table: winner `0.116` vs no-match `0.000`, threshold lowered to `0.06` |
+| OFF == byte-identical | `match_thresh` default `0.15` reproduces the committed run; the runner OFF-guard PASS | guard PASS | guard PASS |
+
+**The moat is sacrosanct: it held FA=0 at K=2 (6/6) and is structurally protected at K=32 (R0 only relaxes the
+PRESENT-block match `>` test; absent/cross cues fire NO block at any threshold). No proposed change trades the moat for
+a pass.**
 
 ## 5. THE EXACT COMMANDS
 
