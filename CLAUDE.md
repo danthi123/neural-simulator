@@ -17,6 +17,18 @@ GPU-accelerated neural network simulator with real-time 3D OpenGL visualization.
 
 **The pattern:** a read-only research subagent reviews the canonical biology catalog (`E:\Documents\Projects\sim-catalog\references\feature-catalog.md`, ~323 entries across clusters A–Q — it lives in the separate `sim-catalog` worktree), plus Kandel 6e (`references/textbooks/`), `references/glossary.md`, and current literature (WebSearch + the `bio-research` MCP biorxiv tools), and produces a findings doc: **diagnosis → ranked biologically-grounded options → what existing project machinery is reusable → a recommended cheap-first de-risk → the anti-cheat controls it needs.** The controller reviews it (trust-but-verify the load-bearing claims), pushes the doc, and presents the recommendation before building. Treat this as the standing opening move for roadblocks and new-direction work.
 
+**The research gate — the AUTOMATIC trigger (2026-06-20, owner directive — make it mechanical, not a judgment call I can rationalize past; it failed once because "is this a significant roadblock?" is rationalizable).** Before committing ANY build / GPU / `sim/`-edit effort to *overcome* a difficulty, the gate fires (dispatch the read-only deep-research subagent FIRST, present its ranked options before building) if **ANY** of these objective conditions hold:
+- **(a) Confirmed boundary:** an experiment/de-risk returned NEGATIVE / BOUNDARY / NO-GO / "walls" / "can't on this substrate," and the next move is a mechanism to push past it.
+- **(b) Known family:** the wall is the same family as a prior documented boundary (the graded-magnitude / divisive-normalization / rate-code / point-neuron-limit / whitening family) — even on the FIRST occurrence in a new place.
+- **(c) Blocks a goal:** the difficulty blocks a stated roadmap/goal item (not a side-nicety).
+- **(d) New mechanism:** about to design a mechanism *class* not previously built (vs. composing already-proven pieces).
+- **(e) `sim/`-to-overcome:** the candidate fix edits protected `sim/` code specifically to push past a limit.
+- **(f) Stuck:** ≥2 distinct approaches to the same goal have failed.
+
+**The self-check (the exact failure to prevent):** the moment I write or read a verdict containing NEGATIVE / BOUNDARY / NO-GO / "walls" / "can't" AND my next instinct is "scope/build the fix" — *that instinct IS the trigger.* The next action is the research gate, and the fix I had in mind becomes just ONE option the research ranks (it is never the default).
+
+**Does NOT fire (so the gate stays calibrated, not over-triggering) — proceed directly:** routine/mechanical bugs with a clear cause (a backend mismatch, an off-by-one, a crash with an obvious fix); engineering that *composes* already-de-risked mechanisms; the GPU / multi-seed *confirmation* of an already-de-risked result; documentation, refactors, frontend wire-up. When genuinely unsure whether the gate fires, it fires (the read-only research is cheap relative to building the wrong fix).
+
 ## Standing standard: BRAIN-BASED ONLY (neurons / synapses / their communication), or it is a shortcut
 
 **(2026-06-08, owner directive — the load-bearing bar for "a proper brain analogue".)** Anything NOT done directly by the simulated brain — **neurons firing, synapses, and the communication between them** — is a **cheat/shortcut, EVEN IF the host-side calculation is biologically correct.** A prediction error computed by a Python formula, a "reflex" that reads pixels and returns a cardinal in code, a reward computed by a distance formula, an argmax over spike counts — all are shortcuts, because the *brain* is not doing them; the simulation's bookkeeping is.
