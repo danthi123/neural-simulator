@@ -87,6 +87,17 @@ class RFPhasorComposer:
         self._retrieve_lam = 0.0
         self._retrieve_kick_mag = 1.0
         self._retrieve_floor = 1.0e-3
+        # _retrieve_noise (DEFAULT 0.0 = OFF = byte-identical): common, GAIN-INDEPENDENT additive complex READ noise
+        # on the recovered readout phasor, with the RF magnitude floor applied to the NOISY phasor (a readout neuron
+        # whose noisy |z| falls below _retrieve_read_floor reads garbage phase -- the documented RF floor). This is the
+        # honest physical damage: read noise of fixed magnitude competes with the readout's SIGNAL magnitude `g*M`, so
+        # a higher-gain (rewarded) fact has higher per-neuron SNR -> cleaner phase -> survives the floor, while a
+        # unit-gain (neutral) fact's low-SNR neurons drop below the floor -> garbled phase -> the cleanup mis-recalls.
+        # The differential is the floor x noise interaction (NOT a hand-set floor at the signal magnitude). Seeded by
+        # _retrieve_noise_rng for reproducibility per query call sequence.
+        self._retrieve_noise = 0.0
+        self._retrieve_read_floor = 1.0e-2
+        self._retrieve_noise_rng = np.random.default_rng(seed)
         # (perf, opt-in) route the per-op resonate window through the fused RF megakernel (one CUDA kernel/step)
         # instead of the ~15-kernel/step loop. Default OFF -> the validated loop path. == loop at the phase-read
         # tolerance (tests/test_rf_megakernel.py). See docs/plans/2026-06-17-resonate-cudagraph-refactor-design.md.
@@ -449,7 +460,22 @@ class RFPhasorComposer:
         kick[0] = complex(self._retrieve_kick_mag)   # common read damage: scale the trigger (default 1.0 = unchanged)
         b.rf_kick(kick, period=self.period, lam=self._retrieve_lam, floor=self._retrieve_floor)
         b.rf_resonate_steps(self.period + 8)
-        return np.asarray(b.rf_read_phases())[1:1 + D]
+        phases = np.asarray(b.rf_read_phases())[1:1 + D]
+        if self._retrieve_noise > 0.0:
+            # The readout SIGNAL magnitude (|Z| of the readout neurons after the resonate) -- THIS is what the
+            # encoding gain controls (g*M). Add common complex read noise of fixed sigma, apply the read floor to the
+            # NOISY phasor; sub-floor neurons read garbage (phase 0). Higher gain -> higher SNR -> survives.
+            re = np.asarray(to_host(b.cp_membrane_potential_v))[1:1 + D]
+            im = np.asarray(to_host(b.cp_recovery_variable_u))[1:1 + D]
+            sig_mag = np.sqrt(re * re + im * im)
+            mag = float(np.median(sig_mag)) if np.any(sig_mag > 0) else 1.0   # the per-fact readout magnitude ~ g*M
+            z = mag * np.exp(2j * np.pi * phases)
+            eta = self._retrieve_noise * (self._retrieve_noise_rng.standard_normal(D)
+                                          + 1j * self._retrieve_noise_rng.standard_normal(D))
+            zn = z + eta
+            phases = (np.angle(zn) / (2.0 * np.pi)) % 1.0
+            phases = np.where(np.abs(zn) < self._retrieve_read_floor, 0.0, phases)   # sub-floor -> garbage phase
+        return phases
 
     def _iter_facts(self):
         """Yield (fact_dict, composite_phases) per stored fact. With the substrate store, the composite is read back
