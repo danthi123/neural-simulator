@@ -682,6 +682,15 @@ agent enables it; numpy stays the fast default. Findings: `2026-06-05-composer-c
 `-spiking-cleanup-memory-literature-synthesis.md`. The deeper **(B) memory shortcut** (the numpy-held bound fact +
 numpy superposition/opponency) is the remaining full-clear piece (options: `docs/plans/2026-06-05-composer-B-substrate-held-memory-options.md`).
 
+> **UPDATE (2026-06-20, shortcut-burndown #1):** the 2026-06-05 NEF cleanup above was opt-in on the
+> `CoreSimComposer`/`rf` path; the shortcut-burndown inventory found the SHIPPED production `OneBrainComposer`
+> (the `--composer onebrain` default) was STILL selecting each recalled word with a host `np.argmax` over the
+> cleanup membrane (`one_brain_composer.py`), i.e. the spiking cleanup was never wired into the one-brain default.
+> Burndown #1 (`69fd355d`) fixed that: the spiking Izhikevich WTA cleanup is now the DEFAULT on the OneBrain path
+> (`consolidated_320` demo + `BrainConversationalAgent`), == host-argmax, moat 0-FA, no `sim/` edit, with an
+> `enable_spiking_cleanup=False` escape for the numpy-CPU + test-oracle path. So the cleanup is now genuinely
+> spiking in the shipped one-brain conversation, not just available opt-in.
+
 **ONE-BRIDGE UNIFICATION COMPLETE (2026-06-04):** the three conversational regions now run as disjoint
 persistent slices on ONE interacting `SimulationBridge` — `research/runners/unified_brain_bridge.py`
 (`UnifiedBrainBridge`). Step 1: parser + composer share the bridge (no capability regression at
