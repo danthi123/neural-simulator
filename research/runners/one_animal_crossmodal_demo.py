@@ -294,7 +294,7 @@ def _query_set(agent):
     return stored, list(_UNSTORED_CUES)
 
 
-def measure_conversation(agent, coupler, deficit, conv_harness, reps=8):
+def measure_conversation(agent, coupler, deficit, conv_harness):
     """At a fixed body drive state (deficit), set the agent's whole-brain DA via the coupler (drive -> spiking
     hunger -> shared SNc dopamine), read the resulting Route-A gate `g_eff`, then measure the conversational
     read-out TWO faithful ways:
@@ -310,27 +310,28 @@ def measure_conversation(agent, coupler, deficit, conv_harness, reps=8):
           decisive (higher mean cue-role margin) + the cue-role error among answered DROPS, with its OWN moat at
           0. The DA driving (2)'s gate is the body drive's, set on the merged bridge in (1)'s coupler.
 
-    The DA state is set ONCE per call (the body drive is fixed for the turn)."""
+    The DA state is set ONCE per call (the body drive is fixed for the turn). The on-bridge merged-composer reads
+    (1) are DETERMINISTIC at a fixed kick (the RF op re-kicks each call; the resting config has OU off), so they
+    are evaluated ONCE per cue — repeating them `reps` times would be byte-identical, wasted GPU. The de-risk's
+    noisy harness (2) carries its OWN internal reps (the stochastic-noise averaging it was validated with)."""
     diag = coupler.set_drive_state(deficit)
     g_eff = diag["g_eff"]
     stored, unstored = _query_set(agent)
 
-    # (1) the REAL merged composer: recall + the no-confab MOAT at this drive level.
+    # (1) the REAL merged composer: recall + the no-confab MOAT at this drive level (deterministic -> one pass).
     n_answer = n_total = n_correct = 0
-    for _rep in range(reps):
-        for (a, v, p) in stored:
-            ans = agent.what_does(a, v)
-            n_total += 1
-            if ans is None:
-                continue
-            n_answer += 1
-            if ans == p:
-                n_correct += 1
+    for (a, v, p) in stored:
+        ans = agent.what_does(a, v)
+        n_total += 1
+        if ans is None:
+            continue
+        n_answer += 1
+        if ans == p:
+            n_correct += 1
     moat_fa = 0
-    for _rep in range(reps):
-        for (a, v) in unstored:
-            if agent.what_does(a, v) is not None:
-                moat_fa += 1
+    for (a, v) in unstored:
+        if agent.what_does(a, v) is not None:
+            moat_fa += 1
 
     # (2) the de-risk's noisy conversational read-out at the drive-set gate (the measurable precision shift).
     conv = conv_harness.read_at_gate(g_eff)
@@ -420,14 +421,16 @@ def run_seed(seed, *, rf_D=128, reps=8, low_deficit=0.05, high_deficit=0.95,
     for (a, v, p) in _FACTS:
         agent.composer.store(a, v, p)
     # the de-risk's validated noisy conversational read-out (same facts/cues, its borderline operating point).
-    conv_harness = NoisyConversationHarness(seed=seed)
+    # `reps` is the noise-AVERAGING count for the stochastic harness (the de-risk's validated 20); the on-bridge
+    # merged-composer read is deterministic so it is evaluated once per cue regardless.
+    conv_harness = NoisyConversationHarness(seed=seed, reps=max(8, reps))
 
     out = {"seed": seed, "modes": {}}
     for mode in ("intact", "lesion", "yoke"):
         coupler = DriveDopamineCoupler(agent, handles, mode=mode, seed=seed,
                                        drive_window=drive_window, snc_window=snc_window)
-        low = measure_conversation(agent, coupler, low_deficit, conv_harness, reps=reps)
-        high = measure_conversation(agent, coupler, high_deficit, conv_harness, reps=reps)
+        low = measure_conversation(agent, coupler, low_deficit, conv_harness)
+        high = measure_conversation(agent, coupler, high_deficit, conv_harness)
         out["modes"][mode] = {"low": low, "high": high,
                               "coupler_log": {k: list(v) for k, v in coupler.log.items()}}
         if verbose:
@@ -502,7 +505,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44])
     ap.add_argument("--rf-D", type=int, default=128)
-    ap.add_argument("--reps", type=int, default=8)
+    ap.add_argument("--reps", type=int, default=20,
+                    help="noise-averaging count for the de-risk's stochastic conversational harness (validated 20); "
+                         "the on-bridge merged-composer read is deterministic (evaluated once per cue regardless)")
     ap.add_argument("--low-deficit", type=float, default=0.05)
     ap.add_argument("--high-deficit", type=float, default=0.95)
     ap.add_argument("--drive-window", type=int, default=40)
