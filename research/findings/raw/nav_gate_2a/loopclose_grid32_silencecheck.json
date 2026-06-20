@@ -1,0 +1,61 @@
+{
+  "arms": [
+    {
+      "arm": "closed_on",
+      "closed_loop": true,
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 900,
+      "with_conv": false,
+      "n_thal_to_cortex_syn": 490,
+      "thal_to_cortex_per_action": {
+        "N": 137,
+        "E": 127,
+        "S": 102,
+        "W": 124
+      },
+      "n_regions": 67,
+      "n_neurons": 7702,
+      "n_motor_log_steps": 900,
+      "motor_sustain_frac": 0.5111111111111111,
+      "late_motor_sustain_frac": 0.43333333333333335,
+      "total_motor_spikes": 2678.0,
+      "gate_score": 31.769911504424776,
+      "episode_json": "research/findings/raw/nav_gate_2a\\loopclose_on_seed42.json"
+    },
+    {
+      "arm": "closed_off",
+      "closed_loop": false,
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 900,
+      "with_conv": false,
+      "n_thal_to_cortex_syn": 0,
+      "thal_to_cortex_per_action": {
+        "N": 0,
+        "E": 0,
+        "S": 0,
+        "W": 0
+      },
+      "n_regions": 67,
+      "n_neurons": 7702,
+      "n_motor_log_steps": 900,
+      "motor_sustain_frac": 0.5211111111111111,
+      "late_motor_sustain_frac": 0.4177777777777778,
+      "total_motor_spikes": 3162.0,
+      "gate_score": 27.398230088495573,
+      "episode_json": "research/findings/raw/nav_gate_2a\\loopclose_off_seed42.json"
+    }
+  ],
+  "verdict": {
+    "premise_doc_claimed_arc_OFF_in_failing_config": true,
+    "arc_present_in_closed_on": true,
+    "arc_present_in_closed_off": false,
+    "closed_on_motor_sustain": 0.5111111111111111,
+    "closed_off_motor_sustain": 0.5211111111111111,
+    "closed_on_late_sustain": 0.43333333333333335,
+    "closed_off_late_sustain": 0.4177777777777778,
+    "closed_on_gate": 31.769911504424776,
+    "closed_off_gate": 27.398230088495573
+  }
+}

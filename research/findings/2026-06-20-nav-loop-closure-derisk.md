@@ -63,13 +63,37 @@ no-op as written, because the reentrant arc was ALREADY ON in the config that pr
    causes the silence" — the arc is a small help that was already present, not the missing sustain. The SC arm is
    still ~9–11× the host-control floor (~0.5) regardless of the arc, so closing the loop does not rescue navigation.
 
+5. **THE FAITHFUL-SCALE A/B (grid-32 / 900 steps, warmup=600 — the NO-GO's grid + warmup) is the decisive datum,
+   and it REFUTES the doc's anti-cheat #2 outright.** At grid-32 a REAL partial-silence DOES appear (the actor's
+   firing-presence drops from ~1.0 at grid-8 to ~0.43–0.52 — so the NO-GO's "actor goes silent" is a genuine
+   faithful-scale phenomenon, confirmed). But closing the reentrant arc makes ZERO difference to it:
+
+   | arm (grid-32 / 900 / warmup 600 / seed 42, standalone) | `thal→cortex` syn | motor_sustain | **late_sustain (post-warmup region)** | gate |
+   |---|---|---|---|---|
+   | **closed_on** (arc ON) | 490 | 0.511 | **0.433** | 31.77 |
+   | **closed_off** (arc OFF) | 0 | 0.521 | **0.418** | 27.40 |
+
+   The actor is **already** partially silent WITH the arc ON (late_sustain 0.433), and lesioning the arc leaves it
+   **statistically identical** (0.418) — not a regression toward silence. The deep-research's decisive control —
+   *"lesion the reentrant arc → the actor must go silent again"* (§5 anti-cheat #2) — is therefore **refuted**: the
+   arc is not what holds the actor up, because the actor is already partly down with it on, and removing it changes
+   nothing. Closing the loop is again slightly **worse** (gate 31.77 ON > 27.40 OFF). The faithful-scale silence is
+   real but is caused by the **weak SC orienting drive into the actor** (the agent navigates early goals fine —
+   distance 40→4.6 by step 400 in BOTH arms — but cannot reliably re-orient to the far-west goal after the phase
+   transition, where the SC bump's drive is too weak), NOT by an open reentrant loop.
+
 **⇒ The fork's answer is NOT "open loop / loop-stability via the missing reentrant arc."** That arc was already
 closed. The actor-silence in the NO-GO is therefore NOT caused by the open `thal→cortex` loop (it cannot be — the
-loop was closed). The deep-research diagnosis identified the right *family* (a systems / operating-point issue, not a
-dendritic credit-assignment wall — that part is well-argued and consistent with the organs validating in isolation),
-but it pinned it on the wrong structural cause. The load-bearing problem is the **SC orienting current (`sc_map →
-cortex_X`, weight 18) being too weak to replace the 800 pA host Manhattan heuristic as the actor's drive**, with the
-neural reward/critic loop not compensating — and the already-closed reentrant arc demonstrably does not fix it.
+loop was closed). **The faithful-scale A/B (grid-32, point 5 below) is the clincher: a real partial-silence DOES
+appear at grid-32, but it is IDENTICAL with the arc ON (late_sustain 0.433, 490 syn) and OFF (0.418, 0 syn)** — so
+the doc's own decisive control ("lesion the arc → actor goes silent again") is directly refuted; the actor is already
+partly silent with the loop closed. The deep-research diagnosis identified the right *family* (a systems /
+operating-point issue, not a dendritic credit-assignment wall — that part is well-argued and consistent with the
+organs validating in isolation), but it pinned it on the wrong structural cause. The load-bearing problem is the **SC
+orienting current (`sc_map → cortex_X`, weight 18) being too weak to replace the 800 pA host Manhattan heuristic as
+the actor's drive** (the agent navigates early goals fine in BOTH arms but cannot reliably re-orient after a goal
+change), with the neural reward/critic loop not compensating — and the already-closed reentrant arc demonstrably does
+not fix it.
 
 This is the honest cheap-first deliverable: a controller-verified deep-research premise, trust-but-verified against
 the actual code + a direct measurement, found to be **falsified at the structural level**. Per the standing
@@ -105,16 +129,16 @@ phase finalQ from the episode JSON.
 
 ## Honest scope + the faithful-scale handoff
 
-- **Scale caveat (the one open item):** the NO-GO's "actor goes silent after warmup" was reported at **grid-32 /
-  1800 steps**; this de-risk's actor-sustain finding is at **grid-8 / 120** (standalone) and **grid-8 / 480 merged**
-  (all 4 phases, conv co-resident). The *structural* refutation (arc was ON) is exact and scale-independent — it is a
-  code fact + a synapse count (490 vs 0), true at any grid. The *behavioral* claim ("closing the loop does not rescue
-  / the actor does not silence for lack of the arc") is shown at two small scales (standalone 120 + merged 480) and
-  should be confirmed at the faithful grid-32/1800 scale before the file is fully closed. But note: because the arc
-  was ALREADY ON in the grid-32/1800 NO-GO, the grid-32/1800 "closed_on" arm simply IS the NO-GO (gate 117.5). The
-  only new datum the faithful A/B adds is whether the **lesioned** (`--no-closed-loop`) arm is *even worse* — which,
-  if the arc were the missing sustain, it would be; at both small scales it is not (the lesion is comparable or
-  slightly better/worse, never a regression toward silence).
+- **Scale: the faithful-scale silence is now REPRODUCED and CHARACTERIZED (not an open item).** The actor-sustain
+  finding was checked at three scales: grid-8/120 standalone (sustain ~1.0), grid-8/480 merged (sustain ~0.97-0.99),
+  and — the decisive one — **grid-32/900 with warmup=600 standalone** (the NO-GO's grid + warmup), where a real
+  partial-silence appears (late_sustain ~0.42-0.43) AND is identical with the arc ON vs OFF. The *structural*
+  refutation (arc was ON in the NO-GO) is exact and scale-independent (a code fact + a 490-vs-0 synapse count). The
+  *behavioral* refutation (the arc is not the silence's cause or fix) is now shown at the faithful grid too: the
+  grid-32 A/B's two arms differ by <3% in sustain and the arc-ON arm is slightly worse on gate. The only remaining
+  larger-scale confirmation is the full grid-32/**1800** merged horizon (the exact NO-GO), which adds little beyond
+  what the grid-32/900 A/B already settled — because the NO-GO's arc was ALREADY ON, its "closed_on" arm simply IS
+  the NO-GO (gate 117.5), and the grid-32/900 A/B already shows the lesion does not regress toward silence.
 
 - **The faithful grid-32/1800 A/B is wired and handed to the controller** (the decisive scale test, GPU):
   `_nav_gate_merged_run.py` now has an additive `--no-closed-loop` flag (default off = arc ON = byte-identical to the
@@ -132,11 +156,11 @@ phase finalQ from the episode JSON.
     --seed 42 --grid-size 32 --n-steps 1800 \
     --out research/findings/raw/nav_gate_2a/loopclose_grid32_off_seed42.json
   ```
-  Read `gate_score` + `motor_counts` from each. **Prediction (from the grid-8 result):** the lesion (`--no-closed-loop`)
-  will NOT meaningfully change the outcome — both arms ~58× host with the actor sustaining; closing the loop is not
-  the missing fix. If instead the lesion regresses sharply while the arc-ON arm recovers, the doc's mechanism would
-  be vindicated at scale (not expected). 3 seeds suffice if the effect is large/mechanistic; 6 if it is a marginal
-  variable effect.
+  Read `gate_score` + `motor_counts` from each. **Prediction (now backed by the grid-32/900 A/B above, not just
+  grid-8):** the lesion (`--no-closed-loop`) will NOT meaningfully change the outcome — at grid-32/900 the two arms'
+  late_sustain already differ by <3% (0.433 vs 0.418) and gate by <16% (arc-ON slightly worse). Closing the loop is
+  not the missing fix. This grid-32/1800 merged A/B is therefore a *confirmation*, not the decisive test (the
+  decisive test was grid-32/900, done). 3 seeds suffice for the mechanistic/exact effect.
 
 ---
 
@@ -168,4 +192,7 @@ and is a candidate for a separate fix.
 
 - `cdb2603d` — the probe `_nav_loop_closure_derisk.py` + the standalone grid-8/120 A/B result (arc 490 vs 0; actor
   sustains both arms).
-- (this finding) + the `--no-closed-loop` flag on `_nav_gate_merged_run.py` + the merged smoke + host-ref JSONs.
+- `bcb45d38` — the MERGED grid-8/480 A/B + the `--no-closed-loop` flag on `_nav_gate_merged_run.py` + the host-ref +
+  this findings doc (initial).
+- (this commit) — the `--warmup-steps` probe flag + the **faithful grid-32/900 (warmup 600) A/B** (the decisive
+  control: real partial-silence appears, IDENTICAL with the arc ON vs OFF) + the doc update folding it in.

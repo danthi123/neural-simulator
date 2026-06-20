@@ -77,8 +77,11 @@ def _count_thal_to_cortex(bridge):
     return total, per_action
 
 
-def run_arm(closed_loop: bool, seed: int, n_steps: int, grid_size: int, with_conv: bool, out_dir: str):
+def run_arm(closed_loop: bool, seed: int, n_steps: int, grid_size: int, with_conv: bool, out_dir: str,
+            warmup_steps: int = None):
     from research.runners.g11_bg_runner import run_moving_goal_episode
+    if warmup_steps is None:
+        warmup_steps = min(100, max(1, n_steps // 2))
 
     gs = grid_size
     far = (max(0, gs - 2), max(0, gs - 2))
@@ -99,7 +102,7 @@ def run_arm(closed_loop: bool, seed: int, n_steps: int, grid_size: int, with_con
         enable_cluster_e_topography=True,
         enable_pfc_nmda=True,
         enable_visual_cortex=True,
-        visual_cortex_action_warmup_steps=min(100, max(1, n_steps // 2)),
+        visual_cortex_action_warmup_steps=warmup_steps,
         stdp_w_max_override=400.0,
         # the failing --spiking-sc arm (verbatim from _nav_gate_merged_run.py)
         enable_spiking_sc=True,
@@ -195,6 +198,9 @@ def main():
     ap.add_argument("--grid-size", type=int, default=8)
     ap.add_argument("--with-conv", action="store_true",
                     help="merged bridge (the NO-GO config). Off = standalone nav SC (faster CPU smoke).")
+    ap.add_argument("--warmup-steps", type=int, default=None,
+                    help="visual_cortex_action_warmup_steps override (the NO-GO grid-32 used 600). "
+                         "Default = min(100, n_steps//2). Use 600 for a faithful grid-32 silence check.")
     ap.add_argument("--out", type=str,
                     default="research/findings/raw/nav_gate_2a/loopclose_summary.json")
     args = ap.parse_args()
@@ -204,7 +210,8 @@ def main():
 
     summaries = []
     for closed in (True, False):
-        s = run_arm(closed, args.seed, args.n_steps, args.grid_size, args.with_conv, out_dir)
+        s = run_arm(closed, args.seed, args.n_steps, args.grid_size, args.with_conv, out_dir,
+                    warmup_steps=args.warmup_steps)
         summaries.append(s)
 
     # the A/B verdict line
