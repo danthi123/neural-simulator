@@ -92,8 +92,22 @@ class OneBrainComposer:
 
     def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200, enable_batched=True,
                  enable_rf_cudagraph=True, grounded_codes=None, confidence_gate=0.0, enable_csr_cache=True,
-                 enable_attributed=False, enable_multiframe=False, enable_spiking_cleanup=False):
+                 enable_attributed=False, enable_multiframe=False, enable_spiking_cleanup=False,
+                 encoding_gain_fn=None):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
+        # encoding_gain_fn (Tier-2 #6, opt-in, DEFAULT-OFF = byte-identical): the one-brain mirror of the RF composer's
+        # DOPAMINE-GATED ENCODING STRENGTH (Lisman-Grace hippocampal-VTA loop; Kandel D.16 -- dopamine gates the entry of
+        # information into LONG-TERM memory, making a trace STABLE vs degradable). An optional callable () -> float read
+        # AT STORE TIME (the shared `dopamine` concentration in deployment; a probe value in the de-risk). When set, the
+        # fact's composite phasor written into the persistent trigger->readout store block (_write_block) is multiplied
+        # by the per-fact gain `g`. The RF phase read-out has a hard MAGNITUDE FLOOR (sim/bridge.py:5589 `_rf_mag2 >
+        # _rf_floor2` -- a readout neuron whose |Z| decays below the floor never spikes -> reads phase 0 = garbage), so a
+        # higher-gain (rewarded) fact reconstructs ABOVE the floor under common read damage where a unit-gain (neutral)
+        # fact degrades BELOW it -> the rewarded fact wins the cue-match scan. NOT a vacuous global gain: the floor is the
+        # nonlinearity that makes it differential. None -> g=1.0 for every fact -> the byte-identical unit-magnitude write
+        # (exactly RFPhasorComposer._store_substrate's semantics). The no-confab moat is preserved by construction: the
+        # gain only scales the stored magnitude; the cue-match abstention + the cleanup winner-pick are unchanged.
+        self.encoding_gain_fn = encoding_gain_fn
         # enable_spiking_cleanup (burndown #1, default OFF = byte-identical = the numpy-CPU + test-oracle path): make
         # the cleanup SELECTION fully on-substrate. The matched FILTER is ALREADY on the co-resident bridge (the
         # complex-synapse `clean` matvec -> the rectified membrane `scores`); the residual host op was the WINNER-PICK
@@ -264,7 +278,11 @@ class OneBrainComposer:
         APPENDED (initial store) -- the slice math is exact either way."""
         D = self.D
         trig = self.store_base + i * self.block
-        block_conns = [(trig + 1 + k, trig, complex(zc[k])) for k in range(D)]
+        # (Tier-2 #6) DA-gated encoding strength: scale the stored composite magnitude by the per-fact gain `g` read from
+        # the dopamine signal at store time. g=1.0 (encoding_gain_fn=None) -> the byte-identical unit-mag write (this
+        # mirrors RFPhasorComposer._store_substrate). The RF read floor (sim/bridge.py:5589) makes the gain differential.
+        g = 1.0 if self.encoding_gain_fn is None else float(self.encoding_gain_fn())
+        block_conns = [(trig + 1 + k, trig, complex(g) * zc[k]) for k in range(D)]
         if i * D < len(self.store_conns):
             self.store_conns[i * D:(i + 1) * D] = block_conns       # in-place rewrite (reconsolidation)
         else:

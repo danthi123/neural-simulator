@@ -312,3 +312,53 @@ def test_onebrain_default_path_unaffected():
     src = inspect.getsource(BrainConversationalAgent.hear)
     assert "self.composer.hear" in src and "self.parser.parse" in src, \
         "hear() must keep BOTH the delegation path (onebrain) and the parse+store path (rf/rate default)"
+
+
+def test_onebrain_encoding_gain_default_off_byte_identical():
+    """(Tier-2 #6, Route B mirror on the one-brain path) DEFAULT-OFF GUARD: encoding_gain_fn=None must write the SAME
+    persistent store weights as before (the byte-identical unit-magnitude write) -- so wiring the dopamine encoding-gain
+    hook changes nothing unless a gain fn is supplied. A constant-1.0 gain fn must ALSO be byte-identical (g=1.0 == the
+    unit write). No GPU run needed (only the store-weight construction is exercised)."""
+    from research.runners.one_brain_composer import OneBrainComposer
+    facts = [("dog", "go", "north"), ("cat", "come", "east"), ("bird", "look", "south")]
+    try:
+        base = OneBrainComposer(seed=42, D=64, vocab=VOCAB)                          # default (no gain hook)
+        unit = OneBrainComposer(seed=42, D=64, vocab=VOCAB, encoding_gain_fn=lambda: 1.0)
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    assert base.encoding_gain_fn is None, "default must be the byte-identical unit write (encoding_gain_fn None)"
+    for (a, v, p) in facts:
+        base.store(a, v, p); unit.store(a, v, p)
+    # the persistent store weights (cp_rf_w_re/im carry these) must be IDENTICAL: same (post, pre) edges, same complex w
+    bc = [(int(po), int(pr), complex(w)) for (po, pr, w) in base.store_conns]
+    uc = [(int(po), int(pr), complex(w)) for (po, pr, w) in unit.store_conns]
+    assert len(bc) == len(uc) == len(facts) * 64, "store_conns length must match (3 facts x D=64)"
+    assert bc == uc, "g=1.0 (and None) must produce the BYTE-IDENTICAL unit-magnitude store write"
+
+
+def test_onebrain_encoding_gain_lifts_recall_moat_intact():
+    """(Tier-2 #6, Route B mirror) A constant encoding_gain_fn (g>1) must (1) WRITE a higher-magnitude store block (the
+    salient/rewarded fact stored more strongly -- the only thing the gain changes) while (2) PRESERVING the no-confab
+    moat: every who/what answer still correct, and an unstored cue / unstored fact still ABSTAIN (is None / unknown).
+    The HARD load-bearing constraint: DA-modulated encoding must NEVER produce a false-accept. The recall lift itself
+    is the magnitude differential under the RF read floor (sim/bridge.py:5589); here we pin that the stored block's
+    magnitude is scaled by g AND the moat is byte-intact (0 false-accepts)."""
+    from research.runners.one_brain_composer import OneBrainComposer
+    facts = [("dog", "go", "north"), ("cat", "come", "east"), ("bird", "look", "south")]
+    try:
+        c = OneBrainComposer(seed=42, D=64, vocab=VOCAB, encoding_gain_fn=lambda: 1.5)
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    for (a, v, p) in facts:
+        c.store(a, v, p)
+    # (1) the WRITE: every stored block's per-edge magnitude is g x the unit composite (|zc|==1 -> |g*zc|==g)
+    mags = np.abs([complex(w) for (_po, _pr, w) in c.store_conns])
+    assert np.allclose(mags, 1.5, atol=1e-9), f"a g=1.5 fact must write |w|==1.5 (got mean {mags.mean():.4f})"
+    # (2) the moat HARD gate -- recall correct AND 0 false-accepts under the gain
+    for (a, v, p) in facts:
+        assert c.query_patient(a, v) == p, f"recall must stay correct under the encoding gain for {(a, v)}"
+        assert c.query_agent(v, p) == a
+        assert c.ask_yes_no(a, v, p) == "yes"
+    assert c.query_patient("apple", "stop") is None, "MOAT BREACH: unstored cue must abstain under the gain"
+    assert c.query_agent("swim", "home") is None, "MOAT BREACH: unstored cue must abstain under the gain"
+    assert c.ask_yes_no("cat", "go", "west") in ("unknown", "no"), "MOAT BREACH: unstored fact must abstain"
