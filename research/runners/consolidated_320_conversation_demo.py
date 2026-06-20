@@ -199,8 +199,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
     ap.add_argument("--readout", choices=["neural", "host"], default="neural",
-                    help="neural = the fully-brain-based read-out codes (seed 42 only so far); "
-                         "host = the host double-centring read-out codes (seeds 42/43/44 available)")
+                    help="neural (PRODUCTION DEFAULT) = the fully-brain-based on-bridge read-out normalization codes "
+                         "(per-hub spike-frequency adaptation + per-concept feedforward inhibition; burndown #5, "
+                         "seeds 42/43/44 == the host who/what baseline with the moat at 0 false-accepts). "
+                         "host = the host double-centring read-out codes (the escape / test-oracle path, seeds 42/43/44).")
     ap.add_argument("--out", default="research/findings/raw/_consolidated_320_conversation.json")
     ap.add_argument("--composer", choices=["rf", "onebrain"], default="onebrain",
                     help="onebrain = the integrated one-brain composer (the whole who/what pipeline on ONE persistent "
