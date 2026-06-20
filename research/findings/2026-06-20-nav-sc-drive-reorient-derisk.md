@@ -24,13 +24,16 @@ between the mid and strong levels), and at the strong drive the SC->cortex pooli
 near-UNIFORMLY** rather than sharpening the orienting bias — the actor's action distribution degenerates toward
 chance instead of committing harder to the new cardinal.
 
-**⇒ The WHICH classification is the operating-point FLOOR, not the re-targeting gap.** The failure mode is *not* "the
-SC stays locked on the old goal's cardinal" (that would be a re-targeting problem a stronger drive can't fix either,
-but for a different reason); it is "a stronger drive saturates/de-sharpens the read-out" — the quadrant-pooling
-read-out's selectivity does not increase with drive magnitude, so past a modest level more current only pushes ALL
-pools past threshold (uniform competition) instead of widening the winner's margin. The drive magnitude is not the
-free parameter that closes the gap; the SC->cortex **read-out's selectivity** (the quadrant-pooling geometry / a
-sharper WTA) is.
+**⇒ The WHICH classification is the operating-point FLOOR — specifically a non-goal-tracking / under-selective
+read-out — NOT a drive deficit and NOT re-targeting-by-lockon.** The faithful grid-32 action distribution is the
+clincher: the host re-targets every phase (W-heavy for the far-west goal, E-heavy for the SE goal), while EVERY SC
+arm goes **N ~0.45–0.52 in every phase regardless of the goal's location** (it pins itself to the top edge). It does
+not point at the *previous* goal's cardinal (that would shift per phase = re-targeting-by-lockon); it points the
+**same** way every phase = a `sc_map -> cortex_X` read-out whose output does not track the bump's retinal position at
+all. Raising `SC_CORTEX_W` 18→150 changes only the *static-hold* finalQ (sc_w150 phase0 1.54 — a stronger stable bump
+holds a single goal) and leaves every re-orient catastrophic (~26–53 vs host 0.5). The drive magnitude is not the
+free parameter that closes the gap; the SC->cortex **read-out's selectivity / goal-position-tracking** (the
+quadrant-pooling geometry / a sharper WTA / divisive normalization) is.
 
 **This closes #6 (SC orienting) as a CHARACTERIZED honest-negative:** the host Manhattan heuristic stays the
 documented scaffold; the spiking superior colliculus is validated for **early-goal orienting only** (it acquires the
@@ -92,53 +95,89 @@ Grid-8 is a weak read (2 phases, easy). The faithful confirm is grid-32.
 
 ---
 
-## Grid-32/1800 (seed 42, warmup 600) — the faithful confirm
+## Grid-32/1800 (seed 42, warmup 600) — the faithful confirm (COMPLETE)
 
-*(GRID32_PLACEHOLDER — filled below when the run lands.)*
+The faithful-scale sweep (the NO-GO's grid + warmup; all 4 goal phases complete; standalone — the prior de-risk
+established the structural facts are scale-independent and the grid-32/900 already reproduced the partial-silence):
 
-**The exact command (in flight in the background as of this commit; ~30–60 min GPU for the 4-episode sweep):**
+| arm | w | phase0 finalQ (acquire) | post-change finalQ (re-orient, phases 1/2/3) | Σ post-change | gate (Σ all) | late_sustain |
+|---|---|---|---|---|---|---|
+| **host** (positive control) | — | **0.690** | **0.50 / 0.50 / 0.50** | **1.50** | **2.19** | **1.000** |
+| sc_w18 (current default = the NO-GO) | 18 | 20.86 | 15.42 / 58.42 / 42.25 | 116.1 | 136.95 | 0.438 |
+| sc_w60 (mid) | 60 | 12.35 | 30.22 / 56.22 / 44.19 | 130.6 | 142.99 | 0.398 |
+| sc_w150 (strong ≈ host pA) | 150 | 1.54 | 26.32 / 52.96 / 31.60 | 110.9 | 112.42 | 0.426 |
 
-```bash
-SIM_BACKEND=cupy python -m research.runners._nav_sc_drive_reorient_derisk \
-  --seed 42 --grid-size 32 --n-steps 1800 --warmup-steps 600 \
-  --sc-drive-levels 18,60,150 \
-  --out research/findings/raw/nav_gate_2a/scdrive_grid32_seed42.json
-```
+**Reproduces the NO-GO and refutes the drive-strength hypothesis at faithful scale:**
 
-Read the `verdict` block + each arm's `per_phase_finalQ` / `phase0_finalQ` / `post_change_finalQ` /
-`late_motor_sustain_frac` from the summary JSON. The grid-8 prediction is that the SC arm's post-change finalQ stays
-~3–4x the host control at every drive level and does NOT monotonically approach host (it saturates) — confirming the
-operating-point-FLOOR (read-out-selectivity) classification, not a drive-strength deficit.
+- **The host re-orients cleanly through ALL THREE post-change goals** (post-change finalQ ~0.5 each, gate 2.19,
+  late_sustain 1.000). Every SC arm is **~50–65x the host gate**; on the post-change re-orient specifically,
+  `host_over_best_sc_ratio = 0.0136` — **the host is ~73x better** than the *best* SC arm. The spiking SC simply
+  does not re-orient at faithful scale, at any drive level.
+- **The sweep is NON-MONOTONE — a stronger drive does NOT close the gap, and the mid level makes it WORSE.**
+  Σ post-change goes 116.1 (w18) → **130.6 (w60, worse)** → 110.9 (w150) — it never approaches the host's 1.5, and
+  the w150 marginal edge over w18 is ~5% (vs the ~77x gap to host). The summary's `improves_with_drive=True` is a
+  misleading first-vs-last artifact (150 < 18 by a hair); the actual trajectory 116→131→111 is the classic
+  saturation/floor shape, not a monotone approach.
+- **The partial-silence (`late_sustain ~0.40`) does NOT recover with stronger drive** (0.438 → 0.398 → 0.426) — the
+  actor stays partly silent regardless, confirming this is not a "the drive wasn't strong enough to keep the actor
+  firing" problem.
+- **The strong drive helps ONLY static acquisition, never re-orient.** sc_w150's phase0 drops to **1.54** (a stronger
+  stable bump *does* help hold a single static goal, ~2x the host's 0.69 — the spiking SC's validated early-goal
+  orienting), but every post-change phase stays catastrophic (~26–53). The drive magnitude moves the static-hold
+  metric and leaves the re-orient metric broken — exactly an operating-point floor on the read-out, not a drive gap.
 
-**Host positive control (grid-32/1800, the anchor) — re-orients cleanly through all 3 post-change goals:**
-phase0_finalQ **0.690** (acquires the NE corner), post-change finalQ **[0.504, 0.496, 0.504]** (sum **1.504**),
-gate **2.195**, late_sustain **1.000**. The host re-adapts to each new corner (~0.5 = essentially at-goal).
-The live `sc_w18` trace confirms the symptom directly: at the first re-orient phase (goal far-west `(1,30)`) the SC
-arm is stuck at pos `(22,31)→(31,31)`, recent_dist **~22–24** — it drifts away from the new goal instead of
-re-orienting, exactly the prior de-risk's "cannot re-orient to the far-west goal after the phase transition."
-*(The full 3-level SC sweep numbers land in the table below.)*
+### The decisive classification evidence — a non-goal-tracking (stuck-N) read-out, NOT re-targeting-by-lockon
+
+The per-phase action distribution (fraction N/E/S/W) settles the WHICH question unambiguously:
+
+| arm | phase0 (goal NE) | phase1 (goal far-W) | phase2 (goal SW) | phase3 (goal SE) |
+|---|---|---|---|---|
+| **host** | E .44 / W .37 | **W .49** / E .42 | E .41 / W .41 | **E .53** / W .46 |
+| sc_w18 | **N .52** | **N .45** | **N .49** | **N .49** |
+| sc_w60 | **N .44** | **N .51** | **N .47** | **N .49** |
+| sc_w150 | **N .33** | **N .47** | **N .52** | **N .52** |
+
+- The **host's** action distribution TRACKS the goal — W-heavy when the goal is far-west, E-heavy when it's the SE
+  corner. It re-targets every phase.
+- **Every SC arm is N-dominated (~0.45–0.52) in EVERY phase, irrespective of where the goal is** (the agent pins
+  itself to the top edge, pos row 31). It does not point at the *previous* goal's cardinal (that would shift per
+  phase = re-targeting-by-lockon); it points the **same** way (N) regardless of goal = a read-out that does **not
+  track the goal's retinal position at all**. (grid-8 read this as "near-uniform"; grid-32 sharpens it to "stuck-N"
+  — the same root cause: the `sc_map -> cortex_X` directional selectivity does not respond to the bump's location or
+  to drive magnitude.)
+
+⇒ **WHICH gap = operating-point FLOOR (a non-goal-tracking / under-selective read-out), NOT a drive deficit and NOT
+re-targeting-by-lockon.** Raising `SC_CORTEX_W` from 18 to 150 changes only the static-hold finalQ; it cannot make
+the read-out's output track the goal, so re-orient stays broken at every level.
 
 ---
 
 ## WHICH gap (the honest-negative classification)
 
 The brief asks to crisply report WHICH residual if the drive doesn't fix re-orient: **re-targeting** (SC stays locked
-on the old goal) vs **operating-point floor** (saturates/destabilizes). The grid-8 evidence (and the grid-32 confirm
-below) point to the **operating-point FLOOR**, specifically a **read-out-selectivity** floor:
+on the old goal) vs **operating-point floor** (saturates/destabilizes). The faithful grid-32 evidence settles it as
+the **operating-point FLOOR**, specifically a **non-goal-tracking / under-selective read-out**:
 
 - **Not re-targeting-by-lockon:** the post-change action counts are not dominated by the *old* phase's winning
-  cardinal — they go toward *uniform*, not toward the stale winner. The SC isn't stubbornly pointing the old way; it
-  is pointing *every* way at once.
-- **Operating-point floor (read-out selectivity):** the `sc_map -> cortex_X` quadrant-pooling read-out's selectivity
-  does not increase with drive magnitude. The pooling weights `wv = max(0, ±ddx/ddy)` overlap substantially near the
-  bump centre, so a stronger global drive lifts all four pools' input together — the winner's *margin* over the
-  runners-up does not widen, and past a modest drive the competition degenerates to chance. The free parameter that
-  would close the gap is the read-out's **selectivity** (a sharper pooling kernel / a competitive WTA at the cortical
-  read-out / divisive normalization), NOT the drive magnitude.
+  cardinal — across all four phases the SC arm outputs the SAME cardinal (N ~0.45–0.52) regardless of the goal. If it
+  were locked on the previous goal, the dominant cardinal would *shift* phase-to-phase tracking the old goals; it
+  does not. The read-out output is goal-INVARIANT.
+- **Not a drive deficit:** raising `SC_CORTEX_W` 18→60→150 makes the post-change re-orient NON-MONOTONE (116→131→111)
+  and never approaches host (best SC arm is ~73x worse on post-change). Stronger drive only moves the *static-hold*
+  finalQ (phase0 20.9→12.4→1.5) — it helps hold a single fixed goal but cannot make the output track a *moved* goal.
+- **Operating-point floor (read-out selectivity / goal tracking):** the `sc_map -> cortex_X` quadrant-pooling
+  read-out's directional output does not respond to the bump's retinal location with enough contrast to override the
+  cascade's intrinsic N-bias, and that contrast does not increase with drive magnitude. The pooling weights
+  `wv = max(0, ±ddx/ddy)` overlap substantially near the bump centre, so a stronger global drive lifts all four
+  pools' input together — the winner's *margin* over the runners-up does not widen with drive; it just over-drives
+  the actor (and the partial-silence persists). The free parameter that would close the gap is the read-out's
+  **selectivity / goal-position tracking** (a sharper pooling kernel, a competitive WTA at the cortical read-out, or
+  divisive normalization), NOT the drive magnitude.
 
-This is consistent with — and refines — the prior de-risk's "operating-point family, not a dendrite" framing: the
-operating point that matters is the read-out's selectivity, and the drive-strength knob (the one the prior doc
-flagged as the single most plausible fix) is now shown to be the wrong lever.
+This is consistent with — and sharpens — the prior de-risk's "operating-point family, not a dendrite" framing: the
+operating point that matters is the read-out's *selectivity / goal-tracking*, and the drive-strength knob (the one
+the prior doc flagged as the single most plausible fix) is now shown to be the wrong lever — closing #6 cleanly as a
+characterized honest-negative and pointing the (deferred) follow-on at the read-out geometry, not the drive.
 
 ---
 
@@ -154,4 +193,6 @@ or made.
 
 - `e7ca4655` — the probe `_nav_sc_drive_reorient_derisk.py` + the grid-8/480 smoke (saturates ~3.5x worse;
   near-uniform action distribution at strong drive).
-- *(this commit)* — the grid-32/1800 faithful confirm + this findings doc.
+- `e333d771` — this findings doc (grid-8 + the host grid-32 anchor + the live symptom + the handoff command).
+- *(this commit)* — the **grid-32/1800 faithful sweep COMPLETE** (the full SC table + the goal-invariant stuck-N
+  action-distribution evidence + the doc finalization).
