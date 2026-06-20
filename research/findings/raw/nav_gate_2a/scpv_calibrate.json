@@ -1,0 +1,684 @@
+{
+  "seed": 42,
+  "grid_size": 8,
+  "n_steps": 480,
+  "warmup_steps": 100,
+  "sc_cortex_w": 18.0,
+  "with_conv": false,
+  "cells": [
+    {
+      "divnorm_sigma": 1.0,
+      "divnorm_gain": 0.0,
+      "per_phase_dominant_cardinal": [
+        "E",
+        "W"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.249,
+          "E": 0.316,
+          "S": 0.191,
+          "W": 0.244
+        },
+        {
+          "N": 0.233,
+          "E": 0.2,
+          "S": 0.2,
+          "W": 0.367
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 0.9911504424778761,
+      "post_change_finalQ": [
+        1.5
+      ],
+      "post_change_finalQ_sum": 1.5,
+      "late_motor_sustain_frac": 0.9958333333333333,
+      "tracks_goal": true,
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": true
+    },
+    {
+      "divnorm_sigma": 1.0,
+      "divnorm_gain": 0.02,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.313,
+          "E": 0.24,
+          "S": 0.244,
+          "W": 0.202
+        },
+        {
+          "N": 0.2,
+          "E": 0.233,
+          "S": 0.2,
+          "W": 0.367
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 1.3628318584070795,
+      "post_change_finalQ": [
+        1.5
+      ],
+      "post_change_finalQ_sum": 1.5,
+      "late_motor_sustain_frac": 0.9958333333333333,
+      "tracks_goal": true,
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": false
+    },
+    {
+      "divnorm_sigma": 1.0,
+      "divnorm_gain": 0.05,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.387,
+          "E": 0.193,
+          "S": 0.269,
+          "W": 0.151
+        },
+        {
+          "N": 0.3,
+          "E": 0.167,
+          "S": 0.167,
+          "W": 0.367
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 0.9469026548672567,
+      "post_change_finalQ": [
+        1.0
+      ],
+      "post_change_finalQ_sum": 1.0,
+      "late_motor_sustain_frac": 0.9541666666666667,
+      "tracks_goal": true,
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": false
+    },
+    {
+      "divnorm_sigma": 1.0,
+      "divnorm_gain": 0.1,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "N"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.34,
+          "E": 0.236,
+          "S": 0.251,
+          "W": 0.173
+        },
+        {
+          "N": 0.467,
+          "E": 0.133,
+          "S": 0.1,
+          "W": 0.3
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 0.8761061946902655,
+      "post_change_finalQ": [
+        2.75
+      ],
+      "post_change_finalQ_sum": 2.75,
+      "late_motor_sustain_frac": 0.8791666666666667,
+      "tracks_goal": false,
+      "n_distinct_dominant": 1,
+      "has_W_dominant_phase": false,
+      "has_E_dominant_phase": false
+    },
+    {
+      "divnorm_sigma": 1.0,
+      "divnorm_gain": 0.2,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.389,
+          "E": 0.176,
+          "S": 0.291,
+          "W": 0.144
+        },
+        {
+          "N": 0.133,
+          "E": 0.3,
+          "S": 0.133,
+          "W": 0.433
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 0.9292035398230089,
+      "post_change_finalQ": [
+        1.25
+      ],
+      "post_change_finalQ_sum": 1.25,
+      "late_motor_sustain_frac": 0.95,
+      "tracks_goal": true,
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": false
+    },
+    {
+      "divnorm_sigma": 5.0,
+      "divnorm_gain": 0.0,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "E"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.336,
+          "E": 0.244,
+          "S": 0.24,
+          "W": 0.18
+        },
+        {
+          "N": 0.2,
+          "E": 0.333,
+          "S": 0.133,
+          "W": 0.333
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 0.8672566371681416,
+      "post_change_finalQ": [
+        1.25
+      ],
+      "post_change_finalQ_sum": 1.25,
+      "late_motor_sustain_frac": 0.9541666666666667,
+      "tracks_goal": true,
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": false,
+      "has_E_dominant_phase": true
+    },
+    {
+      "divnorm_sigma": 5.0,
+      "divnorm_gain": 0.02,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.387,
+          "E": 0.193,
+          "S": 0.28,
+          "W": 0.14
+        },
+        {
+          "N": 0.1,
+          "E": 0.333,
+          "S": 0.067,
+          "W": 0.5
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 0.8938053097345132,
+      "post_change_finalQ": [
+        0.75
+      ],
+      "post_change_finalQ_sum": 0.75,
+      "late_motor_sustain_frac": 0.9583333333333334,
+      "tracks_goal": true,
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": false
+    },
+    {
+      "divnorm_sigma": 5.0,
+      "divnorm_gain": 0.05,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.304,
+          "E": 0.287,
+          "S": 0.209,
+          "W": 0.2
+        },
+        {
+          "N": 0.2,
+          "E": 0.233,
+          "S": 0.167,
+          "W": 0.4
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 0.8053097345132744,
+      "post_change_finalQ": [
+        1.0
+      ],
+      "post_change_finalQ_sum": 1.0,
+      "late_motor_sustain_frac": 0.9833333333333333,
+      "tracks_goal": true,
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": false
+    },
+    {
+      "divnorm_sigma": 5.0,
+      "divnorm_gain": 0.1,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.324,
+          "E": 0.236,
+          "S": 0.251,
+          "W": 0.189
+        },
+        {
+          "N": 0.233,
+          "E": 0.167,
+          "S": 0.233,
+          "W": 0.367
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 1.1061946902654867,
+      "post_change_finalQ": [
+        1.5
+      ],
+      "post_change_finalQ_sum": 1.5,
+      "late_motor_sustain_frac": 0.9625,
+      "tracks_goal": true,
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": false
+    },
+    {
+      "divnorm_sigma": 5.0,
+      "divnorm_gain": 0.2,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.307,
+          "E": 0.256,
+          "S": 0.238,
+          "W": 0.2
+        },
+        {
+          "N": 0.133,
+          "E": 0.3,
+          "S": 0.1,
+          "W": 0.467
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 1.2300884955752212,
+      "post_change_finalQ": [
+        1.25
+      ],
+      "post_change_finalQ_sum": 1.25,
+      "late_motor_sustain_frac": 0.9541666666666667,
+      "tracks_goal": true,
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": false
+    },
+    {
+      "divnorm_sigma": 20.0,
+      "divnorm_gain": 0.0,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.384,
+          "E": 0.204,
+          "S": 0.267,
+          "W": 0.144
+        },
+        {
+          "N": 0.167,
+          "E": 0.267,
+          "S": 0.167,
+          "W": 0.4
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 0.8141592920353983,
+      "post_change_finalQ": [
+        1.5
+      ],
+      "post_change_finalQ_sum": 1.5,
+      "late_motor_sustain_frac": 0.95,
+      "tracks_goal": true,
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": false
+    },
+    {
+      "divnorm_sigma": 20.0,
+      "divnorm_gain": 0.02,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.333,
+          "E": 0.26,
+          "S": 0.229,
+          "W": 0.178
+        },
+        {
+          "N": 0.233,
+          "E": 0.233,
+          "S": 0.233,
+          "W": 0.3
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 1.0,
+      "post_change_finalQ": [
+        1.0
+      ],
+      "post_change_finalQ_sum": 1.0,
+      "late_motor_sustain_frac": 0.9375,
+      "tracks_goal": true,
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": false
+    },
+    {
+      "divnorm_sigma": 20.0,
+      "divnorm_gain": 0.05,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "N"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.351,
+          "E": 0.227,
+          "S": 0.256,
+          "W": 0.167
+        },
+        {
+          "N": 0.4,
+          "E": 0.133,
+          "S": 0.1,
+          "W": 0.367
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 0.9734513274336283,
+      "post_change_finalQ": [
+        1.25
+      ],
+      "post_change_finalQ_sum": 1.25,
+      "late_motor_sustain_frac": 0.9416666666666667,
+      "tracks_goal": false,
+      "n_distinct_dominant": 1,
+      "has_W_dominant_phase": false,
+      "has_E_dominant_phase": false
+    },
+    {
+      "divnorm_sigma": 20.0,
+      "divnorm_gain": 0.1,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "N"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.387,
+          "E": 0.198,
+          "S": 0.269,
+          "W": 0.147
+        },
+        {
+          "N": 0.467,
+          "E": 0.167,
+          "S": 0.1,
+          "W": 0.267
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 0.9646017699115044,
+      "post_change_finalQ": [
+        1.5
+      ],
+      "post_change_finalQ_sum": 1.5,
+      "late_motor_sustain_frac": 0.9208333333333333,
+      "tracks_goal": false,
+      "n_distinct_dominant": 1,
+      "has_W_dominant_phase": false,
+      "has_E_dominant_phase": false
+    },
+    {
+      "divnorm_sigma": 20.0,
+      "divnorm_gain": 0.2,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.48,
+          "E": 0.118,
+          "S": 0.324,
+          "W": 0.078
+        },
+        {
+          "N": 0.133,
+          "E": 0.3,
+          "S": 0.133,
+          "W": 0.433
+        }
+      ],
+      "per_phase_goal": [
+        [
+          6,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "phase0_finalQ": 0.7876106194690266,
+      "post_change_finalQ": [
+        1.0
+      ],
+      "post_change_finalQ_sum": 1.0,
+      "late_motor_sustain_frac": 0.9166666666666666,
+      "tracks_goal": true,
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": false
+    }
+  ],
+  "best_cell": {
+    "divnorm_sigma": 5.0,
+    "divnorm_gain": 0.02,
+    "per_phase_dominant_cardinal": [
+      "N",
+      "W"
+    ],
+    "per_phase_action_frac": [
+      {
+        "N": 0.387,
+        "E": 0.193,
+        "S": 0.28,
+        "W": 0.14
+      },
+      {
+        "N": 0.1,
+        "E": 0.333,
+        "S": 0.067,
+        "W": 0.5
+      }
+    ],
+    "per_phase_goal": [
+      [
+        6,
+        6
+      ],
+      [
+        1,
+        6
+      ]
+    ],
+    "phase0_finalQ": 0.8938053097345132,
+    "post_change_finalQ": [
+      0.75
+    ],
+    "post_change_finalQ_sum": 0.75,
+    "late_motor_sustain_frac": 0.9583333333333334,
+    "tracks_goal": true,
+    "n_distinct_dominant": 2,
+    "has_W_dominant_phase": true,
+    "has_E_dominant_phase": false
+  },
+  "any_tracks_goal": true,
+  "NOTE": "CALIBRATION SCREEN (grid-8, standalone). PASS-to-proceed = any_tracks_goal True (a (sigma,gain) shifts the dominant cardinal off stuck-N toward the goal). The VERDICT is the faithful grid-32 confirm, NOT this screen (grid-8 false-GO is the cautionary tale)."
+}
