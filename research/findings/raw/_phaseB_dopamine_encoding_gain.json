@@ -1,0 +1,119 @@
+{
+  "real": {
+    "neutral_recall": 4,
+    "rewarded_recall": 6,
+    "moat_ok": 6,
+    "per_seed_neutral": [
+      true,
+      false,
+      true,
+      true,
+      false,
+      true
+    ],
+    "per_seed_rewarded": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "per_seed_moat": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "permuted": {
+    "neutral_slot_recall": 6,
+    "rewarded_slot_recall": 2,
+    "moat_ok": 6,
+    "per_seed_neutral_slot": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "per_seed_rewarded_slot": [
+      true,
+      false,
+      true,
+      false,
+      false,
+      false
+    ]
+  },
+  "lesion": {
+    "neutral_recall": 4,
+    "rewarded_recall": 2,
+    "moat_ok": 6,
+    "per_seed_neutral": [
+      true,
+      false,
+      true,
+      true,
+      false,
+      true
+    ],
+    "per_seed_rewarded": [
+      true,
+      false,
+      true,
+      false,
+      false,
+      false
+    ]
+  },
+  "within_fact_gain_lift": {
+    "neutral_fact(dog-go-north)": {
+      "g1": 4,
+      "g2": 6,
+      "lift": 2
+    },
+    "rewarded_fact(cat-eat-apple)": {
+      "g1": 2,
+      "g2": 6,
+      "lift": 4
+    },
+    "total_lift_out_of_12": 6,
+    "lesion_within_fact_null(both_g1_diff)": 2
+  },
+  "monotonicity": {
+    "g=0.5": 1,
+    "g=1.0": 5,
+    "g=1.5": 6,
+    "g=2.0": 6,
+    "g=3.0": 6
+  },
+  "regression_default_eq_g1": 6,
+  "verdict": {
+    "GO": true,
+    "within_fact_total_gain_lift_/12": 6,
+    "neutral_fact_lift": 2,
+    "rewarded_fact_lift": 4,
+    "lesion_within_fact_null(should_be_~0)": 2,
+    "moat_intact_all_conditions(HARD)": true,
+    "monotonic_in_gain": true,
+    "regression_byte_identical": true,
+    "config": {
+      "D": 64,
+      "noise": 260.0,
+      "read_floor": 0.01,
+      "g_rewarded": 2.0,
+      "seeds": [
+        42,
+        43,
+        44,
+        100,
+        101,
+        102
+      ]
+    }
+  }
+}
