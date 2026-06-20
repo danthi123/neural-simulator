@@ -1,0 +1,269 @@
+{
+  "summary": {
+    "n": 3,
+    "ok_n": 3,
+    "moat_n": 3,
+    "gpu": true,
+    "verdict": "GREEN"
+  },
+  "results": [
+    {
+      "seed": 42,
+      "D": 64,
+      "rows_megakernel_on": [
+        {
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "present",
+          "patient": "north",
+          "agent": "dog",
+          "yes_no": "yes",
+          "truth": "north",
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "present",
+          "patient": "river",
+          "agent": "cat",
+          "yes_no": "yes",
+          "truth": "river",
+          "ok": true
+        },
+        {
+          "cue": [
+            "bird",
+            "look"
+          ],
+          "kind": "present",
+          "patient": "south",
+          "agent": "bird",
+          "yes_no": "yes",
+          "truth": "south",
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "moat",
+          "patient": null,
+          "ok": true
+        },
+        {
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "moat",
+          "patient": null,
+          "ok": true
+        },
+        {
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "moat",
+          "patient": null,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "look"
+          ],
+          "kind": "moat",
+          "patient": null,
+          "ok": true
+        }
+      ],
+      "present_ok_on": true,
+      "moat_ok_on": true,
+      "false_accepts_on": 0,
+      "present_ok_off": true,
+      "moat_ok_off": true,
+      "false_accepts_off": 0,
+      "megakernel_eq_loop": true,
+      "ok": true
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "rows_megakernel_on": [
+        {
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "present",
+          "patient": "north",
+          "agent": "dog",
+          "yes_no": "yes",
+          "truth": "north",
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "present",
+          "patient": "river",
+          "agent": "cat",
+          "yes_no": "yes",
+          "truth": "river",
+          "ok": true
+        },
+        {
+          "cue": [
+            "bird",
+            "look"
+          ],
+          "kind": "present",
+          "patient": "south",
+          "agent": "bird",
+          "yes_no": "yes",
+          "truth": "south",
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "moat",
+          "patient": null,
+          "ok": true
+        },
+        {
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "moat",
+          "patient": null,
+          "ok": true
+        },
+        {
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "moat",
+          "patient": null,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "look"
+          ],
+          "kind": "moat",
+          "patient": null,
+          "ok": true
+        }
+      ],
+      "present_ok_on": true,
+      "moat_ok_on": true,
+      "false_accepts_on": 0,
+      "present_ok_off": true,
+      "moat_ok_off": true,
+      "false_accepts_off": 0,
+      "megakernel_eq_loop": true,
+      "ok": true
+    },
+    {
+      "seed": 44,
+      "D": 64,
+      "rows_megakernel_on": [
+        {
+          "cue": [
+            "dog",
+            "go"
+          ],
+          "kind": "present",
+          "patient": "north",
+          "agent": "dog",
+          "yes_no": "yes",
+          "truth": "north",
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "present",
+          "patient": "river",
+          "agent": "cat",
+          "yes_no": "yes",
+          "truth": "river",
+          "ok": true
+        },
+        {
+          "cue": [
+            "bird",
+            "look"
+          ],
+          "kind": "present",
+          "patient": "south",
+          "agent": "bird",
+          "yes_no": "yes",
+          "truth": "south",
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "go"
+          ],
+          "kind": "moat",
+          "patient": null,
+          "ok": true
+        },
+        {
+          "cue": [
+            "dog",
+            "see"
+          ],
+          "kind": "moat",
+          "patient": null,
+          "ok": true
+        },
+        {
+          "cue": [
+            "dog",
+            "run"
+          ],
+          "kind": "moat",
+          "patient": null,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "look"
+          ],
+          "kind": "moat",
+          "patient": null,
+          "ok": true
+        }
+      ],
+      "present_ok_on": true,
+      "moat_ok_on": true,
+      "false_accepts_on": 0,
+      "present_ok_off": true,
+      "moat_ok_off": true,
+      "false_accepts_off": 0,
+      "megakernel_eq_loop": true,
+      "ok": true
+    }
+  ]
+}
