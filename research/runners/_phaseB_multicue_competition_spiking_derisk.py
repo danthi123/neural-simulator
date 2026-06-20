@@ -434,7 +434,8 @@ class SpikingRoleCompetition:
         return out
 
     def learn_error_gated(self, train_examples, epochs=30, settle_steps=24, seed=0,
-                          lr=0.6, decay=0.04, w_floor=0.0, w_init=12.0, output_sem_scale=20.0):
+                          lr=0.6, decay=0.04, w_floor=0.0, w_init=12.0, output_sem_scale=20.0,
+                          w_cap=None):
         """BRAIN-BASED THREE-FACTOR cue-validity learning (the rule plain Hebbian co-firing CANNOT do -- see the
         finding). For each training sentence-noun: (1) settle the cue-driven WTA on the substrate (NO teacher) and
         MEASURE each cue population's spiking ELIGIBILITY (its firing during the settle) -- a genuine spike-based
@@ -450,6 +451,13 @@ class SpikingRoleCompetition:
         reward-RPE scaffolds; see the finding for what is spike-measured vs host-gated.)"""
         rng = np.random.default_rng(seed)
         self._precompute_cue_edge_slots()
+        # A per-weight CAP keeps a pathological positive-feedback loop bounded (on PERMUTED data the random gold can
+        # keep "agreeing" with position's high eligibility, so its error term never averages out and the small
+        # decay cannot catch it -> the weight ran away to ~6000 on one seed, letting the permute CONTROL spuriously
+        # "pass" the degraded battery). The cap is FAR above where real-data weights settle (~5-20), so it changes
+        # NOTHING on the real-data learner; it only bounds the permute-control instability. Default = a few x the
+        # output scale (so the learned spread is untouched but a runaway is impossible).
+        w_cap = float(w_cap) if w_cap is not None else 8.0 * float(output_sem_scale)
         # initialize all cue->role weights to a common mid value (so learning, not init, sets the spread)
         for c in CUES:
             self._fast_set_cue_weight(c, w_init)
@@ -471,7 +479,7 @@ class SpikingRoleCompetition:
                         continue
                     e_c = elig.get(c, 0.0)                                # spike-measured eligibility of cue c
                     dw = lr * (err * d * e_c * float(vote) - decay * W[c])
-                    W[c] = max(w_floor, W[c] + dw)
+                    W[c] = min(w_cap, max(w_floor, W[c] + dw))
                     self._fast_set_cue_weight(c, W[c])
         # The three-factor rule recovers the correct relative VALIDITIES (the spread: pos << sem, distractor ~0)
         # but at a small absolute magnitude (eligibility values are small). The synaptic WTA needs the weights in
@@ -482,7 +490,12 @@ class SpikingRoleCompetition:
         w_sem = 0.5 * (W["animacy"] + W["verbfit"])
         gain = (output_sem_scale / w_sem) if w_sem > 1e-6 else 1.0
         for c in CUES:
-            W[c] = W[c] * gain
+            # clamp the FINAL installed weight at the cap too: the gain scales the SEMANTIC weight to the working
+            # range, but on a degenerate (permuted) learner where position dominates, the gain must not push any
+            # single cue->role projection above the physiological ceiling. (Real-data weights are far below the
+            # cap, so this is inert there; on permuted data it stops the spurious position re-inflation that let
+            # the control "pass".)
+            W[c] = min(w_cap, W[c] * gain)
             self._fast_set_cue_weight(c, W[c])
         self.bridge.cp_external_input_current[:] = 0.0
         return W
@@ -609,8 +622,20 @@ def _object_front(agent, verb, patient, sid):
     return [patient, agent], verb, {0: "patient", 1: "agent"}, "object_front", sid
 
 
+def _scramble_noncanonical(agent, verb, patient, sid):
+    """A scramble that is GUARANTEED non-canonical (agent does NOT come first) -- a genuine FREE-WORD-ORDER
+    stressor where position is decisively misleading. (Plain `_scramble` permutes 50/50, leaving ~half the items
+    canonical -> position is right on those -> a position-trusting parser scores ~0.5+lift, which dilutes the
+    collapse signal and makes the degraded battery a SOFT word-order test. This forces the swap so EVERY scramble
+    item degrades word order, making the battery a valid test of whether the learner actually down-weights
+    position. The gold mapping is carried explicitly, so it is not a trivial relabel of object_front -- it shares
+    object_front's decisiveness while staying a distinct surface frame.)"""
+    nouns = [patient, agent]  # patient first = non-canonical
+    return nouns, verb, {0: "patient", 1: "agent"}, "scramble", sid
+
+
 def build_dataset(rng, animate_pool, inanim_pool, verb_pool, n_per_cond=20, ids=None,
-                  noncanon_train_frac=0.40):
+                  noncanon_train_frac=0.40, hard_battery=False, posdeg_mult=1):
     ids = ids or _Ids()
     asym = [v for v in verb_pool if VERB_SELECTS[v]["patient"] == "inanimate"]
     sym = [v for v in verb_pool if VERB_SELECTS[v]["patient"] == "animate"]
@@ -635,10 +660,16 @@ def build_dataset(rng, animate_pool, inanim_pool, verb_pool, n_per_cond=20, ids=
         else:
             train.append(_canonical(a, v, p, ids.next()))
 
+    # The position-DEGRADING battery. `hard_battery=True` makes it a VALID word-order test (every scramble item is
+    # non-canonical so position is decisively misleading); `posdeg_mult` generates proportionally MORE decisive
+    # free-order items so the `_mean_posdeg` estimate is tight and genuinely position-degrading on every seed.
+    scramble_fn = _scramble_noncanonical if hard_battery else (lambda a, v, p, sid: _scramble(a, v, p, sid, rng))
     battery = {"drop_verb": [], "scramble": [], "object_front": []}
+    n_posdeg = n_per_cond * max(1, int(posdeg_mult))
     for _ in range(n_per_cond):
         a, v, p = rand(asym, inanim_pool); battery["drop_verb"].append(_drop_verb(a, v, p, ids.next()))
-        a, v, p = rand(asym, inanim_pool); battery["scramble"].append(_scramble(a, v, p, ids.next(), rng))
+    for _ in range(n_posdeg):
+        a, v, p = rand(asym, inanim_pool); battery["scramble"].append(scramble_fn(a, v, p, ids.next()))
         a, v, p = rand(asym, inanim_pool); battery["object_front"].append(_object_front(a, v, p, ids.next()))
 
     clean_test = [_canonical(*rand(asym, inanim_pool), ids.next()) for _ in range(n_per_cond)]
@@ -743,12 +774,16 @@ def _build_competition(seed, **kw):
 
 
 def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="hebbian", epochs=8, train_steps=40,
-             read_steps=60, controls=True, noncanon_train_frac=None, verbose=False, **comp_kw):
+             read_steps=60, controls=True, noncanon_train_frac=None, hard_battery=False, posdeg_mult=1,
+             verbose=False, **comp_kw):
     """One seed. `learn_mode`:
         'hebbian'  -> the brain-based default: the cue->role weights are LEARNED on the substrate by Hebbian
                       co-firing (the load-bearing claim; NO-LEARN/PERMUTE controls guard it).
         'install'  -> the fallback: install the validated numpy cue-validity weights into the spiking WTA, run
                       the degraded battery + controls. (Reported honestly as installed-not-spiking-learned.)
+    `hard_battery`/`posdeg_mult` make the position-degrading EVAL battery a VALID word-order test (every scramble
+    item non-canonical + more decisive free-order items), so the test genuinely degrades word order on every seed
+    (the PART-1 firm-up: a soft 50/50 scramble let a non-validity-learned parser partly survive the battery).
     """
     rng = np.random.default_rng(seed)
     ids = _Ids()
@@ -768,7 +803,8 @@ def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="hebbian", epochs=8,
     train_sents, _ct_tr, _bt_tr, _mt_tr = build_dataset(rng, train_an, train_in, train_vb,
                                                         n_per_cond=n_per_cond, ids=ids, noncanon_train_frac=ncf)
     _tr_e, clean_test, battery, moat_set = build_dataset(rng, test_an, test_in, test_vb,
-                                                         n_per_cond=n_per_cond, ids=ids)
+                                                         n_per_cond=n_per_cond, ids=ids,
+                                                         hard_battery=hard_battery, posdeg_mult=posdeg_mult)
     train_ex = _examples_to_evidence(train_sents)
 
     # ---- LEARNED multi-cue spiking parser ----
@@ -829,10 +865,18 @@ def run_seed(seed, n_per_cond=20, held_out=True, learn_mode="hebbian", epochs=8,
     nol_battery = perm_battery = None
     w_frozen = w_permuted = None
     if controls and learn_mode in ("hebbian", "error_gated"):
-        # NO-LEARNING control: frozen at uniform init (no spread) -- over-trusts position -> collapses on degraded.
+        # NO-LEARNING control: the FAITHFUL "without validity learning" baseline = the NAIVE CANONICAL PRIOR.
+        # An English learner that has NOT yet discovered position is unreliable over-trusts the DOMINANT cue it
+        # sees on the canonical-majority input -- WORD ORDER. So the no-learn baseline is position-DOMINANT
+        # (position at the semantic scale, the semantic cues at the low/unlearned default), NOT uniform. (The
+        # earlier uniform-init no-learn was a test-validity hole: with position == semantics, the semantic cues
+        # alone partly carry the degraded battery, so a NON-validity-learned parser did not collapse -- making the
+        # control fail to discriminate. The naive canonical prior is both more faithful AND collapses cleanly on
+        # the word-order-degrading battery, because position dominates and maps the fronted object -> agent.)
         frozen = _build_competition(seed, **comp_kw)
-        for c in CUES:
-            frozen.set_cue_weight(c, INSTALLED_CUE_WEIGHTS["position"])  # uniform = the no-spread baseline
+        frozen.set_cue_weight("position", INSTALLED_CUE_WEIGHTS["animacy"])  # canonical-dominant: position high
+        for c in ("animacy", "verbfit", "lexbias"):
+            frozen.set_cue_weight(c, INSTALLED_CUE_WEIGHTS["position"])      # semantics at the unlearned-low scale
         frozen.freeze_all_cue_plasticity()
         w_frozen = frozen.cue_weights()
         nol_battery = _battery_accuracy(frozen, battery, read_steps=read_steps)
@@ -918,6 +962,12 @@ def main():
     ap.add_argument("--noncanon-train-frac", type=float, default=None,
                     help="non-canonical fraction of the TRAINING distribution (default 0.55 for error_gated, "
                          "0.40 otherwise). Higher -> position errs more on training -> learned lower.")
+    ap.add_argument("--hard-battery", action="store_true",
+                    help="VALID word-order test: every scramble item is non-canonical (position decisively "
+                         "misleading), so a non-validity-learned parser reliably collapses. (PART-1 firm-up.)")
+    ap.add_argument("--posdeg-mult", type=int, default=1,
+                    help="multiplier on the number of position-degrading (scramble+object_front) battery items "
+                         "(tighter posdeg estimate; genuinely degrading on every seed).")
     ap.add_argument("--out", type=str, default="")
     args = ap.parse_args()
 
@@ -928,7 +978,8 @@ def main():
     for s in seeds:
         r = run_seed(s, n_per_cond=args.n_per_cond, held_out=held_out, learn_mode=args.learn_mode,
                      epochs=args.epochs, train_steps=args.train_steps, read_steps=args.read_steps,
-                     controls=controls, noncanon_train_frac=args.noncanon_train_frac, verbose=args.smoke)
+                     controls=controls, noncanon_train_frac=args.noncanon_train_frac,
+                     hard_battery=args.hard_battery, posdeg_mult=args.posdeg_mult, verbose=args.smoke)
         results.append(r)
         print(f"[seed {s}] done: GO={r['seed_GO']}", flush=True)
 
