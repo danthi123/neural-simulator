@@ -1,0 +1,94 @@
+{
+  "item": "dendrite_derisk_A_extension_conversational_cortex",
+  "stage": 0,
+  "sim_edit": false,
+  "verdict": "NEGATIVE",
+  "why": "the GRADED dendritic-plateau read-out does NOT recover the conversational concept-code structure from the RAW common-mode-dominated counts: L1 (graded, fixed-W) +0.037 and L2 (graded, learned-W unsupervised) +0.041 both sit at the point-neuron floor (L0 all-or-none +0.025, raw-profile ~0), while the host ceiling is +0.957. The graded-ness is NOT the load-bearing element here (L1 ~ L2 ~ its own all-or-none lesion +0.037). The ATTRIBUTION ladder localizes the real wall: only PER-HUB divisive NORMALIZATION (the SEPARATE D2 Phase-1 per-input dendritic gain) recovers it -- the normalized residual read LINEARLY already reaches +0.863 (and a graded read-out on top neither helps nor is needed, +0.640). => the conversational cortex NEGATIVE is a COMMON-MODE / per-input-NORMALIZATION problem, a DIFFERENT dendritic unlock than the graded plateau read-out that de-risk A confirmed. The de-risk-A unlock does NOT generalize to this wall (the nav value-critic input has no common mode; the conversational code is common-mode-dominated). A decisive, build-saving result: it sharpens the dendrite's capability map -- the graded read-out and the per-input normalization are DISTINCT dendritic unlocks, not interchangeable.",
+  "detail": {
+    "host_ceiling_pearson_mean": 0.956855789326476,
+    "L0_point_neuron_pearson_mean": 0.025227623895309373,
+    "L1_graded_fixed_pearson_mean": 0.037198146185819646,
+    "L2_graded_learned_pearson_mean": 0.04084831835510297,
+    "best_graded_pearson_mean": 0.04084831835510297,
+    "best_graded_allornone_lesion_pearson_mean": 0.03739448031110607,
+    "L3_norm_linear_pearson_mean": 0.863232005563777,
+    "L3_norm_graded_pearson_mean": 0.6400712684270516,
+    "point_neuron_fails": "1/1",
+    "host_carries": "1/1",
+    "graded_beats_point_neuron": "0/1",
+    "graded_is_loadbearing": "0/1",
+    "permuted_S_clean": "1/1",
+    "controls_valid": true
+  },
+  "seeds": [
+    42
+  ],
+  "config": {
+    "seeds": null,
+    "seed": 42,
+    "n_cat": 8,
+    "per_cat": 8,
+    "n_common": 200,
+    "n_sig_per_cat": 12,
+    "lam_common": 40.0,
+    "lam_sig": 4.0,
+    "lam_bg": 0.3,
+    "n_post": 400,
+    "w_init_scale": 0.1,
+    "slope_scale": 1.0,
+    "epochs": 8,
+    "lr": 0.05,
+    "gain_epochs": 12,
+    "gain_eta": 0.05,
+    "gain_sigma": 1.0,
+    "host_svd": 50,
+    "host_alpha": 0.75,
+    "structure_bar": 0.3,
+    "pn_fail_bar": 0.15,
+    "host_bar": 0.3,
+    "beat_margin": 0.2,
+    "lesion_drop": 0.1,
+    "out": "research/findings/raw/_dendrite_deriskA_ext_conv_cortex_smoke.json"
+  },
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "n_concepts": 64,
+      "n_hubs": 296,
+      "chance": 0.125,
+      "raw_pearson": 0.052937905462208855,
+      "host_ceiling_pearson": 0.956855789326476,
+      "s_true_independent": true,
+      "L0_point_neuron_aon": {
+        "pearson": 0.025227623895309373,
+        "gen": 0.125
+      },
+      "L1_graded_fixed": {
+        "pearson": 0.037198146185819646,
+        "gen": 0.25
+      },
+      "L2_graded_learned": {
+        "pearson": 0.04084831835510297,
+        "gen": 0.28125
+      },
+      "best_graded_pearson": 0.04084831835510297,
+      "best_graded_allornone_lesion_pearson": 0.03739448031110607,
+      "L3_norm_linear": {
+        "pearson": 0.863232005563777,
+        "gen": 1.0
+      },
+      "L3_norm_graded": {
+        "pearson": 0.6400712684270516,
+        "gen": 1.0,
+        "allornone_pearson": 0.36763667413472684
+      },
+      "gains_converge": true,
+      "gain_freq_corr": 0.9995191756489133,
+      "permuted_S": {
+        "L3_linear": -0.005015332902902305,
+        "L1_graded": 0.00548342083621052
+      }
+    }
+  },
+  "note": "Stage-0 extension of the GO dendrite de-risk A (graded dendritic-plateau read-out) from the nav value-critic to the conversational learned cortex (the D2 Phase-2 NEGATIVE). The CONTRAST ladder reads the IDENTICAL common-mode-dominated concept x hub count code; the metric is Pearson(cos(codes),S_true) (a graded category-similarity fidelity) vs the host PPMI+SVD ceiling. NO sim/ edit (reuse-by-import of sim.dendritic_neuron + sim.dendritic_plasticity + the D1/D2 count builder)."
+}
