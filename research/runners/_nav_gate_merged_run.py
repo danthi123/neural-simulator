@@ -57,6 +57,22 @@ def main():
                     help="#4: accumulator->commit drive (commit-threshold proxy)")
     ap.add_argument("--reset-losers-only", action="store_true",
                     help="#4: surgical hysteresis removal (reset NMDA on losing pools each trial)")
+    # TRUE-ONE-BRAIN #2 (Tier-2 nav SC deploy): the SPIKING superior colliculus as the NEURAL orienting +
+    # reward source on the merged bridge, retiring BOTH the host Manhattan orienting heuristic AND the host
+    # sign(distance) reward in one move. Default OFF = byte-identical to the STEP-2a gate (every existing
+    # caller). When set, run_moving_goal_episode builds the spiking SC chain (sc_retina -> sc_map Mexican-hat
+    # WTA -> sc_rostral) + the neural critic (striosome_value GABA_B + spiking SNc) + the spiking reward_us
+    # afferent. The orienting cardinal comes from sc_map->cortex_X pooling (heuristic_strength gated to 0); the
+    # reward `r` comes synaptically from sc_rostral->reward_us (the host write is zeroed, g11_bg_runner.py:7271).
+    # The post-init SC wiring runs inside run_moving_goal_episode (g11_bg_runner.py:4425); finalize_conv_for_nav_gate
+    # masks the fixed perception+SC edges by index after the CSR rebuild (it explicitly handles install_spiking_sc_wiring).
+    # The merged het-off op-point (Step-0 GO 2026-06-19: sc_map peak/mean 35.7x, N1 8/8, corr(ecc,reward_us) -0.989)
+    # is set by the SC_RET_SC/SC_REC/SC_RET_DRIVE/SC_ROS_US env vars; the recommended values are 160/12/3500/40.
+    ap.add_argument("--spiking-sc", action="store_true",
+                    help="#2: deploy the spiking superior colliculus (NEURAL orienting + reward), host heuristic+reward OFF")
+    ap.add_argument("--scramble-sc", action="store_true",
+                    help="#2 anti-cheat: scramble the sc_retina->sc_map retinotopy (decisive lesion; must REGRESS). "
+                         "Sets SC_SCRAMBLE=1 in-process.")
     args = ap.parse_args()
 
     from research.runners.g11_bg_runner import run_moving_goal_episode
@@ -96,6 +112,23 @@ def main():
         sel_to_commit_weight=args.sel_to_commit_weight,
         reset_losers_only=args.reset_losers_only,
     )
+    # TRUE-ONE-BRAIN #2: the spiking-SC NEURAL orienting + reward arm. Additive (default off => the kw above is
+    # the byte-identical STEP-2a gate). enable_spiking_sc + enable_spiking_sc_approach + spiking_reward_us build
+    # the SC chain + the synaptic reward_us; enable_neural_critic + spiking_snc make the SNc encode delta=r-V from
+    # the SYNAPTIC reward (so the host reward write to reward_us is zeroed, g11_bg_runner.py:7271). heuristic_strength=0
+    # gates the host Manhattan orienting OFF (the sc_map->cortex_X pooling carries orienting). The merged het-off
+    # op-point is the SC_RET_SC/SC_REC/SC_RET_DRIVE/SC_ROS_US env vars (recommended 160/12/3500/40).
+    if args.spiking_sc:
+        kw.update(
+            enable_spiking_sc=True,
+            enable_spiking_sc_approach=True,
+            spiking_reward_us=True,
+            enable_neural_critic=True,
+            spiking_snc=True,
+            heuristic_strength=0.0,        # retire the host Manhattan orienting heuristic
+        )
+        if args.scramble_sc:
+            os.environ["SC_SCRAMBLE"] = "1"   # decisive anti-cheat lesion (must REGRESS)
     if args.with_conv:
         from research.runners.nav_conv_merged_bridge import (
             conv_extra_regions_pathways, finalize_conv_for_nav_gate,
@@ -108,9 +141,11 @@ def main():
         kw.update(extra_regions=extra_regions, extra_pathways=extra_pathways,
                   build_with_ou=True, prebuilt_post_init_hook=hook)
         _rf = " + rf" if args.co_resident_rf else ""
-        print(f"[nav-gate(a)] seed={args.seed} MERGED (nav+parser+dlPFC{_rf}) -> {args.out}", flush=True)
+        _sc = (" + SPIKING-SC(scrambled)" if args.scramble_sc else " + SPIKING-SC") if args.spiking_sc else ""
+        print(f"[nav-gate(a)] seed={args.seed} MERGED (nav+parser+dlPFC{_rf}{_sc}) -> {args.out}", flush=True)
     else:
-        print(f"[nav-gate(a)] seed={args.seed} STANDALONE nav -> {args.out}", flush=True)
+        _sc = (" + SPIKING-SC(scrambled)" if args.scramble_sc else " + SPIKING-SC") if args.spiking_sc else ""
+        print(f"[nav-gate(a)] seed={args.seed} STANDALONE nav{_sc} -> {args.out}", flush=True)
 
     run_moving_goal_episode(**kw)
     print(f"[nav-gate(a)] seed={args.seed} {'MERGED' if args.with_conv else 'STANDALONE'} DONE", flush=True)
