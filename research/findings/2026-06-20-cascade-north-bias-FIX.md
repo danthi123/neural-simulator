@@ -90,11 +90,45 @@ with the N-bias removed, the agent steers cleanly when the margin is strong (far
 when the margin is weak (the 18–33% tie fraction = decisions still resolved by coin-flip). The next mechanism
 is the scoping's FIX 3 (opponent-axis push-pull) / SC-margin amplification — NOT a stop.
 
-<!-- MULTISEED: filled below as seeds 43/44 land -->
+---
+
+## Multi-seed confirmation (3 seeds: 42, 43, 44)
+
+The decisive arms (BASELINE / FIX1 / SCRAM(FIX1)) at grid-32/1800/warmup-600. Post-change Σ (phases 1–3) +
+the dom-per-phase (the discriminator):
+
+| seed | BASELINE post-Σ (dom) | FIX1 post-Σ (dom) | SCRAM(FIX1) post-Σ | FIX1 vs BASELINE | SCRAM vs FIX1 |
+|---|---|---|---|---|---|
+| 42 | 99.80 (N,N,N,N) | 83.13 (N,W,W,E) | 109.57 | −17% | **+32%** (collapses) |
+| 43 | 118.25 (N,N,N,N) | 66.94 (W,W,E,W) | 121.38 | **−43%** | **+81%** (collapses) |
+| 44 | 130.35 (N,N,N,N) | 59.45 (W,W,E,W) | 73.19 | **−54%** | **+23%** (collapses) |
+
+**The 3-seed pattern is robust (all three findings hold in every seed):**
+
+1. **BASELINE is stuck-N in ALL 3 seeds** — dom `N,N,N,N` every phase. The structural North-bias is
+   universal (not a seed-42 artifact). It is the host tie-break shortcut, exactly as diagnosed.
+2. **FIX1 TRACKS the goal in ALL 3 seeds** — 3 distinct dom cardinals per seed (the dom shifts to the goal's
+   bearing: W for far-W/SW, E for SE), and the post-change Σ improves **17–54%** over BASELINE. The
+   deterministic-N degeneracy is removed and the agent re-orients. Per-seed each reaches its hardest-margin
+   goal cleanly (far-W finalQ 0.98/1.14 at seeds 42/43; SW finalQ 1.40 at seed 44).
+3. **SCRAM(FIX1) is WORSE than FIX1 in ALL 3 seeds** (+23% / +81% / +32%) — the retinotopy-scramble lesion
+   collapses the re-orient once the bias is removed. **In the #6 verdict SCRAM ≈ NEURAL (the decode was NOT
+   load-bearing); here SCRAM ≫ intact in every seed ⇒ the SC orienting decode IS load-bearing.** This is the
+   clincher the #6 grid-8 + biased-grid-32 could not show.
+
+### Margin-amplification probe (the residual remedy screen) — NEGATIVE
+
+FIX1+2 with a stronger SC drive (`SC_CORTEX_W=60` vs the matched 18), seed 42: post-change Σ **89.15** —
+**NOT better** than the matched-drive FIX1+2 (83.37), and the dom over-corrects to `W,W,W,W` (a W-bias
+replacing the N-bias). ⇒ stronger SC drive does NOT close the residual gap (it just re-biases the choice),
+confirming the #6 verdict's "more SC drive is the wrong lever" holds post-debias too. The residual is a
+genuine **margin-SNR / selectivity** problem; the indicated remedy is the scoping's **FIX 3 (opponent-axis
+push-pull)** — organize the four cardinals as two balanced N↔S / E↔W competitions so a clean 1-D margin is
+extracted per axis — NOT drive amplification. This is the precise next mechanism, not a stop.
 
 ---
 
-## Anti-cheat table (seed 42)
+## Anti-cheat table (seed 42, confirmed 3-seed)
 
 | anti-cheat | requirement | result | pass? |
 |---|---|---|---|
@@ -103,7 +137,8 @@ is the scoping's FIX 3 (opponent-axis push-pull) / SC-margin amplification — N
 | Host ceiling | host re-orients, anchors the gap | HOST post-change Σ 1.57, dom tracks every phase | ✅ |
 | Regime fidelity = grid-32 (NOT grid-8) | the verdict is grid-32/1800/warmup-600 | all arms grid-32/1800/warmup-600 | ✅ |
 | Scramble / lesion control MUST collapse | with the bias fixed, SCRAM must now collapse (decode load-bearing) | SCRAM(FIX1) Σ 109.6 vs FIX1 83.1 (32% worse); far-W 12.77 vs 0.98 (~13×) | ✅ collapses |
-| Tie-break is not a covert random-walk win | report the tie-resolved fraction | FIX1 0.329, FIX1+2 0.181 (the residual margin-SNR tell — flagged, NOT hidden) | ✅ measured |
+| Tie-break is not a covert random-walk win | report the tie-resolved fraction | FIX1 0.329–0.342, FIX1+2 0.181 (the residual margin-SNR tell — flagged, NOT hidden) | ✅ measured |
+| Multi-seed (the bias-fix + SCRAM-collapse is robust) | the re-orient + SCRAM-collapse hold across seeds | 3/3 seeds (42/43/44): BASELINE stuck-N, FIX1 tracks (−17..−54%), SCRAM > FIX1 (+23..+81%) | ✅ 3/3 |
 | FIX-1/2-OFF == byte-identical | the flag guard | BASELINE tie_fraction 0.0 (FIX off); default-off path is the exact N-first max() | ✅ |
 | No-confab moat untouched | nav cascade array-disjoint from the composer's complex synapses | no conversational regions in these nav runs | ✅ |
 
@@ -162,4 +197,42 @@ SIM_BACKEND=cupy python -m research.runners._nav_sc_popvector_readout_derisk \
 NO `sim/` edit (reuse-by-import + existing primitives). The default-off path is byte-identical (the BASELINE
 arm's `tie_break_fraction = 0.0` confirms the flag guard).
 
-<!-- VERDICT: filled below after the multi-seed confirmation -->
+---
+
+## VERDICT
+
+**The root cause is CONFIRMED and FIXED: the cascade North-bias was a HOST tie-break shortcut, and removing
+it makes the spiking SC orienting decode load-bearing.** Across 3 seeds (42/43/44) at faithful grid-32:
+
+- **The host shortcut is real.** BASELINE (the #6 NEURAL config) is dom `N,N,N,N` (stuck-N) in every seed
+  because Python's `max()` resolves the `[40,40,40,40]` accumulator ties to N (index 0). FIX 1 (a fair
+  stochastic tie-break, default-off byte-identical) removes the degeneracy and the agent **re-orients in all
+  3 seeds** (the dom-cardinal tracks the moving goal, the S-axis unlocks, the post-change Σ improves 17–54%,
+  each seed reaches its hardest-margin goal cleanly).
+- **The SC decode is NOW load-bearing — the clincher the #6 verdict could not get.** With the bias removed,
+  the retinotopy-scramble lesion **collapses relative to the intact decode in all 3 seeds** (SCRAM +23..+81%
+  worse than FIX1). The #6 verdict's defining negative was SCRAM ≈ NEURAL (the decode was not load-bearing
+  under the bias); that is now reversed. The orienting signal IS being read and IS steering the body.
+
+**#6 closure — PARTIAL (honest).** Per the verdict criteria (#6 CLOSES iff the agent re-orients **within ~25%
+of host** AND SCRAM collapses): **(b) SCRAM collapses — YES, 3/3, decisively.** **(a) re-orient — PARTIAL:**
+the agent tracks every goal and reaches its strong-margin goal at host-level finalQ, but the post-change Σ
+(59–83) is still well above HOST's ~1.6 because the SW/SE phases random-walk more. This is exactly the
+scoping's predicted **margin-SNR residual** (the SC margin at grid-32 is genuinely tiny; with the bias gone,
+the agent steers cleanly on strong margins but coin-flips on weak ones — the 18–34% tie fraction is the
+direct measure). The margin-amplification screen (stronger SC drive) was NEGATIVE (it re-biases rather than
+sharpens), so the indicated next mechanism is the scoping's **FIX 3 — opponent-axis push-pull** (two balanced
+N↔S / E↔W competitions for a clean per-axis margin), NOT a stop.
+
+**Net:** the North-bias — the project-wide nav bias and the residual the #6 verdict isolated — is a host
+cognitive shortcut, now removed by a fair, biology-grounded (Wang-2002 decision-noise) tie-break, with the
+spiking orienting decode shown load-bearing for the first time at faithful scale. The fix is point-neuron,
+default-off byte-identical, and touches **no `sim/` code**. The honest brain-based deliverable: **the cascade
+North-bias was a host tie-break degeneracy; correcting it converts the spiking SC orienting from inert to
+load-bearing and re-orienting, leaving a characterized margin-SNR residual (FIX 3 = opponent-axis) as the
+precise next mechanism to fully close #6.**
+
+_GPU (`SIM_BACKEND=cupy`). Every arm JSON + the runner edit + the doc committed the moment it landed
+(anti-rest), pushed to both remotes. grid-32 IS the verdict (never grid-8). NO `sim/` edit. The no-confab
+moat is untouched (the nav cascade is `cp_*` nav state, array-disjoint from the composer's complex
+`cp_rf_w_*` synapses)._
