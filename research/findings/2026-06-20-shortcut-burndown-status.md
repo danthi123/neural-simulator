@@ -7,6 +7,18 @@ biologizing as needed?"* — per the burndown priority gate (`feedback_close_all
 boundary (the spiking version's real cost documented, host kept as a known scaffold).** Both are legitimate; a
 deferral is ONLY legitimate for a true dendritic-substrate limit (the owner's call). Status snapshot — work ongoing.
 
+> ## ⚠️ CORRECTION (2026-06-20, owner process steer) — characterized ≠ fully closed
+> The owner corrected a real prioritization error: I counted CHARACTERIZED honest-negatives as "closed,"
+> declared the burndown complete, and moved to CAPABILITY work (the Tier-3 nav-hunger / living-agent arc) with
+> shortcuts STILL OPEN. The bar is **fully-biologized-and-spiking**, and I had standing permission to make the
+> protected edits + use the dendrite (the obvious unlocker) to hit it. **Re-classification:** the rows below
+> marked "CLOSED (characterized)" for **#6, #9** — and the demonstrated-conversion **#3** and the deferred
+> **FHRR-B** — are now **OPEN**, being pushed to the spiking bar (protected edits + dendrite included) BEFORE any
+> further capability work. **#9 is IN FLIGHT** (the dendrite graded value read-out: Stage-1 `sim/` edit
+> byte-reviewed clean + the end-to-end SNc-δ calibration). The Tier-3 capability results stay committed but are
+> **PARKED**. Genuinely-spiking-closed (unaffected): #1, #5, #7, #8, #12, #4; #2/#10 legit. "Closed" is now
+> reserved for ACTUALLY-pushed-to-spiking, or an earned limit only AFTER the real dendritic attempt.
+
 | # | Shortcut | Status | How |
 |---|---|---|---|
 | 1 | Composer cleanup (host argmax over membrane) | ✅ CLOSED (converted) | Spiking NEF thresholded-WTA, shipped as the OneBrain default (`0f13e9f8`) |
