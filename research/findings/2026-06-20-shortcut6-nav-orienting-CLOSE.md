@@ -228,19 +228,25 @@ indicated remedy.
    (post-change unchanged-catastrophic) — the exact static-hold-vs-re-orient split the scoping predicted: more SC drive
    holds a fixed bias better but cannot track a *moved* goal. ⇒ "more SC drive" is the wrong lever; the missing piece is
    COMPETITION. (`scpv_RECAL_g0p005_s42.json`.)
-2. **R1 — inter-cardinal cortex WTA (`--cortex-wta`, `enable_cortex_lateral_inhibition`) — IN FLIGHT (seed 42).** The
-   mechanistically DISTINCT remedy: add FS WTA competition DIRECTLY between `cortex_N/E/S/W` (4 `cortex_FS_X` pools, the
-   pop-vector geometry at sigma=5/gain=0.02) so the small position-correct SC margin is sharpened EARLY, before the
-   downstream `sel_X` N-bias swamps it — exactly the scoping's prescribed Option-B fix (`…scoping.md:172-173`). Wired
-   into the probe (`--cortex-wta`, commit `f95e86eb`), pure point-neuron, default-off.
-3. **(reserve) Option E** — a goal-change inhibition-of-return/fixation reset, only if the residual turns out to be
+2. **R1 — inter-cardinal cortex WTA (`--cortex-wta`, `enable_cortex_lateral_inhibition`), default FS weight 8 — DONE,
+   NEGATIVE but RIGHT DIRECTION (seed 42).** Σ 126.2, post-change 124.7, stuck-N phases 1-3 — BUT **phase0 acquire
+   dropped to 1.469 with dom=E** (E 0.30, NOT N-pinned): the cortex-WTA genuinely BROKE the phase-0 N-pinning the other
+   arms all showed. ⇒ the inter-cardinal competition is the CORRECT mechanism direction; the default strength (FS weight
+   8, 5 FS/pool) is just too weak to also win during re-orient. (`scpv_R1cortexwta_s42.json`.)
+3. **R1 escalation — STRONG cortex WTA (FS weight 40, 15 FS/pool) — IN FLIGHT (seed 42).** Given the default WTA broke
+   phase-0 N-pinning, escalate the inter-cardinal inhibition 5× to test whether a STRONGER competition lets the
+   position-correct SC margin win during re-orient too. Wired (`--cortex-fs-weight/--cortex-fs-n`, commit `40a54a9b`),
+   pure point-neuron, byte-identical default-off.
+4. **(reserve) Option E** — a goal-change inhibition-of-return/fixation reset, only if the residual turns out to be
    bump/ring hysteresis (the diagnosis says it is NOT, so this is a reserve).
 
 ⇒ **#6 status: Option A+B = HONEST NEGATIVE at faithful grid-32 (seed 42, the geometry fix finally tested at faithful
-scale); the next mechanism (R1 cortex-WTA, after the cheap re-calibration screen) is in flight.** The prior "closed
-honest-negative" ledger row was premature (it cited the drive-knob's grid-32 sweep, not the geometry fix, whose grid-32
-confirm was an empty FILL); the prior subagents' arm files were all `grid_size=8` (the documented false-GO scale).
-This doc supersedes them with the genuine faithful-scale geometry-fix verdict + the continuing next-mechanism arc.
+scale). The arc CONTINUES per the no-boundary-exit rule: re-calibration (Lever 1) NEGATIVE; R1 cortex-WTA default
+NEGATIVE-but-right-direction (broke phase-0 N-pinning); the STRONG cortex-WTA escalation is in flight.** The prior
+"closed honest-negative" ledger row was premature (it cited the drive-knob's grid-32 sweep, not the geometry fix, whose
+grid-32 confirm was an empty FILL); the prior subagents' arm files were all `grid_size=8` (the documented false-GO
+scale). This doc supersedes them with the genuine faithful-scale geometry-fix verdict + the continuing next-mechanism
+arc. **The host orienting scaffold STAYS in place** — no spiking organ has re-oriented at faithful scale yet.
 
 _GPU (`SIM_BACKEND=cupy`). Every result JSON committed the moment it landed (anti-rest). grid-32 IS the verdict, never
 grid-8. The no-confab moat is untouched (the nav SC read-out is array-disjoint from the composer's complex synapses)._
