@@ -184,11 +184,14 @@ SIM_BACKEND=cupy python -m research.runners._nav_sc_popvector_readout_derisk \
     --sc-cortex-w 18 --divnorm-sigma 5 --divnorm-gain 0.005 \
     --out research/findings/raw/nav_gate_2a/grid32_s6/scpv_summary_RECAL_g0p005_s42.json
 
-# R1 — inter-cardinal cortex WTA (sharpen the SC margin EARLY)  [IN FLIGHT]
-SIM_BACKEND=cupy python -m research.runners._nav_sc_popvector_readout_derisk \
+# R1 — inter-cardinal cortex WTA strength sweep (sharpen the SC margin EARLY)  [DONE: all NEGATIVE for re-orient]
+#   FS weight 8 (default)  → broke phase-0 N-pinning, no re-orient
+#   FS weight 16, n 10     → stuck-N
+#   FS weight 40, n 15     → over-quenched
+for W in "8 5" "16 10" "40 15"; do set -- $W; SIM_BACKEND=cupy python -m research.runners._nav_sc_popvector_readout_derisk \
     --arms sc_popvector --seed 42 --n-steps 1800 --grid-size 32 --warmup-steps 600 \
-    --sc-cortex-w 18 --divnorm-sigma 5 --divnorm-gain 0.02 --cortex-wta \
-    --out research/findings/raw/nav_gate_2a/grid32_s6/scpv_summary_R1cortexwta_s42.json
+    --sc-cortex-w 18 --divnorm-sigma 5 --divnorm-gain 0.02 --cortex-wta --cortex-fs-weight $1 --cortex-fs-n $2 \
+    --out research/findings/raw/nav_gate_2a/grid32_s6/scpv_summary_R1_fs${1}_s42.json; done
 ```
 
 (The probe `_nav_sc_popvector_readout_derisk.py` IS the faithful harness — it imports `run_moving_goal_episode` and
@@ -253,18 +256,45 @@ indicated remedy.
 | Lever 1 (lower divnorm gain 0.005) | 108.1 | NO | N,N,N,N | static-ACQUIRE improved (phase0 0.63), re-orient unchanged |
 | R1 cortex-WTA FS=8 (default) | 124.7 | NO | **E**,N,N,N | the one positive signal: BROKE phase-0 N-pinning (dom=E) |
 | R1 cortex-WTA FS=40 (strong) | 115.3 | NO | N,N,N,N | over-quenched (phase0 regressed to 19.9) |
-| R1 cortex-WTA FS=16 (intermediate) | <!-- FILL --> | | | |
+| R1 cortex-WTA FS=16 (intermediate) | 114.2 | NO | N,N,N,N | stuck-N; the FS=8 phase-0 break did not persist |
 
-**The convergent pattern (5 variants so far):** the spiking SC orienting read-out does NOT re-orient at faithful
-grid-32 across the read-out-geometry fix (pop-vector + divnorm) + the SC-drive lever (lower gain) + two cortex-WTA
-competition strengths. The actor is **structurally pinned to the top edge (pos row ~31)** during re-orient regardless
-of the SC read-out signal; the HOST (whose orienting reaches the actor strongly) overcomes this same N-bias and tracks
-every goal — so the wall is that the SC read-out's signal, even geometry-corrected + competition-sharpened, is not
-strong/selective enough to override the N-bias when the goal MOVES. The sole positive signal is that the cortex-WTA
-(FS=8) broke the phase-0 N-pinning (static acquisition), confirming the competition mechanism is directionally right
-but insufficient for re-orient. **This is a thoroughly-characterized HONEST NEGATIVE, not "closed boundary" by default
-— the genuine point-neuron mechanism classes (read-out geometry + competition) were each attempted at faithful scale
-and each rigorously measured.**
+**The convergent pattern (6 variants):** the spiking SC orienting read-out does NOT re-orient at faithful grid-32
+across the read-out-geometry fix (pop-vector + divnorm) + the SC-drive lever (lower gain) + the cortex-WTA competition
+at THREE strengths (FS 8/16/40). The actor is **structurally pinned to the top edge (pos row ~31)** during re-orient
+regardless of the SC read-out signal; the HOST (whose orienting reaches the actor strongly) overcomes this same N-bias
+and tracks every goal — so the wall is that the SC read-out's signal, even geometry-corrected + competition-sharpened,
+is not strong/selective enough to override the N-bias when the goal MOVES. The sole positive signal across the whole
+sweep is that the cortex-WTA (FS=8) broke the phase-0 N-pinning (static acquisition), confirming the competition
+mechanism is directionally right but insufficient for re-orient (and FS=16/40 lost even that — too much mutual
+inhibition quenches the pools). **This is a thoroughly-characterized HONEST NEGATIVE, not "closed boundary" by default
+— the genuine point-neuron mechanism classes for the read-out (#6's actual scope: read-out geometry + inter-cardinal
+competition) were each attempted at faithful scale and each rigorously measured.**
+
+## FINAL VERDICT + the precise next direction
+
+**Shortcut #6 (the SC orienting read-out) at faithful grid-32 = a comprehensively-characterized HONEST NEGATIVE.** The
+prescribed geometry fix (Option A+B: pop-vector cosine decode + bump-mass divnorm + the #4 WTA ring) was FINISHED,
+calibrated, and run at the faithful grid-32/1800/warmup-600 scale the prior build abandoned — and it does NOT re-orient
+(NEURAL ~75× the host post-change; SCRAM does not collapse, so the retinotopic decode is not load-bearing). The
+next-mechanism class the diagnosis indicated (inter-cardinal cortex-WTA competition, the scoping's prescribed
+Option-B remedy) was then attempted at three strengths — also NEGATIVE for re-orient. **The host orienting scaffold
+STAYS in place.**
+
+**The precise residual (the next direction — but it is OUTSIDE #6's read-out scope):** the wall is the actor's
+**structural N-bias** (it pins to pos row ~31 and the action distribution is N ~0.5 every phase), which dominates the
+SC read-out's signal during re-orient. The HOST clears this same bias because its orienting reaches the actor at full
+strength; the spiking SC organ's signal does not. Reducing/correcting that N-bias is a **separate shortcut/issue (the
+cascade's perception/selection asymmetry), not the SC read-out geometry #6 is scoped to** — so within #6 (the
+read-out), the point-neuron mechanism classes are exhausted at faithful scale. The honest brain-based deliverable is:
+**the spiking SC read-out, even with the canonical population-vector geometry + Carandini-Heeger normalization + an
+inter-cardinal WTA, cannot re-orient on this substrate at grid-32 because the downstream cascade's N-bias swamps it —
+mapping a genuine point-neuron operating-point limit of the orienting organ as deployed.** Options NOT yet exhausted
+(deferred as out-of-#6-scope or low-probability): correcting the cascade N-bias itself (a different shortcut), or
+Option E's goal-change reset (the diagnosis says the residual is swamping, not hysteresis, so Option E is low-probability).
+
+**This supersedes the prior "closed honest-negative" ledger row** (which cited the drive-knob's grid-32 sweep, not the
+geometry fix) **and the prior subagents' grid-8 arm files** (the documented false-GO scale). The geometry fix is now
+genuinely tested at faithful scale, and the next mechanism class was attempted, per the no-boundary-exit rule.
 
 ⇒ **#6 status: Option A+B = HONEST NEGATIVE at faithful grid-32 (seed 42, the geometry fix finally tested at faithful
 scale). The arc CONTINUES per the no-boundary-exit rule: re-calibration (Lever 1) NEGATIVE; R1 cortex-WTA default
