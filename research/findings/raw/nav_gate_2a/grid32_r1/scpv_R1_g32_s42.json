@@ -1,0 +1,365 @@
+{
+  "arms": [
+    {
+      "arm": "host",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "sc_cortex_w": null,
+      "divnorm_sigma": null,
+      "divnorm_gain": null,
+      "per_phase_finalQ": [
+        0.5663716814159292,
+        0.5929203539823009,
+        0.49557522123893805,
+        0.6283185840707964
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          72,
+          182,
+          43,
+          153
+        ],
+        [
+          7,
+          203,
+          7,
+          233
+        ],
+        [
+          4,
+          207,
+          33,
+          206
+        ],
+        [
+          106,
+          133,
+          106,
+          105
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.16,
+          "E": 0.404,
+          "S": 0.096,
+          "W": 0.34
+        },
+        {
+          "N": 0.016,
+          "E": 0.451,
+          "S": 0.016,
+          "W": 0.518
+        },
+        {
+          "N": 0.009,
+          "E": 0.46,
+          "S": 0.073,
+          "W": 0.458
+        },
+        {
+          "N": 0.236,
+          "E": 0.296,
+          "S": 0.236,
+          "W": 0.233
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "E",
+        "W",
+        "E",
+        "E"
+      ],
+      "phase0_finalQ": 0.5663716814159292,
+      "post_change_finalQ": [
+        0.5929203539823009,
+        0.49557522123893805,
+        0.6283185840707964
+      ],
+      "post_change_finalQ_sum": 1.7168141592920354,
+      "gate_score": 2.2831858407079646,
+      "motor_sustain_frac": 1.0,
+      "late_motor_sustain_frac": 1.0,
+      "episode_json": "research/findings/raw/nav_gate_2a/grid32_r1\\scpv_host_seed42.json"
+    },
+    {
+      "arm": "sc_popvector",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 1.0,
+      "divnorm_gain": 0.0,
+      "per_phase_finalQ": [
+        24.831858407079647,
+        29.56637168141593,
+        46.07964601769911,
+        45.610619469026545
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          213,
+          96,
+          53,
+          88
+        ],
+        [
+          215,
+          111,
+          47,
+          77
+        ],
+        [
+          216,
+          88,
+          50,
+          96
+        ],
+        [
+          222,
+          83,
+          55,
+          90
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.473,
+          "E": 0.213,
+          "S": 0.118,
+          "W": 0.196
+        },
+        {
+          "N": 0.478,
+          "E": 0.247,
+          "S": 0.104,
+          "W": 0.171
+        },
+        {
+          "N": 0.48,
+          "E": 0.196,
+          "S": 0.111,
+          "W": 0.213
+        },
+        {
+          "N": 0.493,
+          "E": 0.184,
+          "S": 0.122,
+          "W": 0.2
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "N",
+        "N",
+        "N",
+        "N"
+      ],
+      "phase0_finalQ": 24.831858407079647,
+      "post_change_finalQ": [
+        29.56637168141593,
+        46.07964601769911,
+        45.610619469026545
+      ],
+      "post_change_finalQ_sum": 121.2566371681416,
+      "gate_score": 146.08849557522123,
+      "motor_sustain_frac": 0.4305555555555556,
+      "late_motor_sustain_frac": 0.43333333333333335,
+      "episode_json": "research/findings/raw/nav_gate_2a/grid32_r1\\scpv_sc_popvector_seed42.json"
+    },
+    {
+      "arm": "sc_popvector_scr",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 1.0,
+      "divnorm_gain": 0.0,
+      "per_phase_finalQ": [
+        2.0,
+        28.964601769911503,
+        57.389380530973455,
+        30.876106194690266
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          103,
+          307,
+          19,
+          21
+        ],
+        [
+          209,
+          104,
+          61,
+          76
+        ],
+        [
+          224,
+          94,
+          56,
+          76
+        ],
+        [
+          216,
+          94,
+          58,
+          82
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.229,
+          "E": 0.682,
+          "S": 0.042,
+          "W": 0.047
+        },
+        {
+          "N": 0.464,
+          "E": 0.231,
+          "S": 0.136,
+          "W": 0.169
+        },
+        {
+          "N": 0.498,
+          "E": 0.209,
+          "S": 0.124,
+          "W": 0.169
+        },
+        {
+          "N": 0.48,
+          "E": 0.209,
+          "S": 0.129,
+          "W": 0.182
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "E",
+        "N",
+        "N",
+        "N"
+      ],
+      "phase0_finalQ": 2.0,
+      "post_change_finalQ": [
+        28.964601769911503,
+        57.389380530973455,
+        30.876106194690266
+      ],
+      "post_change_finalQ_sum": 117.23008849557522,
+      "gate_score": 119.23008849557522,
+      "motor_sustain_frac": 0.48944444444444446,
+      "late_motor_sustain_frac": 0.39222222222222225,
+      "episode_json": "research/findings/raw/nav_gate_2a/grid32_r1\\scpv_sc_popvector_scr_seed42.json"
+    }
+  ],
+  "verdict": {
+    "host_phase0_finalQ": 0.5663716814159292,
+    "host_post_change_finalQ_sum": 1.7168141592920354,
+    "ramp_post_change_finalQ_sum": null,
+    "popvector_post_change_finalQ_sum": 121.2566371681416,
+    "scramble_post_change_finalQ_sum": 117.23008849557522,
+    "host_tracking": {
+      "dominant_per_phase": [
+        "E",
+        "W",
+        "E",
+        "E"
+      ],
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": true,
+      "tracks_goal": true
+    },
+    "ramp_tracking": null,
+    "popvector_tracking": {
+      "dominant_per_phase": [
+        "N",
+        "N",
+        "N",
+        "N"
+      ],
+      "n_distinct_dominant": 1,
+      "has_W_dominant_phase": false,
+      "has_E_dominant_phase": false,
+      "tracks_goal": false
+    },
+    "scramble_tracking": {
+      "dominant_per_phase": [
+        "E",
+        "N",
+        "N",
+        "N"
+      ],
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": false,
+      "has_E_dominant_phase": true,
+      "tracks_goal": true
+    },
+    "ramp_late_sustain": null,
+    "popvector_late_sustain": 0.43333333333333335,
+    "host_over_popvector_post_ratio": 0.014158517004816814,
+    "popvector_over_ramp_post_improvement": null,
+    "NOTE": "GO (#6 CONVERTS) if popvector_tracking.tracks_goal is True AND popvector_post_change approaches host (host_over_popvector_post_ratio ~1, vs the ramp's ~0.01) AND the SCRAMBLE lesion collapses (scramble_tracking.tracks_goal False / much worse finalQ). HONEST NEGATIVE otherwise -- report whether popvector still does NOT track (under-selective) or a deeper issue."
+  }
+}
