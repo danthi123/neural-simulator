@@ -292,6 +292,12 @@ mapping a genuine point-neuron operating-point limit of the orienting organ as d
 (deferred as out-of-#6-scope or low-probability): correcting the cascade N-bias itself (a different shortcut), or
 Option E's goal-change reset (the diagnosis says the residual is swamping, not hysteresis, so Option E is low-probability).
 
+**One final read-out-scoped synthesis shot — combo (FS=8 cortex-WTA + stronger SC drive SC_CORTEX_W=60):** the two
+partial signals were Lever 1's static-acquire improvement (more SC influence) and the FS=8 WTA's phase-0 N-pinning
+break (competition). The combo tests whether a stronger position-correct SC drive THROUGH the competition lets the
+margin win during re-orient (no longer matched-drive — the deliberate test of "enough geometry-correct signal + enough
+competition"). <!-- FILL: combo result -->
+
 **This supersedes the prior "closed honest-negative" ledger row** (which cited the drive-knob's grid-32 sweep, not the
 geometry fix) **and the prior subagents' grid-8 arm files** (the documented false-GO scale). The geometry fix is now
 genuinely tested at faithful scale, and the next mechanism class was attempted, per the no-boundary-exit rule.
