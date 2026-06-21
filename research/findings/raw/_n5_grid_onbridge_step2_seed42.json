@@ -1,0 +1,54 @@
+{
+  "seed": 42,
+  "n_modules": 6,
+  "n_per_module": 33,
+  "step2": {
+    "seed": 42,
+    "n_grid": 198,
+    "grid": {
+      "pairs": [
+        {
+          "pair": [
+            13,
+            13,
+            14,
+            13
+          ],
+          "cos": 0.0,
+          "sparsity": 0.095
+        },
+        {
+          "pair": [
+            6,
+            6,
+            7,
+            6
+          ],
+          "cos": 0.09504968672990799,
+          "sparsity": 0.25
+        },
+        {
+          "pair": [
+            20,
+            20,
+            21,
+            20
+          ],
+          "cos": 0.3161381781101227,
+          "sparsity": 0.35
+        }
+      ],
+      "mean_adjacent_place_cos": 0.13706262161334357,
+      "locally_selective": true
+    },
+    "selforg_diff_cos": 0.30024513602256775,
+    "render_baseline_on_same_bridge": {
+      "mean_adjacent_place_cos": 0.5885491545001665,
+      "pairs": [
+        0.8297576308250427,
+        0.8276366591453552,
+        0.10825317353010178
+      ]
+    }
+  }
+}
