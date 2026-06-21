@@ -52,8 +52,12 @@ class MultiTurnAgent:
         self.seed = int(seed)
         # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
         # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
+        # enable_learned_assoc gated on the onebrain production path (cheat-D): elaborate spreads over the substrate-
+        # learned Hebbian assoc graph, not the host co-occurrence dict. rf (default/test/CPU) keeps the host dict (the
+        # Hebbian graph is underpowered at toy scale); the onebrain conversation closes the shortcut.
         self.agent = BrainConversationalAgent(seed=seed, concepts=concepts, grounded_codes=grounded_codes,
-                                              enable_neural_render=enable_neural_render, composer_kind=composer_kind)
+                                              enable_neural_render=enable_neural_render, composer_kind=composer_kind,
+                                              enable_learned_assoc=(composer_kind == "onebrain"))
         self.referents = list(referent_concepts)
         self.wm = SpikingLoopContextBuffer(self.referents, n=wm_n, pattern_size=wm_pattern_size,
                                            seed=seed, enable_ou=False)

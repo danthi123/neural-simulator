@@ -123,9 +123,16 @@ def run_seed(seed, codes, vocab, cat_ids, readout, composer_kind="rf", spiking_c
     # Python first-match loop. Applied to the onebrain path only (it needs the on-bridge composer). NOT the default
     # (a default flip is a separate, gated step like the spiking-cleanup burndown). The no-confab moat is preserved.
     use_integrated_loop = bool(integrated_loop) and composer_kind == "onebrain"
+    # enable_learned_assoc (cheat-D, onebrain production path only): dialogue planning (elaborate) spreads over the
+    # SUBSTRATE-LEARNED sparse Hebbian recurrent assoc graph instead of the host Python co-occurrence dict -- so that
+    # association op is neurons firing. Validated at scale (test_learned_assoc_graph_agent + 9/9 top-associate); the
+    # library/test default stays False because the Hebbian graph is underpowered at toy 2-fact scale (the rf oracle /
+    # numpy-CPU path keeps the deterministic host dict). The production onebrain conversation closes this shortcut.
+    use_learned_assoc = composer_kind == "onebrain"
     agent = BrainConversationalAgent(seed=seed, concepts=concepts, grounded_codes=grounded,
                                      enable_neural_render=True, composer_kind=composer_kind,
                                      enable_spiking_cleanup=use_spiking_cleanup,
+                                     enable_learned_assoc=use_learned_assoc,
                                      integrated_loop=use_integrated_loop)
 
     # grounded-code structure carried (mean off-diagonal phase-cosine over the words used in the demo).
