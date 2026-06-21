@@ -121,6 +121,51 @@ def _n9_place_sensor_act(x, y, landmarks, n_bearing, n_dist, max_int, falloff,
     return np.concatenate(blocks).astype(np.float32)
 
 
+def _n9_make_grid_code(grid_size, *, n_modules=6, n_per_module=33,
+                       lambda_min=2.0, lambda_max=24.0, seed=0):
+    """#5b R1 SURPASS grid-cell front end (catalog D.07; Moser/Hafting oscillatory-interference
+    form). Returns a closure grid_code(x, y) -> (n_modules*n_per_module,) rectified grid activations
+    at the agent's own position (x, y) -- the DECORRELATED spatial-phase metric that replaces the
+    locally-degenerate egocentric landmark render (`_n9_place_sensor_act`, adjacent-cell afferent cos
+    0.99) so the self-org `place` pool can carve locally-SELECTIVE fields (place value V n/f 4.5-12.3x
+    vs the render's ~1.0x R1-cap; research/findings/2026-06-22-shortcut5b-R1-grid-frontend-derisk.md).
+    Promoted VERBATIM from the de-risk reference helper (_n5_grid_frontend_selectivity_smoke.make_grid_code).
+
+    Each MODULE has a module-specific spatial period lambda (geometrically spaced) and a fixed random
+    orientation; each CELL a fixed random 2D phase; the activation is the rectified mean of 3 plane
+    waves at 60-deg-separated orientations (the canonical triangular grid lattice), sharpened ^3. The
+    phases/orientations are drawn ONCE from rng(seed) (a genome-style developmental draw, the B1
+    dev-random self-organized bar) and FIXED -> grid_code(x,y) is a deterministic fixed sensory
+    transform of position, exactly like the egocentric render it replaces.
+
+    ANTI-CHEAT (structural): the ONLY inputs are (x, y) -- the agent's own legitimate self-position
+    (the SAME channel the egocentric render reads). The goal coordinates NEVER enter.
+    """
+    rng = np.random.default_rng(int(seed))
+    lambdas = np.geomspace(float(lambda_min), float(lambda_max), int(n_modules))
+    mod_theta0 = rng.uniform(0.0, np.pi / 3.0, size=int(n_modules))
+    offs = np.array([0.0, np.pi / 3.0, 2.0 * np.pi / 3.0])
+    cell_phase = rng.uniform(0.0, 2.0 * np.pi, size=(int(n_modules), int(n_per_module), 3))
+    kx = np.zeros((int(n_modules), 3)); ky = np.zeros((int(n_modules), 3))
+    for m in range(int(n_modules)):
+        thetas = mod_theta0[m] + offs
+        kmag = 2.0 * np.pi / float(lambdas[m])
+        kx[m] = kmag * np.cos(thetas)
+        ky[m] = kmag * np.sin(thetas)
+
+    def grid_code(x, y):
+        x = float(x); y = float(y)
+        out = np.empty((int(n_modules), int(n_per_module)), dtype=np.float32)
+        for m in range(int(n_modules)):
+            base = kx[m] * x + ky[m] * y                        # (3,)
+            ph = base[None, :] + cell_phase[m]                  # (n_per, 3)
+            act = np.maximum(0.0, np.cos(ph).mean(axis=1))      # (n_per,)
+            out[m] = (act ** 3).astype(np.float32)
+        return out.reshape(-1)
+
+    return grid_code, int(n_modules) * int(n_per_module)
+
+
 def sc_orienting_cardinal_from_image(image):
     """Innate superior-colliculus orienting reflex: read the goal's RETINAL
     direction from the rendered retinotopic image ALONE — no (gx,gy)/(x,y)
@@ -492,6 +537,24 @@ def build_bg_brain_regions(
     # N9 place-sensors egocentric render params (the legitimate sensory channel; de-risk canon).
     n_place_bearing: int = 12,              # bearing sensors per landmark (de-risk n_bearing)
     n_place_dist: int = 8,                  # distance sensors per landmark (de-risk n_dist)
+    # #5b R1 SURPASS grid-cell front end (2026-06-21, production-wiring nav chunk item 2): when ON
+    # (requires neural_place_selforg), the place_sensors afferent is the DECORRELATED spatial-phase
+    # grid-cell metric (_n9_make_grid_code at the agent's own (x,y)) instead of the locally-degenerate
+    # egocentric landmark render -> the self-org place pool carves locally-SELECTIVE fields (place
+    # value V n/f 4.5-12.3x vs the render's 1.0x R1-cap; R1 GO 3/3,
+    # research/findings/2026-06-22-shortcut5b-R1-grid-frontend-derisk.md). place_sensors is then sized
+    # to the grid dim (grid_n_modules * grid_n_per_module = 198 by default, the validated config).
+    # Default OFF = byte-identical (the landmark render). GUARDED ESCAPE: off => the host-Gaussian /
+    # landmark afferent. HONEST SCOPE: this delivers the R1 selective-afferent win (the host-Gaussian
+    # vs_place_context's FULL retirement-by-default is gated on the δ-readout stabilization -- the
+    # grid-frontend graded-plateau READ conflates the place code's structural near/far magnitude
+    # asymmetry with learned value, a characterized deeper boundary; the recorded next frontier), so
+    # the grid front end is shipped as a first-class flag, opt-in. Reads ONLY (x,y) (anti-cheat).
+    nav_critic_grid_frontend: bool = False,
+    grid_n_modules: int = 6,
+    grid_n_per_module: int = 33,
+    grid_lambda_min: float = 2.0,
+    grid_lambda_max: float = 24.0,
     enable_cluster_a_closed_loop: bool = False,  # Cluster A: hyperdirect + thal->cortex
     n_gpi_per_action: int = 10,
     n_stn: int = 20,
@@ -1281,7 +1344,11 @@ def build_bg_brain_regions(
         #     vs_place_context (a BRAIN-BASED-ONLY shortcut). Three regions: ═══
         # (1) place_sensors — the legitimate egocentric landmark sensors (bearing+distance render,
         #     driven externally each nav step; (x,y) enters the brain ONLY here). EXC stub.
-        _n_place_sensors = int(N_PLACE_LANDMARKS) * (int(n_place_bearing) + int(n_place_dist))
+        #     #5b R1 grid front end: when ON, sized to the grid dim (the grid code drives it instead).
+        if nav_critic_grid_frontend:
+            _n_place_sensors = int(grid_n_modules) * int(grid_n_per_module)
+        else:
+            _n_place_sensors = int(N_PLACE_LANDMARKS) * (int(n_place_bearing) + int(n_place_dist))
         regions.append(BrainRegion(
             name="place_sensors", n_neurons=_n_place_sensors, exc_fraction=1.0,
             internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
@@ -3508,6 +3575,16 @@ def run_moving_goal_episode(
     coincidence_plateau: float = 80.0,  # Route-D plateau strength (de-risk value)
     n_place_bearing: int = 12,          # bearing sensors/landmark (de-risk n_bearing)
     n_place_dist: int = 8,              # distance sensors/landmark (de-risk n_dist)
+    # #5b R1 SURPASS grid-cell front end (nav chunk item 2): the DECORRELATED spatial-phase grid metric
+    # as the place_sensors afferent (selective place value 4.5-12.3x; default OFF = the landmark render).
+    # grid_drive_scale = the operating-point gain on the grid code's [0,1] activations (the de-risk's
+    # validated 2.5: the grid is sparse so the place pool + critic need ~2.5x to see comparable drive).
+    nav_critic_grid_frontend: bool = False,
+    grid_n_modules: int = 6,
+    grid_n_per_module: int = 33,
+    grid_lambda_min: float = 2.0,
+    grid_lambda_max: float = 24.0,
+    grid_drive_scale: float = 2.5,
     selforg_steps: int = 2000,          # total STEP-1 self-org sweep steps (de-risk validated)
     selforg_n_positions: int = 40,      # # agent positions swept during self-org
     reward_delay_steps: int = 8,        # online: hold place active before the SNc burst (Yagishita)
@@ -4161,6 +4238,15 @@ def run_moving_goal_episode(
         if verbose:
             print("[g11] N9 neural_place_selforg ON -> enable_convergent_upstate HARD-GATED OFF "
                   "(the position-blind A1 floor caps grading ~1.2x).", flush=True)
+    # #5b R1 grid front end requires the self-org place pool (it is the place_sensors afferent). If
+    # requested without neural_place_selforg, disable it (the landmark/host afferent is the only place
+    # input otherwise) -> default-OFF safety.
+    if nav_critic_grid_frontend and not _neural_place_selforg:
+        nav_critic_grid_frontend = False
+        if verbose:
+            print("[g11] nav_critic_grid_frontend requested without neural_place_selforg -> DISABLED "
+                  "(the grid front end is the self-org place_sensors afferent; needs the place pool).",
+                  flush=True)
     # Spiking US -> SNc coord-free guard: the reward_us afferent rides on the PERCEIVED reward.
     # WITHOUT --perceived-approach-reward, `reward` is the coord-touched default -> the spiking US is
     # then driven by a coordinate-derived signal (a documented residual shortcut, NOT coord-free).
@@ -4254,6 +4340,11 @@ def run_moving_goal_episode(
         coincidence_plateau=coincidence_plateau,
         n_place_bearing=n_place_bearing,
         n_place_dist=n_place_dist,
+        nav_critic_grid_frontend=nav_critic_grid_frontend,
+        grid_n_modules=grid_n_modules,
+        grid_n_per_module=grid_n_per_module,
+        grid_lambda_min=grid_lambda_min,
+        grid_lambda_max=grid_lambda_max,
         # Critic drive calibration (2026-06-08): raised place-afferent weight so the
         # learned value-of-location is well-graded (the MSN-D1->RS type swap is applied
         # to the returned region below, after build, to keep the build signature stable).
@@ -4424,7 +4515,23 @@ def run_moving_goal_episode(
     # ── N9 place-sensor egocentric render precompute (the legitimate body-sensing channel). The 3
     #    fixed landmarks + dist_max are grid-tuned; the per-step render is _n9_place_sensor_act
     #    (VERBATIM the de-risk landmark_sensor_act). (x,y) enters the brain ONLY through this. ──
-    if _neural_place_selforg:
+    if _neural_place_selforg and nav_critic_grid_frontend:
+        # #5b R1 grid front end (nav chunk item 2): the place_sensors afferent is the DECORRELATED
+        # spatial-phase grid metric at (x,y) (sized to the place_sensors dim), scaled to the
+        # operating-point drive (grid_drive_scale * place_sensor_max_intensity) so the place pool +
+        # critic see drive comparable to the landmark render. The grid code is a fixed developmental
+        # draw (seeded) -> deterministic sensory transform of (x,y); reads ONLY (x,y) (anti-cheat).
+        _n9_landmarks = None
+        _n9_dist_max = None
+        _n9_grid_code, _n9_n_grid = _n9_make_grid_code(
+            grid_size, n_modules=int(grid_n_modules), n_per_module=int(grid_n_per_module),
+            lambda_min=float(grid_lambda_min), lambda_max=float(grid_lambda_max), seed=int(seed))
+        _n9_grid_gain = float(grid_drive_scale) * float(place_sensor_max_intensity)
+
+        def _n9_render(px, py):
+            raw = _n9_grid_code(float(px), float(py)).astype(np.float32)   # [0,1] grid activations
+            return (raw * _n9_grid_gain).astype(np.float32)
+    elif _neural_place_selforg:
         _n9_landmarks = _n9_place_landmarks(grid_size)
         _n9_dist_max = float(grid_size) * 1.42        # de-risk dist_max (diag of the grid)
 
@@ -9053,6 +9160,16 @@ def main():
                          "research/findings/2026-06-22-shortcut5b-determinism-deltabar-close.md.")
     ap.add_argument("--n-place", type=int, default=200, help="N9 self-org place pool size.")
     ap.add_argument("--n-place-fs", type=int, default=24, help="N9 FS-PING interneuron pool size.")
+    ap.add_argument("--nav-critic-grid-frontend", action="store_true",
+                    help="#5b R1 SURPASS (nav chunk item 2): use the DECORRELATED spatial-phase grid-cell "
+                         "metric as the place_sensors afferent (selective place value V n/f 4.5-12.3x vs the "
+                         "landmark render's 1.0x R1-cap; reads ONLY (x,y)). Requires --neural-place-selforg. "
+                         "Default off = the landmark render. See "
+                         "research/findings/2026-06-22-shortcut5b-R1-grid-frontend-derisk.md.")
+    ap.add_argument("--grid-n-modules", type=int, default=6, help="grid front end: # grid modules (item 2).")
+    ap.add_argument("--grid-n-per-module", type=int, default=33, help="grid front end: cells per module (item 2).")
+    ap.add_argument("--grid-drive-scale", type=float, default=2.5,
+                    help="grid front end: operating-point gain on the [0,1] grid activations (de-risk validated 2.5).")
     ap.add_argument("--enable-critic-fs-inhibition", action="store_true",
                     help="SPIKING root fix for the over-firing (~125 Hz) value critic: add a "
                          "place_fs -> striosome_value GABA_A feedforward-inhibition pathway (the FS-PING "
@@ -9508,6 +9625,10 @@ def main():
             critic_fs_density=args.critic_fs_density,
             n_place=args.n_place,
             n_place_fs=args.n_place_fs,
+            nav_critic_grid_frontend=args.nav_critic_grid_frontend,
+            grid_n_modules=args.grid_n_modules,
+            grid_n_per_module=args.grid_n_per_module,
+            grid_drive_scale=args.grid_drive_scale,
             place_sensors_to_place_weight=args.place_sensors_to_place_weight,
             place_sensors_to_place_density=args.place_sensors_to_place_density,
             place_sensors_to_place_jitter=args.place_sensors_to_place_jitter,

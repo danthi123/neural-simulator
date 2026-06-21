@@ -458,6 +458,7 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  nav_critic_homeostasis_mask: str = "all3",
                                  nav_critic_spiking_sc: bool = False,
                                  nav_critic_place_selforg: bool = False,
+                                 nav_critic_grid_frontend: bool = False,
                                  co_resident_td_cueshift: bool = False,
                                  td_csc_n: int = 8, td_csc_n_per: int = 25,
                                  td_csc_to_strio_weight: float = 14.0,
@@ -555,6 +556,18 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         ("nav_critic_place_selforg (self-org place afferent) and nav_critic_convergent_upstate (vs_place_context "
          "up-state arm) are mutually exclusive: the up-state arm has no vs_place_drive in the self-org branch and "
          "g11_bg_runner hard-gates enable_convergent_upstate OFF under neural_place_selforg.")
+    # nav_critic_grid_frontend (#5b R1 SURPASS, production-wiring nav chunk item 2): the place_sensors afferent is
+    # the DECORRELATED spatial-phase grid metric instead of the locally-degenerate landmark render -> the self-org
+    # place pool carves SELECTIVE fields (place value V n/f 4.5-12.3x, R1 GO 3/3,
+    # research/findings/2026-06-22-shortcut5b-R1-grid-frontend-derisk.md). REQUIRES nav_critic_place_selforg (it IS
+    # the place_sensors afferent). Default False = byte-identical (the landmark render). HONEST SCOPE: this is the
+    # R1 selective-afferent win; the host-Gaussian vs_place_context's FULL retirement-by-default is gated on the
+    # δ-readout stabilization (a characterized deeper boundary -- the grid graded-plateau READ conflates the place
+    # code's structural near/far magnitude asymmetry with learned value), so the grid front end ships as a
+    # first-class flag, opt-in.
+    assert not (nav_critic_grid_frontend and not nav_critic_place_selforg), \
+        ("nav_critic_grid_frontend (the grid-cell place afferent) requires nav_critic_place_selforg (it IS the "
+         "self-org place_sensors afferent; without the self-org place pool there is nothing to drive).")
     if co_resident_nav_critic:
         # nav_critic_convergent_upstate (the value-train A1 up-state arm, CYCLE 209 value-train build): forward
         # enable_convergent_upstate to build_bg_brain_regions so the dense NON-plastic vs_place_drive->striosome_value
@@ -584,6 +597,7 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
             enable_neural_critic=True, spiking_reward_us=True, enable_critic_homeostasis=True,
             enable_convergent_upstate=bool(nav_critic_convergent_upstate),
             neural_place_selforg=bool(nav_critic_place_selforg),
+            nav_critic_grid_frontend=bool(nav_critic_grid_frontend),
             enable_visual_cortex=bool(nav_critic_spiking_sc),
             enable_spiking_sc=bool(nav_critic_spiking_sc),
             enable_spiking_sc_approach=bool(nav_critic_spiking_sc))
@@ -1283,7 +1297,8 @@ class MergedNavConvAgent:
 
     def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_limbic=False,
                  co_resident_nav_critic=None, nav_critic_spiking_sc=False,
-                 nav_critic_place_selforg=False, co_resident_td_cueshift=False,
+                 nav_critic_place_selforg=False, nav_critic_grid_frontend=False,
+                 co_resident_td_cueshift=False,
                  enable_da_salience_gate=False, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
         merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory codebook
@@ -1360,6 +1375,11 @@ class MergedNavConvAgent:
         # meaningful with co_resident_nav_critic (it builds the critic). The moat check verifies the self-org place
         # afferent + the DA-over-snc modulator do not perturb the parser/conversational comprehension.
         self.nav_critic_place_selforg = bool(nav_critic_place_selforg)
+        # nav_critic_grid_frontend (#5b R1, nav chunk item 2): the place_sensors afferent is the decorrelated
+        # spatial-phase grid metric (selective place value); requires nav_critic_place_selforg. Default False =
+        # byte-preserved (the landmark render). The R1 selective-afferent win; the host-Gaussian's full
+        # retirement-by-default is gated on the δ-readout boundary, so it ships opt-in.
+        self.nav_critic_grid_frontend = bool(nav_critic_grid_frontend)
         _D = 128
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
             seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,
@@ -1367,6 +1387,7 @@ class MergedNavConvAgent:
             co_resident_nav_critic=self.co_resident_nav_critic,
             nav_critic_spiking_sc=self.nav_critic_spiking_sc,
             nav_critic_place_selforg=self.nav_critic_place_selforg,
+            nav_critic_grid_frontend=self.nav_critic_grid_frontend,
             co_resident_td_cueshift=self.co_resident_td_cueshift)
         words = self._handles["vocab"]   # the sorted merged vocab (the dlPFC + parser word set)
 
