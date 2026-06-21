@@ -25,24 +25,51 @@ snc_pred`) vanishes.
 
 ## The mechanism (Turrigiano 2008 synaptic scaling — the EXISTING sim/ machinery, NO sim/ edit)
 
-`cfg.enable_synaptic_scaling` (`sim/bridge.py:7402`) multiplicatively scales each postsynaptic neuron's
-excitatory afferent weights toward a TARGET firing rate
-(`scale_factor = 1 + synaptic_scaling_rate × (homeostasis_target_rate − activity_ema)`, clipped 0.95–1.05
-per step). The critic (`striosome_value`) is the postsynaptic neuron of the place→value path. Because the
-scale factor is ONE value per postsynaptic neuron applied to ALL its afferents, the **near/far RATIO** (the
-R1 selectivity, set by STDP) is PRESERVED while the ABSOLUTE volley level is driven to one seed-STABLE
-operating point. The strong seed (44) is scaled DOWN to the gentle-seed regime; the gentle seeds (42/43) are
-NOT starved (the flat-cap failure mode) because scaling targets a RATE, not a fixed ceiling. Point-neuron,
-biology-grounded, held ON through the value-train + the reads (the volley settles to target and stays:
-scale_factor → 1 at target → no read-time drift).
+The fix is **synaptic scaling on the place→value path** (Turrigiano 2008): multiplicatively scale the
+critic's afferent weights toward a common SET POINT. Because the scale factor is ONE value applied
+uniformly to ALL the critic's place afferents, the **near/far RATIO** (the R1 selectivity, set by STDP) is
+PRESERVED while the ABSOLUTE volley level is driven to one seed-STABLE operating point. The strong seed
+(44, `w_near` 2.475) is scaled DOWN to the gentle-seed band; the gentle seeds (42/43) are left at their
+already-passing level (the flat-cap STARVATION failure mode is avoided because the set point IS the gentle
+band).
 
-Probe lever: `--synaptic-scaling --synscale-target-rate R [--synscale-rate r] [--synscale-ema-alpha a]`
-(set in `_n5_grid_frontend_onbridge_probe.py:_patched_init` via the existing `cfg.enable_synaptic_scaling`
-path). Held WITH `--deterministic-read` throughout. NO `sim/` edit; NO `g11_bg_runner.py` edit.
+Three forms were tested (all on the EXISTING machinery, NO `sim/` edit):
 
-## RESULTS — IN FLIGHT
+1. **`continuous`** (stock `cfg.enable_synaptic_scaling`, `sim/bridge.py:7402`) — enable the per-step flag
+   for the whole pipeline. **NEGATIVE:** it measures the VALUE-TRAIN firing (inflated by the
+   `critic_teacher_pa=300` teacher) → over-suppresses the READ regime (seed 44: `w_near` 2.475 → 0.0,
+   critic starves — the same failure as the flat cap). The teacher-driven regime is the wrong rate to
+   normalize against.
+2. **`freeze_seam` RATE-TARGET** — a read-regime synaptic-scaling calibration applied ONCE at the
+   value-train→read FREEZE seam (the `value_input` 1.0→0.0 transition in `_patched_set_gate`); measures the
+   WEIGHTED-plateau critic@near (the regime stage-B reads), scales toward a target rate. **PARTIAL:** the
+   calibration lands its own read correctly (seed 44: 401.5 → 49.9 Hz, R1 V_n/f=6.71 preserved) but
+   stage-B reads 273.9 Hz at the SAME near — the critic's OWN threshold homeostasis drifts during the
+   rate-calibration and is not stable into stage-B (a `fs_freeze_critic_threshold` option pins it, untested
+   — superseded by form 3).
+3. **`freeze_seam` WEIGHT-TARGET** (the WINNER) — at the freeze, scale `w_near` to a TARGET WEIGHT (the
+   gentle-seed band ~0.5–0.6) in ONE shot. A SET-POINT form of Turrigiano scaling: no rate measurement, so
+   no interaction with the critic threshold homeostasis. **Seed 44 GO:** `w_near` 2.233 → 0.500 (uniform
+   scale 0.224 over 102 near-active place cells) → crit@near 255.8 → 17.2 Hz, **crit@far 136.5 → 0.0 Hz**
+   (far now SILENT = the over-clamp is gone), `snc_pred(NEAR)=0 / snc_unpred(FAR)=50` = the genuine RPE δ,
+   `gabab_gap=True`, `V_n/f=6.82` (R1 PRESERVED — actually improved from 4.78 because de-saturating the
+   over-driven critic cleans the graded read). Seed 44 now behaves exactly like the gentle seeds (42's
+   17.1/0.0).
 
-<!-- FILL: the 3-seed δ table (all 3 + no starvation), the controls, R1-unchanged, the VERDICT -->
+Probe lever (the WINNER): `--synaptic-scaling --synscale-mode freeze_seam --synscale-fs-target-wnear W
+[--synscale-fs-down-only]` (a uniform multiplicative scale on `cp_connections.data` over the place→value
+synapses, the same op `cfg.enable_synaptic_scaling` does per-step, applied once in the read regime). Held
+WITH `--deterministic-read` throughout. NO `sim/` edit; NO `g11_bg_runner.py` edit.
+
+## RESULTS — single-seed mechanism CONFIRMED (seed 44 GO); 3-seed battery IN FLIGHT
+
+**Seed 44 (the make-or-break) — GO** (weight-target `w_near`→0.5):
+- BEFORE (determinism alone): crit@near 255.8 / far 136.5 Hz, `gabab_gap=False`.
+- AFTER (weight-target): crit@near **17.2** / far **0.0** Hz, `snc_unpred(FAR)=50` / `snc_pred(NEAR)=0`,
+  `gabab_gap=True`, `LEARNS-V=True`, `V_n/f=6.82`.
+
+<!-- FILL: the full 3-seed δ table (config-B target 0.6 down-only: 42/43 untouched, 44 normalized), the
+controls, R1-unchanged, the VERDICT -->
 
 ## sim/-edit flag
 
