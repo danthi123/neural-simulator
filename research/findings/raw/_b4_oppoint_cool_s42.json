@@ -1,0 +1,40 @@
+{
+  "runs": [
+    {
+      "r_migration": -0.6645106473462083,
+      "peak_early": 6.166666666666667,
+      "peak_late": 1.0,
+      "cue_v_early": 25.0,
+      "cue_v_late": 85.13888888888889,
+      "cue_rate_early": 52.49999999999999,
+      "cue_rate_late": 28.333333333333332,
+      "us_rate_early": 123.88888888888887,
+      "us_rate_late": 71.38888888888889,
+      "tonic_rate": 3.75,
+      "w_sub_late_max": 25.322644233703613,
+      "support": 2,
+      "gates": {
+        "migration_r_pass": false,
+        "migration_dir_pass": true,
+        "early_burst_at_us": true,
+        "late_burst_at_cue": false,
+        "omission_dip_at_reward": false,
+        "cue_value_grows": true
+      },
+      "migration_r_pass": false,
+      "migration_dir_pass": true,
+      "label": "HOT_baseline_clip60_FS30-20_gp0.04_gain2_tau250",
+      "op": {
+        "td_stdp_w_max": 60.0,
+        "td_to_fs_weight": 30.0,
+        "td_fs_to_strio_weight": 20.0,
+        "td_gabab_prop": 0.04,
+        "td_derivative_gain": 2.0,
+        "td_slow_tau_ms": 250.0
+      },
+      "seed": 42,
+      "n_train": 30,
+      "wall_s": 221.4
+    }
+  ]
+}
