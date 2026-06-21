@@ -1,5 +1,14 @@
 # Merged-bridge A-CSC TD cue-shift CONSOLIDATION (roadmap #3) — op-point search BOUNDARY: r<-0.7 reachable but the cue-pathway LESION anti-cheat does not discriminate on the merged bridge (2026-06-19)
 
+> **⮕ SURPASSED 2026-06-22 (shortcut B4).** The "cue-pathway LESION does not discriminate" BOUNDARY below was
+> diagnosed to **two merged-config MEASUREMENT causes** (NOT a substrate/dendrite limit) and both fixed runner-side
+> (NO `sim/` edit): (1) per-region homeostasis drifting td_snc's threshold during the frozen probe (post-lesion tonic
+> 3.5 → 44 Hz — a frozen test must freeze ALL plasticity), and (2) the wrong no-cue reference (the B-2 conductance-
+> derivative makes a ~38 Hz no-cue baseline — reference that, not the bare ITI floor). With both corrected, the
+> cue-pathway lesion DISCRIMINATES co-resident (cue 46.7 Hz collapses to 1.21× the no-cue base 38.5 Hz; US reflex 70 Hz
+> survives) and the unpaired control passes (r=−0.118). **B4 consolidation closes (GO on all four gates).** See
+> `research/findings/2026-06-22-shortcut-B4-cueshift-merged-consolidation.md`.
+
 **Status:** bounded coordinate-descent operating-point search, complete (28 op-points at seed 42, CPU/numpy).
 **VERDICT: BOUNDARY (a precisely-localized merged-bridge anti-cheat finding, NOT a substrate / dendrite finding).**
 **Task:** roadmap #3 — lift the validated standalone A-CSC TD cue-shift onto the merged "one brain". The science
