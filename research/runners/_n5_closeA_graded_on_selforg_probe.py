@@ -64,25 +64,62 @@ _CLOSEA = {
     "tau_decay_ms": 80.0,     # the slow NMDA-plateau tau (deploy default)
     "tau_rise_ms": 2.0,
     "bridge": None,           # captured for diagnostics
+    # READOUT-ONLY isolation (the confound fix): with the graded plateau ON during STEP-1, the extra
+    # current on striosome_value -> snc -> DA modulates the DA-gated `landmark_to_place` STDP, so the
+    # SELF-ORG place code DIFFERS from the graded-OFF (canonical) code (an apples-to-apples problem).
+    # When True, the arrays are allocated at init (flag ON) but strength is held 0 through STEP-1 +
+    # STEP-2, then flipped to the target strength the instant the value-train FREEZES the value arm
+    # (value_input 1.0 -> 0.0, just before the stage-B reads) — so STEP-1/STEP-2 are byte-identical to
+    # graded-OFF (the CANONICAL W=10 place code), isolating the READ-OUT as the only difference.
+    "readout_only": False,
+    "_armed": False,          # internal: have we seen value_input go 1.0?
 }
 
 _orig_init = SimulationBridge._initialize_simulation_data
+_orig_set_gate = SimulationBridge.set_plasticity_gate
 
 
 def _patched_init(self, *a, **kw):
     if _CLOSEA["enable"]:
         c = self.core_config
-        # the CLOSE-A read-out swap (the deploy block g11_bg_runner.py:4510-4521, but UNDER self-org):
         c.enable_graded_dendritic_plateau = True
-        c.coincidence_plateau_strength = 0.0     # all-or-none plateau OFF; graded form carries V
         c.graded_plateau_center = float(_CLOSEA["center"])
         c.graded_plateau_slope = float(_CLOSEA["slope"])
-        c.graded_plateau_strength = float(_CLOSEA["strength"])
         c.graded_plateau_tau_decay_ms = float(_CLOSEA["tau_decay_ms"])
         c.graded_plateau_tau_rise_ms = float(_CLOSEA["tau_rise_ms"])
-        # enable_nmda already set True by the self-org build block (per-region mask → critic only).
+        # stash the self-org build's all-or-none COUNT-form strength (set just before init at
+        # g11_bg_runner.py:4493 from `coincidence_plateau`=80) so readout_only can restore it during
+        # training (the COUNT plateau bootstraps the DA-gated LTP — it MUST stay ON during STEP-1/2
+        # for the place code + the learned V to match the canonical graded-OFF baseline).
+        _CLOSEA["_train_coinc_strength"] = float(getattr(c, "coincidence_plateau_strength", 80.0))
+        if _CLOSEA["readout_only"]:
+            # TRAIN regime byte-identical to the all-or-none baseline: keep the COUNT plateau ON,
+            # graded OFF. The READ-OUT swap (coinc OFF, graded ON) happens at the value-train freeze.
+            c.graded_plateau_strength = 0.0
+            # leave c.coincidence_plateau_strength at the self-org default (the COUNT-form 80).
+        else:
+            # the deploy regime throughout: graded carries V, all-or-none OFF (deploy block 4514).
+            c.coincidence_plateau_strength = 0.0
+            c.graded_plateau_strength = float(_CLOSEA["strength"])
+        _CLOSEA["_armed"] = False
     out = _orig_init(self, *a, **kw)
     _CLOSEA["bridge"] = self
+    return out
+
+
+def _patched_set_gate(self, name, value):
+    """Detect the value-train FREEZE (value_input 1.0 -> 0.0) and, in readout_only mode, perform the
+    READ-OUT swap THERE: turn the all-or-none COUNT plateau OFF and the GRADED plateau ON. So STEP-1
+    self-org + STEP-2 value-train ran in the CANONICAL all-or-none regime (identical place code +
+    the documented learned V), and only the stage-B reads use the graded read-out."""
+    if _CLOSEA["enable"] and _CLOSEA["readout_only"] and name == "value_input":
+        if float(value) >= 1.0:
+            _CLOSEA["_armed"] = True
+        elif float(value) <= 0.0 and _CLOSEA["_armed"]:
+            self.core_config.coincidence_plateau_strength = 0.0          # all-or-none OFF for the read
+            self.core_config.graded_plateau_strength = float(_CLOSEA["strength"])  # graded carries V
+            _CLOSEA["_armed"] = False
+    return _orig_set_gate(self, name, value)
     return out
 
 
@@ -140,13 +177,16 @@ def _arm_spec(arm, w_sparse, w_dense, value_train_trials, single_goal):
 
 
 def _run_arm(arm, seed, *, w_sparse, w_dense, value_train_trials,
-             center, slope, strength, single_goal):
+             center, slope, strength, single_goal, readout_only):
     graded, overrides = _arm_spec(arm, w_sparse, w_dense, value_train_trials, single_goal)
     _CLOSEA["enable"] = bool(graded)
     _CLOSEA["center"] = float(center)
     _CLOSEA["slope"] = float(slope)
     _CLOSEA["strength"] = (0.0 if arm == "lesion" else float(strength))
+    # the lesion arm needs strength 0 EVERYWHERE (no read-out at all), so readout_only is a no-op there.
+    _CLOSEA["readout_only"] = bool(readout_only) and arm != "lesion"
     _CLOSEA["bridge"] = None
+    _CLOSEA["_armed"] = False
 
     captured, real_fn = _capture_deployed_kwargs(
         seed, value_train_trials, stage_b=True)
@@ -283,11 +323,16 @@ def main():
     ap.add_argument("--graded-center", type=float, default=1.5)
     ap.add_argument("--graded-slope", type=float, default=1.0)
     ap.add_argument("--graded-strength", type=float, default=80.0)
+    ap.add_argument("--readout-only", action="store_true",
+                    help="isolate the READ-OUT: hold the graded plateau strength 0 through STEP-1+STEP-2 "
+                         "(so the place code == the canonical graded-OFF W=10 code), enable it only for "
+                         "the stage-B reads. Makes test-vs-allnone an apples-to-apples read-out swap.")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
-    # install the init-monkeypatch for the whole run.
+    # install the monkeypatches for the whole run (init cfg-flip + the readout-only gate hook).
     SimulationBridge._initialize_simulation_data = _patched_init
+    SimulationBridge.set_plasticity_gate = _patched_set_gate
 
     arms = (["test", "lesion", "no_learn", "dense", "allnone"]
             if args.all_arms else [args.arm])
@@ -298,7 +343,8 @@ def main():
                      value_train_trials=args.value_train_trials,
                      center=args.graded_center, slope=args.graded_slope,
                      strength=args.graded_strength,
-                     single_goal=(not args.multi_goal))
+                     single_goal=(not args.multi_goal),
+                     readout_only=args.readout_only)
         results[arm] = r
         # honest per-arm one-liner.
         sb = r.get("stage_b") or {}
