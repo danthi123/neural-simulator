@@ -562,6 +562,14 @@ def main():
                     help="B-2 conductance-derivative gain (the bootstrap +dV/dt). RAISE co-resident to lift the cue burst "
                          "so the peak migrates (the merged GIRK cap throttles the derivative; a higher gain compensates)")
     ap.add_argument("--td-slow-tau-ms", type=float, default=130.0, help="td conductance-derivative slow-EMA tau (ms)")
+    ap.add_argument("--reward-learning-rate", type=float, default=0.0,
+                    help="COOLING op-point lever (post-build cfg override): the per-trial value-growth rate. The merged "
+                         "default is 0.01; LOWERING it (e.g. 0.005) DELAYS/centers the cue-burst snap so the migration r "
+                         "is more negative (the merged critic runs hotter, snapping the burst @ ~trial 8 -> step-r -0.665; "
+                         "slowing the value back-prop centers the snap toward the midpoint -> r<-0.7). 0=builder default.")
+    ap.add_argument("--reward-eligibility-tau-ms", type=float, default=0.0,
+                    help="COOLING op-point lever (post-build cfg override): tap-local credit window (merged default 40ms). "
+                         "A SHORTER tau slows the one-tap-per-trial walk. 0=builder default (40ms).")
     ap.add_argument("--n-train", type=int, default=0, help="override n_train (0 = recipe default 50; use ~30 for faster op-point search)")
     ap.add_argument("--global-het-test", action="store_true",
                     help="DIAGNOSTIC: turn on global parameter heterogeneity (perturbs nav/conv determinism) to test "
@@ -578,6 +586,11 @@ def main():
               td_fs_to_strio_weight=args.td_fs_to_strio_weight, td_gabab_prop=args.td_gabab_prop,
               td_gabab_conductance_max=args.td_gabab_cmax, td_stdp_w_max=args.td_stdp_w_max,
               td_derivative_gain=args.td_derivative_gain, td_slow_tau_ms=args.td_slow_tau_ms)
+    # COOLING post-build cfg overrides (popped by _build, applied to bridge.core_config after build). 0 = builder default.
+    if args.reward_learning_rate > 0:
+        op["reward_learning_rate"] = args.reward_learning_rate
+    if args.reward_eligibility_tau_ms > 0:
+        op["reward_eligibility_tau_ms"] = args.reward_eligibility_tau_ms
 
     if args.moat_only:
         rs = [run_moat_gate(s) for s in seeds]
