@@ -10,6 +10,13 @@ answer/abstain routing are now neurons firing, not host bookkeeping.
 **Reuse-by-import, NO `sim/` edit** (the sequencer reuses already-shipped bridge primitives). The per-block spiking
 reconstruction (`_read_blocks`) was already on-bridge; the residual host op was only the first-match loop.
 
+**OVERALL VERDICT — #3 fold COMPLETE on all 4 gates (2026-06-21):**
+(1) answer-identity `==host` at K∈{2,4,8} multi-seed = GO · (2) moat 0-false-accept (HARD, never traded) = GO ·
+(3) **320-scale K=32/V=320 production confirmation = GO** (seed 42: `==host` 1/1, moat FA_total **0**, all anti-cheats
+green; the gate that died 3× — unblocked by a runner-side memory-safe fix, NO `sim/` edit) · (4) default-OFF
+byte-identical (the shipped suites pass verbatim) = GO. The production who/what + yes-no + reason hot paths route
+through the spiking K-way sequencer; the host first-match `_scan` is retired behind the opt-in flag, moat intact.
+
 ---
 
 ## The flag + the helper
@@ -74,9 +81,40 @@ who/what + abstention matrix (every `is None` / `"unknown"`); the **moat holds 0
 `match_thresh=0.06` (never traded); the anti-cheats behaved (LESION→abstain, permuted→cyclic-shift, NO-DIVNORM
 raw→fails so the divnorm is load-bearing). Finding: `2026-06-21-shortcut3-fold-integrated-loop-derisk.md`.
 
-### (3) 320-scale (V=320, K=32, GPU)
+### (3) 320-scale (V=320, K=32, GPU) — **GO**
 
-_See the "320-scale" section below (the production-tier confirmation)._
+The production-tier confirmation: the same composer-API de-risk at **V=320** (the production vocab tier, 320 distinct
+words), **K=32** (the production store size = 32 facts), GPU/CuPy, `match_thresh=0.06`:
+
+| K | V | ==host (answer-identity) | moat (FA_total) | recon-abstain | lesion-safe | permuted | raw-fails | verdict |
+|---|---|---|---|---|---|---|---|---|
+| 32 | 320 | 1/1 | 1/1 (**0**) | 1/1 | 1/1 | 1/1 | 1/1 | **GO** (seed 42) |
+| 2 | 320 | 1/1 | 1/1 (**0**) | 1/1 | 1/1 | 1/1 | 1/1 | GO (seed 42, ladder) |
+| 4 | 320 | 1/1 | 1/1 (**0**) | 1/1 | 1/1 | 1/1 | 1/1 | GO (seed 42, ladder) |
+| 8 | 320 | 1/1 | 1/1 (**0**) | 1/1 | 1/1 | 1/1 | 1/1 | GO (seed 42, ladder) |
+
+`OVERALL: GO (K in [32], V=320, match_thresh=0.06, gpu=True)`. At the production tier the `integrated_loop=True`
+composer is **answer-identical** to the host-`_scan` oracle on the full who/what + every `is None`/`"unknown"`
+abstention, and the **no-confab moat holds 0-false-accept at 320 concepts** (never traded). All anti-cheats green
+(LESION→abstain, permuted→cyclic-shift, NO-DIVNORM raw→fails ⇒ divnorm load-bearing). The K=32/V=320 sequencer fabric
+is **41,761 regions / 836,830 neurons / 21M synapses** — it built + answered the whole battery + freed cleanly.
+Seed count: 1 (seed 42) — the production-scale confirmation that the `integrated_loop` works at V=320; the **K=32
+ROUTING-MARGIN capability** is separately multi-seed de-risked (`2026-06-21-shortcut3-K32-capability-surpass.md`,
+`eq_n 3/3` at `match_thresh=0.06`) and gates (1) answer-identity (K∈{2,4,8}) + (4) byte-identical are multi-seed, so
+the cognitive close is multi-seed and gate (3) is the single-seed production-scale confirmation per the de-risk plan.
+Result: `research/findings/raw/_phaseB_onebrain_integrated_loop_fold_320_K32_seed42.json`.
+
+**Memory-safe fix (the gate-3 unblock, 2026-06-21).** Gate-3 died 3× mid-build before this run. ROOT CAUSE: the fold
+runner's `for K in ks: for s in seeds` loop built, per iteration, two `OneBrainComposer`s + an O(K·V) spiking
+sequencer fabric (the 837K-neuron one above at K=32/V=320) and **freed nothing** — the CuPy mempool retained freed
+blocks and the 21M-synapse build's transient host structures lingered, so memory grew ~0.53GB host + ~0.79GB VRAM per
+K=32 iteration until host RAM was exhausted mid-build and the OS silently killed the process (the dead-log signature:
+progressively larger bridges, then gone, no traceback). It was **accumulation, not a single bad bridge** — one full
+K=32/V=320 composer builds + answers + exits clean on 0.78GB VRAM / 1.5GB host. FIX (runner-side, NO `sim/` edit):
+`_free_gpu_memory()` + explicit `del` of each iteration's composers/bridges at the end of `run_seed_K` + mempool free,
+so the steady-state peak is ONE K=32 composer. The result dict holds only primitives (no live bridge ref) so freeing
+cannot corrupt it; verified VRAM stayed ~2–4.6GB across the whole ladder with zero accumulation. Finding:
+`research/findings/2026-06-21-shortcut3-fold-integrated-loop-derisk.md`.
 
 ### (4) Default-OFF byte-identical — the shipped suites pass verbatim
 
@@ -108,6 +146,8 @@ host with the moat intact (Task 3); `ask_yes_no` affirmative→yes / negated→n
 - Task 2 — `_ensure_sequencer` + the spiking `_seq_block` branch
 - Tasks 3+4 — route `query_patient` / `_find_cued_block` / `ask_yes_no` through `_seq_block`
 - Task 5 — composer-API answer-identity de-risk = OVERALL GO (K∈{2,4,8}, 3 seeds)
-- Task 6 — 320-scale GPU confirmation _(below)_
+- Task 6 — 320-scale GPU confirmation = **GO** (K=32, V=320, seed 42: ==host, moat 0-FA, all anti-cheats green); the
+  gate-3 unblock was a runner-side memory-safe fix (free each (seed,K) iteration — the loop was accumulating the
+  837K-neuron K=32/V=320 sequencer bridges), NO `sim/` edit
 - Task 7 — CI guard + the combined suite
 - Task 8 — opt-in `--integrated-loop` through the demo + `BrainConversationalAgent` (default-OFF)
