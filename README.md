@@ -9,10 +9,17 @@ strengthen or weaken from millisecond-precise spike timing. The core
 runs on local biological rules — *not* backpropagation through a static
 graph, no supervised labels, no symbolic optimizer.
 
+The headline result: a *single* simulated brain that navigates a world
+and holds a grounded conversation, with **every cognitive step done by
+spiking neurons** — no off-brain shortcuts left in by default. Where the
+biology genuinely can't do something on this substrate, that limit is
+mapped and reported rather than papered over.
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
 ![Backend](https://img.shields.io/badge/backend-CuPy%20(CUDA)%20%2F%20NumPy%20(CPU)-orange.svg)
 ![Status](https://img.shields.io/badge/status-active%20research-yellow.svg)
+![Brain](https://img.shields.io/badge/one%20brain-fully%20spiking%20by%20default-blueviolet.svg)
 
 <p align="center">
   <img src="docs/diagrams/brain_master.png" alt="Simulated-brain architecture — master map" width="900">
@@ -123,16 +130,23 @@ wrong one — a trust property today's large language models notably lack.
 This is measured: there is a clean confidence gap between what it knows
 and what it does not.
 
-**It navigates from vision.** The original capability: it finds a goal on
-a gridworld using only simulated retinal input — no direct coordinates and
-no hand-coded distance signal — reaching the goal far above chance (about
-38% of the time on a 16×16 grid in the validated configuration). As of the
-latest work, the *move decision itself* is made by spiking neurons by
-default: competing action circuits (basal ganglia → thalamus → motor
-cortex) race, and the winner is chosen when one fires a committing burst —
-not by any off-brain shortcut. This is a genuine neural decision; it costs
-about 16% more steps than the old shortcut, and that honest cost is
-reported, not hidden.
+**It navigates from vision — with nothing left to the host.** It finds a
+goal on a gridworld using only simulated retinal input — no direct
+coordinates and no hand-coded distance signal — reaching the goal far above
+chance (about 38% of the time on a 16×16 grid in the validated
+configuration). Every step *between* seeing and acting is now done by
+neurons by default: a spiking superior colliculus orients toward the goal,
+self-organizing **grid/place cells** encode where the agent is (replacing
+the last hand-written position formula), a neural reward-and-value system
+drives a spiking dopamine signal, and the *move decision itself* emerges
+from a race between competing action circuits (basal ganglia → thalamus →
+motor cortex) that ends when the winner fires a committing burst — no
+off-brain "pick the best option" step. This neural decision costs about
+16% more steps than the old shortcut, and that honest cost is reported, not
+hidden. One genuine limit stays open and is named as such: separating a
+place cell's *intrinsic* geometry from its *learned* value is something a
+simple point-neuron cannot fully do — a substrate boundary (it would need
+the branching dendrites real neurons have), not a hidden shortcut.
 
 **It is learning to speak in its own words (early stage).** The system's
 *own* spiking network is being trained to generate language from a local
@@ -242,11 +256,13 @@ through a frozen computational graph. They learn from local rules:
 dopamine reward (Schultz 1998).
 
 This project tests how far you can get with **only those biological
-rules, entirely locally.** The answer so far: navigation works; a
-biologically grounded **memory** works genuinely well — continual (it does
-not forget) and trustworthy (it abstains instead of fabricating);
-open-ended **language generation** is an active, honestly hard frontier
-(foundation proven, fluency not). The system has clear limits, and mapping
+rules, entirely locally.** The answer so far: navigation works — and as of
+the latest arc, *every cognitive step in it runs in spiking neurons*, with no
+off-brain shortcut left in by default; a biologically grounded **memory**
+works genuinely well — continual (it does not forget) and trustworthy (it
+abstains instead of fabricating); open-ended **language generation** is an
+active, honestly hard frontier (foundation proven, fluency not). The system
+has clear limits, and mapping
 those limits — with anti-cheat controls and forthright retractions when a
 result does not hold up — is itself part of the contribution.
 
@@ -257,8 +273,9 @@ result does not hold up — is itself part of the contribution.
 | Capability | How it works | Status |
 |---|---|---|
 | **See** | Retina → V1 (edge detectors) → V2 → IT (object recognition) | ✅ Working |
-| **Decide** | Basal ganglia let competing options race; the winner is selected, losers silenced | ✅ Working |
+| **Decide** | Basal ganglia let competing options race; the winner is chosen when it fires a committing burst (in spikes, by default) | ✅ Working |
 | **Move** | Motor-cortex pools fire; the agent moves on the grid | ✅ Working |
+| **Know where it is** | Self-organizing grid/place cells encode position (no hand-written coordinate formula) | ✅ Working |
 | **Learn from reward** | Dopamine modulates spike-timing plasticity | ✅ Working |
 | **Hold a goal in mind** | Prefrontal working memory keeps firing after input stops (NMDA bistability) | ✅ Working |
 | **Remember word–concept facts** | Distributed cortical word-ensembles; sparse scattered recall; tagged engram ensembles | ✅ Working — ~320 concepts, multi-seed |
@@ -326,7 +343,7 @@ OpenGL 3D rendering    lock-free     spike + plasticity kernels
 camera / interaction     queues      recording / checkpointing
 ```
 
-The engine lives in `sim/` (43 modules). The central object is the
+The engine lives in `sim/` (42 modules). The central object is the
 **`SimulationBridge`**, which owns all neuron and synapse state as GPU
 arrays and advances the network one millisecond-scale step at a time:
 synaptic currents → background noise → neuron model update → plasticity →
@@ -397,8 +414,10 @@ NVIDIA RTX 3090, 24 GB):
 - **Generalize across similar concepts** — a novel object seen through the
   simulated visual system fires its concept-neurons for the correct
   *category* (about 3× chance); per-run fidelity is the one open edge.
-- **Navigation** — reaches a goal from simulated vision only, no
-  coordinate or distance shortcuts.
+- **Navigation, fully spiking** — reaches a goal from simulated vision
+  only, no coordinate or distance shortcuts; orienting, the position code
+  (self-organizing grid cells), reward/value/dopamine, and the move decision
+  itself all run in neurons by default.
 - **Own-network text learning (foundation)** — the system's own spiking
   net provably learns real local text structure (it beats a
   shuffled-text control), fully local.
@@ -420,6 +439,19 @@ NVIDIA RTX 3090, 24 GB):
   fully local* memory — not open-ended fluent prose. Local hardware caps
   generation well below cloud models; the point is integrity (no cheating,
   no fabrication, self-contained), not parity.
+- **The cost of brain-based purity: latency.** Doing every step in spiking
+  neurons is correct but slow. With all the spiking machinery switched on at
+  the full 320-concept scale, a conversation runs much slower than the same
+  pipeline would with the (now-retired) host shortcuts. The single-query
+  path was already sped up ~10–20× (a query returns in well under a tenth of
+  a second), but extending that optimization to the rest of the fully-spiking
+  loop is the next engineering arc — the honest price of keeping the brain in
+  charge.
+- **The composer's binding is a principled idealization.** Concepts are
+  combined into facts by a clean, exactly-invertible vector algebra (a serious
+  hypothesis for how cortex binds, not a functional cortex). The binding
+  *operations* run in spikes; replacing the exact-inverse algebra with a fully
+  *learned* cortical binder is the deliberately deferred final frontier.
 - **Scale.** Thousands of neurons per region versus 10⁴–10⁶ in biology;
   far fewer training examples than a developing brain sees.
 - **Static structure.** Developmental synaptic pruning and cortical-layer
@@ -435,33 +467,46 @@ NVIDIA RTX 3090, 24 GB):
 
 This is an **active research project.** The validated core today is the
 biologically grounded **memory** (continual, trustworthy, ~320 concepts,
-multi-seed) and **navigation** from vision; **language generation** is an
-honestly hard frontier with a proven foundation but no fluency yet. Recent
-work has focused on making every remaining shortcut more biologically
-faithful and on folding the system together into one brain.
+multi-seed) and **navigation** from vision, now folded into one fully
+spiking brain; **language generation** is an honestly hard frontier with a
+proven foundation but no fluency yet.
 
-Navigation is now **fully biology-based** — every step between seeing
-and acting is done by simulated neurons (a spiking superior colliculus
-for orienting toward the goal, a neural reward signal, and a spiking
-basal-ganglia decision and dopamine system), with no hand-coded
-shortcut in between. The **move decision itself is now made in spikes by
-default**: the action emerges from a race between competing neural
-populations that ends when one fires a committing burst, with the old
-off-brain "pick the best option" shortcut retired (kept only as an
-optional baseline). It costs about 16% more steps than that shortcut — a
-genuine, reported cost of doing the decision in neurons. An earlier
-milestone **put the navigation brain and
-the conversational brain on a single network** — each as its own group
-of neurons — and the two now genuinely **interact through synapses**, not
-merely sit side by side: a *spoken command* can steer the navigating
-body (six-seed pass), and the agent can navigate to **see** an object and
-afterward **recall** what it saw (six-seed pass). The most recent
-milestone goes further still — the *unified embodied agent* above, where
-navigating, perceiving, composing a new fact, and conversing all run
-together on the one network in a single live run. The conversational
-behaviour (including its refusal to make up answers it doesn't know)
-works unchanged throughout, and the conversational neurons stay exactly
-unchanged during navigation's live learning. See
+**Every host shortcut in the one brain is now closed by default
+(2026-06-22).** This was the recent arc's goal: anything *between* sensation
+and action that had been computed by ordinary code — even where the formula
+was biologically correct — has been converted to genuine spiking neurons, or
+its limit honestly characterized. On the conversation side, the parts that
+recall a fact, pull a bound fact apart, scan the memory store, and learn word
+meanings from co-occurrence all now run in spikes. On the navigation side,
+the orienting reflex, the reward/value signal, the dopamine system, the
+position code (now self-organizing grid cells, replacing the last hand-written
+Gaussian), and the move decision are all neural. The **move decision is made
+in spikes by default**: the action emerges from a race between competing
+neural populations that ends when one fires a committing burst, with the old
+off-brain "pick the best option" shortcut retired (kept only as an optional
+benchmark baseline). It costs about 16% more steps than that shortcut — a
+genuine, reported cost of doing the decision in neurons. Finding:
+[`shortcut-CLOSED-grid-default`](research/findings/2026-06-22-shortcut5b-CLOSED-grid-default.md).
+
+**The honest residual (a substrate limit, not a shortcut).** One thing the
+point-neuron substrate genuinely cannot do cleanly: separate a place cell's
+*intrinsic* near/far geometry from the *value* it has learned. A real neuron
+does this with separate dendritic compartments; a single-point neuron reads
+their sum. This is the project's deepest open *neural* problem (the
+"dendritic frontier"), pursued as its own arc — it is a limit of the biology
+at this scale, not a cheat that was left in.
+
+Earlier milestones **put the navigation brain and the conversational brain
+on a single network** — each as its own group of neurons — and made the two
+genuinely **interact through synapses**, not merely sit side by side: a
+*spoken command* can steer the navigating body (six-seed pass), and the agent
+can navigate to **see** an object and afterward **recall** what it saw
+(six-seed pass). The *unified embodied agent* goes further — navigating,
+perceiving, composing a new fact, and conversing all run together on the one
+network in a single live run. Throughout, the conversational behaviour
+(including its refusal to make up answers it doesn't know) works unchanged,
+and the conversational neurons stay exactly unchanged during navigation's
+live learning. See
 [`docs/ARCHITECTURE_nav_conv_merge.md`](docs/ARCHITECTURE_nav_conv_merge.md)
 and the findings
 [`spoken-instruction-nav`](research/findings/2026-06-10-spoken-instruction-nav-GO.md),
@@ -527,7 +572,7 @@ neural-simulator/
 ├── neural-simulator.py    ← GUI host + main entry point
 ├── benchmark.py           ← GPU throughput benchmark
 ├── run_benchmarks.py      ← biological validation suite
-├── sim/                   ← engine (43 modules)
+├── sim/                   ← engine (42 modules)
 ├── viz/                   ← 3D OpenGL rendering
 ├── ui/                    ← DearPyGUI controls
 ├── experiment/            ← stimulus, groups, readout, training
@@ -539,7 +584,7 @@ neural-simulator/
 ├── docs/                  ← biology, current state, roadmap, guides
 ├── webapp/                ← FastAPI dashboard
 ├── simulation_profiles/   ← 47 brain-region JSON profiles
-└── tests/                 ← pytest suite (303 files)
+└── tests/                 ← pytest suite (314 files)
 ```
 
 ---
