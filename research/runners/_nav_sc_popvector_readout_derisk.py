@@ -90,7 +90,8 @@ def _action_frac(counts):
 def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv,
             sc_cortex_w, divnorm_sigma, divnorm_gain, cortex_wta=False,
             cortex_fs_weight=8.0, cortex_fs_n=5, fix1=False, fix2=False,
-            tie_break_eps=0, fix3=False, opponent_axis_eps=0):
+            tie_break_eps=0, fix3=False, opponent_axis_eps=0,
+            fixA=False, sel_divnorm_sigma=1.0, sel_divnorm_gain=1.0):
     """arm_name in {'host','sc_ramp','sc_popvector','sc_popvector_scr'}.
 
     cortex_wta (the R1 'sharpen-earlier' next mechanism after the Option-A+B HONEST NEGATIVE): add
@@ -136,6 +137,10 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
     if fix3:
         kw["sc_opponent_axis"] = True                   # FIX 3: opponent-axis push-pull read-out
         kw["sc_opponent_axis_eps"] = int(opponent_axis_eps)
+    if fixA:
+        kw["sc_sel_divnorm"] = True                     # FIX A: divisive norm at the sel_X input
+        kw["sc_sel_divnorm_sigma"] = float(sel_divnorm_sigma)
+        kw["sc_sel_divnorm_gain"] = float(sel_divnorm_gain)
 
     # reset the per-run SC env knobs so a prior arm doesn't leak.
     os.environ.pop("SC_CORTEX_W", None)
@@ -214,12 +219,37 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
     else:
         motor_sustain = late_sustain = float("nan")
 
+    # Per-stage N-S / E-W surplus (the FIX-A surplus-shrink check). Aggregate the per-step per-cardinal
+    # counts (N,E,S,W) over the whole run; report the common-mode N-S surplus (absolute + percent) at each
+    # cascade stage. A real FIX A SHRINKS sel_counts/commit_counts N-S toward 0 (the decisive gate).
+    def _stage_surplus(key):
+        log = results.get(key, [])
+        if not log:
+            return None
+        arr = np.asarray(log, dtype=float)
+        if arr.ndim != 2 or arr.shape[1] != 4:
+            return None
+        tot = arr.sum(axis=0)
+        N, E, S, W = (float(tot[0]), float(tot[1]), float(tot[2]), float(tot[3]))
+        ns = N - S
+        ew = E - W
+        denom = max(1.0, (N + S) / 2.0)
+        return {"N": N, "E": E, "S": S, "W": W,
+                "NS_surplus": ns, "NS_pct": round(100.0 * ns / denom, 2),
+                "EW_surplus": ew}
+    stage_surplus = {k: _stage_surplus(k)
+                     for k in ("thal_counts", "sel_counts", "commit_counts", "motor_counts")}
+
     summary = {
         "arm": arm_name, "seed": seed, "grid_size": grid_size, "n_steps": n_steps,
         "warmup_steps": warmup_steps, "with_conv": with_conv,
         "fix1_tie_break": bool(results.get("sc_tie_break_stochastic", False)),
         "fix2_sel_homeostasis": bool(results.get("sc_sel_homeostasis", False)),
         "fix3_opponent_axis": bool(results.get("sc_opponent_axis", False)),
+        "fixA_sel_divnorm": bool(results.get("sc_sel_divnorm", False)),
+        "fixA_sel_divnorm_sigma": float(results.get("sc_sel_divnorm_sigma", 1.0)),
+        "fixA_sel_divnorm_gain": float(results.get("sc_sel_divnorm_gain", 1.0)),
+        "stage_surplus": stage_surplus,
         "tie_break_count": int(results.get("tie_break_count", 0)),
         "decision_total": int(results.get("decision_total", 0)),
         "tie_break_fraction": float(results.get("tie_break_fraction", 0.0)),
@@ -247,11 +277,16 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
     print(f"[sc-pv] arm={arm_name} per-phase dominant cardinal: {per_phase_dom}", flush=True)
     print(f"[sc-pv] arm={arm_name} per-phase action frac: {per_phase_frac}", flush=True)
     print(f"[sc-pv] arm={arm_name} FIX1={summary['fix1_tie_break']} FIX2={summary['fix2_sel_homeostasis']} "
-          f"FIX3={summary['fix3_opponent_axis']} "
+          f"FIX3={summary['fix3_opponent_axis']} FIXA={summary['fixA_sel_divnorm']} "
+          f"(sigma={summary['fixA_sel_divnorm_sigma']} gain={summary['fixA_sel_divnorm_gain']}) "
           f"tie_break_fraction={summary['tie_break_fraction']:.4f} "
-          f"({summary['tie_break_count']}/{summary['decision_total']}) "
-          f"opponent_axis_fraction={summary['opponent_axis_fraction']:.4f} "
-          f"({summary['opponent_axis_count']}/{summary['decision_total']})", flush=True)
+          f"({summary['tie_break_count']}/{summary['decision_total']})", flush=True)
+    _ss = summary.get("stage_surplus") or {}
+    for _stg in ("thal_counts", "sel_counts", "commit_counts", "motor_counts"):
+        _v = _ss.get(_stg)
+        if _v:
+            print(f"[sc-pv] arm={arm_name} {_stg:14s} N-S={_v['NS_surplus']:+.0f} ({_v['NS_pct']:+.1f}%) "
+                  f"E-W={_v['EW_surplus']:+.0f}", flush=True)
     return summary
 
 
@@ -291,6 +326,15 @@ def main():
     ap.add_argument("--opponent-axis-eps", type=int, default=0,
                     help="FIX 3 axis tie tolerance (counts): both axes tie if |axis margin| <= eps -> fall "
                          "through to the FIX-1 tie-break.")
+    ap.add_argument("--fixA", action="store_true",
+                    help="Cascade-accumulator FIX A: DIVISIVE NORMALIZATION at the sel_X accumulator INPUT "
+                         "(divide each sel_X by sigma + gain*mean over the four sel pools -> common-mode "
+                         "rejection BEFORE the Wang-2002 amplification). The scoping's rank-1 remedy; stack "
+                         "with --fix1. Applies to the SC arms.")
+    ap.add_argument("--sel-divnorm-sigma", type=float, default=1.0,
+                    help="FIX A semi-saturation sigma on the sel_X divisive pool.")
+    ap.add_argument("--sel-divnorm-gain", type=float, default=1.0,
+                    help="FIX A divisive strength on the four-sel mean term.")
     ap.add_argument("--with-conv", action="store_true",
                     help="merged bridge (the NEGATIVE config). Off = standalone nav SC (faster smoke).")
     ap.add_argument("--no-host", action="store_true", help="skip the host positive control.")
@@ -324,7 +368,10 @@ def main():
                                  fix1=args.fix1, fix2=args.fix2,
                                  tie_break_eps=args.tie_break_eps,
                                  fix3=args.fix3,
-                                 opponent_axis_eps=args.opponent_axis_eps))
+                                 opponent_axis_eps=args.opponent_axis_eps,
+                                 fixA=args.fixA,
+                                 sel_divnorm_sigma=args.sel_divnorm_sigma,
+                                 sel_divnorm_gain=args.sel_divnorm_gain))
 
     by = {s["arm"]: s for s in summaries}
     host = by.get("host")
@@ -363,6 +410,10 @@ def main():
         "popvector_fix1": (pv["fix1_tie_break"] if pv else None),
         "popvector_fix2": (pv["fix2_sel_homeostasis"] if pv else None),
         "popvector_fix3": (pv["fix3_opponent_axis"] if pv else None),
+        "popvector_fixA": (pv["fixA_sel_divnorm"] if pv else None),
+        "popvector_stage_surplus": (pv["stage_surplus"] if pv else None),
+        "ramp_stage_surplus": (ramp["stage_surplus"] if ramp else None),
+        "scramble_stage_surplus": (scr["stage_surplus"] if scr else None),
         "popvector_tie_break_fraction": (pv["tie_break_fraction"] if pv else None),
         "popvector_opponent_axis_fraction": (pv["opponent_axis_fraction"] if pv else None),
         "scramble_tie_break_fraction": (scr["tie_break_fraction"] if scr else None),

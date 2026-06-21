@@ -305,6 +305,7 @@ class SimulationBridge:
         self.cp_input_mean_ema = None                     # per-neuron slow EMA m of own input drive (None unless flagged region)
         self.cp_input_mean_adapt_mask = None              # bool per-neuron: True for input-mean-adapting neurons
         self.cp_input_divisive_mask = None                # bool per-neuron: True for per-concept divisive-norm neurons (None unless flagged region)
+        self.cp_input_divisive_mask_2 = None              # bool per-neuron: SECOND independent divisive-norm pool (FIX A, sel_X; None unless flagged region)
         # Cluster G v2 (2026-05-01): per-neuron NMDA mask (1.0 for neurons
         # in regions with BrainRegion.enable_nmda=True, 0.0 otherwise).
         # When None, NMDA applies globally per cfg.enable_nmda — backward
@@ -1335,6 +1336,29 @@ class SimulationBridge:
                         self._log_console(
                             f"Input-divisive-norm per-region mask: {len(idn_regions)} regions enabled "
                             f"({sum(int(r.n_neurons) for r in idn_regions)} neurons)",
+                        )
+
+                # SECOND, INDEPENDENT divisive-norm mask (Cascade-accumulator FIX A, 2026-06-20): an
+                # exact clone of the divisive mask above, built from BrainRegion.input_divisive_norm_2.
+                # Built ONLY if cfg.enable_input_divisive_norm_2 AND >=1 region sets the flag; otherwise
+                # cp_input_divisive_mask_2 stays None so default configs are byte-identical (the second
+                # per-step divisive block is unreached). The two pools are independent: the divisor for
+                # this pool is sigma_2 + gain_2*mean over THIS flagged set only (the four sel_X), so it
+                # divides out the common N+E+S+W selection drive without mixing in the cortex_X (pool-1)
+                # currents. Per-NEURON (n is known here), like the input-divisive / input-mean / NMDA masks.
+                if getattr(cfg, "enable_input_divisive_norm_2", False):
+                    idn2_regions = [r for r in self.region_manager.regions()
+                                    if getattr(r, "input_divisive_norm_2", False)]
+                    if idn2_regions:
+                        idn2_mask = cp.zeros(n, dtype=cp.bool_)
+                        for r in idn2_regions:
+                            idx = list(self.region_manager.indices(r.name))
+                            if idx:
+                                idn2_mask[cp.asarray(idx, dtype=cp.int64)] = True
+                        self.cp_input_divisive_mask_2 = idn2_mask
+                        self._log_console(
+                            f"Input-divisive-norm pool-2 per-region mask: {len(idn2_regions)} regions enabled "
+                            f"({sum(int(r.n_neurons) for r in idn2_regions)} neurons)",
                         )
 
             # GABA_B -> GIRK slow K+ inhibitory conductance (2026-06-08). The NMDA
@@ -6086,6 +6110,26 @@ class SimulationBridge:
                 total_input_current_pA = (
                     total_input_current_pA * (1.0 - _idn_mask_f)
                     + _idn_mask_f * total_input_current_pA / _idn_divisor)
+
+            # ── SECOND, INDEPENDENT divisive normalization (Cascade-accumulator FIX A, 2026-06-20).
+            # An exact clone of the divisive block above, on its OWN flagged set (the four sel_X
+            # accumulators) with its OWN sigma_2/gain_2. The mean is over the SECOND pool only, so the
+            # common N+E+S+W selection drive is divided out at the sel_X INPUT before the Wang-2002
+            # accumulators amplify it (the FIX A target; research/findings/2026-06-20-cascade-accumulator
+            # -Nbias-scoping.md). Independent of pool 1 (cortex_X bump-mass): the two pools never mix
+            # currents. GUARDED NO-OP: cp_input_divisive_mask_2 is None unless cfg.enable_input_divisive
+            # _norm_2 + a region sets input_divisive_norm_2=True, so this block is unreached and
+            # total_input_current_pA is byte-identical when off.
+            if self.cp_input_divisive_mask_2 is not None:
+                _idn2_sigma = cp.float32(getattr(cfg, "input_divisive_sigma_2", 1.0))
+                _idn2_gain = cp.float32(getattr(cfg, "input_divisive_gain_2", 1.0))
+                _idn2_mask_f = self.cp_input_divisive_mask_2.astype(cp.float32)
+                _idn2_n = cp.maximum(cp.sum(_idn2_mask_f), cp.float32(1.0))
+                _idn2_mean = cp.sum(_idn2_mask_f * total_input_current_pA) / _idn2_n
+                _idn2_divisor = _idn2_sigma + _idn2_gain * _idn2_mean
+                total_input_current_pA = (
+                    total_input_current_pA * (1.0 - _idn2_mask_f)
+                    + _idn2_mask_f * total_input_current_pA / _idn2_divisor)
 
             # ── Slow per-hub INPUT-MEAN adaptation (axis-0 per-feature centering, 2026-06-15;
             # subtractive spike-frequency adaptation / point-neuron predictive coding). For each

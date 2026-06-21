@@ -3671,6 +3671,24 @@ def run_moving_goal_episode(
     # research/findings/2026-06-20-cascade-north-bias-scoping.md (FIX 3).
     sc_opponent_axis: bool = False,
     sc_opponent_axis_eps: int = 0,             # axis tie tolerance (counts): tie if |axis margin| <= eps
+    # Cascade-accumulator FIX A (2026-06-20): DIVISIVE NORMALIZATION at the sel_X accumulator INPUT
+    # (the mechanistically-matched remedy for the residual North bias the FIX-1/2/3 read-out fixes could
+    # not remove at the source). The source probe localized a small thalamic N-over-S common-mode lead
+    # (~+11%) that the Wang-2002 sel_X NMDA-recurrent accumulators amplify (~12x absolute, to ~+26%);
+    # because the race integrates each ABSOLUTE drive, a common-mode additive offset is integrated like
+    # signal (Bogacz et al. 2006). When True, flag the four sel_{N,E,S,W} pools input_divisive_norm_2=True
+    # and enable cfg.enable_input_divisive_norm_2 (the SECOND, independent divisive pool added 2026-06-20),
+    # so each sel_X's input is divided by (sigma + gain*mean over the four sel pools) -- the common
+    # N+E+S+W drive is divided out BEFORE the accumulators amplify it, leaving the position-bearing
+    # differential (Carandini-Heeger canonical normalization; catalog E.05/E.16/E.17). A SEPARATE pool
+    # from the cortex_X bump-mass pool (input_divisive_norm/pool-1) so the two never mix currents. Master
+    # switch = the sc_sel_divnorm kwarg OR the SC_SEL_DIVNORM env var. Default OFF => byte-identical (no
+    # sel pool opts in; cp_input_divisive_mask_2 is None; the second per-step block is unreached).
+    # MINIMAL guarded sim/ edit (the second pool); FLAGGED for byte-review.
+    # research/findings/2026-06-20-shortcut6-FIXA-divnorm-accumulator.md (FIX A).
+    sc_sel_divnorm: bool = False,
+    sc_sel_divnorm_sigma: float = 1.0,         # Carandini-Heeger semi-saturation sigma on the sel_X pool
+    sc_sel_divnorm_gain: float = 1.0,          # divisive strength on the four-sel mean term
     # Cluster K v2 (2026-05-01)
     visual_receptive_field_radius: int = 4,
     visual_v1_weight_scale: float = 10.0,
@@ -4208,6 +4226,26 @@ def run_moving_goal_episode(
             print(f"[g11 seed={seed}] FIX 2: per-region homeostasis on {_n_flagged} sel_X pools "
                   f"(baseline equalization at the selection stage)", flush=True)
 
+    # Cascade-accumulator FIX A (2026-06-20): DIVISIVE NORMALIZATION at the sel_X accumulator INPUT.
+    # Flag the four sel_{N,E,S,W} pools BrainRegion.input_divisive_norm_2=True (the SECOND, independent
+    # divisive pool); the cfg.enable_input_divisive_norm_2 + sigma_2/gain_2 are set below (with the
+    # cortex_X pool-1 enable) BEFORE the bridge is built. Divides each sel_X input by (sigma_2 + gain_2*
+    # mean over the four sel pools) -> the common N+E+S+W drive is divided out at the INPUT, before the
+    # Wang-2002 accumulators amplify it. Master switch = the sc_sel_divnorm kwarg OR the SC_SEL_DIVNORM
+    # env var. Default OFF => byte-identical (no sel pool opts in; the second mask is None).
+    _sc_sel_divnorm = bool(sc_sel_divnorm) or (os.environ.get("SC_SEL_DIVNORM", "0") == "1")
+    if _sc_sel_divnorm:
+        _sel_names = {f"sel_{a}" for a in ACTION_NAMES}
+        _n_flagged_dn = 0
+        for _r in regions:
+            if _r.name in _sel_names:
+                _r.input_divisive_norm_2 = True
+                _n_flagged_dn += 1
+        if verbose:
+            print(f"[g11 seed={seed}] FIX A: divisive-norm pool-2 on {_n_flagged_dn} sel_X pools "
+                  f"(sigma={sc_sel_divnorm_sigma}, gain={sc_sel_divnorm_gain}) — common-mode rejection "
+                  f"at the accumulator input", flush=True)
+
     # Pre-compute sensory neuron preferred (dx, dy) — 7x7 grid covering [-3, 3]²
     if enable_learned_perception:
         sensory_pref = []
@@ -4359,6 +4397,15 @@ def run_moving_goal_episode(
         cfg.enable_input_divisive_norm = True
         cfg.input_divisive_sigma = float(sc_popvector_divnorm_sigma)
         cfg.input_divisive_gain = float(sc_popvector_divnorm_gain)
+    # Cascade-accumulator FIX A (2026-06-20): enable the SECOND, independent divisive pool when the
+    # sel_X divisive norm is on (the sel_X regions were flagged input_divisive_norm_2=True above).
+    # GUARDED: cp_input_divisive_mask_2 is built ONLY if cfg.enable_input_divisive_norm_2 AND >=1 region
+    # sets input_divisive_norm_2=True (sim/bridge.py), so when _sc_sel_divnorm is off this is byte-
+    # identical. Independent of pool 1: its divisor mean is over the sel_X set only.
+    if _sc_sel_divnorm:
+        cfg.enable_input_divisive_norm_2 = True
+        cfg.input_divisive_sigma_2 = float(sc_sel_divnorm_sigma)
+        cfg.input_divisive_gain_2 = float(sc_sel_divnorm_gain)
     # STEP 2a merge: build with OU on so the parser train pass's OU per-neuron state is ALLOCATED at init
     # (a runtime toggle does not allocate it). The post-init hook sets OU off for the nav episode after the
     # parser pass. Default False => standalone nav byte-equivalent (OU stays off).
@@ -7751,6 +7798,10 @@ def run_moving_goal_episode(
         "tie_break_fraction": (float(_tie_break_count) / float(_decision_total)
                                if _decision_total > 0 else 0.0),
         "sc_sel_homeostasis": bool(_sc_sel_homeo),
+        # Cascade-accumulator FIX A instrumentation (2026-06-20): the sel_X divisive-norm flag + op-point.
+        "sc_sel_divnorm": bool(_sc_sel_divnorm),
+        "sc_sel_divnorm_sigma": float(sc_sel_divnorm_sigma),
+        "sc_sel_divnorm_gain": float(sc_sel_divnorm_gain),
         # Cascade North-bias FIX 3 instrumentation (2026-06-20): how many decisions the opponent-axis
         # push-pull read-out decided by a signed axis margin (the anti-cheat that the axis margin is
         # load-bearing -- a GO needs the per-axis margin deciding, not a fall-through to the tie-break).

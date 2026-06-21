@@ -238,6 +238,13 @@ class BrainRegion:
     # feedforward divisive-gain circuit. Guarded no-op unless BOTH this flag and the global
     # cfg.enable_input_divisive_norm are set (cp_input_divisive_mask stays None otherwise).
     input_divisive_norm: bool = False
+    # SECOND, INDEPENDENT divisive-norm pool (Cascade-accumulator FIX A, 2026-06-20): a byte-identical
+    # clone of input_divisive_norm keyed by cfg.enable_input_divisive_norm_2 + sigma_2/gain_2, so a
+    # SEPARATE set of regions (the four sel_X selection accumulators) is normalized as its OWN pool,
+    # independent of the cortex_X bump-mass pool used by the #6 SC popvector read-out. Guarded no-op
+    # unless BOTH this flag and cfg.enable_input_divisive_norm_2 are set (cp_input_divisive_mask_2 stays
+    # None otherwise). See research/findings/2026-06-20-shortcut6-FIXA-divnorm-accumulator.md.
+    input_divisive_norm_2: bool = False
 
 
 @dataclass

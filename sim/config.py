@@ -470,6 +470,23 @@ class CoreSimConfig:
     # Divisive strength on the mean term.
     input_divisive_gain: float = 1.0
 
+    # ─── SECOND, INDEPENDENT divisive-norm pool (Cascade-accumulator FIX A, 2026-06-20) ───
+    # A byte-identical clone of the divisive primitive above, keyed by BrainRegion.input_divisive_norm_2
+    # and its own sigma_2/gain_2, so a SECOND group of regions can be common-mode-normalized as a
+    # SEPARATE pool (its divisor is sigma_2 + gain_2*mean over the SECOND flagged set only). Motivation:
+    # the #6 SC popvector read-out already flags the four cortex_X pools input_divisive_norm=True (pool 1
+    # = the bump-mass normalization, at the cortex current scale). The cascade North-bias FIX A needs an
+    # INDEPENDENT divisive normalization at the four sel_X selection accumulators (a DIFFERENT current
+    # scale) to divide out the common N+E+S+W drive BEFORE the Wang-2002 accumulators amplify it
+    # (research/findings/2026-06-20-cascade-accumulator-Nbias-scoping.md FIX A). One shared pool would
+    # mix cortex_X + sel_X currents into one mean and corrupt both; a second pool keeps them separate.
+    # GUARDED: unless enable_input_divisive_norm_2 AND a region sets BrainRegion.input_divisive_norm_2,
+    # cp_input_divisive_mask_2 stays None and the second per-step block is unreached -> byte-identical to
+    # today (no existing config sets these). Default OFF.
+    enable_input_divisive_norm_2: bool = False
+    input_divisive_sigma_2: float = 1.0
+    input_divisive_gain_2: float = 1.0
+
     # ─── Synapse tiering (Phase 3 Strategy B, 2026-05-11) ──────────
     # Activity-tracked TieredSynapseStore mirrors the per-pathway CSRs
     # alongside the monolithic cp_connections. Foundation for Phase 4
