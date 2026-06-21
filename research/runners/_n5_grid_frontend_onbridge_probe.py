@@ -136,6 +136,21 @@ def _grid_place_sensor_act(x, y, landmarks, n_bearing, n_dist, max_int, falloff,
 _HOMEO = {"adapt_rate": 0.0, "target_rate": 0.0, "ema_alpha": 0.0}  # 0 = no override (the runner default)
 
 
+# ── deterministic-READ lever (the #5b deterministic-scatter δ close, 2026-06-22) ──────────────
+# RANK-1a per `research/findings/2026-06-22-shortcut5b-deterministic-scatter-scoping.md` (a48ad76f):
+# the secondary SNc-burst δ holds only 2/3 because the read-time critic rate is seed-variable (17/65/254
+# Hz), root-caused to CuPy's transpose-SpMV atomic-scatter non-determinism on the place→critic path. The
+# deterministic-scatter SpMV ALREADY EXISTS (.tocsr()-materialize, numerically-allclose) and is wired at
+# all five critic-path matvec sites in sim/bridge.py, gated on cfg.deterministic_transpose_matvec. The
+# runner (g11_bg_runner.py:5510-5548) only toggles it ON for STEP-1 self-org and RESTORES it OFF before
+# the value-train + δ-read. The fix is to set the cfg field to True in _patched_init BEFORE the runner's
+# `_saved_detmv = getattr(...)` capture — so the runner's restore (`= _saved_detmv`) keeps it ON through
+# the value-train + δ-read, giving a seed-stable volley strength → a single critic-rate regime → the
+# SNc-burst δ holds 3/3 under ONE config. NO sim/ edit (the deterministic branch ships); probe-only.
+# 0 = off (the runner default; STEP-1-only determinism, byte-identical).
+_DETMV = {"read": False}
+
+
 # ── graded-plateau install (VERBATIM from the CLOSE A probe) ──────────────────────────────────
 _CLOSEA = {
     "enable": False, "center": 1.5, "slope": 1.0, "strength": 80.0,
@@ -160,6 +175,13 @@ def _patched_init(self, *a, **kw):
             c.coincidence_plateau_strength = 0.0
             c.graded_plateau_strength = float(_CLOSEA["strength"])
         _CLOSEA["_armed"] = False
+    # the #5b deterministic-READ lever (RANK-1a): set cfg.deterministic_transpose_matvec=True so the
+    # runner's STEP-1 toggle captures `_saved_detmv=True` and RESTORES it back to True (not OFF) after
+    # self-org → the deterministic-scatter SpMV stays ON through the value-train + δ-read → seed-stable
+    # place→critic volley strength → a single critic-rate regime across seeds → the SNc-burst δ holds
+    # 3/3. NO sim/ edit (the deterministic branch already ships at all five critic-path matvec sites).
+    if _DETMV["read"]:
+        self.core_config.deterministic_transpose_matvec = True
     # the δ-readout STABILIZATION lever: speed the critic-homeostasis threshold adaptation (+ optional
     # target rate) so the critic converges to the biological target on every place-code draw.
     if _HOMEO["adapt_rate"] and _HOMEO["adapt_rate"] > 0:
@@ -713,6 +735,13 @@ def main():
                          "gabab_conductance_max, default 0=off=byte-identical): cap g_gabab so a hot "
                          "critic cannot fully CLAMP the SNc (graded subtraction at any rate) -> the "
                          "genuine SNc-burst δ stays graded instead of over-clamping on high-volley draws.")
+    ap.add_argument("--deterministic-read", action="store_true",
+                    help="the #5b deterministic-scatter δ close (RANK-1a, 2026-06-22): hold the EXISTING "
+                         "cfg.deterministic_transpose_matvec ON through the value-train + δ-read (the runner "
+                         "only toggles it for STEP-1 self-org + restores it OFF). Pins the place->critic "
+                         "transpose-SpMV atomic-scatter order -> seed-stable critic rate -> the SNc-burst δ "
+                         "holds 3/3 under one config. NO sim/ edit (the deterministic branch ships); "
+                         "default off = the runner's STEP-1-only determinism (byte-identical).")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
@@ -722,6 +751,7 @@ def main():
     _HOMEO["adapt_rate"] = float(args.critic_homeo_adapt_rate)
     _HOMEO["target_rate"] = float(args.critic_homeo_target_rate)
     _HOMEO["ema_alpha"] = float(args.critic_homeo_ema_alpha)
+    _DETMV["read"] = bool(args.deterministic_read)
 
     # install the monkeypatches (the grid render + the graded plateau init/gate hooks).
     g._n9_place_sensor_act = _grid_place_sensor_act
