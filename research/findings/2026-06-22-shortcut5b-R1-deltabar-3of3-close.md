@@ -32,15 +32,28 @@ SNc GABA_B subtraction over-clamps. The five levers and why each fails:
 | **(b) settling window** (settle_steps=200 before the gap read) | still 0.0 | — | **INSUFFICIENT**: the over-clamp is regime-structural (the strong graded V over-drives the critic for as long as place is on), not a transient the critic relaxes out of. |
 | **(c) fixed GIRK-cap** (`critic_gabab_max=1.0`, bounds g_gabab) | **FIXES** → gap 2.0, gabab_gap True | **BREAKS** → 42 gap 6.67→1.0, 43 True→False | **TRADES seeds**: the gentle seeds need g_gabab UNBOUNDED to subtract at their low critic rate; the hot seed needs it BOUNDED to not over-clamp. No single cap reconciles the opposite requirements. |
 | **(d) critic-rate homeostasis** (fast-EMA intrinsic-threshold adaptation) | still 258 Hz / 0.0 | **PRESERVES** → 42 gap 5.0, 43 True | preserves the gentle seeds (unlike the cap) but **cannot pull down seed-44's READ-time rate** — the weighted-plateau toggle re-over-drives it regardless of the trained threshold (= the prior doc's Attempt 2). |
-| **(e) lower graded-plateau strength** (80→40, drops V_near 1034→520) | still 292 Hz / 0.0 | — | the critic over-fires from the **weighted-plateau READ toggle** (the learned WEIGHT), NOT the graded plateau current, so lowering the graded strength does not lower the read-time critic rate. |
+| **(e) lower graded-plateau strength** (the V_near magnitude at source) | strength 80/40: still 292 Hz / 0.0; strength 15 (V_near→16): **FIXES** → crit 66 Hz, gabab_gap True | strength 15 **BREAKS** → 42 crit→0 Hz (doesn't fire), gabab_gap False | **TRADES seeds (the same trade as the cap)**: a high strength is needed for the gentle seed's critic to fire AT ALL, but it over-drives the hot seed; a low strength un-clamps the hot seed but the gentle seed's critic then can't fire → no GABA_B → no gap. Opposite requirements, irreconcilable. (At intermediate strength 25, seed 44's authoritative read still over-clamps but the SETTLED-regime read `gabab_gap_graded` starts to recover — a promising lead for a settled-read close, below.) |
 
 **Root cause (robust, the SURPASS ISOLATE):** the seed-44 place volley is so strong (the documented
-non-determinism) that the stage-B weighted-plateau READ over-drives the critic to ~290 Hz → the SNc
-subtraction over-clamps; the gentle seeds need the opposite g_gabab regime, so no single read-time or
-build-time knob reconciles them. **R1 is UNAFFECTED throughout (V n/f stays 5.04× selective on seed 44 — the
-place value IS selective; only the SNc somatic readout saturates).** ⇒ the host-Gaussian scaffold's
-retirement rests on R1 (the afferent-selectivity wall, closed 3/3), with the secondary δ-readout over-clamp
-a precisely-characterized substrate boundary downstream of it, not an R1 failure.
+non-determinism) that the stage-B weighted-plateau READ over-drives the critic into the over-clamp regime;
+the gentle seeds need the OPPOSITE regime (enough drive for their critic to fire at all). The two ends of
+the seed-variable critic-rate spread (17–292 Hz) require opposite settings of EVERY global knob tried
+(g_gabab cap, graded strength, homeostasis target), so no single global knob holds the δ 3/3 — it always
+trades the gentle seeds for the hot seed or vice-versa. **R1 is UNAFFECTED throughout (V n/f stays 4.51–5.04×
+selective on every seed at every knob setting — the place value IS selective; only the SNc somatic readout
+saturates on the hot seed).** ⇒ the host-Gaussian scaffold's retirement rests on R1 (the afferent-
+selectivity wall, closed 3/3), with the secondary δ-readout over-clamp a precisely-characterized substrate
+boundary downstream of it, not an R1 failure.
+
+**The one promising lead (a deeper, non-single-global-knob close, NOT pursued to 3/3 here):** at lower
+graded strength the SETTLED-regime read (`gabab_gap_graded`, `coincidence_weighted_drive=False` — NOT the
+over-driving weighted-plateau toggle) recovers seed 44's δ (settled `gabab_gap_graded`=True at strength 25;
+the authoritative weighted-plateau read still over-clamps there). A **strength + settled-regime read**
+combination MIGHT hold 3/3 — but it requires (i) re-validating the settled read collapses for the controls
+(it is closer to the graded-V read, so it must be checked it is not similarly structurally contaminated)
+and (ii) finding a single strength that fires the gentle-seed critic in the settled regime without breaking
+it — i.e. it still faces the gentle-vs-hot tension, just in the settled regime. It is a real next lead, not
+a closed 3/3.
 
 **NO `sim/` edit, NO `g11_bg_runner.py` edit.** All five levers are probe-level (reuse-by-import); the
 GIRK-cap is the EXISTING `critic_gabab_max` kwarg (default 0 = off = byte-identical). The no-confab moat is
