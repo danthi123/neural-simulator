@@ -444,8 +444,180 @@ def _read_graded_v_near_far(captured, result):
         return {"error": repr(e)}
 
 
+def _read_graded_v_delta(captured, result, *, settle_steps=0):
+    """The GRADED-V-only δ read (the SURPASS ISOLATE move (a)) — decouple the δ residual from the
+    SNc-burst over-clamp.
+
+    The stage-B `snc_gap_ratio` (the WEIGHTED-plateau read) over-fires the critic on high-volley draws
+    (seed 44: critic ~260 Hz) -> the SNc over-clamps (GABA_B silences the SNc at BOTH near AND far) ->
+    that δ inverts to 0.0 even though the GRADED VALUE is robustly selective (v_near/v_far 4.5-12.3x on
+    every seed). The fix is to read δ from the already-3/3 graded value V, NOT the over-driving somatic
+    burst. Two faithful graded-V δ forms (both on the captured bridge, the place plateau supplying the
+    differential V; NO weighted-plateau toggle -> no over-clamp):
+
+      (a1) delta_vnf       : the graded plateau conductance near/far RATIO itself (the doc's "host-Gaussian
+                             exact analog read") — the direct R1-fix quantity. >= the δ bar trivially when
+                             the value is selective.
+      (a2) delta_snc_graded: the GENUINE r-V RPE gap (snc_unpred_FAR / snc_pred_NEAR), read in the SETTLED
+                             count-plateau critic regime (coincidence_weighted_drive=FALSE — the regime the
+                             value-train + homeostasis ran in, ~30 Hz critic), so the differential V comes
+                             from the graded plateau WITHOUT the weighted-plateau somatic over-drive. Keeps
+                             the RPE shape but does not saturate the SNc.
+
+    `settle_steps` (move (b)) runs a brief homeostasis SETTLING window (place@near drive, learning off)
+    before the gap read so an over-fired critic relaxes toward its target before δ is read. settle_steps=0
+    = move (a) only (no settle).
+    """
+    br = _CLOSEA["bridge"]
+    if br is None:
+        return None
+    try:
+        from sim.backend import get_backend
+        xp, _ = get_backend()
+        rm = getattr(br, "region_manager", None)
+        if rm is None:
+            return None
+        d = rm.region_indices_dict()
+        for need in ("striosome_value", "snc", "place_sensors"):
+            if need not in d:
+                return {"error": f"missing region {need}"}
+        c_idx = xp.asarray(np.asarray(d["striosome_value"], dtype=np.int64))
+        s_idx = xp.asarray(np.asarray(d["snc"], dtype=np.int64))
+        ps_idx = xp.asarray(np.asarray(d["place_sensors"], dtype=np.int64))
+        n_snc = int(s_idx.size) if hasattr(s_idx, "size") else len(s_idx)
+        has_reward_us = "reward_us" in d
+        ru_idx = xp.asarray(np.asarray(d["reward_us"], dtype=np.int64)) if has_reward_us else None
+        max_int = float(captured.get("place_sensor_max_intensity", 450.0))
+        snc_tonic = float(captured.get("snc_tonic_pa", 220.0))
+        snc_reward_gain = float(captured.get("snc_reward_gain", 400.0))
+        reward_us_drive = float(captured.get("reward_us_drive_pa", 250.0))
+        spiking_reward_us = bool(captured.get("spiking_reward_us", True))
+        lead_steps = int(captured.get("critic_lead_steps", 120))
+        hold_steps = int(captured.get("value_train_hold_steps", 40))
+
+        sb = (result or {}).get("stage_b_smoke") or {}
+        near = sb.get("near") or [6.0, 6.0]
+        far = sb.get("far") or [1.0, 1.0]
+
+        if _GRID["enable"]:
+            if _GRID["_code"] is None:
+                _build_grid_code()
+            def _act(px, py):
+                return (_GRID["_code"](float(px), float(py)) * max_int * float(_GRID["drive_scale"])).astype(np.float32)
+        else:
+            grid_size = int(captured.get("grid_size", 32))
+            landmarks = g._n9_place_landmarks(grid_size)
+            dist_max = float(grid_size) * 1.42
+            def _act(px, py):
+                return _orig_place_sensor_act(
+                    px, py, landmarks, int(captured.get("n_place_bearing", 12)),
+                    int(captured.get("n_place_dist", 8)), max_int,
+                    float(captured.get("place_sensor_falloff", 0.03)),
+                    float(captured.get("place_sensor_dist_sigma", 4.0)), dist_max,
+                    float(captured.get("place_sensor_bexp", 4.0)))
+
+        def _reset():
+            # clean the slow plateau + GABA_B + SNc/critic membrane between reads (mirror
+            # _n9_reset_critic_read_state: contamination across near<->far reads = false grading).
+            for nm in ("cp_conductance_g_coincidence", "cp_conductance_g_coincidence_rise",
+                       "cp_conductance_g_graded_plateau", "cp_conductance_g_graded_plateau_rise",
+                       "cp_conductance_g_gabab"):
+                arr = getattr(br, nm, None)
+                if arr is not None:
+                    arr[:] = xp.float32(0.0)
+            if (getattr(br, "cp_membrane_potential_v", None) is not None
+                    and getattr(br, "cp_izh_vr", None) is not None):
+                br.cp_membrane_potential_v[c_idx] = br.cp_izh_vr[c_idx]
+                br.cp_membrane_potential_v[s_idx] = br.cp_izh_vr[s_idx]
+                if getattr(br, "cp_recovery_variable_u", None) is not None:
+                    br.cp_recovery_variable_u[c_idx] = xp.float32(0.0)
+                    br.cp_recovery_variable_u[s_idx] = xp.float32(0.0)
+            br.cp_external_input_current[:] = xp.float32(0.0)
+            for _ in range(60):
+                br._run_one_simulation_step(); br.runtime_state.current_time_step += 1
+
+        def _snc_burst_rate_graded(px, py):
+            """The r-V SNc burst rate in the SETTLED (non-over-driving) count-plateau regime: the graded
+            plateau supplies the differential V (it is already on, strength set by the readout-only swap);
+            coincidence_weighted_drive STAYS at its converged value (no weighted-plateau over-drive)."""
+            _reset()
+            act = xp.asarray(_act(px, py), dtype=xp.float32)
+            # optional SETTLING (move b): let an over-fired critic relax toward its homeostatic target
+            # under place drive before the gap read (learning off; SNc tonic only).
+            if settle_steps and settle_steps > 0:
+                saved = br.core_config.reward_learning_rate
+                br.core_config.reward_learning_rate = 0.0
+                br.cp_external_input_current[:] = xp.float32(0.0)
+                br.cp_external_input_current[ps_idx] = act
+                br.cp_external_input_current[s_idx] = xp.float32(snc_tonic)
+                for _ in range(int(settle_steps)):
+                    br._run_one_simulation_step(); br.runtime_state.current_time_step += 1
+                br.core_config.reward_learning_rate = saved
+            # LEAD: place drive -> critic fires -> GABA_B builds onto SNc BEFORE the reward burst.
+            br.cp_external_input_current[:] = xp.float32(0.0)
+            br.cp_external_input_current[ps_idx] = act
+            br.cp_external_input_current[s_idx] = xp.float32(snc_tonic)
+            saved = br.core_config.reward_learning_rate
+            br.core_config.reward_learning_rate = 0.0
+            # accumulate the mean GABA_B conductance ON the SNc during the LEAD — the DIRECT V-subtraction
+            # term (the "-V" in δ=r-V). It grades with the learned V (near >> far) and, unlike the SNc
+            # SOMATIC burst, does NOT saturate when V is large (a clamped SNc still has a large g_gabab) ->
+            # the most over-clamp-DECOUPLED RPE-shaped read. None if GABA_B is not enabled on this bridge.
+            gabab_arr = getattr(br, "cp_conductance_g_gabab", None)
+            gb_sum = 0.0; gb_m = 0
+            for _ in range(int(lead_steps)):
+                br._run_one_simulation_step(); br.runtime_state.current_time_step += 1
+                if gabab_arr is not None:
+                    gb_sum += float(gabab_arr[s_idx].mean()); gb_m += 1
+            gabab_lead = (gb_sum / gb_m) if (gabab_arr is not None and gb_m > 0) else None
+            # REWARD burst (place still on) — the spiking US afferent fires into the SNc (fully-spiking r).
+            if spiking_reward_us and ru_idx is not None:
+                br.cp_external_input_current[s_idx] = xp.float32(snc_tonic)
+                br.cp_external_input_current[ru_idx] = xp.float32(reward_us_drive)
+            else:
+                br.cp_external_input_current[s_idx] = xp.float32(snc_tonic + snc_reward_gain)
+            spk = 0
+            for _ in range(int(hold_steps)):
+                br._run_one_simulation_step(); br.runtime_state.current_time_step += 1
+                spk += int(br.cp_firing_states[s_idx].sum())
+            br.core_config.reward_learning_rate = saved
+            br.cp_external_input_current[:] = xp.float32(0.0)
+            return (spk / max(n_snc, 1) / max(int(hold_steps) * 1e-3, 1e-9), gabab_lead)
+
+        # (a2) the genuine r-V SNc-burst gap in the settled regime; (a3) the GABA_B-conductance gap.
+        snc_pred, gb_near = _snc_burst_rate_graded(near[0], near[1])    # NEAR: V subtracts
+        snc_unpred, gb_far = _snc_burst_rate_graded(far[0], far[1])     # FAR: no V
+        delta_snc_graded = snc_unpred / max(snc_pred, 1e-6)
+        gabab_gap_graded = bool(snc_unpred > 1.30 * max(snc_pred, 1e-6))
+        # (a3) the GABA_B-conductance δ: near >> far V-subtraction = the prediction graded with V; immune
+        # to the SNc somatic over-clamp. δ_gabab = g_gabab(near) / g_gabab(far).
+        delta_gabab = (float(gb_near / max(gb_far, 1e-12))
+                       if (gb_near is not None and gb_far is not None) else None)
+        gabab_cond_gap = bool(delta_gabab is not None and delta_gabab >= 1.30)
+
+        # (a1) the pure graded-V near/far ratio (the direct R1-fix read) — reuse the same-bridge V read.
+        grv = _read_graded_v_near_far(captured, result) or {}
+        delta_vnf = float(grv.get("v_near_over_far", 0.0))
+
+        return {
+            "settle_steps": int(settle_steps),
+            "delta_vnf": delta_vnf,                                    # (a1) graded V near/far ratio
+            "vnf_gap": bool(delta_vnf >= 1.30),
+            "snc_pred_near_hz": float(snc_pred), "snc_unpred_far_hz": float(snc_unpred),
+            "delta_snc_graded": float(delta_snc_graded),               # (a2) settled-regime SNc r-V gap
+            "gabab_gap_graded": gabab_gap_graded,
+            "gabab_near": (float(gb_near) if gb_near is not None else None),   # (a3) the -V subtraction term
+            "gabab_far": (float(gb_far) if gb_far is not None else None),
+            "delta_gabab": delta_gabab,                                # (a3) g_gabab(near)/g_gabab(far)
+            "gabab_cond_gap": gabab_cond_gap,
+        }
+    except Exception as e:
+        return {"error": repr(e)}
+
+
 def _run_delta_arm(arm, seed, *, value_train_trials, single_goal, readout_only,
-                   center, slope, strength, value_train_w_max=0.0):
+                   center, slope, strength, value_train_w_max=0.0, settle_steps=0,
+                   critic_gabab_max=0.0):
     """One delta-verdict arm. arm in {grid, render, scramble, no_learn, lesion}."""
     grid_on = arm in ("grid", "scramble", "no_learn", "lesion")
     scramble = (arm == "scramble")
@@ -466,6 +638,10 @@ def _run_delta_arm(arm, seed, *, value_train_trials, single_goal, readout_only,
         # cap the place->value soft-bound DURING value-train so the critic settles in the GRADED
         # ~3-6 range (the de-risk's stdp_w_max=40 regime) instead of over-firing/over-clamping the SNc.
         captured["value_train_stdp_w_max"] = float(value_train_w_max)
+    if critic_gabab_max and critic_gabab_max > 0:
+        # the principled GIRK-saturation regime fix: cap g_gabab so a hot critic cannot fully clamp the
+        # SNc -> the genuine SNc-burst δ stays GRADED on high-volley draws (the over-clamp seed-44 fix).
+        captured["critic_gabab_max"] = float(critic_gabab_max)
     if arm == "no_learn":
         captured["value_train_trials"] = 0
     if grid_on:
@@ -482,9 +658,13 @@ def _run_delta_arm(arm, seed, *, value_train_trials, single_goal, readout_only,
     print("=" * 72, flush=True)
     result = real_fn(**captured)
     grv = _read_graded_v_near_far(captured, result)
+    # the SURPASS ISOLATE move (a)/(b): the GRADED-V-only δ read (decoupled from the SNc-burst
+    # over-clamp). delta_vnf = (a1) the graded V near/far ratio; delta_snc_graded = (a2) the genuine
+    # r-V gap in the settled count-plateau regime (+ optional move-(b) settling window).
+    graded_delta = _read_graded_v_delta(captured, result, settle_steps=settle_steps)
     sb = (result or {}).get("stage_b_smoke") or {}
     return {"arm": arm, "grid_on": grid_on, "scramble": scramble, "n_grid": n_grid,
-            "graded_v": grv, "stage_b": sb,
+            "graded_v": grv, "graded_delta": graded_delta, "stage_b": sb,
             "goal_free_asserted": _GRID.get("_asserted_goal_free", False) if grid_on else None}
 
 
@@ -524,6 +704,15 @@ def main():
     ap.add_argument("--critic-homeo-ema-alpha", type=float, default=0.0,
                     help="speed the homeostasis rate-estimate EMA (runner default 0.0002 tau~5000 steps "
                          "is too slow to register over-firing in the value-train window); 0=no override.")
+    ap.add_argument("--settle-steps", type=int, default=0,
+                    help="the SURPASS move (b): homeostasis SETTLING window (steps) under place drive "
+                         "before the graded-V SNc gap read, so an over-fired critic relaxes toward its "
+                         "target before δ is read; 0=move (a) only (no settle).")
+    ap.add_argument("--critic-gabab-max", type=float, default=0.0,
+                    help="the principled GIRK-saturation regime fix (already in sim/, cfg field "
+                         "gabab_conductance_max, default 0=off=byte-identical): cap g_gabab so a hot "
+                         "critic cannot fully CLAMP the SNc (graded subtraction at any rate) -> the "
+                         "genuine SNc-burst δ stays graded instead of over-clamping on high-volley draws.")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
@@ -554,15 +743,23 @@ def main():
                                readout_only=args.readout_only,
                                center=args.graded_center, slope=args.graded_slope,
                                strength=args.graded_strength,
-                               value_train_w_max=args.value_train_w_max)
+                               value_train_w_max=args.value_train_w_max,
+                               settle_steps=args.settle_steps,
+                               critic_gabab_max=args.critic_gabab_max)
             results[arm] = r
             sb = r.get("stage_b") or {}; grv = r.get("graded_v") or {}
+            gd = r.get("graded_delta") or {}
             print(f"[grid-onbridge DELTA RESULT seed={args.seed} arm={arm}] "
                   f"LEARNS-V={sb.get('learns_v')} (w_n/w_f={sb.get('w_near_over_far')}) "
                   f"critic@near={sb.get('crit_near_hz')}Hz @far={sb.get('crit_far_hz')}Hz "
                   f"grade={sb.get('crit_grade_ratio')} | V_near={grv.get('v_near')} "
                   f"V_far={grv.get('v_far')} V_n/f={grv.get('v_near_over_far')} | "
-                  f"delta(gap)={sb.get('snc_gap_ratio')} gabab_gap={sb.get('gabab_gap')}", flush=True)
+                  f"snc-burst-delta(gap)={sb.get('snc_gap_ratio')} gabab_gap={sb.get('gabab_gap')} | "
+                  f"GRADED-V delta_vnf={gd.get('delta_vnf')} (vnf_gap={gd.get('vnf_gap')}) "
+                  f"delta_snc_graded={gd.get('delta_snc_graded')} "
+                  f"(snc_pred={gd.get('snc_pred_near_hz')} snc_unpred={gd.get('snc_unpred_far_hz')}) | "
+                  f"GABA_B-cond delta_gabab={gd.get('delta_gabab')} (gap={gd.get('gabab_cond_gap')}) "
+                  f"[gb_near={gd.get('gabab_near')} gb_far={gd.get('gabab_far')}]", flush=True)
         out_obj["arms"] = results
 
     if args.out:
