@@ -71,11 +71,22 @@ With the flag ON, the entire bind structure for a role is a **one-time device co
 
 - **No capability added** — the strategic prize (generalization across similar concepts) is already delivered on the *codes* axis (`2026-06-15-on-bridge-hebbian-co-occurrence-learning-mechanism-GO.md`). This closes a brain-based-purity + hardware-portability residual only.
 - **Not "learned," but "developmental"** — the conjugate is now a *local wiring rule* run at construction, not a *host computation*. Under the project's own standard (`dendritic_neuron.py:25`, catalog F.12/D.18/L.01) a fixed local wiring rule IS developmental self-organization — exactly how the genome specifies the retina's center-surround. Making the conjugate *activity-learned* (Mechanism 2: reciprocal-STDP refinement) remains the weeks-scale, research-grade option, worth attempting only if the local-rule reduction is judged insufficiently "emergent."
-- **Out of scope (separate residuals, NOT touched here):** (1) the cleanup codebook `np.conj` over the concept codes (`rf_phasor_composer.py:255/335`) — the scoping marks it "reducible to LEARNED" (Option-1 GO), a different residual; (2) `OneBrainComposer`'s own batched-scan `np.conj(comp._to_phasor(comp.roles[role]))` calls (`one_brain_composer.py:360/396/465/535/546/633`) — the same local-rule reduction applies there and is a clean bounded follow-on, but the controller-verified residual for THIS scope was `rf_phasor_composer.py`'s `_unbind_phases`.
+- **Out of scope (a separate residual, NOT touched):** the cleanup codebook `np.conj` over the concept codes (`rf_phasor_composer.py:255/335`; `one_brain_composer.py` 7 `comp.concepts[...]` sites) — the scoping marks it "reducible to LEARNED" (Option-1 GO), a different residual.
+
+## Extension — the PRODUCTION-default one-brain path (`--composer onebrain`) closed too
+
+The controller-verified residual for THIS scope was `rf_phasor_composer.py`'s `_unbind_phases`, closed above. But `OneBrainComposer` (the flagship production default at V=320, `--composer onebrain`) carries the SAME unbind residual at **6 sites** (`comp.roles[...]`: lines ~360/396/465/556/567/654 — block decode, batched unbind ×2, clause decode ×2, reconsolidation). Since the owner's goal is hardware-portability of the *production* bind structure, the same rule was threaded through it (default-OFF):
+
+- `OneBrainComposer(local_reciprocal_unbind=False)` (default) propagates the flag to the inner `RFPhasorComposer`; a single `_unbind_conj(role)` helper returns `comp._local_conj(role_phasor)` (the local rule) when ON, else `np.conj(role_phasor)`. All 6 unbind-structure sites route through it; the 7 cleanup-codebook conj sites (`comp.concepts[...]`) are left untouched (the separate out-of-scope residual).
+- `_local_conj(z) == np.conj(z)` **bit-for-bit** for a unit phasor (max|diff| = 0.0, verified directly) — so the answer-identity is backend-independent (the masked `rf_kick` is GPU; the math is not).
+- **CPU smoke, 3 seeds:** `OneBrainComposer` store+query OFF vs ON byte-identical — `query_agent('go','north')='dog'`, `query_patient('cat','run')='south'`, `query_patient('dog','go')='north'`, and the moat `query_agent('go','south')=None` — all three seeds identical. The shared `_local_conj` primitive makes the GPU production path identical by the same bit-for-bit argument.
+
+⇒ the host `np.conj` computation of the unbind structure is eliminated on BOTH the `rf` reference composer and the `onebrain` production default; the cleanup-codebook conj is the only remaining (separate, reducible-to-learned) conj residual.
 
 ## Files
 
-- `research/runners/rf_phasor_composer.py` — `local_reciprocal_unbind` flag + `_bind_conns` + `_reciprocal_conjugate` + the branch in `_unbind_phases` / `_unbind_all_phases`.
+- `research/runners/rf_phasor_composer.py` — `local_reciprocal_unbind` flag + `_local_conj` (the shared local-conj primitive) + `_bind_conns` + `_reciprocal_conjugate` + the branch in `_unbind_phases` / `_unbind_all_phases`.
+- `research/runners/one_brain_composer.py` — the same `local_reciprocal_unbind` flag (propagated to the inner composer) + `_unbind_conj` routing all 6 unbind-structure sites through the local rule (cleanup conj untouched).
 - `research/runners/_fhrr_b_mechanism1_local_reciprocal_unbind_derisk.py` — the de-risk runner (byte-equivalence gate, substrate-purity, anti-cheats, hardware-port note).
 - `research/findings/raw/_fhrr_b_mechanism1_local_reciprocal_unbind.json` — the raw result.
 - `tests/test_rf_phasor_composer.py` — the CI guard (+30 existing tests pass unchanged).

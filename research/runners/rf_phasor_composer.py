@@ -181,17 +181,26 @@ class RFPhasorComposer:
         return [(hi + k, lo + k, zr[k]) for k in range(D)]
 
     @staticmethod
-    def _reciprocal_conjugate(bind_conns):
+    def _local_conj(z):
+        """The LOCAL per-component phase-conjugate of a unit phasor (array or scalar): the quadrature
+        (imaginary-component) sign flip `re + i*im -> re - i*im`, computed LOCALLY from the value's own re/im with NO
+        np.conj. For |z|=1 this equals conj(z) = 1/z bit-for-bit. The single shared primitive both the single-block
+        rule (_reciprocal_conjugate) and OneBrainComposer's unbind-structure build use, so the "no host conj, just a
+        local quadrature flip" purity property is uniform across the production composers."""
+        a = np.asarray(z)
+        return a.real - 1j * a.imag
+
+    @classmethod
+    def _reciprocal_conjugate(cls, bind_conns):
         """The LOCAL reciprocal-conjugate WIRING RULE (FHRR-B mechanism 1): derive the UNBIND synapses from the BIND
         synapses by a per-synapse operation -- for each bind synapse (post, pre, w), the reciprocal/feedback synapse
-        carries the phase-conjugate of w. For a unit-magnitude phasor this is the quadrature (imaginary-component)
-        sign flip `re + i*im -> re - i*im`, computed LOCALLY from each synapse's OWN weight (NOT re-derived from the
-        role code, NOT np.conj over the role vector). Biologically a reciprocal connection with a quadrature-sign
-        flip (the ubiquitous cortical/thalamocortical reciprocal motif). The values equal conj(w) bit-for-bit, so
-        held-out recovery is byte-identical to the host-conj path -- but the unbind structure now emerges from a
-        one-time local construction rule over the bind connectivity, host-free at runtime (the neuromorphic-port
-        property: a one-time device configuration, no host in the loop per op)."""
-        return [(post, pre, complex(w.real, -w.imag)) for (post, pre, w) in bind_conns]
+        carries the phase-conjugate of w (the _local_conj quadrature flip). Computed LOCALLY from each synapse's OWN
+        weight (NOT re-derived from the role code, NOT np.conj over the role vector). Biologically a reciprocal
+        connection with a quadrature-sign flip (the ubiquitous cortical/thalamocortical reciprocal motif). The values
+        equal conj(w) bit-for-bit, so held-out recovery is byte-identical to the host-conj path -- but the unbind
+        structure now emerges from a one-time local construction rule over the bind connectivity, host-free at runtime
+        (the neuromorphic-port property: a one-time device configuration, no host in the loop per op)."""
+        return [(post, pre, complex(cls._local_conj(w))) for (post, pre, w) in bind_conns]
 
     def _bind(self, role_phases, filler_phases):
         """bound = role_phasor (x) filler_phasor, via a diagonal complex synapse (filler pre -> bound post,

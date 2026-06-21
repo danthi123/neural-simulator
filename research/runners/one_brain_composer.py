@@ -93,8 +93,18 @@ class OneBrainComposer:
     def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200, enable_batched=True,
                  enable_rf_cudagraph=True, grounded_codes=None, confidence_gate=0.0, enable_csr_cache=True,
                  enable_attributed=False, enable_multiframe=False, enable_spiking_cleanup=False,
-                 encoding_gain_fn=None):
+                 encoding_gain_fn=None, local_reciprocal_unbind=False):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
+        # local_reciprocal_unbind (FHRR-B mechanism 1, opt-in, DEFAULT-OFF = byte-identical): derive the UNBIND
+        # synapse weights from the BIND (role) phasor by the one-time LOCAL reciprocal-conjugate rule (a per-component
+        # quadrature flip via comp._local_conj) instead of the host np.conj over the role code. Closes the same host
+        # residual on the PRODUCTION-default one-brain path that the rf composer's flag closes on its `_unbind_phases`:
+        # conj(role) becomes a local wiring rule the construction step applies, so the bind structure is host-free at
+        # runtime (the neuromorphic-port property). Applies to the 6 UNBIND-structure sites (comp.roles[...]); the
+        # cleanup-codebook conj (comp.concepts[...]) is a SEPARATE residual (reducible-to-learned) left untouched.
+        # Byte-identical (the local conj == host conj bit-for-bit for a unit phasor). See
+        # research/findings/2026-06-20-FHRR-B-mechanism1-local-reciprocal-unbind.md.
+        self.local_reciprocal_unbind = bool(local_reciprocal_unbind)
         # encoding_gain_fn (Tier-2 #6, opt-in, DEFAULT-OFF = byte-identical): the one-brain mirror of the RF composer's
         # DOPAMINE-GATED ENCODING STRENGTH (Lisman-Grace hippocampal-VTA loop; Kandel D.16 -- dopamine gates the entry of
         # information into LONG-TERM memory, making a trace STABLE vs degradable). An optional callable () -> float read
@@ -147,7 +157,8 @@ class OneBrainComposer:
         # grounded_codes (optional word->phases): the learned-from-conversation concept codes (e.g. the 320 stream-learned
         # cortex). Passed to the inner RFPhasorComposer, which overrides its random codes for those words -> the cleanup
         # codebook + the binding both use the learned codes (production parity with the rf composer's grounded path).
-        self.comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, period=period, grounded_codes=grounded_codes)
+        self.comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, period=period, grounded_codes=grounded_codes,
+                                     local_reciprocal_unbind=local_reciprocal_unbind)
         self.words = list(self.comp.words)              # the cleanup codebook = the composer's ACTUAL vocab
         self.V = len(self.words)
         self.R = 40; self.P = 6 + 3 * self.R; self.k_max = int(k_max)
@@ -295,6 +306,16 @@ class OneBrainComposer:
             raise RuntimeError(f"OneBrainComposer store full: k_max={self.k_max} reached (shard or raise k_max)")
         self._write_block(i, self._compose_phases(fillers, roles))
 
+    def _unbind_conj(self, role):
+        """The UNBIND synapse weight phasor for `role` = conj(role phasor). DEFAULT (local_reciprocal_unbind=False):
+        the host np.conj (the legacy path -- the genuine host residual). With the flag ON: the LOCAL reciprocal-
+        conjugate rule (comp._local_conj, a per-component quadrature flip of the role phasor) -- no host np.conj, the
+        unbind structure derived locally from the bind (role) phasor. Byte-identical (== conj for a unit phasor).
+        Used at every unbind-structure site so the production one-brain bind structure becomes host-free at runtime."""
+        comp = self.comp
+        zr = comp._to_phasor(comp.roles[role])
+        return comp._local_conj(zr) if self.local_reciprocal_unbind else np.conj(zr)
+
     # --- query (cue-matching scan; reconstruct ONCE per block, read all 4 roles in PARALLEL) ---
     @staticmethod
     def _margin(scores):
@@ -357,7 +378,7 @@ class OneBrainComposer:
         b.rf_resonate_steps(Pd + 8)
         unbind = []
         for ri, role in enumerate(self.bind_roles):
-            zc = np.conj(comp._to_phasor(comp.roles[role]))
+            zc = self._unbind_conj(role)
             unbind += [(self.q_base + ri * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
         b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
         clean = []
@@ -393,7 +414,7 @@ class OneBrainComposer:
         for i in range(n):
             trig = self.store_base + i * self.block
             for ri, role in enumerate(self.bind_roles):
-                zc = np.conj(comp._to_phasor(comp.roles[role]))
+                zc = self._unbind_conj(role)
                 qreg = self.bat_q_base + (i * nr + ri) * D
                 unbind += [(qreg + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
         clean = []
@@ -462,7 +483,7 @@ class OneBrainComposer:
         for i in range(n):
             trig = self.store_base + i * self.block
             for ri, role in enumerate(self.bind_roles):
-                zc = np.conj(comp._to_phasor(comp.roles[role]))
+                zc = self._unbind_conj(role)
                 qreg = self.bat_q_base + (i * nr + ri) * D
                 unbind += [(qreg + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
         b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
@@ -532,7 +553,7 @@ class OneBrainComposer:
         kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
         b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
-        zc = np.conj(comp._to_phasor(comp.roles["patient"]))
+        zc = self._unbind_conj("patient")
         outer = [(self.q_base + pq * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
         b.rf_set_complex_weights(outer); b.rf_resonate_steps(Pd + 8)
         clause_phases = np.asarray(b.rf_read_phases())[self.q_base + pq * D:self.q_base + (pq + 1) * D]
@@ -543,7 +564,7 @@ class OneBrainComposer:
         kick2[self.q_base + pq * D:self.q_base + (pq + 1) * D] = comp._to_phasor(clause_phases)
         inner = []
         for ri, role in enumerate(ROLES3):
-            zcr = np.conj(comp._to_phasor(comp.roles[role]))
+            zcr = self._unbind_conj(role)
             inner += [(self.q_base + ri * D + k, self.q_base + pq * D + k, complex(zcr[k])) for k in range(D)]
         b.rf_set_complex_weights(inner); b.rf_kick(kick2, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
@@ -630,7 +651,7 @@ class OneBrainComposer:
         kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
         b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
-        zc = np.conj(comp._to_phasor(comp.roles["patient"]))
+        zc = self._unbind_conj("patient")
         unbind = [(self.q_base + 2 * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]      # patient -> Q[2]
         b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
         return np.asarray(b.rf_read_phases())[self.q_base + 2 * D:self.q_base + 3 * D]

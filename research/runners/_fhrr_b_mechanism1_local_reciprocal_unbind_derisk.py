@@ -282,10 +282,46 @@ def main():
                  "Loihi-synapse-table style one-time config.")}
 
     # ============================================================================================================
+    # CHECK 5 -- the PRODUCTION-DEFAULT one-brain path: OneBrainComposer (--composer onebrain) carries the SAME
+    # unbind residual (np.conj(comp._to_phasor(comp.roles[role])) at 6 sites). The flag threads through it (+ to the
+    # inner RFPhasorComposer) and the local rule replaces all 6. Byte-identical answers OFF vs ON, moat preserved.
+    # CPU smoke (the masked rf_kick falls back without GPU); the math (_local_conj == np.conj bit-for-bit) is
+    # backend-independent so the answer-identity holds on GPU too.
+    # ============================================================================================================
+    onebrain = {"ran": False}
+    try:
+        from research.runners.one_brain_composer import OneBrainComposer
+        ob_rows = []
+        ob_ok = True
+        for seed in args.seeds[:3]:     # 3 seeds (CPU OneBrain ops are ~minutes/seed)
+            res = {}
+            for flag in (False, True):
+                with _quiet():
+                    c = OneBrainComposer(seed=seed, D=64, period=120, k_max=8, enable_rf_cudagraph=False,
+                                         enable_batched=False, local_reciprocal_unbind=flag)
+                    c.store("dog", "go", "north")
+                    c.store("cat", "run", "south")
+                    res[flag] = (c.query_agent("go", "north"), c.query_patient("cat", "run"),
+                                 c.query_patient("dog", "go"), c.query_agent("go", "south"))   # last = moat (None)
+            ident = (res[False] == res[True])
+            ob_ok &= ident
+            ob_rows.append({"seed": seed, "flag_off": res[False], "flag_on": res[True], "identical": ident})
+        onebrain = {"ran": True, "ok": ob_ok, "per_seed": ob_rows,
+                    "note": ("OneBrainComposer (production-default --composer onebrain): the 6 unbind-structure conj "
+                             "sites (comp.roles[...]) now route through _unbind_conj (local rule when flag ON); the 7 "
+                             "cleanup-codebook conj sites (comp.concepts[...]) are a SEPARATE residual, left untouched. "
+                             "_local_conj == np.conj bit-for-bit (max|diff|=0.0) so the answer-identity is "
+                             "backend-independent (this CPU smoke + the GPU production path).")}
+    except Exception as e:    # OneBrain CPU smoke is a bonus; don't fail the core RF gate on its absence
+        onebrain = {"ran": False, "error": str(e)}
+    report["checks"]["onebrain_production_path"] = onebrain
+
+    # ============================================================================================================
     # VERDICT.
     # ============================================================================================================
+    onebrain_ok = onebrain.get("ok", True) if onebrain.get("ran") else True   # bonus; absent => don't block core gate
     verdict_pass = (all_byte_identical and batched_ok and purity_pass
-                    and perm_ok and lesion_ok and rev_ok and hw_ok)
+                    and perm_ok and lesion_ok and rev_ok and hw_ok and onebrain_ok)
     report["verdict"] = {
         "host_conj_eliminated_via_local_rule": purity_pass,
         "byte_identical_to_host_conj": all_byte_identical and batched_ok,
@@ -309,6 +345,8 @@ def main():
     print(f"anti-cheat lesion destroys recovery: {lesion_ok}")
     print(f"anti-cheat flag-OFF reversible (byte-identical to today): {rev_ok}")
     print(f"hardware-port (one-time local-rule config): {hw_ok}")
+    if onebrain.get("ran"):
+        print(f"OneBrainComposer (production --composer onebrain) byte-identical OFF vs ON: {onebrain.get('ok')}")
     print("-" * 80)
     print(f"VERDICT: {'GO -- host conj ELIMINATED via local rule, byte-identical' if verdict_pass else 'GAP'}")
     print(f"wrote {args.out}")

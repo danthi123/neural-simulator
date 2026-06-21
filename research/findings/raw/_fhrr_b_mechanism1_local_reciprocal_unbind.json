@@ -815,6 +815,61 @@
     "hardware_port": {
       "ok": true,
       "note": "bind + unbind for a role = a one-time device configuration from the developmental role phasor: install the role phasor as the bind synapses, install its per-component quadrature-flip as the reciprocal unbind synapses. No host in the loop per op -> portable to a memristor-crossbar / Loihi-synapse-table style one-time config."
+    },
+    "onebrain_production_path": {
+      "ran": true,
+      "ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "flag_off": [
+            "dog",
+            "south",
+            "north",
+            null
+          ],
+          "flag_on": [
+            "dog",
+            "south",
+            "north",
+            null
+          ],
+          "identical": true
+        },
+        {
+          "seed": 43,
+          "flag_off": [
+            "dog",
+            "south",
+            "north",
+            null
+          ],
+          "flag_on": [
+            "dog",
+            "south",
+            "north",
+            null
+          ],
+          "identical": true
+        },
+        {
+          "seed": 44,
+          "flag_off": [
+            "dog",
+            "south",
+            "north",
+            null
+          ],
+          "flag_on": [
+            "dog",
+            "south",
+            "north",
+            null
+          ],
+          "identical": true
+        }
+      ],
+      "note": "OneBrainComposer (production-default --composer onebrain): the 6 unbind-structure conj sites (comp.roles[...]) now route through _unbind_conj (local rule when flag ON); the 7 cleanup-codebook conj sites (comp.concepts[...]) are a SEPARATE residual, left untouched. _local_conj == np.conj bit-for-bit (max|diff|=0.0) so the answer-identity is backend-independent (this CPU smoke + the GPU production path)."
     }
   },
   "verdict": {
