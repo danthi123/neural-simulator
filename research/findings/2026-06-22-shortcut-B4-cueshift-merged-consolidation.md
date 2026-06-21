@@ -114,7 +114,7 @@ cause-1 alone fixed the tonic but not yet the reference).
 |---|---|---|---|---|
 | 42 | −0.665 | ✓ | 2/4 | just under the strict bar (the HS98 boundary regime) |
 | 43 | **−0.771** | ✓ | 2/4 | crosses the strict bar |
-| 44 | <!-- FILL --> | <!-- --> | <!-- --> | migrates (peak → bin 1 by trial 10; US-bin 180 → 68 Hz) |
+| 44 | (pending) | ✓ (in flight) | — | migrates (peak → bin 1 by trial 10; US-bin 180 → 68 Hz); final r GPU-contention-pending (the 3-seed run is starved by the controller's concurrent overnight fronts) |
 
 The migration **re-learns** on the merged bridge on every completed seed: the peak migrates US-bin → cue-bin
 (`migration_dir` ✓), the cue value grows, the US reward burst shrinks (180 → 68–70 Hz as the cue value accrues). The
