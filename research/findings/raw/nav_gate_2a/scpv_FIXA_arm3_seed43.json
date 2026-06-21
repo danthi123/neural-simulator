@@ -1,0 +1,610 @@
+{
+  "verdict": {
+    "seed": 43,
+    "grid_size": 32,
+    "n_steps": 1800,
+    "sel_divnorm_sigma": 2.0,
+    "sel_divnorm_gain": 0.1,
+    "HOST_post_change_finalQ_sum": 1.5929203539823011,
+    "FIX1_post_change_finalQ_sum": 78.26548672566372,
+    "FIX1A_post_change_finalQ_sum": 111.42477876106196,
+    "SCRAM_post_change_finalQ_sum": null,
+    "HOST_gate_score": 2.194690265486726,
+    "FIX1_gate_score": 120.69026548672566,
+    "FIX1A_gate_score": 114.63716814159292,
+    "SCRAM_gate_score": null,
+    "FIX1_sel_NS_pct": 23.68,
+    "FIX1A_sel_NS_pct": 10.26,
+    "FIX1_sel_NS_abs": 11601.0,
+    "FIX1A_sel_NS_abs": 151.0,
+    "HOST_tracking": {
+      "dominant_per_phase": [
+        "E",
+        "W",
+        "E",
+        "E"
+      ],
+      "n_distinct": 2,
+      "has_W": true,
+      "has_E": true,
+      "tracks_goal": true
+    },
+    "FIX1_tracking": {
+      "dominant_per_phase": [
+        "N",
+        "W",
+        "E",
+        "W"
+      ],
+      "n_distinct": 3,
+      "has_W": true,
+      "has_E": true,
+      "tracks_goal": true
+    },
+    "FIX1A_tracking": {
+      "dominant_per_phase": [
+        "N",
+        "N",
+        "N",
+        "N"
+      ],
+      "n_distinct": 1,
+      "has_W": false,
+      "has_E": false,
+      "tracks_goal": false
+    },
+    "SCRAM_tracking": null,
+    "FIX1A_late_sustain": 0.09444444444444444,
+    "FIX1A_stage_surplus": {
+      "thal_counts": {
+        "N": 10033.0,
+        "E": 9808.0,
+        "S": 9719.0,
+        "W": 9844.0,
+        "NS_surplus": 314.0,
+        "NS_pct": 3.18,
+        "EW_surplus": -36.0
+      },
+      "sel_counts": {
+        "N": 1547.0,
+        "E": 1765.0,
+        "S": 1396.0,
+        "W": 1543.0,
+        "NS_surplus": 151.0,
+        "NS_pct": 10.26,
+        "EW_surplus": 222.0
+      },
+      "commit_counts": {
+        "N": 1586.0,
+        "E": 2514.0,
+        "S": 1762.0,
+        "W": 1947.0,
+        "NS_surplus": -176.0,
+        "NS_pct": -10.51,
+        "EW_surplus": 567.0
+      },
+      "motor_counts": {
+        "N": 364.0,
+        "E": 578.0,
+        "S": 423.0,
+        "W": 381.0,
+        "NS_surplus": -59.0,
+        "NS_pct": -14.99,
+        "EW_surplus": 197.0
+      }
+    },
+    "FIX1_stage_surplus": {
+      "thal_counts": {
+        "N": 10402.0,
+        "E": 10295.0,
+        "S": 9974.0,
+        "W": 10437.0,
+        "NS_surplus": 428.0,
+        "NS_pct": 4.2,
+        "EW_surplus": -142.0
+      },
+      "sel_counts": {
+        "N": 54795.0,
+        "E": 52362.0,
+        "S": 43194.0,
+        "W": 55022.0,
+        "NS_surplus": 11601.0,
+        "NS_pct": 23.68,
+        "EW_surplus": -2660.0
+      },
+      "commit_counts": {
+        "N": 56640.0,
+        "E": 55889.0,
+        "S": 47049.0,
+        "W": 58191.0,
+        "NS_surplus": 9591.0,
+        "NS_pct": 18.5,
+        "EW_surplus": -2302.0
+      },
+      "motor_counts": {
+        "N": 1188.0,
+        "E": 1223.0,
+        "S": 1046.0,
+        "W": 1672.0,
+        "NS_surplus": 142.0,
+        "NS_pct": 12.71,
+        "EW_surplus": -449.0
+      }
+    },
+    "moat_untouched": "by construction (no --with-conv: cp_rf_w_* never allocated; nav cascade is cp_connections/cp_membrane_potential_v/cp_firing_states, array-disjoint)",
+    "host_over_FIX1A_post_ratio": 0.014295925661186563,
+    "FIX1A_over_SCRAM_post_ratio": null,
+    "SCRAM_note": "killed mid-run (harness/watchdog ~50min); SCRAM is the anti-cheat that only discriminates when FIX1A tracks -- FIX1A is stuck-N here so SCRAM is moot for this negative",
+    "NOTE": "3 primary arms (HOST/FIX1/FIX1A) complete + salvaged. Confirms FIX-A negative: sel N-S abs shrinks 11601->151 (~77x); pct shrinks 23.68->10.26 (seed-variable vs seed42 where it grew); but FIX1A stuck-N (no re-orient) vs FIX1 tracks 4/4, FIX1A post 111.42 >> FIX1 78.27 >> host 1.59. FIX-A HURTS tracking in BOTH seeds."
+  },
+  "arms": {
+    "HOST": {
+      "arm": "host",
+      "seed": 43,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "fix1_tie_break": false,
+      "fix2_sel_homeostasis": false,
+      "fix3_opponent_axis": false,
+      "fixA_sel_divnorm": false,
+      "fixA_sel_divnorm_sigma": 1.0,
+      "fixA_sel_divnorm_gain": 1.0,
+      "fixB_sel_opponent_pair": false,
+      "fixB_sel_opponent_weight": 12.0,
+      "fixB_sel_crossaxis_weight": 0.0,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 11333.0,
+          "E": 14289.0,
+          "S": 10884.0,
+          "W": 13489.0,
+          "NS_surplus": 449.0,
+          "NS_pct": 4.04,
+          "EW_surplus": 800.0
+        },
+        "sel_counts": {
+          "N": 21838.0,
+          "E": 77809.0,
+          "S": 22217.0,
+          "W": 74171.0,
+          "NS_surplus": -379.0,
+          "NS_pct": -1.72,
+          "EW_surplus": 3638.0
+        },
+        "commit_counts": {
+          "N": 22011.0,
+          "E": 78155.0,
+          "S": 22755.0,
+          "W": 75359.0,
+          "NS_surplus": -744.0,
+          "NS_pct": -3.32,
+          "EW_surplus": 2796.0
+        },
+        "motor_counts": {
+          "N": 3131.0,
+          "E": 11109.0,
+          "S": 3168.0,
+          "W": 10688.0,
+          "NS_surplus": -37.0,
+          "NS_pct": -1.17,
+          "EW_surplus": 421.0
+        }
+      },
+      "tie_break_count": 0,
+      "decision_total": 1800,
+      "tie_break_fraction": 0.0,
+      "opponent_axis_count": 0,
+      "opponent_axis_fraction": 0.0,
+      "sc_cortex_w": null,
+      "divnorm_sigma": null,
+      "divnorm_gain": null,
+      "per_phase_finalQ": [
+        0.6017699115044248,
+        0.5221238938053098,
+        0.5663716814159292,
+        0.504424778761062
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          67,
+          187,
+          38,
+          158
+        ],
+        [
+          6,
+          204,
+          6,
+          234
+        ],
+        [
+          91,
+          120,
+          120,
+          119
+        ],
+        [
+          5,
+          235,
+          5,
+          205
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.149,
+          "E": 0.416,
+          "S": 0.084,
+          "W": 0.351
+        },
+        {
+          "N": 0.013,
+          "E": 0.453,
+          "S": 0.013,
+          "W": 0.52
+        },
+        {
+          "N": 0.202,
+          "E": 0.267,
+          "S": 0.267,
+          "W": 0.264
+        },
+        {
+          "N": 0.011,
+          "E": 0.522,
+          "S": 0.011,
+          "W": 0.456
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "E",
+        "W",
+        "E",
+        "E"
+      ],
+      "phase0_finalQ": 0.6017699115044248,
+      "post_change_finalQ": [
+        0.5221238938053098,
+        0.5663716814159292,
+        0.504424778761062
+      ],
+      "post_change_finalQ_sum": 1.5929203539823011,
+      "gate_score": 2.194690265486726,
+      "motor_sustain_frac": 1.0,
+      "late_motor_sustain_frac": 1.0,
+      "episode_json": "research/findings/raw/nav_gate_2a\\arm3_seed43\\scpv_host_seed43.json"
+    },
+    "FIX1": {
+      "arm": "sc_popvector",
+      "seed": 43,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "fix1_tie_break": true,
+      "fix2_sel_homeostasis": false,
+      "fix3_opponent_axis": false,
+      "fixA_sel_divnorm": false,
+      "fixA_sel_divnorm_sigma": 1.0,
+      "fixA_sel_divnorm_gain": 1.0,
+      "fixB_sel_opponent_pair": false,
+      "fixB_sel_opponent_weight": 12.0,
+      "fixB_sel_crossaxis_weight": 0.0,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 10402.0,
+          "E": 10295.0,
+          "S": 9974.0,
+          "W": 10437.0,
+          "NS_surplus": 428.0,
+          "NS_pct": 4.2,
+          "EW_surplus": -142.0
+        },
+        "sel_counts": {
+          "N": 54795.0,
+          "E": 52362.0,
+          "S": 43194.0,
+          "W": 55022.0,
+          "NS_surplus": 11601.0,
+          "NS_pct": 23.68,
+          "EW_surplus": -2660.0
+        },
+        "commit_counts": {
+          "N": 56640.0,
+          "E": 55889.0,
+          "S": 47049.0,
+          "W": 58191.0,
+          "NS_surplus": 9591.0,
+          "NS_pct": 18.5,
+          "EW_surplus": -2302.0
+        },
+        "motor_counts": {
+          "N": 1188.0,
+          "E": 1223.0,
+          "S": 1046.0,
+          "W": 1672.0,
+          "NS_surplus": 142.0,
+          "NS_pct": 12.71,
+          "EW_surplus": -449.0
+        }
+      },
+      "tie_break_count": 647,
+      "decision_total": 1800,
+      "tie_break_fraction": 0.35944444444444446,
+      "opponent_axis_count": 0,
+      "opponent_axis_fraction": 0.0,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 5.0,
+      "divnorm_gain": 0.02,
+      "per_phase_finalQ": [
+        42.424778761061944,
+        1.2654867256637168,
+        33.49557522123894,
+        43.50442477876106
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          125,
+          100,
+          109,
+          116
+        ],
+        [
+          98,
+          127,
+          84,
+          141
+        ],
+        [
+          101,
+          125,
+          103,
+          121
+        ],
+        [
+          108,
+          117,
+          100,
+          125
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.278,
+          "E": 0.222,
+          "S": 0.242,
+          "W": 0.258
+        },
+        {
+          "N": 0.218,
+          "E": 0.282,
+          "S": 0.187,
+          "W": 0.313
+        },
+        {
+          "N": 0.224,
+          "E": 0.278,
+          "S": 0.229,
+          "W": 0.269
+        },
+        {
+          "N": 0.24,
+          "E": 0.26,
+          "S": 0.222,
+          "W": 0.278
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W",
+        "E",
+        "W"
+      ],
+      "phase0_finalQ": 42.424778761061944,
+      "post_change_finalQ": [
+        1.2654867256637168,
+        33.49557522123894,
+        43.50442477876106
+      ],
+      "post_change_finalQ_sum": 78.26548672566372,
+      "gate_score": 120.69026548672566,
+      "motor_sustain_frac": 0.2511111111111111,
+      "late_motor_sustain_frac": 0.10555555555555556,
+      "episode_json": "research/findings/raw/nav_gate_2a\\arm3_seed43\\scpv_sc_popvector_seed43.json"
+    },
+    "FIX1A": {
+      "arm": "sc_popvector",
+      "seed": 43,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "fix1_tie_break": true,
+      "fix2_sel_homeostasis": false,
+      "fix3_opponent_axis": false,
+      "fixA_sel_divnorm": true,
+      "fixA_sel_divnorm_sigma": 2.0,
+      "fixA_sel_divnorm_gain": 0.1,
+      "fixB_sel_opponent_pair": false,
+      "fixB_sel_opponent_weight": 12.0,
+      "fixB_sel_crossaxis_weight": 0.0,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 10033.0,
+          "E": 9808.0,
+          "S": 9719.0,
+          "W": 9844.0,
+          "NS_surplus": 314.0,
+          "NS_pct": 3.18,
+          "EW_surplus": -36.0
+        },
+        "sel_counts": {
+          "N": 1547.0,
+          "E": 1765.0,
+          "S": 1396.0,
+          "W": 1543.0,
+          "NS_surplus": 151.0,
+          "NS_pct": 10.26,
+          "EW_surplus": 222.0
+        },
+        "commit_counts": {
+          "N": 1586.0,
+          "E": 2514.0,
+          "S": 1762.0,
+          "W": 1947.0,
+          "NS_surplus": -176.0,
+          "NS_pct": -10.51,
+          "EW_surplus": 567.0
+        },
+        "motor_counts": {
+          "N": 364.0,
+          "E": 578.0,
+          "S": 423.0,
+          "W": 381.0,
+          "NS_surplus": -59.0,
+          "NS_pct": -14.99,
+          "EW_surplus": 197.0
+        }
+      },
+      "tie_break_count": 7,
+      "decision_total": 1800,
+      "tie_break_fraction": 0.0038888888888888888,
+      "opponent_axis_count": 0,
+      "opponent_axis_fraction": 0.0,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 5.0,
+      "divnorm_gain": 0.02,
+      "per_phase_finalQ": [
+        3.2123893805309733,
+        23.238938053097346,
+        45.230088495575224,
+        42.95575221238938
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          155,
+          115,
+          92,
+          88
+        ],
+        [
+          161,
+          105,
+          85,
+          99
+        ],
+        [
+          168,
+          96,
+          89,
+          97
+        ],
+        [
+          154,
+          91,
+          109,
+          96
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.344,
+          "E": 0.256,
+          "S": 0.204,
+          "W": 0.196
+        },
+        {
+          "N": 0.358,
+          "E": 0.233,
+          "S": 0.189,
+          "W": 0.22
+        },
+        {
+          "N": 0.373,
+          "E": 0.213,
+          "S": 0.198,
+          "W": 0.216
+        },
+        {
+          "N": 0.342,
+          "E": 0.202,
+          "S": 0.242,
+          "W": 0.213
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "N",
+        "N",
+        "N",
+        "N"
+      ],
+      "phase0_finalQ": 3.2123893805309733,
+      "post_change_finalQ": [
+        23.238938053097346,
+        45.230088495575224,
+        42.95575221238938
+      ],
+      "post_change_finalQ_sum": 111.42477876106196,
+      "gate_score": 114.63716814159292,
+      "motor_sustain_frac": 0.14055555555555554,
+      "late_motor_sustain_frac": 0.09444444444444444,
+      "episode_json": "research/findings/raw/nav_gate_2a\\arm3_seed43\\scpv_sc_popvector_seed43.json"
+    }
+  }
+}

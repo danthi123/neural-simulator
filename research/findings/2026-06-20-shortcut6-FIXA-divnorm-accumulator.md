@@ -140,9 +140,28 @@ COUNTER-PRODUCTIVE for re-orienting:**
 5. **Moat untouched** by construction (no `--with-conv` ⇒ `cp_rf_w_*` never allocated; the nav cascade is
    `cp_connections`/`cp_membrane_potential_v`/`cp_firing_states`, array-disjoint).
 
-(Per-seed JSON: `scpv_FIXA_arm3_seed{42,43,...}.json`. Confirmation seeds 43+ follow; this is a clean
-mechanistic null — divisive-common-scalar-cannot-shrink-a-ratio + SCRAM-not-collapsing — so the confirm
-seeds are corroboration, not a borderline-effect resolution.)
+**Seed 43 (3 primary arms HOST/FIX1/FIX1+A complete; SCRAM killed mid-run by the harness ~50 min, moot here
+since FIX1+A doesn't track) — CONFIRMS the negative:**
+
+| seed | metric | HOST | FIX1 | FIX1+A |
+|---|---|---|---|---|
+| 43 | sel N−S abs | — | 11601 | **151 (~77× smaller)** |
+| 43 | sel N−S % | — | 23.68% | **10.26% (shrinks here)** |
+| 43 | post_change_finalQ_sum | 1.59 | 78.27 | **111.42** |
+| 43 | tracks_goal (dominants) | — | True (N,W,E,W) | **FALSE (N,N,N,N stuck)** |
+
+**2-seed read (the negative is robust on the load-bearing metric):** the ABSOLUTE surplus-shrink is large in
+both (8535→820 seed-42, 11601→151 seed-43, ~10–77×). The PERCENT effect is SEED-VARIABLE (grows 18.2→28.4%
+at seed 42; shrinks 23.7→10.3% at seed 43) — consistent with a common-scalar divisor whose net effect on the
+ratio rides on the lower-drive f-I nonlinearity, i.e. it does not reliably reduce the relative bias. But in
+BOTH seeds **FIX-A fails to re-orient and is WORSE than FIX1** (FIX1 tracks 3–4/4 distinct dominants; FIX1+A
+is stuck on a single cardinal — E at seed 42, N at seed 43; FIX1+A post_change ≫ FIX1 ≫ host). The divisive
+flatten throws away the SC goal-direction signal. ⇒ a robust, mechanistically-clear NEGATIVE; the host
+orienting heuristic does NOT retire on FIX-A.
+
+(Note: the full 1800-step grid-32 runs are ~50 min/seed on the shared GPU and the harness terminated the
+seed-43 SCRAM arm mid-run; the 2-seed agreement on the structural re-orient null + the SURPASS round below
+is the deliverable. Per-seed JSON: `scpv_FIXA_arm3_seed{42,43}.json`.)
 
 ---
 
