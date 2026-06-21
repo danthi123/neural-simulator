@@ -1708,6 +1708,13 @@ def nav_on_merged_smoke(seed=42, n_steps=400, grid_size=8, vocab=None,
         box["n_conv"] = int(h["parser_mask"].sum())
 
     print(f"[nav-on-merged-smoke] seed={seed} grid={grid_size} n_steps={n_steps} (enable_visual_cortex => Gabor rebuild)")
+    # NOTE (production-wiring nav chunk item 1, 2026-06-21): the merged-nav episode now INHERITS the
+    # `log_polar_retina=True` library default of run_moving_goal_episode (the #6 biology-faithful SC
+    # retina, 5/6-GO). It is BYTE-INERT in THIS gate because the STEP-2a byte-identity smoke runs the
+    # host-argmax nav cascade WITHOUT the spiking SC (the SC eye-drive render that consumes the flag is
+    # gated on enable_spiking_sc, off here) -> the GREEN_INERT nav byte-identity is preserved. It takes
+    # effect on the spiking-SC merged path (MergedNavConvAgent(nav_critic_spiking_sc=True)), making the
+    # log-polar render the merged-nav default there.
     run_moving_goal_episode(
         out_path=out, seed=seed, n_steps=n_steps, grid_size=grid_size,
         enable_visual_cortex=True, visual_cortex_action_warmup_steps=min(100, max(1, n_steps // 2)),

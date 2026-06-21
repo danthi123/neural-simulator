@@ -3705,7 +3705,21 @@ def run_moving_goal_episode(
     # selection) stays fully spiking and just gets a non-truncated input. Default False =>
     # byte-identical (the linear render reproduces unchanged). NO sim/ edit (the render is in this
     # runner). Env-var SC_LOG_POLAR=1 also enables it (parallels SC_POPVECTOR / SC_CORTEX_W).
-    log_polar_retina: bool = False,
+    #
+    # PRODUCTION DEFAULT = True (2026-06-21, production-wiring nav chunk item 1, after the #6 5/6-GO
+    # confirmation `research/findings/2026-06-22-shortcut6-log-polar-render-derisk.md`): the
+    # biology-faithful log-polar SC retina is now the library default. This is BYTE-INERT for the
+    # host-argmax read-out (the `--readout-source motor`/`thal` ORACLE) and for every standalone run
+    # that does not enable the spiking SC, because the egocentric SC eye-drive render that consumes
+    # this flag is GATED on `enable_spiking_sc and "sc_retina" in region_indices_cp`
+    # (g11_bg_runner.py:~7104) -- and `enable_spiking_sc` itself defaults False. So flipping this
+    # default regresses NO documented standalone benchmark (none enable the spiking SC by default);
+    # it only takes effect on the spiking-SC orienting path (the merged-nav default, where
+    # `nav_critic_spiking_sc=True` builds the SC), making the biology-faithful render the default
+    # there. The `--log-polar-retina` / `--no-log-polar-retina` CLI flags + the SC_LOG_POLAR env var
+    # give explicit override (`--no-log-polar-retina` reproduces the linear render byte-identically =>
+    # revertible).
+    log_polar_retina: bool = True,
     log_polar_d0: float = 1.0,                  # foveal scale (cells): smaller -> more foveal magnification
     # Cascade North-bias FIX 1 (2026-06-20): tie-aware STOCHASTIC action read-out. The host reads the
     # spiking decision with `max(range(N), key=...)` (:7073), and Python's max returns the FIRST index
@@ -8437,6 +8451,17 @@ def main():
                          "are unperturbed. Combine with "
                          "--genuine-thal-disinhibition. See "
                          "research/findings/2026-06-06-N6-spiking-wta-readout-*.")
+    ap.add_argument("--log-polar-retina", action=argparse.BooleanOptionalAction,
+                    default=True,
+                    help="#6 SC orienting (production default ON, 2026-06-21): the "
+                         "biology-faithful log-polar / foveal-magnified egocentric "
+                         "SC retina (Ottes-Van Gisbergen; Hafed 2019; catalog "
+                         "E.04/H.25). BYTE-INERT unless the spiking SC is active "
+                         "(the eye-drive render is gated on enable_spiking_sc), so "
+                         "this only matters on the spiking-SC orienting path. "
+                         "--no-log-polar-retina reproduces the legacy linear render "
+                         "byte-identically (revertible). See "
+                         "research/findings/2026-06-22-shortcut6-log-polar-render-derisk.md.")
     ap.add_argument("--n-sel-per-action", type=int, default=20,
                     help="Neurons per sel_X selection pool (spiking_wta readout).")
     ap.add_argument("--n-sel-fs-per-action", type=int, default=10,
@@ -9384,6 +9409,7 @@ def main():
             sc_popvector_readout=args.sc_popvector_readout,
             sc_popvector_divnorm_sigma=args.sc_popvector_divnorm_sigma,
             sc_popvector_divnorm_gain=args.sc_popvector_divnorm_gain,
+            log_polar_retina=args.log_polar_retina,
             visual_cortex_action_warmup_steps=args.visual_cortex_action_warmup_steps,
             visual_v1_weight_scale=args.visual_v1_weight_scale,
             visual_image_size=args.visual_image_size,
