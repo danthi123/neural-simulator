@@ -511,9 +511,21 @@ def _patched_set_gate(self, name, value):
             self.core_config.coincidence_plateau_strength = 0.0
             self.core_config.graded_plateau_strength = float(_CLOSEA["strength"])
             _CLOSEA["_armed"] = False
+            # the CLEAN metric-lesion anti-cheat: shuffle the learned place→value V FIRST (on the raw
+            # value-trained weights), THEN normalize — so the shuffled (flat-ratio) lesion is
+            # MAGNITUDE-MATCHED to the grid arm (both land at w_near→target) and the ONLY difference is the
+            # learned near/far RATIO. If the δ then collapses, it is the genuine LEARNED ratio; if it
+            # survives at flat ratio + matched magnitude, it is the graded-V structural contamination.
+            if _LESION_SHUFFLE_V["enable"] and not _LESION_SHUFFLE_V["_applied"]:
+                _LESION_SHUFFLE_V["_applied"] = True
+                try:
+                    _lesion_shuffle_v(self)
+                except Exception as e:
+                    print(f"[lesion shuffle-V] failed: {e!r}", flush=True)
             # the freeze-seam volley-normalization (#5b deferred-item-1): the value_input 1.0→0.0
             # transition IS the value-train→read freeze. Run the read-regime synaptic-scaling
-            # calibration on the place→value weights here (one-shot), BEFORE the stage-B reads.
+            # calibration on the place→value weights here (one-shot), BEFORE the stage-B reads. (Runs
+            # AFTER any shuffle so the shuffled lesion is magnitude-matched to the grid arm.)
             if (_SYNSCALE["enable"] and _SYNSCALE["mode"] == "freeze_seam"
                     and not _SYNSCALE["fs_applied"]):
                 _SYNSCALE["fs_applied"] = True
@@ -521,14 +533,6 @@ def _patched_set_gate(self, name, value):
                     _freeze_seam_normalize(self)
                 except Exception as e:
                     print(f"[freeze-seam] normalize failed: {e!r}", flush=True)
-            # the CLEAN metric-lesion anti-cheat: shuffle the learned place→value V AFTER any normalization
-            # (so the lesion acts on the same normalized-weight regime the grid arm reads). MUST collapse.
-            if _LESION_SHUFFLE_V["enable"] and not _LESION_SHUFFLE_V["_applied"]:
-                _LESION_SHUFFLE_V["_applied"] = True
-                try:
-                    _lesion_shuffle_v(self)
-                except Exception as e:
-                    print(f"[lesion shuffle-V] failed: {e!r}", flush=True)
     return _orig_set_gate(self, name, value)
 
 
