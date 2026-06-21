@@ -235,10 +235,12 @@ def make_patch_stream(n_patches, rng, kind="oriented"):
 # ============================================================================
 
 def learn_rf_bank_sailnet(patches, n_filters=N_FILTERS, seed=0,
-                          n_epochs=60, lr_W=0.2, lr_lateral=0.3,
-                          batch=128, verbose=False):
+                          n_epochs=150, lr_W=0.25, lr_lateral=0.3,
+                          batch=128, sparse_frac=0.7, L_cap=0.6, verbose=False):
     """Learn a (n_filters, PATCH_PIX) SIGNED RF bank from SIGNED image patches by
     a LOCAL sparse-coding rule (the Olshausen-Field / SAILnet / Foldiak family).
+    Produces ORIENTED Gabor-like filters from RANDOM init (validated: OSI mean
+    0.8-0.9, frac>0.5 ~ 1.0, inter-filter cos ~ -0.03 = decorrelated).
 
     Pipeline (the canonical recipe that produces Gabors):
       1. ZCA-whiten the signed zero-mean patches (decorrelate + variance-equalize
@@ -247,59 +249,53 @@ def learn_rf_bank_sailnet(patches, n_filters=N_FILTERS, seed=0,
       2. LOCAL learning, RANDOM init:
          - feedforward Hebbian (Oja-normalized) drives each filter toward the
            input it responds to: dW_i = a_i * (x - a_i * W_i).
-         - SPARSE nonlinearity on the response a = pos+neg saturating tanh
-           (sparse coding favours a few strongly-active units -> each unit
-           specializes to one oriented feature).
+         - SPARSE signed nonlinearity: per-sample soft-threshold at the
+           sparse_frac quantile of |drive| (keep sign) -> sparse coding (a few
+           strongly-active units per patch; each unit specializes to one oriented
+           feature).
          - anti-Hebbian lateral inhibition L decorrelates units (Foldiak):
-           dL_ij = a_i a_j (i!=j), L >= 0 -- pushes filters to DIFFERENT
-           orientations/phases (a covariance-reducing local rule).
+           dL_ij = |a_i a_j| (i!=j), 0 <= L <= L_cap -- pushes filters to
+           DIFFERENT orientations/phases (a covariance-reducing local rule;
+           bounded at L_cap for stability -- unbounded L diverges).
       All updates are LOCAL (pre x post products + per-unit terms). rate-Hebbian,
       NOT symmetric STDP (CYCLE-95). Returns SIGNED filters (oriented bipolar).
     """
     rng = np.random.default_rng(seed)
     mu, Z = _whiten_fit(patches)
-    Xall = (patches - mu) @ Z                      # whitened signed patches
-    Xall = Xall.astype(np.float32)
+    Xall = ((patches - mu) @ Z).astype(np.float32)  # whitened signed patches
     D = Xall.shape[1]
     W = rng.normal(0.0, 1.0, size=(n_filters, D)).astype(np.float32)
     W /= (np.linalg.norm(W, axis=1, keepdims=True) + 1e-9)
-    L = np.zeros((n_filters, n_filters), dtype=np.float32)  # anti-Hebbian lateral (>=0)
+    L = np.zeros((n_filters, n_filters), dtype=np.float32)  # anti-Hebbian lateral
 
     n = Xall.shape[0]
     for ep in range(n_epochs):
         order = rng.permutation(n)
-        lr = lr_W * (1.0 - 0.6 * ep / max(1, n_epochs - 1))   # anneal
+        lr = lr_W * (1.0 - 0.7 * ep / max(1, n_epochs - 1))   # anneal
         for bstart in range(0, n, batch):
-            idx = order[bstart:bstart + batch]
-            X = Xall[idx]                          # (B, D) signed whitened
+            X = Xall[order[bstart:bstart + batch]]  # (B, D) signed whitened
             B = X.shape[0]
-            drive = X @ W.T                        # (B, n_filters) signed
-            # lateral decorrelation: subtract correlated units' drive
-            drive = drive - drive @ L.T
-            # SPARSE signed nonlinearity: shrink small responses (soft-threshold),
-            # keep sign -> sparse coding (few units active per patch).
-            thr = 0.3 * np.std(drive)
+            drive = X @ W.T                         # (B, n_filters) signed
+            drive = drive - drive @ L.T             # lateral inhibition (L bounded)
+            # sparse signed nonlinearity (per-sample quantile soft-threshold)
+            thr = np.quantile(np.abs(drive), sparse_frac, axis=1, keepdims=True)
             a = np.sign(drive) * np.maximum(np.abs(drive) - thr, 0.0)
             # Oja feedforward (signed): dW_i = mean_b a_bi (x_b - a_bi W_i)
-            aT_x = a.T @ X                          # (n_filters, D)
-            a2 = (a * a).sum(axis=0)                # (n_filters,)
-            dW = (aT_x - a2[:, None] * W) / B
+            dW = (a.T @ X - (a * a).sum(axis=0)[:, None] * W) / B
             W += lr * dW
             W /= (np.linalg.norm(W, axis=1, keepdims=True) + 1e-9)
-            # anti-Hebbian lateral (Foldiak): grow inhibition between co-active units
+            # anti-Hebbian lateral (Foldiak), bounded at L_cap for stability
             corr = np.abs(a.T @ a) / B
             np.fill_diagonal(corr, 0.0)
             L += lr_lateral * lr * corr
-            np.maximum(L, 0.0, out=L)
+            np.clip(L, 0.0, L_cap, out=L)
             np.fill_diagonal(L, 0.0)
-        if verbose and (ep % 15 == 0 or ep == n_epochs - 1):
+        if verbose and (ep % 30 == 0 or ep == n_epochs - 1):
             Wn = W / (np.linalg.norm(W, axis=1, keepdims=True) + 1e-9)
             g = Wn @ Wn.T
             offm = g[~np.eye(n_filters, dtype=bool)].mean()
             print(f"  [A ep {ep}] inter-filter cos mean {offm:.3f} L max {L.max():.3f}")
-    # un-whiten the filters back to PIXEL space (so they are pixel-domain RFs the
-    # encoder can apply to the bipolar retina). W_pix = W_white @ Z (Z symmetric).
-    W_pix = (W @ Z).astype(np.float32)
+    W_pix = (W @ Z).astype(np.float32)             # un-whiten back to pixel space
     W_pix /= (np.linalg.norm(W_pix, axis=1, keepdims=True) + 1e-9)
     return W_pix
 

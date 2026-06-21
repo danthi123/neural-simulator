@@ -12,7 +12,7 @@
       "B_all_seeds": true
     },
     "which_mechanism_passes_GO": {
-      "A_all_seeds": false,
+      "A_all_seeds": true,
       "B_all_seeds": true
     },
     "controls_unoriented_all_seeds": true,
@@ -22,13 +22,13 @@
       "orient_decode_mean": 0.9844
     },
     "mechanism_A_learned": {
-      "margin_mean": 0.7569,
-      "margin_min": 0.689,
-      "rsa_vs_host_mean": 0.9835,
-      "rsa_vs_host_min": 0.9747,
-      "orient_decode_mean": 0.9844,
-      "orient_decode_min": 0.9844,
-      "osi_frac_mean": 0.2708
+      "margin_mean": 0.737,
+      "margin_min": 0.6742,
+      "rsa_vs_host_mean": 0.9878,
+      "rsa_vs_host_min": 0.9837,
+      "orient_decode_mean": 0.9688,
+      "orient_decode_min": 0.9375,
+      "osi_frac_mean": 1.0
     },
     "mechanism_B_devrandom": {
       "margin_mean": 0.6347,
@@ -49,10 +49,10 @@
       "osi_frac_mean": 0.0
     },
     "control_d_noise_input": {
-      "margin_mean": 0.581,
-      "margin_min": 0.5009,
-      "rsa_vs_host_mean": 0.9705,
-      "rsa_vs_host_min": 0.9598,
+      "margin_mean": 0.6093,
+      "margin_min": 0.5582,
+      "rsa_vs_host_mean": 0.9784,
+      "rsa_vs_host_min": 0.9724,
       "orient_decode_mean": 0.974,
       "orient_decode_min": 0.9531,
       "osi_frac_mean": 0.0
@@ -83,14 +83,14 @@
         "orient_decode": 0.9844
       },
       "mechanism_A_learned": {
-        "within": 0.7322,
-        "between": 0.0432,
-        "margin": 0.689,
+        "within": 0.7249,
+        "between": 0.0506,
+        "margin": 0.6742,
         "orient_decode": 0.9844,
-        "rsa_vs_host": 0.9747,
-        "rsa_vs_pixels": 0.9954,
-        "osi_mean": 0.2996,
-        "osi_frac_gt0.5": 0.3438
+        "rsa_vs_host": 0.9837,
+        "rsa_vs_pixels": 0.9971,
+        "osi_mean": 0.919,
+        "osi_frac_gt0.5": 1.0
       },
       "mechanism_B_devrandom": {
         "within": 0.5908,
@@ -112,19 +112,19 @@
         "osi_frac_gt0.5": 0.0
       },
       "control_d_noise_input": {
-        "within": 0.6036,
-        "between": 0.1026,
-        "margin": 0.5009,
+        "within": 0.6454,
+        "between": 0.0872,
+        "margin": 0.5582,
         "orient_decode": 0.9844,
-        "rsa_vs_host": 0.9598,
-        "osi_mean": 0.2066,
+        "rsa_vs_host": 0.9724,
+        "osi_mean": 0.1402,
         "osi_frac_gt0.5": 0.0
       },
-      "A_ok": false,
+      "A_ok": true,
       "B_ok": true,
       "A_geom": true,
       "B_geom": true,
-      "A_oriented": false,
+      "A_oriented": true,
       "B_oriented": true,
       "controls_unoriented": true,
       "verdict": "GO"
@@ -148,14 +148,14 @@
         "orient_decode": 1.0
       },
       "mechanism_A_learned": {
-        "within": 0.7985,
-        "between": 0.0537,
-        "margin": 0.7447,
+        "within": 0.7963,
+        "between": 0.0626,
+        "margin": 0.7336,
         "orient_decode": 0.9844,
-        "rsa_vs_host": 0.985,
-        "rsa_vs_pixels": 0.9986,
-        "osi_mean": 0.3689,
-        "osi_frac_gt0.5": 0.2812
+        "rsa_vs_host": 0.9864,
+        "rsa_vs_pixels": 0.9981,
+        "osi_mean": 0.918,
+        "osi_frac_gt0.5": 1.0
       },
       "mechanism_B_devrandom": {
         "within": 0.6982,
@@ -177,19 +177,19 @@
         "osi_frac_gt0.5": 0.0
       },
       "control_d_noise_input": {
-        "within": 0.6711,
-        "between": 0.1058,
-        "margin": 0.5653,
+        "within": 0.7056,
+        "between": 0.0995,
+        "margin": 0.6061,
         "orient_decode": 0.9844,
-        "rsa_vs_host": 0.9661,
-        "osi_mean": 0.1275,
+        "rsa_vs_host": 0.9738,
+        "osi_mean": 0.15,
         "osi_frac_gt0.5": 0.0
       },
-      "A_ok": false,
+      "A_ok": true,
       "B_ok": true,
       "A_geom": true,
       "B_geom": true,
-      "A_oriented": false,
+      "A_oriented": true,
       "B_oriented": true,
       "controls_unoriented": true,
       "verdict": "GO"
@@ -213,14 +213,14 @@
         "orient_decode": 0.9688
       },
       "mechanism_A_learned": {
-        "within": 0.8763,
-        "between": 0.0394,
-        "margin": 0.8369,
-        "orient_decode": 0.9844,
-        "rsa_vs_host": 0.9909,
-        "rsa_vs_pixels": 0.9992,
-        "osi_mean": 0.3473,
-        "osi_frac_gt0.5": 0.1875
+        "within": 0.8539,
+        "between": 0.0507,
+        "margin": 0.8032,
+        "orient_decode": 0.9375,
+        "rsa_vs_host": 0.9933,
+        "rsa_vs_pixels": 0.9989,
+        "osi_mean": 0.929,
+        "osi_frac_gt0.5": 1.0
       },
       "mechanism_B_devrandom": {
         "within": 0.767,
@@ -242,19 +242,19 @@
         "osi_frac_gt0.5": 0.0
       },
       "control_d_noise_input": {
-        "within": 0.7635,
-        "between": 0.0868,
-        "margin": 0.6768,
+        "within": 0.7589,
+        "between": 0.0952,
+        "margin": 0.6637,
         "orient_decode": 0.9531,
-        "rsa_vs_host": 0.9857,
-        "osi_mean": 0.0494,
+        "rsa_vs_host": 0.989,
+        "osi_mean": 0.1289,
         "osi_frac_gt0.5": 0.0
       },
-      "A_ok": false,
+      "A_ok": true,
       "B_ok": true,
       "A_geom": true,
       "B_geom": true,
-      "A_oriented": false,
+      "A_oriented": true,
       "B_oriented": true,
       "controls_unoriented": true,
       "verdict": "GO"
