@@ -1,9 +1,102 @@
 # Chat demo guide -- biology-grounded conversational sim
 
-Quick guide to running and understanding the conversational
-sim demos.
+A guide to running and understanding the conversational sim demos, from the
+**production conversational agent** (the whole pipeline on one spiking brain)
+down to the small portable word-binding demos and the foundational tier ladder.
 
-## What you can run today
+**Last updated:** 2026-06-22.
+
+> Where the project is now: the conversational pipeline — parse a sentence,
+> store who-did-what facts, recall them, abstain on what it was never told,
+> handle yes/no and negation, generate a word-ordered reply, plan dialogue,
+> reason across several facts, and track referents across turns — runs as
+> **one persistent interacting spiking loop on a single `SimulationBridge`**,
+> and converses on the codes it **learned from conversation** (320 concepts,
+> multi-seed, zero fabrications). The flagship demo runs fully spiking by
+> default. The Tier-1 / Tier-2.1 word-binding demos below are the earlier
+> foundation; they are kept because they are small, fast, and CPU-portable.
+
+---
+
+## The production conversational agent (start here)
+
+These run the real production agent (`BrainConversationalAgent` +
+`RFPhasorComposer` / `OneBrainComposer`). They want a CUDA GPU
+(`SIM_BACKEND=cupy`) for the full fully-spiking path; the smaller pieces run on
+CPU under `SIM_BACKEND=numpy`.
+
+### A. The whole conversation on one spiking brain, at 320 concepts (flagship)
+
+The agent converses on the **320 word-codes the cortex learned by listening**
+to a sentence stream — recalls every fact, refuses to invent answers it was
+never told, handles yes/no, generates a word-ordered description, and brings up
+an on-topic associate. Defaults to `--composer onebrain` (the whole who/what
+pipeline on **one persistent spiking bridge**, fully spiking by default):
+
+```bash
+# Fully-spiking flagship (needs a CUDA GPU):
+SIM_BACKEND=cupy python -m research.runners.consolidated_320_conversation_demo \
+    --seeds 42 43 44 --readout neural
+
+# CPU-portable / test-oracle path (the numpy reference composer):
+SIM_BACKEND=numpy python -m research.runners.consolidated_320_conversation_demo \
+    --seeds 42 --readout neural --composer rf
+```
+
+Per seed it gates on: recall == 1.00 on every stored fact, abstain == 1.00 on
+the unstored set (**zero false-accepts** — a single one is a moat breach and a
+hard stop), yes/no correct, a correctly-ordered `describe()` for a known agent
+and `None` for an unknown one, and an on-topic `elaborate()`. The stream-learned
+code caches (`research/findings/raw/_phaseB_stream_codes_320_*.npy`) ship in the
+repo; a seed with no cache is skipped with a message.
+
+`--composer onebrain` runs the integrated one-brain composer (production
+default, fully spiking); `--composer rf` is the numpy reference / test oracle
+(also the CPU path). `--no-spiking-cleanup` and `--no-integrated-loop` switch
+individual steps back to their host-oracle equivalents for comparison.
+
+### B. Multi-turn conversation — pronouns and reasoning across turns
+
+A persistent neural working-memory loop holds what was just talked about, so a
+later "it" resolves to the right thing, and a multi-step reasoning chain is
+carried across turns:
+
+```bash
+python -m research.runners.multi_turn_conversation_demo --composer rf
+# --composer onebrain runs it on the one spiking bridge (wants SIM_BACKEND=cupy)
+```
+
+Defaults to `--composer rf` (the test-oracle / numpy-CPU path) so it runs
+anywhere; pass `--composer onebrain` for the fully-spiking bridge.
+
+### C. What a trained conversation looks like
+
+```
+> remember the dog is big
+  OK, I'll remember dog is big.
+> is the dog big?
+  Yes, dog is big.
+> is the apple small?
+  I don't know. I haven't been told.
+> who ate the apple?
+  Dog did.
+```
+
+The binding and unbinding are computed by spiking neurons (not a lookup
+table), and the "I don't know" is the measured **no-confabulation moat**: a
+clean confidence gap between what it knows and what it does not. One honest
+boundary: an object with *two* attributes ("big red ball") is not yet reliable
+on the learned codes — a documented limit, not a hidden one.
+
+---
+
+## The foundational word-binding demos (small, fast, CPU-portable)
+
+Everything below is the earlier **tier ladder** that the production agent was
+built on: bind direction words to motor pools, scale to synonyms, and show
+continual learning without forgetting. They are small enough to train on a
+laptop CPU and are useful for understanding the substrate. They are *not* the
+full conversational agent above.
 
 ### 1. Tier 1 chat demo (single seed, ~6 min on RTX 3090)
 
@@ -208,35 +301,51 @@ For stronger differentiation, would need:
 - More training events
 - Better word encoding (current uses hash-based sparse codes)
 
-## Roadmap
+## Where the conversational arc stands now
 
-The current demo is the FIRST conversational artifact. Future
-extensions:
+The Tier-1 word-binding demo above was the *first* conversational artifact (May
+2026). The arc since then built, on top of that substrate, the full production
+conversational agent at the top of this guide. As of mid-2026 the conversational
+stack is comprehensively complete:
 
-### Near-term (1-2 weeks)
-- ~~Multi-seed demo (run 6 seeds, show variance)~~ — **shipped 2026-05-07**
-  (`scripts/multiseed_chat_demo.sh` + `chat_demo_aggregate`); 6-seed
-  validated at mean 33.3% ± 11.8% (range 17-50%).
-- ~~Tier 2.1 synonym demo (8-word vocab)~~ — **shipped 2026-05-07** (`chat_synonym_demo`)
-- ~~Continual-learning demo (train primary, then synonym, show retention)~~
-  — **shipped 2026-05-07** (`chat_continual_demo`)
-- ~~Interactive REPL mode (Python prompt, type words live)~~
-  — **shipped 2026-05-07** (`chat_repl` — interactive stdin loop, supports
-  both tier1 and synonym modes)
-- Consolidation demo (sleep replay between training rounds) — runner shipped
-  2026-05-07 (`consolidation_synonym_trainer`); multi-seed validation in flight
+- **parse** a sentence (word order × voice → who-did-what), with flexible word
+  orders beyond plain subject-verb-object;
+- **store** who-did-what facts, attributes, and nested clauses, bound in spikes;
+- **recall** them on cue, and **abstain** ("I don't know") on what it was never
+  told — the measured no-confabulation moat;
+- **negate / yes-no** ("is the dog big?");
+- **generate** a word-ordered reply (order produced by spiking neurons);
+- **plan dialogue** (bring up an on-topic associate);
+- **reason** across several facts (multi-hop chaining);
+- **track referents** across turns (a later "it" resolves to the right thing);
+- **learn word meanings from conversation** — a "cortex" that learns what ~320
+  everyday words mean purely by listening to a sentence stream, then converses
+  on those learned codes.
 
-### Medium-term (1-3 months)
-- Interactive REPL mode (Python prompt, type words live)
-- Larger Tier 2.1 vocab (16-30 words)
-- Path F scale-up (10x params, word-level pretraining)
+The whole loop runs as **one persistent interacting spiking loop on a single
+`SimulationBridge`**, fully spiking by default at the 320-concept scale.
 
-### Long-term
-- Tier 3 dendritic learning for compositional binding
-- Project Nord scale conversational LM (1B+ params)
+### Open frontiers
+
+- **Two-attribute objects** ("big red ball") are still unreliable on the
+  learned codes — a documented boundary, with the specific fixes it would need
+  written down.
+- **The composer's binding is a principled idealization** (a clean
+  exactly-invertible vector algebra); the binding *operations* run in spikes,
+  but replacing the exact-inverse algebra with a fully *learned* cortical binder
+  is the deferred final frontier (it needs the dendritic substrate).
+- **Open-ended fluency.** The own-network text generator's foundation is proven
+  (it provably learns real text structure), but it is not yet fluent and is far
+  from a large language model.
 
 ## Where to find more
 
-- Master plan: `docs/plans/2026-05-06-MASTER-PLAN-main-then-pathF.md`
-- Validation findings: `research/findings/2026-05-07-*.md`
-- Architecture details: `CLAUDE.md` (W->A history entries 1-12)
+- Production agent: `research/runners/brain_conversational_agent.py`,
+  `research/runners/one_brain_composer.py`,
+  `research/runners/rf_phasor_composer.py`
+- Flagship demos: `research/runners/consolidated_320_conversation_demo.py`,
+  `research/runners/multi_turn_conversation_demo.py`
+- Current state: [`docs/CURRENT-STATE.md`](CURRENT-STATE.md)
+- History & milestones: [`CHANGELOG.md`](../CHANGELOG.md)
+- Validation findings: `research/findings/` (chronological)
+- Architecture details: `CLAUDE.md`
