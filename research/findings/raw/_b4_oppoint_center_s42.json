@@ -1,0 +1,41 @@
+{
+  "runs": [
+    {
+      "r_migration": 0.0,
+      "peak_early": 7.0,
+      "peak_late": 7.0,
+      "cue_v_early": 9.722222222222221,
+      "cue_v_late": 56.666666666666664,
+      "cue_rate_early": 53.61111111111111,
+      "cue_rate_late": 46.94444444444445,
+      "us_rate_early": 160.55555555555557,
+      "us_rate_late": 102.22222222222221,
+      "tonic_rate": 13.055555555555557,
+      "w_sub_late_max": 16.16547203063965,
+      "support": 3,
+      "gates": {
+        "migration_r_pass": false,
+        "migration_dir_pass": false,
+        "early_burst_at_us": true,
+        "late_burst_at_cue": false,
+        "omission_dip_at_reward": true,
+        "cue_value_grows": true
+      },
+      "migration_r_pass": false,
+      "migration_dir_pass": false,
+      "label": "G1_csc10_clip40_gain2_tau250_nt30",
+      "op": {
+        "td_csc_to_strio_weight": 10.0,
+        "td_stdp_w_max": 40.0,
+        "td_to_fs_weight": 30.0,
+        "td_fs_to_strio_weight": 20.0,
+        "td_gabab_prop": 0.04,
+        "td_derivative_gain": 2.0,
+        "td_slow_tau_ms": 250.0
+      },
+      "seed": 42,
+      "n_train": 30,
+      "wall_s": 328.1
+    }
+  ]
+}
