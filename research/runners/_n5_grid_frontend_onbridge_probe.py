@@ -74,6 +74,13 @@ _GRID = {
     "lambda_min": 2.0,
     "lambda_max": 24.0,
     "seed": 42,
+    "drive_scale": 2.5,     # gain on max_int so the grid's TOTAL drive matches the render's operating
+                            # range (the grid code is in [0,1] cos^3-rectified -> sparse+small; the
+                            # render mean drive at the goal is ~67 pA, the grid's ~27 at scale 1 ->
+                            # ~2.5x matches the mean so the place pool + critic see comparable drive.
+                            # A pure GAIN (NOT a per-location renorm) -> the grid's magnitude structure
+                            # is preserved; it only sets the operating current, exactly as max_int does
+                            # for the render).
     "_code": None,          # the active grid_code(x,y) closure (built lazily at first use)
     "_n_grid": None,
     "_asserted_goal_free": False,
@@ -105,8 +112,9 @@ def _grid_place_sensor_act(x, y, landmarks, n_bearing, n_dist, max_int, falloff,
                                       dist_sigma, dist_max, bexp)
     if _GRID["_code"] is None:
         _build_grid_code()
-    # the grid code is in [0,1]; scale to the render's max_intensity (same current operating range).
-    act = (_GRID["_code"](float(x), float(y)) * float(max_int)).astype(np.float32)
+    # the grid code is in [0,1]; scale to the render's max_intensity * drive_scale (so the grid's TOTAL
+    # drive matches the render's operating current range; see _GRID["drive_scale"]).
+    act = (_GRID["_code"](float(x), float(y)) * float(max_int) * float(_GRID["drive_scale"])).astype(np.float32)
     # size guard: place_sensors is sized N_PLACE_LANDMARKS*(b+d); grid must match.
     expect = int(g.N_PLACE_LANDMARKS) * (int(n_bearing) + int(n_dist))
     if act.size != expect:
@@ -237,7 +245,7 @@ def _read_onbridge_place_selectivity(br, captured, pairs=((13, 13, 14, 13), (6, 
     max_int = float(captured.get("place_sensor_max_intensity", 450.0))
 
     def _ensemble(px, py, *, n_meas=80):
-        act = (code(float(px), float(py)) * max_int).astype(np.float32)
+        act = (code(float(px), float(py)) * max_int * float(_GRID["drive_scale"])).astype(np.float32)
         br.cp_external_input_current[:] = xp.float32(0.0)
         br.cp_external_input_current[ps_idx] = xp.asarray(act, dtype=xp.float32)
         saved = br.core_config.reward_learning_rate
@@ -376,7 +384,7 @@ def _read_graded_v_near_far(captured, result):
             if _GRID["_code"] is None:
                 _build_grid_code()
             def _act(px, py):
-                return (_GRID["_code"](float(px), float(py)) * max_int).astype(np.float32)
+                return (_GRID["_code"](float(px), float(py)) * max_int * float(_GRID["drive_scale"])).astype(np.float32)
         else:
             grid_size = int(captured.get("grid_size", 32))
             landmarks = g._n9_place_landmarks(grid_size)
@@ -415,7 +423,7 @@ def _read_graded_v_near_far(captured, result):
 
 
 def _run_delta_arm(arm, seed, *, value_train_trials, single_goal, readout_only,
-                   center, slope, strength):
+                   center, slope, strength, value_train_w_max=0.0):
     """One delta-verdict arm. arm in {grid, render, scramble, no_learn, lesion}."""
     grid_on = arm in ("grid", "scramble", "no_learn", "lesion")
     scramble = (arm == "scramble")
@@ -432,6 +440,10 @@ def _run_delta_arm(arm, seed, *, value_train_trials, single_goal, readout_only,
     captured, real_fn = _capture_deployed_kwargs(seed, vtt, stage_b=True)
     captured["critic_warmup_all_goals"] = (not single_goal)
     captured["place_sensors_to_place_weight"] = 10.0   # the W=10 sparse sweet spot (CLOSE A)
+    if value_train_w_max and value_train_w_max > 0:
+        # cap the place->value soft-bound DURING value-train so the critic settles in the GRADED
+        # ~3-6 range (the de-risk's stdp_w_max=40 regime) instead of over-firing/over-clamping the SNc.
+        captured["value_train_stdp_w_max"] = float(value_train_w_max)
     if arm == "no_learn":
         captured["value_train_trials"] = 0
     if grid_on:
@@ -474,11 +486,18 @@ def main():
     ap.add_argument("--graded-strength", type=float, default=80.0)
     ap.add_argument("--n-modules", type=int, default=6)
     ap.add_argument("--n-per-module", type=int, default=33)
+    ap.add_argument("--grid-drive-scale", type=float, default=2.5,
+                    help="gain on max_int for the grid code so its total drive matches the render's "
+                         "operating current range (the grid is sparse+small in [0,1]); see _GRID")
+    ap.add_argument("--value-train-w-max", type=float, default=0.0,
+                    help="cap place->value soft-bound DURING value-train (de-risk 40 -> critic in the "
+                         "graded ~3-6 range; 0=no override). Use to avoid critic over-clamp.")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
     _GRID["n_modules"] = int(args.n_modules)
     _GRID["n_per_module"] = int(args.n_per_module)
+    _GRID["drive_scale"] = float(args.grid_drive_scale)
 
     # install the monkeypatches (the grid render + the graded plateau init/gate hooks).
     g._n9_place_sensor_act = _grid_place_sensor_act
@@ -499,7 +518,8 @@ def main():
                                single_goal=(not args.multi_goal),
                                readout_only=args.readout_only,
                                center=args.graded_center, slope=args.graded_slope,
-                               strength=args.graded_strength)
+                               strength=args.graded_strength,
+                               value_train_w_max=args.value_train_w_max)
             results[arm] = r
             sb = r.get("stage_b") or {}; grv = r.get("graded_v") or {}
             print(f"[grid-onbridge DELTA RESULT seed={args.seed} arm={arm}] "
