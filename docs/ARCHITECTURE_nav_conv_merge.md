@@ -82,10 +82,11 @@ flowchart TD
     K --> L["Step 2a complete ✅"]
     L --> M["Step 2b: composer moved<br/>onto the one bridge too ✅"]
     M --> P["Make the move-decision<br/>fully spiking by default ✅"]
-    P --> N["Step 3: replace the composer's<br/>fixed algebra with a learned cortex<br/>(a later, separate effort)"]
+    P --> Q["Close the last host shortcut:<br/>grid/place cells replace the<br/>hand-written position formula ✅"]
+    Q --> N["Step 3: replace the composer's<br/>fixed algebra with a learned cortex<br/>(a later, separate effort)"]
 ```
 
-## Status (2026-06-19) — roadmap step 2 COMPLETE
+## Status (2026-06-22) — roadmap step 2 COMPLETE · every host shortcut in the one brain CLOSED by default
 
 - Conversation on the merged bridge: ✅ the full conversational behaviour passes unchanged — comprehension,
   fact memory, question answering, negation, embedded clauses, dialogue planning, generation, and the
@@ -97,14 +98,28 @@ flowchart TD
   the approved masked engine change): ✅ both **complete**. Navigation + the comprehension parser + the
   dialogue planner + the fact-binding composer now all run as separate, non-overlapping groups of neurons on
   one bridge, capability-equivalent to the separate brains.
-- The navigation **move-decision is now made in spikes by default** (2026-06-19): an accumulator integrates
+- The navigation **move-decision is made in spikes by default** (2026-06-19): an accumulator integrates
   the evidence and the choice is taken when the winner fires an all-or-none committing burst, retiring the
   off-brain "pick the best option" step. Validated across six seeds (the decision terminates on the neural
   burst 100% of the time, at an honest ~16% cost over the shortcut). Because this read-out uses its own
   neurons, disjoint from the parser and composer, the "refuses to make up an answer" guarantee is preserved
   by construction. Finding: `research/findings/2026-06-19-spiking-decision-default-on-GO.md`.
+- **Every host cognitive shortcut is now closed by default** (2026-06-22). The last one — the agent's
+  position code — was a hand-written Gaussian "place field" formula. It is now a self-organizing
+  **grid/place cell** front end (the standard production default for the merged-nav agent); the host
+  Gaussian is proven *absent* from the production bridge inventory. With this, on the navigation side the
+  orienting reflex, the reward/value/dopamine limbic core, the position code, and the move decision are all
+  neural; on the conversation side the cleanup, unbind, memory-store scan, and word-meaning learning are all
+  spiking. The acceptance gates (8/8 + 7/7, including the three "abstains when it doesn't know" assertions)
+  pass with the new defaults, and navigation is byte-unregressed. Finding:
+  `research/findings/2026-06-22-shortcut5b-CLOSED-grid-default.md`.
+- **The honest residual — a substrate limit, not a shortcut.** Reading a place cell's *learned value*
+  separately from its *intrinsic* near/far geometry is something a single-point neuron cannot fully do (it
+  reads their sum); a real neuron separates them across dendritic compartments. This is the "dendritic
+  frontier", the project's deepest open *neural* problem, pursued as its own arc. It is behaviorally inert in
+  the current navigation and is **not** a host shortcut.
 - Step 3 (replacing the composer's fixed binding algebra with a *learned* model cortex) is the remaining
-  frontier, a later, separate effort.
+  frontier, a later, separate effort, related to the same dendritic substrate.
 
 ## Key files
 
