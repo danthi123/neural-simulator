@@ -143,6 +143,42 @@
       "seed": 42,
       "n_train": 30,
       "wall_s": 242.9
+    },
+    {
+      "r_migration": -0.30145577266862983,
+      "peak_early": 7.0,
+      "peak_late": 4.0,
+      "cue_v_early": 20.833333333333332,
+      "cue_v_late": 65.83333333333333,
+      "cue_rate_early": 52.77777777777777,
+      "cue_rate_late": 42.22222222222222,
+      "us_rate_early": 117.5,
+      "us_rate_late": 79.72222222222221,
+      "tonic_rate": 19.618055555555554,
+      "w_sub_late_max": 20.184532165527344,
+      "support": 2,
+      "gates": {
+        "migration_r_pass": false,
+        "migration_dir_pass": true,
+        "early_burst_at_us": true,
+        "late_burst_at_cue": false,
+        "omission_dip_at_reward": false,
+        "cue_value_grows": true
+      },
+      "migration_r_pass": false,
+      "migration_dir_pass": true,
+      "label": "D3_clip40_FS30-20_gp0.04_gain1.5_tau250",
+      "op": {
+        "td_stdp_w_max": 40.0,
+        "td_to_fs_weight": 30.0,
+        "td_fs_to_strio_weight": 20.0,
+        "td_gabab_prop": 0.04,
+        "td_derivative_gain": 1.5,
+        "td_slow_tau_ms": 250.0
+      },
+      "seed": 42,
+      "n_train": 30,
+      "wall_s": 264.9
     }
   ]
 }
