@@ -92,7 +92,8 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
             cortex_fs_weight=8.0, cortex_fs_n=5, fix1=False, fix2=False,
             tie_break_eps=0, fix3=False, opponent_axis_eps=0,
             fixA=False, sel_divnorm_sigma=1.0, sel_divnorm_gain=1.0,
-            fixB=False, sel_opponent_weight=12.0, sel_crossaxis_weight=0.0):
+            fixB=False, sel_opponent_weight=12.0, sel_crossaxis_weight=0.0,
+            log_polar=False, log_polar_d0=1.0):
     """arm_name in {'host','sc_ramp','sc_popvector','sc_popvector_scr'}.
 
     cortex_wta (the R1 'sharpen-earlier' next mechanism after the Option-A+B HONEST NEGATIVE): add
@@ -166,6 +167,10 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
             heuristic_strength=0.0,
         )
         os.environ["SC_CORTEX_W"] = str(float(sc_cortex_w))   # MATCHED drive across SC arms
+        if log_polar:
+            # #6 SURPASS: biology-faithful log-polar SC retina so far goals aren't clipped off-image.
+            # Applied to ALL SC arms (incl. scramble) so the lesion's ONLY difference is retinotopy.
+            kw.update(log_polar_retina=True, log_polar_d0=float(log_polar_d0))
         if arm_name in ("sc_popvector", "sc_popvector_scr"):
             kw.update(
                 sc_popvector_readout=True,
@@ -249,6 +254,7 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
         "arm": arm_name, "seed": seed, "grid_size": grid_size, "n_steps": n_steps,
         "warmup_steps": warmup_steps, "with_conv": with_conv,
         "fix1_tie_break": bool(results.get("sc_tie_break_stochastic", False)),
+        "log_polar_retina": bool(results.get("log_polar_retina", False)),
         "fix2_sel_homeostasis": bool(results.get("sc_sel_homeostasis", False)),
         "fix3_opponent_axis": bool(results.get("sc_opponent_axis", False)),
         "fixA_sel_divnorm": bool(results.get("sc_sel_divnorm", False)),
@@ -352,6 +358,16 @@ def main():
                     help="FIX B: strong balanced sel_FS_X -> axis-partner inhibitory weight.")
     ap.add_argument("--sel-crossaxis-weight", type=float, default=0.0,
                     help="FIX B: weak/zero cross-axis sel_FS_X -> non-partner inhibitory weight.")
+    ap.add_argument("--log-polar", action="store_true",
+                    help="#6 SURPASS: biology-faithful LOG-POLAR / foveal-magnified SC retina "
+                         "(render_egocentric_goal log_polar=True). At grid-32 the default LINEAR render "
+                         "clips every far-corner schedule goal off the 32-pixel sc_retina (mass 0.0, SC bump "
+                         "ABSENT); log-polar compresses eccentricity so far goals land on a peripheral "
+                         "sc_map site -> the SC has a bump to decode. Applies to the SC arms (the host arm "
+                         "has no SC, unaffected). The ENVIRONMENT render, NO sim/ edit, default OFF = "
+                         "byte-identical. research/findings/2026-06-22-shortcut6-upstream-orienting-residual-surpass.md.")
+    ap.add_argument("--log-polar-d0", type=float, default=1.0,
+                    help="#6 SURPASS log-polar foveal scale (cells); smaller => more foveal magnification.")
     ap.add_argument("--with-conv", action="store_true",
                     help="merged bridge (the NEGATIVE config). Off = standalone nav SC (faster smoke).")
     ap.add_argument("--no-host", action="store_true", help="skip the host positive control.")
@@ -391,7 +407,9 @@ def main():
                                  sel_divnorm_gain=args.sel_divnorm_gain,
                                  fixB=args.fixB,
                                  sel_opponent_weight=args.sel_opponent_weight,
-                                 sel_crossaxis_weight=args.sel_crossaxis_weight))
+                                 sel_crossaxis_weight=args.sel_crossaxis_weight,
+                                 log_polar=args.log_polar,
+                                 log_polar_d0=args.log_polar_d0))
 
     by = {s["arm"]: s for s in summaries}
     host = by.get("host")
