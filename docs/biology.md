@@ -354,26 +354,44 @@ biology has overlapping representations.
 
 ### What we found
 
-After many architectural variations:
-- Pure STDP + reward modulation produces 28.5% W→A accuracy across 6
-  seeds (p=0.027 vs 25% chance) — but a permuted-label control test
-  (2026-05-03) showed this is structure above chance, NOT aligned
-  word→action learning. Across 25 prior eval files, 0/25 had the true
-  labeled mapping ranked best of 24 permutations; best-permutation
-  scores cluster at 30-37% but the orientation is randomly seeded,
-  not task-aligned.
-- The current architecture has cascade-driven structural noise that
-  yields some 28-33%-accurate mapping per seed, but the mapping is
-  arbitrary, not learned. See
-  `research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`.
-- The minimal-isolation test (2026-05-04) falsified the
-  cascade-as-cause hypothesis (mean 16.7% at 3 seeds, BELOW chance);
-  the cascade was a weak dampener on seed-dependent random structure,
-  not its source.
+The path here had a sharp turn worth recording, because it shows the
+method working.
 
-Currently testing biology-grounded fixes (topographic prior per
-Pulvermüller 2001-2003, PV-FS lateral inhibition between motor pools
-per Vogels 2011) to see if real word→action learning emerges.
+- **First attempt — a clean negative.** Pure STDP + a global reward
+  signal produced ~28.5% word→action accuracy across 6 seeds — but a
+  *permuted-label control* (2026-05-03) showed this was structure
+  *above* chance, not *aligned* word→action learning: across 25 eval
+  files, 0/25 had the true labeled mapping ranked best of 24
+  permutations. A global scalar reward, in any form, could not match
+  per-region gradient at this scale. The result was retracted rather
+  than kept. See
+  `research/findings/2026-05-03-permuted-label-control-NEGATIVE.md`.
+- **The fix that worked — embodied Hebbian co-firing.** Changing the
+  *training paradigm* (not the rule) — driving the word and its motor
+  action to fire *together* during training, so "fire together, wire
+  together" binds them — produced real, aligned, bidirectional
+  word↔motor binding: type "north" → the north motor pool fires, *and*
+  driving the north motor pool produces "north". Validated 6-seed,
+  then scaled to synonyms (both "north" and "up" → the same pool), then
+  to a 16-word vocabulary with reliable bidirectional binding (Pulvermüller
+  2001-2003 cortical somatotopy; capacity-driven sub-populations within
+  each motor pool).
+- **Then: concepts, composition, and conversation.** From that
+  substrate the project built a 320-concept distributed memory (words
+  as sparse scattered cell-assemblies, Pulvermüller 1999 / Kanerva 1988;
+  tagged re-triggerable ensembles, Liu/Tonegawa 2012), spiking
+  composition that binds words into who-did-what facts and pulls them
+  back apart, a hippocampus→cortex consolidation that prevents
+  catastrophic forgetting (McClelland 1995), and a measured refusal to
+  fabricate (it abstains rather than invent). The full conversational
+  loop — parse, store, recall, abstain, yes/no, negation, multi-hop
+  reasoning, multi-turn anaphora, and learning word meanings from a
+  conversation stream — now runs as spiking neurons. See
+  [`docs/CURRENT-STATE.md`](CURRENT-STATE.md).
+
+The lesson: the *rule* (three-factor Hebbian + reward) was sufficient;
+the early failure was the credit-assignment *signal* (a global scalar)
+and the *training paradigm*, not the biology.
 
 ---
 
@@ -456,9 +474,22 @@ millisecond-to-seconds timescale. What's NOT modeled:
 
 ### Higher cognition
 - Theory of mind
-- Compositional language (only single-token mappings)
-- Logical reasoning
-- Abstract concepts
+- **Open-ended fluent language.** The system *does* now compose words
+  into structured facts in spikes, answer who/what/yes-no questions,
+  reason across several facts, and learn word meanings from a
+  conversation stream (see the language section above and
+  [`docs/CURRENT-STATE.md`](CURRENT-STATE.md)). What it does *not* yet do
+  is generate fluent, open-ended prose — the own-network text generator's
+  foundation is proven but it is far from a large language model.
+- **A fully *learned* concept-binding cortex.** Today's composer binds
+  with a clean, exactly-invertible vector algebra (a principled hypothesis
+  for how cortex binds, with the binding *operations* run in spikes).
+  Replacing that algebra with a *learned* cortical binder that
+  generalizes across similar concepts is the deferred deep frontier — it
+  needs the branching dendrites real neurons have (the "dendritic
+  frontier"), which a single-point neuron cannot substitute for.
+- Logical reasoning beyond fact-chaining
+- Genuinely abstract concepts
 
 These are areas where real biology far exceeds what we capture. They're
 also areas where modeling them at the spike level is genuinely
