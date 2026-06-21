@@ -1,0 +1,298 @@
+{
+  "per_seed": [
+    {
+      "seed": 42,
+      "MISSING": false,
+      "host": {
+        "per_phase_finalQ": [
+          0.504,
+          0.584,
+          0.504,
+          0.496
+        ],
+        "per_phase_dom": [
+          "E",
+          "W",
+          "S",
+          "S"
+        ],
+        "phase0_finalQ": 0.504,
+        "post_change_sum": 1.584,
+        "tie_break_fraction": 0.0156,
+        "log_polar_retina": false,
+        "fix1": true
+      },
+      "popvector": {
+        "per_phase_finalQ": [
+          0.973,
+          1.195,
+          1.23,
+          1.389
+        ],
+        "per_phase_dom": [
+          "E",
+          "W",
+          "S",
+          "E"
+        ],
+        "phase0_finalQ": 0.973,
+        "post_change_sum": 3.814,
+        "tie_break_fraction": 0.1794,
+        "log_polar_retina": true,
+        "fix1": true
+      },
+      "scramble": {
+        "per_phase_finalQ": [
+          30.938,
+          18.425,
+          25.77,
+          54.204
+        ],
+        "per_phase_dom": [
+          "N",
+          "N",
+          "W",
+          "N"
+        ],
+        "phase0_finalQ": 30.938,
+        "post_change_sum": 98.398,
+        "tie_break_fraction": 0.2322,
+        "log_polar_retina": true,
+        "fix1": true
+      },
+      "diagonal_tracking": {
+        "NE": {
+          "dom": "E",
+          "dom_matches_bearing": true,
+          "finalQ": 0.973,
+          "scram_finalQ": 30.938,
+          "beats_scram": true
+        },
+        "SW": {
+          "dom": "S",
+          "dom_matches_bearing": true,
+          "finalQ": 1.23,
+          "scram_finalQ": 25.77,
+          "beats_scram": true
+        },
+        "SE": {
+          "dom": "E",
+          "dom_matches_bearing": true,
+          "finalQ": 1.389,
+          "scram_finalQ": 54.204,
+          "beats_scram": true
+        }
+      },
+      "n_diag_dom_matches_bearing": 3,
+      "n_diag_beats_scram": 3,
+      "lateral_phase1_dom": "W",
+      "lateral_dom_ok": true,
+      "n_distinct_dominant": 3,
+      "host_over_popvector_post_ratio": 0.415,
+      "scram_over_popvector_post_ratio": 25.799,
+      "scram_collapses": true,
+      "popvector_tie_break_fraction": 0.1794,
+      "SEED_GO": true
+    },
+    {
+      "seed": 43,
+      "MISSING": false,
+      "host": {
+        "per_phase_finalQ": [
+          0.496,
+          0.513,
+          0.496,
+          0.611
+        ],
+        "per_phase_dom": [
+          "N",
+          "N",
+          "S",
+          "E"
+        ],
+        "phase0_finalQ": 0.496,
+        "post_change_sum": 1.619,
+        "tie_break_fraction": 0.0161,
+        "log_polar_retina": false,
+        "fix1": true
+      },
+      "popvector": {
+        "per_phase_finalQ": [
+          1.115,
+          1.31,
+          1.646,
+          1.54
+        ],
+        "per_phase_dom": [
+          "N",
+          "W",
+          "S",
+          "E"
+        ],
+        "phase0_finalQ": 1.115,
+        "post_change_sum": 4.496,
+        "tie_break_fraction": 0.1878,
+        "log_polar_retina": true,
+        "fix1": true
+      },
+      "scramble": {
+        "per_phase_finalQ": [
+          27.876,
+          25.973,
+          21.566,
+          57.071
+        ],
+        "per_phase_dom": [
+          "N",
+          "N",
+          "W",
+          "N"
+        ],
+        "phase0_finalQ": 27.876,
+        "post_change_sum": 104.611,
+        "tie_break_fraction": 0.2594,
+        "log_polar_retina": true,
+        "fix1": true
+      },
+      "diagonal_tracking": {
+        "NE": {
+          "dom": "N",
+          "dom_matches_bearing": true,
+          "finalQ": 1.115,
+          "scram_finalQ": 27.876,
+          "beats_scram": true
+        },
+        "SW": {
+          "dom": "S",
+          "dom_matches_bearing": true,
+          "finalQ": 1.646,
+          "scram_finalQ": 21.566,
+          "beats_scram": true
+        },
+        "SE": {
+          "dom": "E",
+          "dom_matches_bearing": true,
+          "finalQ": 1.54,
+          "scram_finalQ": 57.071,
+          "beats_scram": true
+        }
+      },
+      "n_diag_dom_matches_bearing": 3,
+      "n_diag_beats_scram": 3,
+      "lateral_phase1_dom": "W",
+      "lateral_dom_ok": true,
+      "n_distinct_dominant": 4,
+      "host_over_popvector_post_ratio": 0.36,
+      "scram_over_popvector_post_ratio": 23.268,
+      "scram_collapses": true,
+      "popvector_tie_break_fraction": 0.1878,
+      "SEED_GO": true
+    },
+    {
+      "seed": 44,
+      "MISSING": false,
+      "host": {
+        "per_phase_finalQ": [
+          0.513,
+          0.504,
+          0.496,
+          0.504
+        ],
+        "per_phase_dom": [
+          "E",
+          "W",
+          "W",
+          "E"
+        ],
+        "phase0_finalQ": 0.513,
+        "post_change_sum": 1.504,
+        "tie_break_fraction": 0.0172,
+        "log_polar_retina": false,
+        "fix1": true
+      },
+      "popvector": {
+        "per_phase_finalQ": [
+          1.097,
+          1.345,
+          1.796,
+          1.434
+        ],
+        "per_phase_dom": [
+          "N",
+          "W",
+          "W",
+          "E"
+        ],
+        "phase0_finalQ": 1.097,
+        "post_change_sum": 4.575,
+        "tie_break_fraction": 0.195,
+        "log_polar_retina": true,
+        "fix1": true
+      },
+      "scramble": {
+        "per_phase_finalQ": [
+          29.982,
+          36.991,
+          21.442,
+          56.274
+        ],
+        "per_phase_dom": [
+          "N",
+          "S",
+          "W",
+          "N"
+        ],
+        "phase0_finalQ": 29.982,
+        "post_change_sum": 114.708,
+        "tie_break_fraction": 0.2106,
+        "log_polar_retina": true,
+        "fix1": true
+      },
+      "diagonal_tracking": {
+        "NE": {
+          "dom": "N",
+          "dom_matches_bearing": true,
+          "finalQ": 1.097,
+          "scram_finalQ": 29.982,
+          "beats_scram": true
+        },
+        "SW": {
+          "dom": "W",
+          "dom_matches_bearing": true,
+          "finalQ": 1.796,
+          "scram_finalQ": 21.442,
+          "beats_scram": true
+        },
+        "SE": {
+          "dom": "E",
+          "dom_matches_bearing": true,
+          "finalQ": 1.434,
+          "scram_finalQ": 56.274,
+          "beats_scram": true
+        }
+      },
+      "n_diag_dom_matches_bearing": 3,
+      "n_diag_beats_scram": 3,
+      "lateral_phase1_dom": "W",
+      "lateral_dom_ok": true,
+      "n_distinct_dominant": 3,
+      "host_over_popvector_post_ratio": 0.329,
+      "scram_over_popvector_post_ratio": 25.073,
+      "scram_collapses": true,
+      "popvector_tie_break_fraction": 0.195,
+      "SEED_GO": true
+    }
+  ],
+  "verdict": {
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "n_completed": 3,
+    "n_seed_go": 3,
+    "all_seeds_go": true,
+    "majority_go": true,
+    "NOTE": "#6 SURPASSED + CLOSED if all (or strong majority) seeds GO: log-polar render -> far goals represented -> FIX1+decode TRACKS on the diagonal phases (dom matches bearing + beats SCRAM) AND SCRAM collapses AND Sigma toward HOST. The orienting read-out reaches the host ceiling; the host orienting heuristic RETIRES; the residual was a non-biological retina truncation, NOT a substrate limit. Else: honest gap -> ISOLATE + next move."
+  }
+}
