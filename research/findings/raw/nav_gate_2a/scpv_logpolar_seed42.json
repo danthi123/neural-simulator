@@ -1,0 +1,609 @@
+{
+  "arms": [
+    {
+      "arm": "host",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "fix1_tie_break": true,
+      "log_polar_retina": false,
+      "fix2_sel_homeostasis": false,
+      "fix3_opponent_axis": false,
+      "fixA_sel_divnorm": false,
+      "fixA_sel_divnorm_sigma": 1.0,
+      "fixA_sel_divnorm_gain": 1.0,
+      "fixB_sel_opponent_pair": false,
+      "fixB_sel_opponent_weight": 12.0,
+      "fixB_sel_crossaxis_weight": 0.0,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 12883.0,
+          "E": 14396.0,
+          "S": 11428.0,
+          "W": 14401.0,
+          "NS_surplus": 1455.0,
+          "NS_pct": 11.97,
+          "EW_surplus": -5.0
+        },
+        "sel_counts": {
+          "N": 37658.0,
+          "E": 64601.0,
+          "S": 36693.0,
+          "W": 61781.0,
+          "NS_surplus": 965.0,
+          "NS_pct": 2.6,
+          "EW_surplus": 2820.0
+        },
+        "commit_counts": {
+          "N": 38674.0,
+          "E": 64830.0,
+          "S": 37026.0,
+          "W": 60166.0,
+          "NS_surplus": 1648.0,
+          "NS_pct": 4.35,
+          "EW_surplus": 4664.0
+        },
+        "motor_counts": {
+          "N": 5323.0,
+          "E": 8452.0,
+          "S": 6155.0,
+          "W": 7391.0,
+          "NS_surplus": -832.0,
+          "NS_pct": -14.5,
+          "EW_surplus": 1061.0
+        }
+      },
+      "tie_break_count": 28,
+      "decision_total": 1800,
+      "tie_break_fraction": 0.015555555555555555,
+      "opponent_axis_count": 0,
+      "opponent_axis_fraction": 0.0,
+      "sc_cortex_w": null,
+      "divnorm_sigma": null,
+      "divnorm_gain": null,
+      "per_phase_finalQ": [
+        0.504424778761062,
+        0.584070796460177,
+        0.504424778761062,
+        0.49557522123893805
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          45,
+          210,
+          15,
+          180
+        ],
+        [
+          58,
+          152,
+          59,
+          181
+        ],
+        [
+          103,
+          108,
+          130,
+          109
+        ],
+        [
+          130,
+          109,
+          131,
+          80
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.1,
+          "E": 0.467,
+          "S": 0.033,
+          "W": 0.4
+        },
+        {
+          "N": 0.129,
+          "E": 0.338,
+          "S": 0.131,
+          "W": 0.402
+        },
+        {
+          "N": 0.229,
+          "E": 0.24,
+          "S": 0.289,
+          "W": 0.242
+        },
+        {
+          "N": 0.289,
+          "E": 0.242,
+          "S": 0.291,
+          "W": 0.178
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "E",
+        "W",
+        "S",
+        "S"
+      ],
+      "phase0_finalQ": 0.504424778761062,
+      "post_change_finalQ": [
+        0.584070796460177,
+        0.504424778761062,
+        0.49557522123893805
+      ],
+      "post_change_finalQ_sum": 1.584070796460177,
+      "gate_score": 2.088495575221239,
+      "motor_sustain_frac": 1.0,
+      "late_motor_sustain_frac": 1.0,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scpv_host_seed42.json"
+    },
+    {
+      "arm": "sc_popvector",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "fix1_tie_break": true,
+      "log_polar_retina": true,
+      "fix2_sel_homeostasis": false,
+      "fix3_opponent_axis": false,
+      "fixA_sel_divnorm": false,
+      "fixA_sel_divnorm_sigma": 1.0,
+      "fixA_sel_divnorm_gain": 1.0,
+      "fixB_sel_opponent_pair": false,
+      "fixB_sel_opponent_weight": 12.0,
+      "fixB_sel_crossaxis_weight": 0.0,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 12388.0,
+          "E": 12916.0,
+          "S": 11668.0,
+          "W": 12623.0,
+          "NS_surplus": 720.0,
+          "NS_pct": 5.99,
+          "EW_surplus": 293.0
+        },
+        "sel_counts": {
+          "N": 47230.0,
+          "E": 58246.0,
+          "S": 49115.0,
+          "W": 51971.0,
+          "NS_surplus": -1885.0,
+          "NS_pct": -3.91,
+          "EW_surplus": 6275.0
+        },
+        "commit_counts": {
+          "N": 48342.0,
+          "E": 59107.0,
+          "S": 48753.0,
+          "W": 52512.0,
+          "NS_surplus": -411.0,
+          "NS_pct": -0.85,
+          "EW_surplus": 6595.0
+        },
+        "motor_counts": {
+          "N": 4495.0,
+          "E": 5090.0,
+          "S": 4539.0,
+          "W": 5070.0,
+          "NS_surplus": -44.0,
+          "NS_pct": -0.97,
+          "EW_surplus": 20.0
+        }
+      },
+      "tie_break_count": 323,
+      "decision_total": 1800,
+      "tie_break_fraction": 0.17944444444444443,
+      "opponent_axis_count": 0,
+      "opponent_axis_fraction": 0.0,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 1.0,
+      "divnorm_gain": 1.0,
+      "per_phase_finalQ": [
+        0.9734513274336283,
+        1.1946902654867257,
+        1.2300884955752212,
+        1.3893805309734513
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          116,
+          151,
+          80,
+          103
+        ],
+        [
+          105,
+          107,
+          93,
+          145
+        ],
+        [
+          89,
+          113,
+          125,
+          123
+        ],
+        [
+          107,
+          140,
+          120,
+          83
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.258,
+          "E": 0.336,
+          "S": 0.178,
+          "W": 0.229
+        },
+        {
+          "N": 0.233,
+          "E": 0.238,
+          "S": 0.207,
+          "W": 0.322
+        },
+        {
+          "N": 0.198,
+          "E": 0.251,
+          "S": 0.278,
+          "W": 0.273
+        },
+        {
+          "N": 0.238,
+          "E": 0.311,
+          "S": 0.267,
+          "W": 0.184
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "E",
+        "W",
+        "S",
+        "E"
+      ],
+      "phase0_finalQ": 0.9734513274336283,
+      "post_change_finalQ": [
+        1.1946902654867257,
+        1.2300884955752212,
+        1.3893805309734513
+      ],
+      "post_change_finalQ_sum": 3.8141592920353977,
+      "gate_score": 4.787610619469026,
+      "motor_sustain_frac": 0.9116666666666666,
+      "late_motor_sustain_frac": 0.8788888888888889,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scpv_sc_popvector_seed42.json"
+    },
+    {
+      "arm": "sc_popvector_scr",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "fix1_tie_break": true,
+      "log_polar_retina": true,
+      "fix2_sel_homeostasis": false,
+      "fix3_opponent_axis": false,
+      "fixA_sel_divnorm": false,
+      "fixA_sel_divnorm_sigma": 1.0,
+      "fixA_sel_divnorm_gain": 1.0,
+      "fixB_sel_opponent_pair": false,
+      "fixB_sel_opponent_weight": 12.0,
+      "fixB_sel_crossaxis_weight": 0.0,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 13638.0,
+          "E": 10429.0,
+          "S": 9647.0,
+          "W": 10877.0,
+          "NS_surplus": 3991.0,
+          "NS_pct": 34.28,
+          "EW_surplus": -448.0
+        },
+        "sel_counts": {
+          "N": 85157.0,
+          "E": 38583.0,
+          "S": 30087.0,
+          "W": 42889.0,
+          "NS_surplus": 55070.0,
+          "NS_pct": 95.57,
+          "EW_surplus": -4306.0
+        },
+        "commit_counts": {
+          "N": 88364.0,
+          "E": 40814.0,
+          "S": 31641.0,
+          "W": 45487.0,
+          "NS_surplus": 56723.0,
+          "NS_pct": 94.53,
+          "EW_surplus": -4673.0
+        },
+        "motor_counts": {
+          "N": 6045.0,
+          "E": 1165.0,
+          "S": 788.0,
+          "W": 1724.0,
+          "NS_surplus": 5257.0,
+          "NS_pct": 153.87,
+          "EW_surplus": -559.0
+        }
+      },
+      "tie_break_count": 418,
+      "decision_total": 1800,
+      "tie_break_fraction": 0.23222222222222222,
+      "opponent_axis_count": 0,
+      "opponent_axis_fraction": 0.0,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 1.0,
+      "divnorm_gain": 1.0,
+      "per_phase_finalQ": [
+        30.938053097345133,
+        18.424778761061948,
+        25.76991150442478,
+        54.203539823008846
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          130,
+          99,
+          98,
+          123
+        ],
+        [
+          193,
+          112,
+          50,
+          95
+        ],
+        [
+          106,
+          109,
+          92,
+          143
+        ],
+        [
+          359,
+          34,
+          24,
+          33
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.289,
+          "E": 0.22,
+          "S": 0.218,
+          "W": 0.273
+        },
+        {
+          "N": 0.429,
+          "E": 0.249,
+          "S": 0.111,
+          "W": 0.211
+        },
+        {
+          "N": 0.236,
+          "E": 0.242,
+          "S": 0.204,
+          "W": 0.318
+        },
+        {
+          "N": 0.798,
+          "E": 0.076,
+          "S": 0.053,
+          "W": 0.073
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "N",
+        "N",
+        "W",
+        "N"
+      ],
+      "phase0_finalQ": 30.938053097345133,
+      "post_change_finalQ": [
+        18.424778761061948,
+        25.76991150442478,
+        54.203539823008846
+      ],
+      "post_change_finalQ_sum": 98.39823008849558,
+      "gate_score": 129.3362831858407,
+      "motor_sustain_frac": 0.72,
+      "late_motor_sustain_frac": 0.6933333333333334,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scpv_sc_popvector_scr_seed42.json"
+    }
+  ],
+  "verdict": {
+    "host_phase0_finalQ": 0.504424778761062,
+    "host_post_change_finalQ_sum": 1.584070796460177,
+    "ramp_post_change_finalQ_sum": null,
+    "popvector_post_change_finalQ_sum": 3.8141592920353977,
+    "scramble_post_change_finalQ_sum": 98.39823008849558,
+    "host_tracking": {
+      "dominant_per_phase": [
+        "E",
+        "W",
+        "S",
+        "S"
+      ],
+      "n_distinct_dominant": 3,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": true,
+      "tracks_goal": true
+    },
+    "ramp_tracking": null,
+    "popvector_tracking": {
+      "dominant_per_phase": [
+        "E",
+        "W",
+        "S",
+        "E"
+      ],
+      "n_distinct_dominant": 3,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": true,
+      "tracks_goal": true
+    },
+    "scramble_tracking": {
+      "dominant_per_phase": [
+        "N",
+        "N",
+        "W",
+        "N"
+      ],
+      "n_distinct_dominant": 2,
+      "has_W_dominant_phase": true,
+      "has_E_dominant_phase": false,
+      "tracks_goal": true
+    },
+    "ramp_late_sustain": null,
+    "popvector_late_sustain": 0.8788888888888889,
+    "popvector_fix1": true,
+    "popvector_fix2": false,
+    "popvector_fix3": false,
+    "popvector_fixA": false,
+    "popvector_stage_surplus": {
+      "thal_counts": {
+        "N": 12388.0,
+        "E": 12916.0,
+        "S": 11668.0,
+        "W": 12623.0,
+        "NS_surplus": 720.0,
+        "NS_pct": 5.99,
+        "EW_surplus": 293.0
+      },
+      "sel_counts": {
+        "N": 47230.0,
+        "E": 58246.0,
+        "S": 49115.0,
+        "W": 51971.0,
+        "NS_surplus": -1885.0,
+        "NS_pct": -3.91,
+        "EW_surplus": 6275.0
+      },
+      "commit_counts": {
+        "N": 48342.0,
+        "E": 59107.0,
+        "S": 48753.0,
+        "W": 52512.0,
+        "NS_surplus": -411.0,
+        "NS_pct": -0.85,
+        "EW_surplus": 6595.0
+      },
+      "motor_counts": {
+        "N": 4495.0,
+        "E": 5090.0,
+        "S": 4539.0,
+        "W": 5070.0,
+        "NS_surplus": -44.0,
+        "NS_pct": -0.97,
+        "EW_surplus": 20.0
+      }
+    },
+    "ramp_stage_surplus": null,
+    "scramble_stage_surplus": {
+      "thal_counts": {
+        "N": 13638.0,
+        "E": 10429.0,
+        "S": 9647.0,
+        "W": 10877.0,
+        "NS_surplus": 3991.0,
+        "NS_pct": 34.28,
+        "EW_surplus": -448.0
+      },
+      "sel_counts": {
+        "N": 85157.0,
+        "E": 38583.0,
+        "S": 30087.0,
+        "W": 42889.0,
+        "NS_surplus": 55070.0,
+        "NS_pct": 95.57,
+        "EW_surplus": -4306.0
+      },
+      "commit_counts": {
+        "N": 88364.0,
+        "E": 40814.0,
+        "S": 31641.0,
+        "W": 45487.0,
+        "NS_surplus": 56723.0,
+        "NS_pct": 94.53,
+        "EW_surplus": -4673.0
+      },
+      "motor_counts": {
+        "N": 6045.0,
+        "E": 1165.0,
+        "S": 788.0,
+        "W": 1724.0,
+        "NS_surplus": 5257.0,
+        "NS_pct": 153.87,
+        "EW_surplus": -559.0
+      }
+    },
+    "popvector_tie_break_fraction": 0.17944444444444443,
+    "popvector_opponent_axis_fraction": 0.0,
+    "scramble_tie_break_fraction": 0.23222222222222222,
+    "scramble_opponent_axis_fraction": 0.0,
+    "host_over_popvector_post_ratio": 0.4153132250580047,
+    "popvector_over_ramp_post_improvement": null,
+    "NOTE": "GO (#6 CONVERTS) if popvector_tracking.tracks_goal is True AND popvector_post_change approaches host (host_over_popvector_post_ratio ~1, vs the ramp's ~0.01) AND the SCRAMBLE lesion collapses (scramble_tracking.tracks_goal False / much worse finalQ). HONEST NEGATIVE otherwise -- report whether popvector still does NOT track (under-selective) or a deeper issue."
+  }
+}
