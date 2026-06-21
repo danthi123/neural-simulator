@@ -20,7 +20,7 @@ pushed to both remotes (origin + gitea).
 | # | item | flip | status | commit |
 |---|---|---|---|---|
 | 1 | #6 log-polar | `run_moving_goal_episode` `log_polar_retina` default `False`→`True` (library) | **FLIPPED** | `91442e0b` |
-| 2 | #5b grid front end | promote the probe monkeypatch → a first-class `nav_critic_grid_frontend` builder flag (the ONE genuinely-new wiring) | **FLIPPED (opt-in, honest-scoped)** | `822d3359` |
+| 2 | #5b grid front end | promote the probe monkeypatch → a first-class `nav_critic_grid_frontend` builder flag (the ONE genuinely-new wiring) | **FLIPPED (opt-in, honest-scoped) — SUPERSEDED 2026-06-21: now the MergedNavConvAgent PRODUCTION default; #5b CLOSED, host-Gaussian retired (`2026-06-22-shortcut5b-CLOSED-grid-default.md`, `c32be6cc`)** | `822d3359` |
 | 3 | #5b determinism | add `deterministic_read` kwarg holding `deterministic_transpose_matvec` ON through value-train + δ-read | **FLIPPED (kwarg, default-OFF)** | `55389e06` |
 | 4 | B4 op-point | merged cue-shift de-risk defaults → the B4 COOLED op-point (`td_stdp_w_max=40`, `n_train=15` + the supporting strong-derivative regime) | **FLIPPED** | `dcca9aac` |
 | 5 | limbic core | `MergedNavConvAgent` `co_resident_nav_critic` production-default ON (with mutual-exclusivity auto-yield) | **FLIPPED (agent default, GREEN_INERT)** | `bc060020` |
@@ -79,17 +79,27 @@ value V n/f 4.5–12.3× vs the render's 1.0× R1-cap, R1 GO 3/3). `place_sensor
 (`grid_n_modules*grid_n_per_module = 198`, the validated config). The grid reads ONLY `(x,y)` (structural
 anti-cheat).
 
-**HONEST SCOPE (conservative-default + production-opt-in):** this delivers the R1 **selective-afferent**
-win. The `nav_critic_place_selforg=True` self-org path already retires the host-Gaussian
-`vs_place_context` position injection (the brain-shortcut closure). BUT the host-Gaussian's FULL
-retirement-BY-DEFAULT is gated on the **δ-readout stabilization** — a precisely-characterized DEEPER
-boundary: the grid graded-plateau READ conflates the place code's structural near/far MAGNITUDE asymmetry
-with learned value (`2026-06-22-shortcut5b-volley-normalization-close.md`; the δ that passes is
-structurally-influenced, not a clean learned RPE; place-drive normalization that removes the structural
-asymmetry ALSO removes what the value-train learns from). So the grid front end ships as a **first-class
-flag, OPT-IN** (default OFF = byte-identical, the landmark render; the guarded escape) rather than a
-blanket default — honest scope over a forced flip that would overclaim a clean learned-δ the substrate
-does not deliver. The clean-learned-δ readout redesign is the recorded next frontier.
+**HONEST SCOPE (conservative-default + production-opt-in) — SUPERSEDED 2026-06-21 (see the UPDATE below):**
+this delivers the R1 **selective-afferent** win. The `nav_critic_place_selforg=True` self-org path already
+retires the host-Gaussian `vs_place_context` position injection (the brain-shortcut closure). At the time of
+this chunk the host-Gaussian's FULL retirement-BY-DEFAULT was framed as gated on the **δ-readout
+stabilization** — a precisely-characterized DEEPER boundary: the grid graded-plateau READ conflates the
+place code's structural near/far MAGNITUDE asymmetry with learned value
+(`2026-06-22-shortcut5b-volley-normalization-close.md`). So the grid front end shipped as a **first-class
+flag, OPT-IN** (default OFF = byte-identical, the landmark render).
+
+**UPDATE 2026-06-21 — #5b CLOSED, the grid front end is now the MergedNavConvAgent PRODUCTION default
+(`2026-06-22-shortcut5b-CLOSED-grid-default.md`, `c32be6cc`):** the TD-read de-risk
+(`2026-06-22-shortcut5b-td-read-derisk.md`) RESOLVED the "gated on the δ-readout stabilization" disposition.
+**#5b closes on R1 grounds** (the grid front end produces a genuinely-neural, value-gradable place code —
+afferent selectivity + learned near/far value, both 3/3); the close does NOT depend on the δ/TD read. The
+residual value-READ structural/learned separation is the **CHARACTERIZED DENDRITIC FRONTIER** (a point-neuron
+limit, NOT a host shortcut, NOT a blocker — the existing graded-plateau read stays). So `MergedNavConvAgent`
+now flips `nav_critic_place_selforg` + `nav_critic_grid_frontend` to the production default ON (the
+`None`-sentinel auto-yield, mirroring Item 5), retiring `vs_place_context` for the production merged-nav
+bridge. The function-level / low-level builder defaults stay `False` (standalone-CLI reproducibility +
+research-runner config). Gates: moat 8/8 + 7/7 (0-FA) with the flip ON; the production bridge inventory
+confirms `vs_place_context` is ABSENT.
 
 **Validated:** CPU smoke — grid adjacent-cell afferent cos **0.61** (decorrelated) vs the landmark
 render's **0.9954** (degenerate, the exact R1-cap); the grid reads only `(x,y)`. GPU — the grid-frontend
