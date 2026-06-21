@@ -35,6 +35,78 @@
       "seed": 42,
       "n_train": 30,
       "wall_s": 221.4
+    },
+    {
+      "r_migration": 0.06983995877079134,
+      "peak_early": 1.8333333333333333,
+      "peak_late": 2.0,
+      "cue_v_early": 67.91666666666667,
+      "cue_v_late": 248.33333333333334,
+      "cue_rate_early": 15.833333333333336,
+      "cue_rate_late": 0.0,
+      "us_rate_early": 13.611111111111109,
+      "us_rate_late": 0.0,
+      "tonic_rate": 0.0,
+      "w_sub_late_max": 38.73179244995117,
+      "support": 3,
+      "gates": {
+        "migration_r_pass": false,
+        "migration_dir_pass": false,
+        "early_burst_at_us": true,
+        "late_burst_at_cue": false,
+        "omission_dip_at_reward": true,
+        "cue_value_grows": true
+      },
+      "migration_r_pass": false,
+      "migration_dir_pass": false,
+      "label": "C1_standalone_clip40_FS16-10_gp0.105_gain1_tau130",
+      "op": {
+        "td_stdp_w_max": 40.0,
+        "td_to_fs_weight": 16.0,
+        "td_fs_to_strio_weight": 10.0,
+        "td_gabab_prop": 0.105,
+        "td_derivative_gain": 1.0,
+        "td_slow_tau_ms": 130.0
+      },
+      "seed": 42,
+      "n_train": 30,
+      "wall_s": 217.9
+    },
+    {
+      "r_migration": -0.66637373647636,
+      "peak_early": 7.0,
+      "peak_late": 2.3333333333333335,
+      "cue_v_early": 20.833333333333332,
+      "cue_v_late": 65.83333333333333,
+      "cue_rate_early": 52.22222222222222,
+      "cue_rate_late": 44.72222222222223,
+      "us_rate_early": 128.05555555555554,
+      "us_rate_late": 84.72222222222221,
+      "tonic_rate": 9.82638888888889,
+      "w_sub_late_max": 20.18449942270915,
+      "support": 3,
+      "gates": {
+        "migration_r_pass": false,
+        "migration_dir_pass": true,
+        "early_burst_at_us": true,
+        "late_burst_at_cue": false,
+        "omission_dip_at_reward": true,
+        "cue_value_grows": true
+      },
+      "migration_r_pass": false,
+      "migration_dir_pass": true,
+      "label": "D1_clip40_FS30-20_gp0.04_gain2_tau250",
+      "op": {
+        "td_stdp_w_max": 40.0,
+        "td_to_fs_weight": 30.0,
+        "td_fs_to_strio_weight": 20.0,
+        "td_gabab_prop": 0.04,
+        "td_derivative_gain": 2.0,
+        "td_slow_tau_ms": 250.0
+      },
+      "seed": 42,
+      "n_train": 30,
+      "wall_s": 224.2
     }
   ]
 }

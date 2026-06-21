@@ -110,6 +110,20 @@ def _idx_arr(bridge, name, xp):
     return xp.asarray(np.asarray(bridge.region_manager.indices(name), dtype=np.int64))
 
 
+# Runner-side post-build cfg overrides (the COOLING op-point levers, NOT builder kwargs). These are existing
+# CoreSimConfig fields set AFTER the merged build, so they cannot be passed as build_merged_nav_conv_bridge kwargs;
+# the runner pops them from `op` and applies them to bridge.core_config. They are the SNAP-TIMING cooling levers for
+# the strict r<-0.7 bar: the merged critic runs ~50% hotter than the standalone, so the value back-propagates the cue
+# burst ABRUPTLY (a step-function peak series, snap @ ~trial 8 -> r=-0.665, just under), where the standalone's cooler
+# critic slid the peak GRADUALLY (r<-0.7). reward_learning_rate (the merged default 0.01) scales the per-trial value
+# growth; LOWERING it (e.g. 0.005) DELAYS/gradualizes the snap toward the training midpoint -> a stronger (more
+# negative) migration r WITHOUT changing the mechanism (the standalone used 0.10 with 50 trials + a cooler graded
+# critic; co-resident the hot critic over-shoots, so slowing it restores the gradual slide). reward_eligibility_tau_ms
+# (the merged default 40ms) controls tap-local credit; a shorter tau slows the one-tap-per-trial walk. NOT a host
+# value/reward computation — these are learning-RATE / credit-WINDOW knobs; the TD error stays 100% neural.
+_POST_BUILD_CFG_KEYS = ("reward_learning_rate", "reward_eligibility_tau_ms")
+
+
 def _build(seed, td_csc_n=8, vocab=None, op=None, global_het_test=False):
     """Build the merged nav+conv bridge WITH the co-resident A-CSC TD cue-shift slice. global_het_test=True is a
     DIAGNOSTIC hook ONLY (turns on global parameter heterogeneity, perturbing nav/conv determinism) to test whether
@@ -117,9 +131,15 @@ def _build(seed, td_csc_n=8, vocab=None, op=None, global_het_test=False):
     per-region heterogeneity for the td slice (a small additive sim/ analogue of the per-region NMDA mask)."""
     t0 = time.time()
     op = dict(OP, **(op or {}))
+    # Pop the post-build cfg overrides (cooling snap-timing levers) so they aren't passed as builder kwargs.
+    post_build = {k: op.pop(k) for k in _POST_BUILD_CFG_KEYS if k in op}
     bridge, handles = build_merged_nav_conv_bridge(
         seed=int(seed), vocab=vocab, co_resident_td_cueshift=True, td_csc_n=int(td_csc_n),
         _global_het_test=bool(global_het_test), **op)
+    for k, v in post_build.items():
+        setattr(bridge.core_config, k, float(v))
+    if post_build:
+        handles["_post_build_cfg"] = post_build
     return bridge, handles, time.time() - t0
 
 
@@ -245,7 +265,7 @@ def run_td_csc_merged(seed, *, lesion_cue=False, unpaired=False, verbose=True, t
     assert cfg.current_reward_signal == 0.0, "host reward scalar must be 0 (brain-based)"
     assert cfg.reward_baseline == 0.0, "host reward baseline must be 0 (brain-based)"
     assert cfg.enable_td_value_derivative is True, "the B-2 conductance-derivative must be ON for the TD slice"
-    assert cfg.reward_eligibility_tau_ms == 40.0, "the SHORT (tap-local) eligibility tau must be set"
+    assert cfg.reward_eligibility_tau_ms <= 40.0, "the SHORT (tap-local) eligibility tau must be set (<=40ms)"
     prov = {
         "snc_gets_direct_reward": False,            # reward enters synaptically (td_reward_us->td_snc)
         "reward_is_synaptic_relay": True,
