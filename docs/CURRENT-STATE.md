@@ -7,9 +7,33 @@ This document is the **authoritative current-state reference**.
 Update it whenever capabilities change. For the journey of how we
 got here, see `research/findings/`.
 
-**Last meaningful update:** 2026-06-19 (see "Recent milestones (2026-06)" below).
+**Last meaningful update:** 2026-06-22 (see "Recent milestones (2026-06)" below).
 
 **Recent milestones (2026-06):**
+- **Every host shortcut in the one brain is now closed by default (2026-06-22).**
+  The recent arc's goal: anything *between* sensation and action that had been
+  computed by ordinary code — even where the formula was biologically correct —
+  is now done by spiking neurons, or its limit honestly characterized. The last
+  one was the agent's position code, a hand-written Gaussian "place field"
+  formula; it is now a self-organizing **grid/place cell** front end (the
+  standard production default for the merged-nav agent), and the host Gaussian is
+  proven *absent* from the production bridge. With this, on the navigation side
+  the orienting reflex, the reward/value/dopamine limbic core, the position code,
+  and the move decision are all neural; on the conversation side the cleanup,
+  unbind, memory-store scan, and word-meaning learning are all spiking. The
+  acceptance gates (8/8 + 7/7, including the three "abstains when it doesn't
+  know" assertions) pass with the new defaults, and navigation is byte-unregressed.
+  **The honest residual is a substrate limit, not a shortcut:** reading a place
+  cell's *learned value* separately from its *intrinsic* near/far geometry is
+  something a single-point neuron cannot fully do (it reads their sum) — a real
+  neuron separates them across dendritic compartments. This is the "dendritic
+  frontier", the project's deepest open *neural* problem, pursued as its own arc.
+  And **the honest cost of this purity is latency:** with all the spiking
+  machinery on at the 320-concept scale a conversation runs much slower than the
+  same pipeline would with the (now-retired) host shortcuts; the single-query
+  path is already ~10–20× faster, and extending that to the rest of the
+  fully-spiking loop is the next engineering arc. Source:
+  [`2026-06-22-shortcut5b-CLOSED-grid-default.md`](../research/findings/2026-06-22-shortcut5b-CLOSED-grid-default.md).
 - **The navigation move-decision is now made in spikes — by default (2026-06-19).**
   On the one shared brain, the choice of which way to step now *emerges* from a
   race between competing neural populations (a working-memory-style accumulator
