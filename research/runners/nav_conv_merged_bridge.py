@@ -560,11 +560,14 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     # the DECORRELATED spatial-phase grid metric instead of the locally-degenerate landmark render -> the self-org
     # place pool carves SELECTIVE fields (place value V n/f 4.5-12.3x, R1 GO 3/3,
     # research/findings/2026-06-22-shortcut5b-R1-grid-frontend-derisk.md). REQUIRES nav_critic_place_selforg (it IS
-    # the place_sensors afferent). Default False = byte-identical (the landmark render). HONEST SCOPE: this is the
-    # R1 selective-afferent win; the host-Gaussian vs_place_context's FULL retirement-by-default is gated on the
-    # δ-readout stabilization (a characterized deeper boundary -- the grid graded-plateau READ conflates the place
-    # code's structural near/far magnitude asymmetry with learned value), so the grid front end ships as a
-    # first-class flag, opt-in.
+    # the place_sensors afferent). This LOW-LEVEL builder default STAYS False (conservative -- the research runners
+    # that compose their own critic config keep the assert protecting a genuine double-request); the PRODUCTION
+    # default-ON lives in MergedNavConvAgent (the `None` sentinel below). #5b CLOSED (2026-06-22-shortcut5b-td-read-
+    # derisk.md): the host-Gaussian vs_place_context retires on R1 grounds (the grid front end produces a genuinely-
+    # neural, value-gradable place code -- selectivity + learned near/far value, both 3/3); the residual value-READ
+    # structural/learned separation (the graded-plateau read conflates the place code's structural near/far magnitude
+    # with learned value) is the CHARACTERIZED DENDRITIC FRONTIER (a point-neuron limit, NOT a host shortcut, NOT a
+    # blocker -- the existing graded-plateau read stays; the close does NOT depend on the TD read).
     assert not (nav_critic_grid_frontend and not nav_critic_place_selforg), \
         ("nav_critic_grid_frontend (the grid-cell place afferent) requires nav_critic_place_selforg (it IS the "
          "self-org place_sensors afferent; without the self-org place pool there is nothing to drive).")
@@ -1297,7 +1300,7 @@ class MergedNavConvAgent:
 
     def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_limbic=False,
                  co_resident_nav_critic=None, nav_critic_spiking_sc=False,
-                 nav_critic_place_selforg=False, nav_critic_grid_frontend=False,
+                 nav_critic_place_selforg=None, nav_critic_grid_frontend=None,
                  co_resident_td_cueshift=False,
                  enable_da_salience_gate=False, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
@@ -1369,17 +1372,45 @@ class MergedNavConvAgent:
         # is the SYNAPTIC SC-proximity (sc_rostral->reward_us), retiring the host Manhattan formula. Default
         # False = byte-preserved. Only meaningful with co_resident_nav_critic (it builds reward_us + the critic).
         self.nav_critic_spiking_sc = bool(nav_critic_spiking_sc)
-        # nav_critic_place_selforg (TRUE ONE BRAIN roadmap #5): swap the critic's host-Gaussian vs_place_context
-        # position afferent for the SELF-ORGANIZED spiking `place` code (place_sensors -> place threshold-WTA +
-        # place_fs FS-PING -> plastic coincidence place->striosome_value). Default False = byte-preserved. Only
-        # meaningful with co_resident_nav_critic (it builds the critic). The moat check verifies the self-org place
-        # afferent + the DA-over-snc modulator do not perturb the parser/conversational comprehension.
-        self.nav_critic_place_selforg = bool(nav_critic_place_selforg)
-        # nav_critic_grid_frontend (#5b R1, nav chunk item 2): the place_sensors afferent is the decorrelated
-        # spatial-phase grid metric (selective place value); requires nav_critic_place_selforg. Default False =
-        # byte-preserved (the landmark render). The R1 selective-afferent win; the host-Gaussian's full
-        # retirement-by-default is gated on the δ-readout boundary, so it ships opt-in.
-        self.nav_critic_grid_frontend = bool(nav_critic_grid_frontend)
+        # nav_critic_place_selforg (TRUE ONE BRAIN roadmap #5) + nav_critic_grid_frontend (#5b R1, nav chunk item 2):
+        # swap the critic's host-Gaussian vs_place_context position afferent for the SELF-ORGANIZED spiking `place`
+        # code (place_sensors -> place threshold-WTA + place_fs FS-PING -> plastic coincidence place->striosome_value),
+        # with the place_sensors afferent fed by the DECORRELATED spatial-phase grid metric (the grid front end)
+        # instead of the locally-degenerate landmark render.
+        #
+        # PRODUCTION DEFAULT = ON (2026-06-21, #5b CLOSED): the production "one brain" agent retires the host-Gaussian
+        # `vs_place_context` place-code scaffold by default — the place code is genuinely NEURAL (the self-org place
+        # pool carves locally-SELECTIVE fields off the grid metric, place value V n/f 4.5-12.3x vs the render's 1.0x
+        # R1-cap; R1 GO 3/3, research/findings/2026-06-22-shortcut5b-R1-grid-frontend-derisk.md +
+        # -deltabar-3of3-close.md). The TD-read de-risk (2026-06-22-shortcut5b-td-read-derisk.md) CLOSED #5b on R1
+        # grounds: the host-Gaussian retires because the grid front end produces a genuinely-neural, value-gradable
+        # place code (afferent selectivity + learned near/far value, both 3/3). The residual value-READ structural/
+        # learned separation (the graded-plateau read conflates the place code's structural near/far magnitude with
+        # learned value) is the CHARACTERIZED DENDRITIC FRONTIER -- a point-neuron-substrate limit (a two-compartment
+        # neuron would route the structural drive away from the learned-value read-out; a point neuron cannot), NOT a
+        # host shortcut and NOT a blocker for the close (the existing graded-plateau read stays; the close does NOT
+        # depend on the TD read).
+        #
+        # The default is `None` = "production default ON, but ONLY when the spiking critic is actually co-resident
+        # (it builds the place->striosome_value arm the self-org/grid afferent feeds). When the critic is NOT resident
+        # (an explicit co_resident_nav_critic=False, OR a MUTUALLY-EXCLUSIVE critic was requested so the nav critic
+        # auto-yields OFF), the self-org/grid afferent is meaningless (there is no vs_place_context to retire and no
+        # critic to drive) -> resolve OFF." An EXPLICIT True forces it ON (asserts the critic is present); an EXPLICIT
+        # False opts out (the legacy host-Gaussian vs_place_context afferent, the revertible escape). grid REQUIRES
+        # place_selforg (the builder asserts it), so the grid default mirrors place_selforg.
+        # The moat check verifies the self-org place afferent + the grid metric + the DA-over-snc modulator do NOT
+        # perturb the parser/conversational comprehension (the place/critic arrays are array-disjoint from the
+        # composer's complex cp_rf_w_* synapses -> the no-confab moat is preserved by construction).
+        if nav_critic_place_selforg is None:
+            # production default: ON when the critic is resident, else OFF (the afferent needs the critic).
+            self.nav_critic_place_selforg = bool(self.co_resident_nav_critic)
+        else:
+            self.nav_critic_place_selforg = bool(nav_critic_place_selforg)
+        if nav_critic_grid_frontend is None:
+            # production default mirrors place_selforg (the grid IS the place_sensors afferent; requires the self-org pool).
+            self.nav_critic_grid_frontend = bool(self.nav_critic_place_selforg)
+        else:
+            self.nav_critic_grid_frontend = bool(nav_critic_grid_frontend)
         _D = 128
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
             seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,

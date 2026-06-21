@@ -544,12 +544,16 @@ def build_bg_brain_regions(
     # value V n/f 4.5-12.3x vs the render's 1.0x R1-cap; R1 GO 3/3,
     # research/findings/2026-06-22-shortcut5b-R1-grid-frontend-derisk.md). place_sensors is then sized
     # to the grid dim (grid_n_modules * grid_n_per_module = 198 by default, the validated config).
-    # Default OFF = byte-identical (the landmark render). GUARDED ESCAPE: off => the host-Gaussian /
-    # landmark afferent. HONEST SCOPE: this delivers the R1 selective-afferent win (the host-Gaussian
-    # vs_place_context's FULL retirement-by-default is gated on the δ-readout stabilization -- the
-    # grid-frontend graded-plateau READ conflates the place code's structural near/far magnitude
-    # asymmetry with learned value, a characterized deeper boundary; the recorded next frontier), so
-    # the grid front end is shipped as a first-class flag, opt-in. Reads ONLY (x,y) (anti-cheat).
+    # This function-level default STAYS OFF = byte-identical (the landmark render) so the documented
+    # standalone CLI benchmarks reproduce; the PRODUCTION default-ON lives in MergedNavConvAgent (the
+    # merged "one brain" agent). GUARDED ESCAPE: off => the host-Gaussian / landmark afferent. #5b CLOSED
+    # (research/findings/2026-06-22-shortcut5b-td-read-derisk.md): the host-Gaussian vs_place_context
+    # retires on R1 grounds -- the grid front end produces a genuinely-neural, value-gradable place code
+    # (afferent selectivity + learned near/far value, both 3/3). The residual value-READ structural/learned
+    # separation (the graded-plateau READ conflates the place code's structural near/far magnitude with
+    # learned value) is the CHARACTERIZED DENDRITIC FRONTIER (a point-neuron limit, NOT a host shortcut,
+    # NOT a blocker -- the existing graded-plateau read stays; the close does NOT depend on the TD read).
+    # Reads ONLY (x,y) (anti-cheat).
     nav_critic_grid_frontend: bool = False,
     grid_n_modules: int = 6,
     grid_n_per_module: int = 33,
@@ -3576,9 +3580,12 @@ def run_moving_goal_episode(
     n_place_bearing: int = 12,          # bearing sensors/landmark (de-risk n_bearing)
     n_place_dist: int = 8,              # distance sensors/landmark (de-risk n_dist)
     # #5b R1 SURPASS grid-cell front end (nav chunk item 2): the DECORRELATED spatial-phase grid metric
-    # as the place_sensors afferent (selective place value 4.5-12.3x; default OFF = the landmark render).
-    # grid_drive_scale = the operating-point gain on the grid code's [0,1] activations (the de-risk's
-    # validated 2.5: the grid is sparse so the place pool + critic need ~2.5x to see comparable drive).
+    # as the place_sensors afferent (selective place value 4.5-12.3x). This episode-level default STAYS
+    # OFF = the landmark render so the standalone CLI benchmarks reproduce; the PRODUCTION default-ON lives
+    # in MergedNavConvAgent. #5b CLOSED on R1 grounds (2026-06-22-shortcut5b-td-read-derisk.md); the
+    # value-READ structural/learned separation is the characterized dendritic frontier (a point-neuron
+    # limit, NOT a host shortcut). grid_drive_scale = the operating-point gain on the grid code's [0,1]
+    # activations (the de-risk's validated 2.5: the grid is sparse so the place pool + critic need ~2.5x).
     nav_critic_grid_frontend: bool = False,
     grid_n_modules: int = 6,
     grid_n_per_module: int = 33,
