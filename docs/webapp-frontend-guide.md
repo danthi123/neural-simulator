@@ -3,15 +3,21 @@
 How to add features, tabs, and visualizations to the research dashboard
 without breaking what's already there.
 
-**Last updated:** 2026-05-02
+**Last updated:** 2026-06-22. This is a **contributor** guide — the
+architectural patterns (tab registry, endpoint conventions, theming) are
+current and stable. The screenshot tour and the per-tab counts below predate
+later UI growth (the dashboard now has 12 tabs, including **Bridges** and
+**Lineages**, and surfaces 1000+ findings); treat the tour as illustrative
+of the *patterns*, not an exact inventory of the live UI.
 
 ---
 
 ## Screenshot tour
 
-A quick visual tour of every tab, the theme system, and the mobile
+A quick visual tour of the tabs, the theme system, and the mobile
 breakpoints. Screenshots live in `docs/images/webapp/` and are
-captured against the running webapp at `localhost:8765`.
+captured against the running webapp at `localhost:8765`. (The live UI has
+since grown more tabs than shown here — see the note above.)
 
 ### Home (default landing tab)
 
@@ -127,7 +133,7 @@ Splits stack vertically. Toolbars wrap.
 
 ![Mobile menu open — vertical tab drawer](images/webapp/14-mobile-nav-open.png)
 
-The hamburger button reveals all 9 tabs as a vertical drawer. Tapping
+The hamburger button reveals all tabs as a vertical drawer. Tapping
 a tab auto-collapses the menu. Same nav as desktop, just a different
 layout.
 
