@@ -223,13 +223,16 @@ def main():
                          "so the whole conversational turn is brain-based. The escape is for the numpy-CPU / oracle path.")
     ap.set_defaults(spiking_cleanup=True)
     ap.add_argument("--integrated-loop", dest="integrated_loop", action="store_true",
-                    help="(shortcut #3, default OFF = byte-identical) route the (agent, action) cue-match-and-first-"
+                    help="(shortcut #3) route the (agent, action) cue-match-and-first-"
                          "match SELECTION through the validated spiking K-way sequencer (gated-disinhibition match "
                          "cascade + BG first-match priority WTA, match_thresh=0.06) instead of the host first-match "
                          "loop -- so that routing op is neurons firing. onebrain path only; the no-confab moat is "
-                         "preserved (answer-identical + fa_total 0, the #3 fold de-risk). NOT the default (a default "
-                         "flip is a separate gated step).")
-    ap.set_defaults(integrated_loop=False)
+                         "preserved (answer-identical + fa_total 0, the #3 fold de-risk). DEFAULT ON as of the "
+                         "production-wiring pass (validated V=320 GO 4/4): the flagship production who/what is spiking.")
+    ap.add_argument("--no-integrated-loop", dest="integrated_loop", action="store_false",
+                    help="disable the spiking sequencer -> the host first-match _scan (the byte-identical escape / "
+                         "numpy-CPU / test-oracle path).")
+    ap.set_defaults(integrated_loop=True)
     a = ap.parse_args()
 
     vocab, cat_ids, _ = taxonomy_to_vocab_categories(TAXONOMY_40x8)
