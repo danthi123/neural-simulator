@@ -91,7 +91,8 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
             sc_cortex_w, divnorm_sigma, divnorm_gain, cortex_wta=False,
             cortex_fs_weight=8.0, cortex_fs_n=5, fix1=False, fix2=False,
             tie_break_eps=0, fix3=False, opponent_axis_eps=0,
-            fixA=False, sel_divnorm_sigma=1.0, sel_divnorm_gain=1.0):
+            fixA=False, sel_divnorm_sigma=1.0, sel_divnorm_gain=1.0,
+            fixB=False, sel_opponent_weight=12.0, sel_crossaxis_weight=0.0):
     """arm_name in {'host','sc_ramp','sc_popvector','sc_popvector_scr'}.
 
     cortex_wta (the R1 'sharpen-earlier' next mechanism after the Option-A+B HONEST NEGATIVE): add
@@ -141,6 +142,10 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
         kw["sc_sel_divnorm"] = True                     # FIX A: divisive norm at the sel_X input
         kw["sc_sel_divnorm_sigma"] = float(sel_divnorm_sigma)
         kw["sc_sel_divnorm_gain"] = float(sel_divnorm_gain)
+    if fixB:
+        kw["enable_sel_opponent_pair"] = True           # FIX B: opponent-pair the sel accumulators
+        kw["sel_opponent_weight"] = float(sel_opponent_weight)
+        kw["sel_crossaxis_weight"] = float(sel_crossaxis_weight)
 
     # reset the per-run SC env knobs so a prior arm doesn't leak.
     os.environ.pop("SC_CORTEX_W", None)
@@ -249,6 +254,9 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
         "fixA_sel_divnorm": bool(results.get("sc_sel_divnorm", False)),
         "fixA_sel_divnorm_sigma": float(results.get("sc_sel_divnorm_sigma", 1.0)),
         "fixA_sel_divnorm_gain": float(results.get("sc_sel_divnorm_gain", 1.0)),
+        "fixB_sel_opponent_pair": bool(results.get("sc_sel_opponent_pair", False)),
+        "fixB_sel_opponent_weight": float(results.get("sel_opponent_weight", 12.0)),
+        "fixB_sel_crossaxis_weight": float(results.get("sel_crossaxis_weight", 0.0)),
         "stage_surplus": stage_surplus,
         "tie_break_count": int(results.get("tie_break_count", 0)),
         "decision_total": int(results.get("decision_total", 0)),
@@ -335,6 +343,15 @@ def main():
                     help="FIX A semi-saturation sigma on the sel_X divisive pool.")
     ap.add_argument("--sel-divnorm-gain", type=float, default=1.0,
                     help="FIX A divisive strength on the four-sel mean term.")
+    ap.add_argument("--fixB", action="store_true",
+                    help="Cascade-accumulator FIX B: OPPONENT-PAIR the sel accumulators (N<->S, E<->W "
+                         "integrate the DIFFERENCE via balanced sel_FS axis-partner inhibition -> the "
+                         "common-mode N-S offset cancels structurally; Bogacz 2006). The scoping's rank-2 "
+                         "remedy if FIX A over-flattens/under-shrinks. Stack with --fix1. Applies to the SC arms.")
+    ap.add_argument("--sel-opponent-weight", type=float, default=12.0,
+                    help="FIX B: strong balanced sel_FS_X -> axis-partner inhibitory weight.")
+    ap.add_argument("--sel-crossaxis-weight", type=float, default=0.0,
+                    help="FIX B: weak/zero cross-axis sel_FS_X -> non-partner inhibitory weight.")
     ap.add_argument("--with-conv", action="store_true",
                     help="merged bridge (the NEGATIVE config). Off = standalone nav SC (faster smoke).")
     ap.add_argument("--no-host", action="store_true", help="skip the host positive control.")
@@ -371,7 +388,10 @@ def main():
                                  opponent_axis_eps=args.opponent_axis_eps,
                                  fixA=args.fixA,
                                  sel_divnorm_sigma=args.sel_divnorm_sigma,
-                                 sel_divnorm_gain=args.sel_divnorm_gain))
+                                 sel_divnorm_gain=args.sel_divnorm_gain,
+                                 fixB=args.fixB,
+                                 sel_opponent_weight=args.sel_opponent_weight,
+                                 sel_crossaxis_weight=args.sel_crossaxis_weight))
 
     by = {s["arm"]: s for s in summaries}
     host = by.get("host")

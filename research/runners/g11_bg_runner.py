@@ -500,6 +500,21 @@ def build_bg_brain_regions(
     thal_to_sel_weight: float = 30.0,    # thal_X -> sel_X (feed-forward EVIDENCE; modest, not saturating)
     sel_to_sel_fs_weight: float = 20.0,  # sel_X -> sel_FS_X (drives the competing interneuron)
     sel_fs_to_sel_weight: float = 5.0,   # sel_FS_X -> sel_Y!=X (GENTLE cross-pool suppression; symmetric over-inhibition is unstable)
+    # Cascade-accumulator FIX B (2026-06-20): OPPONENT-PAIR the sel accumulators (N<->S, E<->W integrate
+    # the DIFFERENCE). When True, re-weight the sel_FS_X -> sel_Y cross-inhibition into a balanced
+    # opponent-pair topology: each sel_FS_X inhibits ITS AXIS PARTNER (sel_FS_N -> sel_S, sel_FS_S ->
+    # sel_N, sel_FS_E -> sel_W, sel_FS_W -> sel_E) at sel_opponent_weight, and the CROSS-axis terms
+    # (e.g. sel_FS_N -> sel_E) at sel_crossaxis_weight (default 0 = pure opponent pairs). Because
+    # sel_FS_X fires proportional to sel_X, sel_S then receives inhibition proportional to sel_N (and
+    # vice versa), so each axis integrates sel_N - sel_S: a COMMON-mode N-S offset cancels in the
+    # difference, only the position-bearing differential accumulates (Bogacz 2006 race<->diffusion
+    # equivalence: balanced mutual inhibition makes the difference mode the slow integrator). The SC
+    # opponent push-pull realized at the INTEGRATOR (where biology has it), not the read-out (FIX 3,
+    # which re-biased). The BALANCE is load-bearing (equal both directions). Default OFF (the all-to-all
+    # cross-inhibition above is unchanged) => byte-identical. NO sim/ edit (a runner pathway re-weighting).
+    enable_sel_opponent_pair: bool = False,
+    sel_opponent_weight: float = 12.0,   # FIX B: strong balanced sel_FS_X -> axis-partner inhibition
+    sel_crossaxis_weight: float = 0.0,   # FIX B: weak/zero cross-axis sel_FS_X -> non-partner inhibition
     # ACCUMULATE-THEN-COMMIT (2026-06-06, N6 fix). The gain-0 sel_X soft-WTA
     # above is a PASSIVE INSTANTANEOUS COMPARATOR (internal_density=0,
     # exc_weight_mean=0) — it cannot manufacture a winner from the weak released
@@ -2229,13 +2244,25 @@ def build_bg_brain_regions(
                 plastic=False,
             ))
         # sel_FS_X → sel_Y for Y != X (inhibitory cross-pool suppression).
+        # FIX B (2026-06-20): when enable_sel_opponent_pair, re-weight into a balanced opponent-pair
+        # topology -- the AXIS PARTNER (N<->S, E<->W) at sel_opponent_weight, the cross-axis terms at
+        # sel_crossaxis_weight -- so each axis integrates the DIFFERENCE (common-mode N-S cancels;
+        # Bogacz 2006). Default: the symmetric sel_fs_to_sel_weight all-to-all (byte-identical).
+        _opp_partner = {"N": "S", "S": "N", "E": "W", "W": "E"}
         for src_action in ACTION_NAMES:
             for tgt_action in ACTION_NAMES:
                 if src_action == tgt_action:
                     continue
+                if enable_sel_opponent_pair:
+                    _w = (sel_opponent_weight if tgt_action == _opp_partner[src_action]
+                          else sel_crossaxis_weight)
+                    if _w <= 0.0:
+                        continue  # skip zero-weight cross-axis edges entirely
+                else:
+                    _w = sel_fs_to_sel_weight
                 pathways.append(RegionPathway(
                     from_region=f"sel_FS_{src_action}", to_region=f"sel_{tgt_action}",
-                    density=1.0, weight_mean=sel_fs_to_sel_weight, weight_jitter=0.2,
+                    density=1.0, weight_mean=_w, weight_jitter=0.2,
                     plastic=False,
                 ))
         if enable_commit_burst:
@@ -3898,6 +3925,11 @@ def run_moving_goal_episode(
     thal_to_sel_weight: float = 30.0,
     sel_to_sel_fs_weight: float = 20.0,
     sel_fs_to_sel_weight: float = 5.0,
+    # Cascade-accumulator FIX B (2026-06-20): opponent-pair the sel accumulators (see
+    # build_bg_brain_regions). Default OFF => byte-identical (the all-to-all sel_FS cross-inhibition).
+    enable_sel_opponent_pair: bool = False,
+    sel_opponent_weight: float = 12.0,
+    sel_crossaxis_weight: float = 0.0,
     # Accumulate-then-commit readout (2026-06-06, N6 fix). See
     # build_bg_brain_regions for the full mechanism (Wang-2002 NMDA recurrent
     # accumulator on sel_X + Lo-Wang/SC commit_X burst stage). These tune the
@@ -4069,6 +4101,9 @@ def run_moving_goal_episode(
         thal_to_sel_weight=thal_to_sel_weight,
         sel_to_sel_fs_weight=sel_to_sel_fs_weight,
         sel_fs_to_sel_weight=sel_fs_to_sel_weight,
+        enable_sel_opponent_pair=enable_sel_opponent_pair,
+        sel_opponent_weight=sel_opponent_weight,
+        sel_crossaxis_weight=sel_crossaxis_weight,
         sel_recurrent_density=sel_recurrent_density,
         sel_recurrent_weight=sel_recurrent_weight,
         enable_commit_burst=enable_commit_burst,
@@ -7802,6 +7837,10 @@ def run_moving_goal_episode(
         "sc_sel_divnorm": bool(_sc_sel_divnorm),
         "sc_sel_divnorm_sigma": float(sc_sel_divnorm_sigma),
         "sc_sel_divnorm_gain": float(sc_sel_divnorm_gain),
+        # Cascade-accumulator FIX B instrumentation (2026-06-20): the sel opponent-pair flag + weights.
+        "sc_sel_opponent_pair": bool(enable_sel_opponent_pair),
+        "sel_opponent_weight": float(sel_opponent_weight),
+        "sel_crossaxis_weight": float(sel_crossaxis_weight),
         # Cascade North-bias FIX 3 instrumentation (2026-06-20): how many decisions the opponent-axis
         # push-pull read-out decided by a signed axis margin (the anti-cheat that the axis margin is
         # load-bearing -- a GO needs the per-axis margin deciding, not a fall-through to the tie-break).
