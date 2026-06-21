@@ -1,0 +1,74 @@
+{
+  "seed": 42,
+  "n_modules": 6,
+  "n_per_module": 33,
+  "arms": {
+    "shuffle_v": {
+      "arm": "shuffle_v",
+      "grid_on": true,
+      "scramble": false,
+      "n_grid": 198,
+      "graded_v": {
+        "v_near": 687.1763917891572,
+        "v_far": 486.41791305396555,
+        "v_near_over_far": 1.4127283830374036
+      },
+      "graded_delta": {
+        "settle_steps": 0,
+        "delta_vnf": 1.3859725381228145,
+        "vnf_gap": true,
+        "snc_pred_near_hz": 0.0,
+        "snc_unpred_far_hz": 0.0,
+        "delta_snc_graded": 0.0,
+        "gabab_gap_graded": false,
+        "gabab_near": 4.638456650115205,
+        "gabab_far": 3.784712896866994,
+        "delta_gabab": 1.2255768869429817,
+        "gabab_cond_gap": false
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 136,
+        "far_set_size": 26,
+        "w_near": 0.4998778998851776,
+        "w_far": 0.5007821321487427,
+        "w_near_over_far": 0.9981943599711012,
+        "learns_v": false,
+        "crit_near_hz": 226.94444444444446,
+        "crit_far_hz": 318.19444444444446,
+        "crit_grade_ratio": 0.7132256656481886,
+        "critic_fire": true,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 0.0,
+        "snc_unpredicted_far_hz": 0.0,
+        "snc_gap_ratio": 0.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 407,
+        "snc_pred_lesion_hz": 0.0,
+        "snc_unpred_lesion_hz": 5.0,
+        "lesion_gap_ratio": 5000000.0,
+        "lesion_collapses": false
+      },
+      "synscale_freeze_seam_log": [
+        {
+          "mode": "weight_target",
+          "n_near_active": 182,
+          "w_near_before": 2.8268885612487793,
+          "scale": 0.17687290785142404,
+          "w_near_after": 0.5,
+          "target_wnear": 0.5,
+          "down_only": false
+        }
+      ],
+      "goal_free_asserted": true
+    }
+  }
+}

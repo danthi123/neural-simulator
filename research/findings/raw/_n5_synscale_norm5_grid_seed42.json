@@ -1,0 +1,74 @@
+{
+  "seed": 42,
+  "n_modules": 6,
+  "n_per_module": 33,
+  "arms": {
+    "grid": {
+      "arm": "grid",
+      "grid_on": true,
+      "scramble": false,
+      "n_grid": 198,
+      "graded_v": {
+        "v_near": 684.9019279397548,
+        "v_far": 485.25451458872766,
+        "v_near_over_far": 1.4114282450730753
+      },
+      "graded_delta": {
+        "settle_steps": 0,
+        "delta_vnf": 1.3789075074666441,
+        "vnf_gap": true,
+        "snc_pred_near_hz": 0.0,
+        "snc_unpred_far_hz": 0.0,
+        "delta_snc_graded": 0.0,
+        "gabab_gap_graded": false,
+        "gabab_near": 4.524122442910097,
+        "gabab_far": 3.656510519762251,
+        "delta_gabab": 1.2372786618440412,
+        "gabab_cond_gap": false
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 136,
+        "far_set_size": 26,
+        "w_near": 0.4986548125743866,
+        "w_far": 0.5038098692893982,
+        "w_near_over_far": 0.9897678528563115,
+        "learns_v": false,
+        "crit_near_hz": 222.6388888888889,
+        "crit_far_hz": 326.3888888888889,
+        "crit_grade_ratio": 0.6821276595744681,
+        "critic_fire": true,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 0.0,
+        "snc_unpredicted_far_hz": 0.0,
+        "snc_gap_ratio": 0.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 407,
+        "snc_pred_lesion_hz": 0.0,
+        "snc_unpred_lesion_hz": 5.0,
+        "lesion_gap_ratio": 5000000.0,
+        "lesion_collapses": false
+      },
+      "synscale_freeze_seam_log": [
+        {
+          "mode": "weight_target",
+          "n_near_active": 182,
+          "w_near_before": 2.8260128498077393,
+          "scale": 0.17692771638813187,
+          "w_near_after": 0.5,
+          "target_wnear": 0.5,
+          "down_only": false
+        }
+      ],
+      "goal_free_asserted": true
+    }
+  }
+}

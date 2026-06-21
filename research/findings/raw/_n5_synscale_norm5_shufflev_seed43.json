@@ -1,0 +1,74 @@
+{
+  "seed": 43,
+  "n_modules": 6,
+  "n_per_module": 33,
+  "arms": {
+    "shuffle_v": {
+      "arm": "shuffle_v",
+      "grid_on": true,
+      "scramble": false,
+      "n_grid": 198,
+      "graded_v": {
+        "v_near": 772.8926058538765,
+        "v_far": 514.1248464320535,
+        "v_near_over_far": 1.5033169690545616
+      },
+      "graded_delta": {
+        "settle_steps": 0,
+        "delta_vnf": 1.5470202217297717,
+        "vnf_gap": true,
+        "snc_pred_near_hz": 0.0,
+        "snc_unpred_far_hz": 0.0,
+        "delta_snc_graded": 0.0,
+        "gabab_gap_graded": false,
+        "gabab_near": 4.162602820460564,
+        "gabab_far": 15.159791583280771,
+        "delta_gabab": 0.27458179735474464,
+        "gabab_cond_gap": false
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 147,
+        "far_set_size": 13,
+        "w_near": 0.5002778768539429,
+        "w_far": 0.5008123517036438,
+        "w_near_over_far": 0.9989327842097289,
+        "learns_v": false,
+        "crit_near_hz": 125.97222222222223,
+        "crit_far_hz": 339.3055555555556,
+        "crit_grade_ratio": 0.3712648383135489,
+        "critic_fire": true,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 0.0,
+        "snc_unpredicted_far_hz": 0.0,
+        "snc_gap_ratio": 0.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 402,
+        "snc_pred_lesion_hz": 0.0,
+        "snc_unpred_lesion_hz": 0.0,
+        "lesion_gap_ratio": 0.0,
+        "lesion_collapses": true
+      },
+      "synscale_freeze_seam_log": [
+        {
+          "mode": "weight_target",
+          "n_near_active": 173,
+          "w_near_before": 2.831472158432007,
+          "scale": 0.17658658536020588,
+          "w_near_after": 0.49999999999999994,
+          "target_wnear": 0.5,
+          "down_only": false
+        }
+      ],
+      "goal_free_asserted": true
+    }
+  }
+}
