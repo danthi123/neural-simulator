@@ -26,12 +26,34 @@ threshold to mask it.
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 import os
 import numpy as np
 
 from sim.backend import is_gpu_backend
 from research.runners.one_brain_composer import OneBrainComposer, _seq_imports
+
+
+def _free_gpu_memory():
+    """Release the per-iteration bridge memory so the (seed, K) loop does NOT accumulate.
+
+    ROOT CAUSE this guards (2026-06-21): at V=320/K=32 each `OneBrainComposer(integrated_loop=True)` lazily builds an
+    O(K*V) spiking sequencer fabric (~41761 regions / 836830 neurons / 21M synapses). Holding a composer is cheap
+    (~0.78GB VRAM / ~1.5GB host) but the loop built one per iteration and NEVER freed: the CuPy mempool retains freed
+    blocks and the 21M-synapse build's transient host structures linger, so memory grew linearly across the
+    ks x seeds grid until host RAM was exhausted and the OS silently killed the process mid-build (the dead-log
+    signature: progressively larger bridges, then gone, no traceback). Calling this after each iteration drops the
+    only references (the composers are local to run_seed_K) + gc.collect()s the host structures + returns the device
+    mempool blocks, so the steady-state peak is ONE K=32 composer (fits 24GB trivially). NO `sim/` edit -- runner-side
+    teardown only. Inert on the numpy-CPU path (no cupy mempool)."""
+    gc.collect()
+    try:
+        import cupy as cp
+        cp.get_default_memory_pool().free_all_blocks()
+        cp.get_default_pinned_memory_pool().free_all_blocks()
+    except Exception:
+        pass
 # the K=32 production fact set (32 distinct facts, unique (agent, action) cues, 8 actions x 4 agents) + the V=72 vocab.
 from research.runners._phaseB_onebrain_sequencerK_k32_margin_derisk import (
     ALL_FACTS, VOCAB, _build_queries,
@@ -123,9 +145,16 @@ def run_seed_K(seed, D, K, vocab, grounded_codes=None, match_thresh=0.06, gain=0
     raw_moat_clean = all(b is None for b in raw_moat)
     raw_fails = not (raw_present_correct and raw_moat_clean)    # raw control behaved (failed) -> divnorm load-bearing
 
-    return dict(seed=seed, D=D, K=K, rows=rows, answer_identical=answer_identical, moat_ok=moat_ok, fa=fa,
-                reconsolidation_ok=reconsolidation_ok, lesion_fails_safe=lesion_fails_safe,
-                lesion_decisions=les, permuted_inverts=permuted_inverts, raw_fails=raw_fails)
+    result = dict(seed=seed, D=D, K=K, rows=rows, answer_identical=answer_identical, moat_ok=moat_ok, fa=fa,
+                  reconsolidation_ok=reconsolidation_ok, lesion_fails_safe=lesion_fails_safe,
+                  lesion_decisions=les, permuted_inverts=permuted_inverts, raw_fails=raw_fails)
+    # MEMORY-SAFE: drop this iteration's bridges (the heavy K=32/V=320 sequencer fabric the integrated_loop composer
+    # built) + return the GPU mempool blocks BEFORE the next (seed, K) iteration allocates. The result dict above holds
+    # only primitives (strings / None / bools / the lesion-decision strings) -- no live bridge reference -- so freeing
+    # here cannot corrupt it. See _free_gpu_memory's note for the root cause this guards.
+    del c_host, c_seq, raw_sb, sb, meta, drives, raw_drives, raw_present, raw_moat, bscores, les
+    _free_gpu_memory()
+    return result
 
 
 def main():
