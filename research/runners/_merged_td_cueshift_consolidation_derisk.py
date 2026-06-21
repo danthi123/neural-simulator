@@ -123,6 +123,51 @@ def _build(seed, td_csc_n=8, vocab=None, op=None, global_het_test=False):
     return bridge, handles, time.time() - t0
 
 
+class _frozen_homeostasis:
+    """Context manager that FREEZES homeostatic threshold adaptation (+ synaptic scaling) for a probe/test window.
+
+    WHY (the lesion-non-discrimination root cause): the merged-config fix gives the td slice per-region homeostasis
+    (`cp_homeostasis_neuron_mask`). During a frozen LESION test the cue->critic value conduit is cut, so td_snc fires
+    only at its tonic floor (~3.5 Hz). Homeostasis SEES that low rate as below-target and keeps lowering td_snc's
+    threshold across the settle window -> the tonic baseline CLIMBS (measured 3.5 -> 44 Hz, lesion_diag_s42.json), so a
+    cue-bin "burst" of ~60 Hz is really the homeostatically-inflated tonic + a tiny transient, NOT a surviving
+    value-driven burst. That inflated floor is exactly what makes the cue-pathway lesion non-discriminating co-resident
+    (opsearch BOUNDARY). A frozen test must freeze ALL plasticity, not just reward-STDP -- homeostatic threshold
+    adaptation IS plasticity. This pins the thresholds (and disables both the global flag AND the per-region mask) for
+    the duration, then restores the live state EXACTLY. Runner-side measurement protocol; NO `sim/` edit, NO mechanism
+    change (the value learning / derivative / burst stay 100% neural and unchanged; this only stops the probe-window
+    threshold drift)."""
+    def __init__(self, bridge):
+        self.b = bridge
+        self.cfg = bridge.core_config
+
+    def __enter__(self):
+        b, cfg = self.b, self.cfg
+        self._saved_enable = cfg.enable_homeostasis
+        self._saved_scaling = getattr(cfg, "enable_synaptic_scaling", False)
+        self._saved_mask = getattr(b, "cp_homeostasis_neuron_mask", None)
+        # Snapshot thresholds so any residual write is reverted on exit (belt-and-suspenders).
+        thr = getattr(b, "cp_neuron_firing_thresholds", None)
+        self._saved_thr = thr.copy() if thr is not None else None
+        cfg.enable_homeostasis = False
+        if hasattr(cfg, "enable_synaptic_scaling"):
+            cfg.enable_synaptic_scaling = False
+        if self._saved_mask is not None:
+            b.cp_homeostasis_neuron_mask = None   # the mask path keeps homeostasis active even with the flag off
+        return self
+
+    def __exit__(self, *exc):
+        b, cfg = self.b, self.cfg
+        cfg.enable_homeostasis = self._saved_enable
+        if hasattr(cfg, "enable_synaptic_scaling"):
+            cfg.enable_synaptic_scaling = self._saved_scaling
+        if self._saved_mask is not None:
+            b.cp_homeostasis_neuron_mask = self._saved_mask
+        if self._saved_thr is not None and getattr(b, "cp_neuron_firing_thresholds", None) is not None:
+            b.cp_neuron_firing_thresholds[:] = self._saved_thr
+        return False
+
+
 def _clip_td_value_weights(bridge, K, w_max):
     """Re-clip ONLY the td_csc_k->td_striosome (td_value-gated) synapses to w_max via bridge.set_pathway_weights (the
     same (pre,post)->CSR mapper _lesion_pathway uses, so it is orientation-safe and writes the LIVE CSR the matvec +
@@ -291,22 +336,26 @@ def run_td_csc_merged(seed, *, lesion_cue=False, unpaired=False, verbose=True, t
         if verbose:
             print(f"  [lesion-cue] zeroed {n_cut} td_csc_k->td_striosome edges (the value conduit)")
 
-    # Frozen test block: a long settle then baseline + omission (mirrors the standalone).
+    # Frozen test block: a long settle then baseline + omission (mirrors the standalone). FREEZE HOMEOSTASIS for the
+    # whole test block (not just the reward LR) -- otherwise the per-region td_snc threshold drifts during the settle
+    # (the post-lesion floor climbed 3.5 -> 44 Hz, inflating the baseline so the cue-pathway lesion can't discriminate;
+    # lesion_diag_s42.json + opsearch BOUNDARY). A frozen probe must freeze ALL plasticity.
     _settle_bins = max(8, int(iti_bins) * 2)
-    _drive_timecourse(bridge, idx_map, floor, _settle_bins * bin_steps, xp, bin_steps, freeze_lr=0.0, cfg=cfg)
-    base_bins, _, _, _ = _drive_timecourse(bridge, idx_map, floor, win_steps, xp, bin_steps, freeze_lr=0.0, cfg=cfg)
-    _drive_timecourse(bridge, idx_map, floor, _settle_bins * bin_steps, xp, bin_steps, freeze_lr=0.0, cfg=cfg)
     omit_events = [(k * bin_steps, (k + 1) * bin_steps, {f"td_csc_{k}": csc_drive_pa}) for k in range(K)]
-    # For the lesion test, also measure a predicted (chain + US) WITHOUT the teacher (the trained response must stand
-    # on the learned csc->critic synapses, which the lesion cut) so the US reflex can be read.
-    if lesion_cue:
-        les_ev = [(k * bin_steps, (k + 1) * bin_steps, {f"td_csc_{k}": csc_drive_pa}) for k in range(K)]
-        les_ev.append((reward_bin * bin_steps, (reward_bin + max(1, us_dur_bins)) * bin_steps,
-                       {"td_reward_us": reward_us_drive_pa}))
-        pred_bins, pred_strio, _, _ = _drive_timecourse(
-            bridge, idx_map, floor, win_steps, xp, bin_steps, events=les_ev, freeze_lr=0.0, cfg=cfg)
-    omit_bins, _, _, _ = _drive_timecourse(
-        bridge, idx_map, floor, win_steps, xp, bin_steps, events=omit_events, freeze_lr=0.0, cfg=cfg)
+    with _frozen_homeostasis(bridge):
+        _drive_timecourse(bridge, idx_map, floor, _settle_bins * bin_steps, xp, bin_steps, freeze_lr=0.0, cfg=cfg)
+        base_bins, _, _, _ = _drive_timecourse(bridge, idx_map, floor, win_steps, xp, bin_steps, freeze_lr=0.0, cfg=cfg)
+        _drive_timecourse(bridge, idx_map, floor, _settle_bins * bin_steps, xp, bin_steps, freeze_lr=0.0, cfg=cfg)
+        # For the lesion test, also measure a predicted (chain + US) WITHOUT the teacher (the trained response must
+        # stand on the learned csc->critic synapses, which the lesion cut) so the US reflex can be read.
+        if lesion_cue:
+            les_ev = [(k * bin_steps, (k + 1) * bin_steps, {f"td_csc_{k}": csc_drive_pa}) for k in range(K)]
+            les_ev.append((reward_bin * bin_steps, (reward_bin + max(1, us_dur_bins)) * bin_steps,
+                           {"td_reward_us": reward_us_drive_pa}))
+            pred_bins, pred_strio, _, _ = _drive_timecourse(
+                bridge, idx_map, floor, win_steps, xp, bin_steps, events=les_ev, freeze_lr=0.0, cfg=cfg)
+        omit_bins, _, _, _ = _drive_timecourse(
+            bridge, idx_map, floor, win_steps, xp, bin_steps, events=omit_events, freeze_lr=0.0, cfg=cfg)
 
     trial_idx = list(range(n_train))
     r_migration = _pearson_r(trial_idx, peak_bins)
@@ -363,12 +412,23 @@ def run_td_csc_merged(seed, *, lesion_cue=False, unpaired=False, verbose=True, t
         us_rate = float(np.mean(pred_bins[reward_bin:reward_bin + half])) if pred_bins else 0.0
         cue_rate = float(pred_bins[0]) if pred_bins else 0.0
         v_cue = float(pred_strio[0]) if pred_strio else 0.0
+        # no_cue_burst REFERENCE = the derivative-active NO-CUE base window (base_bins), NOT the ITI tonic floor.
+        # On the MERGED bridge the B-2 conductance-derivative converts the critic-tonic-driven GABA_B ripples into a
+        # sustained td_snc baseline (~38 Hz with NO cue) that the bare ITI floor (~3.75 Hz) does not see. The correct
+        # lesion contrast is cue-ON vs cue-OFF *in the same derivative-active window* (the standalone's tonic+base were
+        # both ~60 Hz so this distinction was invisible there). With the proper reference, a cue burst that SURVIVES the
+        # value-conduit lesion would lift cue >> base; a burst carried BY the (cut) value conduit collapses to ~base.
+        base_window_hz = float(np.mean(base_bins)) if base_bins else tonic_rate
+        cue_ref = max(base_window_hz, tonic_rate)
         out.update({
             "lesion_n_cut": n_cut, "lesion_v_cue_hz": v_cue, "lesion_cue_rate_hz": cue_rate,
             "lesion_us_rate_hz": us_rate, "lesion_tonic_hz": tonic_rate,
+            "lesion_base_window_hz": base_window_hz, "lesion_cue_ref_hz": cue_ref,
             "cue_silenced": bool(v_cue <= 1e-2),
-            "no_cue_burst": bool(cue_rate <= 1.30 * tonic_rate + 1e-6),
-            "us_reflex_intact": bool(us_rate > 1.10 * tonic_rate),
+            # cue collapses to within the no-cue base (the value-driven burst is gone with the conduit cut).
+            "no_cue_burst": bool(cue_rate <= 1.30 * cue_ref + 1e-6),
+            # US reflex still bursts ABOVE the no-cue base (the reward relay survives, fires td_snc).
+            "us_reflex_intact": bool(us_rate > 1.30 * cue_ref),
         })
     return out
 
