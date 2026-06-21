@@ -1,0 +1,342 @@
+{
+  "baseline_sel_NS_pct_no_divnorm": 22.2,
+  "points": [
+    {
+      "sigma": 5.0,
+      "gain": 0.05,
+      "sel_NS_surplus": 242.0,
+      "sel_NS_pct": 195.16,
+      "phase0_finalQ": 15.761061946902656,
+      "per_phase_dominant_cardinal": [
+        "N",
+        "N"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.333,
+          "E": 0.322,
+          "S": 0.047,
+          "W": 0.298
+        },
+        {
+          "N": 0.367,
+          "E": 0.267,
+          "S": 0.1,
+          "W": 0.267
+        }
+      ],
+      "late_motor_sustain_frac": 0.42083333333333334,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 2795.0,
+          "E": 2687.0,
+          "S": 2491.0,
+          "W": 2797.0,
+          "NS_surplus": 304.0,
+          "NS_pct": 11.5,
+          "EW_surplus": -110.0
+        },
+        "sel_counts": {
+          "N": 245.0,
+          "E": 254.0,
+          "S": 3.0,
+          "W": 251.0,
+          "NS_surplus": 242.0,
+          "NS_pct": 195.16,
+          "EW_surplus": 3.0
+        },
+        "commit_counts": {
+          "N": 0.0,
+          "E": 0.0,
+          "S": 0.0,
+          "W": 10.0,
+          "NS_surplus": 0.0,
+          "NS_pct": 0.0,
+          "EW_surplus": -10.0
+        },
+        "motor_counts": {
+          "N": 162.0,
+          "E": 41.0,
+          "S": 20.0,
+          "W": 114.0,
+          "NS_surplus": 142.0,
+          "NS_pct": 156.04,
+          "EW_surplus": -73.0
+        }
+      },
+      "summary_json": "research/findings/raw/nav_gate_2a\\arm2_s5p0_g0p05\\scpv_sc_popvector_seed42.json"
+    },
+    {
+      "sigma": 5.0,
+      "gain": 0.2,
+      "sel_NS_surplus": -30.0,
+      "sel_NS_pct": -136.36,
+      "phase0_finalQ": 29.504424778761063,
+      "per_phase_dominant_cardinal": [
+        "E",
+        "N"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.247,
+          "E": 0.287,
+          "S": 0.227,
+          "W": 0.24
+        },
+        {
+          "N": 0.467,
+          "E": 0.1,
+          "S": 0.2,
+          "W": 0.233
+        }
+      ],
+      "late_motor_sustain_frac": 0.3958333333333333,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 2729.0,
+          "E": 2671.0,
+          "S": 2501.0,
+          "W": 2769.0,
+          "NS_surplus": 228.0,
+          "NS_pct": 8.72,
+          "EW_surplus": -98.0
+        },
+        "sel_counts": {
+          "N": 7.0,
+          "E": 48.0,
+          "S": 37.0,
+          "W": 7.0,
+          "NS_surplus": -30.0,
+          "NS_pct": -136.36,
+          "EW_surplus": 41.0
+        },
+        "commit_counts": {
+          "N": 0.0,
+          "E": 62.0,
+          "S": 80.0,
+          "W": 0.0,
+          "NS_surplus": -80.0,
+          "NS_pct": -200.0,
+          "EW_surplus": 62.0
+        },
+        "motor_counts": {
+          "N": 158.0,
+          "E": 37.0,
+          "S": 14.0,
+          "W": 112.0,
+          "NS_surplus": 144.0,
+          "NS_pct": 167.44,
+          "EW_surplus": -75.0
+        }
+      },
+      "summary_json": "research/findings/raw/nav_gate_2a\\arm2_s5p0_g0p2\\scpv_sc_popvector_seed42.json"
+    },
+    {
+      "sigma": 2.0,
+      "gain": 0.05,
+      "sel_NS_surplus": 641.0,
+      "sel_NS_pct": 15.76,
+      "phase0_finalQ": 29.876106194690266,
+      "per_phase_dominant_cardinal": [
+        "W",
+        "N"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.273,
+          "E": 0.264,
+          "S": 0.076,
+          "W": 0.387
+        },
+        {
+          "N": 0.3,
+          "E": 0.233,
+          "S": 0.267,
+          "W": 0.2
+        }
+      ],
+      "late_motor_sustain_frac": 0.5,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 2961.0,
+          "E": 2733.0,
+          "S": 2562.0,
+          "W": 2810.0,
+          "NS_surplus": 399.0,
+          "NS_pct": 14.45,
+          "EW_surplus": -77.0
+        },
+        "sel_counts": {
+          "N": 4387.0,
+          "E": 4140.0,
+          "S": 3746.0,
+          "W": 4290.0,
+          "NS_surplus": 641.0,
+          "NS_pct": 15.76,
+          "EW_surplus": -150.0
+        },
+        "commit_counts": {
+          "N": 5139.0,
+          "E": 4888.0,
+          "S": 5121.0,
+          "W": 4302.0,
+          "NS_surplus": 18.0,
+          "NS_pct": 0.35,
+          "EW_surplus": 586.0
+        },
+        "motor_counts": {
+          "N": 352.0,
+          "E": 181.0,
+          "S": 133.0,
+          "W": 231.0,
+          "NS_surplus": 219.0,
+          "NS_pct": 90.31,
+          "EW_surplus": -50.0
+        }
+      },
+      "summary_json": "research/findings/raw/nav_gate_2a\\arm2_s2p0_g0p05\\scpv_sc_popvector_seed42.json"
+    },
+    {
+      "sigma": 2.0,
+      "gain": 0.2,
+      "sel_NS_surplus": 4.0,
+      "sel_NS_pct": 80.0,
+      "phase0_finalQ": 27.168141592920353,
+      "per_phase_dominant_cardinal": [
+        "E",
+        "N"
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.231,
+          "E": 0.344,
+          "S": 0.211,
+          "W": 0.213
+        },
+        {
+          "N": 0.467,
+          "E": 0.167,
+          "S": 0.2,
+          "W": 0.167
+        }
+      ],
+      "late_motor_sustain_frac": 0.4041666666666667,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 2732.0,
+          "E": 2755.0,
+          "S": 2504.0,
+          "W": 2779.0,
+          "NS_surplus": 228.0,
+          "NS_pct": 8.71,
+          "EW_surplus": -24.0
+        },
+        "sel_counts": {
+          "N": 7.0,
+          "E": 53.0,
+          "S": 3.0,
+          "W": 4.0,
+          "NS_surplus": 4.0,
+          "NS_pct": 80.0,
+          "EW_surplus": 49.0
+        },
+        "commit_counts": {
+          "N": 0.0,
+          "E": 0.0,
+          "S": 0.0,
+          "W": 0.0,
+          "NS_surplus": 0.0,
+          "NS_pct": 0.0,
+          "EW_surplus": 0.0
+        },
+        "motor_counts": {
+          "N": 174.0,
+          "E": 54.0,
+          "S": 23.0,
+          "W": 137.0,
+          "NS_surplus": 151.0,
+          "NS_pct": 153.3,
+          "EW_surplus": -83.0
+        }
+      },
+      "summary_json": "research/findings/raw/nav_gate_2a\\arm2_s2p0_g0p2\\scpv_sc_popvector_seed42.json"
+    }
+  ],
+  "sweet_spot": {
+    "sigma": 2.0,
+    "gain": 0.05,
+    "sel_NS_surplus": 641.0,
+    "sel_NS_pct": 15.76,
+    "phase0_finalQ": 29.876106194690266,
+    "per_phase_dominant_cardinal": [
+      "W",
+      "N"
+    ],
+    "per_phase_action_frac": [
+      {
+        "N": 0.273,
+        "E": 0.264,
+        "S": 0.076,
+        "W": 0.387
+      },
+      {
+        "N": 0.3,
+        "E": 0.233,
+        "S": 0.267,
+        "W": 0.2
+      }
+    ],
+    "late_motor_sustain_frac": 0.5,
+    "stage_surplus": {
+      "thal_counts": {
+        "N": 2961.0,
+        "E": 2733.0,
+        "S": 2562.0,
+        "W": 2810.0,
+        "NS_surplus": 399.0,
+        "NS_pct": 14.45,
+        "EW_surplus": -77.0
+      },
+      "sel_counts": {
+        "N": 4387.0,
+        "E": 4140.0,
+        "S": 3746.0,
+        "W": 4290.0,
+        "NS_surplus": 641.0,
+        "NS_pct": 15.76,
+        "EW_surplus": -150.0
+      },
+      "commit_counts": {
+        "N": 5139.0,
+        "E": 4888.0,
+        "S": 5121.0,
+        "W": 4302.0,
+        "NS_surplus": 18.0,
+        "NS_pct": 0.35,
+        "EW_surplus": 586.0
+      },
+      "motor_counts": {
+        "N": 352.0,
+        "E": 181.0,
+        "S": 133.0,
+        "W": 231.0,
+        "NS_surplus": 219.0,
+        "NS_pct": 90.31,
+        "EW_surplus": -50.0
+      }
+    },
+    "summary_json": "research/findings/raw/nav_gate_2a\\arm2_s2p0_g0p05\\scpv_sc_popvector_seed42.json"
+  },
+  "config": {
+    "seed": 42,
+    "grid_size": 32,
+    "n_steps": 480,
+    "warmup_steps": 200,
+    "sc_cortex_w": 18.0,
+    "divnorm_sigma": 5.0,
+    "divnorm_gain": 0.02,
+    "sigmas": "5,2",
+    "gains": "0.05,0.2",
+    "out": "research/findings/raw/nav_gate_2a/scpv_FIXA_arm2_probe.json"
+  }
+}

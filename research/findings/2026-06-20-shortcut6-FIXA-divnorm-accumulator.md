@@ -55,5 +55,44 @@ is confirmed: divide out the common mode at the `sel_X` input, where the amplifi
 
 ---
 
-_(ARM 2 = the FIX1+A σ/gain sweep, ARM 3 = the multi-seed FIX1+A vs FIX1 vs HOST vs SCRAM, the surplus-shrink check,
-the anti-cheat table, and the FIX-A enable summary follow as they land. Each arm committed the moment it lands.)_
+## ARM 2 — σ/gain sweep (finds the surplus-shrink sweet spot; grid-32, seed 42)
+
+The sel_X divisive divisor is `σ_2 + g_2·mean(sel_X input current)`. Because the four sel inputs share the
+SAME `mean`, the divisor is a COMMON scalar — it rescales all four sel pools identically. So the sweep's job is
+to find the (σ_2, g_2) that (a) keeps the sel pools FIRING robustly (selection intact — `phase0_finalQ` near the
+no-divnorm baseline, NOT the over-flatten where sel goes silent), while (b) the surplus shrinks at the sel +
+commit output (the nonlinear f-I + NMDA-recurrence interaction is where a common-scalar input rescale buys a
+real common-mode reduction).
+
+**Baseline (FIX1 popvector, NO sel divnorm, grid-32 seed 42, same step budget):** sel_counts N−S = **+22.2%**
+(N=52912 E=54862 S=42325 W=55001), commit N−S = +21.4%, the action heavily N-biased (motor N−S +121%).
+
+First pass: σ=1, g=1 OVER-FLATTENS (the divisor `1 + 1·mean` ≈ hundreds of pA silences sel to ~6 spikes —
+useless). The alive regime needs `g·mean ~ O(σ)`, i.e. g ≈ 0.05–0.2 at this drive. The 2×2 regime sweep:
+
+| σ_2 | g_2 | sel N (alive?) | sel N−S | sel N−S % | commit N−S % | phase0_finalQ | dom |
+|---|---|---|---|---|---|---|---|
+| — (no divnorm) | — | 52912 | +10587 | **+22.2%** | +21.4% | (29.2) | N |
+| 5.0 | 0.05 | 245 (near-silent) | +242 | +195% (tiny base) | 0% | 15.8 | N |
+| 5.0 | 0.2  | 7   (silent) | −30  | −136% (collapsed→S) | −200% | 29.5 | E |
+| **2.0** | **0.05** | **4387 (ALIVE)** | +641 | **+15.8%** | **+0.35%** | 29.9 | W |
+| 2.0 | 0.2  | 7   (silent) | +4   | +80% (collapsed) | 0% | 27.2 | E |
+
+**Reads:**
+- **σ=2, g=0.05 is the SWEET SPOT.** The sel pools stay fully alive (N=4387, E=4140, S=3746, W=4290 — thousands
+  of spikes, selection intact, `phase0_finalQ`=29.9 == the no-divnorm baseline). The sel N−S surplus shrinks
+  **+22.2% → +15.8%**, AND the **commit-stage N−S collapses to +0.35%** (was +21.4%) — i.e. by the commit burst
+  (the stage the Lo-Wang threshold reads and the action inherits), the divnorm has removed almost the entire
+  common-mode. The dominant cardinal is no longer locked-N (W then N).
+- Every g≥0.2 point OVER-FLATTENS — sel collapses to single-digit spikes and the "surplus %" is meaningless on a
+  near-zero base (and selection is broken). So the gain has a narrow alive window; 0.05 is in it, 0.2 is past it.
+- **The thalamic common mode is UNCHANGED by FIX-A** (+11–14% at every point) — FIX-A correctly acts at the sel
+  input, not upstream. The amplification is what it suppresses.
+
+Sweep JSON: `research/findings/raw/nav_gate_2a/scpv_FIXA_arm2_probe.json` (+ the σ=2/g=0.1, σ=3/g=0.05 bracket
+refinement appended in `scpv_FIXA_arm2_bracket.json`). **ARM-3 verdict uses the sweet spot σ_2=2.0, g_2=0.05.**
+
+---
+
+_(ARM 3 = the multi-seed FIX1+A vs FIX1 vs HOST vs SCRAM, the surplus-shrink check, the anti-cheat table, and the
+FIX-A enable summary follow as they land. Each seed committed the moment it lands.)_
