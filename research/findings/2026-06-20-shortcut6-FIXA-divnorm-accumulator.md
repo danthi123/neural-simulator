@@ -277,3 +277,48 @@ beyond the pre-existing default-OFF `enable_input_divisive_norm_2` (FIX-A) + `en
 (FIX-B), both byte-identical when off.
 
 (Per-run JSON: `scpv_FIXA_arm3_seed{42,43}.json`, `scpv_FIXB_arm3_seed42.json`.)
+
+---
+
+## SURPASS step 3 — the RANK-1 lever (cortex-WTA, move the competition EARLIER) RAN — PARTIAL POSITIVE: the retinotopic decode becomes load-bearing for the FIRST time in the arc
+
+The re-localized RANK-1 mechanism — add inter-cardinal FS WTA DIRECTLY between cortex_N/E/S/W
+(`enable_cortex_lateral_inhibition`, `--cortex-wta --cortex-fs-weight 16 --cortex-fs-n 8`) so the
+position-correct SC pop-vector margin wins at the cortex_X stage (where the bump is still sharp), BEFORE
+the cascade swamps it — was run at grid-32, seed 42, 1800 steps (popvector + scramble arms):
+
+| metric | popvector + cortex-WTA | scramble + cortex-WTA |
+|---|---|---|
+| post_change_finalQ_sum | **76.04** | **104.46** |
+| per-phase finalQ (goals N,W,S,E) | [35.5, **1.5**, 33.1, 41.5] | [33.7, **18.5**, 51.4, 34.6] |
+| tracks_goal (dominants) | True (W,N,W,N) | True (E,N,E,E) |
+| **scramble / popvector post ratio** | — | **1.374** |
+
+**THE DECISIVE RESULT — for the first time in the whole arc, the SCRAM lesion BITES (ratio 1.374).** In all
+three prior runs (FIX-A ×2, FIX-B ×1) the scramble/intact ratio was ≈1.0 — the retinotopy-scramble lesion was
+statistically identical to the intact read-out, proving the SC decode was NOT load-bearing. With the
+cortex-WTA RANK-1 lever, **scramble (104.46) is materially WORSE than the intact popvector (76.04), ratio
+1.374**, and the per-phase signature is exactly right: the lesion specifically degrades the **W-goal phase 1**
+(popvector reaches finalQ **1.5 = goal reached** when the goal is W; the scramble is **18.5** there). This is
+direct evidence that the cortex-WTA recovers a **load-bearing retinotopic decode** — the position-correct
+signal now wins at the cortex_X stage, the locus the FIX-A/FIX-B arc identified.
+
+**HONEST SCOPE — this is a PARTIAL, not a closure:** popvector still does not reach the host ceiling
+(post_change 76.0 vs host ~2; tracks 2 distinct dominants W,N,W,N, not a full 4-phase re-orient), and the
+sel-stage surplus is unchanged (+22.3%, as expected — the WTA acts at cortex_X, not sel). So #6 is NOT closed
+and the host orienting heuristic does not yet retire. But the qualitative breakthrough is real and confirms
+the SURPASS re-localization: **the productive lever is the cortex_X read-out geometry + inter-cardinal WTA
+(move the competition earlier), NOT the accumulator.** The cheap-first next steps to push the PARTIAL toward
+closure are to tune the cortex-WTA strength + add the cortex_X bump-mass divisive normalization (Option-A's
+full recipe) so the position-correct margin wins MORE decisively, and stack the Usher-McClelland leak (RANK 2)
+— all at the cortex_X stage, multi-seed.
+
+**⇒ FINAL ARC VERDICT.** FIX-A (divisive normalization at the sel_X input) is a **CHARACTERIZED NEGATIVE** for
+the #6 accumulator residual — confirmed multi-seed, with the deeper diagnosis that the **accumulator is not
+the locus at all** (two sel-stage mechanisms, FIX-A and FIX-B, both ruled out; the SCRAM lesion proved the
+decode was not load-bearing in all three sel-stage runs). The SURPASS round then **re-located the genuine
+residual UPSTREAM (the cortex_X read-out signal swamped before the sel ring) and produced a positive
+directional signal**: the cortex-WTA lever makes the retinotopic decode load-bearing for the first time
+(SCRAM ratio 1.374), pointing the precise, cheap-first path to closing #6 (cortex_X read-out geometry + WTA,
+not a deeper accumulator change). #6 is a **surpassable boundary with a now-validated productive lever**, not
+an irreducible one. (R1 JSON: `scpv_R1_cortexwta_seed42.json`.)
