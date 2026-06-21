@@ -1,0 +1,23 @@
+{
+  "dendcritic": {
+    "42": "missing",
+    "43": "missing",
+    "44": "missing",
+    "_mean": null,
+    "_n": 0
+  },
+  "baseline": {
+    "42": "missing",
+    "43": "missing",
+    "44": "missing",
+    "_mean": null,
+    "_n": 0
+  },
+  "lesion": {
+    "42": "missing",
+    "43": "missing",
+    "44": "missing",
+    "_mean": null,
+    "_n": 0
+  }
+}
