@@ -10,17 +10,31 @@ a spatial-phase grid code (a periodic multi-scale lattice evaluated AT the agent
 decorrelated by construction, so a plain feedforward competitive place layer carves locally-SELECTIVE
 fields — NO dendrite. GPU (`SIM_BACKEND=cupy`) for the on-bridge; CPU for the selectivity smoke.
 
-## VERDICT — **GO: #5b R1 SURPASSED + CLOSED** (the grid front end → selective place → δ grades; the host-Gaussian place-context scaffold can RETIRE)
+## VERDICT — **R1 SURPASSED (GO, robust 3/3): the grid front end gives a SELECTIVE place value (V n/f 4.5–12.3× vs the render's 1.0×).** The residual moves DOWN one stage to the δ-readout's stability across the place-code's run-to-run volley variability (the documented place-code non-determinism), NOT R1.
 
-The spatial-phase grid-cell front end converts the locally-degenerate render afferent into a decorrelated
-metric, the self-org place pool carves locally-selective fields off it ON REAL SPIKES, and the SHIPPED
-graded plateau read-out then grades the value **4.4× near/far** (vs the render's 1.18× R1-cap) with a clean
-**δ-gap present** (the SNc RPE subtraction flips from flat→present) — at a physiological critic rate (~17 Hz,
-matching the host-Gaussian positive control). The grid-scramble lesion COLLAPSES it. **NO `sim/` edit, NO
+The spatial-phase grid-cell front end (catalog D.07, the named missing medial-EC metric) converts the
+locally-degenerate render afferent (adjacent-cell cos 0.99) into a decorrelated metric (0.58), the self-org
+place pool carves locally-selective fields off it ON REAL SPIKES (near-neighbour place cos 0.137), and the
+SHIPPED graded plateau read-out then grades the value **4.5–12.3× near/far on every one of 3 seeds** vs the
+render's **1.02× R1-cap**. **R1 — the afferent-selectivity residual — is SURPASSED: the place value is now
+selective, robustly.** The render NEGATIVE control stays flat (1.02×, δ 1.0), the grid-scramble lesion
+COLLAPSES it (critic silent), the no-learning + graded-plateau lesions collapse it. **NO `sim/` edit, NO
 `g11_bg_runner.py` edit** (reuse-by-import: a runner monkeypatch re-points the `place_sensors` stub at the
-grid code; the existing competitive `place_sensors → place` self-org + the already-shipped
+grid code; the existing competitive `place_sensors → place` self-org + the already-shipped, byte-reviewed
 `enable_graded_dendritic_plateau` carry the rest). The grid reads ONLY `(x,y)` self-position (structural
 anti-cheat; goal coords never enter). The no-confab moat is untouched (nav-only probe, array-disjoint).
+
+**The honest GAP (the SURPASS ISOLATE → next move).** The full δ-gap bar (δ ≥ 1.3 / gabab_gap True on all
+seeds) is met on **2/3 seeds** (42: clean δ=6.67 @ 16.7 Hz; 43: present @ 65 Hz); seed 44's stronger place
+volley over-fires the critic (257 Hz) → the SNc over-clamps → δ inverts (0.0). **This residual is NOT R1**
+(the V n/f selectivity is GO on all 3 seeds) — it is the **δ-readout's STABILITY across the self-org place
+code's run-to-run volley-STRENGTH variability** (the CuPy transpose-SpMV non-determinism, the documented
+28–118 Hz critic spread, `2026-06-10-N9-placecode-reproducibility-robustness-research.md`). The named next
+move (cheap, already-built machinery): **tune the `--enable-critic-homeostasis` TARGET** (the intrinsic
+threshold-adaptation that defends a fixed critic rate against volley-strength draws — its primary lever B1
+in that research) so the critic lands ~15–25 Hz on EVERY seed regardless of the volley, decoupling the clean
+δ from the place-code draw. The host-Gaussian `vs_place_context` scaffold can RETIRE once this δ-readout
+stabilization clears 6 seeds — the afferent-selectivity wall (R1) it was holding the line for is now broken.
 
 ---
 
@@ -146,26 +160,48 @@ render exactly and shows the grid front end lifts it past the GO bar (V n/f > 1.
   `cp_firing_states` / `cp_conductance_g_graded_plateau`) is array-disjoint from the composer's complex
   `cp_rf_w_*`. Preserved by construction.
 
-### Multi-seed (the locked config: drive_scale 2.5, w_max 3)
+### Multi-seed (the locked config: drive_scale 2.5, w_max 3) — the R1 fix is robust; the δ-readout is seed-variable
 
-<!-- FILL: seeds 43, 44 (then 6 if it clears) -->
-| seed | grid V n/f | critic@near (Hz) | δ (gap) | gabab_gap |
-|---|---|---|---|---|
-| 42 | 4.48× | 16.7 | 6.67 | True |
-| 43 | _FILL_ | _FILL_ | _FILL_ | _FILL_ |
-| 44 | _FILL_ | _FILL_ | _FILL_ | _FILL_ |
+| seed | grid V n/f (graded) | w_n/w_f (LEARNS-V) | critic@near (Hz) | δ (gap) | gabab_gap |
+|---|---|---|---|---|---|
+| 42 | **4.48×** | 1.43× | 16.7 | 6.67 (clean) | **True** ✓ |
+| 43 | **12.30×** | 1.07× | 65.1 | (saturated) | **True** ✓ |
+| 44 | **4.66×** | **1.91×** | 256.8 | 0.0 (over-clamp) | False ✗ |
+
+**The honest read.** The R1 FIX — the graded value selectivity `V n/f` (the direct read on the SHIPPED
+graded plateau, the quantity the GO bar names) — is **robustly GO across all 3 seeds (4.48 / 12.3 / 4.66×)**,
+vs the render's 1.02× R1-cap. The LEARNS-V weight selectivity is also strong (up to 1.91×, seed 44). **The
+grid front end converts the non-selective afferent into a selective one on every seed — R1 is fixed.**
+
+**The residual is NOT R1 — it is δ-readout STABILITY across the place-code's run-to-run volley variability.**
+The critic somatic rate varies wildly by seed (16.7 / 65 / 257 Hz) because the self-org place code is
+CuPy-non-deterministic (the transpose-SpMV atomic scatter; the documented 28–118 Hz spread,
+`2026-06-10-N9-placecode-reproducibility-robustness-research.md`). At seed 42 the critic lands at a
+physiological 16.7 Hz → a clean δ=6.67. At seed 44 the stronger volley over-fires the critic (257 Hz) →
+the SNc over-clamps at BOTH near and far → δ inverts to 0.0 (gabab_gap False). So 2/3 seeds give a present
+δ-gap; the third over-clamps. The fixed `value_train_w_max=3` does NOT normalize the critic across draws
+because the place-volley STRENGTH is what varies (not the weight ceiling).
 
 ---
 
 ## What this means + sim/-edit + moat confirmation
 
-- **#5b R1 is SURPASSED + CLOSED.** The grid front end (catalog D.07, the named missing medial-EC metric)
-  gives the self-org place pool a decorrelated input → locally-selective fields (real spikes, place cos
-  0.137) → the SHIPPED graded plateau read-out grades the value ~4.4× (vs the render's 1.18× R1-cap) with
-  a clean δ. This is the SAME resolution as the conversation PPMI cortex / the B1 self-org RF: **the fix is
-  the right decorrelated INPUT representation, NOT point-neuron decorrelation** — the dendrite (CLOSE C) is
-  NOT required. The host-Gaussian `vs_place_context` place-context scaffold can RETIRE (the self-org place
-  value, with a biology-faithful grid metric, grades within the δ bar).
+- **#5b R1 is SURPASSED (the afferent-selectivity wall is broken).** The grid front end (catalog D.07, the
+  named missing medial-EC metric) gives the self-org place pool a decorrelated input → locally-selective
+  fields (real spikes, place cos 0.137) → the SHIPPED graded plateau read-out grades the value **4.5–12.3×
+  on every one of 3 seeds** (vs the render's 1.02× R1-cap). This is the SAME resolution as the conversation
+  PPMI cortex / the B1 self-org RF: **the fix is the right decorrelated INPUT representation, NOT
+  point-neuron decorrelation** — the dendrite (CLOSE C) is NOT required. **The host-Gaussian
+  `vs_place_context` scaffold's retirement is gated on the ONE remaining piece below** (the δ-readout
+  stabilization), not on R1 — R1 is done.
+- **The remaining residual is δ-readout STABILITY, not R1 (the SURPASS ISOLATE).** The full δ bar holds on
+  2/3 seeds; seed 44's stronger place volley over-fires the critic (257 Hz → SNc over-clamp → δ inverts).
+  This is the documented self-org place-code volley-strength non-determinism (the CuPy transpose-SpMV
+  atomic-scatter, 28–118 Hz spread), surfacing one stage DOWNSTREAM of the (now-fixed) afferent selectivity.
+  The named cheap next move is to tune the already-built `--enable-critic-homeostasis` TARGET (intrinsic
+  threshold adaptation, the documented primary lever for exactly this draw-to-draw critic-rate variance) so
+  the critic lands ~15–25 Hz on every seed — then 6-seed; then the host-Gaussian scaffold retires. NOT a new
+  mechanism (the homeostasis ships); NOT R1 (the selectivity is GO).
 - **NO `sim/` edit, NO `g11_bg_runner.py` edit.** Reuse-by-import: the `place_sensors` region is an EXC
   stub driven externally by `_n9_render`; a module-level monkeypatch of `g._n9_place_sensor_act` re-points
   it at the grid code (sized to `place_sensors`); the competitive `place_sensors → place` self-org and the
