@@ -93,8 +93,31 @@ class OneBrainComposer:
     def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200, enable_batched=True,
                  enable_rf_cudagraph=True, grounded_codes=None, confidence_gate=0.0, enable_csr_cache=True,
                  enable_attributed=False, enable_multiframe=False, enable_spiking_cleanup=False,
-                 encoding_gain_fn=None, local_reciprocal_unbind=False):
+                 encoding_gain_fn=None, local_reciprocal_unbind=False, integrated_loop=False,
+                 sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
+        # integrated_loop (shortcut #3, default OFF = byte-identical = the host-_scan oracle + numpy-CPU + test-oracle
+        # path): make the CUE-MATCH ROUTING fully on-substrate. The per-block reconstruction (_read_blocks) is ALREADY
+        # spiking; the residual host op is the Python first-match loop that picks WHICH stored block answers a who/what
+        # query (and answer vs abstain). When ON, that loop is replaced by the validated K-way sequencer (gated-
+        # disinhibition match cascade + BG first-match priority WTA): the cue + each block's cleanup scores drive a
+        # spiking control fabric whose winning channel IS the selected block (the legitimate body read), ==
+        # host_scan_block multi-seed at match_thresh 0.06 (2026-06-21-shortcut3-K32-capability-surpass.md). The no-confab
+        # moat is preserved by construction: the abstain channel maps to the same None/"unknown" the host returned, 0
+        # false-accept on absent/cross cues (an absent cue WORD is caught before the sequencer). BUILD-1 SCOPE: the
+        # (agent, action) hot-path sites (_scan / query_patient / ask_yes_no / _find_cued_block) route through spikes;
+        # the (action, patient) `query_agent` + agent-only `render_fact`/`describe` stay on the host read (still
+        # abstaining via the oracle) as named bounded follow-ons (a swapped-cue + a 1-role cascade). See the plan.
+        self.integrated_loop = bool(integrated_loop)
+        self.sequencer_match_thresh = float(sequencer_match_thresh)
+        self.sequencer_gain = float(sequencer_gain)
+        self.sequencer_sigma = float(sequencer_sigma)
+        self.sequencer_input_gain = float(sequencer_input_gain)
+        self._seq = None            # (sb, meta) -- the sequencer control bridge, built lazily on first query
+        self._seq_score = None      # the divnorm score bridge
+        self._seq_K = None          # the store size the current sequencer/drives were built for
+        self._seq_drives = None     # the per-block decoded-line drives (recomputed when the store changes)
+        self._seq_dirty = True      # the store changed since the drives were built -> rebuild the drives
         # local_reciprocal_unbind (FHRR-B mechanism 1, opt-in, DEFAULT-OFF = byte-identical): derive the UNBIND
         # synapse weights from the BIND (role) phasor by the one-time LOCAL reciprocal-conjugate rule (a per-component
         # quadrature flip via comp._local_conj) instead of the host np.conj over the role code. Closes the same host
@@ -196,6 +219,7 @@ class OneBrainComposer:
         self.kb = []          # bookkeeping: list of (fact_dict, None) -- the agent's _assoc_graph reads fact dicts;
         #                       the bound VECTOR is on-substrate (the None placeholder keeps the (fact, vec) shape)
         self.store_conns = []
+        self._word_index = {w: i for i, w in enumerate(self.words)}   # word -> codebook index (the sequencer cue idx)
 
     # --- comprehend + store ---
     def _pol(self, polarity):
@@ -299,6 +323,8 @@ class OneBrainComposer:
         else:
             self.store_conns += block_conns                         # append (a new fact)
         self._store_dirty = True       # store_conns changed -> the cached store CSR is stale (both store + reconsolidation)
+        if self.integrated_loop:
+            self._seq_dirty = True     # (shortcut #3) the store changed -> the per-block sequencer drives are stale
 
     def _store_composite(self, fillers, roles):
         i = len(self.kb)
@@ -539,6 +565,21 @@ class OneBrainComposer:
         if self.enable_batched:
             return self._read_all_blocks()
         return [self._read_block(i) for i in range(len(self.kb))]
+
+    def _seq_block(self, agent, action):
+        """The SELECTED block index for cue (agent, action) -- the spiking K-way sequencer decision (or None = abstain),
+        replacing the host first-match loop. integrated_loop OFF -> the host read (byte-identical, the test oracle).
+        Built lazily; the sequencer + drives are (re)built only when the store size changes or a write dirtied them
+        (shortcut #3, the plan). The (agent, action) hot-path sites delegate here."""
+        if not self.integrated_loop:
+            # the host path: the EXACT same first-match loop the (agent, action) sites used (read here once so all
+            # callers share it). == host_scan_block (the de-risk's `first_block_where(agent==., action==.)`).
+            for i, got in enumerate(self._read_blocks()):
+                if got.get("agent") == agent and got.get("action") == action:
+                    return i
+            return None
+        # the spiking path (lazy build; rebuild drives on a dirtied/grown store) -- wired in Task 2.
+        raise NotImplementedError("integrated_loop spiking path is wired in Task 2 (_ensure_sequencer + _seq_block)")
 
     def _scan(self, cue, answer_role):
         for got in self._read_blocks():
