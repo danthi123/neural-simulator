@@ -81,6 +81,11 @@ _GRID = {
                             # A pure GAIN (NOT a per-location renorm) -> the grid's magnitude structure
                             # is preserved; it only sets the operating current, exactly as max_int does
                             # for the render).
+    "normalize_drive": False,  # #5b NEXT MOVE: divisive (per-location L1) normalization of the grid drive to
+                            # a constant total → removes the structural near/far MAGNITUDE asymmetry the
+                            # graded plateau reads as a (non-learned) V → the only near/far V left is the
+                            # LEARNED weight ratio. Applied EVERYWHERE place_sensors is driven.
+    "_norm_ref_sum": 0.0,   # the reference per-location total (mean over the grid; lazily computed)
     "_code": None,          # the active grid_code(x,y) closure (built lazily at first use)
     "_n_grid": None,
     "_asserted_goal_free": False,
@@ -101,6 +106,21 @@ def _build_grid_code():
     _GRID["_n_grid"] = int(n)
 
 
+def _compute_grid_mean_location_sum(grid_size=None):
+    """The mean per-location L1 sum of the (unscaled) grid code over the whole grid — the reference total
+    for place-drive normalization (so a per-location renorm to this value leaves the AVERAGE operating
+    current unchanged; it only equalizes the per-location structural magnitude asymmetry)."""
+    if _GRID["_code"] is None:
+        _build_grid_code()
+    gs = int(grid_size if grid_size is not None else _GRID["grid_size"])
+    code = _GRID["_code"]
+    tot = 0.0; n = 0
+    for iy in range(gs):
+        for ix in range(gs):
+            tot += float(np.asarray(code(float(ix), float(iy))).sum()); n += 1
+    return tot / max(n, 1)
+
+
 def _grid_place_sensor_act(x, y, landmarks, n_bearing, n_dist, max_int, falloff,
                            dist_sigma, dist_max, bexp):
     """Drop-in for g._n9_place_sensor_act: when grid mode is ON, return the spatial-phase grid code at
@@ -112,9 +132,19 @@ def _grid_place_sensor_act(x, y, landmarks, n_bearing, n_dist, max_int, falloff,
                                       dist_sigma, dist_max, bexp)
     if _GRID["_code"] is None:
         _build_grid_code()
+    raw = _GRID["_code"](float(x), float(y)).astype(np.float32)   # [0,1] grid activations at (x,y)
+    # OPTIONAL place-drive normalization (#5b residual NEXT MOVE, 2026-06-21): the grid code's TOTAL
+    # activation differs by location (some phase draws fire more cells at one place than another) — a
+    # structural near/far MAGNITUDE asymmetry that the graded plateau reads as a near/far V INDEPENDENT of
+    # the learned weight ratio (the magnitude-matched shuffle_v finding). Divisive normalization
+    # (Carandini-Heeger; biology-grounded, point-neuron) to a CONSTANT total per location removes that
+    # structural asymmetry → the only near/far V left is the LEARNED weight ratio. Preserves the activation
+    # PATTERN (which cells fire) so the place self-org still carves selective fields. Applied EVERYWHERE the
+    # runner drives place_sensors (STEP-1 self-org + value-train + reads) for a consistent normalized regime.
+    raw = _grid_norm(raw)
     # the grid code is in [0,1]; scale to the render's max_intensity * drive_scale (so the grid's TOTAL
     # drive matches the render's operating current range; see _GRID["drive_scale"]).
-    act = (_GRID["_code"](float(x), float(y)) * float(max_int) * float(_GRID["drive_scale"])).astype(np.float32)
+    act = (raw * float(max_int) * float(_GRID["drive_scale"])).astype(np.float32)
     # size guard: place_sensors is sized N_PLACE_LANDMARKS*(b+d); grid must match.
     expect = int(g.N_PLACE_LANDMARKS) * (int(n_bearing) + int(n_dist))
     if act.size != expect:
@@ -122,6 +152,31 @@ def _grid_place_sensor_act(x, y, landmarks, n_bearing, n_dist, max_int, falloff,
             f"grid code size {act.size} != place_sensors size {expect} "
             f"(set n_place_bearing/n_place_dist so {g.N_PLACE_LANDMARKS}*(b+d) == n_grid {_GRID['_n_grid']})")
     return act
+
+
+def _grid_norm(raw):
+    """Apply the optional per-location divisive (L1) normalization to a raw grid activation vector (the
+    #5b NEXT MOVE: remove the structural per-location magnitude asymmetry). No-op when normalize_drive off."""
+    if not _GRID.get("normalize_drive", False):
+        return raw
+    s = float(np.asarray(raw).sum())
+    if s <= 1e-9:
+        return raw
+    ref = float(_GRID.get("_norm_ref_sum", 0.0))
+    if ref <= 0.0:
+        ref = _compute_grid_mean_location_sum()
+        _GRID["_norm_ref_sum"] = ref
+    return (np.asarray(raw, dtype=np.float32) * (ref / s)).astype(np.float32)
+
+
+def _grid_act(px, py, max_int):
+    """The normalized grid place-drive at (px,py) scaled to max_int*drive_scale — the SINGLE source used by
+    every read closure so the place-drive normalization is applied CONSISTENTLY (reads == self-org/value-
+    train regime)."""
+    if _GRID["_code"] is None:
+        _build_grid_code()
+    raw = _grid_norm(_GRID["_code"](float(px), float(py)).astype(np.float32))
+    return (raw * float(max_int) * float(_GRID["drive_scale"])).astype(np.float32)
 
 
 # ── critic-homeostasis adapt-rate override (the δ-readout STABILIZATION lever) ────────────────
@@ -299,8 +354,7 @@ def _freeze_seam_normalize(br):
         if _GRID["_code"] is None:
             _build_grid_code()
         def _act():
-            return (_GRID["_code"](float(near[0]), float(near[1])) * max_int
-                    * float(_GRID["drive_scale"])).astype(np.float32)
+            return _grid_act(near[0], near[1], max_int)
     else:
         grid_size = int(_SYNSCALE.get("_grid_size", 32))
         landmarks = g._n9_place_landmarks(grid_size)
@@ -589,6 +643,7 @@ def _set_grid_mode(enable, scramble, seed):
     _GRID["grid_size"] = 32
     _GRID["_code"] = None
     _GRID["_n_grid"] = None
+    _GRID["_norm_ref_sum"] = 0.0   # recompute per (seed/scramble) code draw
     if enable:
         _build_grid_code()
         # the goal-free anti-cheat assertion (the grid_code signature takes ONLY (x,y) — structural).
@@ -756,7 +811,7 @@ def _read_graded_v_near_far(captured, result):
             if _GRID["_code"] is None:
                 _build_grid_code()
             def _act(px, py):
-                return (_GRID["_code"](float(px), float(py)) * max_int * float(_GRID["drive_scale"])).astype(np.float32)
+                return _grid_act(px, py, max_int)
         else:
             grid_size = int(captured.get("grid_size", 32))
             landmarks = g._n9_place_landmarks(grid_size)
@@ -853,7 +908,7 @@ def _read_graded_v_delta(captured, result, *, settle_steps=0):
             if _GRID["_code"] is None:
                 _build_grid_code()
             def _act(px, py):
-                return (_GRID["_code"](float(px), float(py)) * max_int * float(_GRID["drive_scale"])).astype(np.float32)
+                return _grid_act(px, py, max_int)
         else:
             grid_size = int(captured.get("grid_size", 32))
             landmarks = g._n9_place_landmarks(grid_size)
@@ -1066,6 +1121,14 @@ def main():
     ap.add_argument("--grid-drive-scale", type=float, default=2.5,
                     help="gain on max_int for the grid code so its total drive matches the render's "
                          "operating current range (the grid is sparse+small in [0,1]); see _GRID")
+    ap.add_argument("--normalize-place-drive", action="store_true",
+                    help="the #5b residual NEXT MOVE: per-location DIVISIVE (L1) normalization of the grid "
+                         "place drive to a CONSTANT total (Carandini-Heeger; point-neuron). Removes the "
+                         "structural per-location MAGNITUDE asymmetry the graded plateau reads as a "
+                         "non-learned near/far V -> the only near/far V left is the LEARNED weight ratio. "
+                         "Applied EVERYWHERE place_sensors is driven (self-org + value-train + reads). With "
+                         "this ON, the magnitude-matched shuffle_v lesion should COLLAPSE (proving the grid "
+                         "δ is then genuinely learned).")
     ap.add_argument("--value-train-w-max", type=float, default=0.0,
                     help="cap place->value soft-bound DURING value-train (de-risk 40 -> critic in the "
                          "graded ~3-6 range; 0=no override). Use to avoid critic over-clamp.")
@@ -1155,6 +1218,7 @@ def main():
     _GRID["n_modules"] = int(args.n_modules)
     _GRID["n_per_module"] = int(args.n_per_module)
     _GRID["drive_scale"] = float(args.grid_drive_scale)
+    _GRID["normalize_drive"] = bool(args.normalize_place_drive)
     _HOMEO["adapt_rate"] = float(args.critic_homeo_adapt_rate)
     _HOMEO["target_rate"] = float(args.critic_homeo_target_rate)
     _HOMEO["ema_alpha"] = float(args.critic_homeo_ema_alpha)
