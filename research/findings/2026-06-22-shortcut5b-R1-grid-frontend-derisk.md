@@ -180,7 +180,27 @@ CuPy-non-deterministic (the transpose-SpMV atomic scatter; the documented 28–1
 physiological 16.7 Hz → a clean δ=6.67. At seed 44 the stronger volley over-fires the critic (257 Hz) →
 the SNc over-clamps at BOTH near and far → δ inverts to 0.0 (gabab_gap False). So 2/3 seeds give a present
 δ-gap; the third over-clamps. The fixed `value_train_w_max=3` does NOT normalize the critic across draws
-because the place-volley STRENGTH is what varies (not the weight ceiling).
+because the place-volley STRENGTH is what varies (not the weight ceiling). **Crucially the R1 fix holds
+THROUGH the over-clamp:** seed 44's graded-V is still **4.93× selective** (V_near 1031 / V_far 209) — the
+place value IS selective; only the SNc somatic readout saturates.
+
+**The δ-readout stabilization — two attempts that LOCALIZE the residual precisely (the SURPASS ISOLATE).**
+- **Attempt 1** (speed the homeostasis threshold adaptation, `adapt_rate` 0.0005 → 0.01) did NOT converge
+  the critic (seed 44 stayed 242 Hz) — the rate-estimate EMA (`homeostasis_ema_alpha` 0.0002, tau ~5000
+  steps) is too slow to even register the over-firing.
+- **Attempt 2** (+ fast EMA, `ema_alpha` 0.02 / tau ~50 steps) made the homeostasis VISIBLY work DURING the
+  value-train (the critic settled 50 → 30 Hz over the trials, the documented intended behaviour), w_near
+  grew to 1.95× selective — BUT the stage-B READ still over-fired (262 Hz). **Localization:** the residual
+  is the stage-B **weighted-plateau READ regime** (`coincidence_weighted_drive=True` at
+  `k_threshold=coincidence_threshold`) — a STRONGER read-out toggle than the value-train's count plateau —
+  which re-over-drives the critic even after the value-train threshold converged. So the δ-readout
+  instability is NOT in the value-train (the homeostasis fixes that) and NOT R1 (V n/f stays 4.87×
+  selective through the over-clamp) — it is the **weighted-plateau read toggle being too strong for the
+  high-volley draws**. The precise sequenced next move: a homeostasis settling phase run IN the stage-B
+  weighted-plateau read regime (so the converged threshold matches the regime the δ is read in), or a
+  graded-plateau-only δ read (drop the somatic weighted-plateau toggle, read δ purely from the
+  `cp_conductance_g_graded_plateau` subtraction — which is already 4.87× selective). Both are probe-level
+  (reuse-by-import, no `sim/` edit); NOT a new mechanism; NOT R1.
 
 ---
 

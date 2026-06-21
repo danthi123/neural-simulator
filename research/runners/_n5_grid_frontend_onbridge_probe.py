@@ -124,6 +124,18 @@ def _grid_place_sensor_act(x, y, landmarks, n_bearing, n_dist, max_int, falloff,
     return act
 
 
+# ── critic-homeostasis adapt-rate override (the δ-readout STABILIZATION lever) ────────────────
+# The self-org place code's volley STRENGTH is CuPy-non-deterministic (the transpose-SpMV atomic scatter;
+# 28-118 Hz critic spread), so a fixed value-train soft-bound lands the critic at very different rates
+# across seeds (17/65/257 Hz) -> the SNc subtraction is clean at ~17 Hz but over-clamps at 257 Hz -> the
+# δ-gap is seed-variable. The critic ALREADY runs --enable-critic-homeostasis (intrinsic threshold
+# adaptation that defends a TARGET rate against volley draws), but its global adapt rate (0.0005, ~0.5
+# mV/sec) is too slow to converge within the short value-train/read windows. This override speeds the
+# threshold adaptation so the critic settles to ~target Hz on EVERY seed regardless of the volley. A pure
+# DYNAMICS knob (the cell still defends the biological target rate; only the convergence timescale changes).
+_HOMEO = {"adapt_rate": 0.0, "target_rate": 0.0, "ema_alpha": 0.0}  # 0 = no override (the runner default)
+
+
 # ── graded-plateau install (VERBATIM from the CLOSE A probe) ──────────────────────────────────
 _CLOSEA = {
     "enable": False, "center": 1.5, "slope": 1.0, "strength": 80.0,
@@ -148,6 +160,16 @@ def _patched_init(self, *a, **kw):
             c.coincidence_plateau_strength = 0.0
             c.graded_plateau_strength = float(_CLOSEA["strength"])
         _CLOSEA["_armed"] = False
+    # the δ-readout STABILIZATION lever: speed the critic-homeostasis threshold adaptation (+ optional
+    # target rate) so the critic converges to the biological target on every place-code draw.
+    if _HOMEO["adapt_rate"] and _HOMEO["adapt_rate"] > 0:
+        self.core_config.homeostasis_threshold_adapt_rate = float(_HOMEO["adapt_rate"])
+    if _HOMEO["target_rate"] and _HOMEO["target_rate"] > 0:
+        self.core_config.homeostasis_target_rate = float(_HOMEO["target_rate"])
+    if _HOMEO["ema_alpha"] and _HOMEO["ema_alpha"] > 0:
+        # speed the homeostasis RATE-ESTIMATE EMA so the critic over-firing is registered (and the
+        # threshold adapted) within the short value-train window (default tau~5000 steps is too slow).
+        self.core_config.homeostasis_ema_alpha = float(_HOMEO["ema_alpha"])
     out = _orig_init(self, *a, **kw)
     _CLOSEA["bridge"] = self
     return out
@@ -492,12 +514,25 @@ def main():
     ap.add_argument("--value-train-w-max", type=float, default=0.0,
                     help="cap place->value soft-bound DURING value-train (de-risk 40 -> critic in the "
                          "graded ~3-6 range; 0=no override). Use to avoid critic over-clamp.")
+    ap.add_argument("--critic-homeo-adapt-rate", type=float, default=0.0,
+                    help="the δ-readout STABILIZATION lever: speed the critic-homeostasis threshold "
+                         "adaptation (runner default 0.0005 is too slow to converge in the value-train "
+                         "window -> seed-variable critic rate); 0=no override.")
+    ap.add_argument("--critic-homeo-target-rate", type=float, default=0.0,
+                    help="critic-homeostasis target firing rate (fraction; runner default 0.02=20Hz); "
+                         "0=no override.")
+    ap.add_argument("--critic-homeo-ema-alpha", type=float, default=0.0,
+                    help="speed the homeostasis rate-estimate EMA (runner default 0.0002 tau~5000 steps "
+                         "is too slow to register over-firing in the value-train window); 0=no override.")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
     _GRID["n_modules"] = int(args.n_modules)
     _GRID["n_per_module"] = int(args.n_per_module)
     _GRID["drive_scale"] = float(args.grid_drive_scale)
+    _HOMEO["adapt_rate"] = float(args.critic_homeo_adapt_rate)
+    _HOMEO["target_rate"] = float(args.critic_homeo_target_rate)
+    _HOMEO["ema_alpha"] = float(args.critic_homeo_ema_alpha)
 
     # install the monkeypatches (the grid render + the graded plateau init/gate hooks).
     g._n9_place_sensor_act = _grid_place_sensor_act
