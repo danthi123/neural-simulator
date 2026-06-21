@@ -79,18 +79,28 @@ useless). The alive regime needs `g·mean ~ O(σ)`, i.e. g ≈ 0.05–0.2 at thi
 | 2.0 | 0.2  | 7   (silent) | +4   | +80% (collapsed) | 0% | 27.2 | E |
 
 **Reads:**
-- **σ=2, g=0.05 is the SWEET SPOT.** The sel pools stay fully alive (N=4387, E=4140, S=3746, W=4290 — thousands
-  of spikes, selection intact, `phase0_finalQ`=29.9 == the no-divnorm baseline). The sel N−S surplus shrinks
-  **+22.2% → +15.8%**, AND the **commit-stage N−S collapses to +0.35%** (was +21.4%) — i.e. by the commit burst
-  (the stage the Lo-Wang threshold reads and the action inherits), the divnorm has removed almost the entire
-  common-mode. The dominant cardinal is no longer locked-N (W then N).
+- σ=2, g=0.05 keeps the sel pools alive (N=4387, E=4140, S=3746, W=4290) and shrinks sel N−S **+22.2% → +15.8%**
+  with the **commit-stage N−S collapsing to +0.35%** — but a finer bracket (below) does materially better.
 - Every g≥0.2 point OVER-FLATTENS — sel collapses to single-digit spikes and the "surplus %" is meaningless on a
-  near-zero base (and selection is broken). So the gain has a narrow alive window; 0.05 is in it, 0.2 is past it.
+  near-zero base (and selection is broken). So the gain has a narrow alive window.
 - **The thalamic common mode is UNCHANGED by FIX-A** (+11–14% at every point) — FIX-A correctly acts at the sel
   input, not upstream. The amplification is what it suppresses.
 
-Sweep JSON: `research/findings/raw/nav_gate_2a/scpv_FIXA_arm2_probe.json` (+ the σ=2/g=0.1, σ=3/g=0.05 bracket
-refinement appended in `scpv_FIXA_arm2_bracket.json`). **ARM-3 verdict uses the sweet spot σ_2=2.0, g_2=0.05.**
+**Bracket refinement (σ∈{2,3}, g=0.1) → the refined SWEET SPOT σ_2=2.0, g_2=0.1:**
+
+| σ_2 | g_2 | sel N (alive?) | sel N−S % | commit N−S % | phase0_finalQ | dom |
+|---|---|---|---|---|---|---|
+| **2.0** | **0.1** | **4811 E5464 S4502 W4665 (ALIVE)** | **+6.6%** | **−5.0%** | **0.97** | E |
+| 3.0 | 0.1 | 712 (collapsing) | +88.6% (tiny base) | +55.8% | 9.41 | E |
+
+**σ=2, g=0.1 is the chosen operating point for ARM 3.** It keeps the sel pools fully alive (thousands of spikes),
+shrinks the sel N−S surplus to **+6.6%** (the strongest alive shrink: 22.2% → 6.6%, ~3.4× reduction), drives the
+**commit-stage N−S to −5.0%** (common mode removed, slightly over-corrected), AND gives a **phase0_finalQ of 0.97**
+(the agent reaches the goal in phase 0 — vs ~29 at the no-divnorm baseline and at g=0.05). σ=3/g=0.1 over-flattens
+(sel collapses to hundreds, commit +56%). So the alive window is narrow and σ=2/g=0.1 sits in it.
+
+Sweep JSONs: `research/findings/raw/nav_gate_2a/scpv_FIXA_arm2_probe.json` (regime sweep) +
+`scpv_FIXA_arm2_bracket.json` (the bracket). **ARM-3 verdict uses the sweet spot σ_2=2.0, g_2=0.1.**
 
 ---
 
