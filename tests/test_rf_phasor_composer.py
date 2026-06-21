@@ -274,6 +274,21 @@ def test_rf_phasor_composer_local_reciprocal_unbind_byte_identical(seed):
     assert n_conj["n"] == 0, "flag ON must not call np.conj in the unbind-structure build"
 
 
+def test_local_conj_equals_np_conj_bitforbit():
+    """FHRR-B mechanism 1, the load-bearing equivalence (CPU, no bridge): _local_conj (the per-component quadrature
+    flip used by both RFPhasorComposer and OneBrainComposer's unbind-structure build) == np.conj BIT-FOR-BIT for a
+    unit phasor. This is what guarantees the local-rule answer-identity is backend-independent (so the GPU-only
+    OneBrainComposer production path is byte-identical by the same argument the CPU smoke shows)."""
+    import numpy as np
+    for seed in (0, 1, 7):
+        z = np.exp(2j * np.pi * np.random.default_rng(seed).uniform(0.0, 1.0, 256))
+        lc = RFPhasorComposer._local_conj(z)
+        assert np.array_equal(lc, np.conj(z)), "local conj must equal np.conj bit-for-bit for a unit phasor"
+        # and _reciprocal_conjugate over a bind conn list equals the legacy conj exactly
+        conns = [(256 + k, k, z[k]) for k in range(256)]
+        assert RFPhasorComposer._reciprocal_conjugate(conns) == [(256 + k, k, np.conj(z)[k]) for k in range(256)]
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))
