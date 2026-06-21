@@ -108,7 +108,7 @@ class OneBrainComposer:
 
     def __init__(self, seed=42, D=128, vocab=None, k_max=32, period=200, enable_batched=True,
                  enable_rf_cudagraph=True, grounded_codes=None, confidence_gate=0.0, enable_csr_cache=True,
-                 enable_attributed=False, enable_multiframe=False, enable_spiking_cleanup=False,
+                 enable_attributed=False, enable_multiframe=False, enable_spiking_cleanup=True,
                  encoding_gain_fn=None, local_reciprocal_unbind=True, integrated_loop=False,
                  sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
