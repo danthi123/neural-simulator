@@ -104,5 +104,87 @@ Sweep JSONs: `research/findings/raw/nav_gate_2a/scpv_FIXA_arm2_probe.json` (regi
 
 ---
 
-_(ARM 3 = the multi-seed FIX1+A vs FIX1 vs HOST vs SCRAM, the surplus-shrink check, the anti-cheat table, and the
-FIX-A enable summary follow as they land. Each seed committed the moment it lands.)_
+## ARM 3 — multi-seed verdict (FIX1+A vs FIX1 vs HOST vs SCRAM; grid-32, full 1800 steps)
+
+Per seed, four arms at the sweet spot σ_2=2.0, g_2=0.1. Decisive checks: (1) surplus-shrink, (2)
+re-orient/ceiling, (3) nav-not-regressed, (4) SCRAM-collapses, (5) moat-untouched.
+
+| seed | metric | HOST | FIX1 | **FIX1+A** | SCRAM |
+|---|---|---|---|---|---|
+| 42 | post_change_finalQ_sum | 1.93 | 68.65 | **115.84** | 118.20 |
+| 42 | gate_score (4 phases) | 2.53 | 94.10 | **116.90** | 121.15 |
+| 42 | sel N−S % | — | **18.18%** | **28.35%** | 18.9% |
+| 42 | sel N−S abs | — | **8535** | **820** | 241 |
+| 42 | tracks_goal (dominants) | True (N,W,S,E) | **True (N,W,W,E)** | **FALSE (E,E,E,E)** | FALSE (E,E,E,E) |
+| 42 | host/FIX1A post ratio | — | — | **0.017 (~60×)** | — |
+| 42 | FIX1A/SCRAM post ratio | — | — | **0.98 (NOT collapsed)** | — |
+
+**VERDICT seed 42 — HONEST NEGATIVE (decisively diagnosed). FIX-A is the WRONG lever, and is
+COUNTER-PRODUCTIVE for re-orienting:**
+
+1. **ABSOLUTE surplus-shrink WORKS** — sel N−S absolute 8535 → 820 (~10×), sel total ~206K → ~12.8K. The
+   divnorm genuinely scales the sel pools down (as the probe showed).
+2. **PERCENT surplus does NOT shrink — it slightly GROWS (18.2% → 28.4%).** A divisive divisor that is a
+   COMMON SCALAR over the four sel pools (they share the `mean`) preserves the N/S RATIO by construction;
+   the lower-drive f-I nonlinearity even mildly amplifies it. **A divisive common-scalar removes additive
+   common-mode AMPLITUDE but cannot remove a RELATIVE (ratio) bias** — and the residual is a relative bias.
+3. **NO re-orient — and FIX-A HURT tracking.** Per-phase (goals N,W,S,E): HOST → N,W,S,E (finalQ ~0.6 each,
+   perfect). **FIX1 (no divnorm) → N,W,W,E (tracks 3/4; phase-1 W-goal finalQ 1.1 = goal reached).** FIX1+A →
+   E,E,E,E (stuck-E, post_change 115.84 ≫ FIX1's 68.65). **FIX1 tracks the goal BETTER than FIX1+A** — the
+   divisive flattening threw away the goal-direction SC signal along with the common mode.
+4. **DECISIVE anti-cheat: SCRAM does NOT collapse** (118.20 vs FIX1+A 115.84, ratio 0.98 ≈ 1). The retinotopy
+   scramble lesion is statistically identical to the intact read-out ⇒ the orienting is NOT carried by the
+   retinotopic decode even with FIX-A (the SAME signature as the prior grid-32 NEGATIVE `c3fef1ff`). FIX-A
+   flipped the bias axis (N→E) but did not remove the relative bias and did not make the read-out
+   load-bearing.
+5. **Moat untouched** by construction (no `--with-conv` ⇒ `cp_rf_w_*` never allocated; the nav cascade is
+   `cp_connections`/`cp_membrane_potential_v`/`cp_firing_states`, array-disjoint).
+
+(Per-seed JSON: `scpv_FIXA_arm3_seed{42,43,...}.json`. Confirmation seeds 43+ follow; this is a clean
+mechanistic null — divisive-common-scalar-cannot-shrink-a-ratio + SCRAM-not-collapsing — so the confirm
+seeds are corroboration, not a borderline-effect resolution.)
+
+---
+
+## SURPASS round (a boundary is not an exit) — ISOLATE → REFRAME → RANK → verdict
+
+**Move 1 — ISOLATE + QUANTIFY the genuine residual.** FIX-A already did one real job: it removed the
+ABSOLUTE common-mode amplification (sel total 206K → 12.8K; N−S abs 8535 → 820). That part is solved. The
+genuine residual is TWO-fold: (a) the **relative (ratio) sel bias** (FIX1+A: E 3848 > N 3302 > W 3226 > S
+2482, 28.4%) — a per-action tuning asymmetry, not an additive offset; and (b) the deeper fact, proven by
+SCRAM≈FIX1+A, that the **goal-direction SC signal is too weak at the sel ring to overcome that relative
+bias** (the SC pop-vector margin is present — FIX1 tracks 3/4 — but FIX-A's flattening REDUCED it).
+
+**Move 2 — REFRAME via "how does real biology actually do this?"** Carandini-Heeger divisive normalization
+removes a COMMON GAIN (contrast normalization); it is the wrong operator for a RELATIVE channel bias. Real
+SC/BG selection wins not by common-mode removal but by **opponent (push-pull) competition** between
+antagonistic direction channels, which integrate the DIFFERENCE of the two members of an axis (Bogacz et
+al. 2006: a difference-integrator cancels a shared offset AND a relative bias structurally, where a
+race-over-absolutes integrates both as signal). And critically — the data shows the position signal is
+already there (FIX1 tracks 3/4); the failure is that a divisive flatten threw signal away. So the fix must
+ENHANCE the differential, not shrink the absolutes.
+
+**Move 3 — RANK cheap-first SURPASS mechanisms (the path PAST it):**
+1. **FIX-B — opponent-pair the sel accumulators (RANK 1, pre-built).** Re-weight the sel ring into balanced
+   axis-partner inhibition (N↔S, E↔W at `sel_opponent_weight`, cross-axis at `sel_crossaxis_weight`=0) so
+   each axis integrates the DIFFERENCE → a common-mode N−S cancels structurally AND a relative ratio bias is
+   suppressed (Bogacz 2006). This is the mechanistically-CORRECT operator for the residual that FIX-A
+   provably cannot touch. Already wired (`--fixB`, `enable_sel_opponent_pair` in `g11_bg_runner`,
+   `bridge.py:2247` re-weights the sel topology). Cheapest next run.
+2. **Usher-McClelland LEAK on the sel accumulators (RANK 2).** Add accumulator leak so a constant bias does
+   not integrate unboundedly; combined with the (present) SC signal the winner tracks. This was the
+   load-bearing lever for the 2026-06-19 spiking-decision-default-on GO (the finite-size-noise + leak pair).
+3. **Stronger SC drive into the cortex_X ring (RANK 3, low).** The prior calibration found "more SC drive is
+   the wrong lever" (`5c42fa33`); deprioritized but available (`SC_CORTEX_W`).
+
+**Move 4 — Verdict: SURPASSABLE, and the cheapest path is FIX-B.** FIX-A is a CHARACTERIZED NEGATIVE for
+the #6 accumulator residual — *not* because the residual is irreducible, but because divisive normalization
+is the wrong operator (it removes additive common-mode amplitude; the residual is a relative bias + a
+signal-strength shortfall). The genuine residual is precisely pinned (the relative sel bias + the SC margin
+swamped at the sel ring), and the mechanistically-matched cheap-first next move is **FIX-B opponent-pairing
+of the sel accumulators** (integrate the difference, Bogacz 2006), with Usher-McClelland leak as the rank-2
+follow-on. The host orienting heuristic does NOT retire on FIX-A; whether it can retire is now a question
+for FIX-B.
+
+_(Confirmation seeds for the FIX-A negative + the FIX-B run land below as they complete; each committed the
+moment it lands.)_
