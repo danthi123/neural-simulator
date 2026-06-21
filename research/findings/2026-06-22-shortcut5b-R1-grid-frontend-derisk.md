@@ -24,17 +24,20 @@ grid code; the existing competitive `place_sensors → place` self-org + the alr
 `enable_graded_dendritic_plateau` carry the rest). The grid reads ONLY `(x,y)` self-position (structural
 anti-cheat; goal coords never enter). The no-confab moat is untouched (nav-only probe, array-disjoint).
 
-**The honest GAP (the SURPASS ISOLATE → next move).** The full δ-gap bar (δ ≥ 1.3 / gabab_gap True on all
-seeds) is met on **2/3 seeds** (42: clean δ=6.67 @ 16.7 Hz; 43: present @ 65 Hz); seed 44's stronger place
-volley over-fires the critic (257 Hz) → the SNc over-clamps → δ inverts (0.0). **This residual is NOT R1**
-(the V n/f selectivity is GO on all 3 seeds) — it is the **δ-readout's STABILITY across the self-org place
-code's run-to-run volley-STRENGTH variability** (the CuPy transpose-SpMV non-determinism, the documented
-28–118 Hz critic spread, `2026-06-10-N9-placecode-reproducibility-robustness-research.md`). The named next
-move (cheap, already-built machinery): **tune the `--enable-critic-homeostasis` TARGET** (the intrinsic
-threshold-adaptation that defends a fixed critic rate against volley-strength draws — its primary lever B1
-in that research) so the critic lands ~15–25 Hz on EVERY seed regardless of the volley, decoupling the clean
-δ from the place-code draw. The host-Gaussian `vs_place_context` scaffold can RETIRE once this δ-readout
-stabilization clears 6 seeds — the afferent-selectivity wall (R1) it was holding the line for is now broken.
+**The honest GAP (the SURPASS ISOLATE → next move).** The secondary `snc_gap` δ-bar (the r−V SNc-burst gap
+≥ 1.3 / gabab_gap True on all seeds — the host-Gaussian's δ definition, `far_burst/near_burst`) is met on
+**2/3 seeds** (42: clean δ=6.67 @ 16.7 Hz; 43: present @ 65 Hz); seed 44's stronger place volley over-fires
+the critic (257 Hz) → the SNc over-clamps → δ inverts (0.0). **This residual is NOT R1** (the V n/f
+selectivity is GO on all 3 seeds, 4.5–12.3×) and **NOT the afferent or the value-train** — two homeostasis
+attempts LOCALIZED it (see Step 3 below) to the **stage-B WEIGHTED-PLATEAU READ regime**
+(`coincidence_weighted_drive`), a stronger read-out toggle than the value-train's count plateau that
+re-over-drives the critic on the high-volley draws. The precise sequenced next moves (both probe-level,
+reuse-by-import, NO `sim/` edit; NOT a new mechanism): (1) a **graded-V-only δ read** — drop the somatic
+weighted-plateau toggle and read δ purely from the `cp_conductance_g_graded_plateau` near/far subtraction
+(already 4.87× selective on seed 44 — the host-Gaussian control's exact analog read); or (2) a homeostasis
+settling phase run IN the weighted-plateau read regime so the converged critic threshold matches the regime
+the δ is read in. The host-Gaussian `vs_place_context` scaffold retires once one of these clears the snc_gap
+δ on 6 seeds — the afferent-selectivity wall (R1) it was holding the line for **is already broken (3/3)**.
 
 ---
 
