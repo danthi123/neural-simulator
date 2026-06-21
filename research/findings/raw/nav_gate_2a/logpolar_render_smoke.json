@@ -1,0 +1,255 @@
+{
+  "rows": [
+    {
+      "agent": "top_edge_pin",
+      "agent_pos": [
+        16,
+        31
+      ],
+      "goal": "phase0_NE",
+      "goal_pos": [
+        30,
+        30
+      ],
+      "delta_cell": [
+        14.0,
+        -1.0
+      ],
+      "true_bearing_quadrant": "SE",
+      "linear_mass": 0.0,
+      "linear_npix": 0,
+      "linear_centroid": null,
+      "linear_quadrant": "absent",
+      "logpolar_mass": 12.5,
+      "logpolar_npix": 25,
+      "logpolar_centroid": [
+        26.0,
+        15.0
+      ],
+      "logpolar_quadrant": "SE",
+      "logpolar_mass_positive": true,
+      "logpolar_bearing_correct": true
+    },
+    {
+      "agent": "top_edge_pin",
+      "agent_pos": [
+        16,
+        31
+      ],
+      "goal": "phase1_farW",
+      "goal_pos": [
+        1,
+        30
+      ],
+      "delta_cell": [
+        -15.0,
+        -1.0
+      ],
+      "true_bearing_quadrant": "SW",
+      "linear_mass": 0.0,
+      "linear_npix": 0,
+      "linear_centroid": null,
+      "linear_quadrant": "absent",
+      "logpolar_mass": 12.5,
+      "logpolar_npix": 25,
+      "logpolar_centroid": [
+        6.0,
+        15.0
+      ],
+      "logpolar_quadrant": "SW",
+      "logpolar_mass_positive": true,
+      "logpolar_bearing_correct": true
+    },
+    {
+      "agent": "top_edge_pin",
+      "agent_pos": [
+        16,
+        31
+      ],
+      "goal": "phase2_SW",
+      "goal_pos": [
+        1,
+        1
+      ],
+      "delta_cell": [
+        -15.0,
+        -30.0
+      ],
+      "true_bearing_quadrant": "SW",
+      "linear_mass": 0.0,
+      "linear_npix": 0,
+      "linear_centroid": null,
+      "linear_quadrant": "absent",
+      "logpolar_mass": 12.5,
+      "logpolar_npix": 25,
+      "logpolar_centroid": [
+        10.0,
+        4.0
+      ],
+      "logpolar_quadrant": "SW",
+      "logpolar_mass_positive": true,
+      "logpolar_bearing_correct": true
+    },
+    {
+      "agent": "top_edge_pin",
+      "agent_pos": [
+        16,
+        31
+      ],
+      "goal": "phase3_SE",
+      "goal_pos": [
+        30,
+        1
+      ],
+      "delta_cell": [
+        14.0,
+        -30.0
+      ],
+      "true_bearing_quadrant": "SE",
+      "linear_mass": 0.0,
+      "linear_npix": 0,
+      "linear_centroid": null,
+      "linear_quadrant": "absent",
+      "logpolar_mass": 12.5,
+      "logpolar_npix": 25,
+      "logpolar_centroid": [
+        21.0,
+        4.0
+      ],
+      "logpolar_quadrant": "SE",
+      "logpolar_mass_positive": true,
+      "logpolar_bearing_correct": true
+    },
+    {
+      "agent": "foveal_centre",
+      "agent_pos": [
+        16,
+        16
+      ],
+      "goal": "phase0_NE",
+      "goal_pos": [
+        30,
+        30
+      ],
+      "delta_cell": [
+        14.0,
+        14.0
+      ],
+      "true_bearing_quadrant": "NE",
+      "linear_mass": 0.0,
+      "linear_npix": 0,
+      "linear_centroid": null,
+      "linear_quadrant": "absent",
+      "logpolar_mass": 12.5,
+      "logpolar_npix": 25,
+      "logpolar_centroid": [
+        24.0,
+        24.0
+      ],
+      "logpolar_quadrant": "NE",
+      "logpolar_mass_positive": true,
+      "logpolar_bearing_correct": true
+    },
+    {
+      "agent": "foveal_centre",
+      "agent_pos": [
+        16,
+        16
+      ],
+      "goal": "phase1_farW",
+      "goal_pos": [
+        1,
+        30
+      ],
+      "delta_cell": [
+        -15.0,
+        14.0
+      ],
+      "true_bearing_quadrant": "NW",
+      "linear_mass": 0.0,
+      "linear_npix": 0,
+      "linear_centroid": null,
+      "linear_quadrant": "absent",
+      "logpolar_mass": 12.5,
+      "logpolar_npix": 25,
+      "logpolar_centroid": [
+        8.0,
+        24.0
+      ],
+      "logpolar_quadrant": "NW",
+      "logpolar_mass_positive": true,
+      "logpolar_bearing_correct": true
+    },
+    {
+      "agent": "foveal_centre",
+      "agent_pos": [
+        16,
+        16
+      ],
+      "goal": "phase2_SW",
+      "goal_pos": [
+        1,
+        1
+      ],
+      "delta_cell": [
+        -15.0,
+        -15.0
+      ],
+      "true_bearing_quadrant": "SW",
+      "linear_mass": 0.0,
+      "linear_npix": 0,
+      "linear_centroid": null,
+      "linear_quadrant": "absent",
+      "logpolar_mass": 12.5,
+      "logpolar_npix": 25,
+      "logpolar_centroid": [
+        8.0,
+        8.0
+      ],
+      "logpolar_quadrant": "SW",
+      "logpolar_mass_positive": true,
+      "logpolar_bearing_correct": true
+    },
+    {
+      "agent": "foveal_centre",
+      "agent_pos": [
+        16,
+        16
+      ],
+      "goal": "phase3_SE",
+      "goal_pos": [
+        30,
+        1
+      ],
+      "delta_cell": [
+        14.0,
+        -15.0
+      ],
+      "true_bearing_quadrant": "SE",
+      "linear_mass": 0.0,
+      "linear_npix": 0,
+      "linear_centroid": null,
+      "linear_quadrant": "absent",
+      "logpolar_mass": 12.5,
+      "logpolar_npix": 25,
+      "logpolar_centroid": [
+        24.0,
+        8.0
+      ],
+      "logpolar_quadrant": "SE",
+      "logpolar_mass_positive": true,
+      "logpolar_bearing_correct": true
+    }
+  ],
+  "verdict": {
+    "grid_size": 32,
+    "image_size": 32,
+    "log_polar_d0": 1.0,
+    "n_cases": 8,
+    "all_linear_clipped_to_zero": true,
+    "all_logpolar_mass_positive": true,
+    "all_logpolar_bearing_correct": true,
+    "SMOKE_PASS": true,
+    "NOTE": "PASS = log-polar render gives mass>0 AND correct bearing for ALL 4 schedule goals at BOTH agent positions (vs the linear render clipping to mass 0.0). This is the cheap-first gate for the #6 log-polar SURPASS; the grid-32 GPU nav GO is the verdict."
+  }
+}

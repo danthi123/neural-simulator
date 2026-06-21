@@ -180,16 +180,55 @@ def sc_salience_offset_from_image(image, grid_size=8, image_size=32):
     return (dx, dy)
 
 
-def render_egocentric_goal(agent, goal, image_size=32, ppc=4, radius=2):
+def render_egocentric_goal(agent, goal, image_size=32, ppc=4, radius=2,
+                           log_polar=False, log_polar_d0=1.0, log_polar_grid_size=32):
     """ENVIRONMENT render (legitimate, channel-1 of the BRAIN-BASED-ONLY bar): the world
     from the agent's EYE — the goal as a dim ON blob at its bearing (goal - agent) relative
     to the foveal centre. Egocentric (the agent does not see its own eye), so a single blob
     the spiking superior colliculus localises directly. Same (2,H,W) ON/OFF convention as
-    render_gridworld_to_image. De-risked in sc_map_orienting_probe.py."""
+    render_gridworld_to_image. De-risked in sc_map_orienting_probe.py.
+
+    log_polar (#6 SURPASS, 2026-06-22): the SC's CANONICAL log-polar / foveal-magnified
+    retinotopy (Ottes-Van Gisbergen afferent map; Hafed lab 2019; catalog E.04/H.25). The
+    DEFAULT linear map `pixel = c + Δcell·ppc` hard-CLIPS any goal beyond ±(c/ppc) cells off
+    the fixed image (at image_size=32, ppc=4 that is ±4 cells), so at grid-32 the moving-goal
+    schedule's far-corner goals (30+ cells away) render ENTIRELY off-image — sc_retina mass
+    0.0, the SC bump ABSENT (research/findings/2026-06-22-shortcut6-upstream-orienting-residual-
+    surpass.md, MOVE 1). This is a NON-biological truncation, not a substrate limit: the real
+    SC map is log-polar/full-hemifield (eccentricity compressed, NEVER clipped). When True, the
+    goal's BEARING (unit vector of goal−agent) is preserved exactly but its ECCENTRICITY is
+    mapped through a monotone-compressive log: r_pix = R_max · log(1 + r_cell/d0) /
+    log(1 + r_max/d0), R_max = c−radius (so the blob+radius stays on-image), r_max = the grid
+    diagonal (the largest possible eccentricity). So a near goal gets a large foveally-magnified
+    central bump (preserving the fine near-goal discrimination the linear map has), and a far
+    goal gets a COMPRESSED-but-PRESENT peripheral bump — never off-image. Pure render geometry;
+    the input is STILL only the (agent, goal) egocentric bearing exactly as the linear map (it
+    NEVER reads (gx,gy) as coordinates into the brain — a compressive *visual* mapping is what a
+    real retina/SC does). The 16×16 sc_map + the whole pop-vector/divnorm/WTA decode are
+    unchanged; only the input position-encoding is made biology-faithful. Default False =>
+    byte-identical to the linear map. NO sim/ edit (this is the runner's render)."""
     img = np.zeros((2, image_size, image_size), dtype=np.float32)
     c = image_size // 2
-    gx = int(round(c + (goal[0] - agent[0]) * ppc))   # +x = East
-    gy = int(round(c + (goal[1] - agent[1]) * ppc))   # +y = North
+    ddx = float(goal[0] - agent[0])   # +x = East   (cells)
+    ddy = float(goal[1] - agent[1])   # +y = North  (cells)
+    if log_polar:
+        # Log-polar / foveal-magnified eccentricity: preserve bearing, compress radius so far
+        # goals land on a peripheral (compressed) site instead of clipping off-image.
+        r_cell = float(np.hypot(ddx, ddy))
+        if r_cell <= 1e-9:
+            gx, gy = c, c                       # agent on goal -> foveal centre
+        else:
+            r_max_cell = float(log_polar_grid_size) * 1.41421356  # grid diagonal (max eccentricity)
+            d0 = max(1e-3, float(log_polar_d0))
+            r_pix_max = float(c - radius)        # cap the most-eccentric goal at the retina edge
+            denom = np.log1p(r_max_cell / d0)
+            frac = np.log1p(min(r_cell, r_max_cell) / d0) / (denom if denom > 0 else 1.0)
+            r_pix = r_pix_max * float(frac)
+            gx = int(round(c + r_pix * (ddx / r_cell)))   # along the goal's bearing
+            gy = int(round(c + r_pix * (ddy / r_cell)))
+    else:
+        gx = int(round(c + ddx * ppc))   # +x = East
+        gy = int(round(c + ddy * ppc))   # +y = North
     for dy in range(-radius, radius + 1):
         for dx in range(-radius, radius + 1):
             px, py = gx + dx, gy + dy
@@ -3651,6 +3690,23 @@ def run_moving_goal_episode(
     sc_popvector_readout: bool = False,
     sc_popvector_divnorm_sigma: float = 1.0,   # Carandini-Heeger semi-saturation sigma on cortex_X
     sc_popvector_divnorm_gain: float = 1.0,    # divisive strength on the four-cardinal mean term
+    # #6 SURPASS (2026-06-22): biology-faithful LOG-POLAR / foveal-magnified egocentric SC retina.
+    # The default linear render_egocentric_goal map clips every eccentric (>~4-cell) goal off the
+    # 32-pixel sc_retina, so at grid-32 the schedule's far-corner goals render ENTIRELY off-image
+    # (sc_retina mass 0.0, the SC bump ABSENT) and NO selection/decode/projection op can act on an
+    # absent signal -- the deep-research-confirmed upstream residual of #6
+    # (research/findings/2026-06-22-shortcut6-upstream-orienting-residual-surpass.md). When True,
+    # the egocentric SC eye-drive render uses the SC's canonical log-polar map (preserve bearing,
+    # compress eccentricity) so a 30-cell goal lands on a compressed-but-PRESENT peripheral sc_map
+    # site -- restoring the very signal the prior NEGATIVE convergence proved was missing. This is
+    # the ENVIRONMENT sensory render (host-LEGITIMATE, channel-1 of the BRAIN-BASED-ONLY bar -- a
+    # compressive *visual* mapping, NOT a coordinate read-out; the brain still sees only the
+    # rendered retina image, never (gx,gy)); the cognition (SC bump -> pop-vector decode -> WTA
+    # selection) stays fully spiking and just gets a non-truncated input. Default False =>
+    # byte-identical (the linear render reproduces unchanged). NO sim/ edit (the render is in this
+    # runner). Env-var SC_LOG_POLAR=1 also enables it (parallels SC_POPVECTOR / SC_CORTEX_W).
+    log_polar_retina: bool = False,
+    log_polar_d0: float = 1.0,                  # foveal scale (cells): smaller -> more foveal magnification
     # Cascade North-bias FIX 1 (2026-06-20): tie-aware STOCHASTIC action read-out. The host reads the
     # spiking decision with `max(range(N), key=...)` (:7073), and Python's max returns the FIRST index
     # on ties, so with ACTION_NAMES=["N","E","S","W"] every K-way tie deterministically resolves to N
@@ -4239,6 +4295,12 @@ def run_moving_goal_episode(
         for _r in regions:
             if _r.name in ("cortex_N", "cortex_E", "cortex_S", "cortex_W"):
                 _r.input_divisive_norm = True
+
+    # #6 SURPASS (2026-06-22): biology-faithful log-polar SC retina. Master switch = the
+    # log_polar_retina kwarg OR the SC_LOG_POLAR env var. Consumed by the egocentric SC eye-drive
+    # render (render_egocentric_goal log_polar=...) in the trial loop; only meaningful WITH
+    # enable_spiking_sc. Pure render geometry, NO sim/ edit; default OFF => byte-identical.
+    _log_polar_retina = bool(log_polar_retina) or (os.environ.get("SC_LOG_POLAR", "0") == "1")
 
     # Cascade North-bias FIX 2 (2026-06-20): per-pool baseline equalization at the SELECTION stage.
     # Flag the four sel_{N,E,S,W} accumulators BrainRegion.enable_homeostasis=True so each independently
@@ -7041,7 +7103,10 @@ def run_moving_goal_episode(
                 # 2500 pA matches the de-risk operating point (tunable for the 6-seed A/B).
                 if enable_spiking_sc and "sc_retina" in region_indices_cp:
                     _ego = render_egocentric_goal((int(x), int(y)), (int(gx), int(gy)),
-                                                  image_size=int(visual_image_size))
+                                                  image_size=int(visual_image_size),
+                                                  log_polar=_log_polar_retina,
+                                                  log_polar_d0=float(log_polar_d0),
+                                                  log_polar_grid_size=int(grid_size))
                     # TRUE-ONE-BRAIN #2 het-off op-point: 2500 pA STARVES the SC bump on the het-off
                     # merged bridge; the de-risk used 3500. SC_RET_DRIVE overrides; default unset =>
                     # 2500 (byte-identical to the standalone nav).
@@ -7833,6 +7898,9 @@ def run_moving_goal_episode(
         "tie_break_fraction": (float(_tie_break_count) / float(_decision_total)
                                if _decision_total > 0 else 0.0),
         "sc_sel_homeostasis": bool(_sc_sel_homeo),
+        # #6 SURPASS instrumentation (2026-06-22): the biology-faithful log-polar SC retina flag.
+        "log_polar_retina": bool(_log_polar_retina),
+        "log_polar_d0": float(log_polar_d0),
         # Cascade-accumulator FIX A instrumentation (2026-06-20): the sel_X divisive-norm flag + op-point.
         "sc_sel_divnorm": bool(_sc_sel_divnorm),
         "sc_sel_divnorm_sigma": float(sc_sel_divnorm_sigma),
