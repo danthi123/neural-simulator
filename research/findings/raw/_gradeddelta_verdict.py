@@ -1,4 +1,4 @@
-"""Consolidate the #5b R1 δ-close verdict from the all-arms + GIRK-cap JSONs.
+"""Consolidate the #5b R1 delta-close verdict from the all-arms + GIRK-cap JSONs.
 
 Prints: (1) the 3-seed grid arm (V n/f selectivity = R1 fix; SNc-burst gabab_gap = the load-bearing δ;
 delta_vnf for contrast), (2) the control collapse (per seed), (3) the GIRK-cap sweep on seed 44.
@@ -23,7 +23,7 @@ def _arm(d, arm):
 
 
 print("=" * 92)
-print("#5b R1 δ-close verdict")
+print("#5b R1 delta-close verdict")
 print("=" * 92)
 
 print("\n[1] GRID arm, 3-seed (R1 fix = V n/f; load-bearing δ = SNc-burst gabab_gap):")
