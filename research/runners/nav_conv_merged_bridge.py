@@ -1282,7 +1282,7 @@ class MergedNavConvAgent:
     """
 
     def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_limbic=False,
-                 co_resident_nav_critic=False, nav_critic_spiking_sc=False,
+                 co_resident_nav_critic=None, nav_critic_spiking_sc=False,
                  nav_critic_place_selforg=False, co_resident_td_cueshift=False,
                  enable_da_salience_gate=False, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
@@ -1325,8 +1325,31 @@ class MergedNavConvAgent:
         # DA modulator (threshold-0, neutral-at-rest) does not perturb the parser/conversational comprehension.
         self.co_resident_limbic = bool(co_resident_limbic)
         # co_resident_nav_critic (CYCLE 209): lift the FULL nav reward/critic (vs the minimal limbic organ) onto the
-        # merged bridge; the moat check verifies the DA-over-snc modulator does not perturb conversation.
-        self.co_resident_nav_critic = bool(co_resident_nav_critic)
+        # merged bridge -- the spiking limbic core (US->SNc reward burst + striosome_value MSN-D1 value critic +
+        # the scope=all `dopamine` modulator over [snc]); the moat check verifies the DA-over-snc modulator does
+        # NOT perturb the frozen conversational comprehension (validated 15/15: tests/test_nav_conv_merged_agent
+        # 8 + tests/test_nav_conv_step2b_coresident 7 all pass with this resident, incl. the is-None no-confab
+        # assertions).
+        #
+        # PRODUCTION DEFAULT = ON (2026-06-21, production-wiring nav chunk item 5): the production "one brain"
+        # agent brings up the spiking reward/value/dopamine limbic core by default, so the merged-nav cognition
+        # (reward, value, RPE) is spiking-by-default (brain-based purity). GREEN_INERT CAVEAT (documented, NOT
+        # hidden): the nav value/RPE is BEHAVIORALLY INERT on the orient-solvable immediate-reward gridworld (the
+        # #9 lesson / the merged-nav-critic BOUNDARY finding) -- flipping this is a brain-based-purity default, not
+        # a navigation behavior win; the limbic core is validated spiking but its δ does not change the navigation
+        # score. The default is `None` = "production default ON unless a MUTUALLY-EXCLUSIVE critic was explicitly
+        # requested": co_resident_limbic (the 4-region minimal organ) and co_resident_td_cueshift (the A-CSC TD
+        # cue-shift slice) each register their OWN scope=all DA broadcast, so only ONE critic can be co-resident
+        # (the builder asserts this). An EXPLICIT co_resident_limbic=True / co_resident_td_cueshift=True therefore
+        # YIELDS the production default (the explicit research-config request wins; no mutual-exclusivity crash);
+        # an EXPLICIT co_resident_nav_critic=False also opts out (the legacy no-critic config). The low-level
+        # build_merged_nav_conv_bridge default stays False (conservative -- the many research runners that compose
+        # their own critic config keep the assert protecting a genuine double-request).
+        if co_resident_nav_critic is None:
+            # production default: ON, unless a mutually-exclusive critic was explicitly requested.
+            self.co_resident_nav_critic = not (bool(co_resident_limbic) or bool(co_resident_td_cueshift))
+        else:
+            self.co_resident_nav_critic = bool(co_resident_nav_critic)
         # nav_critic_spiking_sc (TRUE ONE BRAIN roadmap #2): also lift the spiking SC chain so the nav reward `r`
         # is the SYNAPTIC SC-proximity (sc_rostral->reward_us), retiring the host Manhattan formula. Default
         # False = byte-preserved. Only meaningful with co_resident_nav_critic (it builds reward_us + the critic).
