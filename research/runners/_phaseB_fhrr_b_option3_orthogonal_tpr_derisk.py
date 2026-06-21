@@ -208,6 +208,19 @@ class OrthogonalTPRBinder:
     def unbind(self, T, r):
         return self._cleanup_forward(self.read_block(T, r), cache=False)
 
+    def unbind_argmax_proj(self, T, r, fillers):
+        """STRONG-TPR (no learned inverse): read role-r's block (== filler@W_F for the bound filler, no
+        crosstalk) and pick the nearest filler IN BLOCK SPACE (compare to each filler's OWN projection). With
+        orthogonal role tags this needs NO learned decode -- the read block IS the bound filler's projection, so
+        nearest-neighbour over {filler_j @ W_F} recovers it exactly + generalizes to held-out fillers trivially.
+        This isolates: the SEPARABLE structure ALONE (a FIXED read-out, no learning) solves the bundle-inverse.
+        Returns the argmax filler index."""
+        blk = self.read_block(T, r)
+        proj = fillers @ self.W_F                       # [F, d_role] each filler's own block projection
+        pn = proj / (np.linalg.norm(proj, axis=1, keepdims=True) + 1e-12)
+        bn = blk / (np.linalg.norm(blk) + 1e-12)
+        return int(np.argmax(pn @ bn))
+
     # ---------------- training (bundle-aware backprop) ----------------
     def train_fact_step(self, fillerids, fillers, query_r, target_fid):
         self.t += 1
@@ -252,6 +265,7 @@ def run_seed_cell(codes, seed, A, d_role, n_hidden=1, shuffle_train=False, lesio
     rng = np.random.default_rng(seed * 53 + 9)
 
     single_held, bundle_train, bundle_held, perm_role_held = [], [], [], []
+    proj_bundle_held, proj_perm_held = [], []   # STRONG-TPR: fixed nearest-block read-out (no learned decode)
     moat_known, moat_novel = [], []
 
     for split in splits:
@@ -280,21 +294,31 @@ def run_seed_cell(codes, seed, A, d_role, n_hidden=1, shuffle_train=False, lesio
         single_held.append(sc_ok / sc_n if sc_n else 0.0)
 
         # --- BUNDLED held-out (the real test: all A bindings superposed) ---
+        # Two read-outs scored side by side on the SAME bundle:
+        #   (full) the LEARNED MLP decode block -> full filler space (the "learned read-out");
+        #   (proj) the FIXED nearest-block read-out (no learned decode) -- isolates whether the SEPARABLE
+        #          structure ALONE solves the bundle-inverse.
         ntr_ok = ntr = nh_ok = nh = perm_ok = perm_n = 0
+        pj_h_ok = pj_h = pj_perm_ok = pj_perm_n = 0
         for _ in range(N_EVAL_FACTS):
             fids = rng.choice(F, A, replace=False)
             T = binder.bundle([fillers[fids[r]] for r in range(A)])
             for r in range(A):
                 ok = int(native_argmax(binder.unbind(T, r), fillers) == fids[r])
+                pj_ok = int(binder.unbind_argmax_proj(T, r, fillers) == fids[r])
                 if (r, int(fids[r])) in train_set:
                     ntr_ok += ok; ntr += 1
                 else:
                     nh_ok += ok; nh += 1
+                    pj_h_ok += pj_ok; pj_h += 1     # proj read-out scored on HELD-OUT combos only
                 wrong_r = (r + 1) % A   # permuted-role: read the WRONG block
                 perm_ok += int(native_argmax(binder.unbind(T, wrong_r), fillers) == fids[r]); perm_n += 1
+                pj_perm_ok += int(binder.unbind_argmax_proj(T, wrong_r, fillers) == fids[r]); pj_perm_n += 1
         bundle_train.append(ntr_ok / ntr if ntr else 0.0)
         bundle_held.append(nh_ok / nh if nh else 0.0)
         perm_role_held.append(perm_ok / perm_n if perm_n else 0.0)
+        proj_bundle_held.append(pj_h_ok / pj_h if pj_h else 0.0)
+        proj_perm_held.append(pj_perm_ok / pj_perm_n if pj_perm_n else 0.0)
 
         # --- the moat (no-confab familiarity gap): real bound filler vs a novel OOD filler ---
         mrng = np.random.default_rng(seed * 99 + split["split_id"] + 1)
@@ -317,7 +341,9 @@ def run_seed_cell(codes, seed, A, d_role, n_hidden=1, shuffle_train=False, lesio
         "seed": seed, "A": A, "d_role": d_role, "n_hidden": n_hidden,
         "shuffle_train": bool(shuffle_train), "lesion": bool(lesion),
         "single_held": m(single_held), "bundle_train": m(bundle_train), "bundle_held": m(bundle_held),
-        "perm_role_held": m(perm_role_held), "moat_known": m(moat_known), "moat_novel": m(moat_novel),
+        "perm_role_held": m(perm_role_held),
+        "proj_bundle_held": m(proj_bundle_held), "proj_perm_held": m(proj_perm_held),
+        "moat_known": m(moat_known), "moat_novel": m(moat_novel),
         "moat_gap": m(moat_known) - m(moat_novel),
     }
 
@@ -485,15 +511,19 @@ def main():
                 r = run_seed_cell(codes, s, A=A, d_role=d_role, n_hidden=args.n_hidden)
                 rows.append(r)
                 print(f"  [seed {s}] A={A} d_role={d_role}: single {r['single_held']:.3f} | BUNDLED train "
-                      f"{r['bundle_train']:.3f} | held-out {r['bundle_held']:.3f} | perm-role "
-                      f"{r['perm_role_held']:.3f} | moat-gap {r['moat_gap']:+.3f}", flush=True)
+                      f"{r['bundle_train']:.3f} | held-out(learned) {r['bundle_held']:.3f} | held-out(proj) "
+                      f"{r['proj_bundle_held']:.3f} | perm-role {r['perm_role_held']:.3f} | moat-gap "
+                      f"{r['moat_gap']:+.3f}", flush=True)
             results[(A, d_role)] = rows
             bh = float(np.mean([x["bundle_held"] for x in rows]))
+            ph = float(np.mean([x["proj_bundle_held"] for x in rows]))
             bt = float(np.mean([x["bundle_train"] for x in rows]))
             sh = float(np.mean([x["single_held"] for x in rows]))
             n_ge = sum(1 for x in rows if x["bundle_held"] >= 0.90)
-            print(f"  MEAN A={A} d_role={d_role}: single {sh:.3f} | BUNDLED train {bt:.3f} | held-out {bh:.3f} "
-                  f"({n_ge}/{len(rows)} seeds >=0.90)", flush=True)
+            n_ge_p = sum(1 for x in rows if x["proj_bundle_held"] >= 0.90)
+            print(f"  MEAN A={A} d_role={d_role}: single {sh:.3f} | BUNDLED train {bt:.3f} | held-out(learned) "
+                  f"{bh:.3f} ({n_ge}/{len(rows)} >=0.90) | held-out(proj/fixed-readout) {ph:.3f} "
+                  f"({n_ge_p}/{len(rows)} >=0.90)", flush=True)
 
     # ---- anti-cheat extras ----
     anticheat = {}
@@ -541,10 +571,21 @@ def main():
     best_moat = float(np.mean([x["moat_gap"] for x in best_rows]))
     n_ge_90 = sum(1 for x in best_rows if x["bundle_held"] >= 0.90)
 
-    print(f"  BEST (A={best_key[0]}, d_role={best_key[1]}): BUNDLED held-out {best_bh:.3f} "
+    best_proj_bh = float(np.mean([x["proj_bundle_held"] for x in best_rows]))
+    best_proj_pr = float(np.mean([x["proj_perm_held"] for x in best_rows]))
+    # The fixed-read-out (proj) result over the cell where IT is strongest (it should be near-ceiling everywhere).
+    proj_best_key = max(keys, key=lambda k: float(np.mean([x["proj_bundle_held"] for x in results[k]])))
+    proj_best_bh = float(np.mean([x["proj_bundle_held"] for x in results[proj_best_key]]))
+    proj_best_pr = float(np.mean([x["proj_perm_held"] for x in results[proj_best_key]]))
+    n_ge_90_proj = sum(1 for x in results[proj_best_key] if x["proj_bundle_held"] >= 0.90)
+
+    print(f"  BEST LEARNED-read-out (A={best_key[0]}, d_role={best_key[1]}): BUNDLED held-out {best_bh:.3f} "
           f"({n_ge_90}/{len(best_rows)} seeds >=0.90), train {best_bt:.3f}, single {best_sh:.3f}", flush=True)
-    print(f"  perm-role control {best_pr:.3f} (must be ~chance {chance:.3f}); moat-gap {best_moat:+.3f} (>0)",
-          flush=True)
+    print(f"  BEST FIXED-read-out/proj (A={proj_best_key[0]}, d_role={proj_best_key[1]}): held-out "
+          f"{proj_best_bh:.3f} ({n_ge_90_proj}/{len(results[proj_best_key])} seeds >=0.90), "
+          f"perm-role {proj_best_pr:.3f}", flush=True)
+    print(f"  perm-role control (learned) {best_pr:.3f} (must be ~chance {chance:.3f}); moat-gap {best_moat:+.3f} "
+          f"(>0)", flush=True)
     if args.run_anticheats:
         print(f"  shuffle-train {anticheat['shuffle_train_held']:.3f} (~chance); lesion "
               f"{anticheat['lesion_held']:.3f} (collapse); additive {anticheat['additive_bundled']:.3f} (ref ~0.193); "
@@ -578,15 +619,24 @@ def main():
               flush=True)
     else:
         verdict = "NEGATIVE"
-        print(f"\n  VERDICT: NEGATIVE — orthogonal-TPR + a learned cleanup does NOT generalize the multi-attribute "
-              f"bundle-inverse (best held-out {best_bh:.3f}). Even with a separable, no-crosstalk tensor-product "
-              f"structure (which REMOVES the exact-reciprocal requirement entirely), the LEARNED read-out does not "
-              f"systematically recombine roles with held-out fillers. NOT a closed boundary (owner's rule): with "
-              f"Option-1 cleanup GO + Option-2 deep-bind NEGATIVE + Option-3 orthogonal-TPR NEGATIVE, the evidence "
-              f"CONVERGES on a genuine structural finding for the controller — the role-filler BIND is a FIXED "
-              f"STRUCTURAL neural primitive (binding-by-coincidence / dendritic multiplication), NOT a learnable host "
-              f"op. Closing FHRR-B = learned codes (done) + learned cleanup (Option-1 GO) + a fixed structural bind.",
-              flush=True)
+        struct_note = ""
+        if proj_best_bh >= 0.90 and proj_best_pr < 0.20:
+            struct_note = (f" KEY STRUCTURAL CONTRAST: on the SAME separable TPR fact, a FIXED nearest-block "
+                           f"read-out (NO learning) recovers held-out {proj_best_bh:.3f} (perm-role "
+                           f"{proj_best_pr:.3f} ~ chance) — i.e. the orthogonal structure DOES dissolve the "
+                           f"bundle-inverse, but ONLY with a FIXED read-out; the LEARNED full-space decode "
+                           f"({best_bh:.3f}) does not generalize. This is direct evidence the bind+read is a "
+                           f"FIXED structural primitive, not a learnable host op.")
+        print(f"\n  VERDICT: NEGATIVE (for the LEARNED read-out) — orthogonal-TPR + a LEARNED cleanup does NOT "
+              f"generalize the multi-attribute bundle-inverse (best learned held-out {best_bh:.3f}). Even with a "
+              f"separable, no-crosstalk tensor-product structure (which REMOVES the exact-reciprocal requirement "
+              f"entirely), the LEARNED read-out does not systematically recombine roles with held-out fillers."
+              f"{struct_note} NOT a closed boundary (owner's rule): with Option-1 cleanup GO + Option-2 deep-bind "
+              f"NEGATIVE + Option-3 orthogonal-TPR-learned NEGATIVE, the evidence CONVERGES on a genuine structural "
+              f"finding for the controller — the role-filler BIND (and the read-out that inverts it) is a FIXED "
+              f"STRUCTURAL neural primitive (binding-by-coincidence / dendritic multiplication / a fixed projection), "
+              f"NOT a learnable host op. Closing FHRR-B = learned codes (done) + learned cleanup (Option-1 GO) + a "
+              f"FIXED structural bind.", flush=True)
 
     print(f"  Total elapsed: {time.time()-t0:.1f}s", flush=True)
     print(f"{'='*110}", flush=True)
@@ -603,11 +653,16 @@ def main():
             "single_held": float(np.mean([x["single_held"] for x in results[k]])),
             "bundle_train": float(np.mean([x["bundle_train"] for x in results[k]])),
             "bundle_held": float(np.mean([x["bundle_held"] for x in results[k]])),
+            "proj_bundle_held": float(np.mean([x["proj_bundle_held"] for x in results[k]])),
             "perm_role_held": float(np.mean([x["perm_role_held"] for x in results[k]])),
+            "proj_perm_held": float(np.mean([x["proj_perm_held"] for x in results[k]])),
             "moat_gap": float(np.mean([x["moat_gap"] for x in results[k]])),
             "n_seeds_ge_0.90": sum(1 for x in results[k] if x["bundle_held"] >= 0.90),
+            "n_seeds_ge_0.90_proj": sum(1 for x in results[k] if x["proj_bundle_held"] >= 0.90),
         } for k in keys},
-        "best": {"A": best_key[0], "d_role": best_key[1], "bundle_held": best_bh}, "verdict": verdict,
+        "best": {"A": best_key[0], "d_role": best_key[1], "bundle_held": best_bh,
+                 "proj_best_A": proj_best_key[0], "proj_best_d_role": proj_best_key[1],
+                 "proj_bundle_held": proj_best_bh, "proj_perm_held": proj_best_pr}, "verdict": verdict,
         "anticheat": anticheat,
     }
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
