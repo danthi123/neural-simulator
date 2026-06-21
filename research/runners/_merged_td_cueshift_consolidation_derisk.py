@@ -547,21 +547,41 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--seeds", type=str, default=None, help="comma seeds for the multi-seed migration battery")
     ap.add_argument("--td-csc-n", type=int, default=8)
-    # CO-RESIDENT operating-point knobs (the merged-bridge runaway-critic / tonic-death fix; defaults = standalone GO).
-    ap.add_argument("--td-stdp-w-max", type=float, default=0.0,
-                    help="per-tap td_value weight cap re-clipped per trial (the standalone used 40; the merged bridge "
-                         "pins the GLOBAL stdp_w_max=400 for conversation, so re-clip ONLY the td slice). 0=off")
+    # CO-RESIDENT operating-point knobs. DEFAULTS = the B4 COOLED op-point (2026-06-21, production-wiring
+    # nav chunk item 4) that restores the strict Schultz-signature migration r < -0.7 on 3/3 seeds
+    # co-resident (-0.787/-0.855/-0.850), per research/findings/2026-06-22-shortcut-B4-oppoint-r07-3of3.md.
+    # The TWO cooling levers (the headline deltas the finding names): td_stdp_w_max 60->40 (cool the
+    # merged critic so the cue-burst snap moves to ~trial 9) + n_train 30->15 (read over the cooled
+    # critic's convergence window so the snap sits at the midpoint). The OTHER four (FS-clamp 30/20,
+    # gabab_prop 0.04, derivative_gain 2, slow_tau 250) are the B4 op-point they cool FROM -- the
+    # strong-derivative regime required for the migration to reach the cue (UNCHANGED hot->cooled; both
+    # share them). So running this de-risk with NO extra flags now reproduces the documented 3/3
+    # r<-0.7. (The pre-B4 "standalone GO" defaults were td_stdp_w_max=0/n_train=50/FS 16,10/gabab
+    # 0.105/gain 1/tau 130 -- supply them explicitly for the legacy regime; revertible.) The TD error
+    # stays 100% neural (the weight cap is a weight-BOUND, n_train a measurement-window, not a host
+    # value/reward computation). All runner-side; NO sim/ edit. NOTE: this is the cue-shift DE-RISK
+    # path (co_resident_td_cueshift, a separate DA modulator over [td_snc]); NOT the default production
+    # merge (co_resident_nav_critic, nav chunk item 5) -- the two critics are mutually exclusive.
+    ap.add_argument("--td-stdp-w-max", type=float, default=40.0,
+                    help="per-tap td_value weight cap re-clipped per trial (cooling lever 1: 60->40 cools the merged "
+                         "critic; the standalone used 40; the merged bridge pins the GLOBAL stdp_w_max=400 for "
+                         "conversation, so re-clip ONLY the td slice). 0=off (legacy uncapped).")
     ap.add_argument("--td-gabab-cmax", type=float, default=0.0,
                     help="GIRK saturation cap on the td GABA_B conductance (bounds -V so a hot critic can't clamp "
                          "td_snc dead). 0=off")
-    ap.add_argument("--td-gabab-prop", type=float, default=0.105, help="td GABA_B per-spike conductance increment")
-    ap.add_argument("--td-to-fs-weight", type=float, default=16.0, help="td_csc_k->td_fs (FS-clamp drive) weight")
-    ap.add_argument("--td-fs-to-strio-weight", type=float, default=10.0, help="td_fs->td_striosome (FS-clamp) weight")
+    ap.add_argument("--td-gabab-prop", type=float, default=0.04, help="td GABA_B per-spike conductance increment "
+                    "(B4 op-point; legacy=0.105)")
+    ap.add_argument("--td-to-fs-weight", type=float, default=30.0, help="td_csc_k->td_fs (FS-clamp drive) weight "
+                    "(B4 op-point; legacy=16)")
+    ap.add_argument("--td-fs-to-strio-weight", type=float, default=20.0, help="td_fs->td_striosome (FS-clamp) weight "
+                    "(B4 op-point; legacy=10)")
     ap.add_argument("--td-csc-to-strio-weight", type=float, default=14.0, help="td_csc_k->td_striosome init weight")
-    ap.add_argument("--td-derivative-gain", type=float, default=1.0,
-                    help="B-2 conductance-derivative gain (the bootstrap +dV/dt). RAISE co-resident to lift the cue burst "
-                         "so the peak migrates (the merged GIRK cap throttles the derivative; a higher gain compensates)")
-    ap.add_argument("--td-slow-tau-ms", type=float, default=130.0, help="td conductance-derivative slow-EMA tau (ms)")
+    ap.add_argument("--td-derivative-gain", type=float, default=2.0,
+                    help="B-2 conductance-derivative gain (the bootstrap +dV/dt; B4 op-point, legacy=1). RAISE "
+                         "co-resident to lift the cue burst so the peak migrates (the merged GIRK cap throttles the "
+                         "derivative; a higher gain compensates)")
+    ap.add_argument("--td-slow-tau-ms", type=float, default=250.0, help="td conductance-derivative slow-EMA tau (ms) "
+                    "(B4 op-point; legacy=130)")
     ap.add_argument("--reward-learning-rate", type=float, default=0.0,
                     help="COOLING op-point lever (post-build cfg override): the per-trial value-growth rate. The merged "
                          "default is 0.01; LOWERING it (e.g. 0.005) DELAYS/centers the cue-burst snap so the migration r "
@@ -570,7 +590,11 @@ def main():
     ap.add_argument("--reward-eligibility-tau-ms", type=float, default=0.0,
                     help="COOLING op-point lever (post-build cfg override): tap-local credit window (merged default 40ms). "
                          "A SHORTER tau slows the one-tap-per-trial walk. 0=builder default (40ms).")
-    ap.add_argument("--n-train", type=int, default=0, help="override n_train (0 = recipe default 50; use ~30 for faster op-point search)")
+    ap.add_argument("--n-train", type=int, default=15,
+                    help="n_train = the migration measurement window (cooling lever 2: 30->15 reads over the cooled "
+                         "critic's convergence window so the cue-burst snap @ ~trial 9 sits at the midpoint -> "
+                         "centered step -> r<-0.7; B4 op-point default 15. The clean GO window is ~15-18, not "
+                         "knife-edge. 0 = recipe default 50 (legacy).")
     ap.add_argument("--global-het-test", action="store_true",
                     help="DIAGNOSTIC: turn on global parameter heterogeneity (perturbs nav/conv determinism) to test "
                          "whether the standalone's het-ON operating point restores migration co-resident")
