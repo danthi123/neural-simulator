@@ -1,0 +1,775 @@
+{
+  "verdict": {
+    "seed": 42,
+    "grid_size": 32,
+    "n_steps": 1800,
+    "sel_opponent_weight": 12.0,
+    "sel_crossaxis_weight": 0.0,
+    "HOST_post_change_finalQ_sum": 2.2123893805309733,
+    "FIX1_post_change_finalQ_sum": 69.76106194690266,
+    "FIX1B_post_change_finalQ_sum": 82.00884955752213,
+    "SCRAM_post_change_finalQ_sum": 81.070796460177,
+    "HOST_gate_score": 2.8141592920353986,
+    "FIX1_gate_score": 101.4424778761062,
+    "FIX1B_gate_score": 83.30088495575221,
+    "SCRAM_gate_score": 94.75221238938053,
+    "FIX1_sel_NS_pct": 21.94,
+    "FIX1B_sel_NS_pct": 55.31,
+    "FIX1_sel_NS_abs": 10702.0,
+    "FIX1B_sel_NS_abs": 37619.0,
+    "HOST_tracking": {
+      "dominant_per_phase": [
+        "N",
+        "W",
+        "E",
+        "E"
+      ],
+      "n_distinct": 3,
+      "has_W": true,
+      "has_E": true,
+      "tracks_goal": true
+    },
+    "FIX1_tracking": {
+      "dominant_per_phase": [
+        "W",
+        "N",
+        "W",
+        "E"
+      ],
+      "n_distinct": 3,
+      "has_W": true,
+      "has_E": true,
+      "tracks_goal": true
+    },
+    "FIX1B_tracking": {
+      "dominant_per_phase": [
+        "E",
+        "W",
+        "N",
+        "N"
+      ],
+      "n_distinct": 3,
+      "has_W": true,
+      "has_E": true,
+      "tracks_goal": true
+    },
+    "SCRAM_tracking": {
+      "dominant_per_phase": [
+        "E",
+        "N",
+        "N",
+        "N"
+      ],
+      "n_distinct": 2,
+      "has_W": false,
+      "has_E": true,
+      "tracks_goal": true
+    },
+    "FIX1B_late_sustain": 0.42,
+    "FIX1B_stage_surplus": {
+      "thal_counts": {
+        "N": 11166.0,
+        "E": 11335.0,
+        "S": 10180.0,
+        "W": 11559.0,
+        "NS_surplus": 986.0,
+        "NS_pct": 9.24,
+        "EW_surplus": -224.0
+      },
+      "sel_counts": {
+        "N": 86828.0,
+        "E": 68689.0,
+        "S": 49209.0,
+        "W": 69729.0,
+        "NS_surplus": 37619.0,
+        "NS_pct": 55.31,
+        "EW_surplus": -1040.0
+      },
+      "commit_counts": {
+        "N": 76740.0,
+        "E": 62503.0,
+        "S": 47770.0,
+        "W": 65028.0,
+        "NS_surplus": 28970.0,
+        "NS_pct": 46.53,
+        "EW_surplus": -2525.0
+      },
+      "motor_counts": {
+        "N": 2203.0,
+        "E": 1808.0,
+        "S": 1648.0,
+        "W": 2813.0,
+        "NS_surplus": 555.0,
+        "NS_pct": 28.82,
+        "EW_surplus": -1005.0
+      }
+    },
+    "FIX1_stage_surplus": {
+      "thal_counts": {
+        "N": 11152.0,
+        "E": 11052.0,
+        "S": 10126.0,
+        "W": 11503.0,
+        "NS_surplus": 1026.0,
+        "NS_pct": 9.64,
+        "EW_surplus": -451.0
+      },
+      "sel_counts": {
+        "N": 54120.0,
+        "E": 52786.0,
+        "S": 43418.0,
+        "W": 55510.0,
+        "NS_surplus": 10702.0,
+        "NS_pct": 21.94,
+        "EW_surplus": -2724.0
+      },
+      "commit_counts": {
+        "N": 58234.0,
+        "E": 55827.0,
+        "S": 45618.0,
+        "W": 58311.0,
+        "NS_surplus": 12616.0,
+        "NS_pct": 24.3,
+        "EW_surplus": -2484.0
+      },
+      "motor_counts": {
+        "N": 2159.0,
+        "E": 1591.0,
+        "S": 1562.0,
+        "W": 2324.0,
+        "NS_surplus": 597.0,
+        "NS_pct": 32.09,
+        "EW_surplus": -733.0
+      }
+    },
+    "moat_untouched": "by construction (no --with-conv: cp_rf_w_* never allocated; nav cascade arrays are array-disjoint)",
+    "host_over_FIX1B_post_ratio": 0.026977446854429696,
+    "FIX1B_over_SCRAM_post_ratio": 1.011570789215151
+  },
+  "arms": {
+    "HOST": {
+      "arm": "host",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "fix1_tie_break": false,
+      "fix2_sel_homeostasis": false,
+      "fix3_opponent_axis": false,
+      "fixA_sel_divnorm": false,
+      "fixA_sel_divnorm_sigma": 1.0,
+      "fixA_sel_divnorm_gain": 1.0,
+      "fixB_sel_opponent_pair": false,
+      "fixB_sel_opponent_weight": 12.0,
+      "fixB_sel_crossaxis_weight": 0.0,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 12162.0,
+          "E": 15359.0,
+          "S": 10770.0,
+          "W": 15644.0,
+          "NS_surplus": 1392.0,
+          "NS_pct": 12.14,
+          "EW_surplus": -285.0
+        },
+        "sel_counts": {
+          "N": 24416.0,
+          "E": 76132.0,
+          "S": 24306.0,
+          "W": 74898.0,
+          "NS_surplus": 110.0,
+          "NS_pct": 0.45,
+          "EW_surplus": 1234.0
+        },
+        "commit_counts": {
+          "N": 24749.0,
+          "E": 76241.0,
+          "S": 25015.0,
+          "W": 72746.0,
+          "NS_surplus": -266.0,
+          "NS_pct": -1.07,
+          "EW_surplus": 3495.0
+        },
+        "motor_counts": {
+          "N": 3749.0,
+          "E": 10334.0,
+          "S": 3766.0,
+          "W": 9467.0,
+          "NS_surplus": -17.0,
+          "NS_pct": -0.45,
+          "EW_surplus": 867.0
+        }
+      },
+      "tie_break_count": 0,
+      "decision_total": 1800,
+      "tie_break_fraction": 0.0,
+      "opponent_axis_count": 0,
+      "opponent_axis_fraction": 0.0,
+      "sc_cortex_w": null,
+      "divnorm_sigma": null,
+      "divnorm_gain": null,
+      "per_phase_finalQ": [
+        0.6017699115044248,
+        0.504424778761062,
+        1.176991150442478,
+        0.5309734513274337
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          134,
+          120,
+          105,
+          91
+        ],
+        [
+          9,
+          201,
+          9,
+          231
+        ],
+        [
+          57,
+          154,
+          86,
+          153
+        ],
+        [
+          2,
+          237,
+          2,
+          209
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.298,
+          "E": 0.267,
+          "S": 0.233,
+          "W": 0.202
+        },
+        {
+          "N": 0.02,
+          "E": 0.447,
+          "S": 0.02,
+          "W": 0.513
+        },
+        {
+          "N": 0.127,
+          "E": 0.342,
+          "S": 0.191,
+          "W": 0.34
+        },
+        {
+          "N": 0.004,
+          "E": 0.527,
+          "S": 0.004,
+          "W": 0.464
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "N",
+        "W",
+        "E",
+        "E"
+      ],
+      "phase0_finalQ": 0.6017699115044248,
+      "post_change_finalQ": [
+        0.504424778761062,
+        1.176991150442478,
+        0.5309734513274337
+      ],
+      "post_change_finalQ_sum": 2.2123893805309733,
+      "gate_score": 2.8141592920353986,
+      "motor_sustain_frac": 1.0,
+      "late_motor_sustain_frac": 1.0,
+      "episode_json": "research/findings/raw/nav_gate_2a\\fixB_seed42\\scpv_host_seed42.json"
+    },
+    "FIX1": {
+      "arm": "sc_popvector",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "fix1_tie_break": true,
+      "fix2_sel_homeostasis": false,
+      "fix3_opponent_axis": false,
+      "fixA_sel_divnorm": false,
+      "fixA_sel_divnorm_sigma": 1.0,
+      "fixA_sel_divnorm_gain": 1.0,
+      "fixB_sel_opponent_pair": false,
+      "fixB_sel_opponent_weight": 12.0,
+      "fixB_sel_crossaxis_weight": 0.0,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 11152.0,
+          "E": 11052.0,
+          "S": 10126.0,
+          "W": 11503.0,
+          "NS_surplus": 1026.0,
+          "NS_pct": 9.64,
+          "EW_surplus": -451.0
+        },
+        "sel_counts": {
+          "N": 54120.0,
+          "E": 52786.0,
+          "S": 43418.0,
+          "W": 55510.0,
+          "NS_surplus": 10702.0,
+          "NS_pct": 21.94,
+          "EW_surplus": -2724.0
+        },
+        "commit_counts": {
+          "N": 58234.0,
+          "E": 55827.0,
+          "S": 45618.0,
+          "W": 58311.0,
+          "NS_surplus": 12616.0,
+          "NS_pct": 24.3,
+          "EW_surplus": -2484.0
+        },
+        "motor_counts": {
+          "N": 2159.0,
+          "E": 1591.0,
+          "S": 1562.0,
+          "W": 2324.0,
+          "NS_surplus": 597.0,
+          "NS_pct": 32.09,
+          "EW_surplus": -733.0
+        }
+      },
+      "tie_break_count": 548,
+      "decision_total": 1800,
+      "tie_break_fraction": 0.30444444444444446,
+      "opponent_axis_count": 0,
+      "opponent_axis_fraction": 0.0,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 5.0,
+      "divnorm_gain": 0.02,
+      "per_phase_finalQ": [
+        31.68141592920354,
+        0.9911504424778761,
+        27.38053097345133,
+        41.389380530973455
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          122,
+          107,
+          97,
+          124
+        ],
+        [
+          122,
+          112,
+          95,
+          121
+        ],
+        [
+          120,
+          104,
+          82,
+          144
+        ],
+        [
+          111,
+          126,
+          99,
+          114
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.271,
+          "E": 0.238,
+          "S": 0.216,
+          "W": 0.276
+        },
+        {
+          "N": 0.271,
+          "E": 0.249,
+          "S": 0.211,
+          "W": 0.269
+        },
+        {
+          "N": 0.267,
+          "E": 0.231,
+          "S": 0.182,
+          "W": 0.32
+        },
+        {
+          "N": 0.247,
+          "E": 0.28,
+          "S": 0.22,
+          "W": 0.253
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "W",
+        "N",
+        "W",
+        "E"
+      ],
+      "phase0_finalQ": 31.68141592920354,
+      "post_change_finalQ": [
+        0.9911504424778761,
+        27.38053097345133,
+        41.389380530973455
+      ],
+      "post_change_finalQ_sum": 69.76106194690266,
+      "gate_score": 101.4424778761062,
+      "motor_sustain_frac": 0.565,
+      "late_motor_sustain_frac": 0.4255555555555556,
+      "episode_json": "research/findings/raw/nav_gate_2a\\fixB_seed42\\scpv_sc_popvector_seed42.json"
+    },
+    "FIX1B": {
+      "arm": "sc_popvector",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "fix1_tie_break": true,
+      "fix2_sel_homeostasis": false,
+      "fix3_opponent_axis": false,
+      "fixA_sel_divnorm": false,
+      "fixA_sel_divnorm_sigma": 1.0,
+      "fixA_sel_divnorm_gain": 1.0,
+      "fixB_sel_opponent_pair": true,
+      "fixB_sel_opponent_weight": 12.0,
+      "fixB_sel_crossaxis_weight": 0.0,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 11166.0,
+          "E": 11335.0,
+          "S": 10180.0,
+          "W": 11559.0,
+          "NS_surplus": 986.0,
+          "NS_pct": 9.24,
+          "EW_surplus": -224.0
+        },
+        "sel_counts": {
+          "N": 86828.0,
+          "E": 68689.0,
+          "S": 49209.0,
+          "W": 69729.0,
+          "NS_surplus": 37619.0,
+          "NS_pct": 55.31,
+          "EW_surplus": -1040.0
+        },
+        "commit_counts": {
+          "N": 76740.0,
+          "E": 62503.0,
+          "S": 47770.0,
+          "W": 65028.0,
+          "NS_surplus": 28970.0,
+          "NS_pct": 46.53,
+          "EW_surplus": -2525.0
+        },
+        "motor_counts": {
+          "N": 2203.0,
+          "E": 1808.0,
+          "S": 1648.0,
+          "W": 2813.0,
+          "NS_surplus": 555.0,
+          "NS_pct": 28.82,
+          "EW_surplus": -1005.0
+        }
+      },
+      "tie_break_count": 325,
+      "decision_total": 1800,
+      "tie_break_fraction": 0.18055555555555555,
+      "opponent_axis_count": 0,
+      "opponent_axis_fraction": 0.0,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 5.0,
+      "divnorm_gain": 0.02,
+      "per_phase_finalQ": [
+        1.2920353982300885,
+        1.2743362831858407,
+        35.902654867256636,
+        44.83185840707964
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          135,
+          145,
+          68,
+          102
+        ],
+        [
+          137,
+          117,
+          57,
+          139
+        ],
+        [
+          159,
+          113,
+          56,
+          122
+        ],
+        [
+          167,
+          104,
+          64,
+          115
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.3,
+          "E": 0.322,
+          "S": 0.151,
+          "W": 0.227
+        },
+        {
+          "N": 0.304,
+          "E": 0.26,
+          "S": 0.127,
+          "W": 0.309
+        },
+        {
+          "N": 0.353,
+          "E": 0.251,
+          "S": 0.124,
+          "W": 0.271
+        },
+        {
+          "N": 0.371,
+          "E": 0.231,
+          "S": 0.142,
+          "W": 0.256
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "E",
+        "W",
+        "N",
+        "N"
+      ],
+      "phase0_finalQ": 1.2920353982300885,
+      "post_change_finalQ": [
+        1.2743362831858407,
+        35.902654867256636,
+        44.83185840707964
+      ],
+      "post_change_finalQ_sum": 82.00884955752213,
+      "gate_score": 83.30088495575221,
+      "motor_sustain_frac": 0.5688888888888889,
+      "late_motor_sustain_frac": 0.42,
+      "episode_json": "research/findings/raw/nav_gate_2a\\fixB_seed42\\scpv_sc_popvector_seed42.json"
+    },
+    "SCRAM": {
+      "arm": "sc_popvector_scr",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "warmup_steps": 600,
+      "with_conv": false,
+      "fix1_tie_break": true,
+      "fix2_sel_homeostasis": false,
+      "fix3_opponent_axis": false,
+      "fixA_sel_divnorm": false,
+      "fixA_sel_divnorm_sigma": 1.0,
+      "fixA_sel_divnorm_gain": 1.0,
+      "fixB_sel_opponent_pair": true,
+      "fixB_sel_opponent_weight": 12.0,
+      "fixB_sel_crossaxis_weight": 0.0,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 12561.0,
+          "E": 10715.0,
+          "S": 9517.0,
+          "W": 10462.0,
+          "NS_surplus": 3044.0,
+          "NS_pct": 27.57,
+          "EW_surplus": 253.0
+        },
+        "sel_counts": {
+          "N": 97161.0,
+          "E": 71761.0,
+          "S": 40852.0,
+          "W": 58505.0,
+          "NS_surplus": 56309.0,
+          "NS_pct": 81.6,
+          "EW_surplus": 13256.0
+        },
+        "commit_counts": {
+          "N": 89429.0,
+          "E": 65324.0,
+          "S": 38761.0,
+          "W": 54110.0,
+          "NS_surplus": 50668.0,
+          "NS_pct": 79.05,
+          "EW_surplus": 11214.0
+        },
+        "motor_counts": {
+          "N": 3784.0,
+          "E": 1330.0,
+          "S": 604.0,
+          "W": 714.0,
+          "NS_surplus": 3180.0,
+          "NS_pct": 144.94,
+          "EW_surplus": 616.0
+        }
+      },
+      "tie_break_count": 299,
+      "decision_total": 1800,
+      "tie_break_fraction": 0.1661111111111111,
+      "opponent_axis_count": 0,
+      "opponent_axis_fraction": 0.0,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 5.0,
+      "divnorm_gain": 0.02,
+      "per_phase_finalQ": [
+        13.68141592920354,
+        4.035398230088496,
+        47.47787610619469,
+        29.557522123893804
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ],
+        [
+          1,
+          30
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          133,
+          181,
+          59,
+          77
+        ],
+        [
+          342,
+          34,
+          26,
+          48
+        ],
+        [
+          138,
+          124,
+          78,
+          110
+        ],
+        [
+          160,
+          129,
+          76,
+          85
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.296,
+          "E": 0.402,
+          "S": 0.131,
+          "W": 0.171
+        },
+        {
+          "N": 0.76,
+          "E": 0.076,
+          "S": 0.058,
+          "W": 0.107
+        },
+        {
+          "N": 0.307,
+          "E": 0.276,
+          "S": 0.173,
+          "W": 0.244
+        },
+        {
+          "N": 0.356,
+          "E": 0.287,
+          "S": 0.169,
+          "W": 0.189
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "E",
+        "N",
+        "N",
+        "N"
+      ],
+      "phase0_finalQ": 13.68141592920354,
+      "post_change_finalQ": [
+        4.035398230088496,
+        47.47787610619469,
+        29.557522123893804
+      ],
+      "post_change_finalQ_sum": 81.070796460177,
+      "gate_score": 94.75221238938053,
+      "motor_sustain_frac": 0.5833333333333334,
+      "late_motor_sustain_frac": 0.40555555555555556,
+      "episode_json": "research/findings/raw/nav_gate_2a\\fixB_seed42\\scpv_sc_popvector_scr_seed42.json"
+    }
+  }
+}

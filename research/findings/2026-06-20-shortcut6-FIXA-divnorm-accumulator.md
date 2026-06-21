@@ -205,5 +205,75 @@ of the sel accumulators** (integrate the difference, Bogacz 2006), with Usher-Mc
 follow-on. The host orienting heuristic does NOT retire on FIX-A; whether it can retire is now a question
 for FIX-B.
 
-_(Confirmation seeds for the FIX-A negative + the FIX-B run land below as they complete; each committed the
-moment it lands.)_
+---
+
+## SURPASS step 1 — FIX-B (opponent-pair the sel accumulators) RAN (grid-32, 1800 steps, seed 42) — ALSO NEGATIVE, and the result SHARPENS the diagnosis
+
+Four arms FIX1+B / FIX1 / HOST / SCRAM at `sel_opponent_weight=12, sel_crossaxis_weight=0` (the
+balanced axis-partner inhibition `sel_FS_N→sel_S`, `sel_FS_S→sel_N`, …):
+
+| metric | HOST | FIX1 | **FIX1+B** | SCRAM |
+|---|---|---|---|---|
+| post_change_finalQ_sum | 2.21 | 69.76 | **82.01** | 81.07 |
+| sel N−S % | — | 21.94% | **55.31% (GREW 2.5×)** | — |
+| sel N−S abs | — | 10702 | **37619 (3.5× LARGER)** | — |
+| commit N−S % | — | 24.3% | **46.5%** | — |
+| tracks_goal (dominants) | True (N,W,E,E) | True (W,N,W,E) | True (E,W,N,N) | True (E,N,N,N) |
+| host/FIX1B post ratio | — | — | **0.027 (~37× gap)** | — |
+| FIX1B/SCRAM post ratio | — | — | **1.01 (NOT collapsed)** | — |
+
+**VERDICT FIX-B (seed 42) — NEGATIVE, and it makes the bias WORSE (the mechanistically-informative
+surprise).** Opponent-pairing the sel accumulators did **not** cancel the common mode — it **amplified** it
+(sel N−S 10702 → 37619, 21.9% → 55.3%; commit 24.3% → 46.5%). The reason is precise and important: the
+balanced opponent topology only cancels a common mode **if the two FS gains are symmetric**, but the bias is
+exactly that the N channel is over-driven, so `sel_FS_N` (driven by the stronger sel_N) inhibits sel_S MORE
+than `sel_FS_S` inhibits sel_N. The opponent inhibition is therefore **asymmetric in the wrong direction** —
+it REINFORCES the dominant channel (a winner-take-all amplification), the opposite of a balanced
+difference-integrator. FIX1+B's post_change (82.0) ≈ SCRAM (81.1), ratio 1.01 — **the retinotopy-scramble
+lesion AGAIN does not collapse** (≫ host 2.21, ~37× gap), so the SC decode is still NOT load-bearing.
+
+**⇒ The decisive 3-run convergence (FIX-A seed-42, FIX-A seed-43, FIX-B seed-42): in EVERY run the SCRAM
+lesion ≈ the intact read-out** (ratios 0.98 / —/ 1.01) and FIX1 (no sel mechanism) tracks the goal as well as
+or better than the sel-stage "fix." **The residual is NOT at the accumulator at all — it is upstream:** the
+spiking-SC goal-direction signal arriving at the cortex_X → sel ring is too weak relative to the cascade's
+intrinsic per-action bias, so NO sel-stage operation (divisive normalization OR opponent-pairing) can make
+the decode load-bearing. Both sel-stage levers are ruled out.
+
+## SURPASS step 2 — REFRAME + the re-ranked next mechanism (the residual moved upstream)
+
+The 3-run convergence (SCRAM never collapses) re-frames the genuine residual away from the accumulator. The
+real question is now **why the retinotopic decode is not load-bearing at grid-32** — i.e. the SC orienting
+SIGNAL is the bottleneck, not the accumulator's bias-rejection. Re-ranked cheap-first surpass mechanisms,
+all UPSTREAM of the sel ring:
+
+1. **RANK 1 — the read-out GEOMETRY at the cortex_X stage (the prescribed-but-uncalibrated Option-A).** The
+   prior deep-research (`2026-06-20-nav-readout-geometry-deep-research.md`) prescribed the SC population-VECTOR
+   decode + cortex_X bump-mass divisive normalization + the #4 cortex-WTA ring as the orienting fix; the
+   grid-8 calibration tracked but the grid-32 confirm was a NEGATIVE that this FIX-A/FIX-B arc now explains —
+   the read-out signal is being SWAMPED before it reaches the sel ring. The cheapest next move is to
+   re-calibrate the **cortex_X divisive sigma/gain + the inter-cardinal cortex-WTA strength** (`--cortex-wta
+   --cortex-fs-weight`) so the position-correct margin WINS at the cortex_X stage (where the SC bump is still
+   sharp), BEFORE the cascade N-bias swamps it downstream — i.e. move the competition EARLIER, not at the sel
+   ring (which this arc proved is too late).
+2. **RANK 2 — Usher-McClelland LEAK on the accumulators (the 2026-06-19 spiking-decision lever).** Adds leak so
+   a constant bias does not integrate unboundedly, letting the (small) SC signal win the race. Lower than R1
+   because the 3-run convergence shows the problem is signal-arrival, not unbounded bias integration per se.
+3. **RANK 3 — strengthen the SC retinotopic drive itself.** The prior calibration found "more SC drive is the
+   wrong lever" (`5c42fa33`), but that was without the cortex-WTA sharpening of R1; deprioritized.
+
+**Move — Final verdict for the #6 accumulator residual: the ACCUMULATOR is NOT the locus (two sel-stage
+mechanisms ruled out, multi-run, with the SCRAM lesion proving the decode isn't load-bearing). FIX-A and
+FIX-B are both CHARACTERIZED NEGATIVES.** The genuine residual is precisely re-pinned UPSTREAM — the
+spiking-SC orienting SIGNAL is swamped before the sel ring at grid-32 — and the cheap-first next mechanism is
+the **cortex_X-stage read-out geometry + inter-cardinal WTA (move the competition earlier)**, NOT a deeper
+accumulator change. The host orienting heuristic does **not** retire on either sel-stage fix. This is a
+surpassable boundary with a precisely-located next lever (the cortex_X read-out), not an irreducible one; the
+deliverable is the multi-run localization that the locus is the read-out signal, not the accumulator.
+
+**Moat:** untouched by construction throughout (no `--with-conv` in any run ⇒ `cp_rf_w_*` never allocated;
+the nav cascade is `cp_connections`/`cp_membrane_potential_v`/`cp_firing_states`, array-disjoint from the
+composer's complex RF synapses). Grid-32 FAITHFUL throughout (never grid-8 for any verdict). NO `sim/` edit
+beyond the pre-existing default-OFF `enable_input_divisive_norm_2` (FIX-A) + `enable_sel_opponent_pair`
+(FIX-B), both byte-identical when off.
+
+(Per-run JSON: `scpv_FIXA_arm3_seed{42,43}.json`, `scpv_FIXB_arm3_seed42.json`.)
