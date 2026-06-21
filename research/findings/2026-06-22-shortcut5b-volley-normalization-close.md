@@ -1,4 +1,24 @@
-# Shortcut #5b secondary SNc-burst δ (deferred-item-1) — synaptic-scaling volley-normalization (IN FLIGHT 2026-06-21)
+# Shortcut #5b secondary SNc-burst δ (deferred-item-1) — synaptic-scaling volley-normalization CLOSES the over-clamp 3/3, AND a rigorous anti-cheat isolates a deeper boundary: the grid δ READOUT is structurally-driven (2026-06-21)
+
+## VERDICT (one line)
+
+**The SPECIFIED #5b residual — seed 44's volley OVER-CLAMP — is CLOSED:** the freeze-seam synaptic-scaling
+volley-normalization (`w_near`→0.5) holds the SNc-burst `gabab_gap` δ **3/3 under one config** (seed 44
+crit@far 136.5→0.0), with **no starvation** (critics 15–21 Hz) and **R1 V_n/f preserved** (4.42 / 12.61 /
+6.69). The three discriminating controls (render / no_learn / lesion) collapse 3/3; moat array-disjoint; NO
+`sim/` edit. **BUT** a rigorous added anti-cheat (the magnitude-matched `shuffle_v` lesion + place-drive
+normalization) isolates a DEEPER, PRE-EXISTING boundary: the grid-frontend δ **READOUT** (the graded
+plateau) conflates the place code's structural near/far MAGNITUDE asymmetry with learned value — the δ
+survives even when the learned weight ratio is destroyed (magnitude-matched `w_n/f`→1.0, δ still True), and
+the cleanest decoupling (place-drive normalization) removes the structural asymmetry but COUPLES to (kills)
+the value-learning. So the over-clamp fix is genuine, but the δ it restores is **structurally-influenced,
+not a clean learned RPE** — a characterized substrate boundary (an honest negative), equally true of the
+determinism-close 2/3 baseline. **Disposition:** the over-clamp deferred-item is CLOSED; the
+"is-the-δ-purely-learned" question is the precisely-isolated deeper residual (the graded-plateau readout
+limitation), recorded as the next frontier.
+
+---
+
 
 **Task:** SURPASS the #5b secondary SNc-burst δ residual (deferred-item-1). Per the determinism close
 (`2026-06-22-shortcut5b-determinism-deltabar-close.md`, `08d24a61`): #5b R1 (value-grading) is CLOSED 3/3;
@@ -61,7 +81,7 @@ Probe lever (the WINNER): `--synaptic-scaling --synscale-mode freeze_seam --syns
 synapses, the same op `cfg.enable_synaptic_scaling` does per-step, applied once in the read regime). Held
 WITH `--deterministic-read` throughout. NO `sim/` edit; NO `g11_bg_runner.py` edit.
 
-## RESULTS — single-seed mechanism CONFIRMED (seed 44 GO); 3-seed battery IN FLIGHT
+## RESULTS — the volley-normalization closes the over-clamp 3/3 (the deeper anti-cheat is in the control battery + NEXT MOVE below)
 
 **Seed 44 (the make-or-break) — GO** (weight-target `w_near`→0.5):
 - BEFORE (determinism alone): crit@near 255.8 / far 136.5 Hz, `gabab_gap=False`.
@@ -104,7 +124,7 @@ cleans the graded read). `LEARNS-V` holds (seed 44's `w_n/w_f=1.94`).
 | no_learn (floor) | False (1.0) | False (1.0) | False (1.0) | needs the value-train | **collapses 3/3** (exactly 1.0; `w_n/f`≈1.0) |
 | lesion (graded off) | False (1.0) | False (1.0) | False (1.0) | needs the graded read-out | **collapses 3/3** |
 | scramble (metric) | True | True | False | needs the periodic grid METRIC | does NOT collapse (confounded — see below) |
-| **shuffle_v** (clean metric-lesion) | True (graded-V FLAT 50/50) | **False** | True (graded-V 0/50) | needs the LEARNED near/far ratio | **mixed — exposes the deeper residual** |
+| **shuffle_v** mag-matched (clean lesion) | True (snc 0/50) | True (snc 0/50) | True (snc 0/50) | needs the LEARNED ratio | **does NOT collapse at flat `w_n/f` → δ is STRUCTURAL** |
 
 **Three discriminating controls collapse 3/3 — the grid δ is value-train-dependent.** The decisive one is
 **no_learn** — the SAME grid code (same magnitude structure), no value-train → `snc_gap=1.0`, `w_n/f`≈1.0,
@@ -120,22 +140,55 @@ learnability of a near/far V — it is NOT a clean "is-it-learned" lesion. (The 
 scramble "collapses (no spatially-selective V)", but that collapse was an OVER-CLAMP artifact, masked by the
 same over-firing this fix removes.)
 
-**The CLEAN metric-lesion `shuffle_v` (permute the LEARNED place→value V across place neurons → `w_n/f`→1.0)
-exposes the DEEPER residual: the grid δ is value-train-dependent but NOT purely the learned near/far
-ratio.** In the graded-V-only read, shuffle_v's δ COLLAPSES on seeds 42/43 (snc_pred/unpred → 50/50 FLAT;
-seed 43 authoritative `gabab_gap`→False) but SURVIVES on seed 44 (snc 0/50, `gabab_gap`=True at `w_n/f`=1.03
-— a FLAT learned ratio). The mechanism (the documented **graded-V structural contamination**): the
-value-train raises the OVERALL place→value weight MAGNITUDE (init ~0.2 → ~0.5), which amplifies the grid
-code's INTRINSIC structural near/far asymmetry (the place drive is stronger at near for seed 44's particular
-phase draw) through the graded plateau → a near>far V WITHOUT a learned ratio. So the value-train is
-necessary (no_learn collapses) and contributes via BOTH the learned ratio (dominant on 42/43) AND a
-structural-magnitude amplification (dominant on 44). This is a **pre-existing property of the
-graded-plateau READ** (flagged in the determinism-close doc), surfaced — not introduced — by removing the
-over-clamp.
+**The CLEAN metric-lesion `shuffle_v`, run MAGNITUDE-MATCHED (permute the LEARNED place→value V THEN
+normalize `w_near`→0.5 = grid's level, so the ONLY difference vs grid is the learned ratio), is DECISIVE:
+the grid δ at `w_near`=0.5 is ENTIRELY graded-V STRUCTURAL, NOT the learned ratio.** The magnitude-matched
+shuffle_v shows `gabab_gap=True` on ALL 3 seeds with `snc_pred/unpred = 0.0/50.0` (a CLEAN δ) DESPITE
+`w_n/f` = 1.005 / 0.817 / 1.049 (flat — and INVERTED on seed 43, far>near weights!). So **the δ does NOT
+require the learned near/far weight ratio at all.** The mechanism (the documented **graded-V structural
+contamination**): the graded plateau reads the grid code's INTRINSIC structural near/far MAGNITUDE asymmetry
+(the place drive fires more cells at near), amplified by the overall weight magnitude (`w_near`=0.5),
+INDEPENDENT of learning. `no_learn` collapses only because its weights are at INIT (~0.2, too low to amplify
+the asymmetry); raise the magnitude (value-train OR the normalization) and the structural δ appears
+regardless of what was learned. **Consequence:** the over-clamp removal is genuine (seed 44 crit@far
+136.5→0), but the δ that now passes is the structural graded-V gradient, not a learned RPE — and this was
+equally true in the determinism-close 2/3 baseline (seeds 42/43 "passed" structurally; the over-clamp masked
+it on seed 44). This is the precisely-isolated genuine residual: **the graded-plateau READ conflates the
+structural place-drive magnitude asymmetry with learned value.**
+
+### NEXT MOVE — place-drive divisive normalization (decouple the δ from the structural asymmetry)
+
+Per the no-boundary rule, the next move: a per-location DIVISIVE (L1) normalization of the grid place drive
+to a CONSTANT total (Carandini-Heeger; point-neuron, biology-grounded), applied EVERYWHERE `place_sensors`
+is driven (self-org + value-train + reads). This removes the structural per-location magnitude asymmetry →
+the only near/far V left is the LEARNED weight ratio. The decisive prediction: with normalization ON, the
+GRID δ HOLDS (learned ratio) while the magnitude-matched `shuffle_v` COLLAPSES (no structural asymmetry
+left). Probe lever `--normalize-place-drive`.
+
+**Result — the normalization confirms the inseparability (a FUNDAMENTAL finding).** With place-drive
+normalization ON (every location → constant total drive), **BOTH** the grid arm AND the magnitude-matched
+`shuffle_v` COLLAPSE (`gabab_gap=False` 6/6), `crit@near`≈0, AND — the key — the grid arm's value-train did
+NOT learn a near/far ratio (`w_n/f` = 0.97 / 1.00 / 0.84 ≈ flat). So on this substrate the learned near/far
+V is **inseparable** from the structural magnitude asymmetry: the value-train learns the near/far V BY
+amplifying the place code's intrinsic structural magnitude differences (near fires more cells); remove that
+asymmetry and there is NOTHING for the value-train to grow from → flat `w_n/f` → no δ. **Disambiguation (rules out "weak drive"):** the `drive_scale`×2 run (`_n5_synscale_norm5_*`) makes the
+critic fire HARD (122–227 Hz) under the normalized drive, yet the grid arm's value-train STILL gives
+`w_n/f` = 0.99 / 1.00 / 0.97 (`learns_v=False`) on every seed → the flat `w_n/f` is the genuine
+inseparability, NOT weak drive. **Nuance — there IS real learning in the winning config:** the
+NON-normalized value-train DOES grow `w_n/f` from ~1.0 (no_learn) to 1.43–1.95 (grid); the learned ratio is
+real. The boundary is in the graded-plateau **READOUT**, which reflects TOTAL magnitude asymmetry
+(structural + learned), not the learned increment selectively — so the gap survives when only the structural
+part remains, and the only way to remove the structural part (place-drive normalization) also removes the
+asymmetry the value-train learns FROM.
 
 ## sim/-edit flag
 
-<!-- FILL -->
+**NONE.** The whole arc is probe-only, reuse-by-import: the volley-normalization is a uniform multiplicative
+scale on `cp_connections.data` over the place→value synapses (the same op the EXISTING
+`cfg.enable_synaptic_scaling` does per-step, applied once at the freeze, on the EXISTING
+`cfg.deterministic_transpose_matvec` deterministic-read path); the place-drive normalization is a
+per-location renorm of the grid sensory drive in the probe's `place_sensors` monkeypatch. `sim/bridge.py`
+and `g11_bg_runner.py` are BYTE-UNCHANGED.
 
 ## Moat confirmation
 
@@ -145,17 +198,54 @@ array-disjoint from the composer's complex `cp_rf_w_*` synapses. Preserved by co
 moat was NEVER weakened.
 
 ## Files
-- `research/runners/_n5_grid_frontend_onbridge_probe.py` — `--synaptic-scaling` + the `_SYNSCALE` lever.
-- `research/findings/raw/_n5_synscale_*_seed{42,43,44}.json` — the 3-seed battery.
-- `sim/bridge.py:7402` + `sim/config.py:291` — the EXISTING synaptic-scaling path (UNCHANGED).
+- `research/runners/_n5_grid_frontend_onbridge_probe.py` — the levers: `--synaptic-scaling --synscale-mode
+  freeze_seam --synscale-fs-target-wnear` (the volley-normalization WINNER), `--deterministic-read`
+  (the determinism-close base), `--arm shuffle_v` / `--with-shuffle-v` (the clean metric-lesion),
+  `--normalize-place-drive` (the structural-decoupling next move).
+- `research/findings/raw/_n5_synscale_battery_w05_seed{42,43,44}.json` — the 5-arm battery (grid δ 3/3 +
+  render/no_learn/lesion collapse 3/3 + scramble confound).
+- `research/findings/raw/_n5_synscale_shufflev_magmatched_seed{42,43,44}.json` — the DECISIVE
+  magnitude-matched clean lesion (δ survives flat `w_n/f` → structural).
+- `research/findings/raw/_n5_synscale_norm{,5}_{grid,shufflev}_seed{42,43,44}.json` — the place-drive
+  normalization + disambiguation (value-train can't learn on flat drive → inseparability confirmed).
+- `sim/bridge.py:7402` + `sim/config.py:291,300` — the EXISTING synaptic-scaling +
+  deterministic-transpose-matvec paths (UNCHANGED).
 - `research/findings/2026-06-22-shortcut5b-determinism-deltabar-close.md` (`08d24a61`) — the 2/3 baseline +
-  the precisely-characterized seed-44 residual this de-risk normalizes.
+  the precisely-characterized seed-44 over-clamp residual this de-risk closes (and the same graded-V
+  structural contamination it flagged, now fully isolated).
+
+## Disposition / next frontier
+- **CLOSED:** the #5b deferred-item-1 over-clamp residual — volley-normalization holds the δ 3/3 (seed 44
+  crit@far 136.5→0), no starvation, R1 preserved.
+- **The precisely-isolated deeper residual (next frontier):** the grid-frontend δ READOUT (the graded
+  plateau) conflates the place code's structural near/far magnitude asymmetry with learned value. A clean
+  learned-only δ needs a READOUT that reads the LEARNED weight increment rather than total magnitude (e.g.,
+  a baseline-subtracted / contrast-normalized value read, or a read that is invariant to the afferent's
+  total drive). That is a READ-mechanism redesign, distinct from the volley-normalization that closed the
+  over-clamp — recorded here as the next move.
 
 ## Reproduce
 ```bash
+# The volley-normalization that CLOSES the over-clamp (δ 3/3, no starvation, R1 preserved):
 SIM_BACKEND=cupy CUBLAS_WORKSPACE_CONFIG=:4096:8 python -m research.runners._n5_grid_frontend_onbridge_probe \
     --seed 44 --all-arms --readout-only --multi-goal --value-train-trials 40 \
     --grid-drive-scale 2.5 --value-train-w-max 3 --deterministic-read \
-    --synaptic-scaling --synscale-target-rate <R> --synscale-ema-alpha <a> \
-    --out research/findings/raw/_n5_synscale_seed44.json
+    --synaptic-scaling --synscale-mode freeze_seam --synscale-fs-target-wnear 0.5 \
+    --out research/findings/raw/_n5_synscale_battery_w05_seed44.json
+# (repeat --seed 42, 43; the δ holds 3/3 under this one config)
+
+# The DECISIVE clean lesion (magnitude-matched flat-ratio → δ survives → structural):
+SIM_BACKEND=cupy CUBLAS_WORKSPACE_CONFIG=:4096:8 python -m research.runners._n5_grid_frontend_onbridge_probe \
+    --seed 44 --arm shuffle_v --readout-only --multi-goal --value-train-trials 40 \
+    --grid-drive-scale 2.5 --value-train-w-max 3 --deterministic-read \
+    --synaptic-scaling --synscale-mode freeze_seam --synscale-fs-target-wnear 0.5 \
+    --out research/findings/raw/_n5_synscale_shufflev_magmatched_seed44.json
+
+# The structural-decoupling next move (place-drive normalization → value-train can't learn on flat drive):
+SIM_BACKEND=cupy CUBLAS_WORKSPACE_CONFIG=:4096:8 python -m research.runners._n5_grid_frontend_onbridge_probe \
+    --seed 44 --arm grid --readout-only --multi-goal --value-train-trials 40 \
+    --grid-drive-scale 5.0 --value-train-w-max 3 --deterministic-read \
+    --synaptic-scaling --synscale-mode freeze_seam --synscale-fs-target-wnear 0.5 \
+    --normalize-place-drive \
+    --out research/findings/raw/_n5_synscale_norm5_grid_seed44.json
 ```
