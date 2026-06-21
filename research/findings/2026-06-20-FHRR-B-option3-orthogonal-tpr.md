@@ -62,14 +62,16 @@ subspaces). Recovery is scored two ways on the SAME bundle:
 systematicity. All trained bundle-aware by backprop (a host-shortcut CEILING characterization, per the scoping —
 a PASS = "a spiking read-out of this separable form CAN be systematic"; explicitly NOT "the brain binds").
 
-## DECISIVE STRUCTURAL RESULT (already conclusive)
+## DECISIVE STRUCTURAL RESULT (already conclusive, MULTI-SEED)
 
-On the IDENTICAL codes/splits, scored on HELD-OUT (never-bundled) bundle bindings:
+On the IDENTICAL codes/splits, scored on HELD-OUT (never-bundled) bundle bindings. The first complete 6-seed
+cell (A=2, d_role=32) confirms the structural split unanimously: the FIXED read-out hits **1.000 on 6/6 seeds**;
+the LEARNED decode hits **0/6 seeds ≥0.90** (mean 0.236).
 
 | read-out on the orthogonal-TPR fact | held-out (bundle) | permuted-role (wrong block) |
 |---|---|---|
-| **(proj) FIXED nearest-block read-out — NO learning** | **1.000** (A=3, d_role=64, even at 1500 steps) | **0.000** ≈ chance |
-| (full) LEARNED MLP decode → 300-dim filler space | 0.488 (A=3, d_role=128, full 24000 steps; single-binding 0.444) | ~chance |
+| **(proj) FIXED nearest-block read-out — NO learning** | **1.000 (6/6 seeds ≥0.90)** [A=2 d_role=32] | **0.00–0.02** ≈ chance |
+| (full) LEARNED MLP decode → 300-dim filler space | 0.236 mean, 0/6 ≥0.90 [A=2 d_role=32]; 0.488 best single seed [A=3 d_role=128] | ~chance |
 | — fixed ±1 self-inverse FHRR (the prior ceiling) | 0.989 | — |
 | — shallow learned-additive bind (the prior NEGATIVE) | 0.193 | — |
 | chance (1/F) | 0.0625 | — |
