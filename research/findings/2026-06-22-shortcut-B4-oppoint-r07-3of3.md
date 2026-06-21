@@ -185,7 +185,8 @@ cascade (cooled to −0.79/−0.86/−0.85). The dendrite question stays CLOSED-
 
 ### The honest residual (NOT a B4 blocker)
 
-The strict r<−0.7 reads cleanly at the cooled critic's convergence window (n_train ≈ 13–18). A FUTURE refinement that
+The strict r<−0.7 reads cleanly at the cooled critic's convergence window (n_train ≈ 15–18; nt13 = −0.677 just-under,
+nt30 = −0.666 from the late-SNc-silencing noise). A FUTURE refinement that
 would let the strict bar read at ANY window length (incl. n_train=30) is a **denser/cooler td_snc** (the B4 doc's
 named option) — a builder-side op-point that would slow the snap into a gradual slide so the strong derivative does
 not silence the late SNc. That is a `sim/`-side enrichment, NOT required for the strict-bar closure (which the
