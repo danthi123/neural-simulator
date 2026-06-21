@@ -1,0 +1,255 @@
+{
+  "seed": 42,
+  "w_sparse": 10.0,
+  "w_dense": 28.0,
+  "value_train_trials": 40,
+  "graded": {
+    "center": 1.5,
+    "slope": 1.0,
+    "strength": 80.0
+  },
+  "arms": {
+    "test": {
+      "arm": "test",
+      "graded": true,
+      "overrides": {
+        "place_sensors_to_place_weight": 10.0,
+        "critic_warmup_all_goals": false
+      },
+      "strength_used": 80.0,
+      "graded_v": {
+        "v_near": 44.73990008131666,
+        "v_far": 25.06460928732572,
+        "v_near_over_far": 1.7849829442160918
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 3,
+        "far_set_size": 2,
+        "w_near": 0.1940585970878601,
+        "w_far": 0.19648772478103638,
+        "w_near_over_far": 0.9876372547145973,
+        "learns_v": false,
+        "crit_near_hz": 0.0,
+        "crit_far_hz": 0.0,
+        "crit_grade_ratio": 0.0,
+        "critic_fire": false,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 85.0,
+        "snc_unpredicted_far_hz": 85.0,
+        "snc_gap_ratio": 1.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 426,
+        "snc_pred_lesion_hz": 85.0,
+        "snc_unpred_lesion_hz": 85.0,
+        "lesion_gap_ratio": 1.0,
+        "lesion_collapses": true
+      },
+      "selforg": {
+        "diff_cos": 0.6666666865348816,
+        "sparsity": 0.03
+      }
+    },
+    "lesion": {
+      "arm": "lesion",
+      "graded": true,
+      "overrides": {
+        "place_sensors_to_place_weight": 10.0,
+        "critic_warmup_all_goals": false
+      },
+      "strength_used": 0.0,
+      "graded_v": {
+        "v_near": 0.0,
+        "v_far": 0.0,
+        "v_near_over_far": 0.0
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 3,
+        "far_set_size": 2,
+        "w_near": 0.1940585970878601,
+        "w_far": 0.19648772478103638,
+        "w_near_over_far": 0.9876372547145973,
+        "learns_v": false,
+        "crit_near_hz": 0.0,
+        "crit_far_hz": 0.0,
+        "crit_grade_ratio": 0.0,
+        "critic_fire": false,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 85.0,
+        "snc_unpredicted_far_hz": 85.0,
+        "snc_gap_ratio": 1.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 426,
+        "snc_pred_lesion_hz": 85.0,
+        "snc_unpred_lesion_hz": 85.0,
+        "lesion_gap_ratio": 1.0,
+        "lesion_collapses": true
+      },
+      "selforg": {
+        "diff_cos": 0.6666666865348816,
+        "sparsity": 0.03
+      }
+    },
+    "no_learn": {
+      "arm": "no_learn",
+      "graded": true,
+      "overrides": {
+        "place_sensors_to_place_weight": 10.0,
+        "critic_warmup_all_goals": false,
+        "value_train_trials": 0
+      },
+      "strength_used": 80.0,
+      "graded_v": {
+        "v_near": 44.058433123654964,
+        "v_far": 25.016417058323775,
+        "v_near_over_far": 1.7611807886371678
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 3,
+        "far_set_size": 2,
+        "w_near": 0.1940585970878601,
+        "w_far": 0.19648772478103638,
+        "w_near_over_far": 0.9876372547145973,
+        "learns_v": false,
+        "crit_near_hz": 0.0,
+        "crit_far_hz": 0.0,
+        "crit_grade_ratio": 0.0,
+        "critic_fire": false,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 85.0,
+        "snc_unpredicted_far_hz": 85.0,
+        "snc_gap_ratio": 1.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 426,
+        "snc_pred_lesion_hz": 85.0,
+        "snc_unpred_lesion_hz": 85.0,
+        "lesion_gap_ratio": 1.0,
+        "lesion_collapses": true
+      },
+      "selforg": {
+        "diff_cos": 0.6666666865348816,
+        "sparsity": 0.03
+      }
+    },
+    "dense": {
+      "arm": "dense",
+      "graded": true,
+      "overrides": {
+        "place_sensors_to_place_weight": 28.0,
+        "critic_warmup_all_goals": false
+      },
+      "strength_used": 80.0,
+      "graded_v": {
+        "v_near": 1477.3229666620432,
+        "v_far": 1684.1536034501653,
+        "v_near_over_far": 0.8771901586859965
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 95,
+        "far_set_size": 53,
+        "w_near": 138.13479614257812,
+        "w_far": 134.15415954589844,
+        "w_near_over_far": 1.0296721071501163,
+        "learns_v": false,
+        "crit_near_hz": 346.94444444444446,
+        "crit_far_hz": 372.5,
+        "crit_grade_ratio": 0.9313944817300522,
+        "critic_fire": true,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 500.0,
+        "snc_unpredicted_far_hz": 500.0,
+        "snc_gap_ratio": 1.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 426,
+        "snc_pred_lesion_hz": 0.0,
+        "snc_unpred_lesion_hz": 0.0,
+        "lesion_gap_ratio": 0.0,
+        "lesion_collapses": true
+      },
+      "selforg": {
+        "diff_cos": 0.7121980786323547,
+        "sparsity": 0.625
+      }
+    },
+    "allnone": {
+      "arm": "allnone",
+      "graded": false,
+      "overrides": {
+        "place_sensors_to_place_weight": 10.0,
+        "critic_warmup_all_goals": false
+      },
+      "strength_used": 80.0,
+      "graded_v": null,
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 15,
+        "far_set_size": 5,
+        "w_near": 0.3599030077457428,
+        "w_far": 0.4660424590110779,
+        "w_near_over_far": 0.7722536880211334,
+        "learns_v": false,
+        "crit_near_hz": 0.0,
+        "crit_far_hz": 0.0,
+        "crit_grade_ratio": 0.0,
+        "critic_fire": false,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 80.0,
+        "snc_unpredicted_far_hz": 85.0,
+        "snc_gap_ratio": 1.0625,
+        "gabab_gap": false,
+        "lesion_n_cut": 426,
+        "snc_pred_lesion_hz": 85.0,
+        "snc_unpred_lesion_hz": 85.0,
+        "lesion_gap_ratio": 1.0,
+        "lesion_collapses": true
+      },
+      "selforg": {
+        "diff_cos": 0.21938173472881317,
+        "sparsity": 0.0625
+      }
+    }
+  }
+}
