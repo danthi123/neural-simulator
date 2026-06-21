@@ -1,0 +1,287 @@
+{
+  "seed": 44,
+  "n_modules": 6,
+  "n_per_module": 33,
+  "arms": {
+    "grid": {
+      "arm": "grid",
+      "grid_on": true,
+      "scramble": false,
+      "n_grid": 198,
+      "graded_v": {
+        "v_near": 1044.214616494246,
+        "v_far": 218.43541608712854,
+        "v_near_over_far": 4.780427254881298
+      },
+      "graded_delta": {
+        "settle_steps": 0,
+        "delta_vnf": 5.461027365029712,
+        "vnf_gap": true,
+        "snc_pred_near_hz": 0.0,
+        "snc_unpred_far_hz": 0.0,
+        "delta_snc_graded": 0.0,
+        "gabab_gap_graded": false,
+        "gabab_near": 0.0,
+        "gabab_far": 1.7847543101306653,
+        "delta_gabab": 0.0,
+        "gabab_cond_gap": false
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 59,
+        "far_set_size": 2,
+        "w_near": 2.4753644466400146,
+        "w_far": 1.2739710807800293,
+        "w_near_over_far": 1.9430303277562582,
+        "learns_v": true,
+        "crit_near_hz": 255.83333333333331,
+        "crit_far_hz": 136.52777777777777,
+        "crit_grade_ratio": 1.8738555442522888,
+        "critic_fire": true,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 0.0,
+        "snc_unpredicted_far_hz": 0.0,
+        "snc_gap_ratio": 0.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 403,
+        "snc_pred_lesion_hz": 30.0,
+        "snc_unpred_lesion_hz": 25.0,
+        "lesion_gap_ratio": 0.8333333333333334,
+        "lesion_collapses": true
+      },
+      "goal_free_asserted": true
+    },
+    "render": {
+      "arm": "render",
+      "grid_on": false,
+      "scramble": false,
+      "n_grid": null,
+      "graded_v": {
+        "v_near": 10.715119660390654,
+        "v_far": 20.606418881835143,
+        "v_near_over_far": 0.5199894130967214
+      },
+      "graded_delta": {
+        "settle_steps": 0,
+        "delta_vnf": 0.5316158225510272,
+        "vnf_gap": false,
+        "snc_pred_near_hz": 50.0,
+        "snc_unpred_far_hz": 50.0,
+        "delta_snc_graded": 1.0,
+        "gabab_gap_graded": false,
+        "gabab_near": 0.0,
+        "gabab_far": 0.0,
+        "delta_gabab": 0.0,
+        "gabab_cond_gap": false
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 9,
+        "far_set_size": 9,
+        "w_near": 0.21251751482486725,
+        "w_far": 0.2109566032886505,
+        "w_near_over_far": 1.0073992068126019,
+        "learns_v": false,
+        "crit_near_hz": 0.0,
+        "crit_far_hz": 0.2777777777777778,
+        "crit_grade_ratio": 0.0,
+        "critic_fire": false,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 50.0,
+        "snc_unpredicted_far_hz": 50.0,
+        "snc_gap_ratio": 1.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 411,
+        "snc_pred_lesion_hz": 50.0,
+        "snc_unpred_lesion_hz": 50.0,
+        "lesion_gap_ratio": 1.0,
+        "lesion_collapses": true
+      },
+      "goal_free_asserted": null
+    },
+    "scramble": {
+      "arm": "scramble",
+      "grid_on": true,
+      "scramble": true,
+      "n_grid": 198,
+      "graded_v": {
+        "v_near": 20.704485667435524,
+        "v_far": 92.18865021860599,
+        "v_near_over_far": 0.22458822879323206
+      },
+      "graded_delta": {
+        "settle_steps": 0,
+        "delta_vnf": 0.2514345570470277,
+        "vnf_gap": false,
+        "snc_pred_near_hz": 50.0,
+        "snc_unpred_far_hz": 0.0,
+        "delta_snc_graded": 0.0,
+        "gabab_gap_graded": false,
+        "gabab_near": 0.0,
+        "gabab_far": 0.0,
+        "delta_gabab": 0.0,
+        "gabab_cond_gap": false
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 24,
+        "far_set_size": 23,
+        "w_near": 0.38498955965042114,
+        "w_far": 0.538214385509491,
+        "w_near_over_far": 0.7153089363933997,
+        "learns_v": false,
+        "crit_near_hz": 6.527777777777779,
+        "crit_far_hz": 60.83333333333333,
+        "crit_grade_ratio": 0.10730593607305938,
+        "critic_fire": true,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 45.0,
+        "snc_unpredicted_far_hz": 0.0,
+        "snc_gap_ratio": 0.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 403,
+        "snc_pred_lesion_hz": 50.0,
+        "snc_unpred_lesion_hz": 50.0,
+        "lesion_gap_ratio": 1.0,
+        "lesion_collapses": true
+      },
+      "goal_free_asserted": true
+    },
+    "no_learn": {
+      "arm": "no_learn",
+      "grid_on": true,
+      "scramble": false,
+      "n_grid": 198,
+      "graded_v": {
+        "v_near": 0.0,
+        "v_far": 0.0,
+        "v_near_over_far": 0.0
+      },
+      "graded_delta": {
+        "settle_steps": 0,
+        "delta_vnf": 0.0,
+        "vnf_gap": false,
+        "snc_pred_near_hz": 112.5,
+        "snc_unpred_far_hz": 117.5,
+        "delta_snc_graded": 1.0444444444444445,
+        "gabab_gap_graded": false,
+        "gabab_near": 0.0,
+        "gabab_far": 0.0,
+        "delta_gabab": 0.0,
+        "gabab_cond_gap": false
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 59,
+        "far_set_size": 2,
+        "w_near": 0.20009681582450867,
+        "w_far": 0.19781282544136047,
+        "w_near_over_far": 1.011546219907896,
+        "learns_v": false,
+        "crit_near_hz": 0.0,
+        "crit_far_hz": 0.0,
+        "crit_grade_ratio": 0.0,
+        "critic_fire": false,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 90.0,
+        "snc_unpredicted_far_hz": 90.0,
+        "snc_gap_ratio": 1.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 403,
+        "snc_pred_lesion_hz": 90.0,
+        "snc_unpred_lesion_hz": 90.0,
+        "lesion_gap_ratio": 1.0,
+        "lesion_collapses": true
+      },
+      "goal_free_asserted": true
+    },
+    "lesion": {
+      "arm": "lesion",
+      "grid_on": true,
+      "scramble": false,
+      "n_grid": 198,
+      "graded_v": {
+        "v_near": 0.0,
+        "v_far": 0.0,
+        "v_near_over_far": 0.0
+      },
+      "graded_delta": {
+        "settle_steps": 0,
+        "delta_vnf": 0.0,
+        "vnf_gap": false,
+        "snc_pred_near_hz": 50.0,
+        "snc_unpred_far_hz": 50.0,
+        "delta_snc_graded": 1.0,
+        "gabab_gap_graded": false,
+        "gabab_near": 0.0,
+        "gabab_far": 0.0,
+        "delta_gabab": 0.0,
+        "gabab_cond_gap": false
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 36,
+        "far_set_size": 4,
+        "w_near": 0.20098179578781128,
+        "w_far": 0.19562500715255737,
+        "w_near_over_far": 1.027382944099148,
+        "learns_v": false,
+        "crit_near_hz": 0.0,
+        "crit_far_hz": 0.0,
+        "crit_grade_ratio": 0.0,
+        "critic_fire": false,
+        "critic_grade": false,
+        "critic_fires_and_grades_at_nav": false,
+        "snc_predicted_near_hz": 50.0,
+        "snc_unpredicted_far_hz": 50.0,
+        "snc_gap_ratio": 1.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 403,
+        "snc_pred_lesion_hz": 50.0,
+        "snc_unpred_lesion_hz": 50.0,
+        "lesion_gap_ratio": 1.0,
+        "lesion_collapses": true
+      },
+      "goal_free_asserted": true
+    }
+  }
+}
