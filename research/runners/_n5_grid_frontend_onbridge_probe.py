@@ -456,6 +456,53 @@ def _freeze_seam_normalize(br):
           f"(target {target:.0f}Hz, {len(log)-2} scale steps)", flush=True)
 
 
+# ── V-location-shuffle lesion (the CLEAN metric-lesion anti-cheat, 2026-06-21) ────────────────
+# The `scramble` arm permutes grid PHASES but leaves a DECORRELATED, location-DISCRIMINABLE code, so the
+# place self-org carves selective fields + the value-train learns a genuine near/far V on it → the δ does
+# NOT collapse (the scramble lesions the periodic METRIC but NOT the learnability of a near/far V; the
+# determinism-close doc's "no spatially-selective V" framing for scramble was wrong — its baseline collapse
+# was an over-clamp artifact). The CLEAN lesion that MUST collapse the LEARNED δ: at the freeze, randomly
+# PERMUTE the learned place→value weights ACROSS the place presynaptic neurons. This destroys WHERE V is
+# high (the learned near/far spatial correspondence) while preserving the weight DISTRIBUTION → if the δ
+# requires the LEARNED spatial V (it does), the shuffled V no longer maps near>>far → the δ collapses. The
+# direct anti-cheat for "the δ is the genuine learned spatial RPE, not a graded-V structural artifact".
+_LESION_SHUFFLE_V = {"enable": False, "_applied": False}
+
+
+def _lesion_shuffle_v(br):
+    """Permute the learned place→value weights across the place presynaptic neurons (the CLEAN
+    metric-lesion). Destroys the learned near/far spatial V structure; preserves the weight distribution."""
+    from sim.backend import get_backend
+    xp, _ = get_backend()
+    rm = getattr(br, "region_manager", None)
+    if rm is None:
+        return
+    d = rm.region_indices_dict()
+    if "place" not in d or "striosome_value" not in d:
+        return
+    place_pre = np.asarray(d["place"], dtype=np.int64)
+    place_post = np.asarray(d["striosome_value"], dtype=np.int64)
+    coo = br.cp_connections.tocoo()
+    rows = coo.row.get() if hasattr(coo.row, "get") else np.asarray(coo.row)
+    cols = coo.col.get() if hasattr(coo.col, "get") else np.asarray(coo.col)
+    pv = np.isin(rows, place_pre) & np.isin(cols, place_post)
+    if not pv.any():
+        pv = np.isin(rows, place_post) & np.isin(cols, place_pre)
+    if not pv.any():
+        return
+    data_h = (br.cp_connections.data.get() if hasattr(br.cp_connections.data, "get")
+              else np.asarray(br.cp_connections.data))
+    idx = np.where(pv)[0]
+    rng = np.random.default_rng(20260621)
+    shuffled = data_h[idx].copy()
+    rng.shuffle(shuffled)              # permute the learned weights across the place→value synapses
+    new_data = data_h.copy()
+    new_data[idx] = shuffled
+    br.cp_connections.data[:] = xp.asarray(new_data, dtype=br.cp_connections.data.dtype)
+    print(f"[lesion shuffle-V] permuted {idx.size} place->value weights "
+          f"(destroyed learned near/far spatial V; weight dist preserved)", flush=True)
+
+
 def _patched_set_gate(self, name, value):
     if _CLOSEA["enable"] and _CLOSEA["readout_only"] and name == "value_input":
         if float(value) >= 1.0:
@@ -474,6 +521,14 @@ def _patched_set_gate(self, name, value):
                     _freeze_seam_normalize(self)
                 except Exception as e:
                     print(f"[freeze-seam] normalize failed: {e!r}", flush=True)
+            # the CLEAN metric-lesion anti-cheat: shuffle the learned place→value V AFTER any normalization
+            # (so the lesion acts on the same normalized-weight regime the grid arm reads). MUST collapse.
+            if _LESION_SHUFFLE_V["enable"] and not _LESION_SHUFFLE_V["_applied"]:
+                _LESION_SHUFFLE_V["_applied"] = True
+                try:
+                    _lesion_shuffle_v(self)
+                except Exception as e:
+                    print(f"[lesion shuffle-V] failed: {e!r}", flush=True)
     return _orig_set_gate(self, name, value)
 
 
@@ -909,8 +964,8 @@ def _read_graded_v_delta(captured, result, *, settle_steps=0):
 def _run_delta_arm(arm, seed, *, value_train_trials, single_goal, readout_only,
                    center, slope, strength, value_train_w_max=0.0, settle_steps=0,
                    critic_gabab_max=0.0):
-    """One delta-verdict arm. arm in {grid, render, scramble, no_learn, lesion}."""
-    grid_on = arm in ("grid", "scramble", "no_learn", "lesion")
+    """One delta-verdict arm. arm in {grid, render, scramble, no_learn, lesion, shuffle_v}."""
+    grid_on = arm in ("grid", "scramble", "no_learn", "lesion", "shuffle_v")
     scramble = (arm == "scramble")
     _set_grid_mode(enable=grid_on, scramble=scramble, seed=seed)
     _CLOSEA["enable"] = True   # graded plateau on for every arm (render arm = CLOSE A R1-LIMIT contrast)
@@ -920,6 +975,10 @@ def _run_delta_arm(arm, seed, *, value_train_trials, single_goal, readout_only,
     _CLOSEA["readout_only"] = bool(readout_only) and arm != "lesion"
     _CLOSEA["bridge"] = None
     _CLOSEA["_armed"] = False
+    # shuffle_v = the CLEAN metric-lesion: grid + graded + value-train, then PERMUTE the learned place→value
+    # V across place neurons at the freeze (destroys the learned spatial near/far V) → the δ MUST collapse.
+    _LESION_SHUFFLE_V["enable"] = (arm == "shuffle_v")
+    _LESION_SHUFFLE_V["_applied"] = False
 
     vtt = 0 if arm == "no_learn" else int(value_train_trials)
     captured, real_fn = _capture_deployed_kwargs(seed, vtt, stage_b=True)
@@ -982,9 +1041,13 @@ def main():
     ap.add_argument("--step2-selectivity", action="store_true",
                     help="Step 2: on-bridge place selectivity (near-neighbour read cos on real spikes)")
     ap.add_argument("--arm", type=str, default="grid",
-                    choices=["grid", "render", "scramble", "no_learn", "lesion"])
+                    choices=["grid", "render", "scramble", "no_learn", "lesion", "shuffle_v"])
     ap.add_argument("--all-arms", action="store_true",
                     help="Step 3: run grid + render + scramble + no_learn + lesion (the delta battery)")
+    ap.add_argument("--with-shuffle-v", action="store_true",
+                    help="add the CLEAN metric-lesion 'shuffle_v' arm to --all-arms (the learned place->value "
+                         "V is permuted across place neurons at the freeze → the δ MUST collapse; the "
+                         "anti-cheat that the δ is the genuine LEARNED spatial RPE, not a graded-V artifact).")
     ap.add_argument("--value-train-trials", type=int, default=40)
     ap.add_argument("--multi-goal", action="store_true",
                     help="train ALL scheduled goals (critic_warmup_all_goals=True)")
@@ -1116,6 +1179,7 @@ def main():
         out_obj["step2"] = _run_step2_selectivity(args.seed)
     else:
         arms = (["grid", "render", "scramble", "no_learn", "lesion"]
+                + (["shuffle_v"] if args.with_shuffle_v else [])
                 if args.all_arms else [args.arm])
         results = {}
         for arm in arms:
