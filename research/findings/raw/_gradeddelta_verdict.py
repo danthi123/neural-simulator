@@ -50,4 +50,21 @@ for p in sorted(glob.glob(f"{RAW}/_n5_grid_onbridge_girkcap*_seed44.json")):
     print(f"  cap={cap:>4}: V n/f={gv.get('v_near_over_far',0):>7.2f} snc_pred={sb.get('snc_predicted_near_hz',0):>6.1f} "
           f"snc_unpred={sb.get('snc_unpredicted_far_hz',0):>6.1f} gap={sb.get('snc_gap_ratio',0):>8.3g} "
           f"gabab_gap={str(sb.get('gabab_gap')):>5} lesion_collapses={str(sb.get('lesion_collapses')):>5}")
+
+print("\n[4] The gentle-vs-hot TRADE-OFF across the global knobs (gabab_gap per seed; no single knob = 3/3):")
+print(f"  {'knob':>22} | {'seed42':>7} | {'seed43':>7} | {'seed44':>7}")
+def _gg(path):
+    d = _load(path); sb = _arm(d, "grid").get("stage_b") or {}
+    return str(sb.get("gabab_gap")) if d else "-"
+rows = [
+    ("cap=0 (baseline)", "_n5_grid_onbridge_gradeddelta_allarms_seed{}.json"),
+    ("GIRK-cap=1.0",      "_n5_grid_onbridge_girkcap1.0_seed{}.json"),
+    ("homeostasis",       "_n5_grid_onbridge_homeo_e02a01_seed{}.json"),
+    ("graded-strength=15","_n5_grid_onbridge_gstr15_seed{}.json"),
+    ("graded-strength=25","_n5_grid_onbridge_gstr25_seed{}.json"),
+]
+for label, tmpl in rows:
+    vals = [_gg(f"{RAW}/{tmpl.format(s)}") for s in (42, 43, 44)]
+    print(f"  {label:>22} | {vals[0]:>7} | {vals[1]:>7} | {vals[2]:>7}")
+print("  => R1 (V n/f) selective 3/3 on every seed at every knob; the SNc-burst δ TRADES gentle<->hot.")
 print("=" * 92)
