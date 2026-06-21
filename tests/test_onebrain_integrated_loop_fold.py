@@ -110,3 +110,77 @@ def test_query_patient_integrated_loop(seed):
     a0, x0 = facts[0][0], facts[0][1]
     assert seq.query_patient("zzz", x0) is None and host.query_patient("zzz", x0) is None
     assert seq.query_patient(a0, facts[1][1]) is None, "moat: a cross cue must abstain"
+
+
+# ----------------------------------------------------------------------------------------------------------------
+# Task 3: route query_patient + _find_cued_block through _seq_block. The answer-identity + moat battery
+# (query_patient, reason_chain, update_on_mismatch abstain) == host, fa_total 0; the spiking path is exercised.
+# ----------------------------------------------------------------------------------------------------------------
+@pytest.mark.parametrize("seed", [42, 43])
+def test_query_patient_routes_through_sequencer(seed):
+    """integrated_loop=True query_patient delegates the (agent, action) cue-match to _seq_block (the spiking decision),
+    NOT the inlined host loop. Asserted by spying on _seq_block: it is called for every query_patient (present + moat),
+    and the answers still == host (== truth) with the moat intact."""
+    host, seq, facts = _pair(seed)
+    calls = {"n": 0}
+    orig = seq._seq_block
+    seq._seq_block = lambda a, x, _o=orig, _c=calls: (_c.__setitem__("n", _c["n"] + 1), _o(a, x))[1]
+    for (a, x, p) in facts:
+        assert seq.query_patient(a, x) == host.query_patient(a, x) == p
+    a0, x0 = facts[0][0], facts[0][1]
+    assert seq.query_patient("zzz", x0) is None, "moat: absent agent abstains through the routed query_patient"
+    assert seq.query_patient(a0, facts[1][1]) is None, "moat: a cross cue abstains through the routed query_patient"
+    assert calls["n"] == len(facts) + 2, "query_patient must call _seq_block once per query (the spiking route)"
+
+
+@pytest.mark.parametrize("seed", [42, 43])
+def test_reason_chain_and_reconsolidation_abstain_through_sequencer(seed):
+    """reason_chain (iterates the routed query_patient) and update_on_mismatch (via _find_cued_block) abstain through
+    the spiking decision == host. A valid 2-hop chain answers; a broken hop abstains; a never-stored reconsolidation
+    cue abstains -- the no-confab moat holds at every hop on the spiking route."""
+    # a chain store: fact0.patient is fact1.agent so a 2-hop chase resolves (a0 -x0-> p0==a1 -x1-> p1)
+    host = OneBrainComposer(seed=seed, D=128, vocab=VOCAB, k_max=8, enable_batched=False,
+                            enable_rf_cudagraph=False, integrated_loop=False)
+    seq = OneBrainComposer(seed=seed, D=128, vocab=VOCAB, k_max=8, enable_batched=False,
+                           enable_rf_cudagraph=False, integrated_loop=True)
+    chain = [("dog", "go", "cat"), ("cat", "run", "river")]   # all words are in the de-risk vocab
+    for (a, x, p) in chain:
+        host.store(a, x, p); seq.store(a, x, p)
+    # a valid 2-hop chain (dog -go-> cat -run-> river) == host == truth
+    assert seq.query_chain("dog", ["go", "run"]) == host.query_chain("dog", ["go", "run"]) == "river"
+    # a broken hop (no (cat, go) fact) abstains == host (the moat at hop 2)
+    assert seq.query_chain("dog", ["go", "go"]) is None and host.query_chain("dog", ["go", "go"]) is None
+    # reconsolidation: a NEVER-stored cue abstains via _find_cued_block (the routed spiking decision)
+    rm = seq.update_on_mismatch("bird", "fly", "north")
+    rmh = host.update_on_mismatch("bird", "fly", "north")
+    assert rm["action"] == rmh["action"] == "abstain", f"never-stored reconsolidation cue must abstain: {rm} vs {rmh}"
+    assert seq.count_facts("bird", "fly") == 0, "no fabricated trace on the spiking route"
+
+
+# ----------------------------------------------------------------------------------------------------------------
+# Task 4: route ask_yes_no through _seq_block. affirmative -> yes, negated -> no, unstored -> unknown == host.
+# ----------------------------------------------------------------------------------------------------------------
+@pytest.mark.parametrize("seed", [42, 43])
+def test_ask_yes_no_routes_through_sequencer(seed):
+    """ask_yes_no routes the (agent, action) cue-match through _seq_block (the spiking decision), then reads the
+    selected block's decoded patient + polarity: an affirmative full-SVO -> 'yes', a negated fact -> 'no', a wrong
+    patient -> the SVO does not match -> 'unknown', an unstored cue -> 'unknown' (the moat). == host, multi-seed."""
+    host = OneBrainComposer(seed=seed, D=128, vocab=VOCAB, k_max=8, enable_batched=False,
+                            enable_rf_cudagraph=False, integrated_loop=False)
+    seq = OneBrainComposer(seed=seed, D=128, vocab=VOCAB, k_max=8, enable_batched=False,
+                           enable_rf_cudagraph=False, integrated_loop=True)
+    # fact 0 affirmative, fact 1 negated -> yes/no by polarity
+    aff = DERISK_FACTS[0]      # (dog, go, north) AFFIRM
+    neg = DERISK_FACTS[1]      # (cat, run, river) NEGATE
+    host.store(*aff, polarity="AFFIRM"); seq.store(*aff, polarity="AFFIRM")
+    host.store(*neg, polarity="NEGATE"); seq.store(*neg, polarity="NEGATE")
+    calls = {"n": 0}
+    orig = seq._seq_block
+    seq._seq_block = lambda a, x, _o=orig, _c=calls: (_c.__setitem__("n", _c["n"] + 1), _o(a, x))[1]
+    assert seq.ask_yes_no(*aff) == host.ask_yes_no(*aff) == "yes", "affirmative full-SVO -> yes"
+    assert seq.ask_yes_no(*neg) == host.ask_yes_no(*neg) == "no", "negated fact -> no"
+    # a wrong patient on a stored (agent, action): the SVO does not match -> unknown (the selected block's patient != )
+    assert seq.ask_yes_no(aff[0], aff[1], "river") == host.ask_yes_no(aff[0], aff[1], "river") == "unknown"
+    # an unstored cue -> unknown (the moat, through the spiking decision)
+    assert seq.ask_yes_no("zzz", aff[1], aff[2]) == host.ask_yes_no("zzz", aff[1], aff[2]) == "unknown"
+    assert calls["n"] == 4, "ask_yes_no must route each call through _seq_block (the spiking decision)"

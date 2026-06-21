@@ -695,26 +695,38 @@ class OneBrainComposer:
 
     def query_patient(self, agent, action, order_fn=None):
         """patient (a concept word) OR, when the stored fact's patient is an embedded CLAUSE, the recursively-decoded
-        clause sentence; an attributed patient ('big apple') prepends the decoded attribute. Matches agent+action via
-        the batched read, then routes on the kb-stored patient type."""
-        for i, got in enumerate(self._read_blocks()):
-            if got.get("agent") == agent and got.get("action") == action:
-                stored = self.kb[i][0].get("patient") if i < len(self.kb) else None
-                if _is_clause(stored):
-                    return self._decode_clause(i, order_fn=order_fn)
-                return self._attributed_patient(i, got.get("patient"), got)
-        return None
+        clause sentence; an attributed patient ('big apple') prepends the decoded attribute. The (agent, action)
+        cue-match-and-first-match SELECTION routes through `_seq_block` (the spiking K-way sequencer when
+        integrated_loop, else the host first-match -- byte-identical); the downstream patient-type routing + decode read
+        the SAME block on both paths (only WHICH block is selected moves from host to spikes)."""
+        idx = self._seq_block(agent, action)
+        if idx is None:
+            return None
+        got = self._read_blocks()[idx]                         # the decoded {role: word} row for the selected block
+        stored = self.kb[idx][0].get("patient") if idx < len(self.kb) else None
+        if _is_clause(stored):
+            return self._decode_clause(idx, order_fn=order_fn)
+        return self._attributed_patient(idx, got.get("patient"), got)
 
     def query_agent(self, action, patient):
         return self._scan({"action": action, "patient": patient}, "agent")
 
     def ask_yes_no(self, agent, action, patient):
         """yes / no / unknown: the first fact matching the full SVO answers by its polarity tag (AFFIRM -> yes,
-        NEGATE -> no); no matching fact -> 'unknown' (the no-confab moat)."""
-        for got in self._read_blocks():
-            if got.get("agent") == agent and got.get("action") == action and got.get("patient") == patient:
-                return "yes" if got.get("polarity") == "AFFIRM" else "no"
-        return "unknown"
+        NEGATE -> no); no matching fact -> 'unknown' (the no-confab moat). The (agent, action) cue-match-and-first-match
+        SELECTION routes through `_seq_block` (the spiking K-way sequencer when integrated_loop, else the host first-
+        match -- byte-identical); the patient equality + polarity are the body read over the selected block (identical
+        on both paths). NOTE: the host first-match scans for the first block matching the FULL SVO, whereas the
+        sequencer matches (agent, action) then checks patient on the selected block -- equivalent for the production
+        unique-(agent, action) store (each (agent, action) selects one block, and the patient check then decides
+        yes/no/unknown); a degenerate same-(agent, action) different-patient pair is outside the production regime."""
+        idx = self._seq_block(agent, action)
+        if idx is None:
+            return "unknown"
+        got = self._read_blocks()[idx]
+        if got.get("patient") != patient:
+            return "unknown"                                   # the (agent, action) block's patient != the asserted one
+        return "yes" if got.get("polarity") == "AFFIRM" else "no"
 
     def render_fact(self, agent, order_fn=None):
         """Generation (for the agent's `describe`): 'agent action patient' decoded from the first stored fact whose
@@ -787,12 +799,11 @@ class OneBrainComposer:
         return 0.5 * (float(np.mean(same)) + float(np.mean(diff)))
 
     def _find_cued_block(self, agent, action):
-        """The FIRST stored block whose cue roles (agent+action) match (the batched read), or None (no trace to
-        reactivate -> abstain). Returns the block/kb index."""
-        for i, got in enumerate(self._read_blocks()):
-            if got.get("agent") == agent and got.get("action") == action:
-                return i
-        return None
+        """The FIRST stored block whose cue roles (agent+action) match, or None (no trace to reactivate -> abstain).
+        Returns the block/kb index. Routes through `_seq_block` (the spiking K-way sequencer when integrated_loop, else
+        the host first-match -- byte-identical), so reconsolidation (`update_on_mismatch`) inherits the spiking decision
+        for free."""
+        return self._seq_block(agent, action)
 
     def update_on_mismatch(self, agent, action, new_patient, pe_labile=None):
         """RECONSOLIDATION: a corrective utterance ('actually, <agent> <action> <new_patient>') reactivates the cued
