@@ -97,7 +97,41 @@ cleans the graded read). `LEARNS-V` holds (seed 44's `w_n/w_f=1.94`).
 
 ### The control battery (the anti-cheat — normalization must NOT manufacture a δ)
 
-<!-- FILL: render/scramble/no_learn/lesion gabab_gap (all collapse) for each seed (controls still running) -->
+| arm | seed 42 `gabab_gap` | seed 43 `gabab_gap` | seed 44 `gabab_gap` | what it controls | verdict |
+|---|---|---|---|---|---|
+| **grid** (TEST) | **True** | **True** | **True** | the learned grid δ | the RPE δ is present 3/3 |
+| render (R1-LIMIT) | False | False | False | needs a non-degenerate location code | **collapses 3/3** |
+| no_learn (floor) | False (1.0) | False (1.0) | False (1.0) | needs the value-train | **collapses 3/3** (exactly 1.0; `w_n/f`≈1.0) |
+| lesion (graded off) | False (1.0) | False (1.0) | False (1.0) | needs the graded read-out | **collapses 3/3** |
+| scramble (metric) | True | True | False | needs the periodic grid METRIC | does NOT collapse (confounded — see below) |
+| **shuffle_v** (clean metric-lesion) | True (graded-V FLAT 50/50) | **False** | True (graded-V 0/50) | needs the LEARNED near/far ratio | **mixed — exposes the deeper residual** |
+
+**Three discriminating controls collapse 3/3 — the grid δ is value-train-dependent.** The decisive one is
+**no_learn** — the SAME grid code (same magnitude structure), no value-train → `snc_gap=1.0`, `w_n/f`≈1.0,
+no δ on every seed. So the grid δ **REQUIRES the value-train** (it is not present in the bare structural
+code). `render` (collapses) shows it needs a non-degenerate location-discriminable code; `lesion`
+(collapses) shows it needs the graded read-out.
+
+**The `scramble` control does NOT collapse — an honest correction to the prior framing.** A scrambled grid
+code (per-cell independent position-permutation) is still **DECORRELATED and location-discriminable**, so
+the place self-org carves selective fields on it and the value-train learns a GENUINE near/far V (seed 43
+scramble: `w_n/f=2.49`, crit@near 53 Hz). The scramble lesions the periodic grid METRIC but NOT the
+learnability of a near/far V — it is NOT a clean "is-it-learned" lesion. (The determinism-close doc reported
+scramble "collapses (no spatially-selective V)", but that collapse was an OVER-CLAMP artifact, masked by the
+same over-firing this fix removes.)
+
+**The CLEAN metric-lesion `shuffle_v` (permute the LEARNED place→value V across place neurons → `w_n/f`→1.0)
+exposes the DEEPER residual: the grid δ is value-train-dependent but NOT purely the learned near/far
+ratio.** In the graded-V-only read, shuffle_v's δ COLLAPSES on seeds 42/43 (snc_pred/unpred → 50/50 FLAT;
+seed 43 authoritative `gabab_gap`→False) but SURVIVES on seed 44 (snc 0/50, `gabab_gap`=True at `w_n/f`=1.03
+— a FLAT learned ratio). The mechanism (the documented **graded-V structural contamination**): the
+value-train raises the OVERALL place→value weight MAGNITUDE (init ~0.2 → ~0.5), which amplifies the grid
+code's INTRINSIC structural near/far asymmetry (the place drive is stronger at near for seed 44's particular
+phase draw) through the graded plateau → a near>far V WITHOUT a learned ratio. So the value-train is
+necessary (no_learn collapses) and contributes via BOTH the learned ratio (dominant on 42/43) AND a
+structural-magnitude amplification (dominant on 44). This is a **pre-existing property of the
+graded-plateau READ** (flagged in the determinism-close doc), surfaced — not introduced — by removing the
+over-clamp.
 
 ## sim/-edit flag
 
