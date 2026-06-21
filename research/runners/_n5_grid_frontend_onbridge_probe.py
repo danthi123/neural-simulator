@@ -1020,9 +1020,169 @@ def _read_graded_v_delta(captured, result, *, settle_steps=0):
         return {"error": repr(e)}
 
 
+def _read_td_delta(captured, result, *, settle_steps=0):
+    """RANK-1 (#5b value-read cleanup, 2026-06-22): the TEMPORAL-DIFFERENCE dopamine read.
+
+    The raw single-state read in `_read_graded_v_delta` is the `no_bootstrap` form
+    `delta ~= r - V(s)` evaluated separately at NEAR and FAR (the `gabab_gap` ratio
+    snc_unpred(FAR) / snc_pred(NEAR)) -> it reads TOTAL afferent magnitude (structural place-code
+    baseline + learned increment), which is why it SURVIVES the magnitude-matched `shuffle_v`
+    control (the bug: it reads the place code's structural geometry, not the learned value).
+
+    The biologically-correct phasic-dopamine signal (Schultz-Dayan-Montague 1997; Schultz 1998;
+    catalog C.28/C.30/C.31; `sim/td_value_critic.py` `delta = r + GAMMA*v_tp1 - v_t`) is a
+    TEMPORAL-DIFFERENCE error -- a DIFFERENCE between successive-state values, which cancels any
+    baseline that is consistent across the two states. We read it across the FAR->NEAR transition
+    (the agent approaches the goal): FAR is the state being left (s), NEAR the state entered (s'):
+
+        delta_TD = r + GAMMA * V(near) - V(far)
+
+    using the SAME per-location reads the raw read uses. Three faithful estimators of V are reported
+    (all reuse-by-import, NO sim/ edit); GAMMA is the td_value_critic default (0.95):
+
+      (td1) graded-V TD   : V(loc) = the graded-plateau conductance read (the critic's learned value
+                            estimate, `_read_graded_v_near_far`). r set to the V-scale reference
+                            r_ref = V(far) (the unpredicted-reward magnitude on the same scale).
+      (td2) snc-burst TD  : V(loc) estimated from the SNc burst RPE: at FAR the burst is unsuppressed
+                            (the reward, ~r), at NEAR it is suppressed by V -> V(near) ~= burst(FAR) -
+                            burst(NEAR); V(far) ~= 0; r ~= burst(FAR). The bootstrapped difference of
+                            the burst-derived RPE.
+      (td3) adjacent TD   : the cleanest structural-baseline-cancellation test -- read V at NEAR and
+                            at an ADJACENT near-neighbour MID location; the structural baseline is
+                            ~common across adjacent states, so delta_TD = r + GAMMA*V(near) - V(mid)
+                            isolates the LEARNED near-vs-neighbour value step.
+
+    The MAKE-OR-BREAK anti-cheat: under the magnitude-matched `shuffle_v` the learned near/far V
+    DIFFERENCE is destroyed (w_n/f -> ~1.0) while the structural magnitude is matched. The raw read
+    survives this; the TD read MUST collapse it (delta_TD -> ~its unlearned value) iff the TD
+    difference genuinely reads the LEARNED gradient and not the structural baseline. If the TD read
+    ALSO survives shuffle_v, the structural/learned inseparability is the honest point-neuron
+    boundary (the scoping MOVE-4 fallback) -- report it, do not force a GO.
+
+    `settle_steps` (the SURPASS move (b)) is forwarded to the per-location burst reads.
+    """
+    br = _CLOSEA["bridge"]
+    if br is None:
+        return None
+    try:
+        from sim.backend import get_backend
+        from sim.td_value_critic import GAMMA
+        xp, _ = get_backend()
+        rm = getattr(br, "region_manager", None)
+        if rm is None:
+            return None
+        d = rm.region_indices_dict()
+        for need in ("striosome_value", "place_sensors"):
+            if need not in d:
+                return {"error": f"missing region {need}"}
+        c_idx = xp.asarray(np.asarray(d["striosome_value"], dtype=np.int64))
+        ps_idx = xp.asarray(np.asarray(d["place_sensors"], dtype=np.int64))
+        max_int = float(captured.get("place_sensor_max_intensity", 450.0))
+        sb = (result or {}).get("stage_b_smoke") or {}
+        near = sb.get("near") or [6.0, 6.0]
+        far = sb.get("far") or [1.0, 1.0]
+        # the ADJACENT near-neighbour MID state (one grid-step toward far from near) for td3.
+        mid = [float(near[0]) - 1.0, float(near[1]) - 1.0]
+
+        if _GRID["enable"]:
+            if _GRID["_code"] is None:
+                _build_grid_code()
+            def _act(px, py):
+                return _grid_act(px, py, max_int)
+        else:
+            grid_size = int(captured.get("grid_size", 32))
+            landmarks = g._n9_place_landmarks(grid_size)
+            dist_max = float(grid_size) * 1.42
+            def _act(px, py):
+                return _orig_place_sensor_act(
+                    px, py, landmarks, int(captured.get("n_place_bearing", 12)),
+                    int(captured.get("n_place_dist", 8)), max_int,
+                    float(captured.get("place_sensor_falloff", 0.03)),
+                    float(captured.get("place_sensor_dist_sigma", 4.0)), dist_max,
+                    float(captured.get("place_sensor_bexp", 4.0)))
+
+        # (td1) graded-V learned value at each location (the SAME plateau read the raw read's V uses).
+        def _v_graded_at(px, py, *, n_meas=120, warmup=40):
+            saved = br.core_config.reward_learning_rate
+            br.core_config.reward_learning_rate = 0.0
+            if getattr(br, "cp_conductance_g_graded_plateau", None) is not None:
+                br.cp_conductance_g_graded_plateau[:] = xp.float32(0.0)
+                br.cp_conductance_g_graded_plateau_rise[:] = xp.float32(0.0)
+            br.cp_external_input_current[:] = xp.float32(0.0)
+            br.cp_external_input_current[ps_idx] = xp.asarray(_act(px, py), dtype=xp.float32)
+            vsum = 0.0; m = 0
+            for t in range(int(n_meas)):
+                br._run_one_simulation_step(); br.runtime_state.current_time_step += 1
+                if t >= warmup:
+                    vsum += float(br.cp_conductance_g_graded_plateau[c_idx].mean()); m += 1
+            br.core_config.reward_learning_rate = saved
+            br.cp_external_input_current[:] = xp.float32(0.0)
+            return vsum / max(m, 1)
+
+        v_near = _v_graded_at(near[0], near[1])
+        v_far = _v_graded_at(far[0], far[1])
+        v_mid = _v_graded_at(mid[0], mid[1])
+
+        # (td2) the per-location SNc burst RPE reads (reuse the raw read's per-location burst fn).
+        rawd = _read_graded_v_delta(captured, result, settle_steps=settle_steps) or {}
+        burst_near = float(rawd.get("snc_pred_near_hz", 0.0))   # r - V(near)  (suppressed)
+        burst_far = float(rawd.get("snc_unpred_far_hz", 0.0))   # r - V(far) ~= r (unsuppressed)
+
+        # ── TD forms (delta = r + GAMMA*V(s') - V(s); FAR=s, NEAR=s') ────────────────────────────
+        # (td1) graded-V TD: r_ref on the V scale = V(far) (the unpredicted-reward magnitude). The
+        # learned-value step is the term that must vanish under shuffle_v.
+        r_ref_graded = v_far
+        delta_td_graded = r_ref_graded + GAMMA * v_near - v_far  # = GAMMA*v_near + (1-GAMMA)*... -> learned step
+        # the discriminating ratio: bootstrapped value at NEAR vs the value baseline at FAR. A learned
+        # near>>far step gives a ratio >> 1; a destroyed step (shuffle_v) -> ~1.
+        td_graded_ratio = (GAMMA * v_near + r_ref_graded) / max(v_far + r_ref_graded, 1e-9)
+        td_graded_gap = bool(td_graded_ratio >= 1.30)
+
+        # (td2) snc-burst TD: V(near) = burst_far - burst_near; V(far) = 0; r = burst_far.
+        v_near_burst = max(burst_far - burst_near, 0.0)
+        r_burst = burst_far
+        delta_td_burst = r_burst + GAMMA * v_near_burst - 0.0
+        # the discriminating ratio: with the learned suppression at near gone (shuffle_v leaves near
+        # suppressed by STRUCTURE), V(near)_burst stays large -> survives; with the learned suppression
+        # the ONLY source of the near/far burst gap, a destroyed learned ratio -> burst_near ~= burst_far
+        # -> V(near)_burst -> 0 -> delta_td_burst -> r (no TD lift). Ratio = delta_td_burst / r.
+        td_burst_ratio = delta_td_burst / max(r_burst, 1e-9)
+        td_burst_gap = bool(td_burst_ratio >= 1.30)
+
+        # (td3) adjacent-state TD: NEAR vs its near-neighbour MID. The structural baseline is ~common
+        # across adjacent states -> the difference isolates the LEARNED local value step. THIS is the
+        # cleanest cancellation test the scoping flags.
+        r_ref_adj = v_mid
+        delta_td_adjacent = r_ref_adj + GAMMA * v_near - v_mid
+        td_adjacent_ratio = (GAMMA * v_near + r_ref_adj) / max(v_mid + r_ref_adj, 1e-9)
+        td_adjacent_gap = bool(td_adjacent_ratio >= 1.30)
+
+        return {
+            "settle_steps": int(settle_steps), "gamma": float(GAMMA),
+            "near": [float(near[0]), float(near[1])],
+            "far": [float(far[0]), float(far[1])],
+            "mid": [float(mid[0]), float(mid[1])],
+            "v_near": float(v_near), "v_far": float(v_far), "v_mid": float(v_mid),
+            "v_near_over_far": float(v_near / max(v_far, 1e-9)),
+            "burst_near_hz": float(burst_near), "burst_far_hz": float(burst_far),
+            # (td1) graded-V TD
+            "delta_td_graded": float(delta_td_graded),
+            "td_graded_ratio": float(td_graded_ratio), "td_graded_gap": td_graded_gap,
+            # (td2) snc-burst TD
+            "v_near_burst": float(v_near_burst), "r_burst": float(r_burst),
+            "delta_td_burst": float(delta_td_burst),
+            "td_burst_ratio": float(td_burst_ratio), "td_burst_gap": td_burst_gap,
+            # (td3) adjacent-state TD (the cleanest baseline-cancellation test)
+            "delta_td_adjacent": float(delta_td_adjacent),
+            "td_adjacent_ratio": float(td_adjacent_ratio), "td_adjacent_gap": td_adjacent_gap,
+        }
+    except Exception as e:
+        return {"error": repr(e)}
+
+
 def _run_delta_arm(arm, seed, *, value_train_trials, single_goal, readout_only,
                    center, slope, strength, value_train_w_max=0.0, settle_steps=0,
-                   critic_gabab_max=0.0):
+                   critic_gabab_max=0.0, td_read=False):
     """One delta-verdict arm. arm in {grid, render, scramble, no_learn, lesion, shuffle_v}."""
     grid_on = arm in ("grid", "scramble", "no_learn", "lesion", "shuffle_v")
     scramble = (arm == "scramble")
@@ -1085,11 +1245,15 @@ def _run_delta_arm(arm, seed, *, value_train_trials, single_goal, readout_only,
     # over-clamp). delta_vnf = (a1) the graded V near/far ratio; delta_snc_graded = (a2) the genuine
     # r-V gap in the settled count-plateau regime (+ optional move-(b) settling window).
     graded_delta = _read_graded_v_delta(captured, result, settle_steps=settle_steps)
+    # RANK-1 (#5b value-read cleanup): the TD-difference dopamine read (opt-in). Reuses the same
+    # per-location V / burst reads; the magnitude-matched shuffle_v is the make-or-break (the raw
+    # read SURVIVES it, the TD read must COLLAPSE it iff it reads learned value not structure).
+    td_delta = _read_td_delta(captured, result, settle_steps=settle_steps) if td_read else None
     sb = (result or {}).get("stage_b_smoke") or {}
     synscale_log = (list(_SYNSCALE.get("_log") or [])
                     if (_SYNSCALE["enable"] and _SYNSCALE["mode"] == "freeze_seam") else None)
     return {"arm": arm, "grid_on": grid_on, "scramble": scramble, "n_grid": n_grid,
-            "graded_v": grv, "graded_delta": graded_delta, "stage_b": sb,
+            "graded_v": grv, "graded_delta": graded_delta, "td_delta": td_delta, "stage_b": sb,
             "synscale_freeze_seam_log": synscale_log,
             "goal_free_asserted": _GRID.get("_asserted_goal_free", False) if grid_on else None}
 
@@ -1158,6 +1322,15 @@ def main():
                          "transpose-SpMV atomic-scatter order -> seed-stable critic rate -> the SNc-burst δ "
                          "holds 3/3 under one config. NO sim/ edit (the deterministic branch ships); "
                          "default off = the runner's STEP-1-only determinism (byte-identical).")
+    ap.add_argument("--td-read", action="store_true",
+                    help="RANK-1 (#5b value-read cleanup, 2026-06-22): add the biologically-correct "
+                         "TEMPORAL-DIFFERENCE dopamine read delta = r + GAMMA*V(near) - V(far) (a "
+                         "DIFFERENCE between successive states; td_value_critic GAMMA=0.95) alongside the "
+                         "raw single-state read, so the A/B is one process. The raw `gabab_gap` reads TOTAL "
+                         "afferent magnitude (structural + learned) and SURVIVES the magnitude-matched "
+                         "shuffle_v (the bug); the TD difference must COLLAPSE shuffle_v iff it reads the "
+                         "LEARNED gradient not the structural place-code geometry. NO sim/ edit "
+                         "(reuse-by-import of td_value_critic). Default off = the raw read only.")
     ap.add_argument("--synaptic-scaling", action="store_true",
                     help="the #5b VOLLEY-NORMALIZATION close (deferred-item-1, 2026-06-21): Turrigiano "
                          "synaptic scaling on the place->value path so the critic's afferent weights are "
@@ -1259,10 +1432,25 @@ def main():
                                strength=args.graded_strength,
                                value_train_w_max=args.value_train_w_max,
                                settle_steps=args.settle_steps,
-                               critic_gabab_max=args.critic_gabab_max)
+                               critic_gabab_max=args.critic_gabab_max,
+                               td_read=args.td_read)
             results[arm] = r
             sb = r.get("stage_b") or {}; grv = r.get("graded_v") or {}
             gd = r.get("graded_delta") or {}
+            td = r.get("td_delta") or {}
+            if td and not td.get("error"):
+                print(f"[grid-onbridge TD-READ seed={args.seed} arm={arm}] "
+                      f"V_near={td.get('v_near')} V_far={td.get('v_far')} V_mid={td.get('v_mid')} "
+                      f"V_n/f={td.get('v_near_over_far')} | "
+                      f"(td1 graded-V) delta_td={td.get('delta_td_graded')} "
+                      f"ratio={td.get('td_graded_ratio')} GAP={td.get('td_graded_gap')} | "
+                      f"(td2 snc-burst) burst_n={td.get('burst_near_hz')} burst_f={td.get('burst_far_hz')} "
+                      f"delta_td={td.get('delta_td_burst')} ratio={td.get('td_burst_ratio')} "
+                      f"GAP={td.get('td_burst_gap')} | "
+                      f"(td3 adjacent) delta_td={td.get('delta_td_adjacent')} "
+                      f"ratio={td.get('td_adjacent_ratio')} GAP={td.get('td_adjacent_gap')}", flush=True)
+            elif td and td.get("error"):
+                print(f"[grid-onbridge TD-READ seed={args.seed} arm={arm}] ERROR {td.get('error')}", flush=True)
             print(f"[grid-onbridge DELTA RESULT seed={args.seed} arm={arm}] "
                   f"LEARNS-V={sb.get('learns_v')} (w_n/w_f={sb.get('w_near_over_far')}) "
                   f"critic@near={sb.get('crit_near_hz')}Hz @far={sb.get('crit_far_hz')}Hz "
