@@ -61,7 +61,7 @@ def _build_rf_bridge(n, seed=42):
 class RFPhasorComposer:
     def __init__(self, seed=42, D=64, vocab=None, period=200, enable_spiking_cleanup=False,
                  enable_substrate_store=False, grounded_codes=None, enable_rf_cudagraph=False,
-                 encoding_gain_fn=None):
+                 encoding_gain_fn=None, local_reciprocal_unbind=False):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
@@ -102,6 +102,23 @@ class RFPhasorComposer:
         # instead of the ~15-kernel/step loop. Default OFF -> the validated loop path. == loop at the phase-read
         # tolerance (tests/test_rf_megakernel.py). See docs/plans/2026-06-17-resonate-cudagraph-refactor-design.md.
         self._enable_rf_cudagraph = bool(enable_rf_cudagraph)
+        # (FHRR-B mechanism 1, opt-in, DEFAULT-OFF = byte-identical) DERIVE the unbind synapse from the bind synapse by
+        # a one-time LOCAL reciprocal-conjugate WIRING RULE at construction, instead of the host re-computing
+        # conj(role) from the role code per op. The bind synapse weight IS the role phasor zr[k] (developmental-random,
+        # drawn once from rng.uniform(seed) -- a genome-style wiring rule, accepted as self-organized like
+        # sim/dendritic_neuron.py:25 / catalog F.12/D.18). The unbind synapse must carry conj(zr[k]); the only
+        # genuine host residual was that the substrate was never TOLD "unbind = the per-component conjugate of its
+        # bind partner" -- it re-derived conj(role) host-side from self.roles[role]. With this flag ON, _unbind_phases
+        # builds the BIND connectivity (the role phasor installed directly) and applies a LOCAL per-synapse rule --
+        # `_reciprocal_conjugate` flips each bind synapse's quadrature (imaginary) component, a purely-local operation
+        # on each single synapse (no read of self.roles, no np.conj over the role vector) = a reciprocal connection
+        # with a quadrature-sign flip, the biological reciprocal/transpose motif. The values are bit-for-bit the same
+        # as the host-conj path (conj per component IS the per-synapse rule), so the whole who/what matrix + the
+        # no-confab abstentions are byte-identical -- but the unbind STRUCTURE now emerges from a local construction
+        # rule over the bind connectivity (host-free at runtime), the property a neuromorphic hardware port needs (a
+        # one-time device configuration, memristor-crossbar / Loihi-synapse-table style). See
+        # research/findings/2026-06-20-FHRR-B-mechanism1-local-reciprocal-unbind.md.
+        self.local_reciprocal_unbind = bool(local_reciprocal_unbind)
         # (cheat-C conversion, opt-in) hold each fact's bound composite in the SUBSTRATE (per-fact trigger->readout
         # complex weights) instead of a numpy array in self.kb; retrieve via firing. Default OFF: numpy kb fast path.
         self.enable_substrate_store = bool(enable_substrate_store)
@@ -153,6 +170,29 @@ class RFPhasorComposer:
     def _to_phasor(phases):
         return np.exp(2j * np.pi * np.asarray(phases))
 
+    def _bind_conns(self, role_phases, lo=0, hi=None):
+        """The BIND connectivity for a diagonal role->filler bind over neurons [lo, lo+D): the forward synapse
+        (lo+D+k <- lo+k) carries the role phasor zr[k] (the developmental-random role code, installed directly).
+        `hi` (= lo+D by default) names the post offset; a single 2D-block uses lo=0,hi=D. Returns a list of
+        (post, pre, complex_weight) tuples -- the exact same structure the host-conj path's bind half installs."""
+        D = self.D
+        hi = lo + D if hi is None else hi
+        zr = self._to_phasor(role_phases)
+        return [(hi + k, lo + k, zr[k]) for k in range(D)]
+
+    @staticmethod
+    def _reciprocal_conjugate(bind_conns):
+        """The LOCAL reciprocal-conjugate WIRING RULE (FHRR-B mechanism 1): derive the UNBIND synapses from the BIND
+        synapses by a per-synapse operation -- for each bind synapse (post, pre, w), the reciprocal/feedback synapse
+        carries the phase-conjugate of w. For a unit-magnitude phasor this is the quadrature (imaginary-component)
+        sign flip `re + i*im -> re - i*im`, computed LOCALLY from each synapse's OWN weight (NOT re-derived from the
+        role code, NOT np.conj over the role vector). Biologically a reciprocal connection with a quadrature-sign
+        flip (the ubiquitous cortical/thalamocortical reciprocal motif). The values equal conj(w) bit-for-bit, so
+        held-out recovery is byte-identical to the host-conj path -- but the unbind structure now emerges from a
+        one-time local construction rule over the bind connectivity, host-free at runtime (the neuromorphic-port
+        property: a one-time device configuration, no host in the loop per op)."""
+        return [(post, pre, complex(w.real, -w.imag)) for (post, pre, w) in bind_conns]
+
     def _bind(self, role_phases, filler_phases):
         """bound = role_phasor (x) filler_phasor, via a diagonal complex synapse (filler pre -> bound post,
         weight = the role phasor)."""
@@ -202,11 +242,22 @@ class RFPhasorComposer:
         return self._cleanup(rec)
 
     def _unbind_phases(self, composite_phases, role):
-        """recovered = conj(role_phasor) (x) composite, via a conj diagonal complex synapse."""
+        """recovered = conj(role_phasor) (x) composite, via a conj diagonal complex synapse.
+
+        The unbind synapse weights are conj(role). DEFAULT (local_reciprocal_unbind=False): the host computes
+        conj(self.roles[role]) and injects it (the legacy path -- the genuine host residual). With the flag ON: the
+        unbind synapses are DERIVED from the BIND synapses by the LOCAL reciprocal-conjugate rule (_bind_conns ->
+        _reciprocal_conjugate) -- the role phasor is installed as the bind synapse (a developmental wiring rule) and
+        the unbind synapse is its per-component quadrature-flip, with NO host re-derivation of conj from the role
+        code. Byte-identical (conj per component IS the per-synapse rule); the structure is then host-free at runtime
+        (the neuromorphic-port property). See 2026-06-20-FHRR-B-mechanism1-local-reciprocal-unbind.md."""
         D = self.D
         zc = self._to_phasor(composite_phases)
-        zr_conj = np.conj(self._to_phasor(self.roles[role]))
-        conns = [(D + k, k, zr_conj[k]) for k in range(D)]
+        if self.local_reciprocal_unbind:
+            conns = self._reciprocal_conjugate(self._bind_conns(self.roles[role]))   # local rule over bind connectivity
+        else:
+            zr_conj = np.conj(self._to_phasor(self.roles[role]))                     # host re-derivation (legacy)
+            conns = [(D + k, k, zr_conj[k]) for k in range(D)]
         kick = np.zeros(2 * D, dtype=np.complex128)
         kick[:D] = zc
         return self._resonate(2 * D, conns, kick)[D:]
@@ -315,9 +366,16 @@ class RFPhasorComposer:
         K, D = len(comps), self.D
         if K == 0:
             return np.zeros((0, D))
-        zr_conj = np.conj(self._to_phasor(self.roles[role]))                  # [D] conj role phasor
         n = 2 * K * D
-        conns = [(i * 2 * D + D + k, i * 2 * D + k, zr_conj[k]) for i in range(K) for k in range(D)]
+        if self.local_reciprocal_unbind:
+            # per-block local rule: each 2D-block's unbind synapses derive from that block's bind synapses (no host
+            # conj over the role vector) -- block i lives at offset i*2D, with the same wiring as the single unbind.
+            conns = []
+            for i in range(K):
+                conns.extend(self._reciprocal_conjugate(self._bind_conns(self.roles[role], lo=i * 2 * D)))
+        else:
+            zr_conj = np.conj(self._to_phasor(self.roles[role]))              # [D] conj role phasor (host re-derivation)
+            conns = [(i * 2 * D + D + k, i * 2 * D + k, zr_conj[k]) for i in range(K) for k in range(D)]
         kick = np.zeros(n, dtype=np.complex128)
         for i in range(K):
             kick[i * 2 * D:i * 2 * D + D] = self._to_phasor(comps[i])

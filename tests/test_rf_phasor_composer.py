@@ -225,6 +225,55 @@ def test_rf_phasor_composer_grounded_codes_interface(seed):
     assert comp.query_agent("go", "south") is None                         # no-confab moat preserved
 
 
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_local_reciprocal_unbind_byte_identical(seed):
+    """FHRR-B mechanism 1 (opt-in): local_reciprocal_unbind derives the UNBIND synapses from the BIND synapses by a
+    one-time LOCAL reciprocal-conjugate wiring rule (a per-synapse quadrature flip) at construction, instead of the
+    host computing conj(role) and injecting it per op. It must give answers BYTE-IDENTICAL to the host-conj default
+    on the full who/what matrix AND the no-confab abstentions (conj per component IS the per-synapse rule). This is
+    the brain-based-purity / neuromorphic-port residual: the unbind structure becomes a host-free device config.
+    De-risk: research/findings/2026-06-20-FHRR-B-mechanism1-local-reciprocal-unbind.md."""
+    import numpy as np
+    from research.runners.rf_phasor_composer import ROLES
+    cn = RFPhasorComposer(seed=seed, D=96, period=200, local_reciprocal_unbind=False)   # host-conj (default/legacy)
+    cl = RFPhasorComposer(seed=seed, D=96, period=200, local_reciprocal_unbind=True)     # local reciprocal rule
+
+    # (a) the unbind connectivity weights are bit-for-bit conj(bind) for every role.
+    for role in ROLES:
+        zr_conj = np.conj(cn._to_phasor(cn.roles[role]))
+        legacy = [(cn.D + k, k, zr_conj[k]) for k in range(cn.D)]
+        local = cl._reciprocal_conjugate(cl._bind_conns(cl.roles[role]))
+        assert legacy == local, f"local rule != conj(bind) for role {role}"
+
+    # (b) the full who/what matrix + abstentions are byte-identical.
+    facts = [("dog", "go", "north"), ("cat", "run", "south"), ("river", "look", ("big", "apple")),
+             ("dog", "stop", "east"), ("cat", "look", "west")]
+    for c in (cn, cl):
+        c.store("dog", "go", "north"); c.store("cat", "run", "south")
+        c.store("river", "look", ("big", "apple"))
+        c.store("dog", "stop", "east", polarity="AFFIRM")
+        c.store("cat", "look", "west", polarity="NEGATE")
+    assert cl.query_agent("go", "north") == cn.query_agent("go", "north") == "dog"
+    assert cl.query_patient("river", "look") == cn.query_patient("river", "look") == "big apple"
+    assert cl.render_fact("river") == cn.render_fact("river") == "river look big apple"
+    assert cl.ask_yes_no("dog", "stop", "east") == cn.ask_yes_no("dog", "stop", "east") == "yes"
+    # the no-confab moat: identical abstentions
+    assert cl.query_agent("go", "south") is None and cn.query_agent("go", "south") is None
+    assert cl.ask_yes_no("dog", "go", "west") == cn.ask_yes_no("dog", "go", "west") == "unknown"
+
+    # (c) substrate-purity: with the flag ON, the unbind-structure build issues ZERO np.conj calls (the unbind
+    #     connectivity comes solely from the local rule over the bind connectivity).
+    composite = cl.kb[0][1]
+    n_conj = {"n": 0}
+    orig = np.conj
+    np.conj = lambda x, _c=n_conj, _o=orig: (_c.__setitem__("n", _c["n"] + 1), _o(x))[1]
+    try:
+        cl._unbind_phases(composite, "agent")
+    finally:
+        np.conj = orig
+    assert n_conj["n"] == 0, "flag ON must not call np.conj in the unbind-structure build"
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))
