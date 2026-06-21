@@ -1,0 +1,41 @@
+{
+  "seed": 43,
+  "grid_size": 32,
+  "n_modules": 7,
+  "n_per_module": 28,
+  "n_grid": 196,
+  "n_render": 60,
+  "n_place": 200,
+  "place_k": 8,
+  "render": {
+    "adjacent_cell_cos": 0.9946686895429224,
+    "near_far_cos": 0.37917691469192505,
+    "place_adjacent_cos": 0.9213308676861335
+  },
+  "more_landmarks_negative": {
+    "ring_4": 0.9936376044499702,
+    "ring_6": 0.992356239453606,
+    "ring_8": 0.9908386264806208,
+    "ring_12": 0.9928296984753747,
+    "grid_3x3": 0.9926218013616576,
+    "grid_4x4": 0.9910555235717607,
+    "grid_5x5": 0.9900288098100303,
+    "3lm_dist_sigma1": 0.9723655212184658,
+    "ring8_ndist16_sig1.5": 0.9661838228719822
+  },
+  "grid": {
+    "adjacent_cell_cos": 0.560133230642996,
+    "near_far_cos": 0.0078450758010149,
+    "place_adjacent_cos": 0.2892857091501355
+  },
+  "random_expansion_control": {
+    "adjacent_cell_cos": 0.1518625502501601,
+    "place_adjacent_cos": 0.07372325951692418
+  },
+  "verdict": {
+    "gate_pass_place_cos_lt_0.3": true,
+    "grid_decorrelates_afferent": true,
+    "grid_place_beats_render_place": true,
+    "cheap_first_gate": true
+  }
+}
