@@ -185,6 +185,10 @@ _DETMV = {"read": False}
 _SYNSCALE = {"enable": False, "mode": "continuous", "target_rate": 0.0, "scaling_rate": 0.0,
              "ema_alpha": 0.0,
              # freeze_seam params:
+             "fs_target_wnear": 0.0,  # WEIGHT-TARGET form (robust): scale w_near to this target weight
+                                      # (the gentle-seed band ~0.4–0.6) in one shot — no rate measurement,
+                                      # no critic-threshold-homeostasis interaction. >0 = use this instead
+                                      # of the rate-target loop.
              "fs_target_hz": 40.0,    # target READ-regime critic@near rate (the gentle-seed band 17–64 Hz)
              "fs_iters": 12,          # calibration iterations (measure→scale→repeat)
              "fs_gain": 0.5,          # fractional step toward target per iter (log-domain); <1 = damped
@@ -192,6 +196,9 @@ _SYNSCALE = {"enable": False, "mode": "continuous", "target_rate": 0.0, "scaling
              "fs_down_only": False,   # homeostatic-CEILING form: only scale DOWN over-firing seeds (never
                                       # UP) → passing gentle seeds (below target) are left UNTOUCHED; only
                                       # the strong seed (over the ceiling) is normalized down.
+             "fs_freeze_critic_threshold": False,  # rate-target: pin the critic threshold homeostasis
+                                      # (adapt_rate=0) from the freeze on, so the calibrated read rate is
+                                      # stable into stage-B (the 50-vs-273 Hz mismatch fix).
              "fs_applied": False,     # one-shot guard (only at the first 1.0→0.0 transition)
              "_log": []}
 
@@ -314,9 +321,63 @@ def _freeze_seam_normalize(br):
     if not pv_mask.any():
         return
     pv_mask_xp = xp.asarray(pv_mask)
+    p_idx = xp.asarray(place_pre)
 
-    # WEIGHTED-plateau read regime (matches stage-B's _critic_rate); restore after.
     cfg = br.core_config
+
+    # ── WEIGHT-TARGET mode (the robust form) ──────────────────────────────────────────────────
+    # Scale w_near to a TARGET WEIGHT directly (the gentle-seed band ~0.4–0.6), ONE shot, no
+    # rate measurement → no interaction with the critic's threshold homeostasis (which moves the
+    # threshold during a rate-calibration and isn't stable into stage-B). A set-point form of
+    # Turrigiano scaling: normalize the place→value volley STRENGTH (the weight) to a common set
+    # point. Uniform multiplicative scale → the near/far RATIO (R1) is preserved; the strong seed
+    # (44, w_near 2.475) lands at the set point matching the gentle seeds (42/43, ~0.4–0.6) so the
+    # WHOLE read regime (incl. stage-B's threshold dynamics) behaves like the gentle seeds → crit@far
+    # falls sub-threshold → the SNc-burst δ holds. With fs_down_only, leave seeds already at/below the
+    # set point UNTOUCHED.
+    target_wnear = float(_SYNSCALE.get("fs_target_wnear", 0.0))
+    if target_wnear and target_wnear > 0:
+        down_only = bool(_SYNSCALE.get("fs_down_only", False))
+        # measure the near-ACTIVE place set (which place cells fire at near) on the FROZEN grid code,
+        # then mean w over their place→value synapses — the SAME w_near the stage-B LEARNS-V gate reads.
+        _saved_lr0 = cfg.reward_learning_rate
+        cfg.reward_learning_rate = 0.0
+        br.cp_external_input_current[:] = xp.float32(0.0)
+        br.cp_external_input_current[ps_idx] = act
+        n_p = int(p_idx.size) if hasattr(p_idx, "size") else len(p_idx)
+        ens = xp.zeros(n_p, dtype=xp.float32)
+        for _ in range(80):
+            br._run_one_simulation_step(); br.runtime_state.current_time_step += 1
+            ens += br.cp_firing_states[p_idx].astype(xp.float32)
+        cfg.reward_learning_rate = _saved_lr0
+        br.cp_external_input_current[:] = xp.float32(0.0)
+        ens_h = ens.get() if hasattr(ens, "get") else np.asarray(ens)
+        near_active = place_pre[ens_h > 0]
+        if near_active.size == 0:
+            near_active = place_pre  # fallback: all place cells
+        near_rows_mask = np.isin(rows, near_active) & np.isin(cols, place_post)
+        if not near_rows_mask.any():
+            near_rows_mask = pv_mask
+        data_h = (br.cp_connections.data.get() if hasattr(br.cp_connections.data, "get")
+                  else np.asarray(br.cp_connections.data))
+        w_near_now = float(data_h[near_rows_mask].mean()) if near_rows_mask.any() else 0.0
+        scale = 1.0 if w_near_now <= 1e-9 else float(target_wnear / w_near_now)
+        if down_only and scale >= 1.0:
+            scale = 1.0   # already at/below the set point → leave the gentle seed untouched
+        if abs(scale - 1.0) > 1e-6:
+            br.cp_connections.data[pv_mask_xp] = br.cp_connections.data[pv_mask_xp] * xp.float32(scale)
+        w_near_after = w_near_now * scale
+        _SYNSCALE["_log"] = [{"mode": "weight_target", "n_near_active": int(near_active.size),
+                              "w_near_before": float(w_near_now), "scale": float(scale),
+                              "w_near_after": float(w_near_after), "target_wnear": float(target_wnear),
+                              "down_only": down_only}]
+        print(f"[freeze-seam synaptic-scaling WEIGHT-TARGET] w_near {w_near_now:.3f} -> {w_near_after:.3f} "
+              f"(target {target_wnear:.3f}, scale {scale:.3f}, {int(near_active.size)} near-active place cells)",
+              flush=True)
+        return
+
+    # ── RATE-TARGET mode (the original; interacts with critic threshold homeostasis) ───────────
+    # WEIGHTED-plateau read regime (matches stage-B's _critic_rate); restore after.
     _saved_wd = bool(getattr(cfg, "coincidence_weighted_drive", False))
     _saved_kth = float(getattr(cfg, "coincidence_k_threshold", 4.0))
     _saved_lr = cfg.reward_learning_rate
@@ -354,6 +415,13 @@ def _freeze_seam_normalize(br):
     gain = float(_SYNSCALE["fs_gain"])
     tol = float(_SYNSCALE["fs_tol"])
     down_only = bool(_SYNSCALE.get("fs_down_only", False))
+    # optionally FREEZE the critic's intrinsic threshold homeostasis from here on (NOT restored): the
+    # rate-calibration fires the critic hard → its homeostatic threshold drifts up during calibration and
+    # is not stable into stage-B (the 50-vs-273 Hz mismatch). Pinning the threshold-adapt rate to 0 makes
+    # the critic threshold STATIC at its post-value-train value → my calibrated read rate persists into the
+    # stage-B read. The threshold stays the cell's own (intrinsic, neural); only its ADAPTATION is frozen.
+    if bool(_SYNSCALE.get("fs_freeze_critic_threshold", False)):
+        cfg.homeostasis_threshold_adapt_rate = 0.0
     log = []
     r0 = _crit_rate()
     log.append({"iter": -1, "rate_hz": float(r0), "scale": 1.0})
@@ -975,9 +1043,16 @@ def main():
                          "read-regime calibration applied ONCE at the value-train->read freeze (measures "
                          "the WEIGHTED-plateau critic@near, the regime stage-B reads -> normalizes "
                          "correctly).")
+    ap.add_argument("--synscale-fs-target-wnear", type=float, default=0.0,
+                    help="freeze_seam WEIGHT-TARGET (robust): scale w_near to this TARGET WEIGHT (the "
+                         "gentle-seed band ~0.4-0.6) in ONE shot — no rate measurement, no interaction "
+                         "with the critic threshold homeostasis. >0 = use instead of the rate-target loop. "
+                         "The recommended form (the rate-target loop interacts with the critic's own "
+                         "threshold homeostasis, which is not stable into stage-B).")
     ap.add_argument("--synscale-fs-target-hz", type=float, default=40.0,
-                    help="freeze_seam: target READ-regime critic@near rate (Hz; the gentle-seed band "
-                         "17-64Hz). Default 40.")
+                    help="freeze_seam RATE-TARGET: target READ-regime critic@near rate (Hz; the "
+                         "gentle-seed band 17-64Hz). Default 40. (Use --synscale-fs-target-wnear for the "
+                         "robust weight-target form.)")
     ap.add_argument("--synscale-fs-iters", type=int, default=12,
                     help="freeze_seam: calibration iterations (measure->scale->repeat). Default 12.")
     ap.add_argument("--synscale-fs-gain", type=float, default=0.5,
@@ -991,6 +1066,11 @@ def main():
                          "UP). Passing gentle seeds (below the target ceiling) are left UNTOUCHED; only the "
                          "strong over-firing seed is normalized down. The cleanest form (perturbs no "
                          "passing seed).")
+    ap.add_argument("--synscale-fs-freeze-critic-threshold", action="store_true",
+                    help="freeze_seam RATE-TARGET: pin the critic threshold homeostasis (adapt_rate=0) from "
+                         "the freeze on, so the calibrated read rate is stable into stage-B (fixes the "
+                         "rate-target 50-vs-273Hz mismatch where the critic's own threshold homeostasis "
+                         "drifts during calibration).")
     ap.add_argument("--synscale-target-rate", type=float, default=0.0,
                     help="continuous: synaptic-scaling target firing rate (fraction of steps; runner "
                          "default 0.02=20Hz). 0=no override (uses the cfg default).")
@@ -1017,11 +1097,13 @@ def main():
     _SYNSCALE["target_rate"] = float(args.synscale_target_rate)
     _SYNSCALE["scaling_rate"] = float(args.synscale_rate)
     _SYNSCALE["ema_alpha"] = float(args.synscale_ema_alpha)
+    _SYNSCALE["fs_target_wnear"] = float(args.synscale_fs_target_wnear)
     _SYNSCALE["fs_target_hz"] = float(args.synscale_fs_target_hz)
     _SYNSCALE["fs_iters"] = int(args.synscale_fs_iters)
     _SYNSCALE["fs_gain"] = float(args.synscale_fs_gain)
     _SYNSCALE["fs_tol"] = float(args.synscale_fs_tol)
     _SYNSCALE["fs_down_only"] = bool(args.synscale_fs_down_only)
+    _SYNSCALE["fs_freeze_critic_threshold"] = bool(args.synscale_fs_freeze_critic_threshold)
 
     # install the monkeypatches (the grid render + the graded plateau init/gate hooks).
     g._n9_place_sensor_act = _grid_place_sensor_act
