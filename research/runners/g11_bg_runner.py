@@ -3480,6 +3480,17 @@ def run_moving_goal_episode(
     #    Default OFF => the enable_neural_critic path is byte-identical (host vs_place_context).
     neural_place_selforg: bool = False,
     deterministic_selforg: bool = False,  # toggle cfg.deterministic_transpose_matvec during STEP-1 self-org (reproducible place code)
+    # deterministic_read (2026-06-21, production-wiring nav chunk item 3, the #5b determinism 1b
+    # deploy scope per research/findings/2026-06-22-shortcut5b-determinism-deltabar-close.md): hold
+    # cfg.deterministic_transpose_matvec ON THROUGH the value-train + the graded-plateau δ-read
+    # (instead of restoring it OFF after STEP-1 self-org). The deterministic-scatter SpMV already
+    # ships at the 5 critic-path matvec sites in sim/bridge.py (gated on the flag, numerically
+    # allclose), so this is a runner-side scope-widening only -- NO sim/ edit. It pins the read-time
+    # Wᵀ@prev_firing scatter ORDER so each seed's critic rate is reproducible run-to-run -> a
+    # seed-stable place->value volley -> the SNc-burst δ holds under ONE config (2/3 with
+    # determinism alone; 3/3 with the volley-normalization). Default False => the documented
+    # STEP-1-only determinism is byte-identical (the read window restores to _saved_detmv).
+    deterministic_read: bool = False,
     n_place: int = 200,
     n_place_fs: int = 24,
     place_sensors_to_place_weight: float = 28.0,
@@ -5522,7 +5533,7 @@ def run_moving_goal_episode(
         # seed draws the SAME place code (the anti-cheat R-A: byte-identical place code across two
         # invocations). Restored after self-org (bounds the per-step .tocsr() cost to STEP-1).
         _saved_detmv = getattr(bridge.core_config, "deterministic_transpose_matvec", False)
-        if deterministic_selforg:
+        if deterministic_selforg or deterministic_read:
             bridge.core_config.deterministic_transpose_matvec = True
         # STEP-1 gate config: open the competitive landmark->place learning, freeze the value
         # arm, and hold the FS-PING inhibition CLOSED (clean threshold-WTA -> sparse, DISTINCT
@@ -5559,11 +5570,15 @@ def run_moving_goal_episode(
         _na = float(np.linalg.norm(ens_goal)); _nb = float(np.linalg.norm(ens_far))
         diff_cos = float(np.dot(ens_goal, ens_far) / (_na * _nb)) if (_na > 0 and _nb > 0) else 1.0
         sparsity = float(0.5 * (np.mean(ens_goal > 0) + np.mean(ens_far > 0)))
-        bridge.core_config.deterministic_transpose_matvec = _saved_detmv   # restore (bound cost to STEP-1)
+        # restore (bound the per-step .tocsr() cost to STEP-1) UNLESS deterministic_read holds it ON
+        # through the value-train + δ-read (the #5b 1b deploy scope, nav chunk item 3).
+        if not deterministic_read:
+            bridge.core_config.deterministic_transpose_matvec = _saved_detmv
         if verbose:
             print(f"[g11 seed={seed}] N9 STEP-1 place self-org done ({time.time()-t_so:.0f}s): "
                   f"diff-loc cos={diff_cos:.6f} sparsity={sparsity:.6f} (place fields FROZEN"
-                  f"{'; DETERMINISTIC' if deterministic_selforg else ''})", flush=True)
+                  f"{'; DETERMINISTIC' if deterministic_selforg else ''}"
+                  f"{'; DET-READ held ON' if deterministic_read else ''})", flush=True)
         return dict(diff_cos=diff_cos, sparsity=sparsity)
 
     def _run_stage_a_smoke():
@@ -9026,6 +9041,16 @@ def main():
                          "sim/ flag) ON during the STEP-1 place self-org so the SAME seed draws the SAME "
                          "place code (fixes the cusparse transpose-SpMV non-determinism; anti-cheat R-A). "
                          "Restored after self-org. Requires --neural-place-selforg.")
+    ap.add_argument("--deterministic-read", action="store_true",
+                    help="#5b determinism 1b deploy (nav chunk item 3): HOLD "
+                         "cfg.deterministic_transpose_matvec ON THROUGH the value-train + the "
+                         "graded-plateau δ-read (instead of restoring it OFF after STEP-1), so the "
+                         "read-time critic rate is reproducible run-to-run -> a seed-stable "
+                         "place->value volley -> the SNc-burst δ holds under ONE config. NO sim/ edit "
+                         "(the deterministic-scatter branch already ships at the 5 critic-path matvec "
+                         "sites). Default off = the STEP-1-only determinism is byte-identical. "
+                         "Requires --neural-place-selforg. See "
+                         "research/findings/2026-06-22-shortcut5b-determinism-deltabar-close.md.")
     ap.add_argument("--n-place", type=int, default=200, help="N9 self-org place pool size.")
     ap.add_argument("--n-place-fs", type=int, default=24, help="N9 FS-PING interneuron pool size.")
     ap.add_argument("--enable-critic-fs-inhibition", action="store_true",
@@ -9477,6 +9502,7 @@ def main():
             # N9 neural place-code self-org (2026-06-09 nav deployment).
             neural_place_selforg=args.neural_place_selforg,
             deterministic_selforg=args.deterministic_selforg,
+            deterministic_read=args.deterministic_read,
             enable_critic_fs_inhibition=args.enable_critic_fs_inhibition,
             critic_fs_weight=args.critic_fs_weight,
             critic_fs_density=args.critic_fs_density,
