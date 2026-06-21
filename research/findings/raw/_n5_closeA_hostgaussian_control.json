@@ -1,0 +1,158 @@
+{
+  "item": "dendrite_stage1_onbridge_graded_plateau",
+  "stage": 1,
+  "sim_edit": true,
+  "sim_edit_flag": "enable_graded_dendritic_plateau",
+  "sim_edit_commit": "d69cc0ab",
+  "deterministic_regime": true,
+  "grid_size": 32,
+  "lead_ms": 150.0,
+  "host_ref_delta": 1.3,
+  "host_ceiling_tol": 0.3,
+  "calibration": {
+    "n_snc": 120,
+    "dend_subtract_scale": 1200.0,
+    "snc_reward_gain": 420.0,
+    "graded_center": 1.5,
+    "graded_slope": 1.0,
+    "graded_strength": 80.0
+  },
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "per_seed": {
+    "42": {
+      "onbridge": {
+        "delta": 1.3333333333333333,
+        "near_burst": 75.0,
+        "mid_burst": 100.0,
+        "far_burst": 100.0,
+        "v_onbridge_near": 0.13015790474192776,
+        "v_onbridge_mid": 0.0805858881153583,
+        "v_onbridge_far": 0.014088621583232255,
+        "graded_gradient": true,
+        "location_selective": true,
+        "w_near_final": 2.7238380908966064,
+        "w_far_final": 0.20329830050468445,
+        "plateau_lesion_delta": 1.0,
+        "plateau_lesion_collapses": true,
+        "allornone_delta": 1.0,
+        "allornone_v_near": 0.0,
+        "allornone_graded_gradient": false,
+        "subtract_lesion_delta": 1.0,
+        "subtract_lesion_collapses": true
+      },
+      "linear": {
+        "delta": 1.0,
+        "near_burst": 100.0,
+        "far_burst": 100.0,
+        "critic_rate_hz": 0.0,
+        "above_floor": true
+      },
+      "plateau": {
+        "delta": 0.0,
+        "near_burst": 0.0,
+        "far_burst": 0.0,
+        "critic_rate_hz": 219.375,
+        "above_floor": false
+      },
+      "host_gaussian": {
+        "delta": 1.3
+      }
+    },
+    "43": {
+      "onbridge": {
+        "delta": 1.3333333333333333,
+        "near_burst": 75.0,
+        "mid_burst": 100.0,
+        "far_burst": 100.0,
+        "v_onbridge_near": 0.13346667433075277,
+        "v_onbridge_mid": 0.08354874145416588,
+        "v_onbridge_far": 0.013901947410153895,
+        "graded_gradient": true,
+        "location_selective": true,
+        "w_near_final": 2.7822370529174805,
+        "w_far_final": 0.20158091187477112,
+        "plateau_lesion_delta": 1.0,
+        "plateau_lesion_collapses": true,
+        "allornone_delta": 1.0,
+        "allornone_v_near": 0.0,
+        "allornone_graded_gradient": false,
+        "subtract_lesion_delta": 1.0,
+        "subtract_lesion_collapses": true
+      },
+      "linear": {
+        "delta": 1.0,
+        "near_burst": 100.0,
+        "far_burst": 100.0,
+        "critic_rate_hz": 0.0,
+        "above_floor": true
+      },
+      "plateau": {
+        "delta": 0.0,
+        "near_burst": 0.0,
+        "far_burst": 0.0,
+        "critic_rate_hz": 192.60416666666666,
+        "above_floor": false
+      },
+      "host_gaussian": {
+        "delta": 1.3
+      }
+    },
+    "44": {
+      "onbridge": {
+        "delta": 1.3333333333333333,
+        "near_burst": 75.0,
+        "mid_burst": 100.0,
+        "far_burst": 100.0,
+        "v_onbridge_near": 0.13400076967793925,
+        "v_onbridge_mid": 0.0841057987123596,
+        "v_onbridge_far": 0.014426683749279814,
+        "graded_gradient": true,
+        "location_selective": true,
+        "w_near_final": 2.8850936889648438,
+        "w_far_final": 0.19985666871070862,
+        "plateau_lesion_delta": 1.0,
+        "plateau_lesion_collapses": true,
+        "allornone_delta": 1.0,
+        "allornone_v_near": 0.0,
+        "allornone_graded_gradient": false,
+        "subtract_lesion_delta": 1.0,
+        "subtract_lesion_collapses": true
+      },
+      "linear": {
+        "delta": 1.0,
+        "near_burst": 100.0,
+        "far_burst": 100.0,
+        "critic_rate_hz": 0.0,
+        "above_floor": true
+      },
+      "plateau": {
+        "delta": 0.0,
+        "near_burst": 0.0,
+        "far_burst": 0.0,
+        "critic_rate_hz": 175.57291666666666,
+        "above_floor": false
+      },
+      "host_gaussian": {
+        "delta": 1.3
+      }
+    }
+  },
+  "median_onbridge_delta": 1.3333333333333333,
+  "median_linear_delta": 1.0,
+  "median_plateau_delta": 0.0,
+  "onbridge_ge_host": 3,
+  "onbridge_le_ceiling": 3,
+  "onbridge_graded_gradient": 3,
+  "linear_fails": 3,
+  "plateau_fails": 3,
+  "plateau_lesion_collapses": 3,
+  "subtract_lesion_collapses": 3,
+  "location_selective": 3,
+  "controls_valid": true,
+  "verdict": "GO",
+  "verdict_note": "the ON-BRIDGE graded dendritic-plateau read-out gives delta=1.33 (>=1.30 ~ the Stage-0 ceiling/host 1.3) at 3/3 seeds, where BOTH point-neuron controls fail (LINEAR ~1.00, PLATEAU ~0.00). The on-bridge plateau is LOAD-BEARING (flag-off lesion collapses 3/3); the value is location-selective (3/3) + below the host ceiling (3/3). The graded value V is the on-bridge plateau CONDUCTANCE -> the dendrite's graded analog read-out now lives ON the spiking substrate (the Stage-0 numpy DendriticLayer retired)."
+}
