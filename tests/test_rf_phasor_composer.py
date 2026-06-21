@@ -289,6 +289,54 @@ def test_local_conj_equals_np_conj_bitforbit():
         assert RFPhasorComposer._reciprocal_conjugate(conns) == [(256 + k, k, np.conj(z)[k]) for k in range(256)]
 
 
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_rf_phasor_composer_cleanup_codebook_local_conj_byte_identical(seed):
+    """FHRR-B cleanup-codebook residual (the SAME local rule extended to the cleanup/matched-filter codebook): with
+    local_reciprocal_unbind ON, the cleanup codebook is derived from the concept codes by the per-component
+    quadrature-flip (_cleanup_conj) instead of the host np.conj. It must give answers BYTE-IDENTICAL to the host-conj
+    default on the full who/what matrix AND the no-confab abstentions (conj per component IS the per-synapse rule).
+    Combined with Mechanism 1's unbind rule, a FULL store+query build then issues ZERO np.conj calls TOTAL -> the WHOLE
+    bind+cleanup structure is host-free. De-risk: research/findings/2026-06-20-FHRR-B-cleanup-codebook-local-conj.md."""
+    import numpy as np
+    cn = RFPhasorComposer(seed=seed, D=96, period=200, local_reciprocal_unbind=False)   # host-conj (default/legacy)
+    cl = RFPhasorComposer(seed=seed, D=96, period=200, local_reciprocal_unbind=True)     # local reciprocal rule
+
+    # (a) the cleanup codebook weights are bit-for-bit conj(concept) for every concept (main vocab + polarity tags).
+    for w in list(cn.words) + cn.pol_words:
+        legacy = np.conj(cn._to_phasor(cn.concepts[w]))
+        local = cl._cleanup_conj(cl._to_phasor(cl.concepts[w]))
+        assert np.array_equal(legacy, local), f"local cleanup rule != conj(concept) for '{w}'"
+
+    # (b) the full who/what matrix + abstentions are byte-identical.
+    for c in (cn, cl):
+        c.store("dog", "go", "north"); c.store("cat", "run", "south")
+        c.store("river", "look", ("big", "apple"))
+        c.store("dog", "stop", "east", polarity="AFFIRM")
+        c.store("cat", "look", "west", polarity="NEGATE")
+    assert cl.query_agent("go", "north") == cn.query_agent("go", "north") == "dog"
+    assert cl.query_patient("river", "look") == cn.query_patient("river", "look") == "big apple"
+    assert cl.render_fact("river") == cn.render_fact("river") == "river look big apple"
+    assert cl.ask_yes_no("dog", "stop", "east") == cn.ask_yes_no("dog", "stop", "east") == "yes"
+    # the no-confab moat: identical abstentions
+    assert cl.query_agent("go", "south") is None and cn.query_agent("go", "south") is None
+    assert cl.ask_yes_no("dog", "go", "west") == cn.ask_yes_no("dog", "go", "west") == "unknown"
+
+    # (c) substrate-purity: with the flag ON, a FULL store+query build (unbind STRUCTURE + cleanup CODEBOOK) issues
+    #     ZERO np.conj calls TOTAL -> the whole bind+cleanup structure is host-free (the headline).
+    cp = RFPhasorComposer(seed=seed, D=64, period=200, local_reciprocal_unbind=True)
+    cp.store("dog", "go", "north"); cp.store("cat", "run", "south"); cp.store("river", "look", "apple")
+    n_conj = {"n": 0}
+    orig = np.conj
+    np.conj = lambda x, _c=n_conj, _o=orig: (_c.__setitem__("n", _c["n"] + 1), _o(x))[1]
+    try:
+        cp.query_agent("go", "north")        # batched scan: _unbind_all_phases + _cleanup_all
+        cp.query_patient("river", "look")    # + _render_filler -> unbind -> _cleanup
+        cp.query_agent("go", "south")        # the moat (abstains)
+    finally:
+        np.conj = orig
+    assert n_conj["n"] == 0, "flag ON must not call np.conj in a full store+query build (bind+cleanup structure)"
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-v", "-s"]))

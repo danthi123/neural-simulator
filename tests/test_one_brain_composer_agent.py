@@ -362,3 +362,49 @@ def test_onebrain_encoding_gain_lifts_recall_moat_intact():
     assert c.query_patient("apple", "stop") is None, "MOAT BREACH: unstored cue must abstain under the gain"
     assert c.query_agent("swim", "home") is None, "MOAT BREACH: unstored cue must abstain under the gain"
     assert c.ask_yes_no("cat", "go", "west") in ("unknown", "no"), "MOAT BREACH: unstored fact must abstain"
+
+
+@pytest.mark.parametrize("seed", [42, 43, 44])
+def test_onebrain_cleanup_codebook_local_conj_byte_identical(seed):
+    """FHRR-B cleanup-codebook residual on the PRODUCTION one-brain path: with local_reciprocal_unbind ON, the 7
+    cleanup-codebook conj sites (comp.concepts[...] / comp.pol_words[...]) derive the matched-filter codebook from the
+    concept codes by the per-component quadrature-flip (_cleanup_conj) instead of the host np.conj. It must give
+    answers BYTE-IDENTICAL to the host-conj default on the who/what matrix + the no-confab moat, AND a FULL store+query
+    build must issue ZERO np.conj calls TOTAL (combined with Mechanism 1's unbind rule -> the whole one-brain
+    bind+cleanup structure host-free). De-risk: research/findings/2026-06-20-FHRR-B-cleanup-codebook-local-conj.md."""
+    from research.runners.one_brain_composer import OneBrainComposer
+    try:
+        cn = OneBrainComposer(seed=seed, D=64, vocab=VOCAB, enable_batched=False, local_reciprocal_unbind=False)
+        cl = OneBrainComposer(seed=seed, D=64, vocab=VOCAB, enable_batched=False, local_reciprocal_unbind=True)
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+
+    # (a) the cleanup codebook helper is bit-for-bit conj(concept) for every concept (main vocab + polarity tags).
+    for w in list(cn.words) + cn.pol_words:
+        legacy = np.conj(cn.comp._to_phasor(cn.comp.concepts[w]))
+        local = cl._cleanup_conj(w)
+        assert np.array_equal(legacy, local), f"local cleanup rule != conj(concept) for '{w}'"
+
+    # (b) the who/what matrix + abstentions byte-identical OFF vs ON (GPU run).
+    for c in (cn, cl):
+        c.store("dog", "go", "north"); c.store("cat", "come", "east"); c.store("bird", "look", "south")
+    assert cl.query_agent("go", "north") == cn.query_agent("go", "north") == "dog"
+    assert cl.query_patient("cat", "come") == cn.query_patient("cat", "come") == "east"
+    assert cl.query_patient("bird", "look") == cn.query_patient("bird", "look") == "south"
+    # the no-confab moat: identical abstentions
+    assert cl.query_agent("go", "south") is None and cn.query_agent("go", "south") is None
+    assert cl.query_patient("apple", "stop") is None and cn.query_patient("apple", "stop") is None
+
+    # (c) substrate-purity: with the flag ON, a FULL store+query build issues ZERO np.conj calls TOTAL.
+    cp = OneBrainComposer(seed=seed, D=48, vocab=VOCAB, enable_batched=False, local_reciprocal_unbind=True)
+    cp.store("dog", "go", "north"); cp.store("cat", "come", "east")
+    n_conj = {"n": 0}
+    orig = np.conj
+    np.conj = lambda x, _c=n_conj, _o=orig: (_c.__setitem__("n", _c["n"] + 1), _o(x))[1]
+    try:
+        cp.query_agent("go", "north")
+        cp.query_patient("cat", "come")
+        cp.query_agent("go", "south")        # the moat (abstains)
+    finally:
+        np.conj = orig
+    assert n_conj["n"] == 0, "flag ON must not call np.conj in a full one-brain store+query build"

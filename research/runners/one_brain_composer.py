@@ -316,6 +316,18 @@ class OneBrainComposer:
         zr = comp._to_phasor(comp.roles[role])
         return comp._local_conj(zr) if self.local_reciprocal_unbind else np.conj(zr)
 
+    def _cleanup_conj(self, concept_word):
+        """The CLEANUP / matched-filter codebook synapse weight phasor for `concept_word` = conj(concept phasor) --
+        so the recovered phasor correlates against each concept's CONJUGATE (the matched filter = the transpose/
+        reciprocal of the encoder). DEFAULT (local_reciprocal_unbind=False): the host np.conj (the legacy residual).
+        With the flag ON: the SAME one-time LOCAL reciprocal-conjugate rule already used for the unbind (per-component
+        quadrature flip via comp._cleanup_conj/_local_conj) -- no host np.conj over the concept code, the cleanup
+        codebook derived locally from the (learned/developmental) concept phasor. Byte-identical (== conj for a unit
+        phasor). Routed at every cleanup-codebook site so the WHOLE bind+cleanup structure is host-free at runtime (the
+        neuromorphic-port property). See 2026-06-20-FHRR-B-cleanup-codebook-local-conj.md."""
+        comp = self.comp
+        return comp._cleanup_conj(comp._to_phasor(comp.concepts[concept_word]))
+
     # --- query (cue-matching scan; reconstruct ONCE per block, read all 4 roles in PARALLEL) ---
     @staticmethod
     def _margin(scores):
@@ -384,11 +396,11 @@ class OneBrainComposer:
         clean = []
         for ri, role in enumerate(self.main_roles):                     # main roles -> the main vocab codebook
             for j in range(V):
-                cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
+                cc = self._cleanup_conj(self.words[j])                   # local reciprocal rule when ON; conj when OFF
                 clean += [(self.c_base + ri * V + j, self.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
         pol_ri = self.bind_roles.index("polarity")                      # polarity role -> the 2-word polarity codebook
         for j in range(NP):
-            cc = np.conj(comp._to_phasor(comp.concepts[self.pol_words[j]]))
+            cc = self._cleanup_conj(self.pol_words[j])                   # local reciprocal rule when ON; conj when OFF
             clean += [(self.c_base + self.n_main * V + j, self.q_base + pol_ri * D + k, complex(cc[k]))
                       for k in range(D)]
         b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
@@ -423,11 +435,11 @@ class OneBrainComposer:
             for ri in range(nm):                                          # main roles -> the main vocab codebook
                 qreg = self.bat_q_base + (i * nr + ri) * D
                 for j in range(V):
-                    cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
+                    cc = self._cleanup_conj(self.words[j])                 # local reciprocal rule when ON; conj when OFF
                     clean += [(cblk + ri * V + j, qreg + k, complex(cc[k])) for k in range(D)]
             qreg_p = self.bat_q_base + (i * nr + pol_ri) * D              # polarity role -> the polarity codebook
             for j in range(NP):
-                cc = np.conj(comp._to_phasor(comp.concepts[self.pol_words[j]]))
+                cc = self._cleanup_conj(self.pol_words[j])                 # local reciprocal rule when ON; conj when OFF
                 clean += [(cblk + nm * V + j, qreg_p + k, complex(cc[k])) for k in range(D)]
         return (_build_complex_csr(self.n_total, unbind), _build_complex_csr(self.n_total, clean))
 
@@ -493,11 +505,11 @@ class OneBrainComposer:
             for ri in range(nm):
                 qreg = self.bat_q_base + (i * nr + ri) * D
                 for j in range(V):
-                    cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
+                    cc = self._cleanup_conj(self.words[j])                 # local reciprocal rule when ON; conj when OFF
                     clean += [(cblk + ri * V + j, qreg + k, complex(cc[k])) for k in range(D)]
             qreg_p = self.bat_q_base + (i * nr + pol_ri) * D
             for j in range(NP):
-                cc = np.conj(comp._to_phasor(comp.concepts[self.pol_words[j]]))
+                cc = self._cleanup_conj(self.pol_words[j])                 # local reciprocal rule when ON; conj when OFF
                 clean += [(cblk + nm * V + j, qreg_p + k, complex(cc[k])) for k in range(D)]
         b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
         mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
@@ -571,7 +583,7 @@ class OneBrainComposer:
         clean = []
         for ri in range(3):
             for j in range(V):
-                cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
+                cc = self._cleanup_conj(self.words[j])                     # local reciprocal rule when ON; conj when OFF
                 clean += [(self.c_base + ri * V + j, self.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
         b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
         mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)

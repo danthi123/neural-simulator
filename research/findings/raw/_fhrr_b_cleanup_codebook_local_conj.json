@@ -1,0 +1,916 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    45
+  ],
+  "dims": [
+    64,
+    96,
+    128
+  ],
+  "checks": {
+    "byte_equivalence": {
+      "all_byte_identical": true,
+      "per_cell": [
+        {
+          "seed": 42,
+          "D": 64,
+          "cleanup_codebook_identical": true,
+          "batched_codebook_identical": true,
+          "full_matrix_identical": true,
+          "matrix_answers": [
+            [
+              "who go north",
+              "dog"
+            ],
+            [
+              "who run south",
+              "cat"
+            ],
+            [
+              "what dog go",
+              "north"
+            ],
+            [
+              "what cat run",
+              "south"
+            ],
+            [
+              "what river look",
+              "big apple"
+            ],
+            [
+              "render river",
+              "river look big apple"
+            ],
+            [
+              "yesno dog stop east",
+              "yes"
+            ],
+            [
+              "yesno cat look west",
+              "no"
+            ],
+            [
+              "MOAT who go south",
+              null
+            ],
+            [
+              "MOAT what dog run",
+              null
+            ],
+            [
+              "MOAT yesno dog go west",
+              "unknown"
+            ],
+            [
+              "MOAT render apple",
+              null
+            ]
+          ]
+        },
+        {
+          "seed": 42,
+          "D": 96,
+          "cleanup_codebook_identical": true,
+          "batched_codebook_identical": true,
+          "full_matrix_identical": true,
+          "matrix_answers": [
+            [
+              "who go north",
+              "dog"
+            ],
+            [
+              "who run south",
+              "cat"
+            ],
+            [
+              "what dog go",
+              "north"
+            ],
+            [
+              "what cat run",
+              "south"
+            ],
+            [
+              "what river look",
+              "big apple"
+            ],
+            [
+              "render river",
+              "river look big apple"
+            ],
+            [
+              "yesno dog stop east",
+              "yes"
+            ],
+            [
+              "yesno cat look west",
+              "no"
+            ],
+            [
+              "MOAT who go south",
+              null
+            ],
+            [
+              "MOAT what dog run",
+              null
+            ],
+            [
+              "MOAT yesno dog go west",
+              "unknown"
+            ],
+            [
+              "MOAT render apple",
+              null
+            ]
+          ]
+        },
+        {
+          "seed": 42,
+          "D": 128,
+          "cleanup_codebook_identical": true,
+          "batched_codebook_identical": true,
+          "full_matrix_identical": true,
+          "matrix_answers": [
+            [
+              "who go north",
+              "dog"
+            ],
+            [
+              "who run south",
+              "cat"
+            ],
+            [
+              "what dog go",
+              "north"
+            ],
+            [
+              "what cat run",
+              "south"
+            ],
+            [
+              "what river look",
+              "big apple"
+            ],
+            [
+              "render river",
+              "river look big apple"
+            ],
+            [
+              "yesno dog stop east",
+              "yes"
+            ],
+            [
+              "yesno cat look west",
+              "no"
+            ],
+            [
+              "MOAT who go south",
+              null
+            ],
+            [
+              "MOAT what dog run",
+              null
+            ],
+            [
+              "MOAT yesno dog go west",
+              "unknown"
+            ],
+            [
+              "MOAT render apple",
+              null
+            ]
+          ]
+        },
+        {
+          "seed": 43,
+          "D": 64,
+          "cleanup_codebook_identical": true,
+          "batched_codebook_identical": true,
+          "full_matrix_identical": true,
+          "matrix_answers": [
+            [
+              "who go north",
+              "dog"
+            ],
+            [
+              "who run south",
+              "cat"
+            ],
+            [
+              "what dog go",
+              "north"
+            ],
+            [
+              "what cat run",
+              "south"
+            ],
+            [
+              "what river look",
+              "big apple"
+            ],
+            [
+              "render river",
+              "river look big apple"
+            ],
+            [
+              "yesno dog stop east",
+              "yes"
+            ],
+            [
+              "yesno cat look west",
+              "no"
+            ],
+            [
+              "MOAT who go south",
+              null
+            ],
+            [
+              "MOAT what dog run",
+              null
+            ],
+            [
+              "MOAT yesno dog go west",
+              "unknown"
+            ],
+            [
+              "MOAT render apple",
+              null
+            ]
+          ]
+        },
+        {
+          "seed": 43,
+          "D": 96,
+          "cleanup_codebook_identical": true,
+          "batched_codebook_identical": true,
+          "full_matrix_identical": true,
+          "matrix_answers": [
+            [
+              "who go north",
+              "dog"
+            ],
+            [
+              "who run south",
+              "cat"
+            ],
+            [
+              "what dog go",
+              "north"
+            ],
+            [
+              "what cat run",
+              "south"
+            ],
+            [
+              "what river look",
+              "big apple"
+            ],
+            [
+              "render river",
+              "river look big apple"
+            ],
+            [
+              "yesno dog stop east",
+              "yes"
+            ],
+            [
+              "yesno cat look west",
+              "no"
+            ],
+            [
+              "MOAT who go south",
+              null
+            ],
+            [
+              "MOAT what dog run",
+              null
+            ],
+            [
+              "MOAT yesno dog go west",
+              "unknown"
+            ],
+            [
+              "MOAT render apple",
+              null
+            ]
+          ]
+        },
+        {
+          "seed": 43,
+          "D": 128,
+          "cleanup_codebook_identical": true,
+          "batched_codebook_identical": true,
+          "full_matrix_identical": true,
+          "matrix_answers": [
+            [
+              "who go north",
+              "dog"
+            ],
+            [
+              "who run south",
+              "cat"
+            ],
+            [
+              "what dog go",
+              "north"
+            ],
+            [
+              "what cat run",
+              "south"
+            ],
+            [
+              "what river look",
+              "big apple"
+            ],
+            [
+              "render river",
+              "river look big apple"
+            ],
+            [
+              "yesno dog stop east",
+              "yes"
+            ],
+            [
+              "yesno cat look west",
+              "no"
+            ],
+            [
+              "MOAT who go south",
+              null
+            ],
+            [
+              "MOAT what dog run",
+              null
+            ],
+            [
+              "MOAT yesno dog go west",
+              "unknown"
+            ],
+            [
+              "MOAT render apple",
+              null
+            ]
+          ]
+        },
+        {
+          "seed": 44,
+          "D": 64,
+          "cleanup_codebook_identical": true,
+          "batched_codebook_identical": true,
+          "full_matrix_identical": true,
+          "matrix_answers": [
+            [
+              "who go north",
+              "dog"
+            ],
+            [
+              "who run south",
+              "cat"
+            ],
+            [
+              "what dog go",
+              "north"
+            ],
+            [
+              "what cat run",
+              "south"
+            ],
+            [
+              "what river look",
+              "big apple"
+            ],
+            [
+              "render river",
+              "river look big apple"
+            ],
+            [
+              "yesno dog stop east",
+              "yes"
+            ],
+            [
+              "yesno cat look west",
+              "no"
+            ],
+            [
+              "MOAT who go south",
+              null
+            ],
+            [
+              "MOAT what dog run",
+              null
+            ],
+            [
+              "MOAT yesno dog go west",
+              "unknown"
+            ],
+            [
+              "MOAT render apple",
+              null
+            ]
+          ]
+        },
+        {
+          "seed": 44,
+          "D": 96,
+          "cleanup_codebook_identical": true,
+          "batched_codebook_identical": true,
+          "full_matrix_identical": true,
+          "matrix_answers": [
+            [
+              "who go north",
+              "dog"
+            ],
+            [
+              "who run south",
+              "cat"
+            ],
+            [
+              "what dog go",
+              "north"
+            ],
+            [
+              "what cat run",
+              "south"
+            ],
+            [
+              "what river look",
+              "big apple"
+            ],
+            [
+              "render river",
+              "river look big apple"
+            ],
+            [
+              "yesno dog stop east",
+              "yes"
+            ],
+            [
+              "yesno cat look west",
+              "no"
+            ],
+            [
+              "MOAT who go south",
+              null
+            ],
+            [
+              "MOAT what dog run",
+              null
+            ],
+            [
+              "MOAT yesno dog go west",
+              "unknown"
+            ],
+            [
+              "MOAT render apple",
+              null
+            ]
+          ]
+        },
+        {
+          "seed": 44,
+          "D": 128,
+          "cleanup_codebook_identical": true,
+          "batched_codebook_identical": true,
+          "full_matrix_identical": true,
+          "matrix_answers": [
+            [
+              "who go north",
+              "dog"
+            ],
+            [
+              "who run south",
+              "cat"
+            ],
+            [
+              "what dog go",
+              "north"
+            ],
+            [
+              "what cat run",
+              "south"
+            ],
+            [
+              "what river look",
+              "big apple"
+            ],
+            [
+              "render river",
+              "river look big apple"
+            ],
+            [
+              "yesno dog stop east",
+              "yes"
+            ],
+            [
+              "yesno cat look west",
+              "no"
+            ],
+            [
+              "MOAT who go south",
+              null
+            ],
+            [
+              "MOAT what dog run",
+              null
+            ],
+            [
+              "MOAT yesno dog go west",
+              "unknown"
+            ],
+            [
+              "MOAT render apple",
+              null
+            ]
+          ]
+        },
+        {
+          "seed": 45,
+          "D": 64,
+          "cleanup_codebook_identical": true,
+          "batched_codebook_identical": true,
+          "full_matrix_identical": true,
+          "matrix_answers": [
+            [
+              "who go north",
+              "dog"
+            ],
+            [
+              "who run south",
+              "cat"
+            ],
+            [
+              "what dog go",
+              "north"
+            ],
+            [
+              "what cat run",
+              "south"
+            ],
+            [
+              "what river look",
+              "big apple"
+            ],
+            [
+              "render river",
+              "river look big apple"
+            ],
+            [
+              "yesno dog stop east",
+              "yes"
+            ],
+            [
+              "yesno cat look west",
+              "no"
+            ],
+            [
+              "MOAT who go south",
+              null
+            ],
+            [
+              "MOAT what dog run",
+              null
+            ],
+            [
+              "MOAT yesno dog go west",
+              "unknown"
+            ],
+            [
+              "MOAT render apple",
+              null
+            ]
+          ]
+        },
+        {
+          "seed": 45,
+          "D": 96,
+          "cleanup_codebook_identical": true,
+          "batched_codebook_identical": true,
+          "full_matrix_identical": true,
+          "matrix_answers": [
+            [
+              "who go north",
+              "dog"
+            ],
+            [
+              "who run south",
+              "cat"
+            ],
+            [
+              "what dog go",
+              "north"
+            ],
+            [
+              "what cat run",
+              "south"
+            ],
+            [
+              "what river look",
+              "big apple"
+            ],
+            [
+              "render river",
+              "river look big apple"
+            ],
+            [
+              "yesno dog stop east",
+              "yes"
+            ],
+            [
+              "yesno cat look west",
+              "no"
+            ],
+            [
+              "MOAT who go south",
+              null
+            ],
+            [
+              "MOAT what dog run",
+              null
+            ],
+            [
+              "MOAT yesno dog go west",
+              "unknown"
+            ],
+            [
+              "MOAT render apple",
+              null
+            ]
+          ]
+        },
+        {
+          "seed": 45,
+          "D": 128,
+          "cleanup_codebook_identical": true,
+          "batched_codebook_identical": true,
+          "full_matrix_identical": true,
+          "matrix_answers": [
+            [
+              "who go north",
+              "dog"
+            ],
+            [
+              "who run south",
+              "cat"
+            ],
+            [
+              "what dog go",
+              "north"
+            ],
+            [
+              "what cat run",
+              "south"
+            ],
+            [
+              "what river look",
+              "big apple"
+            ],
+            [
+              "render river",
+              "river look big apple"
+            ],
+            [
+              "yesno dog stop east",
+              "yes"
+            ],
+            [
+              "yesno cat look west",
+              "no"
+            ],
+            [
+              "MOAT who go south",
+              null
+            ],
+            [
+              "MOAT what dog run",
+              null
+            ],
+            [
+              "MOAT yesno dog go west",
+              "unknown"
+            ],
+            [
+              "MOAT render apple",
+              null
+            ]
+          ]
+        }
+      ]
+    },
+    "spiking_cleanup_path_byte_identical": {
+      "ok": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "spiking_cleanup_query_identical": true,
+          "answers_on": [
+            "dog",
+            "apple",
+            null
+          ]
+        },
+        {
+          "seed": 43,
+          "spiking_cleanup_query_identical": true,
+          "answers_on": [
+            "dog",
+            "apple",
+            null
+          ]
+        },
+        {
+          "seed": 44,
+          "spiking_cleanup_query_identical": true,
+          "answers_on": [
+            "dog",
+            "apple",
+            null
+          ]
+        },
+        {
+          "seed": 45,
+          "spiking_cleanup_query_identical": true,
+          "answers_on": [
+            "dog",
+            "apple",
+            null
+          ]
+        }
+      ]
+    },
+    "substrate_purity": {
+      "np_conj_calls": {
+        "cleanup_build": {
+          "flag_OFF_host_conj": 18,
+          "flag_ON_local_rule": 0
+        },
+        "full_store_query_build": {
+          "flag_OFF_host_conj": 14,
+          "flag_ON_local_rule": 0
+        }
+      },
+      "flag_ON_zero_conj_cleanup": true,
+      "flag_ON_zero_conj_total": true,
+      "flag_OFF_uses_conj": true,
+      "pass": true,
+      "note": "flag ON: the cleanup codebook is a LOCAL per-synapse transform (_cleanup_conj/_local_conj flips the imaginary component) of each concept synapse -- no np.conj over the concept vector. Combined with Mechanism 1's unbind local rule, a FULL store+query build issues 0 np.conj TOTAL: the WHOLE bind+cleanup structure is host-free (random role codes + learned/developmental concept codes + local conjugate rules = a one-time device configuration, end-to-end)."
+    },
+    "anti_cheats": {
+      "permuted_codebook_collapses": {
+        "ok": true,
+        "per_seed": [
+          {
+            "seed": 42,
+            "true_word": "north",
+            "deranged_word": "look",
+            "ok": true
+          },
+          {
+            "seed": 43,
+            "true_word": "north",
+            "deranged_word": "look",
+            "ok": true
+          },
+          {
+            "seed": 44,
+            "true_word": "north",
+            "deranged_word": "look",
+            "ok": true
+          },
+          {
+            "seed": 45,
+            "true_word": "north",
+            "deranged_word": "look",
+            "ok": true
+          }
+        ]
+      },
+      "lesion_destroys_selection": {
+        "ok": true,
+        "per_seed": [
+          {
+            "seed": 42,
+            "true_word": "north",
+            "lesioned_word": "apple",
+            "selection_content_free_when_lesioned": true
+          },
+          {
+            "seed": 43,
+            "true_word": "north",
+            "lesioned_word": "apple",
+            "selection_content_free_when_lesioned": true
+          },
+          {
+            "seed": 44,
+            "true_word": "north",
+            "lesioned_word": "apple",
+            "selection_content_free_when_lesioned": true
+          },
+          {
+            "seed": 45,
+            "true_word": "north",
+            "lesioned_word": "apple",
+            "selection_content_free_when_lesioned": true
+          }
+        ]
+      },
+      "flag_off_reversible": {
+        "ok": true,
+        "per_seed": [
+          {
+            "seed": 42,
+            "flag_off_matches_legacy": true
+          },
+          {
+            "seed": 43,
+            "flag_off_matches_legacy": true
+          },
+          {
+            "seed": 44,
+            "flag_off_matches_legacy": true
+          },
+          {
+            "seed": 45,
+            "flag_off_matches_legacy": true
+          }
+        ]
+      }
+    },
+    "hardware_port": {
+      "ok": true,
+      "note": "cleanup codebook = a one-time device configuration from the concept phasor: install the per-component quadrature-flip of each concept synapse as the matched-filter synapse (the encoder transpose). Combined with the bind+unbind local rules (Mechanism 1), no host in the loop per op -> the whole bind+cleanup structure is portable to a memristor-crossbar / Loihi-synapse-table one-time config."
+    },
+    "onebrain_production_path": {
+      "ran": true,
+      "ok": true,
+      "answers_identical": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "flag_off": [
+            "dog",
+            "south",
+            "north",
+            null
+          ],
+          "flag_on": [
+            "dog",
+            "south",
+            "north",
+            null
+          ],
+          "identical": true
+        },
+        {
+          "seed": 43,
+          "flag_off": [
+            "dog",
+            "south",
+            "north",
+            null
+          ],
+          "flag_on": [
+            "dog",
+            "south",
+            "north",
+            null
+          ],
+          "identical": true
+        },
+        {
+          "seed": 44,
+          "flag_off": [
+            "dog",
+            "south",
+            "north",
+            null
+          ],
+          "flag_on": [
+            "dog",
+            "south",
+            "north",
+            null
+          ],
+          "identical": true
+        }
+      ],
+      "np_conj_full_build": {
+        "flag_OFF_host_conj": 342,
+        "flag_ON_local_rule": 0
+      },
+      "purity_pass": true,
+      "note": "OneBrainComposer (production-default --composer onebrain): the 7 cleanup-codebook conj sites (comp.concepts[...] / comp.pol_words[...]) now route through _cleanup_conj (local rule when ON); combined with Mechanism 1's 6 unbind sites, a full store+query build issues 0 np.conj TOTAL with the flag ON -> the production one-brain bind+cleanup structure is host-free. _local_conj == np.conj bit-for-bit so the answer-identity is backend-independent (this CPU smoke + the GPU production path)."
+    }
+  },
+  "verdict": {
+    "cleanup_codebook_host_conj_eliminated_via_local_rule": true,
+    "byte_identical_to_host_conj": true,
+    "total_np_conj_at_build_zero_flag_ON": true,
+    "moat_untouched": true,
+    "anti_cheats_pass": true,
+    "GO": true
+  }
+}

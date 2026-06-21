@@ -190,6 +190,20 @@ class RFPhasorComposer:
         a = np.asarray(z)
         return a.real - 1j * a.imag
 
+    def _cleanup_conj(self, z):
+        """(FHRR-B cleanup-codebook residual, mechanism 1's local rule extended to the CLEANUP codebook.) The cleanup /
+        matched-filter codebook installs, per concept, a synapse carrying conj(concept_phasor) so the recovered phasor
+        correlates against each concept's CONJUGATE (the matched filter IS the transpose/reciprocal of the encoder). The
+        only host residual was the substrate re-deriving that conjugate host-side via np.conj over the concept code each
+        build. Since conj is per-component, the cleanup synapse is the per-component quadrature-flip of its concept
+        synapse -- the SAME LOCAL reciprocal-conjugate wiring rule already used for the unbind (_local_conj), a purely-
+        local function of each single synapse's own weight, NO np.conj over the concept vector. With local_reciprocal_
+        unbind ON the cleanup codebook is derived by this local rule (bit-for-bit == conj for a unit phasor, so the
+        whole who/what matrix + no-confab abstentions are byte-identical); OFF (default) = the legacy host np.conj,
+        unchanged. Biologically the reciprocal/transpose of the concept-code synapse (the matched filter = encoder
+        transpose). See 2026-06-20-FHRR-B-cleanup-codebook-local-conj.md."""
+        return self._local_conj(z) if self.local_reciprocal_unbind else np.conj(z)
+
     @classmethod
     def _reciprocal_conjugate(cls, bind_conns):
         """The LOCAL reciprocal-conjugate WIRING RULE (FHRR-B mechanism 1): derive the UNBIND synapses from the BIND
@@ -312,7 +326,7 @@ class RFPhasorComposer:
         # Stage 1: matched filter on the complex synapse (concept k = index D+k receives rec via conj(code_k)).
         conns = []
         for k in range(V):
-            cc = np.conj(self._to_phasor(self.concepts[words[k]]))
+            cc = self._cleanup_conj(self._to_phasor(self.concepts[words[k]]))   # local reciprocal rule when ON; conj when OFF
             for d in range(D):
                 conns.append((D + k, d, cc[d]))
         b = self._bridge_cache.get(D + V)
@@ -400,7 +414,7 @@ class RFPhasorComposer:
             return []
         rec_z = np.exp(2j * np.pi * np.asarray(rec))                         # (K, D)
         cb = np.stack([np.exp(2j * np.pi * self.concepts[w]) for w in words])  # (V, D)
-        sims = (rec_z @ np.conj(cb).T).real                                  # (K, V)
+        sims = (rec_z @ self._cleanup_conj(cb).T).real                       # (K, V); local reciprocal rule when ON, conj when OFF
         return [words[int(j)] for j in np.argmax(sims, axis=1)]
 
     def _scan_first_match(self, **cue_roles):
