@@ -36,6 +36,22 @@ from sim.backend import to_host, get_backend, get_sparse_module
 from research.runners.brain_conversational_agent import BridgeParser
 from research.runners.rf_phasor_composer import RFPhasorComposer, _is_clause
 
+
+def _seq_imports():
+    """Lazy import of the validated spiking K-way sequencer fabric (shortcut #3). Deferred so an integrated_loop=OFF
+    composer (the byte-identical default + the numpy-CPU + test-oracle path) never imports the sequencer de-risk
+    runners. Reuse-by-import (NO sim/ edit): the K-way sequencer builder + run + decode (S0), the divnorm score bridge
+    + per-block decoded-line drive (S2/S5), all already-shipped. Returns the functions _ensure_sequencer/_seq_block use."""
+    from research.runners._phaseB_onebrain_sequencerK_derisk import (
+        build_sequencerK_bridge, decision_to_block)
+    from research.runners._phaseB_onebrain_sequencer_derisk import block_cleanup_scores
+    from research.runners._phaseC_S5_divnorm_derisk import build_divnorm_score_bridge
+    from research.runners._phaseB_onebrain_sequencerK_k32_margin_derisk import make_block_drives
+    from research.runners._phaseB_onebrain_sequencerK_divnorm_derisk import run_sequencerK_with_drive
+    return dict(build_sequencerK_bridge=build_sequencerK_bridge, decision_to_block=decision_to_block,
+                block_cleanup_scores=block_cleanup_scores, build_divnorm_score_bridge=build_divnorm_score_bridge,
+                make_block_drives=make_block_drives, run_sequencerK_with_drive=run_sequencerK_with_drive)
+
 ROLES3 = ["agent", "action", "patient"]
 
 
@@ -566,6 +582,30 @@ class OneBrainComposer:
             return self._read_all_blocks()
         return [self._read_block(i) for i in range(len(self.kb))]
 
+    def _ensure_sequencer(self, K):
+        """Lazily build (and cache) the spiking K-way sequencer control fabric + the divnorm score bridge for store
+        size K, and (re)compute the per-block decoded-line drives when the store grew or a write dirtied them. Reuse-
+        by-import (NO sim/ edit): `build_sequencerK_bridge` (the gated-disinhibition match cascade + BG first-match
+        priority WTA, S0) + `build_divnorm_score_bridge` (the on-bridge divisive normalization, S5) + `make_block_drives`
+        (the divnorm-normalized decoded-line drive per block, S2) -- all at the validated op-point (gain/sigma/input_gain
+        from __init__). The sequencer + score bridges depend only on (seed, V, K), so they are rebuilt only when K
+        changes; the drives depend on the stored content, so they are rebuilt when _seq_dirty (a write happened) or K
+        changed. The drives are derived from the composer's OWN on-bridge cleanup scores (`block_cleanup_scores`)."""
+        fns = _seq_imports()
+        if self._seq is None or self._seq_K != K:
+            sb, meta = fns["build_sequencerK_bridge"](seed=self.seed, V=self.V, K=K)
+            score_sb = fns["build_divnorm_score_bridge"](seed=self.seed, V=self.V, enable_divnorm=True,
+                                                         sigma=self.sequencer_sigma, gain=self.sequencer_gain)
+            self._seq = (sb, meta); self._seq_score = score_sb; self._seq_K = K
+            self._seq_dirty = True                                 # a new K -> the drives must be (re)built
+        if self._seq_dirty or self._seq_drives is None:
+            bscores = [fns["block_cleanup_scores"](self, b) for b in range(K)]   # the composer's own op result per block
+            drives, _lit = fns["make_block_drives"](self._seq_score, self.V, bscores,
+                                                    input_gain=self.sequencer_input_gain, retreat="divnorm",
+                                                    peak_mult=1.0)
+            self._seq_drives = drives
+            self._seq_dirty = False
+
     def _seq_block(self, agent, action):
         """The SELECTED block index for cue (agent, action) -- the spiking K-way sequencer decision (or None = abstain),
         replacing the host first-match loop. integrated_loop OFF -> the host read (byte-identical, the test oracle).
@@ -578,8 +618,18 @@ class OneBrainComposer:
                 if got.get("agent") == agent and got.get("action") == action:
                     return i
             return None
-        # the spiking path (lazy build; rebuild drives on a dirtied/grown store) -- wired in Task 2.
-        raise NotImplementedError("integrated_loop spiking path is wired in Task 2 (_ensure_sequencer + _seq_block)")
+        # the spiking path (lazy build; rebuild drives on a dirtied/grown store).
+        K = len(self.kb)
+        if K == 0:
+            return None
+        if agent not in self._word_index or action not in self._word_index:
+            return None                                           # an absent cue WORD -> no block -> abstain (the moat)
+        self._ensure_sequencer(K)
+        fns = _seq_imports()
+        sb, meta = self._seq
+        dec, _rates = fns["run_sequencerK_with_drive"](sb, meta, self._word_index[agent], self._word_index[action],
+                                                       self._seq_drives, match_thresh=self.sequencer_match_thresh)
+        return fns["decision_to_block"](dec, K)
 
     def _scan(self, cue, answer_role):
         for got in self._read_blocks():
