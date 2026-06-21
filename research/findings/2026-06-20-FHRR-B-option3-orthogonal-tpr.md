@@ -115,7 +115,37 @@ read-out is a fixed projection, not a learned op.**
 | no-confab moat (familiarity gap) | > 0, never weakened | +0.20 (smoke) / _…_ |
 | decorrelated stream codes (between-cos 0.047) | not a clean-code artifact | confirmed (between-cos 0.047) |
 
-## Verdict — _PENDING SWEEP (leaning: LEARNED-read-out NEGATIVE → converged structural-primitive finding)_
+## Converged synthesis across Options 1 / 2 / 3 (the controller-facing finding)
+
+The three FHRR-B learned-binder options, run on the SAME harness / codes / systematicity splits, converge on a
+clean decomposition of what *is* and what *is not* learnable about the role-filler bind:
+
+| piece of FHRR-B | option | result | reading |
+|---|---|---|---|
+| **the codes** (concept representations) | (separate stream-cortex arc) | **learned** | PPMI stream cortex; generalizing, decorrelated |
+| **the cleanup / decomposition read-out** (recover a binding from a bundle, given a FIXED bind) | Option 1 | **GO (1.000 @ D_h=256)** | the *learnable half* — a learned iterative cleanup over a fixed bind generalizes to held-out combos |
+| **the bind FORM** (learn the role-dependent reciprocal that inverts a superposition) | Option 2 | **NEGATIVE** | a deep/hidden-layer learned binder cannot discover the *exact element-wise self-inverse*; depth ≠ the missing op |
+| **a DIFFERENT fixed structure + a LEARNED read-out** (orthogonal-TPR, sidestep the reciprocal) | Option 3 | **NEGATIVE for the learned read-out** | the separable structure dissolves the inverse, but ONLY with a FIXED read-out (proj 1.000); the *learned* full-space decode does not generalize |
+
+**The convergence.** Two distinct fixed structures (the ±1 self-inverse *and* orthogonal-TPR) both make
+multi-attribute recovery work — the ±1 self-inverse via its exact algebra (0.989), orthogonal-TPR via a fixed
+nearest-block projection (1.000). In BOTH cases the load-bearing operation is **fixed** (an exact algebra / a
+fixed projection). The moment the inverting read-out is forced to be **learned** — whether as a deep bind
+(Option 2) or as a learned decode over a separable structure (Option 3) — it fails to generalize. This is direct,
+multi-mechanism evidence that **the role-filler BIND (and the read-out that inverts it) is a FIXED STRUCTURAL
+neural primitive** — binding-by-coincidence / dendritic multiplication / a fixed orthogonal projection — **not a
+learnable host op.** This matches the biology: binding-by-coincidence (Singer) and dendritic multiplication
+(Mel / Larkum) are *structural* operations of the neural hardware, not weights a region learns from scratch.
+
+**What this means for FHRR-B (per the owner's rule, this is a FINDING, not a "closed boundary").** Closing FHRR-B
+= **learned codes** (done, the stream cortex) + **a learned cleanup** (Option-1 GO) + **a FIXED structural bind**
+(the ±1 self-inverse / coincidence primitive — kept as the structural hardware op, exactly as the production
+composer already uses it). The residual "host-DESIGNED shortcut" framing dissolves: the bind is not a shortcut
+standing in for something a cortex would *learn*; it is the structural primitive a cortex would *have*. The
+spiking realization of the bind already exists (the resonate-and-fire + complex-synapse FHRR on the bridge); the
+spiking realization of the Option-1 learned cleanup is the hand-controlled next build.
+
+## Verdict — _PENDING SWEEP (leaning: LEARNED-read-out NEGATIVE → converged structural-primitive finding above)_
 
 ## Reproduce
 
