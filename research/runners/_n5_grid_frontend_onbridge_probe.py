@@ -151,6 +151,26 @@ _HOMEO = {"adapt_rate": 0.0, "target_rate": 0.0, "ema_alpha": 0.0}  # 0 = no ove
 _DETMV = {"read": False}
 
 
+# ── synaptic-scaling VOLLEY-NORMALIZATION lever (the #5b deferred-item-1 close, 2026-06-21) ────
+# Per the close doc `2026-06-22-shortcut5b-determinism-deltabar-close.md` (08d24a61): determinism ALONE
+# holds the SNc-burst δ only 2/3 — seed 44's residual is NOT a non-determinism artifact (its 255.8 Hz
+# critic rate is reproducible with the flag ON) but a GENUINELY STRONG learned place→value volley
+# (w_near grew to 2.475 on seed 44 vs 0.40/0.57 on seeds 42/43) OVER-DRIVING the weighted-plateau read →
+# the critic fires hard even at FAR (136.5 Hz) → the SNc GABA_B subtraction over-clamps at BOTH near and
+# far → gabab_gap=False. A FLAT value-train soft-bound CAP (0.8) fails — it STARVES the gentle seeds
+# (their critic needs the higher weight to fire the read at all → 0–1.4 Hz). The genuine fix is to
+# NORMALIZE the seed-variable learned-volley strength: Turrigiano 2008 synaptic scaling
+# (cfg.enable_synaptic_scaling, sim/bridge.py:7402) multiplicatively scales the critic's afferent weights
+# toward a TARGET critic firing rate. Because it scales ALL afferents to a postsynaptic neuron by ONE
+# factor, the near/far RATIO (the R1 selectivity, set by STDP) is PRESERVED while the ABSOLUTE volley
+# level is driven to one seed-STABLE operating point → the strong seed (44) is scaled DOWN to the gentle
+# seeds' regime without starving them (unlike the flat cap). Point-neuron, biology-grounded, on the EXISTING
+# sim/ machinery (NO sim/ edit). 0 = off (byte-identical). The target_rate/scaling_rate set the operating
+# point + convergence speed; the scaling is held ON through value-train + the reads so the volley settles
+# to target and stays there (scale_factor→1 at target → no read-time drift).
+_SYNSCALE = {"enable": False, "target_rate": 0.0, "scaling_rate": 0.0, "ema_alpha": 0.0}
+
+
 # ── graded-plateau install (VERBATIM from the CLOSE A probe) ──────────────────────────────────
 _CLOSEA = {
     "enable": False, "center": 1.5, "slope": 1.0, "strength": 80.0,
@@ -182,6 +202,20 @@ def _patched_init(self, *a, **kw):
     # 3/3. NO sim/ edit (the deterministic branch already ships at all five critic-path matvec sites).
     if _DETMV["read"]:
         self.core_config.deterministic_transpose_matvec = True
+    # the synaptic-scaling VOLLEY-NORMALIZATION lever (#5b deferred-item-1): enable Turrigiano synaptic
+    # scaling so the critic's afferent weights are driven toward a seed-STABLE target firing rate. The
+    # strong-volley seed (44, w_near 2.475) is scaled DOWN to the gentle-seed regime; the gentle seeds
+    # (42/43) are NOT starved (multiplicative per-postsynaptic scaling preserves the near/far RATIO).
+    # Held ON through value-train + the reads (the runner does NOT toggle this flag, so setting it here
+    # keeps it live for the whole pipeline). NO sim/ edit — the existing cfg.enable_synaptic_scaling path.
+    if _SYNSCALE["enable"]:
+        self.core_config.enable_synaptic_scaling = True
+        if _SYNSCALE["scaling_rate"] and _SYNSCALE["scaling_rate"] > 0:
+            self.core_config.synaptic_scaling_rate = float(_SYNSCALE["scaling_rate"])
+        if _SYNSCALE["target_rate"] and _SYNSCALE["target_rate"] > 0:
+            self.core_config.homeostasis_target_rate = float(_SYNSCALE["target_rate"])
+        if _SYNSCALE["ema_alpha"] and _SYNSCALE["ema_alpha"] > 0:
+            self.core_config.homeostasis_ema_alpha = float(_SYNSCALE["ema_alpha"])
     # the δ-readout STABILIZATION lever: speed the critic-homeostasis threshold adaptation (+ optional
     # target rate) so the critic converges to the biological target on every place-code draw.
     if _HOMEO["adapt_rate"] and _HOMEO["adapt_rate"] > 0:
@@ -742,6 +776,24 @@ def main():
                          "transpose-SpMV atomic-scatter order -> seed-stable critic rate -> the SNc-burst δ "
                          "holds 3/3 under one config. NO sim/ edit (the deterministic branch ships); "
                          "default off = the runner's STEP-1-only determinism (byte-identical).")
+    ap.add_argument("--synaptic-scaling", action="store_true",
+                    help="the #5b VOLLEY-NORMALIZATION close (deferred-item-1, 2026-06-21): enable the "
+                         "EXISTING Turrigiano synaptic scaling (cfg.enable_synaptic_scaling) so the critic's "
+                         "afferent weights are driven toward a seed-STABLE target rate. Normalizes the "
+                         "seed-variable learned volley (strong seed 44 w_near 2.475 scaled DOWN to the gentle "
+                         "42/43 regime) WITHOUT starving the gentle seeds (multiplicative per-post scaling "
+                         "preserves the near/far ratio = R1). Hold with --deterministic-read. NO sim/ edit.")
+    ap.add_argument("--synscale-target-rate", type=float, default=0.0,
+                    help="synaptic-scaling target firing rate (fraction of steps; runner default 0.02=20Hz). "
+                         "Sets the seed-stable critic operating point. 0=no override (uses the cfg default).")
+    ap.add_argument("--synscale-rate", type=float, default=0.0,
+                    help="synaptic-scaling rate (cfg.synaptic_scaling_rate, default 0.001/step, clipped to "
+                         "0.95-1.05 per step). Higher = faster convergence to the target within the "
+                         "value-train window. 0=no override.")
+    ap.add_argument("--synscale-ema-alpha", type=float, default=0.0,
+                    help="speed the synaptic-scaling rate-estimate EMA (cfg.homeostasis_ema_alpha, default "
+                         "0.0002 tau~5000 steps is too slow to register the critic rate in the short "
+                         "value-train window); 0=no override.")
     ap.add_argument("--out", type=str, default=None)
     args = ap.parse_args()
 
@@ -752,6 +804,10 @@ def main():
     _HOMEO["target_rate"] = float(args.critic_homeo_target_rate)
     _HOMEO["ema_alpha"] = float(args.critic_homeo_ema_alpha)
     _DETMV["read"] = bool(args.deterministic_read)
+    _SYNSCALE["enable"] = bool(args.synaptic_scaling)
+    _SYNSCALE["target_rate"] = float(args.synscale_target_rate)
+    _SYNSCALE["scaling_rate"] = float(args.synscale_rate)
+    _SYNSCALE["ema_alpha"] = float(args.synscale_ema_alpha)
 
     # install the monkeypatches (the grid render + the graded plateau init/gate hooks).
     g._n9_place_sensor_act = _grid_place_sensor_act
