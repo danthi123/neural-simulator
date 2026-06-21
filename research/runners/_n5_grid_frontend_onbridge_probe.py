@@ -168,7 +168,32 @@ _DETMV = {"read": False}
 # sim/ machinery (NO sim/ edit). 0 = off (byte-identical). The target_rate/scaling_rate set the operating
 # point + convergence speed; the scaling is held ON through value-train + the reads so the volley settles
 # to target and stays there (scale_factor→1 at target → no read-time drift).
-_SYNSCALE = {"enable": False, "target_rate": 0.0, "scaling_rate": 0.0, "ema_alpha": 0.0}
+#
+# MODE "continuous" (the stock cfg flag): enable cfg.enable_synaptic_scaling for the whole pipeline. This
+# measures the VALUE-TRAIN firing (inflated by the critic_teacher_pa=300 teacher) → over-suppresses the
+# READ regime (seed-44 t03: w_near 2.475 → 0.0, critic starves). The teacher-driven value-train regime is
+# the WRONG rate to normalize against.
+# MODE "freeze_seam" (the corrected form): a brief Turrigiano synaptic-scaling CALIBRATION applied at the
+# value-train→read FREEZE seam (the `value_input` 1.0→0.0 transition in _patched_set_gate). It measures the
+# READ-regime critic@near rate (WEIGHTED-plateau, no teacher — the SAME regime stage-B reads) and
+# multiplicatively scales the place→value weights toward a target read rate, iterating to convergence.
+# Uniform per-postsynaptic scaling → the near/far RATIO (R1 selectivity) is PRESERVED; the ABSOLUTE volley
+# is normalized to one seed-STABLE read operating point. Targets the regime that actually matters (the
+# read), so it lands the strong seed in the gentle-seed band WITHOUT the teacher-regime over-suppression.
+# NO sim/ edit — a multiplicative scale on cp_connections.data (the same op cfg.enable_synaptic_scaling does
+# per-step, just measured in the read regime + applied once at the freeze).
+_SYNSCALE = {"enable": False, "mode": "continuous", "target_rate": 0.0, "scaling_rate": 0.0,
+             "ema_alpha": 0.0,
+             # freeze_seam params:
+             "fs_target_hz": 40.0,    # target READ-regime critic@near rate (the gentle-seed band 17–64 Hz)
+             "fs_iters": 12,          # calibration iterations (measure→scale→repeat)
+             "fs_gain": 0.5,          # fractional step toward target per iter (log-domain); <1 = damped
+             "fs_tol": 0.15,          # relative tolerance band around fs_target_hz (stop when within)
+             "fs_down_only": False,   # homeostatic-CEILING form: only scale DOWN over-firing seeds (never
+                                      # UP) → passing gentle seeds (below target) are left UNTOUCHED; only
+                                      # the strong seed (over the ceiling) is normalized down.
+             "fs_applied": False,     # one-shot guard (only at the first 1.0→0.0 transition)
+             "_log": []}
 
 
 # ── graded-plateau install (VERBATIM from the CLOSE A probe) ──────────────────────────────────
@@ -208,7 +233,10 @@ def _patched_init(self, *a, **kw):
     # (42/43) are NOT starved (multiplicative per-postsynaptic scaling preserves the near/far RATIO).
     # Held ON through value-train + the reads (the runner does NOT toggle this flag, so setting it here
     # keeps it live for the whole pipeline). NO sim/ edit — the existing cfg.enable_synaptic_scaling path.
-    if _SYNSCALE["enable"]:
+    # MODE "continuous" enables the stock per-step cfg flag (measures the teacher-driven value-train rate →
+    # over-suppresses). MODE "freeze_seam" does NOT enable the per-step flag; it applies the read-regime
+    # calibration ONCE at the value-train→read freeze in _patched_set_gate (the corrected form).
+    if _SYNSCALE["enable"] and _SYNSCALE["mode"] == "continuous":
         self.core_config.enable_synaptic_scaling = True
         if _SYNSCALE["scaling_rate"] and _SYNSCALE["scaling_rate"] > 0:
             self.core_config.synaptic_scaling_rate = float(_SYNSCALE["scaling_rate"])
@@ -231,6 +259,135 @@ def _patched_init(self, *a, **kw):
     return out
 
 
+def _freeze_seam_normalize(br):
+    """Turrigiano synaptic-scaling CALIBRATION at the value-train→read FREEZE seam (#5b deferred-item-1).
+
+    Measures the READ-regime critic@near rate (WEIGHTED-plateau, no teacher — the SAME regime stage-B reads)
+    and multiplicatively scales the place→value (place→striosome_value) weights toward fs_target_hz,
+    iterating measure→scale→repeat. Uniform per-postsynaptic scaling preserves the near/far RATIO (R1
+    selectivity) while normalizing the ABSOLUTE volley to a seed-STABLE read operating point. The strong
+    seed (44, critic ~256 Hz) is scaled DOWN into the gentle-seed band; the gentle seeds (42/43, already in
+    band) are left near-unchanged (scale ≈ 1). NO sim/ edit (a multiplicative scale on cp_connections.data,
+    the same op cfg.enable_synaptic_scaling does per-step, applied once in the read regime).
+    """
+    from sim.backend import get_backend
+    xp, _ = get_backend()
+    rm = getattr(br, "region_manager", None)
+    if rm is None:
+        return
+    d = rm.region_indices_dict()
+    if "place" not in d or "striosome_value" not in d or "place_sensors" not in d:
+        return
+    ps_idx = xp.asarray(np.asarray(d["place_sensors"], dtype=np.int64))
+    c_idx = xp.asarray(np.asarray(d["striosome_value"], dtype=np.int64))
+    place_post = np.asarray(d["striosome_value"], dtype=np.int64)
+    place_pre = np.asarray(d["place"], dtype=np.int64)
+    n_crit = int(c_idx.size) if hasattr(c_idx, "size") else len(c_idx)
+
+    # the near location: the first scheduled goal (multi-goal) — derive via g._n9 helpers off the bridge's
+    # captured grid_size. The grid code is FROZEN; we read at near only (a single read operating point).
+    near = _SYNSCALE.get("_near") or [6.0, 6.0]
+    max_int = float(_SYNSCALE.get("_max_int", 450.0))
+    if _GRID["enable"]:
+        if _GRID["_code"] is None:
+            _build_grid_code()
+        def _act():
+            return (_GRID["_code"](float(near[0]), float(near[1])) * max_int
+                    * float(_GRID["drive_scale"])).astype(np.float32)
+    else:
+        grid_size = int(_SYNSCALE.get("_grid_size", 32))
+        landmarks = g._n9_place_landmarks(grid_size)
+        dist_max = float(grid_size) * 1.42
+        def _act():
+            return _orig_place_sensor_act(
+                near[0], near[1], landmarks, int(_SYNSCALE.get("_n_bearing", 12)),
+                int(_SYNSCALE.get("_n_dist", 8)), max_int, 0.03, 4.0, dist_max, 4.0)
+    act = xp.asarray(_act(), dtype=xp.float32)
+
+    # the place→value synapse mask on cp_connections (rows=pre place, cols=post critic), for the scale.
+    coo = br.cp_connections.tocoo()
+    rows = coo.row.get() if hasattr(coo.row, "get") else np.asarray(coo.row)
+    cols = coo.col.get() if hasattr(coo.col, "get") else np.asarray(coo.col)
+    pv_mask = np.isin(rows, place_pre) & np.isin(cols, place_post)
+    if not pv_mask.any():
+        pv_mask = np.isin(rows, place_post) & np.isin(cols, place_pre)
+    if not pv_mask.any():
+        return
+    pv_mask_xp = xp.asarray(pv_mask)
+
+    # WEIGHTED-plateau read regime (matches stage-B's _critic_rate); restore after.
+    cfg = br.core_config
+    _saved_wd = bool(getattr(cfg, "coincidence_weighted_drive", False))
+    _saved_kth = float(getattr(cfg, "coincidence_k_threshold", 4.0))
+    _saved_lr = cfg.reward_learning_rate
+    cfg.coincidence_weighted_drive = True
+    cfg.coincidence_k_threshold = float(_SYNSCALE.get("_coin_thr", _saved_kth))
+    cfg.reward_learning_rate = 0.0
+
+    def _reset_read():
+        for nm in ("cp_conductance_g_coincidence", "cp_conductance_g_coincidence_rise",
+                   "cp_conductance_g_graded_plateau", "cp_conductance_g_graded_plateau_rise",
+                   "cp_conductance_g_gabab"):
+            arr = getattr(br, nm, None)
+            if arr is not None:
+                arr[:] = xp.float32(0.0)
+        if (getattr(br, "cp_membrane_potential_v", None) is not None
+                and getattr(br, "cp_izh_vr", None) is not None):
+            br.cp_membrane_potential_v[c_idx] = br.cp_izh_vr[c_idx]
+            if getattr(br, "cp_recovery_variable_u", None) is not None:
+                br.cp_recovery_variable_u[c_idx] = xp.float32(0.0)
+        br.cp_external_input_current[:] = xp.float32(0.0)
+
+    def _crit_rate(*, n_meas=120, warmup=30):
+        _reset_read()
+        br.cp_external_input_current[:] = xp.float32(0.0)
+        br.cp_external_input_current[ps_idx] = act
+        spk = 0; m = 0
+        for t in range(int(n_meas)):
+            br._run_one_simulation_step(); br.runtime_state.current_time_step += 1
+            if t >= warmup:
+                spk += int(br.cp_firing_states[c_idx].sum()); m += 1
+        br.cp_external_input_current[:] = xp.float32(0.0)
+        return spk / max(n_crit, 1) / max(m * 1e-3, 1e-9)
+
+    target = float(_SYNSCALE["fs_target_hz"])
+    gain = float(_SYNSCALE["fs_gain"])
+    tol = float(_SYNSCALE["fs_tol"])
+    down_only = bool(_SYNSCALE.get("fs_down_only", False))
+    log = []
+    r0 = _crit_rate()
+    log.append({"iter": -1, "rate_hz": float(r0), "scale": 1.0})
+    for it in range(int(_SYNSCALE["fs_iters"])):
+        r = _crit_rate()
+        if down_only and r <= target * (1.0 + tol):
+            # homeostatic-CEILING: at/below the ceiling already → leave this (gentle) seed UNTOUCHED.
+            log.append({"iter": it, "rate_hz": float(r), "scale": 1.0, "below_ceiling": True})
+            break
+        if r <= 1e-6:
+            # critic silent — scale UP (toward target) so we don't get stuck at the floor.
+            scale = 1.0 + gain
+        elif abs(r - target) <= tol * target:
+            log.append({"iter": it, "rate_hz": float(r), "scale": 1.0, "converged": True})
+            break
+        else:
+            # log-domain damped step toward target: scale = (target/r)^gain, clipped per-iter for stability.
+            ratio = max(target, 1e-6) / max(r, 1e-6)
+            scale = float(np.clip(ratio ** gain, 0.5, 2.0))
+        # apply the uniform multiplicative scale to the place→value synapses (preserves near/far ratio).
+        br.cp_connections.data[pv_mask_xp] = br.cp_connections.data[pv_mask_xp] * xp.float32(scale)
+        log.append({"iter": it, "rate_hz": float(r), "scale": float(scale)})
+    r_final = _crit_rate()
+    log.append({"iter": "final", "rate_hz": float(r_final), "scale": 1.0})
+
+    cfg.coincidence_weighted_drive = _saved_wd
+    cfg.coincidence_k_threshold = _saved_kth
+    cfg.reward_learning_rate = _saved_lr
+    _reset_read()
+    _SYNSCALE["_log"] = log
+    print(f"[freeze-seam synaptic-scaling] read-regime critic@near {r0:.1f}Hz -> {r_final:.1f}Hz "
+          f"(target {target:.0f}Hz, {len(log)-2} scale steps)", flush=True)
+
+
 def _patched_set_gate(self, name, value):
     if _CLOSEA["enable"] and _CLOSEA["readout_only"] and name == "value_input":
         if float(value) >= 1.0:
@@ -239,6 +396,16 @@ def _patched_set_gate(self, name, value):
             self.core_config.coincidence_plateau_strength = 0.0
             self.core_config.graded_plateau_strength = float(_CLOSEA["strength"])
             _CLOSEA["_armed"] = False
+            # the freeze-seam volley-normalization (#5b deferred-item-1): the value_input 1.0→0.0
+            # transition IS the value-train→read freeze. Run the read-regime synaptic-scaling
+            # calibration on the place→value weights here (one-shot), BEFORE the stage-B reads.
+            if (_SYNSCALE["enable"] and _SYNSCALE["mode"] == "freeze_seam"
+                    and not _SYNSCALE["fs_applied"]):
+                _SYNSCALE["fs_applied"] = True
+                try:
+                    _freeze_seam_normalize(self)
+                except Exception as e:
+                    print(f"[freeze-seam] normalize failed: {e!r}", flush=True)
     return _orig_set_gate(self, name, value)
 
 
@@ -707,6 +874,20 @@ def _run_delta_arm(arm, seed, *, value_train_trials, single_goal, readout_only,
     else:
         n_grid = None
 
+    # freeze-seam synaptic-scaling setup: tell the normalize fn the READ operating point (near=[6,6], the
+    # multi-goal first scheduled goal; the weighted-plateau k = coincidence_threshold=12) + reset the
+    # one-shot guard so it runs at THIS arm's value-train→read freeze.
+    if _SYNSCALE["enable"] and _SYNSCALE["mode"] == "freeze_seam":
+        _SYNSCALE["fs_applied"] = False
+        _SYNSCALE["_log"] = []
+        _SYNSCALE["_near"] = [6.0, 6.0]
+        _SYNSCALE["_max_int"] = float(captured.get("place_sensor_max_intensity", 450.0))
+        _SYNSCALE["_grid_size"] = int(captured.get("grid_size", 32))
+        _SYNSCALE["_coin_thr"] = float(captured.get("coincidence_threshold", 12))
+        if grid_on:
+            _SYNSCALE["_n_bearing"] = int(n_bearing)
+            _SYNSCALE["_n_dist"] = int(n_dist)
+
     print("=" * 72, flush=True)
     print(f"[grid-onbridge DELTA] seed={seed} arm={arm} grid_on={grid_on} scramble={scramble} "
           f"(graded center={center} slope={slope} strength={_CLOSEA['strength']} "
@@ -719,8 +900,11 @@ def _run_delta_arm(arm, seed, *, value_train_trials, single_goal, readout_only,
     # r-V gap in the settled count-plateau regime (+ optional move-(b) settling window).
     graded_delta = _read_graded_v_delta(captured, result, settle_steps=settle_steps)
     sb = (result or {}).get("stage_b_smoke") or {}
+    synscale_log = (list(_SYNSCALE.get("_log") or [])
+                    if (_SYNSCALE["enable"] and _SYNSCALE["mode"] == "freeze_seam") else None)
     return {"arm": arm, "grid_on": grid_on, "scramble": scramble, "n_grid": n_grid,
             "graded_v": grv, "graded_delta": graded_delta, "stage_b": sb,
+            "synscale_freeze_seam_log": synscale_log,
             "goal_free_asserted": _GRID.get("_asserted_goal_free", False) if grid_on else None}
 
 
@@ -777,15 +961,39 @@ def main():
                          "holds 3/3 under one config. NO sim/ edit (the deterministic branch ships); "
                          "default off = the runner's STEP-1-only determinism (byte-identical).")
     ap.add_argument("--synaptic-scaling", action="store_true",
-                    help="the #5b VOLLEY-NORMALIZATION close (deferred-item-1, 2026-06-21): enable the "
-                         "EXISTING Turrigiano synaptic scaling (cfg.enable_synaptic_scaling) so the critic's "
-                         "afferent weights are driven toward a seed-STABLE target rate. Normalizes the "
-                         "seed-variable learned volley (strong seed 44 w_near 2.475 scaled DOWN to the gentle "
-                         "42/43 regime) WITHOUT starving the gentle seeds (multiplicative per-post scaling "
-                         "preserves the near/far ratio = R1). Hold with --deterministic-read. NO sim/ edit.")
+                    help="the #5b VOLLEY-NORMALIZATION close (deferred-item-1, 2026-06-21): Turrigiano "
+                         "synaptic scaling on the place->value path so the critic's afferent weights are "
+                         "driven toward a seed-STABLE target rate. Normalizes the seed-variable learned "
+                         "volley (strong seed 44 w_near 2.475 scaled DOWN to the gentle 42/43 regime) "
+                         "WITHOUT starving the gentle seeds (multiplicative per-post scaling preserves the "
+                         "near/far ratio = R1). Hold with --deterministic-read. NO sim/ edit. See "
+                         "--synscale-mode.")
+    ap.add_argument("--synscale-mode", type=str, default="freeze_seam",
+                    choices=["continuous", "freeze_seam"],
+                    help="continuous = the stock per-step cfg.enable_synaptic_scaling (measures the "
+                         "teacher-driven VALUE-TRAIN rate -> over-suppresses). freeze_seam (default) = a "
+                         "read-regime calibration applied ONCE at the value-train->read freeze (measures "
+                         "the WEIGHTED-plateau critic@near, the regime stage-B reads -> normalizes "
+                         "correctly).")
+    ap.add_argument("--synscale-fs-target-hz", type=float, default=40.0,
+                    help="freeze_seam: target READ-regime critic@near rate (Hz; the gentle-seed band "
+                         "17-64Hz). Default 40.")
+    ap.add_argument("--synscale-fs-iters", type=int, default=12,
+                    help="freeze_seam: calibration iterations (measure->scale->repeat). Default 12.")
+    ap.add_argument("--synscale-fs-gain", type=float, default=0.5,
+                    help="freeze_seam: log-domain step fraction toward target per iter (<1 = damped). "
+                         "Default 0.5.")
+    ap.add_argument("--synscale-fs-tol", type=float, default=0.15,
+                    help="freeze_seam: relative tolerance band around the target (stop when within). "
+                         "Default 0.15.")
+    ap.add_argument("--synscale-fs-down-only", action="store_true",
+                    help="freeze_seam: homeostatic-CEILING form — only scale DOWN over-firing seeds (never "
+                         "UP). Passing gentle seeds (below the target ceiling) are left UNTOUCHED; only the "
+                         "strong over-firing seed is normalized down. The cleanest form (perturbs no "
+                         "passing seed).")
     ap.add_argument("--synscale-target-rate", type=float, default=0.0,
-                    help="synaptic-scaling target firing rate (fraction of steps; runner default 0.02=20Hz). "
-                         "Sets the seed-stable critic operating point. 0=no override (uses the cfg default).")
+                    help="continuous: synaptic-scaling target firing rate (fraction of steps; runner "
+                         "default 0.02=20Hz). 0=no override (uses the cfg default).")
     ap.add_argument("--synscale-rate", type=float, default=0.0,
                     help="synaptic-scaling rate (cfg.synaptic_scaling_rate, default 0.001/step, clipped to "
                          "0.95-1.05 per step). Higher = faster convergence to the target within the "
@@ -805,9 +1013,15 @@ def main():
     _HOMEO["ema_alpha"] = float(args.critic_homeo_ema_alpha)
     _DETMV["read"] = bool(args.deterministic_read)
     _SYNSCALE["enable"] = bool(args.synaptic_scaling)
+    _SYNSCALE["mode"] = str(args.synscale_mode)
     _SYNSCALE["target_rate"] = float(args.synscale_target_rate)
     _SYNSCALE["scaling_rate"] = float(args.synscale_rate)
     _SYNSCALE["ema_alpha"] = float(args.synscale_ema_alpha)
+    _SYNSCALE["fs_target_hz"] = float(args.synscale_fs_target_hz)
+    _SYNSCALE["fs_iters"] = int(args.synscale_fs_iters)
+    _SYNSCALE["fs_gain"] = float(args.synscale_fs_gain)
+    _SYNSCALE["fs_tol"] = float(args.synscale_fs_tol)
+    _SYNSCALE["fs_down_only"] = bool(args.synscale_fs_down_only)
 
     # install the monkeypatches (the grid render + the graded plateau init/gate hooks).
     g._n9_place_sensor_act = _grid_place_sensor_act

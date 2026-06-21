@@ -1,0 +1,131 @@
+{
+  "seed": 44,
+  "n_modules": 6,
+  "n_per_module": 33,
+  "arms": {
+    "grid": {
+      "arm": "grid",
+      "grid_on": true,
+      "scramble": false,
+      "n_grid": 198,
+      "graded_v": {
+        "v_near": 521.5433400767108,
+        "v_far": 77.67811641276533,
+        "v_near_over_far": 6.714160488976562
+      },
+      "graded_delta": {
+        "settle_steps": 0,
+        "delta_vnf": 6.5968633609053695,
+        "vnf_gap": true,
+        "snc_pred_near_hz": 0.0,
+        "snc_unpred_far_hz": 0.0,
+        "delta_snc_graded": 0.0,
+        "gabab_gap_graded": false,
+        "gabab_near": 0.0,
+        "gabab_far": 0.0,
+        "delta_gabab": 0.0,
+        "gabab_cond_gap": false
+      },
+      "stage_b": {
+        "near": [
+          6,
+          6
+        ],
+        "far": [
+          1.0,
+          1.0
+        ],
+        "near_set_size": 59,
+        "far_set_size": 2,
+        "w_near": 0.9884864091873169,
+        "w_far": 0.5086431503295898,
+        "w_near_over_far": 1.9433789849461236,
+        "learns_v": true,
+        "crit_near_hz": 273.88888888888886,
+        "crit_far_hz": 14.027777777777779,
+        "crit_grade_ratio": 19.52475247524752,
+        "critic_fire": true,
+        "critic_grade": true,
+        "critic_fires_and_grades_at_nav": true,
+        "snc_predicted_near_hz": 0.0,
+        "snc_unpredicted_far_hz": 0.0,
+        "snc_gap_ratio": 0.0,
+        "gabab_gap": false,
+        "lesion_n_cut": 403,
+        "snc_pred_lesion_hz": 50.0,
+        "snc_unpred_lesion_hz": 50.0,
+        "lesion_gap_ratio": 1.0,
+        "lesion_collapses": true
+      },
+      "synscale_freeze_seam_log": [
+        {
+          "iter": -1,
+          "rate_hz": 401.5277777777778,
+          "scale": 1.0
+        },
+        {
+          "iter": 0,
+          "rate_hz": 188.05555555555557,
+          "scale": 0.5
+        },
+        {
+          "iter": 1,
+          "rate_hz": 88.61111111111111,
+          "scale": 0.6718710131470251
+        },
+        {
+          "iter": 2,
+          "rate_hz": 28.194444444444446,
+          "scale": 1.1911000007651162
+        },
+        {
+          "iter": 3,
+          "rate_hz": 61.111111111111114,
+          "scale": 0.8090398349558905
+        },
+        {
+          "iter": 4,
+          "rate_hz": 33.888888888888886,
+          "scale": 1.0864289525102224
+        },
+        {
+          "iter": 5,
+          "rate_hz": 23.47222222222222,
+          "scale": 1.3054279037290109
+        },
+        {
+          "iter": 6,
+          "rate_hz": 73.8888888888889,
+          "scale": 0.735767207381959
+        },
+        {
+          "iter": 7,
+          "rate_hz": 22.777777777777775,
+          "scale": 1.3251783128981587
+        },
+        {
+          "iter": 8,
+          "rate_hz": 75.55555555555556,
+          "scale": 0.7276068751089989
+        },
+        {
+          "iter": 9,
+          "rate_hz": 27.083333333333336,
+          "scale": 1.2152872405003998
+        },
+        {
+          "iter": 10,
+          "rate_hz": 36.25,
+          "scale": 1.0,
+          "converged": true
+        },
+        {
+          "iter": "final",
+          "rate_hz": 49.861111111111114,
+          "scale": 1.0
+        }
+      ],
+      "goal_free_asserted": true
+    }
+  }
+}
