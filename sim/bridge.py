@@ -432,6 +432,10 @@ class SimulationBridge:
         # {gate_name, control_idx (gpu), threshold, alpha (EMA), open_value, ema, last_value}.
         # Empty by default -> zero overhead in the step.
         self._gate_couplings = []
+        # Cached flat segment-sum structure for the vectorized _apply_gate_couplings path (perf, opt-in via
+        # cfg.enable_vectorized_gate_couplings). Rebuilt lazily whenever the coupling COUNT changes (the only
+        # mutation: couple_gate_to_pool appends). None until first vectorized step.
+        self._gate_coupling_flat = None
 
         # Cluster B.1 (2026-04-28): D1/D2 plasticity asymmetry.
         # Per-synapse sign multiplier on the reward-modulated weight update.
@@ -3215,19 +3219,60 @@ class SimulationBridge:
             "threshold": float(threshold), "alpha": float(alpha), "open_value": float(open_value),
             "ema": 0.0, "last_value": None,
         })
+        self._gate_coupling_flat = None   # invalidate the vectorized segment-sum cache (coupling count changed)
 
     def _apply_gate_couplings(self) -> None:
         """Per-step hook: update activity-driven transmission gates from control-pool firing. No-op when none
-        are registered (zero overhead). Called after cp_firing_states is finalized."""
+        are registered (zero overhead). Called after cp_firing_states is finalized.
+
+        Two paths, byte-identical (see cfg.enable_vectorized_gate_couplings):
+          * scalar (default): a Python loop, one `cp_firing_states[control_idx].mean()` per coupling.
+          * vectorized (opt-in): batch ALL control-pool means into ONE segment-sum. Each control region is a
+            contiguous DISJOINT block and the firing states are boolean, so a pool's mean is an EXACT integer
+            sum / integer count -- a segment-sum (cp.add.reduceat over the cached flat index concat, / counts)
+            gives the identical per-coupling means with no float reassociation. The EMA + gate-write loop then
+            runs in the SAME coupling order. Used for the #3 K-way sequencer, where the coupling count is
+            ~K*V*2 and the scalar loop dominates host time."""
         if not self._gate_couplings:
             return
-        for c in self._gate_couplings:
-            rate = float(self.cp_firing_states[c["control_idx"]].mean())   # firing fraction of the control pool
+        if getattr(self.core_config, "enable_vectorized_gate_couplings", False):
+            rates = self._gate_coupling_rates_vectorized()
+        else:
+            rates = None
+        for i, c in enumerate(self._gate_couplings):
+            if rates is None:
+                rate = float(self.cp_firing_states[c["control_idx"]].mean())   # firing fraction of the control pool
+            else:
+                rate = rates[i]
             c["ema"] = c["alpha"] * rate + (1.0 - c["alpha"]) * c["ema"]
             value = c["open_value"] if c["ema"] >= c["threshold"] else 0.0
             if value != c["last_value"]:                                  # only write the gate when it changes
                 self.set_transmission_gate(c["gate_name"], value)
                 c["last_value"] = value
+
+    def _gate_coupling_rates_vectorized(self) -> list:
+        """Return [float(mean firing fraction) per coupling], computed as ONE segment-sum over a cached flat
+        concat of the control indices. Byte-identical to the per-coupling `cp_firing_states[control_idx].mean()`
+        for boolean firing states (exact integer sum / integer count). The flat structure (concat indices,
+        reduceat segment starts, per-segment counts) is rebuilt only when the coupling count changes."""
+        flat = self._gate_coupling_flat
+        if flat is None or flat["n"] != len(self._gate_couplings):
+            concat = cp.concatenate([c["control_idx"] for c in self._gate_couplings])
+            sizes = np.asarray([int(c["control_idx"].shape[0]) for c in self._gate_couplings], dtype=np.int64)
+            starts = np.zeros(len(sizes), dtype=np.int64)
+            if len(sizes) > 1:
+                starts[1:] = np.cumsum(sizes)[:-1]
+            flat = {
+                "n": len(self._gate_couplings),
+                "concat": concat,                              # (sum sizes,) int64 on the active backend
+                "starts": cp.asarray(starts),                  # reduceat segment starts
+                "counts": np.asarray(sizes, dtype=np.float64), # per-segment element count (host; divisor)
+            }
+            self._gate_coupling_flat = flat
+        gathered = self.cp_firing_states[flat["concat"]]       # bool slice in coupling order (disjoint blocks)
+        seg_sum = cp.add.reduceat(gathered.astype(cp.float64), flat["starts"])   # exact integer sums per pool
+        means = _backend_to_host(seg_sum) / flat["counts"]     # sum_i / count_i == per-slice .mean() (boolean)
+        return means.tolist()
 
     # ──────────────────────────────────────────────────────────────────
     # Engram-tagging API (P2 / roadmap T1.C / catalog D.14)

@@ -89,6 +89,11 @@ def build_sequencerK_bridge(seed, V, K, n_word=20, n_pool=30,
     for flag in ("enable_short_term_plasticity", "enable_hebbian_learning", "enable_homeostasis",
                  "enable_structural_plasticity", "enable_reward_modulation", "enable_stdp"):
         setattr(cfg, flag, False)
+    # PERF (byte-identical): batch the ~K*V*2 activity-driven gate-coupling control-pool means into ONE segment-sum
+    # per step instead of a Python .mean()-per-coupling loop. The control pools are contiguous DISJOINT boolean
+    # blocks so the segment-sum reproduces each per-coupling mean exactly (integer sum / integer count). Default-OFF
+    # globally; opted-in here for the K-way sequencer where the scalar loop dominates host CPU time (~52% @ K=8).
+    cfg.enable_vectorized_gate_couplings = True
 
     regions = []
     # cue word-lines (shared across blocks) + per-block decoded word-lines

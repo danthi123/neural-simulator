@@ -326,6 +326,27 @@ class CoreSimConfig:
     # Default False so existing runs are bit-identical; opt-in via this flag.
     fast_spike_reset: bool = False
 
+    # Performance: VECTORIZED activity-driven transmission-gate couplings
+    # (couple_gate_to_pool / _apply_gate_couplings). The per-step hook reads
+    # each registered coupling's control-pool firing fraction
+    # (cp_firing_states[control_idx].mean()) in a Python for-loop. For the
+    # K-way on-substrate sequencer (#3) the coupling count is ~K*V*2 (K=32,
+    # V=72 -> ~4640 couplings), so the loop does ~4640 separate .mean()
+    # reductions per step and dominates the host CPU time (profiled ~52% of a
+    # K=8 query). When this flag is True, _apply_gate_couplings batches all
+    # control-pool means into ONE segment-sum (cp.add.reduceat over a cached
+    # flat concat of the control indices, divided by per-segment counts).
+    #
+    # BYTE-IDENTICAL: each control region is a contiguous DISJOINT index block
+    # and the firing states are boolean, so a control pool's mean is an EXACT
+    # integer sum / integer count -- identical whether computed per-slice or by
+    # segment-sum (no float reassociation). The EMA update + gate-write loop
+    # then runs in the SAME coupling order. Default False = the scalar loop
+    # (the reference path stays available); the flag is opt-in (the #3 K-way
+    # sequencer runner sets it). Guarded: with no couplings the hook is a no-op
+    # under either path. See tests/test_gate_coupling_vectorized.py.
+    enable_vectorized_gate_couplings: bool = False
+
     # Performance: FP16 mixed-precision for synaptic state (eligibility
     # traces + connection weights). Voltages and recovery vars stay FP32
     # because spiking integration needs higher precision near threshold.
