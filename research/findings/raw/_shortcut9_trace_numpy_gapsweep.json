@@ -1,0 +1,35 @@
+{
+  "mode": "trace_conditioning_numpy_gap_sweep",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "sweep": {
+    "0": {
+      "g2_count": 0,
+      "g3_count": 3,
+      "mean_trace_lesion_ratio": 1.0
+    },
+    "2": {
+      "g2_count": 3,
+      "g3_count": 3,
+      "mean_trace_lesion_ratio": 0.3576072254205827
+    },
+    "4": {
+      "g2_count": 3,
+      "g3_count": 3,
+      "mean_trace_lesion_ratio": 0.11368159470891788
+    },
+    "6": {
+      "g2_count": 3,
+      "g3_count": 3,
+      "mean_trace_lesion_ratio": 0.033900050798986885
+    },
+    "8": {
+      "g2_count": 3,
+      "g3_count": 3,
+      "mean_trace_lesion_ratio": 0.009712110987179196
+    }
+  }
+}
