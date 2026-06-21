@@ -71,7 +71,7 @@ from research.runners._phaseB_onebrain_sequencerK_derisk import (
 # Reuse S5's on-bridge divnorm score bridge + the per-query-peak divisive-norm drive VERBATIM (retreat 1) + the
 # OFF==byte-identical guard.
 from research.runners._phaseC_S5_divnorm_derisk import (
-    build_divnorm_score_bridge, onbridge_divnorm_drive, check_off_byte_identical,
+    build_divnorm_score_bridge, onbridge_divnorm_drive, check_off_byte_identical, region_idx,
 )
 # Reuse the S1 K-way drive runner VERBATIM (the decoded-line drive is supplied directly; there is NO scores_to_drive
 # / s.max() in this drive path either -- the point of S1/S2).
@@ -160,7 +160,7 @@ def wta_drive(sb, V, scores, input_gain, settle=40, hi_pA=1500.0):
     """Drive the WTA score pool with current = input_gain*max(score,0); let the divisive norm + the lateral-inhibition
     WTA settle; read which word survives firing. Same RETURN contract as `onbridge_divnorm_drive` ((drive[V], acc[V]))
     so it is a drop-in drive source. NO host scores.max()."""
-    idx = lambda nm: np.asarray(sb.region_manager.indices(nm))
+    idx = lambda nm: region_idx(sb, nm)                  # query-invariant cache (behavior-preserving; see region_idx)
     if getattr(sb, "cp_izh_c_reset", None) is not None:
         sb.cp_membrane_potential_v[:] = sb.cp_izh_c_reset
     else:

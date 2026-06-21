@@ -68,6 +68,44 @@ from research.runners._phaseB_onebrain_sequencer_derisk import (
 
 
 # ----------------------------------------------------------------------------------------------------------------
+# QUERY-INVARIANT INDEX CACHE (burndown #3 speedup — runner-side, BEHAVIOR-PRESERVING, no `sim/` edit).
+#
+# `region_manager.indices(name)` is the region->neuron-index map, FIXED for the whole battery (it depends only on
+# the bridge's (V, K, layout), NEVER on the cue content). The hot per-query drive loops (`run_sequencerK_with_drive`,
+# `onbridge_divnorm_drive`, `wta_drive`) rebuild `np.asarray(indices(name))` for EVERY decoded word-line on EVERY
+# settle step -- at K=32, V=72 that is ~K*V*2 ~= 4600 lookups/query x ~99 queries/seed, each doing a string
+# canonicalize + a `list(...)` copy + a fresh `np.asarray` allocation. Memoizing the resolved array per (bridge,
+# name) collapses all of that to one dict-get returning the SAME int64 array.
+#
+# BYTE-IDENTITY: `indices(name)` is deterministic; the returned array is used READ-ONLY (as a fancy index into the
+# per-query `cur`/`acc` host arrays). Sharing the cached array changes nothing the simulation reads or writes -- the
+# decoded-line drive, the spiking dynamics, the match-pool rates, the moat decision are all bit-for-bit identical.
+# The cache is a pure speedup. (No invalidation hook is needed because these runner score/sequencer bridges never
+# re-slice their regions after `_initialize_simulation_data`; a `clear_region_idx_cache(sb)` is provided for any
+# future caller that would mutate the region layout mid-life, mirroring the composer cache's invalidation discipline.)
+# ----------------------------------------------------------------------------------------------------------------
+def region_idx(sb, name):
+    """Return `np.asarray(sb.region_manager.indices(name))`, memoized per (bridge, name). Behavior-preserving: the
+    region->index map is query-invariant, so the cached array is identical to a fresh lookup; it is used read-only."""
+    cache = getattr(sb, "_region_idx_cache", None)
+    if cache is None:
+        cache = {}
+        sb._region_idx_cache = cache
+    arr = cache.get(name)
+    if arr is None:
+        arr = np.asarray(sb.region_manager.indices(name))
+        cache[name] = arr
+    return arr
+
+
+def clear_region_idx_cache(sb):
+    """Drop the memoized region-index arrays (call only if a caller mutates the region layout after init -- the
+    cache-invalidation hook; none of the sequencer/score bridges do, so this is unused on the current paths)."""
+    if getattr(sb, "_region_idx_cache", None) is not None:
+        sb._region_idx_cache.clear()
+
+
+# ----------------------------------------------------------------------------------------------------------------
 # OPTION 4 score bridge: ONE divisive-norm-flagged Izhikevich word-pool per role. We process the agent role and the
 # action role through the SAME flagged pool, ONE role at a time, so the divisor (mean over the flagged set) is that
 # role's OWN per-query total pool drive (the "divide pre-threshold input by total pool drive" the research names) —
@@ -123,7 +161,7 @@ def onbridge_divnorm_drive(score_sb, V, scores, input_gain, settle=20, hi_pA=150
     total pool drive every step, and read which word pools FIRE (the placed firing threshold = the Izhikevich
     rheobase). Returns (drive[V], acc_fired[V]). A word is 'driven' iff its pool fired during the settle. NO host
     scores.max() — the per-query rescaling is the on-bridge divide; the threshold is the same across queries."""
-    idx = lambda nm: np.asarray(score_sb.region_manager.indices(nm))
+    idx = lambda nm: region_idx(score_sb, nm)            # query-invariant cache (behavior-preserving; see region_idx)
     _reset_score_bridge(score_sb)
     s = np.maximum(np.asarray(scores, dtype=float), 0.0)
     cur = np.zeros(score_sb.core_config.num_neurons, dtype=np.float64)
@@ -148,7 +186,7 @@ def run_sequencer_with_drive(sb, meta, cue_a, cue_x, drives, settle=60, match_th
     """Phase B's sequencer driven with decoded-line drives supplied DIRECTLY (the option-4 on-bridge drive), like
     the Task-1 harness. `drives` = [(dA,dX), ...] per block."""
     V = meta["V"]
-    idx = lambda nm: np.asarray(sb.region_manager.indices(nm))
+    idx = lambda nm: region_idx(sb, nm)                  # query-invariant cache (behavior-preserving; see region_idx)
     reset_sequencer_state(sb)
     cur = np.zeros(sb.core_config.num_neurons, dtype=np.float64)
     cur[idx(f"cueA_{cue_a}")] = 1500.0

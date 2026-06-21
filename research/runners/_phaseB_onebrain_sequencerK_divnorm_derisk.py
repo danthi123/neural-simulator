@@ -66,7 +66,7 @@ from research.runners._phaseB_onebrain_sequencerK_derisk import (
 # Reuse S5's on-bridge divnorm score bridge + the per-query-peak divisive-norm drive VERBATIM (the proven mechanism
 # that retires the host scores.max() read). S1 wires it into the K-way loop.
 from research.runners._phaseC_S5_divnorm_derisk import (
-    build_divnorm_score_bridge, onbridge_divnorm_drive, check_off_byte_identical,
+    build_divnorm_score_bridge, onbridge_divnorm_drive, check_off_byte_identical, region_idx,
 )
 from sim.backend import to_host, from_host, is_gpu_backend
 
@@ -110,7 +110,7 @@ def run_sequencerK_with_drive(sb, meta, cue_agent_idx, cue_action_idx, block_dri
     (m{b} -> ans{(b+1)%K}) -- the anti-cheat (the decision must follow the RULE). Returns (decision, rates),
     decision in {"ans0".."ans{K-1}", "abstain"} -- IDENTICAL channel semantics to S0."""
     V, K = meta["V"], meta["K"]
-    idx = lambda nm: np.asarray(sb.region_manager.indices(nm))
+    idx = lambda nm: region_idx(sb, nm)                  # query-invariant cache (behavior-preserving; see region_idx)
     reset_sequencerK_state(sb)                            # clear prior-query gate/EMA/membrane leak (S0 discipline)
     cur = np.zeros(sb.core_config.num_neurons, dtype=np.float64)
     # present the CUE (the question) as a spiking word-line pattern (the cue opens the per-word match gates)
