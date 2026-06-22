@@ -1,0 +1,148 @@
+{
+  "probe": "genseq_step0_bridge_load",
+  "artifact": "cortex_10M_seed42.npz",
+  "layer_probed": 0,
+  "layer_shape": [
+    66,
+    2048
+  ],
+  "neuron_model": "ADEX_as_LIF",
+  "adex_as_lif": {
+    "tau_m_ms": 19.495725746223673,
+    "Delta_T": 0.5,
+    "a": 0.0,
+    "b": 0.0,
+    "V_T": -50.0,
+    "V_r": -70.0,
+    "E_L": -70.0
+  },
+  "drive_pA": 4000.0,
+  "T_off": 32,
+  "n_steps_on": 64,
+  "warmup": 16,
+  "gain_sweep": [
+    {
+      "gain": 0.05,
+      "on_active": 0,
+      "pre_rate": 0.203125,
+      "spearman": 0.0342
+    },
+    {
+      "gain": 0.25,
+      "on_active": 0,
+      "pre_rate": 0.203125,
+      "spearman": 0.0342
+    },
+    {
+      "gain": 1.0,
+      "on_active": 0,
+      "pre_rate": 0.203125,
+      "spearman": 0.0342
+    },
+    {
+      "gain": 4.0,
+      "on_active": 101,
+      "pre_rate": 0.203125,
+      "spearman": 0.1667
+    },
+    {
+      "gain": 16.0,
+      "on_active": 687,
+      "pre_rate": 0.203125,
+      "spearman": 0.782
+    },
+    {
+      "gain": 64.0,
+      "on_active": 947,
+      "pre_rate": 0.203125,
+      "spearman": 0.929
+    }
+  ],
+  "locked_gain": 64.0,
+  "spikes": "Y",
+  "on_active_any": true,
+  "fidelity_mean_spearman": 0.9184327545750749,
+  "fidelity_mean_pearson": 0.8861835845393924,
+  "fidelity_mean_topk_overlap": 0.9404660445952079,
+  "anti_cheat_specificity": {
+    "matched_mean_spearman": 0.9184327545750749,
+    "mismatched_mean_spearman": 0.025282007290230942,
+    "specificity_margin": 0.893150747284844
+  },
+  "per_input": [
+    {
+      "char": " ",
+      "dim": 2,
+      "off_active_hidden": 1003,
+      "on_active_hidden": 947,
+      "on_pre_rate": 0.203125,
+      "pearson": 0.8878094071074554,
+      "spearman": 0.9289870870492369,
+      "topk_overlap": 0.9461615154536391,
+      "k": 1003
+    },
+    {
+      "char": "e",
+      "dim": 44,
+      "off_active_hidden": 966,
+      "on_active_hidden": 901,
+      "on_pre_rate": 0.203125,
+      "pearson": 0.8868181490809331,
+      "spearman": 0.921236159127631,
+      "topk_overlap": 0.937888198757764,
+      "k": 966
+    },
+    {
+      "char": "t",
+      "dim": 59,
+      "off_active_hidden": 1009,
+      "on_active_hidden": 941,
+      "on_pre_rate": 0.203125,
+      "pearson": 0.8790969956260544,
+      "spearman": 0.9282212253889384,
+      "topk_overlap": 0.9385530227948464,
+      "k": 1009
+    },
+    {
+      "char": "a",
+      "dim": 40,
+      "off_active_hidden": 985,
+      "on_active_hidden": 919,
+      "on_pre_rate": 0.203125,
+      "pearson": 0.8843752206421118,
+      "spearman": 0.895310367643325,
+      "topk_overlap": 0.9390862944162437,
+      "k": 985
+    },
+    {
+      "char": "o",
+      "dim": 54,
+      "off_active_hidden": 1006,
+      "on_active_hidden": 939,
+      "on_pre_rate": 0.203125,
+      "pearson": 0.8825850981975962,
+      "spearman": 0.9111753890858029,
+      "topk_overlap": 0.937375745526839,
+      "k": 1006
+    },
+    {
+      "char": "h",
+      "dim": 47,
+      "off_active_hidden": 1013,
+      "on_active_hidden": 951,
+      "on_pre_rate": 0.203125,
+      "pearson": 0.8964166365822032,
+      "spearman": 0.9256662991555152,
+      "topk_overlap": 0.9437314906219151,
+      "k": 1013
+    }
+  ],
+  "gen_f": {
+    "coherent": true,
+    "ppl": 6.1,
+    "sample_head": "u don't have to be scared of the loud dog, I'll protect you\". The mole felt so safe with the little girl. She was very kind and the mole soon came to trust her. He leaned against her and she kept him safe. The mole had found his best friend",
+    "source": "gen_f_train.txt + 2026-05-17-generator-F-...md"
+  },
+  "verdict_line": "step0: spikes=Y fidelity=0.918 | gen_f_coherent=Y gen_f_ppl=6.1 -> GO",
+  "verdict": "GO"
+}
