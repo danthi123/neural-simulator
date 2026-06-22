@@ -177,7 +177,7 @@
 <g filter="url(#soft)">
   <rect x="412" y="160" width="320" height="92" rx="12" fill="url(#gCtx)" stroke="#5b4a8a" stroke-width="2"/>
   <text x="572" y="184" text-anchor="middle" font-size="13.5" font-weight="700" fill="#2c2547">Sensorimotor cortex  (M1)  &#183;  C2</text>
-  <text x="572" y="204" text-anchor="middle" font-size="9.6" fill="#3a3357">cortex_{N,E,S,W} &#215;4 &#8212; RS pyramidal, per&#8211;action input &#183; &#9888; labeled&#8211;line split</text>
+  <text x="572" y="204" text-anchor="middle" font-size="8.8" fill="#3a3357">cortex_{N,E,S,W} &#215;4 &#8212; RS pyramidal, per&#8211;action input &#183; &#9888; labeled&#8211;line</text>
   <text x="572" y="220" text-anchor="middle" font-size="9.2" fill="#4a4170">cortex_FS_{X} &#215;4 (opt) &#8212; PV&#8211;FS per&#8211;pool winner&#8211;take&#8211;all</text>
   <text x="572" y="238" text-anchor="middle" font-size="8.6" fill="#6f5f9a">FS &#8594; cortex: WTA across pools (fast inhibition)</text>
 </g>
@@ -236,7 +236,7 @@
   <rect x="412" y="874" width="320" height="92" rx="12" fill="url(#gMot)" stroke="#c0392b" stroke-width="2.4"/>
   <text x="572" y="896" text-anchor="middle" font-size="13.5" font-weight="700" fill="#641e16">Motor output  &#183;  C10</text>
   <text x="572" y="915" text-anchor="middle" font-size="9.4" fill="#7a2a20">motor_{N,E,S,W} &#215;4 &#8212; RS pyramidal motor pools</text>
-  <text x="572" y="931" text-anchor="middle" font-size="8.8" fill="#8a3328">motor_FS_{X} (opt &#183; &#9888; DEPRECATED, biology = spinal Renshaw) &#183; motor_pop_{&#952;} &#215;8 (opt, population vector)</text>
+  <text x="572" y="931" text-anchor="middle" font-size="7.8" fill="#8a3328">motor_FS_{X} (opt, deprecated) &#183; motor_pop_{&#952;} &#215;8 (opt, population vector)</text>
   <text x="572" y="948" text-anchor="middle" font-size="8.8" fill="#9a4338">the body acts on which pool fires &#8226; &#8962; legitimate boundary</text>
 </g>
 <g filter="url(#soft)">
@@ -255,7 +255,7 @@
 
   <g font-size="9">
     <rect x="786" y="322" width="310" height="48" rx="8" fill="#f9e79f" stroke="#b9770e" stroke-width="1.8" filter="url(#soft)"/>
-    <text x="941" y="339" text-anchor="middle" font-weight="700" fill="#5b3a10">snc  (A9 dopamine)  &#8212;  FIRING = reward&#8211;prediction error &#948; = r &#8722; V</text>
+    <text x="941" y="339" text-anchor="middle" font-weight="700" font-size="8.6" fill="#5b3a10">snc (A9 dopamine) &#8212; FIRING = prediction error &#948; = r &#8722; V</text>
     <text x="941" y="353" text-anchor="middle" font-size="8" fill="#8a5e18">E_GABA &#8722;55, no KCC2 &#183; &#9888; A9+VTA merged &#183; broadcast as a global scalar (not a wire)</text>
     <text x="941" y="364" text-anchor="middle" font-size="7.6" fill="#a06a14">the dopamine signal trains the corticostriatal "go" weights</text>
 
@@ -329,7 +329,6 @@
   <text x="588" y="858" font-size="8.8" font-weight="700" fill="#5b3673">commit PICKS the move (DEFAULT)</text>
   <!-- thalamus -> motor (oracle, dashed, skirts left) -->
   <path d="M412,648 C360,648 360,910 450,914" stroke="#3f5366" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrEx)"/>
-  <text x="356" y="784" font-size="8" fill="#59687a" transform="rotate(-90 356 784)">thal &#8594; motor (host&#8211;argmax oracle path, opt&#8211;in)</text>
   <!-- motor -> body -->
   <path d="M572,966 L572,988" stroke="#b03a2e" stroke-width="2.6" marker-end="url(#arrInh)"/>
   <text x="588" y="980" font-size="8.6" fill="#9a2c20">agent moves</text>
@@ -341,10 +340,8 @@
 <g fill="none" stroke-linecap="round">
   <!-- perception inputs -> cortex -->
   <path d="M372,300 C392,300 396,196 410,196" stroke="#3f5366" stroke-width="2" marker-end="url(#arrEx)"/>
-  <text x="382" y="248" font-size="8" fill="#46586a" transform="rotate(-72 382 248)">place/goal &#8594; cortex</text>
   <!-- SC orienting -> cortex -->
   <path d="M372,520 C400,520 404,222 410,210" stroke="#6c3483" stroke-width="2.2" marker-end="url(#arrP)"/>
-  <text x="392" y="372" font-size="8.4" font-weight="700" fill="#5b3673" transform="rotate(-86 392 372)">orient &#8594; cardinal (winner by firing)</text>
   <!-- striatum striosome -> reward snc (short, kept low and clear of the feedback lanes) -->
   <path d="M732,384 C754,384 766,360 784,354" stroke="#b03a2e" stroke-width="2" marker-end="url(#arrInh)"/>
   <text x="738" y="396" font-size="7.8" fill="#9a2c20">striosome &#8594; SNc</text>
@@ -365,10 +362,8 @@
   <text x="384" y="858" font-size="8" fill="#2e5577">DCN &#8594; motor (additive)</text>
   <!-- hippocampus place readout up to perception (long, left edge) -->
   <path d="M168,976 C150,976 150,420 200,400" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrG)"/>
-  <text x="146" y="700" font-size="8" fill="#1e7a46" transform="rotate(-90 146 700)">ca1 &#8594; place read&#8211;out (closes perception loop)</text>
   <!-- body -> perception (world renders next input) -->
   <path d="M452,1014 C300,1014 250,440 250,430" stroke="#566573" stroke-width="1.6" stroke-dasharray="2 4" marker-end="url(#arrEx)"/>
-  <text x="262" y="720" font-size="8" fill="#5a6b7a" transform="rotate(-90 262 720)">world renders the next sensory input</text>
 </g>
 
 <!-- =======================================================================
