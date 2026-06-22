@@ -280,7 +280,7 @@
     <text x="1020" y="473" text-anchor="middle" font-size="7.6" fill="#7e3300">critic rate&#8211;normalize</text>
   </g>
   <!-- value subtraction edge (signature) — the one slow-inhibition (GABA-B) edge -->
-  <path d="M1020,424 C1006,400 968,376 944,372" fill="none" stroke="#7d3c98" stroke-width="2.4" stroke-dasharray="5 3" marker-end="url(#arrSlow)"/>
+  <path d="M1010,380 C988,375 938,374 900,372" fill="none" stroke="#7d3c98" stroke-width="2.4" stroke-dasharray="5 3" marker-end="url(#arrSlow)"/>
   <text x="788" y="500" font-size="9.4" font-weight="700" fill="#6c3483">VALUE SUBTRACTION  r &#8722; V  &#8212; the one slow&#8211;inhibition (GABA&#8211;B / GIRK) edge:</text>
   <text x="788" y="514" font-size="8.8" fill="#7a5290">striosome_value &#8867; snc, gated by critic_snc_window. The value estimate is subtracted</text>
   <text x="788" y="527" font-size="8.8" fill="#7a5290">from the reward to make the prediction error &#8212; the actor&#8211;critic, entirely in neurons.</text>
