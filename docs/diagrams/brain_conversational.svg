@@ -335,24 +335,28 @@
   <text x="602" y="628" text-anchor="middle" font-size="7.4" fill="#46586a">comprehend</text>
   <!-- semantic -> broca -->
   <path d="M886,624 C900,624 902,610 912,610" stroke="#3f5366" stroke-width="1.6" marker-end="url(#arrEx)"/>
-  <!-- input -> concept pools (long, summarised) -->
-  <path d="M334,650 C700,560 900,560 1108,615" stroke="#3f5366" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
-  <text x="760" y="556" text-anchor="middle" font-size="8" fill="#46586a">language_input &#8594; concept pools (word &#8594; pool)</text>
+  <!-- input -> concept pools (long, summarised): up out of Input, along the clear band just above
+       the inventory boxes (y575, below the header / above the box tops), then down into Concept pools.
+       Clears the Wernicke / Semantic / Broca boxes it used to cut straight through. -->
+  <path d="M320,582 C320,578 318,575 312,575 L1316,575 C1322,575 1320,579 1320,582" stroke="#3f5366" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
+  <text x="1380" y="558" text-anchor="middle" font-size="8" fill="#46586a">language_input &#8594; concept pools (word &#8594; pool)</text>
   <!-- output fan: semantic / broca / concept-pools -> Output, as a tidy fan into
        the box top edge. Entry points are order-preserving (left source -> left
        entry) so the three lines never cross; labels name each target. -->
-  <!-- semantic -> output (naming) -->
-  <path d="M712,706 C712,748 566,776 566,798" stroke="#1e8449" stroke-width="1.7" marker-end="url(#arrG)"/>
-  <text x="612" y="752" text-anchor="middle" font-size="8" fill="#1e7a46">naming</text>
+  <!-- semantic -> output (naming): enter the Output top edge at x640 (still above language_output)
+       so this leftmost fan line stays right of the hippo->semantic diagonal and the two don't cross. -->
+  <path d="M712,706 C712,748 640,772 640,798" stroke="#1e8449" stroke-width="1.7" marker-end="url(#arrG)"/>
+  <text x="648" y="752" text-anchor="middle" font-size="8" fill="#1e7a46">naming</text>
   <!-- broca -> output (articulation -> motor_speech) -->
   <path d="M1004,706 C1004,752 706,776 706,798" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
   <text x="876" y="744" text-anchor="middle" font-size="8" fill="#1e7a46">articulation</text>
   <!-- concept pools -> output (A->W naming pools) -->
   <path d="M1130,706 C1130,754 846,776 846,798" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
   <text x="1028" y="744" text-anchor="middle" font-size="8" fill="#1e7a46">concept &#8594; word (A&#8594;W)</text>
-  <!-- input -> hippocampus -->
-  <path d="M120,702 C120,760 110,780 90,830" stroke="#3f5366" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
-  <text x="78" y="780" text-anchor="middle" font-size="8" fill="#46586a">&#8594; hippo entry</text>
+  <!-- input -> hippocampus: exit the Input box's BOTTOM edge (x150) and drop straight into ec,
+       instead of starting inside the box and running over its Tier-1 shortcut text. -->
+  <path d="M150,788 C150,804 130,818 100,828" stroke="#3f5366" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
+  <text x="206" y="812" text-anchor="middle" font-size="8" fill="#46586a">&#8594; hippo entry</text>
   <!-- hippocampus -> semantic (consolidation feedback, up) -->
   <path d="M411,832 C411,760 560,720 632,656" stroke="#1e8449" stroke-width="1.8" marker-end="url(#arrG)"/>
   <text x="470" y="730" text-anchor="middle" font-size="8" font-weight="700" fill="#1e7a46">ca1 &#8594; semantic (engrams &#8594; durable meaning)</text>
