@@ -24,12 +24,15 @@ fresh per-sentence agents, multi-seed:
 
 | metric | seed 42 | 6-seed (42,43,44,100,101,102) |
 |---|---|---|
-| FIX ambiguous-degraded → ABSTAIN (0 confabulated stores) | 1.00 / 0 | _6-seed confirming (`b8sqhxacf`)_ |
-| the bug genuinely exists (CURRENT `parse` path confabulates) | 1.00 | _confirming_ |
-| **MARGIN-LESION** (`abstain_margin=0` → gate can't fire → confabulates) | 0.00 | _confirming_ |
-| FIX decisive-degraded (object-fronted) → resolved | 1.00 | _confirming_ |
-| FIX canonical → unregressed | 1.00 | _confirming_ |
-| query-time moat intact | True | _confirming_ |
+| FIX ambiguous-degraded → ABSTAIN (0 confabulated stores) | 1.00 / 0 | **6/6** (1.00 / 0 every seed) |
+| the bug genuinely exists (CURRENT `parse` path confabulates) | 1.00 | **6/6** (1.00 every seed) |
+| **MARGIN-LESION** (`abstain_margin=0` → gate can't fire → confabulates) | 0.00 | **6/6** (0.00 every seed) |
+| FIX decisive-degraded (object-fronted) → resolved | 1.00 | **6/6** (1.00 every seed) |
+| FIX canonical → unregressed | 1.00 | **6/6** (1.00 every seed) |
+| query-time moat intact | True | **6/6** (True every seed) |
+
+**6/6 GO** (`b8sqhxacf`, seeds 42,43,44,100,101,102) — every metric identical across all 6 seeds; the content gate's
+decision is deterministic given the parser's competition read, so there is no seed variance.
 
 The **margin-lesion** is the decisive control: with the gate disabled it reproduces today's confabulation, proving
 the abstention is *caused by the gate* (not the parser silently failing on ambiguous input). The CURRENT-confabulates
