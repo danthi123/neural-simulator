@@ -323,8 +323,8 @@
   <path d="M206,232 C300,176 700,150 1080,150 C1420,150 1576,150 1602,200 C1624,242 1620,380 1620,470 C1620,508 1566,524 1528,528" stroke="#2e6da4" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
   <text x="690" y="148" text-anchor="middle" font-size="8.6" fill="#2e6da4">edge&#8211;detectors (V1) &#8594; structured perception</text>
   <!-- recognised category -> recall a fact (generalization back into recall) -->
-  <path d="M1300,833 C1120,884 936,742 882,704" stroke="#7d6608" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
-  <text x="1070" y="858" text-anchor="middle" font-size="8.4" fill="#7d6608">recognised category &#8594; recall a fact about it</text>
+  <path d="M1300,833 C1230,852 1162,810 1162,755 L1162,545 C1162,525 1140,514 1110,514 L840,514 C816,514 820,560 820,604" stroke="#7d6608" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
+  <text x="958" y="578" text-anchor="middle" font-size="8.4" fill="#7d6608">recognised category &#8594; recall a fact about it</text>
 </g>
 
 <!-- ================= LEGEND (bottom strip) ================= -->
