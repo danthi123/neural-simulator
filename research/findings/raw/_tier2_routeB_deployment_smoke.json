@@ -1,0 +1,92 @@
+{
+  "seed": 42,
+  "config": {
+    "noise": 260.0,
+    "read_floor": 0.01,
+    "k_da": 2.0,
+    "i_low": 80.0,
+    "i_high": 600.0,
+    "D": 128
+  },
+  "da": {
+    "low": 0.5388202816890881,
+    "high": 0.8428108707271958,
+    "baseline": 0.5,
+    "snc_rate_low_hz": 0.0,
+    "snc_rate_high_hz": 358.5
+  },
+  "encoding_gain": {
+    "at_low_DA": 1.0776405633781763,
+    "at_high_DA": 1.6856217414543917,
+    "applied(hi>lo)": true
+  },
+  "main": {
+    "hi_recall": true,
+    "lo_recall": true,
+    "diff": 0,
+    "moat_low_DA": true,
+    "moat_high_DA": true
+  },
+  "lesion": {
+    "hi_recall": true,
+    "lo_recall": true,
+    "lesion_diff": 0,
+    "moat": true
+  },
+  "sigma_knee_sweep": [
+    {
+      "noise": 260.0,
+      "hi_recall": true,
+      "lo_recall": true,
+      "diff": 0,
+      "moat": true
+    },
+    {
+      "noise": 400.0,
+      "hi_recall": true,
+      "lo_recall": true,
+      "diff": 0,
+      "moat": true
+    },
+    {
+      "noise": 600.0,
+      "hi_recall": true,
+      "lo_recall": true,
+      "diff": 0,
+      "moat": true
+    },
+    {
+      "noise": 900.0,
+      "hi_recall": false,
+      "lo_recall": true,
+      "diff": -1,
+      "moat": true
+    },
+    {
+      "noise": 1300.0,
+      "hi_recall": false,
+      "lo_recall": false,
+      "diff": 0,
+      "moat": true
+    },
+    {
+      "noise": 1800.0,
+      "hi_recall": false,
+      "lo_recall": false,
+      "diff": 0,
+      "moat": true
+    },
+    {
+      "noise": 2500.0,
+      "hi_recall": false,
+      "lo_recall": false,
+      "diff": 0,
+      "moat": true
+    }
+  ],
+  "sigma_knee_moat_safe_diff_levels": [],
+  "regression_default_identical": true,
+  "moat_intact_all": true,
+  "verdict": "LATENT-content-dominates",
+  "verdict_line": "seed 42: hiDA_recall=1 loDA_recall=1 diff=0 | moat_hi=1 moat_lo=1 (false-accepts=0) | lesion_diff=0 | regression_identical=T -> LATENT-content-dominates"
+}
