@@ -133,12 +133,13 @@
     <path d="M1117,264 C1117,292 990,330 1002,348" stroke="#3f5366" stroke-width="2" marker-end="url(#arrEx)"/><text x="1090" y="300" text-anchor="middle" font-size="8" fill="#46586a">look up / match a cue</text>
     <!-- composer -> recall (unbind) -->
     <path d="M856,272 C856,300 830,308 818,314" stroke="#3f5366" stroke-width="2" marker-end="url(#arrEx)"/><text x="892" y="298" text-anchor="middle" font-size="8" fill="#46586a">unbind + clean up</text>
-    <!-- dialogue -> reply (long, dashed) -->
-    <path d="M1126,396 C1126,440 360,440 351,410" stroke="#3f5366" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrEx)"/><text x="740" y="436" text-anchor="middle" font-size="8" fill="#73838f">next thing to say</text>
+    <!-- dialogue -> reply : a single clean connector along the gutter below the boxes -->
+    <path d="M1126,396 C1126,438 1126,448 1100,448 L382,448 C360,448 353,432 352,412" stroke="#3f5366" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrEx)"/><text x="742" y="443" text-anchor="middle" font-size="8" fill="#5a6b7a">next thing to say</text>
     <!-- recall -> reply -->
-    <path d="M600,372 C540,386 500,378 476,372" stroke="#3f5366" stroke-width="2.4" marker-end="url(#arrEx)"/><text x="538" y="368" text-anchor="middle" font-size="8" fill="#46586a">answer (or abstain)</text>
-    <!-- reply -> words out -->
-    <path d="M310,408 C310,452 180,452 168,300 C162,224 200,230 226,230" stroke="#1e8449" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
+    <path d="M600,372 C540,386 500,378 476,372" stroke="#3f5366" stroke-width="2.4" marker-end="url(#arrEx)"/><text x="538" y="366" text-anchor="middle" font-size="8" fill="#46586a">answer (or abstain)</text>
+    <!-- reply -> words out : a tidy loop hugging the far-left margin back to the I/O boundary -->
+    <path d="M266,408 C240,430 232,440 200,440 C150,440 60,440 50,360 C44,300 44,262 52,236" stroke="#1e8449" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
+    <text x="40" y="350" font-size="8" fill="#1e7a46" transform="rotate(-90 40 350)">words out</text>
   </g>
   <text x="60" y="468" font-size="9.6" fill="#46586a">Comprehend the sentence (the parser routes each word's role into the composer) &#8594; the composer binds agent + action + patient into a single fact and writes it to the store.</text>
   <text x="60" y="484" font-size="9.6" fill="#46586a">A question reconstructs the matching fact, unbinds the role asked for, and answers &#8212; or, if no stored fact matches, the safeguard makes it say "I don't know" instead of guessing.</text>
@@ -174,7 +175,7 @@
   <text x="50" y="724" font-size="8.6" fill="#46586a">language_input &#8594; Wernicke / concept pools / hippocampus &#183; retina &#8594; IT</text>
   <text x="50" y="744" font-size="9" fill="#1f618d" font-weight="700">Tier&#8211;1 embodied shortcut (always built, the CORE):</text>
   <text x="50" y="758" font-size="8.6" fill="#46586a">language_input &#8594; motor (word&#8594;action) &#183; motor &#8594; language_output (action&#8594;word)</text>
-  <text x="50" y="772" font-size="8.2" fill="#7a8aa0">this direct word&#8596;action loop is the validated 4&#8211;word binding result</text>
+  <text x="50" y="772" font-size="8.2" fill="#5f6f86">this direct word&#8596;action loop is the validated 4&#8211;word binding result</text>
 </g>
 
 <!-- COMPREHENSION: Wernicke -->
@@ -189,8 +190,8 @@
     <text x="476" y="676" text-anchor="middle" font-weight="700" fill="#0c2533">wernicke_fs_pool_{i}  &#215;N</text>
     <text x="476" y="688" text-anchor="middle" font-size="8" fill="#274a63">cross&#8211;pool winner&#8211;take&#8211;most (sparse codes)</text>
   </g>
-  <path d="M476,654 C500,654 500,658 500,660" stroke="#3f5366" stroke-width="1.4" marker-end="url(#arrEx)"/>
-  <path d="M452,660 C430,660 430,656 452,654" stroke="#b03a2e" stroke-width="1.4" marker-start="url(#arrInh)"/>
+  <path d="M476,654 C492,654 496,657 498,660" fill="none" stroke="#3f5366" stroke-width="1.4" marker-end="url(#arrEx)"/>
+  <path d="M454,660 C436,660 432,657 452,654" fill="none" stroke="#b03a2e" stroke-width="1.4" marker-start="url(#arrInh)"/>
 </g>
 
 <!-- SEMANTIC: ATL -->
@@ -270,7 +271,7 @@
   <text x="50" y="920" font-size="9" font-weight="700" fill="#1e7a46">consolidation (the KEY no&#8211;forgetting bridge):</text>
   <text x="50" y="934" font-size="8.6" fill="#46586a">ca1 &#8594; semantic_cortex (engrams &#8594; durable meaning) &#183; ca1 &#8594; motor / language_output</text>
   <text x="50" y="948" font-size="8.6" fill="#46586a">(sleep&#8211;replay) &#183; language_input &#8594; ec (cortex &#8594; hippocampus entry)</text>
-  <text x="50" y="966" font-size="8.4" fill="#7a8aa0">replaying memories during "sleep" moves them into cortex, so they aren't forgotten</text>
+  <text x="50" y="966" font-size="8.4" fill="#5f6f86">replaying memories during "sleep" moves them into cortex, so they aren't forgotten</text>
 </g>
 
 <!-- OUTPUT (lower-center/right) -->
@@ -296,7 +297,7 @@
   </g>
   <text x="496" y="944" font-size="8.6" fill="#46586a">comprehend chain: language_input &#8594; Wernicke &#8594; semantic &#8594; (naming) language_output</text>
   <text x="496" y="958" font-size="8.6" fill="#46586a">production: Wernicke / semantic &#8594; Broca &#8594; motor_speech (articulation) &#183; hub &#8594; naming pools</text>
-  <text x="496" y="974" font-size="8.4" fill="#7a8aa0">&#8962; words&#8211;in / words&#8211;out are the legitimate I/O boundary (not a shortcut)</text>
+  <text x="496" y="974" font-size="8.4" fill="#5f6f86">&#8962; words&#8211;in / words&#8211;out are the legitimate I/O boundary (not a shortcut)</text>
 </g>
 
 <!-- NEGATIVE / BOUNDARY composition pathways (honesty axis B) -->
@@ -337,15 +338,18 @@
   <!-- input -> concept pools (long, summarised) -->
   <path d="M334,650 C700,560 900,560 1108,615" stroke="#3f5366" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
   <text x="760" y="556" text-anchor="middle" font-size="8" fill="#46586a">language_input &#8594; concept pools (word &#8594; pool)</text>
+  <!-- output fan: semantic / broca / concept-pools -> Output, as a tidy fan into
+       the box top edge. Entry points are order-preserving (left source -> left
+       entry) so the three lines never cross; labels name each target. -->
   <!-- semantic -> output (naming) -->
-  <path d="M712,706 C712,760 620,790 594,830" stroke="#1e8449" stroke-width="1.6" marker-end="url(#arrG)"/>
-  <text x="700" y="770" text-anchor="middle" font-size="8" fill="#1e7a46">naming</text>
-  <!-- concept pools -> output -->
-  <path d="M1318,706 C1318,760 900,760 696,852" stroke="#1e8449" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
-  <text x="1040" y="752" text-anchor="middle" font-size="8" fill="#1e7a46">concept &#8594; word (A&#8594;W)</text>
-  <!-- broca -> motor_speech -->
-  <path d="M1004,706 C1004,790 880,820 820,884" stroke="#1e8449" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
-  <text x="980" y="800" text-anchor="middle" font-size="8" fill="#1e7a46">articulation</text>
+  <path d="M712,706 C712,748 600,772 566,798" stroke="#1e8449" stroke-width="1.7" marker-end="url(#arrG)"/>
+  <text x="612" y="752" text-anchor="middle" font-size="8" fill="#1e7a46">naming</text>
+  <!-- broca -> output (articulation -> motor_speech) -->
+  <path d="M1004,706 C1004,752 760,768 706,798" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
+  <text x="876" y="744" text-anchor="middle" font-size="8" fill="#1e7a46">articulation</text>
+  <!-- concept pools -> output (A->W naming pools) -->
+  <path d="M1130,706 C1130,754 940,766 846,798" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
+  <text x="1028" y="744" text-anchor="middle" font-size="8" fill="#1e7a46">concept &#8594; word (A&#8594;W)</text>
   <!-- input -> hippocampus -->
   <path d="M120,702 C120,760 110,780 90,830" stroke="#3f5366" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
   <text x="78" y="780" text-anchor="middle" font-size="8" fill="#46586a">&#8594; hippo entry</text>
@@ -407,8 +411,8 @@
   <text x="50" y="1346" font-size="10.6" fill="#46586a">The region inventory (below) is the earlier builder's full map &#8212; <tspan font-weight="700" fill="#1f618d">language I/O</tspan>, <tspan font-weight="700" fill="#21618c">Wernicke</tspan> comprehension pools, the <tspan font-weight="700" fill="#1a5276">ATL semantic store + hub</tspan>, <tspan font-weight="700" fill="#21618c">Broca</tspan> syntax,</text>
   <text x="50" y="1364" font-size="10.6" fill="#46586a">the <tspan font-weight="700" fill="#2874a6">concept pools</tspan>, the <tspan font-weight="700" fill="#1e7a46">hippocampus</tspan> (whose sleep&#8211;replay consolidation into cortex is what prevents catastrophic forgetting), and the <tspan font-weight="700" fill="#1e7a46">output</tspan> naming / articulation / motor.</text>
   <text x="50" y="1382" font-size="10.6" fill="#707577">The grey dashed boxes are the earlier composition attempts that did NOT work &#8212; kept in the map for honesty; they are why the production composer uses a fixed binding algebra.</text>
-  <text x="50" y="1408" font-size="10" fill="#7a8aa0">Substrate&#8211;wide simplifications: point neurons (no dendrites) &#183; one&#8211;step conduction delay &#183; simplified neuron + synapse models &#183; word codes are host&#8211;supplied token embeddings. Full list SH&#8211;1&#8230;SH&#8211;14 in the spec.</text>
-  <text x="50" y="1428" font-size="10" fill="#7a8aa0" font-style="italic">This is an honest map of the code &#8212; accurate to the degree the biology is implemented here, including its reductions and its negative results, not a textbook of neuroanatomy.</text>
-  <text x="50" y="1452" font-size="10" fill="#7a8aa0">Refs: 2026-06-18-onebrain-320-scale-production-GO &#183; the consolidation / latency findings &#183; the .dot source + the extraction spec are the source of truth.</text>
+  <text x="50" y="1408" font-size="10" fill="#5f6f86">Substrate&#8211;wide simplifications: point neurons (no dendrites) &#183; one&#8211;step conduction delay &#183; simplified neuron + synapse models &#183; word codes are host&#8211;supplied token embeddings. Full list SH&#8211;1&#8230;SH&#8211;14 in the spec.</text>
+  <text x="50" y="1428" font-size="10" fill="#5f6f86" font-style="italic">This is an honest map of the code &#8212; accurate to the degree the biology is implemented here, including its reductions and its negative results, not a textbook of neuroanatomy.</text>
+  <text x="50" y="1452" font-size="10" fill="#5f6f86">Refs: 2026-06-18-onebrain-320-scale-production-GO &#183; the consolidation / latency findings &#183; the .dot source + the extraction spec are the source of truth.</text>
 </g>
 </svg>
