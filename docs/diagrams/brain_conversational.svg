@@ -82,7 +82,7 @@
     <text x="856" y="217" text-anchor="middle" font-size="8.8" fill="#244a63">phase&#8211;based "resonate&#8211;and&#8211;fire" neurons</text>
     <text x="856" y="229" text-anchor="middle" font-size="8.8" fill="#244a63">+ complex&#8211;valued synapses</text>
     <text x="856" y="244" text-anchor="middle" font-size="8.4" fill="#3a6280">attributes ("big apple") &#183; negation &#183; clauses &#183; ~10&#8211;20&#215; faster</text>
-    <text x="856" y="258" text-anchor="middle" font-size="8.2" fill="#7a5a18">&#9888; binding rule is fixed algebra &#8212; a stand&#8211;in for a learned cortex</text>
+    <text x="856" y="258" text-anchor="middle" font-size="8.2" fill="#7a5a18">&#9888; binding = fixed algebra (a learned&#8211;cortex stand&#8211;in)</text>
     <text x="856" y="268" text-anchor="middle" font-size="8" fill="#9a7330">(the open "step 3")</text>
   </g>
   <!-- fact store -->
