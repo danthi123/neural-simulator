@@ -1,0 +1,455 @@
+{
+  "probe": "genseq_loopstep3_multilayer_signed",
+  "artifact": "cortex_10M_seed42.npz",
+  "n_blocks": 3,
+  "feature_sizes": [
+    66,
+    2048,
+    2048,
+    2048
+  ],
+  "n_total_neurons": 10372,
+  "neuron_model": "ADEX_as_LIF (signed E/I split-channel)",
+  "signed_method": "E/I split-channel (each source feature duplicated into an excitatory + inhibitory copy; W>0 from E-copy -> g_e, W<0 from I-copy -> g_i; reuse-only, NO sim/ edit)",
+  "drive_pA": 4000.0,
+  "T_off": 32,
+  "n_steps_on": 64,
+  "warmup": 16,
+  "global_gain_sweep": [
+    {
+      "gain": 0.25,
+      "on_active": [
+        0,
+        0,
+        0
+      ],
+      "spearman_final": 0.032,
+      "spearman_per_block": [
+        0.0342,
+        -0.0417,
+        0.032
+      ]
+    },
+    {
+      "gain": 1.0,
+      "on_active": [
+        0,
+        0,
+        0
+      ],
+      "spearman_final": 0.032,
+      "spearman_per_block": [
+        0.0342,
+        -0.0417,
+        0.032
+      ]
+    },
+    {
+      "gain": 4.0,
+      "on_active": [
+        0,
+        0,
+        0
+      ],
+      "spearman_final": 0.032,
+      "spearman_per_block": [
+        0.0342,
+        -0.0417,
+        0.032
+      ]
+    },
+    {
+      "gain": 16.0,
+      "on_active": [
+        3,
+        98,
+        1891
+      ],
+      "spearman_final": -0.0522,
+      "spearman_per_block": [
+        0.0623,
+        -0.0525,
+        -0.0522
+      ]
+    },
+    {
+      "gain": 64.0,
+      "on_active": [
+        845,
+        2048,
+        2048
+      ],
+      "spearman_final": 0.032,
+      "spearman_per_block": [
+        0.2095,
+        -0.0417,
+        0.032
+      ]
+    },
+    {
+      "gain": 256.0,
+      "on_active": [
+        1708,
+        2048,
+        2048
+      ],
+      "spearman_final": 0.032,
+      "spearman_per_block": [
+        0.1902,
+        -0.0417,
+        0.032
+      ]
+    }
+  ],
+  "locked_global_gain": 64.0,
+  "per_layer_threshold_balance": [
+    1.1246826503806981,
+    0.2,
+    0.2
+  ],
+  "per_layer_balance_calibration_log": [
+    {
+      "block": 0,
+      "scale": 0.2,
+      "on_active": 1,
+      "off_active": 1003
+    },
+    {
+      "block": 0,
+      "scale": 0.6325,
+      "on_active": 422,
+      "off_active": 1003
+    },
+    {
+      "block": 0,
+      "scale": 1.1247,
+      "on_active": 965,
+      "off_active": 1003
+    },
+    {
+      "block": 1,
+      "scale": 0.2,
+      "on_active": 2048,
+      "off_active": 1139
+    },
+    {
+      "block": 1,
+      "scale": 0.0632,
+      "on_active": 2048,
+      "off_active": 1139
+    },
+    {
+      "block": 1,
+      "scale": 0.0356,
+      "on_active": 2048,
+      "off_active": 1139
+    },
+    {
+      "block": 1,
+      "scale": 0.0267,
+      "on_active": 2048,
+      "off_active": 1139
+    },
+    {
+      "block": 1,
+      "scale": 0.0231,
+      "on_active": 2048,
+      "off_active": 1139
+    },
+    {
+      "block": 1,
+      "scale": 0.0215,
+      "on_active": 2048,
+      "off_active": 1139
+    },
+    {
+      "block": 2,
+      "scale": 0.2,
+      "on_active": 2048,
+      "off_active": 1159
+    },
+    {
+      "block": 2,
+      "scale": 0.0632,
+      "on_active": 2048,
+      "off_active": 1159
+    },
+    {
+      "block": 2,
+      "scale": 0.0356,
+      "on_active": 2048,
+      "off_active": 1159
+    },
+    {
+      "block": 2,
+      "scale": 0.0267,
+      "on_active": 2048,
+      "off_active": 1159
+    },
+    {
+      "block": 2,
+      "scale": 0.0231,
+      "on_active": 2048,
+      "off_active": 1159
+    },
+    {
+      "block": 2,
+      "scale": 0.0215,
+      "on_active": 2048,
+      "off_active": 1159
+    }
+  ],
+  "off_active_per_layer_cal": [
+    1003,
+    1139,
+    1159
+  ],
+  "per_layer_fidelity": [
+    {
+      "layer": 0,
+      "mean_spearman": 0.3214630566486554,
+      "mean_pearson": 0.38397017039782777,
+      "mean_topk_overlap": 0.5629515922143797,
+      "on_mean_rate": 0.17761993408203125,
+      "on_max_rate": 0.75,
+      "off_mean_rate": 0.3697509765625,
+      "off_max_rate": 1.0
+    },
+    {
+      "layer": 1,
+      "mean_spearman": -0.01944686703234721,
+      "mean_pearson": NaN,
+      "mean_topk_overlap": 0.5663696668647117,
+      "on_mean_rate": 0.5,
+      "on_max_rate": 0.5,
+      "off_mean_rate": 0.43608347574869794,
+      "off_max_rate": 1.0
+    },
+    {
+      "layer": 2,
+      "mean_spearman": 0.008575344407268027,
+      "mean_pearson": NaN,
+      "mean_topk_overlap": 0.5739818639172082,
+      "on_mean_rate": 0.5,
+      "on_max_rate": 0.5,
+      "off_mean_rate": 0.4321746826171875,
+      "off_max_rate": 1.0
+    }
+  ],
+  "cumulative_mean_spearman": 0.008575344407268027,
+  "anti_cheat_specificity": {
+    "matched_mean_spearman": 0.008575344407268027,
+    "mismatched_mean_spearman": 0.008575344407268027,
+    "specificity_margin": 0.0
+  },
+  "per_input": [
+    {
+      "char": " ",
+      "dim": 2,
+      "layers": [
+        {
+          "layer": 0,
+          "off_active": 1003,
+          "on_active": 965,
+          "pearson": 0.2401072636497974,
+          "spearman": 0.2165278717234127,
+          "topk_overlap": 0.5034895314057827,
+          "k": 1003
+        },
+        {
+          "layer": 1,
+          "off_active": 1139,
+          "on_active": 2048,
+          "pearson": NaN,
+          "spearman": -0.04170481038878809,
+          "topk_overlap": 0.5575065847234416,
+          "k": 1139
+        },
+        {
+          "layer": 2,
+          "off_active": 1159,
+          "on_active": 2048,
+          "pearson": NaN,
+          "spearman": 0.03202551063013331,
+          "topk_overlap": 0.5599654874892148,
+          "k": 1159
+        }
+      ],
+      "cumulative_spearman": 0.03202551063013331
+    },
+    {
+      "char": "e",
+      "dim": 44,
+      "layers": [
+        {
+          "layer": 0,
+          "off_active": 966,
+          "on_active": 958,
+          "pearson": 0.20415655805515995,
+          "spearman": 0.18165988801506477,
+          "topk_overlap": 0.4668737060041408,
+          "k": 966
+        },
+        {
+          "layer": 1,
+          "off_active": 1177,
+          "on_active": 2048,
+          "pearson": NaN,
+          "spearman": -0.045235369429229365,
+          "topk_overlap": 0.5845369583687341,
+          "k": 1177
+        },
+        {
+          "layer": 2,
+          "off_active": 1209,
+          "on_active": 2048,
+          "pearson": NaN,
+          "spearman": 0.0060329474922591435,
+          "topk_overlap": 0.5913978494623656,
+          "k": 1209
+        }
+      ],
+      "cumulative_spearman": 0.0060329474922591435
+    },
+    {
+      "char": "t",
+      "dim": 59,
+      "layers": [
+        {
+          "layer": 0,
+          "off_active": 1009,
+          "on_active": 969,
+          "pearson": 0.2090331434801395,
+          "spearman": 0.16648439561948675,
+          "topk_overlap": 0.49950445986124875,
+          "k": 1009
+        },
+        {
+          "layer": 1,
+          "off_active": 1136,
+          "on_active": 2048,
+          "pearson": NaN,
+          "spearman": -0.005814030290014814,
+          "topk_overlap": 0.5589788732394366,
+          "k": 1136
+        },
+        {
+          "layer": 2,
+          "off_active": 1160,
+          "on_active": 2048,
+          "pearson": NaN,
+          "spearman": 0.01793067910732129,
+          "topk_overlap": 0.5577586206896552,
+          "k": 1160
+        }
+      ],
+      "cumulative_spearman": 0.01793067910732129
+    },
+    {
+      "char": "a",
+      "dim": 40,
+      "layers": [
+        {
+          "layer": 0,
+          "off_active": 985,
+          "on_active": 1412,
+          "pearson": 0.5634909210522245,
+          "spearman": 0.4756276563375071,
+          "topk_overlap": 0.6456852791878173,
+          "k": 985
+        },
+        {
+          "layer": 1,
+          "off_active": 1136,
+          "on_active": 2048,
+          "pearson": NaN,
+          "spearman": -0.0013498736969825501,
+          "topk_overlap": 0.5704225352112676,
+          "k": 1136
+        },
+        {
+          "layer": 2,
+          "off_active": 1172,
+          "on_active": 2048,
+          "pearson": NaN,
+          "spearman": -0.01779799354848112,
+          "topk_overlap": 0.5895904436860068,
+          "k": 1172
+        }
+      ],
+      "cumulative_spearman": -0.01779799354848112
+    },
+    {
+      "char": "o",
+      "dim": 54,
+      "layers": [
+        {
+          "layer": 0,
+          "off_active": 1006,
+          "on_active": 1387,
+          "pearson": 0.5646776723421864,
+          "spearman": 0.4705109963666788,
+          "topk_overlap": 0.6520874751491054,
+          "k": 1006
+        },
+        {
+          "layer": 1,
+          "off_active": 1128,
+          "on_active": 2048,
+          "pearson": NaN,
+          "spearman": 0.008210792766849464,
+          "topk_overlap": 0.5576241134751773,
+          "k": 1128
+        },
+        {
+          "layer": 2,
+          "off_active": 1177,
+          "on_active": 2048,
+          "pearson": NaN,
+          "spearman": 0.026528493772535036,
+          "topk_overlap": 0.5700934579439252,
+          "k": 1177
+        }
+      ],
+      "cumulative_spearman": 0.026528493772535036
+    },
+    {
+      "char": "h",
+      "dim": 47,
+      "layers": [
+        {
+          "layer": 0,
+          "off_active": 1013,
+          "on_active": 1460,
+          "pearson": 0.5223554638074587,
+          "spearman": 0.417967531829782,
+          "topk_overlap": 0.6100691016781836,
+          "k": 1013
+        },
+        {
+          "layer": 1,
+          "off_active": 1128,
+          "on_active": 2048,
+          "pearson": NaN,
+          "spearman": -0.030787911155917922,
+          "topk_overlap": 0.5691489361702128,
+          "k": 1128
+        },
+        {
+          "layer": 2,
+          "off_active": 1172,
+          "on_active": 2048,
+          "pearson": NaN,
+          "spearman": -0.013267571010159497,
+          "topk_overlap": 0.5750853242320819,
+          "k": 1172
+        }
+      ],
+      "cumulative_spearman": -0.013267571010159497
+    }
+  ],
+  "final_stage_spikes": true,
+  "go_bar": 0.8,
+  "verdict_line": "ml-signed: blocks=3 signed_EI cumulative_spearman=0.009 per_layer_spearman=[0.321, -0.019, 0.009] specificity_margin=0.000 final_spikes=Y -> NEGATIVE",
+  "verdict": "NEGATIVE"
+}
