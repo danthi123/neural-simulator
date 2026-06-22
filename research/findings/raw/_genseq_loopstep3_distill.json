@@ -1,0 +1,454 @@
+{
+  "probe": "genseq_loopstep3_clip_aware_distillation",
+  "resolves": "the consolidation per-layer clip-compression wall (verbatim install 0.288) via clip-aware layerwise activation distillation through the bridge-faithful differentiable forward, then install on the live bridge. NO sim/ edit.",
+  "scoping": "research/findings/2026-06-22-surrogate-grad-on-bridge-scoping.md (HYBRID #1)",
+  "artifact": "cortex_10M_seed42.npz",
+  "oom_safety": {
+    "hidden_width": 512,
+    "n_blocks": 3,
+    "full_layer_sizes": [
+      66,
+      2048,
+      2048,
+      2048,
+      66
+    ],
+    "narrowed_feature_sizes": [
+      66,
+      512,
+      512,
+      512
+    ],
+    "bytes_per_edge_est": 32,
+    "oom_ceiling_gb": 16.0,
+    "safe_budget_gb": 8.0,
+    "bridge_neurons": 2692,
+    "bridge_est_edges": 854016,
+    "bridge_est_gb": 0.027
+  },
+  "n_blocks": 3,
+  "feature_sizes": [
+    66,
+    512,
+    512,
+    512
+  ],
+  "graded_scale_mV": 20.0,
+  "go_bar": 0.8,
+  "probe_dims": [
+    2,
+    44,
+    59,
+    40,
+    54,
+    47
+  ],
+  "held_out_dims": [
+    53,
+    58,
+    57,
+    48,
+    43,
+    51
+  ],
+  "trainer": {
+    "framework": "torch (clip+matmul autograd; clip sub-gradient pass-through)",
+    "lr": 0.005,
+    "steps_layerwise_per_block": 4000,
+    "steps_e2e": 2000,
+    "target": "layerwise activation distillation to clean teacher reps t_{L+1}=clip(t_L@W_sliced,0,1); compounded real input per block; end-to-end final-block polish"
+  },
+  "teacher": "offbridge_graded_forward(VERBATIM sliced weights) clean per-layer target reps",
+  "verbatim_install": {
+    "cumulative_mean_spearman_vs_teacher": 0.2883323403161633,
+    "per_layer_fidelity": [
+      {
+        "layer": 0,
+        "mean_spearman_vs_teacher": 0.846134030972599,
+        "mean_topk_overlap": 0.8268229166666666,
+        "a_cont_mean": 0.17023875836548086
+      },
+      {
+        "layer": 1,
+        "mean_spearman_vs_teacher": 0.6199199363515332,
+        "mean_topk_overlap": 0.515625,
+        "a_cont_mean": 0.19030197153319026
+      },
+      {
+        "layer": 2,
+        "mean_spearman_vs_teacher": 0.2883323403161633,
+        "mean_topk_overlap": 0.3671875,
+        "a_cont_mean": 0.1908166200483334
+      }
+    ],
+    "anti_cheat_specificity": {
+      "matched_mean_spearman": 0.2883323403161633,
+      "mismatched_mean_spearman": 0.2584336930368158,
+      "specificity_margin": 0.02989864727934749
+    }
+  },
+  "arm1_clip_trainer": {
+    "offline_per_block_spearman_vs_teacher": [
+      0.9817318368457292,
+      0.8978876301531987,
+      0.8722043377803336
+    ],
+    "training_log": {
+      "label": "clip",
+      "driving_force_aware": false,
+      "layerwise": [
+        {
+          "block": 0,
+          "final_mse": 0.0
+        },
+        {
+          "block": 1,
+          "final_mse": 0.00833925511687994
+        },
+        {
+          "block": 2,
+          "final_mse": 0.021426495164632797
+        }
+      ],
+      "e2e": [
+        {
+          "final_loss": 0.02094157040119171
+        }
+      ],
+      "offline_per_block_spearman_vs_teacher": [
+        0.9817318368457292,
+        0.8978876301531987,
+        0.8722043377803336
+      ]
+    },
+    "installed_cumulative_mean_spearman_vs_teacher": 0.30709243738150555,
+    "installed_per_layer_fidelity": [
+      {
+        "layer": 0,
+        "mean_spearman_vs_teacher": 0.8461151660305636,
+        "mean_topk_overlap": 0.8268229166666666,
+        "a_cont_mean": 0.17024949879688708
+      },
+      {
+        "layer": 1,
+        "mean_spearman_vs_teacher": 0.6229098657507544,
+        "mean_topk_overlap": 0.50390625,
+        "a_cont_mean": 0.19054579795947846
+      },
+      {
+        "layer": 2,
+        "mean_spearman_vs_teacher": 0.30709243738150555,
+        "mean_topk_overlap": 0.37890625,
+        "a_cont_mean": 0.1906644273430218
+      }
+    ],
+    "installed_anti_cheat_specificity": {
+      "matched_mean_spearman": 0.30709243738150555,
+      "mismatched_mean_spearman": 0.2710733979164044,
+      "specificity_margin": 0.036019039465101155
+    },
+    "installed_per_input": [
+      {
+        "char": " ",
+        "dim": 2,
+        "layers": [
+          {
+            "layer": 0,
+            "spearman_vs_teacher": 0.8859179734438837,
+            "pearson_vs_teacher": 0.931746473643934,
+            "topk_overlap": 0.859375,
+            "on_a_cont_mean": 0.1659915951267013,
+            "on_a_cont_max": 1.0
+          },
+          {
+            "layer": 1,
+            "spearman_vs_teacher": 0.626806027626143,
+            "pearson_vs_teacher": 0.6899112734264988,
+            "topk_overlap": 0.484375,
+            "on_a_cont_mean": 0.18258133586132685,
+            "on_a_cont_max": 0.5916557312011719
+          },
+          {
+            "layer": 2,
+            "spearman_vs_teacher": 0.5343402742014854,
+            "pearson_vs_teacher": 0.5939900832813698,
+            "topk_overlap": 0.484375,
+            "on_a_cont_mean": 0.18417691416755527,
+            "on_a_cont_max": 1.0
+          }
+        ],
+        "cumulative_spearman": 0.5343402742014854
+      },
+      {
+        "char": "e",
+        "dim": 44,
+        "layers": [
+          {
+            "layer": 0,
+            "spearman_vs_teacher": 0.825363655285474,
+            "pearson_vs_teacher": 0.9354570787634992,
+            "topk_overlap": 0.921875,
+            "on_a_cont_mean": 0.15235923131247295,
+            "on_a_cont_max": 1.0
+          },
+          {
+            "layer": 1,
+            "spearman_vs_teacher": 0.5853258646044335,
+            "pearson_vs_teacher": 0.66107417776045,
+            "topk_overlap": 0.5234375,
+            "on_a_cont_mean": 0.15426023912779988,
+            "on_a_cont_max": 0.5298832058906555
+          },
+          {
+            "layer": 2,
+            "spearman_vs_teacher": 0.552607975417997,
+            "pearson_vs_teacher": 0.5854392059207583,
+            "topk_overlap": 0.515625,
+            "on_a_cont_mean": 0.1376697530359811,
+            "on_a_cont_max": 0.8781360983848572
+          }
+        ],
+        "cumulative_spearman": 0.552607975417997
+      },
+      {
+        "char": "t",
+        "dim": 59,
+        "layers": [
+          {
+            "layer": 0,
+            "spearman_vs_teacher": 0.8121932435254804,
+            "pearson_vs_teacher": 0.9387039746907608,
+            "topk_overlap": 0.7421875,
+            "on_a_cont_mean": 0.17988280516311367,
+            "on_a_cont_max": 1.0
+          },
+          {
+            "layer": 1,
+            "spearman_vs_teacher": 0.6458899281594397,
+            "pearson_vs_teacher": 0.694330849770112,
+            "topk_overlap": 0.4921875,
+            "on_a_cont_mean": 0.21500276335150675,
+            "on_a_cont_max": 0.652958869934082
+          },
+          {
+            "layer": 2,
+            "spearman_vs_teacher": -0.26101131467367045,
+            "pearson_vs_teacher": -0.26281336307775177,
+            "topk_overlap": 0.1875,
+            "on_a_cont_mean": 0.2129618349477806,
+            "on_a_cont_max": 1.0
+          }
+        ],
+        "cumulative_spearman": -0.26101131467367045
+      },
+      {
+        "char": "a",
+        "dim": 40,
+        "layers": [
+          {
+            "layer": 0,
+            "spearman_vs_teacher": 0.8324800299836349,
+            "pearson_vs_teacher": 0.934110821542325,
+            "topk_overlap": 0.8359375,
+            "on_a_cont_mean": 0.17226917535391173,
+            "on_a_cont_max": 1.0
+          },
+          {
+            "layer": 1,
+            "spearman_vs_teacher": 0.6330935071697509,
+            "pearson_vs_teacher": 0.689775050526717,
+            "topk_overlap": 0.5390625,
+            "on_a_cont_mean": 0.19243720729679226,
+            "on_a_cont_max": 0.591792106628418
+          },
+          {
+            "layer": 2,
+            "spearman_vs_teacher": 0.4485449318215631,
+            "pearson_vs_teacher": 0.5092393674791196,
+            "topk_overlap": 0.4140625,
+            "on_a_cont_mean": 0.19801832505077618,
+            "on_a_cont_max": 1.0
+          }
+        ],
+        "cumulative_spearman": 0.4485449318215631
+      },
+      {
+        "char": "o",
+        "dim": 54,
+        "layers": [
+          {
+            "layer": 0,
+            "spearman_vs_teacher": 0.8641704503839508,
+            "pearson_vs_teacher": 0.9346678376853906,
+            "topk_overlap": 0.75,
+            "on_a_cont_mean": 0.17801913264364244,
+            "on_a_cont_max": 1.0
+          },
+          {
+            "layer": 1,
+            "spearman_vs_teacher": 0.5844410898822399,
+            "pearson_vs_teacher": 0.6761631675030215,
+            "topk_overlap": 0.4921875,
+            "on_a_cont_mean": 0.20221269990634294,
+            "on_a_cont_max": 0.6284508109092712
+          },
+          {
+            "layer": 2,
+            "spearman_vs_teacher": 0.2087960161533972,
+            "pearson_vs_teacher": 0.2647810128986393,
+            "topk_overlap": 0.296875,
+            "on_a_cont_mean": 0.20687936639863283,
+            "on_a_cont_max": 1.0
+          }
+        ],
+        "cumulative_spearman": 0.2087960161533972
+      },
+      {
+        "char": "h",
+        "dim": 47,
+        "layers": [
+          {
+            "layer": 0,
+            "spearman_vs_teacher": 0.8565656435609572,
+            "pearson_vs_teacher": 0.9274249260286368,
+            "topk_overlap": 0.8515625,
+            "on_a_cont_mean": 0.17297505318148032,
+            "on_a_cont_max": 1.0
+          },
+          {
+            "layer": 1,
+            "spearman_vs_teacher": 0.6619027770625192,
+            "pearson_vs_teacher": 0.6939603984266568,
+            "topk_overlap": 0.4921875,
+            "on_a_cont_mean": 0.19678054221310198,
+            "on_a_cont_max": 0.6145620346069336
+          },
+          {
+            "layer": 2,
+            "spearman_vs_teacher": 0.3592767413682608,
+            "pearson_vs_teacher": 0.43042133454894127,
+            "topk_overlap": 0.375,
+            "on_a_cont_mean": 0.2042803704574049,
+            "on_a_cont_max": 1.0
+          }
+        ],
+        "cumulative_spearman": 0.3592767413682608
+      }
+    ],
+    "per_layer_gain_calibration": [
+      3.56555542455966,
+      0.10239474269889229,
+      0.1700363907773305
+    ]
+  },
+  "arm2_driving_force_aware_trainer": {
+    "offline_per_block_spearman_vs_teacher": [
+      0.9193045398885339,
+      0.8043488400176622,
+      0.8152619109608114
+    ],
+    "installed_cumulative_mean_spearman_vs_teacher": 0.44351977916156454,
+    "installed_per_layer_fidelity": [
+      {
+        "layer": 0,
+        "mean_spearman_vs_teacher": 0.8184445429116932,
+        "mean_topk_overlap": 0.8203125,
+        "a_cont_mean": 0.1746880742932911
+      },
+      {
+        "layer": 1,
+        "mean_spearman_vs_teacher": 0.6936189765700401,
+        "mean_topk_overlap": 0.5364583333333334,
+        "a_cont_mean": 0.17948525772440513
+      },
+      {
+        "layer": 2,
+        "mean_spearman_vs_teacher": 0.44351977916156454,
+        "mean_topk_overlap": 0.4401041666666667,
+        "a_cont_mean": 0.21804365259857192
+      }
+    ],
+    "installed_anti_cheat_specificity": {
+      "matched_mean_spearman": 0.44351977916156454,
+      "mismatched_mean_spearman": 0.37810933583959894,
+      "specificity_margin": 0.0654104433219656
+    }
+  },
+  "anti_cheat_shuffled_target": {
+    "method": "distil to a deranged permutation of the teacher targets across probe chars; install; score vs the REAL teacher -> must be at chance",
+    "permutation": [
+      4,
+      5,
+      0,
+      1,
+      3,
+      2
+    ],
+    "driving_force_aware": true,
+    "offline_per_block_spearman_vs_real_teacher": [
+      0.41707403616537536,
+      0.660111278123963,
+      0.7716642997571935
+    ],
+    "installed_cumulative_mean_spearman_vs_real_teacher": 0.5421906829001728,
+    "installed_per_layer_fidelity": [
+      {
+        "layer": 0,
+        "mean_spearman_vs_teacher": 0.346332053259099,
+        "mean_topk_overlap": 0.4401041666666667,
+        "a_cont_mean": 0.09471856763807657
+      },
+      {
+        "layer": 1,
+        "mean_spearman_vs_teacher": 0.37844195784838813,
+        "mean_topk_overlap": 0.40234375,
+        "a_cont_mean": 0.15095025903695472
+      },
+      {
+        "layer": 2,
+        "mean_spearman_vs_teacher": 0.5421906829001728,
+        "mean_topk_overlap": 0.5013020833333334,
+        "a_cont_mean": 0.16158660741011519
+      }
+    ],
+    "at_chance": false
+  },
+  "best_arm": "arm2_dfaware",
+  "best_installed_cumulative_mean_spearman_vs_teacher": 0.44351977916156454,
+  "best_installed_per_layer_fidelity": [
+    {
+      "layer": 0,
+      "mean_spearman_vs_teacher": 0.8184445429116932,
+      "mean_topk_overlap": 0.8203125,
+      "a_cont_mean": 0.1746880742932911
+    },
+    {
+      "layer": 1,
+      "mean_spearman_vs_teacher": 0.6936189765700401,
+      "mean_topk_overlap": 0.5364583333333334,
+      "a_cont_mean": 0.17948525772440513
+    },
+    {
+      "layer": 2,
+      "mean_spearman_vs_teacher": 0.44351977916156454,
+      "mean_topk_overlap": 0.4401041666666667,
+      "a_cont_mean": 0.21804365259857192
+    }
+  ],
+  "best_installed_anti_cheat_specificity": {
+    "matched_mean_spearman": 0.44351977916156454,
+    "mismatched_mean_spearman": 0.37810933583959894,
+    "specificity_margin": 0.0654104433219656
+  },
+  "baseline_verbatim_install": {
+    "cumulative_mean_spearman": 0.288,
+    "per_block": [
+      0.846,
+      0.62,
+      0.288
+    ],
+    "note": "the popcode-NEGATIVE verbatim-install wall (scale=20)"
+  },
+  "verdict_line": "distill: narrow512 blocks=3 clip-aware-layerwise-distillation INSTALLED-on-live-bridge cumulative_analog_spearman_vs_teacher=0.444 (best arm=arm2_dfaware; verbatim-install=0.288; trainer-offline=0.815) per_block=[0.818, 0.694, 0.444] specificity_margin=0.065 shuffled_control=0.542 -> NEGATIVE (vs verbatim-install 0.288 baseline)",
+  "verdict": "NEGATIVE"
+}
