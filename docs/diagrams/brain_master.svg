@@ -44,7 +44,7 @@
 <g>
   <rect x="34" y="168" width="196" height="404" rx="14" fill="#eef2f6" stroke="#aebccb" stroke-width="1.6"/>
   <text x="132" y="190" text-anchor="middle" font-size="13.5" font-weight="700" fill="#46586a">SENSE THE WORLD</text>
-  <text x="132" y="206" text-anchor="middle" font-size="10" fill="#73838f">input the world renders &#8226; &#8962; boundary</text>
+  <text x="132" y="206" text-anchor="middle" font-size="10" fill="#59687a">input the world renders &#8226; &#8962; boundary</text>
 
   <g filter="url(#soft)">
     <rect x="50" y="222" width="164" height="86" rx="11" fill="url(#gPer)" stroke="#2e6da4" stroke-width="1.8"/>
@@ -52,7 +52,7 @@
     <text x="132" y="261" text-anchor="middle" font-size="9.5" fill="#2a455c">retina &#8594; edges (V1) &#8594;</text>
     <text x="132" y="274" text-anchor="middle" font-size="9.5" fill="#2a455c">shapes (V2) &#8594; objects (IT)</text>
     <text x="132" y="291" text-anchor="middle" font-size="9" fill="#5a7287">recognises objects &#183; opt&#8211;in</text>
-    <text x="132" y="303" text-anchor="middle" font-size="8.5" fill="#7a8aa0">SHARED</text>
+    <text x="132" y="303" text-anchor="middle" font-size="8.5" fill="#5f6f86">SHARED</text>
   </g>
   <g filter="url(#soft)">
     <rect x="50" y="320" width="164" height="92" rx="11" fill="url(#gNav)" stroke="#ca6f1e" stroke-width="1.8"/>
@@ -114,8 +114,8 @@
     <text x="952" y="234" text-anchor="middle" font-size="9.6" fill="#3e1f4d">evidence builds up &#8594; an all&#8211;or&#8211;none "commit"</text>
     <text x="952" y="247" text-anchor="middle" font-size="9.6" fill="#3e1f4d">burst picks the move  (&#215;4)</text>
     <text x="952" y="265" text-anchor="middle" font-size="9.3" font-weight="700" fill="#6c3483">DEFAULT: the move emerges from the race</text>
-    <text x="952" y="278" text-anchor="middle" font-size="8.8" fill="#7a5290">Wang&#8211;2002 + Lo&#8211;Wang &#183; hand&#8211;coded argmax retired</text>
-    <text x="952" y="290" text-anchor="middle" font-size="8.6" fill="#8a6aa0">6/6&#8211;seed GO &#183; 100% commit&#8211;burst</text>
+    <text x="952" y="278" text-anchor="middle" font-size="8.8" fill="#653f7a">Wang&#8211;2002 + Lo&#8211;Wang &#183; hand&#8211;coded argmax retired</text>
+    <text x="952" y="290" text-anchor="middle" font-size="8.6" fill="#6f5286">6/6&#8211;seed GO &#183; 100% commit&#8211;burst</text>
   </g>
 
   <g filter="url(#soft)">
@@ -266,7 +266,7 @@
   <path d="M1076,256 C1120,256 1160,300 1190,368" stroke="#6c3483" stroke-width="2.6" marker-end="url(#arrEx)"/>
   <text x="1150" y="316" text-anchor="middle" font-size="8.8" font-weight="700" fill="#5b3673" transform="rotate(50 1150 316)">commit fires &#8594; the move</text>
   <path d="M790,286 C900,330 1040,360 1138,392" stroke="#3f5366" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrEx)"/>
-  <text x="980" y="350" text-anchor="middle" font-size="8" fill="#73838f" transform="rotate(16 980 350)">relay &#8594; motor (host&#8211;argmax oracle, opt&#8211;in)</text>
+  <text x="980" y="350" text-anchor="middle" font-size="8" fill="#59687a" transform="rotate(16 980 350)">relay &#8594; motor (host&#8211;argmax oracle, opt&#8211;in)</text>
   <path d="M1100,222 C1060,222 1010,230 1078,238" stroke="#7d3c98" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrEx)"/>
   <path d="M1100,272 C980,302 740,302 632,278" stroke="#d68910" stroke-width="2" stroke-dasharray="2 3" marker-end="url(#arrDA)"/>
   <text x="860" y="302" text-anchor="middle" font-size="8.4" fill="#a06a14" transform="rotate(-4 860 302)">dopamine reinforces what just fired</text>
@@ -284,39 +284,52 @@
   <path d="M703,702 L703,712" stroke="#3f5366" stroke-width="2.4" marker-end="url(#arrEx)"/>
   <text x="745" y="710" font-size="8.4" fill="#46586a">answer (or abstain)</text>
   <path d="M1010,666 C940,690 880,720 880,742" stroke="#3f5366" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrEx)"/>
-  <text x="930" y="704" text-anchor="middle" font-size="8" fill="#73838f">next thing to say</text>
+  <text x="930" y="704" text-anchor="middle" font-size="8" fill="#59687a">next thing to say</text>
 
   <path d="M214,520 C238,520 244,540 268,546" stroke="#117a44" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrXr)"/>
   <text x="226" y="535" font-size="8" fill="#1e7a46">sleep&#8211;replay</text>
 </g>
 
 <!-- ================= THE THREE VALIDATED CROSS-BRAIN ROUTES ================= -->
+<!-- Each route runs in its own corridor so none crosses another or a panel:
+       A  conversation (comprehension) -> nav (motor cortex), up the inner-left gutter
+       C  vision (perception) -> composer, parallel just left of A in the gutter
+       B  vision -> reply (recall), around the far-left + bottom margin
+     Labels sit beside their corridor, never on a line. -->
 <g fill="none" stroke-linecap="round">
-  <path d="M388,522 C388,440 320,300 268,262" stroke="#1a9850" stroke-width="3.4" marker-end="url(#arrX)"/>
+  <!-- Route A : comprehension parser -> motor cortex (up the inner-left gutter, x~244) -->
+  <path d="M272,642 C252,640 244,616 244,560 C244,470 244,372 246,336 C249,306 274,292 294,288" stroke="#1a9850" stroke-width="3.2" marker-end="url(#arrX)"/>
+  <!-- Route C : vision/IT -> composer (parallel gutter just left of A, x~228) -->
+  <path d="M214,298 C226,300 228,322 228,372 C228,520 228,672 228,716 C228,734 246,742 264,743" stroke="#1a9850" stroke-width="2.8" stroke-dasharray="9 5" marker-end="url(#arrX)"/>
+  <!-- Route B : vision -> reply / recall (far-left + bottom margin, clear of A and C) -->
+  <path d="M112,308 C66,332 44,430 44,560 C44,772 44,886 102,892 C320,902 566,898 664,890 C690,888 700,858 703,794" stroke="#1a9850" stroke-width="2.8" marker-end="url(#arrX)"/>
+
+  <!-- A label : in the nav/conversation gap, to the RIGHT of A's gutter line -->
   <g>
-    <rect x="232" y="408" width="216" height="40" rx="9" fill="#eaf6ee" stroke="#1a9850" stroke-width="1.8" filter="url(#soft)"/>
-    <text x="340" y="424" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0c5a28">A &#183; a spoken word steers the body  &#8863;</text>
-    <text x="340" y="438" text-anchor="middle" font-size="8.4" fill="#247a48">learned word&#8594;action route &#183; opened by comprehension &#183; 6/6&#8211;seed GO</text>
+    <rect x="300" y="430" width="206" height="40" rx="9" fill="#eaf6ee" stroke="#1a9850" stroke-width="1.8" filter="url(#soft)"/>
+    <text x="403" y="446" text-anchor="middle" font-size="10.3" font-weight="700" fill="#0c5a28">A &#183; a spoken word steers the body &#8863;</text>
+    <text x="403" y="460" text-anchor="middle" font-size="8.2" fill="#247a48">learned word&#8594;action route &#183; opened by comprehension &#183; 6/6 GO</text>
+  </g>
+  <!-- C label : left zone, just left of C's gutter line -->
+  <g>
+    <rect x="36" y="612" width="184" height="42" rx="9" fill="#eaf6ee" stroke="#1a9850" stroke-width="1.8" stroke-dasharray="6 4" filter="url(#soft)"/>
+    <text x="128" y="628" text-anchor="middle" font-size="10.2" font-weight="700" fill="#0c5a28">C &#183; bind a PERCEIVED object &#9888;</text>
+    <text x="128" y="641" text-anchor="middle" font-size="7.9" fill="#247a48">seen object's firing &#8594; a code</text>
+    <text x="128" y="651" text-anchor="middle" font-size="7.9" fill="#247a48">the composer can bind &#183; 6/6 GO</text>
+  </g>
+  <!-- B label : lower-left zone, to the RIGHT of B's far-left line -->
+  <g>
+    <rect x="70" y="812" width="262" height="40" rx="9" fill="#eaf6ee" stroke="#1a9850" stroke-width="1.8" filter="url(#soft)"/>
+    <text x="201" y="828" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0c5a28">B &#183; see an object, later RECALL it</text>
+    <text x="201" y="842" text-anchor="middle" font-size="8.2" fill="#247a48">vision&#8594;words route + memory tag &#183; navigate&#8211;to&#8211;see &#183; 6/6 GO</text>
   </g>
 
-  <path d="M118,308 C108,520 110,840 232,860 C420,876 470,800 524,758" stroke="#1a9850" stroke-width="2.8" marker-end="url(#arrX)"/>
-  <g>
-    <rect x="40" y="876" width="270" height="40" rx="9" fill="#eaf6ee" stroke="#1a9850" stroke-width="1.8" filter="url(#soft)"/>
-    <text x="175" y="892" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0c5a28">B &#183; see an object, later RECALL it</text>
-    <text x="175" y="906" text-anchor="middle" font-size="8.4" fill="#247a48">vision&#8594;words route + memory tag &#183; navigate&#8211;to&#8211;see &#183; 6/6&#8211;seed GO</text>
-  </g>
-
-  <path d="M150,300 C170,560 210,720 270,742" stroke="#1a9850" stroke-width="2.8" stroke-dasharray="9 5" marker-end="url(#arrX)"/>
-  <g>
-    <rect x="44" y="700" width="222" height="40" rx="9" fill="#eaf6ee" stroke="#1a9850" stroke-width="1.8" stroke-dasharray="6 4" filter="url(#soft)"/>
-    <text x="155" y="716" text-anchor="middle" font-size="10.3" font-weight="700" fill="#0c5a28">C &#183; bind a PERCEIVED object &#9888;</text>
-    <text x="155" y="730" text-anchor="middle" font-size="8.2" fill="#247a48">seen object's firing &#8594; a code the composer can bind &#183; 6/6 GO</text>
-  </g>
-
-  <path d="M214,260 C600,180 1000,360 1300,540" stroke="#2e6da4" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
-  <text x="900" y="318" text-anchor="middle" font-size="8.4" fill="#2e6da4" transform="rotate(11 900 318)">edge&#8211;detectors &#8594; structured perception</text>
-  <path d="M1300,833 C1060,900 920,760 880,706" stroke="#7d6608" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
-  <text x="1080" y="852" text-anchor="middle" font-size="8.4" fill="#7d6608">recognised category &#8594; recall a fact about it</text>
+  <!-- vision -> generalization (genuinely far apart): along the title/nav gap, then down the right margin -->
+  <path d="M206,232 C300,176 700,150 1080,150 C1420,150 1576,150 1602,200 C1624,242 1620,380 1620,470 C1620,508 1566,524 1528,528" stroke="#2e6da4" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
+  <text x="690" y="148" text-anchor="middle" font-size="8.6" fill="#2e6da4">edge&#8211;detectors (V1) &#8594; structured perception</text>
+  <!-- recognised category -> recall a fact (generalization back into recall) -->
+  <path d="M1300,833 C1120,884 936,742 882,704" stroke="#7d6608" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
+  <text x="1070" y="858" text-anchor="middle" font-size="8.4" fill="#7d6608">recognised category &#8594; recall a fact about it</text>
 </g>
 
 <!-- ================= LEGEND (bottom strip) ================= -->
