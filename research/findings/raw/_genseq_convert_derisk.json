@@ -1,0 +1,304 @@
+{
+  "task": "Gen-seq CONVERT de-risk: training-free ANN->SNN of Gen-F (spiking-rate TinyGPT), does it still generate coherent novel text?",
+  "method": "rate-SNN/QCFS clip-floor quantization of softmax/LayerNorm/GELU at T timesteps over calibrated ranges; weights VERBATIM; no gradient; linear ops exact; reference MBE/LAS/ECMT",
+  "corpus_used": "tinystories",
+  "corpus_degraded": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "T_swept": [
+    16,
+    32,
+    64
+  ],
+  "device": "cuda",
+  "config": {
+    "eval_positions": 400,
+    "gen_tokens": 120,
+    "calib_windows": 8,
+    "ckpt_base": "research/findings/raw/g11_bg/generator_f_gate.ckpt"
+  },
+  "anti_cheat": {
+    "gate": "BYTE-UNMODIFIED Gen-F gate (gs_verdict bars 0.20/1.5/0.5/0.20 + abs-competence floor uniform_ppl=V); >=3 seeds unbypassable; bars NEVER tuned",
+    "control": "word-shuffle .ctl model CONVERTED the same way (spiking control)",
+    "convert_bar": "spiking/ANN ppl-ratio <= 1.2 ALL seeds (the SOTA gets ~1.03; 1.2 = generous first-port margin)",
+    "honest_risk": "ppl can be preserved while GENERATION degrades -> spiking_gen_sample recorded every seed for the controller to read; no sim/ edit; no training",
+    "no_confab": "n/a (free LM, not the retrieval composer); novelty = non-degenerate + not-copy + beats-shuffle"
+  },
+  "sweep_results": [
+    {
+      "T": 16,
+      "gate_aggregate": {
+        "GATE": "PASS",
+        "n_seeds": 3,
+        "min_seeds_requested": 3,
+        "min_seeds": 3,
+        "n_pass": 3,
+        "all_pass": true
+      },
+      "ppl_ratios": [
+        1.236358919224454,
+        1.2400436834778514,
+        1.2620307848701444
+      ],
+      "ratio_bar_1.2_all_pass": false,
+      "CONVERT_GO": false,
+      "per_seed": [
+        {
+          "seed": 42,
+          "T": 16,
+          "train_step": 12000,
+          "ann_heldout_ppl": 6.172472170873114,
+          "spiking_heldout_ppl": 7.631391022123702,
+          "spiking_train_ppl": 5.726600753732377,
+          "spiking_ctl_ppl": 46.2722092127586,
+          "uniform_ppl": 513,
+          "ppl_ratio_spiking_over_ann": 1.236358919224454,
+          "distinct_trigram": 0.9915254237288136,
+          "verbatim_copy_frac": 0.1415929203539823,
+          "n_calib_windows": 8,
+          "spiking_gen_sample": "Tom and Sam luam on a trip because they are friends again. They played together and were very happy. <|endoftext|> One day, a little girl named Amy went for a walk. She saw a big red sand spill on it. The red swam on its back. Amy's mom said, \"It's the calenwalk and pointed on the seat me!\" Amy felt sad. She knew the new diary was mine. In the happy with the new calents before. Amy saw Tom",
+          "ann_gen_sample": "(ANN generation skipped; not a gate input)",
+          "verdict": {
+            "GATE": "PASS",
+            "absolute_competence_beats_random": true,
+            "real_structure_vs_shuffled": true,
+            "generalizes_not_memorizes": true,
+            "non_degenerate_generation": true,
+            "not_verbatim_copying": true,
+            "heldout_ppl": 7.631391022123702,
+            "shuffled_ppl": 46.2722092127586,
+            "train_ppl": 5.726600753732377,
+            "uniform_ppl": 513.0,
+            "distinct_trigram": 0.9915254237288136,
+            "verbatim_copy_frac": 0.1415929203539823,
+            "bars": {
+              "ppl_margin": 0.2,
+              "generalization_max": 1.5,
+              "distinct_min": 0.5,
+              "copy_max": 0.2,
+              "abs_competence_ppl_ratio": 1.0
+            },
+            "seed": 42
+          }
+        },
+        {
+          "seed": 43,
+          "T": 16,
+          "train_step": 12000,
+          "ann_heldout_ppl": 6.186588920141749,
+          "spiking_heldout_ppl": 7.671640512695838,
+          "spiking_train_ppl": 5.643848472036522,
+          "spiking_ctl_ppl": 49.4731265395646,
+          "uniform_ppl": 513,
+          "ppl_ratio_spiking_over_ann": 1.2400436834778514,
+          "distinct_trigram": 0.9661016949152542,
+          "verbatim_copy_frac": 0.017699115044247787,
+          "n_calib_windows": 8,
+          "spiking_gen_sample": "Sara was sad because it could not go to mix a sign. Tom saw that it was really wore because of Sara had a pretty enthusion and make noise. He knew a small blue enthusilar sauce. Mom and dad were very angry and sad. But this words were fearful, so they knew they were going on a home. They thought and said, \"Sara, eat what happene",
+          "ann_gen_sample": "(ANN generation skipped; not a gate input)",
+          "verdict": {
+            "GATE": "PASS",
+            "absolute_competence_beats_random": true,
+            "real_structure_vs_shuffled": true,
+            "generalizes_not_memorizes": true,
+            "non_degenerate_generation": true,
+            "not_verbatim_copying": true,
+            "heldout_ppl": 7.671640512695838,
+            "shuffled_ppl": 49.4731265395646,
+            "train_ppl": 5.643848472036522,
+            "uniform_ppl": 513.0,
+            "distinct_trigram": 0.9661016949152542,
+            "verbatim_copy_frac": 0.017699115044247787,
+            "bars": {
+              "ppl_margin": 0.2,
+              "generalization_max": 1.5,
+              "distinct_min": 0.5,
+              "copy_max": 0.2,
+              "abs_competence_ppl_ratio": 1.0
+            },
+            "seed": 43
+          }
+        },
+        {
+          "seed": 44,
+          "T": 16,
+          "train_step": 12000,
+          "ann_heldout_ppl": 6.143469126898965,
+          "spiking_heldout_ppl": 7.753247164045801,
+          "spiking_train_ppl": 5.7532368433039975,
+          "spiking_ctl_ppl": 48.06570431950999,
+          "uniform_ppl": 513,
+          "ppl_ratio_spiking_over_ann": 1.2620307848701444,
+          "distinct_trigram": 0.9915254237288136,
+          "verbatim_copy_frac": 0.035398230088495575,
+          "n_calib_windows": 8,
+          "spiking_gen_sample": "Tim had no ide: about stories and put into the papers. Tim cried, \"How did you get going?\" He asked, smiled. He gave Lily a hug and a buckled. \"I'm going to paper. She pulling the cardge on, pulling a Tom used too agerout to. It was the most! Sally was falling. The next dog did not work call a",
+          "ann_gen_sample": "(ANN generation skipped; not a gate input)",
+          "verdict": {
+            "GATE": "PASS",
+            "absolute_competence_beats_random": true,
+            "real_structure_vs_shuffled": true,
+            "generalizes_not_memorizes": true,
+            "non_degenerate_generation": true,
+            "not_verbatim_copying": true,
+            "heldout_ppl": 7.753247164045801,
+            "shuffled_ppl": 48.06570431950999,
+            "train_ppl": 5.7532368433039975,
+            "uniform_ppl": 513.0,
+            "distinct_trigram": 0.9915254237288136,
+            "verbatim_copy_frac": 0.035398230088495575,
+            "bars": {
+              "ppl_margin": 0.2,
+              "generalization_max": 1.5,
+              "distinct_min": 0.5,
+              "copy_max": 0.2,
+              "abs_competence_ppl_ratio": 1.0
+            },
+            "seed": 44
+          }
+        }
+      ]
+    },
+    {
+      "T": 32,
+      "gate_aggregate": {
+        "GATE": "PASS",
+        "n_seeds": 3,
+        "min_seeds_requested": 3,
+        "min_seeds": 3,
+        "n_pass": 3,
+        "all_pass": true
+      },
+      "ppl_ratios": [
+        1.05793575106876,
+        1.0599534526232517,
+        1.0670019079199138
+      ],
+      "ratio_bar_1.2_all_pass": true,
+      "CONVERT_GO": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "T": 32,
+          "train_step": 12000,
+          "ann_heldout_ppl": 6.172472170873114,
+          "spiking_heldout_ppl": 6.530078982043667,
+          "spiking_train_ppl": 4.684962963355209,
+          "spiking_ctl_ppl": 43.94544291698579,
+          "uniform_ppl": 513,
+          "ppl_ratio_spiking_over_ann": 1.05793575106876,
+          "distinct_trigram": 0.9661016949152542,
+          "verbatim_copy_frac": 0.035398230088495575,
+          "n_calib_windows": 8,
+          "spiking_gen_sample": "Tom thought it was fun to try it. He pushed the button on the grass and put it in a button. They started to lay down around the garden with the microphone. The mister said he needed something, but he had to grump, and why he warned the button to their cat. The cat was nice, but he also happy to have his cap back. It could clean up",
+          "ann_gen_sample": "(ANN generation skipped; not a gate input)",
+          "verdict": {
+            "GATE": "PASS",
+            "absolute_competence_beats_random": true,
+            "real_structure_vs_shuffled": true,
+            "generalizes_not_memorizes": true,
+            "non_degenerate_generation": true,
+            "not_verbatim_copying": true,
+            "heldout_ppl": 6.530078982043667,
+            "shuffled_ppl": 43.94544291698579,
+            "train_ppl": 4.684962963355209,
+            "uniform_ppl": 513.0,
+            "distinct_trigram": 0.9661016949152542,
+            "verbatim_copy_frac": 0.035398230088495575,
+            "bars": {
+              "ppl_margin": 0.2,
+              "generalization_max": 1.5,
+              "distinct_min": 0.5,
+              "copy_max": 0.2,
+              "abs_competence_ppl_ratio": 1.0
+            },
+            "seed": 42
+          }
+        },
+        {
+          "seed": 43,
+          "T": 32,
+          "train_step": 12000,
+          "ann_heldout_ppl": 6.186588920141749,
+          "spiking_heldout_ppl": 6.557496285865001,
+          "spiking_train_ppl": 4.66697203853662,
+          "spiking_ctl_ppl": 44.57974435185402,
+          "uniform_ppl": 513,
+          "ppl_ratio_spiking_over_ann": 1.0599534526232517,
+          "distinct_trigram": 0.9915254237288136,
+          "verbatim_copy_frac": 0.0,
+          "n_calib_windows": 8,
+          "spiking_gen_sample": "Sara was sad. Mom sistol and happy. \"Give me the blue park,\" Mom said. \"It can hurt you. And you feel so enviourse you and give me a good skeletonhew. You know.\" Max nodded. They cared for a valuable year and said, \"Let's posts to the flexeday. We will find them.\" They went to their friend, Sara and stre",
+          "ann_gen_sample": "(ANN generation skipped; not a gate input)",
+          "verdict": {
+            "GATE": "PASS",
+            "absolute_competence_beats_random": true,
+            "real_structure_vs_shuffled": true,
+            "generalizes_not_memorizes": true,
+            "non_degenerate_generation": true,
+            "not_verbatim_copying": true,
+            "heldout_ppl": 6.557496285865001,
+            "shuffled_ppl": 44.57974435185402,
+            "train_ppl": 4.66697203853662,
+            "uniform_ppl": 513.0,
+            "distinct_trigram": 0.9915254237288136,
+            "verbatim_copy_frac": 0.0,
+            "bars": {
+              "ppl_margin": 0.2,
+              "generalization_max": 1.5,
+              "distinct_min": 0.5,
+              "copy_max": 0.2,
+              "abs_competence_ppl_ratio": 1.0
+            },
+            "seed": 43
+          }
+        },
+        {
+          "seed": 44,
+          "T": 32,
+          "train_step": 12000,
+          "ann_heldout_ppl": 6.143469126898965,
+          "spiking_heldout_ppl": 6.555093279648283,
+          "spiking_train_ppl": 4.705789419597241,
+          "spiking_ctl_ppl": 44.21069625218927,
+          "uniform_ppl": 513,
+          "ppl_ratio_spiking_over_ann": 1.0670019079199138,
+          "distinct_trigram": 0.9576271186440678,
+          "verbatim_copy_frac": 0.008849557522123894,
+          "n_calib_windows": 8,
+          "spiking_gen_sample": "It will be useful and refresh.\" Ben cook back to Anna and Ben. They are busy worried. They like new pillow. They smile too. They are happy in old town. They look at the ducks and size and the wind too. They see their stories on the Tom and the makeup ahead. They are your ducks and bubbed Mom. \"We don't like ducks,\" Dad.",
+          "ann_gen_sample": "(ANN generation skipped; not a gate input)",
+          "verdict": {
+            "GATE": "PASS",
+            "absolute_competence_beats_random": true,
+            "real_structure_vs_shuffled": true,
+            "generalizes_not_memorizes": true,
+            "non_degenerate_generation": true,
+            "not_verbatim_copying": true,
+            "heldout_ppl": 6.555093279648283,
+            "shuffled_ppl": 44.21069625218927,
+            "train_ppl": 4.705789419597241,
+            "uniform_ppl": 513.0,
+            "distinct_trigram": 0.9576271186440678,
+            "verbatim_copy_frac": 0.008849557522123894,
+            "bars": {
+              "ppl_margin": 0.2,
+              "generalization_max": 1.5,
+              "distinct_min": 0.5,
+              "copy_max": 0.2,
+              "abs_competence_ppl_ratio": 1.0
+            },
+            "seed": 44
+          }
+        }
+      ]
+    }
+  ],
+  "final_T": 32,
+  "OVERALL": "GO",
+  "CONVERT_GO": true,
+  "elapsed_seconds": 427.4
+}
