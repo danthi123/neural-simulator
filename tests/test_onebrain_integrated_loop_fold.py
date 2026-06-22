@@ -184,3 +184,32 @@ def test_ask_yes_no_routes_through_sequencer(seed):
     # an unstored cue -> unknown (the moat, through the spiking decision)
     assert seq.ask_yes_no("zzz", aff[1], aff[2]) == host.ask_yes_no("zzz", aff[1], aff[2]) == "unknown"
     assert calls["n"] == 4, "ask_yes_no must route each call through _seq_block (the spiking decision)"
+
+
+# ----------------------------------------------------------------------------------------------------------------
+# audit #2 (enable_seq_vocab_shrink, DEFAULT ON): the integrated_loop=True sequencer built over the REDUCED cue vocab
+# (V'_A distinct stored agents / V'_X distinct stored actions) is answer-IDENTICAL to the full-V sequencer on the whole
+# who/what + abstain + cross battery, with a STRICTLY SMALLER fabric -- pins the ~34.6x production reduction's parity.
+# ----------------------------------------------------------------------------------------------------------------
+@pytest.mark.parametrize("seed", [42, 43])
+def test_seq_vocab_shrink_answer_identical_and_smaller(seed):
+    """The reduced-vocab sequencer (default) selects the SAME block as the full-V sequencer on every present + abstain +
+    cross cue, and its bridge has fewer neurons (V word-lines -> V'_A + V'_X). The shrink abstains a cue whose agent or
+    action is not a stored filler BEFORE the fabric (== no block matches in full-V); a cross cue (both fillers stored but
+    never together) runs the fabric and abstains there -- the moat is byte-identical either way."""
+    facts = DERISK_FACTS[:K_SMALL]
+    full = OneBrainComposer(seed=seed, D=128, vocab=VOCAB, k_max=8, enable_batched=False,
+                            enable_rf_cudagraph=False, integrated_loop=True, enable_seq_vocab_shrink=False)
+    shrink = OneBrainComposer(seed=seed, D=128, vocab=VOCAB, k_max=8, enable_batched=False,
+                              enable_rf_cudagraph=False, integrated_loop=True, enable_seq_vocab_shrink=True)
+    for (a, x, p) in facts:
+        full.store(a, x, p); shrink.store(a, x, p)
+    a0, x0 = facts[0][0], facts[0][1]
+    battery = [(a, x) for (a, x, p) in facts] + [("zzz", x0), (a0, "fly"), (a0, facts[1][1])]
+    for (a, x) in battery:
+        assert shrink._seq_block(a, x) == full._seq_block(a, x), f"shrink != full-V block selection on cue {(a, x)}"
+    full._ensure_sequencer(len(facts)); shrink._ensure_sequencer(len(facts))
+    n_full = full._seq[0].core_config.num_neurons
+    n_shrink = shrink._seq[0].core_config.num_neurons
+    assert n_shrink < n_full, f"reduced sequencer ({n_shrink}) must be smaller than full-V ({n_full})"
+    assert shrink._seq_mapA is not None and shrink._seq_mapX is not None, "the reduced cue maps must be populated"

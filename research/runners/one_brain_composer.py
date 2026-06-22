@@ -48,9 +48,13 @@ def _seq_imports():
     from research.runners._phaseC_S5_divnorm_derisk import build_divnorm_score_bridge
     from research.runners._phaseB_onebrain_sequencerK_k32_margin_derisk import make_block_drives
     from research.runners._phaseB_onebrain_sequencerK_divnorm_derisk import run_sequencerK_with_drive
+    from research.runners._seq_vocab_shrink_derisk import (
+        build_sequencerK_reduced_bridge, reduced_cue_vocab, run_sequencerK_reduced_with_drive)
     return dict(build_sequencerK_bridge=build_sequencerK_bridge, decision_to_block=decision_to_block,
                 block_cleanup_scores=block_cleanup_scores, build_divnorm_score_bridge=build_divnorm_score_bridge,
-                make_block_drives=make_block_drives, run_sequencerK_with_drive=run_sequencerK_with_drive)
+                make_block_drives=make_block_drives, run_sequencerK_with_drive=run_sequencerK_with_drive,
+                build_sequencerK_reduced_bridge=build_sequencerK_reduced_bridge, reduced_cue_vocab=reduced_cue_vocab,
+                run_sequencerK_reduced_with_drive=run_sequencerK_reduced_with_drive)
 
 ROLES3 = ["agent", "action", "patient"]
 
@@ -110,7 +114,8 @@ class OneBrainComposer:
                  enable_rf_cudagraph=True, grounded_codes=None, confidence_gate=0.0, enable_csr_cache=True,
                  enable_attributed=False, enable_multiframe=False, enable_spiking_cleanup=True,
                  encoding_gain_fn=None, local_reciprocal_unbind=True, integrated_loop=False,
-                 sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0):
+                 sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0,
+                 enable_seq_vocab_shrink=True):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         # integrated_loop (shortcut #3, default OFF = byte-identical = the host-_scan oracle + numpy-CPU + test-oracle
         # path): make the CUE-MATCH ROUTING fully on-substrate. The per-block reconstruction (_read_blocks) is ALREADY
@@ -134,6 +139,16 @@ class OneBrainComposer:
         self._seq_K = None          # the store size the current sequencer/drives were built for
         self._seq_drives = None     # the per-block decoded-line drives (recomputed when the store changes)
         self._seq_dirty = True      # the store changed since the drives were built -> rebuild the drives
+        # enable_seq_vocab_shrink (audit #2, DEFAULT ON; only active on the integrated_loop spiking path): build the
+        # K-way sequencer over only the DISTINCT stored agents (role A = V'_A) / actions (role X = V'_X) instead of the
+        # full V word-lines, since a who/what cue can only ever be a stored agent/action (else the moat abstains BEFORE
+        # the sequencer). Byte-identical decisions (cue + decoded lines remapped global->reduced; a spurious near-tie
+        # decoded word outside the reduced vocab is dropped == a closed/absent line no battery cue drives) at ~34.6x
+        # fewer sequencer neurons at production V=320/K=32 (_seq_vocab_shrink_derisk.py, GO 2026-06-21).
+        self.enable_seq_vocab_shrink = bool(enable_seq_vocab_shrink)
+        self._seq_mapA = None        # word -> reduced-index (role A) for the shrunk sequencer
+        self._seq_mapX = None        # word -> reduced-index (role X)
+        self._seq_cuevocab_sig = None  # (tuple(V'_A), tuple(V'_X)) -- rebuild the reduced fabric when this changes
         # local_reciprocal_unbind (FHRR-B mechanism 1, opt-in, DEFAULT-OFF = byte-identical): derive the UNBIND
         # synapse weights from the BIND (role) phasor by the one-time LOCAL reciprocal-conjugate rule (a per-component
         # quadrature flip via comp._local_conj) instead of the host np.conj over the role code. Closes the same host
@@ -592,7 +607,21 @@ class OneBrainComposer:
         changes; the drives depend on the stored content, so they are rebuilt when _seq_dirty (a write happened) or K
         changed. The drives are derived from the composer's OWN on-bridge cleanup scores (`block_cleanup_scores`)."""
         fns = _seq_imports()
-        if self._seq is None or self._seq_K != K:
+        if self.enable_seq_vocab_shrink:
+            # reduced fabric: role A over V'_A (distinct stored agents), role X over V'_X (distinct stored actions);
+            # rebuilt when K grows OR the cue-vocab signature changes (e.g. reconsolidation rewrites an agent/action).
+            facts = [(f.get("agent"), f.get("action"), f.get("patient")) for (f, _) in self.kb[:K]]
+            agentsA, actionsX, mapA, mapX = fns["reduced_cue_vocab"](facts, K)
+            sig = (tuple(agentsA), tuple(actionsX))
+            if self._seq is None or self._seq_K != K or self._seq_cuevocab_sig != sig:
+                sb, meta = fns["build_sequencerK_reduced_bridge"](seed=self.seed, VA=len(agentsA),
+                                                                 VX=len(actionsX), K=K)
+                score_sb = fns["build_divnorm_score_bridge"](seed=self.seed, V=self.V, enable_divnorm=True,
+                                                             sigma=self.sequencer_sigma, gain=self.sequencer_gain)
+                self._seq = (sb, meta); self._seq_score = score_sb; self._seq_K = K
+                self._seq_mapA = mapA; self._seq_mapX = mapX; self._seq_cuevocab_sig = sig
+                self._seq_dirty = True                             # a new reduced fabric -> the drives must be rebuilt
+        elif self._seq is None or self._seq_K != K:
             sb, meta = fns["build_sequencerK_bridge"](seed=self.seed, V=self.V, K=K)
             score_sb = fns["build_divnorm_score_bridge"](seed=self.seed, V=self.V, enable_divnorm=True,
                                                          sigma=self.sequencer_sigma, gain=self.sequencer_gain)
@@ -627,8 +656,16 @@ class OneBrainComposer:
         self._ensure_sequencer(K)
         fns = _seq_imports()
         sb, meta = self._seq
-        dec, _rates = fns["run_sequencerK_with_drive"](sb, meta, self._word_index[agent], self._word_index[action],
-                                                       self._seq_drives, match_thresh=self.sequencer_match_thresh)
+        if self.enable_seq_vocab_shrink:
+            if agent not in self._seq_mapA or action not in self._seq_mapX:
+                return None                                        # cue not a stored agent/action -> abstain (== no
+                                                                   # block matches in the full-V build; moat-preserving)
+            dec, _rates = fns["run_sequencerK_reduced_with_drive"](sb, meta, self.words, self._seq_mapA, self._seq_mapX,
+                                                                   agent, action, self._seq_drives,
+                                                                   match_thresh=self.sequencer_match_thresh)
+        else:
+            dec, _rates = fns["run_sequencerK_with_drive"](sb, meta, self._word_index[agent], self._word_index[action],
+                                                           self._seq_drives, match_thresh=self.sequencer_match_thresh)
         return fns["decision_to_block"](dec, K)
 
     def _scan(self, cue, answer_role):
