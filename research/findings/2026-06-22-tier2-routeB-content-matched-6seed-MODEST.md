@@ -38,9 +38,15 @@ spiking dopamine that biases the composer's encoding strength produces a ~+0.2 c
 (5/6 seeds), moat-safe. An honest, characterized result.
 
 ## Next
-1. **Larger-N re-run** (extend the FACTS list to ~48–64) so the random HI/LO assignment balances content per seed →
-   the lesion → ~0 → the strict per-seed verdict aligns with the diff-in-diff (a clean per-seed isolation). The
-   rigorous confirmation of the +0.2 effect.
+1. **Larger-N re-run (N=48) — DONE, CONFIRMS the effect (2026-06-22).** 6-seed at N=48: the per-seed strict verdict
+   is now **4/6 GO** (vs N=16's 1/6 — the larger fact set cleaned the per-seed content confound substantially), and
+   the **diff-in-diff (main − lesion) is +0.306 mean, positive on ALL 6/6 seeds** (vs N=16's +0.208, 5/6). Per-seed
+   main/lesion/diff-in-diff: 42 [+0.250/−0.042/**+0.292** GO], 43 [+0.333/−0.042/**+0.375** GO], 44
+   [+0.250/−0.125/**+0.375** NEG\*], 100 [+0.333/+0.083/**+0.250** GO], 101 [+0.167/+0.000/**+0.167** GO], 102
+   [+0.167/−0.208/**+0.375** NEG\*]. Moat 0-FA every seed. (\*The two NEGATIVEs are residual per-seed content
+   imbalance — non-zero lesion — but their diff-in-diff stays +0.375.) ⇒ the DA encoding-gain effect is CONFIRMED
+   real-but-modest (~+0.3 content-controlled recall), slightly stronger + more consistent at N=48. **Tier-2 #6
+   reward→memory: closed as real-but-modest, multi-seed-confirmed.**
 2. The richer DA→memory routes (DA-gated **reconsolidation**, salience-gated **recall**) likely give a LARGER
    behavioral effect than encoding-strength-as-noise-robustness (they act where the read model is more sensitive than
    a uniform per-fact magnitude scalar) — the natural next one-self levers, now that encoding-strength is confirmed
