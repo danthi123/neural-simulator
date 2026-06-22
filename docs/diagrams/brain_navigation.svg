@@ -319,7 +319,7 @@
   <text x="370" y="582" font-size="8.6" font-weight="700" fill="#9a2c20">GPi tonic &#8867; thal</text>
   <text x="370" y="592" font-size="8" fill="#9a2c20">(D1 silence releases the relay)</text>
   <!-- STN diffuse excitation to GPi -->
-  <path d="M649,556 C649,572 560,576 540,540" stroke="#1e8449" stroke-width="1.8" marker-end="url(#arrG)"/>
+  <path d="M649,556 C649,572 558,540 540,540" stroke="#1e8449" stroke-width="1.8" marker-end="url(#arrG)"/>
   <text x="640" y="576" font-size="7.8" fill="#1e6e49">STN diffuse exc &#8594; GPi</text>
   <!-- thalamus -> decision -->
   <path d="M572,684 L572,698" stroke="#3f5366" stroke-width="2.6" marker-end="url(#arrEx)"/>
@@ -328,7 +328,7 @@
   <path d="M572,838 L572,872" stroke="#6c3483" stroke-width="3" marker-end="url(#arrP)"/>
   <text x="588" y="858" font-size="8.8" font-weight="700" fill="#5b3673">commit PICKS the move (DEFAULT)</text>
   <!-- thalamus -> motor (oracle, dashed, skirts left) -->
-  <path d="M412,648 C360,648 360,910 450,914" stroke="#3f5366" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrEx)"/>
+  <path d="M412,648 C360,648 360,918 412,918" stroke="#3f5366" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrEx)"/>
   <!-- motor -> body -->
   <path d="M572,966 L572,988" stroke="#b03a2e" stroke-width="2.6" marker-end="url(#arrInh)"/>
   <text x="588" y="980" font-size="8.6" fill="#9a2c20">agent moves</text>
@@ -339,11 +339,11 @@
      ======================================================================= -->
 <g fill="none" stroke-linecap="round">
   <!-- perception inputs -> cortex -->
-  <path d="M372,300 C392,300 396,196 410,196" stroke="#3f5366" stroke-width="2" marker-end="url(#arrEx)"/>
+  <path d="M372,300 C392,300 400,196 412,196" stroke="#3f5366" stroke-width="2" marker-end="url(#arrEx)"/>
   <!-- SC orienting -> cortex -->
-  <path d="M372,520 C400,520 404,222 410,210" stroke="#6c3483" stroke-width="2.2" marker-end="url(#arrP)"/>
+  <path d="M372,520 C398,400 402,210 412,210" stroke="#6c3483" stroke-width="2.2" marker-end="url(#arrP)"/>
   <!-- striatum striosome -> reward snc (short, kept low and clear of the feedback lanes) -->
-  <path d="M732,384 C754,384 766,360 784,354" stroke="#b03a2e" stroke-width="2" marker-end="url(#arrInh)"/>
+  <path d="M732,384 C754,384 770,354 786,354" stroke="#b03a2e" stroke-width="2" marker-end="url(#arrInh)"/>
   <text x="738" y="396" font-size="7.8" fill="#9a2c20">striosome &#8594; SNc</text>
   <!-- dopamine bus snc -> cortex (broadcast; a clean single diagonal, distinct dotted style) -->
   <path d="M786,340 C690,318 624,276 594,256" stroke="#d68910" stroke-width="2.2" stroke-dasharray="2 3" marker-end="url(#arrDA)"/>
@@ -351,19 +351,19 @@
   <!-- two feedback returns to cortex: parallel non-crossing lanes up the cortex/reward gutter.
        thalamo-cortical = inner lane (x~750); dlPFC WM-bias = outer lane (x~766). -->
   <!-- thalamo-cortical feedback (closes loop) -->
-  <path d="M732,616 C748,616 750,420 750,300 C750,256 742,238 734,228" stroke="#117a65" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrEx)"/>
+  <path d="M732,616 C748,616 750,420 750,300 C750,256 744,226 732,226" stroke="#117a65" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrEx)"/>
   <!-- dlPFC -> cortex bias -->
-  <path d="M806,648 C770,648 766,440 766,300 C766,252 750,234 734,230" stroke="#2e86c1" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrV)"/>
+  <path d="M806,648 C770,648 766,440 766,300 C766,252 746,234 732,234" stroke="#2e86c1" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrV)"/>
   <!-- both feedback-lane labels, colour-coded, in the open space above the Reward panel -->
   <text x="784" y="262" font-size="8.2" font-weight="700" fill="#117a65">&#8212; thalamo&#8211;cortical feedback (opt)</text>
   <text x="784" y="276" font-size="8.2" font-weight="700" fill="#2e5577">&#8212; dlPFC: WM bias &#8594; cortex (opt)</text>
   <!-- cerebellum DCN -> motor -->
-  <path d="M372,810 C392,810 420,870 450,898" stroke="#2e86c1" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrV)"/>
+  <path d="M372,810 C392,850 400,898 412,898" stroke="#2e86c1" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrV)"/>
   <text x="384" y="858" font-size="8" fill="#2e5577">DCN &#8594; motor (additive)</text>
   <!-- hippocampus place readout up to perception (long, left edge) -->
-  <path d="M168,976 C150,976 150,420 200,400" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrG)"/>
+  <path d="M168,976 C150,976 200,560 200,438" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrG)"/>
   <!-- body -> perception (world renders next input) -->
-  <path d="M452,1014 C300,1014 250,440 250,430" stroke="#566573" stroke-width="1.6" stroke-dasharray="2 4" marker-end="url(#arrEx)"/>
+  <path d="M452,1014 C300,1014 250,470 250,438" stroke="#566573" stroke-width="1.6" stroke-dasharray="2 4" marker-end="url(#arrEx)"/>
 </g>
 
 <!-- =======================================================================
