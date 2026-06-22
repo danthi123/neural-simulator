@@ -177,8 +177,8 @@
     <text x="388" y="717" text-anchor="middle" font-size="12.5" font-weight="700" fill="#143a54">Composer &#8212; bind words into a fact</text>
     <text x="388" y="733" text-anchor="middle" font-size="9.2" fill="#244a63">phase&#8211;based "resonate&#8211;and&#8211;fire"</text>
     <text x="388" y="746" text-anchor="middle" font-size="9.2" fill="#244a63">neurons + complex synapses</text>
-    <text x="388" y="761" text-anchor="middle" font-size="8.8" fill="#3a6280">attributes ("big apple") &#183; negation &#183; clauses &#183; ~10&#8211;20&#215; faster</text>
-    <text x="388" y="775" text-anchor="middle" font-size="8.6" fill="#7a5a18">&#9888; binding rule is fixed algebra (stand&#8211;in for a learned cortex)</text>
+    <text x="388" y="761" text-anchor="middle" font-size="8.8" fill="#3a6280">attributes ("big apple") &#183; negation &#183; clauses</text>
+    <text x="388" y="775" text-anchor="middle" font-size="8.4" fill="#7a5a18">&#9888; binding = fixed algebra (a learned&#8211;cortex stand&#8211;in)</text>
   </g>
 
   <g filter="url(#soft)">
@@ -276,9 +276,7 @@
   <path d="M388,684 L388,692" stroke="#3f5366" stroke-width="2.2" marker-end="url(#arrEx)"/>
   <text x="430" y="691" font-size="8.4" fill="#46586a">who&#8211;did&#8211;what</text>
   <path d="M504,724 C516,700 520,600 526,572" stroke="#3f5366" stroke-width="2" marker-end="url(#arrEx)"/>
-  <text x="520" y="650" font-size="8.4" fill="#46586a" transform="rotate(-78 520 650)">write the fact</text>
   <path d="M504,752 C516,720 518,680 526,664" stroke="#3f5366" stroke-width="2" marker-end="url(#arrEx)"/>
-  <text x="498" y="704" font-size="8.2" fill="#46586a" transform="rotate(-60 498 704)">unbind+clean up</text>
   <path d="M728,580 C748,588 752,596 762,604" stroke="#3f5366" stroke-width="1.8" marker-end="url(#arrEx)"/>
   <text x="752" y="592" text-anchor="middle" font-size="8" fill="#46586a">match a cue</text>
   <path d="M703,702 L703,712" stroke="#3f5366" stroke-width="2.4" marker-end="url(#arrEx)"/>
