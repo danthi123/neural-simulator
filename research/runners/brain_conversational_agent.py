@@ -151,7 +151,7 @@ class BrainConversationalAgent:
     def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None, composer_kind="rf",
                  enable_spiking_cleanup=False, enable_substrate_store=False, grounded_codes=None,
                  enable_learned_assoc=False, enable_neural_render=True, enable_rf_cudagraph=False,
-                 enable_attributed=True, enable_multiframe=True,
+                 enable_attributed=True, enable_multiframe=True, integrated_loop=False,
                  enable_multicue_competition=False, multicue_verbs=None,
                  enable_case_competition=False, case_verbs=None, case_lexicon=None):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
@@ -186,10 +186,17 @@ class BrainConversationalAgent:
             # enable_spiking_cleanup (burndown #1) passes through too: the cleanup SELECTION (the winner-pick over the
             # matched-filter membrane) becomes a fully-on-substrate spiking Izhikevich WTA instead of a host argmax.
             # Default OFF here = byte-identical (the numpy-CPU + test-oracle path); the production demo opts it ON.
+            # integrated_loop (shortcut #3, default OFF = byte-identical = the host-_scan oracle): route the
+            # (agent, action) cue-match-and-first-match SELECTION through the validated spiking K-way sequencer (the
+            # gated-disinhibition match cascade + BG first-match priority WTA) instead of the host first-match loop, at
+            # the validated op-point (match_thresh=0.06). The no-confab moat is preserved by construction (the abstain
+            # channel maps to the same None/"unknown"). NOT flipped on by default here (the agent default stays the
+            # byte-identical host read; the production demo gets the opt-in flag). See the #3 fold plan.
             self.composer = OneBrainComposer(seed=seed, D=128, vocab=vocab, grounded_codes=grounded_codes,
                                              enable_attributed=enable_attributed,
                                              enable_multiframe=enable_multiframe,
-                                             enable_spiking_cleanup=enable_spiking_cleanup)
+                                             enable_spiking_cleanup=enable_spiking_cleanup,
+                                             integrated_loop=integrated_loop)
         else:
             from research.runners.rf_phasor_composer import RFPhasorComposer
             vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
@@ -309,7 +316,13 @@ class BrainConversationalAgent:
         assert self.enable_case_competition, \
             "hear_case needs BrainConversationalAgent(enable_case_competition=True, case_verbs=...)"
         words = sentence.split() if isinstance(sentence, str) else list(sentence)
-        roles = self._ensure_case_parser().parse(words, voice, markers=markers)
+        # GAP-1 (the comprehension no-confab moat): route through parse_decisive -- an UNMARKED content-ambiguous
+        # sentence (no case particle + animacy tie + symmetric verb) is NON-decisive -> ABSTAIN (store nothing,
+        # return None) rather than confabulate. Same gate as hear_multicue (CaseAwareRoleParser.parse_decisive, the
+        # case content gate); the multicue path is de-risked, the case path follows the identical pattern.
+        roles, decisive = self._ensure_case_parser().parse_decisive(words, voice, markers=markers)
+        if not decisive:
+            return None
         self.composer.store(roles.get("agent"), roles.get("action"), roles.get("patient"), polarity=polarity)
         if self._learned_assoc is not None:
             self._learned_assoc.store_fact([roles.get("agent"), roles.get("action"), roles.get("patient")])
@@ -332,7 +345,14 @@ class BrainConversationalAgent:
         assert self.enable_multicue_competition, \
             "hear_multicue needs BrainConversationalAgent(enable_multicue_competition=True, multicue_verbs=...)"
         words = sentence.split() if isinstance(sentence, str) else list(sentence)
-        roles = self._ensure_multicue_parser().parse(words, voice)
+        # GAP-1 (the comprehension no-confab moat): route through parse_decisive -- a content-ambiguous degraded
+        # sentence (two animate nouns + a symmetric verb -> no decisive content cue) is NON-decisive, so ABSTAIN at
+        # comprehension (store NOTHING, return None) rather than confabulate a role assignment the query-time moat
+        # could not un-store. De-risk GO (_phaseB_multicue_comprehension_moat_derisk.py): ambiguous abstain 1.00 /
+        # 0 confab, the margin-lesion reproduces the confab, decisive + canonical unregressed.
+        roles, decisive = self._ensure_multicue_parser().parse_decisive(words, voice)
+        if not decisive:
+            return None
         self.composer.store(roles.get("agent"), roles.get("action"), roles.get("patient"), polarity=polarity)
         if self._learned_assoc is not None:
             self._learned_assoc.store_fact([roles.get("agent"), roles.get("action"), roles.get("patient")])

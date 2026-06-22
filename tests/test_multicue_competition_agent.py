@@ -127,3 +127,18 @@ def test_enable_multicue_requires_verbs():
     with pytest.raises(ValueError):
         BrainConversationalAgent(seed=SEED, composer_kind="rf", concepts=VOCAB,
                                  enable_multicue_competition=True)   # missing multicue_verbs
+
+
+def test_multicue_comprehension_moat_abstains_on_ambiguous():
+    """GAP-1 (the comprehension no-confab moat): hear() on a content-ambiguous degraded sentence (two animate nouns
+    + a symmetric verb -> no decisive content cue) ABSTAINS at comprehension -- stores NOTHING (returns None) so a
+    follow-up who/what query is None -- instead of confabulating a stored role the query-time moat could not un-store.
+    The decisive counterpart ('apple eat dog') still resolves + stores. De-risk:
+    research/runners/_phaseB_multicue_comprehension_moat_derisk.py (GO)."""
+    a = _on_agent()
+    assert a.hear("dog chase cat") is None                # two animate + symmetric verb -> abstain (no store)
+    assert a.who_does("chase", "cat") is None             # nothing stored -> moat at comprehension
+    assert a.who_does("chase", "dog") is None
+    r = a.hear("apple eat dog")                           # animate + inanimate -> decisive -> resolves + stores
+    assert r is not None and r["agent"] == "dog" and r["patient"] == "apple"
+    assert a.who_does("eat", "apple") == "dog"            # the decisive case is unregressed
