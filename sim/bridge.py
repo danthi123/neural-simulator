@@ -436,6 +436,11 @@ class SimulationBridge:
         # cfg.enable_vectorized_gate_couplings). Rebuilt lazily whenever the coupling COUNT changes (the only
         # mutation: couple_gate_to_pool appends). None until first vectorized step.
         self._gate_coupling_flat = None
+        # opt #3: cached per-coupling state arrays (alpha/threshold/open_value/ema/last_value + gate_names) for the
+        # vectorized _apply_gate_couplings path -- the EMA + threshold + gate-select run as ONE batched numpy op
+        # instead of a Python per-coupling loop. Rebuilt lazily when the coupling COUNT changes (same trigger as
+        # _gate_coupling_flat), preserving the existing couplings' running state. None until the first vectorized step.
+        self._gate_coupling_state = None
 
         # Cluster B.1 (2026-04-28): D1/D2 plasticity asymmetry.
         # Per-synapse sign multiplier on the reward-modulated weight update.
@@ -3236,14 +3241,22 @@ class SimulationBridge:
         if not self._gate_couplings:
             return
         if getattr(self.core_config, "enable_vectorized_gate_couplings", False):
-            rates = self._gate_coupling_rates_vectorized()
-        else:
-            rates = None
-        for i, c in enumerate(self._gate_couplings):
-            if rates is None:
-                rate = float(self.cp_firing_states[c["control_idx"]].mean())   # firing fraction of the control pool
-            else:
-                rate = rates[i]
+            # opt #3 (vectorized): batch the rates (segment-sum) + the EMA + threshold + gate-select into ONE numpy
+            # op over all couplings; write ONLY the gates whose open/closed value changed. Byte-identical to the
+            # scalar loop below -- the same per-element EMA arithmetic, the segment-sum rate == per-coupling .mean()
+            # exactly for boolean firing, and the NaN-init last_value reproduces the first-step "write every gate".
+            rates = np.asarray(self._gate_coupling_rates_vectorized(), dtype=np.float64)
+            st = self._gate_coupling_state_cached()
+            new_ema = st["alpha"] * rates + (1.0 - st["alpha"]) * st["ema"]
+            new_value = np.where(new_ema >= st["threshold"], st["open_value"], 0.0)
+            names = st["gate_names"]
+            for i in np.nonzero(new_value != st["last_value"])[0]:        # only the couplings whose gate flipped
+                self.set_transmission_gate(names[i], float(new_value[i]))
+            st["ema"] = new_ema
+            st["last_value"] = new_value
+            return
+        for c in self._gate_couplings:                                    # scalar path (unchanged)
+            rate = float(self.cp_firing_states[c["control_idx"]].mean())   # firing fraction of the control pool
             c["ema"] = c["alpha"] * rate + (1.0 - c["alpha"]) * c["ema"]
             value = c["open_value"] if c["ema"] >= c["threshold"] else 0.0
             if value != c["last_value"]:                                  # only write the gate when it changes
@@ -3273,6 +3286,35 @@ class SimulationBridge:
         seg_sum = cp.add.reduceat(gathered.astype(cp.float64), flat["starts"])   # exact integer sums per pool
         means = _backend_to_host(seg_sum) / flat["counts"]     # sum_i / count_i == per-slice .mean() (boolean)
         return means.tolist()
+
+    def _gate_coupling_state_cached(self) -> dict:
+        """opt #3: cached per-coupling state arrays for the vectorized _apply_gate_couplings path -- alpha / threshold
+        / open_value (constants) + ema / last_value (the running EMA + last gate value) + gate_names, all in coupling
+        order. Rebuilt only when the coupling COUNT changes (couple_gate_to_pool only ever appends), PRESERVING the
+        existing couplings' ema/last_value; an appended coupling inits to ema=0.0 (== the scalar dict) and
+        last_value=NaN (so the first step writes that gate, == `value != None` in the scalar path). The arrays ARE the
+        vectorized path's running state (the scalar dict ema/last_value are unused while vectorized -- one path runs
+        per bridge, fixed by enable_vectorized_gate_couplings)."""
+        st = self._gate_coupling_state
+        if st is None or st["n"] != len(self._gate_couplings):
+            cs = self._gate_couplings
+            n = len(cs)
+            new = {
+                "n": n,
+                "alpha": np.asarray([c["alpha"] for c in cs], dtype=np.float64),
+                "threshold": np.asarray([c["threshold"] for c in cs], dtype=np.float64),
+                "open_value": np.asarray([c["open_value"] for c in cs], dtype=np.float64),
+                "ema": np.zeros(n, dtype=np.float64),
+                "last_value": np.full(n, np.nan, dtype=np.float64),
+                "gate_names": [c["gate_name"] for c in cs],
+            }
+            if st is not None:                                            # appends keep order -> preserve [:old_n]
+                k = min(st["n"], n)
+                new["ema"][:k] = st["ema"][:k]
+                new["last_value"][:k] = st["last_value"][:k]
+            st = new
+            self._gate_coupling_state = st
+        return st
 
     # ──────────────────────────────────────────────────────────────────
     # Engram-tagging API (P2 / roadmap T1.C / catalog D.14)

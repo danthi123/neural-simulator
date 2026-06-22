@@ -75,6 +75,19 @@ cleanup). The drive seed recurs on the first query after every store, so this is
 (per store→query), not a one-time one. Reuse-by-import, NO `sim/` edit. Gate: the fold sequencer answer-identity
 tests (which route through `block_cleanup_scores`) pass.
 
+## Sibling lever — opt #3 (vectorize the sequencer gate-coupling loop — the one `sim/` edit)
+The sequencer's per-step transmission-gate update (`_apply_gate_couplings`, `sim/bridge.py`) ran a Python loop over
+all ~K·V' couplings on every one of the 80 settle steps per query, computing each coupling's EMA + threshold + gate
+value individually (the audit's §5 row #3). With `enable_vectorized_gate_couplings` (which the K-way sequencer opts
+into) the RATE was already a segment-sum (one device reduction), but the EMA + threshold + gate-select stayed a
+Python per-coupling loop. opt #3 batches that into ONE numpy op (`new_ema = alpha*rates + (1-alpha)*ema`;
+`new_value = where(new_ema >= threshold, open_value, 0)`), writing ONLY the gates whose value flipped. Byte-identical
+to the scalar path (the same per-element EMA arithmetic; the segment-sum rate == per-coupling `.mean()` for boolean
+firing; a NaN-init `last_value` reproduces the first-step "write every gate"; the scalar path is provably unchanged).
+The ONE `sim/` edit in the latency arc (owner-approved): a cached `_gate_coupling_state` array structure (rebuilt
+only on a coupling-count change, preserving existing state) + a rewritten `_apply_gate_couplings`. Gate: the fold
+sequencer answer-identity tests 8 passed (the sequencer == the host oracle with the vectorized gate loop), moat 0-FA.
+
 ## Provenance
 De-risk: `research/findings/2026-06-21-seq-vocab-shrink-derisk.md` + `research/runners/_seq_vocab_shrink_derisk.py`
 (`bf217eb3`). Audit: `2026-06-22-megakernel-revisit-optimization-audit.md` (§5 row #2). Wiring + test:
