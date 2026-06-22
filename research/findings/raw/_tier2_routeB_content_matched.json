@@ -1,0 +1,154 @@
+{
+  "seed": 42,
+  "config": {
+    "read_floor": 0.01,
+    "k_da": 2.0,
+    "i_low": 80.0,
+    "i_high": 600.0,
+    "D": 128,
+    "N_facts": 16,
+    "GO_EFFECT": 0.15,
+    "LESION_NULL": 0.1
+  },
+  "labels": [
+    "HI",
+    "LO",
+    "LO",
+    "LO",
+    "LO",
+    "HI",
+    "HI",
+    "HI",
+    "LO",
+    "HI",
+    "HI",
+    "HI",
+    "LO",
+    "HI",
+    "LO",
+    "LO"
+  ],
+  "da": {
+    "low": 0.6787504405916831,
+    "high": 0.8428108707271958,
+    "baseline": 0.5
+  },
+  "encoding_gain": {
+    "at_low_DA": 1.3575008811833662,
+    "at_high_DA": 1.6856217414543917,
+    "applied(hi>lo)": true
+  },
+  "knee": {
+    "noise": 400.0,
+    "meanHI": 0.875,
+    "meanLO": 0.5,
+    "effect": 0.375,
+    "n_HI_ok": 7,
+    "n_LO_ok": 4,
+    "n_HI": 8,
+    "n_LO": 8,
+    "moat_FA": 0
+  },
+  "sigma_knee_sweep": [
+    {
+      "noise": 260.0,
+      "meanHI": 1.0,
+      "meanLO": 1.0,
+      "overall": 1.0,
+      "effect": 0.0,
+      "moat_ok": true,
+      "n_HI_ok": 8,
+      "n_LO_ok": 8
+    },
+    {
+      "noise": 400.0,
+      "meanHI": 0.875,
+      "meanLO": 0.5,
+      "overall": 0.6875,
+      "effect": 0.375,
+      "moat_ok": true,
+      "n_HI_ok": 7,
+      "n_LO_ok": 4
+    },
+    {
+      "noise": 600.0,
+      "meanHI": 0.375,
+      "meanLO": 0.0,
+      "overall": 0.1875,
+      "effect": 0.375,
+      "moat_ok": true,
+      "n_HI_ok": 3,
+      "n_LO_ok": 0
+    },
+    {
+      "noise": 900.0,
+      "meanHI": 0.125,
+      "meanLO": 0.0,
+      "overall": 0.0625,
+      "effect": 0.125,
+      "moat_ok": true,
+      "n_HI_ok": 1,
+      "n_LO_ok": 0
+    },
+    {
+      "noise": 1300.0,
+      "meanHI": 0.0,
+      "meanLO": 0.0,
+      "overall": 0.0,
+      "effect": 0.0,
+      "moat_ok": true,
+      "n_HI_ok": 0,
+      "n_LO_ok": 0
+    },
+    {
+      "noise": 1800.0,
+      "meanHI": 0.0,
+      "meanLO": 0.0,
+      "overall": 0.0,
+      "effect": 0.0,
+      "moat_ok": true,
+      "n_HI_ok": 0,
+      "n_LO_ok": 0
+    },
+    {
+      "noise": 2500.0,
+      "meanHI": 0.0,
+      "meanLO": 0.0,
+      "overall": 0.0,
+      "effect": 0.0,
+      "moat_ok": true,
+      "n_HI_ok": 0,
+      "n_LO_ok": 0
+    },
+    {
+      "noise": 3400.0,
+      "meanHI": 0.0,
+      "meanLO": 0.0,
+      "overall": 0.0,
+      "effect": 0.0,
+      "moat_ok": true,
+      "n_HI_ok": 0,
+      "n_LO_ok": 0
+    },
+    {
+      "noise": 4500.0,
+      "meanHI": 0.0,
+      "meanLO": 0.0,
+      "overall": 0.0,
+      "effect": 0.0,
+      "moat_ok": true,
+      "n_HI_ok": 0,
+      "n_LO_ok": 0
+    }
+  ],
+  "lesion": {
+    "noise": 400.0,
+    "meanHI": 0.5,
+    "meanLO": 0.5,
+    "lesion_effect": 0.0,
+    "moat_ok": true
+  },
+  "regression_default_identical": true,
+  "verdict": "GO",
+  "verdict_line": "seed 42 content-matched: meanHI=0.875 meanLO=0.500 effect=+0.375 (N=16, n_flip=3, knee_noise=400.0) | moat_FA=0 | lesion_effect=+0.000 -> GO"
+}
