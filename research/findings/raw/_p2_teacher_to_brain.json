@@ -1,0 +1,413 @@
+{
+  "derisk": "P2 teacher->brain (grounded-language-faculty scoping Rank 1)",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_go": 3,
+  "n_seeds": 3,
+  "ALL_GO": true,
+  "recall_accuracy_per_seed": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "moat_false_accepts_per_seed": [
+    0,
+    0,
+    0
+  ],
+  "multihop_correct_per_seed": [
+    6,
+    6,
+    6
+  ],
+  "multihop_n_chains": 6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_vocab": 65,
+      "n_facts": 40,
+      "recall": {
+        "what_ok": 40,
+        "what_tot": 40,
+        "who_ok": 40,
+        "who_tot": 40,
+        "n_correct": 80,
+        "n_total": 80,
+        "accuracy": 1.0,
+        "examples": {
+          "what": [
+            "dog",
+            "eat",
+            "meat",
+            "meat"
+          ],
+          "who": [
+            "eat",
+            "meat",
+            "dog",
+            "dog"
+          ]
+        }
+      },
+      "moat": {
+        "n_cues": 10,
+        "n_abstained": 10,
+        "n_false_accepts": 0,
+        "false_accepts": [],
+        "example_abstain": [
+          "dog",
+          "swim"
+        ]
+      },
+      "multihop": {
+        "n_chains": 6,
+        "n_correct": 6,
+        "chains": [
+          {
+            "cue": "dog",
+            "actions": [
+              "chase",
+              "chase"
+            ],
+            "expected": "mouse",
+            "got": "mouse",
+            "ok": true
+          },
+          {
+            "cue": "fox",
+            "actions": [
+              "chase",
+              "eat"
+            ],
+            "expected": "carrot",
+            "got": "carrot",
+            "ok": true
+          },
+          {
+            "cue": "wolf",
+            "actions": [
+              "chase",
+              "eat"
+            ],
+            "expected": "grass",
+            "got": "grass",
+            "ok": true
+          },
+          {
+            "cue": "cat",
+            "actions": [
+              "chase",
+              "eat"
+            ],
+            "expected": "cheese",
+            "got": "cheese",
+            "ok": true
+          },
+          {
+            "cue": "owl",
+            "actions": [
+              "chase",
+              "fly"
+            ],
+            "expected": "lamp",
+            "got": "lamp",
+            "ok": true
+          },
+          {
+            "cue": "bear",
+            "actions": [
+              "chase",
+              "swim"
+            ],
+            "expected": "river",
+            "got": "river",
+            "ok": true
+          }
+        ],
+        "n_broken": 2,
+        "n_broken_abstained": 2,
+        "broken": [
+          {
+            "cue": "dog",
+            "actions": [
+              "go",
+              "eat"
+            ],
+            "got": null,
+            "abstained": true
+          },
+          {
+            "cue": "baker",
+            "actions": [
+              "make",
+              "chase"
+            ],
+            "got": null,
+            "abstained": true
+          }
+        ],
+        "all_correct": true
+      },
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "n_vocab": 65,
+      "n_facts": 40,
+      "recall": {
+        "what_ok": 40,
+        "what_tot": 40,
+        "who_ok": 40,
+        "who_tot": 40,
+        "n_correct": 80,
+        "n_total": 80,
+        "accuracy": 1.0,
+        "examples": {
+          "what": [
+            "dog",
+            "eat",
+            "meat",
+            "meat"
+          ],
+          "who": [
+            "eat",
+            "meat",
+            "dog",
+            "dog"
+          ]
+        }
+      },
+      "moat": {
+        "n_cues": 10,
+        "n_abstained": 10,
+        "n_false_accepts": 0,
+        "false_accepts": [],
+        "example_abstain": [
+          "dog",
+          "swim"
+        ]
+      },
+      "multihop": {
+        "n_chains": 6,
+        "n_correct": 6,
+        "chains": [
+          {
+            "cue": "dog",
+            "actions": [
+              "chase",
+              "chase"
+            ],
+            "expected": "mouse",
+            "got": "mouse",
+            "ok": true
+          },
+          {
+            "cue": "fox",
+            "actions": [
+              "chase",
+              "eat"
+            ],
+            "expected": "carrot",
+            "got": "carrot",
+            "ok": true
+          },
+          {
+            "cue": "wolf",
+            "actions": [
+              "chase",
+              "eat"
+            ],
+            "expected": "grass",
+            "got": "grass",
+            "ok": true
+          },
+          {
+            "cue": "cat",
+            "actions": [
+              "chase",
+              "eat"
+            ],
+            "expected": "cheese",
+            "got": "cheese",
+            "ok": true
+          },
+          {
+            "cue": "owl",
+            "actions": [
+              "chase",
+              "fly"
+            ],
+            "expected": "lamp",
+            "got": "lamp",
+            "ok": true
+          },
+          {
+            "cue": "bear",
+            "actions": [
+              "chase",
+              "swim"
+            ],
+            "expected": "river",
+            "got": "river",
+            "ok": true
+          }
+        ],
+        "n_broken": 2,
+        "n_broken_abstained": 2,
+        "broken": [
+          {
+            "cue": "dog",
+            "actions": [
+              "go",
+              "eat"
+            ],
+            "got": null,
+            "abstained": true
+          },
+          {
+            "cue": "baker",
+            "actions": [
+              "make",
+              "chase"
+            ],
+            "got": null,
+            "abstained": true
+          }
+        ],
+        "all_correct": true
+      },
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "n_vocab": 65,
+      "n_facts": 40,
+      "recall": {
+        "what_ok": 40,
+        "what_tot": 40,
+        "who_ok": 40,
+        "who_tot": 40,
+        "n_correct": 80,
+        "n_total": 80,
+        "accuracy": 1.0,
+        "examples": {
+          "what": [
+            "dog",
+            "eat",
+            "meat",
+            "meat"
+          ],
+          "who": [
+            "eat",
+            "meat",
+            "dog",
+            "dog"
+          ]
+        }
+      },
+      "moat": {
+        "n_cues": 10,
+        "n_abstained": 10,
+        "n_false_accepts": 0,
+        "false_accepts": [],
+        "example_abstain": [
+          "dog",
+          "swim"
+        ]
+      },
+      "multihop": {
+        "n_chains": 6,
+        "n_correct": 6,
+        "chains": [
+          {
+            "cue": "dog",
+            "actions": [
+              "chase",
+              "chase"
+            ],
+            "expected": "mouse",
+            "got": "mouse",
+            "ok": true
+          },
+          {
+            "cue": "fox",
+            "actions": [
+              "chase",
+              "eat"
+            ],
+            "expected": "carrot",
+            "got": "carrot",
+            "ok": true
+          },
+          {
+            "cue": "wolf",
+            "actions": [
+              "chase",
+              "eat"
+            ],
+            "expected": "grass",
+            "got": "grass",
+            "ok": true
+          },
+          {
+            "cue": "cat",
+            "actions": [
+              "chase",
+              "eat"
+            ],
+            "expected": "cheese",
+            "got": "cheese",
+            "ok": true
+          },
+          {
+            "cue": "owl",
+            "actions": [
+              "chase",
+              "fly"
+            ],
+            "expected": "lamp",
+            "got": "lamp",
+            "ok": true
+          },
+          {
+            "cue": "bear",
+            "actions": [
+              "chase",
+              "swim"
+            ],
+            "expected": "river",
+            "got": "river",
+            "ok": true
+          }
+        ],
+        "n_broken": 2,
+        "n_broken_abstained": 2,
+        "broken": [
+          {
+            "cue": "dog",
+            "actions": [
+              "go",
+              "eat"
+            ],
+            "got": null,
+            "abstained": true
+          },
+          {
+            "cue": "baker",
+            "actions": [
+              "make",
+              "chase"
+            ],
+            "got": null,
+            "abstained": true
+          }
+        ],
+        "all_correct": true
+      },
+      "GO": true
+    }
+  ]
+}
