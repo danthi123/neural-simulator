@@ -1,0 +1,393 @@
+{
+  "summary": {
+    "per_K": {
+      "8": {
+        "n": 2,
+        "identical_n": 2,
+        "lesion_n": 2,
+        "permute_n": 2,
+        "full_eq_host_n": 2,
+        "mean_neuron_reduction_pct": 67.2,
+        "verdict": "GO"
+      }
+    },
+    "priority_n": 2,
+    "priority_total": 2,
+    "verdict": "GO",
+    "gpu": false
+  },
+  "results": {
+    "8": [
+      {
+        "seed": 42,
+        "D": 64,
+        "K": 8,
+        "V": 22,
+        "VA": 8,
+        "VX": 4,
+        "n_full": 16190,
+        "n_red": 5310,
+        "n_reduction": 0.672,
+        "rows": [
+          {
+            "cue": [
+              "dog",
+              "go"
+            ],
+            "kind": "blk0-present",
+            "host_block": 0,
+            "full_block": 0,
+            "red_block": 0,
+            "full_decision": "ans0",
+            "red_decision": "ans0",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "cat",
+              "run"
+            ],
+            "kind": "blk1-present",
+            "host_block": 1,
+            "full_block": 1,
+            "red_block": 1,
+            "full_decision": "ans1",
+            "red_decision": "ans1",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "fox",
+              "see"
+            ],
+            "kind": "blk2-present",
+            "host_block": 2,
+            "full_block": 2,
+            "red_block": 2,
+            "full_decision": "ans2",
+            "red_decision": "ans2",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "bird",
+              "fly"
+            ],
+            "kind": "blk3-present",
+            "host_block": 3,
+            "full_block": 3,
+            "red_block": 3,
+            "full_decision": "ans3",
+            "red_decision": "ans3",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "sun",
+              "see"
+            ],
+            "kind": "blk4-present",
+            "host_block": 4,
+            "full_block": 4,
+            "red_block": 4,
+            "full_decision": "ans4",
+            "red_decision": "ans4",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "tree",
+              "run"
+            ],
+            "kind": "blk5-present",
+            "host_block": 5,
+            "full_block": 5,
+            "red_block": 5,
+            "full_decision": "ans5",
+            "red_decision": "ans5",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "moon",
+              "go"
+            ],
+            "kind": "blk6-present",
+            "host_block": 6,
+            "full_block": 6,
+            "red_block": 6,
+            "full_decision": "ans6",
+            "red_decision": "ans6",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "river",
+              "fly"
+            ],
+            "kind": "blk7-present",
+            "host_block": 7,
+            "full_block": 7,
+            "red_block": 7,
+            "full_decision": "ans7",
+            "red_decision": "ans7",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "go",
+              "go"
+            ],
+            "kind": "absent-agent",
+            "host_block": null,
+            "full_block": null,
+            "red_block": null,
+            "full_decision": "abstain",
+            "red_decision": "abstain",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "dog",
+              "cat"
+            ],
+            "kind": "absent-action",
+            "host_block": null,
+            "full_block": null,
+            "red_block": null,
+            "full_decision": "abstain",
+            "red_decision": "abstain",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "dog",
+              "run"
+            ],
+            "kind": "cross-no-block",
+            "host_block": null,
+            "full_block": null,
+            "red_block": null,
+            "full_decision": "abstain",
+            "red_decision": "abstain",
+            "identical": true,
+            "full_eq_host": true
+          }
+        ],
+        "decisions_identical": true,
+        "lesion_identical": true,
+        "lesion_both_safe": true,
+        "permute_identical": true,
+        "permute_follows_rule": true,
+        "spurious_dropped": {},
+        "full_eq_host": true,
+        "timing": null
+      },
+      {
+        "seed": 43,
+        "D": 64,
+        "K": 8,
+        "V": 22,
+        "VA": 8,
+        "VX": 4,
+        "n_full": 16190,
+        "n_red": 5310,
+        "n_reduction": 0.672,
+        "rows": [
+          {
+            "cue": [
+              "dog",
+              "go"
+            ],
+            "kind": "blk0-present",
+            "host_block": 0,
+            "full_block": 0,
+            "red_block": 0,
+            "full_decision": "ans0",
+            "red_decision": "ans0",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "cat",
+              "run"
+            ],
+            "kind": "blk1-present",
+            "host_block": 1,
+            "full_block": 1,
+            "red_block": 1,
+            "full_decision": "ans1",
+            "red_decision": "ans1",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "fox",
+              "see"
+            ],
+            "kind": "blk2-present",
+            "host_block": 2,
+            "full_block": 2,
+            "red_block": 2,
+            "full_decision": "ans2",
+            "red_decision": "ans2",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "bird",
+              "fly"
+            ],
+            "kind": "blk3-present",
+            "host_block": 3,
+            "full_block": 3,
+            "red_block": 3,
+            "full_decision": "ans3",
+            "red_decision": "ans3",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "sun",
+              "see"
+            ],
+            "kind": "blk4-present",
+            "host_block": 4,
+            "full_block": 4,
+            "red_block": 4,
+            "full_decision": "ans4",
+            "red_decision": "ans4",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "tree",
+              "run"
+            ],
+            "kind": "blk5-present",
+            "host_block": 5,
+            "full_block": 5,
+            "red_block": 5,
+            "full_decision": "ans5",
+            "red_decision": "ans5",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "moon",
+              "go"
+            ],
+            "kind": "blk6-present",
+            "host_block": 6,
+            "full_block": 6,
+            "red_block": 6,
+            "full_decision": "ans6",
+            "red_decision": "ans6",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "river",
+              "fly"
+            ],
+            "kind": "blk7-present",
+            "host_block": 7,
+            "full_block": 7,
+            "red_block": 7,
+            "full_decision": "ans7",
+            "red_decision": "ans7",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "go",
+              "go"
+            ],
+            "kind": "absent-agent",
+            "host_block": null,
+            "full_block": null,
+            "red_block": null,
+            "full_decision": "abstain",
+            "red_decision": "abstain",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "dog",
+              "cat"
+            ],
+            "kind": "absent-action",
+            "host_block": null,
+            "full_block": null,
+            "red_block": null,
+            "full_decision": "abstain",
+            "red_decision": "abstain",
+            "identical": true,
+            "full_eq_host": true
+          },
+          {
+            "cue": [
+              "dog",
+              "run"
+            ],
+            "kind": "cross-no-block",
+            "host_block": null,
+            "full_block": null,
+            "red_block": null,
+            "full_decision": "abstain",
+            "red_decision": "abstain",
+            "identical": true,
+            "full_eq_host": true
+          }
+        ],
+        "decisions_identical": true,
+        "lesion_identical": true,
+        "lesion_both_safe": true,
+        "permute_identical": true,
+        "permute_follows_rule": true,
+        "spurious_dropped": {},
+        "full_eq_host": true,
+        "timing": null
+      }
+    ]
+  },
+  "priority_results": [
+    {
+      "seed": 42,
+      "D": 64,
+      "host_block": 0,
+      "full_block": 0,
+      "red_block": 0,
+      "identical": true,
+      "priority_ok": true
+    },
+    {
+      "seed": 43,
+      "D": 64,
+      "host_block": 0,
+      "full_block": 0,
+      "red_block": 0,
+      "identical": true,
+      "priority_ok": true
+    }
+  ]
+}
