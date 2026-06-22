@@ -207,6 +207,30 @@ class SpikingLoopContextBuffer:
             self.bridge.set_pathway_weights("d2c", pre_indices=pre2, post_indices=post2, weights=ww,
                                             add_missing=True)
         self._psize = pattern_size
+        self._segsum_cache = {}   # ordered-concept-tuple -> (concat_idx_device, reduceat_starts_device)
+
+    def _segsum_layout(self, concepts):
+        """Cache + return the flat segment-sum layout for an ORDERED list of concepts: a single device
+        array concatenating each concept's attractor indices (`self._cpat[c]`) in order, plus the
+        `xp.add.reduceat` segment-start offsets. With this, one `xp.add.reduceat(fs[concat], starts)`
+        computes ALL concepts' firing-sums at once on-device (one gather + one reduction) instead of a
+        per-concept `to_host(fs[idx]).sum()` host round-trip. Byte-identical for boolean firing states:
+        each segment's reduceat sum == that concept's integer firing count == the per-concept `.sum()`.
+        Mirrors `SimulationBridge._gate_coupling_rates_vectorized` (bridge.py:3253). All segments are the
+        same length (`self._psize` >= 1), so there are no empty segments (the reduceat empty-segment
+        edge case never triggers)."""
+        key = tuple(concepts)
+        cached = self._segsum_cache.get(key)
+        if cached is None:
+            xp = self.xp
+            concat = xp.concatenate([self._cpat[c] for c in concepts])
+            sizes = np.asarray([int(self._cpat[c].shape[0]) for c in concepts], dtype=np.int64)
+            starts = np.zeros(len(sizes), dtype=np.int64)
+            if len(sizes) > 1:
+                starts[1:] = np.cumsum(sizes)[:-1]
+            cached = (concat, xp.asarray(starts))
+            self._segsum_cache[key] = cached
+        return cached
 
     def update(self, concepts, drive_pA=2500.0, stim=40, settle=15):
         for c in concepts:
@@ -222,15 +246,25 @@ class SpikingLoopContextBuffer:
                 self.bridge._run_one_simulation_step()
 
     def read(self, window=20):
-        """Decode the held set: per-neuron firing of each concept's attractor over a no-drive window."""
-        acc = {c: 0.0 for c in self.concepts}
+        """Decode the held set: per-neuron firing of each concept's attractor over a no-drive window.
+
+        Batched read (answer-identical to the original per-concept host loop): one device segment-sum
+        (`xp.add.reduceat`) per step over a cached concat of all concept attractor indices accumulates
+        every concept's firing-sum on-device, and the host transfer happens ONCE after the window --
+        replacing the original `len(concepts)` device->host syncs PER STEP. For boolean firing states each
+        segment's reduceat sum equals the original `to_host(fs[idx]).sum()`, so the returned per-concept
+        rates are exactly the same."""
+        xp = self.xp
+        concat, starts = self._segsum_layout(self.concepts)
+        acc = xp.zeros(len(self.concepts), dtype=xp.float64)
         for _ in range(window):
             self.bridge.cp_external_input_current[:] = 0.0
             self.bridge._run_one_simulation_step()
             fs = self.bridge.cp_firing_states
-            for c in self.concepts:
-                acc[c] += float(self.B.to_host(fs[self._cpat[c]]).sum())
-        return {c: acc[c] / (self._psize * window) for c in self.concepts}
+            acc += xp.add.reduceat(fs[concat].astype(xp.float64), starts)   # per-concept integer sums, on-device
+        acc_host = self.B.to_host(acc)                                      # ONE sync for the whole window
+        denom = float(self._psize * window)
+        return {c: float(acc_host[i]) / denom for i, c in enumerate(self.concepts)}
 
 
 class SpikingController:
@@ -386,6 +420,28 @@ class SpikingSpreadingController:
         self.said.mark(choice)
         return choice
 
+    def _latency_segsum_layout(self):
+        """Cache + return the flat segment-sum layout used by `relevance_by_latency`: a single device array
+        concatenating every concept's attractor indices (`self.ctx._cpat[c]`) in `self._vocab` order, plus the
+        `xp.add.reduceat` segment-start offsets. One `xp.add.reduceat(fs[concat], starts)` then computes ALL
+        concepts' firing-sums at once on-device, replacing the per-concept `to_host(fs[idx]).sum()` host
+        round-trips. Cached on the CONTROLLER (not the ctx) and keyed by the ctx identity, so it works for any
+        `.ctx` variant -- `SpikingLoopContextBuffer` or the shared-slice `_SharedDlpfcContext` (merged /
+        unified bridge) -- requiring only the primitive `_cpat`/`xp` attributes the original loop already used.
+        Byte-identical for boolean firing states (each segment's reduceat sum == that concept's integer firing
+        count). Mirrors `SimulationBridge._gate_coupling_rates_vectorized` (bridge.py:3253)."""
+        xp = self.ctx.xp
+        cache = getattr(self, "_lat_segsum", None)
+        if cache is None or cache[0] is not self.ctx:
+            concat = xp.concatenate([self.ctx._cpat[c] for c in self._vocab])
+            sizes = np.asarray([int(self.ctx._cpat[c].shape[0]) for c in self._vocab], dtype=np.int64)
+            starts = np.zeros(len(sizes), dtype=np.int64)
+            if len(sizes) > 1:
+                starts[1:] = np.cumsum(sizes)[:-1]
+            cache = (self.ctx, concat, xp.asarray(starts))
+            self._lat_segsum = cache
+        return cache[1], cache[2]
+
     def relevance_by_latency(self, context_concept, steps=60, drive_pA=2500.0, thresh=0.15):
         """Spiking relevance as first-spike LATENCY of the spread -- richer than the rate read: it encodes
         graph DISTANCE (direct associates fire earlier than indirect ones; unrelated concepts never fire).
@@ -401,16 +457,30 @@ class SpikingSpreadingController:
         self._reset_wm()
         drv = self.ctx._cpat[context_concept]
         first = {c: None for c in self._vocab}
+        xp = self.ctx.xp
+        # Batched read (answer-identical to the original per-concept host loop): per step, ONE device
+        # segment-sum over a cached concat of every concept's attractor indices gives all concepts'
+        # firing fractions at once, synced to host with ONE transfer (a V-vector) instead of the original
+        # V separate `to_host(fs[idx]).sum()` syncs. For boolean firing states each segment's reduceat
+        # sum == that concept's integer firing count, so `frac[i] > thresh` is the same per-step test ->
+        # `first[c]` gets exactly the same step. Mirrors bridge.py:_gate_coupling_rates_vectorized.
+        concat, starts = self._latency_segsum_layout()
+        psize = float(self.ctx._psize)
+        n_open = len(self._vocab)
         for t in range(steps):
             cur = self.ctx.bridge.cp_external_input_current
             cur[:] = 0.0
             cur[drv] = drive_pA
             self.ctx.bridge._run_one_simulation_step()
+            if n_open == 0:
+                continue   # all concepts have fired; the spread is still driven but nothing left to record
             fs = self.ctx.bridge.cp_firing_states
-            for c in self._vocab:
-                if first[c] is None and \
-                        float(self.ctx.B.to_host(fs[self.ctx._cpat[c]]).sum()) / self.ctx._psize > thresh:
+            frac = xp.add.reduceat(fs[concat].astype(xp.float64), starts) / psize   # per-concept fraction, on-device
+            frac_host = self.ctx.B.to_host(frac)                                    # ONE sync this step
+            for i, c in enumerate(self._vocab):
+                if first[c] is None and frac_host[i] > thresh:
                     first[c] = t
+                    n_open -= 1
         return first
 
 
