@@ -2,8 +2,16 @@
 
 Honest, **as-implemented** flowcharts of the whole simulated brain — every
 region type, every distinct pathway, the direction and *nature* of each
-signal, and an explicit faithful-vs-shortcut layer. Generated with
-[Graphviz](https://graphviz.org/) from the source `.dot` files in this folder.
+signal, and an explicit faithful-vs-shortcut layer.
+
+**These are hand-crafted SVGs** (2026-06, redesigned from the earlier
+Graphviz auto-layout for a much higher aesthetic ceiling: a function-coloured
+palette, clean labelled panels, generous whitespace, aligned grids, and a
+single consistent visual language across all three). The three `.svg` files
+are the **source of truth**; the `.png` next to each is a render of it. The
+older `.dot` files are retained only as the **textual content reference** the
+SVGs were composed from (the region/pathway inventory + the extraction spec);
+they are no longer the rendered artifact.
 
 The brain is not one fixed network — it is **assembled per configuration** from
 a declarative region/pathway grammar (`sim/regions.py`). Two builder functions
@@ -56,9 +64,11 @@ detail graphs stay scoped to a single builder's own region/pathway output.
 | **Navigation brain** | Exhaustive: every region + every distinct pathway of `build_bg_brain_regions()` — the basal-ganglia action-selection cascade, the spiking superior-colliculus orienting reflex (sc_retina→sc_map→cortex), the spiking actor-critic (reward_us → SNc; striosome value critic → SNc via GABA_B), thalamus/TRN, **the accumulate→commit decision layer — now the DEFAULT read-out (the move emerges from the spiking race; the host argmax is retired, kept as the opt-in oracle)**, cerebellum, hippocampus, dlPFC. | [`brain_navigation.svg`](brain_navigation.svg) · [`.png`](brain_navigation.png) · [`.dot`](brain_navigation.dot) |
 | **Conversational brain** | **Two layers.** *Top* — the **production conversation pipeline** (`OneBrainComposer`, on the shared one brain): a learned-from-conversation 320-concept cortex → an on-bridge sentence parser (who-did-what; flexible word orders) → a resonate-and-fire phasor composer that binds words into facts (attributed objects, negation, embedded clauses; ~10–20× faster) + a persistent fact store → recall & answer with the no-confabulation safeguard → a word-ordered spiking reply + dialogue planning. *Below* — the underlying **region inventory** of `build_biological_brain_regions()` (a reference: language I/O, Wernicke pools, semantic cortex, Broca, concept pools, multimodal hub, hippocampal consolidation, dlPFC verb working memory; not all of it is on the production path). | [`brain_conversational.svg`](brain_conversational.svg) · [`.png`](brain_conversational.png) · [`.dot`](brain_conversational.dot) |
 
-> The two detail graphs are **dense by design** — the goal was every distinct
-> pathway drawn separately, not bundled. Open the **SVG** to zoom; the master
-> map is the readable overview.
+> All three are **cleanly organised** (a redesign goal): the master map is the
+> readable cluster-level overview; the two detail graphs lay the full region
+> inventory out in labelled functional panels with the key pathways drawn
+> between them (per-action / per-concept pools collapsed with a `×N` badge).
+> Open the **SVG** to zoom in.
 
 ## How to read the diagrams
 
@@ -108,31 +118,55 @@ These diagrams are accurate **to the degree the biology is implemented in this
 simulator** — not to the degree real brains are organized. They are an honest
 map of the code, including its reductions, not a textbook of neuroanatomy.
 
-## Regenerating
+## Editing and regenerating
 
-Requires Graphviz (`dot`). On Windows: `winget install Graphviz.Graphviz`.
+The `.svg` files are **plain hand-authored SVG** — edit them directly in any
+text editor. They are self-contained: a subtle background panel (so they read
+on GitHub light **and** dark), a `<defs>` block of gradients + arrowhead
+markers, and absolutely-positioned `<rect>` / `<text>` / `<path>` elements.
+The design system is shared across all three:
+
+- **Colour by function** — perception/vision (blue), memory (green),
+  decision/selection (purple), motor/body (red), language (teal), reward &
+  dopamine (amber), generalization (sand). Each box uses the matching gradient
+  + a darker stroke of the same hue.
+- **Typography** — one sans-serif stack (`Segoe UI`/Helvetica/Arial) with a
+  clear size hierarchy (title > group label > node title > body > annotation).
+  No exotic glyphs that need special fonts: the signal *nature* is shown by
+  arrowhead **shape + colour + line style** (plus a legend), not by inline
+  symbols, so there are no font-fallback gaps. The few markers used (`⌂` `⚠`
+  `⊟` `⟲` `✗`) are common and render everywhere.
+- **Signal legend** — excitatory (solid triangle), fast inhibition (red bar
+  head), slow inhibition GABA-B (purple dashed bar), NMDA-recurrent (green),
+  dopamine (gold diamond, dotted), validated cross-route (bold green), and the
+  honesty markers.
+
+**Rendering the PNGs.** Each PNG is just a raster of its SVG at the file's
+natural width. Any SVG→PNG renderer works; `cairosvg`'s native cairo DLL is
+flaky on Windows, so the simplest portable path is the bundled-binary Node
+renderer [`@resvg/resvg-js`](https://www.npmjs.com/package/@resvg/resvg-js):
 
 ```bash
 cd docs/diagrams
-for f in brain_master brain_navigation brain_conversational; do
-  dot -Tsvg              "$f.dot" -o "$f.svg"   # SVG: viewers do per-glyph font fallback
-  dot -Tpng:gdiplus -Gdpi=140 "$f.dot" -o "$f.png"   # Windows: gdiplus for symbol glyphs
-done
+npm install @resvg/resvg-js            # one-time; brings its own binaries
+node - <<'JS'
+const fs = require('fs'); const { Resvg } = require('@resvg/resvg-js');
+for (const [f, w] of [['brain_master',1680],['brain_navigation',1520],['brain_conversational',1560]]) {
+  const svg = fs.readFileSync(`${f}.svg`,'utf8');
+  const r = new Resvg(svg, { fitTo:{mode:'width',value:w}, font:{loadSystemFonts:true, defaultFontFamily:'Segoe UI'} });
+  fs.writeFileSync(`${f}.png`, r.render().asPng());
+}
+JS
 ```
 
-**Font note (important).** The diagrams use box-drawing and symbol glyphs (⚠ ⊣ ━ ▶
-⊟ ⟲ ◆ …) in `Helvetica`, which Arial-on-Windows lacks. The default Cairo PNG
-renderer leaves them as empty boxes showing the code point (e.g. `26A0`, `2501`)
-unless a Unicode-complete fallback font (e.g. *DejaVu Sans*) is available to
-fontconfig. Two fixes: on **Windows**, render PNGs with `-Tpng:gdiplus` (GDI+ does
-per-glyph font-linking, so only the missing symbols substitute and the Helvetica
-body text is preserved — used above); on **Linux/macOS**, the default
-`-Tpng`/Cairo works once *DejaVu Sans* is installed (it ships with most Graphviz
-packages). The SVGs name `Helvetica` and rely on the viewer's own font fallback,
-so they render correctly in browsers regardless.
+(Or, on Linux/macOS with the native libs present: `cairosvg x.svg -o x.png
+--output-width 1680`, or `rsvg-convert -w 1680 x.svg -o x.png`.) GitHub renders
+the SVG directly; the PNG is the convenience raster.
 
-The `.dot` sources are the source of truth; edit them and re-render. They are
-authored from the as-implemented extraction spec (linked above), which in turn
-was read directly from `sim/regions.py`, `research/runners/g11_bg_runner.py`,
-`research/runners/text_minimal_isolation.py`, `sim/neuromodulators.py`,
-`sim/kernels.py`, and `sim/config.py`.
+**Source of truth.** The `.svg` files are the artifact to edit. Their *content*
+(every region + pathway, the honesty markers) is faithful to the as-implemented
+extraction spec (linked above), which was read directly from `sim/regions.py`,
+`research/runners/g11_bg_runner.py`, `research/runners/text_minimal_isolation.py`,
+`sim/neuromodulators.py`, `sim/kernels.py`, and `sim/config.py`. The `.dot`
+files alongside hold the same content in Graphviz form and are kept as a
+machine-readable inventory reference.

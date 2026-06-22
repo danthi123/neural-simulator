@@ -1,0 +1,6 @@
+# Local render tooling for the hand-authored SVGs (see render.js / README.md).
+# `npm install @resvg/resvg-js` here brings binaries we don't commit.
+node_modules/
+package.json
+package-lock.json
+.rendertool/
