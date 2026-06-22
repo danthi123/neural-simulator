@@ -1,0 +1,349 @@
+{
+  "probe": "genseq_loopstep3_popcode_oomsafe",
+  "resolves": "de-risk #2 Phase B (population coding) at a FEASIBLE OOM-safe scale; does pop-coding lift the multi-layer GRADED consolidation cumulative fidelity to >=0.8?",
+  "artifact": "cortex_10M_seed42.npz",
+  "oom_safety": {
+    "hidden_width": 512,
+    "n_blocks": 3,
+    "full_layer_sizes": [
+      66,
+      2048,
+      2048,
+      2048,
+      66
+    ],
+    "narrowed_feature_sizes": [
+      66,
+      512,
+      512,
+      512
+    ],
+    "bytes_per_edge_est": 32,
+    "oom_ceiling_gb": 16.0,
+    "safe_budget_gb": 8.0,
+    "preflight_plan": [
+      {
+        "n_per": 1,
+        "n_neurons": 2692,
+        "est_edges": 854016,
+        "est_gb": 0.027
+      },
+      {
+        "n_per": 2,
+        "n_neurons": 5384,
+        "est_edges": 3416064,
+        "est_gb": 0.109
+      },
+      {
+        "n_per": 4,
+        "n_neurons": 10768,
+        "est_edges": 13664256,
+        "est_gb": 0.437
+      }
+    ],
+    "note": "prior Phase B OOM'd at the FULL 2048-wide MLP, n_per=8 (~26 GB). Narrowed slice + n_per<=4 keeps every config under the safe budget; built one at a time, pool freed between."
+  },
+  "n_blocks": 3,
+  "feature_sizes": [
+    66,
+    512,
+    512,
+    512
+  ],
+  "neuron_model": "ADEX_as_LIF (signed E/I split-channel, GRADED analog transmission, non-spiking, population-coded)",
+  "method": "reuse the Phase-A graded runner VERBATIM (graded a_cont readout, signed E/I split, TRAIT FIX, non-spiking integrator, greedy per-block fan-in gain calibration, matched off-bridge GRADED ground truth, specificity anti-cheat); the ONLY changes: slice Ws to a narrow HIDDEN_WIDTH dense MLP, sweep n_per in {1,2,4}, OOM-assert each config, free between. NO sim/ edit.",
+  "graded_scale_mV": 20.0,
+  "go_bar": 0.8,
+  "drive_pA": 4000.0,
+  "T_off": 24,
+  "n_steps_on": 36,
+  "warmup": 18,
+  "n_per_sweep": [
+    1,
+    2,
+    4
+  ],
+  "sweep_results": [
+    {
+      "n_per": 1,
+      "n_total_neurons": 2692,
+      "cumulative_mean_spearman": 0.28833022434320194,
+      "per_layer_fidelity": [
+        {
+          "layer": 0,
+          "mean_spearman_vs_graded": 0.846134030972599,
+          "mean_spearman_vs_spiking": 0.7997340818036339,
+          "mean_topk_overlap": 0.8268229166666666,
+          "a_cont_mean": 0.17023875836548086,
+          "a_cont_max": 1.0,
+          "frac_features_pinned_hi": 0.0,
+          "on_spike_max_rate": 0.125
+        },
+        {
+          "layer": 1,
+          "mean_spearman_vs_graded": 0.6199199363515332,
+          "mean_spearman_vs_spiking": 0.8181854405324573,
+          "mean_topk_overlap": 0.515625,
+          "a_cont_mean": 0.19030197205092392,
+          "a_cont_max": 0.601533830165863,
+          "frac_features_pinned_hi": 0.0,
+          "on_spike_max_rate": 0.0
+        },
+        {
+          "layer": 2,
+          "mean_spearman_vs_graded": 0.28833022434320194,
+          "mean_spearman_vs_spiking": 0.392466403117764,
+          "mean_topk_overlap": 0.3671875,
+          "a_cont_mean": 0.19081662041027336,
+          "a_cont_max": 0.9785470068454742,
+          "frac_features_pinned_hi": 0.0,
+          "on_spike_max_rate": 0.02314814814814815
+        }
+      ],
+      "specificity_margin": 0.02989537497186645,
+      "anti_cheat_specificity": {
+        "matched_mean_spearman": 0.28833022434320194,
+        "mismatched_mean_spearman": 0.2584348493713355,
+        "specificity_margin": 0.02989537497186645
+      },
+      "a_cont_saturated": false,
+      "per_layer_gain_calibration": [
+        3.56555542455966,
+        0.10239474269889229,
+        0.1700363907773305
+      ]
+    },
+    {
+      "n_per": 2,
+      "n_total_neurons": 5384,
+      "cumulative_mean_spearman": 0.28833120782359245,
+      "per_layer_fidelity": [
+        {
+          "layer": 0,
+          "mean_spearman_vs_graded": 0.846134030972599,
+          "mean_spearman_vs_spiking": 0.7997340818036339,
+          "mean_topk_overlap": 0.8268229166666666,
+          "a_cont_mean": 0.17023875836548086,
+          "a_cont_max": 1.0,
+          "frac_features_pinned_hi": 0.0,
+          "on_spike_max_rate": 0.125
+        },
+        {
+          "layer": 1,
+          "mean_spearman_vs_graded": 0.6199199363515332,
+          "mean_spearman_vs_spiking": 0.8181854405324573,
+          "mean_topk_overlap": 0.515625,
+          "a_cont_mean": 0.19030197013140915,
+          "a_cont_max": 0.601533830165863,
+          "frac_features_pinned_hi": 0.0,
+          "on_spike_max_rate": 0.0
+        },
+        {
+          "layer": 2,
+          "mean_spearman_vs_graded": 0.28833120782359245,
+          "mean_spearman_vs_spiking": 0.39246479378621596,
+          "mean_topk_overlap": 0.3671875,
+          "a_cont_mean": 0.1908166167792252,
+          "a_cont_max": 0.9785469075043997,
+          "frac_features_pinned_hi": 0.0,
+          "on_spike_max_rate": 0.02314814814814815
+        }
+      ],
+      "specificity_margin": 0.0298997082460718,
+      "anti_cheat_specificity": {
+        "matched_mean_spearman": 0.28833120782359245,
+        "mismatched_mean_spearman": 0.25843149957752065,
+        "specificity_margin": 0.0298997082460718
+      },
+      "a_cont_saturated": false,
+      "per_layer_gain_calibration": [
+        3.56555542455966,
+        0.10239474269889229,
+        0.1700363907773305
+      ]
+    },
+    {
+      "n_per": 4,
+      "n_total_neurons": 10768,
+      "cumulative_mean_spearman": 0.28833022434320194,
+      "per_layer_fidelity": [
+        {
+          "layer": 0,
+          "mean_spearman_vs_graded": 0.846134030972599,
+          "mean_spearman_vs_spiking": 0.7997340818036339,
+          "mean_topk_overlap": 0.8268229166666666,
+          "a_cont_mean": 0.17023875836548086,
+          "a_cont_max": 1.0,
+          "frac_features_pinned_hi": 0.0,
+          "on_spike_max_rate": 0.125
+        },
+        {
+          "layer": 1,
+          "mean_spearman_vs_graded": 0.6199199363515332,
+          "mean_spearman_vs_spiking": 0.8181854405324573,
+          "mean_topk_overlap": 0.515625,
+          "a_cont_mean": 0.19030197175523453,
+          "a_cont_max": 0.6015338897705078,
+          "frac_features_pinned_hi": 0.0,
+          "on_spike_max_rate": 0.0
+        },
+        {
+          "layer": 2,
+          "mean_spearman_vs_graded": 0.28833022434320194,
+          "mean_spearman_vs_spiking": 0.392466403117764,
+          "mean_topk_overlap": 0.3671875,
+          "a_cont_mean": 0.1908166202094651,
+          "a_cont_max": 0.978546937306722,
+          "frac_features_pinned_hi": 0.0,
+          "on_spike_max_rate": 0.02314814814814815
+        }
+      ],
+      "specificity_margin": 0.02989537497186645,
+      "anti_cheat_specificity": {
+        "matched_mean_spearman": 0.28833022434320194,
+        "mismatched_mean_spearman": 0.2584348493713355,
+        "specificity_margin": 0.02989537497186645
+      },
+      "a_cont_saturated": false,
+      "per_layer_gain_calibration": [
+        3.56555542455966,
+        0.10239474269889229,
+        0.1700363907773305
+      ]
+    }
+  ],
+  "n_per_trend": [
+    [
+      1,
+      0.288
+    ],
+    [
+      2,
+      0.288
+    ],
+    [
+      4,
+      0.288
+    ]
+  ],
+  "within_population_divergence_diagnostic": {
+    "graded_non_spiking_n_per4": [
+      {
+        "block": 0,
+        "within_pop_std_mean": 0.0,
+        "within_pop_std_max": 0.0,
+        "spike_rate_mean": 0.0
+      },
+      {
+        "block": 1,
+        "within_pop_std_mean": 0.0,
+        "within_pop_std_max": 0.0,
+        "spike_rate_mean": 0.022081163194444454
+      },
+      {
+        "block": 2,
+        "within_pop_std_mean": 0.0,
+        "within_pop_std_max": 0.0,
+        "spike_rate_mean": 0.2708875868055556
+      }
+    ],
+    "max_within_pop_std": 0.0,
+    "pop_coding_is_noop": true,
+    "interpretation": "pop-coding NO-OP: the graded non-spiking a_cont readout is DETERMINISTIC (within-pop std~0) so the n_per copies are clones -> averaging cancels nothing; the per-layer fidelity loss (0.85->0.62->0.29) is deterministic signal compression through the stacked saturating clip, NOT read-out noise pop-coding can fix",
+    "spiking_jitter_cross_check": [
+      {
+        "n_per": 1,
+        "cumulative_mean_spearman": 0.28833022434320194,
+        "per_block": [
+          0.846134030972599,
+          0.6199199363515332,
+          0.28833022434320194
+        ],
+        "on_spike_max_rate": [
+          0.125,
+          0.0,
+          0.02314814814814815
+        ]
+      },
+      {
+        "n_per": 4,
+        "cumulative_mean_spearman": 0.28833374103065884,
+        "per_block": [
+          0.846134030972599,
+          0.6199199363515332,
+          0.28833374103065884
+        ],
+        "on_spike_max_rate": [
+          0.125,
+          0.0,
+          0.02314814814814815
+        ]
+      }
+    ]
+  },
+  "extrapolation": {
+    "model": "cumulative ~ slope*log2(n_per) + intercept",
+    "slope_per_doubling": 1.1939096338156775e-17,
+    "projected_n_per_for_0.8": null,
+    "note": "MOOT \u2014 pop-coding is a no-op on this deterministic graded readout (within-pop std~0); the flat trend is not a slow lift but a no-op. A larger n_per cannot help."
+  },
+  "best_config": {
+    "n_per": 2,
+    "graded_scale_mV": 20.0,
+    "n_total_neurons": 5384,
+    "per_layer_gain_calibration": [
+      3.56555542455966,
+      0.10239474269889229,
+      0.1700363907773305
+    ]
+  },
+  "best_per_layer_fidelity": [
+    {
+      "layer": 0,
+      "mean_spearman_vs_graded": 0.846134030972599,
+      "mean_spearman_vs_spiking": 0.7997340818036339,
+      "mean_topk_overlap": 0.8268229166666666,
+      "a_cont_mean": 0.17023875836548086,
+      "a_cont_max": 1.0,
+      "frac_features_pinned_hi": 0.0,
+      "on_spike_max_rate": 0.125
+    },
+    {
+      "layer": 1,
+      "mean_spearman_vs_graded": 0.6199199363515332,
+      "mean_spearman_vs_spiking": 0.8181854405324573,
+      "mean_topk_overlap": 0.515625,
+      "a_cont_mean": 0.19030197013140915,
+      "a_cont_max": 0.601533830165863,
+      "frac_features_pinned_hi": 0.0,
+      "on_spike_max_rate": 0.0
+    },
+    {
+      "layer": 2,
+      "mean_spearman_vs_graded": 0.28833120782359245,
+      "mean_spearman_vs_spiking": 0.39246479378621596,
+      "mean_topk_overlap": 0.3671875,
+      "a_cont_mean": 0.1908166167792252,
+      "a_cont_max": 0.9785469075043997,
+      "frac_features_pinned_hi": 0.0,
+      "on_spike_max_rate": 0.02314814814814815
+    }
+  ],
+  "best_cumulative_mean_spearman": 0.28833120782359245,
+  "best_anti_cheat_specificity": {
+    "matched_mean_spearman": 0.28833120782359245,
+    "mismatched_mean_spearman": 0.25843149957752065,
+    "specificity_margin": 0.0298997082460718
+  },
+  "baseline_phaseA_single_neuron": {
+    "cumulative_mean_spearman": 0.327,
+    "per_block": [
+      0.865,
+      0.596,
+      0.327
+    ],
+    "note": "graded a_cont readout, n_per=1, scale=20"
+  },
+  "verdict_line": "popcode: narrow512 blocks=3 GRADED_analog n_per_sweep=[1, 2, 4] -> BEST n_per=2 cumulative_analog_spearman=0.288 per_layer_spearman(vs_graded)=[0.846, 0.62, 0.288] specificity_margin=0.030 trend(n_per:cum)=[(1, 0.288), (2, 0.288), (4, 0.288)] within_pop_std_max=0.00e+00 [pop-coding NO-OP: the graded non-spiking a_cont readout is DETERMINISTIC (within-pop std~0) so the n_per copies are clones -> averaging cancels nothing; the per-layer fidelity loss (0.85->0.62->0.29) is deterministic signal compression through the stacked saturating clip, NOT read-out noise pop-coding can fix] -> NEGATIVE (vs Phase A single-neuron cumulative=0.327)",
+  "verdict": "NEGATIVE"
+}
