@@ -80,11 +80,7 @@ def block_cleanup_scores(c: OneBrainComposer, block_idx: int):
         unbind += [(c.q_base + ri * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
     b.rf_set_complex_weights(unbind)
     b.rf_resonate_steps(Pd + 8)
-    clean = []
-    for ri, role in enumerate(c.main_roles):              # main roles vs the main vocab codebook
-        for j in range(V):
-            cc = np.conj(comp._to_phasor(comp.concepts[c.words[j]]))
-            clean += [(c.c_base + ri * V + j, c.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
+    clean = c._seq_cleanup_conns()                        # opt #4: block-invariant cleanup codebook -- built once + reused across the K per-block drive-seed reads
     b.rf_set_complex_weights(clean)
     b.rf_resonate_steps(1)
     mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)

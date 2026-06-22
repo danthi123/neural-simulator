@@ -149,6 +149,7 @@ class OneBrainComposer:
         self._seq_mapA = None        # word -> reduced-index (role A) for the shrunk sequencer
         self._seq_mapX = None        # word -> reduced-index (role X)
         self._seq_cuevocab_sig = None  # (tuple(V'_A), tuple(V'_X)) -- rebuild the reduced fabric when this changes
+        self._seq_cleanup_conns_cache = None  # opt #4: the block-invariant sequencer drive-seed cleanup conns (per rebuild)
         # local_reciprocal_unbind (FHRR-B mechanism 1, opt-in, DEFAULT-OFF = byte-identical): derive the UNBIND
         # synapse weights from the BIND (role) phasor by the one-time LOCAL reciprocal-conjugate rule (a per-component
         # quadrature flip via comp._local_conj) instead of the host np.conj over the role code. Closes the same host
@@ -597,6 +598,25 @@ class OneBrainComposer:
             return self._read_all_blocks()
         return [self._read_block(i) for i in range(len(self.kb))]
 
+    def _seq_cleanup_conns(self):
+        """opt #4 (the audit's sequencer drive-seed lever): the cleanup-codebook connections that `block_cleanup_scores`
+        installs are BLOCK-INVARIANT -- they depend only on the concept codebook + the fixed single-block c_base/q_base
+        layout (the per-block trigger only changes the UNBIND wiring), so they are identical for every one of the K
+        per-block drive-seed reads. Build them ONCE and reuse across the K reads. The cache is invalidated each drive
+        rebuild in `_ensure_sequencer`, so a store / reconsolidation / regrounded concept is always picked up (the moat
+        is never served a stale cleanup). Saves ~K x the V*main_roles*D tuple construction (the audit's ~3.9M-tuples-
+        at-K=32 drive-seed cost)."""
+        if self._seq_cleanup_conns_cache is not None:
+            return self._seq_cleanup_conns_cache
+        comp, D, V = self.comp, self.D, self.V
+        clean = []
+        for ri in range(len(self.main_roles)):
+            for j in range(V):
+                cc = np.conj(comp._to_phasor(comp.concepts[self.words[j]]))
+                clean += [(self.c_base + ri * V + j, self.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
+        self._seq_cleanup_conns_cache = clean
+        return clean
+
     def _ensure_sequencer(self, K):
         """Lazily build (and cache) the spiking K-way sequencer control fabric + the divnorm score bridge for store
         size K, and (re)compute the per-block decoded-line drives when the store grew or a write dirtied them. Reuse-
@@ -628,6 +648,7 @@ class OneBrainComposer:
             self._seq = (sb, meta); self._seq_score = score_sb; self._seq_K = K
             self._seq_dirty = True                                 # a new K -> the drives must be (re)built
         if self._seq_dirty or self._seq_drives is None:
+            self._seq_cleanup_conns_cache = None              # opt #4: rebuild the block-invariant cleanup conns once for this drive rebuild
             bscores = [fns["block_cleanup_scores"](self, b) for b in range(K)]   # the composer's own op result per block
             drives, _lit = fns["make_block_drives"](self._seq_score, self.V, bscores,
                                                     input_gain=self.sequencer_input_gain, retreat="divnorm",
