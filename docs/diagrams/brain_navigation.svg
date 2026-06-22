@@ -83,8 +83,8 @@
     <path d="M240,300 L248,300" stroke="#3d6fb4" stroke-width="1.4" marker-end="url(#arrV)"/>
     <path d="M300,300 L308,300" stroke="#3d6fb4" stroke-width="1.4" marker-end="url(#arrV)"/>
   </g>
-  <text x="50" y="338" font-size="9" fill="#7a8aa0">&#8962; retina/image = the world's render (legitimate). &#9888; place/goal/beacon/</text>
-  <text x="50" y="351" font-size="9" fill="#7a8aa0">landmark = host&#8211;computed codes (the agent is given its position).</text>
+  <text x="50" y="338" font-size="9" fill="#5f6f86">&#8962; retina/image = the world's render (legitimate). &#9888; place/goal/beacon/</text>
+  <text x="50" y="351" font-size="9" fill="#5f6f86">landmark = host&#8211;computed codes (the agent is given its position).</text>
   <line x1="48" y1="362" x2="358" y2="362" stroke="#e3cba6" stroke-width="1"/>
   <text x="50" y="380" font-size="9.2" fill="#46586a">place / goal &#8594; cortex (learned route) &#8226; sensory &#8594; cortex &#8226; IT &#8594; cortex</text>
   <text x="50" y="394" font-size="9.2" fill="#46586a">(gated) &#8226; beacon &#8594; goal &#8226; landmark &#8594; place &amp; &#8594; entorhinal cortex</text>
@@ -120,12 +120,12 @@
     <text x="281" y="599" text-anchor="middle" font-size="7.8" fill="#5b3673">proximity (the reward r)</text>
   </g>
   <!-- internal SC edges -->
-  <path d="M198,524 L204,524" stroke="#3f5366" stroke-width="1.4" marker-end="url(#arrEx)"/>
-  <path d="M281,546 L150,558" stroke="#3f5366" stroke-width="1.3" marker-end="url(#arrEx)"/>
-  <path d="M196,582 C210,582 216,560 250,558" stroke="#b03a2e" stroke-width="1.4" marker-start="url(#arrInh)"/>
+  <path d="M198,524 L204,524" fill="none" stroke="#3f5366" stroke-width="1.4" marker-end="url(#arrEx)"/>
+  <path d="M281,546 L150,558" fill="none" stroke="#3f5366" stroke-width="1.3" marker-end="url(#arrEx)"/>
+  <path d="M196,582 C210,582 216,562 250,558" fill="none" stroke="#b03a2e" stroke-width="1.4" marker-start="url(#arrInh)"/>
   <text x="60" y="624" font-size="8.6" fill="#5b3673">sc_map &#8635; short&#8211;range exc &#183; surround &#8867; sharpens &#183; centre &#8594; reward r</text>
   <text x="60" y="640" font-size="9.2" fill="#46586a" font-weight="700">sc_map &#8594; cortex: the winner BY FIRING sets the cardinal direction</text>
-  <text x="60" y="656" font-size="8.6" fill="#7a8aa0">the spiking replacement for the old host "read pixels &#8594; return a cardinal" reflex</text>
+  <text x="60" y="656" font-size="8.6" fill="#5f6f86">the spiking replacement for the old host "read pixels &#8594; return a cardinal" reflex</text>
 </g>
 
 <!-- Cerebellum -->
@@ -140,10 +140,10 @@
     <rect x="48" y="788" width="120" height="38" rx="8" fill="url(#gPerD)" stroke="#2e86c1" stroke-width="1.3"/><text x="108" y="804" text-anchor="middle" font-weight="700">deep nucleus (&#215;4)</text><text x="108" y="816" text-anchor="middle" font-size="7.6" fill="#2e5577">dcn &#8594; motor (additive)</text>
     <rect x="180" y="788" width="120" height="38" rx="8" fill="url(#gPerD)" stroke="#2e86c1" stroke-width="1.3"/><text x="240" y="804" text-anchor="middle" font-weight="700">inferior olive</text><text x="240" y="816" text-anchor="middle" font-size="7.6" fill="#2e5577">climbing&#8211;fiber teach</text>
   </g>
-  <path d="M144,744 L150,744" stroke="#3f5366" stroke-width="1.3" marker-end="url(#arrEx)"/>
-  <path d="M252,744 L258,744" stroke="#1e8449" stroke-width="1.3" marker-end="url(#arrG)"/>
-  <path d="M300,764 C300,776 200,776 168,786" stroke="#b03a2e" stroke-width="1.3" marker-start="url(#arrInh)"/>
-  <path d="M276,788 C276,776 290,770 300,766" stroke="#2e86c1" stroke-width="1.3" marker-end="url(#arrV)"/>
+  <path d="M144,744 L150,744" fill="none" stroke="#3f5366" stroke-width="1.3" marker-end="url(#arrEx)"/>
+  <path d="M252,744 L258,744" fill="none" stroke="#1e8449" stroke-width="1.3" marker-end="url(#arrG)"/>
+  <path d="M300,764 C300,778 210,778 170,786" fill="none" stroke="#b03a2e" stroke-width="1.3" marker-start="url(#arrInh)"/>
+  <path d="M276,788 C276,778 290,772 300,768" fill="none" stroke="#2e86c1" stroke-width="1.3" marker-end="url(#arrV)"/>
   <text x="50" y="850" font-size="8.4" fill="#46586a">parallel fiber granule&#8594;PC LEARNS &#183; PC pause &#8594; disinhibits DCN &#8594; motor</text>
   <text x="50" y="863" font-size="8.4" fill="#46586a">climbing fiber from inferior olive is the teaching signal</text>
 </g>
@@ -160,14 +160,14 @@
     <rect x="290" y="926" width="66" height="38" rx="8" fill="url(#gMem)" stroke="#1d8049" stroke-width="1.4"/><text x="323" y="942" text-anchor="middle" font-weight="700">ca3 &#8635;</text><text x="323" y="954" text-anchor="middle" font-size="7" fill="#2c4a1c">SWR replay</text>
     <rect x="126" y="976" width="84" height="36" rx="8" fill="url(#gMem)" stroke="#1d8049" stroke-width="1.3"/><text x="168" y="991" text-anchor="middle" font-weight="700">ca1</text><text x="168" y="1002" text-anchor="middle" font-size="7.4" fill="#2c4a1c">readout</text>
   </g>
-  <path d="M118,945 L124,945" stroke="#3f5366" stroke-width="1.3" marker-end="url(#arrEx)"/>
-  <path d="M196,945 L202,945" stroke="#b03a2e" stroke-width="1.3" marker-start="url(#arrInh)"/>
-  <path d="M282,945 L288,945" stroke="#1e8449" stroke-width="1.3" marker-end="url(#arrG)"/>
-  <path d="M323,964 C323,990 230,990 212,990" stroke="#1e8449" stroke-width="1.3" marker-end="url(#arrG)"/>
+  <path d="M118,945 L124,945" fill="none" stroke="#3f5366" stroke-width="1.3" marker-end="url(#arrEx)"/>
+  <path d="M196,945 L202,945" fill="none" stroke="#b03a2e" stroke-width="1.3" marker-start="url(#arrInh)"/>
+  <path d="M282,945 L288,945" fill="none" stroke="#1e8449" stroke-width="1.3" marker-end="url(#arrG)"/>
+  <path d="M323,964 C323,992 232,992 214,990" fill="none" stroke="#1e8449" stroke-width="1.3" marker-end="url(#arrG)"/>
   <text x="50" y="1034" font-size="8.4" fill="#46586a">ec&#8594;dg (perforant) &#183; dg&#8867;sparsity &#183; dg&#8594;ca3 (mossy) &#183; ca3&#8635;recurrent (SWR)</text>
   <text x="50" y="1047" font-size="8.4" fill="#46586a">ca3&#8594;ca1 (Schaffer) &#183; ec&#8594;ca1 (direct bypass)</text>
   <text x="50" y="1066" font-size="9" font-weight="700" fill="#1e7a46">ca1 &#8594; place read&#8211;out (closes the perception loop)</text>
-  <text x="50" y="1082" font-size="8.4" fill="#7a8aa0">separates similar places &#183; completes partial cues &#183; replays during "sleep"</text>
+  <text x="50" y="1082" font-size="8.4" fill="#5f6f86">separates similar places &#183; completes partial cues &#183; replays during "sleep"</text>
 </g>
 
 <!-- =======================================================================
@@ -279,8 +279,8 @@
     <text x="1020" y="462" text-anchor="middle" font-size="7.6" fill="#7e3300">FS&#8211;PING &#947;&#8211;clamp &#8594;</text>
     <text x="1020" y="473" text-anchor="middle" font-size="7.6" fill="#7e3300">critic rate&#8211;normalize</text>
   </g>
-  <!-- value subtraction edge (signature) -->
-  <path d="M1020,424 C1020,410 990,372 941,370" stroke="#7d3c98" stroke-width="2.6" stroke-dasharray="5 3" marker-end="url(#arrSlow)"/>
+  <!-- value subtraction edge (signature) — the one slow-inhibition (GABA-B) edge -->
+  <path d="M1020,424 C1006,400 968,376 944,372" fill="none" stroke="#7d3c98" stroke-width="2.4" stroke-dasharray="5 3" marker-end="url(#arrSlow)"/>
   <text x="788" y="500" font-size="9.4" font-weight="700" fill="#6c3483">VALUE SUBTRACTION  r &#8722; V  &#8212; the one slow&#8211;inhibition (GABA&#8211;B / GIRK) edge:</text>
   <text x="788" y="514" font-size="8.8" fill="#7a5290">striosome_value &#8867; snc, gated by critic_snc_window. The value estimate is subtracted</text>
   <text x="788" y="527" font-size="8.8" fill="#7a5290">from the reward to make the prediction error &#8212; the actor&#8211;critic, entirely in neurons.</text>
@@ -329,7 +329,7 @@
   <text x="588" y="858" font-size="8.8" font-weight="700" fill="#5b3673">commit PICKS the move (DEFAULT)</text>
   <!-- thalamus -> motor (oracle, dashed, skirts left) -->
   <path d="M412,648 C360,648 360,910 450,914" stroke="#3f5366" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrEx)"/>
-  <text x="356" y="784" font-size="8" fill="#73838f" transform="rotate(-90 356 784)">thal &#8594; motor (host&#8211;argmax oracle path, opt&#8211;in)</text>
+  <text x="356" y="784" font-size="8" fill="#59687a" transform="rotate(-90 356 784)">thal &#8594; motor (host&#8211;argmax oracle path, opt&#8211;in)</text>
   <!-- motor -> body -->
   <path d="M572,966 L572,988" stroke="#b03a2e" stroke-width="2.6" marker-end="url(#arrInh)"/>
   <text x="588" y="980" font-size="8.6" fill="#9a2c20">agent moves</text>
@@ -345,19 +345,21 @@
   <!-- SC orienting -> cortex -->
   <path d="M372,520 C400,520 404,222 410,210" stroke="#6c3483" stroke-width="2.2" marker-end="url(#arrP)"/>
   <text x="392" y="372" font-size="8.4" font-weight="700" fill="#5b3673" transform="rotate(-86 392 372)">orient &#8594; cardinal (winner by firing)</text>
-  <!-- striatum striosome -> reward snc -->
-  <path d="M732,380 C752,380 760,350 784,346" stroke="#b03a2e" stroke-width="2" marker-end="url(#arrInh)"/>
-  <text x="744" y="362" font-size="7.8" fill="#9a2c20">striosome &#8594; SNc</text>
-  <!-- dopamine bus snc -> cortex (broadcast) -->
-  <path d="M786,338 C700,300 640,270 590,254" stroke="#d68910" stroke-width="2.2" stroke-dasharray="2 3" marker-end="url(#arrDA)"/>
-  <text x="690" y="286" font-size="8.2" fill="#a06a14" transform="rotate(-22 690 286)">DOPAMINE bus &#8594; gates STDP</text>
-  <!-- place readout from reward place code <- reward; and place feeds cortex already shown -->
+  <!-- striatum striosome -> reward snc (short, kept low and clear of the feedback lanes) -->
+  <path d="M732,384 C754,384 766,360 784,354" stroke="#b03a2e" stroke-width="2" marker-end="url(#arrInh)"/>
+  <text x="738" y="396" font-size="7.8" fill="#9a2c20">striosome &#8594; SNc</text>
+  <!-- dopamine bus snc -> cortex (broadcast; a clean single diagonal, distinct dotted style) -->
+  <path d="M786,340 C690,318 624,276 594,256" stroke="#d68910" stroke-width="2.2" stroke-dasharray="2 3" marker-end="url(#arrDA)"/>
+  <text x="660" y="298" font-size="8.2" fill="#a06a14" transform="rotate(-17 660 298)">DOPAMINE bus &#8594; gates STDP</text>
+  <!-- two feedback returns to cortex: parallel non-crossing lanes up the cortex/reward gutter.
+       thalamo-cortical = inner lane (x~750); dlPFC WM-bias = outer lane (x~766). -->
   <!-- thalamo-cortical feedback (closes loop) -->
-  <path d="M732,612 C780,612 800,250 734,224" stroke="#117a65" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrEx)"/>
-  <text x="792" y="430" font-size="8" fill="#117a65" transform="rotate(-90 792 430)">thalamo&#8211;cortical feedback (opt)</text>
+  <path d="M732,616 C748,616 750,420 750,300 C750,256 742,238 734,228" stroke="#117a65" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrEx)"/>
   <!-- dlPFC -> cortex bias -->
-  <path d="M786,648 C740,648 736,250 732,232" stroke="#2e86c1" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrV)"/>
-  <text x="756" y="450" font-size="8" fill="#2e5577" transform="rotate(-90 756 450)">WM bias &#8594; cortex</text>
+  <path d="M806,648 C770,648 766,440 766,300 C766,252 750,234 734,230" stroke="#2e86c1" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrV)"/>
+  <!-- both feedback-lane labels, colour-coded, in the open space above the Reward panel -->
+  <text x="784" y="262" font-size="8.2" font-weight="700" fill="#117a65">&#8212; thalamo&#8211;cortical feedback (opt)</text>
+  <text x="784" y="276" font-size="8.2" font-weight="700" fill="#2e5577">&#8212; dlPFC: WM bias &#8594; cortex (opt)</text>
   <!-- cerebellum DCN -> motor -->
   <path d="M372,810 C392,810 420,870 450,898" stroke="#2e86c1" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrV)"/>
   <text x="384" y="858" font-size="8" fill="#2e5577">DCN &#8594; motor (additive)</text>
@@ -416,8 +418,8 @@
   <text x="50" y="1402" font-size="10.6" fill="#46586a">direction is released &#8594; it feeds the <tspan font-weight="700" fill="#6c3483">spiking decision</tspan>, where evidence accumulates until an all&#8211;or&#8211;none <tspan font-weight="700" fill="#6c3483">commit burst</tspan> picks the winner &#8594; that motor pool fires &#8594; the body moves.</text>
   <text x="50" y="1424" font-size="10.6" fill="#46586a">In parallel a <tspan font-weight="700" fill="#9a7d0a">spiking actor&#8211;critic</tspan> computes the reward&#8211;prediction error (reward &#8722; value, the value subtracted via the one slow&#8211;inhibition edge) and broadcasts <tspan font-weight="700" fill="#a06a14">dopamine</tspan> to train the "go" weights.</text>
   <text x="50" y="1446" font-size="10.6" fill="#46586a">The <tspan font-weight="700" fill="#6c3483">superior colliculus</tspan> supplies a fast orienting bump, the <tspan font-weight="700" fill="#21618c">cerebellum</tspan> fine&#8211;tunes the motor command, and the <tspan font-weight="700" fill="#1e7a46">hippocampus</tspan> + <tspan font-weight="700" fill="#16435f">prefrontal working memory</tspan> supply place memory and goal&#8211;holding.</text>
-  <text x="50" y="1474" font-size="10" fill="#7a8aa0">Substrate&#8211;wide simplifications: point neurons (no dendrites) &#183; one&#8211;step conduction delay &#183; Izhikevich point&#8211;neuron default (HH / AdEx available) &#183; forward&#8211;Euler integration. Full list SH&#8211;1&#8230;SH&#8211;14 in the spec.</text>
-  <text x="50" y="1494" font-size="10" fill="#7a8aa0">The hand&#8211;coded argmax read&#8211;out is RETIRED (kept only as the opt&#8211;in motor/thal oracle path, dashed). The spiking decision is the default: 6/6&#8211;seed GO, within 25% of the host floor (1.16&#215;), 100% commit&#8211;burst.</text>
-  <text x="50" y="1514" font-size="10" fill="#7a8aa0" font-style="italic">This is an honest map of the code &#8212; accurate to the degree the biology is implemented here, including its reductions, not a textbook of neuroanatomy.</text>
+  <text x="50" y="1474" font-size="10" fill="#5f6f86">Substrate&#8211;wide simplifications: point neurons (no dendrites) &#183; one&#8211;step conduction delay &#183; Izhikevich point&#8211;neuron default (HH / AdEx available) &#183; forward&#8211;Euler integration. Full list SH&#8211;1&#8230;SH&#8211;14 in the spec.</text>
+  <text x="50" y="1494" font-size="10" fill="#5f6f86">The hand&#8211;coded argmax read&#8211;out is RETIRED (kept only as the opt&#8211;in motor/thal oracle path, dashed). The spiking decision is the default: 6/6&#8211;seed GO, within 25% of the host floor (1.16&#215;), 100% commit&#8211;burst.</text>
+  <text x="50" y="1514" font-size="10" fill="#5f6f86" font-style="italic">This is an honest map of the code &#8212; accurate to the degree the biology is implemented here, including its reductions, not a textbook of neuroanatomy.</text>
 </g>
 </svg>
