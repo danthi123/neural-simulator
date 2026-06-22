@@ -250,10 +250,10 @@
 
 <!-- ================= EDGES — main signal arteries ================= -->
 <g fill="none" stroke-linecap="round">
-  <path d="M214,300 C236,300 242,250 268,246" stroke="#3f5366" stroke-width="1.8" marker-end="url(#arrEx)"/>
+  <path d="M214,300 C236,300 244,246 268,246" stroke="#3f5366" stroke-width="1.8" marker-end="url(#arrEx)"/>
   <path d="M214,360 C238,360 244,252 268,252" stroke="#3f5366" stroke-width="2.2" marker-end="url(#arrEx)"/>
   <text x="246" y="332" font-size="8.6" fill="#46586a" transform="rotate(-26 246 332)">learned place&#8594;action</text>
-  <path d="M214,458 C240,458 244,556 268,558" stroke="#3f5366" stroke-width="2.2" marker-end="url(#arrEx)"/>
+  <path d="M214,458 C240,458 244,558 268,558" stroke="#3f5366" stroke-width="2.2" marker-end="url(#arrEx)"/>
   <text x="238" y="512" font-size="8.6" fill="#46586a" transform="rotate(40 238 512)">words &#8594; meanings</text>
 
   <path d="M428,246 L450,246" stroke="#3f5366" stroke-width="2.6" marker-end="url(#arrEx)"/>
@@ -275,8 +275,8 @@
   <text x="430" y="603" font-size="8.4" fill="#46586a">word meanings</text>
   <path d="M388,684 L388,692" stroke="#3f5366" stroke-width="2.2" marker-end="url(#arrEx)"/>
   <text x="430" y="691" font-size="8.4" fill="#46586a">who&#8211;did&#8211;what</text>
-  <path d="M504,724 C516,700 520,600 526,572" stroke="#3f5366" stroke-width="2" marker-end="url(#arrEx)"/>
-  <path d="M504,752 C516,720 518,680 526,664" stroke="#3f5366" stroke-width="2" marker-end="url(#arrEx)"/>
+  <path d="M504,724 C516,640 520,572 526,572" stroke="#3f5366" stroke-width="2" marker-end="url(#arrEx)"/>
+  <path d="M504,752 C516,710 518,664 526,664" stroke="#3f5366" stroke-width="2" marker-end="url(#arrEx)"/>
   <path d="M728,580 C748,588 752,596 762,604" stroke="#3f5366" stroke-width="1.8" marker-end="url(#arrEx)"/>
   <text x="752" y="592" text-anchor="middle" font-size="8" fill="#46586a">match a cue</text>
   <path d="M703,702 L703,712" stroke="#3f5366" stroke-width="2.4" marker-end="url(#arrEx)"/>
@@ -284,7 +284,7 @@
   <path d="M1010,666 C940,690 880,720 880,742" stroke="#3f5366" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrEx)"/>
   <text x="930" y="704" text-anchor="middle" font-size="8" fill="#59687a">next thing to say</text>
 
-  <path d="M214,520 C238,520 244,540 268,546" stroke="#117a44" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrXr)"/>
+  <path d="M214,520 C238,520 244,546 268,546" stroke="#117a44" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#arrXr)"/>
   <text x="226" y="535" font-size="8" fill="#1e7a46">sleep&#8211;replay</text>
 </g>
 

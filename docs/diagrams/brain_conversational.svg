@@ -342,13 +342,13 @@
        the box top edge. Entry points are order-preserving (left source -> left
        entry) so the three lines never cross; labels name each target. -->
   <!-- semantic -> output (naming) -->
-  <path d="M712,706 C712,748 600,772 566,798" stroke="#1e8449" stroke-width="1.7" marker-end="url(#arrG)"/>
+  <path d="M712,706 C712,748 566,776 566,798" stroke="#1e8449" stroke-width="1.7" marker-end="url(#arrG)"/>
   <text x="612" y="752" text-anchor="middle" font-size="8" fill="#1e7a46">naming</text>
   <!-- broca -> output (articulation -> motor_speech) -->
-  <path d="M1004,706 C1004,752 760,768 706,798" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
+  <path d="M1004,706 C1004,752 706,776 706,798" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
   <text x="876" y="744" text-anchor="middle" font-size="8" fill="#1e7a46">articulation</text>
   <!-- concept pools -> output (A->W naming pools) -->
-  <path d="M1130,706 C1130,754 940,766 846,798" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
+  <path d="M1130,706 C1130,754 846,776 846,798" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arrG)"/>
   <text x="1028" y="744" text-anchor="middle" font-size="8" fill="#1e7a46">concept &#8594; word (A&#8594;W)</text>
   <!-- input -> hippocampus -->
   <path d="M120,702 C120,760 110,780 90,830" stroke="#3f5366" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrEx)"/>
