@@ -261,7 +261,9 @@
   <text x="641" y="323" text-anchor="middle" font-size="8.2" fill="#9a2c20">the gate</text>
   <path d="M804,246 L826,246" stroke="#3f5366" stroke-width="2.2" marker-end="url(#arrEx)"/>
   <text x="815" y="238" text-anchor="middle" font-size="8" fill="#46586a">relay</text>
-  <path d="M1076,256 C1120,256 1160,300 1190,368" stroke="#6c3483" stroke-width="2.6" marker-end="url(#arrEx)"/>
+  <!-- decision -> motor: down the clear gutter between the decision box and the Reward/WM boxes (x1090),
+       then right under them into Motor output's top edge. Clears Reward & dopamine + Working memory. -->
+  <path d="M1076,256 C1090,259 1090,300 1090,340 C1090,356 1102,360 1120,360 C1150,360 1180,362 1180,372" stroke="#6c3483" stroke-width="2.6" marker-end="url(#arrEx)"/>
   <path d="M790,286 C900,330 1040,360 1138,392" stroke="#3f5366" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrEx)"/>
   <text x="975" y="376" text-anchor="middle" font-size="8" fill="#59687a">relay &#8594; motor (host&#8211;argmax oracle, opt&#8211;in)</text>
   <path d="M1078,224 L1098,224" stroke="#7d3c98" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrEx)"/>
@@ -292,12 +294,17 @@
        B  vision -> reply (recall), around the far-left + bottom margin
      Labels sit beside their corridor, never on a line. -->
 <g fill="none" stroke-linecap="round">
-  <!-- Route A : comprehension parser -> motor cortex (up the inner-left gutter, x~244) -->
-  <path d="M272,642 C252,640 244,616 244,560 C244,470 244,372 246,336 C249,306 274,292 294,288" stroke="#1a9850" stroke-width="3.2" marker-end="url(#arrX)"/>
-  <!-- Route C : vision/IT -> composer (parallel gutter just left of A, x~228) -->
-  <path d="M214,298 C226,300 228,322 228,372 C228,520 228,672 228,716 C228,734 246,742 264,743" stroke="#1a9850" stroke-width="2.8" stroke-dasharray="9 5" marker-end="url(#arrX)"/>
-  <!-- Route B : vision -> reply / recall (far-left + bottom margin, clear of A and C) -->
-  <path d="M112,308 C66,332 44,430 44,560 C44,772 44,886 102,892 C320,902 566,898 664,890 C690,888 700,858 703,794" stroke="#1a9850" stroke-width="2.8" marker-end="url(#arrX)"/>
+  <!-- Route A : comprehension parser -> motor cortex. RIGHT lane (x247) in the clear gutter between
+       the SENSE panel and the nav/conversation lanes; runs up only as far as its start (y642) so its
+       bottom never tangles with Route C's composer approach below. -->
+  <path d="M272,642 C258,641 247,620 247,560 L247,338 C247,310 270,291 294,288" stroke="#1a9850" stroke-width="3.2" marker-end="url(#arrX)"/>
+  <!-- Route C : vision/IT -> composer. LEFT lane (x222), strictly left of Route A's lane so the two
+       cross-brain routes never cross each other; hooks right into the composer below A's range. -->
+  <path d="M214,298 C220,300 222,322 222,372 L222,708 C222,730 244,742 264,743" stroke="#1a9850" stroke-width="2.8" stroke-dasharray="9 5" marker-end="url(#arrX)"/>
+  <!-- Route B : vision -> reply / recall. Exit Vision's LEFT edge straight into the SENSE-panel
+       margin lane (x42, clear of every inner box AND the panel border), down to the bottom,
+       then along the conversation-lane bottom corridor up into Reply. No box corner is clipped. -->
+  <path d="M50,280 C44,288 42,320 42,372 L42,824 C42,858 62,882 102,890 C320,902 566,898 664,890 C690,888 700,858 703,794" stroke="#1a9850" stroke-width="2.8" marker-end="url(#arrX)"/>
 
   <!-- A label : in the nav/conversation gap, to the RIGHT of A's gutter line -->
   <g>
