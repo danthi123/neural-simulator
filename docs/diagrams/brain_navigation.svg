@@ -318,8 +318,8 @@
   <path d="M495,564 L495,598" stroke="#b03a2e" stroke-width="3" marker-start="url(#arrInh)"/>
   <text x="370" y="582" font-size="8.6" font-weight="700" fill="#9a2c20">GPi tonic &#8867; thal</text>
   <text x="370" y="592" font-size="8" fill="#9a2c20">(D1 silence releases the relay)</text>
-  <!-- STN diffuse excitation to GPi -->
-  <path d="M649,556 C649,572 558,540 540,540" stroke="#1e8449" stroke-width="1.8" marker-end="url(#arrG)"/>
+  <!-- STN diffuse excitation to GPi: terminate ON the gpi right edge (x566), not inside the box -->
+  <path d="M649,556 C649,576 600,540 566,538" stroke="#1e8449" stroke-width="1.8" marker-end="url(#arrG)"/>
   <text x="640" y="576" font-size="7.8" fill="#1e6e49">STN diffuse exc &#8594; GPi</text>
   <!-- thalamus -> decision -->
   <path d="M572,684 L572,698" stroke="#3f5366" stroke-width="2.6" marker-end="url(#arrEx)"/>
@@ -360,10 +360,13 @@
   <!-- cerebellum DCN -> motor -->
   <path d="M372,810 C392,850 400,898 412,898" stroke="#2e86c1" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrV)"/>
   <text x="384" y="858" font-size="8" fill="#2e5577">DCN &#8594; motor (additive)</text>
-  <!-- hippocampus place readout up to perception (long, left edge) -->
-  <path d="M168,976 C150,976 200,560 200,438" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrG)"/>
-  <!-- body -> perception (world renders next input) -->
-  <path d="M452,1014 C300,1014 250,470 250,438" stroke="#566573" stroke-width="1.6" stroke-dasharray="2 4" marker-end="url(#arrEx)"/>
+  <!-- hippocampus place readout up to perception: out to the LEFT PAGE MARGIN (OUTER lane x24),
+       clear of the cerebellum/SC panels it used to cut through -->
+  <path d="M168,976 C100,976 24,966 24,720 L24,500 C24,468 42,442 55,440" stroke="#1e8449" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrG)"/>
+  <!-- body -> perception (world renders next input): up the center-left gutter (x380, clear lower segment),
+       LEFT through the cerebellum/hippocampus gap (y884), then up the LEFT PAGE MARGIN (INNER lane x30)
+       into perception's bottom edge. Nested INSIDE the green readout lane so the two never cross. -->
+  <path d="M452,1014 C414,1014 380,1000 380,924 C380,898 356,884 300,884 L60,884 C40,884 30,872 30,840 L30,500 C30,466 48,446 70,440" stroke="#566573" stroke-width="1.6" stroke-dasharray="2 4" marker-end="url(#arrEx)"/>
 </g>
 
 <!-- =======================================================================
