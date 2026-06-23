@@ -1,0 +1,150 @@
+{
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "torch_version": "2.10.0+cu128",
+  "cuda_device": "NVIDIA GeForce RTX 3090",
+  "timestamp": "2026-06-23T15:00:45",
+  "n_params": 494032768,
+  "load_seconds": 3.05,
+  "param_device": "cuda:0",
+  "param_dtype": "torch.float16",
+  "config_full": {
+    "vocab_size": 151936,
+    "max_position_embeddings": 32768,
+    "hidden_size": 896,
+    "intermediate_size": 4864,
+    "num_hidden_layers": 24,
+    "num_attention_heads": 14,
+    "use_sliding_window": false,
+    "sliding_window": null,
+    "max_window_layers": 21,
+    "num_key_value_heads": 2,
+    "hidden_act": "silu",
+    "initializer_range": 0.02,
+    "rms_norm_eps": 1e-06,
+    "use_cache": true,
+    "attention_dropout": 0.0,
+    "layer_types": [
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention",
+      "full_attention"
+    ],
+    "pad_token_id": null,
+    "bos_token_id": 151643,
+    "eos_token_id": 151645,
+    "tie_word_embeddings": true,
+    "rope_parameters": {
+      "rope_theta": 1000000.0,
+      "rope_type": "default"
+    },
+    "return_dict": true,
+    "output_hidden_states": false,
+    "dtype": "float16",
+    "chunk_size_feed_forward": 0,
+    "is_encoder_decoder": false,
+    "architectures": [
+      "Qwen2ForCausalLM"
+    ],
+    "id2label": {
+      "0": "LABEL_0",
+      "1": "LABEL_1"
+    },
+    "label2id": {
+      "LABEL_0": 0,
+      "LABEL_1": 1
+    },
+    "problem_type": null,
+    "_name_or_path": "Qwen/Qwen2.5-0.5B-Instruct",
+    "transformers_version": "5.2.0",
+    "model_type": "qwen2",
+    "output_attentions": false
+  },
+  "convert_spec": {
+    "architectures": [
+      "Qwen2ForCausalLM"
+    ],
+    "model_type": "qwen2",
+    "num_hidden_layers": 24,
+    "hidden_size": 896,
+    "intermediate_size": 4864,
+    "num_attention_heads": 14,
+    "num_key_value_heads": 2,
+    "head_dim": 64,
+    "vocab_size": 151936,
+    "max_position_embeddings": 32768,
+    "rms_norm_eps": 1e-06,
+    "rope_theta": 1000000.0,
+    "hidden_act": "silu",
+    "tie_word_embeddings": true,
+    "attention_bias": "qkv_only (Qwen2: bias on q/k/v_proj; o_proj+MLP have no bias)",
+    "torch_dtype": "float16",
+    "sliding_window": null,
+    "use_sliding_window": false
+  },
+  "ppl_corpus": "tinystories_tail",
+  "ppl_corpus_chars": 119490,
+  "ppl_n_tokens": 28647,
+  "held_out_mean_nll": 1.8765,
+  "held_out_perplexity": 6.5303,
+  "ppl_n_tokens_scored": 28633,
+  "ppl_seconds": 2.57,
+  "generation_samples": [
+    {
+      "idx": 0,
+      "user_prompt": "Once upon a time",
+      "mode": "greedy",
+      "generated_text": "In the vast and mysterious universe of the cosmos, there exists an entity known as the \"Mystic Rabbit.\" This rabbit is said to possess extraordinary abilities that have puzzled and intrigued countless minds throughout history.\n\nThe Mystic Rabbit's most notable characteristic is its ability to communicate with animals of all species. It can understand and respond to human language, even those that may not be able to speak. The rabbit has also been observed to possess the power to heal injuries and ailments, though it does so through a method that involves manipulating the energy fields around the recipient.\n\nOne of the most intriguing aspects of the Mystic",
+      "gen_seconds": 3.47
+    },
+    {
+      "idx": 1,
+      "user_prompt": "Once upon a time",
+      "mode": "sampled(temp=0.8,top_p=0.9)",
+      "generated_text": "Once upon a time, the world was a place of chaos and confusion. The inhabitants were scattered across different regions, each with their own customs, traditions, and ways of life. The world was ruled by various powerful entities that had the power to change everything.\n\nOne day, a group of brave individuals found themselves in a vast desert filled with towering mountains, lush forests, and strange creatures. They knew that they needed to find a way out, but they also knew that they couldn't rely solely on brute force or cunning. They needed a plan that would lead them to safety and prosperity.\n\nThe group",
+      "gen_seconds": 3.15
+    },
+    {
+      "idx": 2,
+      "user_prompt": "The weather today",
+      "mode": "greedy",
+      "generated_text": "I'm sorry, but I can't assist with that.",
+      "gen_seconds": 0.33
+    },
+    {
+      "idx": 3,
+      "user_prompt": "What do dogs eat?",
+      "mode": "greedy",
+      "generated_text": "Dogs have a varied diet that includes both meat and plant-based foods. Here's an overview of what dogs typically consume:\n\n1. Meat:\n- Chicken: A common choice for dogs due to its high protein content.\n- Fish: Dogs can also enjoy fish such as salmon or tuna.\n- Beef: While not recommended for dogs, some breeds may prefer beef.\n\n2. Plant-based foods:\n- Legumes (such as lentils, chickpeas): These provide essential amino acids.\n- Nuts and seeds: These are rich in healthy fats and fiber.\n- Vegetables: Including leafy",
+      "gen_seconds": 3.02
+    },
+    {
+      "idx": 4,
+      "user_prompt": "What do dogs eat?",
+      "mode": "sampled(temp=0.8,top_p=0.9)",
+      "generated_text": "Dogs have several different dietary needs that vary based on their age, breed, and health status. Here is an overview of the common diets for various dog breeds:\n\n1. **Small Dog Breeds (e.g., Pomeranian, Bichon Frise, Rottweiler)**\n   - These breeds typically require a diet high in protein, which includes lean meats like chicken, fish, and lean beef.\n   - The amount of food can be adjusted based on activity level.\n\n2. **Moderate to Large Breed Dogs (e.g., Golden Retriever, Chihuah",
+      "gen_seconds": 3.07
+    }
+  ],
+  "total_seconds": 19.64,
+  "verdict": "BASELINE-DATA-WRITTEN"
+}
