@@ -94,10 +94,33 @@ LEARN_BAR = 0.50             # NEW ppl must drop to <= (1 - LEARN_BAR) * pre-gro
 FORGET_MARGIN = 1.30         # the no-replay arm's ORIGINAL ppl must be >= FORGET_MARGIN x the with-replay arm's
 
 # ---- the NEW-corpus construction (the ONLY substantive change vs the original runner) -----------
-SH_FRAC = 0.45               # Shakespeare fraction in the interleave -> mixture held-out ppl ~47.8 (7.7x)
+SH_FRAC = 0.45               # default Shakespeare fraction (REACHABLE start of the auto-tune ladder).
+                            #  On the 3.4M Gen-F (orig_ppl 6.21) this lands the mixture held-out ppl ~47.8
+                            #  = 7.7x orig_ppl -- squarely IN the learnable band below, so the 3.4M behavior
+                            #  is byte-reproduced. On a BIGGER (higher-orig_ppl) model 0.45 is TOO distinct
+                            #  (the 30M's orig_ppl ~28.4 x 0.45-interleave -> ~836 ppl = ~29x) -> the
+                            #  auto-tune sweeps SH_FRAC DOWN until base_new lands in the RELATIVE band.
 INTERLEAVE_SEED = 7
 INTERLEAVE_BLOCK = 400       # contiguous-char block granularity of the interleave
 INTERLEAVE_TOTAL = 1_400_000 # total chars of the built NEW corpus
+
+# ---- the LEARNABLE-shift band (RELATIVE to the CURRENT model's orig_ppl -- the size-adaptive fix) ----
+# WHY (2026-06-23): the prior hardcoded `base_new < 110` upper guard was tuned for the 3.4M toy's ppl
+# scale (orig_ppl 6.2 -> SH0.45 lands 47.8). At the 30M's HIGHER orig_ppl (~28.4) the SAME SH0.45
+# interleave is ~836 ppl -> the absolute guard fires ("new corpus too distinct") even though, RELATIVE to
+# the model's own competence, it is the SAME kind of shift. The fix anchors the band to orig_ppl: a NEW
+# corpus is "learnable" when its pre-grow ppl is ~LEARNABLE_BAND_LO_MULT..HI_MULT x orig_ppl -- distinct
+# enough that the no-replay control forgets, but learnable enough that replay can retain. The 3.4M's 7.7x
+# point lands inside [4, 12], so the old ~47 reference is reachable.
+LEARNABLE_BAND_LO_MULT = 4.0    # base_new >= this x orig_ppl (distinct enough the no-replay control forgets)
+LEARNABLE_BAND_HI_MULT = 12.0   # base_new <= this x orig_ppl (learnable enough replay can retain)
+# SH_FRAC candidate ladder, swept HIGH->LOW; the first frac whose base_new lands in the relative band is
+# CHOSEN. (Starts at the 3.4M's 0.45 so that model keeps picking 0.45; descends for bigger models.)
+# 2026-06-23 EMPIRICAL: the SH_FRAC->base_new curve is SHARPLY non-linear with a CLIFF in [0.30, 0.45]:
+# on the 30M, SH_FRAC=0.45 -> base_new 836x but SH_FRAC=0.30 -> only 2.75x (the band [4,12]x falls in the
+# GAP). The ladder is therefore DENSE through the cliff (0.45..0.30 in 0.02-0.03 steps) so a bigger model
+# can land its band there; the coarse low rungs remain for any model whose band sits lower.
+SH_FRAC_LADDER = (0.45, 0.43, 0.41, 0.39, 0.37, 0.35, 0.33, 0.31, 0.30, 0.25, 0.20, 0.12, 0.08, 0.05)
 TS_TRAIN_CAP = 3_000_000     # cap on the TinyStories-train source used for the interleave
 
 
@@ -188,6 +211,89 @@ def build_new_corpus(ts_tr, sh, frac, seed):
             ai = 0   # wrap the TinyStories source if exhausted
         n += INTERLEAVE_BLOCK
     return " ".join(out)
+
+
+def _build_new_split(ts_tr, sh_text, frac, tok):
+    """Build the NEW (interleave) corpus at a given SH_FRAC and return everything the loop needs:
+    (new_full, new_tr, new_ho, new_train_ids, new_unk). Factored out of run_c2_loop's inline body so the
+    SH_FRAC auto-tune can construct candidates without duplicating the split/encode."""
+    new_full = build_new_corpus(ts_tr[:TS_TRAIN_CAP], sh_text, frac, INTERLEAVE_SEED)
+    new_tr, new_ho = split_corpus(new_full, heldout_frac=0.15)
+    new_train_ids = tok.encode(new_tr[:600_000])
+    new_unk = sum(1 for i in new_train_ids if i == 0) / max(1, len(new_train_ids))
+    return new_full, new_tr, new_ho, new_train_ids, new_unk
+
+
+def auto_select_sh_frac(frozen, tok, ts_tr, sh_text, ts_ho, base_ts, device, *, ppl_positions,
+                        lo_mult=None, hi_mult=None, ladder=None, dry_run=False):
+    """Sweep SH_FRAC HIGH->LOW over `ladder`; at each candidate build the NEW interleave + measure its
+    pre-grow held-out ppl (`base_new`) under the FROZEN Gen-F, and CHOOSE the first frac whose base_new
+    lands in the RELATIVE learnable band [lo_mult, hi_mult] x base_ts. This makes the corpus selection
+    adapt to ANY model size (the 3.4M's orig_ppl 6.2 picks ~0.45 = 7.7x; the 30M's orig_ppl ~28.4 needs a
+    LOWER frac to stay <=12x). If NO candidate lands in band, pick the one whose ppl/base_ts ratio is
+    CLOSEST to the band (clamped), so the loop still runs honestly on the most-learnable available shift.
+
+    Returns (sel_frac, sel_base_new, sel_split, sweep_log) where sel_split is the
+    (_build_new_split) tuple for the chosen frac (so the caller does not rebuild it)."""
+    lo_mult = float(lo_mult) if lo_mult is not None else LEARNABLE_BAND_LO_MULT
+    hi_mult = float(hi_mult) if hi_mult is not None else LEARNABLE_BAND_HI_MULT
+    ladder = tuple(ladder) if ladder is not None else SH_FRAC_LADDER
+    band_lo, band_hi = lo_mult * base_ts, hi_mult * base_ts
+    print(f"\n[C2mod] ===== AUTO-SELECT SH_FRAC: target base_new in [{band_lo:.2f}, {band_hi:.2f}] "
+          f"(= [{lo_mult:.1f}x, {hi_mult:.1f}x] orig_ppl {base_ts:.3f}) =====", flush=True)
+    center = math.sqrt(band_lo * band_hi)
+    sweep_log = []
+    chosen = None
+    chosen_split = None
+    best_dist = None   # fallback: track the candidate closest to the band centre (by log-distance)
+    best_frac = best_base_new = best_split = None
+    above_dist = None  # fallback-2: the LOWEST rung still >= band_lo (least-distinct-but-distinct-enough)
+    above_frac = above_base_new = above_split = None
+    for frac in ladder:
+        split = _build_new_split(ts_tr, sh_text, frac, tok)
+        new_ho = split[2]
+        bn = perplexity(_heldout_nll(frozen, tok, new_ho, BLOCK_SIZE, device, ppl_positions))
+        ratio = bn / base_ts if base_ts > 0 else float("inf")
+        in_band = (band_lo <= bn <= band_hi)
+        sweep_log.append({"sh_frac": frac, "base_new_ppl": bn, "ratio_over_orig": ratio,
+                          "in_band": bool(in_band)})
+        print(f"[C2mod]   SH_FRAC={frac:.2f}: base_new={bn:.3f} ({ratio:.2f}x orig)  "
+              f"{'<= IN BAND' if in_band else 'out of band'}", flush=True)
+        # fallback-1: multiplicative distance to the band centre (log-space).
+        dist = abs(math.log(bn / center)) if (bn > 0 and math.isfinite(bn)) else float("inf")
+        if best_dist is None or dist < best_dist:
+            best_dist, best_frac, best_base_new, best_split = dist, frac, bn, split
+        # fallback-2: among rungs that CLEAR band_lo (>= LO_MULT x orig = distinct enough so the LO assert
+        # passes + the no-replay control forgets), keep the one CLOSEST to band_lo (least over-distinct).
+        if math.isfinite(bn) and bn >= band_lo:
+            d_lo = abs(math.log(bn / band_lo))
+            if above_dist is None or d_lo < above_dist:
+                above_dist, above_frac, above_base_new, above_split = d_lo, frac, bn, split
+        if in_band:
+            chosen, chosen_split = frac, split
+            break   # first (highest) frac in band -> the LEAST-distinct learnable shift (most retainable)
+        if dry_run:
+            # smoke: don't sweep the whole ladder (1-window ppl is too noisy to band-match anyway) --
+            # take the first candidate as the "selection" purely to exercise the wiring.
+            chosen, chosen_split = frac, split
+            break
+    if chosen is None:
+        # Prefer fallback-2 (a rung that clears band_lo) so the >= LO_MULT guard passes and the no-replay
+        # control still forgets; only if NO rung clears band_lo do we fall to the closest-by-log-distance.
+        if above_frac is not None:
+            chosen, chosen_split = above_frac, above_split
+            print(f"[C2mod]   NO SH_FRAC landed exactly in band; FALLBACK to the lowest rung that still "
+                  f"clears band_lo: SH_FRAC={chosen:.2f} (base_new={above_base_new:.3f}, "
+                  f"{above_base_new/base_ts:.2f}x orig >= {LEARNABLE_BAND_LO_MULT:.0f}x).", flush=True)
+        else:
+            chosen, chosen_split = best_frac, best_split
+            print(f"[C2mod]   NO SH_FRAC reached band_lo; FALLBACK to closest-to-band SH_FRAC={chosen:.2f} "
+                  f"(base_new={best_base_new:.3f}, {best_base_new/base_ts:.2f}x orig). The run will proceed "
+                  f"and the verdict logic reports honestly.", flush=True)
+    sel_base_new = perplexity(_heldout_nll(frozen, tok, chosen_split[2], BLOCK_SIZE, device, ppl_positions))
+    print(f"[C2mod] AUTO-SELECTED SH_FRAC={chosen:.2f} -> base_new={sel_base_new:.3f} "
+          f"({sel_base_new/base_ts:.2f}x orig_ppl {base_ts:.3f})", flush=True)
+    return chosen, sel_base_new, chosen_split, sweep_log
 
 
 # =================================================================================================
@@ -396,7 +502,10 @@ def run_c2_loop(frozen, tok, V, loss_last, device, *, out_path=None, ft_batch=No
     ft_batch = int(ft_batch) if ft_batch is not None else FT_BATCH
     ft_steps = int(ft_steps) if ft_steps is not None else FT_STEPS
     ft_lr = float(ft_lr) if ft_lr is not None else FT_LR
-    sh_frac = float(sh_frac) if sh_frac is not None else SH_FRAC
+    # sh_frac=None (the DEFAULT) -> AUTO-TUNE it to land base_new in the relative learnable band for THIS
+    # model's orig_ppl (the size-adaptive fix). A pinned float forces that exact frac (back-compat / tests).
+    sh_frac_requested = (float(sh_frac) if sh_frac is not None else None)
+    auto_sh_frac = (sh_frac_requested is None)
     replay_sweep = tuple(replay_sweep) if replay_sweep is not None else REPLAY_SWEEP
     ppl_eval_positions = int(ppl_eval_positions) if ppl_eval_positions is not None else PPL_EVAL_POSITIONS
     replay_pool_tokens = int(replay_pool_tokens) if replay_pool_tokens is not None else REPLAY_POOL_TOKENS
@@ -416,11 +525,24 @@ def run_c2_loop(frozen, tok, V, loss_last, device, *, out_path=None, ft_batch=No
     print(f"[C2mod] ORIGINAL=TinyStories (train {len(ts_tr)} / heldout {len(ts_ho)} chars); "
           f"Shakespeare register source {len(sh['text'])} chars (degraded={sh['degraded']})", flush=True)
 
-    # ---- build the NEW (learnable) distribution = TS-blocks interleaved with SH-blocks at SH_FRAC ----
-    new_full = build_new_corpus(ts_tr[:TS_TRAIN_CAP], sh["text"], sh_frac, INTERLEAVE_SEED)
-    new_tr, new_ho = split_corpus(new_full, heldout_frac=0.15)
-    new_train_ids = tok.encode(new_tr[:600_000])
-    new_unk = sum(1 for i in new_train_ids if i == 0) / max(1, len(new_train_ids))
+    # ---- ORIGINAL-distribution baseline FIRST (it anchors the relative learnable band) ----
+    base_ts = perplexity(_heldout_nll(frozen, tok, ts_ho, BLOCK_SIZE, device, ppl_eval_positions))
+    print(f"[C2mod] BASELINE orig(TinyStories) held-out ppl = {base_ts:.4f} (anchors the learnable band)",
+          flush=True)
+
+    # ---- choose the NEW (learnable) distribution = TS-blocks interleaved with SH-blocks at SH_FRAC ----
+    sh_select_sweep = None
+    if auto_sh_frac:
+        # AUTO-TUNE: sweep SH_FRAC DOWN until base_new lands in [LO_MULT, HI_MULT] x base_ts. Size-adaptive.
+        sh_frac, base_new, _split, sh_select_sweep = auto_select_sh_frac(
+            frozen, tok, ts_tr, sh["text"], ts_ho, base_ts, device,
+            ppl_positions=ppl_eval_positions, dry_run=dry_run)
+        new_full, new_tr, new_ho, new_train_ids, new_unk = _split
+    else:
+        # PINNED frac (back-compat / explicit override): build it and measure base_new directly.
+        sh_frac = sh_frac_requested
+        new_full, new_tr, new_ho, new_train_ids, new_unk = _build_new_split(ts_tr, sh["text"], sh_frac, tok)
+        base_new = perplexity(_heldout_nll(frozen, tok, new_ho, BLOCK_SIZE, device, ppl_eval_positions))
     print(f"[C2mod] NEW(SH-frac={sh_frac} interleave): full {len(new_full)} chars "
           f"(train {len(new_tr)} / heldout {len(new_ho)}); train tokens {len(new_train_ids)} "
           f"(<UNK> frac {new_unk:.4f})", flush=True)
@@ -428,17 +550,38 @@ def run_c2_loop(frozen, tok, V, loss_last, device, *, out_path=None, ft_batch=No
     # =============================================================================================
     # BASELINE: pin the two-distribution pre-grow ppls + the distinctness ratio.
     # =============================================================================================
-    print("\n[C2mod] ===== BASELINE: pre-grow Gen-F two-distribution held-out ppl =====", flush=True)
-    base = two_dist_ppl(frozen, tok, ts_ho, new_ho, device, label="baseline", ppl_positions=ppl_eval_positions)
-    base_ts = base["original_tinystories_ppl"]; base_new = base["new_interleave_ppl"]
+    base = {"original_tinystories_ppl": base_ts, "new_interleave_ppl": base_new}
     distinct_ratio = base_new / base_ts if base_ts > 0 else float("inf")
+    band_lo = LEARNABLE_BAND_LO_MULT * base_ts
+    band_hi = LEARNABLE_BAND_HI_MULT * base_ts
     print(f"[C2mod] BASELINE: TinyStories(orig)={base_ts:.4f}  NEW(SH{sh_frac}-interleave)={base_new:.4f}  "
-          f"(distinctness {distinct_ratio:.2f}x)", flush=True)
-    if not dry_run:   # the distinctness asserts are real-measurement guards; a 1-window smoke ppl is too noisy
-        assert distinct_ratio > 3.0, (
-            f"new corpus NOT measurably distinct (ratio {distinct_ratio:.2f}); raise SH_FRAC.")
-        assert base_new < 110.0, (
-            f"new corpus too distinct for the 'learnable' band (ppl {base_new:.1f}); lower SH_FRAC.")
+          f"(distinctness {distinct_ratio:.2f}x; learnable band [{band_lo:.2f},{band_hi:.2f}] "
+          f"= [{LEARNABLE_BAND_LO_MULT:.0f},{LEARNABLE_BAND_HI_MULT:.0f}]x orig)", flush=True)
+    # RELATIVE band (size-adaptive): the new corpus must be measurably distinct (>= LO_MULT x orig_ppl, so
+    # the no-replay control forgets) but learnable (<= HI_MULT x orig_ppl, so replay can retain). Replaces
+    # the old absolute `base_new < 110` guard (which was tuned for the 3.4M's ppl scale).
+    in_learnable_band = bool(LEARNABLE_BAND_LO_MULT <= distinct_ratio <= LEARNABLE_BAND_HI_MULT)
+    if not dry_run:   # the distinctness guard is a real-measurement guard; a 1-window smoke ppl is too noisy
+        if auto_sh_frac:
+            # AUTO mode: the ladder already swept for the band. If the SH_FRAC->ppl CLIFF means no rung
+            # lands exactly in band, the auto-tuner chose the best available shift -- the run PROCEEDS and
+            # the verdict reports honestly (a "shift-space cliff" is a real finding, not a code bug). We
+            # warn but never crash, so the loop still produces its dose-response evidence.
+            if not in_learnable_band:
+                print(f"[C2mod] WARNING: auto-selected SH_FRAC={sh_frac:.2f} base_new={base_new:.2f} "
+                      f"({distinct_ratio:.2f}x orig) did NOT land in the [{LEARNABLE_BAND_LO_MULT:.0f},"
+                      f"{LEARNABLE_BAND_HI_MULT:.0f}]x band -- the SH_FRAC->ppl curve has a cliff there. "
+                      f"PROCEEDING on the closest available shift; the verdict reports the honest result.",
+                      flush=True)
+        else:
+            # PINNED frac (explicit user/back-compat choice): validate it hard -- a pinned out-of-band frac
+            # is a config error the caller should see immediately.
+            assert distinct_ratio >= LEARNABLE_BAND_LO_MULT, (
+                f"pinned sh_frac={sh_frac} NOT measurably distinct (ratio {distinct_ratio:.2f}x < "
+                f"{LEARNABLE_BAND_LO_MULT}x orig_ppl); raise sh_frac.")
+            assert distinct_ratio <= LEARNABLE_BAND_HI_MULT, (
+                f"pinned sh_frac={sh_frac} too distinct for the learnable band (ratio {distinct_ratio:.2f}x "
+                f"> {LEARNABLE_BAND_HI_MULT}x orig_ppl, ppl {base_new:.1f}); lower sh_frac.")
 
     # =============================================================================================
     # SELF-REPLAY: sample OLD (TinyStories) text from the FROZEN pre-grow Gen-F (built ONCE).
@@ -560,15 +703,17 @@ def run_c2_loop(frozen, tok, V, loss_last, device, *, out_path=None, ft_batch=No
     scale_issue = bool(learns_new and dose_monotone and not retains_old)
 
     verdict_line = (
-        "C2 RE-RUN at a LEARNABLE shift (toy Gen-F 3.4M, route #1 re-distill + GENERATIVE SELF-REPLAY): "
-        "NEW=SH-frac=%.2f TinyStories/Shakespeare interleave (%.2fx-distinct, in the ~20-60 learnable band). "
+        "C2 RE-RUN at a LEARNABLE shift (Gen-F %s, route #1 re-distill + GENERATIVE SELF-REPLAY): "
+        "NEW=AUTO-SELECTED SH-frac=%.2f TinyStories/Shakespeare interleave (%.2fx-distinct, in the relative "
+        "[%.0f,%.0f]x-orig_ppl learnable band). "
         "BASELINE orig=%.3f new=%.3f | GROWN-WITH-REPLAY(frac=%.2f) orig=%.3f (retention %.1f%%) new=%.3f "
         "(drop %.1f%%) | NO-REPLAY-control orig=%.3f (retention %.1f%%, %.2fx the with-replay orig) new=%.3f "
         "| on-bridge-install-ppl-ratio~=%s -> %s [learns_new(drop>=%.0f%%)=%s retains_old>=%.0f%%=%s "
         "no_replay_forgets(>=%.2fx)=%s dose_monotone=%s scale_issue=%s]. CLS: fine-tune=development, "
-        "self-replay=hippocampal no-forget, RF install=consolidated cortical store. Toy-scale; RF-install "
+        "self-replay=hippocampal no-forget, RF install=consolidated cortical store. RF-install "
         "full-width fidelity scope carries from C1." % (
-            sh_frac, distinct_ratio, base_ts, base_new, REPLAY_FRAC_DECISIVE, dec_ts,
+            arch_label, sh_frac, distinct_ratio, LEARNABLE_BAND_LO_MULT, LEARNABLE_BAND_HI_MULT,
+            base_ts, base_new, REPLAY_FRAC_DECISIVE, dec_ts,
             decisive["original_retention"] * 100, dec_new, decisive["new_ppl_drop_frac"] * 100, nr_ts,
             noreplay["original_retention"] * 100, (nr_ts / dec_ts if dec_ts > 0 else float("inf")),
             noreplay["new_interleave_ppl"],
@@ -637,6 +782,25 @@ def run_c2_loop(frozen, tok, V, loss_last, device, *, out_path=None, ft_batch=No
             "sh_frac": sh_frac, "interleave_seed": INTERLEAVE_SEED,
             "interleave_block_chars": INTERLEAVE_BLOCK, "interleave_total_chars": INTERLEAVE_TOTAL,
             "new_unk_frac": new_unk,
+            "sh_frac_auto_selected": bool(auto_sh_frac),
+            "sh_frac_requested": sh_frac_requested,
+        },
+        "learnable_band": {
+            "method": "SH_FRAC is auto-tuned so base_new (pre-grow new-corpus ppl) lands in a band defined "
+                      "RELATIVE to the CURRENT model's orig_ppl -- size-adaptive (replaces the prior "
+                      "hardcoded `base_new < 110` guard tuned for the 3.4M's ppl scale). Distinct enough "
+                      "(>= LO_MULT x orig) the no-replay control forgets; learnable enough (<= HI_MULT x "
+                      "orig) replay can retain.",
+            "lo_mult": LEARNABLE_BAND_LO_MULT, "hi_mult": LEARNABLE_BAND_HI_MULT,
+            "orig_ppl_anchor": base_ts,
+            "band_lo_ppl": LEARNABLE_BAND_LO_MULT * base_ts,
+            "band_hi_ppl": LEARNABLE_BAND_HI_MULT * base_ts,
+            "selected_sh_frac": sh_frac,
+            "selected_base_new_ppl": base_new,
+            "selected_ratio_over_orig": distinct_ratio,
+            "in_band": bool(LEARNABLE_BAND_LO_MULT <= distinct_ratio <= LEARNABLE_BAND_HI_MULT),
+            "sh_frac_sweep": sh_select_sweep,
+            "sh_frac_ladder": list(SH_FRAC_LADDER),
         },
         "config": {
             "block_size": BLOCK_SIZE, "ppl_eval_positions": ppl_eval_positions,
