@@ -1,0 +1,227 @@
+{
+  "probe": "grounded_lang_integration_end_to_end_real_spiking_qwen_faculty",
+  "resolves": "the grounded-language arc CAPSTONE -- the END-TO-END demo: the REAL spiking Qwen faculty renders the brain's retrieved facts, GATED + VERIFIED, preserving the no-confab moat EVEN WITH a real generative LLM in the loop.",
+  "architecture": "GATE (brain composer exact-match recall / abstain; numpy-CPU) -> CONSTRAIN (the REAL converted-Qwen2.5-0.5B SPIKING forward, T-pool graded-read RMSNorm/SiLU/Softmax, renders the gated SVO into fluent prose with the verb kept; PyTorch on GPU) -> VERIFY (the brain re-parses the faculty's GENERATED PROSE back into an SVO -- content extraction handling determiners+inflection + the BridgeParser role assignment -- and rejects on mismatch with the gated fact). The difference from P3: the faculty is a REAL hallucination-capable generative model, so VERIFY reads its actual prose, not a handed-back SVO.",
+  "faculty": "REAL spiking Qwen2.5-0.5B-Instruct forward (P1b stepB1: T=16 GO, ppl 1.08x ANN), reused-by-import; constrain prompt = variant-D ('Turn the triple (a,v,p) ... Keep the same verb ... only the sentence'); greedy/deterministic; max_new_tokens=24",
+  "curriculum": "research\\findings\\raw\\_grounded_lang_curriculum_p2.json",
+  "brain_backend": "numpy",
+  "T": 16,
+  "max_new_tokens": 24,
+  "seed": 42,
+  "GO": true,
+  "verdict": "GO -- the REAL spiking Qwen faculty (T=16) renders the brain's grounded facts FLUENTLY (grounded 4/4, each re-parses to the taught fact) AND untaught cues ABSTAIN (moat held 2/2) AND the adversarial DRIFT is caught-by-VERIFY (1/1). The END-TO-END grounded-language capability works: a spiking fluent faculty + brain-grounded content + the no-confab moat, COMBINED -- the moat holds EVEN WITH a real generative LLM in the loop.",
+  "elapsed_seconds": 22.9,
+  "result": {
+    "seed": 42,
+    "taught": {
+      "facts": 22,
+      "attribute_facts": 8,
+      "clause_facts": 2,
+      "chain_facts": 2
+    },
+    "grounded_correct": 4,
+    "grounded_total": 4,
+    "untaught_held": 2,
+    "untaught_total": 2,
+    "drift_caught": 1,
+    "drift_total": 1,
+    "grounded_detail": [
+      {
+        "cue": [
+          "dog",
+          "eat"
+        ],
+        "type": "patient",
+        "gate_svo": [
+          "dog",
+          "eat",
+          "meat"
+        ],
+        "gate_truth": null,
+        "surface": "The dog eats meat.",
+        "surface_full": "The dog eats meat.",
+        "reparse_svo": [
+          "dog",
+          "eat",
+          "meat"
+        ],
+        "verified": true,
+        "emitted": true,
+        "abstained": false,
+        "regen_used": false,
+        "reject_reason": null,
+        "gen_seconds": 0.47,
+        "ok": true
+      },
+      {
+        "cue": [
+          "cat",
+          "eat"
+        ],
+        "type": "patient",
+        "gate_svo": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "gate_truth": null,
+        "surface": "The cat eats fish.",
+        "surface_full": "The cat eats fish.",
+        "reparse_svo": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "verified": true,
+        "emitted": true,
+        "abstained": false,
+        "regen_used": false,
+        "reject_reason": null,
+        "gen_seconds": 0.3,
+        "ok": true
+      },
+      {
+        "cue": [
+          "bird",
+          "eat"
+        ],
+        "type": "patient",
+        "gate_svo": [
+          "bird",
+          "eat",
+          "seed"
+        ],
+        "gate_truth": null,
+        "surface": "The bird eats the seed.",
+        "surface_full": "The bird eats the seed.",
+        "reparse_svo": [
+          "bird",
+          "eat",
+          "seed"
+        ],
+        "verified": true,
+        "emitted": true,
+        "abstained": false,
+        "regen_used": false,
+        "reject_reason": null,
+        "gen_seconds": 0.41,
+        "ok": true
+      },
+      {
+        "cue": [
+          "fox",
+          "chase"
+        ],
+        "type": "patient",
+        "gate_svo": [
+          "fox",
+          "chase",
+          "rabbit"
+        ],
+        "gate_truth": null,
+        "constrain_surface": "Rabbit chased fox.",
+        "constrain_reparse_svo": null,
+        "surface": "The fox chased the rabbit through the forest.",
+        "surface_full": "The fox chased the rabbit through the forest.",
+        "reparse_svo": [
+          "fox",
+          "chase",
+          "rabbit"
+        ],
+        "verified": true,
+        "emitted": true,
+        "abstained": false,
+        "regen_used": true,
+        "reject_reason": null,
+        "gen_seconds": 0.81,
+        "ok": true
+      }
+    ],
+    "untaught_detail": [
+      {
+        "cue": [
+          "lion",
+          "eat"
+        ],
+        "type": "patient",
+        "gate_svo": null,
+        "gate_truth": null,
+        "surface": null,
+        "surface_full": null,
+        "reparse_svo": null,
+        "verified": null,
+        "emitted": false,
+        "abstained": true,
+        "gen_seconds": 0.0,
+        "held": true,
+        "note": "lion never taught"
+      },
+      {
+        "cue": [
+          "whale",
+          "eat"
+        ],
+        "type": "patient",
+        "gate_svo": null,
+        "gate_truth": null,
+        "surface": null,
+        "surface_full": null,
+        "reparse_svo": null,
+        "verified": null,
+        "emitted": false,
+        "abstained": true,
+        "gen_seconds": 0.0,
+        "held": true,
+        "note": "whale never taught"
+      }
+    ],
+    "drift_detail": [
+      {
+        "cue": [
+          "dog",
+          "eat"
+        ],
+        "type": "patient",
+        "gate_svo": [
+          "dog",
+          "eat",
+          "meat"
+        ],
+        "gate_truth": null,
+        "surface": "The dog eats the bone.",
+        "surface_full": "The dog eats the bone.",
+        "reparse_svo": [
+          "dog",
+          "eat",
+          "bone"
+        ],
+        "verified": false,
+        "emitted": false,
+        "abstained": false,
+        "regen_used": false,
+        "reject_reason": "re-parsed SVO mismatches the gated fact",
+        "gen_seconds": 0.34,
+        "true_patient": "meat",
+        "confab_patient": "bone",
+        "caught": true
+      }
+    ],
+    "regen_after_reject": {
+      "gate_svo": [
+        "dog",
+        "eat",
+        "meat"
+      ],
+      "surface": "A dog is eating meat.",
+      "surface_full": "A dog is eating meat.",
+      "reparse_svo": [
+        "dog",
+        "eat",
+        "meat"
+      ],
+      "verified": true,
+      "emitted": true,
+      "gen_seconds": 0.35
+    }
+  }
+}
