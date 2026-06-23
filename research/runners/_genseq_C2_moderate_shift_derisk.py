@@ -82,7 +82,7 @@ BLOCK_SIZE = 128
 PPL_EVAL_POSITIONS = 200     # held-out windows for the two-distribution ppl (both corpora)
 FT_STEPS = 1500              # fine-tune steps (re-warmed; matches the original C2 run)
 FT_BATCH = 48               # OOM-safe on a 3090 at d=256 block=128
-FT_LR = 3e-4                # re-warm LR (cosine-annealed over FT_STEPS)
+FT_LR = 1e-5                # re-warm LR -- continual-learning rate (demo-design-validated 2026-06-23: 3e-4 OVERWROTE the original even w/replay -> retention 0.45; 1e-5 retains 0.884 w/replay vs 0.392 without). See 2026-06-23-generative-loop-DEMONSTRATED.md.
 REPLAY_FRAC = 0.30          # reference replay fraction reported in the table (decisive arm chosen adaptively)
 REPLAY_SWEEP = (0.0, 0.30, 0.50)   # the prompt's required sweep (no-replay control + 0.3 + 0.5)
 REPLAY_SAMPLE_TOKENS = 200   # tokens per self-replay sample (autoregressive from the frozen Gen-F)
