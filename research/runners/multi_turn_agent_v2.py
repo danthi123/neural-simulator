@@ -57,7 +57,7 @@ class MultiTurnAgentV2:
     """
 
     def __init__(self, referent_concepts, concepts=None, grounded_codes=None, seed=42,
-                 wm_n_slots=7, enable_neural_render=False, composer_kind="rf"):
+                 wm_n_slots=7, enable_neural_render=True, composer_kind="rf"):
         self.seed = int(seed)
         # composer_kind passes through to the inner agent: "rf" (default, the production numpy composer) or
         # "onebrain" (the integrated one-brain composer -- the cleanup arc validates correction + anaphora on it).

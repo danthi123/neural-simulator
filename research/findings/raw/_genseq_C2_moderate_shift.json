@@ -1,0 +1,182 @@
+{
+  "probe": "genseq_C2_moderate_shift",
+  "resolves": "C2 RE-RUN: at a LEARNABLE (moderate, in-band ~20-60 ppl) distribution shift, does the consolidated spiking generator LEARN the new (new-ppl drops >=50%) WHILE RETAINING the original (>=85%) via generative self-replay -- with the no-replay control forgetting? (The prior run used the EXTREME 41x Shakespeare shift and missed the 85% bar.)",
+  "supersedes_context": "research/findings/raw/_genseq_C2_grow_no_forget.json (the EXTREME-shift run: mechanism validated + dose-monotone, but 52% retention at 41x Shakespeare). This re-run tests the moderate-shift question that prior run left open.",
+  "scoping": "research/findings/2026-06-22-C2-grow-no-forget-scoping.md (route #1: re-distill on new+self-replayed-old; generative self-replay is the CLS no-forget).",
+  "cls_mapping": {
+    "slow_neocortex": "the off-bridge fine-tune (development / gradual structured learning)",
+    "fast_hippocampus_replay": "generative self-replay (the frozen Gen-F samples its OWN old TinyStories distribution into the fine-tune corpus)",
+    "consolidated_cortical_store": "the RF complex-synapse install on the one bridge (C1)"
+  },
+  "genf_checkpoint": "research\\findings\\raw\\g11_bg\\generator_f_gate.ckpt.s42.real.pt",
+  "genf_loss_last": 1.4711004495620728,
+  "vocab_size": 513,
+  "seed": 42,
+  "original_distribution": "TinyStories (data/corpus/tinystories.txt, heldout tail)",
+  "new_distribution": "SH-frac=0.45 TinyStories/Shakespeare block-interleave (heldout tail) -- 7.70x-distinct (pre-grow new-ppl/orig-ppl)",
+  "new_corpus_choice_rationale": "An empirical corpus-selection sweep on THIS frozen 3.4M Gen-F mapped the shift space: PURE TinyStories topic/structural slices = ~0.8-1.05x baseline ppl (Gen-F trained on the FULL TinyStories already models every theme -> NO shift, the no-replay control would not forget); PURE out-of-domain registers (Shakespeare 42x, WikiText 91x; short-line 'simplifying' does NOT lower ppl -- register/vocab drives it) = strong forgetting but replay can't restore past ~55% (the prior run's failure corner). The chosen knob is a TUNABLE TinyStories/Shakespeare block-interleave: SH_FRAC=0.45 lands the mixture held-out ppl ~47.8 (7.70x), 0% <UNK> under Gen-F's TinyStories BPE -- a legitimate measurably-distinct sub-distribution in the prompt's ~20-60 learnable band. Retention is ALWAYS measured on the DISJOINT pure-TinyStories tail. HONEST CAVEAT: a mixture self-reinforces the old distribution (it is 55% TinyStories blocks), so the no-replay forgetting CONTRAST at this in-band point is expected MODEST (a directional mini-FT showed ~1.07-1.10x) rather than the prior run's 5.92x catastrophic spike -- the price of staying in-band; the dose-response + absolute learn/retain numbers are the decisive evidence.",
+  "new_corpus_construction": {
+    "method": "deterministic block-interleave of TinyStories-train (capped 3000000 chars) with Shakespeare blocks at SH_FRAC Shakespeare probability per block",
+    "sh_frac": 0.45,
+    "interleave_seed": 7,
+    "interleave_block_chars": 400,
+    "interleave_total_chars": 1400000,
+    "new_unk_frac": 7.833552672808171e-06
+  },
+  "config": {
+    "block_size": 128,
+    "ppl_eval_positions": 200,
+    "ft_steps": 1500,
+    "ft_batch": 48,
+    "ft_lr_rewarm": 0.0003,
+    "replay_frac_reference": 0.3,
+    "replay_frac_decisive": 0.3,
+    "replay_sweep": [
+      0.0,
+      0.3,
+      0.5
+    ],
+    "replay_sample_tokens": 200,
+    "retain_bar": 0.85,
+    "learn_bar_drop": 0.5,
+    "forget_margin": 1.3,
+    "n_self_replay_tokens": 60000
+  },
+  "grow_route": "#1 (the scoping's cheapest + most C1-faithful): the GROW step IS a second C1 pass on a GROWN corpus (new + self-replayed-old), re-distilled + re-installed on the RF bridge. NO sim/ edit (reuse-by-import of the C1 install + the Gen-F ppl harness).",
+  "baseline_pregrow_ppl": {
+    "original_tinystories_ppl": 6.213096410730846,
+    "new_interleave_ppl": 47.831688292844284
+  },
+  "self_replay": {
+    "method": "autoregressively sample OLD (TinyStories) text from the FROZEN pre-grow Gen-F (varied in-distribution primes); NO stored old data -- the generator IS the source (Shin 2017 Deep Generative Replay; Huang 2024 Self-Synthesized Rehearsal).",
+    "n_tokens": 60000,
+    "distinct_trigram": 0.5850861695389846,
+    "sample_decode": "Once upon a time there was a frog named Tim. He loved to play and run in the sun. His friend, a kind bird named Tim, lived with a big bear. Tim liked to sit on his whistle. Every day, Tim,"
+  },
+  "arms": {
+    "no_replay": {
+      "replay_frac": 0.0,
+      "ft_log": {
+        "label": "no_replay",
+        "steps": 1500,
+        "final_loss": 1.1676901578903198,
+        "initial_loss": 3.742250442504883,
+        "realized_replay_frac": 0.0,
+        "n_new_tokens": 255312,
+        "n_replay_tokens": 0,
+        "batch_size_final": 48
+      },
+      "original_tinystories_ppl": 13.418352241995395,
+      "new_interleave_ppl": 30.372917785634126,
+      "original_retention": 0.4630297594428717,
+      "new_ppl_drop_frac": 0.36500427081563047,
+      "gen_oldprime_text": "boy named Jack. He was only three years old. He had become a big tray. Ann wanted to learn how to use",
+      "gen_newprime_text": "good unto me. First Senator: Farewell. Second Murderer: No, its trencoun"
+    },
+    "replay_30": {
+      "replay_frac": 0.3,
+      "ft_log": {
+        "label": "replay_30",
+        "steps": 1500,
+        "final_loss": 1.3286157846450806,
+        "initial_loss": 3.498403549194336,
+        "realized_replay_frac": 0.3,
+        "n_new_tokens": 255312,
+        "n_replay_tokens": 60000,
+        "batch_size_final": 48
+      },
+      "original_tinystories_ppl": 11.523344020610185,
+      "new_interleave_ppl": 24.26945651059392,
+      "original_retention": 0.5391747742337948,
+      "new_ppl_drop_frac": 0.49260715277272205,
+      "gen_oldprime_text": "boy named Joe. Otch was round and incense a rary. He was hungry and wanted to buy his ? tripped with his s",
+      "gen_newprime_text": "your friend. BRUTUS: A gentle must become one,-- Upon the giggle they shall be"
+    },
+    "replay_50": {
+      "replay_frac": 0.5,
+      "ft_log": {
+        "label": "replay_50",
+        "steps": 1500,
+        "final_loss": 1.1868408918380737,
+        "initial_loss": 2.9654178619384766,
+        "realized_replay_frac": 0.5,
+        "n_new_tokens": 255312,
+        "n_replay_tokens": 60000,
+        "batch_size_final": 48
+      },
+      "original_tinystories_ppl": 13.036747337177696,
+      "new_interleave_ppl": 24.324503854863824,
+      "original_retention": 0.4765833263495547,
+      "new_ppl_drop_frac": 0.4914562976339094,
+      "gen_oldprime_text": "boy named Joe. Otch was being so thoughtful and honest under set. Joe was so excited! He could t",
+      "gen_newprime_text": "the proud of its tail. VALERIA: Marcius, you mock bles; And that pay the"
+    }
+  },
+  "ppl_table": {
+    "rows": [
+      "baseline_pregrow",
+      "grown_with_replay",
+      "grown_no_replay"
+    ],
+    "cols": [
+      "original_tinystories_heldout_ppl",
+      "new_interleave_heldout_ppl"
+    ],
+    "baseline_pregrow": {
+      "original_tinystories_heldout_ppl": 6.213096410730846,
+      "new_interleave_heldout_ppl": 47.831688292844284
+    },
+    "grown_with_replay": {
+      "original_tinystories_heldout_ppl": 11.523344020610185,
+      "new_interleave_heldout_ppl": 24.26945651059392,
+      "replay_frac": 0.3
+    },
+    "grown_no_replay": {
+      "original_tinystories_heldout_ppl": 13.418352241995395,
+      "new_interleave_heldout_ppl": 30.372917785634126
+    }
+  },
+  "on_bridge_verification": {
+    "original_tinystories": {
+      "on_bridge_ppl": 9.314501108426505,
+      "off_bridge_ppl": 9.314501718052988,
+      "ppl_ratio": 0.9999999345508218,
+      "n_windows": 3
+    },
+    "new_interleave": {
+      "on_bridge_ppl": 15.107119198280689,
+      "off_bridge_ppl": 15.107116024372397,
+      "ppl_ratio": 1.0000002100935934,
+      "n_windows": 3
+    }
+  },
+  "anti_cheat_no_replay": {
+    "method": "fine-tune on NEW ONLY (replay_frac=0) -> the ORIGINAL TinyStories ppl must spike vs the with-replay arm -> proves the self-replay is CAUSAL for retention.",
+    "no_replay_original_ppl": 13.418352241995395,
+    "with_replay_original_ppl": 11.523344020610185,
+    "forgetting_ratio_noreplay_over_withreplay": 1.1644495051085757,
+    "no_replay_forgets": false
+  },
+  "anti_cheat_dose_response": {
+    "method": "retention should improve monotonically with replay fraction (the CL-LLM dose-response; a flat curve would mean retention isn't from the replay).",
+    "replay_frac_to_retention": {
+      "0.00": 0.4630297594428717,
+      "0.30": 0.5391747742337948,
+      "0.50": 0.4765833263495547
+    },
+    "monotone": false
+  },
+  "checks": {
+    "learns_new": false,
+    "retains_old": false,
+    "no_replay_forgets": false,
+    "dose_monotone": false,
+    "scale_issue": false
+  },
+  "verdict_line": "C2 RE-RUN at a LEARNABLE shift (toy Gen-F 3.4M, route #1 re-distill + GENERATIVE SELF-REPLAY): NEW=SH-frac=0.45 TinyStories/Shakespeare interleave (7.70x-distinct, in the ~20-60 learnable band). BASELINE orig=6.213 new=47.832 | GROWN-WITH-REPLAY(frac=0.30) orig=11.523 (retention 53.9%) new=24.269 (drop 49.3%) | NO-REPLAY-control orig=13.418 (retention 46.3%, 1.16x the with-replay orig) new=30.373 | on-bridge-install-ppl-ratio~=1.000000 -> NEGATIVE [learns_new(drop>=50%)=False retains_old>=85%=False no_replay_forgets(>=1.30x)=False dose_monotone=False scale_issue=False]. CLS: fine-tune=development, self-replay=hippocampal no-forget, RF install=consolidated cortical store. Toy-scale; RF-install full-width fidelity scope carries from C1.",
+  "verdict": "NEGATIVE",
+  "scale_issue_flag": false,
+  "scale_issue_note": "n/a",
+  "honest_scope": "toy-scale (3.4M-param) demonstration of the loop's BACK HALF (grow + no-forget) at a MODERATE learnable shift. The RF-install full-width fidelity scope carries forward from C1 (not re-litigated). ppl measured off-bridge (fast) and VERIFIED on-bridge (C1: the RF install reproduces off-bridge ppl to ppl_ratio 0.99999999).",
+  "elapsed_seconds": 448.1
+}

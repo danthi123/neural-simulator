@@ -93,12 +93,12 @@ def test_onebrain_spiking_cleanup_clause_parity():
 
 
 def test_onebrain_spiking_cleanup_default_off_byte_identical():
-    """Default `enable_spiking_cleanup=False` keeps the host-argmax path: the composer reports it is off and the
-    read path never builds a WTA bank. (Construction smoke; the byte-identity of the answers is the parity test's
-    host arm.)"""
+    """Explicit `enable_spiking_cleanup=False` keeps the host-argmax path: the composer reports it is off and the
+    read path never builds a WTA bank. (The composer's OWN default is True = spiking, so this guard pins the host
+    oracle EXPLICITLY; construction smoke; answer byte-identity is the parity test's host arm.)"""
     from research.runners.one_brain_composer import OneBrainComposer
     try:
-        c = OneBrainComposer(seed=42, D=64, vocab=VOCAB)
+        c = OneBrainComposer(seed=42, D=64, vocab=VOCAB, enable_spiking_cleanup=False)
     except (FileNotFoundError, KeyError) as e:
         pytest.skip(f"concept-code cache / vocab unavailable: {e}")
     assert c.enable_spiking_cleanup is False, "default must be host-argmax (off) for numpy-CPU + oracle parity"
