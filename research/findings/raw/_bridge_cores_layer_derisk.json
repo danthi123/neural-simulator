@@ -1,0 +1,248 @@
+{
+  "probe": "bridge_coresidence_derisk2_qwen_full_decoder_layer_rf",
+  "resolves": "de-risk #2 (scoping 2026-06-23): port ONE FULL Qwen2.5-0.5B decoder layer (layer 12) onto the LIVE SimulationBridge RF substrate (all 7 linears as RF matvecs + RMSNorm/SiLU/softmax as the B-1 graded reads + RoPE host-exact) and verify it reproduces the B-1 PyTorch-spiking layer (matvecs bit-exact + the graded nonlinearities at their validated fidelity).",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "layer": 12,
+  "arch": {
+    "D": 896,
+    "Hq": 14,
+    "Hkv": 2,
+    "head_dim": 64,
+    "scaling": 0.125,
+    "eps": 1e-06
+  },
+  "n_rows_tested": 16,
+  "seq_len": 128,
+  "T": 16,
+  "pools": {
+    "silu": 512,
+    "div": 512,
+    "softmax": 4096
+  },
+  "rf_operating_point": {
+    "period": 100000,
+    "nsteps": 8,
+    "lambda": 0.0,
+    "read": "Re(Z_out)/nsteps = a @ W (W=linear.weight.T); biases host-add on the read"
+  },
+  "exact_bar": 1e-05,
+  "linear_install_shapes": {
+    "q": [
+      896,
+      896
+    ],
+    "k": [
+      896,
+      128
+    ],
+    "v": [
+      896,
+      128
+    ],
+    "o": [
+      896,
+      896
+    ],
+    "gate": [
+      896,
+      4864
+    ],
+    "up": [
+      896,
+      4864
+    ],
+    "down": [
+      4864,
+      896
+    ]
+  },
+  "total_linear_nnz": 14909427,
+  "silu_fit": {
+    "fit_max_err_grid": 0.003178593232566862,
+    "fit_rmse_grid": 0.0008150450661128296,
+    "grid": [
+      -8.34375,
+      8.0
+    ],
+    "n_knots": 30
+  },
+  "exp_fit": {
+    "fit_max_err_grid": 0.004776968942888038,
+    "fit_rmse_grid": 0.00033546975477099155,
+    "grid": [
+      -34.0,
+      0.5
+    ],
+    "n_knots": 39
+  },
+  "mechanism": "reuse-by-import: the C1/de-risk-#1 RF exact-matvec (rf_set_complex_weights / rf_kick / rf_resonate_steps + the Re(Z)/nsteps read; W=weight.T, biases host-add) for all 7 linears, ONE RF bridge per unique (D_in,D_out) shape; the B-1 calibrated graded reads (RMSNorm/SiLU/wide-exp-softmax) imported from _grounded_lang_p1b_stepB1_forward_derisk; RoPE applied host-exact (a fixed trig rotation, 0 learned params). NO `sim/` edit.",
+  "per_linear_bit_exactness": {
+    "q": {
+      "shape": [
+        896,
+        896
+      ],
+      "max_abs_err": 5.704020296093404e-07,
+      "mean_cosine": 0.9999999999999984,
+      "min_cosine": 0.9999999999999982,
+      "mean_rel_err": 5.7692035101928245e-08,
+      "max_rel_err": 6.088878508353505e-08
+    },
+    "k": {
+      "shape": [
+        896,
+        128
+      ],
+      "max_abs_err": 5.588716476268019e-07,
+      "mean_cosine": 0.9999999999999983,
+      "min_cosine": 0.9999999999999979,
+      "mean_rel_err": 5.913563837089507e-08,
+      "max_rel_err": 6.657711378337735e-08
+    },
+    "v": {
+      "shape": [
+        896,
+        128
+      ],
+      "max_abs_err": 2.517790917977436e-07,
+      "mean_cosine": 0.9999999999999984,
+      "min_cosine": 0.999999999999998,
+      "mean_rel_err": 5.677827977927125e-08,
+      "max_rel_err": 6.393400347568196e-08
+    },
+    "o": {
+      "shape": [
+        896,
+        896
+      ],
+      "max_abs_err": 5.363932542579164e-08,
+      "mean_cosine": 0.9999999999999983,
+      "min_cosine": 0.9999999999999977,
+      "mean_rel_err": 5.952751105123587e-08,
+      "max_rel_err": 6.679015353392068e-08
+    },
+    "gate": {
+      "shape": [
+        896,
+        4864
+      ],
+      "max_abs_err": 4.93345234886533e-07,
+      "mean_cosine": 0.9999999999999989,
+      "min_cosine": 0.9999999999999983,
+      "mean_rel_err": 5.713984913385249e-08,
+      "max_rel_err": 6.689179285310792e-08
+    },
+    "up": {
+      "shape": [
+        896,
+        4864
+      ],
+      "max_abs_err": 2.9535892620558e-07,
+      "mean_cosine": 0.9999999999999989,
+      "min_cosine": 0.9999999999999984,
+      "mean_rel_err": 5.878821231046851e-08,
+      "max_rel_err": 6.271325000251798e-08
+    },
+    "down": {
+      "shape": [
+        4864,
+        896
+      ],
+      "max_abs_err": 2.3295319540039827e-07,
+      "mean_cosine": 0.9999999999999984,
+      "min_cosine": 0.9999999999999978,
+      "mean_rel_err": 5.9208309015633627e-08,
+      "max_rel_err": 7.03571131634152e-08
+    }
+  },
+  "worst_per_linear_max_abs_err": 5.704020296093404e-07,
+  "all_linears_bit_exact": true,
+  "full_layer": {
+    "rf_vs_b1_spiking_graded_rms": {
+      "max_abs_err": 2.3071594501544723e-07,
+      "mean_cosine": 0.9999999999999996,
+      "min_cosine": 0.999999999999999,
+      "mean_rel_err": 3.178059834343497e-08,
+      "max_rel_err": 4.3403716143233574e-08
+    },
+    "rf_vs_b1_spiking_exact_rms": {
+      "max_abs_err": 4.309362893195612e-07,
+      "mean_cosine": 0.9999999999999991,
+      "min_cosine": 0.9999999999999986,
+      "mean_rel_err": 4.200304729786891e-08,
+      "max_rel_err": 5.2164162000514005e-08
+    },
+    "rf_vs_ann_graded_rms": {
+      "max_abs_err": 0.22594356536865234,
+      "mean_cosine": 0.9992995183502621,
+      "min_cosine": 0.998651734032653,
+      "mean_rel_err": 0.03639818716658676,
+      "max_rel_err": 0.053937348485159936
+    },
+    "b1_vs_ann_graded_rms": {
+      "max_abs_err": 0.2259433936410984,
+      "mean_cosine": 0.9992995184059256,
+      "min_cosine": 0.9986517339356601,
+      "mean_rel_err": 0.036398185633282995,
+      "max_rel_err": 0.053937350412751446
+    },
+    "rf_vs_ann_exact_rms": {
+      "max_abs_err": 0.23239610344171524,
+      "mean_cosine": 0.9994170046791188,
+      "min_cosine": 0.9992275353553564,
+      "mean_rel_err": 0.03315952174938991,
+      "max_rel_err": 0.039627610284581366
+    },
+    "b1_vs_ann_exact_rms": {
+      "max_abs_err": 0.232396233436015,
+      "mean_cosine": 0.999417004711656,
+      "min_cosine": 0.9992275352376191,
+      "mean_rel_err": 0.03315952087100931,
+      "max_rel_err": 0.03962761362195053
+    }
+  },
+  "rmsnorm_graded_vs_exact_residual": {
+    "max_abs_err": 0.328898322416447,
+    "mean_cosine": 0.9987178593854533,
+    "min_cosine": 0.9978415159238349,
+    "mean_rel_err": 0.04915583352097153,
+    "max_rel_err": 0.0675213038247702
+  },
+  "rmsnorm_note": "the scoping (1c) flags Qwen's RMSNorm needs exact sqrt(mean x^2) whereas the shipped on-bridge divisive op is L1/mean-abs (+0.037 residual on a Gen-F LayerNorm). HERE the RMSNorm is the B-1 EXACT-RMS graded read (divisor = exact sqrt with a rate-coded SEM), so the graded-vs-exact residual is the SEM-noise-only delta reported above. The host-exact RMSNorm fallback (resolution ii) is the zero-edit option if the SEM bites at 24 layers.",
+  "anti_cheat_lesion": {
+    "lesioned_rf_layer_vs_true_b1_layer_FULL_output": {
+      "max_abs_err": 2.622430809631032,
+      "mean_cosine": 0.7812782337059476,
+      "min_cosine": 0.7312332021181827,
+      "mean_rel_err": 0.7079321689517504,
+      "max_rel_err": 0.8182455485974202
+    },
+    "lesioned_rf_layer_vs_true_attn_mlp_DELTA": {
+      "max_abs_err": 2.622430809631032,
+      "mean_cosine": -0.03303696565545453,
+      "min_cosine": -0.09858671535807312,
+      "mean_rel_err": 2.6738924377667095,
+      "max_rel_err": 3.6817611641643135
+    },
+    "shuffled_q_matvec_vs_own_a_at_W_shuf": {
+      "max_abs_err": 4.155476154288351e-07,
+      "mean_cosine": 0.9999999999999984,
+      "min_cosine": 0.999999999999998,
+      "mean_rel_err": 5.817905006936298e-08,
+      "max_rel_err": 6.346342241928863e-08
+    },
+    "lesion_diverges": true,
+    "lesion_self_exact": true,
+    "note": "row-permuting every installed RF weight. The FULL output stays partly correlated by construction (the decoder layer's TWO residual adds pass the large layer-input through unchanged); the load-bearing signal is the attn+mlp DELTA (output - residual_input) = the contribution the weights drive, which must COLLAPSE to ~chance. Each shuffled matvec still exactly reproduces its own a@W_shuf -- proving the RF carries the installed weights, not a trivial pass."
+  },
+  "timing": {
+    "rf_install_seconds": 34.405,
+    "rf_matvec_seconds": 3.807,
+    "rf_n_installs": 29,
+    "one_full_layer_rf_seconds": 9.936
+  },
+  "sim_edit_needed": false,
+  "verdict": "GO",
+  "verdict_line": "bridge_cores_layer: FULL Qwen layer-12 on the LIVE RF bridge -> 7 linears bit-exact (worst max-abs 5.70e-07, bar 1e-05); full-layer RF-vs-B1(spiking) cos 1.00000000 (max-abs 2.31e-07); RF-vs-ANN cos 0.99930 (B1-vs-ANN 0.99930); RMSNorm graded-vs-exact residual cos 0.99872; lesion attn+mlp-delta cos -0.033 (full-output 0.781; diverges=True) -> GO. the FULL Qwen layer-12 ports onto the LIVE RF bridge: all 7 linears bit-exact (worst per-linear max-abs 5.70e-07 <= 1e-05); the RF-layer output == the B-1 PyTorch-spiking layer to matvec precision (RF-vs-B1 graded max-abs 2.31e-07, cos 1.00000000); RF tracks the B-1 ceiling vs the ANN (RF-vs-ANN cos 0.9993 ~ B1-vs-ANN 0.9993). RMSNorm graded-vs-exact residual = 3.29e-01/cos 0.99872 (small; host-exact fallback available, resolution (ii)). Lesion: the attn+mlp DELTA collapses (cos -0.033, full-output cos 0.781 stays high only via the residual passthrough) while the shuffled matvec stays exact -> the RF carries the computation. => the full 24-layer port (de-risk #3, the wall-clock number) is UNBLOCKED. NO `sim/` edit (reuse-by-import).",
+  "total_seconds": 51.49
+}
