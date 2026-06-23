@@ -1,0 +1,421 @@
+{
+  "probe": "genseq_loopstep3_rf_distillation_synthesis",
+  "resolves": "the LAST cheap shot before the multi-week differentiable-bridge sim/ edit: does DISTILLING clip-aware weights THROUGH the RF complex accumulator (which has NO g*(V-E)) recover the per-layer clip loss AND HOLD on the live RF install -> cumulative >= 0.8? The synthesis of the two best partials (RF's no-conductance escape + distillation's train-through-the-clip).",
+  "rf_finding": "2026-06-22-genseq-loopstep3-rf-PARTIAL-best-cheap.md (RF-verbatim 0.556)",
+  "distill_finding": "2026-06-22-genseq-loopstep3-distill-NEGATIVE-live-bridge-gap.md (graded install lost the offline recovery to g*(V-E): 0.815 -> 0.444)",
+  "artifact": "cortex_10M_seed42.npz",
+  "the_synthesis": "the RF accumulator gives signed=Re(Z)/nsteps=a@W EXACTLY (rank 1.000); the readout is a_hat=clip(signed*scale,0,1)=clip(a@(W*scale),0,1) -> the per-block scale folds INTO the weight. So training W' under clip(a@W',0,1) (the PURE clip forward, NO g*(V-E)) IS training the RF readout chain. The trainer forward == the RF install forward, so (unlike the graded distill) the offline recovery transfers to the live RF install with NO conductance divergence term.",
+  "oom_safety": {
+    "hidden_width": 512,
+    "n_blocks": 3,
+    "full_layer_sizes": [
+      66,
+      2048,
+      2048,
+      2048,
+      66
+    ],
+    "narrowed_feature_sizes": [
+      66,
+      512,
+      512,
+      512
+    ],
+    "max_rf_bridge_neurons": 1024,
+    "max_block_nnz": 262144,
+    "est_gb": 0.0126,
+    "oom_ceiling_gb": 16.0
+  },
+  "n_blocks": 3,
+  "feature_sizes": [
+    66,
+    512,
+    512,
+    512
+  ],
+  "go_bar": 0.8,
+  "rf_period": 100000,
+  "rf_nsteps": 8,
+  "rf_lambda": 0.0,
+  "probe_dims": [
+    2,
+    44,
+    59,
+    40,
+    54,
+    47
+  ],
+  "trainer": {
+    "framework": "torch (clip+matmul autograd; clip sub-gradient pass-through)",
+    "forward": "RF-faithful: clip(a@W',0,1) -- the SIGNED linear matvec (=Re(Z)/nsteps on the RF accumulator, rank 1.000) then the teacher's clip; NO g*(V-E) squash.",
+    "lr": 0.005,
+    "steps_layerwise_per_block": 4000,
+    "steps_e2e": 2000,
+    "target": "layerwise activation distillation to clean teacher reps t_{L+1}=clip(t_L@W_sliced,0,1); compounded real (clip-chain) input per block; end-to-end final-block polish"
+  },
+  "teacher": "offbridge_graded_forward(VERBATIM sliced weights) clean per-layer target reps",
+  "rf_verbatim_install": {
+    "cumulative_mean_spearman_vs_teacher": 0.5560846978080666,
+    "per_layer_fidelity": [
+      {
+        "layer": 0,
+        "mean_spearman_vs_teacher": 0.9344497951738173,
+        "a_hat_mean": 0.1743563472975056
+      },
+      {
+        "layer": 1,
+        "mean_spearman_vs_teacher": 0.6749500451566511,
+        "a_hat_mean": 0.16570914135735848
+      },
+      {
+        "layer": 2,
+        "mean_spearman_vs_teacher": 0.5560846978080666,
+        "a_hat_mean": 0.16515291309213878
+      }
+    ],
+    "per_block_scales": [
+      0.220673406908459,
+      0.11547819846894582,
+      0.1357727142105184
+    ],
+    "anti_cheat_specificity": {
+      "matched_mean_spearman": 0.5560846978080666,
+      "mismatched_mean_spearman": 0.36648910077228847,
+      "specificity_margin": 0.1895955970357781
+    },
+    "note": "the RF probe's residual baseline (rank-faithful linear matvec, lossy per-layer clip)"
+  },
+  "trainer_offline": {
+    "per_block_spearman_vs_teacher": [
+      0.9817318368457292,
+      0.8978876301531987,
+      0.8722043377803336
+    ],
+    "cumulative": 0.8722043377803336,
+    "training_log": {
+      "label": "rf_clip",
+      "layerwise": [
+        {
+          "block": 0,
+          "final_mse": 0.0
+        },
+        {
+          "block": 1,
+          "final_mse": 0.00833925511687994
+        },
+        {
+          "block": 2,
+          "final_mse": 0.021426495164632797
+        }
+      ],
+      "e2e": [
+        {
+          "final_loss": 0.02094157040119171
+        }
+      ],
+      "offline_per_block_spearman_vs_teacher": [
+        0.9817318368457292,
+        0.8978876301531987,
+        0.8722043377803336
+      ]
+    }
+  },
+  "armA_unit_scale_install": {
+    "installed_cumulative_mean_spearman_vs_teacher": 0.8722043377803336,
+    "installed_per_layer_fidelity": [
+      {
+        "layer": 0,
+        "mean_spearman_vs_teacher": 0.9817318368457292,
+        "a_hat_mean": 0.4069552009604725
+      },
+      {
+        "layer": 1,
+        "mean_spearman_vs_teacher": 0.8978876301531987,
+        "a_hat_mean": 0.48618861825282994
+      },
+      {
+        "layer": 2,
+        "mean_spearman_vs_teacher": 0.8722043377803336,
+        "a_hat_mean": 0.4584696001014284
+      }
+    ],
+    "per_block_scales": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "installed_anti_cheat_specificity": {
+      "matched_mean_spearman": 0.8722043377803336,
+      "mismatched_mean_spearman": 0.42997239638765855,
+      "specificity_margin": 0.442231941392675
+    },
+    "installed_per_input": [
+      {
+        "char": " ",
+        "dim": 2,
+        "layers": [
+          {
+            "layer": 0,
+            "spearman_vs_teacher": 1.0,
+            "a_hat_mean": 0.40335766767543646,
+            "a_hat_max": 1.0
+          },
+          {
+            "layer": 1,
+            "spearman_vs_teacher": 0.8979243914580973,
+            "a_hat_mean": 0.48828125,
+            "a_hat_max": 1.0
+          },
+          {
+            "layer": 2,
+            "spearman_vs_teacher": 0.8928220057850105,
+            "a_hat_mean": 0.458984375,
+            "a_hat_max": 1.0
+          }
+        ],
+        "cumulative_spearman": 0.8928220057850105
+      },
+      {
+        "char": "e",
+        "dim": 44,
+        "layers": [
+          {
+            "layer": 0,
+            "spearman_vs_teacher": 0.9994893948627276,
+            "a_hat_mean": 0.36914889318768473,
+            "a_hat_max": 1.0
+          },
+          {
+            "layer": 1,
+            "spearman_vs_teacher": 0.9193445049553106,
+            "a_hat_mean": 0.5050223345169798,
+            "a_hat_max": 1.0
+          },
+          {
+            "layer": 2,
+            "spearman_vs_teacher": 0.8513694696215425,
+            "a_hat_mean": 0.44921875,
+            "a_hat_max": 1.0
+          }
+        ],
+        "cumulative_spearman": 0.8513694696215425
+      },
+      {
+        "char": "t",
+        "dim": 59,
+        "layers": [
+          {
+            "layer": 0,
+            "spearman_vs_teacher": 1.0,
+            "a_hat_mean": 0.4200909203973424,
+            "a_hat_max": 1.0
+          },
+          {
+            "layer": 1,
+            "spearman_vs_teacher": 0.9060763710074272,
+            "a_hat_mean": 0.50390625,
+            "a_hat_max": 1.0
+          },
+          {
+            "layer": 2,
+            "spearman_vs_teacher": 0.8619603017246312,
+            "a_hat_mean": 0.4737338706618175,
+            "a_hat_max": 1.0
+          }
+        ],
+        "cumulative_spearman": 0.8619603017246312
+      },
+      {
+        "char": "a",
+        "dim": 40,
+        "layers": [
+          {
+            "layer": 0,
+            "spearman_vs_teacher": 0.9339440925372792,
+            "a_hat_mean": 0.41103960147120233,
+            "a_hat_max": 1.0
+          },
+          {
+            "layer": 1,
+            "spearman_vs_teacher": 0.8770303505624792,
+            "a_hat_mean": 0.45703125,
+            "a_hat_max": 1.0
+          },
+          {
+            "layer": 2,
+            "spearman_vs_teacher": 0.8676423149769401,
+            "a_hat_mean": 0.43992749182507396,
+            "a_hat_max": 1.0
+          }
+        ],
+        "cumulative_spearman": 0.8676423149769401
+      },
+      {
+        "char": "o",
+        "dim": 54,
+        "layers": [
+          {
+            "layer": 0,
+            "spearman_vs_teacher": 0.9572756448770328,
+            "a_hat_mean": 0.4188053141187993,
+            "a_hat_max": 1.0
+          },
+          {
+            "layer": 1,
+            "spearman_vs_teacher": 0.9127468714594706,
+            "a_hat_mean": 0.470703125,
+            "a_hat_max": 1.0
+          },
+          {
+            "layer": 2,
+            "spearman_vs_teacher": 0.8688018383573087,
+            "a_hat_mean": 0.4535573676403146,
+            "a_hat_max": 1.0
+          }
+        ],
+        "cumulative_spearman": 0.8688018383573087
+      },
+      {
+        "char": "h",
+        "dim": 47,
+        "layers": [
+          {
+            "layer": 0,
+            "spearman_vs_teacher": 0.9996818887973359,
+            "a_hat_mean": 0.41928880891236986,
+            "a_hat_max": 1.0
+          },
+          {
+            "layer": 1,
+            "spearman_vs_teacher": 0.874203291476408,
+            "a_hat_mean": 0.4921875,
+            "a_hat_max": 1.0
+          },
+          {
+            "layer": 2,
+            "spearman_vs_teacher": 0.8906300962165687,
+            "a_hat_mean": 0.47539574548136443,
+            "a_hat_max": 1.0
+          }
+        ],
+        "cumulative_spearman": 0.8906300962165687
+      }
+    ],
+    "note": "the RF-faithful arm: trained W' (gain folded in) installed at unit scale -> the trainer forward IS the install forward."
+  },
+  "armB_calibrated_scale_install": {
+    "installed_cumulative_mean_spearman_vs_teacher": 0.5908651539903792,
+    "installed_per_layer_fidelity": [
+      {
+        "layer": 0,
+        "mean_spearman_vs_teacher": 0.9340843577026661,
+        "a_hat_mean": 0.17436082346535253
+      },
+      {
+        "layer": 1,
+        "mean_spearman_vs_teacher": 0.6730407073858543,
+        "a_hat_mean": 0.17290381960743972
+      },
+      {
+        "layer": 2,
+        "mean_spearman_vs_teacher": 0.5908651539903792,
+        "a_hat_mean": 0.1758218519202881
+      }
+    ],
+    "per_block_scales": [
+      0.220673406908459,
+      0.11547819846894582,
+      0.1357727142105184
+    ],
+    "installed_anti_cheat_specificity": {
+      "matched_mean_spearman": 0.5908651539903792,
+      "mismatched_mean_spearman": 0.38011481924941737,
+      "specificity_margin": 0.21075033474096183
+    },
+    "note": "scale control: rank is scale-invariant on the RF accumulator, so the trained rank should transfer at either scale mode."
+  },
+  "anti_cheat_shuffled_target": {
+    "method": "distil to a deranged permutation of the teacher targets across probe chars; install on the RF bridge; score vs the REAL teacher -> must be below the real arm",
+    "permutation": [
+      4,
+      5,
+      0,
+      1,
+      3,
+      2
+    ],
+    "offline_per_block_spearman_vs_real_teacher": [
+      0.13795969363572555,
+      0.41115382694273733,
+      0.5272033805260868
+    ],
+    "installed_cumulative_mean_spearman_vs_real_teacher": 0.6072893659186016,
+    "installed_per_layer_fidelity": [
+      {
+        "layer": 0,
+        "mean_spearman_vs_teacher": 0.7754997242678615,
+        "a_hat_mean": 0.38800432012825087
+      },
+      {
+        "layer": 1,
+        "mean_spearman_vs_teacher": 0.7056948789639623,
+        "a_hat_mean": 0.4895833333333333
+      },
+      {
+        "layer": 2,
+        "mean_spearman_vs_teacher": 0.6072893659186016,
+        "a_hat_mean": 0.46271013241494074
+      }
+    ],
+    "below_real": true,
+    "note": "the rf-PARTIAL's shuffled control reached 0.373 because the teacher's FINAL reps are char-correlated; reported honestly. A real result has real >> shuffled AND a re-opened matched/mismatched margin."
+  },
+  "best_arm": "armA_unit",
+  "best_installed_cumulative_mean_spearman_vs_teacher": 0.8722043377803336,
+  "best_installed_per_layer_fidelity": [
+    {
+      "layer": 0,
+      "mean_spearman_vs_teacher": 0.9817318368457292,
+      "a_hat_mean": 0.4069552009604725
+    },
+    {
+      "layer": 1,
+      "mean_spearman_vs_teacher": 0.8978876301531987,
+      "a_hat_mean": 0.48618861825282994
+    },
+    {
+      "layer": 2,
+      "mean_spearman_vs_teacher": 0.8722043377803336,
+      "a_hat_mean": 0.4584696001014284
+    }
+  ],
+  "best_installed_anti_cheat_specificity": {
+    "matched_mean_spearman": 0.8722043377803336,
+    "mismatched_mean_spearman": 0.42997239638765855,
+    "specificity_margin": 0.442231941392675
+  },
+  "baselines": {
+    "rf_verbatim_install": {
+      "cumulative": 0.556,
+      "per_block": [
+        0.934,
+        0.675,
+        0.556
+      ]
+    },
+    "graded_distill_install": {
+      "cumulative": 0.444,
+      "note": "lost to g*(V-E); the gap this synthesis removes"
+    },
+    "rate_graded_verbatim": {
+      "cumulative": 0.288,
+      "per_block": [
+        0.846,
+        0.62,
+        0.288
+      ]
+    }
+  },
+  "verdict_line": "rf_distill: narrow512 blocks=3 RF-faithful-clip-aware-distillation INSTALLED-on-live-RF-bridge cumulative_analog_spearman_vs_teacher=0.872 (best arm=armA_unit; trainer-offline=0.872; RF-verbatim-install=0.556) per_block=[0.982, 0.898, 0.872] specificity_margin=0.442 shuffled_control=0.607 -> GO (vs RF-verbatim 0.556 + graded-distill-install 0.444; GO bar 0.80)",
+  "verdict": "GO"
+}
