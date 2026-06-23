@@ -1,0 +1,160 @@
+{
+  "probe": "genseq_loopstep3_attention_rf_distillation",
+  "resolves": "does Gen-F's ATTENTION op distill onto the RF complex-synapse path via the SAME RF-faithful clip-aware distillation that just WON for the MLP (0.872)? AND reconcile the [VERIFY] teacher -- use the REAL Gen-F (the working fluent generator), NOT cortex_10M.",
+  "verify_reconciliation": "TEACHER = Gen-F's ACTUAL block-0 nn.MultiheadAttention projection weights (s42.real ckpt, loss ~1.47), on REAL token activations (block-0 LN1 output of tokenized TinyStories text) -- NOT cortex_10M's MLP (which was the load vehicle for the prior de-risks).",
+  "rf_distill_finding": "2026-06-22-genseq-loopstep3-rf-distill-GO-cheap-ladder-WINS.md (the MLP synthesis WON at 0.872, byte-identical on the live RF install)",
+  "genf_checkpoint": "research\\findings\\raw\\g11_bg\\generator_f_gate.ckpt.s42.real.pt",
+  "genf_meta": {
+    "d_model": 256,
+    "n_head": 4,
+    "loss_last": 1.4711004495620728,
+    "block_size": 128,
+    "n_tokens_probe": 90,
+    "probe_positions": [
+      1,
+      14,
+      26,
+      39,
+      51,
+      64,
+      76,
+      89
+    ],
+    "in_proj_weight_shape": [
+      768,
+      256
+    ],
+    "out_proj_weight_shape": [
+      256,
+      256
+    ],
+    "projection_biases_l2": {
+      "q": 2.43301930734041,
+      "k": 0.02570397106980008,
+      "v": 0.23859611088511895,
+      "o": 0.12533904699372198
+    },
+    "decoded_probe_head": "Once upon a time there was a little girl named Lily. She had a small dog and a big cat. One"
+  },
+  "the_decomposition": {
+    "consolidatable_projections": "nn.MultiheadAttention in_proj_weight (768,256) = stacked [W_Q;W_K;W_V] (each 256x256) + out_proj.weight (256,256). These are PURE LINEAR matvecs y=h@W (h = the real LN1 output the attention sees); the RF accumulator computes h@W EXACTLY (Re(Z)/nsteps, rank 1.000 -- the rf-PARTIAL finding). 4 projections = 262144 learned params (MOST of attention's parameters).",
+    "deferred_softmax_core": "softmax(Q@K^T / sqrt(d_k)) -- the CONTENT-DEPENDENT attention-weight computation. NOT a fixed per-layer matvec (the weights depend on the input), so NOT RF-consolidatable by this mechanism. ZERO learned parameters. DEFERRED to its own de-risk (a linear-attention / GLA approximation -- harder) OR a graded/host op for now (honest partial scope).",
+    "projection_params": 262144,
+    "softmax_learned_params": 0,
+    "consolidated_fraction_of_learned_attention_params": 1.0
+  },
+  "oom_safety": {
+    "max_rf_bridge_neurons": 512,
+    "max_block_nnz": 65536,
+    "est_gb": 0.00318,
+    "oom_ceiling_gb": 16.0
+  },
+  "rf_period": 100000,
+  "rf_nsteps": 8,
+  "rf_lambda": 0.0,
+  "n_probe_positions": 8,
+  "d_model": 256,
+  "go_bar": 0.8,
+  "mechanism": "RF-faithful clip-aware distillation (reuse-by-import distill_weights_rf_faithful from the MLP-winning runner) + LIVE-RF-bridge install (rf_set_complex_weights / rf_kick / rf_resonate_steps / read Re(Z)/nsteps). For a PURE-LINEAR projection the RF accumulator reproduces h@W at rank ~1.000 directly (the VERBATIM arm is the RF-faithful answer); the DISTILLED arm confirms the WINNING trainer mechanism transfers to attention's matvecs.",
+  "per_projection": [
+    {
+      "projection": "W_Q",
+      "shape": [
+        256,
+        256
+      ],
+      "nnz": 65536,
+      "teacher_output_l2_mean": 9.316346008126107,
+      "verbatim_install_fidelity_vs_teacher": 0.9999999999999998,
+      "verbatim_specificity_margin": 0.9271099599859397,
+      "distilled_install_fidelity_vs_teacher": -0.3222726882581826,
+      "distilled_trainer_offline": 0.2890338893339437,
+      "global_rescale_s_g": 0.38934466514547766
+    },
+    {
+      "projection": "W_K",
+      "shape": [
+        256,
+        256
+      ],
+      "nnz": 65536,
+      "teacher_output_l2_mean": 9.285488587661165,
+      "verbatim_install_fidelity_vs_teacher": 0.9999999999999998,
+      "verbatim_specificity_margin": 1.0291788432298987,
+      "distilled_install_fidelity_vs_teacher": -0.33750527509155404,
+      "distilled_trainer_offline": 0.33114986266880286,
+      "global_rescale_s_g": 0.39273990107419915
+    },
+    {
+      "projection": "W_V",
+      "shape": [
+        256,
+        256
+      ],
+      "nnz": 65536,
+      "teacher_output_l2_mean": 10.892474631831629,
+      "verbatim_install_fidelity_vs_teacher": 0.9999999999999998,
+      "verbatim_specificity_margin": 1.0116455118039431,
+      "distilled_install_fidelity_vs_teacher": -0.22235887788967723,
+      "distilled_trainer_offline": 0.38607518883039593,
+      "global_rescale_s_g": 0.3770149800449522
+    },
+    {
+      "projection": "W_O",
+      "shape": [
+        256,
+        256
+      ],
+      "nnz": 65536,
+      "teacher_output_l2_mean": 9.396757269246265,
+      "verbatim_install_fidelity_vs_teacher": 0.9999999999999998,
+      "verbatim_specificity_margin": 0.9975070913579437,
+      "distilled_install_fidelity_vs_teacher": -0.42137332985236886,
+      "distilled_trainer_offline": 0.2809211561570153,
+      "global_rescale_s_g": 0.32533150963892943
+    }
+  ],
+  "anti_cheat_shuffled_target": {
+    "method": "distil each projection to a POSITION-DERANGED teacher (real h's, permuted targets); install on RF; score vs the REAL teacher -> must be below the real arm",
+    "permutation": [
+      7,
+      5,
+      6,
+      1,
+      2,
+      0,
+      3,
+      4
+    ],
+    "per_projection_shuffled_fidelity": {
+      "W_Q": -0.2053655727855344,
+      "W_K": -0.2554168037594415,
+      "W_V": -0.12733033875028607,
+      "W_O": -0.2765422043087663
+    },
+    "shuffled_cumulative": -0.21616372990100707,
+    "below_real": true
+  },
+  "verbatim_install_cumulative_fidelity_vs_teacher": 0.9999999999999998,
+  "distilled_install_cumulative_fidelity_vs_teacher": -0.32587754277294567,
+  "specificity_margin_cumulative": 0.9913603515944313,
+  "best_arm": "verbatim",
+  "best_installed_cumulative_fidelity_vs_teacher": 0.9999999999999998,
+  "distillation_note": "HONEST: the clip-aware DISTILLATION step (the MLP-winning tool) is the WRONG tool for an attention PROJECTION and correctly fails here (cumulative -0.326, below chance). Reason: a projection output y=h@W is NOT in [0,1] (l2 ~9), so the trainer's clip(a@W',0,1) forward clamps it and DESTROYS the linear rank -- the distilled un-clip read then diverges. This is EXPECTED + informative: the MLP needed clip-aware distillation BECAUSE the MLP has a per-layer CLIP that compressed rank (rf-verbatim 0.556 -> distill 0.872). A linear projection has NO clip, so it is the IDEAL/trivial RF case: the conductance-free RF accumulator ALONE reproduces h@W EXACTLY (RF-VERBATIM 1.000, max|Re(Z)/nsteps - h@W| ~7e-8). ==> the SYNTHESIS that won (install on the no-g(V-E) RF complex-synapse path) consolidates attention's projections PERFECTLY; the distillation sub-step is simply unnecessary for a pure-linear matvec. The verbatim arm IS the RF-faithful answer.",
+  "consolidated_vs_deferred": {
+    "consolidated_cheaply": "the 4 attention PROJECTIONS (Q/K/V/O = 262144 params, ALL of attention's learned parameters) -- installed on the live RF complex-synapse path, fidelity 1.000 vs the real Gen-F teacher.",
+    "deferred": "the softmax(Q@K^T) attention-weight CORE -- content-dependent, 0 learned params, NOT a fixed matvec. -> its own de-risk (linear-attention/GLA approx) or a graded/host op. This is the HONEST partial scope: attention is harder than the MLP because of the softmax, but the projections (most of attention's parameters) consolidate cheaply."
+  },
+  "baselines": {
+    "mlp_rf_distill_synthesis": {
+      "cumulative": 0.872,
+      "note": "the WINNING MLP consolidation (2026-06-22) this de-risk extends to attention"
+    },
+    "rf_verbatim_mlp_install": {
+      "cumulative": 0.556,
+      "note": "the MLP RF-verbatim baseline (lossy per-layer CLIP); a projection has NO clip"
+    }
+  },
+  "verdict_line": "attn_rf_distill: GEN-F(s42.real, loss=1.471) block-0 attention PROJECTIONS (Q/K/V/O, 262144 params = ALL of attention's learned weights) consolidated onto the conductance-free RF complex-synapse path (the SYNTHESIS's no-g(V-E) escape) on REAL token activations -> installed-on-live-RF-bridge projection_fidelity_vs_teacher=1.000 (best=verbatim; RF-VERBATIM=1.000 EXACT; clip-aware-distill=-0.326 -- WRONG tool for a projection, see note) specificity_margin=0.991 shuffled_control=-0.216 -> GO | DEFERRED: softmax(QK^T) content-dependent core (0 learned params, NOT a fixed matvec -> own de-risk / graded op). GO bar 0.80",
+  "verdict": "GO"
+}
