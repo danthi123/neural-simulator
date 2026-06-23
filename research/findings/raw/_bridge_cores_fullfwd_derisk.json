@@ -1,0 +1,127 @@
+{
+  "probe": "bridge_coresidence_derisk3_qwen_full_24layer_forward_rf",
+  "resolves": "de-risk #3 (scoping 2026-06-23 §3 de-risk #4 + §6): the FULL 24-layer Qwen2.5-0.5B forward on the LIVE SimulationBridge RF substrate -- measure (1) VRAM, (2) tokens/sec (the cloud-trigger), (3) ppl vs B-1 (does the per-layer graded-read SEM compound over 24 layers?), (4) a short spiking generation (coherent?).",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "arch": {
+    "D": 896,
+    "V": 151936,
+    "n_layers": 24,
+    "Hq": 14,
+    "Hkv": 2,
+    "head_dim": 64,
+    "scaling": 0.125,
+    "eps": 1e-06,
+    "tie_word_embeddings": true
+  },
+  "n_model_params": 494032768,
+  "T": 16,
+  "pools": {
+    "silu": 512,
+    "div": 512,
+    "softmax": 4096
+  },
+  "rmsnorm_mode": "graded",
+  "rf_operating_point": {
+    "period": 100000,
+    "nsteps": 8,
+    "lambda": 0.0,
+    "read": "Re(Z_out)/nsteps = a @ W (W=linear.weight.T); biases host-add"
+  },
+  "storage": {
+    "chosen": "complex CSR (cp_rf_w_re + all-zero cp_rf_w_im, float64 data + int32 idx), VECTORIZED build (rows=D_in+tile(arange(D_out),D_in), cols=repeat(arange(D_in),D_out), data=W.ravel()), assigned to bridge.cp_rf_w_re/cp_rf_w_im == the C1 _set_rf_weights cache-swap (bit-identical to rf_set_complex_weights, verified max|.|=0.0). LAYER-STREAMED: 4 unique layer shapes + lm_head resident; each layer re-installs its 7 weights onto the shared per-shape bridges.",
+    "note": "the as-is re+im f64 CSR is the scoping's worst-case storage; the all-zero im CSR is retained for byte-identity with the RF matvec path (the _rf_advance_one reads cp_rf_w_im). The scoping's dense-fp16 (~1GB) is the perf-storage fallback if VRAM ever binds (it does NOT here)."
+  },
+  "vram_gb": {
+    "free_at_start": 24.465,
+    "total": 25.769,
+    "used_before_install": 1.006,
+    "used_with_lm_head": 5.381,
+    "resident_peak_lm_head_plus_4_layer_shapes": 14.054,
+    "free_after_install": 7.986,
+    "fits_under_24gb": true
+  },
+  "wall_clock": {
+    "ppl_slice_tokens": 160,
+    "rf_forward_seconds_cold": 212.6,
+    "tokens_per_sec_cold_incl_one_time_install": 0.7526,
+    "rf_forward_seconds_warm": 203.65,
+    "tokens_per_sec_warm_install_cached": 0.7857,
+    "rf_install_seconds_total_one_time": 126.63,
+    "rf_matvec_seconds_total": 2917.54,
+    "rf_n_installs": 171,
+    "rf_n_cache_hits": 3043,
+    "generation_seconds": 2579.86,
+    "generation_tokens": 16,
+    "sec_per_generated_token": 161.24,
+    "megakernel": true,
+    "note": "COLD = the first forward (installs all 169 weights once -> the id(W) cache); WARM = a subsequent forward (every install a cached attribute swap) = the steady-state generation rate. Generation re-uses the warm path."
+  },
+  "perplexity": {
+    "rf_on_bridge": 7.0412,
+    "b1_spiking_reproduced": 7.0412,
+    "b1_spiking_reference_T16": 7.08,
+    "ann_exact": 5.8715,
+    "ann_baseline_stepA": 6.5303,
+    "n_tokens_scored": 159,
+    "rf_vs_b1_ratio": 1.0,
+    "compounds_over_24_layers": false
+  },
+  "logit_fidelity": {
+    "rf_vs_b1": {
+      "cosine": 0.9999999999999867,
+      "argmax_agree": 1.0
+    },
+    "rf_vs_ann": {
+      "cosine": 0.9887627584073583,
+      "argmax_agree": 0.825
+    },
+    "b1_vs_ann": {
+      "cosine": 0.9887627596008718,
+      "argmax_agree": 0.825
+    }
+  },
+  "anti_cheat_lesion": {
+    "lesioned_logits_vs_true_b1_cosine": 0.2855843222956819,
+    "lesioned_logits_vs_true_b1_argmax_agree": 0.0,
+    "shuffled_lm_head_matvec_vs_own_a_at_W_shuf_maxabs": 5.471520125865936e-09,
+    "lesion_collapses": true
+  },
+  "generation": {
+    "prompt": "Once upon a time",
+    "rf_on_bridge_greedy": "Once upon a time, in a land far, far away, there was a",
+    "b1_spiking_greedy": "Once upon a time, in a land far, far away, there was a",
+    "rf_vs_b1_token_agreement": 1.0,
+    "n_new_tokens": 16
+  },
+  "silu_fit": {
+    "fit_max_err_grid": 0.003178593232566862,
+    "fit_rmse_grid": 0.0008150450661128296,
+    "grid": [
+      -8.34375,
+      8.0
+    ],
+    "n_knots": 30
+  },
+  "exp_fit": {
+    "fit_max_err_grid": 0.004776968942888038,
+    "fit_rmse_grid": 0.00033546975477099155,
+    "grid": [
+      -34.0,
+      0.5
+    ],
+    "n_knots": 39
+  },
+  "mechanism": "reuse-by-import: de-risk #2's layer_forward/run_attention + the B-1 graded banks; the RF exact-matvec with a VECTORIZED CSR build (bit-identical to rf_set_complex_weights). 24 layers STREAMED onto 4 per-shape bridges + lm_head. NO `sim/` edit.",
+  "cloud_trigger_check": {
+    "rule": "feedback_long_local_runs_ok_confirm_cloud_cause: cloud ONLY for a genuine >24GB VRAM wall; wall-clock alone is fine with an ETA, run local (local perf fix first).",
+    "vram_wall": false,
+    "validation_corpus_tokens_assumed": 2000,
+    "validation_eta_hours_on_3090": 0.71,
+    "overnight_viable_local": true,
+    "decision": "LOCAL -- overnight-viable"
+  },
+  "sim_edit_needed": false,
+  "verdict": "GO",
+  "verdict_line": "bridge_cores_fullfwd: FULL 24-layer Qwen2.5-0.5B on the LIVE RF bridge -> VRAM resident peak 14.05GB (LOCAL); 0.786 tokens/sec; on-bridge ppl 7.041 (B-1 spiking 7.041, ANN 5.872); RF-vs-B1 logit cos 1.00000 (argmax 1.00); lesion cos 0.286 (shuf-self 5.5e-09); generation read below -> GO. the FULL 24-layer Qwen forward RUNS on the LIVE RF bridge (resident peak 14.05GB << 24GB, LOCAL); the on-bridge ppl 7.041 ~ the B-1 spiking 7.041 (the per-layer graded-read SEM does NOT compound-degrade over 24 layers; RF-vs-B1 logit cos 1.00000, argmax-agree 1.000); the lesion collapses (cos 0.286) while the shuffled matvec stays exact (5.5e-09). MEASURED wall-clock = 0.786 tokens/sec for the RF forward. => bridge co-residence is FEASIBLE end-to-end, LOCAL. NO `sim/` edit (vectorized CSR build = the C1 cache-swap pattern, bit-identical to rf_set_complex_weights). The wall-clock is the perf lever (NOT cloud: no VRAM wall). Validation-corpus(2000 tok) ETA 0.7h on the 3090 -> overnight-viable LOCAL.",
+  "total_seconds": 3331.1
+}
