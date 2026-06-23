@@ -1,0 +1,146 @@
+{
+  "probe": "genseq_loopstep3_full_genf_generate_C1",
+  "resolves": "C1: does the FULL Gen-F GENERATOR run on the bridge AND GENERATE coherent text -- ALL 4 blocks' learned weights + embedding + output head on the conductance-free RF complex-synapse path (EXACT matvecs) + softmax/GELU/LayerNorm as faithful reads -- matching the off-bridge Gen-F?",
+  "milestone": "C1 (the full generator WEIGHTS on the bridge, generating; the fully-spiking nonlinearities are the follow-on)",
+  "continues": {
+    "full_block": "research/findings/raw/_genseq_loopstep3_fullblock_rf.json (one FULL block consolidates 1.000 on RF; this STACKS all 4 + embedding + head + generation)",
+    "attention": "Gen-F attn Q/K/V/O EXACT 1.000 on RF; softmax = 0-param faithful read",
+    "mlp_gelu": "Gen-F MLP linears EXACT 1.000 on RF; GELU = exact-erf faithful read"
+  },
+  "verify_reconciliation": "TEACHER = the EXACT-FLOAT Gen-F full forward (s42.real ckpt, loss ~1.47) on REAL token ids (tokenized TinyStories). The RF-on-bridge model runs the SAME forward with EVERY learned matvec (all 4 blocks + head) on the live RF complex-synapse path; embedding lookup exact; softmax/GELU/LN faithful reads.",
+  "genf_checkpoint": "research\\findings\\raw\\g11_bg\\generator_f_gate.ckpt.s42.real.pt",
+  "genf_meta": {
+    "d_model": 256,
+    "n_head": 4,
+    "n_layer": 4,
+    "block_size": 128,
+    "vocab_size": 513,
+    "loss_last": 1.4711004495620728,
+    "lnf_affine_l2": [
+      24.7286765832594,
+      2.20668170911599
+    ],
+    "head_l2": 29.368122100830078,
+    "embedding_kind": "learned LOOKUP (tok.weight/pos.weight row gather; NOT a matvec)"
+  },
+  "the_full_generator": {
+    "structure": "sim/tiny_transformer.py TinyGPT.forward: x=tok(idx)+pos; for b in blocks(4): x=b(x); return head(lnf(x)). Each _Block: LN1->attn(softmax)->+x->LN2->MLP(GELU)->+x.",
+    "on_rf_learned_matvecs": "4 blocks x [attn Q/K/V/O (4x256x256) + MLP W1(256->1024)+W2(1024->256)] = 3277056 + output head (256->513 = 131328) -> 3408384 learned matvec params, ALL on the conductance-free RF complex-synapse path (EXACT).",
+    "embedding": "learned LOOKUP (tok.weight/pos.weight ROW GATHER -> the input x; NOT a matvec, so there is no weight to install on RF -- the embedding rows ARE used faithfully).",
+    "faithful_reads": "softmax(QK^T/sqrt(dh)) [0 params] + GELU [0 params, exact-erf] + LayerNorm (LN1/LN2/lnf; content-norm read + the learned per-feature affine rides on the read). The Linear/proj biases ride on the host read.",
+    "scope_note": "WEIGHTS-on-RF + nonlinearities-as-faithful-reads. The fully-SPIKING nonlinearities (spiking softmax / spiking LayerNorm / spiking GELU) are a SEPARATE follow-on.",
+    "learned_matvec_params_blocks": 3277056,
+    "learned_matvec_params_head": 131328,
+    "learned_matvec_params_total": 3408384
+  },
+  "oom_safety": {
+    "max_rf_bridge_neurons": 1280,
+    "max_block_nnz": 262144,
+    "n_rf_bridges_coresident": 4,
+    "est_gb": 0.05066,
+    "oom_ceiling_gb": 16.0
+  },
+  "rf_period": 100000,
+  "rf_nsteps": 8,
+  "rf_lambda": 0.0,
+  "n_logit_probe_positions": 12,
+  "n_seq_positions": 90,
+  "n_gen_tokens": 48,
+  "d_model": 256,
+  "vocab_size": 513,
+  "n_layer": 4,
+  "go_bar": 0.8,
+  "mechanism": "EXACT RF linear (the SAME primitive that gave the full block + projections + MLP linears rank 1.000) for ALL learned matvecs (4x[Q/K/V/O+W1/W2] + head), batched per matvec (weights set ONCE, kick/resonate/read per position); softmax/GELU/LayerNorm faithful host reads; biases + LN affines on the read; embedding lookup exact; the residual adds in float.",
+  "a_logit_fidelity_vs_teacher": {
+    "spearman": 1.0,
+    "cosine": 0.9999999999999899,
+    "teacher_forced_argmax_agreement": 1.0,
+    "per_position_spearman": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "per_position_cosine": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "per_layer_fidelity": [
+      {
+        "layer": 0,
+        "spearman": 0.9999999999999999,
+        "cosine": 0.9999999999999981
+      },
+      {
+        "layer": 1,
+        "spearman": 0.9999999999999999,
+        "cosine": 0.9999999999999961
+      },
+      {
+        "layer": 2,
+        "spearman": 0.9999999999999999,
+        "cosine": 0.9999999999999926
+      },
+      {
+        "layer": 3,
+        "spearman": 0.9999999999999999,
+        "cosine": 0.9999999999999848
+      }
+    ],
+    "rf_exact_max_err_over_all_matvecs": 1.8695063914719867e-06
+  },
+  "b_generation": {
+    "prompt": "Once upon a time there was a little",
+    "rf_on_bridge_greedy_text": "girl named Lily. She was very excited to go to the park with her mom. Lily saw a big tree and wanted to climb it. She ran to the tree and tried to clim",
+    "off_bridge_greedy_text": "girl named Lily. She was very excited to go to the park with her mom. Lily saw a big tree and wanted to climb it. She ran to the tree and tried to clim",
+    "greedy_token_match_rf_vs_offbridge": 1.0,
+    "rf_on_bridge_temperature_text": "pig named Sam. Sam liked to play and help Sam. One day, Fin saw Tom playing with a pig. Fin was chess and he wanted to play with Tim again. Sammy tried",
+    "rf_temperature_distinct_trigram": 0.9782608695652174,
+    "rf_greedy_distinct_trigram": 0.9347826086956522
+  },
+  "c_perplexity": {
+    "rf_on_bridge_ppl": 7.276071337814278,
+    "off_bridge_ppl": 7.276071419406384,
+    "ppl_ratio_rf_over_offbridge": 0.9999999887862416,
+    "ratio_bar_1.2": true,
+    "n_windows": 6
+  },
+  "anti_cheat_specificity": {
+    "matched_mean_spearman": 1.0,
+    "mismatched_mean_spearman": 0.2045915120361062,
+    "specificity_margin": 0.7954084879638939
+  },
+  "anti_cheat_lesion": {
+    "method": "scramble (row-permute) the RF complex weights of EVERY learned matvec (the 4 blocks' Q/K/V/O + W1/W2 + the output head); the softmax/GELU/LN reads + embedding UNCHANGED. Generation MUST collapse to degenerate (logits lose structure, decoded sample becomes repetitive garbage) -> proves the RF matvecs carry the computation, NOT the host reads.",
+    "lesioned_logit_fidelity_spearman": -0.0182615506083085,
+    "lesioned_logit_fidelity_cosine": -0.020714558353642522,
+    "lesioned_greedy_text": "an s rotrek. ghounexent ind king ted ent oune, but rom s uted ys er er k. watdowted ly obkefor en ll watback together. ylarom raard lly sider. ve day, ch",
+    "lesioned_generation_distinct_trigram": 1.0,
+    "lesioned_top_token_fraction": 0.0625,
+    "real_greedy_distinct_trigram": 0.9347826086956522,
+    "logit_fidelity_collapses": true,
+    "generation_degenerate": false,
+    "real_minus_lesioned_logit_fidelity": 1.0182615506083086
+  },
+  "verdict_line": "full_genf_generate: GEN-F(s42.real, loss=1.471) FULL 4-block generator on the bridge -- ALL learned matvecs (4x[attn Q/K/V/O + MLP W1/W2] + output head = 3408384 params) on the conductance-free RF complex-synapse path (EXACT, max|Re(Z)/nsteps-h@W|=1.9e-06) + embedding-lookup + softmax/GELU/LayerNorm as FAITHFUL READS -> next-token-LOGIT fidelity_vs_exact-float-GenF spearman=1.0000 cosine=1.0000 argmax_agree=1.000 specificity_margin=0.795 | GENERATION greedy-token-match(RF vs off-bridge)=1.000 distinct-trigram=0.935 | held-out PPL RF=7.276 off-bridge=7.276 ratio=1.000 | LESION(scrambled-RF-weights) logit_fid=-0.0183<<real generation distinct=1.000 (degenerate=False) -> PARTIAL | the 4-block stack + lnf + head COMPOSE end-to-end (no error accumulation across layers -- per-layer fidelity stays ~1.0); the RF matvecs carry the computation (lesion collapses generation). SCOPE: weights-on-RF + nonlinearities-as-faithful-reads; the fully-SPIKING nonlinearities (spiking softmax/LayerNorm/GELU) = the SEPARATE follow-on. C1 milestone. GO bar 0.80",
+  "verdict": "PARTIAL",
+  "elapsed_seconds": 2101.6
+}
