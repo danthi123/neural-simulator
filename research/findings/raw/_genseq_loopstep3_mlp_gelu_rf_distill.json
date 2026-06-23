@@ -1,0 +1,111 @@
+{
+  "probe": "genseq_loopstep3_mlp_gelu_rf_consolidation",
+  "resolves": "does Gen-F's REAL MLP (Linear -> GELU -> Linear) consolidate onto the RF complex-synapse path, reconciled to the REAL Gen-F (like the attention de-risk) AND handling GELU (the MLP synthesis used clip(0,1), but Gen-F's MLP uses GELU which is NOT clip-bounded -- smooth/signed/unbounded)?",
+  "continues": {
+    "mlp_synthesis": "2026-06-22-genseq-loopstep3-rf-distill-GO-cheap-ladder-WINS.md (0.872, but on the cortex_10M clip-like activation; absorbed the per-layer CLIP via distill)",
+    "attention": "2026-06-22-genseq-loopstep3-attn-rf-distill-GO-projections-consolidate-softmax-deferred.md (the linear PROJECTIONS consolidate EXACTLY 1.000 on RF WITHOUT distillation; clip is the WRONG tool for an unbounded linear output; softmax = 0-param content-dependent core, deferred to a graded op)"
+  },
+  "verify_reconciliation": "TEACHER = Gen-F's ACTUAL block-0 MLP weights (s42.real ckpt, loss ~1.47), on REAL token activations (block-0 LN2 output, computed through the genuine block-0 attention forward so the MLP sees the real residual stream) -- NOT the cortex_10M MLP slice (which was the load vehicle for the synthesis).",
+  "genf_checkpoint": "research\\findings\\raw\\g11_bg\\generator_f_gate.ckpt.s42.real.pt",
+  "genf_meta": {
+    "d_model": 256,
+    "loss_last": 1.4711004495620728,
+    "block_size": 128,
+    "n_tokens_probe": 90,
+    "probe_positions": [
+      1,
+      14,
+      26,
+      39,
+      51,
+      64,
+      76,
+      89
+    ],
+    "mlp_fc1_weight_shape": [
+      1024,
+      256
+    ],
+    "mlp_fc2_weight_shape": [
+      256,
+      1024
+    ],
+    "mlp_biases_l2": {
+      "fc1": 1.188697047591685,
+      "fc2": 0.2951657579864426
+    },
+    "gelu_variant": "exact_erf (nn.GELU(approximate='none'))",
+    "decoded_probe_head": "Once upon a time there was a little girl named Lily. She had a small dog and a big cat. One"
+  },
+  "gelu_question_scope": {
+    "genf_mlp_forward": "out = GELU(m @ W_fc1_lin.T + b_fc1) @ W_fc2_lin.T + b_fc2 (sim/tiny_transformer.py _Block.mlp); nn.GELU(approximate='none') = EXACT erf GELU.",
+    "gelu_properties": "smooth, signed (slightly negative for small negatives), UNBOUNDED above -- NOT clip(0,1). The MLP synthesis used clip because cortex_10M's activation is clip-like; that is the WRONG transfer for GELU.",
+    "two_linears_are_all_learned_params": "W1 (256->1024) + W2 (1024->256) = 524288 weights = ALL of the MLP's learned params; the RF accumulator computes each linear EXACTLY (rank 1.000).",
+    "gelu_is_parameter_free": "GELU has ZERO learned parameters -- a pointwise nonlinearity between the two exact linears (exactly like the 0-param softmax in the attention de-risk). It is realized as a faithful pointwise read; there is nothing to 'consolidate' for GELU itself.",
+    "chosen_option": "(a) the two linears via the EXACT RF escape + GELU as a faithful exact-erf pointwise transfer on the read between them (the clean analogue of the attention exact-projections result)."
+  },
+  "how_gelu_was_handled": "OPTION (a): the two LINEARS (W1=256->1024, W2=1024->256; 524288 learned params = ALL of the MLP's learned weights) are realized via the EXACT RF escape (Re(Z)/nsteps = a@W, max err linear1=4.8e-07 linear2=3.6e-07 -> EXACT, like the attention projections). GELU is realized as a FAITHFUL parameter-free pointwise READ on the intermediate BETWEEN the two exact RF linears -- the EXACT erf GELU (nn.GELU(approximate='none'), max|ours-torch|=4.4e-16), with NO learned weights (gelu_params=0, exactly the status the attention de-risk gave the 0-param softmax). The Linear biases are added on the host read (the RF matvec has no bias term; GELU is NOT shift-invariant so the bias IS rank-relevant and is added faithfully). ==> GELU is a learned-param-FREE op realized as a graded read; the MLP's learned content (524,288 weights) consolidates EXACTLY on the conductance-free RF path. NOT absorbed-via-clip (clip is the WRONG tool for unbounded GELU: clip-distill arm=0.873 << option(a)); NOT deferred-to-graded (the conductance read COMPRESSES the GELU tails: graded control=0.998 < option(a) -- the conductance-FREE RF read is the faithful one).",
+  "gelu_faithfulness_max_abs_err_vs_torch": 4.440892098500626e-16,
+  "oom_safety": {
+    "max_rf_bridge_neurons": 1280,
+    "max_block_nnz": 262144,
+    "est_gb": 0.01266,
+    "oom_ceiling_gb": 16.0
+  },
+  "rf_period": 100000,
+  "rf_nsteps": 8,
+  "rf_lambda": 0.0,
+  "n_probe_positions": 8,
+  "d_model": 256,
+  "go_bar": 0.8,
+  "mechanism": "EXACT RF linear (rf_linear_layer_signed, reuse-by-import from the RF probe -- the SAME primitive that gave the attention projections rank 1.000) for BOTH linears + the EXACT erf GELU as a faithful parameter-free read between them, installed + scored on the LIVE RF bridge (rf_set_complex_weights / rf_kick / rf_resonate_steps / read Re(Z)/nsteps).",
+  "option_a_exact_rf_linears_plus_faithful_gelu": {
+    "installed_fidelity_vs_teacher": 0.9999999999999998,
+    "specificity_margin": 0.9081367967907005,
+    "rf_linear1_max_abs_err_vs_float_matvec": 4.754181954780279e-07,
+    "rf_linear2_max_abs_err_vs_float_matvec": 3.5928936448215154e-07,
+    "installed_output_l2_mean": 14.710683410605734
+  },
+  "anti_cheat_shuffled_target": {
+    "method": "score the SAME option-(a) installed MLP outputs vs a position-DERANGED teacher (permuted target outputs) -> must be below the matched fidelity",
+    "permutation": [
+      7,
+      5,
+      6,
+      1,
+      2,
+      0,
+      3,
+      4
+    ],
+    "shuffled_fidelity_vs_real_teacher": 0.1223700539311055,
+    "below_real": true
+  },
+  "honest_clip_wrong_arm": {
+    "installed_fidelity": 0.8732359736209658,
+    "note": "the MLP-synthesis clip-aware distillation on the GELU stage -- EXPECTED << option (a). GELU is UNBOUNDED above (range [-0.17,4.21]); the trainer's clip(.,0,1) forward clamps the intermediate and DESTROYS the second linear's input rank. Exactly the attention de-risk's finding for projections: clip is the WRONG tool for an unbounded output."
+  },
+  "honest_graded_control": {
+    "installed_fidelity": 0.9980955131322956,
+    "note": "a conductance-style saturating squash g*(V-E)~E*(1-exp(-x/E)) on the GELU intermediate before the exact RF linear 2 -- EXPECTED < option (a). A real conductance read COMPRESSES the GELU tails -> distorts the output rank; the conductance-FREE RF read is the faithful one. The [VERIFY] g*(V-E) gap that killed the graded distill install (0.815 -> 0.444)."
+  },
+  "consolidated_vs_deferred": {
+    "consolidated_cheaply": "the TWO MLP LINEARS (W1+W2 = 524288 params = ALL of the MLP's learned weights) -- installed EXACTLY on the live conductance-free RF complex-synapse path, fidelity 1.0000 vs the real Gen-F teacher.",
+    "gelu_handling": "GELU = a learned-param-FREE pointwise op (0 weights), realized as a faithful exact-erf read between the two exact RF linears -- the analogue of attention's 0-param softmax. NOT a weight to consolidate; NOT absorbed via clip (wrong tool); the conductance-free RF read makes the end-to-end MLP faithful.",
+    "linear_params": 524288,
+    "gelu_learned_params": 0,
+    "consolidated_fraction_of_learned_mlp_params": 1.0
+  },
+  "baselines": {
+    "mlp_synthesis_clip_distill": {
+      "cumulative": 0.872,
+      "note": "the WINNING cortex_10M MLP synthesis (clip-like activation); this de-risk does the REAL Gen-F MLP with GELU instead of clip"
+    },
+    "attention_projections_rf_verbatim": {
+      "cumulative": 1.0,
+      "note": "the attention projections install EXACTLY on RF (no clip); the MLP linears are the same IDEAL RF case, GELU is the 0-param nonlinearity between them"
+    }
+  },
+  "verdict_line": "mlp_gelu_rf_distill: GEN-F(s42.real, loss=1.471) block-0 MLP (Linear->GELU->Linear) consolidated onto the conductance-free RF complex-synapse path on REAL token activations -> installed-on-live-RF-bridge MLP-output fidelity_vs_teacher=1.0000 (option (a): EXACT RF linears [524288 params] + faithful exact-erf-GELU read [0 params]; clip-distill-on-GELU=0.873 WRONG-tool; graded(g*(V-E))-control=0.998) specificity_margin=0.908 shuffled_control=0.1224 -> GO | GELU realized as a learned-param-FREE faithful pointwise read between the two EXACT RF linears (the analogue of attention's exact projections + 0-param softmax). GO bar 0.80",
+  "verdict": "GO"
+}
