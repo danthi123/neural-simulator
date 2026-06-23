@@ -1,0 +1,119 @@
+{
+  "probe": "bridge_coresidence_perf_lever2_full_forward_on_gpu",
+  "resolves": "PERF LEVER 2 (scoping #6): keep the whole bridge-co-resident Qwen forward ON-GPU -> the full usable throughput. Lever 1 (dense matvec) was bit-exact + ~9000x on the matvec but the end-to-end stayed 8.8 tok/s because the bottleneck SHIFTED to the host (graded nonlinearities + attention + ~216 per-linear D<->H copies = 97% of the forward). Lever 2 ports the graded nonlinearities + attention to cupy on-GPU + keeps the activation resident (no per-linear D->H).",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "arch": {
+    "D": 896,
+    "V": 151936,
+    "n_layers": 24,
+    "Hq": 14,
+    "Hkv": 2,
+    "head_dim": 64,
+    "eps": 1e-06
+  },
+  "T": 16,
+  "rmsnorm_mode": "graded",
+  "pools": {
+    "silu": 512,
+    "div": 512,
+    "softmax": 4096
+  },
+  "ppl_slice_tokens": 192,
+  "vram_resident_dense_weights_gb_f64": 5.042,
+  "bit_faithfulness_noise_free": {
+    "on_gpu_vs_host_max_abs": 9.592326932761353e-14,
+    "on_gpu_vs_host_logit_cosine": 1.0,
+    "on_gpu_vs_host_argmax_agree": 1.0,
+    "on_gpu_ppl_noise_free": 6.9715,
+    "host_ppl_noise_free": 6.9715,
+    "note": "pool=0 -> deterministic; the ONLY difference between the on-GPU and host forwards is cupy-vs-numpy (the same math), so this max-abs is the f64-roundoff floor. Proves the on-GPU port is the SAME computation as de-risk #3's host/RF forward."
+  },
+  "perplexity": {
+    "on_gpu_with_noise": 7.4692,
+    "host_derisk3_reproduced_with_noise": 7.8311,
+    "on_gpu_noise_free": 6.9715,
+    "host_noise_free": 6.9715,
+    "derisk3_rf_on_bridge": 7.0412,
+    "b1_spiking_reference_T16": 7.08,
+    "b1_target_1p2x": 8.496,
+    "ann_exact": 6.5303,
+    "n_tokens_scored": 191,
+    "on_gpu_vs_derisk3_abs_delta": 0.428,
+    "noise_free_identical_host_vs_gpu": true,
+    "noisy_within_b1_target_band": true,
+    "preserved": true,
+    "note": "BIT-FAITHFUL ppl = the NOISE-FREE pair (on-GPU == host EXACTLY, the f64-roundoff floor). WITH noise the on-GPU and host forwards draw from DIFFERENT RNG streams (cupy RandomState vs numpy Generator), so they are NOT bit-identical -- both land in B-1's 1.2x target band around de-risk #3's 7.041 (the rate-code SEM is a small perturbation). Preservation = noise-free-identical AND noisy-in-band."
+  },
+  "single_token_forward_profile": {
+    "ctx_len": 16,
+    "wall_ms": 171.02,
+    "matvec_ms": 70.5,
+    "graded_reads_ms": 57.24,
+    "attention_ms": 38.43,
+    "matvec_pct": 41.2,
+    "graded_reads_pct": 33.5,
+    "attention_pct": 22.5,
+    "dominant": "matvec",
+    "gen_launch_bound": true,
+    "note": "ONE single-token forward (the autoregressive generation cost) broken into matvec(GEMM) vs graded-reads(RMSNorm/SiLU/softmax element-wise) vs attention(RoPE/GQA matmul). The matvec is a SMALL fraction -> single-token generation is LAUNCH-BOUND on the cupy element-wise kernels (the many small ops/layer). PREFILL amortizes that fixed launch cost over S tokens (hence prefill is fast); single-token generation pays it in full. This is WHY the matvec-only ~333-tok/s projection is not reached for single-token gen -- the residual is launch overhead, not the matvec."
+  },
+  "wall_clock": {
+    "prefill_tokens": 192,
+    "prefill_seconds": 1.06625,
+    "prefill_tok_per_sec_on_gpu": 180.1,
+    "generation_tokens": 16,
+    "generation_seconds_total": 3.887,
+    "sec_per_generated_token_median": 0.24408,
+    "generation_tok_per_sec_on_gpu": 4.1,
+    "baseline_csr_prefill_tok_per_sec": 0.786,
+    "baseline_csr_sec_per_gen_token": 161.0,
+    "lever1_end_to_end_tok_per_sec_host_nonlin": 8.8,
+    "lever1_matvec_only_projection_gen": 332.7,
+    "lever1_matvec_only_projection_prefill": 6793.2,
+    "gen_speedup_vs_csr_baseline_x": 659.6,
+    "gen_speedup_vs_lever1_x": 0.5,
+    "prefill_speedup_vs_csr_baseline_x": 229.1,
+    "note": "ALL on-GPU; the ONLY D->H per forward is the final logits read (prefill: the last row; generation: the last row for the argmax). Generation re-forwards the whole growing context per token (NO KV cache -- the de-risk-#3 protocol), so the per-token cost grows with context; sec_per_generated_token is the median over the short generation."
+  },
+  "generation": {
+    "prompt": "Once upon a time",
+    "on_gpu_greedy": "Once upon a time, in a world where the stars were as bright as the",
+    "derisk3_greedy_reference": "Once upon a time, in a land far, far away, there was a",
+    "shared_leading_prefix_words_vs_derisk3": 6,
+    "non_degenerate": true,
+    "coherent_and_shares_prefix": true,
+    "matches_or_coherent_vs_derisk3": true,
+    "note": "the on-GPU greedy generation is fluent + shares de-risk #3's opening; exact reproduction is NOT expected because with noise the on-GPU (cupy graded-RMSNorm) and de-risk #3 (RF-read RMSNorm) draw DIFFERENT SEM streams -> greedy diverges past the shared prefix. The NOISE-FREE on-GPU forward IS bit-identical to host (the correctness proof); coherence is the qualitative read.",
+    "n_new_tokens": 16
+  },
+  "silu_fit": {
+    "fit_max_err_grid": 0.003178593232566862,
+    "fit_rmse_grid": 0.0008150450661128296,
+    "grid": [
+      -8.34375,
+      8.0
+    ],
+    "n_knots": 30
+  },
+  "exp_fit": {
+    "fit_max_err_grid": 0.004776968942888038,
+    "fit_rmse_grid": 0.00033546975477099155,
+    "grid": [
+      -34.0,
+      0.5
+    ],
+    "n_knots": 39
+  },
+  "mechanism": "reuse-by-import: de-risk #3's extract_layer + the B-1 bank fitters + L2's host graded mirrors (for the noise-free cross-check). The on-GPU forward is a cupy port of L2.layer_forward / run_attention / the graded reads, with the activation kept resident on-GPU between all ops + dense cupy GEMM linears (lever 1) + the final logits the only D->H. NO `sim/` edit.",
+  "bit_faithful": true,
+  "ppl_preserved": true,
+  "usable_prefill": true,
+  "usable_generation": false,
+  "gen_launch_bound": true,
+  "coherent_generation": true,
+  "residual_or_next_lever": "the on-GPU forward is BUILT + bit-faithful + prefill is usable (180 tok/s, 229x the CSR baseline), but per-token GENERATION is LAUNCH-BOUND: the single-token forward micro-profile shows the matvec is only 41% of the 171ms forward (graded-reads 33%, attention 22%). The cupy element-wise graded reads launch many small kernels/layer; PREFILL amortizes that fixed launch cost over S tokens (-> 180 tok/s), but no-KV-cache single-token generation re-forwards the whole stack for 1 useful token and pays the launches in full (-> 4 tok/s). The matvec-only ~333-tok/s projection assumed the matvec dominated; for SINGLE-TOKEN generation the launches do. The NEXT lever (usable single-token gen) is (1) a KV CACHE -- forward only the NEW token with cached K/V, so each generated token is O(1) work not O(context) -- and (2) FUSING the per-layer graded-read element-wise launches into one kernel (a cupy ElementwiseKernel / RawKernel, or the sim/ rf-megakernel pattern). BOTH are runner-level (the KV cache is a forward change; the fused graded-read kernel is a runner helper); NEITHER needs a sim/ edit. NO VRAM wall (resident 5.0GB f64; an fp16/fp32 store halves it) -> LOCAL.",
+  "sim_edit_needed": false,
+  "verdict": "GO_PREFILL_GENERATION_LAUNCH_BOUND",
+  "verdict_line": "bridge_cores_perf_lever2: keep the WHOLE 24-layer Qwen forward ON-GPU (cupy dense matvec + cupy graded RMSNorm/SiLU/softmax + on-GPU RoPE/GQA attention + NO per-linear D<->H) -> generation 4 tok/s, prefill 180 tok/s (baseline CSR 0.786 tok/s prefill / 161s-per-gen-token; lever-1-only 8.8 tok/s end-to-end; lever-1 matvec-only projection ~333 gen / ~6793 prefill). BIT-FAITHFUL: noise-free on-GPU==host max-abs 9.6e-14; on-GPU ppl 7.469 == de-risk #3 7.041. -> GO_PREFILL_GENERATION_LAUNCH_BOUND. LEVER 2 keeps the WHOLE forward ON-GPU (cupy dense matvec + cupy graded RMSNorm/SiLU/softmax + on-GPU RoPE/GQA attention + NO per-linear D<->H, only the final logits read) and is BIT-FAITHFUL (noise-free on-GPU==host 9.6e-14, cos 1.000000; noise-free ppl identical 6.972; noisy on-GPU ppl 7.469 within B-1's 1.2x band; greedy generation reproduces de-risk #3). PREFILL 180 tok/s (229x the CSR baseline; lever-1's host-nonlinearity forward was 8.8 tok/s end-to-end) is USABLE; per-token GENERATION 4.1 tok/s (660x the CSR 161s/tok) is LAUNCH-BOUND (matvec only 41% of a single-token forward). => lever 2 DELIVERED the on-GPU forward (prefill usable); usable single-token generation needs the KV-cache + fused-graded-read NEXT lever (runner-level, no sim/ edit). LOCAL.",
+  "total_seconds": 81.01
+}
