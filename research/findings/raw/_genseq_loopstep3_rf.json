@@ -1,0 +1,209 @@
+{
+  "probe": "genseq_loopstep3_rf_complex_accumulator",
+  "resolves": "P1 (scoping \u00a76): does the RF complex-synapse path preserve per-layer rank across stacked dense layers, escaping BOTH the clip-compression (W1) AND g\u00b7(V\u2212E) (W2) walls?",
+  "artifact": "cortex_10M_seed42.npz",
+  "design_choice_activation_to_phasor": {
+    "encoding": "magnitude=activation: z_in = a_in (REAL, reference phase 0); the scoping-named faithful encoding. Weights = the REAL W as complex synapses (W_im=0).",
+    "dynamics": "lam=0.0 (no magnitude decay) + period=100000 so omega=2pi/period~0 (rotation per step ~ identity) => the complex accumulator computes Re(Z_out)=nsteps*(a_in@W) EXACTLY (verified sp(Re(Z),a_in@W)=1.000, im->0), with NO clip / g.(V-E) / refractory ceiling.",
+    "primary_readout": "a_hat = clip(Re(Z)/scale, 0, 1) -- re-imposes the TEACHER'S OWN clip on the rank-faithful linear accumulation; teacher-clip vs teacher-clip, so the ONLY thing measured is whether the RF accumulator compressed rank.",
+    "secondary_readout": "RF-NATIVE phase channel: phase=activation encoding (|z|=1, info in PHASE), rf_read_phases() per single (teacher-forced) block -- does the unit-magnitude phase channel ALSO carry a dense layer's rank?",
+    "stacking": "layer L's PRIMARY a_hat (in [0,1]) re-encodes as layer L+1's input magnitude; a FRESH small RF bridge per block (D_in+D_out<=~1024 neurons; OOM-trivial)."
+  },
+  "n_blocks": 3,
+  "feature_sizes": [
+    66,
+    512,
+    512,
+    512
+  ],
+  "neuron_model": "RESONATE_AND_FIRE (complex state Z=re+i*im; complex synaptic matvec added DIRECTLY to Z -- NO clip, NO g.(V-E), NO refractory ceiling)",
+  "rf_period": 100000,
+  "rf_nsteps": 8,
+  "rf_lambda": 0.0,
+  "go_bar": 0.85,
+  "per_block_scale_calibration": [
+    0.220673406908459,
+    0.11547819846894582,
+    0.1357727142105184
+  ],
+  "per_input": [
+    {
+      "char": " ",
+      "dim": 2,
+      "layers": [
+        {
+          "layer": 0,
+          "spearman_primary_vs_teacher": 0.977733288701205,
+          "spearman_phase_vs_teacher": 0.04720831044506243
+        },
+        {
+          "layer": 1,
+          "spearman_primary_vs_teacher": 0.724236479469221,
+          "spearman_phase_vs_teacher": 0.10560129633444343
+        },
+        {
+          "layer": 2,
+          "spearman_primary_vs_teacher": 0.5946865415536559,
+          "spearman_phase_vs_teacher": 0.05993025514699993
+        }
+      ],
+      "cumulative_spearman": 0.5946865415536559
+    },
+    {
+      "char": "e",
+      "dim": 44,
+      "layers": [
+        {
+          "layer": 0,
+          "spearman_primary_vs_teacher": 0.9784589184147585,
+          "spearman_phase_vs_teacher": 0.09108941732184342
+        },
+        {
+          "layer": 1,
+          "spearman_primary_vs_teacher": 0.6234013079216305,
+          "spearman_phase_vs_teacher": 0.054322896997058855
+        },
+        {
+          "layer": 2,
+          "spearman_primary_vs_teacher": 0.5253940001258854,
+          "spearman_phase_vs_teacher": 0.06102987563085796
+        }
+      ],
+      "cumulative_spearman": 0.5253940001258854
+    },
+    {
+      "char": "t",
+      "dim": 59,
+      "layers": [
+        {
+          "layer": 0,
+          "spearman_primary_vs_teacher": 0.8728119349458121,
+          "spearman_phase_vs_teacher": 0.0032973415273343173
+        },
+        {
+          "layer": 1,
+          "spearman_primary_vs_teacher": 0.6793034062038659,
+          "spearman_phase_vs_teacher": 0.067741592851993
+        },
+        {
+          "layer": 2,
+          "spearman_primary_vs_teacher": 0.5577083047229947,
+          "spearman_phase_vs_teacher": 0.07813510302582942
+        }
+      ],
+      "cumulative_spearman": 0.5577083047229947
+    },
+    {
+      "char": "a",
+      "dim": 40,
+      "layers": [
+        {
+          "layer": 0,
+          "spearman_primary_vs_teacher": 0.8890120027523144,
+          "spearman_phase_vs_teacher": 0.05407318238518671
+        },
+        {
+          "layer": 1,
+          "spearman_primary_vs_teacher": 0.6470054631441617,
+          "spearman_phase_vs_teacher": 0.04038268831324888
+        },
+        {
+          "layer": 2,
+          "spearman_primary_vs_teacher": 0.5914825412561083,
+          "spearman_phase_vs_teacher": 0.11588537196301257
+        }
+      ],
+      "cumulative_spearman": 0.5914825412561083
+    },
+    {
+      "char": "o",
+      "dim": 54,
+      "layers": [
+        {
+          "layer": 0,
+          "spearman_primary_vs_teacher": 0.9141670171433148,
+          "spearman_phase_vs_teacher": 0.013616554228035845
+        },
+        {
+          "layer": 1,
+          "spearman_primary_vs_teacher": 0.6501931019043041,
+          "spearman_phase_vs_teacher": 0.06953483523305981
+        },
+        {
+          "layer": 2,
+          "spearman_primary_vs_teacher": 0.5422012329625433,
+          "spearman_phase_vs_teacher": -0.0010916632334260308
+        }
+      ],
+      "cumulative_spearman": 0.5422012329625433
+    },
+    {
+      "char": "h",
+      "dim": 47,
+      "layers": [
+        {
+          "layer": 0,
+          "spearman_primary_vs_teacher": 0.9745156090854991,
+          "spearman_phase_vs_teacher": -0.04024714683397993
+        },
+        {
+          "layer": 1,
+          "spearman_primary_vs_teacher": 0.7255605122967235,
+          "spearman_phase_vs_teacher": 0.08640080867122144
+        },
+        {
+          "layer": 2,
+          "spearman_primary_vs_teacher": 0.5250355662272118,
+          "spearman_phase_vs_teacher": 0.057281295418912574
+        }
+      ],
+      "cumulative_spearman": 0.5250355662272118
+    }
+  ],
+  "per_layer_fidelity": [
+    {
+      "layer": 0,
+      "mean_spearman_primary_vs_teacher": 0.9344497951738173,
+      "mean_spearman_phase_vs_teacher": 0.028172943178913803
+    },
+    {
+      "layer": 1,
+      "mean_spearman_primary_vs_teacher": 0.6749500451566511,
+      "mean_spearman_phase_vs_teacher": 0.07066401973350424
+    },
+    {
+      "layer": 2,
+      "mean_spearman_primary_vs_teacher": 0.5560846978080666,
+      "mean_spearman_phase_vs_teacher": 0.06186170632536441
+    }
+  ],
+  "cumulative_mean_spearman": 0.5560846978080666,
+  "anti_cheat_specificity": {
+    "matched_mean_spearman": 0.5560846978080666,
+    "mismatched_mean_spearman": 0.36648910077228847,
+    "specificity_margin": 0.1895955970357781
+  },
+  "anti_cheat_shuffled_target": {
+    "per_layer_shuffled_spearman": [
+      -0.001341497055042477,
+      0.23865440630209467,
+      0.37324009164368305
+    ],
+    "shuffled_cumulative": 0.37324009164368305,
+    "real_cumulative": 0.5560846978080666,
+    "real_minus_shuffled": 0.18284460616438353,
+    "collapses_to_chance": false,
+    "note": "the distill-NEGATIVE's shuffled control reached 0.542 because the teacher's FINAL reps are char-correlated; reported honestly. A real result has real_cumulative >> shuffled AND a re-opened matched/mismatched margin."
+  },
+  "baseline_rate_graded": {
+    "cumulative_mean_spearman": 0.288,
+    "per_block": [
+      0.846,
+      0.62,
+      0.288
+    ],
+    "note": "graded/rate a_cont readout, the W1 deterministic clip-compression"
+  },
+  "verdict_line": "rf_complex_accumulator: narrow512 blocks=3 ENCODE=magnitude(signed Re(Z), lam=0 omega~0) stacked CUMULATIVE_rank=0.556 per_layer_primary=[0.934, 0.675, 0.556] per_layer_phase=[0.028, 0.071, 0.062] specificity_margin=0.190 shuffled_control_cumulative=0.373 -> PARTIAL (vs rate/graded cumulative 0.288; both-walls-escape GO bar 0.85)",
+  "verdict": "PARTIAL"
+}
