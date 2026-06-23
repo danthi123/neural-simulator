@@ -72,10 +72,26 @@ DEF_N_LAYERS = 8
 DEF_N_HEADS = 8
 DEF_VOCAB = 2048
 DEF_BLOCK = 128
-DEF_STEPS = 30000          # ~Chinchilla-ish for 27M at B=24/T=128 (~92M tok); the FULL-run default
+DEF_STEPS = 3500          # ~6 epochs of the ~1.8M-token TinyStories-valid corpus at B=24/T=128 (~10.8M
+                          # tok). The corpus is DATA-bound (only ~1.8M unique tokens) -> the budget is set
+                          # by epochs, NOT Chinchilla's 20x-param token count (which would be ~50 epochs of
+                          # REPETITION = memorization; see the FIRST-run diagnosis below). 3000-5000 is the
+                          # convergence band; with dropout+wd the held-out ppl bottoms ~6 around here.
 DEF_BATCH = 24            # TRAIN batch (OOM-safe on a 3090 at d=512; auto-halves on OOM in the trainer)
 DEF_FT_BATCH = 32         # C2 fine-tune batch (the scoping's 30M FT_BATCH; < 3.4M's 48 for VRAM headroom)
 DEF_LR = 3e-4
+# --- regularization / schedule defaults (size-aware) -------------------------------------------------
+# WHY (2026-06-23 diagnosis of the failed 30M run): the FIRST 30M run reused the 3.4M toy's config --
+# dropout=0, no warmup, 30000 steps. At batch 24 x block 128 that is ~92M tokens = ~50 EPOCHS over the
+# ~1.8M-token TinyStories-valid corpus. A 27M-param model with ZERO regularization MEMORIZED the train
+# set (train loss 0.16 ~ ppl 1.18) while held-out ppl was 95.4 -- a classic overfit, NOT undertraining
+# (the 3.4M reached held-out 6.1 only because it LACKS the capacity to memorize). The fix is to (a) cap
+# the epoch budget (DEF_STEPS below = ~6 epochs, not ~50), (b) add dropout, (c) add weight decay, and
+# (d) warm the LR up. All ADDITIVE; the 3.4M toy path (train_tiny_gpt defaults) is byte-unchanged.
+DEF_DROPOUT = 0.1
+DEF_WEIGHT_DECAY = 0.1
+DEF_WARMUP = 300
+DEF_HELDOUT_EVERY = 500   # in-loop overfit probe cadence (0=off)
 
 # stage artifacts (all under one run-id dir so the run is RESUMABLE + self-contained).
 RAW = _REPO / "research/findings/raw"
@@ -119,7 +135,8 @@ def measured_param_count(model):
 # checkpoints every print_every steps + resumes from the .pt; we additionally write a stage marker).
 # =================================================================================================
 def stage1_train(run_dir, *, seed, d_model, n_layer, n_head, vocab_size, block_size, steps, batch_size,
-                 lr, device, corpus_path):
+                 lr, device, corpus_path, dropout=0.1, weight_decay=0.1, warmup_steps=300,
+                 heldout_path=None, heldout_every=0):
     ckpt_path = str(run_dir / "genf.ckpt")
     bpe_path = str(run_dir / "genf.bpe.json")
     marker = run_dir / "stage1_train.DONE.json"
@@ -127,13 +144,20 @@ def stage1_train(run_dir, *, seed, d_model, n_layer, n_head, vocab_size, block_s
         print(f"[scaleup] STAGE 1 already DONE (marker {marker.name}); skipping train.", flush=True)
         return ckpt_path, bpe_path, json.loads(marker.read_text())
     print("\n[scaleup] ===== STAGE 1: TRAIN the bigger Gen-F on TinyStories =====", flush=True)
+    print(f"[scaleup] reg/sched: dropout={dropout} weight_decay={weight_decay} warmup_steps={warmup_steps} "
+          f"lr={lr} steps={steps} batch={batch_size}", flush=True)
     t0 = time.time()
     rr = train_tiny_gpt(
         seed=seed, corpus_path=corpus_path, vocab_size=vocab_size, d_model=d_model,
         n_layer=n_layer, n_head=n_head, block_size=block_size, steps=steps, batch_size=batch_size,
-        lr=lr, ckpt_path=ckpt_path, bpe_path=bpe_path, device=device, print_every=500, verbose=True)
+        lr=lr, ckpt_path=ckpt_path, bpe_path=bpe_path, device=device, print_every=500, verbose=True,
+        dropout=dropout, weight_decay=weight_decay, warmup_steps=warmup_steps,
+        heldout_path=heldout_path, heldout_every=heldout_every)
     info = {"final_loss": rr.get("final_loss"), "initial_loss": rr.get("initial_loss"),
             "vocab_size": rr.get("vocab_size"), "steps": steps, "interrupted": rr.get("interrupted"),
+            "dropout": dropout, "weight_decay": weight_decay, "warmup_steps": warmup_steps, "lr": lr,
+            "final_heldout_ppl": rr.get("final_heldout_ppl"),
+            "heldout_history": rr.get("heldout_history"),
             "elapsed_seconds": round(time.time() - t0, 1)}
     if rr.get("interrupted"):
         print("[scaleup] STAGE 1 INTERRUPTED (checkpoint flushed); re-run to resume (NO marker written).",
@@ -460,6 +484,17 @@ def main():
     ap.add_argument("--batch-size", type=int, default=DEF_BATCH, help="STAGE-1 train batch")
     ap.add_argument("--ft-batch", type=int, default=DEF_FT_BATCH, help="STAGE-3 C2 fine-tune batch")
     ap.add_argument("--lr", type=float, default=DEF_LR)
+    # --- regularization / schedule (size-aware: a 10x model on a SMALL corpus overfits without these) ---
+    ap.add_argument("--dropout", type=float, default=DEF_DROPOUT,
+                    help="STAGE-1 attn+MLP+emb dropout (default %g; a 27M model on ~1.8M tokens MUST "
+                         "regularize or it memorizes the train set)" % DEF_DROPOUT)
+    ap.add_argument("--weight-decay", type=float, default=DEF_WEIGHT_DECAY,
+                    help="STAGE-1 AdamW weight decay (default %g)" % DEF_WEIGHT_DECAY)
+    ap.add_argument("--warmup-steps", type=int, default=DEF_WARMUP,
+                    help="STAGE-1 linear LR warmup steps then cosine decay (default %d)" % DEF_WARMUP)
+    ap.add_argument("--heldout-every", type=int, default=DEF_HELDOUT_EVERY,
+                    help="print STAGE-1 held-out TinyStories ppl every N steps (overfit probe; "
+                         "default %d; 0=off)" % DEF_HELDOUT_EVERY)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--corpus", type=str, default="tinystories")
     ap.add_argument("--out", type=str, default=str(RAW / "_genseq_C2_scaleup_30M.json"),
@@ -483,11 +518,14 @@ def main():
 
     # corpus (cached, offline-safe; degrades to tinyshakespeare with degraded=True noted).
     cinfo = fetch_corpus(name=a.corpus, max_bytes=8_000_000)
-    train_text, _ = split_corpus(cinfo["text"], heldout_frac=0.1)
+    train_text, heldout_text = split_corpus(cinfo["text"], heldout_frac=0.1)
     corpus_file = str(run_dir / "train_corpus.txt")
     Path(corpus_file).write_text(train_text, encoding="utf-8")
-    print(f"[scaleup] corpus={cinfo['corpus_used']} degraded={cinfo['degraded']} train_chars={len(train_text)}",
-          flush=True)
+    # the held-out tail (same split the C2 stage scores on) -> the in-loop overfit probe.
+    heldout_file = str(run_dir / "heldout_corpus.txt")
+    Path(heldout_file).write_text(heldout_text, encoding="utf-8")
+    print(f"[scaleup] corpus={cinfo['corpus_used']} degraded={cinfo['degraded']} "
+          f"train_chars={len(train_text)} heldout_chars={len(heldout_text)}", flush=True)
 
     # the EXACT param count (printed up front regardless of mode).
     formula_params = tinygpt_param_count(a.vocab_size, a.d_model, a.n_layers, a.block_size)
@@ -500,8 +538,10 @@ def main():
         full_cmd = (f"SIM_BACKEND=cupy python -m research.runners._genseq_C2_scaleup_runner "
                     f"--d-model {a.d_model} --n-layers {a.n_layers} --n-heads {a.n_heads} "
                     f"--steps {a.steps} --batch-size {a.batch_size} --ft-batch {a.ft_batch} "
+                    f"--lr {a.lr} --dropout {a.dropout} --weight-decay {a.weight_decay} "
+                    f"--warmup-steps {a.warmup_steps} --heldout-every {a.heldout_every} "
                     f"--out {a.out}")
-        print(f"\n[scaleup] FULL ~4h RUN (controller launches separately):\n  {full_cmd}", flush=True)
+        print(f"\n[scaleup] FULL RUN (controller launches separately):\n  {full_cmd}", flush=True)
         return 0
 
     # ---- FULL run: the 3 stages end-to-end (each resumable via its marker) ----
@@ -509,7 +549,9 @@ def main():
     ckpt_path, bpe_path, s1 = stage1_train(
         run_dir, seed=a.seed, d_model=a.d_model, n_layer=a.n_layers, n_head=a.n_heads,
         vocab_size=a.vocab_size, block_size=a.block_size, steps=a.steps, batch_size=a.batch_size,
-        lr=a.lr, device=device, corpus_path=corpus_file)
+        lr=a.lr, device=device, corpus_path=corpus_file, dropout=a.dropout,
+        weight_decay=a.weight_decay, warmup_steps=a.warmup_steps,
+        heldout_path=heldout_file, heldout_every=a.heldout_every)
     if s1.get("interrupted"):
         print("[scaleup] stage 1 interrupted -> exiting (re-run to resume).", flush=True)
         return 0
