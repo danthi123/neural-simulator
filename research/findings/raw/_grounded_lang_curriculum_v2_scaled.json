@@ -1,0 +1,62 @@
+{
+  "domain": "a richer micro-world (animals / food / nature / objects / people / actions) — the SCALED grounded-language curriculum (~67 facts, ~2.2x the P2 de-risk's 30), Claude-authored OFFLINE textbook-author. All facts polarity=AFFIRM.",
+  "facts": [
+    ["dog","eat","meat"], ["cat","eat","fish"], ["bird","eat","seed"], ["cow","eat","grass"], ["fox","eat","rabbit"],
+    ["horse","eat","hay"], ["sheep","eat","clover"], ["pig","eat","corn"], ["duck","eat","bread"], ["frog","eat","fly"],
+    ["owl","eat","mouse"], ["wolf","eat","deer"], ["deer","eat","leaf"], ["ant","eat","sugar"], ["hen","eat","grain"],
+    ["dog","chase","cat"], ["cat","chase","mouse"], ["fox","chase","rabbit"], ["wolf","chase","deer"], ["owl","chase","mouse"],
+    ["dog","like","bone"], ["cat","like","milk"], ["bird","like","worm"], ["cow","like","hay"], ["horse","like","apple"],
+    ["pig","like","mud"], ["owl","like","night"], ["wolf","like","pack"],
+    ["sun","give","light"], ["rain","give","water"], ["tree","give","shade"], ["wind","give","breeze"], ["fire","give","heat"],
+    ["river","give","fish"], ["cloud","give","rain"],
+    ["bee","make","honey"], ["hen","make","egg"], ["spider","make","web"], ["cow","make","milk"], ["sheep","make","wool"],
+    ["tree","make","fruit"],
+    ["fish","live","water"], ["bird","live","tree"], ["mole","live","ground"], ["bear","live","cave"], ["fox","live","den"],
+    ["ant","live","hill"], ["frog","live","pond"]
+  ],
+  "attribute_facts": [
+    ["apple","red"], ["banana","yellow"], ["grass","green"], ["sky","blue"], ["dog","big"], ["mouse","small"],
+    ["fox","clever"], ["cow","slow"], ["sun","hot"], ["snow","cold"], ["night","dark"], ["lion","brave"],
+    ["owl","wise"], ["ant","tiny"], ["whale","huge"], ["bear","strong"]
+  ],
+  "clause_facts": [
+    ["dog","know",["cat","chase","mouse"]],
+    ["boy","see",["wolf","chase","deer"]],
+    ["man","think",["sun","give","light"]]
+  ],
+  "chains": [
+    {"desc":"2-hop chase","facts":[["dog","chase","cat"],["cat","chase","mouse"]],"query":["dog","chase"],"expect_2hop":"mouse"},
+    {"desc":"2-hop chase->eat","facts":[["wolf","chase","deer"],["deer","eat","leaf"]],"query":["wolf","chase"],"expect_2hop":"deer"}
+  ],
+  "queries_recall": [
+    {"type":"patient","cue":["dog","eat"],"expect":"meat"},
+    {"type":"patient","cue":["horse","eat"],"expect":"hay"},
+    {"type":"patient","cue":["wolf","eat"],"expect":"deer"},
+    {"type":"patient","cue":["owl","eat"],"expect":"mouse"},
+    {"type":"patient","cue":["frog","eat"],"expect":"fly"},
+    {"type":"patient","cue":["fox","chase"],"expect":"rabbit"},
+    {"type":"patient","cue":["wolf","chase"],"expect":"deer"},
+    {"type":"patient","cue":["horse","like"],"expect":"apple"},
+    {"type":"patient","cue":["bee","make"],"expect":"honey"},
+    {"type":"patient","cue":["sheep","make"],"expect":"wool"},
+    {"type":"patient","cue":["river","give"],"expect":"fish"},
+    {"type":"patient","cue":["fox","live"],"expect":"den"},
+    {"type":"patient","cue":["frog","live"],"expect":"pond"},
+    {"type":"agent","cue":["eat","meat"],"expect":"dog"},
+    {"type":"agent","cue":["make","honey"],"expect":"bee"},
+    {"type":"yesno","cue":["dog","eat","meat"],"expect":"yes"},
+    {"type":"yesno","cue":["wolf","chase","deer"],"expect":"yes"},
+    {"type":"yesno","cue":["cat","eat","grass"],"expect":"no_or_unknown"}
+  ],
+  "queries_moat": [
+    {"type":"patient","cue":["dragon","eat"],"expect":null,"note":"dragon never taught"},
+    {"type":"patient","cue":["tiger","chase"],"expect":null,"note":"tiger never taught"},
+    {"type":"patient","cue":["whale","eat"],"expect":null,"note":"whale only has an attribute, no eat-fact"},
+    {"type":"patient","cue":["lion","chase"],"expect":null,"note":"lion only has an attribute, no chase-fact"},
+    {"type":"patient","cue":["cat","give"],"expect":null,"note":"cat has no give-fact"},
+    {"type":"patient","cue":["dog","make"],"expect":null,"note":"dog has no make-fact"},
+    {"type":"agent","cue":["fly","plane"],"expect":null,"note":"never taught"},
+    {"type":"yesno","cue":["apple","is","blue"],"expect":"no_or_unknown","note":"apple is red"}
+  ],
+  "notes": "SCALED grounded-language demo: store all facts (polarity=AFFIRM) via BrainConversationalAgent; the END-TO-END loop (gate -> real spiking-Qwen render -> verify) on queries_recall (a subset for grounded-render) + queries_moat (abstain) + drift adversarial. Use the SUBJECT-FIRST constrain prompt by default (fixes the role-inversion) + reject->regenerate recovery. >=3 seeds. GO = grounded-render high + moat 0-false-accept + drift caught, robust multi-seed."
+}
