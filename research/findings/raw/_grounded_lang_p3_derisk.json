@@ -1,0 +1,2444 @@
+{
+  "curriculum": "research\\findings\\raw\\_grounded_lang_curriculum_p2.json",
+  "backend": "numpy",
+  "vocab_size": 77,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_seeds_ok": 3,
+  "architecture": "GATE (composer exact-match recall / abstain) -> CONSTRAIN (template-stub faculty renders the gated SVO into fluent surface form, content-locked) -> VERIFY (re-parse the asserted SVO with the same BridgeParser; reject on mismatch with the stored fact)",
+  "layer_mapping": {
+    "(a) grounded": "tests CONSTRAIN -- the rendered sentence re-parses back to the taught fact",
+    "(b) untaught": "tests GATE/moat -- the gate gives the faculty nothing -> no sentence",
+    "(c) injected-confab": "tests VERIFY -- a deliberately-wrong faculty SVO is caught by the re-parse"
+  },
+  "faculty": "TEMPLATE-STUB (standing in for the real P1 LLM -- NO model download). Emits a fluent surface form + the canonical content SVO it asserts; the real LLM's asserted SVO is recovered by re-parsing its prose.",
+  "all_grounded_correct": true,
+  "min_grounded_rate": 1.0,
+  "all_moat_held": true,
+  "min_untaught_abstain_rate": 1.0,
+  "all_confab_caught": true,
+  "min_confab_caught_rate": 1.0,
+  "anticheat_passive_roundtrip_all_ok": true,
+  "anticheat_swapped_role_all_caught": true,
+  "anticheat_note": "VERIFY is genuinely role-assignment (not an echo): passive-frame TRUE fact accepted via reorder; active role-swap caught. Both all-or-nothing across seeds.",
+  "GO": true,
+  "verdict": "GO -- grounded->fluent-correct AND untaught->abstain (moat held) AND injected-confab->caught-by-verify, >=3 seeds; the GATE->CONSTRAIN->VERIFY grounding mechanism PRESERVES the no-confab moat while a faculty supplies fluency. The architecture is sound; the real P1 faculty (a converted SLM) later swaps in for the stub.",
+  "elapsed_seconds": 27.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "taught": {
+        "facts": 22,
+        "attribute_facts": 8,
+        "clause_facts": 2,
+        "chain_facts": 2
+      },
+      "grounded_correct": 9,
+      "grounded_total": 9,
+      "grounded_rate": 1.0,
+      "untaught_abstain": 5,
+      "untaught_total": 5,
+      "untaught_abstain_rate": 1.0,
+      "confab_caught": 8,
+      "confab_total": 8,
+      "confab_caught_rate": 1.0,
+      "anticheat_passive_roundtrip_ok": 4,
+      "anticheat_passive_roundtrip_total": 4,
+      "anticheat_swapped_role_caught": 4,
+      "anticheat_swapped_role_total": 4,
+      "grounded_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "gate_truth": null,
+          "surface": "The dog eats meat.",
+          "asserted_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verify_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "meat",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "gate_truth": null,
+          "surface": "The cat eats fish.",
+          "asserted_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "verify_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "fish",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "gate_truth": null,
+          "surface": "The bird eats seed.",
+          "asserted_svo": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "verify_svo": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "seed",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "gate_truth": null,
+          "surface": "The fox chases rabbit.",
+          "asserted_svo": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "verify_svo": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "rabbit",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "eat",
+            "meat"
+          ],
+          "type": "agent",
+          "gate_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "gate_truth": null,
+          "surface": "The dog eats meat.",
+          "asserted_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verify_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "dog",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "gate_truth": null,
+          "surface": "The bee makes honey.",
+          "asserted_svo": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "verify_svo": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "honey",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "fish",
+            "live"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "fish",
+            "live",
+            "water"
+          ],
+          "gate_truth": null,
+          "surface": "The fish lives in water.",
+          "asserted_svo": [
+            "fish",
+            "live",
+            "water"
+          ],
+          "verify_svo": [
+            "fish",
+            "live",
+            "water"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "water",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "type": "yesno",
+          "gate_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "gate_truth": "yes",
+          "surface": "Yes, the dog eats meat.",
+          "asserted_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verify_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "yes",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat",
+            "grass"
+          ],
+          "type": "yesno",
+          "gate_svo": null,
+          "gate_truth": "unknown",
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "expect": "no_or_unknown",
+          "is_negative_probe": true,
+          "ok": true
+        }
+      ],
+      "untaught_detail": [
+        {
+          "cue": [
+            "lion",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": null,
+          "gate_truth": null,
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "lion never taught",
+          "held": true
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": null,
+          "gate_truth": null,
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "whale never taught",
+          "held": true
+        },
+        {
+          "cue": [
+            "dog",
+            "drink"
+          ],
+          "type": "patient",
+          "gate_svo": null,
+          "gate_truth": null,
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "drink-action never taught for dog",
+          "held": true
+        },
+        {
+          "cue": [
+            "fly",
+            "plane"
+          ],
+          "type": "agent",
+          "gate_svo": null,
+          "gate_truth": null,
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "never taught",
+          "held": true
+        },
+        {
+          "cue": [
+            "apple",
+            "is",
+            "blue"
+          ],
+          "type": "yesno",
+          "gate_svo": null,
+          "gate_truth": "unknown",
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "apple is red, not blue",
+          "held": true
+        }
+      ],
+      "confab_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "gate_truth": null,
+          "surface": "The dog eats bone.",
+          "asserted_svo": [
+            "dog",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "dog",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "meat",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "gate_truth": null,
+          "surface": "The cat eats bone.",
+          "asserted_svo": [
+            "cat",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "cat",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "fish",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "gate_truth": null,
+          "surface": "The bird eats bone.",
+          "asserted_svo": [
+            "bird",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "bird",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "seed",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "cow",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "cow",
+            "eat",
+            "grass"
+          ],
+          "gate_truth": null,
+          "surface": "The cow eats bone.",
+          "asserted_svo": [
+            "cow",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "cow",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "grass",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "fox",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "fox",
+            "eat",
+            "rabbit"
+          ],
+          "gate_truth": null,
+          "surface": "The fox eats bone.",
+          "asserted_svo": [
+            "fox",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "fox",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "rabbit",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "dog",
+            "chase"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "gate_truth": null,
+          "surface": "The dog chases bone.",
+          "asserted_svo": [
+            "dog",
+            "chase",
+            "bone"
+          ],
+          "verify_svo": [
+            "dog",
+            "chase",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "cat",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "cat",
+            "chase"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "cat",
+            "chase",
+            "mouse"
+          ],
+          "gate_truth": null,
+          "surface": "The cat chases bone.",
+          "asserted_svo": [
+            "cat",
+            "chase",
+            "bone"
+          ],
+          "verify_svo": [
+            "cat",
+            "chase",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "mouse",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "gate_truth": null,
+          "surface": "The fox chases bone.",
+          "asserted_svo": [
+            "fox",
+            "chase",
+            "bone"
+          ],
+          "verify_svo": [
+            "fox",
+            "chase",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "rabbit",
+          "confab_patient": "bone",
+          "caught": true
+        }
+      ],
+      "anticheat_detail": {
+        "passive_roundtrip": [
+          {
+            "fact": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "passive_surface_tokens": [
+              "meat",
+              "eat",
+              "dog"
+            ],
+            "reparsed_svo": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "gate_svo": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "accepted": true
+          },
+          {
+            "fact": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "passive_surface_tokens": [
+              "fish",
+              "eat",
+              "cat"
+            ],
+            "reparsed_svo": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "gate_svo": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "accepted": true
+          },
+          {
+            "fact": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "passive_surface_tokens": [
+              "seed",
+              "eat",
+              "bird"
+            ],
+            "reparsed_svo": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "gate_svo": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "accepted": true
+          },
+          {
+            "fact": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "passive_surface_tokens": [
+              "grass",
+              "eat",
+              "cow"
+            ],
+            "reparsed_svo": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "gate_svo": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "accepted": true
+          }
+        ],
+        "swapped_role_catch": [
+          {
+            "fact": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "swapped_active_tokens": [
+              "meat",
+              "eat",
+              "dog"
+            ],
+            "reparsed_svo": [
+              "meat",
+              "eat",
+              "dog"
+            ],
+            "gate_svo": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "caught": true
+          },
+          {
+            "fact": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "swapped_active_tokens": [
+              "fish",
+              "eat",
+              "cat"
+            ],
+            "reparsed_svo": [
+              "fish",
+              "eat",
+              "cat"
+            ],
+            "gate_svo": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "caught": true
+          },
+          {
+            "fact": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "swapped_active_tokens": [
+              "seed",
+              "eat",
+              "bird"
+            ],
+            "reparsed_svo": [
+              "seed",
+              "eat",
+              "bird"
+            ],
+            "gate_svo": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "caught": true
+          },
+          {
+            "fact": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "swapped_active_tokens": [
+              "grass",
+              "eat",
+              "cow"
+            ],
+            "reparsed_svo": [
+              "grass",
+              "eat",
+              "cow"
+            ],
+            "gate_svo": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "caught": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 43,
+      "taught": {
+        "facts": 22,
+        "attribute_facts": 8,
+        "clause_facts": 2,
+        "chain_facts": 2
+      },
+      "grounded_correct": 9,
+      "grounded_total": 9,
+      "grounded_rate": 1.0,
+      "untaught_abstain": 5,
+      "untaught_total": 5,
+      "untaught_abstain_rate": 1.0,
+      "confab_caught": 8,
+      "confab_total": 8,
+      "confab_caught_rate": 1.0,
+      "anticheat_passive_roundtrip_ok": 4,
+      "anticheat_passive_roundtrip_total": 4,
+      "anticheat_swapped_role_caught": 4,
+      "anticheat_swapped_role_total": 4,
+      "grounded_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "gate_truth": null,
+          "surface": "The dog eats meat.",
+          "asserted_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verify_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "meat",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "gate_truth": null,
+          "surface": "The cat eats fish.",
+          "asserted_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "verify_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "fish",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "gate_truth": null,
+          "surface": "The bird eats seed.",
+          "asserted_svo": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "verify_svo": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "seed",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "gate_truth": null,
+          "surface": "The fox chases rabbit.",
+          "asserted_svo": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "verify_svo": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "rabbit",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "eat",
+            "meat"
+          ],
+          "type": "agent",
+          "gate_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "gate_truth": null,
+          "surface": "The dog eats meat.",
+          "asserted_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verify_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "dog",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "gate_truth": null,
+          "surface": "The bee makes honey.",
+          "asserted_svo": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "verify_svo": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "honey",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "fish",
+            "live"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "fish",
+            "live",
+            "water"
+          ],
+          "gate_truth": null,
+          "surface": "The fish lives in water.",
+          "asserted_svo": [
+            "fish",
+            "live",
+            "water"
+          ],
+          "verify_svo": [
+            "fish",
+            "live",
+            "water"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "water",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "type": "yesno",
+          "gate_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "gate_truth": "yes",
+          "surface": "Yes, the dog eats meat.",
+          "asserted_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verify_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "yes",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat",
+            "grass"
+          ],
+          "type": "yesno",
+          "gate_svo": null,
+          "gate_truth": "unknown",
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "expect": "no_or_unknown",
+          "is_negative_probe": true,
+          "ok": true
+        }
+      ],
+      "untaught_detail": [
+        {
+          "cue": [
+            "lion",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": null,
+          "gate_truth": null,
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "lion never taught",
+          "held": true
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": null,
+          "gate_truth": null,
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "whale never taught",
+          "held": true
+        },
+        {
+          "cue": [
+            "dog",
+            "drink"
+          ],
+          "type": "patient",
+          "gate_svo": null,
+          "gate_truth": null,
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "drink-action never taught for dog",
+          "held": true
+        },
+        {
+          "cue": [
+            "fly",
+            "plane"
+          ],
+          "type": "agent",
+          "gate_svo": null,
+          "gate_truth": null,
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "never taught",
+          "held": true
+        },
+        {
+          "cue": [
+            "apple",
+            "is",
+            "blue"
+          ],
+          "type": "yesno",
+          "gate_svo": null,
+          "gate_truth": "unknown",
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "apple is red, not blue",
+          "held": true
+        }
+      ],
+      "confab_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "gate_truth": null,
+          "surface": "The dog eats bone.",
+          "asserted_svo": [
+            "dog",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "dog",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "meat",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "gate_truth": null,
+          "surface": "The cat eats bone.",
+          "asserted_svo": [
+            "cat",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "cat",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "fish",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "gate_truth": null,
+          "surface": "The bird eats bone.",
+          "asserted_svo": [
+            "bird",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "bird",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "seed",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "cow",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "cow",
+            "eat",
+            "grass"
+          ],
+          "gate_truth": null,
+          "surface": "The cow eats bone.",
+          "asserted_svo": [
+            "cow",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "cow",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "grass",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "fox",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "fox",
+            "eat",
+            "rabbit"
+          ],
+          "gate_truth": null,
+          "surface": "The fox eats bone.",
+          "asserted_svo": [
+            "fox",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "fox",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "rabbit",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "dog",
+            "chase"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "gate_truth": null,
+          "surface": "The dog chases bone.",
+          "asserted_svo": [
+            "dog",
+            "chase",
+            "bone"
+          ],
+          "verify_svo": [
+            "dog",
+            "chase",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "cat",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "cat",
+            "chase"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "cat",
+            "chase",
+            "mouse"
+          ],
+          "gate_truth": null,
+          "surface": "The cat chases bone.",
+          "asserted_svo": [
+            "cat",
+            "chase",
+            "bone"
+          ],
+          "verify_svo": [
+            "cat",
+            "chase",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "mouse",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "gate_truth": null,
+          "surface": "The fox chases bone.",
+          "asserted_svo": [
+            "fox",
+            "chase",
+            "bone"
+          ],
+          "verify_svo": [
+            "fox",
+            "chase",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "rabbit",
+          "confab_patient": "bone",
+          "caught": true
+        }
+      ],
+      "anticheat_detail": {
+        "passive_roundtrip": [
+          {
+            "fact": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "passive_surface_tokens": [
+              "meat",
+              "eat",
+              "dog"
+            ],
+            "reparsed_svo": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "gate_svo": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "accepted": true
+          },
+          {
+            "fact": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "passive_surface_tokens": [
+              "fish",
+              "eat",
+              "cat"
+            ],
+            "reparsed_svo": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "gate_svo": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "accepted": true
+          },
+          {
+            "fact": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "passive_surface_tokens": [
+              "seed",
+              "eat",
+              "bird"
+            ],
+            "reparsed_svo": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "gate_svo": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "accepted": true
+          },
+          {
+            "fact": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "passive_surface_tokens": [
+              "grass",
+              "eat",
+              "cow"
+            ],
+            "reparsed_svo": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "gate_svo": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "accepted": true
+          }
+        ],
+        "swapped_role_catch": [
+          {
+            "fact": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "swapped_active_tokens": [
+              "meat",
+              "eat",
+              "dog"
+            ],
+            "reparsed_svo": [
+              "meat",
+              "eat",
+              "dog"
+            ],
+            "gate_svo": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "caught": true
+          },
+          {
+            "fact": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "swapped_active_tokens": [
+              "fish",
+              "eat",
+              "cat"
+            ],
+            "reparsed_svo": [
+              "fish",
+              "eat",
+              "cat"
+            ],
+            "gate_svo": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "caught": true
+          },
+          {
+            "fact": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "swapped_active_tokens": [
+              "seed",
+              "eat",
+              "bird"
+            ],
+            "reparsed_svo": [
+              "seed",
+              "eat",
+              "bird"
+            ],
+            "gate_svo": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "caught": true
+          },
+          {
+            "fact": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "swapped_active_tokens": [
+              "grass",
+              "eat",
+              "cow"
+            ],
+            "reparsed_svo": [
+              "grass",
+              "eat",
+              "cow"
+            ],
+            "gate_svo": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "caught": true
+          }
+        ]
+      }
+    },
+    {
+      "seed": 44,
+      "taught": {
+        "facts": 22,
+        "attribute_facts": 8,
+        "clause_facts": 2,
+        "chain_facts": 2
+      },
+      "grounded_correct": 9,
+      "grounded_total": 9,
+      "grounded_rate": 1.0,
+      "untaught_abstain": 5,
+      "untaught_total": 5,
+      "untaught_abstain_rate": 1.0,
+      "confab_caught": 8,
+      "confab_total": 8,
+      "confab_caught_rate": 1.0,
+      "anticheat_passive_roundtrip_ok": 4,
+      "anticheat_passive_roundtrip_total": 4,
+      "anticheat_swapped_role_caught": 4,
+      "anticheat_swapped_role_total": 4,
+      "grounded_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "gate_truth": null,
+          "surface": "The dog eats meat.",
+          "asserted_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verify_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "meat",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "gate_truth": null,
+          "surface": "The cat eats fish.",
+          "asserted_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "verify_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "fish",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "gate_truth": null,
+          "surface": "The bird eats seed.",
+          "asserted_svo": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "verify_svo": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "seed",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "gate_truth": null,
+          "surface": "The fox chases rabbit.",
+          "asserted_svo": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "verify_svo": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "rabbit",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "eat",
+            "meat"
+          ],
+          "type": "agent",
+          "gate_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "gate_truth": null,
+          "surface": "The dog eats meat.",
+          "asserted_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verify_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "dog",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "gate_truth": null,
+          "surface": "The bee makes honey.",
+          "asserted_svo": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "verify_svo": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "honey",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "fish",
+            "live"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "fish",
+            "live",
+            "water"
+          ],
+          "gate_truth": null,
+          "surface": "The fish lives in water.",
+          "asserted_svo": [
+            "fish",
+            "live",
+            "water"
+          ],
+          "verify_svo": [
+            "fish",
+            "live",
+            "water"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "water",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "type": "yesno",
+          "gate_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "gate_truth": "yes",
+          "surface": "Yes, the dog eats meat.",
+          "asserted_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verify_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "verified": true,
+          "emitted": true,
+          "abstained": false,
+          "expect": "yes",
+          "is_negative_probe": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat",
+            "grass"
+          ],
+          "type": "yesno",
+          "gate_svo": null,
+          "gate_truth": "unknown",
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "expect": "no_or_unknown",
+          "is_negative_probe": true,
+          "ok": true
+        }
+      ],
+      "untaught_detail": [
+        {
+          "cue": [
+            "lion",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": null,
+          "gate_truth": null,
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "lion never taught",
+          "held": true
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": null,
+          "gate_truth": null,
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "whale never taught",
+          "held": true
+        },
+        {
+          "cue": [
+            "dog",
+            "drink"
+          ],
+          "type": "patient",
+          "gate_svo": null,
+          "gate_truth": null,
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "drink-action never taught for dog",
+          "held": true
+        },
+        {
+          "cue": [
+            "fly",
+            "plane"
+          ],
+          "type": "agent",
+          "gate_svo": null,
+          "gate_truth": null,
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "never taught",
+          "held": true
+        },
+        {
+          "cue": [
+            "apple",
+            "is",
+            "blue"
+          ],
+          "type": "yesno",
+          "gate_svo": null,
+          "gate_truth": "unknown",
+          "surface": null,
+          "asserted_svo": null,
+          "verify_svo": null,
+          "verified": null,
+          "emitted": false,
+          "abstained": true,
+          "note": "apple is red, not blue",
+          "held": true
+        }
+      ],
+      "confab_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "gate_truth": null,
+          "surface": "The dog eats bone.",
+          "asserted_svo": [
+            "dog",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "dog",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "meat",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "gate_truth": null,
+          "surface": "The cat eats bone.",
+          "asserted_svo": [
+            "cat",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "cat",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "fish",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "gate_truth": null,
+          "surface": "The bird eats bone.",
+          "asserted_svo": [
+            "bird",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "bird",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "seed",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "cow",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "cow",
+            "eat",
+            "grass"
+          ],
+          "gate_truth": null,
+          "surface": "The cow eats bone.",
+          "asserted_svo": [
+            "cow",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "cow",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "grass",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "fox",
+            "eat"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "fox",
+            "eat",
+            "rabbit"
+          ],
+          "gate_truth": null,
+          "surface": "The fox eats bone.",
+          "asserted_svo": [
+            "fox",
+            "eat",
+            "bone"
+          ],
+          "verify_svo": [
+            "fox",
+            "eat",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "rabbit",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "dog",
+            "chase"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          "gate_truth": null,
+          "surface": "The dog chases bone.",
+          "asserted_svo": [
+            "dog",
+            "chase",
+            "bone"
+          ],
+          "verify_svo": [
+            "dog",
+            "chase",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "cat",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "cat",
+            "chase"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "cat",
+            "chase",
+            "mouse"
+          ],
+          "gate_truth": null,
+          "surface": "The cat chases bone.",
+          "asserted_svo": [
+            "cat",
+            "chase",
+            "bone"
+          ],
+          "verify_svo": [
+            "cat",
+            "chase",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "mouse",
+          "confab_patient": "bone",
+          "caught": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "type": "patient",
+          "gate_svo": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "gate_truth": null,
+          "surface": "The fox chases bone.",
+          "asserted_svo": [
+            "fox",
+            "chase",
+            "bone"
+          ],
+          "verify_svo": [
+            "fox",
+            "chase",
+            "bone"
+          ],
+          "verified": false,
+          "emitted": false,
+          "abstained": false,
+          "true_patient": "rabbit",
+          "confab_patient": "bone",
+          "caught": true
+        }
+      ],
+      "anticheat_detail": {
+        "passive_roundtrip": [
+          {
+            "fact": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "passive_surface_tokens": [
+              "meat",
+              "eat",
+              "dog"
+            ],
+            "reparsed_svo": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "gate_svo": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "accepted": true
+          },
+          {
+            "fact": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "passive_surface_tokens": [
+              "fish",
+              "eat",
+              "cat"
+            ],
+            "reparsed_svo": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "gate_svo": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "accepted": true
+          },
+          {
+            "fact": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "passive_surface_tokens": [
+              "seed",
+              "eat",
+              "bird"
+            ],
+            "reparsed_svo": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "gate_svo": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "accepted": true
+          },
+          {
+            "fact": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "passive_surface_tokens": [
+              "grass",
+              "eat",
+              "cow"
+            ],
+            "reparsed_svo": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "gate_svo": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "accepted": true
+          }
+        ],
+        "swapped_role_catch": [
+          {
+            "fact": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "swapped_active_tokens": [
+              "meat",
+              "eat",
+              "dog"
+            ],
+            "reparsed_svo": [
+              "meat",
+              "eat",
+              "dog"
+            ],
+            "gate_svo": [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            "caught": true
+          },
+          {
+            "fact": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "swapped_active_tokens": [
+              "fish",
+              "eat",
+              "cat"
+            ],
+            "reparsed_svo": [
+              "fish",
+              "eat",
+              "cat"
+            ],
+            "gate_svo": [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            "caught": true
+          },
+          {
+            "fact": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "swapped_active_tokens": [
+              "seed",
+              "eat",
+              "bird"
+            ],
+            "reparsed_svo": [
+              "seed",
+              "eat",
+              "bird"
+            ],
+            "gate_svo": [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            "caught": true
+          },
+          {
+            "fact": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "swapped_active_tokens": [
+              "grass",
+              "eat",
+              "cow"
+            ],
+            "reparsed_svo": [
+              "grass",
+              "eat",
+              "cow"
+            ],
+            "gate_svo": [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            "caught": true
+          }
+        ]
+      }
+    }
+  ]
+}
