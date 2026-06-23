@@ -1,0 +1,288 @@
+{
+  "probe": "bridge_coresidence_perf_derisk_dense_matvec_lever",
+  "resolves": "scoping #6 (the PERF LEVER): profile the RF forward + test the dense-matvec & batch levers -> the projected tokens/sec. De-risk #3 demonstrated the full 494M Qwen runs on-bridge LOCAL + bit-exact but SLOW (0.786 tok/s prefill, 161 s/gen-token; CSR-gather/launch-bound). The Qwen layers are 100% DENSE -> the sparse CSR gather is the WRONG storage.",
+  "rf_operating_point": {
+    "period": 100000,
+    "nsteps": 8,
+    "lambda": 0.0,
+    "read": "Re(Z_out)/nsteps = a @ W (omega~0, decay=1 -> nsteps copies of W@a)"
+  },
+  "S_prefill_window": 32,
+  "n_layers": 24,
+  "qwen_layer_shapes": {
+    "q_proj": [
+      896,
+      896
+    ],
+    "k_proj": [
+      896,
+      128
+    ],
+    "v_proj": [
+      896,
+      128
+    ],
+    "o_proj": [
+      896,
+      896
+    ],
+    "gate_proj": [
+      896,
+      4864
+    ],
+    "up_proj": [
+      896,
+      4864
+    ],
+    "down_proj": [
+      4864,
+      896
+    ]
+  },
+  "lm_head_shape": [
+    896,
+    151936
+  ],
+  "profile": {
+    "per_linear_csr": {
+      "q_proj": {
+        "D_in": 896,
+        "D_out": 896,
+        "nnz": 802816,
+        "total_s": 0.1058,
+        "kick_s": 0.0095,
+        "resonate_s": 0.0944,
+        "read_s": 0.0019,
+        "per_row_ms": 3.306
+      },
+      "k_proj": {
+        "D_in": 896,
+        "D_out": 128,
+        "nnz": 114688,
+        "total_s": 0.0902,
+        "kick_s": 0.0081,
+        "resonate_s": 0.0804,
+        "read_s": 0.0017,
+        "per_row_ms": 2.82
+      },
+      "v_proj": {
+        "D_in": 896,
+        "D_out": 128,
+        "nnz": 114688,
+        "total_s": 0.0858,
+        "kick_s": 0.0084,
+        "resonate_s": 0.0754,
+        "read_s": 0.0019,
+        "per_row_ms": 2.68
+      },
+      "o_proj": {
+        "D_in": 896,
+        "D_out": 896,
+        "nnz": 802816,
+        "total_s": 0.0962,
+        "kick_s": 0.0081,
+        "resonate_s": 0.0863,
+        "read_s": 0.0018,
+        "per_row_ms": 3.006
+      },
+      "gate_proj": {
+        "D_in": 896,
+        "D_out": 4864,
+        "nnz": 4358144,
+        "total_s": 0.1224,
+        "kick_s": 0.0097,
+        "resonate_s": 0.1105,
+        "read_s": 0.0022,
+        "per_row_ms": 3.823
+      },
+      "up_proj": {
+        "D_in": 896,
+        "D_out": 4864,
+        "nnz": 4358144,
+        "total_s": 0.1198,
+        "kick_s": 0.0092,
+        "resonate_s": 0.1084,
+        "read_s": 0.0022,
+        "per_row_ms": 3.745
+      },
+      "down_proj": {
+        "D_in": 4864,
+        "D_out": 896,
+        "nnz": 4358144,
+        "total_s": 0.4667,
+        "kick_s": 0.0117,
+        "resonate_s": 0.4521,
+        "read_s": 0.0028,
+        "per_row_ms": 14.583
+      }
+    },
+    "one_layer_7linears_csr_s": 1.0869,
+    "gate_proj_resonate_ms_by_nsteps_megakernel": {
+      "1": 0.5162,
+      "2": 0.9597,
+      "4": 1.8488,
+      "8": 3.5033,
+      "16": 6.8727
+    },
+    "resonate_fit_ms_per_step": 0.4226,
+    "resonate_fit_fixed_overhead_ms": 0.1203
+  },
+  "dense_vs_csr": {
+    "q_proj": {
+      "D_in": 896,
+      "D_out": 896,
+      "nnz": 802816,
+      "csr_rf_per_row_s": 0.09771,
+      "dense_per_row_s": 0.00075,
+      "dense_batched_gemm_s": 2.32e-05,
+      "speedup_dense_batched_vs_csr": 4216.8,
+      "speedup_dense_batched_vs_csr_timer_floored": false,
+      "speedup_dense_perrow_vs_csr": 130.3,
+      "max_err_csr_rf_vs_a_at_W_f64": 3.361607991969606e-07,
+      "max_err_dense_batch_f32_vs_a_at_W_f64": 5.545318781940978e-07,
+      "max_err_dense_batch_f64_vs_a_at_W_f64": 5.329070518200751e-15,
+      "max_err_csr_rf_vs_dense_batch_f32": 7.152557373046875e-07
+    },
+    "k_proj": {
+      "D_in": 896,
+      "D_out": 128,
+      "nnz": 114688,
+      "csr_rf_per_row_s": 0.08276,
+      "dense_per_row_s": 0.000539,
+      "dense_batched_gemm_s": 1.69e-05,
+      "speedup_dense_batched_vs_csr": 4886.4,
+      "speedup_dense_batched_vs_csr_timer_floored": false,
+      "speedup_dense_perrow_vs_csr": 153.5,
+      "max_err_csr_rf_vs_a_at_W_f64": 2.0426534574902178e-07,
+      "max_err_dense_batch_f32_vs_a_at_W_f64": 2.848481444051032e-07,
+      "max_err_dense_batch_f64_vs_a_at_W_f64": 8.881784197001252e-16,
+      "max_err_csr_rf_vs_dense_batch_f32": 3.5762786865234375e-07
+    },
+    "v_proj": {
+      "D_in": 896,
+      "D_out": 128,
+      "nnz": 114688,
+      "csr_rf_per_row_s": 0.08399,
+      "dense_per_row_s": 0.000699,
+      "dense_batched_gemm_s": 1.66e-05,
+      "speedup_dense_batched_vs_csr": 5062.9,
+      "speedup_dense_batched_vs_csr_timer_floored": false,
+      "speedup_dense_perrow_vs_csr": 120.2,
+      "max_err_csr_rf_vs_a_at_W_f64": 2.3421130079803731e-07,
+      "max_err_dense_batch_f32_vs_a_at_W_f64": 2.9492291075960964e-07,
+      "max_err_dense_batch_f64_vs_a_at_W_f64": 1.1379786002407855e-15,
+      "max_err_csr_rf_vs_dense_batch_f32": 3.5762786865234375e-07
+    },
+    "o_proj": {
+      "D_in": 896,
+      "D_out": 896,
+      "nnz": 802816,
+      "csr_rf_per_row_s": 0.09585,
+      "dense_per_row_s": 0.000657,
+      "dense_batched_gemm_s": 1.87e-05,
+      "speedup_dense_batched_vs_csr": 5131.4,
+      "speedup_dense_batched_vs_csr_timer_floored": false,
+      "speedup_dense_perrow_vs_csr": 145.9,
+      "max_err_csr_rf_vs_a_at_W_f64": 2.7089995224827135e-07,
+      "max_err_dense_batch_f32_vs_a_at_W_f64": 6.459250188051158e-07,
+      "max_err_dense_batch_f64_vs_a_at_W_f64": 3.9968028886505635e-15,
+      "max_err_csr_rf_vs_dense_batch_f32": 5.960464477539062e-07
+    },
+    "gate_proj": {
+      "D_in": 896,
+      "D_out": 4864,
+      "nnz": 4358144,
+      "csr_rf_per_row_s": 0.12174,
+      "dense_per_row_s": 0.000765,
+      "dense_batched_gemm_s": 3.35e-05,
+      "speedup_dense_batched_vs_csr": 3635.0,
+      "speedup_dense_batched_vs_csr_timer_floored": false,
+      "speedup_dense_perrow_vs_csr": 159.2,
+      "max_err_csr_rf_vs_a_at_W_f64": 3.003305879545337e-07,
+      "max_err_dense_batch_f32_vs_a_at_W_f64": 9.769050315355798e-07,
+      "max_err_dense_batch_f64_vs_a_at_W_f64": 3.1086244689504383e-15,
+      "max_err_csr_rf_vs_dense_batch_f32": 9.5367431640625e-07
+    },
+    "up_proj": {
+      "D_in": 896,
+      "D_out": 4864,
+      "nnz": 4358144,
+      "csr_rf_per_row_s": 0.125,
+      "dense_per_row_s": 0.000799,
+      "dense_batched_gemm_s": 3.36e-05,
+      "speedup_dense_batched_vs_csr": 3715.8,
+      "speedup_dense_batched_vs_csr_timer_floored": false,
+      "speedup_dense_perrow_vs_csr": 156.4,
+      "max_err_csr_rf_vs_a_at_W_f64": 2.892246595553871e-07,
+      "max_err_dense_batch_f32_vs_a_at_W_f64": 9.447350388658293e-07,
+      "max_err_dense_batch_f64_vs_a_at_W_f64": 2.886579864025407e-15,
+      "max_err_csr_rf_vs_dense_batch_f32": 9.5367431640625e-07
+    },
+    "down_proj": {
+      "D_in": 4864,
+      "D_out": 896,
+      "nnz": 4358144,
+      "csr_rf_per_row_s": 0.47321,
+      "dense_per_row_s": 0.000792,
+      "dense_batched_gemm_s": 3.6e-05,
+      "speedup_dense_batched_vs_csr": 13161.9,
+      "speedup_dense_batched_vs_csr_timer_floored": false,
+      "speedup_dense_perrow_vs_csr": 597.1,
+      "max_err_csr_rf_vs_a_at_W_f64": 2.5518383361955443e-07,
+      "max_err_dense_batch_f32_vs_a_at_W_f64": 8.96316611931347e-07,
+      "max_err_dense_batch_f64_vs_a_at_W_f64": 2.4424906541753444e-15,
+      "max_err_csr_rf_vs_dense_batch_f32": 8.642673492431641e-07
+    },
+    "lm_head": {
+      "D_in": 896,
+      "D_out": 151936,
+      "nnz": 136134656,
+      "csr_rf_per_row_s": 7.98306,
+      "dense_per_row_s": 0.019604,
+      "dense_batched_gemm_s": 0.0008942,
+      "speedup_dense_batched_vs_csr": 8927.7,
+      "speedup_dense_batched_vs_csr_timer_floored": false,
+      "speedup_dense_perrow_vs_csr": 407.2,
+      "max_err_csr_rf_vs_a_at_W_f64": 3.604399214651721e-07,
+      "max_err_dense_batch_f32_vs_a_at_W_f64": 3.2764836888077298e-06,
+      "max_err_dense_batch_f64_vs_a_at_W_f64": 7.549516567451064e-15,
+      "max_err_csr_rf_vs_dense_batch_f32": 3.2186508178710938e-06
+    }
+  },
+  "extrapolation": {
+    "S_prefill": 32,
+    "dense_prefill_full_forward_s": 0.00471,
+    "dense_prefill_tok_per_sec_matvec_only": 6793.2,
+    "dense_generation_one_token_s": 0.003006,
+    "dense_generation_tok_per_sec_matvec_only": 332.7,
+    "csr_demonstrated_prefill_tok_per_sec": 0.786,
+    "csr_demonstrated_sec_per_gen_token": 161.0,
+    "prefill_speedup_x": 8642.7,
+    "gen_speedup_x": 53557.8,
+    "note": "matvec-only wall-clock (dense GEMM for all 169 linears). The graded nonlinearities + attention add host time on top; profile (1) shows their share. CSR baseline = the de-risk #3 DEMONSTRATED numbers."
+  },
+  "end_to_end_measured": {
+    "tokens_scored": 32,
+    "end_to_end_forward_seconds": 3.6473,
+    "end_to_end_tok_per_sec_dense": 8.8,
+    "dense_linears_seconds_incl_HtoD": 0.1076,
+    "rest_seconds_nonlin_attn_rope_host": 3.5397,
+    "linears_pct_of_forward": 3.0,
+    "rest_pct_of_forward": 97.0,
+    "residual_bottleneck": "nonlinearities_attention_host",
+    "csr_warm_tok_per_sec_derisk3": 0.786,
+    "end_to_end_speedup_x": 11.2,
+    "rmsnorm_mode": "graded (B-1 spiking RMS, host read)",
+    "note": "the REAL end-to-end forward: de-risk #3's path VERBATIM (real Qwen weights, B-1 graded RMSNorm/SiLU/softmax + RoPE + attention, H<->D per linear) with the per-row CSR-RF matvec SWAPPED for a dense GPU GEMM. INCLUDES the nonlinearity/attention residual the matvec-only projection omits. The dense matvec made the LINEARS cheap; the residual is now the host nonlinearities/attention."
+  },
+  "verdict": "GO_WITH_CAVEAT",
+  "sim_edit_recommendation": "TWO levers, in order. (1) THE DENSE MATVEC (proven here): a guarded dense-weight path for the RF matvec read so `Re(Z)/nsteps = a@W` is a cuBLAS GEMM (a@W_dense), not the cuSPARSE CSR resonate, when the weights are dense. Concretely `cfg.rf_dense_weights` + a stored dense `cp_rf_w_dense`, read in rf_resonate_steps/_rf_advance_one via GEMM; DEFAULT-OFF = the byte-identical CSR path (the composer's sparse O(D) bind/unbind unaffected). NOTE the dense GEMM is ALREADY runner-computable WITHOUT a sim/ edit (the host forward calls cupy `A @ W_dense` directly), so the sim/ edit is OPTIONAL — for on-bridge co-residence purity, not for the throughput. BUT (2) the dense matvec is NECESSARY-NOT-SUFFICIENT: once the linears are cheap, the MEASURED end-to-end is bottlenecked by the HOST graded nonlinearities (RMSNorm/SiLU/softmax) + attention + the per-linear H<->D round-trips (the numpy reads + ~216 device-host copies/forward). The SECOND lever (the real end-to-end win) is keeping the whole forward ON-GPU: cupy graded ops + an on-GPU attention + no per-linear D->H (only the final logits read). That is the actual usability work; it is NOT a sim/ edit (it's the host forward staying on-device).",
+  "bit_exactness": {
+    "dense_batch_f64_vs_a_at_W_max_err": 7.549516567451064e-15,
+    "dense_batch_f32_vs_csr_rf_f32_max_err": 3.2186508178710938e-06,
+    "all_f64_bit_exact": true,
+    "note": "the dense f64 GEMM is the SAME math as a@W (max-err <1e-9 = numerical roundoff); the f32 dense GEMM and the f32 RF membrane read both approximate a@W and agree to ~f32 precision. Bit-exactness of the dense path is trivial (a@W == a@W); the speedup is the deliverable."
+  },
+  "verdict_line": "bridge_cores_perf: the DENSE-MATVEC lever for the on-bridge Qwen faculty -> dense batched GEMM is bit-faithful (== a@W) and 3635x (gate_proj) / 8928x (lm_head) faster than the CSR-RF per-row loop; projected full-forward prefill 6793 tok/s (CSR 0.786 -> 8643x), generation 333 tok/s (CSR 161 s/tok -> 53558x) [matvec-only]; MEASURED end-to-end 9 tok/s (de-risk #3 warm CSR 0.786 -> 11x, incl the B-1 graded nonlinearities + attention). The CSR-on-dense gather was the wall (the Qwen layers are 100% dense -> sparse CSR is the wrong storage). -> GO_WITH_CAVEAT. the DENSE batched GEMM is bit-faithful (== a@W, f64 max-err <1e-9; f32 dense vs f32 CSR-RF agree to 3.2e-06) and 3635x (gate_proj) / 8928x (lm_head) faster than the per-row CSR-RF loop — the CSR-on-dense gather WAS the wall and dense storage IS the ANN GEMM speed. BUT the MEASURED end-to-end forward is only 8.8 tok/s (de-risk #3 warm CSR 0.786 -> 11.0x), because once the matvec is cheap the bottleneck SHIFTS to the host nonlinearities/attention + H<->D round-trips (97% of the forward vs the linears' 3%). => the dense matvec is the proven FIRST lever (necessary + bit-exact); end-to-end usability needs the SECOND lever (keep the whole forward on-GPU: cupy nonlinearities + on-GPU attention + no per-linear D->H). Still LOCAL (no VRAM wall); NO sim/ edit required for either lever — both are host-forward changes (the optional dense-RF sim/ mode is only for on-bridge purity).",
+  "total_seconds": 55.24
+}
