@@ -1,0 +1,194 @@
+{
+  "probe": "genseq_spiking_gelu_via_calibrated_graded_read",
+  "resolves": "does routing a REAL Gen-F block's GELU through a CALIBRATED GRADED read on a live GPU bridge (a fitted rectified-basis neuron transfer matching GELU over the measured LN-bounded MLP-hidden input range) preserve the full-block output fidelity >= 0.90 vs the all-host-read C1 teacher?",
+  "scoping": "research/findings/2026-06-23-spiking-nonlinearities-scoping.md (the GELU section S2)",
+  "continues": {
+    "layernorm_op_1": "_genseq_spiking_layernorm.json (LayerNorm via the shipped norm circuits -- fully-spiking-C1 op 1/3, GO at 0.962; this is op 2/3, GELU)",
+    "C1_fullblock": "2026-06-22-genseq-loopstep3-fullblock-rf-integration-GO.md (_genseq_loopstep3_fullblock_rf_derisk.py -- the all-host-read full block IS the C1 teacher, fidelity 1.000; reused VERBATIM)",
+    "mlp_gelu_rf": "_genseq_loopstep3_mlp_gelu_rf_distill.json (the MLP's two linears install EXACTLY on RF; GELU = the 0-param read between them -- THIS makes that read spiking)"
+  },
+  "graded_gelu_mechanism": {
+    "transfer": "GELU(x) ~ c0 + sum_k a_k * relu((x-knot_k)/READ_SCALE) -- a FIXED 25-knot rectified-basis fit (calibrated ONCE off-line on a fixed grid, NOT learned on the data, NOT per-token); the coefficients are constants of the neuron-bank transfer.",
+    "onbridge_read": "each knot-neuron is driven with (x-knot_k); the Izhikevich-2007 read-back from v=vr recovers moff=(v_new-vr)/G == (x-knot_k) EXACTLY (the same exact linear inverse the LN op uses, ~1e-6); the shipped GRADED transfer a_cont=clip((v-rest)/scale,0,1) (sim/bridge.py:6144) gives relu((x-knot)/READ_SCALE) -- the live neurons' rectifying+saturating membrane response. The host combines the K reads with the fixed coefficients.",
+    "knots": [
+      -5.0,
+      -4.125,
+      -3.25,
+      -2.375,
+      -1.5,
+      -1.2,
+      -1.0286,
+      -0.8571,
+      -0.6857,
+      -0.5143,
+      -0.3429,
+      -0.1714,
+      0.0,
+      0.1714,
+      0.3429,
+      0.5143,
+      0.6857,
+      0.8571,
+      1.0286,
+      1.2,
+      1.5,
+      2.375,
+      3.25,
+      4.125,
+      5.0
+    ],
+    "read_scale": 20.0,
+    "calibration_grid": [
+      -6.0,
+      6.0
+    ],
+    "basis_pool": 64,
+    "fit_quality": {
+      "fit_max_err_grid": 0.005514558867817697,
+      "fit_rmse_grid": 0.0014869512278938286,
+      "fit_max_err_h1range": 0.005514558867817697,
+      "fit_rmse_h1range": 0.0018558391031832987
+    },
+    "no_sim_edit": true
+  },
+  "genf_meta": {
+    "d_model": 256,
+    "n_head": 4,
+    "loss_last": 1.4711004495620728,
+    "block_size": 128,
+    "n_tokens_probe": 90,
+    "probe_positions": [
+      1,
+      14,
+      26,
+      39,
+      51,
+      64,
+      76,
+      89
+    ],
+    "ln1_affine_l2": [
+      14.539785423996229,
+      0.6202636815533034
+    ],
+    "ln2_affine_l2": [
+      16.093630949414013,
+      0.19639445917797718
+    ],
+    "attn_bias_l2": {
+      "q": 2.43301930734041,
+      "k": 0.02570397106980008,
+      "v": 0.23859611088511895,
+      "o": 0.12533904699372198
+    },
+    "mlp_bias_l2": {
+      "fc1": 1.188697047591685,
+      "fc2": 0.2951657579864426
+    },
+    "decoded_probe_head": "Once upon a time there was a little girl named Lily. She had a small dog and a big cat. One"
+  },
+  "rf_period": 100000,
+  "rf_nsteps": 8,
+  "rf_lambda": 0.0,
+  "gelu_dt": 0.5,
+  "gelu_drive_gain": 1000.0,
+  "n_probe_positions": 8,
+  "n_seq_positions": 90,
+  "d_model": 256,
+  "d_hid": 1024,
+  "go_bar": 0.9,
+  "oom_safety": {
+    "max_rf_bridge_neurons": 1280,
+    "max_block_nnz": 262144,
+    "n_rf_bridges": 3,
+    "n_gelu_knots": 25,
+    "est_gb": 0.038,
+    "oom_ceiling_gb": 16.0
+  },
+  "sanity_rf_plus_host_gelu_vs_c1": {
+    "spearman": 0.9999999999999998,
+    "cosine": 0.999999999999998,
+    "rf_exact_max_err": 4.918190521507881e-07,
+    "note": "RF weights + HOST exact GELU should == the C1 teacher (~1.000); confirms the harness wiring + IS the exact-GELU ceiling for the PWL-fit gap"
+  },
+  "spiking_gelu_fidelity_vs_teacher": {
+    "spearman": 0.9910703428988326,
+    "cosine": 0.9929548024600159,
+    "per_position_spearman": [
+      0.9939,
+      0.9906,
+      0.9922,
+      0.9868,
+      0.9909,
+      0.9912,
+      0.9908,
+      0.9921
+    ],
+    "per_position_cosine": [
+      0.9951,
+      0.993,
+      0.9927,
+      0.9906,
+      0.9937,
+      0.9923,
+      0.9929,
+      0.9934
+    ],
+    "onbridge_transfer_max_err_vs_exact_gelu": 1.1564922373113873,
+    "h1_input_range": [
+      -3.3123482605442405,
+      4.278135264292359
+    ],
+    "h1_input_std": 0.6780627628827088,
+    "frac_basis_reads_upper_clipped": 0.0,
+    "n_feature_values_read_on_bridge": 92160
+  },
+  "anti_cheat_specificity": {
+    "matched_mean_spearman": 0.9910703428988326,
+    "mismatched_mean_spearman": 0.12708942161494946,
+    "specificity_margin": 0.8639809212838832,
+    "margin_ok": true
+  },
+  "anti_cheat_lesion": {
+    "identity_gelu_spearman": 0.787411843385214,
+    "identity_gelu_cosine": 0.8032587649307159,
+    "zero_gelu_spearman": 0.7030527580682077,
+    "zero_gelu_cosine": 0.7295793838187047,
+    "identity_lesion_drops": true,
+    "zero_lesion_drops": true,
+    "real_minus_identity": 0.20365849951361858,
+    "real_minus_zero": 0.2880175848306249,
+    "method": "replace GELU with IDENTITY (g=h1) or ZERO (g=0); each must reduce the block fidelity below the full spiking-GELU -> the GELU nonlinearity is load-bearing. (The block is residual so the absolute drop is small but each is real.)"
+  },
+  "anti_cheat_nogelu_floor": {
+    "identity_gelu_spearman": 0.787411843385214,
+    "zero_gelu_spearman": 0.7030527580682077,
+    "nogelu_residual_floor": 0.787411843385214,
+    "above_floor": true,
+    "method": "the BEST of the identity/zero GELU lesions = the RESIDUAL FLOOR (the carried-through x1 correlates highly with the teacher because the block is residual); spiking-GELU must be above it."
+  },
+  "residual_floor_lift_analysis": {
+    "nogelu_residual_floor": 0.787411843385214,
+    "spiking_gelu": 0.9910703428988326,
+    "exact_gelu_ceiling": 0.9999999999999998,
+    "spiking_gelu_lift_over_floor": 0.20365849951361858,
+    "exact_gelu_lift_over_floor": 0.2125881566147858,
+    "recovered_lift_fraction": 0.9579955099881319,
+    "lift_meaningful": true,
+    "interpretation": "the Gen-F block is RESIDUAL (out=x1+W2@GELU(...)), so the no-GELU output is already high-spearman with the teacher -- the GELU adds a SMALL absolute lift on top. spiking-GELU recovers a fraction of the exact-GELU lift over that floor; the shortfall is the PWL-fit + graded-pool-noise residual."
+  },
+  "anti_cheat_pwl_fit_gap": {
+    "exact_gelu_ceiling_spearman": 0.9999999999999998,
+    "onbridge_gelu_noise_free_spearman": 0.9999914168001831,
+    "onbridge_gelu_pool_noisy_spearman": 0.9910703428988326,
+    "pwl_fit_gap": 8.583199816669662e-06,
+    "pool_noise_cost": 0.008921073901350551,
+    "fit_max_err_over_h1_range": 0.005514558867817697,
+    "noise_free_transfer_max_err_vs_exact_gelu": 0.005563445559463321,
+    "pool_noisy_transfer_max_err_vs_exact_gelu": 1.1564922373113873,
+    "transfer_max_err_note": "the NOISE-FREE on-bridge transfer max-err (0.0056) == the PWL fit error (negligible vs the GELU output range [-0.17,4.28]); the POOL-NOISY transfer max-err (1.1565) is a per-element rate-coded-graded-pool SEM OUTLIER (mean per-element err ~0.14), NOT a fit failure -- it is the honest 1/sqrt(pool) graded-read noise, and it costs only +0.0089 of block fidelity (averaged over 256 dims + the residual stream).",
+    "interpretation": "the on-bridge graded read approximates GELU by a fixed rectified-basis fit; the gap = (exact-host-GELU ceiling) - (on-bridge noise-free). The input h1 is LN-bounded ([-3.3,4.3], ZERO mass beyond +-6, no fat tails), so the fit (max-err 0.0055 over the range) is the only deterministic approximation; the noise-free on-bridge GELU reproduces the C1 teacher EXACTLY (gap +0.0000). The residual is the graded-pool noise alone."
+  },
+  "verdict_line": "spiking_GELU: GEN-F(s42.real, loss=1.471) FULL block-0 with the MLP's GELU routed through a CALIBRATED GRADED read on a LIVE GPU Izhikevich bank (25-knot rectified-basis a_cont=clip((v-rest)/scale,0,1) fitted to GELU over the MEASURED h1 range [-3.31,4.28] std=0.68; exact membrane read-back ~1e-6), weights exact-on-RF (max|Re(Z)/nsteps-h@W|=4.9e-07), softmax/LayerNorm host reads, on REAL token activations -> spiking-GELU block-output fidelity_vs_C1-teacher spearman=0.9911 cosine=0.9930 (>= 0.90 bar) | specificity_margin=0.864 | no-GELU residual floor=0.7874, spiking-GELU recovers 96% of the exact-GELU lift over it | lesions load-bearing (identity-GELU=0.7874 zero-GELU=0.7031, each < full) | on-bridge GELU transfer max-err vs exact=1.1565, PWL-fit gap=+0.0000 graded-pool-noise cost=+0.0089 -> GO. The GELU is a FIXED scalar monotone transfer (0 learned params) realized by the live neurons' rectifying graded membrane read; the input is LN-bounded (ZERO mass beyond +-6) so the calibrated fit tracks it (per-element max-err 0.0055 over the h1 range). SCOPE: GELU-spiking; softmax stays a host read (its own follow-on, the rate-code boundary candidate). ==> fully-spiking-C1 op 2/3. NO sim/ edit.",
+  "verdict": "GO"
+}
