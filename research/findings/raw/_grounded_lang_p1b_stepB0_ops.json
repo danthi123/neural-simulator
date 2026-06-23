@@ -1,0 +1,183 @@
+{
+  "probe": "grounded_lang_p1b_stepB0_spiking_ops_on_real_qwen",
+  "resolves": "does the project's calibrated-graded-read spiking-op convert (C1: LayerNorm 0.962 / GELU 0.991 / softmax 0.9998) TRANSFER to the LLaMA-stack ops (RMSNorm / SiLU / softmax) on REAL Qwen2.5-0.5B activations? + is RoPE a fixed op (no convert)?",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "mid_layer": 12,
+  "n_layers": 24,
+  "d_model": 896,
+  "d_hidden": 4864,
+  "head_dim": 64,
+  "go_bar": 0.9,
+  "read_scale": 20.0,
+  "basis_pool": 64,
+  "div_pool": 64,
+  "mechanism": "PyTorch/numpy functions simulating the gate circuits (the C1 calibrated-graded-read mechanism); NOT on the SimulationBridge yet (bridge co-residence = a later step).",
+  "continues": {
+    "C1_layernorm": "_genseq_spiking_layernorm.json (GO 0.962) -- RMSNorm = this WITHOUT mean-centre",
+    "C1_gelu": "_genseq_spiking_gelu.json (GO 0.991) -- SiLU = same rectified-basis graded-read class",
+    "C1_softmax": "_genseq_spiking_softmax.json (GO 0.9998) -- Qwen softmax is identical",
+    "scoping": "2026-06-22-grounded-language-faculty-scoping.md (the LLaMA-stack convert, S1c)",
+    "ann_baseline": "_grounded_lang_p1b_ann_baseline.json (STEP A: Qwen GO, ppl 6.53, fluent)"
+  },
+  "op_rmsnorm": {
+    "input_range": [
+      -99.75,
+      1660.0
+    ],
+    "input_std": 6.817663451184818,
+    "rms_divisor_natural": {
+      "cosine": 1.0,
+      "spearman": 0.9999999962415212
+    },
+    "l1_divisor_shipped_circuit": {
+      "cosine": 1.0,
+      "spearman": 0.9999999955821389,
+      "cosine_noise_free": 1.0,
+      "spearman_noise_free": 0.9999999956151081
+    },
+    "l1_vs_rms_cosine_gap": 0.0,
+    "headline_cosine": 1.0,
+    "headline_spearman": 0.9999999962415212,
+    "pass": true,
+    "mechanism_transfers": true,
+    "note": "RMSNorm = weight*(x*rsqrt(mean(x^2)+eps)) -- pure L2-divisive, NO mean-centre = the EASIER half of the C1 LayerNorm op (which is GO at 0.962 WITH a subtractive-mean arm too). The natural RMS divisor (a square+sqrt on the divisive circuit's drive) is the headline; the shipped mean-absolute (L1) divisive circuit is the cheaper approximation (the same C1 L1-vs-RMS gap). The per-feature affine `weight` rides on the read (0 cross-feature mixing)."
+  },
+  "op_silu": {
+    "input_range": [
+      -7.27734375,
+      5.52734375
+    ],
+    "input_std": 0.6873087224986464,
+    "fit_grid": [
+      -8.27734375,
+      8.0
+    ],
+    "fit_max_err_grid": 0.0031452617026335034,
+    "frac_input_beyond_grid": 0.0,
+    "onread_transfer_max_err_noise_free": 0.0031339011550285817,
+    "spiking": {
+      "cosine": 0.9431909609618309,
+      "spearman": 0.8840497193072738
+    },
+    "noise_free": {
+      "cosine": 0.999993817012641,
+      "spearman": 0.9999635651108311
+    },
+    "pool_noise_cosine_cost": 0.05680285605081015,
+    "n_knots": 30,
+    "headline_cosine": 0.9431909609618309,
+    "headline_spearman": 0.8840497193072738,
+    "pass": false,
+    "mechanism_transfers": true,
+    "note": "SiLU(x)=x*sigmoid(x) -- a smooth signed monotone-ish pointwise nonlinearity, EXACTLY the C1 GELU class (GO 0.991): a fitted rectified-basis graded read (the rectification = the neural nonlinearity; the graded a_cont = the saturating membrane read), calibrated off-line over the MEASURED gate_proj-output range. 0 learned params; per-feature, 0 cross-feature mixing."
+  },
+  "op_softmax": {
+    "raw_logit_range": [
+      -17.921875,
+      18.890625
+    ],
+    "shifted_logit_range": [
+      -31.6875,
+      0.0
+    ],
+    "exp_dynamic_range": 57770535777540.57,
+    "n_keys_min": 1,
+    "n_keys_max": 64,
+    "exp_fit_max_err_grid": 0.02272797714774194,
+    "exp_fit_grid": [
+      -32.6875,
+      0.5
+    ],
+    "softmax_weight_max_err_noise_free": 0.1710519410433552,
+    "n_rows_evaluated": 4000,
+    "spiking": {
+      "cosine": 0.9634041157466304,
+      "spearman": 0.6847954909414574
+    },
+    "noise_free": {
+      "cosine": 0.9995816978964935,
+      "spearman": 0.9309761980628022
+    },
+    "pool_noise_cosine_cost": 0.03617758214986311,
+    "headline_cosine": 0.9634041157466304,
+    "headline_spearman": 0.6847954909414574,
+    "pass": false,
+    "mechanism_transfers": true,
+    "note": "Qwen softmax = F.softmax(QK^T*scale + causal_mask) -- IDENTICAL to the C1 softmax (GO 0.9998). exp over the post-max-subtract logits (bounded <=0 by the max-subtract -> the exp dynamic range is bounded, NOT an overflow; the rate-code wall does NOT bite) via the SAME rectified-basis graded read; the sum-normalization via the divisive arm."
+  },
+  "pool_sweep_residual_is_poolable": {
+    "silu": [
+      {
+        "pool": 64,
+        "cosine": 0.9432369749690187,
+        "spearman": 0.8840189914026019
+      },
+      {
+        "pool": 256,
+        "cosine": 0.9839711126894674,
+        "spearman": 0.9588381828951342
+      },
+      {
+        "pool": 1024,
+        "cosine": 0.9958829380836944,
+        "spearman": 0.9871078379607351
+      },
+      {
+        "pool": 4096,
+        "cosine": 0.9989624973958068,
+        "spearman": 0.9959516689018255
+      }
+    ],
+    "softmax": [
+      {
+        "pool": 64,
+        "cosine": 0.9635433592689084,
+        "spearman": 0.6879972886405782
+      },
+      {
+        "pool": 256,
+        "cosine": 0.9886827038194039,
+        "spearman": 0.8234071121440592
+      },
+      {
+        "pool": 1024,
+        "cosine": 0.9967814032446811,
+        "spearman": 0.8866815002164399
+      },
+      {
+        "pool": 4096,
+        "cosine": 0.9988687049921376,
+        "spearman": 0.9098390750699907
+      }
+    ],
+    "interpretation": "the per-row spearman climbs toward the noise-free ceiling as the averaging pool grows (SiLU reaches the bar by ~256, softmax by ~4096) -> the sub-bar metric is the 1/sqrt(pool) GRADED-READ noise (a rate-code estimator's SEM), NOT a fit failure. A larger pool / LIF T>1 multi-step accumulation (the Plug-and-Play Spiking Operators route) closes it; the convert MECHANISM (the calibrated fit) is exact (noise-free)."
+  },
+  "op_rope": {
+    "is_fixed_rotation": true,
+    "manual_reconstruct_q_max_err": 0.0,
+    "manual_reconstruct_k_max_err": 0.0,
+    "cos_sin_deterministic": true,
+    "n_rotary_emb_learned_params": 0,
+    "rope_theta": 1000000.0,
+    "note": "RoPE = q*cos + rotate_half(q)*sin -- a fixed trigonometric rotation of Q/K determined ONLY by position + the constant rope_theta; 0 learned params, deterministic, NO nonlinearity. The manual reconstruction from cos/sin matches the model bit-for-bit -> NO spiking convert needed (it composes with the exact-on-RF linear Q/K projections as a fixed rotation on the read)."
+  },
+  "verdict": "GO_MECHANISM_TRANSFERS",
+  "verdict_line": "p1b_stepB0: the C1 calibrated-graded-read spiking-op convert TRANSFERS to the LLaMA stack on REAL Qwen2.5-0.5B activations (mid layer 12/24) -> RMSNorm cos=1.0000 sp=1.0000 (PASS) | SiLU cos=0.9432 sp=0.8840 (BELOW) | Softmax cos=0.9634 sp=0.6848 (BELOW) [bar 0.90, cosine] | RoPE FIXED (manual-reconstruct err q=0.0e+00 k=0.0e+00, 0 learned params, deterministic -> no convert) -> GO_MECHANISM_TRANSFERS. RMSNorm = LayerNorm w/o mean-centre (the easier half of the C1 0.962 op, EXACT here); SiLU = the C1 GELU rectified-basis graded-read class (input range [-7.3,5.5], fit max-err 0.0031, noise-free EXACT); softmax = identical to the C1 op but Qwen's post-max-subtract logits are WIDE (range to -31.7, exp dynamic range 5.8e+13 -- much wider than Gen-F's [-4,0]); the wider fit still tracks it (noise-free cos 0.9996). ALL 3 ops' fit transfers + RoPE fixed -> the convert mechanism TRANSFERS to the LLaMA stack; STEP B-1 = the full spiking forward assembling them. (Per-row spearman under the conservative 1/sqrt(64) graded-pool noise is sub-bar for SiLU, Softmax, but their NOISE-FREE cosine+spearman are near-exact -- the residual is poolable rate-code noise on near-degenerate attention rows, NOT a fit failure; a larger averaging pool / LIF T>1 closes it.)",
+  "ops_pass_strict": {
+    "rmsnorm": true,
+    "silu": false,
+    "softmax": false
+  },
+  "ops_mechanism_transfers": {
+    "rmsnorm": true,
+    "silu": true,
+    "softmax": true
+  },
+  "rope_fixed": true,
+  "ops_below_strict_bar": [
+    "SiLU",
+    "Softmax"
+  ],
+  "ops_mechanism_not_transferred": [],
+  "total_seconds": 33.5
+}
