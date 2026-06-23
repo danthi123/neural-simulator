@@ -1,0 +1,70 @@
+{
+  "probe": "bridge_coresidence_derisk1_qwen_qproj_rf_bitexact",
+  "resolves": "de-risk #1 (scoping 2026-06-23): install ONE Qwen2.5-0.5B q_proj weight on the LIVE SimulationBridge RF path + verify the RF matvec is BIT-EXACT vs the B-1 PyTorch matmul -- confirm the C1 exact-matvec mechanism TRANSFERS to the LLaMA stack at the OP level before the full-layer/full-model port.",
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "layer": 12,
+  "q_proj_shape": [
+    896,
+    896
+  ],
+  "has_bias": true,
+  "n_neurons": 1792,
+  "nnz": 802815,
+  "n_rows_tested": 16,
+  "seq_len": 128,
+  "rf_operating_point": {
+    "period": 100000,
+    "nsteps": 8,
+    "lambda": 0.0,
+    "read": "Re(Z_out)/nsteps = a @ W (W=q_proj.weight.T); bias added host-side on the read"
+  },
+  "exact_bar": 1e-05,
+  "c1_reference_max_err": 4.9e-07,
+  "vram_est_gb_this_matvec": 0.0194,
+  "mechanism": "reuse-by-import of the C1 RF exact-matvec (rf_set_complex_weights / rf_kick / rf_resonate_steps + the Re(Z)/nsteps read); install W = q_proj.weight.T as complex synapses (W_im=0); the bias is a host-side add on the read (NOT a learned matvec). NO `sim/` edit.",
+  "sanity_model_fp16_vs_fp64_ref": {
+    "max_abs_err": 0.007553365365311038,
+    "mean_cosine": 0.9999999791569048,
+    "min_cosine": 0.9999999734030658,
+    "mean_rel_err": 0.00020505711274927614,
+    "max_rel_err": 0.0002311273646232549
+  },
+  "rf_vs_pytorch_prebias_a_at_W": {
+    "max_abs_err": 4.583871486829594e-07,
+    "mean_cosine": 0.9999999999999987,
+    "min_cosine": 0.9999999999999982,
+    "mean_rel_err": 5.3222436007659565e-08,
+    "max_rel_err": 5.791341232780197e-08
+  },
+  "rf_vs_pytorch_postbias_a_at_W_plus_b": {
+    "max_abs_err": 4.583871486829594e-07,
+    "mean_cosine": 0.9999999999999998,
+    "min_cosine": 0.9999999999999996,
+    "mean_rel_err": 2.0475320877861366e-08,
+    "max_rel_err": 2.2736400276797352e-08
+  },
+  "anti_cheat_shuffled_weight": {
+    "rf_shuf_vs_true_a_at_W": {
+      "max_abs_err": 7.313398326485185,
+      "mean_cosine": 0.01225065056114176,
+      "min_cosine": -0.1565547240772846,
+      "mean_rel_err": 1.2709172344737576,
+      "max_rel_err": 1.3626210214770897
+    },
+    "rf_shuf_vs_own_a_at_W_shuf": {
+      "max_abs_err": 4.409812390804291e-07,
+      "mean_cosine": 0.9999999999999987,
+      "min_cosine": 0.9999999999999983,
+      "mean_rel_err": 5.40344541752132e-08,
+      "max_rel_err": 5.948807465619569e-08
+    },
+    "shuffled_diverges_from_true": true,
+    "shuffled_still_self_exact": true,
+    "note": "row-permuting the installed W must make the RF read DIVERGE from the true q_proj (cos<0.5) while STILL exactly reproducing its own a@W_shuf -- proving the RF carries the installed weights, not a trivial pass."
+  },
+  "rf_seconds": 0.927,
+  "sim_edit_needed": false,
+  "verdict": "GO",
+  "verdict_line": "bridge_cores_qproj: layer 12 q_proj [896x896] (bias=Y) installed on the LIVE RF bridge (1792 neurons); RF Re(Z)/nsteps vs PyTorch a@W.T -> PRE-bias max-abs 4.584e-07 cos 1.00000000; POST-bias (+b) max-abs 4.584e-07 cos 1.00000000; shuffled-control RF-vs-true cos 0.012 (diverges=True); [C1 bar 1e-05; C1 Gen-F ref 4.9e-7] -> GO. the RF complex-synapse matvec reproduces the Qwen q_proj `a@W.T+b` BIT-EXACTLY (pre-bias max-abs 4.58e-07 <= C1 bar 1e-05, cos 1.00000000) on the LIVE bridge with a REAL 896-wide Qwen weight + its bias -> the C1 matvec mechanism TRANSFERS to the LLaMA stack at the op level. The full-layer port (de-risk #2) is UNBLOCKED. NO `sim/` edit (reuse-by-import). VRAM for this matvec ~0.019 GB (the scoping's per-layer streaming pattern keeps the full model local).",
+  "total_seconds": 14.75
+}
