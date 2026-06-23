@@ -120,19 +120,38 @@ def free_cuda():
 # =================================================================================================
 # Load the frozen Gen-F into a TinyGPT (weights VERBATIM) + its TinyStories BPE. (byte-identical to orig)
 # =================================================================================================
-def load_genf(device):
+def load_genf(device, *, ckpt_path=None, bpe_path=None, d_model=256, n_layer=4, n_head=4,
+              block_size=None):
+    """Load a frozen Gen-F TinyGPT (weights VERBATIM) + its BPE. Defaults reproduce the original 3.4M
+    toy (d=256/L=4/H=4, the s42.real checkpoint); the scale-up runner passes the bigger arch + paths.
+    The arch is also auto-detected from the state_dict (d_model/n_layer/block_size/vocab from the
+    tensor shapes) so a mismatched hyperparam can't silently load the wrong shape -- n_head alone is
+    not recoverable from the shapes, so it is taken from the argument (and must match training)."""
     import torch
     from sim.tiny_transformer import TinyGPT
     from sim.bpe_tokenizer import BPETokenizer
-    tok = BPETokenizer.load(str(GENF_BPE))
+    ckpt_path = str(ckpt_path) if ckpt_path is not None else str(GENF_CKPT)
+    bpe_path = str(bpe_path) if bpe_path is not None else str(GENF_BPE)
+    tok = BPETokenizer.load(bpe_path)
     V = tok.vocab_size
     # weights_only=True: OUR OWN trusted, local, project-generated checkpoint; safe unpickler regardless.
-    ck = torch.load(str(GENF_CKPT), map_location=device, weights_only=True)
+    ck = torch.load(ckpt_path, map_location=device, weights_only=True)
+    sd = ck["model"]
     loss_last = float(ck["loss_history"][-1]) if ck.get("loss_history") else float("nan")
-    m = TinyGPT(vocab_size=V, d_model=256, n_layer=4, n_head=4, block_size=BLOCK_SIZE, dropout=0.0).to(device)
-    m.load_state_dict(ck["model"])
+    # auto-detect arch from the tensor shapes (defensive against a wrong --d-model / --n-layer arg).
+    d_det = int(sd["tok.weight"].shape[1])
+    L_det = sum(1 for k in sd if k.endswith(".ln1.weight") and k.startswith("blocks."))
+    blk_det = int(sd["pos.weight"].shape[0])
+    V_det = int(sd["tok.weight"].shape[0])
+    if d_model != d_det or n_layer != L_det:
+        print(f"[C2:load_genf] NOTE: arch arg (d={d_model},L={n_layer}) != ckpt shapes "
+              f"(d={d_det},L={L_det}); using ckpt shapes.", flush=True)
+    d_model, n_layer, block_size, V = d_det, L_det, blk_det, V_det
+    m = TinyGPT(vocab_size=V, d_model=d_model, n_layer=n_layer, n_head=n_head,
+                block_size=block_size, dropout=0.0).to(device)
+    m.load_state_dict(sd)
     m.eval()
-    del ck
+    del ck, sd
     return m, tok, V, loss_last
 
 
@@ -276,9 +295,10 @@ def grow_finetune(frozen_model, tok, new_train_ids, replay_ids, target_replay_fr
 # Two-distribution held-out ppl (the C2 measurement). ORIGINAL = pure-TinyStories tail; NEW = the
 # interleave held-out tail. SAME Gen-F TinyStories BPE throughout -> directly comparable.
 # =================================================================================================
-def two_dist_ppl(model, tok, ts_ho, new_ho, device, *, label):
-    ts_ppl = perplexity(_heldout_nll(model, tok, ts_ho, BLOCK_SIZE, device, PPL_EVAL_POSITIONS))
-    new_ppl = perplexity(_heldout_nll(model, tok, new_ho, BLOCK_SIZE, device, PPL_EVAL_POSITIONS))
+def two_dist_ppl(model, tok, ts_ho, new_ho, device, *, label, ppl_positions=None):
+    ppl_positions = int(ppl_positions) if ppl_positions is not None else PPL_EVAL_POSITIONS
+    ts_ppl = perplexity(_heldout_nll(model, tok, ts_ho, BLOCK_SIZE, device, ppl_positions))
+    new_ppl = perplexity(_heldout_nll(model, tok, new_ho, BLOCK_SIZE, device, ppl_positions))
     print(f"[C2mod:{label}]   ORIGINAL(TinyStories) held-out ppl = {ts_ppl:.4f} | "
           f"NEW(SH{SH_FRAC}-interleave) held-out ppl = {new_ppl:.4f}", flush=True)
     return {"original_tinystories_ppl": ts_ppl, "new_interleave_ppl": new_ppl}
@@ -288,11 +308,12 @@ def two_dist_ppl(model, tok, ts_ho, new_ho, device, *, label):
 # ON-THE-BRIDGE VERIFICATION (byte-identical to orig): re-distill + install the grown model on the RF
 # complex-synapse bridge (the C1 path) and confirm on-bridge ppl == off-bridge ppl on the SAME windows.
 # =================================================================================================
-def verify_on_bridge(grown_model, tok, ts_ho, new_ho, device):
+def verify_on_bridge(grown_model, tok, ts_ho, new_ho, device, *, n_windows=None):
     from research.runners._genseq_loopstep3_full_genf_generate_derisk import (
         rf_full_forward, _heldout_nll_numpy, _perplexity)
     from research.runners._genseq_loopstep3_rf_probe import (
         _build_rf_bridge, RF_PERIOD, RF_NSTEPS, RF_LAMBDA)
+    n_windows = int(n_windows) if n_windows is not None else ONBRIDGE_VERIFY_WINDOWS
 
     d = grown_model.cfg["d_model"]; V = grown_model.cfg["vocab_size"]; n_layer = grown_model.cfg["n_layer"]
     sd = {k: v.detach().to("cpu") for k, v in grown_model.state_dict().items()}
@@ -343,16 +364,16 @@ def verify_on_bridge(grown_model, tok, ts_ho, new_ho, device):
             x = _t.tensor(_ids, dtype=_t.long, device=device)[None]
             return grown_model(x)[0].float().cpu().numpy()
 
-    ts_ids = tok.encode(ts_ho[:ONBRIDGE_VERIFY_WINDOWS * BLOCK_SIZE * 8])
-    new_ids = tok.encode(new_ho[:ONBRIDGE_VERIFY_WINDOWS * BLOCK_SIZE * 8])
+    ts_ids = tok.encode(ts_ho[:n_windows * BLOCK_SIZE * 8])
+    new_ids = tok.encode(new_ho[:n_windows * BLOCK_SIZE * 8])
     res = {}
     for name, ids in (("original_tinystories", ts_ids), ("new_interleave", new_ids)):
-        rf_nll = _heldout_nll_numpy(_rf_fwd, ids, V, BLOCK_SIZE, ONBRIDGE_VERIFY_WINDOWS)
-        off_nll = _heldout_nll_numpy(_off_fwd, ids, V, BLOCK_SIZE, ONBRIDGE_VERIFY_WINDOWS)
+        rf_nll = _heldout_nll_numpy(_rf_fwd, ids, V, BLOCK_SIZE, n_windows)
+        off_nll = _heldout_nll_numpy(_off_fwd, ids, V, BLOCK_SIZE, n_windows)
         rf_ppl = _perplexity(rf_nll); off_ppl = _perplexity(off_nll)
         ratio = rf_ppl / off_ppl if (math.isfinite(off_ppl) and off_ppl > 0) else float("inf")
         res[name] = {"on_bridge_ppl": rf_ppl, "off_bridge_ppl": off_ppl, "ppl_ratio": ratio,
-                     "n_windows": ONBRIDGE_VERIFY_WINDOWS}
+                     "n_windows": n_windows}
         print(f"[C2mod:on-bridge]   {name}: RF-on-bridge ppl={rf_ppl:.4f} off-bridge ppl={off_ppl:.4f} "
               f"ratio={ratio:.6f}", flush=True)
     del bridges
@@ -360,17 +381,33 @@ def verify_on_bridge(grown_model, tok, ts_ho, new_ho, device):
     return res
 
 
-def main():
+def run_c2_loop(frozen, tok, V, loss_last, device, *, out_path=None, ft_batch=None,
+                ft_steps=None, ft_lr=None, sh_frac=None, replay_sweep=None,
+                ppl_eval_positions=None, arch_label=None, t_start=None, do_onbridge_verify=True,
+                replay_pool_tokens=None, dry_run=False):
+    """The C2 grow-no-forget LOOP body (corpora -> baseline -> self-replay -> grow dose-sweep ->
+    on-bridge verify -> verdict), factored out of main() so the C2 scale-up runner can drive the SAME
+    machinery on a BIGGER frozen Gen-F. All knobs default to the module-level constants (so the
+    original main() is behaviourally unchanged). `frozen` is an already-loaded TinyGPT (any arch); the
+    body is arch-agnostic (it reads frozen.cfg throughout). `dry_run` cuts every loop to the cheapest
+    1-window/1-arm/short-FT smoke (for the scale-up wiring smoke -- NOT a real measurement)."""
     import torch
-    backend = os.environ.get("SIM_BACKEND", "auto")
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"[C2mod] SIM_BACKEND={backend} device={device}", flush=True)
-    t_start = time.time()
-
-    # ---- load frozen Gen-F + BPE ----
-    frozen, tok, V, loss_last = load_genf(device)
-    print(f"[C2mod] frozen Gen-F loaded: vocab={V} d_model=256 n_layer=4 block_size={BLOCK_SIZE} "
-          f"loss_last={loss_last:.4f}", flush=True)
+    out_path = Path(out_path) if out_path is not None else OUT_PATH
+    ft_batch = int(ft_batch) if ft_batch is not None else FT_BATCH
+    ft_steps = int(ft_steps) if ft_steps is not None else FT_STEPS
+    ft_lr = float(ft_lr) if ft_lr is not None else FT_LR
+    sh_frac = float(sh_frac) if sh_frac is not None else SH_FRAC
+    replay_sweep = tuple(replay_sweep) if replay_sweep is not None else REPLAY_SWEEP
+    ppl_eval_positions = int(ppl_eval_positions) if ppl_eval_positions is not None else PPL_EVAL_POSITIONS
+    replay_pool_tokens = int(replay_pool_tokens) if replay_pool_tokens is not None else REPLAY_POOL_TOKENS
+    arch_label = arch_label or f"d{frozen.cfg['d_model']}_L{frozen.cfg['n_layer']}"
+    if t_start is None:
+        t_start = time.time()
+    if dry_run:   # cheapest possible wiring smoke: 1 window, 1 with-replay arm, a handful of FT steps
+        ppl_eval_positions = 1
+        ft_steps = min(ft_steps, 3)
+        replay_sweep = (0.0, 0.30)
+        replay_pool_tokens = min(replay_pool_tokens, 1500)
 
     # ---- corpora ----
     ts = fetch_corpus(name="tinystories", max_bytes=8_000_000)
@@ -380,11 +417,11 @@ def main():
           f"Shakespeare register source {len(sh['text'])} chars (degraded={sh['degraded']})", flush=True)
 
     # ---- build the NEW (learnable) distribution = TS-blocks interleaved with SH-blocks at SH_FRAC ----
-    new_full = build_new_corpus(ts_tr[:TS_TRAIN_CAP], sh["text"], SH_FRAC, INTERLEAVE_SEED)
+    new_full = build_new_corpus(ts_tr[:TS_TRAIN_CAP], sh["text"], sh_frac, INTERLEAVE_SEED)
     new_tr, new_ho = split_corpus(new_full, heldout_frac=0.15)
     new_train_ids = tok.encode(new_tr[:600_000])
     new_unk = sum(1 for i in new_train_ids if i == 0) / max(1, len(new_train_ids))
-    print(f"[C2mod] NEW(SH-frac={SH_FRAC} interleave): full {len(new_full)} chars "
+    print(f"[C2mod] NEW(SH-frac={sh_frac} interleave): full {len(new_full)} chars "
           f"(train {len(new_tr)} / heldout {len(new_ho)}); train tokens {len(new_train_ids)} "
           f"(<UNK> frac {new_unk:.4f})", flush=True)
 
@@ -392,15 +429,16 @@ def main():
     # BASELINE: pin the two-distribution pre-grow ppls + the distinctness ratio.
     # =============================================================================================
     print("\n[C2mod] ===== BASELINE: pre-grow Gen-F two-distribution held-out ppl =====", flush=True)
-    base = two_dist_ppl(frozen, tok, ts_ho, new_ho, device, label="baseline")
+    base = two_dist_ppl(frozen, tok, ts_ho, new_ho, device, label="baseline", ppl_positions=ppl_eval_positions)
     base_ts = base["original_tinystories_ppl"]; base_new = base["new_interleave_ppl"]
     distinct_ratio = base_new / base_ts if base_ts > 0 else float("inf")
-    print(f"[C2mod] BASELINE: TinyStories(orig)={base_ts:.4f}  NEW(SH{SH_FRAC}-interleave)={base_new:.4f}  "
+    print(f"[C2mod] BASELINE: TinyStories(orig)={base_ts:.4f}  NEW(SH{sh_frac}-interleave)={base_new:.4f}  "
           f"(distinctness {distinct_ratio:.2f}x)", flush=True)
-    assert distinct_ratio > 3.0, (
-        f"new corpus NOT measurably distinct (ratio {distinct_ratio:.2f}); raise SH_FRAC.")
-    assert base_new < 110.0, (
-        f"new corpus too distinct for the 'learnable' band (ppl {base_new:.1f}); lower SH_FRAC.")
+    if not dry_run:   # the distinctness asserts are real-measurement guards; a 1-window smoke ppl is too noisy
+        assert distinct_ratio > 3.0, (
+            f"new corpus NOT measurably distinct (ratio {distinct_ratio:.2f}); raise SH_FRAC.")
+        assert base_new < 110.0, (
+            f"new corpus too distinct for the 'learnable' band (ppl {base_new:.1f}); lower SH_FRAC.")
 
     # =============================================================================================
     # SELF-REPLAY: sample OLD (TinyStories) text from the FROZEN pre-grow Gen-F (built ONCE).
@@ -408,7 +446,7 @@ def main():
     print("\n[C2mod] ===== GENERATIVE SELF-REPLAY: sample OLD TinyStories from the FROZEN Gen-F =====",
           flush=True)
     t0 = time.time()
-    replay_ids_full = sample_self_replay(frozen, tok, REPLAY_POOL_TOKENS, BLOCK_SIZE, device, seed=SEED * 17)
+    replay_ids_full = sample_self_replay(frozen, tok, replay_pool_tokens, BLOCK_SIZE, device, seed=SEED * 17)
     rep_distinct = distinct_ngram_ratio(replay_ids_full, n=3)
     print(f"[C2mod] self-replay: sampled {len(replay_ids_full)} OLD tokens from frozen Gen-F "
           f"(distinct-trigram {rep_distinct:.3f}, {time.time()-t0:.0f}s); sample decode: "
@@ -419,7 +457,7 @@ def main():
     # GROW + the dose-response / no-replay control: fine-tune at each replay fraction (0 / 0.3 / 0.5).
     # =============================================================================================
     arms = {}
-    sweep_fracs = sorted(set(REPLAY_SWEEP) | {REPLAY_FRAC})
+    sweep_fracs = sorted(set(replay_sweep) | ({REPLAY_FRAC} if not dry_run else set()))
     for frac in sweep_fracs:
         label = ("no_replay" if frac == 0.0 else f"replay_{int(round(frac*100)):02d}")
         print(f"\n[C2mod] ===== GROW arm '{label}' (replay_frac={frac:.2f}) =====", flush=True)
@@ -427,9 +465,9 @@ def main():
         free_cuda()
         grown, ftlog = grow_finetune(
             frozen, tok, new_train_ids, replay_ids, frac, device,
-            steps=FT_STEPS, batch_size=FT_BATCH, lr=FT_LR, block_size=BLOCK_SIZE,
+            steps=ft_steps, batch_size=ft_batch, lr=ft_lr, block_size=BLOCK_SIZE,
             seed=SEED, label=label)
-        ppls = two_dist_ppl(grown, tok, ts_ho, new_ho, device, label=label)
+        ppls = two_dist_ppl(grown, tok, ts_ho, new_ho, device, label=label, ppl_positions=ppl_eval_positions)
         prompt_ids = tok.encode("Once upon a time there was a little")
         gen_ids = _generate(grown, tok, prompt_ids, 40, BLOCK_SIZE, device, SEED * 13 + 5)
         gen_text = tok.decode(gen_ids)
@@ -487,7 +525,8 @@ def main():
           flush=True)
     onbridge = None
     try:
-        onbridge = verify_on_bridge(decisive["_model"], tok, ts_ho, new_ho, device)
+        onbridge = verify_on_bridge(decisive["_model"], tok, ts_ho, new_ho, device,
+                                    n_windows=(1 if dry_run else None))
     except Exception as e:
         print(f"[C2mod] on-bridge verify raised ({type(e).__name__}: {e}); the off-bridge ppl table stands "
               f"(C1 proved the install ppl_ratio=0.99999999). Recording the exception.", flush=True)
@@ -529,7 +568,7 @@ def main():
         "no_replay_forgets(>=%.2fx)=%s dose_monotone=%s scale_issue=%s]. CLS: fine-tune=development, "
         "self-replay=hippocampal no-forget, RF install=consolidated cortical store. Toy-scale; RF-install "
         "full-width fidelity scope carries from C1." % (
-            SH_FRAC, distinct_ratio, base_ts, base_new, REPLAY_FRAC_DECISIVE, dec_ts,
+            sh_frac, distinct_ratio, base_ts, base_new, REPLAY_FRAC_DECISIVE, dec_ts,
             decisive["original_retention"] * 100, dec_new, decisive["new_ppl_drop_frac"] * 100, nr_ts,
             noreplay["original_retention"] * 100, (nr_ts / dec_ts if dec_ts > 0 else float("inf")),
             noreplay["new_interleave_ppl"],
@@ -569,9 +608,14 @@ def main():
         },
         "genf_checkpoint": str(GENF_CKPT.relative_to(_REPO)),
         "genf_loss_last": loss_last, "vocab_size": V, "seed": SEED,
+        "arch_label": arch_label,
+        "arch": {"d_model": int(frozen.cfg["d_model"]), "n_layer": int(frozen.cfg["n_layer"]),
+                 "n_head": int(frozen.cfg["n_head"]), "block_size": int(frozen.cfg["block_size"]),
+                 "vocab_size": int(frozen.cfg["vocab_size"])},
+        "dry_run": bool(dry_run),
         "original_distribution": "TinyStories (data/corpus/tinystories.txt, heldout tail)",
         "new_distribution": "SH-frac=%.2f TinyStories/Shakespeare block-interleave (heldout tail) -- "
-                            "%.2fx-distinct (pre-grow new-ppl/orig-ppl)" % (SH_FRAC, distinct_ratio),
+                            "%.2fx-distinct (pre-grow new-ppl/orig-ppl)" % (sh_frac, distinct_ratio),
         "new_corpus_choice_rationale": (
             "An empirical corpus-selection sweep on THIS frozen 3.4M Gen-F mapped the shift space: PURE "
             "TinyStories topic/structural slices = ~0.8-1.05x baseline ppl (Gen-F trained on the FULL "
@@ -586,17 +630,17 @@ def main():
             "so the no-replay forgetting CONTRAST at this in-band point is expected MODEST (a directional "
             "mini-FT showed ~1.07-1.10x) rather than the prior run's 5.92x catastrophic spike -- the price "
             "of staying in-band; the dose-response + absolute learn/retain numbers are the decisive evidence."
-            % (SH_FRAC, base_new, distinct_ratio, int(round((1 - SH_FRAC) * 100)))),
+            % (sh_frac, base_new, distinct_ratio, int(round((1 - sh_frac) * 100)))),
         "new_corpus_construction": {
             "method": "deterministic block-interleave of TinyStories-train (capped %d chars) with "
                       "Shakespeare blocks at SH_FRAC Shakespeare probability per block" % TS_TRAIN_CAP,
-            "sh_frac": SH_FRAC, "interleave_seed": INTERLEAVE_SEED,
+            "sh_frac": sh_frac, "interleave_seed": INTERLEAVE_SEED,
             "interleave_block_chars": INTERLEAVE_BLOCK, "interleave_total_chars": INTERLEAVE_TOTAL,
             "new_unk_frac": new_unk,
         },
         "config": {
-            "block_size": BLOCK_SIZE, "ppl_eval_positions": PPL_EVAL_POSITIONS,
-            "ft_steps": FT_STEPS, "ft_batch": FT_BATCH, "ft_lr_rewarm": FT_LR,
+            "block_size": BLOCK_SIZE, "ppl_eval_positions": ppl_eval_positions,
+            "ft_steps": ft_steps, "ft_batch": ft_batch, "ft_lr_rewarm": ft_lr,
             "replay_frac_reference": REPLAY_FRAC, "replay_frac_decisive": REPLAY_FRAC_DECISIVE,
             "replay_sweep": list(sweep_fracs),
             "replay_sample_tokens": REPLAY_SAMPLE_TOKENS,
@@ -647,11 +691,11 @@ def main():
                         "(C1: the RF install reproduces off-bridge ppl to ppl_ratio 0.99999999).",
         "elapsed_seconds": round(time.time() - t_start, 1),
     }
-    OUT_PATH.write_text(json.dumps(result, indent=2, default=lambda o: None
+    out_path.write_text(json.dumps(result, indent=2, default=lambda o: None
                                    if (isinstance(o, float) and math.isnan(o)) else o))
 
     print("\n[C2mod] ===== PPL TABLE (held-out; Gen-F TinyStories BPE throughout) =====", flush=True)
-    print(f"[C2mod]   {'condition':24s} {'original(TinyStories)':>22s} {'new(SH'+str(SH_FRAC)+'-interleave)':>22s}",
+    print(f"[C2mod]   {'condition':24s} {'original(TinyStories)':>22s} {'new(SH'+str(sh_frac)+'-interleave)':>22s}",
           flush=True)
     print(f"[C2mod]   {'baseline (pre-grow)':24s} {base_ts:>22.4f} {base_new:>22.4f}", flush=True)
     print(f"[C2mod]   {'grown WITH replay':24s} {dec_ts:>22.4f} {dec_new:>22.4f}", flush=True)
@@ -660,9 +704,22 @@ def main():
     print("\n" + "=" * 78)
     print(verdict_line)
     print("=" * 78)
-    print(f"[C2mod] wrote {OUT_PATH}", flush=True)
+    print(f"[C2mod] wrote {out_path}", flush=True)
     free_cuda()
     return result
+
+
+def main():
+    import torch
+    backend = os.environ.get("SIM_BACKEND", "auto")
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"[C2mod] SIM_BACKEND={backend} device={device}", flush=True)
+    t_start = time.time()
+    # ---- load the original 3.4M frozen Gen-F + BPE (behaviourally unchanged from the pre-refactor) ----
+    frozen, tok, V, loss_last = load_genf(device)
+    print(f"[C2mod] frozen Gen-F loaded: vocab={V} d_model={frozen.cfg['d_model']} "
+          f"n_layer={frozen.cfg['n_layer']} block_size={BLOCK_SIZE} loss_last={loss_last:.4f}", flush=True)
+    return run_c2_loop(frozen, tok, V, loss_last, device, t_start=t_start)
 
 
 if __name__ == "__main__":

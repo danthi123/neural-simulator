@@ -1,0 +1,47 @@
+{
+  "probe": "genseq_C2_scaleup_SMOKE",
+  "arch": {
+    "vocab_size": 2049,
+    "d_model": 512,
+    "n_layer": 8,
+    "n_head": 8,
+    "block_size": 128
+  },
+  "exact_param_count": 27383808,
+  "exact_param_count_millions": 27.3838,
+  "param_formula_equals_measured": true,
+  "vram_gb": {
+    "after_build": 0.1116,
+    "peak_train": 0.782
+  },
+  "five_step_loss": {
+    "initial": 7.816219329833984,
+    "final": 6.9988813400268555,
+    "decreasing": true,
+    "history": [
+      7.8162,
+      7.4526,
+      7.2029,
+      7.018,
+      6.9989
+    ]
+  },
+  "stage2_c1_dry_run": {
+    "wired": true,
+    "logit_fidelity_spearman": 1.0,
+    "greedy_token_match": 1.0,
+    "ppl_ratio": 1.0000000136951677,
+    "elapsed_seconds": 65.0
+  },
+  "stage3_c2_dry_run": {
+    "wired": true,
+    "verdict": "NEGATIVE",
+    "arms": [
+      "no_replay",
+      "replay_30"
+    ],
+    "elapsed_seconds": 295.8
+  },
+  "stages_wired": true,
+  "device": "cuda"
+}
