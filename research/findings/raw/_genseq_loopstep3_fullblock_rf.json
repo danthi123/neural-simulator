@@ -1,0 +1,148 @@
+{
+  "probe": "genseq_loopstep3_fullblock_rf_integration",
+  "resolves": "does a FULL Gen-F transformer BLOCK run end-to-end on the bridge -- the exact-RF learned weights (attn Q/K/V/O projections + MLP linears) + the parameter-free nonlinearities (softmax, GELU, LayerNorm) as faithful reads -- and preserve output fidelity vs the exact-float Gen-F block?",
+  "continues": {
+    "attention": "2026-06-22-genseq-loopstep3-attn-rf-distill-GO-projections-consolidate-softmax-deferred.md (Q/K/V/O projections consolidate EXACTLY 1.000 on RF; softmax = 0-param content-dependent core -> faithful read)",
+    "mlp_gelu": "_genseq_loopstep3_mlp_gelu_rf_distill.json (MLP linears consolidate EXACTLY 1.000 on RF; GELU = exact-erf faithful read between the two exact linears, 0 params)"
+  },
+  "verify_reconciliation": "TEACHER = the EXACT-FLOAT Gen-F block-0 forward (s42.real ckpt, loss ~1.47) on REAL token activations (tokenized TinyStories -> block-0 input tok+pos embedding). The RF-full-block runs the SAME forward with every learned matvec on the live RF complex-synapse path.",
+  "genf_checkpoint": "research\\findings\\raw\\g11_bg\\generator_f_gate.ckpt.s42.real.pt",
+  "genf_meta": {
+    "d_model": 256,
+    "n_head": 4,
+    "loss_last": 1.4711004495620728,
+    "block_size": 128,
+    "n_tokens_probe": 90,
+    "probe_positions": [
+      1,
+      14,
+      26,
+      39,
+      51,
+      64,
+      76,
+      89
+    ],
+    "ln1_affine_l2": [
+      14.539785423996229,
+      0.6202636815533034
+    ],
+    "ln2_affine_l2": [
+      16.093630949414013,
+      0.19639445917797718
+    ],
+    "attn_bias_l2": {
+      "q": 2.43301930734041,
+      "k": 0.02570397106980008,
+      "v": 0.23859611088511895,
+      "o": 0.12533904699372198
+    },
+    "mlp_bias_l2": {
+      "fc1": 1.188697047591685,
+      "fc2": 0.2951657579864426
+    },
+    "decoded_probe_head": "Once upon a time there was a little girl named Lily. She had a small dog and a big cat. One"
+  },
+  "the_full_block": {
+    "structure": "sim/tiny_transformer.py _Block.forward: h=LN1(x); a=attn(h,h,h,causal); x=x+a; out=x+MLP(LN2(x)). TWO residual streams.",
+    "on_rf_learned_matvecs": "attn Q/K/V/O (4x256x256=262144) + MLP W1(256->1024)+W2(1024->256)=524288 -> 786432 params = ALL of the block's learned weights, ALL on the conductance-free RF complex-synapse path (exact).",
+    "faithful_reads": "softmax(QK^T/sqrt(dh)) [0 learned params, content-dependent attention weights] + GELU [0 params, exact-erf] + LayerNorm [content-dependent normalization; the learned affine 2x256 per LN rides on the read as a per-feature scale+shift, NOT a matvec]. The Linear/proj biases ride on the host read.",
+    "scope_note": "WEIGHTS-on-RF + nonlinearities-as-faithful-reads. The fully-SPIKING nonlinearities (spiking softmax / spiking LayerNorm / spiking GELU) are a SEPARATE follow-on, NOT this de-risk.",
+    "learned_matvec_params": 786432,
+    "nonlinearity_learned_matvec_params": 0,
+    "layernorm_affine_read_params": 1024
+  },
+  "oom_safety": {
+    "max_rf_bridge_neurons": 1280,
+    "max_block_nnz": 262144,
+    "n_rf_bridges_coresident": 3,
+    "est_gb": 0.03799,
+    "oom_ceiling_gb": 16.0
+  },
+  "rf_period": 100000,
+  "rf_nsteps": 8,
+  "rf_lambda": 0.0,
+  "n_probe_positions": 8,
+  "n_seq_positions": 90,
+  "d_model": 256,
+  "go_bar": 0.8,
+  "mechanism": "EXACT RF linear (rf_linear_layer_signed, reuse-by-import from the RF probe -- the SAME primitive that gave the attention projections + MLP linears rank 1.000) for ALL 6 learned matvecs (Q/K/V/O + W1/W2), run per sequence position; softmax/GELU/LayerNorm as faithful host reads; biases + LN affines on the read; TWO residual adds in float.",
+  "fullblock_fidelity_vs_teacher": {
+    "spearman": 0.9999999999999998,
+    "cosine": 0.999999999999998,
+    "per_position_spearman": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "per_position_cosine": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "rf_exact_max_err_per_matvec": {
+    "Wq": 2.5554608606981333e-07,
+    "Wk": 2.649104295926463e-07,
+    "Wv": 2.5365512112962563e-07,
+    "Wo": 2.3716766728298921e-07,
+    "W1": 4.918190521507881e-07,
+    "W2": 4.3498089175031396e-07,
+    "max_over_all": 4.918190521507881e-07
+  },
+  "anti_cheat_specificity": {
+    "matched_mean_spearman": 0.9999999999999998,
+    "mismatched_mean_spearman": 0.12209652830003594,
+    "specificity_margin": 0.8779034716999639
+  },
+  "anti_cheat_shuffled_target": {
+    "method": "score the RF-full-block output for position p vs a position-DERANGED teacher (permuted target rows) -> must be below the matched fidelity.",
+    "permutation": [
+      7,
+      5,
+      6,
+      1,
+      2,
+      0,
+      3,
+      4
+    ],
+    "shuffled_fidelity_vs_real_teacher": 0.08454880979629203,
+    "below_real": true
+  },
+  "anti_cheat_lesion": {
+    "method": "scramble (row-permute) the RF complex weights of EVERY learned matvec (Q/K/V/O + W1/W2); the softmax/GELU/LN reads UNCHANGED. The block fidelity MUST collapse to the RESIDUAL FLOOR -> proves the RF matvecs carry the sublayer corrections, NOT the host nonlinearities.",
+    "lesioned_fidelity_spearman": 0.6731484428644998,
+    "lesioned_fidelity_cosine": 0.7057596432319059,
+    "collapses": true,
+    "real_minus_lesioned": 0.32685155713549996,
+    "residual_floor_spearman": 0.6554914597161821,
+    "residual_floor_cosine": 0.685446296644729,
+    "sublayer_correction_fraction_of_output_norm": 0.9512519110961386,
+    "lesion_lands_at_residual_floor": true,
+    "real_above_residual_floor": true,
+    "interpretation": "the block is RESIDUAL (out = x + attn + mlp), so the carried-through input x is itself correlated with the teacher output (l2(x)/l2(teacher)~1.3, residual-floor spearman 0.655). A scrambled-weight block lands AT this floor (0.673), losing the sublayer corrections (95% of the output norm); the REAL RF-full-block (1.000) is decisively above it. => the RF matvecs carry the sublayer computation; the host softmax/GELU/LN reads do NOT manufacture the output."
+  },
+  "baselines": {
+    "attention_projections_rf": {
+      "cumulative": 1.0,
+      "note": "the 4 attention projections install EXACTLY on RF (this de-risk composes them in a full block forward with softmax + the residual streams)"
+    },
+    "mlp_gelu_rf": {
+      "cumulative": 1.0,
+      "note": "the MLP (Linear->GELU->Linear) installs EXACTLY on RF (this de-risk composes it after the attention sublayer + LN2 + the second residual)"
+    }
+  },
+  "verdict_line": "fullblock_rf: GEN-F(s42.real, loss=1.471) FULL block-0 forward on the bridge -- ALL learned-weight matvecs (attn Q/K/V/O + MLP W1/W2 = 786432 params) on the conductance-free RF complex-synapse path (EXACT, max|Re(Z)/nsteps-h@W|=4.9e-07) + softmax/GELU/LayerNorm as FAITHFUL READS, on REAL token activations -> full-block output fidelity_vs_exact-float-teacher spearman=1.0000 cosine=1.0000 specificity_margin=0.878 shuffled_control=0.0845 LESION(scrambled-RF-weights)=0.6731~residual-floor=0.6555<<real -> GO | the two residual streams + LN/softmax-as-reads COMPOSE; the RF matvecs carry the 95%-of-norm sublayer corrections (lesion collapses to the residual floor). SCOPE: weights-on-RF + nonlinearities-as-faithful-reads; the fully-SPIKING nonlinearities (spiking softmax/LayerNorm/GELU) are the SEPARATE follow-on. GO bar 0.80",
+  "verdict": "GO"
+}
