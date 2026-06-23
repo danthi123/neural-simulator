@@ -1,0 +1,1008 @@
+{
+  "probe": "grounded_lang_scaled_demo_end_to_end_real_spiking_qwen_faculty",
+  "resolves": "SCALE the grounded-language capstone -- the END-TO-END demo (GATE -> real spiking-Qwen SUBJECT-FIRST render -> VERIFY/reject->regen) on a richer ~67-fact curriculum, the FULL query set multi-seed for the brain half + a larger grounded-render subset; does the no-confab moat stay 0-false-accept at the bigger vocab + does subject-first LIFT the render correctness?",
+  "curriculum": "research\\findings\\raw\\_grounded_lang_curriculum_v2_scaled.json",
+  "n_facts_total": 67,
+  "vocab_size": 138,
+  "brain_backend": "numpy",
+  "brain_seeds": [
+    42,
+    43,
+    44
+  ],
+  "render_seeds": [
+    42
+  ],
+  "T": 16,
+  "max_new_tokens": 24,
+  "n_render": 10,
+  "prompt_default": "subject_first",
+  "subject_first_template": "Write one short, grammatical sentence. The subject is '{a}'. The action verb is '{v}'. The object is '{p}'. Put the subject '{a}' first, then the verb, then the object. Keep the verb '{v}'. Reply with only the sentence.",
+  "loose_template": "Turn the triple ({a}, {v}, {p}) into one short grammatical sentence. Keep the same verb '{v}'. Reply with only the sentence.",
+  "regen_template": "Write exactly one short sentence that means '{a} {v} {p}'. Put '{a}' first. Use the words {a}, {v}, and {p}. Reply with only the sentence, nothing else.",
+  "brain_recall_all_perfect": true,
+  "brain_min_recall_rate": 1.0,
+  "brain_moat_all_clean": true,
+  "brain_max_moat_false_accepts": 0,
+  "brain_n_seeds_ok": 3,
+  "render_grounded_all_correct": false,
+  "render_moat_all_clean": false,
+  "render_drift_all_caught": false,
+  "subject_first_first_render_mean": null,
+  "loose_first_render_mean": null,
+  "subject_first_lift": null,
+  "faculty_info": null,
+  "faculty_error": null,
+  "GO": true,
+  "verdict": "GO (brain-half): at ~67 facts, recall 1.0 (all seeds) AND moat 0-false-accept across 3 seeds. -- the spiking render was SKIPPED (--no-faculty); the END-TO-END grounded-render half is NOT validated by this run.",
+  "elapsed_seconds": 36.9,
+  "brain_per_seed": [
+    {
+      "seed": 42,
+      "taught": {
+        "facts": 48,
+        "attribute_facts": 16,
+        "clause_facts": 3,
+        "chain_facts": 4
+      },
+      "recall_correct": 18,
+      "recall_total": 18,
+      "recall_rate": 1.0,
+      "moat_false_accepts": 0,
+      "moat_total": 8,
+      "recall_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "meat",
+          "got": "meat",
+          "ok": true
+        },
+        {
+          "cue": [
+            "horse",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "hay",
+          "got": "hay",
+          "ok": true
+        },
+        {
+          "cue": [
+            "wolf",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "deer",
+          "got": "deer",
+          "ok": true
+        },
+        {
+          "cue": [
+            "owl",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "mouse",
+          "got": "mouse",
+          "ok": true
+        },
+        {
+          "cue": [
+            "frog",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "fly",
+          "got": "fly",
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "type": "patient",
+          "expect": "rabbit",
+          "got": "rabbit",
+          "ok": true
+        },
+        {
+          "cue": [
+            "wolf",
+            "chase"
+          ],
+          "type": "patient",
+          "expect": "deer",
+          "got": "deer",
+          "ok": true
+        },
+        {
+          "cue": [
+            "horse",
+            "like"
+          ],
+          "type": "patient",
+          "expect": "apple",
+          "got": "apple",
+          "ok": true
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "type": "patient",
+          "expect": "honey",
+          "got": "honey",
+          "ok": true
+        },
+        {
+          "cue": [
+            "sheep",
+            "make"
+          ],
+          "type": "patient",
+          "expect": "wool",
+          "got": "wool",
+          "ok": true
+        },
+        {
+          "cue": [
+            "river",
+            "give"
+          ],
+          "type": "patient",
+          "expect": "fish",
+          "got": "fish",
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "live"
+          ],
+          "type": "patient",
+          "expect": "den",
+          "got": "den",
+          "ok": true
+        },
+        {
+          "cue": [
+            "frog",
+            "live"
+          ],
+          "type": "patient",
+          "expect": "pond",
+          "got": "pond",
+          "ok": true
+        },
+        {
+          "cue": [
+            "eat",
+            "meat"
+          ],
+          "type": "agent",
+          "expect": "dog",
+          "got": "dog",
+          "ok": true
+        },
+        {
+          "cue": [
+            "make",
+            "honey"
+          ],
+          "type": "agent",
+          "expect": "bee",
+          "got": "bee",
+          "ok": true
+        },
+        {
+          "cue": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "type": "yesno",
+          "expect": "yes",
+          "got": "yes",
+          "ok": true
+        },
+        {
+          "cue": [
+            "wolf",
+            "chase",
+            "deer"
+          ],
+          "type": "yesno",
+          "expect": "yes",
+          "got": "yes",
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat",
+            "grass"
+          ],
+          "type": "yesno",
+          "expect": "no_or_unknown",
+          "got": "unknown",
+          "ok": true
+        }
+      ],
+      "moat_detail": [
+        {
+          "cue": [
+            "dragon",
+            "eat"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "dragon never taught"
+        },
+        {
+          "cue": [
+            "tiger",
+            "chase"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "tiger never taught"
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "whale only has an attribute, no eat-fact"
+        },
+        {
+          "cue": [
+            "lion",
+            "chase"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "lion only has an attribute, no chase-fact"
+        },
+        {
+          "cue": [
+            "cat",
+            "give"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "cat has no give-fact"
+        },
+        {
+          "cue": [
+            "dog",
+            "make"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "dog has no make-fact"
+        },
+        {
+          "cue": [
+            "fly",
+            "plane"
+          ],
+          "type": "agent",
+          "got": null,
+          "abstained": true,
+          "note": "never taught"
+        },
+        {
+          "cue": [
+            "apple",
+            "is",
+            "blue"
+          ],
+          "type": "yesno",
+          "got": "unknown",
+          "abstained": true,
+          "note": "apple is red"
+        }
+      ],
+      "chain_detail": [
+        {
+          "desc": "2-hop chase",
+          "cue": "dog",
+          "rel": "chase",
+          "same_rel_actions": [
+            "chase",
+            "chase"
+          ],
+          "got_same_rel": "mouse",
+          "expect_2hop_as_specified": "mouse",
+          "ok_as_specified": true,
+          "mixed_actions": [
+            "chase",
+            "chase"
+          ],
+          "got_mixed": "mouse",
+          "true_terminal": "mouse",
+          "ok_mixed_true": true
+        },
+        {
+          "desc": "2-hop chase->eat",
+          "cue": "wolf",
+          "rel": "chase",
+          "same_rel_actions": [
+            "chase",
+            "chase"
+          ],
+          "got_same_rel": null,
+          "expect_2hop_as_specified": "deer",
+          "ok_as_specified": false,
+          "mixed_actions": [
+            "chase",
+            "eat"
+          ],
+          "got_mixed": "leaf",
+          "true_terminal": "leaf",
+          "ok_mixed_true": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "taught": {
+        "facts": 48,
+        "attribute_facts": 16,
+        "clause_facts": 3,
+        "chain_facts": 4
+      },
+      "recall_correct": 18,
+      "recall_total": 18,
+      "recall_rate": 1.0,
+      "moat_false_accepts": 0,
+      "moat_total": 8,
+      "recall_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "meat",
+          "got": "meat",
+          "ok": true
+        },
+        {
+          "cue": [
+            "horse",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "hay",
+          "got": "hay",
+          "ok": true
+        },
+        {
+          "cue": [
+            "wolf",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "deer",
+          "got": "deer",
+          "ok": true
+        },
+        {
+          "cue": [
+            "owl",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "mouse",
+          "got": "mouse",
+          "ok": true
+        },
+        {
+          "cue": [
+            "frog",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "fly",
+          "got": "fly",
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "type": "patient",
+          "expect": "rabbit",
+          "got": "rabbit",
+          "ok": true
+        },
+        {
+          "cue": [
+            "wolf",
+            "chase"
+          ],
+          "type": "patient",
+          "expect": "deer",
+          "got": "deer",
+          "ok": true
+        },
+        {
+          "cue": [
+            "horse",
+            "like"
+          ],
+          "type": "patient",
+          "expect": "apple",
+          "got": "apple",
+          "ok": true
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "type": "patient",
+          "expect": "honey",
+          "got": "honey",
+          "ok": true
+        },
+        {
+          "cue": [
+            "sheep",
+            "make"
+          ],
+          "type": "patient",
+          "expect": "wool",
+          "got": "wool",
+          "ok": true
+        },
+        {
+          "cue": [
+            "river",
+            "give"
+          ],
+          "type": "patient",
+          "expect": "fish",
+          "got": "fish",
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "live"
+          ],
+          "type": "patient",
+          "expect": "den",
+          "got": "den",
+          "ok": true
+        },
+        {
+          "cue": [
+            "frog",
+            "live"
+          ],
+          "type": "patient",
+          "expect": "pond",
+          "got": "pond",
+          "ok": true
+        },
+        {
+          "cue": [
+            "eat",
+            "meat"
+          ],
+          "type": "agent",
+          "expect": "dog",
+          "got": "dog",
+          "ok": true
+        },
+        {
+          "cue": [
+            "make",
+            "honey"
+          ],
+          "type": "agent",
+          "expect": "bee",
+          "got": "bee",
+          "ok": true
+        },
+        {
+          "cue": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "type": "yesno",
+          "expect": "yes",
+          "got": "yes",
+          "ok": true
+        },
+        {
+          "cue": [
+            "wolf",
+            "chase",
+            "deer"
+          ],
+          "type": "yesno",
+          "expect": "yes",
+          "got": "yes",
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat",
+            "grass"
+          ],
+          "type": "yesno",
+          "expect": "no_or_unknown",
+          "got": "unknown",
+          "ok": true
+        }
+      ],
+      "moat_detail": [
+        {
+          "cue": [
+            "dragon",
+            "eat"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "dragon never taught"
+        },
+        {
+          "cue": [
+            "tiger",
+            "chase"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "tiger never taught"
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "whale only has an attribute, no eat-fact"
+        },
+        {
+          "cue": [
+            "lion",
+            "chase"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "lion only has an attribute, no chase-fact"
+        },
+        {
+          "cue": [
+            "cat",
+            "give"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "cat has no give-fact"
+        },
+        {
+          "cue": [
+            "dog",
+            "make"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "dog has no make-fact"
+        },
+        {
+          "cue": [
+            "fly",
+            "plane"
+          ],
+          "type": "agent",
+          "got": null,
+          "abstained": true,
+          "note": "never taught"
+        },
+        {
+          "cue": [
+            "apple",
+            "is",
+            "blue"
+          ],
+          "type": "yesno",
+          "got": "unknown",
+          "abstained": true,
+          "note": "apple is red"
+        }
+      ],
+      "chain_detail": [
+        {
+          "desc": "2-hop chase",
+          "cue": "dog",
+          "rel": "chase",
+          "same_rel_actions": [
+            "chase",
+            "chase"
+          ],
+          "got_same_rel": "mouse",
+          "expect_2hop_as_specified": "mouse",
+          "ok_as_specified": true,
+          "mixed_actions": [
+            "chase",
+            "chase"
+          ],
+          "got_mixed": "mouse",
+          "true_terminal": "mouse",
+          "ok_mixed_true": true
+        },
+        {
+          "desc": "2-hop chase->eat",
+          "cue": "wolf",
+          "rel": "chase",
+          "same_rel_actions": [
+            "chase",
+            "chase"
+          ],
+          "got_same_rel": null,
+          "expect_2hop_as_specified": "deer",
+          "ok_as_specified": false,
+          "mixed_actions": [
+            "chase",
+            "eat"
+          ],
+          "got_mixed": "leaf",
+          "true_terminal": "leaf",
+          "ok_mixed_true": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "taught": {
+        "facts": 48,
+        "attribute_facts": 16,
+        "clause_facts": 3,
+        "chain_facts": 4
+      },
+      "recall_correct": 18,
+      "recall_total": 18,
+      "recall_rate": 1.0,
+      "moat_false_accepts": 0,
+      "moat_total": 8,
+      "recall_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "meat",
+          "got": "meat",
+          "ok": true
+        },
+        {
+          "cue": [
+            "horse",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "hay",
+          "got": "hay",
+          "ok": true
+        },
+        {
+          "cue": [
+            "wolf",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "deer",
+          "got": "deer",
+          "ok": true
+        },
+        {
+          "cue": [
+            "owl",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "mouse",
+          "got": "mouse",
+          "ok": true
+        },
+        {
+          "cue": [
+            "frog",
+            "eat"
+          ],
+          "type": "patient",
+          "expect": "fly",
+          "got": "fly",
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "type": "patient",
+          "expect": "rabbit",
+          "got": "rabbit",
+          "ok": true
+        },
+        {
+          "cue": [
+            "wolf",
+            "chase"
+          ],
+          "type": "patient",
+          "expect": "deer",
+          "got": "deer",
+          "ok": true
+        },
+        {
+          "cue": [
+            "horse",
+            "like"
+          ],
+          "type": "patient",
+          "expect": "apple",
+          "got": "apple",
+          "ok": true
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "type": "patient",
+          "expect": "honey",
+          "got": "honey",
+          "ok": true
+        },
+        {
+          "cue": [
+            "sheep",
+            "make"
+          ],
+          "type": "patient",
+          "expect": "wool",
+          "got": "wool",
+          "ok": true
+        },
+        {
+          "cue": [
+            "river",
+            "give"
+          ],
+          "type": "patient",
+          "expect": "fish",
+          "got": "fish",
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "live"
+          ],
+          "type": "patient",
+          "expect": "den",
+          "got": "den",
+          "ok": true
+        },
+        {
+          "cue": [
+            "frog",
+            "live"
+          ],
+          "type": "patient",
+          "expect": "pond",
+          "got": "pond",
+          "ok": true
+        },
+        {
+          "cue": [
+            "eat",
+            "meat"
+          ],
+          "type": "agent",
+          "expect": "dog",
+          "got": "dog",
+          "ok": true
+        },
+        {
+          "cue": [
+            "make",
+            "honey"
+          ],
+          "type": "agent",
+          "expect": "bee",
+          "got": "bee",
+          "ok": true
+        },
+        {
+          "cue": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "type": "yesno",
+          "expect": "yes",
+          "got": "yes",
+          "ok": true
+        },
+        {
+          "cue": [
+            "wolf",
+            "chase",
+            "deer"
+          ],
+          "type": "yesno",
+          "expect": "yes",
+          "got": "yes",
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat",
+            "grass"
+          ],
+          "type": "yesno",
+          "expect": "no_or_unknown",
+          "got": "unknown",
+          "ok": true
+        }
+      ],
+      "moat_detail": [
+        {
+          "cue": [
+            "dragon",
+            "eat"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "dragon never taught"
+        },
+        {
+          "cue": [
+            "tiger",
+            "chase"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "tiger never taught"
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "whale only has an attribute, no eat-fact"
+        },
+        {
+          "cue": [
+            "lion",
+            "chase"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "lion only has an attribute, no chase-fact"
+        },
+        {
+          "cue": [
+            "cat",
+            "give"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "cat has no give-fact"
+        },
+        {
+          "cue": [
+            "dog",
+            "make"
+          ],
+          "type": "patient",
+          "got": null,
+          "abstained": true,
+          "note": "dog has no make-fact"
+        },
+        {
+          "cue": [
+            "fly",
+            "plane"
+          ],
+          "type": "agent",
+          "got": null,
+          "abstained": true,
+          "note": "never taught"
+        },
+        {
+          "cue": [
+            "apple",
+            "is",
+            "blue"
+          ],
+          "type": "yesno",
+          "got": "unknown",
+          "abstained": true,
+          "note": "apple is red"
+        }
+      ],
+      "chain_detail": [
+        {
+          "desc": "2-hop chase",
+          "cue": "dog",
+          "rel": "chase",
+          "same_rel_actions": [
+            "chase",
+            "chase"
+          ],
+          "got_same_rel": "mouse",
+          "expect_2hop_as_specified": "mouse",
+          "ok_as_specified": true,
+          "mixed_actions": [
+            "chase",
+            "chase"
+          ],
+          "got_mixed": "mouse",
+          "true_terminal": "mouse",
+          "ok_mixed_true": true
+        },
+        {
+          "desc": "2-hop chase->eat",
+          "cue": "wolf",
+          "rel": "chase",
+          "same_rel_actions": [
+            "chase",
+            "chase"
+          ],
+          "got_same_rel": null,
+          "expect_2hop_as_specified": "deer",
+          "ok_as_specified": false,
+          "mixed_actions": [
+            "chase",
+            "eat"
+          ],
+          "got_mixed": "leaf",
+          "true_terminal": "leaf",
+          "ok_mixed_true": true
+        }
+      ]
+    }
+  ],
+  "render_per_seed": []
+}
