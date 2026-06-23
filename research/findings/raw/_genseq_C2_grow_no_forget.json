@@ -1,0 +1,169 @@
+{
+  "probe": "genseq_C2_grow_no_forget",
+  "resolves": "C2: does the consolidated spiking generator LEARN a new distribution (new-ppl drops) WHILE RETAINING the original (original held-out ppl >= ~90% of baseline) via GENERATIVE SELF-REPLAY + re-distill -- with the NO-replay control showing catastrophic forgetting?",
+  "scoping": "research/findings/2026-06-22-C2-grow-no-forget-scoping.md (route #1: re-distill on new+self-replayed-old; the gate-freeze is the WRONG tool -- generative self-replay is the CLS no-forget, free because the model IS a generator).",
+  "cls_mapping": {
+    "slow_neocortex": "the off-bridge fine-tune (development / gradual structured learning)",
+    "fast_hippocampus_replay": "generative self-replay (the frozen Gen-F samples its OWN old TinyStories distribution into the fine-tune corpus)",
+    "consolidated_cortical_store": "the RF complex-synapse install on the one bridge (C1)"
+  },
+  "genf_checkpoint": "research\\findings\\raw\\g11_bg\\generator_f_gate.ckpt.s42.real.pt",
+  "genf_loss_last": 1.4711004495620728,
+  "vocab_size": 513,
+  "seed": 42,
+  "original_distribution": "TinyStories (data/corpus/tinystories.txt, heldout tail)",
+  "new_distribution": "Shakespeare (data/tinyshakespeare.txt, heldout tail) -- 41.0x-distinct (pre-grow new-ppl/orig-ppl)",
+  "new_corpus_choice_rationale": "Shakespeare is a DISTINCT, learnable register: pre-grow Gen-F Shakespeare-ppl 41x the TinyStories-ppl (decisively distinct -> learns-new detectable AND the no-replay control should catastrophically forget), yet 0%% <UNK> under Gen-F's TinyStories BPE (the BPE is valid; the shift is style/vocabulary). A TinyStories sub-slice would be too similar for the forgetting control to bite.",
+  "config": {
+    "block_size": 128,
+    "ppl_eval_positions": 200,
+    "ft_steps": 1500,
+    "ft_batch": 48,
+    "ft_lr_rewarm": 0.0003,
+    "replay_frac_decisive": 0.3,
+    "replay_sweep": [
+      0.0,
+      0.1,
+      0.3
+    ],
+    "replay_sample_tokens": 200,
+    "retain_bar": 0.85,
+    "learn_bar": 0.8,
+    "forget_margin": 1.3,
+    "n_self_replay_tokens": 132599
+  },
+  "grow_route": "#1 (the scoping's cheapest + most C1-faithful): the GROW step IS a second C1 pass on a GROWN corpus (new + self-replayed-old), re-distilled + re-installed on the RF bridge. NO sim/ edit (reuse-by-import of the C1 install + the Gen-F ppl harness).",
+  "baseline_pregrow_ppl": {
+    "original_tinystories_ppl": 6.213096410730846,
+    "new_shakespeare_ppl": 254.65934271776283
+  },
+  "self_replay": {
+    "method": "autoregressively sample OLD (TinyStories) text from the FROZEN pre-grow Gen-F (varied in-distribution primes); NO stored old data -- the generator IS the source (Shin 2017 Deep Generative Replay; Huang 2024 Self-Synthesized Rehearsal).",
+    "n_tokens": 132599,
+    "distinct_trigram": 0.47772574040136656,
+    "sample_decode": "Once upon a time there was a frog named Tim. He loved to play and run in the sun. His friend, a kind bird named Tim, lived with a big bear. Tim liked to sit on his whistle. Every day, Tim,"
+  },
+  "arms": {
+    "no_replay": {
+      "replay_frac": 0.0,
+      "ft_log": {
+        "label": "no_replay",
+        "steps": 1500,
+        "final_loss": 1.7114464044570923,
+        "initial_loss": 5.522218227386475,
+        "realized_replay_frac": 0.0,
+        "n_new_tokens": 309399,
+        "n_replay_tokens": 0,
+        "batch_size_final": 48
+      },
+      "original_tinystories_ppl": 58.31499950306209,
+      "new_shakespeare_ppl": 41.764551063206206,
+      "original_retention": 0.10654371025767735,
+      "new_ppl_drop_frac": 0.8359983552243219,
+      "gen_oldprime_text": "grave, am Opperry ruled in: Whilst that name be unis. There's a woman's name hour,",
+      "gen_newprime_text": "your friend. BISHOP OF ELY: My Romeo's good, you love me well. I am nor now"
+    },
+    "replay_10": {
+      "replay_frac": 0.1,
+      "ft_log": {
+        "label": "replay_10",
+        "steps": 1500,
+        "final_loss": 1.889050841331482,
+        "initial_loss": 5.2797698974609375,
+        "realized_replay_frac": 0.0999982546774644,
+        "n_new_tokens": 309399,
+        "n_replay_tokens": 34377,
+        "batch_size_final": 48
+      },
+      "original_tinystories_ppl": 13.947293152891856,
+      "new_shakespeare_ppl": 39.2367395998694,
+      "original_retention": 0.4454696938411029,
+      "new_ppl_drop_frac": 0.8459246019363397,
+      "gen_oldprime_text": "boy named Joe. Otch, lived on the stadium, round night from unseen and traventons Till it lament",
+      "gen_newprime_text": "your friend to all your form; For you have issued, 'tis since you might break thee too: I'll"
+    },
+    "replay_30": {
+      "replay_frac": 0.3,
+      "ft_log": {
+        "label": "replay_30",
+        "steps": 1500,
+        "final_loss": 1.9573942422866821,
+        "initial_loss": 4.429585933685303,
+        "realized_replay_frac": 0.2999990950185295,
+        "n_new_tokens": 309399,
+        "n_replay_tokens": 132599,
+        "batch_size_final": 48
+      },
+      "original_tinystories_ppl": 9.852846519395658,
+      "new_shakespeare_ppl": 34.70998051159122,
+      "original_retention": 0.6305889773579805,
+      "new_ppl_drop_frac": 0.8637003451702927,
+      "gen_oldprime_text": "boy named Joe. Otch was being Officle. He also playing with his toys and all night long te asked his mom for to take them awa",
+      "gen_newprime_text": "your friend. BRUTUS: My gracious namation. MERCUTIO: God will be my"
+    }
+  },
+  "ppl_table": {
+    "rows": [
+      "baseline_pregrow",
+      "grown_with_replay",
+      "grown_no_replay"
+    ],
+    "cols": [
+      "original_tinystories_heldout_ppl",
+      "new_shakespeare_heldout_ppl"
+    ],
+    "baseline_pregrow": {
+      "original_tinystories_heldout_ppl": 6.213096410730846,
+      "new_shakespeare_heldout_ppl": 254.65934271776283
+    },
+    "grown_with_replay": {
+      "original_tinystories_heldout_ppl": 9.852846519395658,
+      "new_shakespeare_heldout_ppl": 34.70998051159122,
+      "replay_frac": 0.3
+    },
+    "grown_no_replay": {
+      "original_tinystories_heldout_ppl": 58.31499950306209,
+      "new_shakespeare_heldout_ppl": 41.764551063206206
+    }
+  },
+  "on_bridge_verification": {
+    "original_tinystories": {
+      "on_bridge_ppl": 8.349971332587787,
+      "off_bridge_ppl": 8.349972712054873,
+      "ppl_ratio": 0.999999834793821,
+      "n_windows": 3
+    },
+    "new_shakespeare": {
+      "on_bridge_ppl": 29.206013082630793,
+      "off_bridge_ppl": 29.206011300307864,
+      "ppl_ratio": 1.0000000610258932,
+      "n_windows": 3
+    }
+  },
+  "anti_cheat_no_replay": {
+    "method": "fine-tune on NEW Shakespeare ONLY (replay_frac=0) -> the ORIGINAL TinyStories ppl must SPIKE (catastrophic forgetting) while NEW ppl drops -> proves the self-replay is CAUSAL for retention (not that the new corpus happens to preserve the old).",
+    "no_replay_original_ppl": 58.31499950306209,
+    "with_replay_original_ppl": 9.852846519395658,
+    "forgetting_ratio_noreplay_over_withreplay": 5.918594122852422,
+    "no_replay_forgets": true
+  },
+  "anti_cheat_dose_response": {
+    "method": "retention should improve monotonically with replay fraction (the CL-LLM dose-response; a flat curve would mean retention isn't from the replay).",
+    "replay_frac_to_retention": {
+      "0.00": 0.10654371025767735,
+      "0.10": 0.4454696938411029,
+      "0.30": 0.6305889773579805
+    },
+    "monotone": true
+  },
+  "checks": {
+    "learns_new": true,
+    "retains_old": false,
+    "no_replay_forgets": true,
+    "dose_monotone": true
+  },
+  "verdict_line": "C2 grow+no-forget (toy Gen-F 3.4M, route #1 re-distill + GENERATIVE SELF-REPLAY): NEW=Shakespeare (41.0x-distinct from TinyStories). BASELINE orig=6.213 new=254.659 | GROWN-WITH-REPLAY(frac=0.30) orig=9.853 (retention 63.1%) new=34.710 (drop 86.4%) | NO-REPLAY-control orig=58.315 (retention 10.7%, SPIKES 5.92x the with-replay orig) new=41.765 | on-bridge-install-ppl-ratio~=1.000000 -> NEGATIVE [learns_new=True retains_old>=85%=False no_replay_forgets(>=1.30x)=True dose_monotone=True]. CLS: the fine-tune = development (slow cortical), the self-replay = hippocampal no-forget, the RF install = the consolidated cortical store. Toy-scale; RF-install full-width fidelity scope carries from C1.",
+  "verdict": "NEGATIVE",
+  "honest_scope": "toy-scale (3.4M-param) demonstration of the loop's BACK HALF (grow + no-forget). The RF-install full-width fidelity scope carries forward from C1 (not re-litigated). The ppl is measured off-bridge (fast) and VERIFIED on-bridge (C1: the RF install reproduces off-bridge ppl to ppl_ratio 0.99999999).",
+  "elapsed_seconds": 866.0
+}
