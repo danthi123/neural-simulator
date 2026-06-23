@@ -1,0 +1,42 @@
+{
+  "domain": "animals / objects / actions micro-domain — P2 grounded-language de-risk curriculum, authored by Claude as the OFFLINE 'textbook author' (the rich model authors the lesson; the brain learns it its own way; no external LLM at runtime).",
+  "facts": [
+    ["dog", "eat", "meat"], ["cat", "eat", "fish"], ["bird", "eat", "seed"], ["cow", "eat", "grass"], ["fox", "eat", "rabbit"],
+    ["dog", "chase", "cat"], ["cat", "chase", "mouse"], ["fox", "chase", "rabbit"],
+    ["dog", "like", "bone"], ["cat", "like", "milk"], ["bird", "like", "worm"], ["cow", "like", "hay"],
+    ["sun", "give", "light"], ["rain", "give", "water"], ["tree", "give", "shade"],
+    ["bee", "make", "honey"], ["hen", "make", "egg"], ["spider", "make", "web"],
+    ["fish", "live", "water"], ["bird", "live", "tree"], ["mole", "live", "ground"], ["bear", "live", "cave"]
+  ],
+  "attribute_facts": [
+    ["apple", "red"], ["banana", "yellow"], ["grass", "green"], ["sky", "blue"],
+    ["dog", "big"], ["mouse", "small"], ["fox", "clever"], ["cow", "slow"]
+  ],
+  "clause_facts": [
+    ["dog", "know", ["cat", "chase", "mouse"]],
+    ["boy", "see", ["fox", "chase", "rabbit"]]
+  ],
+  "chains": [
+    {"desc": "2-hop chase", "facts": [["dog", "chase", "cat"], ["cat", "chase", "mouse"]], "query": ["dog", "chase"], "expect_2hop": "mouse"}
+  ],
+  "queries_recall": [
+    {"type": "patient", "cue": ["dog", "eat"], "expect": "meat"},
+    {"type": "patient", "cue": ["cat", "eat"], "expect": "fish"},
+    {"type": "patient", "cue": ["bird", "eat"], "expect": "seed"},
+    {"type": "patient", "cue": ["fox", "chase"], "expect": "rabbit"},
+    {"type": "agent", "cue": ["eat", "meat"], "expect": "dog"},
+    {"type": "patient", "cue": ["bee", "make"], "expect": "honey"},
+    {"type": "patient", "cue": ["fish", "live"], "expect": "water"},
+    {"type": "yesno", "cue": ["dog", "eat", "meat"], "expect": "yes"},
+    {"type": "yesno", "cue": ["cat", "eat", "grass"], "expect": "no_or_unknown"}
+  ],
+  "queries_moat": [
+    {"type": "patient", "cue": ["lion", "eat"], "expect": null, "note": "lion never taught"},
+    {"type": "patient", "cue": ["whale", "eat"], "expect": null, "note": "whale never taught"},
+    {"type": "patient", "cue": ["dog", "drink"], "expect": null, "note": "drink-action never taught for dog"},
+    {"type": "agent", "cue": ["fly", "plane"], "expect": null, "note": "never taught"},
+    {"type": "yesno", "cue": ["apple", "is", "blue"], "expect": "no_or_unknown", "note": "apple is red, not blue"}
+  ],
+  "stream": "the dog ran . the dog ate meat . the dog chased the cat . the cat ran . the cat ate fish . the bird ate seed . the bird sat in the tree . the fox chased the rabbit . the fox was clever . the cow ate grass . the cow was slow . the bee made honey . the fish lived in water .",
+  "notes": "P2 de-risk: feed facts + attribute_facts + clause_facts through BrainConversationalAgent.hear(); test queries_recall (recall ~1.0) + queries_moat (0 false-accepts) + the 2-hop chain via reason_chain/query_chain. >=3 seeds. The stream is OPTIONAL (for the PPMI stream-cortex grounding variant). GO = recall correct AND moat 0-false-accept >=3 seeds. This de-risks P2 (knowledge teacher -> brain) AND P3's gate (the moat) with NO LLM touched."
+}
