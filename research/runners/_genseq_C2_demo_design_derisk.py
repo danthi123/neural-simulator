@@ -82,6 +82,10 @@ from research.runners.corpus_fetch import fetch_corpus, split_corpus  # noqa: E4
 OUT_PATH = _REPO / "research/findings/raw/_genseq_C2_demo_design.json"
 
 # ---- knobs (toy 3.4M scale; foreground-bounded) ------------------------------------------------------
+# SEED is the module-level default (42 -> byte-identical to the original run). An ADDITIVE optional
+# `--seed N` CLI arg (parsed in main()) overrides it for the multi-seed confirm; when overridden, the
+# output path is suffixed `_seed{N}.json` so the canonical seed-42 result is never clobbered. The default
+# (no `--seed`) writes the original OUT_PATH and uses SEED=42 -> the original behavior is unchanged.
 SEED = 42
 BLOCK_SIZE = 128
 FT_STEPS = 1500              # fine-tune steps (matches the prior C2 runs -> apples-to-apples)
@@ -239,10 +243,21 @@ def _arm_metrics(grown, tok, ts_ho, sh_ho, base_ts, base_sh, device, *, ppl_posi
 
 
 def main():
+    import argparse
+    global SEED, OUT_PATH
+    # ADDITIVE: optional --seed N (default = the module SEED=42 -> original behavior + original OUT_PATH).
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--seed", type=int, default=SEED,
+                    help="random seed (default 42 = the canonical run; writes original OUT_PATH).")
+    args, _ = ap.parse_known_args()
+    if args.seed != SEED:
+        SEED = args.seed
+        OUT_PATH = _REPO / f"research/findings/raw/_genseq_C2_demo_design_seed{SEED}.json"
+
     import torch
     backend = os.environ.get("SIM_BACKEND", "auto")
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"[C2dd] SIM_BACKEND={backend} device={device}", flush=True)
+    print(f"[C2dd] SIM_BACKEND={backend} device={device} SEED={SEED} OUT={OUT_PATH.name}", flush=True)
     t_start = time.time()
 
     # ---- load frozen 3.4M Gen-F + BPE (the CLEAN testbed) ----

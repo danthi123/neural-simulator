@@ -1,0 +1,18 @@
+{
+  "experiment": "C2 generative grow+no-forget LOOP — multi-seed robustness confirmation (demonstrated -> robust)",
+  "date": "2026-06-23",
+  "config": "demo-design WINNER: FT_LR=1e-5, replay=0.30, EXTREME 41x Shakespeare shift (the genuine forgetting stressor); 3.4M Gen-F retrained per seed",
+  "bars": {"retains_old": ">=0.85", "learns_new": "new_ppl_drop>=0.30", "no_replay_forgets": ">=1.30x contrast"},
+  "per_seed": {
+    "42": {"verdict": "GO", "orig_retention": 0.884, "new_drop": 0.868, "no_replay_retention": 0.392, "forget_contrast": 2.25},
+    "43": {"verdict": "GO", "orig_retention": 0.886, "new_drop": 0.868, "no_replay_retention": 0.392, "forget_contrast": 2.26},
+    "44": {"verdict": "GO", "orig_retention": 0.883, "new_drop": 0.868, "no_replay_retention": 0.393, "forget_contrast": 2.25}
+  },
+  "aggregate": {
+    "n_seeds_go": 3, "n_seeds_total": 3,
+    "retention_range": [0.883, 0.886], "contrast_range": [2.25, 2.26],
+    "variance_note": "std ~0.15% on retention, ~0.005x on contrast across 3 seeds = near-zero seed variance"
+  },
+  "verdict": "ROBUST — 3/3 seeds (42/43/44) GO, all 3 bars cleared on the EXTREME 41x shift with TIGHT variance. The demonstrated generative loop (train -> generate -> grow -> confirm-no-catastrophic-forgetting) is MULTI-SEED ROBUST.",
+  "provenance": "Seeds aggregated from _genseq_C2_demo_design{,_seed43,_seed44}.json. Subagent ae28270d52342f5fa stalled after seed 43 (backgrounded-run stall); seed 44 launched controller-managed (bgog8q1by). FT_LR=1e-5 fix is now the shared run_c2_loop default (commit 05c107b0)."
+}
