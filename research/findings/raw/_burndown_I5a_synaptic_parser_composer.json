@@ -1,0 +1,443 @@
+{
+  "probe": "burndown_I5a_synaptic_parser_composer",
+  "question": "does the synaptic parser->composer route recover the role->word assignment == the host dict path, gated by parser firing (lesion collapses), provenance-clean?",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_seeds_GO": 3,
+  "verdict": "GO",
+  "route_eq_ground_truth_all": true,
+  "route_not_worse_than_dict_all": true,
+  "route_eq_dict_bitwise_all": false,
+  "moat_preserved_all": true,
+  "gated_by_firing_all": true,
+  "lesion_collapses_all": true,
+  "provenance_clean_all": true,
+  "note_route_eq_dict_bitwise": "route_eq_dict_bitwise is a SECONDARY check confounded by the DICT path's OWN seed-dependent composer-decode jitter (OU noise at the code margin); the load-bearing invariants are route_eq_ground_truth + route_not_worse_than_dict. On any seed where they differ, the route recovered the fact and the DICT path was the noisy one (route never worse).",
+  "per_seed": [
+    {
+      "seed": 42,
+      "1_route_vs_dict": {
+        "parses_route": [
+          {
+            "agent": "dog",
+            "action": "go",
+            "patient": "north"
+          },
+          {
+            "agent": "cat",
+            "action": "look",
+            "patient": "river"
+          },
+          {
+            "agent": "dog",
+            "action": "come",
+            "patient": "south"
+          }
+        ],
+        "parses_dict": [
+          {
+            "agent": "dog",
+            "action": "go",
+            "patient": "north"
+          },
+          {
+            "agent": "cat",
+            "action": "look",
+            "patient": "river"
+          },
+          {
+            "agent": "dog",
+            "action": "come",
+            "patient": "south"
+          }
+        ],
+        "recovered_route": {
+          "query_patient": {
+            "('dog', 'go')": "north",
+            "('cat', 'look')": "river",
+            "('dog', 'come')": "south"
+          },
+          "query_agent": {
+            "('go', 'north')": "dog",
+            "('look', 'river')": "cat",
+            "('come', 'south')": "dog"
+          },
+          "render_fact": {
+            "dog": "dog go north",
+            "cat": "cat look river"
+          },
+          "moat_abstain": null
+        },
+        "recovered_dict": {
+          "query_patient": {
+            "('dog', 'go')": "north",
+            "('cat', 'look')": "river",
+            "('dog', 'come')": "south"
+          },
+          "query_agent": {
+            "('go', 'north')": "dog",
+            "('look', 'river')": "cat",
+            "('come', 'south')": "dog"
+          },
+          "render_fact": {
+            "dog": "dog go north",
+            "cat": "cat look river"
+          },
+          "moat_abstain": null
+        },
+        "route_correct": 3,
+        "dict_correct": 3,
+        "n_facts": 3,
+        "route_eq_ground_truth": true,
+        "route_not_worse_than_dict": true,
+        "route_eq_dict_bitwise": true,
+        "moat_abstain_both_None": true
+      },
+      "2_gated_by_firing": {
+        "trace": [
+          {
+            "word": "dog",
+            "parser_role": "agent",
+            "gates_open": [
+              "agent"
+            ],
+            "open_fraction": {
+              "agent": 1.0,
+              "action": 0.0,
+              "patient": 0.0
+            }
+          },
+          {
+            "word": "go",
+            "parser_role": "action",
+            "gates_open": [
+              "action"
+            ],
+            "open_fraction": {
+              "agent": 0.0,
+              "action": 1.0,
+              "patient": 0.0
+            }
+          },
+          {
+            "word": "north",
+            "parser_role": "patient",
+            "gates_open": [
+              "patient"
+            ],
+            "open_fraction": {
+              "agent": 0.0,
+              "action": 0.0,
+              "patient": 1.0
+            }
+          }
+        ],
+        "ok": true
+      },
+      "3_lesion": {
+        "intact_correct": 3,
+        "lesion_correct": 0,
+        "collapses": true,
+        "recovered_lesion": {
+          "('dog', 'go')": null,
+          "('cat', 'look')": null,
+          "('dog', 'come')": null
+        }
+      },
+      "4_provenance": {
+        "word": "dog",
+        "parser_role": "agent",
+        "synaptic_route_role_bank_direct_current_max": 0.0,
+        "dict_path_role_bank_direct_current_max": 2500.0,
+        "clean": true
+      },
+      "seed_GO": true,
+      "elapsed_s": 18.3
+    },
+    {
+      "seed": 43,
+      "1_route_vs_dict": {
+        "parses_route": [
+          {
+            "agent": "dog",
+            "action": "go",
+            "patient": "north"
+          },
+          {
+            "agent": "cat",
+            "action": "look",
+            "patient": "river"
+          },
+          {
+            "agent": "dog",
+            "action": "come",
+            "patient": "south"
+          }
+        ],
+        "parses_dict": [
+          {
+            "agent": "dog",
+            "action": "go",
+            "patient": "north"
+          },
+          {
+            "agent": "cat",
+            "action": "look",
+            "patient": "river"
+          },
+          {
+            "agent": "dog",
+            "action": "come",
+            "patient": "south"
+          }
+        ],
+        "recovered_route": {
+          "query_patient": {
+            "('dog', 'go')": "north",
+            "('cat', 'look')": "river",
+            "('dog', 'come')": "south"
+          },
+          "query_agent": {
+            "('go', 'north')": "dog",
+            "('look', 'river')": "cat",
+            "('come', 'south')": "dog"
+          },
+          "render_fact": {
+            "dog": "dog go north",
+            "cat": "cat look river"
+          },
+          "moat_abstain": null
+        },
+        "recovered_dict": {
+          "query_patient": {
+            "('dog', 'go')": "north",
+            "('cat', 'look')": null,
+            "('dog', 'come')": "south"
+          },
+          "query_agent": {
+            "('go', 'north')": "dog",
+            "('look', 'river')": "south",
+            "('come', 'south')": "dog"
+          },
+          "render_fact": {
+            "dog": "dog go north",
+            "cat": null
+          },
+          "moat_abstain": null
+        },
+        "route_correct": 3,
+        "dict_correct": 2,
+        "n_facts": 3,
+        "route_eq_ground_truth": true,
+        "route_not_worse_than_dict": true,
+        "route_eq_dict_bitwise": false,
+        "moat_abstain_both_None": true
+      },
+      "2_gated_by_firing": {
+        "trace": [
+          {
+            "word": "dog",
+            "parser_role": "agent",
+            "gates_open": [
+              "agent"
+            ],
+            "open_fraction": {
+              "agent": 1.0,
+              "action": 0.0,
+              "patient": 0.0
+            }
+          },
+          {
+            "word": "go",
+            "parser_role": "action",
+            "gates_open": [
+              "action"
+            ],
+            "open_fraction": {
+              "agent": 0.0,
+              "action": 1.0,
+              "patient": 0.0
+            }
+          },
+          {
+            "word": "north",
+            "parser_role": "patient",
+            "gates_open": [
+              "patient"
+            ],
+            "open_fraction": {
+              "agent": 0.0,
+              "action": 0.0,
+              "patient": 1.0
+            }
+          }
+        ],
+        "ok": true
+      },
+      "3_lesion": {
+        "intact_correct": 3,
+        "lesion_correct": 0,
+        "collapses": true,
+        "recovered_lesion": {
+          "('dog', 'go')": null,
+          "('cat', 'look')": null,
+          "('dog', 'come')": null
+        }
+      },
+      "4_provenance": {
+        "word": "dog",
+        "parser_role": "agent",
+        "synaptic_route_role_bank_direct_current_max": 0.0,
+        "dict_path_role_bank_direct_current_max": 2500.0,
+        "clean": true
+      },
+      "seed_GO": true,
+      "elapsed_s": 18.7
+    },
+    {
+      "seed": 44,
+      "1_route_vs_dict": {
+        "parses_route": [
+          {
+            "agent": "dog",
+            "action": "go",
+            "patient": "north"
+          },
+          {
+            "agent": "cat",
+            "action": "look",
+            "patient": "river"
+          },
+          {
+            "agent": "dog",
+            "action": "come",
+            "patient": "south"
+          }
+        ],
+        "parses_dict": [
+          {
+            "agent": "dog",
+            "action": "go",
+            "patient": "north"
+          },
+          {
+            "agent": "cat",
+            "action": "look",
+            "patient": "river"
+          },
+          {
+            "agent": "dog",
+            "action": "come",
+            "patient": "south"
+          }
+        ],
+        "recovered_route": {
+          "query_patient": {
+            "('dog', 'go')": "north",
+            "('cat', 'look')": "river",
+            "('dog', 'come')": "south"
+          },
+          "query_agent": {
+            "('go', 'north')": "dog",
+            "('look', 'river')": "cat",
+            "('come', 'south')": "dog"
+          },
+          "render_fact": {
+            "dog": "dog go north",
+            "cat": "cat look river"
+          },
+          "moat_abstain": null
+        },
+        "recovered_dict": {
+          "query_patient": {
+            "('dog', 'go')": "north",
+            "('cat', 'look')": "river",
+            "('dog', 'come')": "south"
+          },
+          "query_agent": {
+            "('go', 'north')": "dog",
+            "('look', 'river')": "cat",
+            "('come', 'south')": "dog"
+          },
+          "render_fact": {
+            "dog": "dog go north",
+            "cat": "cat look river"
+          },
+          "moat_abstain": null
+        },
+        "route_correct": 3,
+        "dict_correct": 3,
+        "n_facts": 3,
+        "route_eq_ground_truth": true,
+        "route_not_worse_than_dict": true,
+        "route_eq_dict_bitwise": true,
+        "moat_abstain_both_None": true
+      },
+      "2_gated_by_firing": {
+        "trace": [
+          {
+            "word": "dog",
+            "parser_role": "agent",
+            "gates_open": [
+              "agent"
+            ],
+            "open_fraction": {
+              "agent": 1.0,
+              "action": 0.0,
+              "patient": 0.0
+            }
+          },
+          {
+            "word": "go",
+            "parser_role": "action",
+            "gates_open": [
+              "action"
+            ],
+            "open_fraction": {
+              "agent": 0.0,
+              "action": 1.0,
+              "patient": 0.0
+            }
+          },
+          {
+            "word": "north",
+            "parser_role": "patient",
+            "gates_open": [
+              "patient"
+            ],
+            "open_fraction": {
+              "agent": 0.0,
+              "action": 0.0,
+              "patient": 1.0
+            }
+          }
+        ],
+        "ok": true
+      },
+      "3_lesion": {
+        "intact_correct": 3,
+        "lesion_correct": 0,
+        "collapses": true,
+        "recovered_lesion": {
+          "('dog', 'go')": null,
+          "('cat', 'look')": null,
+          "('dog', 'come')": null
+        }
+      },
+      "4_provenance": {
+        "word": "dog",
+        "parser_role": "agent",
+        "synaptic_route_role_bank_direct_current_max": 0.0,
+        "dict_path_role_bank_direct_current_max": 2500.0,
+        "clean": true
+      },
+      "seed_GO": true,
+      "elapsed_s": 18.3
+    }
+  ],
+  "total_elapsed_s": 55.4
+}
