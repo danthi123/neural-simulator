@@ -1,0 +1,65 @@
+{
+  "topic": "the project itself — teach the brain how IT works (meta/self-knowledge). Claude-authored OFFLINE textbook (the brain's own architecture). The LLM (Qwen-0.5B) has ZERO knowledge of THIS niche project, so EVERY correct answer is provably the brain's own memory = an airtight firewall.",
+  "self_reference": {"note": "the REPL maps 'you'/'your'/'I'/'me' to the agent 'brain' so the owner can ask 'what are you?', 'how do you learn?', etc.", "agent_aliases": ["brain", "you", "i", "me", "it"]},
+  "facts": [
+    ["brain", "uses", "spikes"],
+    ["brain", "has", "neurons"],
+    ["neurons", "send", "signals"],
+    ["neurons", "form", "synapses"],
+    ["synapses", "carry", "signals"],
+    ["brain", "simulates", "cortex"],
+    ["brain", "learns", "words"],
+    ["brain", "learns", "listening"],
+    ["hebbian", "learns", "cooccurrence"],
+    ["cortex", "learns", "meaning"],
+    ["repetition", "strengthens", "memory"],
+    ["stream", "teaches", "words"],
+    ["composer", "binds", "facts"],
+    ["composer", "stores", "knowledge"],
+    ["parser", "reads", "sentences"],
+    ["recall", "retrieves", "facts"],
+    ["brain", "remembers", "facts"],
+    ["brain", "answers", "questions"],
+    ["moat", "prevents", "confabulation"],
+    ["moat", "refuses", "guessing"],
+    ["brain", "abstains", "unknown"],
+    ["brain", "admits", "ignorance"],
+    ["hippocampus", "consolidates", "memory"],
+    ["sleep", "replays", "memory"],
+    ["replay", "prevents", "forgetting"],
+    ["lineage", "persists", "brain"],
+    ["brain", "remembers", "days"],
+    ["brain", "grows", "tiers"],
+    ["brain", "develops", "daily"],
+    ["growth", "adds", "neurons"],
+    ["bridge", "runs", "neurons"],
+    ["resonate", "fires", "spikes"],
+    ["synapses", "hold", "weights"],
+    ["faculty", "phrases", "answers"],
+    ["faculty", "assists", "speaking"],
+    ["brain", "controls", "faculty"],
+    ["verify", "checks", "answers"],
+    ["knowledge", "comes", "brain"],
+    ["claude", "teaches", "brain"],
+    ["curriculum", "teaches", "facts"]
+  ],
+  "attribute_facts": [
+    ["brain", "spiking"], ["brain", "neural"], ["moat", "honest"], ["memory", "persistent"],
+    ["learning", "gradual"], ["faculty", "helpful"], ["knowledge", "neural"], ["recall", "exact"],
+    ["bridge", "spiking"], ["development", "gradual"], ["abstention", "honest"], ["composer", "compositional"]
+  ],
+  "deliberately_untaught_project_facts": {
+    "note": "REAL parts of the project NOT in this curriculum -> the brain must ABSTAIN on these (no LLM leak, and no over-generalization)",
+    "probes": [["brain", "navigates"], ["dopamine", "?"], ["basal", "?"], ["vision", "?"], ["brain", "drives"]]
+  },
+  "firewall_probes_abstain_general_knowledge": {
+    "note": "things Qwen-0.5B KNOWS but the brain was NEVER taught -> the brain MUST abstain. The decisive proof that the LLM's knowledge does NOT leak into the answer.",
+    "probes": ["what is the capital of France", "what is two plus two", "who wrote Romeo and Juliet", "what color is the sky", "how many legs does a dog have"]
+  },
+  "firewall_probes_answer_project": {
+    "note": "project facts Qwen CANNOT know -> the brain answers from its OWN memory (positive proof).",
+    "probes": [["what does the moat prevent", "confabulation"], ["what does the brain use", "spikes"], ["how does the brain learn", "listening/words"], ["what consolidates memory", "hippocampus"], ["what prevents forgetting", "replay"], ["what persists the brain", "lineage"]]
+  },
+  "self_reflective_questions": ["what are you", "how do you learn", "do you forget", "what do you use", "what prevents you from lying", "how do you remember", "what teaches you"],
+  "notes": "Feed facts+attribute_facts through the develop loop (graded across days; polarity=AFFIRM). The faculty (off-bridge Qwen, fast) renders the recalled facts; the verify rejects any LLM additions. GO = brain answers project facts + abstains on BOTH untaught-project AND Qwen-general-knowledge probes (0 leak) + the self-reflective Q&As read coherently with brain-sourced content."
+}
