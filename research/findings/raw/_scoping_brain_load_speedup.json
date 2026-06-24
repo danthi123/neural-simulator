@@ -1,0 +1,113 @@
+{
+  "task": "SCOPING (read-only research-gate): cheapest-first speedup for the brain-LOAD latency on the interact console (first turn per (session,brain) is ~110s tiny-demo / ~9min self-knowledge). Owner priority: feedback_prioritize_orchestration_overhead (per-op latency).",
+  "date": "2026-06-24",
+  "read_only": true,
+  "no_code_changed": true,
+  "no_commit": true,
+
+  "problem_restated": {
+    "symptom": "POST /api/brain-chat first request per (session,brain,renderer): tiny-demo (5 facts) ~112s; self-knowledge (52 facts) ~9 min (slower). Warm turns 0.2-2.8s. Cache _BRAIN_CHATS keyed (session, brain, renderer).",
+    "evidence": "research/findings/raw/_console_live_debug_fixes.json -> time_total_s_first_build=112.3 (tiny-demo, 5 facts); warm=1.19s; latency_note: 'brain-LOAD = Hebbian parser training on the bridge + per-fact RF resonate windows', self-knowledge first load 'longer (52 facts)'.",
+    "goal": "A brain LOADS its saved trained state instead of RE-TRAINS the parser / RE-RESONATES every fact."
+  },
+
+  "load_cost_breakdown": {
+    "method": "static read of the construct->teach path: webapp/server.py _build_chat_brain -> load_developed_brain / _load_self_knowledge / _build_tiny_demo -> BrainConversationalAgent.__init__ (composer + parsers) -> per-fact comp.store()/hear().",
+    "components": [
+      {
+        "name": "Parser Hebbian training (the FIXED, fact-count-INDEPENDENT cost)",
+        "where": "brain_conversational_agent.py:268 BridgeParser(seed) + :299 AttributedBridgeParser(seed) (built whenever the composer lacks .hear, i.e. the rf/rate default path the console uses; enable_attributed defaults True). Both build a PRIVATE SimulationBridge and run _train() in __init__.",
+        "step_count": {
+          "BridgeParser": "n_epochs=30 x 6 conjunctions x (train_steps=120 + reset~20) ~= 25,200 bridge steps on a 6+3*40=126-neuron Izhikevich bridge",
+          "AttributedBridgeParser": "~15 trained (s,e,voice) conjunctions x n_epochs=24 x (120+20) ~= 50,400 bridge steps on a (n_conj + 3*40)-neuron bridge",
+          "total": "~75,000 _run_one_simulation_step() calls, INDEPENDENT of fact count"
+        },
+        "verdict": "DOMINATES the tiny-demo 112s (5 facts add little). Each is a fresh-bridge _initialize_simulation_data + a long single-threaded step loop. PAID EVERY LOAD; never persisted today.",
+        "important": "At CHAT time the parser is exercised ONLY when the user TEACHES a new fact in the live console (hear() -> parser.parse). For a LOADED brain the saved facts are re-stored via comp.store() DIRECTLY (developed_brain_io._restore_facts), BYPASSING the parser. So a read-only chat session never needs the trained parser at all -- yet pays the full ~75K-step training."
+      },
+      {
+        "name": "Per-fact RF resonate re-store (the PER-FACT cost; grows with the brain's knowledge)",
+        "where": "rf_phasor_composer.py:432 store() -> :246 _encode() -> per role (3) a _bind() (:219) + one _bundle() (:230); each is a _resonate() (:156) of rf_resonate_steps(period+8 = 208). Called for EVERY fact: load (_restore_facts -> comp.store) and the self-knowledge re-teach loop (brain_chat_tui:376 inner.hear).",
+        "step_count": {
+          "per_fact": "3 binds + 1 bundle = 4 RF resonate windows x 208 steps ~= 832 RF steps (on a per-op RF bridge of 2D..(L+1)D neurons, D=128; bridges reused via _bridge_cache by neuron count)",
+          "tiny_demo_5_facts": "~4,160 RF steps (small)",
+          "self_knowledge_52_facts": "~43,000 RF steps (comparable to / approaching the parser cost -> why SK is 'longer')"
+        },
+        "verdict": "The result of store() is the numpy COMPOSITE phases array `comp` cached in composer.kb[i] = (fact, comp) (enable_substrate_store=False default). So the RF resonate output per fact IS just a [D] numpy array -- it is recomputed every load but is trivially serializable."
+      },
+      {
+        "name": "Bundle / codes JSON deserialize + agent skeleton + RF bridge inits",
+        "where": "developed_brain_io._load_codes_npz / _load_facts_json (ms); MultiTurnAgent/BrainConversationalAgent skeleton; _build_rf_bridge per distinct neuron count (a handful).",
+        "verdict": "Negligible (<1s) vs the two loops above."
+      }
+    ],
+    "headline": "TWO loops dominate: (1) ~75K-step parser training (FIXED, fact-independent -> dominates tiny-demo 112s) and (2) ~832-step-per-fact RF resonate (-> dominates the 52-fact SK brain). BOTH are pure recomputation of state that could be persisted; NEITHER is persisted today. load_developed_brain does NOT re-train any composer -- it re-RESONATES each fact via comp.store, and the agent constructor re-TRAINS the parser."
+  },
+
+  "what_save_checkpoint_load_checkpoint_persists": {
+    "persists": "cp_connections CSR (data/indices/indptr) [the parser's TRAINED Hebbian weights live here], membrane V, conductances, external current, firing states, traits, refractory, adex_w, ou, stp_u/x, last_spike_time, plastic mask.",
+    "does_NOT_persist": "firing thresholds, STP recovery, eligibility traces (documented CLAUDE.md gotcha -> a loaded parser self-recovers in ~10ms of free-running, fine for inference); AND -- crucially for the composer -- the RF COMPLEX weights (cp_rf_w_re/im) are NOT in save_checkpoint's array list, and the composer's numpy kb composites are not bridge state at all.",
+    "implication": "save_checkpoint is the RIGHT tool to persist the PARSER (its trained weights are in cp_connections). It is the WRONG tool for the composer fact-store (kb composites are numpy, not bridge arrays; and the per-op RF bridges are ephemeral). The composer store is better persisted as the kb composites themselves (already a numpy array per fact)."
+  },
+
+  "ranked_options_cheapest_first": [
+    {
+      "rank": 1,
+      "name": "Persist the composer fact-store composites (kb) in the bundle -> SKIP per-fact RF resonate on load",
+      "mechanism": "developed_brain_io already writes facts.json + grounded_codes.npz. ADD a kb_composites.npz: {fact_index -> comp[D] float32} extracted from composer.kb (the numpy composite each store() already computed). On load, instead of _restore_facts calling comp.store() (4 RF resonate windows/fact), set composer.kb = [(fact_dict, comp_array)] directly from the saved composites. Byte-identical to re-resonating (the composite IS the resonate output; deterministic per seed/codes). The fact dicts already round-trip via facts.json.",
+      "reusable_vs_build": "REUSE developed_brain_io.extract_facts + the npz machinery; BUILD a small extract_kb_composites()/load path (~30-40 lines, runner-only). NO sim/ edit.",
+      "expected_speedup": "Removes ~43K RF steps for the 52-fact SK brain (the part that makes SK 'longer'); ~4K for tiny-demo. Cuts the per-fact term to ~0. Dominant win for KNOWLEDGE-RICH brains (the artificial-life trajectory grows facts daily).",
+      "caveat": "Only addresses the per-fact term -- the ~75K-step parser training (option 2) still dominates tiny-demo. Best stacked with #2/#3."
+    },
+    {
+      "rank": 2,
+      "name": "Make the agent parser LAZY (deferred) for a read-only LOADED brain -> SKIP ~75K-step parser training entirely",
+      "mechanism": "The parser is only used by hear() when the user TEACHES a new fact at runtime. A LOADED brain restores facts via comp.store() (no parser). So defer BridgeParser + AttributedBridgeParser construction+training until the FIRST runtime hear()/teach. Add a default-OFF constructor flag (e.g. defer_parser=True) on BrainConversationalAgent that sets self.parser/_attr_parser to a lazy builder; load_developed_brain passes it (a loaded brain is read-mostly). First teach in the console pays the ~75K steps ONCE; pure-Q&A sessions NEVER pay it.",
+      "reusable_vs_build": "REUSE the existing defer_train plumbing already in BridgeParser (defer_train param) + AttributedBridgeParser pattern. BUILD a lazy-property wrapper in BrainConversationalAgent + a load_developed_brain kwarg (~40-60 lines, runner-only). NO sim/ edit.",
+      "expected_speedup": "Removes the ENTIRE fixed ~75K-step cost for any session that doesn't teach a new fact -- i.e. the dominant term of the tiny-demo 112s and a large chunk of SK. The owner's 'talk to a developed brain' usage is overwhelmingly Q&A (read), so this is near-100% hit-rate.",
+      "caveat": "If a session DOES teach, the first teach is slow (one-time). Mitigate by also persisting trained parser weights (sub-option 2b) so even the first teach loads instead of trains:",
+      "sub_option_2b_persist_parser": {
+        "mechanism": "Persist each parser bridge via SimulationBridge.save_checkpoint (its trained cp_connections weights). On load, build the parser bridge skeleton + load_checkpoint + a short free-run to recover the unsaved thresholds (the documented ~10ms self-recovery), instead of _train(). BridgeParser/AttributedBridgeParser get a save_state(path)/load_state(path) pair writing under <bundle>/parser/.",
+        "reusable": "REUSE bridge.save_checkpoint/load_checkpoint (cp_connections IS the trained weight). BUILD save_state/load_state on the two parser classes (~50 lines, runner-only). NO sim/ edit.",
+        "expected_speedup": "Turns the first-teach parser cost from ~75K training steps into an HDF5 load + ~20-step recovery (<1s). Stacks with the lazy default so a Q&A session skips it and a teaching session loads-not-trains."
+      }
+    },
+    {
+      "rank": 3,
+      "name": "Warm the brains at webapp STARTUP (cheap stopgap; hides latency, doesn't remove it)",
+      "mechanism": "Add an @app.on_event('startup') (the server ALREADY has two at server.py:1692/1701) that pre-builds + caches the default brains (tiny-demo, self-knowledge, the develop_gpu bundle) into _BRAIN_CHATS under a 'warm' session key in a background thread, so the owner's first real turn hits the warm cache. Optionally gate behind an env flag (BRAIN_CHAT_WARM=1) to keep dev startup fast.",
+      "reusable_vs_build": "REUSE _build_chat_brain + _BRAIN_CHATS + the existing startup-hook pattern. BUILD a ~20-line startup warmer (threaded so it doesn't block uvicorn boot). NO sim/ edit.",
+      "expected_speedup": "Owner first-turn latency -> ~warm (0.2-2.8s) for the pre-warmed brains. Does NOT reduce the actual build cost (still ~112s/9min, just moved to boot). Independent of #1/#2 -- complementary; best is #1+#2 (make the build itself fast) THEN optionally #3 to also hide the now-small residual."
+    },
+    {
+      "rank": 4,
+      "name": "Cache the fully-built ChatBrain to disk (pickle) -- NOT recommended",
+      "mechanism": "Pickle the live ChatBrain/agent (incl. per-op RF bridges + parser bridges) after first build; unpickle on next load.",
+      "reusable_vs_build": "Would need custom __reduce__ for SimulationBridge (cupy arrays, h5 handles, CUDA-graph state) -- fragile, large, GPU-context-bound, version-brittle.",
+      "expected_speedup": "Unknown/risky; likely SLOWER than #1+#2 to deserialize cupy state and re-bind CUDA. REJECTED in favor of the structured persistence (#1 codes/composites + #2b parser checkpoint), which is the project's existing pattern (developed_brain_io bundle + bridge HDF5)."
+    }
+  ],
+
+  "recommendation": {
+    "single_best_cheapest_first_step": "OPTION 2 (lazy parser for a loaded brain) -- it removes the dominant fact-INDEPENDENT ~75K-step parser training for the overwhelmingly-common read-only Q&A session, is the smallest change (reuses the existing BridgeParser defer_train plumbing), needs NO sim/ edit, and is byte-identical for any session that never teaches (the parser was never going to be used). It alone collapses tiny-demo's ~112s to seconds.",
+    "recommended_stack_for_full_fix": "2 (lazy parser) + 1 (persist kb composites -> skip per-fact RF resonate). Together they remove BOTH dominant loops: #2 kills the fixed parser cost, #1 kills the per-fact cost -> a 52-fact brain LOADS in ~bundle-deserialize time (low seconds) instead of ~9 min. Add 2b (persist parser weights) so even a teaching session loads-not-trains, and optionally #3 (startup warm) as a zero-risk stopgap to also pre-pay the small residual before the owner's first turn.",
+    "sim_flags": "NONE. Every recommended option is reuse-by-import / runner + webapp only. (#2 reuses the existing BridgeParser(defer_train=...) param; #2b reuses bridge.save_checkpoint/load_checkpoint, no new sim/ surface; #1 extends developed_brain_io; #3 reuses the existing @app.on_event('startup') hook.)",
+    "anti_cheat_controls": [
+      "Round-trip EQUALITY: a loaded brain (lazy parser + persisted composites) must answer the FULL who/what + yes-no + abstain matrix BYTE-IDENTICALLY to a freshly-built+retaught brain (the persisted composite IS the deterministic resonate output; assert per-fact comp arrays match a fresh _encode within atol 1e-9).",
+      "MOAT preserved: the no-confab abstention must hold (0 false-accepts) on the loaded brain -- only the saved facts are in kb; an untaught cue still abstains.",
+      "First-TEACH correctness (option 2): after a lazy-loaded brain teaches a NEW fact in the console, the parser must build+work and the new fact must recall correctly (and, with 2b, a loaded-parser teach must equal a trained-parser teach).",
+      "Existing CI guards (tests/test_brain_conversational_agent.py, tests/test_one_brain_composer_agent.py, the developed_brain_io round-trip) must pass verbatim with the new defaults OFF for the standalone build path (byte-identical) and ON for the load path."
+    ]
+  },
+
+  "key_code_anchors": {
+    "load_path": "webapp/server.py:2788 _build_chat_brain ; :3084 brain_chat ; _BRAIN_CHATS at :2718 ; startup hooks at :1692/:1701",
+    "agent_ctor_parsers": "research/runners/brain_conversational_agent.py:268 (BridgeParser) + :299 (AttributedBridgeParser); hear() at :407 (parser used only on runtime teach)",
+    "bridge_parser_train": "brain_conversational_agent.py:34 BridgeParser(n_epochs=30, train_steps=120) ; :96 defer_train already supported ; :134 _train loop",
+    "attributed_parser_train": "research/runners/attributed_parser.py:54 (n_epochs=24, train_steps=120) ; :119 _train loop",
+    "rf_per_fact": "research/runners/rf_phasor_composer.py:432 store -> :246 _encode -> :219 _bind / :230 _bundle -> :156 _resonate(period+8=208) ; kb composite cached at :448",
+    "bundle_io": "research/runners/developed_brain_io.py:105 save_developed_brain ; :234 load_developed_brain ; :209 _restore_facts (the per-fact comp.store re-resonate on load)",
+    "bridge_persist": "sim/bridge.py:7592 save_checkpoint (persists cp_connections = trained parser weights; NOT thresholds/STP/eligibility/RF complex weights) ; :7767 load_checkpoint",
+    "bundle_saver": "research/runners/_longitudinal_develop_loop_gpu.py:501 save_developed_bundle (does NOT persist parser/RF state -> a load re-trains+re-resonates)"
+  }
+}
