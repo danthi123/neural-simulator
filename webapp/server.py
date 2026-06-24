@@ -3228,6 +3228,20 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
           "verified": bool,         # the render re-parsed back to the fact
           "renderer": str,          # which renderer produced the surface form
           "brain": str, "source": str,
+          # B3 per-turn "brain activity" (read-only; null for the rate composer
+          # or when the matcher abstained before any spiking query):
+          "activity": {
+            "roles": [{"role": "agent", "word": "dog", "confidence": 0.97,
+                       "cue": true, "asserted": "dog"}, ...],  # decoded chips
+            "matched_fact_index": int | null,  # which engram block answered
+                                               # (null = abstained -> moat fired)
+            "n_facts_scanned": int,            # how many stored facts scanned
+            "abstained": bool,
+            "rf": {"n_readout_neurons": int|null,
+                   "frac_fired": float|null,   # cp_rf_fired.mean() over readouts
+                   "mean_magnitude": float|null},  # mean |Z| (recovery strength)
+            "composer": "rf" | "onebrain",
+          } | null,
           # rich=True only (the multi-sentence grounded path):
           "rich": bool,             # whether the rich path produced this turn
           "n_sentences": int,       # number of brain-sourced sentences
@@ -3260,6 +3274,25 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         chat._brain_chat_source = source  # type: ignore[attr-defined]
         _BRAIN_CHATS[cache_key] = chat
     source = getattr(chat, "_brain_chat_source", source)
+
+    # B3 per-turn "brain activity": flip the composer's READ-ONLY trace flag ON (default-off in the composer; a
+    # post-construction attribute flip only GATES the read-only `last_trace` recording, so it stays answer-identical +
+    # the no-confab moat is unchanged). After the gate runs the spiking recall (`what_does` -> composer.query_patient),
+    # the composer's `last_trace` holds what the brain DID this turn (decoded role chips + match confidence, the matched
+    # engram block + how many scanned, a scalar RF firing/|Z| gauge). The endpoint reads it and attaches it as
+    # `activity`. Guarded for the rate composer / any composer without `last_trace` (-> activity stays None).
+    _composer = getattr(getattr(chat, "inner", None), "composer", None)
+    if _composer is not None and hasattr(_composer, "last_trace"):
+        try:
+            _composer.trace = True   # read-only recording gate (default off = byte-identical for every other caller)
+        except Exception:
+            pass
+
+    def _read_activity():
+        """Read the composer's per-turn trace AFTER the gate (read-only). None when the composer doesn't trace (the
+        rate composer / an external composer) or nothing was recorded (e.g. the matcher abstained before any query)."""
+        c = getattr(getattr(chat, "inner", None), "composer", None)
+        return getattr(c, "last_trace", None) if c is not None else None
 
     msg = (req.message or "").strip()
     if not msg:
@@ -3295,6 +3328,9 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
             "n_sentences": int(r.get("n_sentences", 0)),
             "supporting_facts": facts,
             "followup": bool(r.get("followup", False)),
+            # B3: what the brain DID this turn (the LAST spiking recall the rich gate ran), or null. The rich path
+            # plans over multiple supporting facts; last_trace reflects the most recent query (the direct recall).
+            "activity": _read_activity(),
         })
 
     # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
@@ -3322,6 +3358,10 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         "brain": req.brain,
         "source": source,
         "rich": False,
+        # B3: what the brain DID this turn -- the decoded role chips + match confidence, which engram block answered
+        # (or null -> abstained), and a scalar RF firing/|Z| gauge. Read-only of the spiking recall the gate already
+        # ran (composer.query_patient); null for the rate composer / when the matcher abstained before any query.
+        "activity": _read_activity(),
     })
 
 

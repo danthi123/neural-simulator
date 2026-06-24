@@ -115,8 +115,19 @@ class OneBrainComposer:
                  enable_attributed=False, enable_multiframe=False, enable_spiking_cleanup=True,
                  encoding_gain_fn=None, local_reciprocal_unbind=True, integrated_loop=False,
                  sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0,
-                 enable_seq_vocab_shrink=True):
+                 enable_seq_vocab_shrink=True, trace=False):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
+        # trace (B3 per-turn "brain activity", opt-in, DEFAULT-OFF = byte-identical): READ-ONLY trace of what the brain
+        # DID on the LAST query -- the decoded role-words + their cleanup match-confidence (per role), which stored
+        # fact-block matched + how many were scanned, and a scalar RF activity gauge (the fraction of the rf-slice
+        # readout neurons that crossed `cp_rf_fired[rf_mask].mean()` + the mean recovery magnitude |Z| over the rf
+        # slice). Populated from the ALREADY-COMPUTED decoded {role: word} rows + the matched-filter membrane `scores`
+        # `_read_blocks` produces + two `.mean()` reads of the shared bridge's `cp_rf_fired`/v/u over the rf slice --
+        # NO extra resonate, strictly observational. The no-confab moat is UNCHANGED (an abstain records
+        # matched_fact_index=None + scanned=N WITHOUT a fallback answer). trace=False (default) -> the dict is never
+        # built (byte-identical numpy-CPU + test-oracle path). See research/findings/raw/_b3_activity_viz_scoping.md.
+        self.trace = bool(trace)
+        self.last_trace = None
         # integrated_loop (shortcut #3, default OFF = byte-identical = the host-_scan oracle + numpy-CPU + test-oracle
         # path): make the CUE-MATCH ROUTING fully on-substrate. The per-block reconstruction (_read_blocks) is ALREADY
         # spiking; the residual host op is the Python first-match loop that picks WHICH stored block answers a who/what
@@ -625,6 +636,111 @@ class OneBrainComposer:
             return self._read_all_blocks()
         return [self._read_block(i) for i in range(len(self.kb))]
 
+    # --- (B3) READ-ONLY per-turn trace helpers (only invoked on the trace path; default OFF = byte-identical) ---
+    def _rf_gauge(self):
+        """A scalar RF activity gauge over the rf SLICE of the shared bridge (read after the last query's resonate):
+        the fraction of rf-slice readout neurons that crossed (`cp_rf_fired[rf_mask].mean()`) + the mean recovery
+        magnitude |Z| = mean(sqrt(re²+im²)) over the rf slice. The parser slice [0:P] is EXCLUDED (rf_mask is the
+        composer's readout region). All guarded -> None on absence. Strictly read-only of state the resonate already
+        produced (no extra GPU work)."""
+        b = getattr(self, "b", None)
+        mask = getattr(self, "rf_mask", None)
+        out = {"n_readout_neurons": (int(mask.sum()) if mask is not None else None),
+               "frac_fired": None, "mean_magnitude": None}
+        if b is None or mask is None:
+            return out
+        try:
+            fired = getattr(b, "cp_rf_fired", None)
+            if fired is not None:
+                fh = np.asarray(to_host(fired)).astype(float)
+                out["frac_fired"] = float(fh[mask].mean()) if fh.shape[0] == mask.shape[0] else float(fh.mean())
+        except Exception:
+            pass
+        try:
+            re = getattr(b, "cp_membrane_potential_v", None)
+            im = getattr(b, "cp_recovery_variable_u", None)
+            if re is not None and im is not None:
+                re_h = np.asarray(to_host(re)).astype(float); im_h = np.asarray(to_host(im)).astype(float)
+                magn = np.sqrt(re_h * re_h + im_h * im_h)
+                out["mean_magnitude"] = float(magn[mask].mean()) if magn.shape[0] == mask.shape[0] else float(magn.mean())
+        except Exception:
+            pass
+        return out
+
+    def _block_role_scores(self, block_idx):
+        """Read block_idx once + return {role: (decoded_word, confidence)} for the main roles (+polarity), where
+        confidence = the role's top matched-filter membrane score normalized into [0,1] by its row peak. Read-only
+        (mirrors `_read_block`'s per-block matched-filter, but ALSO returns the winner's normalized score). Trace-only
+        -- never on the answer path."""
+        comp, b, D, Pd, V, NP = self.comp, self.b, self.D, self.period, self.V, self.NP
+        b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+        trig = self.store_base + block_idx * self.block
+        kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
+        b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
+        b.rf_resonate_steps(Pd + 8)
+        unbind = []
+        for ri, role in enumerate(self.bind_roles):
+            zc = self._unbind_conj(role)
+            unbind += [(self.q_base + ri * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
+        b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
+        clean = []
+        for ri, role in enumerate(self.main_roles):
+            for j in range(V):
+                cc = self._cleanup_conj(self.words[j])
+                clean += [(self.c_base + ri * V + j, self.q_base + ri * D + k, complex(cc[k])) for k in range(D)]
+        pol_ri = self.bind_roles.index("polarity")
+        for j in range(NP):
+            cc = self._cleanup_conj(self.pol_words[j])
+            clean += [(self.c_base + self.n_main * V + j, self.q_base + pol_ri * D + k, complex(cc[k]))
+                      for k in range(D)]
+        b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
+        mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
+
+        def _winner(scores, vocab):
+            s = np.maximum(np.asarray(scores, dtype=float), 0.0)
+            if s.size == 0:
+                return (None, None)
+            j = int(np.argmax(s)); peak = float(s.max())
+            conf = float(np.clip(s[j] / peak, 0.0, 1.0)) if peak > 0.0 else 0.0
+            return (vocab[j], conf)
+        out = {}
+        for ri, role in enumerate(self.main_roles):
+            out[role] = _winner(mem[self.c_base + ri * V:self.c_base + (ri + 1) * V], self.words)
+        out["polarity"] = _winner(mem[self.c_base + self.n_main * V:self.c_base + self.n_main * V + NP], self.pol_words)
+        return out
+
+    def _trace_query(self, cue_roles, idx, decoded_extra=None):
+        """Build self.last_trace for the LAST query (read-only). `cue_roles` = the {role: asserted_value} matched on;
+        `idx` = the selected fact-block index (or None = abstain); `decoded_extra` optionally overrides/adds answer
+        chips (e.g. a rendered clause patient). Records the per-role chips (cue + answer roles), which engram block
+        matched + how many were scanned, and the post-resonate RF gauge over the rf slice. An abstain records
+        matched_fact_index=None + scanned=N WITHOUT a fabricated answer (the moat made visible). Never affects the
+        return value."""
+        if not self.trace:
+            return
+        n_scanned = len(self.kb)
+        roles_out = []
+        block_scores = self._block_role_scores(idx) if idx is not None else {}
+        cue_set = set(cue_roles)
+        for role, asserted in cue_roles.items():
+            word, conf = block_scores.get(role, (asserted, None))
+            roles_out.append({"role": role, "word": word, "confidence": conf, "cue": True, "asserted": asserted})
+        # answer/decoded roles = the non-cue main roles (+ polarity) of the selected block + any explicit extras
+        for role, (word, conf) in block_scores.items():
+            if role in cue_set:
+                continue
+            roles_out.append({"role": role, "word": word, "confidence": conf, "cue": False})
+        for role, (word, conf) in (decoded_extra or {}).items():
+            roles_out.append({"role": role, "word": word, "confidence": conf, "cue": False})
+        self.last_trace = {
+            "roles": roles_out,
+            "matched_fact_index": (int(idx) if idx is not None else None),
+            "n_facts_scanned": int(n_scanned),
+            "abstained": idx is None,
+            "rf": self._rf_gauge(),
+            "composer": "onebrain",
+        }
+
     def _seq_cleanup_conns(self):
         """opt #4 (the audit's sequencer drive-seed lever): the cleanup-codebook connections that `block_cleanup_scores`
         installs are BLOCK-INVARIANT -- they depend only on the concept codebook + the fixed single-block c_base/q_base
@@ -784,17 +900,38 @@ class OneBrainComposer:
         cue-match-and-first-match SELECTION routes through `_seq_block` (the spiking K-way sequencer when
         integrated_loop, else the host first-match -- byte-identical); the downstream patient-type routing + decode read
         the SAME block on both paths (only WHICH block is selected moves from host to spikes)."""
+        if self.trace:
+            self.last_trace = None
         idx = self._seq_block(agent, action)
         if idx is None:
+            if self.trace:
+                self._trace_query({"agent": agent, "action": action}, None)
             return None
         got = self._read_blocks()[idx]                         # the decoded {role: word} row for the selected block
         stored = self.kb[idx][0].get("patient") if idx < len(self.kb) else None
         if _is_clause(stored):
-            return self._decode_clause(idx, order_fn=order_fn)
-        return self._attributed_patient(idx, got.get("patient"), got)
+            ans = self._decode_clause(idx, order_fn=order_fn)
+            if self.trace:
+                self._trace_query({"agent": agent, "action": action}, idx,
+                                  decoded_extra={"patient": (ans, None)})
+            return ans
+        ans = self._attributed_patient(idx, got.get("patient"), got)
+        if self.trace:
+            self._trace_query({"agent": agent, "action": action}, idx)
+        return ans
 
     def query_agent(self, action, patient):
-        return self._scan({"action": action, "patient": patient}, "agent")
+        if self.trace:
+            self.last_trace = None
+        ans = self._scan({"action": action, "patient": patient}, "agent")
+        if self.trace:
+            # find the block index (the first matching), for the trace's matched-engram line
+            idx = None
+            for i, got in enumerate(self._read_blocks()):
+                if got.get("action") == action and got.get("patient") == patient:
+                    idx = i; break
+            self._trace_query({"action": action, "patient": patient}, idx)
+        return ans
 
     def ask_yes_no(self, agent, action, patient):
         """yes / no / unknown: the first fact matching the full SVO answers by its polarity tag (AFFIRM -> yes,
@@ -805,12 +942,20 @@ class OneBrainComposer:
         sequencer matches (agent, action) then checks patient on the selected block -- equivalent for the production
         unique-(agent, action) store (each (agent, action) selects one block, and the patient check then decides
         yes/no/unknown); a degenerate same-(agent, action) different-patient pair is outside the production regime."""
+        if self.trace:
+            self.last_trace = None
         idx = self._seq_block(agent, action)
         if idx is None:
+            if self.trace:
+                self._trace_query({"agent": agent, "action": action, "patient": patient}, None)
             return "unknown"
         got = self._read_blocks()[idx]
         if got.get("patient") != patient:
+            if self.trace:
+                self._trace_query({"agent": agent, "action": action, "patient": patient}, None)
             return "unknown"                                   # the (agent, action) block's patient != the asserted one
+        if self.trace:
+            self._trace_query({"agent": agent, "action": action, "patient": patient}, idx)
         return "yes" if got.get("polarity") == "AFFIRM" else "no"
 
     def render_fact(self, agent, order_fn=None):

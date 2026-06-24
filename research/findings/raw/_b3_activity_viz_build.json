@@ -1,0 +1,87 @@
+{
+  "task": "B3 option A -- per-turn 'brain activity' summary in the Interact console (read-only, default-off, NO sim/ edit)",
+  "date": "2026-06-24",
+  "status": "BUILT + LOGIC-VALIDATED (CPU). Live chat-turn verification deferred to the controller (do not restart the live webapp).",
+  "spec": "research/findings/raw/_b3_activity_viz_scoping.md (Option A, the default-cheap `last_trace` hook)",
+  "sim_edit": "NONE (confirmed `git status sim/` clean). Option A reads only already-public bridge attrs (cp_rf_fired / cp_membrane_potential_v / cp_recovery_variable_u) via the runner-level composers + webapp wiring.",
+  "design": "A default-False `trace` ctor flag on RFPhasorComposer + OneBrainComposer adds a read-only `self.last_trace` dict, populated in query_patient/query_agent/ask_yes_no from the ALREADY-COMPUTED match-score vectors + decoded role-words + matched-block index (+ how many scanned) + a post-resonate cp_rf_fired.mean() and mean |Z|. trace=False (default) -> the dict is NOT built -> byte-identical. The webapp endpoint flips composer.trace=True (a post-construction attribute flip; only gates the read-only recording) and attaches last_trace as an `activity` field on both rich + single-fact responses. The Interact tab renders a per-role chip strip + 'engram #i of N matched (or none -> abstained)' line + a two-bar RF gauge behind a 'Show brain activity' toggle.",
+  "files_changed": {
+    "research/runners/rf_phasor_composer.py": {
+      "lines": "+134 / -2",
+      "changes": [
+        "__init__: new `trace=False` kwarg -> self.trace + self.last_trace=None + self._last_resonate_n (the comment block documents the read-only/byte-identical/moat-unchanged contract)",
+        "_resonate: record self._last_resonate_n = n ONLY when self.trace (for the gauge read; default path untouched)",
+        "NEW _cleanup_all_scored(): like _cleanup_all but also returns each row's top normalized cleanup score (mean-cos clipped to [0,1]) -- read-only of the SAME matched filter",
+        "NEW _rf_gauge(): reads the last _resonate bridge's cp_rf_fired.mean() + mean |Z| over cp_membrane_potential_v/cp_recovery_variable_u, all guarded (-> None on absence)",
+        "NEW _trace_scan(cue_roles, idx, answer_roles): builds self.last_trace (role chips + matched_fact_index + n_facts_scanned + abstained + rf gauge + composer:'rf'); records an abstain (idx=None) WITHOUT inventing an answer",
+        "query_agent / query_patient / ask_yes_no: reset last_trace then call _trace_scan after the batched scan (the patient role is decoded with score over the matched block)"
+      ]
+    },
+    "research/runners/one_brain_composer.py": {
+      "lines": "+153 / -8",
+      "changes": [
+        "__init__: new `trace=False` kwarg -> self.trace + self.last_trace=None (documented contract; gauge reads the rf SLICE via self.rf_mask, parser slice excluded)",
+        "NEW _rf_gauge(): cp_rf_fired[rf_mask].mean() + mean |Z| over the rf slice of the shared bridge, guarded",
+        "NEW _block_role_scores(block_idx): read one block + return {role: (decoded_word, confidence)} where confidence = the role's matched-filter winner score normalized by its row peak (trace-only; mirrors _read_block)",
+        "NEW _trace_query(cue_roles, idx, decoded_extra): builds self.last_trace (cue + answer chips + matched_fact_index + n_facts_scanned + abstained + rf gauge + composer:'onebrain')",
+        "query_patient / query_agent / ask_yes_no: reset last_trace then call _trace_query (clause patient passes decoded_extra; query_agent re-finds the matched block index for the engram line)"
+      ]
+    },
+    "webapp/server.py": {
+      "lines": "+40",
+      "changes": [
+        "brain_chat(): docstring return-schema gains the full `activity` object spec",
+        "brain_chat(): after the warm ChatBrain is resolved, flip chat.inner.composer.trace=True (guarded for the rate composer / any composer without last_trace) + a local _read_activity() helper that reads chat.inner.composer.last_trace AFTER the gate",
+        "brain_chat(): attach `activity`: _read_activity() on BOTH the rich response and the single-fact response"
+      ]
+    },
+    "webapp/static/index.html": {
+      "lines": "+4",
+      "changes": ["a 'Show brain activity' checkbox (#brainchat-show-activity) next to #brainchat-show-svo"]
+    },
+    "webapp/static/app.js": {
+      "lines": "+101",
+      "changes": [
+        "setupBrainChat(): grab #brainchat-show-activity + a live toggle handler (logEl.classList.toggle('show-activity', ...)) mirroring the show-svo pattern; initial-state sync",
+        "appendBrainTurn(): when data.activity present, append buildActivityStrip(data.activity)",
+        "NEW buildActivityStrip(act): the engram line ('engram #i of N matched' / 'scanned N, none matched -> abstained'), the per-role chip strip (decoded word + confidence%, colored by confidence, cue vs answer), and the two-bar RF gauge",
+        "NEW gaugeBar(label, value, frac, title) + confClass(c) helpers (pure DOM via el(); no chart lib)"
+      ]
+    },
+    "webapp/static/style.css": {
+      "lines": "+50",
+      "changes": [".interact-activity (hidden until .show-activity, like .interact-meta); .interact-activity-engram (+.is-abstain); .interact-activity-chips + .interact-chip-role (+.is-cue/.is-answer/.conf-high/mid/low using theme-adaptive --accent/--accent-warn/--accent-bad); .interact-activity-gauge bars"]
+    }
+  },
+  "logic_validation": {
+    "a_byte_identical_default": {
+      "method": "SIM_BACKEND=numpy CPU smoke: RFPhasorComposer built with trace=False vs trace=True over 2 stored facts; query_patient/query_agent/ask_yes_no/abstain.",
+      "result": "PASS -- trace=False -> last_trace is None; answers ('rabbit','dog','yes',None) BYTE-IDENTICAL with trace on==off.",
+      "onebrain": "PASS -- OneBrainComposer trace=False -> last_trace None; answers identical on/off (small-D config abstains, the SAFE direction; recall validated separately at production resolution).",
+      "test_suite": "SIM_BACKEND=numpy pytest tests/test_one_brain_composer_agent.py -> 18 skipped cleanly (GPU-gated; no collection error from the edits). SIM_BACKEND=numpy pytest tests/test_brain_conversational_agent.py -> 7 passed / 5 skipped / 0 failed (the rf default path is unregressed)."
+    },
+    "b_trace_well_formed": {
+      "method": "CPU snippet: build composer with trace=True on 2 facts, run a MATCHED query, assert last_trace has role-words + matched_fact_index + n_facts_scanned + the rf gauge + is well-formed.",
+      "rf_result": "PASS -- roles {agent:dog(cue,conf 0.464), action:chase(cue,0.444), patient:rabbit(answer,0.486)}, matched_fact_index=0, n_facts_scanned=2, abstained=false, rf {n_readout_neurons:128, frac_fired:1.0, mean_magnitude:36.5}, composer:'rf'.",
+      "onebrain_result": "PASS @ D=64/period=200 -- query_patient(dog,chase)->rabbit; roles agent/action(cue,conf 1.0) + patient/polarity(answer,conf 1.0), matched_fact_index=0, scanned 2, rf {n_readout_neurons:2231, frac_fired:0.144}, composer:'onebrain'. (OneBrain confidence = margin-normalized winner/peak; rf confidence = raw mean-cos -- both valid per-composer measures.)"
+    },
+    "c_moat_abstain_recorded": {
+      "method": "CPU: query an unstored cue; assert matched_fact_index=None + 'scanned N, none matched' recorded + answer UNCHANGED (None) + NO answer role.",
+      "rf_result": "PASS -- query_patient(cat,run)->None; trace matched_fact_index=null, abstained=true, n_facts_scanned=2, only the 2 cue chips (no answer role).",
+      "onebrain_result": "PASS -- same abstain recording, answer still None."
+    },
+    "anti_cheat": "The trace is strictly READ-ONLY of state the query already computed (sims / decoded words / matched index were computed regardless; cp_rf_fired/v/u are the resonate's OUTPUT). NO extra resonate, NO extra GPU work per turn. The answer + the no-confab moat are UNCHANGED (the abstain code path is the same; the trace only RECORDS the abstain, never supplies a fallback)."
+  },
+  "honest_notes": [
+    "NO extra resonate was needed -- the gauge reads cp_rf_fired/|Z| off the cached _resonate bridge (rf) or the shared bridge's rf slice (onebrain), both already produced by the query. The per-role CONFIDENCE for the rf cue roles does one extra unbind+matched-filter over the matched block (read-only, the same op the cleanup uses), but ONLY on the trace path and ONLY for the single matched block -- not per-turn GPU bloat across all facts.",
+    "|Z| (mean recovery magnitude) is unbounded (it scales with the kick magnitude, e.g. ~36 for rf D=64, ~10k for onebrain): the gauge BAR clamps to [0,1] for display but the LABEL shows the true value. frac_fired is a true fraction in [0,1].",
+    "OneBrain `_block_role_scores` confidence is the winner/peak margin (1.0 on a confident match); the rf `_cleanup_all_scored` confidence is the raw mean-cos. Both are documented in the helper docstrings; they're not directly comparable across composers but each is a faithful per-composer 'how confident' read.",
+    "The webapp's chat brains (tiny-demo / self-knowledge / developed bundles via composer_kind='rf') use the RFPhasorComposer, so the rf trace is the live path; the onebrain trace is wired for parity (composer_kind='onebrain')."
+  ],
+  "controller_command": {
+    "note": "Do NOT restart the live webapp yourself per the build prompt -- this is the controller's command.",
+    "restart_webapp": "python -m webapp.server   (or the controller's existing webapp launcher; serves at http://localhost:8765)",
+    "live_chat_turn_showing_activity": "curl -s -X POST http://localhost:8765/api/brain-chat -H 'Content-Type: application/json' -d '{\"session\":\"b3check\",\"brain\":\"tiny-demo\",\"message\":\"what does the dog chase?\"}' | python -m json.tool   # -> the response JSON now carries an `activity` object (roles[] + matched_fact_index + n_facts_scanned + rf{frac_fired,mean_magnitude} + composer). In the UI: open Interact, tick 'Show brain activity', ask 'what does the dog chase?' -> the per-role chip strip + 'engram #i of N matched' line + the two-bar RF gauge render under the answer; ask something unknown -> 'scanned N, none matched -> abstained'."
+  },
+  "do_not": ["commit", "restart the live webapp", "add per-turn GPU work"]
+}

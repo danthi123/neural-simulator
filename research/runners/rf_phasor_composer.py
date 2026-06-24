@@ -61,10 +61,23 @@ def _build_rf_bridge(n, seed=42):
 class RFPhasorComposer:
     def __init__(self, seed=42, D=64, vocab=None, period=200, enable_spiking_cleanup=False,
                  enable_substrate_store=False, grounded_codes=None, enable_rf_cudagraph=False,
-                 encoding_gain_fn=None, local_reciprocal_unbind=False):
+                 encoding_gain_fn=None, local_reciprocal_unbind=False, trace=False):
         self.seed = int(seed)
         self.D = int(D)
         self.period = int(period)
+        # (B3 per-turn "brain activity", opt-in, DEFAULT-OFF = byte-identical) READ-ONLY trace of what the brain DID on
+        # the LAST query: the decoded role-words + their cleanup match-confidence (per role), which stored fact-block
+        # matched + how many were scanned, and a scalar RF activity gauge (the fraction of readout neurons that crossed
+        # `cp_rf_fired.mean()` + the mean recovery magnitude |Z|). Populated from the ALREADY-COMPUTED `sims` /
+        # decoded-word / matched-index produced by `_scan_first_match`/`_cleanup_all` + two `.mean()` reads of the
+        # cached `_resonate` bridge -- NO extra resonate, NO extra GPU work, strictly observational of state the query
+        # already produced. The no-confab moat is UNCHANGED (an abstain records matched_fact_index=None +
+        # "scanned N, none matched" WITHOUT supplying a fallback answer). When `trace=False` (default) the dict is NOT
+        # built -> byte-identical (the test-oracle + numpy-CPU paths are untouched). See
+        # research/findings/raw/_b3_activity_viz_scoping.md (Option A).
+        self.trace = bool(trace)
+        self.last_trace = None
+        self._last_resonate_n = None      # n of the most recent _resonate (for the gauge read; trace-only)
         # (Tier-2 #6, opt-in, DEFAULT-OFF = byte-identical) DOPAMINE-GATED ENCODING STRENGTH (Lisman-Grace
         # hippocampal-VTA loop; Kandel D.16 -- dopamine gates the entry of information into LONG-TERM memory, making a
         # trace STABLE vs degradable). encoding_gain_fn: an optional callable () -> float read AT STORE TIME (the
@@ -164,6 +177,8 @@ class RFPhasorComposer:
         b.rf_set_complex_weights(conns)   # (c-opt) builds the sparse complex weights FRESH each op -> replaces; no reset needed
         b.rf_kick(kick, period=self.period, lam=0.0)
         b.rf_resonate_steps(self.period + 8)   # (c-opt) fast RF dynamics loop -- skips the full-step machinery
+        if self.trace:
+            self._last_resonate_n = n          # remember which cached bridge to read for the gauge (trace-only)
         return np.asarray(b.rf_read_phases())
 
     @staticmethod
@@ -428,6 +443,87 @@ class RFPhasorComposer:
         idx = np.where(mask)[0]
         return int(idx[0]) if len(idx) else None
 
+    # --- (B3) READ-ONLY per-turn trace helpers (only invoked on the trace path; default OFF = byte-identical) ---
+    def _cleanup_all_scored(self, rec, words=None):
+        """Like `_cleanup_all` but ALSO returns each row's top normalized cleanup score (the decided concept's
+        match confidence in [0,1]). sims = Re(rec_phasor @ conj(codebook)ᵀ)/D (the mean-cos the cleanup argmax uses);
+        the score = max_j sims[i,j] (== mean cos in [-1,1], clipped to [0,1] for display). Read-only of the SAME
+        matched-filter the cleanup already computes -- no new resonate, only the per-row max is extra arithmetic.
+        Returns (words[list], scores[list])."""
+        words = words if words is not None else self.words
+        if len(rec) == 0:
+            return [], []
+        rec_z = np.exp(2j * np.pi * np.asarray(rec))                         # (K, D)
+        cb = np.stack([np.exp(2j * np.pi * self.concepts[w]) for w in words])  # (V, D)
+        sims = (rec_z @ self._cleanup_conj(cb).T).real / float(self.D)       # (K, V) mean-cos
+        j = np.argmax(sims, axis=1)
+        decoded = [words[int(jj)] for jj in j]
+        scores = [float(np.clip(sims[i, int(j[i])], 0.0, 1.0)) for i in range(len(rec))]
+        return decoded, scores
+
+    def _rf_gauge(self):
+        """A scalar RF activity gauge read from the LAST `_resonate` bridge (cached by neuron count): the fraction of
+        readout neurons that crossed (`cp_rf_fired.mean()`) + the mean recovery magnitude |Z| = mean(sqrt(re²+im²))
+        over `cp_membrane_potential_v`(re) / `cp_recovery_variable_u`(im). All guarded: the rf slice / arrays may be
+        absent -> the field is None. Strictly read-only of state the resonate already produced (no extra GPU work)."""
+        n = self._last_resonate_n
+        b = self._bridge_cache.get(n) if n is not None else None
+        if b is None:
+            return {"n_readout_neurons": None, "frac_fired": None, "mean_magnitude": None}
+        out = {"n_readout_neurons": int(n) if n is not None else None,
+               "frac_fired": None, "mean_magnitude": None}
+        try:
+            fired = getattr(b, "cp_rf_fired", None)
+            if fired is not None:
+                out["frac_fired"] = float(np.asarray(to_host(fired)).astype(float).mean())
+        except Exception:
+            pass
+        try:
+            re = getattr(b, "cp_membrane_potential_v", None)
+            im = getattr(b, "cp_recovery_variable_u", None)
+            if re is not None and im is not None:
+                re_h = np.asarray(to_host(re)).astype(float)
+                im_h = np.asarray(to_host(im)).astype(float)
+                out["mean_magnitude"] = float(np.sqrt(re_h * re_h + im_h * im_h).mean())
+        except Exception:
+            pass
+        return out
+
+    def _trace_scan(self, cue_roles, idx, answer_roles):
+        """Build self.last_trace for the LAST query (read-only). `cue_roles` = the {role: asserted_value} the scan
+        matched on; `idx` = the matched fact-block index (or None = abstain); `answer_roles` = the read-out
+        {role: (decoded_word, confidence)} for the roles the query DECODED (agent/action/patient, etc.). Records the
+        per-role chips, which engram block matched + how many were scanned, and the post-resonate RF gauge. On an
+        abstain (idx is None) it records matched_fact_index=None + scanned=N WITHOUT inventing an answer (the moat
+        made visible). Stored on self.last_trace; never affects the return value."""
+        if not self.trace:
+            return
+        comps = [comp for _f, comp in self.kb]
+        n_scanned = len(comps)
+        roles_out = []
+        # the cue roles first (what the question asserted -> their decoded match over the matched block, if any)
+        cue_decoded = {}
+        if idx is not None:
+            comp = comps[idx]
+            for role in cue_roles:
+                rec = self._unbind_phases(comp, role)
+                _w, _s = self._cleanup_all_scored(np.asarray(rec)[None, :])
+                cue_decoded[role] = (_w[0], _s[0]) if _w else (None, None)
+        for role, asserted in cue_roles.items():
+            word, conf = cue_decoded.get(role, (asserted, None))
+            roles_out.append({"role": role, "word": word, "confidence": conf, "cue": True,
+                              "asserted": asserted})
+        for role, (word, conf) in (answer_roles or {}).items():
+            roles_out.append({"role": role, "word": word, "confidence": conf, "cue": False})
+        self.last_trace = {
+            "roles": roles_out,
+            "matched_fact_index": (int(idx) if idx is not None else None),
+            "n_facts_scanned": int(n_scanned),
+            "abstained": idx is None,
+            "rf": self._rf_gauge(),
+            "composer": "rf",
+        }
+
     # --- conversational API (mirrors CoreSimComposer; the no-confab moat preserved) ---
     def store(self, agent, action, patient, polarity=None):
         fact = {"agent": agent, "action": action}
@@ -568,9 +664,15 @@ class RFPhasorComposer:
     def query_agent(self, action, patient):
         """'who <action> <patient>?' -> the agent of the matching fact; None if no fact matches (abstention).
         Batched store scan on the fast path (answer-identical to the per-fact loop)."""
+        if self.trace:
+            self.last_trace = None
         if self._can_batch_scan():
             i = self._scan_first_match(action=action, patient=patient)
-            return self.unbind(self.kb[i][1], "agent") if i is not None else None
+            ans = self.unbind(self.kb[i][1], "agent") if i is not None else None
+            if self.trace:
+                self._trace_scan({"action": action, "patient": patient}, i,
+                                 {"agent": (ans, None)} if i is not None else {})
+            return ans
         for fact, comp in self._iter_facts():
             if self.unbind(comp, "action") == action and self.unbind(comp, "patient") == patient:
                 return self.unbind(comp, "agent")
@@ -583,14 +685,30 @@ class RFPhasorComposer:
         inner CLAUSE patient's SVO order is produced by the de-risked spiking serial-order generator. The moat is
         unaffected: abstention (return None) happens BEFORE any rendering. The store scan is BATCHED on the fast
         path (one resonate over all facts; answer-identical to the per-fact loop below)."""
+        if self.trace:
+            self.last_trace = None
         if self._can_batch_scan():
             i = self._scan_first_match(agent=agent, action=action)
             if i is None:
+                if self.trace:
+                    self._trace_scan({"agent": agent, "action": action}, None, {})
                 return None
             fact, comp = self.kb[i]
             noun = self._render(comp, "patient", fact["patient"], order_fn=order_fn)
             adjs = [self.unbind(comp, r) for r in ("attribute", "attribute2") if r in fact]
-            return " ".join(adjs + [noun]) if adjs else noun
+            ans = " ".join(adjs + [noun]) if adjs else noun
+            if self.trace:
+                # the patient role's decoded word + confidence (read-only over the matched block)
+                rec = self._unbind_phases(comp, "patient")
+                _w, _s = self._cleanup_all_scored(np.asarray(rec)[None, :])
+                ans_roles = {"patient": (_w[0] if _w else noun, _s[0] if _s else None)}
+                for r in ("attribute", "attribute2"):
+                    if r in fact:
+                        rr = self._unbind_phases(comp, r)
+                        _wa, _sa = self._cleanup_all_scored(np.asarray(rr)[None, :])
+                        ans_roles[r] = (_wa[0] if _wa else None, _sa[0] if _sa else None)
+                self._trace_scan({"agent": agent, "action": action}, i, ans_roles)
+            return ans
         for fact, comp in self._iter_facts():
             if self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action:
                 noun = self._render(comp, "patient", fact["patient"], order_fn=order_fn)   # word OR recursive Clause
@@ -618,11 +736,19 @@ class RFPhasorComposer:
     def ask_yes_no(self, agent, action, patient):
         """'does <agent> <action> <patient>?' -> 'yes'/'no'/'unknown' via the bound AFFIRM/NEGATE polarity tag.
         Matches the full SVO; 'unknown' (abstention) when no stored fact matches. Batched scan on the fast path."""
+        if self.trace:
+            self.last_trace = None
         if self._can_batch_scan():
             i = self._scan_first_match(agent=agent, action=action, patient=patient)
             if i is None:
+                if self.trace:
+                    self._trace_scan({"agent": agent, "action": action, "patient": patient}, None, {})
                 return "unknown"
-            return "yes" if self.unbind(self.kb[i][1], "polarity", self.pol_words) == "AFFIRM" else "no"
+            pol = self.unbind(self.kb[i][1], "polarity", self.pol_words)
+            if self.trace:
+                self._trace_scan({"agent": agent, "action": action, "patient": patient}, i,
+                                 {"polarity": (pol, None)})
+            return "yes" if pol == "AFFIRM" else "no"
         for fact, comp in self._iter_facts():
             if (self.unbind(comp, "agent") == agent and self.unbind(comp, "action") == action
                     and self.unbind(comp, "patient") == patient):

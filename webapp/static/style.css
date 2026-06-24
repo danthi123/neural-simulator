@@ -2729,6 +2729,56 @@ pre {
   display: none; padding-left: 2px; }
 .interact-log.show-svo .interact-meta { display: block; }
 
+/* ── B3 per-turn "brain activity" strip — hidden until the toggle ───────── */
+.interact-activity {
+  display: none; margin-top: 4px; padding: 8px 10px;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 8px; max-width: 78%;
+  font-size: 11px; font-family: ui-monospace, Consolas, monospace;
+}
+.interact-log.show-activity .interact-activity { display: block; }
+
+/* "engram #i of N matched" / abstain line */
+.interact-activity-engram { color: var(--fg-muted); margin-bottom: 6px; }
+.interact-activity-engram.is-abstain { color: var(--accent-warn); font-weight: 600; }
+
+/* per-role chip strip (decoded word + cleanup confidence) */
+.interact-activity-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.interact-chip-role {
+  display: inline-flex; align-items: baseline; gap: 5px;
+  padding: 3px 7px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--bg-3);
+}
+.interact-chip-role .chip-role-name {
+  text-transform: uppercase; letter-spacing: .05em; font-size: 9px;
+  color: var(--fg-muted); font-weight: 700;
+}
+.interact-chip-role .chip-role-word { font-weight: 700; font-size: 12px; }
+.interact-chip-role .chip-role-conf { font-size: 10px; color: var(--fg-muted); }
+/* a cue role (what the question asserted) vs an answer role (decoded) */
+.interact-chip-role.is-answer { border-color: var(--accent); }
+.interact-chip-role.is-cue { border-style: dashed; }
+/* confidence color on the left edge (theme-adaptive accents, high contrast) */
+.interact-chip-role.conf-high { border-left: 3px solid var(--accent); }
+.interact-chip-role.conf-mid  { border-left: 3px solid var(--accent-warn); }
+.interact-chip-role.conf-low  { border-left: 3px solid var(--accent-bad); }
+
+/* two-bar RF activity gauge (firing fraction + mean |Z|) */
+.interact-activity-gauge { display: flex; flex-direction: column; gap: 3px; }
+.interact-activity-gauge .gauge-row { display: flex; align-items: center; gap: 6px; }
+.interact-activity-gauge .gauge-label {
+  flex: 0 0 56px; color: var(--fg-muted); text-align: right;
+}
+.interact-activity-gauge .gauge-track {
+  flex: 1; height: 8px; border-radius: 4px;
+  background: var(--bg-3); border: 1px solid var(--border); overflow: hidden;
+}
+.interact-activity-gauge .gauge-fill {
+  height: 100%; background: var(--accent); transition: width .2s;
+}
+.interact-activity-gauge .gauge-val { flex: 0 0 48px; color: var(--fg); }
+.interact-activity-nrn { font-size: 10px; margin-top: 2px; }
+
 .interact-input-row { display: flex; gap: 10px; margin-top: 12px; }
 .interact-input {
   flex: 1; background: var(--bg-2); border: 1px solid var(--border); color: var(--fg);

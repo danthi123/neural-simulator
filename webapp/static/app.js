@@ -2287,6 +2287,7 @@ function setupBrainChat() {
   const rendererEl = document.getElementById("brainchat-renderer");
   const richEl = document.getElementById("brainchat-rich");
   const showSvoEl = document.getElementById("brainchat-show-svo");
+  const showActivityEl = document.getElementById("brainchat-show-activity");
   const statusEl = document.getElementById("brainchat-status");
   if (!logEl || !inputEl || !sendBtn) return;
 
@@ -2455,6 +2456,16 @@ function setupBrainChat() {
     });
   }
 
+  // B3: reveal/hide the per-turn "brain activity" strip live (CSS-gated, like
+  // the recalled-fact strip). The strip is always rendered into the turn; the
+  // `show-activity` class on the log controls its visibility.
+  if (showActivityEl) {
+    logEl.classList.toggle("show-activity", showActivityEl.checked);
+    showActivityEl.addEventListener("change", () => {
+      logEl.classList.toggle("show-activity", showActivityEl.checked);
+    });
+  }
+
   // Populate the brain dropdown from the server (built-ins + any developed
   // bundle). Non-blocking; the static tiny-demo option works meanwhile.
   populateBrains();
@@ -2503,8 +2514,98 @@ function appendBrainTurn(logEl, role, content, showSvoEl, data) {
     turn.appendChild(el("div", { class: "interact-meta muted" }, metaBits.join("  ·  ")));
   }
 
+  // B3 per-turn "brain activity" strip (hidden unless the "Show brain activity"
+  // toggle is on; CSS-gated by `.show-activity` on the log). Renders what the
+  // brain DID this turn: a per-role chip strip (decoded word + cleanup
+  // confidence), an "engram #i of N matched (or none → abstained)" line, and a
+  // small two-bar gauge (RF fired fraction + mean |Z|).
+  if (data && data.activity) {
+    turn.appendChild(buildActivityStrip(data.activity));
+  }
+
   logEl.appendChild(turn);
   logEl.scrollTop = logEl.scrollHeight;
+}
+
+// Build the B3 "brain activity" strip from a turn's `activity` object (the
+// read-only per-turn trace the composer recorded). Pure DOM via el(); no chart
+// lib needed.
+function buildActivityStrip(act) {
+  const wrap = el("div", { class: "interact-activity" });
+
+  // Header: which engram block answered + how many were scanned (the no-confab
+  // scan made visible — an abstain shows "none matched → abstained").
+  const n = (act.n_facts_scanned != null) ? act.n_facts_scanned : "?";
+  let engramText;
+  if (act.matched_fact_index != null) {
+    engramText = `engram #${act.matched_fact_index + 1} of ${n} matched`;
+  } else {
+    engramText = `scanned ${n}, none matched → abstained`;
+  }
+  wrap.appendChild(el("div", {
+    class: "interact-activity-engram" + (act.matched_fact_index == null ? " is-abstain" : ""),
+  }, engramText));
+
+  // Per-role chip strip (decoded role-word + cleanup confidence, colored by
+  // confidence). Cue roles (what the question asserted) are tagged; answer
+  // roles (what the brain read out) are highlighted.
+  const roles = Array.isArray(act.roles) ? act.roles : [];
+  if (roles.length) {
+    const chips = el("div", { class: "interact-activity-chips" });
+    for (const r of roles) {
+      const conf = (typeof r.confidence === "number") ? r.confidence : null;
+      const pct = (conf != null) ? Math.round(conf * 100) + "%" : "—";
+      const word = (r.word != null && r.word !== "") ? r.word : "∅";
+      const chip = el("div", {
+        class: "interact-chip-role" + (r.cue ? " is-cue" : " is-answer")
+          + (conf != null ? " " + confClass(conf) : ""),
+        title: (r.cue ? "cue role (asserted: " + (r.asserted != null ? r.asserted : "—") + ")"
+                      : "decoded by the brain") + (conf != null ? " · confidence " + pct : ""),
+      },
+        [el("span", { class: "chip-role-name" }, r.role),
+         el("span", { class: "chip-role-word" }, word),
+         el("span", { class: "chip-role-conf" }, pct)]);
+      chips.appendChild(chip);
+    }
+    wrap.appendChild(chips);
+  }
+
+  // Two-bar RF activity gauge: firing fraction + mean |Z| (recovery strength).
+  const rf = act.rf || {};
+  const gauge = el("div", { class: "interact-activity-gauge" });
+  gauge.appendChild(gaugeBar("RF fired", rf.frac_fired, rf.frac_fired,
+    "fraction of readout neurons that crossed (cp_rf_fired.mean())"));
+  // |Z| (recovery magnitude) is unbounded-ish; clamp the bar width to [0,1] for
+  // display but show the true value in the label.
+  gauge.appendChild(gaugeBar("|Z|", rf.mean_magnitude,
+    (rf.mean_magnitude != null ? Math.max(0, Math.min(1, rf.mean_magnitude)) : null),
+    "mean recovery magnitude |Z| over the readout neurons"));
+  if (rf.n_readout_neurons != null) {
+    gauge.appendChild(el("span", { class: "interact-activity-nrn muted" },
+      rf.n_readout_neurons + " readout neurons"));
+  }
+  wrap.appendChild(gauge);
+  return wrap;
+}
+
+// One labeled bar of the RF gauge. `value` is shown in the label (3 d.p.);
+// `frac` ∈ [0,1] drives the fill width (null → an empty/“n/a” bar).
+function gaugeBar(label, value, frac, title) {
+  const has = (typeof value === "number");
+  const w = (typeof frac === "number") ? Math.round(Math.max(0, Math.min(1, frac)) * 100) : 0;
+  return el("div", { class: "gauge-row", title: title || "" }, [
+    el("span", { class: "gauge-label" }, label),
+    el("div", { class: "gauge-track" },
+      el("div", { class: "gauge-fill", style: "width:" + w + "%" })),
+    el("span", { class: "gauge-val" }, has ? value.toFixed(3) : "n/a"),
+  ]);
+}
+
+// Map a confidence ∈ [0,1] to a coarse color class (high/mid/low) for a chip.
+function confClass(c) {
+  if (c >= 0.66) return "conf-high";
+  if (c >= 0.33) return "conf-mid";
+  return "conf-low";
 }
 
 function renderLLMChatPanel(body, lineageName) {
