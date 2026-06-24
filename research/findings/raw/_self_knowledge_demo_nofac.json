@@ -1,0 +1,476 @@
+{
+  "probe": "teach_the_brain_about_itself__develop_plus_firewall_proof",
+  "resolves": "DEVELOP a brain on the self-knowledge curriculum (the project's own architecture, Claude-authored, learned from listening), then PROVE its answers are the brain's OWN knowledge via the firewall test (the brain answers niche project facts the off-bridge Qwen cannot know, AND ABSTAINS on the things Qwen DOES know — capital of France, 2+2 — so a leak is impossible).",
+  "curriculum": "research\\findings\\raw\\_curriculum_self_knowledge.json",
+  "backend": "cupy",
+  "seed": 42,
+  "n_days": 4,
+  "D": 128,
+  "n_hub": 200,
+  "n_per": 12,
+  "max_windows_per_day": 2500,
+  "T": 16,
+  "max_new_tokens": 24,
+  "GO": false,
+  "verdict": "HONEST/PARTIAL — brain_learned=False (vocab_grew=True, facts_grew=True, recall_mean=0.28846153846153844, project_answered=2/6)",
+  "developed": {
+    "vocab_grew": true,
+    "facts_grew": true,
+    "vocab_trend": [
+      26,
+      53,
+      75,
+      88
+    ],
+    "concepts_heard_trend": [
+      26,
+      53,
+      75,
+      88
+    ],
+    "facts_trend": [
+      13,
+      26,
+      39,
+      52
+    ],
+    "recall_mean": 0.28846153846153844,
+    "retention_mean": 0.875,
+    "learn_fidelity_mean": 0.8586463467588145,
+    "moat_false_accepts_develop": 0,
+    "concepts_grounded": 88
+  },
+  "develop_seconds": 2766.8,
+  "develop_per_day": [
+    {
+      "day": 0,
+      "vocab_size": 26,
+      "concepts_heard": 26,
+      "facts_known": 13,
+      "recall_correct": 7,
+      "recall_total": 13,
+      "recall_acc": 0.5384615384615384,
+      "heldout_correct": 0,
+      "heldout_total": 0,
+      "heldout_acc": null,
+      "retention_correct": 1,
+      "retention_total": 1,
+      "retention_acc": 1.0,
+      "moat_false_accepts": 0,
+      "chain_correct": 0,
+      "chain_total": 0,
+      "chain_acc": null,
+      "learn_fidelity": 0.8627337969896924,
+      "n_windows_today": 2500,
+      "brain_tier": 4,
+      "turns_lived": 13,
+      "facts_replayed_in_sleep": 6,
+      "promoted": false,
+      "day_seconds": 609.27,
+      "wake_seconds": 31.64
+    },
+    {
+      "day": 1,
+      "vocab_size": 53,
+      "concepts_heard": 53,
+      "facts_known": 26,
+      "recall_correct": 5,
+      "recall_total": 13,
+      "recall_acc": 0.38461538461538464,
+      "heldout_correct": 0,
+      "heldout_total": 0,
+      "heldout_acc": null,
+      "retention_correct": 2,
+      "retention_total": 2,
+      "retention_acc": 1.0,
+      "moat_false_accepts": 0,
+      "chain_correct": 0,
+      "chain_total": 0,
+      "chain_acc": null,
+      "learn_fidelity": 0.8574811472251876,
+      "n_windows_today": 2095,
+      "brain_tier": 4,
+      "turns_lived": 26,
+      "facts_replayed_in_sleep": 13,
+      "promoted": false,
+      "day_seconds": 655.62,
+      "wake_seconds": 29.94
+    },
+    {
+      "day": 2,
+      "vocab_size": 75,
+      "concepts_heard": 75,
+      "facts_known": 39,
+      "recall_correct": 1,
+      "recall_total": 13,
+      "recall_acc": 0.07692307692307693,
+      "heldout_correct": 0,
+      "heldout_total": 0,
+      "heldout_acc": null,
+      "retention_correct": 1,
+      "retention_total": 2,
+      "retention_acc": 0.5,
+      "moat_false_accepts": 0,
+      "chain_correct": 0,
+      "chain_total": 0,
+      "chain_acc": null,
+      "learn_fidelity": 0.8525415582972911,
+      "n_windows_today": 2500,
+      "brain_tier": 4,
+      "turns_lived": 39,
+      "facts_replayed_in_sleep": 19,
+      "promoted": false,
+      "day_seconds": 718.45,
+      "wake_seconds": 35.44
+    },
+    {
+      "day": 3,
+      "vocab_size": 88,
+      "concepts_heard": 88,
+      "facts_known": 52,
+      "recall_correct": 2,
+      "recall_total": 13,
+      "recall_acc": 0.15384615384615385,
+      "heldout_correct": 0,
+      "heldout_total": 0,
+      "heldout_acc": null,
+      "retention_correct": 2,
+      "retention_total": 2,
+      "retention_acc": 1.0,
+      "moat_false_accepts": 0,
+      "chain_correct": 0,
+      "chain_total": 0,
+      "chain_acc": null,
+      "learn_fidelity": 0.8618288845230868,
+      "n_windows_today": 2500,
+      "brain_tier": 4,
+      "turns_lived": 52,
+      "facts_replayed_in_sleep": 26,
+      "promoted": false,
+      "day_seconds": 781.36,
+      "wake_seconds": 34.42
+    }
+  ],
+  "firewall": {
+    "positive_answered": 2,
+    "positive_total": 6,
+    "general_abstained": 5,
+    "general_total": 5,
+    "general_leaks": 0,
+    "untaught_abstained": 5,
+    "untaught_total": 5,
+    "untaught_leaks": 0,
+    "positive_detail": [
+      {
+        "question": "what does the moat prevent",
+        "expect": "confabulation",
+        "kind": "fact",
+        "gate_svo": [
+          "moat",
+          "prevents",
+          "confabulation"
+        ],
+        "answer": null,
+        "abstained": true,
+        "answered_correctly": false
+      },
+      {
+        "question": "what does the brain use",
+        "expect": "spikes",
+        "kind": "fact",
+        "gate_svo": [
+          "brain",
+          "uses",
+          "spikes"
+        ],
+        "answer": "brain uses spikes",
+        "abstained": false,
+        "answered_correctly": true
+      },
+      {
+        "question": "how does the brain learn",
+        "expect": "listening/words",
+        "kind": "fact",
+        "gate_svo": [
+          "brain",
+          "learns",
+          "words"
+        ],
+        "answer": "brain learns words",
+        "abstained": false,
+        "answered_correctly": true
+      },
+      {
+        "question": "what consolidates memory",
+        "expect": "hippocampus",
+        "kind": "fact",
+        "gate_svo": [
+          "hippocampus",
+          "consolidates",
+          "memory"
+        ],
+        "answer": null,
+        "abstained": true,
+        "answered_correctly": false
+      },
+      {
+        "question": "what prevents forgetting",
+        "expect": "replay",
+        "kind": "fact",
+        "gate_svo": [
+          "replay",
+          "prevents",
+          "forgetting"
+        ],
+        "answer": null,
+        "abstained": true,
+        "answered_correctly": false
+      },
+      {
+        "question": "what persists the brain",
+        "expect": "lineage",
+        "kind": "fact",
+        "gate_svo": [
+          "lineage",
+          "persists",
+          "brain"
+        ],
+        "answer": null,
+        "abstained": true,
+        "answered_correctly": false
+      }
+    ],
+    "general_detail": [
+      {
+        "question": "what is the capital of France",
+        "kind": "none",
+        "gate_svo": null,
+        "direct_cue": [
+          "france",
+          "has"
+        ],
+        "answer": null,
+        "abstained": true,
+        "LEAK": false
+      },
+      {
+        "question": "what is two plus two",
+        "kind": "none",
+        "gate_svo": null,
+        "direct_cue": [
+          "two",
+          "plus"
+        ],
+        "answer": null,
+        "abstained": true,
+        "LEAK": false
+      },
+      {
+        "question": "who wrote Romeo and Juliet",
+        "kind": "none",
+        "gate_svo": null,
+        "direct_cue": [
+          "romeo",
+          "wrote"
+        ],
+        "answer": null,
+        "abstained": true,
+        "LEAK": false
+      },
+      {
+        "question": "what color is the sky",
+        "kind": "none",
+        "gate_svo": null,
+        "direct_cue": [
+          "sky",
+          "is"
+        ],
+        "answer": null,
+        "abstained": true,
+        "LEAK": false
+      },
+      {
+        "question": "how many legs does a dog have",
+        "kind": "none",
+        "gate_svo": null,
+        "direct_cue": [
+          "dog",
+          "has"
+        ],
+        "answer": null,
+        "abstained": true,
+        "LEAK": false
+      }
+    ],
+    "untaught_detail": [
+      {
+        "probe": [
+          "brain",
+          "navigates"
+        ],
+        "gate_svo": null,
+        "answer": null,
+        "abstained": true,
+        "LEAK": false
+      },
+      {
+        "probe": [
+          "dopamine",
+          "?"
+        ],
+        "gate_svo": null,
+        "answer": null,
+        "abstained": true,
+        "LEAK": false
+      },
+      {
+        "probe": [
+          "basal",
+          "?"
+        ],
+        "gate_svo": null,
+        "answer": null,
+        "abstained": true,
+        "LEAK": false
+      },
+      {
+        "probe": [
+          "vision",
+          "?"
+        ],
+        "gate_svo": null,
+        "answer": null,
+        "abstained": true,
+        "LEAK": false
+      },
+      {
+        "probe": [
+          "brain",
+          "drives"
+        ],
+        "gate_svo": null,
+        "answer": null,
+        "abstained": true,
+        "LEAK": false
+      }
+    ]
+  },
+  "self_reflective_qas": [
+    {
+      "question": "what are you",
+      "kind": "fact",
+      "cue": [
+        "brain",
+        "has",
+        "neurons"
+      ],
+      "gate_svo": null,
+      "answer": null,
+      "abstained": true,
+      "verified": null,
+      "note": "brain knows no fact for this self-question -> abstain (the moat)"
+    },
+    {
+      "question": "how do you learn",
+      "kind": "fact",
+      "cue": [
+        "brain",
+        "learns",
+        "words"
+      ],
+      "gate_svo": [
+        "brain",
+        "learns",
+        "words"
+      ],
+      "answer": "brain learns words",
+      "verified": null,
+      "abstained": false,
+      "note": "no-faculty: raw brain triple (BRAIN-sourced; not LLM-phrased)"
+    },
+    {
+      "question": "do you forget",
+      "kind": "fact",
+      "cue": [
+        "replay",
+        "prevents",
+        "forgetting"
+      ],
+      "gate_svo": null,
+      "answer": null,
+      "abstained": true,
+      "verified": null,
+      "note": "brain knows no fact for this self-question -> abstain (the moat)"
+    },
+    {
+      "question": "what do you use",
+      "kind": "fact",
+      "cue": [
+        "brain",
+        "uses",
+        "spikes"
+      ],
+      "gate_svo": [
+        "brain",
+        "uses",
+        "spikes"
+      ],
+      "answer": "brain uses spikes",
+      "verified": null,
+      "abstained": false,
+      "note": "no-faculty: raw brain triple (BRAIN-sourced; not LLM-phrased)"
+    },
+    {
+      "question": "what prevents you from lying",
+      "kind": "fact",
+      "cue": [
+        "moat",
+        "prevents",
+        "confabulation"
+      ],
+      "gate_svo": null,
+      "answer": null,
+      "abstained": true,
+      "verified": null,
+      "note": "brain knows no fact for this self-question -> abstain (the moat)"
+    },
+    {
+      "question": "how do you remember",
+      "kind": "fact",
+      "cue": [
+        "brain",
+        "remembers",
+        "facts"
+      ],
+      "gate_svo": [
+        "brain",
+        "remembers",
+        "facts"
+      ],
+      "answer": "brain remembers facts",
+      "verified": null,
+      "abstained": false,
+      "note": "no-faculty: raw brain triple (BRAIN-sourced; not LLM-phrased)"
+    },
+    {
+      "question": "what teaches you",
+      "kind": "fact",
+      "cue": [
+        "claude",
+        "teaches",
+        "brain"
+      ],
+      "gate_svo": null,
+      "answer": null,
+      "abstained": true,
+      "verified": null,
+      "note": "brain knows no fact for this self-question -> abstain (the moat)"
+    }
+  ],
+  "faculty_info": null,
+  "faculty_error": null,
+  "n_facts_taught": 52,
+  "grounded_codes_saved": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\_self_knowledge_grounded_codes.json",
+  "repl_command": "SIM_BACKEND=cupy python -u -m research.runners._self_knowledge_demo --repl --load research\\findings\\raw\\_self_knowledge_grounded_codes.json --seed 42",
+  "wall_seconds": 3151.1
+}
