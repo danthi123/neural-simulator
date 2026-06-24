@@ -772,82 +772,11 @@ def test_control_endpoint_writes_state(client, tmp_path):
         launched_runs.pop(fake_id, None)
 
 
-# ─────────────────────────────────────────────────────────────────────────
-# Capability status endpoint (added 2026-05-09)
-# ─────────────────────────────────────────────────────────────────────────
-
-
-def test_capability_status_returns_json(client):
-    """The /api/capability-status endpoint should return parseable JSON
-    matching the documented shape (headline + pillars + capacity_rule +
-    phase_status). Backed by webapp/capability_status.json."""
-    res = client.get("/api/capability-status")
-    assert res.status_code == 200
-    data = res.json()
-    # Top-level keys present
-    assert "as_of" in data
-    assert "headline" in data
-    assert "pillars" in data
-    assert "capacity_rule" in data
-    assert "phase_status" in data
-
-
-def test_capability_status_headline_shape(client):
-    """Headline should have tier + result + finding_doc fields so the UI
-    can render the headline card without conditionals on missing keys."""
-    res = client.get("/api/capability-status")
-    data = res.json()
-    headline = data.get("headline")
-    if headline is None:
-        pytest.skip("no headline configured in capability_status.json")
-    assert "tier" in headline
-    assert "result" in headline
-    assert "finding_doc" in headline
-
-
-def test_capability_status_pillars_have_status(client):
-    """Each pillar should have name + status + metric. Status is one of
-    VALIDATED/BOUNDARY/PREDICTED/NEGATIVE/RETRACTED so the UI can color-code badges."""
-    res = client.get("/api/capability-status")
-    data = res.json()
-    pillars = data.get("pillars") or []
-    assert len(pillars) >= 1, "expect at least one empirical pillar documented"
-    # RETRACTED added 2026-05-14: bug-affected pillars marked RETRACTED
-    # (semantically different from NEGATIVE: previous claim invalidated by
-    # measurement bug, not by genuine experimental failure).
-    valid_statuses = {"VALIDATED", "BOUNDARY", "PREDICTED", "NEGATIVE", "RETRACTED"}
-    for p in pillars:
-        assert "name" in p
-        assert "status" in p
-        assert p["status"] in valid_statuses, f"unknown pillar status: {p['status']}"
-        assert "metric" in p
-
-
-def test_capability_status_capacity_rule_table(client):
-    """Capacity rule should have a numerical table the UI can render."""
-    res = client.get("/api/capability-status")
-    data = res.json()
-    rule = data.get("capacity_rule")
-    if rule is None:
-        pytest.skip("no capacity rule configured")
-    assert "rule" in rule
-    rows = rule.get("rows") or []
-    assert len(rows) >= 1
-    for r in rows:
-        # Each row needs the columns the UI table renders
-        for k in ("vocab", "subpops", "n_motor", "neurons_per_subpop", "status"):
-            assert k in r, f"capacity rule row missing key: {k}"
-
-
-def test_capability_status_phase_status(client):
-    """Phase status should at least name the active phase so the UI's
-    'Active:' line is never blank."""
-    res = client.get("/api/capability-status")
-    data = res.json()
-    ps = data.get("phase_status")
-    if ps is None:
-        pytest.skip("no phase_status configured")
-    assert "active" in ps and ps["active"], "active phase must be non-empty"
+# NOTE: the /api/capability-status endpoint (+ webapp/capability_status.json
+# + the renderCapabilityStatus frontend) was RETIRED 2026-06-23 with the
+# INTERACT-first console reframe. Its tests (test_capability_status_*) were
+# removed alongside the endpoint. See the brain-chat tests below for the
+# console's new INTERACT centerpiece.
 
 
 def test_parse_log_progress_continual_eval_partial(tmp_path):
@@ -1055,37 +984,6 @@ def test_inflight_dedup_webapp_run_with_pid_file(client, tmp_path, monkeypatch):
         launched_runs.pop(fake_id, None)
 
 
-def test_capability_status_handles_missing_file(client, monkeypatch, tmp_path):
-    """If capability_status.json is missing, the endpoint should return a
-    stub with _warning rather than 500-ing — the dashboard should still
-    render on a fresh checkout."""
-    # Re-import inside the test so we can monkey-patch Path resolution
-    import webapp.server as srv
-    real_resolve = srv.Path
-
-    # Point the endpoint at a temp dir without the JSON file
-    fake_static = tmp_path / "static"
-    fake_static.mkdir()
-    fake_server_dir = tmp_path
-    monkeypatch.setattr(srv, "Path",
-                        lambda *a, **k: real_resolve(*a, **k))
-    # Easier path: temporarily move the real JSON aside
-    real_path = real_resolve(srv.__file__).parent / "capability_status.json"
-    backup = None
-    if real_path.exists():
-        backup = real_path.read_bytes()
-        real_path.unlink()
-    try:
-        res = client.get("/api/capability-status")
-        assert res.status_code == 200
-        data = res.json()
-        assert "_warning" in data
-        assert data["headline"] is None
-    finally:
-        if backup is not None:
-            real_path.write_bytes(backup)
-
-
 # ─── Phase 3.2 LLM chat endpoint (2026-05-11) ───────────────────────
 
 
@@ -1165,6 +1063,100 @@ def test_llm_chat_frontend_ux_helpers_present(client):
     # Specific example prompts shipped
     assert "Remember that my favorite is north" in body
     assert "What word goes with east" in body
+
+
+# ─── Brain chat — the INTERACT centerpiece (2026-06-23) ─────────────────
+
+
+def test_interact_tab_present(client):
+    """The Interact tab (the console centerpiece) is the leftmost nav button
+    and its section + chat widgets are in the page; app.js wires the brain
+    chat. Also asserts the capability/MockLLM surfaces are demoted/gone."""
+    body = client.get("/").text
+    # Interact is the leftmost primary nav button.
+    assert 'data-tab="interact"' in body
+    assert 'id="tab-interact"' in body
+    assert 'id="brainchat-input"' in body
+    assert 'id="brainchat-log"' in body
+    # The capability panel markup must be GONE from the page.
+    assert "overview-capability" not in body
+    # Nav collapsed to the console jobs + an Archive group for the rest.
+    assert 'id="nav-archive-toggle"' in body
+
+    appjs = client.get("/static/app.js").text
+    assert "setupBrainChat" in appjs
+    assert "/api/brain-chat" in appjs
+    # The retired capability renderer is gone from the client.
+    assert "renderOverviewCapability" not in appjs
+
+
+def test_capability_status_endpoint_removed(client):
+    """The retired /api/capability-status endpoint must 404 (it was removed
+    with the INTERACT-first console reframe)."""
+    res = client.get("/api/capability-status")
+    assert res.status_code == 404
+
+
+def test_brain_chat_validates_body(client):
+    """Missing the required `message` field -> 422 (FastAPI validation)."""
+    res = client.post("/api/brain-chat", json={"session": "t", "brain": "tiny-demo"})
+    assert res.status_code == 422
+
+
+def test_brain_chat_reset_idempotent(client):
+    """POST /api/brain-chat/reset is idempotent — 200 + reset:false when no
+    session was cached, without building a brain."""
+    res = client.post("/api/brain-chat/reset",
+                      json={"session": "no-such", "brain": "tiny-demo", "renderer": "stub"})
+    assert res.status_code == 200
+    data = res.json()
+    assert data["reset"] is False
+    assert data["brain"] == "tiny-demo"
+
+
+def test_brain_chat_tiny_demo_answers_and_abstains(client, monkeypatch):
+    """End-to-end smoke of the INTERACT endpoint on the GPU-free tiny-demo
+    brain with the stub renderer: a taught cue ANSWERS (abstained=false,
+    recalled_svo present); an untaught cue ABSTAINS (the no-confab MOAT,
+    abstained=true, recalled_svo null). CPU-only (no GPU/Qwen).
+
+    Skips gracefully if the conversational stack can't import on this host
+    (the endpoint surface is still covered by the validation tests above)."""
+    pytest.importorskip("numpy")
+    # Force the GPU-free path regardless of the host's CUDA state.
+    monkeypatch.setenv("SIM_BACKEND", "numpy")
+    try:
+        import research.runners.brain_chat_tui  # noqa: F401
+    except Exception as e:
+        pytest.skip(f"brain_chat_tui not importable here: {e}")
+
+    sess = "pytest-interact"
+    # A taught fact: the tiny-demo knows (dog, chase, cat).
+    res = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub",
+        "message": "what does the dog chase",
+    })
+    assert res.status_code == 200, res.text
+    data = res.json()
+    assert data["abstained"] is False
+    assert data["recalled_svo"] == ["dog", "chase", "cat"]
+    assert "cat" in data["answer"].lower()
+    assert data["renderer"]  # a renderer name string
+
+    # An untaught cue must ABSTAIN — the no-confab moat.
+    res2 = client.post("/api/brain-chat", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub",
+        "message": "what does the dragon breathe",
+    })
+    assert res2.status_code == 200, res2.text
+    data2 = res2.json()
+    assert data2["abstained"] is True
+    assert data2["recalled_svo"] is None
+    assert "don't know" in data2["answer"].lower()
+
+    # Clean up the warm cache so the test is hermetic.
+    client.post("/api/brain-chat/reset", json={
+        "session": sess, "brain": "tiny-demo", "renderer": "stub"})
 
 
 # ─────────────────────────────────────────────────────────────────────────

@@ -40,19 +40,30 @@
       <span class="active-runs-dot"></span>
       <span id="active-runs-count">0</span> live
     </span>
+    <!-- 2026-06-23: INTERACT-first console. Primary nav = the 3 console jobs:
+         INTERACT (chat — the centerpiece, leftmost) · VISUALIZE (World/Brain)
+         · LAUNCH+MANAGE (Lab/Runs). The capability/research surfaces
+         (Experiments/Findings/Plans/Language/Bridges/Lineages/About) are
+         DEMOTED behind the "Archive" toggle — they are not the console's jobs. -->
     <nav id="nav-tabs">
-      <button data-tab="overview" class="active">Home</button>
-      <button data-tab="launcher">Lab</button>
+      <button data-tab="interact" class="active">💬 Interact</button>
+      <button data-tab="world">🗺 World</button>
+      <button data-tab="brain">🧠 Brain</button>
+      <button data-tab="launcher">▶ Lab</button>
       <button data-tab="runs">Runs</button>
-      <button data-tab="experiments">Experiments</button>
-      <button data-tab="world">World</button>
-      <button data-tab="brain">Brain</button>
-      <button data-tab="language">Language</button>
-      <button data-tab="findings">Findings</button>
-      <button data-tab="plans">Plans</button>
-      <button data-tab="bridges">Bridges</button>
-      <button data-tab="lineages">Lineages</button>
-      <button data-tab="info">About</button>
+      <span class="nav-archive-sep"></span>
+      <button id="nav-archive-toggle" class="nav-archive-toggle"
+              aria-expanded="false" title="Research / archive surfaces (not part of the console)">Archive ▾</button>
+      <span id="nav-archive-group" class="nav-archive-group" style="display:none;">
+        <button data-tab="overview">Home</button>
+        <button data-tab="experiments">Experiments</button>
+        <button data-tab="language">Language</button>
+        <button data-tab="findings">Findings</button>
+        <button data-tab="plans">Plans</button>
+        <button data-tab="bridges">Bridges</button>
+        <button data-tab="lineages">Lineages</button>
+        <button data-tab="info">About</button>
+      </span>
     </nav>
     <!-- Theme toggle. Click cycles dark <-> light; persisted in localStorage. -->
     <button id="theme-toggle" class="theme-toggle"
@@ -62,7 +73,68 @@
   </header>
 
   <main>
-    <section id="tab-overview" class="tab active">
+    <!-- 2026-06-23: INTERACT tab — the console CENTERPIECE. Chat with a
+         DEVELOPED brain via /api/brain-chat (the real conversational agent,
+         NOT the deprecated MockLLM). Abstentions (the no-confab MOAT) are
+         rendered distinctly. Defaults to the GPU-free tiny-demo brain. -->
+    <section id="tab-interact" class="tab active">
+      <div class="interact-wrap">
+        <div class="interact-header">
+          <div class="section-title" style="padding:0;">Talk to the brain</div>
+          <p class="muted interact-blurb">
+            Ask the brain about what it knows. It speaks only from facts it was
+            taught — when it wasn't taught something it says
+            <em>“the brain doesn't know that”</em> rather than make it up
+            (the no-confab moat).
+          </p>
+        </div>
+
+        <div class="interact-controls">
+          <label class="interact-field" title="A developed-brain bundle directory, or 'tiny-demo' (GPU-free) / 'self-knowledge'">
+            Brain
+            <input type="text" id="brainchat-brain" value="tiny-demo"
+                   placeholder="tiny-demo · self-knowledge · path/to/developed-brain">
+          </label>
+          <label class="interact-field interact-field-narrow" title="Fluent renderer. 'auto' picks Qwen only if a GPU is free, else the GPU-free stub.">
+            Renderer
+            <select id="brainchat-renderer">
+              <option value="auto" selected>auto (GPU-light)</option>
+              <option value="stub">stub (GPU-free)</option>
+              <option value="qwen">qwen (GPU)</option>
+              <option value="raw">raw triples</option>
+            </select>
+          </label>
+          <label class="toolbar-checkbox interact-svo-toggle" title="Show the stored fact (subject–verb–object) the brain recalled for each answer">
+            <input type="checkbox" id="brainchat-show-svo">
+            Show recalled fact
+          </label>
+          <span class="spacer"></span>
+          <button id="brainchat-reset" class="ctrl-btn" title="Start a fresh conversation (clears the discourse buffer)">↺ New chat</button>
+        </div>
+
+        <div id="brainchat-log" class="interact-log">
+          <p class="muted interact-empty">Say hi — try “what are you?” or “what does the dog chase?”</p>
+        </div>
+
+        <div class="interact-input-row">
+          <input type="text" id="brainchat-input" class="interact-input"
+                 placeholder="Ask the brain something… (Enter to send)" autocomplete="off">
+          <button id="brainchat-send" class="interact-send">Send</button>
+        </div>
+
+        <div class="interact-chips" id="brainchat-chips">
+          <button type="button" class="interact-chip">what are you?</button>
+          <button type="button" class="interact-chip">how do you learn?</button>
+          <button type="button" class="interact-chip">what does the dog chase?</button>
+          <button type="button" class="interact-chip">what does it eat?</button>
+          <button type="button" class="interact-chip">who wrote romeo and juliet?</button>
+        </div>
+
+        <div id="brainchat-status" class="muted interact-status"></div>
+      </div>
+    </section>
+
+    <section id="tab-overview" class="tab">
       <!-- 2026-06-08 (owner directive): Home is a RUN-MANAGEMENT + MONITORING
            surface. Live active-run cards (auto-refresh every 5s; placeholder
            when idle) + quick links. The old project-progress panels (KPIs,
@@ -550,78 +622,31 @@
       <h2>Launch a runner</h2>
       <form id="launch-form">
         <label>Preset
+          <!-- 2026-06-23: curated menu (the console's current-relevant runners).
+               The full PRESETS dict still lives server-side — any preset key can
+               be launched by typing it as the value; this list is just the short
+               default menu. -->
           <select name="preset" id="launch-preset-select">
             <option disabled>──── NAVIGATION (gridworld) ────</option>
             <option value="flagship_k_v2_visual" data-eta-min="15">★★ flagship_k_v2_visual — Cluster K v2 visual cortex 16×16 (2.87±0.19, perception-only, NO heuristic) [~15min]</option>
             <option value="flagship_k_v2_24x24" data-eta-min="20">flagship_k_v2_24x24 — K v2 at 24×24 (2.87±0.22, grid-invariant) [~20min]</option>
-            <option value="flagship_g_v25" data-eta-min="15">★ flagship_g_v25 — Cluster G v2.5 NMDA (2.00±0.00 with heuristic) [~15min]</option>
             <option value="interactive_k_v2_visual" data-eta-min="30">★ interactive_k_v2_visual — K v2, 3600 steps, click grid to teleport goal [interactive ~30min]</option>
             <option value="flagship" data-eta-min="15">flagship — 4-cheats-closed (perception arc, 4.08±0.49) [~15min]</option>
-            <option value="flagship_with_cheat5" data-eta-min="15">flagship_with_cheat5 — adds curriculum-staged BG cross-projections [~15min]</option>
-            <option value="perception_only" data-eta-min="15">perception_only — full perception arc, no sensed reward [~15min]</option>
-            <option value="biology_AE" data-eta-min="15">biology_AE — A+E composite (3.31±0.74 single-goal) [~15min]</option>
-            <option value="biology_AE_multi" data-eta-min="15">biology_AE_multi — A+E with --goal-schedule multi [~15min]</option>
-            <option value="biology_AE_sensed" data-eta-min="15">biology_AE_sensed — A+E with sensed-reward only [~15min]</option>
-            <option value="biology_baseline" data-eta-min="15">biology_baseline — R-pass + Cluster B baseline [~15min]</option>
             <option value="baseline" data-eta-min="15">baseline — minimal, no flags [~15min]</option>
-            <option value="smoke" data-eta-min="1">smoke — 100 steps for quick check [~1min]</option>
-            <option value="interactive_flagship" data-eta-min="30">interactive_flagship — flagship config + interactive control [interactive ~30min]</option>
-            <option value="interactive_baseline" data-eta-min="30">interactive_baseline — minimal + interactive control [interactive ~30min]</option>
-            <option disabled>──── TEXT I/O (language) ────</option>
-            <option value="text_io_v2_baseline" data-eta-min="55">★ text_io_v2_baseline — current best (28.5% W→A, p=0.027 across 6 seeds) [~55min]</option>
-            <option value="text_io_v2_smoke" data-eta-min="5">text_io_v2_smoke — 10-episode smoke for quick verification [~5min]</option>
-            <option value="text_io_distributed_motor_pop" data-eta-min="55">text_io_distributed_motor_pop — Pulvermüller G.20, 8-direction motor cosine tuning [~55min]</option>
-            <option value="text_io_motor_cross_coupling" data-eta-min="55">text_io_motor_cross_coupling — 90° adjacency cross-coupling (NEGATIVE 22% W→A) [~55min]</option>
-            <option disabled>──── CHAT DEMOS (conversational, validated 2026-05-07/08) ────</option>
-            <option value="imperfect_english_demo" data-eta-min="1">★ imperfect_english_demo — robust multi-cue parser vs order-only on IMPERFECT English (object-fronted/scrambled); multi-cue 4/4 vs order-only 0/4, no-confab moat held [~1min]</option>
-            <option value="chat_demo" data-eta-min="6">★ chat_demo — Tier 1 4-word chat (north/east/south/west); 6-seed mean 33.3%±11.8% [~6min]</option>
-            <option value="chat_synonym_demo" data-eta-min="20">★ chat_synonym_demo — Tier 2.1 8-word with synonyms (up/right/down/left); validated 5/6+6/6 aligned [~20min]</option>
-            <option value="chat_continual_demo" data-eta-min="25">chat_continual_demo — Phase 1.4 BRANCH A continual-learning chat (train primary then synonyms, test retention) [~25min]</option>
-            <option value="chat_learn_demo" data-eta-min="10">chat_learn_demo — Track 3 online vocab learning: train, learn 2 new words, test bindings + retention (binding>=50% + retention>=80% = GO) [~10min]</option>
-            <option value="chat_speak_demo" data-eta-min="10">chat_speak_demo — Track 3 generative decoder (A→W): drive motor pools, decode to word via language_output cosine. Validates :speak primitive [~10min]</option>
-            <option value="chat_speak_synonym_demo" data-eta-min="13">chat_speak_synonym_demo — Tier 2.1 8-word :speak (A→W ranked against 8 synonyms); production-side analog of Tier 2.1 reception [~13min]</option>
-            <option disabled>──── CONSOLIDATION (Phase 1.3 + Tier 2.1, validated 2026-05-08) ────</option>
-            <option value="consolidation_synonym_smoke" data-eta-min="21">consolidation_synonym_smoke — quick runner validation (50 events/word) [~21min]</option>
-            <option value="consolidation_synonym_medium" data-eta-min="115">★ consolidation_synonym_medium — 8-word, 3/3 GO 91%/128% retention [~115min]</option>
-            <option value="consolidation_synonym_medium_strict" data-eta-min="115">consolidation_synonym_medium_strict — anti-cheat (10× silencing + zero ca1→cortex); 3/3 identical to non-strict [~115min]</option>
-            <option value="consolidation_synonym_12word_medium" data-eta-min="115">consolidation_synonym_12word_medium — 12-word default arch (2/3 GO PARTIAL, capacity edge) [~115min]</option>
-            <option value="consolidation_synonym_12word_scaled_medium" data-eta-min="220">★ consolidation_synonym_12word_scaled_medium — 12-word at scaled n_motor=2000; 3/3 GO 95%/115% retention [~220min]</option>
-            <option value="consolidation_synonym_16word_scaled_medium" data-eta-min="220">consolidation_synonym_16word_scaled_medium — 16-word with Unicode arrows (capacity rule extension test) [~220min]</option>
-            <option value="consolidation_synonym_16word_scaled_smoke" data-eta-min="35">consolidation_synonym_16word_scaled_smoke — cheap 16-word probe before committing 220 min/seed [~35min]</option>
-            <option value="consolidation_synonym_24word_scaled_smoke" data-eta-min="35">consolidation_synonym_24word_scaled_smoke — find-the-ceiling 24-word (Spanish/German synonyms) [~35min]</option>
-            <option value="consolidation_synonym_32word_scaled_smoke" data-eta-min="40">consolidation_synonym_32word_scaled_smoke — find-the-ceiling 32-word (Japanese/Arabic synonyms) [~40min]</option>
-            <option value="consolidation_synonym_48word_scaled_smoke" data-eta-min="45">consolidation_synonym_48word_scaled_smoke — find-the-ceiling 48-word (derived English forms) [~45min]</option>
-            <option value="consolidation_synonym_64word_scaled_smoke" data-eta-min="50">consolidation_synonym_64word_scaled_smoke — find-the-ceiling 64-word (nautical/movement) [~50min]</option>
-            <option disabled>──── CONTINUAL LEARNING (Phase 1.4) ────</option>
-            <option value="phase_1_4_forgetting" data-eta-min="25">★ phase_1_4_forgetting — catastrophic forgetting eval; 5/6 PASS mean 103% retention (BRANCH A) [~25min]</option>
-            <option disabled>──── HIPPOCAMPUS (Phase 1.3) ────</option>
-            <option value="phase_1_3_consolidation" data-eta-min="25">phase_1_3_consolidation — sleep replay consolidation; 3/3 PASS mean 96% hippo-OFF retention [~25min]</option>
-            <option disabled>──── EVAL SUITE (Phase 1.5) ────</option>
-            <option value="phase_1_5_unified" data-eta-min="100">phase_1_5_unified — 4-benchmark continual-learning suite at default arch (2/4 PASS at smoke) [~100min]</option>
-            <option value="phase_1_5_unified_scaled" data-eta-min="180">★ phase_1_5_unified_scaled — same at Tier 2.1 scaled arch (interference + long_tail need 8-word capacity) [~180min]</option>
-            <option value="phase_1_5_unified_scaled_v400" data-eta-min="300">phase_1_5_unified_scaled_v400 — full suite at validated 400 events/word (interference under-training hypothesis test) [~300min]</option>
-            <option value="phase_1_5_interference_only_v400" data-eta-min="70">phase_1_5_interference_only_v400 — interference at 400 events/word (REFUTED 2026-05-09: 0.340→0.345, no change) [~70min]</option>
-            <option value="phase_1_5_interference_only_n_motor_2000" data-eta-min="90">phase_1_5_interference_only_n_motor_2000 — interference at scaled n_motor=2000 (capacity hypothesis from 12-word arc; tests if interleaved 8-word has per-word capacity bottleneck) [~90min]</option>
-            <option value="phase_1_5_long_tail_relaxed" data-eta-min="50">phase_1_5_long_tail_relaxed — long_tail with rare-ratio=4 (50 events) + 1500pA motor teacher (relaxed few-shot; tests if 17% rare-word failure was dose+teacher, not architecture) [~50min]</option>
-            <option value="phase_1_5_unified_combined" data-eta-min="350">phase_1_5_unified_combined — Outcome-A milestone preset: all 4 benchmarks at v400 + n_motor=2000 + long_tail relaxed (only run if BOTH hypothesis tests pass) [~5-6 hr]</option>
-            <option disabled>──── COMPOSITIONAL (Tier 2.3, architecture-limited) ────</option>
-            <option value="tier_2_3_phrases" data-eta-min="60">tier_2_3_phrases — 2-word phrase composition; ARCHITECTURE-LIMITED at ~40% [~60min]</option>
-            <option disabled>──── CONCEPT POOLS v14 (2026-05-13, 16 pools, orthogonal codes) ────</option>
-            <option value="concept_pool_demo" data-eta-min="18">★ concept_pool_demo v14 — 4 motor + 4 noun + 4 verb + 4 adjective = 16 pools; orthogonal codes; W→A ~80% mean across seeds 42-45 (Phase 1) [~18min]</option>
-            <option value="concept_compose_demo" data-eta-min="20">concept_compose_demo — Phase 2 composition (sequential NMDA + co-fire merge); does verb_GO + motor_N fire together for "go north"? Sequential still open (v15 planned) [~20min]</option>
-            <option value="concept_speak_demo" data-eta-min="2">★ concept_speak_demo v14 — Phase 3 A→W readout; drives each pool, decodes spoken word; 16/16 = 100% A→W unanimous across seeds 42-45 [~2min, needs --load-bridge]</option>
-            <option disabled>──── SEMANTIC MEMORY (2026-05-14, validated after architecture bug fix) ────</option>
-            <option value="engram_stim_recall" data-eta-min="2">★ engram_stim_recall — Tonegawa engram tags; stim tag → both bound concepts; 87.5% multi-seed [~2min, needs --load-bridge ...v16.simstate.h5]</option>
-            <option value="multitag_cue_recall" data-eta-min="3">★★ multitag_cue_recall — user types cue word → system returns all trained associates; 90% FULL / 100% PARTIAL multi-seed [~3min, needs --load-bridge ...v16.simstate.h5]</option>
-            <option disabled>──── MULTI-BRIDGE 60-WORD VOCAB (2026-05-15) ────</option>
-            <option value="concept_pool_demo_set2" data-eta-min="18">concept_pool_demo_set2 — train set 2 bridge (tree/bird/sun/moon/walk/run/eat/sleep/red/blue/fast/slow). 12 new vocab. 11/16 PASS seed 42 [~18min]</option>
-            <option value="concept_pool_demo_set3" data-eta-min="18">concept_pool_demo_set3 — train set 3 bridge (house/road/fire/water/give/take/find/lose/tall/short/wet/dry). 14/16 PASS seed 42 [~18min]</option>
-            <option value="concept_pool_demo_set4" data-eta-min="18">concept_pool_demo_set4 — train set 4 bridge (person/baby/ball/key/open/close/push/pull/happy/sad/full/empty). 13/16 PASS seed 42 [~18min]</option>
-            <option value="concept_pool_demo_set5" data-eta-min="18">concept_pool_demo_set5 — train set 5 bridge (food/drink/hand/foot/speak/listen/read/write/new/old/clean/hard). 13/16 PASS seed 42 [~18min]</option>
-            <option value="multibridge_60word_demo" data-eta-min="6">★★★ multibridge_60word_demo — 60-word end-to-end demo across all 5 bridges. 11 conversational features. --friendly mode. Requires all 5 bridges trained at requested seed [~6min]</option>
-            <option disabled>──── 🎉 G.20 DISTRIBUTED ENCODING BREAKTHROUGH (2026-05-15) ────</option>
-            <option value="g20_shared_pool_n32" data-eta-min="30">★★★ g20_shared_pool_n32 — Catalog G.20: 32 concepts in 1 shared pool. 81.2% top-1 seed42, 74% multi-seed. 4.2x per-neuron efficiency vs v16 [~30min]</option>
-            <option value="g20_shared_pool_n60" data-eta-min="80">g20_shared_pool_n60 — G.20 capacity stretch. 60 concepts, 56.7% top-1, 76.7% top-5. Capacity wall visible [~80min]</option>
+            <option value="smoke" data-eta-min="1">★ smoke — 100 steps for a quick check [~1min]</option>
+            <option disabled>──── CONVERSATIONAL DEMOS ────</option>
+            <option value="imperfect_english_demo" data-eta-min="1">★ imperfect_english_demo — robust multi-cue parser vs order-only on imperfect English; moat held [~1min]</option>
+            <option value="chat_demo" data-eta-min="6">★ chat_demo — Tier 1 4-word chat (north/east/south/west) [~6min]</option>
+            <option value="chat_synonym_demo" data-eta-min="20">chat_synonym_demo — Tier 2.1 8-word with synonyms (up/right/down/left) [~20min]</option>
+            <option value="concept_pool_demo" data-eta-min="18">concept_pool_demo v14 — 16 pools (motor/noun/verb/adjective), orthogonal codes [~18min]</option>
+            <option value="multitag_cue_recall" data-eta-min="3">★ multitag_cue_recall — cue word → trained associates; 90% FULL multi-seed [~3min, needs --load-bridge]</option>
+            <option value="g20_shared_pool_n32" data-eta-min="30">★ g20_shared_pool_n32 — G.20: 32 concepts in 1 shared pool; 4.2× per-neuron efficiency [~30min]</option>
+            <option disabled>──── CONTINUAL LEARNING / CONSOLIDATION ────</option>
+            <option value="phase_1_4_forgetting" data-eta-min="25">phase_1_4_forgetting — catastrophic-forgetting eval; 5/6 PASS, mean 103% retention [~25min]</option>
+            <option value="phase_1_3_consolidation" data-eta-min="25">phase_1_3_consolidation — sleep-replay consolidation; 3/3 PASS, 96% hippo-OFF retention [~25min]</option>
+            <option value="consolidation_synonym_smoke" data-eta-min="21">consolidation_synonym_smoke — quick consolidation runner validation [~21min]</option>
+            <option disabled>──── OTHER ────</option>
+            <option value="text_io_v2_smoke" data-eta-min="5">text_io_v2_smoke — 10-episode text-IO smoke [~5min]</option>
           </select>
           <!-- ETA hint shown on preset change -->
           <div id="launch-preset-hint" class="muted" style="font-size:11px;margin-top:4px;"></div>

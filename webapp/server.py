@@ -2698,6 +2698,207 @@ def llm_chat_reset(name: str, mode: str = "tier1") -> JSONResponse:
     return JSONResponse({"reset": existed, "lineage_name": name, "mode": mode})
 
 
+# ─── Brain chat — the INTERACT centerpiece (2026-06-23) ──────────────────
+# Talk to a DEVELOPED brain (the real conversational agent), NOT the
+# deprecated MockLLM↔BridgeMemory pattern-matcher above. Backed by
+# `research/runners/brain_chat_tui.ChatBrain` (reuse-by-import, NO sim/
+# edit): GATE (spiking recall + the no-confab MOAT) → CONSTRAIN+VERIFY
+# fluent render → (answer, abstained).
+#
+# Like _LLM_ORCHESTRATORS, the ChatBrain is session-cached + kept WARM:
+# the first load (and, with the qwen renderer, the model warm-up) is
+# expensive and must be paid once per session. The cache key is
+# (session, brain, renderer) so switching brain/renderer rebuilds.
+#
+# GPU policy: the qwen renderer needs cupy + CUDA torch. On a GPU-less
+# host (or when another build owns the GPU) the endpoint defaults to the
+# `stub`/`raw` renderer — the moat + recall are CPU; only fluent surface
+# form needs the GPU. So the console works out of the box, GPU-light.
+
+_BRAIN_CHATS: dict[tuple[str, str, str], object] = {}
+
+
+def _default_brain_renderer() -> str:
+    """Pick the out-of-box renderer: `qwen` only when a CUDA GPU is
+    actually available AND the cupy backend is selected; else the GPU-free
+    `stub`. Keeps the console GPU-light by default (another build may own
+    the GPU; the chat endpoint must not contend for it unasked)."""
+    backend = os.environ.get("SIM_BACKEND", "").lower()
+    if backend and backend != "cupy":
+        return "stub"
+    try:
+        import torch  # noqa: PLC0415
+        if torch.cuda.is_available():
+            return "qwen"
+    except Exception:
+        pass
+    return "stub"
+
+
+def _build_chat_brain(brain: str, renderer: str):
+    """Construct a `ChatBrain` for the given brain source + renderer.
+
+    brain: 'tiny-demo' (GPU-free fallback), 'self-knowledge' (the learned
+        self-facts codes), or a developed-brain bundle DIRECTORY path
+        (brain.json + grounded_codes.npz + facts.json).
+    renderer: 'qwen' (off-bridge Qwen, GPU) / 'stub' (template-stub,
+        GPU-free) / 'raw' (the brain's own raw triples, no LLM).
+    """
+    from research.runners.brain_chat_tui import (
+        ChatBrain, StubRenderer, QwenRenderer,
+        _build_tiny_demo, _load_self_knowledge, DEFAULT_SELF_ALIASES,
+        _SK_CODES, _SK_CURRICULUM,
+    )
+    from research.runners.developed_brain_io import (
+        is_developed_brain_bundle, load_developed_brain,
+    )
+
+    # --- load the brain (mirrors brain_chat_tui.load_brain precedence) ---
+    if brain in ("", "tiny-demo", "tiny", "demo"):
+        agent, aliases, _n = _build_tiny_demo(42, use_multiturn=True,
+                                              enable_neural_render=False)
+        source = "tiny-demo"
+    elif brain in ("self-knowledge", "self_knowledge", "self"):
+        agent, aliases, _n = _load_self_knowledge(
+            _SK_CODES, _SK_CURRICULUM, 42, True, False)
+        source = "self-knowledge"
+    elif is_developed_brain_bundle(brain):
+        agent, manifest = load_developed_brain(brain, use_multiturn=True,
+                                               enable_neural_render=False)
+        aliases = set(manifest.get("self_aliases") or []) | set(DEFAULT_SELF_ALIASES)
+        source = f"developed-brain:{brain}"
+    else:
+        raise HTTPException(
+            400,
+            f"brain {brain!r} is neither 'tiny-demo'/'self-knowledge' nor a "
+            f"developed-brain bundle directory (needs a brain.json manifest). "
+            f"Save one with developed_brain_io.save_developed_brain.",
+        )
+
+    # --- the fluent renderer (GPU-free unless qwen explicitly requested) ---
+    rname = (renderer or "stub").lower()
+    if rname == "raw":
+        rend = None
+    elif rname == "qwen":
+        rend = QwenRenderer(seed=42)        # needs cupy + CUDA torch
+    else:
+        rend = StubRenderer()               # GPU-free default
+    return ChatBrain(agent, self_aliases=aliases, renderer=rend), source
+
+
+class BrainChatRequest(BaseModel):
+    """One conversational turn against a developed brain."""
+    session: str = "default"
+    message: str
+    # 'tiny-demo' / 'self-knowledge' / a developed-brain bundle dir path.
+    brain: str = "tiny-demo"
+    # 'qwen' (GPU) / 'stub' (GPU-free) / 'raw'; None -> auto (GPU-light).
+    renderer: str | None = None
+    # Forward-compat for the upcoming RICH-answer mode (multi-fact /
+    # reasoned). Routed to ChatBrain's rich path IF it exposes one; else
+    # ignored, so the endpoint contract is stable and works today.
+    rich: bool = False
+    # If True, drop the cached ChatBrain for this (session, brain,
+    # renderer) before answering (rebuilds — for 'start fresh').
+    reset: bool = False
+
+
+@app.post("/api/brain-chat")
+def brain_chat(req: BrainChatRequest) -> JSONResponse:
+    """One turn talking to a DEVELOPED brain (the INTERACT centerpiece).
+
+    First call per (session, brain, renderer) builds + warms a ChatBrain
+    (a few seconds for the tiny-demo; longer for a real bundle or the qwen
+    warm-up). Subsequent turns reuse the warm cache.
+
+    Returns:
+        {
+          "answer": str,            # the verified fluent answer, or
+                                    # "I don't know about that." on abstain
+          "abstained": bool,        # the no-confab MOAT fired (the brain
+                                    # was never taught this) — shown distinctly
+          "recalled_svo": [a, v, p] | null,   # the stored fact the gate hit
+          "verified": bool,         # the render re-parsed back to the fact
+          "renderer": str,          # which renderer produced the surface form
+          "brain": str, "source": str,
+        }
+    """
+    renderer = (req.renderer or _default_brain_renderer()).lower()
+    cache_key = (req.session, req.brain, renderer)
+    if req.reset:
+        _BRAIN_CHATS.pop(cache_key, None)
+
+    chat = _BRAIN_CHATS.get(cache_key)
+    source = None
+    if chat is None:
+        try:
+            chat, source = _build_chat_brain(req.brain, renderer)
+        except HTTPException:
+            raise
+        except Exception as e:  # a missing model / bad bundle -> a clean 400
+            raise HTTPException(
+                400, f"failed to load brain {req.brain!r} with renderer "
+                     f"{renderer!r}: {type(e).__name__}: {e}")
+        chat._brain_chat_source = source  # type: ignore[attr-defined]
+        _BRAIN_CHATS[cache_key] = chat
+    source = getattr(chat, "_brain_chat_source", source)
+
+    msg = (req.message or "").strip()
+    if not msg:
+        raise HTTPException(422, "message must be non-empty")
+
+    # Peek the GATE so we can report the recalled fact (exactly what the TUI
+    # smoke records), then render. gate() returns None on the moat.
+    try:
+        gate_svo = chat.gate(msg)
+        if gate_svo is None:
+            answer, abstained, verified = "I don't know about that.", True, False
+        else:
+            # forward-compat: if a future ChatBrain exposes a rich path, use
+            # it when asked; else fall back to the standard verified render.
+            if req.rich and hasattr(chat, "render_rich"):
+                answer = chat.render_rich(gate_svo)  # type: ignore[attr-defined]
+            else:
+                answer = chat.render(gate_svo)
+            abstained = False
+            # 'verified' = the render did NOT fall back to the raw triple
+            # (ChatBrain marks an unverified render with this suffix).
+            verified = "[unverified render" not in answer
+    except Exception as e:
+        raise HTTPException(500, f"chat turn failed: {type(e).__name__}: {e}")
+
+    rname = chat.renderer.name if getattr(chat, "renderer", None) is not None else "raw brain triples"
+    return JSONResponse({
+        "answer": answer,
+        "abstained": abstained,
+        "recalled_svo": list(gate_svo) if gate_svo is not None else None,
+        "verified": verified,
+        "renderer": rname,
+        "brain": req.brain,
+        "source": source,
+    })
+
+
+class BrainChatResetRequest(BaseModel):
+    """Reset a brain-chat session (no `message` required, unlike a turn)."""
+    session: str = "default"
+    brain: str = "tiny-demo"
+    renderer: str | None = None
+
+
+@app.post("/api/brain-chat/reset")
+def brain_chat_reset(req: BrainChatResetRequest) -> JSONResponse:
+    """Drop the cached ChatBrain for (session, brain, renderer) and clear
+    its discourse buffer (a fresh conversation). Idempotent — reports
+    whether a session existed."""
+    renderer = (req.renderer or _default_brain_renderer()).lower()
+    cache_key = (req.session, req.brain, renderer)
+    existed = cache_key in _BRAIN_CHATS
+    _BRAIN_CHATS.pop(cache_key, None)
+    return JSONResponse({"reset": existed, "session": req.session,
+                         "brain": req.brain, "renderer": renderer})
+
+
 # ─── In-flight detached-run monitor (2026-05-01) ────────────────────────
 # Detached runs (launched via PowerShell Start-Process to survive Claude
 # restart) write a *.pid + *.log file under research/findings/raw/g11_bg/.
@@ -3605,33 +3806,11 @@ def get_readme() -> str:
     return path.read_text(encoding="utf-8")
 
 
-@app.get("/api/capability-status")
-def get_capability_status() -> JSONResponse:
-    """Project capability snapshot for the Home tab.
-
-    Reads the JSON source-of-truth at ``webapp/capability_status.json``,
-    which is updated manually when significant milestones land
-    (per autonomous-runs skill principle #10 — frontend stays in sync
-    with shipped capability). Falls back to a minimal stub if the file
-    is missing so the dashboard still renders on a fresh checkout.
-    """
-    path = Path(__file__).resolve().parent / "capability_status.json"
-    if not path.is_file():
-        return JSONResponse(
-            {
-                "as_of": None,
-                "headline": None,
-                "pillars": [],
-                "capacity_rule": None,
-                "phase_status": None,
-                "_warning": "capability_status.json not found",
-            }
-        )
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as e:
-        raise HTTPException(500, f"capability_status.json malformed: {e}")
-    return JSONResponse(data)
+# NOTE: the /api/capability-status endpoint (+ webapp/capability_status.json
+# + the renderCapabilityStatus frontend) was RETIRED 2026-06-23 with the
+# INTERACT-first console reframe: the webapp is a functional console
+# (launch/manage · visualize · INTERACT), not a capability/milestone
+# dashboard. The capability snapshot is no longer surfaced in the UI.
 
 
 @app.get("/api/text_io_runs/{name}")

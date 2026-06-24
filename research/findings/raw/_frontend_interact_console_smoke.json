@@ -1,0 +1,82 @@
+{
+  "task": "BUILD the INTERACT-FIRST webapp console (owner frontend reframe)",
+  "date": "2026-06-23",
+  "scoping_doc": "research/findings/2026-06-23-frontend-interact-console-scoping.md",
+  "verdict": "GO",
+  "verdict_detail": "POST /api/brain-chat works (chat with the GPU-free tiny-demo brain; taught cue answers, untaught cue ABSTAINS via the no-confab moat). The Interact tab is the leftmost centerpiece. The capability/milestone surfaces are gone (endpoint 404, capability_status.json deleted, renderOverviewCapability removed). Nav collapsed to the 4-job console (Interact / World+Brain / Lab / Runs) + an Archive group. All webapp tests pass (67).",
+  "constraints_respected": {
+    "no_sim_edit": true,
+    "edited_only": ["webapp/server.py", "webapp/static/app.js", "webapp/static/index.html", "webapp/static/style.css", "tests/test_webapp_server.py", "webapp/capability_status.json (deleted)"],
+    "did_not_edit": ["research/runners/brain_chat_tui.py", "research/runners/rich_answer_composer.py"],
+    "chat_brain_imported_not_edited": true,
+    "gpu_light": "the /api/brain-chat renderer defaults to the GPU-free stub on a GPU-less host (or when SIM_BACKEND!=cupy); qwen only when a CUDA GPU is actually free"
+  },
+
+  "built": {
+    "endpoint_POST_/api/brain-chat": {
+      "backed_by": "research.runners.brain_chat_tui.ChatBrain (reuse-by-import)",
+      "warm_cache": "_BRAIN_CHATS keyed by (session, brain, renderer) — mirrors the existing _LLM_ORCHESTRATORS pattern; first load paid once, kept warm",
+      "load_sources": ["tiny-demo (GPU-free fallback, default)", "self-knowledge (learned self-facts codes)", "a developed-brain bundle DIRECTORY via developed_brain_io.load_developed_brain"],
+      "renderers": {"auto": "GPU-light: qwen only if a CUDA GPU is free, else stub", "stub": "template-stub (GPU-free)", "qwen": "off-bridge Qwen-0.5B (GPU)", "raw": "the brain's own raw triples"},
+      "returns": ["answer", "abstained", "recalled_svo", "verified", "renderer", "brain", "source"],
+      "rich_ready": "a `rich: bool` body param is accepted and routed to ChatBrain.render_rich IF present (else ignored, default false) — forward-compatible with the upcoming rich-answer build with no contract change",
+      "reset": "POST /api/brain-chat/reset clears the cached ChatBrain + discourse buffer (dedicated request model, no `message` required)"
+    },
+    "interact_tab": {
+      "position": "leftmost primary nav (the centerpiece), default landing tab",
+      "widgets": ["brain-source field (default tiny-demo)", "renderer selector (auto/stub/qwen/raw)", "Show recalled fact toggle (reveals recalled SVO + verify + renderer)", "chat log", "input + Send (Enter to send)", "example-prompt chips", "New chat (reset) button", "status line"],
+      "abstention_rendered_distinctly": "abstained turns render as a warning-colored bubble with a '∅' icon + the note 'the brain wasn't taught this - it won't make something up'"
+    },
+    "removed_or_demoted": {
+      "retired_endpoint": "/api/capability-status (now 404)",
+      "deleted_file": "webapp/capability_status.json",
+      "removed_frontend": "renderOverviewCapability() (dead; was no longer rendered in Home)",
+      "demoted_tabs": ["overview(Home)", "experiments", "language", "findings", "plans", "bridges", "lineages", "info(About)"],
+      "demotion_mechanism": "an 'Archive ▾' nav toggle reveals/hides the demoted research tabs (one click away, out of the primary console nav)",
+      "mockllm_panel": "the deprecated /api/llm-chat MockLLM panel + endpoint were KEPT but its host (Lineages tab) is now demoted to Archive — out of the primary console; the task's removal list was specifically the capability surfaces"
+    },
+    "primary_nav": ["interact", "world", "brain", "launcher (Lab)", "runs"],
+    "presets_curated": "the launcher <select> trimmed from ~90 options to a 16-item curated menu (flagship nav / smoke / conversational demos / continual-learning / text-io). The full 68-entry server-side PRESETS dict is UNCHANGED."
+  },
+
+  "endpoint_smoke": {
+    "method": "in-process FastAPI TestClient (the live uvicorn --reload single worker jammed under concurrent GPU-bridge cold-builds during browser testing — an environment/concurrency artifact, NOT a code defect; the TestClient runs the identical endpoint code path)",
+    "backend": "SIM_BACKEND=numpy (GPU-free), renderer=stub",
+    "taught": {"status": 200, "answer": "The dog chases cat.", "abstained": false, "recalled_svo": ["dog", "chase", "cat"], "verified": true, "renderer": "template-stub (GPU-free)", "source": "tiny-demo"},
+    "untaught_abstains_MOAT": {"status": 200, "answer": "I don't know about that.", "abstained": true, "recalled_svo": null},
+    "self_reference": {"status": 200, "answer": "The brain uses spikes.", "abstained": false, "recalled_svo": ["brain", "use", "spikes"]},
+    "reset": {"status": 200, "reset": true},
+    "capability_status_removed": {"status": 404}
+  },
+
+  "frontend_verified_in_browser": {
+    "method": "Claude Preview (uvicorn dev server) — static/JS verification (no chat request, to avoid GPU contention)",
+    "default_landing_tab": "interact (active section = tab-interact, active nav = interact)",
+    "primary_nav_buttons": ["interact", "world", "brain", "launcher", "runs"],
+    "archive_group_tabs": ["overview", "experiments", "language", "findings", "plans", "bridges", "lineages", "info"],
+    "archive_toggle": "clicking 'Archive ▾' reveals the group AND leaves the active tab (Interact) unchanged (a setupTabs bug — the toggle has no data-tab — was found + fixed: nav handlers now bind only `nav button[data-tab]`)",
+    "demoted_tab_click": "clicking Findings in the Archive group switches to tab-findings correctly; clicking Interact returns to it (round-trip OK)",
+    "console_errors": "none"
+  },
+
+  "pytest": {
+    "command": "SIM_BACKEND=numpy python -m pytest tests/test_webapp_server.py -q",
+    "result": "67 passed, 4 warnings (the 4 warnings are pre-existing FastAPI on_event deprecations, unrelated)",
+    "tests_removed": ["test_capability_status_returns_json", "test_capability_status_headline_shape", "test_capability_status_pillars_have_status", "test_capability_status_capacity_rule_table", "test_capability_status_phase_status", "test_capability_status_handles_missing_file"],
+    "tests_added": ["test_interact_tab_present", "test_capability_status_endpoint_removed", "test_brain_chat_validates_body", "test_brain_chat_reset_idempotent", "test_brain_chat_tiny_demo_answers_and_abstains (end-to-end: taught->answer+recalled_svo, untaught->abstain)"]
+  },
+
+  "git_diff_stat": {
+    "tests/test_webapp_server.py": "+/- (capability tests removed, brain-chat tests added)",
+    "webapp/server.py": "+233/-... (brain-chat endpoint + reset; capability-status endpoint removed)",
+    "webapp/static/app.js": "setupBrainChat + appendBrainTurn + interact TAB_REGISTRY entry + Archive nav toggle; renderOverviewCapability removed; nav handlers scoped to [data-tab]",
+    "webapp/static/index.html": "Interact tab section + 4-job nav + Archive group; launcher preset menu curated",
+    "webapp/static/style.css": "+99 (Interact tab + nav-archive styles, theme-adaptive)",
+    "webapp/capability_status.json": "deleted (-157)"
+  },
+
+  "restart_note": "a `uvicorn` reload is REQUIRED for the new /api/brain-chat routes to register (in-flight detached runs survive the reload). Not committed.",
+
+  "how_rich_mode_plugs_in": "ChatBrain.render(gate_svo) is the single render seam. The endpoint already accepts `rich: bool` and calls chat.render_rich(gate_svo) when ChatBrain exposes it, else falls back to chat.render. So the rich-answer build (the concurrent owner of rich_answer_composer.py) only needs to add a render_rich method to ChatBrain — the /api/brain-chat contract ({answer, abstained, recalled_svo, verified, renderer}) is unchanged and the VERIFY/moat guard still applies.",
+  "how_a_real_developed_brain_plugs_in": "POST /api/brain-chat with `brain` set to a developed-brain bundle DIRECTORY path (one produced by developed_brain_io.save_developed_brain: brain.json + grounded_codes.npz + facts.json). The endpoint detects the manifest via is_developed_brain_bundle and reconstructs the EXACT brain (its learned grounded codes + stored facts) via load_developed_brain. With a free GPU, set renderer='qwen' (or 'auto') for the fluent off-bridge Qwen surface form. The Interact tab's Brain field accepts that path directly."
+}

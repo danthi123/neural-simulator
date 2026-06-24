@@ -337,6 +337,7 @@ function el(tag, attrs = {}, children = []) {
 // See: docs/webapp-frontend-guide.md for full architecture.
 // ─────────────────────────────────────────────────────────────────────────
 const TAB_REGISTRY = [
+  { id: "interact",    label: "Interact",    order: 5,  onActivate: () => { if (!window._interactLoaded) setupBrainChat(); } },
   { id: "overview",    label: "Home",        order: 10, onActivate: () => { if (!window._overviewLoaded) loadOverview(); } },
   { id: "launcher",    label: "Lab",         order: 20, onActivate: null /* setup in setupLauncher() */ },
   { id: "runs",        label: "Runs",        order: 30, onActivate: null /* loaded eagerly */ },
@@ -356,10 +357,12 @@ const TAB_BY_ID = Object.fromEntries(TAB_REGISTRY.map((t) => [t.id, t]));
 // Tab switching
 // ─────────────────────────────────────────────────────────────────────────
 function setupTabs() {
-  $$("nav button").forEach((btn) => {
+  // 2026-06-23: bind only buttons with a data-tab — the nav now also holds the
+  // "Archive ▾" toggle (no data-tab), which must NOT be treated as a tab.
+  $$("nav button[data-tab]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const t = btn.dataset.tab;
-      $$("nav button").forEach((b) => b.classList.toggle("active", b === btn));
+      $$("nav button[data-tab]").forEach((b) => b.classList.toggle("active", b === btn));
       $$("section.tab").forEach((s) =>
         s.classList.toggle("active", s.id === `tab-${t}`),
       );
@@ -2262,6 +2265,161 @@ function renderLineageDetail(data) {
   renderLLMChatPanel(body, data.name);
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// Brain chat — the INTERACT centerpiece (2026-06-23)
+// ─────────────────────────────────────────────────────────────────────────
+// Talks to a DEVELOPED brain via POST /api/brain-chat (the real
+// conversational agent: GATE → spiking recall + the no-confab MOAT →
+// CONSTRAIN+VERIFY render). Abstentions are rendered DISTINCTLY ("the brain
+// doesn't know that"), a toggle reveals the recalled SVO + renderer.
+// Session-cached server-side so the first (slow) load is paid once.
+function setupBrainChat() {
+  if (window._interactLoaded) return;
+  window._interactLoaded = true;
+
+  const logEl = document.getElementById("brainchat-log");
+  const inputEl = document.getElementById("brainchat-input");
+  const sendBtn = document.getElementById("brainchat-send");
+  const resetBtn = document.getElementById("brainchat-reset");
+  const brainEl = document.getElementById("brainchat-brain");
+  const rendererEl = document.getElementById("brainchat-renderer");
+  const showSvoEl = document.getElementById("brainchat-show-svo");
+  const statusEl = document.getElementById("brainchat-status");
+  if (!logEl || !inputEl || !sendBtn) return;
+
+  // A stable per-tab session id so the server keeps ONE warm ChatBrain.
+  const session = "ui-" + Math.random().toString(36).slice(2, 10);
+
+  function rendererParam() {
+    const v = rendererEl ? rendererEl.value : "auto";
+    return v === "auto" ? null : v;
+  }
+
+  function clearLog(msg) {
+    logEl.replaceChildren(
+      el("p", { class: "muted interact-empty" }, msg || "Say hi — the brain is listening."));
+  }
+
+  async function send() {
+    const message = inputEl.value.trim();
+    if (!message) return;
+    appendBrainTurn(logEl, "user", message, showSvoEl);
+    inputEl.value = "";
+    sendBtn.disabled = true;
+    sendBtn.textContent = "…";
+    const thinking = el("div", { class: "interact-turn interact-thinking" },
+      el("span", { class: "interact-role role-brain" }, "brain"),
+      el("span", { class: "interact-bubble" }, "thinking…"));
+    logEl.appendChild(thinking);
+    logEl.scrollTop = logEl.scrollHeight;
+    try {
+      const res = await fetch("/api/brain-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session, message,
+          brain: (brainEl && brainEl.value.trim()) || "tiny-demo",
+          renderer: rendererParam(),
+        }),
+      });
+      thinking.remove();
+      if (!res.ok) {
+        let detail = "";
+        try { detail = (await res.json()).detail || ""; } catch (e) { detail = await res.text(); }
+        appendBrainTurn(logEl, "error", `Error ${res.status}: ${detail}`, showSvoEl);
+      } else {
+        const data = await res.json();
+        appendBrainTurn(logEl, data.abstained ? "abstain" : "brain",
+                        data.answer, showSvoEl, data);
+        if (statusEl) {
+          statusEl.textContent = `renderer: ${data.renderer} · brain: ${data.source || data.brain}`;
+        }
+      }
+    } catch (e) {
+      thinking.remove();
+      appendBrainTurn(logEl, "error", `Network error: ${e.message}`, showSvoEl);
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = "Send";
+      inputEl.focus();
+    }
+  }
+
+  sendBtn.addEventListener("click", send);
+  inputEl.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", async () => {
+      try {
+        await fetch("/api/brain-chat/reset", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            session,
+            brain: (brainEl && brainEl.value.trim()) || "tiny-demo",
+            renderer: rendererParam(),
+          }),
+        });
+      } catch (e) { /* non-fatal */ }
+      clearLog("New chat — the brain's discourse buffer was cleared.");
+      if (statusEl) statusEl.textContent = "";
+    });
+  }
+
+  // Example-prompt chips fill the input.
+  for (const chip of document.querySelectorAll("#brainchat-chips .interact-chip")) {
+    chip.addEventListener("click", () => {
+      inputEl.value = chip.textContent;
+      inputEl.focus();
+    });
+  }
+
+  // Re-render the recalled-SVO visibility live when the toggle flips.
+  if (showSvoEl) {
+    showSvoEl.addEventListener("change", () => {
+      logEl.classList.toggle("show-svo", showSvoEl.checked);
+    });
+  }
+
+  inputEl.focus();
+}
+
+// Append one chat turn. role ∈ user | brain | abstain | error. When `data`
+// is present (a brain answer) the recalled SVO + verified/renderer meta are
+// attached (revealed by the "Show recalled fact" toggle).
+function appendBrainTurn(logEl, role, content, showSvoEl, data) {
+  const empty = logEl.querySelector(".interact-empty");
+  if (empty) empty.remove();
+
+  const roleLabel = { user: "you", brain: "brain", abstain: "brain", error: "error" }[role] || role;
+  const turn = el("div", { class: "interact-turn interact-turn-" + role });
+  turn.appendChild(el("span", { class: "interact-role role-" + role }, roleLabel));
+
+  const bubble = el("div", { class: "interact-bubble interact-bubble-" + role });
+  if (role === "abstain") {
+    bubble.appendChild(el("span", { class: "interact-abstain-icon", title: "the no-confab moat fired" }, "∅ "));
+    bubble.appendChild(el("span", {}, content));
+    bubble.appendChild(el("div", { class: "interact-abstain-note muted" },
+      "the brain wasn't taught this — it won't make something up"));
+  } else {
+    bubble.appendChild(el("span", {}, content));
+  }
+  turn.appendChild(bubble);
+
+  // Recalled-fact / meta strip (hidden unless the toggle is on).
+  if (data && (data.recalled_svo || role === "brain")) {
+    const svo = data.recalled_svo;
+    const metaBits = [];
+    if (svo) metaBits.push("recalled: " + svo.join(" "));
+    metaBits.push(data.verified ? "verified ✓" : "unverified");
+    metaBits.push("via " + (data.renderer || "—"));
+    turn.appendChild(el("div", { class: "interact-meta muted" }, metaBits.join("  ·  ")));
+  }
+
+  logEl.appendChild(turn);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
 function renderLLMChatPanel(body, lineageName) {
   body.appendChild(el("h4", {}, "Chat with this lineage (Phase 3.2 demo)"));
   body.appendChild(el("p", { class: "muted" },
@@ -2954,7 +3112,7 @@ function setupBrain3DControls(mod) {
 // already toggles section.active classes; we hook into that via a
 // MutationObserver-free approach: just set _brainTabActive=false in the
 // tab click handler below.
-$$("nav button").forEach((b) => {
+$$("nav button[data-tab]").forEach((b) => {
   b.addEventListener("click", () => {
     if (b.dataset.tab !== "brain") {
       _brainTabActive = false;
@@ -3300,127 +3458,9 @@ function kpiCard(label, value, sub = "", cls = "kpi-card", onClick = null) {
   return card;
 }
 
-// 2026-05-09: Capability status panel — read-only summary of latest
-// validated capability + Path F empirical pillars + capacity scaling rule
-// + active phase. Reads from /api/capability-status which serves
-// webapp/capability_status.json (manual source of truth, updated when
-// major milestones land). Hidden if endpoint returns null/empty.
-function renderOverviewCapability(data) {
-  const section = document.getElementById("overview-capability-section");
-  const container = document.getElementById("overview-capability");
-  const asOfSpan = document.getElementById("capability-as-of");
-  if (!section || !container) return;
-  if (!data || !data.headline) {
-    section.style.display = "none";
-    return;
-  }
-  section.style.display = "";
-  if (asOfSpan) asOfSpan.textContent = data.as_of ? `· as of ${data.as_of}` : "";
-
-  const h = data.headline || {};
-  const headline = el("div", { class: "capability-card capability-headline" }, [
-    el("div", { class: "capability-tier" }, "★ Latest validated capability"),
-    el("div", { class: "capability-title" }, h.tier || "—"),
-    el("div", { class: "capability-result" }, [
-      el("span", { class: "capability-badge ok" }, h.result || ""),
-      el("span", { class: "capability-metrics" }, h.metrics ? "· " + h.metrics : ""),
-    ]),
-    h.summary ? el("div", { class: "capability-summary" }, h.summary) : null,
-    el("div", { class: "capability-meta" }, [
-      h.wall_clock ? el("span", {}, "wall clock: " + h.wall_clock) : null,
-      h.finding_doc
-        ? el("a", { href: "#", class: "capability-link",
-                    onclick: (e) => {
-                      e.preventDefault();
-                      activateTab("findings");
-                      setTimeout(() => {
-                        const item = Array.from(document.querySelectorAll("#findings-list .list-item"))
-                          .find((i) => i.querySelector(".name")?.textContent === h.finding_doc);
-                        if (item) { item.scrollIntoView({ block: "center" }); item.click(); }
-                      }, 150);
-                    } }, "→ open finding")
-        : null,
-    ].filter(Boolean)),
-  ].filter(Boolean));
-
-  // Pillars list
-  const pillars = data.pillars || [];
-  const pillarsEl = pillars.length
-    ? el("div", { class: "capability-card capability-pillars" }, [
-        el("div", { class: "capability-tier" }, "Path F empirical pillars (cumulative)"),
-        el("ol", { class: "capability-pillar-list" },
-          pillars.map((p) => el("li", { class: "capability-pillar-item" }, [
-            el("span", { class: "capability-pillar-status status-" + (p.status || "").toLowerCase() }, p.status || ""),
-            el("span", { class: "capability-pillar-name" }, p.name || ""),
-            p.metric ? el("span", { class: "capability-pillar-metric" }, " — " + p.metric) : null,
-            p.date ? el("span", { class: "capability-pillar-date" }, " (" + p.date + ")") : null,
-          ].filter(Boolean))),
-        ),
-      ])
-    : null;
-
-  // Capacity rule table
-  const capRule = data.capacity_rule || null;
-  const capRuleEl = capRule
-    ? el("div", { class: "capability-card capability-capacity" }, [
-        el("div", { class: "capability-tier" }, "Capacity scaling rule (empirical)"),
-        el("div", { class: "capability-rule-text" }, capRule.rule || ""),
-        el("table", { class: "capability-capacity-table" }, [
-          el("thead", {}, [
-            el("tr", {}, [
-              el("th", {}, "Vocab"),
-              el("th", {}, "Sub-pops/motor_X"),
-              el("th", {}, "n_motor"),
-              el("th", {}, "Neurons/sub-pop"),
-              el("th", {}, "Status"),
-            ]),
-          ]),
-          el("tbody", {},
-            (capRule.rows || []).map((r) => el("tr", {}, [
-              el("td", {}, r.vocab),
-              el("td", {}, String(r.subpops)),
-              el("td", {}, String(r.n_motor)),
-              el("td", {}, String(r.neurons_per_subpop)),
-              el("td", { class: "capability-status-cell status-" + (r.status || "").toLowerCase() }, r.status || ""),
-            ])),
-          ),
-        ]),
-      ])
-    : null;
-
-  // Phase status — what's running, what's next
-  const ps = data.phase_status || null;
-  const phaseEl = ps
-    ? el("div", { class: "capability-card capability-phase" }, [
-        el("div", { class: "capability-tier" }, "Master plan position"),
-        el("div", { class: "capability-phase-row" }, [
-          el("span", { class: "capability-phase-label" }, "Active:"),
-          el("span", { class: "capability-phase-value" }, ps.active || "—"),
-        ]),
-        ps.next ? el("div", { class: "capability-phase-row" }, [
-          el("span", { class: "capability-phase-label" }, "Next:"),
-          el("span", { class: "capability-phase-value muted" }, ps.next),
-        ]) : null,
-        ps.after_next ? el("div", { class: "capability-phase-row" }, [
-          el("span", { class: "capability-phase-label" }, "After:"),
-          el("span", { class: "capability-phase-value muted" }, ps.after_next),
-        ]) : null,
-        ps.master_plan ? el("div", { class: "capability-phase-doc" }, [
-          el("a", { href: "#", onclick: (e) => {
-            e.preventDefault();
-            activateTab("plans");
-            setTimeout(() => {
-              const item = Array.from(document.querySelectorAll("#plans-list .list-item"))
-                .find((i) => i.querySelector(".name")?.textContent?.endsWith(ps.master_plan.split("/").pop()));
-              if (item) { item.scrollIntoView({ block: "center" }); item.click(); }
-            }, 150);
-          } }, "→ master plan"),
-        ]) : null,
-      ].filter(Boolean))
-    : null;
-
-  container.replaceChildren(...[headline, pillarsEl, capRuleEl, phaseEl].filter(Boolean));
-}
+// 2026-06-23: the Home capability/milestone snapshot panel was REMOVED with
+// the INTERACT-first console reframe — the webapp no longer surfaces it. (The
+// backing endpoint + JSON source-of-truth were retired alongside the panel.)
 
 function renderOverviewDistribution(runs) {
   const real = runs.filter((r) => !/smoke/i.test(r.name) && r.sum_finalQ != null);
@@ -3672,16 +3712,43 @@ setupMobileNav();    // 2026-05-02: hamburger menu for <900px viewports
 setupKeyboardShortcuts(); // 2026-05-03: arrows, space, r, t, ?
 initNotifications();      // 2026-05-03: browser-notification readiness
 setupTabs();
+setupArchiveNav();   // 2026-06-23: reveal/hide the demoted research tabs
 setupLauncher();
 setupPresetHint();
 setupWorldTab();
 loadRuns();
-loadOverview();  // active tab on first load
+setupBrainChat();    // 2026-06-23: Interact is the default landing tab (centerpiece)
 
 // Active-runs badge click — jump to Runs tab so user sees the live panel
 document.getElementById("active-runs-badge")?.addEventListener("click", () => {
   activateTab("runs");
 });
+
+// 2026-06-23: the "Archive ▾" nav toggle reveals the demoted research tabs
+// (Home/Experiments/Language/Findings/Plans/Bridges/Lineages/About). They
+// stay one click away but out of the primary console nav.
+function setupArchiveNav() {
+  const toggle = document.getElementById("nav-archive-toggle");
+  const group = document.getElementById("nav-archive-group");
+  if (!toggle || !group) return;
+  toggle.addEventListener("click", () => {
+    const open = group.style.display !== "none";
+    group.style.display = open ? "none" : "";
+    toggle.setAttribute("aria-expanded", String(!open));
+    toggle.textContent = open ? "Archive ▾" : "Archive ▴";
+  });
+  // If a demoted tab is activated (e.g. via deep link), auto-open the group
+  // so its nav button is visible/highlighted.
+  group.querySelectorAll("button[data-tab]").forEach((b) => {
+    b.addEventListener("click", () => {
+      if (group.style.display === "none") {
+        group.style.display = "";
+        toggle.setAttribute("aria-expanded", "true");
+        toggle.textContent = "Archive ▴";
+      }
+    });
+  });
+}
 
 // ─────────────────────────────────────────────────────────────────────────
 // Keyboard shortcuts (2026-05-03)
@@ -3696,7 +3763,7 @@ function setupKeyboardShortcuts() {
     // Ignore when modifier keys are held (avoids breaking browser shortcuts)
     if (e.ctrlKey || e.metaKey || e.altKey) return;
 
-    const activeTabBtn = document.querySelector("nav button.active");
+    const activeTabBtn = document.querySelector("nav button[data-tab].active");
     const activeTab = activeTabBtn?.dataset.tab;
 
     switch (e.key) {
@@ -3769,7 +3836,7 @@ function setupKeyboardShortcuts() {
         // Number keys jump to nth tab
         e.preventDefault();
         const idx = parseInt(e.key, 10) - 1;
-        const navBtns = $$("nav button");
+        const navBtns = $$("nav button[data-tab]");
         if (navBtns[idx]) navBtns[idx].click();
         break;
       }

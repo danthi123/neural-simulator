@@ -2658,3 +2658,102 @@ pre {
 }
 .quicklink-btn:hover { border-color: var(--accent); color: var(--accent); }
 #overview-inflight { margin-bottom: 6px; }
+
+/* ─────────────────────────────────────────────────────────────────────
+ * INTERACT tab — the console centerpiece (2026-06-23)
+ * Chat with a developed brain. Abstentions (the no-confab moat) rendered
+ * distinctly. Theme-adaptive (uses the shared --bg-*/--fg-* / --accent vars).
+ * ───────────────────────────────────────────────────────────────────── */
+.interact-wrap {
+  max-width: 880px; margin: 0 auto; padding: 18px 20px 28px;
+  display: flex; flex-direction: column; min-height: calc(100vh - 160px);
+}
+.interact-header { margin-bottom: 12px; }
+.interact-blurb { font-size: 13px; margin: 6px 0 0; max-width: 70ch; }
+.interact-blurb em { color: var(--accent); font-style: normal; }
+
+.interact-controls {
+  display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;
+  padding: 10px 0 12px; border-bottom: 1px solid var(--border); margin-bottom: 12px;
+}
+.interact-field { display: flex; flex-direction: column; gap: 3px;
+  font-size: 11px; color: var(--fg-dim); flex: 1; min-width: 180px; }
+.interact-field-narrow { flex: 0 0 auto; min-width: 140px; }
+.interact-field input, .interact-field select {
+  background: var(--bg-2); border: 1px solid var(--border); color: var(--fg);
+  border-radius: 6px; padding: 6px 8px; font: inherit; font-size: 13px;
+}
+.interact-field input:focus, .interact-field select:focus {
+  outline: none; border-color: var(--accent);
+}
+.interact-svo-toggle { font-size: 12px; color: var(--fg-dim); align-self: center; }
+
+.interact-log {
+  flex: 1; overflow-y: auto; padding: 8px 4px; min-height: 240px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.interact-empty { text-align: center; margin: auto; font-size: 13px; }
+
+.interact-turn { display: flex; flex-direction: column; gap: 3px; }
+.interact-turn-user { align-items: flex-end; }
+.interact-role {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--fg-muted); font-weight: 700;
+}
+.interact-role.role-user { color: var(--accent); }
+.interact-role.role-abstain { color: var(--accent-warn); }
+.interact-role.role-error { color: var(--accent-bad); }
+.interact-bubble {
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 10px 14px; font-size: 14px; line-height: 1.45;
+  max-width: 78%; white-space: pre-wrap; word-break: break-word;
+}
+.interact-turn-user .interact-bubble {
+  background: var(--bg-3); border-color: var(--accent);
+}
+.interact-bubble-abstain {
+  background: color-mix(in srgb, var(--accent-warn) 12%, var(--bg-2));
+  border-color: var(--accent-warn);
+}
+.interact-bubble-error { border-color: var(--accent-bad); color: var(--accent-bad); }
+.interact-abstain-icon { color: var(--accent-warn); font-weight: 700; }
+.interact-abstain-note { font-size: 11px; margin-top: 4px; }
+.interact-thinking .interact-bubble { color: var(--fg-muted); font-style: italic; }
+
+/* recalled-SVO / verify meta — hidden until the "Show recalled fact" toggle */
+.interact-meta { font-size: 11px; font-family: ui-monospace, Consolas, monospace;
+  display: none; padding-left: 2px; }
+.interact-log.show-svo .interact-meta { display: block; }
+
+.interact-input-row { display: flex; gap: 10px; margin-top: 12px; }
+.interact-input {
+  flex: 1; background: var(--bg-2); border: 1px solid var(--border); color: var(--fg);
+  border-radius: 10px; padding: 12px 14px; font: inherit; font-size: 14px;
+}
+.interact-input:focus { outline: none; border-color: var(--accent); }
+.interact-send {
+  background: var(--accent); color: var(--bg); border: none; border-radius: 10px;
+  padding: 0 22px; font: inherit; font-weight: 600; font-size: 14px; cursor: pointer;
+  transition: filter .15s;
+}
+.interact-send:hover { filter: brightness(1.08); }
+.interact-send:disabled { opacity: .6; cursor: default; }
+
+.interact-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.interact-chip {
+  font-size: 12px; padding: 5px 12px; cursor: pointer; color: var(--fg-dim);
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: 999px;
+  transition: border-color .15s, color .15s;
+}
+.interact-chip:hover { border-color: var(--accent); color: var(--accent); }
+.interact-status { font-size: 11px; margin-top: 10px; font-family: ui-monospace, Consolas, monospace; }
+
+/* nav "Archive ▾" group — the demoted research surfaces */
+.nav-archive-sep { display: inline-block; width: 1px; height: 18px;
+  background: var(--border); margin: 0 6px; vertical-align: middle; }
+.nav-archive-toggle {
+  background: none; border: none; color: var(--fg-muted); cursor: pointer;
+  font: inherit; font-size: 13px; padding: 6px 10px;
+}
+.nav-archive-toggle:hover { color: var(--fg); }
+.nav-archive-group { display: inline-flex; gap: 0; }
