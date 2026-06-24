@@ -115,7 +115,7 @@ class OneBrainComposer:
                  enable_attributed=False, enable_multiframe=False, enable_spiking_cleanup=True,
                  encoding_gain_fn=None, local_reciprocal_unbind=True, integrated_loop=False,
                  sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0,
-                 enable_seq_vocab_shrink=True, trace=False):
+                 enable_seq_vocab_shrink=True, persistent_loop=False, trace=False):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         # trace (B3 per-turn "brain activity", opt-in, DEFAULT-OFF = byte-identical): READ-ONLY trace of what the brain
         # DID on the LAST query -- the decoded role-words + their cleanup match-confidence (per role), which stored
@@ -141,6 +141,29 @@ class OneBrainComposer:
         # the (action, patient) `query_agent` + agent-only `render_fact`/`describe` stay on the host read (still
         # abstaining via the oracle) as named bounded follow-ons (a swapped-cue + a 1-role cascade). See the plan.
         self.integrated_loop = bool(integrated_loop)
+        # persistent_loop (Tier-2 TRUE one brain / I-1-a op-handoff-as-spikes, DEFAULT OFF = byte-identical = the
+        # numpy-CPU + test-oracle path): make the FLAT who/what query path a PERSISTENT INTERACTING SPIKING LOOP -- the
+        # composite is handed off BETWEEN ops as a clean unit phasor held ON THE BRIDGE (register->register), with NO
+        # host round-trip. Today the flat read (`_read_block` / `_read_all_blocks`) carries the LIVE register Z forward
+        # across the unbind->cleanup handoff (the resonate matvec reads the live unbound Q register). When ON, that
+        # handoff instead RE-KICKS a clean unit phasor into the unbound Q register(s) via `_dev_rekick_into` -- the I-1-a
+        # mechanism: recover the phase from the device spike-step trackers + install exp(2pi i phi) into each register's
+        # v/u + reset the RF trackers, ALL device ops, NO `to_host` of the phasor value. This is the canonical "each
+        # register holds a clean unit phasor between ops" form (WM-attractor / reentrant-loop biology, catalog A.05 /
+        # G.06-G.08) -- the brain's own op result drives the next op as spikes, not a host buffer copy. It is BYTE-
+        # IDENTICAL (cleanup membrane atol 0) to the HOST ROUND-TRIP reference (`to_host(rf_read_phases) -> exp ->
+        # rf_kick` the Q registers before cleanup) -- the I-1-a de-risk's exact GO (`_burndown_I1a_op_handoff_probe`,
+        # max|dphase|=0; reproduced over the flat per-block AND batched reads in `_persistent_loop_flat_derisk`). It is
+        # ANSWER-IDENTICAL to the carry-live-Z default (the cleanup argmax is invariant to the common |Z| scale the
+        # carry path leaves inflated). The no-confab moat is preserved by construction: the cleanup winner-pick + the
+        # cue-match abstention read the SAME relative cleanup pattern (only the register's magnitude is normalized to
+        # unit before cleanup -- the argmax + the confidence-gate margin are unchanged). HONEST SCOPE: the FLAT path only
+        # (`_read_block` + both `_read_all_blocks` sub-paths). The recursive CLAUSE path's hop-1->hop-2 handoff is ALREADY
+        # on-substrate (`_decode_clause` uses `_dev_rekick_into` unconditionally -- it inherited this I-1-a GO); the
+        # STORE-side composite read-out (`_compose_phases` -> `_write_block`) is a legitimate "consolidate the composed
+        # result into the synaptic store" step, not a between-op cognitive handoff, and is left as-is. See
+        # research/findings/raw/_persistent_loop_flat_derisk.json.
+        self.persistent_loop = bool(persistent_loop)
         self.sequencer_match_thresh = float(sequencer_match_thresh)
         self.sequencer_gain = float(sequencer_gain)
         self.sequencer_sigma = float(sequencer_sigma)
@@ -424,6 +447,16 @@ class OneBrainComposer:
         b.cp_rf_fired = xp.zeros(n, dtype=bool)
         b.cp_rf_spike_step = xp.full(n, period, dtype=xp.int64)
 
+    def _loop_rekick(self, dst_slices):
+        """The persistent-loop op-handoff hook: when `persistent_loop` is ON, re-kick a CLEAN UNIT PHASOR into the
+        unbound Q register(s) `dst_slices` via `_dev_rekick_into` (the I-1-a on-substrate read-phase + re-kick, no host
+        round-trip) BEFORE the cleanup op; when OFF, a no-op (the carry-live-Z default = byte-identical to today). The
+        single dispatch the flat read sites (`_read_block`, both `_read_all_blocks` sub-paths) share so the flag toggles
+        all of them at once. Byte-identical to a host round-trip on the cleanup membrane; answer-identical to the carry
+        default (the cleanup argmax is invariant to the common register magnitude this normalizes)."""
+        if self.persistent_loop:
+            self._dev_rekick_into(dst_slices)
+
     # --- query (cue-matching scan; reconstruct ONCE per block, read all 4 roles in PARALLEL) ---
     @staticmethod
     def _margin(scores):
@@ -489,6 +522,10 @@ class OneBrainComposer:
             zc = self._unbind_conj(role)
             unbind += [(self.q_base + ri * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
         b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
+        # (persistent_loop) op-handoff-as-spikes: re-kick the unbound Q registers as clean unit phasors before cleanup
+        # (== a host round-trip, no `to_host`; no-op when OFF = the carry-live-Z default). The Q regs are the contiguous
+        # run [q_base : q_base + n_roles*D].
+        self._loop_rekick([slice(self.q_base, self.q_base + self.n_roles * D)])
         clean = []
         for ri, role in enumerate(self.main_roles):                     # main roles -> the main vocab codebook
             for j in range(V):
@@ -575,6 +612,10 @@ class OneBrainComposer:
             b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
             b.rf_resonate_steps(Pd + 8)
             b.cp_rf_w_re, b.cp_rf_w_im = Ure, Uim; b.rf_resonate_steps(Pd + 8)  # cached unbind
+            # (persistent_loop) op-handoff-as-spikes: re-kick the active batched Q run as clean unit phasors before the
+            # cleanup operator install (no-op when OFF). _dev_rekick_into touches only v/u + the RF trackers, never the
+            # cleanup CSR installed on the next line.
+            self._loop_rekick([slice(self.bat_q_base, self.bat_q_base + n * self.n_roles * D)])
             b.cp_rf_w_re, b.cp_rf_w_im = Cre, Cim; b.rf_resonate_steps(1)       # cached cleanup
             mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
             return self._decode_batched_mem(mem, n)
@@ -595,6 +636,9 @@ class OneBrainComposer:
                 qreg = self.bat_q_base + (i * nr + ri) * D
                 unbind += [(qreg + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
         b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
+        # (persistent_loop) op-handoff-as-spikes: re-kick the active batched Q run as clean unit phasors before cleanup
+        # (no-op when OFF = the carry-live-Z default).
+        self._loop_rekick([slice(self.bat_q_base, self.bat_q_base + n * nr * D)])
         clean = []
         for i in range(n):
             cblk = self.bat_c_base + i * self.cb

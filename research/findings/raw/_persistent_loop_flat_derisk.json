@@ -1,0 +1,107 @@
+{
+  "probe": "persistent_loop=True FLAT who/what op-handoff-as-spikes (I-1-a) byte-identity vs host round-trip",
+  "backend": "numpy",
+  "atol": 1e-09,
+  "D": 32,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "vocab_size": 18,
+  "n_facts": 5,
+  "verdict": "GO",
+  "default_persistent_loop_off": true,
+  "membrane_byte_identical_all": true,
+  "worst_membrane_perblock_maxabs": 0.0,
+  "worst_membrane_batched_maxabs": 0.0,
+  "matrix_identical_all": true,
+  "moat_preserved_all": true,
+  "total_false_accepts_on": 0,
+  "flat_path_was_carry_live_z": true,
+  "clause_path_already_on_substrate": true,
+  "needs_gpu": false,
+  "needs_sim_edit": false,
+  "reuse_by_import": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "membrane_perblock_maxabs": 0.0,
+      "membrane_batched_maxabs": 0.0,
+      "membrane_byte_identical": true,
+      "configs": {
+        "batched_cache": {
+          "matrix_identical": true,
+          "false_accepts_on": 0,
+          "false_accepts_off": 0,
+          "moat_preserved": true
+        },
+        "batched_stock": {
+          "matrix_identical": true,
+          "false_accepts_on": 0,
+          "false_accepts_off": 0,
+          "moat_preserved": true
+        },
+        "perblock": {
+          "matrix_identical": true,
+          "false_accepts_on": 0,
+          "false_accepts_off": 0,
+          "moat_preserved": true
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "membrane_perblock_maxabs": 0.0,
+      "membrane_batched_maxabs": 0.0,
+      "membrane_byte_identical": true,
+      "configs": {
+        "batched_cache": {
+          "matrix_identical": true,
+          "false_accepts_on": 0,
+          "false_accepts_off": 0,
+          "moat_preserved": true
+        },
+        "batched_stock": {
+          "matrix_identical": true,
+          "false_accepts_on": 0,
+          "false_accepts_off": 0,
+          "moat_preserved": true
+        },
+        "perblock": {
+          "matrix_identical": true,
+          "false_accepts_on": 0,
+          "false_accepts_off": 0,
+          "moat_preserved": true
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "membrane_perblock_maxabs": 0.0,
+      "membrane_batched_maxabs": 0.0,
+      "membrane_byte_identical": true,
+      "configs": {
+        "batched_cache": {
+          "matrix_identical": true,
+          "false_accepts_on": 0,
+          "false_accepts_off": 0,
+          "moat_preserved": true
+        },
+        "batched_stock": {
+          "matrix_identical": true,
+          "false_accepts_on": 0,
+          "false_accepts_off": 0,
+          "moat_preserved": true
+        },
+        "perblock": {
+          "matrix_identical": true,
+          "false_accepts_on": 0,
+          "false_accepts_off": 0,
+          "moat_preserved": true
+        }
+      }
+    }
+  ],
+  "notes": "GO: persistent_loop=True wires the I-1-a clean-unit-phasor op-handoff into the production OneBrainComposer FLAT who/what read (the per-block oracle AND the batched default, both cache sub-paths). The cleanup membrane is BYTE-IDENTICAL (atol 1e-9, maxabs 0.0) to the HOST ROUND-TRIP reference on every fact/seed, the full who/what/yes-no matrix + every is-None/unknown abstention is identical True-vs-False across batched/cache/perblock, and the no-confab moat holds (0 false-accepts). DEFAULT persistent_loop=False is byte-identical to today (a no-op handoff = the carry-live-Z path the composer already used). DIAGNOSIS: the flat path NEVER host-round-tripped between ops -- it carried the LIVE register Z (inflated |Z|~period) across the unbind->cleanup handoff; persistent_loop=True makes it the canonical clean-unit-phasor handoff (== the host round-trip, == the carry default's ANSWER since the cleanup argmax is scale-invariant). The recursive CLAUSE path is ALREADY on-substrate (_decode_clause uses _dev_rekick_into unconditionally) -> no flat-arc drift to localize. NO sim/ edit (reuse-by-import of the public RF ops + the composer's own _dev_rekick_into)."
+}
