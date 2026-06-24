@@ -164,7 +164,7 @@
       "kind": "followup",
       "thin_answer": "I don't know about that.",
       "thin_abstained": true,
-      "rich_answer": "The weights holds memory. The learning changeses weights. The brain refuseses guessing. The brain speaks answers.",
+      "rich_answer": "The weights holds memory. The learning changeses weights. The brain speaks answers. The brain refuseses guessing.",
       "rich_abstained": false,
       "rich_facts": [
         [
@@ -179,13 +179,13 @@
         ],
         [
           "brain",
-          "refuses",
-          "guessing"
+          "speak",
+          "answers"
         ],
         [
           "brain",
-          "speak",
-          "answers"
+          "refuses",
+          "guessing"
         ]
       ],
       "rich_dropped": [],
@@ -311,7 +311,7 @@
     {
       "question": "tell me more",
       "THIN (old, one fact)": "I don't know about that.",
-      "RICH (multi-sentence, grounded)": "The weights holds memory. The learning changeses weights. The brain refuseses guessing. The brain speaks answers.",
+      "RICH (multi-sentence, grounded)": "The weights holds memory. The learning changeses weights. The brain speaks answers. The brain refuseses guessing.",
       "rich_sentences": 4,
       "supporting_facts": [
         [
@@ -326,13 +326,13 @@
         ],
         [
           "brain",
-          "refuses",
-          "guessing"
+          "speak",
+          "answers"
         ],
         [
           "brain",
-          "speak",
-          "answers"
+          "refuses",
+          "guessing"
         ]
       ]
     }

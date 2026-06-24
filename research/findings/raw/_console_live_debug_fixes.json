@@ -1,0 +1,47 @@
+{
+  "task": "LIVE console debug: 2 brain-chat issues fixed against the running webapp (uvicorn :8765, cupy/GPU)",
+  "date": "2026-06-24",
+  "validated_against": "LIVE running webapp at http://localhost:8765 via curl (NOT in-process stubs)",
+  "no_sim_edit": true,
+  "files_changed": [
+    "webapp/server.py",
+    "research/runners/brain_conversational_agent.py",
+    "research/runners/attributed_parser.py"
+  ],
+  "issue_1_single_fact_http400": {
+    "symptom": "POST /api/brain-chat {brain:tiny-demo, rich:false} -> HTTP 400 'failed to load brain ... ValueError: non-scalar numpy.ndarray cannot be used for fill'",
+    "root_cause": "BACKEND CACHE/ENV MISMATCH in the long-running server. sim.backend.get_backend() is a sticky process-global that ALSO re-reads SIM_BACKEND on every bare call (env always wins). The live server env has SIM_BACKEND=numpy, but sim.bridge bound its module-level cp=cupy at import (sim.bridge._backend_name='cupy'), so EVERY bridge state array is cupy. Two failure points: (a) BridgeParser._train / AttributedBridgeParser._train build cur via get_backend() -> numpy zeros, then assign cp_external_input_current[:] = cur (cupy<-numpy) which cupy routes through .fill() -> 'non-scalar numpy.ndarray cannot be used for fill'; (b) sim.backend.to_host() checks get_backend()=='cupy'; under the numpy env it becomes a no-op passthrough and hands a cupy array to np.asarray -> 'Implicit conversion to a NumPy array is not allowed' (rf_phasor_composer._resonate -> bridge.rf_read_phases).",
+    "proof": "Reproduced the exact live traceback via a temp server-side traceback capture (brain_conversational_agent.py:118 cp_external_input_current[:] = cur). Reproduced standalone by flipping the get_backend cache to numpy after importing the cupy bridge -> identical errors; confirmed live DBG: sim.bridge._backend_name='cupy' B.cp=cupy get_backend()='numpy' SIM_BACKEND='numpy'.",
+    "fix": [
+      "webapp/server.py: added _pin_bridge_backend() -- aligns os.environ['SIM_BACKEND'] AND the get_backend() cache to sim.bridge._backend_name (the bridge's REAL backend, cupy on this GPU server) so every get_backend()/to_host() in the chat path is consistent with the cupy bridge arrays. Called at the start of brain_chat and _build_chat_brain. Fixes both (a) and (b) at the source instead of patching each call site.",
+      "research/runners/brain_conversational_agent.py: BridgeParser now derives xp from the bridge's OWN array module (cupy.get_array_module(self.bridge.cp_external_input_current)) via a new _bridge_xp() helper, used in __init__/_train/role_of -- so cur ALWAYS matches the bridge regardless of the global cache (belt-and-suspenders).",
+      "research/runners/attributed_parser.py: identical _bridge_xp() fix for AttributedBridgeParser (the (noun,'is',adj) attribute-fact parser the self-knowledge brain exercises)."
+    ],
+    "live_validation_tiny_demo": {
+      "taught_what_does_the_dog_chase": {"answer": "The dog chases cat.", "recalled_svo": ["dog","chase","cat"], "verified": true, "abstained": false, "http": 200, "time_total_s_first_build": 112.3},
+      "taught_what_does_the_cat_eat_warm": {"answer": "The cat eats fish.", "recalled_svo": ["cat","eat","fish"], "verified": true, "abstained": false, "http": 200, "time_total_s": 1.19},
+      "moat_untaught_what_does_the_elephant_build": {"answer": "I don't know about that.", "abstained": true, "recalled_svo": null, "http": 200, "time_total_s": 0.21}
+    },
+    "standalone_proof_attributed_path_self_knowledge": {
+      "note": "Mimics the SK path (BrainConversationalAgent + AttributedBridgeParser 'apple is red' + rf composer + to_host) under the reproduced numpy-env/cupy-bridge mismatch + the pin.",
+      "what_does_dog_chase": "cat",
+      "what_does_untaught_dragon_guard": "None (moat abstains)",
+      "result": "PASS"
+    },
+    "live_validation_self_knowledge": "PENDING (first build is slow -- the 52-fact hear() loop, brain-load not planner; see note)"
+  },
+  "issue_2_rich_too_slow": {
+    "symptom": "POST /api/brain-chat {rich:true} took >75s (http 000 timeout). _get_rich_composer built RichAnswerComposer(neural_planner=on_gpu=True), so the NEURAL dlPFC discourse-planner built + stepped a per-topic SimulationBridge ON THE GPU every turn.",
+    "root_cause": "neural_planner=True instantiates NeuralDiscoursePlanner which builds a per-topic spiking bridge per turn -- on the GPU webapp this pushes a turn past the ~75s timeout. The owner prioritizes interactive-console latency.",
+    "fix": "webapp/server.py _get_rich_composer now uses neural_planner=False (the HOST gather/order/relevance/breadth/stop planner). With neural_planner=False, NeuralDiscoursePlanner is never instantiated (self._planner=None) so NO per-turn bridge build; the host planner is still SUBSTANTIVE multi-sentence (chain + elaboration, the 'too thin' fix). The direct gate (no-confab MOAT), the role-chase chain hop, and the per-sentence VERIFY are identical either way, so the moat is NOT weakened. The neural planner STAYS the brain_chat_tui --rich default (the 3G flip); ONLY the interactive webapp trades it for latency (commented in code).",
+    "live_validation_tiny_demo": {
+      "rich_tell_me_about_the_dog_first_build": {"answer": "The dog chases cat. The cat eats fish.", "n_sentences": 2, "supporting_facts": [["dog","chase","cat"],["cat","eat","fish"]], "verified": true, "abstained": false, "http": 200, "time_total_s": 117.4, "note": "117s is the one-time brain BUILD; the rich host planner itself is fast"},
+      "rich_tell_me_about_the_cat_warm": {"answer": "The dog chases cat.", "n_sentences": 1, "verified": true, "abstained": false, "http": 200, "time_total_s": 2.79, "note": "WARM brain: rich answers in ~2.8s, NOT >75s"},
+      "rich_moat_untaught_tell_me_about_the_elephant": {"answer": "I don't know about that.", "abstained": true, "n_sentences": 0, "supporting_facts": [], "http": 200, "time_total_s": 0.22}
+    }
+  },
+  "moat_0_FA": "Both single-fact and rich paths ABSTAIN ('I don't know about that.', abstained=true) on untaught cues -- 0 false-accepts. Brain-sourced (grounded SVOs, verified by re-parse), not confabulated.",
+  "latency_note": "The ~110-117s on the FIRST request per (session,brain) is the brain-LOAD (Hebbian parser training on the bridge + per-fact RF resonate windows), NOT the rich planner. Subsequent turns on a warm brain are 0.2-2.8s. The self-knowledge brain's first load is longer (52 facts).",
+  "reloader_note": "uvicorn --reload was wedged (watchfiles 1.0.5 present but never respawned the app child on edit). Forced reloads by killing the supervisor's app child (PID respawns from disk with current code). server.py hot-reload did NOT happen automatically; the static-only-refresh claim held but server.py edits needed the child-kill nudge.",
+  "git_diff_stat": "research/runners/attributed_parser.py | 23 +; research/runners/brain_conversational_agent.py | 30 +; webapp/server.py | 78 +- ; 3 files changed, 113 insertions(+), 18 deletions(-)"
+}

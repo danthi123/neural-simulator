@@ -86,7 +86,7 @@ class BridgeParser:
             from research.runners.unified_brain_bridge import merge_population_into_shared_bridge
             merge_population_into_shared_bridge(self.bridge, plan)   # parser pop is plastic → no gate
 
-        xp, _ = get_backend()
+        xp = self._bridge_xp()
         self.conj_arr = xp.asarray(self.conj, dtype=xp.int64)
         self.role_arr = {r: xp.asarray(v, dtype=xp.int64) for r, v in self.role_idx.items()}
         # `self._n` is the size of the *current-state* arrays we zero/index = the whole bridge.
@@ -102,13 +102,37 @@ class BridgeParser:
         trained `"parse"` weights. Uses the epoch/step counts passed at construction."""
         self._train(self._n_epochs, self._train_steps)
 
+    def _bridge_xp(self):
+        """Return the array module (cupy or numpy) the BRIDGE'S OWN state arrays
+        actually use — NOT the process-global ``get_backend()``.
+
+        Why: ``get_backend()`` is a sticky/global cache that a numpy-CPU code
+        path elsewhere in a long-running process (e.g. the webapp) can flip to
+        numpy AFTER ``sim.bridge`` bound its module-level ``cp`` to cupy. The
+        bridge then builds cupy state arrays, but a later ``get_backend()`` here
+        returns numpy → a numpy ``cur`` assigned into the cupy
+        ``cp_external_input_current[:]`` raises cupy's
+        "non-scalar numpy.ndarray cannot be used for fill". Deriving xp from the
+        bridge's own array keeps ``cur`` matched to the bridge regardless of the
+        global cache state (the live webapp single-fact bug, 2026-06-24)."""
+        arr = getattr(self.bridge, "cp_external_input_current", None)
+        if arr is not None:
+            try:
+                import cupy as _cp  # noqa: PLC0415
+                return _cp.get_array_module(arr)  # cupy for a device array, numpy otherwise
+            except Exception:
+                return np  # cupy unavailable → arrays are numpy
+        # No state array yet (shouldn't happen post-init): fall back to the global.
+        xp, _ = get_backend()
+        return xp
+
     def _step_reset(self, reset=20):
         self.bridge.cp_external_input_current[:] = 0.0
         for _ in range(reset):
             self.bridge._run_one_simulation_step()
 
     def _train(self, n_epochs, train_steps):
-        xp, _ = get_backend()
+        xp = self._bridge_xp()
         for _ in range(n_epochs):
             for k in range(6):
                 self._step_reset()
@@ -122,7 +146,7 @@ class BridgeParser:
 
     def role_of(self, position, voice=0):
         """Drive the (position, voice) conjunction ALONE; read which role ensemble fires most -> the learned role."""
-        xp, _ = get_backend()
+        xp = self._bridge_xp()
         k = position * 2 + (0 if voice in (0, "active") else 1)
         self._step_reset()
         cur = xp.zeros(self._n, dtype=xp.float32)

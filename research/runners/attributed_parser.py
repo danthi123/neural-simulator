@@ -88,11 +88,28 @@ class AttributedBridgeParser:
         self.bridge.inject_explicit_wiring({"parse": {"pre_indices": pre, "post_indices": post,
                                                       "initial_weights": np.array(w, dtype=np.float32),
                                                       "plastic": True, "conn_type": "E_TO_E", "count": len(pre)}})
-        xp, _ = get_backend()
+        xp = self._bridge_xp()
         self.conj_arr = xp.asarray(self.conj, dtype=xp.int64)
         self.role_arr = {r: xp.asarray(v, dtype=xp.int64) for r, v in self.role_idx.items()}
         self._n = self.bridge.core_config.num_neurons
         self._train(n_epochs, train_steps)
+
+    def _bridge_xp(self):
+        """Return the array module (cupy/numpy) the BRIDGE'S state arrays actually
+        use, NOT the sticky-global ``get_backend()`` (which a numpy-CPU path in a
+        long-running process can flip to numpy after the bridge bound cupy → a
+        numpy ``cur`` into the cupy ``cp_external_input_current[:]`` raises cupy's
+        "non-scalar numpy.ndarray cannot be used for fill"). Same fix as
+        BridgeParser._bridge_xp (the live webapp single-fact bug, 2026-06-24)."""
+        arr = getattr(self.bridge, "cp_external_input_current", None)
+        if arr is not None:
+            try:
+                import cupy as _cp  # noqa: PLC0415
+                return _cp.get_array_module(arr)
+            except Exception:
+                return np
+        xp, _ = get_backend()
+        return xp
 
     def _step_reset(self, reset=20):
         self.bridge.cp_external_input_current[:] = 0.0
@@ -100,7 +117,7 @@ class AttributedBridgeParser:
             self.bridge._run_one_simulation_step()
 
     def _train(self, n_epochs, train_steps):
-        xp, _ = get_backend()
+        xp = self._bridge_xp()
         ks = sorted(self.teacher)
         for _ in range(n_epochs):
             for k in ks:
@@ -114,7 +131,7 @@ class AttributedBridgeParser:
         self.bridge.cp_external_input_current[:] = 0.0
 
     def role_of(self, s, e, voice=0):
-        xp, _ = get_backend()
+        xp = self._bridge_xp()
         k = conj_index(s, e, voice, self.use_end)
         self._step_reset()
         cur = xp.zeros(self._n, dtype=xp.float32)

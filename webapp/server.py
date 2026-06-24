@@ -2743,6 +2743,48 @@ def _default_brain_renderer() -> str:
     return "stub"
 
 
+def _pin_bridge_backend() -> None:
+    """Re-assert the global ``sim.backend`` cache to whatever backend
+    ``sim.bridge`` bound at import (``sim.bridge._backend_name``).
+
+    WHY (the live single-fact bug, 2026-06-24): ``sim.bridge`` binds its
+    module-level ``cp`` ONCE at import (cupy on a GPU box), so EVERY bridge
+    state array (``cp_external_input_current``, ``cp_rf_spike_step`` …) is cupy.
+    But ``get_backend()`` is a STICKY PROCESS-GLOBAL cache that any numpy-CPU
+    code path elsewhere in this long-running server can flip to numpy (e.g. an
+    imported runner calling ``get_backend("numpy")``). Once flipped, the chat
+    path breaks pervasively: a numpy ``cur`` written into a cupy
+    ``cp_external_input_current[:]`` raises cupy's "non-scalar numpy.ndarray
+    cannot be used for fill", and ``sim.backend.to_host`` becomes a no-op
+    passthrough that hands a cupy array to ``np.asarray`` ("Implicit conversion
+    to a NumPy array is not allowed"). Pinning the cache back to the bridge's
+    ACTUAL backend at the start of each chat call makes the global consistent
+    with the cupy bridge state — fixing all those mismatches at the source
+    rather than patching every call site. No-op when already consistent / on a
+    genuine numpy server. NO ``sim/`` edit (reads a public-ish module attr)."""
+    try:
+        import sim.bridge as _sb  # noqa: PLC0415
+        want = getattr(_sb, "_backend_name", None)
+        if not want:
+            return
+        # CRITICAL: ``get_backend(None)`` re-reads ``SIM_BACKEND`` on EVERY call and
+        # the env ALWAYS wins over the cache (sim/backend.py). So if the launch env
+        # has ``SIM_BACKEND=numpy`` while the bridge bound cupy (the live server's
+        # state), re-asserting the cache alone is undone by the next bare
+        # ``get_backend()``. Align the ENV to the bridge's real backend so every
+        # ``get_backend()`` / ``to_host`` in the chat path agrees with the cupy
+        # bridge arrays. (We only ever STRENGTHEN to the bridge's actual backend;
+        # if they already agree this is a no-op.)
+        if os.environ.get("SIM_BACKEND", "").lower() != want:
+            os.environ["SIM_BACKEND"] = want
+        from sim.backend import get_backend as _gb  # noqa: PLC0415
+        _xp, _cur = _gb()
+        if _cur != want:
+            _gb(want)   # re-assert the cache too (e.g. "cupy")
+    except Exception:
+        pass  # never let backend-pinning crash a chat turn
+
+
 def _build_chat_brain(brain: str, renderer: str):
     """Construct a `ChatBrain` for the given brain source + renderer.
 
@@ -2752,6 +2794,9 @@ def _build_chat_brain(brain: str, renderer: str):
     renderer: 'qwen' (off-bridge Qwen, GPU) / 'stub' (template-stub,
         GPU-free) / 'raw' (the brain's own raw triples, no LLM).
     """
+    # Make the global backend cache consistent with the bridge's actual arrays
+    # BEFORE building any bridge in the chat brain (the cupy/numpy-flip bug).
+    _pin_bridge_backend()
     from research.runners.brain_chat_tui import (
         ChatBrain, StubRenderer, QwenRenderer,
         _build_tiny_demo, _load_self_knowledge, DEFAULT_SELF_ALIASES,
@@ -2812,23 +2857,27 @@ def _get_rich_composer(cache_key: tuple, chat):
 
     The composer is keyed identically to the ChatBrain so each session/brain/
     renderer gets its own multi-sentence discourse thread (so 'tell me more'
-    elaborates forward within that conversation). The neural dlPFC
-    discourse-planner is ON only on the cupy/GPU backend (it builds + steps a
-    per-topic SimulationBridge, heavy on CPU) — mirroring brain_chat_tui's
-    --rich default + the numpy-CPU host escape. The direct gate (the moat),
-    the role-chase chain hop, and the per-sentence VERIFY are unchanged either
-    way; the planner only steers WHICH grounded facts to bring up.
+    elaborates forward within that conversation).
+
+    LATENCY (2026-06-24): the interactive WEBAPP console deliberately uses the
+    HOST discourse-planner (``neural_planner=False``). The owner cares about
+    snappiness — the console must answer in a few seconds. The NEURAL dlPFC
+    planner builds + steps a per-topic ``SimulationBridge`` ON THE GPU *every
+    turn*, which on the GPU webapp pushes a turn past ~75s (timeout). The host
+    planner still produces a SUBSTANTIVE multi-sentence grounded reply (the host
+    gather/order/relevance/breadth/stop heuristics + the "too thin" fix) — it
+    only drops the per-turn bridge build. The direct gate (the no-confab MOAT),
+    the role-chase chain hop, and the per-sentence VERIFY are identical either
+    way (the planner only steers WHICH grounded facts to bring up), so dropping
+    the neural planner does NOT weaken the moat. The neural planner stays the
+    ``brain_chat_tui --rich`` default (the 3G flip) — only the interactive
+    webapp trades it for latency.
     """
     rich = _BRAIN_RICH.get(cache_key)
     if rich is None:
         from research.runners.rich_answer_composer import RichAnswerComposer
-        try:
-            from sim.backend import is_gpu_backend
-            on_gpu = bool(is_gpu_backend())
-        except Exception:
-            on_gpu = (os.environ.get("SIM_BACKEND", "").lower() == "cupy")
         rich = RichAnswerComposer(
-            chat, max_sentences=4, neural_planner=on_gpu,
+            chat, max_sentences=4, neural_planner=False,   # host planner = fast + still multi-sentence
             planner_seed=getattr(getattr(chat, "inner", None), "seed", 42),
         )
         _BRAIN_RICH[cache_key] = rich
@@ -3058,6 +3107,11 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         }
     """
     renderer = (req.renderer or _default_brain_renderer()).lower()
+    # A numpy-CPU code path elsewhere in this long-running server can have flipped
+    # the global backend cache away from the bridge's cupy arrays between turns;
+    # re-assert it here so gate()/render()/the rich path run consistently (the
+    # cupy/numpy-flip bug, 2026-06-24).
+    _pin_bridge_backend()
     cache_key = (req.session, req.brain, renderer)
     if req.reset:
         _BRAIN_CHATS.pop(cache_key, None)
