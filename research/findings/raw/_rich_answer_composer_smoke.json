@@ -1,0 +1,340 @@
+{
+  "probe": "rich_answer_composer_substantive_multisentence_grounded_reply",
+  "resolves": "make each conversational turn produce a SUBSTANTIVE multi-sentence GROUNDED reply (direct recall + multi-hop chain + elaboration), verify-checked per sentence, so the brain holds a genuinely substantive multi-turn conversation -- and the no-confab moat EXTENDS to multi-sentence (only brain-sourced claims survive).",
+  "architecture": "GATHER (a) direct gate-recall + (b) composer.query_chain multi-hop (1-3, abstains per hop) + (c) dlPFC elaborate(topic) on the assoc graph -> RENDER each gathered SVO via the fluent faculty (off-bridge Qwen / GPU-free template-stub) -> VERIFY each sentence's re-parsed SVO against the brain, DROP any that fail -> a multi-sentence paragraph of ONLY verified, brain-sourced prose. Multi-turn: 'tell me more'/'why?' elaborates the held topic further (walks deeper, skips already-said).",
+  "backend": "numpy",
+  "renderer": "template-stub (GPU-free)",
+  "n_facts": 17,
+  "seed": 43,
+  "GO": true,
+  "verdict": "GO -- the brain gives SUBSTANTIVE multi-sentence grounded answers (each rich turn >= 4 brain-sourced sentences, every sentence verify-checked against the spiking store), the 'tell me more' follow-up ELABORATES the held topic (4 new grounded sentences, none repeating), and the no-confab moat STILL ABSTAINS on all 2 untaught/general cues (incl. 'capital of France'). A confabulating faculty's WRONG sentence is DROPPED by the per-sentence VERIFY (the truthful sentences survive) -- so the multi-sentence reply contains ONLY brain-sourced, verified claims. Genuinely more substantive AND still hallucination-proof. READY to --rich the real developed brain (off-bridge Qwen renderer).",
+  "min_rich_sentences": 4,
+  "all_rich_turns_substantive": true,
+  "depth_gain": true,
+  "followup_elaborated": true,
+  "moat_held": true,
+  "all_brain_sourced": true,
+  "verify_drop_ok": true,
+  "adversarial_verify_drop": {
+    "ran": true,
+    "target_fact": [
+      "spikes",
+      "fire",
+      "neurons"
+    ],
+    "confab_patient": "answers",
+    "confab_fact_dropped": true,
+    "confab_not_in_answer": true,
+    "truthful_sentences_survive": true,
+    "adv_answer": "The brain uses spikes. The neurons haves synapses. The synapses stores weights.",
+    "adv_dropped": [
+      [
+        "spikes",
+        "fire",
+        "neurons"
+      ]
+    ],
+    "adv_kept_facts": [
+      [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      [
+        "neurons",
+        "have",
+        "synapses"
+      ],
+      [
+        "synapses",
+        "store",
+        "weights"
+      ]
+    ]
+  },
+  "n_abstain_turns": 2,
+  "transcript": [
+    {
+      "you": "what are you",
+      "kind": "rich",
+      "thin_answer": "The brain uses spikes.",
+      "thin_abstained": false,
+      "rich_answer": "The brain uses spikes. The spikes fires neurons. The neurons haves synapses. The synapses stores weights.",
+      "rich_abstained": false,
+      "rich_facts": [
+        [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        [
+          "spikes",
+          "fire",
+          "neurons"
+        ],
+        [
+          "neurons",
+          "have",
+          "synapses"
+        ],
+        [
+          "synapses",
+          "store",
+          "weights"
+        ]
+      ],
+      "rich_dropped": [],
+      "n_sentences": 4,
+      "topic": "spikes",
+      "followup": false,
+      "all_brain_sourced": true
+    },
+    {
+      "you": "how do you learn",
+      "kind": "rich",
+      "thin_answer": "The brain learns words.",
+      "thin_abstained": false,
+      "rich_answer": "The brain learns words. The words forms facts. The facts builds memory. The memory needses sleep.",
+      "rich_abstained": false,
+      "rich_facts": [
+        [
+          "brain",
+          "learn",
+          "words"
+        ],
+        [
+          "words",
+          "form",
+          "facts"
+        ],
+        [
+          "facts",
+          "build",
+          "memory"
+        ],
+        [
+          "memory",
+          "needs",
+          "sleep"
+        ]
+      ],
+      "rich_dropped": [],
+      "n_sentences": 4,
+      "topic": "words",
+      "followup": false,
+      "all_brain_sourced": true
+    },
+    {
+      "you": "how do you remember things",
+      "kind": "rich",
+      "thin_answer": "The brain stores memory.",
+      "thin_abstained": false,
+      "rich_answer": "The brain stores memory. The sleep driveses replay. The replay preventses forgetting. The answers comes memory.",
+      "rich_abstained": false,
+      "rich_facts": [
+        [
+          "brain",
+          "store",
+          "memory"
+        ],
+        [
+          "sleep",
+          "drives",
+          "replay"
+        ],
+        [
+          "replay",
+          "prevents",
+          "forgetting"
+        ],
+        [
+          "answers",
+          "come",
+          "memory"
+        ]
+      ],
+      "rich_dropped": [],
+      "n_sentences": 4,
+      "topic": "memory",
+      "followup": false,
+      "all_brain_sourced": true
+    },
+    {
+      "you": "tell me more",
+      "kind": "followup",
+      "thin_answer": "I don't know about that.",
+      "thin_abstained": true,
+      "rich_answer": "The weights holds memory. The learning changeses weights. The neurons makes thoughts. The brain refuseses guessing.",
+      "rich_abstained": false,
+      "rich_facts": [
+        [
+          "weights",
+          "hold",
+          "memory"
+        ],
+        [
+          "learning",
+          "changes",
+          "weights"
+        ],
+        [
+          "neurons",
+          "make",
+          "thoughts"
+        ],
+        [
+          "brain",
+          "refuses",
+          "guessing"
+        ]
+      ],
+      "rich_dropped": [],
+      "n_sentences": 4,
+      "topic": "memory",
+      "followup": true,
+      "all_brain_sourced": true
+    },
+    {
+      "you": "what does the dragon do",
+      "kind": "abstain",
+      "thin_answer": "I don't know about that.",
+      "thin_abstained": true,
+      "rich_answer": "I don't know about that.",
+      "rich_abstained": true,
+      "rich_facts": [],
+      "rich_dropped": [],
+      "n_sentences": 0,
+      "topic": null,
+      "followup": false,
+      "all_brain_sourced": true
+    },
+    {
+      "you": "what is the capital of france",
+      "kind": "abstain",
+      "thin_answer": "I don't know about that.",
+      "thin_abstained": true,
+      "rich_answer": "I don't know about that.",
+      "rich_abstained": true,
+      "rich_facts": [],
+      "rich_dropped": [],
+      "n_sentences": 0,
+      "topic": null,
+      "followup": false,
+      "all_brain_sourced": true
+    }
+  ],
+  "rich_vs_thin": [
+    {
+      "question": "what are you",
+      "THIN (old, one fact)": "The brain uses spikes.",
+      "RICH (multi-sentence, grounded)": "The brain uses spikes. The spikes fires neurons. The neurons haves synapses. The synapses stores weights.",
+      "rich_sentences": 4,
+      "supporting_facts": [
+        [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        [
+          "spikes",
+          "fire",
+          "neurons"
+        ],
+        [
+          "neurons",
+          "have",
+          "synapses"
+        ],
+        [
+          "synapses",
+          "store",
+          "weights"
+        ]
+      ]
+    },
+    {
+      "question": "how do you learn",
+      "THIN (old, one fact)": "The brain learns words.",
+      "RICH (multi-sentence, grounded)": "The brain learns words. The words forms facts. The facts builds memory. The memory needses sleep.",
+      "rich_sentences": 4,
+      "supporting_facts": [
+        [
+          "brain",
+          "learn",
+          "words"
+        ],
+        [
+          "words",
+          "form",
+          "facts"
+        ],
+        [
+          "facts",
+          "build",
+          "memory"
+        ],
+        [
+          "memory",
+          "needs",
+          "sleep"
+        ]
+      ]
+    },
+    {
+      "question": "how do you remember things",
+      "THIN (old, one fact)": "The brain stores memory.",
+      "RICH (multi-sentence, grounded)": "The brain stores memory. The sleep driveses replay. The replay preventses forgetting. The answers comes memory.",
+      "rich_sentences": 4,
+      "supporting_facts": [
+        [
+          "brain",
+          "store",
+          "memory"
+        ],
+        [
+          "sleep",
+          "drives",
+          "replay"
+        ],
+        [
+          "replay",
+          "prevents",
+          "forgetting"
+        ],
+        [
+          "answers",
+          "come",
+          "memory"
+        ]
+      ]
+    },
+    {
+      "question": "tell me more",
+      "THIN (old, one fact)": "I don't know about that.",
+      "RICH (multi-sentence, grounded)": "The weights holds memory. The learning changeses weights. The neurons makes thoughts. The brain refuseses guessing.",
+      "rich_sentences": 4,
+      "supporting_facts": [
+        [
+          "weights",
+          "hold",
+          "memory"
+        ],
+        [
+          "learning",
+          "changes",
+          "weights"
+        ],
+        [
+          "neurons",
+          "make",
+          "thoughts"
+        ],
+        [
+          "brain",
+          "refuses",
+          "guessing"
+        ]
+      ]
+    }
+  ]
+}
