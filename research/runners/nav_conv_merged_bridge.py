@@ -1302,7 +1302,9 @@ class MergedNavConvAgent:
                  co_resident_nav_critic=None, nav_critic_spiking_sc=False,
                  nav_critic_place_selforg=None, nav_critic_grid_frontend=None,
                  co_resident_td_cueshift=False,
-                 enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25):
+                 enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
+                 enable_da_encoding_gain=False, da_encoding_k=2.0,
+                 da_encoding_g_min=0.5, da_encoding_g_max=3.0):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
         merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory codebook
         share one word set.
@@ -1349,6 +1351,29 @@ class MergedNavConvAgent:
         self._da_gate_g0 = float(da_gate_g0)
         self._da_gate_k = float(da_gate_k)
         self._da_gate_cap = float(da_gate_cap)
+        # --- DA ENCODING-gain hook (TRUE ONE BRAIN roadmap #6 WRITE side / burndown I-7-b): the WRITE-side mirror of
+        # the read-side salience gate. The shared spiking-SNc dopamine modulates the composer's fact ENCODING STRENGTH
+        # AT STORE TIME (Lisman-Grace hippocampal-VTA loop; Kandel D.16 — dopamine gates entry into LONG-TERM memory: a
+        # rewarded trace stays STABLE, an un-rewarded one degrades). When True, the composer's `encoding_gain_fn` is
+        # wired to read the SAME shared `dopamine` `_da_confidence_gate` reads (off THIS agent's merged bridge) and map
+        # it to a per-fact encoding gain `g = clip(g_min, g_max, 1 + k*(DA - DA_baseline))` (the de-risk's
+        # `da_to_encoding_gain`), so a fact heard while the spiking SNc is bursting (a salient/rewarded utterance) is
+        # encoded STRONGER than one heard at DA baseline. Default OFF = byte-identical (g=1 for every fact, the unit-mag
+        # write). MOAT-SAFE by construction: the gain scales the stored complex-weight MAGNITUDE only; the cue-match
+        # abstention + the cleanup winner-pick read relative scores (magnitude-invariant for the argmax), so the moat is
+        # unchanged. LOAD-BEARING only when the composer stores MAGNITUDE in synapses — i.e. the production
+        # `OneBrainComposer` (`_write_block` -> `store_conns`) or `RFPhasorComposer(enable_substrate_store=True)`; the
+        # default merged `RFPhasorComposer`/`MergedRFComposer` numpy-kb path stores PHASES (magnitude-invariant), so the
+        # hook is wired + DA-correct there but behaviorally INERT until a substrate-store composer is used (the
+        # characterized consolidation step — the OneBrainComposer co-residence). De-risked GO on the production
+        # OneBrainComposer (the stored block magnitude == g, lesion-confirmed, moat 0-FA, regression byte-identical):
+        # research/findings/raw/_burndown_I7_limbic_encoding_hook.json + the prior oracle GO
+        # 2026-06-19-dopamine-encoding-gain-derisk.md. NO `sim/` edit (composer-runner-layer read of a spike-derived
+        # scalar -> the composer's already-shipped default-OFF `encoding_gain_fn`).
+        self.enable_da_encoding_gain = bool(enable_da_encoding_gain)
+        self._da_encoding_k = float(da_encoding_k)
+        self._da_encoding_g_min = float(da_encoding_g_min)
+        self._da_encoding_g_max = float(da_encoding_g_max)
         # co_resident_td_cueshift (TRUE ONE BRAIN roadmap #3): also lift the A-CSC TD cue-shift slice onto the merged
         # bridge (the td_ slice + the `dopamine`-over-td_snc modulator). Default False = byte-preserved. When True the
         # moat-no-regression check verifies the shared TD DA broadcast does not perturb conversational comprehension.
@@ -1448,6 +1473,14 @@ class MergedNavConvAgent:
         else:
             self.composer = RFPhasorComposer(seed=seed, D=_D, vocab=words, period=200)
 
+        # WRITE-side limbic->composer hook (burndown I-7-b): wire the composer's encoding_gain_fn to read the SHARED
+        # `dopamine` (the same DA `_da_confidence_gate` reads) so a fact heard during a salient/high-DA turn encodes
+        # stronger (Lisman-Grace/Kandel D.16). Default OFF = byte-identical (encoding_gain_fn stays None -> g=1). The
+        # hook is load-bearing only on a MAGNITUDE-storing composer (OneBrainComposer / substrate-store); see the
+        # __init__ docstring for the inert-on-numpy-kb caveat.
+        if self.enable_da_encoding_gain:
+            self.composer.encoding_gain_fn = self._da_encoding_gain
+
         # The parser READ surface on the merged framework slices (so `self.parser.parse(...)` matches the agent's).
         self.parser = _MergedParserAdapter(self._merged_bridge, self._handles["conj_arr"], self._handles["role_arr"])
 
@@ -1488,6 +1521,28 @@ class MergedNavConvAgent:
         except (KeyError, AttributeError):
             return g0                                    # no `dopamine` modulator present -> the gate floor (no-op)
         return da_to_gate(da, da_baseline, g0, self._da_gate_k, g_cap=self._da_gate_cap)
+
+    # --- DA ENCODING-gain hook (roadmap #6 WRITE side / burndown I-7-b): the spiking-SNc dopamine -> composer fact
+    #     ENCODING strength at store time (the write-side mirror of _da_confidence_gate) ---
+    def _da_encoding_gain(self):
+        """Read the SHARED spiking-SNc dopamine off the merged bridge and map it (the de-risk's `da_to_encoding_gain`)
+        onto a per-fact ENCODING gain `g = clip(g_min, g_max, 1 + k*(DA - DA_baseline))`, read AT STORE TIME by the
+        composer's `encoding_gain_fn`. SAFE: if no `dopamine` modulator is on the merged bridge (no limbic/critic/TD
+        slice co-resident), DA reads as baseline => `g = 1.0` (the byte-identical unit-mag write = a no-op), exactly
+        like `_da_confidence_gate`'s gate-floor fallback. A salient (high-DA) turn => g > 1 => a stronger, more-stable
+        encoding (Lisman-Grace/Kandel D.16). MOAT-SAFE: the gain scales stored magnitude only; the cue-match abstention
+        is unchanged. Returns `g`."""
+        from research.runners._burndown_I7_dopamine_encoding_deploy_derisk import da_to_encoding_gain  # the de-risk map
+        nm = getattr(self._merged_bridge, "neuromodulator_manager", None)
+        if nm is None:
+            return 1.0                                   # no neuromodulator subsystem -> unit gain (byte-identical)
+        try:
+            da = float(nm.get_concentration("dopamine"))
+            da_baseline = float(nm._config_by_name("dopamine").baseline)
+        except (KeyError, AttributeError):
+            return 1.0                                   # no `dopamine` modulator present -> unit gain (byte-identical)
+        return da_to_encoding_gain(da, da_baseline, self._da_encoding_k,
+                                   g_min=self._da_encoding_g_min, g_max=self._da_encoding_g_max)
 
     def _gated_out(self, match_fn, g_eff):
         """The de-risk's gate, applied to THIS agent's composer reads (no `sim/`/composer edit, reuse-by-import): is

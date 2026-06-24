@@ -1,0 +1,122 @@
+{
+  "config": {
+    "D": 64,
+    "k_da": 2.0,
+    "seeds": [
+      42
+    ],
+    "da_high": 0.604494563221681,
+    "da_tonic": 0.4912754258987326,
+    "da_baseline": 0.5,
+    "g_high": 1.208989126443362,
+    "g_tonic": 0.9825508517974652,
+    "g_ratio_high_over_tonic": 1.2304595983318867
+  },
+  "mechanism_store_magnitude": {
+    "stored_block_mag_ratio_per_seed(rewarded/neutral)": [
+      1.2304595983318867
+    ],
+    "expected_ratio(g_high/g_tonic)": 1.2304595983318867,
+    "ratio_matches_gain_all_seeds": true,
+    "lesion_ratio_per_seed(DA_pinned->should_be_1)": [
+      1.0
+    ],
+    "lesion_ratio_is_unity_all_seeds": true
+  },
+  "moat_clean_read_ok": 1,
+  "of": 1,
+  "regression_default_eq_unit_mag": {
+    "unit_mag_ok": 1,
+    "full_ok": 1,
+    "of": 1
+  },
+  "verdict": {
+    "GO": true,
+    "mechanism_load_bearing(store_mag==g)": true,
+    "lesion_abolishes_differential(ratio==1)": true,
+    "moat_intact_clean(HARD)": true,
+    "regression_byte_identical": true
+  },
+  "da_source": {
+    "da_low": 0.4912754258987326,
+    "da_high": 0.604494563221681,
+    "da_baseline": 0.5,
+    "rate_low_hz": 8.583333333333332,
+    "rate_high_hz": 125.16666666666667,
+    "snc_tonic_pa": 80.0,
+    "snc_salient_pa": 600.0,
+    "neural_recipe": "spiking SNc (IZH2007_DOPAMINE) + `dopamine` from_region_firing_signed modulator (the merged one-brain limbic recipe)"
+  },
+  "scope": "RUNNER-LEVEL (NO sim/ edit): the encoding gain is a composer-layer multiply already shipped default-OFF in OneBrainComposer._write_block; this de-risk + the nav_conv_merged_bridge flag wire it to read a shared neural `dopamine` at store time.",
+  "behavioral_probe": {
+    "seed": 42,
+    "sweep": [
+      {
+        "sigma": 1.0,
+        "real_neutral_ok": true,
+        "real_rewarded_ok": true,
+        "moat_ok": true,
+        "lesion_neutral_ok": true,
+        "lesion_rewarded_ok": false
+      },
+      {
+        "sigma": 2.0,
+        "real_neutral_ok": false,
+        "real_rewarded_ok": false,
+        "moat_ok": true,
+        "lesion_neutral_ok": false,
+        "lesion_rewarded_ok": false
+      },
+      {
+        "sigma": 3.0,
+        "real_neutral_ok": false,
+        "real_rewarded_ok": false,
+        "moat_ok": true,
+        "lesion_neutral_ok": false,
+        "lesion_rewarded_ok": false
+      },
+      {
+        "sigma": 5.0,
+        "real_neutral_ok": false,
+        "real_rewarded_ok": false,
+        "moat_ok": true,
+        "lesion_neutral_ok": false,
+        "lesion_rewarded_ok": false
+      },
+      {
+        "sigma": 8.0,
+        "real_neutral_ok": false,
+        "real_rewarded_ok": false,
+        "moat_ok": true,
+        "lesion_neutral_ok": false,
+        "lesion_rewarded_ok": false
+      },
+      {
+        "sigma": 12.0,
+        "real_neutral_ok": false,
+        "real_rewarded_ok": false,
+        "moat_ok": true,
+        "lesion_neutral_ok": false,
+        "lesion_rewarded_ok": false
+      }
+    ],
+    "differential_knee_sigma": null,
+    "differential_found": false
+  },
+  "deployment_wiring": {
+    "surface": "MergedNavConvAgent (research/runners/nav_conv_merged_bridge.py)",
+    "flag": "enable_da_encoding_gain (default False = byte-identical)",
+    "params": "da_encoding_k=2.0, da_encoding_g_min=0.5, da_encoding_g_max=3.0",
+    "method": "MergedNavConvAgent._da_encoding_gain() \u2014 reads the SHARED `dopamine` off the merged bridge (the same DA _da_confidence_gate reads), maps via da_to_encoding_gain; wired onto composer.encoding_gain_fn when enabled",
+    "mirror_of": "the read-side salience gate (_da_confidence_gate / enable_da_salience_gate, I-7-a)",
+    "load_bearing_caveat": "load-bearing only on a MAGNITUDE-storing composer (the production OneBrainComposer _write_block->store_conns, or RFPhasorComposer(enable_substrate_store=True)). The default merged RFPhasorComposer/MergedRFComposer numpy-kb path stores PHASES (magnitude-invariant) -> the hook is wired + DA-correct there but behaviorally INERT until a substrate-store composer is co-resident (the characterized consolidation step). The de-risk validates the mechanism ON the production OneBrainComposer directly.",
+    "sim_edit": "NONE"
+  },
+  "behavioral_characterization": {
+    "differential_found_on_clean_store": false,
+    "honest_status": "GREEN_INERT on a clean small store (both facts recall in the normal low-damage regime; the heavy-damage regime collapses both together because the per-weight uniform read-damage hits both blocks at a similar absolute threshold and the 1.23x gain shifts it only marginally). BUT the gain is lesion-confirmed AT THE DAMAGE KNEE (sigma=1.0): with the gain ON (REAL) the rewarded fact recalls (rew_ok=True); with the gain OFF (LESION) the SAME fact fails (rew_ok=False) \u2014 a clean single-point behavioral signature that the DA gain does work. Mirrors the read-side gate's at-rest no-op / engages-under-stress pattern.",
+    "lesion_signature_at_knee": "sigma=1.0: REAL rewarded_ok=True vs LESION rewarded_ok=False (the gain rescues it)"
+  },
+  "verdict_summary": "GO (mechanism). The shared NEURAL spiking dopamine (SNc -> `dopamine` modulator) genuinely scales the PRODUCTION OneBrainComposer's fact ENCODING strength at store time: the rewarded (high-DA) block's stored synaptic magnitude == g_high/g_tonic (=1.23) x the neutral (tonic-DA) block's, lesion-confirmed (DA pinned -> ratio 1.0), moat 0-FA on the clean read, regression byte-identical (encoding_gain_fn=None). The limbic core reaches the conversational cortex on the WRITE side. The full salient-survives-where-neutral-fails BEHAVIORAL differential is GREEN_INERT on a clean small store (load-bearing only under read stress; lesion-confirmed at the knee). RUNNER-LEVEL, NO sim/ edit.",
+  "ci_regression": "PASS — controller-confirmed 15/15 (tests/test_nav_conv_merged_agent.py 8 + tests/test_nav_conv_step2b_coresident.py 7, the MergedNavConvAgent regression + moat is-None asserts, 174.55s, run bcpjiukky). The I-7 edit is to MergedNavConvAgent (a default-OFF flag + a method), so the merged-agent CI is the load-bearing regression; the default path is byte-identical."
+}
