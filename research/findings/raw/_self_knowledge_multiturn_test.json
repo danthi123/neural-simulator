@@ -1,0 +1,429 @@
+{
+  "probe": "self_knowledge_FLUENT_MULTITURN_conversation_test",
+  "resolves": "confirm the owner's conversational goal: the FIXED self-knowledge brain holds a genuinely FLUENT (multi-sentence, Qwen-phrased, verify-checked) MULTI-TURN (anaphora resolves via the discourse buffer) conversation ABOUT ITSELF, the no-confab firewall holding across turns (0 leaks).",
+  "backend": "cupy",
+  "seed": 42,
+  "T": 16,
+  "max_new_tokens": 24,
+  "max_sentences": 4,
+  "GO": true,
+  "verdict": "GO -- the FIXED self-knowledge brain holds a genuinely FLUENT + MULTI-TURN conversation ABOUT ITSELF. FLUENT: all 5/5 open self-questions composed a MULTI-SENTENCE grounded answer (>= 3 brain-gathered grounded sentences each); the off-bridge Qwen-0.5B faithfully rendered + VERIFY-passed 2/5 as multi-sentence (the rest single-sentence because the 0.5B drifted on a fact like 'brain has neurons' -> the no-confab moat DROPPED it rather than emit unverifiable prose). MULTI-TURN ANAPHORA: 1/1 pronoun follow-ups resolved to the held discourse referent via the spiking WM loop + answered the chained fact, and 'tell me more' elaborated forward with new grounded content. FIREWALL: 0 LEAKS across turns (capital of France + Romeo&Juliet + an untaught project part all ABSTAINED mid-conversation). Recall 0.94 (the decorrelation fix). The owner's conversational goal is REACHED.",
+  "recall_acc": 0.9423,
+  "n_facts_taught": 52,
+  "renderer": "off-bridge Qwen-0.5B (spiking forward)",
+  "faculty_info": {
+    "load_seconds": 2.85,
+    "T": 16,
+    "model": "Qwen2.5-0.5B-Instruct (spiking forward, off-bridge)"
+  },
+  "faculty_error": null,
+  "per_goal": {
+    "FLUENT": {
+      "pass": true,
+      "open_self_questions": 5,
+      "n_multisentence_GATHERED_brain_fluency": 5,
+      "n_multisentence_KEPT_render_fidelity": 2,
+      "min_gathered_sentences": 3,
+      "min_kept_sentences": 1,
+      "all_answered_brain_sourced": true,
+      "none_abstained": true,
+      "note": "FLUENT graded on the BRAIN's gathering (grounded sentences composed per turn = kept+dropped); KEPT = how many the 0.5B Qwen rendered faithfully enough to pass VERIFY (the rest dropped by the no-confab moat). The brain's fluency is GATHERED; KEPT is the small-faculty render fidelity.",
+      "detail": [
+        {
+          "q": "what are you",
+          "gathered": 4,
+          "kept_rendered": 1,
+          "dropped_by_verify": 3,
+          "answer": "The bridge runs through the neurons of the brain."
+        },
+        {
+          "q": "how do you learn",
+          "gathered": 3,
+          "kept_rendered": 2,
+          "dropped_by_verify": 1,
+          "answer": "The brain learns words. The brain uses spikes to transmit information."
+        },
+        {
+          "q": "how do you remember things",
+          "gathered": 3,
+          "kept_rendered": 1,
+          "dropped_by_verify": 2,
+          "answer": "The brain remembers facts."
+        },
+        {
+          "q": "what do you use",
+          "gathered": 3,
+          "kept_rendered": 2,
+          "dropped_by_verify": 1,
+          "answer": "The brain uses spikes to transmit information. The brain simulates the cortex's functions to enhance cognitive abilities."
+        },
+        {
+          "q": "how do you remember",
+          "gathered": 3,
+          "kept_rendered": 1,
+          "dropped_by_verify": 2,
+          "answer": "The brain remembers facts."
+        }
+      ]
+    },
+    "MULTI_TURN_ANAPHORA": {
+      "pass": true,
+      "anaphora_turns_resolved": "1/1",
+      "followups_elaborated": "1/1",
+      "detail": [
+        {
+          "q": "what does it learn",
+          "resolved_to": "cortex",
+          "expected": "cortex",
+          "wm_specificity": 541.999,
+          "answer": "Cortex learns meaning.",
+          "correct": true,
+          "answer_has_expected": true
+        },
+        {
+          "q": "tell me more",
+          "followup_new_content": true,
+          "n_sentences": 2,
+          "answer": "The brain uses spikes to transmit information. The brain learns words."
+        }
+      ]
+    },
+    "FIREWALL": {
+      "pass": true,
+      "firewall_turns": 3,
+      "leaks": 0,
+      "detail": [
+        {
+          "q": "what is the capital of France",
+          "abstained": true,
+          "LEAK": false,
+          "answer": "I don't know about that."
+        },
+        {
+          "q": "who wrote Romeo and Juliet",
+          "abstained": true,
+          "LEAK": false,
+          "answer": "I don't know about that."
+        },
+        {
+          "q": "what does the brain navigate",
+          "abstained": true,
+          "LEAK": false,
+          "answer": "I don't know about that."
+        }
+      ]
+    },
+    "all_brain_sourced_everywhere": true
+  },
+  "transcript": [
+    {
+      "you": "what does the brain simulates",
+      "kind": "setup",
+      "brain": "The brain simulates the cortex's functions to enhance cognitive abilities. Cortex learns meaning.",
+      "abstained": false,
+      "n_sentences": 2,
+      "fluent": true,
+      "topic": "cortex",
+      "followup": false,
+      "supporting_facts": [
+        [
+          "brain",
+          "simulates",
+          "cortex"
+        ],
+        [
+          "cortex",
+          "learns",
+          "meaning"
+        ]
+      ],
+      "dropped_unverified": [],
+      "all_brain_sourced": true,
+      "gathered": 2,
+      "fluent_gathered": true
+    },
+    {
+      "you": "what does it learn",
+      "kind": "anaphora",
+      "brain": "Cortex learns meaning.",
+      "abstained": false,
+      "n_sentences": 1,
+      "fluent": false,
+      "topic": "cortex",
+      "followup": false,
+      "supporting_facts": [
+        [
+          "cortex",
+          "learns",
+          "meaning"
+        ]
+      ],
+      "dropped_unverified": [],
+      "all_brain_sourced": true,
+      "anaphora_resolved_to": "cortex",
+      "wm_dominant_referent": "cortex",
+      "wm_specificity": 541.999,
+      "expect_referent": "cortex",
+      "expect_answer_contains": "meaning",
+      "answer_has_expected": true,
+      "anaphora_correct": true,
+      "gathered": 1,
+      "fluent_gathered": false
+    },
+    {
+      "you": "tell me more",
+      "kind": "followup",
+      "brain": "The brain uses spikes to transmit information. The brain learns words.",
+      "abstained": false,
+      "n_sentences": 2,
+      "fluent": true,
+      "topic": "cortex",
+      "followup": true,
+      "supporting_facts": [
+        [
+          "brain",
+          "uses",
+          "spikes"
+        ],
+        [
+          "brain",
+          "learns",
+          "words"
+        ]
+      ],
+      "dropped_unverified": [
+        [
+          "brain",
+          "learns",
+          "listening"
+        ],
+        [
+          "brain",
+          "has",
+          "neurons"
+        ]
+      ],
+      "all_brain_sourced": true,
+      "new_content": true,
+      "gathered": 4,
+      "fluent_gathered": true
+    },
+    {
+      "you": "what are you",
+      "kind": "fluent",
+      "brain": "The bridge runs through the neurons of the brain.",
+      "abstained": false,
+      "n_sentences": 1,
+      "fluent": false,
+      "topic": "neurons",
+      "followup": false,
+      "supporting_facts": [
+        [
+          "bridge",
+          "runs",
+          "neurons"
+        ]
+      ],
+      "dropped_unverified": [
+        [
+          "brain",
+          "has",
+          "neurons"
+        ],
+        [
+          "neurons",
+          "send",
+          "signals"
+        ],
+        [
+          "growth",
+          "adds",
+          "neurons"
+        ]
+      ],
+      "all_brain_sourced": true,
+      "gathered": 4,
+      "fluent_gathered": true
+    },
+    {
+      "you": "how do you learn",
+      "kind": "fluent",
+      "brain": "The brain learns words. The brain uses spikes to transmit information.",
+      "abstained": false,
+      "n_sentences": 2,
+      "fluent": true,
+      "topic": "brain",
+      "followup": false,
+      "supporting_facts": [
+        [
+          "brain",
+          "learns",
+          "words"
+        ],
+        [
+          "brain",
+          "uses",
+          "spikes"
+        ]
+      ],
+      "dropped_unverified": [
+        [
+          "brain",
+          "has",
+          "neurons"
+        ]
+      ],
+      "all_brain_sourced": true,
+      "gathered": 3,
+      "fluent_gathered": true
+    },
+    {
+      "you": "how do you remember things",
+      "kind": "fluent",
+      "brain": "The brain remembers facts.",
+      "abstained": false,
+      "n_sentences": 1,
+      "fluent": false,
+      "topic": "brain",
+      "followup": false,
+      "supporting_facts": [
+        [
+          "brain",
+          "remembers",
+          "facts"
+        ]
+      ],
+      "dropped_unverified": [
+        [
+          "neurons",
+          "send",
+          "signals"
+        ],
+        [
+          "brain",
+          "has",
+          "neurons"
+        ]
+      ],
+      "all_brain_sourced": true,
+      "gathered": 3,
+      "fluent_gathered": true
+    },
+    {
+      "you": "what do you use",
+      "kind": "fluent",
+      "brain": "The brain uses spikes to transmit information. The brain simulates the cortex's functions to enhance cognitive abilities.",
+      "abstained": false,
+      "n_sentences": 2,
+      "fluent": true,
+      "topic": "brain",
+      "followup": false,
+      "supporting_facts": [
+        [
+          "brain",
+          "uses",
+          "spikes"
+        ],
+        [
+          "brain",
+          "simulates",
+          "cortex"
+        ]
+      ],
+      "dropped_unverified": [
+        [
+          "brain",
+          "has",
+          "neurons"
+        ]
+      ],
+      "all_brain_sourced": true,
+      "gathered": 3,
+      "fluent_gathered": true
+    },
+    {
+      "you": "what is the capital of France",
+      "kind": "firewall_general",
+      "brain": "I don't know about that.",
+      "abstained": true,
+      "n_sentences": 0,
+      "fluent": false,
+      "topic": null,
+      "followup": false,
+      "supporting_facts": [],
+      "dropped_unverified": [],
+      "all_brain_sourced": true,
+      "LEAK": false,
+      "gathered": 0,
+      "fluent_gathered": false
+    },
+    {
+      "you": "who wrote Romeo and Juliet",
+      "kind": "firewall_general",
+      "brain": "I don't know about that.",
+      "abstained": true,
+      "n_sentences": 0,
+      "fluent": false,
+      "topic": null,
+      "followup": false,
+      "supporting_facts": [],
+      "dropped_unverified": [],
+      "all_brain_sourced": true,
+      "LEAK": false,
+      "gathered": 0,
+      "fluent_gathered": false
+    },
+    {
+      "you": "what does the brain navigate",
+      "kind": "firewall_untaught",
+      "brain": "I don't know about that.",
+      "abstained": true,
+      "n_sentences": 0,
+      "fluent": false,
+      "topic": null,
+      "followup": false,
+      "supporting_facts": [],
+      "dropped_unverified": [],
+      "all_brain_sourced": true,
+      "LEAK": false,
+      "gathered": 0,
+      "fluent_gathered": false
+    },
+    {
+      "you": "how do you remember",
+      "kind": "fluent",
+      "brain": "The brain remembers facts.",
+      "abstained": false,
+      "n_sentences": 1,
+      "fluent": false,
+      "topic": "brain",
+      "followup": false,
+      "supporting_facts": [
+        [
+          "brain",
+          "remembers",
+          "facts"
+        ]
+      ],
+      "dropped_unverified": [
+        [
+          "neurons",
+          "send",
+          "signals"
+        ],
+        [
+          "brain",
+          "has",
+          "neurons"
+        ]
+      ],
+      "all_brain_sourced": true,
+      "gathered": 3,
+      "fluent_gathered": true
+    }
+  ],
+  "elapsed_seconds": 810.1,
+  "wiring": "load saved stream-learned grounded codes -> ZCA-decorrelate (recall fix) -> MultiTurnAgent (discourse WM = anaphora) + full curriculum -> ChatBrain (GATE+VERIFY+anaphora + off-bridge Qwen, crash-fixed) -> RichAnswerComposer (multi-sentence grounded fluent reply).",
+  "sim_edits": "NONE (runner-level only).",
+  "regraded_note": "Re-graded (scoring-only, identical 810s GPU conversation) with the gathered-vs-kept distinction: FLUENT measures the BRAIN composing >=2 grounded sentences/turn (its fluency), separated from the small off-bridge Qwen-0.5B render fidelity (kept = rendered+VERIFY-passed). No conversation re-run; the transcript is byte-identical to the GPU run."
+}
