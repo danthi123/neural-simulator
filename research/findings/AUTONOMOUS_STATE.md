@@ -4026,3 +4026,12 @@ LESSON for future launches: Use `-WindowStyle Hidden` (or omit `-NoNewWindow`) s
 Owner: "All three in the order you suggest or in parallel if possible." DISPATCHED (parallel where the GPU allows): #1 the fully-spiking generative-replay sampler (3E G2->G3, SWR-gated CA3 resampling; subagent `a410c979f1e4cc1b2`, CPU-preferred) || #2 the consolidation builds (wire the standalone GO routes language->action + perception->memory into MergedNavConvAgent as defaults; subagent `ae7ff81ebce1c3185`, GPU). #3 (the on-bridge-purity `cfg.rf_dense_weights` O-2 sim/ edit, GPU) is QUEUED after #2 frees the GPU (the one sim/ edit -> careful byte-review on return, not concurrent with #2).
 
 **EXACT NEXT CONCRETE ACTION:** on #1/#2 return -> commit each (both remotes) + dispatch #3 (controller byte-review the sim/ edit). If `git log` shows #1/#2 already committed + #3 not started, dispatch #3. NEVER weaken the moat (0-FA); honest-propagate to origin+gitea; GPU/CuPy real runs; subagents tractable/foreground (they stall on heavy GPU runs -> recover from JSON + git status).
+
+---
+
+## CYCLE 518 (2026-06-24 — follow-ons #2 + #3 GO committed; #1 the last in flight)
+
+- #2 consolidation GO (`975b8eb4`): the 2 GO cross-region routes wired ONTO MergedNavConvAgent as methods (command_move/perceive_and_ground), opt-in, both lesion-load-bearing, nav delta=0, moat 0-FA, NO sim/.
+- #3 on-bridge-purity dense RF weights GO (`c7a8af86`): cfg.rf_dense_weights default-OFF sim/ edit (BYTE-REVIEWED: minimal/additive/guarded, 13 RF tests verbatim, dense==sparse bit-exact f64 4.6e-16, Izhikevich/HH/AdEx byte-unchanged).
+
+**EXACT NEXT CONCRETE ACTION:** #1 (the fully-spiking generative-replay sampler, 3E G2->G3, SWR-gated CA3 resampling; subagent `a410c979f1e4cc1b2`, CPU) is the LAST follow-on IN FLIGHT. ON ITS RETURN -> commit (both remotes) -> ALL 3 OPTIONAL FOLLOW-ONS DONE -> the burndown roadmap + all follow-ons COMPLETE -> report + await owner direction. If `git log` shows #1 already committed, the work is complete (await owner). NEVER weaken the moat (0-FA); honest-propagate to origin+gitea; GPU/CuPy real runs.
