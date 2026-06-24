@@ -1,0 +1,32 @@
+{
+  "probe": "I-1-a op-handoff-as-spikes (register->register identity route)",
+  "backend": "numpy",
+  "atol": 1e-09,
+  "D": 64,
+  "period": 200,
+  "n_cases": 9,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "vocab_size": 8,
+  "verdict": "GO",
+  "dev_handoff": {
+    "description": "ON-SUBSTRATE read-phase-from-trackers + re-kick clean unit phasor into next register, NO to_host of the phasor",
+    "byte_identical_all_cases": true,
+    "answer_match_all_cases": true,
+    "worst_acc_phase_maxdiff": 0.0,
+    "worst_cleanup_score_maxabsdiff": 0.0
+  },
+  "naive_identity_route": {
+    "description": "naive register->register identity route: carry LIVE Z forward (no re-kick); NOT byte-identical",
+    "worst_acc_phase_maxdiff": 0.030000000000000027,
+    "worst_cleanup_score_maxabsdiff": 8006.735443115234,
+    "one_over_period": 0.005
+  },
+  "cpu_closable_reuse_by_import": true,
+  "needs_gpu": false,
+  "needs_sim_edit": false,
+  "notes": "GO: the on-substrate read-phase+re-kick handoff (variant B) is byte-identical (atol 1e-9) to the host round-trip on the FLAT path (store->unbind->cleanup) across 3 facts x query-roles x 3 seeds, decoded answer + acc phases + cleanup membrane bit-for-bit. The host round-trip is removed by computing rf_read_phases/exp/rf_kick ON-DEVICE (no host phasor copy) -- reuse-by-import of the public RF ops + direct cp_* register addressing the composer already performs; NO sim/ edit for the flat path. CAVEAT (I-1-c, quantified here): a NAIVE carry-live-Z identity route is NOT byte-identical (off by ~1/period = 0.005); rf_read_phases QUANTIZES to the spike grid and the lam=0 matvec inflates the live |Z| to ~period, so the host's normalize-to-unit + quantize MUST be replicated on-device. The clause re-kick (_decode_clause) is the SAME on-substrate read+re-kick and inherits this GO; a fused multi-op megakernel (I-1-b) is the optional perf-only follow-on (a default-off sim/ edit), not required for byte-identity."
+}
