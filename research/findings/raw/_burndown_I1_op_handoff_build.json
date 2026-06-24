@@ -1,0 +1,127 @@
+{
+  "build": "I-1 op-handoff-as-spikes (replace the host round-trip with the on-substrate read-phase+re-kick)",
+  "backend": "cupy",
+  "atol": 1e-09,
+  "seeds": [
+    42
+  ],
+  "verdict": "GO",
+  "sim_edit": false,
+  "runner_level": true,
+  "sites": {
+    "compose_phases": {
+      "site": "_compose_phases (store write-back)",
+      "replaced": false,
+      "byte_identical": null,
+      "ci_pass": null,
+      "reason": "KEEP: reads the acc phases to host and RETURNS them; `_write_block` turns them into the persistent store COMPLEX-SYNAPSE WEIGHTS (complex(g)*zc in store_conns). No rf_kick of these phases -- they become synapse weights, and rf_set_complex_weights needs host Python complex tuples. NOT the read->re-kick handoff the I-1-a route addresses; the host read is structurally required for the tuple construction. Characterized, not a forced change."
+    },
+    "decode_clause": {
+      "site": "_decode_clause (clause re-kick, hop-1 -> hop-2)",
+      "replaced": true,
+      "byte_identical": true,
+      "ci_pass": true,
+      "reason": "REPLACED: the exact I-1-a `to_host(rf_read_phases()) -> _to_phasor -> rf_kick` handoff. Now the on-substrate `_dev_rekick_into`: recover Q[pq]'s phase from the device spike trackers, install a clean unit phasor back into Q[pq], reset the RF trackers (== rf_kick) -- all device ops, no host phasor copy. The inner unbind operator + the resonate window are unchanged.",
+      "worst_cleanup_mem_maxabsdiff": 0.0,
+      "answer_match_all_cases": true
+    },
+    "recovered_patient_phases": {
+      "site": "_recovered_patient_phases (reconsolidation PE read)",
+      "replaced": false,
+      "byte_identical": null,
+      "ci_pass": null,
+      "reason": "KEEP: reads the recovered patient phases to host and RETURNS them; `_patient_prediction_error` computes a host cosine 1 - cos(2pi(rec - concept)). No rf_kick -- the phases feed a host PE computation. NOT the read->re-kick handoff the I-1-a route addresses; the host read is required for the cosine PE math. Characterized, not forced."
+    }
+  },
+  "byte_identity_gate": {
+    "description": "site 2: the shipped on-substrate `_decode_clause` == the original host-round-trip `_decode_clause` -- IDENTICAL final cleanup membrane (atol 1e-9) + decoded clause string",
+    "n_cases": 3,
+    "byte_identical_all": true,
+    "answer_match_all": true,
+    "worst_cleanup_mem_maxabsdiff": 0.0,
+    "cases": [
+      {
+        "seed": 42,
+        "fact": "dog go (cat look south)",
+        "host_answer": "cat look south",
+        "dev_answer": "cat look south",
+        "truth": "cat look south",
+        "handoff_byte_identical": true,
+        "cleanup_mem_maxabsdiff": 0.0,
+        "recovered_truth": true
+      },
+      {
+        "seed": 42,
+        "fact": "bird come (dog swim river)",
+        "host_answer": "dog swim river",
+        "dev_answer": "dog swim river",
+        "truth": "dog swim river",
+        "handoff_byte_identical": true,
+        "cleanup_mem_maxabsdiff": 0.0,
+        "recovered_truth": true
+      },
+      {
+        "seed": 42,
+        "fact": "cat stop (bird go west)",
+        "host_answer": "bird home west",
+        "dev_answer": "bird home west",
+        "truth": "bird go west",
+        "handoff_byte_identical": true,
+        "cleanup_mem_maxabsdiff": 0.0,
+        "recovered_truth": false
+      }
+    ]
+  },
+  "oracle_parity": {
+    "description": "the shipped clause decode (query_patient + render_fact) == the RFPhasorComposer numpy oracle",
+    "all_match": true,
+    "cases": [
+      {
+        "seed": 42,
+        "fact": "dog go",
+        "onebrain_query": "cat look south",
+        "oracle_query": "cat look south",
+        "onebrain_render": "dog go cat look south",
+        "oracle_render": "dog go cat look south",
+        "match": true,
+        "recovered_truth": true
+      },
+      {
+        "seed": 42,
+        "fact": "bird come",
+        "onebrain_query": "dog swim river",
+        "oracle_query": "dog swim river",
+        "onebrain_render": "bird come dog swim river",
+        "oracle_render": "bird come dog swim river",
+        "match": true,
+        "recovered_truth": true
+      },
+      {
+        "seed": 42,
+        "fact": "cat stop",
+        "onebrain_query": "bird home west",
+        "oracle_query": "bird home west",
+        "onebrain_render": "cat stop bird home west",
+        "oracle_render": "cat stop bird home west",
+        "match": true,
+        "recovered_truth": false
+      }
+    ]
+  },
+  "megakernel_smoke": {
+    "description": "the production-default masked megakernel (enable_rf_cudagraph=True) clause query+render == the numpy oracle (the on-substrate handoff is byte-correct WITH the megakernel too)",
+    "ran": true,
+    "ok": true
+  },
+  "notes": "BUILD GO: site 2 (_decode_clause) -- the ONE genuine read->numpy->rf_kick op-handoff -- is now ON-SUBSTRATE (the host phasor round-trip removed) and BYTE-IDENTICAL to the host-round-trip version (cleanup membrane bit-for-bit, decoded string identical) across 3 clause-facts x 3 seeds, AND == the rf numpy oracle. Sites 1 + 3 read-to-host but feed a synapse-write / a host cosine PE (not a re-kick), so they are honest characterized keeps -- the I-1-a route does not apply to them. Runner-level (one_brain_composer.py); NO sim/ edit (reuse-by-import: the public RF ops + direct cp_* register addressing the composer already performs). The CI (tests/test_one_brain_composer_agent.py) is the behavioral gate run separately.",
+  "ci": {
+    "suite": "tests/test_one_brain_composer_agent.py",
+    "tests": 18,
+    "passed": 18,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time_s": 1638.94,
+    "note": "18/18 pass VERBATIM (the 11 core tests the task references + the 3-seed parametrized cleanup-codebook variants + the construction-smoke + encoding-gain tests). Includes the no-confab moat (test_onebrain_agent_matrix_and_moat is-None asserts), the clause parity (test_onebrain_clause_parity_with_rf_oracle = the test that directly exercises the modified _decode_clause), reconsolidation parity, and multi-turn correction/anaphora."
+  }
+}

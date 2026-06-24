@@ -386,6 +386,33 @@ class OneBrainComposer:
         comp = self.comp
         return comp._cleanup_conj(comp._to_phasor(comp.concepts[concept_word]))
 
+    def _dev_rekick_into(self, dst_slices):
+        """BURNDOWN I-1 (op-handoff-as-spikes): the ON-SUBSTRATE read-phase + re-kick that REPLACES a host round-trip
+        `to_host(rf_read_phases()) -> np.exp -> rf_kick`. Recover each RF neuron's phase from the device spike-step
+        tracker with the SAME integer formula `rf_read_phases` uses (`((period - spike_step) % period)/period`), install
+        a clean unit phasor `exp(2pi i phi)` into each register in `dst_slices`, and reset the RF trackers exactly as
+        `rf_kick` does (counter=0, prev_im=u, fired=False, spike_step=period) -- ALL device ops, with NO `to_host` of the
+        phasor value. Byte-identical to the host round-trip (I-1-a de-risk `_burndown_I1a_op_handoff_probe`: max|dphase|
+        = 0.0 over 9 cases): the phase computation, the complex exp, and the writeback are device ops on the SAME float32
+        membrane the host path casts to, so the quantize-to-spike-grid + the unit-normalize match the host path exactly.
+        The caller then proceeds with `rf_set_complex_weights(...)` + `rf_resonate_steps(...)` (the re-kicked op),
+        replacing the host `rf_kick` whose only job was to normalize+quantize+reset before that op."""
+        xp, _name = get_backend()
+        b, period, n = self.b, int(self.period), self.n_total
+        ss = b.cp_rf_spike_step                                       # device int (per neuron, set by the prior resonate)
+        phi_dev = ((period - ss) % period) / float(period)           # device phases (the rf_read_phases formula)
+        zc = xp.exp(2j * np.pi * phi_dev)                            # device clean unit phasor (the np.exp host uses)
+        b.cp_membrane_potential_v[:] = 0.0
+        b.cp_recovery_variable_u[:] = 0.0
+        for sl in dst_slices:
+            b.cp_membrane_potential_v[sl] = xp.real(zc[sl]).astype(b.cp_membrane_potential_v.dtype)
+            b.cp_recovery_variable_u[sl] = xp.imag(zc[sl]).astype(b.cp_recovery_variable_u.dtype)
+        # rf_kick's global tracker resets (counter=0, prev_im=u, fired=False, spike_step=period):
+        b._rf_counter = 0
+        b.cp_rf_prev_im = b.cp_recovery_variable_u.copy()
+        b.cp_rf_fired = xp.zeros(n, dtype=bool)
+        b.cp_rf_spike_step = xp.full(n, period, dtype=xp.int64)
+
     # --- query (cue-matching scan; reconstruct ONCE per block, read all 4 roles in PARALLEL) ---
     @staticmethod
     def _margin(scores):
@@ -702,7 +729,7 @@ class OneBrainComposer:
         unit phasor each hop), the intermediate clause composite is READ OUT and RE-KICKED as a clean unit phasor
         before the 2nd hop -- chaining the resonate through an unbind-DRIVEN register (instead of a kicked one)
         degrades its magnitude and the deeper unbind reads the wrong filler (the agent slot fails first)."""
-        comp, b, D, Pd, V = self.comp, self.b, self.D, self.period, self.V
+        b, D, Pd, V = self.b, self.D, self.period, self.V
         # Q register holding the recovered outer patient (= the clause composite). Reuse the POLARITY Q slot as scratch
         # (clause decode never reads polarity), which is valid for both the 4-role default (pol at index 3, == the old
         # hardcoded Q[3]) and the 5-role attribute layout (pol at index 4) -- always inside the per-block Q region, so
@@ -717,18 +744,18 @@ class OneBrainComposer:
         zc = self._unbind_conj("patient")
         outer = [(self.q_base + pq * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]
         b.rf_set_complex_weights(outer); b.rf_resonate_steps(Pd + 8)
-        clause_phases = np.asarray(b.rf_read_phases())[self.q_base + pq * D:self.q_base + (pq + 1) * D]
         # hop 2: RE-KICK the clause composite as a clean unit phasor (== the oracle's fresh per-hop kick), then unbind
-        # the 3 clause roles IN PARALLEL from Q[pq] -> Q[0..2] + cleanup against the main vocab
-        b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
-        kick2 = np.zeros(self.n_total, dtype=np.complex128)
-        kick2[self.q_base + pq * D:self.q_base + (pq + 1) * D] = comp._to_phasor(clause_phases)
+        # the 3 clause roles IN PARALLEL from Q[pq] -> Q[0..2] + cleanup against the main vocab.
+        # BURNDOWN I-1: the hop-1 -> hop-2 handoff is ON-SUBSTRATE (the host `to_host(rf_read_phases()) -> _to_phasor ->
+        # rf_kick` round-trip is gone): `_dev_rekick_into` recovers Q[pq]'s phase from the device spike trackers, installs
+        # a clean unit phasor back into Q[pq], and resets the RF trackers (== rf_kick) -- all device ops, no host phasor
+        # copy. Byte-identical to the round-trip (I-1-a de-risk). The unbind operator + the resonate window are unchanged.
         inner = []
         for ri, role in enumerate(ROLES3):
             zcr = self._unbind_conj(role)
             inner += [(self.q_base + ri * D + k, self.q_base + pq * D + k, complex(zcr[k])) for k in range(D)]
-        b.rf_set_complex_weights(inner); b.rf_kick(kick2, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
-        b.rf_resonate_steps(Pd + 8)
+        self._dev_rekick_into([slice(self.q_base + pq * D, self.q_base + (pq + 1) * D)])
+        b.rf_set_complex_weights(inner); b.rf_resonate_steps(Pd + 8)
         clean = []
         for ri in range(3):
             for j in range(V):
