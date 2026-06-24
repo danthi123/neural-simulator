@@ -5,7 +5,7 @@
   "backend": "numpy",
   "renderer": "template-stub (GPU-free)",
   "n_facts": 17,
-  "seed": 43,
+  "seed": 42,
   "GO": true,
   "verdict": "GO -- the brain gives SUBSTANTIVE multi-sentence grounded answers (each rich turn >= 4 brain-sourced sentences, every sentence verify-checked against the spiking store), the 'tell me more' follow-up ELABORATES the held topic (4 new grounded sentences, none repeating), and the no-confab moat STILL ABSTAINS on all 2 untaught/general cues (incl. 'capital of France'). A confabulating faculty's WRONG sentence is DROPPED by the per-sentence VERIFY (the truthful sentences survive) -- so the multi-sentence reply contains ONLY brain-sourced, verified claims. Genuinely more substantive AND still hallucination-proof. READY to --rich the real developed brain (off-bridge Qwen renderer).",
   "min_rich_sentences": 4,
@@ -164,7 +164,7 @@
       "kind": "followup",
       "thin_answer": "I don't know about that.",
       "thin_abstained": true,
-      "rich_answer": "The weights holds memory. The learning changeses weights. The neurons makes thoughts. The brain refuseses guessing.",
+      "rich_answer": "The weights holds memory. The learning changeses weights. The brain refuseses guessing. The brain speaks answers.",
       "rich_abstained": false,
       "rich_facts": [
         [
@@ -178,14 +178,14 @@
           "weights"
         ],
         [
-          "neurons",
-          "make",
-          "thoughts"
-        ],
-        [
           "brain",
           "refuses",
           "guessing"
+        ],
+        [
+          "brain",
+          "speak",
+          "answers"
         ]
       ],
       "rich_dropped": [],
@@ -311,7 +311,7 @@
     {
       "question": "tell me more",
       "THIN (old, one fact)": "I don't know about that.",
-      "RICH (multi-sentence, grounded)": "The weights holds memory. The learning changeses weights. The neurons makes thoughts. The brain refuseses guessing.",
+      "RICH (multi-sentence, grounded)": "The weights holds memory. The learning changeses weights. The brain refuseses guessing. The brain speaks answers.",
       "rich_sentences": 4,
       "supporting_facts": [
         [
@@ -325,14 +325,14 @@
           "weights"
         ],
         [
-          "neurons",
-          "make",
-          "thoughts"
-        ],
-        [
           "brain",
           "refuses",
           "guessing"
+        ],
+        [
+          "brain",
+          "speak",
+          "answers"
         ]
       ]
     }

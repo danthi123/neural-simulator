@@ -483,9 +483,13 @@ def _print_facts(chat):
         print(f"    - {a} {v} {p}", flush=True)
 
 
-def run_repl(chat, source, n_facts):
+def run_repl(chat, source, n_facts, rich=None):
+    """The interactive chat loop. When `rich` is a RichAnswerComposer, each turn produces a SUBSTANTIVE
+    multi-sentence GROUNDED reply (direct recall + multi-hop chain + elaboration, each sentence verify-checked);
+    'tell me more' / 'why?' elaborates the held topic further. Otherwise the default single-fact answer."""
     rname = chat.renderer.name if chat.renderer is not None else "(none -- raw brain triples)"
-    print(_BANNER.format(source=source, n_facts=n_facts, renderer=rname), flush=True)
+    mode = "RICH (multi-sentence grounded; 'tell me more' elaborates)" if rich is not None else "single-fact"
+    print(_BANNER.format(source=source, n_facts=n_facts, renderer=f"{rname}   |   answers: {mode}"), flush=True)
     while True:
         try:
             line = input("you> ").strip()
@@ -511,9 +515,14 @@ def run_repl(chat, source, n_facts):
             continue
         if chat.verbose_thinking and chat.renderer is not None and not chat.raw_mode:
             print("  brain> thinking...", flush=True)
-        ans, abstained = chat.answer(line)
-        tag = "  (abstained -- the moat)" if abstained else ""
-        print(f"brain> {ans}{tag}\n", flush=True)
+        if rich is not None:
+            r = rich.answer(line)
+            tag = "  (abstained -- the moat)" if r["abstained"] else f"  [{r['n_sentences']} grounded sentences]"
+            print(f"brain> {r['answer']}{tag}\n", flush=True)
+        else:
+            ans, abstained = chat.answer(line)
+            tag = "  (abstained -- the moat)" if abstained else ""
+            print(f"brain> {ans}{tag}\n", flush=True)
 
 
 # ============================================================================================================
@@ -652,6 +661,12 @@ def main():
                     help="no fluent renderer (the brain speaks its own raw triples).")
     ap.add_argument("--T", type=int, default=16, help="off-bridge Qwen rate-code pool budget (16=GO).")
     ap.add_argument("--max-new-tokens", type=int, default=24, help="Qwen surface-form length cap.")
+    # rich answers (opt-in)
+    ap.add_argument("--rich", action="store_true",
+                    help="SUBSTANTIVE multi-sentence GROUNDED replies (direct recall + multi-hop chain + "
+                         "elaboration, each sentence verify-checked); 'tell me more'/'why?' elaborates further. "
+                         "Default OFF = the single-fact oracle answer.")
+    ap.add_argument("--rich-max-sentences", type=int, default=4, help="max sentences per rich reply.")
     # smoke
     ap.add_argument("--smoke", action="store_true",
                     help="run the scripted GPU-FREE smoke (no interactive input) + write the JSON verdict.")
@@ -677,7 +692,11 @@ def main():
         res = run_smoke(chat, source, n_facts, os.path.join(_REPO, a.out) if not os.path.isabs(a.out) else a.out)
         return 0 if res["go"] else 1
 
-    run_repl(chat, source, n_facts)
+    rich = None
+    if a.rich:
+        from research.runners.rich_answer_composer import RichAnswerComposer
+        rich = RichAnswerComposer(chat, max_sentences=a.rich_max_sentences)
+    run_repl(chat, source, n_facts, rich=rich)
     return 0
 
 
