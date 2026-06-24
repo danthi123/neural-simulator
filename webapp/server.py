@@ -1799,7 +1799,7 @@ async def _warm_chat_brain() -> None:
             import time as _t
             t0 = _t.time()
             print("[webapp] startup: warming the off-bridge Qwen-0.5B renderer "
-                  "(one-time model load; the first chat turn will be fast)…",
+                  "(one-time model load; the first chat turn will be fast)...",
                   flush=True)
             # Build the DEFAULT ChatBrain (default brain + the resolved qwen
             # renderer). This constructs the shared warm QwenRenderer (the heavy
