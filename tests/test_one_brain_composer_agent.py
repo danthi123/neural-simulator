@@ -310,8 +310,9 @@ def test_onebrain_default_path_unaffected():
     from research.runners.brain_conversational_agent import BrainConversationalAgent
     import inspect
     src = inspect.getsource(BrainConversationalAgent.hear)
-    assert "self.composer.hear" in src and "self.parser.parse" in src, \
-        "hear() must keep BOTH the delegation path (onebrain) and the parse+store path (rf/rate default)"
+    assert "self.composer.hear" in src and "_ensure_parser" in src and "self.composer.store" in src, \
+        "hear() must keep BOTH the delegation path (onebrain: composer.hear) and the parse+store path " \
+        "(rf/rate default: _ensure_parser().parse -> composer.store; _ensure_parser is the lazy-built parser)"
 
 
 def test_onebrain_encoding_gain_default_off_byte_identical():
