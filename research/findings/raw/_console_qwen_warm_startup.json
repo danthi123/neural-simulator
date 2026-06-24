@@ -1,0 +1,76 @@
+{
+  "title": "Console final polish — warm the off-bridge Qwen renderer at webapp startup + default to cupy when a GPU is present",
+  "date": "2026-06-24",
+  "scope": "webapp only (webapp/server.py); NO sim/ edit",
+  "context": {
+    "prior": "CYCLE 521 (AUTONOMOUS_STATE.md) + research/findings/raw/_console_live_debug_fixes.json: the SK brain-load was fixed (~9.8min -> 0.7s). The remaining ~58s FIRST-turn cost is the off-bridge Qwen-0.5B renderer MODEL load (transformers from_pretrained -> GPU + spiking-op calibration), one-time per webapp session; warm turns are ~1.7s.",
+    "goal": "Pay the ~58s Qwen model load at webapp STARTUP (background, non-blocking) so the FIRST chat turn is fast; and make a bare `uvicorn webapp.server:app` use the cupy (GPU) backend when a CUDA GPU is present instead of the ~20x-slower numpy-CPU backend."
+  },
+  "changes": [
+    {
+      "id": "1-warm-qwen-at-startup",
+      "what": "Added a third `@app.on_event('startup')` hook `_warm_chat_brain` that pre-builds the off-bridge Qwen renderer (and the DEFAULT ChatBrain) ONCE in a background daemon thread, so uvicorn reports startup-complete promptly while the model loads.",
+      "files": "webapp/server.py",
+      "lines": {
+        "startup_hook_warm_chat_brain": "~1763-1827 (new `@app.on_event('startup') async def _warm_chat_brain`)",
+        "warm_qwen_singleton_helper": "~2888-2915 (new `import threading as _threading`, `_WARM_QWEN_RENDERER`/`_WARM_QWEN_LOCK`, `_get_warm_qwen_renderer()`)",
+        "build_chat_brain_reuse": "~2956-2964 (`_build_chat_brain` now uses `_get_warm_qwen_renderer()` for the qwen renderer instead of constructing a fresh `QwenRenderer(seed=42)`)",
+        "import_trim": "QwenRenderer dropped from the `_build_chat_brain` import block; now imported locally inside `_get_warm_qwen_renderer` (its only use site)"
+      },
+      "mechanism": "The QwenRenderer (which constructs SpikingQwenFaculty -> from_pretrained model load + calibration, the ~58s cost) is now a PROCESS-WIDE shared singleton built once under a double-checked lock. The startup hook builds the DEFAULT ChatBrain (brain='tiny-demo' + the resolved renderer), which (a) pays the model load once and (b) caches the default ChatBrain under the SAME cache key brain_chat() looks up for a default first turn: ('default','tiny-demo',<renderer>). So a default first turn hits the warm cache outright; and because the qwen renderer is the shared singleton, even a first turn that picks a DIFFERENT brain reuses the already-loaded model (only its small brain build remains).",
+      "guards": [
+        "only warms the qwen MODEL when `_default_brain_renderer()` actually resolves to 'qwen' (a GPU host on the cupy backend); on a GPU-less / stub-renderer host the hook logs + returns (no model download, the stub builds instantly on first turn)",
+        "the warm runs in a daemon thread (never blocks boot, never blocks process exit)",
+        "any failure (no GPU, qwen/torch unavailable, model not downloaded) is swallowed -> the chat endpoint builds on the first turn / falls back to the stub renderer exactly as before",
+        "_get_warm_qwen_renderer uses double-checked locking so a concurrent startup-warm + first-turn build the model only ONCE"
+      ]
+    },
+    {
+      "id": "2-cupy-default-when-gpu",
+      "what": "Added a module-load-time block (right after the path constants, BEFORE any FastAPI/sim/cupy use) that `os.environ.setdefault('SIM_BACKEND','cupy')` ONLY IF a CUDA GPU is detected.",
+      "files": "webapp/server.py",
+      "lines": "~44-80 (new `def _cuda_gpu_present()` + the `if 'SIM_BACKEND' not in os.environ and _cuda_gpu_present(): os.environ.setdefault('SIM_BACKEND','cupy')` block)",
+      "mechanism": "All sim/cupy imports in server.py are lazy (inside endpoint handlers + _build_chat_brain), so a module-load-time SIM_BACKEND set wins the FIRST `get_backend()` resolution. `_cuda_gpu_present()` tries cupy's runtime getDeviceCount first (matches the production backend), then torch.cuda.is_available() as a fallback; any import/probe error -> False (conservative).",
+      "guards": [
+        "`setdefault` never clobbers an explicit SIM_BACKEND -> `SIM_BACKEND=numpy uvicorn ...` stays numpy (CPU-portable path preserved)",
+        "the `and` short-circuits: when SIM_BACKEND is ALREADY set (incl. numpy), `_cuda_gpu_present()` is NEVER called -> no cupy/torch import on a deliberately-numpy launch",
+        "only sets cupy when a GPU is genuinely found; else the env is left unset so sim.backend auto-detects -> numpy on a GPU-less host"
+      ]
+    }
+  ],
+  "validation_logic_cpu_only": {
+    "ast_parse": "PASS — webapp/server.py parses (ast.parse OK).",
+    "wiring_static_check": {
+      "startup_hooks": ["recover_orphan_runs", "_periodic_orphan_scan", "_warm_chat_brain"],
+      "_warm_chat_brain_defined": true,
+      "_get_warm_qwen_renderer_defined": true,
+      "_build_chat_brain_uses_warm_singleton": true,
+      "_build_chat_brain_no_longer_constructs_bare_QwenRenderer": true,
+      "module_head_setdefault_cupy_present": true,
+      "module_head_guarded_by_gpu_and_env": true,
+      "warm_hook_resolves_default_renderer": true,
+      "warm_hook_guards_renderer_neq_qwen": true,
+      "warm_hook_builds_default_cache_key": true,
+      "warm_hook_setdefault_into_BRAIN_CHATS": true,
+      "warm_hook_daemon_thread": true
+    },
+    "cache_key_match": "VERIFIED — brain_chat() builds cache_key=(req.session, req.brain, _default_brain_renderer().lower()); BrainChatRequest defaults session='default', brain='tiny-demo', renderer=None. The warm hook builds ('default','tiny-demo',_default_brain_renderer()). _default_brain_renderer() returns already-lowercase 'qwen'/'stub' so .lower() is a no-op -> keys are IDENTICAL. A default first turn hits the warm cache.",
+    "double_checked_locking_unit_test": "PASS — 8 concurrent callers (startup-warm racing a fast first turn) -> the mock model build_count == 1 and all callers share the SAME instance; a subsequent call returns the cached instance with no new build.",
+    "renderer_default_logic": "_default_brain_renderer(): backend='cupy' (now set by change #2 on a GPU host) passes the `backend != 'cupy'` guard, torch.cuda.is_available() -> returns 'qwen'. On a numpy/CPU host SIM_BACKEND is unset -> backend='' -> torch check -> 'stub'. Consistent.",
+    "anti_cheat_behavior_unchanged": "The ONLY chat-path change is reusing a SHARED QwenRenderer instance (same class, seed=42) instead of constructing a fresh one each build. QwenRenderer.render_svo is stateless across calls (re-prompts per fact), so the surface form + the gate/constrain/VERIFY no-confab moat are byte-identical. brain_chat()'s GATE -> render -> verify flow, the recalled_svo, abstained, verified fields, and the rich path are all untouched. Only the FIRST-turn LATENCY improves."
+  },
+  "git_diff_stat": " webapp/server.py | 133 ++++++++++++++++++++++++++++++++++++++++++++++++++++++- \n 1 file changed, 131 insertions(+), 2 deletions(-)",
+  "sim_edit_flag": "NONE — git diff --name-only -- sim/ is empty. webapp-only change.",
+  "honest_notes": [
+    "Warming is done in a BACKGROUND DAEMON THREAD (not a blocking startup) so uvicorn boots promptly and the dashboard + all other endpoints are usable immediately; if a first chat turn arrives DURING the warm, the shared-singleton lock serializes it so the model still loads exactly once (the turn waits on the same load it would have triggered itself — no double load, no extra latency vs. cold).",
+    "On a GPU-less / stub-renderer host the warm hook is a deliberate no-op (logs that the renderer is GPU-free); the stub ChatBrain is cheap to build on the first turn so there is nothing worth warming.",
+    "Controller does the live restart + first-turn timing (this session did NOT restart or curl the running webapp).",
+    "The model files must already be downloaded for the warm to be instant-after-startup; if not present, from_pretrained downloads on first warm (one-time), and the guard swallows any failure -> falls back to the stub renderer."
+  ],
+  "controller_restart_and_time_command": {
+    "note": "Restart the webapp on cupy and time the FIRST chat turn to confirm it is now fast (the renderer is warmed at startup). Wait until the startup log prints '[webapp] startup: Qwen renderer WARM in <N>s' BEFORE sending the first turn, OR send it immediately to confirm the singleton lock makes the cold first turn no slower than the warm load.",
+    "powershell_restart": "Stop the current :8765 server, then: $env:SIM_BACKEND='cupy'; python -m uvicorn webapp.server:app --host 127.0.0.1 --port 8765   # (or `uvicorn webapp.server:app --port 8765` — change #2 now auto-sets cupy when the GPU is present)",
+    "time_first_turn_bash": "time curl -s -X POST http://127.0.0.1:8765/api/brain-chat -H 'Content-Type: application/json' -d '{\"session\":\"default\",\"brain\":\"tiny-demo\",\"message\":\"what does the dog do?\"}'",
+    "expected": "After the startup log shows 'Qwen renderer WARM', the FIRST POST should return in ~1.7s (the warm-turn latency) instead of ~58s; the answer + abstained/verified fields are unchanged."
+  }
+}

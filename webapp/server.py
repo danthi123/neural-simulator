@@ -41,6 +41,44 @@ FINDINGS_DIR = REPO_ROOT / "research" / "findings"
 RAW_RUNS_DIR = REPO_ROOT / "research" / "findings" / "raw" / "g11_bg"
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 
+
+# ─── Default to the cupy (GPU) backend when a CUDA GPU is present ───────────
+# A bare `uvicorn webapp.server:app` would otherwise auto-detect a backend per
+# `sim.backend` defaults, but the chat path's qwen renderer + any on-bridge
+# spiking work is ~20× slower on the numpy-CPU backend. So: if a CUDA GPU is
+# actually detectable, `setdefault` SIM_BACKEND=cupy BEFORE any sim/cupy import
+# happens (all of those are lazy, inside endpoint handlers + _build_chat_brain,
+# so this module-load-time set wins the first `get_backend()` resolution).
+# Guarded both ways: `setdefault` never clobbers an explicit SIM_BACKEND
+# (so `SIM_BACKEND=numpy uvicorn ...` stays numpy for the CPU-portable path),
+# and we only set cupy when a GPU is genuinely found (else leave the env unset
+# so `sim.backend` auto-detects → numpy on a GPU-less host). Detection is
+# defensive: a probe failure leaves the env untouched (numpy fallback).
+def _cuda_gpu_present() -> bool:
+    """True iff a CUDA GPU is actually usable. Tries cupy's runtime first
+    (cheapest, matches the production backend), then torch as a fallback.
+    Any import/probe error → False (conservative: never force cupy on a host
+    where the GPU can't be confirmed)."""
+    try:
+        import cupy  # noqa: PLC0415
+        if cupy.cuda.runtime.getDeviceCount() > 0:
+            return True
+    except Exception:
+        pass
+    try:
+        import torch  # noqa: PLC0415
+        if torch.cuda.is_available():
+            return True
+    except Exception:
+        pass
+    return False
+
+
+if "SIM_BACKEND" not in os.environ and _cuda_gpu_present():
+    os.environ.setdefault("SIM_BACKEND", "cupy")
+    print("[webapp] CUDA GPU detected → defaulting SIM_BACKEND=cupy "
+          "(set SIM_BACKEND=numpy to override for the CPU path)", flush=True)
+
 class NoCacheStaticFiles(StaticFiles):
     """Disable browser caching of /static/* in dev so JS/CSS edits are
     picked up on the next reload without a manual hard-refresh. The
@@ -1723,6 +1761,68 @@ async def _periodic_orphan_scan() -> None:
     asyncio.create_task(_loop())
 
 
+@app.on_event("startup")
+async def _warm_chat_brain() -> None:
+    """Pre-build the off-bridge Qwen renderer (+ the default ChatBrain) ONCE at
+    startup so the FIRST `/api/brain-chat` turn doesn't pay the ~58s Qwen-0.5B
+    model load (the SK brain-load is already fixed; the renderer model load is
+    the remaining first-turn cost — one-time per webapp session; warm turns are
+    ~1.7s). See AUTONOMOUS_STATE CYCLE 521 + `_console_live_debug_fixes.json`.
+
+    Runs in a BACKGROUND DAEMON THREAD so uvicorn reports startup-complete
+    promptly (the dashboard + every other endpoint are usable immediately while
+    the model loads). Idempotent + guarded:
+      - only warms the qwen model when the default renderer actually resolves to
+        'qwen' (a GPU host on the cupy backend); on a GPU-less / stub-renderer
+        host this is a no-op (the stub builds instantly, no model download);
+      - any failure (no GPU, qwen/torch unavailable, model not downloaded) is
+        swallowed — the chat endpoint then builds on the first turn / falls back
+        to the stub renderer exactly as before. Warming NEVER blocks boot and
+        NEVER changes the chat answer (only the first-turn latency).
+
+    The warm builds the DEFAULT cache key `(session='default', brain='tiny-demo',
+    renderer=<default>)`, so a default first turn hits the warm cache outright;
+    and because the qwen renderer is a PROCESS-WIDE shared singleton
+    (`_get_warm_qwen_renderer`), even a first turn that picks a DIFFERENT brain
+    reuses the already-loaded model (only its small brain build remains)."""
+    renderer = _default_brain_renderer()
+    if renderer != "qwen":
+        # No GPU / cupy not selected → the stub renderer is instant; nothing to
+        # warm. (Building the stub ChatBrain here would just duplicate the
+        # cheap first-turn build, so skip — keep startup lean.)
+        print(f"[webapp] startup: chat renderer is {renderer!r} (GPU-free) — "
+              "no Qwen model to warm", flush=True)
+        return
+
+    def _warm() -> None:
+        try:
+            import time as _t
+            t0 = _t.time()
+            print("[webapp] startup: warming the off-bridge Qwen-0.5B renderer "
+                  "(one-time model load; the first chat turn will be fast)…",
+                  flush=True)
+            # Build the DEFAULT ChatBrain (default brain + the resolved qwen
+            # renderer). This constructs the shared warm QwenRenderer (the heavy
+            # model load) AND caches the default ChatBrain so the default first
+            # turn is instant. Cache key MUST mirror brain_chat()'s lookup.
+            default_brain = "tiny-demo"   # == BrainChatRequest.brain default
+            chat, source = _build_chat_brain(default_brain, renderer)
+            chat._brain_chat_source = source  # type: ignore[attr-defined]
+            cache_key = ("default", default_brain, renderer)
+            _BRAIN_CHATS.setdefault(cache_key, chat)
+            dt = round(_t.time() - t0, 1)
+            print(f"[webapp] startup: Qwen renderer WARM in {dt}s "
+                  f"(default ChatBrain cached as {cache_key!r}); "
+                  "first chat turn is now fast", flush=True)
+        except Exception as e:   # no GPU / model missing / qwen unavailable
+            print(f"[webapp] startup: Qwen warm skipped ({type(e).__name__}: {e}) "
+                  "— the chat endpoint will build on the first turn / use the "
+                  "stub renderer", flush=True)
+
+    # Daemon thread: never blocks process exit, never blocks uvicorn boot.
+    _threading.Thread(target=_warm, name="qwen-warm", daemon=True).start()
+
+
 class ControlUpdate(BaseModel):
     """Body for POST /api/runs/launch/{run_id}/control. All fields optional;
     the runner reads the file fresh on each trial, so partial updates work
@@ -2785,6 +2885,35 @@ def _pin_bridge_backend() -> None:
         pass  # never let backend-pinning crash a chat turn
 
 
+# A PROCESS-WIDE warm QwenRenderer singleton. The off-bridge Qwen-0.5B model
+# load (from_pretrained → GPU + the spiking-op calibration) is the ~58s one-time
+# cost; a fresh `QwenRenderer()` re-pays it every time. Building it ONCE and
+# reusing the SAME instance across every (session, brain) ChatBrain means only
+# the FIRST construction (the startup warm, below) pays the model load — every
+# later brain that uses the qwen renderer reuses the already-loaded model. The
+# renderer is stateless across `render_svo` calls (it re-prompts per fact), so a
+# shared instance is safe to reuse for any brain/session. Guarded by a lock so a
+# concurrent first-turn + startup-warm build the model only once.
+import threading as _threading
+
+_WARM_QWEN_RENDERER: object | None = None
+_WARM_QWEN_LOCK = _threading.Lock()
+
+
+def _get_warm_qwen_renderer():
+    """Return the shared warm QwenRenderer, building it ONCE (the ~58s model
+    load) under a lock. Reused by every ChatBrain that uses the qwen renderer
+    so the model loads a single time per server process."""
+    global _WARM_QWEN_RENDERER
+    if _WARM_QWEN_RENDERER is not None:
+        return _WARM_QWEN_RENDERER
+    with _WARM_QWEN_LOCK:
+        if _WARM_QWEN_RENDERER is None:   # double-checked: another thread may have built it
+            from research.runners.brain_chat_tui import QwenRenderer
+            _WARM_QWEN_RENDERER = QwenRenderer(seed=42)   # the heavy model load (paid once)
+        return _WARM_QWEN_RENDERER
+
+
 def _build_chat_brain(brain: str, renderer: str):
     """Construct a `ChatBrain` for the given brain source + renderer.
 
@@ -2798,7 +2927,7 @@ def _build_chat_brain(brain: str, renderer: str):
     # BEFORE building any bridge in the chat brain (the cupy/numpy-flip bug).
     _pin_bridge_backend()
     from research.runners.brain_chat_tui import (
-        ChatBrain, StubRenderer, QwenRenderer,
+        ChatBrain, StubRenderer,
         _build_tiny_demo, _load_self_knowledge, DEFAULT_SELF_ALIASES,
         _SK_CODES, _SK_CURRICULUM,
     )
@@ -2846,7 +2975,7 @@ def _build_chat_brain(brain: str, renderer: str):
     if rname == "raw":
         rend = None
     elif rname == "qwen":
-        rend = QwenRenderer(seed=42)        # needs cupy + CUDA torch
+        rend = _get_warm_qwen_renderer()    # shared warm model (loaded once); needs cupy + CUDA torch
     else:
         rend = StubRenderer()               # GPU-free default
     return ChatBrain(agent, self_aliases=aliases, renderer=rend), source
