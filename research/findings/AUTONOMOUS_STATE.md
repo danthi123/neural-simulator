@@ -4074,3 +4074,13 @@ Owner's "keep digging on SK latency" is RESOLVED. SK-brain first-load dropped **
 **Capstone payoff LAUNCHED:** a 7-day develop-to-disk run (`b08132cle`, cupy, `--save-bundle bridges/developed/week1 --per-day-bundles`) -> a brain bundle PER DAY; the console `/api/brains` scan finds depth-2 per-day bundles + labels them `week1/day_<N> (day N)`, so the owner loads each day + watches the brain grow (vocab+facts). ETA ~15.6 min (7 x ~2.2 min/day).
 
 **EXACT NEXT CONCRETE ACTION:** on `b08132cle` completion -> verify the 7 per-day bundles + final brain landed under bridges/developed/week1/ + the console picker lists them (curl /api/brains) + spot-load day_0 vs day_6 to confirm growth is visible; commit a findings note. PARALLEL: B3 (per-turn chat activity viz in the console). NEVER weaken the moat; honest-propagate to origin+gitea; GPU validations controller-managed.
+
+---
+
+## CYCLE 523 (2026-06-24 — week-1 develop CAPSTONE demonstrated + B3 activity-viz built)
+
+**ARTIFICIAL-LIFE CAPSTONE DEMONSTRATED end-to-end + LOCAL.** The 7-day develop-to-disk run (`b08132cle`) completed: the brain DEVELOPED over a simulated week -- **vocab 6->24, facts 2->11, recall 1.00 every day, retention 1.00 (no forgetting), no-confab moat 0-FA every day (7/7), corr(M,C) ~+0.9 (real stream-cortex learning), tier 4->8->12 growth**, ~15 min for the week on one 3090. **8 console-loadable per-day bundles** under bridges/developed/week1/ (day_0..day_6 + final brain); /api/brains lists all 8 as `week1/day_N (day N)` with growing fact counts (3,7,12,16,18,19,19 / final 11). The owner picks a day -> chats with that day's brain -> watches it grow = the watch-and-talk-to-a-developing-brain north-star. Finding: `2026-06-24-week1-develop-loop-console-capstone.md`.
+
+**B3 (per-turn brain-activity viz) BUILT + committed (`d7379e4a`, NO sim/ edit).** A chat turn now carries an `activity` object (per-role decoded words+confidence, which engram matched/how many scanned, an RF firing-fraction+|Z| gauge), rendered in the Interact tab behind a 'Show brain activity' toggle; makes the no-confab moat VISIBLE ('scanned N, none matched -> abstained'). Default-off -> trace=False byte-identical (conversational tests pass). Read-only of already-computed state, no per-turn GPU bloat.
+
+**EXACT NEXT CONCRETE ACTION:** restart the webapp (pick up B3) once the develop run fully exits (GPU free) -> live-verify a chat turn shows the `activity` field + spot-load week1/day_0 vs day_6 to see growth in the console. Then A2 (scale the develop horizon: compressed month/year). NEVER weaken the moat; honest-propagate origin+gitea; GPU validations controller-managed.
