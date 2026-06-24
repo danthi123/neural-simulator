@@ -2283,6 +2283,7 @@ function setupBrainChat() {
   const moreBtn = document.getElementById("brainchat-more");
   const resetBtn = document.getElementById("brainchat-reset");
   const brainEl = document.getElementById("brainchat-brain");
+  const brainRefreshBtn = document.getElementById("brainchat-brain-refresh");
   const rendererEl = document.getElementById("brainchat-renderer");
   const richEl = document.getElementById("brainchat-rich");
   const showSvoEl = document.getElementById("brainchat-show-svo");
@@ -2292,12 +2293,47 @@ function setupBrainChat() {
   // A stable per-tab session id so the server keeps ONE warm ChatBrain.
   const session = "ui-" + Math.random().toString(36).slice(2, 10);
 
+  function currentBrain() {
+    return (brainEl && brainEl.value && brainEl.value.trim()) || "tiny-demo";
+  }
+
   function rendererParam() {
     const v = rendererEl ? rendererEl.value : "auto";
     return v === "auto" ? null : v;
   }
 
   function richOn() { return !!(richEl && richEl.checked); }
+
+  // Populate the brain-selector dropdown from /api/brains (built-ins + any
+  // developed-brain bundle under bridges/developed/). The option VALUE is the
+  // brain `id` the chat endpoint resolves verbatim. Keeps the current
+  // selection if it still exists after a refresh.
+  async function populateBrains() {
+    if (!brainEl) return;
+    const prev = brainEl.value;
+    try {
+      const res = await fetch("/api/brains");
+      if (!res.ok) return;
+      const data = await res.json();
+      const brains = (data && data.brains) || [];
+      if (!brains.length) return;
+      brainEl.replaceChildren();
+      for (const b of brains) {
+        const bits = [];
+        if (b.day != null) bits.push("day " + b.day);
+        if (b.n_facts != null) bits.push(b.n_facts + " facts");
+        if (b.vocab_size != null && b.kind === "developed-bundle") bits.push(b.vocab_size + " words");
+        const suffix = bits.length ? "  (" + bits.join(", ") + ")" : "";
+        const opt = el("option", { value: b.id }, (b.label || b.id) + suffix);
+        if (b.loadable === false) opt.disabled = true;
+        if (b.note) opt.title = b.note;
+        brainEl.appendChild(opt);
+      }
+      // restore prior selection if still present, else default to first.
+      if (prev && brains.some((b) => b.id === prev)) brainEl.value = prev;
+      else if (data.default && brains.some((b) => b.id === data.default)) brainEl.value = data.default;
+    } catch (e) { /* non-fatal — the static tiny-demo option stays */ }
+  }
 
   function clearLog(msg) {
     logEl.replaceChildren(
@@ -2331,7 +2367,7 @@ function setupBrainChat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           session, message, rich,
-          brain: (brainEl && brainEl.value.trim()) || "tiny-demo",
+          brain: currentBrain(),
           renderer: rendererParam(),
         }),
       });
@@ -2379,7 +2415,7 @@ function setupBrainChat() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             session,
-            brain: (brainEl && brainEl.value.trim()) || "tiny-demo",
+            brain: currentBrain(),
             renderer: rendererParam(),
           }),
         });
@@ -2388,6 +2424,20 @@ function setupBrainChat() {
       if (statusEl) statusEl.textContent = "";
       showMore(false);
     });
+  }
+
+  // Picking a different brain starts a fresh conversation with it (the next
+  // turn loads + warms the picked brain server-side). The "↻" refresh rescans
+  // for newly-saved developed-brain bundles.
+  if (brainEl) {
+    brainEl.addEventListener("change", () => {
+      clearLog("Switched to " + currentBrain() + " — ask it something.");
+      if (statusEl) statusEl.textContent = "brain: " + currentBrain() + " (loads on first message)";
+      showMore(false);
+    });
+  }
+  if (brainRefreshBtn) {
+    brainRefreshBtn.addEventListener("click", () => { populateBrains(); });
   }
 
   // Example-prompt chips fill the input.
@@ -2404,6 +2454,10 @@ function setupBrainChat() {
       logEl.classList.toggle("show-svo", showSvoEl.checked);
     });
   }
+
+  // Populate the brain dropdown from the server (built-ins + any developed
+  // bundle). Non-blocking; the static tiny-demo option works meanwhile.
+  populateBrains();
 
   inputEl.focus();
 }

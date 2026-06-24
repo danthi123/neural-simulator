@@ -1,0 +1,81 @@
+{
+  "task": "CAPSTONE+CONSOLE BUILD — STEP B2: GET /api/brains list endpoint + Interact-tab brain-selector DROPDOWN",
+  "date": "2026-06-24",
+  "scope_ref": "research/findings/2026-06-24-capstone-console-scoping.md (step B2)",
+  "verdict": "GO",
+  "sim_edit": false,
+  "webapp_restart_needed": true,
+  "summary": "Added GET /api/brains (lists the brains the console can talk to: the two built-ins + any bridges/developed/* bundle) and replaced the Interact-tab free-text brain field with a <select> dropdown populated from it (+ a rescan button). The dropdown sends the brain `id` verbatim and /api/brain-chat resolves it to the bundle (cached, the SAME load path brain_chat_tui uses). Default (no-pick) chat is byte-unchanged. NO sim/ edit.",
+
+  "build": {
+    "endpoint": {
+      "route": "GET /api/brains",
+      "file": "webapp/server.py",
+      "returns": "{brains:[...], n_brains, developed_root, default}",
+      "entry_shape": "{id, label, kind, loadable, n_facts?, vocab_size?, n_grounded_codes?, day?, seed?, composer_kind?, provenance?, note?}",
+      "sources": [
+        "builtin 'tiny-demo' — always loadable, code-only (5 facts)",
+        "builtin 'self-knowledge' — metadata (n_facts=40+12 attr, n_grounded_codes, seed, n_days, learn_fidelity_mean) read from the on-disk _self_knowledge_grounded_codes.json + _curriculum_self_knowledge.json; selectable even if absent (the chat endpoint falls back to seed codes, noted)",
+        "developed-bundle — scans bridges/developed/* at depth 1 AND depth 2 (the develop loop's <lineage>/{brain,day_N} layout) for any dir with a brain.json manifest; reads name/day/n_facts/vocab_size/n_grounded_codes from the manifest; id = repo-RELATIVE forward-slash path; sorts 'brain' first then day_N ascending"
+      ],
+      "helpers_added": ["_read_json_safe", "_scan_developed_bundles", "list_brains", "DEVELOPED_DIR/_SK_CODES_PATH/_SK_CURRICULUM_PATH consts"]
+    },
+    "brain_resolution": {
+      "file": "webapp/server.py (_build_chat_brain)",
+      "change": "added _resolve_bundle(): a repo-RELATIVE bundle id (e.g. 'bridges/developed/develop_gpu/brain') is resolved against REPO_ROOT before is_developed_brain_bundle(), so the picked id loads regardless of the server's launch CWD; absolute paths used as-is; tiny-demo/self-knowledge still hit the built-in branches (id not a bundle path)",
+      "load_path": "is_developed_brain_bundle -> load_developed_brain(use_multiturn=True) — the SAME cached path brain_chat_tui.load_brain + the existing /api/brain-chat used; cache key (session, brain, renderer) unchanged"
+    },
+    "frontend": {
+      "index_html": "replaced <input id=brainchat-brain> with <select id=brainchat-brain> + a ↻ rescan button inside .interact-brain-row",
+      "app_js": "setupBrainChat: added populateBrains() (fetch /api/brains -> build options with day/facts/words suffixes; disable non-loadable; restore prior selection or default); send()/reset() use currentBrain() (reads the select's value, identical to the old input.value); a 'change' handler clears the log + starts a fresh conversation with the picked brain (loads on next turn); the ↻ button rescans; populateBrains() called on init",
+      "style_css": ".interact-brain-row flex layout for the select + compact button"
+    }
+  },
+
+  "validation": {
+    "method": "CPU/logic-only — NO heavy GPU brain-load (the ~104s live load is the controller's separate validation)",
+    "list_returns_brains": {
+      "ok": true,
+      "n_brains_builtin_only": 2,
+      "ids": ["tiny-demo", "self-knowledge"],
+      "tiny_demo": {"loadable": true, "n_facts": 5},
+      "self_knowledge": {"loadable": true, "n_facts": 52, "n_grounded_codes": 88, "seed": 42, "learn_fidelity_mean": 0.8586}
+    },
+    "bundle_scan_correct": {
+      "ok": true,
+      "note": "temp fake bundles bridges/developed/_b2test/{brain,day_2} were found (2); 'brain' sorts first; day/n_facts/vocab_size surfaced from manifest; id is repo-relative posix (bridges/developed/_b2test/brain); list endpoint includes them",
+      "scan_brain_first": true,
+      "scan_brain_day": 4,
+      "scan_brain_n_facts": 11,
+      "scan_brain_vocab_size": 24,
+      "scan_id_is_relposix": true
+    },
+    "resolution_correct": {
+      "ok": true,
+      "note": "the relative bundle id resolves (REPO_ROOT / id) to an existing brain.json + is_developed_brain_bundle()==True"
+    },
+    "dropdown_wired": {
+      "ok": true,
+      "note": "app.js parses clean as ESM (node --check); populateBrains() fetches /api/brains, builds <option value=id>, restores selection; send/reset send currentBrain(); change re-loads; ↻ rescans"
+    },
+    "default_unchanged_anticheat": {
+      "ok": true,
+      "note": "tiny-demo/self-knowledge/empty resolve to the BUILT-IN branches (not the bundle branch); end-to-end CPU tiny-demo turn: taught fact answered ([dog,chase,cat]), untaught fact -> no-confab MOAT abstains, render non-empty. The default (no-pick) path is byte-unchanged."
+    }
+  },
+
+  "honest_caveats": [
+    "No developed-brain BUNDLE exists on disk yet (A1 landed the SAVE capability but no develop-loop run has produced one). bridges/developed/ is absent, so /api/brains currently lists only the 2 built-ins live; the scan was validated against temp fake bundles matching the develop loop's manifest layout. Once a develop loop runs with --save-bundle-root bridges/developed/<lineage>, its {brain, day_N} bundles appear in the dropdown (verified by the scan logic).",
+    "The self-knowledge brain is a flat grounded-codes JSON, NOT a save_developed_brain bundle — it loads via the existing dedicated 'self-knowledge' source (not the bundle path). It IS loadable + listed with metadata. A format shim to also expose it as a bundle is unnecessary (the chat endpoint already loads it); no gap.",
+    "The live heavy brain-load (load_developed_brain on a real bundle, ~104s GPU) was NOT exercised here per the task's CPU/logic-only constraint — that is the controller's separate live validation. The LOGIC (list returns the brains; the id->path resolution is correct; the dropdown is wired; the default is unchanged) is fully validated."
+  ],
+
+  "git_diff_stat": {
+    "webapp/server.py": "+193 (the /api/brains endpoint + _scan_developed_bundles + _resolve_bundle in _build_chat_brain)",
+    "webapp/static/app.js": "+58/-7 (populateBrains + currentBrain + change/refresh wiring)",
+    "webapp/static/index.html": "+11/-3 (select dropdown + rescan button)",
+    "webapp/static/style.css": "+4 (.interact-brain-row)",
+    "sim/": "UNTOUCHED",
+    "total": "4 files, +259/-7"
+  }
+}

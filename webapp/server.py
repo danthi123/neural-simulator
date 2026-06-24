@@ -2761,6 +2761,18 @@ def _build_chat_brain(brain: str, renderer: str):
         is_developed_brain_bundle, load_developed_brain,
     )
 
+    # A developed-brain bundle id from /api/brains is a repo-RELATIVE path
+    # (e.g. 'bridges/developed/develop_gpu/brain'). The server may be launched
+    # from any CWD, so resolve a relative bundle path against REPO_ROOT before
+    # the is_developed_brain_bundle() check (an absolute path is used as-is).
+    def _resolve_bundle(b: str) -> str:
+        p = Path(b)
+        if not p.is_absolute():
+            cand = REPO_ROOT / b
+            if (cand / "brain.json").exists():
+                return str(cand)
+        return b
+
     # --- load the brain (mirrors brain_chat_tui.load_brain precedence) ---
     if brain in ("", "tiny-demo", "tiny", "demo"):
         agent, aliases, _n = _build_tiny_demo(42, use_multiturn=True,
@@ -2770,8 +2782,9 @@ def _build_chat_brain(brain: str, renderer: str):
         agent, aliases, _n = _load_self_knowledge(
             _SK_CODES, _SK_CURRICULUM, 42, True, False)
         source = "self-knowledge"
-    elif is_developed_brain_bundle(brain):
-        agent, manifest = load_developed_brain(brain, use_multiturn=True,
+    elif is_developed_brain_bundle(_resolve_bundle(brain)):
+        bundle = _resolve_bundle(brain)
+        agent, manifest = load_developed_brain(bundle, use_multiturn=True,
                                                enable_neural_render=False)
         aliases = set(manifest.get("self_aliases") or []) | set(DEFAULT_SELF_ALIASES)
         source = f"developed-brain:{brain}"
@@ -2820,6 +2833,182 @@ def _get_rich_composer(cache_key: tuple, chat):
         )
         _BRAIN_RICH[cache_key] = rich
     return rich
+
+
+# ─── /api/brains — LIST the brains the console can talk to (B2, 2026-06-24) ─
+# The Interact-tab brain-selector dropdown is populated from this. It scans
+# `bridges/developed/*` for developed-brain BUNDLES (any dir with a brain.json
+# manifest — the `{brain, day_N}` layout the develop loop's save_bundle_root
+# writes) + always includes the two built-in sources the chat endpoint loads
+# (the GPU-free 'tiny-demo' + the learned 'self-knowledge' codes). Each entry's
+# `id` is EXACTLY what /api/brain-chat's `brain` field expects (so picking a
+# brain in the dropdown needs no further resolution server-side — the chat
+# endpoint's existing precedence resolves 'tiny-demo'/'self-knowledge'/a bundle
+# DIR path verbatim). Reuse-by-import, NO sim/ edit.
+
+DEVELOPED_DIR = REPO_ROOT / "bridges" / "developed"
+# the self-knowledge codes + curriculum (mirrors brain_chat_tui._SK_CODES/_SK_CURRICULUM)
+_SK_CODES_PATH = REPO_ROOT / "research" / "findings" / "raw" / "_self_knowledge_grounded_codes.json"
+_SK_CURRICULUM_PATH = REPO_ROOT / "research" / "findings" / "raw" / "_curriculum_self_knowledge.json"
+
+
+def _read_json_safe(path: Path):
+    """Read a JSON file, returning None on any error (missing / malformed)."""
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, json.JSONDecodeError, ValueError):
+        return None
+
+
+def _scan_developed_bundles() -> list[dict]:
+    """Find every developed-brain BUNDLE under bridges/developed/ (a dir with a
+    brain.json manifest). The develop loop writes `bridges/developed/<lineage>/
+    {brain, day_<N>}`, so we look at depth 1 (a bundle directly under
+    developed/) AND depth 2 (a bundle under a lineage subdir). Each bundle's
+    `id` is its path RELATIVE to the repo root (forward slashes) — exactly what
+    /api/brain-chat resolves via is_developed_brain_bundle(brain)."""
+    out: list[dict] = []
+    if not DEVELOPED_DIR.exists():
+        return out
+    seen: set[str] = set()
+
+    def _add(d: Path):
+        manifest_path = d / "brain.json"
+        if not manifest_path.exists():
+            return
+        rel = d.resolve()
+        key = str(rel)
+        if key in seen:
+            return
+        seen.add(key)
+        m = _read_json_safe(manifest_path) or {}
+        meta = m.get("metadata") or {}
+        # the day: per-day bundles carry metadata.day; the final brain carries
+        # metadata.final_day; otherwise unknown.
+        day = meta.get("day", meta.get("final_day"))
+        try:
+            id_path = d.resolve().relative_to(REPO_ROOT).as_posix()
+        except ValueError:
+            id_path = str(d.resolve())
+        # a readable label: <lineage>/<bundle> (e.g. develop_gpu/day_3) + day tag
+        try:
+            label_rel = d.resolve().relative_to(DEVELOPED_DIR).as_posix()
+        except ValueError:
+            label_rel = d.name
+        label = label_rel
+        if day is not None:
+            label = f"{label_rel} (day {day})"
+        out.append({
+            "id": id_path,
+            "label": label,
+            "kind": "developed-bundle",
+            "path": id_path,
+            "day": day,
+            "n_facts": m.get("n_facts"),
+            "vocab_size": len(m.get("vocab") or []),
+            "n_grounded_codes": m.get("n_grounded_codes"),
+            "composer_kind": m.get("composer_kind"),
+            "seed": m.get("seed"),
+            "provenance": meta.get("provenance"),
+            "loadable": True,
+        })
+
+    # depth 1 (a bundle directly under developed/) + depth 2 (under a lineage)
+    for child in sorted(DEVELOPED_DIR.iterdir()):
+        if not child.is_dir():
+            continue
+        _add(child)
+        for grandchild in sorted(child.iterdir()):
+            if grandchild.is_dir():
+                _add(grandchild)
+    # sort: final 'brain' bundles first within a lineage, then day_N ascending,
+    # then everything else — stable + readable in the dropdown.
+    def _sort_key(e):
+        name = e["id"].rsplit("/", 1)[-1]
+        if name == "brain":
+            return (0, e["id"])
+        if name.startswith("day_"):
+            try:
+                return (1, int(name[4:]))
+            except ValueError:
+                return (2, e["id"])
+        return (3, e["id"])
+    out.sort(key=_sort_key)
+    return out
+
+
+@app.get("/api/brains")
+def list_brains() -> JSONResponse:
+    """List the brains the Interact tab can talk to (the dropdown source).
+
+    Returns: {"brains": [...], "n_brains": int, "developed_root": str|null,
+              "default": str}
+    Each entry: {id, label, kind, loadable, n_facts?, vocab_size?, day?, ...}.
+      - kind 'builtin'           → 'tiny-demo' (always loadable, code-only) and
+                                   'self-knowledge' (loadable iff the learned
+                                   codes JSON exists).
+      - kind 'developed-bundle'  → a save_developed_brain bundle under
+                                   bridges/developed/ (id = repo-relative path).
+
+    The `id` of every loadable entry is EXACTLY what POST /api/brain-chat's
+    `brain` field expects, so the dropdown sends it verbatim.
+    """
+    brains: list[dict] = []
+
+    # --- built-in: the GPU-free tiny-demo (always available; code-only) ---
+    brains.append({
+        "id": "tiny-demo",
+        "label": "Tiny demo (GPU-free)",
+        "kind": "builtin",
+        "n_facts": 5,
+        "vocab_size": 8,
+        "loadable": True,
+        "note": "A handful of built-in self + object facts; no GPU. Good for a quick smoke.",
+    })
+
+    # --- built-in: the learned self-knowledge brain (loadable iff codes exist) ---
+    sk_codes = _read_json_safe(_SK_CODES_PATH)
+    sk_cur = _read_json_safe(_SK_CURRICULUM_PATH)
+    sk_loadable = sk_codes is not None and sk_cur is not None
+    sk_entry = {
+        "id": "self-knowledge",
+        "label": "Self-knowledge (learned codes)",
+        "kind": "builtin",
+        "loadable": bool(sk_loadable),
+    }
+    if sk_cur is not None:
+        n_facts = len(sk_cur.get("facts") or []) + len(sk_cur.get("attribute_facts") or [])
+        sk_entry["n_facts"] = n_facts
+    if sk_codes is not None:
+        sk_entry["n_grounded_codes"] = len(sk_codes.get("grounded_codes") or {})
+        sk_entry["seed"] = sk_codes.get("seed")
+        sk_entry["n_days"] = sk_codes.get("n_days")
+        if sk_codes.get("learn_fidelity_mean") is not None:
+            sk_entry["learn_fidelity_mean"] = round(float(sk_codes["learn_fidelity_mean"]), 4)
+    if not sk_loadable:
+        missing = []
+        if sk_codes is None:
+            missing.append("_self_knowledge_grounded_codes.json")
+        if sk_cur is None:
+            missing.append("_curriculum_self_knowledge.json")
+        sk_entry["note"] = ("not yet developed — run _self_knowledge_demo to produce "
+                            + " + ".join(missing) + " (it answers on seed codes meanwhile).")
+        # the chat endpoint still loads 'self-knowledge' (falls back to seed
+        # codes when the file is absent), so it remains selectable.
+        sk_entry["loadable"] = True
+    brains.append(sk_entry)
+
+    # --- developed-brain bundles under bridges/developed/ ---
+    brains.extend(_scan_developed_bundles())
+
+    return JSONResponse({
+        "brains": brains,
+        "n_brains": len(brains),
+        "developed_root": (str(DEVELOPED_DIR.relative_to(REPO_ROOT).as_posix())
+                           if DEVELOPED_DIR.exists() else None),
+        "default": "tiny-demo",
+    })
 
 
 class BrainChatRequest(BaseModel):

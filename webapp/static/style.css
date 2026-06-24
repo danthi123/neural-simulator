@@ -2686,6 +2686,10 @@ pre {
 .interact-field input:focus, .interact-field select:focus {
   outline: none; border-color: var(--accent);
 }
+/* the brain-selector row: the dropdown + a compact rescan button */
+.interact-brain-row { display: flex; gap: 6px; align-items: stretch; }
+.interact-brain-row select { flex: 1; min-width: 0; }
+.interact-brain-row .ctrl-btn { flex: 0 0 auto; padding: 6px 9px; }
 .interact-svo-toggle { font-size: 12px; color: var(--fg-dim); align-self: center; }
 
 .interact-log {

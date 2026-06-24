@@ -90,10 +90,15 @@
         </div>
 
         <div class="interact-controls">
-          <label class="interact-field" title="A developed-brain bundle directory, or 'tiny-demo' (GPU-free) / 'self-knowledge'">
+          <label class="interact-field" title="Which developed brain (or which day) to talk to. Populated from the brains the server can load — built-ins + any bridges/developed/* bundle.">
             Brain
-            <input type="text" id="brainchat-brain" value="tiny-demo"
-                   placeholder="tiny-demo · self-knowledge · path/to/developed-brain">
+            <span class="interact-brain-row">
+              <select id="brainchat-brain" title="Pick a brain to talk to">
+                <option value="tiny-demo">Tiny demo (GPU-free)</option>
+              </select>
+              <button type="button" id="brainchat-brain-refresh" class="ctrl-btn"
+                      title="Rescan for developed-brain bundles">↻</button>
+            </span>
           </label>
           <label class="interact-field interact-field-narrow" title="Fluent renderer. 'auto' picks Qwen only if a GPU is free, else the GPU-free stub.">
             Renderer
