@@ -1,0 +1,343 @@
+{
+  "probe": "burndown_3E_brain_owns_generation",
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "n_facts": 24,
+    "n_negated": 12,
+    "n_attempts": 2000,
+    "tau_pct": 50.0,
+    "advantage_bar": 3.0,
+    "min_novel": 3,
+    "shuffle_collapse_frac": 0.5,
+    "store_floor_bar": 0.95,
+    "max_bytes": 4000000,
+    "window": 5
+  },
+  "baseline_to_beat": {
+    "measured_retrieval_novel_composition": 0.0,
+    "source": "2026-06-22-generation-novelty-categorical-gap-MEASURED.md"
+  },
+  "integration_scope": "the b2 generative-replay proposer is wired into the conversational TURN as a GENERATE channel ADDED alongside the agent's existing RETRIEVAL channels (what_does/who_does/is_it_true direct recall + the dlPFC elaborate dialogue plan). The wrapper GenerativeConversationalTurn(BrainConversationalAgent) exposes generate(topic) -> the brain proposes a novel-but-plausible SVO it did NOT hear verbatim, via the b2 proposer over the brain's own association structure (the learned PPMI co-occurrence cortex). The MOAT verifies a GENERATED (vs retrieved) proposition by the b2 dual gate (plausibility AND non-contradiction) + the HYPOTHESIS guarantee (it must NEVER pass the agent's known-fact retrieval -- what_does/is_it_true still abstain on it). The no-confab moat on KNOWN-fact retrieval is preserved verbatim; the GENERATE channel is a separate, honestly-flagged channel ('perhaps S V O').",
+  "moat_verify_distinction": "the retrieval VERIFY (RichAnswerComposer.render_paragraph: each sentence re-parses to its gathered STORED SVO) REJECTS a novel proposition (never stored). A GENERATED proposition uses the owner-sanctioned moat/generativity trade (feedback_moat_not_hard_lossy_memory_ok): plausibility + non-contradiction + the hypothesis-flag. A generated SVO that cannot be verified is ABSTAINED, never emitted -- the no-confab moat (0 false-accepts on KNOWN facts) is never weakened.",
+  "detail": {
+    "replay_plausible_fraction_mean": 0.3233108128201167,
+    "random_plausible_fraction_mean": 0.01939225076372392,
+    "shuffled_true_plausible_fraction_mean": 0.018666666666666668,
+    "advantage_ratio_mean": 16.74936298590873,
+    "advantage_ratio_min": 15.719183333333335,
+    "novel_composition_score_mean": 0.7111111111111111,
+    "n_generated_mean": 32.0,
+    "n_generated_min": 26,
+    "novel_disjoint_all_seeds": true,
+    "retrieval_abstains_on_generated_all_seeds": true,
+    "moat_leaks_total": 0,
+    "contradictions_proposed_total": 0,
+    "untaught_cue_abstention_rate_mean": 1.0,
+    "untaught_cue_abstention_rate_min": 1.0,
+    "untaught_cue_abstention_ok_all": true,
+    "lesion_plausible_fraction_mean": 0.13123497063612538,
+    "lesion_floods_nonsense_all": true,
+    "novel_above_zero_all_seeds": true,
+    "advantage_all_seeds": true,
+    "shuffled_collapses_all_seeds": true,
+    "moat_preserved_all_seeds": true,
+    "advantage_bar": 3.0,
+    "min_novel_bar": 3,
+    "shuffle_collapse_frac_bar": 0.5,
+    "store_floor_bar": 0.95
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_affirmed": 24,
+      "n_negated": 12,
+      "tau": 0.47702477601079807,
+      "discoverable_novel_plausible_universe": 45,
+      "n_generated": 34,
+      "novel_composition_score": 0.7555555555555555,
+      "novel_disjoint_from_store": true,
+      "retrieval_abstains_on_generated": 34,
+      "retrieval_abstains_all": true,
+      "n_verified": 34,
+      "generated_examples": [
+        "perhaps bird sing white",
+        "perhaps bear walk foot",
+        "perhaps cat sleep blocks",
+        "perhaps dog run road",
+        "perhaps cat sleep house",
+        "perhaps brother play eye",
+        "perhaps cat sleep blue",
+        "perhaps duck eat soup",
+        "perhaps mouse eat brown",
+        "perhaps mouse eat apple",
+        "perhaps fish jump green",
+        "perhaps sister look bell",
+        "perhaps fish sing room",
+        "perhaps frog jump green",
+        "perhaps frog jump cookie",
+        "perhaps fish sing road",
+        "perhaps brother play pink",
+        "perhaps duck jump road",
+        "perhaps sister look eye",
+        "perhaps bird sing blue"
+      ],
+      "replay_plausible_fraction_of_novel": 0.31933333333333336,
+      "random_plausible_fraction_of_novel": 0.02031488065007618,
+      "advantage_ratio": 15.719183333333335,
+      "shuffled_true_plausible_fraction_of_novel": 0.0175,
+      "moat_leaks": 0,
+      "contradictions_proposed": 0,
+      "untaught_cue_abstention_correct": 20,
+      "untaught_cue_abstention_attempted": 20,
+      "lesion_accepted": 263,
+      "lesion_plausible_fraction": 0.12927756653992395,
+      "examples": [
+        {
+          "hypothesis": "perhaps bird sing white",
+          "ppmi_agent_action": 0.596,
+          "ppmi_action_patient": 1.076,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps bear walk foot",
+          "ppmi_agent_action": 0.737,
+          "ppmi_action_patient": 1.516,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps cat sleep blocks",
+          "ppmi_agent_action": 0.747,
+          "ppmi_action_patient": 0.601,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps dog run road",
+          "ppmi_agent_action": 0.597,
+          "ppmi_action_patient": 0.668,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps cat sleep house",
+          "ppmi_agent_action": 0.747,
+          "ppmi_action_patient": 0.477,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps brother play eye",
+          "ppmi_agent_action": 0.577,
+          "ppmi_action_patient": 0.824,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps cat sleep blue",
+          "ppmi_agent_action": 0.747,
+          "ppmi_action_patient": 1.084,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps duck eat soup",
+          "ppmi_agent_action": 0.636,
+          "ppmi_action_patient": 0.519,
+          "known_fact_retrieval_abstains": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "n_affirmed": 24,
+      "n_negated": 12,
+      "tau": 0.47702477601079807,
+      "discoverable_novel_plausible_universe": 45,
+      "n_generated": 36,
+      "novel_composition_score": 0.8,
+      "novel_disjoint_from_store": true,
+      "retrieval_abstains_on_generated": 36,
+      "retrieval_abstains_all": true,
+      "n_verified": 36,
+      "generated_examples": [
+        "perhaps brother play pink",
+        "perhaps bird sing pink",
+        "perhaps fish sing room",
+        "perhaps frog jump road",
+        "perhaps brother play green",
+        "perhaps fish sing road",
+        "perhaps sister look leg",
+        "perhaps duck eat brown",
+        "perhaps dog run house",
+        "perhaps mouse eat soup",
+        "perhaps duck eat milk",
+        "perhaps fish sing blue",
+        "perhaps sister look bell",
+        "perhaps mouse eat brown",
+        "perhaps sister look black",
+        "perhaps bird sing road",
+        "perhaps cat sleep black",
+        "perhaps bear walk road",
+        "perhaps fish sing pink",
+        "perhaps dog run foot"
+      ],
+      "replay_plausible_fraction_of_novel": 0.3357712765957447,
+      "random_plausible_fraction_of_novel": 0.017902813299232736,
+      "advantage_ratio": 18.75522416413374,
+      "shuffled_true_plausible_fraction_of_novel": 0.019,
+      "moat_leaks": 0,
+      "contradictions_proposed": 0,
+      "untaught_cue_abstention_correct": 20,
+      "untaught_cue_abstention_attempted": 20,
+      "lesion_accepted": 248,
+      "lesion_plausible_fraction": 0.14516129032258066,
+      "examples": [
+        {
+          "hypothesis": "perhaps brother play pink",
+          "ppmi_agent_action": 0.577,
+          "ppmi_action_patient": 0.805,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps bird sing pink",
+          "ppmi_agent_action": 0.596,
+          "ppmi_action_patient": 1.219,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps fish sing room",
+          "ppmi_agent_action": 1.299,
+          "ppmi_action_patient": 0.645,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps frog jump road",
+          "ppmi_agent_action": 1.454,
+          "ppmi_action_patient": 0.695,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps brother play green",
+          "ppmi_agent_action": 0.577,
+          "ppmi_action_patient": 0.591,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps fish sing road",
+          "ppmi_agent_action": 1.299,
+          "ppmi_action_patient": 1.527,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps sister look leg",
+          "ppmi_agent_action": 0.605,
+          "ppmi_action_patient": 1.224,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps duck eat brown",
+          "ppmi_agent_action": 0.636,
+          "ppmi_action_patient": 0.89,
+          "known_fact_retrieval_abstains": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "n_affirmed": 24,
+      "n_negated": 12,
+      "tau": 0.47702477601079807,
+      "discoverable_novel_plausible_universe": 45,
+      "n_generated": 26,
+      "novel_composition_score": 0.5777777777777777,
+      "novel_disjoint_from_store": true,
+      "retrieval_abstains_on_generated": 26,
+      "retrieval_abstains_all": true,
+      "n_verified": 26,
+      "generated_examples": [
+        "perhaps sister look eye",
+        "perhaps cat sleep black",
+        "perhaps frog jump road",
+        "perhaps bird sing white",
+        "perhaps brother play pink",
+        "perhaps mouse eat cake",
+        "perhaps frog jump green",
+        "perhaps fish jump bell",
+        "perhaps frog jump cookie",
+        "perhaps duck eat brown",
+        "perhaps fish jump road",
+        "perhaps bear walk foot",
+        "perhaps fish jump bread",
+        "perhaps bird sing cake",
+        "perhaps bird sing blue",
+        "perhaps fish sing white",
+        "perhaps dog run road",
+        "perhaps duck jump road",
+        "perhaps fish jump green",
+        "perhaps duck jump cookie"
+      ],
+      "replay_plausible_fraction_of_novel": 0.31482782853127195,
+      "random_plausible_fraction_of_novel": 0.019959058341862845,
+      "advantage_ratio": 15.773681460259112,
+      "shuffled_true_plausible_fraction_of_novel": 0.0195,
+      "moat_leaks": 0,
+      "contradictions_proposed": 0,
+      "untaught_cue_abstention_correct": 20,
+      "untaught_cue_abstention_attempted": 20,
+      "lesion_accepted": 218,
+      "lesion_plausible_fraction": 0.11926605504587157,
+      "examples": [
+        {
+          "hypothesis": "perhaps sister look eye",
+          "ppmi_agent_action": 0.605,
+          "ppmi_action_patient": 0.995,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps cat sleep black",
+          "ppmi_agent_action": 0.747,
+          "ppmi_action_patient": 1.665,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps frog jump road",
+          "ppmi_agent_action": 1.454,
+          "ppmi_action_patient": 0.695,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps bird sing white",
+          "ppmi_agent_action": 0.596,
+          "ppmi_action_patient": 1.076,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps brother play pink",
+          "ppmi_agent_action": 0.577,
+          "ppmi_action_patient": 0.805,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps mouse eat cake",
+          "ppmi_agent_action": 0.855,
+          "ppmi_action_patient": 0.821,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps frog jump green",
+          "ppmi_agent_action": 1.454,
+          "ppmi_action_patient": 0.939,
+          "known_fact_retrieval_abstains": true
+        },
+        {
+          "hypothesis": "perhaps fish jump bell",
+          "ppmi_agent_action": 0.655,
+          "ppmi_action_patient": 1.518,
+          "known_fact_retrieval_abstains": true
+        }
+      ]
+    }
+  ],
+  "brain_based_note": "the LEARNED graph (plausibility/likelihood) is the project's PPMI co-occurrence cortex over REAL TinyStories; the KNOWN-fact store + the no-confab moat are the RF phasor composer the conversational agent talks through. The proposer RESAMPLES role-filler bindings from the learned graph (hippocampal generative replay, catalog G.09), gated by graph-plausibility + non-contradiction, FLAGGING proposals as HYPOTHESES. NO sim/ edit; reuse-by-import; CPU.",
+  "elapsed_total_s": 143.51875472068787
+}
