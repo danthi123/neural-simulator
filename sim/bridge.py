@@ -5706,6 +5706,15 @@ class SimulationBridge:
         r = cp.asarray(rows); c = cp.asarray(cols)
         self.cp_rf_w_re = csp.csr_matrix((cp.asarray(w_re), (r, c)), shape=(n, n))
         self.cp_rf_w_im = csp.csr_matrix((cp.asarray(w_im), (r, c)), shape=(n, n))
+        # O-2-purity (opt-in, default OFF): also materialize a DENSE complex weight W_dense = W_re + i*W_im from the
+        # SAME weights so the RF matvec can use a single dense GEMV (the neuromorphic-natural form). DEFAULT-OFF leaves
+        # cp_rf_w_dense = None so nothing downstream reads it => the sparse CSR path is byte-identical. See config flag
+        # rf_dense_weights. (cp.asarray(...).todense() would round-trip; build directly from the dense CSR view.)
+        if getattr(self.core_config, "rf_dense_weights", False):
+            self.cp_rf_w_dense = (self.cp_rf_w_re.toarray().astype(cp.complex128)
+                                  + 1j * self.cp_rf_w_im.toarray().astype(cp.complex128))
+        else:
+            self.cp_rf_w_dense = None
 
     def _rf_advance_one(self):
         """One step of the resonate-and-fire dynamics: rotate the complex state Z=re+i*im (v=re, u=im) by
@@ -5723,8 +5732,15 @@ class SimulationBridge:
         _rf_im_new = _rf_decay * (_rf_re * _rf_sin + _rf_im * _rf_cos)
         if getattr(self, "cp_rf_w_re", None) is not None:
             # FHRR bind THROUGH synapses: complex matvec u_i = sum_j W_ij z_j from the presynaptic RF states.
-            _rf_re_new = _rf_re_new + (self.cp_rf_w_re @ _rf_re - self.cp_rf_w_im @ _rf_im)
-            _rf_im_new = _rf_im_new + (self.cp_rf_w_re @ _rf_im + self.cp_rf_w_im @ _rf_re)
+            if getattr(self.core_config, "rf_dense_weights", False) and getattr(self, "cp_rf_w_dense", None) is not None:
+                # O-2-purity dense path (opt-in): one dense complex GEMV W_dense @ z instead of four sparse SpMVs.
+                # SAME math: (W_re+i*W_im)@(re+i*im) = (W_re@re-W_im@im)+i*(W_re@im+W_im@re) -> bit-exact to roundoff.
+                _rf_mv = self.cp_rf_w_dense @ (_rf_re + 1j * _rf_im)
+                _rf_re_new = _rf_re_new + _rf_mv.real.astype(_rf_re_new.dtype)
+                _rf_im_new = _rf_im_new + _rf_mv.imag.astype(_rf_im_new.dtype)
+            else:
+                _rf_re_new = _rf_re_new + (self.cp_rf_w_re @ _rf_re - self.cp_rf_w_im @ _rf_im)
+                _rf_im_new = _rf_im_new + (self.cp_rf_w_re @ _rf_im + self.cp_rf_w_im @ _rf_re)
         self._rf_counter = int(getattr(self, "_rf_counter", 0)) + 1
         _rf_mag2 = _rf_re_new * _rf_re_new + _rf_im_new * _rf_im_new
         _rf_crossed = ((~self.cp_rf_fired) & (self.cp_rf_prev_im < 0.0)
@@ -5762,7 +5778,10 @@ class SimulationBridge:
         if getattr(self, "cp_rf_prev_im", None) is None:
             return
         if (getattr(self.core_config, "enable_rf_cudagraph", False) and is_gpu_backend()
-                and getattr(self, "cp_rf_w_re", None) is not None):
+                and getattr(self, "cp_rf_w_re", None) is not None
+                and not getattr(self.core_config, "rf_dense_weights", False)):
+            # O-2-purity: the megakernel is CSR-specific; the dense-weight mode routes through the per-step loop
+            # (`_rf_advance_one`, which has the dense-GEMV branch). Default-off rf_dense_weights => byte-identical.
             self._rf_resonate_steps_megakernel(int(n_steps))   # masked or unmasked (the kernel honors _rf_neuron_mask)
             return
         for _ in range(int(n_steps)):

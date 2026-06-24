@@ -177,6 +177,17 @@ class CoreSimConfig:
     # step into 1 -- the launch-bound conversational-latency fix. GPU-only; numpy backend + masked bridges fall back
     # to the loop. See docs/plans/2026-06-17-resonate-cudagraph-refactor-design.md.
     enable_rf_cudagraph: bool = False
+    # Opt-in RF DENSE complex-weight mode (O-2-purity, default OFF -> byte-identical to the sparse complex-CSR path).
+    # When True, rf_set_complex_weights ALSO materializes a DENSE complex weight `cp_rf_w_dense` (= W_re + i*W_im) from
+    # the SAME weights, and the RF matvec uses a single dense cuBLAS GEMV (W_dense @ z) instead of four sparse SpMVs
+    # -- the neuromorphic-natural / hardware-compatible representation (the on-bridge version of the host dense-matvec
+    # perf lever). DEFAULT-OFF short-circuits to the existing sparse CSR matvec (the composer's genuinely-sparse O(D)
+    # bind/unbind is unaffected; Izhikevich/HH/AdEx byte-unchanged). The dense GEMV is the SAME math as the sparse
+    # branch (W_re+i*W_im)@(re+i*im) = (W_re@re-W_im@im) + i*(W_re@im+W_im@re), so it is bit-exact to roundoff. The
+    # dense mode routes through the per-step loop (`_rf_advance_one`), bypassing the CSR-specific megakernel. VRAM
+    # trade: dense is O(N^2) (bigger for sparse weights) but IS the hardware-natural form. GPU recommended (the dense
+    # GEMV is the lever). See research/findings/2026-06-24-bridge-llm-perf-integration-scoping.md (O-2-purity).
+    rf_dense_weights: bool = False
     coincidence_gain: float = 2.0               # sigmoid slope of the all-or-none switch (~0.88/0.12 at K+/-1)
     coincidence_plateau_strength: float = 80.0  # per-step plateau conductance increment scale (the regenerative NMDA-spike drive)
     coincidence_tau_decay_ms: float = 80.0      # plateau duration (Major-Larkum-Schiller NMDA spike 50-100ms)

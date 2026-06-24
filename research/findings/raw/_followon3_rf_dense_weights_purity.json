@@ -1,0 +1,36 @@
+{
+  "backend": "cupy",
+  "gpu": true,
+  "workload": {
+    "D": 64,
+    "L": 3,
+    "n": 256,
+    "n_conns": 192
+  },
+  "default_off": {
+    "cp_rf_w_dense_is_None_when_off": true,
+    "off_phases_byte_identical_to_baseline": true
+  },
+  "dense_on": {
+    "cp_rf_w_dense_materialized_when_on": true,
+    "dense_vs_sparse_max_phase_diff": 0.0,
+    "raw_matvec_max_err_f64": 4.577566798522237e-16,
+    "raw_matvec_max_err_f32": 1.9869289846555611e-07
+  },
+  "vram_trade": {
+    "nnz": 192,
+    "dense_bytes_NxN_complex128": 1048576,
+    "sparse_bytes_two_CSR": 6664,
+    "dense_over_sparse_x": 157.3,
+    "note": "dense is bigger for sparse weights (O(N^2)) but IS the hardware-natural representation"
+  },
+  "verdict": "GO",
+  "go_criteria": {
+    "default_off_byte_identical": true,
+    "dense_None_when_off": true,
+    "dense_materialized_when_on": true,
+    "dense_eq_sparse_phase_lt_1e-9": true,
+    "raw_f64_lt_1e-9": true,
+    "raw_f32_lt_1e-4": true
+  }
+}
