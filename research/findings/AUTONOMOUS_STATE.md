@@ -4018,3 +4018,11 @@ LESSON for future launches: Use `-WindowStyle Hidden` (or omit `-NoNewWindow`) s
 **Commit trail (origin+gitea):** 1A `2b026433` · 1B `c86d3441` · I-1-a `c96ef106` · I-5-a `ae3b190a` · 3B `9768b474` · I-4-a `f5044b11` · I-1-BUILD `5665c9a8` · I-7 `f4f028ca` · 2A-derisk `450c3896` · 2A-build `bd27a8f7` · 3E `f161b19b` · 3G `15fdc85d` · 3F `853599cb` · 3D `a4aba77a` (+ CYCLE checkpoints + the inventory B-2 reclassification).
 
 **EXACT NEXT CONCRETE ACTION:** the owner is AWAKE + was given the completion report. AWAITING their direction on the OPTIONAL follow-ons (all lower-value polish): (1) the fully-spiking generative-replay sampler (3E G2->G3, the owner's stated generative-frontier primary -- SWR-gated CA3 resampling); (2) the on-bridge-purity `cfg.rf_dense_weights` mode (the one optional sim/ edit, O-2); (3) the I-5-b/I-4-b/c consolidation (wire the standalone GO routes language->action + perception->memory into the merged agent as defaults). DEFAULT if the owner goes absent again (watchdog): start (1) the 3E-G3 fully-spiking sampler, tractable + controller-managed. NEVER weaken the moat; honest-propagate to both remotes; GPU/CuPy real runs.
+
+---
+
+## CYCLE 517 (2026-06-24 — owner directed ALL 3 optional follow-ons; parallelizing)
+
+Owner: "All three in the order you suggest or in parallel if possible." DISPATCHED (parallel where the GPU allows): #1 the fully-spiking generative-replay sampler (3E G2->G3, SWR-gated CA3 resampling; subagent `a410c979f1e4cc1b2`, CPU-preferred) || #2 the consolidation builds (wire the standalone GO routes language->action + perception->memory into MergedNavConvAgent as defaults; subagent `ae7ff81ebce1c3185`, GPU). #3 (the on-bridge-purity `cfg.rf_dense_weights` O-2 sim/ edit, GPU) is QUEUED after #2 frees the GPU (the one sim/ edit -> careful byte-review on return, not concurrent with #2).
+
+**EXACT NEXT CONCRETE ACTION:** on #1/#2 return -> commit each (both remotes) + dispatch #3 (controller byte-review the sim/ edit). If `git log` shows #1/#2 already committed + #3 not started, dispatch #3. NEVER weaken the moat (0-FA); honest-propagate to origin+gitea; GPU/CuPy real runs; subagents tractable/foreground (they stall on heavy GPU runs -> recover from JSON + git status).
