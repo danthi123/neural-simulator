@@ -1,0 +1,102 @@
+{
+  "go": true,
+  "verdict": "GO -- the TUI loads a saved/tiny brain + holds a multi-turn conversation: self-reference resolves ('what are you' -> ['brain', 'use', 'spikes']), learn-synonym resolves to the 'brain learn words' fact, multi-turn anaphora binds 'it' -> 'what does cat eat' (the dog's chase-object 'cat') and answers ['cat','eat','fish'], the no-confab moat abstains on all 3 untaught/general cues (incl. 'capital of France' the LLM knows but the brain must not), and 4 fact turns answered. Renderer=template-stub (GPU-free). READY for the owner to --load the real developed brain (with the off-bridge Qwen renderer).",
+  "backend": "numpy",
+  "source": "tiny CPU demo brain",
+  "renderer": "template-stub (GPU-free)",
+  "n_facts": 5,
+  "self_reference_answered": true,
+  "learn_synonym_answered": true,
+  "multiturn_anaphora_resolved": true,
+  "anaphora_resolved_to": "what does cat eat",
+  "moat_held": true,
+  "n_abstain_turns": 3,
+  "n_answer_turns": 4,
+  "converses": true,
+  "transcript": [
+    {
+      "you": "what are you",
+      "kind": "answer",
+      "gate_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "brain": "The brain uses spikes.",
+      "abstained": false
+    },
+    {
+      "you": "how do you learn",
+      "kind": "answer",
+      "gate_svo": [
+        "brain",
+        "learn",
+        "words"
+      ],
+      "brain": "The brain learns words.",
+      "abstained": false
+    },
+    {
+      "you": "what does the brain store",
+      "kind": "answer",
+      "gate_svo": [
+        "brain",
+        "store",
+        "memory"
+      ],
+      "brain": "The brain stores memory.",
+      "abstained": false
+    },
+    {
+      "you": "what does the dog chase",
+      "kind": "answer",
+      "gate_svo": [
+        "dog",
+        "chase",
+        "cat"
+      ],
+      "brain": "The dog chases cat.",
+      "abstained": false
+    },
+    {
+      "you": "what does it eat",
+      "kind": "anaphora",
+      "gate_svo": [
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "brain": "The cat eats fish.",
+      "abstained": false
+    },
+    {
+      "you": "what does the dragon do",
+      "kind": "abstain",
+      "gate_svo": null,
+      "brain": "I don't know about that.",
+      "abstained": true
+    },
+    {
+      "you": "who wrote romeo and juliet",
+      "kind": "abstain",
+      "gate_svo": null,
+      "brain": "I don't know about that.",
+      "abstained": true
+    },
+    {
+      "you": "what is the capital of france",
+      "kind": "abstain",
+      "gate_svo": null,
+      "brain": "I don't know about that.",
+      "abstained": true
+    }
+  ],
+  "tui_features": [
+    "load a developed brain (codes + facts + vocab) from a developed_brain_io bundle, OR the self-knowledge codes+curriculum, OR a tiny CPU fallback",
+    "multi-turn chat: GATE (recall + abstain) -> CONSTRAIN+VERIFY fluent render (off-bridge Qwen default; template-stub for the GPU-free smoke) -> answer or 'I don't know about that.'",
+    "multi-turn anaphora (it/that/they -> the prior referent via the MultiTurnAgent discourse WM)",
+    "self-reference (you/your/I/me/it -> the brain) so 'what are you' / 'how do you learn' resolve",
+    "commands: /raw (brain's own renderer, no LLM), /facts (list knowledge), /help, /quit",
+    "the no-confab moat: the brain abstains on anything it was not taught (verified at the recall layer)"
+  ]
+}
