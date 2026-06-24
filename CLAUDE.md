@@ -41,6 +41,18 @@ GPU-accelerated neural network simulator with real-time 3D OpenGL visualization.
 
 **Everything between sensation and action is the brain's job and MUST be neurons/synapses:** perception/salience, orienting decisions, reward, value, dopamine/neuromodulators, action selection. When a capability is realized by host computation (even biologically-shaped), it is a documented shortcut to be converted to a spiking/synaptic mechanism — and an **honest negative** (the neural version underperforming the host shortcut) **IS the scientific deliverable** (it maps what the substrate can/can't do on its own). Applies **PROJECT-WIDE** (navigation AND the conversational pipeline — e.g. the VSA composer's clean exact-inverse algebra is a host shortcut for what a learned cortex would do; see the "composer-as-idealization" note). **Re-classification:** the recent nav wins (N1 SC reflex, N5 perceived reward, N6 thal/argmax readout, N9-step-1 scalar RPE) are biologically-*shaped* but partly **host-computed → they are now shortcuts**, with their spiking/synaptic versions (a spiking superior colliculus, a neural reward/value system, a spiking SNc, a neural position code, a minimal motor read-out) the real target. The host versions become the *teaching scaffolds* for their neural replacements (the innate-reflex-teaches-a-learned-circuit pattern).
 
+## 🎉 Recent arcs (2026-06-23): generative loop · grounded-language faculty · bridge co-residence · artificial-life develop loop
+
+**(Concise summary of the latest session arcs — see `research/findings/AUTONOMOUS_STATE.md` CYCLES 478-507 + the `2026-06-23-*.md` findings. Each arc is reuse-by-import with NO `sim/` edit unless noted.)**
+
+- **The generative LOOP — DEMONSTRATED + multi-seed ROBUST + fully-spiking-C1.** The consolidated spiking generator runs the whole artificial-life loop end-to-end: train → generate → grow → confirm-no-catastrophic-forgetting (3/3 seeds). The prior "scale wall" was a MIRAGE — the C2 retention failure was a fine-tune-LR bug (3e-4 → 1e-5): retention **0.884** with self-replay vs **0.392** without (2.25× forget-contrast — self-replay causally prevents forgetting). The generator's 3 nonlinearities are now ALL spiking — LayerNorm 0.962 / GELU 0.991 / softmax 0.9998 (the predicted rate-code wall did NOT bite). The moderate-shift capacity wall (the 3.4M toy can't hold two in-band distributions; needs ~50-200M params) is characterized + affects only the optional free-GENERATION upgrade. Findings: `2026-06-23-generative-loop-DEMONSTRATED.md`, `-spiking-{layernorm,gelu,softmax}-GO.md`, `-C2-moderate-shift-NEGATIVE-scale-wall.md`.
+
+- **The grounded-language faculty — COMPLETE + ROBUST (a spiking LLM speaks the brain's grounded knowledge, hallucination-proof).** The owner's decoupling realized: the LLM supplies FLUENCY only; the BRAIN supplies knowledge + grounding + verification. P1 = a fully-spiking Qwen2.5-0.5B converted via the project's OWN graded-read mechanism generates coherent English at **1.08× ANN** ppl; P2 = the brain re-encodes a Claude-authored OFFLINE curriculum (recall 1.0, abstain 0-FA, ≠ deprecated Path-3); P3 = a gate→constrain→verify grounding loop; integration + scale (~67 facts, 3 seeds). The decisive proof: the real LLM tried to hallucinate (flipped "fox chase rabbit" → the false converse) and the architecture CAUGHT it → the no-confab moat holds WITH a real generative LLM in the loop. Findings: `2026-06-23-grounded-lang-INTEGRATION-GO.md`, `-P1b-GO.md`, `-P2-GO.md`, `-P3-GO.md`, `-SCALED-GO.md`.
+
+- **Bridge co-residence — the 494M spiking Qwen faculty RUNS on the SimulationBridge, LOCAL (the "one brain" north-star for language).** The full 24-layer Qwen runs end-to-end on the live RF (resonate-and-fire complex-synapse) substrate: VRAM **14 GB** (LOCAL, < 24), ppl **7.041 == the off-bridge B-1 spiking forward** (the per-layer graded-SEM does NOT compound over 24 layers, logit cos 1.0), generation coherent + byte-identical to B-1. The de-risk ladder (#1 q_proj bit-exact 4.6e-7 / #2 full-layer cos 1.0 / #3 full forward) all GO; NO `sim/` edit. Feasibility DEMONSTRATED but SLOW — the wall is wall-clock not VRAM; the perf levers eliminate the CSR-storage wall (lever-1 dense matvec ~9000× bit-exact; lever-2 on-GPU forward → **prefill 187 tok/s**, generation 4.4 tok/s launch-bound = the KV-cache lever, held). Findings: `2026-06-23-bridge-coresidence-DEMONSTRATED.md`, `-perf-dense-matvec-GO-WITH-CAVEAT.md`; scoping `-qwen-faculty-scoping.md`.
+
+- **The artificial-life DEVELOP LOOP — runs at GPU scale with REAL stream-cortex learning.** The brain DEVELOPS over simulated days (1-seed GPU smoke GO): 4 sim-days of REAL stream-cortex Hebbian learning (corr(M,C) **0.894**) grow vocab **6→24** + facts **2→11**, recall 1.0, retention **1.0** (no catastrophic forgetting), moat **0-FA** every day; it PERSISTS+RESUMES (lived 5 more days on a resume) and the frozen-brain anti-cheat holds. Per-day ~2.2 min → compressed-week ETA **15.6 min**, year ≈~13.5 hr (overnight, LOCAL) — the owner's artificial-life north-star validated + computationally tractable. LLM-minimal (the brain's own renderer + self-replay consolidation). Finding: `2026-06-23-longitudinal-develop-loop-GPU-GO.md`; scoping `-artificial-life-longitudinal-test-scoping.md`.
+
 ## Common Commands
 
 ```bash
@@ -95,14 +107,14 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
-sim/                    # 42 modules (+ __init__.py), ~20K lines — core engine
-  bridge.py             # 8147 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate, graded inhibition, input-mean adaptation)
-  config.py             #  945 lines — all @dataclass configs
+sim/                    # 43 modules (+ __init__.py), ~20K lines — core engine
+  bridge.py             # 8366 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate, graded inhibition, input-mean adaptation, RF complex-synapse ops)
+  config.py             # 1010 lines — all @dataclass configs
   enums.py              #  830 lines — NeuronType (50+ presets), enums, default param managers
   connectivity.py       #  999 lines — spatial/WS/motif connection generators (backend-pluggable)
-  kernels.py            #  365 lines — fused @fuse() neuron + plasticity kernels (cupy/numpy)
+  kernels.py            #  417 lines — fused @fuse() neuron + plasticity kernels (cupy/numpy)
   profiles.py           #  432 lines — NEURAL_STRUCTURE_PROFILES + CONNECTIVITY_MOTIFS dicts
-  regions.py            #  739 lines — BrainRegion + RegionPathway (incl. transmission_gate, graded, input_mean_adapt) + RegionManager
+  regions.py            #  775 lines — BrainRegion + RegionPathway (incl. transmission_gate, graded, input_mean_adapt) + RegionManager
   neuromodulators.py    # 1114 lines — declarative neuromodulator subsystem
   data_bus.py           #   95 lines — DataChannel pub/sub for streaming sim data
   replicas.py           #  243 lines — replicated wiring (multi-bridge support)
@@ -124,9 +136,9 @@ sim/                    # 42 modules (+ __init__.py), ~20K lines — core engine
 viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
-research/runners/       # 500+ headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/generator_S-D-E-F-G/mode-unification/content_selection+content_selection_spiking+dialogue_agent/nested_composition+phasor_associative_memory+phasor_chat+gated_compose/unified_agent_benchmark+spiking_unified_agent/multibridge_graded_derisk+cortex_conversation_ensemble+phase1_composer_ab/etc) for research
-research/findings/      # session-by-session findings docs (850+ files)
-tests/                  # 303 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, mode-unification, content-selection/dialogue, nested-composition, transmission-gate/gated-compose, unified-agent-benchmark/spiking-unified-agent, core-sim-composition + brain-conversational-agent, learned-graded cortex, one-brain composer/agent, etc.)
+research/runners/       # 660+ headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/generator_S-D-E-F-G/mode-unification/content_selection+content_selection_spiking+dialogue_agent/nested_composition+phasor_associative_memory+phasor_chat+gated_compose/unified_agent_benchmark+spiking_unified_agent/multibridge_graded_derisk+cortex_conversation_ensemble+phase1_composer_ab/one_brain_composer/grounded_lang/bridge_coresidence/longitudinal_develop_loop/etc) for research
+research/findings/      # session-by-session findings docs (1060+ files)
+tests/                  # 314 test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, mode-unification, content-selection/dialogue, nested-composition, transmission-gate/gated-compose, unified-agent-benchmark/spiking-unified-agent, core-sim-composition + brain-conversational-agent, learned-graded cortex, one-brain composer/agent, etc.)
 ```
 
 ### Thread Model
@@ -136,10 +148,10 @@ tests/                  # 303 test files (determinism, runners, kernels, plastic
 
 ### Key Classes
 
-**SimulationBridge** (`sim/bridge.py:210`): Central simulation orchestrator
+**SimulationBridge** (`sim/bridge.py:211`): Central simulation orchestrator
 - Manages all GPU state arrays (CuPy)
-- Simulation stepping (`_run_one_simulation_step` at line 5715)
-- Initialization (`_initialize_simulation_data` at line 1041)
+- Simulation stepping (`_run_one_simulation_step` at line 5857)
+- Initialization (`_initialize_simulation_data` at line 1063)
 - Recording/playback to HDF5
 - Checkpoint save/restore
 - Profiling and performance monitoring
@@ -154,10 +166,10 @@ tests/                  # 303 test files (determinism, runners, kernels, plastic
   - HH numerical stability: dt auto-adjusts to 0.05ms when HH model selected
   - **Per-gate Q10**: `hh_q10_m=3.0`, `hh_q10_h=hh_q10_n=1.5` (fixed 2026-04-25 — uniform Q10=3 over-compressed dynamics at 37°C; see Phase A below)
   - **STDP bounds gotcha**: `stdp_w_max=2.0` default. The STDP rule is **soft-bound** (`Δw_LTP = A_plus * (w_max - w) * exp(...)`) so when `weight_mean > stdp_w_max`, every "LTP" event is strongly negative and weights collapse to w_max within ms. Set `cfg.stdp_w_max` above your design weights (e.g. cortex→D1 in Phase B uses `weight_mean=25` → set `stdp_w_max=30`).
-- `VisualizationConfig` (line 561): OpenGL rendering and camera parameters
-- `RuntimeState` (line 581): Mutable execution state (running, paused, time tracking)
-- `GPUConfig` (line 596): GPU features, memory management, recording modes
-- Experiment configs (lines 648–845): `StimulusPattern`, `StimulusChannel`, `NeuronGroup`, `ReadoutConfig`, `TrainingConfig`, `ExperimentPhase`, `ExperimentConfig`
+- `VisualizationConfig` (line 626): OpenGL rendering and camera parameters
+- `RuntimeState` (line 646): Mutable execution state (running, paused, time tracking)
+- `GPUConfig` (line 661): GPU features, memory management, recording modes
+- Experiment configs (lines 774–960): `StimulusPattern`, `StimulusChannel`, `NeuronGroup`, `ReadoutConfig`, `TrainingConfig`, `ExperimentPhase`, `ExperimentConfig`
 
 ### GPU Array Naming Conventions
 - `cp_*`: CuPy GPU arrays (e.g., `cp_membrane_potential_v`, `cp_firing_states`)
@@ -241,7 +253,7 @@ Two critical functions must be kept in sync for profile save/load to work correc
 These are inverse operations: any parameter exposed in the UI must have a corresponding getter and setter to ensure bidirectional sync between UI state and simulation configuration.
 
 ### Experiment & Stimulus System (`experiment/` package)
-Programmable infrastructure for stimulus injection, I/O neuron group management, training protocols, readout/analysis, and multi-phase experiment orchestration. Configs live in `sim/config.py` (lines 440–619); engines live in `experiment/`.
+Programmable infrastructure for stimulus injection, I/O neuron group management, training protocols, readout/analysis, and multi-phase experiment orchestration. Configs live in `sim/config.py` (lines 774–960); engines live in `experiment/`.
 
 **Key Classes:**
 - `StimulusManager` (`experiment/stimulus.py`): Generates per-step GPU current arrays from channel definitions

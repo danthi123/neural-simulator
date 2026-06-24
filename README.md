@@ -343,7 +343,7 @@ OpenGL 3D rendering    lock-free     spike + plasticity kernels
 camera / interaction     queues      recording / checkpointing
 ```
 
-The engine lives in `sim/` (42 modules). The central object is the
+The engine lives in `sim/` (43 modules). The central object is the
 **`SimulationBridge`**, which owns all neuron and synapse state as GPU
 arrays and advances the network one millisecond-scale step at a time:
 synaptic currents → background noise → neuron model update → plasticity →
@@ -471,6 +471,29 @@ multi-seed) and **navigation** from vision, now folded into one fully
 spiking brain; **language generation** is an honestly hard frontier with a
 proven foundation but no fluency yet.
 
+**Latest arcs (2026-06-23).** Four results moved the frontier this session.
+(1) The **generative loop** — train → generate → grow → *don't forget* — was
+demonstrated end-to-end on the spiking network and held across three seeds; a
+feared "scale wall" turned out to be a tuning bug, and the generator's last
+math operations now run in spikes too. (2) A **grounded-language faculty**:
+a spiking large-language-model speaks the *brain's* own knowledge, and is
+**hallucination-proof by construction** — when a real generative model tried
+to invent a false fact, the architecture caught and rejected it before it was
+ever said, so the no-fabrication guarantee holds *with a real LLM in the
+loop*. (3) **Bridge co-residence** — the full 494-million-parameter spiking
+language faculty was shown to run **on the simulation engine itself**, on one
+local 24 GB GPU, producing identical output (the "one brain" goal for
+language; it runs but is still slow, an engineering item). (4) An
+**artificial-life development loop**: the brain now **develops over simulated
+days** — hearing new words, growing its vocabulary and facts, and keeping old
+memories — fast enough to compress a "week" into about a quarter-hour and a
+"year" into an overnight run, entirely on local hardware. This is the project's
+artificial-life north star, validated at small scale. Findings:
+[`generative-loop`](research/findings/2026-06-23-generative-loop-DEMONSTRATED.md),
+[`grounded-language`](research/findings/2026-06-23-grounded-lang-INTEGRATION-GO.md),
+[`bridge-co-residence`](research/findings/2026-06-23-bridge-coresidence-DEMONSTRATED.md),
+[`develop-loop`](research/findings/2026-06-23-longitudinal-develop-loop-GPU-GO.md).
+
 **Every host shortcut in the one brain is now closed by default
 (2026-06-22).** This was the recent arc's goal: anything *between* sensation
 and action that had been computed by ordinary code — even where the formula
@@ -572,7 +595,7 @@ neural-simulator/
 ├── neural-simulator.py    ← GUI host + main entry point
 ├── benchmark.py           ← GPU throughput benchmark
 ├── run_benchmarks.py      ← biological validation suite
-├── sim/                   ← engine (42 modules)
+├── sim/                   ← engine (43 modules)
 ├── viz/                   ← 3D OpenGL rendering
 ├── ui/                    ← DearPyGUI controls
 ├── experiment/            ← stimulus, groups, readout, training

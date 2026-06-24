@@ -8,7 +8,7 @@ who wants the mechanism and the evidence, and a contributor who wants to
 know what to build next. Each item is stated plainly first; the technical
 detail and the linked write-up follow.
 
-**Last updated:** 2026-06-19
+**Last updated:** 2026-06-23
 
 > If you only read one paragraph: this project is trying to build
 > **artificial life with a real, biologically translatable brain** — a
@@ -269,6 +269,61 @@ sibling `2026-06-16-generalization-*` docs; capstone:
 These are the things in flight or next in line. Each is labelled honestly for
 how far along it is.
 
+### 0. The artificial-life **development loop** — *De-risked at small scale (the current north-star arc)*
+
+The project's actual end goal (see [The North Star](#the-north-star)) is
+**artificial life that develops**: a brain that lives through simulated days
+of conversation, grows, and remembers — and that a human can then talk to. As
+of June 2026 this loop runs end-to-end on the spiking network at small scale.
+In a single GPU smoke run the brain **develops over four simulated days**:
+hearing a daily curriculum, it learns the word co-occurrence with a plain local
+rule (learning quality ~0.89), grows its vocabulary (6→24 words) and its store
+of facts (2→11), recalls them perfectly, **keeps the old memories** (no
+catastrophic forgetting), and **never fabricates** (zero false-accepts every
+day). It **persists and resumes** — a later run picks up where the last left
+off and lives more days — and a frozen-brain control (no learning) develops
+nothing, confirming the development is real. The timing is tractable: about two
+minutes per simulated day, so a compressed "week" is ~16 minutes and a "year"
+is an overnight run, all on local hardware — no cloud needed. What remains is
+to scale the horizon (a "month"/"year" brain), confirm across more seeds, and
+wire up the human-talks-to-the-developed-brain step.
+→ `research/findings/2026-06-23-longitudinal-develop-loop-GPU-GO.md`; scoping:
+`research/findings/2026-06-23-artificial-life-longitudinal-test-scoping.md`.
+
+### 0b. A **grounded-language faculty** — a spiking LLM that speaks the brain's knowledge, hallucination-proof — *De-risked end-to-end*
+
+A separation the owner asked for is now realized: an external language model
+supplies **fluency only**, while the **brain** supplies the **knowledge,
+the grounding, and the verification**. A real small language model
+(Qwen2.5-0.5B), converted to run **fully in spikes** by the project's own
+graded-read mechanism, generates coherent English (within ~8% of the original's
+quality). It is then **gated and verified by the brain**: it may only phrase
+facts the brain actually holds, and every sentence is parsed back and checked
+before it is allowed out. The decisive proof: in testing the real model *did*
+try to hallucinate — it inverted a fact into its false opposite ("rabbit chased
+fox") — and the architecture **caught and rejected it**, so the
+no-fabrication guarantee holds *with a real generative model in the loop*.
+Validated end-to-end and at small scale (~67 facts, several seeds).
+→ `research/findings/2026-06-23-grounded-lang-INTEGRATION-GO.md`;
+the spiking faculty: `research/findings/2026-06-23-grounded-lang-P1b-GO.md`;
+the scaled run: `research/findings/2026-06-23-grounded-lang-SCALED-GO.md`.
+
+### 0c. **Bridge co-residence** — the language faculty *on the brain's own engine* — *Demonstrated (feasibility); perf is the open item*
+
+The "one brain" goal for language: run the whole spiking language faculty **on
+the simulation engine itself**, alongside the conversational brain, rather than
+as a separate process. This was shown feasible and **local**: the full
+494-million-parameter, 24-layer spiking model runs on the simulation engine's
+resonate-and-fire substrate on a single 24 GB GPU (~14 GB used), producing
+**identical output** to the off-engine version. The honest catch is **speed,
+not memory** — it runs but slowly (prefill is usable at ~187 tokens/sec after
+a first optimization; token-by-token generation is still launch-bound and is
+the next engineering lever, a key-value cache). No simulation-engine code was
+changed. The faculty *running on* the brain is demonstrated; making it fast,
+and making it *interact* with the conversational brain, are the follow-ons.
+→ `research/findings/2026-06-23-bridge-coresidence-DEMONSTRATED.md`; perf:
+`research/findings/2026-06-23-bridge-coresidence-perf-dense-matvec-GO-WITH-CAVEAT.md`.
+
 ### 1. Scale the **learned** cortex to production size (~2,048 concepts) — *In progress*
 
 There are two model cortices in this project, and the distinction matters:
@@ -393,7 +448,7 @@ yet started in earnest.
 - **Harder tasks.** Larger grids, more goal types, multi-step plans for
   navigation; richer fact structures and multi-turn dialogue for conversation.
 
-### Open-ended language toward fluency — *Open (foundation proven, far from fluent)*
+### Open-ended language toward fluency — *Open (foundation proven, the full learn-loop now demonstrated, fluency still far)*
 
 The system's *own* spiking network is being trained to generate language from
 a local text corpus, using a spike-compatible form of gradient learning. The
@@ -406,8 +461,24 @@ system runs entirely on its own, fully local, with no external model and no
 hand-written reply templates. Closing the fluency gap on biologically faithful
 hardware is a genuinely hard, open frontier — possibly the hardest in the
 project.
-→ `research/findings/2026-06-02-generative-ceiling-spiking-LM-NEGATIVE-overfit-not-size.md`;
-the field-context review:
+
+**New (June 2026): the full generative *loop* is now demonstrated** — train on
+a distribution → generate → **grow** the network → confirm it **did not
+forget** the old distribution — end-to-end on the spiking generator, across
+three seeds. A "scale wall" that had stopped this turned out to be a tuning bug
+(a fine-tuning learning rate 30× too high); with it fixed, self-replay during
+the grow step **causally prevents forgetting** (retention 0.88 with replay vs
+0.39 without). The generator's last math operations (its normalization and
+output steps) now also run **in spikes**. One honest boundary is mapped: the
+tiny demonstration network cannot hold *two* similar distributions at once — a
+genuine capacity wall that would need a larger (~50–200M-parameter, still
+local) generator, and which affects only the optional *free-generation* upgrade,
+not the development loop's memory (which is carried by the stream cortex and
+consolidation, both validated to retain).
+→ `research/findings/2026-06-23-generative-loop-DEMONSTRATED.md`,
+`research/findings/2026-06-23-C2-moderate-shift-NEGATIVE-scale-wall.md`;
+the original ceiling + field-context:
+`research/findings/2026-06-02-generative-ceiling-spiking-LM-NEGATIVE-overfit-not-size.md`,
 `research/findings/2026-06-03-pre-compute-review-the-tiny-LLM-gap-is-ALREADY-MEASURED.md`.
 
 ### Richer working memory and longer timescales — *Planned*
