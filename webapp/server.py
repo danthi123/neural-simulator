@@ -2716,6 +2716,14 @@ def llm_chat_reset(name: str, mode: str = "tier1") -> JSONResponse:
 # form needs the GPU. So the console works out of the box, GPU-light.
 
 _BRAIN_CHATS: dict[tuple[str, str, str], object] = {}
+# Parallel cache of the RICH composer (the multi-sentence grounded path)
+# keyed identically to _BRAIN_CHATS. The RichAnswerComposer WRAPS the warm
+# ChatBrain (reuse-by-import, NO sim/ edit): on rich=True one turn becomes a
+# SUBSTANTIVE multi-sentence reply (direct recall + multi-hop chain +
+# elaboration), each sentence VERIFY-checked against the brain so the
+# no-confab moat EXTENDS to multi-sentence. Built lazily on first rich turn
+# (it carries discourse-thread state so 'tell me more' walks forward).
+_BRAIN_RICH: dict[tuple[str, str, str], object] = {}
 
 
 def _default_brain_renderer() -> str:
@@ -2786,6 +2794,34 @@ def _build_chat_brain(brain: str, renderer: str):
     return ChatBrain(agent, self_aliases=aliases, renderer=rend), source
 
 
+def _get_rich_composer(cache_key: tuple, chat):
+    """Build (once) + cache a RichAnswerComposer wrapping the warm ChatBrain.
+
+    The composer is keyed identically to the ChatBrain so each session/brain/
+    renderer gets its own multi-sentence discourse thread (so 'tell me more'
+    elaborates forward within that conversation). The neural dlPFC
+    discourse-planner is ON only on the cupy/GPU backend (it builds + steps a
+    per-topic SimulationBridge, heavy on CPU) — mirroring brain_chat_tui's
+    --rich default + the numpy-CPU host escape. The direct gate (the moat),
+    the role-chase chain hop, and the per-sentence VERIFY are unchanged either
+    way; the planner only steers WHICH grounded facts to bring up.
+    """
+    rich = _BRAIN_RICH.get(cache_key)
+    if rich is None:
+        from research.runners.rich_answer_composer import RichAnswerComposer
+        try:
+            from sim.backend import is_gpu_backend
+            on_gpu = bool(is_gpu_backend())
+        except Exception:
+            on_gpu = (os.environ.get("SIM_BACKEND", "").lower() == "cupy")
+        rich = RichAnswerComposer(
+            chat, max_sentences=4, neural_planner=on_gpu,
+            planner_seed=getattr(getattr(chat, "inner", None), "seed", 42),
+        )
+        _BRAIN_RICH[cache_key] = rich
+    return rich
+
+
 class BrainChatRequest(BaseModel):
     """One conversational turn against a developed brain."""
     session: str = "default"
@@ -2794,9 +2830,13 @@ class BrainChatRequest(BaseModel):
     brain: str = "tiny-demo"
     # 'qwen' (GPU) / 'stub' (GPU-free) / 'raw'; None -> auto (GPU-light).
     renderer: str | None = None
-    # Forward-compat for the upcoming RICH-answer mode (multi-fact /
-    # reasoned). Routed to ChatBrain's rich path IF it exposes one; else
-    # ignored, so the endpoint contract is stable and works today.
+    # RICH-answer mode: when True, the turn returns a SUBSTANTIVE
+    # multi-sentence GROUNDED reply (direct recall + multi-hop chain +
+    # elaboration), each sentence VERIFY-checked against the brain so the
+    # no-confab moat EXTENDS to multi-sentence. Routed through a
+    # session-cached RichAnswerComposer wrapping the warm ChatBrain. A bare
+    # 'tell me more' / 'why?' follow-up elaborates the held topic further.
+    # rich=False keeps the single-fact verified answer (the host path).
     rich: bool = False
     # If True, drop the cached ChatBrain for this (session, brain,
     # renderer) before answering (rebuilds — for 'start fresh').
@@ -2821,12 +2861,18 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
           "verified": bool,         # the render re-parsed back to the fact
           "renderer": str,          # which renderer produced the surface form
           "brain": str, "source": str,
+          # rich=True only (the multi-sentence grounded path):
+          "rich": bool,             # whether the rich path produced this turn
+          "n_sentences": int,       # number of brain-sourced sentences
+          "supporting_facts": [[a, v, p], ...],   # the verified SVOs behind it
+          "followup": bool,         # the turn was a 'tell me more'/'why?'
         }
     """
     renderer = (req.renderer or _default_brain_renderer()).lower()
     cache_key = (req.session, req.brain, renderer)
     if req.reset:
         _BRAIN_CHATS.pop(cache_key, None)
+        _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
 
     chat = _BRAIN_CHATS.get(cache_key)
     source = None
@@ -2847,6 +2893,39 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     if not msg:
         raise HTTPException(422, "message must be non-empty")
 
+    rname = chat.renderer.name if getattr(chat, "renderer", None) is not None else "raw brain triples"
+
+    # ── RICH path: a SUBSTANTIVE multi-sentence grounded reply ──────────
+    # The RichAnswerComposer does its own GATE (direct recall + the moat) +
+    # multi-hop chain + elaboration, VERIFY-checks each sentence, and carries
+    # the discourse thread (so a 'tell me more' follow-up elaborates forward).
+    if req.rich:
+        try:
+            rich = _get_rich_composer(cache_key, chat)
+            r = rich.answer(msg)
+        except Exception as e:
+            raise HTTPException(500, f"rich chat turn failed: {type(e).__name__}: {e}")
+        facts = [list(f) for f in r.get("facts", [])]
+        return JSONResponse({
+            "answer": r["answer"],
+            "abstained": bool(r["abstained"]),
+            # the direct recall (the first supporting fact) is the gate hit,
+            # surfaced for parity with the single-fact path's recalled_svo.
+            "recalled_svo": facts[0] if facts else None,
+            # every kept sentence is gate-sourced + verify-checked, so the
+            # multi-sentence reply is verified-by-construction (unless it
+            # abstained, in which case there is nothing to verify).
+            "verified": (not r["abstained"]) and bool(facts),
+            "renderer": rname,
+            "brain": req.brain,
+            "source": source,
+            "rich": True,
+            "n_sentences": int(r.get("n_sentences", 0)),
+            "supporting_facts": facts,
+            "followup": bool(r.get("followup", False)),
+        })
+
+    # ── single-fact path (rich=False): GATE -> CONSTRAIN+VERIFY render ──
     # Peek the GATE so we can report the recalled fact (exactly what the TUI
     # smoke records), then render. gate() returns None on the moat.
     try:
@@ -2854,12 +2933,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         if gate_svo is None:
             answer, abstained, verified = "I don't know about that.", True, False
         else:
-            # forward-compat: if a future ChatBrain exposes a rich path, use
-            # it when asked; else fall back to the standard verified render.
-            if req.rich and hasattr(chat, "render_rich"):
-                answer = chat.render_rich(gate_svo)  # type: ignore[attr-defined]
-            else:
-                answer = chat.render(gate_svo)
+            answer = chat.render(gate_svo)
             abstained = False
             # 'verified' = the render did NOT fall back to the raw triple
             # (ChatBrain marks an unverified render with this suffix).
@@ -2867,7 +2941,6 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     except Exception as e:
         raise HTTPException(500, f"chat turn failed: {type(e).__name__}: {e}")
 
-    rname = chat.renderer.name if getattr(chat, "renderer", None) is not None else "raw brain triples"
     return JSONResponse({
         "answer": answer,
         "abstained": abstained,
@@ -2876,6 +2949,7 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
         "renderer": rname,
         "brain": req.brain,
         "source": source,
+        "rich": False,
     })
 
 
@@ -2895,6 +2969,7 @@ def brain_chat_reset(req: BrainChatResetRequest) -> JSONResponse:
     cache_key = (req.session, req.brain, renderer)
     existed = cache_key in _BRAIN_CHATS
     _BRAIN_CHATS.pop(cache_key, None)
+    _BRAIN_RICH.pop(cache_key, None)   # drop the rich discourse thread too
     return JSONResponse({"reset": existed, "session": req.session,
                          "brain": req.brain, "renderer": renderer})
 

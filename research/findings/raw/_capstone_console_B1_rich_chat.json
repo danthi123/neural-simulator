@@ -1,0 +1,173 @@
+{
+  "probe": "capstone_console_B1_rich_chat_endpoint_wiring",
+  "goal": "wire RICH multi-sentence grounded answers into /api/brain-chat (rich=True -> RichAnswerComposer), + Interact rich toggle + tell-me-more follow-up; single-fact path intact; moat 0-FA preserved.",
+  "validation_method": "in-process call of the FastAPI brain_chat() endpoint handler (NO live-server restart; the controller manages the live webapp). GPU-free stub renderer (moat+recall are CPU).",
+  "what_changed": {
+    "webapp/server.py": [
+      "_BRAIN_RICH session cache (keyed (session,brain,renderer))",
+      "_get_rich_composer(): builds+caches a RichAnswerComposer wrapping the warm ChatBrain (neural dlPFC planner ON only on cupy/GPU; host default on numpy-CPU)",
+      "brain_chat(): rich=True routes through RichAnswerComposer.answer() -> multi-sentence + supporting_facts + n_sentences + followup; rich=False keeps the single-fact verified render",
+      "both reset paths drop _BRAIN_RICH too"
+    ],
+    "webapp/static/index.html": [
+      "#brainchat-rich toggle (Rich answers)",
+      "#brainchat-more button (Tell me more, hidden until a rich answer)"
+    ],
+    "webapp/static/app.js": [
+      "send() passes rich + accepts an explicit message (Tell me more -> \"tell me more\")",
+      "showMore() reveals the follow-up button after a non-abstained rich turn",
+      "appendBrainTurn() shows ALL supporting_facts (grounded-in) for a rich answer"
+    ],
+    "webapp/static/style.css": [
+      ".interact-more secondary-button style"
+    ]
+  },
+  "sim_edit": false,
+  "GO": true,
+  "checks": {
+    "tiny_rich_multisentence": true,
+    "tiny_moat_0FA": true,
+    "tiny_single_fact_intact": true,
+    "interlinked_rich_multisentence": true,
+    "interlinked_followup_walks_forward": true,
+    "interlinked_all_brain_sourced": true
+  },
+  "tiny_demo": {
+    "rich_what_are_you": {
+      "answer": "The brain uses spikes. The brain learns words. The brain stores memory.",
+      "n_sentences": 3,
+      "facts": [
+        [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        [
+          "brain",
+          "learn",
+          "words"
+        ],
+        [
+          "brain",
+          "store",
+          "memory"
+        ]
+      ],
+      "rich": true,
+      "abstained": false
+    },
+    "moat_rich": [
+      {
+        "cue": "what does the dragon do",
+        "abstained": true,
+        "answer": "I don't know about that."
+      },
+      {
+        "cue": "what is the capital of france",
+        "abstained": true,
+        "answer": "I don't know about that."
+      },
+      {
+        "cue": "who wrote romeo and juliet",
+        "abstained": true,
+        "answer": "I don't know about that."
+      }
+    ],
+    "single_fact": {
+      "answer": "The brain uses spikes.",
+      "rich": false,
+      "recalled_svo": [
+        "brain",
+        "use",
+        "spikes"
+      ],
+      "verified": true,
+      "untaught_abstained": true
+    }
+  },
+  "interlinked_developed_shaped": {
+    "turn1": {
+      "q": "what are you",
+      "answer": "The brain uses spikes. The spikes fires neurons. The neurons haves synapses. The synapses stores weights.",
+      "n_sentences": 4,
+      "facts": [
+        [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        [
+          "spikes",
+          "fire",
+          "neurons"
+        ],
+        [
+          "neurons",
+          "have",
+          "synapses"
+        ],
+        [
+          "synapses",
+          "store",
+          "weights"
+        ]
+      ]
+    },
+    "turn2_followup": {
+      "q": "tell me more",
+      "answer": "The brain speaks answers. The answers comes memory. The brain refuseses guessing. The brain learns words.",
+      "n_sentences": 4,
+      "facts": [
+        [
+          "brain",
+          "speak",
+          "answers"
+        ],
+        [
+          "answers",
+          "come",
+          "memory"
+        ],
+        [
+          "brain",
+          "refuses",
+          "guessing"
+        ],
+        [
+          "brain",
+          "learn",
+          "words"
+        ]
+      ],
+      "followup": true,
+      "abstained": false
+    },
+    "turn3": {
+      "q": "how do you learn",
+      "answer": "The brain learns words. The words forms facts. The facts builds memory. The memory needses sleep.",
+      "n_sentences": 4,
+      "facts": [
+        [
+          "brain",
+          "learn",
+          "words"
+        ],
+        [
+          "words",
+          "form",
+          "facts"
+        ],
+        [
+          "facts",
+          "build",
+          "memory"
+        ],
+        [
+          "memory",
+          "needs",
+          "sleep"
+        ]
+      ]
+    }
+  }
+}

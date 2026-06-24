@@ -2280,9 +2280,11 @@ function setupBrainChat() {
   const logEl = document.getElementById("brainchat-log");
   const inputEl = document.getElementById("brainchat-input");
   const sendBtn = document.getElementById("brainchat-send");
+  const moreBtn = document.getElementById("brainchat-more");
   const resetBtn = document.getElementById("brainchat-reset");
   const brainEl = document.getElementById("brainchat-brain");
   const rendererEl = document.getElementById("brainchat-renderer");
+  const richEl = document.getElementById("brainchat-rich");
   const showSvoEl = document.getElementById("brainchat-show-svo");
   const statusEl = document.getElementById("brainchat-status");
   if (!logEl || !inputEl || !sendBtn) return;
@@ -2295,21 +2297,32 @@ function setupBrainChat() {
     return v === "auto" ? null : v;
   }
 
+  function richOn() { return !!(richEl && richEl.checked); }
+
   function clearLog(msg) {
     logEl.replaceChildren(
       el("p", { class: "muted interact-empty" }, msg || "Say hi — the brain is listening."));
   }
 
-  async function send() {
-    const message = inputEl.value.trim();
+  // Reveal "Tell me more" only after a non-abstained RICH turn (the
+  // follow-up elaborate path needs a held topic + rich mode).
+  function showMore(canFollowUp) {
+    if (moreBtn) moreBtn.hidden = !(richOn() && canFollowUp);
+  }
+
+  // `explicitMsg` lets "Tell me more" drive a follow-up without the input box.
+  async function send(explicitMsg) {
+    const message = (explicitMsg != null ? explicitMsg : inputEl.value.trim());
     if (!message) return;
+    const rich = richOn();
     appendBrainTurn(logEl, "user", message, showSvoEl);
-    inputEl.value = "";
+    if (explicitMsg == null) inputEl.value = "";
     sendBtn.disabled = true;
+    if (moreBtn) moreBtn.disabled = true;
     sendBtn.textContent = "…";
     const thinking = el("div", { class: "interact-turn interact-thinking" },
       el("span", { class: "interact-role role-brain" }, "brain"),
-      el("span", { class: "interact-bubble" }, "thinking…"));
+      el("span", { class: "interact-bubble" }, rich ? "thinking… (composing a grounded reply)" : "thinking…"));
     logEl.appendChild(thinking);
     logEl.scrollTop = logEl.scrollHeight;
     try {
@@ -2317,7 +2330,7 @@ function setupBrainChat() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          session, message,
+          session, message, rich,
           brain: (brainEl && brainEl.value.trim()) || "tiny-demo",
           renderer: rendererParam(),
         }),
@@ -2327,26 +2340,36 @@ function setupBrainChat() {
         let detail = "";
         try { detail = (await res.json()).detail || ""; } catch (e) { detail = await res.text(); }
         appendBrainTurn(logEl, "error", `Error ${res.status}: ${detail}`, showSvoEl);
+        showMore(false);
       } else {
         const data = await res.json();
         appendBrainTurn(logEl, data.abstained ? "abstain" : "brain",
                         data.answer, showSvoEl, data);
+        // After a substantive rich answer, offer "Tell me more"; an
+        // abstention (incl. "nothing more to add") hides it again.
+        showMore(!!data.rich && !data.abstained);
         if (statusEl) {
-          statusEl.textContent = `renderer: ${data.renderer} · brain: ${data.source || data.brain}`;
+          const richTag = data.rich ? ` · rich: ${data.n_sentences} grounded sentence${data.n_sentences === 1 ? "" : "s"}` : "";
+          statusEl.textContent = `renderer: ${data.renderer} · brain: ${data.source || data.brain}${richTag}`;
         }
       }
     } catch (e) {
       thinking.remove();
       appendBrainTurn(logEl, "error", `Network error: ${e.message}`, showSvoEl);
+      showMore(false);
     } finally {
       sendBtn.disabled = false;
+      if (moreBtn) moreBtn.disabled = false;
       sendBtn.textContent = "Send";
       inputEl.focus();
     }
   }
 
-  sendBtn.addEventListener("click", send);
+  sendBtn.addEventListener("click", () => send());
   inputEl.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
+  if (moreBtn) moreBtn.addEventListener("click", () => send("tell me more"));
+  // Flipping the rich toggle off hides the follow-up affordance.
+  if (richEl) richEl.addEventListener("change", () => { if (!richOn()) showMore(false); });
 
   if (resetBtn) {
     resetBtn.addEventListener("click", async () => {
@@ -2363,6 +2386,7 @@ function setupBrainChat() {
       } catch (e) { /* non-fatal */ }
       clearLog("New chat — the brain's discourse buffer was cleared.");
       if (statusEl) statusEl.textContent = "";
+      showMore(false);
     });
   }
 
@@ -2406,12 +2430,21 @@ function appendBrainTurn(logEl, role, content, showSvoEl, data) {
   }
   turn.appendChild(bubble);
 
-  // Recalled-fact / meta strip (hidden unless the toggle is on).
-  if (data && (data.recalled_svo || role === "brain")) {
-    const svo = data.recalled_svo;
+  // Recalled-fact / meta strip (hidden unless the "Show recalled fact"
+  // toggle is on). For a RICH answer, show ALL the brain-sourced supporting
+  // facts behind the multi-sentence reply (each one gate-sourced +
+  // verify-checked) so the grounding is fully visible.
+  if (data && (data.recalled_svo || (data.supporting_facts && data.supporting_facts.length) || role === "brain")) {
     const metaBits = [];
-    if (svo) metaBits.push("recalled: " + svo.join(" "));
-    metaBits.push(data.verified ? "verified ✓" : "unverified");
+    if (data.rich && data.supporting_facts && data.supporting_facts.length) {
+      metaBits.push("grounded in: " + data.supporting_facts.map((f) => f.join(" ")).join("; "));
+      metaBits.push(data.verified ? "all verified ✓" : "unverified");
+    } else if (data.recalled_svo) {
+      metaBits.push("recalled: " + data.recalled_svo.join(" "));
+      metaBits.push(data.verified ? "verified ✓" : "unverified");
+    } else {
+      metaBits.push(data.verified ? "verified ✓" : "unverified");
+    }
     metaBits.push("via " + (data.renderer || "—"));
     turn.appendChild(el("div", { class: "interact-meta muted" }, metaBits.join("  ·  ")));
   }

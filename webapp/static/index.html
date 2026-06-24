@@ -104,6 +104,10 @@
               <option value="raw">raw triples</option>
             </select>
           </label>
+          <label class="toolbar-checkbox interact-svo-toggle" title="Rich answers: a SUBSTANTIVE multi-sentence grounded reply per turn (direct recall + multi-hop chain + elaboration), each sentence verified against the brain. 'Tell me more' elaborates further.">
+            <input type="checkbox" id="brainchat-rich">
+            Rich answers
+          </label>
           <label class="toolbar-checkbox interact-svo-toggle" title="Show the stored fact (subject–verb–object) the brain recalled for each answer">
             <input type="checkbox" id="brainchat-show-svo">
             Show recalled fact
@@ -120,6 +124,8 @@
           <input type="text" id="brainchat-input" class="interact-input"
                  placeholder="Ask the brain something… (Enter to send)" autocomplete="off">
           <button id="brainchat-send" class="interact-send">Send</button>
+          <button id="brainchat-more" class="interact-send interact-more" hidden
+                  title="Elaborate further on what the brain just said (rich answers only)">Tell me more</button>
         </div>
 
         <div class="interact-chips" id="brainchat-chips">

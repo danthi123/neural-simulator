@@ -2738,6 +2738,13 @@ pre {
 }
 .interact-send:hover { filter: brightness(1.08); }
 .interact-send:disabled { opacity: .6; cursor: default; }
+/* "Tell me more" — a secondary follow-up action (rich answers only). */
+.interact-more {
+  background: transparent; color: var(--accent);
+  border: 1px solid var(--accent); padding: 0 16px; font-weight: 500;
+}
+.interact-more:hover { filter: none; background: var(--bg-2); }
+.interact-more[hidden] { display: none; }
 
 .interact-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 .interact-chip {
