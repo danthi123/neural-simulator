@@ -3967,3 +3967,17 @@ Relaunched at 17:32:57 as PID 26928 with `Start-Process -WindowStyle Hidden` (cr
 
 LESSON for future launches: Use `-WindowStyle Hidden` (or omit `-NoNewWindow`) so the python process gets its own console + survives client death. `-NoNewWindow` is convenient for live log piping but makes the process die with the harness. The KILL-SAFE per-cell caches did their job here -- they're the load-bearing recovery mechanism, not the detachment.
 
+
+---
+
+## CYCLE 513 (2026-06-24 overnight burndown — clean checkpoint; CYCLE 512's body became one un-editable ~25K-token line, so progress logs here)
+
+**BURNDOWN PROGRESS — 6 items CLOSED tonight (all committed, both remotes):**
+- 1A — 4/5 conversational spiking flips DEFAULT-ON on the production onebrain path (C-3 spiking-cleanup + C-5 learned-assoc via False→None sentinel; C-4 reciprocal-unbind + H-7 substrate-store already-on). Caps PASS, moat 0-FA, no regression. C-2 integrated_loop = characterized residual (small-vocab code-margin boundary; already-ON + GO at production 320). NO sim/ edit. `2b026433`.
+- 1B — deployed nav reward/value/dopamine now SPIKING by default (5 episode-loop defaults flipped; host reward-scaffold dropped). RPE battery 2/2 + decisive lesions, nav not regressed, moat intact, CLI preserved. Brain-based PURITY (GREEN_INERT). NO sim/ edit. `c86d3441`.
+- I-1-a — op-handoff-as-spikes byte-identical (atol 1e-9, 9 cases), CPU-closable reuse-by-import. `c96ef106`.
+- I-5-a — synaptic parser→composer route recovers role→word == ground-truth 3/3 seeds, gated-by-firing, lesion-collapses, provenance-clean. `ae3b190a`.
+- 3B — DEEP dendritic learned binder HONEST-NEGATIVE (held-out 0.007 vs FHRR 0.228; ORACLE also fails 0.007/0.984 -> not capacity/rule). Dendrite comprehensively ruled out for learnable generalizable multi-attr composition (3 NEGATIVEs). Phase-3B = honest point-neuron BOUNDARY, NOT a months build. Fixed +-1/FHRR primitive STAYS (structural neural primitive). `9768b474`.
+- I-4-a — merged nav+conv INTERACTS by default (enable_da_salience_gate flipped on -> shared dopamine reaches the conversational composer). Moat 15/15 0-FA, byte-identical at rest, engaged, nav delta=0. NO sim/ edit. `f5044b11`.
+
+**EXACT NEXT CONCRETE ACTION (watchdog anchor):** the I-1 op-handoff BUILD is IN FLIGHT (subagent `a7a7dda284e0338b7`, GPU, tractable — applies the de-risked byte-identical on-substrate read+re-kick to the composer's 3 host round-trips, validated vs the 11-test CI). ON ITS RETURN -> commit both remotes + continue the burndown GPU-serially: I-7 (limbic->composer ENCODING hook; the read-side DA gate already flipped on by I-4-a) -> 2A perf root (O-1 on-GPU LLM forward -> O-2 dense matvec -> O-3 KV cache) -> Phase-3 3D/3E/3F/3G. If `git log` shows NO subagent in flight, immediately start the next pre-registered item. NEVER idle/checkpoint; honest-propagate every outcome to origin+gitea; GPU/CuPy for real runs (numpy tiny-smoke only); never weaken the no-confab moat (0-FA). OPS LESSON (mechanical): subagents fine for CPU de-risks but STALL on big GPU runs -> keep GPU validations SMALL/tractable (existing tests + V<=64 smoke, <5min, foreground) or controller-managed.
