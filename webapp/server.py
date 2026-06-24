@@ -76,7 +76,7 @@ def _cuda_gpu_present() -> bool:
 
 if "SIM_BACKEND" not in os.environ and _cuda_gpu_present():
     os.environ.setdefault("SIM_BACKEND", "cupy")
-    print("[webapp] CUDA GPU detected → defaulting SIM_BACKEND=cupy "
+    print("[webapp] CUDA GPU detected -> defaulting SIM_BACKEND=cupy "
           "(set SIM_BACKEND=numpy to override for the CPU path)", flush=True)
 
 class NoCacheStaticFiles(StaticFiles):
