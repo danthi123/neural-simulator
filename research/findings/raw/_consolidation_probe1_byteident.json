@@ -1,0 +1,286 @@
+{
+  "probe": "consolidation_probe1_byteident",
+  "what": "co-resident OneBrainComposer on an OFFSET rf slice == standalone OneBrainComposer (atol 1e-9), the full who/what/yes-no matrix + every is-None/unknown abstention, persistent_loop=True",
+  "scoping": "research/findings/raw/_consolidation_onebrain_limbic_scoping.md (Probe 1)",
+  "backend": "numpy",
+  "seed": 42,
+  "D": 48,
+  "nav_stub_offset": 37,
+  "vocab_size": 16,
+  "n_facts": 5,
+  "atol": 1e-09,
+  "configs": {
+    "oracle_cleanup": {
+      "n_matrix": 30,
+      "n_match": 30,
+      "n_mismatch": 0,
+      "n_abstain_total": 8,
+      "n_abstain_match": 8,
+      "max_abs_membrane_delta": 0.0,
+      "atol": 1e-09,
+      "byte_identical": true,
+      "moat_preserved": true,
+      "nav_slice_byte_identical": true,
+      "mismatches": [],
+      "sample_rows": [
+        {
+          "label": "patient[dog,chase]",
+          "answer": "cat"
+        },
+        {
+          "label": "patient[cat,see]",
+          "answer": "bird"
+        },
+        {
+          "label": "patient[fox,eat]",
+          "answer": "rabbit"
+        },
+        {
+          "label": "patient[rabbit,eat]",
+          "answer": "seed"
+        },
+        {
+          "label": "patient[bird,see]",
+          "answer": "worm"
+        },
+        {
+          "label": "patient[dog,see]",
+          "answer": null
+        },
+        {
+          "label": "patient[hill,chase]",
+          "answer": null
+        },
+        {
+          "label": "agent[chase,cat]",
+          "answer": "dog"
+        },
+        {
+          "label": "agent[see,bird]",
+          "answer": "cat"
+        },
+        {
+          "label": "agent[eat,rabbit]",
+          "answer": "fox"
+        },
+        {
+          "label": "agent[eat,seed]",
+          "answer": "rabbit"
+        },
+        {
+          "label": "agent[see,worm]",
+          "answer": "bird"
+        },
+        {
+          "label": "agent[chase,bird]",
+          "answer": null
+        },
+        {
+          "label": "agent[fly,fish]",
+          "answer": null
+        },
+        {
+          "label": "yesno[dog,chase,cat]",
+          "answer": "yes"
+        },
+        {
+          "label": "yesno[cat,see,bird]",
+          "answer": "yes"
+        },
+        {
+          "label": "yesno[fox,eat,rabbit]",
+          "answer": "no"
+        },
+        {
+          "label": "yesno[rabbit,eat,seed]",
+          "answer": "yes"
+        },
+        {
+          "label": "yesno[bird,see,worm]",
+          "answer": "yes"
+        },
+        {
+          "label": "yesno[dog,chase,bird]",
+          "answer": "unknown"
+        },
+        {
+          "label": "yesno[hill,eat,seed]",
+          "answer": "unknown"
+        },
+        {
+          "label": "render[dog]",
+          "answer": "dog chase cat"
+        },
+        {
+          "label": "render[cat]",
+          "answer": "cat see bird"
+        },
+        {
+          "label": "render[fox]",
+          "answer": "fox eat rabbit"
+        },
+        {
+          "label": "render[rabbit]",
+          "answer": "rabbit eat seed"
+        },
+        {
+          "label": "render[bird]",
+          "answer": "bird see worm"
+        },
+        {
+          "label": "render[hill]",
+          "answer": null
+        },
+        {
+          "label": "chain[rabbit;eat]",
+          "answer": "seed"
+        },
+        {
+          "label": "chain[dog;chase,see]",
+          "answer": "bird"
+        },
+        {
+          "label": "chain[dog;chase,eat]",
+          "answer": null
+        }
+      ]
+    },
+    "spiking_cleanup": {
+      "n_matrix": 30,
+      "n_match": 30,
+      "n_mismatch": 0,
+      "n_abstain_total": 8,
+      "n_abstain_match": 8,
+      "max_abs_membrane_delta": 0.0,
+      "atol": 1e-09,
+      "byte_identical": true,
+      "moat_preserved": true,
+      "nav_slice_byte_identical": true,
+      "mismatches": [],
+      "sample_rows": [
+        {
+          "label": "patient[dog,chase]",
+          "answer": "cat"
+        },
+        {
+          "label": "patient[cat,see]",
+          "answer": "bird"
+        },
+        {
+          "label": "patient[fox,eat]",
+          "answer": "rabbit"
+        },
+        {
+          "label": "patient[rabbit,eat]",
+          "answer": "seed"
+        },
+        {
+          "label": "patient[bird,see]",
+          "answer": "worm"
+        },
+        {
+          "label": "patient[dog,see]",
+          "answer": null
+        },
+        {
+          "label": "patient[hill,chase]",
+          "answer": null
+        },
+        {
+          "label": "agent[chase,cat]",
+          "answer": "dog"
+        },
+        {
+          "label": "agent[see,bird]",
+          "answer": "cat"
+        },
+        {
+          "label": "agent[eat,rabbit]",
+          "answer": "fox"
+        },
+        {
+          "label": "agent[eat,seed]",
+          "answer": "rabbit"
+        },
+        {
+          "label": "agent[see,worm]",
+          "answer": "bird"
+        },
+        {
+          "label": "agent[chase,bird]",
+          "answer": null
+        },
+        {
+          "label": "agent[fly,fish]",
+          "answer": null
+        },
+        {
+          "label": "yesno[dog,chase,cat]",
+          "answer": "yes"
+        },
+        {
+          "label": "yesno[cat,see,bird]",
+          "answer": "yes"
+        },
+        {
+          "label": "yesno[fox,eat,rabbit]",
+          "answer": "no"
+        },
+        {
+          "label": "yesno[rabbit,eat,seed]",
+          "answer": "yes"
+        },
+        {
+          "label": "yesno[bird,see,worm]",
+          "answer": "yes"
+        },
+        {
+          "label": "yesno[dog,chase,bird]",
+          "answer": "unknown"
+        },
+        {
+          "label": "yesno[hill,eat,seed]",
+          "answer": "unknown"
+        },
+        {
+          "label": "render[dog]",
+          "answer": "dog chase cat"
+        },
+        {
+          "label": "render[cat]",
+          "answer": "cat see bird"
+        },
+        {
+          "label": "render[fox]",
+          "answer": "fox eat rabbit"
+        },
+        {
+          "label": "render[rabbit]",
+          "answer": "rabbit eat seed"
+        },
+        {
+          "label": "render[bird]",
+          "answer": "bird see worm"
+        },
+        {
+          "label": "render[hill]",
+          "answer": null
+        },
+        {
+          "label": "chain[rabbit;eat]",
+          "answer": "seed"
+        },
+        {
+          "label": "chain[dog;chase,see]",
+          "answer": "bird"
+        },
+        {
+          "label": "chain[dog;chase,eat]",
+          "answer": null
+        }
+      ]
+    }
+  },
+  "GO": true,
+  "verdict": "GO -- co-resident OneBrainComposer is byte-identical (atol 1e-9) to standalone on the full matrix; moat preserved; nav slice byte-isolated; the index rebasing is correct"
+}

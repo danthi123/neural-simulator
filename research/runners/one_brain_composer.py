@@ -282,10 +282,32 @@ class OneBrainComposer:
         self.b = build_coresident_bridge(seed, self.n_total, enable_rf_cudagraph=self.enable_rf_cudagraph)
         self.parser = BridgeParser(seed=seed, R=self.R, shared_bridge=self.b, index_offset=0)   # wires+trains [0:P]
         self.rf_mask = np.zeros(self.n_total, dtype=bool); self.rf_mask[self.P:self.n_total] = True
+        # _rf_reset_mask (consolidation / co-residence, DEFAULT None = byte-identical = the full-array zero the private-
+        # bridge path uses): the slice the per-op `v/u <- 0` reset is restricted to. None -> the whole bridge is zeroed
+        # (the standalone composer owns its bridge, so a full reset is correct + byte-identical). A CO-RESIDENT subclass
+        # (CoResidentOneBrainComposer) sets this to its rf slice so a composer op zeroes ONLY the rf slice and leaves a
+        # co-resident Izhikevich (nav) slice's v/u byte-untouched (the same masked-rf-kick discipline). Routed through
+        # `_zero_rf_v_u()` at every reset site.
+        self._rf_reset_mask = None
         self.kb = []          # bookkeeping: list of (fact_dict, None) -- the agent's _assoc_graph reads fact dicts;
         #                       the bound VECTOR is on-substrate (the None placeholder keeps the (fact, vec) shape)
         self.store_conns = []
         self._word_index = {w: i for i, w in enumerate(self.words)}   # word -> codebook index (the sequencer cue idx)
+
+    def _zero_rf_v_u(self):
+        """Reset the RF complex state v/u to 0 before a kick. DEFAULT (_rf_reset_mask=None): the whole bridge (the
+        standalone composer owns its bridge -> byte-identical to the prior `b.cp_*[:] = 0.0`). CO-RESIDENT
+        (_rf_reset_mask = the rf slice): zero ONLY the rf slice, so a composer op leaves a co-resident Izhikevich (nav)
+        slice's v/u byte-untouched (the masked-rf-kick co-residence guarantee). The single dispatch every per-op reset
+        site shares so co-residence isolation holds across all of them at once."""
+        b = self.b
+        m = self._rf_reset_mask
+        if m is None:
+            b.cp_membrane_potential_v[:] = 0.0
+            b.cp_recovery_variable_u[:] = 0.0
+        else:
+            b.cp_membrane_potential_v[m] = 0.0
+            b.cp_recovery_variable_u[m] = 0.0
 
     # --- comprehend + store ---
     def _pol(self, polarity):
@@ -367,7 +389,7 @@ class OneBrainComposer:
             kick[P + i * D:P + (i + 1) * D] = zf                                                  # fill_i at block i
             binds += [(P + (n + i) * D + k, P + i * D + k, complex(zr[k])) for k in range(D)]     # bound_i at block n+i
             bundle += [(P + acc * D + k, P + (n + i) * D + k, 1.0) for k in range(D)]             # acc at block 2n
-        b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+        self._zero_rf_v_u()
         b.rf_set_complex_weights(binds); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
         b.rf_set_complex_weights(bundle); b.rf_resonate_steps(Pd + 8)
@@ -436,8 +458,7 @@ class OneBrainComposer:
         ss = b.cp_rf_spike_step                                       # device int (per neuron, set by the prior resonate)
         phi_dev = ((period - ss) % period) / float(period)           # device phases (the rf_read_phases formula)
         zc = xp.exp(2j * np.pi * phi_dev)                            # device clean unit phasor (the np.exp host uses)
-        b.cp_membrane_potential_v[:] = 0.0
-        b.cp_recovery_variable_u[:] = 0.0
+        self._zero_rf_v_u()        # full reset (private bridge) OR rf-slice-only (co-resident) -- byte-identical default
         for sl in dst_slices:
             b.cp_membrane_potential_v[sl] = xp.real(zc[sl]).astype(b.cp_membrane_potential_v.dtype)
             b.cp_recovery_variable_u[sl] = xp.imag(zc[sl]).astype(b.cp_recovery_variable_u.dtype)
@@ -512,7 +533,7 @@ class OneBrainComposer:
         the 2-word polarity codebook. Returns a dict {role: word} for the bind_roles (attribute present only on the
         attribute-enabled composer; its value is noise for a plain fact and the caller ignores it via the kb dict)."""
         comp, b, D, Pd, V, NP = self.comp, self.b, self.D, self.period, self.V, self.NP
-        b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+        self._zero_rf_v_u()
         trig = self.store_base + block_idx * self.block
         kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
         b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
@@ -604,7 +625,7 @@ class OneBrainComposer:
                 self._csr_cache[n] = self._build_batched_unbind_clean(n)       # query-invariant: build once per n
             (Ure, Uim), (Cre, Cim) = self._csr_cache[n]
             Sre, Sim = self._store_csr_cached()                                # rebuilt only when store changed
-            b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+            self._zero_rf_v_u()
             kick = np.zeros(self.n_total, dtype=np.complex128)
             for i in range(n):
                 kick[self.store_base + i * self.block] = 1.0                   # fire EVERY stored trigger
@@ -620,7 +641,7 @@ class OneBrainComposer:
             mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
             return self._decode_batched_mem(mem, n)
         # --- stock path (cache off): rebuild every CSR from fresh tuple lists each query ---
-        b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+        self._zero_rf_v_u()
         kick = np.zeros(self.n_total, dtype=np.complex128)
         for i in range(n):
             kick[self.store_base + i * self.block] = 1.0                       # fire EVERY stored trigger
@@ -717,7 +738,7 @@ class OneBrainComposer:
         (mirrors `_read_block`'s per-block matched-filter, but ALSO returns the winner's normalized score). Trace-only
         -- never on the answer path."""
         comp, b, D, Pd, V, NP = self.comp, self.b, self.D, self.period, self.V, self.NP
-        b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+        self._zero_rf_v_u()
         trig = self.store_base + block_idx * self.block
         kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
         b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
@@ -896,7 +917,7 @@ class OneBrainComposer:
         # it never clobbers the cleanup region at c_base.
         pq = self.bind_roles.index("polarity")                             # the polarity Q slot, reused as scratch
         # hop 1: reconstruct the outer block (kick) + unbind the OUTER patient -> the embedded clause composite in Q[pq]
-        b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+        self._zero_rf_v_u()
         trig = self.store_base + block_idx * self.block
         kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
         b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
@@ -1035,7 +1056,7 @@ class OneBrainComposer:
         """Reconstruct block_idx + unbind the patient role -> the RAW recovered patient phases (NOT cleaned up to a
         word). The reconsolidation prediction error compares these against an asserted patient's code."""
         comp, b, D, Pd = self.comp, self.b, self.D, self.period
-        b.cp_membrane_potential_v[:] = 0.0; b.cp_recovery_variable_u[:] = 0.0
+        self._zero_rf_v_u()
         trig = self.store_base + block_idx * self.block
         kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
         b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
