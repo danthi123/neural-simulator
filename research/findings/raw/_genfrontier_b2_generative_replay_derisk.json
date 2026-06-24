@@ -1,0 +1,615 @@
+{
+  "probe": "genfrontier_b2_generative_replay",
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "D": 128,
+    "n_facts": 24,
+    "n_negated": 12,
+    "n_attempts": 3000,
+    "tau_pct": 50.0,
+    "advantage_bar": 3.0,
+    "min_novel": 3,
+    "shuffle_collapse_frac": 0.5,
+    "store_floor_bar": 0.95,
+    "max_bytes": 4000000,
+    "window": 5
+  },
+  "baseline_to_beat": {
+    "measured_retrieval_novel_composition": 0.0,
+    "source": "2026-06-22-generation-novelty-categorical-gap-MEASURED.md"
+  },
+  "detail": {
+    "replay_plausible_fraction_mean": 0.32815679191115427,
+    "random_plausible_fraction_mean": 0.019475026515868087,
+    "shuffled_true_plausible_fraction_mean": 0.017944444444444443,
+    "advantage_ratio_mean": 16.96913288564248,
+    "advantage_ratio_min": 14.949319415003533,
+    "novel_composition_score_mean": 0.7518518518518519,
+    "n_novel_proposed_mean": 33.833333333333336,
+    "n_novel_proposed_min": 26,
+    "n_strongly_plausible_mean": 7.166666666666667,
+    "moat_leaks_total": 0,
+    "contradictions_proposed_total": 0,
+    "store_abstention_floor_rate_mean": 0.9833333333333334,
+    "store_abstention_floor_rate_min": 0.95,
+    "store_abstention_floor_ok_all": true,
+    "novel_above_zero_all_seeds": true,
+    "advantage_all_seeds": true,
+    "shuffled_collapses_all_seeds": true,
+    "moat_preserved_all_seeds": true,
+    "advantage_bar": 3.0,
+    "min_novel_bar": 3,
+    "shuffle_collapse_frac_bar": 0.5,
+    "store_floor_bar": 0.95
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_stored": 24,
+      "tau": 0.47702477601079807,
+      "discoverable_novel_plausible_universe": 45,
+      "novel_composition_score": 0.7555555555555555,
+      "n_novel_proposed": 34,
+      "n_strongly_plausible": 5,
+      "replay_plausible_fraction_of_novel": 0.3177361853832442,
+      "novel_proposed_examples": [
+        "bird sing white",
+        "bear walk foot",
+        "cat sleep blocks",
+        "dog run road",
+        "cat sleep house",
+        "brother play eye",
+        "cat sleep blue",
+        "duck eat soup",
+        "mouse eat brown",
+        "mouse eat apple",
+        "fish jump green",
+        "sister look bell",
+        "fish sing room",
+        "frog jump green",
+        "frog jump cookie",
+        "fish sing road",
+        "brother play pink",
+        "duck jump road",
+        "sister look eye",
+        "bird sing blue"
+      ],
+      "random_plausible_fraction_of_novel": 0.01865038996269922,
+      "random_distinct_plausible": 27,
+      "advantage_ratio": 17.036436558094312,
+      "shuffled_n_accepted": 35,
+      "shuffled_true_plausible_fraction_accepted": 0.0,
+      "shuffled_true_plausible_fraction_of_novel": 0.017333333333333333,
+      "moat_leaks": 0,
+      "contradictions_proposed": 0,
+      "n_negated": 12,
+      "store_abstention_correct": 20,
+      "store_abstention_attempted": 20,
+      "samples": [
+        {
+          "triple": "bird sing white",
+          "ppmi_agent_action": 0.596,
+          "ppmi_action_patient": 1.076,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "bear walk foot",
+          "ppmi_agent_action": 0.737,
+          "ppmi_action_patient": 1.516,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "cat sleep blocks",
+          "ppmi_agent_action": 0.747,
+          "ppmi_action_patient": 0.601,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "dog run road",
+          "ppmi_agent_action": 0.597,
+          "ppmi_action_patient": 0.668,
+          "ppmi_agent_patient": 0.068
+        },
+        {
+          "triple": "cat sleep house",
+          "ppmi_agent_action": 0.747,
+          "ppmi_action_patient": 0.477,
+          "ppmi_agent_patient": 0.015
+        },
+        {
+          "triple": "brother play eye",
+          "ppmi_agent_action": 0.577,
+          "ppmi_action_patient": 0.824,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "cat sleep blue",
+          "ppmi_agent_action": 0.747,
+          "ppmi_action_patient": 1.084,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "duck eat soup",
+          "ppmi_agent_action": 0.636,
+          "ppmi_action_patient": 0.519,
+          "ppmi_agent_patient": 0.0
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "n_stored": 24,
+      "tau": 0.47702477601079807,
+      "discoverable_novel_plausible_universe": 45,
+      "novel_composition_score": 0.8,
+      "n_novel_proposed": 36,
+      "n_strongly_plausible": 7,
+      "replay_plausible_fraction_of_novel": 0.335249889429456,
+      "novel_proposed_examples": [
+        "brother play pink",
+        "bird sing pink",
+        "fish sing room",
+        "frog jump road",
+        "brother play green",
+        "fish sing road",
+        "sister look leg",
+        "duck eat brown",
+        "dog run house",
+        "mouse eat soup",
+        "duck eat milk",
+        "fish sing blue",
+        "sister look bell",
+        "mouse eat brown",
+        "sister look black",
+        "bird sing road",
+        "cat sleep black",
+        "bear walk road",
+        "fish sing pink",
+        "dog run foot"
+      ],
+      "random_plausible_fraction_of_novel": 0.019427402862985686,
+      "random_distinct_plausible": 26,
+      "advantage_ratio": 17.256546940105682,
+      "shuffled_n_accepted": 47,
+      "shuffled_true_plausible_fraction_accepted": 0.02127659574468085,
+      "shuffled_true_plausible_fraction_of_novel": 0.015333333333333332,
+      "moat_leaks": 0,
+      "contradictions_proposed": 0,
+      "n_negated": 12,
+      "store_abstention_correct": 20,
+      "store_abstention_attempted": 20,
+      "samples": [
+        {
+          "triple": "brother play pink",
+          "ppmi_agent_action": 0.577,
+          "ppmi_action_patient": 0.805,
+          "ppmi_agent_patient": 1.068
+        },
+        {
+          "triple": "bird sing pink",
+          "ppmi_agent_action": 0.596,
+          "ppmi_action_patient": 1.219,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "fish sing room",
+          "ppmi_agent_action": 1.299,
+          "ppmi_action_patient": 0.645,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "frog jump road",
+          "ppmi_agent_action": 1.454,
+          "ppmi_action_patient": 0.695,
+          "ppmi_agent_patient": 0.922
+        },
+        {
+          "triple": "brother play green",
+          "ppmi_agent_action": 0.577,
+          "ppmi_action_patient": 0.591,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "fish sing road",
+          "ppmi_agent_action": 1.299,
+          "ppmi_action_patient": 1.527,
+          "ppmi_agent_patient": 0.647
+        },
+        {
+          "triple": "sister look leg",
+          "ppmi_agent_action": 0.605,
+          "ppmi_action_patient": 1.224,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "duck eat brown",
+          "ppmi_agent_action": 0.636,
+          "ppmi_action_patient": 0.89,
+          "ppmi_agent_patient": 0.0
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "n_stored": 24,
+      "tau": 0.47702477601079807,
+      "discoverable_novel_plausible_universe": 45,
+      "novel_composition_score": 0.5777777777777777,
+      "n_novel_proposed": 26,
+      "n_strongly_plausible": 5,
+      "replay_plausible_fraction_of_novel": 0.31711969480209823,
+      "novel_proposed_examples": [
+        "sister look eye",
+        "cat sleep black",
+        "frog jump road",
+        "bird sing white",
+        "brother play pink",
+        "mouse eat cake",
+        "frog jump green",
+        "fish jump bell",
+        "frog jump cookie",
+        "duck eat brown",
+        "fish jump road",
+        "bear walk foot",
+        "fish jump bread",
+        "bird sing cake",
+        "bird sing blue",
+        "fish sing white",
+        "dog run road",
+        "duck jump road",
+        "fish jump green",
+        "duck jump cookie"
+      ],
+      "random_plausible_fraction_of_novel": 0.020790729379686436,
+      "random_distinct_plausible": 21,
+      "advantage_ratio": 15.252937451628789,
+      "shuffled_n_accepted": 39,
+      "shuffled_true_plausible_fraction_accepted": 0.0,
+      "shuffled_true_plausible_fraction_of_novel": 0.017,
+      "moat_leaks": 0,
+      "contradictions_proposed": 0,
+      "n_negated": 12,
+      "store_abstention_correct": 20,
+      "store_abstention_attempted": 20,
+      "samples": [
+        {
+          "triple": "sister look eye",
+          "ppmi_agent_action": 0.605,
+          "ppmi_action_patient": 0.995,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "cat sleep black",
+          "ppmi_agent_action": 0.747,
+          "ppmi_action_patient": 1.665,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "frog jump road",
+          "ppmi_agent_action": 1.454,
+          "ppmi_action_patient": 0.695,
+          "ppmi_agent_patient": 0.922
+        },
+        {
+          "triple": "bird sing white",
+          "ppmi_agent_action": 0.596,
+          "ppmi_action_patient": 1.076,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "brother play pink",
+          "ppmi_agent_action": 0.577,
+          "ppmi_action_patient": 0.805,
+          "ppmi_agent_patient": 1.068
+        },
+        {
+          "triple": "mouse eat cake",
+          "ppmi_agent_action": 0.855,
+          "ppmi_action_patient": 0.821,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "frog jump green",
+          "ppmi_agent_action": 1.454,
+          "ppmi_action_patient": 0.939,
+          "ppmi_agent_patient": 1.63
+        },
+        {
+          "triple": "fish jump bell",
+          "ppmi_agent_action": 0.655,
+          "ppmi_action_patient": 1.518,
+          "ppmi_agent_patient": 0.0
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "n_stored": 24,
+      "tau": 0.47702477601079807,
+      "discoverable_novel_plausible_universe": 45,
+      "novel_composition_score": 0.8222222222222222,
+      "n_novel_proposed": 37,
+      "n_strongly_plausible": 9,
+      "replay_plausible_fraction_of_novel": 0.3234217749313815,
+      "novel_proposed_examples": [
+        "mouse eat brown",
+        "duck jump green",
+        "brother play eye",
+        "duck eat soup",
+        "duck eat apple",
+        "fish sing pink",
+        "bird sing blue",
+        "fish jump green",
+        "frog jump cookie",
+        "fish jump road",
+        "fish jump bell",
+        "fish sing blue",
+        "bird sing pink",
+        "dog run cookie",
+        "mouse eat cookie",
+        "dog run eye",
+        "dog run black",
+        "bird sing doll",
+        "brother play pink",
+        "bird sing cake"
+      ],
+      "random_plausible_fraction_of_novel": 0.017783857729138167,
+      "random_distinct_plausible": 27,
+      "advantage_ratio": 18.1862551903723,
+      "shuffled_n_accepted": 47,
+      "shuffled_true_plausible_fraction_accepted": 0.0,
+      "shuffled_true_plausible_fraction_of_novel": 0.014666666666666666,
+      "moat_leaks": 0,
+      "contradictions_proposed": 0,
+      "n_negated": 12,
+      "store_abstention_correct": 19,
+      "store_abstention_attempted": 20,
+      "samples": [
+        {
+          "triple": "mouse eat brown",
+          "ppmi_agent_action": 0.855,
+          "ppmi_action_patient": 0.89,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "duck jump green",
+          "ppmi_agent_action": 0.834,
+          "ppmi_action_patient": 0.939,
+          "ppmi_agent_patient": 1.034
+        },
+        {
+          "triple": "brother play eye",
+          "ppmi_agent_action": 0.577,
+          "ppmi_action_patient": 0.824,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "duck eat soup",
+          "ppmi_agent_action": 0.636,
+          "ppmi_action_patient": 0.519,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "duck eat apple",
+          "ppmi_agent_action": 0.636,
+          "ppmi_action_patient": 1.22,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "fish sing pink",
+          "ppmi_agent_action": 1.299,
+          "ppmi_action_patient": 1.219,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "bird sing blue",
+          "ppmi_agent_action": 0.596,
+          "ppmi_action_patient": 1.137,
+          "ppmi_agent_patient": 0.146
+        },
+        {
+          "triple": "fish jump green",
+          "ppmi_agent_action": 0.655,
+          "ppmi_action_patient": 0.939,
+          "ppmi_agent_patient": 0.0
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "n_stored": 24,
+      "tau": 0.47702477601079807,
+      "discoverable_novel_plausible_universe": 45,
+      "novel_composition_score": 0.8444444444444444,
+      "n_novel_proposed": 38,
+      "n_strongly_plausible": 9,
+      "replay_plausible_fraction_of_novel": 0.33479982402111746,
+      "novel_proposed_examples": [
+        "fish sing blue",
+        "sister look pink",
+        "mouse eat cake",
+        "sister look leg",
+        "fish sing road",
+        "frog play green",
+        "sister look bell",
+        "duck jump head",
+        "fish sing pink",
+        "bear walk foot",
+        "dog run road",
+        "duck jump bread",
+        "brother play pink",
+        "frog jump road",
+        "bear walk candy",
+        "bear walk road",
+        "fish sing doll",
+        "frog jump bell",
+        "bird sing room",
+        "mouse eat milk"
+      ],
+      "random_plausible_fraction_of_novel": 0.022395656599932135,
+      "random_distinct_plausible": 29,
+      "advantage_ratio": 14.949319415003533,
+      "shuffled_n_accepted": 88,
+      "shuffled_true_plausible_fraction_accepted": 0.0,
+      "shuffled_true_plausible_fraction_of_novel": 0.021,
+      "moat_leaks": 0,
+      "contradictions_proposed": 0,
+      "n_negated": 12,
+      "store_abstention_correct": 20,
+      "store_abstention_attempted": 20,
+      "samples": [
+        {
+          "triple": "fish sing blue",
+          "ppmi_agent_action": 1.299,
+          "ppmi_action_patient": 1.137,
+          "ppmi_agent_patient": 0.848
+        },
+        {
+          "triple": "sister look pink",
+          "ppmi_agent_action": 0.605,
+          "ppmi_action_patient": 0.976,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "mouse eat cake",
+          "ppmi_agent_action": 0.855,
+          "ppmi_action_patient": 0.821,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "sister look leg",
+          "ppmi_agent_action": 0.605,
+          "ppmi_action_patient": 1.224,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "fish sing road",
+          "ppmi_agent_action": 1.299,
+          "ppmi_action_patient": 1.527,
+          "ppmi_agent_patient": 0.647
+        },
+        {
+          "triple": "frog play green",
+          "ppmi_agent_action": 0.533,
+          "ppmi_action_patient": 0.591,
+          "ppmi_agent_patient": 1.63
+        },
+        {
+          "triple": "sister look bell",
+          "ppmi_agent_action": 0.605,
+          "ppmi_action_patient": 0.744,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "duck jump head",
+          "ppmi_agent_action": 0.834,
+          "ppmi_action_patient": 0.482,
+          "ppmi_agent_patient": 0.0
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "n_stored": 24,
+      "tau": 0.47702477601079807,
+      "discoverable_novel_plausible_universe": 45,
+      "novel_composition_score": 0.7111111111111111,
+      "n_novel_proposed": 32,
+      "n_strongly_plausible": 8,
+      "replay_plausible_fraction_of_novel": 0.3406133828996282,
+      "novel_proposed_examples": [
+        "duck jump cookie",
+        "mouse eat brown",
+        "cat sleep blue",
+        "frog jump bell",
+        "frog jump cookie",
+        "fish sing blue",
+        "bird sing road",
+        "brother play pink",
+        "mouse eat cake",
+        "dog run cookie",
+        "cat sleep blocks",
+        "dog run road",
+        "duck jump green",
+        "dog run black",
+        "brother play eye",
+        "bird sing pink",
+        "cat sleep doll",
+        "fish jump bell",
+        "duck jump bell",
+        "dog run eye"
+      ],
+      "random_plausible_fraction_of_novel": 0.01780212256076686,
+      "random_distinct_plausible": 27,
+      "advantage_ratio": 19.13330175865027,
+      "shuffled_n_accepted": 36,
+      "shuffled_true_plausible_fraction_accepted": 0.0,
+      "shuffled_true_plausible_fraction_of_novel": 0.022333333333333334,
+      "moat_leaks": 0,
+      "contradictions_proposed": 0,
+      "n_negated": 12,
+      "store_abstention_correct": 19,
+      "store_abstention_attempted": 20,
+      "samples": [
+        {
+          "triple": "duck jump cookie",
+          "ppmi_agent_action": 0.834,
+          "ppmi_action_patient": 1.333,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "mouse eat brown",
+          "ppmi_agent_action": 0.855,
+          "ppmi_action_patient": 0.89,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "cat sleep blue",
+          "ppmi_agent_action": 0.747,
+          "ppmi_action_patient": 1.084,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "frog jump bell",
+          "ppmi_agent_action": 1.454,
+          "ppmi_action_patient": 1.518,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "frog jump cookie",
+          "ppmi_agent_action": 1.454,
+          "ppmi_action_patient": 1.333,
+          "ppmi_agent_patient": 0.0
+        },
+        {
+          "triple": "fish sing blue",
+          "ppmi_agent_action": 1.299,
+          "ppmi_action_patient": 1.137,
+          "ppmi_agent_patient": 0.848
+        },
+        {
+          "triple": "bird sing road",
+          "ppmi_agent_action": 0.596,
+          "ppmi_action_patient": 1.527,
+          "ppmi_agent_patient": 0.792
+        },
+        {
+          "triple": "brother play pink",
+          "ppmi_agent_action": 0.577,
+          "ppmi_action_patient": 0.805,
+          "ppmi_agent_patient": 1.068
+        }
+      ]
+    }
+  ],
+  "brain_based_note": "the LEARNED graph (plausibility/likelihood) is the project's PPMI co-occurrence cortex over REAL TinyStories (option_c_real_cooccurrence_derisk.build_real_cooccurrence); the KNOWN-fact store + the no-confab moat are the RF phasor composer (rf_phasor_composer.RFPhasorComposer). The proposer RESAMPLES role-filler bindings from the learned graph (hippocampal generative replay, catalog G.09 constructive imagination), gated by graph-plausibility + non-contradiction, and FLAGS proposals as HYPOTHESES (the known-fact moat is preserved verbatim -- a proposal never passes as a stored fact). The host computes the recombination bookkeeping; the plausibility signal + the fact store are the brain's. NO sim/ edit; reuse-by-import; CPU.",
+  "elapsed_total_s": 141.5100634098053
+}
