@@ -3285,6 +3285,11 @@ def brain_chat(req: BrainChatRequest) -> JSONResponse:
     if _composer is not None and hasattr(_composer, "last_trace"):
         try:
             _composer.trace = True   # read-only recording gate (default off = byte-identical for every other caller)
+            # Reset the per-turn record BEFORE the gate runs: a turn that abstains
+            # *before* the composer scan (e.g. a parse-fail on unknown words) never
+            # touches last_trace, so without this it would return the STALE trace from
+            # a prior turn on the same cached composer. Cleared -> such a turn -> None.
+            _composer.last_trace = None
         except Exception:
             pass
 
