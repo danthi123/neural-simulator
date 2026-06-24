@@ -1,0 +1,173 @@
+{
+  "arms": [
+    {
+      "arm": "sc_popvector",
+      "seed": 42,
+      "grid_size": 32,
+      "n_steps": 450,
+      "warmup_steps": 200,
+      "with_conv": false,
+      "fix1_tie_break": true,
+      "log_polar_retina": true,
+      "fix2_sel_homeostasis": false,
+      "fix3_opponent_axis": false,
+      "fixA_sel_divnorm": false,
+      "fixA_sel_divnorm_sigma": 1.0,
+      "fixA_sel_divnorm_gain": 1.0,
+      "fixB_sel_opponent_pair": false,
+      "fixB_sel_opponent_weight": 12.0,
+      "fixB_sel_crossaxis_weight": 0.0,
+      "stage_surplus": {
+        "thal_counts": {
+          "N": 3538.0,
+          "E": 3842.0,
+          "S": 2934.0,
+          "W": 3367.0,
+          "NS_surplus": 604.0,
+          "NS_pct": 18.67,
+          "EW_surplus": 475.0
+        },
+        "sel_counts": {
+          "N": 13532.0,
+          "E": 17343.0,
+          "S": 9314.0,
+          "W": 11638.0,
+          "NS_surplus": 4218.0,
+          "NS_pct": 36.93,
+          "EW_surplus": 5705.0
+        },
+        "commit_counts": {
+          "N": 13518.0,
+          "E": 17612.0,
+          "S": 8978.0,
+          "W": 12075.0,
+          "NS_surplus": 4540.0,
+          "NS_pct": 40.36,
+          "EW_surplus": 5537.0
+        },
+        "motor_counts": {
+          "N": 1946.0,
+          "E": 2341.0,
+          "S": 1120.0,
+          "W": 1607.0,
+          "NS_surplus": 826.0,
+          "NS_pct": 53.88,
+          "EW_surplus": 734.0
+        }
+      },
+      "tie_break_count": 42,
+      "decision_total": 450,
+      "tie_break_fraction": 0.09333333333333334,
+      "opponent_axis_count": 0,
+      "opponent_axis_fraction": 0.0,
+      "sc_cortex_w": 18.0,
+      "divnorm_sigma": 5.0,
+      "divnorm_gain": 0.02,
+      "per_phase_finalQ": [
+        1.0
+      ],
+      "per_phase_goal": [
+        [
+          30,
+          30
+        ]
+      ],
+      "per_phase_action_counts": [
+        [
+          114,
+          161,
+          71,
+          104
+        ]
+      ],
+      "per_phase_action_frac": [
+        {
+          "N": 0.253,
+          "E": 0.358,
+          "S": 0.158,
+          "W": 0.231
+        }
+      ],
+      "per_phase_dominant_cardinal": [
+        "E"
+      ],
+      "phase0_finalQ": 1.0,
+      "post_change_finalQ": [],
+      "post_change_finalQ_sum": NaN,
+      "gate_score": 1.0,
+      "motor_sustain_frac": 0.9822222222222222,
+      "late_motor_sustain_frac": 0.9733333333333334,
+      "episode_json": "research/findings/raw/nav_gate_2a\\scpv_sc_popvector_seed42.json"
+    }
+  ],
+  "verdict": {
+    "host_phase0_finalQ": null,
+    "host_post_change_finalQ_sum": null,
+    "ramp_post_change_finalQ_sum": null,
+    "popvector_post_change_finalQ_sum": NaN,
+    "scramble_post_change_finalQ_sum": null,
+    "host_tracking": null,
+    "ramp_tracking": null,
+    "popvector_tracking": {
+      "dominant_per_phase": [
+        "E"
+      ],
+      "n_distinct_dominant": 1,
+      "has_W_dominant_phase": false,
+      "has_E_dominant_phase": true,
+      "tracks_goal": false
+    },
+    "scramble_tracking": null,
+    "ramp_late_sustain": null,
+    "popvector_late_sustain": 0.9733333333333334,
+    "popvector_fix1": true,
+    "popvector_fix2": false,
+    "popvector_fix3": false,
+    "popvector_fixA": false,
+    "popvector_stage_surplus": {
+      "thal_counts": {
+        "N": 3538.0,
+        "E": 3842.0,
+        "S": 2934.0,
+        "W": 3367.0,
+        "NS_surplus": 604.0,
+        "NS_pct": 18.67,
+        "EW_surplus": 475.0
+      },
+      "sel_counts": {
+        "N": 13532.0,
+        "E": 17343.0,
+        "S": 9314.0,
+        "W": 11638.0,
+        "NS_surplus": 4218.0,
+        "NS_pct": 36.93,
+        "EW_surplus": 5705.0
+      },
+      "commit_counts": {
+        "N": 13518.0,
+        "E": 17612.0,
+        "S": 8978.0,
+        "W": 12075.0,
+        "NS_surplus": 4540.0,
+        "NS_pct": 40.36,
+        "EW_surplus": 5537.0
+      },
+      "motor_counts": {
+        "N": 1946.0,
+        "E": 2341.0,
+        "S": 1120.0,
+        "W": 1607.0,
+        "NS_surplus": 826.0,
+        "NS_pct": 53.88,
+        "EW_surplus": 734.0
+      }
+    },
+    "ramp_stage_surplus": null,
+    "scramble_stage_surplus": null,
+    "popvector_tie_break_fraction": 0.09333333333333334,
+    "popvector_opponent_axis_fraction": 0.0,
+    "scramble_tie_break_fraction": null,
+    "scramble_opponent_axis_fraction": null,
+    "NOTE": "GO (#6 CONVERTS) if popvector_tracking.tracks_goal is True AND popvector_post_change approaches host (host_over_popvector_post_ratio ~1, vs the ramp's ~0.01) AND the SCRAMBLE lesion collapses (scramble_tracking.tracks_goal False / much worse finalQ). HONEST NEGATIVE otherwise -- report whether popvector still does NOT track (under-selective) or a deeper issue."
+  }
+}
