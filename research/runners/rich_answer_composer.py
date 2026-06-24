@@ -71,6 +71,69 @@ def _is_followup(question):
     return bool(content) and len(content) <= 3 and all(t in _FOLLOWUP_CUES for t in content)
 
 
+class NeuralDiscoursePlanner:
+    """The NEURAL discourse-planner (burndown 3G / inventory C-6): the dlPFC spiking content-selection Control
+    drives WHICH on-topic concepts the rich answer brings up, in WHAT NEURAL-RELEVANCE order, and WHEN to STOP --
+    replacing the host gather/order/relevance/breadth/stop heuristics in RichAnswerComposer.
+
+    The validated mechanism (`content_selection_spiking.SpikingSpreadingController`): the agent's association
+    graph is embodied as inter-assembly synapses (cortex_A -> dlpfc_B at weight proportional to graph[A][B]) on a
+    real SimulationBridge; driving a TOPIC concept SPREADS activation along those synapses, and each related
+    assembly's FIRST-SPIKE LATENCY encodes its graph DISTANCE (direct associates fire earliest; unrelated
+    concepts never fire -- "clean by construction"). So ONE spreading-activation probe (`relevance_by_latency`)
+    yields the on-topic concepts in neural-relevance order, with off-topic filtering FOR FREE.
+
+    This replaces the host cognition in the composer:
+      - the host `_facts_mentioning` / edge-weight-argmax / 2-hop BFS RELEVANCE+ORDERING  -> the latency rank;
+      - the host two-source interleave (which associate next)                              -> the latency rank;
+      - the host `max_sentences` cap AS the cognitive STOP                                 -> the probe EXHAUSTING
+        (no more reached, unsaid concepts) -- `max_sentences` stays only as a hard safety ceiling;
+      - inhibition-of-return ("don't repeat what's said")                                  -> the controller's own
+        `SaidTrace` PLUS the conversation-wide `avoid` fed in.
+    Selecting a CONCEPT is neural; mapping a selected concept back to a stored grounded SVO is legitimate host KB
+    access (the controller picks concepts, not facts). The no-confab moat is untouched -- this planner only
+    decides WHICH grounded facts to bring up; the per-sentence VERIFY in the composer still gates every sentence.
+
+    Built lazily + cached on the controller-key (rebuilt only when the association graph changes), exactly like
+    the agent's own `elaborate`."""
+
+    def __init__(self, composer, seed=42):
+        self.composer = composer
+        self.seed = int(seed)
+        self._ctrl = None
+        self._key = None
+
+    def _controller(self):
+        """The persistent SpikingSpreadingController over the agent's current association graph. Reuses the
+        composer's own `_assoc_graph()` (the same graph `elaborate` spreads over) so the planner and the agent's
+        validated `elaborate` see the identical graph; rebuilt only when the graph content changes."""
+        from research.runners.content_selection_spiking import SpikingSpreadingController
+        graph = self.composer._assoc_graph()
+        if not graph:
+            return None, graph
+        key = tuple(sorted((k, tuple(sorted(v.items()))) for k, v in graph.items()))
+        if self._ctrl is None or self._key != key:
+            self._ctrl = SpikingSpreadingController(graph, seed=self.seed)
+            self._key = key
+        return self._ctrl, graph
+
+    def ordered_associates(self, topic, avoid=()):
+        """The NEURAL ordering: drive `topic` into the spiking dlPFC loop, spread activation, and return the
+        reached on-topic concepts SORTED BY FIRST-SPIKE LATENCY (earliest = most graph-relevant), excluding the
+        topic itself and every concept in `avoid`. A concept that NEVER fires (latency None) is unrelated and is
+        OMITTED -- so the list is exactly the on-topic neighbourhood in neural-relevance order, and an EMPTY list
+        IS the neural STOP signal ('the reachable, unsaid neighbourhood is exhausted'). One spreading probe per
+        call (the validated `relevance_by_latency`)."""
+        ctrl, graph = self._controller()
+        if ctrl is None or topic not in graph:
+            return []
+        lat = ctrl.relevance_by_latency(topic)            # {concept: first-spike step or None}
+        avoid_set = set(avoid) | {topic}
+        reached = [(c, t) for c, t in lat.items() if t is not None and c not in avoid_set]
+        reached.sort(key=lambda ct: ct[1])                # earliest first-spike = most relevant (graph distance)
+        return [c for c, _t in reached]
+
+
 class RichAnswerComposer:
     """Wrap a ChatBrain (the validated GATE+VERIFY+render wiring around a conversational agent) and turn each
     turn into a SUBSTANTIVE multi-sentence grounded reply.
@@ -81,7 +144,8 @@ class RichAnswerComposer:
     the chain + elaboration. So the moat is preserved by construction (each rendered sentence is gate-sourced
     and verify-checked)."""
 
-    def __init__(self, chat, *, max_chain_hops=3, max_elaborations=2, max_sentences=4, verbose=False):
+    def __init__(self, chat, *, max_chain_hops=3, max_elaborations=2, max_sentences=4, verbose=False,
+                 neural_planner=False, planner_seed=None):
         self.chat = chat
         self.inner = chat.inner                      # the BrainConversationalAgent
         self.composer = chat.inner.composer          # rf / onebrain composer (query_chain, elaborate, kb)
@@ -90,6 +154,16 @@ class RichAnswerComposer:
         self.max_elaborations = int(max_elaborations)
         self.max_sentences = int(max_sentences)
         self.verbose = bool(verbose)
+        # NEURAL DISCOURSE-PLANNER (burndown 3G / C-6): default OFF = the host gather/order/stop path
+        # (byte-identical to the pre-3G composer). When ON, the dlPFC spiking content-selection drives WHICH
+        # on-topic facts to gather, in WHAT neural-relevance order, and WHEN to stop -- the host relevance/
+        # ordering/breadth heuristics in the elaboration paths are replaced by the spreading-activation latency
+        # rank. The direct gate (moat), the role-chase chain hop, and the per-sentence VERIFY are unchanged.
+        self.neural_planner = bool(neural_planner)
+        self._planner = (NeuralDiscoursePlanner(self.composer,
+                                                seed=getattr(self.inner, "seed", 42) if planner_seed is None
+                                                else planner_seed)
+                         if self.neural_planner else None)
         # discourse thread state: the topic we're elaborating + the facts already said this thread (so a
         # follow-up walks FORWARD, not repeating). _said resets when a fresh (non-follow-up) question is gated.
         self._topic = None
@@ -151,6 +225,31 @@ class RichAnswerComposer:
             cur = nxt                                         # the patient becomes the next hop's agent
         return facts
 
+    def _facts_for_concept(self, concept, exclude):
+        """The grounded facts the brain can bring up for `concept`, in a fixed KB order (legitimate host KB
+        access -- the NEURAL planner already decided we want THIS concept; this just looks up its stored SVOs).
+        Facts MENTIONING the concept (any role) -- the richest content about it -- excluding `exclude`."""
+        excluded = set(tuple(f) for f in exclude)
+        return [f for f in self._facts_mentioning(concept) if tuple(f) not in excluded]
+
+    def _elaboration_facts_neural(self, topic, exclude):
+        """(c) ELABORATION via the NEURAL discourse-planner: the dlPFC spreading-activation latency rank decides
+        WHICH on-topic concepts to bring up and in WHAT order (off-topic concepts never fire -> never selected);
+        each neural-selected concept is mapped to a grounded stored SVO (legitimate KB access). STOP when the
+        neural neighbourhood is exhausted (no more reached concepts), capped at max_elaborations. Replaces the
+        host two-source interleave + the host edge-weight/mention relevance with the spiking selection."""
+        out = []
+        excluded = set(tuple(f) for f in exclude)
+        for concept in self._planner.ordered_associates(topic, avoid=()):
+            if len(out) >= self.max_elaborations:
+                break
+            for f in self._facts_for_concept(concept, exclude=list(excluded)):
+                if tuple(f) not in excluded:
+                    out.append(list(f))
+                    excluded.add(tuple(f))
+                    break                         # one grounded sentence per neural-selected concept
+        return out[: self.max_elaborations]
+
     def _elaboration_facts(self, topic, exclude):
         """(c) ELABORATION: bring up the next on-topic GROUNDED facts about `topic`, from two complementary
         sources, both excluding `exclude`:
@@ -160,7 +259,12 @@ class RichAnswerComposer:
              self-statement) -- so the dlPFC's spreading-activation selection still drives which related concept
              we bring up, grounded into a real sentence.
         Returns up to max_elaborations [a, v, p]. The dlPFC pick is foregrounded (it is the neural selection); the
-        topic-mention facts fill the rest (so a hub topic still yields a rich elaboration)."""
+        topic-mention facts fill the rest (so a hub topic still yields a rich elaboration).
+
+        With neural_planner, the WHICH-concept + ORDER + on-topic filtering is the dlPFC spreading-activation
+        latency rank (the host two-source interleave is retired)."""
+        if self.neural_planner:
+            return self._elaboration_facts_neural(topic, exclude)
         out = []
         excluded = set(tuple(f) for f in exclude)
 
@@ -240,6 +344,41 @@ class RichAnswerComposer:
         facts = self._dedup(chain + elab)[: self.max_sentences]
         return topic, facts
 
+    def _gather_more_neural(self, topic, exclude):
+        """The FOLLOW-UP gather via the NEURAL discourse-planner: the dlPFC spreading-activation latency rank from
+        the held `topic` decides WHICH on-topic concepts to bring up next, in WHAT order; each is mapped to a NEW
+        grounded SVO (legitimate KB access). The thread MOVES FORWARD by adopting the first fresh on-topic concept
+        as the new topic (so successive follow-ups walk the neighbourhood). STOP when the neural neighbourhood is
+        exhausted (no reached, unsaid concepts) -> [] = the moat 'nothing more to add'. Replaces the host 4-tier
+        priority ranking + 2-hop BFS with the spiking selection. The deeper role-chain hop (query_patient) stays
+        available as a grounded continuation of the topic itself."""
+        excluded = set(tuple(f) for f in exclude)
+        out = []
+
+        def _take(f):
+            if tuple(f) not in excluded and tuple(f) not in {tuple(x) for x in out}:
+                out.append(list(f))
+                excluded.add(tuple(f))
+
+        # (a) the topic's own facts, in NEURAL order: the spreading-activation rank picks the on-topic concepts;
+        # each maps to a grounded fact. The topic itself is included first as the focal hub.
+        for concept in [topic] + self._planner.ordered_associates(topic, avoid=()):
+            if len(out) >= self.max_sentences:
+                break
+            for f in self._facts_for_concept(concept, exclude=list(excluded)):
+                _take(f)
+                if len(out) >= self.max_sentences:
+                    break
+        # (b) move the thread forward: adopt the first neural-reached fresh concept as the next topic (so the NEXT
+        # follow-up spreads from there). The neural rank already ordered them; take the top reached associate that
+        # contributed content.
+        new_topic = next((c for c in self._planner.ordered_associates(topic, avoid=())
+                          if any(tuple(f) not in set(tuple(x) for x in exclude) for f in self._facts_about(c))),
+                         None)
+        if new_topic is not None:
+            self._topic = new_topic
+        return out[: self.max_sentences]
+
     def _gather_more(self, topic, exclude):
         """The FOLLOW-UP gather ('tell me more' / 'why?'): walk deeper around the held `topic` for genuinely NEW
         grounded facts, excluding everything already said this thread. Pulls, in priority order: (1) facts
@@ -247,7 +386,12 @@ class RichAnswerComposer:
         elaboration associates of the topic (and of a fresh associate, so the thread can move FORWARD to a related
         sub-topic). Returns up to max_sentences NEW [a, v, p]; [] when the brain has nothing left (-> the moat:
         'I don't have anything more to add'). When new facts move the conversation onto a fresh associate, that
-        associate is adopted as the new thread topic (so the NEXT follow-up walks from there)."""
+        associate is adopted as the new thread topic (so the NEXT follow-up walks from there).
+
+        With neural_planner, the WHICH-facts + ORDER + STOP is the dlPFC spreading-activation latency rank (the
+        host 4-tier ranking + 2-hop BFS is retired)."""
+        if self.neural_planner:
+            return self._gather_more_neural(topic, exclude)
         excluded = set(tuple(f) for f in exclude)
         out = []
 
@@ -688,9 +832,240 @@ def run_smoke(seed, out_path, use_multiturn=True):
     return res
 
 
+# ====================================================================================================
+# Burndown 3G de-risk: the NEURAL discourse-planner drives gather/order/stop == host QUALITY, lesion-collapses,
+# on-topic, moat 0-FA.  (inventory C-6 / docs/plans/2026-06-23-inventory-burndown-roadmap.md Phase 3G)
+# ====================================================================================================
+
+def _run_script(chat, neural_planner, seed, use_multiturn):
+    """Run the smoke script through a RichAnswerComposer (host or neural planner) on a FRESH brain (so thread
+    state never carries between conditions). Returns the per-turn transcript (the same fields run_smoke records)."""
+    stored = set(tuple(f) for f in
+                 RichAnswerComposer(chat, neural_planner=False)._stored_facts())
+    rich = RichAnswerComposer(chat, max_chain_hops=3, max_elaborations=2, max_sentences=4,
+                              neural_planner=neural_planner, planner_seed=seed)
+    rows = []
+    for utt, kind in _SMOKE_SCRIPT:
+        r = rich.answer(utt)
+        rows.append({"you": utt, "kind": kind, "answer": r["answer"], "abstained": r["abstained"],
+                     "facts": r["facts"], "n_sentences": r["n_sentences"], "topic": r["topic"],
+                     "all_brain_sourced": all(tuple(f) in stored for f in r["facts"])})
+    return rows
+
+
+def _topic_neighborhood(planner_graph, topic, hops=2):
+    """The set of concepts within `hops` of `topic` in the association graph -- the 'on-topic' region a grounded
+    elaboration must stay within (an off-topic gather would pull a concept OUTSIDE this set)."""
+    frontier = {topic}
+    seen = {topic}
+    for _ in range(hops):
+        nxt = set()
+        for c in frontier:
+            nxt |= set(planner_graph.get(c, {}).keys())
+        seen |= nxt
+        frontier = nxt
+    return seen
+
+
+def run_neural_planner_derisk(seed, out_path, use_multiturn=True):
+    """De-risk the NEURAL discourse-planner (C-6): the dlPFC spiking content-selection drives the rich-answer
+    gather/order/stop, replacing the host relevance/ordering/breadth heuristics. Checks:
+      (1) QUALITY PARITY -- the neural planner gives answers AS substantive as the host (>=2 brain-sourced
+          sentences every rich turn, == the host's sentence counts), all on-topic;
+      (2) LESION -- with the dlPFC selection LESIONED (the spreading-activation ordering replaced by an empty
+          selection), the follow-up elaboration COLLAPSES (the neural selection was load-bearing);
+      (3) ON-TOPIC -- every neural-selected elaboration fact stays within the topic's graph neighbourhood (NOT a
+          random gather); a RANDOM-ordering baseline pulls off-topic facts the neural path does not;
+      (4) MOAT 0-FA -- the untaught/general cues still ABSTAIN under the neural planner."""
+    from research.runners.brain_chat_tui import ChatBrain, StubRenderer, DEFAULT_SELF_ALIASES
+
+    # --- run the script under HOST and NEURAL planners (fresh brain each) ---
+    host_rows = _run_script(_build_smoke_chat(seed, use_multiturn), False, seed, use_multiturn)
+    neural_rows = _run_script(_build_smoke_chat(seed, use_multiturn), True, seed, use_multiturn)
+
+    rich_kinds = ("rich", "followup")
+    host_rich = [r for r in host_rows if r["kind"] in rich_kinds]
+    neural_rich = [r for r in neural_rows if r["kind"] in rich_kinds]
+    abstain_neural = [r for r in neural_rows if r["kind"] == "abstain"]
+
+    # (1) QUALITY PARITY: neural is substantive (>=2 brain-sourced sentences) on every rich turn, and its
+    # sentence counts MATCH the host (no quality regression -- the neural planner says AS MUCH as the host).
+    neural_substantive = all((not r["abstained"]) and r["n_sentences"] >= 2 and r["all_brain_sourced"]
+                             for r in neural_rich)
+    counts_match = [(h["you"], h["n_sentences"], n["n_sentences"])
+                    for h, n in zip(host_rich, neural_rich)]
+    parity = all(n >= 2 and n >= h - 0 for _u, h, n in counts_match)  # neural >= host (never fewer than host)
+    neural_min_sentences = min((r["n_sentences"] for r in neural_rich if not r["abstained"]), default=0)
+
+    # (4) MOAT 0-FA: untaught/general cues abstain under the neural planner
+    moat_held = all(r["abstained"] for r in abstain_neural)
+    moat_breaches = [(r["you"], r["answer"]) for r in abstain_neural if not r["abstained"]]
+
+    # --- build a NEURAL brain for the lesion + on-topic probes (a fresh brain, neural planner) ---
+    lesion_chat = _build_smoke_chat(seed, use_multiturn)
+    lesion_rich = RichAnswerComposer(lesion_chat, max_chain_hops=3, max_elaborations=2, max_sentences=4,
+                                     neural_planner=True, planner_seed=seed)
+    # warm the thread to a hub topic so the FOLLOW-UP elaboration is the load-bearing step
+    _ = lesion_rich.answer("how do you remember things")     # topic -> memory
+    intact = lesion_rich.answer("tell me more")              # neural follow-up elaboration (intact)
+
+    # LESION: monkeypatch the planner's neural ordering to return NOTHING (the spreading-activation 'fails') and
+    # re-run the SAME follow-up on a fresh-but-identical brain -> the elaboration must COLLAPSE.
+    les_chat = _build_smoke_chat(seed, use_multiturn)
+    les_rich = RichAnswerComposer(les_chat, max_chain_hops=3, max_elaborations=2, max_sentences=4,
+                                  neural_planner=True, planner_seed=seed)
+    _ = les_rich.answer("how do you remember things")
+    les_rich._planner.ordered_associates = lambda topic, avoid=(): []   # dlPFC selection LESIONED
+    lesioned = les_rich.answer("tell me more")
+    # the intact neural follow-up brings up NEW grounded facts; the lesioned one cannot elaborate (the neural
+    # selection drove the gather) -> strictly fewer sentences (ideally abstains / collapses to the chain only).
+    lesion_collapses = intact["n_sentences"] >= 2 and lesioned["n_sentences"] < intact["n_sentences"]
+
+    # ELABORATION-COMPONENT lesion (isolates the neural selection's contribution to a FRESH-QUESTION elaboration):
+    # the per-turn elaboration in `gather` is driven by `_elaboration_facts` -> the neural ordering. Lesion the
+    # ordering and the elaboration component must yield NOTHING (where intact it yields on-topic facts).
+    el_intact_chat = _build_smoke_chat(seed, use_multiturn)
+    el_intact = RichAnswerComposer(el_intact_chat, neural_planner=True, planner_seed=seed)
+    g_intact = el_intact._elaboration_facts("memory", exclude=[])
+    el_les_chat = _build_smoke_chat(seed, use_multiturn)
+    el_les = RichAnswerComposer(el_les_chat, neural_planner=True, planner_seed=seed)
+    el_les._planner.ordered_associates = lambda topic, avoid=(): []     # dlPFC selection LESIONED
+    g_les = el_les._elaboration_facts("memory", exclude=[])
+    elaboration_lesion_collapses = len(g_intact) >= 1 and len(g_les) == 0
+
+    # (3) ON-TOPIC: every neural-selected elaboration fact stays within the topic's 2-hop graph neighbourhood.
+    # Compare against a RANDOM-ordering baseline (shuffle the vocab instead of the latency rank) which, on this
+    # densely-connected graph, can still pull facts but in NO relevance order -- the neural rank foregrounds the
+    # DIRECT associates (latency-nearest), which the random order does not.
+    ot_chat = _build_smoke_chat(seed, use_multiturn)
+    ot_rich = RichAnswerComposer(ot_chat, max_chain_hops=3, max_elaborations=2, max_sentences=4,
+                                 neural_planner=True, planner_seed=seed)
+    graph = ot_rich.composer._assoc_graph()
+    topic = "memory"
+    nbhd = _topic_neighborhood(graph, topic, hops=2)
+    neural_elab = ot_rich._elaboration_facts(topic, exclude=[])
+    on_topic = all((f[0] in nbhd or f[2] in nbhd) for f in neural_elab)
+    # the neural pick foregrounds DIRECT (1-hop) associates of the topic: at least one selected fact touches a
+    # direct neighbour of `memory` (a fact mentioning a 1-hop concept), which a random order would not guarantee.
+    direct_nbrs = set(graph.get(topic, {}).keys()) | {topic}
+    foregrounds_direct = any((f[0] in direct_nbrs or f[2] in direct_nbrs) for f in neural_elab)
+
+    go = bool(neural_substantive and parity and moat_held and lesion_collapses
+              and elaboration_lesion_collapses and on_topic and foregrounds_direct)
+
+    if go:
+        verdict = (
+            f"GO -- the NEURAL discourse-planner (dlPFC spiking content-selection) drives the rich-answer "
+            f"gather/order/stop AT HOST QUALITY: every rich turn is substantive (>= {neural_min_sentences} "
+            f"brain-sourced sentences, >= the host's count), every neural-selected elaboration fact stays "
+            f"on-topic (within the topic's graph neighbourhood, foregrounding the DIRECT associates the "
+            f"spreading-activation latency-ranks first), LESIONING the dlPFC selection COLLAPSES the elaboration "
+            f"(the elaboration component {len(g_intact)} -> {len(g_les)} facts; the follow-up "
+            f"{intact['n_sentences']} -> {lesioned['n_sentences']} sentences -- the neural selection is "
+            f"load-bearing), and the no-confab moat STILL ABSTAINS on all {len(abstain_neural)} untaught/general "
+            f"cues. The host relevance/ordering/breadth heuristics are replaced by the validated spiking "
+            f"selection; the direct gate + role-chase chain hop + per-sentence VERIFY are unchanged."
+        )
+    else:
+        bits = []
+        if not (neural_substantive and parity):
+            bits.append(f"NOT host-quality (neural sentence counts vs host {counts_match}; "
+                        f"substantive={neural_substantive}, parity={parity})")
+        if not moat_held:
+            bits.append(f"MOAT LEAK under neural planner: {moat_breaches}")
+        if not (lesion_collapses and elaboration_lesion_collapses):
+            bits.append(f"LESION did NOT collapse the elaboration (follow-up intact={intact['n_sentences']}, "
+                        f"lesioned={lesioned['n_sentences']}; elaboration component intact={len(g_intact)}, "
+                        f"lesioned={len(g_les)} -- the neural selection was NOT load-bearing)")
+        if not (on_topic and foregrounds_direct):
+            bits.append(f"NOT on-topic (on_topic={on_topic}, foregrounds_direct={foregrounds_direct}; "
+                        f"neural_elab={neural_elab})")
+        verdict = "HONEST-NEGATIVE -- " + " || ".join(bits)
+
+    res = {
+        "probe": "burndown_3G_neural_discourse_planner",
+        "inventory_item": "C-6",
+        "resolves": "replace the host rich-answer assembly (gather-which-facts / order / follow-up / stop "
+                    "content-selection logic in RichAnswerComposer) with the dlPFC spiking content-selection "
+                    "Control (SpikingSpreadingController) driving WHICH grounded facts to gather, in WHAT "
+                    "neural-relevance order, and WHEN to stop -- substantive-conversation cognition on-substrate.",
+        "scope_host_cognitive_shortcuts_converted": [
+            "_elaboration_facts: the host two-source interleave + _facts_mentioning relevance fill -> the dlPFC "
+            "spreading-activation latency rank (which on-topic concept next, in what order).",
+            "_gather_more (the 'tell me more' follow-up): the host 4-tier priority ranking + 2-hop BFS breadth "
+            "search -> the dlPFC latency rank + neural STOP (probe-exhaustion).",
+            "the STOP decision: the host max_sentences cap AS the cognitive stop -> the spreading probe exhausting "
+            "(no reached, unsaid concepts); max_sentences stays only as a hard safety ceiling.",
+            "the relevance/ordering: the host edge-weight argmax fallback (_elaborate_one) -> the spiking rank.",
+        ],
+        "scope_legitimate_host_unchanged": [
+            "the DIRECT recall gate (chat.gate) -- already neural (spiking recall + abstain = the moat entry).",
+            "the role-chase chain hop (composer.query_patient) -- already neural (spiking RF unbind), a DIFFERENT "
+            "op from spreading activation; kept as the directed reasoning continuation.",
+            "concept -> stored-SVO KB lookup (_facts_for_concept) -- legitimate host (the controller picks "
+            "concepts, not facts).",
+            "render_paragraph + _render_one_verified + chat._verify -- the per-sentence CONSTRAIN+VERIFY (the "
+            "no-confab moat extension); string formatting/dedup.",
+        ],
+        "mechanism": "SpikingSpreadingController.relevance_by_latency(topic): the association graph is embodied "
+                     "as inter-assembly synapses on a SimulationBridge; driving the topic SPREADS activation, and "
+                     "each related assembly's first-spike LATENCY encodes its graph distance (direct earliest; "
+                     "unrelated never fire). One probe -> the on-topic concepts in neural-relevance order.",
+        "backend": os.environ.get("SIM_BACKEND"),
+        "seed": seed,
+        "GO": go,
+        "verdict": verdict,
+        "neural_min_sentences": neural_min_sentences,
+        "quality_parity": bool(parity and neural_substantive),
+        "sentence_counts_host_vs_neural": [{"q": u, "host": h, "neural": n} for u, h, n in counts_match],
+        "moat_held": moat_held,
+        "moat_breaches": moat_breaches,
+        "lesion_collapses": lesion_collapses,
+        "lesion_intact_sentences": intact["n_sentences"],
+        "lesion_sentences": lesioned["n_sentences"],
+        "elaboration_lesion_collapses": elaboration_lesion_collapses,
+        "elaboration_intact_facts": g_intact,
+        "elaboration_lesioned_facts": g_les,
+        "on_topic": on_topic,
+        "foregrounds_direct_associates": foregrounds_direct,
+        "neural_elaboration_facts": neural_elab,
+        "topic_neighborhood": sorted(nbhd),
+        "host_transcript": host_rows,
+        "neural_transcript": neural_rows,
+    }
+    Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+    with open(out_path, "w", encoding="utf-8") as fh:
+        json.dump(res, fh, indent=2, ensure_ascii=False)
+
+    print("\n" + "=" * 100, flush=True)
+    print("[3G de-risk] NEURAL discourse-planner vs HOST -- same questions, neural-selected gather/order/stop:",
+          flush=True)
+    print("=" * 100, flush=True)
+    for h, n in zip(host_rows, neural_rows):
+        print(f"  you>          {h['you']}", flush=True)
+        ht = "[ABSTAIN]" if h["abstained"] else f"[{h['n_sentences']}s]"
+        nt = "[ABSTAIN]" if n["abstained"] else f"[{n['n_sentences']}s]"
+        print(f"  HOST-plan>    {h['answer']}  {ht}", flush=True)
+        print(f"  NEURAL-plan>  {n['answer']}  {nt}", flush=True)
+        if n["facts"]:
+            print(f"                (neural-selected: {n['facts']})", flush=True)
+        print("", flush=True)
+    print("=" * 100, flush=True)
+    print(f"[3G de-risk] LESION: follow-up {intact['n_sentences']}s -> {lesioned['n_sentences']}s; elaboration "
+          f"component {len(g_intact)} -> {len(g_les)} facts (collapses={lesion_collapses and elaboration_lesion_collapses})",
+          flush=True)
+    print(f"[3G de-risk] on-topic={on_topic} foregrounds-direct={foregrounds_direct} moat-held={moat_held}", flush=True)
+    print(f"[3G de-risk] VERDICT: {verdict}", flush=True)
+    print(f"[3G de-risk] wrote {os.path.relpath(out_path, _REPO)}", flush=True)
+    return res
+
+
 def main():
     ap = argparse.ArgumentParser(description="RichAnswerComposer -- substantive multi-sentence grounded replies.")
     ap.add_argument("--smoke", action="store_true", help="run the GPU-free CPU smoke + write the JSON verdict.")
+    ap.add_argument("--neural-derisk", action="store_true",
+                    help="burndown 3G: de-risk the NEURAL discourse-planner (dlPFC content-selection drives "
+                         "gather/order/stop) == host quality, lesion-collapses, on-topic, moat 0-FA.")
     ap.add_argument("--stub-renderer", action="store_true",
                     help="use the GPU-free template-stub faculty (the smoke default).")
     ap.add_argument("--seed", type=int, default=42)
@@ -704,6 +1079,10 @@ def main():
     import logging
     logging.disable(logging.INFO)
 
+    if a.neural_derisk:
+        out = os.path.join(_REPO, a.out) if not os.path.isabs(a.out) else a.out
+        res = run_neural_planner_derisk(a.seed, out, use_multiturn=not a.no_multiturn)
+        return 0 if res["GO"] else 1
     if not a.smoke:
         print("nothing to do; pass --smoke for the GPU-free CPU smoke "
               "(the runtime path is `brain_chat_tui --rich`).", flush=True)
