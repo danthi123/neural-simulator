@@ -3332,7 +3332,18 @@ def run_moving_goal_episode(
     # magnitude the reflex already reads from pixels) — appetitive/incentive-
     # salience approach reward (Schultz reward-fn-2; Berridge wanting; phototaxis).
     # Use with --enable-visual-cortex. Takes precedence over sensed/Manhattan reward.
-    perceived_approach_reward: bool = False,
+    # PRODUCTION DEFAULT = True (2026-06-24, BURNDOWN Phase-1 1B — the NAV LIMBIC-CORE PURITY
+    # FLIP): the deployed merged "one brain" nav episode sources its reward COORD-FREE from the
+    # goal's retinal eccentricity (pixels), not the host sign(Manhattan) coordinate formula. The
+    # reward LOGIC reads only sc_salience_offset_from_image (the world's visible-goal render is the
+    # legitimate environment-side sensory input; coords never enter the reward). Self-contained
+    # (uses render_gridworld_to_image directly; does NOT require the enable_visual_cortex region).
+    # The CLI `--perceived-approach-reward` default stays False (action="store_true") so every
+    # documented standalone benchmark reproduces unchanged — the host Manhattan reward is the
+    # opt-out oracle (and the CLI passes args.perceived_approach_reward explicitly, so this function
+    # default never leaks into the CLI path). Mirrors the roadmap-#4 spiking-decision default flip
+    # pattern (flip the function default the merged brain inherits; keep CLI host for reproduction).
+    perceived_approach_reward: bool = True,
     # Homeostatic agent hook (2026-06-17). Default None = byte-identical (no
     # behavior change for any existing caller; guarded below). When set to a
     # callable, it is invoked once per trial AFTER the natural reward is
@@ -3455,8 +3466,18 @@ def run_moving_goal_episode(
     # STAGE A: value V is the host reward_ema scaffold (the inhibitory drive is
     # proportional to the host R̄). Stage B's neural critic is NOT in this runner.
     # Supersedes --rpe-dopamine (host formula) and owns the `dopamine` modulator
-    # vs --enable-tonic-da (precedence guard). Default OFF (additive).
-    spiking_snc: bool = False,
+    # vs --enable-tonic-da (precedence guard).
+    # PRODUCTION DEFAULT = True (2026-06-24, BURNDOWN Phase-1 1B): the spiking SNc is the master
+    # gate for the deployed nav limbic core — it registers the `dopamine` neuromodulator
+    # (from_region_firing_signed over the snc pool) so the RPE = the SNc FIRING (a neuron), not a
+    # host scalar. With enable_neural_critic + spiking_reward_us (also flipped on below), the whole
+    # δ=r−V is synaptic (r = reward_us excitation, V = striosome_value GABA_B subtraction). The CLI
+    # `--spiking-snc` default stays False (action="store_true"); the CLI passes args.spiking_snc
+    # explicitly, so this function default never reaches the CLI benchmarks (they reproduce
+    # unchanged with the host snc_reward_gain write). GREEN_INERT (B-5): behaviorally inert on the
+    # orient-solvable gridworld → this is a brain-based-PURITY default, validated by the signal's
+    # FUNCTION (the Schultz RPE battery), not a navigation behavior win.
+    spiking_snc: bool = True,
     snc_tonic_pa: float = 220.0,       # tonic pacemaker drive -> mid-range SNc rate (headroom to dip)
     snc_reward_gain: float = 400.0,    # k_r: excitatory reward afferent gain (pA per unit r)
     snc_value_gain: float = 400.0,     # k_v: inhibitory value (striosome) drive gain (pA per unit V)
@@ -3471,13 +3492,35 @@ def run_moving_goal_episode(
     # is NEURAL, not host arithmetic (the BRAIN-BASED-ONLY completion of Stage B).
     # When False, Stage A behavior is byte-unchanged (host _V_scaffold subtraction).
     # Validated CPU de-risk: research/findings/2026-06-08-gabab-girk-stageB-derisk-GO.md.
-    enable_neural_critic: bool = False,
+    # PRODUCTION DEFAULT = True (2026-06-24, BURNDOWN Phase-1 1B): the deployed nav VALUE/critic is
+    # NEURAL — the striosome_value MSN-D1 critic learns V via the SNc-derived dopamine δ and
+    # SUBTRACTS V at the SNc membrane through the GABA_B/GIRK conductance; the host _V_scaffold
+    # reward_ema subtraction is DROPPED (the brain-based-only completion of Stage B). Paired with
+    # enable_critic_homeostasis=True (below) so the critic fires from the place afferent (the
+    # cold-start operating point). This mirrors the production MergedNavConvAgent, which already
+    # resolves co_resident_nav_critic ON via its None-sentinel; this flip makes the LOW-LEVEL
+    # run_moving_goal_episode episode loop drive that critic NEURALLY by default (the episode loop
+    # previously inherited the host default even on the production agent — the N-1/N-2 residual).
+    # The CLI `--enable-neural-critic` default stays False (passed explicitly as args.* → CLI
+    # benchmarks reproduce the host critic). Validated by function: the Schultz RPE battery δ=r−V.
+    enable_neural_critic: bool = True,
     # ── 2026-06-10 spiking US/reward -> SNc (drops the host SNc reward write) ──
     # With spiking_reward_us, a PPN-like `reward_us` population receives the PERCEIVED reward (N5's
     # coord-free approach signal, a sensory drive) and FIRES into the SNc, so the reward burst is a
     # NEURON's synapse (US->VTA), not a host current write. STRONGLY recommend --perceived-approach-
     # reward so the US rides on pixels (coord-free); else a WARN (the reward is the coord default).
-    spiking_reward_us: bool = False,
+    # PRODUCTION DEFAULT = True (2026-06-24, BURNDOWN Phase-1 1B): the deployed nav reward DELIVERY
+    # is a SPIKE — the PPN-like reward_us population FIRES into the SNc (the US→VTA glutamatergic
+    # afferent), retiring the host `snc += snc_reward_gain·max(0,reward)` direct DA-current write.
+    # Paired with perceived_approach_reward=True (above), reward_us rides on the coord-free pixel
+    # eccentricity reward (the coord-free guard at ~:4260 then passes silently). The CLI
+    # `--spiking-reward-us` default stays False (passed explicitly as args.* → CLI benchmarks keep
+    # the host write). The fully coord-free SYNAPTIC reward SOURCE (sc_rostral→reward_us, the SC
+    # proximity) stays opt-in via nav_critic_spiking_sc / enable_spiking_sc_approach (it builds the
+    # SC vision chain; not defaulted here to keep the region build minimal — mirrors the production
+    # agent, which also leaves nav_critic_spiking_sc opt-in). Validated: the deployed-config RPE
+    # battery (corr(ecc, reward_us) ≤ −0.5, SNc burst, lesion-collapse) in _merged_neural_reward_*.
+    spiking_reward_us: bool = True,
     n_reward_us: int = 40,
     reward_us_to_snc_weight: float = 50.0,
     reward_us_to_snc_density: float = 0.6,
@@ -3515,7 +3558,13 @@ def run_moving_goal_episode(
     # de-risk arc showed could not, on its own, fire the MSN critic from the SPARSE actor place
     # code under the deterministic regime). With this on, --critic-neuron-type stays None (the
     # critic keeps its MSN-D1 default; homeostasis — not the type swap — fires it).
-    enable_critic_homeostasis: bool = False,   # per-region homeostasis on vs_place_context + critic
+    # PRODUCTION DEFAULT = True (2026-06-24, BURNDOWN Phase-1 1B): paired with enable_neural_critic
+    # so the deployed nav critic actually FIRES from the place afferent (the cold-start operating
+    # point — the RPE-battery finding's root-cause #1: at the default critic weight the MSN-D1
+    # never crosses rheobase → never learns V; per-region homeostasis fires it). This is the
+    # validated deployed config (_merged_neural_reward_validate.py:99). The CLI
+    # `--enable-critic-homeostasis` default stays False (passed explicitly as args.*).
+    enable_critic_homeostasis: bool = True,    # per-region homeostasis on vs_place_context + critic
     n_vs_place_context: int = 200,             # dense dedicated place-context afferent size
     vs_place_to_value_weight: float = 0.2,     # vs_place_context->striosome_value plastic INIT weight (STDP grows V up)
     vs_place_to_value_density: float = 0.5,

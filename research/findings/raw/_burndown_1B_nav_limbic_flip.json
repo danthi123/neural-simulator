@@ -1,0 +1,81 @@
+{
+  "mode": "burndown_1B_nav_limbic_core_purity_flip",
+  "date": "2026-06-24",
+  "task": "BURNDOWN Phase-1 1B (N-1/N-2): flip the deployed nav reward/value/dopamine-RPE to SPIKING by default in run_moving_goal_episode",
+  "flip": {
+    "kind": "runner-level function-default flip (g11_bg_runner.py:run_moving_goal_episode), NO sim/ edit",
+    "flags_flipped_to_True": [
+      "perceived_approach_reward",
+      "spiking_snc",
+      "enable_neural_critic",
+      "spiking_reward_us",
+      "enable_critic_homeostasis"
+    ],
+    "cli_defaults_kept_host": true,
+    "cli_pattern": "all 5 CLI args stay action=store_true (default False), passed explicitly as args.X -> standalone benchmarks reproduce unchanged (the roadmap-#4 spiking-decision pattern)",
+    "diff_stat": "1 file (g11_bg_runner.py): 55 insertions, 6 deletions (5 default flips + doc comments); NO sim/ edit",
+    "effect": "the deployed merged-nav episode loop (nav_on_merged_bridge / nav_on_merged_smoke / any caller inheriting the default) now drives the spiking limbic core delta=r-V by default; previously inherited the host reward formula even on the production MergedNavConvAgent (the N-1/N-2 residual: the agent BUILD resolved the critic ON via its None-sentinel, but the EPISODE LOOP defaulted host)"
+  },
+  "validation_by_function": {
+    "note": "Validated by the signal FUNCTION (Schultz dopamine-RPE battery), NOT the orient-solvable nav A/B (the GREEN_INERT confound B-5: no reward is behaviorally load-bearing on the gridworld). Per memory feedback_validate_signal_by_its_function + feedback_brain_based_only_standard.",
+    "rpe_battery_limbic_core": {
+      "tool": "_limbic_core_rpe_battery_derisk.py (the canonical Schultz RPE battery on the spiking limbic organ; r/V/delta all neural)",
+      "seeds": [
+        42,
+        43
+      ],
+      "core_gates": "2/2 PASS all 4 (burst_on_us, graded corr +0.99, omission_dip, pred_shrink)",
+      "reward_lesion_vanishes": "2/2 (decisive: the RPE IS the synaptic reward, not a host scalar)",
+      "critic_gabab_lesion_gap_collapses": "2/2 (decisive: V IS the synaptic GABA_B, not host arithmetic)",
+      "verdict": "GO"
+    },
+    "deployed_config_rpe_battery": {
+      "tool": "_merged_neural_reward_validate.py --smoke (the merged-bridge deployed-config RPE: corr(ecc, reward_us), SNc burst, lesion)",
+      "seed": 42,
+      "corr_ecc_reward_us": -0.814,
+      "corr_gate": "<= -0.5 PASS",
+      "snc_burst_x": 1.451,
+      "snc_burst_gate": ">= 1.3 PASS",
+      "reward_lesion_collapses": "True (close reward_us 63.8 -> 0.0 Hz, decisive)",
+      "moat_ok": true,
+      "note": "the smoke timed out (290s) during the second nav A/B episode AFTER the RPE+lesion+moat all PASSED; the function-validation criteria are met. The nav A/B is the GREEN_INERT part (not the validation criterion)."
+    },
+    "spiking_reward_source_probe": {
+      "tool": "sc_n5_rpe_probe.py (the spiking reward SOURCE: SC retina->sc_map->sc_rostral->reward_us->snc)",
+      "corr_distance_snc": -0.99,
+      "monotone": true,
+      "omission_dip": true,
+      "reward_lesion_no_burst": true,
+      "verdict": "PASS"
+    }
+  },
+  "nav_not_regressed": {
+    "tool": "nav_on_merged_smoke (the STEP-2a gate; inherits the FLIPPED defaults \u2014 passes NO reward/critic flags)",
+    "seed": 42,
+    "grid_size": 8,
+    "n_steps": 120,
+    "flip_engaged": "CONFIRMED \u2014 Spiking-SNc Stage A dopamine modulator registered + Stage B NEURAL value critic ON (host _V_scaffold DROPPED); no coord-free WARN (perceived_approach_reward engaged)",
+    "merged_bridge": "63 regions, 7508 neurons, 720 frozen parser synapses",
+    "A1_nav_conv_coreside": true,
+    "A2_parser_weights_frozen": true,
+    "A2_parser_gains_zero": true,
+    "A3_parser_still_parses": true,
+    "nav_navigates": "True (recent_dist ~1.18, holds near goal; sum_finalQ 0.50 \u2014 within the GREEN_INERT byte-identical band, the reward is not behaviorally load-bearing on the orient-solvable gridworld)",
+    "verdict": "PASS (nav navigates + conversational parser byte-frozen under the LIVE spiking nav reward-STDP + dopamine stressor)"
+  },
+  "moat_preserved": {
+    "mechanism": "the spiking limbic core (striosome_value / snc / reward_us / vs_place_context + the scope=all dopamine modulator) is array-disjoint from the parser/composer CSR; the parser weights stay byte-frozen across the live nav episode",
+    "nav_on_merged_smoke_A2": "parser frozen True, gains==0 True",
+    "deployed_config_moat": "MergedNavConvAgent what_does(dog,go)==north AND what_does(river,look) is None: True (seed 42, from _merged_neural_reward_validate smoke)",
+    "verdict": "PRESERVED"
+  },
+  "cli_reproduction_unchanged": {
+    "tool": "g11_bg_runner --moving-goal (CLI standalone, no reward flags)",
+    "output_json_spiking_snc": false,
+    "output_json_enable_neural_critic": false,
+    "verdict": "host reward path byte-preserved on the CLI (the flip does NOT leak into documented benchmarks)"
+  },
+  "verdict": "GO",
+  "verdict_detail": "BANK THE FLIP. The deployed nav reward/value/dopamine-RPE is SPIKING by default (run_moving_goal_episode), validated by the signals FUNCTION (RPE battery 2/2 all gates + 2/2 both lesions; deployed-config corr(ecc,reward_us)=-0.81, burst 1.45x, lesion-collapse; sc_n5 corr(dist,SNc)=-0.99). Nav NOT regressed (nav_on_merged_smoke PASS) + the conversational no-confab MOAT preserved (parser byte-frozen, disjoint slices) + CLI benchmarks reproduce host-unchanged. HONEST: this is brain-based PURITY, not a behavior win (GREEN_INERT B-5 \u2014 the reward is not behaviorally load-bearing on the orient-solvable gridworld), exactly as the inventory predicted. NO sim/ edit.",
+  "sim_edit_flag": "NONE \u2014 runner-level default flip only (g11_bg_runner.py, 5 function-default values + comments)"
+}
