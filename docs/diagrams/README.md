@@ -1,5 +1,17 @@
 # Simulated-brain architecture diagrams
 
+> **Current-state whole-stack view (2026-06-23):**
+> [`brain_architecture_current.md`](brain_architecture_current.md) — three
+> maintainable **Mermaid** flowcharts that render on GitHub: (1) the **master
+> map** (substrate → conversational pipeline → learned cortex →
+> grounded-language faculty → develop loop), (2) the **grounded-language
+> faculty** (gate → constrain → verify; brain = knowledge, LLM = phrasing,
+> with the anti-hallucination firewall), and (3) the artificial-life **develop
+> loop** (the day cycle). These add the 2026-06-23 layers (grounded-language
+> faculty, bridge co-residence, develop loop) that the hand-authored SVGs
+> below predate. The SVGs remain the source of truth for the exhaustive
+> per-region / per-synapse **detail** graphs.
+
 Honest, **as-implemented** flowcharts of the whole simulated brain — every
 region type, every distinct pathway, the direction and *nature* of each
 signal, and an explicit faithful-vs-shortcut layer.
