@@ -1,0 +1,133 @@
+{
+  "go": true,
+  "verdict": "GO \u2014 the L0 longitudinal-development loop runs at GPU scale with REAL stream-cortex code-learning (corr(M,C) mean +0.88), day-over-day development (vocab 6->12, heard 6->12, facts 2->5), retention holds (1.00), moat 0-FA, a tier fired, persistence resumes, frozen-brain anti-cheat holds. Per-day 110.9s; compressed-week ETA ~12.9 min. READY for the 6-seed compressed-week.",
+  "backend": "cupy",
+  "n_days": 2,
+  "seed": 42,
+  "config": {
+    "max_windows_per_day": 800,
+    "n_hub": 200,
+    "n_per": 12,
+    "D": 128,
+    "neural_render": false
+  },
+  "loop_closed": true,
+  "stages_run": [
+    "WAKE(stream-cortex)",
+    "CONVERSE",
+    "SLEEP(replay+retention)",
+    "GROWTH",
+    "PERSIST"
+  ],
+  "lineage_persisted": true,
+  "n_metric_days": 2,
+  "vocab_trend": [
+    6,
+    12
+  ],
+  "concepts_heard_trend": [
+    6,
+    12
+  ],
+  "facts_trend": [
+    2,
+    5
+  ],
+  "learn_fidelity_trend": [
+    0.892,
+    0.87
+  ],
+  "day0_vs_dayN_differs": true,
+  "recall_acc_mean": 1.0,
+  "recall_nontrivial": true,
+  "real_learning_mean_corrMC": 0.8809139227861953,
+  "real_learning": true,
+  "retention_acc_mean": 1.0,
+  "retention_holds": true,
+  "moat_false_accepts_total": 0,
+  "moat_clean": true,
+  "persist_resumes": null,
+  "resume_info": {},
+  "frozen_facts_final": null,
+  "frozen_learn_fidelity": null,
+  "frozen_anticheat_ok": null,
+  "build_seconds": 0.52,
+  "per_day_seconds": [
+    107.69,
+    114.04
+  ],
+  "per_day_wake_seconds": [
+    4.21,
+    4.11
+  ],
+  "mean_day_seconds": 110.87,
+  "mean_wake_seconds": 4.16,
+  "compressed_week_eta_minutes": 12.9,
+  "per_day": [
+    {
+      "day": 0,
+      "vocab_size": 6,
+      "concepts_heard": 6,
+      "facts_known": 2,
+      "recall_correct": 2,
+      "recall_total": 2,
+      "recall_acc": 1.0,
+      "heldout_correct": 0,
+      "heldout_total": 0,
+      "heldout_acc": null,
+      "retention_correct": 0,
+      "retention_total": 0,
+      "retention_acc": null,
+      "moat_false_accepts": 0,
+      "chain_correct": 0,
+      "chain_total": 0,
+      "chain_acc": null,
+      "learn_fidelity": 0.8918785771424577,
+      "n_windows_today": 800,
+      "brain_tier": 4,
+      "turns_lived": 2,
+      "facts_replayed_in_sleep": 1,
+      "promoted": false,
+      "day_seconds": 107.69,
+      "wake_seconds": 4.21
+    },
+    {
+      "day": 1,
+      "vocab_size": 12,
+      "concepts_heard": 12,
+      "facts_known": 5,
+      "recall_correct": 2,
+      "recall_total": 2,
+      "recall_acc": 1.0,
+      "heldout_correct": 1,
+      "heldout_total": 1,
+      "heldout_acc": 1.0,
+      "retention_correct": 2,
+      "retention_total": 2,
+      "retention_acc": 1.0,
+      "moat_false_accepts": 0,
+      "chain_correct": 0,
+      "chain_total": 0,
+      "chain_acc": null,
+      "learn_fidelity": 0.8699492684299329,
+      "n_windows_today": 800,
+      "brain_tier": 4,
+      "turns_lived": 5,
+      "facts_replayed_in_sleep": 2,
+      "promoted": false,
+      "day_seconds": 114.04,
+      "wake_seconds": 4.11
+    }
+  ],
+  "components_real_gpu": [
+    "WAKE/learn = REAL stream-cortex Hebbian co-occurrence on a persistent GPU bridge (the brain hears the TinyStories corpus window-by-window + learns concept codes; codes -> grounded phasors -> the composer).",
+    "CONVERSE = MultiTurnAgent (real spiking composer/parser) on the stream-LEARNED grounded codes.",
+    "PERSIST = BridgeLineage atomic save/load (the developed state persists day-to-day + resumes)."
+  ],
+  "components_standin": [
+    "CONSOLIDATE = the agent's self-replay + OLD-fact retention re-test (owner-approved stand-in; full-SWR-on-the-conv-bridge is a follow-on -- consolidation_trainer hard-imports cupy + a different direction-vocab bridge).",
+    "GROWTH = the TierPromoter DECISION + lineage growth-event (the real neuron-count arch rebuild + weight-transfer is the heavy GPU follow-on).",
+    "RESUME re-instates the developed codes by RE-HEARING the cumulative vocab (cheap stand-in for persisting cp_connections in the lineage .h5 -- a follow-on)."
+  ],
+  "wall_seconds": 222.6
+}

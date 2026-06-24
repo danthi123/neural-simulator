@@ -1,0 +1,170 @@
+{
+  "probe": "A1_pairing_seam__develop_loop_saves_a_developed_brain_bundle_console_loads_it",
+  "GO": true,
+  "verdict": "GO \u2014 the develop loop SAVES a developed-brain bundle (brain.json on disk) AND it ROUND-TRIPS: load_developed_brain reconstructs the EXACT brain (facts re-store, codes loaded byte-for-byte, max|\u0394code|<1e-6), and the loaded brain is USABLE (answers a who/what query + ABSTAINS on an untaught cue, moat 0-FA across all 3 bundles). The console can now --load + talk to a develop-loop brain (per-day bundles give the day-0-vs-day-N deliverable). NO sim/ edit.",
+  "backend": "cupy",
+  "n_days": 2,
+  "seed": 42,
+  "max_windows_per_day": 500,
+  "D": 128,
+  "n_hub": 200,
+  "n_per": 12,
+  "develop_loop_go": true,
+  "develop_vocab_trend": [
+    6,
+    12
+  ],
+  "develop_facts_trend": [
+    2,
+    5
+  ],
+  "bundle_save_enabled": true,
+  "n_bundles_saved": 3,
+  "a_bundle_was_saved_to_disk": true,
+  "all_bundles_roundtrip_and_usable": true,
+  "moat_clean_across_bundles": true,
+  "development_monotone_across_bundles": true,
+  "final_bundle_path_template": "bridges/developed/<lineage>/brain (this run used a tempdir)",
+  "bundle_results": [
+    {
+      "path": "C:\\Users\\dant123\\AppData\\Local\\Temp\\a1_bundles_q76rz2s4\\brain",
+      "is_bundle": true,
+      "manifest_n_facts": 5,
+      "manifest_n_grounded_codes": 25,
+      "manifest_vocab_size": 25,
+      "load_seconds": 104.3,
+      "facts_roundtrip_ok": true,
+      "n_facts_loaded": 5,
+      "n_facts_saved": 5,
+      "n_codes_checked": 25,
+      "codes_max_abs_diff": 0.0,
+      "codes_roundtrip_faithful": true,
+      "recall_probes": [
+        {
+          "q": "what does bird play?",
+          "expect": "tree",
+          "got": "tree",
+          "ok": true
+        },
+        {
+          "q": "what does cat run?",
+          "expect": "ball",
+          "got": "ball",
+          "ok": true
+        },
+        {
+          "q": "what does dog eat?",
+          "expect": "apple",
+          "got": "apple",
+          "ok": true
+        }
+      ],
+      "recall_ok": 3,
+      "recall_total": 3,
+      "answers_a_query": true,
+      "untaught_cue": [
+        "bird",
+        "jump"
+      ],
+      "untaught_answer": null,
+      "moat_abstains": true,
+      "bundle_ok": true,
+      "which": "final"
+    },
+    {
+      "path": "C:\\Users\\dant123\\AppData\\Local\\Temp\\a1_bundles_q76rz2s4\\day_0",
+      "is_bundle": true,
+      "manifest_n_facts": 3,
+      "manifest_n_grounded_codes": 25,
+      "manifest_vocab_size": 25,
+      "load_seconds": 103.6,
+      "facts_roundtrip_ok": true,
+      "n_facts_loaded": 2,
+      "n_facts_saved": 2,
+      "n_codes_checked": 25,
+      "codes_max_abs_diff": 0.0,
+      "codes_roundtrip_faithful": true,
+      "recall_probes": [
+        {
+          "q": "what does cat run?",
+          "expect": "ball",
+          "got": "ball",
+          "ok": true
+        },
+        {
+          "q": "what does dog eat?",
+          "expect": "apple",
+          "got": "apple",
+          "ok": true
+        }
+      ],
+      "recall_ok": 2,
+      "recall_total": 2,
+      "answers_a_query": true,
+      "untaught_cue": [
+        "bird",
+        "jump"
+      ],
+      "untaught_answer": null,
+      "moat_abstains": true,
+      "bundle_ok": true,
+      "which": "day_0"
+    },
+    {
+      "path": "C:\\Users\\dant123\\AppData\\Local\\Temp\\a1_bundles_q76rz2s4\\day_1",
+      "is_bundle": true,
+      "manifest_n_facts": 7,
+      "manifest_n_grounded_codes": 25,
+      "manifest_vocab_size": 25,
+      "load_seconds": 104.87,
+      "facts_roundtrip_ok": true,
+      "n_facts_loaded": 5,
+      "n_facts_saved": 5,
+      "n_codes_checked": 25,
+      "codes_max_abs_diff": 0.0,
+      "codes_roundtrip_faithful": true,
+      "recall_probes": [
+        {
+          "q": "what does bird play?",
+          "expect": "tree",
+          "got": "tree",
+          "ok": true
+        },
+        {
+          "q": "what does cat run?",
+          "expect": "ball",
+          "got": "ball",
+          "ok": true
+        },
+        {
+          "q": "what does dog eat?",
+          "expect": "apple",
+          "got": "apple",
+          "ok": true
+        }
+      ],
+      "recall_ok": 3,
+      "recall_total": 3,
+      "answers_a_query": true,
+      "untaught_cue": [
+        "bird",
+        "jump"
+      ],
+      "untaught_answer": null,
+      "moat_abstains": true,
+      "bundle_ok": true,
+      "which": "day_1"
+    }
+  ],
+  "anti_cheats": [
+    "FAITHFUL codes round-trip: the loaded composer code == the saved .npz code byte-for-byte (max|\u0394|<1e-6), NOT a re-derive from the seed -> the bundle stores the codes the brain LEARNED.",
+    "FAITHFUL facts round-trip: the loaded composer.kb == the saved facts.json (re-stored exactly).",
+    "no-confab moat: the loaded brain ABSTAINS (returns None) on an untaught (subject, action) cue.",
+    "development capture: per-day bundle fact-counts are monotone non-decreasing -> the bundles capture the brain's day-by-day accumulation (the day-0-vs-day-N deliverable)."
+  ],
+  "components": [
+    "SAVE = research.runners._longitudinal_develop_loop_gpu.save_developed_bundle / a per-day save hook -> developed_brain_io.save_developed_brain (reuse-by-import, NO sim/ edit).",
+    "LOAD = developed_brain_io.load_developed_brain (the SAME path brain_chat_tui.load_brain uses)."
+  ],
+  "wall_seconds": 660.9
+}

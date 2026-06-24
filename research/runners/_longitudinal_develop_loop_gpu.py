@@ -286,7 +286,7 @@ class StreamCortex:
 
 def develop_gpu(lineage, curriculum, n_days, seed=42, consolidation_on=True, plasticity_on=True,
                 max_windows_per_day=2500, n_hub=200, n_per=12, D=128, enable_neural_render=False,
-                resume=False, verbose=True, _shared_cortex=None):
+                resume=False, verbose=True, _shared_cortex=None, per_day_save_hook=None):
     """The GPU develop(N_days) loop. Each simulated day: WAKE = REAL stream-cortex code-learning (the brain hears
     the day's concepts in the corpus) -> CONVERSE = MultiTurnAgent on the learned grounded codes (store the day's
     facts, run the probe batteries) -> SLEEP consolidation (self-replay + retention re-test) -> [GROWTH] -> METRICS
@@ -294,7 +294,15 @@ def develop_gpu(lineage, curriculum, n_days, seed=42, consolidation_on=True, pla
 
     `plasticity_on=False` is the FROZEN-BRAIN anti-cheat: the brain HEARS the stream but the stream cortex's
     Hebbian learning is gated OFF (no code learning) AND the day's facts are not committed -> competence must NOT
-    rise. Returns (per_day metrics, assembly_trace)."""
+    rise.
+
+    `per_day_save_hook` (default None = byte-identical to the validated loop): a callback
+    `hook(day_index, state, grounded, agent)` fired AFTER PERSIST and BEFORE the per-day agent is freed, so a caller
+    can SAVE a developed-brain BUNDLE for THIS day (the day-N artifact the console picks). It receives the live
+    per-day agent (with the day's grounded codes injected + the developed facts re-instated) so the bundle is the
+    EXACT in-memory brain for that day. Exceptions in the hook are swallowed (the loop must never die on a save).
+
+    Returns (per_day metrics, assembly_trace)."""
     from sim.auto_growth import TierPromoter
 
     rng = np.random.default_rng(seed)
@@ -412,6 +420,16 @@ def develop_gpu(lineage, curriculum, n_days, seed=42, consolidation_on=True, pla
         if "PERSIST" not in assembly_trace["stages_run"]:
             assembly_trace["stages_run"].append("PERSIST")
 
+        # ================= BUNDLE (optional): save a self-contained developed-brain bundle for THIS day =====
+        # The live per-day `agent` already has the day's grounded codes injected + the developed facts
+        # re-instated, so it IS the exact in-memory brain for this day -> the console can `--load` the bundle.
+        if per_day_save_hook is not None:
+            try:
+                per_day_save_hook(day_index, state, grounded, agent)
+            except Exception as _hook_e:   # a save must never kill the develop loop
+                if verbose:
+                    print(f"    [bundle] per-day save hook failed (non-fatal): {_hook_e!r}", flush=True)
+
         # free the per-day agent's composer bridge (the conversational agent builds its own small bridge)
         _free_agent(agent)
 
@@ -457,6 +475,59 @@ def _free_agent(agent):
         pass
 
 
+# ============================================================================================================
+# THE PAIRING SEAM (A1): save a self-contained developed-brain BUNDLE the interact console can `--load`.
+# `developed_brain_io.save_developed_brain` extracts {grounded codes + facts + vocab + lineage} from a LIVE
+# conversational agent's composer. The develop loop's per-day agent (with the day's stream-learned codes injected
+# + the developed facts re-instated) IS that brain, so we just hand it to the saver. The round-trip is FAITHFUL:
+# the saved phases are the codes the brain LEARNED (loaded verbatim on reload), and the facts re-store exactly.
+# Reuse-by-import, NO `sim/` edit.
+# ============================================================================================================
+
+def build_bundle_agent(full_vocab, seed, grounded, facts, referent_nouns=None, use_multiturn=True,
+                       enable_neural_render=False):
+    """Build a fresh conversational agent over `full_vocab` on the day's stream-LEARNED `grounded` codes, then
+    re-store every developed `fact` (so `composer.kb` matches the developed state). This is the EXACT brain the
+    bundle persists -- it converses on the codes the brain learned from listening, knows exactly the facts it was
+    taught, and ABSTAINS on everything else (the no-confab moat, by construction)."""
+    agent = build_agent(full_vocab, seed, plastic=True, use_multiturn=use_multiturn,
+                        enable_neural_render=enable_neural_render, referent_nouns=referent_nouns)
+    _inject_grounded(agent, grounded)
+    for f in facts:
+        _teach_fact(agent, tuple(f))
+    return agent
+
+
+def save_developed_bundle(bundle_dir, *, full_vocab, seed, grounded, state, referent_nouns=None,
+                          composer_kind="rf", self_aliases=None, extra_metadata=None,
+                          use_multiturn=True, enable_neural_render=False):
+    """Save a developed-brain BUNDLE (brain.json + grounded_codes.npz + facts.json + lineage/) at `bundle_dir`
+    from the develop loop's state. Builds the exact in-memory brain (codes + facts) then calls
+    `developed_brain_io.save_developed_brain`. The bundle's lineage payload carries the FULL `DevelopState` so the
+    develop loop can RESUME from this bundle. Returns (manifest, n_facts). Frees the temporary agent's bridge.
+
+    NOTE on use_multiturn: the bundle does NOT store whether the brain was wrapped in MultiTurnAgent -- that is a
+    LOAD-TIME choice (`load_developed_brain(use_multiturn=...)`). We build the saver's temporary agent as a
+    MultiTurnAgent by default (matching the develop loop) but its only role here is to expose `.composer` for the
+    extract; the persisted artifact (codes/facts/vocab) is wrapper-agnostic."""
+    from research.runners.developed_brain_io import save_developed_brain
+
+    facts = list(state.facts)
+    agent = build_bundle_agent(full_vocab, seed, grounded, facts, referent_nouns=referent_nouns,
+                               use_multiturn=use_multiturn, enable_neural_render=enable_neural_render)
+    try:
+        comp = getattr(agent, "agent", agent).composer
+        D = int(getattr(comp, "D", 128))
+        manifest = save_developed_brain(
+            agent, bundle_dir, seed=int(seed), D=D, composer_kind=composer_kind,
+            self_aliases=self_aliases, develop_state=state, lineage_name="developed_brain",
+            extra_metadata=extra_metadata)
+        n_facts = manifest.get("n_facts", len(facts))
+    finally:
+        _free_agent(agent)
+    return manifest, n_facts
+
+
 def _measure(agent, state, day_curr, replayed, day_index, n_windows, learn_fid, concepts_heard):
     """Per-day development datapoint (scoping §4) + the GPU-specific learning-fidelity + heard-concept count."""
     recall = [_query_recall(agent, p) for p in day_curr.get("probe_recall", [])]
@@ -495,8 +566,10 @@ def _measure(agent, state, day_curr, replayed, day_index, n_windows, learn_fid, 
 # ============================================================================================================
 
 def run_gpu_smoke(n_days, seed, root, max_windows_per_day, n_hub, n_per, D, enable_neural_render=False,
-                  do_frozen=True, do_resume=True, verbose=True):
+                  do_frozen=True, do_resume=True, verbose=True, save_bundle_root=None, per_day_bundles=False):
     curriculum = GPUGradedCurriculum()
+    full_vocab = curriculum.full_vocab()
+    referent_nouns = curriculum.referent_nouns()
 
     # ---- main run: the full develop loop (consolidation ON, plasticity ON), REAL stream cortex ----
     main_root = os.path.join(root, "main")
@@ -504,10 +577,61 @@ def run_gpu_smoke(n_days, seed, root, max_windows_per_day, n_hub, n_per, D, enab
     if verbose:
         print("[L0 develop loop — GPU] WAKE(REAL stream-cortex) -> CONVERSE(MultiTurnAgent on learned codes) -> "
               f"SLEEP(replay+retention) -> [GROWTH] -> METRICS -> PERSIST, {n_days} days.\n", flush=True)
+
+    # --- A1 PAIRING SEAM: optionally SAVE a developed-brain bundle per day (day_<N>.json) + a final brain.json,
+    #     so the console can `--load` + talk to a day-N developed brain. A SHARED cortex lets us read the FINAL
+    #     developed codes after the loop for the end-of-run brain.json bundle. ---
+    bundle_info = {"enabled": bool(save_bundle_root), "per_day": bool(per_day_bundles),
+                   "bundles": [], "final_bundle": None}
+    shared_cortex = None
+    per_day_hook = None
+    if save_bundle_root:
+        os.makedirs(save_bundle_root, exist_ok=True)
+        shared_cortex = StreamCortex(full_vocab, seed, n_hub=n_hub, n_per=n_per, D=D, verbose=verbose)
+        if per_day_bundles:
+            def per_day_hook(day_index, state, grounded, agent):  # noqa: E306
+                bdir = os.path.join(save_bundle_root, f"day_{day_index}")
+                from research.runners.developed_brain_io import save_developed_brain
+                comp = getattr(agent, "agent", agent).composer
+                manifest = save_developed_brain(
+                    agent, bdir, seed=int(seed), D=int(getattr(comp, "D", D)), composer_kind="rf",
+                    develop_state=state, lineage_name="developed_brain",
+                    extra_metadata={"provenance": "longitudinal_develop_loop_gpu", "day": int(day_index),
+                                    "n_days_planned": int(n_days)})
+                bundle_info["bundles"].append({"day": int(day_index), "path": os.path.abspath(bdir),
+                                               "n_facts": manifest.get("n_facts"),
+                                               "n_grounded_codes": manifest.get("n_grounded_codes")})
+                if verbose:
+                    print(f"    [bundle] saved day-{day_index} developed brain -> {bdir} "
+                          f"({manifest.get('n_facts')} facts, {manifest.get('n_grounded_codes')} codes)",
+                          flush=True)
+
     per_day, assembly = develop_gpu(lineage, curriculum, n_days, seed=seed, consolidation_on=True,
                                     plasticity_on=True, max_windows_per_day=max_windows_per_day,
                                     n_hub=n_hub, n_per=n_per, D=D, enable_neural_render=enable_neural_render,
-                                    verbose=verbose)
+                                    verbose=verbose, _shared_cortex=shared_cortex, per_day_save_hook=per_day_hook)
+
+    # --- the FINAL developed-brain bundle (brain.json), from the survived shared cortex's final codes + the
+    #     persisted DevelopState. This is the canonical day-N brain the console loads by default. ---
+    if save_bundle_root and shared_cortex is not None:
+        final_state = _load_state(lineage)
+        _, _, final_grounded = shared_cortex.read_codes()
+        final_dir = os.path.join(save_bundle_root, "brain")
+        # the saver agent's ONLY role is to expose .composer for the extract (the persisted artifact is
+        # wrapper-agnostic), so build it WITHOUT the multi-turn WM loop -> a much faster save.
+        manifest, n_facts = save_developed_bundle(
+            final_dir, full_vocab=full_vocab, seed=seed, grounded=final_grounded, state=final_state,
+            referent_nouns=referent_nouns, enable_neural_render=enable_neural_render, use_multiturn=False,
+            extra_metadata={"provenance": "longitudinal_develop_loop_gpu", "n_days": int(n_days),
+                            "final_day": int(final_state.day)})
+        bundle_info["final_bundle"] = {"path": os.path.abspath(final_dir), "n_facts": n_facts,
+                                       "n_grounded_codes": manifest.get("n_grounded_codes"),
+                                       "vocab_size": len(manifest.get("vocab", []))}
+        if verbose:
+            print(f"\n[bundle] saved FINAL developed brain -> {final_dir} "
+                  f"({n_facts} facts, {manifest.get('n_grounded_codes')} codes, "
+                  f"vocab {len(manifest.get('vocab', []))})", flush=True)
+        shared_cortex.close()
 
     # ---- CHECK 1: the loop CLOSED ----
     stages = assembly["stages_run"]
@@ -626,6 +750,7 @@ def run_gpu_smoke(n_days, seed, root, max_windows_per_day, n_hub, n_per, D, enab
         "frozen_facts_final": frozen_facts_final,
         "frozen_learn_fidelity": frozen_learnfid,
         "frozen_anticheat_ok": frozen_anticheat_ok,
+        "bundle_info": bundle_info,
         "build_seconds": assembly["build_seconds"],
         "per_day_seconds": day_secs,
         "per_day_wake_seconds": wake_secs,
@@ -666,6 +791,12 @@ def main():
     ap.add_argument("--no-resume", action="store_true", help="skip the persistence-resume check")
     ap.add_argument("--out", default="research/findings/raw/_longitudinal_develop_loop_gpu_smoke.json")
     ap.add_argument("--keep-lineage", action="store_true")
+    ap.add_argument("--save-bundle", default=None,
+                    help="directory to SAVE a developed-brain BUNDLE (brain.json + day_<N>.json) so the interact "
+                         "console can --load + talk to the developed brain. e.g. bridges/developed/develop_gpu")
+    ap.add_argument("--per-day-bundles", action="store_true",
+                    help="with --save-bundle, also save a per-day bundle (day_<N>/) so the console can pick a "
+                         "day-N brain (the day-0-vs-day-N deliverable)")
     a = ap.parse_args()
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -688,7 +819,8 @@ def main():
     try:
         res = run_gpu_smoke(a.n_days, a.seed, root, a.max_windows_per_day, a.n_hub, a.n_per, a.D,
                             enable_neural_render=a.neural_render, do_frozen=not a.no_frozen,
-                            do_resume=not a.no_resume, verbose=True)
+                            do_resume=not a.no_resume, verbose=True,
+                            save_bundle_root=a.save_bundle, per_day_bundles=a.per_day_bundles)
     finally:
         if not a.keep_lineage:
             shutil.rmtree(root, ignore_errors=True)
