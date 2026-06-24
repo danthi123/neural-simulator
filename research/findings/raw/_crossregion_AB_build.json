@@ -1,0 +1,99 @@
+{
+  "title": "Cross-region persistent integrated spiking loop (Tier-2 #6) — Route A flip + Route B host-M closure",
+  "date": "2026-06-24",
+  "spec": "research/findings/raw/_crossregion_persistent_loop_next_build_scoping.md",
+  "scope": "BUILD only (no commit, no webapp restart). LOGIC/CPU/numpy-smoke validation; the CONTROLLER runs the GPU gates.",
+  "sim_edit": "NONE (reuse-by-import). `git diff -- sim/` is empty. No protected-sim/ change was required or made.",
+  "verdict_logic": "PASS — both routes wired faithfully; all logic/numpy-smoke checks GREEN. GPU gates (compose accuracy + the named regression suites) are the controller's to run.",
+
+  "route_A_language_to_action": {
+    "what": "Flip the language->action command route DEFAULT-ON on the deployed MergedNavConvAgent (the parser's action-role FIRING opens the COMMAND_GATE -> the learned language_input->cortex_X route steers the BG cascade). GO 6-seed: 2026-06-10-spoken-instruction-nav-GO.md.",
+    "mechanism_is_already_spiking": "The COMMAND_GATE is a 0/1 transmission-gate STATE coupled to the parser's action-role firing (couple_gate_to_indices). No host value crosses regions: the parser supplies the WHEN (a gate-from-firing), the word supplies the WHICH (its LEARNED route). So this is a CLEAN default-flip, not new science (scoping Rank 2).",
+    "changes": [
+      "research/runners/nav_conv_merged_bridge.py:1470 — MergedNavConvAgent.__init__ signature: co_resident_command_route default changed False -> None (the sentinel).",
+      "research/runners/nav_conv_merged_bridge.py:1659-1662 — sentinel resolution following the DA-route precedent (co_resident_nav_critic=None at :1573): None -> True (production default ON, the deployed merged agent INTERACTS); an EXPLICIT False opts out (the legacy byte-identical-everywhere build = the revertible escape).",
+      "research/runners/nav_conv_merged_bridge.py:1637-1658 — expanded docstring: PRODUCTION DEFAULT = ON; NAV-NEUTRAL by construction (the route's language_input->cortex_X edges held CLOSED by COMMAND_GATE at rest -> nav-inert, an uncommanded episode byte-identical Δ=0); MOAT-SAFE (the route is array-disjoint from the composer's cp_rf_w_* + the parser slice). NO sim/ edit.",
+      "research/runners/nav_conv_merged_bridge.py:541 — the LOW-LEVEL builder default stays False (conservative; only the agent flips, matching the DA precedent)."
+    ],
+    "anti_cheats_satisfied": {
+      "nav_byte_identity": "By construction (the route is held CLOSED at rest -> nav-inert; array-disjoint from composer/parser). VERIFIED by the controller's nav-byte-identity Δ gate.",
+      "provenance": "No host value crosses regions (the gate is a firing STATE). Asserted in spoken_instruction_nav.provenance_facts (no parser-derived value written to any nav drive).",
+      "lesion_vanishes": "lesion_command_route() cuts the route synapses -> command-following collapses to chance even with the parser firing (the GO de-risk control, now reachable on the deployed agent default).",
+      "moat_preserved": "Array-disjoint from the composer's complex synapses -> cannot perturb the conversational no-confab abstention (the controller's test_nav_conv_merged_agent is-None assertions confirm)."
+    }
+  },
+
+  "route_B_perception_to_compose_host_M_closure": {
+    "what": "Close the LAST cross-region host shortcut on Route B (the host-DESIGNED random projection `M`: composer.concepts[o] = angle(M @ to_host(cortex_it_rate))) by GROUNDING off the GO gen_perception->gen_concept Hebbian-convergence SPIKES (spikes-only). DEFAULT flipped to gen_spikes. Legacy host_m kept ONLY as the revertible `--grounding host_m` A/B comparison.",
+    "why_spikes_only": "The load-bearing percept->concept transform is now the LEARNED (self-organized) rate-Hebbian gen_perception->gen_concept convergence (a SYNAPTIC route), not a host-designed matrix `M`. The residual fixed read-projection only FORMATS the substrate's own gen_concept SPIKES (cp_firing_states) into the composer's phasor (the same legitimacy class as rf_read_phases). This retires the host-DESIGNED structure per feedback_spiking_structure_must_self_organize. De-risk: the held-out novel percept fires category-correct gen_concept SPIKES (2026-06-16-generalization-graded-propagation.md, 3-seed GPU GO).",
+    "changes": [
+      "research/runners/navigate_to_compose_then_answer.py:148 — NEW _gen_read_projection(D, n_concept, seed): the FIXED format projection of the gen_concept spikes (distinct seed offset from host_m's M).",
+      "research/runners/navigate_to_compose_then_answer.py:157 — NEW read_gen_concept_spikes(bridge, gen, obj_idx): render object (its structured-perception set vis_sets[gen_held_out[obj_idx]]) into gen_perception -> learned convergence fires gen_concept -> accumulate gen_concept cp_firing_states over the read window. Object i -> the i-th held-out gen concept (distinct categories).",
+      "research/runners/navigate_to_compose_then_answer.py:197 — NEW gen_grounded_phases(conc_rate, gen_proj): angle(P_read @ gen_concept_spikes) -> phases in [0,1)^D.",
+      "research/runners/navigate_to_compose_then_answer.py:205 — NEW lesion_gen_convergence(bridge, gen): SEVER the LEARNED gen_perception->gen_concept synapses (zero them via gen['gen_conv_mask']) -> anti-cheat 1 (the spikes-only lesion).",
+      "research/runners/navigate_to_compose_then_answer.py:225 — build_compose_bridge: default co_resident_generalization False->True + NEW grounding param (default 'gen_spikes'); builds the gen read-projection (h['gen_proj']) for gen_spikes; the legacy host-M proj for host_m.",
+      "research/runners/navigate_to_compose_then_answer.py:248-263 — _perceive_and_ground: REPLACED the unconditional host-`M` write with a grounding-mode DISPATCH. gen_spikes (DEFAULT): source = read_gen_concept_spikes(...) ; phases = gen_grounded_phases(source, gen_proj). host_m (else, gated): the legacy read_cortex_it_rate -> angle(M @ rate). The host-`M` write `composer.concepts[o] = angle(M @ rate)` is NO LONGER on the default path (gated behind the host_m else branch).",
+      "research/runners/navigate_to_compose_then_answer.py:524-578 — _provenance_check: REPLACED the host-`M` structural assertion (np.allclose(composer.concepts[o], grounded_phases(rate, proj))) with a SPIKES-ONLY assertion for gen_spikes: source_kind == 'gen_concept_spikes' (anti-smuggle), composer.concepts[o] == gen_grounded_phases(gen_concept_SPIKES), gen_concept actually SPIKED (the learned route fired). The host-M assertion is RETAINED ONLY inside the host_m else branch (A/B).",
+      "research/runners/navigate_to_compose_then_answer.py:632-651 — run_seed LESION: gen_spikes -> lesion_gen_convergence (sever the LEARNED convergence) + RE-GROUND (degenerate codes) + re-cleanup the SAME composites -> collapse; host_m -> the legacy random-code lesion.",
+      "research/runners/navigate_to_compose_then_answer.py — module docstring (grounded code / rate-vs-phasor wall / BRAIN-BASED-ONLY / HONEST SCOPE / the four anti-cheats) updated to describe the spikes-only grounding + the empirical held-out-compose BOUNDARY caveat.",
+      "research/runners/navigate_to_compose_then_answer.py:701-715 — main(): NEW --grounding {gen_spikes,host_m} flag (default gen_spikes), threaded through run_seed; JSON records the grounding mode."
+    ],
+    "default_flip_co_resident_perception": "Flipped at the BEHAVIORAL-RUNNER surface (build_compose_bridge default co_resident_generalization=True + grounding='gen_spikes'), so the deployed Route-B path is spikes-only. The AGENT-CONSTRUCTOR default (MergedNavConvAgent co_resident_perception) was deliberately NOT flipped — see FORKS below (flipping it crashes the named gates / forces composer+GPU on every agent).",
+    "anti_cheats_satisfied": {
+      "provenance_spikes_only": "VERIFIED in the numpy logic smoke (mock bridge): the gen_spikes path grounds off gen_concept cp_firing_states (NOT cortex_it), read_cortex_it_rate (the host-M cortex_it round-trip) is NEVER called on the gen_spikes path, composer.concepts[o] == gen_grounded_phases(gen_concept_spikes), and _provenance_check asserts spikes-only=True / no_host_M=True / source='gen_concept cp_firing_states'. The anti-smuggle guard REJECTS a host-M source_kind on the gen_spikes path.",
+      "lesion_vanishes": "lesion_gen_convergence severs the LEARNED convergence -> re-grounding produces degenerate codes -> compose collapses (run_seed gen_spikes lesion path). The controller's GPU gate confirms the collapse-to-floor.",
+      "both_brains_required": "ISO-PERCEPTION (with_body=False) -> the agent never traverses -> never arrives -> nothing grounded -> nothing composes (unchanged control, gen_spikes-aware).",
+      "moat_preserved": "The _moat_check function, query_patient, MOAT_ABSENT, and the verdict logic (compose_go/moat_ok_all/moat_breach) are UNCHANGED (git diff touches no moat logic). The grounding change is UPSTREAM of the cue-match abstention -> moat 0-FA preserved (the controller's GPU gate confirms)."
+    },
+    "honest_boundary_caveat": "The compose-held-out anti-cheat requires DISTINCT object codes (unbind must recover the exact perceived object). gen_concept GENERALIZES (same-category -> similar spikes), so the distinct-object compose maps each object to a DISTINCT semantic category (one per category) -> category-distinct codes. Whether the noisier (0.92 cat-acc) spike-grounded codes still clear the held-out bar (clean >= 0.90 AND clean >= floor + 0.30) is an EMPIRICAL question = the controller's GPU gate. If they do NOT, the HONEST verdict is a BOUNDARY: the host-`M` is NOT smuggled back (`--grounding host_m` is retained ONLY as the A/B comparison, never as the default fallback)."
+  },
+
+  "logic_numpy_smoke": {
+    "ast_parse": "all 3 modified files + the importers parse (UTF-8).",
+    "imports": "navigate_to_compose_then_answer, nav_conv_merged_bridge, navigate_unified_episode, _followon2_consolidation_merged_routes, _stage2_gen_erosion_diag, _stage2_gen_moat_probe all import cleanly under SIM_BACKEND=numpy.",
+    "route_a_checks": {
+      "agent_co_resident_command_route_default": "None (the sentinel)",
+      "sentinel_None_resolves_to_True": true,
+      "explicit_False_opts_out": true,
+      "builder_default_stays_False": true,
+      "co_resident_perception_NOT_flipped_on_agent": true
+    },
+    "route_b_checks": {
+      "GROUNDING_DEFAULT": "gen_spikes",
+      "build_compose_bridge_default_co_resident_generalization": true,
+      "build_compose_bridge_default_grounding": "gen_spikes",
+      "gen_spikes_grounds_off_gen_concept_cp_firing_states": true,
+      "no_host_M_read_cortex_it_rate_call_on_gen_spikes_path": true,
+      "code_equals_gen_grounded_phases_of_spikes": true,
+      "provenance_spikes_only_True": true,
+      "provenance_no_host_M_True": true,
+      "provenance_source_is_gen_concept_firing": true,
+      "anti_smuggle_provenance_rejects_host_M_source_kind": true,
+      "host_m_mode_still_dispatches_to_read_cortex_it_rate_AB_preserved": true,
+      "moat_abstain_logic_untouched": true
+    },
+    "note_heavy_build": "A full numpy build_compose_bridge(gen_spikes) was attempted to exercise the gen-convergence train pass end-to-end but is CPU-heavy and was time-boxed/stopped; the gen_concept SPIKES need GPU + NMDA (the documented rate-code-wall lift), so compose ACCURACY is the controller's GPU gate, not a numpy claim. The mock-bridge logic smoke validates the DISPATCH + provenance + anti-smuggle comprehensively (which is the SPEC's LOGIC mandate)."
+  },
+
+  "git_diff_stat": {
+    "research/runners/nav_conv_merged_bridge.py": "+41 (Route A sentinel flip + docstrings; agent perceive_and_ground grounding=host_m)",
+    "research/runners/navigate_to_compose_then_answer.py": "+~204 net (4 new helpers + grounding-mode dispatch + spikes-only provenance + docstrings + --grounding flag)",
+    "research/runners/navigate_unified_episode.py": "+8 (importer fix: explicit grounding='host_m' to preserve its validated result + the new _provenance_check signature)",
+    "sim/": "EMPTY (NO sim/ edit)"
+  },
+
+  "gpu_gate_commands_for_controller": {
+    "note": "The controller runs these on GPU (SIM_BACKEND=cupy). This subagent did NOT run them (the webapp is warm on the GPU).",
+    "1_named_regression_gate_no_perception_no_composer": "SIM_BACKEND=cupy python -m pytest tests/test_nav_conv_merged_agent.py -q   # 8/8, incl. the three is-None no-confab assertions; now built with Route A (command_route) DEFAULT-ON",
+    "2_named_regression_gate_co_resident_composer": "SIM_BACKEND=cupy python -m pytest tests/test_nav_conv_step2b_coresident.py -q   # 7/7, co_resident_composer=True; Route A default-ON",
+    "3_route_B_held_out_compose_OFF_SPIKES_plus_moat": "SIM_BACKEND=cupy python -m research.runners.navigate_to_compose_then_answer --seeds 42 --grounding gen_spikes --out research/findings/raw/navigate_to_compose_then_answer_genspikes_seed42.json   # GO bar: held-out compose clean >= 0.90 AND >= floor+0.30 with the grounding OFF gen_concept SPIKES (provenance spikes-only); LESION (sever gen_perception->gen_concept) collapses; MOAT 0-FA (HARD); ISO-PERC grounds 0. If clean < bar -> HONEST BOUNDARY (do NOT smuggle host_m back).",
+    "3b_route_B_AB_comparison_legacy_host_m": "SIM_BACKEND=cupy python -m research.runners.navigate_to_compose_then_answer --seeds 42 --grounding host_m --out research/findings/raw/navigate_to_compose_then_answer_hostm_seed42.json   # the legacy host-M reference (the A/B comparison; was 6-seed GO). NOT the default.",
+    "4_route_A_nav_byte_identity": "SIM_BACKEND=cupy python -m research.runners.spoken_instruction_nav --seeds 42 43 44 --out research/findings/raw/spoken_instruction_nav_routeA_default.json   # confirm Route A still GO under the default; AND a nav-byte-identity Δ check: the standalone nav score with co_resident_command_route default-ON (uncommanded episode, gate closed at rest) == the pre-flip nav score (Δ=0). Use research/runners/nav_gate2a_aggregate.py if a dedicated Δ harness is preferred.",
+    "5_route_B_6seed_if_seed42_GO": "SIM_BACKEND=cupy python -m research.runners.navigate_to_compose_then_answer --seeds 42 43 44 100 101 102 --grounding gen_spikes --out research/findings/raw/navigate_to_compose_then_answer_genspikes_6seed.json   # the 6-seed confirmation once seed-42 is GO."
+  },
+
+  "forks_flagged_for_owner": {
+    "1_agent_constructor_co_resident_perception_default": "The SPEC literally says 'flip co_resident_perception default-ON', but flipping the AGENT constructor default crashes the named gates and forces composer+GPU on every agent: (a) MergedNavConvAgent.__init__ raises ValueError('co_resident_perception requires co_resident_composer') for the plain agent -> test_nav_conv_merged_agent (which builds MergedNavConvAgent(seed=42), no composer) CRASHES at construction; (b) it would force GPU (the composer) onto every default agent, breaking the rf/rate-default + numpy-CPU portability. RESOLUTION: flipped Route B at the BEHAVIORAL-RUNNER surface (build_compose_bridge default gen_spikes + co_resident_generalization=True) so the deployed Route-B path is spikes-only; the agent-constructor co_resident_perception default stays False (the gates pass). The agent's perceive_and_ground method keeps the LEGACY host_m grounding (explicitly tagged grounding='host_m'); exposing the gen_spikes path on the agent constructor (so the deployed-default agent grounds via the learned convergence) is the natural FOLLOW-ON — it needs the gen stack + co_resident_composer wired into the agent default, NOT a pure flip.",
+    "2_route_A_default_build_weight": "Flipping Route A default-ON makes EVERY MergedNavConvAgent build the language_input region + the command route + force enable_spiking_wta_readout (sel_X) + run a Hebbian command-route train pass. This is a heavier default than the DA-route precedent (a read-side scalar gate). It is NAV-NEUTRAL + MOAT-SAFE by construction (gate closed at rest, array-disjoint), so the conversational gates SHOULD pass — but the controller's GPU run of test_nav_conv_merged_agent / test_nav_conv_step2b_coresident is the confirmation. If the heavier default is undesired, the revertible escape is an EXPLICIT co_resident_command_route=False."
+  }
+}

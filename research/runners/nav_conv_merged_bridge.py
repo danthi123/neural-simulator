@@ -1467,7 +1467,7 @@ class MergedNavConvAgent:
                  co_resident_nav_critic=None, nav_critic_spiking_sc=False,
                  nav_critic_place_selforg=None, nav_critic_grid_frontend=None,
                  co_resident_td_cueshift=False,
-                 co_resident_perception=False, co_resident_command_route=False,
+                 co_resident_perception=False, co_resident_command_route=None,
                  enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
                  enable_da_encoding_gain=False, da_encoding_k=2.0,
                  da_encoding_g_min=0.5, da_encoding_g_max=3.0):
@@ -1636,10 +1636,30 @@ class MergedNavConvAgent:
                              "the co-resident `rf` composer's bind/unbind algebra)")
         # co_resident_command_route (route A, language->action COMMAND_GATE): bring the `language_input` region + the
         # LEARNED `language_input -> cortex_X` route (transmission_gate=command_route) onto the merged bridge so a
-        # PARSED spoken command (the parser's action-role FIRING) opens the route and steers the BG cascade. When True,
+        # PARSED spoken command (the parser's action-role FIRING) opens the route and steers the BG cascade. When on,
         # the agent gains `command_move(direction)` (the parser comprehends -> gate opens -> the commanded word's
-        # learned route biases the action cascade -> the body picks a move). Default False = byte-preserved.
-        self.co_resident_command_route = bool(co_resident_command_route)
+        # learned route biases the action cascade -> the body picks a move).
+        #
+        # PRODUCTION DEFAULT = ON (2026-06-24, TRUE ONE BRAIN roadmap #6 / cross-region persistent-loop build A): the
+        # merged DEFAULT now carries the language->action functional integration (the "spoken command steers the body"
+        # one-brain story, GO 6-seed: 2026-06-10-spoken-instruction-nav-GO.md). The route is ALREADY fully spiking -- the
+        # COMMAND_GATE is a 0/1 transmission-gate STATE coupled to the parser's action-role FIRING (no host value crosses
+        # regions; the parser supplies the WHEN, the word supplies the WHICH via its LEARNED route), provenance asserted
+        # (spoken_instruction_nav.provenance_facts: no parser-derived value written to any nav drive), lesion-load-bearing
+        # (lesion_command_route collapses command-following to chance even with the parser firing). NAV-NEUTRAL by
+        # construction: the route's `language_input -> cortex_X` edges are held CLOSED by COMMAND_GATE at rest (no current,
+        # no STDP cold-start) -> nav-inert until a parsed command opens them, so an UNCOMMANDED nav episode is byte-identical
+        # (Δ=0). MOAT-SAFE: the route is array-disjoint from the composer's complex `cp_rf_w_*` synapses + the parser slice,
+        # so it cannot perturb the conversational no-confab abstention. The `language_input` region is appended AFTER
+        # cortex_it/rf (the nav/parser/dlPFC/rf/cortex_it index bases stay byte-unchanged). Following the DA-route precedent
+        # (co_resident_nav_critic=None-sentinel default-ON at :1573): the default is `None` = ON; an EXPLICIT False opts out
+        # (the legacy byte-identical-everywhere build, the revertible escape). NO `sim/` edit (reuse-by-import of the GO
+        # standalone spoken_instruction_nav primitives). enable_spiking_wta_readout is forced on for this route (the sel_X
+        # readout the standalone validated).
+        if co_resident_command_route is None:
+            self.co_resident_command_route = True            # production default: ON (the deployed merged agent INTERACTS)
+        else:
+            self.co_resident_command_route = bool(co_resident_command_route)
 
         _D = 128
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
@@ -1765,11 +1785,20 @@ class MergedNavConvAgent:
         the one brain. Delegates to the GO standalone `navigate_to_compose_then_answer._perceive_and_ground` against
         THIS agent's merged bridge + co-resident composer (reuse-by-import). Returns (rate, phases).
 
-        PROVENANCE: the only write into the percept's code is `composer.concepts[o] = M @ (the live cortex_it rate)`;
-        no host code copies a labeled phasor in. Requires co_resident_perception (+ co_resident_composer)."""
+        GROUNDING (host_m on the agent path): the agent's `perceive_and_ground` uses the LEGACY host-`M` grounding (the
+        bare cortex_it region + the fixed `self._grounded_proj` projection). The cross-region host-`M` CLOSURE (the
+        spikes-only `gen_concept`-SPIKES grounding) is wired + DEFAULT in the standalone behavioral runner
+        `navigate_to_compose_then_answer` (which co-residents the trained generalization stack); exposing the
+        gen_spikes path on this agent constructor (so the deployed-default agent grounds via the learned convergence,
+        NOT host-`M`) is the flagged FOLLOW-ON (it would force the gen stack + co_resident_composer onto every agent,
+        so it is NOT a pure default-flip — see `research/findings/raw/_crossregion_AB_build.json` §forks).
+
+        PROVENANCE (host_m): the only write into the percept's code is `composer.concepts[o] = M @ (the live cortex_it
+        rate)`; no host code copies a labeled phasor in. Requires co_resident_perception (+ co_resident_composer)."""
         assert self.co_resident_perception, "perceive_and_ground requires co_resident_perception=True"
         from research.runners.navigate_to_compose_then_answer import _perceive_and_ground
         h = {
+            "grounding": "host_m",          # the agent path keeps the legacy host-`M` grounding (the gen_spikes flip is the FORK)
             "it_indices": self._handles["cortex_it_indices_xp"],
             "grounded_objects": self._grounded_objects,
         }

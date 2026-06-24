@@ -266,8 +266,11 @@ def run_seed(seed):
 
     # ── build ONE unified bridge: BOTH the nav/compose handles AND h["gen"] (the additive Stage-1 generalization
     #    stack appended LAST). This is the SAME live bridge the agent navigates, composes, and generalizes on. ──
+    # grounding="host_m": this unified-episode runner's compose-perceived was validated with the legacy host-`M`
+    # grounding; keep it host_m so its result is unchanged by the cross-region host-`M` CLOSURE (the gen_spikes
+    # default of build_compose_bridge), which is validated separately in navigate_to_compose_then_answer.
     bridge, composer, h, proj = build_compose_bridge(
-        seed, with_body=True, co_resident_generalization=True)
+        seed, with_body=True, co_resident_generalization=True, grounding="host_m")
     n_neurons = int(bridge.core_config.num_neurons)
     print(f"[unified-episode] unified bridge: {n_neurons} neurons | readout={h.get('readout_region')}_X | "
           f"rf_base={h['rf_base']} cortex_it_base={int(h['it_indices_host'][0])} | gen ON "
@@ -313,7 +316,8 @@ def run_seed(seed):
     prov = {}
     samp = h.get("provenance_sample")
     if samp is not None:
-        prov = _provenance_check(bridge, composer, h, samp["rate"], samp["phases"], samp["obj"])
+        prov = _provenance_check(bridge, composer, h, samp["source"], samp.get("phases"), samp["obj"],
+                                 samp.get("source_kind"))
 
     # ── (iv) ANSWER the conversational who/what matrix + (v-conv) the conversational no-confab moat ──
     # COMPOSITION DECISION (flagged): `MergedNavConvAgent.__init__` builds its OWN merged bridge — it does not accept a
