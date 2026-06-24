@@ -1,0 +1,373 @@
+{
+  "probe": "closeout_3G_neural_planner_default_on_rich_runtime",
+  "flip": "brain_chat_tui --rich now DEFAULTS the spiking dlPFC discourse-planner ON (neural_planner=True); --no-neural-planner is the host escape. numpy-CPU nuance: HOST default on the numpy backend (the planner builds a per-topic SimulationBridge), neural-ON the GPU default.",
+  "backend": "cupy",
+  "seed": 42,
+  "GO": true,
+  "verdict": "GO -- the --rich runtime NEURAL discourse-planner is REACHABLE + DEFAULT-correct: every rich turn is substantive (>= 4 brain-sourced, neural-ordered sentences, >= the host count), the no-confab moat STILL ABSTAINS on all 2 untaught/general cues, the --no-neural-planner host escape restores the host path (substantive + moat-held), the neural selection is LOAD-BEARING (elaboration 2 -> 0 facts under dlPFC lesion), and every neural-selected fact is ON-TOPIC (within memory's 2-hop neighbourhood, foregrounding a direct associate). Quality-parity, NOT output-identity -- the neural latency rank surfaces a different-but-equally-valid order than the host argmax. 3G re-confirmed on the runtime wiring.",
+  "neural_min_sentences": 4,
+  "neural_substantive": true,
+  "moat_held_neural": true,
+  "moat_breaches": [],
+  "host_escape_ok": true,
+  "host_substantive": true,
+  "moat_held_host": true,
+  "quality_parity": true,
+  "sentence_counts_host_vs_neural": [
+    {
+      "q": "what are you",
+      "host": 4,
+      "neural": 4
+    },
+    {
+      "q": "how do you learn",
+      "host": 4,
+      "neural": 4
+    },
+    {
+      "q": "how do you remember things",
+      "host": 4,
+      "neural": 4
+    },
+    {
+      "q": "tell me more",
+      "host": 4,
+      "neural": 4
+    }
+  ],
+  "on_topic": true,
+  "foregrounds_direct_associates": true,
+  "lesion_collapses": true,
+  "elaboration_intact_facts": [
+    [
+      "brain",
+      "speak",
+      "answers"
+    ],
+    [
+      "words",
+      "form",
+      "facts"
+    ]
+  ],
+  "elaboration_lesioned_facts": [],
+  "topic_neighborhood": [
+    "answers",
+    "brain",
+    "build",
+    "changes",
+    "come",
+    "drives",
+    "facts",
+    "form",
+    "guessing",
+    "hold",
+    "learn",
+    "learning",
+    "memory",
+    "needs",
+    "refuses",
+    "replay",
+    "sleep",
+    "speak",
+    "spikes",
+    "store",
+    "synapses",
+    "use",
+    "weights",
+    "words"
+  ],
+  "neural_transcript": [
+    {
+      "you": "what are you",
+      "kind": "rich",
+      "answer": "The brain uses spikes. The spikes fires neurons. The neurons haves synapses. The synapses stores weights.",
+      "abstained": false,
+      "facts": [
+        [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        [
+          "spikes",
+          "fire",
+          "neurons"
+        ],
+        [
+          "neurons",
+          "have",
+          "synapses"
+        ],
+        [
+          "synapses",
+          "store",
+          "weights"
+        ]
+      ],
+      "n_sentences": 4,
+      "topic": "spikes",
+      "all_brain_sourced": true
+    },
+    {
+      "you": "how do you learn",
+      "kind": "rich",
+      "answer": "The brain learns words. The words forms facts. The facts builds memory. The memory needses sleep.",
+      "abstained": false,
+      "facts": [
+        [
+          "brain",
+          "learn",
+          "words"
+        ],
+        [
+          "words",
+          "form",
+          "facts"
+        ],
+        [
+          "facts",
+          "build",
+          "memory"
+        ],
+        [
+          "memory",
+          "needs",
+          "sleep"
+        ]
+      ],
+      "n_sentences": 4,
+      "topic": "words",
+      "all_brain_sourced": true
+    },
+    {
+      "you": "how do you remember things",
+      "kind": "rich",
+      "answer": "The brain stores memory. The sleep driveses replay. The replay preventses forgetting. The brain speaks answers.",
+      "abstained": false,
+      "facts": [
+        [
+          "brain",
+          "store",
+          "memory"
+        ],
+        [
+          "sleep",
+          "drives",
+          "replay"
+        ],
+        [
+          "replay",
+          "prevents",
+          "forgetting"
+        ],
+        [
+          "brain",
+          "speak",
+          "answers"
+        ]
+      ],
+      "n_sentences": 4,
+      "topic": "memory",
+      "all_brain_sourced": true
+    },
+    {
+      "you": "tell me more",
+      "kind": "followup",
+      "answer": "The weights holds memory. The answers comes memory. The brain refuseses guessing. The learning changeses weights.",
+      "abstained": false,
+      "facts": [
+        [
+          "weights",
+          "hold",
+          "memory"
+        ],
+        [
+          "answers",
+          "come",
+          "memory"
+        ],
+        [
+          "brain",
+          "refuses",
+          "guessing"
+        ],
+        [
+          "learning",
+          "changes",
+          "weights"
+        ]
+      ],
+      "n_sentences": 4,
+      "topic": "memory",
+      "all_brain_sourced": true
+    },
+    {
+      "you": "what does the dragon do",
+      "kind": "abstain",
+      "answer": "I don't know about that.",
+      "abstained": true,
+      "facts": [],
+      "n_sentences": 0,
+      "topic": null,
+      "all_brain_sourced": true
+    },
+    {
+      "you": "what is the capital of france",
+      "kind": "abstain",
+      "answer": "I don't know about that.",
+      "abstained": true,
+      "facts": [],
+      "n_sentences": 0,
+      "topic": null,
+      "all_brain_sourced": true
+    }
+  ],
+  "host_transcript": [
+    {
+      "you": "what are you",
+      "kind": "rich",
+      "answer": "The brain uses spikes. The spikes fires neurons. The neurons haves synapses. The synapses stores weights.",
+      "abstained": false,
+      "facts": [
+        [
+          "brain",
+          "use",
+          "spikes"
+        ],
+        [
+          "spikes",
+          "fire",
+          "neurons"
+        ],
+        [
+          "neurons",
+          "have",
+          "synapses"
+        ],
+        [
+          "synapses",
+          "store",
+          "weights"
+        ]
+      ],
+      "n_sentences": 4,
+      "topic": "spikes",
+      "all_brain_sourced": true
+    },
+    {
+      "you": "how do you learn",
+      "kind": "rich",
+      "answer": "The brain learns words. The words forms facts. The facts builds memory. The memory needses sleep.",
+      "abstained": false,
+      "facts": [
+        [
+          "brain",
+          "learn",
+          "words"
+        ],
+        [
+          "words",
+          "form",
+          "facts"
+        ],
+        [
+          "facts",
+          "build",
+          "memory"
+        ],
+        [
+          "memory",
+          "needs",
+          "sleep"
+        ]
+      ],
+      "n_sentences": 4,
+      "topic": "words",
+      "all_brain_sourced": true
+    },
+    {
+      "you": "how do you remember things",
+      "kind": "rich",
+      "answer": "The brain stores memory. The sleep driveses replay. The replay preventses forgetting. The answers comes memory.",
+      "abstained": false,
+      "facts": [
+        [
+          "brain",
+          "store",
+          "memory"
+        ],
+        [
+          "sleep",
+          "drives",
+          "replay"
+        ],
+        [
+          "replay",
+          "prevents",
+          "forgetting"
+        ],
+        [
+          "answers",
+          "come",
+          "memory"
+        ]
+      ],
+      "n_sentences": 4,
+      "topic": "memory",
+      "all_brain_sourced": true
+    },
+    {
+      "you": "tell me more",
+      "kind": "followup",
+      "answer": "The weights holds memory. The learning changeses weights. The brain speaks answers. The brain refuseses guessing.",
+      "abstained": false,
+      "facts": [
+        [
+          "weights",
+          "hold",
+          "memory"
+        ],
+        [
+          "learning",
+          "changes",
+          "weights"
+        ],
+        [
+          "brain",
+          "speak",
+          "answers"
+        ],
+        [
+          "brain",
+          "refuses",
+          "guessing"
+        ]
+      ],
+      "n_sentences": 4,
+      "topic": "memory",
+      "all_brain_sourced": true
+    },
+    {
+      "you": "what does the dragon do",
+      "kind": "abstain",
+      "answer": "I don't know about that.",
+      "abstained": true,
+      "facts": [],
+      "n_sentences": 0,
+      "topic": null,
+      "all_brain_sourced": true
+    },
+    {
+      "you": "what is the capital of france",
+      "kind": "abstain",
+      "answer": "I don't know about that.",
+      "abstained": true,
+      "facts": [],
+      "n_sentences": 0,
+      "topic": null,
+      "all_brain_sourced": true
+    }
+  ],
+  "elapsed_s": 249.6
+}

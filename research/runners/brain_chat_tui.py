@@ -667,6 +667,12 @@ def main():
                          "elaboration, each sentence verify-checked); 'tell me more'/'why?' elaborates further. "
                          "Default OFF = the single-fact oracle answer.")
     ap.add_argument("--rich-max-sentences", type=int, default=4, help="max sentences per rich reply.")
+    ap.add_argument("--no-neural-planner", action="store_true",
+                    help="(--rich only) DISABLE the spiking dlPFC discourse-planner; use the HOST gather/order/"
+                         "stop heuristics instead. Default = neural-ON (the brain-based-purity version: the dlPFC "
+                         "spreading-activation latency rank drives WHICH grounded facts to bring up, in WHAT order, "
+                         "and WHEN to stop). The escape exists for the numpy-CPU / reproducibility / test-oracle "
+                         "path (the host planner avoids building a per-topic SimulationBridge).")
     # smoke
     ap.add_argument("--smoke", action="store_true",
                     help="run the scripted GPU-FREE smoke (no interactive input) + write the JSON verdict.")
@@ -695,7 +701,31 @@ def main():
     rich = None
     if a.rich:
         from research.runners.rich_answer_composer import RichAnswerComposer
-        rich = RichAnswerComposer(chat, max_sentences=a.rich_max_sentences)
+        # DEFAULT = the NEURAL discourse-planner (brain-based-purity): the spiking dlPFC content-selection
+        # (SpikingSpreadingController) drives WHICH grounded facts to bring up, in WHAT neural-relevance order,
+        # and WHEN to stop -- the GO 3G replacement for the host gather/order/stop heuristics (quality-parity,
+        # lesion-load-bearing, on-topic, moat 0-FA). `--no-neural-planner` is the host escape.
+        # numpy-CPU nuance (mirrors the 1A sentinel): the planner builds + steps a per-topic SimulationBridge,
+        # which is heavy on the CPU smoke path -- so on the numpy backend we keep the HOST default for
+        # portability/speed (neural-on stays the GPU default). The explicit `--no-neural-planner` always forces
+        # host regardless of backend.
+        try:
+            from sim.backend import is_gpu_backend
+            _on_gpu = bool(is_gpu_backend())
+        except Exception:
+            _on_gpu = (os.environ.get("SIM_BACKEND", "").lower() == "cupy")
+        neural_planner = (not a.no_neural_planner) and _on_gpu
+        if a.no_neural_planner:
+            print("[rich] neural discourse-planner DISABLED (--no-neural-planner): host gather/order/stop.",
+                  flush=True)
+        elif not _on_gpu:
+            print("[rich] neural discourse-planner: HOST default on the numpy-CPU backend "
+                  "(the spiking dlPFC planner needs a bridge; use SIM_BACKEND=cupy for neural-ON).", flush=True)
+        else:
+            print("[rich] neural discourse-planner ON (default): spiking dlPFC content-selection drives "
+                  "gather/order/stop.", flush=True)
+        rich = RichAnswerComposer(chat, max_sentences=a.rich_max_sentences,
+                                  neural_planner=neural_planner, planner_seed=a.seed)
     run_repl(chat, source, n_facts, rich=rich)
     return 0
 
