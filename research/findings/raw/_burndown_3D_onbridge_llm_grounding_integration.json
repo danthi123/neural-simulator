@@ -1,0 +1,274 @@
+{
+  "probe": "burndown_3D_onbridge_llm_grounding_integration",
+  "resolves": "Phase-3D (the LAST burndown item): OFF-bridge-LLM -> ON-bridge FUNCTIONAL integration. Wire the 2A-fast ON-bridge Qwen forward (production_o1_forward: cupy-resident 24-layer graded-op forward + KV-cache greedy decode) into the validated grounded-language gate->constrain->verify loop, so the brain's grounded knowledge CONSTRAINS + VERIFIES the ON-bridge faculty's generation, the no-confab moat intact -- the faculty's fluency functionally GATED by the brain's grounding, all on ONE substrate. Reproduce the decisive proof (the LLM hallucinates -> the architecture CATCHES it) WITH the on-bridge faculty.",
+  "how_it_wires": "a FACULTY-HANDLE SWAP behind the SAME grounding API: the P3/integration grounded_reply loop is faculty-agnostic (calls faculty.render_svo / .render_svo_regen / .render_svo_adversarial). The OFF-bridge SpikingQwenFaculty implements those via HuggingFace model.generate() + PyTorch-installed spiking ops; the ON-bridge OnBridgeQwenFaculty implements the SAME three methods via the 2A production_o1_forward (chat-template -> tokenize -> PREFILL -> KV-cache greedy DECODE). The GATE (brain composer recall/abstain) + VERIFY (brain re-parses the GENERATED PROSE back to an SVO, reject on mismatch) are REUSED VERBATIM from _grounded_lang_integration_derisk; ONLY the faculty forward moved on-bridge.",
+  "architecture": "GATE (brain composer exact-match recall / abstain; numpy-CPU) -> CONSTRAIN (the ON-bridge 2A Qwen forward renders the gated SVO into fluent prose with the verb kept; cupy-resident on GPU) -> VERIFY (the brain re-parses the faculty's GENERATED PROSE back into an SVO and rejects on mismatch with the gated fact). The on-bridge forward is bit-exact to the deployed host reference (2A logit cos ~1.0), itself bit-exact to B-1 (the off-bridge spiking forward); so the grounding loop's verdicts carry from off-bridge to on-bridge.",
+  "faculty": "ON-BRIDGE 2A-fast Qwen2.5-0.5B forward (production_o1_forward: cupy-resident graded RMSNorm/SiLU/softmax + on-GPU GQA attention/RoPE + dense GEMM linears across all 24 layers + KV cache), T=16, noise_off (deterministic-mean graded reads = the 2A KV-cache-correctness mode; greedy faculty). Same constrain/regen/adversarial prompts as the off-bridge SpikingQwenFaculty.",
+  "noise_note": "the on-bridge forward runs noise_off=True for generation (graded reads at their DETERMINISTIC mean), exactly as the 2A KV-cache-correctness path -- deterministic-greedy (matching the off-bridge greedy faculty) + reproducible. It is STILL the cupy-resident graded-op forward (the SAME ops); the 2A (A) bit-exactness test validated the noise-ON path matches the host reference, so this is a faithful + tractable choice, NOT a shortcut around the spiking ops.",
+  "curriculum": "research\\findings\\raw\\_grounded_lang_curriculum_p2.json",
+  "brain_backend": "numpy",
+  "faculty_backend": "cupy (the 2A on-GPU forward)",
+  "T": 16,
+  "max_new_tokens": 24,
+  "ctx": 128,
+  "seed": 42,
+  "model_meta": {
+    "model_load_seconds": 3.0338218212127686,
+    "upload_seconds": 1.0158581733703613,
+    "vram_resident_gb": 5.39533824,
+    "n_params": 494032768,
+    "L": 24,
+    "D": 896,
+    "V": 151936,
+    "ctx_need": 128,
+    "T": 16,
+    "pools": {
+      "silu": 512,
+      "div": 512,
+      "softmax": 4096
+    }
+  },
+  "GO": true,
+  "moat_clean_0_false_accept": true,
+  "lesion_load_bearing": true,
+  "verdict": "GO -- the ON-BRIDGE (2A-fast) Qwen forward, wired into the grounded-language gate->constrain->verify loop, renders the brain's grounded facts FLUENTLY (grounded 4/4, each re-parses to the taught fact) AND untaught cues ABSTAIN (moat held 2/2) AND the adversarial DRIFT is caught-by-VERIFY (1/1) AND the LESION anti-cheat confirms VERIFY is load-bearing (severed -> the false on-bridge sentence survives; intact -> caught). => the OFF-bridge -> ON-bridge functional integration WORKS on ONE substrate: the faculty's fluency is functionally GATED by the brain's grounding, the no-confab moat (0-false-accept) intact, EVEN WITH the real generative LLM forward running on the bridge substrate.",
+  "anti_cheats": {
+    "grounding_load_bearing": "the LESION run severs VERIFY -> the adversarial on-bridge sentence is emitted unchecked (the hallucination survives); with VERIFY intact it is caught. The contrast proves the grounding is what stops the on-bridge faculty's hallucination.",
+    "moat_0_false_accept": "untaught cues -> the GATE abstains -> NO on-bridge generation (the faculty is never invoked); the adversarial drift is caught-by-VERIFY -> 0 false-accepts.",
+    "onbridge_reproduces_offbridge": "the 2A on-bridge forward is bit-exact to the deployed host reference (logit cos ~1.0), itself bit-exact to B-1 (the off-bridge spiking forward) -> the on-bridge generation is the on-bridge analogue of the off-bridge faculty's, and the grounding verdicts carry."
+  },
+  "sim_edit_needed": false,
+  "sim_edit_flag": "NONE -- the on-bridge faculty is the 2A host-forward (cupy, reused-by-import; the 2A build is verified NO-sim/-edit GO); the brain half (parser/composer) is the numpy-CPU pipeline reused from P2/P3. No bridge / sim/ code touched.",
+  "elapsed_seconds": 27.9,
+  "result": {
+    "seed": 42,
+    "taught": {
+      "facts": 22,
+      "attribute_facts": 8,
+      "clause_facts": 2,
+      "chain_facts": 2
+    },
+    "grounded_correct": 4,
+    "grounded_total": 4,
+    "untaught_held": 2,
+    "untaught_total": 2,
+    "drift_caught": 1,
+    "drift_total": 1,
+    "grounded_detail": [
+      {
+        "cue": [
+          "dog",
+          "eat"
+        ],
+        "type": "patient",
+        "gate_svo": [
+          "dog",
+          "eat",
+          "meat"
+        ],
+        "gate_truth": null,
+        "surface": "The dog eats meat.",
+        "surface_full": "The dog eats meat.",
+        "reparse_svo": [
+          "dog",
+          "eat",
+          "meat"
+        ],
+        "verified": true,
+        "emitted": true,
+        "abstained": false,
+        "regen_used": false,
+        "reject_reason": null,
+        "gen_seconds": 0.43,
+        "ok": true
+      },
+      {
+        "cue": [
+          "cat",
+          "eat"
+        ],
+        "type": "patient",
+        "gate_svo": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "gate_truth": null,
+        "surface": "The cat eats fish.",
+        "surface_full": "The cat eats fish.",
+        "reparse_svo": [
+          "cat",
+          "eat",
+          "fish"
+        ],
+        "verified": true,
+        "emitted": true,
+        "abstained": false,
+        "regen_used": false,
+        "reject_reason": null,
+        "gen_seconds": 0.35,
+        "ok": true
+      },
+      {
+        "cue": [
+          "bird",
+          "eat"
+        ],
+        "type": "patient",
+        "gate_svo": [
+          "bird",
+          "eat",
+          "seed"
+        ],
+        "gate_truth": null,
+        "surface": "The bird eats the seed.",
+        "surface_full": "The bird eats the seed.",
+        "reparse_svo": [
+          "bird",
+          "eat",
+          "seed"
+        ],
+        "verified": true,
+        "emitted": true,
+        "abstained": false,
+        "regen_used": false,
+        "reject_reason": null,
+        "gen_seconds": 0.31,
+        "ok": true
+      },
+      {
+        "cue": [
+          "fox",
+          "chase"
+        ],
+        "type": "patient",
+        "gate_svo": [
+          "fox",
+          "chase",
+          "rabbit"
+        ],
+        "gate_truth": null,
+        "surface": "The fox chased the rabbit.",
+        "surface_full": "The fox chased the rabbit.",
+        "reparse_svo": [
+          "fox",
+          "chase",
+          "rabbit"
+        ],
+        "verified": true,
+        "emitted": true,
+        "abstained": false,
+        "regen_used": false,
+        "reject_reason": null,
+        "gen_seconds": 0.35,
+        "ok": true
+      }
+    ],
+    "untaught_detail": [
+      {
+        "cue": [
+          "lion",
+          "eat"
+        ],
+        "type": "patient",
+        "gate_svo": null,
+        "gate_truth": null,
+        "surface": null,
+        "surface_full": null,
+        "reparse_svo": null,
+        "verified": null,
+        "emitted": false,
+        "abstained": true,
+        "gen_seconds": 0.0,
+        "held": true,
+        "note": "lion never taught"
+      },
+      {
+        "cue": [
+          "whale",
+          "eat"
+        ],
+        "type": "patient",
+        "gate_svo": null,
+        "gate_truth": null,
+        "surface": null,
+        "surface_full": null,
+        "reparse_svo": null,
+        "verified": null,
+        "emitted": false,
+        "abstained": true,
+        "gen_seconds": 0.0,
+        "held": true,
+        "note": "whale never taught"
+      }
+    ],
+    "drift_detail": [
+      {
+        "cue": [
+          "dog",
+          "eat"
+        ],
+        "type": "patient",
+        "gate_svo": [
+          "dog",
+          "eat",
+          "meat"
+        ],
+        "gate_truth": null,
+        "surface": "The dog eats the bone.",
+        "surface_full": "The dog eats the bone.",
+        "reparse_svo": [
+          "dog",
+          "eat",
+          "bone"
+        ],
+        "verified": false,
+        "emitted": false,
+        "abstained": false,
+        "regen_used": false,
+        "reject_reason": "re-parsed SVO mismatches the gated fact",
+        "gen_seconds": 0.32,
+        "true_patient": "meat",
+        "confab_patient": "bone",
+        "caught": true
+      }
+    ],
+    "lesion_anti_cheat": {
+      "description": "VERIFY gate SEVERED: the adversarial on-bridge render is emitted UNCHECKED.",
+      "on_bridge_false_surface": "The dog eats the bone.",
+      "false_reparse_svo": [
+        "dog",
+        "eat",
+        "bone"
+      ],
+      "gated_true_svo": [
+        "dog",
+        "eat",
+        "meat"
+      ],
+      "lesioned_emitted_false": true,
+      "intact_caught": true,
+      "note": "lesioned_emitted_false=True AND intact_caught=True => the grounding/VERIFY is LOAD-BEARING: it is what stops the on-bridge faculty's hallucination from reaching the user. Without it the false on-bridge sentence survives; with it the false assertion is rejected."
+    },
+    "regen_after_reject": {
+      "gate_svo": [
+        "dog",
+        "eat",
+        "meat"
+      ],
+      "surface": "Dogs consume meat as a primary source of nutrition.",
+      "surface_full": "Dogs consume meat as a primary source of nutrition.",
+      "reparse_svo": null,
+      "verified": false,
+      "emitted": false,
+      "gen_seconds": 0.56
+    },
+    "faculty_gen_stats": {
+      "gen_calls": 6,
+      "gen_seconds_total": 2.32,
+      "gen_tokens_total": 39,
+      "gen_tok_per_sec": 16.8,
+      "avg_seconds_per_render": 0.387
+    }
+  }
+}
