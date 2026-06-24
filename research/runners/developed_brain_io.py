@@ -326,13 +326,17 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
     Returns (agent, manifest). `agent` is a `BrainConversationalAgent` (or a `MultiTurnAgent` wrapper if
     `use_multiturn`), built over the saved vocab with the saved grounded codes, with every saved fact re-stored.
 
-    BRAIN-LOAD SPEEDUP (default-ON for the load path -- both options): the per-fact RF resonate is SKIPPED when
-    kb_composites.npz is present (option 1 -- the persisted composite is set directly into composer.kb), and the
+    BRAIN-LOAD SPEEDUP (default-ON for the load path -- three options): the per-fact RF resonate is SKIPPED when
+    kb_composites.npz is present (option 1 -- the persisted composite is set directly into composer.kb); the
     comprehension parser's ~75K-step Hebbian training is DEFERRED (option 2 -- `defer_parser=True`: the parser builds
-    lazily on the FIRST runtime teach, so a pure Q&A session never pays it). Both are byte-identical to the
-    re-resonate + eager-train path for any Q&A. A loaded brain that then TEACHES a new fact pays the one-time parser
-    training on the first teach (identical to a never-deferred agent). Pass `defer_parser=False` to force the eager
-    parser (e.g. if you want the parser warm immediately).
+    lazily on the FIRST runtime teach); and (option 3, MultiTurnAgent only) the persistent discourse WORKING-MEMORY
+    loop is DEFERRED (`defer_planner`, tied to `defer_parser` here) -- the WM loop's ~2*len(referents) attractor
+    pathways into the merged ~10M-synapse bridge are the dominant load cost (~681s on the SK brain; see the load
+    profile), and a pure Q&A / rich-answer session never introduces a multi-turn referent, so it never needs the WM
+    loop. All three are byte-identical to the eager path for any Q&A. A loaded brain that then TEACHES a new fact pays
+    the one-time parser training on the first teach; one that introduces a multi-turn referent pays the one-time WM
+    build on the first referent write -- both identical to a never-deferred agent. Pass `defer_parser=False` to force
+    the eager parser AND eager planner (e.g. if you want them warm immediately).
 
     Args:
         path: the developed-brain directory (must contain brain.json + grounded_codes.npz + facts.json; optionally
@@ -383,7 +387,8 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                grounded_codes=codes if codes else None, seed=seed,
                                wm_n=wm_n, wm_pattern_size=wm_pattern_size,
                                enable_neural_render=enable_neural_render, composer_kind=composer_kind,
-                               enable_biased_competition=False, defer_parser=defer_parser)
+                               enable_biased_competition=False, defer_parser=defer_parser,
+                               defer_planner=defer_parser)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts,
                                          grounded_codes=codes if codes else None,

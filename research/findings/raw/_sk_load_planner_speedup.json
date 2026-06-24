@@ -1,0 +1,77 @@
+{
+  "checks": {
+    "B_batched_csr_byte_identical": {
+      "ok": true,
+      "nnz_batched": 51001,
+      "nnz_perconcept": 51001,
+      "n_edges_batched": 51001,
+      "n_edges_perconcept": 51001,
+      "edge_keys_match": true,
+      "weights_match": true
+    },
+    "B_latency_rank_sane": {
+      "ok": true,
+      "lat_pie": 6,
+      "lat_tree": 7,
+      "lat_bark": null,
+      "direct_fire": true,
+      "dog_silent": true
+    },
+    "A_defer_builds_no_wm_loop": {
+      "ok": true,
+      "wm_is_none": true,
+      "bcw_is_none": true
+    },
+    "A_qa_answers_moat_abstains_zero_wm": {
+      "ok": true,
+      "what_does_dog_eat": "apple",
+      "moat_fox_eat": null,
+      "wm_none_after_store": true,
+      "wm_none_after_qa": true
+    },
+    "A_lazy_wm_builds_and_equals_eager": {
+      "ok": true,
+      "wm_none_before_first_referent": true,
+      "wm_built_after_first_referent": true,
+      "deferred_read_equals_eager_read": true,
+      "eager_rates": {
+        "dog": 0.0,
+        "apple": 0.00125,
+        "cat": 0.0,
+        "mouse": 0.3075
+      },
+      "deferred_rates": {
+        "dog": 0.0,
+        "apple": 0.00125,
+        "cat": 0.0,
+        "mouse": 0.3075
+      }
+    },
+    "A_deferred_equals_eager_qa": {
+      "ok": true,
+      "eager_wm_built_eager": true,
+      "eager_ans": "apple",
+      "deferred_ans": "apple",
+      "eager_moat": null,
+      "deferred_moat": null
+    }
+  },
+  "verdict": "PASS",
+  "summary": {
+    "root_cause": "MultiTurnAgent.__init__ eagerly builds a persistent SpikingLoopContextBuffer WM loop; its ~2*len(referents) attractor pathways are installed by one set_pathway_weights(add_missing=True) call PER attractor, each rebuilding the ENTIRE ~10M-synapse CSR + walking the full nnz in a Python pair_to_idx loop. Profile bwy27t6g6: 144 calls = 681.6s of a 840.8s SK-brain load.",
+    "fix_A_defer_planner": "MultiTurnAgent(defer_planner=True) builds the WM loop (and biased-competition buffer) LAZILY on the first referent write; a Q&A/rich-answer console session never introduces a multi-turn referent so it pays ZERO WM build. Threaded from load_developed_brain (tied to defer_parser, default True on load) + brain_chat_tui._load_self_knowledge/_build_tiny_demo (defer_planner=True). Default OFF = byte-identical.",
+    "fix_B_batch_graph_build": "SpikingLoopContextBuffer.__init__ (and BiasedCompetitionContextBuffer) now install ALL concepts' attractor edges in 2 batched set_pathway_weights calls (c2d + d2c) instead of 2*len(concepts); CSR is rebuilt 2x not 144x. Validated byte-identical to the per-concept CSR (51001 nnz, edge keys + weights match). Makes the WM-loop / planner build fast WHEN used (no sim/ edit -- runner-level only).",
+    "expected_load_time_after": "Profile-derived estimate from bwy27t6g6 (TOTAL 840.8s, of which the MultiTurnAgent->WM-loop chain is 840.78s, set_pathway_weights 144x = 742.2s cumtime / 681.6s tottime). Fix B alone: 144 calls -> 2 calls => WM-loop graph install ~742s -> ~10-15s (host pair_to_idx loop is O(nnz)/call, so ~2/144 of 681.6s ~= 9.5s + 2 CSR rebuilds ~1.7s) => total load ~840s -> ~115s. Fix A (deferred, the console default): the WHOLE WM-loop chain (the build_loop_wm_bridge 56.3s + the graph install) is skipped at load, so a Q&A/rich console load drops to the BrainConversationalAgent + fact-restore residual (seconds; the per-fact resonate is already skip-optimized via kb_composites). The controller should re-measure the real GPU load-time.",
+    "files_changed": [
+      "research/runners/content_selection_spiking.py (B: batch SpikingLoopContextBuffer attractor install)",
+      "research/runners/biased_competition_buffer.py (B: batch attractor + ref2sel install)",
+      "research/runners/multi_turn_agent.py (A: defer_planner flag + lazy _ensure_wm/_ensure_bcw)",
+      "research/runners/developed_brain_io.py (A: thread defer_planner=defer_parser into MultiTurnAgent)",
+      "research/runners/brain_chat_tui.py (A: _load_self_knowledge + _build_tiny_demo pass defer_planner=True)"
+    ],
+    "sim_edit": "NONE (runner-level only; bridge.py inject_explicit_wiring/set_pathway_weights untouched)",
+    "moat": "0 false-accepts (fox eat -> None); deferred Q&A answers == eager == ground truth",
+    "remeasure_command": "SIM_BACKEND=cupy python -c \"import time,cProfile,pstats; from research.runners.developed_brain_io import load_developed_brain; t=time.time(); a,m=load_developed_brain('<SK_BUNDLE_DIR>', use_multiturn=True); print('LOAD %.1fs n_facts=%d wm_deferred=%s' % (time.time()-t, m.get('n_facts'), a.wm is None))\"",
+    "remeasure_note": "Replace <SK_BUNDLE_DIR> with the same developed-brain bundle the original profile loaded (a dir with brain.json). load_developed_brain now defaults defer_planner=True, so 'wm_deferred=True' confirms the WM loop was NOT built at load. To time a WM-USING turn, then call a.hear('x verb y') + a.what_does('it','verb')."
+  }
+}

@@ -48,7 +48,7 @@ class MultiTurnAgent:
                  wm_n=600, wm_pattern_size=40, enable_neural_render=True, spec_threshold=1.5,
                  composer_kind="rf", enable_biased_competition=True,
                  biased_competition_bias_pA=2500.0, biased_competition_spec_threshold=1.3,
-                 biased_competition_window=20, defer_parser=False):
+                 biased_competition_window=20, defer_parser=False, defer_planner=False):
         self.seed = int(seed)
         # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
         # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
@@ -63,8 +63,20 @@ class MultiTurnAgent:
                                               enable_learned_assoc=(composer_kind == "onebrain"),
                                               defer_parser=defer_parser)
         self.referents = list(referent_concepts)
-        self.wm = SpikingLoopContextBuffer(self.referents, n=wm_n, pattern_size=wm_pattern_size,
-                                           seed=seed, enable_ou=False)
+        # BRAIN-LOAD SPEEDUP (defer_planner, default OFF = byte-identical): the persistent discourse working-memory
+        # loop (a SpikingLoopContextBuffer holding one attractor per referent) is the dominant LOAD cost -- building
+        # its ~2*len(referents) attractor pathways into the merged bridge's ~10M-synapse CSR (~681s on the SK brain;
+        # see the load profile). A pure Q&A / rich-answer console session never introduces a multi-turn discourse
+        # referent (no pronoun to resolve), so it never needs the WM loop. With `defer_planner=True` the WM loop (and
+        # the optional biased-competition buffer) is built LAZILY on the FIRST referent write / pronoun read -- a
+        # Q&A-only session pays ZERO planner/WM build. Default OFF preserves the eager build byte-for-byte; the
+        # console load paths (load_developed_brain + the webapp _build_chat_brain) pass True.
+        self._defer_planner = bool(defer_planner)
+        self._wm_n = int(wm_n)
+        self._wm_pattern_size = int(wm_pattern_size)
+        self.wm = None
+        if not self._defer_planner:
+            self.wm = self._build_wm()
         self._spec = float(spec_threshold)
         # Agent-owned discourse-referent registry (the plain SpikingLoopContextBuffer does NOT track which
         # referents were introduced; the biased-competition path needs the held SET to know when >=2 referents
@@ -76,17 +88,39 @@ class MultiTurnAgent:
         self._bc_bias_pA = float(biased_competition_bias_pA)
         self._bc_spec = float(biased_competition_spec_threshold)
         self._bc_window = int(biased_competition_window)
-        self._wm_n = int(wm_n)
-        self._wm_pattern_size = int(wm_pattern_size)
         # The biased-competition buffer mirrors the held discourse-referent registry; it is built ONLY when the
         # flag is ON (default OFF -> never constructed -> byte-identical to the prior behavior). It holds the same
         # attractor per referent (same seed, same n/pattern_size) PLUS the per-referent WTA accumulator + selective
-        # inhibition that the plain SpikingLoopContextBuffer lacks.
+        # inhibition that the plain SpikingLoopContextBuffer lacks. When defer_planner is set it is ALSO deferred
+        # (built lazily by _ensure_bcw() on the first multi-referent pronoun read) -- a Q&A session never pays it.
         self.bcw = None
-        if self.enable_biased_competition:
-            self.bcw = BiasedCompetitionContextBuffer(
-                self.referents, n=self._wm_n, pattern_size=self._wm_pattern_size,
-                seed=seed, enable_ou=False, competition=True)
+        if self.enable_biased_competition and not self._defer_planner:
+            self.bcw = self._build_bcw()
+
+    # --- lazy planner / working-memory construction (BRAIN-LOAD SPEEDUP) ------
+    def _build_wm(self):
+        """Build the persistent discourse WM loop (one attractor per referent). Same params whether eager or lazy."""
+        return SpikingLoopContextBuffer(self.referents, n=self._wm_n, pattern_size=self._wm_pattern_size,
+                                        seed=self.seed, enable_ou=False)
+
+    def _build_bcw(self):
+        """Build the biased-competition buffer (same referents/seed/n/pattern_size as the WM loop)."""
+        return BiasedCompetitionContextBuffer(
+            self.referents, n=self._wm_n, pattern_size=self._wm_pattern_size,
+            seed=self.seed, enable_ou=False, competition=True)
+
+    def _ensure_wm(self):
+        """Lazily build the WM loop on first use (deferred load path). Identical to the eager build -- the FIRST
+        referent write / pronoun read pays the one-time WM construction; a never-deferred agent built it in __init__."""
+        if self.wm is None:
+            self.wm = self._build_wm()
+        return self.wm
+
+    def _ensure_bcw(self):
+        """Lazily build the biased-competition buffer on first multi-referent pronoun read (deferred load path)."""
+        if self.bcw is None and self.enable_biased_competition:
+            self.bcw = self._build_bcw()
+        return self.bcw
 
     # --- discourse state -----------------------------------------------------
     def _write_referent(self, ref):
@@ -94,15 +128,15 @@ class MultiTurnAgent:
         competition is enabled, mirror the write into the biased-competition buffer's registry so the same held
         referents compete during a pronoun query."""
         if isinstance(ref, str) and ref in self.referents:
-            self.wm.update([ref])
+            self._ensure_wm().update([ref])
             self._referent_history.append(ref)
-            if self.bcw is not None:
-                self.bcw.update([ref])
+            if self.enable_biased_competition:
+                self._ensure_bcw().update([ref])
 
     def held_referent(self, window=20):
         """Read the WM loop; return (referent, specificity). The referent is the concept whose attractor dominates
         the read by > spec_threshold; otherwise None (ambiguous / empty WM -> no antecedent)."""
-        rates = self.wm.read(window=window)
+        rates = self._ensure_wm().read(window=window)
         items = sorted(rates.items(), key=lambda kv: kv[1], reverse=True)
         if not items or items[0][1] <= 1e-6:
             return None, 0.0

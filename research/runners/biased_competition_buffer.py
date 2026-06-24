@@ -197,20 +197,33 @@ class BiasedCompetitionContextBuffer:
         perm = rng.permutation(n)
         self._cpat = {}
         self._dpat = {}
-        ww_attr = np.full(pattern_size * pattern_size, attractor_weight, np.float32)
+        # BRAIN-LOAD SPEEDUP (2026-06-24): batch ALL concepts' attractor edges into ONE c2d + ONE d2c
+        # set_pathway_weights call (was one-call-per-concept). Each call rebuilds the WHOLE sparse CSR, so the
+        # original 2*len(concepts) calls cost 2*len(concepts) full CSR rebuilds; batching => exactly 2. The
+        # edges are identical (the per-concept attractors partition the indices via disjoint perm slices, all
+        # at attractor_weight; set_pathway_weights is order-independent for distinct edges) -> byte-identical
+        # CSR. Mirrors the same fix in content_selection_spiking.SpikingLoopContextBuffer.
+        c2d_pre, c2d_post, d2c_pre, d2c_post = [], [], [], []
         for i, c in enumerate(self.concepts):
             p = perm[i * pattern_size:(i + 1) * pattern_size]
             cpat, dpat = cidx[p], didx[p]
             self._cpat[c] = self.xp.asarray(cpat)
             self._dpat[c] = self.xp.asarray(dpat)
             # per-concept outer-product attractor (the SpikingLoopContextBuffer mechanism)
-            pre1 = np.repeat(cpat, pattern_size).astype(np.int64)
-            post1 = np.tile(dpat, pattern_size).astype(np.int64)
-            self.bridge.set_pathway_weights("c2d", pre_indices=pre1, post_indices=post1, weights=ww_attr,
+            c2d_pre.append(np.repeat(cpat, pattern_size))
+            c2d_post.append(np.tile(dpat, pattern_size))
+            d2c_pre.append(np.repeat(dpat, pattern_size))
+            d2c_post.append(np.tile(cpat, pattern_size))
+        if self.concepts:
+            c2d_pre = np.concatenate(c2d_pre).astype(np.int64)
+            c2d_post = np.concatenate(c2d_post).astype(np.int64)
+            d2c_pre = np.concatenate(d2c_pre).astype(np.int64)
+            d2c_post = np.concatenate(d2c_post).astype(np.int64)
+            ww_attr = np.full(c2d_pre.size, attractor_weight, np.float32)
+            self.bridge.set_pathway_weights("c2d", pre_indices=c2d_pre, post_indices=c2d_post, weights=ww_attr,
                                             add_missing=True)
-            self.bridge.set_pathway_weights("d2c", pre_indices=np.repeat(dpat, pattern_size).astype(np.int64),
-                                            post_indices=np.tile(cpat, pattern_size).astype(np.int64),
-                                            weights=ww_attr, add_missing=True)
+            self.bridge.set_pathway_weights("d2c", pre_indices=d2c_pre, post_indices=d2c_post, weights=ww_attr,
+                                            add_missing=True)
 
         self._sel_idx = {}
         if self.competition:
@@ -228,11 +241,17 @@ class BiasedCompetitionContextBuffer:
         """cortex_assembly[X] -> sel_X (all-to-all, excitatory FEED-FORWARD EVIDENCE: the held referent's
         firing drives its accumulator). Read-only: there is NO sel_X -> cortex projection, so the held
         attractors are byte-unperturbed by the competition."""
+        # BRAIN-LOAD SPEEDUP (2026-06-24): batch all referents' assembly->sel edges into ONE call (was
+        # one-call-per-concept; each is a full CSR rebuild). Identical edge set -> byte-identical CSR.
+        pre_all, post_all = [], []
         for X in self.concepts:
             aX = cpat_by_concept[X]
             sX = self._sel_idx[X]
-            pre = np.repeat(aX, sX.size).astype(np.int64)
-            post = np.tile(sX, aX.size).astype(np.int64)
+            pre_all.append(np.repeat(aX, sX.size))
+            post_all.append(np.tile(sX, aX.size))
+        if self.concepts:
+            pre = np.concatenate(pre_all).astype(np.int64)
+            post = np.concatenate(post_all).astype(np.int64)
             w = np.full(pre.size, np.float32(ref_to_sel_weight), np.float32)
             self.bridge.set_pathway_weights("ref2sel", pre_indices=pre, post_indices=post, weights=w,
                                             add_missing=True)

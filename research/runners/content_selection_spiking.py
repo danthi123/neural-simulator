@@ -192,20 +192,36 @@ class SpikingLoopContextBuffer:
         perm = rng.permutation(n)
         self._cpat = {}
         self._dpat = {}   # dlPFC assembly indices per concept (for Milestone-3 spiking spreading-activation)
+        # BRAIN-LOAD SPEEDUP (2026-06-24): accumulate ALL concepts' attractor edges, then install each
+        # direction (c2d / d2c) in ONE batched set_pathway_weights call instead of one-call-PER-CONCEPT.
+        # Each set_pathway_weights(add_missing=True) rebuilds the ENTIRE sparse CSR (tocsr/coosort/lexsort/
+        # sum_duplicates) + walks the full nnz in a Python pair_to_idx loop -- O(nnz) PER CALL. The original
+        # 2*len(concepts) calls => 2*len(concepts) full CSR rebuilds (~4.7s each on the 9.95M-synapse merged
+        # bridge => ~681s for ~144 calls; see the SK-brain load profile). Batching collapses that to exactly
+        # 2 CSR rebuilds. The installed edges are IDENTICAL -- the per-concept attractors partition the
+        # neuron indices (perm slices are disjoint) so the concatenated edge set is the same (pre,post,weight)
+        # triples, all at `attractor_weight`; set_pathway_weights is order-independent for distinct edges, so
+        # the resulting CSR is byte-identical to the per-concept path.
+        c2d_pre, c2d_post, d2c_pre, d2c_post = [], [], [], []
         for i, c in enumerate(self.concepts):
             p = perm[i * pattern_size:(i + 1) * pattern_size]
             cpat, dpat = cidx[p], didx[p]
             self._cpat[c] = self.xp.asarray(cpat)
             self._dpat[c] = self.xp.asarray(dpat)
-            pre1 = np.repeat(cpat, pattern_size).astype(np.int64)
-            post1 = np.tile(dpat, pattern_size).astype(np.int64)
-            pre2 = np.repeat(dpat, pattern_size).astype(np.int64)
-            post2 = np.tile(cpat, pattern_size).astype(np.int64)
-            ww = np.full(pattern_size * pattern_size, attractor_weight, np.float32)
-            self.bridge.set_pathway_weights("c2d", pre_indices=pre1, post_indices=post1, weights=ww,
-                                            add_missing=True)
-            self.bridge.set_pathway_weights("d2c", pre_indices=pre2, post_indices=post2, weights=ww,
-                                            add_missing=True)
+            c2d_pre.append(np.repeat(cpat, pattern_size))
+            c2d_post.append(np.tile(dpat, pattern_size))
+            d2c_pre.append(np.repeat(dpat, pattern_size))
+            d2c_post.append(np.tile(cpat, pattern_size))
+        if self.concepts:
+            c2d_pre = np.concatenate(c2d_pre).astype(np.int64)
+            c2d_post = np.concatenate(c2d_post).astype(np.int64)
+            d2c_pre = np.concatenate(d2c_pre).astype(np.int64)
+            d2c_post = np.concatenate(d2c_post).astype(np.int64)
+            ww = np.full(c2d_pre.size, attractor_weight, np.float32)
+            self.bridge.set_pathway_weights("c2d", pre_indices=c2d_pre, post_indices=c2d_post, weights=ww,
+                                            add_missing=True)   # ONE CSR rebuild for ALL concepts' c2d edges
+            self.bridge.set_pathway_weights("d2c", pre_indices=d2c_pre, post_indices=d2c_post, weights=ww,
+                                            add_missing=True)   # ONE CSR rebuild for ALL concepts' d2c edges
         self._psize = pattern_size
         self._segsum_cache = {}   # ordered-concept-tuple -> (concat_idx_device, reduceat_starts_device)
 

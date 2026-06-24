@@ -362,11 +362,15 @@ def _load_self_knowledge(codes_path, curriculum_path, seed, use_multiturn, enabl
         # _longitudinal_develop_loop.build_agent.
         pattern_size = 40
         wm_n = max(600, 2 * pattern_size * max(1, len(referents)))
+        # defer_planner=True: the persistent discourse WM loop is built lazily on the first multi-turn referent
+        # (the curriculum teach below uses BrainConversationalAgent.hear, which does NOT write WM referents, so a
+        # loaded self-knowledge brain never pays the ~681s WM build at load -- only when a console turn actually
+        # introduces a pronoun antecedent). Byte-identical otherwise.
         agent = MultiTurnAgent(referent_concepts=referents, concepts=concepts,
                                grounded_codes=grounded if grounded else None, seed=seed,
                                wm_n=wm_n, wm_pattern_size=pattern_size,
                                enable_neural_render=enable_neural_render, composer_kind="rf",
-                               enable_biased_competition=False)
+                               enable_biased_competition=False, defer_planner=True)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts,
                                          grounded_codes=grounded if grounded else None,
@@ -402,7 +406,7 @@ def _build_tiny_demo(seed, use_multiturn, enable_neural_render):
         referents = [w for w in vocab if w not in actions]
         agent = MultiTurnAgent(referent_concepts=referents, concepts=concepts, seed=seed,
                                enable_neural_render=enable_neural_render, composer_kind="rf",
-                               enable_biased_competition=False)
+                               enable_biased_competition=False, defer_planner=True)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts, composer_kind="rf",
                                          enable_neural_render=enable_neural_render)
