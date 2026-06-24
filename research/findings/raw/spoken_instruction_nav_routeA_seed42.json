@@ -1,0 +1,343 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "parser_ok": true,
+      "readout_region": "sel",
+      "schedule": [
+        "S",
+        "N",
+        "E",
+        "W"
+      ],
+      "chance": 0.25,
+      "coupled": {
+        "condition": "coupled",
+        "n_total": 32,
+        "acc_vs_commanded": 1.0,
+        "acc_vs_spoken": 1.0,
+        "per_phase": [
+          {
+            "phase": 0,
+            "commanded": "S",
+            "spoken": "S",
+            "correct_vs_commanded": 8,
+            "decisions": 8,
+            "moves": {
+              "N": 0,
+              "E": 0,
+              "S": 8,
+              "W": 0
+            },
+            "no_clear_move": 0,
+            "acc_vs_commanded": 1.0
+          },
+          {
+            "phase": 1,
+            "commanded": "N",
+            "spoken": "N",
+            "correct_vs_commanded": 8,
+            "decisions": 8,
+            "moves": {
+              "N": 8,
+              "E": 0,
+              "S": 0,
+              "W": 0
+            },
+            "no_clear_move": 0,
+            "acc_vs_commanded": 1.0
+          },
+          {
+            "phase": 2,
+            "commanded": "E",
+            "spoken": "E",
+            "correct_vs_commanded": 8,
+            "decisions": 8,
+            "moves": {
+              "N": 0,
+              "E": 8,
+              "S": 0,
+              "W": 0
+            },
+            "no_clear_move": 0,
+            "acc_vs_commanded": 1.0
+          },
+          {
+            "phase": 3,
+            "commanded": "W",
+            "spoken": "W",
+            "correct_vs_commanded": 8,
+            "decisions": 8,
+            "moves": {
+              "N": 0,
+              "E": 0,
+              "S": 0,
+              "W": 8
+            },
+            "no_clear_move": 0,
+            "acc_vs_commanded": 1.0
+          }
+        ]
+      },
+      "isolated_nav": {
+        "condition": "isolated_nav",
+        "n_total": 32,
+        "acc_vs_commanded": 0.09375,
+        "acc_vs_spoken": 0.09375,
+        "per_phase": [
+          {
+            "phase": 0,
+            "commanded": "S",
+            "spoken": "S",
+            "correct_vs_commanded": 0,
+            "decisions": 8,
+            "moves": {
+              "N": 2,
+              "E": 4,
+              "S": 0,
+              "W": 1
+            },
+            "no_clear_move": 1,
+            "acc_vs_commanded": 0.0
+          },
+          {
+            "phase": 1,
+            "commanded": "N",
+            "spoken": "N",
+            "correct_vs_commanded": 0,
+            "decisions": 8,
+            "moves": {
+              "N": 0,
+              "E": 1,
+              "S": 2,
+              "W": 1
+            },
+            "no_clear_move": 4,
+            "acc_vs_commanded": 0.0
+          },
+          {
+            "phase": 2,
+            "commanded": "E",
+            "spoken": "E",
+            "correct_vs_commanded": 3,
+            "decisions": 8,
+            "moves": {
+              "N": 0,
+              "E": 3,
+              "S": 3,
+              "W": 0
+            },
+            "no_clear_move": 2,
+            "acc_vs_commanded": 0.375
+          },
+          {
+            "phase": 3,
+            "commanded": "W",
+            "spoken": "W",
+            "correct_vs_commanded": 0,
+            "decisions": 8,
+            "moves": {
+              "N": 2,
+              "E": 2,
+              "S": 3,
+              "W": 0
+            },
+            "no_clear_move": 1,
+            "acc_vs_commanded": 0.0
+          }
+        ]
+      },
+      "lesion": {
+        "condition": "lesion",
+        "n_total": 32,
+        "acc_vs_commanded": 0.09375,
+        "acc_vs_spoken": 0.09375,
+        "per_phase": [
+          {
+            "phase": 0,
+            "commanded": "S",
+            "spoken": "S",
+            "correct_vs_commanded": 1,
+            "decisions": 8,
+            "moves": {
+              "N": 0,
+              "E": 2,
+              "S": 1,
+              "W": 0
+            },
+            "no_clear_move": 5,
+            "acc_vs_commanded": 0.125
+          },
+          {
+            "phase": 1,
+            "commanded": "N",
+            "spoken": "N",
+            "correct_vs_commanded": 1,
+            "decisions": 8,
+            "moves": {
+              "N": 1,
+              "E": 1,
+              "S": 0,
+              "W": 0
+            },
+            "no_clear_move": 6,
+            "acc_vs_commanded": 0.125
+          },
+          {
+            "phase": 2,
+            "commanded": "E",
+            "spoken": "E",
+            "correct_vs_commanded": 1,
+            "decisions": 8,
+            "moves": {
+              "N": 1,
+              "E": 1,
+              "S": 2,
+              "W": 0
+            },
+            "no_clear_move": 4,
+            "acc_vs_commanded": 0.125
+          },
+          {
+            "phase": 3,
+            "commanded": "W",
+            "spoken": "W",
+            "correct_vs_commanded": 0,
+            "decisions": 8,
+            "moves": {
+              "N": 1,
+              "E": 0,
+              "S": 1,
+              "W": 0
+            },
+            "no_clear_move": 6,
+            "acc_vs_commanded": 0.0
+          }
+        ]
+      },
+      "scramble": {
+        "condition": "scramble",
+        "n_total": 32,
+        "acc_vs_commanded": 0.0,
+        "acc_vs_spoken": 1.0,
+        "per_phase": [
+          {
+            "phase": 0,
+            "commanded": "S",
+            "spoken": "W",
+            "correct_vs_commanded": 0,
+            "decisions": 8,
+            "moves": {
+              "N": 0,
+              "E": 0,
+              "S": 0,
+              "W": 8
+            },
+            "no_clear_move": 0,
+            "acc_vs_commanded": 0.0
+          },
+          {
+            "phase": 1,
+            "commanded": "N",
+            "spoken": "E",
+            "correct_vs_commanded": 0,
+            "decisions": 8,
+            "moves": {
+              "N": 0,
+              "E": 8,
+              "S": 0,
+              "W": 0
+            },
+            "no_clear_move": 0,
+            "acc_vs_commanded": 0.0
+          },
+          {
+            "phase": 2,
+            "commanded": "E",
+            "spoken": "S",
+            "correct_vs_commanded": 0,
+            "decisions": 8,
+            "moves": {
+              "N": 0,
+              "E": 0,
+              "S": 8,
+              "W": 0
+            },
+            "no_clear_move": 0,
+            "acc_vs_commanded": 0.0
+          },
+          {
+            "phase": 3,
+            "commanded": "W",
+            "spoken": "N",
+            "correct_vs_commanded": 0,
+            "decisions": 8,
+            "moves": {
+              "N": 8,
+              "E": 0,
+              "S": 0,
+              "W": 0
+            },
+            "no_clear_move": 0,
+            "acc_vs_commanded": 0.0
+          }
+        ]
+      },
+      "isolated_conv": {
+        "parses": true,
+        "parse": {
+          "agent": "dog",
+          "action": "go",
+          "patient": "north"
+        },
+        "has_body": false,
+        "n_motor_or_sel_pools": 0
+      },
+      "n_lesioned_synapses": 5027
+    }
+  ],
+  "provenance": {
+    "nav_side_current_writes": [
+      "language_input <- orthogonal_drive_pattern(command word)  [sensory render: the environment presents the instruction word as text]"
+    ],
+    "conv_side_current_writes": [
+      "parse_conj[k=2] <- PARSER_DRIVE_PA  [conv-side: the parser comprehending the verb]"
+    ],
+    "cross_region_coupling": [
+      "couple_gate_to_indices(command_route, action_block_idx)  [a 0/1 GATE STATE from the parser action ensemble FIRING, not a value]",
+      "language_input -> cortex_X synapses (LEARNED by co-firing training, transmission_gate=command_route)  [the word->action selectivity is GROWN, not hand-wired; gated by the firing-driven gate]"
+    ],
+    "word_to_action_mapping_is_learned_not_handwired": true,
+    "no_parser_derived_value_written_to_nav_drive": true
+  },
+  "verdict": {
+    "verdict": "GO",
+    "seeds": [
+      42
+    ],
+    "chance": 0.25,
+    "coupled_follows_all_seeds": true,
+    "coupled_beats_controls_all_seeds": true,
+    "isolated_nav_at_chance_all_seeds": true,
+    "lesion_at_chance_all_seeds": true,
+    "isolated_conv_no_body_all_seeds": true,
+    "scramble_collapses_vs_commanded_all_seeds": true,
+    "parser_ok_all_seeds": true,
+    "coupled_acc_per_seed": {
+      "42": 1.0
+    },
+    "isolated_nav_acc_per_seed": {
+      "42": 0.094
+    },
+    "lesion_acc_per_seed": {
+      "42": 0.094
+    },
+    "scramble_acc_vs_commanded_per_seed": {
+      "42": 0.0
+    },
+    "scramble_acc_vs_spoken_per_seed": {
+      "42": 1.0
+    }
+  }
+}

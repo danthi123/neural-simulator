@@ -1,0 +1,387 @@
+{
+  "verdict": "GO",
+  "backend": "cupy",
+  "grounding": "gen_spikes",
+  "mean_clean": 1.0,
+  "mean_floor": 0.4444444444444444,
+  "results": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "chance": 0.25,
+      "grounding": "gen_spikes",
+      "object_layout": {
+        "1,2": "apple",
+        "3,2": "cat",
+        "5,2": "dog",
+        "7,2": "river"
+      },
+      "n_grounded": 3,
+      "grounded": [
+        "apple",
+        "cat",
+        "dog"
+      ],
+      "compose_clean": 1.0,
+      "compose_floor": 0.5,
+      "n_held_out": 3,
+      "moat_ok": 1,
+      "moat_tot": 1,
+      "pos_recall": 1,
+      "moat_absent": [
+        [
+          "apple",
+          "near"
+        ]
+      ],
+      "stored": [
+        [
+          "apple",
+          "chase",
+          "cat"
+        ],
+        [
+          "dog",
+          "near",
+          "apple"
+        ]
+      ],
+      "lesion_compose": 0.16666666666666666,
+      "byte_identity": true,
+      "iso_perception_grounded": 0,
+      "provenance": {
+        "grounding_mode": "gen_spikes",
+        "grounded_code_source": "gen_concept cp_firing_states (LEARNED convergence)",
+        "grounded_code_is_spikes_only": true,
+        "no_host_M_cross_region_quantity": true,
+        "composer_bound_to_merged_bridge": true,
+        "rf_complex_weights_allocated_after_store": true,
+        "perception_side_write": "gen_perception <- structured_perception_set(object) DURING arrival [sensory render]",
+        "ground_write": "composer.concepts[o] = angle(P_read @ gen_concept_SPIKES) \u2014 the LEARNED gen_perception->gen_concept convergence grounds the percept; P_read only FORMATS the concept spikes into a phasor [NO host-`M`, NO cortex_it host round-trip]"
+      },
+      "compose_go": true,
+      "moat_ok_all": true,
+      "moat_breach": false,
+      "lesion_ok": true,
+      "iso_ok": true,
+      "go": true,
+      "n_moves": 5,
+      "reached_all_waypoints": true
+    },
+    {
+      "seed": 43,
+      "backend": "cupy",
+      "chance": 0.25,
+      "grounding": "gen_spikes",
+      "object_layout": {
+        "1,2": "river",
+        "3,2": "dog",
+        "5,2": "cat",
+        "7,2": "apple"
+      },
+      "n_grounded": 3,
+      "grounded": [
+        "river",
+        "dog",
+        "cat"
+      ],
+      "compose_clean": 1.0,
+      "compose_floor": 0.5,
+      "n_held_out": 3,
+      "moat_ok": 1,
+      "moat_tot": 1,
+      "pos_recall": 1,
+      "moat_absent": [
+        [
+          "dog",
+          "near"
+        ]
+      ],
+      "stored": [
+        [
+          "river",
+          "chase",
+          "dog"
+        ],
+        [
+          "cat",
+          "near",
+          "river"
+        ]
+      ],
+      "lesion_compose": 0.3333333333333333,
+      "byte_identity": true,
+      "iso_perception_grounded": 0,
+      "provenance": {
+        "grounding_mode": "gen_spikes",
+        "grounded_code_source": "gen_concept cp_firing_states (LEARNED convergence)",
+        "grounded_code_is_spikes_only": true,
+        "no_host_M_cross_region_quantity": true,
+        "composer_bound_to_merged_bridge": true,
+        "rf_complex_weights_allocated_after_store": true,
+        "perception_side_write": "gen_perception <- structured_perception_set(object) DURING arrival [sensory render]",
+        "ground_write": "composer.concepts[o] = angle(P_read @ gen_concept_SPIKES) \u2014 the LEARNED gen_perception->gen_concept convergence grounds the percept; P_read only FORMATS the concept spikes into a phasor [NO host-`M`, NO cortex_it host round-trip]"
+      },
+      "compose_go": true,
+      "moat_ok_all": true,
+      "moat_breach": false,
+      "lesion_ok": true,
+      "iso_ok": true,
+      "go": true,
+      "n_moves": 5,
+      "reached_all_waypoints": true
+    },
+    {
+      "seed": 44,
+      "backend": "cupy",
+      "chance": 0.25,
+      "grounding": "gen_spikes",
+      "object_layout": {
+        "1,2": "river",
+        "3,2": "cat",
+        "5,2": "apple",
+        "7,2": "dog"
+      },
+      "n_grounded": 3,
+      "grounded": [
+        "river",
+        "cat",
+        "apple"
+      ],
+      "compose_clean": 1.0,
+      "compose_floor": 0.3333333333333333,
+      "n_held_out": 3,
+      "moat_ok": 1,
+      "moat_tot": 1,
+      "pos_recall": 1,
+      "moat_absent": [
+        [
+          "cat",
+          "near"
+        ]
+      ],
+      "stored": [
+        [
+          "river",
+          "chase",
+          "cat"
+        ],
+        [
+          "apple",
+          "near",
+          "river"
+        ]
+      ],
+      "lesion_compose": 0.0,
+      "byte_identity": true,
+      "iso_perception_grounded": 0,
+      "provenance": {
+        "grounding_mode": "gen_spikes",
+        "grounded_code_source": "gen_concept cp_firing_states (LEARNED convergence)",
+        "grounded_code_is_spikes_only": true,
+        "no_host_M_cross_region_quantity": true,
+        "composer_bound_to_merged_bridge": true,
+        "rf_complex_weights_allocated_after_store": true,
+        "perception_side_write": "gen_perception <- structured_perception_set(object) DURING arrival [sensory render]",
+        "ground_write": "composer.concepts[o] = angle(P_read @ gen_concept_SPIKES) \u2014 the LEARNED gen_perception->gen_concept convergence grounds the percept; P_read only FORMATS the concept spikes into a phasor [NO host-`M`, NO cortex_it host round-trip]"
+      },
+      "compose_go": true,
+      "moat_ok_all": true,
+      "moat_breach": false,
+      "lesion_ok": true,
+      "iso_ok": true,
+      "go": true,
+      "n_moves": 5,
+      "reached_all_waypoints": true
+    },
+    {
+      "seed": 100,
+      "backend": "cupy",
+      "chance": 0.25,
+      "grounding": "gen_spikes",
+      "object_layout": {
+        "1,2": "dog",
+        "3,2": "apple",
+        "5,2": "cat",
+        "7,2": "river"
+      },
+      "n_grounded": 3,
+      "grounded": [
+        "dog",
+        "apple",
+        "cat"
+      ],
+      "compose_clean": 1.0,
+      "compose_floor": 0.5,
+      "n_held_out": 3,
+      "moat_ok": 1,
+      "moat_tot": 1,
+      "pos_recall": 1,
+      "moat_absent": [
+        [
+          "apple",
+          "near"
+        ]
+      ],
+      "stored": [
+        [
+          "dog",
+          "chase",
+          "apple"
+        ],
+        [
+          "cat",
+          "near",
+          "dog"
+        ]
+      ],
+      "lesion_compose": 0.5,
+      "byte_identity": true,
+      "iso_perception_grounded": 0,
+      "provenance": {
+        "grounding_mode": "gen_spikes",
+        "grounded_code_source": "gen_concept cp_firing_states (LEARNED convergence)",
+        "grounded_code_is_spikes_only": true,
+        "no_host_M_cross_region_quantity": true,
+        "composer_bound_to_merged_bridge": true,
+        "rf_complex_weights_allocated_after_store": true,
+        "perception_side_write": "gen_perception <- structured_perception_set(object) DURING arrival [sensory render]",
+        "ground_write": "composer.concepts[o] = angle(P_read @ gen_concept_SPIKES) \u2014 the LEARNED gen_perception->gen_concept convergence grounds the percept; P_read only FORMATS the concept spikes into a phasor [NO host-`M`, NO cortex_it host round-trip]"
+      },
+      "compose_go": true,
+      "moat_ok_all": true,
+      "moat_breach": false,
+      "lesion_ok": true,
+      "iso_ok": true,
+      "go": true,
+      "n_moves": 5,
+      "reached_all_waypoints": true
+    },
+    {
+      "seed": 101,
+      "backend": "cupy",
+      "chance": 0.25,
+      "grounding": "gen_spikes",
+      "object_layout": {
+        "1,2": "dog",
+        "3,2": "river",
+        "5,2": "apple",
+        "7,2": "cat"
+      },
+      "n_grounded": 3,
+      "grounded": [
+        "dog",
+        "river",
+        "apple"
+      ],
+      "compose_clean": 1.0,
+      "compose_floor": 0.5,
+      "n_held_out": 3,
+      "moat_ok": 1,
+      "moat_tot": 1,
+      "pos_recall": 1,
+      "moat_absent": [
+        [
+          "river",
+          "chase"
+        ]
+      ],
+      "stored": [
+        [
+          "dog",
+          "chase",
+          "river"
+        ],
+        [
+          "apple",
+          "near",
+          "dog"
+        ]
+      ],
+      "lesion_compose": 0.0,
+      "byte_identity": true,
+      "iso_perception_grounded": 0,
+      "provenance": {
+        "grounding_mode": "gen_spikes",
+        "grounded_code_source": "gen_concept cp_firing_states (LEARNED convergence)",
+        "grounded_code_is_spikes_only": true,
+        "no_host_M_cross_region_quantity": true,
+        "composer_bound_to_merged_bridge": true,
+        "rf_complex_weights_allocated_after_store": true,
+        "perception_side_write": "gen_perception <- structured_perception_set(object) DURING arrival [sensory render]",
+        "ground_write": "composer.concepts[o] = angle(P_read @ gen_concept_SPIKES) \u2014 the LEARNED gen_perception->gen_concept convergence grounds the percept; P_read only FORMATS the concept spikes into a phasor [NO host-`M`, NO cortex_it host round-trip]"
+      },
+      "compose_go": true,
+      "moat_ok_all": true,
+      "moat_breach": false,
+      "lesion_ok": true,
+      "iso_ok": true,
+      "go": true,
+      "n_moves": 5,
+      "reached_all_waypoints": true
+    },
+    {
+      "seed": 102,
+      "backend": "cupy",
+      "chance": 0.25,
+      "grounding": "gen_spikes",
+      "object_layout": {
+        "1,2": "dog",
+        "3,2": "cat",
+        "5,2": "river",
+        "7,2": "apple"
+      },
+      "n_grounded": 3,
+      "grounded": [
+        "dog",
+        "cat",
+        "river"
+      ],
+      "compose_clean": 1.0,
+      "compose_floor": 0.3333333333333333,
+      "n_held_out": 3,
+      "moat_ok": 1,
+      "moat_tot": 1,
+      "pos_recall": 1,
+      "moat_absent": [
+        [
+          "river",
+          "chase"
+        ]
+      ],
+      "stored": [
+        [
+          "dog",
+          "chase",
+          "cat"
+        ],
+        [
+          "river",
+          "near",
+          "dog"
+        ]
+      ],
+      "lesion_compose": 0.3333333333333333,
+      "byte_identity": true,
+      "iso_perception_grounded": 0,
+      "provenance": {
+        "grounding_mode": "gen_spikes",
+        "grounded_code_source": "gen_concept cp_firing_states (LEARNED convergence)",
+        "grounded_code_is_spikes_only": true,
+        "no_host_M_cross_region_quantity": true,
+        "composer_bound_to_merged_bridge": true,
+        "rf_complex_weights_allocated_after_store": true,
+        "perception_side_write": "gen_perception <- structured_perception_set(object) DURING arrival [sensory render]",
+        "ground_write": "composer.concepts[o] = angle(P_read @ gen_concept_SPIKES) \u2014 the LEARNED gen_perception->gen_concept convergence grounds the percept; P_read only FORMATS the concept spikes into a phasor [NO host-`M`, NO cortex_it host round-trip]"
+      },
+      "compose_go": true,
+      "moat_ok_all": true,
+      "moat_breach": false,
+      "lesion_ok": true,
+      "iso_ok": true,
+      "go": true,
+      "n_moves": 5,
+      "reached_all_waypoints": true
+    }
+  ]
+}
