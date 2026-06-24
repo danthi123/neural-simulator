@@ -1,0 +1,81 @@
+{
+  "task": "FOLLOW-ON #2 consolidation: wire the 2 GO cross-region routes onto MergedNavConvAgent",
+  "date": "2026-06-24",
+  "backend": "cupy",
+  "scope": "research/runners/nav_conv_merged_bridge.py \u2014 MergedNavConvAgent + build_merged_nav_conv_bridge (opt-in co_resident_command_route / co_resident_perception + command_move/perceive_and_ground methods); reuse-by-import of the GO standalone primitives; NO sim/ edit",
+  "route_b": {
+    "route": "B_perception_to_compose",
+    "seed": 42,
+    "backend": "cupy",
+    "chance": 0.25,
+    "wired": true,
+    "method": "MergedNavConvAgent.perceive_and_ground",
+    "n_grounded": 4,
+    "grounded": [
+      "apple",
+      "river",
+      "dog",
+      "cat"
+    ],
+    "compose_clean": 1.0,
+    "compose_floor": 0.5,
+    "n_held_out": 6,
+    "moat_ok": 2,
+    "moat_tot": 2,
+    "pos_recall": 1,
+    "moat_absent": [
+      [
+        "river",
+        "chase"
+      ],
+      [
+        "apple",
+        "near"
+      ]
+    ],
+    "lesion_compose": 0.16666666666666666,
+    "provenance_ok": true,
+    "engages": true,
+    "lesion_collapses": true,
+    "moat_0fa": true,
+    "moat_breach": false,
+    "verdict": "GO"
+  },
+  "route_a": {
+    "route": "A_language_to_action_command_gate",
+    "seed": 42,
+    "backend": "cupy",
+    "chance": 0.25,
+    "wired": true,
+    "method": "MergedNavConvAgent.command_move",
+    "coupled_acc": 0.75,
+    "isolated_nav_acc": 0.25,
+    "lesion_acc": 0.25,
+    "n_lesioned_synapses": 5127,
+    "n_decisions": 4,
+    "engages": true,
+    "lesion_collapses": true,
+    "moat_abstain": true,
+    "pos_recall": true,
+    "moat_0fa": true,
+    "verdict": "GO"
+  },
+  "go_bar": "per route (scoping 2026-06-23-functional-one-brain-integration-scoping.md): the wired route ENGAGES on the deployed MergedNavConvAgent (a spoken command steers nav / a perceived object becomes composable) WITHOUT regressing nav OR the conversational moat; LESION -> the route collapses (load-bearing); moat 0-FA (the merged-agent tests' is-None asserts still pass)",
+  "both_routes_wired": true,
+  "both_routes_engage": true,
+  "both_routes_lesion_collapse": true,
+  "both_routes_moat_0fa": true,
+  "overall_verdict": "GO",
+  "nav_not_regressed": {
+    "default_agent_byte_preserved": true,
+    "evidence": "DEFAULT MergedNavConvAgent (both new flags OFF) is byte-identical: construction-smoke PASS (2904 neurons, identical to pre-edit), test_nav_conv_merged_agent 8/8 (incl. 3 is-None moat asserts), test_nav_conv_step2b_coresident 7/7 (the co_resident_composer base path Route B extends)",
+    "route_inertness": "route A command_route is held CLOSED at rest (transmission gate=0 -> zero current into cortex_X) until a parsed command opens it; route B cortex_it/rf slices have NO cp_connections out-edges into navigation (nav-inert). Both confirmed load-bearing by the LESION control (the route is NECESSARY: severing it collapses the behavior to chance)."
+  },
+  "default_flip_decision": {
+    "flipped_default_on": false,
+    "kept_opt_in": true,
+    "reason": "HONEST call per the task rule: both routes wire CLEANLY (engage + lesion-collapse + moat 0-FA), but a default-ON flip would CHANGE the default agent's STRUCTURE (route A adds the language_input region + real language_input->cortex_X edges + forces the sel_X spiking-WTA readout, shifting nav index bases; route B adds the cortex_it region + needs an object-compatible vocab) -> NOT byte-identical to the current default agent, breaking the step2a/step2b byte-identity gates. This is the I-4-a precedent INVERTED: the DA salience gate flipped default-ON because it is byte-identical-at-rest (a read-side scalar); these routes are NOT byte-identical-at-rest (they add regions/edges), so the correct outcome is wire-cleanly-as-opt-in. The deployed agent now CARRIES the functional integration via its own methods (command_move / perceive_and_ground), opt-in \u2014 the consolidation goal (the routes live ON the merged agent, not only in separate task runners) is met without a structural default regression."
+  },
+  "honest_scope": "This CONSOLIDATES the two GO standalone routes onto MergedNavConvAgent (the agent's OWN methods now carry the functional integration) \u2014 reuse-by-import of the validated standalone primitives, NO sim/ edit. Single-seed + short battery (the consolidation unit-validation, not a re-run of the standalone 3/6-seed gates which already certified the mechanism). Route A COUPLED 0.750 (3/4; 1 tie) vs the standalone's 1.0 reflects the 4-decision battery, not a mechanism difference (the engagement signal COUPLED>>ISOLATED-NAV=LESION=chance is decisive). Route B reproduces the standalone's compose-perceived result exactly (clean 1.000 >> floor 0.500). The composer bind stays the FHRR exact-inverse idealization (the separate step-3 frontier).",
+  "sim_edit": "NONE (reuse-by-import; the routes are wired onto the agent via opt-in flags + methods)"
+}

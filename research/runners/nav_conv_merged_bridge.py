@@ -68,6 +68,24 @@ GEN_FACT = "gen_fact"
 # same trained-then-frozen discipline as the parser. The convergent concept→fact edges are plastic=False.
 GEN_CONV_GATE = "gen_convergence_fixed"
 
+# ── command-route (route A: language->action) constants — ported from spoken_instruction_nav.py (GO 3-seed) ────
+# The CONSOLIDATION (FOLLOW-ON #2) lifts the LEARNED `language_input -> cortex_X` route + its `command_route`
+# transmission gate onto the merged bridge so MergedNavConvAgent.command_move() steers nav from a PARSED command.
+# These mirror spoken_instruction_nav.py's constants exactly (the validated values).
+COMMAND_GATE = "command_route"                     # the ONE transmission gate on language_input -> cortex_X
+CMD_LANG_GATE = "language_input_to_cortex"         # the LEARNED route's plasticity gate (open to train, then freeze)
+CMD_N_LANG_INPUT = 256                             # language_input region size (g11 text-IO default)
+CMD_LANG_TO_CORTEX_DENSITY = 0.20                  # the route's density (g11 text_input_to_cortex_density)
+CMD_LANG_TO_CORTEX_INIT_W = 2.0                    # non-zero init (g11 canon: dense-then-prune, not grow-from-zero)
+CMD_LANG_TO_CORTEX_JITTER = 0.5
+CMD_LANG_DRIVE_PA = 2500.0                         # per-active-neuron language_input drive (composer ROLE_DRIVE scale)
+CMD_LANG_SPARSITY = 0.1
+CMD_ROUTE_TRAIN_EPOCHS = 30
+CMD_ROUTE_TRAIN_STEPS = 60                          # per (word, teacher) co-drive window
+CMD_ROUTE_TEACHER_PA = 600.0                       # cortex_d teacher current (supervised co-fire label)
+CMD_ROUTE_HEBBIAN_LR = 0.02                        # the LEARNED-route Hebbian rate (the route grows in 30 epochs)
+CMD_ROUTE_SETTLE_STEPS = 30                         # the per-epoch inter-drive settle (matches the standalone)
+
 
 # ── parser as framework regions/pathways ─────────────────────────────────────────────────────────────────
 def parser_regions_pathways(R: int = PARSER_R):
@@ -443,10 +461,84 @@ def _train_merged_convergence(bridge, gen_handles, vis_sets, train, *, epochs=20
     return {"conv_mask": conv_mask, "train_diag": diag}
 
 
+# ── command-route training (route A: language->action) — ported from spoken_instruction_nav._train_learned_route ─
+def _command_band_excitatory(rm, region_name, cue_idx, n_cues, sparsity):
+    """The EXCITATORY global indices of cue_idx's orthogonal band within `region_name` (the word code must hit the
+    band's EXCITATORY neurons; including inhibitory ones makes the word drive partly suppressive). Layout MUST match
+    orthogonal_drive_pattern exactly. Ported VERBATIM from spoken_instruction_nav._orthogonal_band_excitatory."""
+    idx_h = np.asarray(list(rm.indices(region_name)), dtype=np.int64)
+    n = int(idx_h.size)
+    n_active = max(1, int(round(sparsity * n)))
+    stride = n // n_cues
+    if n_active > stride:
+        raise ValueError(f"band overlap: n_active={n_active} > stride={stride}")
+    start = cue_idx * stride
+    band = idx_h[start:start + n_active]
+    inh = set(int(i) for i in rm.inhibitory_indices(region_name))
+    return np.asarray([int(p) for p in band if int(p) not in inh], dtype=np.int64)
+
+
+def _train_command_route_on_merged(bridge, seed):
+    """Grow the direction-selectivity of `language_input -> cortex_X` by BRAIN-BASED co-firing (Pulvermüller action-
+    word somatotopy), then FREEZE it. Ported from spoken_instruction_nav._train_learned_route: for each direction d,
+    co-drive language_input(d)'s orthogonal band + a teacher current on cortex_d with Hebbian ON, so the simultaneously
+    active pre (the word code) and post (cortex_d) strengthen their connection. ISOLATED to the route via the global
+    plasticity gain (0 everywhere, 1 on the CMD_LANG_GATE), so the nav cascade's own plastic pathways do not drift.
+    After training: route frozen (CMD_LANG_GATE 0), global gain restored to 1, the command_route transmission gate
+    CLOSED (the agent reopens it per-decision via the parser-firing coupling)."""
+    from research.runners.g11_bg_runner import ACTION_NAMES as _CR_ACTIONS, N_ACTIONS as _CR_N
+    xp, _ = get_backend()
+    rm = bridge.region_manager
+    n = int(bridge.core_config.num_neurons)
+    cc = bridge.core_config
+
+    band_exc = {a: _command_band_excitatory(rm, "language_input", i, _CR_N, CMD_LANG_SPARSITY)
+                for i, a in enumerate(_CR_ACTIONS)}
+    cortex_idx = {a: np.asarray(list(rm.indices(f"cortex_{a}")), dtype=np.int64) for a in _CR_ACTIONS}
+
+    if bridge.cp_plasticity_rate_gain is None:
+        bridge.set_global_plasticity_gain(1.0)
+    saved_gain = bridge.cp_plasticity_rate_gain.copy()       # restore the parser-frozen / nav-plastic gain afterward
+    bridge.set_global_plasticity_gain(0.0)                   # only the route's gate-1 synapses learn this pass
+    bridge.set_plasticity_gate(CMD_LANG_GATE, 1.0)
+    bridge.set_transmission_gate(COMMAND_GATE, 1.0)          # open the route's current during training
+
+    saved = (cc.enable_hebbian_learning, cc.enable_stdp, cc.enable_reward_modulation,
+             cc.hebbian_learning_rate, cc.enable_ou_process, cc.ou_std_current_pA)
+    cc.enable_hebbian_learning = True
+    cc.enable_stdp = False
+    cc.enable_reward_modulation = False
+    cc.hebbian_learning_rate = CMD_ROUTE_HEBBIAN_LR
+    cc.enable_ou_process = True
+    cc.ou_std_current_pA = 20.0
+    try:
+        for _ in range(CMD_ROUTE_TRAIN_EPOCHS):
+            for a in _CR_ACTIONS:
+                bridge.cp_external_input_current[:] = 0.0
+                for _ in range(CMD_ROUTE_SETTLE_STEPS):
+                    bridge._run_one_simulation_step()
+                cur = xp.zeros(n, dtype=xp.float32)
+                cur[xp.asarray(band_exc[a])] = CMD_LANG_DRIVE_PA          # the word code (pre)
+                cur[xp.asarray(cortex_idx[a])] = CMD_ROUTE_TEACHER_PA      # the cortex_d teacher (post label)
+                bridge.cp_external_input_current[:] = cur
+                for _ in range(CMD_ROUTE_TRAIN_STEPS):
+                    bridge._run_one_simulation_step()
+        bridge.cp_external_input_current[:] = 0.0
+    finally:
+        (cc.enable_hebbian_learning, cc.enable_stdp, cc.enable_reward_modulation,
+         cc.hebbian_learning_rate, cc.enable_ou_process, cc.ou_std_current_pA) = saved
+    # FREEZE the route + restore the parser-frozen / nav-plastic gain; close the command gate (reopened per-decision).
+    bridge.set_plasticity_gate(CMD_LANG_GATE, 0.0)
+    bridge.cp_plasticity_rate_gain[:] = saved_gain
+    bridge.set_transmission_gate(COMMAND_GATE, 0.0)
+    cc.enable_ou_process = False                              # the resting nav config
+
+
 # ── the merged nav + parser + dlPFC bridge builder (design §2.5 FINAL FORM) ───────────────────────────────
 def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100,
                                  co_resident_rf: bool = False, rf_D: int = 128,
                                  co_resident_perception: bool = False,
+                                 co_resident_command_route: bool = False,
                                  enable_spiking_wta_readout: bool = False,
                                  co_resident_generalization: bool = False,
                                  gen_n_concept_per: int = 100, gen_n_fact_per: int = 100,
@@ -651,6 +743,31 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     if co_resident_perception:
         perception_regions = [BrainRegion(name="cortex_it", n_neurons=256, exc_fraction=0.8,
                                           internal_density=0.0, enable_nmda=False)]
+    # COMMAND-ROUTE SLICE (co_resident_command_route, route A: language->action, additive default-off): the
+    # `language_input` region + the LEARNED `language_input -> cortex_X` route (transmission_gate=command_route,
+    # plasticity_gate=language_input_to_cortex), ported VERBATIM from the GO standalone spoken_instruction_nav.py
+    # (3-seed GO: COUPLED 1.0, LESION ~0.1). The route is plastic at build (the LEARNED word->cortex selectivity is
+    # GROWN by co-firing in step 5c below), then frozen; its CURRENT is scaled by the `command_route` transmission
+    # gate, which the agent couples to the parser's action-role FIRING (so a comprehended verb opens the route).
+    # language_input is appended AFTER cortex_it (so the nav/parser/dlPFC/rf/cortex_it index bases are byte-unchanged);
+    # the route pathways enter the EXISTING nav cortex_{N,E,S,W} (they are real cp_connections edges into navigation —
+    # held CLOSED by the gate at rest, so nav-inert until a parsed command opens them). NMDA off. Default False =
+    # byte-preserved. enable_spiking_wta_readout is forced on by the agent for this route (the sel_X readout the
+    # standalone validated). Uses N_ACTIONS cortex_X pools, which only exist when the nav cascade is present.
+    command_route_regions, command_route_pathways = [], []
+    if co_resident_command_route:
+        from research.runners.g11_bg_runner import ACTION_NAMES as _CR_ACTIONS
+        from sim.enums import NeuronType as _CR_NT
+        command_route_regions = [BrainRegion(
+            name="language_input", n_neurons=CMD_N_LANG_INPUT, exc_fraction=0.8, internal_density=0.05,
+            exc_weight_mean=2.0, inh_weight_mean=4.0, weight_jitter=0.2, plastic_internal=True,
+            izh_neuron_type=_CR_NT.IZH2007_RS_CORTICAL_PYRAMIDAL.name)]
+        for _a in _CR_ACTIONS:
+            command_route_pathways.append(RegionPathway(
+                from_region="language_input", to_region=f"cortex_{_a}",
+                density=CMD_LANG_TO_CORTEX_DENSITY, weight_mean=CMD_LANG_TO_CORTEX_INIT_W,
+                weight_jitter=CMD_LANG_TO_CORTEX_JITTER, plastic=True,
+                plasticity_gate=CMD_LANG_GATE, transmission_gate=COMMAND_GATE))
     # STAGE 1 (co_resident_generalization, additive default-off): the GENERALIZATION STACK — a structured-perception
     # region (Gabor/V1 top-K), an NMDA `gen_concept` region, an NMDA `gen_fact` tag region, the plastic rate-Hebbian
     # gen_perception→gen_concept convergence pathway, and the FIXED convergent gen_concept→gen_fact pathway. Appended
@@ -838,9 +955,10 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                           receptor="gaba_b"),
         ]
     union_regions = (list(nav_regions) + list(parser_regions) + list(dlpfc_regions)
-                     + list(rf_regions) + list(perception_regions) + list(generalization_regions)
+                     + list(rf_regions) + list(perception_regions) + list(command_route_regions)
+                     + list(generalization_regions)
                      + list(limbic_regions) + list(td_regions) + list(drive_regions))
-    union_pathways = (list(nav_pathways) + list(parser_pathways)
+    union_pathways = (list(nav_pathways) + list(parser_pathways) + list(command_route_pathways)
                       + list(generalization_pathways) + list(limbic_pathways)
                       + list(td_pathways) + list(drive_pathways))   # dlPFC loop is hand-built, NOT a pathway
 
@@ -1015,6 +1133,19 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     cc.enable_ou_process = False
     bridge.set_plasticity_gate(PARSER_GATE, 0.0)
 
+    # 5c) COMMAND-ROUTE train pass (route A: language->action). GROW the LEARNED `language_input -> cortex_X`
+    #     direction-selectivity by brain-based co-firing (Pulvermüller action-word somatotopy), then FREEZE the route
+    #     and hold the command_route transmission gate CLOSED at rest. Ported from spoken_instruction_nav._train_learned_route
+    #     (the GO standalone) — isolated to the route via the global plasticity gain (0 everywhere, 1 on the route gate)
+    #     so the nav cascade's own plastic pathways do not drift. Runs after the parser pass; nav stays plastic for the
+    #     episode (gain restored to 1, the route gate frozen to 0). The transmission gate is registered by the framework
+    #     from the route pathway's transmission_gate field; assert it exists before training.
+    if co_resident_command_route:
+        assert COMMAND_GATE in bridge._transmission_gate_to_synapses, \
+            f"FAIL: '{COMMAND_GATE}' transmission gate not registered (known: " \
+            f"{list(bridge._transmission_gate_to_synapses.keys())})"
+        _train_command_route_on_merged(bridge, int(seed))
+
     # 5b) STAGE 1 generalization convergence train pass (after the parser pass — a later injection would reset
     #     the trained weights, and the parser must already be final). The perception→concept rate-Hebbian
     #     convergence is trained ISOLATED from nav/parser/dlPFC via the cp_plasticity_rate_gain index mask, then
@@ -1046,6 +1177,40 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         handles["rf_base"] = int(rm.indices("rf")[0])
         handles["rf_size"] = 7 * int(rf_D)
         handles["rf_D"] = int(rf_D)
+    if co_resident_perception:
+        # the cortex_it perception slice indices (for perceive_and_ground: the live-rate read + grounded code).
+        handles["cortex_it_indices"] = np.asarray(list(rm.indices("cortex_it")), dtype=np.int64)
+    if co_resident_command_route:
+        # the command-route handles (for MergedNavConvAgent.command_move): language_input indices, the parser
+        # action-role block (the gate's control ensemble), and the cortex_X / readout / tonic indices.
+        from research.runners.g11_bg_runner import ACTION_NAMES as _CR_ACTIONS
+        handles["lang_indices"] = xp.asarray(np.asarray(list(rm.indices("language_input")), dtype=np.int64))
+        handles["action_block_idx"] = role_arr["action"]
+        handles["cmd_cortex_idx"] = {a: xp.asarray(np.asarray(list(rm.indices(f"cortex_{a}")), dtype=np.int64))
+                                     for a in _CR_ACTIONS}
+        _rn = set(rm.region_indices_dict())
+        if all(f"sel_{a}" in _rn for a in _CR_ACTIONS):
+            handles["cmd_readout_region"] = "sel"
+            handles["cmd_readout_idx"] = {a: xp.asarray(np.asarray(list(rm.indices(f"sel_{a}")), dtype=np.int64))
+                                          for a in _CR_ACTIONS}
+        else:
+            handles["cmd_readout_region"] = "motor"
+            handles["cmd_readout_idx"] = {a: xp.asarray(np.asarray(list(rm.indices(f"motor_{a}")), dtype=np.int64))
+                                          for a in _CR_ACTIONS}
+
+        def _cr_ridx(name):
+            return xp.asarray(np.asarray(list(rm.indices(name)), dtype=np.int64)) if name in _rn else None
+        handles["cmd_cascade_tonic"] = []
+        for a in _CR_ACTIONS:
+            for name, pa in ((f"gpe_{a}", 150.0), (f"gpe_arky_{a}", 120.0), (f"gpi_{a}", 110.0),
+                             (f"thal_{a}", 300.0)):
+                ii = _cr_ridx(name)
+                if ii is not None:
+                    handles["cmd_cascade_tonic"].append((ii, float(pa)))
+        for name, pa in (("stn", 150.0), ("snc", 150.0)):
+            ii = _cr_ridx(name)
+            if ii is not None:
+                handles["cmd_cascade_tonic"].append((ii, float(pa)))
     if co_resident_generalization:
         handles["gen"] = dict(gen_handles, **gen_extra)
     if co_resident_limbic:
@@ -1302,6 +1467,7 @@ class MergedNavConvAgent:
                  co_resident_nav_critic=None, nav_critic_spiking_sc=False,
                  nav_critic_place_selforg=None, nav_critic_grid_frontend=None,
                  co_resident_td_cueshift=False,
+                 co_resident_perception=False, co_resident_command_route=False,
                  enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
                  enable_da_encoding_gain=False, da_encoding_k=2.0,
                  da_encoding_g_min=0.5, da_encoding_g_max=3.0):
@@ -1452,9 +1618,35 @@ class MergedNavConvAgent:
             self.nav_critic_grid_frontend = bool(self.nav_critic_place_selforg)
         else:
             self.nav_critic_grid_frontend = bool(nav_critic_grid_frontend)
+        # --- CONSOLIDATION (FOLLOW-ON #2, 2026-06-24): wire the two GO cross-region routes (which until now lived in
+        # the standalone behavioral-task runners spoken_instruction_nav.py / navigate_to_compose_then_answer.py) ONTO
+        # the deployed MergedNavConvAgent itself, so the merged agent's OWN methods carry the functional integration
+        # (scoping 2026-06-23-functional-one-brain-integration-scoping.md §I-4-c / §I-5-b). BOTH are opt-in (default
+        # False = byte-preserved); each is validated separately (route engages + nav Δ~0 + moat 0-FA + lesion-collapses)
+        # before any default flip. Reuse-by-import (the standalone runners' primitives), NO `sim/` edit. ---
+        # co_resident_perception (route B, perception->memory/compose): bring the bare `cortex_it` perception region +
+        # the co-resident `rf` composer onto the merged bridge so the agent's PERCEPTION (the navigating body reading a
+        # rendered object's live cortex_it rate) writes a grounded code into the co-resident composer's codebook, which
+        # the conversational composer then binds/queries. REQUIRES co_resident_composer (the grounded code feeds the
+        # `rf` composer's FHRR algebra). When True, the agent gains `perceive_and_ground(obj_word)` (the in-episode
+        # perception->codebook grounding) so a perceived object becomes composable/recallable on the one brain.
+        self.co_resident_perception = bool(co_resident_perception)
+        if self.co_resident_perception and not self.co_resident_composer:
+            raise ValueError("co_resident_perception requires co_resident_composer (the grounded percept code feeds "
+                             "the co-resident `rf` composer's bind/unbind algebra)")
+        # co_resident_command_route (route A, language->action COMMAND_GATE): bring the `language_input` region + the
+        # LEARNED `language_input -> cortex_X` route (transmission_gate=command_route) onto the merged bridge so a
+        # PARSED spoken command (the parser's action-role FIRING) opens the route and steers the BG cascade. When True,
+        # the agent gains `command_move(direction)` (the parser comprehends -> gate opens -> the commanded word's
+        # learned route biases the action cascade -> the body picks a move). Default False = byte-preserved.
+        self.co_resident_command_route = bool(co_resident_command_route)
+
         _D = 128
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
             seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,
+            co_resident_perception=self.co_resident_perception,
+            enable_spiking_wta_readout=(self.co_resident_perception or self.co_resident_command_route),
+            co_resident_command_route=self.co_resident_command_route,
             co_resident_limbic=self.co_resident_limbic,
             co_resident_nav_critic=self.co_resident_nav_critic,
             nav_critic_spiking_sc=self.nav_critic_spiking_sc,
@@ -1502,6 +1694,86 @@ class MergedNavConvAgent:
                 "FAIL anti-cheat: co_resident_composer set but no 'rf' region on the merged bridge"
             assert self.composer._merged is self._merged_bridge, \
                 "FAIL anti-cheat: the co-resident composer is not bound to the merged bridge"
+
+        # --- ROUTE A (language->action) setup (FOLLOW-ON #2): the command-route grounding into the agent. The route +
+        #     gate live on the merged bridge; couple `command_route` to the parser's action-role FIRING here so a
+        #     comprehended verb opens the route (the in-substrate gate-from-firing, NOT a Python value copy). ---
+        self._grounded_proj = None
+        if self.co_resident_command_route:
+            assert "language_input" in region_names, \
+                "FAIL anti-cheat: co_resident_command_route set but no 'language_input' region on the merged bridge"
+            assert COMMAND_GATE in self._merged_bridge._transmission_gate_to_synapses, \
+                "FAIL anti-cheat: the command_route transmission gate is not registered on the merged bridge"
+            self._couple_command_gate()
+        # --- ROUTE B (perception->memory/compose) setup: the fixed grounded-code projection M (live cortex_it rate ->
+        #     composer phases), built once from the cortex_it slice size (the de-risk's exact construction). ---
+        self._grounded_objects = []
+        if self.co_resident_perception:
+            import numpy as _np
+            from sim.backend import get_backend as _gb
+            from research.runners._step3_grounded_codes_production_composer_derisk import _projection
+            _xp, _ = _gb()
+            it_h = self._handles["cortex_it_indices"]
+            self._handles["cortex_it_indices_xp"] = _xp.asarray(_np.asarray(it_h, dtype=_np.int64))
+            self._grounded_proj = _projection(_D, int(_np.asarray(it_h).size), seed)
+
+    # --- ROUTE A (language->action): the parser action-ensemble firing opens the command_route + one commanded move ---
+    def _couple_command_gate(self):
+        """Couple `command_route` to the parser's ACTION-role ensemble firing (the in-substrate primitive — a 0/1 gate
+        STATE from the parser SPIKING, not a value). Ported from spoken_instruction_nav.couple_command_gate."""
+        from research.runners.unified_brain_bridge import couple_gate_to_indices
+        from research.runners.spoken_instruction_nav import COMMAND_GATE_THRESHOLD, COMMAND_GATE_ALPHA
+        couple_gate_to_indices(self._merged_bridge, COMMAND_GATE, to_host(self._handles["action_block_idx"]),
+                               threshold=COMMAND_GATE_THRESHOLD, alpha=COMMAND_GATE_ALPHA)
+
+    def command_move(self, direction, parse_first=True):
+        """Route A — ONE navigation decision driven by a PARSED spoken command. The parser comprehends the action verb
+        (its action ensemble FIRES) -> `command_route` opens (via the firing coupling) -> the commanded direction word's
+        LEARNED `language_input -> cortex_{direction}` current biases the action cascade -> the body picks the move (the
+        cascade's disinhibited sel/motor winner). Returns (chosen_action, per-pool counts). Delegates to the GO
+        standalone `spoken_instruction_nav.decide_move` against THIS agent's merged-bridge handles, so the in-episode
+        mechanism is byte-for-byte the validated one (reuse-by-import).
+
+        parse_first=False is the ISOLATED-NAV control (no parser drive -> the gate stays closed -> the word's route
+        current never reaches cortex -> chance)."""
+        assert self.co_resident_command_route, "command_move requires co_resident_command_route=True"
+        from research.runners.spoken_instruction_nav import decide_move
+        h = {
+            "conj_arr": self._handles["conj_arr"],
+            "lang_indices": self._handles["lang_indices"],
+            "readout_idx": self._handles["cmd_readout_idx"],
+            "readout_region": self._handles["cmd_readout_region"],
+            "cascade_tonic": self._handles["cmd_cascade_tonic"],
+            "sel_all_idx": (list(self._handles["cmd_readout_idx"].values())
+                            if self._handles["cmd_readout_region"] == "sel" else []),
+        }
+        return decide_move(self._merged_bridge, h, direction, parse_first=parse_first)
+
+    def lesion_command_route(self):
+        """Cut the command_route (zero its synapses) — the route A lesion control (the behavior must collapse to chance,
+        proving it rides the SYNAPTIC route). Returns the number of synapses zeroed."""
+        assert self.co_resident_command_route, "lesion_command_route requires co_resident_command_route=True"
+        from research.runners.spoken_instruction_nav import _lesion_command_route
+        return _lesion_command_route(self._merged_bridge)
+
+    # --- ROUTE B (perception->memory/compose): ground a perceived object into the composer codebook from live cortex_it ---
+    def perceive_and_ground(self, obj_word):
+        """Route B — the agent has PERCEIVED object `obj_word`: render its identity into the merged bridge's cortex_it
+        (the sensory render), read the LIVE cortex_it spiking rate OFF THE MERGED BRIDGE, map it through the fixed
+        grounded-code projection M, and SET `composer.concepts[obj_word]` = the grounded phasor code. The percept thus
+        becomes a phasor the co-resident composer's FHRR algebra can bind/query — so a perceived object is composable on
+        the one brain. Delegates to the GO standalone `navigate_to_compose_then_answer._perceive_and_ground` against
+        THIS agent's merged bridge + co-resident composer (reuse-by-import). Returns (rate, phases).
+
+        PROVENANCE: the only write into the percept's code is `composer.concepts[o] = M @ (the live cortex_it rate)`;
+        no host code copies a labeled phasor in. Requires co_resident_perception (+ co_resident_composer)."""
+        assert self.co_resident_perception, "perceive_and_ground requires co_resident_perception=True"
+        from research.runners.navigate_to_compose_then_answer import _perceive_and_ground
+        h = {
+            "it_indices": self._handles["cortex_it_indices_xp"],
+            "grounded_objects": self._grounded_objects,
+        }
+        return _perceive_and_ground(self._merged_bridge, self.composer, h, self._grounded_proj, obj_word)
 
     # --- DA salience-gate (roadmap #6): the spiking-SNc dopamine -> composer cue-role confidence gate ---
     def _da_confidence_gate(self):
