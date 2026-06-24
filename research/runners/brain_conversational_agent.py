@@ -149,8 +149,8 @@ class BrainConversationalAgent:
     SimulationBridge neurons, the substrate's own concept codes, no bolted-on numpy simulator."""
 
     def __init__(self, seed=42, proj_dim=800, concepts=None, composer=None, composer_kind="rf",
-                 enable_spiking_cleanup=False, enable_substrate_store=False, grounded_codes=None,
-                 enable_learned_assoc=False, enable_neural_render=True, enable_rf_cudagraph=False,
+                 enable_spiking_cleanup=None, enable_substrate_store=False, grounded_codes=None,
+                 enable_learned_assoc=None, enable_neural_render=True, enable_rf_cudagraph=False,
                  enable_attributed=True, enable_multiframe=True, integrated_loop=False,
                  enable_multicue_competition=False, multicue_verbs=None,
                  enable_case_competition=False, case_verbs=None, case_lexicon=None):
@@ -165,7 +165,27 @@ class BrainConversationalAgent:
           - 'rate' = the legacy rate-coded `CoreSimComposer` (the +-1 Hadamard; opponency-bounded) -- kept as an
                      explicit opt-in (`composer_kind='rate'`) + needs the denoise64 cache.
         `composer` (optional) = an externally-constructed composer instance, overriding `composer_kind`. The agent
-        delegates all fact storage/retrieval to the composer; the parser + dialogue-planning are composer-agnostic."""
+        delegates all fact storage/retrieval to the composer; the parser + dialogue-planning are composer-agnostic.
+
+        SPIKING DEFAULT-FLIP (burndown 1A, C-3/C-5): `enable_spiking_cleanup` + `enable_learned_assoc` default to a
+        sentinel (None) that resolves to **the production fully-spiking config on the onebrain path** (the brain's own
+        spiking ops do the cognition) and **OFF on the rf/rate test-oracle + numpy-CPU path** (byte-identical). So a
+        plain `BrainConversationalAgent(composer_kind="onebrain", ...)` is fully-spiking-cleanup + learned-assoc by
+        default, == the production demo, == the host oracle on the who/what matrix with the no-confab moat at 0 false-
+        accepts (the spiking ops are answer-identical in their validated config). C-4 (local_reciprocal_unbind) is
+        ALREADY ON in OneBrainComposer's own default; H-7 (on-bridge complex-synapse store) is on-by-design for the
+        OneBrainComposer. C-2 (`integrated_loop`, the spiking K-way cue-match sequencer) STAYS OFF at this library
+        default: at the SMALL test vocab / fresh random codes the divnorm-WTA agent-line decode falls below firing
+        (over-abstention, the SAFE direction, moat 0-FA -- the de-risk `_burndown_1A_c2_smallvocab_derisk.json`), so
+        the host first-match _scan stays the byte-identical oracle here; the PRODUCTION demo (V=320 stream-learned
+        codes, where it is GO 4/4) opts it ON explicitly. Pass the flags explicitly (True/False) to override the auto.
+        """
+        # resolve the onebrain-aware spiking defaults (None = auto: ON for onebrain production, OFF for rf/rate oracle).
+        _is_onebrain = (composer is None) and (composer_kind == "onebrain")
+        if enable_spiking_cleanup is None:
+            enable_spiking_cleanup = _is_onebrain        # C-3: spiking NEF/WTA cleanup-select (== host argmax)
+        if enable_learned_assoc is None:
+            enable_learned_assoc = _is_onebrain          # C-5: substrate-learned Hebbian CA3 assoc graph for elaborate
         self.seed = int(seed)
         if composer is not None:
             self.composer = composer
@@ -183,15 +203,17 @@ class BrainConversationalAgent:
             # validated 100% on the learned 320 codes) + auto-selected multi-frame comprehension. The F=3 two-attribute
             # path is deliberately NOT wired (it degrades to ~29% on the correlated learned codes -- the documented
             # boundary, 2026-06-19-resonator-on-learned-codes-derisk.md).
-            # enable_spiking_cleanup (burndown #1) passes through too: the cleanup SELECTION (the winner-pick over the
-            # matched-filter membrane) becomes a fully-on-substrate spiking Izhikevich WTA instead of a host argmax.
-            # Default OFF here = byte-identical (the numpy-CPU + test-oracle path); the production demo opts it ON.
-            # integrated_loop (shortcut #3, default OFF = byte-identical = the host-_scan oracle): route the
-            # (agent, action) cue-match-and-first-match SELECTION through the validated spiking K-way sequencer (the
-            # gated-disinhibition match cascade + BG first-match priority WTA) instead of the host first-match loop, at
-            # the validated op-point (match_thresh=0.06). The no-confab moat is preserved by construction (the abstain
-            # channel maps to the same None/"unknown"). NOT flipped on by default here (the agent default stays the
-            # byte-identical host read; the production demo gets the opt-in flag). See the #3 fold plan.
+            # enable_spiking_cleanup (burndown 1A, C-3): the cleanup SELECTION (the winner-pick over the matched-filter
+            # membrane) is a fully-on-substrate spiking Izhikevich WTA instead of a host argmax. DEFAULT-ON on this
+            # onebrain production path (the None-sentinel auto-resolves True above) == host argmax + moat 0-FA
+            # (test_onebrain_spiking_cleanup); the rf/rate test-oracle + numpy-CPU path keeps it OFF (byte-identical).
+            # integrated_loop (shortcut #3, C-2; STAYS default-OFF at this library default = the byte-identical host-
+            # _scan oracle): route the (agent, action) cue-match-and-first-match SELECTION through the validated spiking
+            # K-way sequencer (gated-disinhibition match cascade + BG first-match priority WTA). At PRODUCTION scale
+            # (V=320 stream-learned codes) it is GO 4/4 and the production demo opts it ON; but at the SMALL test vocab /
+            # fresh random codes the divnorm-WTA agent-line decode falls below firing (over-abstention, the SAFE
+            # direction, moat 0-FA -- the de-risk _burndown_1A_c2_smallvocab_derisk.json: a code-MARGIN boundary, NOT a
+            # match_thresh re-cal), so the host read stays the byte-identical oracle here. See the #3 fold plan.
             self.composer = OneBrainComposer(seed=seed, D=128, vocab=vocab, grounded_codes=grounded_codes,
                                              enable_attributed=enable_attributed,
                                              enable_multiframe=enable_multiframe,

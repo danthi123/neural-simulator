@@ -1,0 +1,75 @@
+{
+  "task": "BURNDOWN Phase-1 1A re-dispatch: conversational spiking default-flip pass (runner-level, NO sim/ edit)",
+  "date": "2026-06-24",
+  "principle": "The rf/rate composer is the deliberate test-oracle + numpy-CPU path (keep byte-identical); the onebrain composer is the production fully-spiking path -> flip the validated spiking replacements ON by default ONLY on the onebrain agent path.",
+  "edit": {
+    "file": "research/runners/brain_conversational_agent.py",
+    "change": "enable_spiking_cleanup + enable_learned_assoc default False->None (sentinel = auto: ON for onebrain production, OFF for rf/rate oracle). integrated_loop kept default False (the C-2 residual). _is_onebrain resolution added at the top of __init__.",
+    "sim_edit": false
+  },
+  "flips": {
+    "C-3_enable_spiking_cleanup": {
+      "what": "cleanup SELECTION (winner-pick over the matched-filter membrane) = spiking Izhikevich NEF/WTA instead of host argmax",
+      "flipped": true,
+      "where": "onebrain agent path (None-sentinel auto-resolves True); rf/rate path stays OFF (byte-identical)",
+      "prior_state": "OneBrainComposer's OWN default already True (commit ff77f2da); the AGENT overrode it to False -> this flip makes the agent default it ON for onebrain",
+      "capability_tests_pass": true,
+      "moat_FA": 0,
+      "regression": false,
+      "evidence": "test_onebrain_agent_matrix_and_moat + test_onebrain_negation_yes_no (2 passed, 245.88s) + test_onebrain_describe_and_reason (1 passed, 111.83s), all GPU, cleanup auto-on, moat 0-FA; auto-resolution confirmed (onebrain composer receives enable_spiking_cleanup=True, rf stays False)"
+    },
+    "C-4_local_reciprocal_unbind": {
+      "what": "local quadrature-flip unbind + cleanup-codebook local conj (host-free bind/cleanup STRUCTURE) instead of host np.conj",
+      "flipped": "already-on",
+      "where": "OneBrainComposer's OWN default local_reciprocal_unbind=True (commit 62052b62); the agent does NOT override it -> already on for onebrain by default",
+      "prior_state": "already default-ON on the production one-brain composer",
+      "capability_tests_pass": true,
+      "moat_FA": 0,
+      "regression": false,
+      "evidence": "test_onebrain_cleanup_codebook_local_conj_byte_identical (3 seeds, parametrized) is the standing CI guard; the agent path inherits the composer default unchanged"
+    },
+    "C-5_enable_learned_assoc": {
+      "what": "dialogue-plan association graph = substrate-learned Hebbian CA3 assoc graph instead of host Python dict (elaborate spreads over the learned graph)",
+      "flipped": true,
+      "where": "onebrain agent path (None-sentinel auto-resolves True); rf/rate path stays OFF (byte-identical). MultiTurnAgent/V2 already gated this on (composer_kind=='onebrain'); this makes the base agent consistent.",
+      "prior_state": "agent default False; consolidated_320 demo + MultiTurnAgent already turned it on for onebrain",
+      "capability_tests_pass": true,
+      "moat_FA": 0,
+      "regression": false,
+      "evidence": "LearnedAssocGraph builds on the onebrain path (auto-resolution confirmed via stubbed construction); the functional elaborate behavior is the validated test_learned_assoc_graph_agent (passes with enable_learned_assoc=True)"
+    },
+    "H-7_enable_substrate_store": {
+      "what": "on-bridge complex-synapse fact store (persistent trigger->readout blocks) instead of a host numpy KB list",
+      "flipped": "already-on (by design on onebrain)",
+      "where": "OneBrainComposer stores every fact in store_conns -> on-bridge complex synapses BY DESIGN (no flag needed). The enable_substrate_store flag only exists on the RFPhasorComposer (the oracle path), which stays the host-KB default.",
+      "prior_state": "on-by-design for the production OneBrainComposer",
+      "capability_tests_pass": true,
+      "moat_FA": 0,
+      "regression": false,
+      "evidence": "OneBrainComposer._write_block writes the composite into cp_rf_w_re/im; the persistent multi-fact store (GAP A) is on-bridge by construction"
+    },
+    "C-2_integrated_loop": {
+      "what": "spiking K-way cue-match sequencer (gated-disinhibition match cascade + BG first-match priority WTA) instead of the host Python first-match _scan + moat",
+      "flipped": false,
+      "where": "STAYS OFF at the library agent default (the byte-identical host-_scan oracle); ALREADY ON at the production demo (consolidated_320_conversation_demo.py set_defaults(integrated_loop=True), validated V=320 GO 4/4).",
+      "blocker": "DIVNORM-MARGIN BOUNDARY at small vocab (NOT a match_thresh re-cal)",
+      "residual_mechanism": "At the SMALL test vocab (V=15, K=4) with FRESH RANDOM codes, the divnorm-WTA AGENT-role cleanup decode (dA) falls below firing on >=half the blocks (the action-role decode dX is clean). The C-2 de-risk swept match_thresh in {0.06,0.02,0.005,0.001}: present_ok stays 0/4 (seed 42) or 2/4 (seeds 43/44) at EVERY threshold because the winner match-pool rate is structurally 0.000 on those blocks (nothing to detect), NOT a threshold sit-point. The gain sweep (divnorm gain {0.11..0.001} x sigma {1,100}) found NO operating point that cleanly isolates the agent winner: gain>=0.11 -> agent line empty; gain<=0.03 -> agent winner lights WITH runner-ups (clean_exact 0/4 at every setting). Root cause = the LOW cleanup MARGIN of fresh random codes at small V (agent winner ~2.4x runner-up) vs the high-margin stream-learned 320 codes where it is GO 4/4.",
+      "next_fix": "config-aware -> use the high-margin learned/grounded codes (production already does); OR a code-margin-aware drive (NOT match_thresh). The library small-vocab path is best left on the host oracle.",
+      "capability_tests_pass": "n/a (not flipped at library default)",
+      "moat_FA": 0,
+      "moat_note": "the moat is INTACT throughout the de-risk: worst_off_rate is 0.000 on EVERY cue/seed/threshold, host_absent_all_none=True. The failure is OVER-abstention (the SAFE direction), 0 false-accepts.",
+      "regression": false,
+      "evidence": "research/findings/raw/_burndown_1A_c2_smallvocab_derisk.json (3 seeds: VERDICT smallest all-seed answer-identical+moat-0FA thresh = None)"
+    }
+  },
+  "capability_bar": {
+    "who_what": "PASS (test_onebrain_agent_matrix_and_moat)",
+    "describe": "PASS (test_onebrain_describe_and_reason)",
+    "yes_no_negation": "PASS (test_onebrain_negation_yes_no)",
+    "moat_false_accepts": 0,
+    "regression": "NONE (rf-path test_comprehend_store_and_qa + test_negation_yes_no still pass, byte-identical; the signature default change False->None resolves to False for rf)"
+  },
+  "multi_turn_onebrain": "PASS (test_onebrain_multiturn_correction + test_onebrain_multiturn_anaphora, 2 passed 248.35s, GPU) -- the full agent path with C-3 cleanup + C-5 learned-assoc auto-on: pronoun resolution + reconsolidation rewrite + cross-turn anaphora + moat abstain on never-stored. NOTE: these 2 were among the 6 the migration-PARTIAL saw FAIL when integrated_loop was on -> they pass now with integrated_loop OFF + cleanup ON, confirming the over-abstention was an integrated_loop (C-2) issue, NOT a cleanup (C-3) issue.",
+  "banked": "C-3, C-4 (already-on), C-5, H-7 (already-on by design) flipped/confirmed ON for the production onebrain agent path; C-2 characterized as a divnorm code-margin boundary (residual), already-on at production scale.",
+  "git_diff_stat": "research/runners/brain_conversational_agent.py: 1 file changed, 34 insertions(+), 12 deletions(-); research/runners/_burndown_1A_c2_smallvocab_derisk.py: untracked (created prior 1A attempt + a minimal _rates_to_array bug fix this session). NO sim/ edit."
+}

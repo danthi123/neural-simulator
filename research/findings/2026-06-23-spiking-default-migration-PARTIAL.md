@@ -41,3 +41,31 @@ were ALL `integrated_loop` abstentions).
 The migration is honestly PARTIAL: 2 of 3 done (word-order shipped, read-out-norm already-neural at production), the
 3rd (`integrated_loop` agent-default) reverted because it breaks small-vocab recall — a bounded threshold-calibration
 follow-on, NOT a moat failure (the moat held: over-abstention, zero false-accepts).
+
+## UPDATE (2026-06-24, BURNDOWN 1A re-dispatch — the agent-level flips banked; C-2 root-caused deeper than "threshold")
+The "3rd" above was treated as a `match_thresh` calibration follow-on. The burndown 1A de-risk
+(`research/findings/raw/_burndown_1A_c2_smallvocab_derisk.json`, 3 seeds) shows it is NOT a `match_thresh` re-cal: at
+the SMALL test vocab (V=15, K=4, fresh random codes) the divnorm-WTA **agent-role** cleanup decode produces ZERO firing
+on ≥half the blocks (the action-role decode is clean) — `present_ok` stays 0/4 (seed 42) or 2/4 (seeds 43/44) at EVERY
+threshold {0.06,0.02,0.005,0.001} because the winner match-pool rate is structurally 0.000 (nothing to detect). A
+divnorm gain/sigma sweep (gain {0.11→0.001} × sigma {1,100}) found NO operating point that cleanly isolates the agent
+winner (gain≥0.11 → empty; gain≤0.03 → winner lights WITH runner-ups, `clean_exact` 0/4 everywhere). Root cause = the
+LOW cleanup MARGIN of fresh random codes at small V (agent winner ~2.4× runner-up), vs the high-margin stream-learned
+320 codes where `integrated_loop` is GO 4/4. The moat is INTACT throughout (worst_off_rate 0.000, `host_absent_all_none`
+True). ⇒ **C-2 stays default-OFF at the library agent default (the host-`_scan` oracle for the small-vocab path) and ON
+at the production demo** (a code-MARGIN boundary, not a fixable threshold).
+
+What the burndown DID flip (runner-level, NO `sim/` edit, `research/runners/brain_conversational_agent.py`): the
+agent-level `enable_spiking_cleanup` (C-3) + `enable_learned_assoc` (C-5) now default to a **None sentinel that
+auto-resolves ON for the onebrain production path, OFF for the rf/rate test-oracle + numpy-CPU path** (byte-identical).
+So a plain `BrainConversationalAgent(composer_kind="onebrain")` is fully-spiking-cleanup + learned-assoc by default
+(== the production demo). C-4 (`local_reciprocal_unbind`) was already the OneBrainComposer default; H-7 (on-bridge
+complex-synapse store) is on-by-design for the OneBrainComposer. Validated on GPU: `test_onebrain_agent_matrix_and_moat`
++ `test_onebrain_negation_yes_no` + `test_onebrain_describe_and_reason` + `test_onebrain_multiturn_correction` +
+`test_onebrain_multiturn_anaphora` (who/what · describe · yes-no/negation · multi-turn) all PASS with the flips on,
+**moat 0 false-accepts**, and the rf-path `test_comprehend_store_and_qa` + `test_negation_yes_no` still pass
+(byte-identical, no regression). Finding: `research/findings/raw/_burndown_1A_conv_spiking_flips.json`.
+
+Notably, the 2 multi-turn onebrain tests above were among the 6 this PARTIAL saw FAIL when `integrated_loop` was on —
+they PASS now with `integrated_loop` OFF + cleanup ON, confirming the over-abstention was an `integrated_loop` (C-2)
+issue, NOT a cleanup (C-3) issue.

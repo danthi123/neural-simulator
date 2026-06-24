@@ -1,0 +1,218 @@
+{
+  "config": {
+    "vocab_size": 15,
+    "n_facts": 4,
+    "D": 128,
+    "threshs": [
+      0.06,
+      0.02,
+      0.005,
+      0.001
+    ],
+    "seeds": [
+      42,
+      43,
+      44
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "host_present": {
+        "dog,go": 0,
+        "cat,come": 1,
+        "bird,look": 2,
+        "river,stop": 3
+      },
+      "host_absent_all_none": true,
+      "by_thresh": [
+        {
+          "match_thresh": 0.06,
+          "present_ok": 0,
+          "present_tot": 4,
+          "false_accept": 0,
+          "answer_identical": false,
+          "moat_0fa": true
+        },
+        {
+          "match_thresh": 0.02,
+          "present_ok": 0,
+          "present_tot": 4,
+          "false_accept": 0,
+          "answer_identical": false,
+          "moat_0fa": true
+        },
+        {
+          "match_thresh": 0.005,
+          "present_ok": 0,
+          "present_tot": 4,
+          "false_accept": 0,
+          "answer_identical": false,
+          "moat_0fa": true
+        },
+        {
+          "match_thresh": 0.001,
+          "present_ok": 0,
+          "present_tot": 4,
+          "false_accept": 0,
+          "answer_identical": false,
+          "moat_0fa": true
+        }
+      ],
+      "margins": {
+        "dog,go": {
+          "target_block": 0,
+          "win_rate": 0.0,
+          "worst_off_rate": 0.0
+        },
+        "cat,come": {
+          "target_block": 1,
+          "win_rate": 0.0,
+          "worst_off_rate": 0.0
+        },
+        "bird,look": {
+          "target_block": 2,
+          "win_rate": 0.0,
+          "worst_off_rate": 0.0
+        },
+        "river,stop": {
+          "target_block": 3,
+          "win_rate": 0.0,
+          "worst_off_rate": 0.0
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "host_present": {
+        "dog,go": 0,
+        "cat,come": 1,
+        "bird,look": 2,
+        "river,stop": 3
+      },
+      "host_absent_all_none": true,
+      "by_thresh": [
+        {
+          "match_thresh": 0.06,
+          "present_ok": 2,
+          "present_tot": 4,
+          "false_accept": 0,
+          "answer_identical": false,
+          "moat_0fa": true
+        },
+        {
+          "match_thresh": 0.02,
+          "present_ok": 2,
+          "present_tot": 4,
+          "false_accept": 0,
+          "answer_identical": false,
+          "moat_0fa": true
+        },
+        {
+          "match_thresh": 0.005,
+          "present_ok": 2,
+          "present_tot": 4,
+          "false_accept": 0,
+          "answer_identical": false,
+          "moat_0fa": true
+        },
+        {
+          "match_thresh": 0.001,
+          "present_ok": 2,
+          "present_tot": 4,
+          "false_accept": 0,
+          "answer_identical": false,
+          "moat_0fa": true
+        }
+      ],
+      "margins": {
+        "dog,go": {
+          "target_block": 0,
+          "win_rate": 0.241,
+          "worst_off_rate": 0.0
+        },
+        "cat,come": {
+          "target_block": 1,
+          "win_rate": 0.0,
+          "worst_off_rate": 0.0
+        },
+        "bird,look": {
+          "target_block": 2,
+          "win_rate": 0.241,
+          "worst_off_rate": 0.0
+        },
+        "river,stop": {
+          "target_block": 3,
+          "win_rate": 0.0,
+          "worst_off_rate": 0.0
+        }
+      }
+    },
+    {
+      "seed": 44,
+      "host_present": {
+        "dog,go": 0,
+        "cat,come": 1,
+        "bird,look": 2,
+        "river,stop": 3
+      },
+      "host_absent_all_none": true,
+      "by_thresh": [
+        {
+          "match_thresh": 0.06,
+          "present_ok": 2,
+          "present_tot": 4,
+          "false_accept": 0,
+          "answer_identical": false,
+          "moat_0fa": true
+        },
+        {
+          "match_thresh": 0.02,
+          "present_ok": 2,
+          "present_tot": 4,
+          "false_accept": 0,
+          "answer_identical": false,
+          "moat_0fa": true
+        },
+        {
+          "match_thresh": 0.005,
+          "present_ok": 2,
+          "present_tot": 4,
+          "false_accept": 0,
+          "answer_identical": false,
+          "moat_0fa": true
+        },
+        {
+          "match_thresh": 0.001,
+          "present_ok": 2,
+          "present_tot": 4,
+          "false_accept": 0,
+          "answer_identical": false,
+          "moat_0fa": true
+        }
+      ],
+      "margins": {
+        "dog,go": {
+          "target_block": 0,
+          "win_rate": 0.222,
+          "worst_off_rate": 0.0
+        },
+        "cat,come": {
+          "target_block": 1,
+          "win_rate": 0.0,
+          "worst_off_rate": 0.0
+        },
+        "bird,look": {
+          "target_block": 2,
+          "win_rate": 0.0,
+          "worst_off_rate": 0.0
+        },
+        "river,stop": {
+          "target_block": 3,
+          "win_rate": 0.229,
+          "worst_off_rate": 0.0
+        }
+      }
+    }
+  ]
+}
