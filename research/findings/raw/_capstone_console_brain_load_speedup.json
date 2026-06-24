@@ -1,0 +1,74 @@
+{
+  "probe": "capstone_console_brain_load_speedup__lazy_parser_plus_persist_kb_composites",
+  "backend": "numpy",
+  "seed": 42,
+  "scope": "LOGIC/CPU validation on a SMALL brain (NOT a full self-knowledge brain-load; the controller measures the full GPU load-time separately).",
+  "sim_edit": "NONE (reuse-by-import: brain_conversational_agent + multi_turn_agent + developed_brain_io only).",
+  "eager_build_seconds": 5.939,
+  "eager_parser_trained_count": 2,
+  "bundle_files": [
+    "brain.json",
+    "facts.json",
+    "grounded_codes.npz",
+    "kb_composites.npz",
+    "lineage"
+  ],
+  "manifest_n_kb_composites": 4,
+  "kb_composites_npz_written": true,
+  "n_composites_persisted": 4,
+  "n_facts": 4,
+  "loaded_build_seconds": 0.01,
+  "option1_persist_kb_composites": {
+    "saved_composite_bit_exact_vs_inmemory": true,
+    "loaded_kb_composite_bit_exact_vs_inmemory": true,
+    "loaded_composite_bit_exact_vs_fresh_reresonate": true,
+    "fact_dicts_identical_to_store": true
+  },
+  "option2_lazy_parser": {
+    "loaded_parser_is_none_before_teach": true,
+    "loaded_parser_trained_count_on_load": 0,
+    "no_train_on_load": true,
+    "qa_answers_identical_to_eager": true,
+    "parser_still_untrained_after_pure_qa": true,
+    "moat_abstains_on_untaught": true,
+    "teach_new_fact_seconds": 1.819,
+    "parser_trained_count_after_first_teach": 1,
+    "lazy_parser_built_on_first_teach": true,
+    "new_fact_recalls": true,
+    "old_fact_intact_after_teach": true,
+    "deferred_parse_equals_eager_parse": true
+  },
+  "regression_eager_path_unchanged": {
+    "eager_default_trains_two_parsers": true,
+    "eager_default_qa_identical": true
+  },
+  "console_multiturn_load": {
+    "is_multiturn": true,
+    "load_seconds": 1.058,
+    "inner_parser_trained_count": 0,
+    "no_train_on_load": true,
+    "qa_and_moat_ok": true
+  },
+  "option1_ok": true,
+  "option2_ok": true,
+  "regression_ok": true,
+  "console_ok": true,
+  "moat_clean": true,
+  "GO": true,
+  "verdict": "GO \u2014 the brain-LOAD speedup LOGIC is validated on a small brain. (2) LAZY PARSER: a LOADED brain constructs the comprehension parser DEFERRED (parser_trained_count==0 on load, still 0 after pure Q&A \u2014 no ~75K-step training paid), Q&A answers IDENTICALLY to the eager reference, the moat ABSTAINS on an untaught cue, and teaching a NEW fact builds the parser lazily (count->1) + recalls correctly, with the deferred parse BIT-EQUAL to a fresh eager parse. (1) PERSIST KB COMPOSITES: the bundle's kb_composites.npz round-trips BIT-EXACT (loaded == in-memory == a FRESH re-resonate \u2014 the persisted composite IS the deterministic resonate output, NOT a re-derive), recall is byte-identical, the fact dicts match store() exactly, and the load skips the per-fact resonate. The EAGER standalone path is byte-unchanged (trains 2 parsers, Q&A identical) and the CONSOLE MultiTurnAgent load path flows defer+composites through (no train on load, Q&A+moat OK). NO sim/ edit; moat 0-FA throughout.",
+  "anti_cheats": [
+    "(1) the loaded composer.kb composite == a FRESH store() re-resonate BIT-EXACT (np.array_equal) \u2014 the persisted composite IS the same deterministic resonate array, NOT a re-derive; recall is byte-identical.",
+    "(1) the rebuilt fact dicts == store()'s fact dicts (attribute split + clause + polarity), so the direct-set matches store() in structure, not just the composite array.",
+    "(2) parser_trained_count == 0 on a Q&A-only load (and still 0 after pure Q&A) proves the deferred parser never paid its ~75K-step training; the first TEACH builds it lazily (count->1) and the deferred parse is BIT-EQUAL to a fresh eager parse, so a teaching session is identical to a never-deferred one.",
+    "the no-confab MOAT is 0-FA on the loaded brain (an untaught cue abstains -> None) \u2014 only the saved facts are in kb.",
+    "REGRESSION: defer-OFF (the standalone build default) trains 2 parsers eagerly + Q&A is byte-identical, so the standalone path is unchanged."
+  ],
+  "expected_load_time_speedup": {
+    "removed_loops": [
+      "(2) the ~75K-step Hebbian parser training (BridgeParser ~25K + AttributedBridgeParser ~50K), fact-INDEPENDENT -> the dominant term of the tiny-demo's ~112 s first load; now 0 for a Q&A session.",
+      "(1) the ~832-step-per-fact RF resonate re-store (~43K steps for a 52-fact self-knowledge brain) -> now a direct kb-composite set from kb_composites.npz; ~0 per fact."
+    ],
+    "expected": "a developed-brain BUNDLE that previously re-trained the parser (~75K steps) + re-resonated each fact (~832/fact) now LOADS in bundle-deserialize time (low seconds): both dominant loops are removed for a Q&A session. The residual is the bundle npz/json read + (for use_multiturn) the SpikingLoopContextBuffer WM build \u2014 both sub-second to a few seconds.",
+    "note": "the SELF-KNOWLEDGE built-in (`_load_self_knowledge`) re-teaches its curriculum via hear() (parser + resonate) rather than load_developed_brain; to get the same speedup for it, save it as a bundle (developed_brain_io.save_developed_brain) and load via the bundle path \u2014 the generic path this build speeds up. The controller measures the bundle load-time before vs after."
+  }
+}

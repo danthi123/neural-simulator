@@ -98,6 +98,29 @@ def extract_vocab(agent) -> list[str]:
     return sorted(w for w in comp.concepts.keys() if w not in pol)
 
 
+def extract_kb_composites(agent) -> dict[str, np.ndarray]:
+    """BRAIN-LOAD SPEEDUP (option 1): each stored fact's BOUND COMPOSITE PHASOR -- the `[D]` numpy array `composer.kb`
+    already cached from `store()`'s `_encode`, keyed by the fact's index (string, aligned to `extract_facts` order).
+
+    The composite IS the deterministic resonate output of `store()`, so persisting it lets a reload SKIP the ~832-step
+    per-fact RF resonate (`_restore_facts` sets `composer.kb` directly instead of re-`store()`-ing). Only the rf/rate
+    composer holds a numpy composite in kb; the onebrain composer holds the bound vector ON-SUBSTRATE (kb is
+    `(fact, None)`), so a None handle is SKIPPED here -> that fact re-stores on load (the onebrain path is unchanged).
+    Indices with a non-array handle are simply absent from the dict (a partial map round-trips: present -> loaded,
+    absent -> re-stored)."""
+    comp = _inner_agent(agent).composer
+    out: dict[str, np.ndarray] = {}
+    for i, (_fact, handle) in enumerate(comp.kb):
+        # a numpy composite (rf/rate fast path: enable_substrate_store=False). A None (onebrain) or a substrate-store
+        # bridge handle is NOT serializable here -> omit it (the fact will re-store on load). The composite is saved in
+        # its NATIVE dtype (float64 on the rf path) so the load round-trip is BIT-EXACT -- a float32 down-cast would
+        # perturb the phases by ~3e-8 (harmless for the cleanup argmax, but the anti-cheat demands a byte-identical
+        # array, so we keep full precision; npz compresses the redundancy away).
+        if isinstance(handle, np.ndarray):
+            out[str(i)] = np.ascontiguousarray(handle)
+    return out
+
+
 # ============================================================================================================
 # SAVE.
 # ============================================================================================================
@@ -138,6 +161,13 @@ def save_developed_brain(agent, path, *, seed=42, D=None, composer_kind="rf",
     with open(root / "facts.json", "w", encoding="utf-8") as fh:
         json.dump({"schema_version": SCHEMA_VERSION, "facts": facts}, fh, indent=2, ensure_ascii=False)
 
+    # --- (BRAIN-LOAD SPEEDUP, option 1) the bound composites -> kb_composites.npz ({fact_index -> comp[D]}) so a
+    #     reload SKIPS the per-fact RF resonate (the composite IS the deterministic resonate output). Aligned to the
+    #     facts.json order. Empty on the onebrain path (composites are on-substrate) -> the file is just absent. ---
+    kb_composites = extract_kb_composites(agent)
+    if kb_composites:
+        np.savez_compressed(str(root / "kb_composites.npz"), **kb_composites)
+
     # --- the BridgeLineage (DevelopState payload + metadata) -- the project's standard persistent-state machinery.
     #     If a DevelopState is supplied, persist its payload so the develop loop can RESUME from this bundle. ---
     lineage = BridgeLineage(lineage_name, root=root / "lineage")
@@ -166,10 +196,12 @@ def save_developed_brain(agent, path, *, seed=42, D=None, composer_kind="rf",
         "composer_kind": composer_kind,
         "n_facts": len(facts),
         "n_grounded_codes": len(codes),
+        "n_kb_composites": len(kb_composites),     # (option 1) persisted composites -> per-fact resonate skipped on load
         "vocab": list(vocab),
         "self_aliases": sorted(self_aliases) if self_aliases else None,
         "lineage_name": lineage_name,
-        "files": {"codes": "grounded_codes.npz", "facts": "facts.json", "lineage": "lineage"},
+        "files": {"codes": "grounded_codes.npz", "facts": "facts.json", "lineage": "lineage",
+                  **({"kb_composites": "kb_composites.npz"} if kb_composites else {})},
     }
     if extra_metadata:
         manifest["metadata"] = extra_metadata
@@ -206,16 +238,64 @@ def _load_facts_json(path) -> list[dict]:
         return json.load(fh).get("facts", [])
 
 
-def _restore_facts(agent, facts):
+def _load_kb_composites(path) -> dict[int, np.ndarray]:
+    """(BRAIN-LOAD SPEEDUP, option 1) Load kb_composites.npz -> {fact_index(int) -> comp[D]}. Absent file (e.g. the
+    onebrain path, or a pre-speedup bundle) -> {} (then _restore_facts re-stores every fact, the original behavior)."""
+    p = Path(path) / "kb_composites.npz"
+    if not p.exists():
+        return {}
+    with np.load(str(p)) as data:
+        # keep the NATIVE saved dtype (float64 on the rf path) so the composite round-trips BIT-EXACT.
+        return {int(k): np.array(data[k]) for k in data.files}
+
+
+def _store_fact_dict_from_operand(a, v, p, polarity):
+    """Build the EXACT fact dict that `RFPhasorComposer.store(a, v, p, polarity)` appends -- WITHOUT the expensive
+    `_encode` resonate. Mirrors the composer's `store` dict-build (rf_phasor_composer.store): a Clause patient stays a
+    Clause; an `(adjs, noun)` attributed entity splits into patient=noun + attribute[/attribute2]; else patient=p; a
+    polarity tag is added when present. Kept in lock-step with that store (a tiny, stable mapping); the round-trip
+    validator asserts this dict == a real `store()`-built dict, so a drift is caught immediately. This is the only
+    place option-1 reconstructs the dict instead of calling store (which would re-resonate)."""
+    fact = {"agent": a, "action": v}
+    _is_clause = getattr(p, "_fields", None) == ("agent", "action", "patient")
+    if _is_clause:                                   # a recursive clause filler (check BEFORE tuple: a Clause IS a tuple)
+        fact["patient"] = p
+    elif isinstance(p, tuple):                        # (adj(s), noun) attributed entity
+        adjs, noun = p
+        adjs = list(adjs) if isinstance(adjs, (tuple, list)) else [adjs]
+        fact["patient"] = noun
+        fact["attribute"] = adjs[0]
+        if len(adjs) > 1:
+            fact["attribute2"] = adjs[1]
+    else:
+        fact["patient"] = p
+    if polarity is not None:
+        fact["polarity"] = polarity
+    return fact
+
+
+def _restore_facts(agent, facts, composites=None):
     """Re-store the saved facts into the agent's composer (so composer.kb matches the developed state). Handles a
-    clause patient (the tagged dict) by reconstructing a Clause. Uses the bound polarity tag when present."""
+    clause patient (the tagged dict) by reconstructing a Clause. Uses the bound polarity tag when present.
+
+    BRAIN-LOAD SPEEDUP (option 1): when `composites` is a {fact_index -> comp[D]} map (from kb_composites.npz) AND the
+    composer holds numpy composites in kb (the rf/rate fast path, `enable_substrate_store=False`), the fact's composite
+    is set DIRECTLY (the dict via `_store_fact_dict_from_operand` + the persisted composite, appended to `composer.kb`)
+    -- SKIPPING the ~832-step per-fact RF resonate `store()` would run. The composite IS the deterministic resonate
+    output, so recall is byte-identical. A fact with no persisted composite (absent index, onebrain on-substrate, or a
+    substrate-store composer) falls back to `comp.store()` (re-resonate), so the path is always correct -- the speedup
+    is applied only where it is provably byte-identical."""
     inner = _inner_agent(agent)
     comp = inner.composer
+    composites = composites or {}
+    # the fast direct-set path applies only when the composer caches a NUMPY composite in kb (rf/rate, no substrate
+    # store). A substrate-store composer's handle is a bridge (not the composite), so a direct set would corrupt it.
+    can_direct = not bool(getattr(comp, "enable_substrate_store", False))
     try:
         from research.runners.core_sim_composition import Clause
     except Exception:
         Clause = None
-    for f in facts:
+    for i, f in enumerate(facts):
         a, v = f.get("agent"), f.get("action")
         p = f.get("patient")
         polarity = f.get("polarity")
@@ -228,25 +308,43 @@ def _restore_facts(agent, facts):
         if isinstance(p, str) and attr is not None:
             adjs = [attr] + ([attr2] if attr2 is not None else [])
             p = (adjs, p)
-        comp.store(a, v, p, polarity=polarity)
+        comp_arr = composites.get(i)
+        if can_direct and comp_arr is not None:
+            # DIRECT SET (skip the resonate): the persisted composite is store()'s deterministic _encode output, kept
+            # in its native dtype so the kb array is BIT-EXACT to the re-resonated one.
+            fact_dict = _store_fact_dict_from_operand(a, v, p, polarity)
+            comp.kb.append((fact_dict, comp_arr))
+        else:
+            comp.store(a, v, p, polarity=polarity)   # re-resonate (no persisted composite, or a substrate-store composer)
 
 
 def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_render=False,
                          referent_nouns=None, wm_n=600, wm_pattern_size=40, composer_kind=None,
-                         grounded_codes_override=None):
+                         grounded_codes_override=None, defer_parser=True):
     """Reconstruct the EXACT developed brain from a `save_developed_brain` bundle at `path`.
 
     Returns (agent, manifest). `agent` is a `BrainConversationalAgent` (or a `MultiTurnAgent` wrapper if
     `use_multiturn`), built over the saved vocab with the saved grounded codes, with every saved fact re-stored.
 
+    BRAIN-LOAD SPEEDUP (default-ON for the load path -- both options): the per-fact RF resonate is SKIPPED when
+    kb_composites.npz is present (option 1 -- the persisted composite is set directly into composer.kb), and the
+    comprehension parser's ~75K-step Hebbian training is DEFERRED (option 2 -- `defer_parser=True`: the parser builds
+    lazily on the FIRST runtime teach, so a pure Q&A session never pays it). Both are byte-identical to the
+    re-resonate + eager-train path for any Q&A. A loaded brain that then TEACHES a new fact pays the one-time parser
+    training on the first teach (identical to a never-deferred agent). Pass `defer_parser=False` to force the eager
+    parser (e.g. if you want the parser warm immediately).
+
     Args:
-        path: the developed-brain directory (must contain brain.json + grounded_codes.npz + facts.json).
+        path: the developed-brain directory (must contain brain.json + grounded_codes.npz + facts.json; optionally
+            kb_composites.npz from option 1).
         seed: override the saved seed (defaults to the manifest's seed -- keep it to reproduce ungrounded codes).
         use_multiturn: wrap in MultiTurnAgent (the persistent discourse-WM loop, for anaphora + multi-hop).
         enable_neural_render: the brain's own spiking serial-order renderer (slow; default OFF).
         referent_nouns: the WM-loop referent set for MultiTurnAgent (defaults to the saved vocab minus actions).
         composer_kind: override the manifest's composer_kind.
         grounded_codes_override: optional {word: phases} to override the saved codes (rare; e.g. a re-developed run).
+        defer_parser: defer the comprehension-parser training to the first runtime teach (default True for the load
+            path -- a loaded brain Q&As without ever needing the parser).
     """
     manifest = _read_manifest(path)
     if manifest is None:
@@ -258,6 +356,7 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
     if grounded_codes_override:
         codes.update({w: np.asarray(v, dtype=float) for w, v in grounded_codes_override.items()})
     facts = _load_facts_json(path)
+    composites = _load_kb_composites(path)   # (option 1) {fact_index -> comp[D]} -> skip the per-fact resonate
     # the vocab must cover every grounded code + every fact word (so the composer can encode them)
     vocab_set = set(vocab) | set(codes.keys())
     for f in facts:
@@ -284,13 +383,14 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                grounded_codes=codes if codes else None, seed=seed,
                                wm_n=wm_n, wm_pattern_size=wm_pattern_size,
                                enable_neural_render=enable_neural_render, composer_kind=composer_kind,
-                               enable_biased_competition=False)
+                               enable_biased_competition=False, defer_parser=defer_parser)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts,
                                          grounded_codes=codes if codes else None,
                                          composer_kind=composer_kind,
-                                         enable_neural_render=enable_neural_render)
-    _restore_facts(agent, facts)
+                                         enable_neural_render=enable_neural_render,
+                                         defer_parser=defer_parser)
+    _restore_facts(agent, facts, composites=composites)
     return agent, manifest
 
 

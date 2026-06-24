@@ -48,16 +48,20 @@ class MultiTurnAgent:
                  wm_n=600, wm_pattern_size=40, enable_neural_render=True, spec_threshold=1.5,
                  composer_kind="rf", enable_biased_competition=True,
                  biased_competition_bias_pA=2500.0, biased_competition_spec_threshold=1.3,
-                 biased_competition_window=20):
+                 biased_competition_window=20, defer_parser=False):
         self.seed = int(seed)
         # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
         # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
         # enable_learned_assoc gated on the onebrain production path (cheat-D): elaborate spreads over the substrate-
         # learned Hebbian assoc graph, not the host co-occurrence dict. rf (default/test/CPU) keeps the host dict (the
         # Hebbian graph is underpowered at toy scale); the onebrain conversation closes the shortcut.
+        # defer_parser (BRAIN-LOAD SPEEDUP, default OFF = byte-identical): pass-through to the inner agent so a LOADED
+        # brain skips the ~75K-step Hebbian parser training (the parser is built lazily on the first runtime teach;
+        # a pure Q&A session never pays it). load_developed_brain passes True.
         self.agent = BrainConversationalAgent(seed=seed, concepts=concepts, grounded_codes=grounded_codes,
                                               enable_neural_render=enable_neural_render, composer_kind=composer_kind,
-                                              enable_learned_assoc=(composer_kind == "onebrain"))
+                                              enable_learned_assoc=(composer_kind == "onebrain"),
+                                              defer_parser=defer_parser)
         self.referents = list(referent_concepts)
         self.wm = SpikingLoopContextBuffer(self.referents, n=wm_n, pattern_size=wm_pattern_size,
                                            seed=seed, enable_ou=False)

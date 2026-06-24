@@ -177,7 +177,8 @@ class BrainConversationalAgent:
                  enable_learned_assoc=None, enable_neural_render=True, enable_rf_cudagraph=False,
                  enable_attributed=True, enable_multiframe=True, integrated_loop=False,
                  enable_multicue_competition=False, multicue_verbs=None,
-                 enable_case_competition=False, case_verbs=None, case_lexicon=None):
+                 enable_case_competition=False, case_verbs=None, case_lexicon=None,
+                 defer_parser=False):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -203,6 +204,17 @@ class BrainConversationalAgent:
         (over-abstention, the SAFE direction, moat 0-FA -- the de-risk `_burndown_1A_c2_smallvocab_derisk.json`), so
         the host first-match _scan stays the byte-identical oracle here; the PRODUCTION demo (V=320 stream-learned
         codes, where it is GO 4/4) opts it ON explicitly. Pass the flags explicitly (True/False) to override the auto.
+
+        BRAIN-LOAD SPEEDUP (`defer_parser`, default OFF = byte-identical): when True, the comprehension parsers
+        (`BridgeParser` + the optional `AttributedBridgeParser`) are NOT built/trained in `__init__` -- they are
+        constructed LAZILY on the FIRST runtime `hear()` / `parse()` / `hear_attributed()` (the only places a parser is
+        used). A LOADED brain restores its facts via `composer.store()` directly (bypassing the parser entirely --
+        `developed_brain_io._restore_facts`), so a pure Q&A session NEVER pays the ~75K-step Hebbian parser training.
+        The lazy build trains EXACTLY as the eager one would, so a deferred agent's first teach is identical to a
+        never-deferred agent's. DEFAULT-OFF preserves the standalone build path byte-for-byte; `load_developed_brain`
+        passes True. On the onebrain path the composer carries its own on-bridge parser (`hasattr(composer, 'hear')`),
+        so the agent's separate parser is None regardless and `defer_parser` only affects the rf/rate/external paths.
+        See research/findings/2026-06-24-brain-load-speedup-scoping.md (option 2).
         """
         # resolve the onebrain-aware spiking defaults (None = auto: ON for onebrain production, OFF for rf/rate oracle).
         _is_onebrain = (composer is None) and (composer_kind == "onebrain")
@@ -265,7 +277,24 @@ class BrainConversationalAgent:
         # The agent's own comprehension parser -- built ONLY when the composer does not carry its own. The
         # OneBrainComposer carries an on-bridge parser (it has `hear`), so for it there is ONE parser on the one brain
         # and the agent's separate parser is skipped; the rf / rate / external paths build the agent parser as before.
-        self.parser = None if hasattr(self.composer, "hear") else BridgeParser(seed=seed)
+        #
+        # BRAIN-LOAD SPEEDUP (defer_parser): a parser is only USED on a runtime teach (hear/parse). With
+        # `defer_parser=True` (a LOADED brain) the BridgeParser is NOT built/trained here -- `_ensure_parser()` builds
+        # it lazily on the first hear()/parse() (the same trained parser the eager path would have). Default-OFF keeps
+        # the standalone path byte-identical (the parser is constructed + trained eagerly, as before). `_composer_has_hear`
+        # caches whether the composer carries its own parser (then the agent parser stays None regardless of the flag).
+        self._defer_parser = bool(defer_parser)
+        self._composer_has_hear = hasattr(self.composer, "hear")
+        # counts how many TIMES a parser was actually TRAINED (eager build, or a lazy build) -- 0 on a loaded Q&A-only
+        # session, proving the deferred parser never paid its ~75K-step training. (Diagnostic; read by the validators.)
+        self._parser_trained_count = 0
+        if self._composer_has_hear:
+            self.parser = None
+        elif self._defer_parser:
+            self.parser = None        # built lazily by _ensure_parser() on the first hear()/parse()
+        else:
+            self.parser = BridgeParser(seed=seed)
+            self._parser_trained_count += 1
         self._dlpfc = None              # dialogue-planning Control: built lazily, cached, rebuilt only when the graph changes
         self._dlpfc_key = None
         # (cheat-D conversion, opt-in) the dialogue-planning association graph LEARNED in the substrate (a sparse
@@ -294,9 +323,15 @@ class BrainConversationalAgent:
         # documented boundary, 2026-06-19-resonator-on-learned-codes-derisk.md).
         self.enable_attributed = bool(enable_attributed)
         self._attr_parser = None
-        if enable_attributed:
+        # BRAIN-LOAD SPEEDUP (defer_parser): the AttributedBridgeParser (~50K-step Hebbian training) is ALSO only used
+        # on a runtime hear_attributed(). With `defer_parser=True` it is built lazily by `_ensure_attr_parser()` on the
+        # first hear_attributed(); default-OFF it is constructed + trained eagerly here whenever enable_attributed
+        # (byte-identical to before -- the original built it for the rf/rate AND onebrain paths alike, so a default
+        # agent's `_attr_parser is not None` test is preserved).
+        if enable_attributed and not self._defer_parser:
             from research.runners.attributed_parser import AttributedBridgeParser
             self._attr_parser = AttributedBridgeParser(seed=seed)
+            self._parser_trained_count += 1
         # (richer-syntax #2, opt-in) multi-frame comprehension: a neural FrameParser (verb-position -> frame selection +
         # position x frame -> role) comprehends a sentence in an AUTO-SELECTED word-order frame (SVO/VSO/OSV).
         # `hear_multiframe(sentence, verbs)` routes through it; default OFF = byte-identical (the native BridgeParser /
@@ -341,6 +376,27 @@ class BrainConversationalAgent:
         if enable_case_competition and self._case_verbs is None:
             raise ValueError("enable_case_competition=True needs case_verbs=<known-verb set> "
                              "(the lexical front-end that finds the sentence's verb)")
+
+    def _ensure_parser(self):
+        """Lazily build + train the comprehension `BridgeParser` (BRAIN-LOAD SPEEDUP: deferred so a LOADED Q&A-only
+        brain never pays the ~75K-step training). Returns the trained parser. A no-op (returns the existing parser)
+        when one is already built -- so the FIRST hear()/parse() pays the one-time training, identical to a
+        never-deferred agent. On the onebrain path the composer carries the parser, so this is never reached (hear()
+        delegates to the composer); callers that need a parser without a composer hear() use this."""
+        if self.parser is None and not self._composer_has_hear:
+            self.parser = BridgeParser(seed=self.seed)   # trains in __init__ (defer_train default False) == the eager build
+            self._parser_trained_count += 1
+        return self.parser
+
+    def _ensure_attr_parser(self):
+        """Lazily build + train the `AttributedBridgeParser` (BRAIN-LOAD SPEEDUP: deferred so a loaded Q&A-only brain
+        never pays its ~50K-step training). The first hear_attributed() pays the one-time training; identical to the
+        eager build."""
+        if self._attr_parser is None:
+            from research.runners.attributed_parser import AttributedBridgeParser
+            self._attr_parser = AttributedBridgeParser(seed=self.seed)
+            self._parser_trained_count += 1
+        return self._attr_parser
 
     def _ensure_case_parser(self):
         """Lazily build + cache the CASE-aware spiking CaseAwareRoleParser (one bridge build, install-path
@@ -425,7 +481,7 @@ class BrainConversationalAgent:
         if hasattr(self.composer, "hear"):
             roles = self.composer.hear(sentence, voice, polarity=polarity)
         else:
-            roles = self.parser.parse(sentence.split(), voice)
+            roles = self._ensure_parser().parse(sentence.split(), voice)   # builds+trains the parser lazily if deferred
             self.composer.store(roles["agent"], roles["action"], roles["patient"], polarity=polarity)
         if self._learned_assoc is not None:                  # learn the concept co-occurrence in the substrate
             self._learned_assoc.store_fact([roles["agent"], roles["action"], roles["patient"]])
@@ -441,9 +497,9 @@ class BrainConversationalAgent:
         (parse-in-spikes) and store it -- the parsed (adjective(s), noun) is routed to the composer's ready
         attribute/attribute2 roles, so `what_does('dog','eat')` -> 'big red apple'. Requires enable_attributed=True.
         Returns the parsed {role: word}. (Richer-syntax #1; the production hear() auto-routing is a follow-on.)"""
-        assert self._attr_parser is not None, "hear_attributed needs BrainConversationalAgent(enable_attributed=True)"
+        assert self.enable_attributed, "hear_attributed needs BrainConversationalAgent(enable_attributed=True)"
         words = sentence.split() if isinstance(sentence, str) else list(sentence)
-        roles = self._attr_parser.parse(words, voice)
+        roles = self._ensure_attr_parser().parse(words, voice)   # builds+trains the attributed parser lazily if deferred
         adjs = [roles[r] for r in ("attribute", "attribute2") if r in roles]
         noun = roles.get("patient")
         patient = (adjs, noun) if adjs else noun
@@ -471,8 +527,11 @@ class BrainConversationalAgent:
         """Comprehend an SVO into {agent, action, patient}, using whichever parser the agent has: its OWN parser (the
         rf / rate / external paths) OR the composer's on-bridge parser (the OneBrainComposer carries the one parser on
         the one brain). A single comprehension entry point so callers (e.g. a correction turn) don't depend on which
-        composer is wired -- `self.parser` is None on the onebrain path."""
-        parser = self.parser if self.parser is not None else getattr(self.composer, "parser", None)
+        composer is wired -- `self.parser` is None on the onebrain path. (BRAIN-LOAD SPEEDUP: when the agent's own
+        parser was deferred, `_ensure_parser()` builds+trains it lazily on first use here.)"""
+        parser = None if self._composer_has_hear else self._ensure_parser()
+        if parser is None:
+            parser = getattr(self.composer, "parser", None)
         if parser is None:
             raise RuntimeError("BrainConversationalAgent has no parser (composer carries neither a parser nor hear)")
         return parser.parse(list(words), voice)
