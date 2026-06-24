@@ -4035,3 +4035,16 @@ Owner: "All three in the order you suggest or in parallel if possible." DISPATCH
 - #3 on-bridge-purity dense RF weights GO (`c7a8af86`): cfg.rf_dense_weights default-OFF sim/ edit (BYTE-REVIEWED: minimal/additive/guarded, 13 RF tests verbatim, dense==sparse bit-exact f64 4.6e-16, Izhikevich/HH/AdEx byte-unchanged).
 
 **EXACT NEXT CONCRETE ACTION:** #1 (the fully-spiking generative-replay sampler, 3E G2->G3, SWR-gated CA3 resampling; subagent `a410c979f1e4cc1b2`, CPU) is the LAST follow-on IN FLIGHT. ON ITS RETURN -> commit (both remotes) -> ALL 3 OPTIONAL FOLLOW-ONS DONE -> the burndown roadmap + all follow-ons COMPLETE -> report + await owner direction. If `git log` shows #1 already committed, the work is complete (await owner). NEVER weaken the moat (0-FA); honest-propagate to origin+gitea; GPU/CuPy real runs.
+
+---
+
+## CYCLE 519 (2026-06-24 — CLOSE-OUT COMPLETE; capstone+console build STARTED)
+
+**CLOSE-OUT (#4) COMPLETE — the project code is at ZERO-PENDING-DEFAULT-WORK.**
+- Follow-ons: #1 spiking generative sampler HONEST_NEGATIVE (`fe84aebe`, ~7% host quality, superposition limit, characterized boundary, moat intact); #2 consolidation GO (`975b8eb4`, the 2 GO routes wired onto MergedNavConvAgent as opt-in methods); #3 dense RF weights GO (`c7a8af86`, default-OFF sim/ edit byte-reviewed).
+- Close-out audit (`afb15687`): the burndown already flipped the bulk default-on; the only clean remaining flip = the 3G neural planner.
+- 3G neural-planner DEFAULT-ON on the --rich chat (`d9287763`): brain-based discourse-planning live, --no-neural-planner host escape, numpy-CPU keeps host, moat 0-FA, NO sim/. => every reasonably-default-on brain-based replacement is ON; the rest is correctly opt-in (situational/byte-identity/portability) or a characterized boundary (FHRR/dendritic) or a future-stub (LlamaCpp/MLX).
+
+**CAPSTONE+CONSOLE (1+2) — SCOPED (`5c9cd67f`) + BUILD STARTED.** Both substantially built (loop GPU-GO 1-seed; /api/brain-chat + Interact tab ship). 8 cheapest-first steps, NO sim/ on the critical path. Pairing seam = the developed-brain bundle (A1).
+
+**EXACT NEXT CONCRETE ACTION:** B1 (wire RICH multi-sentence answers into /api/brain-chat -- the owner's 'too thin' fix; subagent `a1ce9bf96c7372bf4`, webapp) IN FLIGHT. ON ITS RETURN -> commit (both remotes; restart the live webapp if needed) + dispatch A1 (save a developed-brain bundle at the loop finish -- the pairing seam). THEN B2 (/api/brains dropdown) -> A2 (scale the develop horizon 6-seed) -> B3 (chat activity viz) -> A3 (persist cp_connections). If git log shows B1 committed + A1 not started, dispatch A1. NEVER weaken the moat (0-FA); honest-propagate to origin+gitea; GPU/CuPy real runs; subagents tractable/foreground; restart the live webapp after webapp edits.
