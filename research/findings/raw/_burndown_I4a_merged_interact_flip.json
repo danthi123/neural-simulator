@@ -1,0 +1,86 @@
+{
+  "task": "BURNDOWN Phase-2B I-4-a — flip the merged nav+conv DEFAULT to INTERACT (close the co-located-not-interacting gap I-4)",
+  "date": "2026-06-24",
+  "scope": "research/runners/nav_conv_merged_bridge.py — MergedNavConvAgent.__init__ default flip (runner-level, NO sim/ edit)",
+  "go_bar": "I-4-a (scoping 2026-06-23-functional-one-brain-integration-scoping.md): conversational MOAT 8/8 (0-FA) + nav Δ=0 + the interaction ENGAGES (flag-on vs flag-off / lesion-confirmable delta)",
+  "verdict": "GO",
+  "summary": "ONE cross-region interaction lives ON MergedNavConvAgent (the deployed merged agent): the DA->composer read-side salience gate (enable_da_salience_gate, roadmap #6 / I-7-a). Its DA SOURCE (co_resident_nav_critic -> shared spiking SNc + `dopamine`) ALREADY defaults ON, so the prerequisite is met. FLIPPED default OFF->ON: the merged DEFAULT now INTERACTS (the limbic core reaches the conversational cortex). The other two GO interactions (language->action COMMAND_GATE; perception->memory/compose) live in SEPARATE behavioral-task runners (spoken_instruction_nav.py / navigate_to_compose_then_answer.py), NOT as flags on MergedNavConvAgent's conversational surface — so they are out of scope for an agent-default flip (kept as-is; characterized below).",
+  "interactions": [
+    {
+      "name": "DA -> composer read-side salience gate (enable_da_salience_gate)",
+      "roadmap": "#6 / scoping I-7-a",
+      "location": "MergedNavConvAgent flag (the deployed merged agent)",
+      "derisk": "2026-06-18-DA-composer-precision-derisk-GO.md (6/6 GO; _da_composer_precision_derisk.json verdict=GO, n_pass_ab 6/6, n_lesion_ok 6, da_loosened_moat_seeds [], da_high_nonzero_seeds [])",
+      "flipped": true,
+      "prev_default": false,
+      "new_default": true,
+      "da_source_default_on": true,
+      "da_source": "co_resident_nav_critic (resolves True by default) -> shared spiking SNc + `dopamine` modulator on the merged bridge",
+      "moat_safe_by_construction": true,
+      "moat_safe_reason": "a higher gate only TIGHTENS abstention (da_to_gate clamps at the g0 floor); the moat can only get STRICTER, never loosen",
+      "nav_neutral_by_construction": true,
+      "nav_neutral_reason": "the gate is a composer-read-side scalar that reads DA and NEVER writes any nav drive; the place/critic arrays are array-disjoint from the composer's complex cp_rf_w_* synapses; MergedNavConvAgent has no nav-episode method (conversational surface only) so the agent-level flag never enters the nav path",
+      "byte_identical_at_rest": true,
+      "engaged": true,
+      "moat_false_accepts": 0,
+      "evidence": {
+        "smoke (_burndown_I4a_smoke, GPU)": {
+          "co_resident_nav_critic_resolved": true,
+          "da_present": true,
+          "da_rest": 0.5,
+          "da_baseline": 0.5,
+          "g0": 0.06,
+          "g_eff_rest": 0.06,
+          "gate_is_noop_at_rest": true,
+          "reads_identical_off_vs_on_at_rest": true,
+          "moat_on_recall": true,
+          "moat_on_abstain": true,
+          "moat_on_FA": 0,
+          "g_eff_salient": 0.25,
+          "gate_engages_when_salient": true
+        },
+        "tests": {
+          "test_nav_conv_merged_agent (STEP-2a, default co_resident_composer=False)": "8/8 PASS with DA gate default-ON (incl. the 4 is-None/unknown moat assertions)",
+          "test_nav_conv_step2b_coresident (STEP-2b, co_resident_composer=True)": "7/7 PASS with DA gate default-ON (incl. the 3 is-None moat assertions)",
+          "combined": "15/15 conversational tests PASS, 0 false-accepts"
+        }
+      }
+    },
+    {
+      "name": "language -> action (COMMAND_GATE: parser action-role firing opens language_input->cortex_X route)",
+      "roadmap": "scoping (A) / I-5-b",
+      "location": "SEPARATE runner spoken_instruction_nav.py (its own bridge build; NOT a flag on MergedNavConvAgent)",
+      "derisk": "2026-06-10-spoken-instruction-nav-GO.md (6-seed GO, lesion+scramble+isolated controls)",
+      "flipped": false,
+      "kept_opt_in_reason": "NOT exposed as a flag on MergedNavConvAgent (which is a conversational-surface-only shim: hear/what_does/who_does/describe/elaborate, no navigate/command method). It is a standalone behavioral-task runner with its own bridge. Wiring the COMMAND_GATE route INTO MergedNavConvAgent as a default is a build/wire job (scoping I-5-a/b: port hear_synaptic / couple_gate_to_indices onto the merged agent), not an agent-default flip — out of scope for I-4-a (the default-flip item). Characterized as the next concrete consolidation step.",
+      "moat_false_accepts": null,
+      "engaged": null
+    },
+    {
+      "name": "perception -> memory / compose (engram-tag recall; live cortex_it -> grounded composer code)",
+      "roadmap": "scoping (B)/(B') / I-4-c / I-4-b",
+      "location": "SEPARATE runners navigate_to_see_then_answer.py / navigate_to_compose_then_answer.py (their own bridge builds via co_resident_perception/co_resident_rf builder kwargs; NOT flags on MergedNavConvAgent)",
+      "derisk": "2026-06-16-navigate-to-see-then-answer.md + 2026-06-16-navigate-to-compose-then-answer.md (both 6-seed GO)",
+      "flipped": false,
+      "kept_opt_in_reason": "Same as language->action: realized in standalone behavioral-task runners (the agent needs a body/episode loop these runners provide; MergedNavConvAgent has no episode method). (B') ALSO carries the documented HOST GROUNDING residual (I-4-resid / N-4: composer.concepts[o] = angle(M @ live_rate), a host round-trip + host-designed projection M) — scoping I-4-b's planned fix is to replace M with the LEARNED gen_perception->gen_concept spiking convergence (already de-risked + wired as co_resident_generalization). That is a wiring/consolidation job, not an agent-default flip.",
+      "moat_false_accepts": null,
+      "engaged": null
+    }
+  ],
+  "nav_delta": {
+    "value": 0,
+    "by_construction": true,
+    "reason": "the agent-level flip changes only MergedNavConvAgent.__init__'s enable_da_salience_gate default; the navigation byte-identity gate (nav_on_merged_smoke) builds the bridge via run_moving_goal_episode + finalize_conv_for_nav_gate DIRECTLY (not through MergedNavConvAgent), so the nav path is structurally unchanged",
+    "nav_on_merged_smoke (seed 42, grid 8, 400 steps)": {
+      "passed": true,
+      "A1_nav_conv_coreside": true,
+      "A2_parser_weights_frozen": true,
+      "A2_parser_gains_zero": true,
+      "A3_parser_parses_post_episode": true,
+      "sum_finalQ": 1.48,
+      "note": "the parser stays byte-frozen + gains==0 under the LIVE nav reward-STDP + dopamine stressor"
+    }
+  },
+  "sim_edit": "NONE (runner-level default flip only; one-line default change + docstring/comment update in research/runners/nav_conv_merged_bridge.py)",
+  "honest_scope": "I-4-a at the AGENT level = flip the ONE cross-region interaction that lives on the deployed MergedNavConvAgent (the DA->composer gate). The deployed merged agent now INTERACTS (limbic core -> conversational cortex), retiring I-4's literal 'zero cross-synapses' charge FOR THE DA INTERACTION. The other two GO interactions (language->action, perception->memory/compose) are realized in standalone behavioral-task runners (they need a body/episode loop the conversational-surface agent does not have); wiring them INTO the merged agent as defaults is the scoping's I-5-a/b + I-4-b/c CONSOLIDATION work (a build, not a flip) and is the characterized next step."
+}

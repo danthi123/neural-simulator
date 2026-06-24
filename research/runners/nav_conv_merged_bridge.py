@@ -1302,7 +1302,7 @@ class MergedNavConvAgent:
                  co_resident_nav_critic=None, nav_critic_spiking_sc=False,
                  nav_critic_place_selforg=None, nav_critic_grid_frontend=None,
                  co_resident_td_cueshift=False,
-                 enable_da_salience_gate=False, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25):
+                 enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
         merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory codebook
         share one word set.
@@ -1320,15 +1320,31 @@ class MergedNavConvAgent:
         cue-role CONFIDENCE GATE (`g_eff = clip(g0, g_cap, g0 + k*(DA - DA_baseline))`, the de-risk's `da_to_gate`),
         and ABSTAINS on a noise-dominated cue read (`min(margin(agent), margin(action)) < g_eff`). A higher gate =>
         STRICTER abstention, so this can ONLY TIGHTEN the no-confab moat, never loosen it (moat-safe by
-        construction). Default False = byte-identical (the read path is unchanged); DA at/below baseline => g_eff =
-        g0 => the gate floor => also a no-op (only a SALIENT/high-DA turn raises the gate). NO `sim/` edit
-        (composer-runner-layer read of a spike-derived scalar; the gate reuses the composer's own cleanup primitives
-        + `OneBrainComposer._margin`). `da_gate_g0`/`da_gate_k`/`da_gate_cap` = the de-risk's validated 0.06/2.0/0.25
-        (the inverted-U ceiling). The hook is meaningful only when a `dopamine` modulator is present on the merged
-        bridge (a limbic/critic/TD slice is co-resident); without one DA reads as baseline => g_eff = g0 => no-op."""
+        construction).
+
+        PRODUCTION DEFAULT = ON (2026-06-24, burndown I-4-a — the merged DEFAULT now INTERACTS, closing the
+        co-located-not-interacting gap I-4 / functional one-brain scoping I-7-a). The DA SOURCE is already
+        default-ON (`co_resident_nav_critic` resolves True by default => the shared spiking SNc + `dopamine`
+        modulator on the merged bridge), so the limbic core now reaches the conversational cortex by default
+        (the read-side salience gate). MOAT-SAFE + NAV-NEUTRAL by construction: (i) a higher gate only TIGHTENS
+        abstention (never loosens — the 6/6-GO `da_to_gate` clamps at the `g0` floor, so the moat can only get
+        STRICTER); (ii) the gate is a composer-read-side scalar that reads DA and NEVER writes any nav drive, and
+        the place/critic arrays are array-disjoint from the composer's complex `cp_rf_w_*` synapses, so the
+        navigation score is unaffected. BYTE-IDENTICAL AT REST: with no salient/nav-driven turn the SNc is tonic
+        => DA == baseline => `g_eff = g0` => the gate floor => the read path is unchanged (verified on the merged
+        bridge: DA-at-rest 0.5 == baseline, `g_eff_rest == g0`, conversational reads identical OFF vs ON, moat
+        0-FA); the interaction ENGAGES (g_eff rises above g0) only on a SALIENT/high-DA turn. Set False for the
+        legacy byte-identical-everywhere read path (the revertible escape). NO `sim/` edit (composer-runner-layer
+        read of a spike-derived scalar; the gate reuses the composer's own cleanup primitives + `OneBrainComposer._margin`).
+        `da_gate_g0`/`da_gate_k`/`da_gate_cap` = the de-risk's validated 0.06/2.0/0.25 (the inverted-U ceiling).
+        The hook is meaningful only when a `dopamine` modulator is present on the merged bridge (a limbic/critic/TD
+        slice is co-resident — the production default); without one DA reads as baseline => g_eff = g0 => no-op."""
         self.seed = int(seed)
         self.co_resident_composer = bool(co_resident_composer)
-        # --- DA salience-gate (roadmap #6) state (default-off = byte-identical read path) ---
+        # --- DA salience-gate (roadmap #6 / burndown I-4-a) state. PRODUCTION DEFAULT = ON (the merged DEFAULT now
+        # INTERACTS: the shared spiking-SNc dopamine reaches the conversational composer's read-side precision gate).
+        # Byte-identical at rest (DA == baseline => g_eff = g0 floor => no-op); moat-safe + nav-neutral by
+        # construction (see the __init__ docstring). False = the legacy byte-identical-everywhere read path. ---
         self.enable_da_salience_gate = bool(enable_da_salience_gate)
         self._da_gate_g0 = float(da_gate_g0)
         self._da_gate_k = float(da_gate_k)
