@@ -4470,3 +4470,13 @@ Step 1 calibration (`_curriculum_step1_gpu_calib.json`, GPU): an 8000-window QUI
 **PURITY: #1 Route-B CLOSED-on-agent; #3+#5+Option-A CLOSED; #7 characterized read-boundary; #8 forward-on-substrate (B-relabel done, A-compose-polish dispatched) + weights-deep-boundary[D]; #6 rich-answer (LAST purity BUILD) -- NOW UNBLOCKED.**
 
 **EXACT NEXT CONCRETE ACTION:** committed Route-B (narrow). Dispatched #8-A (GPU, compose the all-spiking-forward block, quick polish). NEXT (commit landed): dispatch #6 (CPU, wire the GO spiking 3G dlPFC planner onto --rich) + on #8-A landing launch the Step-1 re-run (overnight curriculum training, controller-managed GPU). GPU queue: #8-A -> Step-1-rerun -> Step 2 (4-bridge hard gate) -> 24/7. NEVER weaken the moat; honest-propagate origin+gitea.
+
+---
+
+## CYCLE 569 (2026-06-25 — purity #6 ALREADY-WIRED + re-validated; backlog line STALE. Purity nearly to ZERO -> only #4 spiking-sequencer open)
+
+#6 (`_rich_answer_3G_planner_wirein*.json`, CPU validate, NO code edit): **CLOSED (already-wired + re-validated).** The GO spiking 3G dlPFC planner (`rich_answer_composer.py::NeuralDiscoursePlanner` wrapping `content_selection_spiking.py::SpikingSpreadingController`) IS on the --rich path + committed (15fdc85d + d9287763 --rich default-on-GPU); the backlog #6 line was STALE. Re-validate (numpy seed 42): neural path builds a real SimulationBridge (dlpfc_wm 3720n/345,831syn), sentence-counts 4/4 quality-parity, LESION 2->0 (load-bearing), on-topic, MOAT 0-FA both untaught (per-sentence VERIFY still gates), host --smoke GO (VERIFY-DROP confirmed), test_content_selection 19/19. git diff empty; sim/ NONE.
+
+**PURITY -> NEARLY ZERO:** #1/#3/#5/#6/Option-A CLOSED; #7 characterized read-boundary; #8 forward-closeable (#8-A running)+weights-deep-D; **#4 cue-match->spiking-sequencer = the LAST open closure** (GO@320 reverted@small-vocab); #2 console = (1)-frontier; #9 = curriculum-adjacent.
+
+**EXACT NEXT CONCRETE ACTION:** committed #6 + the backlog status. Dispatched the #4 research-gate scoping (read-only: why the spiking sequencer reverts at small vocab + rank the fix; moat stays 0-FA). #8-A (GPU, generator forward-compose) running -> on landing launch the Step-1 re-run (overnight curriculum training). GPU queue: #8-A -> Step-1-rerun -> Step 2 (4-bridge hard gate) -> 24/7. NEVER weaken the moat; honest-propagate origin+gitea.

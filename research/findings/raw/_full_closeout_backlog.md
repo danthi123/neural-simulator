@@ -46,3 +46,19 @@ gate + the no-confab moat.
   guarantee to close.
 - The off-bridge spiking Qwen fluency faculty: owner-sanctioned (fluency-only, lesion-confirmed). Bridge
   co-residence DEMONSTRATED (~14 GB, local); wiring it into the live console is build #2's drop-in.
+
+---
+
+## STATUS (2026-06-25 overnight close-out — purity backlog nearly to ZERO)
+- **#1 Route-B-on-onebrain — CLOSED on the agent** (6-seed GO + Option-1 agent wire-in; deployed MergedNavConvAgent perceives+composes via spikes-only grounding on the onebrain composer; last cross-region host-M closed; CYCLE 565/568).
+- **#3 b2 generative sampler → spiking — CLOSED** (spiking soft-WTA sampler default-on).
+- **#5 between-op hand-offs → one persistent spiking loop — CLOSED** (Closure 2: persistent_loop default-on; FLAT+clause register->register, no host round-trip).
+- **#6 rich-answer → neural dlPFC planner on --rich — CLOSED (ALREADY-WIRED)**: the GO spiking 3G planner is on --rich, default-on-GPU, committed 15fdc85d+d9287763; the line below was STALE. Re-validated CYCLE 569 (neural-path GO, lesion 2->0, moat 0-FA, 19/19 content-selection tests).
+- **Option A (onebrain merged-default) — CLOSED** (gate-3A functional-neutrality; onebrain default, rf=oracle).
+- **#7 read-out normalization on-bridge — CHARACTERIZED READ-BOUNDARY** (subtractive arithmetic EXACT, the point-neuron f-I READ loses ~half; same wall divisive hit; numpy scaffold stays; Option C = future; sim/ reverted; CYCLE 566).
+- **#8 generator → on-substrate — SPLIT**: FORWARD on-substrate (matvec on bridge + spiking nonlinearities; B-relabel done; #8-A compose-polish RUNNING); WEIGHTS = a named H-2-class DEEP boundary [D] (backprop-distilled, owner-deferred); CYCLE 567.
+- **#4 cue-match scan → spiking sequencer DEFAULT — OPEN (the LAST closure)**: largest live conversational host residual; GO@320 reverted@small-vocab; research-gate scoping dispatched.
+- **#2 communicable-turn → console — the FRONTIER (priority 1)**: Stage A+B done; the discursive turn + console = the foreground after purity.
+- **#9 develop-loop A2/A3 — curriculum-adjacent** (folds into the curriculum-training work, priority 1).
+
+⇒ Purity (cognitive-shortcut closures) nearly ZERO: only #4 (spiking sequencer) the last open closure + #8-A polish running. Then (1) curriculum + the communicable-turn richness.

@@ -1,0 +1,93 @@
+{
+  "task": "BUILD (purity #6, the LAST purity build): wire the GO spiking 3G dlPFC dialogue-planner onto the --rich rich-answer-assembly path -- replace the host discourse heuristics. Reuse-by-import, NO sim/ edit.",
+  "backend": "numpy (CPU foreground validation; the neural path still builds a real SimulationBridge per topic on CPU). GPU agent #8-A on the generator left untouched.",
+  "seed": 42,
+  "VERDICT": "ALREADY-WIRED-AND-VALIDATED (the build was completed + committed by two prior commits BEFORE the close-out backlog #6 line was written). The task premise ('the GO spiking 3G planner exists but isn't wired onto the --rich path -- host discourse heuristics today') is STALE. Re-validated GO on CPU this session: the --rich NEURAL discourse-planner is reachable + default-correct, quality-parity with host, lesion-load-bearing, on-topic, moat 0-FA; the host-path --smoke is byte-preserved + GO; content-selection suite 19/19. NO new code needed; NO sim/ edit.",
+  "GO": true,
+
+  "FINDING_what_was_found": {
+    "the_3G_planner": {
+      "class": "research/runners/rich_answer_composer.py :: NeuralDiscoursePlanner (lines 74-134)",
+      "mechanism": "wraps research/runners/content_selection_spiking.py :: SpikingSpreadingController. The agent's association graph is embodied as inter-assembly synapses (cortex_A -> dlpfc_B at weight ~ graph[A][B]) on a real SimulationBridge; driving a TOPIC concept SPREADS activation, and each related assembly's FIRST-SPIKE LATENCY encodes graph distance (direct associates fire earliest; unrelated never fire = 'clean by construction'). One spreading probe (relevance_by_latency) -> on-topic concepts in neural-relevance order, off-topic filtering for free.",
+      "API": "NeuralDiscoursePlanner(composer, seed).ordered_associates(topic, avoid=()) -> [concept, ...] sorted by first-spike latency (earliest=most relevant); empty list = the neural STOP (reachable+unsaid neighbourhood exhausted). Built lazily + cached on the graph key (rebuilt only when the assoc graph changes), exactly like the agent's own elaborate.",
+      "underlying_GO": "burndown 3G GO (research/findings/raw/_burndown_3G_neural_discourse_planner.json, inventory C-6): host quality 3-seed (42/43/44), lesion-load-bearing, on-topic, moat 0-FA, GPU(cupy) confirmed. Commit 15fdc85d."
+    },
+    "the_rich_path": {
+      "module": "research/runners/rich_answer_composer.py :: RichAnswerComposer -- the --rich rich-answer assembly (substantive multi-sentence GROUNDED reply per turn: GATHER (a) direct gate-recall + (b) composer.query_chain multi-hop + (c) elaboration, then RENDER each gathered SVO + per-sentence VERIFY-DROP).",
+      "the_exact_host_heuristics_the_3G_planner_replaces": [
+        "_elaboration_facts: the host two-source interleave + _facts_mentioning relevance fill -> _elaboration_facts_neural (the dlPFC spreading-activation latency rank: which on-topic concept next, in what order).",
+        "_gather_more (the 'tell me more' follow-up): the host 4-tier priority ranking + 2-hop BFS breadth search -> _gather_more_neural (the dlPFC latency rank + neural STOP = probe-exhaustion).",
+        "the STOP decision: the host max_sentences cap AS the cognitive stop -> the spreading probe exhausting (no reached, unsaid concepts); max_sentences stays only as a hard safety ceiling.",
+        "the relevance/ordering argmax fallback (_elaborate_one host edge-weight argmax) -> the spiking latency rank."
+      ],
+      "legitimate_host_kept_unchanged": [
+        "the DIRECT recall gate (chat.gate) -- already neural (spiking recall + abstain = the moat entry).",
+        "the role-chase chain hop (composer.query_patient) -- already neural (spiking RF unbind), a DIFFERENT op from spreading activation; the directed reasoning continuation.",
+        "concept -> stored-SVO KB lookup (_facts_for_concept) -- legitimate host (the controller picks CONCEPTS, not facts).",
+        "render_paragraph + _render_one_verified + chat._verify -- the per-sentence CONSTRAIN+VERIFY (the no-confab moat extension)."
+      ]
+    }
+  },
+
+  "WIRE_IN_already_committed": {
+    "summary": "The wire-in onto the --rich path was completed + committed in TWO prior commits; the close-out backlog #6 line was written before they landed.",
+    "files_and_lines": [
+      "research/runners/rich_answer_composer.py:147-167 -- RichAnswerComposer.__init__ gains neural_planner (default False) + planner_seed; constructs NeuralDiscoursePlanner when on.",
+      "research/runners/rich_answer_composer.py:235-251 -- _elaboration_facts_neural (the neural elaboration gather).",
+      "research/runners/rich_answer_composer.py:266-267 -- _elaboration_facts dispatches to the neural path when neural_planner.",
+      "research/runners/rich_answer_composer.py:347-380 -- _gather_more_neural (the neural follow-up gather + thread-forward).",
+      "research/runners/rich_answer_composer.py:393-394 -- _gather_more dispatches to the neural path when neural_planner.",
+      "research/runners/brain_chat_tui.py:669-675 -- the --rich + --no-neural-planner CLI flags.",
+      "research/runners/brain_chat_tui.py:705-732 -- the --rich runtime: DEFAULTS neural_planner ON on the GPU backend (line 721: neural_planner = (not a.no_neural_planner) and _on_gpu), --no-neural-planner is the host escape, numpy-CPU keeps the HOST default (the per-topic SimulationBridge is heavy on CPU)."
+    ],
+    "commits": [
+      "15fdc85d -- burndown 3G GO: NeuralDiscoursePlanner added to rich_answer_composer.py (opt-in, default-off, byte-preserved).",
+      "d9287763 -- close-out flip GO: brain_chat_tui --rich DEFAULTS the spiking dlPFC discourse-planner ON; --no-neural-planner host escape; numpy-CPU keeps host default (GPU neural)."
+    ],
+    "default_preserving": "neural_planner defaults False on the RichAnswerComposer constructor -> _planner None -> the host gather/order/stop path is byte-identical to the pre-3G composer. The --rich runtime defaults neural-ON only on the GPU backend; --no-neural-planner forces host on any backend.",
+    "no_sim_edit": true
+  },
+
+  "VALIDATION_this_session_CPU": {
+    "1_closeout_validator_neural_path": {
+      "runner": "research/runners/_closeout_3G_planner_default_validate.py (SIM_BACKEND=numpy, seed 42)",
+      "out": "research/findings/raw/_rich_answer_3G_planner_wirein_cpuvalidate.json",
+      "GO": true,
+      "neural_built_a_real_bridge": "dlpfc_wm, 3720 neurons, 345831 synapses (the SpikingSpreadingController spread activation on a live SimulationBridge -- on-substrate, not a host stub).",
+      "neural_min_sentences": 4,
+      "neural_substantive": true,
+      "quality_parity_host_vs_neural": [
+        {"q": "what are you", "host": 4, "neural": 4},
+        {"q": "how do you learn", "host": 4, "neural": 4},
+        {"q": "how do you remember things", "host": 4, "neural": 4},
+        {"q": "tell me more", "host": 4, "neural": 4}
+      ],
+      "quality_parity": true,
+      "host_escape_ok": true,
+      "lesion_collapses": "elaboration 2 -> 0 facts under dlPFC lesion (the neural selection is LOAD-BEARING)",
+      "on_topic": true,
+      "foregrounds_direct_associates": true,
+      "moat_held_neural": true,
+      "moat_breaches": [],
+      "note_quality_parity_not_output_identity": "the neural latency rank surfaces a different-but-equally-valid order than the host argmax on 2 of 8 lines (e.g. 'how do you remember things' neural ends 'The brain speaks answers' vs host 'The answers comes memory'; both brain-sourced + on-topic). Sentence COUNTS are identical; this is the documented dt/latency tie-break nuance, not a regression.",
+      "elapsed_s": 94.4
+    },
+    "2_host_path_smoke_byte_preserved": {
+      "runner": "research/runners/rich_answer_composer.py --smoke --stub-renderer (SIM_BACKEND=numpy)",
+      "out": "research/findings/raw/_rich_answer_3G_hostsmoke.json",
+      "GO": true,
+      "covers": "the default-off HOST gather/order/stop path (byte-identical to pre-3G). Substantive 4-sentence grounded answers, follow-up elaborates (4 new grounded sentences, none repeating), moat abstains on both untaught/general cues ('dragon', 'capital of france'), AND the adversarial VERIFY-DROP: a confabulating faculty's WRONG sentence is DROPPED (truthful sentences survive) -> the moat EXTENDS to multi-sentence."
+    },
+    "3_underlying_controller_suite": {
+      "suite": "tests/test_content_selection.py (the SpikingSpreadingController the planner reuses)",
+      "result": "19/19 passed",
+      "note": "no dedicated tests/test_rich_answer_composer.py exists; the rich-answer validation lives in the runner's own --smoke + --neural-derisk self-tests (both GO) + this content_selection suite."
+    }
+  },
+
+  "MOAT_intact": "YES on both paths. Neural path: moat abstains on all untaught/general cues (dragon, capital-of-france), 0 false-accepts; the planner only decides WHICH grounded facts to bring up, the per-sentence VERIFY still gates every sentence. Host path: same abstention + the adversarial VERIFY-DROP confirms a confabulated sentence is dropped from a multi-sentence reply. The no-confab moat was NOT weakened.",
+
+  "git_diff_stat_this_task": "EMPTY for the three relevant files (research/runners/rich_answer_composer.py, brain_chat_tui.py, content_selection_spiking.py all CLEAN vs HEAD -- the wire-in is already committed). NO sim/ edit (git diff --stat -- sim/ empty). Only new files written this session are the two validation JSONs under research/findings/raw/.",
+
+  "HONEST_verdict": "WIRED + VALIDATED. The purity #6 build is already complete: the GO spiking 3G dlPFC discourse-planner is wired onto the --rich path (default-ON on GPU, host escape via --no-neural-planner, host default on numpy-CPU for portability), reuse-by-import, NO sim/ edit. It replaces the host elaboration/follow-up/relevance/ordering/breadth/stop heuristics with the dlPFC spreading-activation latency rank, at host quality, lesion-load-bearing, on-topic, moat 0-FA. Re-validated GO this session on CPU. Nothing further to wire; this closes close-out backlog #6 (the line was stale -- written before commits 15fdc85d + d9287763 landed)."
+}
