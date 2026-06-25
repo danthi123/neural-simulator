@@ -5,14 +5,14 @@
   "consolidation_wire_in": "MergedNavConvAgent(co_resident_composer=True, co_resident_composer_kind='onebrain', enable_da_encoding_gain=True) -> CoResidentOneBrainComposer on the merged rf slice; encoding_gain_fn = _da_encoding_gain (reads get_concentration('dopamine'))",
   "seed": 42,
   "result": {
-    "backend": "numpy",
+    "backend": "cupy",
     "da_source": {
       "recipe": "co_resident_limbic: limbic_snc (IZH2007_DOPAMINE) + `dopamine` from_region_firing_signed over [limbic_snc] on the MERGED bridge; DA read via get_concentration('dopamine')",
       "da_baseline": 0.5,
       "da_tonic": 0.5,
       "rate_tonic_hz": 0.0,
-      "da_high": 0.7090572361897893,
-      "rate_high_hz": 291.44444444444446,
+      "da_high": 0.711466023744263,
+      "rate_high_hz": 294.6666666666667,
       "snc_tonic_pa": 80.0,
       "snc_salient_pa": 600.0,
       "n_settle": 300
@@ -20,14 +20,14 @@
     "gains": {
       "k_da": 2.0,
       "g_tonic": 1.0,
-      "g_high": 1.4181144723795787,
-      "g_ratio_high_over_tonic": 1.4181144723795787
+      "g_high": 1.422932047488526,
+      "g_ratio_high_over_tonic": 1.422932047488526
     },
     "mechanism_store_magnitude": {
       "neutral_block_mean_mag": 1.0,
-      "rewarded_block_mean_mag": 1.4181144723795784,
-      "stored_ratio(rewarded/neutral)": 1.4181144723795784,
-      "expected_ratio(g_high/g_tonic)": 1.4181144723795787,
+      "rewarded_block_mean_mag": 1.4229320474885263,
+      "stored_ratio(rewarded/neutral)": 1.4229320474885263,
+      "expected_ratio(g_high/g_tonic)": 1.422932047488526,
       "ratio_matches_gain": true,
       "lesion_ratio(DA_pinned->should_be_1)": 1.0,
       "lesion_ratio_is_unity": true
