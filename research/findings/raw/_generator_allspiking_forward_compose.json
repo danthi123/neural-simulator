@@ -1,0 +1,171 @@
+{
+  "probe": "generator_allspiking_forward_compose",
+  "resolves": "does the generator's all-spiking-forward block hold END-TO-END -- every learned-weight matvec on the RF complex-synapse accumulator + ALL THREE parameter-free nonlinearities (LayerNorm, GELU, softmax) routed through their shipped spiking circuits SIMULTANEOUSLY, one block forward on the live bridge -- and preserve output fidelity (>= 0.90 spearman) vs the exact-float Gen-F teacher? (the #8 scoping's cheap COMPOSE milestone -- M10 ran the matvec-on-RF with HOST nonlinearities; M11 validated the spiking nonlinearities SEPARATELY; they were NEVER composed into one full-block forward.)",
+  "scoping": "research/findings/raw/_generator_onsubstrate_scoping.md (Option A / the FORWARD's actual gap: compose the already-GO pieces into one block).",
+  "composes": {
+    "M10_matvec_on_rf": "_genseq_loopstep3_fullblock_rf.json (every learned matvec exact-on-RF, spearman 1.000 vs the exact-float teacher; HOST nonlinearities)",
+    "M11_layernorm": "2026-06-23-spiking-layernorm-GO.md (LayerNorm via shipped mean-adapt + divisive circuits, GO 0.962)",
+    "M11_gelu": "2026-06-23-spiking-gelu-GO.md (GELU via the calibrated graded read, GO 0.991)",
+    "M11_softmax": "2026-06-23-spiking-softmax-GO.md (softmax via graded-exp read + shipped divisive sum-norm, GO 0.9998)"
+  },
+  "regime_note": "the RF matvec stays in the DELIBERATE exact-linear-accumulator regime (lambda=0, omega~0 -> Re(Z)/nsteps = a@W exactly). The scoping is explicit that making the matvec 'more dynamically spiking' (oscillatory phasor / first-passage spikes) REINTRODUCES the rate-code wall the linear escape was designed to avoid -- it is a fidelity regression, not a purity gain. So NO added dynamics; the linear accumulator IS the legitimate spiking-substrate op (the shipped FHRR complex-synapse matvec).",
+  "scope_ceded": "the FORWARD only. The 786,432 host-backprop-distilled WEIGHTS remain the SEPARATE deep residual (Option D = host-DESIGNED structure, same class as the FHRR bind-structure / H-2 / the C2 host-orchestrated fine-tune), explicitly NOT closed here; closing it = on-substrate/developmental learning of a generative transformer (months-scale, owner-deferred deep frontier).",
+  "genf_checkpoint": "research/findings/raw/g11_bg/generator_f_gate.ckpt.s42.real.pt",
+  "genf_meta": {
+    "d_model": 256,
+    "n_head": 4,
+    "loss_last": 1.4711004495620728,
+    "block_size": 128,
+    "n_tokens_probe": 90,
+    "probe_positions": [
+      1,
+      14,
+      26,
+      39,
+      51,
+      64,
+      76,
+      89
+    ],
+    "ln1_affine_l2": [
+      14.539785423996229,
+      0.6202636815533034
+    ],
+    "ln2_affine_l2": [
+      16.093630949414013,
+      0.19639445917797718
+    ],
+    "attn_bias_l2": {
+      "q": 2.43301930734041,
+      "k": 0.02570397106980008,
+      "v": 0.23859611088511895,
+      "o": 0.12533904699372198
+    },
+    "mlp_bias_l2": {
+      "fc1": 1.188697047591685,
+      "fc2": 0.2951657579864426
+    },
+    "decoded_probe_head": "Once upon a time there was a little girl named Lily. She had a small dog and a big cat. One"
+  },
+  "rf_period": 100000,
+  "rf_nsteps": 8,
+  "rf_lambda": 0.0,
+  "ln_sigma": 0.001,
+  "ln_gain": 1.0,
+  "n_probe_positions": 8,
+  "n_seq_positions": 90,
+  "d_model": 256,
+  "d_hid": 1024,
+  "go_bar": 0.9,
+  "learned_matvec_params": 786432,
+  "oom_safety": {
+    "max_rf_bridge_neurons": 1280,
+    "max_block_nnz": 262144,
+    "n_rf_bridges": 3,
+    "n_spiking_pools": 5,
+    "est_gb": 0.03804,
+    "oom_ceiling_gb": 16.0
+  },
+  "gelu_fit_quality": {
+    "fit_max_err_grid": 0.005514558867817697,
+    "fit_rmse_grid": 0.0014869512278938286,
+    "fit_max_err_h1range": 0.005514558867817697,
+    "fit_rmse_h1range": 0.0018558391031832987
+  },
+  "exp_fit_quality": {
+    "fit_max_err_grid": 0.004930994735918182,
+    "fit_rmse_grid": 0.0009065398035268601,
+    "fit_max_err_logitrange": 0.002702225995600438,
+    "fit_rmse_logitrange": 0.000799896433916756
+  },
+  "sanity_all_host_ceiling_vs_teacher": {
+    "spearman": 0.9999999999999998,
+    "cosine": 0.999999999999998,
+    "rf_exact_max_err": 4.918190521507881e-07,
+    "note": "RF matvecs + ALL-HOST nonlinearities == the exact-float teacher == the M10 all-host ceiling (~1.000); confirms the harness wiring + IS the ceiling for the compounding gap"
+  },
+  "composed_allspiking_fidelity_vs_teacher": {
+    "spearman": 0.9454117432478826,
+    "cosine": 0.9521089212178655,
+    "per_position_spearman": [
+      0.9562,
+      0.9468,
+      0.9851,
+      0.9653,
+      0.9865,
+      0.9355,
+      0.9026,
+      0.8852
+    ],
+    "per_position_cosine": [
+      0.9643,
+      0.9509,
+      0.9844,
+      0.9756,
+      0.9895,
+      0.9392,
+      0.9193,
+      0.8937
+    ],
+    "rf_exact_max_err_over_all": 6.111479819992383e-07,
+    "onbridge_subop_exactness": {
+      "ln1_centre_readback_max_err": 1.1410520728283302e-06,
+      "ln1_scale_readback_max_err": 0.0011475077786077814,
+      "ln2_centre_readback_max_err": 1.1624667348719697e-06,
+      "ln2_scale_readback_max_err": 0.0011426730004620023,
+      "softmax_weight_max_err_vs_exact": 0.14023823632515597,
+      "softmax_divnorm_readback_max_err": 0.0010368007995637842,
+      "gelu_transfer_max_err_vs_exact": 1.0483971655241886
+    }
+  },
+  "compounding_analysis": {
+    "all_host_ceiling_spearman": 0.9999999999999998,
+    "composed_noise_free_spearman": 0.9627751094357975,
+    "composed_pool_noisy_spearman": 0.9454117432478826,
+    "compounded_approx_gap": 0.037224890564202306,
+    "pool_noise_cost": 0.017363366187914897,
+    "single_op_M11_references": {
+      "layernorm": 0.962,
+      "gelu": 0.991,
+      "softmax": 0.9998
+    },
+    "worst_single_op": 0.962,
+    "interpretation": "the per-op deterministic approximations (LayerNorm L1-vs-RMS divisor +0.037 the dominant one; GELU/softmax rectified-basis fits ~0) COMPOUND across the 3 ops in one forward. compounded_approx_gap = (all-host ceiling) - (composed noise-free). If the composed >= 0.90 with this gap, the errors do NOT compound below the bar -> the forward holds. If it drops below 0.90, the dominant compounding op (most likely the LayerNorm L1-vs-RMS gap feeding the softmax temperature) is the characterized cost (the honest PARTIAL the scoping predicted)."
+  },
+  "anti_cheat_specificity": {
+    "matched_mean_spearman": 0.9454117432478826,
+    "mismatched_mean_spearman": 0.1537066650590197,
+    "specificity_margin": 0.7917050781888628,
+    "margin_ok": true
+  },
+  "anti_cheat_shuffled_target": {
+    "method": "score the composed output for position p vs a position-DERANGED teacher (permuted target rows) -> must be below the matched fidelity.",
+    "permutation": [
+      7,
+      5,
+      6,
+      1,
+      2,
+      0,
+      3,
+      4
+    ],
+    "shuffled_fidelity_vs_real_teacher": 0.10122677171549552,
+    "below_real": true
+  },
+  "anti_cheat_lesion": {
+    "method": "scramble (row-permute) the RF complex weights of EVERY learned matvec (Q/K/V/O + W1/W2); the LN/softmax/GELU spiking circuits UNCHANGED. The block fidelity MUST collapse to the RESIDUAL FLOOR -> proves the RF matvecs carry the sublayer corrections, NOT the spiking nonlinearity circuits.",
+    "lesioned_fidelity_spearman": 0.6626741674296176,
+    "lesioned_fidelity_cosine": 0.694181842109486,
+    "collapses": true,
+    "real_minus_lesioned": 0.282737575818265,
+    "residual_floor_spearman": 0.6554914597161821,
+    "residual_floor_cosine": 0.685446296644729,
+    "sublayer_correction_fraction_of_output_norm": 0.9512519110961386,
+    "lesion_lands_at_residual_floor": true,
+    "real_above_residual_floor": true
+  },
+  "no_sim_edit": true,
+  "verdict_line": "allspiking_compose: GEN-F(s42.real, loss=1.471) FULL block-0 -- the COMPOSED all-spiking-forward (EVERY learned matvec on the RF complex-synapse accumulator, exact-linear regime lam=0 period=100000, max|Re(Z)/nsteps-h@W|=6.1e-07 == 786432 params; + LN1/LN2 via the SHIPPED mean-adapt+divisive-norm circuits + softmax via the graded-exp read + shipped divisive sum-norm + GELU via the calibrated graded read, ALL THREE M11 nonlinearities composed SIMULTANEOUSLY on live GPU bridges), on REAL token activations -> composed-forward fidelity_vs_exact-float-teacher spearman=0.9454 cosine=0.9521 (>= 0.90 bar) | specificity_margin=0.792 | shuffled-target=0.1012 (<real) | LESION(scrambled-RF-weights)=0.6627 ~ residual-floor=0.6555 << real (RF matvecs carry the 95%-of-norm sublayer corrections) | per-op attribution: all-host ceiling=1.0000, single-op M11 {LN 0.962, GELU 0.991, softmax 0.9998} (worst 0.962), compounded-approx gap=+0.0372 pool-noise cost=+0.0174 -> GO. ==> the 'fully-spiking-FORWARD generator block on the bridge' claim HOLDS without the M10 host-nonlinearity caveat (the three M11 ops COMPOSE; errors do NOT compound below the bar). SCOPE: the FORWARD only -- the host-distilled WEIGHTS remain the SEPARATE deferred host-structure residual (Option D, NOT closed here). NO sim/ edit.",
+  "verdict": "GO"
+}
