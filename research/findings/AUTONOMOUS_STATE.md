@@ -4634,3 +4634,11 @@ C0 (`_curriculum_gen_C0_substrate_vs_scale.json`, CPU/numpy, +244 harness, NO si
 C2 (bekbbru82, hi-fi read-out-fidelity n_per 32/n_hub 500/300K) CRASHED ~1min in: `cudaErrorAlreadyMapped: resource already mapped` (GPU contention). Root cause: the pre-launch GPU check used `Get-Process|Measure-Object|Count` which returned 0 SPURIOUSLY; the actual cmd-line check shows PID 38056 = the content-vocab gen-confirm STILL running its frozen-control phase (no VERDICT yet). C2 started (config+curriculum loaded) then contention-crashed. Minimal waste. LESSON: verify GPU-free via `Get-CimInstance ... CommandLine` (not Measure-Object count) before launching.
 
 **EXACT NEXT CONCRETE ACTION:** committed the hiccup note. AWAIT bxrhjw13y TRUE completion (notification + cmd-line GPU-free confirm) -> relaunch C2 (decisive 'dial-able' test: does bridge gen recover toward numpy-320 +0.215?). C2 cmd: `--seeds 42 --n-concepts 320 --vocab-filter content --gen-reference coherent --n-per 32 --n-hub 500 --max-windows 300000 --no-frozen`. recall 1.000 + moat 0-FA STAND. Also queued: re-calibrate the gen readiness-bar (Pearson-based per C0). NEVER weaken the moat; honest origin+gitea.
+
+---
+
+## CYCLE 589 (2026-06-25 — owner flagged VRAM [C2 ~20.9/24GB]; chose LET C2 FINISH; committed to cap the CuPy pool [~50-60%] for the 24/7 training on the gaming GPU)
+
+Owner saw ~all VRAM in use (C2 hi-fi ~20.9/24GB, GPU 97% util -- C2 the only research python [PID 28584], the rest the owner's apps; Windows [N/A] per-proc). C2's hi-fi (n_per 32/n_hub 500/300K, ~4x the base 5GB) sized too aggressively for the gaming GPU. Owner chose **(let C2 finish ~3-4hr)** over pausing. COMMITTED fix: cap the CuPy mempool fraction (~50-60% vs the 0.8 default) for curriculum/24/7 runs -> gaming headroom + no lock-out -- AFTER C2 (don't touch C2's runner mid-run).
+
+**EXACT NEXT CONCRETE ACTION:** owner chose let-C2-finish. AWAIT C2 (batfptbjc, ~3-4hr) -> the decisive dial-able verdict (bridge gen recover toward numpy-320 +0.215 with hi-fi read-out?). THEN: (1) re-calibrate the gen readiness-bar (Pearson-based per C0); (2) add --mempool-fraction cap to the curriculum runner (VRAM-polite 24/7); (3) Step-2 multi-bridge. recall 1.000 + moat 0-FA STAND. NEVER weaken the moat; honest-propagate origin+gitea.
