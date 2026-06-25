@@ -1,0 +1,15 @@
+{
+  "probe": "optionA_rng_vs_fp_probe",
+  "check_step": 50,
+  "results": {
+    "A_unmodified": {
+      "max_abs_dv_at_step50": 0.0010213851928710938,
+      "identical": false
+    },
+    "B_reseed_each_step": {
+      "max_abs_dv_at_step50": 0.0007200241088867188,
+      "identical": false
+    }
+  },
+  "verdict": "RESIDUAL = a DETERMINISTIC N-dependent FP reduction/matvec in the episode-loop readout/render (GPU non-associativity): re-seeding the global RNG does NOT help -> NOT fixable by any runner-side RNG/state reset. Closing it needs an N-independent reduction (a sim/ edit). The episode-start-state reset (recommendation a) cannot achieve byte-identity here. DO NOT FLIP; report the boundary."
+}

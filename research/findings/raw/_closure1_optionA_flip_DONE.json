@@ -1,0 +1,77 @@
+{
+  "task": "Close Option A -- flip the merged composer default rf->onebrain, UNBLOCKED by a runner-side nav v/u reset",
+  "date": "2026-06-25",
+  "outcome": "STILL-BLOCKED-WITH-RESIDUAL -- the byte-identical gate (Delta=0) is NOT achievable via the prescribed runner-side episode-start-state reset; the residual is GPU floating-point NON-ASSOCIATIVITY in the episode-LOOP readout/render compute (a deterministic, N-dependent FP reduction), which would need an N-independent reduction = a sim/ edit (OUT OF SCOPE). NOT FLIPPED.",
+  "flip_done": false,
+  "sim_edit_made": false,
+  "sim_edit_flagged_needed": true,
+
+  "what_the_analysis_prescribed": "research/findings/raw/_optionA_flip_rng_decoupling_analysis.md recommendation (a): reset the NAV-slice cp_membrane_potential_v -> cp_izh_vr and cp_recovery_variable_u -> 0 at the end of finalize_conv_for_nav_gate, on the theory that the ONLY N-dependent coupler is the nav v/u start-state left by the OU-on parser train, and that the nav fixed params are N-independent (prefix-matched, analysis section 1.1).",
+
+  "what_was_implemented_then_reverted": {
+    "file": "research/runners/nav_conv_merged_bridge.py",
+    "function": "finalize_conv_for_nav_gate (end, before return)",
+    "change": "the recommendation-(a) v/u reset, EXTENDED (driven by precise root-cause probes) to ALSO zero the nav-slice per-neuron synaptic conductances (g_e/g_i + the slow NMDA/GABA_B/coincidence/plateau ones) AND re-derive the nav-slice firing thresholds from an N-independent seed-seeded RNG. This made the episode-START state BYTE-IDENTICAL across N (validated). It was REVERTED because it does NOT achieve the Delta=0 gate (the residual is in the episode-LOOP per-step compute, not the start state) and it altered the merged nav trajectory; the tree is restored to baseline for controller review.",
+    "post_revert_git_diff_for_this_file": "0 (reverted to baseline)"
+  },
+
+  "root_cause_investigation": {
+    "step_1_vu_reset_only": {
+      "gate3_fast_seed42": {"onebrain": 4.615385, "rf": 3.307692, "delta": 1.307692},
+      "verdict": "Delta != 0 -- v/u reset alone INSUFFICIENT",
+      "probe": "research/findings/raw/_optionA_residual_probe.json",
+      "residual_found": "cp_conductance_g_e (max|d| 9.9e-5), cp_conductance_g_i (max|d| 6.8e-3) differ across N after a v/u-only reset (the OU-on parser train builds up fast synaptic conductances on the nav recurrent edges, N-dependently)"
+    },
+    "step_2_plus_conductance_reset": {
+      "gate3_fast_seed42": {"onebrain": 3.000000, "rf": 3.538462, "delta": -0.538462},
+      "verdict": "Delta != 0 (smaller) -- conductance reset helped (more phases matched) but a residual remained",
+      "probe": "research/findings/raw/_optionA_residual_probe_fullstack.json",
+      "residual_found": "cp_neuron_firing_thresholds (max|d| 1.46e-3) -- a FIXED parameter that the analysis section 1.1 claimed was prefix-matched/N-independent, but in the FULL 68-region build the per-region homeostasis-threshold re-init + per-region neuron-type param draws DESYNC the global cuRAND stream so the nav-slice threshold prefix is NOT identical across N. Everything else (v/u, all conductances, external input, global cupy RNG state) was byte-identical."
+    },
+    "step_3_plus_threshold_rederivation": {
+      "fullstack_probe": "research/findings/raw/_optionA_residual_probe_fullstack.json (re-run): residual_couplers = [] -- EVERY per-neuron array (incl. thresholds) + the global cupy RNG state are BYTE-IDENTICAL across N at episode start",
+      "gate3_fast_seed42": {"onebrain": 4.153846, "rf": 3.000000, "delta": 1.153846},
+      "verdict": "Delta != 0 STILL -- so the residual is NOT the episode-start state (now proven byte-identical)"
+    },
+    "step_4_bare_step_vs_episode_loop": {
+      "onestep_probe": "research/findings/raw/_optionA_onestep_probe.json: from the byte-identical reset start, ONE and FIVE bare bridge._run_one_simulation_step() calls leave the nav-slice v BYTE-IDENTICAL across N (max|dv| 0.0) -> the bare per-step bridge dynamics (incl. the full-CSR synaptic matvec) are N-INDEPENDENT",
+      "bracket_probe": "research/findings/raw/_optionA_bracket_probe.json: the FULL episode LOOP (run_moving_goal_episode) diverges by step 10 (max|dv| 1.0e-5, growing chaotically: step30 1.4e-4, step50 1.05e-3, step100 2.9e-2) -> the divergence is introduced by episode-LOOP-only compute (readout/render/reward/STDP between bridge steps), NOT the bare step and NOT the start state"
+    },
+    "step_5_rng_vs_fp_distinguishing": {
+      "probe": "research/findings/raw/_optionA_rng_vs_fp_probe.json",
+      "A_unmodified_max_abs_dv_step50": 1.021e-3,
+      "B_global_rng_reseeded_each_step_max_abs_dv_step50": 7.2e-4,
+      "verdict": "Forcing an N-INDEPENDENT global cupy RNG re-seed before EVERY bridge step does NOT make the arms byte-identical -> the residual is NOT a per-step global-RNG draw. It is a DETERMINISTIC N-dependent FP reduction/matvec in the episode-loop readout/render -> GPU floating-point NON-ASSOCIATIVITY (the reduction tiles differently for the different total-N bridge), amplified chaotically by the spiking-WTA decision dynamics over 200 steps."
+    }
+  },
+
+  "precise_residual": "GPU floating-point non-associativity in the episode-LOOP readout/render compute: a deterministic reduction/matvec over the full-N bridge produces ~1e-5 (FP32 round-off scale) differences in the SAME nav-slice neurons when the total N differs (onebrain rf=24051 -> N=31579 vs rf rf=896 -> N=8424), which the chaotic spiking-WTA action-selection amplifies into a divergent-but-equally-valid nav trajectory. CUBLAS_WORKSPACE_CONFIG=:4096:8 enforces cuBLAS determinism for the SAME problem but NOT across different matrix sizes (and cuSPARSE/reduction ordering is size-dependent).",
+
+  "why_not_fixable_runner_side": "The episode-start-state reset (recommendation a) is necessary + validated (it makes the start state byte-identical) but INSUFFICIENT: the residual is in the per-step episode-loop COMPUTE, not any state the runner can reset. Re-seeding the global RNG does not help (it is not an RNG draw). Closing it would require forcing N-independent reductions/matvec in the readout/render path -- a protected sim/ edit. Per the task constraint (NO sim/ edit; flag + STOP if one is required), this is FLAGGED, not done.",
+
+  "functional_neutrality_evidence_for_the_controller": "The Delta is NOT a composer/synaptic effect -- it is purely the rf-region SIZE -> total N -> GPU FP non-associativity. Independent evidence the co-resident composer is FUNCTIONALLY nav-neutral: (1) Probe-1 (research/findings/raw/_consolidation_probe1_byteident.json, re-confirmed GO this session): a co-resident OneBrainComposer OP leaves the co-resident Izhikevich (nav-stub) slice's v/u BYTE-identical (atol exact) -- a composer op cannot leak into nav; (2) the rf slice has ZERO cp_connections out-edges into the nav cascade (the Task-1 anti-cheat) and is never stepped during a nav episode; (3) the documented STANDALONE nav benchmark (--readout-source motor, the CLI default) never builds the conversational rf region at all, so it is totally unaffected by the merged composer kind. This is exactly the analysis's recommendation (b) ('flip with a documented N-noise caveat') argument -- now with the residual root-caused to GPU FP non-associativity rather than a fixable state coupler. The controller may elect (b) (flip on the functional-neutrality argument, documenting that the merged nav SCORE is non-byte-reproducible across composer kinds at the FP-noise level) -- but that is the controller's call; this task's literal gate (Delta=0) is not met, so per instruction NOT flipped.",
+
+  "gate3_runs": "all via research/runners/_closure1_optionA_gate3_fast.py (the validated fast null-gate driver, compressed schedule + warmup; Delta=0 is schedule-invariant for a true null). PART 1 GREEN every run: onebrain_constructs=true, onebrain composer is CoResidentOneBrainComposer (persistent_loop on), nav_regions_identical=true, rf sizes 24051 (onebrain) vs 896 (rf). seeds 42,43,44 launched; the seed-42 Delta != 0 was conclusive each iteration so later seeds were not needed to establish the boundary (byte-identity is a true-null gate; one non-zero seed refutes it).",
+
+  "gate3A_functional_neutrality": "NOT separately executed -- subsumed by Probe-1's stronger op-isolation result (a composer op leaves the co-resident nav slice byte-identical, atol exact) + the gate-3 finding that the Delta is purely the rf-SIZE -> N -> FP-noise, not a composer functional effect. A dedicated 3A (composer OFF vs ON at fixed N) would be byte-identical by the Probe-1 guarantee; it does not change the verdict (the blocker is the cross-N FP non-associativity, which 3A does not exercise since it holds N fixed).",
+
+  "probe1_byteidentity_recheck": "GO (re-run this session, CPU/numpy): matrix 30/30 match, abstain 8/8, max|dmem| 0.00e+00, byte_identical=True, moat_preserved=True, nav_slice_byte_identical=True. The reverted finalize_conv_for_nav_gate does not touch the composer; Probe-1 is invariant and still GO.",
+
+  "moat_status": "NEVER weakened. No flip; the conversational no-confab moat path is byte-unchanged from baseline. Probe-1's abstention (8/8 is-None/unknown) is intact.",
+
+  "diagnostic_artifacts_created": [
+    "research/runners/_optionA_residual_probe.py (minimal-build residual probe -> g_e/g_i)",
+    "research/runners/_optionA_residual_probe_fullstack.py (full 68-region build residual probe -> firing thresholds; then clean)",
+    "research/runners/_optionA_onestep_probe.py (bare 1/5-step byte-identity -> rules out GPU non-assoc in the bare step)",
+    "research/runners/_optionA_bracket_probe.py (brackets divergence onset to the episode loop, step ~10)",
+    "research/runners/_optionA_rng_vs_fp_probe.py (RNG-draw vs FP-reduction -> deterministic FP reduction, sim/-only)",
+    "research/runners/_closure1_optionA_gate3A.py (same-N functional-neutrality probe, written but not needed given Probe-1)",
+    "research/findings/raw/_optionA_residual_probe.json",
+    "research/findings/raw/_optionA_residual_probe_fullstack.json",
+    "research/findings/raw/_optionA_onestep_probe.json",
+    "research/findings/raw/_optionA_bracket_probe.json",
+    "research/findings/raw/_optionA_rng_vs_fp_probe.json"
+  ],
+
+  "recommendation_to_controller": "The literal byte-identical gate (a) is unreachable on the GPU without a sim/ edit to force N-independent reductions in the episode-loop readout/render. THREE options: (1) ACCEPT recommendation (b) -- flip rf->onebrain on the functional-neutrality argument (composer is provably nav-inert: Probe-1 op-isolation + 0 out-edges + the standalone benchmark unaffected), documenting that the MERGED nav score is non-byte-reproducible across composer kinds at the ~1e-5 FP-noise level (NOT a regression, just GPU non-associativity from the different N); (2) a scoped sim/ edit to make the offending episode-loop reduction N-independent (then recommendation (a)'s state reset + this would give true Delta=0) -- byte-review required; (3) keep onebrain opt-in (status quo). The task's HARD constraint (Delta=0 + NO sim/ edit) is met by NONE, so per instruction the flip is HELD and reported honestly. The episode-start-state reset is a validated, reusable building block if option (2) is later pursued."
+}

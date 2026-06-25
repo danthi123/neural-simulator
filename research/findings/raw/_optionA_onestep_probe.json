@@ -1,0 +1,18 @@
+{
+  "probe": "optionA_onestep_probe",
+  "results": {
+    "1_steps": {
+      "nav_start_v_byte_identical": true,
+      "max_abs_start_dv": 0.0,
+      "nav_v_byte_identical_after": true,
+      "max_abs_after_dv": 0.0
+    },
+    "5_steps": {
+      "nav_start_v_byte_identical": true,
+      "max_abs_start_dv": 0.0,
+      "nav_v_byte_identical_after": true,
+      "max_abs_after_dv": 0.0
+    }
+  },
+  "verdict": "byte-identical after 1 step -- the divergence accumulates later; re-investigate slower state"
+}
