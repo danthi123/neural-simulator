@@ -4642,3 +4642,11 @@ C2 (bekbbru82, hi-fi read-out-fidelity n_per 32/n_hub 500/300K) CRASHED ~1min in
 Owner saw ~all VRAM in use (C2 hi-fi ~20.9/24GB, GPU 97% util -- C2 the only research python [PID 28584], the rest the owner's apps; Windows [N/A] per-proc). C2's hi-fi (n_per 32/n_hub 500/300K, ~4x the base 5GB) sized too aggressively for the gaming GPU. Owner chose **(let C2 finish ~3-4hr)** over pausing. COMMITTED fix: cap the CuPy mempool fraction (~50-60% vs the 0.8 default) for curriculum/24/7 runs -> gaming headroom + no lock-out -- AFTER C2 (don't touch C2's runner mid-run).
 
 **EXACT NEXT CONCRETE ACTION:** owner chose let-C2-finish. AWAIT C2 (batfptbjc, ~3-4hr) -> the decisive dial-able verdict (bridge gen recover toward numpy-320 +0.215 with hi-fi read-out?). THEN: (1) re-calibrate the gen readiness-bar (Pearson-based per C0); (2) add --mempool-fraction cap to the curriculum runner (VRAM-polite 24/7); (3) Step-2 multi-bridge. recall 1.000 + moat 0-FA STAND. NEVER weaken the moat; honest-propagate origin+gitea.
+
+---
+
+## CYCLE 590 (2026-06-25 — owner: NO VRAM cap; pause-on-demand for gaming. CYCLE-589 VRAM-cap commitment WITHDRAWN. C2 continues [let-finish].)
+
+Owner: 'No need to cap VRAM use, when I want to game I'll just ask you to pause any in-flight runs.' ⇒ full VRAM use is FINE (maximize runs); the gaming lever is on-demand PAUSE, NOT a standing cap. The CYCLE-589 VRAM-cap-for-24/7 commitment WITHDRAWN. Memory saved (feedback_pause_on_demand_not_vram_cap). Pause-on-demand readiness: a de-risk = kill the process (re-runnable, bounded loss); the 24/7 develop-loop = the bridges/PAUSE sentinel (clean exit-42 + crash-safe resume). C2 continues (owner chose let-finish).
+
+**EXACT NEXT CONCRETE ACTION:** owner withdrew the VRAM cap (do NOT add it). AWAIT C2 (batfptbjc, ~3-4hr) -> the dial-able verdict (bridge gen recover toward numpy-320 +0.215?). THEN: re-calibrate the gen readiness-bar (Pearson per C0) + Step-2 multi-bridge (NO VRAM cap). If owner asks to pause (game) -> pause cleanly + resume. recall 1.000 + moat 0-FA STAND. NEVER weaken the moat; honest-propagate origin+gitea.
