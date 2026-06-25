@@ -4304,3 +4304,11 @@ learned-talkativeness de-risk (`_learned_talkativeness_derisk.py`, 961 lines, Op
 ⇒ the communicable-brain MECHANISM STACK is de-risked GO: the brain GENERATES (b2 spiking sampler #3) + DECIDES-to-speak (value/salience appraisal) + LEARNS-talkativeness (this). NEXT = INTEGRATION (backlog #2).
 
 **EXACT NEXT CONCRETE ACTION:** committed the learned-talkativeness GO. backlog #2 communicable-brain console-integration SCOPING dispatched (read-only: wire the 3 mechanisms + the spiking-Qwen fluency into the production agent/console; the gate->VERIFY moat HARD on known-facts, speak-while-flagging on novel). The flip-completion (`a15de189`, Option A byte-identical) lands -> commit (closes Option A). NEVER weaken the moat; honest-propagate origin+gitea.
+
+---
+
+## CYCLE 550 (2026-06-25 — communicable-brain console-integration SCOPED; the 3 mechanisms already co-resident -> Stage A de-risk started)
+
+Console-integration scoping (`_communicable_brain_console_integration_scoping.md`): all 4 inputs verified GO; the 3 mechanisms (GENERATE/DECIDE/LEARN) ALREADY run on the SAME brain object (import chain over the b2 proposer + RFPhasorComposer + BrainConversationalAgent) -> fusion is a ROUTING SHELL, not new mechanism. TURN ARCH: `CommunicableTurn` router classifies {question/opinion/phatic/teaching} -> 3 channels (KNOWN-FACT hard-gated-certain / NOVEL generative-flagged-hypothesis / PHATIC) + learned talkativeness shapes threshold + updates from elaborate/stop. SAFETY (by construction): moat HARD on known-fact, speak-while-flag on novel, LLM fluency-only lesion-provable. STAGED: A (CPU unified turn) -> B (agent wire-in default-OFF) -> C (GPU spiking-Qwen) -> D (console surface). 7 owner-steer forks (presented; mostly stages C/D, NOT blocking A).
+
+**EXACT NEXT CONCRETE ACTION:** Stage A (`_communicable_turn_stageA_derisk.py`, CPU) STARTED with the scoping's proposed defaults (no UX-fork commitment): fuse the 3 mechanisms on one harness; gate = each component GO-in-composition + 0 moat leaks + feedback raises next-turn talkativeness + DA-lesion abolishes it (anti-cheats: shuffled-graph, free-gen lesion, non-circularity, decorrelated-credit). The flip-completion (`a15de189`, Option A) lands -> commit (closes Option A). Owner steers stages C/D + the forks. NEVER weaken the moat; honest-propagate origin+gitea.
