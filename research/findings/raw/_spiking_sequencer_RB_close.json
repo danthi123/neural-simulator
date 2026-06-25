@@ -1,0 +1,495 @@
+{
+  "config": {
+    "D": 128,
+    "match_thresh": 0.06,
+    "v_ref": 320,
+    "base_coeff": 0.00034375,
+    "prod_gain": 0.11,
+    "readout": "neural",
+    "seeds": [
+      42
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "scales": [
+        {
+          "scale": "V15_agent",
+          "V": 15,
+          "fixed_gain": 0.11,
+          "vaware_gain": 0.005156249999999999,
+          "fixed": {
+            "margins": {
+              "dog,go": {
+                "target_block": 0,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "cat,come": {
+                "target_block": 1,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "bird,look": {
+                "target_block": 2,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "river,stop": {
+                "target_block": 3,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              }
+            },
+            "present_ok": 0,
+            "present_tot": 4,
+            "both_roles_lit": 0,
+            "K": 4,
+            "false_accept": 0,
+            "moat_0fa": true,
+            "win_rate_nonzero_all": false,
+            "host_present": {
+              "dog,go": 0,
+              "cat,come": 1,
+              "bird,look": 2,
+              "river,stop": 3
+            },
+            "host_absent_all_none": true
+          },
+          "vaware": {
+            "margins": {
+              "dog,go": {
+                "target_block": 0,
+                "win_rate": 0.206,
+                "worst_off_rate": 0.0
+              },
+              "cat,come": {
+                "target_block": 1,
+                "win_rate": 0.25,
+                "worst_off_rate": 0.0
+              },
+              "bird,look": {
+                "target_block": 2,
+                "win_rate": 0.276,
+                "worst_off_rate": 0.0
+              },
+              "river,stop": {
+                "target_block": 3,
+                "win_rate": 0.225,
+                "worst_off_rate": 0.0
+              }
+            },
+            "present_ok": 4,
+            "present_tot": 4,
+            "both_roles_lit": 4,
+            "K": 4,
+            "false_accept": 0,
+            "moat_0fa": true,
+            "win_rate_nonzero_all": true,
+            "host_present": {
+              "dog,go": 0,
+              "cat,come": 1,
+              "bird,look": 2,
+              "river,stop": 3
+            },
+            "host_absent_all_none": true
+          },
+          "agent_level": {
+            "present_eq_host": 4,
+            "present_tot": 4,
+            "present_correct": 4,
+            "agent_false_accept": 0,
+            "agent_eq_host": true,
+            "agent_moat_0fa": true,
+            "mismatches": []
+          }
+        },
+        {
+          "scale": "V23_child",
+          "V": 23,
+          "fixed_gain": 0.11,
+          "vaware_gain": 0.00790625,
+          "fixed": {
+            "margins": {
+              "dog,eat": {
+                "target_block": 0,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "cat,play": {
+                "target_block": 1,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "bird,sleep": {
+                "target_block": 2,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "girl,run": {
+                "target_block": 3,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "boy,look": {
+                "target_block": 4,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "lion,eat": {
+                "target_block": 5,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "rabbit,jump": {
+                "target_block": 6,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "mouse,walk": {
+                "target_block": 7,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              }
+            },
+            "present_ok": 0,
+            "present_tot": 8,
+            "both_roles_lit": 0,
+            "K": 8,
+            "false_accept": 0,
+            "moat_0fa": true,
+            "win_rate_nonzero_all": false,
+            "host_present": {
+              "dog,eat": 0,
+              "cat,play": 1,
+              "bird,sleep": 2,
+              "girl,run": 3,
+              "boy,look": 4,
+              "lion,eat": 5,
+              "rabbit,jump": 6,
+              "mouse,walk": 7
+            },
+            "host_absent_all_none": true
+          },
+          "vaware": {
+            "margins": {
+              "dog,eat": {
+                "target_block": 0,
+                "win_rate": 0.274,
+                "worst_off_rate": 0.247
+              },
+              "cat,play": {
+                "target_block": 1,
+                "win_rate": 0.229,
+                "worst_off_rate": 0.251
+              },
+              "bird,sleep": {
+                "target_block": 2,
+                "win_rate": 0.246,
+                "worst_off_rate": 0.224
+              },
+              "girl,run": {
+                "target_block": 3,
+                "win_rate": 0.216,
+                "worst_off_rate": 0.253
+              },
+              "boy,look": {
+                "target_block": 4,
+                "win_rate": 0.218,
+                "worst_off_rate": 0.244
+              },
+              "lion,eat": {
+                "target_block": 5,
+                "win_rate": 0.23,
+                "worst_off_rate": 0.236
+              },
+              "rabbit,jump": {
+                "target_block": 6,
+                "win_rate": 0.227,
+                "worst_off_rate": 0.234
+              },
+              "mouse,walk": {
+                "target_block": 7,
+                "win_rate": 0.195,
+                "worst_off_rate": 0.248
+              }
+            },
+            "present_ok": 2,
+            "present_tot": 8,
+            "both_roles_lit": 8,
+            "K": 8,
+            "false_accept": 5,
+            "moat_0fa": false,
+            "win_rate_nonzero_all": true,
+            "host_present": {
+              "dog,eat": 0,
+              "cat,play": 1,
+              "bird,sleep": 2,
+              "girl,run": 3,
+              "boy,look": 4,
+              "lion,eat": 5,
+              "rabbit,jump": 6,
+              "mouse,walk": 7
+            },
+            "host_absent_all_none": true
+          },
+          "agent_level": {
+            "present_eq_host": 2,
+            "present_tot": 8,
+            "present_correct": 2,
+            "agent_false_accept": 8,
+            "agent_eq_host": false,
+            "agent_moat_0fa": false,
+            "mismatches": [
+              {
+                "cue": "cat,play",
+                "spk": [
+                  "apple",
+                  "cat",
+                  "unknown"
+                ],
+                "host": [
+                  "ball",
+                  "cat",
+                  "yes"
+                ]
+              },
+              {
+                "cue": "girl,run",
+                "spk": [
+                  "apple",
+                  "girl",
+                  "unknown"
+                ],
+                "host": [
+                  "park",
+                  "girl",
+                  "yes"
+                ]
+              },
+              {
+                "cue": "boy,look",
+                "spk": [
+                  "apple",
+                  "boy",
+                  "unknown"
+                ],
+                "host": [
+                  "book",
+                  "boy",
+                  "yes"
+                ]
+              },
+              {
+                "cue": "lion,eat",
+                "spk": [
+                  "ball",
+                  "lion",
+                  "unknown"
+                ],
+                "host": [
+                  "cake",
+                  "lion",
+                  "yes"
+                ]
+              },
+              {
+                "cue": "rabbit,jump",
+                "spk": [
+                  "park",
+                  "rabbit",
+                  "unknown"
+                ],
+                "host": [
+                  "garden",
+                  "rabbit",
+                  "yes"
+                ]
+              },
+              {
+                "cue": "mouse,walk",
+                "spk": [
+                  "ball",
+                  "mouse",
+                  "unknown"
+                ],
+                "host": [
+                  "house",
+                  "mouse",
+                  "yes"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "scale": "V320_prod",
+          "V": 320,
+          "fixed_gain": 0.11,
+          "vaware_gain": 0.10999999999999999,
+          "fixed": {
+            "margins": {
+              "dog,eat": {
+                "target_block": 0,
+                "win_rate": 0.274,
+                "worst_off_rate": 0.0
+              },
+              "cat,play": {
+                "target_block": 1,
+                "win_rate": 0.229,
+                "worst_off_rate": 0.0
+              },
+              "bird,sleep": {
+                "target_block": 2,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "girl,run": {
+                "target_block": 3,
+                "win_rate": 0.216,
+                "worst_off_rate": 0.0
+              },
+              "boy,look": {
+                "target_block": 4,
+                "win_rate": 0.218,
+                "worst_off_rate": 0.0
+              },
+              "lion,eat": {
+                "target_block": 5,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "rabbit,jump": {
+                "target_block": 6,
+                "win_rate": 0.227,
+                "worst_off_rate": 0.0
+              },
+              "mouse,walk": {
+                "target_block": 7,
+                "win_rate": 0.195,
+                "worst_off_rate": 0.0
+              }
+            },
+            "present_ok": 6,
+            "present_tot": 8,
+            "both_roles_lit": 6,
+            "K": 8,
+            "false_accept": 0,
+            "moat_0fa": true,
+            "win_rate_nonzero_all": false,
+            "host_present": {
+              "dog,eat": 0,
+              "cat,play": 1,
+              "bird,sleep": 2,
+              "girl,run": 3,
+              "boy,look": 4,
+              "lion,eat": 5,
+              "rabbit,jump": 6,
+              "mouse,walk": 7
+            },
+            "host_absent_all_none": true
+          },
+          "vaware": {
+            "margins": {
+              "dog,eat": {
+                "target_block": 0,
+                "win_rate": 0.274,
+                "worst_off_rate": 0.0
+              },
+              "cat,play": {
+                "target_block": 1,
+                "win_rate": 0.229,
+                "worst_off_rate": 0.0
+              },
+              "bird,sleep": {
+                "target_block": 2,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "girl,run": {
+                "target_block": 3,
+                "win_rate": 0.216,
+                "worst_off_rate": 0.0
+              },
+              "boy,look": {
+                "target_block": 4,
+                "win_rate": 0.218,
+                "worst_off_rate": 0.0
+              },
+              "lion,eat": {
+                "target_block": 5,
+                "win_rate": 0.0,
+                "worst_off_rate": 0.0
+              },
+              "rabbit,jump": {
+                "target_block": 6,
+                "win_rate": 0.227,
+                "worst_off_rate": 0.0
+              },
+              "mouse,walk": {
+                "target_block": 7,
+                "win_rate": 0.195,
+                "worst_off_rate": 0.0
+              }
+            },
+            "present_ok": 6,
+            "present_tot": 8,
+            "both_roles_lit": 6,
+            "K": 8,
+            "false_accept": 0,
+            "moat_0fa": true,
+            "win_rate_nonzero_all": false,
+            "host_present": {
+              "dog,eat": 0,
+              "cat,play": 1,
+              "bird,sleep": 2,
+              "girl,run": 3,
+              "boy,look": 4,
+              "lion,eat": 5,
+              "rabbit,jump": 6,
+              "mouse,walk": 7
+            },
+            "host_absent_all_none": true
+          },
+          "agent_level": {
+            "present_eq_host": 6,
+            "present_tot": 8,
+            "present_correct": 6,
+            "agent_false_accept": 0,
+            "agent_eq_host": false,
+            "agent_moat_0fa": true,
+            "mismatches": [
+              {
+                "cue": "bird,sleep",
+                "spk": [
+                  null,
+                  "bird",
+                  "unknown"
+                ],
+                "host": [
+                  "tree",
+                  "bird",
+                  "yes"
+                ]
+              },
+              {
+                "cue": "lion,eat",
+                "spk": [
+                  null,
+                  "lion",
+                  "unknown"
+                ],
+                "host": [
+                  "cake",
+                  "lion",
+                  "yes"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
