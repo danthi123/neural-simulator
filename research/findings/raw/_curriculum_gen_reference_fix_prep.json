@@ -1,0 +1,68 @@
+{
+  "task": "Foundational-curriculum Step-1 gen-reference fix (CPU EDIT-PREP only; NO GPU run)",
+  "date": "2026-06-25",
+  "type": "edit-prep (no GPU eval; controller launches the re-run after the GPU frees)",
+  "trigger": "Step-1 (320 concepts, REAL TinyStories, frequency-derived curriculum, 150K windows, GPU, seed 42) landed: recall 1.000 CLEARED, moat 0-FA CLEARED, derangement+frozen controls PASS -- but generalization 0.153 MISSED (bar 0.80). Per research/findings/raw/_curriculum_gen_miss_scoping.md the miss is a WRONG-YARDSTICK artifact: the gen reference was the g20_vocab_spec_2048 SHARDING taxonomy (incoherent in TinyStories, Pearson 0.07), NOT a co-occurrence-coherent semantic taxonomy.",
+  "files_edited": [
+    "research/runners/_curriculum_step1_320_real_corpus.py (the ONLY edit; +232/-29 lines)"
+  ],
+  "sim_edits": "NONE (reuse-by-import only)",
+  "composer_sequencer_touched": "NONE (one_brain_composer*, _spiking_sequencer* untouched -- R-B's territory)",
+  "recall_moat_frozen_byte_unchanged": "YES -- measure_recall_and_moat, _make_svo_facts, read_codes, StreamCortexBridge, hear_corpus, all learning code, and the frozen-brain competence-flat logic are byte-unchanged. recall-1.000 + moat-0-FA win stays intact; only the gen REFERENCE/SCORING changed.",
+
+  "decision": {
+    "chosen_option": "Option (a) hybrid: keep the REAL-corpus frequency-derived 320 vocab (the north-star), score generalization against an INDEPENDENT co-occurrence-COHERENT reference = the VALIDATED stream_taxonomy_320.TAXONOMY_40x8 (the exact reference the validated stream cortex scored 0.91 against) + the coherent g20 entity/verb domains for content words not in it; score gen over the GEN-USABLE coherent subset (a coherent category with >=2 members of the vocab); report BOTH the old sharding (0.153) and the new coherent number.",
+    "why_not_pure_a_or_b": "Mapping freq-320 onto TAXONOMY_40x8 alone covers only 50.6% (162/320). Building a coherent a-priori map (TAXONOMY_40x8 + coherent g20 entity/verb domains) maximizes clean coverage at 67.5% (216/320) / 65.6% gen-usable (210/320). The hybrid is what option (a) + (b) collapse to: the validated coherent taxonomy first, coherent g20 domains second.",
+    "vocab_swap": "REJECTED -- the prompt explicitly forbids swapping to the curated TAXONOMY_40x8 vocab; real-corpus frequency learning is the north-star. The frequency vocab is KEPT intact; only the gen SCORING subset + reference change."
+  },
+
+  "coherent_reference": {
+    "how_built": "_coherent_category_map() merges two INDEPENDENT a-priori sources (NEVER corpus-derived): (1) stream_taxonomy_320.TAXONOMY_40x8 (40x8 hand-curated semantic categories, freq>=50, the validated 0.91 reference) FIRST priority; (2) the coherent g20 ENTITY+VERB domains (COHERENT_G20_DOMAINS: animals/food/body/people/emotions/nature/objects/vehicles/verbs) prefixed 'g20_' for content words not in (1). Words in the INCOHERENT g20 categories (color/size/texture adjectives + abstract/spatial/time/quantity/discourse function words) get NO coherent label -> not gen-usable.",
+    "independence": "Both sources are a-priori semantic taxonomies, asserted distinct from the corpus. The corpus only sets WHICH 320 words (by frequency) + their co-occurrence codes; the category LABELS come from the independent taxonomies. Anti-cheat #1 (gen reference must be independent/not-smuggled) preserved.",
+    "coverage_of_freq_derived_320": {
+      "n_with_coherent_category": 216,
+      "coverage_frac_with_category": 0.675,
+      "n_gen_usable_cat_ge_2_members": 210,
+      "coverage_frac_gen_usable": 0.656,
+      "n_coherent_categories_used": 45,
+      "n_from_validated_taxonomy_40x8": 162,
+      "n_from_coherent_g20_domains": 54,
+      "n_incoherent_excluded": 104
+    },
+    "members_per_category_balance": "45 categories over 210 gen-usable words = mean ~4.7 members/cat; all scored categories have >=2 members (gen-usable definition). The TAXONOMY_40x8 categories (8 members each) anchor the balance; the coherent g20 extensions add 2-21 members each. A handful of would-be singletons (brave/balloon/fruit/orange/button/bone) are correctly dropped from scoring (cat<2).",
+    "independence_of_excluded": "The 104 excluded words are the genuinely co-occurrence-INCOHERENT ones (abstract_relations 19, spatial_words 19, time_words 18, question_discourse 14, texture/color/size adjectives 34, quantity 11) -- a distributional cortex has no category for them, confirmed by the scoping. Excluding them is honest, not cherry-picking."
+  },
+
+  "coverage_below_90pct_finding": {
+    "honest_caveat": "The prompt's '>=~90% coverage with >=2 members/category' bar is UNREACHABLE over the frequency-derived vocab while keeping the real-corpus words. Best achievable coherent coverage is ~67.5% (gen-usable ~65.6%). CAUSE: TinyStories' most-frequent CONTENT words are ~33% adjectives + function words (very/because/inside/hot/fast/up/down/now/then/what/who...) that don't co-occur with EACH OTHER, so a distributional (Hebbian co-occurrence) cortex provably cannot cluster them by category -- exactly the scoping's dominant cause (a). This ~67.5% ceiling is itself an honest FINDING, not a fixable engineering gap: to reach >=90% one would have to swap to the curated TAXONOMY_40x8 vocab (which the prompt forbids) or invent pseudo-categories for function words (a cheat).",
+    "what_the_re_run_will_show": "Gen scored over the gen-usable 210-word coherent subset, against the validated coherent reference the stream cortex cleared at 0.91. The scoping strongly predicts coherent gen >= 0.80 (Pearson 0.07 on the orthogonal sharding reference vs +0.41-0.52 + 0.91 gen on a coherent one, same mechanism + byte-identical normalization). BOTH numbers reported."
+  },
+
+  "runner_edit": {
+    "new_flag": "--gen-reference {coherent,sharding} (default coherent). 'coherent' = the FIX (independent co-occurrence-coherent reference, scored over the gen-usable subset = the 0.91 apples-to-apples reference). 'sharding' = the ORIGINAL full g20_vocab_spec_2048 (gen 0.153). BOTH numbers are always reported regardless of the choice (anti-cheat #5 -- the swap is a re-measure, NOT hiding the 0.153).",
+    "code_changes": [
+      "_category_map (line ~104): docstring NOTE added flagging the sharding-vs-coherent distinction (no behavior change).",
+      "COHERENT_G20_DOMAINS frozenset (line ~130): the coherent entity/verb g20 domains (excludes the adjective/function clusters).",
+      "_coherent_category_map() (line ~146): word -> independent coherent category (TAXONOMY_40x8 first, then coherent g20 'g20_<domain>').",
+      "_coherent_labels_for_vocab(vocab, min_members=2) (line ~163): builds the gen-usable subset + coverage report.",
+      "_gen_on_labels(code, labels, seed) (line ~430-ish): the shared metric (heldout_generalization/_cos_sim/_pearson_vs_Strue, byte-identical to the validated arc) on a code matrix + labels (may be a row-subset).",
+      "measure_generalization(code, cat_ids, seed, vocab=None, gen_reference='coherent') (rewritten): computes BOTH the sharding (full 320) and coherent (gen-usable subset) numbers; returns the selected reference top-level + both={sharding,coherent}.",
+      "run_seed: the learned + frozen gen calls pass vocab + gen_reference; prints BOTH refs; return dict adds generalization_sharding + generalization_coherent provenance fields.",
+      "decide(): gates gen on the SELECTED reference; bars report generalization_sharding_per_seed + generalization_coherent_per_seed.",
+      "main(): --gen-reference arg; computes + prints + JSON-reports the coherent_gen_reference_coverage; verdict mentions BOTH refs + the honest coverage caveat; gen_reference added to config; 2 new notes (gen-reference-fix + coverage-caveat)."
+    ]
+  },
+
+  "verification": {
+    "import_compiles": "PASS -- SIM_BACKEND=numpy python -c 'import research.runners._curriculum_step1_320_real_corpus' -> EXIT 0",
+    "help_shows_flag": "PASS -- --gen-reference {coherent,sharding} present in --help",
+    "function_smoke_cpu_no_gpu": "PASS -- _coherent_category_map (dog->animals_pets, run->motion_actions, apple->food; very/because/inside->None); coverage 216/320 (67.5%) with-category, 210/320 (65.6%) gen-usable, 45 cats (162 TAXONOMY_40x8 + 54 coherent-g20), 104 incoherent excluded; measure_generalization on synthetic structured codes -> coherent gen 1.0 over 210 words (chance 0.022, derangement collapses), sharding gen 0.391 (full 320); --gen-reference sharding selection works.",
+    "gpu_eval_run": "NOT RUN (CPU EDIT-PREP only, per instructions)"
+  },
+
+  "git_diff_stat": "research/runners/_curriculum_step1_320_real_corpus.py | 261 +++ (232 insertions, 29 deletions). The only file edited by this task. NO sim/ edits. NO composer/sequencer edits. (Other files in the broad working-tree diff were already dirty at session start.)",
+
+  "rerun_command_for_controller": "SIM_BACKEND=cupy python -u -m research.runners._curriculum_step1_320_real_corpus --seeds 42,43,44 --n-concepts 320 --gen-reference coherent --out research/findings/raw/_curriculum_step1_320_real_corpus.json",
+  "rerun_notes": "Default --gen-reference coherent is the fix; both numbers (sharding 0.153 provenance + coherent fix) are reported regardless. ~150K windows/bridge x 3 seeds + 3 frozen-control bridges (the validated 320 rate; ~75 min/bridge per the scoping). To re-measure seed 42 cheaply first: --seeds 42. To skip the frozen control during a fast confirm: --no-frozen.",
+  "commit": "NOT committed (controller reviews)."
+}
