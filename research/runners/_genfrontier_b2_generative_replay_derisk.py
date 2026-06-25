@@ -143,7 +143,19 @@ class GenerativeReplayProposer:
     role-fillers are mutually graph-related above threshold) and (ii) non-contradiction (it doesn't
     contradict a stored fact). Proposals are flagged HYPOTHESES, never asserted as stored facts."""
 
-    def __init__(self, composer, stored_facts, negated_facts, P, row, tau, rng):
+    def __init__(self, composer, stored_facts, negated_facts, P, row, tau, rng,
+                 use_spiking_sampler=True, spiking_seed=None):
+        # use_spiking_sampler (DEFAULT ON = the brain's spiking generative DRAW): the single generative ACT -- drawing
+        # ONE role-filler from the brain's PPMI likelihood -- is performed by the validated noise-driven spiking
+        # soft-WTA (SpikingWTASampler, GO 6-seed `_followon2_spiking_wta_sampler_derisk`: a Buesing-Maass neural
+        # sampler over an Izhikevich WTA bank with OU membrane noise; the winner read from cp_firing_states IS the
+        # draw, NO host rng.choice). The brain's likelihood (`_weight_partner`) is UNCHANGED -- only the DRAW is swapped.
+        # use_spiking_sampler=False = the host np.random.choice ORACLE, RETAINED for the numpy-CPU/test/reproducibility
+        # path. The spiking sampler is built LAZILY on first draw (a ~2ms unwired bank; lazy import avoids the
+        # followon2<-b2 import cycle).
+        self.use_spiking_sampler = bool(use_spiking_sampler)
+        self._spiking_sampler = None       # lazily built on first _sample_weighted draw
+        self._spiking_seed = spiking_seed
         self.composer = composer
         # the brain's experienced facts -- AFFIRMED (true) and NEGATED ('X does NOT Y', stored via the
         # composer's polarity tag). Both are "stored" (the proposer must not resurface either as novel); the
@@ -201,7 +213,34 @@ class GenerativeReplayProposer:
             w[k] = s
         return w
 
+    def _ensure_spiking_sampler(self, max_candidates):
+        """Lazily build the validated spiking soft-WTA sampler (import-by-reuse from the GO `_followon2` de-risk; lazy
+        import breaks the followon2<-b2 module cycle). The bank's OU-noise stream is seeded deterministically per
+        proposer (from `spiking_seed` if given, else one draw off self.rng) for reproducibility. n_cand_max is sized
+        to the largest candidate pool the proposer will draw over."""
+        if self._spiking_sampler is not None:
+            if max_candidates > self._spiking_sampler.n_cand_max:
+                # a larger pool appeared than the bank was sized for -> rebuild bigger (rare; sizes are tiny)
+                self._spiking_sampler = None
+            else:
+                return self._spiking_sampler
+        from research.runners._followon2_spiking_wta_sampler_derisk import SpikingWTASampler
+        if self._spiking_seed is not None:
+            bank_seed = int(self._spiking_seed)
+        else:
+            bank_seed = int(self.rng.integers(1, 2_000_000_000))
+        n_cand_max = max(64, int(max_candidates))
+        self._spiking_sampler = SpikingWTASampler(self.P, self.row, self.tau, seed=bank_seed, n_cand_max=n_cand_max)
+        return self._spiking_sampler
+
     def _sample_weighted(self, candidates, weights):
+        """Draw ONE candidate from the brain's PPMI likelihood weights (the single generative ACT). When
+        use_spiking_sampler is ON (DEFAULT), the DRAW is the validated noise-driven spiking soft-WTA winner (read from
+        cp_firing_states) -- the brain's spiking generative act; the likelihood `weights` are the brain's, unchanged.
+        When OFF, the host np.random.choice ORACLE (retained for the numpy-CPU/test/reproducibility path)."""
+        if self.use_spiking_sampler:
+            sampler = self._ensure_spiking_sampler(len(candidates))
+            return sampler.draw_from_weights(weights, candidates)
         tot = float(weights.sum())
         if tot <= 0:                          # no graph signal -> fall back to uniform (rare)
             return candidates[int(self.rng.integers(len(candidates)))]

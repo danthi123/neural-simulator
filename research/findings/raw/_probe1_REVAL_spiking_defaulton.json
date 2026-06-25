@@ -1,0 +1,5525 @@
+{
+  "probe": "communicable_brain_probe1_whatdoyouthink",
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "D": 64,
+    "n_facts": 24,
+    "n_negated": 12,
+    "n_topics": 30,
+    "n_attempts": 150,
+    "tau_pct": 50.0,
+    "advantage_bar": 3.0,
+    "calib_spearman_bar": 0.5,
+    "min_emit": 3,
+    "neural_order": false,
+    "host_oracle_sampler": false,
+    "use_spiking_sampler": true,
+    "max_bytes": 4000000
+  },
+  "baseline_to_beat": {
+    "measured_retrieval_novel_composition": 0.0,
+    "source": "2026-06-22-generation-novelty-categorical-gap-MEASURED.md"
+  },
+  "pipeline": "ASSIMILATE(X) [PPMI cortex neighborhood] -> PROPOSE [b2 GenerativeReplayProposer: novel-but-plausible graph-biased, moat-gated, non-contradictory] -> RENDER [neural serial-order word order (opt-in) + fluency-only faculty surface form] + VERIFY [content-extractor + BridgeParser re-parse of the PROSE; reject on drift] -> EMIT [graded-confidence FLAGGED hypothesis; NOT stored; known-fact channel stays hard-gated].",
+  "go_pieces_composed": {
+    "propose": "research/runners/_genfrontier_b2_generative_replay_derisk.py (GenerativeReplayProposer) [2026-06-23-genfrontier-b2-generative-replay-derisk.md, GO 6-seed]",
+    "render_word_order": "research/runners/neural_serial_order_renderer.py (NeuralSerialOrderRenderer) [2026-06-16-sentence-generation-serial-order-cheap-first-GO.md, GO 6/6]",
+    "render_verify": "research/runners/_grounded_lang_p3_derisk.py (gate->constrain->VERIFY; _grounded_lang_integration_derisk._extract_svo_from_prose + the BridgeParser) [2026-06-23-grounded-lang-INTEGRATION-GO.md, GO]"
+  },
+  "fluency_only_note": "the fluency faculty supplies SURFACE FORM only; the BRAIN (PPMI cortex + RF composer) supplies the proposition (content + choice) and VERIFY re-parses the faculty's prose. CPU stand-ins reused from the GO P3 loop (the SAME VERIFY contract the real spiking-Qwen integration passed): GROUNDED = TemplateStubFaculty (content-locked); LESION = InjectingStubFaculty (free-generates content -> VERIFY MUST reject -> the content is the BRAIN's, not the LLM's). The real spiking-Qwen faculty (_grounded_lang_integration_derisk.SpikingQwenFaculty) is the GPU follow-on; this CPU probe is the cheap-first composition de-risk per the scoping.",
+  "detail": {
+    "n_emitted_mean": 8.0,
+    "n_emitted_min": 6,
+    "render_verify_rate_mean": 1.0,
+    "novel_all_seeds": true,
+    "novel_ratio_mean": 1.0,
+    "topic_relevant_all_seeds": true,
+    "n_topic_relevant_total": 24,
+    "n_opinion_abstained_total": 66,
+    "grounded_advantage_mean": 89.74417770968877,
+    "grounded_advantage_min": 28.131041890440383,
+    "grounded_all_seeds": true,
+    "moat_leaks_total": 0,
+    "flagged_leakfree_all_seeds": true,
+    "calib_spearman_mean": 1.0,
+    "calibrated_all_seeds": true,
+    "calibrated_assessable_seeds": 3,
+    "lesion_caught_total": 24,
+    "lesion_total": 24,
+    "lesion_all_seeds": true,
+    "advantage_bar": 3.0,
+    "calib_spearman_bar": 0.5,
+    "min_emit": 3
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_stored": 24,
+      "n_negated": 12,
+      "n_topics": 30,
+      "topics": [
+        "garden",
+        "girl",
+        "ball",
+        "soup",
+        "head",
+        "apple",
+        "baby",
+        "boy",
+        "foot",
+        "friend",
+        "mom",
+        "red",
+        "school",
+        "green",
+        "eye",
+        "blocks",
+        "doll",
+        "yellow",
+        "leg",
+        "candy",
+        "house",
+        "kite",
+        "egg",
+        "room",
+        "cookie",
+        "black",
+        "bell",
+        "hair",
+        "arm",
+        "pink"
+      ],
+      "tau": 0.47702477601079807,
+      "n_proposed": 6,
+      "n_render_verify_ok": 6,
+      "render_verify_rate": 1.0,
+      "n_emitted": 6,
+      "n_novel_emitted": 6,
+      "all_emitted_novel": true,
+      "novel_ratio": 1.0,
+      "n_topic_relevant": 6,
+      "all_topic_relevant": true,
+      "n_opinion_abstained": 24,
+      "replay_true_plausible_frac": 0.40601503759398494,
+      "shuffled_true_plausible_frac": 0.01443298969072165,
+      "grounded_advantage_ratio": 28.131041890440383,
+      "grounded_ok": true,
+      "moat_leaks": 0,
+      "all_flagged": true,
+      "flagged_leakfree": true,
+      "calib_spearman": 1.0,
+      "calib_monotone": true,
+      "calib_strong_reliability": true,
+      "calib_strong_incidence_lo_conf": 0.5,
+      "calib_strong_incidence_hi_conf": 1.0,
+      "calibrated_ok": true,
+      "lesion_caught": 6,
+      "lesion_total": 6,
+      "lesion_ok": true,
+      "lesion_detail": [
+        {
+          "brain_proposed": [
+            "frog",
+            "jump",
+            "head"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The frog jumps apple.",
+          "reparse_svo": [
+            "frog",
+            "jump",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "mouse",
+            "eat",
+            "apple"
+          ],
+          "llm_free_generated_patient": "arm",
+          "surface": "The mouse eats arm.",
+          "reparse_svo": [
+            "mouse",
+            "eat",
+            "arm"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "frog",
+            "jump",
+            "green"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The frog jumps apple.",
+          "reparse_svo": [
+            "frog",
+            "jump",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "cat",
+            "sleep",
+            "doll"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The cat sleeps apple.",
+          "reparse_svo": [
+            "cat",
+            "sleep",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "dog",
+            "run",
+            "black"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The dog runs apple.",
+          "reparse_svo": [
+            "dog",
+            "run",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "brother",
+            "play",
+            "pink"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The brother plays apple.",
+          "reparse_svo": [
+            "brother",
+            "play",
+            "apple"
+          ],
+          "verify_rejected": true
+        }
+      ],
+      "turns": [
+        {
+          "topic": "garden",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.434
+              ],
+              [
+                "look",
+                0.282
+              ],
+              [
+                "sing",
+                0.197
+              ],
+              [
+                "play",
+                0.163
+              ]
+            ],
+            "related_patients": [
+              [
+                "green",
+                0.79
+              ],
+              [
+                "blocks",
+                0.682
+              ],
+              [
+                "brown",
+                0.643
+              ],
+              [
+                "house",
+                0.509
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "girl",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "walk",
+                0.054
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "bread",
+                0.875
+              ],
+              [
+                "white",
+                0.113
+              ],
+              [
+                "cake",
+                0.089
+              ],
+              [
+                "room",
+                0.018
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "ball",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "road",
+                0.459
+              ],
+              [
+                "park",
+                0.386
+              ],
+              [
+                "milk",
+                0.299
+              ],
+              [
+                "bread",
+                0.196
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "soup",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.519
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "white",
+                1.164
+              ],
+              [
+                "bread",
+                1.089
+              ],
+              [
+                "brown",
+                0.884
+              ],
+              [
+                "pink",
+                0.848
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "head",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                0.482
+              ],
+              [
+                "look",
+                0.4
+              ],
+              [
+                "run",
+                0.159
+              ],
+              [
+                "walk",
+                0.112
+              ]
+            ],
+            "related_patients": [
+              [
+                "park",
+                0.768
+              ],
+              [
+                "bread",
+                0.579
+              ],
+              [
+                "arm",
+                0.362
+              ],
+              [
+                "room",
+                0.35
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "frog",
+            "jump",
+            "head"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.9106,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess frog jump head.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.298,
+          "abstained_opinion": false,
+          "rendered_surface": "The frog jumps head.",
+          "rendered_reparse": [
+            "frog",
+            "jump",
+            "head"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "apple",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                1.22
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "cookie",
+                1.436
+              ],
+              [
+                "brown",
+                1.38
+              ],
+              [
+                "arm",
+                1.08
+              ],
+              [
+                "apple",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "mouse",
+            "eat",
+            "apple"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 1.3158,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'd say mouse eat apple.",
+          "hedge": "I'd say",
+          "confidence": 0.686,
+          "abstained_opinion": false,
+          "rendered_surface": "The mouse eats apple.",
+          "rendered_reparse": [
+            "mouse",
+            "eat",
+            "apple"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "baby",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "look",
+                0.258
+              ],
+              [
+                "jump",
+                0.116
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "milk",
+                1.925
+              ],
+              [
+                "candy",
+                1.166
+              ],
+              [
+                "blocks",
+                0.922
+              ],
+              [
+                "cookie",
+                0.624
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "boy",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                0.377
+              ],
+              [
+                "run",
+                0.294
+              ],
+              [
+                "walk",
+                0.137
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "cookie",
+                0.675
+              ],
+              [
+                "eye",
+                0.551
+              ],
+              [
+                "foot",
+                0.365
+              ],
+              [
+                "park",
+                0.048
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "foot",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "walk",
+                1.516
+              ],
+              [
+                "run",
+                0.98
+              ],
+              [
+                "look",
+                0.184
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "pink",
+                2.018
+              ],
+              [
+                "white",
+                1.823
+              ],
+              [
+                "cake",
+                1.752
+              ],
+              [
+                "brown",
+                0.627
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "friend",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                0.221
+              ],
+              [
+                "run",
+                0.194
+              ],
+              [
+                "sleep",
+                0.151
+              ],
+              [
+                "eat",
+                0.009
+              ]
+            ],
+            "related_patients": [
+              [
+                "leg",
+                0.99
+              ],
+              [
+                "eye",
+                0.962
+              ],
+              [
+                "bell",
+                0.844
+              ],
+              [
+                "blue",
+                0.34
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "mom",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                0.161
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "foot",
+                1.283
+              ],
+              [
+                "soup",
+                1.134
+              ],
+              [
+                "milk",
+                1.094
+              ],
+              [
+                "candy",
+                1.073
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "red",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "run",
+                0.447
+              ],
+              [
+                "eat",
+                0.433
+              ],
+              [
+                "look",
+                0.227
+              ],
+              [
+                "walk",
+                0.085
+              ]
+            ],
+            "related_patients": [
+              [
+                "bell",
+                1.386
+              ],
+              [
+                "brown",
+                1.116
+              ],
+              [
+                "road",
+                1.073
+              ],
+              [
+                "white",
+                1.01
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "school",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "walk",
+                0.385
+              ],
+              [
+                "look",
+                0.333
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "blue",
+                0.784
+              ],
+              [
+                "apple",
+                0.0
+              ],
+              [
+                "arm",
+                0.0
+              ],
+              [
+                "bell",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "green",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                0.939
+              ],
+              [
+                "play",
+                0.591
+              ],
+              [
+                "look",
+                0.405
+              ],
+              [
+                "eat",
+                0.324
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                1.633
+              ],
+              [
+                "bell",
+                1.516
+              ],
+              [
+                "blue",
+                1.166
+              ],
+              [
+                "blocks",
+                0.956
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "frog",
+            "jump",
+            "green"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 1.6443,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'd say frog jump green.",
+          "hedge": "I'd say",
+          "confidence": 1.0,
+          "abstained_opinion": false,
+          "rendered_surface": "The frog jumps green.",
+          "rendered_reparse": [
+            "frog",
+            "jump",
+            "green"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "eye",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "run",
+                1.609
+              ],
+              [
+                "look",
+                0.995
+              ],
+              [
+                "play",
+                0.824
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "arm",
+                3.482
+              ],
+              [
+                "milk",
+                2.885
+              ],
+              [
+                "road",
+                2.823
+              ],
+              [
+                "cookie",
+                2.346
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "blocks",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "play",
+                1.038
+              ],
+              [
+                "sleep",
+                0.601
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                1.7
+              ],
+              [
+                "room",
+                1.576
+              ],
+              [
+                "green",
+                0.956
+              ],
+              [
+                "blue",
+                0.855
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "doll",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                0.76
+              ],
+              [
+                "sleep",
+                0.749
+              ],
+              [
+                "look",
+                0.06
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "milk",
+                1.817
+              ],
+              [
+                "pink",
+                1.795
+              ],
+              [
+                "foot",
+                1.507
+              ],
+              [
+                "room",
+                1.397
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "cat",
+            "sleep",
+            "doll"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.8112,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess cat sleep doll.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.203,
+          "abstained_opinion": false,
+          "rendered_surface": "The cat sleeps doll.",
+          "rendered_reparse": [
+            "cat",
+            "sleep",
+            "doll"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "yellow",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "look",
+                0.225
+              ],
+              [
+                "play",
+                0.182
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "green",
+                1.587
+              ],
+              [
+                "blue",
+                1.36
+              ],
+              [
+                "pink",
+                1.108
+              ],
+              [
+                "blocks",
+                1.097
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "leg",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "walk",
+                1.228
+              ],
+              [
+                "look",
+                1.224
+              ],
+              [
+                "play",
+                0.041
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "bread",
+                2.0
+              ],
+              [
+                "white",
+                0.465
+              ],
+              [
+                "house",
+                0.387
+              ],
+              [
+                "room",
+                0.345
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "candy",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.922
+              ],
+              [
+                "walk",
+                0.613
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "pink",
+                1.297
+              ],
+              [
+                "milk",
+                1.066
+              ],
+              [
+                "bread",
+                0.846
+              ],
+              [
+                "road",
+                0.598
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "house",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "run",
+                0.547
+              ],
+              [
+                "sleep",
+                0.477
+              ],
+              [
+                "eat",
+                0.025
+              ],
+              [
+                "look",
+                0.011
+              ]
+            ],
+            "related_patients": [
+              [
+                "blocks",
+                0.811
+              ],
+              [
+                "cake",
+                0.628
+              ],
+              [
+                "brown",
+                0.514
+              ],
+              [
+                "leg",
+                0.387
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "kite",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "room",
+                0.317
+              ],
+              [
+                "park",
+                0.082
+              ],
+              [
+                "apple",
+                0.0
+              ],
+              [
+                "arm",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "egg",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.271
+              ],
+              [
+                "look",
+                0.198
+              ],
+              [
+                "run",
+                0.119
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                3.19
+              ],
+              [
+                "arm",
+                1.992
+              ],
+              [
+                "soup",
+                1.679
+              ],
+              [
+                "milk",
+                1.395
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "room",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                0.645
+              ],
+              [
+                "look",
+                0.256
+              ],
+              [
+                "play",
+                0.085
+              ],
+              [
+                "sleep",
+                0.029
+              ]
+            ],
+            "related_patients": [
+              [
+                "blocks",
+                1.576
+              ],
+              [
+                "pink",
+                1.397
+              ],
+              [
+                "cake",
+                0.482
+              ],
+              [
+                "leg",
+                0.345
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "cookie",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                1.333
+              ],
+              [
+                "eat",
+                0.7
+              ],
+              [
+                "run",
+                0.48
+              ],
+              [
+                "look",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                2.346
+              ],
+              [
+                "milk",
+                1.874
+              ],
+              [
+                "bread",
+                1.807
+              ],
+              [
+                "apple",
+                1.436
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "black",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sleep",
+                1.665
+              ],
+              [
+                "run",
+                0.727
+              ],
+              [
+                "look",
+                0.719
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "arm",
+                2.377
+              ],
+              [
+                "brown",
+                2.078
+              ],
+              [
+                "blue",
+                1.161
+              ],
+              [
+                "white",
+                1.059
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "dog",
+            "run",
+            "black"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.8411,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess dog run black.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.231,
+          "abstained_opinion": false,
+          "rendered_surface": "The dog runs black.",
+          "rendered_reparse": [
+            "dog",
+            "run",
+            "black"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "bell",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                1.518
+              ],
+              [
+                "look",
+                0.744
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "green",
+                1.516
+              ],
+              [
+                "cake",
+                1.186
+              ],
+              [
+                "apple",
+                0.0
+              ],
+              [
+                "arm",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "hair",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "look",
+                0.387
+              ],
+              [
+                "walk",
+                0.071
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                2.2
+              ],
+              [
+                "white",
+                1.541
+              ],
+              [
+                "pink",
+                1.042
+              ],
+              [
+                "arm",
+                1.002
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "arm",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sleep",
+                0.774
+              ],
+              [
+                "walk",
+                0.254
+              ],
+              [
+                "look",
+                0.02
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                3.482
+              ],
+              [
+                "milk",
+                2.247
+              ],
+              [
+                "brown",
+                1.967
+              ],
+              [
+                "cookie",
+                1.149
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "pink",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                1.219
+              ],
+              [
+                "look",
+                0.976
+              ],
+              [
+                "play",
+                0.805
+              ],
+              [
+                "run",
+                0.386
+              ]
+            ],
+            "related_patients": [
+              [
+                "foot",
+                2.018
+              ],
+              [
+                "white",
+                1.817
+              ],
+              [
+                "milk",
+                1.817
+              ],
+              [
+                "room",
+                1.397
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "brother",
+            "play",
+            "pink"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.8639,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess brother play pink.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.253,
+          "abstained_opinion": false,
+          "rendered_surface": "The brother plays pink.",
+          "rendered_reparse": [
+            "brother",
+            "play",
+            "pink"
+          ],
+          "rendered_neural_order": null
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "n_stored": 24,
+      "n_negated": 12,
+      "n_topics": 30,
+      "topics": [
+        "pink",
+        "yellow",
+        "room",
+        "boy",
+        "baby",
+        "blue",
+        "school",
+        "mom",
+        "road",
+        "ball",
+        "candy",
+        "blocks",
+        "eye",
+        "white",
+        "hair",
+        "green",
+        "cake",
+        "doll",
+        "red",
+        "dad",
+        "apple",
+        "house",
+        "kite",
+        "beach",
+        "hand",
+        "girl",
+        "black",
+        "brown",
+        "milk",
+        "garden"
+      ],
+      "tau": 0.47702477601079807,
+      "n_proposed": 9,
+      "n_render_verify_ok": 9,
+      "render_verify_rate": 1.0,
+      "n_emitted": 9,
+      "n_novel_emitted": 9,
+      "all_emitted_novel": true,
+      "novel_ratio": 1.0,
+      "n_topic_relevant": 9,
+      "all_topic_relevant": true,
+      "n_opinion_abstained": 21,
+      "replay_true_plausible_frac": 0.3307453416149068,
+      "shuffled_true_plausible_frac": 0.0020491803278688526,
+      "grounded_advantage_ratio": 161.40372670807452,
+      "grounded_ok": true,
+      "moat_leaks": 0,
+      "all_flagged": true,
+      "flagged_leakfree": true,
+      "calib_spearman": 1.0,
+      "calib_monotone": true,
+      "calib_strong_reliability": true,
+      "calib_strong_incidence_lo_conf": 0.3333333333333333,
+      "calib_strong_incidence_hi_conf": 0.6666666666666666,
+      "calibrated_ok": true,
+      "lesion_caught": 9,
+      "lesion_total": 9,
+      "lesion_ok": true,
+      "lesion_detail": [
+        {
+          "brain_proposed": [
+            "brother",
+            "play",
+            "pink"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The brother plays apple.",
+          "reparse_svo": [
+            "brother",
+            "play",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "fish",
+            "sing",
+            "blue"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The fish sings apple.",
+          "reparse_svo": [
+            "fish",
+            "sing",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "fish",
+            "sing",
+            "road"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The fish sings apple.",
+          "reparse_svo": [
+            "fish",
+            "sing",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "fish",
+            "sing",
+            "white"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The fish sings apple.",
+          "reparse_svo": [
+            "fish",
+            "sing",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "frog",
+            "play",
+            "green"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The frog plays apple.",
+          "reparse_svo": [
+            "frog",
+            "play",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "cat",
+            "sleep",
+            "doll"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The cat sleeps apple.",
+          "reparse_svo": [
+            "cat",
+            "sleep",
+            "apple"
+          ],
+          "verify_rejected": true
+        }
+      ],
+      "turns": [
+        {
+          "topic": "pink",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                1.219
+              ],
+              [
+                "look",
+                0.976
+              ],
+              [
+                "play",
+                0.805
+              ],
+              [
+                "run",
+                0.386
+              ]
+            ],
+            "related_patients": [
+              [
+                "foot",
+                2.018
+              ],
+              [
+                "milk",
+                1.817
+              ],
+              [
+                "room",
+                1.397
+              ],
+              [
+                "candy",
+                1.297
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "brother",
+            "play",
+            "pink"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.8639,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess brother play pink.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.268,
+          "abstained_opinion": false,
+          "rendered_surface": "The brother plays pink.",
+          "rendered_reparse": [
+            "brother",
+            "play",
+            "pink"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "yellow",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "look",
+                0.225
+              ],
+              [
+                "play",
+                0.182
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "green",
+                1.587
+              ],
+              [
+                "blue",
+                1.36
+              ],
+              [
+                "black",
+                1.254
+              ],
+              [
+                "pink",
+                1.108
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "room",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                0.645
+              ],
+              [
+                "look",
+                0.256
+              ],
+              [
+                "play",
+                0.085
+              ],
+              [
+                "sleep",
+                0.029
+              ]
+            ],
+            "related_patients": [
+              [
+                "blocks",
+                1.576
+              ],
+              [
+                "pink",
+                1.397
+              ],
+              [
+                "cake",
+                0.482
+              ],
+              [
+                "head",
+                0.35
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "boy",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                0.377
+              ],
+              [
+                "run",
+                0.294
+              ],
+              [
+                "walk",
+                0.137
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "cookie",
+                0.675
+              ],
+              [
+                "eye",
+                0.551
+              ],
+              [
+                "foot",
+                0.365
+              ],
+              [
+                "head",
+                0.244
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "baby",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "look",
+                0.258
+              ],
+              [
+                "jump",
+                0.116
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "milk",
+                1.925
+              ],
+              [
+                "candy",
+                1.166
+              ],
+              [
+                "blocks",
+                0.922
+              ],
+              [
+                "cookie",
+                0.624
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "blue",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                1.137
+              ],
+              [
+                "sleep",
+                1.084
+              ],
+              [
+                "jump",
+                0.167
+              ],
+              [
+                "play",
+                0.04
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                1.245
+              ],
+              [
+                "green",
+                1.166
+              ],
+              [
+                "black",
+                1.161
+              ],
+              [
+                "pink",
+                0.916
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "fish",
+            "sing",
+            "blue"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 1.473,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'd say fish sing blue.",
+          "hedge": "I'd say",
+          "confidence": 0.845,
+          "abstained_opinion": false,
+          "rendered_surface": "The fish sings blue.",
+          "rendered_reparse": [
+            "fish",
+            "sing",
+            "blue"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "school",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "walk",
+                0.385
+              ],
+              [
+                "look",
+                0.333
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "blue",
+                0.784
+              ],
+              [
+                "apple",
+                0.0
+              ],
+              [
+                "bell",
+                0.0
+              ],
+              [
+                "black",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "mom",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                0.161
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "foot",
+                1.283
+              ],
+              [
+                "soup",
+                1.134
+              ],
+              [
+                "milk",
+                1.094
+              ],
+              [
+                "candy",
+                1.073
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "road",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                1.527
+              ],
+              [
+                "look",
+                1.11
+              ],
+              [
+                "walk",
+                1.07
+              ],
+              [
+                "jump",
+                0.695
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                2.823
+              ],
+              [
+                "candy",
+                0.598
+              ],
+              [
+                "green",
+                0.287
+              ],
+              [
+                "house",
+                0.229
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "fish",
+            "sing",
+            "road"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 1.6359,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'd say fish sing road.",
+          "hedge": "I'd say",
+          "confidence": 1.0,
+          "abstained_opinion": false,
+          "rendered_surface": "The fish sings road.",
+          "rendered_reparse": [
+            "fish",
+            "sing",
+            "road"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "ball",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "road",
+                0.459
+              ],
+              [
+                "park",
+                0.386
+              ],
+              [
+                "milk",
+                0.299
+              ],
+              [
+                "bread",
+                0.196
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "candy",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.922
+              ],
+              [
+                "walk",
+                0.613
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "pink",
+                1.297
+              ],
+              [
+                "milk",
+                1.066
+              ],
+              [
+                "bread",
+                0.846
+              ],
+              [
+                "road",
+                0.598
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "blocks",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "play",
+                1.038
+              ],
+              [
+                "sleep",
+                0.601
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                1.7
+              ],
+              [
+                "room",
+                1.576
+              ],
+              [
+                "green",
+                0.956
+              ],
+              [
+                "blue",
+                0.855
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "eye",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "run",
+                1.609
+              ],
+              [
+                "look",
+                0.995
+              ],
+              [
+                "play",
+                0.824
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "milk",
+                2.885
+              ],
+              [
+                "road",
+                2.823
+              ],
+              [
+                "cookie",
+                2.346
+              ],
+              [
+                "blocks",
+                1.7
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "white",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                1.076
+              ],
+              [
+                "look",
+                1.005
+              ],
+              [
+                "play",
+                0.254
+              ],
+              [
+                "walk",
+                0.189
+              ]
+            ],
+            "related_patients": [
+              [
+                "brown",
+                2.546
+              ],
+              [
+                "foot",
+                1.823
+              ],
+              [
+                "pink",
+                1.817
+              ],
+              [
+                "soup",
+                1.164
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "fish",
+            "sing",
+            "white"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 1.2828,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'd say fish sing white.",
+          "hedge": "I'd say",
+          "confidence": 0.665,
+          "abstained_opinion": false,
+          "rendered_surface": "The fish sings white.",
+          "rendered_reparse": [
+            "fish",
+            "sing",
+            "white"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "hair",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "look",
+                0.387
+              ],
+              [
+                "walk",
+                0.071
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                2.2
+              ],
+              [
+                "pink",
+                1.042
+              ],
+              [
+                "milk",
+                0.406
+              ],
+              [
+                "head",
+                0.401
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "green",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                0.939
+              ],
+              [
+                "play",
+                0.591
+              ],
+              [
+                "look",
+                0.405
+              ],
+              [
+                "eat",
+                0.324
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                1.633
+              ],
+              [
+                "bell",
+                1.516
+              ],
+              [
+                "blue",
+                1.166
+              ],
+              [
+                "blocks",
+                0.956
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "frog",
+            "play",
+            "green"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.7902,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess frog play green.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.198,
+          "abstained_opinion": false,
+          "rendered_surface": "The frog plays green.",
+          "rendered_reparse": [
+            "frog",
+            "play",
+            "green"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "cake",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.821
+              ],
+              [
+                "sing",
+                0.621
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "foot",
+                1.752
+              ],
+              [
+                "bell",
+                1.186
+              ],
+              [
+                "brown",
+                1.118
+              ],
+              [
+                "house",
+                0.628
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "doll",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                0.76
+              ],
+              [
+                "sleep",
+                0.749
+              ],
+              [
+                "look",
+                0.06
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "milk",
+                1.817
+              ],
+              [
+                "pink",
+                1.795
+              ],
+              [
+                "foot",
+                1.507
+              ],
+              [
+                "room",
+                1.397
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "cat",
+            "sleep",
+            "doll"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.8112,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess cat sleep doll.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.218,
+          "abstained_opinion": false,
+          "rendered_surface": "The cat sleeps doll.",
+          "rendered_reparse": [
+            "cat",
+            "sleep",
+            "doll"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "red",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "run",
+                0.447
+              ],
+              [
+                "eat",
+                0.433
+              ],
+              [
+                "look",
+                0.227
+              ],
+              [
+                "walk",
+                0.085
+              ]
+            ],
+            "related_patients": [
+              [
+                "bell",
+                1.386
+              ],
+              [
+                "brown",
+                1.116
+              ],
+              [
+                "road",
+                1.073
+              ],
+              [
+                "blue",
+                0.764
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "dad",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                0.172
+              ],
+              [
+                "play",
+                0.082
+              ],
+              [
+                "look",
+                0.03
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "black",
+                1.136
+              ],
+              [
+                "soup",
+                0.898
+              ],
+              [
+                "cookie",
+                0.688
+              ],
+              [
+                "house",
+                0.428
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "apple",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                1.22
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "cookie",
+                1.436
+              ],
+              [
+                "brown",
+                1.38
+              ],
+              [
+                "apple",
+                0.0
+              ],
+              [
+                "bell",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "house",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "run",
+                0.547
+              ],
+              [
+                "sleep",
+                0.477
+              ],
+              [
+                "eat",
+                0.025
+              ],
+              [
+                "look",
+                0.011
+              ]
+            ],
+            "related_patients": [
+              [
+                "blocks",
+                0.811
+              ],
+              [
+                "cake",
+                0.628
+              ],
+              [
+                "brown",
+                0.514
+              ],
+              [
+                "black",
+                0.442
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "dog",
+            "run",
+            "house"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.5942,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess dog run house.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.012,
+          "abstained_opinion": false,
+          "rendered_surface": "The dog runs house.",
+          "rendered_reparse": [
+            "dog",
+            "run",
+            "house"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "kite",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "room",
+                0.317
+              ],
+              [
+                "park",
+                0.082
+              ],
+              [
+                "apple",
+                0.0
+              ],
+              [
+                "bell",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "beach",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "look",
+                0.435
+              ],
+              [
+                "run",
+                0.287
+              ],
+              [
+                "walk",
+                0.13
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "blue",
+                0.749
+              ],
+              [
+                "head",
+                0.594
+              ],
+              [
+                "apple",
+                0.0
+              ],
+              [
+                "bell",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "hand",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "look",
+                0.484
+              ],
+              [
+                "walk",
+                0.335
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                2.059
+              ],
+              [
+                "foot",
+                1.613
+              ],
+              [
+                "bell",
+                1.43
+              ],
+              [
+                "head",
+                1.241
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "sister",
+            "look",
+            "hand"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.5816,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess sister look hand.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.0,
+          "abstained_opinion": false,
+          "rendered_surface": "The sister looks hand.",
+          "rendered_reparse": [
+            "sister",
+            "look",
+            "hand"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "girl",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "walk",
+                0.054
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "bread",
+                0.875
+              ],
+              [
+                "head",
+                0.162
+              ],
+              [
+                "cake",
+                0.089
+              ],
+              [
+                "room",
+                0.018
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "black",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sleep",
+                1.665
+              ],
+              [
+                "run",
+                0.727
+              ],
+              [
+                "look",
+                0.719
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "brown",
+                2.078
+              ],
+              [
+                "blue",
+                1.161
+              ],
+              [
+                "head",
+                0.495
+              ],
+              [
+                "house",
+                0.442
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "brown",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.89
+              ],
+              [
+                "look",
+                0.597
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "black",
+                2.078
+              ],
+              [
+                "apple",
+                1.38
+              ],
+              [
+                "cake",
+                1.118
+              ],
+              [
+                "soup",
+                0.884
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "mouse",
+            "eat",
+            "brown"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.8723,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess mouse eat brown.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.276,
+          "abstained_opinion": false,
+          "rendered_surface": "The mouse eats brown.",
+          "rendered_reparse": [
+            "mouse",
+            "eat",
+            "brown"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "milk",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                1.077
+              ],
+              [
+                "look",
+                0.435
+              ],
+              [
+                "sleep",
+                0.401
+              ],
+              [
+                "play",
+                0.064
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                2.885
+              ],
+              [
+                "cookie",
+                1.874
+              ],
+              [
+                "pink",
+                1.817
+              ],
+              [
+                "candy",
+                1.066
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "garden",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.434
+              ],
+              [
+                "look",
+                0.282
+              ],
+              [
+                "sing",
+                0.197
+              ],
+              [
+                "play",
+                0.163
+              ]
+            ],
+            "related_patients": [
+              [
+                "green",
+                0.79
+              ],
+              [
+                "blocks",
+                0.682
+              ],
+              [
+                "brown",
+                0.643
+              ],
+              [
+                "house",
+                0.509
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "n_stored": 24,
+      "n_negated": 12,
+      "n_topics": 30,
+      "topics": [
+        "brother",
+        "arm",
+        "blue",
+        "white",
+        "eye",
+        "bell",
+        "egg",
+        "face",
+        "school",
+        "red",
+        "mom",
+        "house",
+        "soup",
+        "hair",
+        "yellow",
+        "road",
+        "box",
+        "bread",
+        "green",
+        "blocks",
+        "foot",
+        "friend",
+        "ball",
+        "head",
+        "boy",
+        "baby",
+        "cookie",
+        "apple",
+        "hand",
+        "room"
+      ],
+      "tau": 0.47702477601079807,
+      "n_proposed": 9,
+      "n_render_verify_ok": 9,
+      "render_verify_rate": 1.0,
+      "n_emitted": 9,
+      "n_novel_emitted": 9,
+      "all_emitted_novel": true,
+      "novel_ratio": 1.0,
+      "n_topic_relevant": 9,
+      "all_topic_relevant": true,
+      "n_opinion_abstained": 21,
+      "replay_true_plausible_frac": 0.4008941877794337,
+      "shuffled_true_plausible_frac": 0.005030181086519115,
+      "grounded_advantage_ratio": 79.69776453055142,
+      "grounded_ok": true,
+      "moat_leaks": 0,
+      "all_flagged": true,
+      "flagged_leakfree": true,
+      "calib_spearman": 1.0,
+      "calib_monotone": true,
+      "calib_strong_reliability": true,
+      "calib_strong_incidence_lo_conf": 0.0,
+      "calib_strong_incidence_hi_conf": 0.6666666666666666,
+      "calibrated_ok": true,
+      "lesion_caught": 9,
+      "lesion_total": 9,
+      "lesion_ok": true,
+      "lesion_detail": [
+        {
+          "brain_proposed": [
+            "brother",
+            "play",
+            "blocks"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The brother plays apple.",
+          "reparse_svo": [
+            "brother",
+            "play",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "bird",
+            "sing",
+            "blue"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The bird sings apple.",
+          "reparse_svo": [
+            "bird",
+            "sing",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "fish",
+            "sing",
+            "white"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The fish sings apple.",
+          "reparse_svo": [
+            "fish",
+            "sing",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "bear",
+            "walk",
+            "face"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The bear walks apple.",
+          "reparse_svo": [
+            "bear",
+            "walk",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "cat",
+            "sleep",
+            "house"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The cat sleeps apple.",
+          "reparse_svo": [
+            "cat",
+            "sleep",
+            "apple"
+          ],
+          "verify_rejected": true
+        },
+        {
+          "brain_proposed": [
+            "frog",
+            "jump",
+            "road"
+          ],
+          "llm_free_generated_patient": "apple",
+          "surface": "The frog jumps apple.",
+          "reparse_svo": [
+            "frog",
+            "jump",
+            "apple"
+          ],
+          "verify_rejected": true
+        }
+      ],
+      "turns": [
+        {
+          "topic": "brother",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "play",
+                0.577
+              ],
+              [
+                "eat",
+                0.22
+              ],
+              [
+                "sing",
+                0.126
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "candy",
+                1.405
+              ],
+              [
+                "foot",
+                1.343
+              ],
+              [
+                "milk",
+                1.212
+              ],
+              [
+                "pink",
+                1.068
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "brother",
+            "play",
+            "blocks"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 1.146,
+          "verified": true,
+          "emitted": true,
+          "reply": "I think maybe brother play blocks.",
+          "hedge": "I think maybe",
+          "confidence": 0.523,
+          "abstained_opinion": false,
+          "rendered_surface": "The brother plays blocks.",
+          "rendered_reparse": [
+            "brother",
+            "play",
+            "blocks"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "arm",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sleep",
+                0.774
+              ],
+              [
+                "walk",
+                0.254
+              ],
+              [
+                "look",
+                0.02
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                3.482
+              ],
+              [
+                "black",
+                2.377
+              ],
+              [
+                "milk",
+                2.247
+              ],
+              [
+                "brown",
+                1.967
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "blue",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                1.137
+              ],
+              [
+                "sleep",
+                1.084
+              ],
+              [
+                "jump",
+                0.167
+              ],
+              [
+                "play",
+                0.04
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                1.245
+              ],
+              [
+                "green",
+                1.166
+              ],
+              [
+                "black",
+                1.161
+              ],
+              [
+                "white",
+                1.157
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "bird",
+            "sing",
+            "blue"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.8533,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess bird sing blue.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.243,
+          "abstained_opinion": false,
+          "rendered_surface": "The bird sings blue.",
+          "rendered_reparse": [
+            "bird",
+            "sing",
+            "blue"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "white",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                1.076
+              ],
+              [
+                "look",
+                1.005
+              ],
+              [
+                "play",
+                0.254
+              ],
+              [
+                "walk",
+                0.189
+              ]
+            ],
+            "related_patients": [
+              [
+                "brown",
+                2.546
+              ],
+              [
+                "foot",
+                1.823
+              ],
+              [
+                "pink",
+                1.817
+              ],
+              [
+                "blue",
+                1.157
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "fish",
+            "sing",
+            "white"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 1.2828,
+          "verified": true,
+          "emitted": true,
+          "reply": "I think maybe fish sing white.",
+          "hedge": "I think maybe",
+          "confidence": 0.654,
+          "abstained_opinion": false,
+          "rendered_surface": "The fish sings white.",
+          "rendered_reparse": [
+            "fish",
+            "sing",
+            "white"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "eye",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "run",
+                1.609
+              ],
+              [
+                "look",
+                0.995
+              ],
+              [
+                "play",
+                0.824
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "milk",
+                2.885
+              ],
+              [
+                "road",
+                2.823
+              ],
+              [
+                "cookie",
+                2.346
+              ],
+              [
+                "hand",
+                2.059
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "bell",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                1.518
+              ],
+              [
+                "look",
+                0.744
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "green",
+                1.516
+              ],
+              [
+                "hand",
+                1.43
+              ],
+              [
+                "cake",
+                1.186
+              ],
+              [
+                "bell",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "egg",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.271
+              ],
+              [
+                "look",
+                0.198
+              ],
+              [
+                "run",
+                0.119
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                3.19
+              ],
+              [
+                "hand",
+                1.85
+              ],
+              [
+                "milk",
+                1.395
+              ],
+              [
+                "pink",
+                1.051
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "face",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "walk",
+                0.552
+              ],
+              [
+                "look",
+                0.383
+              ],
+              [
+                "sleep",
+                0.038
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "candy",
+                1.333
+              ],
+              [
+                "milk",
+                0.782
+              ],
+              [
+                "hand",
+                0.425
+              ],
+              [
+                "white",
+                0.413
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "bear",
+            "walk",
+            "face"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.6949,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess bear walk face.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.091,
+          "abstained_opinion": false,
+          "rendered_surface": "The bear walks face.",
+          "rendered_reparse": [
+            "bear",
+            "walk",
+            "face"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "school",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "walk",
+                0.385
+              ],
+              [
+                "look",
+                0.333
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "blue",
+                0.784
+              ],
+              [
+                "bell",
+                0.0
+              ],
+              [
+                "black",
+                0.0
+              ],
+              [
+                "bread",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "red",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "run",
+                0.447
+              ],
+              [
+                "eat",
+                0.433
+              ],
+              [
+                "look",
+                0.227
+              ],
+              [
+                "walk",
+                0.085
+              ]
+            ],
+            "related_patients": [
+              [
+                "bell",
+                1.386
+              ],
+              [
+                "brown",
+                1.116
+              ],
+              [
+                "road",
+                1.073
+              ],
+              [
+                "white",
+                1.01
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "mom",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                0.161
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "foot",
+                1.283
+              ],
+              [
+                "milk",
+                1.094
+              ],
+              [
+                "candy",
+                1.073
+              ],
+              [
+                "bread",
+                1.01
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "house",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "run",
+                0.547
+              ],
+              [
+                "sleep",
+                0.477
+              ],
+              [
+                "eat",
+                0.025
+              ],
+              [
+                "look",
+                0.011
+              ]
+            ],
+            "related_patients": [
+              [
+                "cake",
+                0.628
+              ],
+              [
+                "brown",
+                0.514
+              ],
+              [
+                "black",
+                0.442
+              ],
+              [
+                "hand",
+                0.254
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "cat",
+            "sleep",
+            "house"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 0.5994,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'm not sure, but I'd guess cat sleep house.",
+          "hedge": "I'm not sure, but I'd guess",
+          "confidence": 0.0,
+          "abstained_opinion": false,
+          "rendered_surface": "The cat sleeps house.",
+          "rendered_reparse": [
+            "cat",
+            "sleep",
+            "house"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "soup",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.519
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "white",
+                1.164
+              ],
+              [
+                "bread",
+                1.089
+              ],
+              [
+                "brown",
+                0.884
+              ],
+              [
+                "pink",
+                0.848
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "hair",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "look",
+                0.387
+              ],
+              [
+                "walk",
+                0.071
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                2.2
+              ],
+              [
+                "white",
+                1.541
+              ],
+              [
+                "pink",
+                1.042
+              ],
+              [
+                "milk",
+                0.406
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "yellow",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "look",
+                0.225
+              ],
+              [
+                "play",
+                0.182
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "green",
+                1.587
+              ],
+              [
+                "blue",
+                1.36
+              ],
+              [
+                "black",
+                1.254
+              ],
+              [
+                "pink",
+                1.108
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "road",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                1.527
+              ],
+              [
+                "look",
+                1.11
+              ],
+              [
+                "walk",
+                1.07
+              ],
+              [
+                "jump",
+                0.695
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                2.823
+              ],
+              [
+                "candy",
+                0.598
+              ],
+              [
+                "green",
+                0.287
+              ],
+              [
+                "bell",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "frog",
+            "jump",
+            "road"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 1.237,
+          "verified": true,
+          "emitted": true,
+          "reply": "I think maybe frog jump road.",
+          "hedge": "I think maybe",
+          "confidence": 0.61,
+          "abstained_opinion": false,
+          "rendered_surface": "The frog jumps road.",
+          "rendered_reparse": [
+            "frog",
+            "jump",
+            "road"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "box",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "black",
+                1.069
+              ],
+              [
+                "pink",
+                0.793
+              ],
+              [
+                "candy",
+                0.682
+              ],
+              [
+                "foot",
+                0.406
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "bread",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                0.607
+              ],
+              [
+                "run",
+                0.446
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "cookie",
+                1.807
+              ],
+              [
+                "green",
+                0.94
+              ],
+              [
+                "candy",
+                0.846
+              ],
+              [
+                "milk",
+                0.806
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "green",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                0.939
+              ],
+              [
+                "play",
+                0.591
+              ],
+              [
+                "look",
+                0.405
+              ],
+              [
+                "eat",
+                0.324
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                1.633
+              ],
+              [
+                "bell",
+                1.516
+              ],
+              [
+                "blue",
+                1.166
+              ],
+              [
+                "bread",
+                0.94
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "frog",
+            "jump",
+            "green"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 1.6443,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'd say frog jump green.",
+          "hedge": "I'd say",
+          "confidence": 1.0,
+          "abstained_opinion": false,
+          "rendered_surface": "The frog jumps green.",
+          "rendered_reparse": [
+            "frog",
+            "jump",
+            "green"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "blocks",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "play",
+                1.038
+              ],
+              [
+                "sleep",
+                0.601
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                1.7
+              ],
+              [
+                "green",
+                0.956
+              ],
+              [
+                "blue",
+                0.855
+              ],
+              [
+                "hand",
+                0.177
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "brother",
+            "play",
+            "blocks"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 1.146,
+          "verified": true,
+          "emitted": true,
+          "reply": "I think maybe brother play blocks.",
+          "hedge": "I think maybe",
+          "confidence": 0.523,
+          "abstained_opinion": false,
+          "rendered_surface": "The brother plays blocks.",
+          "rendered_reparse": [
+            "brother",
+            "play",
+            "blocks"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "foot",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "walk",
+                1.516
+              ],
+              [
+                "run",
+                0.98
+              ],
+              [
+                "look",
+                0.184
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "pink",
+                2.018
+              ],
+              [
+                "white",
+                1.823
+              ],
+              [
+                "cake",
+                1.752
+              ],
+              [
+                "hand",
+                1.613
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "friend",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                0.221
+              ],
+              [
+                "run",
+                0.194
+              ],
+              [
+                "sleep",
+                0.151
+              ],
+              [
+                "eat",
+                0.009
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                0.962
+              ],
+              [
+                "bell",
+                0.844
+              ],
+              [
+                "black",
+                0.591
+              ],
+              [
+                "blue",
+                0.34
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "ball",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "road",
+                0.459
+              ],
+              [
+                "milk",
+                0.299
+              ],
+              [
+                "bread",
+                0.196
+              ],
+              [
+                "brown",
+                0.086
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "head",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                0.482
+              ],
+              [
+                "look",
+                0.4
+              ],
+              [
+                "run",
+                0.159
+              ],
+              [
+                "walk",
+                0.112
+              ]
+            ],
+            "related_patients": [
+              [
+                "hand",
+                1.241
+              ],
+              [
+                "bread",
+                0.579
+              ],
+              [
+                "black",
+                0.495
+              ],
+              [
+                "bell",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "boy",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                0.377
+              ],
+              [
+                "run",
+                0.294
+              ],
+              [
+                "walk",
+                0.137
+              ],
+              [
+                "eat",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "cookie",
+                0.675
+              ],
+              [
+                "eye",
+                0.551
+              ],
+              [
+                "foot",
+                0.365
+              ],
+              [
+                "head",
+                0.244
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "baby",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "look",
+                0.258
+              ],
+              [
+                "jump",
+                0.116
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "milk",
+                1.925
+              ],
+              [
+                "candy",
+                1.166
+              ],
+              [
+                "cookie",
+                0.624
+              ],
+              [
+                "head",
+                0.311
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "cookie",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "jump",
+                1.333
+              ],
+              [
+                "eat",
+                0.7
+              ],
+              [
+                "run",
+                0.48
+              ],
+              [
+                "look",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                2.346
+              ],
+              [
+                "milk",
+                1.874
+              ],
+              [
+                "bread",
+                1.807
+              ],
+              [
+                "hand",
+                0.236
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "apple",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "eat",
+                1.22
+              ],
+              [
+                "jump",
+                0.0
+              ],
+              [
+                "look",
+                0.0
+              ],
+              [
+                "play",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "cookie",
+                1.436
+              ],
+              [
+                "brown",
+                1.38
+              ],
+              [
+                "bell",
+                0.0
+              ],
+              [
+                "black",
+                0.0
+              ]
+            ]
+          },
+          "proposed_triple": [
+            "mouse",
+            "eat",
+            "apple"
+          ],
+          "topic_in_proposition": true,
+          "plausibility": 1.3158,
+          "verified": true,
+          "emitted": true,
+          "reply": "I'd say mouse eat apple.",
+          "hedge": "I'd say",
+          "confidence": 0.686,
+          "abstained_opinion": false,
+          "rendered_surface": "The mouse eats apple.",
+          "rendered_reparse": [
+            "mouse",
+            "eat",
+            "apple"
+          ],
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "hand",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "look",
+                0.484
+              ],
+              [
+                "walk",
+                0.335
+              ],
+              [
+                "eat",
+                0.0
+              ],
+              [
+                "jump",
+                0.0
+              ]
+            ],
+            "related_patients": [
+              [
+                "eye",
+                2.059
+              ],
+              [
+                "foot",
+                1.613
+              ],
+              [
+                "bell",
+                1.43
+              ],
+              [
+                "head",
+                1.241
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        },
+        {
+          "topic": "room",
+          "assimilation": {
+            "in_graph": true,
+            "related_actions": [
+              [
+                "sing",
+                0.645
+              ],
+              [
+                "look",
+                0.256
+              ],
+              [
+                "play",
+                0.085
+              ],
+              [
+                "sleep",
+                0.029
+              ]
+            ],
+            "related_patients": [
+              [
+                "pink",
+                1.397
+              ],
+              [
+                "cake",
+                0.482
+              ],
+              [
+                "head",
+                0.35
+              ],
+              [
+                "hand",
+                0.298
+              ]
+            ]
+          },
+          "proposed_triple": null,
+          "plausibility": null,
+          "verified": null,
+          "emitted": false,
+          "reply": "I don't really have a view on that.",
+          "hedge": null,
+          "confidence": null,
+          "abstained_opinion": true,
+          "rendered_surface": null,
+          "rendered_reparse": null,
+          "rendered_neural_order": null
+        }
+      ]
+    }
+  ],
+  "elapsed_total_s": 546.4262812137604
+}

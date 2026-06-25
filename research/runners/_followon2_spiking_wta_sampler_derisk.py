@@ -150,6 +150,7 @@ class SpikingWTASampler:
         # provenance bookkeeping: count every winner-read from cp_firing_states + assert NO host categorical draw used.
         self.n_spiking_draws = 0
         self.n_host_rng_draws = 0          # MUST stay 0 -- the whole point (a hidden host draw would increment here)
+        self.n_silent_fallbacks = 0        # production wire-in: all-silent windows that fell back to argmax-over-drive
 
     # ---- the validated WTA bank (== RFPhasorComposer._izh_bank), but with OU NOISE ON ----
     def _build_wta_bank(self, V, ou_std):
@@ -198,19 +199,25 @@ class SpikingWTASampler:
             w[k] = sum(P[self.row[x], self.row[c]] for x in seed_words)
         return np.maximum(w, 0.0)
 
-    def _likelihood_drive(self, seed_words, candidates):
-        """The brain's likelihood, read as DRIVE into the WTA. Each candidate with NONZERO weight gets base_pA (so it
-        can fire under noise) + gain_pA * its input-normalized weight; a ZERO-weight candidate gets ZERO drive -> SILENT
-        (the host's p~w gives it zero mass; Buesing-Maass / NEF 'off-target emits zero spikes'). So the firing-rate
-        ranking among the related candidates reproduces the host's p ~ w, and the unrelated candidates never win.
-        Returns (drive, weights)."""
-        w = self._weights(seed_words, candidates)
-        peak = float(w.max())
+    def drive_from_weights(self, w):
+        """Map a RAW PPMI weight vector w (the brain's `_weight_partner` likelihood) into the WTA DRIVE. Each candidate
+        with NONZERO weight gets base_pA (so it can fire under noise) + gain_pA * its input-normalized weight; a
+        ZERO-weight candidate gets ZERO drive -> SILENT (the host's p~w gives it zero mass; Buesing-Maass / NEF
+        'off-target emits zero spikes'). This is the EXACT mapping `_likelihood_drive` applies, factored so the
+        production wire-in (`GenerativeReplayProposer._sample_weighted`) can feed the brain's already-computed weights
+        straight in WITHOUT re-deriving them from seed words. Returns the drive vector (same len as w)."""
+        w = np.asarray(w, dtype=np.float64)
+        peak = float(w.max()) if w.size else 0.0
         if peak <= 1e-9:
-            return np.zeros(len(candidates)), w          # no signal -> all silent (honest: no sample)
+            return np.zeros(len(w))                       # no signal -> all silent (honest: no sample)
         active = (w > 0).astype(np.float64)
-        drive = active * (self.base_pA + self.gain_pA * (w / peak))
-        return drive, w
+        return active * (self.base_pA + self.gain_pA * (w / peak))
+
+    def _likelihood_drive(self, seed_words, candidates):
+        """The brain's likelihood, read as DRIVE into the WTA. Reproduces the host's p ~ w peakiness among the related
+        candidates; the unrelated candidates get ZERO drive and never win. Returns (drive, weights)."""
+        w = self._weights(seed_words, candidates)
+        return self.drive_from_weights(w), w
 
     def target_host(self, seed_words, candidates):
         """The TARGET the spiking sampler should approximate: the HOST's conditional p ~ raw PPMI weights (the b2
@@ -222,12 +229,11 @@ class SpikingWTASampler:
             return np.ones(len(candidates)) / len(candidates)
         return w / tot
 
-    def _draw(self, seed_words, candidates):
-        """ONE spiking draw: drive the WTA pool with the input-normalized likelihood drive + OU noise, run the noisy
-        competition, return the candidate whose pool WON (argmax-over-FIRING read from cp_firing_states). NO host
-        `rng.choice` -- the stochasticity is the bank's OU membrane noise.  Returns (winner_word, winner_idx, drive)."""
-        V = len(candidates)
-        drive, weights = self._likelihood_drive(seed_words, candidates)
+    def _compete(self, drive, V):
+        """The spiking competition KERNEL: drive the first V neurons of the WTA pool + the bank's OU noise, integrate
+        firing over the read window, return the per-candidate firing vector fv (len V) read from cp_firing_states. The
+        ONLY randomness is the bank's OU membrane noise; NO host RNG. Shared by `_draw` (seed-words path) and
+        `draw_from_weights` (the production wire-in)."""
         bank = self._bank
         # reset to resting so each draw is an independent competition (a cached bank's v/u persist across calls)
         bank.cp_membrane_potential_v[:] = bank._wta_v0
@@ -241,7 +247,15 @@ class SpikingWTASampler:
             bank._run_one_simulation_step()
             firing += np.asarray(to_host(bank.cp_firing_states)).astype(float)
         bank.cp_external_input_current[:] = 0.0
-        fv = firing[:V]
+        return firing[:V]
+
+    def _draw(self, seed_words, candidates):
+        """ONE spiking draw: drive the WTA pool with the input-normalized likelihood drive + OU noise, run the noisy
+        competition, return the candidate whose pool WON (argmax-over-FIRING read from cp_firing_states). NO host
+        `rng.choice` -- the stochasticity is the bank's OU membrane noise.  Returns (winner_word, winner_idx, drive)."""
+        V = len(candidates)
+        drive, weights = self._likelihood_drive(seed_words, candidates)
+        fv = self._compete(drive, V)
         # PROVENANCE: the winner is read from the spiking firing (argmax-over-FIRING). NO host categorical draw.
         self.n_spiking_draws += 1
         if float(fv.max()) <= 0.0:
@@ -249,6 +263,28 @@ class SpikingWTASampler:
             return None, -1, drive
         win = int(np.argmax(fv))
         return candidates[win], win, drive
+
+    def draw_from_weights(self, weights, candidates, max_retries=3):
+        """The PRODUCTION WIRE-IN draw (used by GenerativeReplayProposer._sample_weighted when use_spiking_sampler=True):
+        DRAW ONE candidate given the brain's already-computed RAW PPMI weight vector (the `_weight_partner` likelihood,
+        UNCHANGED). Maps the weights into the WTA drive (`drive_from_weights`) + runs the noisy spiking competition
+        (`_compete`); the WINNER is argmax-over-FIRING read from cp_firing_states -- NO host rng.choice over the
+        distribution. Returns the winning candidate (a word). On a SILENT competition (no spike in the window -- rare
+        at the calibrated operating point, measured 0/300), retries the window a few times, then falls back to
+        argmax-over-DRIVE (still a spiking-derived quantity: the most-driven pool, deterministic), so the production
+        caller always gets a concrete sample (the host `_sample_weighted` contract). NEVER a host categorical draw."""
+        weights = np.asarray(weights, dtype=np.float64)
+        V = len(candidates)
+        drive = self.drive_from_weights(weights)
+        for _ in range(max(1, int(max_retries))):
+            fv = self._compete(drive, V)
+            self.n_spiking_draws += 1
+            if float(fv.max()) > 0.0:
+                return candidates[int(np.argmax(fv))]
+        # rare all-silent window even with drive present -> the most-DRIVEN pool (spiking-derived, deterministic);
+        # NOT a host categorical draw over the weights (that would re-introduce the rng.choice we are eliminating).
+        self.n_silent_fallbacks += 1
+        return candidates[int(np.argmax(drive))]
 
     def draw_one(self):
         """ONE generative event: pick a seed agent (the SWR replay seed -- which memory reactivates; a host process),
@@ -351,9 +387,11 @@ def run_seed(seed, vocab, corpus, a):
     all_stored = set(affirmed) | set(negated)
 
     # the brain's gates (the proposer object supplies _plausible/_contradicts; we DON'T use its host propose() for the
-    # spiking path -- only for the HOST baseline below).
+    # spiking path -- only for the HOST baseline below). PIN use_spiking_sampler=False: this proposer's propose() is
+    # THE HOST ORACLE baseline this de-risk matches the spiking SpikingWTASampler against (so it must stay the host
+    # rng.choice draw -- NOT the now-default spiking draw, which would make this spiking-vs-spiking).
     proposer = GenerativeReplayProposer(comp, affirmed, negated, P, row, tau,
-                                        np.random.default_rng(seed * 7 + 1))
+                                        np.random.default_rng(seed * 7 + 1), use_spiking_sampler=False)
 
     # ---- the HOST sample-loop baseline (the b2 GO; what we are matching for quality, NOT regressing) ----
     host_rep = proposer.propose(a.n_attempts)

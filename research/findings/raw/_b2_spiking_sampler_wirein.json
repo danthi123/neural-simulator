@@ -1,0 +1,331 @@
+{
+  "build": "b2_spiking_sampler_wirein",
+  "task": "Full close-out of backlog #3: WIRE the de-risked spiking generative DRAW (SpikingWTASampler, GO 6-seed _followon2_spiking_wta_sampler_derisk) into the PRODUCTION b2 proposer (GenerativeReplayProposer) so the brain's generative ACT is a spiking event BY DEFAULT, with a host-np.random.choice ORACLE escape retained for the numpy-CPU/test/reproducibility path. ONLY the DRAW (R2, rng.choice over PPMI weights) is swapped; the brain's PPMI likelihood (_weight_partner) is unchanged. NO sim/ edit; reuse-by-import; CPU/numpy.",
+  "verdict": "GO_default_on_CLOSED",
+  "closed": true,
+  "default_on": true,
+  "no_sim_edit": true,
+  "wire_in": {
+    "mechanism_source": "research/runners/_followon2_spiking_wta_sampler_derisk.py::SpikingWTASampler (import-by-reuse; GO 6-seed)",
+    "edits": {
+      "research/runners/_genfrontier_b2_generative_replay_derisk.py": [
+        "GenerativeReplayProposer.__init__ (~L146): added use_spiking_sampler=True (DEFAULT ON) + spiking_seed kwargs; lazy _spiking_sampler holder",
+        "_ensure_spiking_sampler (NEW, ~L216): lazily builds SpikingWTASampler (lazy import breaks followon2<-b2 cycle; bank OU-noise seeded deterministically per proposer; n_cand_max sized to the largest pool)",
+        "_sample_weighted (~L236): when use_spiking_sampler ON -> delegates the DRAW to sampler.draw_from_weights(weights, candidates) (spiking soft-WTA winner from cp_firing_states); when OFF -> the host np.random.choice ORACLE verbatim"
+      ],
+      "research/runners/_followon2_spiking_wta_sampler_derisk.py": [
+        "SpikingWTASampler.__init__: added n_silent_fallbacks counter",
+        "drive_from_weights (NEW): factored the EXACT _likelihood_drive mapping to accept a raw PPMI weight vector directly (so the production wire-in feeds the brain-computed weights without re-deriving from seed words)",
+        "_compete (NEW): factored the spiking competition KERNEL (reset->drive->read-window->firing-read) shared by _draw and draw_from_weights -- byte-faithful refactor of the validated _draw",
+        "draw_from_weights (NEW): the production-wire-in draw -- maps weights->drive->_compete; winner = argmax-over-FIRING from cp_firing_states; on a (rare) all-silent window retries then falls back to argmax-over-DRIVE (spiking-derived, deterministic) so the host _sample_weighted contract (always a concrete sample) holds; NEVER a host categorical draw",
+        "_draw refactored to call _compete (numerics byte-identical -- followon2 re-run reproduces the original validated metrics to 4 decimals)"
+      ],
+      "research/runners/_communicable_brain_probe1_whatdoyouthink.py": [
+        "added --host-oracle-sampler CLI flag (default OFF = spiking default-on); threads use_spiking_sampler into BOTH the main proposer (~L382) and the shuffled-graph control proposer (~L467) so the grounded control stays apples-to-apples; surfaces use_spiking_sampler in the output config"
+      ]
+    },
+    "note": "_sample_weighted is the single chokepoint used by the b2 propose() loop AND the Probe-1 turn AND the shuffled-graph controls AND the other downstream gen-replay runners (_burndown_3E, _learned_talkativeness, _value_salience_appraisal, _followon1) -- so the spiking draw is now default-on for ALL of them by construction. All 10 existing call sites pass the original 7 positional args; the new kwargs are keyword-with-defaults -> zero breakage. followon2 run_seed pins its HOST-baseline proposer to use_spiking_sampler=False (it is the host oracle this de-risk matches against)."
+  },
+  "revalidation": {
+    "backend": "numpy (CPU)",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "gate1_b2_derisk_spiking_defaulton": {
+      "verdict": "GO",
+      "config_n_attempts": 1200,
+      "novel_composition_score_mean": 0.6074,
+      "n_novel_proposed_min": 23,
+      "advantage_ratio_mean": 20.09,
+      "advantage_ratio_min": 16.94,
+      "shuffled_collapses_all_seeds": true,
+      "moat_leaks_total": 0,
+      "contradictions_proposed_total": 0,
+      "vs_original_archived": {
+        "verdict": "GO",
+        "novel_composition_score_mean": 0.752,
+        "advantage_ratio_mean": 17.0,
+        "n_attempts": 3000,
+        "moat_leaks_total": 0,
+        "note": "original at 3000 attempts; re-val at 1200 (leaner for CPU tractability) -> lower ABSOLUTE novel-comp but ALL gates GO and advantage even higher; same GO shape"
+      },
+      "per_seed": [
+        {
+          "seed": 42,
+          "novel_composition_score": 0.6444,
+          "n_novel_proposed": 29,
+          "advantage_ratio": 16.94,
+          "shuffled_true_plausible_fraction_of_novel": 0.0225,
+          "moat_leaks": 0,
+          "contradictions_proposed": 0
+        },
+        {
+          "seed": 43,
+          "novel_composition_score": 0.6667,
+          "n_novel_proposed": 30,
+          "advantage_ratio": 23.88,
+          "shuffled_true_plausible_fraction_of_novel": 0.0083,
+          "moat_leaks": 0,
+          "contradictions_proposed": 0
+        },
+        {
+          "seed": 44,
+          "novel_composition_score": 0.5111,
+          "n_novel_proposed": 23,
+          "advantage_ratio": 19.44,
+          "shuffled_true_plausible_fraction_of_novel": 0.0167,
+          "moat_leaks": 0,
+          "contradictions_proposed": 0
+        }
+      ]
+    },
+    "gate2_probe1_communicable_brain_spiking_defaulton": {
+      "verdict": "GO",
+      "config": {
+        "n_attempts": 150,
+        "n_topics": 30,
+        "use_spiking_sampler": true
+      },
+      "n_emitted_mean": 8.0,
+      "n_emitted_min": 6,
+      "novel_all_seeds": true,
+      "topic_relevant_all_seeds": true,
+      "grounded_all_seeds": true,
+      "grounded_advantage_mean": 89.74,
+      "grounded_advantage_min": 28.13,
+      "flagged_leakfree_all_seeds": true,
+      "moat_leaks_total": 0,
+      "calibrated_all_seeds": true,
+      "calib_spearman_mean": 1.0,
+      "lesion_caught_total": 24,
+      "lesion_total": 24,
+      "lesion_all_seeds": true,
+      "per_seed": [
+        {
+          "seed": 42,
+          "n_emitted": 6,
+          "all_emitted_novel": true,
+          "all_topic_relevant": true,
+          "grounded_advantage_ratio": 28.13,
+          "moat_leaks": 0,
+          "calibrated_ok": true,
+          "calib_spearman": 1.0,
+          "lesion_caught": 6,
+          "lesion_total": 6,
+          "lesion_ok": true
+        },
+        {
+          "seed": 43,
+          "n_emitted": 9,
+          "all_emitted_novel": true,
+          "all_topic_relevant": true,
+          "grounded_advantage_ratio": 161.4,
+          "moat_leaks": 0,
+          "calibrated_ok": true,
+          "calib_spearman": 1.0,
+          "lesion_caught": 9,
+          "lesion_total": 9,
+          "lesion_ok": true
+        },
+        {
+          "seed": 44,
+          "n_emitted": 9,
+          "all_emitted_novel": true,
+          "all_topic_relevant": true,
+          "grounded_advantage_ratio": 79.7,
+          "moat_leaks": 0,
+          "calibrated_ok": true,
+          "calib_spearman": 1.0,
+          "lesion_caught": 9,
+          "lesion_total": 9,
+          "lesion_ok": true
+        }
+      ]
+    },
+    "gate3_probe1_host_oracle_parity": {
+      "verdict": "GO",
+      "config_use_spiking_sampler": false,
+      "n_emitted_mean": 8.0,
+      "n_emitted_min": 7,
+      "novel_all_seeds": true,
+      "grounded_all_seeds": true,
+      "flagged_leakfree_all_seeds": true,
+      "moat_leaks_total": 0,
+      "calibrated_all_seeds": true,
+      "lesion_caught_total": 24,
+      "lesion_total": 24,
+      "per_seed": [
+        {
+          "seed": 42,
+          "n_emitted": 7,
+          "all_emitted_novel": true,
+          "all_topic_relevant": true,
+          "grounded_advantage_ratio": 17.59,
+          "moat_leaks": 0,
+          "calibrated_ok": true,
+          "calib_spearman": 0.9642857142857145,
+          "lesion_caught": 7,
+          "lesion_total": 7,
+          "lesion_ok": true
+        },
+        {
+          "seed": 43,
+          "n_emitted": 8,
+          "all_emitted_novel": true,
+          "all_topic_relevant": true,
+          "grounded_advantage_ratio": 21.46,
+          "moat_leaks": 0,
+          "calibrated_ok": true,
+          "calib_spearman": 1.0,
+          "lesion_caught": 8,
+          "lesion_total": 8,
+          "lesion_ok": true
+        },
+        {
+          "seed": 44,
+          "n_emitted": 9,
+          "all_emitted_novel": true,
+          "all_topic_relevant": true,
+          "grounded_advantage_ratio": 21.83,
+          "moat_leaks": 0,
+          "calibrated_ok": true,
+          "calib_spearman": 1.0,
+          "lesion_caught": 9,
+          "lesion_total": 9,
+          "lesion_ok": true
+        }
+      ],
+      "parity_vs_spiking": {
+        "both_GO": true,
+        "spiking_emitted_per_seed": [
+          6,
+          9,
+          9
+        ],
+        "host_emitted_per_seed": [
+          7,
+          8,
+          9
+        ],
+        "emitted_topic_overlap": [
+          {
+            "seed": 42,
+            "spiking_emitted": 6,
+            "host_emitted": 7,
+            "shared_topics": 6
+          },
+          {
+            "seed": 43,
+            "spiking_emitted": 9,
+            "host_emitted": 8,
+            "shared_topics": 8
+          },
+          {
+            "seed": 44,
+            "spiking_emitted": 9,
+            "host_emitted": 9,
+            "shared_topics": 9
+          }
+        ],
+        "note": "matched config (n_attempts 150, n_topics 30); both GO, 0 leaks both, all gates green both, lesion 24/24 both; near-identical emitted counts + high emitted-topic overlap; the small count differences are the expected spiking-SAMPLER stochasticity (a sampler, not a deterministic argmax) -- both explore the same grounded space; the host-oracle escape reproduces the prior host behavior"
+      }
+    },
+    "gate0_followon2_mechanism_byte_faithful_after_refactor": {
+      "verdict": "GO",
+      "note": "the _compete/drive_from_weights refactor is behavior-preserving -- followon2 re-run reproduces its validated metrics to 4 decimals",
+      "provenance_all_seeds": true,
+      "moat_leaks_total": 0,
+      "contradictions_proposed_total": 0,
+      "spiking_vs_host_quality_mean": 1.1208,
+      "spiking_vs_host_quality_min": 1.0821,
+      "per_seed": [
+        {
+          "seed": 42,
+          "provenance_ok": true,
+          "n_spiking_draws": 3600,
+          "n_host_rng_draws": 0,
+          "noise_ablation_ok": true,
+          "novel_composition_score": 0.6667,
+          "spiking_plausible_fraction_of_novel": 0.3421,
+          "spiking_vs_host_quality": 1.0821,
+          "lesion_collapses": true,
+          "shuffled_collapses": true,
+          "moat_leaks": 0
+        },
+        {
+          "seed": 43,
+          "provenance_ok": true,
+          "n_spiking_draws": 3600,
+          "n_host_rng_draws": 0,
+          "noise_ablation_ok": true,
+          "novel_composition_score": 0.6889,
+          "spiking_plausible_fraction_of_novel": 0.3694,
+          "spiking_vs_host_quality": 1.0958,
+          "lesion_collapses": true,
+          "shuffled_collapses": true,
+          "moat_leaks": 0
+        },
+        {
+          "seed": 44,
+          "provenance_ok": true,
+          "n_spiking_draws": 3600,
+          "n_host_rng_draws": 0,
+          "noise_ablation_ok": true,
+          "novel_composition_score": 0.7111,
+          "spiking_plausible_fraction_of_novel": 0.3692,
+          "spiking_vs_host_quality": 1.1844,
+          "lesion_collapses": true,
+          "shuffled_collapses": true,
+          "moat_leaks": 0
+        }
+      ],
+      "byte_faithful_check": {
+        "metrics_match_original_to_4dp": true,
+        "novelcomp_orig_vs_new": {
+          "42": [
+            0.6667,
+            0.6667
+          ],
+          "43": [
+            0.6889,
+            0.6889
+          ],
+          "44": [
+            0.7111,
+            0.7111
+          ]
+        },
+        "spkfrac_orig_vs_new": {
+          "42": [
+            0.3421,
+            0.3421
+          ],
+          "43": [
+            0.3694,
+            0.3694
+          ],
+          "44": [
+            0.3692,
+            0.3692
+          ]
+        }
+      }
+    }
+  },
+  "moat": "INTACT throughout -- 0 known-fact-channel leaks across ALL re-validation runs (b2 + Probe-1 spiking + Probe-1 host-oracle); 0 negated facts re-proposed; the generative channel stays a SEPARATE, hedge-FLAGGED hypothesis channel (the moat is RELAXED to speak-while-flagging, NOT removed).",
+  "verdict_detail": "default-on CLOSED: the brain generative DRAW is now a SPIKING event by default in production. (gate1) the b2 generative-replay de-risk GO with the spiking sampler default-on (novel-comp>0 all seeds, advantage 20.1x>=3x, shuffled collapses, 0 leaks/0 negated). (gate2) the communicable-brain Probe-1 GO with the spiking draw default-on (24 emitted all-novel+topic-relevant, grounded 89.7x>=3x, 0 leaks, calibrated spearman 1.0, lesion 24/24 caught). (gate3) the host-oracle escape (use_spiking_sampler=False) reproduces the prior host behavior at GO with parity to the spiking path. (gate0) the followon2 mechanism is byte-faithful after the refactor. NO sim/ edit. The owner directive (the generative ACT IS the brain's spiking competition) is satisfied by default; the host oracle is the documented numpy-CPU/test/reproducibility escape.",
+  "files_revalidation_raw": [
+    "research/findings/raw/_b2_REVAL_spiking_defaulton.json",
+    "research/findings/raw/_probe1_REVAL_spiking_defaulton.json",
+    "research/findings/raw/_probe1_REVAL_host_oracle.json",
+    "research/findings/raw/_followon2_REVAL_after_refactor.json"
+  ],
+  "elapsed_per_run_s": {
+    "_b2_REVAL_spiking_defaulton": 211.9,
+    "_probe1_REVAL_spiking_defaulton": 546.4,
+    "_probe1_REVAL_host_oracle": 195.5,
+    "_followon2_REVAL_after_refactor": 221.6
+  }
+}

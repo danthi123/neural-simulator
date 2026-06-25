@@ -375,9 +375,13 @@ def run_seed(seed, vocab, corpus, a):
     bc_agent = BrainConversationalAgent(seed=seed, concepts={w: None for w in vocab},
                                         composer=comp, composer_kind="rf")
 
-    # the generative-replay proposer (the GO PROPOSE piece) over the TRUE learned graph
+    # the generative-replay proposer (the GO PROPOSE piece) over the TRUE learned graph. The generative DRAW is the
+    # validated spiking soft-WTA by DEFAULT (use_spiking_sampler=True -> the brain's spiking generative act); the
+    # --host-oracle-sampler escape pins it to the host np.random.choice ORACLE (the prior behavior, for parity).
+    use_spiking = not a.host_oracle_sampler
     proposer = GenerativeReplayProposer(comp, affirmed, negated, P, row, tau,
-                                        np.random.default_rng(seed * 7 + 1))
+                                        np.random.default_rng(seed * 7 + 1),
+                                        use_spiking_sampler=use_spiking, spiking_seed=seed)
 
     # content-token sets for the VERIFY re-parse. The brain's COMPREHENSION vocab is the WHOLE vocab it
     # learned (its parser reads any known word), so the VERIFY sets are the FULL taxonomy category pools --
@@ -461,7 +465,8 @@ def run_seed(seed, vocab, corpus, a):
     pos_s = P_shuf[P_shuf > 0]
     tau_s = float(np.percentile(pos_s, a.tau_pct)) if pos_s.size else 0.0
     proposer_shuf = GenerativeReplayProposer(comp, affirmed, negated, P_shuf, row, tau_s,
-                                             np.random.default_rng(seed * 19 + 7))
+                                             np.random.default_rng(seed * 19 + 7),
+                                             use_spiking_sampler=use_spiking, spiking_seed=seed * 19 + 7)
     shuf_true_plausible, shuf_novel = 0, 0
     for _ in range(a.n_attempts_grounded):
         ag = proposer_shuf.agents[int(proposer_shuf.rng.integers(len(proposer_shuf.agents)))]
@@ -725,6 +730,9 @@ def main():
     p.add_argument("--min-emit", type=int, default=3, help="min emitted flagged hypotheses per seed")
     p.add_argument("--neural-order", action="store_true",
                    help="exercise the NEURAL serial-order renderer for word order (builds a GPU pool bridge)")
+    p.add_argument("--host-oracle-sampler", action="store_true",
+                   help="pin the generative DRAW to the host np.random.choice ORACLE (default OFF = the validated "
+                        "spiking soft-WTA draw is default-on); for the host-parity escape check")
     p.add_argument("--max-bytes", type=int, default=4_000_000)
     p.add_argument("--window", type=int, default=5)
     p.add_argument("--repeat-cap", type=int, default=40)
@@ -777,7 +785,8 @@ def main():
         "config": {"D": a.D, "n_facts": a.n_facts, "n_negated": a.n_negated, "n_topics": a.n_topics,
                    "n_attempts": a.n_attempts, "tau_pct": a.tau_pct, "advantage_bar": a.advantage_bar,
                    "calib_spearman_bar": a.calib_spearman_bar, "min_emit": a.min_emit,
-                   "neural_order": a.neural_order, "max_bytes": a.max_bytes},
+                   "neural_order": a.neural_order, "host_oracle_sampler": a.host_oracle_sampler,
+                   "use_spiking_sampler": (not a.host_oracle_sampler), "max_bytes": a.max_bytes},
         "baseline_to_beat": {"measured_retrieval_novel_composition": 0.0,
                              "source": "2026-06-22-generation-novelty-categorical-gap-MEASURED.md"},
         "pipeline": (
