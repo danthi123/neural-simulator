@@ -1,0 +1,104 @@
+{
+  "task": "Crash-proof / pausable / resumable 24/7 develop-loop training infrastructure (owner's HARD prerequisite for the foundational-curriculum training).",
+  "date": "2026-06-25",
+  "owner_bar": {
+    "1_continuous_24_7": "run continuously",
+    "2_cannot_be_accidentally_killed": "survives terminal-close / parent-exit; auto-restart on crash",
+    "3_pausable_on_demand": "owner wants to game -> free the GPU gracefully -> resume later",
+    "4_crash_resumable_bounded_loss": "atomic + frequent checkpoints; resume-from-latest; NO corruption on hard kill; NO start-from-scratch"
+  },
+  "verdict": "GO — training is crash-proof / pausable / resumable to the owner's bar. The existing per-day persist/resume was already atomic+correct; the hardening adds fsync-durability, a PAUSE sentinel, a heartbeat, and a detached auto-restart watchdog. All four requirements validated on CPU (numpy), NO sim/ edit, NO GPU contention. Residual (honest): intra-DAY checkpointing is not byte-level (a hard kill loses the in-flight day's partial work, not completed days) — bounded to MINUTES via --max-windows-per-day; full intra-day stream-cortex cp_connections persistence is a documented GPU follow-on.",
+
+  "verified_existing_persist_resume": {
+    "already_robust": [
+      "BridgeLineage.save() is ATOMIC: writes current.simstate.h5.new then os.replace() (Windows-safe atomic rename) -> a reader never sees a torn checkpoint (sim/lineage.py:216-225). metadata.json likewise (.new + os.replace, sim/lineage.py:177-186).",
+      "_save_state persists the FULL DevelopState every day (day, facts, vocab, current_tier, metrics, turns) as JSON via the lineage save_fn (_longitudinal_develop_loop.py:427-451).",
+      "develop_gpu(resume=True) correctly reloads DevelopState, re-instates facts (re-teach), re-hears cumulative vocab to re-acquire learned codes, and continues from state.day (_longitudinal_develop_loop_gpu.py:312-339). CLAUDE.md 'lived 5 more days on a resume' reproduced.",
+      "Verified: save->reload->resume continues from the correct day with facts/vocab preserved (no corruption)."
+    ],
+    "gaps_found_and_closed": [
+      "(a) NO fsync before the atomic rename: os.replace guarantees no torn read but NOT that the renamed file's bytes are on physical media before a power loss. CLOSED: supervisor _fsync_lineage() fsyncs current.simstate.h5 + metadata.json + the dir entry after each day's save (develop_loop_supervisor.py:_fsync_lineage).",
+      "(b) NO pause mechanism. CLOSED: PAUSE sentinel polled at each day boundary -> clean exit 42.",
+      "(c) NO watchdog that restarts the TRAINING (repo's autonomous_watchdog.ps1 restarts the Claude CLI, not the run). CLOSED: scripts/develop_train_watchdog.ps1 owns the training process, auto-restarts on crash, respects PAUSE.",
+      "(d) NO run-detached launcher (survives terminal close). CLOSED: scripts/start_develop_training.ps1 launches the watchdog detached.",
+      "(e) BUG found during testing: routing PAUSE through develop_gpu's per_day_save_hook did NOT stop the loop — the loop deliberately SWALLOWS hook exceptions ('a save must never kill the develop loop'), so a raised pause was caught and the loop ran away (observed: ran to day 10 with PAUSE set). FIXED: added an additive should_continue() predicate to develop_gpu, polled at the TOP of each day (the correct deterministic pause seam); default None = byte-identical."
+    ]
+  },
+
+  "hardening": {
+    "files": {
+      "research/runners/develop_loop_supervisor.py": "NEW. The crash-proof/pausable/resumable supervisor around develop_gpu (PUBLIC seams only). run_resumable(): runs unbounded days into one persistent lineage, fsyncs every checkpoint (_fsync_lineage), writes a heartbeat.json, polls the PAUSE sentinel + an optional runtime cap via should_continue() at each day boundary, re-hears cumulative vocab on resume. PAUSE_EXIT_CODE=42.",
+      "research/runners/_longitudinal_develop_loop_gpu.py": "EDIT (+17/-1, runner not sim/): additive should_continue=None param on develop_gpu, polled BEFORE each day -> clean stop without starting the next day. Default None = byte-identical (verified: the runner's own smoke is GO unchanged; all other callers pass None implicitly).",
+      "scripts/develop_train_watchdog.ps1": "NEW. The training watchdog: while PAUSE set -> hold (GPU free); else run the supervisor foreground; on exit 42 (pause/runtime-cap) -> do NOT restart; on any other exit (crash/kill) -> restart from the last checkpoint after a backoff. MaxRestarts=0 = unlimited (24/7).",
+      "scripts/start_develop_training.ps1": "NEW. Launches the watchdog DETACHED (Start-Process -WindowStyle Hidden -PassThru) so it survives the terminal closing; writes bridges/developed/.train_watchdog.pid.",
+      "research/runners/_curriculum_kill_safety_test.py": "NEW. The decisive kill-safety gate (hard-kill mid-run + integrity + resume).",
+      "research/runners/_curriculum_pause_test.py": "NEW. The PAUSE-sentinel test (mid-run pause + clean exit 42 + resume)."
+    },
+    "checkpoint_cadence": "per-DAY, atomic (.new + os.replace) + fsync'd (durable to physical disk). --max-windows-per-day bounds a day's wall-clock -> bounds worst-case crash loss to that day's minutes. The supervisor also exposes --max-runtime-s for optional lossless process recycling.",
+    "pause_mechanism": "a PAUSE sentinel file (default bridges/PAUSE), polled by should_continue() at each day boundary. On presence: the current day finishes + is durably persisted, then the loop stops cleanly with exit 42; the watchdog sees 42 and does NOT restart (returns to pause-wait, GPU free).",
+    "watchdog": "scripts/develop_train_watchdog.ps1 (+ scripts/start_develop_training.ps1 for detached launch). Distinct from the repo's autonomous_watchdog.ps1 (which restarts Claude). Reuses the project's watchdog PATTERN (a long-lived supervisor loop + a sentinel/lock).",
+    "no_sim_edit": true
+  },
+
+  "tests_cpu_numpy": {
+    "kill_safety": {
+      "passed": true,
+      "method": "establish 2 days -> relaunch unbounded -> taskkill /F /T mid-run (a day in flight) -> check integrity -> relaunch -> assert resume + continue.",
+      "no_corruption_after_hard_kill": true,
+      "post_kill_corruption_error": null,
+      "days_on_disk_after_kill": 3,
+      "resumed_from_disk_not_scratch": true,
+      "days_on_disk_after_resume": 4,
+      "completed_days_lost": 0,
+      "worst_case_loss": "<= the single in-flight (unfinished) day; 0 completed days re-done",
+      "wall_seconds": 100.1,
+      "result_file": "research/findings/raw/_kill_safety.json"
+    },
+    "pause_sentinel": {
+      "passed": true,
+      "clean_pause_exit_42": true,
+      "no_runaway": true,
+      "days_checkpointed_before_pause": 2,
+      "disk_day_at_pause": 2,
+      "resumed_from_paused_day": true,
+      "disk_day_after_resume": 3,
+      "wall_seconds": 67.0,
+      "result_file": "research/findings/raw/_pause_test.json"
+    },
+    "watchdog_pause_respect": {
+      "passed": true,
+      "observed": "while PAUSE set, watchdog logs 'PAUSE sentinel present -> training held (gaming)' every poll and NEVER launches the supervisor (GPU stays free)."
+    },
+    "watchdog_crash_restart": {
+      "passed": true,
+      "observed": "supervisor crashed (exit 1, bad corpus) -> watchdog 'non-pause exit (crash/kill) -> resuming from last checkpoint after backoff' -> relaunched (restart #1) -> respected MaxRestarts cap. In production MaxRestarts=0 = unbounded restart."
+    },
+    "detached_launcher": {
+      "passed": true,
+      "observed": "start_develop_training.ps1 launched the watchdog as an independent hidden process (the launcher script returned/exited and the watchdog stayed alive -> survives terminal close); pid file written; documented Stop-Process stop works."
+    },
+    "byte_identical_default_path": {
+      "passed": true,
+      "observed": "_longitudinal_develop_loop_gpu --n-days 2 (no should_continue) is GO unchanged: vocab 6->12, facts 2->5, recall 0.50, retain 1.00, moat 0-FA, tier fired (== pre-edit)."
+    },
+    "production_invocation_smoke": {
+      "passed": true,
+      "observed": "supervisor --save-bundle --per-day-bundles wrote console bundles day_0/day_1 + heartbeat.json + lineage (current.simstate.h5 + metadata.json + history/)."
+    }
+  },
+
+  "owner_commands": {
+    "start_24_7_detached": "pwsh scripts/start_develop_training.ps1 -LineageRoot bridges/developed/curriculum -LineageName curriculum -BundleRoot bridges/developed/curriculum/bundles -PerDayBundles -MaxWindowsPerDay 2500",
+    "pause_to_game": "New-Item -ItemType File bridges/PAUSE      (PowerShell)   |   touch bridges/PAUSE      (bash)",
+    "resume": "Remove-Item bridges/PAUSE      (PowerShell)   |   rm bridges/PAUSE      (bash)   — the watchdog relaunches training automatically, resuming the developed brain.",
+    "check_liveness": "Get-Content bridges/developed/curriculum/curriculum/heartbeat.json   ;   Get-Content research/findings/raw/develop_train_watchdog.log -Tail 20",
+    "stop_entirely": "Stop-Process -Id (Get-Content bridges/developed/.train_watchdog.pid)",
+    "foreground_no_watchdog": "SIM_BACKEND=cupy python -u -m research.runners.develop_loop_supervisor --lineage-root bridges/developed/curriculum --lineage-name curriculum --bundle-root bridges/developed/curriculum/bundles --per-day-bundles --max-windows-per-day 2500"
+  },
+
+  "honest_residual": [
+    "Intra-DAY checkpoint granularity: a hard kill loses the IN-FLIGHT day's partial stream-learning (completed days are never lost; resume re-does only the unfinished day). Mitigated to MINUTES via --max-windows-per-day. Byte-level intra-day persistence would require persisting the stream-cortex cp_connections mid-day — a documented GPU follow-on (the loop currently re-hears the cumulative vocab on resume to re-instate codes).",
+    "The directory-entry fsync is best-effort (not supported on all Windows configs); the atomic rename (os.replace) stands regardless, so a torn read is impossible even without the dir fsync.",
+    "All robustness tests run on CPU (numpy) to avoid GPU contention; the persistence/pause/watchdog logic is backend-independent (it operates on the lineage JSON/.h5 + process lifecycle, not the GPU)."
+  ]
+}

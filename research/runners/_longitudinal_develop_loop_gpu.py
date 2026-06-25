@@ -286,7 +286,8 @@ class StreamCortex:
 
 def develop_gpu(lineage, curriculum, n_days, seed=42, consolidation_on=True, plasticity_on=True,
                 max_windows_per_day=2500, n_hub=200, n_per=12, D=128, enable_neural_render=False,
-                resume=False, verbose=True, _shared_cortex=None, per_day_save_hook=None, corpus_path=None):
+                resume=False, verbose=True, _shared_cortex=None, per_day_save_hook=None, corpus_path=None,
+                should_continue=None):
     """The GPU develop(N_days) loop. Each simulated day: WAKE = REAL stream-cortex code-learning (the brain hears
     the day's concepts in the corpus) -> CONVERSE = MultiTurnAgent on the learned grounded codes (store the day's
     facts, run the probe batteries) -> SLEEP consolidation (self-replay + retention re-test) -> [GROWTH] -> METRICS
@@ -301,6 +302,14 @@ def develop_gpu(lineage, curriculum, n_days, seed=42, consolidation_on=True, pla
     can SAVE a developed-brain BUNDLE for THIS day (the day-N artifact the console picks). It receives the live
     per-day agent (with the day's grounded codes injected + the developed facts re-instated) so the bundle is the
     EXACT in-memory brain for that day. Exceptions in the hook are swallowed (the loop must never die on a save).
+
+    `should_continue` (default None = byte-identical to the validated loop): an optional zero-arg predicate polled
+    at the TOP of each day, BEFORE any of that day's work. If it returns False the loop STOPS cleanly (returns the
+    days completed so far) WITHOUT starting the next day -- the crash-proof/pausable supervisor uses this to honor
+    a PAUSE sentinel (each completed day is already durably persisted, so stopping here loses zero completed work).
+    This is the correct pause seam: unlike an exception from `per_day_save_hook` (which the loop deliberately
+    swallows so a save can never kill training), a clean predicate at the day boundary lets the caller stop the
+    loop deterministically.
 
     Returns (per_day metrics, assembly_trace)."""
     from sim.auto_growth import TierPromoter
@@ -345,6 +354,13 @@ def develop_gpu(lineage, curriculum, n_days, seed=42, consolidation_on=True, pla
 
     for d in range(n_days):
         day_index = start_day + d
+        # PAUSE/STOP seam: poll BEFORE starting this day. The prior day is already durably persisted, so stopping
+        # here loses zero completed work. (Default None -> byte-identical to the validated loop.)
+        if should_continue is not None and not should_continue():
+            if verbose:
+                print(f"  [develop_gpu] should_continue() False at day {day_index} -> clean stop "
+                      f"(days completed this call = {len(per_day)})", flush=True)
+            break
         day_t0 = time.time()
         day_curr = curriculum.day_stream(day_index)
 
