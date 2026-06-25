@@ -4650,3 +4650,11 @@ Owner saw ~all VRAM in use (C2 hi-fi ~20.9/24GB, GPU 97% util -- C2 the only res
 Owner: 'No need to cap VRAM use, when I want to game I'll just ask you to pause any in-flight runs.' ⇒ full VRAM use is FINE (maximize runs); the gaming lever is on-demand PAUSE, NOT a standing cap. The CYCLE-589 VRAM-cap-for-24/7 commitment WITHDRAWN. Memory saved (feedback_pause_on_demand_not_vram_cap). Pause-on-demand readiness: a de-risk = kill the process (re-runnable, bounded loss); the 24/7 develop-loop = the bridges/PAUSE sentinel (clean exit-42 + crash-safe resume). C2 continues (owner chose let-finish).
 
 **EXACT NEXT CONCRETE ACTION:** owner withdrew the VRAM cap (do NOT add it). AWAIT C2 (batfptbjc, ~3-4hr) -> the dial-able verdict (bridge gen recover toward numpy-320 +0.215?). THEN: re-calibrate the gen readiness-bar (Pearson per C0) + Step-2 multi-bridge (NO VRAM cap). If owner asks to pause (game) -> pause cleanly + resume. recall 1.000 + moat 0-FA STAND. NEVER weaken the moat; honest-propagate origin+gitea.
+
+---
+
+## CYCLE 591 (2026-06-25 — C2 hi-fi OOM'd [my sizing error]: n_per 32/n_hub 500 ~34GB >> 24GB, OOM-retry-looped ~3.3hr, NO result. Killed; relaunching RIGHT-SIZED n_per 24/n_hub 400 ~15GB.)
+
+C2 (batfptbjc) OOM'd: cudaOutOfMemory ~1.25GB @ the 20.6GB (80% CuPy pool) limit, REPEATEDLY (retry-loop ~3.3hr, NO [learn]/corr/gen -- couldn't build the bridge). Sizing error: n_per 32/n_hub 500 = (500+320)×32 = 26240 neurons (2.6× base 9920) -> ~7× synapses -> ~34GB. Killed PID 28584; GPU free (2.2GB baseline). NOTE: raising the pool can't fix it (n_per 32 needs ~34GB > 24GB hardware); the fix is RIGHT-SIZING. Right-sized: n_per 24/n_hub 400 = (400+320)×24 = 17280 (1.74×) -> ~3× synapses -> ~15GB (fits). Same read-out-fidelity lever (1.5× population + 1.33× context + 2× windows -> corr 0.756->higher -> gen toward +0.215?).
+
+**EXACT NEXT CONCRETE ACTION:** killed OOM'd C2. Relaunched RIGHT-SIZED (self-guarded: n_per 24/n_hub 400/300K/content/coherent/--no-frozen, ~15GB, ~3hr) + VERIFY into [learn] within ~5min (catch OOM in minutes). On C2 -> dial-able verdict (read-out fidelity recovers gen?). recall 1.000 + moat 0-FA STAND. NEVER weaken the moat; honest origin+gitea.
