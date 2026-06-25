@@ -1,0 +1,119 @@
+{
+  "task": "BUILD (CPU edit-only) — the COMBINED-corpus loader, Rung-1 of the knowledge-scaling path (_knowledge_scaling_first_chat_scoping.md). Stream a COMBINED corpus (TinyStories for clean codes + Wikipedia for breadth) so the derived curriculum vocab + co-occurrence come from the UNION.",
+  "date": "2026-06-25",
+  "status": "DONE — additive plumbing built, verified CPU-only (import + small load test), single-corpus path BYTE-IDENTICAL, NO sim/ edit, NOT committed, GPU NOT touched.",
+  "constraints_honored": {
+    "cpu_edit_only": true,
+    "gpu_not_run": true,
+    "sim_dir_untouched": true,
+    "additive_single_tinystories_content_path_byte_unchanged": true,
+    "no_tail_grep_sleep_watchers": true,
+    "no_commit": true,
+    "no_webapp_restart": true
+  },
+
+  "loader_edits": {
+    "research/runners/corpus_stream.py": {
+      "summary": "ADDITIVE combined-corpus helpers; the existing single-file iter_stories / load_token_stream are BYTE-UNCHANGED (the new helpers compose them).",
+      "line_1_import": "added Sequence, Union to the typing import",
+      "lines_added_after_load_token_stream": {
+        "normalize_corpus_paths(paths)": "resolve None | str (comma- or os.pathsep-separated) | Sequence[str] -> ordered list of file paths. A single bare path str -> [that_path] (byte-identical contract). None / empty -> [DEFAULT_CORPUS_PATH].",
+        "iter_stories_multi(paths, chunk_bytes, skip_empty)": "stream stories across MULTIPLE files concatenated in order, each split on its OWN <|endoftext|> delimiter via the unchanged iter_stories; per-file chunked streaming (bounded memory). A single str path == iter_stories(path) exactly.",
+        "load_token_stream_multi(paths, chunk_bytes, max_stories)": "materialize list[list[str]] across multiple files (skip_empty=False, matching load_token_stream). A single str/[single] path == load_token_stream(path) exactly."
+      },
+      "net_diff": "+70 lines, -? (additive only)"
+    },
+    "research/runners/_curriculum_step1_320_real_corpus.py": {
+      "summary": "Thread a COMBINED corpus through the Step-1 curriculum runner; the single --corpus-path / --vocab-filter content path (the IN-FLIGHT run) is byte-unchanged.",
+      "import": "extended corpus_stream import to include iter_stories_multi, load_token_stream_multi, normalize_corpus_paths",
+      "derive_curriculum_from_corpus(corpus_path, ...)": "now accepts a single path str OR a list (normalize_corpus_paths internally); frequency aggregated across the UNION via iter_stories_multi (was iter_stories(corpus_path)); a single str path is byte-identical. report['corpus'] -> '+'.join(basenames); added report['corpus_paths'], report['n_corpora'].",
+      "main_argparse": "added --corpus-paths (comma-sep COMBINED corpus; takes precedence over --corpus-path when given). --corpus-path help clarified as the single/legacy path. Default = the single TinyStories corpus => byte-identical.",
+      "main_resolution": "corpus_paths = normalize_corpus_paths(--corpus-paths) if given else [--corpus-path or default]; each path existence-validated; story stream materialized via load_token_stream_multi(corpus_paths) (byte-identical for single).",
+      "config_json": "added config.corpus_paths + config.n_corpora for traceability (additive metadata; does not affect vocab/cat_ids/freqs)."
+    }
+  },
+
+  "combined_corpus_stats": {
+    "tokenizer_note": "the runner's tokenizer is re.findall(r'[a-z]+', story) (does NOT lowercase; the cached corpora retain capitals, so leading capitals are dropped -- e.g. 'He'->'e', 'They'->'hey', 'Tom'->'om', 'Valkyria'->'alkyria'). UNCHANGED -- I preserved it exactly (changing it would break byte-identity for the in-flight run). All counts below use this actual tokenizer.",
+    "wikitext_delimiter": "data/corpus/wikitext.txt has 0 <|endoftext|> delimiters and 0 newlines (WikiText-103 style, single line). It streams as ONE document -- correct for the seed-independent token-frequency + WINDOW=2-local co-occurrence the curriculum uses (a 'trivial loader detail' per the scoping). tinystories.txt has 9828 <|endoftext|> delimiters -> 9829 stories.",
+    "per_corpus": {
+      "tinystories_alone": {"stories": 9829, "tokens": 1570941, "types": 7948},
+      "wikitext_alone": {"stories": 1, "tokens": 619738, "types": 23289}
+    },
+    "combined_tinystories_plus_wikitext": {
+      "stories": 9830,
+      "tokens": 2190679,
+      "types": 25946,
+      "union_check_types": 25946,
+      "new_types_from_wikipedia_not_in_tinystories": 17998
+    },
+    "breadth_lift_vs_tinystories_alone": {
+      "types_delta": 17998,
+      "multiplier": "3.3x",
+      "matches_scoping_claim": "scoping said Wikipedia gives ~3x topic breadth -> CONFIRMED (3.3x at the actual tokenizer)"
+    },
+    "content_word_counts_g20_entity_verb": {
+      "tinystories_content_f>=50": 417,
+      "wikitext_content_f>=50": 94,
+      "combined_content_f>=50": 477
+    },
+    "combined_content_vocab_filter_top320": {
+      "n_chosen": 320,
+      "content_frac": 1.0,
+      "freq_range": [8913, 87],
+      "categories_covered": "23/32",
+      "top20": ["saw", "bird", "dog", "girl", "ball", "cat", "boy", "tree", "friend", "park", "go", "hen", "make", "pot", "home", "see", "hat", "find", "box", "house"],
+      "n_NEW_content_concepts_vs_tinystories_alone_top320": 28,
+      "NEW_content_concepts_examples": ["season", "state", "order", "church", "father", "study", "television", "wife", "son", "hurricane", "level", "station", "view", "port", "van", "date", "office", "search", "summer", "spread", "cricket", "skin", "rise", "battery", "hospital", "frame", "earthquake", "lower"],
+      "interpretation": "the combined top-320 keeps the TinyStories child-world core (saw/bird/dog/girl/cat) AND pulls in 28 real-world breadth concepts from Wikipedia (places, professions, weather/science, household: church/television/hurricane/hospital/earthquake/office/station/port). TinyStories' larger token mass (1.57M vs 0.62M) dominates the union frequency ranking at the 320 tier, so most Wikipedia breadth rides in at the tail -- at the Rung-2 ~1,280 tier (4 bridges) far more Wikipedia content enters. The plumbing correctly aggregates the union."
+    }
+  },
+
+  "byte_identical_single_path_confirm": {
+    "loader_level": {
+      "iter_stories('tinystories.txt') vs iter_stories_multi('tinystories.txt') vs iter_stories_multi(['tinystories.txt'])": "ALL IDENTICAL: stories=9829 tokens=1570941 types=7948 top3=[('the',74980),('and',69838),('a',54214)]",
+      "load_token_stream vs load_token_stream_multi (str AND [list])": "token lists EQUAL (==) element-for-element"
+    },
+    "curriculum_deriver_level": {
+      "derive_curriculum_from_corpus('tinystories.txt', 320, vocab_filter='content') vs ([list], ...)": "vocab byte-identical, cat_ids np.array_equal, freqs equal, freq_range [8828,70], n_chosen=320, content_frac=1.0, top5=['saw','bird','dog','girl','cat']"
+    },
+    "vs_on_disk_baseline": {
+      "file": "research/findings/raw/_curriculum_step1_320_real_corpus_seed42.json (the existing --vocab-filter all / None baseline)",
+      "baseline_freq_range": [19729, 169],
+      "baseline_top10": ["hey","day","big","very","happy","saw","play","little","there","bird"],
+      "baseline_n_unique_types": 7948,
+      "my_single_path_vocab_filter_all": "freq_range [19729,169], top5 ['hey','day','big','very','happy'], n_unique_types 7948 -> BYTE-IDENTICAL to the on-disk baseline. The single-corpus path (all/content/curated) reproduces the prior numbers exactly."
+    },
+    "all_three_vocab_filters_single_path_smoke": {
+      "content": "freq_range [8828,70] top5 ['saw','bird','dog','girl','cat']",
+      "all": "freq_range [19729,169] top5 ['hey','day','big','very','happy'] (== baseline)",
+      "curated": "freq_range [12427,50] top5 ['big','happy','play','little','mom']"
+    }
+  },
+
+  "import_load_verify": {
+    "corpus_stream import": "OK (iter_stories_multi, load_token_stream_multi, normalize_corpus_paths present)",
+    "_curriculum_step1_320_real_corpus import": "OK (derive_curriculum_from_corpus present; --corpus-paths argparse present); GPU NOT built at import (import != bridge build)",
+    "normalize_corpus_paths contract": {
+      "None": ["tinystories.txt"],
+      "single str": ["tinystories.txt"],
+      "comma str": ["tinystories.txt", "wikitext.txt"],
+      "list": ["tinystories.txt", "wikitext.txt"],
+      "empty str": ["tinystories.txt"]
+    }
+  },
+
+  "git_diff_stat": {
+    "files": [
+      "research/runners/_curriculum_step1_320_real_corpus.py | 53 +++--",
+      "research/runners/corpus_stream.py                  | 70 ++++++"
+    ],
+    "totals": "2 files changed, 111 insertions(+), 12 deletions(-)",
+    "sim_dir_changes": "NONE (git status --porcelain -- sim/ is empty)"
+  },
+
+  "sim_flag": "NONE — no sim/ edit (reuse-by-import runner-only plumbing).",
+
+  "rung2_rerun_command": "SIM_BACKEND=cupy python -u -m research.runners._curriculum_step1_320_real_corpus --seeds 42,43,44 --n-concepts 1280 --vocab-filter content --gen-reference coherent --corpus-paths data/corpus/tinystories.txt,data/corpus/wikitext.txt --out research/findings/raw/_curriculum_step1_combined_1280.json",
+  "rung2_note": "This single-bridge runner caps at the validated 320-tier substrate; the DECISIVE Rung-2 gate per the scoping is the 4-bridge ~1,280-concept ENSEMBLE via `g20_multibridge --sparse` + `g20_vocab_spec_2048` sharding (per-bridge <=320). The combined-corpus loader built here is the prerequisite plumbing for BOTH: it feeds the union-derived ~1,280-concept vocab. The command above runs THIS runner at n_concepts=1280 over the combined corpus as the cheap single-bridge combined-corpus smoke; the production Rung-2 ensemble run wires the same --corpus-paths through g20_multibridge (a separate runner)."
+}

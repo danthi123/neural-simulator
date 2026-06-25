@@ -73,7 +73,10 @@ if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
 from sim.backend import to_host, is_gpu_backend  # noqa: E402
-from research.runners.corpus_stream import iter_stories, load_token_stream, default_corpus_path  # noqa: E402
+from research.runners.corpus_stream import (  # noqa: E402
+    iter_stories, load_token_stream, default_corpus_path,
+    iter_stories_multi, load_token_stream_multi, normalize_corpus_paths,
+)
 from research.runners._phaseB_onbridge_stream_cortex_derisk import build_stream_bridge  # noqa: E402
 from research.runners.option_c_stageB_fair_test import STOPLIST  # noqa: E402
 from research.runners.dendritic_d1_learn_graded_structure_derisk import (  # noqa: E402
@@ -265,10 +268,14 @@ def derive_curriculum_from_corpus(corpus_path, n_concepts, verbose=True, vocab_f
     coherent_map = _coherent_category_map()   # only for the gen-coverage diagnostic below (which CHOSEN words
     #                                            have a coherent GEN home), NOT the content filter (g20 domains).
 
+    # COMBINED-CORPUS support (ADDITIVE; a single str path is byte-identical to the old single-file iter_stories):
+    # `corpus_path` may be a single path, a comma/os.pathsep-separated string, or a list -> aggregate frequency
+    # across the UNION (so the derived vocab is from all corpora) via iter_stories_multi.
+    corpus_paths = normalize_corpus_paths(corpus_path)
     gfreq = Counter()
     n_stories = 0
     n_tokens = 0
-    for toks in iter_stories(corpus_path):
+    for toks in iter_stories_multi(corpus_paths):
         n_stories += 1
         n_tokens += len(toks)
         gfreq.update(toks)
@@ -316,7 +323,9 @@ def derive_curriculum_from_corpus(corpus_path, n_concepts, verbose=True, vocab_f
 
     report = {
         "vocab_filter": vocab_filter,
-        "corpus": os.path.basename(corpus_path),
+        "corpus": "+".join(os.path.basename(p) for p in corpus_paths),
+        "corpus_paths": list(corpus_paths),
+        "n_corpora": len(corpus_paths),
         "n_stories": n_stories,
         "n_tokens": n_tokens,
         "n_unique_types": len(gfreq),
@@ -808,7 +817,16 @@ def main():
                         "sharding taxonomy (gen 0.153). BOTH are always reported regardless of this choice.")
     p.add_argument("--no-frozen", action="store_true", help="skip the frozen-brain control (debug only)")
     p.add_argument("--corpus-path", default=None,
-                   help="path to a plain-text corpus shard; default = data/corpus/tinystories.txt")
+                   help="path to a SINGLE plain-text corpus shard; default = data/corpus/tinystories.txt. "
+                        "(Byte-identical legacy single-corpus path; for the COMBINED corpus use --corpus-paths.)")
+    p.add_argument("--corpus-paths", default=None,
+                   help="COMBINED corpus: comma-separated list of plain-text corpus shards whose token-frequency "
+                        "+ co-occurrence are aggregated across the UNION (so the derived vocab spans all corpora) "
+                        "-- the Rung-1 knowledge-scaling path (TinyStories for clean codes + Wikipedia for "
+                        "breadth, per _knowledge_scaling_first_chat_scoping.md). Each file is split on its OWN "
+                        "<|endoftext|> delimiter (a file with none streams as one document). Default = the single "
+                        "TinyStories corpus (--corpus-path / data/corpus/tinystories.txt) => byte-identical to the "
+                        "legacy single-corpus run. Takes precedence over --corpus-path when given.")
     p.add_argument("--out", default="research/findings/raw/_curriculum_step1_320_real_corpus.json")
     a = p.parse_args()
     try:
@@ -819,17 +837,28 @@ def main():
     logging.disable(logging.INFO)
 
     seeds = [int(s.strip()) for s in a.seeds.split(",")]
-    corpus_path = a.corpus_path or default_corpus_path()
-    if not os.path.exists(corpus_path):
-        print(f"[ERROR] corpus not found: {corpus_path}", flush=True)
-        sys.exit(2)
+    # Resolve the corpus path(s): --corpus-paths (COMBINED, comma-sep) takes precedence; else the single
+    # --corpus-path (default TinyStories). normalize_corpus_paths makes a single bare path byte-identical to the
+    # legacy single-corpus run. (A combined-corpus run is the additive Rung-1 path.)
+    if a.corpus_paths:
+        corpus_paths = normalize_corpus_paths(a.corpus_paths)
+    else:
+        corpus_paths = [a.corpus_path or default_corpus_path()]
+    for cp in corpus_paths:
+        if not os.path.exists(cp):
+            print(f"[ERROR] corpus not found: {cp}", flush=True)
+            sys.exit(2)
+    # `corpus_path` retained as the value passed to the curriculum deriver (str when single -> byte-identical;
+    # list when combined). The deriver + loaders accept either (normalize_corpus_paths internally).
+    corpus_path = corpus_paths[0] if len(corpus_paths) == 1 else corpus_paths
 
     print("=" * 100, flush=True)
     print("[FOUNDATIONAL CURRICULUM — STEP 1: 320 concepts from the REAL TinyStories corpus]", flush=True)
     print(f"  backend={os.environ.get('SIM_BACKEND')}  seeds={seeds}  n_concepts={a.n_concepts}  "
           f"n_hub={a.n_hub}  n_per={a.n_per}  max_windows={a.max_windows}  D={a.D}  "
           f"vocab_filter={a.vocab_filter}", flush=True)
-    print(f"  corpus={corpus_path}", flush=True)
+    print(f"  corpus={'+'.join(corpus_paths) if len(corpus_paths) > 1 else corpus_paths[0]} "
+          f"({len(corpus_paths)} corpus file(s))", flush=True)
     print("  bars: recall>=%.2f (who/what) | moat 0 false-accepts | generalization>=%.2f (gen-reference=%s; "
           "BOTH sharding+coherent reported) + derangement collapse | frozen-brain control | MEASURE VRAM + "
           "wall-clock" % (a.recall_bar, a.gen_bar, a.gen_reference), flush=True)
@@ -837,7 +866,8 @@ def main():
 
     t0 = time.time()
     # derive the curriculum ONCE (corpus frequency is seed-independent); the story stream is loaded once + reused.
-    stories = load_token_stream(corpus_path)
+    # load_token_stream_multi over a single-element list is byte-identical to the legacy load_token_stream.
+    stories = load_token_stream_multi(corpus_paths)
     vocab, cat_ids, cat_names, freqs, curr_report = derive_curriculum_from_corpus(
         corpus_path, a.n_concepts, vocab_filter=a.vocab_filter)
 
@@ -930,7 +960,8 @@ def main():
         "config": {"n_concepts": a.n_concepts, "n_hub": a.n_hub, "n_per": a.n_per,
                    "window_steps": a.window_steps, "max_windows": a.max_windows, "D": a.D,
                    "n_facts": a.n_facts, "recall_bar": a.recall_bar, "gen_bar": a.gen_bar,
-                   "gen_reference": a.gen_reference, "vocab_filter": a.vocab_filter},
+                   "gen_reference": a.gen_reference, "vocab_filter": a.vocab_filter,
+                   "corpus_paths": list(corpus_paths), "n_corpora": len(corpus_paths)},
         "curriculum": curr_report,
         "curriculum_developmental_order": vocab,
         "curriculum_category_ids": cat_ids.tolist(),
