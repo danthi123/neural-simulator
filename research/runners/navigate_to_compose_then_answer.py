@@ -109,8 +109,11 @@ import numpy as np
 
 from sim.backend import get_backend, to_host
 
-# the merged bridge + the co-resident RF composer (STEP 2b) + the additive STEP-3 perception + WTA kwargs.
-from research.runners.nav_conv_merged_bridge import build_merged_nav_conv_bridge, MergedRFComposer
+# the merged bridge + the co-resident RF composer (STEP 2b) + the co-resident OneBrainComposer (the production-default
+# persistent-loop one-brain composer) + the additive STEP-3 perception + WTA kwargs.
+from research.runners.nav_conv_merged_bridge import (
+    build_merged_nav_conv_bridge, MergedRFComposer, CoResidentOneBrainComposer,
+)
 # the perceived-object vocabulary + the grounding constants (reuse-by-import, VERBATIM with the cheap-first smoke).
 from research.runners.funcint_perception_to_memory_probe import OBJECT_WORDS, N_OBJECTS
 # the de-risked grounded-code map (live rate read -> fixed complex projection -> phasor), VERBATIM. host_m mode only.
@@ -137,6 +140,29 @@ MOAT_ABSENT = [("river", "chase"), ("apple", "near")]
 # `gen_concept` response through the LEARNED convergence (spikes-only, no host-designed projection); `host_m` is the
 # legacy host-`M` round-trip kept ONLY as the revertible `--grounding host_m` A/B comparison.
 GROUNDING_DEFAULT = "gen_spikes"
+# DEFAULT composer (purity #1 Route-B Option-3, 2026-06-25): `rf` is the validated `MergedRFComposer` oracle (the
+# Route-B 6-seed GO substrate); `onebrain` is the PRODUCTION-DEFAULT persistent-loop `CoResidentOneBrainComposer`
+# (the consolidated one brain). On the onebrain composer the codebook + the FHRR bind/unbind algebra live on the INNER
+# `composer.comp` (an `RFPhasorComposer`); the grounding write + the compose anti-cheats route there (see `_codebook` /
+# `_algebra`), while the no-confab MOAT (store/query) exercises the onebrain SPIKING store + spiking cleanup.
+COMPOSER_DEFAULT = "rf"
+
+
+def _codebook(composer):
+    """The concept codebook the binds/cleanups actually consult. For the OneBrainComposer it lives on the INNER
+    `composer.comp` (an `RFPhasorComposer`); for the rf `MergedRFComposer` it is `composer.concepts` directly. The
+    Route-B grounding MUST write here (not a stray `composer.concepts` attr that nothing reads -- the scoping's
+    diagnosis (i)) so the percept's grounded code reaches the codebook the store + the compose read."""
+    comp = getattr(composer, "comp", None)
+    return comp if comp is not None else composer
+
+
+def _algebra(composer):
+    """The object exposing the FHRR `_encode`/`unbind` algebra over `_codebook(composer)`. On the OneBrainComposer the
+    algebra is on the inner `composer.comp` (the same `RFPhasorComposer` the onebrain store binds through); on the rf
+    composer it is `composer` itself. The held-out-compose + lesion anti-cheats run their `_encode`/`unbind` here, so
+    they exercise the SAME grounded codebook the onebrain store consumes."""
+    return _codebook(composer)
 # gen_concept spike-read knobs (the de-risk's graded-propagation config): NMDA on gen_concept integrates the sparse
 # structured-perception drive to spikes over the read window; OU is on for the read (the live co-resident episode noise).
 GEN_PERC_DRIVE_PA = 300.0   # the structured-perception drive into gen_perception (the convergence de-risk's perc_scale)
@@ -223,8 +249,8 @@ def lesion_gen_convergence(bridge, gen):
 
 # ── the merged nav-body + perception(cortex_it) + co-resident composer bridge ────────────────────────────────
 def build_compose_bridge(seed: int = 42, with_body: bool = True, co_resident_generalization: bool = True,
-                         grounding: str = GROUNDING_DEFAULT):
-    """Build the merged nav+conv bridge WITH the perception region(s) + the co-resident RF composer, and construct the
+                         grounding: str = GROUNDING_DEFAULT, composer_kind: str = COMPOSER_DEFAULT):
+    """Build the merged nav+conv bridge WITH the perception region(s) + the co-resident composer, and construct the
     navsee-style navigation handles (readout/cortex/tonic) against it + the grounded-code read-projection.
 
     with_body=True : the full nav cascade selects moves (spiking-WTA sel_X). with_body=False is the ISOLATED-PERCEPTION
@@ -234,6 +260,12 @@ def build_compose_bridge(seed: int = 42, with_body: bool = True, co_resident_gen
                      `gen_concept` response through the LEARNED convergence; FORCES co_resident_generalization=True (the
                      gen stack must be co-resident + trained). "host_m" is the legacy host-`M` round-trip (the revertible
                      `--grounding host_m` A/B comparison), which uses the bare cortex_it rate -> host random projection.
+    composer_kind  : "rf" (the validated `MergedRFComposer` oracle) | "onebrain" (the PRODUCTION-DEFAULT persistent-loop
+                     `CoResidentOneBrainComposer`, the consolidated one brain). On the onebrain path the codebook + the
+                     FHRR algebra live on the inner `composer.comp`; the grounding write + the compose anti-cheats route
+                     through `_codebook`/`_algebra`, and the no-confab MOAT (store/query) exercises the onebrain SPIKING
+                     store + spiking cleanup. The merged `rf` region is sized for the onebrain layout span via
+                     `CoResidentOneBrainComposer.n_total_for(...)` (passed as `onebrain_rf_size` to the builder).
     co_resident_generalization=True (the DEFAULT now, since gen_spikes needs it): append the generalization stack
                      (structured-perception gen_perception -> NMDA gen_concept -> gen_fact + the trained-then-frozen
                      rate-Hebbian convergence) so the percept->concept grounding is a LEARNED SYNAPTIC route. The gen
@@ -244,25 +276,45 @@ def build_compose_bridge(seed: int = 42, with_body: bool = True, co_resident_gen
     handles["gen_proj"] mirrors it); for host_m, `proj` is the legacy cortex_it host-`M`.
     """
     grounding = str(grounding)
+    composer_kind = str(composer_kind)
     assert grounding in ("gen_spikes", "host_m"), f"unknown grounding mode {grounding!r}"
+    assert composer_kind in ("rf", "onebrain"), f"unknown composer_kind {composer_kind!r}"
     if grounding == "gen_spikes":
         co_resident_generalization = True            # gen_spikes REQUIRES the co-resident trained gen stack
     xp, _ = get_backend()
     vocab = list(OBJECT_WORDS) + ACTIONS
+    # onebrain: size the merged `rf` region for the persistent-loop composer's FULL layout span (work registers +
+    # k_max store blocks + per-block + batched Q+cleanup). n_total_for builds an internal RFPhasorComposer(vocab=...)
+    # so it sees the SAME word set the composer will -> the size is exact. rf path passes 0 (the byte-unchanged 7*D).
+    onebrain_rf_size = (CoResidentOneBrainComposer.n_total_for(D=D, vocab=vocab, k_max=32, enable_attributed=False)
+                        if composer_kind == "onebrain" else 0)
     # enable_spiking_wta_readout=with_body: the body gets the validated sel_X selection (Step-1 de-risk: motor_X also
     # selects, but sel_X has the higher SNR margin navsee was validated with). co_resident_rf + co_resident_perception
     # bring the composer `rf` slice + the bare cortex_it perception region onto the one bridge (both appended LAST so
     # the nav/parser/dlPFC index bases are byte-unchanged; cortex_it is the very last region).
     bridge, handles = build_merged_nav_conv_bridge(
         seed=seed, vocab=vocab, n_cortex=100, co_resident_rf=True, rf_D=D,
+        onebrain_rf_size=onebrain_rf_size,
         co_resident_perception=True, enable_spiking_wta_readout=with_body,
         co_resident_generalization=co_resident_generalization)
     rm = bridge.region_manager
     region_names = set(rm.region_indices_dict())
 
-    # the co-resident composer (STEP 2b): RF binding ops run on the merged bridge's own `rf` slice. Same seed + vocab.
-    composer = MergedRFComposer(bridge, handles["rf_base"], handles["rf_size"],
-                                seed=seed, D=D, vocab=vocab, period=200)
+    # the co-resident composer: RF binding ops run on the merged bridge's own `rf` slice. Same seed + vocab.
+    #   rf       : MergedRFComposer (the STEP-2b oracle; numpy-kb fact memory + numpy-argmax cleanup).
+    #   onebrain : CoResidentOneBrainComposer (the persistent-loop one brain; synaptic multi-fact store + SPIKING
+    #              cleanup). build_parser=False -> the idle layout-only parser is skipped (comprehension here goes
+    #              through store(); the standalone runner has no framework parse slice to read). enable_rf_cudagraph
+    #              uses the masked megakernel when on GPU for the resonate loop.
+    if composer_kind == "onebrain":
+        _, _backend = get_backend()
+        composer = CoResidentOneBrainComposer(
+            bridge, handles["rf_base"], build_parser=False,
+            seed=seed, D=D, vocab=vocab, period=200, k_max=32, persistent_loop=True,
+            enable_rf_cudagraph=(_backend == "cupy"))
+    else:
+        composer = MergedRFComposer(bridge, handles["rf_base"], handles["rf_size"],
+                                    seed=seed, D=D, vocab=vocab, period=200)
 
     # the cortex_it slice (used by host_m grounding + the byte-identity gate's "cortex_it is the last region" check).
     it_indices = np.asarray(list(rm.indices("cortex_it")), dtype=np.int64)
@@ -271,6 +323,7 @@ def build_compose_bridge(seed: int = 42, with_body: bool = True, co_resident_gen
         "seed": int(seed),
         "with_body": bool(with_body),
         "grounding": grounding,
+        "composer_kind": composer_kind,
         "it_indices": xp.asarray(it_indices),
         "it_indices_host": it_indices,
         "rf_base": int(handles["rf_base"]),
@@ -360,7 +413,20 @@ def _perceive_and_ground(bridge, composer, handles, proj, obj_word):
             source_vec = read_cortex_it_rate(bridge, handles["it_indices"], obj_idx)
             phases = grounded_phases(source_vec, proj)
             source_kind = "cortex_it_rate_host_M"
-        composer.concepts[obj_word] = phases
+        # CODEBOOK WRITE REDIRECT (scoping diagnosis (i)): write to the codebook the binds/cleanups actually read.
+        # For the rf composer that is `composer.concepts`; for the OneBrainComposer it is the inner `composer.comp.concepts`
+        # (a stray `composer.concepts` write would be silently dropped). `_codebook` resolves both.
+        cb = _codebook(composer)
+        cb.concepts[obj_word] = phases
+        # CACHE-INVALIDATION (the onebrain-specific nuance, scoping §2 caveat): the onebrain store/cleanup cache CSRs
+        # (`_store_csr`/`_csr_cache`). A re-ground AFTER a store (the lesion's re-ground) must be SEEN by the cleanup
+        # codebook. The cleanup codebook stack is rebuilt per-read from `comp.concepts` (NOT cached on the concept code),
+        # so a `comp.concepts` re-write is picked up; we additionally mark the store CSR dirty so any cached store stack
+        # rebuilds against the re-grounded code on the next op (belt-and-suspenders; never HIDES the lesion).
+        if hasattr(composer, "_store_dirty"):
+            composer._store_dirty = True
+        if hasattr(composer, "_csr_cache"):
+            composer._csr_cache = {}
     finally:
         cc.enable_ou_process, cc.ou_std_current_pA = prev_ou, prev_std
     if obj_word not in handles["grounded_objects"]:
@@ -451,8 +517,13 @@ def _held_out_compose_score(composer, grounded_objs, seed):
     if not held_out:
         return 0.0, 0.0, 0, []
 
+    # the FHRR `_encode`/`unbind` algebra over the GROUNDED codebook. On the OneBrainComposer the algebra + the codebook
+    # live on the inner `composer.comp` (the SAME RFPhasorComposer the onebrain store binds through), so this exercises
+    # the grounded codebook the onebrain store consumes; on the rf composer it is `composer` itself.
+    alg = _algebra(composer)
+
     # the memorization floor (a recall-only baseline): nearest stored composite -> its remembered filler.
-    mem_store = [(composer._encode({"agent": names[ai], "patient": names[bi]}), ai, bi) for (ai, bi) in memorized]
+    mem_store = [(alg._encode({"agent": names[ai], "patient": names[bi]}), ai, bi) for (ai, bi) in memorized]
 
     def _mem_recall(comp, role):
         best, bk = -1.0, 0
@@ -465,10 +536,10 @@ def _held_out_compose_score(composer, grounded_objs, seed):
     clean_ok = mem_ok = 0
     held_composites = []
     for (ai, bi) in held_out:
-        comp = composer._encode({"agent": names[ai], "patient": names[bi]})    # COMPOSE on the merged rf slice
+        comp = alg._encode({"agent": names[ai], "patient": names[bi]})    # COMPOSE on the merged rf slice
         held_composites.append((comp, ai, bi))
-        ra = composer.unbind(comp, "agent")
-        rb = composer.unbind(comp, "patient")
+        ra = alg.unbind(comp, "agent")
+        rb = alg.unbind(comp, "patient")
         clean_ok += int(ra == names[ai]) + int(rb == names[bi])
         mem_ok += int(names[_mem_recall(comp, "agent")] == names[ai]) + int(names[_mem_recall(comp, "patient")] == names[bi])
     clean = clean_ok / (2 * len(held_out))
@@ -487,10 +558,11 @@ def _lesion_recompose_score(composer, grounded_objs, held_composites):
     names = list(grounded_objs)
     if not held_composites:
         return 0.0, 0
+    alg = _algebra(composer)                     # the FHRR algebra over the now-LESIONED codebook (composer.comp on onebrain)
     ok = 0
     for (comp, ai, bi) in held_composites:
-        ra = composer.unbind(comp, "agent")     # cleanup vs the now-LESIONED codebook
-        rb = composer.unbind(comp, "patient")
+        ra = alg.unbind(comp, "agent")           # cleanup vs the now-LESIONED codebook
+        rb = alg.unbind(comp, "patient")
         ok += int(ra == names[ai]) + int(rb == names[bi])
     return ok / (2 * len(held_composites)), len(held_composites)
 
@@ -537,13 +609,16 @@ def _provenance_check(bridge, composer, handles, ground_source, ground_phases, o
     DECISIVE spikes-only control is the LESION (anti-cheat 1, run_seed): severing the LEARNED convergence collapses the
     compose, proving it rode the synaptic spiking route. Raises on violation."""
     grounding = handles.get("grounding", GROUNDING_DEFAULT)
+    cb = _codebook(composer)            # the codebook the binds/cleanups read (composer.comp.concepts on OneBrainComposer)
+    cb_attr = "composer.comp.concepts" if cb is not composer else "composer.concepts"
     if grounding == "gen_spikes":
         # (i) the grounded code is the FIXED read-projection of the gen_concept SPIKES — a spikes-only provenance.
         assert source_kind == "gen_concept_spikes", \
             f"FAIL provenance: gen_spikes grounding produced source_kind {source_kind!r} (expected gen_concept_spikes — " \
             f"the host-`M` cortex_it round-trip must NOT be on the grounding path)"
-        assert np.allclose(composer.concepts[obj_word], gen_grounded_phases(ground_source, handles["gen_proj"])), \
-            f"FAIL provenance: composer.concepts[{obj_word!r}] is not the gen_concept-SPIKES-derived grounded code"
+        assert np.allclose(cb.concepts[obj_word], gen_grounded_phases(ground_source, handles["gen_proj"])), \
+            f"FAIL provenance: {cb_attr}[{obj_word!r}] is not the gen_concept-SPIKES-derived grounded code (the write " \
+            f"did not reach the codebook the binds read)"
         # (ii) the LEARNED convergence actually fired the gen_concept assembly for the rendered percept.
         assert float(np.asarray(ground_source).sum()) > 0.0, \
             f"FAIL provenance: gen_concept did not SPIKE for {obj_word!r} (the learned percept->concept route is dead)"
@@ -554,8 +629,8 @@ def _provenance_check(bridge, composer, handles, ground_source, ground_phases, o
         perc_write = "gen_perception <- structured_perception_set(object) DURING arrival [sensory render]"
     else:
         assert source_kind == "cortex_it_rate_host_M", f"FAIL provenance: host_m grounding source_kind {source_kind!r}"
-        assert np.allclose(composer.concepts[obj_word], ground_phases), \
-            f"FAIL provenance: composer.concepts[{obj_word!r}] is not the live-rate-derived grounded code"
+        assert np.allclose(cb.concepts[obj_word], ground_phases), \
+            f"FAIL provenance: {cb_attr}[{obj_word!r}] is not the live-rate-derived grounded code"
         assert float(np.asarray(ground_source).sum()) > 0.0, \
             f"FAIL provenance: the cortex_it live rate for {obj_word!r} was all-zero (no perception)"
         ground_write = "composer.concepts[o] = angle(M @ live_cortex_it_rate) [LEGACY host-`M`; A/B only]"
@@ -566,22 +641,34 @@ def _provenance_check(bridge, composer, handles, ground_source, ground_phases, o
     # (iv) the bind actually ran on the bridge's RF complex synapses (cp_rf_w_re allocated after a store).
     rf_w_re = getattr(bridge, "cp_rf_w_re", None)
     assert rf_w_re is not None, "FAIL co-residence: cp_rf_w_re is None after a store (the bind did not run on the bridge)"
+    # (v) ONEBRAIN-SPECIFIC (scoping §4 anti-cheat 1): the grounding write reached the codebook the binds read --
+    # `composer.comp.concepts` on the OneBrainComposer (NOT a stray `composer.concepts` attr nothing reads). Confirmed
+    # by `cb is composer.comp` for the onebrain path + the obj_word actually present in cb.concepts.
+    composer_kind = handles.get("composer_kind", "rf")
+    write_reached_comp_concepts = bool(cb is getattr(composer, "comp", None)) if composer_kind == "onebrain" else False
+    codebook_has_obj = bool(obj_word in cb.concepts)
+    assert codebook_has_obj, f"FAIL provenance: {obj_word!r} not in {cb_attr} (the grounding write did not land in the codebook)"
     return {
         "grounding_mode": grounding,
+        "composer_kind": composer_kind,
         "grounded_code_source": code_src,
         "grounded_code_is_spikes_only": bool(grounding == "gen_spikes"),
         "no_host_M_cross_region_quantity": bool(grounding == "gen_spikes"),
         "composer_bound_to_merged_bridge": True,
         "rf_complex_weights_allocated_after_store": True,
+        "codebook_attr": cb_attr,
+        "write_reached_comp_concepts": write_reached_comp_concepts,
+        "codebook_has_grounded_obj": codebook_has_obj,
         "perception_side_write": perc_write,
         "ground_write": ground_write,
     }
 
 
 # ── one seed: the COUPLED compose episode + the LESION + ISOLATED-PERCEPTION controls ─────────────────────────
-def run_seed(seed, grounding=GROUNDING_DEFAULT):
+def run_seed(seed, grounding=GROUNDING_DEFAULT, composer_kind=COMPOSER_DEFAULT):
     xp, backend = get_backend()
-    print(f"\n[navcompose] ===== seed {seed} (backend={backend}, grounding={grounding}) =====", flush=True)
+    print(f"\n[navcompose] ===== seed {seed} (backend={backend}, grounding={grounding}, composer={composer_kind}) =====",
+          flush=True)
     chance = 1.0 / N_OBJECTS
 
     layout = default_object_layout(seed)
@@ -592,7 +679,8 @@ def run_seed(seed, grounding=GROUNDING_DEFAULT):
     print(f"[navcompose] start={start_pos} route_waypoints={route_waypoints}", flush=True)
 
     # --- COUPLED: navigate + perceive+ground the encountered objects in-episode, then COMPOSE held-out facts. ---
-    bridge, composer, h, proj = build_compose_bridge(seed, with_body=True, grounding=grounding)
+    bridge, composer, h, proj = build_compose_bridge(seed, with_body=True, grounding=grounding,
+                                                     composer_kind=composer_kind)
     print(f"[navcompose] merged bridge: {int(bridge.core_config.num_neurons)} neurons, readout={h.get('readout_region')}_X; "
           f"rf_base={h['rf_base']} cortex_it_base={int(h['it_indices_host'][0])} grounding={h['grounding']}", flush=True)
 
@@ -648,14 +736,20 @@ def run_seed(seed, grounding=GROUNDING_DEFAULT):
               f"composites: held-out compose {lesion_clean:.3f} (was {clean:.3f}; should collapse toward chance)", flush=True)
     else:
         rng = np.random.default_rng(seed * 7919 + 3)
+        cb = _codebook(composer)                                # the codebook the binds read (composer.comp on onebrain)
         for o in grounded:
-            composer.concepts[o] = rng.uniform(0.0, 1.0, D)     # sever the live-percept grounding (random code)
+            cb.concepts[o] = rng.uniform(0.0, 1.0, D)           # sever the live-percept grounding (random code)
+        if hasattr(composer, "_store_dirty"):
+            composer._store_dirty = True
+        if hasattr(composer, "_csr_cache"):
+            composer._csr_cache = {}
         lesion_clean, _ = _lesion_recompose_score(composer, grounded, held_composites)
         print(f"[navcompose]  LESION    grounded->random codes, re-cleanup the SAME composites: held-out compose "
               f"{lesion_clean:.3f} (was {clean:.3f}; should collapse toward chance)", flush=True)
 
     # --- ISOLATED-PERCEPTION: NO body -> never traverses -> never arrives -> nothing grounded -> nothing composes. ---
-    bridge_ip, composer_ip, h_ip, proj_ip = build_compose_bridge(seed, with_body=False, grounding=grounding)
+    bridge_ip, composer_ip, h_ip, proj_ip = build_compose_bridge(seed, with_body=False, grounding=grounding,
+                                                                 composer_kind=composer_kind)
     ep_ip = run_compose_episode(bridge_ip, composer_ip, h_ip, proj_ip, layout, start_pos, route_waypoints, perceive=True)
     grounded_ip = list(h_ip["grounded_objects"])
     print(f"[navcompose]  ISO-PERC  no body -> grounded {len(grounded_ip)} objects in-episode (expect 0)", flush=True)
@@ -671,6 +765,7 @@ def run_seed(seed, grounding=GROUNDING_DEFAULT):
 
     return {
         "seed": int(seed), "backend": backend, "chance": chance, "grounding": grounding,
+        "composer_kind": composer_kind,
         "object_layout": {f"{c[0]},{c[1]}": w for c, w in layout.items()},
         "n_grounded": n_grounded, "grounded": grounded,
         "compose_clean": clean, "compose_floor": floor, "n_held_out": n_held,
@@ -708,14 +803,17 @@ def main():
     ap.add_argument("--seeds", type=int, nargs="+", default=[42], help="single-seed GPU smoke uses [42]")
     ap.add_argument("--grounding", type=str, default=GROUNDING_DEFAULT, choices=["gen_spikes", "host_m"],
                     help="gen_spikes (DEFAULT, spikes-only — the host-`M` closure) | host_m (legacy A/B comparison)")
+    ap.add_argument("--composer", type=str, default=COMPOSER_DEFAULT, choices=["rf", "onebrain"],
+                    help="rf (DEFAULT, the MergedRFComposer oracle) | onebrain (the production-default persistent-loop "
+                         "CoResidentOneBrainComposer — purity #1 Route-B Option-3: spikes-only grounding on the one brain)")
     ap.add_argument("--out", type=str, default="research/findings/raw/navigate_to_compose_then_answer.json")
     args = ap.parse_args()
 
     _, backend = get_backend()
-    print(f"[navcompose] backend={backend} grounding={args.grounding} — does the agent NAVIGATE, GROUND perceived "
-          f"objects IN-EPISODE ({'gen_concept SPIKES via the LEARNED convergence' if args.grounding == 'gen_spikes' else 'cortex_it rate -> host-M'}), "
+    print(f"[navcompose] backend={backend} grounding={args.grounding} composer={args.composer} — does the agent NAVIGATE, "
+          f"GROUND perceived objects IN-EPISODE ({'gen_concept SPIKES via the LEARNED convergence' if args.grounding == 'gen_spikes' else 'cortex_it rate -> host-M'}), "
           f"and COMPOSE novel perceived-object facts on ONE bridge (held-out >> floor, moat intact)?", flush=True)
-    results = [run_seed(s, grounding=args.grounding) for s in args.seeds]
+    results = [run_seed(s, grounding=args.grounding, composer_kind=args.composer) for s in args.seeds]
 
     any_breach = any(r["moat_breach"] for r in results)
     all_go = all(r["go"] for r in results)
@@ -753,6 +851,7 @@ def main():
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
     with open(args.out, "w") as f:
         json.dump(_ser({"verdict": verdict, "backend": backend, "grounding": args.grounding,
+                        "composer": args.composer,
                         "mean_clean": mean_clean, "mean_floor": mean_floor, "results": results}), f, indent=2, default=str)
     print(f"[navcompose] wrote {args.out}", flush=True)
     raise SystemExit(0 if verdict == "GO" else (3 if verdict == "MOAT_BREACH" else 1))
