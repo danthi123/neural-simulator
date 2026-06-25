@@ -1,0 +1,61 @@
+{
+  "gate": "option A gate 3A -- same-N functional-neutrality (direct composer ops at fixed onebrain N)",
+  "backend": "cupy",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "logic": "at a FIXED merged N (the onebrain rf size), exercising the co-resident composer's kind-specific RF work DIRECTLY (agent.composer.store + the who/what/yes-no matrix on the `rf` slice; NOT agent.hear/what_does, which would also run the kind-INDEPENDENT parser's full-bridge OU stepping -- see _optionA_gate3A_diag.json) must leave the NAV-slice v/u BYTE-IDENTICAL -> the episode (a deterministic OU-OFF function of the nav v/u start-state) is unperturbed by the composer kind -> \u0394=0. Any \u0394 would be a real composer->nav state leak (the Task-1 anti-cheat says impossible: rf has 0 out-edges into nav + every op _zero_rf_v_u()-resets the rf slice).",
+  "rows": [
+    {
+      "seed": 42,
+      "merged_N": 27973,
+      "nav_slice_size": 1756,
+      "composer_is_CoResidentOneBrainComposer": true,
+      "nav_v_byte_identical": true,
+      "nav_u_byte_identical": true,
+      "max_abs_nav_dv": 0.0,
+      "max_abs_nav_du": 0.0,
+      "moat_unstored_abstains": true,
+      "moat_unknown_is_unknown": true,
+      "moat_preserved": true,
+      "seed_pass": true
+    },
+    {
+      "seed": 43,
+      "merged_N": 27973,
+      "nav_slice_size": 1756,
+      "composer_is_CoResidentOneBrainComposer": true,
+      "nav_v_byte_identical": true,
+      "nav_u_byte_identical": true,
+      "max_abs_nav_dv": 0.0,
+      "max_abs_nav_du": 0.0,
+      "moat_unstored_abstains": true,
+      "moat_unknown_is_unknown": true,
+      "moat_preserved": true,
+      "seed_pass": true
+    },
+    {
+      "seed": 44,
+      "merged_N": 27973,
+      "nav_slice_size": 1756,
+      "composer_is_CoResidentOneBrainComposer": true,
+      "nav_v_byte_identical": true,
+      "nav_u_byte_identical": true,
+      "max_abs_nav_dv": 0.0,
+      "max_abs_nav_du": 0.0,
+      "moat_unstored_abstains": true,
+      "moat_unknown_is_unknown": true,
+      "moat_preserved": true,
+      "seed_pass": true
+    }
+  ],
+  "n_seeds": 3,
+  "n_byte_identical": 3,
+  "n_moat_preserved": 3,
+  "max_abs_nav_dv": 0.0,
+  "max_abs_nav_du": 0.0,
+  "gate3a_pass": true,
+  "verdict": "DELTA0_GO -- exercising the composer is nav-neutral at fixed N (functional neutrality proven, all seeds); the moat is preserved -> Option A may flip on the functional-neutrality argument"
+}

@@ -25,13 +25,17 @@ pytestmark = pytest.mark.skipif(
            "the merged bridge + dlPFC run on CuPy. Run on GPU (the acceptance environment).")
 
 
-@pytest.fixture(scope="module")
-def agent():
-    """Build the merged nav+parser+dlPFC bridge + the separate RFPhasorComposer ONCE. NO try/except skip on a missing
-    denoise64 cache: the RF composer uses random phasor codes, so this never raises FileNotFoundError — a silent skip
-    would hide a non-functional merge (design §3 anti-cheat)."""
+# STEP 2a runs the composer on a SEPARATE per-op bridge (co_resident_composer=False), so co_resident_composer_kind is
+# inert here. We still parametrize over it as a regression guard: the 2026-06-25 Closure-1 flip changed the kind DEFAULT
+# (rf -> onebrain), and this asserts the STEP-2a agent constructs + passes the full matrix + the no-confab moat under
+# BOTH the new onebrain default and the retained rf oracle.
+@pytest.fixture(scope="module", params=["onebrain", "rf"], ids=["kind=onebrain", "kind=rf"])
+def agent(request):
+    """Build the merged nav+parser+dlPFC bridge + the separate RFPhasorComposer ONCE per composer-kind. NO try/except
+    skip on a missing denoise64 cache: the RF composer uses random phasor codes, so this never raises FileNotFoundError —
+    a silent skip would hide a non-functional merge (design §3 anti-cheat)."""
     from research.runners.nav_conv_merged_bridge import MergedNavConvAgent
-    return MergedNavConvAgent(seed=42)
+    return MergedNavConvAgent(seed=42, co_resident_composer_kind=request.param)
 
 
 # --- anti-cheat: the agent's parser + dlPFC actually run on the merged bridge (design §3) -----------------------

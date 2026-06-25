@@ -141,7 +141,11 @@ def validate_route_b(seed=42):
     t0 = time.time()
     # vocab = the perceived objects + the compose verbs (so the composer codebook + the moat actions are coherent).
     vocab = list(OBJECT_WORDS) + ACTIONS
-    agent = MergedNavConvAgent(seed=seed, vocab=vocab, co_resident_composer=True, co_resident_perception=True)
+    # Route B (perceive_and_ground) writes composer.concepts, the rf-path attribute -> pin the rf composer kind
+    # explicitly (the 2026-06-25 Closure-1 flip made 'onebrain' the kind DEFAULT, which guards out co_resident_perception
+    # because OneBrainComposer holds concepts on `comp`; the gen-spikes onebrain Route-B grounding is a flagged follow-on).
+    agent = MergedNavConvAgent(seed=seed, vocab=vocab, co_resident_composer=True,
+                               co_resident_composer_kind="rf", co_resident_perception=True)
     print(f"[routeB] built agent in {time.time() - t0:.1f}s ({agent._merged_bridge.core_config.num_neurons} neurons, "
           f"cortex_it base={int(agent._handles['cortex_it_indices'][0])})", flush=True)
 

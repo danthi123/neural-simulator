@@ -1631,14 +1631,14 @@ class MergedNavConvAgent:
       * the dlPFC context `elaborate` drives is the merged bridge's (`self._dlpfc_ctx.bridge is self._merged_bridge`).
     """
 
-    def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_composer_kind="rf",
+    def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_composer_kind="onebrain",
                  co_resident_limbic=False,
                  co_resident_nav_critic=None, nav_critic_spiking_sc=False,
                  nav_critic_place_selforg=None, nav_critic_grid_frontend=None,
                  co_resident_td_cueshift=False,
                  co_resident_perception=False, co_resident_command_route=None,
                  enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
-                 enable_da_encoding_gain=False, da_encoding_k=2.0,
+                 enable_da_encoding_gain=True, da_encoding_k=2.0,
                  da_encoding_g_min=0.5, da_encoding_g_max=3.0,
                  onebrain_k_max=32):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
@@ -1679,16 +1679,27 @@ class MergedNavConvAgent:
         slice is co-resident — the production default); without one DA reads as baseline => g_eff = g0 => no-op."""
         self.seed = int(seed)
         self.co_resident_composer = bool(co_resident_composer)
-        # --- CONSOLIDATION (option A, Probe 2/3): which co-resident composer runs on the merged `rf` slice. ---
-        # "rf"       (DEFAULT, unchanged): MergedRFComposer (an RFPhasorComposer storing PHASES in numpy `kb`) -- the
-        #            byte-identity ORACLE; the encoding_gain_fn WRITE-side hook is wired+DA-correct but INERT here (phases
-        #            are magnitude-invariant), and the DA salience READ gate uses the composer-external `_gated_out`.
-        # "onebrain" (NEW opt-in): CoResidentOneBrainComposer -- the persistent-loop composer (synaptic multi-fact store
-        #            + spiking cleanup + the no-confab moat) on the merged `rf` slice (Probe-1 byte-identical to a
-        #            standalone OneBrainComposer). This ACTIVATES the limbic encoding-gain WRITE side (OneBrainComposer
-        #            ._write_block scales the stored complex-weight MAGNITUDE by encoding_gain_fn() -> LOAD-BEARING under
-        #            read damage), and routes the DA salience READ gate through the composer's NATIVE `confidence_gate`
-        #            (the same `min(margin(agent),margin(action)) < g` abstention, moat-safe by construction).
+        # --- CONSOLIDATION (option A, Closure 1): which co-resident composer runs on the merged `rf` slice. ---
+        # "onebrain" (PRODUCTION DEFAULT, 2026-06-25, Closure 1 flip via owner-default (b)): CoResidentOneBrainComposer
+        #            -- the persistent-loop composer (synaptic multi-fact store + spiking cleanup + the no-confab moat) on
+        #            the merged `rf` slice (Probe-1 byte-identical to a standalone OneBrainComposer). This ACTIVATES the
+        #            limbic encoding-gain WRITE side (OneBrainComposer._write_block scales the stored complex-weight
+        #            MAGNITUDE by encoding_gain_fn() -> LOAD-BEARING under read damage), and routes the DA salience READ
+        #            gate through the composer's NATIVE `confidence_gate` (the same `min(margin(agent),margin(action)) < g`
+        #            abstention, moat-safe by construction). The merged conversation is now FULLY-SPIKING-ONE-BRAIN.
+        # "rf"       (TEST ORACLE / numpy-CPU path): MergedRFComposer (an RFPhasorComposer storing PHASES in numpy `kb`) --
+        #            the byte-identity ORACLE; the encoding_gain_fn WRITE-side hook is wired+DA-correct but INERT here
+        #            (phases are magnitude-invariant), and the DA salience READ gate uses the composer-external `_gated_out`.
+        #            Retained as the oracle the onebrain path is validated against (`test_*_merged_agent[rf]` parametrization).
+        # FLIP RATIONALE (Closure 1, owner-default (b)): the literal cross-N byte-identity nav gate is UNREACHABLE on the
+        # GPU without a sim/ FP rewrite (the residual is GPU floating-point NON-ASSOCIATIVITY: the rf-region SIZE changes
+        # the total N -> the episode-loop readout/render reduction tiles differently -> ~1e-5 FP32 round-off in the SAME
+        # nav-slice neurons, chaotically amplified by the spiking-WTA decision over 200 steps). That is NOT a composer
+        # functional effect: the `rf` slice has ZERO cp_connections out-edges into nav + every composer op _zero_rf_v_u()-
+        # resets it, so it cannot leak into nav (Probe-1 op-isolation, atol exact; gate 3A same-N functional neutrality,
+        # Δ=0). The documented STANDALONE nav benchmark (--readout-source motor, the CLI default) NEVER builds the
+        # conversational rf region at all -> totally unaffected by the merged composer kind. So the flip is on the proven
+        # FUNCTIONAL-neutrality argument, NOT cross-N byte-identity. See research/findings/raw/_closure1_optionA_DONE_optionB.json.
         # Only meaningful when co_resident_composer=True (it selects WHICH co-resident composer). NO `sim/` edit.
         self.co_resident_composer_kind = str(co_resident_composer_kind)
         if self.co_resident_composer_kind not in ("rf", "onebrain"):
@@ -1903,9 +1914,12 @@ class MergedNavConvAgent:
 
         # WRITE-side limbic->composer hook (burndown I-7-b): wire the composer's encoding_gain_fn to read the SHARED
         # `dopamine` (the same DA `_da_confidence_gate` reads) so a fact heard during a salient/high-DA turn encodes
-        # stronger (Lisman-Grace/Kandel D.16). Default OFF = byte-identical (encoding_gain_fn stays None -> g=1). The
-        # hook is load-bearing only on a MAGNITUDE-storing composer (OneBrainComposer / substrate-store); see the
-        # __init__ docstring for the inert-on-numpy-kb caveat.
+        # stronger (Lisman-Grace/Kandel D.16). PRODUCTION DEFAULT = ON (2026-06-25, Closure 3 flip): the LOAD-BEARING
+        # limbic WRITE side is engaged on the (now-default) onebrain composer (OneBrainComposer._write_block scales the
+        # stored complex-weight MAGNITUDE by encoding_gain_fn()). Byte-identical AT REST (DA == baseline => g=1 => no-op);
+        # the gain rises above 1 only on a salient/high-DA encode. Set enable_da_encoding_gain=False for the legacy
+        # byte-identical-everywhere write path. The hook is inert on the rf-oracle composer (numpy-kb phases are
+        # magnitude-invariant); see the __init__ docstring for the inert-on-numpy-kb caveat.
         if self.enable_da_encoding_gain:
             self.composer.encoding_gain_fn = self._da_encoding_gain
 
