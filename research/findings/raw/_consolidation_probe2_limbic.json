@@ -1,0 +1,130 @@
+{
+  "probe": "consolidation_probe2_limbic",
+  "what": "the limbic encoding-gain WRITE side is LOAD-BEARING on the CO-RESIDENT OneBrainComposer wired into MergedNavConvAgent, with the gain reading the SHARED spike-derived `dopamine` off the ONE merged bridge",
+  "scoping": "research/findings/raw/_consolidation_onebrain_limbic_scoping.md (Probe 2)",
+  "consolidation_wire_in": "MergedNavConvAgent(co_resident_composer=True, co_resident_composer_kind='onebrain', enable_da_encoding_gain=True) -> CoResidentOneBrainComposer on the merged rf slice; encoding_gain_fn = _da_encoding_gain (reads get_concentration('dopamine'))",
+  "seed": 42,
+  "result": {
+    "backend": "numpy",
+    "da_source": {
+      "recipe": "co_resident_limbic: limbic_snc (IZH2007_DOPAMINE) + `dopamine` from_region_firing_signed over [limbic_snc] on the MERGED bridge; DA read via get_concentration('dopamine')",
+      "da_baseline": 0.5,
+      "da_tonic": 0.5,
+      "rate_tonic_hz": 0.0,
+      "da_high": 0.7090572361897893,
+      "rate_high_hz": 291.44444444444446,
+      "snc_tonic_pa": 80.0,
+      "snc_salient_pa": 600.0,
+      "n_settle": 300
+    },
+    "gains": {
+      "k_da": 2.0,
+      "g_tonic": 1.0,
+      "g_high": 1.4181144723795787,
+      "g_ratio_high_over_tonic": 1.4181144723795787
+    },
+    "mechanism_store_magnitude": {
+      "neutral_block_mean_mag": 1.0,
+      "rewarded_block_mean_mag": 1.4181144723795784,
+      "stored_ratio(rewarded/neutral)": 1.4181144723795784,
+      "expected_ratio(g_high/g_tonic)": 1.4181144723795787,
+      "ratio_matches_gain": true,
+      "lesion_ratio(DA_pinned->should_be_1)": 1.0,
+      "lesion_ratio_is_unity": true
+    },
+    "moat": {
+      "clean_unstored_abstains": true,
+      "clean_recall_neutral_ok": true,
+      "clean_recall_rewarded_ok": true,
+      "moat_breach_under_damage_any": false
+    },
+    "differential_under_damage": {
+      "sweep": [
+        {
+          "sigma": 1.0,
+          "real_neutral_ok": true,
+          "real_rewarded_ok": true,
+          "moat_ok": true,
+          "lesion_neutral_ok": true,
+          "lesion_rewarded_ok": true,
+          "lesion_moat_ok": true
+        },
+        {
+          "sigma": 1.5,
+          "real_neutral_ok": true,
+          "real_rewarded_ok": true,
+          "moat_ok": true,
+          "lesion_neutral_ok": true,
+          "lesion_rewarded_ok": true,
+          "lesion_moat_ok": true
+        },
+        {
+          "sigma": 2.0,
+          "real_neutral_ok": true,
+          "real_rewarded_ok": true,
+          "moat_ok": true,
+          "lesion_neutral_ok": true,
+          "lesion_rewarded_ok": false,
+          "lesion_moat_ok": true
+        },
+        {
+          "sigma": 3.0,
+          "real_neutral_ok": true,
+          "real_rewarded_ok": false,
+          "moat_ok": true,
+          "lesion_neutral_ok": true,
+          "lesion_rewarded_ok": false,
+          "lesion_moat_ok": true
+        },
+        {
+          "sigma": 4.0,
+          "real_neutral_ok": false,
+          "real_rewarded_ok": false,
+          "moat_ok": true,
+          "lesion_neutral_ok": false,
+          "lesion_rewarded_ok": false,
+          "lesion_moat_ok": true
+        },
+        {
+          "sigma": 5.0,
+          "real_neutral_ok": false,
+          "real_rewarded_ok": false,
+          "moat_ok": true,
+          "lesion_neutral_ok": false,
+          "lesion_rewarded_ok": false,
+          "lesion_moat_ok": true
+        },
+        {
+          "sigma": 6.0,
+          "real_neutral_ok": false,
+          "real_rewarded_ok": false,
+          "moat_ok": true,
+          "lesion_neutral_ok": false,
+          "lesion_rewarded_ok": false,
+          "lesion_moat_ok": true
+        },
+        {
+          "sigma": 8.0,
+          "real_neutral_ok": false,
+          "real_rewarded_ok": false,
+          "moat_ok": true,
+          "lesion_neutral_ok": false,
+          "lesion_rewarded_ok": false,
+          "lesion_moat_ok": true
+        }
+      ],
+      "knee_sigma": null,
+      "found": false
+    },
+    "verdict": {
+      "load_bearing(mechanism+lesion+moat)": true,
+      "mechanism_load_bearing(store_mag==g)": true,
+      "lesion_abolishes_differential(ratio==1)": true,
+      "moat_intact_all_levels(HARD)": true,
+      "behavioral_differential_found": false,
+      "GO": true
+    }
+  },
+  "GO": true,
+  "load_bearing": true
+}

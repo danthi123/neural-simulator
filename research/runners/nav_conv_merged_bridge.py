@@ -29,6 +29,10 @@ from sim.backend import get_backend, to_host
 # Module-level (the MergedRFComposer base class needs it at class-definition time). Lightweight: rf_phasor_composer
 # only imports numpy + the already-imported sim.* substrate, so this does not slow the parser-only --microcheck path.
 from research.runners.rf_phasor_composer import RFPhasorComposer
+# Module-level too (the CoResidentOneBrainComposer base class needs it at class-definition time -- the consolidation
+# port, option A). one_brain_composer imports rf_phasor_composer + the same sim.* substrate (no new heavy deps), so
+# this does not slow the parser-only --microcheck path either.
+from research.runners.one_brain_composer import OneBrainComposer
 
 # parser ground truth (from brain_conversational_agent): conjunction index k = position*2 + voice
 # (voice 0=active, 1=passive); each k teacher-binds to one role.
@@ -537,6 +541,7 @@ def _train_command_route_on_merged(bridge, seed):
 # ── the merged nav + parser + dlPFC bridge builder (design §2.5 FINAL FORM) ───────────────────────────────
 def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100,
                                  co_resident_rf: bool = False, rf_D: int = 128,
+                                 onebrain_rf_size: int = 0,
                                  co_resident_perception: bool = False,
                                  co_resident_command_route: bool = False,
                                  enable_spiking_wta_readout: bool = False,
@@ -729,9 +734,19 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     # neurons' incidental Izhikevich firing between composer ops injects NOTHING into the nav cascade (the Task-1
     # anti-cheat). enable_nmda=False keeps the slow NMDA current confined to the dlPFC slices. Appended LAST so the
     # navigation/parser/dlPFC index bases are unchanged (the nav byte-identity is preserved).
+    #
+    # rf region size: default `7*rf_D` covers the largest SINGLE MergedRFComposer op (a 6-role bundle = (6+1)*D). The
+    # co-resident OneBrainComposer (option A) needs a MUCH larger span (work registers + k_max store blocks + per-block
+    # + batched Q+cleanup); the agent passes `onebrain_rf_size` = CoResidentOneBrainComposer.n_total_for(...). When >0,
+    # it OVERRIDES `7*rf_D` (and must be >= it, since the same region still hosts the largest single RF op). Default 0
+    # = the byte-unchanged MergedRFComposer sizing (the `--composer onebrain` path is the only caller that sets it).
+    _rf_n = int(onebrain_rf_size) if int(onebrain_rf_size) > 0 else 7 * int(rf_D)
+    if int(onebrain_rf_size) > 0 and int(onebrain_rf_size) < 7 * int(rf_D):
+        raise ValueError(f"onebrain_rf_size={onebrain_rf_size} < 7*rf_D={7 * int(rf_D)} (the rf region must still hold "
+                         f"the largest single RF op)")
     rf_regions = []
     if co_resident_rf:
-        rf_regions = [BrainRegion(name="rf", n_neurons=7 * int(rf_D), exc_fraction=1.0,
+        rf_regions = [BrainRegion(name="rf", n_neurons=_rf_n, exc_fraction=1.0,
                                   internal_density=0.0, enable_nmda=False)]
     # STEP-3 (compose perceived content): an optional BARE `cortex_it` perception region so the navigation
     # perception's live spiking rate code can be read OFF the merged bridge (co-resident with the whole stack) and
@@ -1175,7 +1190,7 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     }
     if co_resident_rf:
         handles["rf_base"] = int(rm.indices("rf")[0])
-        handles["rf_size"] = 7 * int(rf_D)
+        handles["rf_size"] = int(_rf_n)        # the ACTUAL rf region size (7*rf_D, or onebrain_rf_size when given)
         handles["rf_D"] = int(rf_D)
     if co_resident_perception:
         # the cortex_it perception slice indices (for perceive_and_ground: the live-rate read + grounded code).
@@ -1446,6 +1461,137 @@ class MergedRFComposer(RFPhasorComposer):
         return phases[base:base + n]
 
 
+# ── CONSOLIDATION (option A, Probe 2/3): the co-resident `OneBrainComposer` on the merged `rf` slice ──────────────
+# The persistent-loop composer (the whole who/what pipeline: synaptic multi-fact store + spiking cleanup + the
+# no-confab moat + the encoding_gain_fn WRITE-side hook) run as a SLICE of the merged bridge -- the same index-shift
+# port `MergedRFComposer` performs for `RFPhasorComposer`, applied ONE LEVEL UP. Byte-identical to a standalone
+# `OneBrainComposer` (Probe 1 GO, research/findings/raw/_consolidation_probe1_byteident.json: full who/what matrix +
+# every is-None/unknown abstention identical to atol 1e-9, moat preserved, nav slice byte-isolated). This is the
+# importable home for the class first proven in research/runners/_consolidation_probe1_byteident.py (the probe now
+# imports it from here). NO `sim/` edit (reuse-by-import: OneBrainComposer + BridgeParser(index_offset=) + the masked
+# rf_kick + the _rf_reset_mask co-residence guarantee). The scoping rationale: §1.2/§1.3 of
+# research/findings/raw/_consolidation_onebrain_limbic_scoping.md.
+class CoResidentOneBrainComposer(OneBrainComposer):
+    """`OneBrainComposer` whose RF/store/cleanup ops run on a SLICE of a shared (merged) bridge instead of on its own
+    private bridge -- the consolidation port.
+
+    `OneBrainComposer.__init__` builds the layout from `self.P` and a PRIVATE bridge at `[0:n_total]`. This subclass
+    redirects the bridge handle to `merged_bridge` and REBASES every absolute index by `rf_base`:
+      * the parser slice moves to `[rf_base : rf_base + P_local]` (BridgeParser(index_offset=rf_base));
+      * every base (P, store_base, q_base, c_base, bat_q_base, bat_c_base) is shifted += rf_base, so every downstream
+        `self.<base> + i*...` lands inside the slice;
+      * `self.n_total` is REDEFINED to the merged bridge's N (so every `np.zeros(self.n_total)` kick + every
+        `_build_complex_csr(self.n_total, ...)` is full-N, the merged-bridge size);
+      * `self.rf_mask` AND `self._rf_reset_mask` cover exactly the composer's layout span on the merged bridge
+        ([rf_base : rf_base + span]); the per-op `v/u <- 0` reset is thus restricted to the rf slice, so a composer op
+        leaves a co-resident Izhikevich (nav) slice's v/u BYTE-untouched (the masked-rf-kick 5b coexistence guarantee).
+
+    Because the resonate loop is pure complex dynamics (no OU) + masked + the CSR is block-local, the RF ops reproduce
+    the standalone composer's results bit-for-bit (Probe 1). On the merged agent the parser is built on the slice but
+    comprehension is driven via `store()` (the agent's merged `parse_conj`/`parse_role` slices supply the roles --
+    LAYOUT decision 2b), so the composer's own parser is idle (it is constructed for layout completeness only)."""
+
+    def __init__(self, merged_bridge, rf_base, **kwargs):
+        # Reproduce OneBrainComposer.__init__'s feature/layout computation WITHOUT building the private bridge/parser
+        # (which __init__ does at one_brain_composer.py:282-283). We mirror the relevant body, then rebase. Keeping
+        # this in the subclass leaves one_brain_composer.py byte-untouched (a NEW opt-in alongside MergedRFComposer).
+        from research.runners.brain_conversational_agent import BridgeParser
+        seed = int(kwargs.get("seed", 42)); D = int(kwargs.get("D", 128))
+        vocab = kwargs.get("vocab", None); period = int(kwargs.get("period", 200))
+        k_max = int(kwargs.get("k_max", 32))
+        grounded_codes = kwargs.get("grounded_codes", None)
+        # --- the flag fields (defaults match OneBrainComposer.__init__ signature) ---
+        self.seed = seed; self.D = D; self.period = period
+        self.trace = bool(kwargs.get("trace", False)); self.last_trace = None
+        self.integrated_loop = bool(kwargs.get("integrated_loop", False))
+        self.persistent_loop = bool(kwargs.get("persistent_loop", False))
+        self.sequencer_match_thresh = float(kwargs.get("sequencer_match_thresh", 0.06))
+        self.sequencer_gain = float(kwargs.get("sequencer_gain", 0.11))
+        self.sequencer_sigma = float(kwargs.get("sequencer_sigma", 1.0))
+        self.sequencer_input_gain = float(kwargs.get("sequencer_input_gain", 1.0))
+        self._seq = None; self._seq_score = None; self._seq_K = None; self._seq_drives = None; self._seq_dirty = True
+        self.enable_seq_vocab_shrink = bool(kwargs.get("enable_seq_vocab_shrink", True))
+        self._seq_mapA = None; self._seq_mapX = None; self._seq_cuevocab_sig = None; self._seq_cleanup_conns_cache = None
+        self.local_reciprocal_unbind = bool(kwargs.get("local_reciprocal_unbind", True))
+        self.encoding_gain_fn = kwargs.get("encoding_gain_fn", None)
+        self.confidence_gate = float(kwargs.get("confidence_gate", 0.0))
+        self.enable_spiking_cleanup = bool(kwargs.get("enable_spiking_cleanup", True))
+        self.enable_multiframe = bool(kwargs.get("enable_multiframe", False)); self._frame_parser = None
+        self.enable_batched = bool(kwargs.get("enable_batched", True))
+        self.enable_rf_cudagraph = bool(kwargs.get("enable_rf_cudagraph", False))   # numpy path => no megakernel
+        self.enable_csr_cache = bool(kwargs.get("enable_csr_cache", True))
+        self._csr_cache = {}; self._store_csr = None; self._store_dirty = True
+        self.comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, period=period, grounded_codes=grounded_codes,
+                                     local_reciprocal_unbind=self.local_reciprocal_unbind)
+        self.words = list(self.comp.words); self.V = len(self.words)
+        self.R = 40; self.P = 6 + 3 * self.R; self.k_max = int(k_max)
+        self.pol_words = list(self.comp.pol_words); self.NP = len(self.pol_words)
+        self.enable_attributed = bool(kwargs.get("enable_attributed", False))
+        self.bind_roles = (["agent", "action", "patient", "attribute", "polarity"] if self.enable_attributed
+                           else ["agent", "action", "patient", "polarity"])
+        self.n_roles = len(self.bind_roles)
+        self.main_roles = [r for r in self.bind_roles if r != "polarity"]; self.n_main = len(self.main_roles)
+        # the standalone (pre-offset) layout:
+        self.store_base = self.P + (2 * self.n_roles + 1) * D
+        self.block = 1 + D
+        self.q_base = self.store_base + self.k_max * self.block
+        self.c_base = self.q_base + self.n_roles * D
+        self.cb = self.n_main * self.V + self.NP
+        self.bat_q_base = self.c_base + self.cb
+        self.bat_c_base = self.bat_q_base + self.k_max * self.n_roles * D
+        layout_span = self.bat_c_base + self.k_max * self.cb     # == standalone n_total = the slice span on the merged bridge
+
+        # --- THE REBASE: shift every base by rf_base; n_total becomes the merged bridge N; rf_mask = the slice. ---
+        self._rf_base = int(rf_base)
+        N = int(merged_bridge.core_config.num_neurons)
+        if self._rf_base + layout_span > N:
+            raise ValueError(f"co-resident OneBrainComposer needs {layout_span} rf neurons at base {self._rf_base} "
+                             f"but the merged bridge has only {N} (raise the rf region size via onebrain_rf_size)")
+        self.P += self._rf_base
+        self.store_base += self._rf_base
+        self.q_base += self._rf_base
+        self.c_base += self._rf_base
+        self.bat_q_base += self._rf_base
+        self.bat_c_base += self._rf_base
+        self.n_total = N                                         # array-sizing is full merged-bridge N
+        self.b = merged_bridge
+        # the parser slice lives at [rf_base : rf_base + P_local] on the merged bridge (same relative wiring). On the
+        # merged agent it is idle (comprehension goes through the merged parser -> store()); built for layout completeness.
+        self.parser = BridgeParser(seed=seed, R=self.R, shared_bridge=self.b, index_offset=self._rf_base)
+        self.rf_mask = np.zeros(self.n_total, dtype=bool)
+        self.rf_mask[self._rf_base:self._rf_base + layout_span] = True
+        # the per-op `v/u <- 0` reset is restricted to the rf slice (so a co-resident Izhikevich/nav slice's v/u is
+        # byte-untouched across a composer op) -- the masked-rf-kick co-residence guarantee.
+        self._rf_reset_mask = self.rf_mask
+        self.kb = []
+        self.store_conns = []
+        self._word_index = {w: i for i, w in enumerate(self.words)}
+        self._layout_span = int(layout_span)
+        self._merged = merged_bridge                             # parity with MergedRFComposer's anti-cheat attribute
+
+    @staticmethod
+    def n_total_for(D=128, vocab=None, k_max=32, enable_attributed=False):
+        """The full layout span (= standalone `OneBrainComposer.n_total`) the composer needs on the merged `rf` slice,
+        as a function of (D, |vocab|, k_max, attribute role). Used by `build_merged_nav_conv_bridge` to size the merged
+        `rf` region. Mirrors OneBrainComposer.__init__'s layout math EXACTLY (a drift here would over/under-size the
+        slice and Probe-1 byte-identity would fail loudly via the rebase bounds check)."""
+        D = int(D); k_max = int(k_max)
+        # the vocab the composer actually uses == RFPhasorComposer(vocab=...).words
+        comp = RFPhasorComposer(seed=42, D=D, vocab=vocab)
+        V = len(comp.words); NP = len(comp.pol_words)
+        P = 6 + 3 * 40
+        n_roles = 5 if enable_attributed else 4
+        n_main = n_roles - 1
+        store_base = P + (2 * n_roles + 1) * D
+        block = 1 + D
+        q_base = store_base + k_max * block
+        cb = n_main * V + NP
+        c_base = q_base + n_roles * D
+        bat_q_base = c_base + cb
+        bat_c_base = bat_q_base + k_max * n_roles * D
+        return int(bat_c_base + k_max * cb)
+
+
 class MergedNavConvAgent:
     """STEP 2a agent shim: the `BrainConversationalAgent` surface where comprehension (the PARSER) and dialogue
     planning (the dlPFC `elaborate`) run on the MERGED nav+conv `SimulationBridge`, while fact storage/retrieval
@@ -1463,14 +1609,16 @@ class MergedNavConvAgent:
       * the dlPFC context `elaborate` drives is the merged bridge's (`self._dlpfc_ctx.bridge is self._merged_bridge`).
     """
 
-    def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_limbic=False,
+    def __init__(self, seed=42, vocab=None, co_resident_composer=False, co_resident_composer_kind="rf",
+                 co_resident_limbic=False,
                  co_resident_nav_critic=None, nav_critic_spiking_sc=False,
                  nav_critic_place_selforg=None, nav_critic_grid_frontend=None,
                  co_resident_td_cueshift=False,
                  co_resident_perception=False, co_resident_command_route=None,
                  enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
                  enable_da_encoding_gain=False, da_encoding_k=2.0,
-                 da_encoding_g_min=0.5, da_encoding_g_max=3.0):
+                 da_encoding_g_min=0.5, da_encoding_g_max=3.0,
+                 onebrain_k_max=32):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
         merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory codebook
         share one word set.
@@ -1509,6 +1657,21 @@ class MergedNavConvAgent:
         slice is co-resident — the production default); without one DA reads as baseline => g_eff = g0 => no-op."""
         self.seed = int(seed)
         self.co_resident_composer = bool(co_resident_composer)
+        # --- CONSOLIDATION (option A, Probe 2/3): which co-resident composer runs on the merged `rf` slice. ---
+        # "rf"       (DEFAULT, unchanged): MergedRFComposer (an RFPhasorComposer storing PHASES in numpy `kb`) -- the
+        #            byte-identity ORACLE; the encoding_gain_fn WRITE-side hook is wired+DA-correct but INERT here (phases
+        #            are magnitude-invariant), and the DA salience READ gate uses the composer-external `_gated_out`.
+        # "onebrain" (NEW opt-in): CoResidentOneBrainComposer -- the persistent-loop composer (synaptic multi-fact store
+        #            + spiking cleanup + the no-confab moat) on the merged `rf` slice (Probe-1 byte-identical to a
+        #            standalone OneBrainComposer). This ACTIVATES the limbic encoding-gain WRITE side (OneBrainComposer
+        #            ._write_block scales the stored complex-weight MAGNITUDE by encoding_gain_fn() -> LOAD-BEARING under
+        #            read damage), and routes the DA salience READ gate through the composer's NATIVE `confidence_gate`
+        #            (the same `min(margin(agent),margin(action)) < g` abstention, moat-safe by construction).
+        # Only meaningful when co_resident_composer=True (it selects WHICH co-resident composer). NO `sim/` edit.
+        self.co_resident_composer_kind = str(co_resident_composer_kind)
+        if self.co_resident_composer_kind not in ("rf", "onebrain"):
+            raise ValueError(f"co_resident_composer_kind must be 'rf' or 'onebrain', got {co_resident_composer_kind!r}")
+        self._onebrain_k_max = int(onebrain_k_max)
         # --- DA salience-gate (roadmap #6 / burndown I-4-a) state. PRODUCTION DEFAULT = ON (the merged DEFAULT now
         # INTERACTS: the shared spiking-SNc dopamine reaches the conversational composer's read-side precision gate).
         # Byte-identical at rest (DA == baseline => g_eff = g0 floor => no-op); moat-safe + nav-neutral by
@@ -1634,6 +1797,14 @@ class MergedNavConvAgent:
         if self.co_resident_perception and not self.co_resident_composer:
             raise ValueError("co_resident_perception requires co_resident_composer (the grounded percept code feeds "
                              "the co-resident `rf` composer's bind/unbind algebra)")
+        # Route B (perceive_and_ground) writes `composer.concepts[obj]`; on the OneBrainComposer `concepts` lives on
+        # `composer.comp` (the read path consults `comp.concepts`), so the host-M grounding would write a stray attr the
+        # reads never see. That combination is NOT validated in the consolidation arc -> guard it explicitly (the
+        # gen-spikes Route-B grounding on the onebrain path is a flagged FOLLOW-ON, see perceive_and_ground's docstring).
+        if self.co_resident_perception and self.co_resident_composer_kind == "onebrain":
+            raise ValueError("co_resident_perception with co_resident_composer_kind='onebrain' is not yet supported "
+                             "(Route-B host-M grounding writes composer.concepts, which lives on comp for OneBrainComposer; "
+                             "use kind='rf' for Route B, or wire the gen-spikes grounding -- the flagged follow-on)")
         # co_resident_command_route (route A, language->action COMMAND_GATE): bring the `language_input` region + the
         # LEARNED `language_input -> cortex_X` route (transmission_gate=command_route) onto the merged bridge so a
         # PARSED spoken command (the parser's action-role FIRING) opens the route and steers the BG cascade. When on,
@@ -1662,8 +1833,19 @@ class MergedNavConvAgent:
             self.co_resident_command_route = bool(co_resident_command_route)
 
         _D = 128
+        # CONSOLIDATION (option A): when the co-resident composer is the persistent-loop OneBrainComposer, size the
+        # merged `rf` region for its FULL layout span (work registers + k_max store blocks + per-block + batched
+        # Q+cleanup) -- a function of (D, |merged vocab|, k_max, attribute role). Computed BEFORE the build (it sizes
+        # the region). The "rf" oracle path passes 0 (the byte-unchanged 7*rf_D sizing). The merged vocab the composer
+        # gets is build_merged_nav_conv_bridge's SORTED probe vocab; n_total_for builds an RFPhasorComposer(vocab=...)
+        # internally so it sees the SAME word set the composer will -> the size is exact.
+        _onebrain_rf_size = 0
+        if self.co_resident_composer and self.co_resident_composer_kind == "onebrain":
+            _onebrain_rf_size = CoResidentOneBrainComposer.n_total_for(
+                D=_D, vocab=vocab, k_max=self._onebrain_k_max, enable_attributed=False)
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
             seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,
+            onebrain_rf_size=_onebrain_rf_size,
             co_resident_perception=self.co_resident_perception,
             enable_spiking_wta_readout=(self.co_resident_perception or self.co_resident_command_route),
             co_resident_command_route=self.co_resident_command_route,
@@ -1676,12 +1858,20 @@ class MergedNavConvAgent:
         words = self._handles["vocab"]   # the sorted merged vocab (the dlPFC + parser word set)
 
         # The composer. STEP 2a default: on its OWN per-op bridges (separate). STEP 2b (co_resident_composer=True):
-        # the MergedRFComposer runs the RF binding ops on the merged bridge's own `rf` slice. Same seed + vocab as
-        # the merged dlPFC either way.
+        # a CO-RESIDENT composer runs the RF binding ops on the merged bridge's own `rf` slice. co_resident_composer_kind
+        # selects which: "rf" (MergedRFComposer, the byte-identity oracle, numpy-kb phases) or "onebrain"
+        # (CoResidentOneBrainComposer, the persistent-loop composer with the synaptic store + the LOAD-BEARING limbic
+        # encoding-gain WRITE side). Same seed + vocab as the merged dlPFC either way.
         if self.co_resident_composer:
-            self.composer = MergedRFComposer(
-                self._merged_bridge, self._handles["rf_base"], self._handles["rf_size"],
-                seed=seed, D=_D, vocab=words, period=200)
+            if self.co_resident_composer_kind == "onebrain":
+                self.composer = CoResidentOneBrainComposer(
+                    self._merged_bridge, self._handles["rf_base"],
+                    seed=seed, D=_D, vocab=words, period=200, k_max=self._onebrain_k_max,
+                    persistent_loop=True, enable_rf_cudagraph=False)
+            else:
+                self.composer = MergedRFComposer(
+                    self._merged_bridge, self._handles["rf_base"], self._handles["rf_size"],
+                    seed=seed, D=_D, vocab=words, period=200)
         else:
             self.composer = RFPhasorComposer(seed=seed, D=_D, vocab=words, period=200)
 
@@ -1853,11 +2043,23 @@ class MergedNavConvAgent:
         agent abstains (the salience-gated precision tail). Returns False (do NOT gate) when `g_eff <= g0` (the
         no-modulation floor: BYTE-IDENTICAL), when no block matches (the composer abstains anyway -> the moat is
         unchanged), or when the matched read is decisive. Reuses the composer's OWN cleanup primitives
-        (`_unbind_phases` + the matched filter == `_cleanup`'s cosine scores) + `OneBrainComposer._margin`."""
-        if g_eff <= self._da_gate_g0 + 1e-12:
-            return False                                 # the gate floor -> no modulation -> byte-identical read path
+        (`_unbind_phases` + the matched filter == `_cleanup`'s cosine scores) + `OneBrainComposer._margin`.
+
+        CONSOLIDATION (option A): the co-resident OneBrainComposer stores facts in SYNAPSES (no numpy `_iter_facts`
+        with a host composite to scan), and it already has a NATIVE `confidence_gate` applying the SAME
+        `min(margin(agent),margin(action)) < g` abstention inside its read path (`_read_block`/`_read_blocks`). So for
+        the onebrain composer the gate is delegated: set `composer.confidence_gate = g_eff` (or 0.0 at the floor =
+        byte-identical-at-rest) and return False (the native gate inside the subsequent query_* call handles the
+        abstention). Moat-safe by construction (a higher gate only TIGHTENS abstention)."""
         from research.runners.one_brain_composer import OneBrainComposer    # the EXACT margin function under de-risk
         comp = self.composer
+        if isinstance(comp, OneBrainComposer):
+            # route the DA gate through the composer's NATIVE confidence_gate; the floor maps to 0.0 (off) so an
+            # at-rest (DA==baseline) read is byte-identical to the no-gate default.
+            comp.confidence_gate = 0.0 if g_eff <= self._da_gate_g0 + 1e-12 else float(g_eff)
+            return False
+        if g_eff <= self._da_gate_g0 + 1e-12:
+            return False                                 # the gate floor -> no modulation -> byte-identical read path
         for fact, composite in comp._iter_facts():       # the same cue-matching scan the composer's query_* uses
             sa = self._role_cleanup_scores(composite, "agent")
             sv = self._role_cleanup_scores(composite, "action")

@@ -52,8 +52,12 @@ from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
 from sim.config import CoreSimConfig
 from sim.enums import NeuronModel
 from sim.backend import get_backend
-from research.runners.brain_conversational_agent import BridgeParser
 from research.runners.one_brain_composer import OneBrainComposer
+# RELOCATED (option A consolidation): `CoResidentOneBrainComposer` now lives in `nav_conv_merged_bridge` (the
+# importable home so MergedNavConvAgent can use it as the `co_resident_composer_kind="onebrain"` path). This probe
+# imports it from there -- re-running this probe therefore ALSO validates the relocated class is byte-identical to the
+# GO version it was first proven as (the local copy is gone).
+from research.runners.nav_conv_merged_bridge import CoResidentOneBrainComposer
 
 
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -86,101 +90,9 @@ def build_merged_stub_bridge(n_total, seed=42):
     return b
 
 
-class CoResidentOneBrainComposer(OneBrainComposer):
-    """`OneBrainComposer` whose RF/store/cleanup ops run on a SLICE of a shared (merged) bridge instead of on its own
-    private bridge -- the consolidation port. The SAME pattern `MergedRFComposer` performs for `RFPhasorComposer`,
-    applied one level up.
-
-    `OneBrainComposer.__init__` builds the layout from `self.P` and a PRIVATE bridge at `[0:n_total]`. This subclass
-    redirects the bridge handle to `merged_bridge` and REBASES every absolute index by `rf_base`:
-      * the parser slice moves to `[rf_base : rf_base + P_local]` (BridgeParser(index_offset=rf_base));
-      * every base (P, store_base, q_base, c_base, bat_q_base, bat_c_base) is shifted += rf_base, so every downstream
-        `self.<base> + i*...` lands inside the slice;
-      * `self.n_total` is REDEFINED to the merged bridge's N (so every `np.zeros(self.n_total)` kick + every
-        `_build_complex_csr(self.n_total, ...)` is full-N, the merged-bridge size);
-      * `self.rf_mask` covers exactly the composer's layout span on the merged bridge ([rf_base : rf_base + span]).
-
-    Because the resonate loop is pure complex dynamics (no OU) + masked + the CSR is block-local, the RF ops reproduce
-    the standalone composer's results bit-for-bit. The parser is given the SAME relative wiring at index_offset=rf_base
-    (comprehension is driven via `store()` in the de-risk, so parser RNG-stream differences do not enter the compared
-    answers; see the module docstring)."""
-
-    def __init__(self, merged_bridge, rf_base, **kwargs):
-        # Reproduce OneBrainComposer.__init__'s feature/layout computation WITHOUT building the private bridge/parser
-        # (which __init__ does at lines 282-283). We mirror the relevant body, then rebase. Keeping this in the subclass
-        # leaves one_brain_composer.py byte-untouched (a NEW opt-in alongside MergedRFComposer).
-        from research.runners.rf_phasor_composer import RFPhasorComposer
-        seed = int(kwargs.get("seed", 42)); D = int(kwargs.get("D", 128))
-        vocab = kwargs.get("vocab", None); period = int(kwargs.get("period", 200))
-        k_max = int(kwargs.get("k_max", 32))
-        grounded_codes = kwargs.get("grounded_codes", None)
-        # --- the flag fields (defaults match OneBrainComposer.__init__ signature) ---
-        self.seed = seed; self.D = D; self.period = period
-        self.trace = bool(kwargs.get("trace", False)); self.last_trace = None
-        self.integrated_loop = bool(kwargs.get("integrated_loop", False))
-        self.persistent_loop = bool(kwargs.get("persistent_loop", False))
-        self.sequencer_match_thresh = float(kwargs.get("sequencer_match_thresh", 0.06))
-        self.sequencer_gain = float(kwargs.get("sequencer_gain", 0.11))
-        self.sequencer_sigma = float(kwargs.get("sequencer_sigma", 1.0))
-        self.sequencer_input_gain = float(kwargs.get("sequencer_input_gain", 1.0))
-        self._seq = None; self._seq_score = None; self._seq_K = None; self._seq_drives = None; self._seq_dirty = True
-        self.enable_seq_vocab_shrink = bool(kwargs.get("enable_seq_vocab_shrink", True))
-        self._seq_mapA = None; self._seq_mapX = None; self._seq_cuevocab_sig = None; self._seq_cleanup_conns_cache = None
-        self.local_reciprocal_unbind = bool(kwargs.get("local_reciprocal_unbind", True))
-        self.encoding_gain_fn = kwargs.get("encoding_gain_fn", None)
-        self.enable_spiking_cleanup = bool(kwargs.get("enable_spiking_cleanup", True))
-        self.enable_multiframe = bool(kwargs.get("enable_multiframe", False)); self._frame_parser = None
-        self.enable_batched = bool(kwargs.get("enable_batched", True))
-        self.enable_rf_cudagraph = bool(kwargs.get("enable_rf_cudagraph", False))   # numpy path => no megakernel
-        self.enable_csr_cache = bool(kwargs.get("enable_csr_cache", True))
-        self._csr_cache = {}; self._store_csr = None; self._store_dirty = True
-        self.confidence_gate = float(kwargs.get("confidence_gate", 0.0))
-        self.comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab, period=period, grounded_codes=grounded_codes,
-                                     local_reciprocal_unbind=self.local_reciprocal_unbind)
-        self.words = list(self.comp.words); self.V = len(self.words)
-        self.R = 40; self.P = 6 + 3 * self.R; self.k_max = int(k_max)
-        self.pol_words = list(self.comp.pol_words); self.NP = len(self.pol_words)
-        self.enable_attributed = bool(kwargs.get("enable_attributed", False))
-        self.bind_roles = (["agent", "action", "patient", "attribute", "polarity"] if self.enable_attributed
-                           else ["agent", "action", "patient", "polarity"])
-        self.n_roles = len(self.bind_roles)
-        self.main_roles = [r for r in self.bind_roles if r != "polarity"]; self.n_main = len(self.main_roles)
-        # the standalone (pre-offset) layout:
-        self.store_base = self.P + (2 * self.n_roles + 1) * D
-        self.block = 1 + D
-        self.q_base = self.store_base + self.k_max * self.block
-        self.c_base = self.q_base + self.n_roles * D
-        self.cb = self.n_main * self.V + self.NP
-        self.bat_q_base = self.c_base + self.cb
-        self.bat_c_base = self.bat_q_base + self.k_max * self.n_roles * D
-        layout_span = self.bat_c_base + self.k_max * self.cb     # == standalone n_total = the slice span on the merged bridge
-
-        # --- THE REBASE: shift every base by rf_base; n_total becomes the merged bridge N; rf_mask = the slice. ---
-        self._rf_base = int(rf_base)
-        N = int(merged_bridge.core_config.num_neurons)
-        if self._rf_base + layout_span > N:
-            raise ValueError(f"co-resident OneBrainComposer needs {layout_span} rf neurons at base {self._rf_base} "
-                             f"but the merged bridge has only {N} (raise the rf region size)")
-        self.P += self._rf_base
-        self.store_base += self._rf_base
-        self.q_base += self._rf_base
-        self.c_base += self._rf_base
-        self.bat_q_base += self._rf_base
-        self.bat_c_base += self._rf_base
-        self.n_total = N                                         # array-sizing is full merged-bridge N
-        self.b = merged_bridge
-        # the parser slice lives at [rf_base : rf_base + P_local] on the merged bridge (same relative wiring).
-        self.parser = BridgeParser(seed=seed, R=self.R, shared_bridge=self.b, index_offset=self._rf_base)
-        self.rf_mask = np.zeros(self.n_total, dtype=bool)
-        self.rf_mask[self._rf_base:self._rf_base + layout_span] = True
-        # the per-op `v/u <- 0` reset is restricted to the rf slice (so a co-resident Izhikevich/nav slice's v/u is
-        # byte-untouched across a composer op) -- the masked-rf-kick co-residence guarantee, the MergedRFComposer 5b
-        # precedent applied to OneBrainComposer's extra reset sites.
-        self._rf_reset_mask = self.rf_mask
-        self.kb = []
-        self.store_conns = []
-        self._word_index = {w: i for i, w in enumerate(self.words)}
-        self._layout_span = int(layout_span)
+# NOTE: `CoResidentOneBrainComposer` is now imported from `nav_conv_merged_bridge` (see the import above) -- it was
+# relocated there so MergedNavConvAgent can use it (the `co_resident_composer_kind="onebrain"` consolidation path).
+# The probe below is UNCHANGED; re-running it validates the relocated class is byte-identical to the GO version.
 
 
 # ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
