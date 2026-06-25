@@ -1636,7 +1636,8 @@ class MergedNavConvAgent:
                  co_resident_nav_critic=None, nav_critic_spiking_sc=False,
                  nav_critic_place_selforg=None, nav_critic_grid_frontend=None,
                  co_resident_td_cueshift=False,
-                 co_resident_perception=False, co_resident_command_route=None,
+                 co_resident_perception=False, co_resident_generalization=False,
+                 perception_grounding="gen_spikes", co_resident_command_route=None,
                  enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
                  enable_da_encoding_gain=True, da_encoding_k=2.0,
                  da_encoding_g_min=0.5, da_encoding_g_max=3.0,
@@ -1830,14 +1831,31 @@ class MergedNavConvAgent:
         if self.co_resident_perception and not self.co_resident_composer:
             raise ValueError("co_resident_perception requires co_resident_composer (the grounded percept code feeds "
                              "the co-resident `rf` composer's bind/unbind algebra)")
-        # Route B (perceive_and_ground) writes `composer.concepts[obj]`; on the OneBrainComposer `concepts` lives on
-        # `composer.comp` (the read path consults `comp.concepts`), so the host-M grounding would write a stray attr the
-        # reads never see. That combination is NOT validated in the consolidation arc -> guard it explicitly (the
-        # gen-spikes Route-B grounding on the onebrain path is a flagged FOLLOW-ON, see perceive_and_ground's docstring).
-        if self.co_resident_perception and self.co_resident_composer_kind == "onebrain":
-            raise ValueError("co_resident_perception with co_resident_composer_kind='onebrain' is not yet supported "
-                             "(Route-B host-M grounding writes composer.concepts, which lives on comp for OneBrainComposer; "
-                             "use kind='rf' for Route B, or wire the gen-spikes grounding -- the flagged follow-on)")
+        # ROUTE-B GROUNDING MODE (purity #1 Route-B Option-1 wire-in, 2026-06-25). Mirrors the standalone behavioral
+        # runner navigate_to_compose_then_answer's GROUNDING_DEFAULT/_codebook/_algebra wiring:
+        #   "gen_spikes" (DEFAULT, spikes-only — the cross-region host-`M` CLOSURE): the percept is rendered into the
+        #     generalization stack's structured-perception region `gen_perception`; the LEARNED (self-organized)
+        #     rate-Hebbian `gen_perception->gen_concept` CONVERGENCE fires the NMDA-integrated `gen_concept` assembly; the
+        #     grounded code is a FIXED read-projection of `gen_concept`'s `cp_firing_states` (REAL spikes). The
+        #     load-bearing percept->concept transform is SYNAPTIC+LEARNED, NOT a host-designed matrix — so NO host
+        #     quantity crosses regions (feedback_spiking_structure_must_self_organize). REQUIRES the co-resident trained
+        #     generalization stack -> forces co_resident_generalization=True. WORKS on the onebrain composer because the
+        #     standalone `_perceive_and_ground` writes the grounded code to `_codebook(composer)` (= `composer.comp.concepts`
+        #     for the OneBrainComposer, the codebook the binds/cleanups actually read), so there is no stray-attr problem
+        #     — the prior onebrain guard is RETIRED (6-seed GO: research/findings/raw/_route_b_6seed_and_agent_wirein.json).
+        #   "host_m" (LEGACY, revertible A/B escape): the bare `cortex_it` region + a host-DESIGNED random projection
+        #     `composer.concepts[o] = angle(M @ live_cortex_it_rate)`. Retired as the default because `M` carries
+        #     host-designed (not self-organized) structure; kept ONLY for the A/B comparison.
+        self.perception_grounding = str(perception_grounding)
+        if self.perception_grounding not in ("gen_spikes", "host_m"):
+            raise ValueError(f"perception_grounding must be 'gen_spikes' or 'host_m', got {perception_grounding!r}")
+        # co_resident_generalization (the gen stack — structured-perception gen_perception -> NMDA gen_concept ->
+        # gen_fact + the trained-then-frozen rate-Hebbian convergence). gen_spikes grounding REQUIRES it (the learned
+        # convergence does the percept->concept grounding); it is also independently usable for the generalization
+        # checks. Appended LAST in the build so the nav/parser/dlPFC/rf/cortex_it index bases are byte-unchanged.
+        self.co_resident_generalization = bool(co_resident_generalization)
+        if self.co_resident_perception and self.perception_grounding == "gen_spikes":
+            self.co_resident_generalization = True   # gen_spikes needs the co-resident trained gen stack
         # co_resident_command_route (route A, language->action COMMAND_GATE): bring the `language_input` region + the
         # LEARNED `language_input -> cortex_X` route (transmission_gate=command_route) onto the merged bridge so a
         # PARSED spoken command (the parser's action-role FIRING) opens the route and steers the BG cascade. When on,
@@ -1880,6 +1898,7 @@ class MergedNavConvAgent:
             seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,
             onebrain_rf_size=_onebrain_rf_size,
             co_resident_perception=self.co_resident_perception,
+            co_resident_generalization=self.co_resident_generalization,
             enable_spiking_wta_readout=(self.co_resident_perception or self.co_resident_command_route),
             co_resident_command_route=self.co_resident_command_route,
             co_resident_limbic=self.co_resident_limbic,
@@ -1955,16 +1974,28 @@ class MergedNavConvAgent:
             assert COMMAND_GATE in self._merged_bridge._transmission_gate_to_synapses, \
                 "FAIL anti-cheat: the command_route transmission gate is not registered on the merged bridge"
             self._couple_command_gate()
-        # --- ROUTE B (perception->memory/compose) setup: the fixed grounded-code projection M (live cortex_it rate ->
-        #     composer phases), built once from the cortex_it slice size (the de-risk's exact construction). ---
+        # --- ROUTE B (perception->memory/compose) setup: the fixed grounded-code read-projection. For gen_spikes the
+        #     projection FORMATS the spiking `gen_concept` response into a phasor (the LEARNED convergence does the
+        #     grounding); for host_m it is the legacy host-`M` projection of the bare cortex_it live rate. Mirrors the
+        #     standalone navigate_to_compose_then_answer.build_compose_bridge's exact construction (reuse-by-import). ---
         self._grounded_objects = []
         if self.co_resident_perception:
             import numpy as _np
             from sim.backend import get_backend as _gb
             from research.runners._step3_grounded_codes_production_composer_derisk import _projection
+            from research.runners.navigate_to_compose_then_answer import _gen_read_projection
             _xp, _ = _gb()
             it_h = self._handles["cortex_it_indices"]
             self._handles["cortex_it_indices_xp"] = _xp.asarray(_np.asarray(it_h, dtype=_np.int64))
+            if self.perception_grounding == "gen_spikes":
+                assert "gen" in self._handles, \
+                    "gen_spikes grounding requires the co-resident generalization stack (handles['gen'])"
+                _n_conc = int(_np.asarray(self._handles["gen"]["conc_region"], dtype=_np.int64).size)
+                # the FIXED read-projection of the gen_concept SPIKES (length n_concept) -> D-dim phasor. The
+                # standalone runner's `_gen_read_projection` (distinct seed offset from host_m's `M` so the two modes'
+                # projections never coincide). Stored on handles["gen_proj"] (where the standalone `_perceive_and_ground`
+                # reads it). `_grounded_proj` stays the legacy cortex_it `M` for the host_m A/B path.
+                self._handles["gen_proj"] = _gen_read_projection(_D, _n_conc, seed)
             self._grounded_proj = _projection(_D, int(_np.asarray(it_h).size), seed)
 
     # --- ROUTE A (language->action): the parser action-ensemble firing opens the command_route + one commanded move ---
@@ -2008,30 +2039,42 @@ class MergedNavConvAgent:
 
     # --- ROUTE B (perception->memory/compose): ground a perceived object into the composer codebook from live cortex_it ---
     def perceive_and_ground(self, obj_word):
-        """Route B — the agent has PERCEIVED object `obj_word`: render its identity into the merged bridge's cortex_it
-        (the sensory render), read the LIVE cortex_it spiking rate OFF THE MERGED BRIDGE, map it through the fixed
-        grounded-code projection M, and SET `composer.concepts[obj_word]` = the grounded phasor code. The percept thus
-        becomes a phasor the co-resident composer's FHRR algebra can bind/query — so a perceived object is composable on
-        the one brain. Delegates to the GO standalone `navigate_to_compose_then_answer._perceive_and_ground` against
-        THIS agent's merged bridge + co-resident composer (reuse-by-import). Returns (rate, phases).
+        """Route B — the agent has PERCEIVED object `obj_word`: read the percept's LIVE SPIKING response OFF THE MERGED
+        BRIDGE and SET the composer codebook entry for `obj_word` = the grounded phasor code. The percept thus becomes a
+        phasor the co-resident composer's FHRR algebra can bind/query — so a perceived object is composable on the one
+        brain. Delegates to the GO standalone `navigate_to_compose_then_answer._perceive_and_ground` against THIS agent's
+        merged bridge + co-resident composer (reuse-by-import), which writes the grounded code to `_codebook(composer)`
+        (= `composer.comp.concepts` for the OneBrainComposer, the codebook the binds/cleanups actually read; =
+        `composer.concepts` for the rf composer). Returns (source_vec, phases).
 
-        GROUNDING (host_m on the agent path): the agent's `perceive_and_ground` uses the LEGACY host-`M` grounding (the
-        bare cortex_it region + the fixed `self._grounded_proj` projection). The cross-region host-`M` CLOSURE (the
-        spikes-only `gen_concept`-SPIKES grounding) is wired + DEFAULT in the standalone behavioral runner
-        `navigate_to_compose_then_answer` (which co-residents the trained generalization stack); exposing the
-        gen_spikes path on this agent constructor (so the deployed-default agent grounds via the learned convergence,
-        NOT host-`M`) is the flagged FOLLOW-ON (it would force the gen stack + co_resident_composer onto every agent,
-        so it is NOT a pure default-flip — see `research/findings/raw/_crossregion_AB_build.json` §forks).
+        GROUNDING (self.perception_grounding):
+          "gen_spikes" (DEFAULT — the cross-region host-`M` CLOSURE, spikes-only): the object is RENDERED as its
+            structured-perception set into `gen_perception` (the sensory render); the LEARNED rate-Hebbian
+            `gen_perception->gen_concept` CONVERGENCE fires the NMDA-integrated `gen_concept` assembly; the grounded code
+            is a FIXED read-projection of `gen_concept`'s `cp_firing_states` (REAL spikes). The load-bearing
+            percept->concept transform is SYNAPTIC+LEARNED — NO host quantity crosses regions (in particular NO
+            `composer.concepts[o]=host_fn(cortex_it_rate)`, the retired host-`M` round-trip). Validated through the AGENT
+            on the onebrain composer (the prior onebrain guard is retired): the held-out compose recovers the perceived
+            object >> the memorization floor, lesioning the convergence collapses it, the moat abstains
+            (research/findings/raw/_route_b_6seed_and_agent_wirein.json).
+          "host_m" (LEGACY, revertible A/B escape): the bare cortex_it live rate -> the host-DESIGNED random projection
+            `self._grounded_proj` (`composer.concepts[o] = angle(M @ live_cortex_it_rate)`).
 
-        PROVENANCE (host_m): the only write into the percept's code is `composer.concepts[o] = M @ (the live cortex_it
-        rate)`; no host code copies a labeled phasor in. Requires co_resident_perception (+ co_resident_composer)."""
+        Requires co_resident_perception (+ co_resident_composer). For gen_spikes, co_resident_generalization is forced on
+        in __init__ so the gen stack + the gen read-projection (handles['gen'], handles['gen_proj']) are present."""
         assert self.co_resident_perception, "perceive_and_ground requires co_resident_perception=True"
         from research.runners.navigate_to_compose_then_answer import _perceive_and_ground
         h = {
-            "grounding": "host_m",          # the agent path keeps the legacy host-`M` grounding (the gen_spikes flip is the FORK)
+            "grounding": self.perception_grounding,        # gen_spikes (DEFAULT, the host-`M` closure) | host_m (A/B)
+            "composer_kind": self.co_resident_composer_kind,
             "it_indices": self._handles["cortex_it_indices_xp"],
             "grounded_objects": self._grounded_objects,
         }
+        if self.perception_grounding == "gen_spikes":
+            # the gen handles the standalone `_perceive_and_ground`/`read_gen_concept_spikes` consult for the
+            # SPIKES-ONLY grounding (the trained convergence + the gen_concept read-projection), surfaced from the build.
+            h["gen"] = self._handles["gen"]
+            h["gen_proj"] = self._handles["gen_proj"]
         return _perceive_and_ground(self._merged_bridge, self.composer, h, self._grounded_proj, obj_word)
 
     # --- DA salience-gate (roadmap #6): the spiking-SNc dopamine -> composer cue-role confidence gate ---

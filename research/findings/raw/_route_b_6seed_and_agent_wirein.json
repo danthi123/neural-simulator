@@ -1,0 +1,185 @@
+{
+  "task": "purity #1 Route-B completion: (A) 6-seed gate + (B) Option-1 agent wire-in",
+  "verdict": "ROUTE_B_CLOSED_ON_AGENT",
+  "backend": "cupy",
+  "A_6seed_gate": {
+    "verdict": "GO",
+    "n_seeds": 6,
+    "config": "navigate_to_compose_then_answer --grounding gen_spikes --composer onebrain",
+    "bars_required": {
+      "compose_clean": ">=0.90 AND >=floor+0.30",
+      "lesion": "<=chance+0.10 (0.35)",
+      "moat": "0 false-accepts (moat_ok==moat_tot, pos_recall==1)",
+      "provenance": "grounding_is_spikes"
+    },
+    "committed_seeds_42_43_44_source": "research/findings/raw/_route_b_onebrain_option3_derisk.json",
+    "new_seeds_100_101_102_source": "research/findings/raw/_route_b_6seed_100_101_102.json",
+    "per_seed": [
+      {
+        "seed": 42,
+        "compose_clean": 1.0,
+        "compose_floor": 0.5,
+        "compose_margin_over_floor": 0.5,
+        "lesion_compose": 0.16666666666666666,
+        "chance_plus_0.10": 0.35,
+        "moat_ok": 1,
+        "moat_tot": 1,
+        "pos_recall": 1,
+        "grounding_is_spikes": true,
+        "no_host_M": true,
+        "go": true
+      },
+      {
+        "seed": 43,
+        "compose_clean": 1.0,
+        "compose_floor": 0.5,
+        "compose_margin_over_floor": 0.5,
+        "lesion_compose": 0.3333333333333333,
+        "chance_plus_0.10": 0.35,
+        "moat_ok": 1,
+        "moat_tot": 1,
+        "pos_recall": 1,
+        "grounding_is_spikes": true,
+        "no_host_M": true,
+        "go": true
+      },
+      {
+        "seed": 44,
+        "compose_clean": 1.0,
+        "compose_floor": 0.3333333333333333,
+        "compose_margin_over_floor": 0.6667,
+        "lesion_compose": 0.3333333333333333,
+        "chance_plus_0.10": 0.35,
+        "moat_ok": 1,
+        "moat_tot": 1,
+        "pos_recall": 1,
+        "grounding_is_spikes": true,
+        "no_host_M": true,
+        "go": true
+      },
+      {
+        "seed": 100,
+        "compose_clean": 1.0,
+        "compose_floor": 0.5,
+        "compose_margin_over_floor": 0.5,
+        "lesion_compose": 0.3333333333333333,
+        "chance_plus_0.10": 0.35,
+        "moat_ok": 1,
+        "moat_tot": 1,
+        "pos_recall": 1,
+        "grounding_is_spikes": true,
+        "no_host_M": true,
+        "go": true
+      },
+      {
+        "seed": 101,
+        "compose_clean": 1.0,
+        "compose_floor": 0.5,
+        "compose_margin_over_floor": 0.5,
+        "lesion_compose": 0.0,
+        "chance_plus_0.10": 0.35,
+        "moat_ok": 1,
+        "moat_tot": 1,
+        "pos_recall": 1,
+        "grounding_is_spikes": true,
+        "no_host_M": true,
+        "go": true
+      },
+      {
+        "seed": 102,
+        "compose_clean": 1.0,
+        "compose_floor": 0.16666666666666666,
+        "compose_margin_over_floor": 0.8333,
+        "lesion_compose": 0.16666666666666666,
+        "chance_plus_0.10": 0.35,
+        "moat_ok": 1,
+        "moat_tot": 1,
+        "pos_recall": 1,
+        "grounding_is_spikes": true,
+        "no_host_M": true,
+        "go": true
+      }
+    ],
+    "all_go": true,
+    "all_moat_0_FA": true,
+    "all_lesion_collapse": true,
+    "all_grounding_spikes": true
+  },
+  "B_agent_wirein": {
+    "verdict": "GO",
+    "no_sim_edit": true,
+    "files_changed": {
+      "research/runners/nav_conv_merged_bridge.py": {
+        "diffstat": "research/runners/nav_conv_merged_bridge.py | 101 ++++++++++++++++++++---------\n 1 file changed, 72 insertions(+), 29 deletions(-)",
+        "edits": [
+          "__init__ signature: +co_resident_generalization=False, +perception_grounding=\"gen_spikes\" (~line 1639)",
+          "__init__ body: resolve perception_grounding (gen_spikes|host_m) + force co_resident_generalization=True for gen_spikes; DELETED the onebrain+perception guard (~old line 1837-1840)",
+          "build_merged_nav_conv_bridge call: thread co_resident_generalization=self.co_resident_generalization (~line 1882)",
+          "ROUTE-B setup: build handles[\"gen_proj\"] via navigate_to_compose_then_answer._gen_read_projection for gen_spikes (~line 1988)",
+          "perceive_and_ground: route grounding=self.perception_grounding + pass handles[\"gen\"]/handles[\"gen_proj\"]/composer_kind; codebook redirect via reuse-by-import _codebook (writes composer.comp.concepts for onebrain) (~line 2041)"
+        ]
+      },
+      "research/runners/_route_b_agent_wirein_validate.py": "NEW: agent re-validation runner (reuses navigate_to_compose_then_answer anti-cheat scorers against MergedNavConvAgent)"
+    },
+    "agent_revalidation_onebrain_gen_spikes": {
+      "source": "research/findings/raw/_route_b_agent_wirein_validate.json",
+      "via": "MergedNavConvAgent(co_resident_composer=True, co_resident_composer_kind=\"onebrain\", co_resident_perception=True).perceive_and_ground",
+      "verdict": "GO",
+      "per_seed": [
+        {
+          "seed": 42,
+          "compose_clean": 1.0,
+          "compose_floor": 0.5,
+          "lesion_compose": 0.5,
+          "moat_ok": 1,
+          "moat_tot": 1,
+          "pos_recall": 1,
+          "grounding_is_spikes": true,
+          "codebook": "composer.comp.concepts",
+          "write_reached_comp_concepts": true,
+          "go": true
+        },
+        {
+          "seed": 43,
+          "compose_clean": 1.0,
+          "compose_floor": 0.5,
+          "lesion_compose": 0.3333333333333333,
+          "moat_ok": 1,
+          "moat_tot": 1,
+          "pos_recall": 1,
+          "grounding_is_spikes": true,
+          "codebook": "composer.comp.concepts",
+          "write_reached_comp_concepts": true,
+          "go": true
+        }
+      ]
+    },
+    "rf_path_regression_host_m": {
+      "source": "research/findings/raw/_route_b_agent_wirein_rf_regression.json",
+      "verdict": "GO",
+      "per_seed": [
+        {
+          "seed": 42,
+          "compose_clean": 1.0,
+          "lesion_compose": 0.16666666666666666,
+          "moat_ok": 1,
+          "moat_tot": 1,
+          "pos_recall": 1,
+          "codebook": "composer.concepts",
+          "go": true
+        }
+      ]
+    },
+    "nav_conv_suites_regression": {
+      "suites": [
+        "tests/test_nav_conv_merged_agent.py",
+        "tests/test_nav_conv_step2b_coresident.py"
+      ],
+      "baseline_pre_edit": "29 passed, 1 xfailed (522.20s)",
+      "post_edit": "29 passed, 1 xfailed (518.26s)",
+      "regression": false
+    },
+    "moat_intact": true
+  },
+  "honest_verdict": "ROUTE-B CLOSED ON THE AGENT. (A) 6-seed gate GO (42/43/44 committed + 100/101/102 this run): all 6 compose=1.000 (margin >=0.50 over floor), lesion collapses (<=0.35), moat 0-FA, grounding-is-SPIKES. (B) Option-1 agent wire-in GO: MergedNavConvAgent.perceive_and_ground now grounds via the LEARNED gen_perception->gen_concept convergence (gen_spikes, spikes-only, writes composer.comp.concepts) on the onebrain composer -> held-out compose 1.000 >> floor 0.500, lesion collapses, moat 0-FA, provenance grounding_is_spikes=True; the onebrain+perception guard is RETIRED. rf-path regression GO. nav+conv suites unchanged (29 passed/1 xfailed). NO sim/ edit. The deployed merged agent now perceives+composes via spikes-only grounding on the one brain."
+}
