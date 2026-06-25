@@ -37,10 +37,22 @@ HONEST: if a bar misses on the real (noisier) corpus vs the curated 64-word base
 the cause (real-corpus noise vs curated). The first real-corpus 320-concept data point is a FINDING, not a
 failure.
 
-GPU (`SIM_BACKEND=cupy`). Run:
+VOCAB-FILTER FIX (2026-06-25, per `research/findings/raw/_curriculum_gen_miss_REAL_scoping.md`): the gen miss
+(0.153) was DIAGNOSED to the VOCAB SELECTION -- frequency-ranking over the FULL g20 taxonomy put ~48%
+distributionally-FLAT adjective/function/emotion words at the TOP (they co-occur with everything -> near-uniform
+codes that homogenize the entity codes too). The fix (`--vocab-filter content`, the DEFAULT) frequency-ranks
+WITHIN co-occurrence-COHERENT CONTENT categories only (entities + verbs); the flat words stay context HUBS.
+`--vocab-filter all` = the old freq-top-N (provenance); `--vocab-filter curated` = the validated TAXONOMY_40x8
+positive control.
+
+GPU (`SIM_BACKEND=cupy`). Run (the FIX, 3 seeds + the apples-to-apples coherent gen reference):
     SIM_BACKEND=cupy python -u -m research.runners._curriculum_step1_320_real_corpus \
-        --seeds 42,43,44 --n-concepts 320 \
+        --seeds 42,43,44 --n-concepts 320 --vocab-filter content --gen-reference coherent \
         --out research/findings/raw/_curriculum_step1_320_real_corpus.json
+The #3 positive control (should reproduce the validated ~0.91 gen on the curated content vocab):
+    SIM_BACKEND=cupy python -u -m research.runners._curriculum_step1_320_real_corpus \
+        --seeds 42,43,44 --n-concepts 320 --vocab-filter curated --gen-reference coherent \
+        --out research/findings/raw/_curriculum_step1_320_curated_control.json
 """
 from __future__ import annotations
 
@@ -138,6 +150,16 @@ COHERENT_G20_DOMAINS = frozenset({
 })
 
 
+# The TARGET-VOCAB CONTENT g20 domains (the 2026-06-25 vocab-filter fix, `--vocab-filter content`): the strict
+# ENTITY + VERB domains a distributional cortex CAN cluster -- COHERENT_G20_DOMAINS minus emotion_states (the
+# prompt's exclusion list is exactly adjectives [texture/size/color] + function [abstract_relations/spatial/time/
+# quantity/question_discourse] + EMOTION; emotion words, though they co-occur, are excluded from the TARGET set per
+# the owner directive and remain context HUBS like the rest). DISTINCT from COHERENT_G20_DOMAINS (the GEN
+# reference, which keeps emotion as a coherent gen category) so the two concerns stay independent + auditable:
+# this set picks WHICH words become TARGET concepts; the coherent map picks WHICH words are gen-scored.
+CONTENT_G20_DOMAINS = COHERENT_G20_DOMAINS - frozenset({"emotion_states"})
+
+
 def _coherent_category_map():
     """word -> INDEPENDENT a-priori CO-OCCURRENCE-COHERENT category label = the gen reference a distributional
     cortex can actually recover. Two independent a-priori sources, merged (NEVER corpus-derived):
@@ -197,19 +219,51 @@ def _coherent_labels_for_vocab(vocab, min_members=2):
     return usable_idx, usable_labels, report
 
 
-def derive_curriculum_from_corpus(corpus_path, n_concepts, verbose=True):
-    """Stream the corpus, count word frequency, and return the top-`n_concepts` CONTENT words ranked
-    HIGH-FREQUENCY-FIRST (the developmental order). A CONTENT word = a member of the independent
-    g20_vocab_spec_2048 semantic taxonomy that is NOT a stopword (the function-word hubs are the context
-    dimension, not target concepts). Returns:
+def _is_content_word(word, word2cat):
+    """The a-priori CONTENT-word predicate (the 2026-06-25 vocab-filter fix). A word is a CONTENT word iff its
+    INDEPENDENT g20 category is in `CONTENT_G20_DOMAINS` -- i.e. it is an ENTITY (animals, food, body, people,
+    nature, objects, vehicles, ...) or a VERB (motion/manipulation/perception/communication). The
+    distributionally-FLAT g20 categories the prompt enumerates -- ADJECTIVES (texture_material_adj /
+    size_shape_adj / color_adj), FUNCTION words (abstract_relations / spatial_words / time_words /
+    quantity_number_words / question_discourse), and EMOTION (emotion_states) -- are EXCLUDED from the TARGET
+    set. They remain available as context HUBS (the n_hub dimension), exactly as the validated recipe
+    (stream_taxonomy_320 docstring :22-23 "ABSTRACT / FUNCTION words ... deliberately EXCLUDED") does. The filter
+    is a-priori (CONTENT_G20_DOMAINS is fixed before the run), NOT tuned on the gen score (anti-cheat #2)."""
+    return word2cat.get(word) in CONTENT_G20_DOMAINS
+
+
+def derive_curriculum_from_corpus(corpus_path, n_concepts, verbose=True, vocab_filter="content"):
+    """Stream the corpus, count word frequency, and return the top-`n_concepts` words ranked
+    HIGH-FREQUENCY-FIRST (the developmental order) under the chosen `vocab_filter`. Returns:
         vocab     : list[str], the curriculum in developmental order (most-frequent first)
-        cat_ids   : np.ndarray[int], the INDEPENDENT category id per word (for generalization)
-        cat_names : list[str], the category names (cat_ids index into this)
+        cat_ids   : np.ndarray[int], the INDEPENDENT g20 category id per word (for the sharding gen reference)
+        cat_names : list[str], the g20 category names (cat_ids index into this)
         freqs     : list[int], the corpus frequency per word (developmental order)
         report    : dict, the frequency-derivation report (coverage, range, per-category spread)
+
+    THREE FILTERS (the 2026-06-25 fix; declared a-priori, never tuned on gen -- anti-cheat #2):
+
+      - "content" (DEFAULT = the FIX, per `_curriculum_gen_miss_REAL_scoping.md` option #1): frequency-rank
+        but KEEP ONLY words whose coherent category (`_coherent_category_map`) is a CONTENT category --
+        ENTITIES + VERBS. The distributionally-FLAT adjective/function/emotion words (which a distributional
+        Hebbian cortex provably cannot cluster, and which -- being the MOST frequent words -- homogenized the
+        entity codes too: the gen 0.153 miss) are EXCLUDED from the TARGET set; they stay HUBS (context).
+        Fills to `n_concepts`, or FEWER if the content-coverage of the corpus caps it (reported honestly).
+
+      - "all" (PROVENANCE): the ORIGINAL top-N over the FULL g20 taxonomy (the gen 0.153 vocab -- 48% flat
+        adjective/function words). Retained verbatim so the report can show the original number alongside.
+
+      - "curated" (the #3 CONTROL): use the VALIDATED `stream_taxonomy_320.TAXONOMY_40x8` words directly
+        (40x8 hand-curated co-occurrence-coherent CONTENT words, freq>=50 -- the EXACT vocab the stream cortex
+        scored generalization ~0.91 against), frequency-ranked. NOT corpus-derived (curated meanings); the
+        positive control that proves the pipeline reproduces the validated number when given the validated
+        content-word vocab. cat_ids are mapped to the g20 taxonomy where a word has a g20 home (else a synthetic
+        `curated_<TAXONOMY_40x8_category>` label so every curated word keeps an independent category for the
+        sharding reference; the gen `coherent` reference reads TAXONOMY_40x8 natively).
     """
     word2cat = _category_map()
-    candidates = set(word2cat)
+    coherent_map = _coherent_category_map()   # only for the gen-coverage diagnostic below (which CHOSEN words
+    #                                            have a coherent GEN home), NOT the content filter (g20 domains).
 
     gfreq = Counter()
     n_stories = 0
@@ -219,14 +273,34 @@ def derive_curriculum_from_corpus(corpus_path, n_concepts, verbose=True):
         n_tokens += len(toks)
         gfreq.update(toks)
 
-    # CONTENT candidates = taxonomy member, non-stopword, appears in the corpus. Rank HIGH-FREQ-FIRST.
-    content = [(w, gfreq[w]) for w in candidates if w not in STOPLIST and gfreq.get(w, 0) > 0]
-    content.sort(key=lambda x: (-x[1], x[0]))   # freq desc, name asc for a deterministic tie-break
-    chosen = content[:n_concepts]
+    if vocab_filter == "curated":
+        # the VALIDATED TAXONOMY_40x8 content vocab (the #3 control); frequency-rank for the developmental order.
+        from research.runners.stream_taxonomy_320 import TAXONOMY_40x8
+        curated_cat_of = {}
+        for cat, words in TAXONOMY_40x8.items():
+            for w in words:
+                curated_cat_of.setdefault(w, cat)
+        candidates = list(curated_cat_of)
+        # g20 home where it exists (keeps the sharding reference comparable); else a synthetic curated_<cat> label.
+        def _cat_for(w):
+            return word2cat.get(w) or ("curated_" + curated_cat_of[w])
+    else:
+        # frequency-rank over the g20 taxonomy members; "content" additionally requires a coherent (content) home.
+        candidates = list(word2cat)
+        def _cat_for(w):
+            return word2cat[w]
+
+    pool = [(w, gfreq[w]) for w in candidates if w not in STOPLIST and gfreq.get(w, 0) > 0]
+    if vocab_filter == "content":
+        pool = [(w, f) for (w, f) in pool if _is_content_word(w, word2cat)]
+    pool.sort(key=lambda x: (-x[1], x[0]))   # freq desc, name asc for a deterministic tie-break
+    chosen = pool[:n_concepts]
+
+    n_content_present = sum(1 for (w, _) in pool)   # how many of the (already-filtered) pool exist in-corpus
 
     # the independent category structure of the chosen vocab (drop the empty categories so cat ids are contiguous)
     chosen_words = [w for w, _ in chosen]
-    chosen_cats = [word2cat[w] for w in chosen_words]
+    chosen_cats = [_cat_for(w) for w in chosen_words]
     present_cats = sorted(set(chosen_cats))
     cat_to_id = {c: i for i, c in enumerate(present_cats)}
     cat_ids = np.asarray([cat_to_id[c] for c in chosen_cats], dtype=int)
@@ -235,32 +309,43 @@ def derive_curriculum_from_corpus(corpus_path, n_concepts, verbose=True):
     cat_count = Counter(chosen_cats)
     # a word is gen-usable iff its category has >= 2 members in the chosen vocab (heldout needs another member)
     n_gen_usable = sum(1 for c in chosen_cats if cat_count[c] >= 2)
+    # how many of the chosen words are CONTENT (entity/verb g20 domain) -- 100% by construction for "content".
+    n_chosen_content = sum(1 for w in chosen_words if _is_content_word(w, word2cat))
+    # how many chosen words have a coherent GEN home (TAXONOMY_40x8 + coherent g20) -- the gen-scorable subset.
+    n_chosen_coherent_gen = sum(1 for w in chosen_words if coherent_map.get(w) is not None)
 
     report = {
+        "vocab_filter": vocab_filter,
         "corpus": os.path.basename(corpus_path),
         "n_stories": n_stories,
         "n_tokens": n_tokens,
         "n_unique_types": len(gfreq),
-        "n_candidate_content_present": len(content),
+        "n_candidate_pool_present": n_content_present,
         "n_concepts_requested": n_concepts,
         "n_concepts_chosen": len(chosen_words),
+        "capped_by_coverage": bool(len(chosen_words) < n_concepts),
         "freq_range": [int(chosen[0][1]), int(chosen[-1][1])] if chosen else [0, 0],
         "n_categories_covered": len(present_cats),
         "n_categories_total": len(VOCAB_SPEC.ALL_CLUSTERS_2048),
         "categories_missing": sorted(set(VOCAB_SPEC.ALL_CLUSTERS_2048) - set(present_cats)),
         "per_category_count": dict(cat_count.most_common()),
         "n_gen_usable_words": n_gen_usable,
+        "n_chosen_content_words": n_chosen_content,
+        "frac_chosen_content": round(n_chosen_content / max(len(chosen_words), 1), 3),
+        "n_chosen_coherent_gen": n_chosen_coherent_gen,
         "top25": [(w, int(f)) for w, f in chosen[:25]],
         "tail10": [(w, int(f)) for w, f in chosen[-10:]],
     }
     if verbose:
         print(f"  [curriculum] corpus={report['corpus']} | {n_stories} stories, {n_tokens} tokens, "
-              f"{len(gfreq)} types", flush=True)
-        print(f"  [curriculum] {len(chosen_words)} content words (high-freq-first), freq {report['freq_range'][0]}"
+              f"{len(gfreq)} types | vocab-filter={vocab_filter}", flush=True)
+        _cap = " (CAPPED by content-coverage)" if report["capped_by_coverage"] else ""
+        print(f"  [curriculum] {len(chosen_words)} words (high-freq-first){_cap}, freq {report['freq_range'][0]}"
               f"->{report['freq_range'][1]} | {len(present_cats)}/{len(VOCAB_SPEC.ALL_CLUSTERS_2048)} categories | "
-              f"{n_gen_usable}/{len(chosen_words)} gen-usable (cat has >=2 members)", flush=True)
-        print(f"  [curriculum] developmental order (top 12): "
-              f"{[w for w,_ in chosen[:12]]}", flush=True)
+              f"{n_gen_usable}/{len(chosen_words)} gen-usable (cat has >=2 members) | "
+              f"{n_chosen_content}/{len(chosen_words)} content", flush=True)
+        print(f"  [curriculum] developmental order (top 20): "
+              f"{[w for w,_ in chosen[:20]]}", flush=True)
     return chosen_words, cat_ids, present_cats, freqs, report
 
 
@@ -706,6 +791,15 @@ def main():
     p.add_argument("--n-facts", type=int, default=24, help="SVO facts to store for the recall/moat bars")
     p.add_argument("--recall-bar", type=float, default=0.95)
     p.add_argument("--gen-bar", type=float, default=0.80)
+    p.add_argument("--vocab-filter", choices=["content", "all", "curated"], default="content",
+                   help="WHICH words become the TARGET concepts (the 2026-06-25 fix per "
+                        "_curriculum_gen_miss_REAL_scoping.md option #1). 'content' (DEFAULT = the FIX): "
+                        "frequency-rank but keep ONLY co-occurrence-COHERENT CONTENT words (entities + verbs); "
+                        "the distributionally-flat adjective/function/emotion words (the gen-0.153 cause -- "
+                        "they homogenize the entity codes) are EXCLUDED from the target set, remaining context "
+                        "HUBS. 'all': the ORIGINAL freq-top-N over the FULL g20 taxonomy (the gen-0.153 vocab, "
+                        "~half flat words) -- PROVENANCE. 'curated': the VALIDATED stream_taxonomy_320.TAXONOMY_40x8 "
+                        "content vocab directly (the #3 positive CONTROL -- should reproduce the ~0.91 gen).")
     p.add_argument("--gen-reference", choices=["coherent", "sharding"], default="coherent",
                    help="generalization reference. 'coherent' (default, the FIX): the INDEPENDENT co-occurrence-"
                         "COHERENT taxonomy (validated TAXONOMY_40x8 + coherent g20 entity/verb domains), scored "
@@ -733,7 +827,8 @@ def main():
     print("=" * 100, flush=True)
     print("[FOUNDATIONAL CURRICULUM — STEP 1: 320 concepts from the REAL TinyStories corpus]", flush=True)
     print(f"  backend={os.environ.get('SIM_BACKEND')}  seeds={seeds}  n_concepts={a.n_concepts}  "
-          f"n_hub={a.n_hub}  n_per={a.n_per}  max_windows={a.max_windows}  D={a.D}", flush=True)
+          f"n_hub={a.n_hub}  n_per={a.n_per}  max_windows={a.max_windows}  D={a.D}  "
+          f"vocab_filter={a.vocab_filter}", flush=True)
     print(f"  corpus={corpus_path}", flush=True)
     print("  bars: recall>=%.2f (who/what) | moat 0 false-accepts | generalization>=%.2f (gen-reference=%s; "
           "BOTH sharding+coherent reported) + derangement collapse | frozen-brain control | MEASURE VRAM + "
@@ -743,7 +838,8 @@ def main():
     t0 = time.time()
     # derive the curriculum ONCE (corpus frequency is seed-independent); the story stream is loaded once + reused.
     stories = load_token_stream(corpus_path)
-    vocab, cat_ids, cat_names, freqs, curr_report = derive_curriculum_from_corpus(corpus_path, a.n_concepts)
+    vocab, cat_ids, cat_names, freqs, curr_report = derive_curriculum_from_corpus(
+        corpus_path, a.n_concepts, vocab_filter=a.vocab_filter)
 
     # the COHERENT gen-reference coverage of the frequency-derived vocab (seed-independent; reported transparently).
     _coh_usable_idx, _coh_labels, coherent_coverage = _coherent_labels_for_vocab(vocab)
@@ -834,7 +930,7 @@ def main():
         "config": {"n_concepts": a.n_concepts, "n_hub": a.n_hub, "n_per": a.n_per,
                    "window_steps": a.window_steps, "max_windows": a.max_windows, "D": a.D,
                    "n_facts": a.n_facts, "recall_bar": a.recall_bar, "gen_bar": a.gen_bar,
-                   "gen_reference": a.gen_reference},
+                   "gen_reference": a.gen_reference, "vocab_filter": a.vocab_filter},
         "curriculum": curr_report,
         "curriculum_developmental_order": vocab,
         "curriculum_category_ids": cat_ids.tolist(),
@@ -849,6 +945,18 @@ def main():
             "first = developmental order), NOT the hardcoded syllabus. CONTENT word = a member of the independent "
             "g20_vocab_spec_2048 semantic taxonomy that is not a stopword (function-word hubs are the context "
             "dimension, not targets).",
+            "VOCAB-FILTER FIX (2026-06-25, per research/findings/raw/_curriculum_gen_miss_REAL_scoping.md option "
+            "#1, vocab_filter=%r): the original Step-1 gen 0.153 was DECISIVELY diagnosed to the VOCAB SELECTION "
+            "-- frequency-ranking over the FULL g20 taxonomy put ~48%% distributionally-FLAT adjective/function/"
+            "emotion words at the TOP of the 320 (hey/very/big/happy/there... co-occur with everything -> "
+            "near-uniform codes that ALSO homogenize the genuine entity codes; the SAME pipeline+corpus+"
+            "normalization scored 0.91 on the curated CONTENT words). The FIX ('content', the default): "
+            "frequency-rank but keep ONLY co-occurrence-COHERENT CONTENT words (entities + verbs per "
+            "_coherent_category_map / COHERENT_G20_DOMAINS); the flat adjective/function/emotion words are "
+            "EXCLUDED from the TARGET set and remain context HUBS (n_hub unchanged). 'all' = the old freq-top-N "
+            "(provenance, gen 0.153); 'curated' = the validated TAXONOMY_40x8 positive control (~0.91). The "
+            "filter is a-priori (the coherent map is fixed BEFORE the run, never tuned on the gen score -- "
+            "anti-cheat #2)." % a.vocab_filter,
             "INDEPENDENCE (load-bearing): the generalization reference S_true is the a-priori taxonomy "
             "category-block matrix, NEVER corpus-derived. The corpus only sets WHICH words (by frequency) + their "
             "co-occurrence codes; the category labels come from the independent taxonomy.",
