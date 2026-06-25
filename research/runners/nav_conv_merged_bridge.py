@@ -1491,10 +1491,25 @@ class CoResidentOneBrainComposer(OneBrainComposer):
     comprehension is driven via `store()` (the agent's merged `parse_conj`/`parse_role` slices supply the roles --
     LAYOUT decision 2b), so the composer's own parser is idle (it is constructed for layout completeness only)."""
 
-    def __init__(self, merged_bridge, rf_base, **kwargs):
+    def __init__(self, merged_bridge, rf_base, build_parser=True, **kwargs):
         # Reproduce OneBrainComposer.__init__'s feature/layout computation WITHOUT building the private bridge/parser
         # (which __init__ does at one_brain_composer.py:282-283). We mirror the relevant body, then rebase. Keeping
         # this in the subclass leaves one_brain_composer.py byte-untouched (a NEW opt-in alongside MergedRFComposer).
+        #
+        # build_parser (DEFAULT True = the Probe-1 / standalone-parity path, byte-unchanged): whether to construct the
+        # idle layout-only `BridgeParser(shared_bridge=merged_bridge)`. On a FRAMEWORK-WIRED merged bridge (the
+        # MergedNavConvAgent path) that parser is REDUNDANT — comprehension goes through the agent's
+        # `_MergedParserAdapter` (nav_conv_merged_bridge.py:1887, reading the framework `parse_conj` slice), so the
+        # composer's own parser is NEVER used (LAYOUT decision 2b). Worse, `BridgeParser(shared_bridge=...)` calls
+        # `merge_population_into_shared_bridge`, which re-injects from the (empty on a framework-wired bridge)
+        # `_unified_wiring_plan` -> it WIPES the framework wiring (the nav cascade) + the COMMAND_GATE
+        # transmission-gate registration -> the MergedNavConvAgent COMMAND_GATE anti-cheat assert fails at
+        # construction (the traced close-out bug, _closure1_optionA_gate3_flip.json). So the merged agent passes
+        # build_parser=False: skip the destructive merge, set self.parser=None. The RF ops are reset-isolated from the
+        # parser (every op `_zero_rf_v_u()`-resets the rf slice before kicking, and the complex `cp_rf_w_*` synapses are
+        # array-disjoint from `cp_connections`), so dropping the idle parser leaves the composer's RF numerical OUTPUT
+        # byte-identical to the standalone/Probe-1 oracle (verified: _closure1_buildfix_answer_identity.py + Probe-1
+        # re-run, which uses the default build_parser=True and is therefore UNCHANGED).
         from research.runners.brain_conversational_agent import BridgeParser
         seed = int(kwargs.get("seed", 42)); D = int(kwargs.get("D", 128))
         vocab = kwargs.get("vocab", None); period = int(kwargs.get("period", 200))
@@ -1556,8 +1571,15 @@ class CoResidentOneBrainComposer(OneBrainComposer):
         self.n_total = N                                         # array-sizing is full merged-bridge N
         self.b = merged_bridge
         # the parser slice lives at [rf_base : rf_base + P_local] on the merged bridge (same relative wiring). On the
-        # merged agent it is idle (comprehension goes through the merged parser -> store()); built for layout completeness.
-        self.parser = BridgeParser(seed=seed, R=self.R, shared_bridge=self.b, index_offset=self._rf_base)
+        # merged agent it is idle (comprehension goes through the merged parser -> store()); built for layout completeness
+        # on the Probe-1 / standalone-parity path (build_parser=True). On a framework-wired merged bridge the agent
+        # passes build_parser=False (the parser would be redundant AND its shared-bridge merge would wipe the framework
+        # wiring + COMMAND_GATE -- see the __init__ docstring); the RF ops are reset-isolated from the parser so the
+        # composer's output is byte-identical with self.parser=None.
+        if build_parser:
+            self.parser = BridgeParser(seed=seed, R=self.R, shared_bridge=self.b, index_offset=self._rf_base)
+        else:
+            self.parser = None
         self.rf_mask = np.zeros(self.n_total, dtype=bool)
         self.rf_mask[self._rf_base:self._rf_base + layout_span] = True
         # the per-op `v/u <- 0` reset is restricted to the rf slice (so a co-resident Izhikevich/nav slice's v/u is
@@ -1864,8 +1886,12 @@ class MergedNavConvAgent:
         # encoding-gain WRITE side). Same seed + vocab as the merged dlPFC either way.
         if self.co_resident_composer:
             if self.co_resident_composer_kind == "onebrain":
+                # build_parser=False: the merged agent comprehends via _MergedParserAdapter (the framework parse_conj
+                # slice), so the composer's own idle parser is redundant; building it would re-inject from the empty
+                # _unified_wiring_plan and WIPE the framework wiring + COMMAND_GATE (the traced close-out bug). The RF
+                # ops are reset-isolated from the parser -> the composer's output is byte-identical without it.
                 self.composer = CoResidentOneBrainComposer(
-                    self._merged_bridge, self._handles["rf_base"],
+                    self._merged_bridge, self._handles["rf_base"], build_parser=False,
                     seed=seed, D=_D, vocab=words, period=200, k_max=self._onebrain_k_max,
                     persistent_loop=True, enable_rf_cudagraph=False)
             else:

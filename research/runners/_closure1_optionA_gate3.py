@@ -252,7 +252,7 @@ def main(argv=None):
         row = {"seed": seed, "onebrain_score": ob_score, "rf_score": rf_score, "delta": delta,
                "byte_identical": (delta == 0.0), "onebrain_phases": ob_phases, "rf_phases": rf_phases}
         rows.append(row)
-        print(f"[gate3]   seed {seed}: onebrain={ob_score:.6f} rf={rf_score:.6f} Δ={delta:+.6e} "
+        print(f"[gate3]   seed {seed}: onebrain={ob_score:.6f} rf={rf_score:.6f} delta={delta:+.6e} "
               f"{'byte-identical' if delta == 0.0 else 'DELTA!=0'}", flush=True)
 
     gate3_pass = (max_abs_delta == 0.0)
@@ -278,7 +278,7 @@ def main(argv=None):
     with open(OUT, "w") as f:
         json.dump(result, f, indent=2)
     print(f"\n[gate3] VERDICT: {result['verdict']}")
-    print(f"[gate3] max|Δ|={max_abs_delta:.6e}  byte-identical {result['n_byte_identical']}/{result['n_seeds']} seeds")
+    print(f"[gate3] max|delta|={max_abs_delta:.6e}  byte-identical {result['n_byte_identical']}/{result['n_seeds']} seeds")
     print(f"[gate3] wrote {os.path.normpath(OUT)}")
     return 0 if gate3_pass else 2
 

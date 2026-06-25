@@ -1,0 +1,98 @@
+{
+  "task": "close-out option A — the genuine build-fix for the onebrain construction crash, then re-run gate 3 + flip if Delta=0",
+  "date": "2026-06-24",
+  "backend": "cupy (GPU) for gate 3; numpy (CPU) for the build-fix guard + Probe-1",
+
+  "headline": "THE BUILD FIX IS DONE + VALIDATED (the traced construction-crash blocker is RESOLVED): the onebrain co-resident composer now CONSTRUCTS under the production co_resident_command_route=True default, COMMAND_GATE preserved, answer-identical, Probe-1 byte-identical, NO sim/ edit. BUT the FLIP is NOT made: gate 3 RAN to PART 2 (for the first time — the prior close-out was blocked at construction) and returned Delta != 0 (seed 42: onebrain-rf-size score 3.6923 vs rf-rf-size score 3.0769, Delta=+0.6154). HONEST NEGATIVE per the task: Delta != 0 => DO NOT FLIP. Root cause is a METHODOLOGICAL FLAW in the gate-3 null-gate design (not a functional regression) — see gate3_part2 below.",
+
+  "the_bug_traced": "CoResidentOneBrainComposer.__init__ built an idle layout-only BridgeParser(shared_bridge=merged_bridge); BridgeParser's shared-bridge path calls merge_population_into_shared_bridge, which re-injects via inject_explicit_wiring from the EMPTY bridge._unified_wiring_plan (the merged bridge is framework-wired in ONE inject at nav_conv_merged_bridge.py:1125, never populating that plan) -> it WIPED the framework wiring (the nav cascade) + the COMMAND_GATE transmission-gate registration -> the MergedNavConvAgent COMMAND_GATE anti-cheat assert (nav_conv_merged_bridge.py:~1941) crashed at construction under co_resident_command_route=True. The rf arm builds no parser -> survived.",
+
+  "the_fix": {
+    "kind": "runner-level (NO sim/ edit)",
+    "what": "Added `build_parser=True` param to CoResidentOneBrainComposer.__init__. When False, SKIP the idle BridgeParser shared-bridge merge entirely and set self.parser=None. MergedNavConvAgent passes build_parser=False on the onebrain path, because comprehension on the merged agent goes through `_MergedParserAdapter` (the framework parse_conj slice) — the composer's OWN parser is never used (LAYOUT decision 2b); it was pure redundant dead weight whose only effect was the destructive merge.",
+    "files_lines": [
+      "research/runners/nav_conv_merged_bridge.py:1494 — CoResidentOneBrainComposer.__init__ signature `build_parser=True` + docstring",
+      "research/runners/nav_conv_merged_bridge.py:1579-1582 — `if build_parser: self.parser = BridgeParser(...) else: self.parser = None`",
+      "research/runners/nav_conv_merged_bridge.py:1888-1897 — MergedNavConvAgent onebrain branch passes `build_parser=False`"
+    ],
+    "minimal_and_clean": true,
+    "sim_edit_required": false,
+    "why_byte_identical": "The RF ops are RESET-ISOLATED from the parser: every composer op `_zero_rf_v_u()`-resets the rf slice's v/u to 0 before kicking (one_brain_composer.py:301-314, called at every op site), the complex `cp_rf_w_*` synapses are a SEPARATE array from the parser's `parse` `cp_connections` population, and the composer codes come from RFPhasorComposer(seed=...)'s own RNG (built BEFORE the parser). So whatever the parser's Hebbian training left on the bridge is wiped before any RF read, and dropping the idle parser leaves the composer's RF numerical OUTPUT identical."
+  },
+
+  "build_fix_validation": {
+    "answer_identity_guard": {
+      "file": "research/runners/_closure1_buildfix_answer_identity.py",
+      "out": "research/findings/raw/_closure1_buildfix_answer_identity.json",
+      "GO": true,
+      "result": "build_parser=False == build_parser=True == standalone OneBrainComposer, VERBATIM, on the full who/what/yes-no + abstention matrix (30/30 each), BOTH cleanup configs (oracle_cleanup + spiking_cleanup); the no-confab moat preserved (8/8 abstentions each); build_parser=False -> parser is None; the rf layout indices unchanged."
+    },
+    "probe1_byte_identity": {
+      "out": "research/findings/raw/_consolidation_probe1_byteident.json",
+      "GO": true,
+      "result": "Probe-1 (DEFAULT build_parser=True path) RE-RUN after the fix: byte-identical (atol 1e-9), matrix 30/30, max|dmem|=0.0, moat 8/8, nav slice byte-isolated — BOTH configs. The fix leaves the Probe-1 baseline UNCHANGED."
+    }
+  },
+
+  "gate3_part1_construction": {
+    "ran": true,
+    "onebrain_constructs": true,
+    "onebrain_construct_error": null,
+    "onebrain_composer_is_CoResidentOneBrainComposer": true,
+    "onebrain_persistent_loop_on": true,
+    "composer_parser_is_none_buildparser_false": true,
+    "COMMAND_GATE_registered_under_production_default": true,
+    "co_resident_command_route_default_observed": true,
+    "nav_regions_identical": true,
+    "nav_region_diffs": [],
+    "rf_kind_rf_region_size": 896,
+    "onebrain_kind_rf_region_size": 24051,
+    "merged_N_rf_kind": 4818,
+    "merged_N_onebrain_kind": 27973,
+    "note": "PART 1 PASSES: the build fix works; the onebrain agent constructs under the production COMMAND_GATE default; the ONLY structural difference between the two arms is the disjoint, out-edge-free `rf` region SIZE (24051 vs 896 neurons), which changes the bridge total-N (27973 vs 8424)."
+  },
+
+  "gate3_part2_delta": {
+    "ran": true,
+    "seed_42": {
+      "onebrain_rf_size_score": 3.6923,
+      "onebrain_phases": [0.46, 0.54, 1.54, 1.15],
+      "rf_rf_size_score": 3.0769,
+      "rf_phases": [0.46, 1.31, 0.62, 0.69],
+      "delta": 0.6154,
+      "byte_identical": false
+    },
+    "seeds_43_44": "NOT COMPLETED — the driver CRASHED printing the seed-42 result on the Windows cp1252 console (a UnicodeEncodeError on the 'Delta' glyph in the gate-3 driver's print, a mechanical driver bug now fixed: _closure1_optionA_gate3.py:255/281 'Delta'->'delta'). The seed-42 scores above are the load-bearing observation; they are deterministic per N.",
+    "gate3_pass": false,
+    "ROOT_CAUSE_methodological_flaw": "The gate-3 driver's null-gate PREMISE ('a disjoint silent out-edge-free rf slice CANNOT perturb the nav score -> Delta=0') is FLAWED for a SIZE-difference comparison. PART 2 (`_run_nav_with_rf_size`) builds a nav bridge with the `rf` region sized to rf_n and runs the nav episode — it NEVER instantiates a composer; the two arms differ ONLY in the rf-region SIZE (24051 vs 896), which changes the bridge total-N (27973 vs 8424). The bridge's per-neuron HETEROGENEITY (drawn for N neurons) AND the size-N OU NOISE array are RNG-stream-dependent on N, so a different N gives the NAV neurons different heterogeneity + noise samples -> a different (equally valid) navigation trajectory -> a different score. The phase-0 finalQ MATCHES exactly (0.46 == 0.46, before noise compounds) and phases 1-3 DIVERGE — the classic signature of noise-driven trajectory divergence, NOT a functional change.",
+    "is_this_a_functional_regression": "NO. (1) PART 2 instantiates NO composer — the Delta is purely the rf-region SIZE/N effect, NOT the onebrain composer. (2) The `rf` region is array-disjoint from the nav cascade (ZERO cp_connections out-edges into nav — the Task-1 anti-cheat) and is never stepped during a nav episode, so there is NO synaptic/functional path by which it perturbs nav. (3) In the DEPLOYED flip there is no 'rf-size vs onebrain-size' comparison — every merged agent uses the onebrain rf size; the size-difference Delta is an artifact of the GATE'S comparison, not a property of the deployed agent.",
+    "why_not_flip_anyway": "Per the task's EXPLICIT instruction ('IF ... gate 3 != Delta=0 ... report PRECISELY + do NOT flip. HONEST NEGATIVE') I do NOT override the literal Delta=0 gate on my own RNG-confound reasoning, however well-supported. The clean 'onebrain composer is nav-neutral at FIXED N' test does NOT yet exist (the documented step-2b 'nav-not-regressed=2.0 byte-identical' was the rf composer at a FIXED rf size, standalone-vs-merged — not a different-size comparison). So the flip is HELD pending a redesigned gate."
+  },
+
+  "flips": {
+    "closure_1_kind_default_rf_to_onebrain": {
+      "file_line": "research/runners/nav_conv_merged_bridge.py:1638 (co_resident_composer_kind default 'rf'->'onebrain')",
+      "flipped": false,
+      "held_because": "gate 3 returned Delta != 0 (the literal flip gate failed). The build-fix that BLOCKED the gate is resolved, but the flip gate itself is now a methodologically-flawed null-gate that returns Delta != 0 from an RNG-stream/N confound — it cannot certify nav-neutrality."
+    },
+    "closure_3_enable_da_encoding_gain_default_on": {
+      "file_line": "research/runners/nav_conv_merged_bridge.py:1641 (enable_da_encoding_gain default False->True)",
+      "flipped": false,
+      "held_because": "rides Closure 1 (inert on the rf phase-store; load-bearing only on the onebrain magnitude store). Not flipped because Closure 1 is held."
+    }
+  },
+
+  "test_suites": {
+    "ran": false,
+    "reason": "the suites are run only AFTER a clean Delta=0 flip; since the flip is HELD, the suites were not modified or run. The current default ('rf') is unchanged, so test_nav_conv_merged_agent.py (8) + test_nav_conv_step2b_coresident.py (7) remain GREEN as-is (the rf path, validated by the prior close-out: step2b 7 passed)."
+  },
+
+  "moat": "the no-confab moat was NEVER weakened. The build fix is answer-identical (the parser is reset-isolated from the RF output); the build-fix guard + Probe-1 both assert the `is None`/`unknown` abstentions are IDENTICAL with the fix. No flip was made; no abstention path was touched.",
+  "sim_edit": "NONE. All changes are runner-level (nav_conv_merged_bridge.py build_parser param; _closure1_optionA_gate3.py print-glyph fix) + new test/probe runners. No protected sim/ edit was made or required.",
+
+  "concurrent_derisk_note": "A concurrent CPU de-risk (`_learned_talkativeness_derisk`, the owner's run, up to 6 worker procs) was NOT killed and the GPU was not fought for (per the task). It heavily throttled the gate-3 host-side per-episode bridge build, which is why the gate took a long wall-clock; it did not affect the RESULT (the scores are deterministic per N).",
+
+  "needed_to_actually_flip": "A REDESIGNED gate that isolates FUNCTIONAL nav regression from the RNG-stream/N confound: e.g. (a) seed the nav neurons' heterogeneity + OU stream INDEPENDENTLY of the rf-region size (so the two arms share an identical nav RNG draw), OR (b) compare two SAME-N builds where only the composer's functional presence toggles (a co-resident onebrain composer vs a same-N inert disjoint region), OR (c) accept the array-disjointness + the no-composer-in-PART-2 structural proof as sufficient (the rf slice cannot functionally touch nav) and re-scope the flip gate to that. This is a gate-methodology call FLAGGED for the controller — NOT improvised here.",
+
+  "verdict": "BUILD-FIX = CLOSED + VALIDATED (construction crash RESOLVED; answer-identical; Probe-1 byte-identical; PART-1 nav_regions_identical GREEN; NO sim/ edit). GATE 3 = RAN to PART 2 (first time ever) and returned Delta=+0.6154 != 0 at seed 42 -> per the task, HONEST NEGATIVE, FLIP NOT MADE. The Delta != 0 is a METHODOLOGICAL FLAW in the gate's null-gate premise (the rf-region SIZE change perturbs the nav neurons' RNG-derived heterogeneity+OU noise; PART 2 uses no composer; the rf slice is array-disjoint from nav), NOT a functional regression — but the gate as designed cannot certify the flip, so the flip stays HELD pending a redesigned (RNG/N-controlled) nav-neutrality gate. STILL-BLOCKED on the flip; build-fix DONE."
+}

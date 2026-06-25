@@ -1,0 +1,42 @@
+{
+  "guard": "closure1_buildfix_answer_identity",
+  "what": "CoResidentOneBrainComposer(build_parser=False) == build_parser=True == standalone OneBrainComposer on the full who/what/yes-no + abstention matrix (verbatim), the no-confab moat preserved",
+  "backend": "numpy",
+  "seed": 42,
+  "D": 48,
+  "nav_stub_offset": 37,
+  "configs": {
+    "oracle_cleanup": {
+      "n_matrix": 30,
+      "n_match_buildparserFalse_vs_standalone": 30,
+      "n_match_buildparserFalse_vs_buildparserTrue": 30,
+      "n_match_buildparserTrue_vs_standalone": 30,
+      "n_abstain_total": 8,
+      "n_abstain_match_buildparserFalse": 8,
+      "n_abstain_match_buildparserTrue": 8,
+      "coF_parser_is_none": true,
+      "coT_parser_index_offset": 37,
+      "answer_identical": true,
+      "moat_preserved": true,
+      "mismatches_F_vs_standalone": [],
+      "mismatches_F_vs_T": []
+    },
+    "spiking_cleanup": {
+      "n_matrix": 30,
+      "n_match_buildparserFalse_vs_standalone": 30,
+      "n_match_buildparserFalse_vs_buildparserTrue": 30,
+      "n_match_buildparserTrue_vs_standalone": 30,
+      "n_abstain_total": 8,
+      "n_abstain_match_buildparserFalse": 8,
+      "n_abstain_match_buildparserTrue": 8,
+      "coF_parser_is_none": true,
+      "coT_parser_index_offset": 37,
+      "answer_identical": true,
+      "moat_preserved": true,
+      "mismatches_F_vs_standalone": [],
+      "mismatches_F_vs_T": []
+    }
+  },
+  "GO": true,
+  "verdict": "GO -- dropping the idle parser (build_parser=False) leaves the composer answer-identical; the merged-agent onebrain composer is safe to build under the production COMMAND_GATE default"
+}
