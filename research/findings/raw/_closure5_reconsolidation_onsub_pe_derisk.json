@@ -1,0 +1,127 @@
+{
+  "probe": "reconsolidation PE: on-substrate matched-filter (clean-phasor re-kick) == host numpy cos (decision-identical)",
+  "backend": "numpy",
+  "pe_atol": 1e-06,
+  "D": 64,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "vocab_size": 18,
+  "n_facts": 5,
+  "verdict": "GO",
+  "pe_atol_ok_all": true,
+  "worst_pe_maxabs": 1.626083256933697e-08,
+  "decisions_identical_all": true,
+  "moat_preserved_all": true,
+  "analytic_identity": "PE_w = 1 - score_w/D where score_w = Re(conj(code_w).clean_Q2) = sum_k cos(2pi(code_w-rec))",
+  "needs_gpu": false,
+  "needs_sim_edit": false,
+  "reuse_by_import": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "pe_maxabs": 1.0447375520250546e-08,
+      "pe_atol_ok": true,
+      "decisions_identical": true,
+      "moat_preserved": true,
+      "gate": 0.7275773988059246,
+      "battery": [
+        {
+          "cue": "dog,go->south",
+          "idx": 0,
+          "pe_host": 1.0264091596995581,
+          "pe_onsub": 1.026409162208438,
+          "host_action": "rewrite",
+          "onsub_action": "rewrite"
+        },
+        {
+          "cue": "cat,come->east",
+          "idx": 1,
+          "pe_host": 0.5079471140596816,
+          "pe_onsub": 0.5079471170902252,
+          "host_action": "restabilize",
+          "onsub_action": "restabilize"
+        },
+        {
+          "cue": "bird,go->west",
+          "idx": null,
+          "pe_host": null,
+          "pe_onsub": null,
+          "host_action": "abstain",
+          "onsub_action": "abstain"
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "pe_maxabs": 1.4130068004547525e-08,
+      "pe_atol_ok": true,
+      "decisions_identical": true,
+      "moat_preserved": true,
+      "gate": 0.800313937262144,
+      "battery": [
+        {
+          "cue": "dog,go->south",
+          "idx": 0,
+          "pe_host": 1.056362692492377,
+          "pe_onsub": 1.0563626922667027,
+          "host_action": "rewrite",
+          "onsub_action": "rewrite"
+        },
+        {
+          "cue": "cat,come->east",
+          "idx": 1,
+          "pe_host": 0.6136023558936594,
+          "pe_onsub": 0.6136023700237274,
+          "host_action": "restabilize",
+          "onsub_action": "restabilize"
+        },
+        {
+          "cue": "bird,go->west",
+          "idx": null,
+          "pe_host": null,
+          "pe_onsub": null,
+          "host_action": "abstain",
+          "onsub_action": "abstain"
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "pe_maxabs": 1.626083256933697e-08,
+      "pe_atol_ok": true,
+      "decisions_identical": true,
+      "moat_preserved": true,
+      "gate": 0.7678074926717724,
+      "battery": [
+        {
+          "cue": "dog,go->south",
+          "idx": 0,
+          "pe_host": 0.9082226098833103,
+          "pe_onsub": 0.908222608268261,
+          "host_action": "rewrite",
+          "onsub_action": "rewrite"
+        },
+        {
+          "cue": "cat,come->east",
+          "idx": 1,
+          "pe_host": 0.6465149461961833,
+          "pe_onsub": 0.6465149521827698,
+          "host_action": "restabilize",
+          "onsub_action": "restabilize"
+        },
+        {
+          "cue": "bird,go->west",
+          "idx": null,
+          "pe_host": null,
+          "pe_onsub": null,
+          "host_action": "abstain",
+          "onsub_action": "abstain"
+        }
+      ]
+    }
+  ],
+  "notes": "GO: the reconsolidation PE comparison -- the last non-flat op with a genuine host seam -- is spike-resident-able. Re-kicking the recovered patient (Q[2]) as a CLEAN UNIT PHASOR (the Closure-2 `_dev_rekick_into`, no host phasor copy) and reading the PE off the on-substrate matched-filter membrane score (PE_w = 1 - score_w/D) AGREES with the host numpy cos PE to float32 atol on every (block, candidate) pair and seed (worst ~2.5e-8 << gate margins), so every rewrite/restabilize/abstain DECISION is answer-identical and the no-confab moat holds (a never-stored cue still abstains). The host `rf_read_phases -> numpy cos` round-trip is replaced by an on-device read-phase + re-kick + matched filter -- the same Closure-2 mechanism extended to reconsolidation. NO sim/ edit (reuse-by-import of the public RF ops + the composer's own _dev_rekick_into + _cleanup_conj). The exact analytic identity is PE = 1 - score/D; the residual is float32 membrane rounding (the DECISION is invariant, as the flat cleanup argmax is)."
+}

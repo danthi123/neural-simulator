@@ -161,12 +161,25 @@ class OneBrainComposer:
         # ANSWER-IDENTICAL to the carry-live-Z default (the cleanup argmax is invariant to the common |Z| scale the
         # carry path leaves inflated). The no-confab moat is preserved by construction: the cleanup winner-pick + the
         # cue-match abstention read the SAME relative cleanup pattern (only the register's magnitude is normalized to
-        # unit before cleanup -- the argmax + the confidence-gate margin are unchanged). HONEST SCOPE: the FLAT path only
-        # (`_read_block` + both `_read_all_blocks` sub-paths). The recursive CLAUSE path's hop-1->hop-2 handoff is ALREADY
-        # on-substrate (`_decode_clause` uses `_dev_rekick_into` unconditionally -- it inherited this I-1-a GO); the
-        # STORE-side composite read-out (`_compose_phases` -> `_write_block`) is a legitimate "consolidate the composed
-        # result into the synaptic store" step, not a between-op cognitive handoff, and is left as-is. See
-        # research/findings/raw/_persistent_loop_flat_derisk.json.
+        # unit before cleanup -- the argmax + the confidence-gate margin are unchanged).
+        #
+        # SCOPE (CLOSURE 5, purity backlog #5 -- extend the persistent spiking loop to ALL ops): persistent_loop now
+        # also gates the RECONSOLIDATION prediction-error op. Audit of the non-flat ops found that almost all of them
+        # were ALREADY spike-resident: the recursive CLAUSE path's hop-1->hop-2 handoff uses `_dev_rekick_into`
+        # unconditionally (it inherited this I-1-a GO); negation/yes-no reads the polarity role IN PARALLEL within the
+        # SAME flat reconstruction (no separate sub-op -- it inherits the flat handoff); query_chain's hop-to-hop
+        # handoff is a DECODED WORD (the cleanup body read), not a phasor crossing an op boundary (the validated
+        # "re-discretize between hops" design, 2026-06-17). The ONE remaining genuine host seam was RECONSOLIDATION's
+        # PE: `_recovered_patient_phases` read the recovered patient phasor TO HOST (rf_read_phases) and
+        # `_patient_prediction_error` computed `1 - mean(cos(...))` as a HOST numpy cos. When persistent_loop is ON,
+        # the PE is now SPIKE-RESIDENT: re-kick the recovered patient (Q[2]) as a clean unit phasor (`_dev_rekick_into`,
+        # no host phasor copy) and read PE_w = 1 - score_w/D off the on-substrate matched-filter membrane
+        # (`_patient_cleanup_scores`). Decision-identical to the host cos (residual ~2.5e-8 float32 << the gate margin;
+        # the rewrite/restabilize/abstain decision is invariant, as the flat argmax is). The STORE-side composite
+        # read-out (`_compose_phases` -> `_write_block`) is a legitimate "consolidate the composed result into the
+        # synaptic store" step, not a between-op cognitive handoff, and is left as-is. persistent_loop=False keeps the
+        # legacy host-cos PE (the revertible escape). See research/findings/raw/_persistent_loop_flat_derisk.json +
+        # _closure5_persistent_loop_all_ops.json + _closure5_reconsolidation_onsub_pe_derisk.json.
         self.persistent_loop = bool(persistent_loop)
         self.sequencer_match_thresh = float(sequencer_match_thresh)
         self.sequencer_gain = float(sequencer_gain)
@@ -1058,7 +1071,9 @@ class OneBrainComposer:
     # --- reconsolidation: prediction-error-gated in-place fact update (== the rf composer's update_on_mismatch) ---
     def _recovered_patient_phases(self, block_idx):
         """Reconstruct block_idx + unbind the patient role -> the RAW recovered patient phases (NOT cleaned up to a
-        word). The reconsolidation prediction error compares these against an asserted patient's code."""
+        word), READ TO HOST via rf_read_phases. The reconsolidation prediction error compares these against an asserted
+        patient's code. LEGACY HOST-SEAM read used ONLY when persistent_loop=False (the on-substrate PE path below
+        avoids this host round-trip)."""
         comp, b, D, Pd = self.comp, self.b, self.D, self.period
         self._zero_rf_v_u()
         trig = self.store_base + block_idx * self.block
@@ -1070,9 +1085,53 @@ class OneBrainComposer:
         b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
         return np.asarray(b.rf_read_phases())[self.q_base + 2 * D:self.q_base + 3 * D]
 
+    def _patient_cleanup_scores(self, block_idx):
+        """CLOSURE 5 (purity backlog #5 -- extend the persistent spiking loop to the RECONSOLIDATION op): the
+        on-substrate prediction-error read. Reconstruct block_idx + unbind the patient role into Q[2], RE-KICK Q[2] as
+        a CLEAN UNIT PHASOR (the Closure-2 `_dev_rekick_into` register->register op-handoff -- NO `to_host` of the
+        phasor; the recovered patient composite is held on the bridge as a clean unit phasor), then run the matched-
+        filter cleanup matvec (Q[2] -> a cleanup neuron per vocab word via `_cleanup_conj`) and read the per-word
+        membrane SCORES off the body (cp_membrane_potential_v[c_base:c_base+V]). The reconsolidation PE then derives
+        from the SPIKING score: PE_w = 1 - score_w/D, where score_w = Re(conj(code_w).clean_Q2) = sum_k
+        cos(2pi(code_w-rec)) -- the EXACT on-substrate analog of the host numpy cos `1 - mean(cos(...))`. This replaces
+        the host `rf_read_phases -> numpy cos` round-trip (the last non-flat op with a genuine host seam) with an
+        on-device read-phase + re-kick + matched filter. Decision-identical to the host cos (the residual is float32
+        membrane rounding ~2.5e-8 << the gate margins; the rewrite/restabilize/abstain decision is invariant, exactly
+        as the flat cleanup argmax is). De-risk: research/findings/raw/_closure5_reconsolidation_onsub_pe_derisk.json."""
+        b, D, Pd, V = self.b, self.D, self.period, self.V
+        self._zero_rf_v_u()
+        trig = self.store_base + block_idx * self.block
+        kick = np.zeros(self.n_total, dtype=np.complex128); kick[trig] = 1.0
+        b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
+        b.rf_resonate_steps(Pd + 8)
+        zc = self._unbind_conj("patient")
+        unbind = [(self.q_base + 2 * D + k, trig + 1 + k, complex(zc[k])) for k in range(D)]      # patient -> Q[2]
+        b.rf_set_complex_weights(unbind); b.rf_resonate_steps(Pd + 8)
+        # the Closure-2 clean-unit-phasor op-handoff: normalize+quantize Q[2] on-device (register->register), no host
+        # phasor copy. == a host round-trip on the cleanup membrane (the I-1-a byte-identity GO); makes the recovered
+        # patient a clean unit phasor held ON THE BRIDGE between the unbind op and the matched-filter PE op.
+        self._dev_rekick_into([slice(self.q_base + 2 * D, self.q_base + 3 * D)])
+        clean = []
+        for j in range(V):
+            cc = self._cleanup_conj(self.words[j])
+            clean += [(self.c_base + j, self.q_base + 2 * D + k, complex(cc[k])) for k in range(D)]
+        b.rf_set_complex_weights(clean); b.rf_resonate_steps(1)
+        mem = np.asarray(to_host(b.cp_membrane_potential_v)).astype(float)
+        return mem[self.c_base:self.c_base + V]
+
     def _patient_prediction_error(self, block_idx, patient_word):
         """PE = 1 - phase-cos(recovered patient phasor, the asserted patient's code). ~0 when the asserted filler
-        matches the stored one (a re-statement); ~1 on a mismatch (a correction). == the rf composer's measure."""
+        matches the stored one (a re-statement); ~1 on a mismatch (a correction). == the rf composer's measure.
+        persistent_loop ON (default, Closure 5): the SPIKE-RESIDENT read -- PE_w = 1 - score_w/D from the on-substrate
+        matched-filter cleanup (`_patient_cleanup_scores`), NO host rf_read_phases/cos round-trip. OFF: the legacy host
+        cos over the host-read recovered phases (the revertible byte-comparable escape)."""
+        if self.persistent_loop:
+            scores = self._patient_cleanup_scores(block_idx)
+            j = self._word_index.get(patient_word)
+            if j is None:                       # an out-of-vocab asserted patient: fall back to the host cos (no score)
+                rec = self._recovered_patient_phases(block_idx)
+                return 1.0 - float(np.mean(np.cos(2.0 * np.pi * (rec - self.comp.concepts[patient_word]))))
+            return 1.0 - float(scores[j]) / float(self.D)
         rec = self._recovered_patient_phases(block_idx)
         return 1.0 - float(np.mean(np.cos(2.0 * np.pi * (rec - self.comp.concepts[patient_word]))))
 
@@ -1080,10 +1139,27 @@ class OneBrainComposer:
         """Frozen labilization gate = the midpoint of the same-vs-different prediction-error distributions over the
         CURRENT facts (each fact's PE against its OWN stored patient = 'same'; against other facts' patients =
         'different'). The data's own separation point -- NOT tuned to a downstream probe. 0.5 fallback when too few
-        distinct facts exist to calibrate. == the rf composer's _calibrate_pe_labile (string-patient facts only)."""
+        distinct facts exist to calibrate. == the rf composer's _calibrate_pe_labile (string-patient facts only).
+        persistent_loop ON (default, Closure 5): each fact's PE is read from the SPIKE-RESIDENT matched-filter scores
+        (PE = 1 - score/D), so the gate calibration is also host-round-trip-free; OFF: the legacy host cos."""
         idxs = [i for i, (fact, _) in enumerate(self.kb) if isinstance(fact.get("patient"), str)]
-        recs = {i: self._recovered_patient_phases(i) for i in idxs}
         pats = {i: self.kb[i][0]["patient"] for i in idxs}
+        if self.persistent_loop:
+            scores = {i: self._patient_cleanup_scores(i) for i in idxs}   # one matched-filter read per fact (full vocab)
+
+            def pe(i, word):                                              # PE = 1 - score_word/D (the on-substrate read)
+                j = self._word_index.get(word)
+                return (1.0 - float(scores[i][j]) / float(self.D)) if j is not None else 1.0
+            same, diff = [], []
+            for i in idxs:
+                same.append(pe(i, pats[i]))
+                for j in idxs:
+                    if pats[j] != pats[i]:
+                        diff.append(pe(i, pats[j]))
+            if not same or not diff:
+                return 0.5
+            return 0.5 * (float(np.mean(same)) + float(np.mean(diff)))
+        recs = {i: self._recovered_patient_phases(i) for i in idxs}
 
         def pe(rec, word):
             return 1.0 - float(np.mean(np.cos(2.0 * np.pi * (rec - self.comp.concepts[word]))))

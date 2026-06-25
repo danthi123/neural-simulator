@@ -1,0 +1,215 @@
+{
+  "probe": "Closure 5: extend the persistent spiking loop (clean-phasor op-handoff) to ALL non-flat composer ops",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "vocab_size": 18,
+  "D": 64,
+  "verdict": "GO",
+  "gate_definition": "per-op ANSWER-IDENTITY of the spike-resident handoff (persistent_loop=True, default) vs the host-round-trip/legacy reference (persistent_loop=False) -- the same bar Closure 2 used for the flat path -- + the no-confab moat. NOT absolute low-D recall correctness (orthogonal).",
+  "all_ops_on_off_identical": true,
+  "all_moat_preserved": true,
+  "per_op_ok": {
+    "clause": true,
+    "negation_yesno": true,
+    "query_chain": true,
+    "reconsolidation": true
+  },
+  "per_op_moat_ok": {
+    "clause": true,
+    "negation_yesno": true,
+    "query_chain": true,
+    "reconsolidation": true
+  },
+  "spike_resident_status": {
+    "clause": "ALREADY (Closure-2 _dev_rekick_into in _decode_clause)",
+    "negation_yesno": "ALREADY (polarity in-parallel within the flat reconstruction)",
+    "query_chain": "BY-DESIGN (hop-to-hop handoff is a decoded word/body read, not a phasor)",
+    "reconsolidation": "EXTENDED THIS BUILD (PE via clean-phasor re-kick + on-substrate matched filter)"
+  },
+  "irreducible_host_seam": "NONE (no cognitive between-op handoff copies a phasor through the host after Closure 5)",
+  "clause_lowD_recall_note": "the recursive CLAUSE is a 2-level nested unbind -- the deepest/lowest-SNR op. At D=64 on the numpy backend the onebrain decode and the RFPhasorComposer oracle can land on DIFFERENT near-miss inner-clause words (seeds 42/43 here; seed 44 == truth) because the two composers' independent bind/cleanup-region layouts accumulate float noise differently. This is a DOCUMENTED low-D nested-unbind recall-fidelity property (higher D recovers it; the production path runs at D>=128 / GPU), and crucially it is IDENTICAL on persistent_loop True vs False (clause is flag-independent -- _decode_clause uses _dev_rekick_into unconditionally), so it is NOT a Closure-5 handoff regression. The op-handoff (the Closure-5 deliverable) is spike-resident either way.",
+  "needs_gpu": false,
+  "needs_sim_edit": false,
+  "reuse_by_import": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "clause": {
+        "spike_resident": true,
+        "mechanism": "_decode_clause uses _dev_rekick_into unconditionally (Closure-2 inherited)",
+        "query_patient_on": "cat look west",
+        "query_patient_off": "cat look west",
+        "render_fact_on": "dog go cat look west",
+        "render_fact_off": "dog go cat look west",
+        "oracle_query_patient": "cat home west",
+        "truth_query_patient": "cat look south",
+        "on_off_identical": true,
+        "moat_abstain": true,
+        "ok": true
+      },
+      "negation_yesno": {
+        "spike_resident": true,
+        "mechanism": "polarity decoded in-parallel within the flat reconstruction (flat handoff)",
+        "affirmative_on": "yes",
+        "negated_on": "no",
+        "unstored_on": "unknown",
+        "oracle_affirmative": "yes",
+        "oracle_negated": "no",
+        "on_off_identical": true,
+        "moat_abstain": true,
+        "ok": true
+      },
+      "query_chain": {
+        "spike_resident": true,
+        "mechanism": "hop-to-hop handoff = a DECODED WORD (cleanup body read), not a phasor",
+        "two_hop_on": "north",
+        "two_hop_off": "north",
+        "oracle_two_hop": "north",
+        "truth_two_hop": "north",
+        "missing_hop_on": null,
+        "on_off_identical": true,
+        "moat_abstain": true,
+        "ok": true
+      },
+      "reconsolidation": {
+        "spike_resident": true,
+        "mechanism": "PE now read from the on-substrate matched filter (clean-phasor re-kick), not host rf_read_phases+cos",
+        "correction_on": "rewrite",
+        "correction_off": "rewrite",
+        "correction_oracle": "rewrite",
+        "restatement_on": "restabilize",
+        "restatement_off": "restabilize",
+        "moat_on": "abstain",
+        "moat_off": "abstain",
+        "query_after_rewrite": "south",
+        "count_after_rewrite": 1,
+        "count_moat": 0,
+        "decisions_on_off_identical": true,
+        "oracle_match": true,
+        "moat_abstain": true,
+        "ok": true
+      }
+    },
+    {
+      "seed": 43,
+      "clause": {
+        "spike_resident": true,
+        "mechanism": "_decode_clause uses _dev_rekick_into unconditionally (Closure-2 inherited)",
+        "query_patient_on": "home look south",
+        "query_patient_off": "home look south",
+        "render_fact_on": "dog go home look south",
+        "render_fact_off": "dog go home look south",
+        "oracle_query_patient": "cat look south",
+        "truth_query_patient": "cat look south",
+        "on_off_identical": true,
+        "moat_abstain": true,
+        "ok": true
+      },
+      "negation_yesno": {
+        "spike_resident": true,
+        "mechanism": "polarity decoded in-parallel within the flat reconstruction (flat handoff)",
+        "affirmative_on": "yes",
+        "negated_on": "no",
+        "unstored_on": "unknown",
+        "oracle_affirmative": "yes",
+        "oracle_negated": "no",
+        "on_off_identical": true,
+        "moat_abstain": true,
+        "ok": true
+      },
+      "query_chain": {
+        "spike_resident": true,
+        "mechanism": "hop-to-hop handoff = a DECODED WORD (cleanup body read), not a phasor",
+        "two_hop_on": "north",
+        "two_hop_off": "north",
+        "oracle_two_hop": "north",
+        "truth_two_hop": "north",
+        "missing_hop_on": null,
+        "on_off_identical": true,
+        "moat_abstain": true,
+        "ok": true
+      },
+      "reconsolidation": {
+        "spike_resident": true,
+        "mechanism": "PE now read from the on-substrate matched filter (clean-phasor re-kick), not host rf_read_phases+cos",
+        "correction_on": "rewrite",
+        "correction_off": "rewrite",
+        "correction_oracle": "rewrite",
+        "restatement_on": "restabilize",
+        "restatement_off": "restabilize",
+        "moat_on": "abstain",
+        "moat_off": "abstain",
+        "query_after_rewrite": "south",
+        "count_after_rewrite": 1,
+        "count_moat": 0,
+        "decisions_on_off_identical": true,
+        "oracle_match": true,
+        "moat_abstain": true,
+        "ok": true
+      }
+    },
+    {
+      "seed": 44,
+      "clause": {
+        "spike_resident": true,
+        "mechanism": "_decode_clause uses _dev_rekick_into unconditionally (Closure-2 inherited)",
+        "query_patient_on": "cat look south",
+        "query_patient_off": "cat look south",
+        "render_fact_on": "dog go cat look south",
+        "render_fact_off": "dog go cat look south",
+        "oracle_query_patient": "cat look south",
+        "truth_query_patient": "cat look south",
+        "on_off_identical": true,
+        "moat_abstain": true,
+        "ok": true
+      },
+      "negation_yesno": {
+        "spike_resident": true,
+        "mechanism": "polarity decoded in-parallel within the flat reconstruction (flat handoff)",
+        "affirmative_on": "yes",
+        "negated_on": "no",
+        "unstored_on": "unknown",
+        "oracle_affirmative": "yes",
+        "oracle_negated": "no",
+        "on_off_identical": true,
+        "moat_abstain": true,
+        "ok": true
+      },
+      "query_chain": {
+        "spike_resident": true,
+        "mechanism": "hop-to-hop handoff = a DECODED WORD (cleanup body read), not a phasor",
+        "two_hop_on": "north",
+        "two_hop_off": "north",
+        "oracle_two_hop": "north",
+        "truth_two_hop": "north",
+        "missing_hop_on": null,
+        "on_off_identical": true,
+        "moat_abstain": true,
+        "ok": true
+      },
+      "reconsolidation": {
+        "spike_resident": true,
+        "mechanism": "PE now read from the on-substrate matched filter (clean-phasor re-kick), not host rf_read_phases+cos",
+        "correction_on": "rewrite",
+        "correction_off": "rewrite",
+        "correction_oracle": "rewrite",
+        "restatement_on": "restabilize",
+        "restatement_off": "restabilize",
+        "moat_on": "abstain",
+        "moat_off": "abstain",
+        "query_after_rewrite": "south",
+        "count_after_rewrite": 1,
+        "count_moat": 0,
+        "decisions_on_off_identical": true,
+        "oracle_match": true,
+        "moat_abstain": true,
+        "ok": true
+      }
+    }
+  ],
+  "notes": "GO: every non-flat composer op hands off as spikes on the bridge with NO host phasor round-trip, and the spike-resident handoff is ANSWER-IDENTICAL to the legacy reference (ON==OFF) on every op + seed, moat 0-leak. AUDIT: the recursive CLAUSE handoff was ALREADY on-substrate (Closure-2 _dev_rekick_into, flag-independent); negation/yes-no reads polarity IN PARALLEL within the flat reconstruction (inherits the flat handoff); query_chain's hop-to-hop handoff is a DECODED WORD (a cleanup body read = the legitimate act-on-the-result boundary, the validated re-discretize-between-hops design), not a phasor crossing an op boundary. The ONE genuine host seam was RECONSOLIDATION's PE (host rf_read_phases + numpy cos) -- now SPIKE-RESIDENT: re-kick the recovered patient (Q[2]) as a clean unit phasor (_dev_rekick_into, no host phasor copy) + read PE = 1 - score/D off the on-substrate matched-filter membrane (_patient_cleanup_scores), gated by the same persistent_loop flag (default ON); ON decides identically to the legacy host-cos PE OFF (rewrite/restabilize/abstain), and the moat holds. The clause op's vs-oracle near-miss at D=64 (clause_lowD_recall_note) is orthogonal low-D substrate fidelity, identical on both flag values -- NOT a handoff regression. NO irreducible host seam remains among the cognitive between-op handoffs. NO sim/ edit (reuse-by-import of the public RF ops + the composer's own _dev_rekick_into + _cleanup_conj)."
+}
