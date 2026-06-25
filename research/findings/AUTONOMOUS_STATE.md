@@ -4346,3 +4346,11 @@ Stage A (`_communicable_turn_stageA_derisk.py`, 1300 lines, CPU, NO sim/ edit): 
 ⇒ discursive-turn FOUNDATION validated. The owner's full DISCURSIVE RICHNESS (multi-proposition, engage-and-discuss, address-the-conversation) = the NEXT layer ON this foundation, gated by KNOWLEDGE (the curriculum) + LATENCY (perf levers).
 
 **EXACT NEXT CONCRETE ACTION:** committed Stage A. Stage B dispatched (production `BrainConversationalAgent`/`MultiTurnAgent` wire-in: communicable-mode default-OFF byte-identity + Q-persistence to the lineage bundle). DISCURSIVE-RICHNESS + LATENCY = big-next design choices (flagged for owner steer; gated by curriculum+perf). Concurrent: Option A b (`a1cfec71`) + curriculum Step 0 (`a3a9f5d1`). NEVER weaken the moat; honest-propagate origin+gitea.
+
+---
+
+## CYCLE 555 (2026-06-25 — curriculum Step 0 GO: streaming corpus loader lossless on a REAL TinyStories shard; gateway open)
+
+Curriculum de-risk Step 0 (`_curriculum_step0_streaming_loader.json`, CPU, NO sim/ edit): **GO**. NEW `research/runners/corpus_stream.py` (118 lines): `iter_stories(path, chunk_bytes)` = a TRUE streaming generator (fixed byte chunks, carries partial-story across boundaries, yields one story's tokens at a time -> peak resident ~chunk+story, INDEPENDENT of corpus size); `load_token_stream` = backward-compatible drop-in. Wired into `_phaseB_onbridge_stream_cortex_derisk.py` (+13/-7) + `_longitudinal_develop_loop_gpu.py` (+26/-16) with `--corpus-path` (byte-identical fallback). The shard is REAL (not synthesized): `data/corpus/tinystories.txt` (7.99MB, 9829 stories, 1.57M tokens = genuine HF roneneldan/TinyStories V2-GPT4 val, already in repo via corpus_fetch.py). corr(M,C) streamed **0.8527** == baseline **0.8527**, delta 0.0 (LOSSLESS, >0.85). Streaming: 7.99MB in 122×64KiB chunks, peak 0.365MB = 0.046× file (43.7× reduction), chunk-independent. sim/ clean.
+
+**EXACT NEXT CONCRETE ACTION:** committed Step 0. Step 1 (320 concepts from the REAL TinyStories corpus, frequency-derived curriculum, ~1-3 GPU-hr) = next rung -- WAITS for the GPU (Option A b `a1cfec71` holds it; avoid contention) then launches LOCAL-with-ETA. Stage B (communicable-brain production wire-in, CPU) dispatched. Concurrent: Option A b (GPU) + Stage B (CPU). NEVER weaken the moat; honest-propagate origin+gitea.

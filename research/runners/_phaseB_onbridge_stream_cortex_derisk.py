@@ -43,6 +43,7 @@ from sim.backend import to_host  # noqa: E402
 from research.runners.dendritic_d1_learn_graded_structure_derisk import _cos_sim, _pearson_vs_Strue, heldout_generalization  # noqa: E402
 from research.runners.option_c_real_cooccurrence_derisk import TAXONOMY_8x8, taxonomy_to_vocab_categories  # noqa: E402
 from research.runners.option_c_stageB_fair_test import STOPLIST  # noqa: E402
+from research.runners.corpus_stream import load_token_stream as _stream_load, default_corpus_path  # noqa: E402
 
 WINDOW = 2
 
@@ -51,11 +52,11 @@ def double_center(X):
     return X - X.mean(0, keepdims=True) - X.mean(1, keepdims=True) + X.mean()
 
 
-def load_token_stream():
-    path = os.path.join(_REPO, "data", "corpus", "tinystories.txt")
-    with open(path, "r", encoding="utf-8", errors="ignore") as fh:
-        text = fh.read()
-    return [re.findall(r"[a-z]+", s) for s in text.split("<|endoftext|>")]
+def load_token_stream(corpus_path: str | None = None):
+    """Load stories from a corpus file via the BOUNDED-MEMORY chunked streaming reader
+    (`corpus_stream.load_token_stream`), so the raw file is never read whole into one string. `corpus_path` of
+    None defaults to the wired TinyStories cache (backward-compatible)."""
+    return _stream_load(corpus_path or default_corpus_path())
 
 
 def build_stream_bridge(n_target, n_hub, n_per, seed):
@@ -185,6 +186,9 @@ def main():
     p.add_argument("--max-windows", type=int, default=20000, help="stream-window budget (caps wall-clock)")
     p.add_argument("--hub-scale", type=float, default=250.0)
     p.add_argument("--tgt-scale", type=float, default=1200.0)
+    p.add_argument("--corpus-path", default=None,
+                   help="path to a plain-text corpus shard (stories split on <|endoftext|>); default = the "
+                        "wired data/corpus/tinystories.txt. Streamed in bounded-memory chunks.")
     a = p.parse_args()
     os.environ.setdefault("SIM_BACKEND", "cupy")
     t0 = time.time()
@@ -194,8 +198,10 @@ def main():
           f"co-occurrence, NO precomputed counts in the drive), learn the cortex that reaches the target?",
           flush=True)
     vocab, cat_ids, _ = taxonomy_to_vocab_categories(TAXONOMY_8x8)
-    stories = load_token_stream()
-    print(f"  loaded {len(stories)} stories; vocab {len(vocab)} targets", flush=True)
+    corpus_path = a.corpus_path or default_corpus_path()
+    stories = load_token_stream(corpus_path)
+    print(f"  loaded {len(stories)} stories from {corpus_path} (streamed in bounded-memory chunks); "
+          f"vocab {len(vocab)} targets", flush=True)
     rows = [run_seed(s, stories, vocab, cat_ids, a) for s in seeds]
 
     def m(k):

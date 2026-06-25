@@ -1,0 +1,81 @@
+{
+  "title": "Foundational-curriculum Step 0 (cheap gateway): streaming corpus loader + stream-cortex learning-faithfulness smoke",
+  "date": "2026-06-25",
+  "type": "BUILD + cheap-first de-risk (Step 0). CPU (SIM_BACKEND=numpy). Reuse-by-import, runner-side only, NO sim/ edit.",
+  "scoping_ref": "research/findings/raw/_foundational_curriculum_scaling_scoping.md (Mechanism piece 1 = streaming loader; De-risk Step 0)",
+  "verdict": "Step 0 GO: streaming corpus loader works (bounded-memory, byte-identical, chunk-independent) AND stream-cortex learning is faithful from the streamed shard (corr(M,C)=0.8527 > 0.85, EXACTLY == the whole-file baseline). The gateway to the foundational-curriculum arc is open.",
+  "go": true,
+
+  "loader_change": {
+    "new_module": "research/runners/corpus_stream.py",
+    "exports": ["iter_stories(path, chunk_bytes)", "load_token_stream(path, chunk_bytes, max_stories)", "default_corpus_path()", "DEFAULT_CORPUS_PATH"],
+    "design": "iter_stories = TRUE streaming generator: reads the file in fixed byte chunks, carries the partial story across chunk boundaries, splits on the <|endoftext|> document delimiter, yields one story's tokens at a time -> peak resident raw text bounded by ~chunk+one-story, INDEPENDENT of total corpus size (the scaling path). load_token_stream = backward-compatible drop-in that returns the SAME list[list[str]] the old whole-file loaders returned (the permutation-based consumers need len()+random access) but is built via iter_stories so the raw file is NEVER read whole into one string.",
+    "wired_into": [
+      "research/runners/_phaseB_onbridge_stream_cortex_derisk.py: load_token_stream() now delegates to corpus_stream (chunked); added --corpus-path (default = wired data/corpus/tinystories.txt fallback).",
+      "research/runners/_longitudinal_develop_loop_gpu.py: StreamCortex._load_token_stream() now uses corpus_stream (chunked); added corpus_path through StreamCortex.__init__ / develop_gpu / run_gpu_smoke and a --corpus-path CLI arg (default fallback = byte-identical prior behavior); removed now-unused `import re`."
+    ],
+    "backward_compatible": "Yes -- --corpus-path defaults to the same hardcoded data/corpus/tinystories.txt the loaders used; the materialized list is shape-identical, so existing consumers are unaffected.",
+    "sim_edit": "NONE. All three files are under research/runners/. No protected sim/ edit was needed."
+  },
+
+  "shard": {
+    "path": "data/corpus/tinystories.txt",
+    "bytes": 7988286,
+    "n_stories": 9829,
+    "total_tokens": 1570941,
+    "provenance": "REAL TinyStories shard (NOT synthesized). It is the genuine HuggingFace 'roneneldan/TinyStories' V2-GPT4 validation split, fetched + cleaned + cached by the repo's existing research/runners/corpus_fetch.py (degraded=False). Confirmed by inspection: 9828 <|endoftext|>-delimited simple-English children's narratives ('Once upon a time...'). NOTE: the scoping said this file 'is not in the repo' -- it WAS already present (fetched after the scoping was written), so Step 0 used a REAL corpus shard, the stronger test (no stand-in was synthesized)."
+  },
+
+  "streaming_demo": {
+    "n_stories": 9829,
+    "identical_stories_stream_vs_wholefile": true,
+    "identical_stories_997B_chunks": true,
+    "total_tokens": 1570941,
+    "chunk_bytes": 65536,
+    "n_chunks_for_file": 122,
+    "peak_bytes_whole_file_read": 15985993,
+    "peak_bytes_iter_stories": 365425,
+    "peak_reduction_factor": 43.7,
+    "stream_peak_over_filesize": 0.0457,
+    "note": "Streaming PROVEN: the 7.99 MB file is processed in 122 chunks of 64 KiB via iter_stories; peak resident raw text is 0.365 MB = 0.046x the file size (bounded by chunk+story, NOT total size) vs 15.99 MB for a whole-file read = 43.7x reduction. Story lists are byte-identical to the old whole-file read at BOTH 64 KiB and 997-byte chunks (chunk-size-independent boundary splitting)."
+  },
+
+  "smoke_config": {
+    "runner": "research/runners/_phaseB_onbridge_stream_cortex_derisk.py::run_seed (the on-bridge stream-cortex learning-faithfulness smoke; prints corr(M,C))",
+    "backend": "numpy (CPU)",
+    "vocab": "TAXONOMY_8x8 (64 concepts, 8 categories)",
+    "n_hub": 200,
+    "n_per": 12,
+    "max_windows": 2000,
+    "window_steps": 2,
+    "seed": 42,
+    "bridge": "3168 neurons (64*12 target + 200*12 hub), 1843200 hub->target plastic synapses, rate-Hebbian co-occurrence learning"
+  },
+
+  "result": {
+    "corr_MC_streamed": 0.852600625678975,
+    "corr_MC_baseline_whole_file": 0.852600625678975,
+    "corr_MC_delta_streamed_minus_baseline": 0.0,
+    "learning_faithful_streamed_gt_0p85": true,
+    "streamed_run_seconds": 385.5,
+    "baseline_run_seconds": 337.7,
+    "secondary_metrics_both_runs": {
+      "normalized_code_pearson": 0.08361423914332741,
+      "host_ref": 0.08383026562543813,
+      "code_pct_of_host_ref": "99.7%",
+      "generalization_heldout": 0.265625,
+      "permuted_control": -0.011029772962734535
+    },
+    "honest_note_on_secondary_metrics": "The load-bearing Step 0 bar is corr(M,C) > 0.85 (learning fidelity: does the bridge's learned co-occurrence M match the windows it heard?) -- MET (0.8527) and EXACTLY identical streamed-vs-baseline. The secondary code/gen metrics are modest (code +0.084 == 99.7% of host-ref; gen 0.27; permuted ~0 clean) because this is a deliberately REDUCED CPU smoke (2000 windows, n_per=12) -- the standalone derisk at 20000 windows / larger n_per reaches the documented higher values. These are byte-identical between the streamed and whole-file runs, confirming the loader is the ONLY difference and it is lossless; they are NOT a regression introduced by the streaming change."
+  },
+
+  "validation": {
+    "corr_MC_gt_0p85_on_streamed_shard": true,
+    "streamed_equals_whole_file_baseline_byte_for_byte": true,
+    "streaming_demonstrated_bounded_memory": true,
+    "real_corpus_not_synthesized": true,
+    "no_sim_edit": true
+  },
+
+  "go_bar": "Step 0 GO = streaming loader works (bounded-memory + byte-identical + chunk-independent) AND learning faithful (corr(M,C) > 0.85 on the streamed shard, unchanged vs the hardcoded-corpus baseline). BOTH met."
+}

@@ -37,7 +37,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import re
 import shutil
 import sys
 import tempfile
@@ -149,8 +148,9 @@ class StreamCortex:
     introduced into the stream; the learned codes drive the conversational composer (grounded codes)."""
 
     def __init__(self, full_vocab, seed, n_hub=200, n_per=12, hub_scale=250.0, tgt_scale=1200.0,
-                 window_steps=2, D=128, verbose=True):
+                 window_steps=2, D=128, verbose=True, corpus_path=None):
         from research.runners._phaseB_onbridge_stream_cortex_derisk import build_stream_bridge
+        self.corpus_path = corpus_path
         self.full_vocab = list(full_vocab)
         self.Nt = len(self.full_vocab)
         self.tgt_row = {w: i for i, w in enumerate(self.full_vocab)}
@@ -194,12 +194,12 @@ class StreamCortex:
         self.heard_concepts = set()
         self._rng_story = np.random.RandomState(seed)
 
-    @staticmethod
-    def _load_token_stream():
-        path = os.path.join(_REPO, "data", "corpus", "tinystories.txt")
-        with open(path, "r", encoding="utf-8", errors="ignore") as fh:
-            text = fh.read()
-        return [re.findall(r"[a-z]+", s) for s in text.split("<|endoftext|>")]
+    def _load_token_stream(self):
+        """Load stories from the corpus via the BOUNDED-MEMORY chunked streaming reader (so the raw file is
+        never read whole into one string -- this scales to a foundational corpus far bigger than RAM). The
+        corpus path is `self.corpus_path` or, by default, the wired data/corpus/tinystories.txt cache."""
+        from research.runners.corpus_stream import load_token_stream, default_corpus_path
+        return load_token_stream(self.corpus_path or default_corpus_path())
 
     def _present_window(self, tgt_ids, hub_ids):
         hub_full = np.zeros(self.n_hub_neurons, np.float32)
@@ -286,7 +286,7 @@ class StreamCortex:
 
 def develop_gpu(lineage, curriculum, n_days, seed=42, consolidation_on=True, plasticity_on=True,
                 max_windows_per_day=2500, n_hub=200, n_per=12, D=128, enable_neural_render=False,
-                resume=False, verbose=True, _shared_cortex=None, per_day_save_hook=None):
+                resume=False, verbose=True, _shared_cortex=None, per_day_save_hook=None, corpus_path=None):
     """The GPU develop(N_days) loop. Each simulated day: WAKE = REAL stream-cortex code-learning (the brain hears
     the day's concepts in the corpus) -> CONVERSE = MultiTurnAgent on the learned grounded codes (store the day's
     facts, run the probe batteries) -> SLEEP consolidation (self-replay + retention re-test) -> [GROWTH] -> METRICS
@@ -322,7 +322,8 @@ def develop_gpu(lineage, curriculum, n_days, seed=42, consolidation_on=True, pla
     #     the frozen arm we DISABLE the bridge's Hebbian learning so hearing the stream cannot learn codes. ---
     own_cortex = _shared_cortex is None
     if own_cortex:
-        cortex = StreamCortex(full_vocab, seed, n_hub=n_hub, n_per=n_per, D=D, verbose=verbose)
+        cortex = StreamCortex(full_vocab, seed, n_hub=n_hub, n_per=n_per, D=D, verbose=verbose,
+                              corpus_path=corpus_path)
         if not plasticity_on:
             # FROZEN-BRAIN: gate the stream cortex's plasticity OFF (the bridge hears but does not learn codes)
             cortex.bridge.core_config.enable_hebbian_learning = False
@@ -566,7 +567,8 @@ def _measure(agent, state, day_curr, replayed, day_index, n_windows, learn_fid, 
 # ============================================================================================================
 
 def run_gpu_smoke(n_days, seed, root, max_windows_per_day, n_hub, n_per, D, enable_neural_render=False,
-                  do_frozen=True, do_resume=True, verbose=True, save_bundle_root=None, per_day_bundles=False):
+                  do_frozen=True, do_resume=True, verbose=True, save_bundle_root=None, per_day_bundles=False,
+                  corpus_path=None):
     curriculum = GPUGradedCurriculum()
     full_vocab = curriculum.full_vocab()
     referent_nouns = curriculum.referent_nouns()
@@ -587,7 +589,8 @@ def run_gpu_smoke(n_days, seed, root, max_windows_per_day, n_hub, n_per, D, enab
     per_day_hook = None
     if save_bundle_root:
         os.makedirs(save_bundle_root, exist_ok=True)
-        shared_cortex = StreamCortex(full_vocab, seed, n_hub=n_hub, n_per=n_per, D=D, verbose=verbose)
+        shared_cortex = StreamCortex(full_vocab, seed, n_hub=n_hub, n_per=n_per, D=D, verbose=verbose,
+                                     corpus_path=corpus_path)
         if per_day_bundles:
             def per_day_hook(day_index, state, grounded, agent):  # noqa: E306
                 bdir = os.path.join(save_bundle_root, f"day_{day_index}")
@@ -609,7 +612,8 @@ def run_gpu_smoke(n_days, seed, root, max_windows_per_day, n_hub, n_per, D, enab
     per_day, assembly = develop_gpu(lineage, curriculum, n_days, seed=seed, consolidation_on=True,
                                     plasticity_on=True, max_windows_per_day=max_windows_per_day,
                                     n_hub=n_hub, n_per=n_per, D=D, enable_neural_render=enable_neural_render,
-                                    verbose=verbose, _shared_cortex=shared_cortex, per_day_save_hook=per_day_hook)
+                                    verbose=verbose, _shared_cortex=shared_cortex, per_day_save_hook=per_day_hook,
+                                    corpus_path=corpus_path)
 
     # --- the FINAL developed-brain bundle (brain.json), from the survived shared cortex's final codes + the
     #     persisted DevelopState. This is the canonical day-N brain the console loads by default. ---
@@ -669,7 +673,8 @@ def run_gpu_smoke(n_days, seed, root, max_windows_per_day, n_hub, n_per, D, enab
                            and len(reloaded.vocab) == vocab_trend[-1])
         resume_day, _ = develop_gpu(lineage, curriculum, 1, seed=seed, consolidation_on=True, plasticity_on=True,
                                     max_windows_per_day=max_windows_per_day, n_hub=n_hub, n_per=n_per, D=D,
-                                    enable_neural_render=enable_neural_render, resume=True, verbose=False)
+                                    enable_neural_render=enable_neural_render, resume=True, verbose=False,
+                                    corpus_path=corpus_path)
         after_resume = _load_state(lineage)
         resumed_continued = (len(resume_day) == 1 and resume_day[0]["day"] == n_days
                              and after_resume.day == n_days + 1
@@ -690,7 +695,7 @@ def run_gpu_smoke(n_days, seed, root, max_windows_per_day, n_hub, n_per, D, enab
         frozen_day, _ = develop_gpu(frozen_lineage, curriculum, n_days, seed=seed, consolidation_on=True,
                                     plasticity_on=False, max_windows_per_day=max_windows_per_day,
                                     n_hub=n_hub, n_per=n_per, D=D, enable_neural_render=enable_neural_render,
-                                    verbose=False)
+                                    verbose=False, corpus_path=corpus_path)
         frozen_facts_final = frozen_day[-1]["facts_known"] if frozen_day else 0
         frozen_learnfid = round(float(np.mean([d["learn_fidelity"] for d in frozen_day])), 3) if frozen_day else 0.0
         # frozen brain: commits NO facts AND its gated stream cortex learns ~nothing (learn fidelity ~0)
@@ -797,6 +802,10 @@ def main():
     ap.add_argument("--per-day-bundles", action="store_true",
                     help="with --save-bundle, also save a per-day bundle (day_<N>/) so the console can pick a "
                          "day-N brain (the day-0-vs-day-N deliverable)")
+    ap.add_argument("--corpus-path", default=None,
+                    help="path to a plain-text corpus shard (stories split on <|endoftext|>); default = the "
+                         "wired data/corpus/tinystories.txt. Streamed in bounded-memory chunks (scales to a "
+                         "foundational corpus far bigger than RAM).")
     a = ap.parse_args()
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -820,7 +829,8 @@ def main():
         res = run_gpu_smoke(a.n_days, a.seed, root, a.max_windows_per_day, a.n_hub, a.n_per, a.D,
                             enable_neural_render=a.neural_render, do_frozen=not a.no_frozen,
                             do_resume=not a.no_resume, verbose=True,
-                            save_bundle_root=a.save_bundle, per_day_bundles=a.per_day_bundles)
+                            save_bundle_root=a.save_bundle, per_day_bundles=a.per_day_bundles,
+                            corpus_path=a.corpus_path)
     finally:
         if not a.keep_lineage:
             shutil.rmtree(root, ignore_errors=True)
