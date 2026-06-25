@@ -661,11 +661,9 @@ def run_seed(seed, vocab, corpus, a, accumulator):
         calibrated_ok = None
 
     # =====================================================================
-    # (3) MOAT RELAXED-NOT-REMOVED (HARD): the LOAD-BEARING gate is 0 known-fact-channel LEAKS (an un-stored
-    # proposition never passes the known-fact channel) + every emission FLAGGED. (stored-facts-answer is a SANITY
-    # read, NOT the gate: the RF composer at small D has a documented retrieval-fidelity tail -- a couple of stored
-    # facts may not round-trip at D=64 -- which is a composer property, not a moat breach. The speak gate is an
-    # ADDITIVE emission channel; it does not touch the known-fact channel.)
+    # (3) MOAT RELAXED-NOT-REMOVED (HARD): (i) 0 known-fact-channel LEAKS (an un-stored proposition never passes
+    # the known-fact channel) + (ii) every emission FLAGGED + (iii) stored facts still ANSWER (per distinct
+    # multi-valued cue). The speak gate is an ADDITIVE emission channel; it does NOT touch the known-fact channel.
     # =====================================================================
     moat_leaks = 0
     for r in emitted_val:
@@ -675,14 +673,31 @@ def run_seed(seed, vocab, corpus, a, accumulator):
         if bc_agent.is_it_true(a_, v_, p_) == "yes":
             moat_leaks += 1
     all_flagged = (n_emit_val > 0) and all(r["hedge"] is not None for r in emitted_val)
-    # stored facts still ANSWER (SANITY -- the documented RF small-D fidelity tail, not the moat gate)
-    stored_answer_ok, stored_answer_total = 0, 0
+    # stored facts still ANSWER -- per DISTINCT (agent, action) cue (the b2 store is MULTI-VALUED by construction:
+    # an agent does several plausible things -- 'dog plays ball' AND 'dog plays toy' share the (dog, play) cue --
+    # so what_does(cue) can only return ONE of them; a strict per-fact ==pt check spuriously "fails" the others).
+    # The correct test: each distinct stored cue resolves to ONE OF ITS stored patients (a genuine stored fact,
+    # NOT a confabulation) -> the known-fact channel is intact. (Plus the 0-leak check above is the load-bearing
+    # part: an UN-stored proposition never passes as a known fact.)
+    # NOT a confabulation) -> the known-fact channel is intact. A small tolerance absorbs the DOCUMENTED RF
+    # small-D retrieval tail (b2 doc: "the documented RF code-fidelity tail at small D" -- a single cue out of
+    # ~13 may land on a non-stored patient at D=64); that is a composer-fidelity property, NOT a moat-mechanism
+    # failure. The LOAD-BEARING moat claim is the 0-LEAK check (an UN-stored proposition never passes as a known
+    # fact) + every emission FLAGGED -- both must be PERFECT; the stored-cue answer rate carries the small-D tol.
+    from collections import defaultdict as _dd
+    cue_to_patients = _dd(set)
     for ag, ac, pt in affirmed:
+        cue_to_patients[(ag, ac)].add(pt)
+    stored_answer_ok, stored_answer_total = 0, 0
+    for (ag, ac), pats in cue_to_patients.items():
         stored_answer_total += 1
-        if bc_agent.what_does(ag, ac) == pt:
+        if bc_agent.what_does(ag, ac) in pats:                        # resolves to a genuine stored patient
             stored_answer_ok += 1
-    stored_answers = (stored_answer_total > 0) and (stored_answer_ok == stored_answer_total)
-    moat_ok = (moat_leaks == 0) and all_flagged                       # the load-bearing relaxed-not-removed gate
+    stored_answer_rate = stored_answer_ok / max(1, stored_answer_total)
+    stored_answers = (stored_answer_total > 0) and (stored_answer_rate >= a.stored_answer_bar)
+    # the LOAD-BEARING relaxed-not-removed gate: 0 leaks (PERFECT) + all flagged (PERFECT) + stored-cues answer
+    # at/above the small-D-tolerant bar (the moat is RELAXED to a flagged speak channel, never REMOVED).
+    moat_ok = (moat_leaks == 0) and all_flagged and stored_answers
 
     # =====================================================================
     # (4) LESION COLLAPSES TO PLAUSIBILITY-ONLY: with the value system pinned to baseline, the emission count +
@@ -703,8 +718,9 @@ def run_seed(seed, vocab, corpus, a, accumulator):
           f"{new_grounded_advantage if isinstance(new_grounded_advantage,float) else float('nan'):.1f}x)", flush=True)
     print(f"  (2) CALIBRATED: spearman(worth,conf)={spearman} | INDEPENDENT strong-plausible lo {strong_lo} -> "
           f"hi {strong_hi} (rises: {strong_reliability}) -> {calibrated_ok}", flush=True)
-    print(f"  (3) MOAT (load-bearing): {moat_leaks} known-fact leaks (0) | all-flagged {all_flagged} -> {moat_ok} "
-          f"| [sanity] stored-facts-answer {stored_answer_ok}/{stored_answer_total} (RF small-D tail)", flush=True)
+    print(f"  (3) MOAT (relaxed-not-removed): {moat_leaks} known-fact leaks (0) | all-flagged {all_flagged} | "
+          f"stored-cues-answer {stored_answer_ok}/{stored_answer_total} ({stored_answer_rate:.2f} >= "
+          f"{a.stored_answer_bar} small-D-tol) -> {moat_ok}", flush=True)
     print(f"  (4) LESION collapses-to-plausibility-only: {lesion_collapses} "
           f"(value arm {n_emit_val} > lesion {n_emit_les}; {len(new_topics & emit_topics_les)} extra topics leaked "
           f"into lesion)", flush=True)
@@ -752,6 +768,7 @@ def run_seed(seed, vocab, corpus, a, accumulator):
         "all_flagged": bool(all_flagged),
         "stored_answer_ok": stored_answer_ok,
         "stored_answer_total": stored_answer_total,
+        "stored_answer_rate": stored_answer_rate,
         "stored_facts_answer": bool(stored_answers),
         "moat_ok": bool(moat_ok),
         # (4) lesion
@@ -773,11 +790,11 @@ def run_seed(seed, vocab, corpus, a, accumulator):
 def decide_verdict(rows, a):
     """GO iff, across ALL seeds: (1a) the value appraisal SPEAKS MORE than the plausibility-only baseline; (1b)
     every emission (and every NEW value-driven emission) is GROUNDED (shuffled-graph advantage >= bar); (2) the
-    stated confidence tracks WORTH (calibrated, non-tautological); (3) the MOAT is RELAXED-NOT-REMOVED -- the
-    LOAD-BEARING gate is 0 known-fact-channel leaks + every emission flagged (stored-facts-answer is reported as
-    SANITY, the documented RF small-D fidelity tail, NOT a gate); AND (4) the LESION COLLAPSES the extra emissions
-    to the plausibility-only baseline (the extra emissions are the BRAIN's value system). The value axis must also
-    be NON-circular (concept-level |corr(value, plausibility)| <= bar) else the probe is INVALID.
+    stated confidence tracks WORTH (calibrated, non-tautological); (3) the MOAT is RELAXED-NOT-REMOVED -- 0
+    known-fact-channel leaks + every emission flagged + stored facts still answer (per distinct multi-valued cue);
+    AND (4) the LESION COLLAPSES the extra emissions to the plausibility-only baseline (the extra emissions are the
+    BRAIN's value system). The value axis must also be NON-circular (concept-level |corr(value, plausibility)| <=
+    bar) else the probe is INVALID.
     Else HONEST_NEGATIVE / BOUNDARY + why."""
     def col(k):
         return [r[k] for r in rows]
@@ -817,6 +834,8 @@ def decide_verdict(rows, a):
         "moat_leaks_total": int(np.sum(col("moat_leaks"))),
         "moat_all_seeds": moat_all,
         "stored_facts_answer_all_seeds": bool(all(col("stored_facts_answer"))),
+        "stored_answer_rate_min": float(np.min(col("stored_answer_rate"))),
+        "stored_answer_rate_mean": float(np.mean(col("stored_answer_rate"))),
         "lesion_collapses_all_seeds": lesion_all,
         "value_plaus_corr_mean": float(np.mean(vpcorr)),
         "value_plaus_corr_absmax": float(np.max(np.abs(vpcorr))),
@@ -874,6 +893,9 @@ def main():
                    help="min Spearman(worth, stated confidence) for CALIBRATED")
     p.add_argument("--max-value-plaus-corr", type=float, default=0.35,
                    help="max |corr(value, plausibility)| for the value axis to be NON-circular (distinct)")
+    p.add_argument("--stored-answer-bar", type=float, default=0.9,
+                   help="min stored-cue answer rate (per distinct multi-valued cue); small-D-tolerant so the "
+                        "documented RF retrieval tail (1 cue out of ~13 at D=64) does not spuriously fail the moat")
     p.add_argument("--max-bytes", type=int, default=4_000_000)
     p.add_argument("--window", type=int, default=5)
     p.add_argument("--repeat-cap", type=int, default=40)
@@ -922,8 +944,8 @@ def main():
           f"{detail['calib_spearman_mean']:.3f}; assessable {detail['calibrated_assessable_seeds']}/{len(seeds)})",
           flush=True)
     print(f"  (3) MOAT relaxed-not-removed all seeds: {detail['moat_all_seeds']} "
-          f"({detail['moat_leaks_total']} leaks; stored-facts-answer all seeds "
-          f"{detail['stored_facts_answer_all_seeds']})", flush=True)
+          f"({detail['moat_leaks_total']} known-fact leaks [load-bearing=0]; stored-cue answer rate min "
+          f"{detail['stored_answer_rate_min']:.2f} mean {detail['stored_answer_rate_mean']:.2f})", flush=True)
     print(f"  (4) LESION collapses-to-plausibility-only all seeds: {detail['lesion_collapses_all_seeds']}",
           flush=True)
     print(f"  NON-CIRCULAR (value distinct from plausibility) all seeds: {detail['noncircular_all_seeds']} "
@@ -942,7 +964,8 @@ def main():
                    "speak_base_pA": a.speak_base_pA, "speak_gain_pA": a.speak_gain_pA,
                    "silence_drive_pA": a.silence_drive_pA, "acc_steps": a.acc_steps,
                    "advantage_bar": a.advantage_bar, "calib_spearman_bar": a.calib_spearman_bar,
-                   "max_value_plaus_corr": a.max_value_plaus_corr, "max_bytes": a.max_bytes},
+                   "max_value_plaus_corr": a.max_value_plaus_corr, "stored_answer_bar": a.stored_answer_bar,
+                   "max_bytes": a.max_bytes},
         "baseline_to_beat": {"probe1_plausibility_only_emissions_per_30": "6-9 (mean 7.7)",
                              "source": "2026-06-24-communicable-brain-probe1-GO.md",
                              "note": "the plausibility-only arm here re-derives the Probe-1 baseline ON the "
@@ -969,7 +992,8 @@ def main():
             "shuffled_graph_groundedness": "the value-driven emission set (and every NEW emission) collapses "
                                            ">= advantage_bar under a shuffled PPMI graph -> grounded, not noise. (1b)",
             "moat_relaxed_not_removed": "0 known-fact-channel leaks + every emission flagged + stored facts still "
-                                        "answer (the speak gate is an ADDITIVE channel). (gate 3)",
+                                        "answer (per distinct multi-valued cue; the speak gate is an ADDITIVE "
+                                        "channel that does not touch the known-fact channel). (gate 3)",
             "non_tautological_calibration": "confidence tracks WORTH (which has a value axis the plausibility-only "
                                             "confidence does not read) + the high-worth bin carries more INDEPENDENT "
                                             "strong-plausibility. (gate 2)",

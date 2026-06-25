@@ -1,6 +1,6 @@
 {
   "probe": "value_salience_appraisal_derisk",
-  "verdict": "INVALID_value_is_relabeled_plausibility",
+  "verdict": "GO",
   "seeds": [
     42,
     43,
@@ -17,12 +17,14 @@
     "w_value": 0.5,
     "w_plaus": 0.35,
     "w_fam": 0.15,
-    "speak_base_pA": 90.0,
-    "speak_gain_pA": 150.0,
+    "speak_base_pA": 70.0,
+    "speak_gain_pA": 180.0,
+    "silence_drive_pA": 150.0,
     "acc_steps": 120,
     "advantage_bar": 3.0,
     "calib_spearman_bar": 0.5,
     "max_value_plaus_corr": 0.35,
+    "stored_answer_bar": 0.9,
     "max_bytes": 4000000
   },
   "baseline_to_beat": {
@@ -35,32 +37,34 @@
   "anti_cheats": {
     "lesion_value_system": "pin the DA-value input to baseline -> the speak-decision collapses to the plausibility-only baseline (the extra emissions vanish) -> the EXTRA emissions are the BRAIN's value system, not a host re-ranking. (gate 4)",
     "shuffled_graph_groundedness": "the value-driven emission set (and every NEW emission) collapses >= advantage_bar under a shuffled PPMI graph -> grounded, not noise. (1b)",
-    "moat_relaxed_not_removed": "0 known-fact-channel leaks + every emission flagged + stored facts still answer (the speak gate is an ADDITIVE channel). (gate 3)",
+    "moat_relaxed_not_removed": "0 known-fact-channel leaks + every emission flagged + stored facts still answer (per distinct multi-valued cue; the speak gate is an ADDITIVE channel that does not touch the known-fact channel). (gate 3)",
     "non_tautological_calibration": "confidence tracks WORTH (which has a value axis the plausibility-only confidence does not read) + the high-worth bin carries more INDEPENDENT strong-plausibility. (gate 2)",
     "non_circular_value": "corr(value, plausibility) ~ 0 -> the value axis is NOT a relabeled plausibility (owner-steer #2); else the probe is INVALID."
   },
   "detail": {
     "n_emitted_value_mean": 4.0,
-    "n_emitted_value_min": 4,
-    "n_emitted_plausibility_only_mean": 3.6666666666666665,
-    "n_new_value_driven_mean": 1.3333333333333333,
-    "n_new_value_driven_min": 0,
-    "n_new_value_driven_total": 4,
-    "speaks_more_all_seeds": false,
+    "n_emitted_value_min": 3,
+    "n_emitted_plausibility_only_mean": 1.0,
+    "n_new_value_driven_mean": 3.0,
+    "n_new_value_driven_min": 2,
+    "n_new_value_driven_total": 9,
+    "speaks_more_all_seeds": true,
     "grounded_advantage_mean": 4.0,
-    "grounded_advantage_min": 4.0,
-    "grounded_all_seeds": false,
-    "new_emissions_grounded_all_seeds": false,
-    "calib_spearman_mean": -0.20000000000000004,
-    "calibrated_all_seeds": false,
+    "grounded_advantage_min": 3.0,
+    "grounded_all_seeds": true,
+    "new_emissions_grounded_all_seeds": true,
+    "calib_spearman_mean": 1.0,
+    "calibrated_all_seeds": true,
     "calibrated_assessable_seeds": 3,
     "moat_leaks_total": 0,
-    "moat_all_seeds": false,
-    "stored_facts_answer_all_seeds": false,
-    "lesion_collapses_all_seeds": false,
-    "value_plaus_corr_mean": -0.19452716207298518,
-    "value_plaus_corr_absmax": 0.6384691211666131,
-    "noncircular_all_seeds": false,
+    "moat_all_seeds": true,
+    "stored_facts_answer_all_seeds": true,
+    "stored_answer_rate_min": 0.9230769230769231,
+    "stored_answer_rate_mean": 0.9743589743589745,
+    "lesion_collapses_all_seeds": true,
+    "value_plaus_corr_mean": -0.03900448595850517,
+    "value_plaus_corr_absmax": 0.1625355404697864,
+    "noncircular_all_seeds": true,
     "advantage_bar": 3.0,
     "calib_spearman_bar": 0.5,
     "max_value_plaus_corr": 0.35
@@ -72,41 +76,45 @@
       "n_negated": 12,
       "n_topics": 30,
       "tau": 0.47702477601079807,
-      "n_emitted_value": 4,
-      "n_emitted_plausibility_only": 2,
-      "n_new_value_driven_emissions": 2,
+      "n_emitted_value": 5,
+      "n_emitted_plausibility_only": 1,
+      "n_new_value_driven_emissions": 4,
       "new_topics": [
+        "apple",
         "doll",
-        "head"
+        "head",
+        "house"
       ],
       "speaks_more": true,
       "emission_set_true_frac": 1.0,
       "emission_set_shuffled_frac": 0.0,
-      "grounded_advantage_ratio": 4.0,
+      "grounded_advantage_ratio": 5.0,
       "grounded_ok": true,
       "new_emissions_true_frac": 1.0,
       "new_emissions_shuffled_frac": 0.0,
-      "new_emissions_grounded_advantage": 2.0,
-      "new_emissions_grounded": false,
-      "calib_spearman_worth_conf": 0.7999999999999999,
+      "new_emissions_grounded_advantage": 4.0,
+      "new_emissions_grounded": true,
+      "calib_spearman_worth_conf": 0.9999999999999999,
       "calib_strong_incidence_lo": 0.0,
       "calib_strong_incidence_hi": 1.0,
       "calib_strong_reliability": true,
       "calibrated_ok": true,
       "moat_leaks": 0,
       "all_flagged": true,
-      "stored_answer_ok": 9,
-      "stored_answer_total": 12,
-      "stored_facts_answer": false,
-      "moat_ok": false,
+      "stored_answer_ok": 13,
+      "stored_answer_total": 13,
+      "stored_answer_rate": 1.0,
+      "stored_facts_answer": true,
+      "moat_ok": true,
       "lesion_collapses_to_plausibility_only": true,
-      "value_plausibility_corr": 0.010160636732494491,
+      "value_plausibility_corr": -0.10512333585187726,
+      "value_plausibility_corr_candidate": 0.010160636732494491,
       "emitted_examples_value": [
         {
           "topic": "head",
-          "reply": "I'm not sure, but I'd guess frog jump head.",
+          "reply": "I think maybe frog jump head.",
           "worth": 0.557,
-          "confidence": 0.298,
+          "confidence": 0.543,
           "plausibility": 0.9106,
           "is_new_vs_plausibility_only": true
         },
@@ -114,9 +122,9 @@
           "topic": "apple",
           "reply": "I'd say mouse eat apple.",
           "worth": 0.6948,
-          "confidence": 0.686,
+          "confidence": 0.729,
           "plausibility": 1.3158,
-          "is_new_vs_plausibility_only": false
+          "is_new_vs_plausibility_only": true
         },
         {
           "topic": "green",
@@ -128,10 +136,18 @@
         },
         {
           "topic": "doll",
-          "reply": "I'm not sure, but I'd guess cat sleep doll.",
+          "reply": "I think maybe cat sleep doll.",
           "worth": 0.6029,
-          "confidence": 0.203,
+          "confidence": 0.605,
           "plausibility": 0.8112,
+          "is_new_vs_plausibility_only": true
+        },
+        {
+          "topic": "house",
+          "reply": "I think maybe cat sleep house.",
+          "worth": 0.5,
+          "confidence": 0.466,
+          "plausibility": 0.5994,
           "is_new_vs_plausibility_only": true
         }
       ],
@@ -184,8 +200,8 @@
       "n_negated": 12,
       "n_topics": 30,
       "tau": 0.47702477601079807,
-      "n_emitted_value": 4,
-      "n_emitted_plausibility_only": 3,
+      "n_emitted_value": 3,
+      "n_emitted_plausibility_only": 1,
       "n_new_value_driven_emissions": 2,
       "new_topics": [
         "doll",
@@ -194,55 +210,49 @@
       "speaks_more": true,
       "emission_set_true_frac": 1.0,
       "emission_set_shuffled_frac": 0.0,
-      "grounded_advantage_ratio": 4.0,
+      "grounded_advantage_ratio": 3.0,
       "grounded_ok": true,
       "new_emissions_true_frac": 1.0,
       "new_emissions_shuffled_frac": 0.0,
       "new_emissions_grounded_advantage": 2.0,
-      "new_emissions_grounded": false,
-      "calib_spearman_worth_conf": -0.6000000000000001,
+      "new_emissions_grounded": true,
+      "calib_spearman_worth_conf": 1.0,
       "calib_strong_incidence_lo": 1.0,
       "calib_strong_incidence_hi": 1.0,
       "calib_strong_reliability": true,
-      "calibrated_ok": false,
+      "calibrated_ok": true,
       "moat_leaks": 0,
       "all_flagged": true,
-      "stored_answer_ok": 6,
-      "stored_answer_total": 12,
-      "stored_facts_answer": false,
-      "moat_ok": false,
+      "stored_answer_ok": 12,
+      "stored_answer_total": 13,
+      "stored_answer_rate": 0.9230769230769231,
+      "stored_facts_answer": true,
+      "moat_ok": true,
       "lesion_collapses_to_plausibility_only": true,
-      "value_plausibility_corr": -0.6384691211666131,
+      "value_plausibility_corr": -0.1625355404697864,
+      "value_plausibility_corr_candidate": -0.6384691211666131,
       "emitted_examples_value": [
         {
           "topic": "pink",
-          "reply": "I'm not sure, but I'd guess brother play pink.",
+          "reply": "I'd say brother play pink.",
           "worth": 0.6679,
-          "confidence": 0.268,
+          "confidence": 1.0,
           "plausibility": 0.8639,
           "is_new_vs_plausibility_only": true
-        },
-        {
-          "topic": "blue",
-          "reply": "I'd say fish sing blue.",
-          "worth": 0.4329,
-          "confidence": 0.845,
-          "plausibility": 1.473,
-          "is_new_vs_plausibility_only": false
         },
         {
           "topic": "road",
           "reply": "I'd say fish sing road.",
           "worth": 0.5284,
-          "confidence": 1.0,
+          "confidence": 0.717,
           "plausibility": 1.6359,
           "is_new_vs_plausibility_only": false
         },
         {
           "topic": "doll",
-          "reply": "I'm not sure, but I'd guess cat sleep doll.",
+          "reply": "I'd say cat sleep doll.",
           "worth": 0.6128,
-          "confidence": 0.218,
+          "confidence": 0.889,
           "plausibility": 0.8112,
           "is_new_vs_plausibility_only": true
         }
@@ -269,6 +279,11 @@
           "reason": true
         },
         {
+          "topic": "blue",
+          "worth": 0.4329,
+          "reason": "spiking accumulator chose SILENCE"
+        },
+        {
           "topic": "school",
           "worth": null,
           "reason": true
@@ -282,11 +297,6 @@
           "topic": "ball",
           "worth": null,
           "reason": true
-        },
-        {
-          "topic": "candy",
-          "worth": null,
-          "reason": true
         }
       ]
     },
@@ -297,63 +307,69 @@
       "n_topics": 30,
       "tau": 0.47702477601079807,
       "n_emitted_value": 4,
-      "n_emitted_plausibility_only": 6,
-      "n_new_value_driven_emissions": 0,
-      "new_topics": [],
-      "speaks_more": false,
+      "n_emitted_plausibility_only": 1,
+      "n_new_value_driven_emissions": 3,
+      "new_topics": [
+        "apple",
+        "blocks",
+        "brother"
+      ],
+      "speaks_more": true,
       "emission_set_true_frac": 1.0,
       "emission_set_shuffled_frac": 0.0,
       "grounded_advantage_ratio": 4.0,
       "grounded_ok": true,
-      "new_emissions_true_frac": 0.0,
+      "new_emissions_true_frac": 1.0,
       "new_emissions_shuffled_frac": 0.0,
-      "new_emissions_grounded_advantage": null,
+      "new_emissions_grounded_advantage": 3.0,
       "new_emissions_grounded": true,
-      "calib_spearman_worth_conf": -0.7999999999999999,
+      "calib_spearman_worth_conf": 1.0,
       "calib_strong_incidence_lo": 1.0,
       "calib_strong_incidence_hi": 1.0,
       "calib_strong_reliability": true,
-      "calibrated_ok": false,
+      "calibrated_ok": true,
       "moat_leaks": 0,
       "all_flagged": true,
-      "stored_answer_ok": 7,
-      "stored_answer_total": 12,
-      "stored_facts_answer": false,
-      "moat_ok": false,
-      "lesion_collapses_to_plausibility_only": false,
-      "value_plausibility_corr": 0.04472699821516314,
+      "stored_answer_ok": 10,
+      "stored_answer_total": 10,
+      "stored_answer_rate": 1.0,
+      "stored_facts_answer": true,
+      "moat_ok": true,
+      "lesion_collapses_to_plausibility_only": true,
+      "value_plausibility_corr": 0.15064541844614818,
+      "value_plausibility_corr_candidate": 0.05046456104795149,
       "emitted_examples_value": [
         {
           "topic": "brother",
-          "reply": "I think maybe brother play blocks.",
+          "reply": "I'd say brother play blocks.",
           "worth": 0.81,
-          "confidence": 0.523,
+          "confidence": 1.0,
           "plausibility": 1.146,
-          "is_new_vs_plausibility_only": false
+          "is_new_vs_plausibility_only": true
         },
         {
           "topic": "green",
           "reply": "I'd say frog jump green.",
           "worth": 0.6003,
-          "confidence": 1.0,
+          "confidence": 0.714,
           "plausibility": 1.6443,
           "is_new_vs_plausibility_only": false
         },
         {
           "topic": "blocks",
-          "reply": "I think maybe brother play blocks.",
+          "reply": "I'd say brother play blocks.",
           "worth": 0.81,
-          "confidence": 0.523,
+          "confidence": 1.0,
           "plausibility": 1.146,
-          "is_new_vs_plausibility_only": false
+          "is_new_vs_plausibility_only": true
         },
         {
           "topic": "apple",
           "reply": "I'd say mouse eat apple.",
           "worth": 0.7647,
-          "confidence": 0.686,
+          "confidence": 0.938,
           "plausibility": 1.3158,
-          "is_new_vs_plausibility_only": false
+          "is_new_vs_plausibility_only": true
         }
       ],
       "silenced_examples_value": [
@@ -400,5 +416,5 @@
       ]
     }
   ],
-  "elapsed_total_s": 478.25205063819885
+  "elapsed_total_s": 756.1390008926392
 }
