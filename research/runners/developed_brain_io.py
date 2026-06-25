@@ -98,6 +98,20 @@ def extract_vocab(agent) -> list[str]:
     return sorted(w for w in comp.concepts.keys() if w not in pol)
 
 
+def extract_speak_value_Q(agent) -> dict[str, float]:
+    """The LEARNED per-topic TALKATIVENESS Q ({topic: float}) -- the communicable-brain's persistable
+    speak-value (Stage B). Empty {} when the agent has no communicable orchestrator (communicable_mode OFF, or it
+    was never built), so a non-communicable bundle is unchanged. The Q IS the talkativeness the brain LEARNED FROM
+    INTERACTION (the develop-loop tie-in): persisting it carries the learned talkativeness across sessions."""
+    fn = getattr(agent, "speak_value_Q", None)
+    if callable(fn):
+        try:
+            return {str(t): float(q) for t, q in (fn() or {}).items()}
+        except Exception:
+            return {}
+    return {}
+
+
 def extract_kb_composites(agent) -> dict[str, np.ndarray]:
     """BRAIN-LOAD SPEEDUP (option 1): each stored fact's BOUND COMPOSITE PHASOR -- the `[D]` numpy array `composer.kb`
     already cached from `store()`'s `_encode`, keyed by the fact's index (string, aligned to `extract_facts` order).
@@ -152,6 +166,16 @@ def save_developed_brain(agent, path, *, seed=42, D=None, composer_kind="rf",
     codes = extract_grounded_codes(agent)
     facts = extract_facts(agent)
     vocab = extract_vocab(agent)
+    speak_value_Q = extract_speak_value_Q(agent)        # (Stage B) the learned talkativeness Q (empty if not communicable)
+
+    # --- the learned talkativeness Q -> speak_value_Q.json (the communicable-brain's persistable speak-value).
+    #     Written ONLY when non-empty, so a non-communicable bundle is byte-unchanged (the file is simply absent).
+    #     The Q is a flat {topic: float}; a reload seeds the rebuilt agent's CommunicableTurn so the talkativeness
+    #     learned from interaction carries across sessions (the develop-loop tie-in). ---
+    if speak_value_Q:
+        with open(root / "speak_value_Q.json", "w", encoding="utf-8") as fh:
+            json.dump({"schema_version": SCHEMA_VERSION, "speak_value_Q": speak_value_Q}, fh, indent=2,
+                      ensure_ascii=False)
 
     # --- grounded codes -> a compact .npz (word -> phases[D]) ---
     np.savez_compressed(str(root / "grounded_codes.npz"),
@@ -197,11 +221,13 @@ def save_developed_brain(agent, path, *, seed=42, D=None, composer_kind="rf",
         "n_facts": len(facts),
         "n_grounded_codes": len(codes),
         "n_kb_composites": len(kb_composites),     # (option 1) persisted composites -> per-fact resonate skipped on load
+        "n_speak_value_Q": len(speak_value_Q),     # (Stage B) persisted learned-talkativeness Q entries (0 if not communicable)
         "vocab": list(vocab),
         "self_aliases": sorted(self_aliases) if self_aliases else None,
         "lineage_name": lineage_name,
         "files": {"codes": "grounded_codes.npz", "facts": "facts.json", "lineage": "lineage",
-                  **({"kb_composites": "kb_composites.npz"} if kb_composites else {})},
+                  **({"kb_composites": "kb_composites.npz"} if kb_composites else {}),
+                  **({"speak_value_Q": "speak_value_Q.json"} if speak_value_Q else {})},
     }
     if extra_metadata:
         manifest["metadata"] = extra_metadata
@@ -236,6 +262,16 @@ def _load_facts_json(path) -> list[dict]:
         return []
     with open(p, "r", encoding="utf-8") as fh:
         return json.load(fh).get("facts", [])
+
+
+def _load_speak_value_Q(path) -> dict[str, float]:
+    """(Stage B) Load speak_value_Q.json -> {topic: float}. Absent file (a non-communicable bundle, or pre-Stage-B)
+    -> {} (the rebuilt agent's talkativeness Q stays at its baseline)."""
+    p = Path(path) / "speak_value_Q.json"
+    if not p.exists():
+        return {}
+    with open(p, "r", encoding="utf-8") as fh:
+        return {str(t): float(q) for t, q in json.load(fh).get("speak_value_Q", {}).items()}
 
 
 def _load_kb_composites(path) -> dict[int, np.ndarray]:
@@ -320,7 +356,8 @@ def _restore_facts(agent, facts, composites=None):
 
 def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_render=False,
                          referent_nouns=None, wm_n=600, wm_pattern_size=40, composer_kind=None,
-                         grounded_codes_override=None, defer_parser=True):
+                         grounded_codes_override=None, defer_parser=True,
+                         communicable_mode=False, communicable_draw="spiking"):
     """Reconstruct the EXACT developed brain from a `save_developed_brain` bundle at `path`.
 
     Returns (agent, manifest). `agent` is a `BrainConversationalAgent` (or a `MultiTurnAgent` wrapper if
@@ -361,6 +398,7 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
         codes.update({w: np.asarray(v, dtype=float) for w, v in grounded_codes_override.items()})
     facts = _load_facts_json(path)
     composites = _load_kb_composites(path)   # (option 1) {fact_index -> comp[D]} -> skip the per-fact resonate
+    speak_value_Q = _load_speak_value_Q(path)   # (Stage B) the persisted learned-talkativeness Q (seeds CommunicableTurn)
     # the vocab must cover every grounded code + every fact word (so the composer can encode them)
     vocab_set = set(vocab) | set(codes.keys())
     for f in facts:
@@ -388,13 +426,17 @@ def load_developed_brain(path, *, seed=None, use_multiturn=False, enable_neural_
                                wm_n=wm_n, wm_pattern_size=wm_pattern_size,
                                enable_neural_render=enable_neural_render, composer_kind=composer_kind,
                                enable_biased_competition=False, defer_parser=defer_parser,
-                               defer_planner=defer_parser)
+                               defer_planner=defer_parser,
+                               communicable_mode=communicable_mode, communicable_draw=communicable_draw,
+                               speak_value_Q=(speak_value_Q or None))
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts,
                                          grounded_codes=codes if codes else None,
                                          composer_kind=composer_kind,
                                          enable_neural_render=enable_neural_render,
-                                         defer_parser=defer_parser)
+                                         defer_parser=defer_parser,
+                                         communicable_mode=communicable_mode, communicable_draw=communicable_draw,
+                                         speak_value_Q=(speak_value_Q or None))
     _restore_facts(agent, facts, composites=composites)
     return agent, manifest
 

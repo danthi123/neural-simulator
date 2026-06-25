@@ -48,7 +48,9 @@ class MultiTurnAgent:
                  wm_n=600, wm_pattern_size=40, enable_neural_render=True, spec_threshold=1.5,
                  composer_kind="rf", enable_biased_competition=True,
                  biased_competition_bias_pA=2500.0, biased_competition_spec_threshold=1.3,
-                 biased_competition_window=20, defer_parser=False, defer_planner=False):
+                 biased_competition_window=20, defer_parser=False, defer_planner=False,
+                 communicable_mode=False, communicable_draw="spiking", communicable_config=None,
+                 speak_value_Q=None):
         self.seed = int(seed)
         # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
         # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
@@ -58,10 +60,16 @@ class MultiTurnAgent:
         # defer_parser (BRAIN-LOAD SPEEDUP, default OFF = byte-identical): pass-through to the inner agent so a LOADED
         # brain skips the ~75K-step Hebbian parser training (the parser is built lazily on the first runtime teach;
         # a pure Q&A session never pays it). load_developed_brain passes True.
+        # communicable_mode (Stage B wire-in, opt-in, default OFF = byte-identical) passes through to the inner
+        # BrainConversationalAgent: when ON, MultiTurnAgent.converse / communicable_feedback / speak_value_Q
+        # delegate to it (one CommunicableTurn on the inner agent's composer, the same no-confab moat). Default OFF
+        # = the inner agent never constructs the orchestrator (the existing multi-turn tests pass verbatim).
         self.agent = BrainConversationalAgent(seed=seed, concepts=concepts, grounded_codes=grounded_codes,
                                               enable_neural_render=enable_neural_render, composer_kind=composer_kind,
                                               enable_learned_assoc=(composer_kind == "onebrain"),
-                                              defer_parser=defer_parser)
+                                              defer_parser=defer_parser, communicable_mode=communicable_mode,
+                                              communicable_draw=communicable_draw,
+                                              communicable_config=communicable_config, speak_value_Q=speak_value_Q)
         self.referents = list(referent_concepts)
         # BRAIN-LOAD SPEEDUP (defer_planner, default OFF = byte-identical): the persistent discourse working-memory
         # loop (a SpikingLoopContextBuffer holding one attractor per referent) is the dominant LOAD cost -- building
@@ -222,3 +230,27 @@ class MultiTurnAgent:
     def describe(self, agent_word):
         a = self._resolve(agent_word)
         return self.agent.describe(a) if a is not None else None
+
+    # --- COMMUNICABLE BRAIN (Stage B wire-in, opt-in) -- delegate to the inner agent's CommunicableTurn ---------
+    @property
+    def communicable_mode(self):
+        return self.agent.communicable_mode
+
+    def enable_communicable_mode(self, **kwargs):
+        """Turn communicable-mode ON at runtime (delegates to the inner BrainConversationalAgent)."""
+        self.agent.enable_communicable_mode(**kwargs)
+        return self
+
+    def converse(self, msg, *, cue=None, topic=None, n_attempts=500):
+        """Route one message through the fused communicable turn (delegates to the inner agent). Requires
+        communicable_mode=True. The no-confab moat is preserved (the inner agent's composer + moat)."""
+        return self.agent.converse(msg, cue=cue, topic=topic, n_attempts=n_attempts)
+
+    def communicable_feedback(self, topic, polarity, *, lesion_DA=False, decorrelate=False):
+        """Deliver a perceived conversational feedback on `topic` (delegates to the inner agent's three-factor
+        talkativeness update)."""
+        self.agent.communicable_feedback(topic, polarity, lesion_DA=lesion_DA, decorrelate=decorrelate)
+
+    def speak_value_Q(self):
+        """The learned talkativeness Q ({topic: float}) -- the persistable state (delegates to the inner agent)."""
+        return self.agent.speak_value_Q()

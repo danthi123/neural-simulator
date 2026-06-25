@@ -178,7 +178,8 @@ class BrainConversationalAgent:
                  enable_attributed=True, enable_multiframe=True, integrated_loop=False,
                  enable_multicue_competition=False, multicue_verbs=None,
                  enable_case_competition=False, case_verbs=None, case_lexicon=None,
-                 defer_parser=False):
+                 defer_parser=False, communicable_mode=False, communicable_draw="spiking",
+                 communicable_config=None, speak_value_Q=None):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -376,6 +377,29 @@ class BrainConversationalAgent:
         if enable_case_competition and self._case_verbs is None:
             raise ValueError("enable_case_competition=True needs case_verbs=<known-verb set> "
                              "(the lexical front-end that finds the sentence's verb)")
+        # (COMMUNICABLE BRAIN, Stage B wire-in, opt-in, default OFF = BYTE-IDENTICAL) -- route a conversational
+        # TURN through the validated `CommunicableTurn` (the fused GENERATE / DECIDE-to-speak / LEARN-talkativeness
+        # + known-fact + phatic orchestrator, Stage A GO 3-seed). When ON, `converse(msg, ...)` classifies intent
+        # and routes to the known-fact (hard-gated, the no-confab moat) / novel-generative (a FLAGGED hypothesis,
+        # never stored) / phatic / teaching channel; `communicable_feedback(topic, polarity)` runs the brain's
+        # three-factor talkativeness update. Default OFF = the orchestrator is NEVER constructed (no corpus pass,
+        # no proposer/accumulator build, no behaviour change to the existing what_does/who_does/is_it_true/hear
+        # path -- the production suites pass verbatim). The orchestrator REUSES this agent's OWN composer (so its
+        # known-fact channel reads the agent's facts + the same moat) and is built LAZILY on the first converse()
+        # so even `communicable_mode=True` pays the ~corpus+brain build only when a turn actually runs.
+        #   communicable_draw (owner-steer #3): 'spiking' (DEFAULT, the production generative draw -- each filler a
+        #     spiking soft-WTA sample; ~40s/topic on CPU in the fused turn, the megakernel perf lever is Stage C) or
+        #     'host' (the fast-interactive / numpy-CPU / test oracle -- the SAME PPMI likelihood, fast). The
+        #     load-bearing SPIKING speak DECISION stays spiking regardless.
+        #   speak_value_Q (optional): a {topic: float} dict to SEED the learned talkativeness Q (e.g. restored from a
+        #     developed-brain bundle, so the talkativeness learned across sessions carries forward).
+        #   communicable_config (optional): a dict of extra build_communicable_brain kwargs (D, weights, ...).
+        self.communicable_mode = bool(communicable_mode)
+        self._communicable_draw = str(communicable_draw)
+        self._communicable_config = dict(communicable_config) if communicable_config else {}
+        self._communicable_seed_Q = dict(speak_value_Q) if speak_value_Q else None
+        self._communicable = None        # the built CommunicableTurn (lazy); None until first converse()
+        self._communicable_brain = None  # the build_communicable_brain() result dict (the value object lives here)
 
     def _ensure_parser(self):
         """Lazily build + train the comprehension `BridgeParser` (BRAIN-LOAD SPEEDUP: deferred so a LOADED Q&A-only
@@ -601,3 +625,60 @@ class BrainConversationalAgent:
             self._dlpfc = SpikingSpreadingController(graph, seed=self.seed)   # first-class: rebuild only when the graph changes
             self._dlpfc_key = key
         return self._dlpfc.turn_latency([topic])
+
+    # --- COMMUNICABLE BRAIN (Stage B wire-in, opt-in) -----------------------------------------------------------
+    def _ensure_communicable(self):
+        """Lazily build the `CommunicableTurn` orchestrator (the Stage A fusion) over THIS agent's composer (so the
+        known-fact channel reads the agent's OWN facts + the same no-confab moat). Built on the first converse() /
+        feedback() / speak_value_Q() so even communicable_mode=True pays the corpus+brain build only when used.
+        Returns the CommunicableTurn. Raises if communicable_mode is OFF (the orchestrator is never constructed)."""
+        if not self.communicable_mode:
+            raise RuntimeError("communicable_mode is OFF -- construct the agent with communicable_mode=True "
+                               "(or call enable_communicable_mode()) to route a turn through the CommunicableTurn")
+        if self._communicable is None:
+            from research.runners._communicable_turn_stageA_derisk import build_communicable_brain
+            cfg = dict(self._communicable_config)
+            cfg.setdefault("host_oracle_sampler", self._communicable_draw == "host")
+            brain = build_communicable_brain(seed=self.seed, composer=self.composer, bc_agent=self,
+                                             speak_value_Q=self._communicable_seed_Q, **cfg)
+            self._communicable_brain = brain
+            self._communicable = brain["turn"]
+        return self._communicable
+
+    def enable_communicable_mode(self, *, draw=None, speak_value_Q=None, **config):
+        """Turn communicable-mode ON at runtime (mirrors the constructor flag). `draw` ('spiking'|'host') selects
+        the generative draw; `speak_value_Q` seeds the learned talkativeness; extra kwargs pass to
+        build_communicable_brain. The orchestrator is still built lazily on the first converse()."""
+        self.communicable_mode = True
+        if draw is not None:
+            self._communicable_draw = str(draw)
+        if speak_value_Q is not None:
+            self._communicable_seed_Q = dict(speak_value_Q)
+        if config:
+            self._communicable_config.update(config)
+        self._communicable = None          # force a rebuild with the new config on next use
+        self._communicable_brain = None
+        return self
+
+    def converse(self, msg, *, cue=None, topic=None, n_attempts=500):
+        """Route ONE user message through the fused communicable turn (intent -> known-fact / novel-generative /
+        phatic / teaching channel). Returns the CommunicableTurn's structured channel record. Requires
+        communicable_mode=True. The no-confab moat is preserved (the known-fact channel hard-gates + abstains; the
+        novel channel emits only FLAGGED hypotheses and NEVER stores). `cue` = an (agent, action[, patient]) tuple
+        for a structured known-fact question; `topic` = the opinion topic. (The agent's existing what_does/who_does/
+        is_it_true/hear API is unchanged and remains the structured entry point.)"""
+        return self._ensure_communicable().turn(msg, cue=cue, topic=topic, n_attempts=n_attempts)
+
+    def communicable_feedback(self, topic, polarity, *, lesion_DA=False, decorrelate=False):
+        """Deliver a perceived conversational feedback on `topic` (+1 'elaborate' -> a DA burst raises the learned
+        talkativeness there + at PPMI-similar contexts; -1 'stop' -> a DA dip lowers it). The brain's three-factor
+        plasticity, NOT a host counter (the DA-lesion abolishes it). Requires communicable_mode=True."""
+        self._ensure_communicable().feedback(topic, polarity, lesion_DA=lesion_DA, decorrelate=decorrelate)
+
+    def speak_value_Q(self):
+        """The LEARNED per-topic talkativeness Q ({topic: float}) -- the persistable talkativeness state (saved into
+        a developed-brain bundle so it carries across sessions). Returns {} if communicable-mode was never built."""
+        if self._communicable_brain is None:
+            # never built -> return the seed Q (if any) so a save before any turn still round-trips a restored Q.
+            return dict(self._communicable_seed_Q) if self._communicable_seed_Q else {}
+        return {t: float(q) for t, q in self._communicable_brain["value"].Q.items()}

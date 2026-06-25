@@ -543,6 +543,127 @@ class CommunicableTurn:
 
 
 # ===========================================================================
+# STAGE B FACTORY -- assemble the WHOLE communicable brain (the same construction run_seed does inline) into ONE
+# `CommunicableTurn`, so the PRODUCTION agent can ATTACH it without duplicating the mechanism (the agent wire-in
+# `BrainConversationalAgent.enable_communicable_mode` / the `communicable_mode=True` constructor flag call this).
+# Pure ADDITION: run_seed is unchanged; this just hoists its brain-assembly into a reusable builder that returns
+# the same objects the gate exercises (composer / agent / proposer / accumulator / value / the CommunicableTurn).
+# NO sim/ edit; reuse-by-import VERBATIM.
+# ===========================================================================
+_CORPUS_CACHE = {}
+
+
+def _default_corpus(vocab, cat_ids, *, window=5, repeat_cap=40, max_bytes=4_000_000):
+    """Build (or reuse a cached) PPMI co-occurrence corpus over the 8x8-taxonomy vocab from the project's
+    TinyStories corpus -- the SAME `build_real_cooccurrence` Stage A uses. Cached per (window, repeat_cap,
+    max_bytes) so attaching communicable-mode to several agents in one process pays the corpus pass once."""
+    key = (window, repeat_cap, max_bytes)
+    if key not in _CORPUS_CACHE:
+        corpus_path = os.path.join(_REPO, "data", "corpus", "tinystories.txt")
+        if not os.path.exists(corpus_path):
+            raise FileNotFoundError(f"corpus not found: {corpus_path} (needed to build the communicable PPMI graph)")
+        _CORPUS_CACHE[key] = build_real_cooccurrence(corpus_path, vocab, cat_ids, window=window,
+                                                     repeat_cap=repeat_cap, seed=42, max_bytes=max_bytes,
+                                                     freq_floor=30, min_facts_per_category=20, verbose=False)
+    return _CORPUS_CACHE[key]
+
+
+def build_communicable_brain(seed=42, *, D=256, n_facts=24, n_negated=12, n_attempts=500, tau_pct=50.0,
+                             lr=0.10, da_reward=1.0, da_baseline=0.0, kappa=2.0,
+                             w_value=0.5, w_plaus=0.35, w_fam=0.15,
+                             speak_base_pA=70.0, speak_gain_pA=180.0, silence_drive_pA=150.0,
+                             acc_steps=120, host_oracle_sampler=False,
+                             composer=None, bc_agent=None, accumulator=None,
+                             stored_facts=None, speak_value_Q=None, corpus=None):
+    """Assemble the full communicable brain into a `CommunicableTurn` (the Stage A fusion), reusing every GO piece
+    VERBATIM. Returns a dict with the turn + every component (so a caller can persist the value Q or inspect).
+
+    The DRAW selector (scoping/owner-steer #3): `host_oracle_sampler` picks the generative draw --
+      - False (DEFAULT, the production path): the validated SPIKING soft-WTA generative draw (each filler a
+        spiking Izhikevich-bank sample of the brain's PPMI likelihood). ~40s/topic in the fused turn on CPU (the
+        per-candidate spiking draw x ~500 attempts); the megakernel perf lever is the Stage-C fix.
+      - True (the fast-interactive / numpy-CPU / test oracle): the HOST sample from the SAME PPMI likelihood
+        (`_weight_partner`); answer-distribution-identical, fast. The load-bearing SPIKING speak DECISION (the
+        SpikingSpeakAccumulator) stays spiking either way -- the brain-based speak choice is unchanged.
+
+    `composer`/`bc_agent`/`accumulator` (optional) let a caller SHARE its already-built brain objects (e.g. the
+    production agent passes ITS composer + itself, so the known-fact channel reads the agent's OWN facts + the
+    moat). When `composer` is given, `stored_facts` is ignored (the composer already holds the agent's facts).
+    `speak_value_Q` (optional) seeds the LEARNED talkativeness Q (a {topic: float} dict, e.g. restored from a
+    bundle) so the talkativeness learned across sessions carries forward."""
+    rng = np.random.default_rng(seed)
+    agents, actions, patients = _category_pools(TAXONOMY_8x8)
+    vocab, cat_ids, _cat_names = taxonomy_to_vocab_categories(TAXONOMY_8x8)
+    if corpus is None:
+        corpus = _default_corpus(vocab, cat_ids)
+    P, row = build_plausibility(corpus, vocab)
+    pos = P[P > 0]
+    tau = float(np.percentile(pos, tau_pct)) if pos.size else 0.0
+
+    # the KNOWN-fact store + the moat: reuse the caller's composer/agent when given (so the channel reads the
+    # agent's OWN facts); else build a self-contained communicable brain (the Stage A construction).
+    if composer is None:
+        comp = RFPhasorComposer(seed=seed, D=D, vocab=vocab)
+        if stored_facts is None:
+            affirmed, negated, _ = build_stored_facts(agents, actions, patients, P, row, tau, n_facts, n_negated, rng)
+        else:
+            affirmed = [tuple(f) for f in stored_facts.get("affirmed", [])]
+            negated = [tuple(f) for f in stored_facts.get("negated", [])]
+        for ag, ac, pt in affirmed:
+            comp.store(ag, ac, pt, polarity="AFFIRM")
+        for ag, ac, pt in negated:
+            comp.store(ag, ac, pt, polarity="NEGATE")
+    else:
+        comp = composer
+        # derive affirmed/negated from the composer's OWN kb (the agent's facts) so the proposer's non-contradiction
+        # gate + the all_stored novelty filter use the real stored set.
+        affirmed, negated = [], []
+        for fact, _h in getattr(comp, "kb", []):
+            a_, v_, p_ = fact.get("agent"), fact.get("action"), fact.get("patient")
+            if not (isinstance(a_, str) and isinstance(v_, str) and isinstance(p_, str)):
+                continue  # clause / attributed patients are not flat SVO triples -> skip for the proposer gate
+            (negated if fact.get("polarity") == "NEGATE" else affirmed).append((a_, v_, p_))
+    all_stored = set(affirmed) | set(negated)
+
+    if bc_agent is None:
+        bc_agent = BrainConversationalAgent(seed=seed, concepts={w: None for w in vocab},
+                                            composer=comp, composer_kind="rf", enable_neural_render=False)
+    proposer = GenerativeReplayProposer(comp, affirmed, negated, P, row, tau,
+                                        np.random.default_rng(seed * 7 + 1),
+                                        use_spiking_sampler=(not host_oracle_sampler))
+
+    agents_set, actions_set, patients_set = set(agents), set(actions), set(patients)
+    inflect = _build_inflection_map(sorted(actions_set))
+    vocab_sets = (agents_set, actions_set, patients_set, inflect)
+    grounded_faculty = TemplateStubFaculty()
+    full_pools = (set(agents), set(actions), set(patients))
+
+    if accumulator is None:
+        accumulator = SpikingSpeakAccumulator(seed=12345, n_steps=acc_steps)
+
+    # the talkativeness arena = the held-out grounded topics (words NOT the agent of any stored fact). The LEARNED
+    # speak-value Q is over this topic set; `speak_value_Q` (optional) restores it from a bundle.
+    stored_agents = {f[0] for f in affirmed}
+    topic_pool = [w for w in (agents + patients) if w not in stored_agents]
+    codes = {w: context_code(P, row, w) for w in topic_pool}
+    value = SignedLearnedSpeakValue(topic_pool, codes, lr=lr, da_reward=da_reward, da_baseline=da_baseline,
+                                    kappa=kappa, da_punish=da_reward, rng=np.random.default_rng(seed * 211 + 3))
+    if speak_value_Q:
+        for t, q in speak_value_Q.items():
+            if t in value.Q:
+                value.Q[t] = float(q)
+
+    turn = CommunicableTurn(comp, bc_agent, proposer, accumulator, P, row, vocab_sets, grounded_faculty,
+                            value, codes, full_pools=full_pools, w_value=w_value, w_plaus=w_plaus, w_fam=w_fam,
+                            speak_base_pA=speak_base_pA, speak_gain_pA=speak_gain_pA,
+                            silence_drive_pA=silence_drive_pA)
+    return {"turn": turn, "composer": comp, "agent": bc_agent, "proposer": proposer,
+            "accumulator": accumulator, "value": value, "P": P, "row": row, "codes": codes,
+            "topic_pool": topic_pool, "affirmed": affirmed, "negated": negated,
+            "host_oracle_sampler": bool(host_oracle_sampler)}
+
+
+# ===========================================================================
 # Per-seed run: build the ONE brain, LEARN the talkativeness over taught/untaught feedback, then exercise the
 # FUSED turn across all four cases + measure the Stage A gate IN COMPOSITION.
 # ===========================================================================
