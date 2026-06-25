@@ -1,0 +1,253 @@
+{
+  "config": {
+    "n_facts": 8,
+    "D": 128,
+    "match_thresh": 0.06,
+    "readout": "neural",
+    "seeds": [
+      42
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_words": 23,
+      "codes_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\_phaseB_stream_codes_320_neural_seed42.npy",
+      "codes_found": true,
+      "fresh_random": {
+        "margins": {
+          "dog,eat": {
+            "target_block": 0,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "cat,play": {
+            "target_block": 1,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "bird,sleep": {
+            "target_block": 2,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "girl,run": {
+            "target_block": 3,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "boy,look": {
+            "target_block": 4,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "lion,eat": {
+            "target_block": 5,
+            "win_rate": 0.23,
+            "worst_off_rate": 0.0
+          },
+          "rabbit,jump": {
+            "target_block": 6,
+            "win_rate": 0.227,
+            "worst_off_rate": 0.0
+          },
+          "mouse,walk": {
+            "target_block": 7,
+            "win_rate": 0.195,
+            "worst_off_rate": 0.0
+          }
+        },
+        "present_ok": 3,
+        "present_tot": 8,
+        "false_accept": 0,
+        "moat_0fa": true,
+        "win_rate_nonzero_all": false,
+        "host_present": {
+          "dog,eat": 0,
+          "cat,play": 1,
+          "bird,sleep": 2,
+          "girl,run": 3,
+          "boy,look": 4,
+          "lion,eat": 5,
+          "rabbit,jump": 6,
+          "mouse,walk": 7
+        },
+        "host_absent_all_none": true
+      },
+      "production_margin": {
+        "margins": {
+          "dog,eat": {
+            "target_block": 0,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "cat,play": {
+            "target_block": 1,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "bird,sleep": {
+            "target_block": 2,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "girl,run": {
+            "target_block": 3,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "boy,look": {
+            "target_block": 4,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "lion,eat": {
+            "target_block": 5,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "rabbit,jump": {
+            "target_block": 6,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "mouse,walk": {
+            "target_block": 7,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          }
+        },
+        "present_ok": 0,
+        "present_tot": 8,
+        "false_accept": 0,
+        "moat_0fa": true,
+        "win_rate_nonzero_all": false,
+        "host_present": {
+          "dog,eat": 0,
+          "cat,play": 1,
+          "bird,sleep": 2,
+          "girl,run": 3,
+          "boy,look": 4,
+          "lion,eat": 5,
+          "rabbit,jump": 6,
+          "mouse,walk": 7
+        },
+        "host_absent_all_none": true
+      },
+      "agent_level": {
+        "present_eq_host": 0,
+        "present_tot": 8,
+        "present_correct": 0,
+        "agent_false_accept": 0,
+        "agent_eq_host": false,
+        "agent_moat_0fa": true,
+        "mismatches": [
+          {
+            "cue": "dog,eat",
+            "spk": [
+              null,
+              "dog",
+              "unknown"
+            ],
+            "host": [
+              "apple",
+              "dog",
+              "yes"
+            ]
+          },
+          {
+            "cue": "cat,play",
+            "spk": [
+              null,
+              "cat",
+              "unknown"
+            ],
+            "host": [
+              "ball",
+              "cat",
+              "yes"
+            ]
+          },
+          {
+            "cue": "bird,sleep",
+            "spk": [
+              null,
+              "bird",
+              "unknown"
+            ],
+            "host": [
+              "tree",
+              "bird",
+              "yes"
+            ]
+          },
+          {
+            "cue": "girl,run",
+            "spk": [
+              null,
+              "girl",
+              "unknown"
+            ],
+            "host": [
+              "park",
+              "girl",
+              "yes"
+            ]
+          },
+          {
+            "cue": "boy,look",
+            "spk": [
+              null,
+              "boy",
+              "unknown"
+            ],
+            "host": [
+              "book",
+              "boy",
+              "yes"
+            ]
+          },
+          {
+            "cue": "lion,eat",
+            "spk": [
+              null,
+              "lion",
+              "unknown"
+            ],
+            "host": [
+              "cake",
+              "lion",
+              "yes"
+            ]
+          },
+          {
+            "cue": "rabbit,jump",
+            "spk": [
+              null,
+              "rabbit",
+              "unknown"
+            ],
+            "host": [
+              "garden",
+              "rabbit",
+              "yes"
+            ]
+          },
+          {
+            "cue": "mouse,walk",
+            "spk": [
+              null,
+              "mouse",
+              "unknown"
+            ],
+            "host": [
+              "house",
+              "mouse",
+              "yes"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

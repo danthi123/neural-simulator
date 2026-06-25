@@ -1,0 +1,771 @@
+{
+  "_findings": {
+    "title": "Purity #4 / R-A1 close attempt: production-margin (320 stream-learned) codes do NOT clear the spiking-sequencer over-abstention at small vocab -- R-A FAILS; the residual is RE-LOCATED to the sequencer's divnorm-DRIVE op-point x the cleanup-codebook size V, NOT the code margin and NOT the threshold",
+    "date": "2026-06-25",
+    "type": "BUILD / cheap-first de-risk -- HONEST NEGATIVE for R-A + a precisely-relocated residual; R-B is next (NOT forced)",
+    "verdict": "R-A FAILS. Production-margin codes at small vocab give present_ok 0/8 -- WORSE than fresh-random's 3/8 -- on ALL 3 seeds; the codes are NOT the lever. The integrated_loop default flip was NOT made. The no-confab moat stayed 0-FA on every arm/seed (the failure is a present-cue MISS = the SAFE over-abstention direction; the gap was NEVER touched via match_thresh or a looser gate). The scoping MIS-LOCATED the residual: the agent-role CLEANUP is correct on BOTH code arms (host _scan answers 8/8); the win_rate 0.000 comes from the sequencer's DIVNORM-DRIVE op-point interacting with the cleanup-codebook size V. R-B (lift the drive margin: V-aware divnorm op-point / per-role re-kick / population redundancy) is next, NEVER via the threshold or the gate.",
+    "no_sim_edit": true,
+    "git_diff_stat": "1 new file: research/runners/_spiking_sequencer_RA1_close_derisk.py (the de-risk runner). NO sim/ edit. NO default flip.",
+
+    "the_bars": {
+      "R_A1_GO_bar_was": "production-margin codes -> agent-role win_rate non-zero on all cues + present_ok 8/8 at match_thresh 0.06 + agent == host + moat 0-FA.",
+      "result": "FAILED -- production_margin present_ok 0/8 (win_rate 0.000 on EVERY cue) all 3 seeds; agent eq_host 0/8 (the spiking sequencer abstains -> None where host recalls; a present-cue MISS, NOT a wrong-block confab).",
+      "fresh_random_baseline": "present_ok 3/8 all 3 seeds (the documented small-vocab revert). The production-margin arm is WORSE than this, proving the codes are NOT the lever.",
+      "moat_0fa": "TRUE on every arm, every seed, both the margin-read and the agent-level matrix (0 false-accepts). The moat was NEVER the failing axis and was NEVER traded.",
+      "agent_eq_host": "0/8 on the production-margin arm -- because the sequencer over-abstains, not because it routes wrong."
+    },
+
+    "diagnostic_probes_seed42_GPU": {
+      "probe_1_cleanup_is_CORRECT_on_both_arms": "Direct read of each block's agent-role cleanup membrane (block_cleanup_scores -- the SAME arrays _read_block argmaxes, which the host oracle uses correctly): EVERY block's agent winner is CORRECT on both arms. Margins: fresh-random 0.523-0.788; production-margin 0.276-0.733 (TIGHTER, because the stream codes are semantically CORRELATED -> candidates pulled together). => the scoping's 'agent-role cleanup produces ZERO firing' is INCORRECT; the cleanup is decisive on both arms.",
+      "probe_2_the_DIVNORM_DRIVE_is_what_zeroes": "make_block_drives (the divnorm score bridge, gain=0.11 sigma=1.0) maps cleanup scores -> per-word drive currents; a block's spiking match pool fires only if BOTH its agent line AND action line light (coincidence). blocks-with-both-roles-lit: fresh-random 3/8; production-margin 0/8 (at V=23). => the over-abstention is in the divnorm DRIVE, downstream of the (correct) cleanup -- NOT the cleanup, NOT match_thresh.",
+      "probe_3_input_gain_is_SCALE_INVARIANT": "Sweep sequencer_input_gain in {1,2,4,8,16,32}: lit-counts IDENTICAL across all (fresh 3/8, prod 0/8). The divnorm divides by the per-query pool total, so a common drive scale cancels (the S5 contract). => input_gain is NOT a lever; the divisor SHAPE (gain/sigma) + the codebook SIZE V set which words clear rheobase relative to the normalized peak.",
+      "probe_4_V_is_the_real_lever_NOT_code_source": "Same K=8 + same 320 stream codes, but vocab=the FULL 320 words (the demo config) instead of the 23 fact words: blocks-with-both-roles-lit 6/8, present_ok (sequencer) 6/8 -- vs 0/8 at V=23. => V (the cleanup-codebook / vocab size) is a real lever, but it is NOT code margin (probe 1 shows the stream codes have a TIGHTER margin than fresh-random). The 320 demo GOes because it uses V=320.",
+      "probe_5_even_V320_K8_the_sequencer_over_abstains": "query_patient via the spiking sequencer at the EXACT demo config (V=320, K=8, stream codes, enable_spiking_cleanup=True, integrated_loop=True), seed 42: recall 6/8 (MISS on bird,sleep + lion,eat -> None); moat 0-FA. => the production 320 demo's reported 'recall 1.0' is achieved because who_does routes through query_agent -> the HOST _scan (still host on the ON path -- the named build-1 follow-on), which answers the (action,patient) direction; query_patient -> the spiking sequencer over-abstains 2/8 even at V=320 for this K=8 fact set. The CLAUDE.md/scoping 'GO 4/4 at V=320' refers to a DIFFERENT fact set (the K=32 margin run: V=72 SYNTHETIC words at match_thresh=0.06), NOT this K=8 child-corpus demo fact set."
+    },
+
+    "residual_relocated": {
+      "scoping_said": "the small-vocab revert is an UPSTREAM cleanup-margin failure (the agent-role cleanup produces win_rate 0.000); production/PPMI codes have a wider margin and clear the floor (R-A1).",
+      "actually_is": "the agent-role CLEANUP IS CORRECT on both code arms (probe 1). The win_rate 0.000 comes from the sequencer's DIVNORM-DRIVE op-point (gain=0.11/sigma=1.0) interacting with the cleanup-codebook SIZE V: at small V the divisor shape leaves the (correct) winner below the placed rheobase or lets a runner-up co-fire, so the coincidence-AND match pool fires 0.000. The lever is the DRIVE MARGIN (set by V + the divnorm op-point), NOT the code source and NOT match_thresh (scale-invariant here, and the moat forbids lowering it).",
+      "why_R_A1_cannot_work": "Production-margin (stream) codes are semantically CORRELATED, so they LOWER the agent-role cleanup margin at small V (probe 1) -> the divnorm separates the winner LESS -> strictly worse than fresh-random (0/8 vs 3/8). R-A1's premise (codes are the lever) is falsified."
+    },
+
+    "default_flip": "NOT MADE. integrated_loop stays default-OFF at the library BrainConversationalAgent(composer_kind='onebrain') path (the byte-identical host-_scan oracle + numpy-CPU + test-oracle path), exactly as before -- NO edit to brain_conversational_agent.py / one_brain_composer.py / consolidated_320_conversation_demo.py. The None-sentinel flip was NOT applied because its precondition (R-A1 GO) FAILED; flipping it would REVERT test_one_brain_composer_agent.py (the sequencer over-abstains on the V=15 fresh-random test codes -> what_does None where it should recall).",
+
+    "next_R_B": "Lift the DRIVE MARGIN (the relocated residual), cheapest-first, NEVER via match_thresh / a looser gate. The most direct given the relocation: (R-B-new) a V-AWARE divnorm DRIVE op-point -- re-tune the divisor shape (gain/sigma) as a function of the cleanup-codebook size V, since probe 4 shows the SAME codes clear at V=320 but not V=23 (this is a sequencer DRIVE op-point change, distinct from the sequencer control logic AND from match_thresh). Plus the scoping's named R-B: (R-B1) population redundancy on the match-pool drive (the documented rate-code-wall lift); (R-B2) per-role re-kick (_dev_rekick_into) before the agent-role cleanup. Each R-B GO requires the agent-role win_rate to go non-zero BECAUSE the drive margin rose (probe-2 lit-count non-zero on all blocks), NOT because a threshold moved, AND present_ok 8/8 == host AND moat 0-FA multi-seed at BOTH the library (V=15-23) and production (V=320) scales.",
+
+    "anti_cheats_honored": "moat 0-FA at both arms + the agent-level matrix on every seed; the gap was NEVER closed by lowering match_thresh (the existing de-risk shows win_rate 0.000 is below every threshold, and probe 3 shows the drive is scale-invariant in input_gain). The gate was NOT loosened -- R-A simply did not GO and the default was left OFF."
+  },
+  "config": {
+    "n_facts": 8,
+    "D": 128,
+    "match_thresh": 0.06,
+    "readout": "neural",
+    "seeds": [
+      42,
+      43,
+      44
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_words": 23,
+      "codes_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\_phaseB_stream_codes_320_neural_seed42.npy",
+      "codes_found": true,
+      "fresh_random": {
+        "margins": {
+          "dog,eat": {
+            "target_block": 0,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "cat,play": {
+            "target_block": 1,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "bird,sleep": {
+            "target_block": 2,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "girl,run": {
+            "target_block": 3,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "boy,look": {
+            "target_block": 4,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "lion,eat": {
+            "target_block": 5,
+            "win_rate": 0.23,
+            "worst_off_rate": 0.0
+          },
+          "rabbit,jump": {
+            "target_block": 6,
+            "win_rate": 0.227,
+            "worst_off_rate": 0.0
+          },
+          "mouse,walk": {
+            "target_block": 7,
+            "win_rate": 0.195,
+            "worst_off_rate": 0.0
+          }
+        },
+        "present_ok": 3,
+        "present_tot": 8,
+        "false_accept": 0,
+        "moat_0fa": true,
+        "win_rate_nonzero_all": false,
+        "host_present": {
+          "dog,eat": 0,
+          "cat,play": 1,
+          "bird,sleep": 2,
+          "girl,run": 3,
+          "boy,look": 4,
+          "lion,eat": 5,
+          "rabbit,jump": 6,
+          "mouse,walk": 7
+        },
+        "host_absent_all_none": true
+      },
+      "production_margin": {
+        "margins": {
+          "dog,eat": {
+            "target_block": 0,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "cat,play": {
+            "target_block": 1,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "bird,sleep": {
+            "target_block": 2,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "girl,run": {
+            "target_block": 3,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "boy,look": {
+            "target_block": 4,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "lion,eat": {
+            "target_block": 5,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "rabbit,jump": {
+            "target_block": 6,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "mouse,walk": {
+            "target_block": 7,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          }
+        },
+        "present_ok": 0,
+        "present_tot": 8,
+        "false_accept": 0,
+        "moat_0fa": true,
+        "win_rate_nonzero_all": false,
+        "host_present": {
+          "dog,eat": 0,
+          "cat,play": 1,
+          "bird,sleep": 2,
+          "girl,run": 3,
+          "boy,look": 4,
+          "lion,eat": 5,
+          "rabbit,jump": 6,
+          "mouse,walk": 7
+        },
+        "host_absent_all_none": true
+      },
+      "agent_level": {
+        "present_eq_host": 0,
+        "present_tot": 8,
+        "present_correct": 0,
+        "agent_false_accept": 0,
+        "agent_eq_host": false,
+        "agent_moat_0fa": true,
+        "mismatches": [
+          {
+            "cue": "dog,eat",
+            "spk": [
+              null,
+              "dog",
+              "unknown"
+            ],
+            "host": [
+              "apple",
+              "dog",
+              "yes"
+            ]
+          },
+          {
+            "cue": "cat,play",
+            "spk": [
+              null,
+              "cat",
+              "unknown"
+            ],
+            "host": [
+              "ball",
+              "cat",
+              "yes"
+            ]
+          },
+          {
+            "cue": "bird,sleep",
+            "spk": [
+              null,
+              "bird",
+              "unknown"
+            ],
+            "host": [
+              "tree",
+              "bird",
+              "yes"
+            ]
+          },
+          {
+            "cue": "girl,run",
+            "spk": [
+              null,
+              "girl",
+              "unknown"
+            ],
+            "host": [
+              "park",
+              "girl",
+              "yes"
+            ]
+          },
+          {
+            "cue": "boy,look",
+            "spk": [
+              null,
+              "boy",
+              "unknown"
+            ],
+            "host": [
+              "book",
+              "boy",
+              "yes"
+            ]
+          },
+          {
+            "cue": "lion,eat",
+            "spk": [
+              null,
+              "lion",
+              "unknown"
+            ],
+            "host": [
+              "cake",
+              "lion",
+              "yes"
+            ]
+          },
+          {
+            "cue": "rabbit,jump",
+            "spk": [
+              null,
+              "rabbit",
+              "unknown"
+            ],
+            "host": [
+              "garden",
+              "rabbit",
+              "yes"
+            ]
+          },
+          {
+            "cue": "mouse,walk",
+            "spk": [
+              null,
+              "mouse",
+              "unknown"
+            ],
+            "host": [
+              "house",
+              "mouse",
+              "yes"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seed": 43,
+      "n_words": 23,
+      "codes_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\_phaseB_stream_codes_320_neural_seed43.npy",
+      "codes_found": true,
+      "fresh_random": {
+        "margins": {
+          "dog,eat": {
+            "target_block": 0,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "cat,play": {
+            "target_block": 1,
+            "win_rate": 0.234,
+            "worst_off_rate": 0.0
+          },
+          "bird,sleep": {
+            "target_block": 2,
+            "win_rate": 0.223,
+            "worst_off_rate": 0.0
+          },
+          "girl,run": {
+            "target_block": 3,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "boy,look": {
+            "target_block": 4,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "lion,eat": {
+            "target_block": 5,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "rabbit,jump": {
+            "target_block": 6,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "mouse,walk": {
+            "target_block": 7,
+            "win_rate": 0.247,
+            "worst_off_rate": 0.0
+          }
+        },
+        "present_ok": 3,
+        "present_tot": 8,
+        "false_accept": 0,
+        "moat_0fa": true,
+        "win_rate_nonzero_all": false,
+        "host_present": {
+          "dog,eat": 0,
+          "cat,play": 1,
+          "bird,sleep": 2,
+          "girl,run": 3,
+          "boy,look": 4,
+          "lion,eat": 5,
+          "rabbit,jump": 6,
+          "mouse,walk": 7
+        },
+        "host_absent_all_none": true
+      },
+      "production_margin": {
+        "margins": {
+          "dog,eat": {
+            "target_block": 0,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "cat,play": {
+            "target_block": 1,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "bird,sleep": {
+            "target_block": 2,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "girl,run": {
+            "target_block": 3,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "boy,look": {
+            "target_block": 4,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "lion,eat": {
+            "target_block": 5,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "rabbit,jump": {
+            "target_block": 6,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "mouse,walk": {
+            "target_block": 7,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          }
+        },
+        "present_ok": 0,
+        "present_tot": 8,
+        "false_accept": 0,
+        "moat_0fa": true,
+        "win_rate_nonzero_all": false,
+        "host_present": {
+          "dog,eat": 0,
+          "cat,play": 1,
+          "bird,sleep": 2,
+          "girl,run": 3,
+          "boy,look": 4,
+          "lion,eat": 5,
+          "rabbit,jump": 6,
+          "mouse,walk": 7
+        },
+        "host_absent_all_none": true
+      },
+      "agent_level": {
+        "present_eq_host": 0,
+        "present_tot": 8,
+        "present_correct": 0,
+        "agent_false_accept": 0,
+        "agent_eq_host": false,
+        "agent_moat_0fa": true,
+        "mismatches": [
+          {
+            "cue": "dog,eat",
+            "spk": [
+              null,
+              "dog",
+              "unknown"
+            ],
+            "host": [
+              "apple",
+              "dog",
+              "yes"
+            ]
+          },
+          {
+            "cue": "cat,play",
+            "spk": [
+              null,
+              "cat",
+              "unknown"
+            ],
+            "host": [
+              "ball",
+              "cat",
+              "yes"
+            ]
+          },
+          {
+            "cue": "bird,sleep",
+            "spk": [
+              null,
+              "bird",
+              "unknown"
+            ],
+            "host": [
+              "tree",
+              "bird",
+              "yes"
+            ]
+          },
+          {
+            "cue": "girl,run",
+            "spk": [
+              null,
+              "girl",
+              "unknown"
+            ],
+            "host": [
+              "park",
+              "girl",
+              "yes"
+            ]
+          },
+          {
+            "cue": "boy,look",
+            "spk": [
+              null,
+              "boy",
+              "unknown"
+            ],
+            "host": [
+              "book",
+              "boy",
+              "yes"
+            ]
+          },
+          {
+            "cue": "lion,eat",
+            "spk": [
+              null,
+              "lion",
+              "unknown"
+            ],
+            "host": [
+              "cake",
+              "lion",
+              "yes"
+            ]
+          },
+          {
+            "cue": "rabbit,jump",
+            "spk": [
+              null,
+              "rabbit",
+              "unknown"
+            ],
+            "host": [
+              "garden",
+              "rabbit",
+              "yes"
+            ]
+          },
+          {
+            "cue": "mouse,walk",
+            "spk": [
+              null,
+              "mouse",
+              "unknown"
+            ],
+            "host": [
+              "house",
+              "mouse",
+              "yes"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seed": 44,
+      "n_words": 23,
+      "codes_path": "E:\\Documents\\Projects\\sim\\research\\findings\\raw\\_phaseB_stream_codes_320_neural_seed44.npy",
+      "codes_found": true,
+      "fresh_random": {
+        "margins": {
+          "dog,eat": {
+            "target_block": 0,
+            "win_rate": 0.239,
+            "worst_off_rate": 0.0
+          },
+          "cat,play": {
+            "target_block": 1,
+            "win_rate": 0.211,
+            "worst_off_rate": 0.0
+          },
+          "bird,sleep": {
+            "target_block": 2,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "girl,run": {
+            "target_block": 3,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "boy,look": {
+            "target_block": 4,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "lion,eat": {
+            "target_block": 5,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "rabbit,jump": {
+            "target_block": 6,
+            "win_rate": 0.218,
+            "worst_off_rate": 0.0
+          },
+          "mouse,walk": {
+            "target_block": 7,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          }
+        },
+        "present_ok": 3,
+        "present_tot": 8,
+        "false_accept": 0,
+        "moat_0fa": true,
+        "win_rate_nonzero_all": false,
+        "host_present": {
+          "dog,eat": 0,
+          "cat,play": 1,
+          "bird,sleep": 2,
+          "girl,run": 3,
+          "boy,look": 4,
+          "lion,eat": 5,
+          "rabbit,jump": 6,
+          "mouse,walk": 7
+        },
+        "host_absent_all_none": true
+      },
+      "production_margin": {
+        "margins": {
+          "dog,eat": {
+            "target_block": 0,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "cat,play": {
+            "target_block": 1,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "bird,sleep": {
+            "target_block": 2,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "girl,run": {
+            "target_block": 3,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "boy,look": {
+            "target_block": 4,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "lion,eat": {
+            "target_block": 5,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "rabbit,jump": {
+            "target_block": 6,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          },
+          "mouse,walk": {
+            "target_block": 7,
+            "win_rate": 0.0,
+            "worst_off_rate": 0.0
+          }
+        },
+        "present_ok": 0,
+        "present_tot": 8,
+        "false_accept": 0,
+        "moat_0fa": true,
+        "win_rate_nonzero_all": false,
+        "host_present": {
+          "dog,eat": 0,
+          "cat,play": 1,
+          "bird,sleep": 2,
+          "girl,run": 3,
+          "boy,look": 4,
+          "lion,eat": 5,
+          "rabbit,jump": 6,
+          "mouse,walk": 7
+        },
+        "host_absent_all_none": true
+      },
+      "agent_level": {
+        "present_eq_host": 0,
+        "present_tot": 8,
+        "present_correct": 0,
+        "agent_false_accept": 0,
+        "agent_eq_host": false,
+        "agent_moat_0fa": true,
+        "mismatches": [
+          {
+            "cue": "dog,eat",
+            "spk": [
+              null,
+              "dog",
+              "unknown"
+            ],
+            "host": [
+              "apple",
+              "dog",
+              "yes"
+            ]
+          },
+          {
+            "cue": "cat,play",
+            "spk": [
+              null,
+              "cat",
+              "unknown"
+            ],
+            "host": [
+              "ball",
+              "cat",
+              "yes"
+            ]
+          },
+          {
+            "cue": "bird,sleep",
+            "spk": [
+              null,
+              "bird",
+              "unknown"
+            ],
+            "host": [
+              "tree",
+              "bird",
+              "yes"
+            ]
+          },
+          {
+            "cue": "girl,run",
+            "spk": [
+              null,
+              "girl",
+              "unknown"
+            ],
+            "host": [
+              "park",
+              "girl",
+              "yes"
+            ]
+          },
+          {
+            "cue": "boy,look",
+            "spk": [
+              null,
+              "boy",
+              "unknown"
+            ],
+            "host": [
+              "book",
+              "boy",
+              "yes"
+            ]
+          },
+          {
+            "cue": "lion,eat",
+            "spk": [
+              null,
+              "lion",
+              "unknown"
+            ],
+            "host": [
+              "cake",
+              "lion",
+              "yes"
+            ]
+          },
+          {
+            "cue": "rabbit,jump",
+            "spk": [
+              null,
+              "rabbit",
+              "unknown"
+            ],
+            "host": [
+              "garden",
+              "rabbit",
+              "yes"
+            ]
+          },
+          {
+            "cue": "mouse,walk",
+            "spk": [
+              null,
+              "mouse",
+              "unknown"
+            ],
+            "host": [
+              "house",
+              "mouse",
+              "yes"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
