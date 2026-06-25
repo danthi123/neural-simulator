@@ -4658,3 +4658,11 @@ Owner: 'No need to cap VRAM use, when I want to game I'll just ask you to pause 
 C2 (batfptbjc) OOM'd: cudaOutOfMemory ~1.25GB @ the 20.6GB (80% CuPy pool) limit, REPEATEDLY (retry-loop ~3.3hr, NO [learn]/corr/gen -- couldn't build the bridge). Sizing error: n_per 32/n_hub 500 = (500+320)×32 = 26240 neurons (2.6× base 9920) -> ~7× synapses -> ~34GB. Killed PID 28584; GPU free (2.2GB baseline). NOTE: raising the pool can't fix it (n_per 32 needs ~34GB > 24GB hardware); the fix is RIGHT-SIZING. Right-sized: n_per 24/n_hub 400 = (400+320)×24 = 17280 (1.74×) -> ~3× synapses -> ~15GB (fits). Same read-out-fidelity lever (1.5× population + 1.33× context + 2× windows -> corr 0.756->higher -> gen toward +0.215?).
 
 **EXACT NEXT CONCRETE ACTION:** killed OOM'd C2. Relaunched RIGHT-SIZED (self-guarded: n_per 24/n_hub 400/300K/content/coherent/--no-frozen, ~15GB, ~3hr) + VERIFY into [learn] within ~5min (catch OOM in minutes). On C2 -> dial-able verdict (read-out fidelity recovers gen?). recall 1.000 + moat 0-FA STAND. NEVER weaken the moat; honest origin+gitea.
+
+---
+
+## CYCLE 592 (2026-06-25 — owner directive: PROACTIVELY MONITOR long runs [don't idle for hours]; right-sized C2 HEALTHY; monitor-heartbeat armed)
+
+Owner: 'You should be checking these on your own periodically to detect when [a run fails] so we don't sit doing nothing for hours.' RIGHT -- I let the OOM'd C2 spin 3.3hr undetected (passively awaited the completion notification a hung process never sends). FIX: memory `feedback_proactively_monitor_long_runs` (active interval progress-checks, not passive-await; reconciles w/ no-stale-pollers); ScheduleWakeup heartbeat (~900s). Right-sized C2 (hifi24, n_per 24/n_hub 400, PID 31112) HEALTHY: bridge built (17280 neurons, 73.7M syn), 13.3GB (fits), 96% util, learning, NO OOM.
+
+**EXACT NEXT CONCRETE ACTION (= MONITOR, not passive-await):** ScheduleWakeup heartbeat (~900s) -> each wake CHECK C2 hifi24 advancing (log progressed? util? OOM?); hung/OOM -> kill+relaunch; done -> read the gen/Pearson verdict (hi-fi read-out recover gen toward numpy-320 +0.215?); else re-schedule + continue. C2 ~3hr. recall 1.000 + moat 0-FA STAND. NEVER weaken the moat; honest origin+gitea.
