@@ -11,7 +11,7 @@
   "vocab_size": 18,
   "n_facts": 5,
   "verdict": "GO",
-  "default_persistent_loop_off": true,
+  "default_persistent_loop": true,
   "membrane_byte_identical_all": true,
   "worst_membrane_perblock_maxabs": 0.0,
   "worst_membrane_batched_maxabs": 0.0,

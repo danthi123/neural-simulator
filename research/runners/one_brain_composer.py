@@ -115,7 +115,7 @@ class OneBrainComposer:
                  enable_attributed=False, enable_multiframe=False, enable_spiking_cleanup=True,
                  encoding_gain_fn=None, local_reciprocal_unbind=True, integrated_loop=False,
                  sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0,
-                 enable_seq_vocab_shrink=True, persistent_loop=False, trace=False):
+                 enable_seq_vocab_shrink=True, persistent_loop=True, trace=False):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         # trace (B3 per-turn "brain activity", opt-in, DEFAULT-OFF = byte-identical): READ-ONLY trace of what the brain
         # DID on the LAST query -- the decoded role-words + their cleanup match-confidence (per role), which stored
@@ -141,8 +141,12 @@ class OneBrainComposer:
         # the (action, patient) `query_agent` + agent-only `render_fact`/`describe` stay on the host read (still
         # abstaining via the oracle) as named bounded follow-ons (a swapped-cue + a 1-role cascade). See the plan.
         self.integrated_loop = bool(integrated_loop)
-        # persistent_loop (Tier-2 TRUE one brain / I-1-a op-handoff-as-spikes, DEFAULT OFF = byte-identical = the
-        # numpy-CPU + test-oracle path): make the FLAT who/what query path a PERSISTENT INTERACTING SPIKING LOOP -- the
+        # persistent_loop (Tier-2 TRUE one brain / I-1-a op-handoff-as-spikes, DEFAULT ON since 2026-06-24 close-out
+        # Closure 2 -- the I-1-a clean-unit-phasor op-handoff is ANSWER-IDENTICAL + cleanup-membrane BYTE-IDENTICAL to
+        # the legacy carry-live-Z handoff [maxabs 0.0, _persistent_loop_flat_derisk GO], so flipping it on is a
+        # behaviorally-INVISIBLE formalization that makes the flat who/what read the canonical "each register holds a
+        # clean unit phasor between ops" form by default; pass persistent_loop=False for the legacy carry-live-Z path,
+        # the byte-identical revertible escape): make the FLAT who/what query path a PERSISTENT INTERACTING SPIKING LOOP -- the
         # composite is handed off BETWEEN ops as a clean unit phasor held ON THE BRIDGE (register->register), with NO
         # host round-trip. Today the flat read (`_read_block` / `_read_all_blocks`) carries the LIVE register Z forward
         # across the unbind->cleanup handoff (the resonate matvec reads the live unbound Q register). When ON, that

@@ -243,17 +243,20 @@ def main():
         per_seed.append(dict(seed=seed, membrane_perblock_maxabs=mb_pb, membrane_batched_maxabs=mb_b,
                              membrane_byte_identical=membrane_ok, configs=seed_cfg))
 
-    # (a) default-path-untouched: persistent_loop=False is the construction default + a no-op handoff (a static check).
+    # (a) the construction default. Closure 2 (2026-06-24) flipped the OneBrainComposer default persistent_loop
+    #     False -> True (it is the behaviorally-invisible formalization the byte-identity proves), so this now
+    #     records default ON. The VERDICT no longer depends on the default DIRECTION -- the load-bearing GO criterion
+    #     is the byte-identity + matrix + moat (persistent_loop=True == the host round-trip == the carry-live-Z
+    #     answer), which is what makes the flip safe in EITHER direction. We assert the default is a recognized bool.
     c_default = OneBrainComposer(seed=42, D=D, vocab=VOCAB)
-    default_off_by_default = (c_default.persistent_loop is False)
+    default_persistent_loop = bool(c_default.persistent_loop)
 
-    verdict = "GO" if (all_membrane_byte_identical and all_matrix_identical and all_moat_preserved
-                       and default_off_by_default) else "HONEST"
+    verdict = "GO" if (all_membrane_byte_identical and all_matrix_identical and all_moat_preserved) else "HONEST"
     result = dict(
         probe="persistent_loop=True FLAT who/what op-handoff-as-spikes (I-1-a) byte-identity vs host round-trip",
         backend=BACKEND, atol=ATOL, D=D, seeds=seeds, vocab_size=len(VOCAB), n_facts=len(FACTS),
         verdict=verdict,
-        default_persistent_loop_off=default_off_by_default,
+        default_persistent_loop=default_persistent_loop,   # Closure 2: now True (the close-out default-on flip)
         membrane_byte_identical_all=all_membrane_byte_identical,
         worst_membrane_perblock_maxabs=worst_membrane_perblock,
         worst_membrane_batched_maxabs=worst_membrane_batched,
@@ -285,7 +288,7 @@ def main():
         json.dump(result, f, indent=2)
 
     print(json.dumps({k: result[k] for k in (
-        "verdict", "default_persistent_loop_off", "membrane_byte_identical_all",
+        "verdict", "default_persistent_loop", "membrane_byte_identical_all",
         "worst_membrane_perblock_maxabs", "worst_membrane_batched_maxabs", "matrix_identical_all",
         "moat_preserved_all", "total_false_accepts_on", "clause_path_already_on_substrate",
         "needs_gpu", "needs_sim_edit")}, indent=2))

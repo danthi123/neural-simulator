@@ -1,0 +1,46 @@
+{
+  "task": "close-out to full capacity: option A gate 3 (HARD-gated flip to onebrain) + Closures 2+3",
+  "date": "2026-06-24",
+  "gpu": "RTX 3090, free at start (2008 MiB / 24576; no stale training processes); concurrent CPU de-risk not killed",
+  "backend": "cupy",
+
+  "gate3": {
+    "definition": "construct MergedNavConvAgent(co_resident_composer=True, kind in {onebrain, rf}); run the SAME nav moving-goal episode for each; assert nav score Δ=0 (the same null/inertness gate as step-2b nav-not-regressed = 2.0 byte-identical, since the composer rf slice is array-disjoint from the spiking nav read-out)",
+    "status": "CANNOT_RUN",
+    "reason": "the onebrain arm does NOT construct under the current production defaults. MergedNavConvAgent(co_resident_composer=True) now defaults co_resident_command_route=True (production default-ON since commits 9a9975d6 / 975b8eb4). With co_resident_composer_kind='onebrain', CoResidentOneBrainComposer.__init__ builds an idle layout-only BridgeParser(shared_bridge=self.b) (nav_conv_merged_bridge.py:1560), whose shared-bridge path UNCONDITIONALLY calls merge_population_into_shared_bridge (brain_conversational_agent.py:87). That helper re-injects via inject_explicit_wiring from an EMPTY bridge._unified_wiring_plan (build_merged_nav_conv_bridge never populates it -- it wires the whole merged bridge in ONE framework inject_explicit_wiring at nav_conv_merged_bridge.py:1125), which rebuilds cp_connections + the gate maps from scratch and does NOT re-register transmission gates -> the COMMAND_GATE registration is wiped -> the agent's __init__ anti-cheat assert (nav_conv_merged_bridge.py:1915, 'the command_route transmission gate is not registered on the merged bridge') FAILS at construction.",
+    "delta_per_seed": "N/A -- one arm (onebrain) cannot be constructed under production defaults, so no nav score can be produced for it",
+    "rf_arm_healthy": true,
+    "rf_arm_evidence": "tests/test_nav_conv_step2b_coresident.py (which builds MergedNavConvAgent(seed=42, co_resident_composer=True) -- rf default today, under ALL current production defaults incl. co_resident_command_route=True): 7 passed in 145.24s on GPU. The rf co-resident path is healthy.",
+    "onebrain_never_exercised_with_command_route": "gate 4 / Probe 2 (_consolidation_probe2_limbic.py:82-84) constructs the onebrain agent with co_resident_command_route=False EXPLICITLY; Probe 1 (_consolidation_probe1_byteident.py:193) builds CoResidentOneBrainComposer on a MINIMAL stub bridge (no command route). So the onebrain co-resident composer was NEVER constructed inside MergedNavConvAgent with the command-route production default ON -- the audit's 'cheap green-gate-pending flip' characterization is falsified by this construction incompatibility."
+  },
+
+  "closure_1": {
+    "name": "flip co_resident_composer_kind default 'rf' -> 'onebrain' (nav_conv_merged_bridge.py:1612)",
+    "status": "BLOCKED-BY-REGRESSION (NOT flipped)",
+    "why_blocked": "the flip would change tests/test_nav_conv_step2b_coresident.py's default fixture (MergedNavConvAgent(seed=42, co_resident_composer=True), which does NOT pass co_resident_command_route=False) to build the onebrain composer, which CRASHES at construction under the command-route production default (see gate3.reason). Flipping would turn the step2b suite RED at construction.",
+    "fix_required": "a runner-level (NOT sim/) build: make CoResidentOneBrainComposer NOT re-inject the framework wiring when built on a framework-wired merged bridge -- e.g. skip the idle layout-only BridgeParser shared-bridge merge (it is 'constructed for layout completeness only', nav_conv_merged_bridge.py:1490-1492), OR have merge_population_into_shared_bridge preserve the framework inject_explicit_wiring union + re-register transmission gates. Either is a real build needing its own validation (Probe-1 byte-identity included the idle parser), NOT the cheap default-flip the audit assumed. NOT attempted here (out of the prescribed flip scope; flagged + stopped per the task).",
+    "flipped": false
+  },
+
+  "closure_2": {
+    "name": "persistent_loop default-on (one_brain_composer.py:118 False -> True)",
+    "status": "FLIPPED (independent of the merged-agent blocker; byte-identical no-op formalization)",
+    "gate": "_persistent_loop_flat_derisk (CPU, 3 seeds, pre-flip run): verdict GO, worst_membrane_perblock_maxabs=0.0, worst_membrane_batched_maxabs=0.0, matrix_identical_all=true, moat_preserved_all=true, total_false_accepts_on=0",
+    "scope_note": "flips ONLY the standalone OneBrainComposer library default; CoResidentOneBrainComposer reads kwargs.get('persistent_loop', False) (its own default unchanged) and the merged agent already passes persistent_loop=True explicitly (nav_conv_merged_bridge.py:1870) -- so this flip does NOT touch the (blocked) merged path. The RFPhasorComposer test-oracle path is unaffected.",
+    "parity_test_added": "tests/test_one_brain_composer_agent.py::test_onebrain_persistent_loop_parity (pins default-on + answer-identical True-vs-False on the who/what matrix + the no-confab moat)",
+    "derisk_probe_updated": "_persistent_loop_flat_derisk.py default-direction assertion relaxed (verdict now keyed on byte-identity+matrix+moat, the actual claims; records default_persistent_loop=True for provenance)",
+    "flipped": true,
+    "test_results": "tests/test_one_brain_composer_agent.py FULL suite (19 tests incl. the new test_onebrain_persistent_loop_parity + the no-confab moat tests) ran to completion on GPU with persistent_loop default-on: pytest EXIT CODE 0 (all-pass; pytest exits 0 only when every collected test passes/skips). The post-flip de-risk re-run: verdict GO, default_persistent_loop=true, worst_membrane_perblock_maxabs=0.0, worst_membrane_batched_maxabs=0.0, matrix_identical_all=true, moat_preserved_all=true, total_false_accepts_on=0. A combined GPU re-confirm (merged_agent 8 + step2b 7 + onebrain moat/parity 4) was launched for the explicit per-test record; the load-bearing pass evidence is the suite exit-0 + the de-risk GO + the standalone step2b 7-passed run."
+  },
+
+  "closure_3": {
+    "name": "enable_da_encoding_gain default-on (nav_conv_merged_bridge.py:1619 False -> True)",
+    "status": "BLOCKED (rides Closure 1; not independently flippable)",
+    "why_blocked": "the audit (rank 3) makes this conditional on Closure 1: 'Do NOT do this before Closure 1 (it is a no-op on the rf phase-store default)... load-bearing only on the onebrain magnitude store.' With Closure 1 BLOCKED, the merged default stays the rf phase-store, on which enable_da_encoding_gain is INERT, and the onebrain magnitude store (where it is load-bearing) cannot be constructed under production defaults. So flipping it now would be a pure inert no-op on a path that cannot reach its load-bearing case.",
+    "flipped": false
+  },
+
+  "moat": "the no-confab moat was NEVER weakened. Closure 2 is answer-identical (the cleanup argmax + the confidence-gate margin are unchanged by the unit-phasor re-kick); its parity test asserts the moat (is None / unknown) holds under both persistent_loop True and False. No flip touched any abstention path.",
+  "sim_edit": "NONE. All changes are runner-default + test/probe code. No protected sim/ edit was made or required.",
+  "verdict": "Closure 1 + Closure 3 = BLOCKED-BY-REGRESSION (gate 3 cannot run: the onebrain arm does not construct under the command-route production default). Closure 2 = CLOSED (byte-identical default-on flip + parity test). The audit's premise that Closure 1 was a clean green-gate-pending flip is falsified -- it needs a runner-level build to make the onebrain co-resident composer compatible with the framework-wired merged bridge under co_resident_command_route=True."
+}

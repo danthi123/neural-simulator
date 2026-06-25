@@ -304,6 +304,38 @@ def test_onebrain_batched_equals_per_block():
     assert c.query_patient("apple", "stop") is None
 
 
+def test_onebrain_persistent_loop_parity():
+    """Closure 2 (2026-06-24 close-out): persistent_loop is now the OneBrainComposer DEFAULT (the I-1-a clean
+    unit-phasor op-handoff). Pin (1) the new default IS on, and (2) the FLAT who/what matrix + the no-confab moat are
+    ANSWER-IDENTICAL between persistent_loop=True (default) and =False (the legacy carry-live-Z handoff, the revertible
+    escape) -- so the flip is behaviorally invisible. (The cleanup-membrane byte-identity, maxabs 0.0, is pinned by the
+    research/runners/_persistent_loop_flat_derisk.py probe; here we pin the public answers at the composer surface.)"""
+    from research.runners.one_brain_composer import OneBrainComposer
+    facts = [("dog", "go", "north"), ("cat", "come", "east"), ("bird", "look", "south")]
+    queries = [("dog", "go", "north"), ("cat", "come", "east"), ("bird", "look", "south")]
+    try:
+        default_c = OneBrainComposer(seed=42, D=64, vocab=VOCAB)
+        on = OneBrainComposer(seed=42, D=64, vocab=VOCAB, persistent_loop=True)
+        off = OneBrainComposer(seed=42, D=64, vocab=VOCAB, persistent_loop=False)
+    except (FileNotFoundError, KeyError) as e:
+        pytest.skip(f"concept-code cache / vocab unavailable: {e}")
+    assert default_c.persistent_loop is True, "Closure 2: persistent_loop must now be the construction default (on)"
+    for c in (on, off):
+        for (a, v, p) in facts:
+            c.store(a, v, p)
+    for (a, v, p) in queries:
+        assert on.query_patient(a, v) == off.query_patient(a, v) == p, \
+            f"persistent_loop True vs False must be answer-identical for what({a},{v})"
+        assert on.query_agent(v, p) == off.query_agent(v, p) == a, \
+            f"persistent_loop True vs False must be answer-identical for who({v},{p})"
+        assert on.ask_yes_no(a, v, p) == off.ask_yes_no(a, v, p) == "yes"
+    # the no-confab moat is identical under both handoffs (an unstored cue / fact abstains either way)
+    assert on.query_patient("apple", "stop") is None and off.query_patient("apple", "stop") is None, \
+        "moat: an unstored cue must abstain under both persistent_loop True and False"
+    assert on.ask_yes_no("cat", "go", "west") in ("unknown", "no")
+    assert off.ask_yes_no("cat", "go", "west") in ("unknown", "no")
+
+
 def test_onebrain_default_path_unaffected():
     """The additive wiring must not change the default ('rf') agent: it has no `hear` on its composer, so it builds the
     agent's own parser and uses parse+store (the byte-unchanged path). A construction smoke (no GPU run needed)."""
