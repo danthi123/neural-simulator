@@ -4875,3 +4875,11 @@ Console subagent (a3c651e5) DONE -> research/runners/first_chat_console.py (nump
 The breadth-build delivered VOCABULARY (1454 recognized words), not deep KNOWLEDGE (meaningful facts/relations). "Natural-feeling" needs the latter.
 
 **EXACT NEXT CONCRETE ACTION:** owner is steering the fork (deepen-knowledge / wire-LLM-fluency-faculty / curated-chat-now). On their answer, execute it. Console + probe committed. NEVER weaken the moat; honest origin+gitea.
+
+---
+
+## CYCLE 613 (2026-06-26 — Stage 1a de-risk GO: spaCy extracts MEANINGFUL corpus facts)
+
+The deep-knowledge plan's headline cheap-first de-risk PASSED. research/runners/_corpus_svo_extract.py (spaCy 3.8.11 + en_core_web_sm, nsubj + dobj/pobj, in-vocab to the 7K brain's 1454 words, corpus-attested) on 30K TinyStories sentences -> 734 distinct in-vocab triples, 30 at count>=3, ALL MEANINGFUL: (boy,go,park)28x, (girl,go,park)15x, (bird,fly,sky)14x, (cat,go,walk)11x, (cat,climb,tree), (cat,see,bird), (bird,see,cat), (cat,jump,table), (bear,ask,rabbit). vs the random _make_svo_facts gibberish (curry describes pine). Clean source-sentence attestation (the anti-cheat). Honest residual: a few mis-parses ((spot,go,friend) = pobj-of-"with"; (rocket,make,fire) = quoted hypothetical) -- the brain is only as truthful as the extractor, but corpus-attested + moat-protected. Facts JSON: research/findings/raw/_tinystories_svo_facts.json. Root cause confirmed: _make_svo_facts:521-523 = uniform random sampling.
+
+**EXACT NEXT CONCRETE ACTION:** (1) full-TinyStories extraction launched in background (-> _tinystories_svo_facts_full.json) for a richer base; (2) wire first_chat_console.py to LOAD real facts from the JSON instead of calling _make_svo_facts (a --facts-json arg); (3) re-run the console --demo + 10-prompt rubric (Stage-1a GO test: chat states corpus-TRUE facts, moat still 0-leak, proposer recombines real arguments). Then Stage 1b (multi-bridge coverage) + 1c (develop-loop syllabus, cumulative). NEVER weaken the moat; honest origin+gitea.
