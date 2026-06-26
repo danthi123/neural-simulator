@@ -92,7 +92,44 @@ _NON_ENTITY_NAMES = {"abstract_relations", "spatial_words", "time_words", "quant
 # build_communicable_brain (every component class reused verbatim) but parameterized on OUR 1,454 vocab + the
 # 7K grounded codes + a PPMI graph built over OUR vocab from the SAME corpus the brain learned from.
 # ===========================================================================
-def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, n_attempts=60,
+def _load_real_facts(json_path, vocab, n_facts, seed):
+    """Load corpus-EXTRACTED SVO facts (_corpus_svo_extract.py output) instead of the random _make_svo_facts.
+    Same return shape (facts, absent_what, absent_who). Facts are frequency-ranked + corpus-attested; dedup to
+    one patient per (agent,action) and per (action,patient) so who/what cues stay unambiguous (the moat rule).
+    absent_* are cue combos NOT stored, drawn from the same real vocab, so the no-confab moat test still holds."""
+    import json as _json
+    vset = set(vocab)
+    with open(json_path, encoding="utf-8") as fh:
+        raw = _json.load(fh)                       # sorted by corpus count desc
+    facts, seen = [], set()
+    for rec in raw:
+        a, v, p = rec["agent"], rec["action"], rec["patient"]
+        if a not in vset or v not in vset or p not in vset or a == p:
+            continue
+        if (a, v) in seen or (v, p) in seen:       # one patient per (a,v)/(v,p) -> unambiguous cues
+            continue
+        facts.append((a, v, p)); seen.add((a, v)); seen.add((v, p))
+        if len(facts) >= n_facts:
+            break
+    if not facts:
+        return [], [], []
+    rng = np.random.RandomState(seed * 131 + 5)
+    agents = sorted({a for a, _, _ in facts}); actions = sorted({v for _, v, _ in facts})
+    patients = sorted({p for _, _, p in facts})
+    stored_av = {(a, v) for a, v, _ in facts}; stored_vp = {(v, p) for _, v, p in facts}
+    absent_what, absent_who, tries = [], [], 0
+    while (len(absent_what) < len(facts) or len(absent_who) < len(facts)) and tries < len(facts) * 200:
+        tries += 1
+        a = agents[rng.randint(len(agents))]; v = actions[rng.randint(len(actions))]
+        p = patients[rng.randint(len(patients))]
+        if len(absent_what) < len(facts) and (a, v) not in stored_av and (a, v) not in set(absent_what):
+            absent_what.append((a, v))
+        if len(absent_who) < len(facts) and (v, p) not in stored_vp and (v, p) not in set(absent_who):
+            absent_who.append((v, p))
+    return facts, absent_what, absent_who
+
+
+def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_json=None, n_attempts=60,
                          tau_pct=50.0, corpus_paths=None, corpus_max_bytes=(None, 40_000_000),
                          w_value=0.5, w_plaus=0.35, w_fam=0.15,
                          speak_base_pA=70.0, speak_gain_pA=180.0, silence_drive_pA=150.0,
@@ -151,7 +188,12 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, n_attem
 
     # ---- the KNOWN-fact store on the LEARNED codes (the no-confab moat intact) ----
     comp = RFPhasorComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded)
-    facts, _absent_what, _absent_who = _make_svo_facts(vocab, cat_ids, cat_names, n_facts, seed)
+    if facts_json:
+        facts, _absent_what, _absent_who = _load_real_facts(facts_json, vocab, n_facts, seed)
+        if verbose:
+            print(f"[console] loaded {len(facts)} REAL corpus-extracted facts from {facts_json}", flush=True)
+    else:
+        facts, _absent_what, _absent_who = _make_svo_facts(vocab, cat_ids, cat_names, n_facts, seed)
     for a, v, p in facts:
         comp.store(a, v, p, polarity="AFFIRM")
     affirmed = [tuple(f) for f in facts]
@@ -585,6 +627,8 @@ def main():
     ap.add_argument("--brain", default=DEFAULT_BRAIN, help="path to the trained brain .npz")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--n-facts", type=int, default=24, help="SVO facts the brain is TOLD (recall + discuss)")
+    ap.add_argument("--facts-json", default=None,
+                    help="path to corpus-EXTRACTED SVO facts (_corpus_svo_extract.py output); replaces random facts")
     ap.add_argument("--n-attempts", type=int, default=60, help="generative-replay samples per topic")
     ap.add_argument("--n-topics", type=int, default=12, help="grounded topics for the talkativeness arena")
     ap.add_argument("--max-topic-scan", type=int, default=40, help="cap on topics scanned for grounding (build cost)")
@@ -601,7 +645,8 @@ def main():
     warnings.filterwarnings("ignore", message="overflow encountered in exp")
     np.seterr(over="ignore")
 
-    brain = build_brain_on_codes(a.brain, seed=a.seed, n_facts=a.n_facts, n_attempts=a.n_attempts,
+    brain = build_brain_on_codes(a.brain, seed=a.seed, n_facts=a.n_facts, facts_json=a.facts_json,
+                                 n_attempts=a.n_attempts,
                                  n_topics=a.n_topics, max_topic_scan=a.max_topic_scan)
 
     if a.demo:
