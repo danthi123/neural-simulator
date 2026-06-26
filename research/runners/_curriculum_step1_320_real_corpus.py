@@ -685,6 +685,17 @@ def run_seed(seed, stories, vocab, cat_ids, cat_names, a):
           f"(hub {cx.n_hub_neurons} + tgt {cx.n_tgt_neurons}) | corr(M,C)={corr_mc:+.3f} | "
           f"VRAM resident {vram_peak} MB (pool {pool_mb} MB)", flush=True)
 
+    # ---- SAVE the trained codes (the first-chat brain artifact the composer/DiscursiveTurn loads) ----
+    if getattr(a, "save_codes", None):
+        _sc = a.save_codes if len(getattr(a, "seeds", [seed])) <= 1 else f"{a.save_codes}_seed{seed}"
+        os.makedirs(os.path.dirname(_sc) or ".", exist_ok=True)
+        G = np.array([grounded[w] for w in vocab], dtype=np.float64)   # (Nt, D) phasors, vocab order
+        np.savez(_sc, vocab=np.array(vocab, dtype=object), grounded=G,
+                 cat_ids=np.asarray(cat_ids), cat_names=np.array(cat_names, dtype=object),
+                 code=code, M=M, seed=int(seed), n_concepts=int(len(vocab)), D=int(a.D))
+        print(f"  [save-codes] wrote {_sc}.npz  ({len(vocab)} concepts, D={G.shape[1]}, "
+              f"corr(M,C)={corr_mc:+.3f})", flush=True)
+
     # ---- BARS on the LEARNED codes ----
     rm = measure_recall_and_moat(grounded, vocab, cat_ids, cat_names, seed, a.n_facts, a.D)
     gen = measure_generalization(code, cat_ids, seed, vocab=vocab, gen_reference=a.gen_reference)
@@ -832,6 +843,9 @@ def main():
                         "TinyStories corpus (--corpus-path / data/corpus/tinystories.txt) => byte-identical to the "
                         "legacy single-corpus run. Takes precedence over --corpus-path when given.")
     p.add_argument("--out", default="research/findings/raw/_curriculum_step1_320_real_corpus.json")
+    p.add_argument("--save-codes", default=None,
+                   help="path (no ext) to save the trained grounded codes (.npz: vocab+grounded+code+M) "
+                        "as the first-chat brain artifact the composer/DiscursiveTurn loads")
     a = p.parse_args()
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
