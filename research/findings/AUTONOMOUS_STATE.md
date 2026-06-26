@@ -4686,3 +4686,15 @@ The 10K smoke COMPLETED on its own right as my kill landed (3rd near-miss finish
 INSTRUMENTED the runner (commit dcbce8b5: [learn-progress] every 5000 windows). LAUNCHED (blb5vcsjd, run_in_background) the decisive **n_per24 @ 150K instrumented** vs the known n_per-16 base (gen 0.125) -- clean fidelity-effect isolation + produces full-training codes the curriculum needs either way. Owner gaming (GPU shared, slower OK, ~13GB leaves headroom).
 
 **EXACT NEXT CONCRETE ACTION:** read the first [learn-progress] line (~10min) for the REAL rate + ETA; on completion read gen + Pearson vs the 0.125 base (does corr 0.902 lift gen at full training?). Then re-calibrate the gen readiness-bar to Pearson-based (the 0.80@40cat is miscalibrated per C0). recall 1.000/moat STAND from prior real-corpus runs; NEVER weaken the moat; honest origin+gitea.
+
+---
+
+## CYCLE 595 (2026-06-26 — owner to BED, all-night autonomy; GPU frees (not gaming) -> 150K speeds up + future runs full-VRAM; parallel corpus-richness scoping kicked off)
+
+Owner: "Headed to bed so continue autonomously all night." Full autonomy, no deferring, never idle, commit both remotes, watchdog+heartbeats carry continuity. Owner no longer gaming -> GPU frees -> the in-flight 150K speeds up (no game-sharing) + future runs may use FULL VRAM (gaming-headroom no longer needed tonight; pause-on-demand only if asked).
+
+IN FLIGHT: n_per24 @ 150K instrumented (blb5vcsjd, ~25K/150K at last check, ~10 win/s, ETA ~3-4hr, healthy, [learn-progress] visible). Heartbeat armed (~00:41) to read the gen+Pearson verdict on completion.
+
+PARALLEL (kicked off this cycle): a READ-ONLY research subagent scoping the CORPUS-RICHNESS gen lever (TinyStories weak category structure -> BabyLM/Simple-Wikipedia/CHILDES? ranked cheap-first + a cheap Pearson de-risk) -> research/findings/raw/_corpus_richness_gen_lever_scoping.md. CPU-only (GPU busy). This is the likely-bigger gen lever (per C0: fidelity is one half; corpus richness + scale the other).
+
+**EXACT NEXT CONCRETE ACTION (all-night loop):** (1) when the 150K finishes (heartbeat), read gen+Pearson vs the n_per-16 base (gen 0.125) -> does corr 0.902 lift gen at full training? Fill the re-calibration doc (2026-06-26-gen-readiness-bar-recalibration.md) + commit. (2) when the corpus-scoping subagent returns, review it + run its cheap-first Pearson de-risk (GPU free now). (3) Based on both: if fidelity OR corpus lifts gen -> proceed toward first-chat-ready (curriculum scaling: Step-2 multi-bridge / richer corpus); if both flat -> honest-characterize + re-scope. NEVER idle; NEVER weaken the moat; honest origin+gitea every cycle; update this file each cycle.
