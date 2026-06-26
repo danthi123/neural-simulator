@@ -4744,3 +4744,13 @@ RECOMMENDED first-chat-ready BAR (present to owner for sign-off): keep vocab>=10
 ⇒ PIVOT to BREADTH-scaling (the confirmed first-chat path: more facts/concepts to feed the DiscursiveTurn richness). Breadth runners verified ready: _longitudinal_develop_loop_gpu.py (vocab+facts), g20_multibridge.py (concepts). Within TinyStories' ~680-concept cap NO download needed; >680 needs the Simple-Wiki download (OWNER-GATED).
 
 **EXACT NEXT CONCRETE ACTION:** launch the breadth run (develop-loop to grow vocab+facts on the real-corpus stream, within the ~680 cap) -- reading its recipe now, then launch instrumented + sized-to-fit + monitored. MORNING: present owner the full arc -- (a) gen CHARACTERIZED + not-the-first-chat-gate, (b) the recommended first-chat-ready bar for sign-off, (c) the breadth run's progress, (d) the Simple-Wiki download request (for >680 concepts). NEVER idle; NEVER weaken moat; honest origin+gitea.
+
+---
+
+## CYCLE 600 (2026-06-26 — gen arc CONCLUDED; pivot to breadth; launched 4-week develop-loop (facts + console bundles))
+
+gen arc CONCLUDED + recorded (CYCLE 599: fidelity lever closed, gen characterized+capped, recall/moat perfect). PIVOT to breadth (the confirmed first-chat path). Launched bwo79ldwo: the 4-WEEK DEVELOP-LOOP (--n-days 28, real corpus tinystories.txt, --save-bundle bridges/developed/month1 --per-day-bundles --keep-lineage) -- the artificial-life north-star AND the FACTS + console-bundle half of the first chat (grows vocab+facts over simulated days, zero catastrophic forgetting, emits console-loadable per-day bundles = the watch-and-chat-with-a-developing-brain surface). Verified UP: PID 6056, 2700-neuron stream cortex, 1.6GB (no OOM), building day 1. Small footprint -> ~1-1.5hr for 28 days + anti-cheat arms.
+
+The CONCEPT-breadth (>680 concepts) is a CONSIDERED build for the MORNING, NOT a hasty launch: the validated scaling route is MULTI-BRIDGE (g20_multibridge, linear in bridge count), NOT a single big bridge (a 640 single-bridge @ n_per 24 ~= 25K neurons ~= OOM risk); and >680 needs the Simple-Wiki download (OWNER-GATED).
+
+**EXACT NEXT CONCRETE ACTION:** monitor the develop-loop (per-day metrics in _develop_loop_month1.log; ~1-1.5hr); on completion -> review the 4-week development (vocab/facts growth, retention/zero-forget, the console bundles). MORNING: present the owner the FULL overnight arc -- (a) gen CHARACTERIZED + NOT the first-chat gate (the strategic reframe), (b) the recommended first-chat-ready bar for sign-off (demote gen to reported floor; DiscursiveTurn rubric = pass/fail), (c) the 4-week develop result + console bundles, (d) the multi-bridge concept-breadth plan + the Simple-Wiki download request (>680). NEVER idle; NEVER weaken moat; honest origin+gitea each cycle.
