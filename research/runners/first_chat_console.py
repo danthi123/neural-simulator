@@ -129,7 +129,7 @@ def _load_real_facts(json_path, vocab, n_facts, seed):
     return facts, absent_what, absent_who
 
 
-def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_json=None, n_attempts=60,
+def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_json=None, n_attempts=60, cand_cap=16,
                          tau_pct=50.0, corpus_paths=None, corpus_max_bytes=(None, 40_000_000),
                          w_value=0.5, w_plaus=0.35, w_fam=0.15,
                          speak_base_pA=70.0, speak_gain_pA=180.0, silence_drive_pA=150.0,
@@ -231,6 +231,7 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
                           scratch_value, codes_pool, full_pools=full_pools, w_value=w_value, w_plaus=w_plaus,
                           w_fam=w_fam, speak_base_pA=speak_base_pA, speak_gain_pA=speak_gain_pA,
                           silence_drive_pA=silence_drive_pA, cand_cache=cand_cache)
+    ct._cand_cap = cand_cap   # Stage-0 latency: bound _contradicts resonates per topic (None = exhaustive)
 
     # SCAN a CAPPED prefix of the topic pool for grounded topics (a topic the brain has a graph-supported
     # candidate SET about). propose_candidates_about runs a composer resonate per novel candidate (~2s/topic on
@@ -653,6 +654,8 @@ def main():
     ap.add_argument("--facts-json", default=None,
                     help="path to corpus-EXTRACTED SVO facts (_corpus_svo_extract.py output); replaces random facts")
     ap.add_argument("--n-attempts", type=int, default=60, help="generative-replay samples per topic")
+    ap.add_argument("--cand-cap", type=int, default=16,
+                    help="Stage-0 latency: stop proposing after this many accepted candidates per topic (0=exhaustive)")
     ap.add_argument("--n-topics", type=int, default=12, help="grounded topics for the talkativeness arena")
     ap.add_argument("--max-topic-scan", type=int, default=40, help="cap on topics scanned for grounding (build cost)")
     ap.add_argument("--demo", action="store_true", help="run the fixed sample conversation + print the transcript")
@@ -669,7 +672,7 @@ def main():
     np.seterr(over="ignore")
 
     brain = build_brain_on_codes(a.brain, seed=a.seed, n_facts=a.n_facts, facts_json=a.facts_json,
-                                 n_attempts=a.n_attempts,
+                                 n_attempts=a.n_attempts, cand_cap=(a.cand_cap or None),
                                  n_topics=a.n_topics, max_topic_scan=a.max_topic_scan)
 
     if a.demo:

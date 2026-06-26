@@ -346,6 +346,13 @@ class CommunicableTurn:
             if self.proposer._contradicts(a, ac, p):
                 rejected.add(triple); continue
             seen[triple] = plausibility_score(self.P, self.row, a, ac, p)
+            # Stage-0 latency: stop once we have enough accepted candidates. The DiscursiveTurn only consumes the
+            # top few (max_discuss/max_novel), so enumerating ALL distinct plausible triples just burns
+            # _contradicts composer-resonates. `_cand_cap`=None (default) keeps the original exhaustive behavior;
+            # each kept candidate is still VERIFY-gated downstream, so the no-confab moat is unaffected.
+            _cap = getattr(self, "_cand_cap", None)
+            if _cap and len(seen) >= _cap:
+                break
         out = sorted(seen.items(), key=lambda kv: -kv[1])
         self._cand_cache[topic] = out
         return out

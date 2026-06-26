@@ -4909,3 +4909,15 @@ F1 surface-morphology polish (first_chat_console.py: _third_person + _surface_mo
 Fixed _corpus_svo_extract.py splitter: normalize <|endoftext|> -> newline, split on newlines, chunk long articles (<=100k) -- now handles TinyStories (<|endoftext|>) AND Simple-Wiki (newline-per-article). Simple-Wiki re-run (20K sentences) yields MEANINGFUL facts ((cat,sit,mat), (people,catch,fish), (computer,come,window), (people,go,school)) -- but LOW volume (9 at count>=2): most encyclopedic args are OUT of the 1454 vocab. CONFIRMS the VOCAB is the knowledge ceiling (what Stage 1b grows), not the corpus. Capacity de-risk probe (_facts_capacity_probe.py) running: how many real facts can the RFPhasorComposer hold at recall>=0.95 + moat 0 (VSA linear-degradation wall, research risk 2) -> the Stage-1b storage budget.
 
 **EXACT NEXT CONCRETE ACTION:** read the capacity-probe result (recall vs N=60/120/180/250) -> sets the facts-per-composer budget. Then: full Simple-Wiki extraction (broader base) + combine with TinyStories; and Stage 1b (multi-bridge: MORE concepts -> more in-vocab facts extractable -> deeper knowledge) -- the owner's #1, with a week of training authorized. Moat 0-leak throughout; honest origin+gitea.
+
+---
+
+## CYCLE 617 (2026-06-26 — capacity GO + Stage-0 latency cap implemented)
+
+CAPACITY DE-RISK GO: the RFPhasorComposer holds all 165 unique-cue TinyStories facts at who+what recall 0.988, moat 0 false-accepts -- NO VSA degradation wall up to 165 (research risk 2 retired for this scale). So the brain can know the FULL real-fact base cleanly.
+
+STAGE-0 latency cap IMPLEMENTED (root-caused: propose_candidates_about runs a _contradicts composer-resonate per distinct plausible candidate, but the DiscursiveTurn only uses the top few -> over-computes). Fix: early-stop after `_cand_cap` accepted candidates (first_chat_console --cand-cap, default 16; 0=exhaustive), wired via getattr in _communicable_turn_stageA_derisk.propose_candidates_about. Moat unaffected (each kept candidate still VERIFY-gated). Import-verified. Backward-compatible (cap=None = original).
+
+Full Simple-Wiki extraction (300K sentences) running in background -> broader encyclopedic facts.
+
+**EXACT NEXT CONCRETE ACTION:** on Simple-Wiki done -> (1) combine TinyStories(558)+Simple-Wiki facts into one base; (2) timed console run WITH --cand-cap + --n-facts ~165 (clean, no CPU contention): verify <3s/turn (Stage-0 speedup) + moat 0 + answer quality = the deployable Stage-1 first-chat brain milestone. Then Stage 1b (multi-bridge MORE concepts -> deeper knowledge). Moat 0-leak throughout; honest origin+gitea.
