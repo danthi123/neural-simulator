@@ -4982,3 +4982,13 @@ Multi-bridge design (subagent) -> research/findings/2026-06-26-multibridge-deep-
 Stage-0 multi-bridge de-risk (minutes, NO training): split the EXISTING brain1454 codes into 2x727 shards, route the 24 facts by agent-shard, show per-shard recall >=0.95 at <= single-bridge time -- proves per-bridge cleanup with zero new training.
 
 **EXACT NEXT CONCRETE ACTION:** (speed profiler b1t07tgcy landing -> optimize the per-turn hotspot = SHORT-term). Then the medium/long-term deep-knowledge fork has TWO levers now: multi-bridge (Stage 0 cheap de-risk) AND the taxonomy ceiling (corpus-mined taxonomy expansion -- the deeper bottleneck). Moat 0-leak; honest origin+gitea.
+
+---
+
+## CYCLE 624 (2026-06-26 — SPEED CORRECTION: per-turn ~2.7s not 13s; reprioritize to deep knowledge)
+
+Per-turn profiler (_profile_turn.py, clean/uncontended): respond 0.2-6.0s (avg ~2.7s), audit ~0.1s (nearly free). The ~13s/turn I flagged was CONTENDED runs (overlapping GPU/CPU jobs) -- MIS-DIAGNOSIS, corrected. Speed is ACCEPTABLE; the 1454-brain is usable. Hotspot: _rf_advance_one (the RF resonate per-step loop, CPU; 2.49s of ~16s profiled, 27664 calls = ~22 resonates/turn) + _cleanup_all (1.35s). Cheap wins (batched scan like the OneBrainComposer's lever-1; fewer discuss ops) AVAILABLE but NOT urgent.
+
+REPRIORITIZE: speed is not the binding constraint -> the deep-knowledge frontier is. Two levers (CYCLE 623): (a) the g20 TAXONOMY ceiling (#1 bottleneck -- trainer admits only ~2012 taxonomy words; corpus has 6279@freq>=300) -> corpus-mine more concepts into the curriculum; (b) multi-bridge per-bridge-cleanup (hold more concepts without the crowding).
+
+**EXACT NEXT CONCRETE ACTION:** dispatched the multi-bridge Stage-0 de-risk (split brain1454 into 2 shards, prove per-bridge cleanup recall>=0.95, no training) as a subagent; IN PARALLEL scope the taxonomy expansion (corpus-mine content words -> categories, brain-native, the #1 bottleneck). Both are the deep-knowledge frontier. Moat 0-leak; honest origin+gitea.
