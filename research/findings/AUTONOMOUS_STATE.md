@@ -4774,3 +4774,13 @@ Launched (run_in_background) the 6-SEED COMPRESSED-WEEK (the runner's pre-regist
 **OWNER IS BACK + ENGAGED (morning).** Reported the night; owner asked what generalization is (answered). ⇒ OVERNIGHT AUTONOMY IS PAUSED pending the owner's steer. Do NOT autonomously launch the owner-gated breadth-build (multi-bridge concept-scaling / bigger curriculum / Simple-Wiki download) -- those are the owner's to direct. If the heartbeat/watchdog fires while the owner is engaging: read this, do a light status check only, do NOT launch GPU work, await the owner.
 
 **3 DECISIONS PENDING OWNER (the morning agenda):** (1) first-chat-ready BAR sign-off (demote gen from hard >=0.80 gate to a reported soft floor; DiscursiveTurn 10-prompt rubric = pass/fail); (2) breadth-build direction + how far to scale (~1-1.5K concepts via multi-bridge); (3) Simple-Wiki download approval (~120MB, for >680 concepts). Once the owner steers -> resume the chosen build. NEVER weaken the moat; honest origin+gitea.
+
+---
+
+## CYCLE 603 (2026-06-26 — owner steered "3 then 2 then 1"; autonomy RESUMED; executing #3 Simple-Wiki download first)
+
+Owner decision (morning): "3 then 2 then 1" -> execute the 3 in dependency order: #3 download corpus -> #2 breadth-build on it -> #1 set the bar. Autonomy RESUMED on the owner's direction (the CYCLE-602 pause is lifted). Heartbeat check before this was clean (GPU idle, nothing rogue, 6-seed finding committed a8f25b31).
+
+#3 DOWNLOAD (owner-approved): launched _download_simplewiki.py (background) -> data/corpus/simplewiki.txt = full Simple-English-Wikipedia (rahular/simple-wikipedia HF, ~120MB, public no-auth), extracted + LOWERCASED (the tokenizer is re.findall([a-z]+)). HF datasets 3.6.0 present, network 200 OK.
+
+**EXACT NEXT CONCRETE ACTION:** (a) verify the download lands (token count + size sane; corpus_stream multi-file already consumes it via --corpus-paths). (b) #2 BREADTH-BUILD: scale concepts toward the ~1-1.5K first-chat target on the COMBINED corpus (tinystories.txt clean codes + simplewiki.txt breadth) -- the validated route is MULTI-BRIDGE (g20_multibridge, linear in bridge count); design the run (bridge count, vocab, facts-for-discursive-richness), de-risk cheap-first (smoke), then the full run instrumented + monitored. (c) #1 BAR: demote gen from hard >=0.80 gate to a reported soft floor (~0.10 Pearson + derangement-collapse) + the 10-prompt DiscursiveTurn rubric = pass/fail (relax in the runner + the knowledge-scaling bar). NEVER idle; NEVER weaken the moat; honest origin+gitea.
