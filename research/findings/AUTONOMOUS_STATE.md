@@ -4816,3 +4816,11 @@ OWNER said "up to you" on the diagnosis fork -> ran the OFFLINE diagnostic (_dia
 => the BREADTH TARGET is sound (1454 fits, moat holds); a single over-trained 1454/n_per-10 bridge is the wrong vehicle. FIX: stay in the STRUCTURED regime -- train to the window count where recall PEAKS before densifying, at the proven n_per.
 
 **EXACT NEXT CONCRETE ACTION:** add a CHECKPOINT-EVAL to the curriculum runner (measure recall+moat every ~10K windows during one run, log the recall-vs-windows curve, save-codes at the PEAK recall) -> ONE run (1454, ~60K windows) gives the curve + the optimal brain. If the peak recall at 1454 is still too low (the n_per-10/1454 regime fundamentally can't hold structure) -> MULTI-BRIDGE split (~5 bridges of ~290 concepts each at the proven n_per 16-24, replicating the 320-tier that works). Diagnostic committed: _diagnose_recall_degradation.py. NEVER weaken the moat; honest origin+gitea.
+
+---
+
+## CYCLE 607 (2026-06-26 — owner "up to you"; launched window sweep to find the recall peak + bank the optimal working first-chat brain)
+
+Per the diagnosis (CYCLE 606: over-training densification): single-bridge has a recall-vs-coverage tradeoff. Launched (b4eygqzky) a WINDOW SWEEP: 1454/n_per10/n_hub500 @ 8K/16K/32K windows, combined corpus, --save-codes bridges/firstchat/brain1454_w{W} each -> _breadth1454_w{W}.json + _breadth1454_sweep.log. ~1.5hr. Finds the recall-vs-windows peak (8K=0.917, 150K=0.208 known) + banks the optimal working brain.
+
+**EXACT NEXT CONCRETE ACTION:** on sweep completion -> read recall+moat at 8K/16K/32K, pick the BEST (highest recall, moat 0-FA) = the working first-chat brain (frequent-concept breadth; the rare-1454 tail stays thin in a single bridge). Commit a finding. THEN: #1 (bar relax against the real numbers) + tee up the MULTI-BRIDGE split (~5 bridges of ~290c at proven n_per 16-24, the 320-tier recipe that held recall) for the FULL 1454-with-coverage + the console (load the brain into the DiscursiveTurn = the first chat). NEVER weaken the moat; honest origin+gitea.
