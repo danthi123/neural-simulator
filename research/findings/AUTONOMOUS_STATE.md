@@ -4824,3 +4824,11 @@ OWNER said "up to you" on the diagnosis fork -> ran the OFFLINE diagnostic (_dia
 Per the diagnosis (CYCLE 606: over-training densification): single-bridge has a recall-vs-coverage tradeoff. Launched (b4eygqzky) a WINDOW SWEEP: 1454/n_per10/n_hub500 @ 8K/16K/32K windows, combined corpus, --save-codes bridges/firstchat/brain1454_w{W} each -> _breadth1454_w{W}.json + _breadth1454_sweep.log. ~1.5hr. Finds the recall-vs-windows peak (8K=0.917, 150K=0.208 known) + banks the optimal working brain.
 
 **EXACT NEXT CONCRETE ACTION:** on sweep completion -> read recall+moat at 8K/16K/32K, pick the BEST (highest recall, moat 0-FA) = the working first-chat brain (frequent-concept breadth; the rare-1454 tail stays thin in a single bridge). Commit a finding. THEN: #1 (bar relax against the real numbers) + tee up the MULTI-BRIDGE split (~5 bridges of ~290c at proven n_per 16-24, the 320-tier recipe that held recall) for the FULL 1454-with-coverage + the console (load the brain into the DiscursiveTurn = the first chat). NEVER weaken the moat; honest origin+gitea.
+
+---
+
+## CYCLE 608 (2026-06-26 — owner steer: recall declines MONOTONICALLY, so kill the 32K + sweep UNDER 8K for the true peak)
+
+Sweep curve confirmed MONOTONIC DECLINE: 8K recall **0.917** (moat 0-FA, saved brain1454_w8000) / 16K **0.667** / 150K 0.208. Owner: don't bother finishing the declining 32K point; the peak is at/below 8K + sub-8K runs are quicker. AGREED. Killed the 32K; launched (bmsfpj8vz) the SUB-8K sweep: 1454/n_per10 @ 3K/5K/7K windows, --save-codes brain1454_w{W} each -> _breadth1454_w{W}.json + _breadth1454_sub8k_sweep.log. ~25min. The 8K brain (0.917) is banked as a FLOOR -- this can only improve on it (find a higher peak, ideally >=0.95).
+
+**EXACT NEXT CONCRETE ACTION:** on sub-8K completion -> read recall+moat at 3K/5K/7K (+ known 8K 0.917 / 16K 0.667); pick the BEST (highest recall, moat 0-FA) = the working first-chat brain (bridges/firstchat/brain1454_w{best}.npz); write the curve finding 2026-06-26-breadth1454-window-sweep.md + commit. THEN #1 (bar relax against the real numbers) + multi-bridge for full-1454-coverage + the console. NEVER weaken the moat; honest origin+gitea.
