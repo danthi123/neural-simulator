@@ -783,7 +783,11 @@ def decide(per_seed, a):
     der_ok = all(der)
     frozen_ok = (len(frozen_flat) == 0) or all(frozen_flat)
 
-    go = bool(recall_ok and moat_ok and gen_ok and der_ok and frozen_ok)
+    # gen DEMOTED from a hard gate to a REPORTED soft floor (2026-06-26 reframe, owner-approved): on-substrate
+    # generalization is substrate-capped (over-training densification) + is NOT the first-chat gate -- recall +
+    # the no-confab moat + the derangement-collapse VALIDITY (der_ok: gen structure is real, not noise) are the
+    # real bars. gen magnitude (gen_ok vs gen_bar) is still computed + reported, but no longer gates GO.
+    go = bool(recall_ok and moat_ok and der_ok and frozen_ok)
 
     # per-bar pass/miss for an honest report (the first real-corpus 320 data point)
     bars = {
@@ -934,10 +938,11 @@ def main():
         verdict = (
             f"STEP 1 GO -> STEP 2 — the CORPUS-FREQUENCY-DERIVED 320-concept curriculum learns on ONE bridge from "
             f"the REAL TinyStories corpus and passes every bar (3 seeds): recall {min(bars['recall_per_seed']):.2f}"
-            f"-{max(bars['recall_per_seed']):.2f} >= {a.recall_bar}, moat 0 false-accepts, generalization "
-            f"({a.gen_reference} reference) {min(bars['generalization_per_seed']):.2f}"
-            f"-{max(bars['generalization_per_seed']):.2f} >= {a.gen_bar} with derangement collapse, frozen-brain "
-            f"control holds. {_both_str}. Calibrated per-bridge rate: "
+            f"-{max(bars['recall_per_seed']):.2f} >= {a.recall_bar}, moat 0 false-accepts, derangement collapse "
+            f"+ frozen-brain control hold. Generalization ({a.gen_reference} reference) "
+            f"{min(bars['generalization_per_seed']):.2f}-{max(bars['generalization_per_seed']):.2f} REPORTED "
+            f"(soft floor, NOT gating -- substrate-capped, not the first-chat gate). {_both_str}. "
+            f"Calibrated per-bridge rate: "
             f"{calibrated['mean_learn_seconds_per_bridge']}s for 320 concepts "
             f"({calibrated['windows_per_second']} win/s), VRAM {calibrated['vram_resident_mb_peak_max']} MB resident "
             f"(<24 GB). The corpus-derived pipeline works at the validated scale -> the decisive Step-2 4-bridge "
@@ -949,9 +954,8 @@ def main():
             misses.append(f"recall {bars['recall_per_seed']} (bar {a.recall_bar})")
         if not bars["moat_pass_0FA"]:
             misses.append(f"MOAT false-accepts {bars['moat_false_accepts_per_seed']} (must be 0)")
-        if not bars["generalization_pass"]:
-            misses.append(f"generalization ({a.gen_reference}) "
-                          f"{[round(x,3) for x in bars['generalization_per_seed']]} (bar {a.gen_bar})")
+        # gen is REPORTED-only now (demoted from a gate, 2026-06-26 reframe) -> NOT a gating miss
+        # (its value is in the [generalization] line + bars dict; der_ok below is the structure-validity gate).
         if not bars["derangement_pass"]:
             misses.append(f"derangement did NOT collapse {bars['derangement_collapses_per_seed']}")
         if not bars["frozen_pass"]:

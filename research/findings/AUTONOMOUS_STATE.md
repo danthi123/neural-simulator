@@ -4844,3 +4844,11 @@ Recall PEAKS at 3K (perfect), declines after ~8K (densification, per CYCLE-606 d
 PICK (recommended to owner): **brain1454_w7000_seed42.npz** = the working first-chat brain -- recall 0.958 (within 2/48 of 3K's perfect), highest corr 0.869, most concept-coverage before densification (-> richest discursive adjacency). 3K (perfect recall, thinnest coverage) = the max-recall alternative. AWAITING owner's pick (7K rec vs 3K).
 
 **EXACT NEXT CONCRETE ACTION:** on owner's brain pick -> Step 1 (#1 bar relax: demote gen>=0.80 gate to reported floor + DiscursiveTurn rubric pass/fail, against the chosen brain's recall) -> Step 2 console (load the chosen brain1454_w{W}.npz codes into the DiscursiveTurn agent + wire the GO 3G neural discourse-planner as --neural-planner = the one cheap purity close-out) -> Step 3 THE FIRST CHAT (owner tests). Then: multi-bridge full-1454-coverage + richer fact-base. NEVER weaken the moat; honest origin+gitea.
+
+---
+
+## CYCLE 610 (2026-06-26 — owner picked 7K brain; #1 DONE: gen demoted gate->reported floor + first-chat-ready bar doc)
+
+Owner: "go with your suggestion" = 7K (brain1454_w7000_seed42.npz: recall 0.958, moat 0-FA, 1454 concepts). #1 (the bar) DONE: demoted gen from a GO gate to a REPORTED soft floor in the curriculum runner (`_curriculum_step1_320_real_corpus.py:786` -- go = recall_ok and moat_ok and der_ok and frozen_ok; gen still computed+reported, derangement-collapse VALIDITY still gates; verdict wording + miss-list updated; import OK). First-chat-ready bar doc: research/findings/2026-06-26-first-chat-ready-bar.md (vocab>=1000 + recall>=0.95 + moat 0-FA HARD + gen reported-floor[derangement-collapse, not magnitude] + DiscursiveTurn rubric >=8/10 = the pass/fail). 7K brain PASSES all quantitative bars; the rubric is pending the console. This also closes the close-out-audit's flagged gen-gate-demote.
+
+**EXACT NEXT CONCRETE ACTION:** Step 2 = THE CONSOLE -- wire the 7K brain (brain1454_w7000_seed42.npz grounded codes) into the DiscursiveTurn agent (_discursive_turn_stage0_derisk.py, Stage-0 GO) + fold in the 3G neural discourse-planner (the cheap purity close-out: --neural-planner) -> an interactive chat loop (REPL first). Pure composition, NO sim/ edit. Then run the 10-prompt rubric (the bar's final check) + Step 3 (owner's first chat). NEVER weaken the moat; honest origin+gitea.
