@@ -4893,3 +4893,11 @@ Wired first_chat_console.py with --facts-json (new _load_real_facts: loads corpu
 HONEST RESIDUALS: (1) verb morphology -- renders "boy gos park"/"bird flys sky" (naive +s) instead of "goes"/"flies"; the Stage-2a F1 surface-polish (host-side body-level inflection). (2) the flagged/opinion channel is still noisy for ABSTRACT topics ("head peeks rocket", "ball clutches jelly") because the PPMI graph is noise there -- but HEDGED ("I'd guess"/"I think maybe"), never asserted, moat intact. Frequent-entity topics (boy/bird/cat) are clean; the abstract tail wants Stage 1b coverage.
 
 **EXACT NEXT CONCRETE ACTION:** Stage 2a (F1) -- fix the verb-inflection map in first_chat_console.py (_build_inflection_map / the renderer's 3rd-person conjugation: go->goes, fly->flies, the -es/-ies/-y rules) so CERTAIN facts read fluent ("the boy goes to the park"). Cheap + directly lifts the felt fluency. Then Stage 1b (multi-bridge coverage for the abstract/rare tail) + Stage 0 (latency: build 40.7s + per-turn). NEVER weaken the moat; honest origin+gitea.
+
+---
+
+## CYCLE 615 (2026-06-26 — Stage 2a morphology polish VERIFIED + Stage-1a findings doc)
+
+F1 surface-morphology polish (first_chat_console.py: _third_person + _surface_morphology, applied in _render to the DISPLAYED paragraph only -- body-level, VERIFY chain untouched). VERIFIED on the demo: "The boy GOES park." / "The bird FLIES sky." (was gos/flys), moat 0 LEAKS. Stage-1a findings doc: research/findings/2026-06-26-stage1a-corpus-facts-GO.md. Simple-Wiki extraction returned 0 facts -- delimiter bug: simplewiki.txt is NEWLINE-per-article (not <|endoftext|>), so split("<|endoftext|>") -> one 143MB blob -> skipped by the len<50000 guard. Fix: robust splitter (handle both delimiters + long articles).
+
+**EXACT NEXT CONCRETE ACTION:** fix _corpus_svo_extract.py splitter (replace <|endoftext|> with newline THEN split on newlines + raise nlp.max_length / sentence-chunk long articles) -> re-run Simple-Wiki extraction (Stage 1b broader base). Then Stage 1b multi-bridge coverage + Stage 1c develop-loop syllabus (cumulative) + Stage 0 latency. Moat 0-leak throughout; honest origin+gitea.

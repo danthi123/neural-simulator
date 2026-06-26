@@ -315,6 +315,29 @@ _ABOUT_RE = re.compile(r"\b(?:what\s+is|what's|tell me about|what do you know ab
                        r"thoughts on|your view on|talk about)\s+(?:a\s+|an\s+|the\s+)?(\w+)", re.IGNORECASE)
 
 
+_SIBILANT = ("s", "sh", "ch", "x", "z", "o")
+
+
+def _third_person(v):
+    """Correct English 3rd-person-singular present of a base verb (go->goes, fly->flies, kiss->kisses, eat->eats)."""
+    if v.endswith(_SIBILANT):
+        return v + "es"
+    if len(v) > 1 and v.endswith("y") and v[-2] not in "aeiou":
+        return v[:-1] + "ies"
+    return v + "s"
+
+
+def _surface_morphology(text, verbs):
+    """F1 surface polish (body-level emission, NOT cognition): fix the renderer's naive verb+'s' to correct
+    3rd-person morphology in the DISPLAYED paragraph only. The VERIFY chain stays internally consistent on the
+    naive form (untouched) -- this rewrites just the final surface a human reads ('the boy gos' -> 'the boy goes')."""
+    fixes = {v + "s": _third_person(v) for v in verbs if _third_person(v) != v + "s"}
+    if not fixes:
+        return text
+    pat = re.compile(r"\b(" + "|".join(re.escape(w) for w in fixes) + r")\b")
+    return pat.sub(lambda mo: fixes[mo.group(1)], text)
+
+
 class FirstChatConsole:
     """Routes a free-text user line to the right DiscursiveTurn.discuss(...) call + assembles the paragraph.
 
@@ -351,7 +374,7 @@ class FirstChatConsole:
         # greeting / phatic
         if _GREETING_RE.search(m):
             rec = self.dt.discuss(m, force_intent="phatic")
-            return rec["paragraph"], rec
+            return self._render(rec), rec
 
         # teaching: depth-up / stop on the held topic
         if _MORE_RE.search(m) or _STOP_RE.search(m):
@@ -398,12 +421,12 @@ class FirstChatConsole:
         rec = self.dt.discuss(m, topic=topic)
         return self._render(rec), rec
 
-    @staticmethod
-    def _render(rec):
-        """The paragraph, or a graceful honest non-answer if the brain assembled nothing."""
+    def _render(self, rec):
+        """The paragraph (with F1 surface-morphology polish), or a graceful honest non-answer if the brain
+        assembled nothing."""
         para = rec.get("paragraph", "").strip()
         if para:
-            return para
+            return _surface_morphology(para, self.verbs)
         # nothing assembled (e.g. an unknown word, or a topic with no graph support) -> honest, NOT a fabrication.
         return "I don't have anything grounded to say about that yet."
 
