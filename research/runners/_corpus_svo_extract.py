@@ -44,9 +44,19 @@ def extract(corpus_path, vocab, max_sentences, nlp):
     # well under spaCy's 1M-char parser limit). Skip any pathological >50k-char chunk defensively.
     with open(corpus_path, encoding="utf-8") as fh:
         text = fh.read()
-    stories = [s.strip() for s in text.split("<|endoftext|>") if s.strip() and len(s) < 50000]
+    # robust to both corpora: TinyStories is <|endoftext|>-delimited (few newlines), Simple-Wiki is one article
+    # PER LINE. Normalize both to newline-split, then chunk any long article well under spaCy's 1M parser limit.
+    pieces = []
+    for s in text.replace("<|endoftext|>", "\n").split("\n"):
+        s = s.strip()
+        if not s:
+            continue
+        if len(s) <= 100000:
+            pieces.append(s)
+        else:
+            pieces.extend(s[i:i + 100000] for i in range(0, len(s), 100000))
     n_sent = 0
-    for doc in nlp.pipe(stories, batch_size=128):
+    for doc in nlp.pipe(pieces, batch_size=128):
         for sent in doc.sents:
             n_sent += 1
             for tok in sent:

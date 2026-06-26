@@ -4901,3 +4901,11 @@ HONEST RESIDUALS: (1) verb morphology -- renders "boy gos park"/"bird flys sky" 
 F1 surface-morphology polish (first_chat_console.py: _third_person + _surface_morphology, applied in _render to the DISPLAYED paragraph only -- body-level, VERIFY chain untouched). VERIFIED on the demo: "The boy GOES park." / "The bird FLIES sky." (was gos/flys), moat 0 LEAKS. Stage-1a findings doc: research/findings/2026-06-26-stage1a-corpus-facts-GO.md. Simple-Wiki extraction returned 0 facts -- delimiter bug: simplewiki.txt is NEWLINE-per-article (not <|endoftext|>), so split("<|endoftext|>") -> one 143MB blob -> skipped by the len<50000 guard. Fix: robust splitter (handle both delimiters + long articles).
 
 **EXACT NEXT CONCRETE ACTION:** fix _corpus_svo_extract.py splitter (replace <|endoftext|> with newline THEN split on newlines + raise nlp.max_length / sentence-chunk long articles) -> re-run Simple-Wiki extraction (Stage 1b broader base). Then Stage 1b multi-bridge coverage + Stage 1c develop-loop syllabus (cumulative) + Stage 0 latency. Moat 0-leak throughout; honest origin+gitea.
+
+---
+
+## CYCLE 616 (2026-06-26 — extractor splitter fixed for both corpora; capacity de-risk running)
+
+Fixed _corpus_svo_extract.py splitter: normalize <|endoftext|> -> newline, split on newlines, chunk long articles (<=100k) -- now handles TinyStories (<|endoftext|>) AND Simple-Wiki (newline-per-article). Simple-Wiki re-run (20K sentences) yields MEANINGFUL facts ((cat,sit,mat), (people,catch,fish), (computer,come,window), (people,go,school)) -- but LOW volume (9 at count>=2): most encyclopedic args are OUT of the 1454 vocab. CONFIRMS the VOCAB is the knowledge ceiling (what Stage 1b grows), not the corpus. Capacity de-risk probe (_facts_capacity_probe.py) running: how many real facts can the RFPhasorComposer hold at recall>=0.95 + moat 0 (VSA linear-degradation wall, research risk 2) -> the Stage-1b storage budget.
+
+**EXACT NEXT CONCRETE ACTION:** read the capacity-probe result (recall vs N=60/120/180/250) -> sets the facts-per-composer budget. Then: full Simple-Wiki extraction (broader base) + combine with TinyStories; and Stage 1b (multi-bridge: MORE concepts -> more in-vocab facts extractable -> deeper knowledge) -- the owner's #1, with a week of training authorized. Moat 0-leak throughout; honest origin+gitea.
