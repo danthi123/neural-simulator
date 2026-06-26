@@ -4921,3 +4921,13 @@ STAGE-0 latency cap IMPLEMENTED (root-caused: propose_candidates_about runs a _c
 Full Simple-Wiki extraction (300K sentences) running in background -> broader encyclopedic facts.
 
 **EXACT NEXT CONCRETE ACTION:** on Simple-Wiki done -> (1) combine TinyStories(558)+Simple-Wiki facts into one base; (2) timed console run WITH --cand-cap + --n-facts ~165 (clean, no CPU contention): verify <3s/turn (Stage-0 speedup) + moat 0 + answer quality = the deployable Stage-1 first-chat brain milestone. Then Stage 1b (multi-bridge MORE concepts -> deeper knowledge). Moat 0-leak throughout; honest origin+gitea.
+
+---
+
+## CYCLE 618 (2026-06-26 — combined facts + corpus ceiling: Stage 1b is feasible)
+
+Combined TinyStories(558)+Simple-Wiki(90) -> 647 distinct facts (165 unique-cue) via _combine_facts.py. Corpus CONCEPT CEILING (word-freq over the combined corpus): 320270 distinct types; 6279 @ freq>=300, 13421 @ freq>=100, 60355 @ freq>=10. So 1454 was a CHOSEN first-chat target, NOT the corpus cap -> Stage 1b (grow concepts -> more in-vocab facts, since out-of-vocab args are the current fact ceiling) is FEASIBLE. Constraint = the BRIDGE (single-bridge densifies at scale per the window-sweep -> multi-bridge, OR a tuned bigger single-bridge at the recall-peak window count -> a de-risk).
+
+Stage-0 cap: implemented (helps the build's topic-scan; the per-TURN cost is the render/VERIFY resonates per emitted proposition, NOT propose [cached] -- so the cap is a build-speedup, the per-turn render/VERIFY optimization is the deeper deferred lever). Clean Stage-1 demo (combined facts, n_facts 60, cap 16, -u) running (bxf2ezimd, will notify).
+
+**EXACT NEXT CONCRETE ACTION:** on the clean demo notification -> read its transcript+TOTAL (confirm combined-facts Stage-1 brain works + moat 0); bank Stage 1. Then Stage 1b de-risk: derive a ~3000-concept curriculum from the combined corpus + train a bigger single-bridge at a tuned window count (n_hub scaled up), check recall vs densification (GPU, background ~hours -- owner authorized a week). If single-bridge densifies -> multi-bridge (g20 sparse). Moat 0-leak throughout; honest origin+gitea.
