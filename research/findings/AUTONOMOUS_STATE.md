@@ -4992,3 +4992,13 @@ Per-turn profiler (_profile_turn.py, clean/uncontended): respond 0.2-6.0s (avg ~
 REPRIORITIZE: speed is not the binding constraint -> the deep-knowledge frontier is. Two levers (CYCLE 623): (a) the g20 TAXONOMY ceiling (#1 bottleneck -- trainer admits only ~2012 taxonomy words; corpus has 6279@freq>=300) -> corpus-mine more concepts into the curriculum; (b) multi-bridge per-bridge-cleanup (hold more concepts without the crowding).
 
 **EXACT NEXT CONCRETE ACTION:** dispatched the multi-bridge Stage-0 de-risk (split brain1454 into 2 shards, prove per-bridge cleanup recall>=0.95, no training) as a subagent; IN PARALLEL scope the taxonomy expansion (corpus-mine content words -> categories, brain-native, the #1 bottleneck). Both are the deep-knowledge frontier. Moat 0-leak; honest origin+gitea.
+
+---
+
+## CYCLE 625 (2026-06-26 — taxonomy-expansion scoped: the g20 admission gate + the POS-driven unlock)
+
+The trainer's concept-admission gate: `candidates = list(word2cat)` (_curriculum_step1_320_real_corpus.py:296) -- only g20-TAXONOMY members are candidates; `_is_content_word` (:302) further requires a CONTENT_G20 category. So a corpus word NOT in g20 is NEVER admitted regardless of frequency -> the ~2012 ceiling. The cat_ids' LIVE uses: the proposer noun/verb pools (discuss) + the gen-reference (DEMOTED). The FACTS already use spaCy POS (the extractor), NOT cat_ids.
+
+CHEAPEST UNLOCK (scoped, not yet built): a POS-driven admission path -- a new vocab_filter that admits the corpus's top-N content words (spaCy noun/verb-tagged via a one-time corpus POS-map, beyond g20) with POS-based cat_ids. Bypasses the g20 cap -> the full corpus content vocab (6279@freq>=300). COMBINES with multi-bridge (more concepts -> per-bridge shards). Build = corpus POS-map extractor (spaCy, once) + the trainer admission path + a training; gen will be lower (reported-not-gating) for non-g20 words; recall/facts/proposer-pools all work via POS.
+
+**EXACT NEXT CONCRETE ACTION:** await the multi-bridge Stage-0 de-risk (ad08ab71, subagent -- per-bridge cleanup recall>=0.95). Then build the deep-knowledge stack: POS-driven taxonomy expansion (the #1 concept bottleneck) + multi-bridge (hold them). Do NOT overlap CPU-heavy runs. Moat 0-leak; honest origin+gitea.
