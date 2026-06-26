@@ -4931,3 +4931,13 @@ Combined TinyStories(558)+Simple-Wiki(90) -> 647 distinct facts (165 unique-cue)
 Stage-0 cap: implemented (helps the build's topic-scan; the per-TURN cost is the render/VERIFY resonates per emitted proposition, NOT propose [cached] -- so the cap is a build-speedup, the per-turn render/VERIFY optimization is the deeper deferred lever). Clean Stage-1 demo (combined facts, n_facts 60, cap 16, -u) running (bxf2ezimd, will notify).
 
 **EXACT NEXT CONCRETE ACTION:** on the clean demo notification -> read its transcript+TOTAL (confirm combined-facts Stage-1 brain works + moat 0); bank Stage 1. Then Stage 1b de-risk: derive a ~3000-concept curriculum from the combined corpus + train a bigger single-bridge at a tuned window count (n_hub scaled up), check recall vs densification (GPU, background ~hours -- owner authorized a week). If single-bridge densifies -> multi-bridge (g20 sparse). Moat 0-leak throughout; honest origin+gitea.
+
+---
+
+## CYCLE 619 (2026-06-26 — Stage 1 FUNCTIONALLY CONFIRMED: the brain states real corpus facts, moat 0)
+
+Clean demo on the COMBINED facts (n_facts 60, cap 16): "The boy goes park." / "The bird flies sky." (real corpus facts + correct morphology), discuss via real adjacent facts (lily throws ball / asks friend), abstain on "florbglax", MOAT 0 LEAKS. => the deployable Stage-1 first-chat brain (1454 concepts, real corpus-extracted knowledge, hallucination-safe). 58/60 recall.
+
+CAVEATS (honest): (1) the 475s timing was CONTENDED -- the 3000-smoke's CPU-host corpus-parse ran concurrently; true ~145s (~13s/turn). Still SLOW for "natural-feeling". The per-turn cost is the render/VERIFY resonates per proposition (NOT propose, which is cached) -- so the Stage-0 cap helped the BUILD-scan, not the per-turn; the per-turn render/VERIFY optimization is the deeper DEFERRED Stage-0 lever (needs a clean profile). (2) n_facts 180 build timed out (>5min) WITHOUT contention -- the recall-check (180 query_patient) + build is slow; one-time, optimizable (sample the recall-check). Deployable demo used n_facts 60.
+
+**EXACT NEXT CONCRETE ACTION:** await the 3000-concept smoke (ba63pq5cr, GPU) -> if it runs + fits VRAM, launch a full Stage-1b de-risk training (recall vs densification at 2x vocab); the corpus supports 6000+ concepts so concept-growth is the deep-knowledge lever (owner's #1). Stage-0 per-turn latency = parallel/later optimization (profile render/VERIFY cleanly). Do NOT overlap CPU-heavy runs (the 475s lesson). Moat 0-leak; honest origin+gitea.
