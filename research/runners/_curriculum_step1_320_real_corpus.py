@@ -432,6 +432,7 @@ class StreamCortexBridge:
         rng = np.random.RandomState(story_seed)
         story_order = rng.permutation(len(self.stories))
         n_win = 0
+        _learn_t0 = time.time()
         for si in story_order:
             if n_win >= max_windows:
                 break
@@ -447,6 +448,9 @@ class StreamCortexBridge:
                         for h in hub_ids:
                             self.C_stream[t, h] += 1.0
                     n_win += 1
+                    if (n_win % 5000) == 0:
+                        print(f"[learn-progress] {n_win}/{max_windows} windows  "
+                              f"{time.time()-_learn_t0:.0f}s", flush=True)
                     if n_win >= max_windows:
                         break
         self.bridge.cp_external_input_current[:] = 0.0
