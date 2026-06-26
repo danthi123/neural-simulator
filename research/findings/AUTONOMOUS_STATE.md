@@ -4959,3 +4959,13 @@ The 2500-concept request CAPPED to 1454: the cap is the CURATED-TAXONOMY coverag
 Deeper concept-growth options (all real tradeoffs): (a) higher D (more phasor separation -> recall up, but SLOWER per-turn -- hurts the owner's speed goal); (b) g20-style per-bridge-cleanup multi-bridge (recall+speed-preserving at D=128, but a real integration build); (c) accept the recall cost for breadth.
 
 **EXACT NEXT CONCRETE ACTION:** the cheap empirical decider -- re-extract facts on the 2012-brain's vocab (more in-vocab args) + demo it, compare CHAT QUALITY vs the reliable 1454-brain (does breadth beat the recall dip?). Then present the 1454-vs-2012-vs-multibridge fork to the owner WITH data. Moat 0-leak; honest origin+gitea.
+
+---
+
+## CYCLE 622 (2026-06-26 — EMPIRICAL: single-bridge concept-growth is a NET LOSS for the chat)
+
+2012-brain demo (brainALL_w7000.npz_seed42.npz, 705 facts) vs the reliable 1454: recall 55/60 (vs 58/60), DISCUSS THINNED ("head" -> 1 adjacent fact vs 1454's 4), build 68.5s (vs 41s), per-turn ~3x slower, for only +147 facts. moat 0. => single-bridge concept-growth degrades recall + discuss-richness + speed for modest breadth; the reliable 1454-brain chats BETTER. Single-bridge-bigger is a DEAD END. The recall cap + slowdown are the composer's D=128 cleanup/proposer scanning more candidates.
+
+Deep-knowledge route forward (real options): (1) multi-bridge with PER-BRIDGE cleanup (each bridge ~1000-1454 at D=128 -> recall+speed preserved per-bridge, cross-bridge routing) -- the proper deep route, a real integration build; (2) maximize facts/relations on the 1454 (more relation types/corpus) -- cheap, modest; (3) fix the per-turn SPEED first (the ~13s/turn render/VERIFY resonates -- the bigger felt 'natural-feeling' blocker, made worse by breadth).
+
+**EXACT NEXT CONCRETE ACTION:** owner is steering the fork (multi-bridge depth / max-facts-on-1454 / speed-first). On their answer, execute. Deployable today = the reliable 1454-brain (real facts, morphology, moat 0). Moat 0-leak; honest origin+gitea.
