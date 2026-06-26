@@ -4832,3 +4832,15 @@ Per the diagnosis (CYCLE 606: over-training densification): single-bridge has a 
 Sweep curve confirmed MONOTONIC DECLINE: 8K recall **0.917** (moat 0-FA, saved brain1454_w8000) / 16K **0.667** / 150K 0.208. Owner: don't bother finishing the declining 32K point; the peak is at/below 8K + sub-8K runs are quicker. AGREED. Killed the 32K; launched (bmsfpj8vz) the SUB-8K sweep: 1454/n_per10 @ 3K/5K/7K windows, --save-codes brain1454_w{W} each -> _breadth1454_w{W}.json + _breadth1454_sub8k_sweep.log. ~25min. The 8K brain (0.917) is banked as a FLOOR -- this can only improve on it (find a higher peak, ideally >=0.95).
 
 **EXACT NEXT CONCRETE ACTION:** on sub-8K completion -> read recall+moat at 3K/5K/7K (+ known 8K 0.917 / 16K 0.667); pick the BEST (highest recall, moat 0-FA) = the working first-chat brain (bridges/firstchat/brain1454_w{best}.npz); write the curve finding 2026-06-26-breadth1454-window-sweep.md + commit. THEN #1 (bar relax against the real numbers) + multi-bridge for full-1454-coverage + the console. NEVER weaken the moat; honest origin+gitea.
+
+---
+
+## CYCLE 609 (2026-06-26 — sub-8K sweep DONE: recall peaks at 3K (1.000); 7K = best balance (0.958/corr0.869/most coverage); WORKING 1454 first-chat brain in hand)
+
+Sub-8K sweep (bmsfpj8vz) DONE. FULL recall-vs-windows curve (1454c/n_per10, moat 0-FA at EVERY point):
+  3K recall 1.000 (48/48) corr 0.853 | 5K 0.917 corr 0.863 | 7K 0.958 (46/48) corr 0.869 | 8K 0.917 corr 0.868 | 16K 0.667 | 150K 0.208.
+Recall PEAKS at 3K (perfect), declines after ~8K (densification, per CYCLE-606 diagnosis). Moat 0-FA across the ENTIRE range (robust). Owner's "sweep under 8K" steer paid off (3K=1.0 > the prior 8K=0.917). Saved brains: bridges/firstchat/brain1454_w{3000,5000,7000,8000,16000}_seed42.npz.
+
+PICK (recommended to owner): **brain1454_w7000_seed42.npz** = the working first-chat brain -- recall 0.958 (within 2/48 of 3K's perfect), highest corr 0.869, most concept-coverage before densification (-> richest discursive adjacency). 3K (perfect recall, thinnest coverage) = the max-recall alternative. AWAITING owner's pick (7K rec vs 3K).
+
+**EXACT NEXT CONCRETE ACTION:** on owner's brain pick -> Step 1 (#1 bar relax: demote gen>=0.80 gate to reported floor + DiscursiveTurn rubric pass/fail, against the chosen brain's recall) -> Step 2 console (load the chosen brain1454_w{W}.npz codes into the DiscursiveTurn agent + wire the GO 3G neural discourse-planner as --neural-planner = the one cheap purity close-out) -> Step 3 THE FIRST CHAT (owner tests). Then: multi-bridge full-1454-coverage + richer fact-base. NEVER weaken the moat; honest origin+gitea.
