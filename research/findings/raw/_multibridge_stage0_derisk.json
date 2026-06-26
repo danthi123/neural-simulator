@@ -1,0 +1,106 @@
+{
+  "brain": "brain1454_w7000_seed42.npz",
+  "seed": 42,
+  "D": 128,
+  "n_concepts": 1454,
+  "n_shards": 2,
+  "shard_sizes": [
+    727,
+    727
+  ],
+  "fact_source": "real:_combined_svo_facts.json",
+  "n_facts": 24,
+  "n_absent_what": 24,
+  "n_absent_who": 24,
+  "n_cross_absent": 24,
+  "store_stats": {
+    "n_stored": 24,
+    "n_same_shard": 12,
+    "n_cross_shard": 12,
+    "n_extension_fillers": 16,
+    "codebook_ext_per_shard": [
+      10,
+      6
+    ]
+  },
+  "single_1454": {
+    "recall": 0.9166666666666666,
+    "correct": 44,
+    "total": 48,
+    "abstain": 1.0,
+    "false_accept": 0,
+    "abstain_total": 48,
+    "moat_breaches": [],
+    "vocab_size": 1454,
+    "sec_per_query": 0.07618209719657898
+  },
+  "confound_1454_vs_2012": {
+    "recall_1454": 0.9166666666666666,
+    "recall_2012": 0.9166666666666666,
+    "abstain_1454": 1.0,
+    "abstain_2012": 1.0,
+    "tq_ms_1454": 76.18209719657898,
+    "tq_ms_2012": 83.70654781659444,
+    "vocab_1454": 1454,
+    "vocab_2012": 2012
+  },
+  "multibridge": {
+    "recall": 0.9583333333333334,
+    "abstain": 1.0,
+    "false_accept": 0,
+    "sec_per_query": 0.043417349457740784,
+    "per_shard": {
+      "0": {
+        "recall": 0.9090909090909091,
+        "correct": 20,
+        "total": 22,
+        "n_facts": 11
+      },
+      "1": {
+        "recall": 1.0,
+        "correct": 26,
+        "total": 26,
+        "n_facts": 13
+      }
+    },
+    "moat_breaches": []
+  },
+  "permuted_routing": {
+    "recall": 0.20833333333333334,
+    "abstain": 1.0,
+    "false_accept": 0,
+    "per_shard": {
+      "0": {
+        "recall": 0.36363636363636365,
+        "correct": 8,
+        "total": 22,
+        "n_facts": 11
+      },
+      "1": {
+        "recall": 0.07692307692307693,
+        "correct": 2,
+        "total": 26,
+        "n_facts": 13
+      }
+    },
+    "moat_breaches": []
+  },
+  "verdict": {
+    "GO": false,
+    "go_recall_vs_single_bridge_content": false,
+    "go_recall_per_shard_ge_0.95_absolute": false,
+    "go_moat_0_false_accepts": true,
+    "go_time_le_single_bridge": true,
+    "go_anticheat_permuted_collapses_no_FA": true,
+    "per_shard_min_recall": 0.9090909090909091,
+    "multibridge_recall": 0.9583333333333334,
+    "multibridge_false_accept": 0,
+    "single_1454_recall": 0.9166666666666666,
+    "single_1454_false_accept": 0,
+    "permuted_recall": 0.20833333333333334,
+    "permuted_false_accept": 0,
+    "tq_ms_multibridge": 43.417349457740784,
+    "tq_ms_single_1454": 76.18209719657898,
+    "headline_bar": "content-vs-content: per-bridge recall >= single-bridge recall on the SAME facts, moat 0-FA"
+  }
+}
