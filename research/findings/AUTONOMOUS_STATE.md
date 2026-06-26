@@ -4784,3 +4784,15 @@ Owner decision (morning): "3 then 2 then 1" -> execute the 3 in dependency order
 #3 DOWNLOAD (owner-approved): launched _download_simplewiki.py (background) -> data/corpus/simplewiki.txt = full Simple-English-Wikipedia (rahular/simple-wikipedia HF, ~120MB, public no-auth), extracted + LOWERCASED (the tokenizer is re.findall([a-z]+)). HF datasets 3.6.0 present, network 200 OK.
 
 **EXACT NEXT CONCRETE ACTION:** (a) verify the download lands (token count + size sane; corpus_stream multi-file already consumes it via --corpus-paths). (b) #2 BREADTH-BUILD: scale concepts toward the ~1-1.5K first-chat target on the COMBINED corpus (tinystories.txt clean codes + simplewiki.txt breadth) -- the validated route is MULTI-BRIDGE (g20_multibridge, linear in bridge count); design the run (bridge count, vocab, facts-for-discursive-richness), de-risk cheap-first (smoke), then the full run instrumented + monitored. (c) #1 BAR: demote gen from hard >=0.80 gate to a reported soft floor (~0.10 Pearson + derangement-collapse) + the 10-prompt DiscursiveTurn rubric = pass/fail (relax in the runner + the knowledge-scaling bar). NEVER idle; NEVER weaken the moat; honest origin+gitea.
+
+---
+
+## CYCLE 604 (2026-06-26 — #2 breadth-build: smoke GO at 1454; full run LAUNCHED + saving codes)
+
+#2 (owner steer, after #3 download done). 1454-concept SMOKE (8K windows) = strong GO: 1454-bridge FITS 12GB (19540 neurons, hub5000+tgt14540), no OOM; **moat 0-FA at 1454 concepts** (the no-confab moat HOLDS at full breadth); recall 0.917@8K (->0.95 with more); corr(M,C)+0.868; rate 12.6 win/s (== 320-tier, bridge NOT slower -> full run ~3.3hr NOT the 5-9hr I'd feared). Coverage RESOLVED: hear_corpus counts TARGET-containing windows (line 445), so windows land on the 1454 concepts (explains the fast corr); more windows deepen the rarer tail.
+
+Combined-corpus capacity (CPU probe): **1454 clusterable content concepts** (vs TinyStories ~680) -- right in the ~1-1.5K first-chat target. Simple-Wiki download (23.4M tok, lowercased, data/corpus/simplewiki.txt) doubled the vocab.
+
+ADDED --save-codes to the curriculum runner (commit f25c7fb6, additive default-off): persists grounded phasor codes (.npz vocab+grounded+code+M) = the first-chat brain artifact the composer/DiscursiveTurn loads. LAUNCHED the FULL run: 1454c / n_per10 / n_hub500 / 150K windows / --no-frozen / --save-codes bridges/firstchat/brain1454 / combined corpus. ~3.3hr.
+
+**EXACT NEXT CONCRETE ACTION:** monitor the full run ([learn-progress] every 5000 win; recall->0.95; moat 0-FA; the save-codes write at the end); on completion -> bridges/firstchat/brain1454.npz = the 1454-concept first-chat brain. THEN #1 (bar relax: demote gen gate -> reported floor + DiscursiveTurn rubric). THEN the console (load brain1454 into the DiscursiveTurn agent = the first chat). NEVER weaken the moat; honest origin+gitea.
