@@ -4949,3 +4949,13 @@ CAVEATS (honest): (1) the 475s timing was CONTENDED -- the 3000-smoke's CPU-host
 The 2500-concept request CAPPED to 1454: the cap is the CURATED-TAXONOMY coverage (190 from stream_taxonomy_320.TAXONOMY_40x8 + 1264 from g20_vocab_spec coherent domains = 1454), NOT VRAM and NOT corpus freq (corpus has 6279 @ freq>=300). KEY: `--vocab-filter all` = the old freq-top-N selection (UNCAPPED) -> the concept-growth lever is a FLAG, not a curriculum rewrite. VRAM: 1454/n_per10/hub5000 = 72.7M synapses @ 12GB resident, recall 1.000; synapses ~ tgt(n_per x concepts) x hub. The earlier 3000 OOM was n_per 16 oversizing; n_per 10 + tuned n_hub fits. CAVEAT: --vocab-filter all words beyond the taxonomy get codes+facts (recall works, spaCy-POS facts work) but may lack a cat_id -> the discuss-PROPOSER pools use the categorized core (recall/facts broad, discuss core narrower) -- verify on the bigger brain.
 
 **EXACT NEXT CONCRETE ACTION:** --vocab-filter all 3000-concept smoke (n_per 10, n_hub 400, 200 windows) running -> verify it unlocks >1454 + fits VRAM. If GO -> full 3000-concept training at the recall-peak windows (de-risk recall vs densification at 2x vocab) -> re-extract facts on the bigger vocab (more in-vocab args -> more facts) -> richer first-chat brain. The deep-knowledge lever (owner #1). Moat 0-leak; honest origin+gitea.
+
+---
+
+## CYCLE 621 (2026-06-26 — single-bridge concept-growth COSTS recall: 2012 -> 0.875, a capacity ceiling)
+
+--vocab-filter all unlocked 2012 concepts (vs 1454). Window sweep 4K/7K/10K (saved brainALL_w{4000,7000,10000}.npz_seed42.npz, 2012c, D=128, n_per 10, hub 4000): recall FLAT at 0.875 (42/48) across ALL window counts, moat 0 false-accepts, corr(M,C)~0.87. => a CAPACITY ceiling (NOT under-training -- more windows don't move it), the composer's D=128 cleanup crowding with more concepts. vs 1454's 0.958. So single-bridge concept-growth TRADES recall for breadth; 1454 = the single-bridge recall sweet spot. The moat holds -> the 12.5% misses are SAFE abstains, not fabrications.
+
+Deeper concept-growth options (all real tradeoffs): (a) higher D (more phasor separation -> recall up, but SLOWER per-turn -- hurts the owner's speed goal); (b) g20-style per-bridge-cleanup multi-bridge (recall+speed-preserving at D=128, but a real integration build); (c) accept the recall cost for breadth.
+
+**EXACT NEXT CONCRETE ACTION:** the cheap empirical decider -- re-extract facts on the 2012-brain's vocab (more in-vocab args) + demo it, compare CHAT QUALITY vs the reliable 1454-brain (does breadth beat the recall dip?). Then present the 1454-vs-2012-vs-multibridge fork to the owner WITH data. Moat 0-leak; honest origin+gitea.
