@@ -4860,3 +4860,18 @@ Owner: "go with your suggestion" = 7K (brain1454_w7000_seed42.npz: recall 0.958,
 #1 (bar) DONE (CYCLE 610). Step 2 = the CONSOLE. Dispatched a3c651e5 (background, CPU): build research/runners/first_chat_console.py = load the 7K brain (brain1454_w7000_seed42.npz grounded codes) -> inject into the DiscursiveTurn pipeline (build_communicable_brain scaffolding + the 1454 codes + a vocab fact-set) -> a REPL + a --demo scripted transcript + the 10-prompt QUALITY RUBRIC (the first-chat-ready bar's final check). The 3G neural discourse-planner purity close-out comes FREE (the DiscursiveTurn already reuses NeuralDiscoursePlanner, :233). numpy-CPU, NO sim/ edit.
 
 **EXACT NEXT CONCRETE ACTION:** on the subagent's completion -> REVIEW: (a) the --demo transcript (is the discursive quality good?), (b) the rubric score (>=8/10? = the bar's final check), (c) the MOAT (0 leaks = HARD invariant). Trust-but-verify: run the console --demo myself + spot-check the moat. If GO -> Step 3 (owner's first chat -- surface the transcript + how to run the REPL). If issues -> fix. Then the enrichment follow-ons (multi-bridge full-coverage, richer fact-base). NEVER weaken the moat; honest origin+gitea.
+
+---
+
+## CYCLE 612 (2026-06-26 — first-chat console BUILT + VERIFIED; honest gaps + GPU-detour correction)
+
+Console subagent (a3c651e5) DONE -> research/runners/first_chat_console.py (numpy-CPU RFPhasorComposer + DiscursiveTurn on the 7K brain's 1454 grounded codes; no sim/ edit). VERIFIED myself (trust-but-verify):
+- MECHANISM works: 10/10 rubric, moat 0 leaks (abstains on unknown word, drops un-stored CERTAIN claims), mixed-type.
+- GAP 1 LATENCY: ~15s/substantive-turn (145s build+8-prompt demo; build 28s) -- NOT the subagent's claimed 2-4s. Bottleneck: propose_candidates_about (~2s/uncached topic) x several + per-flagged moat-audit resonates.
+- GAP 2 KNOWLEDGE shallow: learned co-occurrence meaningful for FREQUENT concepts (dog->cat, fire->cook/oven, run->catch) but NOISE for the rare tail (curry->bull, king->knife, school->lamb; many saturated at cos 1.00 = the single-bridge coverage limit per 2026-06-26-breadth1454-window-sweep.md). The 24 stored facts are random SVO recombinations.
+- GAP 3 FLUENCY: sentence-gen overlays random verbs ("curry describes pine") -> stilted even on good codes.
+- GPU-DETOUR CORRECTION (owner asked re: the megakernel): the A5 megakernel IS running (probe: 6 megakernel calls, 0 loop), but the OneBrainComposer's co-resident bridge is ~54K neurons -> ~1s/query, SLOWER than the small-bridge CPU RFPhasorComposer for the DiscursiveTurn's many-ops/turn. So the CPU console is the right substrate; my "switch to GPU" pivot was a wrong turn. Probe: research/runners/_firstchat_gpu_latency_probe.py.
+
+The breadth-build delivered VOCABULARY (1454 recognized words), not deep KNOWLEDGE (meaningful facts/relations). "Natural-feeling" needs the latter.
+
+**EXACT NEXT CONCRETE ACTION:** owner is steering the fork (deepen-knowledge / wire-LLM-fluency-faculty / curated-chat-now). On their answer, execute it. Console + probe committed. NEVER weaken the moat; honest origin+gitea.
