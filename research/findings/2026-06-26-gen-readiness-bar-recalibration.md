@@ -69,7 +69,7 @@ may not be sufficient for the *felt* richness of a first chat.
 | numpy ideal (C0) | exact | full | 1.000 | 0.45 | **+0.215** | representation ceiling |
 | n_per-16 base | 16 | 150K | 0.885 | 0.125 | (TBD from log) | prior real-corpus base |
 | 10K smoke | 24 | 10K | 0.902 | 0.056 | +0.017 | under-trained (15x); inconclusive |
-| **n_per24 @ 150K** | 24 | 150K | (pending) | (pending) | **(pending)** | THE decisive fidelity test |
+| **n_per24 @ 150K** | 24 | 150K | 0.821 | 0.141 | **+0.065** | fidelity did NOT lift gen (corr up 0.756→0.821 vs C0 baseline, but Pearson flat ≈ +0.07); recall 1.000, moat 0-FA |
 
 ## The decision this run resolves
 
@@ -83,4 +83,10 @@ does gen stay near the n_per-16 base (Pearson ~?) regardless?
   category structure) and scale, which is the foundational-curriculum
   direction. Conclude the fidelity micro-question and pivot.
 
-(Result + conclusion to be appended when blb5vcsjd completes.)
+## CONCLUSION (2026-06-26, blb5vcsjd complete)
+
+**The read-out fidelity lever is closed: it does NOT recover generalization.** n_per 24 @ 150K lifted corr(M,C) above the C0 spiking baseline (0.756 → 0.821) but generalization Pearson stayed flat at **+0.065** (vs the ~+0.07 baseline; gen-coherent 0.141 vs the n_per-16 base 0.125 — a noise-level bump). A modest corr lift did not move gen; recovering toward the numpy ceiling (+0.215) would require corr → ~0.95, i.e. n_per 32+ (which OOM'd at 20.6 GB) or many more windows — an expensive grind for a number that is **not the first-chat gate** (see `_first_chat_ready_bar_given_gen_reality_scoping.md`).
+
+**What the run DID confirm (the first-chat-critical part):** at full training on real-corpus codes, **recall 1.000 (48/48), moat 1.000 abstain with 0 false-accepts, derangement collapses (gen control valid).** The capabilities the first chat actually depends on are perfect; generalization is the one capped, non-gating axis.
+
+**Decision:** generalization is now CHARACTERIZED (spiking substrate caps it at ~+0.065 Pearson @320; fidelity doesn't lift it cheaply; corpus doesn't lift it — refuted 4×; scale/metric-granularity + the point-neuron read-out are the binding constraints). Per the reframe, **demote it from a gate to a reported soft floor and stop chasing it.** The path is breadth-scaling + the discursive console. (Owner to sign off the relaxed bar; the runner's `generalization >= 0.80` gate should be relaxed to the reported-floor framing.)
