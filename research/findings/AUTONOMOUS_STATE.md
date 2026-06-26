@@ -4969,3 +4969,16 @@ Deeper concept-growth options (all real tradeoffs): (a) higher D (more phasor se
 Deep-knowledge route forward (real options): (1) multi-bridge with PER-BRIDGE cleanup (each bridge ~1000-1454 at D=128 -> recall+speed preserved per-bridge, cross-bridge routing) -- the proper deep route, a real integration build; (2) maximize facts/relations on the 1454 (more relation types/corpus) -- cheap, modest; (3) fix the per-turn SPEED first (the ~13s/turn render/VERIFY resonates -- the bigger felt 'natural-feeling' blocker, made worse by breadth).
 
 **EXACT NEXT CONCRETE ACTION:** owner is steering the fork (multi-bridge depth / max-facts-on-1454 / speed-first). On their answer, execute. Deployable today = the reliable 1454-brain (real facts, morphology, moat 0). Moat 0-leak; honest origin+gitea.
+
+---
+
+## CYCLE 623 (2026-06-26 — multi-bridge design DONE + the REAL bottleneck = the TAXONOMY ceiling)
+
+Multi-bridge design (subagent) -> research/findings/2026-06-26-multibridge-deep-knowledge-design.md. Three findings:
+1. DESIGN: N stream-cortex shards, each an RFPhasorComposer over ~1000 DISJOINT concepts -> PER-BRIDGE cleanup (comp.words = shard vocab; NO sim/composer edit -- the words= subset is already supported at every cleanup site, verified), a host word2shard router (the g20 pattern, legitimate environment bookkeeping), a RoutedComposer facade presenting the existing composer API (the agent/proposer/DiscursiveTurn consume only that surface). Per-bridge cleanup + routing, NOT one shared phasor space.
+2. CONFOUND in my 2012-loss verdict: --vocab-filter all includes 558 distributionally-FLAT adjective/function/emotion words that homogenize the entity codes (the trainer's own docstring) -> brainALL(2012) was partly worse from CODE DEGRADATION, not only crowding. Fair comparison is content-vs-content.
+3. THE REAL DEEP-KNOWLEDGE BOTTLENECK = the g20 TAXONOMY ceiling (content 1454, all 2012), NOT the bridge/corpus. The trainer only admits taxonomy words (CONTENT_G20_DOMAINS=1472, all 32 domains=2048); the corpus has 6279@freq>=300 but they're not in the taxonomy. So "discuss almost anything" needs a GROWN corpus-mined taxonomy -- a separate, arguably HIGHER-leverage item than multi-bridge.
+
+Stage-0 multi-bridge de-risk (minutes, NO training): split the EXISTING brain1454 codes into 2x727 shards, route the 24 facts by agent-shard, show per-shard recall >=0.95 at <= single-bridge time -- proves per-bridge cleanup with zero new training.
+
+**EXACT NEXT CONCRETE ACTION:** (speed profiler b1t07tgcy landing -> optimize the per-turn hotspot = SHORT-term). Then the medium/long-term deep-knowledge fork has TWO levers now: multi-bridge (Stage 0 cheap de-risk) AND the taxonomy ceiling (corpus-mined taxonomy expansion -- the deeper bottleneck). Moat 0-leak; honest origin+gitea.
