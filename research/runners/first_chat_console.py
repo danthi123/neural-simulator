@@ -442,6 +442,17 @@ class FirstChatConsole:
     def _render(self, rec):
         """The paragraph (with F1 surface-morphology polish), or a graceful honest non-answer if the brain
         assembled nothing."""
+        # STOPGAP (2026-06-26, pre-Path-B): an ALL-speculative turn -- no grounded/CERTAIN fact, only FLAGGED
+        # guesses -- currently renders co-occurrence-sampled SVO that reads as word-salad ("the world inducteds
+        # hip"): the proposer samples PPMI-adjacent words (POS-valid but meaningless) + the template stub inflects
+        # them crudely. Until the Path-B fluent faculty (On-bridge/Spiking Qwen + the GATE->CONSTRAIN->VERIFY loop)
+        # replaces the proposer+stub, SUPPRESS the all-speculative paragraph and abstain HONESTLY rather than emit
+        # gibberish. A grounded turn (>=1 CERTAIN/stored fact, possibly plus hedged adjacent facts) renders normally.
+        props = rec.get("emitted_propositions", [])
+        n_certain = sum(1 for p in props if p.get("type") == "C")
+        n_flagged = sum(1 for p in props if p.get("type") in ("N", "D"))
+        if n_certain == 0 and n_flagged > 0:
+            return "I don't have grounded facts on that yet, so I'd rather not guess at it."
         para = rec.get("paragraph", "").strip()
         if para:
             return _surface_morphology(para, self.verbs)
