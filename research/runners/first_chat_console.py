@@ -696,6 +696,16 @@ class FirstChatConsole:
                 hedge = self._llm_grounded_hedge(topic)
                 if hedge:
                     return hedge
+            # FALLBACK (no fluency faculty, OR the LLM hedge failed the strict moat-VERIFY whitelist): a
+            # neighbour-NAMING TEMPLATE hedge -- still topic-relevant + honest (it NAMES the brain's REAL PPMI
+            # associations, framed as association-not-fact, so it is moat-safe BY CONSTRUCTION -- the console writes
+            # the associative framing, not the LLM). Only a truly-neighbourless topic falls to the bare canned line.
+            nbrs = self._ppmi_neighbors(topic, k=3) if topic else []
+            if nbrs:
+                nb_str = nbrs[0] if len(nbrs) == 1 else (f"{nbrs[0]} and {nbrs[1]}" if len(nbrs) == 2
+                                                         else f"{', '.join(nbrs[:-1])}, and {nbrs[-1]}")
+                return (f"I don't have settled facts about {topic}, but it tends to come up alongside "
+                        f"{nb_str} -- I'd be guessing past that.")
             return "I don't have grounded facts on that yet, so I'd rather not guess at it."
 
         # PATH B: re-render the CERTAIN sentences fluently via the LLM (GATE already passed -> CONSTRAIN -> VERIFY).
