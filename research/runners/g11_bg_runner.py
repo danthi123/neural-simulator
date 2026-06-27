@@ -284,7 +284,8 @@ def render_egocentric_goal(agent, goal, image_size=32, ppc=4, radius=2,
 
 def install_spiking_sc_wiring(bridge, visual_image_size=32, w_ret_sc=80.0,
                               w_sc_rec=6.0, w_sc_cortex=1.0, scramble=False,
-                              popvector=False, verbose=False):
+                              popvector=False, sc_opponent_decode=False,
+                              sc_opponent_fs_weight=14.0, verbose=False):
     """Post-init explicit wiring for the spiking superior colliculus (N1), de-risked in
     sc_map_orienting_probe.py. Installs (via set_pathway_weights, add_missing): retina(ON)->
     sc_map retinotopic pooling (2x2 RF), sc_map short-range recurrent excitation, and
@@ -313,7 +314,31 @@ def install_spiking_sc_wiring(bridge, visual_image_size=32, w_ret_sc=80.0,
         when sc_popvector_readout=True), so each cardinal's drive is divided by (sigma + gain*mean
         over the four cardinals) -> "where" not "mass". PURE POINT-NEURON (a feedforward weighted
         sum of preferred-vector cosines on LIF point neurons + the existing Carandini-Heeger divisive
-        primitive); NO dendrite, NO sim/ edit (a weight-formula change + an existing-primitive flag)."""
+        primitive); NO dendrite, NO sim/ edit (a weight-formula change + an existing-primitive flag).
+
+    OPPONENT-AXIS push-pull AT THE SC DECODE (R2, 2026-06-27, `2026-06-27-navcloseout-R2-...md`).
+    sc_opponent_decode=True AUGMENTS the popvector excitation with a SPIKING opponent inhibition so the
+    SC orienting decode reads the DIFFERENCE of opposing SC sub-populations (E-minus-W, N-minus-S), not
+    two independent half-plane sums. Mechanism (point-neuron, NO `sim/` edit, NO negative weights): the
+    OPPOSING-half-plane sc_map sites are wired (same cosine-projection magnitude) into the cardinal's
+    EXISTING cortex_FS_{cardinal} interneuron, so a W-bump fires cortex_FS_E -> INHIBITS cortex_E (and
+    symmetrically each axis). cortex_E's NET SC drive is therefore (E-site excitation) MINUS (W-site
+    inhibition via cortex_FS_E) = the opponent contrast: a symmetric common-mode (equal E & W mass)
+    CANCELS, an eccentric bump yields a sharp single winner -> a HIGHER margin-SNR for the orienting
+    direction (the CPU smoke: +0.49 -> +0.84 normalized margin on far goals, +0.28 -> +0.67 on weak
+    near goals, the weak-margin phases R1-a random-walks; common mode rejected to ~0). This is the
+    biology-faithful realization of the SC motor map's opponent/push-pull organization (catalog H.25)
+    + center-surround / ON-OFF push-pull opponency (catalog E.05/E.06). The inhibition uses the cardinal's
+    OWN cortex_FS interneuron (which already mediates the cortex WTA), so it REQUIRES the cortex_FS pools
+    (enable_cortex_lateral_inhibition=True). sc_opponent_fs_weight is the per-edge drive into cortex_FS
+    (GPU-calibrated; the CPU smoke validates the geometry, not the absolute scale). Default False =>
+    byte-identical (no opponent edges installed; the popvector/ramp decode is unchanged). It is
+    UPSTREAM of the Wang-2002 sel accumulator -- the locus the FIX-3 NEGATIVE (`2026-06-20-shortcut6-
+    FIX3-opponent-axis.md`) prescribed for the differential remedy ("the SC opponent push-pull realized
+    at the integrator, not the read-out where it failed"); the READ-OUT opponent-axis (sc_opponent_axis,
+    on sel/commit counts) re-biased to N because it read the accumulator-AMPLIFIED common mode, whereas
+    this shapes the SC's own E-W/N-S signal BEFORE the cascade amplifies anything. COMPLEMENTARY to FIX B
+    (enable_sel_opponent_pair, the sel-accumulator opponent pairing)."""
     rm = bridge.region_manager
     IMGW = int(visual_image_size)
     SCN = IMGW // 2                       # sc sheet side (32 -> 16)
@@ -392,6 +417,57 @@ def install_spiking_sc_wiring(bridge, visual_image_size=32, w_ret_sc=80.0,
             n_installed += bridge.set_pathway_weights(f"sc_map_to_cortex_{a}",
                 np.asarray(pre, np.int64), np.asarray(post, np.int64),
                 np.asarray(w, np.float32), add_missing=True)
+
+    # R2 (2026-06-27): OPPONENT-AXIS push-pull AT THE SC DECODE. The OPPOSING-half-plane sc_map sites
+    # drive the cardinal's OWN cortex_FS interneuron (which already mediates the cortex WTA), so a
+    # W-bump fires cortex_FS_E -> INHIBITS cortex_E => cortex_E's net SC drive is the E-minus-W opponent
+    # contrast (common mode cancels; eccentric bump => sharp winner). Spiking inhibition via the existing
+    # FS pool (NO negative weights, NO sim/ edit). Requires the cortex_FS_{cardinal} pools to exist
+    # (enable_cortex_lateral_inhibition). The opposing-half weight uses the SAME cosine magnitude as the
+    # excitation (popvector) or signed ramp -- the inhibitory drive grows with the opposing bump's
+    # eccentricity, matching the excitation it must cancel. Default-off => no edges installed.
+    _opp_card = {"E": "W", "W": "E", "N": "S", "S": "N"}
+    if sc_opponent_decode:
+        _fs_present = all(f"cortex_FS_{a}" in rm._indices for a in ACTION_NAMES)
+        if not _fs_present:
+            if verbose:
+                print("[g11] spiking SC: sc_opponent_decode requested but cortex_FS pools absent "
+                      "(needs enable_cortex_lateral_inhibition) -- opponent edges SKIPPED.", flush=True)
+        else:
+            _n_opp = 0
+            for a in ACTION_NAMES:
+                fs0 = int(list(rm.indices(f"cortex_FS_{a}"))[0])
+                n_fs = len(list(rm.indices(f"cortex_FS_{a}")))
+                opp = _opp_card[a]               # the half-plane that should SUPPRESS cardinal a
+                _ax, _ay = _card_axis[opp]        # the opposing cardinal's axis (its preferred sites)
+                pre, post, w = [], [], []
+                for sy in range(SCN):
+                    for sx in range(SCN):
+                        ddx, ddy = sx - sc_center, sy - sc_center
+                        if popvector:
+                            _mag = float(np.hypot(ddx, ddy))
+                            if _mag <= 0.0:
+                                continue
+                            wv = max(0.0, (ddx / _mag) * _ax + (ddy / _mag) * _ay)  # cosine to OPP axis
+                        else:
+                            wv = {"E": max(0.0, ddx), "W": max(0.0, -ddx),
+                                  "N": max(0.0, ddy), "S": max(0.0, -ddy)}[opp]
+                        if wv <= 0.0:
+                            continue
+                        for d in range(n_fs):
+                            pre.append(sc0 + sc_idx(sy, sx))
+                            post.append(fs0 + d)
+                            w.append(float(sc_opponent_fs_weight) * wv)
+                if pre:
+                    _n_opp += bridge.set_pathway_weights(f"sc_map_opponent_to_cortex_FS_{a}",
+                        np.asarray(pre, np.int64), np.asarray(post, np.int64),
+                        np.asarray(w, np.float32), add_missing=True)
+            n_installed += _n_opp
+            if verbose:
+                print(f"[g11] spiking SC: OPPONENT-AXIS decode ON -- installed {_n_opp} "
+                      f"sc_map->cortex_FS opponent-inhibition synapses (fs_weight="
+                      f"{sc_opponent_fs_weight}; opposing-half bump inhibits the cardinal "
+                      f"=> E-W / N-S push-pull contrast)", flush=True)
     # N5 Option C: sc_map -> sc_rostral foveal-CENTRE pooling (broad Gaussian) so sc_rostral
     # fires graded with how central the bump is (= how small the goal's eccentricity is). The
     # temporal-difference (sc_rostral - lagged) downstream = "the goal got closer". Only when
@@ -3834,6 +3910,18 @@ def run_moving_goal_episode(
     sc_popvector_readout: bool = False,
     sc_popvector_divnorm_sigma: float = 1.0,   # Carandini-Heeger semi-saturation sigma on cortex_X
     sc_popvector_divnorm_gain: float = 1.0,    # divisive strength on the four-cardinal mean term
+    # R2 (2026-06-27): OPPONENT-AXIS push-pull AT THE SC DECODE -- the margin-SNR remedy that shrinks
+    # the R1-a 1.91x spiking-SC cost. When True (only meaningful WITH enable_spiking_sc AND the cortex_FS
+    # pools, i.e. enable_cortex_lateral_inhibition), the opposing-half-plane sc_map sites are wired into
+    # the cardinal's cortex_FS interneuron so a W-bump INHIBITS cortex_E (and each axis), making each
+    # cardinal's net SC drive the E-minus-W / N-minus-S opponent CONTRAST (common mode cancels; eccentric
+    # bump => a sharp single winner => higher orienting margin-SNR). Spiking inhibition via the existing
+    # FS pool, NO negative weights, NO sim/ edit. UPSTREAM of the Wang-2002 sel accumulator (the locus the
+    # FIX-3 read-out NEGATIVE prescribed for the differential remedy); COMPLEMENTARY to FIX B
+    # (enable_sel_opponent_pair). Env-var SC_OPPONENT_DECODE=1 also enables it. Default False =>
+    # byte-identical (no opponent edges installed). research/findings/2026-06-27-navcloseout-R2-...md.
+    sc_opponent_decode: bool = False,
+    sc_opponent_fs_weight: float = 14.0,       # per-edge sc_map->cortex_FS opponent drive (GPU-calibrated)
     # #6 SURPASS (2026-06-22): biology-faithful LOG-POLAR / foveal-magnified egocentric SC retina.
     # The default linear render_egocentric_goal map clips every eccentric (>~4-cell) goal off the
     # 32-pixel sc_retina, so at grid-32 the schedule's far-corner goals render ENTIRELY off-image
@@ -4468,6 +4556,12 @@ def run_moving_goal_episode(
             if _r.name in ("cortex_N", "cortex_E", "cortex_S", "cortex_W"):
                 _r.input_divisive_norm = True
 
+    # R2 (2026-06-27): OPPONENT-AXIS push-pull at the SC decode. Master switch = the sc_opponent_decode
+    # kwarg OR the SC_OPPONENT_DECODE env var. Consumed by install_spiking_sc_wiring below (wires the
+    # opposing-half sc_map -> cortex_FS opponent inhibition). Only meaningful WITH enable_spiking_sc AND
+    # the cortex_FS pools (enable_cortex_lateral_inhibition). Default OFF => byte-identical (no edges).
+    _sc_opponent_decode = bool(sc_opponent_decode) or (os.environ.get("SC_OPPONENT_DECODE", "0") == "1")
+
     # #6 SURPASS (2026-06-22): biology-faithful log-polar SC retina. Master switch = the
     # log_polar_retina kwarg OR the SC_LOG_POLAR env var. Consumed by the egocentric SC eye-drive
     # render (render_egocentric_goal log_polar=...) in the trial loop; only meaningful WITH
@@ -4986,7 +5080,10 @@ def run_moving_goal_episode(
             install_spiking_sc_wiring(bridge, visual_image_size=visual_image_size,
                                       w_ret_sc=_w_ret_sc, w_sc_rec=_w_sc_rec,
                                       w_sc_cortex=_scw, scramble=_scramble,
-                                      popvector=_sc_popvector, verbose=verbose)
+                                      popvector=_sc_popvector,
+                                      sc_opponent_decode=_sc_opponent_decode,
+                                      sc_opponent_fs_weight=float(sc_opponent_fs_weight),
+                                      verbose=verbose)
             if verbose and _sc_popvector:
                 print(f"[g11 seed={seed}] #6 SC read-out: POPULATION-VECTOR (cosine) + cortex_X "
                       f"divisive-norm (sigma={cfg.input_divisive_sigma}, gain={cfg.input_divisive_gain})",
@@ -8109,6 +8206,11 @@ def run_moving_goal_episode(
         "opponent_axis_count": int(_opp_axis_count),
         "opponent_axis_fraction": (float(_opp_axis_count) / float(_decision_total)
                                    if _decision_total > 0 else 0.0),
+        # R2 instrumentation (2026-06-27): the SC-DECODE opponent-axis push-pull (sc_map->cortex_FS
+        # opponent inhibition). Distinct from sc_opponent_axis (the read-out variant, FIX-3 NEGATIVE):
+        # this shapes the SC's own E-W/N-S contrast UPSTREAM of the sel accumulator.
+        "sc_opponent_decode": bool(_sc_opponent_decode),
+        "sc_opponent_fs_weight": float(sc_opponent_fs_weight),
         "reset_losers_only": bool(reset_losers_only),
         "urgency_max_pA": float(urgency_max_pA),
         "readout_source": _readout_source,
@@ -8890,6 +8992,19 @@ def main():
     ap.add_argument("--sc-popvector-divnorm-gain", type=float, default=1.0,
                     help="Divisive strength on the four-cardinal mean for the #6 cortex_X divisive "
                          "norm (default 1.0). Only with --sc-popvector-readout.")
+    ap.add_argument("--sc-opponent-decode", action="store_true",
+                    help="NAV CLOSE-OUT R2 (2026-06-27): OPPONENT-AXIS push-pull AT THE SC DECODE -- the "
+                         "margin-SNR remedy that shrinks the R1-a 1.91x spiking-SC cost. Wires the "
+                         "opposing-half sc_map sites into the cardinal's cortex_FS interneuron so a W-bump "
+                         "INHIBITS cortex_E (each axis) -> each cardinal's net SC drive is the E-minus-W / "
+                         "N-minus-S opponent CONTRAST (common mode cancels; eccentric bump => sharp winner "
+                         "=> higher orienting margin-SNR). Spiking inhibition via the EXISTING cortex_FS "
+                         "pool (needs --cortex-wta), NO negative weights, NO sim/ edit. UPSTREAM of the sel "
+                         "accumulator (vs the FIX-3 read-out opponent-axis NEGATIVE). Default OFF = "
+                         "byte-identical. research/findings/2026-06-27-navcloseout-R2-sc-opponent-axis-SCOPED.md.")
+    ap.add_argument("--sc-opponent-fs-weight", type=float, default=14.0,
+                    help="Per-edge sc_map->cortex_FS opponent-inhibition drive for --sc-opponent-decode "
+                         "(default 14.0; GPU-calibrated). Only with --sc-opponent-decode.")
     # NAV CLOSE-OUT R1-a (2026-06-27): expose FIX1 on the standalone CLI too (it was reachable only
     # via the SC_TIE_BREAK env var). Completes the spiking-SC orienting path so the full Burndown-3F
     # VALIDATED config (--enable-spiking-sc --sc-popvector-readout --sc-tie-break-stochastic, log-polar
@@ -9624,6 +9739,8 @@ def main():
             sc_popvector_readout=args.sc_popvector_readout,
             sc_popvector_divnorm_sigma=args.sc_popvector_divnorm_sigma,
             sc_popvector_divnorm_gain=args.sc_popvector_divnorm_gain,
+            sc_opponent_decode=args.sc_opponent_decode,
+            sc_opponent_fs_weight=args.sc_opponent_fs_weight,
             sc_tie_break_stochastic=args.sc_tie_break_stochastic,
             sc_tie_break_eps=args.sc_tie_break_eps,
             log_polar_retina=args.log_polar_retina,

@@ -93,6 +93,7 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
             tie_break_eps=0, fix3=False, opponent_axis_eps=0,
             fixA=False, sel_divnorm_sigma=1.0, sel_divnorm_gain=1.0,
             fixB=False, sel_opponent_weight=12.0, sel_crossaxis_weight=0.0,
+            fix_r2=False, opponent_fs_weight=14.0,
             log_polar=False, log_polar_d0=1.0):
     """arm_name in {'host','sc_ramp','sc_popvector','sc_popvector_scr'}.
 
@@ -147,11 +148,23 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
         kw["enable_sel_opponent_pair"] = True           # FIX B: opponent-pair the sel accumulators
         kw["sel_opponent_weight"] = float(sel_opponent_weight)
         kw["sel_crossaxis_weight"] = float(sel_crossaxis_weight)
+    if fix_r2:
+        # R2 (2026-06-27): OPPONENT-AXIS push-pull AT THE SC DECODE. Needs the cortex_FS pools
+        # (the opposing-half sc_map sites inhibit the cardinal through its cortex_FS), so auto-enable
+        # the cortex WTA when not already on. Distinct from FIX 3 (read-out, NEGATIVE) -- this is the
+        # SC decode shaped UPSTREAM of the sel accumulator.
+        kw["sc_opponent_decode"] = True
+        kw["sc_opponent_fs_weight"] = float(opponent_fs_weight)
+        kw["enable_cortex_lateral_inhibition"] = True
+        if not cortex_wta:                               # supply WTA knobs if --cortex-wta wasn't passed
+            kw.setdefault("fs_to_cortex_weight", float(cortex_fs_weight))
+            kw.setdefault("n_cortex_fs_per_action", int(cortex_fs_n))
 
     # reset the per-run SC env knobs so a prior arm doesn't leak.
     os.environ.pop("SC_CORTEX_W", None)
     os.environ.pop("SC_SCRAMBLE", None)
     os.environ.pop("SC_POPVECTOR", None)
+    os.environ.pop("SC_OPPONENT_DECODE", None)
 
     if arm_name == "host":
         # host-heuristic positive control: the documented host Manhattan orienting + host reward.
@@ -263,6 +276,8 @@ def run_arm(arm_name, seed, n_steps, grid_size, warmup_steps, out_dir, with_conv
         "fixB_sel_opponent_pair": bool(results.get("sc_sel_opponent_pair", False)),
         "fixB_sel_opponent_weight": float(results.get("sel_opponent_weight", 12.0)),
         "fixB_sel_crossaxis_weight": float(results.get("sel_crossaxis_weight", 0.0)),
+        "r2_sc_opponent_decode": bool(results.get("sc_opponent_decode", False)),
+        "r2_opponent_fs_weight": float(results.get("sc_opponent_fs_weight", 14.0)),
         "stage_surplus": stage_surplus,
         "tie_break_count": int(results.get("tie_break_count", 0)),
         "decision_total": int(results.get("decision_total", 0)),
@@ -358,6 +373,17 @@ def main():
                     help="FIX B: strong balanced sel_FS_X -> axis-partner inhibitory weight.")
     ap.add_argument("--sel-crossaxis-weight", type=float, default=0.0,
                     help="FIX B: weak/zero cross-axis sel_FS_X -> non-partner inhibitory weight.")
+    ap.add_argument("--fix-r2", "--r2", action="store_true",
+                    help="NAV CLOSE-OUT R2 (2026-06-27): OPPONENT-AXIS push-pull AT THE SC DECODE. The "
+                         "opposing-half sc_map sites inhibit the cardinal through its cortex_FS interneuron "
+                         "=> each cardinal's net SC drive is the E-minus-W / N-minus-S opponent CONTRAST "
+                         "(common mode cancels; eccentric bump => sharp winner => higher orienting margin-"
+                         "SNR). Shaped UPSTREAM of the sel accumulator (vs FIX 3, the read-out opponent-axis "
+                         "NEGATIVE). Auto-enables --cortex-wta (the opponent inhibition uses the EXISTING "
+                         "cortex_FS pool). Stack with --fix1 + --log-polar (the R1-a config). Applies to the SC arms.")
+    ap.add_argument("--opponent-fs-weight", type=float, default=14.0,
+                    help="R2 per-edge sc_map->cortex_FS opponent-inhibition drive (default 14; GPU-calibrated). "
+                         "Only with --fix-r2.")
     ap.add_argument("--log-polar", action="store_true",
                     help="#6 SURPASS: biology-faithful LOG-POLAR / foveal-magnified SC retina "
                          "(render_egocentric_goal log_polar=True). At grid-32 the default LINEAR render "
@@ -408,6 +434,8 @@ def main():
                                  fixB=args.fixB,
                                  sel_opponent_weight=args.sel_opponent_weight,
                                  sel_crossaxis_weight=args.sel_crossaxis_weight,
+                                 fix_r2=args.fix_r2,
+                                 opponent_fs_weight=args.opponent_fs_weight,
                                  log_polar=args.log_polar,
                                  log_polar_d0=args.log_polar_d0))
 
