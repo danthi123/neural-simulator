@@ -609,6 +609,13 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
     #     (the bundle-SNR lever). store_fact / query_role / render are API-identical, so the downstream pipeline is
     #     unchanged across the rf/onebrain typed paths.
     #     Single-bridge (shards>1 is a follow-on; a RoutedComposer of ArgStructureComposers is not yet built).
+    # BURNDOWN C-1 (2026-06-27): "auto" (the CLI default) resolves to the SPIKING onebrain on a GPU (cupy) backend
+    # and to the rf numpy ORACLE on a CPU/numpy backend -- so the flagship GPU chat runs fully-spiking-on-one-brain
+    # BY DEFAULT, while the numpy test-oracle + GPU-less CPU path (and the --rubric, which runs on numpy) stay rf,
+    # byte-unchanged. (consolidated_320 pattern: spiking default on GPU, rf retained as the oracle/CPU path.)
+    if composer_kind == "auto":
+        from sim.backend import get_backend
+        composer_kind = "onebrain" if get_backend()[1] == "cupy" else "rf"
     _onebrain = (composer_kind == "onebrain") and not argstructure
     _argstructure_onebrain = argstructure and (composer_kind == "onebrain")   # BURNDOWN C4
     # B-mine-1 deploy: the verb-frame LEXICON the typed composer renders/recalls through is MINED FROM THE CORPUS over
@@ -2287,10 +2294,11 @@ def main():
                          "ORACLE; with --composer onebrain (BURNDOWN C4) = the typed-role OneBrainComposer on the SPIKING "
                          "substrate (needs a D>=128 brain). Requires --facts-json with TYPED-ROLE facts "
                          "(_corpus_svo_extract --typed-roles). Single-bridge (--shards 1). Default off = byte-unchanged.")
-    ap.add_argument("--composer", choices=("rf", "onebrain"), default="rf",
+    ap.add_argument("--composer", choices=("auto", "rf", "onebrain"), default="auto",
                     help="BURNDOWN C3/C4: the substrate the console's who/what pipeline (recall / bind / cleanup / yes-no / "
                          "chain-of-thought / generation -- and, with --argstructure, the TYPED verb-frame surface) runs on. "
-                         "'rf' (DEFAULT) = the numpy RFPhasorComposer / ArgStructureComposer = the test ORACLE + the GPU-less "
+                         "'auto' (DEFAULT, BURNDOWN C-1) = onebrain on a GPU (cupy) backend / rf on numpy-CPU. "
+                         "'rf' = the numpy RFPhasorComposer / ArgStructureComposer = the test ORACLE + the GPU-less "
                          "CPU path (byte-unchanged). 'onebrain' = the persistent spiking OneBrainComposer (an on-bridge parser "
                          "+ RF complex-synapse fact store + spiking Izhikevich-WTA cleanup on ONE co-resident SimulationBridge) "
                          "-- the console's recall/answer path runs on FIRING NEURONS. With --argstructure (C4) the typed roles "
