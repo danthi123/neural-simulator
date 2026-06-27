@@ -97,14 +97,27 @@ from research.runners.argstructure_composer import (  # noqa: E402  (Tier 0.1 --
 )
 from research.runners.entity_instance_layer import EntityInstanceLayer, past_tense, _PAST  # noqa: E402  (Tier 1.1)
 from research.runners.factored_relation_analogy import build_knowledge_base  # noqa: E402  (Tier 2.1-A -- analogy KB)
+# B-wire-1 (2026-06-27): the Tier-2.3 ordinal axis is no longer a hand-curated `_SIZE_LADDER` -- it is MINED FROM
+# THE CORPUS over the brain's OWN learned vocab (B1, GO 6-seed + 3-spiking, 2026-06-27-regimeB-corpus-mined-axis-GO.md).
+# Reuse-by-import the B1 mining half VERBATIM: `mine_size_scores` (distributional scalar-adjective co-occurrence
+# with provenance), `mined_order` (sort by corpus-derived score), `adjacent_premises` (the mined (Hi,Lo) premises),
+# and the relation's marker/item constants (GT_ORDER = the candidate animal items; HIGH/LOW_ADJ = the SIZE markers).
+# The mined premises feed the SAME Betasort ordinal-map learner already in `_build_ordinal_map`. Brains whose learned
+# vocab lacks the size markers (e.g. the default brain1454_w7000) cannot mine an axis -> fall back to `_SIZE_LADDER`.
+from research.runners._regimeb_corpus_mined_axis_derisk import (  # noqa: E402  (Tier 2.3 -- corpus-mined ordinal axis)
+    mine_size_scores, mined_order, adjacent_premises,
+    GT_ORDER as _SIZE_ITEMS, HIGH_ADJ as _SIZE_HIGH_ADJ, LOW_ADJ as _SIZE_LOW_ADJ,
+)
 from research.runners.common_ground_composer import CommonGroundComposer  # noqa: E402  (Tier 2.4 -- shared/private tag)
 from research.runners.tense_aspect_composer import TenseAspectComposer, inflect  # noqa: E402  (Tier 2.5 -- tense tag)
 # Tier 2.2 self-cued chain-of-thought is the composer's own `chain_of_thought` method (what self_cued_chain_demo.think
 # and BrainConversationalAgent.chain_of_thought both delegate to) -- reused directly on the console's composer.
 # Tier 2.3 transitive inference uses the Betasort-ASYMMETRIC ordinal-map update from _transitive_ordinal_map_derisk;
 # its `learn_positions` is locked to that module's 7-item ABCDEFG ladder, so the console replicates the SAME validated
-# update body (one short function) parameterized on a curated REAL-WORD size ladder (the regime-A pattern -- like the
-# analogy KB; the corpus has no clean total order, so the axis is GIVEN, and an off-axis item ABSTAINS).
+# update body (one short function). B-wire-1 (2026-06-27): the PREMISES fed to that learner are now the CORPUS-MINED
+# size axis over the brain's OWN learned vocab (the B1 mining half, imported above) when the brain has the size
+# markers -- structure ACQUIRED, not given; a vocab-poor brain falls back to the curated `_SIZE_LADDER`. Off-axis
+# items ABSTAIN either way (the no-confab moat).
 
 # Tier 0.1 typed object roles a corpus fact may realize (GOAL/THEME/RECIPIENT/LOCATION/...). When a fact realizes a
 # typed object (not a bare `patient`), the console ALSO binds that filler to `patient` so the flat-SVO machinery
@@ -866,8 +879,13 @@ class FirstChatConsole:
         # items the KB tracks, and ABSTAINS ("I don't track that kind of relation") on everything else -- never
         # fabricates a relation. Built lazily + guarded (any failure -> self.analogy_kb=None -> graceful abstain).
         self.analogy_kb = self._build_analogy_kb(brain)
-        # Tier 2.3 -- the learned 1-D ORDINAL MAP for transitive inference (a curated REAL-WORD size ladder; regime A,
-        # like the analogy KB). Built lazily + guarded: any failure -> self.ordinal_pos=None -> graceful abstain.
+        # Tier 2.3 -- the learned 1-D ORDINAL MAP for transitive inference ("is A bigger than B?"). B-wire-1: the axis
+        # is MINED FROM THE CORPUS over the brain's OWN learned vocab (B1, GO) when the brain has the size markers; it
+        # falls back to the hand-curated `_SIZE_LADDER` (regime A) only for vocab-poor brains that can't mine one.
+        # `self._ordinal_axis_order` records the ACTIVE axis (ascending; mined order OR curated ladder) for display;
+        # `self._ordinal_axis_source` is "corpus-mined" or "curated". Built lazily + guarded (failure -> None -> abstain).
+        self._ordinal_axis_order = list(self._SIZE_LADDER)
+        self._ordinal_axis_source = "curated"
         self.ordinal_pos = self._build_ordinal_map(brain)
         # Tier 2.5 -- the TENSE composer (a bound PAST/PRESENT/FUTURE tag DRIVES the rendered verb form). GENUINE: a
         # user statement's input tense is detected from its verb form + echoed back tensed. Built lazily + guarded.
@@ -892,28 +910,87 @@ class FirstChatConsole:
         except Exception:
             return None
 
-    # the curated REAL-WORD size ladder (ascending: tiny < small < big < huge < giant). This is a GIVEN axis (regime
-    # A -- EXACTLY like the analogy KB, which carries its own curated king/queen/prince items independent of the
-    # brain's corpus vocab). The corpus this brain learned has no clean total order (its 1,454 vocab carries no size
-    # scale), so the axis is given, NOT corpus-learned -- the honest regime-A scope. Trained ONLY from adjacent pairs;
-    # held-out non-adjacent comparisons (tiny vs huge) read from the learned geometry; an off-ladder item ABSTAINS.
+    # the FALLBACK curated REAL-WORD size ladder (ascending: tiny < small < big < huge < giant). Used ONLY for a
+    # brain whose learned vocab can't MINE a size axis (the default brain1454_w7000 has the 16 animals but ZERO size
+    # markers). When the brain DOES have the size markers (e.g. brainALL_w7000), B-wire-1 reasons over the
+    # CORPUS-MINED axis instead (the brain's own learned size knowledge, NOT this hand-typed scale). The mined-vs-
+    # curated choice is made in `_build_ordinal_map`; an off-axis item ABSTAINS either way (the no-confab moat).
     _SIZE_LADDER = ("tiny", "small", "big", "huge", "giant")
+    # B-wire-1: the B1-validated mining operating point. The mine MUST run at the FULL-corpus budget (80 MB) -- at the
+    # console's truncated 40 MB PPMI budget the mined axis degrades below the gate (rho ~0.19 at 40 MB vs the clean GO
+    # at 80 MB; see 2026-06-27-regimeB-corpus-mined-axis-GO.md §4). window/min_freq are B1's validated defaults.
+    _MINE_CORPUS = os.path.join(_REPO, "data", "corpus", "simplewiki.txt")
+    _MINE_WINDOW = 4
+    _MINE_MIN_FREQ = 8
+    _MINE_MAX_CHARS = 80_000_000
+    _MINE_MIN_ITEMS = 6        # need >= this many attested items to call it an axis (else the order is too thin)
+
+    def _mine_size_axis(self, brain):
+        """B-wire-1 -- MINE the ordinal size axis from the corpus over the brain's OWN learned vocab (the B1 template,
+        reuse-by-import). Returns (premises, ascending_order) where `premises` are the mined adjacent (Hi=larger,
+        Lo=smaller) pairs fed to the Betasort learner and `ascending_order` is the mined order (smallest->largest),
+        or None if the brain can't support a mined axis (then `_build_ordinal_map` falls back to the curated ladder).
+
+        Gating (the honest constraint from B1 §4: 'the relation must be ATTESTED in the brain's learned vocab'):
+        the brain's vocab must contain >=1 HIGH and >=1 LOW size marker (else there is no scalar-adjective signal to
+        mine) AND, after the attestation filter, >=`_MINE_MIN_ITEMS` items survive. host-side curriculum prep
+        (legitimate per BRAIN-BASED-ONLY: preparing the syllabus over the brain's own vocab)."""
+        try:
+            vocab = set(str(w).lower() for w in brain["vocab"])
+            hi_in = [a for a in _SIZE_HIGH_ADJ if a in vocab]
+            lo_in = [a for a in _SIZE_LOW_ADJ if a in vocab]
+            if not hi_in or not lo_in:                     # no scalar-adjective signal in this brain's vocab
+                return None
+            if not os.path.exists(self._MINE_CORPUS):
+                return None
+            items = [it for it in _SIZE_ITEMS if it in vocab]   # candidate items present in the brain's learned vocab
+            if len(items) < self._MINE_MIN_ITEMS:
+                return None
+            # MINE the distributional size score per item (B1 `mine_size_scores`, restricted to the brain's vocab).
+            scores, prov = mine_size_scores(self._MINE_CORPUS, items, vocab, _SIZE_HIGH_ADJ, _SIZE_LOW_ADJ,
+                                            window=self._MINE_WINDOW, max_chars=self._MINE_MAX_CHARS)
+            # PROVENANCE / attestation (B1 _regimeb run_seed): keep only corpus-ATTESTED items (>= min_freq AND >=1
+            # HIGH-or-LOW context). Items below threshold are dropped from the axis (the moat then abstains on them).
+            attested = [it for it in items
+                        if prov[it]["freq"] >= self._MINE_MIN_FREQ and (prov[it]["hi"] + prov[it]["lo"]) >= 1]
+            if len(attested) < self._MINE_MIN_ITEMS:
+                return None
+            order = mined_order(scores, attested)          # ascending size (smallest first)
+            premises = adjacent_premises(order)            # the MINED (Hi=larger, Lo=smaller) premises
+            return premises, order
+        except Exception:
+            return None
 
     def _build_ordinal_map(self, brain):
-        """Learn a 1-D ordinal position per ladder item via the de-risk's Betasort-ASYMMETRIC update (replicated here
-        because the de-risk's `learn_positions` is locked to its 7-item ABCDEFG ladder). Each adjacent (Hi, Lo)
-        nudges Hi UP and Lo DOWN (the LOWER member updated by asym x the higher's amount -- the asymmetry is what
-        makes the axis TRANSITIVE, the literature-validated rule). The ladder is the GIVEN curated axis (regime A,
-        the analogy-KB pattern) -- NOT filtered to the brain's vocab (the corpus carries no size scale). Returns
-        {word: position}, or None (graceful abstain)."""
+        """Learn a 1-D ordinal position per axis item via the Betasort-ASYMMETRIC update (replicated here because the
+        de-risk's `learn_positions` is locked to its 7-item ABCDEFG ladder). Each adjacent (Hi, Lo) nudges Hi UP and
+        Lo DOWN (the LOWER member updated by asym x the higher's amount -- the asymmetry is what makes the axis
+        TRANSITIVE, the literature-validated rule).
+
+        B-wire-1: the PREMISES come from the corpus-MINED axis over the brain's OWN learned vocab (B1) whenever the
+        brain has the size markers; otherwise they fall back to the hand-curated `_SIZE_LADDER` (regime A, for
+        vocab-poor brains). The learner is IDENTICAL -- only the SOURCE of the premises changes from given to
+        acquired. Sets `self._ordinal_axis_order` / `_ordinal_axis_source` for display. Returns {word: position},
+        or None (graceful abstain)."""
         try:
-            ladder = list(self._SIZE_LADDER)               # the GIVEN curated axis (regime A, like the analogy KB)
-            if len(ladder) < 3:
+            mined = self._mine_size_axis(brain)
+            if mined is not None:
+                premises, order = mined                    # the CORPUS-MINED axis (the brain's own learned knowledge)
+                self._ordinal_axis_order = list(order)
+                self._ordinal_axis_source = "corpus-mined"
+                axis_items = list(order)
+                adj = list(premises)                       # already (Hi=larger, Lo=smaller)
+            else:
+                ladder = list(self._SIZE_LADDER)           # the GIVEN curated axis (regime A, like the analogy KB)
+                self._ordinal_axis_order = list(ladder)
+                self._ordinal_axis_source = "curated"
+                axis_items = ladder
+                adj = [(ladder[i + 1], ladder[i]) for i in range(len(ladder) - 1)]   # (Hi, Lo): bigger is higher rank
+            if len(axis_items) < 3:
                 return None
             seed = int(getattr(brain["comp"], "seed", 42))
-            adj = [(ladder[i + 1], ladder[i]) for i in range(len(ladder) - 1)]   # (Hi, Lo): bigger is higher rank
             rng = np.random.default_rng(seed)
-            pos = {it: float(rng.normal(0.0, 0.01)) for it in ladder}            # near-degenerate start -> LEARNED
+            pos = {it: float(rng.normal(0.0, 0.01)) for it in axis_items}        # near-degenerate start -> LEARNED
             for _ in range(400):
                 for k in rng.permutation(len(adj)):
                     hi, lo = adj[int(k)]
@@ -1337,14 +1414,15 @@ class FirstChatConsole:
     def _transitive_response(self, a, b, want_greater):
         """Tier 2.3 -- compare two items' learned ordinal-map POSITIONS (the order is read from the learned GEOMETRY,
         so it generalizes to never-adjacent pairs). `want_greater` selects the comparator direction (True for
-        bigger/larger/greater/'>'; False for smaller/lesser/'<'). The no-confab moat: an item NOT on the curated axis
-        -> ABSTAIN (None map position -> honest 'I don't have those on a scale'), never a fabricated order. HONEST
-        SCOPE: the axis is a GIVEN curated size ladder (regime A); it is NOT a corpus-learned ordering. Returns
-        (paragraph, record)."""
+        bigger/larger/greater/'>'; False for smaller/lesser/'<'). The no-confab moat: an item NOT on the axis ->
+        ABSTAIN (None map position -> honest 'I don't have those on a scale'), never a fabricated order. SCOPE
+        (B-wire-1): the axis is the CORPUS-MINED size ordering over the brain's OWN learned vocab (B1, GO) when the
+        brain has the size markers (`self._ordinal_axis_source == 'corpus-mined'`) -- structure ACQUIRED, not given;
+        for a vocab-poor brain it falls back to the GIVEN curated ladder ('curated'). Returns (paragraph, record)."""
         a, b = a.lower(), b.lower()
         rec = {"intent": "transitive", "transitive_ab": [a, b], "transitive_want_greater": want_greater,
                "transitive_answer": None, "paragraph": "", "emitted_propositions": [], "depth": 0,
-               "n_certain": 0, "n_flagged": 0}
+               "n_certain": 0, "n_flagged": 0, "axis_source": self._ordinal_axis_source}
         pos = self.ordinal_pos
         cmp_word = "bigger" if want_greater else "smaller"
         if pos is None:
@@ -1354,9 +1432,12 @@ class FirstChatConsole:
         if missing:                                    # an off-axis item -> abstain (the moat -- never fabricate order)
             rec["intent"] = "transitive_unmapped"
             rec["transitive_missing"] = missing
-            scale = " < ".join(k for k in self._SIZE_LADDER if k in pos)
+            # show a short window of the ACTIVE axis (mined order OR curated ladder); the wording reflects the source.
+            on_axis = [k for k in self._ordinal_axis_order if k in pos]
+            scale = " < ".join(on_axis[:8]) + (" < ..." if len(on_axis) > 8 else "")
+            how = ("learned from the corpus" if self._ordinal_axis_source == "corpus-mined" else "I've been given")
             return (f"I can't place {' or '.join(repr(m) for m in missing)} on a size scale -- I only compare things "
-                    f"on a scale I've been given ({scale}).", rec)
+                    f"on a scale {how} ({scale}).", rec)
         if a == b:
             return (f"\"{a}\" and \"{b}\" are the same thing -- neither is {cmp_word}.", rec)
         gap = pos[a] - pos[b]
