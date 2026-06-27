@@ -95,10 +95,16 @@ from research.runners.wh_question_parser import (  # noqa: E402  (Tier 0.3 -- na
 from research.runners.argstructure_composer import (  # noqa: E402  (Tier 0.1 -- typed verb-frame argument structure)
     ArgStructureComposer, ALL_ROLES, TYPED_ROLES, FUNCTION_WORDS,
 )
-from research.runners.entity_instance_layer import EntityInstanceLayer  # noqa: E402  (Tier 1.1 -- entity instances)
+from research.runners.entity_instance_layer import EntityInstanceLayer, past_tense, _PAST  # noqa: E402  (Tier 1.1)
 from research.runners.factored_relation_analogy import build_knowledge_base  # noqa: E402  (Tier 2.1-A -- analogy KB)
+from research.runners.common_ground_composer import CommonGroundComposer  # noqa: E402  (Tier 2.4 -- shared/private tag)
+from research.runners.tense_aspect_composer import TenseAspectComposer, inflect  # noqa: E402  (Tier 2.5 -- tense tag)
 # Tier 2.2 self-cued chain-of-thought is the composer's own `chain_of_thought` method (what self_cued_chain_demo.think
 # and BrainConversationalAgent.chain_of_thought both delegate to) -- reused directly on the console's composer.
+# Tier 2.3 transitive inference uses the Betasort-ASYMMETRIC ordinal-map update from _transitive_ordinal_map_derisk;
+# its `learn_positions` is locked to that module's 7-item ABCDEFG ladder, so the console replicates the SAME validated
+# update body (one short function) parameterized on a curated REAL-WORD size ladder (the regime-A pattern -- like the
+# analogy KB; the corpus has no clean total order, so the axis is GIVEN, and an off-axis item ABSTAINS).
 
 # Tier 0.1 typed object roles a corpus fact may realize (GOAL/THEME/RECIPIENT/LOCATION/...). When a fact realizes a
 # typed object (not a bare `patient`), the console ALSO binds that filler to `patient` so the flat-SVO machinery
@@ -559,6 +565,33 @@ _CHAIN_RE = re.compile(
 _ANALOGY_COLON_RE = re.compile(r"\b(\w+)\s*:\s*(\w+)\s*::?\s*(\w+)\s*:\s*\??", re.IGNORECASE)
 _ANALOGY_PROSE_RE = re.compile(
     r"\b(\w+)\s+is\s+to\s+(\w+)\s+as\s+(\w+)\s+is\s+to\b\s*(?:what\b|\?|$)", re.IGNORECASE)
+# Tier 2.3 -- TRANSITIVE INFERENCE over a learned 1-D ORDINAL MAP ("is A bigger than B?" / "is A smaller than B?" /
+# "A > B" / "A < B"). Answered by COMPARING the two items' learned map POSITIONS (the order is read from the learned
+# GEOMETRY, not a stored edge -- it generalizes to never-trained non-adjacent pairs). HONEST SCOPE: the map is a
+# curated REAL-WORD size axis the agent is GIVEN (regime A -- like the analogy KB); the corpus has no clean total
+# order, so an item NOT on the axis ABSTAINS ("I don't have those on a scale"). The comparative word also selects the
+# direction (bigger/larger/greater -> higher rank wins; smaller/lesser -> lower rank wins).
+_TRANSITIVE_PROSE_RE = re.compile(
+    r"\bis\s+(?:a\s+|the\s+)?(\w+)\s+(bigger|larger|greater|smaller|lesser|less)\s+than\s+(?:a\s+|the\s+)?(\w+)",
+    re.IGNORECASE)
+_TRANSITIVE_OP_RE = re.compile(r"\bis\s+(?:a\s+|the\s+)?(\w+)\s*([<>])\s*(?:a\s+|the\s+)?(\w+)|^\s*(\w+)\s*([<>])\s*(\w+)\s*\??\s*$",
+                               re.IGNORECASE)
+_GREATER_WORDS = {"bigger", "larger", "greater", ">"}      # the comparator direction the surface form asks for
+
+# Tier 2.4 + 2.5 -- a user STATEMENT ("the boy went to the park" / "dog chase cat"): a declarative SVO, NOT a
+# question. Checked LAST (after every question route) so a question is never consumed as a statement. The leading
+# token must NOT be an interrogative / route-trigger, and there must be NO question mark / colon. The verb slot is
+# confirmed against the brain's known verbs in `_statement_svo` so a non-SVO declarative is not mis-parsed.
+_STATEMENT_STOP = frozenset((
+    "what", "which", "who", "whom", "where", "when", "why", "how", "is", "are", "was", "were", "do", "does", "did",
+    "tell", "hi", "hey", "hello", "yo", "howdy", "starting", "start", "begin", "beginning", "chain", "thoughts",
+    "your", "talk", "thanks", "thank", "please", "can", "could", "would", "will", "let"))
+_STATEMENT_DROP = frozenset(("the", "a", "an", "to", "at", "of", "in", "on", "with", "for", "into", "onto"))
+
+
+def _reverse_past_map():
+    """surface PAST form -> base verb (irregular table, reused from the entity-instance layer's _PAST)."""
+    return {v: k for k, v in _PAST.items()}
 
 
 _SIBILANT = ("s", "sh", "ch", "x", "z", "o")
@@ -635,6 +668,21 @@ class FirstChatConsole:
         # items the KB tracks, and ABSTAINS ("I don't track that kind of relation") on everything else -- never
         # fabricates a relation. Built lazily + guarded (any failure -> self.analogy_kb=None -> graceful abstain).
         self.analogy_kb = self._build_analogy_kb(brain)
+        # Tier 2.3 -- the learned 1-D ORDINAL MAP for transitive inference (a curated REAL-WORD size ladder; regime A,
+        # like the analogy KB). Built lazily + guarded: any failure -> self.ordinal_pos=None -> graceful abstain.
+        self.ordinal_pos = self._build_ordinal_map(brain)
+        # Tier 2.5 -- the TENSE composer (a bound PAST/PRESENT/FUTURE tag DRIVES the rendered verb form). GENUINE: a
+        # user statement's input tense is detected from its verb form + echoed back tensed. Built lazily + guarded.
+        self._past_to_base = _reverse_past_map()
+        self.tense_comp = self._build_tense_composer(brain)
+        # Tier 2.4 -- the COMMON-GROUND composer + the per-SESSION discourse ledger. GENUINE audience design over the
+        # LIVE conversation: a fact the USER states THIS session is SHARED (mutually known -> acknowledge, don't
+        # re-tell); the brain's own pre-loaded facts are PRIVATE (only the brain knows them -> volunteer). The ledger
+        # starts EMPTY (so the rubric/demo, which make no statements, are byte-unchanged) and grows as the user
+        # speaks. Built lazily + guarded: any failure -> self.cg_comp=None -> the statement route still echoes/stores.
+        self.cg_comp = self._build_cg_composer(brain)
+        self._shared_facts = set()        # (agent, action, patient) the user has STATED this session (= SHARED)
+        self._stated_tense = {}           # (agent, action, patient) -> the tense the user used (for a tensed ack)
 
     def _build_analogy_kb(self, brain):
         """Build the curated factored-relation analogy KB (gender / capital_of / past-tense / comparative). Same
@@ -643,6 +691,72 @@ class FirstChatConsole:
         try:
             seed = int(getattr(brain["comp"], "seed", 42))
             return build_knowledge_base(seed=seed, D=256)
+        except Exception:
+            return None
+
+    # the curated REAL-WORD size ladder (ascending: tiny < small < big < huge < giant). This is a GIVEN axis (regime
+    # A -- EXACTLY like the analogy KB, which carries its own curated king/queen/prince items independent of the
+    # brain's corpus vocab). The corpus this brain learned has no clean total order (its 1,454 vocab carries no size
+    # scale), so the axis is given, NOT corpus-learned -- the honest regime-A scope. Trained ONLY from adjacent pairs;
+    # held-out non-adjacent comparisons (tiny vs huge) read from the learned geometry; an off-ladder item ABSTAINS.
+    _SIZE_LADDER = ("tiny", "small", "big", "huge", "giant")
+
+    def _build_ordinal_map(self, brain):
+        """Learn a 1-D ordinal position per ladder item via the de-risk's Betasort-ASYMMETRIC update (replicated here
+        because the de-risk's `learn_positions` is locked to its 7-item ABCDEFG ladder). Each adjacent (Hi, Lo)
+        nudges Hi UP and Lo DOWN (the LOWER member updated by asym x the higher's amount -- the asymmetry is what
+        makes the axis TRANSITIVE, the literature-validated rule). The ladder is the GIVEN curated axis (regime A,
+        the analogy-KB pattern) -- NOT filtered to the brain's vocab (the corpus carries no size scale). Returns
+        {word: position}, or None (graceful abstain)."""
+        try:
+            ladder = list(self._SIZE_LADDER)               # the GIVEN curated axis (regime A, like the analogy KB)
+            if len(ladder) < 3:
+                return None
+            seed = int(getattr(brain["comp"], "seed", 42))
+            adj = [(ladder[i + 1], ladder[i]) for i in range(len(ladder) - 1)]   # (Hi, Lo): bigger is higher rank
+            rng = np.random.default_rng(seed)
+            pos = {it: float(rng.normal(0.0, 0.01)) for it in ladder}            # near-degenerate start -> LEARNED
+            for _ in range(400):
+                for k in rng.permutation(len(adj)):
+                    hi, lo = adj[int(k)]
+                    err = 1.0 - (pos[hi] - pos[lo])      # want a unit separation per adjacent step
+                    pos[hi] += 0.08 * err
+                    pos[lo] -= 0.08 * err * 0.5          # asym=0.5 -> the transitive (not merely associative) axis
+            return pos
+        except Exception:
+            return None
+
+    def _build_tense_composer(self, brain):
+        """Build the Tier 2.5 TenseAspectComposer on the brain's OWN learned codes (same seed/D/grounded codes), so a
+        tensed user statement is stored + rendered on the codes the brain knows. Standalone (its own kb) so the main
+        composer's recall + no-confab moat are byte-untouched. Returns the composer or None (graceful abstain)."""
+        try:
+            comp = brain["comp"]
+            words = list(getattr(comp, "words", brain["vocab"]))
+            codes = {w: comp.concepts[w] for w in words if w in getattr(comp, "concepts", {})}
+            seed = int(getattr(comp, "seed", 42))
+            D = int(getattr(comp, "D", 128))
+            return TenseAspectComposer(seed=seed, D=D, vocab=sorted(set(words)), grounded_codes=codes)
+        except Exception:
+            return None
+
+    def _build_cg_composer(self, brain):
+        """Build the Tier 2.4 CommonGroundComposer on the brain's OWN learned codes + PRE-LOAD the brain's stored
+        facts as PRIVATE (only the brain knows them -> volunteer). User-stated facts are added as SHARED at runtime
+        (the live discourse ledger). Standalone (its own kb) so the main composer's recall + moat are byte-untouched.
+        Returns the composer or None (graceful abstain -- the statement route then just echoes, no audience design)."""
+        try:
+            comp = brain["comp"]
+            words = list(getattr(comp, "words", brain["vocab"]))
+            codes = {w: comp.concepts[w] for w in words if w in getattr(comp, "concepts", {})}
+            seed = int(getattr(comp, "seed", 42))
+            D = int(getattr(comp, "D", 128))
+            cg = CommonGroundComposer(seed=seed, D=D, vocab=sorted(set(words)), grounded_codes=codes)
+            for f in brain["facts"]:                       # the brain's own knowledge = PRIVATE (it knows; the user may not)
+                a, v, p = f[0], f[1], f[2]
+                if a in codes and v in codes and p in codes:
+                    cg.store_cg(a, v, p, common_ground="PRIVATE")
+            return cg
         except Exception:
             return None
 
@@ -1018,6 +1132,168 @@ class FirstChatConsole:
                     f"I'd rather not guess.", rec)
         return (f"\"{a}\" is to \"{b}\" as \"{c}\" is to \"{ans}\".", rec)
 
+    # ---- Tier 2.3: transitive inference via the learned ordinal map ------------------------------------------
+    def _transitive_response(self, a, b, want_greater):
+        """Tier 2.3 -- compare two items' learned ordinal-map POSITIONS (the order is read from the learned GEOMETRY,
+        so it generalizes to never-adjacent pairs). `want_greater` selects the comparator direction (True for
+        bigger/larger/greater/'>'; False for smaller/lesser/'<'). The no-confab moat: an item NOT on the curated axis
+        -> ABSTAIN (None map position -> honest 'I don't have those on a scale'), never a fabricated order. HONEST
+        SCOPE: the axis is a GIVEN curated size ladder (regime A); it is NOT a corpus-learned ordering. Returns
+        (paragraph, record)."""
+        a, b = a.lower(), b.lower()
+        rec = {"intent": "transitive", "transitive_ab": [a, b], "transitive_want_greater": want_greater,
+               "transitive_answer": None, "paragraph": "", "emitted_propositions": [], "depth": 0,
+               "n_certain": 0, "n_flagged": 0}
+        pos = self.ordinal_pos
+        cmp_word = "bigger" if want_greater else "smaller"
+        if pos is None:
+            rec["intent"] = "transitive_no_map"
+            return ("I don't keep things on a size scale yet, so I can't compare those.", rec)
+        missing = [x for x in (a, b) if x not in pos]
+        if missing:                                    # an off-axis item -> abstain (the moat -- never fabricate order)
+            rec["intent"] = "transitive_unmapped"
+            rec["transitive_missing"] = missing
+            scale = " < ".join(k for k in self._SIZE_LADDER if k in pos)
+            return (f"I can't place {' or '.join(repr(m) for m in missing)} on a size scale -- I only compare things "
+                    f"on a scale I've been given ({scale}).", rec)
+        if a == b:
+            return (f"\"{a}\" and \"{b}\" are the same thing -- neither is {cmp_word}.", rec)
+        gap = pos[a] - pos[b]
+        a_is_greater = gap > 0
+        yes = (a_is_greater == want_greater)           # the queried relation holds iff direction matches the map
+        rec["transitive_answer"] = bool(yes)
+        rec["transitive_gap"] = round(float(abs(gap)), 3)     # the position gap = the symbolic-distance margin
+        winner = a if a_is_greater else b
+        if yes:
+            return (f"Yes -- {a} is {cmp_word} than {b}.", rec)
+        return (f"No -- {winner} is {cmp_word.replace('bigger','bigger').replace('smaller','smaller')} than the "
+                f"other; {b} is {cmp_word} than {a}." if not want_greater else
+                f"No -- it's the other way around: {winner} is {cmp_word} than {a if winner == b else b}.", rec)
+
+    # ---- Tier 2.4 + 2.5: a user STATEMENT -> record (tensed + as SHARED common ground) + a tensed acknowledgement --
+    def _statement_svo(self, msg):
+        """Parse a declarative user line into (agent, action, patient, tense) IFF it is a real SVO the brain can
+        ground: exactly 3 content words (articles/prepositions dropped) with a KNOWN verb in the middle, plus a
+        detected tense from the surface verb form (PAST via the irregular table or -ed; FUTURE via 'will V';
+        PRESENT otherwise). Returns the 4-tuple, or None (not a groundable statement -> fall through to discuss)."""
+        s = msg.strip()
+        if "?" in s or ":" in s:
+            return None
+        toks = re.findall(r"[a-zA-Z]+", s.lower())
+        if not toks or toks[0] in _STATEMENT_STOP:
+            return None
+        # detect tense BEFORE dropping function words ('will' is the future marker; it then drops out of the content)
+        tense, future = "PRESENT", ("will" in toks)
+        content = []
+        for t in toks:
+            if t == "will":                         # the future auxiliary -> a tense marker, not a content word
+                continue
+            if t in _STATEMENT_DROP:
+                continue
+            content.append(t)
+        if len(content) != 3:
+            return None
+        a, vsurf, p = content
+        # map the surface verb form back to the brain's known base verb (the lemma it stores) + read the tense.
+        verb = None
+        if vsurf in self.verbs:
+            verb = vsurf
+        elif vsurf in self._past_to_base and self._past_to_base[vsurf] in self.verbs:
+            verb, tense = self._past_to_base[vsurf], "PAST"
+        elif vsurf.endswith("ed") and vsurf[:-2] in self.verbs:
+            verb, tense = vsurf[:-2], "PAST"
+        elif vsurf.endswith("ed") and vsurf[:-1] in self.verbs:
+            verb, tense = vsurf[:-1], "PAST"
+        elif vsurf.endswith("s") and vsurf[:-1] in self.verbs:
+            verb = vsurf[:-1]
+        if verb is None:
+            return None                              # the middle word isn't a known verb -> not a groundable SVO
+        if future:
+            tense = "FUTURE"
+        # both flanking content words must be in the brain's vocab (so the codes exist + the moat stays grounded).
+        if a not in self._vocab_set or p not in self._vocab_set:
+            return None
+        return a, verb, p, tense
+
+    def _statement_response(self, parsed):
+        """A user STATEMENT -> GENUINE Tier 2.5 (echo it back in the SAME tense the user used) AND GENUINE Tier 2.4
+        (record it as SHARED common ground -- the user told me, so it is now mutually known; a later question about
+        it is ACKNOWLEDGED, not re-told). The brain's own pre-loaded facts stay PRIVATE -> volunteered. The moat: we
+        only ever store/echo a fully-vocab SVO the user actually stated; we never fabricate. Returns (paragraph,
+        record)."""
+        a, verb, p, tense = parsed
+        # record into the live discourse ledger (so a follow-up query gets audience-designed -- 2.4).
+        self._shared_facts.add((a, verb, p))
+        self._stated_tense[(a, verb, p)] = tense
+        if self.cg_comp is not None:
+            try:
+                self.cg_comp.store_cg(a, verb, p, common_ground="SHARED")   # the user stated it -> SHARED (known to both)
+            except Exception:
+                pass
+        rec = {"intent": "user_statement", "statement_svo": [a, verb, p], "statement_tense": tense,
+               "common_ground": "SHARED", "paragraph": "", "emitted_propositions": [], "depth": 0,
+               "n_certain": 0, "n_flagged": 0}
+        # echo it back tensed (2.5): bind the object to the verb's frame role (GOAL for motion verbs) so the render
+        # reads naturally ('went to the park' vs 'ate the apple'); the bound tense tag DRIVES the surface verb form.
+        echo = None
+        if self.tense_comp is not None:
+            try:
+                role = _frame_object_role(verb)
+                fact = {"agent": a, "action": verb, role: p}
+                if role != "patient":
+                    fact["patient"] = p
+                self.tense_comp.store_tensed(fact, tense=tense)
+                echo = self.tense_comp.render_tensed(fact)
+            except Exception:
+                echo = None
+        if echo:
+            rec["statement_echo"] = echo
+            return (f"Got it -- {echo}. I'll remember you told me that.", rec)
+        # fallback echo (tense composer unavailable): a host-tensed surface (still genuine -- the user's tense drives it)
+        surf = inflect(verb, tense)
+        return (f"Got it -- the {a} {surf} the {p}. I'll remember you told me that.", rec)
+
+    def _common_ground_ack(self, agent, action):
+        """Tier 2.4 AUDIENCE DESIGN: if (agent, action, p) is a fact the USER stated this session (SHARED common
+        ground), return an ACKNOWLEDGEMENT that references it as already-known rather than re-telling it (the
+        competent move); else None (the caller runs the normal certain-lead discuss -- a PRIVATE brain fact is
+        volunteered). The patient is read from the live ledger (the user's own stated fact), and -- when the
+        CommonGroundComposer is available -- CONFIRMED as SHARED via the bound tag (the validated audience-design
+        read). The moat holds: this only fires for a fact the user literally stated; nothing is fabricated."""
+        match = next(((a, v, p) for (a, v, p) in self._shared_facts if a == agent and v == action), None)
+        if match is None:
+            return None
+        a, v, p = match
+        # confirm via the bound SHARED/PRIVATE tag (the validated read) when the composer is present; should_volunteer
+        # is False for a SHARED fact -> suppress the re-telling, acknowledge instead.
+        if self.cg_comp is not None:
+            try:
+                if self.cg_comp.should_volunteer(a, v, p) is not False:   # not SHARED (or unknown) -> don't ack
+                    return None
+            except Exception:
+                pass
+        # render the acknowledgement in the tense the user used (composing 2.4 audience design with 2.5 tense). Render
+        # via the tense composer's verb FRAME so the surface reads naturally ('went to the park' vs 'ate the apple');
+        # fall back to a flat tensed surface if the composer is unavailable.
+        tense = self._stated_tense.get((a, v, p), "PRESENT")
+        sent = None
+        if self.tense_comp is not None:
+            try:
+                role = _frame_object_role(v)
+                fact = {"agent": a, "action": v, role: p}
+                if role != "patient":
+                    fact["patient"] = p
+                sent = self.tense_comp.render_tensed(fact)
+            except Exception:
+                sent = None
+        if sent is None:
+            sent = f"the {a} {inflect(v, tense)} the {p}"
+        rec = {"intent": "common_ground_ack", "common_ground": "SHARED", "statement_svo": [a, v, p],
+               "paragraph": "", "emitted_propositions": [], "depth": 0, "n_certain": 0, "n_flagged": 0}
+        para = f"As you mentioned, {sent} -- you told me that, so I won't belabour it."
+        rec["paragraph"] = para
+        return para, rec
+
     def respond(self, msg):
         """Return (paragraph, record). Pure routing -> DiscursiveTurn.discuss; the brain does the cognition."""
         m = msg.strip()
@@ -1040,6 +1316,18 @@ class FirstChatConsole:
         man = _ANALOGY_PROSE_RE.search(m) or _ANALOGY_COLON_RE.search(m)
         if man:
             return self._analogy_response(man.group(1), man.group(2), man.group(3))
+
+        # Tier 2.3 -- TRANSITIVE INFERENCE ("is A bigger than B?" / "is A smaller than B?" / "A > B" / "A < B").
+        # Checked EARLY: the prose form starts with "is X bigger/smaller than Y" (would otherwise be partly read by
+        # the relate / about routes). Compares learned ordinal-map positions; an off-axis item ABSTAINS (the moat).
+        mt = _TRANSITIVE_PROSE_RE.search(m)
+        if mt:
+            return self._transitive_response(mt.group(1), mt.group(3), mt.group(2).lower() in _GREATER_WORDS)
+        mto = _TRANSITIVE_OP_RE.search(m)
+        if mto:
+            ga, op, gb = (mto.group(1), mto.group(2), mto.group(3)) if mto.group(2) else (
+                mto.group(4), mto.group(5), mto.group(6))
+            return self._transitive_response(ga, gb, op == ">")
 
         # Tier 2.2 -- SELF-CUED CHAIN-OF-THOUGHT ("starting from X, what follows?" / "what comes after X?" / "where
         # does thinking about X lead?"). Checked before the wh / about routes so the chain trigger is not consumed by
@@ -1095,6 +1383,14 @@ class FirstChatConsole:
         md = _WHAT_DOES_RE.search(m)
         if md:
             x, y = md.group(1).lower(), md.group(2).lower()
+            # Tier 2.4 AUDIENCE DESIGN (genuine, over the live discourse): if THIS fact was something the USER stated
+            # this session (it is SHARED common ground), ACKNOWLEDGE it ("as you mentioned, ...") instead of re-telling
+            # it -- the competent move (don't re-explain what the listener already knows). The brain's own PRIVATE
+            # facts fall through to the normal certain-lead discuss (volunteered). The moat is intact: this only fires
+            # for a fact the user literally said, and the acknowledgement re-states exactly that stated fact.
+            ack = self._common_ground_ack(x, y)
+            if ack is not None:
+                return ack
             # map a surface verb form back to a base verb if needed (so 'what does dog eats' still cues)
             cue = (x, y)
             rec = self.dt.discuss(m, cue=cue, topic=(x if x in self.stored_agents else None))
@@ -1123,6 +1419,15 @@ class FirstChatConsole:
                 # force_intent='question' makes this deterministic regardless of which router pattern the phrasing hit.
                 rec = self.dt.discuss(m, cue=(x, "is"), topic=x, force_intent="question")
             return self._render(rec), rec
+
+        # Tier 2.4 + 2.5 -- a user STATEMENT ("the boy went to the park" / "dog chase cat"): a declarative SVO, NOT a
+        # question. Checked LAST among the structured routes (every question route above had its chance first) so a
+        # question is never consumed as a statement. RECORD it (tensed, as SHARED common ground) + ECHO it back in the
+        # SAME tense the user used. Only a fully-vocab SVO with a known verb is accepted; everything else falls through
+        # to the discuss fallback (so a non-SVO declarative still gets an opinion, not a mis-parse).
+        stmt = self._statement_svo(m)
+        if stmt is not None:
+            return self._statement_response(stmt)
 
         # fallback: a bare topic mention -> opinion on the first content word.
         topic = self._content_word(m)
