@@ -96,6 +96,9 @@ from research.runners.argstructure_composer import (  # noqa: E402  (Tier 0.1 --
     ArgStructureComposer, ALL_ROLES, TYPED_ROLES, FUNCTION_WORDS,
 )
 from research.runners.entity_instance_layer import EntityInstanceLayer  # noqa: E402  (Tier 1.1 -- entity instances)
+from research.runners.factored_relation_analogy import build_knowledge_base  # noqa: E402  (Tier 2.1-A -- analogy KB)
+# Tier 2.2 self-cued chain-of-thought is the composer's own `chain_of_thought` method (what self_cued_chain_demo.think
+# and BrainConversationalAgent.chain_of_thought both delegate to) -- reused directly on the console's composer.
 
 # Tier 0.1 typed object roles a corpus fact may realize (GOAL/THEME/RECIPIENT/LOCATION/...). When a fact realizes a
 # typed object (not a bare `patient`), the console ALSO binds that filler to `patient` so the flat-SVO machinery
@@ -540,6 +543,22 @@ _ABOUT_RE = re.compile(r"\b(?:what\s+is|what's|tell me about|what do you know ab
 # but cannot resolve WHICH instance (it has no entity-instance layer yet -- that is the Tier-1 keystone). This is the
 # honest, generic clarification TRIGGER (the full which-X disambiguation needs Tier-1 entity instances).
 _WHICH_RE = re.compile(r"\bwhich\s+(?:one\b|(?:of\s+(?:the\s+)?)?(\w+))", re.IGNORECASE)
+# Tier 2.2 -- SELF-CUED CHAIN-OF-THOUGHT ("starting from X, what follows?" / "what comes after X?" / "where does
+# thinking about X lead?"): the brain SELECTS each next hop by its OWN learned association over its stored facts and
+# chases it via the validated single hop, abstaining honestly at a dead end / unknown X (the no-confab moat at every
+# hop). The start concept is the LAST captured group across the alternatives.
+_CHAIN_RE = re.compile(
+    r"\b(?:starting\s+from|start\s+(?:from|at|with)|begin(?:ning)?\s+(?:from|at|with)|chain\s+from)\s+"
+    r"(?:the\s+|a\s+|an\s+)?(\w+)"
+    r"|\bwhat\s+(?:comes|follows)\s+(?:next\s+)?(?:after|from)\s+(?:the\s+|a\s+|an\s+)?(\w+)"
+    r"|\bwhere\s+does\s+(?:thinking\s+about|a\s+thought\s+(?:about|of)|following)\s+(?:the\s+|a\s+|an\s+)?(\w+)\s+lead",
+    re.IGNORECASE)
+# Tier 2.1-A -- proportional ANALOGY ("A is to B as C is to?" / "A:B::C:?"): answered over the curated factored-
+# relation KB (bijective relations -- gender, capital_of, past-tense, comparative); an un-grounded analogy (an item
+# the KB does not track, or low cleanup confidence) ABSTAINS (the no-confab moat). Two surface forms:
+_ANALOGY_COLON_RE = re.compile(r"\b(\w+)\s*:\s*(\w+)\s*::?\s*(\w+)\s*:\s*\??", re.IGNORECASE)
+_ANALOGY_PROSE_RE = re.compile(
+    r"\b(\w+)\s+is\s+to\s+(\w+)\s+as\s+(\w+)\s+is\s+to\b\s*(?:what\b|\?|$)", re.IGNORECASE)
 
 
 _SIBILANT = ("s", "sh", "ch", "x", "z", "o")
@@ -608,6 +627,24 @@ class FirstChatConsole:
         # moat audit are byte-untouched (purely ADDITIVE; the layer only powers the "which X?" route). Built lazily
         # + guarded: any failure leaves `self.instances=None` and the console falls back to the generic clarification.
         self.instances = self._build_instance_layer(brain)
+        # Tier 2.1-A -- the factored-relation ANALOGY KB (the "A is to B as C is to ?" route). HONEST SCOPE: this is
+        # a STANDALONE curated KB of EXPLICIT FACTORED bijective relations (gender / capital_of / past-tense /
+        # comparative -- the GO'd regime-A, 2026-06-27-tier2.1A-factored-relation-analogy-GO.md). It is NOT analogy
+        # over the brain's CORPUS-LEARNED codes (regime B = the documented NO-GO -- producing meaningful relational
+        # geometry on learned codes is the open corpus-scale frontier). So the analogy route answers analogies whose
+        # items the KB tracks, and ABSTAINS ("I don't track that kind of relation") on everything else -- never
+        # fabricates a relation. Built lazily + guarded (any failure -> self.analogy_kb=None -> graceful abstain).
+        self.analogy_kb = self._build_analogy_kb(brain)
+
+    def _build_analogy_kb(self, brain):
+        """Build the curated factored-relation analogy KB (gender / capital_of / past-tense / comparative). Same
+        seed/D as the brain so it is reproducible; standalone (its own factored codes -- the brain's corpus codes
+        are regime-B and unusable for analogy, the documented NO-GO). Returns the KB or None on any failure."""
+        try:
+            seed = int(getattr(brain["comp"], "seed", 42))
+            return build_knowledge_base(seed=seed, D=256)
+        except Exception:
+            return None
 
     def _build_instance_layer(self, brain):
         """Build + populate the entity-instance layer from the brain's stored facts. For each ENTITY TYPE that is the
@@ -926,6 +963,61 @@ class FirstChatConsole:
         rec["paragraph"] = para
         return _surface_morphology(para, self.verbs), rec
 
+    # ---- Tier 2.2: self-cued CHAIN-OF-THOUGHT -----------------------------------------------------------------
+    def _chain_response(self, start):
+        """Tier 2.2 -- 'starting from X, what follows?': the brain SELECTS each next hop by its OWN learned
+        association over its stored facts and chases it via the validated single hop (composer.chain_of_thought),
+        re-cleaning between hops so error does not compound. Renders the self-generated chain, or ABSTAINS honestly
+        on a dead end / unknown X (the no-confab moat holds at EVERY hop -- never a fabricated hop). The chain is a
+        sequence of grounded query_patient recalls; the record carries no flag-able certain proposition (the moat
+        audit sees it clean by construction). Reuses the composer's validated chain_of_thought method (the same op
+        self_cued_chain_demo.think and BrainConversationalAgent.chain_of_thought both delegate to)."""
+        comp = self.brain["comp"]
+        if not hasattr(comp, "chain_of_thought"):     # only RFPhasorComposer / OneBrainComposer support it
+            return None
+        term, path = comp.chain_of_thought(start, max_hops=5, return_path=True)
+        rec = {"intent": "chain_of_thought", "chain_start": start, "chain_path": list(path),
+               "chain_terminal": term, "chain_hops": len(path) - 1,
+               "paragraph": "", "emitted_propositions": [], "depth": len(path) - 1, "n_certain": 0, "n_flagged": 0}
+        if len(path) <= 1:                            # dead end -> abstain (no fabricated hop) -- the moat
+            rec["intent"] = "chain_deadend"
+            return (f"Starting from \"{start}\", nothing follows -- I have no association to chase from there.", rec)
+        chain_str = " -> ".join(path)
+        para = (f"Starting from \"{start}\", my thoughts run: {chain_str}. "
+                f"That's {len(path)-1} self-cued hop{'s' if len(path)-1 != 1 else ''}, ending at \"{term}\".")
+        rec["paragraph"] = para
+        return _surface_morphology(para, self.verbs), rec
+
+    # ---- Tier 2.1-A: proportional ANALOGY ('A is to B as C is to ?') ------------------------------------------
+    def _analogy_response(self, a, b, c):
+        """Tier 2.1-A -- A:B::C:? over the curated factored-relation KB (bijective relations only). Answers via the
+        validated transform-extract -> apply -> cleanup (FactoredRelationAnalogy.analogy); a low-confidence / un-
+        grounded analogy ABSTAINS (the no-confab moat -- never fabricates a relation). HONEST SCOPE: the KB is the
+        explicit factored-relation set the agent is GIVEN (regime A); it does NOT operate over the brain's corpus-
+        learned codes (regime B = the documented NO-GO). Returns (paragraph, record)."""
+        a, b, c = a.lower(), b.lower(), c.lower()
+        kb = self.analogy_kb
+        rec = {"intent": "analogy", "analogy_abc": [a, b, c], "analogy_answer": None, "analogy_conf": None,
+               "paragraph": "", "emitted_propositions": [], "depth": 0, "n_certain": 0, "n_flagged": 0}
+        # the moat: when the KB is unavailable, or any operand is not a tracked factored-relation item, ABSTAIN
+        # honestly -- the analogy route is wired but data-limited to the curated bijective relations.
+        if kb is None:
+            rec["intent"] = "analogy_no_kb"
+            return ("I don't track relations in a way that lets me answer analogies yet.", rec)
+        missing = [x for x in (a, b, c) if x not in kb.item_code]
+        if missing:
+            rec["intent"] = "analogy_untracked"
+            rec["analogy_missing"] = missing
+            return (f"I can't answer that analogy -- I don't track {'that kind of relation' if len(missing) == 3 else 'a relation for ' + ', '.join(repr(m) for m in missing)}. "
+                    f"I only do analogies over relations I know explicitly (gender, capital-of, past-tense, comparative).", rec)
+        ans, sim = kb.analogy(a, b, c, return_score=True)
+        rec["analogy_answer"], rec["analogy_conf"] = ans, (round(float(sim), 3) if sim is not None else None)
+        if ans is None:                               # low cleanup confidence -> abstain (un-grounded) -- the moat
+            rec["intent"] = "analogy_abstain"
+            return (f"\"{a}\" is to \"{b}\" as \"{c}\" is to ... I'm not confident enough to answer that -- "
+                    f"I'd rather not guess.", rec)
+        return (f"\"{a}\" is to \"{b}\" as \"{c}\" is to \"{ans}\".", rec)
+
     def respond(self, msg):
         """Return (paragraph, record). Pure routing -> DiscursiveTurn.discuss; the brain does the cognition."""
         m = msg.strip()
@@ -941,6 +1033,26 @@ class FirstChatConsole:
         if _MORE_RE.search(m) or _STOP_RE.search(m):
             rec = self.dt.discuss(m, topic=self.dt._topic)
             return self._render(rec), rec
+
+        # Tier 2.1-A -- proportional ANALOGY ("A is to B as C is to?" / "A:B::C:?"). Checked EARLY: the prose form
+        # contains "is to ... as ... is to" (would otherwise be mis-read by the relate / about routes) and the colon
+        # form is unambiguous. Answered over the curated factored-relation KB; an un-grounded analogy ABSTAINS.
+        man = _ANALOGY_PROSE_RE.search(m) or _ANALOGY_COLON_RE.search(m)
+        if man:
+            return self._analogy_response(man.group(1), man.group(2), man.group(3))
+
+        # Tier 2.2 -- SELF-CUED CHAIN-OF-THOUGHT ("starting from X, what follows?" / "what comes after X?" / "where
+        # does thinking about X lead?"). Checked before the wh / about routes so the chain trigger is not consumed by
+        # a generic content-word opinion. The brain SELECTS each hop; a dead end / unknown X abstains (the moat).
+        mc = _CHAIN_RE.search(m)
+        if mc:
+            start = (mc.group(1) or mc.group(2) or mc.group(3) or "").lower()
+            if start and start not in self._vocab_set:
+                return self._clarify_unknown(start)   # an unknown start word -> the specific 'I don't know X' line
+            res = self._chain_response(start) if start else None
+            if res is not None:
+                return res
+            # the composer lacks chain_of_thought (e.g. a non-RF composer) -> fall through to the normal routes
 
         # Tier 0.4 -- a REFERENTIAL / under-specified question ("which boy?", "which one ...?"). The brain knows the
         # TYPE but has no entity-instance layer to resolve WHICH one (Tier 1). Honest generic clarification (the
