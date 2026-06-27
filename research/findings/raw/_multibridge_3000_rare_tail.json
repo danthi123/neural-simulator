@@ -1,0 +1,43 @@
+{
+  "brain": "brain3000pos_w7000",
+  "D": 128,
+  "n_unambiguous_facts": 1013,
+  "tail_slices": [
+    {
+      "n": 40,
+      "count_max": 2,
+      "single_recall": 0.9,
+      "multibridge_recall": 0.95,
+      "worst_shard": 0.9230769230769231,
+      "multibridge_FA": 0,
+      "delta": 0.04999999999999993
+    },
+    {
+      "n": 80,
+      "count_max": 2,
+      "single_recall": 0.8875,
+      "multibridge_recall": 0.975,
+      "worst_shard": 0.9615384615384616,
+      "multibridge_FA": 0,
+      "delta": 0.08750000000000002
+    },
+    {
+      "n": 120,
+      "count_max": 2,
+      "single_recall": 0.875,
+      "multibridge_recall": 0.95,
+      "worst_shard": 0.9444444444444444,
+      "multibridge_FA": 0,
+      "delta": 0.07499999999999996
+    },
+    {
+      "n": 200,
+      "count_max": 2,
+      "single_recall": 0.875,
+      "multibridge_recall": 0.955,
+      "worst_shard": 0.9473684210526315,
+      "multibridge_FA": 0,
+      "delta": 0.07999999999999996
+    }
+  ]
+}
