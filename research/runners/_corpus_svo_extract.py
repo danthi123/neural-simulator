@@ -119,14 +119,21 @@ def main():
         recs = []
         for (aa, vv, pp), c in kept:
             prep = preps.get((aa, vv, pp))
-            # which typed role does this object fill? A prep maps via VERB_PREP_ROLE; a direct object (prep=None) is
-            # the bare patient (default transitive). An unknown (verb,prep) with a single oblique role -> that role.
-            role = "patient"
+            # which typed role does this object fill? A prep maps via VERB_PREP_ROLE; a DIRECT object (prep=None)
+            # fills the verb-frame's FIRST internal-argument content role (Bock & Levelt: the verb lemma projects
+            # its argument frame -- a transitive verb's direct object is the `patient`, but a ditransitive verb like
+            # `give`/`send`/`put` has NO `patient` slot, so its direct object ('mom gave a hug') is the THEME, not a
+            # patient the frame can't render). An unknown (verb,prep) with a single oblique role -> that role.
             if prep is not None:
                 role = VERB_PREP_ROLE.get((vv, prep))
                 if role is None:
                     obliques = [r for r in FRAME_ROLES.get(vv, []) if r not in ("agent", "action", "patient")]
                     role = obliques[0] if len(obliques) == 1 else None
+            else:
+                # direct object -> the frame's first non-(agent/action) CONTENT role (patient for transitive,
+                # THEME for ditransitive go-by-the-frame), so the stored role is one the frame actually renders.
+                frame_obj = [r for r in FRAME_ROLES.get(vv, FRAME_ROLES["_default"]) if r not in ("agent", "action")]
+                role = frame_obj[0] if frame_obj else "patient"
             rec = {"agent": aa, "action": vv, "count": c, "attest": attest[(aa, vv, pp)], "prep": prep}
             rec[role if role else "patient"] = pp
             recs.append(rec)

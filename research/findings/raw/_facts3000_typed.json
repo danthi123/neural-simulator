@@ -1,0 +1,7338 @@
+[
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 169,
+  "attest": "One day, a boy named Tim went to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 146,
+  "attest": "One day, a little boy named Tim went to the store with his mom.",
+  "prep": "with",
+  "GOAL": "mom"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 107,
+  "attest": "One day, a little girl named Amy went to the store with her mom.",
+  "prep": "with",
+  "GOAL": "mom"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 97,
+  "attest": "One day, a little girl named Lily went to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 71,
+  "attest": "One day, a thoughtful boy named Tim went for a walk.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 63,
+  "attest": "One day, a blue bird named Billy was flying in the sky.",
+  "prep": "in",
+  "patient": "sky"
+ },
+ {
+  "agent": "mom",
+  "action": "come",
+  "count": 62,
+  "attest": "Just then, Tim's mom came into the room.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "cat",
+  "action": "go",
+  "count": 60,
+  "attest": "One day, a popular cat named Tom went for a walk.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 58,
+  "attest": "One day, a little girl named Amy went for a walk.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "dog",
+  "action": "go",
+  "count": 48,
+  "attest": "One day, a big dog named Max went for a walk.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "bird",
+  "action": "become",
+  "count": 40,
+  "attest": "The bird became their friend and they all had a fun day together.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "bird",
+  "action": "sing",
+  "count": 36,
+  "attest": "The bird would sing sweet songs for her.",
+  "prep": null,
+  "patient": "song"
+ },
+ {
+  "agent": "mom",
+  "action": "hear",
+  "count": 36,
+  "attest": "Lily's mom hears the noise.",
+  "prep": null,
+  "patient": "noise"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 29,
+  "attest": "So, the bird flew down from the tree and started to look for the note.",
+  "prep": "from",
+  "patient": "tree"
+ },
+ {
+  "agent": "cat",
+  "action": "become",
+  "count": 27,
+  "attest": "The purple cat and the foolish dog became friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "cat",
+  "action": "stick",
+  "count": 25,
+  "attest": "One day, Max saw a small cat stuck in a tree.",
+  "prep": "in",
+  "patient": "tree"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 25,
+  "attest": "Once upon a time, a little boy named Tim went to the park with his mom.",
+  "prep": "upon",
+  "GOAL": "time"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 23,
+  "attest": "One day, a little boy named Tim went to the store with his mom.",
+  "prep": "to",
+  "GOAL": "store"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 23,
+  "attest": "One day, a little girl named Amy went to the store with her mom.",
+  "prep": "to",
+  "GOAL": "store"
+ },
+ {
+  "agent": "cat",
+  "action": "play",
+  "count": 23,
+  "attest": "One day, a cat and a dog were playing in the park.",
+  "prep": "in",
+  "patient": "park"
+ },
+ {
+  "agent": "bird",
+  "action": "live",
+  "count": 21,
+  "attest": "A little bird lived in the tree.",
+  "prep": "in",
+  "patient": "tree"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 20,
+  "attest": "One day, a tall boy named Tom found a big shield in his yard.",
+  "prep": "in",
+  "patient": "yard"
+ },
+ {
+  "agent": "mom",
+  "action": "make",
+  "count": 18,
+  "attest": "She wore her favorite dress and her mom made a big cake.",
+  "prep": null,
+  "patient": "cake"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 18,
+  "attest": "One sunny day, a little girl named Lily came to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 18,
+  "attest": "One day, a cheerful little girl named Lily found a small, broken toy in her room.",
+  "prep": "in",
+  "patient": "room"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 18,
+  "attest": "After a few moments, her mom gave her a big hug and they both laughed.",
+  "prep": null,
+  "THEME": "hug"
+ },
+ {
+  "agent": "girl",
+  "action": "play",
+  "count": 18,
+  "attest": "One day, a little girl named Mia was playing in her room.",
+  "prep": "in",
+  "patient": "room"
+ },
+ {
+  "agent": "bird",
+  "action": "come",
+  "count": 16,
+  "attest": "Suddenly, a big bird came down from the tree.",
+  "prep": "from",
+  "GOAL": "tree"
+ },
+ {
+  "agent": "mom",
+  "action": "see",
+  "count": 15,
+  "attest": "Amy's mom saw her sad face and asked, \"Why are you sad, Amy?\"",
+  "prep": null,
+  "patient": "face"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 15,
+  "attest": "The bird saw a big cat.",
+  "prep": null,
+  "patient": "cat"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 14,
+  "attest": "One day, a little boy found the box.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "boy",
+  "action": "become",
+  "count": 14,
+  "attest": "The little boy and the string became best friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "dog",
+  "action": "become",
+  "count": 14,
+  "attest": "Tim and the dog became good friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 14,
+  "attest": "One day, a little girl named Lucy went to the beach with her mom.",
+  "prep": "to",
+  "GOAL": "beach"
+ },
+ {
+  "agent": "bird",
+  "action": "think",
+  "count": 14,
+  "attest": "The bird thought for a moment and said, \"I have an idea.",
+  "prep": "for",
+  "patient": "moment"
+ },
+ {
+  "agent": "girl",
+  "action": "become",
+  "count": 13,
+  "attest": "From that day on, the little girl and the musician became good friends, and they played in",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "dog",
+  "action": "play",
+  "count": 13,
+  "attest": "They saw a happy dog playing with a ball.",
+  "prep": "with",
+  "patient": "ball"
+ },
+ {
+  "agent": "girl",
+  "action": "play",
+  "count": 13,
+  "attest": "One day, a girl named Sue was playing with her toys.",
+  "prep": "with",
+  "patient": "toy"
+ },
+ {
+  "agent": "cat",
+  "action": "play",
+  "count": 12,
+  "attest": "The cat was playing with a ball.",
+  "prep": "with",
+  "patient": "ball"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 12,
+  "attest": "The cat saw the bird and wanted to catch it.",
+  "prep": null,
+  "patient": "bird"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 12,
+  "attest": "One day, a little girl named Lily found a box.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 12,
+  "attest": "Once upon a time, a little girl named Lily found a small, cheap bulb in her garden.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 12,
+  "attest": "One day, a little boy named Tim found a bathrobe in his room.",
+  "prep": "in",
+  "patient": "room"
+ },
+ {
+  "agent": "mom",
+  "action": "hear",
+  "count": 12,
+  "attest": "Mom heard their cries and ran to the alley.",
+  "prep": null,
+  "patient": "cry"
+ },
+ {
+  "agent": "cat",
+  "action": "say",
+  "count": 11,
+  "attest": "The cat said to the dog, \"I can bow better than you!\"",
+  "prep": "to",
+  "patient": "dog"
+ },
+ {
+  "agent": "cat",
+  "action": "go",
+  "count": 11,
+  "attest": "One day, a lazy cat named Tom went to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "brother",
+  "action": "come",
+  "count": 11,
+  "attest": "Lily's little brother, Tim, came into her room and played with her toys.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "dog",
+  "action": "take",
+  "count": 11,
+  "attest": "The mean dog took their hockey ball.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "boy",
+  "action": "come",
+  "count": 11,
+  "attest": "One day, a big boy comes to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "mom",
+  "action": "think",
+  "count": 10,
+  "attest": "His mom thought for a moment and said, \"Maybe you ate too much candy, Tom.\"",
+  "prep": "for",
+  "patient": "moment"
+ },
+ {
+  "agent": "toy",
+  "action": "come",
+  "count": 10,
+  "attest": "They waved the magic wand and their toys came to life.",
+  "prep": "to",
+  "GOAL": "life"
+ },
+ {
+  "agent": "sister",
+  "action": "come",
+  "count": 10,
+  "attest": "As Sally started to play with the puzzle, her big sister, Lucy, came into the room.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "dog",
+  "action": "go",
+  "count": 10,
+  "attest": "One day, a lively dog named Spot went to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "boy",
+  "action": "play",
+  "count": 10,
+  "attest": "One day, a little boy named Tim was playing in his room.",
+  "prep": "in",
+  "patient": "room"
+ },
+ {
+  "agent": "girl",
+  "action": "live",
+  "count": 10,
+  "attest": "Once upon a time, a little girl named Lucy lived with her mommy and daddy.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 9,
+  "attest": "Once upon a time, a kind girl named Lily went for a walk.",
+  "prep": "upon",
+  "GOAL": "time"
+ },
+ {
+  "agent": "lion",
+  "action": "become",
+  "count": 9,
+  "attest": "From that day on, the lion and the cat became best friends, and they always shared their t",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "boy",
+  "action": "live",
+  "count": 9,
+  "attest": "A little boy named Tim lived in the house.",
+  "prep": "in",
+  "patient": "house"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 9,
+  "attest": "The bird saw a big tree and thought it would be a nice place to rest.",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "girl",
+  "action": "live",
+  "count": 9,
+  "attest": "A little girl named Sue lived in the house with her mom and dad.",
+  "prep": "in",
+  "patient": "house"
+ },
+ {
+  "agent": "dog",
+  "action": "see",
+  "count": 9,
+  "attest": "One day, while playing in the park, the big dog saw a little cat.",
+  "prep": null,
+  "patient": "cat"
+ },
+ {
+  "agent": "dog",
+  "action": "come",
+  "count": 9,
+  "attest": "One day, a big mean dog came into the room.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 9,
+  "attest": "One day, the baby bird saw a big ball.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "ball",
+  "action": "stick",
+  "count": 9,
+  "attest": "As he swung, he saw his big red ball stuck in a tree.",
+  "prep": "in",
+  "patient": "tree"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 9,
+  "attest": "One day, a little girl named Amy came into the room.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 9,
+  "attest": "One sunny day, a little bird flew in through the window.",
+  "prep": "through",
+  "patient": "window"
+ },
+ {
+  "agent": "dog",
+  "action": "live",
+  "count": 8,
+  "attest": "Once upon a time, a mighty dog named Spike lived in a small house.",
+  "prep": "in",
+  "patient": "house"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 8,
+  "attest": "One day, a boy named Tom went to the beach with his mom.",
+  "prep": "to",
+  "GOAL": "beach"
+ },
+ {
+  "agent": "cat",
+  "action": "climb",
+  "count": 8,
+  "attest": "The cat climbed down the tree carefully, following the moon's light.",
+  "prep": "down",
+  "patient": "tree"
+ },
+ {
+  "agent": "bird",
+  "action": "stick",
+  "count": 8,
+  "attest": "They saw a bird stuck in a tree because of the flood.",
+  "prep": "in",
+  "patient": "tree"
+ },
+ {
+  "agent": "cat",
+  "action": "play",
+  "count": 8,
+  "attest": "One day, a little cat named Mimi was playing in the yard.",
+  "prep": "in",
+  "patient": "yard"
+ },
+ {
+  "agent": "mom",
+  "action": "come",
+  "count": 8,
+  "attest": "Mom came into the kitchen.",
+  "prep": "into",
+  "GOAL": "kitchen"
+ },
+ {
+  "agent": "bird",
+  "action": "become",
+  "count": 8,
+  "attest": "From that day on, the big bird and the small bird became best friends.",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "kid",
+  "action": "come",
+  "count": 8,
+  "attest": "But then, a mean kid came to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 8,
+  "attest": "One day, a little boy named Tim found a big round ball in his yard.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "man",
+  "action": "go",
+  "count": 7,
+  "attest": "One day, a big bald man went for a walk in the woods.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "girl",
+  "action": "see",
+  "count": 7,
+  "attest": "The girl saw a nice cat with a big bow on its neck.",
+  "prep": null,
+  "patient": "cat"
+ },
+ {
+  "agent": "girl",
+  "action": "love",
+  "count": 7,
+  "attest": "Once upon a time, a little girl named Lily loved to read.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "cat",
+  "action": "live",
+  "count": 7,
+  "attest": "The cat lived in a big house with a nice family.",
+  "prep": "in",
+  "patient": "house"
+ },
+ {
+  "agent": "dog",
+  "action": "come",
+  "count": 7,
+  "attest": "Then, a big dog named Max came to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 7,
+  "attest": "One day, a little boy named Tim found an unusual toy.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 7,
+  "attest": "One day, a cheerful little girl named Lily found a small, broken toy in her room.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "dog",
+  "action": "take",
+  "count": 7,
+  "attest": "The dog took the penny in its mouth and ran away.",
+  "prep": "in",
+  "patient": "mouth"
+ },
+ {
+  "agent": "owl",
+  "action": "live",
+  "count": 7,
+  "attest": "The owl lived in a big tree near a playground.",
+  "prep": "in",
+  "patient": "tree"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 7,
+  "attest": "A big bird flew into his room.",
+  "prep": "into",
+  "patient": "room"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 7,
+  "attest": "The next day, a girl came to the shop.",
+  "prep": "to",
+  "GOAL": "shop"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 7,
+  "attest": "One day, a little girl named Lucy came to the garden.",
+  "prep": "to",
+  "GOAL": "garden"
+ },
+ {
+  "agent": "cat",
+  "action": "come",
+  "count": 7,
+  "attest": "One day, a big cat came to the house.",
+  "prep": "to",
+  "GOAL": "house"
+ },
+ {
+  "agent": "boy",
+  "action": "play",
+  "count": 7,
+  "attest": "He saw a little boy playing with a ball.",
+  "prep": "with",
+  "patient": "ball"
+ },
+ {
+  "agent": "mom",
+  "action": "go",
+  "count": 7,
+  "attest": "One day, Amy's mom and dad went to the store.",
+  "prep": "to",
+  "GOAL": "store"
+ },
+ {
+  "agent": "dog",
+  "action": "find",
+  "count": 7,
+  "attest": "Amy wanted to help the dog find its home.",
+  "prep": null,
+  "patient": "home"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 7,
+  "attest": "One day, a cat named Max saw a ball of yarn.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 7,
+  "attest": "The cat saw a tree and wanted to climb it.",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "bird",
+  "action": "come",
+  "count": 7,
+  "attest": "A big bird came down from the sky and took the skull away!",
+  "prep": "from",
+  "GOAL": "sky"
+ },
+ {
+  "agent": "dog",
+  "action": "see",
+  "count": 7,
+  "attest": "The dog saw the ball and ran to get it.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "girl",
+  "action": "see",
+  "count": 7,
+  "attest": "A little girl saw the bird eating the olives.",
+  "prep": null,
+  "patient": "bird"
+ },
+ {
+  "agent": "man",
+  "action": "become",
+  "count": 7,
+  "attest": "The people were happy, and the mean man became a good friend to them.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 6,
+  "attest": "When the pasta was ready, Mia's mom gave her a small bowl of pasta.",
+  "prep": null,
+  "THEME": "bowl"
+ },
+ {
+  "agent": "dog",
+  "action": "play",
+  "count": 6,
+  "attest": "One day, a little dog named Max was playing in the park.",
+  "prep": "in",
+  "patient": "park"
+ },
+ {
+  "agent": "ball",
+  "action": "roll",
+  "count": 6,
+  "attest": "But one day, while they were playing, the ball rolled into the street.",
+  "prep": "into",
+  "patient": "street"
+ },
+ {
+  "agent": "friend",
+  "action": "come",
+  "count": 6,
+  "attest": "On the day of the party, Lily's friends came to her house.",
+  "prep": "to",
+  "GOAL": "house"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 6,
+  "attest": "The cat saw a big dog.",
+  "prep": null,
+  "patient": "dog"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 6,
+  "attest": "One day, a boy named Tim went to the museum with his mom.",
+  "prep": "to",
+  "GOAL": "museum"
+ },
+ {
+  "agent": "mom",
+  "action": "take",
+  "count": 6,
+  "attest": "Later that day, Mom took Tim to the store to buy a new glass.",
+  "prep": "to",
+  "patient": "store"
+ },
+ {
+  "agent": "boy",
+  "action": "play",
+  "count": 6,
+  "attest": "The boy and the yellow bird played in the park again.",
+  "prep": "in",
+  "patient": "park"
+ },
+ {
+  "agent": "owl",
+  "action": "think",
+  "count": 6,
+  "attest": "The owl thought for a moment and then said, \"You must say 'please' and 'thank you' to open",
+  "prep": "for",
+  "patient": "moment"
+ },
+ {
+  "agent": "mom",
+  "action": "call",
+  "count": 6,
+  "attest": "As it got dark, Lucy's mom called her for dinner.",
+  "prep": "for",
+  "patient": "dinner"
+ },
+ {
+  "agent": "boy",
+  "action": "come",
+  "count": 6,
+  "attest": "One day, a boy named Tim came to the shop.",
+  "prep": "to",
+  "GOAL": "shop"
+ },
+ {
+  "agent": "bird",
+  "action": "thanked",
+  "count": 6,
+  "attest": "The bird thanked Tom for his help.",
+  "prep": "for",
+  "patient": "help"
+ },
+ {
+  "agent": "cat",
+  "action": "jump",
+  "count": 6,
+  "attest": "Just as they finished, their cat jumped on the table.",
+  "prep": "on",
+  "patient": "table"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 6,
+  "attest": "A little girl named Mia found the shoe in her yard.",
+  "prep": "in",
+  "patient": "yard"
+ },
+ {
+  "agent": "bug",
+  "action": "become",
+  "count": 6,
+  "attest": "The glowing bug also became their friend, teaching them that sharing is better than fighti",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "rabbit",
+  "action": "become",
+  "count": 6,
+  "attest": "The rabbit, the bird, and the butterfly all became friends and played together every day.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "machine",
+  "action": "make",
+  "count": 6,
+  "attest": "The machine made a loud noise and started to smoke.",
+  "prep": null,
+  "patient": "noise"
+ },
+ {
+  "agent": "truck",
+  "action": "come",
+  "count": 6,
+  "attest": "One day, Max saw the mail truck coming down the street.",
+  "prep": "down",
+  "GOAL": "street"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 6,
+  "attest": "Once upon a time, a boy named Tom found a big zip.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "elephant",
+  "action": "go",
+  "count": 5,
+  "attest": "One day, the elephant went out for a walk, but it was a big mistake!",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "cat",
+  "action": "meet",
+  "count": 5,
+  "attest": "One day, the purple cat met a foolish dog.",
+  "prep": null,
+  "patient": "dog"
+ },
+ {
+  "agent": "car",
+  "action": "become",
+  "count": 5,
+  "attest": "The toy car and the lotion became best friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "mom",
+  "action": "hold",
+  "count": 5,
+  "attest": "His mom held his hand and told him, \"It's normal to feel scared, but it will be okay.\"",
+  "prep": null,
+  "patient": "hand"
+ },
+ {
+  "agent": "bird",
+  "action": "come",
+  "count": 5,
+  "attest": "One day, a little bird came into the house.",
+  "prep": "into",
+  "GOAL": "house"
+ },
+ {
+  "agent": "girl",
+  "action": "think",
+  "count": 5,
+  "attest": "The little girl thought for a moment.",
+  "prep": "for",
+  "patient": "moment"
+ },
+ {
+  "agent": "girl",
+  "action": "play",
+  "count": 5,
+  "attest": "One day, a little girl named Sue was playing with her ball near a big tree.",
+  "prep": "with",
+  "patient": "ball"
+ },
+ {
+  "agent": "girl",
+  "action": "live",
+  "count": 5,
+  "attest": "In one home, a little girl named Lily lived with her mom.",
+  "prep": "with",
+  "patient": "mom"
+ },
+ {
+  "agent": "squirrel",
+  "action": "climb",
+  "count": 5,
+  "attest": "The squirrel climbed into the tree and rolled around in the leaves.",
+  "prep": "into",
+  "patient": "tree"
+ },
+ {
+  "agent": "man",
+  "action": "walk",
+  "count": 5,
+  "attest": "One day, Joy saw the old man walking down the street and decided to tease him.",
+  "prep": "down",
+  "GOAL": "street"
+ },
+ {
+  "agent": "bird",
+  "action": "spread",
+  "count": 5,
+  "attest": "While they played, the bird spread its wings wide and flew around the boy.",
+  "prep": null,
+  "patient": "wing"
+ },
+ {
+  "agent": "dog",
+  "action": "chase",
+  "count": 5,
+  "attest": "The dog would chase the cat and try to catch it, but the cat was too fast.",
+  "prep": null,
+  "patient": "cat"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 5,
+  "attest": "The cat saw snow on the ground.",
+  "prep": "on",
+  "patient": "ground"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 5,
+  "attest": "The bird flies after the ball.",
+  "prep": "after",
+  "patient": "ball"
+ },
+ {
+  "agent": "mom",
+  "action": "say",
+  "count": 5,
+  "attest": "\"We need to get some more wire,\" Mom said with a smile.",
+  "prep": "with",
+  "patient": "smile"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 5,
+  "attest": "One day, a little boy named Tim found a package outside his house.",
+  "prep": "outside",
+  "patient": "house"
+ },
+ {
+  "agent": "rainbow",
+  "action": "appear",
+  "count": 5,
+  "attest": "After they delivered the box, the rain stopped, and a big, beautiful rainbow appeared in t",
+  "prep": "in",
+  "patient": "sky"
+ },
+ {
+  "agent": "squirrel",
+  "action": "come",
+  "count": 5,
+  "attest": "A friendly squirrel came down the tree with the kite.",
+  "prep": "down",
+  "GOAL": "tree"
+ },
+ {
+  "agent": "cat",
+  "action": "come",
+  "count": 5,
+  "attest": "As Tim practiced, he saw a big cat coming near the tree.",
+  "prep": "near",
+  "GOAL": "tree"
+ },
+ {
+  "agent": "girl",
+  "action": "take",
+  "count": 5,
+  "attest": "Soon the little girl and her mum were taking the baby to a nice new home and they named it",
+  "prep": "to",
+  "patient": "home"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 5,
+  "attest": "One day, a boy named Tim went to the market.",
+  "prep": "to",
+  "GOAL": "market"
+ },
+ {
+  "agent": "bunny",
+  "action": "become",
+  "count": 5,
+  "attest": "The pink bunny and the yellow bird became very good friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "cat",
+  "action": "find",
+  "count": 5,
+  "attest": "Inside the box, the cat found a soft, round ball.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "boy",
+  "action": "play",
+  "count": 5,
+  "attest": "The mop started to feel jealous of the car because the boy played with the car all the tim",
+  "prep": "with",
+  "patient": "car"
+ },
+ {
+  "agent": "girl",
+  "action": "see",
+  "count": 5,
+  "attest": "A little girl saw the grumpy man and wanted to help.",
+  "prep": null,
+  "patient": "man"
+ },
+ {
+  "agent": "friend",
+  "action": "come",
+  "count": 5,
+  "attest": "After a while, Tom's friends came to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 5,
+  "attest": "Lucy's mom gave her the medicine, and Lucy started to feel better.",
+  "prep": null,
+  "THEME": "medicine"
+ },
+ {
+  "agent": "truck",
+  "action": "drive",
+  "count": 5,
+  "attest": "One day, a red truck was driving down the road.",
+  "prep": "down",
+  "patient": "road"
+ },
+ {
+  "agent": "people",
+  "action": "go",
+  "count": 5,
+  "attest": "The bus liked to help people go from one place to another.",
+  "prep": "from",
+  "GOAL": "place"
+ },
+ {
+  "agent": "team",
+  "action": "win",
+  "count": 5,
+  "attest": "Tom's team won the game!",
+  "prep": null,
+  "patient": "game"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 4,
+  "attest": "One day, a little girl came to the tree.",
+  "prep": "to",
+  "GOAL": "tree"
+ },
+ {
+  "agent": "friend",
+  "action": "having",
+  "count": 4,
+  "attest": "After a while, Freddy saw that his friends were not having fun.",
+  "prep": null,
+  "patient": "fun"
+ },
+ {
+  "agent": "man",
+  "action": "think",
+  "count": 4,
+  "attest": "The man thought for a moment before he said, \"You know, I could help you.",
+  "prep": "for",
+  "patient": "moment"
+ },
+ {
+  "agent": "dog",
+  "action": "play",
+  "count": 4,
+  "attest": "One day, a little dog named Spot was playing in the yard.",
+  "prep": "in",
+  "patient": "yard"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 4,
+  "attest": "One day, a boy named Tim found a magic rock.",
+  "prep": null,
+  "patient": "rock"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 4,
+  "attest": "One day, a little girl named Amy went to the library with her mom.",
+  "prep": "to",
+  "GOAL": "library"
+ },
+ {
+  "agent": "mom",
+  "action": "look",
+  "count": 4,
+  "attest": "Her mom looked at the book and said, \"This book is too big.",
+  "prep": "at",
+  "patient": "book"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 4,
+  "attest": "One day, a cat named Tom saw a weird muffin on the table.",
+  "prep": "on",
+  "patient": "table"
+ },
+ {
+  "agent": "bird",
+  "action": "ask",
+  "count": 4,
+  "attest": "The bird asked his friend, the wise old owl, for help.",
+  "prep": "for",
+  "patient": "help"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 4,
+  "attest": "One day, a little boy named Tim and his dog, Spot, went to the wood to play.",
+  "prep": "to",
+  "GOAL": "wood"
+ },
+ {
+  "agent": "mom",
+  "action": "call",
+  "count": 4,
+  "attest": "But then her mom called her name again.",
+  "prep": null,
+  "patient": "name"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 4,
+  "attest": "One day, their mom gave them a big box.",
+  "prep": null,
+  "THEME": "box"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 4,
+  "attest": "One day, a boy named Tim found a stick.",
+  "prep": null,
+  "patient": "stick"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 4,
+  "attest": "One day, a boy named Tim went with his mom to the subway.",
+  "prep": "to",
+  "GOAL": "subway"
+ },
+ {
+  "agent": "man",
+  "action": "come",
+  "count": 4,
+  "attest": "One day, a wise man came to the town.",
+  "prep": "to",
+  "GOAL": "town"
+ },
+ {
+  "agent": "man",
+  "action": "see",
+  "count": 4,
+  "attest": "The man saw a big tree and thought, \"I will sit under the tree and wait for the sun to com",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "frog",
+  "action": "live",
+  "count": 4,
+  "attest": "The frog lived in a small pond.",
+  "prep": "in",
+  "patient": "pond"
+ },
+ {
+  "agent": "dog",
+  "action": "see",
+  "count": 4,
+  "attest": "At the park, the dog saw a distant tree.",
+  "prep": "at",
+  "patient": "park"
+ },
+ {
+  "agent": "dog",
+  "action": "pick",
+  "count": 4,
+  "attest": "The dog picked up the fancy guitar with his mouth and started to play it.",
+  "prep": "with",
+  "patient": "mouth"
+ },
+ {
+  "agent": "bird",
+  "action": "give",
+  "count": 4,
+  "attest": "The bird gave the ball to Tim, and he was very happy.",
+  "prep": null,
+  "THEME": "ball"
+ },
+ {
+  "agent": "dog",
+  "action": "find",
+  "count": 4,
+  "attest": "The big dog found the metal ball and started to play with it.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 4,
+  "attest": "A little girl, no more than three years old, had come to his house.",
+  "prep": "to",
+  "GOAL": "house"
+ },
+ {
+  "agent": "dog",
+  "action": "become",
+  "count": 4,
+  "attest": "From that day, the dog and the cat became friends and shared their food.",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "boy",
+  "action": "come",
+  "count": 4,
+  "attest": "One day, a little boy named Tim came to the office with his mom.",
+  "prep": "with",
+  "GOAL": "mom"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 4,
+  "attest": "A scary cat saw the mule with the cake.",
+  "prep": "with",
+  "patient": "cake"
+ },
+ {
+  "agent": "cat",
+  "action": "want",
+  "count": 4,
+  "attest": "The cat wanted the cake too.",
+  "prep": null,
+  "patient": "cake"
+ },
+ {
+  "agent": "fish",
+  "action": "swim",
+  "count": 4,
+  "attest": "One day, a little fish named Bob was swimming in the water.",
+  "prep": "in",
+  "patient": "water"
+ },
+ {
+  "agent": "rabbit",
+  "action": "think",
+  "count": 4,
+  "attest": "Rabbit thought for a moment and said, I think it means we have to put something in the doo",
+  "prep": "for",
+  "patient": "moment"
+ },
+ {
+  "agent": "boy",
+  "action": "become",
+  "count": 4,
+  "attest": "From that day on, the little purple bird and the boy became best friends.",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "mom",
+  "action": "make",
+  "count": 4,
+  "attest": "One day, Lily's mom made a new food for them to eat.",
+  "prep": null,
+  "patient": "food"
+ },
+ {
+  "agent": "dad",
+  "action": "come",
+  "count": 4,
+  "attest": "Soon, dad came home from work.",
+  "prep": "from",
+  "GOAL": "work"
+ },
+ {
+  "agent": "monster",
+  "action": "come",
+  "count": 4,
+  "attest": "She did not want the monster to come to her party.",
+  "prep": "to",
+  "GOAL": "party"
+ },
+ {
+  "agent": "boy",
+  "action": "play",
+  "count": 4,
+  "attest": "When they were leaving, Tim saw another boy playing with a toy and he broke it.",
+  "prep": "with",
+  "patient": "toy"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 4,
+  "attest": "One day, a little girl named Lily found an unusual key.",
+  "prep": null,
+  "patient": "key"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 4,
+  "attest": "One day, a boy named Tim went on a trip with his mom and dad.",
+  "prep": "on",
+  "GOAL": "trip"
+ },
+ {
+  "agent": "ball",
+  "action": "hit",
+  "count": 4,
+  "attest": "They hope the ball will hit the tree.",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 4,
+  "attest": "One day, a little boy named Tim found a magic toy car.",
+  "prep": null,
+  "patient": "car"
+ },
+ {
+  "agent": "bird",
+  "action": "find",
+  "count": 4,
+  "attest": "And that's how Bob the brave bird found a new way to have fun in the sky.",
+  "prep": null,
+  "patient": "way"
+ },
+ {
+  "agent": "cat",
+  "action": "closed",
+  "count": 4,
+  "attest": "The cat closed its eyes and went to sleep.",
+  "prep": null,
+  "patient": "eye"
+ },
+ {
+  "agent": "family",
+  "action": "go",
+  "count": 4,
+  "attest": "Later that week, the family went on a camping trip.",
+  "prep": "on",
+  "GOAL": "trip"
+ },
+ {
+  "agent": "boy",
+  "action": "see",
+  "count": 4,
+  "attest": "One day, a little boy named Tim saw the red ball and wanted to play with it too.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "boy",
+  "action": "say",
+  "count": 4,
+  "attest": "The goat thanked the little boy again and the little boy said goodbye.",
+  "prep": null,
+  "patient": "goodbye"
+ },
+ {
+  "agent": "dog",
+  "action": "go",
+  "count": 4,
+  "attest": "Tim and the dog went to the neighbor's house, and they were so happy to see their lost dog",
+  "prep": "to",
+  "GOAL": "house"
+ },
+ {
+  "agent": "man",
+  "action": "go",
+  "count": 4,
+  "attest": "One day, a bald man named Tom went to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "boy",
+  "action": "want",
+  "count": 4,
+  "attest": "Once upon a time, a little boy wanted to drive his toy car.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "frog",
+  "action": "become",
+  "count": 4,
+  "attest": "The frog and the pillow became best friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "car",
+  "action": "drive",
+  "count": 4,
+  "attest": "One day, a red car named Tom was driving down the road.",
+  "prep": "down",
+  "patient": "road"
+ },
+ {
+  "agent": "brother",
+  "action": "come",
+  "count": 4,
+  "attest": "Lily's little brother, Tom, came into the kitchen with a big smile.",
+  "prep": "into",
+  "GOAL": "kitchen"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 4,
+  "attest": "A little bird saw the cloud and said, \"Why are you sad, cloud?\"",
+  "prep": null,
+  "patient": "cloud"
+ },
+ {
+  "agent": "girl",
+  "action": "walk",
+  "count": 4,
+  "attest": "A smart little girl named Lily was walking in the park with her mom.",
+  "prep": "in",
+  "GOAL": "park"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 4,
+  "attest": "His mom gave him an apple and a banana.",
+  "prep": null,
+  "THEME": "apple"
+ },
+ {
+  "agent": "mom",
+  "action": "take",
+  "count": 4,
+  "attest": "One day, his mom was taking him to the park, and as they approached the entrance, Timmy no",
+  "prep": "to",
+  "patient": "park"
+ },
+ {
+  "agent": "tree",
+  "action": "become",
+  "count": 4,
+  "attest": "As time went by, the tree and the bird family became good friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "boat",
+  "action": "become",
+  "count": 4,
+  "attest": "The boat and the fish became best friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 4,
+  "attest": "Just then, a three-year-old girl came into the store.",
+  "prep": "into",
+  "GOAL": "store"
+ },
+ {
+  "agent": "dog",
+  "action": "run",
+  "count": 4,
+  "attest": "The dog ran away with the ball, and Tim's glove got stuck on the dog's collar.",
+  "prep": "with",
+  "GOAL": "ball"
+ },
+ {
+  "agent": "girl",
+  "action": "ask",
+  "count": 4,
+  "attest": "A girl named Lily asked her mom, \"Can I touch the button?\"",
+  "prep": null,
+  "patient": "mom"
+ },
+ {
+  "agent": "mom",
+  "action": "tell",
+  "count": 4,
+  "attest": "One day, her mom told her a story about a funny cat who could sew.",
+  "prep": null,
+  "patient": "story"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 4,
+  "attest": "One day, a boy named Tim found a big book called a dictionary.",
+  "prep": null,
+  "patient": "book"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 4,
+  "attest": "One day, a girl named Sue went to the kitchen.",
+  "prep": "to",
+  "GOAL": "kitchen"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 4,
+  "attest": "One day, the cat saw a big box near the wall.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 4,
+  "attest": "One day, a little boy named Tim went to school.",
+  "prep": "to",
+  "GOAL": "school"
+ },
+ {
+  "agent": "cat",
+  "action": "come",
+  "count": 4,
+  "attest": "But then, a thin cat named Mittens came into the room.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "friend",
+  "action": "play",
+  "count": 4,
+  "attest": "Tim saw his friends playing with a ball.",
+  "prep": "with",
+  "patient": "ball"
+ },
+ {
+  "agent": "bunny",
+  "action": "hop",
+  "count": 4,
+  "attest": "The bunny was hopping around the deep forest, looking for food.",
+  "prep": "around",
+  "patient": "forest"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 4,
+  "attest": "One day, a little girl named Sue went to the farm with her mom.",
+  "prep": "to",
+  "GOAL": "farm"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 4,
+  "attest": "The bird saw the toy and wanted to play with it too.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "sound",
+  "action": "come",
+  "count": 4,
+  "attest": "The sound came from a big tree.",
+  "prep": "from",
+  "GOAL": "tree"
+ },
+ {
+  "agent": "kid",
+  "action": "play",
+  "count": 4,
+  "attest": "They saw some kids playing with a ball.",
+  "prep": "with",
+  "patient": "ball"
+ },
+ {
+  "agent": "girl",
+  "action": "see",
+  "count": 4,
+  "attest": "The girl sees the dog and the sand castle.",
+  "prep": null,
+  "patient": "dog"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 4,
+  "attest": "One day, a boy named Tim found a pen on the ground.",
+  "prep": "on",
+  "patient": "ground"
+ },
+ {
+  "agent": "cake",
+  "action": "fall",
+  "count": 4,
+  "attest": "The cake fell on the floor, and Max was so happy!",
+  "prep": "on",
+  "patient": "floor"
+ },
+ {
+  "agent": "family",
+  "action": "live",
+  "count": 3,
+  "attest": "A family lived in the house, and they had a problem.",
+  "prep": "in",
+  "patient": "house"
+ },
+ {
+  "agent": "mom",
+  "action": "walk",
+  "count": 3,
+  "attest": "Suddenly, his mom walked into the room.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 3,
+  "attest": "One day, a little girl named Sue found a pen on the floor.",
+  "prep": "on",
+  "patient": "floor"
+ },
+ {
+  "agent": "mom",
+  "action": "make",
+  "count": 3,
+  "attest": "Mia's mom was making pasta for dinner.",
+  "prep": "for",
+  "patient": "dinner"
+ },
+ {
+  "agent": "bird",
+  "action": "live",
+  "count": 3,
+  "attest": "Once upon a time, a little bird lived in a small tree.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "girl",
+  "action": "play",
+  "count": 3,
+  "attest": "One day, a little girl named Sue was playing in the park.",
+  "prep": "in",
+  "patient": "park"
+ },
+ {
+  "agent": "cat",
+  "action": "walk",
+  "count": 3,
+  "attest": "One day, a cat and a dog were walking in the woods.",
+  "prep": "in",
+  "GOAL": "wood"
+ },
+ {
+  "agent": "boy",
+  "action": "come",
+  "count": 3,
+  "attest": "A little boy named Tim came to the field.",
+  "prep": "to",
+  "GOAL": "field"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 3,
+  "attest": "One day, a little boy named Tim found a fake bug.",
+  "prep": null,
+  "patient": "bug"
+ },
+ {
+  "agent": "mom",
+  "action": "look",
+  "count": 3,
+  "attest": "His mom looked at the bug and said, \"Oh, that's a fake bug, Tim.",
+  "prep": "at",
+  "patient": "bug"
+ },
+ {
+  "agent": "mom",
+  "action": "look",
+  "count": 3,
+  "attest": "Mom looked out the window and saw the huge thing too.",
+  "prep": null,
+  "patient": "window"
+ },
+ {
+  "agent": "mom",
+  "action": "put",
+  "count": 3,
+  "attest": "Lily's mom put the cake on the table and Lily saw that it was not the cake she wanted.",
+  "prep": null,
+  "THEME": "cake"
+ },
+ {
+  "agent": "mom",
+  "action": "put",
+  "count": 3,
+  "attest": "Lily's mom put the cake on the table and Lily saw that it was not the cake she wanted.",
+  "prep": "on",
+  "LOCATION": "table"
+ },
+ {
+  "agent": "dog",
+  "action": "live",
+  "count": 3,
+  "attest": "Once upon a time, a mighty dog named Spike lived in a small house.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "squirrel",
+  "action": "hop",
+  "count": 3,
+  "attest": "The kids jumped with excitement, and the squirrel hopped down from the tree.",
+  "prep": "from",
+  "patient": "tree"
+ },
+ {
+  "agent": "dog",
+  "action": "come",
+  "count": 3,
+  "attest": "One day, a little dog came into the barber's shop.",
+  "prep": "into",
+  "GOAL": "shop"
+ },
+ {
+  "agent": "dog",
+  "action": "drop",
+  "count": 3,
+  "attest": "The dog dropped the ball and wagged its tail.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a cheerful girl named Lily and her mom went to a big museum.",
+  "prep": "to",
+  "GOAL": "museum"
+ },
+ {
+  "agent": "mom",
+  "action": "look",
+  "count": 3,
+  "attest": "Her mom looked at the price and said, \"Lily, this one is too much.",
+  "prep": "at",
+  "patient": "price"
+ },
+ {
+  "agent": "bird",
+  "action": "ask",
+  "count": 3,
+  "attest": "The bird asked his friend, the wise old owl, for help.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "mom",
+  "action": "look",
+  "count": 3,
+  "attest": "His mom looked at the toy and said, \"If you are careful at the store today, we can buy the",
+  "prep": "at",
+  "patient": "toy"
+ },
+ {
+  "agent": "family",
+  "action": "give",
+  "count": 3,
+  "attest": "The family gave the cat a big hug.",
+  "prep": null,
+  "THEME": "hug"
+ },
+ {
+  "agent": "boy",
+  "action": "see",
+  "count": 3,
+  "attest": "A little boy saw the cat and the watch.",
+  "prep": null,
+  "patient": "cat"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 3,
+  "attest": "One day, a fast cat named Tom saw a mouse.",
+  "prep": null,
+  "patient": "mouse"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 3,
+  "attest": "One day, a girl named Lily found a soft book.",
+  "prep": null,
+  "patient": "book"
+ },
+ {
+  "agent": "picture",
+  "action": "come",
+  "count": 3,
+  "attest": "The pictures came to life!",
+  "prep": "to",
+  "GOAL": "life"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a girl named Mia went to the zoo with her mom.",
+  "prep": "to",
+  "GOAL": "zoo"
+ },
+ {
+  "agent": "dog",
+  "action": "find",
+  "count": 3,
+  "attest": "One day, a dog named Max found a big bone.",
+  "prep": null,
+  "patient": "bone"
+ },
+ {
+  "agent": "butterfly",
+  "action": "fly",
+  "count": 3,
+  "attest": "One day, a little butterfly was flying in the sky.",
+  "prep": "in",
+  "patient": "sky"
+ },
+ {
+  "agent": "boy",
+  "action": "see",
+  "count": 3,
+  "attest": "One day, a little boy named Tim saw a bright light in the sky.",
+  "prep": "in",
+  "patient": "sky"
+ },
+ {
+  "agent": "boat",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a green boat went to a port.",
+  "prep": "to",
+  "GOAL": "port"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a boy went to his uncle's house.",
+  "prep": "to",
+  "GOAL": "house"
+ },
+ {
+  "agent": "mom",
+  "action": "come",
+  "count": 3,
+  "attest": "At the end of the day, their mom came into the room.",
+  "prep": "at",
+  "GOAL": "end"
+ },
+ {
+  "agent": "girl",
+  "action": "play",
+  "count": 3,
+  "attest": "Once upon a time, a little girl was playing outside.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "dog",
+  "action": "look",
+  "count": 3,
+  "attest": "The big dog looked at the little cat and said, \"We are friends.",
+  "prep": "at",
+  "patient": "cat"
+ },
+ {
+  "agent": "lion",
+  "action": "become",
+  "count": 3,
+  "attest": "From that day on, the lion and the cat became best friends, and they always shared their t",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "mom",
+  "action": "walk",
+  "count": 3,
+  "attest": "As Tim was preparing the food, his mom walked into the kitchen.",
+  "prep": "into",
+  "GOAL": "kitchen"
+ },
+ {
+  "agent": "boy",
+  "action": "throw",
+  "count": 3,
+  "attest": "The boy would throw a ball, and the yellow bird would fly and catch it.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "fox",
+  "action": "become",
+  "count": 3,
+  "attest": "From that day, the fox and the girl became good friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "cat",
+  "action": "become",
+  "count": 3,
+  "attest": "From that day on, the cat and the bird became the best of friends.",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "ghost",
+  "action": "live",
+  "count": 3,
+  "attest": "One day, he found out that a ghost lived in his house.",
+  "prep": "in",
+  "patient": "house"
+ },
+ {
+  "agent": "boat",
+  "action": "meet",
+  "count": 3,
+  "attest": "One day, the boat met a little fish.",
+  "prep": null,
+  "patient": "fish"
+ },
+ {
+  "agent": "bird",
+  "action": "feel",
+  "count": 3,
+  "attest": "After a few days, the bird felt better and they let it go.",
+  "prep": "after",
+  "patient": "day"
+ },
+ {
+  "agent": "girl",
+  "action": "cry",
+  "count": 3,
+  "attest": "On their walk, they saw a little girl crying by a tree.",
+  "prep": "by",
+  "patient": "tree"
+ },
+ {
+  "agent": "rocket",
+  "action": "make",
+  "count": 3,
+  "attest": "\"I guess your rocket can make fire.",
+  "prep": null,
+  "patient": "fire"
+ },
+ {
+  "agent": "rocket",
+  "action": "swim",
+  "count": 3,
+  "attest": "\"I guess your rocket can swim in water.",
+  "prep": "in",
+  "patient": "water"
+ },
+ {
+  "agent": "jungle",
+  "action": "become",
+  "count": 3,
+  "attest": "The jungle became a happy place.",
+  "prep": null,
+  "patient": "place"
+ },
+ {
+  "agent": "person",
+  "action": "go",
+  "count": 3,
+  "attest": "Every day, the person and the dog would go on walks together.",
+  "prep": "on",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "part",
+  "action": "play",
+  "count": 3,
+  "attest": "The red part played with the big toys.",
+  "prep": "with",
+  "patient": "toy"
+ },
+ {
+  "agent": "storm",
+  "action": "come",
+  "count": 3,
+  "attest": "But then, a big storm came to the town.",
+  "prep": "to",
+  "GOAL": "town"
+ },
+ {
+  "agent": "bear",
+  "action": "ask",
+  "count": 3,
+  "attest": "Bear asked Rabbit, Whats that?",
+  "prep": null,
+  "patient": "rabbit"
+ },
+ {
+  "agent": "bird",
+  "action": "come",
+  "count": 3,
+  "attest": "One day, a big, mean bird came to the garden.",
+  "prep": "to",
+  "GOAL": "garden"
+ },
+ {
+  "agent": "mom",
+  "action": "take",
+  "count": 3,
+  "attest": "At the end of the game, Tim's mom took him to a special place in the stadium.",
+  "prep": "to",
+  "patient": "place"
+ },
+ {
+  "agent": "friend",
+  "action": "ask",
+  "count": 3,
+  "attest": "One day, his friend, a little bird, asked for his help.",
+  "prep": "for",
+  "patient": "help"
+ },
+ {
+  "agent": "bird",
+  "action": "live",
+  "count": 3,
+  "attest": "A baby bird lived in the nest.",
+  "prep": "in",
+  "patient": "nest"
+ },
+ {
+  "agent": "mom",
+  "action": "hear",
+  "count": 3,
+  "attest": "Lily's mom heard the noisy sounds and came to see what was happening.",
+  "prep": null,
+  "patient": "sound"
+ },
+ {
+  "agent": "mom",
+  "action": "say",
+  "count": 3,
+  "attest": "His mom said, \"Good job, Tim!",
+  "prep": null,
+  "patient": "job"
+ },
+ {
+  "agent": "kid",
+  "action": "learn",
+  "count": 3,
+  "attest": "University is a big place where big kids learn new things.",
+  "prep": null,
+  "patient": "thing"
+ },
+ {
+  "agent": "cat",
+  "action": "find",
+  "count": 3,
+  "attest": "One day, the silly cat found a big box.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a boy named Tim went to the shop with his mom.",
+  "prep": "to",
+  "GOAL": "shop"
+ },
+ {
+  "agent": "bunny",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, the bunny went for a walk.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "cat",
+  "action": "make",
+  "count": 3,
+  "attest": "The cat also made a snow cat friend.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "car",
+  "action": "win",
+  "count": 3,
+  "attest": "Tim's car won the race and he was very happy.",
+  "prep": null,
+  "patient": "race"
+ },
+ {
+  "agent": "seal",
+  "action": "live",
+  "count": 3,
+  "attest": "The seal lived in the sea.",
+  "prep": "in",
+  "patient": "sea"
+ },
+ {
+  "agent": "ball",
+  "action": "go",
+  "count": 3,
+  "attest": "The ball goes over the tree.",
+  "prep": "over",
+  "GOAL": "tree"
+ },
+ {
+  "agent": "bird",
+  "action": "catch",
+  "count": 3,
+  "attest": "The bird catches the ball with its beak.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "ball",
+  "action": "become",
+  "count": 3,
+  "attest": "The red ball became his best friend, and they played together every day.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 3,
+  "attest": "One day, a little boy named Tim found a long rope in his yard.",
+  "prep": null,
+  "patient": "rope"
+ },
+ {
+  "agent": "drawing",
+  "action": "come",
+  "count": 3,
+  "attest": "Her drawing came to life!",
+  "prep": "to",
+  "GOAL": "life"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 3,
+  "attest": "Then, a little girl found a note under the magic hat.",
+  "prep": null,
+  "patient": "note"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 3,
+  "attest": "One day, a little cat saw a tasty bug.",
+  "prep": null,
+  "patient": "bug"
+ },
+ {
+  "agent": "boy",
+  "action": "see",
+  "count": 3,
+  "attest": "The boy saw a squirrel up in the tree.",
+  "prep": "in",
+  "patient": "tree"
+ },
+ {
+  "agent": "butterfly",
+  "action": "become",
+  "count": 3,
+  "attest": "The rabbit, the bird, and the butterfly all became friends and played together every day.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "girl",
+  "action": "see",
+  "count": 3,
+  "attest": "One day, a little girl named Lucy saw a big yellow cabinet in her room.",
+  "prep": "in",
+  "patient": "room"
+ },
+ {
+  "agent": "mom",
+  "action": "take",
+  "count": 3,
+  "attest": "Tim's mom took him to the doctor.",
+  "prep": "to",
+  "patient": "doctor"
+ },
+ {
+  "agent": "sun",
+  "action": "rise",
+  "count": 3,
+  "attest": "One day, Ella saw the sun rise in the sky.",
+  "prep": "in",
+  "patient": "sky"
+ },
+ {
+  "agent": "bird",
+  "action": "come",
+  "count": 3,
+  "attest": "One day, a little bird came to the pond.",
+  "prep": "to",
+  "GOAL": "pond"
+ },
+ {
+  "agent": "cat",
+  "action": "hear",
+  "count": 3,
+  "attest": "One day, the cat heard a sound.",
+  "prep": null,
+  "patient": "sound"
+ },
+ {
+  "agent": "bird",
+  "action": "drop",
+  "count": 3,
+  "attest": "The bird dropped the ball and flew away.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 3,
+  "attest": "The gray bird was flying near the white cloud.",
+  "prep": "near",
+  "patient": "cloud"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 3,
+  "attest": "Tim tried to count how many times the gray bird flew around the white cloud.",
+  "prep": null,
+  "patient": "time"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 3,
+  "attest": "The birds flew up high to their nests, the rabbits went into their holes, and the squirrel",
+  "prep": "to",
+  "patient": "nest"
+ },
+ {
+  "agent": "dog",
+  "action": "see",
+  "count": 3,
+  "attest": "The big, scary dog saw the stick and ran to get it.",
+  "prep": null,
+  "patient": "stick"
+ },
+ {
+  "agent": "bird",
+  "action": "come",
+  "count": 3,
+  "attest": "One day, a big bird came to the forest.",
+  "prep": "to",
+  "GOAL": "forest"
+ },
+ {
+  "agent": "face",
+  "action": "light",
+  "count": 3,
+  "attest": "Sue's face lit up with joy.",
+  "prep": "with",
+  "patient": "joy"
+ },
+ {
+  "agent": "teacher",
+  "action": "ask",
+  "count": 3,
+  "attest": "The teacher asked the class if anyone had seen it.",
+  "prep": null,
+  "patient": "class"
+ },
+ {
+  "agent": "cat",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a gray cat named Tom went to the sea.",
+  "prep": "to",
+  "GOAL": "sea"
+ },
+ {
+  "agent": "mom",
+  "action": "read",
+  "count": 3,
+  "attest": "But then, he remembered that his mom always read him a story about a magic frog.",
+  "prep": null,
+  "patient": "story"
+ },
+ {
+  "agent": "dog",
+  "action": "take",
+  "count": 3,
+  "attest": "They thought the dog would take their toy.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "girl",
+  "action": "play",
+  "count": 3,
+  "attest": "One day, a little girl was playing in her garden.",
+  "prep": "in",
+  "patient": "garden"
+ },
+ {
+  "agent": "chicken",
+  "action": "cross",
+  "count": 3,
+  "attest": "The dog thought for a moment and then said, \"Why did the chicken cross the road?\"",
+  "prep": null,
+  "patient": "road"
+ },
+ {
+  "agent": "bird",
+  "action": "come",
+  "count": 3,
+  "attest": "One day, a graceful bird came to the farm.",
+  "prep": "to",
+  "GOAL": "farm"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 3,
+  "attest": "One day, the girl found a little bird.",
+  "prep": null,
+  "patient": "bird"
+ },
+ {
+  "agent": "girl",
+  "action": "walk",
+  "count": 3,
+  "attest": "A smart little girl named Lily was walking in the park with her mom.",
+  "prep": "with",
+  "GOAL": "mom"
+ },
+ {
+  "agent": "boy",
+  "action": "climb",
+  "count": 3,
+  "attest": "So the little boy bravely climbed up the tree and when he reached the top he shouted, \"I d",
+  "prep": "up",
+  "patient": "tree"
+ },
+ {
+  "agent": "bird",
+  "action": "find",
+  "count": 3,
+  "attest": "Lily wanted to help the bird find its family.",
+  "prep": null,
+  "patient": "family"
+ },
+ {
+  "agent": "boy",
+  "action": "come",
+  "count": 3,
+  "attest": "One day, a little boy came to the river.",
+  "prep": "to",
+  "GOAL": "river"
+ },
+ {
+  "agent": "dog",
+  "action": "win",
+  "count": 3,
+  "attest": "The dog won the race and was very proud.",
+  "prep": null,
+  "patient": "race"
+ },
+ {
+  "agent": "cat",
+  "action": "walk",
+  "count": 3,
+  "attest": "One day, a cute cat was walking in the park.",
+  "prep": "in",
+  "GOAL": "park"
+ },
+ {
+  "agent": "lion",
+  "action": "walk",
+  "count": 3,
+  "attest": "One day, a big, powerful lion was walking in the forest.",
+  "prep": "in",
+  "GOAL": "forest"
+ },
+ {
+  "agent": "boy",
+  "action": "come",
+  "count": 3,
+  "attest": "One day, a little boy named Tim came to the store.",
+  "prep": "to",
+  "GOAL": "store"
+ },
+ {
+  "agent": "cat",
+  "action": "look",
+  "count": 3,
+  "attest": "The cat was looking at the bird and said, \"I will scare you, little bird!\"",
+  "prep": "at",
+  "patient": "bird"
+ },
+ {
+  "agent": "man",
+  "action": "see",
+  "count": 3,
+  "attest": "At the party, the man saw a big box of toys.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "monkey",
+  "action": "climb",
+  "count": 3,
+  "attest": "The monkey climbed the tree.",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "dog",
+  "action": "pick",
+  "count": 3,
+  "attest": "The dog picked up the balls in his mouth and brought them to Tim.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "bird",
+  "action": "take",
+  "count": 3,
+  "attest": "From that day on, Spot and his family always played together, and they never let the bird ",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "fox",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, the curious little fox went for a walk in the woods.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "mom",
+  "action": "make",
+  "count": 3,
+  "attest": "One day, they saw their mom make coffee in the kitchen.",
+  "prep": null,
+  "patient": "coffee"
+ },
+ {
+  "agent": "mom",
+  "action": "make",
+  "count": 3,
+  "attest": "One day, they saw their mom make coffee in the kitchen.",
+  "prep": "in",
+  "patient": "kitchen"
+ },
+ {
+  "agent": "girl",
+  "action": "play",
+  "count": 3,
+  "attest": "One day, a little girl named Sue was playing with her blocks.",
+  "prep": "with",
+  "patient": "block"
+ },
+ {
+  "agent": "cat",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a large cat named Tom went to the kitchen.",
+  "prep": "to",
+  "GOAL": "kitchen"
+ },
+ {
+  "agent": "people",
+  "action": "go",
+  "count": 3,
+  "attest": "In the little store, people would go to buy things.",
+  "prep": "in",
+  "GOAL": "store"
+ },
+ {
+  "agent": "bird",
+  "action": "come",
+  "count": 3,
+  "attest": "One day, a big bird came to the baby's window and heard her sing.",
+  "prep": "to",
+  "GOAL": "window"
+ },
+ {
+  "agent": "mouse",
+  "action": "come",
+  "count": 3,
+  "attest": "Then, a little mouse came in the room.",
+  "prep": "in",
+  "GOAL": "room"
+ },
+ {
+  "agent": "dog",
+  "action": "walk",
+  "count": 3,
+  "attest": "One day, a deaf dog named Max was walking in the park.",
+  "prep": "in",
+  "GOAL": "park"
+ },
+ {
+  "agent": "boy",
+  "action": "see",
+  "count": 3,
+  "attest": "The boy saw a tall man wearing a big hat, who smiled at him.",
+  "prep": null,
+  "patient": "man"
+ },
+ {
+  "agent": "boy",
+  "action": "walk",
+  "count": 3,
+  "attest": "One day, a little boy named Tim was walking with his mom.",
+  "prep": "with",
+  "GOAL": "mom"
+ },
+ {
+  "agent": "bird",
+  "action": "know",
+  "count": 3,
+  "attest": "And from that day, the bird knew how to play in the swamp too.",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "dog",
+  "action": "come",
+  "count": 3,
+  "attest": "The dog came back with the ball and dropped it near Tim.",
+  "prep": "with",
+  "GOAL": "ball"
+ },
+ {
+  "agent": "bear",
+  "action": "climb",
+  "count": 3,
+  "attest": "The bear climbed the tree.",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "dog",
+  "action": "wear",
+  "count": 3,
+  "attest": "The cat wore a pretty dress, and the dog wore a nice hat.",
+  "prep": null,
+  "patient": "hat"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 3,
+  "attest": "On the tree, the bird saw a small boy.",
+  "prep": null,
+  "patient": "boy"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a girl named Lily went to the spring with her friend, Tom.",
+  "prep": "with",
+  "GOAL": "friend"
+ },
+ {
+  "agent": "train",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a little train was going down the tracks.",
+  "prep": "down",
+  "GOAL": "track"
+ },
+ {
+  "agent": "truck",
+  "action": "stop",
+  "count": 3,
+  "attest": "The truck stops near their house and a man gets out.",
+  "prep": "near",
+  "patient": "house"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a little boy named Tim went to a big building with his mom.",
+  "prep": "to",
+  "GOAL": "building"
+ },
+ {
+  "agent": "mom",
+  "action": "make",
+  "count": 3,
+  "attest": "Tim's mom made a promise to him.",
+  "prep": null,
+  "patient": "promise"
+ },
+ {
+  "agent": "bear",
+  "action": "become",
+  "count": 3,
+  "attest": "From that day on, the bear and the girl became best friends, and the bear did not mind bei",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "frog",
+  "action": "jump",
+  "count": 3,
+  "attest": "The ugly frog jumped into the water and hid.",
+  "prep": "into",
+  "patient": "water"
+ },
+ {
+  "agent": "cat",
+  "action": "eat",
+  "count": 3,
+  "attest": "The cat had eaten the cake!",
+  "prep": null,
+  "patient": "cake"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 3,
+  "attest": "One sunny day, a little girl named Jane came to the park with her mom.",
+  "prep": "with",
+  "GOAL": "mom"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 3,
+  "attest": "One day, a boy named Tim found a clean card on the floor.",
+  "prep": "on",
+  "patient": "floor"
+ },
+ {
+  "agent": "man",
+  "action": "play",
+  "count": 3,
+  "attest": "Then, they saw a man playing music with a drum.",
+  "prep": null,
+  "patient": "music"
+ },
+ {
+  "agent": "bird",
+  "action": "look",
+  "count": 3,
+  "attest": "One day, a hungry little bird named Tim was looking for food.",
+  "prep": "for",
+  "patient": "food"
+ },
+ {
+  "agent": "tree",
+  "action": "wave",
+  "count": 3,
+  "attest": "So, the tree would wave its branches to say hello.",
+  "prep": null,
+  "patient": "branch"
+ },
+ {
+  "agent": "dog",
+  "action": "liked",
+  "count": 3,
+  "attest": "The big dog liked the idea.",
+  "prep": null,
+  "patient": "idea"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a little girl named Amy went to her room.",
+  "prep": "to",
+  "GOAL": "room"
+ },
+ {
+  "agent": "girl",
+  "action": "play",
+  "count": 3,
+  "attest": "He saw a girl playing with her dolls.",
+  "prep": "with",
+  "patient": "doll"
+ },
+ {
+  "agent": "toy",
+  "action": "become",
+  "count": 3,
+  "attest": "They had lots of fun, and their toys became friends too.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "girl",
+  "action": "walk",
+  "count": 3,
+  "attest": "One night, a little girl was walking through the woods.",
+  "prep": "through",
+  "GOAL": "wood"
+ },
+ {
+  "agent": "cat",
+  "action": "liked",
+  "count": 3,
+  "attest": "The cat liked the song.",
+  "prep": null,
+  "patient": "song"
+ },
+ {
+  "agent": "bear",
+  "action": "come",
+  "count": 3,
+  "attest": "Mia's wish had made Mr. Bear come to life.",
+  "prep": "to",
+  "GOAL": "life"
+ },
+ {
+  "agent": "ball",
+  "action": "make",
+  "count": 3,
+  "attest": "The ball made a loud noise and then it was quiet.",
+  "prep": null,
+  "patient": "noise"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 3,
+  "attest": "The bird flew around the park, making everyone laugh and clap.",
+  "prep": "around",
+  "patient": "park"
+ },
+ {
+  "agent": "bird",
+  "action": "come",
+  "count": 3,
+  "attest": "The bird came back with many friends.",
+  "prep": "with",
+  "GOAL": "friend"
+ },
+ {
+  "agent": "dog",
+  "action": "find",
+  "count": 3,
+  "attest": "In the end, the clever dog found the toy.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "friend",
+  "action": "see",
+  "count": 3,
+  "attest": "Spot's friend, a cat named Fluffy, saw him with the cake.",
+  "prep": "with",
+  "patient": "cake"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 3,
+  "attest": "One sunny day, a little girl named Sue came to the farm.",
+  "prep": "to",
+  "GOAL": "farm"
+ },
+ {
+  "agent": "seed",
+  "action": "grow",
+  "count": 3,
+  "attest": "Months went by, and the seed grew into a beautiful plant.",
+  "prep": "into",
+  "patient": "plant"
+ },
+ {
+  "agent": "bunny",
+  "action": "hop",
+  "count": 3,
+  "attest": "The bunny hopped through fields and woods, and even over small hills.",
+  "prep": "through",
+  "patient": "field"
+ },
+ {
+  "agent": "kid",
+  "action": "take",
+  "count": 3,
+  "attest": "The kids would take turns kicking the pink ball and laughing as it rolled away.",
+  "prep": null,
+  "patient": "turn"
+ },
+ {
+  "agent": "fish",
+  "action": "swim",
+  "count": 3,
+  "attest": "One day, a small fish was swimming in the sea.",
+  "prep": "in",
+  "patient": "sea"
+ },
+ {
+  "agent": "friend",
+  "action": "see",
+  "count": 3,
+  "attest": "Tim's friends saw the magic ball.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "friend",
+  "action": "play",
+  "count": 3,
+  "attest": "When he got there, he saw his friends playing with a new toy.",
+  "prep": "with",
+  "patient": "toy"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 3,
+  "attest": "One day, Tim's mom gave him a ball to play with.",
+  "prep": null,
+  "THEME": "ball"
+ },
+ {
+  "agent": "car",
+  "action": "need",
+  "count": 3,
+  "attest": "\"Your car needs a new battery,\" she said.",
+  "prep": null,
+  "patient": "battery"
+ },
+ {
+  "agent": "boy",
+  "action": "play",
+  "count": 3,
+  "attest": "The red truck saw a little boy playing in the field.",
+  "prep": "in",
+  "patient": "field"
+ },
+ {
+  "agent": "hat",
+  "action": "fall",
+  "count": 3,
+  "attest": "The hat fell off her head.",
+  "prep": "off",
+  "patient": "head"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 3,
+  "attest": "Once upon a time, a boy named Tim went to a big party.",
+  "prep": "to",
+  "GOAL": "party"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a little boy named Tim went to the pool with his mom.",
+  "prep": "to",
+  "GOAL": "pool"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a girl named Lily went to her grandma's house.",
+  "prep": "to",
+  "GOAL": "house"
+ },
+ {
+  "agent": "frog",
+  "action": "play",
+  "count": 3,
+  "attest": "From that day on, Amy, Tom, and the little green frog played together every day.",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 3,
+  "attest": "But then, the bird saw a man behind the boat.",
+  "prep": null,
+  "patient": "man"
+ },
+ {
+  "agent": "man",
+  "action": "give",
+  "count": 3,
+  "attest": "The ice cream man gave them ice cream, but it started to melt fast.",
+  "prep": null,
+  "THEME": "cream"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a boy named Tim went to the lake with his mom and dad.",
+  "prep": "to",
+  "GOAL": "lake"
+ },
+ {
+  "agent": "cat",
+  "action": "find",
+  "count": 3,
+  "attest": "One day, the cat found a big tree.",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "bear",
+  "action": "think",
+  "count": 3,
+  "attest": "The bear thought for a moment and said he knew the perfect person.",
+  "prep": "for",
+  "patient": "moment"
+ },
+ {
+  "agent": "mom",
+  "action": "draw",
+  "count": 3,
+  "attest": "Look, this is how you write A.\" Mom draws a big A on the paper.",
+  "prep": "on",
+  "patient": "paper"
+ },
+ {
+  "agent": "tower",
+  "action": "fall",
+  "count": 2,
+  "attest": "Suddenly, the tower fell down with a loud crash.",
+  "prep": "with",
+  "patient": "crash"
+ },
+ {
+  "agent": "ball",
+  "action": "break",
+  "count": 2,
+  "attest": "The ball broke into pieces.",
+  "prep": "into",
+  "patient": "piece"
+ },
+ {
+  "agent": "rabbit",
+  "action": "win",
+  "count": 2,
+  "attest": "At the end of the race, the rabbit and the turtle won.",
+  "prep": "at",
+  "patient": "end"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 2,
+  "attest": "One day, Tim's mom gave him some money to buy a toy at the store.",
+  "prep": null,
+  "THEME": "money"
+ },
+ {
+  "agent": "boy",
+  "action": "thanked",
+  "count": 2,
+  "attest": "The boy thanked the man and ran off, much wiser than when he had arrived.",
+  "prep": null,
+  "patient": "man"
+ },
+ {
+  "agent": "kid",
+  "action": "become",
+  "count": 2,
+  "attest": "The kids in the park became good friends, and they always played together after that day.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a boy named Tim went to the doctor with his mom.",
+  "prep": "to",
+  "GOAL": "doctor"
+ },
+ {
+  "agent": "flower",
+  "action": "live",
+  "count": 2,
+  "attest": "The flower lived in a big garden.",
+  "prep": "in",
+  "patient": "garden"
+ },
+ {
+  "agent": "man",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a big bald man went for a walk in the woods.",
+  "prep": "in",
+  "GOAL": "wood"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, while playing in the garden, the little girl found a sharp stick.",
+  "prep": null,
+  "patient": "stick"
+ },
+ {
+  "agent": "mom",
+  "action": "buy",
+  "count": 2,
+  "attest": "Tim's mom bought food for the cat, too.",
+  "prep": null,
+  "patient": "food"
+ },
+ {
+  "agent": "cat",
+  "action": "look",
+  "count": 2,
+  "attest": "The cat looked at the dog and said, \"Okay, let's play!\"",
+  "prep": "at",
+  "patient": "dog"
+ },
+ {
+  "agent": "cat",
+  "action": "walk",
+  "count": 2,
+  "attest": "The big cat walked away with the bird.",
+  "prep": "with",
+  "GOAL": "bird"
+ },
+ {
+  "agent": "squirrel",
+  "action": "jump",
+  "count": 2,
+  "attest": "Suddenly, the squirrel jumped down from the tree and sat near the boy.",
+  "prep": "from",
+  "patient": "tree"
+ },
+ {
+  "agent": "squirrel",
+  "action": "nodded",
+  "count": 2,
+  "attest": "The squirrel nodded its head and said, \"Guess how high I can jump?\"",
+  "prep": null,
+  "patient": "head"
+ },
+ {
+  "agent": "sun",
+  "action": "hide",
+  "count": 2,
+  "attest": "The sun hid behind a big cloud.",
+  "prep": "behind",
+  "patient": "cloud"
+ },
+ {
+  "agent": "girl",
+  "action": "become",
+  "count": 2,
+  "attest": "From that day on, the little girl and the musician became good friends, and they played in",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "friend",
+  "action": "come",
+  "count": 2,
+  "attest": "On the day of the party, Lily's friends came to her house.",
+  "prep": "on",
+  "GOAL": "day"
+ },
+ {
+  "agent": "mom",
+  "action": "cut",
+  "count": 2,
+  "attest": "After they sang, Lily's mom cut the cake.",
+  "prep": null,
+  "patient": "cake"
+ },
+ {
+  "agent": "bird",
+  "action": "take",
+  "count": 2,
+  "attest": "The bird took a turn and flew high up in the sky with the ball.",
+  "prep": null,
+  "patient": "turn"
+ },
+ {
+  "agent": "king",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a king and his son went to the park to play.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "mom",
+  "action": "reach",
+  "count": 2,
+  "attest": "Mom reached in her pocket and pulled out a piece of coal.",
+  "prep": "in",
+  "patient": "pocket"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 2,
+  "attest": "Once upon a time, a little girl named Lily found a small, cheap bulb in her garden.",
+  "prep": "in",
+  "patient": "garden"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a girl named Lily went for a drive with her mom.",
+  "prep": "for",
+  "GOAL": "drive"
+ },
+ {
+  "agent": "man",
+  "action": "opened",
+  "count": 2,
+  "attest": "A man opened the door and looked at Sue.",
+  "prep": null,
+  "patient": "door"
+ },
+ {
+  "agent": "garden",
+  "action": "become",
+  "count": 2,
+  "attest": "And Mia's garden became a special place where everyone loved to visit and find more shiny ",
+  "prep": null,
+  "patient": "place"
+ },
+ {
+  "agent": "mom",
+  "action": "look",
+  "count": 2,
+  "attest": "She went to the living room where her mom was looking at a screen.",
+  "prep": "at",
+  "patient": "screen"
+ },
+ {
+  "agent": "butterfly",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, the butterfly saw a big number on a tree.",
+  "prep": null,
+  "patient": "number"
+ },
+ {
+  "agent": "spider",
+  "action": "make",
+  "count": 2,
+  "attest": "One day, he saw a spider making a web.",
+  "prep": null,
+  "patient": "web"
+ },
+ {
+  "agent": "gas",
+  "action": "make",
+  "count": 2,
+  "attest": "They learn that gas can make fire.",
+  "prep": null,
+  "patient": "fire"
+ },
+ {
+  "agent": "owl",
+  "action": "sit",
+  "count": 2,
+  "attest": "One day, a wise old owl sat on a tree.",
+  "prep": "on",
+  "patient": "tree"
+ },
+ {
+  "agent": "dog",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a dog named Max found a pair of sunglasses on the ground.",
+  "prep": null,
+  "patient": "pair"
+ },
+ {
+  "agent": "lady",
+  "action": "become",
+  "count": 2,
+  "attest": "The nice lady at the store became their friend too, and they always went back to the prett",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "man",
+  "action": "come",
+  "count": 2,
+  "attest": "A kind man came to the market and saw the two children with their chickens.",
+  "prep": "to",
+  "GOAL": "market"
+ },
+ {
+  "agent": "man",
+  "action": "thanked",
+  "count": 2,
+  "attest": "The old man thanked the little girl for making him happy and the little girl thanked the o",
+  "prep": null,
+  "patient": "girl"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little boy named Tim went to the shore with his mom.",
+  "prep": "to",
+  "GOAL": "shore"
+ },
+ {
+  "agent": "bird",
+  "action": "come",
+  "count": 2,
+  "attest": "After some time, a bird came with a key.",
+  "prep": "after",
+  "GOAL": "time"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a little boy named Tim found a phone.",
+  "prep": null,
+  "patient": "phone"
+ },
+ {
+  "agent": "phone",
+  "action": "make",
+  "count": 2,
+  "attest": "The phone made a strange sound.",
+  "prep": null,
+  "patient": "sound"
+ },
+ {
+  "agent": "dog",
+  "action": "play",
+  "count": 2,
+  "attest": "One day, a big dog and a little cat were playing near a tree.",
+  "prep": "near",
+  "patient": "tree"
+ },
+ {
+  "agent": "frog",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, the frog went to a big pond.",
+  "prep": "to",
+  "GOAL": "pond"
+ },
+ {
+  "agent": "friend",
+  "action": "come",
+  "count": 2,
+  "attest": "Jane's friend, Tom, came into the kitchen and saw her drinking the juice.",
+  "prep": "into",
+  "GOAL": "kitchen"
+ },
+ {
+  "agent": "friend",
+  "action": "go",
+  "count": 2,
+  "attest": "At the end of the day, Max's friends went home, and Max put the axe away.",
+  "prep": "at",
+  "GOAL": "end"
+ },
+ {
+  "agent": "girl",
+  "action": "see",
+  "count": 2,
+  "attest": "The girl saw the cat under the table.",
+  "prep": "under",
+  "patient": "table"
+ },
+ {
+  "agent": "girl",
+  "action": "give",
+  "count": 2,
+  "attest": "The girl gently gave the cat a hug.",
+  "prep": null,
+  "THEME": "cat"
+ },
+ {
+  "agent": "fox",
+  "action": "become",
+  "count": 2,
+  "attest": "From that day, the fox and the girl became good friends.",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "dog",
+  "action": "meet",
+  "count": 2,
+  "attest": "One Tuesday, a big dog named Max met a small cat named Lily.",
+  "prep": null,
+  "patient": "cat"
+ },
+ {
+  "agent": "bird",
+  "action": "bring",
+  "count": 2,
+  "attest": "A nice bird brought back their toys one by one.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a girl named Sue found a big calendar in her room.",
+  "prep": null,
+  "patient": "calendar"
+ },
+ {
+  "agent": "man",
+  "action": "leave",
+  "count": 2,
+  "attest": "The wise man left the town without giving them the money.",
+  "prep": null,
+  "patient": "town"
+ },
+ {
+  "agent": "dog",
+  "action": "play",
+  "count": 2,
+  "attest": "The dog played with the rope.",
+  "prep": "with",
+  "patient": "rope"
+ },
+ {
+  "agent": "mom",
+  "action": "see",
+  "count": 2,
+  "attest": "Amy's mom saw the dirty toy and said, \"Amy, you need to wash your toy.\"",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "bird",
+  "action": "marry",
+  "count": 2,
+  "attest": "They said, \"Birds should not marry bugs!\"",
+  "prep": null,
+  "patient": "bug"
+ },
+ {
+  "agent": "lady",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a lady went for a walk.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "boy",
+  "action": "come",
+  "count": 2,
+  "attest": "One day a little boy named Jack came to the temple.",
+  "prep": "to",
+  "GOAL": "temple"
+ },
+ {
+  "agent": "cloud",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a gloomy cloud came to the sky.",
+  "prep": "to",
+  "GOAL": "sky"
+ },
+ {
+  "agent": "girl",
+  "action": "play",
+  "count": 2,
+  "attest": "One day, a little girl named Sue was playing with her ball near a big tree.",
+  "prep": "near",
+  "patient": "tree"
+ },
+ {
+  "agent": "bear",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a nice bear went for a walk in the woods.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "rocket",
+  "action": "fly",
+  "count": 2,
+  "attest": "\"I guess your rocket can fly in the air.",
+  "prep": "in",
+  "patient": "air"
+ },
+ {
+  "agent": "girl",
+  "action": "read",
+  "count": 2,
+  "attest": "One day, a little girl was reading a book with many pages.",
+  "prep": null,
+  "patient": "book"
+ },
+ {
+  "agent": "cat",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a thin cat named Tom went to the store.",
+  "prep": "to",
+  "GOAL": "store"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "The bird saw the lonely boat.",
+  "prep": null,
+  "patient": "boat"
+ },
+ {
+  "agent": "leaf",
+  "action": "stay",
+  "count": 2,
+  "attest": "He tried again and again, but the leaves and sticks would not stay on the tree.",
+  "prep": "on",
+  "patient": "tree"
+ },
+ {
+  "agent": "cat",
+  "action": "turn",
+  "count": 2,
+  "attest": "The cat turned into a big, nice bird!",
+  "prep": "into",
+  "patient": "bird"
+ },
+ {
+  "agent": "bird",
+  "action": "win",
+  "count": 2,
+  "attest": "In the end, the unknown big bird won the race.",
+  "prep": "in",
+  "patient": "end"
+ },
+ {
+  "agent": "bird",
+  "action": "win",
+  "count": 2,
+  "attest": "In the end, the unknown big bird won the race.",
+  "prep": null,
+  "patient": "race"
+ },
+ {
+  "agent": "girl",
+  "action": "live",
+  "count": 2,
+  "attest": "A little girl named Lucy lived in this room.",
+  "prep": "in",
+  "patient": "room"
+ },
+ {
+  "agent": "boy",
+  "action": "think",
+  "count": 2,
+  "attest": "The boy thought for a moment and said, \"I will help you.\"",
+  "prep": "for",
+  "patient": "moment"
+ },
+ {
+  "agent": "dog",
+  "action": "run",
+  "count": 2,
+  "attest": "But one day, when Sue and Tom were playing, a big dog ran into the room.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "dog",
+  "action": "play",
+  "count": 2,
+  "attest": "They did not know dogs could play the guitar.",
+  "prep": null,
+  "patient": "guitar"
+ },
+ {
+  "agent": "cat",
+  "action": "walk",
+  "count": 2,
+  "attest": "One day, a sad cat named Tom was walking in the rain.",
+  "prep": "in",
+  "GOAL": "rain"
+ },
+ {
+  "agent": "doctor",
+  "action": "take",
+  "count": 2,
+  "attest": "The doctor took her by the hand and led her back to his warm office.",
+  "prep": "by",
+  "patient": "hand"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 2,
+  "attest": "The cat saw the toys and wanted to play with them too.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "cat",
+  "action": "eat",
+  "count": 2,
+  "attest": "The cat ate the food and started to nod its head.",
+  "prep": null,
+  "patient": "food"
+ },
+ {
+  "agent": "cat",
+  "action": "say",
+  "count": 2,
+  "attest": "The big cat said to the little mouse, \"Why are you scared?",
+  "prep": "to",
+  "patient": "mouse"
+ },
+ {
+  "agent": "mom",
+  "action": "opened",
+  "count": 2,
+  "attest": "Her mom opened the door for her and let her go inside.",
+  "prep": null,
+  "patient": "door"
+ },
+ {
+  "agent": "wind",
+  "action": "come",
+  "count": 2,
+  "attest": "But then, a big wind came through the window.",
+  "prep": "through",
+  "GOAL": "window"
+ },
+ {
+  "agent": "owner",
+  "action": "call",
+  "count": 2,
+  "attest": "One day, Fluffy's owner called out his name to start the walk.",
+  "prep": null,
+  "patient": "name"
+ },
+ {
+  "agent": "cat",
+  "action": "take",
+  "count": 2,
+  "attest": "The scary cat did not take the cake.",
+  "prep": null,
+  "patient": "cake"
+ },
+ {
+  "agent": "mom",
+  "action": "call",
+  "count": 2,
+  "attest": "Just then, her mom called her to the kitchen.",
+  "prep": "to",
+  "patient": "kitchen"
+ },
+ {
+  "agent": "bird",
+  "action": "take",
+  "count": 2,
+  "attest": "The bird took the squirrel to a big tree with lots of leaves.",
+  "prep": "to",
+  "patient": "tree"
+ },
+ {
+  "agent": "fairy",
+  "action": "thanked",
+  "count": 2,
+  "attest": "The fairy thanked Lily for her help and flew away.",
+  "prep": "for",
+  "patient": "help"
+ },
+ {
+  "agent": "fish",
+  "action": "need",
+  "count": 2,
+  "attest": "The little fish needed help to find his way home.",
+  "prep": null,
+  "patient": "help"
+ },
+ {
+  "agent": "cat",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a playful cat named Tom went to his friend, a dog named Sam.",
+  "prep": "to",
+  "GOAL": "friend"
+ },
+ {
+  "agent": "friend",
+  "action": "lose",
+  "count": 2,
+  "attest": "One day, his friend, a little bird, lost her toy.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "hat",
+  "action": "fly",
+  "count": 2,
+  "attest": "Spot sneezed so hard, his funny hat flew off his head.",
+  "prep": null,
+  "patient": "head"
+ },
+ {
+  "agent": "bear",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little bear named Ben went for a walk in the woods.",
+  "prep": "in",
+  "GOAL": "wood"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 2,
+  "attest": "Mom gave them some bread and they walked to the water.",
+  "prep": null,
+  "THEME": "bread"
+ },
+ {
+  "agent": "man",
+  "action": "sit",
+  "count": 2,
+  "attest": "Under the tree, a little old man sat.",
+  "prep": "under",
+  "patient": "tree"
+ },
+ {
+  "agent": "bird",
+  "action": "go",
+  "count": 2,
+  "attest": "The bird went under the water and did not come back up.",
+  "prep": "under",
+  "GOAL": "water"
+ },
+ {
+  "agent": "princess",
+  "action": "become",
+  "count": 2,
+  "attest": "The princess and the bird became good friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "bird",
+  "action": "live",
+  "count": 2,
+  "attest": "The bird lived in a big tree near a small house.",
+  "prep": "near",
+  "patient": "house"
+ },
+ {
+  "agent": "ball",
+  "action": "stop",
+  "count": 2,
+  "attest": "Tom guessed the ball would stop by the tree's roots.",
+  "prep": "by",
+  "patient": "root"
+ },
+ {
+  "agent": "bug",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a little bug came to the wise old bird.",
+  "prep": "to",
+  "GOAL": "bird"
+ },
+ {
+  "agent": "cloud",
+  "action": "cover",
+  "count": 2,
+  "attest": "The cloud covered the sun.",
+  "prep": null,
+  "patient": "sun"
+ },
+ {
+  "agent": "mom",
+  "action": "look",
+  "count": 2,
+  "attest": "His mom looked at the bottle and smiled.",
+  "prep": "at",
+  "patient": "bottle"
+ },
+ {
+  "agent": "farmer",
+  "action": "become",
+  "count": 2,
+  "attest": "The farmer and the bunny became good friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a boy named Tim found some clay.",
+  "prep": null,
+  "patient": "clay"
+ },
+ {
+  "agent": "bear",
+  "action": "give",
+  "count": 2,
+  "attest": "The bear gave her a big hug and they played together.",
+  "prep": null,
+  "THEME": "hug"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a boy named Tim went with his mom and dad to a big hotel.",
+  "prep": "to",
+  "GOAL": "hotel"
+ },
+ {
+  "agent": "leaf",
+  "action": "fall",
+  "count": 2,
+  "attest": "But the wind was stronger and the leaf fell to the ground.",
+  "prep": "to",
+  "patient": "ground"
+ },
+ {
+  "agent": "friend",
+  "action": "take",
+  "count": 2,
+  "attest": "The friends took turns putting their clothes on one side of the scales, and then added lit",
+  "prep": null,
+  "patient": "turn"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a girl named Sue went to the airport with her mom.",
+  "prep": "to",
+  "GOAL": "airport"
+ },
+ {
+  "agent": "mom",
+  "action": "see",
+  "count": 2,
+  "attest": "Sue's mom saw a man with a hat.",
+  "prep": "with",
+  "patient": "hat"
+ },
+ {
+  "agent": "plant",
+  "action": "drink",
+  "count": 2,
+  "attest": "The plants and pumpkins drank the water.",
+  "prep": null,
+  "patient": "water"
+ },
+ {
+  "agent": "car",
+  "action": "meet",
+  "count": 2,
+  "attest": "On the way to the west, the car met a big blue truck.",
+  "prep": "on",
+  "patient": "way"
+ },
+ {
+  "agent": "car",
+  "action": "meet",
+  "count": 2,
+  "attest": "On the way to the west, the car met a big blue truck.",
+  "prep": null,
+  "patient": "truck"
+ },
+ {
+  "agent": "horse",
+  "action": "live",
+  "count": 2,
+  "attest": "The horse lived on a big farm with a nice girl named Lily.",
+  "prep": "on",
+  "patient": "farm"
+ },
+ {
+  "agent": "friend",
+  "action": "see",
+  "count": 2,
+  "attest": "Fluffy's friend, a small dog named Tiny, saw her jump in the water.",
+  "prep": null,
+  "patient": "jump"
+ },
+ {
+  "agent": "ball",
+  "action": "roll",
+  "count": 2,
+  "attest": "The ball rolled down the hill and went far away.",
+  "prep": "down",
+  "patient": "hill"
+ },
+ {
+  "agent": "dog",
+  "action": "think",
+  "count": 2,
+  "attest": "The dog thought for a moment and then decided to shrug his shoulders and walk up to the ca",
+  "prep": "for",
+  "patient": "moment"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a girl named Sue went to a yoga class with her mom.",
+  "prep": "to",
+  "GOAL": "class"
+ },
+ {
+  "agent": "ball",
+  "action": "hit",
+  "count": 2,
+  "attest": "The ball hit the wall and bounced back.",
+  "prep": null,
+  "patient": "wall"
+ },
+ {
+  "agent": "dog",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, a big, tough dog named Max saw a sign.",
+  "prep": null,
+  "patient": "sign"
+ },
+ {
+  "agent": "dog",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, a smart dog named Max saw a fire in a house.",
+  "prep": "in",
+  "patient": "house"
+ },
+ {
+  "agent": "truck",
+  "action": "arrived",
+  "count": 2,
+  "attest": "One day, a big truck arrived in the town.",
+  "prep": "in",
+  "patient": "town"
+ },
+ {
+  "agent": "boat",
+  "action": "move",
+  "count": 2,
+  "attest": "The boat moved in the water.",
+  "prep": "in",
+  "patient": "water"
+ },
+ {
+  "agent": "dog",
+  "action": "run",
+  "count": 2,
+  "attest": "The dog ran away with the basketball in its mouth.",
+  "prep": "in",
+  "GOAL": "mouth"
+ },
+ {
+  "agent": "food",
+  "action": "fall",
+  "count": 2,
+  "attest": "All the food fell on the floor.",
+  "prep": "on",
+  "patient": "floor"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 2,
+  "attest": "The cat saw snow on the ground.",
+  "prep": null,
+  "patient": "snow"
+ },
+ {
+  "agent": "cat",
+  "action": "say",
+  "count": 2,
+  "attest": "When it was time to go home, the fat cat said goodbye to the snow cat friend.",
+  "prep": null,
+  "patient": "goodbye"
+ },
+ {
+  "agent": "cat",
+  "action": "look",
+  "count": 2,
+  "attest": "Cat looked at the ball and smiled.",
+  "prep": "at",
+  "patient": "ball"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little girl named Lily went to the theater.",
+  "prep": "to",
+  "GOAL": "theater"
+ },
+ {
+  "agent": "friend",
+  "action": "come",
+  "count": 2,
+  "attest": "Max's friend, a dog named Sam, came into the room.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "kid",
+  "action": "play",
+  "count": 2,
+  "attest": "He saw kids playing games and having fun.",
+  "prep": null,
+  "patient": "game"
+ },
+ {
+  "agent": "block",
+  "action": "fall",
+  "count": 2,
+  "attest": "The blocks fell on the floor with a loud crash.",
+  "prep": "on",
+  "patient": "floor"
+ },
+ {
+  "agent": "block",
+  "action": "fall",
+  "count": 2,
+  "attest": "The blocks fell on the floor with a loud crash.",
+  "prep": "with",
+  "patient": "crash"
+ },
+ {
+  "agent": "mother",
+  "action": "climb",
+  "count": 2,
+  "attest": "She watched carefully as her mother climbed the tree and carefully grabbed the branch.",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "bear",
+  "action": "say",
+  "count": 2,
+  "attest": "The bear said to the rabbit, \"Let's unite and work together to get the fruit.\"",
+  "prep": "to",
+  "patient": "rabbit"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "The bird saw the big blue box.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "boy",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, a little boy named Tim saw the spider in his room.",
+  "prep": "in",
+  "patient": "room"
+ },
+ {
+  "agent": "man",
+  "action": "walk",
+  "count": 2,
+  "attest": "He saw a man walking his dog nearby.",
+  "prep": null,
+  "GOAL": "dog"
+ },
+ {
+  "agent": "bird",
+  "action": "watch",
+  "count": 2,
+  "attest": "A little bird watched them from a tree nearby.",
+  "prep": "from",
+  "patient": "tree"
+ },
+ {
+  "agent": "boy",
+  "action": "come",
+  "count": 2,
+  "attest": "As Granny was cooking the dinner, a little boy named Timmy came to her house.",
+  "prep": "to",
+  "GOAL": "house"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "The bird saw a little girl named Mia playing with her toy.",
+  "prep": null,
+  "patient": "girl"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a girl named Ann went to the market with her mom.",
+  "prep": "to",
+  "GOAL": "market"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 2,
+  "attest": "The people in the village were very sad, until one day a brave little girl came forward.",
+  "prep": "until",
+  "GOAL": "day"
+ },
+ {
+  "agent": "bird",
+  "action": "look",
+  "count": 2,
+  "attest": "The bird looked in the sky and saw a yellow sun.",
+  "prep": "in",
+  "patient": "sky"
+ },
+ {
+  "agent": "rabbit",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, the rabbit and the bird found a big box.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "mom",
+  "action": "put",
+  "count": 2,
+  "attest": "She did not know that her mom had put all her favorite things in the cabinet for her birth",
+  "prep": null,
+  "THEME": "thing"
+ },
+ {
+  "agent": "duck",
+  "action": "go",
+  "count": 2,
+  "attest": "One sunny day, the duck and Mr. Frog went for a walk.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 2,
+  "attest": "Tim's mom gave him a note with a song to play.",
+  "prep": null,
+  "THEME": "note"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, the little bird saw a clear, shiny stone on the ground.",
+  "prep": null,
+  "patient": "stone"
+ },
+ {
+  "agent": "cat",
+  "action": "make",
+  "count": 2,
+  "attest": "At first, Cat made a funny sound, but he did not give up.",
+  "prep": null,
+  "patient": "sound"
+ },
+ {
+  "agent": "bunny",
+  "action": "look",
+  "count": 2,
+  "attest": "One day, a little bunny was looking for food near the tree.",
+  "prep": "for",
+  "patient": "food"
+ },
+ {
+  "agent": "mom",
+  "action": "see",
+  "count": 2,
+  "attest": "Tim's mom saw the dog and said, \"This is our neighbor's dog!",
+  "prep": null,
+  "patient": "dog"
+ },
+ {
+  "agent": "car",
+  "action": "break",
+  "count": 2,
+  "attest": "The toy car broke into pieces, making Tim very sad.",
+  "prep": "into",
+  "patient": "piece"
+ },
+ {
+  "agent": "boat",
+  "action": "go",
+  "count": 2,
+  "attest": "The boat went fast on the water.",
+  "prep": "on",
+  "GOAL": "water"
+ },
+ {
+  "agent": "frog",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, the frog saw a big leaf.",
+  "prep": null,
+  "patient": "leaf"
+ },
+ {
+  "agent": "man",
+  "action": "take",
+  "count": 2,
+  "attest": "They smiled and waved goodbye as the man took the bird to a safe place where it could get ",
+  "prep": null,
+  "patient": "bird"
+ },
+ {
+  "agent": "man",
+  "action": "take",
+  "count": 2,
+  "attest": "They smiled and waved goodbye as the man took the bird to a safe place where it could get ",
+  "prep": "to",
+  "patient": "place"
+ },
+ {
+  "agent": "animal",
+  "action": "live",
+  "count": 2,
+  "attest": "Many animals lived near the lake.",
+  "prep": "near",
+  "patient": "lake"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, the cat saw an image on the wall.",
+  "prep": "on",
+  "patient": "wall"
+ },
+ {
+  "agent": "dog",
+  "action": "find",
+  "count": 2,
+  "attest": "The big dog found the little cat.",
+  "prep": null,
+  "patient": "cat"
+ },
+ {
+  "agent": "town",
+  "action": "become",
+  "count": 2,
+  "attest": "The town became a better place because of Tim and his friend, and everyone was happy.",
+  "prep": null,
+  "patient": "place"
+ },
+ {
+  "agent": "bird",
+  "action": "drop",
+  "count": 2,
+  "attest": "The bird dropped the cake from the sky.",
+  "prep": null,
+  "patient": "cake"
+ },
+ {
+  "agent": "ant",
+  "action": "become",
+  "count": 2,
+  "attest": "And so, the mighty ant and the big bug became best friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "thing",
+  "action": "bring",
+  "count": 2,
+  "attest": "The man and his wife knew that sometimes unexpected things can bring joy and happiness.",
+  "prep": null,
+  "patient": "joy"
+ },
+ {
+  "agent": "thing",
+  "action": "make",
+  "count": 2,
+  "attest": "She learned an important lesson - if you work together, even small things can make a big d",
+  "prep": null,
+  "patient": "difference"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 2,
+  "attest": "A little girl named Sue came to the field and saw Tim sitting by the stone.",
+  "prep": "to",
+  "GOAL": "field"
+ },
+ {
+  "agent": "animal",
+  "action": "ride",
+  "count": 2,
+  "attest": "It liked to let animals ride with the people.",
+  "prep": "with",
+  "patient": "people"
+ },
+ {
+  "agent": "girl",
+  "action": "walk",
+  "count": 2,
+  "attest": "One day, a little girl named Sally was walking down the road.",
+  "prep": "down",
+  "GOAL": "road"
+ },
+ {
+  "agent": "friend",
+  "action": "opened",
+  "count": 2,
+  "attest": "When his friend opened the door, Joe was surprised to see his friend looking very sad.",
+  "prep": null,
+  "patient": "door"
+ },
+ {
+  "agent": "family",
+  "action": "move",
+  "count": 2,
+  "attest": "One day, a new family moved in next door.",
+  "prep": "in",
+  "patient": "door"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a boy named Tim found a big rocket in his yard.",
+  "prep": null,
+  "patient": "rocket"
+ },
+ {
+  "agent": "dog",
+  "action": "find",
+  "count": 2,
+  "attest": "They hope the dog will find a nice place to eat its sausage.",
+  "prep": null,
+  "patient": "place"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, while flying high in the sky, the bird saw a snake on the ground.",
+  "prep": null,
+  "patient": "snake"
+ },
+ {
+  "agent": "bird",
+  "action": "land",
+  "count": 2,
+  "attest": "The powerful bird landed on the ground and looked around for the snake, but it was gone.",
+  "prep": "on",
+  "patient": "ground"
+ },
+ {
+  "agent": "ball",
+  "action": "go",
+  "count": 2,
+  "attest": "The ball went very high in the sky and landed on a tree.",
+  "prep": "in",
+  "GOAL": "sky"
+ },
+ {
+  "agent": "bird",
+  "action": "take",
+  "count": 2,
+  "attest": "The bird took the bell in its beak and flew away.",
+  "prep": null,
+  "patient": "bell"
+ },
+ {
+  "agent": "mom",
+  "action": "take",
+  "count": 2,
+  "attest": "One day, Lily's mom took her to school.",
+  "prep": "to",
+  "patient": "school"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, the girl and the bird found a new olive tree with even more olives.",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "leaf",
+  "action": "live",
+  "count": 2,
+  "attest": "The leaf lived on a big tree with other leaves.",
+  "prep": "on",
+  "patient": "tree"
+ },
+ {
+  "agent": "girl",
+  "action": "see",
+  "count": 2,
+  "attest": "A kind girl saw the little leaf on the ground.",
+  "prep": null,
+  "patient": "leaf"
+ },
+ {
+  "agent": "mom",
+  "action": "look",
+  "count": 2,
+  "attest": "Her mom looked at the picture and said, \"Oh, Lily, this is a memory of our family from a l",
+  "prep": "at",
+  "patient": "picture"
+ },
+ {
+  "agent": "frog",
+  "action": "think",
+  "count": 2,
+  "attest": "The frog thought about it for a moment, then smiled and hopped closer.",
+  "prep": "for",
+  "patient": "moment"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "The bird saw a kind frog and asked, \"Can you help me find my nest?\"",
+  "prep": null,
+  "patient": "frog"
+ },
+ {
+  "agent": "cat",
+  "action": "put",
+  "count": 2,
+  "attest": "The cat put the pot in its home.",
+  "prep": null,
+  "THEME": "pot"
+ },
+ {
+  "agent": "mom",
+  "action": "come",
+  "count": 2,
+  "attest": "At the end of the day, Lily's mom came to the garden.",
+  "prep": "to",
+  "GOAL": "garden"
+ },
+ {
+  "agent": "owl",
+  "action": "sit",
+  "count": 2,
+  "attest": "The owl sits on a branch and looks at Anna and Ben.",
+  "prep": "on",
+  "patient": "branch"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "The bird saw a big tree with a big nest in it.",
+  "prep": "with",
+  "patient": "nest"
+ },
+ {
+  "agent": "fish",
+  "action": "stick",
+  "count": 2,
+  "attest": "One day, they saw a little fish stuck in a net.",
+  "prep": "in",
+  "patient": "net"
+ },
+ {
+  "agent": "cat",
+  "action": "wear",
+  "count": 2,
+  "attest": "The cat wore a mild pink dress, and the dog wore a mild blue shirt.",
+  "prep": null,
+  "patient": "dress"
+ },
+ {
+  "agent": "band",
+  "action": "play",
+  "count": 2,
+  "attest": "He saw a band playing fun songs.",
+  "prep": null,
+  "patient": "song"
+ },
+ {
+  "agent": "mom",
+  "action": "see",
+  "count": 2,
+  "attest": "Tim's mom saw the frame with the bug.",
+  "prep": "with",
+  "patient": "bug"
+ },
+ {
+  "agent": "mouse",
+  "action": "take",
+  "count": 2,
+  "attest": "The mouse took off its big hat, and it was not a mouse at all!",
+  "prep": null,
+  "patient": "hat"
+ },
+ {
+  "agent": "dad",
+  "action": "use",
+  "count": 2,
+  "attest": "His dad used a tool to cut the branch.",
+  "prep": null,
+  "patient": "tool"
+ },
+ {
+  "agent": "jazz",
+  "action": "see",
+  "count": 2,
+  "attest": "Suddenly, Jazz saw a big dog.",
+  "prep": null,
+  "patient": "dog"
+ },
+ {
+  "agent": "turtle",
+  "action": "win",
+  "count": 2,
+  "attest": "The turtle won the race and everyone cheered.",
+  "prep": null,
+  "patient": "race"
+ },
+ {
+  "agent": "dragon",
+  "action": "come",
+  "count": 2,
+  "attest": "A big, friendly dragon came to the castle!",
+  "prep": "to",
+  "GOAL": "castle"
+ },
+ {
+  "agent": "tree",
+  "action": "grow",
+  "count": 2,
+  "attest": "So, the tree grew apples for the bird to eat.",
+  "prep": null,
+  "patient": "apple"
+ },
+ {
+  "agent": "bird",
+  "action": "stay",
+  "count": 2,
+  "attest": "The bird stayed with the tree and they became friends.",
+  "prep": "with",
+  "patient": "tree"
+ },
+ {
+  "agent": "sun",
+  "action": "done",
+  "count": 2,
+  "attest": "The sun had already done its damage.",
+  "prep": null,
+  "patient": "damage"
+ },
+ {
+  "agent": "bird",
+  "action": "build",
+  "count": 2,
+  "attest": "The bird built a nest on a branch and had a family.",
+  "prep": null,
+  "patient": "nest"
+ },
+ {
+  "agent": "girl",
+  "action": "walk",
+  "count": 2,
+  "attest": "One day, a little girl named Lily was walking in the forest.",
+  "prep": "in",
+  "GOAL": "forest"
+ },
+ {
+  "agent": "mom",
+  "action": "call",
+  "count": 2,
+  "attest": "After a while, Lucy's mom called, \"Time to go, Lucy!\"",
+  "prep": null,
+  "patient": "time"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a boy named Tim went to a fancy race with his mom.",
+  "prep": "to",
+  "GOAL": "race"
+ },
+ {
+  "agent": "boat",
+  "action": "meet",
+  "count": 2,
+  "attest": "At the port, the boat met a little boat.",
+  "prep": "at",
+  "patient": "port"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 2,
+  "attest": "One sunny day, a little boy named Timmy went to the ice-cream truck with his mommy.",
+  "prep": "to",
+  "GOAL": "truck"
+ },
+ {
+  "agent": "boat",
+  "action": "see",
+  "count": 2,
+  "attest": "The boat saw a big fish.",
+  "prep": null,
+  "patient": "fish"
+ },
+ {
+  "agent": "bus",
+  "action": "stop",
+  "count": 2,
+  "attest": "The bus stops at a red light.",
+  "prep": "at",
+  "patient": "light"
+ },
+ {
+  "agent": "piano",
+  "action": "make",
+  "count": 2,
+  "attest": "The piano made a loud and funny noise that sounded like \"Achoo!\"",
+  "prep": null,
+  "patient": "noise"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a little girl came to the beach.",
+  "prep": "to",
+  "GOAL": "beach"
+ },
+ {
+  "agent": "cat",
+  "action": "jump",
+  "count": 2,
+  "attest": "The cat jumped off the paper!",
+  "prep": "off",
+  "patient": "paper"
+ },
+ {
+  "agent": "engine",
+  "action": "go",
+  "count": 2,
+  "attest": "The bird moved, and the engine went up the hill.",
+  "prep": "up",
+  "GOAL": "hill"
+ },
+ {
+  "agent": "mom",
+  "action": "come",
+  "count": 2,
+  "attest": "Later, Mia's mom came to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "The bird saw a wrap on the ground.",
+  "prep": "on",
+  "patient": "ground"
+ },
+ {
+  "agent": "mom",
+  "action": "pick",
+  "count": 2,
+  "attest": "His mom picked up the book and showed Tim how to put it on the shelf.",
+  "prep": null,
+  "patient": "book"
+ },
+ {
+  "agent": "mom",
+  "action": "come",
+  "count": 2,
+  "attest": "Her mom came to her side and quickly saw the problem.",
+  "prep": "to",
+  "GOAL": "side"
+ },
+ {
+  "agent": "friend",
+  "action": "come",
+  "count": 2,
+  "attest": "In the end, all their friends came to eat the pie, and they had a great time.",
+  "prep": "in",
+  "GOAL": "end"
+ },
+ {
+  "agent": "cat",
+  "action": "help",
+  "count": 2,
+  "attest": "The cat helped the dog, and together they put out the fire.",
+  "prep": null,
+  "patient": "dog"
+ },
+ {
+  "agent": "girl",
+  "action": "cry",
+  "count": 2,
+  "attest": "One day, Tim saw a little girl crying in the park.",
+  "prep": "in",
+  "patient": "park"
+ },
+ {
+  "agent": "key",
+  "action": "opened",
+  "count": 2,
+  "attest": "The key opened the box, and inside was a note.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "box",
+  "action": "make",
+  "count": 2,
+  "attest": "The box made a funny sound, but it did not open.",
+  "prep": null,
+  "patient": "sound"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 2,
+  "attest": "Lily was very happy because her mom gave her a soft toy.",
+  "prep": null,
+  "THEME": "toy"
+ },
+ {
+  "agent": "cat",
+  "action": "make",
+  "count": 2,
+  "attest": "And with a wave of her tail, the magic cat made it so Max could talk like a person too.",
+  "prep": "with",
+  "patient": "wave"
+ },
+ {
+  "agent": "family",
+  "action": "thanked",
+  "count": 2,
+  "attest": "Carl was so happy to be home, and his family thanked Fin for his help.",
+  "prep": "for",
+  "patient": "help"
+ },
+ {
+  "agent": "owl",
+  "action": "see",
+  "count": 2,
+  "attest": "Mr. Owl saw Timmy's sad face and asked, \"Why are you so sad, Timmy?\"",
+  "prep": null,
+  "patient": "face"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 2,
+  "attest": "At the top of the tree, the cat saw a big cut on the tree.",
+  "prep": "at",
+  "patient": "top"
+ },
+ {
+  "agent": "mom",
+  "action": "take",
+  "count": 2,
+  "attest": "Mom takes out a box from the car.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "mom",
+  "action": "take",
+  "count": 2,
+  "attest": "Mom takes out a box from the car.",
+  "prep": "from",
+  "patient": "car"
+ },
+ {
+  "agent": "radio",
+  "action": "make",
+  "count": 2,
+  "attest": "The radio could make different sounds and songs.",
+  "prep": null,
+  "patient": "sound"
+ },
+ {
+  "agent": "car",
+  "action": "crash",
+  "count": 2,
+  "attest": "My car crashed into a tree and the door is jammed.",
+  "prep": "into",
+  "patient": "tree"
+ },
+ {
+  "agent": "cat",
+  "action": "turn",
+  "count": 2,
+  "attest": "The cat turned into a fairy!",
+  "prep": "into",
+  "patient": "fairy"
+ },
+ {
+  "agent": "frog",
+  "action": "see",
+  "count": 2,
+  "attest": "The frog saw the bird and wanted to play.",
+  "prep": null,
+  "patient": "bird"
+ },
+ {
+  "agent": "ant",
+  "action": "walk",
+  "count": 2,
+  "attest": "Step by step, the little ant walked on the line.",
+  "prep": "on",
+  "GOAL": "line"
+ },
+ {
+  "agent": "radio",
+  "action": "play",
+  "count": 2,
+  "attest": "Suddenly, the radio played a happy song.",
+  "prep": null,
+  "patient": "song"
+ },
+ {
+  "agent": "fox",
+  "action": "live",
+  "count": 2,
+  "attest": "The fox lived in the woods.",
+  "prep": "in",
+  "patient": "wood"
+ },
+ {
+  "agent": "mom",
+  "action": "put",
+  "count": 2,
+  "attest": "Mom and Sara put the cookies on a big plate.",
+  "prep": "on",
+  "LOCATION": "plate"
+ },
+ {
+  "agent": "girl",
+  "action": "walk",
+  "count": 2,
+  "attest": "A little girl named Sue walked by the billboard and saw the mean man.",
+  "prep": "by",
+  "GOAL": "billboard"
+ },
+ {
+  "agent": "mom",
+  "action": "find",
+  "count": 2,
+  "attest": "Lucy's mom found a big, soft ball.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "bird",
+  "action": "grant",
+  "count": 2,
+  "attest": "The magic bird granted her wish and Ben came to life.",
+  "prep": null,
+  "patient": "wish"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a little girl named Sally came to the palace.",
+  "prep": "to",
+  "GOAL": "palace"
+ },
+ {
+  "agent": "frog",
+  "action": "sit",
+  "count": 2,
+  "attest": "The frog was sitting near a pond.",
+  "prep": "near",
+  "patient": "pond"
+ },
+ {
+  "agent": "monkey",
+  "action": "play",
+  "count": 2,
+  "attest": "The little monkey played with the shiny, red ball.",
+  "prep": "with",
+  "patient": "ball"
+ },
+ {
+  "agent": "voice",
+  "action": "belong",
+  "count": 2,
+  "attest": "The voice belonged to a rich old man.",
+  "prep": "to",
+  "patient": "man"
+ },
+ {
+  "agent": "man",
+  "action": "tell",
+  "count": 2,
+  "attest": "The rich old man told the boy stories and gave him cookies.",
+  "prep": null,
+  "patient": "story"
+ },
+ {
+  "agent": "king",
+  "action": "ask",
+  "count": 2,
+  "attest": "The king asked his friends, the animals, to help him prevent the crown from blowing away.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "bird",
+  "action": "come",
+  "count": 2,
+  "attest": "Suddenly, a bird came out of the tree with the ball in its beak!",
+  "prep": "with",
+  "GOAL": "ball"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, the cat saw a chimney on a house.",
+  "prep": "on",
+  "patient": "house"
+ },
+ {
+  "agent": "girl",
+  "action": "get",
+  "count": 2,
+  "attest": "The girl got on the bus, and the bus took her to the park.",
+  "prep": "on",
+  "patient": "bus"
+ },
+ {
+  "agent": "bus",
+  "action": "take",
+  "count": 2,
+  "attest": "The girl got on the bus, and the bus took her to the park.",
+  "prep": "to",
+  "patient": "park"
+ },
+ {
+  "agent": "cat",
+  "action": "hide",
+  "count": 2,
+  "attest": "The cat was hiding in the box all this time!",
+  "prep": "in",
+  "patient": "box"
+ },
+ {
+  "agent": "cat",
+  "action": "put",
+  "count": 2,
+  "attest": "The cat put her head inside the hole to see what was in there.",
+  "prep": null,
+  "THEME": "head"
+ },
+ {
+  "agent": "boy",
+  "action": "come",
+  "count": 2,
+  "attest": "A new boy named Tom came into the class.",
+  "prep": "into",
+  "GOAL": "class"
+ },
+ {
+  "agent": "mom",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little boy named Tim and his mom went to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "mouse",
+  "action": "live",
+  "count": 2,
+  "attest": "The mouse lived in a dry house made of straw.",
+  "prep": "in",
+  "patient": "house"
+ },
+ {
+  "agent": "butterfly",
+  "action": "land",
+  "count": 2,
+  "attest": "As they finished their picnic, a friendly butterfly landed on Sue's nose.",
+  "prep": "on",
+  "patient": "nose"
+ },
+ {
+  "agent": "lady",
+  "action": "come",
+  "count": 2,
+  "attest": "Soon, a nice lady came to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "king",
+  "action": "become",
+  "count": 2,
+  "attest": "The king and the dragon became friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "boy",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a little boy named Tim came to the kitchen to get a drink.",
+  "prep": "to",
+  "GOAL": "kitchen"
+ },
+ {
+  "agent": "man",
+  "action": "smile",
+  "count": 2,
+  "attest": "The tall man smiled down at the boy.",
+  "prep": "at",
+  "patient": "boy"
+ },
+ {
+  "agent": "ant",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little ant went for a walk.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "bug",
+  "action": "go",
+  "count": 2,
+  "attest": "So, the bug went on a long walk to look for a new rock.",
+  "prep": "on",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "cat",
+  "action": "play",
+  "count": 2,
+  "attest": "The funny cat played near the wall every day.",
+  "prep": "near",
+  "patient": "wall"
+ },
+ {
+  "agent": "cat",
+  "action": "opened",
+  "count": 2,
+  "attest": "The cat opened the box and found a big dog inside.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "bird",
+  "action": "share",
+  "count": 2,
+  "attest": "The bird shared the fruit with all its friends.",
+  "prep": "with",
+  "patient": "friend"
+ },
+ {
+  "agent": "fox",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, the fox saw a big red ball.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "fox",
+  "action": "take",
+  "count": 2,
+  "attest": "The fox took the big red ball and ran away.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a boy named Tim found a cap.",
+  "prep": null,
+  "patient": "cap"
+ },
+ {
+  "agent": "mom",
+  "action": "take",
+  "count": 2,
+  "attest": "Tim knew that his mom always took her big bag to meetings.",
+  "prep": null,
+  "patient": "bag"
+ },
+ {
+  "agent": "cat",
+  "action": "catch",
+  "count": 2,
+  "attest": "In the end, the cat caught the bird and the bird was never free again.",
+  "prep": null,
+  "patient": "bird"
+ },
+ {
+  "agent": "bunny",
+  "action": "say",
+  "count": 2,
+  "attest": "The bunny and the bear then said goodbye and continued on their way.",
+  "prep": null,
+  "patient": "goodbye"
+ },
+ {
+  "agent": "screen",
+  "action": "show",
+  "count": 2,
+  "attest": "The big screen showed many colors and pictures that made everyone happy.",
+  "prep": null,
+  "patient": "color"
+ },
+ {
+  "agent": "family",
+  "action": "move",
+  "count": 2,
+  "attest": "One day, a new family moved into the big house.",
+  "prep": "into",
+  "patient": "house"
+ },
+ {
+  "agent": "frog",
+  "action": "meet",
+  "count": 2,
+  "attest": "One day, the frog met a little bird.",
+  "prep": null,
+  "patient": "bird"
+ },
+ {
+  "agent": "lady",
+  "action": "give",
+  "count": 2,
+  "attest": "He hopes the nice lady will give him more food and milk soon.",
+  "prep": null,
+  "THEME": "food"
+ },
+ {
+  "agent": "dog",
+  "action": "run",
+  "count": 2,
+  "attest": "So, the dog ran to the park and started to bark very loud.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "seal",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a seal named Sam went to the beach to eat some fish.",
+  "prep": "to",
+  "GOAL": "beach"
+ },
+ {
+  "agent": "man",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, the elderly man could not find his wheel.",
+  "prep": null,
+  "patient": "wheel"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 2,
+  "attest": "The bird flew down to the ground.",
+  "prep": "to",
+  "patient": "ground"
+ },
+ {
+  "agent": "doctor",
+  "action": "give",
+  "count": 2,
+  "attest": "\"The doctor will give you some medicine to make you sleep.",
+  "prep": null,
+  "THEME": "medicine"
+ },
+ {
+  "agent": "price",
+  "action": "tell",
+  "count": 2,
+  "attest": "The price we have to pay for something doesn't always tell us the true value of it.",
+  "prep": null,
+  "patient": "value"
+ },
+ {
+  "agent": "mom",
+  "action": "cook",
+  "count": 2,
+  "attest": "Mia's mom would cook yummy food for her.",
+  "prep": null,
+  "patient": "food"
+ },
+ {
+  "agent": "man",
+  "action": "play",
+  "count": 2,
+  "attest": "While the man was playing his drum, a strong wind came and scatter leaves all around him.",
+  "prep": null,
+  "patient": "drum"
+ },
+ {
+  "agent": "dog",
+  "action": "run",
+  "count": 2,
+  "attest": "The dog ran after the hat.",
+  "prep": "after",
+  "GOAL": "hat"
+ },
+ {
+  "agent": "bird",
+  "action": "give",
+  "count": 2,
+  "attest": "Maybe the bird will give the plane back.\"",
+  "prep": null,
+  "THEME": "plane"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a little boy named Tim found a big piece of cardboard.",
+  "prep": null,
+  "patient": "piece"
+ },
+ {
+  "agent": "boy",
+  "action": "sit",
+  "count": 2,
+  "attest": "The boy sat under the tree and wondered what it would be like to fly like the bird.",
+  "prep": "under",
+  "patient": "tree"
+ },
+ {
+  "agent": "boy",
+  "action": "wave",
+  "count": 2,
+  "attest": "The boy waved goodbye, and the bird flew back into the sky.",
+  "prep": null,
+  "patient": "goodbye"
+ },
+ {
+  "agent": "bird",
+  "action": "put",
+  "count": 2,
+  "attest": "Lily helped the bird put its nest back in the tree.",
+  "prep": null,
+  "THEME": "nest"
+ },
+ {
+  "agent": "bird",
+  "action": "continue",
+  "count": 2,
+  "attest": "After a few minutes of gathering the squash, the little bird continued her journey.",
+  "prep": null,
+  "patient": "journey"
+ },
+ {
+  "agent": "bird",
+  "action": "liked",
+  "count": 2,
+  "attest": "The small bird liked the tall tree's coat.",
+  "prep": null,
+  "patient": "coat"
+ },
+ {
+  "agent": "car",
+  "action": "come",
+  "count": 2,
+  "attest": "As Max ran to get the ball, a big car came fast on the road.",
+  "prep": "on",
+  "GOAL": "road"
+ },
+ {
+  "agent": "car",
+  "action": "stop",
+  "count": 2,
+  "attest": "The car stopped just in time, and Max was safe.",
+  "prep": "in",
+  "patient": "time"
+ },
+ {
+  "agent": "fire",
+  "action": "spread",
+  "count": 2,
+  "attest": "But the fire spread to another house.",
+  "prep": "to",
+  "patient": "house"
+ },
+ {
+  "agent": "mom",
+  "action": "watch",
+  "count": 2,
+  "attest": "Her mom watched them with a smile.",
+  "prep": "with",
+  "patient": "smile"
+ },
+ {
+  "agent": "boy",
+  "action": "love",
+  "count": 2,
+  "attest": "A little boy named Tim loved this tree.",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 2,
+  "attest": "The bird flew high in the sky with its thick wing.",
+  "prep": "with",
+  "patient": "wing"
+ },
+ {
+  "agent": "train",
+  "action": "see",
+  "count": 2,
+  "attest": "The train saw the rock and slowed down just in time.",
+  "prep": null,
+  "patient": "rock"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 2,
+  "attest": "A little girl named Lily found a way to make the people feel great without the medicine.",
+  "prep": null,
+  "patient": "way"
+ },
+ {
+  "agent": "mother",
+  "action": "walk",
+  "count": 2,
+  "attest": "Just then, her mother walked into her room with a big smile.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "man",
+  "action": "take",
+  "count": 2,
+  "attest": "The man took the toy from the lady.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "dog",
+  "action": "leave",
+  "count": 2,
+  "attest": "It was just a toy that another dog had left at the park.",
+  "prep": "at",
+  "patient": "park"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little boy named Tim went to the garden.",
+  "prep": "to",
+  "GOAL": "garden"
+ },
+ {
+  "agent": "mom",
+  "action": "get",
+  "count": 2,
+  "attest": "Mom got a long stick and poked the ball until it fell down.",
+  "prep": null,
+  "patient": "stick"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a little boy named Tim found a lucky flag.",
+  "prep": null,
+  "patient": "flag"
+ },
+ {
+  "agent": "kid",
+  "action": "go",
+  "count": 2,
+  "attest": "Every day, he would watch the kids go to school and wish he could go too.",
+  "prep": "to",
+  "GOAL": "school"
+ },
+ {
+  "agent": "bird",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a big bird came to the town.",
+  "prep": "to",
+  "GOAL": "town"
+ },
+ {
+  "agent": "bird",
+  "action": "give",
+  "count": 2,
+  "attest": "So, Lily raised her hand as high as she could, and the bird gave her the cup.",
+  "prep": null,
+  "THEME": "cup"
+ },
+ {
+  "agent": "mother",
+  "action": "make",
+  "count": 2,
+  "attest": "Her mother made yummy, spicy food for her to eat.",
+  "prep": null,
+  "patient": "food"
+ },
+ {
+  "agent": "bird",
+  "action": "opened",
+  "count": 2,
+  "attest": "When the bird opened the box, it sneezed!",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "boy",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, a little boy named Tim saw a big, unknown box in the park.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 2,
+  "attest": "After some days, the bird could fly again.",
+  "prep": "after",
+  "patient": "day"
+ },
+ {
+  "agent": "dog",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a healthy dog named Max found a big cardboard box.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "girl",
+  "action": "see",
+  "count": 2,
+  "attest": "They walked together through the woods, and soon the girl saw her house.",
+  "prep": null,
+  "patient": "house"
+ },
+ {
+  "agent": "bear",
+  "action": "become",
+  "count": 2,
+  "attest": "From that day on, the bear and the girl became best friends, and the bear did not mind bei",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "girl",
+  "action": "see",
+  "count": 2,
+  "attest": "The little girl saw the sad ball.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "boy",
+  "action": "come",
+  "count": 2,
+  "attest": "One sunny day, a little boy named Timmy came to the toy box.",
+  "prep": "to",
+  "GOAL": "box"
+ },
+ {
+  "agent": "rock",
+  "action": "become",
+  "count": 2,
+  "attest": "The rock with the big brain became their best friend.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 2,
+  "attest": "Mia's mom gave her a big bag to hold.",
+  "prep": null,
+  "THEME": "bag"
+ },
+ {
+  "agent": "king",
+  "action": "think",
+  "count": 2,
+  "attest": "The king thought for a moment and said, \"Yes, you can play with my toys.\"",
+  "prep": "for",
+  "patient": "moment"
+ },
+ {
+  "agent": "bell",
+  "action": "make",
+  "count": 2,
+  "attest": "When she moved, the bells made a fun sound.",
+  "prep": null,
+  "patient": "sound"
+ },
+ {
+  "agent": "rock",
+  "action": "live",
+  "count": 2,
+  "attest": "The rock lived in a park with many small rocks.",
+  "prep": "in",
+  "patient": "park"
+ },
+ {
+  "agent": "factory",
+  "action": "make",
+  "count": 2,
+  "attest": "The factory made toys for all the kids.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "factory",
+  "action": "make",
+  "count": 2,
+  "attest": "The factory made toys for all the kids.",
+  "prep": "for",
+  "patient": "kid"
+ },
+ {
+  "agent": "kid",
+  "action": "love",
+  "count": 2,
+  "attest": "They told him how much the kids love the toys.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a boy named Tim found a clean card on the floor.",
+  "prep": null,
+  "patient": "card"
+ },
+ {
+  "agent": "cat",
+  "action": "get",
+  "count": 2,
+  "attest": "Tom and Tim used the long stick to help the fat cat get down from the tree.",
+  "prep": "from",
+  "patient": "tree"
+ },
+ {
+  "agent": "rabbit",
+  "action": "see",
+  "count": 2,
+  "attest": "The rabbit saw a hole near the seat.",
+  "prep": null,
+  "patient": "hole"
+ },
+ {
+  "agent": "bird",
+  "action": "find",
+  "count": 2,
+  "attest": "The bird found a big, shiny toy for Tom to play with.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "truck",
+  "action": "stop",
+  "count": 2,
+  "attest": "One day, they saw a big truck stop in front of their house.",
+  "prep": "in",
+  "patient": "front"
+ },
+ {
+  "agent": "bird",
+  "action": "play",
+  "count": 2,
+  "attest": "They decided to let the bird play with its new friends.",
+  "prep": "with",
+  "patient": "friend"
+ },
+ {
+  "agent": "friend",
+  "action": "say",
+  "count": 2,
+  "attest": "The two friends said goodbye and the pirate continued his adventures.",
+  "prep": null,
+  "patient": "goodbye"
+ },
+ {
+  "agent": "let",
+  "action": "go",
+  "count": 2,
+  "attest": "He said to his reflection, Wear your kingly crown and lets go on an adventure!",
+  "prep": "on",
+  "GOAL": "adventure"
+ },
+ {
+  "agent": "mill",
+  "action": "provide",
+  "count": 2,
+  "attest": "The mill provided bread for everyone in the town.",
+  "prep": null,
+  "patient": "bread"
+ },
+ {
+  "agent": "doctor",
+  "action": "come",
+  "count": 2,
+  "attest": "The doctor came to Lucy's house and looked at her.",
+  "prep": "to",
+  "GOAL": "house"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 2,
+  "attest": "The little bird flew to the big man.",
+  "prep": "to",
+  "patient": "man"
+ },
+ {
+  "agent": "frog",
+  "action": "jump",
+  "count": 2,
+  "attest": "Then, the frog jumped high into the air and turned into a beautiful bird.",
+  "prep": "into",
+  "patient": "air"
+ },
+ {
+  "agent": "mom",
+  "action": "see",
+  "count": 2,
+  "attest": "His mom saw the dust on his clothes.",
+  "prep": "on",
+  "patient": "clothes"
+ },
+ {
+  "agent": "ball",
+  "action": "fly",
+  "count": 2,
+  "attest": "The ball flew high in the air and landed far away.",
+  "prep": "in",
+  "patient": "air"
+ },
+ {
+  "agent": "frog",
+  "action": "sit",
+  "count": 2,
+  "attest": "The frog was sitting on a rock.",
+  "prep": "on",
+  "patient": "rock"
+ },
+ {
+  "agent": "car",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a red car went on a long ride.",
+  "prep": "on",
+  "GOAL": "ride"
+ },
+ {
+  "agent": "soap",
+  "action": "become",
+  "count": 2,
+  "attest": "The soap and match became good friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "mom",
+  "action": "take",
+  "count": 2,
+  "attest": "He was so excited because his mom had just taken him to the market.",
+  "prep": "to",
+  "patient": "market"
+ },
+ {
+  "agent": "bird",
+  "action": "fall",
+  "count": 2,
+  "attest": "They ran to the window and saw a big, yellow bird had fallen from the sky.",
+  "prep": "from",
+  "patient": "sky"
+ },
+ {
+  "agent": "dog",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, a big, tough dog named Max saw a wreck in his yard.",
+  "prep": "in",
+  "patient": "yard"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a little boy named Tim found a broken phone in the park.",
+  "prep": "in",
+  "patient": "park"
+ },
+ {
+  "agent": "cat",
+  "action": "want",
+  "count": 2,
+  "attest": "The dog wanted a toy, and the cat wanted the same toy.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "soldier",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, the curious soldier went for a walk.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "cat",
+  "action": "sit",
+  "count": 2,
+  "attest": "She saw a cat sitting near a tree.",
+  "prep": "near",
+  "patient": "tree"
+ },
+ {
+  "agent": "mom",
+  "action": "see",
+  "count": 2,
+  "attest": "But when he came back home, his mom saw his room and knew what Tim did.",
+  "prep": null,
+  "patient": "room"
+ },
+ {
+  "agent": "act",
+  "action": "make",
+  "count": 2,
+  "attest": "The moral of the story is that even small acts of kindness can make a big difference.",
+  "prep": null,
+  "patient": "difference"
+ },
+ {
+  "agent": "lady",
+  "action": "cut",
+  "count": 2,
+  "attest": "The nice lady cut Lily's hair little by little.",
+  "prep": null,
+  "patient": "hair"
+ },
+ {
+  "agent": "mom",
+  "action": "find",
+  "count": 2,
+  "attest": "Rachel's mom found a movie for her to watch.",
+  "prep": null,
+  "patient": "movie"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "A nice bird saw the cake in the sky.",
+  "prep": null,
+  "patient": "cake"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "A nice bird saw the cake in the sky.",
+  "prep": "in",
+  "patient": "sky"
+ },
+ {
+  "agent": "bird",
+  "action": "get",
+  "count": 2,
+  "attest": "The yellow bird got the ball and gave it to the bear.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "bird",
+  "action": "find",
+  "count": 2,
+  "attest": "The bird found a big red ball.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "map",
+  "action": "show",
+  "count": 2,
+  "attest": "The map showed a way to a big, red ball.",
+  "prep": null,
+  "patient": "way"
+ },
+ {
+  "agent": "bear",
+  "action": "live",
+  "count": 2,
+  "attest": "Once upon a time, a big brown bear named Bobo lived in the woods.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "bird",
+  "action": "help",
+  "count": 2,
+  "attest": "The bird could not help the cat anymore.",
+  "prep": null,
+  "patient": "cat"
+ },
+ {
+  "agent": "sheep",
+  "action": "live",
+  "count": 2,
+  "attest": "The sheep lived on a big farm.",
+  "prep": "on",
+  "patient": "farm"
+ },
+ {
+  "agent": "boy",
+  "action": "play",
+  "count": 2,
+  "attest": "One day, a little boy named Tim was playing outside with his friends.",
+  "prep": "with",
+  "patient": "friend"
+ },
+ {
+  "agent": "bird",
+  "action": "find",
+  "count": 2,
+  "attest": "And that's how the little gray bird found a home and settled in the big cardboard box.",
+  "prep": null,
+  "patient": "home"
+ },
+ {
+  "agent": "car",
+  "action": "hit",
+  "count": 2,
+  "attest": "Tim's car hit a big rock and break into pieces.",
+  "prep": null,
+  "patient": "rock"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little girl named Lucy went to the river with her mom.",
+  "prep": "to",
+  "GOAL": "river"
+ },
+ {
+  "agent": "bird",
+  "action": "get",
+  "count": 2,
+  "attest": "They found the stick and Ben used it to help the bird get down from the tree.",
+  "prep": "from",
+  "patient": "tree"
+ },
+ {
+  "agent": "boy",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, a boy named Tom saw a weird thing in the sky.",
+  "prep": null,
+  "patient": "thing"
+ },
+ {
+  "agent": "train",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, the train was going on a trip.",
+  "prep": "on",
+  "GOAL": "trip"
+ },
+ {
+  "agent": "storm",
+  "action": "come",
+  "count": 2,
+  "attest": "A few days later, a big storm came to the forest.",
+  "prep": "to",
+  "GOAL": "forest"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little boy named Tim went with his dad to the park.",
+  "prep": "with",
+  "GOAL": "dad"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little girl named Suzy went to a big building with her mom.",
+  "prep": "to",
+  "GOAL": "building"
+ },
+ {
+  "agent": "dog",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, Tim the dog and Sam the cat went on a journey.",
+  "prep": "on",
+  "GOAL": "journey"
+ },
+ {
+  "agent": "girl",
+  "action": "want",
+  "count": 2,
+  "attest": "Once upon a time, a little girl named Sue wanted to bake a cake.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "mom",
+  "action": "take",
+  "count": 2,
+  "attest": "Lisa loved Mia very much and liked to help her mom take care of her.",
+  "prep": null,
+  "patient": "care"
+ },
+ {
+  "agent": "animal",
+  "action": "become",
+  "count": 2,
+  "attest": "He only roared when he needed to, and all the animals in the jungle became Leo's friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little boy named Tim went to a fun place with his mom.",
+  "prep": "to",
+  "GOAL": "place"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a boy named Tim found a hidden book under his bed.",
+  "prep": "under",
+  "patient": "bed"
+ },
+ {
+  "agent": "smoke",
+  "action": "come",
+  "count": 2,
+  "attest": "Suddenly, they saw smoke coming from behind a big tree.",
+  "prep": "behind",
+  "GOAL": "tree"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little girl named Amy went to the park with her loyal dog, Buddy.",
+  "prep": "with",
+  "GOAL": "dog"
+ },
+ {
+  "agent": "people",
+  "action": "come",
+  "count": 2,
+  "attest": "More and more people came to Tom's shop to buy fruits and vegetables.",
+  "prep": "to",
+  "GOAL": "shop"
+ },
+ {
+  "agent": "others",
+  "action": "learn",
+  "count": 2,
+  "attest": "The moral of the story is to never give up and help others learn new things.",
+  "prep": null,
+  "patient": "thing"
+ },
+ {
+  "agent": "fish",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, the beautiful fish saw a big boat on the water.",
+  "prep": "on",
+  "patient": "water"
+ },
+ {
+  "agent": "boy",
+  "action": "move",
+  "count": 2,
+  "attest": "One day, a new boy moved in next door.",
+  "prep": "in",
+  "patient": "door"
+ },
+ {
+  "agent": "man",
+  "action": "see",
+  "count": 2,
+  "attest": "The tall man saw the bird in the automobile and thought it was stuck.",
+  "prep": null,
+  "patient": "bird"
+ },
+ {
+  "agent": "boy",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, a little boy named Tim saw the smooth rock near the stage.",
+  "prep": null,
+  "patient": "rock"
+ },
+ {
+  "agent": "bird",
+  "action": "give",
+  "count": 2,
+  "attest": "When they were safe, the bird gave them a gift.",
+  "prep": null,
+  "THEME": "gift"
+ },
+ {
+  "agent": "dragon",
+  "action": "live",
+  "count": 2,
+  "attest": "The dragon lived in a big cave.",
+  "prep": "in",
+  "patient": "cave"
+ },
+ {
+  "agent": "family",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a new family came to the town.",
+  "prep": "to",
+  "GOAL": "town"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 2,
+  "attest": "Once upon a time, a little girl named Lucy found a pretty glass.",
+  "prep": null,
+  "patient": "glass"
+ },
+ {
+  "agent": "bird",
+  "action": "give",
+  "count": 2,
+  "attest": "The bird gave Sue a big hug, and then they played together until Sue woke up.",
+  "prep": null,
+  "THEME": "hug"
+ },
+ {
+  "agent": "bird",
+  "action": "find",
+  "count": 2,
+  "attest": "The bird found a big leaf and put it on Tim's knee.",
+  "prep": null,
+  "patient": "leaf"
+ },
+ {
+  "agent": "bird",
+  "action": "take",
+  "count": 2,
+  "attest": "The bird took Tom's hat.",
+  "prep": null,
+  "patient": "hat"
+ },
+ {
+  "agent": "squirrel",
+  "action": "see",
+  "count": 2,
+  "attest": "The squirrel saw a big nut high up in a tree.",
+  "prep": "in",
+  "patient": "tree"
+ },
+ {
+  "agent": "rabbit",
+  "action": "live",
+  "count": 2,
+  "attest": "The black rabbit lived in a small hole with his family.",
+  "prep": "in",
+  "patient": "hole"
+ },
+ {
+  "agent": "heart",
+  "action": "filled",
+  "count": 2,
+  "attest": "Baby Bear felt relieved and his heart filled with joy.",
+  "prep": "with",
+  "patient": "joy"
+ },
+ {
+  "agent": "bird",
+  "action": "eat",
+  "count": 2,
+  "attest": "The bird ate all the food for the animals.",
+  "prep": null,
+  "patient": "food"
+ },
+ {
+  "agent": "bunny",
+  "action": "become",
+  "count": 2,
+  "attest": "And from that day on, the bunny and Wisdom became the best of friends.",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "mom",
+  "action": "look",
+  "count": 2,
+  "attest": "His mom looked at the label on the toy car.",
+  "prep": "at",
+  "patient": "label"
+ },
+ {
+  "agent": "cat",
+  "action": "tell",
+  "count": 2,
+  "attest": "One day, the cat told the dog a funny joke.",
+  "prep": null,
+  "patient": "dog"
+ },
+ {
+  "agent": "owl",
+  "action": "tell",
+  "count": 2,
+  "attest": "The wise old owl always told the little animals to behave and be nice to each other.",
+  "prep": null,
+  "patient": "animal"
+ },
+ {
+  "agent": "boy",
+  "action": "live",
+  "count": 2,
+  "attest": "A little boy named Tim lived in the house with his mom and dad.",
+  "prep": "with",
+  "patient": "mom"
+ },
+ {
+  "agent": "girl",
+  "action": "walk",
+  "count": 2,
+  "attest": "Once upon a time, a little girl named Emily was walking through a forest.",
+  "prep": "upon",
+  "GOAL": "time"
+ },
+ {
+  "agent": "block",
+  "action": "make",
+  "count": 2,
+  "attest": "The blocks made a loud noise and scattered everywhere.",
+  "prep": null,
+  "patient": "noise"
+ },
+ {
+  "agent": "owl",
+  "action": "know",
+  "count": 2,
+  "attest": "The owl knew many things.",
+  "prep": null,
+  "patient": "thing"
+ },
+ {
+  "agent": "dog",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a big dog came to the town.",
+  "prep": "to",
+  "GOAL": "town"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, a pink cat and a blue dog saw a mirror in the park.",
+  "prep": "in",
+  "patient": "park"
+ },
+ {
+  "agent": "dad",
+  "action": "come",
+  "count": 2,
+  "attest": "His dad came into the room and saw Tim with the microscope.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "bird",
+  "action": "raise",
+  "count": 2,
+  "attest": "The bird could raise its wings and fly high in the sky.",
+  "prep": null,
+  "patient": "wing"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 2,
+  "attest": "Once upon a time, on a sunny day, a little boy named Tim and his dog, Spot, went to the be",
+  "prep": "on",
+  "GOAL": "day"
+ },
+ {
+  "agent": "sand",
+  "action": "feel",
+  "count": 2,
+  "attest": "The wind blew in their faces, and the sand felt warm under their feet.",
+  "prep": "under",
+  "patient": "foot"
+ },
+ {
+  "agent": "boy",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a little boy came to the yard.",
+  "prep": "to",
+  "GOAL": "yard"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "The blue bird saw a big flower.",
+  "prep": null,
+  "patient": "flower"
+ },
+ {
+  "agent": "man",
+  "action": "read",
+  "count": 2,
+  "attest": "The jolly man read the novel every day.",
+  "prep": null,
+  "patient": "novel"
+ },
+ {
+  "agent": "boy",
+  "action": "live",
+  "count": 2,
+  "attest": "Once upon a time, a little boy named Tim lived in a small house.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "friend",
+  "action": "see",
+  "count": 2,
+  "attest": "The next day, True's friend, Sam, saw the dog and wanted to take it home.",
+  "prep": null,
+  "patient": "dog"
+ },
+ {
+  "agent": "mom",
+  "action": "go",
+  "count": 2,
+  "attest": "They waited until Mom went to the kitchen.",
+  "prep": "to",
+  "GOAL": "kitchen"
+ },
+ {
+  "agent": "cat",
+  "action": "spend",
+  "count": 2,
+  "attest": "From that day on, Max, Lily, and the cat spent their days playing together and eating soup",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "owner",
+  "action": "put",
+  "count": 2,
+  "attest": "Tim's owner would put the food in a dish for him to eat.",
+  "prep": "in",
+  "LOCATION": "dish"
+ },
+ {
+  "agent": "cake",
+  "action": "weigh",
+  "count": 2,
+  "attest": "Lucy carefully put the cake on the puzzle, and it showed her that the cake weighed ten pou",
+  "prep": null,
+  "patient": "pounds"
+ },
+ {
+  "agent": "hunter",
+  "action": "become",
+  "count": 2,
+  "attest": "The hunter and the rabbit became good friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "dog",
+  "action": "smell",
+  "count": 2,
+  "attest": "The dog smelled the treat and let go of the car.",
+  "prep": null,
+  "patient": "treat"
+ },
+ {
+  "agent": "ball",
+  "action": "roll",
+  "count": 2,
+  "attest": "But then, the ball with the sharp stick rolled under a chair.",
+  "prep": "under",
+  "patient": "chair"
+ },
+ {
+  "agent": "wind",
+  "action": "take",
+  "count": 2,
+  "attest": "I saw the wind take your toys, but I can help you find them.\"",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "duck",
+  "action": "live",
+  "count": 2,
+  "attest": "The duck lived near a pond with its family.",
+  "prep": "near",
+  "patient": "pond"
+ },
+ {
+  "agent": "cat",
+  "action": "get",
+  "count": 2,
+  "attest": "In the end, the cat did not get better because there was no medicine.",
+  "prep": "in",
+  "patient": "end"
+ },
+ {
+  "agent": "dog",
+  "action": "lead",
+  "count": 2,
+  "attest": "The dog led the cat to a big park.",
+  "prep": null,
+  "patient": "cat"
+ },
+ {
+  "agent": "bird",
+  "action": "nodded",
+  "count": 2,
+  "attest": "The bird nodded its head and opened its mouth to sing.",
+  "prep": null,
+  "patient": "head"
+ },
+ {
+  "agent": "dog",
+  "action": "save",
+  "count": 2,
+  "attest": "The dog had saved the day.",
+  "prep": null,
+  "patient": "day"
+ },
+ {
+  "agent": "ship",
+  "action": "go",
+  "count": 2,
+  "attest": "The ship could go very, very fast on the water.",
+  "prep": "on",
+  "GOAL": "water"
+ },
+ {
+  "agent": "toy",
+  "action": "break",
+  "count": 2,
+  "attest": "The toy broke into pieces.",
+  "prep": "into",
+  "patient": "piece"
+ },
+ {
+  "agent": "dog",
+  "action": "run",
+  "count": 2,
+  "attest": "Just then, a big dog ran into the shop.",
+  "prep": "into",
+  "GOAL": "shop"
+ },
+ {
+  "agent": "child",
+  "action": "push",
+  "count": 2,
+  "attest": "Then, the children can push you both around the yard.\"",
+  "prep": "around",
+  "patient": "yard"
+ },
+ {
+  "agent": "cow",
+  "action": "take",
+  "count": 2,
+  "attest": "Every day, the cow would take a nap in the valley at the same time.",
+  "prep": "in",
+  "patient": "valley"
+ },
+ {
+  "agent": "cat",
+  "action": "eat",
+  "count": 2,
+  "attest": "As the cat was eating the meat, a small bird came by.",
+  "prep": null,
+  "patient": "meat"
+ },
+ {
+  "agent": "cat",
+  "action": "run",
+  "count": 2,
+  "attest": "The cat ran around the room and knocked over Tim's toys.",
+  "prep": "around",
+  "GOAL": "room"
+ },
+ {
+  "agent": "cow",
+  "action": "catch",
+  "count": 2,
+  "attest": "The cow did not catch the ball.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "fairy",
+  "action": "grant",
+  "count": 2,
+  "attest": "He held his balance and the fairy granted him three wishes.",
+  "prep": null,
+  "patient": "wish"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 2,
+  "attest": "At the party, the cat and dog saw the man with the wine.",
+  "prep": null,
+  "patient": "man"
+ },
+ {
+  "agent": "mom",
+  "action": "see",
+  "count": 2,
+  "attest": "Her mom saw the cake and said, \"Don't worry, Sue.",
+  "prep": null,
+  "patient": "cake"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "The bird saw the plane in trouble and quickly flew to help.",
+  "prep": null,
+  "patient": "plane"
+ },
+ {
+  "agent": "bus",
+  "action": "drive",
+  "count": 2,
+  "attest": "One day, a big red bus was driving down the street.",
+  "prep": "down",
+  "patient": "street"
+ },
+ {
+  "agent": "bear",
+  "action": "see",
+  "count": 2,
+  "attest": "When they got there, Brother Bear saw a huge tree that was broken in half.",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "frog",
+  "action": "find",
+  "count": 2,
+  "attest": "The frog found a big leaf.",
+  "prep": null,
+  "patient": "leaf"
+ },
+ {
+  "agent": "action",
+  "action": "affect",
+  "count": 2,
+  "attest": "Bob learned that it is important to be careful and think about how his actions affect othe",
+  "prep": null,
+  "patient": "others"
+ },
+ {
+  "agent": "owl",
+  "action": "show",
+  "count": 2,
+  "attest": "The owl showed them the way home.",
+  "prep": null,
+  "patient": "way"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 2,
+  "attest": "One day, Tim's mom gave him a big, white paper to tear.",
+  "prep": null,
+  "THEME": "paper"
+ },
+ {
+  "agent": "cat",
+  "action": "having",
+  "count": 2,
+  "attest": "Lily saw two cats having a fight in the yard.",
+  "prep": null,
+  "patient": "fight"
+ },
+ {
+  "agent": "mom",
+  "action": "give",
+  "count": 2,
+  "attest": "At the end of the party, Sue's mom gave her a big box.",
+  "prep": "at",
+  "patient": "end"
+ },
+ {
+  "agent": "car",
+  "action": "hide",
+  "count": 2,
+  "attest": "He bent down and saw the toy car hiding behind a big box.",
+  "prep": "behind",
+  "patient": "box"
+ },
+ {
+  "agent": "truck",
+  "action": "go",
+  "count": 2,
+  "attest": "One sunny day, the truck went to a house with a big porch.",
+  "prep": "to",
+  "GOAL": "house"
+ },
+ {
+  "agent": "family",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a family went to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "family",
+  "action": "become",
+  "count": 2,
+  "attest": "The family and the dog became good friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "bird",
+  "action": "take",
+  "count": 2,
+  "attest": "The bird took the food to Spot.",
+  "prep": null,
+  "patient": "food"
+ },
+ {
+  "agent": "dog",
+  "action": "go",
+  "count": 2,
+  "attest": "Once upon a time, a little dog named Spot went for a walk.",
+  "prep": "upon",
+  "GOAL": "time"
+ },
+ {
+  "agent": "truck",
+  "action": "become",
+  "count": 2,
+  "attest": "From that day on, the truck and the digger became best friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "mom",
+  "action": "look",
+  "count": 2,
+  "attest": "\"Mom, Dad, look at that boy!\"",
+  "prep": "at",
+  "patient": "boy"
+ },
+ {
+  "agent": "bird",
+  "action": "make",
+  "count": 2,
+  "attest": "On one branch, a bird made a nest.",
+  "prep": null,
+  "patient": "nest"
+ },
+ {
+  "agent": "owner",
+  "action": "hear",
+  "count": 2,
+  "attest": "The dog's owner hears the noise and comes to see what happened.",
+  "prep": null,
+  "patient": "noise"
+ },
+ {
+  "agent": "bird",
+  "action": "hide",
+  "count": 2,
+  "attest": "The bird hid the nut in the tree.",
+  "prep": "in",
+  "patient": "tree"
+ },
+ {
+  "agent": "man",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a man came to their house.",
+  "prep": "to",
+  "GOAL": "house"
+ },
+ {
+  "agent": "man",
+  "action": "put",
+  "count": 2,
+  "attest": "The man and the girl put toys, balls, and candy in the box.",
+  "prep": null,
+  "THEME": "toy"
+ },
+ {
+  "agent": "man",
+  "action": "put",
+  "count": 2,
+  "attest": "The man and the girl put toys, balls, and candy in the box.",
+  "prep": "in",
+  "LOCATION": "box"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 2,
+  "attest": "A girl named Lily found the ball and brought it back to Tim.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "star",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, the little star saw a big, round moon.",
+  "prep": null,
+  "patient": "moon"
+ },
+ {
+  "agent": "mom",
+  "action": "set",
+  "count": 2,
+  "attest": "They help mom set the table and wait for dad to come home.",
+  "prep": null,
+  "patient": "table"
+ },
+ {
+  "agent": "truck",
+  "action": "go",
+  "count": 2,
+  "attest": "The ice cream truck went from place to place, making children happy.",
+  "prep": "from",
+  "GOAL": "place"
+ },
+ {
+  "agent": "man",
+  "action": "cook",
+  "count": 2,
+  "attest": "The man cooked a big hot dog for Sam.",
+  "prep": null,
+  "patient": "dog"
+ },
+ {
+  "agent": "bunny",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, the bunny saw a big tree.",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "bird",
+  "action": "tell",
+  "count": 2,
+  "attest": "The magic bird told the bunny to make a wish.",
+  "prep": null,
+  "patient": "bunny"
+ },
+ {
+  "agent": "bird",
+  "action": "tell",
+  "count": 2,
+  "attest": "The bird told her about a little girl who was lost in the woods.",
+  "prep": "about",
+  "patient": "girl"
+ },
+ {
+  "agent": "girl",
+  "action": "see",
+  "count": 2,
+  "attest": "Then, a little girl named Lily saw Tom's sign.",
+  "prep": null,
+  "patient": "sign"
+ },
+ {
+  "agent": "bird",
+  "action": "turn",
+  "count": 2,
+  "attest": "The bird turned into a fairy!",
+  "prep": "into",
+  "patient": "fairy"
+ },
+ {
+  "agent": "tree",
+  "action": "give",
+  "count": 2,
+  "attest": "Do you know that trees give us oxygen?\"",
+  "prep": null,
+  "THEME": "oxygen"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 2,
+  "attest": "So, the boy and the dog went in the boat.",
+  "prep": "in",
+  "GOAL": "boat"
+ },
+ {
+  "agent": "mom",
+  "action": "take",
+  "count": 2,
+  "attest": "Tim and his mom took out their toys, towels, and food from their big bag.",
+  "prep": null,
+  "patient": "toy"
+ },
+ {
+  "agent": "ball",
+  "action": "go",
+  "count": 2,
+  "attest": "The ball did not go into the goal.",
+  "prep": "into",
+  "GOAL": "goal"
+ },
+ {
+  "agent": "dog",
+  "action": "win",
+  "count": 2,
+  "attest": "In the end, the big dog won the race.",
+  "prep": "in",
+  "patient": "end"
+ },
+ {
+  "agent": "bird",
+  "action": "look",
+  "count": 2,
+  "attest": "The bird looked at the cat.",
+  "prep": "at",
+  "patient": "cat"
+ },
+ {
+  "agent": "car",
+  "action": "see",
+  "count": 2,
+  "attest": "The car saw a long, dark tunnel.",
+  "prep": null,
+  "patient": "tunnel"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a little girl came to the hotel with her family.",
+  "prep": "to",
+  "GOAL": "hotel"
+ },
+ {
+  "agent": "girl",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a little girl came to the hotel with her family.",
+  "prep": "with",
+  "GOAL": "family"
+ },
+ {
+  "agent": "girl",
+  "action": "see",
+  "count": 2,
+  "attest": "A little girl named Sue saw the box.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "bug",
+  "action": "nodded",
+  "count": 2,
+  "attest": "The bug nodded its tiny head.",
+  "prep": null,
+  "patient": "head"
+ },
+ {
+  "agent": "dog",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a gifted dog named Spot went for a walk with his best friend, a little girl named",
+  "prep": "with",
+  "GOAL": "friend"
+ },
+ {
+  "agent": "family",
+  "action": "stay",
+  "count": 2,
+  "attest": "The family stayed inside their house.",
+  "prep": "inside",
+  "patient": "house"
+ },
+ {
+  "agent": "elephant",
+  "action": "become",
+  "count": 2,
+  "attest": "From that day, Enormous Elephant and the tiny ant became good friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "dog",
+  "action": "want",
+  "count": 2,
+  "attest": "The dog wanted the ball.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 2,
+  "attest": "The girl went to the tree.",
+  "prep": "to",
+  "GOAL": "tree"
+ },
+ {
+  "agent": "box",
+  "action": "opened",
+  "count": 2,
+  "attest": "Suddenly the box opened with a big surprise!",
+  "prep": "with",
+  "patient": "surprise"
+ },
+ {
+  "agent": "mom",
+  "action": "take",
+  "count": 2,
+  "attest": "His mom took the cap and saw that it was too tight.",
+  "prep": null,
+  "patient": "cap"
+ },
+ {
+  "agent": "mouse",
+  "action": "become",
+  "count": 2,
+  "attest": "From that day on, the mouse became their friend and they all shared food together.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 2,
+  "attest": "Once upon a time, in a small house, a little girl named Emma found a big rubber ball.",
+  "prep": "in",
+  "patient": "house"
+ },
+ {
+  "agent": "piece",
+  "action": "come",
+  "count": 2,
+  "attest": "They were sad that their game was over, but they knew they would always remember the day t",
+  "prep": "to",
+  "GOAL": "life"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little boy named Tim went to the kitchen.",
+  "prep": "to",
+  "GOAL": "kitchen"
+ },
+ {
+  "agent": "voice",
+  "action": "belong",
+  "count": 2,
+  "attest": "Then, he realized that the voice belonged to a small bird who was perched on a tree branch",
+  "prep": "to",
+  "patient": "bird"
+ },
+ {
+  "agent": "bug",
+  "action": "become",
+  "count": 2,
+  "attest": "From that day on, the little bug and the big bug became best friends.",
+  "prep": "from",
+  "patient": "day"
+ },
+ {
+  "agent": "cat",
+  "action": "see",
+  "count": 2,
+  "attest": "When the cat and the dog saw the disgusting thing on the cake, they stopped fighting.",
+  "prep": null,
+  "patient": "thing"
+ },
+ {
+  "agent": "dad",
+  "action": "put",
+  "count": 2,
+  "attest": "One day, she saw her dad put a big box in the garage.",
+  "prep": null,
+  "THEME": "box"
+ },
+ {
+  "agent": "cat",
+  "action": "play",
+  "count": 2,
+  "attest": "One day, a cat and a dog were playing near a tree.",
+  "prep": "near",
+  "patient": "tree"
+ },
+ {
+  "agent": "mom",
+  "action": "cut",
+  "count": 2,
+  "attest": "Mom cut the tomato in half.",
+  "prep": "in",
+  "patient": "half"
+ },
+ {
+  "agent": "girl",
+  "action": "see",
+  "count": 2,
+  "attest": "A little girl named Lily and her dog, Spot, saw a big tree.",
+  "prep": null,
+  "patient": "tree"
+ },
+ {
+  "agent": "bird",
+  "action": "see",
+  "count": 2,
+  "attest": "The big bird saw the stick and thought it was a worm.",
+  "prep": null,
+  "patient": "stick"
+ },
+ {
+  "agent": "fox",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a charming fox went for a walk in the woods.",
+  "prep": "in",
+  "GOAL": "wood"
+ },
+ {
+  "agent": "sea",
+  "action": "give",
+  "count": 2,
+  "attest": "\"Maybe the sea will give us back our things,\" Sam said.",
+  "prep": null,
+  "THEME": "thing"
+ },
+ {
+  "agent": "duck",
+  "action": "serve",
+  "count": 2,
+  "attest": "So, the ugly duck served the ball to the other ducks.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "man",
+  "action": "live",
+  "count": 2,
+  "attest": "A kind old man lived in the house.",
+  "prep": "in",
+  "patient": "house"
+ },
+ {
+  "agent": "cat",
+  "action": "shoot",
+  "count": 2,
+  "attest": "At first, the fat cat shot the ball and it went far.",
+  "prep": null,
+  "patient": "ball"
+ },
+ {
+  "agent": "dad",
+  "action": "cut",
+  "count": 2,
+  "attest": "Dad cut the wheel into two smaller wheels.",
+  "prep": null,
+  "patient": "wheel"
+ },
+ {
+  "agent": "lion",
+  "action": "take",
+  "count": 2,
+  "attest": "The lion took the box away.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "mouse",
+  "action": "see",
+  "count": 2,
+  "attest": "A little mouse saw the bird and wanted to help.",
+  "prep": null,
+  "patient": "bird"
+ },
+ {
+  "agent": "ball",
+  "action": "roll",
+  "count": 2,
+  "attest": "One day, Max's ball rolled into the woods.",
+  "prep": "into",
+  "patient": "wood"
+ },
+ {
+  "agent": "bear",
+  "action": "live",
+  "count": 2,
+  "attest": "The purple bear lived in a big forest with his friends.",
+  "prep": "in",
+  "patient": "forest"
+ },
+ {
+  "agent": "ball",
+  "action": "belong",
+  "count": 2,
+  "attest": "She did not know the ball belonged to the boy.",
+  "prep": "to",
+  "patient": "boy"
+ },
+ {
+  "agent": "girl",
+  "action": "put",
+  "count": 2,
+  "attest": "So the little girl put the bird in her basket and took it back to her house.",
+  "prep": null,
+  "THEME": "bird"
+ },
+ {
+  "agent": "bird",
+  "action": "take",
+  "count": 2,
+  "attest": "The bird took the rabbit up to the tree.",
+  "prep": null,
+  "patient": "rabbit"
+ },
+ {
+  "agent": "mom",
+  "action": "say",
+  "count": 2,
+  "attest": "\"Sure thing,\" her mom said.",
+  "prep": null,
+  "patient": "thing"
+ },
+ {
+  "agent": "cat",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, the beautiful cat found a big apple under a tree.",
+  "prep": null,
+  "patient": "apple"
+ },
+ {
+  "agent": "cat",
+  "action": "dance",
+  "count": 2,
+  "attest": "The cat danced with the apple.",
+  "prep": "with",
+  "patient": "apple"
+ },
+ {
+  "agent": "bird",
+  "action": "play",
+  "count": 2,
+  "attest": "The next day, the bird and the cat played in the park.",
+  "prep": "in",
+  "patient": "park"
+ },
+ {
+  "agent": "fish",
+  "action": "ask",
+  "count": 2,
+  "attest": "A fish in the lake asked the boat, \"Can you help me?",
+  "prep": null,
+  "patient": "boat"
+ },
+ {
+  "agent": "bird",
+  "action": "live",
+  "count": 2,
+  "attest": "This bird lived on a farm with lots of wheat.",
+  "prep": "on",
+  "patient": "farm"
+ },
+ {
+  "agent": "bunny",
+  "action": "come",
+  "count": 2,
+  "attest": "One day, a funny bunny came to the tree.",
+  "prep": "to",
+  "GOAL": "tree"
+ },
+ {
+  "agent": "duck",
+  "action": "play",
+  "count": 2,
+  "attest": "The duck, the frog, and the fish played in the pond.",
+  "prep": "in",
+  "patient": "pond"
+ },
+ {
+  "agent": "sign",
+  "action": "say",
+  "count": 2,
+  "attest": "The sign says no ball games.\"",
+  "prep": null,
+  "patient": "game"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a little girl named Lily found a small pink car.",
+  "prep": null,
+  "patient": "car"
+ },
+ {
+  "agent": "car",
+  "action": "turn",
+  "count": 2,
+  "attest": "The car turned into a big hand!",
+  "prep": "into",
+  "patient": "hand"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little girl named Lucy went to the cave to talk to the monster.",
+  "prep": "to",
+  "GOAL": "cave"
+ },
+ {
+  "agent": "mom",
+  "action": "go",
+  "count": 2,
+  "attest": "Mom went to the room and came back with a video.",
+  "prep": "to",
+  "GOAL": "room"
+ },
+ {
+  "agent": "cow",
+  "action": "eat",
+  "count": 2,
+  "attest": "But the cow is eating our hay castle!\"",
+  "prep": null,
+  "patient": "castle"
+ },
+ {
+  "agent": "pilot",
+  "action": "fly",
+  "count": 2,
+  "attest": "The pilot flew his plane down to the park.",
+  "prep": null,
+  "patient": "plane"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a humble girl named Sara found a phone.",
+  "prep": null,
+  "patient": "phone"
+ },
+ {
+  "agent": "cat",
+  "action": "play",
+  "count": 2,
+  "attest": "One day, a gray cat named Tom was playing with his friend, a dog named Max.",
+  "prep": "with",
+  "patient": "friend"
+ },
+ {
+  "agent": "car",
+  "action": "meet",
+  "count": 2,
+  "attest": "One day, the blue car met a nice man.",
+  "prep": null,
+  "patient": "man"
+ },
+ {
+  "agent": "duck",
+  "action": "wear",
+  "count": 2,
+  "attest": "The duck was wearing a cap, just like Tim's red cap!",
+  "prep": null,
+  "patient": "cap"
+ },
+ {
+  "agent": "man",
+  "action": "come",
+  "count": 2,
+  "attest": "He saw a man come into the room every day.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "girl",
+  "action": "get",
+  "count": 2,
+  "attest": "A little girl named Amy got on the bus with her mom.",
+  "prep": "with",
+  "patient": "mom"
+ },
+ {
+  "agent": "mom",
+  "action": "keep",
+  "count": 2,
+  "attest": "He liked to help his mom and dad keep their house tidy.",
+  "prep": null,
+  "patient": "house"
+ },
+ {
+  "agent": "boy",
+  "action": "listen",
+  "count": 2,
+  "attest": "The boy listened to the wise old man and went to play with his toys instead.",
+  "prep": "to",
+  "patient": "man"
+ },
+ {
+  "agent": "squirrel",
+  "action": "see",
+  "count": 2,
+  "attest": "The squirrel saw the crystal too.",
+  "prep": null,
+  "patient": "crystal"
+ }
+]

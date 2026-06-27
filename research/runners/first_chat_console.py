@@ -92,6 +92,16 @@ from research.runners._curriculum_step1_320_real_corpus import _make_svo_facts  
 from research.runners.wh_question_parser import (  # noqa: E402  (Tier 0.3 -- natural wh-questions, filler-gap)
     parse_wh_question, answer_wh, bare_answer, is_wh_question,
 )
+from research.runners.argstructure_composer import (  # noqa: E402  (Tier 0.1 -- typed verb-frame argument structure)
+    ArgStructureComposer, ALL_ROLES, TYPED_ROLES,
+)
+
+# Tier 0.1 typed object roles a corpus fact may realize (GOAL/THEME/RECIPIENT/LOCATION/...). When a fact realizes a
+# typed object (not a bare `patient`), the console ALSO binds that filler to `patient` so the flat-SVO machinery
+# (DiscursiveTurn what_does / the proposer / audit_moat) sees the same (agent, action, filler) -- the verb-frame
+# render still uses ONLY the typed role (the redundant patient is invisible to the frame). `_TYPED_OBJECT_ROLES` is
+# the set of object roles eligible for that flat projection (the agent is never an object).
+_TYPED_OBJECT_ROLES = tuple(TYPED_ROLES)
 
 DEFAULT_BRAIN = os.path.join(_REPO, "bridges", "firstchat", "brain1454_w7000_seed42.npz")
 
@@ -224,7 +234,65 @@ def _load_real_facts(json_path, vocab, n_facts, seed):
     return facts, absent_what, absent_who
 
 
-def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_json=None, n_attempts=60, cand_cap=16,
+def _load_typed_facts(json_path, vocab, n_facts, seed):
+    """Tier 0.1 -- load TYPED-ROLE corpus facts (`_corpus_svo_extract.py --typed-roles` output): each record is
+    {agent, action, <one typed object role>: filler} where the object role is GOAL / THEME / RECIPIENT / LOCATION /
+    patient (per the verb-frame lexicon + the introducing preposition). Frequency-ranked, vocab-restricted, dedup to
+    one object per (agent, action) and per (action, filler) so who/what/where cues stay unambiguous (the moat rule).
+
+    Returns (typed_facts, flat_facts, absent_what, absent_who):
+      * typed_facts -- the dicts (stored via ArgStructureComposer.store_fact; carry the typed role for wh + render);
+      * flat_facts  -- (agent, action, filler) 3-tuples (the SAME filler), for the DiscursiveTurn / proposer / audit
+        pipeline (which is SVO-shaped). The console binds the filler to BOTH its typed role AND `patient`, so the
+        flat tuple is a genuinely stored, recallable fact (query_patient(agent,action)==filler) while render uses the
+        verb frame. absent_* are (agent,action)/(action,filler) combos NOT stored (the no-confab moat test holds)."""
+    import json as _json
+    vset = set(vocab)
+    with open(json_path, encoding="utf-8") as fh:
+        raw = _json.load(fh)                       # sorted by corpus count desc
+    typed_facts, flat_facts, seen = [], [], set()
+    for rec in raw:
+        a, v = rec.get("agent"), rec.get("action")
+        if a not in vset or v not in vset:
+            continue
+        # the single object role this record realizes (GOAL/THEME/RECIPIENT/LOCATION/patient) + its filler word
+        obj_role, filler = None, None
+        for r in ("patient",) + _TYPED_OBJECT_ROLES:
+            if r in rec and rec[r] in vset:
+                obj_role, filler = r, rec[r]
+                break
+        if obj_role is None or filler is None or filler == a:
+            continue
+        if (a, v) in seen or (v, filler) in seen:  # one object per (a,v)/(v,filler) -> unambiguous cues
+            continue
+        fact = {"agent": a, "action": v, obj_role: filler}
+        if obj_role != "patient":                  # flat projection: bind the typed filler to patient too (render
+            fact["patient"] = filler               # ignores it -- it only emits the verb-frame's typed unit)
+        typed_facts.append(fact)
+        flat_facts.append((a, v, filler))
+        seen.add((a, v)); seen.add((v, filler))
+        if len(flat_facts) >= n_facts:
+            break
+    if not flat_facts:
+        return [], [], [], []
+    rng = np.random.RandomState(seed * 131 + 5)
+    agents = sorted({a for a, _, _ in flat_facts}); actions = sorted({v for _, v, _ in flat_facts})
+    objs = sorted({p for _, _, p in flat_facts})
+    stored_av = {(a, v) for a, v, _ in flat_facts}; stored_vp = {(v, p) for _, v, p in flat_facts}
+    absent_what, absent_who, tries = [], [], 0
+    while (len(absent_what) < len(flat_facts) or len(absent_who) < len(flat_facts)) and tries < len(flat_facts) * 200:
+        tries += 1
+        a = agents[rng.randint(len(agents))]; v = actions[rng.randint(len(actions))]
+        p = objs[rng.randint(len(objs))]
+        if len(absent_what) < len(flat_facts) and (a, v) not in stored_av and (a, v) not in set(absent_what):
+            absent_what.append((a, v))
+        if len(absent_who) < len(flat_facts) and (v, p) not in stored_vp and (v, p) not in set(absent_who):
+            absent_who.append((v, p))
+    return typed_facts, flat_facts, absent_what, absent_who
+
+
+def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_json=None, argstructure=False,
+                         n_attempts=60, cand_cap=16,
                          shards=1, shard_by="domain", fluency_faculty=None,
                          tau_pct=50.0, corpus_paths=None, corpus_max_bytes=(None, 40_000_000),
                          w_value=0.5, w_plaus=0.35, w_fam=0.15,
@@ -290,8 +358,17 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
         nouns, verbs = sorted(set(vocab)), sorted(set(vocab))
 
     # ---- the KNOWN-fact store on the LEARNED codes (the no-confab moat intact) ----
-    # shards==1 -> the single composer (byte-unchanged); shards>1 -> the RoutedComposer (per-shard cleanup).
-    if shards and int(shards) > 1:
+    # Three composer modes, ALL on the SAME learned codes:
+    #   * default (shards==1, argstructure=False) -> the single RFPhasorComposer (byte-unchanged);
+    #   * shards>1 -> the RoutedComposer (per-shard cleanup, deep-knowledge scaling);
+    #   * argstructure=True (Tier 0.1) -> an ArgStructureComposer (typed verb-frame roles + the FrameCQ render).
+    #     Single-bridge (shards>1 is a follow-on; a RoutedComposer of ArgStructureComposers is not yet built).
+    if argstructure:
+        if shards and int(shards) > 1 and verbose:
+            print(f"[console] (note) --argstructure is single-bridge; ignoring shards={shards} "
+                  f"(multi-bridge ArgStructure is a follow-on)", flush=True)
+        comp = ArgStructureComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded)
+    elif shards and int(shards) > 1:
         from research.runners.routed_composer import RoutedComposer
         comp = RoutedComposer(npz_path, n_shards=int(shards), seed=seed, D=D, shard_by=shard_by,
                               grounded_codes=grounded, verbose=verbose)
@@ -300,14 +377,32 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
                   f"(policy={comp._shard_policy}, sizes={[len(s) for s in comp.shard_vocabs]})", flush=True)
     else:
         comp = RFPhasorComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded)
-    if facts_json:
+
+    if argstructure:
+        # Tier 0.1: typed-role corpus facts (go->GOAL:park, give->THEME:hug). Stored via store_fact (the typed role
+        # is bound + the flat patient projection for the SVO pipeline). `facts` (the affirmed/recall/discuss ground
+        # truth consumed downstream) is the FLAT (agent, action, filler) view.
+        if not facts_json:
+            raise SystemExit("[console] --argstructure requires --facts-json with typed-role facts "
+                             "(run: python -m research.runners._corpus_svo_extract --typed-roles ...)")
+        typed_facts, facts, _absent_what, _absent_who = _load_typed_facts(facts_json, vocab, n_facts, seed)
+        for tf in typed_facts:
+            comp.store_fact(tf)
+        if verbose:
+            import collections as _co
+            rc = _co.Counter(r for tf in typed_facts for r in tf if r in ALL_ROLES and r != "patient")
+            print(f"[console] loaded {len(typed_facts)} TYPED-ROLE corpus facts from {facts_json} "
+                  f"(object roles: {dict(rc)})", flush=True)
+    elif facts_json:
         facts, _absent_what, _absent_who = _load_real_facts(facts_json, vocab, n_facts, seed)
+        for a, v, p in facts:
+            comp.store(a, v, p, polarity="AFFIRM")
         if verbose:
             print(f"[console] loaded {len(facts)} REAL corpus-extracted facts from {facts_json}", flush=True)
     else:
         facts, _absent_what, _absent_who = _make_svo_facts(vocab, cat_ids, cat_names, n_facts, seed)
-    for a, v, p in facts:
-        comp.store(a, v, p, polarity="AFFIRM")
+        for a, v, p in facts:
+            comp.store(a, v, p, polarity="AFFIRM")
     affirmed = [tuple(f) for f in facts]
     negated = []                                   # no NEGATE facts in the first-chat console (recall+discuss only)
     if verbose:
@@ -428,6 +523,10 @@ _RELATE_RE = re.compile(r"\b(?:is|are)\s+(?:a\s+|the\s+)?(\w+)\s+(?:like|related
 # "what is X" / "what's a X" / "tell me about X" / "what do you know about X" / "what do you think about X"
 _ABOUT_RE = re.compile(r"\b(?:what\s+is|what's|tell me about|what do you know about|what do you think about|"
                        r"thoughts on|your view on|talk about)\s+(?:a\s+|an\s+|the\s+)?(\w+)", re.IGNORECASE)
+# Tier 0.4 -- a REFERENTIAL / under-specified question ("which boy?", "which one ...?"): the brain knows the TYPE
+# but cannot resolve WHICH instance (it has no entity-instance layer yet -- that is the Tier-1 keystone). This is the
+# honest, generic clarification TRIGGER (the full which-X disambiguation needs Tier-1 entity instances).
+_WHICH_RE = re.compile(r"\bwhich\s+(?:one\b|(?:of\s+(?:the\s+)?)?(\w+))", re.IGNORECASE)
 
 
 _SIBILANT = ("s", "sh", "ch", "x", "z", "o")
@@ -483,6 +582,12 @@ class FirstChatConsole:
         self._vocab_list = brain["vocab"]
         # row index -> word (for naming a topic's PPMI neighbours in a grounded hedge)
         self._idx_to_word = {i: w for w, i in self.row.items()}
+        # Tier 0.1/0.3: is the composer an ArgStructureComposer (typed verb-frame roles)? When so, "what does X V"
+        # for a verb whose frame realizes a TYPED object (give->THEME) routes through the wh filler-gap path so the
+        # answer renders via that verb's frame ('the girl gives the ball'), not the flat-patient discuss.
+        self._argstructure = hasattr(brain["comp"], "query_role")
+        # the full vocab (for the 0.4 unknown-word clarification: a content word the brain never learned).
+        self._vocab_set = set(brain["vocab"])
 
     def _llm_render_certain(self, svo):
         """GATE(passed: svo is a stored, recalled fact) -> CONSTRAIN (LLM renders it fluently) -> VERIFY (re-parse
@@ -619,6 +724,42 @@ class FirstChatConsole:
                 return w
         return None
 
+    # ---- Tier 0.4: clarification-on-failure -----------------------------------------------------------------
+    # When the brain ABSTAINS (the moat / familiarity gate fires), route it to an INFORMATIVE reply instead of a
+    # bare canned line: an UNKNOWN word -> "I don't know X yet"; a KNOWN-but-factless topic -> the grounded PPMI
+    # hedge (already built in _render / _wh_response); a REFERENTIALLY under-specified query -> a generic, honest
+    # "I'm not sure which one -- can you say more?" (the FULL which-X disambiguation needs Tier-1 entity instances;
+    # this is the honest generic TRIGGER). Reuses the EXISTING abstain/familiarity signal; never fabricates.
+    _CLARIFY_REC = {"intent": "clarify", "paragraph": "", "emitted_propositions": [],
+                    "depth": 0, "n_certain": 0, "n_flagged": 0}
+
+    def _unknown_content_word(self, msg):
+        """The first word-shaped token in `msg` that is NOT in the brain's vocab (>=3 letters, not a stopword/
+        function word) -- the 0.4 'I don't know X' trigger. None if every content-shaped token is known."""
+        skip = FUNCTION_WORDS | {"what", "is", "are", "the", "do", "does", "did", "you", "think", "about",
+                                 "tell", "me", "more", "know", "your", "view", "on", "thoughts", "talk",
+                                 "of", "like", "related", "similar", "to", "and", "how", "which", "one", "a", "an"}
+        for w in re.findall(r"[a-zA-Z]+", msg.lower()):
+            if len(w) < 3 or w in skip:
+                continue
+            if w not in self._vocab_set:
+                return w
+        return None
+
+    def _clarify_unknown(self, word):
+        """0.4 -- an unknown word: an honest 'I don't know X yet' (NOT a guess)."""
+        return (f"I don't know the word \"{word}\" yet -- it's not in what I've learned.", dict(self._CLARIFY_REC,
+                intent="unknown_word", clarify_word=word))
+
+    def _clarify_underspecified(self, topic):
+        """0.4 -- a referential / under-specified query ('which boy?'): the honest generic trigger. The brain knows
+        the TYPE but has no entity-instance layer to resolve WHICH one (the Tier-1 keystone). Never fabricates."""
+        if topic and topic in self.row:
+            return (f"I'm not sure which {topic} you mean -- I track the idea of \"{topic}\" but not specific "
+                    f"ones yet. Can you say more?", dict(self._CLARIFY_REC, intent="underspecified", clarify_topic=topic))
+        return ("I'm not sure which one you mean -- can you say more?",
+                dict(self._CLARIFY_REC, intent="underspecified"))
+
     def _wh_response(self, msg, wh_parse):
         """Tier 0.3 -- answer a natural wh-question (the filler-gap route). Resolve the gapped role from the verb's
         frame, query it on the composer (the COGNITION), and render the grounded answer -- OR abstain gracefully
@@ -639,6 +780,15 @@ class FirstChatConsole:
                "paragraph": "", "emitted_propositions": [], "depth": 0, "n_certain": 0, "n_flagged": 0,
                "glue": []}
         if filler is None:
+            # 0.4 -- if the question names a referent the brain never learned (an unknown agent/object word), say so
+            # specifically ("I don't know X yet") rather than a generic abstention.
+            unk = None
+            for cand in (agent, verb, (parse.get("cue") or {}).get("patient")):
+                if cand and cand not in self._vocab_set:
+                    unk = cand
+                    break
+            if unk is not None:
+                return self._clarify_unknown(unk)
             # MOAT: no grounded answer -> an honest, topic-relevant non-fabrication (NOT a guess). Name what we DO
             # know about the agent (its PPMI neighbours) when possible, framed as association-not-fact.
             subj = agent or verb
@@ -686,13 +836,36 @@ class FirstChatConsole:
             rec = self.dt.discuss(m, topic=self.dt._topic)
             return self._render(rec), rec
 
+        # Tier 0.4 -- a REFERENTIAL / under-specified question ("which boy?", "which one ...?"). The brain knows the
+        # TYPE but has no entity-instance layer to resolve WHICH one (Tier 1). Honest generic clarification (the
+        # trigger is free now; the full disambiguation is the Tier-1 keystone). Checked BEFORE the wh / about routes
+        # so "which" is handled as referential, not as a generic content-word opinion.
+        mw = _WHICH_RE.search(m)
+        if mw:
+            kind = (mw.group(1) or "").lower() or self._content_word(m)
+            # an unknown referent kind is itself unknown -> the unknown-word clarification (more specific).
+            if kind and kind not in self._vocab_set and kind not in (None, ""):
+                return self._clarify_unknown(kind)
+            return self._clarify_underspecified(kind)
+
         # Tier 0.3 -- NATURAL wh-questions as a filler-gap dependency. The fronted wh-word is the FILLER; the verb's
         # frame says which role is the GAP; query that role. This handles where/when/who/whom/with-what + the
         # bare-subject "who V P?" -- the forms the rigid "what does X Y" probe never covered. "what does X V?" is
-        # left to the existing _WHAT_DOES_RE route below (its rich discuss-while-answering is preserved -- ADDITIVE).
+        # usually left to the existing _WHAT_DOES_RE route below (its rich discuss-while-answering is preserved --
+        # ADDITIVE) -- EXCEPT, on an ArgStructureComposer, when the verb's frame realizes a TYPED object (give->THEME):
+        # then "what does the girl give?" routes through the wh path so the answer renders via the verb FRAME
+        # ('the girl gives the ball'), the Tier-0.1 payoff. A frame-unlicensed wh still falls through to discuss.
         wh_parse = parse_wh_question(m)
-        if wh_parse is not None and not (wh_parse["form"] == "aux" and wh_parse.get("wh") == "what"):
-            return self._wh_response(m, wh_parse)
+        # a COPULA subject-question ("what is X?", "who is X?") is NOT a verb-frame filler-gap -- it belongs to the
+        # 'what is X' (_ABOUT_RE) route below (which gives the right unknown-word clarification on the REAL word X,
+        # not on the copula). Don't let the wh-route consume it.
+        _is_copula = (wh_parse is not None and wh_parse.get("verb") in ("is", "are", "was", "were", "be", "am"))
+        if wh_parse is not None and not _is_copula:
+            _is_what_aux = (wh_parse["form"] == "aux" and wh_parse.get("wh") == "what")
+            _typed_what = (self._argstructure and _is_what_aux
+                           and wh_parse.get("role") not in (None, "__UNLICENSED__", "patient"))
+            if (not _is_what_aux) or _typed_what:
+                return self._wh_response(m, wh_parse)
 
         # 'what does X Y' -> structured known-fact cue (certain lead + discuss-while-answering)
         md = _WHAT_DOES_RE.search(m)
@@ -716,10 +889,8 @@ class FirstChatConsole:
         if ma:
             x = ma.group(1).lower()
             if x not in self.row:
-                # an unknown word (not in the brain's vocab) -> a graceful, honest non-fabrication (NOT a guess).
-                return (f"I don't know the word \"{x}\" yet -- it's not in what I've learned.",
-                        {"intent": "unknown_word", "paragraph": "", "emitted_propositions": [],
-                         "depth": 0, "n_certain": 0, "n_flagged": 0})
+                # 0.4 -- an unknown word (not in the brain's vocab) -> a graceful, honest non-fabrication (NOT a guess).
+                return self._clarify_unknown(x)
             if x in self.stored_agents:
                 rec = self.dt.discuss(m, topic=x, force_intent="opinion")   # grounded opinion (the brain holds facts)
             else:
@@ -729,8 +900,14 @@ class FirstChatConsole:
                 rec = self.dt.discuss(m, cue=(x, "is"), topic=x, force_intent="question")
             return self._render(rec), rec
 
-        # fallback: a bare topic mention -> opinion on the first content word
+        # fallback: a bare topic mention -> opinion on the first content word.
         topic = self._content_word(m)
+        if topic is None:
+            # 0.4 -- no in-vocab content word: if the message has an unknown content-shaped word, say so honestly
+            # (the unknown-word clarification) rather than fall to a topic-less, contentless reply.
+            unk = self._unknown_content_word(m)
+            if unk is not None:
+                return self._clarify_unknown(unk)
         rec = self.dt.discuss(m, topic=topic)
         return self._render(rec), rec
 
@@ -1140,6 +1317,11 @@ def main():
     ap.add_argument("--n-facts", type=int, default=24, help="SVO facts the brain is TOLD (recall + discuss)")
     ap.add_argument("--facts-json", default=None,
                     help="path to corpus-EXTRACTED SVO facts (_corpus_svo_extract.py output); replaces random facts")
+    ap.add_argument("--argstructure", action="store_true",
+                    help="Tier 0.1/0.3: build an ArgStructureComposer (typed verb-frame roles: GOAL/THEME/RECIPIENT/"
+                         "LOCATION + the FrameCQ render) instead of the plain RFPhasorComposer, and route the wh + "
+                         "verb-frame render through it. Requires --facts-json with TYPED-ROLE facts "
+                         "(_corpus_svo_extract --typed-roles). Single-bridge (--shards 1). Default off = byte-unchanged.")
     ap.add_argument("--n-attempts", type=int, default=60, help="generative-replay samples per topic")
     ap.add_argument("--cand-cap", type=int, default=16,
                     help="Stage-0 latency: stop proposing after this many accepted candidates per topic (0=exhaustive)")
@@ -1178,6 +1360,7 @@ def main():
         fluency = LLMFluencyFaculty(T=a.faculty_T, max_new_tokens=a.faculty_max_new_tokens, seed=a.seed)
 
     brain = build_brain_on_codes(a.brain, seed=a.seed, n_facts=a.n_facts, facts_json=a.facts_json,
+                                 argstructure=a.argstructure,
                                  n_attempts=a.n_attempts, cand_cap=(a.cand_cap or None),
                                  shards=a.shards, shard_by=a.shard_by, fluency_faculty=fluency,
                                  n_topics=a.n_topics, max_topic_scan=a.max_topic_scan)
