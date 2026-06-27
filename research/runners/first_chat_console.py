@@ -36,10 +36,19 @@ THE MOAT IS THE LOAD-BEARING INVARIANT: the DiscursiveTurn's type-aware VERIFY g
 fabricated fact" STRUCTURAL -- a CERTAIN proposition requires its re-parsed SVO to be a STORED fact; everything
 else is rendered FLAGGED (hedged + a HYPOTHESIS marker, never stored) or DROPPED. This console never relaxes it.
 
-CPU / numpy ONLY (the whole DiscursiveTurn pipeline is a numpy-CPU brain). Run:
+PATH B -- FLUENT GROUNDED RENDERING (`--faculty llm`): the brain is the numpy-CPU pipeline; the OPTIONAL fluency
+faculty is an off-bridge spiking-LLM (converted Qwen2.5-0.5B) that renders a GATED, VERIFIED stored fact into
+fluent prose. The LLM provides WORDING ONLY -- the brain supplies the knowledge, the GATE (composer recall), and
+the VERIFY (re-parse the LLM's prose back to an SVO; reject on content-mismatch -> a hallucination never reaches
+the user). The LLM is NEVER invoked to free-generate ungrounded content (the console ABSTAINS instead). Default
+`--faculty stub` is the template renderer (numpy-CPU, byte-unchanged, no torch needed).
+
+CPU / numpy by default (the whole DiscursiveTurn pipeline is a numpy-CPU brain). Run:
   REPL:   SIM_BACKEND=numpy python -m research.runners.first_chat_console
   DEMO:   SIM_BACKEND=numpy python -m research.runners.first_chat_console --demo
   RUBRIC: SIM_BACKEND=numpy python -m research.runners.first_chat_console --rubric
+  PATH B: SIM_BACKEND=numpy python -m research.runners.first_chat_console --faculty llm --n-facts 24 --shards 1 --demo
+  MOAT:   SIM_BACKEND=numpy python -m research.runners.first_chat_console --faculty llm --n-facts 24 --shards 1 --moat-test
 """
 from __future__ import annotations
 
@@ -74,7 +83,10 @@ from research.runners._genfrontier_b2_generative_replay_derisk import (  # noqa:
 from research.runners.option_c_real_cooccurrence_derisk import build_real_cooccurrence  # noqa: E402
 from research.runners._value_salience_appraisal_derisk import SpikingSpeakAccumulator  # noqa: E402
 from research.runners._learned_talkativeness_derisk import context_code  # noqa: E402
-from research.runners._grounded_lang_integration_derisk import _build_inflection_map  # noqa: E402
+from research.runners._grounded_lang_integration_derisk import (  # noqa: E402
+    _build_inflection_map,
+    _extract_svo_from_prose,
+)
 from research.runners._grounded_lang_p3_derisk import TemplateStubFaculty  # noqa: E402
 from research.runners._curriculum_step1_320_real_corpus import _make_svo_facts  # noqa: E402
 
@@ -85,6 +97,86 @@ DEFAULT_BRAIN = os.path.join(_REPO, "bridges", "firstchat", "brain1454_w7000_see
 _NON_ENTITY_SUFFIX = ("_verbs", "_adj")
 _NON_ENTITY_NAMES = {"abstract_relations", "spatial_words", "time_words", "quantity_number_words",
                      "question_discourse", "emotion_states"}
+
+
+# ===========================================================================
+# PATH B -- the FLUENCY faculty.  A spiking-LLM supplies WORDING ONLY; the BRAIN supplies KNOWLEDGE + grounding
+# + the no-confab moat.  The console renders a GROUNDED (verified-stored) SVO fact fluently via the LLM, then
+# RE-PARSES the generated prose back to an SVO (the BRAIN's comprehension) and REJECTS on content-mismatch -- so
+# a hallucination never reaches the user.  The LLM NEVER free-generates ungrounded content (the console abstains
+# instead).  This wraps the off-bridge `SpikingQwenFaculty` (the validated grounded-loop faculty) behind the
+# 2-tuple `render_svo(a,v,p) -> (surface, asserted_svo)` interface the CommunicableTurn/DiscursiveTurn renderer
+# expects (the LLM's native `render_svo` returns a 3-tuple `(first_line, full_text, seconds)`).
+# ===========================================================================
+class LLMFluencyFaculty:
+    """The Path-B fluent renderer: the off-bridge converted-Qwen2.5-0.5B SPIKING faculty rendering a GATED SVO
+    into one fluent sentence (CONSTRAIN), exposed behind the same 2-tuple interface as `TemplateStubFaculty`.
+
+    GATE + VERIFY live in the console / the CommunicableTurn re-parse; this faculty is fluency-only.  When the
+    LLM's render does NOT re-parse to the gated fact (a drift/role-inversion), the caller's VERIFY rejects it and
+    falls back to the template surface (still grounded + true) -- the LLM never gets to assert an unverified fact.
+    """
+
+    def __init__(self, T=16, max_new_tokens=24, seed=42, device=None, verbose=True):
+        # import lazily so the default `--faculty stub` path never needs torch/transformers installed.
+        from research.runners._grounded_lang_integration_derisk import SpikingQwenFaculty
+        dev = device
+        if dev is None:
+            try:
+                import torch
+                dev = "cuda" if torch.cuda.is_available() else "cpu"
+            except Exception:
+                dev = "cpu"
+        self.device_req = dev
+        self._stub = TemplateStubFaculty()              # the deterministic fallback when the LLM render won't verify
+        t0 = time.time()
+        self.qwen = SpikingQwenFaculty(T=int(T), max_new_tokens=int(max_new_tokens), seed=int(seed), device=dev)
+        self.load_seconds = round(time.time() - t0, 2)
+        # report VRAM (if CUDA) so the owner sees the footprint.
+        self.vram_mb = None
+        try:
+            import torch
+            if str(self.qwen.device).startswith("cuda"):
+                self.vram_mb = round(torch.cuda.max_memory_allocated() / (1024 * 1024), 1)
+        except Exception:
+            pass
+        # per-render latency telemetry (tok/s) accumulated over the session.
+        self.n_renders = 0
+        self.total_gen_seconds = 0.0
+        self.total_gen_tokens = 0
+        if verbose:
+            print(f"[console] Path-B fluency faculty: off-bridge spiking Qwen2.5-0.5B on {self.qwen.device} "
+                  f"(T={int(T)}), loaded in {self.load_seconds}s"
+                  + (f", VRAM {self.vram_mb} MB" if self.vram_mb is not None else "")
+                  + f", pools={self.qwen.pools}", flush=True)
+
+    def render_svo(self, agent, action, patient, template=0):
+        """CONSTRAIN: the LLM renders the gated SVO into one fluent sentence.  Returns (surface, asserted_svo).
+        `asserted_svo` is the canonical content the gate retrieved -- VERIFY re-parses the SURFACE (the LLM's
+        actual prose), so a drift in the surface is caught regardless of what we report as `asserted`."""
+        surface, _full, gen_s = self.qwen.render_svo(agent, action, patient)
+        self.n_renders += 1
+        self.total_gen_seconds += float(gen_s)
+        # count generated content tokens for a tok/s estimate (cheap whitespace count of the first line).
+        self.total_gen_tokens += max(1, len(str(surface).split()))
+        return surface, [agent, action, patient]
+
+    def render_svo_fluent(self, agent, action, patient):
+        """The full LLM render returning (surface, full_text, seconds) for the console's VERIFY + telemetry."""
+        surface, full, gen_s = self.qwen.render_svo(agent, action, patient)
+        self.n_renders += 1
+        self.total_gen_seconds += float(gen_s)
+        self.total_gen_tokens += max(1, len(str(surface).split()))
+        return surface, full, float(gen_s)
+
+    def render_yesno(self, agent, action, patient, truth):
+        # yes/no answers are short + structural; keep the deterministic stub (no fluency win, avoids a drift path).
+        return self._stub.render_yesno(agent, action, patient, truth)
+
+    def tok_per_s(self):
+        if self.total_gen_seconds <= 0:
+            return None
+        return round(self.total_gen_tokens / self.total_gen_seconds, 1)
 
 
 # ===========================================================================
@@ -130,7 +222,7 @@ def _load_real_facts(json_path, vocab, n_facts, seed):
 
 
 def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_json=None, n_attempts=60, cand_cap=16,
-                         shards=1, shard_by="domain",
+                         shards=1, shard_by="domain", fluency_faculty=None,
                          tau_pct=50.0, corpus_paths=None, corpus_max_bytes=(None, 40_000_000),
                          w_value=0.5, w_plaus=0.35, w_fam=0.15,
                          speak_base_pA=70.0, speak_gain_pA=180.0, silence_drive_pA=150.0,
@@ -288,7 +380,9 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
     return {"dt": dt, "ct": ct, "comp": comp, "agent": agent, "P": P, "row": row, "vocab": vocab,
             "cat_ids": cat_ids, "cat_names": cat_names, "facts": affirmed, "recalled_facts": recalled_facts,
             "nouns": nouns, "verbs": verbs, "grounded_topics": grounded_topics, "topics": topics,
-            "taught": taught, "D": D, "stored_agents": stored_agents}
+            "taught": taught, "D": D, "stored_agents": stored_agents,
+            # Path B: the fluency faculty (None = stub) + the VERIFY content sets for re-parsing LLM prose.
+            "fluency_faculty": fluency_faculty, "vocab_sets": vocab_sets}
 
 
 def _learn_talkativeness(ct, topics, n_attempts, taught_frac, n_rounds, lr, da_reward, da_baseline, kappa, seed):
@@ -375,6 +469,145 @@ class FirstChatConsole:
         self.stored_agents = brain["stored_agents"]
         self.nouns = set(brain["nouns"])
         self.verbs = set(brain["verbs"])
+        # Path B: the fluent renderer (None = template stub, byte-unchanged) + the VERIFY content sets.
+        self.fluency = brain.get("fluency_faculty")
+        self._agents_set, self._actions_set, self._patients_set, self._inflect = brain.get(
+            "vocab_sets", (set(brain["nouns"]), set(brain["verbs"]), set(brain["nouns"]),
+                           _build_inflection_map(brain["verbs"])))
+        self._stored = {(f[0], f[1], f[2]) for f in brain["facts"]}
+        self._agent = brain["agent"]
+        self._P = brain["P"]                              # the PPMI association matrix (the brain's learned graph)
+        self._vocab_list = brain["vocab"]
+        # row index -> word (for naming a topic's PPMI neighbours in a grounded hedge)
+        self._idx_to_word = {i: w for w, i in self.row.items()}
+
+    def _llm_render_certain(self, svo):
+        """GATE(passed: svo is a stored, recalled fact) -> CONSTRAIN (LLM renders it fluently) -> VERIFY (re-parse
+        the LLM PROSE back to an SVO via the brain's comprehension; must match the gated fact).  Returns the fluent
+        sentence on VERIFY-pass, else None (the caller keeps the template surface -- still grounded + true).  The
+        LLM NEVER asserts an unverified fact: a drift/role-inversion is rejected here."""
+        a, v, p = svo
+        # belt-and-suspenders: a CERTAIN proposition is only ever gathered from the stored set, but never render an
+        # unstored triple through the LLM (the moat: the LLM only ever speaks a verified-stored fact).
+        if (a, v, p) not in self._stored:
+            return None
+        try:
+            surface, _full, _gen_s = self.fluency.render_svo_fluent(a, v, p)
+        except Exception:
+            return None
+        # VERIFY: recover the 3 content tokens from the LLM's actual prose, then the brain's parser re-assigns roles.
+        csvo = _extract_svo_from_prose(surface, self._agents_set, self._actions_set, self._patients_set,
+                                       self._inflect)
+        if csvo is None:
+            return None
+        parsed = self._agent.parse(csvo, voice="active")
+        rsvo = [parsed.get("agent"), parsed.get("action"), parsed.get("patient")]
+        if rsvo != [a, v, p]:
+            return None                       # the LLM drifted (a swapped/dropped/added word) -> REJECT
+        return surface.strip()
+
+    def _ppmi_neighbors(self, topic, k=3):
+        """The topic's strongest PPMI-graph neighbours (the brain's REAL learned associations) -- the GATE for a
+        grounded hedge. Returns up to k neighbour words (highest positive PPMI), excluding the topic itself."""
+        if topic is None or topic not in self.row:
+            return []
+        ti = self.row[topic]
+        scores = self._P[ti]
+        order = np.argsort(scores)[::-1]
+        out = []
+        for j in order:
+            if scores[j] <= 0:
+                break
+            w = self._idx_to_word.get(int(j))
+            if w is None or w == topic:
+                continue
+            out.append(w)
+            if len(out) >= k:
+                break
+        return out
+
+    # the allowed HEDGE LEXICON: connective / framing words the LLM may use to wrap the gated neighbour names.
+    # The moat-faithful constraint: the ONLY content words a hedge may contain are the topic, the named PPMI
+    # neighbours, or a word in this fixed honest-hedge vocabulary -- so the LLM cannot inject a NEW entity or a
+    # quasi-factual relation word ("ingredients", "incorporates", "key", ...). Any out-of-set content word -> reject.
+    _HEDGE_LEXICON = frozenset((
+        "i", "s", "dont", "don", "t", "do", "not", "have", "has", "any", "settled", "solid", "real", "hard", "firm",
+        "facts", "fact", "knowledge", "info", "information", "anything", "much", "specific", "concrete", "sure",
+        "certain", "about", "on", "regarding", "but", "though", "however", "yet", "still", "it", "its", "that",
+        "this", "they", "them", "there", "here", "is", "isnt", "are", "am", "was", "be", "been", "being", "tends",
+        "tend", "to", "come", "comes", "came", "coming", "up", "out", "often", "frequently", "usually", "sometimes",
+        "commonly", "typically", "alongside", "with", "and", "or", "near", "around", "together", "associated",
+        "association", "associate", "associates", "linked", "link", "links", "connected", "related", "relate",
+        "relates", "appears", "appear", "appeared", "appearing", "shows", "show", "showed", "showing", "surfaces",
+        "surface", "surfaced", "occurs", "occur", "occurred", "the", "a", "an", "of", "in", "for", "as", "like",
+        "such", "things", "topics", "words", "word", "terms", "context", "contexts", "mind", "guess", "guessing",
+        "say", "saying", "said", "tell", "more", "really", "just", "only", "mostly", "when", "while", "those",
+        "these", "some", "few", "other", "others", "rather", "wouldnt", "couldnt", "cant", "can", "would", "could",
+        "my", "me", "ive", "im", "id", "well", "so", "by", "into", "though", "talk", "talking", "talked", "discuss",
+        "discussion", "discussions", "references", "reference", "thinking", "think", "thought",
+    ))
+
+    def _llm_grounded_hedge(self, topic):
+        """TIER 2 -- a known-but-factless topic: GATE the topic's top PPMI neighbours (the brain's real learned
+        associations) -> CONSTRAIN (the LLM renders ONE fluent, honest hedge NAMING those neighbours, framed as
+        association-not-fact) -> VERIFY (the moat): (1) no smuggled SVO that re-parses to a NON-stored fact, AND
+        (2) every CONTENT word in the hedge is the topic, a named neighbour, or an allowed hedge-lexicon word --
+        so the LLM cannot inject a new entity or a quasi-factual relation. Reject (fall back to the canned hedge)
+        on either breach. The associations are HEDGED, never asserted; the moat holds. Returns the hedge or None."""
+        neighbors = self._ppmi_neighbors(topic, k=3)
+        if not neighbors or self.fluency is None:
+            return None
+        nb = neighbors[:3]
+        nb_str = nb[0] if len(nb) == 1 else (f"{nb[0]} and {nb[1]}" if len(nb) == 2
+                                             else f"{', '.join(nb[:-1])}, and {nb[-1]}")
+        prompt = (f"You have NO factual knowledge about '{topic}'. The ONLY thing you know is that the word "
+                  f"'{topic}' tends to appear NEAR these words: {nb_str}. Write ONE short, honest sentence that "
+                  f"says you have no settled facts about {topic}, but it tends to come up alongside {nb_str}. Use "
+                  f"ONLY the words {topic}, {nb_str}, and ordinary connecting words -- do NOT add any other nouns "
+                  f"and do NOT state a fact about {topic}. Reply with only the sentence.")
+        try:
+            surface, _full, _gen_s = self.fluency.qwen._generate(prompt)
+            self.fluency.n_renders += 1
+            self.fluency.total_gen_seconds += float(_gen_s)
+            self.fluency.total_gen_tokens += max(1, len(str(surface).split()))
+        except Exception:
+            return None
+        surface = surface.strip()
+        if not surface:
+            return None
+        # VERIFY (1): the hedge must NOT smuggle an asserted fact. Re-parse it as an SVO; if it yields a clean
+        # 3-token SVO that is NOT a stored fact, the LLM asserted a non-grounded fact -> REJECT.
+        csvo = _extract_svo_from_prose(surface, self._agents_set, self._actions_set, self._patients_set,
+                                       self._inflect)
+        if csvo is not None:
+            parsed = self._agent.parse(csvo, voice="active")
+            rsvo = (parsed.get("agent"), parsed.get("action"), parsed.get("patient"))
+            if all(isinstance(x, str) for x in rsvo) and rsvo not in self._stored:
+                return None
+        # VERIFY (2) -- the moat constraint "name ONLY the gated neighbours, framed as association-not-fact". The
+        # hedge must (2a) contain an explicit ASSOCIATION / UNCERTAINTY frame token (so it reads "X comes up
+        # alongside Y", NOT "X is Y") AND (2b) every word must be the topic, a gated neighbour (allowing simple
+        # plural/inflection), or an allowed hedge-lexicon word. (2b) is a strict whitelist: it rejects BOTH a new
+        # entity AND a quasi-factual relation word ('incorporates'/'ingredients') the LLM might use to dress an
+        # ungated assertion -- even when the named nouns are the gated neighbours, the FRAMING must stay associative.
+        # A reject falls back to the canned honest hedge (still correct, just less fluent) -- a SAFE failure, never a
+        # leaked fact. This makes "name ONLY the gated neighbours, as an association" structural, not a polite ask.
+        frame_tokens = {"alongside", "near", "associated", "association", "linked", "connected", "related",
+                        "comes", "come", "tends", "tend", "often", "frequently", "usually", "commonly", "typically",
+                        "appears", "appear", "surfaces", "surface", "occurs", "guess", "guessing", "settled",
+                        "around", "together", "with", "found", "tendency", "context"}
+        words = re.findall(r"[a-z]+", surface.lower())
+        if not (frame_tokens & set(words)):
+            return None                        # no association/uncertainty frame -> reads as a fact -> reject
+        nb_lower = {n.lower() for n in nb}
+        allowed = self._HEDGE_LEXICON | {topic.lower()} | nb_lower | frame_tokens
+        for w in words:
+            if w in allowed:
+                continue
+            if any(w == n + "s" or w.rstrip("s") == n.rstrip("s") for n in nb_lower):
+                continue                       # a plural/inflected gated neighbour (tern->terns) is still gated
+            return None                        # an out-of-whitelist content word -> reject (canned hedge fallback)
+        return surface
 
     def _content_word(self, msg):
         """The first in-vocab content word in the message (for a bare-topic opinion fallback)."""
@@ -441,18 +674,45 @@ class FirstChatConsole:
 
     def _render(self, rec):
         """The paragraph (with F1 surface-morphology polish), or a graceful honest non-answer if the brain
-        assembled nothing."""
-        # STOPGAP (2026-06-26, pre-Path-B): an ALL-speculative turn -- no grounded/CERTAIN fact, only FLAGGED
-        # guesses -- currently renders co-occurrence-sampled SVO that reads as word-salad ("the world inducteds
-        # hip"): the proposer samples PPMI-adjacent words (POS-valid but meaningless) + the template stub inflects
-        # them crudely. Until the Path-B fluent faculty (On-bridge/Spiking Qwen + the GATE->CONSTRAIN->VERIFY loop)
-        # replaces the proposer+stub, SUPPRESS the all-speculative paragraph and abstain HONESTLY rather than emit
-        # gibberish. A grounded turn (>=1 CERTAIN/stored fact, possibly plus hedged adjacent facts) renders normally.
+        assembled nothing.
+
+        PATH B (when a fluency faculty is wired): each emitted CERTAIN (grounded, stored, recalled) proposition is
+        re-rendered FLUENTLY by the LLM (CONSTRAIN), VERIFIED by re-parsing the LLM's prose back to the gated fact,
+        and the paragraph re-assembled with the verified fluent sentences (a VERIFY reject keeps the template
+        surface -- still grounded + true).  The LLM NEVER renders an ungrounded/FLAGGED proposition or free-
+        generates: an all-speculative turn still ABSTAINS honestly (the moat).  --faculty stub leaves this path
+        untouched (the original paragraph)."""
         props = rec.get("emitted_propositions", [])
         n_certain = sum(1 for p in props if p.get("type") == "C")
         n_flagged = sum(1 for p in props if p.get("type") in ("N", "D"))
+        # An ALL-speculative turn (no grounded/CERTAIN fact, only FLAGGED guesses) ABSTAINS HONESTLY rather than
+        # emit co-occurrence word-salad.  The LLM is NEVER invoked to free-generate ungrounded content -- the moat.
+        # TIER 2 (Path B): a KNOWN topic (in the PPMI graph) with no stored fact -> a FLUENT GROUNDED HEDGE that
+        # NAMES the topic's real PPMI neighbours (hedged, never asserted; VERIFY strips any smuggled fact). A truly
+        # unknown word never reaches here (respond() handles it). Falls back to the canned honest hedge.
         if n_certain == 0 and n_flagged > 0:
+            topic = rec.get("topic")
+            if self.fluency is not None and topic in self.row:
+                hedge = self._llm_grounded_hedge(topic)
+                if hedge:
+                    return hedge
             return "I don't have grounded facts on that yet, so I'd rather not guess at it."
+
+        # PATH B: re-render the CERTAIN sentences fluently via the LLM (GATE already passed -> CONSTRAIN -> VERIFY).
+        if self.fluency is not None and n_certain > 0:
+            sentences = list(rec.get("glue", []))
+            for p in props:
+                if not p.get("surface"):
+                    continue
+                if p.get("type") == "C" and p.get("svo") is not None:
+                    fluent = self._llm_render_certain(p["svo"])      # None on VERIFY-reject
+                    sentences.append(fluent if fluent else p["surface"])
+                else:
+                    sentences.append(p["surface"])                   # flagged/phatic: stub surface, verbatim
+            para = " ".join(s.rstrip() for s in sentences if s).strip()
+            if para:
+                return _surface_morphology(para, self.verbs)
+
         para = rec.get("paragraph", "").strip()
         if para:
             return _surface_morphology(para, self.verbs)
@@ -674,6 +934,133 @@ def run_repl(brain):
                 print(f"   !! MOAT LEAK: {lk}")
 
 
+# ===========================================================================
+# PATH-B MOAT/VERIFY TEST -- the owner's exact pains + the load-bearing moat (needs --faculty llm).
+#   (1) world / music  -> ABSTAIN honestly (no grounded fact -> NO LLM guessing).
+#   (2) a GROUNDED topic (a stored agent) -> a FLUENT grounded sentence (the real stored fact).
+#   (3) 'what does <agent> <verb>' on a stored fact -> fluent + correct.
+#   (4) MOAT: the adversarial hallucination (the LLM steered to a WRONG patient) -> VERIFY must REJECT it
+#       (the false sentence never reaches the user); an untaught cue -> abstain.
+# ===========================================================================
+def run_moat_test(brain):
+    console = FirstChatConsole(brain)
+    fac = brain.get("fluency_faculty")
+    agent = brain["agent"]
+    stored = {(f[0], f[1], f[2]) for f in brain["facts"]}
+    agents_set, actions_set, patients_set, inflect = brain["vocab_sets"]
+    print("=" * 92)
+    print("  PATH-B MOAT / VERIFY TEST (the LLM provides WORDING ONLY; the brain supplies KNOWLEDGE + the moat)")
+    print("=" * 92)
+    results = {"abstain": [], "grounded_fluent": None, "what_does": None, "grounded_hedge": None,
+               "hallucination_rejected": None, "untaught_abstain": None, "leaks": 0}
+
+    # (1) TIER 1 -- world / music -> a truly-unknown word (not in vocab) -> plain honest "I don't know it"
+    #     (or, if in the graph but factless, a fluent grounded hedge -- TIER 2, handled by _render).
+    for topic in ("world", "music"):
+        msg = f"what do you think about the {topic}?" if topic == "world" else f"what do you think about {topic}?"
+        para, rec = console.respond(msg)
+        ok, leaks = audit_moat(brain, rec)
+        results["leaks"] += 0 if ok else len(leaks)
+        n_certain = rec.get("n_certain", 0)
+        abstained = (n_certain == 0)
+        results["abstain"].append({"msg": msg, "reply": para, "abstained": abstained, "moat_ok": ok})
+        print(f"\nYOU: {msg}\nBRAIN: {para}\n   [abstained={abstained} certain={n_certain} moat={'OK' if ok else 'LEAK'}]")
+
+    # (1b) TIER 2 -- a KNOWN-but-FACTLESS topic (in the PPMI graph, no stored fact) -> a FLUENT GROUNDED HEDGE that
+    #      NAMES the topic's REAL PPMI neighbours (hedged, never asserted; VERIFY strips any smuggled fact).
+    stored_agents_set = {f[0] for f in brain["facts"]}
+    factless = next((w for w in brain["grounded_topics"] if w in console.row and w not in stored_agents_set), None)
+    if factless is not None:
+        nb = console._ppmi_neighbors(factless, k=3)
+        msg = f"what do you think about {factless}?"
+        para, rec = console.respond(msg)
+        ok, leaks = audit_moat(brain, rec)
+        results["leaks"] += 0 if ok else len(leaks)
+        names_a_neighbor = any(n in para.lower() for n in nb)
+        results["grounded_hedge"] = {"msg": msg, "topic": factless, "ppmi_neighbors": nb, "reply": para,
+                                     "names_a_neighbor": names_a_neighbor, "n_certain": rec.get("n_certain", 0),
+                                     "moat_ok": ok}
+        print(f"\nYOU: {msg}  (known-but-factless; PPMI neighbours={nb})\nBRAIN: {para}\n"
+              f"   [certain={rec.get('n_certain',0)} names-a-neighbor={names_a_neighbor} moat={'OK' if ok else 'LEAK'}]")
+
+    # pick a stored, RECALLED fact whose agent leads a grounded answer (a real first-chat surfaces what it knows).
+    kf = [f for f in (brain["recalled_facts"] or brain["facts"])]
+    f0 = kf[0]
+    a0, v0, p0 = f0
+
+    # (2) a GROUNDED topic (the fact's agent) -> a FLUENT grounded sentence rendering the real stored fact
+    msg = f"what do you think about {a0}?"
+    para, rec = console.respond(msg)
+    ok, leaks = audit_moat(brain, rec)
+    results["leaks"] += 0 if ok else len(leaks)
+    results["grounded_fluent"] = {"msg": msg, "reply": para, "moat_ok": ok, "agent": a0,
+                                  "n_certain": rec.get("n_certain", 0)}
+    print(f"\nYOU: {msg}\nBRAIN: {para}\n   [certain={rec.get('n_certain',0)} flagged={rec.get('n_flagged',0)} "
+          f"moat={'OK' if ok else 'LEAK'}]")
+
+    # (3) 'what does <agent> <verb>' on the stored fact -> fluent + correct
+    msg = f"what does {a0} {v0}?"
+    para, rec = console.respond(msg)
+    ok, leaks = audit_moat(brain, rec)
+    results["leaks"] += 0 if ok else len(leaks)
+    results["what_does"] = {"msg": msg, "reply": para, "moat_ok": ok, "fact": [a0, v0, p0],
+                            "mentions_patient": p0 in para.lower()}
+    print(f"\nYOU: {msg}\nBRAIN: {para}\n   [fact=({a0},{v0},{p0}) patient-in-reply={p0 in para.lower()} "
+          f"moat={'OK' if ok else 'LEAK'}]")
+
+    # (4) the ADVERSARIAL hallucination: steer the LLM to a WRONG patient -> VERIFY must REJECT (false never emitted)
+    if fac is not None:
+        wrong_p = next((x for x in sorted(patients_set) if x != p0), (p0 or "thing") + "_x")
+        surface, full, gen_s = fac.qwen.render_svo_adversarial(a0, v0, wrong_p)
+        # the GATE retrieved the TRUE fact (a0,v0,p0); the LLM was steered to (a0,v0,wrong_p). VERIFY re-parses the
+        # LLM's actual prose -> must NOT match the gated fact -> REJECT (the console never emits a steered-wrong fact).
+        csvo = _extract_svo_from_prose(surface, agents_set, actions_set, patients_set, inflect)
+        rsvo = None
+        if csvo is not None:
+            parsed = agent.parse(csvo, voice="active")
+            rsvo = [parsed.get("agent"), parsed.get("action"), parsed.get("patient")]
+        verified_against_true = (rsvo == [a0, v0, p0])
+        rejected = not verified_against_true        # the drifted assertion fails VERIFY -> rejected
+        results["hallucination_rejected"] = {"gated_fact": [a0, v0, p0], "steered_to_wrong_patient": wrong_p,
+                                              "llm_surface": surface, "reparsed_svo": rsvo, "rejected": rejected}
+        print(f"\n[ADVERSARIAL] gated TRUE fact=({a0},{v0},{p0}); LLM steered to wrong patient '{wrong_p}'")
+        print(f"   LLM emitted: {surface!r}")
+        print(f"   VERIFY re-parse -> {rsvo}  ==>  {'REJECTED (moat held; false sentence withheld)' if rejected else 'LEAKED!! (false reached user)'}")
+        if not rejected:
+            results["leaks"] += 1
+
+    # untaught cue: a (agent, action) NOT stored -> the GATE abstains -> the LLM is never invoked
+    untaught_cue = None
+    all_agents = sorted({f[0] for f in brain["facts"]})
+    all_actions = sorted({f[1] for f in brain["facts"]})
+    for ag in all_agents:
+        for ac in all_actions:
+            if agent.what_does(ag, ac) is None:
+                untaught_cue = (ag, ac)
+                break
+        if untaught_cue:
+            break
+    if untaught_cue:
+        msg = f"what does {untaught_cue[0]} {untaught_cue[1]}?"
+        para, rec = console.respond(msg)
+        ok, leaks = audit_moat(brain, rec)
+        results["leaks"] += 0 if ok else len(leaks)
+        abstained = (rec.get("n_certain", 0) == 0)
+        results["untaught_abstain"] = {"msg": msg, "reply": para, "abstained": abstained, "moat_ok": ok}
+        print(f"\nYOU: {msg}  (untaught cue)\nBRAIN: {para}\n   [abstained={abstained} moat={'OK' if ok else 'LEAK'}]")
+
+    tps = fac.tok_per_s() if fac is not None else None
+    print("\n" + "=" * 92)
+    print(f"  MOAT-TEST leaks: {results['leaks']}  ({'CLEAN' if results['leaks'] == 0 else 'HARD FAIL'})")
+    if fac is not None:
+        print(f"  LLM faculty: {fac.qwen.device}, load {fac.load_seconds}s"
+              + (f", VRAM {fac.vram_mb} MB" if fac.vram_mb is not None else "")
+              + (f", ~{tps} tok/s, {fac.n_renders} renders, mean {round(fac.total_gen_seconds/max(1,fac.n_renders),2)}s/render" ))
+    print("=" * 92)
+    results["tok_per_s"] = tps
+    return results
+
+
 def main():
     ap = argparse.ArgumentParser(description="First-chat console for the 1,454-concept brain (DiscursiveTurn).")
     ap.add_argument("--brain", default=DEFAULT_BRAIN, help="path to the trained brain .npz")
@@ -691,8 +1078,17 @@ def main():
                     help="shard policy: 'domain' (g20-category bands) or 'partition' (disjoint random split)")
     ap.add_argument("--n-topics", type=int, default=12, help="grounded topics for the talkativeness arena")
     ap.add_argument("--max-topic-scan", type=int, default=40, help="cap on topics scanned for grounding (build cost)")
+    ap.add_argument("--faculty", default="stub", choices=("stub", "llm"),
+                    help="fluency renderer for GROUNDED facts: 'stub' (template, default, byte-unchanged + numpy-CPU) "
+                         "or 'llm' (Path B: off-bridge spiking Qwen2.5-0.5B renders the GATED fact fluently, then "
+                         "VERIFY re-parses its prose -- the LLM provides WORDING ONLY, never knowledge; needs torch)")
+    ap.add_argument("--faculty-T", type=int, default=16, help="rate-code pool budget for the LLM faculty (16=GO,1.08x ANN)")
+    ap.add_argument("--faculty-max-new-tokens", type=int, default=24, help="LLM render length cap (keep small)")
     ap.add_argument("--demo", action="store_true", help="run the fixed sample conversation + print the transcript")
     ap.add_argument("--rubric", action="store_true", help="run the 10-prompt quality rubric (>=8/10, moat-safe)")
+    ap.add_argument("--moat-test", action="store_true",
+                    help="Path-B moat/VERIFY test: world/music abstain + a grounded fluent answer + the adversarial "
+                         "hallucination rejected + an untaught cue abstains (use with --faculty llm)")
     a = ap.parse_args()
 
     import logging
@@ -704,16 +1100,23 @@ def main():
     warnings.filterwarnings("ignore", message="overflow encountered in exp")
     np.seterr(over="ignore")
 
+    # PATH B: construct the fluent LLM faculty when requested (default stub = numpy-CPU, byte-unchanged).
+    fluency = None
+    if a.faculty == "llm":
+        fluency = LLMFluencyFaculty(T=a.faculty_T, max_new_tokens=a.faculty_max_new_tokens, seed=a.seed)
+
     brain = build_brain_on_codes(a.brain, seed=a.seed, n_facts=a.n_facts, facts_json=a.facts_json,
                                  n_attempts=a.n_attempts, cand_cap=(a.cand_cap or None),
-                                 shards=a.shards, shard_by=a.shard_by,
+                                 shards=a.shards, shard_by=a.shard_by, fluency_faculty=fluency,
                                  n_topics=a.n_topics, max_topic_scan=a.max_topic_scan)
 
     if a.demo:
         run_demo(brain)
     if a.rubric:
         run_rubric(brain)
-    if not a.demo and not a.rubric:
+    if a.moat_test:
+        run_moat_test(brain)
+    if not a.demo and not a.rubric and not a.moat_test:
         run_repl(brain)
     return 0
 
