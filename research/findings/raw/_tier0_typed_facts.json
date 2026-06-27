@@ -1,0 +1,178 @@
+[
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 6,
+  "attest": "One day, a little boy named Tim went to the store with his mom.",
+  "prep": "with",
+  "GOAL": "mom"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 5,
+  "attest": "One day, a boy named Tim went to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 4,
+  "attest": "One day, a little girl named Lily went to the park.",
+  "prep": "to",
+  "GOAL": "park"
+ },
+ {
+  "agent": "bird",
+  "action": "live",
+  "count": 3,
+  "attest": "A little bird lived in the tree.",
+  "prep": "in",
+  "patient": "tree"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a little girl named Amy went to the store with her mom.",
+  "prep": "with",
+  "GOAL": "mom"
+ },
+ {
+  "agent": "boy",
+  "action": "go",
+  "count": 3,
+  "attest": "One day, a thoughtful boy named Tim went for a walk.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "bird",
+  "action": "fly",
+  "count": 3,
+  "attest": "One day, a blue bird named Billy was flying in the sky.",
+  "prep": "in",
+  "patient": "sky"
+ },
+ {
+  "agent": "bird",
+  "action": "live",
+  "count": 2,
+  "attest": "Once upon a time, a little bird lived in a small tree.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "boy",
+  "action": "find",
+  "count": 2,
+  "attest": "One day, a little boy found the box.",
+  "prep": null,
+  "patient": "box"
+ },
+ {
+  "agent": "girl",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a little girl named Amy went for a walk.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "cat",
+  "action": "go",
+  "count": 2,
+  "attest": "One day, a popular cat named Tom went for a walk.",
+  "prep": "for",
+  "GOAL": "walk"
+ },
+ {
+  "agent": "mom",
+  "action": "make",
+  "count": 2,
+  "attest": "She wore her favorite dress and her mom made a big cake.",
+  "prep": null,
+  "patient": "cake"
+ },
+ {
+  "agent": "mom",
+  "action": "put",
+  "count": 2,
+  "attest": "Lily's mom put the cake on the table and Lily saw that it was not the cake she wanted.",
+  "prep": null,
+  "patient": "cake"
+ },
+ {
+  "agent": "mom",
+  "action": "put",
+  "count": 2,
+  "attest": "Lily's mom put the cake on the table and Lily saw that it was not the cake she wanted.",
+  "prep": "on",
+  "LOCATION": "table"
+ },
+ {
+  "agent": "mom",
+  "action": "come",
+  "count": 2,
+  "attest": "Just then, Tim's mom came into the room.",
+  "prep": "into",
+  "GOAL": "room"
+ },
+ {
+  "agent": "bird",
+  "action": "sing",
+  "count": 2,
+  "attest": "The bird would sing sweet songs for her.",
+  "prep": null,
+  "patient": "song"
+ },
+ {
+  "agent": "cat",
+  "action": "meet",
+  "count": 2,
+  "attest": "One day, the purple cat met a foolish dog.",
+  "prep": null,
+  "patient": "dog"
+ },
+ {
+  "agent": "cat",
+  "action": "become",
+  "count": 2,
+  "attest": "The purple cat and the foolish dog became friends.",
+  "prep": null,
+  "patient": "friend"
+ },
+ {
+  "agent": "squirrel",
+  "action": "nodded",
+  "count": 2,
+  "attest": "The squirrel nodded its head and said, \"Guess how high I can jump?\"",
+  "prep": null,
+  "patient": "head"
+ },
+ {
+  "agent": "cat",
+  "action": "play",
+  "count": 2,
+  "attest": "One day, a cat and a dog were playing in the park.",
+  "prep": "in",
+  "patient": "park"
+ },
+ {
+  "agent": "girl",
+  "action": "find",
+  "count": 2,
+  "attest": "Once upon a time, a little girl named Lily found a small, cheap bulb in her garden.",
+  "prep": "upon",
+  "patient": "time"
+ },
+ {
+  "agent": "butterfly",
+  "action": "see",
+  "count": 2,
+  "attest": "One day, the butterfly saw a big number on a tree.",
+  "prep": null,
+  "patient": "number"
+ }
+]

@@ -1,0 +1,36 @@
+{
+  "all_ok": true,
+  "results": [
+    {
+      "name": "real_brain",
+      "ok": true,
+      "n_facts": 4,
+      "n_recall_ok": 4,
+      "n_reparse_ok": 4,
+      "n_render_fluent": 4,
+      "false_accepts": 0,
+      "agrammatism_ok": true,
+      "boy_park_render": "the boy goes to the park"
+    },
+    {
+      "name": "fixed_wm",
+      "ok": true,
+      "neuron_counts": {
+        "16": 384,
+        "320": 384,
+        "3000": 384
+      },
+      "balloon_counts": {
+        "16": 960,
+        "320": 19200,
+        "3000": 180000
+      }
+    },
+    {
+      "name": "frame_coverage",
+      "ok": true,
+      "n_ok": 4,
+      "n_total": 4
+    }
+  ]
+}

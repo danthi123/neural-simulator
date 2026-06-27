@@ -1,0 +1,541 @@
+{
+  "go": true,
+  "n_go": 6,
+  "n_seeds": 6,
+  "all_recall": true,
+  "all_render": true,
+  "total_false_accepts": 0,
+  "all_abstain": true,
+  "all_reparse": true,
+  "all_agrammatism": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "recall": {
+        "n_ok": 7,
+        "n_total": 7,
+        "detail": [
+          [
+            "go.GOAL",
+            true,
+            "park"
+          ],
+          [
+            "go.agent",
+            true,
+            "boy"
+          ],
+          [
+            "give.THEME",
+            true,
+            "ball"
+          ],
+          [
+            "give.RECIPIENT",
+            true,
+            "dog"
+          ],
+          [
+            "put.THEME",
+            true,
+            "bone"
+          ],
+          [
+            "put.LOCATION",
+            true,
+            "table"
+          ],
+          [
+            "chase.patient",
+            true,
+            "river"
+          ]
+        ]
+      },
+      "render_boy_go_park": "the boy goes to the park",
+      "render_others": {
+        "give": "the girl gives the ball to the dog",
+        "put": "the dog puts the bone on the table",
+        "chase": "the cat chases the river"
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 3,
+        "n_abstain": 3,
+        "detail": [
+          [
+            "stored go.GOAL",
+            "park",
+            "park"
+          ],
+          [
+            "unstored agent=boy,action=eat",
+            "None",
+            "None"
+          ],
+          [
+            "unstored agent=cat,action=go",
+            "None",
+            "None"
+          ],
+          [
+            "unstored give wrong agent",
+            "None",
+            "None"
+          ]
+        ]
+      },
+      "verify_reparse": true,
+      "render_ablated": "boy go park",
+      "agrammatism": {
+        "telegraphic": "boy go park",
+        "differs_from_full": true,
+        "no_function_words": true,
+        "no_tense": true,
+        "ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "recall": {
+        "n_ok": 7,
+        "n_total": 7,
+        "detail": [
+          [
+            "go.GOAL",
+            true,
+            "park"
+          ],
+          [
+            "go.agent",
+            true,
+            "boy"
+          ],
+          [
+            "give.THEME",
+            true,
+            "ball"
+          ],
+          [
+            "give.RECIPIENT",
+            true,
+            "dog"
+          ],
+          [
+            "put.THEME",
+            true,
+            "bone"
+          ],
+          [
+            "put.LOCATION",
+            true,
+            "table"
+          ],
+          [
+            "chase.patient",
+            true,
+            "river"
+          ]
+        ]
+      },
+      "render_boy_go_park": "the boy goes to the park",
+      "render_others": {
+        "give": "the girl gives the ball to the dog",
+        "put": "the dog puts the bone on the table",
+        "chase": "the cat chases the river"
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 3,
+        "n_abstain": 3,
+        "detail": [
+          [
+            "stored go.GOAL",
+            "park",
+            "park"
+          ],
+          [
+            "unstored agent=boy,action=eat",
+            "None",
+            "None"
+          ],
+          [
+            "unstored agent=cat,action=go",
+            "None",
+            "None"
+          ],
+          [
+            "unstored give wrong agent",
+            "None",
+            "None"
+          ]
+        ]
+      },
+      "verify_reparse": true,
+      "render_ablated": "boy go park",
+      "agrammatism": {
+        "telegraphic": "boy go park",
+        "differs_from_full": true,
+        "no_function_words": true,
+        "no_tense": true,
+        "ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 44,
+      "recall": {
+        "n_ok": 7,
+        "n_total": 7,
+        "detail": [
+          [
+            "go.GOAL",
+            true,
+            "park"
+          ],
+          [
+            "go.agent",
+            true,
+            "boy"
+          ],
+          [
+            "give.THEME",
+            true,
+            "ball"
+          ],
+          [
+            "give.RECIPIENT",
+            true,
+            "dog"
+          ],
+          [
+            "put.THEME",
+            true,
+            "bone"
+          ],
+          [
+            "put.LOCATION",
+            true,
+            "table"
+          ],
+          [
+            "chase.patient",
+            true,
+            "river"
+          ]
+        ]
+      },
+      "render_boy_go_park": "the boy goes to the park",
+      "render_others": {
+        "give": "the girl gives the ball to the dog",
+        "put": "the dog puts the bone on the table",
+        "chase": "the cat chases the river"
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 3,
+        "n_abstain": 3,
+        "detail": [
+          [
+            "stored go.GOAL",
+            "park",
+            "park"
+          ],
+          [
+            "unstored agent=boy,action=eat",
+            "None",
+            "None"
+          ],
+          [
+            "unstored agent=cat,action=go",
+            "None",
+            "None"
+          ],
+          [
+            "unstored give wrong agent",
+            "None",
+            "None"
+          ]
+        ]
+      },
+      "verify_reparse": true,
+      "render_ablated": "boy go park",
+      "agrammatism": {
+        "telegraphic": "boy go park",
+        "differs_from_full": true,
+        "no_function_words": true,
+        "no_tense": true,
+        "ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 45,
+      "recall": {
+        "n_ok": 7,
+        "n_total": 7,
+        "detail": [
+          [
+            "go.GOAL",
+            true,
+            "park"
+          ],
+          [
+            "go.agent",
+            true,
+            "boy"
+          ],
+          [
+            "give.THEME",
+            true,
+            "ball"
+          ],
+          [
+            "give.RECIPIENT",
+            true,
+            "dog"
+          ],
+          [
+            "put.THEME",
+            true,
+            "bone"
+          ],
+          [
+            "put.LOCATION",
+            true,
+            "table"
+          ],
+          [
+            "chase.patient",
+            true,
+            "river"
+          ]
+        ]
+      },
+      "render_boy_go_park": "the boy goes to the park",
+      "render_others": {
+        "give": "the girl gives the ball to the dog",
+        "put": "the dog puts the bone on the table",
+        "chase": "the cat chases the river"
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 3,
+        "n_abstain": 3,
+        "detail": [
+          [
+            "stored go.GOAL",
+            "park",
+            "park"
+          ],
+          [
+            "unstored agent=boy,action=eat",
+            "None",
+            "None"
+          ],
+          [
+            "unstored agent=cat,action=go",
+            "None",
+            "None"
+          ],
+          [
+            "unstored give wrong agent",
+            "None",
+            "None"
+          ]
+        ]
+      },
+      "verify_reparse": true,
+      "render_ablated": "boy go park",
+      "agrammatism": {
+        "telegraphic": "boy go park",
+        "differs_from_full": true,
+        "no_function_words": true,
+        "no_tense": true,
+        "ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 46,
+      "recall": {
+        "n_ok": 7,
+        "n_total": 7,
+        "detail": [
+          [
+            "go.GOAL",
+            true,
+            "park"
+          ],
+          [
+            "go.agent",
+            true,
+            "boy"
+          ],
+          [
+            "give.THEME",
+            true,
+            "ball"
+          ],
+          [
+            "give.RECIPIENT",
+            true,
+            "dog"
+          ],
+          [
+            "put.THEME",
+            true,
+            "bone"
+          ],
+          [
+            "put.LOCATION",
+            true,
+            "table"
+          ],
+          [
+            "chase.patient",
+            true,
+            "river"
+          ]
+        ]
+      },
+      "render_boy_go_park": "the boy goes to the park",
+      "render_others": {
+        "give": "the girl gives the ball to the dog",
+        "put": "the dog puts the bone on the table",
+        "chase": "the cat chases the river"
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 3,
+        "n_abstain": 3,
+        "detail": [
+          [
+            "stored go.GOAL",
+            "park",
+            "park"
+          ],
+          [
+            "unstored agent=boy,action=eat",
+            "None",
+            "None"
+          ],
+          [
+            "unstored agent=cat,action=go",
+            "None",
+            "None"
+          ],
+          [
+            "unstored give wrong agent",
+            "None",
+            "None"
+          ]
+        ]
+      },
+      "verify_reparse": true,
+      "render_ablated": "boy go park",
+      "agrammatism": {
+        "telegraphic": "boy go park",
+        "differs_from_full": true,
+        "no_function_words": true,
+        "no_tense": true,
+        "ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 47,
+      "recall": {
+        "n_ok": 7,
+        "n_total": 7,
+        "detail": [
+          [
+            "go.GOAL",
+            true,
+            "park"
+          ],
+          [
+            "go.agent",
+            true,
+            "boy"
+          ],
+          [
+            "give.THEME",
+            true,
+            "ball"
+          ],
+          [
+            "give.RECIPIENT",
+            true,
+            "dog"
+          ],
+          [
+            "put.THEME",
+            true,
+            "bone"
+          ],
+          [
+            "put.LOCATION",
+            true,
+            "table"
+          ],
+          [
+            "chase.patient",
+            true,
+            "river"
+          ]
+        ]
+      },
+      "render_boy_go_park": "the boy goes to the park",
+      "render_others": {
+        "give": "the girl gives the ball to the dog",
+        "put": "the dog puts the bone on the table",
+        "chase": "the cat chases the river"
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 3,
+        "n_abstain": 3,
+        "detail": [
+          [
+            "stored go.GOAL",
+            "park",
+            "park"
+          ],
+          [
+            "unstored agent=boy,action=eat",
+            "None",
+            "None"
+          ],
+          [
+            "unstored agent=cat,action=go",
+            "None",
+            "None"
+          ],
+          [
+            "unstored give wrong agent",
+            "None",
+            "None"
+          ]
+        ]
+      },
+      "verify_reparse": true,
+      "render_ablated": "boy go park",
+      "agrammatism": {
+        "telegraphic": "boy go park",
+        "differs_from_full": true,
+        "no_function_words": true,
+        "no_tense": true,
+        "ok": true
+      },
+      "seed_go": true
+    }
+  ]
+}

@@ -38,8 +38,13 @@ def vform(tok, vocab):
     return None
 
 
-def extract(corpus_path, vocab, max_sentences, nlp):
+def extract(corpus_path, vocab, max_sentences, nlp, keep_prep=False):
+    """Extract (subject, verb, object) facts. When keep_prep=True, ALSO retain the PREPOSITION that introduced an
+    oblique object (Tier 0.1: "go to the park" keeps 'to' -> a typed GOAL role downstream, instead of collapsing
+    the oblique into a bare patient and discarding the preposition). The preposition is recorded in a parallel
+    `preps` dict keyed by the (a, vl, p) triple; the default (keep_prep=False) output is byte-identical."""
     counts, attest = Counter(), {}
+    preps = {}     # (a, vl, p) -> the preposition string that introduced p (None for a direct object)
     # the corpus is one blob delimited by <|endoftext|> (NOT newlines); split into stories (each short,
     # well under spaCy's 1M-char parser limit). Skip any pathological >50k-char chunk defensively.
     with open(corpus_path, encoding="utf-8") as fh:
@@ -68,19 +73,22 @@ def extract(corpus_path, vocab, max_sentences, nlp):
                 if a is None or vl is None:
                     continue
                 for c in v.children:
-                    p = None
+                    p, prep = None, None
                     if c.dep_ in OBJ_DEPS:
                         p = vform(c, vocab)
                     elif c.dep_ == "prep":
                         po = next((x for x in c.children if x.dep_ == "pobj"), None)
                         if po is not None:
                             p = vform(po, vocab)
+                            prep = c.text.lower()       # Tier 0.1: KEEP the preposition (was discarded)
                     if p and p != a:
                         counts[(a, vl, p)] += 1
                         attest.setdefault((a, vl, p), sent.text.strip()[:90])
+                        if keep_prep:
+                            preps.setdefault((a, vl, p), prep)
         if n_sent >= max_sentences:
             break
-    return counts, attest, n_sent
+    return (counts, attest, preps, n_sent) if keep_prep else (counts, attest, n_sent)
 
 
 def main():
@@ -91,6 +99,9 @@ def main():
     ap.add_argument("--top-n", type=int, default=40)
     ap.add_argument("--min-count", type=int, default=2)
     ap.add_argument("--out", default=None)
+    ap.add_argument("--typed-roles", action="store_true",
+                    help="Tier 0.1: keep the preposition + emit a typed oblique role (GOAL/RECIPIENT/LOCATION/...) "
+                         "per the verb-frame lexicon, instead of collapsing obliques into a bare patient.")
     a = ap.parse_args()
 
     vocab = load_vocab(a.npz)
@@ -98,6 +109,38 @@ def main():
     nlp = spacy.load("en_core_web_sm", disable=["ner", "lemmatizer"]) if False else spacy.load("en_core_web_sm")
     print(f"[svo] spaCy {spacy.__version__} loaded; parsing up to {a.max_sentences} sentences of {a.corpus} ...",
           flush=True)
+
+    if a.typed_roles:
+        from research.runners.argstructure_composer import VERB_PREP_ROLE, FRAME_ROLES
+        counts, attest, preps, n_sent = extract(a.corpus, vocab, a.max_sentences, nlp, keep_prep=True)
+        kept = [(t, c) for t, c in counts.most_common() if c >= a.min_count]
+        print(f"[svo] parsed {n_sent} sentences -> {len(counts)} distinct triples, {len(kept)} with "
+              f"count>={a.min_count}; assigning typed oblique roles by (verb, prep)", flush=True)
+        recs = []
+        for (aa, vv, pp), c in kept:
+            prep = preps.get((aa, vv, pp))
+            # which typed role does this object fill? A prep maps via VERB_PREP_ROLE; a direct object (prep=None) is
+            # the bare patient (default transitive). An unknown (verb,prep) with a single oblique role -> that role.
+            role = "patient"
+            if prep is not None:
+                role = VERB_PREP_ROLE.get((vv, prep))
+                if role is None:
+                    obliques = [r for r in FRAME_ROLES.get(vv, []) if r not in ("agent", "action", "patient")]
+                    role = obliques[0] if len(obliques) == 1 else None
+            rec = {"agent": aa, "action": vv, "count": c, "attest": attest[(aa, vv, pp)], "prep": prep}
+            rec[role if role else "patient"] = pp
+            recs.append(rec)
+        print(f"[svo] TOP {a.top_n} typed-role corpus facts:", flush=True)
+        for r in recs[:a.top_n]:
+            obl = {k: v for k, v in r.items() if k not in ("agent", "action", "count", "attest", "prep")}
+            print(f"    {r['count']:4d}x  ({r['agent']}, {r['action']}, {obl})  prep={r['prep']}  "
+                  f"e.g. \"{r['attest']}\"", flush=True)
+        if a.out:
+            with open(a.out, "w", encoding="utf-8") as fh:
+                json.dump(recs, fh, indent=1)
+            print(f"[svo] wrote {len(recs)} typed-role facts -> {a.out}", flush=True)
+        return 0
+
     counts, attest, n_sent = extract(a.corpus, vocab, a.max_sentences, nlp)
     kept = [(t, c) for t, c in counts.most_common() if c >= a.min_count]
     print(f"[svo] parsed {n_sent} sentences -> {len(counts)} distinct in-vocab triples, "
