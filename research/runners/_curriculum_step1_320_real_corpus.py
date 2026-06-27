@@ -291,13 +291,24 @@ def derive_curriculum_from_corpus(corpus_path, n_concepts, verbose=True, vocab_f
         # g20 home where it exists (keeps the sharding reference comparable); else a synthetic curated_<cat> label.
         def _cat_for(w):
             return word2cat.get(w) or ("curated_" + curated_cat_of[w])
+    elif vocab_filter == "pos":
+        # POS-DRIVEN admission (taxonomy expansion, 2026-06-26): admit the corpus's NOUN+VERB content words
+        # from the precomputed POS-map, BEYOND the g20 ~2012 cap. cat = the g20 home if any (keeps the fine
+        # gen/proposer category), else a coarse POS category -- "pos_verbs" / "pos_nouns", names the console's
+        # noun/verb split recognizes (verb_cats = endswith("_verbs"); nouns = not _verbs/_adj). Flat adjectives
+        # are excluded (NOUN+VERB only, like the "content" filter); the "s" junk is dropped by len>1 below.
+        import json as _json
+        _posmap = _json.load(open("research/findings/raw/_corpus_pos_map.json", encoding="utf-8"))
+        candidates = [w for w, d in _posmap.items() if d.get("pos") in ("NOUN", "VERB")]
+        def _cat_for(w):
+            return word2cat.get(w) or ("pos_verbs" if _posmap[w]["pos"] == "VERB" else "pos_nouns")
     else:
         # frequency-rank over the g20 taxonomy members; "content" additionally requires a coherent (content) home.
         candidates = list(word2cat)
         def _cat_for(w):
             return word2cat[w]
 
-    pool = [(w, gfreq[w]) for w in candidates if w not in STOPLIST and gfreq.get(w, 0) > 0]
+    pool = [(w, gfreq[w]) for w in candidates if w not in STOPLIST and gfreq.get(w, 0) > 0 and len(w) > 1]
     if vocab_filter == "content":
         pool = [(w, f) for (w, f) in pool if _is_content_word(w, word2cat)]
     pool.sort(key=lambda x: (-x[1], x[0]))   # freq desc, name asc for a deterministic tie-break
@@ -819,7 +830,7 @@ def main():
     p.add_argument("--n-facts", type=int, default=24, help="SVO facts to store for the recall/moat bars")
     p.add_argument("--recall-bar", type=float, default=0.95)
     p.add_argument("--gen-bar", type=float, default=0.80)
-    p.add_argument("--vocab-filter", choices=["content", "all", "curated"], default="content",
+    p.add_argument("--vocab-filter", choices=["content", "all", "curated", "pos"], default="content",
                    help="WHICH words become the TARGET concepts (the 2026-06-25 fix per "
                         "_curriculum_gen_miss_REAL_scoping.md option #1). 'content' (DEFAULT = the FIX): "
                         "frequency-rank but keep ONLY co-occurrence-COHERENT CONTENT words (entities + verbs); "
