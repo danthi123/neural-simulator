@@ -1,0 +1,1081 @@
+{
+  "go": true,
+  "n_go": 6,
+  "n_seeds": 6,
+  "all_wh": true,
+  "all_render": true,
+  "total_false_accepts": 0,
+  "all_abstain": true,
+  "all_reparse": true,
+  "all_permuted_mapping": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "wh": {
+        "n_ok": 7,
+        "n_total": 7,
+        "detail": [
+          [
+            "where does the boy go?",
+            true,
+            "GOAL",
+            "park",
+            "GOAL",
+            "park"
+          ],
+          [
+            "what does the girl give?",
+            true,
+            "THEME",
+            "ball",
+            "THEME",
+            "ball"
+          ],
+          [
+            "who does the girl give to?",
+            true,
+            "RECIPIENT",
+            "dog",
+            "RECIPIENT",
+            "dog"
+          ],
+          [
+            "where does the dog put?",
+            true,
+            "LOCATION",
+            "table",
+            "LOCATION",
+            "table"
+          ],
+          [
+            "what does the dog put?",
+            true,
+            "THEME",
+            "bone",
+            "THEME",
+            "bone"
+          ],
+          [
+            "what does the cat chase?",
+            true,
+            "patient",
+            "river",
+            "patient",
+            "river"
+          ],
+          [
+            "who chase river?",
+            true,
+            "agent",
+            "cat",
+            "agent",
+            "cat"
+          ]
+        ]
+      },
+      "render_where_boy_go": {
+        "full": "the boy goes to the park",
+        "bare": "to the park",
+        "filler": "park",
+        "role": "GOAL"
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 6,
+        "n_abstain": 6,
+        "detail": [
+          [
+            "where does the boy go?",
+            "park",
+            "park",
+            true
+          ],
+          [
+            "where does the boy give?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "where does the cat go?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "what does the boy give?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "who does the dog give to?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "when does the boy go?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "where does the cat chase?",
+            "None",
+            "None",
+            true
+          ]
+        ]
+      },
+      "verify_reparse": true,
+      "permuted_mapping": {
+        "matches_true": 0,
+        "ok": true,
+        "detail": [
+          [
+            "where does the boy go?",
+            "park",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "what does the girl give?",
+            "ball",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "who does the girl give to?",
+            "dog",
+            "ball",
+            "THEME",
+            false
+          ],
+          [
+            "where does the dog put?",
+            "table",
+            "bone",
+            "THEME",
+            false
+          ],
+          [
+            "what does the dog put?",
+            "bone",
+            "table",
+            "LOCATION",
+            false
+          ],
+          [
+            "what does the cat chase?",
+            "river",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "who chase river?",
+            "cat",
+            "None",
+            "None",
+            false
+          ]
+        ]
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "wh": {
+        "n_ok": 7,
+        "n_total": 7,
+        "detail": [
+          [
+            "where does the boy go?",
+            true,
+            "GOAL",
+            "park",
+            "GOAL",
+            "park"
+          ],
+          [
+            "what does the girl give?",
+            true,
+            "THEME",
+            "ball",
+            "THEME",
+            "ball"
+          ],
+          [
+            "who does the girl give to?",
+            true,
+            "RECIPIENT",
+            "dog",
+            "RECIPIENT",
+            "dog"
+          ],
+          [
+            "where does the dog put?",
+            true,
+            "LOCATION",
+            "table",
+            "LOCATION",
+            "table"
+          ],
+          [
+            "what does the dog put?",
+            true,
+            "THEME",
+            "bone",
+            "THEME",
+            "bone"
+          ],
+          [
+            "what does the cat chase?",
+            true,
+            "patient",
+            "river",
+            "patient",
+            "river"
+          ],
+          [
+            "who chase river?",
+            true,
+            "agent",
+            "cat",
+            "agent",
+            "cat"
+          ]
+        ]
+      },
+      "render_where_boy_go": {
+        "full": "the boy goes to the park",
+        "bare": "to the park",
+        "filler": "park",
+        "role": "GOAL"
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 6,
+        "n_abstain": 6,
+        "detail": [
+          [
+            "where does the boy go?",
+            "park",
+            "park",
+            true
+          ],
+          [
+            "where does the boy give?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "where does the cat go?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "what does the boy give?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "who does the dog give to?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "when does the boy go?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "where does the cat chase?",
+            "None",
+            "None",
+            true
+          ]
+        ]
+      },
+      "verify_reparse": true,
+      "permuted_mapping": {
+        "matches_true": 0,
+        "ok": true,
+        "detail": [
+          [
+            "where does the boy go?",
+            "park",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "what does the girl give?",
+            "ball",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "who does the girl give to?",
+            "dog",
+            "ball",
+            "THEME",
+            false
+          ],
+          [
+            "where does the dog put?",
+            "table",
+            "bone",
+            "THEME",
+            false
+          ],
+          [
+            "what does the dog put?",
+            "bone",
+            "table",
+            "LOCATION",
+            false
+          ],
+          [
+            "what does the cat chase?",
+            "river",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "who chase river?",
+            "cat",
+            "None",
+            "None",
+            false
+          ]
+        ]
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 44,
+      "wh": {
+        "n_ok": 7,
+        "n_total": 7,
+        "detail": [
+          [
+            "where does the boy go?",
+            true,
+            "GOAL",
+            "park",
+            "GOAL",
+            "park"
+          ],
+          [
+            "what does the girl give?",
+            true,
+            "THEME",
+            "ball",
+            "THEME",
+            "ball"
+          ],
+          [
+            "who does the girl give to?",
+            true,
+            "RECIPIENT",
+            "dog",
+            "RECIPIENT",
+            "dog"
+          ],
+          [
+            "where does the dog put?",
+            true,
+            "LOCATION",
+            "table",
+            "LOCATION",
+            "table"
+          ],
+          [
+            "what does the dog put?",
+            true,
+            "THEME",
+            "bone",
+            "THEME",
+            "bone"
+          ],
+          [
+            "what does the cat chase?",
+            true,
+            "patient",
+            "river",
+            "patient",
+            "river"
+          ],
+          [
+            "who chase river?",
+            true,
+            "agent",
+            "cat",
+            "agent",
+            "cat"
+          ]
+        ]
+      },
+      "render_where_boy_go": {
+        "full": "the boy goes to the park",
+        "bare": "to the park",
+        "filler": "park",
+        "role": "GOAL"
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 6,
+        "n_abstain": 6,
+        "detail": [
+          [
+            "where does the boy go?",
+            "park",
+            "park",
+            true
+          ],
+          [
+            "where does the boy give?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "where does the cat go?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "what does the boy give?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "who does the dog give to?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "when does the boy go?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "where does the cat chase?",
+            "None",
+            "None",
+            true
+          ]
+        ]
+      },
+      "verify_reparse": true,
+      "permuted_mapping": {
+        "matches_true": 0,
+        "ok": true,
+        "detail": [
+          [
+            "where does the boy go?",
+            "park",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "what does the girl give?",
+            "ball",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "who does the girl give to?",
+            "dog",
+            "ball",
+            "THEME",
+            false
+          ],
+          [
+            "where does the dog put?",
+            "table",
+            "bone",
+            "THEME",
+            false
+          ],
+          [
+            "what does the dog put?",
+            "bone",
+            "table",
+            "LOCATION",
+            false
+          ],
+          [
+            "what does the cat chase?",
+            "river",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "who chase river?",
+            "cat",
+            "None",
+            "None",
+            false
+          ]
+        ]
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 45,
+      "wh": {
+        "n_ok": 7,
+        "n_total": 7,
+        "detail": [
+          [
+            "where does the boy go?",
+            true,
+            "GOAL",
+            "park",
+            "GOAL",
+            "park"
+          ],
+          [
+            "what does the girl give?",
+            true,
+            "THEME",
+            "ball",
+            "THEME",
+            "ball"
+          ],
+          [
+            "who does the girl give to?",
+            true,
+            "RECIPIENT",
+            "dog",
+            "RECIPIENT",
+            "dog"
+          ],
+          [
+            "where does the dog put?",
+            true,
+            "LOCATION",
+            "table",
+            "LOCATION",
+            "table"
+          ],
+          [
+            "what does the dog put?",
+            true,
+            "THEME",
+            "bone",
+            "THEME",
+            "bone"
+          ],
+          [
+            "what does the cat chase?",
+            true,
+            "patient",
+            "river",
+            "patient",
+            "river"
+          ],
+          [
+            "who chase river?",
+            true,
+            "agent",
+            "cat",
+            "agent",
+            "cat"
+          ]
+        ]
+      },
+      "render_where_boy_go": {
+        "full": "the boy goes to the park",
+        "bare": "to the park",
+        "filler": "park",
+        "role": "GOAL"
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 6,
+        "n_abstain": 6,
+        "detail": [
+          [
+            "where does the boy go?",
+            "park",
+            "park",
+            true
+          ],
+          [
+            "where does the boy give?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "where does the cat go?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "what does the boy give?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "who does the dog give to?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "when does the boy go?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "where does the cat chase?",
+            "None",
+            "None",
+            true
+          ]
+        ]
+      },
+      "verify_reparse": true,
+      "permuted_mapping": {
+        "matches_true": 0,
+        "ok": true,
+        "detail": [
+          [
+            "where does the boy go?",
+            "park",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "what does the girl give?",
+            "ball",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "who does the girl give to?",
+            "dog",
+            "ball",
+            "THEME",
+            false
+          ],
+          [
+            "where does the dog put?",
+            "table",
+            "bone",
+            "THEME",
+            false
+          ],
+          [
+            "what does the dog put?",
+            "bone",
+            "table",
+            "LOCATION",
+            false
+          ],
+          [
+            "what does the cat chase?",
+            "river",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "who chase river?",
+            "cat",
+            "None",
+            "None",
+            false
+          ]
+        ]
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 46,
+      "wh": {
+        "n_ok": 7,
+        "n_total": 7,
+        "detail": [
+          [
+            "where does the boy go?",
+            true,
+            "GOAL",
+            "park",
+            "GOAL",
+            "park"
+          ],
+          [
+            "what does the girl give?",
+            true,
+            "THEME",
+            "ball",
+            "THEME",
+            "ball"
+          ],
+          [
+            "who does the girl give to?",
+            true,
+            "RECIPIENT",
+            "dog",
+            "RECIPIENT",
+            "dog"
+          ],
+          [
+            "where does the dog put?",
+            true,
+            "LOCATION",
+            "table",
+            "LOCATION",
+            "table"
+          ],
+          [
+            "what does the dog put?",
+            true,
+            "THEME",
+            "bone",
+            "THEME",
+            "bone"
+          ],
+          [
+            "what does the cat chase?",
+            true,
+            "patient",
+            "river",
+            "patient",
+            "river"
+          ],
+          [
+            "who chase river?",
+            true,
+            "agent",
+            "cat",
+            "agent",
+            "cat"
+          ]
+        ]
+      },
+      "render_where_boy_go": {
+        "full": "the boy goes to the park",
+        "bare": "to the park",
+        "filler": "park",
+        "role": "GOAL"
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 6,
+        "n_abstain": 6,
+        "detail": [
+          [
+            "where does the boy go?",
+            "park",
+            "park",
+            true
+          ],
+          [
+            "where does the boy give?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "where does the cat go?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "what does the boy give?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "who does the dog give to?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "when does the boy go?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "where does the cat chase?",
+            "None",
+            "None",
+            true
+          ]
+        ]
+      },
+      "verify_reparse": true,
+      "permuted_mapping": {
+        "matches_true": 0,
+        "ok": true,
+        "detail": [
+          [
+            "where does the boy go?",
+            "park",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "what does the girl give?",
+            "ball",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "who does the girl give to?",
+            "dog",
+            "ball",
+            "THEME",
+            false
+          ],
+          [
+            "where does the dog put?",
+            "table",
+            "bone",
+            "THEME",
+            false
+          ],
+          [
+            "what does the dog put?",
+            "bone",
+            "table",
+            "LOCATION",
+            false
+          ],
+          [
+            "what does the cat chase?",
+            "river",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "who chase river?",
+            "cat",
+            "None",
+            "None",
+            false
+          ]
+        ]
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 47,
+      "wh": {
+        "n_ok": 7,
+        "n_total": 7,
+        "detail": [
+          [
+            "where does the boy go?",
+            true,
+            "GOAL",
+            "park",
+            "GOAL",
+            "park"
+          ],
+          [
+            "what does the girl give?",
+            true,
+            "THEME",
+            "ball",
+            "THEME",
+            "ball"
+          ],
+          [
+            "who does the girl give to?",
+            true,
+            "RECIPIENT",
+            "dog",
+            "RECIPIENT",
+            "dog"
+          ],
+          [
+            "where does the dog put?",
+            true,
+            "LOCATION",
+            "table",
+            "LOCATION",
+            "table"
+          ],
+          [
+            "what does the dog put?",
+            true,
+            "THEME",
+            "bone",
+            "THEME",
+            "bone"
+          ],
+          [
+            "what does the cat chase?",
+            true,
+            "patient",
+            "river",
+            "patient",
+            "river"
+          ],
+          [
+            "who chase river?",
+            true,
+            "agent",
+            "cat",
+            "agent",
+            "cat"
+          ]
+        ]
+      },
+      "render_where_boy_go": {
+        "full": "the boy goes to the park",
+        "bare": "to the park",
+        "filler": "park",
+        "role": "GOAL"
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 6,
+        "n_abstain": 6,
+        "detail": [
+          [
+            "where does the boy go?",
+            "park",
+            "park",
+            true
+          ],
+          [
+            "where does the boy give?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "where does the cat go?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "what does the boy give?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "who does the dog give to?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "when does the boy go?",
+            "None",
+            "None",
+            true
+          ],
+          [
+            "where does the cat chase?",
+            "None",
+            "None",
+            true
+          ]
+        ]
+      },
+      "verify_reparse": true,
+      "permuted_mapping": {
+        "matches_true": 0,
+        "ok": true,
+        "detail": [
+          [
+            "where does the boy go?",
+            "park",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "what does the girl give?",
+            "ball",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "who does the girl give to?",
+            "dog",
+            "ball",
+            "THEME",
+            false
+          ],
+          [
+            "where does the dog put?",
+            "table",
+            "bone",
+            "THEME",
+            false
+          ],
+          [
+            "what does the dog put?",
+            "bone",
+            "table",
+            "LOCATION",
+            false
+          ],
+          [
+            "what does the cat chase?",
+            "river",
+            "None",
+            "None",
+            false
+          ],
+          [
+            "who chase river?",
+            "cat",
+            "None",
+            "None",
+            false
+          ]
+        ]
+      },
+      "seed_go": true
+    }
+  ]
+}

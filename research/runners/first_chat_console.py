@@ -89,6 +89,9 @@ from research.runners._grounded_lang_integration_derisk import (  # noqa: E402
 )
 from research.runners._grounded_lang_p3_derisk import TemplateStubFaculty  # noqa: E402
 from research.runners._curriculum_step1_320_real_corpus import _make_svo_facts  # noqa: E402
+from research.runners.wh_question_parser import (  # noqa: E402  (Tier 0.3 -- natural wh-questions, filler-gap)
+    parse_wh_question, answer_wh, bare_answer, is_wh_question,
+)
 
 DEFAULT_BRAIN = os.path.join(_REPO, "bridges", "firstchat", "brain1454_w7000_seed42.npz")
 
@@ -616,6 +619,57 @@ class FirstChatConsole:
                 return w
         return None
 
+    def _wh_response(self, msg, wh_parse):
+        """Tier 0.3 -- answer a natural wh-question (the filler-gap route). Resolve the gapped role from the verb's
+        frame, query it on the composer (the COGNITION), and render the grounded answer -- OR abstain gracefully
+        (the no-confab moat: an unanswerable/unstored/frame-unlicensed wh returns None -> an honest non-fabrication,
+        NEVER a guessed answer). The answer is grounded BY CONSTRUCTION (a composer recall, not a generated claim),
+        so the record carries no flag-able certain proposition; the moat audit sees it clean.
+
+        On the deployed first-chat `RFPhasorComposer` (agent/action/patient only) `answer_wh` falls back to
+        query_patient/query_agent, so "who/what" questions still answer; the typed obliques (where->GOAL, ...) need
+        a Tier-0.1 `ArgStructureComposer` and otherwise abstain (no such role -> honest non-answer)."""
+        comp = self.brain["comp"]
+        filler, role, parse = answer_wh(comp, msg)
+        agent = parse.get("agent")
+        verb = parse.get("verb")
+        # the record shape the demo/rubric + moat audit consume. `wh_answer` is the grounded retrieval (or None).
+        rec = {"intent": "wh_question", "wh": parse.get("wh"), "wh_role": role, "wh_filler": filler,
+               "agent": agent, "verb": verb, "topic": agent if (agent in self.stored_agents) else None,
+               "paragraph": "", "emitted_propositions": [], "depth": 0, "n_certain": 0, "n_flagged": 0,
+               "glue": []}
+        if filler is None:
+            # MOAT: no grounded answer -> an honest, topic-relevant non-fabrication (NOT a guess). Name what we DO
+            # know about the agent (its PPMI neighbours) when possible, framed as association-not-fact.
+            subj = agent or verb
+            nbrs = self._ppmi_neighbors(subj, k=3) if subj else []
+            if nbrs:
+                nb_str = nbrs[0] if len(nbrs) == 1 else (f"{nbrs[0]} and {nbrs[1]}" if len(nbrs) == 2
+                                                         else f"{', '.join(nbrs[:-1])}, and {nbrs[-1]}")
+                return (f"I don't have a stored fact answering that, but {subj} tends to come up alongside "
+                        f"{nb_str} -- I'd be guessing past that.", rec)
+            return ("I don't have a grounded answer to that yet, so I'd rather not guess.", rec)
+        # a grounded answer: the short natural answer + (when the agent is a stored subject) the full frame sentence.
+        rec["n_certain"] = 1
+        short = bare_answer(role, filler)
+        rec["wh_short_answer"] = short
+        # render the full grounded sentence when the composer supports the typed-role frame render (Tier 0.1).
+        full = None
+        if hasattr(comp, "render") and role not in ("agent",):
+            try:
+                fact = dict(parse["cue"]); fact[role] = filler
+                full = comp.render(fact)        # ArgStructureComposer.render(fact) recalls + renders via the frame
+            except Exception:
+                full = None
+        if role == "agent":          # a subject question ("who chase river?") -> "the cat chases the river"
+            para = f"the {filler} {_third_person(verb)} the {parse['cue'].get('patient', '')}".strip()
+        elif full:
+            para = full
+        else:
+            para = short.capitalize() + "."
+        rec["paragraph"] = para
+        return _surface_morphology(para, self.verbs), rec
+
     def respond(self, msg):
         """Return (paragraph, record). Pure routing -> DiscursiveTurn.discuss; the brain does the cognition."""
         m = msg.strip()
@@ -631,6 +685,14 @@ class FirstChatConsole:
         if _MORE_RE.search(m) or _STOP_RE.search(m):
             rec = self.dt.discuss(m, topic=self.dt._topic)
             return self._render(rec), rec
+
+        # Tier 0.3 -- NATURAL wh-questions as a filler-gap dependency. The fronted wh-word is the FILLER; the verb's
+        # frame says which role is the GAP; query that role. This handles where/when/who/whom/with-what + the
+        # bare-subject "who V P?" -- the forms the rigid "what does X Y" probe never covered. "what does X V?" is
+        # left to the existing _WHAT_DOES_RE route below (its rich discuss-while-answering is preserved -- ADDITIVE).
+        wh_parse = parse_wh_question(m)
+        if wh_parse is not None and not (wh_parse["form"] == "aux" and wh_parse.get("wh") == "what"):
+            return self._wh_response(m, wh_parse)
 
         # 'what does X Y' -> structured known-fact cue (certain lead + discuss-while-answering)
         md = _WHAT_DOES_RE.search(m)
