@@ -93,8 +93,9 @@ from research.runners.wh_question_parser import (  # noqa: E402  (Tier 0.3 -- na
     parse_wh_question, answer_wh, bare_answer, is_wh_question,
 )
 from research.runners.argstructure_composer import (  # noqa: E402  (Tier 0.1 -- typed verb-frame argument structure)
-    ArgStructureComposer, ALL_ROLES, TYPED_ROLES,
+    ArgStructureComposer, ALL_ROLES, TYPED_ROLES, FUNCTION_WORDS,
 )
+from research.runners.entity_instance_layer import EntityInstanceLayer  # noqa: E402  (Tier 1.1 -- entity instances)
 
 # Tier 0.1 typed object roles a corpus fact may realize (GOAL/THEME/RECIPIENT/LOCATION/...). When a fact realizes a
 # typed object (not a bare `patient`), the console ALSO binds that filler to `patient` so the flat-SVO machinery
@@ -102,6 +103,18 @@ from research.runners.argstructure_composer import (  # noqa: E402  (Tier 0.1 --
 # render still uses ONLY the typed role (the redundant patient is invisible to the frame). `_TYPED_OBJECT_ROLES` is
 # the set of object roles eligible for that flat projection (the agent is never an object).
 _TYPED_OBJECT_ROLES = tuple(TYPED_ROLES)
+
+
+def _frame_object_role(verb):
+    """The single object role a verb's frame licenses (Tier 0.1 frame lexicon): a motion verb (go/come/walk/run)
+    -> GOAL ('to the park'); everything else -> the bare `patient`. Used by the entity-instance layer so a
+    distinguishing fact reads naturally ('went to the park' vs 'ate the apple') and a typed-role cue resolves it."""
+    from research.runners.argstructure_composer import FRAME_ROLES
+    roles = FRAME_ROLES.get(verb, [])
+    for r in ("GOAL", "RECIPIENT", "THEME", "LOCATION"):
+        if r in roles:
+            return r
+    return "patient"
 
 DEFAULT_BRAIN = os.path.join(_REPO, "bridges", "firstchat", "brain1454_w7000_seed42.npz")
 
@@ -588,6 +601,62 @@ class FirstChatConsole:
         self._argstructure = hasattr(brain["comp"], "query_role")
         # the full vocab (for the 0.4 unknown-word clarification: a content word the brain never learned).
         self._vocab_set = set(brain["vocab"])
+        # Tier 1.1 -- the ENTITY-INSTANCE layer (the keystone): turn the TYPE-keyed facts into INSTANCE tracking so
+        # "which boy?" disambiguates by distinguishing facts instead of the honest-generic Tier-0.4 line. The layer
+        # gets its OWN composer (same seed/D/grounded codes -> the instance barcodes blend the SAME type codes the
+        # console knows) so instance-keyed facts are ISOLATED from the main composer's kb -- the recall + no-confab
+        # moat audit are byte-untouched (purely ADDITIVE; the layer only powers the "which X?" route). Built lazily
+        # + guarded: any failure leaves `self.instances=None` and the console falls back to the generic clarification.
+        self.instances = self._build_instance_layer(brain)
+
+    def _build_instance_layer(self, brain):
+        """Build + populate the entity-instance layer from the brain's stored facts. For each ENTITY TYPE that is the
+        SUBJECT of >=2 distinct facts, allocate one instance per fact (a boy went to the park, ANOTHER boy ate the
+        apple -- the type/token split read straight from the brain's own knowledge), and attach each fact to its
+        instance. Types with <2 distinct facts get <2 instances -> "which X?" correctly stays generic (no ambiguity).
+        Returns the layer, or None on any failure (the console then falls back to the honest generic clarification)."""
+        try:
+            comp = brain["comp"]
+            words = list(getattr(comp, "words", brain["vocab"]))
+            codes = {w: comp.concepts[w] for w in words if w in getattr(comp, "concepts", {})}
+            seed = int(getattr(comp, "seed", 42))
+            D = int(getattr(comp, "D", 128))
+            ic = RFPhasorComposer(seed=seed, D=D, vocab=sorted(set(words)), grounded_codes=codes)
+            layer = EntityInstanceLayer(ic, barcode_seed=seed + 7000)
+            # group facts by entity subject (subject must be a NOUN/entity type the layer can mint a token of).
+            by_subj = {}
+            for f in brain["facts"]:
+                a, v, p = f[0], f[1], f[2]
+                if a in self.nouns and a in codes:
+                    by_subj.setdefault(a, []).append((v, p))
+            n_inst = 0
+            for subj, fs in by_subj.items():
+                # dedup distinct (action, object) facts -> distinct instances; <2 distinct -> skip (no ambiguity).
+                uniq = []
+                for v, p in fs:
+                    if (v, p) not in uniq:
+                        uniq.append((v, p))
+                if len(uniq) < 2:
+                    continue
+                for v, p in uniq:
+                    tok = layer.allocate(subj)
+                    # assign the verb-frame's typed object role (go->GOAL 'to the park'; default transitive
+                    # ->patient 'the apple') so the distinguisher reads naturally; the role is also bound so a
+                    # future "which boy went TO the park" resolves on the typed role.
+                    role = _frame_object_role(v)
+                    if p in codes:
+                        layer.store_fact(tok, v, **{role: p})
+                    else:
+                        layer.store_fact(tok, v)
+                    n_inst += 1
+            self._instance_types = {t for t in by_subj if len(set(by_subj[t])) >= 2}
+            if getattr(self, "_verbose_instances", False):
+                print(f"[console] entity-instance layer: {n_inst} instances across "
+                      f"{len(self._instance_types)} multi-instance types", flush=True)
+            return layer if n_inst else None
+        except Exception as e:   # never let the keystone wiring break the console
+            self._instance_types = set()
+            return None
 
     def _llm_render_certain(self, svo):
         """GATE(passed: svo is a stored, recalled fact) -> CONSTRAIN (LLM renders it fluently) -> VERIFY (re-parse
@@ -752,13 +821,50 @@ class FirstChatConsole:
                 intent="unknown_word", clarify_word=word))
 
     def _clarify_underspecified(self, topic):
-        """0.4 -- a referential / under-specified query ('which boy?'): the honest generic trigger. The brain knows
-        the TYPE but has no entity-instance layer to resolve WHICH one (the Tier-1 keystone). Never fabricates."""
+        """Tier 1.1 (KEYSTONE) -> Tier 0.4 fallback -- a referential / under-specified query ('which boy?').
+
+        If the ENTITY-INSTANCE layer tracks >=2 instances of `topic`, the brain now disambiguates by their
+        DISTINGUISHING FACTS -- 'which boy? the one that went to the park, or the one that ate the apple?' (the
+        type/token unlock). Otherwise it falls back to the honest GENERIC Tier-0.4 line (the brain knows the TYPE but
+        has only <2 distinguishable instances -> nothing to disambiguate). Never fabricates an instance (the moat)."""
+        if topic and self.instances is not None and topic in getattr(self, "_instance_types", set()):
+            text, n = self.instances.clarify_which(topic)
+            if text and n >= 2:
+                return (f"which {topic}? {text}",
+                        dict(self._CLARIFY_REC, intent="disambiguate", clarify_topic=topic, n_instances=n))
         if topic and topic in self.row:
             return (f"I'm not sure which {topic} you mean -- I track the idea of \"{topic}\" but not specific "
                     f"ones yet. Can you say more?", dict(self._CLARIFY_REC, intent="underspecified", clarify_topic=topic))
         return ("I'm not sure which one you mean -- can you say more?",
                 dict(self._CLARIFY_REC, intent="underspecified"))
+
+    def _which_with_predicate(self, kind, msg):
+        """Tier 1.1 -- resolve 'which <kind> <predicate>?' (e.g. 'which boy went to the park?') to the specific
+        instance whose DISTINGUISHING fact matches the predicate, and answer 'the <kind> that <distinguisher>'.
+
+        The predicate is read from the message tail: the FIRST known verb (present or irregular-past form) + the
+        FIRST object word that, together, name a fact stored about some instance of `kind`. Resolution is the layer's
+        biased-competition WTA; a TIE / NO-match -> None (the caller falls back to the clarification -- the no-confab
+        moat: never fabricate which one). Returns (paragraph, record) or None (no resolvable predicate -> clarify)."""
+        if self.instances is None or kind not in getattr(self, "_instance_types", set()):
+            return None
+        toks = [t for t in re.findall(r"[a-zA-Z]+", msg.lower()) if t not in FUNCTION_WORDS]
+        # map any irregular-past surface form back to the stored present-tense verb (the brain stores the lemma).
+        from research.runners.entity_instance_layer import past_tense
+        past_to_pres = {past_tense(v): v for v in self.verbs}
+        verb = next((past_to_pres.get(t, t) for t in toks if (past_to_pres.get(t, t) in self.verbs)), None)
+        if verb is None:
+            return None
+        obj = next((t for t in toks if t in self.nouns and t != kind), None)
+        cue = {"action": verb}
+        if obj is not None:
+            cue[_frame_object_role(verb)] = obj      # cue on the verb-frame's object role (GOAL for motion verbs)
+        tok, ans = self.instances.answer_which(kind, **cue)
+        if tok is None or ans is None:
+            return None
+        rec = dict(self._CLARIFY_REC, intent="which_resolved", clarify_topic=kind,
+                   which_instance=tok, which_cue=cue, paragraph=ans, n_certain=1)
+        return _surface_morphology(ans, self.verbs), rec
 
     def _wh_response(self, msg, wh_parse):
         """Tier 0.3 -- answer a natural wh-question (the filler-gap route). Resolve the gapped role from the verb's
@@ -846,6 +952,12 @@ class FirstChatConsole:
             # an unknown referent kind is itself unknown -> the unknown-word clarification (more specific).
             if kind and kind not in self._vocab_set and kind not in (None, ""):
                 return self._clarify_unknown(kind)
+            # Tier 1.1 -- "which boy WENT TO THE PARK?" carries a DISTINGUISHING predicate -> resolve the specific
+            # instance by its distinguishing fact (the biased-competition WTA) and answer 'the boy that went to the
+            # park'. A tie / no-match -> abstain into the clarification (the moat: never fabricate which one).
+            ans = self._which_with_predicate(kind, m)
+            if ans is not None:
+                return ans
             return self._clarify_underspecified(kind)
 
         # Tier 0.3 -- NATURAL wh-questions as a filler-gap dependency. The fronted wh-word is the FILLER; the verb's

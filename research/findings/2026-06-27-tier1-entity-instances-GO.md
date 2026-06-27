@@ -95,11 +95,43 @@ competition picks among several matching referents; DRT/file-card (Kamp 1981) = 
 
 ---
 
+## Step 2 — the production build + console wire (GO Step 1 → built)
+
+- **`research/runners/entity_instance_layer.py`** (`EntityInstanceLayer`) — the validated mechanism promoted to a
+  production module that WRAPS any deployed composer (reuse-by-import): `allocate(type)` mints a fresh barcode token
+  (overlap-rejected DG separation), `store_fact(token, action, …)` binds a fact to the INSTANCE, `which(type, **cue)`
+  is the biased-competition WTA, `clarify_which`/`answer_which` produce the disambiguation/answer prose,
+  `resolve_pronoun` pattern-completes a pronoun to the held referent, a capacity-bounded (~7, Lisman-Idiart)
+  file-card holds the active referents. NO `sim/` edit; NO production-composer edit.
+- **CI guard `tests/test_entity_instance_layer.py`** — 9 tests (separation + merge-lesion + right-referent +
+  binding-lesion + pronoun + moat + 3-instance tie + 6-seed), all green, CPU/numpy.
+- **Console wire (`research/runners/first_chat_console.py`)** — the `_WHICH_RE` branch in `respond()` now consults an
+  `EntityInstanceLayer` built in the responder `__init__` from the brain's OWN stored facts (each ENTITY TYPE that is
+  the subject of ≥2 distinct facts gets one instance per fact). The layer gets its OWN composer (same seed/D/grounded
+  codes) so instance-keyed facts are ISOLATED from the main composer's kb — recall + the no-confab moat audit are
+  byte-untouched (purely ADDITIVE). A `<2`-instance type falls back to the honest GENERIC Tier-0.4 line. A latent
+  `NameError` (`FUNCTION_WORDS` was used but never imported in the console) was fixed as part of the wire.
+
+**Real 7K-brain console transcript** (built with real corpus facts, `_facts3000.json`, n_facts=120; 19 multi-instance
+types tracked; recall 113/120, unchanged from baseline → the layer did not perturb the main composer):
+
+    > which boy?
+      which boy? the one that went to the park, the one that found the box, the one that came to the shop,
+      the one that saw the sky, or the one that threw the ball?        [intent=disambiguate]
+    > which boy come the shop?
+      the boy that came to the shop                                    [intent=which_resolved]
+    > which boy see the sky?
+      the boy that saw the sky                                         [intent=which_resolved]
+
+This is the exact console upgrade the keystone targeted: the Tier-0.4 generic *"I track the idea of boy but not
+specific ones yet"* becomes a real disambiguation by the instances' distinguishing facts, and a predicate ("which boy
+went to the park?") resolves the specific instance — abstaining (→ clarification) when no instance matches (the moat).
+
 ## Verdict
 
 **GO.** The keystone mechanism — allocate same-type instances as separable barcode tokens, attach facts to the
 instance, resolve "which X?" by distinguishing facts (biased-competition WTA), pattern-complete a pronoun to the held
 referent, abstain on the unknown — is validated end-to-end, multi-seed, with every anti-cheat control load-bearing
 (merge-lesion + binding-lesion both break disambiguation; the moat holds 0-FA). NO `sim/` edit; reuse-by-import on the
-deployed `RFPhasorComposer` + the SHIPPED D.14 barcode primitive. Step 2 (production `EntityInstanceLayer` +
-console "which boy?" upgrade) followed.
+deployed `RFPhasorComposer` + the SHIPPED D.14 barcode primitive. Step 2 BUILT: production `EntityInstanceLayer` + CI
+guard + the console "which boy?" upgrade (real 7K-brain transcript above).
