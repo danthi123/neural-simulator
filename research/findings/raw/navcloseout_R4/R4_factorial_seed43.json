@@ -1,0 +1,135 @@
+{
+  "seed": 43,
+  "mean_distance": {
+    "value_on_immediate": 2.6,
+    "value_off_immediate": 2.6066666666666665,
+    "value_on_delayed": 2.61,
+    "value_off_delayed": 2.4983333333333335,
+    "value_on_delayed_permuted": 2.7116666666666664,
+    "value_off_delayed_permuted": 2.4833333333333334
+  },
+  "improvement_immediate": 0.0066666666666663765,
+  "improvement_delayed": -0.11166666666666636,
+  "value_x_delay_interaction": -0.11833333333333274,
+  "helps_on_delayed": false,
+  "neutral_on_immediate": true,
+  "interaction_positive": false,
+  "improvement_delayed_permuted": -0.22833333333333306,
+  "permute_control_ok": true,
+  "summary": {
+    "value_on_immediate": {
+      "arm": "value_on_immediate",
+      "seed": 43,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "reward_delay": 0,
+      "value_on": true,
+      "permute": false,
+      "mean_distance_overall": 2.6,
+      "n_steps_at_goal": 419,
+      "mean_distance_quarters": [
+        4.564444444444445,
+        2.042222222222222,
+        1.9955555555555555,
+        1.7977777777777777
+      ],
+      "n_gabab_cut": null,
+      "out_path": "research/findings/raw/navcloseout_R4\\R4_value_on_immediate_seed43.json"
+    },
+    "value_off_immediate": {
+      "arm": "value_off_immediate",
+      "seed": 43,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "reward_delay": 0,
+      "value_on": false,
+      "permute": false,
+      "mean_distance_overall": 2.6066666666666665,
+      "n_steps_at_goal": 434,
+      "mean_distance_quarters": [
+        4.615555555555556,
+        2.1955555555555555,
+        1.9244444444444444,
+        1.691111111111111
+      ],
+      "n_gabab_cut": 388,
+      "out_path": "research/findings/raw/navcloseout_R4\\R4_value_off_immediate_seed43.json"
+    },
+    "value_on_delayed": {
+      "arm": "value_on_delayed",
+      "seed": 43,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "reward_delay": 12,
+      "value_on": true,
+      "permute": false,
+      "mean_distance_overall": 2.61,
+      "n_steps_at_goal": 396,
+      "mean_distance_quarters": [
+        4.58,
+        2.1155555555555554,
+        1.9177777777777778,
+        1.8266666666666667
+      ],
+      "n_gabab_cut": null,
+      "out_path": "research/findings/raw/navcloseout_R4\\R4_value_on_delayed_seed43.json"
+    },
+    "value_off_delayed": {
+      "arm": "value_off_delayed",
+      "seed": 43,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "reward_delay": 12,
+      "value_on": false,
+      "permute": false,
+      "mean_distance_overall": 2.4983333333333335,
+      "n_steps_at_goal": 475,
+      "mean_distance_quarters": [
+        4.475555555555555,
+        1.9266666666666667,
+        1.8755555555555556,
+        1.7155555555555555
+      ],
+      "n_gabab_cut": 388,
+      "out_path": "research/findings/raw/navcloseout_R4\\R4_value_off_delayed_seed43.json"
+    },
+    "value_on_delayed_permuted": {
+      "arm": "value_on_delayed_permuted",
+      "seed": 43,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "reward_delay": 12,
+      "value_on": true,
+      "permute": true,
+      "mean_distance_overall": 2.7116666666666664,
+      "n_steps_at_goal": 409,
+      "mean_distance_quarters": [
+        4.664444444444444,
+        2.1622222222222223,
+        1.991111111111111,
+        2.028888888888889
+      ],
+      "n_gabab_cut": null,
+      "out_path": "research/findings/raw/navcloseout_R4\\R4_value_on_delayed_permuted_seed43.json"
+    },
+    "value_off_delayed_permuted": {
+      "arm": "value_off_delayed_permuted",
+      "seed": 43,
+      "grid_size": 32,
+      "n_steps": 1800,
+      "reward_delay": 12,
+      "value_on": false,
+      "permute": true,
+      "mean_distance_overall": 2.4833333333333334,
+      "n_steps_at_goal": 482,
+      "mean_distance_quarters": [
+        4.597777777777778,
+        1.8755555555555556,
+        1.751111111111111,
+        1.708888888888889
+      ],
+      "n_gabab_cut": 388,
+      "out_path": "research/findings/raw/navcloseout_R4\\R4_value_off_delayed_permuted_seed43.json"
+    }
+  }
+}
