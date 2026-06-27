@@ -108,6 +108,21 @@ from research.runners._regimeb_corpus_mined_axis_derisk import (  # noqa: E402  
     mine_size_scores, mined_order, adjacent_premises,
     GT_ORDER as _SIZE_ITEMS, HIGH_ADJ as _SIZE_HIGH_ADJ, LOW_ADJ as _SIZE_LOW_ADJ,
 )
+# B-mine-1 + B-mine-2 deploy (2026-06-27): the verb-frame LEXICON + the wh->role MAP are no longer the hand-authored
+# dicts (argstructure_composer.FRAME_LEXICON / wh_question_parser.WH_ROLE_CANDIDATES) -- they are MINED FROM THE CORPUS
+# over the brain's OWN learned verbs (B-mine-1 GO 6-seed: mined-acc 1.000, permuted-mining 0.033; B-mine-2 GO 6-seed:
+# parse-parity 1.000, permuted-mining 0.250; both moat 0-FA, 2026-06-27-burndown-Bmine{1,2}-*-GO.md). Reuse-by-import
+# the mining halves VERBATIM: mine_verb_argstats (the inverted _corpus_svo_extract --typed-roles -> per-verb argument
+# distribution), derive_frame_lexicon (the corpus-justifiable prep->role table + the Bock&Levelt ditransitive rule ->
+# a FRAME_LEXICON-shaped dict), derive_wh_role_map (the INVERSE INDEX of the mined frames -> a WH_ROLE_CANDIDATES dict).
+# Brains whose learned vocab lacks the frame verbs cannot mine the frames -> fall back to the hand structures (the
+# parity ORACLE), exactly as B-wire-1 falls back to the curated `_SIZE_LADDER` for vocab-poor brains.
+from research.runners._bucketB_corpus_mined_frames_derisk import (  # noqa: E402  (B-mine-1 -- corpus-mined verb-frames)
+    mine_verb_argstats, derive_frame_lexicon, VALIDATED_VERBS as _FRAME_VALIDATED_VERBS,
+)
+from research.runners._bucketB_corpus_mined_wh_map_derisk import (  # noqa: E402  (B-mine-2 -- mined wh->role map)
+    derive_wh_role_map, frame_roles_of as _frame_roles_of,
+)
 from research.runners.common_ground_composer import CommonGroundComposer  # noqa: E402  (Tier 2.4 -- shared/private tag)
 from research.runners.tense_aspect_composer import TenseAspectComposer, inflect  # noqa: E402  (Tier 2.5 -- tense tag)
 # Tier 2.2 self-cued chain-of-thought is the composer's own `chain_of_thought` method (what self_cued_chain_demo.think
@@ -140,16 +155,89 @@ def _composer_concept_codes(comp):
     return c if isinstance(c, dict) else {}
 
 
-def _frame_object_role(verb):
+def _frame_object_role(verb, frame_roles=None):
     """The single object role a verb's frame licenses (Tier 0.1 frame lexicon): a motion verb (go/come/walk/run)
     -> GOAL ('to the park'); everything else -> the bare `patient`. Used by the entity-instance layer so a
-    distinguishing fact reads naturally ('went to the park' vs 'ate the apple') and a typed-role cue resolves it."""
-    from research.runners.argstructure_composer import FRAME_ROLES
-    roles = FRAME_ROLES.get(verb, [])
+    distinguishing fact reads naturally ('went to the park' vs 'ate the apple') and a typed-role cue resolves it.
+
+    `frame_roles` (B-mine-2 deploy, default None -> the module hand FRAME_ROLES, byte-identical) selects the per-verb
+    licensing map -- pass the CORPUS-MINED frame-roles so this picks the object role from the SAME acquired frames the
+    composer renders + the wh-route resolves through (consistent deploy; identical for the validated motion/ditransitive
+    verbs where mined==hand)."""
+    if frame_roles is None:
+        from research.runners.argstructure_composer import FRAME_ROLES
+        frame_roles = FRAME_ROLES
+    roles = frame_roles.get(verb, frame_roles.get("_default", []))
     for r in ("GOAL", "RECIPIENT", "THEME", "LOCATION"):
         if r in roles:
             return r
     return "patient"
+
+
+# B-mine-1 + B-mine-2 deploy: MINE the verb-frame lexicon + the wh->role map from the corpus over the brain's OWN
+# learned vocab (the validated mining halves, reuse-by-import). The mine runs at the B-mine validated operating point
+# (TinyStories, the child-directed-speech corpus the frames are recoverable from -- Buttery & Korhonen 2005;
+# min_freq=30, the B-mine default). Cached per (corpus, brain-vocab) so the ~12s spaCy parse is paid ONCE per build.
+_FRAME_MINE_CORPUS = os.path.join(_REPO, "data", "corpus", "tinystories.txt")
+_FRAME_MINE_MAX_SENTENCES = 200_000
+_FRAME_MINE_MIN_FREQ = 30
+_FRAME_MINE_CACHE = {}        # (corpus, frozenset(vocab)) -> (frames, frame_roles, wh_map, wh_multiword) | None
+
+
+def _mine_verb_frames(vocab, *, corpus_path=_FRAME_MINE_CORPUS, verbose=False):
+    """B-mine-1+2 -- MINE the verb-frame lexicon AND the wh->role map from the corpus over the brain's OWN learned
+    vocab (the B1 template, reuse-by-import). Returns (frame_lexicon, frame_roles, wh_role_map, wh_multiword) where
+    `frame_lexicon` is a FRAME_LEXICON-shaped dict, `frame_roles` is the per-verb {verb:[roles]} licensing map (for
+    the wh-parser), `wh_role_map` is the mined WH_ROLE_CANDIDATES, and `wh_multiword` is the mined WH_MULTIWORD; or
+    None if the brain can't support a mined frame lexicon (then the caller falls back to the hand structures).
+
+    Gating (the honest B-mine constraint: 'the brain's vocab gates which verbs are mineable'): spaCy + the corpus
+    must be available, AND >= 1 of the validated content verbs (go/come/walk/run/give/send) must clear attestation
+    over the brain's vocab (else there is no frame signal to mine -- a vocab-poor brain falls back to the hand
+    frames). Host-side curriculum prep (legitimate per BRAIN-BASED-ONLY: preparing the verb's frame the brain then
+    RENDERS/RECALLS through spikes -- like rendering a retinal image)."""
+    vset = frozenset(str(w).lower() for w in vocab)
+    key = (corpus_path, vset)
+    if key in _FRAME_MINE_CACHE:
+        return _FRAME_MINE_CACHE[key]
+    result = None
+    try:
+        if os.path.exists(corpus_path):
+            import spacy  # noqa: F401  (gate on spaCy being installed; mine_verb_argstats imports it)
+            stats, _n_sent = mine_verb_argstats(corpus_path, vset, _FRAME_MINE_MAX_SENTENCES, target_verbs=None)
+            frames, _vpr, prov = derive_frame_lexicon(stats, min_freq=_FRAME_MINE_MIN_FREQ)
+            n_mined = len([v for v in frames if v != "_default"])
+            # the validated content verbs that the brain learned AND that cleared attestation (the B-mine gate).
+            mineable_validated = [v for v in _FRAME_VALIDATED_VERBS if v in frames]
+            if n_mined >= 1 and mineable_validated:
+                frame_roles = _frame_roles_of(frames)
+                # B-mine-2: the per-role corpus attestation total (the inverse-index ranking weight, GOAL>LOCATION).
+                import collections as _co
+                attest = _co.Counter()
+                for _v, p in prov.items():
+                    if p.get("attested"):
+                        for s in p.get("slots", []):
+                            attest[s["role"]] += s.get("count", 0)
+                wh_map, wh_mw, _wp = derive_wh_role_map(frames, attest_count=dict(attest))
+                result = (frames, frame_roles, wh_map, wh_mw)
+                if verbose:
+                    print(f"[console] B-mine deploy: MINED {n_mined} verb-frames + a {len(wh_map)}-entry wh-map from "
+                          f"{os.path.basename(corpus_path)} over the brain's vocab (validated verbs mined: "
+                          f"{mineable_validated})", flush=True)
+            elif verbose:
+                print(f"[console] B-mine deploy: brain vocab has no mineable validated frame verb "
+                      f"-> hand frames + wh-map (the parity oracle)", flush=True)
+        elif verbose:
+            print(f"[console] B-mine deploy: corpus {os.path.basename(corpus_path)} absent "
+                  f"-> hand frames + wh-map (the parity oracle)", flush=True)
+    except Exception as e:
+        if verbose:
+            print(f"[console] B-mine deploy: mining unavailable ({type(e).__name__}) "
+                  f"-> hand frames + wh-map (the parity oracle)", flush=True)
+        result = None
+    _FRAME_MINE_CACHE[key] = result
+    return result
+
 
 DEFAULT_BRAIN = os.path.join(_REPO, "bridges", "firstchat", "brain1454_w7000_seed42.npz")
 
@@ -523,6 +611,18 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
     #     Single-bridge (shards>1 is a follow-on; a RoutedComposer of ArgStructureComposers is not yet built).
     _onebrain = (composer_kind == "onebrain") and not argstructure
     _argstructure_onebrain = argstructure and (composer_kind == "onebrain")   # BURNDOWN C4
+    # B-mine-1 deploy: the verb-frame LEXICON the typed composer renders/recalls through is MINED FROM THE CORPUS over
+    # the brain's OWN learned verbs (B-mine-1 GO 6-seed) when the brain has the frame verbs, else the hand FRAME_LEXICON
+    # (the parity ORACLE for vocab-poor brains). Mined ONCE here (cached); `_mined_frames`/`_mined_frame_roles`/the mined
+    # wh-map are reused by the wh-route below + carried into `brain` for the agent's wh-parse (B-mine-2). `argstructure`
+    # is the only path that BINDS the typed roles, so the mined frames matter on it; the flat (rf/onebrain) + the wh-map
+    # are deployed regardless of argstructure (the wh-route runs on every composer).
+    _mined = _mine_verb_frames(vocab, verbose=verbose)
+    _mined_frames = _mined[0] if _mined else None
+    _mined_frame_roles = _mined[1] if _mined else None
+    _mined_wh_map = _mined[2] if _mined else None
+    _mined_wh_multiword = _mined[3] if _mined else None
+    _frame_source = "corpus-mined" if _mined_frames is not None else "hand"
     if argstructure:
         if shards and int(shards) > 1 and verbose:
             print(f"[console] (note) --argstructure is single-bridge; ignoring shards={shards} "
@@ -550,15 +650,24 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
                       f"composites; the substrate may mis-decode the densest 4-role frames below D=128 (the bundle-SNR "
                       f"boundary). Use a D>=128 brain for the spiking typed-frame path.", flush=True)
             from research.runners.one_brain_composer import OneBrainComposer
+            # B-mine-1 deploy: the typed-onebrain render/recall goes through the CORPUS-MINED frames when available
+            # (frame_lexicon=_mined_frames; default None -> the hand FRAME_LEXICON, byte-identical for vocab-poor brains).
             comp = OneBrainComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded,
-                                    typed_roles=TYPED_ROLES, enable_spiking_cleanup=False)
+                                    typed_roles=TYPED_ROLES, enable_spiking_cleanup=False,
+                                    frame_lexicon=_mined_frames)
             if verbose:
                 print(f"[console] C4: composer=OneBrainComposer(typed_roles) -- the TYPED verb-frame surface "
                       f"(store_fact / query_role / frame-render) on ONE persistent spiking bridge (the typed roles "
-                      f"bound + stored in RF complex synapses; render-order = the C1 spiking competitive-queuing)",
-                      flush=True)
+                      f"bound + stored in RF complex synapses; render-order = the C1 spiking competitive-queuing); "
+                      f"frames={_frame_source}", flush=True)
         else:
-            comp = ArgStructureComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded)
+            # B-mine-1 deploy: frame_lexicon=_mined_frames (the corpus-mined verb-frames) when the brain has the frame
+            # verbs, else None -> the hand FRAME_LEXICON (byte-identical; the parity ORACLE for vocab-poor brains).
+            comp = ArgStructureComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded,
+                                        frame_lexicon=_mined_frames)
+            if verbose:
+                print(f"[console] Tier 0.1: composer=ArgStructureComposer (typed verb-frame roles + the FrameCQ "
+                      f"render); frames={_frame_source}", flush=True)
     elif _onebrain:
         # BURNDOWN C3: the persistent spiking one-brain path. Reuse-by-import (NO sim/ edit): the validated production
         # OneBrainComposer (the consolidated_320 default). enable_spiking_cleanup stays ON (its own default) -> the
@@ -712,6 +821,11 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
             "cat_ids": cat_ids, "cat_names": cat_names, "facts": affirmed, "recalled_facts": recalled_facts,
             "nouns": nouns, "verbs": verbs, "grounded_topics": grounded_topics, "topics": topics,
             "taught": taught, "D": D, "stored_agents": stored_agents,
+            # B-mine-2 deploy: the CORPUS-MINED wh->role map + per-verb frame-roles (the DiscursiveTurn threads them
+            # into answer_wh so the wh-route resolves through ACQUIRED frames). None -> the hand wh-scaffold (the parity
+            # ORACLE for vocab-poor brains). `frame_source` records which (corpus-mined / hand) for display.
+            "wh_role_map": _mined_wh_map, "wh_frame_roles": _mined_frame_roles,
+            "wh_multiword": _mined_wh_multiword, "frame_source": _frame_source,
             # Path B: the fluency faculty (None = stub) + the VERIFY content sets for re-parsing LLM prose.
             "fluency_faculty": fluency_faculty, "vocab_sets": vocab_sets}
 
@@ -862,6 +976,15 @@ class FirstChatConsole:
         # for a verb whose frame realizes a TYPED object (give->THEME) routes through the wh filler-gap path so the
         # answer renders via that verb's frame ('the girl gives the ball'), not the flat-patient discuss.
         self._argstructure = hasattr(brain["comp"], "query_role")
+        # B-mine-2 deploy: the CORPUS-MINED wh->role map + per-verb frame-roles the wh-route resolves through (the
+        # INVERSE INDEX of the mined frames, B-mine-2 GO). DEFAULT None (vocab-poor brain / mining unavailable) ->
+        # answer_wh's hand WH_ROLE_CANDIDATES + FRAME_ROLES (byte-identical, the parity ORACLE). When mined, the
+        # wh-parse resolves the gapped role against the ACQUIRED frame inventory. _wh_multiword is the mined multiword
+        # table (== the hand one in the validated case); the wh-parser reads WH_MULTIWORD as a module constant, so we
+        # only swap it in for the call when it DIFFERS from the hand table (it does not in the validated case).
+        self._wh_role_map = brain.get("wh_role_map")
+        self._wh_frame_roles = brain.get("wh_frame_roles")
+        self._wh_multiword = brain.get("wh_multiword")
         # the full vocab (for the 0.4 unknown-word clarification: a content word the brain never learned).
         self._vocab_set = set(brain["vocab"])
         # Tier 1.1 -- the ENTITY-INSTANCE layer (the keystone): turn the TYPE-keyed facts into INSTANCE tracking so
@@ -1072,7 +1195,7 @@ class FirstChatConsole:
                     # assign the verb-frame's typed object role (go->GOAL 'to the park'; default transitive
                     # ->patient 'the apple') so the distinguisher reads naturally; the role is also bound so a
                     # future "which boy went TO the park" resolves on the typed role.
-                    role = _frame_object_role(v)
+                    role = _frame_object_role(v, frame_roles=self._wh_frame_roles)
                     if p in codes:
                         layer.store_fact(tok, v, **{role: p})
                     else:
@@ -1287,13 +1410,34 @@ class FirstChatConsole:
         obj = next((t for t in toks if t in self.nouns and t != kind), None)
         cue = {"action": verb}
         if obj is not None:
-            cue[_frame_object_role(verb)] = obj      # cue on the verb-frame's object role (GOAL for motion verbs)
+            cue[_frame_object_role(verb, frame_roles=self._wh_frame_roles)] = obj   # the verb-frame's object role (GOAL for motion verbs)
         tok, ans = self.instances.answer_which(kind, **cue)
         if tok is None or ans is None:
             return None
         rec = dict(self._CLARIFY_REC, intent="which_resolved", clarify_topic=kind,
                    which_instance=tok, which_cue=cue, paragraph=ans, n_certain=1)
         return _surface_morphology(ans, self.verbs), rec
+
+    def _answer_wh_mined(self, comp, msg):
+        """B-mine-2 deploy -- answer_wh resolved through the CORPUS-MINED wh->role map + per-verb frame-roles when the
+        brain supports them, else the hand wh-scaffold (byte-identical, the parity ORACLE). The wh-parser reads
+        WH_MULTIWORD as a module constant; we swap in the mined multiword table ONLY when it DIFFERS from the hand one
+        (it does not in the validated case), restoring it after the call so the module global is never left mutated."""
+        role_map = self._wh_role_map
+        frame_roles = self._wh_frame_roles
+        if role_map is None:                                        # vocab-poor brain / mining unavailable -> hand
+            return answer_wh(comp, msg)
+        mined_mw = self._wh_multiword
+        import research.runners.wh_question_parser as _whp
+        swap = bool(mined_mw) and dict(mined_mw) != dict(_whp.WH_MULTIWORD)
+        if not swap:
+            return answer_wh(comp, msg, role_map=role_map, frame_roles=frame_roles)
+        saved = dict(_whp.WH_MULTIWORD)
+        try:
+            _whp.WH_MULTIWORD.clear(); _whp.WH_MULTIWORD.update(mined_mw)
+            return answer_wh(comp, msg, role_map=role_map, frame_roles=frame_roles)
+        finally:
+            _whp.WH_MULTIWORD.clear(); _whp.WH_MULTIWORD.update(saved)
 
     def _wh_response(self, msg, wh_parse):
         """Tier 0.3 -- answer a natural wh-question (the filler-gap route). Resolve the gapped role from the verb's
@@ -1306,7 +1450,12 @@ class FirstChatConsole:
         query_patient/query_agent, so "who/what" questions still answer; the typed obliques (where->GOAL, ...) need
         a Tier-0.1 `ArgStructureComposer` and otherwise abstain (no such role -> honest non-answer)."""
         comp = self.brain["comp"]
-        filler, role, parse = answer_wh(comp, msg)
+        # B-mine-2 deploy: resolve the wh-gap through the CORPUS-MINED wh->role map + the mined per-verb frame-roles
+        # (the INVERSE INDEX of the mined frames). role_map/frame_roles=None -> answer_wh's hand scaffold (byte-identical,
+        # the parity ORACLE). The mined multiword table is swapped in ONLY when it DIFFERS from the module hand one
+        # (it does not in the validated case -- both have {where-from->SOURCE, with-what->INSTRUMENT, to-whom->RECIPIENT}),
+        # so the common path never mutates the module constant.
+        filler, role, parse = self._answer_wh_mined(comp, msg)
         agent = parse.get("agent")
         verb = parse.get("verb")
         # the record shape the demo/rubric + moat audit consume. `wh_answer` is the grounded retrieval (or None).
@@ -1520,7 +1669,7 @@ class FirstChatConsole:
         echo = None
         if self.tense_comp is not None:
             try:
-                role = _frame_object_role(verb)
+                role = _frame_object_role(verb, frame_roles=self._wh_frame_roles)
                 fact = {"agent": a, "action": verb, role: p}
                 if role != "patient":
                     fact["patient"] = p
@@ -1561,7 +1710,7 @@ class FirstChatConsole:
         sent = None
         if self.tense_comp is not None:
             try:
-                role = _frame_object_role(v)
+                role = _frame_object_role(v, frame_roles=self._wh_frame_roles)
                 fact = {"agent": a, "action": v, role: p}
                 if role != "patient":
                     fact["patient"] = p
@@ -1649,7 +1798,10 @@ class FirstChatConsole:
         # ADDITIVE) -- EXCEPT, on an ArgStructureComposer, when the verb's frame realizes a TYPED object (give->THEME):
         # then "what does the girl give?" routes through the wh path so the answer renders via the verb FRAME
         # ('the girl gives the ball'), the Tier-0.1 payoff. A frame-unlicensed wh still falls through to discuss.
-        wh_parse = parse_wh_question(m)
+        # B-mine-2 deploy: route the wh-parse through the CORPUS-MINED wh->role map + per-verb frame-roles (so the
+        # `_typed_what` routing decision uses the SAME ACQUIRED frame inventory _wh_response answers through); None ->
+        # the hand wh-scaffold (byte-identical, the parity ORACLE for vocab-poor brains).
+        wh_parse = parse_wh_question(m, role_map=self._wh_role_map, frame_roles=self._wh_frame_roles)
         # a COPULA subject-question ("what is X?", "who is X?") is NOT a verb-frame filler-gap -- it belongs to the
         # 'what is X' (_ABOUT_RE) route below (which gives the right unknown-word clarification on the REAL word X,
         # not on the copula). Don't let the wh-route consume it.

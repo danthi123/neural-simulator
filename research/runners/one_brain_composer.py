@@ -116,7 +116,7 @@ class OneBrainComposer:
                  encoding_gain_fn=None, local_reciprocal_unbind=True, integrated_loop=False,
                  sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0,
                  enable_seq_vocab_shrink=True, persistent_loop=True, typed_roles=None, framecq_seed=None,
-                 use_spiking_cq=None, trace=False):
+                 use_spiking_cq=None, frame_lexicon=None, trace=False):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         # trace (B3 per-turn "brain activity", opt-in, DEFAULT-OFF = byte-identical): READ-ONLY trace of what the brain
         # DID on the LAST query -- the decoded role-words + their cleanup match-confidence (per role), which stored
@@ -345,6 +345,13 @@ class OneBrainComposer:
             from sim.backend import is_gpu_backend
             use_spiking_cq = bool(is_gpu_backend())
         self.use_spiking_cq = bool(use_spiking_cq)
+        # (B-mine-1 deploy) the verb-frame lexicon render() recalls/orders through. DEFAULT None -> the module-level
+        # hand FRAME_LEXICON (byte-identical to the prior behaviour, so every existing caller + the C4 default path is
+        # unchanged). Pass a same-shaped dict (the CORPUS-MINED frame lexicon) to render/recall through ACQUIRED frames;
+        # frame_for/frame_id/realized_units + the numpy FrameCQ all take a `lexicon=` (the spiking SpikingFrameCQ is
+        # frame-agnostic -- it orders the realized-index list -- so it needs no lexicon). The typed roles bind via
+        # bind_roles regardless; only render's frame SHAPE (which roles + lead scaffold) follows _frames.
+        self._frames = frame_lexicon
         self._frame_cq = None          # numpy FrameCQ oracle (lazy)
         self._spiking_cq = None        # spiking CQ renderer (lazy)
 
@@ -481,10 +488,12 @@ class OneBrainComposer:
         from research.runners.argstructure_composer import FrameCQ, SpikingFrameCQ
         if self.use_spiking_cq:
             if self._spiking_cq is None:
-                self._spiking_cq = SpikingFrameCQ(seed=self._framecq_seed)
+                self._spiking_cq = SpikingFrameCQ(seed=self._framecq_seed)   # frame-agnostic (orders the index list)
             return self._spiking_cq
         if self._frame_cq is None:
-            self._frame_cq = FrameCQ(seed=self._framecq_seed)
+            # (B-mine-1) the numpy FrameCQ teaches a per-frame primacy gradient -> it must see the ACTIVE lexicon
+            # (mined or hand) so a mined frame's slot order is taught; lexicon=None reuses the hand FRAME_LEXICON.
+            self._frame_cq = FrameCQ(seed=self._framecq_seed, lexicon=self._frames)
         return self._frame_cq
 
     def render(self, fact, comp=None, ablate_closed_class=False, use_framecq=True):
@@ -503,13 +512,14 @@ class OneBrainComposer:
             return None                                    # moat: no stored composite -> no fabricated sentence
         decoded = self._read_blocks()[idx]                 # the on-bridge spiking decode of every role
         verb = fact["action"]
-        units = realized_units(verb, fact)                 # only the units whose role is present in the fact
-        full_frame = frame_for(verb)
+        # (B-mine-1) render through the ACTIVE frame lexicon (mined or hand); lexicon=None reuses the hand FRAME_LEXICON.
+        units = realized_units(verb, fact, lexicon=self._frames)   # only the units whose role is present in the fact
+        full_frame = frame_for(verb, lexicon=self._frames)
         if use_framecq:
             engine = self._ordering_engine()
             unit_to_idx = {id(u): i for i, u in enumerate(full_frame)}
             realized_idx = [unit_to_idx[id(u)] for u in units]
-            order = engine.emit_order(frame_id(verb), realized_idx)
+            order = engine.emit_order(frame_id(verb, lexicon=self._frames), realized_idx)
             idx_to_unit = {unit_to_idx[id(u)]: u for u in units}
             ordered_units = [idx_to_unit[j] for j in order]
         else:
