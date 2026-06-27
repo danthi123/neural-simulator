@@ -86,12 +86,19 @@ def is_wh_question(text):
     return bool(_WH_AUX_RE.search(text) or _WH_SUBJ_RE.search(text))
 
 
-def _resolve_wh_role(wh_cue, verb, trailprep=None, role_map=None):
+def _resolve_wh_role(wh_cue, verb, trailprep=None, role_map=None, frame_roles=None):
     """Map a parsed wh-cue + verb-frame to the GAPPED typed role. `role_map` (default WH_ROLE_CANDIDATES) is the
     wh->candidate-roles table; the PERMUTED-MAPPING anti-cheat passes a WRONG one. Returns the role string, or None
-    if the verb's frame licenses none of the candidates (e.g. when->TIME but `go`'s frame has no TIME -> abstain)."""
+    if the verb's frame licenses none of the candidates (e.g. when->TIME but `go`'s frame has no TIME -> abstain).
+
+    `frame_roles` (default None -> the module-level hand-authored FRAME_ROLES, byte-identical to the prior
+    behaviour) is the per-verb {verb: [roles]} licensing map the resolver intersects the wh-candidates against.
+    Pass a same-shaped dict (e.g. the CORPUS-MINED frame roles, B-mine-2) so the wh resolution consumes ACQUIRED
+    frames -- and so the B-mine-2 permuted-mining control (a SCRAMBLED frame inventory -> a verb licenses the WRONG
+    roles -> the wh-gap can't resolve -> abstain) actually bites."""
+    fr = FRAME_ROLES if frame_roles is None else frame_roles
     role_map = WH_ROLE_CANDIDATES if role_map is None else role_map
-    licensed = set(FRAME_ROLES.get(verb, FRAME_ROLES["_default"]))
+    licensed = set(fr.get(verb, fr.get("_default", FRAME_ROLES["_default"])))
     wh_tokens = tuple(wh_cue.lower().strip().split())
     if wh_tokens in WH_MULTIWORD:                       # multiword cues (where-from, to-whom, with-what)
         r = WH_MULTIWORD[wh_tokens]
@@ -104,7 +111,7 @@ def _resolve_wh_role(wh_cue, verb, trailprep=None, role_map=None):
     return None
 
 
-def parse_wh_question(text, role_map=None):
+def parse_wh_question(text, role_map=None, frame_roles=None):
     """Parse a natural wh-question into a parse dict, or None if it isn't a wh-question.
 
     Returns {role, cue, agent, verb} where `cue` is the {role: filler} the query matches on (the KNOWN arguments)
@@ -112,14 +119,15 @@ def parse_wh_question(text, role_map=None):
       * auxiliary ("where does the boy go?"): cue = {agent, action}, role = the wh-gapped oblique/patient;
       * bare subject ("who chase river?"): cue = {action, patient}, role = agent.
     `role` is "__UNLICENSED__" when the verb frame licenses none of the wh-word's candidates (-> abstain).
-    `role_map` lets the anti-cheat inject a wrong table."""
+    `role_map` lets the anti-cheat inject a wrong table; `frame_roles` selects the per-verb licensing map (default
+    None -> the hand FRAME_ROLES; pass the MINED frame roles for B-mine-2)."""
     m = _WH_AUX_RE.search(text)
     if m:
         wh = m.group("wh").lower()
         agent = m.group("agent").lower()
         verb = _INV_TENSE.get(m.group("verb").lower(), m.group("verb").lower())
         trailprep = (m.group("trailprep") or "").lower() or None
-        role = _resolve_wh_role(wh, verb, trailprep=trailprep, role_map=role_map)
+        role = _resolve_wh_role(wh, verb, trailprep=trailprep, role_map=role_map, frame_roles=frame_roles)
         cue = {"agent": agent, "action": verb}
         return {"role": role if role is not None else "__UNLICENSED__", "cue": cue, "agent": agent, "verb": verb,
                 "form": "aux", "wh": wh}
@@ -154,11 +162,12 @@ def _query_composer(comp, role, cue):
     return None                                         # a typed oblique on a plain composer -> abstain (no role)
 
 
-def answer_wh(comp, text, role_map=None):
+def answer_wh(comp, text, role_map=None, frame_roles=None):
     """The full wh-question route: parse -> resolve the gapped role -> query the composer -> (filler, role, parse).
     `filler` is None on abstain (the no-confab moat: an unanswerable/unstored/unlicensed wh returns None). `parse`
-    is the parse dict (for downstream render), or None if `text` is not a wh-question."""
-    parse = parse_wh_question(text, role_map=role_map)
+    is the parse dict (for downstream render), or None if `text` is not a wh-question. `role_map` / `frame_roles`
+    select the (mined-or-hand) wh-candidate table + per-verb licensing map (default None = the hand scaffold)."""
+    parse = parse_wh_question(text, role_map=role_map, frame_roles=frame_roles)
     if parse is None:
         return None, None, None
     if parse["role"] == "__UNLICENSED__":

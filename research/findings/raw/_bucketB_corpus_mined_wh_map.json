@@ -1,0 +1,1007 @@
+{
+  "capability": "corpus-mined wh->role map as the inverse index of the mined frames (B-mine-2)",
+  "corpus": "data/corpus/tinystories.txt",
+  "brain": "brainALL_w7000.npz_seed42.npz",
+  "n_seeds": 6,
+  "n_sentences": 175347,
+  "mined_wh_role_candidates": {
+    "who": [
+      "agent",
+      "RECIPIENT"
+    ],
+    "what": [
+      "patient",
+      "THEME"
+    ],
+    "where": [
+      "GOAL",
+      "LOCATION"
+    ],
+    "when": [],
+    "whom": [
+      "RECIPIENT"
+    ],
+    "with": [
+      "INSTRUMENT"
+    ],
+    "who_to": [
+      "RECIPIENT",
+      "agent"
+    ]
+  },
+  "mined_wh_multiword": {
+    "where from": "SOURCE",
+    "from where": "SOURCE",
+    "with what": "INSTRUMENT",
+    "to whom": "RECIPIENT"
+  },
+  "hand_wh_role_candidates": {
+    "who": [
+      "agent",
+      "RECIPIENT"
+    ],
+    "who_to": [
+      "RECIPIENT",
+      "agent"
+    ],
+    "what": [
+      "patient",
+      "THEME"
+    ],
+    "where": [
+      "GOAL",
+      "LOCATION"
+    ],
+    "when": [
+      "TIME"
+    ],
+    "whom": [
+      "RECIPIENT"
+    ],
+    "with": [
+      "INSTRUMENT"
+    ]
+  },
+  "hand_wh_multiword": {
+    "where from": "SOURCE",
+    "from where": "SOURCE",
+    "to whom": "RECIPIENT",
+    "with what": "INSTRUMENT"
+  },
+  "wh_comparison": {
+    "who": {
+      "status": "match",
+      "mined": [
+        "agent",
+        "RECIPIENT"
+      ],
+      "hand": [
+        "agent",
+        "RECIPIENT"
+      ]
+    },
+    "what": {
+      "status": "match",
+      "mined": [
+        "patient",
+        "THEME"
+      ],
+      "hand": [
+        "patient",
+        "THEME"
+      ]
+    },
+    "where": {
+      "status": "match",
+      "mined": [
+        "GOAL",
+        "LOCATION"
+      ],
+      "hand": [
+        "GOAL",
+        "LOCATION"
+      ]
+    },
+    "when": {
+      "status": "differ",
+      "mined": [],
+      "hand": [
+        "TIME"
+      ]
+    },
+    "whom": {
+      "status": "match",
+      "mined": [
+        "RECIPIENT"
+      ],
+      "hand": [
+        "RECIPIENT"
+      ]
+    },
+    "with": {
+      "status": "match",
+      "mined": [
+        "INSTRUMENT"
+      ],
+      "hand": [
+        "INSTRUMENT"
+      ]
+    }
+  },
+  "multiword_status": "match",
+  "wh_role_class_affinity": {
+    "who": [
+      "PARTICIPANT"
+    ],
+    "what": [
+      "ENTITY"
+    ],
+    "where": [
+      "SPATIAL"
+    ],
+    "when": [
+      "TEMPORAL"
+    ],
+    "whom": [
+      "RECIPIENT_CLASS"
+    ],
+    "with": [
+      "INSTRUMENT_CLASS"
+    ]
+  },
+  "provenance": {
+    "wh": {
+      "who": {
+        "class": [
+          "PARTICIPANT"
+        ],
+        "candidates": [
+          {
+            "role": "agent",
+            "n_licensing_verbs": 152,
+            "attestation": 0,
+            "example_verbs": [
+              "agree",
+              "answer",
+              "ask",
+              "bark"
+            ]
+          },
+          {
+            "role": "RECIPIENT",
+            "n_licensing_verbs": 5,
+            "attestation": 1230,
+            "example_verbs": [
+              "bring",
+              "carry",
+              "give",
+              "tie"
+            ]
+          }
+        ]
+      },
+      "what": {
+        "class": [
+          "ENTITY"
+        ],
+        "candidates": [
+          {
+            "role": "patient",
+            "n_licensing_verbs": 62,
+            "attestation": 14181,
+            "example_verbs": [
+              "ask",
+              "break",
+              "build",
+              "call"
+            ]
+          },
+          {
+            "role": "THEME",
+            "n_licensing_verbs": 5,
+            "attestation": 810,
+            "example_verbs": [
+              "bring",
+              "carry",
+              "give",
+              "tie"
+            ]
+          }
+        ]
+      },
+      "where": {
+        "class": [
+          "SPATIAL"
+        ],
+        "candidates": [
+          {
+            "role": "GOAL",
+            "n_licensing_verbs": 8,
+            "attestation": 3437,
+            "example_verbs": [
+              "come",
+              "go",
+              "listen",
+              "pour"
+            ]
+          },
+          {
+            "role": "LOCATION",
+            "n_licensing_verbs": 11,
+            "attestation": 2819,
+            "example_verbs": [
+              "fly",
+              "jump",
+              "left",
+              "look"
+            ]
+          }
+        ]
+      },
+      "when": {
+        "class": [
+          "TEMPORAL"
+        ],
+        "candidates": []
+      },
+      "whom": {
+        "class": [
+          "RECIPIENT_CLASS"
+        ],
+        "candidates": [
+          {
+            "role": "RECIPIENT",
+            "n_licensing_verbs": 5,
+            "attestation": 1230,
+            "example_verbs": [
+              "bring",
+              "carry",
+              "give",
+              "tie"
+            ]
+          }
+        ]
+      },
+      "with": {
+        "class": [
+          "INSTRUMENT_CLASS"
+        ],
+        "candidates": [
+          {
+            "role": "INSTRUMENT",
+            "n_licensing_verbs": 2,
+            "attestation": 1078,
+            "example_verbs": [
+              "fill",
+              "play"
+            ]
+          }
+        ]
+      },
+      "who_to": {
+        "class": [
+          "RECIPIENT_CLASS",
+          "PARTICIPANT"
+        ],
+        "candidates": [
+          {
+            "role": "RECIPIENT",
+            "n_licensing_verbs": 5,
+            "example_verbs": [
+              "bring",
+              "carry",
+              "give",
+              "tie"
+            ]
+          }
+        ]
+      }
+    },
+    "multiword": {
+      "where from": {
+        "role": "SOURCE",
+        "from_prep": "from",
+        "attested": true
+      },
+      "from where": {
+        "role": "SOURCE",
+        "from_prep": "from",
+        "attested": true
+      },
+      "with what": {
+        "role": "INSTRUMENT",
+        "from_prep": "with",
+        "attested": true
+      },
+      "to whom": {
+        "role": "RECIPIENT",
+        "from_prep": "to(dative)",
+        "attested": true
+      }
+    },
+    "role_count": {
+      "agent": 152,
+      "GOAL": 8,
+      "patient": 62,
+      "LOCATION": 11,
+      "INSTRUMENT": 2,
+      "THEME": 5,
+      "RECIPIENT": 5
+    }
+  },
+  "justified_diffs": [
+    "when"
+  ],
+  "n_unjustified": 0,
+  "match_or_justify_ok": true,
+  "parity_ok": true,
+  "mined_acc": 1.0,
+  "permuted_mining_acc": 0.25,
+  "permuted_mining_ok": true,
+  "moat_ok": true,
+  "total_false_accepts": 0,
+  "provenance_ok": true,
+  "go": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "elapsed_s": 1.2,
+      "parity_ok": true,
+      "mined_acc": 1.0,
+      "permuted_mining_acc": 0.3333333333333333,
+      "moat_false_accepts": 0,
+      "moat_recall_ok": true,
+      "moat_abstain_ok": 6,
+      "moat_n_abstain": 6,
+      "moat_ok": true,
+      "parity_details": [
+        {
+          "q": "where does the boy go?",
+          "exp_role": "GOAL",
+          "exp_filler": "park",
+          "hand": [
+            "GOAL",
+            "park"
+          ],
+          "mined": [
+            "GOAL",
+            "park"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "what does the mom give?",
+          "exp_role": "THEME",
+          "exp_filler": "ball",
+          "hand": [
+            "THEME",
+            "ball"
+          ],
+          "mined": [
+            "THEME",
+            "ball"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "who does the girl give to?",
+          "exp_role": "RECIPIENT",
+          "exp_filler": "cat",
+          "hand": [
+            "RECIPIENT",
+            "cat"
+          ],
+          "mined": [
+            "RECIPIENT",
+            "cat"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "where does the dog come?",
+          "exp_role": "GOAL",
+          "exp_filler": "house",
+          "hand": [
+            "GOAL",
+            "house"
+          ],
+          "mined": [
+            "GOAL",
+            "house"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "what does the cat chase?",
+          "exp_role": "patient",
+          "exp_filler": "river",
+          "hand": [
+            "patient",
+            "river"
+          ],
+          "mined": [
+            "patient",
+            "river"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "who chase river?",
+          "exp_role": "agent",
+          "exp_filler": "cat",
+          "hand": [
+            "agent",
+            "cat"
+          ],
+          "mined": [
+            "agent",
+            "cat"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "elapsed_s": 1.2,
+      "parity_ok": true,
+      "mined_acc": 1.0,
+      "permuted_mining_acc": 0.3333333333333333,
+      "moat_false_accepts": 0,
+      "moat_recall_ok": true,
+      "moat_abstain_ok": 6,
+      "moat_n_abstain": 6,
+      "moat_ok": true,
+      "parity_details": [
+        {
+          "q": "where does the boy go?",
+          "exp_role": "GOAL",
+          "exp_filler": "park",
+          "hand": [
+            "GOAL",
+            "park"
+          ],
+          "mined": [
+            "GOAL",
+            "park"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "what does the mom give?",
+          "exp_role": "THEME",
+          "exp_filler": "ball",
+          "hand": [
+            "THEME",
+            "ball"
+          ],
+          "mined": [
+            "THEME",
+            "ball"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "who does the girl give to?",
+          "exp_role": "RECIPIENT",
+          "exp_filler": "cat",
+          "hand": [
+            "RECIPIENT",
+            "cat"
+          ],
+          "mined": [
+            "RECIPIENT",
+            "cat"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "where does the dog come?",
+          "exp_role": "GOAL",
+          "exp_filler": "house",
+          "hand": [
+            "GOAL",
+            "house"
+          ],
+          "mined": [
+            "GOAL",
+            "house"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "what does the cat chase?",
+          "exp_role": "patient",
+          "exp_filler": "river",
+          "hand": [
+            "patient",
+            "river"
+          ],
+          "mined": [
+            "patient",
+            "river"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "who chase river?",
+          "exp_role": "agent",
+          "exp_filler": "cat",
+          "hand": [
+            "agent",
+            "cat"
+          ],
+          "mined": [
+            "agent",
+            "cat"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "elapsed_s": 1.2,
+      "parity_ok": true,
+      "mined_acc": 1.0,
+      "permuted_mining_acc": 0.16666666666666666,
+      "moat_false_accepts": 0,
+      "moat_recall_ok": true,
+      "moat_abstain_ok": 6,
+      "moat_n_abstain": 6,
+      "moat_ok": true,
+      "parity_details": [
+        {
+          "q": "where does the boy go?",
+          "exp_role": "GOAL",
+          "exp_filler": "park",
+          "hand": [
+            "GOAL",
+            "park"
+          ],
+          "mined": [
+            "GOAL",
+            "park"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "what does the mom give?",
+          "exp_role": "THEME",
+          "exp_filler": "ball",
+          "hand": [
+            "THEME",
+            "ball"
+          ],
+          "mined": [
+            "THEME",
+            "ball"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "who does the girl give to?",
+          "exp_role": "RECIPIENT",
+          "exp_filler": "cat",
+          "hand": [
+            "RECIPIENT",
+            "cat"
+          ],
+          "mined": [
+            "RECIPIENT",
+            "cat"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "where does the dog come?",
+          "exp_role": "GOAL",
+          "exp_filler": "house",
+          "hand": [
+            "GOAL",
+            "house"
+          ],
+          "mined": [
+            "GOAL",
+            "house"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "what does the cat chase?",
+          "exp_role": "patient",
+          "exp_filler": "river",
+          "hand": [
+            "patient",
+            "river"
+          ],
+          "mined": [
+            "patient",
+            "river"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "who chase river?",
+          "exp_role": "agent",
+          "exp_filler": "cat",
+          "hand": [
+            "agent",
+            "cat"
+          ],
+          "mined": [
+            "agent",
+            "cat"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 45,
+      "elapsed_s": 1.2,
+      "parity_ok": true,
+      "mined_acc": 1.0,
+      "permuted_mining_acc": 0.16666666666666666,
+      "moat_false_accepts": 0,
+      "moat_recall_ok": true,
+      "moat_abstain_ok": 6,
+      "moat_n_abstain": 6,
+      "moat_ok": true,
+      "parity_details": [
+        {
+          "q": "where does the boy go?",
+          "exp_role": "GOAL",
+          "exp_filler": "park",
+          "hand": [
+            "GOAL",
+            "park"
+          ],
+          "mined": [
+            "GOAL",
+            "park"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "what does the mom give?",
+          "exp_role": "THEME",
+          "exp_filler": "ball",
+          "hand": [
+            "THEME",
+            "ball"
+          ],
+          "mined": [
+            "THEME",
+            "ball"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "who does the girl give to?",
+          "exp_role": "RECIPIENT",
+          "exp_filler": "cat",
+          "hand": [
+            "RECIPIENT",
+            "cat"
+          ],
+          "mined": [
+            "RECIPIENT",
+            "cat"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "where does the dog come?",
+          "exp_role": "GOAL",
+          "exp_filler": "house",
+          "hand": [
+            "GOAL",
+            "house"
+          ],
+          "mined": [
+            "GOAL",
+            "house"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "what does the cat chase?",
+          "exp_role": "patient",
+          "exp_filler": "river",
+          "hand": [
+            "patient",
+            "river"
+          ],
+          "mined": [
+            "patient",
+            "river"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "who chase river?",
+          "exp_role": "agent",
+          "exp_filler": "cat",
+          "hand": [
+            "agent",
+            "cat"
+          ],
+          "mined": [
+            "agent",
+            "cat"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 46,
+      "elapsed_s": 1.2,
+      "parity_ok": true,
+      "mined_acc": 1.0,
+      "permuted_mining_acc": 0.3333333333333333,
+      "moat_false_accepts": 0,
+      "moat_recall_ok": true,
+      "moat_abstain_ok": 6,
+      "moat_n_abstain": 6,
+      "moat_ok": true,
+      "parity_details": [
+        {
+          "q": "where does the boy go?",
+          "exp_role": "GOAL",
+          "exp_filler": "park",
+          "hand": [
+            "GOAL",
+            "park"
+          ],
+          "mined": [
+            "GOAL",
+            "park"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "what does the mom give?",
+          "exp_role": "THEME",
+          "exp_filler": "ball",
+          "hand": [
+            "THEME",
+            "ball"
+          ],
+          "mined": [
+            "THEME",
+            "ball"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "who does the girl give to?",
+          "exp_role": "RECIPIENT",
+          "exp_filler": "cat",
+          "hand": [
+            "RECIPIENT",
+            "cat"
+          ],
+          "mined": [
+            "RECIPIENT",
+            "cat"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "where does the dog come?",
+          "exp_role": "GOAL",
+          "exp_filler": "house",
+          "hand": [
+            "GOAL",
+            "house"
+          ],
+          "mined": [
+            "GOAL",
+            "house"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "what does the cat chase?",
+          "exp_role": "patient",
+          "exp_filler": "river",
+          "hand": [
+            "patient",
+            "river"
+          ],
+          "mined": [
+            "patient",
+            "river"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "who chase river?",
+          "exp_role": "agent",
+          "exp_filler": "cat",
+          "hand": [
+            "agent",
+            "cat"
+          ],
+          "mined": [
+            "agent",
+            "cat"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 47,
+      "elapsed_s": 1.1,
+      "parity_ok": true,
+      "mined_acc": 1.0,
+      "permuted_mining_acc": 0.16666666666666666,
+      "moat_false_accepts": 0,
+      "moat_recall_ok": true,
+      "moat_abstain_ok": 6,
+      "moat_n_abstain": 6,
+      "moat_ok": true,
+      "parity_details": [
+        {
+          "q": "where does the boy go?",
+          "exp_role": "GOAL",
+          "exp_filler": "park",
+          "hand": [
+            "GOAL",
+            "park"
+          ],
+          "mined": [
+            "GOAL",
+            "park"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "what does the mom give?",
+          "exp_role": "THEME",
+          "exp_filler": "ball",
+          "hand": [
+            "THEME",
+            "ball"
+          ],
+          "mined": [
+            "THEME",
+            "ball"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "who does the girl give to?",
+          "exp_role": "RECIPIENT",
+          "exp_filler": "cat",
+          "hand": [
+            "RECIPIENT",
+            "cat"
+          ],
+          "mined": [
+            "RECIPIENT",
+            "cat"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "where does the dog come?",
+          "exp_role": "GOAL",
+          "exp_filler": "house",
+          "hand": [
+            "GOAL",
+            "house"
+          ],
+          "mined": [
+            "GOAL",
+            "house"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "what does the cat chase?",
+          "exp_role": "patient",
+          "exp_filler": "river",
+          "hand": [
+            "patient",
+            "river"
+          ],
+          "mined": [
+            "patient",
+            "river"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        },
+        {
+          "q": "who chase river?",
+          "exp_role": "agent",
+          "exp_filler": "cat",
+          "hand": [
+            "agent",
+            "cat"
+          ],
+          "mined": [
+            "agent",
+            "cat"
+          ],
+          "role_match": true,
+          "filler_match": true,
+          "pair_ok": true
+        }
+      ]
+    }
+  ]
+}
