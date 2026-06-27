@@ -378,7 +378,7 @@ class StreamCortexBridge:
     rate-Hebbian co-occurrence) -- the validated on-bridge stream cortex, parameterized for the 320-concept tier."""
 
     def __init__(self, vocab, cat_ids, seed, stories, n_hub=300, n_per=16, hub_scale=250.0, tgt_scale=1200.0,
-                 window_steps=2, D=128, plasticity_on=True, verbose=True):
+                 window_steps=2, D=128, plasticity_on=True, verbose=True, resume_bridge=None):
         self.vocab = list(vocab)
         self.Nt = len(self.vocab)
         self.cat_ids = np.asarray(cat_ids, dtype=int)
@@ -405,8 +405,21 @@ class StreamCortexBridge:
 
         t0 = time.time()
         self.bridge, self.hub_region, self.tgt_region = build_stream_bridge(self.Nt, self.n_hub, self.n_per, seed)
+        # CUMULATIVE / STAGED TRAINING (2026-06-26): restore a previously-trained brain's learned co-occurrence M
+        # (the rate-Hebbian hub->target weights live in `bridge.cp_connections`). save_checkpoint/load_checkpoint
+        # (HDF5) persist cp_connections verbatim; the region INDEX slices (self.hub_region/self.tgt_region) are
+        # contiguous and identical for the SAME vocab+n_hub+n_per, so they remain valid across the load (the load
+        # rebuilds cp_connections to the same NxN shape; it does NOT touch region_manager). The load happens AFTER
+        # build (which set the stream-cortex Hebbian config) and BEFORE hear_corpus -> continued training COMPOUNDS
+        # onto the preserved M. SAME-vocab only (continue the same concepts); vocab-GROWTH is a documented follow-on.
+        self.resumed_from = None
+        if resume_bridge:
+            self.bridge.load_checkpoint(resume_bridge)   # restores cp_connections (the learned M); rebuilds
+            #                                               core_config from the saved attrs (Hebbian stays ON).
+            self.resumed_from = resume_bridge
         if not self.plasticity_on:
             # FROZEN-BRAIN anti-cheat: gate the stream cortex's Hebbian learning OFF (hears but learns no codes).
+            # Set AFTER any resume-load (load_checkpoint rebuilds core_config from the saved Hebbian-ON config).
             self.bridge.core_config.enable_hebbian_learning = False
         self.build_s = time.time() - t0
         self.xp = self.bridge._cp if hasattr(self.bridge, "_cp") else None
@@ -682,8 +695,22 @@ def run_seed(seed, stories, vocab, cat_ids, cat_names, a):
     vram0 = _vram_used_mb()
 
     # ---- LEARN: hear the corpus on a persistent bridge (plasticity ON) ----
+    # CUMULATIVE/STAGED: --resume-bridge restores a prior brain's learned M (cp_connections) BEFORE hearing the
+    # corpus, so this run's windows COMPOUND onto it (vs restarting from scratch). Per-seed resume path when >1 seed.
+    _resume = getattr(a, "resume_bridge", None)
+    if _resume and len(getattr(a, "seeds", [seed])) > 1:
+        _resume = f"{_resume}_seed{seed}"
     cx = StreamCortexBridge(vocab, cat_ids, seed, stories, n_hub=a.n_hub, n_per=a.n_per,
-                            window_steps=a.window_steps, D=a.D, plasticity_on=True, verbose=True)
+                            window_steps=a.window_steps, D=a.D, plasticity_on=True, verbose=True,
+                            resume_bridge=_resume)
+    if cx.resumed_from is not None:
+        # corr(M,C) AT RELOAD (before training any more windows): the PRESERVATION check -- it must ~match the
+        # saved brain's corr (the checkpoint preserved the learned M; no catastrophic loss on reload).
+        corr_at_reload = cx.learning_fidelity()
+        print(f"  [resume] restored learned M from {cx.resumed_from} -> corr(M,C)-at-reload={corr_at_reload:+.3f} "
+              f"(preservation check; should ~match the saved brain)", flush=True)
+    else:
+        corr_at_reload = None
     t_learn = time.time()
     n_win = cx.hear_corpus(a.max_windows, story_seed=seed)
     learn_s = time.time() - t_learn
@@ -695,6 +722,15 @@ def run_seed(seed, stories, vocab, cat_ids, cat_names, a):
     print(f"  [learn] {n_win} windows in {learn_s:.0f}s | {n_pool_neurons} neurons "
           f"(hub {cx.n_hub_neurons} + tgt {cx.n_tgt_neurons}) | corr(M,C)={corr_mc:+.3f} | "
           f"VRAM resident {vram_peak} MB (pool {pool_mb} MB)", flush=True)
+
+    # ---- SAVE the trained BRIDGE (cp_connections = the learned M) for cumulative/staged resume ----
+    if getattr(a, "save_bridge", None):
+        _sb = a.save_bridge if len(getattr(a, "seeds", [seed])) <= 1 else f"{a.save_bridge}_seed{seed}"
+        os.makedirs(os.path.dirname(_sb) or ".", exist_ok=True)
+        ok = cx.bridge.save_checkpoint(_sb)
+        print(f"  [save-bridge] {'wrote' if ok else 'FAILED to write'} {_sb}  "
+              f"(learned M as cp_connections, corr(M,C)={corr_mc:+.3f}, total_windows={cx.total_windows})",
+              flush=True)
 
     # ---- SAVE the trained codes (the first-chat brain artifact the composer/DiscursiveTurn loads) ----
     if getattr(a, "save_codes", None):
@@ -765,6 +801,10 @@ def run_seed(seed, stories, vocab, cat_ids, cat_names, a):
         "vram_resident_mb_peak": vram_peak,
         "pool_used_mb": pool_mb,
         "corr_MC": corr_mc,
+        # cumulative/staged training provenance (None unless --resume-bridge was given)
+        "resumed_from": cx.resumed_from,
+        "corr_MC_at_reload": corr_at_reload,
+        "total_windows_cumulative": cx.total_windows,
         "recall": rm["recall"], "recall_detail": rm,
         "moat_false_accepts": rm["false_accept"],
         "generalization": gen["generalization"], "generalization_detail": gen,
@@ -861,6 +901,19 @@ def main():
     p.add_argument("--save-codes", default=None,
                    help="path (no ext) to save the trained grounded codes (.npz: vocab+grounded+code+M) "
                         "as the first-chat brain artifact the composer/DiscursiveTurn loads")
+    p.add_argument("--save-bridge", default=None,
+                   help="CUMULATIVE/STAGED training: path to save the trained BRIDGE (HDF5 checkpoint via "
+                        "bridge.save_checkpoint) AFTER training. The learnable stream-cortex state -- the "
+                        "rate-Hebbian co-occurrence M -- lives in cp_connections, which the checkpoint persists. "
+                        "Per-seed suffix (_seed{N}) appended when >1 seed. Pair with --resume-bridge to continue "
+                        "(SAME vocab/n_hub/n_per) so a week of training COMPOUNDS instead of restarting.")
+    p.add_argument("--resume-bridge", default=None,
+                   help="CUMULATIVE/STAGED training: path to a --save-bridge checkpoint to RESTORE (the learned "
+                        "co-occurrence M in cp_connections) BEFORE hearing the corpus, so this run's windows "
+                        "compound onto the preserved brain. SAME-vocab only (continue the same concepts -> better "
+                        "codes from more corpus); vocab-GROWTH is a documented follow-on. Per-seed suffix appended "
+                        "when >1 seed. Also enables this run to scale concepts past the single-bridge VRAM wall by "
+                        "training in chunks that each fit, accumulating across runs.")
     a = p.parse_args()
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -870,6 +923,8 @@ def main():
     logging.disable(logging.INFO)
 
     seeds = [int(s.strip()) for s in a.seeds.split(",")]
+    a.seeds = seeds   # store the PARSED list so the per-seed suffix logic in run_seed (save/resume/codes paths,
+    #                   `len(getattr(a, "seeds", [seed]))`) counts seeds, not the raw string's characters.
     # Resolve the corpus path(s): --corpus-paths (COMBINED, comma-sep) takes precedence; else the single
     # --corpus-path (default TinyStories). normalize_corpus_paths makes a single bare path byte-identical to the
     # legacy single-corpus run. (A combined-corpus run is the additive Rung-1 path.)
@@ -994,7 +1049,8 @@ def main():
                    "window_steps": a.window_steps, "max_windows": a.max_windows, "D": a.D,
                    "n_facts": a.n_facts, "recall_bar": a.recall_bar, "gen_bar": a.gen_bar,
                    "gen_reference": a.gen_reference, "vocab_filter": a.vocab_filter,
-                   "corpus_paths": list(corpus_paths), "n_corpora": len(corpus_paths)},
+                   "corpus_paths": list(corpus_paths), "n_corpora": len(corpus_paths),
+                   "save_bridge": a.save_bridge, "resume_bridge": a.resume_bridge},
         "curriculum": curr_report,
         "curriculum_developmental_order": vocab,
         "curriculum_category_ids": cat_ids.tolist(),

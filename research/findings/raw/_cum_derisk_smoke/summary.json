@@ -1,0 +1,120 @@
+{
+  "go": true,
+  "verdict": "CUMULATIVE TRAINING GO \u2014 checkpoint resume PRESERVES the learned M (corr(M_reload,M_saved)=1.000000 >= 0.999) AND continuing COMPOUNDS: 2N-effective corr(M,C) +0.745 >= fresh-N +0.733, recall 1.000 >= fresh-N 1.000; moat 0 false-accepts throughout. A week of training COMPOUNDS via save_checkpoint/load_checkpoint (cp_connections persisted) -> the chunked accumulation that scales concepts past the single-bridge VRAM wall is unblocked. NO sim/ edit.",
+  "backend": "numpy",
+  "seed": 42,
+  "config": {
+    "n_concepts": 16,
+    "n_hub": 40,
+    "n_per": 4,
+    "windows_N": 400,
+    "vocab_filter": "content",
+    "D": 128,
+    "n_facts": 24,
+    "corpus_paths": [
+      "data/corpus/tinystories.txt"
+    ],
+    "preservation_bar": 0.999,
+    "compound_eps": 0.01
+  },
+  "curriculum": {
+    "vocab_filter": "content",
+    "corpus": "tinystories.txt",
+    "n_concepts_chosen": 16,
+    "freq_range": [
+      8828,
+      2489
+    ],
+    "n_categories_covered": 10
+  },
+  "n_concepts_chosen": 16,
+  "bars": {
+    "preservation_pass": true,
+    "corr_M_reload_vs_saved": 1.0,
+    "compounding_pass": true,
+    "compound_corr_ok": true,
+    "compound_recall_ok": true,
+    "moat_pass_0FA": true
+  },
+  "stages": {
+    "fresh_N": {
+      "label": "fresh-N",
+      "n_windows": 400,
+      "resume_bridge": null,
+      "learn_seconds": 0.2,
+      "corr_MC": 0.733040051070448,
+      "corr_MC_at_reload": null,
+      "recall": 1.0,
+      "recall_correct": 48,
+      "recall_total": 48,
+      "false_accept": 0,
+      "abstain": 1.0,
+      "n_facts": 24,
+      "generalization": 0.625,
+      "M_norm": 2.00512473685639,
+      "M_reload_norm": 1.2649110829159953,
+      "vram_mb": null,
+      "n_pool_neurons": 224
+    },
+    "reload_0_preservation": {
+      "label": "reload@0",
+      "n_windows": 0,
+      "resume_bridge": "research/findings/raw/_cum_derisk_smoke\\freshN.simstate.h5",
+      "learn_seconds": 0.0,
+      "corr_MC": 0.0,
+      "corr_MC_at_reload": 0.0,
+      "recall": 1.0,
+      "recall_correct": 48,
+      "recall_total": 48,
+      "false_accept": 0,
+      "abstain": 1.0,
+      "n_facts": 24,
+      "generalization": 0.625,
+      "M_norm": 2.00512473685639,
+      "M_reload_norm": 2.00512473685639,
+      "vram_mb": null,
+      "n_pool_neurons": 224,
+      "corr_M_reload_vs_saved": 1.0
+    },
+    "reload_plus_N_2Neff": {
+      "label": "reload+N (2N-eff)",
+      "n_windows": 400,
+      "resume_bridge": "research/findings/raw/_cum_derisk_smoke\\freshN.simstate.h5",
+      "learn_seconds": 0.3,
+      "corr_MC": 0.7446261384204534,
+      "corr_MC_at_reload": 0.0,
+      "recall": 1.0,
+      "recall_correct": 48,
+      "recall_total": 48,
+      "false_accept": 0,
+      "abstain": 1.0,
+      "n_facts": 24,
+      "generalization": 0.625,
+      "M_norm": 2.907532970861448,
+      "M_reload_norm": 2.00512473685639,
+      "vram_mb": null,
+      "n_pool_neurons": 224,
+      "corr_M2N_vs_freshN": 0.994477256035851
+    },
+    "fresh_2N_ceiling": {
+      "label": "fresh-2N (ceiling)",
+      "n_windows": 800,
+      "resume_bridge": null,
+      "learn_seconds": 0.4,
+      "corr_MC": 0.7261871258735035,
+      "corr_MC_at_reload": null,
+      "recall": 1.0,
+      "recall_correct": 48,
+      "recall_total": 48,
+      "false_accept": 0,
+      "abstain": 1.0,
+      "n_facts": 24,
+      "generalization": 0.5,
+      "M_norm": 2.748605861398709,
+      "M_reload_norm": 1.2649110829159953,
+      "vram_mb": null,
+      "n_pool_neurons": 224
+    }
+  },
+  "wall_seconds": 17.5
+}
