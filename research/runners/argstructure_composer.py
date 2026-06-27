@@ -157,6 +157,45 @@ class FrameCQ:
         return order
 
 
+class SpikingFrameCQ:
+    """Burndown C1: the SPIKING drop-in for FrameCQ -- orders a verb frame's realized-slot indices by the VALIDATED
+    spiking competitive-queuing read-out (NeuralSerialOrderRenderer: concept pools driven by a primacy CURRENT on a
+    real SimulationBridge, the per-pool spiking RATE ranking = the emission order; the packaged 6/6-GO
+    _phaseB_serial_order_spiking_derisk). Same function as FrameCQ.emit_order, on neurons instead of a numpy
+    primacy vector + max().
+
+    FrameCQ teaches each frame the IDENTITY order (canonical slot 0 first; the frame lexicon already lists content
+    slots in canonical order), and render's realized-slot indices arrive in canonical-frame (ascending) order. So
+    this adapter drives the spiking renderer with the realized indices IN THAT ORDER -- the renderer drives the
+    first (lowest canonical index) with the highest primacy current and reads the rate ranking back -- reproducing
+    the canonical order on spikes, byte-for-byte == the numpy FrameCQ (de-risk: 6/6 exhaustive parity over every
+    frame + every realized subset; the equal-drive control fails -> the neurons serialize, not pool bias). The
+    NeuralSerialOrderRenderer builds a SimulationBridge, so this is imported + instantiated LAZILY -- the default
+    numpy path never touches a bridge (CPU-portable). See 2026-06-27-burndown-C1-framecq-spiking-GO.md.
+    """
+
+    # A monotonic, WIDELY-SPACED primacy gradient covering the LARGEST verb frame (give/send = 4 content slots).
+    # The validated SVO de-risk used (2400, 1700, 1000) (3 levels, Δ=700); a 4-slot frame needs a 4th DISTINCT level
+    # or slots 3+4 TIE (equal current -> the rate ranking flips on neuron heterogeneity, breaking parity). We use a
+    # wider step (900) for a robust per-slot rate margin: stress-tested 0/40 non-canonical sequential calls across 6
+    # seeds for both 3- and 4-slot frames (research/findings/2026-06-27-burndown-C1-framecq-spiking-GO.md). The floor
+    # (>=400 pA) still fires; order() indexes primacy_pA[min(i, len-1)], so a 3-slot frame uses the first 3 levels.
+    _MAX_SLOTS = max(content_slot_count(v) for v in FRAME_LEXICON)
+    _PRIMACY_GRADIENT = tuple(max(400.0, 2800.0 - 900.0 * i) for i in range(_MAX_SLOTS))
+
+    def __init__(self, seed=42):
+        # lazy import: building the renderer constructs a bridge; keep it off the module import path (CPU-clean).
+        from research.runners.neural_serial_order_renderer import NeuralSerialOrderRenderer
+        self._r = NeuralSerialOrderRenderer(seed=seed, primacy_pA=self._PRIMACY_GRADIENT)
+
+    def emit_order(self, fid, unit_indices):
+        # `unit_indices` = the canonical-frame positions of the realized slots, in canonical (ascending) order.
+        # The frame id is implicit in the input ORDER (the renderer drives input-position 0 with the most current),
+        # so emit_order is frame-conditioned exactly as FrameCQ's per-frame primacy is (a different frame's order
+        # -> a different driving order -> a different emitted order; the cross-frame anti-cheat passes).
+        return self._r.order(list(unit_indices))
+
+
 class ArgStructureComposer(RFPhasorComposer):
     """RFPhasorComposer extended with TYPED OBLIQUE roles + a per-verb FRAME LEXICON + FrameCQ rendering.
 
@@ -166,12 +205,37 @@ class ArgStructureComposer(RFPhasorComposer):
     Recall reuses the parent's `unbind`. Render expands the verb's frame into ordered (content + closed-class) slots
     and orders the content slots with FrameCQ. The no-confab moat is the parent's."""
 
-    def __init__(self, seed=42, D=64, vocab=None, grounded_codes=None, framecq_seed=None):
+    def __init__(self, seed=42, D=64, vocab=None, grounded_codes=None, framecq_seed=None,
+                 use_spiking_cq=None):
         super().__init__(seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes)
         prng = np.random.default_rng(seed + 2000)
         for r in TYPED_ROLES:
             self.roles[r] = prng.uniform(0.0, 1.0, self.D)
-        self.frame_cq = FrameCQ(seed=seed if framecq_seed is None else framecq_seed)
+        self._framecq_seed = seed if framecq_seed is None else framecq_seed
+        self.frame_cq = FrameCQ(seed=self._framecq_seed)        # the numpy oracle (always built; CPU-portable)
+        # Burndown C1: the word ORDER is produced by the VALIDATED SPIKING competitive-queuing renderer
+        # (NeuralSerialOrderRenderer; real firing rates -> the order == the numpy FrameCQ, 6/6 exhaustive parity)
+        # instead of the numpy primacy-vector + max(). DEFAULT (use_spiking_cq=None) = the consolidated_320 pattern:
+        # SPIKING on GPU (SIM_BACKEND=cupy, the production substrate -> honors the fully-spiking-one-brain end-state)
+        # / the numpy FrameCQ ORACLE on CPU (SIM_BACKEND=numpy -> CPU-portable, the retained test oracle; the spiking
+        # renderer builds a SimulationBridge and cannot run GPU-less). True/False force the choice. The renderer is
+        # built LAZILY on first spiking render so the numpy/CPU path never touches a bridge.
+        if use_spiking_cq is None:
+            from sim.backend import is_gpu_backend
+            use_spiking_cq = bool(is_gpu_backend())
+        self.use_spiking_cq = bool(use_spiking_cq)
+        self._spiking_cq = None
+
+    def _ordering_engine(self, use_spiking_cq=None):
+        """The serial-order engine for render(): the spiking competitive-queuing renderer (C1) if requested (the
+        per-instance default or the per-call override), else the numpy FrameCQ oracle. The spiking renderer is
+        built lazily (it constructs a bridge) and cached."""
+        want_spiking = self.use_spiking_cq if use_spiking_cq is None else bool(use_spiking_cq)
+        if not want_spiking:
+            return self.frame_cq
+        if self._spiking_cq is None:
+            self._spiking_cq = SpikingFrameCQ(seed=self._framecq_seed)
+        return self._spiking_cq
 
     # the parent's _encode iterates the module-level ROLES tuple; iterate the EXTENDED role set so typed roles bind.
     def _encode(self, fact):
@@ -202,13 +266,17 @@ class ArgStructureComposer(RFPhasorComposer):
             return TENSE_3SG.get(self.unbind(comp, "action"), self.unbind(comp, "action"))
         return self.unbind(comp, role)
 
-    def render(self, fact, comp=None, ablate_closed_class=False, use_framecq=True):
+    def render(self, fact, comp=None, ablate_closed_class=False, use_framecq=True, use_spiking_cq=None):
         """Render the fact as prose via its verb frame.
 
         `ablate_closed_class=True` drops the closed-class scaffold (each unit's lead function words) + the tense
         morphology -> telegraphic agrammatic output (the Broca's anti-cheat -- proves the scaffold does real work).
-        `use_framecq=True` orders the REALIZED phrase units by the validated FrameCQ serial-order engine (the
-        cognitive ordering is neural). `comp` may be omitted -- it is then recalled from the store (agent+action)."""
+        `use_framecq=True` orders the REALIZED phrase units by the validated competitive-queuing serial-order
+        engine (the cognitive ordering is neural). `use_spiking_cq` (Burndown C1): None = the instance default
+        (`self.use_spiking_cq`, default False = the numpy FrameCQ oracle, byte-identical); True = the VALIDATED
+        SPIKING competitive-queuing renderer (NeuralSerialOrderRenderer; real firing rates produce the order ==
+        the numpy order, 6/6 parity); False = force the numpy oracle. `comp` may be omitted -- it is then recalled
+        from the store (agent+action)."""
         if comp is None:
             comp = self._composite_for(fact)
             if comp is None:
@@ -216,11 +284,13 @@ class ArgStructureComposer(RFPhasorComposer):
         verb = fact["action"]
         units = realized_units(verb, fact)        # only the units whose role is present in the fact
         full_frame = frame_for(verb)
-        # FrameCQ orders the realized units by their canonical-frame index (the learned per-frame primacy gradient).
+        # The serial-order engine orders the realized units by their canonical-frame index (the per-frame primacy
+        # gradient). engine = the spiking competitive-queuing renderer (C1) or the numpy FrameCQ oracle.
         if use_framecq:
+            engine = self._ordering_engine(use_spiking_cq)
             unit_to_idx = {id(u): i for i, u in enumerate(full_frame)}
             realized_idx = [unit_to_idx[id(u)] for u in units]
-            order = self.frame_cq.emit_order(frame_id(verb), realized_idx)
+            order = engine.emit_order(frame_id(verb), realized_idx)
             idx_to_unit = {unit_to_idx[id(u)]: u for u in units}
             ordered_units = [idx_to_unit[i] for i in order]
         else:

@@ -102,8 +102,9 @@ class TenseAspectComposer(ArgStructureComposer):
     underlying who/what query abstains on an unstored (agent,action) cue. The default-tense store is byte-compatible
     with the parent's store_fact for facts that carry no tense (tense defaults to PRESENT)."""
 
-    def __init__(self, seed=42, D=64, vocab=None, grounded_codes=None, framecq_seed=None):
-        super().__init__(seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes, framecq_seed=framecq_seed)
+    def __init__(self, seed=42, D=64, vocab=None, grounded_codes=None, framecq_seed=None, use_spiking_cq=None):
+        super().__init__(seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes, framecq_seed=framecq_seed,
+                         use_spiking_cq=use_spiking_cq)
         # ADD the TENSE role + its tag codebook to the parent's dicts (exactly as polarity adds AFFIRM/NEGATE and
         # common-ground adds SHARED/PRIVATE). Use a DISJOINT rng stream so the parent's codes stay byte-identical.
         prng = np.random.default_rng(seed + 5252)
@@ -162,13 +163,16 @@ class TenseAspectComposer(ArgStructureComposer):
             return inflect(verb, tense)
         return self.unbind(comp, role)
 
-    def render_tensed(self, fact, comp=None, ablate_closed_class=False, use_framecq=True, lesion_tense=False):
+    def render_tensed(self, fact, comp=None, ablate_closed_class=False, use_framecq=True, lesion_tense=False,
+                      use_spiking_cq=None):
         """Render the fact as tensed prose via its verb frame, with the surface verb form DRIVEN by the bound tense
         tag. `lesion_tense=True` SEVERS the tense read (forces the PRESENT default) -- the lesion control proving the
         tag does real work (the rendered tense then collapses to present regardless of the stored tag). Otherwise the
-        parent's frame render (FrameCQ ordering + closed-class scaffold + the moat on a missing composite)."""
+        parent's frame render (the serial-order engine's ordering + closed-class scaffold + the moat on a missing
+        composite). `use_spiking_cq` (Burndown C1): None = the instance default; True = the spiking CQ ordering."""
         if not lesion_tense:
-            return self.render(fact, comp=comp, ablate_closed_class=ablate_closed_class, use_framecq=use_framecq)
+            return self.render(fact, comp=comp, ablate_closed_class=ablate_closed_class, use_framecq=use_framecq,
+                               use_spiking_cq=use_spiking_cq)
         # lesion: temporarily make _decode_unit_word read PRESENT (sever the tense role read).
         saved = self._decode_unit_word
 
@@ -179,7 +183,8 @@ class TenseAspectComposer(ArgStructureComposer):
             return self.unbind(c, role)
         self._decode_unit_word = _present_only
         try:
-            return self.render(fact, comp=comp, ablate_closed_class=ablate_closed_class, use_framecq=use_framecq)
+            return self.render(fact, comp=comp, ablate_closed_class=ablate_closed_class, use_framecq=use_framecq,
+                               use_spiking_cq=use_spiking_cq)
         finally:
             self._decode_unit_word = saved
 
