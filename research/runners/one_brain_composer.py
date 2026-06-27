@@ -1068,6 +1068,56 @@ class OneBrainComposer:
                 return None
         return current
 
+    # --- Tier 2.2: SELF-CUED associative chain-of-thought (== the rf composer's chain_of_thought) ---------------
+    def _relation_assoc(self):
+        """The agent's OWN learned RELATION-KEYED association strengths from its stored facts:
+        assoc[(agent, action)] = co-occurrence count over the kb (keyed by the RELATION so the selector picks WHICH
+        relation to chase). Mirrors RFPhasorComposer._relation_assoc."""
+        assoc = {}
+        for fact, _ in self.kb:
+            a, act = fact.get("agent"), fact.get("action")
+            if isinstance(a, str) and isinstance(act, str):
+                assoc[(a, act)] = assoc.get((a, act), 0.0) + 1.0
+        return assoc
+
+    def _select_next_relation(self, x, assoc, lesion=None, lesion_rng=None):
+        """SELF-CUE: among the relations available from concept `x` (as agent), pick the highest learned-association
+        relation; None if no associate (dead end -> abstain). lesion='zero' -> None; 'scramble' -> random ordering.
+        Mirrors RFPhasorComposer._select_next_relation."""
+        cands = {rel: w for (a, rel), w in assoc.items() if a == x}
+        if not cands:
+            return None
+        if lesion == "zero":
+            return None
+        if lesion == "scramble":
+            cands = {rel: float(lesion_rng.random()) for rel in cands}
+        return max(sorted(cands), key=cands.get)
+
+    def chain_of_thought(self, start, goal=None, max_hops=4, lesion=None, lesion_rng=None, return_path=False):
+        """SELF-CUED associative chain-of-thought (Tier 2.2) on the ONE persistent brain: from `start`, the agent
+        SELECTS each next relation by LEARNED association over its own facts (NOT a caller plan), then chases it via
+        the validated on-bridge `query_patient`; cleanup re-discretizes between hops (no compounding). Stops at
+        `goal` or a dead end -> ABSTAIN (the no-confab moat at EVERY hop). == RFPhasorComposer.chain_of_thought;
+        de-risked GO (2026-06-27-tier2.2-chain-of-thought-GO.md). Returns terminal (or None); return_path=True ->
+        (terminal, [start, ...])."""
+        assoc = self._relation_assoc()
+        x = start
+        path = [x]
+        terminal = None
+        for _ in range(int(max_hops)):
+            rel = self._select_next_relation(x, assoc, lesion=lesion, lesion_rng=lesion_rng)
+            if rel is None:
+                break
+            nxt = self.query_patient(x, rel)
+            if nxt is None:
+                break
+            path.append(nxt)
+            x = nxt
+            terminal = x
+            if goal is not None and x == goal:
+                break
+        return (terminal, path) if return_path else terminal
+
     # --- reconsolidation: prediction-error-gated in-place fact update (== the rf composer's update_on_mismatch) ---
     def _recovered_patient_phases(self, block_idx):
         """Reconstruct block_idx + unbind the patient role -> the RAW recovered patient phases (NOT cleaned up to a

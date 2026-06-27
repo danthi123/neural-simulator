@@ -733,6 +733,72 @@ class RFPhasorComposer:
                 return None
         return x
 
+    # --- Tier 2.2: SELF-CUED associative chain-of-thought -------------------------------------------------------
+    def _relation_assoc(self):
+        """The agent's OWN learned RELATION-KEYED association strengths, derived from its stored facts:
+        assoc[(agent, action)] = how strongly that (agent, relation) pair was reinforced (a co-occurrence count
+        over the kb -- the same statistic the dialogue-planning `_assoc_graph` reads, but keyed by the RELATION so
+        it can pick WHICH relation to chase). Built lazily from `self.kb` each call (the kb is the source of
+        truth). Clause-patient facts contribute their (agent, action) too (the inner SVO is structural)."""
+        assoc = {}
+        for fact, _ in self.kb:
+            a, act = fact.get("agent"), fact.get("action")
+            if isinstance(a, str) and isinstance(act, str):
+                assoc[(a, act)] = assoc.get((a, act), 0.0) + 1.0
+        return assoc
+
+    def _select_next_relation(self, x, assoc, lesion=None, lesion_rng=None):
+        """SELF-CUE: among the relations available from concept `x` (as agent in some stored fact), pick the one
+        with the HIGHEST learned association strength. Returns the relation, or None (no associate -> a dead end ->
+        the moat abstains; no fabricated hop). lesion='zero' removes the learned signal (-> None, abstain);
+        lesion='scramble' randomizes the ordering (the anti-cheat controls)."""
+        cands = {rel: w for (a, rel), w in assoc.items() if a == x}
+        if not cands:
+            return None
+        if lesion == "zero":
+            return None
+        if lesion == "scramble":
+            cands = {rel: float(lesion_rng.random()) for rel in cands}
+        # deterministic tie-break (sorted) so a given fact set yields a reproducible chain
+        return max(sorted(cands), key=cands.get)
+
+    def chain_of_thought(self, start, goal=None, max_hops=4, lesion=None, lesion_rng=None, return_path=False):
+        """SELF-CUED associative chain-of-thought (Tier 2.2): the structural heart of 'thinking'. From `start`, at
+        each step the AGENT itself SELECTS the next relation to chase -- by LEARNED association strength over its
+        own stored facts (`_relation_assoc`), NOT a caller-supplied plan -- then chases it via the validated single
+        hop (`query_patient`: match the current concept as AGENT under the chosen relation, read the PATIENT). The
+        cleanup re-discretizes the intermediate concept each hop, so error does NOT compound. Stops at `goal` (if
+        given and reached) or a dead end (no associate / no matching fact -> abstain).
+
+        This is exactly `query_chain` with the agent CHOOSING each hop instead of the caller supplying the action
+        list -- the single change that turns retrieval into self-generated thought (front-3 §2.6; roadmap 2.2).
+
+        The no-confab MOAT holds at EVERY hop: a dead-end concept abstains rather than fabricating a hop; an
+        unstored start returns None. De-risked GO (numpy, 3 seeds x 3 D): self-cued 2-hop 1.00 vs spreading floor
+        0.08, lesion-the-association -> 0.00, permuted-graph -> 0.08, re-cue lesion -> 0.00, moat at every hop, no
+        compounding to 4 hops -- 2026-06-27-tier2.2-chain-of-thought-GO.md.
+
+        Returns the terminal concept (or None if it dead-ended before any hop / start unstored). With
+        return_path=True, returns (terminal_or_None, [start, ...visited concepts]).
+        `lesion` ('zero'|'scramble') + `lesion_rng` are the anti-cheat hooks (default None = the real chain)."""
+        assoc = self._relation_assoc()
+        x = start
+        path = [x]
+        terminal = None
+        for _ in range(int(max_hops)):
+            rel = self._select_next_relation(x, assoc, lesion=lesion, lesion_rng=lesion_rng)
+            if rel is None:                                       # dead end -> abstain (no fabricated hop)
+                break
+            nxt = self.query_patient(x, rel)                      # the VALIDATED role-structured single hop + moat
+            if nxt is None:
+                break
+            path.append(nxt)
+            x = nxt
+            terminal = x
+            if goal is not None and x == goal:
+                break
+        return (terminal, path) if return_path else terminal
+
     def ask_yes_no(self, agent, action, patient):
         """'does <agent> <action> <patient>?' -> 'yes'/'no'/'unknown' via the bound AFFIRM/NEGATE polarity tag.
         Matches the full SVO; 'unknown' (abstention) when no stored fact matches. Batched scan on the fast path."""

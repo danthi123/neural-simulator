@@ -1,0 +1,791 @@
+{
+  "chance": 0.025,
+  "d0": 128,
+  "chase2": 1.0,
+  "spread2": 0.08333333333333333,
+  "lesion_selector_zero2": 0.0,
+  "lesion_selector_demote2": 0.3333333333333333,
+  "lesion_recue2": 0.0,
+  "perm2": 0.08333333333333333,
+  "selector_picks_eat": true,
+  "chase3": 1.0,
+  "chase3_hi": 1.0,
+  "moat_ok": true,
+  "cross_stays_above_0.5_to_depth": 4,
+  "results": [
+    {
+      "seed": 42,
+      "D": 128,
+      "hops": {
+        "1": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.25,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "2": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.0,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "3": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "4": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 1.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        }
+      },
+      "example_chains": {
+        "1": {
+          "start": "dog",
+          "goal": "cat",
+          "path": [
+            "dog",
+            "cat"
+          ],
+          "reached": true
+        },
+        "2": {
+          "start": "dog",
+          "goal": "mouse",
+          "path": [
+            "dog",
+            "cat",
+            "mouse"
+          ],
+          "reached": true
+        },
+        "3": {
+          "start": "dog",
+          "goal": "bug",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug"
+          ],
+          "reached": true
+        },
+        "4": {
+          "start": "dog",
+          "goal": "leaf",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug",
+            "leaf"
+          ],
+          "reached": true
+        }
+      },
+      "selector_picks_eat_at_start": "8/8",
+      "perm_2hop": 0.0,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true
+    },
+    {
+      "seed": 43,
+      "D": 128,
+      "hops": {
+        "1": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "2": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "3": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.125,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        },
+        "4": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.125,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        }
+      },
+      "example_chains": {
+        "1": {
+          "start": "dog",
+          "goal": "cat",
+          "path": [
+            "dog",
+            "cat"
+          ],
+          "reached": true
+        },
+        "2": {
+          "start": "dog",
+          "goal": "mouse",
+          "path": [
+            "dog",
+            "cat",
+            "mouse"
+          ],
+          "reached": true
+        },
+        "3": {
+          "start": "dog",
+          "goal": "bug",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug"
+          ],
+          "reached": true
+        },
+        "4": {
+          "start": "dog",
+          "goal": "leaf",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug",
+            "leaf"
+          ],
+          "reached": true
+        }
+      },
+      "selector_picks_eat_at_start": "8/8",
+      "perm_2hop": 0.125,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true
+    },
+    {
+      "seed": 44,
+      "D": 128,
+      "hops": {
+        "1": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 1.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "2": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 1.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "3": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.0,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        },
+        "4": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.0,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        }
+      },
+      "example_chains": {
+        "1": {
+          "start": "dog",
+          "goal": "cat",
+          "path": [
+            "dog",
+            "cat"
+          ],
+          "reached": true
+        },
+        "2": {
+          "start": "dog",
+          "goal": "mouse",
+          "path": [
+            "dog",
+            "cat",
+            "mouse"
+          ],
+          "reached": true
+        },
+        "3": {
+          "start": "dog",
+          "goal": "bug",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug"
+          ],
+          "reached": true
+        },
+        "4": {
+          "start": "dog",
+          "goal": "leaf",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug",
+            "leaf"
+          ],
+          "reached": true
+        }
+      },
+      "selector_picks_eat_at_start": "8/8",
+      "perm_2hop": 0.125,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true
+    },
+    {
+      "seed": 42,
+      "D": 256,
+      "hops": {
+        "1": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.25,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "2": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.0,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "3": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "4": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 1.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        }
+      },
+      "example_chains": {
+        "1": {
+          "start": "dog",
+          "goal": "cat",
+          "path": [
+            "dog",
+            "cat"
+          ],
+          "reached": true
+        },
+        "2": {
+          "start": "dog",
+          "goal": "mouse",
+          "path": [
+            "dog",
+            "cat",
+            "mouse"
+          ],
+          "reached": true
+        },
+        "3": {
+          "start": "dog",
+          "goal": "bug",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug"
+          ],
+          "reached": true
+        },
+        "4": {
+          "start": "dog",
+          "goal": "leaf",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug",
+            "leaf"
+          ],
+          "reached": true
+        }
+      },
+      "selector_picks_eat_at_start": "8/8",
+      "perm_2hop": 0.0,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true
+    },
+    {
+      "seed": 43,
+      "D": 256,
+      "hops": {
+        "1": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "2": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "3": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.125,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        },
+        "4": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.125,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        }
+      },
+      "example_chains": {
+        "1": {
+          "start": "dog",
+          "goal": "cat",
+          "path": [
+            "dog",
+            "cat"
+          ],
+          "reached": true
+        },
+        "2": {
+          "start": "dog",
+          "goal": "mouse",
+          "path": [
+            "dog",
+            "cat",
+            "mouse"
+          ],
+          "reached": true
+        },
+        "3": {
+          "start": "dog",
+          "goal": "bug",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug"
+          ],
+          "reached": true
+        },
+        "4": {
+          "start": "dog",
+          "goal": "leaf",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug",
+            "leaf"
+          ],
+          "reached": true
+        }
+      },
+      "selector_picks_eat_at_start": "8/8",
+      "perm_2hop": 0.125,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true
+    },
+    {
+      "seed": 44,
+      "D": 256,
+      "hops": {
+        "1": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 1.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "2": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 1.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "3": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.0,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        },
+        "4": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.0,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        }
+      },
+      "example_chains": {
+        "1": {
+          "start": "dog",
+          "goal": "cat",
+          "path": [
+            "dog",
+            "cat"
+          ],
+          "reached": true
+        },
+        "2": {
+          "start": "dog",
+          "goal": "mouse",
+          "path": [
+            "dog",
+            "cat",
+            "mouse"
+          ],
+          "reached": true
+        },
+        "3": {
+          "start": "dog",
+          "goal": "bug",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug"
+          ],
+          "reached": true
+        },
+        "4": {
+          "start": "dog",
+          "goal": "leaf",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug",
+            "leaf"
+          ],
+          "reached": true
+        }
+      },
+      "selector_picks_eat_at_start": "8/8",
+      "perm_2hop": 0.125,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true
+    },
+    {
+      "seed": 42,
+      "D": 512,
+      "hops": {
+        "1": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.25,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "2": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.0,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "3": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "4": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 1.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        }
+      },
+      "example_chains": {
+        "1": {
+          "start": "dog",
+          "goal": "cat",
+          "path": [
+            "dog",
+            "cat"
+          ],
+          "reached": true
+        },
+        "2": {
+          "start": "dog",
+          "goal": "mouse",
+          "path": [
+            "dog",
+            "cat",
+            "mouse"
+          ],
+          "reached": true
+        },
+        "3": {
+          "start": "dog",
+          "goal": "bug",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug"
+          ],
+          "reached": true
+        },
+        "4": {
+          "start": "dog",
+          "goal": "leaf",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug",
+            "leaf"
+          ],
+          "reached": true
+        }
+      },
+      "selector_picks_eat_at_start": "8/8",
+      "perm_2hop": 0.0,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true
+    },
+    {
+      "seed": 43,
+      "D": 512,
+      "hops": {
+        "1": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "2": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "3": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.125,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        },
+        "4": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 0.125,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        }
+      },
+      "example_chains": {
+        "1": {
+          "start": "dog",
+          "goal": "cat",
+          "path": [
+            "dog",
+            "cat"
+          ],
+          "reached": true
+        },
+        "2": {
+          "start": "dog",
+          "goal": "mouse",
+          "path": [
+            "dog",
+            "cat",
+            "mouse"
+          ],
+          "reached": true
+        },
+        "3": {
+          "start": "dog",
+          "goal": "bug",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug"
+          ],
+          "reached": true
+        },
+        "4": {
+          "start": "dog",
+          "goal": "leaf",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug",
+            "leaf"
+          ],
+          "reached": true
+        }
+      },
+      "selector_picks_eat_at_start": "8/8",
+      "perm_2hop": 0.125,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true
+    },
+    {
+      "seed": 44,
+      "D": 512,
+      "hops": {
+        "1": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 1.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "2": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.125,
+          "lesion_selector_demote": 1.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.0
+        },
+        "3": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.0,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        },
+        "4": {
+          "n": 8,
+          "chase": 1.0,
+          "spread": 0.0,
+          "lesion_selector_demote": 0.0,
+          "lesion_selector_zero": 0.0,
+          "lesion_recue": 0.125
+        }
+      },
+      "example_chains": {
+        "1": {
+          "start": "dog",
+          "goal": "cat",
+          "path": [
+            "dog",
+            "cat"
+          ],
+          "reached": true
+        },
+        "2": {
+          "start": "dog",
+          "goal": "mouse",
+          "path": [
+            "dog",
+            "cat",
+            "mouse"
+          ],
+          "reached": true
+        },
+        "3": {
+          "start": "dog",
+          "goal": "bug",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug"
+          ],
+          "reached": true
+        },
+        "4": {
+          "start": "dog",
+          "goal": "leaf",
+          "path": [
+            "dog",
+            "cat",
+            "mouse",
+            "bug",
+            "leaf"
+          ],
+          "reached": true
+        }
+      },
+      "selector_picks_eat_at_start": "8/8",
+      "perm_2hop": 0.125,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true
+    }
+  ]
+}

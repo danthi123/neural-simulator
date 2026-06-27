@@ -581,6 +581,20 @@ class BrainConversationalAgent:
         query_chain -- de-risked GO 3 seeds x 3 D, every anti-cheat collapsing (2026-06-17-multihop-query-chain-GO.md)."""
         return self.composer.query_chain(cue, actions)
 
+    def chain_of_thought(self, start, goal=None, max_hops=4, return_path=False):
+        """SELF-CUED associative chain-of-thought (Tier 2.2 -- the structural heart of 'thinking'): from `start`,
+        the agent itself SELECTS each next relation to chase by LEARNED association strength over its own stored
+        facts (NOT a caller-supplied action list, unlike reason_chain), then chases it via the validated single
+        hop, re-cleaning between hops so error does not compound. Stops at `goal` (if reached) or a dead end ->
+        ABSTAIN (the no-confab moat holds at EVERY hop; an unstored start or a dead end returns None / no fabricated
+        hop). Delegates to the composer's chain_of_thought -- de-risked GO numpy 3 seeds x 3 D (self-cued 2-hop
+        1.00 vs spreading floor 0.08; lesion-the-association/permuted/re-cue all collapse; no compounding to 4
+        hops): 2026-06-27-tier2.2-chain-of-thought-GO.md. With return_path=True returns (terminal, [start, ...])."""
+        if not hasattr(self.composer, "chain_of_thought"):
+            raise NotImplementedError("the active composer does not support self-cued chain_of_thought "
+                                      "(needs RFPhasorComposer / OneBrainComposer)")
+        return self.composer.chain_of_thought(start, goal=goal, max_hops=max_hops, return_path=return_path)
+
     def describe(self, agent):
         """Generation: produce a sentence about `agent` from the spiking memory ('dog go north'), or None if the
         agent knows no fact about it (no confabulation). With enable_neural_render, the word ORDER is produced by
