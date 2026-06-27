@@ -1,0 +1,70 @@
+{
+  "verdict": "GO",
+  "backend": "numpy",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "all_parity_surface": true,
+  "all_parity_asserted": true,
+  "all_real_order_hi": true,
+  "equal_drive_fails": true,
+  "lesion_fails": true,
+  "moat_structural_ok": true,
+  "gap_bar": 0.3,
+  "rows": [
+    {
+      "seed": 42,
+      "n_facts": 24,
+      "n_checks": 48,
+      "parity_surface_ok": 48,
+      "parity_asserted_ok": 48,
+      "parity_surface_frac": 1.0,
+      "real_svo_order": [
+        0,
+        1,
+        2
+      ],
+      "real_order_score": 1.0,
+      "equal_drive_score": 0.0833,
+      "lesion_score": 0.3056,
+      "moat_structural_ok": true
+    },
+    {
+      "seed": 43,
+      "n_facts": 24,
+      "n_checks": 48,
+      "parity_surface_ok": 48,
+      "parity_asserted_ok": 48,
+      "parity_surface_frac": 1.0,
+      "real_svo_order": [
+        0,
+        1,
+        2
+      ],
+      "real_order_score": 1.0,
+      "equal_drive_score": 0.0278,
+      "lesion_score": 0.5278,
+      "moat_structural_ok": true
+    },
+    {
+      "seed": 44,
+      "n_facts": 24,
+      "n_checks": 48,
+      "parity_surface_ok": 48,
+      "parity_asserted_ok": 48,
+      "parity_surface_frac": 1.0,
+      "real_svo_order": [
+        0,
+        1,
+        2
+      ],
+      "real_order_score": 1.0,
+      "equal_drive_score": 0.0278,
+      "lesion_score": 0.4167,
+      "moat_structural_ok": true
+    }
+  ],
+  "elapsed_s": 8.8
+}

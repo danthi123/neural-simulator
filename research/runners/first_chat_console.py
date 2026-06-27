@@ -87,7 +87,7 @@ from research.runners._grounded_lang_integration_derisk import (  # noqa: E402
     _build_inflection_map,
     _extract_svo_from_prose,
 )
-from research.runners._grounded_lang_p3_derisk import TemplateStubFaculty  # noqa: E402
+from research.runners._grounded_lang_p3_derisk import TemplateStubFaculty, _inflect, _determiner  # noqa: E402
 from research.runners._curriculum_step1_320_real_corpus import _make_svo_facts  # noqa: E402
 from research.runners.wh_question_parser import (  # noqa: E402  (Tier 0.3 -- natural wh-questions, filler-gap)
     parse_wh_question, answer_wh, bare_answer, is_wh_question,
@@ -215,6 +215,61 @@ class LLMFluencyFaculty:
 
 
 # ===========================================================================
+# BURNDOWN C2 -- the console's DEFAULT word-ordering on SPIKES.
+#
+# The console's CERTAIN sentence surface ("The dragonfly hums cod.") is produced by the fluency faculty's
+# `render_svo` -- specifically `TemplateStubFaculty.render_svo` lays the SVO slots out in a HOST f-string
+# (`f"{det_a}{agent} {verb} {patient}."`), i.e. the [agent, verb, patient] ORDER is a host literal. (The
+# DiscursiveTurn certain path is `_render_verify -> ct.render_and_verify(svo, faculty) -> faculty.render_svo`,
+# so the agent's `enable_neural_render` -- which only rewires `describe()`/`what_does()` -- does NOT touch this
+# surface; see the C2 note in 2026-06-27-burndown-bucketA-build-plan.md.)
+#
+# This faculty moves the cognitive ORDERING step onto neurons: it drives the 3 SVO slots through the VALIDATED
+# spiking competitive-queuing read-out (`NeuralSerialOrderRenderer`, the packaged 6/6-GO mechanism C1 also uses)
+# -- concept pools driven by a per-slot primacy CURRENT on a real SimulationBridge, the per-pool spiking RATE
+# ranking = the emission order. On the canonical SVO frame the spiking order == [agent, verb, patient] exactly
+# (the C1 6/6-GO parity), so the surface is BYTE-IDENTICAL to the host f-string for well-ordered facts -- but the
+# order is now NEURALLY produced (the equal-drive control FAILS -> the neurons serialize, not a host sort). The
+# final join + determiner + inflection stay host (the body's emission, per BRAIN-BASED-ONLY). The asserted SVO it
+# commits to is the canonical [a, v, p] (VERIFY checks CONTENT, not order -- unchanged).
+#
+# The NeuralSerialOrderRenderer builds a small SimulationBridge that runs on the console's ACTIVE backend --
+# including numpy-CPU (~0.5s build + ~5ms/order, verified) -- so this is the DEFAULT (enable_spiking_order=True),
+# NOT GPU-gated: the flagship numpy console orders words on neurons by default. `--spiking-render off` keeps the
+# host f-string (the legitimate body-emission oracle / fastest path). NO `sim/` edit; reuse-by-import.
+# ===========================================================================
+class SpikingOrderStubFaculty(TemplateStubFaculty):
+    """A `TemplateStubFaculty` whose SVO slot ORDER is produced by the VALIDATED spiking competitive-queuing
+    read-out (`NeuralSerialOrderRenderer`) instead of the host literal. Same fluent-surface contract (returns
+    `(surface, asserted_svo)`; only function words + inflection are added; never a content word changed), same
+    canonical asserted content `[agent, action, patient]` (so VERIFY is byte-unchanged). The ordering -- the
+    cognitive parallel->serial step -- is neural; only the determiner/inflection/join (the body's emission) is
+    host. On SVO the neural order == [agent, verb, patient] (C1 6/6-GO parity) -> the surface is byte-identical
+    to the host f-string for well-ordered facts, but produced by firing rates."""
+
+    def __init__(self, seed=42, n_templates=2):
+        super().__init__(n_templates=int(n_templates))
+        # lazy import: building the renderer constructs a bridge; keep it off the module import path (CPU-clean).
+        from research.runners.neural_serial_order_renderer import NeuralSerialOrderRenderer
+        self._order = NeuralSerialOrderRenderer(seed=int(seed))
+
+    def render_svo(self, agent, action, patient, template=0):
+        """Render the stored SVO fact, ordering the 3 slots [agent, verb, patient] by the spiking rate ranking.
+        Returns (surface, asserted_svo). The surface words are assembled in the NEURALLY-determined order
+        (det+inflection added on the agent/verb slots wherever they land); the asserted content is the canonical
+        [agent, action, patient] (VERIFY checks content, not order)."""
+        # canonical SVO slot pieces (surface fragments), slot 0=agent (highest primacy), 1=verb, 2=patient.
+        det_a = _determiner(agent, "agent")
+        verb = _inflect(action)
+        the_p = patient if template % 2 == 0 else f"the {patient}"
+        pieces = [f"{det_a}{agent}", verb, the_p]                 # the SVO frame pieces, in canonical order
+        order = self._order.order([0, 1, 2])                     # the SPIKING competitive-queuing order (== [0,1,2] on SVO)
+        surface = " ".join(pieces[i] for i in order).rstrip() + "."
+        asserted = [agent, action, patient]                      # the CONTENT the faculty commits to (VERIFY checks this)
+        return surface, asserted
+
+
+# ===========================================================================
 # Build the whole DiscursiveTurn pipeline on the 7K brain's LEARNED codes.  Replicates the short body of
 # build_communicable_brain (every component class reused verbatim) but parameterized on OUR 1,454 vocab + the
 # 7K grounded codes + a PPMI graph built over OUR vocab from the SAME corpus the brain learned from.
@@ -314,7 +369,7 @@ def _load_typed_facts(json_path, vocab, n_facts, seed):
 
 
 def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_json=None, argstructure=False,
-                         n_attempts=60, cand_cap=16,
+                         n_attempts=60, cand_cap=16, enable_spiking_order=None,
                          shards=1, shard_by="domain", fluency_faculty=None,
                          tau_pct=50.0, corpus_paths=None, corpus_max_bytes=(None, 40_000_000),
                          w_value=0.5, w_plaus=0.35, w_fam=0.15,
@@ -346,6 +401,32 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
     if verbose:
         print(f"[console] loaded brain: {len(vocab)} concepts, D={D}, {len(cat_names)} categories "
               f"({os.path.basename(npz_path)})", flush=True)
+
+    # ---- BURNDOWN C2: the DEFAULT render word-ORDER on SPIKES. The console's certain surface comes from the
+    # fluency faculty's render_svo (a host f-string SVO order) AND the agent's describe()/what_does() ordering;
+    # both are flipped to the VALIDATED spiking competitive-queuing read-out (NeuralSerialOrderRenderer).
+    #
+    # GATE: default ON (the renderer runs on the console's ACTIVE backend -- it builds a small SimulationBridge that
+    # runs on the numpy-CPU backend too, ~0.5s build + ~5ms/order; verified). This is the console's NATIVE backend,
+    # so it does NOT require SIM_BACKEND=cupy -- and MUST NOT, because forcing cupy breaks the UNRELATED
+    # SpikingSpeakAccumulator (`np.asarray(cp_firing_states)`), a pre-existing numpy-only path in the DiscursiveTurn
+    # speak decision. (C1 GPU-gated because it wired the renderer into the GPU ArgStructureComposer; the renderer
+    # itself is backend-agnostic.) `--spiking-render off` keeps the host f-string (the body-emission oracle). A
+    # Path-B LLM faculty (--faculty llm) supplies its own fluent wording -> the spiking-order stub faculty is NOT
+    # used then (the LLM owns ordering); enable_neural_render still flips on (covers agent describe()/what_does()).
+    if enable_spiking_order is None:
+        enable_spiking_order = True
+    enable_spiking_order = bool(enable_spiking_order)
+    # the spiking-ordered stub faculty (built ONCE, reused) -- only when ON, on the stub path (no LLM faculty).
+    spiking_stub = None
+    if enable_spiking_order and fluency_faculty is None:
+        spiking_stub = SpikingOrderStubFaculty(seed=seed)
+        if verbose:
+            print(f"[console] C2: word-ordering on SPIKES (NeuralSerialOrderRenderer competitive-queuing; "
+                  f"order==SVO on the canonical frame, neurally produced)", flush=True)
+    elif verbose and enable_spiking_order and fluency_faculty is not None:
+        print(f"[console] C2: --faculty llm supplies its own fluent ordering; enable_neural_render still on "
+              f"(agent describe()/what_does() spiking-ordered)", flush=True)
 
     # ---- the LEARNED ASSOCIATION GRAPH: PPMI over OUR 1,454 vocab, from the SAME corpus the brain learned from
     # (TinyStories full + a large slice of Simple-English-Wikipedia). build_real_cooccurrence reads ONE file; we
@@ -431,8 +512,13 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
         print(f"[console] stored {len(affirmed)} SVO facts (recall + discuss ground truth)", flush=True)
 
     # ---- the agent (comprehension parser + what_does/who_does/is_it_true), sharing the composer ----
+    # C2: enable_neural_render flips ON with the spiking-order gate so the agent's describe()/what_does() word
+    # ORDER is the spiking serial-order read-out too (it covers any path that reaches them -- e.g. an inner-clause
+    # patient render); the console's PRIMARY certain surface goes through the faculty (handled by spiking_stub
+    # below). With --spiking-render off it stays False -> the host f-string (the body-emission oracle).
     agent = BrainConversationalAgent(seed=seed, concepts={w: None for w in vocab},
-                                     composer=comp, composer_kind="rf", enable_neural_render=False)
+                                     composer=comp, composer_kind="rf",
+                                     enable_neural_render=bool(enable_spiking_order))
 
     # ---- the b2 generative-replay PROPOSER (host-oracle DRAW for CPU; the spiking SPEAK decision stays spiking) ----
     proposer = GenerativeReplayProposer(comp, affirmed, negated, P, row, tau,
@@ -456,7 +542,12 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
                                             da_baseline=da_baseline, kappa=kappa, da_punish=da_reward,
                                             rng=np.random.default_rng(seed * 211 + 3))
     cand_cache = {}
-    ct = CommunicableTurn(comp, agent, proposer, accumulator, P, row, vocab_sets, TemplateStubFaculty(),
+    # C2: the certain-fact surface is rendered by ct.faculty (DiscursiveTurn._render_verify -> ct.render_and_verify
+    # -> faculty.render_svo). When the GPU spiking-order gate is on (and no LLM faculty), use the SpikingOrderStubFaculty
+    # so the SVO word ORDER is the spiking competitive-queuing read-out (byte-identical surface on the canonical SVO
+    # frame, but neurally produced); else the host-literal TemplateStubFaculty (the numpy-CPU oracle).
+    turn_faculty = spiking_stub if spiking_stub is not None else TemplateStubFaculty()
+    ct = CommunicableTurn(comp, agent, proposer, accumulator, P, row, vocab_sets, turn_faculty,
                           scratch_value, codes_pool, full_pools=full_pools, w_value=w_value, w_plaus=w_plaus,
                           w_fam=w_fam, speak_base_pA=speak_base_pA, speak_gain_pA=speak_gain_pA,
                           silence_drive_pA=silence_drive_pA, cand_cache=cand_cache)
@@ -1851,6 +1942,14 @@ def main():
                          "LOCATION + the FrameCQ render) instead of the plain RFPhasorComposer, and route the wh + "
                          "verb-frame render through it. Requires --facts-json with TYPED-ROLE facts "
                          "(_corpus_svo_extract --typed-roles). Single-bridge (--shards 1). Default off = byte-unchanged.")
+    ap.add_argument("--spiking-render", choices=("auto", "on", "off"), default="auto",
+                    help="C2: word-ORDER the rendered sentences via the VALIDATED spiking competitive-queuing read-out "
+                         "(NeuralSerialOrderRenderer) instead of the host f-string. 'auto'/'on' (DEFAULT) = the spiking "
+                         "order, run on the console's ACTIVE backend (a small SimulationBridge; runs on numpy-CPU too, "
+                         "~0.5s build + ~5ms/order -- it does NOT need SIM_BACKEND=cupy); 'off' = the host f-string "
+                         "(the body-emission oracle / fastest path). The order==SVO on the canonical frame so the "
+                         "surface is byte-identical, but neurally produced (the moat is unaffected -- abstention "
+                         "happens before any ordering).")
     ap.add_argument("--n-attempts", type=int, default=60, help="generative-replay samples per topic")
     ap.add_argument("--cand-cap", type=int, default=16,
                     help="Stage-0 latency: stop proposing after this many accepted candidates per topic (0=exhaustive)")
@@ -1888,8 +1987,9 @@ def main():
     if a.faculty == "llm":
         fluency = LLMFluencyFaculty(T=a.faculty_T, max_new_tokens=a.faculty_max_new_tokens, seed=a.seed)
 
+    spiking_order = {"auto": None, "on": True, "off": False}[a.spiking_render]   # C2: None = auto (GPU-gated)
     brain = build_brain_on_codes(a.brain, seed=a.seed, n_facts=a.n_facts, facts_json=a.facts_json,
-                                 argstructure=a.argstructure,
+                                 argstructure=a.argstructure, enable_spiking_order=spiking_order,
                                  n_attempts=a.n_attempts, cand_cap=(a.cand_cap or None),
                                  shards=a.shards, shard_by=a.shard_by, fluency_faculty=fluency,
                                  n_topics=a.n_topics, max_topic_scan=a.max_topic_scan)
