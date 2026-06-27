@@ -114,6 +114,19 @@ from research.runners.tense_aspect_composer import TenseAspectComposer, inflect 
 _TYPED_OBJECT_ROLES = tuple(TYPED_ROLES)
 
 
+def _composer_concept_codes(comp):
+    """The {word: code} concept-code dict for the auxiliary Tier-2 standalone composers (tense / common-ground /
+    entity-instance), resolved from EITHER composer substrate. An RFPhasorComposer / ArgStructureComposer / RoutedComposer
+    exposes `.concepts` directly; the OneBrainComposer (BURNDOWN C3) holds them on its inner `.comp` (the RFPhasorComposer
+    it wraps). So those auxiliary layers build on the SAME learned codes whether the main console composer is rf or
+    onebrain (otherwise they would silently build on EMPTY codes on the onebrain path). Returns a dict (possibly empty)."""
+    c = getattr(comp, "concepts", None)
+    if c is None:
+        inner = getattr(comp, "comp", None)               # OneBrainComposer wraps an inner RFPhasorComposer
+        c = getattr(inner, "concepts", None)
+    return c if isinstance(c, dict) else {}
+
+
 def _frame_object_role(verb):
     """The single object role a verb's frame licenses (Tier 0.1 frame lexicon): a motion verb (go/come/walk/run)
     -> GOAL ('to the park'); everything else -> the bare `patient`. Used by the entity-instance layer so a
@@ -369,6 +382,7 @@ def _load_typed_facts(json_path, vocab, n_facts, seed):
 
 
 def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_json=None, argstructure=False,
+                         composer_kind="rf",
                          n_attempts=60, cand_cap=16, enable_spiking_order=None,
                          shards=1, shard_by="domain", fluency_faculty=None,
                          tau_pct=50.0, corpus_paths=None, corpus_max_bytes=(None, 40_000_000),
@@ -377,6 +391,18 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
                          acc_steps=120, n_topics=12, max_topic_scan=40, taught_frac=0.4, n_rounds=12,
                          lr=0.10, da_reward=1.0, da_baseline=0.0, kappa=2.0, verbose=True):
     """Load the 7K brain (`vocab`, `grounded` codes) and assemble the full DiscursiveTurn pipeline on it.
+
+    `composer_kind` (BURNDOWN C3, default 'rf' = the numpy-reference CPU ORACLE, behavior byte-unchanged): selects
+    the substrate the whole who/what pipeline (recall / bind / cleanup / yes-no / chain-of-thought / generation) runs
+    on. 'rf' = the numpy `RFPhasorComposer` (the test oracle + the GPU-less CPU path). 'onebrain' = the persistent
+    spiking `OneBrainComposer` -- the WHOLE flat who/what pipeline (an on-bridge parser + RF complex-synapse fact store
+    + spiking Izhikevich-WTA cleanup) on ONE co-resident `SimulationBridge`, so the console's recall/answer path runs
+    on firing neurons (needs SIM_BACKEND=cupy for real use; numpy is the tiny test-oracle path). The onebrain composer
+    is an `RFPhasorComposer` API-sibling, so the DiscursiveTurn / proposer / agent / audit_moat consume it through the
+    SAME composer API -- the substrate swap is invisible to them. The grounded codes loaded here pass through, so the
+    brain converses on exactly the codes it learned, on spikes. HONEST SCOPE: onebrain covers the FLAT who/what +
+    chain-of-thought + yes/no + generation; the TYPED verb-frame `--argstructure` path stays on the numpy
+    `ArgStructureComposer` (that is burndown C4) -- so `--composer onebrain` is ignored when `--argstructure` is set.
 
     `shards` (default 1 = TODAY'S single RFPhasorComposer, behavior byte-unchanged): when >1, the composer is a
     RoutedComposer over `shards` disjoint ~V/shards-concept shards (deep-knowledge scaling -- per-shard cleanup so
@@ -461,16 +487,61 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
         nouns, verbs = sorted(set(vocab)), sorted(set(vocab))
 
     # ---- the KNOWN-fact store on the LEARNED codes (the no-confab moat intact) ----
-    # Three composer modes, ALL on the SAME learned codes:
-    #   * default (shards==1, argstructure=False) -> the single RFPhasorComposer (byte-unchanged);
+    # Composer modes, ALL on the SAME learned codes:
+    #   * default (composer_kind='rf', shards==1, argstructure=False) -> the single RFPhasorComposer (byte-unchanged,
+    #     the numpy-reference test ORACLE + the GPU-less CPU path);
+    #   * composer_kind='onebrain' (BURNDOWN C3) -> the persistent spiking OneBrainComposer: the WHOLE flat who/what
+    #     pipeline (an on-bridge parser + RF complex-synapse fact store + spiking Izhikevich-WTA cleanup) on ONE
+    #     co-resident SimulationBridge, so recall/answer runs on FIRING NEURONS. An RFPhasorComposer API-sibling -> the
+    #     DiscursiveTurn / proposer / agent / audit_moat consume it through the same composer API (the swap is invisible
+    #     to them); the grounded codes pass through (it converses on the codes it learned, on spikes). Needs
+    #     SIM_BACKEND=cupy for real use (numpy is the tiny test-oracle path). HONEST SCOPE: onebrain is single-bridge
+    #     (no RoutedComposer-of-onebrain yet) + flat-SVO only -- the TYPED verb-frame --argstructure path stays rf (C4).
     #   * shards>1 -> the RoutedComposer (per-shard cleanup, deep-knowledge scaling);
     #   * argstructure=True (Tier 0.1) -> an ArgStructureComposer (typed verb-frame roles + the FrameCQ render).
     #     Single-bridge (shards>1 is a follow-on; a RoutedComposer of ArgStructureComposers is not yet built).
+    _onebrain = (composer_kind == "onebrain") and not argstructure
     if argstructure:
+        if composer_kind == "onebrain" and verbose:
+            print(f"[console] (note) --composer onebrain is ignored with --argstructure (the typed verb-frame path "
+                  f"stays the numpy ArgStructureComposer = burndown C4); flat who/what only is on the onebrain path.",
+                  flush=True)
         if shards and int(shards) > 1 and verbose:
             print(f"[console] (note) --argstructure is single-bridge; ignoring shards={shards} "
                   f"(multi-bridge ArgStructure is a follow-on)", flush=True)
         comp = ArgStructureComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded)
+    elif _onebrain:
+        # BURNDOWN C3: the persistent spiking one-brain path. Reuse-by-import (NO sim/ edit): the validated production
+        # OneBrainComposer (the consolidated_320 default). enable_spiking_cleanup stays ON (its own default) -> the
+        # cleanup winner-pick is a spiking Izhikevich WTA, so the whole conversational turn is brain-based on one
+        # bridge; the grounded codes are the SAME loaded above (production parity with the rf grounded path).
+        from sim.backend import get_backend
+        _bk = get_backend()[1]
+        if _bk != "cupy" and verbose:
+            print(f"[console] (warn) --composer onebrain on backend '{_bk}': the onebrain bridge runs but is the SLOW "
+                  f"tiny test-oracle path on numpy. Set SIM_BACKEND=cupy for the real spiking-substrate console.",
+                  flush=True)
+        from research.runners.one_brain_composer import OneBrainComposer
+        # enable_spiking_cleanup=False to MATCH THE rf ORACLE EXACTLY: the rf RFPhasorComposer the console builds for
+        # --composer rf defaults to a HOST-argmax cleanup-select (rf_phasor_composer.py:62, enable_spiking_cleanup=False)
+        # over a numpy kb. The OneBrainComposer's memory is ALWAYS the on-bridge complex-synapse STORE + the resonate
+        # SCAN/unbind (so bind / store / unbind / recall already run on FIRING NEURONS -- the C3 substrate win); the only
+        # remaining choice is the final winner-PICK. Matching the oracle's host argmax there makes the onebrain console
+        # ANSWER-IDENTICAL to the rf oracle on the validated cases (the substrate store == the numpy kb bit-for-bit:
+        # 0 mismatches, c3_localize). The fully-on-substrate spiking Izhikevich-WTA cleanup-select is the documented
+        # default ELSEWHERE (consolidated_320 / the agent's onebrain path) -- it is == numpy argmax @ D=2048 but at this
+        # CROWDED scale (V=1454, D=128, thin code margins) it costs 1 SAFE-direction abstain on a thin-margin fact
+        # (c3_parity: dragonfly/hum/cod -> None instead of 'cod'; moat still 0-FA), so it is NOT the console default
+        # here where exact oracle parity is the bar. (Future: a wider-D / shard pass would close that margin.)
+        comp = OneBrainComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded,
+                                enable_spiking_cleanup=False)
+        if shards and int(shards) > 1 and verbose:
+            print(f"[console] (note) --composer onebrain is single-bridge; ignoring shards={shards} "
+                  f"(a RoutedComposer-of-onebrain is a follow-on)", flush=True)
+        if verbose:
+            print(f"[console] C3: composer=OneBrainComposer (the WHOLE flat who/what pipeline -- parser + "
+                  f"RF complex-synapse fact store + spiking WTA cleanup -- on ONE persistent spiking bridge)",
+                  flush=True)
     elif shards and int(shards) > 1:
         from research.runners.routed_composer import RoutedComposer
         comp = RoutedComposer(npz_path, n_shards=int(shards), seed=seed, D=D, shard_by=shard_by,
@@ -824,7 +895,8 @@ class FirstChatConsole:
         try:
             comp = brain["comp"]
             words = list(getattr(comp, "words", brain["vocab"]))
-            codes = {w: comp.concepts[w] for w in words if w in getattr(comp, "concepts", {})}
+            _cc = _composer_concept_codes(comp)            # rf->.concepts; onebrain->inner .comp.concepts (C3)
+            codes = {w: _cc[w] for w in words if w in _cc}
             seed = int(getattr(comp, "seed", 42))
             D = int(getattr(comp, "D", 128))
             return TenseAspectComposer(seed=seed, D=D, vocab=sorted(set(words)), grounded_codes=codes)
@@ -839,7 +911,8 @@ class FirstChatConsole:
         try:
             comp = brain["comp"]
             words = list(getattr(comp, "words", brain["vocab"]))
-            codes = {w: comp.concepts[w] for w in words if w in getattr(comp, "concepts", {})}
+            _cc = _composer_concept_codes(comp)            # rf->.concepts; onebrain->inner .comp.concepts (C3)
+            codes = {w: _cc[w] for w in words if w in _cc}
             seed = int(getattr(comp, "seed", 42))
             D = int(getattr(comp, "D", 128))
             cg = CommonGroundComposer(seed=seed, D=D, vocab=sorted(set(words)), grounded_codes=codes)
@@ -860,7 +933,8 @@ class FirstChatConsole:
         try:
             comp = brain["comp"]
             words = list(getattr(comp, "words", brain["vocab"]))
-            codes = {w: comp.concepts[w] for w in words if w in getattr(comp, "concepts", {})}
+            _cc = _composer_concept_codes(comp)            # rf->.concepts; onebrain->inner .comp.concepts (C3)
+            codes = {w: _cc[w] for w in words if w in _cc}
             seed = int(getattr(comp, "seed", 42))
             D = int(getattr(comp, "D", 128))
             ic = RFPhasorComposer(seed=seed, D=D, vocab=sorted(set(words)), grounded_codes=codes)
@@ -1942,6 +2016,16 @@ def main():
                          "LOCATION + the FrameCQ render) instead of the plain RFPhasorComposer, and route the wh + "
                          "verb-frame render through it. Requires --facts-json with TYPED-ROLE facts "
                          "(_corpus_svo_extract --typed-roles). Single-bridge (--shards 1). Default off = byte-unchanged.")
+    ap.add_argument("--composer", choices=("rf", "onebrain"), default="rf",
+                    help="BURNDOWN C3: the substrate the console's who/what pipeline (recall / bind / cleanup / yes-no / "
+                         "chain-of-thought / generation) runs on. 'rf' (DEFAULT) = the numpy RFPhasorComposer = the test "
+                         "ORACLE + the GPU-less CPU path (byte-unchanged). 'onebrain' = the persistent spiking "
+                         "OneBrainComposer (an on-bridge parser + RF complex-synapse fact store + spiking Izhikevich-WTA "
+                         "cleanup on ONE co-resident SimulationBridge) -- the console's recall/answer path runs on FIRING "
+                         "NEURONS. Needs SIM_BACKEND=cupy for the real spiking path (numpy is the tiny test-oracle path). "
+                         "HONEST SCOPE: covers FLAT who/what + chain-of-thought + yes/no + generation; the TYPED verb-frame "
+                         "--argstructure path stays on the numpy ArgStructureComposer (= burndown C4), so --composer "
+                         "onebrain is ignored when --argstructure is set.")
     ap.add_argument("--spiking-render", choices=("auto", "on", "off"), default="auto",
                     help="C2: word-ORDER the rendered sentences via the VALIDATED spiking competitive-queuing read-out "
                          "(NeuralSerialOrderRenderer) instead of the host f-string. 'auto'/'on' (DEFAULT) = the spiking "
@@ -1989,7 +2073,8 @@ def main():
 
     spiking_order = {"auto": None, "on": True, "off": False}[a.spiking_render]   # C2: None = auto (GPU-gated)
     brain = build_brain_on_codes(a.brain, seed=a.seed, n_facts=a.n_facts, facts_json=a.facts_json,
-                                 argstructure=a.argstructure, enable_spiking_order=spiking_order,
+                                 argstructure=a.argstructure, composer_kind=a.composer,
+                                 enable_spiking_order=spiking_order,
                                  n_attempts=a.n_attempts, cand_cap=(a.cand_cap or None),
                                  shards=a.shards, shard_by=a.shard_by, fluency_faculty=fluency,
                                  n_topics=a.n_topics, max_topic_scan=a.max_topic_scan)

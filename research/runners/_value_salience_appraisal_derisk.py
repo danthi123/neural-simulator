@@ -73,6 +73,8 @@ _REPO = os.path.normpath(os.path.join(_HERE, "..", ".."))
 if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
+from sim.backend import to_host  # noqa: E402  -- backend-safe device->host read (passthrough on numpy, .get() on cupy)
+
 # --- the Probe-1 brain (reuse-by-import VERBATIM): PPMI cortex + b2 proposer + RF composer + parser + faculty ---
 from research.runners._genfrontier_b2_generative_replay_derisk import (  # noqa: E402
     GenerativeReplayProposer,
@@ -232,7 +234,10 @@ class SpikingSpeakAccumulator:
             sp = si = 0.0
             for _ in range(self.n_steps):
                 b._run_one_simulation_step()
-                fs = np.asarray(b.cp_firing_states)
+                # backend-safe (C3): to_host is a passthrough on numpy (byte-identical to the np.asarray it replaces)
+                # and `.get()` on cupy -- so the speak accumulator's per-step spike read works when the console runs on
+                # SIM_BACKEND=cupy for the onebrain composer (the accumulator bridge shares the active backend).
+                fs = to_host(b.cp_firing_states)
                 sp += float(fs[self._idx["speak_acc"]].sum())
                 si += float(fs[self._idx["silence_acc"]].sum())
         finally:

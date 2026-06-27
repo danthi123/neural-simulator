@@ -1068,6 +1068,22 @@ class OneBrainComposer:
                 return None
         return current
 
+    def _assoc_graph(self):
+        """An association graph (concept -> {concept: weight}) from the stored facts (agent/action/patient co-occur;
+        clause patients skipped -- their inner concepts are structural). The graph the dlPFC dialogue planner spreads
+        over (the rich_answer_composer's `ordered_associates` + the agent's `elaborate`). A pure function of `self.kb`
+        (the (fact_dict, None) bookkeeping), so it is BYTE-IDENTICAL to RFPhasorComposer._assoc_graph on the same kb --
+        making the OneBrainComposer a complete RFPhasorComposer API-sibling for the console's dialogue-planning path
+        (C3). Read-only (no resonate, no bridge step); the no-confab moat is untouched."""
+        graph = {}
+        for fact, _ in self.kb:
+            cs = [fact.get(r) for r in ("agent", "action", "patient") if isinstance(fact.get(r), str)]
+            for x in cs:
+                for y in cs:
+                    if x != y:
+                        graph.setdefault(x, {})[y] = graph.get(x, {}).get(y, 0.0) + 1.0
+        return graph
+
     # --- Tier 2.2: SELF-CUED associative chain-of-thought (== the rf composer's chain_of_thought) ---------------
     def _relation_assoc(self):
         """The agent's OWN learned RELATION-KEYED association strengths from its stored facts:
