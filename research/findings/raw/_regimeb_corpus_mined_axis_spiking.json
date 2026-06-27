@@ -1,0 +1,830 @@
+{
+  "relation": "size",
+  "corpus": "data/corpus/simplewiki.txt",
+  "brain": "brainALL_w7000.npz_seed42.npz",
+  "n_items_gt": 16,
+  "n_seeds": 3,
+  "mined_order": [
+    "mouse",
+    "pig",
+    "fox",
+    "bear",
+    "dog",
+    "ant",
+    "cat",
+    "wolf",
+    "rabbit",
+    "lion",
+    "cow",
+    "sheep",
+    "horse",
+    "tiger",
+    "whale",
+    "elephant"
+  ],
+  "gt_order": [
+    "ant",
+    "mouse",
+    "rabbit",
+    "cat",
+    "fox",
+    "dog",
+    "pig",
+    "sheep",
+    "wolf",
+    "lion",
+    "tiger",
+    "bear",
+    "horse",
+    "cow",
+    "elephant",
+    "whale"
+  ],
+  "premises": [
+    [
+      "pig",
+      "mouse"
+    ],
+    [
+      "fox",
+      "pig"
+    ],
+    [
+      "bear",
+      "fox"
+    ],
+    [
+      "dog",
+      "bear"
+    ],
+    [
+      "ant",
+      "dog"
+    ],
+    [
+      "cat",
+      "ant"
+    ],
+    [
+      "wolf",
+      "cat"
+    ],
+    [
+      "rabbit",
+      "wolf"
+    ],
+    [
+      "lion",
+      "rabbit"
+    ],
+    [
+      "cow",
+      "lion"
+    ],
+    [
+      "sheep",
+      "cow"
+    ],
+    [
+      "horse",
+      "sheep"
+    ],
+    [
+      "tiger",
+      "horse"
+    ],
+    [
+      "whale",
+      "tiger"
+    ],
+    [
+      "elephant",
+      "whale"
+    ]
+  ],
+  "provenance": {
+    "ant": {
+      "freq": 199,
+      "hi": 2,
+      "lo": 2,
+      "score": 0.0,
+      "examples": [
+        "male ants really big ant colonies are sometimes called",
+        "as small as an ant or as large as",
+        "numbers ant mill an ant mill is a small"
+      ]
+    },
+    "mouse": {
+      "freq": 413,
+      "hi": 3,
+      "lo": 10,
+      "score": -0.01694915254237288,
+      "examples": [
+        "as big as a mouse some insects also use",
+        "vole is a small mouse like mammal it is",
+        "orientated to mocking timothy mouse than dumbo s large"
+      ]
+    },
+    "rabbit": {
+      "freq": 203,
+      "hi": 5,
+      "lo": 3,
+      "score": 0.009852216748768473,
+      "examples": [
+        "de indias indian bunny rabbit guinea pigs need large",
+        "was to hide large rabbit ears the gag was",
+        "his large military each rabbit is told when are"
+      ]
+    },
+    "cat": {
+      "freq": 700,
+      "hi": 17,
+      "lo": 16,
+      "score": 0.0014285714285714286,
+      "examples": [
+        "in the sun giant cat on a hot tin",
+        "rhapsody giant raintree county cat on a hot tin",
+        "puma the next big cat in mac os x"
+      ]
+    },
+    "fox": {
+      "freq": 858,
+      "hi": 3,
+      "lo": 6,
+      "score": -0.0034965034965034965,
+      "examples": [
+        "as big as a fox about million years ago",
+        "ballroom blitz little willy fox on the run and",
+        "still toxic fox a fox is a small mammalian"
+      ]
+    },
+    "dog": {
+      "freq": 955,
+      "hi": 33,
+      "lo": 34,
+      "score": -0.0010471204188481676,
+      "examples": [
+        "a kind of small dog whose ancestors came from",
+        "breed of medium large dog it was first developed",
+        "small breed type of dog in the toy group"
+      ]
+    },
+    "pig": {
+      "freq": 197,
+      "hi": 3,
+      "lo": 6,
+      "score": -0.015228426395939087,
+      "examples": [
+        "looks like a large pig it is actually related",
+        "meaning also little sea pig it comes from archaic",
+        "a hedgepig or furze pig is a small mammal"
+      ]
+    },
+    "sheep": {
+      "freq": 413,
+      "hi": 5,
+      "lo": 0,
+      "score": 0.012106537530266344,
+      "examples": [
+        "large herd spanish merino sheep had been brought to",
+        "with large flocks of sheep some of the first",
+        "large wealthy landowners while sheep were still grazed on"
+      ]
+    },
+    "wolf": {
+      "freq": 384,
+      "hi": 7,
+      "lo": 4,
+      "score": 0.0078125,
+      "examples": [
+        "little pigs has a wolf and pigs who talk",
+        "is a giant monstrous wolf son of loki and",
+        "until she notes the wolf s big teeth what"
+      ]
+    },
+    "lion": {
+      "freq": 496,
+      "hi": 9,
+      "lo": 4,
+      "score": 0.010080645161290322,
+      "examples": [
+        "the little mermaid the lion king the flintstones scooby",
+        "the big cats the lion tiger leopard jaguar snow",
+        "the large and powerful lion of kithaeron this lion"
+      ]
+    },
+    "tiger": {
+      "freq": 404,
+      "hi": 11,
+      "lo": 5,
+      "score": 0.01485148514851485,
+      "examples": [
+        "merely a little stuffed tiger watterson explains it like",
+        "its own each siberian tiger has its own large",
+        "big cats the lion tiger leopard jaguar snow leopard"
+      ]
+    },
+    "bear": {
+      "freq": 673,
+      "hi": 16,
+      "lo": 18,
+      "score": -0.0029717682020802376,
+      "examples": [
+        "stars called the great bear and the little bear",
+        "bear and the little bear this is why it",
+        "maritimus is a large bear which lives in the"
+      ]
+    },
+    "horse": {
+      "freq": 984,
+      "hi": 16,
+      "lo": 3,
+      "score": 0.013211382113821139,
+      "examples": [
+        "he made a huge horse of clay it was",
+        "milan the huge clay horse was still standing when",
+        "building a big wooden horse which we now call"
+      ]
+    },
+    "cow": {
+      "freq": 174,
+      "hi": 4,
+      "lo": 2,
+      "score": 0.011494252873563218,
+      "examples": [
+        "little rock called the cow and calf rocks this",
+        "large breed with the cow s weight averaging around",
+        "of a large domesticated cow is about meters feet"
+      ]
+    },
+    "elephant": {
+      "freq": 284,
+      "hi": 16,
+      "lo": 0,
+      "score": 0.056338028169014086,
+      "examples": [
+        "as big as an elephant it may be better",
+        "usually handlers trained the elephant to put its large",
+        "on them the huge elephant crushed most but sometimes"
+      ]
+    },
+    "whale": {
+      "freq": 321,
+      "hi": 16,
+      "lo": 9,
+      "score": 0.021806853582554516,
+      "examples": [
+        "little movement when a whale does this it looks",
+        "its large size the whale shark is timid divers",
+        "small tuna and squids whale sharks may also sometimes"
+      ]
+    }
+  },
+  "held_out_acc": 0.7904761904761904,
+  "mem_floor": 0.4984126984126984,
+  "rho_margin": 0.8821428571428571,
+  "rho_acc": 0.8749999999999999,
+  "permuted_mining_acc": 0.40317460317460313,
+  "permuted_mining_relabel_acc": 0.5523809523809524,
+  "perm_order_acc": 0.44126984126984126,
+  "true_top2pct_all": true,
+  "lesion_acc": 0.5238095238095238,
+  "spread_sym_acc": 0.5968253968253968,
+  "moat_all": true,
+  "no_leak_all": true,
+  "distance_effect_margin": true,
+  "permuted_mining_ok": true,
+  "spiking_ran": true,
+  "go": true,
+  "spiking_held_acc": 0.8601190476190476,
+  "spiking_rho_acc": 0.7916666666666665,
+  "spiking_rho_margin": 0.47380952380952374,
+  "spiking_distance_effect": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "elapsed_s": 8.6,
+      "n_attested": 16,
+      "n_premises": 15,
+      "n_heldout": 105,
+      "mined_order": [
+        "mouse",
+        "pig",
+        "fox",
+        "bear",
+        "dog",
+        "ant",
+        "cat",
+        "wolf",
+        "rabbit",
+        "lion",
+        "cow",
+        "sheep",
+        "horse",
+        "tiger",
+        "whale",
+        "elephant"
+      ],
+      "premises": [
+        [
+          "pig",
+          "mouse"
+        ],
+        [
+          "fox",
+          "pig"
+        ],
+        [
+          "bear",
+          "fox"
+        ],
+        [
+          "dog",
+          "bear"
+        ],
+        [
+          "ant",
+          "dog"
+        ],
+        [
+          "cat",
+          "ant"
+        ],
+        [
+          "wolf",
+          "cat"
+        ],
+        [
+          "rabbit",
+          "wolf"
+        ],
+        [
+          "lion",
+          "rabbit"
+        ],
+        [
+          "cow",
+          "lion"
+        ],
+        [
+          "sheep",
+          "cow"
+        ],
+        [
+          "horse",
+          "sheep"
+        ],
+        [
+          "tiger",
+          "horse"
+        ],
+        [
+          "whale",
+          "tiger"
+        ],
+        [
+          "elephant",
+          "whale"
+        ]
+      ],
+      "held_out_acc": 0.7904761904761904,
+      "chance": 0.5,
+      "mem_floor": 0.4666666666666667,
+      "rho_acc": 0.8749999999999999,
+      "rho_margin": 0.8821428571428571,
+      "map_acc_curve": {
+        "1": 0.5,
+        "2": 0.6666666666666666,
+        "3": 0.6666666666666666,
+        "4": 0.7272727272727273,
+        "5": 1.0,
+        "6": 0.8571428571428571,
+        "7": 1.0,
+        "8": 0.875,
+        "9": 0.8571428571428571,
+        "10": 1.0,
+        "11": 0.8,
+        "12": 1.0,
+        "13": 1.0,
+        "14": 1.0,
+        "15": 1.0
+      },
+      "map_margin_curve": {
+        "1": 4.7234876269383355,
+        "2": 4.572167233759754,
+        "3": 4.478678018592206,
+        "4": 5.768626388349133,
+        "5": 4.644079439415172,
+        "6": 7.08997807880074,
+        "7": 6.390107628369783,
+        "8": 6.109654364446363,
+        "9": 8.052486002764656,
+        "10": 6.479467693510571,
+        "11": 6.902202126943803,
+        "12": 7.392775665616096,
+        "13": 8.024050683802054,
+        "14": 11.118001788255263,
+        "15": 8.185551453933126
+      },
+      "permuted_mining_acc": 0.5047619047619047,
+      "permuted_mining_rho_margin": -0.11040845946506324,
+      "permuted_mining_relabel_acc": 0.5523809523809524,
+      "perm_order_acc": 0.5428571428571428,
+      "true_top2pct": true,
+      "perms_beating_true": 0,
+      "n_perm_sample": 200,
+      "lesion_acc": 0.5238095238095238,
+      "lesion_rho_margin": 0.024787476674269126,
+      "spread_sym_acc": 0.6190476190476191,
+      "moat_unmapped_abstains": true,
+      "no_leak": true,
+      "spiking_held_acc": 0.8273809523809523,
+      "spiking_rho_acc": 0.8107142857142855,
+      "spiking_rho_margin": 0.2928571428571428,
+      "spiking_acc_curve": {
+        "1": 0.25,
+        "2": 0.8333333333333334,
+        "3": 0.6666666666666666,
+        "4": 0.9166666666666666,
+        "5": 0.75,
+        "6": 0.9583333333333334,
+        "7": 0.875,
+        "8": 0.6666666666666666,
+        "9": 0.9166666666666666,
+        "10": 0.7916666666666666,
+        "11": 1.0,
+        "12": 1.0,
+        "13": 0.9583333333333334,
+        "14": 1.0,
+        "15": 1.0
+      },
+      "spiking_margin_curve": {
+        "1": 0.16071745473670931,
+        "2": 0.08695679199386237,
+        "3": 0.1778150258046041,
+        "4": 0.0642299727784676,
+        "5": 0.04771115181630877,
+        "6": 0.16116510005535398,
+        "7": 0.07505314581983388,
+        "8": 0.13748492540460547,
+        "9": 0.1317974815031652,
+        "10": 0.12416007247613962,
+        "11": 0.19402873377544438,
+        "12": 0.1298367335564606,
+        "13": 0.15637506135870394,
+        "14": 0.21871198261318542,
+        "15": 0.1546382584289318
+      }
+    },
+    {
+      "seed": 43,
+      "elapsed_s": 0.1,
+      "n_attested": 16,
+      "n_premises": 15,
+      "n_heldout": 105,
+      "mined_order": [
+        "mouse",
+        "pig",
+        "fox",
+        "bear",
+        "dog",
+        "ant",
+        "cat",
+        "wolf",
+        "rabbit",
+        "lion",
+        "cow",
+        "sheep",
+        "horse",
+        "tiger",
+        "whale",
+        "elephant"
+      ],
+      "premises": [
+        [
+          "pig",
+          "mouse"
+        ],
+        [
+          "fox",
+          "pig"
+        ],
+        [
+          "bear",
+          "fox"
+        ],
+        [
+          "dog",
+          "bear"
+        ],
+        [
+          "ant",
+          "dog"
+        ],
+        [
+          "cat",
+          "ant"
+        ],
+        [
+          "wolf",
+          "cat"
+        ],
+        [
+          "rabbit",
+          "wolf"
+        ],
+        [
+          "lion",
+          "rabbit"
+        ],
+        [
+          "cow",
+          "lion"
+        ],
+        [
+          "sheep",
+          "cow"
+        ],
+        [
+          "horse",
+          "sheep"
+        ],
+        [
+          "tiger",
+          "horse"
+        ],
+        [
+          "whale",
+          "tiger"
+        ],
+        [
+          "elephant",
+          "whale"
+        ]
+      ],
+      "held_out_acc": 0.7904761904761904,
+      "chance": 0.5,
+      "mem_floor": 0.5428571428571428,
+      "rho_acc": 0.8749999999999999,
+      "rho_margin": 0.8821428571428571,
+      "map_acc_curve": {
+        "1": 0.5,
+        "2": 0.6666666666666666,
+        "3": 0.6666666666666666,
+        "4": 0.7272727272727273,
+        "5": 1.0,
+        "6": 0.8571428571428571,
+        "7": 1.0,
+        "8": 0.875,
+        "9": 0.8571428571428571,
+        "10": 1.0,
+        "11": 0.8,
+        "12": 1.0,
+        "13": 1.0,
+        "14": 1.0,
+        "15": 1.0
+      },
+      "map_margin_curve": {
+        "1": 4.722831026339164,
+        "2": 4.572034717801544,
+        "3": 4.478603354595567,
+        "4": 5.767927698565606,
+        "5": 4.64400351020129,
+        "6": 7.0891735029531295,
+        "7": 6.389512503086592,
+        "8": 6.10926099769464,
+        "9": 8.051875678370871,
+        "10": 6.478826869166032,
+        "11": 6.9012626869496,
+        "12": 7.391554078672975,
+        "13": 8.023394222021876,
+        "14": 11.11681360449655,
+        "15": 8.183745834179625
+      },
+      "permuted_mining_acc": 0.37142857142857144,
+      "permuted_mining_rho_margin": -0.06982168774621604,
+      "permuted_mining_relabel_acc": 0.5523809523809524,
+      "perm_order_acc": 0.2857142857142857,
+      "true_top2pct": true,
+      "perms_beating_true": 0,
+      "n_perm_sample": 200,
+      "lesion_acc": 0.49523809523809526,
+      "lesion_rho_margin": -0.23061372589674475,
+      "spread_sym_acc": 0.6095238095238096,
+      "moat_unmapped_abstains": true,
+      "no_leak": true,
+      "spiking_held_acc": 0.8452380952380952,
+      "spiking_rho_acc": 0.8035714285714284,
+      "spiking_rho_margin": 0.575,
+      "spiking_acc_curve": {
+        "1": 0.2916666666666667,
+        "2": 0.5416666666666666,
+        "3": 0.625,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "8": 0.7083333333333334,
+        "9": 1.0,
+        "10": 0.9583333333333334,
+        "11": 0.7083333333333334,
+        "12": 1.0,
+        "13": 1.0,
+        "14": 1.0,
+        "15": 1.0
+      },
+      "spiking_margin_curve": {
+        "1": 0.06948023207900524,
+        "2": 0.09077557249716343,
+        "3": 0.1515376093319368,
+        "4": 0.1644449258080327,
+        "5": 0.16879580041038753,
+        "6": 0.2703568262146595,
+        "7": 0.14187390827414123,
+        "8": 0.05634087892015081,
+        "9": 0.19021826927332872,
+        "10": 0.1807360922054656,
+        "11": 0.1295955170744714,
+        "12": 0.19556606576607663,
+        "13": 0.19298391074790422,
+        "14": 0.27977793607222134,
+        "15": 0.17388390335862292
+      }
+    },
+    {
+      "seed": 44,
+      "elapsed_s": 0.1,
+      "n_attested": 16,
+      "n_premises": 15,
+      "n_heldout": 105,
+      "mined_order": [
+        "mouse",
+        "pig",
+        "fox",
+        "bear",
+        "dog",
+        "ant",
+        "cat",
+        "wolf",
+        "rabbit",
+        "lion",
+        "cow",
+        "sheep",
+        "horse",
+        "tiger",
+        "whale",
+        "elephant"
+      ],
+      "premises": [
+        [
+          "pig",
+          "mouse"
+        ],
+        [
+          "fox",
+          "pig"
+        ],
+        [
+          "bear",
+          "fox"
+        ],
+        [
+          "dog",
+          "bear"
+        ],
+        [
+          "ant",
+          "dog"
+        ],
+        [
+          "cat",
+          "ant"
+        ],
+        [
+          "wolf",
+          "cat"
+        ],
+        [
+          "rabbit",
+          "wolf"
+        ],
+        [
+          "lion",
+          "rabbit"
+        ],
+        [
+          "cow",
+          "lion"
+        ],
+        [
+          "sheep",
+          "cow"
+        ],
+        [
+          "horse",
+          "sheep"
+        ],
+        [
+          "tiger",
+          "horse"
+        ],
+        [
+          "whale",
+          "tiger"
+        ],
+        [
+          "elephant",
+          "whale"
+        ]
+      ],
+      "held_out_acc": 0.7904761904761904,
+      "chance": 0.5,
+      "mem_floor": 0.4857142857142857,
+      "rho_acc": 0.8749999999999999,
+      "rho_margin": 0.8821428571428571,
+      "map_acc_curve": {
+        "1": 0.5,
+        "2": 0.6666666666666666,
+        "3": 0.6666666666666666,
+        "4": 0.7272727272727273,
+        "5": 1.0,
+        "6": 0.8571428571428571,
+        "7": 1.0,
+        "8": 0.875,
+        "9": 0.8571428571428571,
+        "10": 1.0,
+        "11": 0.8,
+        "12": 1.0,
+        "13": 1.0,
+        "14": 1.0,
+        "15": 1.0
+      },
+      "map_margin_curve": {
+        "1": 4.723173499551616,
+        "2": 4.572453094598948,
+        "3": 4.478822540058625,
+        "4": 5.768691621012943,
+        "5": 4.643901162975422,
+        "6": 7.089893939036743,
+        "7": 6.389795269649696,
+        "8": 6.10922575348415,
+        "9": 8.052246964964796,
+        "10": 6.47911157156489,
+        "11": 6.9018205680130835,
+        "12": 7.392136972362986,
+        "13": 8.023892168332376,
+        "14": 11.11804962243789,
+        "15": 8.187031476586235
+      },
+      "permuted_mining_acc": 0.3333333333333333,
+      "permuted_mining_rho_margin": 0.12432096205681112,
+      "permuted_mining_relabel_acc": 0.5523809523809524,
+      "perm_order_acc": 0.49523809523809526,
+      "true_top2pct": true,
+      "perms_beating_true": 0,
+      "n_perm_sample": 200,
+      "lesion_acc": 0.5523809523809524,
+      "lesion_rho_margin": 2.0733982998133937e-05,
+      "spread_sym_acc": 0.5619047619047619,
+      "moat_unmapped_abstains": true,
+      "no_leak": true,
+      "spiking_held_acc": 0.9077380952380952,
+      "spiking_rho_acc": 0.7607142857142856,
+      "spiking_rho_margin": 0.5535714285714285,
+      "spiking_acc_curve": {
+        "1": 0.875,
+        "2": 0.6666666666666666,
+        "3": 0.6666666666666666,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0,
+        "7": 1.0,
+        "8": 1.0,
+        "9": 0.6666666666666666,
+        "10": 1.0,
+        "11": 0.8333333333333334,
+        "12": 1.0,
+        "13": 1.0,
+        "14": 1.0,
+        "15": 1.0
+      },
+      "spiking_margin_curve": {
+        "1": 0.18441648775606392,
+        "2": 0.1444382977665917,
+        "3": 0.17652659884303032,
+        "4": 0.15083197137246815,
+        "5": 0.1308202581376515,
+        "6": 0.26928336566861777,
+        "7": 0.2128935330382242,
+        "8": 0.15328289215083385,
+        "9": 0.1643754387212988,
+        "10": 0.18868261374289164,
+        "11": 0.18002607592385053,
+        "12": 0.18829801671997456,
+        "13": 0.21004226123608624,
+        "14": 0.30556960462632216,
+        "15": 0.20608924742890342
+      }
+    }
+  ]
+}
