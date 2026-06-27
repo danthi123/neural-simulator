@@ -130,12 +130,20 @@ def _load_real_facts(json_path, vocab, n_facts, seed):
 
 
 def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_json=None, n_attempts=60, cand_cap=16,
+                         shards=1, shard_by="domain",
                          tau_pct=50.0, corpus_paths=None, corpus_max_bytes=(None, 40_000_000),
                          w_value=0.5, w_plaus=0.35, w_fam=0.15,
                          speak_base_pA=70.0, speak_gain_pA=180.0, silence_drive_pA=150.0,
                          acc_steps=120, n_topics=12, max_topic_scan=40, taught_frac=0.4, n_rounds=12,
                          lr=0.10, da_reward=1.0, da_baseline=0.0, kappa=2.0, verbose=True):
     """Load the 7K brain (`vocab`, `grounded` codes) and assemble the full DiscursiveTurn pipeline on it.
+
+    `shards` (default 1 = TODAY'S single RFPhasorComposer, behavior byte-unchanged): when >1, the composer is a
+    RoutedComposer over `shards` disjoint ~V/shards-concept shards (deep-knowledge scaling -- per-shard cleanup so
+    recall+speed are preserved past the single-bridge crowding knee). The DiscursiveTurn / proposer / agent /
+    audit_moat consume the RoutedComposer through the SAME composer API, so the router is invisible to them. The
+    grounded codes are the SAME ones loaded here (passed through to the RoutedComposer), so the brain converses on
+    exactly the codes it learned, sharded.
 
     Returns a dict: {dt (the DiscursiveTurn), ct (the CommunicableTurn), comp, agent, P, row, vocab, cat_ids,
     cat_names, facts, grounded_topics, taught, D}.
@@ -187,7 +195,16 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
         nouns, verbs = sorted(set(vocab)), sorted(set(vocab))
 
     # ---- the KNOWN-fact store on the LEARNED codes (the no-confab moat intact) ----
-    comp = RFPhasorComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded)
+    # shards==1 -> the single composer (byte-unchanged); shards>1 -> the RoutedComposer (per-shard cleanup).
+    if shards and int(shards) > 1:
+        from research.runners.routed_composer import RoutedComposer
+        comp = RoutedComposer(npz_path, n_shards=int(shards), seed=seed, D=D, shard_by=shard_by,
+                              grounded_codes=grounded, verbose=verbose)
+        if verbose:
+            print(f"[console] RoutedComposer over {int(shards)} shards "
+                  f"(policy={comp._shard_policy}, sizes={[len(s) for s in comp.shard_vocabs]})", flush=True)
+    else:
+        comp = RFPhasorComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded)
     if facts_json:
         facts, _absent_what, _absent_who = _load_real_facts(facts_json, vocab, n_facts, seed)
         if verbose:
@@ -656,6 +673,11 @@ def main():
     ap.add_argument("--n-attempts", type=int, default=60, help="generative-replay samples per topic")
     ap.add_argument("--cand-cap", type=int, default=16,
                     help="Stage-0 latency: stop proposing after this many accepted candidates per topic (0=exhaustive)")
+    ap.add_argument("--shards", type=int, default=1,
+                    help="number of composer shards (1=single RFPhasorComposer, byte-unchanged; >1=RoutedComposer "
+                         "with per-shard cleanup for deep-knowledge scaling)")
+    ap.add_argument("--shard-by", default="domain", choices=("domain", "partition"),
+                    help="shard policy: 'domain' (g20-category bands) or 'partition' (disjoint random split)")
     ap.add_argument("--n-topics", type=int, default=12, help="grounded topics for the talkativeness arena")
     ap.add_argument("--max-topic-scan", type=int, default=40, help="cap on topics scanned for grounding (build cost)")
     ap.add_argument("--demo", action="store_true", help="run the fixed sample conversation + print the transcript")
@@ -673,6 +695,7 @@ def main():
 
     brain = build_brain_on_codes(a.brain, seed=a.seed, n_facts=a.n_facts, facts_json=a.facts_json,
                                  n_attempts=a.n_attempts, cand_cap=(a.cand_cap or None),
+                                 shards=a.shards, shard_by=a.shard_by,
                                  n_topics=a.n_topics, max_topic_scan=a.max_topic_scan)
 
     if a.demo:
