@@ -27,28 +27,38 @@ def main():
     ap.add_argument("--grid-size", type=int, default=32)
     ap.add_argument("--out", type=str, required=True)
     # Roadmap #4 (fully-spiking motor read-out): which spiking pool drives the action selection.
-    #   motor      = host argmax over motor_X spike counts (the deployed default / the N6 cheat).
+    #   motor      = host argmax over motor_X spike counts (the host-argmax ORACLE / the N6 cheat).
     #   thal       = host argmax over the cleanly-selective thalamus (biologized SOURCE, best historically).
     #   spiking_wta= the ACCUMULATE-THEN-COMMIT layer: each commit_X burst threshold-crossing IS the
     #                decision (the host argmax merely OBSERVES which commit pool bursted -> a tie-break of
     #                last resort). Combine with --urgency-max-pa 180 (the recommended Cisek collapsing bound)
     #                so even a weak late release crosses the bound (eliminates the silent-commit fallback).
     # All three already wired through run_moving_goal_episode; this just exposes them on the merged-gate runner.
-    ap.add_argument("--readout-source", choices=["motor", "thal", "spiking_wta"], default="motor",
-                    help="action-selection read-out (roadmap #4: spiking_wta = the commit-burst IS the decision)")
-    ap.add_argument("--urgency-max-pa", type=float, default=0.0,
-                    help="Cisek collapsing-bound urgency peak pA (spiking_wta only; RECOMMENDED 180)")
+    # NAV CLOSE-OUT R1-a (2026-06-27): the DEPLOYED merged-gate default is now spiking_wta + the CYCLE-1B
+    # cost-reduction levers (sel_recurrent_weight 0.3, n_sel/n_commit 40, urgency 180) -> the shipped nav
+    # benchmark runs fully-spiking-on-one-brain by default (the action EMERGES from the spiking competition;
+    # the host argmax is RETIRED). `--readout-source motor` (with `--no-spiking-sc`) = the explicit host-argmax
+    # ORACLE that reproduces the documented STEP-2a gate unchanged. Validated 6-seed grid-32/1800 at 1.16x host,
+    # 100% commit-burst (2026-06-19-spiking-decision-default-on-GO.md).
+    ap.add_argument("--readout-source", choices=["motor", "thal", "spiking_wta"], default="spiking_wta",
+                    help="action-selection read-out (R1-a: DEFAULT spiking_wta = the commit-burst IS the "
+                         "decision; 'motor'/'thal' = the opt-in host-argmax ORACLE)")
+    ap.add_argument("--urgency-max-pa", type=float, default=180.0,
+                    help="Cisek collapsing-bound urgency peak pA (spiking_wta only; R1-a default 180 = the "
+                         "validated config -> 100%% commit-burst, no silent-commit fallback)")
     # Roadmap #4 COST-REDUCTION levers (CYCLE 228 brain-based-purity arc). The +1.46 (~1.7x) spiking-decision
     # cost localizes to the goal-change phases (cross-trial NMDA hysteresis: the stale winner lingers). These
-    # tune the accumulate-then-commit competition; ALL default to run_moving_goal_episode's own defaults, so
-    # unspecified == byte-identical to the historical gate. Active only under --readout-source spiking_wta
-    # (inert otherwise). Sweep the deep-research-ranked subset to lower the cost toward default-on.
-    ap.add_argument("--n-sel-per-action", type=int, default=20,
-                    help="#4: accumulator pool size per action (more neurons -> cleaner competition)")
-    ap.add_argument("--n-commit-per-action", type=int, default=20,
-                    help="#4: commit-burst pool size per action")
-    ap.add_argument("--sel-recurrent-weight", type=float, default=1.0,
-                    help="#4: Wang attractor self-excitation gain (lower -> less cross-trial hysteresis)")
+    # tune the accumulate-then-commit competition. NAV CLOSE-OUT R1-a (2026-06-27): defaults flipped to the
+    # CYCLE-1B winning config (n_sel/n_commit 40 = the 1/sqrt(N) finite-size lever; sel_recurrent_weight 0.3 =
+    # the Usher-McClelland leak that cuts the cross-trial hysteresis) -> 1.16x host (2026-06-19-spiking-decision-
+    # default-on-GO.md). Active only under --readout-source spiking_wta (inert under the host-argmax ORACLE).
+    ap.add_argument("--n-sel-per-action", type=int, default=40,
+                    help="#4: accumulator pool size per action (R1-a default 40 = the N-scaling lever)")
+    ap.add_argument("--n-commit-per-action", type=int, default=40,
+                    help="#4: commit-burst pool size per action (R1-a default 40, grown in lockstep with n_sel)")
+    ap.add_argument("--sel-recurrent-weight", type=float, default=0.3,
+                    help="#4: Wang attractor self-excitation gain (R1-a default 0.3 = the leak that cuts "
+                         "cross-trial NMDA hysteresis = the dominant cost)")
     ap.add_argument("--sel-fs-to-sel-weight", type=float, default=5.0,
                     help="#4: cross-pool selective-inhibition strength (lateral inhibition)")
     ap.add_argument("--thal-to-sel-weight", type=float, default=30.0,
@@ -59,8 +69,8 @@ def main():
                     help="#4: surgical hysteresis removal (reset NMDA on losing pools each trial)")
     # TRUE-ONE-BRAIN #2 (Tier-2 nav SC deploy): the SPIKING superior colliculus as the NEURAL orienting +
     # reward source on the merged bridge, retiring BOTH the host Manhattan orienting heuristic AND the host
-    # sign(distance) reward in one move. Default OFF = byte-identical to the STEP-2a gate (every existing
-    # caller). When set, run_moving_goal_episode builds the spiking SC chain (sc_retina -> sc_map Mexican-hat
+    # sign(distance) reward in one move. R1-a DEFAULT ON; `--no-spiking-sc` = the host Manhattan-heuristic
+    # ORACLE (= the byte-identical STEP-2a gate). When set, run_moving_goal_episode builds the spiking SC chain (sc_retina -> sc_map Mexican-hat
     # WTA -> sc_rostral) + the neural critic (striosome_value GABA_B + spiking SNc) + the spiking reward_us
     # afferent. The orienting cardinal comes from sc_map->cortex_X pooling (heuristic_strength gated to 0); the
     # reward `r` comes synaptically from sc_rostral->reward_us (the host write is zeroed, g11_bg_runner.py:7271).
@@ -68,8 +78,20 @@ def main():
     # masks the fixed perception+SC edges by index after the CSR rebuild (it explicitly handles install_spiking_sc_wiring).
     # The merged het-off op-point (Step-0 GO 2026-06-19: sc_map peak/mean 35.7x, N1 8/8, corr(ecc,reward_us) -0.989)
     # is set by the SC_RET_SC/SC_REC/SC_RET_DRIVE/SC_ROS_US env vars; the recommended values are 160/12/3500/40.
-    ap.add_argument("--spiking-sc", action="store_true",
-                    help="#2: deploy the spiking superior colliculus (NEURAL orienting + reward), host heuristic+reward OFF")
+    #
+    # NAV CLOSE-OUT R1-a (2026-06-27): the spiking SC is now the DEFAULT orienting (`--no-spiking-sc` reverts to
+    # the host Manhattan heuristic = the ORACLE). When on, the kw.update below wires the FULL Burndown-3F
+    # VALIDATED config (NOT just the bare SC chain): the population-VECTOR decode (sc_popvector_readout) + the
+    # FIX1 stochastic tie-break + the log-polar foveal retina (lib-default True) + the het-off SC op-point env
+    # vars (SC_RET_SC=160/SC_REC=12/SC_RET_DRIVE=3500/SC_ROS_US=40/SC_CORTEX_W=18). That is the exact config that
+    # SUSTAINS the closed neural-reward->critic->actor loop at ~2.4x host (4/4 seeds GO, 21.8x retina-lesion
+    # contrast; 2026-06-24-burndown-3F-sc-sustained-orienting-surpass.md). WITHOUT popvector the SC read-out is
+    # the half-plane LINEAR RAMP = the stuck-N ~58x NEGATIVE (2026-06-19-nav-spiking-sc-deploy-NO-GO.md), so the
+    # bare chain alone must NOT be deployed -> R1-a wires the validated config, not just enable_spiking_sc.
+    ap.add_argument("--spiking-sc", action=argparse.BooleanOptionalAction, default=True,
+                    help="#2: deploy the spiking superior colliculus (NEURAL orienting + reward; the validated "
+                         "popvector+FIX1+log-polar config), host heuristic+reward OFF. R1-a DEFAULT ON; "
+                         "--no-spiking-sc = the host Manhattan-heuristic ORACLE.")
     ap.add_argument("--scramble-sc", action="store_true",
                     help="#2 anti-cheat: scramble the sc_retina->sc_map retinotopy (decisive lesion; must REGRESS). "
                          "Sets SC_SCRAMBLE=1 in-process.")
@@ -109,10 +131,12 @@ def main():
         visual_cortex_action_warmup_steps=600,
         stdp_w_max_override=400.0,
         # Roadmap #4: the read-out source + the collapsing-bound urgency (both already threaded through
-        # run_moving_goal_episode). Default motor = the deployed host-argmax read-out (the historical gate).
+        # run_moving_goal_episode). R1-a DEFAULT spiking_wta = the deployed fully-spiking decision; the
+        # opt-in `--readout-source motor` host-argmax ORACLE makes the urgency + levers below INERT (the
+        # sel/commit layer is built only for spiking_wta), so the oracle reproduces the historical gate.
         readout_source=args.readout_source,
         urgency_max_pA=args.urgency_max_pa,
-        # #4 cost-reduction levers (default == run_moving_goal_episode defaults -> byte-identical when unset).
+        # #4 cost-reduction levers (R1-a defaults = the CYCLE-1B winners; inert under the host-argmax oracle).
         n_sel_per_action=args.n_sel_per_action,
         n_commit_per_action=args.n_commit_per_action,
         sel_recurrent_weight=args.sel_recurrent_weight,
@@ -135,7 +159,25 @@ def main():
             enable_neural_critic=True,
             spiking_snc=True,
             heuristic_strength=0.0,        # retire the host Manhattan orienting heuristic
+            # R1-a: the Burndown-3F VALIDATED orienting read-out (NOT the bare SC chain). The
+            # population-VECTOR cosine decode + cortex_X bump-mass divisive norm turns the
+            # position-INVARIANT half-plane ramp (the stuck-N ~58x NEGATIVE) into a position decode
+            # that TRACKS the goal's retinal bearing; FIX1 reads the genuine spiking margin with a
+            # fair tie-break (vs the N-first max() degeneracy); log-polar (lib-default True) ensures
+            # the SC bump EXISTS for far goals. Together = the ~2.4x-host sustaining config (4/4 GO).
+            sc_popvector_readout=True,        # #6 popvector decode (the position-decode half)
+            sc_tie_break_stochastic=True,     # FIX1 (fair tie-break, not the N-first max())
+            log_polar_retina=True,            # biology-faithful foveal retina (lib-default; explicit for clarity)
         )
+        # The het-off SC operating point (the merged bridge starves the SC bump at the standalone
+        # 80/6/2500/14 defaults; the de-risk's merged-tuned op-point is 160/12/3500/40, SC_CORTEX_W=18).
+        # setdefault => an externally-set env var (e.g. a sweep) still wins; the host-oracle path
+        # (--no-spiking-sc) never reaches here so its env stays clean.
+        os.environ.setdefault("SC_RET_SC", "160")
+        os.environ.setdefault("SC_REC", "12")
+        os.environ.setdefault("SC_RET_DRIVE", "3500")
+        os.environ.setdefault("SC_ROS_US", "40")
+        os.environ.setdefault("SC_CORTEX_W", "18")
         if args.scramble_sc:
             os.environ["SC_SCRAMBLE"] = "1"   # decisive anti-cheat lesion (must REGRESS)
     if args.with_conv:

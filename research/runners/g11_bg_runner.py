@@ -8890,6 +8890,23 @@ def main():
     ap.add_argument("--sc-popvector-divnorm-gain", type=float, default=1.0,
                     help="Divisive strength on the four-cardinal mean for the #6 cortex_X divisive "
                          "norm (default 1.0). Only with --sc-popvector-readout.")
+    # NAV CLOSE-OUT R1-a (2026-06-27): expose FIX1 on the standalone CLI too (it was reachable only
+    # via the SC_TIE_BREAK env var). Completes the spiking-SC orienting path so the full Burndown-3F
+    # VALIDATED config (--enable-spiking-sc --sc-popvector-readout --sc-tie-break-stochastic, log-polar
+    # is the default) is reachable from the standalone CLI. Default OFF = byte-identical (the N-first
+    # max() read-out reproduces unchanged), matching the deployed merged-gate's host-oracle preservation.
+    ap.add_argument("--sc-tie-break-stochastic", action="store_true",
+                    help="Cascade North-bias FIX 1 (2026-06-20): tie-aware STOCHASTIC action read-out. "
+                         "Break a K-way sel_X/commit_X tie by a UNIFORM draw among the tied set (the "
+                         "persistent per-episode action_rng), NOT Python max()'s N-first ordering (which "
+                         "deterministically resolves [40,40,40,40] ties to N -> a structural North bias). "
+                         "A host READ of a genuine spiking tie (a fair read, not a new mechanism). Part "
+                         "of the validated spiking-SC orienting config. Default OFF = byte-identical. "
+                         "Env-var SC_TIE_BREAK=1 also enables it. research/findings/2026-06-20-cascade-"
+                         "north-bias-FIX.md.")
+    ap.add_argument("--sc-tie-break-eps", type=int, default=0,
+                    help="FIX 1 tie tolerance (counts): an action is 'tied' if its count >= leader - eps "
+                         "(default 0 = exact ties). Only with --sc-tie-break-stochastic.")
     ap.add_argument("--visual-cortex-action-warmup-steps", type=int, default=600,
                     help="Cluster K v2: steps before the IT -> cortex_X "
                          "plasticity gate opens. Default 600. 0 = open from "
@@ -9607,6 +9624,8 @@ def main():
             sc_popvector_readout=args.sc_popvector_readout,
             sc_popvector_divnorm_sigma=args.sc_popvector_divnorm_sigma,
             sc_popvector_divnorm_gain=args.sc_popvector_divnorm_gain,
+            sc_tie_break_stochastic=args.sc_tie_break_stochastic,
+            sc_tie_break_eps=args.sc_tie_break_eps,
             log_polar_retina=args.log_polar_retina,
             visual_cortex_action_warmup_steps=args.visual_cortex_action_warmup_steps,
             visual_v1_weight_scale=args.visual_v1_weight_scale,
