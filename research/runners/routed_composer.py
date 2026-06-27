@@ -169,15 +169,23 @@ class RoutedComposer:
         if si is None:
             return None                        # unknown agent -> no home; do not fabricate one
         comp = self.comps[si]
-        # co-store every cross-shard STRING role-filler's code so the shard can decode it (agent is native by def).
-        self._ensure_filler(comp, action)
-        self._ensure_filler(comp, patient if isinstance(patient, str) else agent)
-        if isinstance(patient, tuple) and not _is_clause(patient):
+        # collect the STRING role-fillers that must have a code to bind. A clause patient binds its own inner
+        # concepts (handled by the composer's _encode recursion); a (adjs, noun) tuple binds the adjs + noun.
+        need = [action]
+        if isinstance(patient, str):
+            need.append(patient)
+        elif isinstance(patient, tuple) and not _is_clause(patient):
             adjs, noun = patient
             adjs = list(adjs) if isinstance(adjs, (tuple, list)) else [adjs]
-            for w in list(adjs) + [noun]:
-                if isinstance(w, str):
-                    self._ensure_filler(comp, w)
+            need.extend(w for w in (list(adjs) + [noun]) if isinstance(w, str))
+        # MOAT-CONSISTENT GUARD: every string filler must be a KNOWN concept (native to this shard OR have a
+        # grounded code we can co-store, option 2a). A filler with no code anywhere is an unknown word -> we DROP
+        # the fact rather than fabricate a code (the composer would KeyError on self.concepts[filler] otherwise).
+        for w in need:
+            if w not in comp.concepts and self._grounded.get(w) is None:
+                return None                    # unknown role-filler -> drop the fact (no fabrication)
+        for w in need:                         # co-store every cross-shard filler so the shard can decode it
+            self._ensure_filler(comp, w)
         comp.store(agent, action, patient, polarity=polarity)
         return si
 
