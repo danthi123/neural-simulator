@@ -1,0 +1,360 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_seeds": 6,
+  "n_go": 6,
+  "verdict": "GO",
+  "D": 128,
+  "alpha": 0.7,
+  "wall_s": 2.5,
+  "results": [
+    {
+      "seed": 42,
+      "alpha": 0.7,
+      "D": 128,
+      "separation": {
+        "inst_inst_cos": 0.06245263181780365,
+        "inst_type_cos": 0.22037378430058258,
+        "random_floor_cos": -0.006599678418302248,
+        "random_floor_sd": 0.061726334568463104,
+        "midpoint": 0.10688705294114016,
+        "separated": true
+      },
+      "merge_lesion": {
+        "merged_inst_inst_cos": 1.0,
+        "which_park_under_merge": "boy#1",
+        "which_apple_under_merge": null,
+        "merged_distinct_correct": false,
+        "breaks_disambiguation": true
+      },
+      "which_x": {
+        "which_park": "boy#1",
+        "which_apple": "boy#2",
+        "right_referent": true,
+        "scores_park": {
+          "boy#1": 2,
+          "boy#2": 0
+        },
+        "scores_apple": {
+          "boy#1": 0,
+          "boy#2": 2
+        },
+        "disambiguation_text": "the one that went to the park, or the one that ate the apple?",
+        "answer_text": "the boy that went to the park"
+      },
+      "binding_lesion": {
+        "which_park_severed": null,
+        "breaks_disambiguation": true
+      },
+      "pronoun": {
+        "resolved": "boy#2",
+        "pronoun_ok": true,
+        "empty_filecard_abstains": true
+      },
+      "moat": {
+        "unstored_which": null,
+        "unalloc_which": null,
+        "query_unstored_predicate": null,
+        "false_accepts": 0,
+        "moat_ok": true
+      },
+      "gates": {
+        "a_separation": true,
+        "b_right_referent": true,
+        "c_moat": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "alpha": 0.7,
+      "D": 128,
+      "separation": {
+        "inst_inst_cos": -0.00875227224147073,
+        "inst_type_cos": 0.22183321637827463,
+        "random_floor_cos": -0.00710444229175409,
+        "random_floor_sd": 0.06526212568032277,
+        "midpoint": 0.10736438704326028,
+        "separated": true
+      },
+      "merge_lesion": {
+        "merged_inst_inst_cos": 1.0,
+        "which_park_under_merge": null,
+        "which_apple_under_merge": null,
+        "merged_distinct_correct": false,
+        "breaks_disambiguation": true
+      },
+      "which_x": {
+        "which_park": "boy#1",
+        "which_apple": "boy#2",
+        "right_referent": true,
+        "scores_park": {
+          "boy#1": 2,
+          "boy#2": 0
+        },
+        "scores_apple": {
+          "boy#1": 0,
+          "boy#2": 2
+        },
+        "disambiguation_text": "the one that went to the park, or the one that ate the apple?",
+        "answer_text": "the boy that went to the park"
+      },
+      "binding_lesion": {
+        "which_park_severed": null,
+        "breaks_disambiguation": true
+      },
+      "pronoun": {
+        "resolved": "boy#2",
+        "pronoun_ok": true,
+        "empty_filecard_abstains": true
+      },
+      "moat": {
+        "unstored_which": null,
+        "unalloc_which": null,
+        "query_unstored_predicate": null,
+        "false_accepts": 0,
+        "moat_ok": true
+      },
+      "gates": {
+        "a_separation": true,
+        "b_right_referent": true,
+        "c_moat": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 44,
+      "alpha": 0.7,
+      "D": 128,
+      "separation": {
+        "inst_inst_cos": -0.006755280774199329,
+        "inst_type_cos": 0.1937736996339559,
+        "random_floor_cos": 0.0009776729649942676,
+        "random_floor_sd": 0.06275602113401699,
+        "midpoint": 0.09737568629947509,
+        "separated": true
+      },
+      "merge_lesion": {
+        "merged_inst_inst_cos": 1.0,
+        "which_park_under_merge": null,
+        "which_apple_under_merge": null,
+        "merged_distinct_correct": false,
+        "breaks_disambiguation": true
+      },
+      "which_x": {
+        "which_park": "boy#1",
+        "which_apple": "boy#2",
+        "right_referent": true,
+        "scores_park": {
+          "boy#1": 2,
+          "boy#2": 0
+        },
+        "scores_apple": {
+          "boy#1": 0,
+          "boy#2": 2
+        },
+        "disambiguation_text": "the one that went to the park, or the one that ate the apple?",
+        "answer_text": "the boy that went to the park"
+      },
+      "binding_lesion": {
+        "which_park_severed": null,
+        "breaks_disambiguation": true
+      },
+      "pronoun": {
+        "resolved": "boy#2",
+        "pronoun_ok": true,
+        "empty_filecard_abstains": true
+      },
+      "moat": {
+        "unstored_which": null,
+        "unalloc_which": null,
+        "query_unstored_predicate": null,
+        "false_accepts": 0,
+        "moat_ok": true
+      },
+      "gates": {
+        "a_separation": true,
+        "b_right_referent": true,
+        "c_moat": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 100,
+      "alpha": 0.7,
+      "D": 128,
+      "separation": {
+        "inst_inst_cos": 0.10588559561188547,
+        "inst_type_cos": 0.2750420235651455,
+        "random_floor_cos": 0.006325985427506537,
+        "random_floor_sd": 0.06246877965913538,
+        "midpoint": 0.14068400449632604,
+        "separated": true
+      },
+      "merge_lesion": {
+        "merged_inst_inst_cos": 1.0,
+        "which_park_under_merge": null,
+        "which_apple_under_merge": "boy#1",
+        "merged_distinct_correct": false,
+        "breaks_disambiguation": true
+      },
+      "which_x": {
+        "which_park": "boy#1",
+        "which_apple": "boy#2",
+        "right_referent": true,
+        "scores_park": {
+          "boy#1": 2,
+          "boy#2": 0
+        },
+        "scores_apple": {
+          "boy#1": 0,
+          "boy#2": 2
+        },
+        "disambiguation_text": "the one that went to the park, or the one that ate the apple?",
+        "answer_text": "the boy that went to the park"
+      },
+      "binding_lesion": {
+        "which_park_severed": null,
+        "breaks_disambiguation": true
+      },
+      "pronoun": {
+        "resolved": "boy#2",
+        "pronoun_ok": true,
+        "empty_filecard_abstains": true
+      },
+      "moat": {
+        "unstored_which": null,
+        "unalloc_which": null,
+        "query_unstored_predicate": null,
+        "false_accepts": 0,
+        "moat_ok": true
+      },
+      "gates": {
+        "a_separation": true,
+        "b_right_referent": true,
+        "c_moat": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 101,
+      "alpha": 0.7,
+      "D": 128,
+      "separation": {
+        "inst_inst_cos": -0.031687487292295494,
+        "inst_type_cos": 0.17426078715557702,
+        "random_floor_cos": -0.000954619488032269,
+        "random_floor_sd": 0.06818329563116733,
+        "midpoint": 0.08665308383377238,
+        "separated": true
+      },
+      "merge_lesion": {
+        "merged_inst_inst_cos": 1.0,
+        "which_park_under_merge": null,
+        "which_apple_under_merge": null,
+        "merged_distinct_correct": false,
+        "breaks_disambiguation": true
+      },
+      "which_x": {
+        "which_park": "boy#1",
+        "which_apple": "boy#2",
+        "right_referent": true,
+        "scores_park": {
+          "boy#1": 2,
+          "boy#2": 0
+        },
+        "scores_apple": {
+          "boy#1": 0,
+          "boy#2": 2
+        },
+        "disambiguation_text": "the one that went to the park, or the one that ate the apple?",
+        "answer_text": "the boy that went to the park"
+      },
+      "binding_lesion": {
+        "which_park_severed": null,
+        "breaks_disambiguation": true
+      },
+      "pronoun": {
+        "resolved": "boy#2",
+        "pronoun_ok": true,
+        "empty_filecard_abstains": true
+      },
+      "moat": {
+        "unstored_which": null,
+        "unalloc_which": null,
+        "query_unstored_predicate": null,
+        "false_accepts": 0,
+        "moat_ok": true
+      },
+      "gates": {
+        "a_separation": true,
+        "b_right_referent": true,
+        "c_moat": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 102,
+      "alpha": 0.7,
+      "D": 128,
+      "separation": {
+        "inst_inst_cos": 0.07900648186325601,
+        "inst_type_cos": 0.23308614843248673,
+        "random_floor_cos": 0.0029407871278357644,
+        "random_floor_sd": 0.06339654904568826,
+        "midpoint": 0.11801346778016125,
+        "separated": true
+      },
+      "merge_lesion": {
+        "merged_inst_inst_cos": 1.0,
+        "which_park_under_merge": null,
+        "which_apple_under_merge": null,
+        "merged_distinct_correct": false,
+        "breaks_disambiguation": true
+      },
+      "which_x": {
+        "which_park": "boy#1",
+        "which_apple": "boy#2",
+        "right_referent": true,
+        "scores_park": {
+          "boy#1": 2,
+          "boy#2": 0
+        },
+        "scores_apple": {
+          "boy#1": 0,
+          "boy#2": 2
+        },
+        "disambiguation_text": "the one that went to the park, or the one that ate the apple?",
+        "answer_text": "the boy that went to the park"
+      },
+      "binding_lesion": {
+        "which_park_severed": null,
+        "breaks_disambiguation": true
+      },
+      "pronoun": {
+        "resolved": "boy#2",
+        "pronoun_ok": true,
+        "empty_filecard_abstains": true
+      },
+      "moat": {
+        "unstored_which": null,
+        "unalloc_which": null,
+        "query_unstored_predicate": null,
+        "false_accepts": 0,
+        "moat_ok": true
+      },
+      "gates": {
+        "a_separation": true,
+        "b_right_referent": true,
+        "c_moat": true
+      },
+      "seed_go": true
+    }
+  ]
+}
