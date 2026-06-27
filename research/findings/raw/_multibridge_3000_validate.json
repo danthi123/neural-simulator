@@ -1,0 +1,487 @@
+{
+  "brain": "brain3000pos_w7000.npz_seed42.npz",
+  "seed": 42,
+  "D": 128,
+  "n_concepts": 3000,
+  "fact_source": "real:_facts3000.json",
+  "n_facts": 48,
+  "n_absent_what": 48,
+  "n_absent_who": 48,
+  "single_bridge_3000": {
+    "recall": 1.0,
+    "correct": 96,
+    "total": 96,
+    "abstain": 1.0,
+    "false_accept": 0,
+    "abstain_total": 96,
+    "moat_breaches": [],
+    "vocab_size": 3000,
+    "sec_per_query": 0.127186285952727
+  },
+  "results": [
+    {
+      "n_shards": 1,
+      "policy": "domain",
+      "shard_sizes": [
+        3000
+      ],
+      "store_stats": {
+        "n_stored": 48,
+        "n_same_shard": 48,
+        "n_cross_shard": 0,
+        "n_extension_fillers": 0,
+        "codebook_ext_per_shard": [
+          0
+        ]
+      },
+      "multibridge_recall": 1.0,
+      "per_shard": {
+        "0": {
+          "recall": 1.0,
+          "correct": 96,
+          "total": 96,
+          "n_facts": 48
+        }
+      },
+      "per_shard_min_recall": 1.0,
+      "multibridge_abstain": 1.0,
+      "multibridge_false_accept": 0,
+      "moat_breaches": [],
+      "n_cross_absent": 0,
+      "sec_per_query": 0.12622529764970145,
+      "tq_ms": 126.22529764970145,
+      "permuted_recall": 1.0,
+      "permuted_false_accept": 0,
+      "permuted_breaches": [],
+      "go_recall_per_shard_ge_0.95_absolute": true,
+      "go_recall_vs_single_bridge": true,
+      "go_moat_0_false_accepts": true,
+      "go_time_le_single_bridge": true,
+      "go_anticheat_permuted_collapses_no_FA": false,
+      "GO": false
+    },
+    {
+      "n_shards": 1,
+      "policy": "partition",
+      "shard_sizes": [
+        3000
+      ],
+      "store_stats": {
+        "n_stored": 48,
+        "n_same_shard": 48,
+        "n_cross_shard": 0,
+        "n_extension_fillers": 0,
+        "codebook_ext_per_shard": [
+          0
+        ]
+      },
+      "multibridge_recall": 1.0,
+      "per_shard": {
+        "0": {
+          "recall": 1.0,
+          "correct": 96,
+          "total": 96,
+          "n_facts": 48
+        }
+      },
+      "per_shard_min_recall": 1.0,
+      "multibridge_abstain": 1.0,
+      "multibridge_false_accept": 0,
+      "moat_breaches": [],
+      "n_cross_absent": 0,
+      "sec_per_query": 0.12763926883538565,
+      "tq_ms": 127.63926883538565,
+      "permuted_recall": 1.0,
+      "permuted_false_accept": 0,
+      "permuted_breaches": [],
+      "go_recall_per_shard_ge_0.95_absolute": true,
+      "go_recall_vs_single_bridge": true,
+      "go_moat_0_false_accepts": true,
+      "go_time_le_single_bridge": true,
+      "go_anticheat_permuted_collapses_no_FA": false,
+      "GO": false
+    },
+    {
+      "n_shards": 2,
+      "policy": "domain",
+      "shard_sizes": [
+        1804,
+        1196
+      ],
+      "store_stats": {
+        "n_stored": 48,
+        "n_same_shard": 27,
+        "n_cross_shard": 21,
+        "n_extension_fillers": 25,
+        "codebook_ext_per_shard": [
+          16,
+          9
+        ]
+      },
+      "multibridge_recall": 0.9791666666666666,
+      "per_shard": {
+        "0": {
+          "recall": 1.0,
+          "correct": 34,
+          "total": 34,
+          "n_facts": 17
+        },
+        "1": {
+          "recall": 0.967741935483871,
+          "correct": 60,
+          "total": 62,
+          "n_facts": 31
+        }
+      },
+      "per_shard_min_recall": 0.967741935483871,
+      "multibridge_abstain": 1.0,
+      "multibridge_false_accept": 0,
+      "moat_breaches": [],
+      "n_cross_absent": 48,
+      "sec_per_query": 0.07096305737892787,
+      "tq_ms": 70.96305737892787,
+      "permuted_recall": 0.15625,
+      "permuted_false_accept": 0,
+      "permuted_breaches": [],
+      "go_recall_per_shard_ge_0.95_absolute": true,
+      "go_recall_vs_single_bridge": false,
+      "go_moat_0_false_accepts": true,
+      "go_time_le_single_bridge": true,
+      "go_anticheat_permuted_collapses_no_FA": true,
+      "GO": false
+    },
+    {
+      "n_shards": 2,
+      "policy": "partition",
+      "shard_sizes": [
+        1500,
+        1500
+      ],
+      "store_stats": {
+        "n_stored": 48,
+        "n_same_shard": 21,
+        "n_cross_shard": 27,
+        "n_extension_fillers": 36,
+        "codebook_ext_per_shard": [
+          19,
+          17
+        ]
+      },
+      "multibridge_recall": 1.0,
+      "per_shard": {
+        "0": {
+          "recall": 1.0,
+          "correct": 38,
+          "total": 38,
+          "n_facts": 19
+        },
+        "1": {
+          "recall": 1.0,
+          "correct": 58,
+          "total": 58,
+          "n_facts": 29
+        }
+      },
+      "per_shard_min_recall": 1.0,
+      "multibridge_abstain": 1.0,
+      "multibridge_false_accept": 0,
+      "moat_breaches": [],
+      "n_cross_absent": 48,
+      "sec_per_query": 0.07327764232953389,
+      "tq_ms": 73.27764232953389,
+      "permuted_recall": 0.23958333333333334,
+      "permuted_false_accept": 0,
+      "permuted_breaches": [],
+      "go_recall_per_shard_ge_0.95_absolute": true,
+      "go_recall_vs_single_bridge": true,
+      "go_moat_0_false_accepts": true,
+      "go_time_le_single_bridge": true,
+      "go_anticheat_permuted_collapses_no_FA": true,
+      "GO": true
+    },
+    {
+      "n_shards": 3,
+      "policy": "domain",
+      "shard_sizes": [
+        1804,
+        746,
+        450
+      ],
+      "store_stats": {
+        "n_stored": 48,
+        "n_same_shard": 25,
+        "n_cross_shard": 23,
+        "n_extension_fillers": 31,
+        "codebook_ext_per_shard": [
+          16,
+          0,
+          15
+        ]
+      },
+      "multibridge_recall": 0.9791666666666666,
+      "per_shard": {
+        "0": {
+          "recall": 1.0,
+          "correct": 34,
+          "total": 34,
+          "n_facts": 17
+        },
+        "2": {
+          "recall": 0.967741935483871,
+          "correct": 60,
+          "total": 62,
+          "n_facts": 31
+        }
+      },
+      "per_shard_min_recall": 0.967741935483871,
+      "multibridge_abstain": 1.0,
+      "multibridge_false_accept": 0,
+      "moat_breaches": [],
+      "n_cross_absent": 48,
+      "sec_per_query": 0.06798040370146434,
+      "tq_ms": 67.98040370146434,
+      "permuted_recall": 0.11458333333333333,
+      "permuted_false_accept": 0,
+      "permuted_breaches": [],
+      "go_recall_per_shard_ge_0.95_absolute": true,
+      "go_recall_vs_single_bridge": false,
+      "go_moat_0_false_accepts": true,
+      "go_time_le_single_bridge": true,
+      "go_anticheat_permuted_collapses_no_FA": true,
+      "GO": false
+    },
+    {
+      "n_shards": 3,
+      "policy": "partition",
+      "shard_sizes": [
+        1000,
+        1000,
+        1000
+      ],
+      "store_stats": {
+        "n_stored": 48,
+        "n_same_shard": 10,
+        "n_cross_shard": 38,
+        "n_extension_fillers": 49,
+        "codebook_ext_per_shard": [
+          4,
+          23,
+          22
+        ]
+      },
+      "multibridge_recall": 0.9791666666666666,
+      "per_shard": {
+        "0": {
+          "recall": 1.0,
+          "correct": 6,
+          "total": 6,
+          "n_facts": 3
+        },
+        "1": {
+          "recall": 1.0,
+          "correct": 48,
+          "total": 48,
+          "n_facts": 24
+        },
+        "2": {
+          "recall": 0.9523809523809523,
+          "correct": 40,
+          "total": 42,
+          "n_facts": 21
+        }
+      },
+      "per_shard_min_recall": 0.9523809523809523,
+      "multibridge_abstain": 1.0,
+      "multibridge_false_accept": 0,
+      "moat_breaches": [],
+      "n_cross_absent": 48,
+      "sec_per_query": 0.05612156788508097,
+      "tq_ms": 56.12156788508097,
+      "permuted_recall": 0.125,
+      "permuted_false_accept": 0,
+      "permuted_breaches": [],
+      "go_recall_per_shard_ge_0.95_absolute": true,
+      "go_recall_vs_single_bridge": false,
+      "go_moat_0_false_accepts": true,
+      "go_time_le_single_bridge": true,
+      "go_anticheat_permuted_collapses_no_FA": true,
+      "GO": false
+    },
+    {
+      "n_shards": 4,
+      "policy": "domain",
+      "shard_sizes": [
+        1804,
+        746,
+        226,
+        224
+      ],
+      "store_stats": {
+        "n_stored": 48,
+        "n_same_shard": 11,
+        "n_cross_shard": 37,
+        "n_extension_fillers": 52,
+        "codebook_ext_per_shard": [
+          16,
+          0,
+          10,
+          26
+        ]
+      },
+      "multibridge_recall": 1.0,
+      "per_shard": {
+        "0": {
+          "recall": 1.0,
+          "correct": 34,
+          "total": 34,
+          "n_facts": 17
+        },
+        "2": {
+          "recall": 1.0,
+          "correct": 14,
+          "total": 14,
+          "n_facts": 7
+        },
+        "3": {
+          "recall": 1.0,
+          "correct": 48,
+          "total": 48,
+          "n_facts": 24
+        }
+      },
+      "per_shard_min_recall": 1.0,
+      "multibridge_abstain": 1.0,
+      "multibridge_false_accept": 0,
+      "moat_breaches": [],
+      "n_cross_absent": 48,
+      "sec_per_query": 0.05006198833386103,
+      "tq_ms": 50.06198833386103,
+      "permuted_recall": 0.16666666666666666,
+      "permuted_false_accept": 0,
+      "permuted_breaches": [],
+      "go_recall_per_shard_ge_0.95_absolute": true,
+      "go_recall_vs_single_bridge": true,
+      "go_moat_0_false_accepts": true,
+      "go_time_le_single_bridge": true,
+      "go_anticheat_permuted_collapses_no_FA": true,
+      "GO": true
+    },
+    {
+      "n_shards": 4,
+      "policy": "partition",
+      "shard_sizes": [
+        750,
+        750,
+        750,
+        750
+      ],
+      "store_stats": {
+        "n_stored": 48,
+        "n_same_shard": 6,
+        "n_cross_shard": 42,
+        "n_extension_fillers": 69,
+        "codebook_ext_per_shard": [
+          19,
+          23,
+          14,
+          13
+        ]
+      },
+      "multibridge_recall": 1.0,
+      "per_shard": {
+        "0": {
+          "recall": 1.0,
+          "correct": 22,
+          "total": 22,
+          "n_facts": 11
+        },
+        "1": {
+          "recall": 1.0,
+          "correct": 38,
+          "total": 38,
+          "n_facts": 19
+        },
+        "2": {
+          "recall": 1.0,
+          "correct": 16,
+          "total": 16,
+          "n_facts": 8
+        },
+        "3": {
+          "recall": 1.0,
+          "correct": 20,
+          "total": 20,
+          "n_facts": 10
+        }
+      },
+      "per_shard_min_recall": 1.0,
+      "multibridge_abstain": 1.0,
+      "multibridge_false_accept": 0,
+      "moat_breaches": [],
+      "n_cross_absent": 48,
+      "sec_per_query": 0.04251193751891454,
+      "tq_ms": 42.51193751891454,
+      "permuted_recall": 0.09375,
+      "permuted_false_accept": 0,
+      "permuted_breaches": [],
+      "go_recall_per_shard_ge_0.95_absolute": true,
+      "go_recall_vs_single_bridge": true,
+      "go_moat_0_false_accepts": true,
+      "go_time_le_single_bridge": true,
+      "go_anticheat_permuted_collapses_no_FA": true,
+      "GO": true
+    }
+  ],
+  "primary_n_shards": 3,
+  "primary": {
+    "n_shards": 3,
+    "policy": "domain",
+    "shard_sizes": [
+      1804,
+      746,
+      450
+    ],
+    "store_stats": {
+      "n_stored": 48,
+      "n_same_shard": 25,
+      "n_cross_shard": 23,
+      "n_extension_fillers": 31,
+      "codebook_ext_per_shard": [
+        16,
+        0,
+        15
+      ]
+    },
+    "multibridge_recall": 0.9791666666666666,
+    "per_shard": {
+      "0": {
+        "recall": 1.0,
+        "correct": 34,
+        "total": 34,
+        "n_facts": 17
+      },
+      "2": {
+        "recall": 0.967741935483871,
+        "correct": 60,
+        "total": 62,
+        "n_facts": 31
+      }
+    },
+    "per_shard_min_recall": 0.967741935483871,
+    "multibridge_abstain": 1.0,
+    "multibridge_false_accept": 0,
+    "moat_breaches": [],
+    "n_cross_absent": 48,
+    "sec_per_query": 0.06798040370146434,
+    "tq_ms": 67.98040370146434,
+    "permuted_recall": 0.11458333333333333,
+    "permuted_false_accept": 0,
+    "permuted_breaches": [],
+    "go_recall_per_shard_ge_0.95_absolute": true,
+    "go_recall_vs_single_bridge": false,
+    "go_moat_0_false_accepts": true,
+    "go_time_le_single_bridge": true,
+    "go_anticheat_permuted_collapses_no_FA": true,
+    "GO": false
+  }
+}

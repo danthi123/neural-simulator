@@ -124,6 +124,8 @@ class RoutedComposer:
         for c in self.comps:
             self._union_concepts.update(c.concepts)
         self._union_words = sorted(set(all_words))
+        self._dlpfc = None        # union-graph dialogue-planning Control (lazy; rebuilt when the union graph changes)
+        self._dlpfc_key = None
         if verbose:
             sizes = [len(s) for s in shards]
             print(f"[routed] {self.n_shards} shards ({self._shard_policy}), sizes={sizes}, "
@@ -260,16 +262,36 @@ class RoutedComposer:
             words = self._union_words
         return comp0._cleanup(rec, words)
 
-    def elaborate(self, topic):
-        """Dialogue planning: the next on-topic concept about `topic`, routed to the topic's shard (the dlPFC
-        spreading Control runs on that shard's own association graph). None if the topic is unknown/unconnected.
+    def _assoc_graph(self):
+        """The association graph (concept -> {concept: weight}) over the UNION of stored facts across ALL shards
+        (agent/action/patient co-occur; clause patients skipped -- their inner concepts are structural). Built over
+        the union so the dialogue-planner / discuss channel sees CROSS-SHARD relatedness (a fact whose agent is on
+        shard A and patient on shard B contributes a cross-shard edge), exactly the (N)/(D) adjacency the design
+        wants (§2.2). Mirrors RFPhasorComposer._assoc_graph but over self.kb (the union). Consumed by
+        rich_answer_composer.ordered_associates + elaborate's spreading Control."""
+        graph = {}
+        for fact, _ in self.kb:
+            cs = [fact.get(r) for r in ("agent", "action", "patient") if isinstance(fact.get(r), str)]
+            for x in cs:
+                for y in cs:
+                    if x != y:
+                        graph.setdefault(x, {})[y] = graph.get(x, {}).get(y, 0.0) + 1.0
+        return graph
 
-        NOTE: this elaborates over the topic's SHARD-LOCAL fact graph. The cross-shard discuss adjacency (the
-        (N)/(D) channel) is supplied by the console's SHARED PPMI graph, not by this method (design §2.2)."""
-        si = self._shard_of(topic)
-        if si is None:
+    def elaborate(self, topic):
+        """Dialogue planning: the next on-topic concept about `topic`, chosen by the dlPFC spiking content-selection
+        Control over the UNION association graph (so the adjacency spans shards). None if the topic is
+        unknown/unconnected. Uses the same SpikingSpreadingController the rf composer's elaborate uses; it operates
+        on the graph, so it is substrate-independent."""
+        from research.runners.content_selection_spiking import SpikingSpreadingController
+        graph = self._assoc_graph()
+        if topic not in graph:
             return None
-        return self.comps[si].elaborate(topic)
+        key = tuple(sorted((k, tuple(sorted(v.items()))) for k, v in graph.items()))
+        if self._dlpfc is None or self._dlpfc_key != key:
+            self._dlpfc = SpikingSpreadingController(graph, seed=self.seed)
+            self._dlpfc_key = key
+        return self._dlpfc.turn_latency([topic])
 
     # ----------------------------------------------------------------------------------------------------------
     # union views (read-only) -- the DiscursiveTurn / agent introspect these
