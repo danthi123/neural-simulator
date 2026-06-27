@@ -102,24 +102,34 @@ FUNCTION_WORDS = {"the", "a", "an", "to", "on", "in", "of", "with", "from", "at"
 _FRAME_IDS = {v: i for i, v in enumerate(FRAME_LEXICON.keys())}
 
 
-def frame_for(verb):
-    """The verb's stored frame (MUC-Memory). Unknown verbs -> the default transitive frame."""
-    return FRAME_LEXICON.get(verb, FRAME_LEXICON["_default"])
+def frame_for(verb, lexicon=None):
+    """The verb's stored frame (MUC-Memory). Unknown verbs -> the default transitive frame.
+
+    `lexicon` (default None -> the module-level hand-authored FRAME_LEXICON) lets a caller supply an ALTERNATIVE
+    frame dict of the same shape -- e.g. the CORPUS-MINED frame lexicon (B-mine-1). Passing nothing is byte-identical
+    to the prior behaviour, so every existing caller is unaffected."""
+    lx = FRAME_LEXICON if lexicon is None else lexicon
+    return lx.get(verb, lx.get("_default", FRAME_LEXICON["_default"]))
 
 
-def frame_id(verb):
-    return _FRAME_IDS.get(verb, _FRAME_IDS["_default"])
+def frame_id(verb, lexicon=None):
+    """Stable per-verb FrameCQ frame-id. With an alternative `lexicon`, ids are assigned over THAT lexicon's verbs
+    (a distinct frame -> a distinct learned primacy gradient); default None reuses the module-level ids."""
+    if lexicon is None:
+        return _FRAME_IDS.get(verb, _FRAME_IDS["_default"])
+    ids = {v: i for i, v in enumerate(lexicon.keys())}
+    return ids.get(verb, ids.get("_default", 0))
 
 
-def content_slot_count(verb):
+def content_slot_count(verb, lexicon=None):
     """Number of phrase units in a verb's frame (all units are CONTENT/TENSE -- what FrameCQ orders)."""
-    return len(frame_for(verb))
+    return len(frame_for(verb, lexicon=lexicon))
 
 
-def realized_units(verb, fact):
+def realized_units(verb, fact, lexicon=None):
     """The frame units whose role is PRESENT in `fact` (action + agent always; obliques present-only). A partial
     corpus fact (e.g. 'boy go' with no GOAL) realizes a subset of the frame's units."""
-    return [u for u in frame_for(verb) if u[1] in ("action",) or u[1] in fact]
+    return [u for u in frame_for(verb, lexicon=lexicon) if u[1] in ("action",) or u[1] in fact]
 
 
 class FrameCQ:
@@ -128,17 +138,19 @@ class FrameCQ:
     the choice-WTA read-out in that frame's primacy order (inhibition-of-return). Here it orders the CONTENT slots
     of a verb frame (the argument order). The teacher order is the frame lexicon's canonical content-slot order."""
 
-    def __init__(self, n_frames=None, max_slots=None, lr=0.1, seed=42, wta_noise=0.05, teacher_reps=40):
-        n_frames = n_frames if n_frames is not None else len(FRAME_LEXICON)
-        max_slots = max_slots if max_slots is not None else max(content_slot_count(v) for v in FRAME_LEXICON)
+    def __init__(self, n_frames=None, max_slots=None, lr=0.1, seed=42, wta_noise=0.05, teacher_reps=40,
+                 lexicon=None):
+        lx = FRAME_LEXICON if lexicon is None else lexicon
+        n_frames = n_frames if n_frames is not None else len(lx)
+        max_slots = max_slots if max_slots is not None else max(content_slot_count(v, lexicon=lx) for v in lx)
         self.lr = lr
         self.wta_noise = wta_noise
         self.prim = np.random.default_rng(seed * 13 + 5).standard_normal((n_frames, max_slots)) * 0.01
         self._rng = np.random.default_rng(seed * 71 + 3)
         # teach each frame its canonical content-slot order (identity: slot 0 first) -- the frame lexicon already
         # lists content slots in their canonical argument order.
-        for verb in FRAME_LEXICON:
-            fid, n = frame_id(verb), content_slot_count(verb)
+        for verb in lx:
+            fid, n = frame_id(verb, lexicon=lx), content_slot_count(verb, lexicon=lx)
             for _ in range(teacher_reps):
                 for pos in range(n):
                     self.prim[fid][pos] += self.lr * (n - 1 - pos)
@@ -206,13 +218,19 @@ class ArgStructureComposer(RFPhasorComposer):
     and orders the content slots with FrameCQ. The no-confab moat is the parent's."""
 
     def __init__(self, seed=42, D=64, vocab=None, grounded_codes=None, framecq_seed=None,
-                 use_spiking_cq=None):
+                 use_spiking_cq=None, frame_lexicon=None):
         super().__init__(seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes)
         prng = np.random.default_rng(seed + 2000)
         for r in TYPED_ROLES:
             self.roles[r] = prng.uniform(0.0, 1.0, self.D)
+        # B-mine-1: the verb-frame lexicon this composer renders/recalls through. DEFAULT None -> the module-level
+        # hand-authored FRAME_LEXICON (byte-identical to the prior behaviour, so the production path + every existing
+        # caller is unchanged). Pass a same-shaped dict (e.g. the CORPUS-MINED frame lexicon) to use ACQUIRED frames
+        # instead of given ones -- the composer is otherwise unchanged (it consumes a FRAME_LEXICON-shaped dict
+        # whether hand-typed or mined). FRAME_ROLES + the FrameCQ frame-id map are derived from whichever is active.
+        self._frames = FRAME_LEXICON if frame_lexicon is None else dict(frame_lexicon)
         self._framecq_seed = seed if framecq_seed is None else framecq_seed
-        self.frame_cq = FrameCQ(seed=self._framecq_seed)        # the numpy oracle (always built; CPU-portable)
+        self.frame_cq = FrameCQ(seed=self._framecq_seed, lexicon=self._frames)   # numpy oracle (always built)
         # Burndown C1: the word ORDER is produced by the VALIDATED SPIKING competitive-queuing renderer
         # (NeuralSerialOrderRenderer; real firing rates -> the order == the numpy FrameCQ, 6/6 exhaustive parity)
         # instead of the numpy primacy-vector + max(). DEFAULT (use_spiking_cq=None) = the consolidated_320 pattern:
@@ -282,15 +300,15 @@ class ArgStructureComposer(RFPhasorComposer):
             if comp is None:
                 return None                       # moat: no stored composite -> no fabricated sentence
         verb = fact["action"]
-        units = realized_units(verb, fact)        # only the units whose role is present in the fact
-        full_frame = frame_for(verb)
+        units = realized_units(verb, fact, lexicon=self._frames)   # only the units whose role is present in the fact
+        full_frame = frame_for(verb, lexicon=self._frames)
         # The serial-order engine orders the realized units by their canonical-frame index (the per-frame primacy
         # gradient). engine = the spiking competitive-queuing renderer (C1) or the numpy FrameCQ oracle.
         if use_framecq:
             engine = self._ordering_engine(use_spiking_cq)
             unit_to_idx = {id(u): i for i, u in enumerate(full_frame)}
             realized_idx = [unit_to_idx[id(u)] for u in units]
-            order = engine.emit_order(frame_id(verb), realized_idx)
+            order = engine.emit_order(frame_id(verb, lexicon=self._frames), realized_idx)
             idx_to_unit = {unit_to_idx[id(u)]: u for u in units}
             ordered_units = [idx_to_unit[i] for i in order]
         else:
@@ -314,14 +332,15 @@ class ArgStructureComposer(RFPhasorComposer):
         return None
 
 
-def reparse_to_fact(rendered, fact):
+def reparse_to_fact(rendered, fact, lexicon=None):
     """VERIFY: strip the closed-class scaffold + tense morphology from the rendered prose and check the residual
     content words match the stored fact's REALIZED fillers (agent, action, + the obliques present in the fact). A
-    content mismatch -> False (reject -- the moat on the render)."""
+    content mismatch -> False (reject -- the moat on the render). `lexicon` (default None) selects the frame
+    source so a fact rendered through the MINED frames re-parses against the same frames."""
     inv_tense = {v: k for k, v in TENSE_3SG.items()}
     toks = [inv_tense.get(t, t) for t in rendered.split() if t not in FUNCTION_WORDS]
     content_vals = set()
-    for kind, role, _lead in realized_units(fact["action"], fact):
+    for kind, role, _lead in realized_units(fact["action"], fact, lexicon=lexicon):
         content_vals.add(fact["action"] if role == "action" else fact[role])
     return set(toks) == content_vals
 

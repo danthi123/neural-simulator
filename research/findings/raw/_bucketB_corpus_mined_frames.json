@@ -1,0 +1,8651 @@
+{
+  "capability": "corpus-mined verb-frame lexicon (B-mine-1)",
+  "corpus": "data/corpus/tinystories.txt",
+  "brain": "brainALL_w7000.npz_seed42.npz",
+  "n_seeds": 6,
+  "n_sentences": 175347,
+  "mined_frames": {
+    "feel": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "come": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "GOAL",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "find": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "ask": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "search": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "look": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "LOCATION",
+        [
+          "on",
+          "the"
+        ]
+      ]
+    ],
+    "say": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "fall": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "go": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "GOAL",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "want": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "call": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "hear": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "play": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "INSTRUMENT",
+        [
+          "with",
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "LOCATION",
+        [
+          "on",
+          "the"
+        ]
+      ]
+    ],
+    "pull": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "cry": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "do": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "see": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "love": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "make": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "notice": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "smile": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "agree": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "wake": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "shin": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "take": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "open": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "stick": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "LOCATION",
+        [
+          "on",
+          "the"
+        ]
+      ]
+    ],
+    "mean": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "clean": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "sigh": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "touch": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "hop": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "fill": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "INSTRUMENT",
+        [
+          "with",
+          "the"
+        ]
+      ]
+    ],
+    "grab": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "wash": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "dry": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "laugh": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "need": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "sing": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "suggest": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "walk": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "GOAL",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "give": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "THEME",
+        [
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "RECIPIENT",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "close": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "dream": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "break": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "stop": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "run": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "GOAL",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "read": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "drop": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "work": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "fix": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "could": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "paint": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "wait": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "sort": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "spot": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "reply": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "cut": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "light": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "roll": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "race": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "watch": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "cheer": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "tell": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "jump": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "LOCATION",
+        [
+          "on",
+          "the"
+        ]
+      ]
+    ],
+    "wave": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "THEME",
+        [
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "RECIPIENT",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "fly": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "LOCATION",
+        [
+          "on",
+          "the"
+        ]
+      ]
+    ],
+    "hold": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "poke": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "listen": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "GOAL",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "taste": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "eat": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "drink": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "climb": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "left": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "LOCATION",
+        [
+          "on",
+          "the"
+        ]
+      ]
+    ],
+    "talk": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "GOAL",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "lift": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "jog": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "turn": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "GOAL",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "shout": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "throw": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "LOCATION",
+        [
+          "on",
+          "the"
+        ]
+      ]
+    ],
+    "float": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "sit": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "LOCATION",
+        [
+          "on",
+          "the"
+        ]
+      ]
+    ],
+    "thank": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "bend": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "bring": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "THEME",
+        [
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "RECIPIENT",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "stand": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "LOCATION",
+        [
+          "on",
+          "the"
+        ]
+      ]
+    ],
+    "recognize": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "kick": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "study": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "fold": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "can": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "insist": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "move": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "write": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "whisper": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "yell": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "chase": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "hope": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "catch": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "pack": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "slide": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "scream": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "escape": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "tie": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "THEME",
+        [
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "RECIPIENT",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "count": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "swim": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "LOCATION",
+        [
+          "on",
+          "the"
+        ]
+      ]
+    ],
+    "shake": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "pointed": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "promise": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "explain": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "stir": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "pour": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "GOAL",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "build": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "rest": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "crawl": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "bark": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "lick": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "smell": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "hit": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "push": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "carry": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "THEME",
+        [
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "RECIPIENT",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "skip": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "cook": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "wander": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "sleep": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "LOCATION",
+        [
+          "on",
+          "the"
+        ]
+      ]
+    ],
+    "swing": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "spin": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "peek": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "answer": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "wrap": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "speak": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "warn": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "shoot": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "ride": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "frown": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "discover": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "spread": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "star": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "press": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "bounce": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "wipe": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "mix": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "march": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "trip": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "hate": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "rain": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "soar": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "twist": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "rise": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ]
+    ],
+    "scared": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "send": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ],
+    "_default": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ]
+  },
+  "mined_verb_prep_role": {
+    "come|to": "GOAL",
+    "look|at": "LOCATION",
+    "go|to": "GOAL",
+    "play|with": "INSTRUMENT",
+    "play|in": "LOCATION",
+    "stick|on": "LOCATION",
+    "fill|with": "INSTRUMENT",
+    "walk|to": "GOAL",
+    "give|to": "RECIPIENT",
+    "run|to": "GOAL",
+    "jump|on": "LOCATION",
+    "wave|to": "RECIPIENT",
+    "fly|over": "LOCATION",
+    "listen|to": "GOAL",
+    "left|at": "LOCATION",
+    "talk|to": "GOAL",
+    "turn|into": "GOAL",
+    "throw|at": "LOCATION",
+    "sit|on": "LOCATION",
+    "bring|to": "RECIPIENT",
+    "stand|near": "LOCATION",
+    "tie|to": "RECIPIENT",
+    "swim|in": "LOCATION",
+    "pour|into": "GOAL",
+    "carry|to": "RECIPIENT",
+    "sleep|on": "LOCATION"
+  },
+  "hand_frames": {
+    "go": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "GOAL",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "come": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "GOAL",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "walk": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "GOAL",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "run": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "GOAL",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "give": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "THEME",
+        [
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "RECIPIENT",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "send": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "THEME",
+        [
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "RECIPIENT",
+        [
+          "to",
+          "the"
+        ]
+      ]
+    ],
+    "put": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "THEME",
+        [
+          "the"
+        ]
+      ],
+      [
+        "CONTENT",
+        "LOCATION",
+        [
+          "on",
+          "the"
+        ]
+      ]
+    ],
+    "_default": [
+      [
+        "CONTENT",
+        "agent",
+        [
+          "the"
+        ]
+      ],
+      [
+        "TENSE",
+        "action",
+        []
+      ],
+      [
+        "CONTENT",
+        "patient",
+        [
+          "the"
+        ]
+      ]
+    ]
+  },
+  "frame_comparison": {
+    "go": {
+      "status": "match",
+      "mined_roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ],
+      "hand_roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ]
+    },
+    "come": {
+      "status": "match",
+      "mined_roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ],
+      "hand_roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ]
+    },
+    "walk": {
+      "status": "match",
+      "mined_roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ],
+      "hand_roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ]
+    },
+    "run": {
+      "status": "match",
+      "mined_roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ],
+      "hand_roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ]
+    },
+    "give": {
+      "status": "match",
+      "mined_roles": [
+        "agent",
+        "action",
+        "THEME",
+        "RECIPIENT"
+      ],
+      "hand_roles": [
+        "agent",
+        "action",
+        "THEME",
+        "RECIPIENT"
+      ]
+    },
+    "send": {
+      "status": "differ",
+      "mined_roles": [
+        "agent",
+        "action",
+        "patient"
+      ],
+      "hand_roles": [
+        "agent",
+        "action",
+        "THEME",
+        "RECIPIENT"
+      ]
+    },
+    "put": {
+      "status": "unmined",
+      "mined_roles": null,
+      "hand_roles": [
+        "agent",
+        "action",
+        "THEME",
+        "LOCATION"
+      ]
+    }
+  },
+  "justified_diffs": [
+    "send"
+  ],
+  "n_unjustified": 0,
+  "provenance": {
+    "feel": {
+      "attested": true,
+      "freq": 3686,
+      "dobj": 101,
+      "dobj_frac": 0.027,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 25,
+        "after": 15,
+        "in": 40,
+        "like": 21,
+        "with": 3,
+        "at": 8,
+        "for": 6,
+        "from": 7,
+        "because": 3,
+        "despite": 1,
+        "down": 1,
+        "under": 2,
+        "by": 2,
+        "beneath": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "come": {
+      "attested": true,
+      "freq": 3573,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 356,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 356,
+        "at": 1,
+        "from": 128,
+        "on": 8,
+        "into": 147,
+        "with": 42,
+        "behind": 3,
+        "across": 23,
+        "after": 19,
+        "in": 14,
+        "through": 4,
+        "until": 2,
+        "upon": 4,
+        "up": 4,
+        "down": 4,
+        "near": 3,
+        "towards": 1,
+        "before": 1,
+        "inside": 1,
+        "off": 1,
+        "by": 1,
+        "during": 1,
+        "for": 1,
+        "between": 1
+      },
+      "slots": [
+        {
+          "role": "GOAL",
+          "source": "prep:to(+role-agg)",
+          "count": 505,
+          "frac": 0.141,
+          "example": "One day, a little bird came to the wise owl."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ]
+    },
+    "find": {
+      "attested": true,
+      "freq": 4451,
+      "dobj": 2128,
+      "dobj_frac": 0.478,
+      "dative": 12,
+      "recip_count": 12,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 207,
+        "on": 33,
+        "at": 32,
+        "under": 116,
+        "inside": 51,
+        "near": 21,
+        "behind": 11,
+        "by": 5,
+        "with": 26,
+        "from": 4,
+        "after": 16,
+        "outside": 1,
+        "about": 2,
+        "until": 1,
+        "like": 1,
+        "for": 2,
+        "because": 1,
+        "over": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 2128,
+          "frac": 0.478,
+          "example": "The mole had found his best friend."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "ask": {
+      "attested": true,
+      "freq": 2723,
+      "dobj": 548,
+      "dobj_frac": 0.201,
+      "dative": 17,
+      "recip_count": 17,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 4,
+        "from": 6,
+        "for": 14,
+        "in": 5,
+        "at": 2,
+        "about": 1,
+        "after": 1,
+        "to": 1,
+        "during": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 548,
+          "frac": 0.201,
+          "example": "Tom asked his friend, Sam, to help him search for the ball."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "search": {
+      "attested": true,
+      "freq": 81,
+      "dobj": 21,
+      "dobj_frac": 0.259,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "for": 12,
+        "through": 2,
+        "near": 1,
+        "behind": 1,
+        "around": 1,
+        "throughout": 1,
+        "in": 2,
+        "under": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 21,
+          "frac": 0.259,
+          "example": "Together, they searched the whole house, and finally, they found the toy car under Tim's b"
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "look": {
+      "attested": true,
+      "freq": 4317,
+      "dobj": 33,
+      "dobj_frac": 0.008,
+      "dative": 1,
+      "recip_count": 8,
+      "ditransitive": false,
+      "top_preps": {
+        "at": 710,
+        "for": 205,
+        "in": 146,
+        "to": 8,
+        "like": 110,
+        "under": 96,
+        "by": 2,
+        "inside": 8,
+        "around": 67,
+        "with": 31,
+        "out": 11,
+        "over": 3,
+        "behind": 34,
+        "into": 6,
+        "near": 10,
+        "from": 15,
+        "through": 2,
+        "on": 10,
+        "after": 1,
+        "down": 1
+      },
+      "slots": [
+        {
+          "role": "LOCATION",
+          "source": "prep:at(+role-agg)",
+          "count": 1009,
+          "frac": 0.234,
+          "example": "She looked at his tower and had an idea."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "LOCATION"
+      ]
+    },
+    "say": {
+      "attested": true,
+      "freq": 13366,
+      "dobj": 444,
+      "dobj_frac": 0.033,
+      "dative": 0,
+      "recip_count": 249,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 249,
+        "with": 68,
+        "after": 17,
+        "at": 2,
+        "about": 3,
+        "on": 1,
+        "above": 1,
+        "before": 2,
+        "for": 1,
+        "like": 1,
+        "in": 1,
+        "from": 2
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "fall": {
+      "attested": true,
+      "freq": 673,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 8,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 8,
+        "under": 1,
+        "in": 5,
+        "on": 43,
+        "of": 1,
+        "off": 31,
+        "from": 32,
+        "into": 25,
+        "down": 3,
+        "outside": 1,
+        "with": 6,
+        "onto": 1,
+        "at": 1,
+        "over": 2,
+        "like": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "go": {
+      "attested": true,
+      "freq": 7392,
+      "dobj": 9,
+      "dobj_frac": 0.001,
+      "dative": 0,
+      "recip_count": 1891,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 1891,
+        "after": 24,
+        "for": 436,
+        "with": 155,
+        "in": 43,
+        "on": 132,
+        "without": 8,
+        "over": 9,
+        "up": 19,
+        "down": 23,
+        "by": 3,
+        "past": 2,
+        "inside": 50,
+        "into": 57,
+        "through": 10,
+        "from": 18,
+        "under": 4,
+        "around": 12,
+        "outside": 2,
+        "out": 4,
+        "near": 16,
+        "at": 6,
+        "behind": 4,
+        "like": 7,
+        "during": 1,
+        "as": 3
+      },
+      "slots": [
+        {
+          "role": "GOAL",
+          "source": "prep:to(+role-agg)",
+          "count": 1998,
+          "frac": 0.27,
+          "example": "Let's go to the car and nap."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ]
+    },
+    "want": {
+      "attested": true,
+      "freq": 9107,
+      "dobj": 392,
+      "dobj_frac": 0.043,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "from": 2,
+        "in": 3,
+        "on": 5,
+        "after": 4,
+        "for": 1,
+        "at": 1,
+        "like": 1,
+        "near": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "call": {
+      "attested": true,
+      "freq": 372,
+      "dobj": 104,
+      "dobj_frac": 0.28,
+      "dative": 0,
+      "recip_count": 10,
+      "ditransitive": false,
+      "top_preps": {
+        "for": 4,
+        "to": 10,
+        "after": 5,
+        "with": 2,
+        "from": 3,
+        "on": 2,
+        "inside": 1,
+        "in": 2
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 104,
+          "frac": 0.28,
+          "example": "One day, he saw a big boat called a yacht."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "hear": {
+      "attested": true,
+      "freq": 1253,
+      "dobj": 137,
+      "dobj_frac": 0.109,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "from": 5,
+        "about": 6,
+        "after": 6,
+        "in": 4,
+        "at": 2,
+        "on": 2,
+        "inside": 1,
+        "near": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "play": {
+      "attested": true,
+      "freq": 6266,
+      "dobj": 112,
+      "dobj_frac": 0.018,
+      "dative": 1,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 655,
+        "with": 1036,
+        "on": 133,
+        "after": 5,
+        "from": 123,
+        "under": 22,
+        "near": 74,
+        "at": 60,
+        "for": 53,
+        "against": 1,
+        "outside": 1,
+        "during": 1,
+        "without": 4,
+        "inside": 2,
+        "like": 1,
+        "by": 4,
+        "before": 1
+      },
+      "slots": [
+        {
+          "role": "INSTRUMENT",
+          "source": "prep:with(+role-agg)",
+          "count": 1036,
+          "frac": 0.165,
+          "example": "But, as he was playing with the ball, he accidentally let it drop."
+        },
+        {
+          "role": "LOCATION",
+          "source": "prep:in(+role-agg)",
+          "count": 944,
+          "frac": 0.151,
+          "example": "Tom and Lily were playing with their toys in the living room."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "INSTRUMENT",
+        "LOCATION"
+      ]
+    },
+    "pull": {
+      "attested": true,
+      "freq": 266,
+      "dobj": 69,
+      "dobj_frac": 0.259,
+      "dative": 0,
+      "recip_count": 4,
+      "ditransitive": false,
+      "top_preps": {
+        "from": 6,
+        "to": 4,
+        "on": 4,
+        "with": 3,
+        "over": 2,
+        "off": 3,
+        "into": 2,
+        "through": 1,
+        "at": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 69,
+          "frac": 0.259,
+          "example": "They pull the bread from each other."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "cry": {
+      "attested": true,
+      "freq": 485,
+      "dobj": 2,
+      "dobj_frac": 0.004,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "at": 1,
+        "by": 2,
+        "near": 2,
+        "in": 2,
+        "on": 1,
+        "under": 1,
+        "from": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "do": {
+      "attested": true,
+      "freq": 1721,
+      "dobj": 569,
+      "dobj_frac": 0.331,
+      "dative": 11,
+      "recip_count": 11,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 24,
+        "in": 9,
+        "for": 6,
+        "on": 2,
+        "to": 3,
+        "at": 2,
+        "after": 1,
+        "because": 1,
+        "like": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 569,
+          "frac": 0.331,
+          "example": "Tom felt sorry for what he did."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "see": {
+      "attested": true,
+      "freq": 9114,
+      "dobj": 4640,
+      "dobj_frac": 0.509,
+      "dative": 1,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 167,
+        "under": 55,
+        "outside": 26,
+        "at": 155,
+        "after": 16,
+        "in": 390,
+        "on": 228,
+        "inside": 15,
+        "near": 66,
+        "by": 9,
+        "before": 1,
+        "like": 6,
+        "for": 2,
+        "around": 1,
+        "to": 1,
+        "from": 11,
+        "during": 2,
+        "of": 1,
+        "underneath": 1,
+        "atop": 1,
+        "behind": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 4640,
+          "frac": 0.509,
+          "example": "He saw his friend, a dog named Max."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "love": {
+      "attested": true,
+      "freq": 4056,
+      "dobj": 427,
+      "dobj_frac": 0.105,
+      "dative": 0,
+      "recip_count": 8,
+      "ditransitive": false,
+      "top_preps": {
+        "from": 22,
+        "at": 2,
+        "like": 1,
+        "to": 8,
+        "with": 2,
+        "for": 1,
+        "in": 3,
+        "as": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "make": {
+      "attested": true,
+      "freq": 3211,
+      "dobj": 777,
+      "dobj_frac": 0.242,
+      "dative": 64,
+      "recip_count": 64,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 72,
+        "in": 23,
+        "from": 30,
+        "on": 19,
+        "like": 4,
+        "to": 15,
+        "near": 2,
+        "after": 1,
+        "at": 7,
+        "for": 20,
+        "of": 2,
+        "into": 4,
+        "around": 1,
+        "down": 1,
+        "up": 1,
+        "past": 1,
+        "under": 1,
+        "over": 1,
+        "as": 1,
+        "through": 1,
+        "inside": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 777,
+          "frac": 0.242,
+          "example": "They made a big house with a garden and a fence."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "praise": {
+      "attested": false,
+      "freq": 13,
+      "reason": "freq 13 < min_freq 30"
+    },
+    "notice": {
+      "attested": true,
+      "freq": 307,
+      "dobj": 75,
+      "dobj_frac": 0.244,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 11,
+        "after": 4,
+        "on": 2,
+        "at": 5,
+        "with": 2,
+        "beneath": 1,
+        "inside": 1,
+        "outside": 1,
+        "near": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 75,
+          "frac": 0.244,
+          "example": "As they were looking around, Lucy noticed a little girl playing with a toy in the corner o"
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "smile": {
+      "attested": true,
+      "freq": 2400,
+      "dobj": 5,
+      "dobj_frac": 0.002,
+      "dative": 0,
+      "recip_count": 3,
+      "ditransitive": false,
+      "top_preps": {
+        "at": 51,
+        "from": 4,
+        "to": 3,
+        "as": 1,
+        "with": 4,
+        "on": 1,
+        "in": 1,
+        "for": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "agree": {
+      "attested": true,
+      "freq": 416,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {},
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "wake": {
+      "attested": true,
+      "freq": 216,
+      "dobj": 1,
+      "dobj_frac": 0.005,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 2,
+        "to": 1,
+        "from": 3,
+        "after": 2,
+        "with": 2,
+        "in": 2
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "shin": {
+      "attested": true,
+      "freq": 200,
+      "dobj": 3,
+      "dobj_frac": 0.015,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "through": 4,
+        "on": 6,
+        "in": 7,
+        "like": 1,
+        "over": 1,
+        "from": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "take": {
+      "attested": true,
+      "freq": 2571,
+      "dobj": 1183,
+      "dobj_frac": 0.46,
+      "dative": 3,
+      "recip_count": 222,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 222,
+        "past": 1,
+        "in": 25,
+        "off": 10,
+        "from": 70,
+        "for": 12,
+        "on": 14,
+        "of": 19,
+        "outside": 1,
+        "with": 9,
+        "like": 1,
+        "by": 5,
+        "at": 3,
+        "inside": 9,
+        "under": 5,
+        "around": 1,
+        "into": 3,
+        "after": 1,
+        "near": 1,
+        "through": 1,
+        "because": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 1183,
+          "frac": 0.46,
+          "example": "They took the pot to their room and put it on the floor."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "open": {
+      "attested": true,
+      "freq": 1003,
+      "dobj": 563,
+      "dobj_frac": 0.561,
+      "dative": 0,
+      "recip_count": 3,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 9,
+        "from": 1,
+        "to": 3,
+        "on": 1,
+        "after": 6,
+        "in": 2,
+        "at": 4,
+        "by": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 563,
+          "frac": 0.561,
+          "example": "They opened their box of crayons, stickers, and glitter."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "stick": {
+      "attested": true,
+      "freq": 117,
+      "dobj": 6,
+      "dobj_frac": 0.051,
+      "dative": 0,
+      "recip_count": 2,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 8,
+        "in": 61,
+        "onto": 1,
+        "under": 1,
+        "because": 1,
+        "to": 2,
+        "from": 2
+      },
+      "slots": [
+        {
+          "role": "LOCATION",
+          "source": "prep:on(+role-agg)",
+          "count": 70,
+          "frac": 0.598,
+          "example": "They stuck stickers on the wall and the door."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "LOCATION"
+      ]
+    },
+    "mean": {
+      "attested": true,
+      "freq": 219,
+      "dobj": 36,
+      "dobj_frac": 0.164,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "clean": {
+      "attested": true,
+      "freq": 230,
+      "dobj": 91,
+      "dobj_frac": 0.396,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "from": 6,
+        "with": 3,
+        "off": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 91,
+          "frac": 0.396,
+          "example": "You cannot go to Ben's house until you clean your room.\""
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "sigh": {
+      "attested": true,
+      "freq": 59,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {},
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "touch": {
+      "attested": true,
+      "freq": 259,
+      "dobj": 101,
+      "dobj_frac": 0.39,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 6,
+        "on": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 101,
+          "frac": 0.39,
+          "example": "Tim knew he should not touch the apple, so he left it alone."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "will": {
+      "attested": false,
+      "freq": 28,
+      "reason": "freq 28 < min_freq 30"
+    },
+    "hop": {
+      "attested": true,
+      "freq": 482,
+      "dobj": 2,
+      "dobj_frac": 0.004,
+      "dative": 0,
+      "recip_count": 25,
+      "ditransitive": false,
+      "top_preps": {
+        "around": 10,
+        "into": 8,
+        "from": 7,
+        "to": 25,
+        "on": 17,
+        "in": 11,
+        "with": 6,
+        "over": 6,
+        "across": 1,
+        "for": 2,
+        "onto": 4,
+        "through": 3,
+        "near": 1,
+        "under": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "fill": {
+      "attested": true,
+      "freq": 114,
+      "dobj": 51,
+      "dobj_frac": 0.447,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 42,
+        "at": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 51,
+          "frac": 0.447,
+          "example": "Every day he would fill up his bucket with dirt and rocks."
+        },
+        {
+          "role": "INSTRUMENT",
+          "source": "prep:with(+role-agg)",
+          "count": 42,
+          "frac": 0.368,
+          "example": "One day, he wanted to take a nice and long bath, so he filled up his big bathtub with warm"
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient",
+        "INSTRUMENT"
+      ]
+    },
+    "grab": {
+      "attested": true,
+      "freq": 255,
+      "dobj": 131,
+      "dobj_frac": 0.514,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 11,
+        "from": 6,
+        "by": 2,
+        "onto": 1,
+        "like": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 131,
+          "frac": 0.514,
+          "example": "He felt guilty that he had made such a mess, so he quickly grabbed a cloth and began to cl"
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "relax": {
+      "attested": false,
+      "freq": 22,
+      "reason": "freq 22 < min_freq 30"
+    },
+    "wash": {
+      "attested": true,
+      "freq": 91,
+      "dobj": 43,
+      "dobj_frac": 0.473,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 4,
+        "with": 1,
+        "off": 1,
+        "at": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 43,
+          "frac": 0.473,
+          "example": "They washed the jar and put it on the table."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "dry": {
+      "attested": true,
+      "freq": 43,
+      "dobj": 9,
+      "dobj_frac": 0.209,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 2,
+        "after": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 9,
+          "frac": 0.209,
+          "example": "The boy dried his tears and smiled."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "laugh": {
+      "attested": true,
+      "freq": 1328,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "at": 16,
+        "about": 1,
+        "with": 3,
+        "in": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "need": {
+      "attested": true,
+      "freq": 1133,
+      "dobj": 122,
+      "dobj_frac": 0.108,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "for": 11,
+        "like": 2,
+        "in": 4,
+        "before": 1,
+        "on": 2,
+        "after": 1,
+        "from": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "sing": {
+      "attested": true,
+      "freq": 340,
+      "dobj": 3,
+      "dobj_frac": 0.009,
+      "dative": 4,
+      "recip_count": 4,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 7,
+        "from": 4,
+        "for": 5,
+        "with": 5,
+        "like": 1,
+        "at": 2,
+        "to": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "suggest": {
+      "attested": true,
+      "freq": 41,
+      "dobj": 1,
+      "dobj_frac": 0.024,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "walk": {
+      "attested": true,
+      "freq": 1337,
+      "dobj": 8,
+      "dobj_frac": 0.006,
+      "dative": 0,
+      "recip_count": 157,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 157,
+        "beside": 1,
+        "in": 73,
+        "into": 24,
+        "with": 33,
+        "towards": 9,
+        "through": 36,
+        "around": 39,
+        "up": 3,
+        "on": 11,
+        "down": 4,
+        "by": 10,
+        "near": 4,
+        "over": 3,
+        "for": 1,
+        "out": 1,
+        "at": 4,
+        "along": 1,
+        "past": 1,
+        "from": 1
+      },
+      "slots": [
+        {
+          "role": "GOAL",
+          "source": "prep:to(+role-agg)",
+          "count": 190,
+          "frac": 0.142,
+          "example": "They walked to the car and mom buckled them in their seats."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ]
+    },
+    "buckle": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "give": {
+      "attested": true,
+      "freq": 1483,
+      "dobj": 498,
+      "dobj_frac": 0.336,
+      "dative": 1098,
+      "recip_count": 1098,
+      "ditransitive": true,
+      "top_preps": {
+        "to": 25,
+        "on": 3,
+        "after": 2,
+        "at": 6,
+        "like": 1,
+        "from": 3,
+        "as": 3,
+        "in": 1,
+        "with": 4,
+        "over": 1,
+        "under": 1,
+        "for": 1
+      },
+      "slots": [
+        {
+          "role": "THEME",
+          "source": "direct-object",
+          "count": 498,
+          "frac": 0.336,
+          "example": "She gave Lily a big, yummy cookie and Max a tasty bone."
+        },
+        {
+          "role": "RECIPIENT",
+          "source": "dative",
+          "count": 1098,
+          "frac": 0.74,
+          "example": "She gave them each a kiss and a hug."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "THEME",
+        "RECIPIENT"
+      ]
+    },
+    "close": {
+      "attested": true,
+      "freq": 150,
+      "dobj": 127,
+      "dobj_frac": 0.847,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 127,
+          "frac": 0.847,
+          "example": "Lily and Max closed their eyes and fell asleep."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "dream": {
+      "attested": true,
+      "freq": 46,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "of": 12,
+        "in": 1,
+        "about": 2
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "break": {
+      "attested": true,
+      "freq": 379,
+      "dobj": 86,
+      "dobj_frac": 0.227,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 13,
+        "into": 1,
+        "with": 3
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 86,
+          "frac": 0.227,
+          "example": "Jimmy asked his father, \"Who broke the window, daddy?\""
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "stop": {
+      "attested": true,
+      "freq": 817,
+      "dobj": 24,
+      "dobj_frac": 0.029,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "near": 8,
+        "at": 13,
+        "after": 8,
+        "from": 3,
+        "by": 4,
+        "for": 3,
+        "in": 8,
+        "during": 1,
+        "under": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "run": {
+      "attested": true,
+      "freq": 2245,
+      "dobj": 13,
+      "dobj_frac": 0.006,
+      "dative": 0,
+      "recip_count": 435,
+      "ditransitive": false,
+      "top_preps": {
+        "after": 36,
+        "to": 435,
+        "around": 45,
+        "into": 19,
+        "inside": 10,
+        "with": 37,
+        "towards": 12,
+        "across": 5,
+        "down": 6,
+        "in": 24,
+        "up": 10,
+        "behind": 3,
+        "under": 2,
+        "onto": 1,
+        "off": 1,
+        "on": 2,
+        "from": 3,
+        "without": 2,
+        "at": 3,
+        "over": 1,
+        "past": 1,
+        "through": 3
+      },
+      "slots": [
+        {
+          "role": "GOAL",
+          "source": "prep:to(+role-agg)",
+          "count": 477,
+          "frac": 0.212,
+          "example": "Tom ran to Lily and hugged her."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ]
+    },
+    "read": {
+      "attested": true,
+      "freq": 173,
+      "dobj": 52,
+      "dobj_frac": 0.301,
+      "dative": 14,
+      "recip_count": 14,
+      "ditransitive": false,
+      "top_preps": {
+        "before": 2,
+        "to": 2,
+        "in": 1,
+        "about": 1,
+        "under": 1,
+        "from": 1,
+        "with": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 52,
+          "frac": 0.301,
+          "example": "He read the book and learned that ghosts could be nice or scary."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "drop": {
+      "attested": true,
+      "freq": 173,
+      "dobj": 77,
+      "dobj_frac": 0.445,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "into": 4,
+        "near": 1,
+        "from": 5,
+        "in": 3,
+        "at": 3,
+        "on": 3,
+        "to": 1,
+        "onto": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 77,
+          "frac": 0.445,
+          "example": "He drops the ball."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "work": {
+      "attested": true,
+      "freq": 685,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 1,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 13,
+        "for": 3,
+        "at": 7,
+        "on": 6,
+        "like": 1,
+        "from": 2,
+        "with": 3,
+        "through": 1,
+        "under": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "fix": {
+      "attested": true,
+      "freq": 270,
+      "dobj": 97,
+      "dobj_frac": 0.359,
+      "dative": 5,
+      "recip_count": 5,
+      "ditransitive": false,
+      "top_preps": {
+        "for": 2,
+        "with": 4,
+        "after": 4,
+        "in": 5,
+        "on": 1,
+        "like": 1,
+        "at": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 97,
+          "frac": 0.359,
+          "example": "They fixed the door together, and Sue felt happy that she could help her mom and dad."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "could": {
+      "attested": true,
+      "freq": 279,
+      "dobj": 1,
+      "dobj_frac": 0.004,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {},
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "paint": {
+      "attested": true,
+      "freq": 110,
+      "dobj": 53,
+      "dobj_frac": 0.482,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 3,
+        "from": 2,
+        "for": 1,
+        "on": 6
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 53,
+          "frac": 0.482,
+          "example": "One day, he was painting a big, pretty flower."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "wait": {
+      "attested": true,
+      "freq": 475,
+      "dobj": 1,
+      "dobj_frac": 0.002,
+      "dative": 3,
+      "recip_count": 3,
+      "ditransitive": false,
+      "top_preps": {
+        "at": 3,
+        "for": 32,
+        "from": 2,
+        "outside": 1,
+        "until": 6,
+        "by": 1,
+        "with": 4,
+        "under": 2,
+        "in": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "sort": {
+      "attested": true,
+      "freq": 44,
+      "dobj": 14,
+      "dobj_frac": 0.318,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "into": 1,
+        "through": 1,
+        "from": 1,
+        "in": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 14,
+          "frac": 0.318,
+          "example": "\"Sue, can you please sort the pans for me?\" asked her mom."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "spot": {
+      "attested": true,
+      "freq": 61,
+      "dobj": 28,
+      "dobj_frac": 0.459,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 6,
+        "on": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 28,
+          "frac": 0.459,
+          "example": "As they walked around, Bella spotted a cauliflower and pointed at it, saying \"Mummy!"
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "reply": {
+      "attested": true,
+      "freq": 309,
+      "dobj": 4,
+      "dobj_frac": 0.013,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 5,
+        "to": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "cut": {
+      "attested": true,
+      "freq": 116,
+      "dobj": 77,
+      "dobj_frac": 0.664,
+      "dative": 2,
+      "recip_count": 2,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 4,
+        "in": 6,
+        "through": 1,
+        "by": 1,
+        "from": 2,
+        "at": 1,
+        "for": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 77,
+          "frac": 0.664,
+          "example": "I'll cut the cauliflower into very small pieces, and then you can play with it\"."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "light": {
+      "attested": true,
+      "freq": 53,
+      "dobj": 3,
+      "dobj_frac": 0.057,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 7,
+        "before": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "roll": {
+      "attested": true,
+      "freq": 222,
+      "dobj": 38,
+      "dobj_frac": 0.171,
+      "dative": 0,
+      "recip_count": 8,
+      "ditransitive": false,
+      "top_preps": {
+        "down": 7,
+        "on": 3,
+        "around": 5,
+        "under": 5,
+        "into": 5,
+        "with": 1,
+        "after": 1,
+        "to": 8,
+        "through": 5,
+        "in": 3,
+        "towards": 4
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "race": {
+      "attested": true,
+      "freq": 105,
+      "dobj": 14,
+      "dobj_frac": 0.133,
+      "dative": 0,
+      "recip_count": 17,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 4,
+        "to": 17,
+        "past": 1,
+        "like": 1,
+        "down": 2,
+        "around": 4,
+        "through": 2,
+        "on": 1,
+        "up": 1,
+        "from": 1,
+        "in": 3
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "watch": {
+      "attested": true,
+      "freq": 485,
+      "dobj": 73,
+      "dobj_frac": 0.151,
+      "dative": 3,
+      "recip_count": 3,
+      "ditransitive": false,
+      "top_preps": {
+        "at": 1,
+        "from": 18,
+        "with": 7,
+        "in": 3,
+        "outside": 1,
+        "for": 4,
+        "as": 2
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "cheer": {
+      "attested": true,
+      "freq": 78,
+      "dobj": 1,
+      "dobj_frac": 0.013,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "for": 2,
+        "with": 1,
+        "from": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "tell": {
+      "attested": true,
+      "freq": 1344,
+      "dobj": 228,
+      "dobj_frac": 0.17,
+      "dative": 84,
+      "recip_count": 84,
+      "ditransitive": false,
+      "top_preps": {
+        "about": 113,
+        "on": 2,
+        "to": 1,
+        "with": 2,
+        "in": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "jump": {
+      "attested": true,
+      "freq": 742,
+      "dobj": 7,
+      "dobj_frac": 0.009,
+      "dative": 0,
+      "recip_count": 9,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 77,
+        "from": 16,
+        "in": 12,
+        "over": 10,
+        "into": 27,
+        "to": 9,
+        "off": 16,
+        "with": 6,
+        "onto": 7,
+        "at": 2,
+        "for": 1,
+        "across": 3,
+        "through": 1,
+        "out": 1
+      },
+      "slots": [
+        {
+          "role": "LOCATION",
+          "source": "prep:on(+role-agg)",
+          "count": 101,
+          "frac": 0.136,
+          "example": "Tom liked the idea, so they both jumped on the mattress."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "LOCATION"
+      ]
+    },
+    "wave": {
+      "attested": true,
+      "freq": 252,
+      "dobj": 105,
+      "dobj_frac": 0.417,
+      "dative": 0,
+      "recip_count": 33,
+      "ditransitive": true,
+      "top_preps": {
+        "to": 33,
+        "over": 2,
+        "at": 19,
+        "from": 4,
+        "in": 4,
+        "with": 4
+      },
+      "slots": [
+        {
+          "role": "THEME",
+          "source": "direct-object",
+          "count": 105,
+          "frac": 0.417,
+          "example": "With that, Dino waved goodbye and went on its way."
+        },
+        {
+          "role": "RECIPIENT",
+          "source": "prep:to",
+          "count": 33,
+          "frac": 0.131,
+          "example": "He waved to his friends on the land."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "THEME",
+        "RECIPIENT"
+      ]
+    },
+    "fly": {
+      "attested": true,
+      "freq": 1388,
+      "dobj": 20,
+      "dobj_frac": 0.014,
+      "dative": 0,
+      "recip_count": 78,
+      "ditransitive": false,
+      "top_preps": {
+        "over": 13,
+        "to": 78,
+        "around": 17,
+        "in": 127,
+        "through": 15,
+        "from": 32,
+        "into": 43,
+        "with": 22,
+        "off": 1,
+        "near": 6,
+        "like": 12,
+        "across": 5,
+        "after": 2,
+        "on": 5,
+        "past": 1,
+        "by": 3,
+        "toward": 1,
+        "towards": 3,
+        "out": 1
+      },
+      "slots": [
+        {
+          "role": "LOCATION",
+          "source": "prep:over(+role-agg)",
+          "count": 151,
+          "frac": 0.109,
+          "example": "She saw her hat fly over the fence and into the street."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "LOCATION"
+      ]
+    },
+    "hold": {
+      "attested": true,
+      "freq": 387,
+      "dobj": 209,
+      "dobj_frac": 0.54,
+      "dative": 1,
+      "recip_count": 7,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 33,
+        "to": 7,
+        "onto": 3,
+        "under": 1,
+        "with": 5,
+        "on": 1,
+        "for": 7,
+        "at": 1,
+        "from": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 209,
+          "frac": 0.54,
+          "example": "They played some more, but they held their hats tight."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "poke": {
+      "attested": true,
+      "freq": 34,
+      "dobj": 22,
+      "dobj_frac": 0.647,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 7,
+        "around": 1,
+        "on": 1,
+        "in": 2
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 22,
+          "frac": 0.647,
+          "example": "He poked his pasta and threw some on the floor."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "listen": {
+      "attested": true,
+      "freq": 678,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 91,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 91,
+        "from": 10,
+        "after": 1,
+        "in": 1
+      },
+      "slots": [
+        {
+          "role": "GOAL",
+          "source": "prep:to(+role-agg)",
+          "count": 91,
+          "frac": 0.134,
+          "example": "The jet listened to the bird and tried very hard."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ]
+    },
+    "taste": {
+      "attested": true,
+      "freq": 148,
+      "dobj": 30,
+      "dobj_frac": 0.203,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "like": 4,
+        "in": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 30,
+          "frac": 0.203,
+          "example": "Every time Lily touched a piece, it made her fingers taste sour."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "eat": {
+      "attested": true,
+      "freq": 806,
+      "dobj": 371,
+      "dobj_frac": 0.46,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 7,
+        "in": 2,
+        "from": 9,
+        "on": 2,
+        "at": 4,
+        "like": 2,
+        "as": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 371,
+          "frac": 0.46,
+          "example": "Maybe next time you will eat your pasta nicely.\""
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "drink": {
+      "attested": true,
+      "freq": 129,
+      "dobj": 81,
+      "dobj_frac": 0.628,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "from": 3,
+        "like": 1,
+        "in": 1,
+        "with": 2
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 81,
+          "frac": 0.628,
+          "example": "Tom drank the milk and calmed down."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "climb": {
+      "attested": true,
+      "freq": 424,
+      "dobj": 140,
+      "dobj_frac": 0.33,
+      "dative": 0,
+      "recip_count": 4,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 33,
+        "down": 21,
+        "to": 4,
+        "with": 6,
+        "into": 11,
+        "up": 28,
+        "onto": 8,
+        "from": 2,
+        "in": 4,
+        "inside": 1,
+        "over": 3,
+        "near": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 140,
+          "frac": 0.33,
+          "example": "So, Tom climbed the tree and poked the toy with a stick."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "left": {
+      "attested": true,
+      "freq": 194,
+      "dobj": 80,
+      "dobj_frac": 0.412,
+      "dative": 5,
+      "recip_count": 5,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 7,
+        "at": 8,
+        "in": 7,
+        "from": 2,
+        "on": 13,
+        "under": 3,
+        "over": 1,
+        "for": 3,
+        "without": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 80,
+          "frac": 0.412,
+          "example": "She said, \"Let's make a new festival with what we have left!\""
+        },
+        {
+          "role": "LOCATION",
+          "source": "prep:at(+role-agg)",
+          "count": 32,
+          "frac": 0.165,
+          "example": "They all had their shoes on, except for the young boy, he had left his shoes at home."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient",
+        "LOCATION"
+      ]
+    },
+    "talk": {
+      "attested": true,
+      "freq": 434,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 48,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 1,
+        "about": 21,
+        "to": 48,
+        "inside": 1,
+        "like": 4,
+        "for": 3,
+        "on": 4,
+        "in": 2,
+        "through": 1
+      },
+      "slots": [
+        {
+          "role": "GOAL",
+          "source": "prep:to(+role-agg)",
+          "count": 49,
+          "frac": 0.113,
+          "example": "Every day, Lily would talk to the bird and play with it."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ]
+    },
+    "lift": {
+      "attested": true,
+      "freq": 94,
+      "dobj": 49,
+      "dobj_frac": 0.521,
+      "dative": 1,
+      "recip_count": 2,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 3,
+        "from": 1,
+        "onto": 2,
+        "into": 3,
+        "to": 2,
+        "on": 1,
+        "in": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 49,
+          "frac": 0.521,
+          "example": "They lifted the rock and found a shiny coin under it."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "jog": {
+      "attested": true,
+      "freq": 36,
+      "dobj": 2,
+      "dobj_frac": 0.056,
+      "dative": 0,
+      "recip_count": 4,
+      "ditransitive": false,
+      "top_preps": {
+        "from": 3,
+        "to": 4,
+        "in": 2,
+        "near": 1,
+        "past": 1,
+        "for": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "turn": {
+      "attested": true,
+      "freq": 401,
+      "dobj": 53,
+      "dobj_frac": 0.132,
+      "dative": 0,
+      "recip_count": 2,
+      "ditransitive": false,
+      "top_preps": {
+        "into": 101,
+        "with": 1,
+        "for": 1,
+        "on": 4,
+        "to": 2,
+        "after": 1,
+        "in": 1,
+        "from": 1
+      },
+      "slots": [
+        {
+          "role": "GOAL",
+          "source": "prep:into(+role-agg)",
+          "count": 103,
+          "frac": 0.257,
+          "example": "It turned into a real cat!"
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "GOAL"
+      ]
+    },
+    "shout": {
+      "attested": true,
+      "freq": 290,
+      "dobj": 2,
+      "dobj_frac": 0.007,
+      "dative": 0,
+      "recip_count": 3,
+      "ditransitive": false,
+      "top_preps": {
+        "at": 8,
+        "from": 1,
+        "to": 3,
+        "with": 2,
+        "for": 2
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "throw": {
+      "attested": true,
+      "freq": 319,
+      "dobj": 177,
+      "dobj_frac": 0.555,
+      "dative": 4,
+      "recip_count": 21,
+      "ditransitive": false,
+      "top_preps": {
+        "into": 8,
+        "to": 21,
+        "at": 13,
+        "from": 1,
+        "on": 7,
+        "over": 5,
+        "for": 2,
+        "in": 9,
+        "up": 1,
+        "with": 1,
+        "against": 1,
+        "before": 1,
+        "off": 1,
+        "across": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 177,
+          "frac": 0.555,
+          "example": "Lily would throw a ball, and Max would find it even though he could not hear."
+        },
+        {
+          "role": "LOCATION",
+          "source": "prep:at(+role-agg)",
+          "count": 34,
+          "frac": 0.107,
+          "example": "He throws the pieces at Lily."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient",
+        "LOCATION"
+      ]
+    },
+    "float": {
+      "attested": true,
+      "freq": 36,
+      "dobj": 3,
+      "dobj_frac": 0.083,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 7,
+        "in": 1,
+        "with": 1,
+        "above": 1,
+        "near": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "sit": {
+      "attested": true,
+      "freq": 777,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 222,
+        "in": 48,
+        "with": 8,
+        "under": 90,
+        "near": 9,
+        "by": 13,
+        "at": 17,
+        "around": 4,
+        "after": 2,
+        "for": 2,
+        "to": 1,
+        "inside": 1
+      },
+      "slots": [
+        {
+          "role": "LOCATION",
+          "source": "prep:on(+role-agg)",
+          "count": 386,
+          "frac": 0.497,
+          "example": "The bird would observe them, as it sat on a branch."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "LOCATION"
+      ]
+    },
+    "hand": {
+      "attested": false,
+      "freq": 28,
+      "reason": "freq 28 < min_freq 30"
+    },
+    "thank": {
+      "attested": true,
+      "freq": 544,
+      "dobj": 248,
+      "dobj_frac": 0.456,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "for": 20,
+        "with": 2
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 248,
+          "frac": 0.456,
+          "example": "Sofia thanked the man and he smiled."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "bend": {
+      "attested": true,
+      "freq": 49,
+      "dobj": 1,
+      "dobj_frac": 0.02,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {},
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "bring": {
+      "attested": true,
+      "freq": 274,
+      "dobj": 127,
+      "dobj_frac": 0.464,
+      "dative": 58,
+      "recip_count": 58,
+      "ditransitive": true,
+      "top_preps": {
+        "from": 3,
+        "to": 17,
+        "like": 2,
+        "inside": 1,
+        "for": 2,
+        "after": 1,
+        "on": 1
+      },
+      "slots": [
+        {
+          "role": "THEME",
+          "source": "direct-object",
+          "count": 127,
+          "frac": 0.464,
+          "example": "She took the red mug from Sophies hands and said, But when you bathe, you can bring your f"
+        },
+        {
+          "role": "RECIPIENT",
+          "source": "dative",
+          "count": 58,
+          "frac": 0.212,
+          "example": "Her dad smiled and said, \"I've brought you something special!\""
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "THEME",
+        "RECIPIENT"
+      ]
+    },
+    "stand": {
+      "attested": true,
+      "freq": 165,
+      "dobj": 3,
+      "dobj_frac": 0.018,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "near": 2,
+        "on": 21,
+        "in": 16,
+        "with": 4,
+        "by": 4,
+        "for": 3,
+        "after": 1,
+        "without": 1,
+        "under": 2
+      },
+      "slots": [
+        {
+          "role": "LOCATION",
+          "source": "prep:near(+role-agg)",
+          "count": 41,
+          "frac": 0.248,
+          "example": "Soon, they saw a woman standing near a tree."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "LOCATION"
+      ]
+    },
+    "recognize": {
+      "attested": true,
+      "freq": 32,
+      "dobj": 12,
+      "dobj_frac": 0.375,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "from": 2,
+        "as": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 12,
+          "frac": 0.375,
+          "example": "He was scared because he didn't recognize the work he had to do."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "kick": {
+      "attested": true,
+      "freq": 105,
+      "dobj": 63,
+      "dobj_frac": 0.6,
+      "dative": 0,
+      "recip_count": 4,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 4,
+        "towards": 1,
+        "with": 6,
+        "in": 1,
+        "at": 3,
+        "from": 1,
+        "across": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 63,
+          "frac": 0.6,
+          "example": "He kicks a ball."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "study": {
+      "attested": true,
+      "freq": 50,
+      "dobj": 6,
+      "dobj_frac": 0.12,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "about": 3,
+        "from": 1,
+        "with": 1,
+        "in": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "fold": {
+      "attested": true,
+      "freq": 41,
+      "dobj": 13,
+      "dobj_frac": 0.317,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "into": 3,
+        "from": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 13,
+          "frac": 0.317,
+          "example": "The wizard smiled and answered \"I can fold your leg back into its original shape."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "sink": {
+      "attested": false,
+      "freq": 13,
+      "reason": "freq 13 < min_freq 30"
+    },
+    "can": {
+      "attested": true,
+      "freq": 177,
+      "dobj": 2,
+      "dobj_frac": 0.011,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {},
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "place": {
+      "attested": false,
+      "freq": 14,
+      "reason": "freq 14 < min_freq 30"
+    },
+    "insist": {
+      "attested": true,
+      "freq": 32,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {},
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "move": {
+      "attested": true,
+      "freq": 388,
+      "dobj": 42,
+      "dobj_frac": 0.108,
+      "dative": 0,
+      "recip_count": 8,
+      "ditransitive": false,
+      "top_preps": {
+        "through": 1,
+        "into": 6,
+        "in": 13,
+        "to": 8,
+        "across": 3,
+        "from": 2,
+        "near": 1,
+        "on": 4,
+        "with": 2,
+        "like": 1,
+        "around": 2,
+        "without": 1,
+        "off": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "write": {
+      "attested": true,
+      "freq": 92,
+      "dobj": 6,
+      "dobj_frac": 0.065,
+      "dative": 6,
+      "recip_count": 6,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 2,
+        "on": 6,
+        "in": 1,
+        "about": 8,
+        "to": 1,
+        "at": 1,
+        "for": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "whisper": {
+      "attested": true,
+      "freq": 54,
+      "dobj": 1,
+      "dobj_frac": 0.019,
+      "dative": 0,
+      "recip_count": 11,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 11,
+        "in": 1,
+        "through": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "yell": {
+      "attested": true,
+      "freq": 85,
+      "dobj": 2,
+      "dobj_frac": 0.024,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 1,
+        "at": 6,
+        "for": 1,
+        "with": 1,
+        "about": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "chase": {
+      "attested": true,
+      "freq": 98,
+      "dobj": 47,
+      "dobj_frac": 0.48,
+      "dative": 0,
+      "recip_count": 2,
+      "ditransitive": false,
+      "top_preps": {
+        "through": 1,
+        "around": 7,
+        "after": 2,
+        "with": 1,
+        "across": 1,
+        "down": 1,
+        "to": 2
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 47,
+          "frac": 0.48,
+          "example": "They chase the dog."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "hope": {
+      "attested": true,
+      "freq": 104,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {},
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "observe": {
+      "attested": false,
+      "freq": 11,
+      "reason": "freq 11 < min_freq 30"
+    },
+    "catch": {
+      "attested": true,
+      "freq": 241,
+      "dobj": 82,
+      "dobj_frac": 0.34,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 6,
+        "in": 3,
+        "to": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 82,
+          "frac": 0.34,
+          "example": "Tom thought he caught the mouse!"
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "pack": {
+      "attested": true,
+      "freq": 55,
+      "dobj": 26,
+      "dobj_frac": 0.473,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 5,
+        "for": 1,
+        "with": 2
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 26,
+          "frac": 0.473,
+          "example": "Sara and Ben pack their cars and their blocks in a big box."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "slide": {
+      "attested": true,
+      "freq": 82,
+      "dobj": 1,
+      "dobj_frac": 0.012,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 3,
+        "through": 1,
+        "down": 8,
+        "like": 1,
+        "across": 1,
+        "around": 1,
+        "towards": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "scream": {
+      "attested": true,
+      "freq": 119,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 2,
+        "at": 1,
+        "in": 2
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "escape": {
+      "attested": true,
+      "freq": 33,
+      "dobj": 1,
+      "dobj_frac": 0.03,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "from": 3,
+        "to": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "tie": {
+      "attested": true,
+      "freq": 59,
+      "dobj": 28,
+      "dobj_frac": 0.475,
+      "dative": 0,
+      "recip_count": 21,
+      "ditransitive": true,
+      "top_preps": {
+        "to": 21,
+        "around": 6,
+        "between": 1,
+        "in": 1,
+        "from": 1
+      },
+      "slots": [
+        {
+          "role": "THEME",
+          "source": "direct-object",
+          "count": 28,
+          "frac": 0.475,
+          "example": "He tied a cloth to the stick for a sail."
+        },
+        {
+          "role": "RECIPIENT",
+          "source": "prep:to",
+          "count": 21,
+          "frac": 0.356,
+          "example": "He tied a cloth to the stick for a sail."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "THEME",
+        "RECIPIENT"
+      ]
+    },
+    "rip": {
+      "attested": false,
+      "freq": 13,
+      "reason": "freq 13 < min_freq 30"
+    },
+    "count": {
+      "attested": true,
+      "freq": 153,
+      "dobj": 31,
+      "dobj_frac": 0.203,
+      "dative": 0,
+      "recip_count": 17,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 17,
+        "in": 2,
+        "from": 4,
+        "on": 11,
+        "with": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 31,
+          "frac": 0.203,
+          "example": "They approached a large frame together and one of them said to the other, \"Let's count the"
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "rub": {
+      "attested": false,
+      "freq": 27,
+      "reason": "freq 27 < min_freq 30"
+    },
+    "swim": {
+      "attested": true,
+      "freq": 137,
+      "dobj": 3,
+      "dobj_frac": 0.022,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 20,
+        "around": 2,
+        "near": 1,
+        "with": 2,
+        "to": 1,
+        "beside": 1,
+        "like": 1
+      },
+      "slots": [
+        {
+          "role": "LOCATION",
+          "source": "prep:in(+role-agg)",
+          "count": 22,
+          "frac": 0.161,
+          "example": "He saw a shrimp and it was swimming in the ocean."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "LOCATION"
+      ]
+    },
+    "shake": {
+      "attested": true,
+      "freq": 217,
+      "dobj": 149,
+      "dobj_frac": 0.687,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "off": 1,
+        "like": 1,
+        "with": 1,
+        "from": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 149,
+          "frac": 0.687,
+          "example": "Sara shakes her head."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "pointed": {
+      "attested": true,
+      "freq": 78,
+      "dobj": 7,
+      "dobj_frac": 0.09,
+      "dative": 0,
+      "recip_count": 14,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 14,
+        "with": 2,
+        "at": 18,
+        "on": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "promise": {
+      "attested": true,
+      "freq": 243,
+      "dobj": 1,
+      "dobj_frac": 0.004,
+      "dative": 1,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "from": 11
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "explain": {
+      "attested": true,
+      "freq": 65,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "stir": {
+      "attested": true,
+      "freq": 39,
+      "dobj": 16,
+      "dobj_frac": 0.41,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 3,
+        "with": 2,
+        "into": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 16,
+          "frac": 0.41,
+          "example": "We can stir the water with a big stick.\""
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "pour": {
+      "attested": true,
+      "freq": 66,
+      "dobj": 49,
+      "dobj_frac": 0.742,
+      "dative": 2,
+      "recip_count": 2,
+      "ditransitive": false,
+      "top_preps": {
+        "into": 24,
+        "from": 2,
+        "on": 5,
+        "in": 2,
+        "for": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 49,
+          "frac": 0.742,
+          "example": "She poured the soup into two yellow bowls and gave one to Anna."
+        },
+        {
+          "role": "GOAL",
+          "source": "prep:into(+role-agg)",
+          "count": 24,
+          "frac": 0.364,
+          "example": "She poured the soup into two yellow bowls and gave one to Anna."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient",
+        "GOAL"
+      ]
+    },
+    "build": {
+      "attested": true,
+      "freq": 110,
+      "dobj": 59,
+      "dobj_frac": 0.536,
+      "dative": 1,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 2,
+        "by": 1,
+        "from": 1,
+        "around": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 59,
+          "frac": 0.536,
+          "example": "I built a big garage for my cars!\""
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "rest": {
+      "attested": true,
+      "freq": 30,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 3,
+        "under": 1,
+        "in": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "crawl": {
+      "attested": true,
+      "freq": 78,
+      "dobj": 3,
+      "dobj_frac": 0.038,
+      "dative": 0,
+      "recip_count": 8,
+      "ditransitive": false,
+      "top_preps": {
+        "under": 4,
+        "onto": 3,
+        "from": 1,
+        "by": 1,
+        "like": 1,
+        "around": 2,
+        "on": 1,
+        "through": 3,
+        "to": 8
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "bark": {
+      "attested": true,
+      "freq": 142,
+      "dobj": 4,
+      "dobj_frac": 0.028,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "at": 9,
+        "with": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "lick": {
+      "attested": true,
+      "freq": 50,
+      "dobj": 43,
+      "dobj_frac": 0.86,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {},
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 43,
+          "frac": 0.86,
+          "example": "The dog licked Tim's face and wagged its tail."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "smell": {
+      "attested": true,
+      "freq": 117,
+      "dobj": 23,
+      "dobj_frac": 0.197,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "like": 5,
+        "in": 1,
+        "under": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "tremble": {
+      "attested": false,
+      "freq": 9,
+      "reason": "freq 9 < min_freq 30"
+    },
+    "hit": {
+      "attested": true,
+      "freq": 145,
+      "dobj": 86,
+      "dobj_frac": 0.593,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 9,
+        "on": 8,
+        "from": 1,
+        "at": 1,
+        "in": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 86,
+          "frac": 0.593,
+          "example": "The rake hit a big rock and broke!"
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "push": {
+      "attested": true,
+      "freq": 306,
+      "dobj": 161,
+      "dobj_frac": 0.526,
+      "dative": 0,
+      "recip_count": 4,
+      "ditransitive": false,
+      "top_preps": {
+        "off": 2,
+        "on": 7,
+        "with": 25,
+        "around": 4,
+        "into": 5,
+        "through": 2,
+        "under": 1,
+        "over": 1,
+        "down": 3,
+        "to": 4,
+        "up": 1,
+        "near": 1,
+        "across": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 161,
+          "frac": 0.526,
+          "example": "They both pushed the box, and it opened."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "carry": {
+      "attested": true,
+      "freq": 149,
+      "dobj": 52,
+      "dobj_frac": 0.349,
+      "dative": 1,
+      "recip_count": 20,
+      "ditransitive": true,
+      "top_preps": {
+        "to": 20,
+        "in": 10,
+        "around": 3,
+        "into": 1,
+        "on": 4,
+        "with": 3,
+        "from": 1
+      },
+      "slots": [
+        {
+          "role": "THEME",
+          "source": "direct-object",
+          "count": 52,
+          "frac": 0.349,
+          "example": "She carried her bone in her mouth and ran fast."
+        },
+        {
+          "role": "RECIPIENT",
+          "source": "prep:to",
+          "count": 20,
+          "frac": 0.134,
+          "example": "They carried the chicken food for him."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "THEME",
+        "RECIPIENT"
+      ]
+    },
+    "skip": {
+      "attested": true,
+      "freq": 72,
+      "dobj": 3,
+      "dobj_frac": 0.042,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 6,
+        "like": 1,
+        "to": 1,
+        "with": 5,
+        "for": 1,
+        "around": 3,
+        "near": 1,
+        "through": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "cook": {
+      "attested": true,
+      "freq": 90,
+      "dobj": 17,
+      "dobj_frac": 0.189,
+      "dative": 1,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "for": 2,
+        "in": 2,
+        "like": 1,
+        "on": 2,
+        "from": 1,
+        "with": 2
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "cause": {
+      "attested": false,
+      "freq": 8,
+      "reason": "freq 8 < min_freq 30"
+    },
+    "remove": {
+      "attested": false,
+      "freq": 23,
+      "reason": "freq 23 < min_freq 30"
+    },
+    "wander": {
+      "attested": true,
+      "freq": 31,
+      "dobj": 1,
+      "dobj_frac": 0.032,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "through": 2,
+        "up": 1,
+        "in": 1,
+        "around": 3,
+        "near": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "sleep": {
+      "attested": true,
+      "freq": 122,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 14,
+        "in": 7,
+        "under": 5,
+        "at": 2,
+        "with": 1,
+        "near": 1,
+        "until": 2
+      },
+      "slots": [
+        {
+          "role": "LOCATION",
+          "source": "prep:on(+role-agg)",
+          "count": 29,
+          "frac": 0.238,
+          "example": "That night, Lily slept well on her new mattress, happy that she and her mom found one they"
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "LOCATION"
+      ]
+    },
+    "swing": {
+      "attested": true,
+      "freq": 84,
+      "dobj": 7,
+      "dobj_frac": 0.083,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 5,
+        "from": 1,
+        "to": 1,
+        "in": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "spin": {
+      "attested": true,
+      "freq": 92,
+      "dobj": 20,
+      "dobj_frac": 0.217,
+      "dative": 1,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "down": 1,
+        "in": 4,
+        "on": 5,
+        "for": 2,
+        "from": 1,
+        "with": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 20,
+          "frac": 0.217,
+          "example": "He picked it up and said, \"Let's spin this top, Spot!\""
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "worry": {
+      "attested": false,
+      "freq": 15,
+      "reason": "freq 15 < min_freq 30"
+    },
+    "cool": {
+      "attested": false,
+      "freq": 16,
+      "reason": "freq 16 < min_freq 30"
+    },
+    "scrub": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "rock": {
+      "attested": false,
+      "freq": 16,
+      "reason": "freq 16 < min_freq 30"
+    },
+    "argue": {
+      "attested": false,
+      "freq": 17,
+      "reason": "freq 17 < min_freq 30"
+    },
+    "seed": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "peek": {
+      "attested": true,
+      "freq": 36,
+      "dobj": 1,
+      "dobj_frac": 0.028,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "around": 4,
+        "over": 1,
+        "through": 2,
+        "from": 4,
+        "into": 1,
+        "at": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "answer": {
+      "attested": true,
+      "freq": 107,
+      "dobj": 1,
+      "dobj_frac": 0.009,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {},
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "switch": {
+      "attested": false,
+      "freq": 7,
+      "reason": "freq 7 < min_freq 30"
+    },
+    "wrap": {
+      "attested": true,
+      "freq": 32,
+      "dobj": 15,
+      "dobj_frac": 0.469,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "around": 5,
+        "in": 3,
+        "with": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 15,
+          "frac": 0.469,
+          "example": "They wrap the scarf around their hands."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "shop": {
+      "attested": false,
+      "freq": 6,
+      "reason": "freq 6 < min_freq 30"
+    },
+    "speak": {
+      "attested": true,
+      "freq": 72,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 9,
+      "ditransitive": false,
+      "top_preps": {
+        "until": 1,
+        "to": 9,
+        "from": 1,
+        "like": 1,
+        "at": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "order": {
+      "attested": false,
+      "freq": 24,
+      "reason": "freq 24 < min_freq 30"
+    },
+    "sweep": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "warn": {
+      "attested": true,
+      "freq": 42,
+      "dobj": 6,
+      "dobj_frac": 0.143,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "about": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "shoot": {
+      "attested": true,
+      "freq": 41,
+      "dobj": 21,
+      "dobj_frac": 0.512,
+      "dative": 0,
+      "recip_count": 1,
+      "ditransitive": false,
+      "top_preps": {
+        "into": 3,
+        "at": 4,
+        "to": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 21,
+          "frac": 0.512,
+          "example": "They shoot water at the flowers and the trees."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "mumble": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "ride": {
+      "attested": true,
+      "freq": 83,
+      "dobj": 36,
+      "dobj_frac": 0.434,
+      "dative": 0,
+      "recip_count": 10,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 7,
+        "to": 10,
+        "from": 1,
+        "with": 2,
+        "in": 3,
+        "around": 2,
+        "like": 1,
+        "along": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 36,
+          "frac": 0.434,
+          "example": "He felt a little anxious because he had never ridden a scooter before."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "weep": {
+      "attested": false,
+      "freq": 18,
+      "reason": "freq 18 < min_freq 30"
+    },
+    "frown": {
+      "attested": true,
+      "freq": 32,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {},
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "discover": {
+      "attested": true,
+      "freq": 41,
+      "dobj": 7,
+      "dobj_frac": 0.171,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 2
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "spread": {
+      "attested": true,
+      "freq": 40,
+      "dobj": 12,
+      "dobj_frac": 0.3,
+      "dative": 0,
+      "recip_count": 4,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 6,
+        "around": 2,
+        "to": 4,
+        "for": 1,
+        "like": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 12,
+          "frac": 0.3,
+          "example": "Mom and Dad spread out a blanket and opened their picnic basket."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "polish": {
+      "attested": false,
+      "freq": 17,
+      "reason": "freq 17 < min_freq 30"
+    },
+    "dive": {
+      "attested": false,
+      "freq": 23,
+      "reason": "freq 23 < min_freq 30"
+    },
+    "split": {
+      "attested": false,
+      "freq": 22,
+      "reason": "freq 22 < min_freq 30"
+    },
+    "swoop": {
+      "attested": false,
+      "freq": 4,
+      "reason": "freq 4 < min_freq 30"
+    },
+    "star": {
+      "attested": true,
+      "freq": 33,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 2,
+        "at": 13,
+        "for": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "press": {
+      "attested": true,
+      "freq": 40,
+      "dobj": 36,
+      "dobj_frac": 0.9,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 1,
+        "on": 2
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 36,
+          "frac": 0.9,
+          "example": "He pressed a button and the train made a sound."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "sway": {
+      "attested": false,
+      "freq": 5,
+      "reason": "freq 5 < min_freq 30"
+    },
+    "hat": {
+      "attested": false,
+      "freq": 7,
+      "reason": "freq 7 < min_freq 30"
+    },
+    "bounce": {
+      "attested": true,
+      "freq": 79,
+      "dobj": 7,
+      "dobj_frac": 0.089,
+      "dative": 0,
+      "recip_count": 3,
+      "ditransitive": false,
+      "top_preps": {
+        "with": 1,
+        "into": 3,
+        "near": 1,
+        "by": 1,
+        "on": 7,
+        "in": 3,
+        "to": 3,
+        "like": 1,
+        "around": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "brush": {
+      "attested": false,
+      "freq": 14,
+      "reason": "freq 14 < min_freq 30"
+    },
+    "caress": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "wipe": {
+      "attested": true,
+      "freq": 33,
+      "dobj": 23,
+      "dobj_frac": 0.697,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "off": 2,
+        "with": 3,
+        "from": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 23,
+          "frac": 0.697,
+          "example": "Mommy wiped her tears and kissed her."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "snap": {
+      "attested": false,
+      "freq": 19,
+      "reason": "freq 19 < min_freq 30"
+    },
+    "mix": {
+      "attested": true,
+      "freq": 87,
+      "dobj": 20,
+      "dobj_frac": 0.23,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "for": 3,
+        "in": 11,
+        "with": 3
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 20,
+          "frac": 0.23,
+          "example": "The big boat mixed the paint to make a new color."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "mention": {
+      "attested": false,
+      "freq": 28,
+      "reason": "freq 28 < min_freq 30"
+    },
+    "march": {
+      "attested": true,
+      "freq": 36,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 1,
+        "around": 1,
+        "with": 2,
+        "through": 1,
+        "under": 1,
+        "from": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "beg": {
+      "attested": false,
+      "freq": 13,
+      "reason": "freq 13 < min_freq 30"
+    },
+    "trip": {
+      "attested": true,
+      "freq": 54,
+      "dobj": 1,
+      "dobj_frac": 0.019,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 11,
+        "over": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "sniff": {
+      "attested": false,
+      "freq": 26,
+      "reason": "freq 26 < min_freq 30"
+    },
+    "hate": {
+      "attested": true,
+      "freq": 40,
+      "dobj": 11,
+      "dobj_frac": 0.275,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "from": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 11,
+          "frac": 0.275,
+          "example": "She would always say, \"I hate my baby brother!\""
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "roam": {
+      "attested": false,
+      "freq": 5,
+      "reason": "freq 5 < min_freq 30"
+    },
+    "chop": {
+      "attested": false,
+      "freq": 6,
+      "reason": "freq 6 < min_freq 30"
+    },
+    "scold": {
+      "attested": false,
+      "freq": 20,
+      "reason": "freq 20 < min_freq 30"
+    },
+    "smash": {
+      "attested": false,
+      "freq": 4,
+      "reason": "freq 4 < min_freq 30"
+    },
+    "sneak": {
+      "attested": false,
+      "freq": 25,
+      "reason": "freq 25 < min_freq 30"
+    },
+    "yawn": {
+      "attested": false,
+      "freq": 22,
+      "reason": "freq 22 < min_freq 30"
+    },
+    "groan": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "crack": {
+      "attested": false,
+      "freq": 7,
+      "reason": "freq 7 < min_freq 30"
+    },
+    "welcome": {
+      "attested": false,
+      "freq": 12,
+      "reason": "freq 12 < min_freq 30"
+    },
+    "rain": {
+      "attested": true,
+      "freq": 57,
+      "dobj": 1,
+      "dobj_frac": 0.018,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "on": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "last": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "should": {
+      "attested": false,
+      "freq": 8,
+      "reason": "freq 8 < min_freq 30"
+    },
+    "drip": {
+      "attested": false,
+      "freq": 4,
+      "reason": "freq 4 < min_freq 30"
+    },
+    "hammer": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "number": {
+      "attested": false,
+      "freq": 6,
+      "reason": "freq 6 < min_freq 30"
+    },
+    "back": {
+      "attested": false,
+      "freq": 7,
+      "reason": "freq 7 < min_freq 30"
+    },
+    "stroll": {
+      "attested": false,
+      "freq": 5,
+      "reason": "freq 5 < min_freq 30"
+    },
+    "soar": {
+      "attested": true,
+      "freq": 38,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "into": 2,
+        "in": 12,
+        "over": 1,
+        "like": 3,
+        "above": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "graze": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "regret": {
+      "attested": false,
+      "freq": 19,
+      "reason": "freq 19 < min_freq 30"
+    },
+    "head": {
+      "attested": false,
+      "freq": 8,
+      "reason": "freq 8 < min_freq 30"
+    },
+    "snow": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "squeeze": {
+      "attested": false,
+      "freq": 20,
+      "reason": "freq 20 < min_freq 30"
+    },
+    "perch": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "tear": {
+      "attested": false,
+      "freq": 21,
+      "reason": "freq 21 < min_freq 30"
+    },
+    "water": {
+      "attested": false,
+      "freq": 23,
+      "reason": "freq 23 < min_freq 30"
+    },
+    "respond": {
+      "attested": false,
+      "freq": 4,
+      "reason": "freq 4 < min_freq 30"
+    },
+    "twist": {
+      "attested": true,
+      "freq": 32,
+      "dobj": 10,
+      "dobj_frac": 0.312,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "into": 1,
+        "from": 1,
+        "around": 4
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 10,
+          "frac": 0.312,
+          "example": "He twisted his hand and spilled the juice all over the table and the floor."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "rise": {
+      "attested": true,
+      "freq": 49,
+      "dobj": 0,
+      "dobj_frac": 0.0,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 10,
+        "from": 2,
+        "into": 1
+      },
+      "slots": [],
+      "roles": [
+        "agent",
+        "action"
+      ]
+    },
+    "dip": {
+      "attested": false,
+      "freq": 11,
+      "reason": "freq 11 < min_freq 30"
+    },
+    "scared": {
+      "attested": true,
+      "freq": 37,
+      "dobj": 12,
+      "dobj_frac": 0.324,
+      "dative": 0,
+      "recip_count": 0,
+      "ditransitive": false,
+      "top_preps": {
+        "in": 1
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 12,
+          "frac": 0.324,
+          "example": "This noise was so loud that it scared all the birds and animals in the woods."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "garden": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "stack": {
+      "attested": false,
+      "freq": 6,
+      "reason": "freq 6 < min_freq 30"
+    },
+    "delighted": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "face": {
+      "attested": false,
+      "freq": 19,
+      "reason": "freq 19 < min_freq 30"
+    },
+    "breeze": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "handle": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "pile": {
+      "attested": false,
+      "freq": 4,
+      "reason": "freq 4 < min_freq 30"
+    },
+    "gaze": {
+      "attested": false,
+      "freq": 24,
+      "reason": "freq 24 < min_freq 30"
+    },
+    "spell": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "tiptoe": {
+      "attested": false,
+      "freq": 4,
+      "reason": "freq 4 < min_freq 30"
+    },
+    "stumble": {
+      "attested": false,
+      "freq": 25,
+      "reason": "freq 25 < min_freq 30"
+    },
+    "blame": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "spring": {
+      "attested": false,
+      "freq": 18,
+      "reason": "freq 18 < min_freq 30"
+    },
+    "rake": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "pin": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "stare": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "slow": {
+      "attested": false,
+      "freq": 6,
+      "reason": "freq 6 < min_freq 30"
+    },
+    "send": {
+      "attested": true,
+      "freq": 32,
+      "dobj": 7,
+      "dobj_frac": 0.219,
+      "dative": 14,
+      "recip_count": 14,
+      "ditransitive": false,
+      "top_preps": {
+        "to": 4,
+        "into": 2,
+        "in": 3
+      },
+      "slots": [
+        {
+          "role": "patient",
+          "source": "direct-object",
+          "count": 7,
+          "frac": 0.219,
+          "example": "The man sent the red dog away."
+        }
+      ],
+      "roles": [
+        "agent",
+        "action",
+        "patient"
+      ]
+    },
+    "lower": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "panic": {
+      "attested": false,
+      "freq": 6,
+      "reason": "freq 6 < min_freq 30"
+    },
+    "stroke": {
+      "attested": false,
+      "freq": 6,
+      "reason": "freq 6 < min_freq 30"
+    },
+    "sob": {
+      "attested": false,
+      "freq": 6,
+      "reason": "freq 6 < min_freq 30"
+    },
+    "quiet": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "store": {
+      "attested": false,
+      "freq": 6,
+      "reason": "freq 6 < min_freq 30"
+    },
+    "bear": {
+      "attested": false,
+      "freq": 7,
+      "reason": "freq 7 < min_freq 30"
+    },
+    "hum": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "blink": {
+      "attested": false,
+      "freq": 27,
+      "reason": "freq 27 < min_freq 30"
+    },
+    "dove": {
+      "attested": false,
+      "freq": 6,
+      "reason": "freq 6 < min_freq 30"
+    },
+    "bent": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "request": {
+      "attested": false,
+      "freq": 10,
+      "reason": "freq 10 < min_freq 30"
+    },
+    "announce": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "heat": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "round": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "examine": {
+      "attested": false,
+      "freq": 7,
+      "reason": "freq 7 < min_freq 30"
+    },
+    "calm": {
+      "attested": false,
+      "freq": 7,
+      "reason": "freq 7 < min_freq 30"
+    },
+    "park": {
+      "attested": false,
+      "freq": 4,
+      "reason": "freq 4 < min_freq 30"
+    },
+    "twirl": {
+      "attested": false,
+      "freq": 8,
+      "reason": "freq 8 < min_freq 30"
+    },
+    "chat": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "fire": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "warm": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "peer": {
+      "attested": false,
+      "freq": 9,
+      "reason": "freq 9 < min_freq 30"
+    },
+    "drift": {
+      "attested": false,
+      "freq": 4,
+      "reason": "freq 4 < min_freq 30"
+    },
+    "glue": {
+      "attested": false,
+      "freq": 10,
+      "reason": "freq 10 < min_freq 30"
+    },
+    "dress": {
+      "attested": false,
+      "freq": 14,
+      "reason": "freq 14 < min_freq 30"
+    },
+    "pat": {
+      "attested": false,
+      "freq": 4,
+      "reason": "freq 4 < min_freq 30"
+    },
+    "discuss": {
+      "attested": false,
+      "freq": 8,
+      "reason": "freq 8 < min_freq 30"
+    },
+    "wobble": {
+      "attested": false,
+      "freq": 7,
+      "reason": "freq 7 < min_freq 30"
+    },
+    "untie": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "sip": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "wink": {
+      "attested": false,
+      "freq": 4,
+      "reason": "freq 4 < min_freq 30"
+    },
+    "rejoice": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "cloud": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "squat": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "spy": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "ladle": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "swallow": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "cup": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "plead": {
+      "attested": false,
+      "freq": 4,
+      "reason": "freq 4 < min_freq 30"
+    },
+    "dash": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "glide": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "glance": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "wet": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "down": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "arm": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "slug": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "blossom": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "tickle": {
+      "attested": false,
+      "freq": 4,
+      "reason": "freq 4 < min_freq 30"
+    },
+    "sense": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "fish": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "frustrated": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "lunge": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "train": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "leap": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "cauliflower": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "would": {
+      "attested": false,
+      "freq": 5,
+      "reason": "freq 5 < min_freq 30"
+    },
+    "pump": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "plunge": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "describe": {
+      "attested": false,
+      "freq": 2,
+      "reason": "freq 2 < min_freq 30"
+    },
+    "scamper": {
+      "attested": false,
+      "freq": 3,
+      "reason": "freq 3 < min_freq 30"
+    },
+    "castle": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "gulp": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "result": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "please": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "overhear": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "clutch": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "five": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "greet": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "screw": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "blush": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "waffle": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "punch": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "wind": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "sun": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    },
+    "declare": {
+      "attested": false,
+      "freq": 1,
+      "reason": "freq 1 < min_freq 30"
+    }
+  },
+  "match_or_justify_ok": true,
+  "parity_ok": true,
+  "mined_acc": 1.0,
+  "permuted_mining_acc": 0.03333333333333333,
+  "permuted_mining_ok": true,
+  "agrammatism_ok": true,
+  "reparse_ok": true,
+  "moat_ok": true,
+  "go": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "elapsed_s": 2.6,
+      "parity_ok": true,
+      "mined_acc": 1.0,
+      "permuted_mining_acc": 0.0,
+      "agrammatism_ok": true,
+      "reparse_ok": true,
+      "moat_ok": true,
+      "parity_details": [
+        {
+          "fact": {
+            "agent": "boy",
+            "action": "go",
+            "GOAL": "park"
+          },
+          "hand_render": "the boy goes to the park",
+          "mined_render": "the boy goes to the park",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "girl",
+            "action": "give",
+            "THEME": "ball",
+            "RECIPIENT": "dog"
+          },
+          "hand_render": "the girl gives the ball to the dog",
+          "mined_render": "the girl gives the ball to the dog",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "dog",
+            "action": "come",
+            "GOAL": "house"
+          },
+          "hand_render": "the dog comes to the house",
+          "mined_render": "the dog comes to the house",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "cat",
+            "action": "run",
+            "GOAL": "tree"
+          },
+          "hand_render": "the cat runs to the tree",
+          "mined_render": "the cat runs to the tree",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "man",
+            "action": "walk",
+            "GOAL": "shop"
+          },
+          "hand_render": "the man walks to the shop",
+          "mined_render": "the man walks to the shop",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "elapsed_s": 2.6,
+      "parity_ok": true,
+      "mined_acc": 1.0,
+      "permuted_mining_acc": 0.0,
+      "agrammatism_ok": true,
+      "reparse_ok": true,
+      "moat_ok": true,
+      "parity_details": [
+        {
+          "fact": {
+            "agent": "boy",
+            "action": "go",
+            "GOAL": "park"
+          },
+          "hand_render": "the boy goes to the park",
+          "mined_render": "the boy goes to the park",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "girl",
+            "action": "give",
+            "THEME": "ball",
+            "RECIPIENT": "dog"
+          },
+          "hand_render": "the girl gives the ball to the dog",
+          "mined_render": "the girl gives the ball to the dog",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "dog",
+            "action": "come",
+            "GOAL": "house"
+          },
+          "hand_render": "the dog comes to the house",
+          "mined_render": "the dog comes to the house",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "cat",
+            "action": "run",
+            "GOAL": "tree"
+          },
+          "hand_render": "the cat runs to the tree",
+          "mined_render": "the cat runs to the tree",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "man",
+            "action": "walk",
+            "GOAL": "shop"
+          },
+          "hand_render": "the man walks to the shop",
+          "mined_render": "the man walks to the shop",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "elapsed_s": 2.6,
+      "parity_ok": true,
+      "mined_acc": 1.0,
+      "permuted_mining_acc": 0.0,
+      "agrammatism_ok": true,
+      "reparse_ok": true,
+      "moat_ok": true,
+      "parity_details": [
+        {
+          "fact": {
+            "agent": "boy",
+            "action": "go",
+            "GOAL": "park"
+          },
+          "hand_render": "the boy goes to the park",
+          "mined_render": "the boy goes to the park",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "girl",
+            "action": "give",
+            "THEME": "ball",
+            "RECIPIENT": "dog"
+          },
+          "hand_render": "the girl gives the ball to the dog",
+          "mined_render": "the girl gives the ball to the dog",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "dog",
+            "action": "come",
+            "GOAL": "house"
+          },
+          "hand_render": "the dog comes to the house",
+          "mined_render": "the dog comes to the house",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "cat",
+            "action": "run",
+            "GOAL": "tree"
+          },
+          "hand_render": "the cat runs to the tree",
+          "mined_render": "the cat runs to the tree",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "man",
+            "action": "walk",
+            "GOAL": "shop"
+          },
+          "hand_render": "the man walks to the shop",
+          "mined_render": "the man walks to the shop",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 45,
+      "elapsed_s": 2.7,
+      "parity_ok": true,
+      "mined_acc": 1.0,
+      "permuted_mining_acc": 0.2,
+      "agrammatism_ok": true,
+      "reparse_ok": true,
+      "moat_ok": true,
+      "parity_details": [
+        {
+          "fact": {
+            "agent": "boy",
+            "action": "go",
+            "GOAL": "park"
+          },
+          "hand_render": "the boy goes to the park",
+          "mined_render": "the boy goes to the park",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "girl",
+            "action": "give",
+            "THEME": "ball",
+            "RECIPIENT": "dog"
+          },
+          "hand_render": "the girl gives the ball to the dog",
+          "mined_render": "the girl gives the ball to the dog",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "dog",
+            "action": "come",
+            "GOAL": "house"
+          },
+          "hand_render": "the dog comes to the house",
+          "mined_render": "the dog comes to the house",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "cat",
+            "action": "run",
+            "GOAL": "tree"
+          },
+          "hand_render": "the cat runs to the tree",
+          "mined_render": "the cat runs to the tree",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "man",
+            "action": "walk",
+            "GOAL": "shop"
+          },
+          "hand_render": "the man walks to the shop",
+          "mined_render": "the man walks to the shop",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 46,
+      "elapsed_s": 2.6,
+      "parity_ok": true,
+      "mined_acc": 1.0,
+      "permuted_mining_acc": 0.0,
+      "agrammatism_ok": true,
+      "reparse_ok": true,
+      "moat_ok": true,
+      "parity_details": [
+        {
+          "fact": {
+            "agent": "boy",
+            "action": "go",
+            "GOAL": "park"
+          },
+          "hand_render": "the boy goes to the park",
+          "mined_render": "the boy goes to the park",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "girl",
+            "action": "give",
+            "THEME": "ball",
+            "RECIPIENT": "dog"
+          },
+          "hand_render": "the girl gives the ball to the dog",
+          "mined_render": "the girl gives the ball to the dog",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "dog",
+            "action": "come",
+            "GOAL": "house"
+          },
+          "hand_render": "the dog comes to the house",
+          "mined_render": "the dog comes to the house",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "cat",
+            "action": "run",
+            "GOAL": "tree"
+          },
+          "hand_render": "the cat runs to the tree",
+          "mined_render": "the cat runs to the tree",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "man",
+            "action": "walk",
+            "GOAL": "shop"
+          },
+          "hand_render": "the man walks to the shop",
+          "mined_render": "the man walks to the shop",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        }
+      ]
+    },
+    {
+      "seed": 47,
+      "elapsed_s": 2.6,
+      "parity_ok": true,
+      "mined_acc": 1.0,
+      "permuted_mining_acc": 0.0,
+      "agrammatism_ok": true,
+      "reparse_ok": true,
+      "moat_ok": true,
+      "parity_details": [
+        {
+          "fact": {
+            "agent": "boy",
+            "action": "go",
+            "GOAL": "park"
+          },
+          "hand_render": "the boy goes to the park",
+          "mined_render": "the boy goes to the park",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "girl",
+            "action": "give",
+            "THEME": "ball",
+            "RECIPIENT": "dog"
+          },
+          "hand_render": "the girl gives the ball to the dog",
+          "mined_render": "the girl gives the ball to the dog",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "dog",
+            "action": "come",
+            "GOAL": "house"
+          },
+          "hand_render": "the dog comes to the house",
+          "mined_render": "the dog comes to the house",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "cat",
+            "action": "run",
+            "GOAL": "tree"
+          },
+          "hand_render": "the cat runs to the tree",
+          "mined_render": "the cat runs to the tree",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        },
+        {
+          "fact": {
+            "agent": "man",
+            "action": "walk",
+            "GOAL": "shop"
+          },
+          "hand_render": "the man walks to the shop",
+          "mined_render": "the man walks to the shop",
+          "render_match": true,
+          "recall_match": true,
+          "frame_differs_justified": false,
+          "pair_ok": true
+        }
+      ]
+    }
+  ]
+}
