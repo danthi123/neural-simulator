@@ -1,0 +1,121 @@
+{
+  "go": false,
+  "verdict": "CUMULATIVE TRAINING NEGATIVE \u2014 COMPOUNDING corr(M,C) did NOT rise: 2N-eff +0.823 < fresh-N +0.838-0.01 (resume is inert); COMPOUNDING recall dropped: 2N-eff 0.292 < fresh-N 0.625. This maps whether checkpoint-resume is the right cumulative mechanism vs needing the lineage/develop-loop machinery instead.",
+  "backend": "cupy",
+  "seed": 42,
+  "config": {
+    "n_concepts": 1000,
+    "n_hub": 300,
+    "n_per": 8,
+    "windows_N": 3500,
+    "vocab_filter": "pos",
+    "D": 128,
+    "n_facts": 24,
+    "corpus_paths": [
+      "data/corpus/tinystories.txt",
+      "data/corpus/simplewiki.txt"
+    ],
+    "preservation_bar": 0.999,
+    "compound_eps": 0.01
+  },
+  "curriculum": {
+    "vocab_filter": "pos",
+    "corpus": "tinystories.txt+simplewiki.txt",
+    "n_concepts_chosen": 1000,
+    "freq_range": [
+      63571,
+      1549
+    ],
+    "n_categories_covered": 30
+  },
+  "n_concepts_chosen": 1000,
+  "bars": {
+    "preservation_pass": true,
+    "corr_M_reload_vs_saved": 1.0,
+    "compounding_pass": false,
+    "compound_corr_ok": false,
+    "compound_recall_ok": false,
+    "moat_pass_0FA": true
+  },
+  "stages": {
+    "fresh_N": {
+      "label": "fresh-N",
+      "n_windows": 3500,
+      "resume_bridge": null,
+      "learn_seconds": 93.8,
+      "corr_MC": 0.8379050642438424,
+      "corr_MC_at_reload": null,
+      "recall": 0.625,
+      "recall_correct": 30,
+      "recall_total": 48,
+      "false_accept": 0,
+      "abstain": 1.0,
+      "n_facts": 24,
+      "generalization": 0.05128205128205128,
+      "M_norm": 26.366635402639254,
+      "M_reload_norm": 27.386128283343503,
+      "vram_mb": 5007.5,
+      "n_pool_neurons": 10400
+    },
+    "reload_0_preservation": {
+      "label": "reload@0",
+      "n_windows": 0,
+      "resume_bridge": "research/findings/raw/_cum_derisk\\freshN.simstate.h5",
+      "learn_seconds": 0.0,
+      "corr_MC": 0.0,
+      "corr_MC_at_reload": 0.0,
+      "recall": 0.625,
+      "recall_correct": 30,
+      "recall_total": 48,
+      "false_accept": 0,
+      "abstain": 1.0,
+      "n_facts": 24,
+      "generalization": 0.05128205128205128,
+      "M_norm": 26.366635402639254,
+      "M_reload_norm": 26.366635402639254,
+      "vram_mb": 4451.5,
+      "n_pool_neurons": 10400,
+      "corr_M_reload_vs_saved": 1.0
+    },
+    "reload_plus_N_2Neff": {
+      "label": "reload+N (2N-eff)",
+      "n_windows": 3500,
+      "resume_bridge": "research/findings/raw/_cum_derisk\\freshN.simstate.h5",
+      "learn_seconds": 75.1,
+      "corr_MC": 0.8231921778183839,
+      "corr_MC_at_reload": 0.0,
+      "recall": 0.2916666666666667,
+      "recall_correct": 14,
+      "recall_total": 48,
+      "false_accept": 0,
+      "abstain": 1.0,
+      "n_facts": 24,
+      "generalization": 0.05128205128205128,
+      "M_norm": 26.07583009770477,
+      "M_reload_norm": 26.366635402639254,
+      "vram_mb": 4525.5,
+      "n_pool_neurons": 10400,
+      "corr_M2N_vs_freshN": 0.9915785616658568
+    },
+    "fresh_2N_ceiling": {
+      "label": "fresh-2N (ceiling)",
+      "n_windows": 7000,
+      "resume_bridge": null,
+      "learn_seconds": 179.8,
+      "corr_MC": 0.8401139152917109,
+      "corr_MC_at_reload": null,
+      "recall": 0.5833333333333334,
+      "recall_correct": 28,
+      "recall_total": 48,
+      "false_accept": 0,
+      "abstain": 1.0,
+      "n_facts": 24,
+      "generalization": 0.08717948717948718,
+      "M_norm": 25.7620466678595,
+      "M_reload_norm": 27.386128283343503,
+      "vram_mb": 5379.5,
+      "n_pool_neurons": 10400
+    }
+  },
+  "wall_seconds": 693.7
+}
