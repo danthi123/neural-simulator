@@ -115,7 +115,8 @@ class OneBrainComposer:
                  enable_attributed=False, enable_multiframe=False, enable_spiking_cleanup=True,
                  encoding_gain_fn=None, local_reciprocal_unbind=True, integrated_loop=False,
                  sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0,
-                 enable_seq_vocab_shrink=True, persistent_loop=True, trace=False):
+                 enable_seq_vocab_shrink=True, persistent_loop=True, typed_roles=None, framecq_seed=None,
+                 use_spiking_cq=None, trace=False):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
         # trace (B3 per-turn "brain activity", opt-in, DEFAULT-OFF = byte-identical): READ-ONLY trace of what the brain
         # DID on the LAST query -- the decoded role-words + their cleanup match-confidence (per role), which stored
@@ -280,10 +281,28 @@ class OneBrainComposer:
         # the existing flat layout is preserved when n_roles=4); `main_roles` is the subset cleaned against the main
         # vocab (every role except polarity, which uses the 2-word polarity codebook).
         self.enable_attributed = bool(enable_attributed)
-        self.bind_roles = (["agent", "action", "patient", "attribute", "polarity"] if self.enable_attributed
-                           else ["agent", "action", "patient", "polarity"])
+        # typed_roles (BURNDOWN C4, the LAST Bucket-A conversion -- the TYPED verb-frame argument-structure surface on the
+        # spiking substrate, default None = byte-identical = the flat who/what path). A tuple of TYPED OBLIQUE roles
+        # (GOAL/THEME/RECIPIENT/LOCATION/SOURCE/INSTRUMENT/TIME) the bare (agent, action, patient) alphabet cannot
+        # express -- the MUC-Memory story (Hagoort: the verb stores its frame; Broca binds the fillers in). When set,
+        # each typed role is (a) given a phasor code on the inner composer's `self.comp.roles` from a DISJOINT rng stream
+        # (seed+2000, the SAME disjoint-stream discipline ArgStructureComposer + OrderedPositionWM use, so the parent's
+        # concept/role codes stay byte-identical), and (b) inserted into `bind_roles` (and so `main_roles`) BEFORE polarity
+        # -- preserving the polarity-LAST layout invariant -- so the on-bridge bind/store/unbind/cleanup machinery (which
+        # iterates self.bind_roles / self.main_roles uniformly) carries them for free. The binding is role-AGNOSTIC, so
+        # adding roles costs only more codebook entries + a wider per-block cleanup region; the per-fact BUNDLE never
+        # exceeds the few roles a single verb frame actually realizes (go->agent+action+GOAL=3; give->agent+action+THEME+
+        # RECIPIENT=4 -- the same density the flat+attribute path already validates), since _store_composite binds only
+        # the roles a fact ACTUALLY has. The typed-role API (`store_fact`/`query_role`/`render`) mirrors the numpy
+        # `ArgStructureComposer` oracle; the no-confab moat is the parent's (a cue matching no stored fact -> None).
+        # `framecq_seed`/`use_spiking_cq` configure the verb-frame render's serial-order engine (the spiking C1 CQ
+        # renderer on GPU / the numpy FrameCQ oracle on CPU -- the consolidated_320 default pattern; only used by render).
+        self.typed_roles = tuple(typed_roles) if typed_roles else ()
+        base_roles = (["agent", "action", "patient", "attribute"] if self.enable_attributed
+                      else ["agent", "action", "patient"])
+        self.bind_roles = base_roles + list(self.typed_roles) + ["polarity"]
         self.n_roles = len(self.bind_roles)
-        self.main_roles = [r for r in self.bind_roles if r != "polarity"]   # cleaned vs the main vocab (3 or 4)
+        self.main_roles = [r for r in self.bind_roles if r != "polarity"]   # cleaned vs the main vocab
         self.n_main = len(self.main_roles)
         # work registers: fill_0..n-1 (n) + bound_0..n-1 (n) + acc (1) = 2*n+1 D-blocks. Default n=4 -> 9*D (byte-equal).
         self.store_base = self.P + (2 * self.n_roles + 1) * D
@@ -310,6 +329,24 @@ class OneBrainComposer:
         #                       the bound VECTOR is on-substrate (the None placeholder keeps the (fact, vec) shape)
         self.store_conns = []
         self._word_index = {w: i for i, w in enumerate(self.words)}   # word -> codebook index (the sequencer cue idx)
+        # (C4) register the TYPED-ROLE phasors on the inner composer's role codebook, from a DISJOINT rng stream
+        # (seed+2000 -- == ArgStructureComposer, so the parent's concept/role codes are byte-identical). The read path
+        # (_read_block / _read_all_blocks) unbinds + cleans up every role in self.bind_roles, so the typed roles need a
+        # code on self.comp.roles. A typed role's filler is decoded against the SAME main vocab as the patient.
+        if self.typed_roles:
+            prng = np.random.default_rng(int(seed) + 2000)
+            for r in self.typed_roles:
+                self.comp.roles[r] = prng.uniform(0.0, 1.0, self.D)
+        # (C4) the verb-frame render's serial-order engine config (only used by render(); lazily built). framecq_seed
+        # defaults to seed; use_spiking_cq follows the consolidated_320 pattern (spiking CQ on GPU / numpy FrameCQ oracle
+        # on CPU) when None. Imported lazily in render() so the flat-only path never touches argstructure_composer.
+        self._framecq_seed = int(seed) if framecq_seed is None else int(framecq_seed)
+        if use_spiking_cq is None:
+            from sim.backend import is_gpu_backend
+            use_spiking_cq = bool(is_gpu_backend())
+        self.use_spiking_cq = bool(use_spiking_cq)
+        self._frame_cq = None          # numpy FrameCQ oracle (lazy)
+        self._spiking_cq = None        # spiking CQ renderer (lazy)
 
     def _zero_rf_v_u(self):
         """Reset the RF complex state v/u to 0 before a kick. DEFAULT (_rf_reset_mask=None): the whole bridge (the
@@ -389,6 +426,104 @@ class OneBrainComposer:
         an attributed-entity patient `(adjs, noun)` binds the single-attribute role too -> 'big apple'."""
         fact = self._store_fact(agent, action, patient, polarity)
         self.kb.append((fact, None))
+
+    # --- (C4) TYPED VERB-FRAME ARGUMENT-STRUCTURE API on the spiking substrate (== ArgStructureComposer numpy oracle) ---
+    def store_fact(self, fact):
+        """Store a TYPED argument-structure fact dict on the spiking substrate, e.g.
+        {'agent':'boy','action':'go','GOAL':'park'} or {'agent':'girl','action':'give','THEME':'ball','RECIPIENT':'dog'}.
+        Binds + bundles + writes the persistent store block exactly like store()/hear() -- but over the TYPED roles
+        present in the fact (the few-role bundle a verb frame realizes). Requires the composer to have been built with
+        the relevant typed_roles. Mirrors ArgStructureComposer.store_fact; the no-confab moat is the parent's. The bind
+        binds ONLY the roles the fact ACTUALLY has (in self.bind_roles canonical order), so a go-fact is a 3-way bundle
+        and a give-fact a 4-way bundle -- never the full 10-role density. polarity defaults to AFFIRM (so ask_yes_no /
+        the flat read still work on a typed fact)."""
+        f = dict(fact)
+        f.setdefault("polarity", "AFFIRM")
+        f["polarity"] = self._pol(f["polarity"])
+        roles = [r for r in self.bind_roles if r in f]                  # bind only present roles, canonical order
+        unknown = [r for r in f if r not in self.bind_roles and r != "polarity"]
+        if unknown:
+            raise KeyError(f"store_fact: role(s) {unknown} not in bind_roles {self.bind_roles}; "
+                           f"build OneBrainComposer(typed_roles=(...)) with them")
+        self._store_composite([f[r] for r in roles], roles)
+        self.kb.append((f, None))
+        return f
+
+    def query_role(self, role, **cue_roles):
+        """Recall the filler of `role` (any typed role, agent/action/patient too) from the FIRST stored fact whose cue
+        roles ALL match; None = abstain (the no-confab moat). The on-bridge spiking read (`_read_blocks`) reconstructs
+        every block + unbinds + cleans up ALL roles in PARALLEL; this scans the decoded {role: word} rows for the first
+        whose cue roles match and returns the requested role's decoded word. Generalizes query_patient/query_agent to
+        ANY typed role. == ArgStructureComposer.query_role; the SELECTION + decode are on FIRING NEURONS (the substrate
+        store + the resonate scan/unbind/cleanup). An unanswerable role (None decoded / not in any matching fact's
+        bound roles) abstains."""
+        for i, got in enumerate(self._read_blocks()):
+            if all(got.get(cr) == cv for cr, cv in cue_roles.items()):
+                # the role the caller wants -- but only if THIS fact actually bound it (else its decoded word is the
+                # unbind of an unbound role = noise -> abstain, never confabulate a role the fact does not have).
+                if role in self.bind_roles and (i >= len(self.kb) or role in self.kb[i][0]):
+                    return got.get(role)
+                return None
+        return None
+
+    def _composite_for_typed(self, fact):
+        """The kb index of the stored fact whose agent (+ action) matches `fact` -- for render(). The composite itself
+        lives on the substrate (read via _read_blocks); we return the BLOCK INDEX (the spiking read decodes it)."""
+        for i, (f, _) in enumerate(self.kb):
+            if f.get("agent") == fact.get("agent") and f.get("action") == fact.get("action"):
+                return i
+        return None
+
+    def _ordering_engine(self):
+        """The verb-frame render's serial-order engine: the validated SPIKING competitive-queuing renderer (C1
+        SpikingFrameCQ, real firing rates) when use_spiking_cq, else the numpy FrameCQ oracle. Lazily built (each
+        constructs/loads its mechanism) + cached. Imported here so the flat-only path never imports argstructure."""
+        from research.runners.argstructure_composer import FrameCQ, SpikingFrameCQ
+        if self.use_spiking_cq:
+            if self._spiking_cq is None:
+                self._spiking_cq = SpikingFrameCQ(seed=self._framecq_seed)
+            return self._spiking_cq
+        if self._frame_cq is None:
+            self._frame_cq = FrameCQ(seed=self._framecq_seed)
+        return self._frame_cq
+
+    def render(self, fact, comp=None, ablate_closed_class=False, use_framecq=True):
+        """Render a TYPED fact as prose via its verb frame -- e.g. {'agent':'boy','action':'go','GOAL':'park'} ->
+        'the boy goes to the park'. The frame's closed-class scaffold (determiner 'the' + preposition 'to'/'on') comes
+        from the FRAME LEXICON; the CONTENT words are DECODED FROM THE ON-BRIDGE UNBIND (the spiking read, not the
+        stored labels); the content slots are ordered by the validated serial-order engine (the spiking C1 CQ renderer
+        on GPU / the numpy FrameCQ oracle on CPU). `ablate_closed_class=True` -> telegraphic 'boy go park' (the Broca's
+        agrammatism anti-cheat). The no-confab moat: a fact with no matching stored block -> None (no fabricated
+        sentence). == ArgStructureComposer.render, on FIRING NEURONS. `comp` is ignored on the substrate path (the
+        composite lives on the bridge) -- accepted for API parity with the numpy oracle's render(fact, comp)."""
+        from research.runners.argstructure_composer import (
+            frame_for, frame_id, realized_units, TENSE_3SG)
+        idx = self._composite_for_typed(fact)
+        if idx is None:
+            return None                                    # moat: no stored composite -> no fabricated sentence
+        decoded = self._read_blocks()[idx]                 # the on-bridge spiking decode of every role
+        verb = fact["action"]
+        units = realized_units(verb, fact)                 # only the units whose role is present in the fact
+        full_frame = frame_for(verb)
+        if use_framecq:
+            engine = self._ordering_engine()
+            unit_to_idx = {id(u): i for i, u in enumerate(full_frame)}
+            realized_idx = [unit_to_idx[id(u)] for u in units]
+            order = engine.emit_order(frame_id(verb), realized_idx)
+            idx_to_unit = {unit_to_idx[id(u)]: u for u in units}
+            ordered_units = [idx_to_unit[j] for j in order]
+        else:
+            ordered_units = units
+        toks = []
+        for kind, role, lead in ordered_units:
+            if not ablate_closed_class:
+                toks.extend(lead)                          # the unit's closed-class scaffold (det / prep)
+            if kind == "TENSE":
+                bare = decoded.get("action")               # decoded bare verb (from the on-bridge unbind)
+                toks.append(bare if ablate_closed_class else TENSE_3SG.get(bare, bare))
+            else:
+                toks.append(decoded.get(role))             # the role's decoded filler
+        return " ".join(toks)
 
     def _compose_phases(self, fillers, roles):
         """Bind each (role, filler) + bundle -> the composite phasor PHASES, via the work registers (fill_* -> bound_*

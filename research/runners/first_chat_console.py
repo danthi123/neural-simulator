@@ -400,9 +400,11 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
     on firing neurons (needs SIM_BACKEND=cupy for real use; numpy is the tiny test-oracle path). The onebrain composer
     is an `RFPhasorComposer` API-sibling, so the DiscursiveTurn / proposer / agent / audit_moat consume it through the
     SAME composer API -- the substrate swap is invisible to them. The grounded codes loaded here pass through, so the
-    brain converses on exactly the codes it learned, on spikes. HONEST SCOPE: onebrain covers the FLAT who/what +
-    chain-of-thought + yes/no + generation; the TYPED verb-frame `--argstructure` path stays on the numpy
-    `ArgStructureComposer` (that is burndown C4) -- so `--composer onebrain` is ignored when `--argstructure` is set.
+    brain converses on exactly the codes it learned, on spikes. SCOPE: onebrain covers the FLAT who/what +
+    chain-of-thought + yes/no + generation; with `--argstructure` (BURNDOWN C4), `--composer onebrain` builds the
+    TYPED verb-frame surface (GOAL/THEME/RECIPIENT/... store_fact / query_role / the frame render) on the SAME spiking
+    substrate (needs a D>=128 brain -- the bundle-SNR lever); `--composer rf` (default) keeps the numpy
+    `ArgStructureComposer` oracle (+ the GPU-less CPU path).
 
     `shards` (default 1 = TODAY'S single RFPhasorComposer, behavior byte-unchanged): when >1, the composer is a
     RoutedComposer over `shards` disjoint ~V/shards-concept shards (deep-knowledge scaling -- per-shard cleanup so
@@ -496,20 +498,54 @@ def build_brain_on_codes(npz_path=DEFAULT_BRAIN, *, seed=42, n_facts=24, facts_j
     #     DiscursiveTurn / proposer / agent / audit_moat consume it through the same composer API (the swap is invisible
     #     to them); the grounded codes pass through (it converses on the codes it learned, on spikes). Needs
     #     SIM_BACKEND=cupy for real use (numpy is the tiny test-oracle path). HONEST SCOPE: onebrain is single-bridge
-    #     (no RoutedComposer-of-onebrain yet) + flat-SVO only -- the TYPED verb-frame --argstructure path stays rf (C4).
+    #     (no RoutedComposer-of-onebrain yet).
     #   * shards>1 -> the RoutedComposer (per-shard cleanup, deep-knowledge scaling);
-    #   * argstructure=True (Tier 0.1) -> an ArgStructureComposer (typed verb-frame roles + the FrameCQ render).
+    #   * argstructure=True + composer_kind='rf' (Tier 0.1) -> the numpy ArgStructureComposer (typed verb-frame roles +
+    #     the FrameCQ render) = the ORACLE + GPU-less path;
+    #   * argstructure=True + composer_kind='onebrain' (BURNDOWN C4) -> the TYPED-ROLE OneBrainComposer: the typed
+    #     verb-frame surface (store_fact / query_role / the frame render) on the SAME spiking substrate (the typed roles
+    #     bound + stored in RF complex synapses; render-order = the C1 spiking competitive-queuing); needs a D>=128 brain
+    #     (the bundle-SNR lever). store_fact / query_role / render are API-identical, so the downstream pipeline is
+    #     unchanged across the rf/onebrain typed paths.
     #     Single-bridge (shards>1 is a follow-on; a RoutedComposer of ArgStructureComposers is not yet built).
     _onebrain = (composer_kind == "onebrain") and not argstructure
+    _argstructure_onebrain = argstructure and (composer_kind == "onebrain")   # BURNDOWN C4
     if argstructure:
-        if composer_kind == "onebrain" and verbose:
-            print(f"[console] (note) --composer onebrain is ignored with --argstructure (the typed verb-frame path "
-                  f"stays the numpy ArgStructureComposer = burndown C4); flat who/what only is on the onebrain path.",
-                  flush=True)
         if shards and int(shards) > 1 and verbose:
             print(f"[console] (note) --argstructure is single-bridge; ignoring shards={shards} "
                   f"(multi-bridge ArgStructure is a follow-on)", flush=True)
-        comp = ArgStructureComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded)
+        if _argstructure_onebrain:
+            # BURNDOWN C4 (the LAST Bucket-A conversion): the TYPED verb-frame argument-structure surface on the
+            # SPIKING one-brain substrate. Reuse-by-import (NO sim/ edit): the production OneBrainComposer extended
+            # with typed_roles -- store_fact / query_role / the verb-frame render all run the bind/store/unbind/cleanup
+            # on FIRING NEURONS (the RF complex-synapse store + the resonate scan), and the render word-ordering is the
+            # C1 spiking competitive-queuing read-out. enable_spiking_cleanup=False MATCHES the numpy ArgStructureComposer
+            # ORACLE's host-argmax cleanup EXACTLY (the substrate store == the numpy kb bit-for-bit; the only remaining
+            # choice is the final winner-PICK -- the same reasoning C3 used for the flat path's exact oracle parity at
+            # the crowded V=1454/D=128 console scale). De-risked GO at D=128 (the console D): typed recall + render
+            # ANSWER-IDENTICAL to the numpy oracle, moat 0-FA (2026-06-27-burndown-C4-typed-frame-onebrain-GO.md). At
+            # the default brain D=64 a bundle-SNR boundary mis-decodes the densest 4-role frames; D>=128 clears it (the
+            # standard VSA lever; the 7K console brain is D=128).
+            from sim.backend import get_backend
+            _bk = get_backend()[1]
+            if _bk != "cupy" and verbose:
+                print(f"[console] (warn) --argstructure --composer onebrain on backend '{_bk}': the onebrain bridge "
+                      f"runs but is the SLOW tiny test-oracle path on numpy. Set SIM_BACKEND=cupy for the real "
+                      f"spiking-substrate typed-frame console.", flush=True)
+            if D < 128 and verbose:
+                print(f"[console] (warn) --argstructure --composer onebrain at D={D}<128: typed frames are dense "
+                      f"composites; the substrate may mis-decode the densest 4-role frames below D=128 (the bundle-SNR "
+                      f"boundary). Use a D>=128 brain for the spiking typed-frame path.", flush=True)
+            from research.runners.one_brain_composer import OneBrainComposer
+            comp = OneBrainComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded,
+                                    typed_roles=TYPED_ROLES, enable_spiking_cleanup=False)
+            if verbose:
+                print(f"[console] C4: composer=OneBrainComposer(typed_roles) -- the TYPED verb-frame surface "
+                      f"(store_fact / query_role / frame-render) on ONE persistent spiking bridge (the typed roles "
+                      f"bound + stored in RF complex synapses; render-order = the C1 spiking competitive-queuing)",
+                      flush=True)
+        else:
+            comp = ArgStructureComposer(seed=seed, D=D, vocab=sorted(set(vocab)), grounded_codes=grounded)
     elif _onebrain:
         # BURNDOWN C3: the persistent spiking one-brain path. Reuse-by-import (NO sim/ edit): the validated production
         # OneBrainComposer (the consolidated_320 default). enable_spiking_cleanup stays ON (its own default) -> the
@@ -2012,20 +2048,22 @@ def main():
     ap.add_argument("--facts-json", default=None,
                     help="path to corpus-EXTRACTED SVO facts (_corpus_svo_extract.py output); replaces random facts")
     ap.add_argument("--argstructure", action="store_true",
-                    help="Tier 0.1/0.3: build an ArgStructureComposer (typed verb-frame roles: GOAL/THEME/RECIPIENT/"
-                         "LOCATION + the FrameCQ render) instead of the plain RFPhasorComposer, and route the wh + "
-                         "verb-frame render through it. Requires --facts-json with TYPED-ROLE facts "
+                    help="Tier 0.1/0.3: build a typed verb-frame argument-structure composer (typed roles: GOAL/THEME/"
+                         "RECIPIENT/LOCATION + the frame render) instead of the plain RFPhasorComposer, and route the wh + "
+                         "verb-frame render through it. With --composer rf (default) = the numpy ArgStructureComposer "
+                         "ORACLE; with --composer onebrain (BURNDOWN C4) = the typed-role OneBrainComposer on the SPIKING "
+                         "substrate (needs a D>=128 brain). Requires --facts-json with TYPED-ROLE facts "
                          "(_corpus_svo_extract --typed-roles). Single-bridge (--shards 1). Default off = byte-unchanged.")
     ap.add_argument("--composer", choices=("rf", "onebrain"), default="rf",
-                    help="BURNDOWN C3: the substrate the console's who/what pipeline (recall / bind / cleanup / yes-no / "
-                         "chain-of-thought / generation) runs on. 'rf' (DEFAULT) = the numpy RFPhasorComposer = the test "
-                         "ORACLE + the GPU-less CPU path (byte-unchanged). 'onebrain' = the persistent spiking "
-                         "OneBrainComposer (an on-bridge parser + RF complex-synapse fact store + spiking Izhikevich-WTA "
-                         "cleanup on ONE co-resident SimulationBridge) -- the console's recall/answer path runs on FIRING "
-                         "NEURONS. Needs SIM_BACKEND=cupy for the real spiking path (numpy is the tiny test-oracle path). "
-                         "HONEST SCOPE: covers FLAT who/what + chain-of-thought + yes/no + generation; the TYPED verb-frame "
-                         "--argstructure path stays on the numpy ArgStructureComposer (= burndown C4), so --composer "
-                         "onebrain is ignored when --argstructure is set.")
+                    help="BURNDOWN C3/C4: the substrate the console's who/what pipeline (recall / bind / cleanup / yes-no / "
+                         "chain-of-thought / generation -- and, with --argstructure, the TYPED verb-frame surface) runs on. "
+                         "'rf' (DEFAULT) = the numpy RFPhasorComposer / ArgStructureComposer = the test ORACLE + the GPU-less "
+                         "CPU path (byte-unchanged). 'onebrain' = the persistent spiking OneBrainComposer (an on-bridge parser "
+                         "+ RF complex-synapse fact store + spiking Izhikevich-WTA cleanup on ONE co-resident SimulationBridge) "
+                         "-- the console's recall/answer path runs on FIRING NEURONS. With --argstructure (C4) the typed roles "
+                         "(GOAL/THEME/RECIPIENT/...) are bound + stored on the substrate too and the frame-render order is the "
+                         "C1 spiking competitive-queuing read-out. Needs SIM_BACKEND=cupy for the real spiking path (numpy is "
+                         "the tiny test-oracle path); the typed-frame path needs a D>=128 brain (the bundle-SNR lever).")
     ap.add_argument("--spiking-render", choices=("auto", "on", "off"), default="auto",
                     help="C2: word-ORDER the rendered sentences via the VALIDATED spiking competitive-queuing read-out "
                          "(NeuralSerialOrderRenderer) instead of the host f-string. 'auto'/'on' (DEFAULT) = the spiking "

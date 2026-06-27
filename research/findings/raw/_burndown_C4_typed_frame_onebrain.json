@@ -1,0 +1,1092 @@
+{
+  "go": true,
+  "n_go": 6,
+  "n_seeds": 6,
+  "D": 128,
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47
+  ],
+  "all_recall": true,
+  "all_render": true,
+  "total_false_accepts": 0,
+  "all_abstain": true,
+  "all_moat_parity": true,
+  "all_reparse": true,
+  "all_agrammatism": true,
+  "backend": "cupy",
+  "per_seed": [
+    {
+      "seed": 42,
+      "D": 128,
+      "recall": {
+        "n_parity": 7,
+        "n_correct": 7,
+        "n_total": 7,
+        "detail": [
+          {
+            "role": "GOAL",
+            "cue": {
+              "agent": "boy",
+              "action": "go"
+            },
+            "truth": "park",
+            "oracle": "park",
+            "sub": "park",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "agent",
+            "cue": {
+              "action": "go",
+              "GOAL": "park"
+            },
+            "truth": "boy",
+            "oracle": "boy",
+            "sub": "boy",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "THEME",
+            "cue": {
+              "agent": "girl",
+              "action": "give"
+            },
+            "truth": "ball",
+            "oracle": "ball",
+            "sub": "ball",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "RECIPIENT",
+            "cue": {
+              "agent": "girl",
+              "action": "give"
+            },
+            "truth": "dog",
+            "oracle": "dog",
+            "sub": "dog",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "THEME",
+            "cue": {
+              "agent": "dog",
+              "action": "put"
+            },
+            "truth": "bone",
+            "oracle": "bone",
+            "sub": "bone",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "LOCATION",
+            "cue": {
+              "agent": "dog",
+              "action": "put"
+            },
+            "truth": "table",
+            "oracle": "table",
+            "sub": "table",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "patient",
+            "cue": {
+              "agent": "cat",
+              "action": "chase"
+            },
+            "truth": "river",
+            "oracle": "river",
+            "sub": "river",
+            "parity": true,
+            "correct": true
+          }
+        ]
+      },
+      "render": {
+        "n_parity": 4,
+        "n_correct": 4,
+        "n_cq_correct": 4,
+        "n_total": 4,
+        "detail": [
+          {
+            "fact": {
+              "agent": "boy",
+              "action": "go",
+              "GOAL": "park"
+            },
+            "target": "the boy goes to the park",
+            "oracle": "the boy goes to the park",
+            "sub": "the boy goes to the park",
+            "sub_cq": "the boy goes to the park",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "girl",
+              "action": "give",
+              "THEME": "ball",
+              "RECIPIENT": "dog"
+            },
+            "target": "the girl gives the ball to the dog",
+            "oracle": "the girl gives the ball to the dog",
+            "sub": "the girl gives the ball to the dog",
+            "sub_cq": "the girl gives the ball to the dog",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "dog",
+              "action": "put",
+              "THEME": "bone",
+              "LOCATION": "table"
+            },
+            "target": "the dog puts the bone on the table",
+            "oracle": "the dog puts the bone on the table",
+            "sub": "the dog puts the bone on the table",
+            "sub_cq": "the dog puts the bone on the table",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "cat",
+              "action": "chase",
+              "patient": "river"
+            },
+            "target": "the cat chases the river",
+            "oracle": "the cat chases the river",
+            "sub": "the cat chases the river",
+            "sub_cq": "the cat chases the river",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          }
+        ]
+      },
+      "verify_reparse": {
+        "n_ok": 3,
+        "n_total": 3
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 3,
+        "n_abstain": 3,
+        "parity": true
+      },
+      "agrammatism": {
+        "telegraphic": "boy go park",
+        "full": "the boy goes to the park",
+        "ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 43,
+      "D": 128,
+      "recall": {
+        "n_parity": 7,
+        "n_correct": 7,
+        "n_total": 7,
+        "detail": [
+          {
+            "role": "GOAL",
+            "cue": {
+              "agent": "boy",
+              "action": "go"
+            },
+            "truth": "park",
+            "oracle": "park",
+            "sub": "park",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "agent",
+            "cue": {
+              "action": "go",
+              "GOAL": "park"
+            },
+            "truth": "boy",
+            "oracle": "boy",
+            "sub": "boy",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "THEME",
+            "cue": {
+              "agent": "girl",
+              "action": "give"
+            },
+            "truth": "ball",
+            "oracle": "ball",
+            "sub": "ball",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "RECIPIENT",
+            "cue": {
+              "agent": "girl",
+              "action": "give"
+            },
+            "truth": "dog",
+            "oracle": "dog",
+            "sub": "dog",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "THEME",
+            "cue": {
+              "agent": "dog",
+              "action": "put"
+            },
+            "truth": "bone",
+            "oracle": "bone",
+            "sub": "bone",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "LOCATION",
+            "cue": {
+              "agent": "dog",
+              "action": "put"
+            },
+            "truth": "table",
+            "oracle": "table",
+            "sub": "table",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "patient",
+            "cue": {
+              "agent": "cat",
+              "action": "chase"
+            },
+            "truth": "river",
+            "oracle": "river",
+            "sub": "river",
+            "parity": true,
+            "correct": true
+          }
+        ]
+      },
+      "render": {
+        "n_parity": 4,
+        "n_correct": 4,
+        "n_cq_correct": 4,
+        "n_total": 4,
+        "detail": [
+          {
+            "fact": {
+              "agent": "boy",
+              "action": "go",
+              "GOAL": "park"
+            },
+            "target": "the boy goes to the park",
+            "oracle": "the boy goes to the park",
+            "sub": "the boy goes to the park",
+            "sub_cq": "the boy goes to the park",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "girl",
+              "action": "give",
+              "THEME": "ball",
+              "RECIPIENT": "dog"
+            },
+            "target": "the girl gives the ball to the dog",
+            "oracle": "the girl gives the ball to the dog",
+            "sub": "the girl gives the ball to the dog",
+            "sub_cq": "the girl gives the ball to the dog",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "dog",
+              "action": "put",
+              "THEME": "bone",
+              "LOCATION": "table"
+            },
+            "target": "the dog puts the bone on the table",
+            "oracle": "the dog puts the bone on the table",
+            "sub": "the dog puts the bone on the table",
+            "sub_cq": "the dog puts the bone on the table",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "cat",
+              "action": "chase",
+              "patient": "river"
+            },
+            "target": "the cat chases the river",
+            "oracle": "the cat chases the river",
+            "sub": "the cat chases the river",
+            "sub_cq": "the cat chases the river",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          }
+        ]
+      },
+      "verify_reparse": {
+        "n_ok": 3,
+        "n_total": 3
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 3,
+        "n_abstain": 3,
+        "parity": true
+      },
+      "agrammatism": {
+        "telegraphic": "boy go park",
+        "full": "the boy goes to the park",
+        "ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 44,
+      "D": 128,
+      "recall": {
+        "n_parity": 7,
+        "n_correct": 7,
+        "n_total": 7,
+        "detail": [
+          {
+            "role": "GOAL",
+            "cue": {
+              "agent": "boy",
+              "action": "go"
+            },
+            "truth": "park",
+            "oracle": "park",
+            "sub": "park",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "agent",
+            "cue": {
+              "action": "go",
+              "GOAL": "park"
+            },
+            "truth": "boy",
+            "oracle": "boy",
+            "sub": "boy",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "THEME",
+            "cue": {
+              "agent": "girl",
+              "action": "give"
+            },
+            "truth": "ball",
+            "oracle": "ball",
+            "sub": "ball",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "RECIPIENT",
+            "cue": {
+              "agent": "girl",
+              "action": "give"
+            },
+            "truth": "dog",
+            "oracle": "dog",
+            "sub": "dog",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "THEME",
+            "cue": {
+              "agent": "dog",
+              "action": "put"
+            },
+            "truth": "bone",
+            "oracle": "bone",
+            "sub": "bone",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "LOCATION",
+            "cue": {
+              "agent": "dog",
+              "action": "put"
+            },
+            "truth": "table",
+            "oracle": "table",
+            "sub": "table",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "patient",
+            "cue": {
+              "agent": "cat",
+              "action": "chase"
+            },
+            "truth": "river",
+            "oracle": "river",
+            "sub": "river",
+            "parity": true,
+            "correct": true
+          }
+        ]
+      },
+      "render": {
+        "n_parity": 4,
+        "n_correct": 4,
+        "n_cq_correct": 4,
+        "n_total": 4,
+        "detail": [
+          {
+            "fact": {
+              "agent": "boy",
+              "action": "go",
+              "GOAL": "park"
+            },
+            "target": "the boy goes to the park",
+            "oracle": "the boy goes to the park",
+            "sub": "the boy goes to the park",
+            "sub_cq": "the boy goes to the park",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "girl",
+              "action": "give",
+              "THEME": "ball",
+              "RECIPIENT": "dog"
+            },
+            "target": "the girl gives the ball to the dog",
+            "oracle": "the girl gives the ball to the dog",
+            "sub": "the girl gives the ball to the dog",
+            "sub_cq": "the girl gives the ball to the dog",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "dog",
+              "action": "put",
+              "THEME": "bone",
+              "LOCATION": "table"
+            },
+            "target": "the dog puts the bone on the table",
+            "oracle": "the dog puts the bone on the table",
+            "sub": "the dog puts the bone on the table",
+            "sub_cq": "the dog puts the bone on the table",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "cat",
+              "action": "chase",
+              "patient": "river"
+            },
+            "target": "the cat chases the river",
+            "oracle": "the cat chases the river",
+            "sub": "the cat chases the river",
+            "sub_cq": "the cat chases the river",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          }
+        ]
+      },
+      "verify_reparse": {
+        "n_ok": 3,
+        "n_total": 3
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 3,
+        "n_abstain": 3,
+        "parity": true
+      },
+      "agrammatism": {
+        "telegraphic": "boy go park",
+        "full": "the boy goes to the park",
+        "ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 45,
+      "D": 128,
+      "recall": {
+        "n_parity": 7,
+        "n_correct": 7,
+        "n_total": 7,
+        "detail": [
+          {
+            "role": "GOAL",
+            "cue": {
+              "agent": "boy",
+              "action": "go"
+            },
+            "truth": "park",
+            "oracle": "park",
+            "sub": "park",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "agent",
+            "cue": {
+              "action": "go",
+              "GOAL": "park"
+            },
+            "truth": "boy",
+            "oracle": "boy",
+            "sub": "boy",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "THEME",
+            "cue": {
+              "agent": "girl",
+              "action": "give"
+            },
+            "truth": "ball",
+            "oracle": "ball",
+            "sub": "ball",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "RECIPIENT",
+            "cue": {
+              "agent": "girl",
+              "action": "give"
+            },
+            "truth": "dog",
+            "oracle": "dog",
+            "sub": "dog",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "THEME",
+            "cue": {
+              "agent": "dog",
+              "action": "put"
+            },
+            "truth": "bone",
+            "oracle": "bone",
+            "sub": "bone",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "LOCATION",
+            "cue": {
+              "agent": "dog",
+              "action": "put"
+            },
+            "truth": "table",
+            "oracle": "table",
+            "sub": "table",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "patient",
+            "cue": {
+              "agent": "cat",
+              "action": "chase"
+            },
+            "truth": "river",
+            "oracle": "river",
+            "sub": "river",
+            "parity": true,
+            "correct": true
+          }
+        ]
+      },
+      "render": {
+        "n_parity": 4,
+        "n_correct": 4,
+        "n_cq_correct": 4,
+        "n_total": 4,
+        "detail": [
+          {
+            "fact": {
+              "agent": "boy",
+              "action": "go",
+              "GOAL": "park"
+            },
+            "target": "the boy goes to the park",
+            "oracle": "the boy goes to the park",
+            "sub": "the boy goes to the park",
+            "sub_cq": "the boy goes to the park",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "girl",
+              "action": "give",
+              "THEME": "ball",
+              "RECIPIENT": "dog"
+            },
+            "target": "the girl gives the ball to the dog",
+            "oracle": "the girl gives the ball to the dog",
+            "sub": "the girl gives the ball to the dog",
+            "sub_cq": "the girl gives the ball to the dog",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "dog",
+              "action": "put",
+              "THEME": "bone",
+              "LOCATION": "table"
+            },
+            "target": "the dog puts the bone on the table",
+            "oracle": "the dog puts the bone on the table",
+            "sub": "the dog puts the bone on the table",
+            "sub_cq": "the dog puts the bone on the table",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "cat",
+              "action": "chase",
+              "patient": "river"
+            },
+            "target": "the cat chases the river",
+            "oracle": "the cat chases the river",
+            "sub": "the cat chases the river",
+            "sub_cq": "the cat chases the river",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          }
+        ]
+      },
+      "verify_reparse": {
+        "n_ok": 3,
+        "n_total": 3
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 3,
+        "n_abstain": 3,
+        "parity": true
+      },
+      "agrammatism": {
+        "telegraphic": "boy go park",
+        "full": "the boy goes to the park",
+        "ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 46,
+      "D": 128,
+      "recall": {
+        "n_parity": 7,
+        "n_correct": 7,
+        "n_total": 7,
+        "detail": [
+          {
+            "role": "GOAL",
+            "cue": {
+              "agent": "boy",
+              "action": "go"
+            },
+            "truth": "park",
+            "oracle": "park",
+            "sub": "park",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "agent",
+            "cue": {
+              "action": "go",
+              "GOAL": "park"
+            },
+            "truth": "boy",
+            "oracle": "boy",
+            "sub": "boy",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "THEME",
+            "cue": {
+              "agent": "girl",
+              "action": "give"
+            },
+            "truth": "ball",
+            "oracle": "ball",
+            "sub": "ball",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "RECIPIENT",
+            "cue": {
+              "agent": "girl",
+              "action": "give"
+            },
+            "truth": "dog",
+            "oracle": "dog",
+            "sub": "dog",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "THEME",
+            "cue": {
+              "agent": "dog",
+              "action": "put"
+            },
+            "truth": "bone",
+            "oracle": "bone",
+            "sub": "bone",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "LOCATION",
+            "cue": {
+              "agent": "dog",
+              "action": "put"
+            },
+            "truth": "table",
+            "oracle": "table",
+            "sub": "table",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "patient",
+            "cue": {
+              "agent": "cat",
+              "action": "chase"
+            },
+            "truth": "river",
+            "oracle": "river",
+            "sub": "river",
+            "parity": true,
+            "correct": true
+          }
+        ]
+      },
+      "render": {
+        "n_parity": 4,
+        "n_correct": 4,
+        "n_cq_correct": 4,
+        "n_total": 4,
+        "detail": [
+          {
+            "fact": {
+              "agent": "boy",
+              "action": "go",
+              "GOAL": "park"
+            },
+            "target": "the boy goes to the park",
+            "oracle": "the boy goes to the park",
+            "sub": "the boy goes to the park",
+            "sub_cq": "the boy goes to the park",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "girl",
+              "action": "give",
+              "THEME": "ball",
+              "RECIPIENT": "dog"
+            },
+            "target": "the girl gives the ball to the dog",
+            "oracle": "the girl gives the ball to the dog",
+            "sub": "the girl gives the ball to the dog",
+            "sub_cq": "the girl gives the ball to the dog",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "dog",
+              "action": "put",
+              "THEME": "bone",
+              "LOCATION": "table"
+            },
+            "target": "the dog puts the bone on the table",
+            "oracle": "the dog puts the bone on the table",
+            "sub": "the dog puts the bone on the table",
+            "sub_cq": "the dog puts the bone on the table",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "cat",
+              "action": "chase",
+              "patient": "river"
+            },
+            "target": "the cat chases the river",
+            "oracle": "the cat chases the river",
+            "sub": "the cat chases the river",
+            "sub_cq": "the cat chases the river",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          }
+        ]
+      },
+      "verify_reparse": {
+        "n_ok": 3,
+        "n_total": 3
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 3,
+        "n_abstain": 3,
+        "parity": true
+      },
+      "agrammatism": {
+        "telegraphic": "boy go park",
+        "full": "the boy goes to the park",
+        "ok": true
+      },
+      "seed_go": true
+    },
+    {
+      "seed": 47,
+      "D": 128,
+      "recall": {
+        "n_parity": 7,
+        "n_correct": 7,
+        "n_total": 7,
+        "detail": [
+          {
+            "role": "GOAL",
+            "cue": {
+              "agent": "boy",
+              "action": "go"
+            },
+            "truth": "park",
+            "oracle": "park",
+            "sub": "park",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "agent",
+            "cue": {
+              "action": "go",
+              "GOAL": "park"
+            },
+            "truth": "boy",
+            "oracle": "boy",
+            "sub": "boy",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "THEME",
+            "cue": {
+              "agent": "girl",
+              "action": "give"
+            },
+            "truth": "ball",
+            "oracle": "ball",
+            "sub": "ball",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "RECIPIENT",
+            "cue": {
+              "agent": "girl",
+              "action": "give"
+            },
+            "truth": "dog",
+            "oracle": "dog",
+            "sub": "dog",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "THEME",
+            "cue": {
+              "agent": "dog",
+              "action": "put"
+            },
+            "truth": "bone",
+            "oracle": "bone",
+            "sub": "bone",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "LOCATION",
+            "cue": {
+              "agent": "dog",
+              "action": "put"
+            },
+            "truth": "table",
+            "oracle": "table",
+            "sub": "table",
+            "parity": true,
+            "correct": true
+          },
+          {
+            "role": "patient",
+            "cue": {
+              "agent": "cat",
+              "action": "chase"
+            },
+            "truth": "river",
+            "oracle": "river",
+            "sub": "river",
+            "parity": true,
+            "correct": true
+          }
+        ]
+      },
+      "render": {
+        "n_parity": 4,
+        "n_correct": 4,
+        "n_cq_correct": 4,
+        "n_total": 4,
+        "detail": [
+          {
+            "fact": {
+              "agent": "boy",
+              "action": "go",
+              "GOAL": "park"
+            },
+            "target": "the boy goes to the park",
+            "oracle": "the boy goes to the park",
+            "sub": "the boy goes to the park",
+            "sub_cq": "the boy goes to the park",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "girl",
+              "action": "give",
+              "THEME": "ball",
+              "RECIPIENT": "dog"
+            },
+            "target": "the girl gives the ball to the dog",
+            "oracle": "the girl gives the ball to the dog",
+            "sub": "the girl gives the ball to the dog",
+            "sub_cq": "the girl gives the ball to the dog",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "dog",
+              "action": "put",
+              "THEME": "bone",
+              "LOCATION": "table"
+            },
+            "target": "the dog puts the bone on the table",
+            "oracle": "the dog puts the bone on the table",
+            "sub": "the dog puts the bone on the table",
+            "sub_cq": "the dog puts the bone on the table",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          },
+          {
+            "fact": {
+              "agent": "cat",
+              "action": "chase",
+              "patient": "river"
+            },
+            "target": "the cat chases the river",
+            "oracle": "the cat chases the river",
+            "sub": "the cat chases the river",
+            "sub_cq": "the cat chases the river",
+            "parity": true,
+            "correct": true,
+            "cq_correct": true
+          }
+        ]
+      },
+      "verify_reparse": {
+        "n_ok": 3,
+        "n_total": 3
+      },
+      "moat": {
+        "false_accepts": 0,
+        "recall_ok": true,
+        "abstain_ok": 3,
+        "n_abstain": 3,
+        "parity": true
+      },
+      "agrammatism": {
+        "telegraphic": "boy go park",
+        "full": "the boy goes to the park",
+        "ok": true
+      },
+      "seed_go": true
+    }
+  ]
+}
