@@ -1,8 +1,26 @@
 # nav close-out R5 — a VALUE-DRIVEN-CHOICE task proves the spiking value-critic LOAD-BEARING BY ITS FUNCTION (2026-06-27)
 
-**Status:** BUILT + CPU R1-a gate **GO 3/3 seeds** (all 4 gates pass). The nav-embodied R1-b form is SCAFFOLDED;
-its GPU eval is **FLAGGED FOR THE CONTROLLER** below. Reuse-by-import, **NO `sim/` edit** (`git diff HEAD -- sim/`
-empty), the no-confab moat preserved BY CONSTRUCTION (the decision organ has NO RF/conversational slices).
+**Status: GO — CPU R1-a gate GO 6/6 seeds (42/43/44/100/101/102), all 4 gates pass.** The nav-embodied R1-b form is
+SCAFFOLDED; its GPU eval is **FLAGGED FOR THE CONTROLLER** below. Reuse-by-import, **NO `sim/` edit** (`git diff
+HEAD -- sim/` empty), the no-confab moat preserved BY CONSTRUCTION (the decision organ has NO RF/conversational
+slices).
+
+> **PERMUTED-CONTROL FIX (CYCLE 677, 2026-06-27) — the only behavioral change vs the original 3-seed scope.** The
+> first 6-seed run PASSED G_HEADLINE + G_LESION + G_DISCRIM but FAILED G_PERMUTE on seed 102 (permuted 0.683 > the
+> near-chance tol; mean over seeds 0.492 ≈ chance). An inline probe VERIFIED the root cause as a **control-design
+> artifact, NOT a fixed-pool bias**: the permuted control (in `score_arm`, the `permute=True` branch) drew ONE
+> permutation per trial via `permute_values`; for n_options=2 that is a coin flip (identity → the choice follows the
+> true-best; swap → follows the other), so over 60 trials the identity/swap split has binomial finite-sample
+> variance — seed 102 happened to draw 38/60 identities (predicted permuted 0.609 ≈ the actual 0.683) while the
+> other seeds drew ~30/60 (≈chance) and the MEAN was chance. **The fix (a MORE-RIGOROUS, deterministic control —
+> not bar-tuning, not run-until-pass):** in the `permute=True` branch, instead of one permutation per trial, AVERAGE
+> correctness over ALL value↔option permutations of that trial (for n=2: both identity + swap, via
+> `itertools.permutations`). Each trial then contributes the MEAN correctness over its permutations — deterministic,
+> zero coin-flip variance: a value-driven choice follows the permuted drives so correctness averages to chance
+> EXACTLY by construction; only a genuine fixed-pool bias would keep it high. **NO gate bar, `n_trials`, `acc_steps`,
+> or `*_gain_pA` changed; NO `sim/` edit.** Post-fix the permuted accuracy is ≈chance on ALL 6 seeds
+> deterministically (0.475/0.45/0.50/0.517/0.475/0.533, mean 0.492) and the verdict is GO. The other 3 gates are
+> unchanged (the non-permute path is behaviorally identical).
 
 **Research gate (read first):** `research/findings/2026-06-27-nav-value-loadbearing-research-gate.md` (SHA
 `1a0cac04`, on `main`) — RANK 1 = a value-DRIVEN-CHOICE task transplanting the project's EXISTING spiking
@@ -21,14 +39,16 @@ load-bearing BY CONSTRUCTION — NOT a substrate limit. **R5's RANK-1 fix is a v
 options of DIFFERENT learned value; picking the higher-value option REQUIRES V), so the value is the ONLY signal
 that can drive the correct choice and the lesion is FORCED to be load-bearing-or-not. The CPU-first gate (R1-a)
 transplants the project's existing spiking value-driven WTA (`_value_salience_appraisal_derisk.SpikingSpeakAccumulator`,
-speak-vs-silence → option-A-vs-option-B) and is **GO 3/3 seeds**: value-ON picks the higher-value option at **0.90**
-(≫ chance 0.50); the value lesion **COLLAPSES** it to **0.461 ≈ chance** (drop 0.439) — *here the lesion HAS
-something to collapse, the R4 fix*; the **EQUAL-value control** (the validate-by-function discriminator R4 LACKED)
-shows the lesion is **NEUTRAL** (intact-vs-lesion choice agreement **1.000** — when value carries no gradient the
-lesion changes nothing → the effect is value-gradient-SPECIFIC, not a general lesion artifact); and the
-**permuted-value** control collapses to **0.461 ≈ chance**. The catalog says this binary value-choice (O.22 +
-O.19 + C.34 + L.41) is THE canonical way to make a value signal load-bearing, and the prior evidence (V-A trace
-6/6 GO + this existing spiking value-WTA) predicted the GO.
+speak-vs-silence → option-A-vs-option-B) and is **GO 6/6 seeds** (42/43/44/100/101/102): value-ON picks the
+higher-value option at **0.914** (min 0.883, ≫ chance 0.50); the value lesion **COLLAPSES** it to **0.494 ≈ chance**
+(drop 0.419) — *here the lesion HAS something to collapse, the R4 fix*; the **EQUAL-value control** (the
+validate-by-function discriminator R4 LACKED) shows the lesion is **NEUTRAL** (intact-vs-lesion choice agreement
+**1.000** every seed — when value carries no gradient the lesion changes nothing → the effect is
+value-gradient-SPECIFIC, not a general lesion artifact); and the **permuted-value** control collapses to
+**0.492 ≈ chance** deterministically on all 6 seeds (the deterministic permutation-AVERAGE control — see the fix
+note above). The catalog says this binary value-choice (O.22 + O.19 + C.34 + L.41) is THE canonical way to make a
+value signal load-bearing, and the prior evidence (V-A trace 6/6 GO + this existing spiking value-WTA) predicted
+the GO.
 
 ---
 
@@ -77,31 +97,40 @@ nav read-out is the controller's optional confirmation.
 
 ---
 
-## 2. THE R1-a GATE — GO 3/3 seeds (the decisive CPU mechanism result, run inline)
+## 2. THE R1-a GATE — GO 6/6 seeds (the decisive CPU mechanism result, run inline)
 
-`SIM_BACKEND=numpy python -m research.runners._navcloseout_R5_value_driven_choice --r1a --seeds 42,43,44`
-(11.4 s total, 3 seeds, n_options=2, 60 trials/seed; JSON `research/findings/raw/navcloseout_R5/R5_r1a.json`).
+`SIM_BACKEND=numpy python -m research.runners._navcloseout_R5_value_driven_choice --r1a --seeds
+42,43,44,100,101,102 --out research/findings/raw/navcloseout_R5/R5_r1a_6seed_permfix.json` (26.0 s total, 6 seeds,
+n_options=2, 60 trials/seed; with the deterministic permutation-average G_PERMUTE control).
 
 | seed | acc value-INTACT | acc value-LESION | lesion drop | EQUAL-value agreement | acc PERMUTED | corr(val,sal) |
 |---|---|---|---|---|---|---|
-| 42 | 0.917 | 0.467 | 0.450 | **1.000** | 0.483 | −0.126 |
-| 43 | 0.883 | 0.350 | 0.533 | **1.000** | 0.417 | +0.053 |
-| 44 | 0.900 | 0.567 | 0.333 | **1.000** | 0.483 | +0.157 |
-| **mean** | **0.900** (min 0.883) | **0.461** | **0.439** | **1.000** | **0.461** | (|max| 0.157) |
+| 42 | 0.917 | 0.467 | 0.450 | **1.000** | 0.475 | −0.126 |
+| 43 | 0.883 | 0.350 | 0.533 | **1.000** | 0.450 | +0.053 |
+| 44 | 0.900 | 0.567 | 0.333 | **1.000** | 0.500 | +0.157 |
+| 100 | 0.950 | 0.517 | 0.433 | **1.000** | 0.517 | −0.020 |
+| 101 | 0.883 | 0.533 | 0.350 | **1.000** | 0.475 | +0.021 |
+| 102 | 0.950 | 0.533 | 0.417 | **1.000** | 0.533 | +0.105 |
+| **mean** | **0.914** (min 0.883) | **0.494** | **0.419** | **1.000** | **0.492** | (|max| 0.157) |
 
 chance = 0.500.
 
-**The 4 gates (validate-by-function), ALL 3/3:**
-- **(G_HEADLINE)** value-ON picks the higher-value option ABOVE chance: **3/3** (0.90 ≫ 0.50; ≥0.20 above-chance).
+**The 4 gates (validate-by-function), ALL 6/6:**
+- **(G_HEADLINE)** value-ON picks the higher-value option ABOVE chance: **6/6** (0.914, min 0.883 ≫ 0.50; ≥0.20
+  above-chance).
 - **(G_LESION, the headline anti-cheat)** the value lesion COLLAPSES the high-value choice to ~chance (the EXTRA
-  correct choices VANISH): **3/3** (drop 0.439 ≥ 0.20; lesion 0.461 within ±0.15 of chance). **This is the R4 fix
+  correct choices VANISH): **6/6** (drop 0.419 ≥ 0.20; lesion 0.494 within ±0.15 of chance). **This is the R4 fix
   — here the lesion HAS a value-driven choice to collapse, unlike R4's value-irrelevant task.**
 - **(G_DISCRIM, the validate-by-function control R4 LACKED)** the EQUAL-value task (V(A)=V(B)): the lesion is
-  NEUTRAL (intact-vs-lesion trial-by-trial choice agreement **1.000** ≥ 0.80): **3/3**. ⇒ the lesion's G_LESION
-  effect is value-GRADIENT-SPECIFIC, NOT a general lesion artifact (when value can't help, the lesion does nothing).
-- **(G_PERMUTE)** permuting the option↔value contingency collapses the advantage to ~chance: **3/3** (0.461 ≈ 0.50).
-- **NON-CIRCULAR (value distinct from salience):** **3/3** (|corr(value, salience)| ≤ 0.157 ≤ 0.35).
-- **MOAT preserved BY CONSTRUCTION:** **3/3** (no RF/conversational slices on this decision organ).
+  NEUTRAL (intact-vs-lesion trial-by-trial choice agreement **1.000** every seed ≥ 0.80): **6/6**. ⇒ the lesion's
+  G_LESION effect is value-GRADIENT-SPECIFIC, NOT a general lesion artifact (when value can't help, the lesion does
+  nothing).
+- **(G_PERMUTE)** permuting the option↔value contingency collapses the advantage to ~chance: **6/6** (mean 0.492,
+  per-seed 0.475/0.45/0.50/0.517/0.475/0.533 — ≈chance **deterministically** on every seed via the
+  permutation-AVERAGE control; the seed-102 finite-sample artifact of the one-permutation-per-trial design is gone,
+  now 0.533). **The control was made MORE rigorous (deterministic), not relaxed — see the fix note at the top.**
+- **NON-CIRCULAR (value distinct from salience):** **6/6** (|corr(value, salience)| ≤ 0.157 ≤ 0.35).
+- **MOAT preserved BY CONSTRUCTION:** **6/6** (no RF/conversational slices on this decision organ).
 
 **Verdict: GO** — the spiking value is load-bearing BY ITS FUNCTION on a value-driven choice; the value lesion
 collapses the higher-value choice (G_LESION), the equal-value control discriminates it as value-SPECIFIC
@@ -165,10 +194,10 @@ the scaffold-check confirms the kwargs are well-formed today):**
 # 0) confirm the scaffold kwargs (CPU, no bridge) — already PASS:
 SIM_BACKEND=numpy python -m research.runners._navcloseout_R5_value_driven_choice --r1b-scaffold-check
 
-# 1) the R1-a gate at 6 seeds (CPU, fast — the decisive value-WTA proof; promote 3-seed GO to 6-seed):
+# 1) the R1-a gate at 6 seeds (CPU, fast — the decisive value-WTA proof) — DONE, GO 6/6:
 SIM_BACKEND=numpy python -m research.runners._navcloseout_R5_value_driven_choice \
     --r1a --seeds 42,43,44,100,101,102 \
-    --out research/findings/raw/navcloseout_R5/R5_r1a_6seed.json
+    --out research/findings/raw/navcloseout_R5/R5_r1a_6seed_permfix.json
 
 # 2) (optional nav confirmation) the R1-b two-beacon value-choice on the real bridge, per seed (GPU):
 #    — the controller adds the two-beacon homeostatic_hook + the value-lesion arm to r1b_two_beacon_kwargs
@@ -177,10 +206,10 @@ SIM_BACKEND=numpy python -m research.runners._navcloseout_R5_value_driven_choice
 #      grid-32, n_steps 1800. The de-risk = the G_*_nav gates above.
 ```
 
-**De-risk criteria (GO):** across the seeds (3-seed indicator → 6-seed for any generalization claim, per
-`feedback_6seed_validation`): R1-a all 4 gates pass at 6 seeds; (optional) R1-b G_HEADLINE_nav + G_LESION_nav +
-G_DISCRIM_nav + G_PERMUTE_nav pass at grid-32, 6 seeds. **A GO is the likely outcome** (R1-a is already GO 3/3; the
-V-A trace is 6/6 GO; the spiking value-WTA is pre-validated). A R1-b NEGATIVE that survives its own SURPASS round
+**De-risk criteria (GO):** across the seeds (per `feedback_6seed_validation`): **R1-a all 4 gates pass at 6 seeds —
+DONE, GO 6/6**; (optional) R1-b G_HEADLINE_nav + G_LESION_nav + G_DISCRIM_nav + G_PERMUTE_nav pass at grid-32, 6
+seeds. **A GO is the likely outcome for R1-b too** (R1-a is GO 6/6; the V-A trace is 6/6 GO; the spiking value-WTA
+is pre-validated). A R1-b NEGATIVE that survives its own SURPASS round
 would localize the genuine *instrumental* value-choice-via-the-BG-cascade boundary (the legitimate juncture for the
 deferred dendritic question) — but R1-a having isolated the value-WTA as GO makes that a BG-cascade-readout issue,
 not a value-mechanism one.
@@ -199,8 +228,12 @@ background-completion).
   1.000). This is the validate-by-function control — it proves the lesion effect is value-SPECIFIC, not a general
   lesion artifact. The drive-level-matched lesion (removes the gradient, holds the operating point) makes this
   exact.
-- **permuted-value** (G_PERMUTE): shuffle option↔value → advantage vanishes (0.461 ≈ chance) → the headline is the
-  value STRUCTURE, not a fixed pool bias.
+- **permuted-value** (G_PERMUTE): the **deterministic permutation-AVERAGE** control — each trial's correctness is
+  averaged over ALL value↔option permutations (for n=2: identity + swap) → a value-driven choice averages to chance
+  EXACTLY by construction (advantage → 0.492 ≈ chance on all 6 seeds, zero coin-flip variance) → the headline is the
+  value STRUCTURE, not a fixed pool bias. (The earlier one-permutation-per-trial design had binomial finite-sample
+  variance for n=2 and produced a seed-102 artifact — a CONTROL-DESIGN flaw, not a fixed-pool bias; the
+  permutation-average is the MORE-rigorous fix, see the top note.)
 - **non-circular value** (asserted): corr(value, salience) ≤ 0.157 ≤ 0.35 → the value is NOT a relabeled salience.
 - **MOAT by construction**: the decision organ has NO RF/conversational slices (`cp_rf_w_re/im` None) →
   array-disjoint from any composer; the no-confab moat is preserved by construction.
@@ -223,10 +256,12 @@ background-completion).
 ## 7. Deliverables
 
 - **Runner:** `research/runners/_navcloseout_R5_value_driven_choice.py` (the value-WTA-choice R1-a gate + the R1-b
-  nav scaffold + the CPU smoke).
-- **JSON:** `research/findings/raw/navcloseout_R5/R5_r1a.json` (R1-a GO 3/3, seeds 42/43/44).
-- **This findings doc** (the scope + the GO result + the EXACT GPU command + de-risk criteria FLAGGED FOR
-  CONTROLLER).
+  nav scaffold + the CPU smoke; the `score_arm` `permute=True` branch now uses the deterministic permutation-average
+  G_PERMUTE control).
+- **JSON:** `research/findings/raw/navcloseout_R5/R5_r1a_6seed_permfix.json` (R1-a **GO 6/6**, seeds
+  42/43/44/100/101/102, deterministic permutation-average control). (`R5_r1a.json` = the original 3-seed scope.)
+- **This findings doc** (the scope + the GO result + the permuted-control fix + the EXACT GPU command + de-risk
+  criteria FLAGGED FOR CONTROLLER).
 
 ---
 

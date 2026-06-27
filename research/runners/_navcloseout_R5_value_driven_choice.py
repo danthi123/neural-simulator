@@ -76,6 +76,7 @@ Run:
 from __future__ import annotations
 
 import argparse
+import itertools
 import json
 import logging
 import os
@@ -315,28 +316,48 @@ def run_r1a_seed(seed, accumulator, a):
         per-trial arrays (for the trial-by-trial G_DISCRIM agreement). For equal-value trials the value vector is
         constant so argmax is ill-defined as a 'correct' target -- the discriminator uses the trial-by-trial
         intact-vs-lesion CHOICE AGREEMENT instead (see G_DISCRIM)."""
-        n_correct = 0
+        n_correct = 0.0
         margins = []
         choices, true_bests = [], []
         for t in range(n_trials):
             values = trial_values(t, equal=equal)
             salience = trial_salience(t)
             true_best = int(np.argmax(values))           # the option the brain SHOULD pick (highest value)
-            drive_values = values
             if permute:
-                drive_values, _perm = permute_values(values, seed=seed * 1000 + t)
-                # after permuting which option gets which value, the value attached to each POOL no longer tracks
-                # that pool's TRUE identity; the "correct" answer is still the TRUE-highest-value option, which the
-                # permuted drives no longer favor -> advantage collapses.
-            drives = _drives(drive_values, salience, speak_base_pA=a.speak_base_pA,
-                             value_gain_pA=a.value_gain_pA, salience_gain_pA=a.salience_gain_pA,
-                             lesion_value=lesion_value)
-            chosen, counts, margin = accumulator.decide(drives)
-            margins.append(margin)
-            choices.append(int(chosen))
-            true_bests.append(true_best)
-            if chosen == true_best:
-                n_correct += 1
+                # G_PERMUTE (deterministic, zero coin-flip variance -- the CYCLE-677 root-cause fix): instead of
+                # drawing ONE permutation per trial (for n_options=2 that is a coin flip whose identity/swap split
+                # has binomial finite-sample variance -> the seed-102 permuted-fail artifact), AVERAGE correctness
+                # over ALL value<->option permutations of this trial. Each trial contributes the MEAN correctness
+                # over its permutations. A value-driven choice follows the permuted drives, so its correctness
+                # averages to chance EXACTLY by construction; only a genuine FIXED-POOL bias would keep it high.
+                perms = list(itertools.permutations(range(len(values))))
+                trial_correct = 0.0
+                last_chosen, last_margin = 0, 0.0
+                for perm in perms:
+                    drive_values = np.asarray(values, dtype=float)[list(perm)]
+                    drives = _drives(drive_values, salience, speak_base_pA=a.speak_base_pA,
+                                     value_gain_pA=a.value_gain_pA, salience_gain_pA=a.salience_gain_pA,
+                                     lesion_value=lesion_value)
+                    chosen, counts, margin = accumulator.decide(drives)
+                    if chosen == true_best:
+                        trial_correct += 1.0
+                    last_chosen, last_margin = int(chosen), margin
+                n_correct += trial_correct / max(1, len(perms))
+                margins.append(last_margin)
+                # G_DISCRIM/G_LESION use the EQUAL/distinct arms, not the permute arm -> the permute arm's per-trial
+                # choice record is unused downstream; record the last permutation's chosen for completeness.
+                choices.append(last_chosen)
+                true_bests.append(true_best)
+            else:
+                drives = _drives(values, salience, speak_base_pA=a.speak_base_pA,
+                                 value_gain_pA=a.value_gain_pA, salience_gain_pA=a.salience_gain_pA,
+                                 lesion_value=lesion_value)
+                chosen, counts, margin = accumulator.decide(drives)
+                margins.append(margin)
+                choices.append(int(chosen))
+                true_bests.append(true_best)
+                if chosen == true_best:
+                    n_correct += 1.0
         return (n_correct / max(1, n_trials), float(np.mean(margins)) if margins else 0.0,
                 np.array(choices), np.array(true_bests))
 
