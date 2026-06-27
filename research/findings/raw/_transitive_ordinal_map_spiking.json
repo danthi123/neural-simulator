@@ -1,0 +1,200 @@
+{
+  "n_items": 7,
+  "n_seeds": 3,
+  "held_out_acc": 1.0,
+  "mem_floor": 0.4666666666666666,
+  "rho_acc": 0.0,
+  "rho_margin": 0.9999999999999999,
+  "perm_acc": 0.4222222222222222,
+  "true_rank1_all": true,
+  "lesion_acc": 0.3333333333333333,
+  "spread_sym_acc": 0.5777777777777778,
+  "spread_dir_rho_margin": -0.907142857142857,
+  "moat_all": true,
+  "distance_effect_margin": true,
+  "spiking_ran": true,
+  "go": true,
+  "spiking_held_acc": 0.8944444444444445,
+  "spiking_rho_acc": 1.0,
+  "spiking_rho_margin": 0.980952380952381,
+  "spiking_distance_effect": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "elapsed_s": 121.1,
+      "held_out_acc": 1.0,
+      "chance": 0.5,
+      "mem_floor": 0.4666666666666667,
+      "rho_acc": 0.0,
+      "rho_margin": 0.9999999999999999,
+      "map_acc_curve": {
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0
+      },
+      "map_margin_curve": {
+        "2": 1.9988473307767336,
+        "3": 2.998235562134185,
+        "4": 3.9976474161789137,
+        "5": 4.997118326941834,
+        "6": 5.996727227043721
+      },
+      "perm_acc": 0.4,
+      "perm_rho_margin": -0.175,
+      "true_rank1": true,
+      "perms_beating_true": 0,
+      "lesion_acc": 0.06666666666666667,
+      "lesion_rho_margin": 0.5714285714285713,
+      "spread_sym_acc": 0.5333333333333333,
+      "spread_dir_acc": 1.0,
+      "spread_dir_rho_margin": -0.907142857142857,
+      "spread_dir_margin_curve": {
+        "2": 0.5,
+        "3": 0.3333333333333333,
+        "4": 0.25,
+        "5": 0.2,
+        "6": 0.16666666666666666
+      },
+      "moat_unmapped_abstains": true,
+      "spiking_held_acc": 0.9666666666666667,
+      "spiking_rho_acc": 1.0,
+      "spiking_rho_margin": 0.942857142857143,
+      "spiking_acc_curve": {
+        "1": 0.875,
+        "2": 0.925,
+        "3": 0.96875,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0
+      },
+      "spiking_margin_curve": {
+        "1": 0.14695284919255558,
+        "2": 0.16416739997990826,
+        "3": 0.23944894209227374,
+        "4": 0.2583789988993133,
+        "5": 0.24486162842231451,
+        "6": 0.4243560142130699
+      }
+    },
+    {
+      "seed": 43,
+      "elapsed_s": 119.5,
+      "held_out_acc": 1.0,
+      "chance": 0.5,
+      "mem_floor": 0.3333333333333333,
+      "rho_acc": 0.0,
+      "rho_margin": 0.9999999999999999,
+      "map_acc_curve": {
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0
+      },
+      "map_margin_curve": {
+        "2": 1.998843760151584,
+        "3": 2.998226672670273,
+        "4": 3.997635563560364,
+        "5": 4.99710940037896,
+        "6": 5.996713535593604
+      },
+      "perm_acc": 0.4,
+      "perm_rho_margin": 0.0035714285714285704,
+      "true_rank1": true,
+      "perms_beating_true": 0,
+      "lesion_acc": 0.26666666666666666,
+      "lesion_rho_margin": -0.017857142857142853,
+      "spread_sym_acc": 0.6,
+      "spread_dir_acc": 1.0,
+      "spread_dir_rho_margin": -0.907142857142857,
+      "spread_dir_margin_curve": {
+        "2": 0.5,
+        "3": 0.3333333333333333,
+        "4": 0.25,
+        "5": 0.2,
+        "6": 0.16666666666666666
+      },
+      "moat_unmapped_abstains": true,
+      "spiking_held_acc": 0.875,
+      "spiking_rho_acc": 1.0,
+      "spiking_rho_margin": 1.0,
+      "spiking_acc_curve": {
+        "1": 0.625,
+        "2": 0.8,
+        "3": 0.8125,
+        "4": 0.9583333333333334,
+        "5": 1.0,
+        "6": 1.0
+      },
+      "spiking_margin_curve": {
+        "1": 0.09561479705778979,
+        "2": 0.10805636390524612,
+        "3": 0.13771205981206947,
+        "4": 0.19309967658540858,
+        "5": 0.2534864970606642,
+        "6": 0.3348776815340328
+      }
+    },
+    {
+      "seed": 44,
+      "elapsed_s": 118.0,
+      "held_out_acc": 1.0,
+      "chance": 0.5,
+      "mem_floor": 0.6,
+      "rho_acc": 0.0,
+      "rho_margin": 0.9999999999999999,
+      "map_acc_curve": {
+        "2": 1.0,
+        "3": 1.0,
+        "4": 1.0,
+        "5": 1.0,
+        "6": 1.0
+      },
+      "map_margin_curve": {
+        "2": 1.9988505831097076,
+        "3": 2.9982345559798045,
+        "4": 3.9976460746397393,
+        "5": 4.997126457774269,
+        "6": 5.996720451703948
+      },
+      "perm_acc": 0.4666666666666667,
+      "perm_rho_margin": 0.0964285714285714,
+      "true_rank1": true,
+      "perms_beating_true": 0,
+      "lesion_acc": 0.6666666666666666,
+      "lesion_rho_margin": 0.2321428571428571,
+      "spread_sym_acc": 0.6,
+      "spread_dir_acc": 1.0,
+      "spread_dir_rho_margin": -0.907142857142857,
+      "spread_dir_margin_curve": {
+        "2": 0.5,
+        "3": 0.3333333333333333,
+        "4": 0.25,
+        "5": 0.2,
+        "6": 0.16666666666666666
+      },
+      "moat_unmapped_abstains": true,
+      "spiking_held_acc": 0.8416666666666667,
+      "spiking_rho_acc": 1.0,
+      "spiking_rho_margin": 1.0,
+      "spiking_acc_curve": {
+        "1": 0.6875,
+        "2": 0.725,
+        "3": 0.84375,
+        "4": 0.875,
+        "5": 1.0,
+        "6": 1.0
+      },
+      "spiking_margin_curve": {
+        "1": 0.0940486323793251,
+        "2": 0.11308578918313401,
+        "3": 0.15526426435385712,
+        "4": 0.20463956576086598,
+        "5": 0.2446231056344268,
+        "6": 0.3105640251087
+      }
+    }
+  ]
+}
