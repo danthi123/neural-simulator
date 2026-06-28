@@ -69,6 +69,17 @@ def main():
     ap.add_argument("--corpus-path", default=None,
                     help="plain-text corpus shard; default = the wired data/corpus/tinystories.txt")
     ap.add_argument("--status", action="store_true", help="print day/vocab/facts and exit (no GPU)")
+    ap.add_argument("--corpus-curriculum", action="store_true",
+                    help="scale the run with a CORPUS-GROUNDED curriculum (thousands of TinyStories-frequent "
+                         "concepts + real corpus SVO facts) instead of the hardcoded ~24-concept demo schedule")
+    ap.add_argument("--brain-npz", default="bridges/firstchat/brain3000pos_w7000.npz_seed42.npz",
+                    help="(--corpus-curriculum) the trained brain whose high-frequency-first vocab orders the curriculum")
+    ap.add_argument("--facts-json", default="research/findings/raw/_facts3000.json",
+                    help="(--corpus-curriculum) the corpus-extracted SVO facts asserted as the brain's vocab grows")
+    ap.add_argument("--concepts-per-day", type=int, default=24,
+                    help="(--corpus-curriculum) new concepts introduced per simulated day")
+    ap.add_argument("--max-concepts", type=int, default=None,
+                    help="(--corpus-curriculum) optional cap on total concepts (None = the full corpus vocab)")
     a = ap.parse_args()
 
     try:
@@ -94,7 +105,17 @@ def main():
         GPUGradedCurriculum, StreamCortex, develop_gpu)
     from research.runners.developed_brain_io import save_developed_brain
 
-    curriculum = GPUGradedCurriculum()
+    if a.corpus_curriculum:
+        from research.runners._corpus_develop_curriculum import (
+            CorpusGradedCurriculum, load_concepts_and_facts)
+        concepts, facts = load_concepts_and_facts(a.brain_npz, a.facts_json)
+        if a.max_concepts:
+            concepts = concepts[:int(a.max_concepts)]
+        curriculum = CorpusGradedCurriculum(concepts, facts, concepts_per_day=a.concepts_per_day)
+        print(f"[develop_run] CORPUS curriculum: {len(concepts)} concepts, {len(facts)} corpus facts, "
+              f"{curriculum.n_authored_days()} days @ {a.concepts_per_day}/day", flush=True)
+    else:
+        curriculum = GPUGradedCurriculum()
     full_vocab = curriculum.full_vocab()
     lineage = BridgeLineage(LINEAGE_NAME, root=Path(LINEAGE_ROOT))
     resume = lineage.exists()
