@@ -18,7 +18,7 @@ That's the whole workflow. Everything below is detail.
 
 ## Two run modes (measured trade-offs)
 
-`develop.ps1 start` runs the **corpus-grounded** curriculum by default (64 real TinyStories-frequent concepts
+`develop.ps1 start` runs the **corpus-grounded** curriculum by default (320 real corpus concepts at D=512
 + real corpus SVO facts) — `start` / `resume` / `pause` / `status` all operate on it. To run the small curated
 demo instead (24 concepts, clean recall), use the runner directly:
 
@@ -26,11 +26,12 @@ demo instead (24 concepts, clean recall), use the runner directly:
 $env:SIM_BACKEND='cupy'; python -m research.runners.develop_run   # the 24-concept curated demo
 ```
 
-- **Corpus** (64 concepts, the `develop.ps1 start` default): real corpus vocab + facts; the cortex learns
-  (corr 0.88) and the no-confab moat holds **0 false-accepts**, but per-day recall is **modest + noisy**
-  (~0.3–1.0 — the real-corpus cost plus a small probe count). Capped at ~64–72: the composer's fixed dimension
-  (D=128) loses recall past ~72 concepts (the 200-cap collapses at vocab ~96, the 320-cap OOMs). Scaling further
-  needs a bigger D threaded through the conversational agent plus a VRAM budget — a documented follow-on.
+- **Corpus** (320 real concepts at D=512, the `develop.ps1 start` default): real corpus vocab + facts; the
+  cortex learns (corr ~0.88) and the no-confab moat holds **0 false-accepts**. The scaling arc (2026-06-27)
+  lifted the prior D=128 ~72-concept cap — it kills the multi-turn working-memory loop's quadratic VRAM
+  (`use_multiturn=False` on this path) and threads the composer dimension (`--develop-D 512`) — so 320
+  concepts now fit (~3 GB) with no recall collapse. Per-day recall is still **modest + noisy**
+  (window-budget-limited, not a substrate limit); raise `--max-windows-per-day` for better codes.
 - **Demo** (24 concepts): clean per-day recall ~1.0. Small, curated, reliable.
 
 **Both modes mature in ~hours, then consolidate.** The curriculum is finite, so the *new-learning* phase is the
