@@ -86,7 +86,18 @@ def main():
                     help="(--corpus-curriculum) new concepts introduced per simulated day")
     ap.add_argument("--max-concepts", type=int, default=None,
                     help="(--corpus-curriculum) optional cap on total concepts (None = the full corpus vocab)")
+    ap.add_argument("--root", default=None,
+                    help="override the run directory (default bridges/developed/run3day). Use a SEPARATE root to "
+                         "run a second develop run (e.g. a scaling-arc validation) without touching the default "
+                         "run's lineage/bundles.")
     a = ap.parse_args()
+
+    global ROOT, PAUSE_FILE, BUNDLE_ROOT, LINEAGE_ROOT
+    if a.root:
+        ROOT = a.root
+        PAUSE_FILE = os.path.join(ROOT, "PAUSE")
+        BUNDLE_ROOT = ROOT
+        LINEAGE_ROOT = os.path.join(ROOT, "lineage")
 
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
