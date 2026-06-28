@@ -29,7 +29,10 @@ from pathlib import Path
 # everything for this run is self-contained under one stable root
 ROOT = os.path.join("bridges", "developed", "run3day")
 PAUSE_FILE = os.path.join(ROOT, "PAUSE")
-BUNDLE_ROOT = os.path.join(ROOT, "bundles")
+# Day bundles save DIRECTLY under ROOT as run3day/day_<N> (DEPTH 2 below bridges/developed/),
+# because the dashboard's _scan_developed_bundles only scans depth 1 + depth 2 -- a bundles/
+# subdir (depth 3) would be invisible to the brain picker.
+BUNDLE_ROOT = ROOT
 LINEAGE_ROOT = os.path.join(ROOT, "lineage")
 LINEAGE_NAME = "develop_3day"
 
@@ -46,7 +49,8 @@ def _status():
     paused = "YES (remove the PAUSE file to resume)" if os.path.exists(PAUSE_FILE) else "no"
     print(f"[develop_run] day={st.day}  vocab={len(st.vocab)}  facts={len(st.facts)}  tier={st.current_tier}")
     print(f"  paused={paused}")
-    print(f"  bundles (load one in the chat console): {os.path.abspath(BUNDLE_ROOT)}")
+    print(f"  developed-day brains (load a day_<N>/ in the dashboard brain picker): "
+          f"{os.path.abspath(BUNDLE_ROOT)}\\day_<N>")
     return 0
 
 
@@ -151,7 +155,7 @@ def main():
     print(f"\n[develop_run] stopped ({reason}) after {len(per_day)} day(s) this invocation, "
           f"wall {round(time.time() - t0, 1)}s.", flush=True)
     print("  resume: re-run the same command (auto-resumes).  status: --status.  "
-          "chat: load a bundles/day_<N>/ in the console.", flush=True)
+          "chat: load a day_<N>/ bundle in the dashboard brain picker.", flush=True)
     return 0
 
 

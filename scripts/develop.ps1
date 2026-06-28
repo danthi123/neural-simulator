@@ -20,7 +20,7 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent $PSScriptRoot
 Set-Location $repo
 $pauseFile = Join-Path $repo 'bridges\developed\run3day\PAUSE'
-$bundleDir = Join-Path $repo 'bridges\developed\run3day\bundles'
+$bundleDir = Join-Path $repo 'bridges\developed\run3day'
 
 function New-PauseFile {
     $dir = Split-Path -Parent $pauseFile

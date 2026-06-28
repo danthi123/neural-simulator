@@ -53,7 +53,7 @@ the GPU. When you're done, `.\scripts\develop.ps1 resume`. No VRAM is held while
 
 ## Chat with the developing brain
 
-Each day is saved as a bundle under `bridges\developed\run3day\bundles\day_<N>\`. Load one in
+Each day is saved as a bundle under `bridges\developed\run3day\day_<N>\`. Load one in
 the **webapp dashboard's brain picker** (the Interact tab lists developed-brain bundles) and
 chat with the brain at that stage. Compare an early day vs a later day to *hear* it develop —
 more words, more facts, steadier answers.
