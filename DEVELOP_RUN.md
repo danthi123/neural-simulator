@@ -16,6 +16,27 @@ you can chat with.
 
 That's the whole workflow. Everything below is detail.
 
+## Two run modes (measured trade-offs)
+
+`develop.ps1 start` runs the **demo curriculum** (24 hand-curated concepts). To run the **corpus-grounded**
+curriculum instead (real TinyStories-frequent concepts + real corpus SVO facts), pass the flags through:
+
+```powershell
+.\scripts\develop.ps1 start --corpus-curriculum --max-concepts 64
+```
+
+- **Demo** (24 concepts): clean per-day recall ~1.0. Small, curated, reliable.
+- **Corpus** (64 concepts): real corpus vocab + facts; the cortex learns (corr 0.88) and the no-confab moat
+  holds **0 false-accepts**, but per-day recall is **modest + noisy** (~0.3–1.0 — the real-corpus cost plus a
+  small probe count). Capped at ~64–72: the composer's fixed dimension (D=128) loses recall past ~72 concepts
+  (the 200-cap collapses at vocab ~96, the 320-cap OOMs). Scaling further needs a bigger D threaded through the
+  conversational agent plus a VRAM budget — a documented follow-on, not yet wired.
+
+**Both modes mature in ~hours, then consolidate.** The curriculum is finite, so the *new-learning* phase is the
+first stretch (the per-day bundles capture it); after that the run is a long-horizon zero-forgetting stress-test
+(a real result — the longest develop run yet), not continuous new learning. A true multi-day-continuous-learning
+run needs the bigger-D scaling work above.
+
 ## What it does
 
 Each simulated "day": the brain HEARS corpus windows (its Hebbian synapses learn the day's
