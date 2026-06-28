@@ -44,11 +44,11 @@ switch ($cmd) {
         python -m research.runners.develop_run --status
     }
     default {
-        # start | resume -- the CORPUS-grounded run (64 real TinyStories concepts + facts); auto-resumes from the saved day
+        # start | resume -- the CORPUS-grounded DEEP-KNOWLEDGE run (320 real concepts, D=512); auto-resumes from the saved day
         if (Test-Path $pauseFile) { Remove-Item -Force $pauseFile; Write-Host "[develop] removed the PAUSE sentinel." }
         $env:SIM_BACKEND = 'cupy'
-        Write-Host "[develop] starting/resuming the CORPUS run (64 real concepts; auto-resumes from the saved day)."
+        Write-Host "[develop] starting/resuming the CORPUS run (320 real concepts, D=512; auto-resumes from the saved day)."
         Write-Host "[develop] Ctrl-C stops cleanly (the last completed day is saved); per-day brains -> $bundleDir"
-        python -m research.runners.develop_run --corpus-curriculum --max-concepts 64 @args
+        python -m research.runners.develop_run --corpus-curriculum --max-concepts 320 --develop-D 512 @args
     }
 }
