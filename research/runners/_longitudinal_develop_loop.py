@@ -253,7 +253,8 @@ class DevelopState:
 #    (multi-turn anaphora + multi-hop) / BrainConversationalAgent. On numpy-CPU at tiny scale.
 # ============================================================================================================
 
-def build_agent(vocab, seed, plastic=True, use_multiturn=True, enable_neural_render=True, referent_nouns=None):
+def build_agent(vocab, seed, plastic=True, use_multiturn=True, enable_neural_render=True, referent_nouns=None,
+                D=128):
     """Construct the conversational agent over `vocab` (the brain's own renderer is the LLM-MINIMAL output, scoping
     §3 role-i). `use_multiturn` wraps it in MultiTurnAgent (the persistent discourse WM loop, for anaphora +
     multi-hop). Returns an object exposing hear/what_does/who_does/is_it_true/describe/reason_chain.
@@ -261,7 +262,18 @@ def build_agent(vocab, seed, plastic=True, use_multiturn=True, enable_neural_ren
     `plastic` is the FROZEN-BRAIN anti-cheat hook (scoping §4 #3): when False, the brain still HEARS the stream but
     its hearing does NOT update its knowledge (we simply do not store the fact) — competence must NOT rise, proving
     the stream->learning coupling drives development, not test-time luck. (At the scaffold level "plasticity off" =
-    "do not commit the heard fact"; on the GPU/spiking path this is the per-synapse plasticity gate set to 0.)"""
+    "do not commit the heard fact"; on the GPU/spiking path this is the per-synapse plasticity gate set to 0.)
+
+    `use_multiturn=False` (the develop-probe path; scoping §3 option b1) builds a PLAIN BrainConversationalAgent with
+    NO persistent discourse WM loop. The per-day battery (recall / heldout / retention / chain / yes-no / moat) needs
+    no cross-turn anaphora — multi-hop runs on the composer's query_chain, not the WM — so the WM loop (a
+    SpikingLoopContextBuffer sized ~1080*V^2 synapses on the GPU path, the ~quadratic VRAM driver / OOM at 100s of
+    concepts) is dead weight for the probe. DEFAULT True = byte-identical for every other caller.
+
+    `D` (default 128 = byte-identical) threads the composer's phasor dimension through to the inner agent's composer
+    so the develop loop can lift the recall/abstention margin at 100s of concepts (FHRR capacity ~sqrt(D)); it MUST
+    match develop_gpu's StreamCortex D or `_inject_grounded` silently drops the (mismatched-length) learned codes.
+    See research/findings/2026-06-27-develop-knowledge-scaling-arc-scoping.md (§3 options a + b1)."""
     from research.runners.brain_conversational_agent import BrainConversationalAgent
     concepts = {w: None for w in vocab}
     if use_multiturn:
@@ -277,10 +289,10 @@ def build_agent(vocab, seed, plastic=True, use_multiturn=True, enable_neural_ren
         agent = MultiTurnAgent(referent_concepts=refs, concepts=concepts, seed=seed,
                                wm_n=wm_n, wm_pattern_size=pattern_size,
                                enable_neural_render=enable_neural_render, composer_kind="rf",
-                               enable_biased_competition=False)
+                               enable_biased_competition=False, D=D)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts, composer_kind="rf",
-                                         enable_neural_render=enable_neural_render)
+                                         enable_neural_render=enable_neural_render, D=D)
     return agent
 
 

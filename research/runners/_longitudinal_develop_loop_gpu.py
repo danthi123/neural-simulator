@@ -287,7 +287,7 @@ class StreamCortex:
 def develop_gpu(lineage, curriculum, n_days, seed=42, consolidation_on=True, plasticity_on=True,
                 max_windows_per_day=2500, n_hub=200, n_per=12, D=128, enable_neural_render=False,
                 resume=False, verbose=True, _shared_cortex=None, per_day_save_hook=None, corpus_path=None,
-                should_continue=None):
+                should_continue=None, use_multiturn=True):
     """The GPU develop(N_days) loop. Each simulated day: WAKE = REAL stream-cortex code-learning (the brain hears
     the day's concepts in the corpus) -> CONVERSE = MultiTurnAgent on the learned grounded codes (store the day's
     facts, run the probe batteries) -> SLEEP consolidation (self-replay + retention re-test) -> [GROWTH] -> METRICS
@@ -310,6 +310,23 @@ def develop_gpu(lineage, curriculum, n_days, seed=42, consolidation_on=True, pla
     This is the correct pause seam: unlike an exception from `per_day_save_hook` (which the loop deliberately
     swallows so a save can never kill training), a clean predicate at the day boundary lets the caller stop the
     loop deterministically.
+
+    `use_multiturn` (DEFAULT **True** = byte-identical to the validated loop): when True the per-day CONVERSE agent is
+    a MultiTurnAgent (the persistent discourse working-memory loop). Pass `use_multiturn=False` (the develop-probe
+    path; scoping 2026-06-27 §3 option b1) to build a PLAIN BrainConversationalAgent with NO WM loop. The per-day
+    battery (recall / heldout / retention / chain / yes-no / moat) needs no cross-turn anaphora (multi-hop runs on
+    the composer's query_chain, not the WM), so the WM loop — a SpikingLoopContextBuffer sized ~1080*V^2 synapses,
+    the ~quadratic-VRAM driver that OOMs at 100s of concepts on a 24GB GPU — is dead weight for the probe; killing it
+    lifts the VRAM ceiling from ~200 concepts to V=320+ at near-zero cost. `develop_run`'s corpus-curriculum (big-D)
+    path passes False; the default True keeps every existing caller byte-identical.
+
+    `D` (DEFAULT 128 = the validated scale): the composer's phasor dimension. It is threaded to BOTH the StreamCortex
+    (the grounded codes are read as length-D phasors) AND `build_agent` -> the composer, so `_inject_grounded`'s
+    `v.shape[0] == comp.D` guard PASSES and the brain converses on the codes it LEARNED (not the composer's random
+    defaults). Raising D lifts the recall/abstention margin at 100s of concepts (FHRR capacity ~sqrt(D)); D~512 for
+    ~320 concepts per the validated flat-distinct tier. NOTE the consistency is load-bearing: a D that reaches only
+    the StreamCortex (the prior behavior) would emit length-D codes that `_inject_grounded` silently DROPS against
+    the composer's hardcoded 128. See research/findings/2026-06-27-develop-knowledge-scaling-arc-scoping.md.
 
     Returns (per_day metrics, assembly_trace)."""
     from sim.auto_growth import TierPromoter
@@ -387,8 +404,8 @@ def develop_gpu(lineage, curriculum, n_days, seed=42, consolidation_on=True, pla
         # ================= CONVERSE: MultiTurnAgent on the learned grounded codes =================
         # build a fresh agent each day on the CURRENT learned codes + re-instate the developed facts (the cheap
         # stand-in for the agent's persistent synaptic fact-store; idempotent re-store).
-        agent = build_agent(full_vocab, seed, plastic=plasticity_on, use_multiturn=True,
-                            enable_neural_render=enable_neural_render, referent_nouns=referent_nouns)
+        agent = build_agent(full_vocab, seed, plastic=plasticity_on, use_multiturn=use_multiturn,
+                            enable_neural_render=enable_neural_render, referent_nouns=referent_nouns, D=D)
         # inject the stream-learned grounded codes into the composer (the brain's own listened-for codes)
         _inject_grounded(agent, grounded)
         if state.facts:

@@ -179,7 +179,7 @@ class BrainConversationalAgent:
                  enable_multicue_competition=False, multicue_verbs=None,
                  enable_case_competition=False, case_verbs=None, case_lexicon=None,
                  defer_parser=False, communicable_mode=False, communicable_draw="spiking",
-                 communicable_config=None, speak_value_Q=None):
+                 communicable_config=None, speak_value_Q=None, D=128):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
         vocabulary-agnostic (it assigns roles by word position x voice), so the same parser serves any vocab.
 
@@ -216,6 +216,13 @@ class BrainConversationalAgent:
         passes True. On the onebrain path the composer carries its own on-bridge parser (`hasattr(composer, 'hear')`),
         so the agent's separate parser is None regardless and `defer_parser` only affects the rf/rate/external paths.
         See research/findings/2026-06-24-brain-load-speedup-scoping.md (option 2).
+
+        `D` (default **128** = byte-identical) is the composer's phasor dimension when this agent constructs its OWN
+        composer (the `composer is None` paths below). It is threaded through to the `OneBrainComposer`/`RFPhasorComposer`
+        D so a caller (e.g. the longitudinal develop loop) can raise the recall/abstention margin at 100s of concepts
+        (FHRR capacity ~sqrt(D)). When an EXTERNAL `composer` is passed, that composer's own D wins and this is ignored.
+        The default 128 reproduces the prior hardcoded literal exactly. See
+        research/findings/2026-06-27-develop-knowledge-scaling-arc-scoping.md (§3 option a).
         """
         # resolve the onebrain-aware spiking defaults (None = auto: ON for onebrain production, OFF for rf/rate oracle).
         _is_onebrain = (composer is None) and (composer_kind == "onebrain")
@@ -251,7 +258,7 @@ class BrainConversationalAgent:
             # fresh random codes the divnorm-WTA agent-line decode falls below firing (over-abstention, the SAFE
             # direction, moat 0-FA -- the de-risk _burndown_1A_c2_smallvocab_derisk.json: a code-MARGIN boundary, NOT a
             # match_thresh re-cal), so the host read stays the byte-identical oracle here. See the #3 fold plan.
-            self.composer = OneBrainComposer(seed=seed, D=128, vocab=vocab, grounded_codes=grounded_codes,
+            self.composer = OneBrainComposer(seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes,
                                              enable_attributed=enable_attributed,
                                              enable_multiframe=enable_multiframe,
                                              enable_spiking_cleanup=enable_spiking_cleanup,
@@ -270,7 +277,7 @@ class BrainConversationalAgent:
             # enable_rf_cudagraph (opt-in, GPU-only): route the resonate step through the fused RF megakernel
             # (1 CUDA launch/step instead of ~15). Default OFF = byte-identical loop path; validated answer-identical
             # across the full conversational stack incl. embedded clauses (2026-06-17-rf-megakernel-resonate-GO.md).
-            self.composer = RFPhasorComposer(seed=seed, D=128, vocab=vocab, period=200,
+            self.composer = RFPhasorComposer(seed=seed, D=D, vocab=vocab, period=200,
                                              enable_spiking_cleanup=enable_spiking_cleanup,
                                              enable_substrate_store=enable_substrate_store,
                                              grounded_codes=grounded_codes,

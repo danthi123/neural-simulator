@@ -66,6 +66,12 @@ def main():
     ap.add_argument("--n-hub", type=int, default=200, help="stream-cortex hub (context-word) count")
     ap.add_argument("--n-per", type=int, default=12, help="neurons per concept (population code)")
     ap.add_argument("--D", type=int, default=128, help="composer phasor dimension")
+    ap.add_argument("--develop-D", type=int, default=None,
+                    help="the develop-loop phasor dimension for BOTH the StreamCortex AND the conversational "
+                         "composer (they MUST match or the learned codes are dropped by _inject_grounded). "
+                         "Default None = use --D. Raise it (e.g. 512) to lift the recall/abstention margin at "
+                         "100s of concepts (FHRR capacity ~sqrt(D)); pair with --corpus-curriculum (which kills "
+                         "the multi-turn WM-loop's ~quadratic VRAM so a bigger-D 100s-concept run fits 24GB).")
     ap.add_argument("--corpus-path", default=None,
                     help="plain-text corpus shard; default = the wired data/corpus/tinystories.txt")
     ap.add_argument("--status", action="store_true", help="print day/vocab/facts and exit (no GPU)")
@@ -120,9 +126,21 @@ def main():
     lineage = BridgeLineage(LINEAGE_NAME, root=Path(LINEAGE_ROOT))
     resume = lineage.exists()
 
+    # The develop-loop phasor dimension (StreamCortex AND composer; --develop-D overrides --D). They MUST stay equal
+    # or the stream-learned grounded codes (length develop_D) are silently dropped by _inject_grounded against the
+    # composer's D. ONE value drives BOTH below, so they cannot diverge. The KNOWLEDGE-SCALING combo (scoping
+    # 2026-06-27): use_multiturn=False on the corpus-curriculum path kills the multi-turn WM loop's ~quadratic VRAM
+    # (so a bigger-D 100s-of-concepts run fits 24GB), and develop_D threads the composer dimension recall needs.
+    develop_D = int(a.develop_D) if a.develop_D is not None else int(a.D)
+    # The corpus-curriculum (scaling) path drops the multi-turn discourse WM loop -- the per-day battery (recall /
+    # heldout / retain / chain / moat) needs no cross-turn anaphora, and the WM loop is the ~quadratic-VRAM OOM at
+    # 100s of concepts. The hardcoded ~24-concept demo schedule keeps the multi-turn agent (byte-identical).
+    use_multiturn = not a.corpus_curriculum
+
     print("=" * 100, flush=True)
     print(f"[develop_run] {'RESUME' if resume else 'START (day 0)'}  "
-          f"backend={os.environ.get('SIM_BACKEND')}  max-days-this-run={a.n_days}", flush=True)
+          f"backend={os.environ.get('SIM_BACKEND')}  max-days-this-run={a.n_days}  "
+          f"D={develop_D}  multi_turn={use_multiturn}", flush=True)
     print(f"  PAUSE  : create  {os.path.abspath(PAUSE_FILE)}   -> stops cleanly at the next day boundary",
           flush=True)
     print(f"  RESUME : remove that file, re-run this command (auto-resumes from the saved day)", flush=True)
@@ -132,7 +150,7 @@ def main():
 
     # one shared stream cortex for this invocation; develop_gpu re-hears the cumulative vocab on resume so the
     # freshly-built cortex re-acquires the developed codes (the validated resume path).
-    shared = StreamCortex(full_vocab, a.seed, n_hub=a.n_hub, n_per=a.n_per, D=a.D,
+    shared = StreamCortex(full_vocab, a.seed, n_hub=a.n_hub, n_per=a.n_per, D=develop_D,
                           verbose=True, corpus_path=a.corpus_path)
 
     def per_day_hook(day_index, state, grounded, agent):
@@ -140,7 +158,7 @@ def main():
         bdir = os.path.join(BUNDLE_ROOT, f"day_{day_index}")
         comp = getattr(agent, "agent", agent).composer
         try:
-            save_developed_brain(agent, bdir, seed=int(a.seed), D=int(getattr(comp, "D", a.D)),
+            save_developed_brain(agent, bdir, seed=int(a.seed), D=int(getattr(comp, "D", develop_D)),
                                  composer_kind="rf", develop_state=state, lineage_name="developed_brain",
                                  extra_metadata={"provenance": "develop_run", "day": int(day_index)})
             print(f"    [bundle] day-{day_index} -> {bdir}  (load it in the console)", flush=True)
@@ -155,9 +173,9 @@ def main():
     try:
         per_day, _assembly = develop_gpu(
             lineage, curriculum, a.n_days, seed=a.seed, consolidation_on=True, plasticity_on=True,
-            max_windows_per_day=a.max_windows_per_day, n_hub=a.n_hub, n_per=a.n_per, D=a.D,
+            max_windows_per_day=a.max_windows_per_day, n_hub=a.n_hub, n_per=a.n_per, D=develop_D,
             resume=resume, verbose=True, _shared_cortex=shared, per_day_save_hook=per_day_hook,
-            corpus_path=a.corpus_path, should_continue=should_continue)
+            corpus_path=a.corpus_path, should_continue=should_continue, use_multiturn=use_multiturn)
     except KeyboardInterrupt:
         print("\n[develop_run] interrupted (Ctrl-C). The last COMPLETED day is persisted; re-run to resume.",
               flush=True)

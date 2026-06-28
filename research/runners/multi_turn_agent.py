@@ -50,7 +50,7 @@ class MultiTurnAgent:
                  biased_competition_bias_pA=2500.0, biased_competition_spec_threshold=1.3,
                  biased_competition_window=20, defer_parser=False, defer_planner=False,
                  communicable_mode=False, communicable_draw="spiking", communicable_config=None,
-                 speak_value_Q=None):
+                 speak_value_Q=None, D=128):
         self.seed = int(seed)
         # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
         # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
@@ -64,12 +64,15 @@ class MultiTurnAgent:
         # BrainConversationalAgent: when ON, MultiTurnAgent.converse / communicable_feedback / speak_value_Q
         # delegate to it (one CommunicableTurn on the inner agent's composer, the same no-confab moat). Default OFF
         # = the inner agent never constructs the orchestrator (the existing multi-turn tests pass verbatim).
+        # D (default 128 = byte-identical) passes through to the inner agent's composer phasor dimension (the
+        # develop loop raises it to lift the recall/abstention margin at 100s of concepts; FHRR capacity ~sqrt(D)).
         self.agent = BrainConversationalAgent(seed=seed, concepts=concepts, grounded_codes=grounded_codes,
                                               enable_neural_render=enable_neural_render, composer_kind=composer_kind,
                                               enable_learned_assoc=(composer_kind == "onebrain"),
                                               defer_parser=defer_parser, communicable_mode=communicable_mode,
                                               communicable_draw=communicable_draw,
-                                              communicable_config=communicable_config, speak_value_Q=speak_value_Q)
+                                              communicable_config=communicable_config, speak_value_Q=speak_value_Q,
+                                              D=D)
         self.referents = list(referent_concepts)
         # BRAIN-LOAD SPEEDUP (defer_planner, default OFF = byte-identical): the persistent discourse working-memory
         # loop (a SpikingLoopContextBuffer holding one attractor per referent) is the dominant LOAD cost -- building
