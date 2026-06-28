@@ -10,7 +10,7 @@ anytime, re-run the same command, it continues from the last checkpoint.
 ```powershell
 $env:SIM_BACKEND='cupy'
 python -m research.runners._genseq_C2_scaleup_runner --d-model 768 --n-layers 12 --n-heads 12 `
-  --vocab-size 2048 --block-size 512 --batch-size 16 --ft-batch 8 --steps 245000 `
+  --vocab-size 2048 --block-size 512 --batch-size 16 --ft-batch 8 --steps 450000 `
   --dropout 0.1 --weight-decay 0.1 --warmup-steps 1000 --heldout-every 1000 --corpus simplewiki `
   --out research/findings/raw/_genseq_C2_scaleup_100M.json `
   --run-dir research/findings/raw/c2_scaleup_100M
