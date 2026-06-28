@@ -96,7 +96,33 @@ def train_tiny_gpt(
                   % (tok.vocab_size, len(fit_text), len(corpus), bpe_path), flush=True)
     V = tok.vocab_size
 
-    data = torch.tensor(tok.encode(corpus), dtype=torch.long)
+    def _encode_cached(text, cache_path):
+        # Encoding a large corpus with the pure-Python per-word BPE apply is the
+        # second big pre-training cost (after the BPE fit). Two speedups, both
+        # OUTPUT-IDENTICAL to tok.encode(text): (1) memoize per UNIQUE word --
+        # natural-language corpora repeat words heavily, so this cuts the
+        # BPE-applies from O(total words) down to O(unique words); (2) cache the
+        # token array to disk so pause/resume skips the re-encode entirely.
+        if os.path.exists(cache_path):
+            arr = np.load(cache_path)
+            if verbose:
+                print("[gen-f] loaded cached tokens (%d) %s" % (arr.size, cache_path), flush=True)
+            return arr
+        wc, ids = {}, []
+        for w in text.split():
+            e = wc.get(w)
+            if e is None:
+                e = [tok._sym_to_id.get(s, 0) for s in tok._encode_word(w)]
+                wc[w] = e
+            ids.extend(e)
+        arr = np.asarray(ids, dtype=np.int32)
+        np.save(cache_path, arr)
+        if verbose:
+            print("[gen-f] encoded+cached %d tokens (%d unique words) -> %s"
+                  % (arr.size, len(wc), cache_path), flush=True)
+        return arr
+
+    data = torch.tensor(_encode_cached(corpus, bpe_path + ".traintokens.npy"), dtype=torch.long)
     if data.numel() < block_size + 2:
         raise ValueError("corpus too short for block_size")
     data = data.to(device)
@@ -106,7 +132,7 @@ def train_tiny_gpt(
     if heldout_path and int(heldout_every) > 0 and os.path.exists(heldout_path):
         try:
             ho_text = Path(heldout_path).read_text(encoding="utf-8")
-            ho_ids = tok.encode(ho_text)
+            ho_ids = _encode_cached(ho_text, bpe_path + ".heldtokens.npy")
             if len(ho_ids) > block_size + 2:
                 ho_data = torch.tensor(ho_ids, dtype=torch.long, device=device)
                 if verbose:
