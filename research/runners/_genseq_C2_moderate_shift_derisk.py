@@ -300,13 +300,17 @@ def auto_select_sh_frac(frozen, tok, ts_tr, sh_text, ts_ho, base_ts, device, *, 
 # GENERATIVE SELF-REPLAY: sample OLD-distribution (TinyStories) text from the FROZEN pre-grow Gen-F.
 # (byte-identical to orig) -- the CLS hippocampal-replay analogue (Shin 2017).
 # =================================================================================================
-def sample_self_replay(frozen_model, tok, n_target_tokens, block_size, device, seed):
+def sample_self_replay(frozen_model, tok, n_target_tokens, block_size, device, seed, primes=None):
     import torch
     rng = np.random.default_rng(seed)
     out_ids = []
     si = 0
-    primes = ["Once upon a time", "One day", "There was a", "She had a", "The little",
-              "He wanted to", "They went to", "Lily and Tom"]
+    # default primes = TinyStories register (byte-unchanged for the original 3.4M path); a
+    # different-domain frozen model (e.g. the SimpleWiki-trained 100M) passes register-matched primes so
+    # the self-replay samples its OWN old distribution, not a TinyStories one it was never trained on.
+    if primes is None:
+        primes = ["Once upon a time", "One day", "There was a", "She had a", "The little",
+                  "He wanted to", "They went to", "Lily and Tom"]
     while len(out_ids) < n_target_tokens:
         prime = primes[si % len(primes)]
         prompt_ids = tok.encode(prime)
@@ -401,11 +405,11 @@ def grow_finetune(frozen_model, tok, new_train_ids, replay_ids, target_replay_fr
 # Two-distribution held-out ppl (the C2 measurement). ORIGINAL = pure-TinyStories tail; NEW = the
 # interleave held-out tail. SAME Gen-F TinyStories BPE throughout -> directly comparable.
 # =================================================================================================
-def two_dist_ppl(model, tok, ts_ho, new_ho, device, *, label, ppl_positions=None):
+def two_dist_ppl(model, tok, ts_ho, new_ho, device, *, label, ppl_positions=None, orig_label="TinyStories"):
     ppl_positions = int(ppl_positions) if ppl_positions is not None else PPL_EVAL_POSITIONS
     ts_ppl = perplexity(_heldout_nll(model, tok, ts_ho, BLOCK_SIZE, device, ppl_positions))
     new_ppl = perplexity(_heldout_nll(model, tok, new_ho, BLOCK_SIZE, device, ppl_positions))
-    print(f"[C2mod:{label}]   ORIGINAL(TinyStories) held-out ppl = {ts_ppl:.4f} | "
+    print(f"[C2mod:{label}]   ORIGINAL({orig_label}) held-out ppl = {ts_ppl:.4f} | "
           f"NEW(SH{SH_FRAC}-interleave) held-out ppl = {new_ppl:.4f}", flush=True)
     return {"original_tinystories_ppl": ts_ppl, "new_interleave_ppl": new_ppl}
 
@@ -487,10 +491,75 @@ def verify_on_bridge(grown_model, tok, ts_ho, new_ho, device, *, n_windows=None)
     return res
 
 
+# =================================================================================================
+# THE ORIGINAL-DISTRIBUTION SELECTOR (the C2-VALIDITY fix, 2026-06-30). The default ORIGINAL is
+# TinyStories (the 3.4M toy's training domain). BUT the 100M scale-up Gen-F was TRAINED ON SIMPLEWIKI
+# (held-out ppl ~11.5), NOT TinyStories -- so "retain TinyStories" is a CONFOUNDED test for it (the
+# model never knew TinyStories; its TinyStories ppl is ~227, and the SH-interleave is mostly TinyStories
+# so the model LEARNS rather than forgets -> no_replay_forgets=False, a spurious NEGATIVE). This selector
+# lets the ORIGINAL task be the model's ACTUAL training domain, so retention is measured on what it KNOWS.
+#   "tinystories" (default) -> the byte-unchanged behaviour (fetch_corpus tinystories, TinyStories primes).
+#   "simplewiki"            -> ORIGINAL=SimpleWiki: prefer the model's OWN cached SimpleWiki train/heldout
+#                              split (research/findings/raw/c2_scaleup_100M/{train,heldout}_corpus.txt, the
+#                              exact text the 100M trained+eval'd on so orig_ppl reproduces ~11.5); fall
+#                              back to splitting data/corpus/simplewiki.txt. NEW=SimpleWiki interleaved with
+#                              Shakespeare (the SAME build_new_corpus mechanism). The tokenizer (`tok`,
+#                              the SimpleWiki-fit BPE) is UNCHANGED -- only the corpus TEXT is re-pointed.
+# Returns (orig_label, orig_train, orig_heldout, replay_primes, source_note).
+# =================================================================================================
+_SIMPLEWIKI_CACHED_DIR = _REPO / "research/findings/raw/c2_scaleup_100M"
+_SIMPLEWIKI_FALLBACK = _REPO / "data/corpus/simplewiki.txt"
+# SimpleWiki-register self-replay primes (encyclopaedic openings) so a SimpleWiki-trained frozen Gen-F
+# samples its OWN old distribution for the no-forget replay (vs the TinyStories "Once upon a time" set).
+_SIMPLEWIKI_PRIMES = ["The", "In", "A", "It is", "He was", "She was", "They were",
+                      "This is a", "There are", "The city of"]
+# CAP the SimpleWiki original train/heldout char lengths. WHY: the project BPE encode is SLOW
+# (~0.02 MChar/s measured) and `_heldout_nll` re-encodes the WHOLE original-heldout on every ppl call
+# (baseline + each grow arm) -- the model's full 14MB SimpleWiki heldout would cost ~15 min PER call
+# (~1 hr wasted). The heldout ppl scores only ppl_eval_positions (200) windows x block (128) = ~25.6K
+# tokens, so ~1.5 MB of heldout text is MORE than enough; the train cap matches build_new_corpus's
+# internal TS_TRAIN_CAP (3M) usage. Both are leading slices of the SAME contiguous cached split, so the
+# retention measurement (a leading slice of the disjoint pure-SimpleWiki heldout tail) is honest.
+_SIMPLEWIKI_HELDOUT_CAP = 1_500_000
+_SIMPLEWIKI_TRAIN_CAP = TS_TRAIN_CAP   # the interleave only consumes tr[:TS_TRAIN_CAP] anyway
+
+
+def load_original_corpus(c2_original, *, ts_tr, ts_ho):
+    """Pick the ORIGINAL (retention-measured) distribution + register-matched self-replay primes.
+    `ts_tr`/`ts_ho` are the already-fetched TinyStories train/heldout (so the default path reuses them
+    with ZERO extra I/O). Returns (orig_label, orig_train, orig_heldout, replay_primes, source_note)."""
+    key = (c2_original or "tinystories").strip().lower()
+    if key in ("tinystories", "ts", "default", ""):
+        return "TinyStories", ts_tr, ts_ho, None, "tinystories (default; byte-unchanged)"
+    if key in ("simplewiki", "wiki", "simple_wiki"):
+        from research.runners.corpus_fetch import clean_text
+        tr_cache = _SIMPLEWIKI_CACHED_DIR / "train_corpus.txt"
+        ho_cache = _SIMPLEWIKI_CACHED_DIR / "heldout_corpus.txt"
+        if tr_cache.is_file() and ho_cache.is_file():
+            # the EXACT text the 100M trained + eval'd on (already cleaned + split) -> orig_ppl ~= 11.5.
+            # Read only a leading slice (cleaning + holding all 127MB is needless; the caps below bound it).
+            o_tr = clean_text(tr_cache.read_text(encoding="utf-8", errors="ignore")[:_SIMPLEWIKI_TRAIN_CAP * 2])
+            o_ho = clean_text(ho_cache.read_text(encoding="utf-8", errors="ignore")[:_SIMPLEWIKI_HELDOUT_CAP * 2])
+            src = f"the model's OWN cached split {tr_cache.name}/{ho_cache.name}"
+        else:
+            # fallback: split the raw SimpleWiki corpus the same way STAGE 1 did (heldout_frac=0.1).
+            wiki = fetch_corpus(name=str(_SIMPLEWIKI_FALLBACK), max_bytes=200_000_000)
+            o_tr, o_ho = split_corpus(wiki["text"], heldout_frac=0.1)
+            src = f"{_SIMPLEWIKI_FALLBACK.name} split heldout_frac=0.1 (cached run split absent)"
+        # CAP both (the BPE encode is slow; see _SIMPLEWIKI_HELDOUT_CAP). Leading slices of the SAME
+        # contiguous split, so train stays disjoint from the heldout tail and retention is honest.
+        o_tr = o_tr[:_SIMPLEWIKI_TRAIN_CAP]
+        o_ho = o_ho[:_SIMPLEWIKI_HELDOUT_CAP]
+        note = (f"SimpleWiki from {src} -- the 100M's actual training domain; train {len(o_tr)} (cap "
+                f"{_SIMPLEWIKI_TRAIN_CAP}) / heldout {len(o_ho)} (cap {_SIMPLEWIKI_HELDOUT_CAP}) chars")
+        return "SimpleWiki", o_tr, o_ho, _SIMPLEWIKI_PRIMES, note
+    raise ValueError(f"unknown c2_original={c2_original!r} (expected 'tinystories' or 'simplewiki')")
+
+
 def run_c2_loop(frozen, tok, V, loss_last, device, *, out_path=None, ft_batch=None,
                 ft_steps=None, ft_lr=None, sh_frac=None, replay_sweep=None,
                 ppl_eval_positions=None, arch_label=None, t_start=None, do_onbridge_verify=True,
-                replay_pool_tokens=None, dry_run=False):
+                replay_pool_tokens=None, dry_run=False, c2_original="tinystories"):
     """The C2 grow-no-forget LOOP body (corpora -> baseline -> self-replay -> grow dose-sweep ->
     on-bridge verify -> verdict), factored out of main() so the C2 scale-up runner can drive the SAME
     machinery on a BIGGER frozen Gen-F. All knobs default to the module-level constants (so the
@@ -519,15 +588,23 @@ def run_c2_loop(frozen, tok, V, loss_last, device, *, out_path=None, ft_batch=No
         replay_pool_tokens = min(replay_pool_tokens, 1500)
 
     # ---- corpora ----
+    # Always fetch TinyStories (it is the DEFAULT original AND the no-extra-I/O reuse for the selector).
     ts = fetch_corpus(name="tinystories", max_bytes=8_000_000)
-    ts_tr, ts_ho = split_corpus(ts["text"], heldout_frac=0.1)
+    _ts_tr, _ts_ho = split_corpus(ts["text"], heldout_frac=0.1)
     sh = fetch_corpus(name=str(_REPO / "data/tinyshakespeare.txt"), max_bytes=8_000_000)
-    print(f"[C2mod] ORIGINAL=TinyStories (train {len(ts_tr)} / heldout {len(ts_ho)} chars); "
+    # ORIGINAL-distribution selector (the 2026-06-30 C2-validity fix): default 'tinystories' returns the
+    # TinyStories split verbatim (byte-unchanged); 'simplewiki' re-points ORIGINAL to the 100M's actual
+    # training domain so retention is measured on what the model KNOWS. `ts_tr`/`ts_ho` keep their names
+    # downstream (they are "the ORIGINAL train/heldout", whatever domain that is); `replay_primes` are
+    # the register-matched self-replay seeds; the tokenizer is UNCHANGED (only the corpus text moves).
+    orig_label, ts_tr, ts_ho, replay_primes, orig_note = load_original_corpus(
+        c2_original, ts_tr=_ts_tr, ts_ho=_ts_ho)
+    print(f"[C2mod] ORIGINAL={orig_label} [{orig_note}] (train {len(ts_tr)} / heldout {len(ts_ho)} chars); "
           f"Shakespeare register source {len(sh['text'])} chars (degraded={sh['degraded']})", flush=True)
 
     # ---- ORIGINAL-distribution baseline FIRST (it anchors the relative learnable band) ----
     base_ts = perplexity(_heldout_nll(frozen, tok, ts_ho, BLOCK_SIZE, device, ppl_eval_positions))
-    print(f"[C2mod] BASELINE orig(TinyStories) held-out ppl = {base_ts:.4f} (anchors the learnable band)",
+    print(f"[C2mod] BASELINE orig({orig_label}) held-out ppl = {base_ts:.4f} (anchors the learnable band)",
           flush=True)
 
     # ---- choose the NEW (learnable) distribution = TS-blocks interleaved with SH-blocks at SH_FRAC ----
@@ -554,7 +631,7 @@ def run_c2_loop(frozen, tok, V, loss_last, device, *, out_path=None, ft_batch=No
     distinct_ratio = base_new / base_ts if base_ts > 0 else float("inf")
     band_lo = LEARNABLE_BAND_LO_MULT * base_ts
     band_hi = LEARNABLE_BAND_HI_MULT * base_ts
-    print(f"[C2mod] BASELINE: TinyStories(orig)={base_ts:.4f}  NEW(SH{sh_frac}-interleave)={base_new:.4f}  "
+    print(f"[C2mod] BASELINE: {orig_label}(orig)={base_ts:.4f}  NEW(SH{sh_frac}-interleave)={base_new:.4f}  "
           f"(distinctness {distinct_ratio:.2f}x; learnable band [{band_lo:.2f},{band_hi:.2f}] "
           f"= [{LEARNABLE_BAND_LO_MULT:.0f},{LEARNABLE_BAND_HI_MULT:.0f}]x orig)", flush=True)
     # RELATIVE band (size-adaptive): the new corpus must be measurably distinct (>= LO_MULT x orig_ppl, so
@@ -584,12 +661,13 @@ def run_c2_loop(frozen, tok, V, loss_last, device, *, out_path=None, ft_batch=No
                 f"> {LEARNABLE_BAND_HI_MULT}x orig_ppl, ppl {base_new:.1f}); lower sh_frac.")
 
     # =============================================================================================
-    # SELF-REPLAY: sample OLD (TinyStories) text from the FROZEN pre-grow Gen-F (built ONCE).
+    # SELF-REPLAY: sample OLD (ORIGINAL-domain) text from the FROZEN pre-grow Gen-F (built ONCE).
     # =============================================================================================
-    print("\n[C2mod] ===== GENERATIVE SELF-REPLAY: sample OLD TinyStories from the FROZEN Gen-F =====",
+    print(f"\n[C2mod] ===== GENERATIVE SELF-REPLAY: sample OLD {orig_label} from the FROZEN Gen-F =====",
           flush=True)
     t0 = time.time()
-    replay_ids_full = sample_self_replay(frozen, tok, replay_pool_tokens, BLOCK_SIZE, device, seed=SEED * 17)
+    replay_ids_full = sample_self_replay(frozen, tok, replay_pool_tokens, BLOCK_SIZE, device, seed=SEED * 17,
+                                         primes=replay_primes)
     rep_distinct = distinct_ngram_ratio(replay_ids_full, n=3)
     print(f"[C2mod] self-replay: sampled {len(replay_ids_full)} OLD tokens from frozen Gen-F "
           f"(distinct-trigram {rep_distinct:.3f}, {time.time()-t0:.0f}s); sample decode: "
@@ -610,7 +688,8 @@ def run_c2_loop(frozen, tok, V, loss_last, device, *, out_path=None, ft_batch=No
             frozen, tok, new_train_ids, replay_ids, frac, device,
             steps=ft_steps, batch_size=ft_batch, lr=ft_lr, block_size=BLOCK_SIZE,
             seed=SEED, label=label)
-        ppls = two_dist_ppl(grown, tok, ts_ho, new_ho, device, label=label, ppl_positions=ppl_eval_positions)
+        ppls = two_dist_ppl(grown, tok, ts_ho, new_ho, device, label=label, ppl_positions=ppl_eval_positions,
+                            orig_label=orig_label)
         prompt_ids = tok.encode("Once upon a time there was a little")
         gen_ids = _generate(grown, tok, prompt_ids, 40, BLOCK_SIZE, device, SEED * 13 + 5)
         gen_text = tok.decode(gen_ids)
@@ -758,9 +837,12 @@ def run_c2_loop(frozen, tok, V, loss_last, device, *, out_path=None, ft_batch=No
                  "n_head": int(frozen.cfg["n_head"]), "block_size": int(frozen.cfg["block_size"]),
                  "vocab_size": int(frozen.cfg["vocab_size"])},
         "dry_run": bool(dry_run),
-        "original_distribution": "TinyStories (data/corpus/tinystories.txt, heldout tail)",
-        "new_distribution": "SH-frac=%.2f TinyStories/Shakespeare block-interleave (heldout tail) -- "
-                            "%.2fx-distinct (pre-grow new-ppl/orig-ppl)" % (sh_frac, distinct_ratio),
+        "c2_original": c2_original,
+        "original_domain": orig_label,
+        "original_domain_source_note": orig_note,
+        "original_distribution": "%s (heldout tail) [%s]" % (orig_label, orig_note),
+        "new_distribution": "SH-frac=%.2f %s/Shakespeare block-interleave (heldout tail) -- "
+                            "%.2fx-distinct (pre-grow new-ppl/orig-ppl)" % (sh_frac, orig_label, distinct_ratio),
         "new_corpus_choice_rationale": (
             "An empirical corpus-selection sweep on THIS frozen 3.4M Gen-F mapped the shift space: PURE "
             "TinyStories topic/structural slices = ~0.8-1.05x baseline ppl (Gen-F trained on the FULL "

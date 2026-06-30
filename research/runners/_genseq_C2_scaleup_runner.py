@@ -315,17 +315,17 @@ def stage2_c1_consolidate(run_dir, *, ckpt_path, bpe_path, device, n_head, n_log
 # runner's run_c2_loop verbatim; ONLY ft_batch + out_path + arch_label differ).
 # =================================================================================================
 def stage3_c2_loop(run_dir, *, ckpt_path, bpe_path, device, n_head, ft_batch, out_path, arch_label,
-                   dry_run=False):
+                   dry_run=False, c2_original="tinystories"):
     marker = run_dir / "stage3_c2.DONE.json"
     if marker.exists() and not dry_run:
         print(f"[scaleup] STAGE 3 already DONE (marker {marker.name}); skipping.", flush=True)
         return json.loads(marker.read_text())
-    print("\n[scaleup] ===== STAGE 3: the C2 grow+no-forget MODERATE-SHIFT loop (run_c2_loop) =====",
-          flush=True)
+    print(f"\n[scaleup] ===== STAGE 3: the C2 grow+no-forget MODERATE-SHIFT loop (run_c2_loop) "
+          f"[c2_original={c2_original}] =====", flush=True)
     frozen, tok, V, loss_last = load_genf(device, ckpt_path=ckpt_path + ".pt", bpe_path=bpe_path,
                                           n_head=n_head)
     res = run_c2_loop(frozen, tok, V, loss_last, device, out_path=out_path, ft_batch=ft_batch,
-                      arch_label=arch_label, dry_run=dry_run)
+                      arch_label=arch_label, dry_run=dry_run, c2_original=c2_original)
     del frozen
     free_cuda()
     if not dry_run:
@@ -437,7 +437,8 @@ def smoke(args, run_dir, device, corpus_path):
         smoke_out = run_dir / "genf_smoke_c2_dryrun.json"
         s3 = stage3_c2_loop(run_dir, ckpt_path=smoke_ckpt, bpe_path=bpe_path, device=device,
                             n_head=args.n_heads, ft_batch=min(args.ft_batch, 8),
-                            out_path=smoke_out, arch_label="SMOKE", dry_run=True)
+                            out_path=smoke_out, arch_label="SMOKE", dry_run=True,
+                            c2_original=args.c2_original)
         stage3_dry = {"wired": True, "verdict": s3.get("verdict"),
                       "arms": list(s3.get("arms", {}).keys()),
                       "elapsed_seconds": s3.get("elapsed_seconds")}
@@ -497,6 +498,12 @@ def main():
                          "default %d; 0=off)" % DEF_HELDOUT_EVERY)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--corpus", type=str, default="tinystories")
+    ap.add_argument("--c2-original", type=str, default="tinystories", choices=["tinystories", "simplewiki"],
+                    help="STAGE-3 C2 ORIGINAL (retention-measured) domain. 'tinystories' (default) is the "
+                         "byte-unchanged behaviour; 'simplewiki' makes the C2 retain the model's ACTUAL "
+                         "training domain (use this for the SimpleWiki-trained 100M -- 'retain TinyStories' "
+                         "is a confounded test for it since it never saw TinyStories). The model's BPE "
+                         "tokenizer is unchanged; only the original/retention corpus text is re-pointed.")
     ap.add_argument("--out", type=str, default=str(RAW / "_genseq_C2_scaleup_30M.json"),
                     help="STAGE-3 C2 result JSON (the loop verdict)")
     ap.add_argument("--run-dir", type=str, default=None,
@@ -559,7 +566,8 @@ def main():
                                n_head=a.n_heads, n_logit_pos=12, n_gen_tokens=18, ppl_windows=4)
     arch_label = f"d{a.d_model}_L{a.n_layers}_H{a.n_heads}_~{formula_params//1_000_000}M"
     s3 = stage3_c2_loop(run_dir, ckpt_path=ckpt_path, bpe_path=bpe_path, device=device, n_head=a.n_heads,
-                        ft_batch=a.ft_batch, out_path=out_path, arch_label=arch_label)
+                        ft_batch=a.ft_batch, out_path=out_path, arch_label=arch_label,
+                        c2_original=a.c2_original)
     print("\n" + "=" * 78, flush=True)
     print(f"[scaleup] FULL LOOP DONE ({round(time.time()-t_start,1)}s). C2 verdict: {s3.get('verdict')}",
           flush=True)
