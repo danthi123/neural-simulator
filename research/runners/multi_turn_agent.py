@@ -19,6 +19,17 @@ where recency and a salience boost both failed. Default OFF == byte-identical to
 biased-competition buffer is never even constructed). See
 `research/findings/2026-06-19-multireferent-integration-multiturnagent.md`.
 
+CONTENT-GRADED BIAS (opt-in, default OFF; de-risk GO 6/6, 2026-06-19-multireferent-graded-bias-polish.md): the
+fixed-magnitude (2500 pA) content bias closes the decisive 2-referent cases but cannot lift a referent that is
+intrinsically DOMINATED by its rival (the pre-registered seed-100 extreme-asymmetry miss — it mis-resolves /
+abstains, moat-preserving). With `graded_bias=True`, `_resolve_biased` first takes a cheap UNBIASED PROBE read of
+the per-referent accumulator competition, then scales the bias by the content-favored referent's competitive
+DEFICIT (`bias_pA = min(cap, base*(1 + gain*deficit/ref))`, injected into ONLY the favored sel pool), so an
+extreme-asymmetry referent gets a proportionally stronger steer while easy cases (deficit=0) stay at base (no
+over-steer). The mechanism (`graded_bias_pA`) is reused by import from `_phaseB_biased_competition_graded_derisk`
+(single source of truth). Default OFF == byte-identical to the fixed-bias path. The bias stays load-bearing
+(graded(lesioned)=0) and the no-confab moat is unchanged.
+
 Reuse-by-import; NO `sim/` edit. The WM loop, the composer, the parser, the biased-competition buffer are all
 already validated.
 """
@@ -32,6 +43,9 @@ from research.runners.biased_competition_buffer import (
     content_bias_target,
     resolve_referent,
 )
+# CONTENT-GRADED bias (opt-in; de-risk GO 6/6) — the deficit-scaled magnitude lives in the de-risk runner and is
+# reused by import here (single source of truth, NO reimplementation). Default OFF = the fixed-bias path verbatim.
+from research.runners._phaseB_biased_competition_graded_derisk import graded_bias_pA
 from research.runners.content_selection_spiking import SpikingLoopContextBuffer
 
 _ANAPHORS = {"it", "that", "them", "they", "this"}
@@ -48,7 +62,8 @@ class MultiTurnAgent:
                  wm_n=600, wm_pattern_size=40, enable_neural_render=True, spec_threshold=1.5,
                  composer_kind="rf", enable_biased_competition=True,
                  biased_competition_bias_pA=2500.0, biased_competition_spec_threshold=1.3,
-                 biased_competition_window=20, defer_parser=False, defer_planner=False,
+                 biased_competition_window=20, graded_bias=False, graded_bias_gain=1.0,
+                 graded_bias_ref=0.20, graded_bias_cap_pA=8000.0, defer_parser=False, defer_planner=False,
                  communicable_mode=False, communicable_draw="spiking", communicable_config=None,
                  speak_value_Q=None, D=128):
         self.seed = int(seed)
@@ -99,6 +114,13 @@ class MultiTurnAgent:
         self._bc_bias_pA = float(biased_competition_bias_pA)
         self._bc_spec = float(biased_competition_spec_threshold)
         self._bc_window = int(biased_competition_window)
+        # CONTENT-GRADED bias (opt-in; default OFF == the fixed-magnitude path verbatim). When ON, _resolve_biased
+        # probes the unbiased competition and scales the bias by the favored referent's deficit (graded_bias_pA).
+        # base = self._bc_bias_pA (the same 2500 pA floor); the de-risk's validated gain/ref/cap constants.
+        self._graded_bias = bool(graded_bias)
+        self._graded_gain = float(graded_bias_gain)
+        self._graded_ref = float(graded_bias_ref)
+        self._graded_cap_pA = float(graded_bias_cap_pA)
         # The biased-competition buffer mirrors the held discourse-referent registry; it is built ONLY when the
         # flag is ON (default OFF -> never constructed -> byte-identical to the prior behavior). It holds the same
         # attractor per referent (same seed, same n/pattern_size) PLUS the per-referent WTA accumulator + selective
@@ -169,14 +191,30 @@ class MultiTurnAgent:
             (the no-confab moat: refuse to pick by intrinsic strength);
           - else run the biased-competition read (re-present the held referents + bias the content-favored sel
             pool) and return the moat-gated WTA winner.
-        This is the de-risked decision (resolve_pronoun in the de-risk runner), here driven by the live registry."""
+        This is the de-risked decision (resolve_pronoun in the de-risk runner), here driven by the live registry.
+
+        When `graded_bias` is ON, the bias magnitude is CONTENT-GRADED: a cheap unbiased PROBE read measures the
+        favored referent's intrinsic accumulator deficit vs its strongest rival, and the bias is scaled up by that
+        deficit (closing the seed-100 extreme-asymmetry miss WITHOUT over-steering easy cases). Default OFF -> the
+        fixed-magnitude `self._bc_bias_pA` path, byte-identical to before."""
         held = self._held_set()
         if len(held) < 2 or self.bcw is None:
             return None  # <2 held -> let the plain single-attractor path decide (no competition needed)
         fav = content_bias_target(held, query_verb)
         if fav is None:
             return None  # content silent -> abstain (moat)
-        rates = self.bcw.read(window=self._bc_window, bias_concept=fav, bias_pA=self._bc_bias_pA)
+        if not self._graded_bias:
+            # FIXED bias (default) -- byte-identical to the prior behavior.
+            rates = self.bcw.read(window=self._bc_window, bias_concept=fav, bias_pA=self._bc_bias_pA)
+            return resolve_referent(rates, spec_threshold=self._bc_spec)
+        # CONTENT-GRADED bias (de-risk GO 6/6): probe the unbiased competition, scale the bias by the favored
+        # referent's competitive deficit, inject into ONLY the favored sel pool (graded_bias_pA reused by import).
+        probe = self.bcw.read(window=self._bc_window, bias_concept=None, bias_pA=0.0)
+        fav_sel = probe["sel"].get(fav, 0.0)
+        rival_sel = max((v for c, v in probe["sel"].items() if c != fav), default=0.0)
+        pA = graded_bias_pA(fav_sel, rival_sel, self._bc_bias_pA, self._graded_gain,
+                            self._graded_ref, self._graded_cap_pA)
+        rates = self.bcw.read(window=self._bc_window, bias_concept=fav, bias_pA=pA)
         return resolve_referent(rates, spec_threshold=self._bc_spec)
 
     def _resolve(self, word, query_verb=None):
