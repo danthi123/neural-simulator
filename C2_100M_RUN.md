@@ -10,12 +10,18 @@ anytime, re-run the same command, it continues from the last checkpoint.
 ```powershell
 $env:SIM_BACKEND='cupy'
 python -m research.runners._genseq_C2_scaleup_runner --d-model 768 --n-layers 12 --n-heads 12 `
-  --vocab-size 2048 --block-size 512 --batch-size 16 --ft-batch 8 --steps 450000 `
+  --vocab-size 2048 --block-size 512 --batch-size 16 --ft-batch 8 --steps 232000 `
   --dropout 0.1 --weight-decay 0.1 --warmup-steps 1000 --heldout-every 1000 --corpus simplewiki `
   --out research/findings/raw/_genseq_C2_scaleup_100M.json `
   --run-dir research/findings/raw/c2_scaleup_100M
 ```
-It was launched detached (survives a closed terminal); live log at `research/findings/raw/_c2_100M_live.log`.
+It was launched detached (survives a closed terminal).
+
+> **STATUS (2026-06-30): STAGE 1 is COMPLETE.** The model peaked at held-out ppl ~11.5 (step 232.5k) —
+> it's data-bound on 41M tokens, so more steps don't help. `--steps` is set to **232000** so a resume
+> keeps STAGE 1 done and continues into the **C1 → C2** stages (the decisive verdict). **Do NOT raise
+> `--steps`** — that re-opens STAGE 1 and grinds for no gain. Live log for the C1/C2 stages:
+> `research/findings/raw/_c2_100M_finish.log`.
 
 ## Monitor (anytime, safe — no GPU contention)
 
