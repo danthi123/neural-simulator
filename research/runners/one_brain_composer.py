@@ -142,6 +142,21 @@ class OneBrainComposer:
         # the (action, patient) `query_agent` + agent-only `render_fact`/`describe` stay on the host read (still
         # abstaining via the oracle) as named bounded follow-ons (a swapped-cue + a 1-role cascade). See the plan.
         self.integrated_loop = bool(integrated_loop)
+        # integrated_loop="fused" (R1 close, opt-in, DEFAULT False = byte-identical): fold the divnorm-score pool + the
+        # K-way sequencer onto ONE Izhikevich fabric bridge and route the cleanup membrane -> score pool DEVICE-RESIDENT
+        # (NO `to_host` of the cleanup score), closing the LAST host DATA seam in the integrated who/what query path.
+        # `integrated_loop=True` keeps the legacy SEPARATE-bridge spiking path (the revertible escape, byte-unchanged);
+        # `integrated_loop=False` keeps the host `_scan` oracle. `self._fused` selects the fused fabric inside
+        # `_seq_block` (a `bool(integrated_loop)` is still True for "fused", so the spiking branch is taken; the
+        # `self._fused` sub-branch swaps the separate-bridge sequencer for the folded device-resident one). The fused
+        # fabric + its per-block device-resident decoded-line drives are lazily built + cached on first query
+        # (`_fused_seq`/`_fused_drives`), rebuilt when the store grows or a write dirties them. See
+        # research/runners/_seq_fused_fabric.py + research/findings/2026-06-30-tier2-integrated-spiking-loop-scoping.md R1.
+        self._fused = (integrated_loop == "fused")
+        self._fused_seq = None        # (sb, meta) -- the fused fabric bridge, built lazily on first fused query
+        self._fused_K = None          # the store size the current fused fabric/drives were built for
+        self._fused_drives = None     # the per-block device-resident decoded-line drives (recomputed on a store change)
+        self._fused_dirty = True      # the store changed since the fused drives were built -> rebuild them
         # persistent_loop (Tier-2 TRUE one brain / I-1-a op-handoff-as-spikes, DEFAULT ON since 2026-06-24 close-out
         # Closure 2 -- the I-1-a clean-unit-phasor op-handoff is ANSWER-IDENTICAL + cleanup-membrane BYTE-IDENTICAL to
         # the legacy carry-live-Z handoff [maxabs 0.0, _persistent_loop_flat_derisk GO], so flipping it on is a
@@ -575,6 +590,8 @@ class OneBrainComposer:
         self._store_dirty = True       # store_conns changed -> the cached store CSR is stale (both store + reconsolidation)
         if self.integrated_loop:
             self._seq_dirty = True     # (shortcut #3) the store changed -> the per-block sequencer drives are stale
+            if self._fused:
+                self._fused_dirty = True   # (R1) the store changed -> the per-block FUSED device-resident drives are stale
 
     def _store_composite(self, fillers, roles):
         i = len(self.kb)
@@ -1038,6 +1055,13 @@ class OneBrainComposer:
                 if got.get("agent") == agent and got.get("action") == action:
                     return i
             return None
+        if self._fused:
+            # the R1 FUSED path: the folded one-bridge sequencer with the cleanup->score handoff DEVICE-RESIDENT
+            # (no `to_host` of the cleanup score). == the separate-bridge spiking decision; only WHERE the cleanup
+            # score lives (host array vs device) differs. Lazily built + cached (the fused fabric is a separate
+            # runner module so the OFF/True paths never import it).
+            from research.runners._seq_fused_fabric import fused_seq_block
+            return fused_seq_block(self, agent, action)
         # the spiking path (lazy build; rebuild drives on a dirtied/grown store).
         K = len(self.kb)
         if K == 0:
