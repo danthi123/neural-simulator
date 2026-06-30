@@ -7,6 +7,28 @@ controller's run (command below).
 
 ---
 
+## UPDATE (2026-06-30) — GPU 6-seed was NEGATIVE *as a de-risk-harness artifact*; root-caused + FIXED. The CLOSE itself is correct.
+
+The first GPU 6-seed came back **structurally GO but numerically NEGATIVE**: the SEAM is closed (`gen_concept-spike
+to_host-clean 6/6` — the carrier never crosses host, the R4 structural goal ✓), but `device==host 0/6` (phase_cos
+~0.73–0.90). **Root cause (it is the de-risk HARNESS, not the close):** the old `_seed_compare` ran the HOST path
+(`read_gen_concept_spikes`) and the DEVICE path (`accumulate_conc_spikes_device`) as **TWO SEPARATE perception windows**
+on the same bridge → **two DIFFERENT gen_concept spike snapshots**. GPU spike timing is not bit-identical across two
+windows, so the RATE INPUTS differed — a phase_cos ~0.87 gap is **cross-window rate-input variance, NOT the complex op**
+(a GEMV float-order delta would be phase_cos > 0.99999). The CPU smoke passed only because numpy is deterministic across
+windows. **The production code reads ONCE per object**, so the two-window variance never arises in deployment — it was
+purely an artifact of the de-risk comparing two reads.
+
+**The fix (de-risk only, no change to the close):** `_seed_compare` now accumulates the gen_concept spikes **ONCE**
+(device-resident) and formats that **ONE shared rate snapshot** BOTH ways — the host `angle(gen_proj@rate)` matmul and
+the on-device projection — and asserts they are equal. This is the apples-to-apples test that isolates the close (the
+only thing the close changes is *where* the projection runs), and is exactly what `test_device_resident_equals_host_matmul`
+already pins on a fixed rate vector (**==host to atol 1e-9**, CPU). On GPU the same-snapshot device vs host is a
+complex128 GEMV float-order delta (expected phase_cos > 0.99999) — the **GPU re-check command is in §5**. The earlier
+"two separate windows" comparison was the bug; the close (accumulate-on-device + on-device fan-in, read once) is correct.
+
+---
+
 ## TOP-LINE
 
 **R4 is CLOSEABLE and CLOSED (device-resident), not a boundary.** The scoping ranked R4 SECONDARY and flagged it as

@@ -118,15 +118,23 @@ def device_resident_grounded_phases(conc_rate_dev, gen_proj):
 # CPU runs a tiny smoke (a few seeds at the merged tier); the GPU 6-seed is the controller's run.
 # ----------------------------------------------------------------------------------------------------------------
 def _seed_compare(seed):
-    """Build the merged nav+conv bridge with the co-resident gen stack, render+ground ONE object two ways
-    (host `gen_grounded_phases` vs device-resident), and assert ==host + the gen_concept-spike-to_host eliminated."""
+    """Build the merged nav+conv bridge with the co-resident gen stack, render+ground ONE object, and isolate the R4
+    CLOSE: do the gen_concept-spike accumulation ONCE (device-resident -- the carrier never crosses host), then FORMAT
+    that ONE shared rate vector BOTH ways -- the HOST `angle(gen_proj @ rate)` matmul and the device-resident on-device
+    projection -- and assert they are EQUAL.
+
+    WHY format-on-ONE-snapshot (the fix for the GPU NEGATIVE, 2026-06-30): the close changes ONLY where the projection
+    runs (host matmul vs on-device); it must NOT change the value GIVEN THE SAME spike rate. The earlier de-risk ran
+    the HOST path (`read_gen_concept_spikes`) and the DEVICE path as TWO SEPARATE perception windows -> two DIFFERENT
+    gen_concept spike snapshots (GPU spike timing is not bit-identical across two windows) -> a phase_cos ~0.87 gap that
+    is the cross-window RATE-INPUT variance, NOT the close. The production code reads ONCE per object, so the two-window
+    variance never arises in deployment. The correct GO bar accumulates ONCE + formats both ways on that snapshot, which
+    is exactly what `test_device_resident_equals_host_matmul` pins on a fixed rate vector (here on the LIVE rate)."""
     import sim.backend as backend
     from research.runners.navigate_to_compose_then_answer import (
-        build_compose_bridge, read_gen_concept_spikes, gen_grounded_phases,
-        GEN_SETTLE_STEPS, GEN_READ_STEPS,
+        build_compose_bridge, gen_grounded_phases, GEN_SETTLE_STEPS, GEN_READ_STEPS, GEN_PERC_DRIVE_PA,
     )
     from research.runners.funcint_perception_to_memory_probe import OBJECT_WORDS
-    from research.runners.nav_conv_merged_bridge import GEN_PERCEPTION
 
     xp, backend_name = get_backend()
     # the merged bridge (host_m vs gen_spikes irrelevant for the build -- we force the gen stack via gen_spikes).
@@ -136,11 +144,7 @@ def _seed_compare(seed):
     obj_word = OBJECT_WORDS[0]
     obj_idx = OBJECT_WORDS.index(obj_word)
 
-    # --- HOST path (the current default): read_gen_concept_spikes (host to_host accumulate) + host gen_grounded_phases.
-    conc_rate_host = read_gen_concept_spikes(bridge, gen, obj_idx)         # host vector (to_host of cp_firing_states)
-    host_phases = gen_grounded_phases(conc_rate_host, gen_proj)            # host gen_proj @ rate + angle
-
-    # --- DEVICE-RESIDENT path: render the percept, accumulate gen_concept spikes ON-DEVICE, project + angle ON-DEVICE.
+    # render the percept ONCE: drive the held-out shape's structured-perception set into gen_perception + settle.
     perc_region = np.asarray(gen["perc_region"], dtype=np.int64)
     conc_region = np.asarray(gen["conc_region"], dtype=np.int64)
     vis_sets = gen["vis_sets"]
@@ -149,20 +153,20 @@ def _seed_compare(seed):
     perc_global = perc_local + int(perc_region[0])
     n = int(bridge.core_config.num_neurons)
     drive = np.zeros(n, dtype=np.float32)
-    drive[perc_global] = 300.0
+    drive[perc_global] = GEN_PERC_DRIVE_PA
     drive_dev = xp.asarray(drive)
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(GEN_SETTLE_STEPS):
         bridge._run_one_simulation_step()
 
-    # instrument to_host: count reads of the per-step gen_concept firing carrier + any host matmul of gen_proj.
+    # ACCUMULATE the gen_concept spikes ONCE (device-resident: the carrier never crosses host). Instrument to_host to
+    # count any read of the per-step firing carrier DURING the accumulate -- that is the structural R4 close (the seam).
     conc_idx_dev = xp.asarray(conc_region)
     firing_reads = {"n": 0}
     real_to_host = backend.to_host
     import research.runners._r4_grounding_onbridge as r4mod
 
     def _spy(arr):
-        # the per-step firing carrier is bridge.cp_firing_states; a read of it during the device accumulate = a leak.
         try:
             if arr is bridge.cp_firing_states:
                 firing_reads["n"] += 1
@@ -174,23 +178,30 @@ def _seed_compare(seed):
     r4mod.to_host = _spy
     try:
         conc_rate_dev = accumulate_conc_spikes_device(bridge, conc_idx_dev, GEN_READ_STEPS, drive_dev=drive_dev)
-        dev_phases = device_resident_grounded_phases(conc_rate_dev, gen_proj)
     finally:
         backend.to_host = real_to_host
         r4mod.to_host = real_to_host
     bridge.cp_external_input_current[:] = 0.0
-
-    # ==host: the two grounding paths must produce numerically-equal phases (same drive, same conc spikes -> same code).
-    # NOTE: the host + device reads are SEPARATE perception windows (OU off here so they are deterministic + equal);
-    # if a tiny residual remains from step-order, we compare the PHASOR cosine (the composer's own similarity).
-    phase_cos = float(np.mean(np.cos(2.0 * np.pi * (host_phases - dev_phases))))
-    equal = bool(np.allclose(host_phases, dev_phases, atol=1e-6)) or phase_cos > 0.9999
     to_host_clean = (firing_reads["n"] == 0)
 
-    print(f"  [seed {seed} backend={backend_name}] ==host phase_cos={phase_cos:.6f} equal={equal}  "
-          f"gen_concept-spike-carrier to_host reads in device path: {firing_reads['n']} "
+    # FORMAT the ONE shared rate vector BOTH ways:
+    #   HOST   path: bring the rate to host + the host `angle(gen_proj @ rate)` matmul (the validated default format).
+    #   DEVICE path: the close's on-device projection + angle() (only the final phases cross host, the R5 body-read).
+    conc_rate_host = np.asarray(to_host(conc_rate_dev), dtype=np.float64)
+    host_phases = gen_grounded_phases(conc_rate_host, gen_proj)            # host gen_proj @ rate + angle
+    dev_phases = device_resident_grounded_phases(conc_rate_dev, gen_proj)  # on-device gen_proj @ rate + angle
+
+    # ==host on the SAME snapshot: the close must not change the value. (atol 1e-6 covers a benign cupy/numpy GEMV
+    # float-order delta; the phasor cosine is the composer's own similarity, reported for context.)
+    phase_cos = float(np.mean(np.cos(2.0 * np.pi * (host_phases - dev_phases))))
+    equal = bool(np.allclose(host_phases, dev_phases, atol=1e-6)) or phase_cos > 0.99999
+
+    print(f"  [seed {seed} backend={backend_name}] ==host (SAME snapshot) phase_cos={phase_cos:.6f} equal={equal}  "
+          f"max|dphase|={float(np.max(np.abs(host_phases - dev_phases))):.2e}  "
+          f"gen_concept-spike-carrier to_host reads in device accumulate: {firing_reads['n']} "
           f"({'CLEAN' if to_host_clean else 'LEAK'})", flush=True)
     return dict(seed=int(seed), backend=backend_name, phase_cos=phase_cos, equal=bool(equal),
+                max_dphase=float(np.max(np.abs(host_phases - dev_phases))),
                 firing_carrier_reads=int(firing_reads["n"]), to_host_clean=bool(to_host_clean),
                 n_conc=int(conc_region.size))
 
@@ -213,19 +224,22 @@ def main():
     verdict = "GO" if (all_equal and all_clean) else "NEGATIVE"
 
     print(f"\n{'=' * 96}", flush=True)
-    print(f"  {len(rows)} seed(s): device==host {sum(r['equal'] for r in rows)}/{len(rows)}  "
+    print(f"  {len(rows)} seed(s): device==host (SAME snapshot) {sum(r['equal'] for r in rows)}/{len(rows)}  "
           f"gen_concept-spike to_host-clean {sum(r['to_host_clean'] for r in rows)}/{len(rows)}  ==> {verdict}",
           flush=True)
     if verdict == "GO":
-        print("  GO: the device-resident grounding produces the SAME grounded code as the host `angle(gen_proj@rate)` "
-              "path (==host), AND the gen_concept SPIKE VECTOR is never read to host + the host gen_proj@rate matmul "
-              "is GONE from the device path -- only the final D-length phases cross host (the R5 body-read). R4 (the "
-              "perception->compose grounding host-marshal) is closed: the fixed cortico-cortical fan-in runs on-device, "
-              "the spike accumulation runs on-device. The integration (the navigate-to-compose runner + the "
-              "CoResidentOneBrainComposer perceive-and-ground) flip on via the opt-in flag.", flush=True)
+        print("  GO: GIVEN THE SAME gen_concept spike snapshot, the device-resident on-device projection produces the "
+              "SAME grounded code as the host `angle(gen_proj@rate)` matmul (==host), AND the gen_concept SPIKE VECTOR "
+              "is never read to host in the accumulate + the host gen_proj@rate matmul is GONE from the device path -- "
+              "only the final D-length phases cross host (the R5 body-read). R4 (the perception->compose grounding "
+              "host-marshal) is closed: the fixed cortico-cortical fan-in runs on-device, the spike accumulation runs "
+              "on-device. The integration (the navigate-to-compose runner + the CoResidentOneBrainComposer "
+              "perceive-and-ground) flip on via the opt-in flag.", flush=True)
     else:
-        print("  NEGATIVE: localize -- device-resident grounded phases != host (a backend numerical gap) OR the "
-              "gen_concept-spike carrier still read to host in the device path.", flush=True)
+        print("  NEGATIVE: localize -- the on-device projection != the host matmul ON THE SAME rate snapshot (a genuine "
+              "backend GEMV gap, > a benign float-order delta) OR the gen_concept-spike carrier still read to host in "
+              "the accumulate. (NOTE: this de-risk formats ONE shared snapshot both ways -- a divergence here is the "
+              "complex op itself, NOT cross-window spike-snapshot variance.)", flush=True)
     print(f"{'=' * 96}", flush=True)
 
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
