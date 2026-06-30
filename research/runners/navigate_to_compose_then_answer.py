@@ -626,7 +626,8 @@ def _moat_check(composer, grounded_objs):
 
 
 # ── provenance + co-residence (anti-cheat 3) — SPIKES-ONLY for gen_spikes (the host-`M` closure) ──────────────
-def _provenance_check(bridge, composer, handles, ground_source, ground_phases, obj_word, source_kind):
+def _provenance_check(bridge, composer, handles, ground_source, ground_phases, obj_word, source_kind,
+                      device_resident=False):
     """Anti-cheat 3 (PROVENANCE — the load-bearing one for the cross-region host-`M` closure): the grounded code derives
     from the substrate's own LIVE SPIKES routed through a LEARNED synaptic route — NO host quantity is smuggled across
     regions — and the compose ran on the merged `rf` slice. Asserts, for the DEFAULT gen_spikes mode:
@@ -649,15 +650,20 @@ def _provenance_check(bridge, composer, handles, ground_source, ground_phases, o
         assert source_kind == "gen_concept_spikes", \
             f"FAIL provenance: gen_spikes grounding produced source_kind {source_kind!r} (expected gen_concept_spikes — " \
             f"the host-`M` cortex_it round-trip must NOT be on the grounding path)"
-        assert np.allclose(cb.concepts[obj_word], gen_grounded_phases(ground_source, handles["gen_proj"])), \
+        # re-derive the matching way (device-resident path re-projects on-device == the stored device code; the host
+        # path re-projects on host). Either way the codebook code must be the FIXED fan-in of the gen_concept SPIKES.
+        assert np.allclose(cb.concepts[obj_word],
+                           gen_grounded_phases(ground_source, handles["gen_proj"], device_resident=device_resident)), \
             f"FAIL provenance: {cb_attr}[{obj_word!r}] is not the gen_concept-SPIKES-derived grounded code (the write " \
             f"did not reach the codebook the binds read)"
         # (ii) the LEARNED convergence actually fired the gen_concept assembly for the rendered percept.
         assert float(np.asarray(ground_source).sum()) > 0.0, \
             f"FAIL provenance: gen_concept did not SPIKE for {obj_word!r} (the learned percept->concept route is dead)"
+        _devr = " [R4: P_read @ SPIKES runs ON-DEVICE; no host gen_proj@rate matmul, no to_host of the spike vector]" \
+            if device_resident else ""
         ground_write = ("composer.concepts[o] = angle(P_read @ gen_concept_SPIKES) — the LEARNED "
                         "gen_perception->gen_concept convergence grounds the percept; P_read only FORMATS the concept "
-                        "spikes into a phasor [NO host-`M`, NO cortex_it host round-trip]")
+                        "spikes into a phasor [NO host-`M`, NO cortex_it host round-trip]" + _devr)
         code_src = "gen_concept cp_firing_states (LEARNED convergence)"
         perc_write = "gen_perception <- structured_perception_set(object) DURING arrival [sensory render]"
     else:
@@ -687,6 +693,9 @@ def _provenance_check(bridge, composer, handles, ground_source, ground_phases, o
         "grounded_code_source": code_src,
         "grounded_code_is_spikes_only": bool(grounding == "gen_spikes"),
         "no_host_M_cross_region_quantity": bool(grounding == "gen_spikes"),
+        # R4: True iff the gen_proj@rate fan-in + the gen_concept-spike accumulation ran ON-DEVICE (no host matmul, no
+        # to_host of the spike vector) -- the perception->compose grounding host-marshal closed.
+        "grounding_handoff_device_resident": bool(device_resident),
         "composer_bound_to_merged_bridge": True,
         "rf_complex_weights_allocated_after_store": True,
         "codebook_attr": cb_attr,
@@ -752,7 +761,7 @@ def run_seed(seed, grounding=GROUNDING_DEFAULT, composer_kind=COMPOSER_DEFAULT, 
     samp = h.get("provenance_sample")
     if samp is not None:
         prov = _provenance_check(bridge, composer, h, samp["source"], samp.get("phases"), samp["obj"],
-                                 samp.get("source_kind"))
+                                 samp.get("source_kind"), device_resident=bool(samp.get("device_resident", False)))
 
     # --- LESION (anti-cheat 1, navsee cut-after-encode form): the held-out composites were composed UNDER the grounded
     # codebook; now SEVER the grounding and RE-GROUND the objects (degenerate codes), then re-cleanup those SAME
