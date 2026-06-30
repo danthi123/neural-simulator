@@ -1,0 +1,123 @@
+{
+  "summary": {
+    "n": 1,
+    "eq_host_n": 1,
+    "never_wrong_n": 1,
+    "over_abstain_total": 0,
+    "moat_n": 1,
+    "fa_total": 0,
+    "to_host_clean_n": 1,
+    "lesion_n": 1,
+    "off_byte_identical_n": 1,
+    "verdict": "GO",
+    "strict_eqhost": false,
+    "op": {
+      "match_thresh": 0.06,
+      "gain": 0.1,
+      "sigma": 1.0,
+      "input_gain": 1.0
+    },
+    "D": 256,
+    "V": 320,
+    "smoke": true,
+    "gpu": false
+  },
+  "results": [
+    {
+      "seed": 42,
+      "D": 256,
+      "readout": "neural",
+      "n_facts": 8,
+      "V": 320,
+      "VA": 8,
+      "VX": 7,
+      "rows": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "kind": "present",
+          "host": "apple",
+          "fused": "apple",
+          "want": "apple",
+          "fused_eq_host": true,
+          "correct": true,
+          "over_abstain": false,
+          "wrong": false
+        },
+        {
+          "cue": [
+            "cat",
+            "play"
+          ],
+          "kind": "present",
+          "host": "ball",
+          "fused": "ball",
+          "want": "ball",
+          "fused_eq_host": true,
+          "correct": true,
+          "over_abstain": false,
+          "wrong": false
+        },
+        {
+          "cue": [
+            "bird",
+            "sleep"
+          ],
+          "kind": "present",
+          "host": "tree",
+          "fused": "tree",
+          "want": "tree",
+          "fused_eq_host": true,
+          "correct": true,
+          "over_abstain": false,
+          "wrong": false
+        }
+      ],
+      "moat_rows": [
+        {
+          "cue": [
+            "dog",
+            "sing"
+          ],
+          "kind": "absent",
+          "host": null,
+          "fused": null,
+          "fused_eq_host": true
+        },
+        {
+          "cue": [
+            "cat",
+            "run"
+          ],
+          "kind": "absent",
+          "host": null,
+          "fused": null,
+          "fused_eq_host": true
+        }
+      ],
+      "eq_host": true,
+      "never_wrong": true,
+      "over_abstain": 0,
+      "strict_eqhost": false,
+      "moat_ok": true,
+      "fa": 0,
+      "to_host_clean": true,
+      "to_host_counter": {
+        "cleanup_membrane_reads": 0,
+        "total": 60
+      },
+      "lesion_fails_safe": true,
+      "lesion_answers": [
+        null,
+        null,
+        null
+      ],
+      "off_byte_identical": true,
+      "go": true,
+      "smoke": true,
+      "wall_s": 77.4
+    }
+  ]
+}
