@@ -68,11 +68,36 @@ from research.runners.rf_phasor_composer import RFPhasorComposer
 
 # --- the value-conflicted geometry: two facts that SHARE the cue role (agent) but differ in (action, patient) and in
 #     value. Cueing on the shared agent matches BOTH (both clear familiarity); only the value/DA prior disambiguates.
-VOCAB = ["dog", "chase", "cat", "see", "bird", "go", "north", "river", "apple", "run"]
+# EVERY word is drawn from the production composer's DEFAULT_VOCAB (rf_phasor_composer.DEFAULT_VOCAB, the 16-word probe
+# set the merged bridge uses), so the SAME facts are in-codebook on BOTH the CPU oracle AND the deployed merged composer
+# (the GPU path introspects agent.composer.words and asserts the picked words are present -- see _pick_conflict_facts).
+VOCAB = ["dog", "cat", "go", "run", "come", "stop", "look", "north", "south", "east", "west",
+         "apple", "river", "big", "small", "hot", "cold"]          # == rf_phasor_composer.DEFAULT_VOCAB
 CUE_ROLE = "agent"
-FACT_HI = {"agent": "dog", "action": "chase", "patient": "cat"}    # the (intended) HIGH-value memory
-FACT_LO = {"agent": "dog", "action": "see", "patient": "bird"}     # the (intended) LOW-value memory
-UNSTORED_CUE = "river"                                             # an agent NEVER stored -> the moat probe
+FACT_HI = {"agent": "dog", "action": "go", "patient": "north"}     # the (intended) HIGH-value memory
+FACT_LO = {"agent": "dog", "action": "run", "patient": "south"}    # the (intended) LOW-value memory (shares agent=dog)
+UNSTORED_CUE = "cat"                                               # an agent NEVER stored -> the moat probe (in-vocab)
+
+
+def _pick_conflict_facts(vocab, cue_role=CUE_ROLE):
+    """Derive the value-conflict facts from an ARBITRARY composer vocab (the GPU-path robustness the coordinator asked
+    for): pick an agent + a shared action + two DISTINCT patients + an UNSTORED agent cue, ALL in `vocab`, so both
+    facts share the cue-role word and differ only in (action, patient). PREFERS the module defaults (FACT_HI/FACT_LO/
+    UNSTORED_CUE) when they are all in-vocab (the common case, since they are DEFAULT_VOCAB words); else picks the first
+    suitable in-vocab words deterministically. Returns (fact_hi, fact_lo, unstored_cue). Asserts >=5 distinct words so
+    a valid agent/2-actions/2-patients/unstored selection always exists."""
+    vset = set(vocab)
+    default_words = {FACT_HI["agent"], FACT_HI["action"], FACT_HI["patient"],
+                     FACT_LO["action"], FACT_LO["patient"], UNSTORED_CUE}
+    if default_words <= vset:
+        return dict(FACT_HI), dict(FACT_LO), UNSTORED_CUE
+    ws = sorted(vset)
+    assert len(ws) >= 5, f"vocab too small ({len(ws)}) to build a value-conflict (need >= 5 distinct words)"
+    agent, action_hi, action_lo, patient_hi, patient_lo = ws[0], ws[1], ws[2], ws[3], ws[4]
+    unstored = ws[5] if len(ws) > 5 else ws[1]    # an in-vocab word never used as the stored agent (ws[0])
+    fhi = {cue_role: agent, "action": action_hi, "patient": patient_hi}
+    flo = {cue_role: agent, "action": action_lo, "patient": patient_lo}
+    return fhi, flo, unstored
 
 SEEDS = [42, 43, 44, 100, 101, 102]
 
@@ -343,7 +368,7 @@ def _seed_result_gpu(seed, D, beta, i_low, i_high, value_hi, value_lo):
     agent = MergedNavConvAgent(seed=seed, co_resident_limbic=True)
     nm = agent._merged_bridge.neuromodulator_manager
     assert nm is not None and "dopamine" in nm.modulator_names(), "the shared dopamine modulator must be present"
-    da_base = float(nm._config_by_name("dopamine").baseline)
+    da_base_cfg = float(nm._config_by_name("dopamine").baseline)
     snc_idx = _np.asarray(agent._merged_bridge.region_manager.indices("limbic_snc"), dtype=_np.int64)
     snc_idx_x = xp.asarray(snc_idx)
 
@@ -352,35 +377,52 @@ def _seed_result_gpu(seed, D, beta, i_low, i_high, value_hi, value_lo):
     # and the DA operating point is set by driving the shared SNc -- so the content-controlled comparison holds with
     # the REAL spiking dopamine. The DA is read live by da_fn at the moment of each valued_recall.
     comp = agent.composer
+    # FIX (KeyError 'see'): derive the conflict facts from the DEPLOYED composer's ACTUAL vocab (agent.composer.words),
+    # NOT the hardcoded module constants -- so every fact word is in the deployed codebook (comp.store -> _encode ->
+    # comp.concepts[word]). The defaults (FACT_HI/FACT_LO/UNSTORED_CUE) ARE DEFAULT_VOCAB words so they pass through
+    # unchanged on the standard 16-word merged build; the helper picks in-vocab words for any non-default vocab.
+    fhi, flo, unstored = _pick_conflict_facts(list(comp.words), cue_role=CUE_ROLE)
+    for wd in (fhi["agent"], fhi["action"], fhi["patient"], flo["action"], flo["patient"], unstored):
+        assert wd in comp.concepts, f"derived word {wd!r} not in the deployed composer codebook"
     comp.kb = []
-    w = DARecallVigorComposer(comp, da_fn=(lambda: float(nm.get_concentration("dopamine"))),
-                              beta=beta, da_baseline=da_base)
-    w.store_valued(FACT_LO["agent"], FACT_LO["action"], FACT_LO["patient"], value_lo)
-    w.store_valued(FACT_HI["agent"], FACT_HI["action"], FACT_HI["patient"], value_hi)
-    hi_patient, lo_patient = FACT_HI["patient"], FACT_LO["patient"]
-    cue = FACT_HI[CUE_ROLE]
+    w = DARecallVigorComposer(comp, da_fn=(lambda: float(nm.get_concentration("dopamine"))), beta=beta)
+    w.store_valued(flo["agent"], flo["action"], flo["patient"], value_lo)   # LO fact -> kb index 0
+    w.store_valued(fhi["agent"], fhi["action"], fhi["patient"], value_hi)   # HI fact -> kb index 1
+    hi_patient, lo_patient = fhi["patient"], flo["patient"]
+    cue = fhi[CUE_ROLE]
     V_NORMAL = [value_lo, value_hi]    # kb-index 0 = LO fact, 1 = HI fact -> HI fact carries value_hi
     V_PERMUT = [value_hi, value_lo]    # swap: the LO fact now carries value_hi
     V_EQUAL = [0.5, 0.5]
 
-    # --- HIGH DA: drive the SNc to the salient operating point; read normal vs permuted vs equal under high dopamine ---
+    # ORDER MATTERS on the real SNc (dopamine-EMA hysteresis): the lesion (tonic) reads run FIRST, on the fresh bridge,
+    # so the "prior off" reference is the agent's ACTUAL tonic DA at THAT sequence point. The salient burst then runs
+    # AFTER (raising the EMA above tonic). If the high-DA burst ran first, the EMA would not relax back to tonic within
+    # one settle, leaving residual DA at the "lesion" read -> the prior would not be off. Biologically correct
+    # (Niv-2007 / catalog C.20): tonic DA = the running reference; the PHASIC burst ABOVE it = the salience signal that
+    # scales recall vigor (da_term = beta*(DA - DA_tonic)). da_baseline is SET to the measured tonic DA so the prior is
+    # exactly off at the lesion reads.
+
+    # --- (1) LESION / TONIC DA FIRST: drive the SNc to tonic, set the reference = this tonic DA -> the prior is OFF;
+    #         the answer is INVARIANT to the value assignment (normal vs permuted give the SAME answer). ---
+    da_low, _r2 = _settle_snc(agent._merged_bridge, snc_idx_x, I_snc=i_low)
+    w.da_baseline = float(da_low)                    # reference = the agent's actual tonic DA (prior off at tonic)
+    w.values = V_NORMAL; a_les_n = w.valued_recall(cue)
+    w.values = V_PERMUT; a_les_p = w.valued_recall(cue)
+    moat_low = (w.candidate_indices(unstored) == []) and (w.valued_recall(unstored) is None)
+
+    # --- (2) HIGH (SALIENT) DA: drive the SNc to the salient burst (DA above tonic) -> the prior is ON; read normal vs
+    #         permuted vs equal. ---
     da_high, _r = _settle_snc(agent._merged_bridge, snc_idx_x, I_snc=i_high)
     w.values = V_NORMAL; a_norm = w.valued_recall(cue)
     cand = w.candidate_indices(cue); gate_correct = (sorted(cand) == [0, 1])
     _words, scores = w._cue_scores(cue)
     cand_scores = [float(scores[i]) for i in sorted(cand)] if gate_correct else []
     match_gap = float(abs(scores[0] - scores[1])) if len(scores) >= 2 else None
-    moat_high = (w.candidate_indices(UNSTORED_CUE) == []) and (w.valued_recall(UNSTORED_CUE) is None)
+    moat_high = (w.candidate_indices(unstored) == []) and (w.valued_recall(unstored) is None)
     w.values = V_PERMUT; a_perm = w.valued_recall(cue)
     w.values = V_EQUAL;  a_eq = w.valued_recall(cue)
-
-    # --- BASELINE DA (the DA-LESION): drive the SNc to tonic; the prior contribution -> 0 -> the answer is INVARIANT
-    #     to the value assignment (normal vs permuted give the SAME answer). ---
-    da_low, _r2 = _settle_snc(agent._merged_bridge, snc_idx_x, I_snc=i_low)
-    w.values = V_NORMAL; a_les_n = w.valued_recall(cue)
-    w.values = V_PERMUT; a_les_p = w.valued_recall(cue)
-    moat_low = (w.candidate_indices(UNSTORED_CUE) == []) and (w.valued_recall(UNSTORED_CUE) is None)
     w.values = V_NORMAL  # restore
+    da_tonic = float(da_low)                         # the reference used (== the tonic DA)
 
     headline_follows_value = (a_norm == hi_patient) and (a_perm == lo_patient)
     headline_pick_hi = (a_norm == hi_patient)
@@ -391,7 +433,9 @@ def _seed_result_gpu(seed, D, beta, i_low, i_high, value_hi, value_lo):
     seed_go = bool(headline_follows_value and gate_correct and lesion_value_invariant
                    and equal_neutral and permuted_follows_value and moat_ok)
     return {
-        "seed": seed, "da_high": da_high, "da_low": da_low, "da_baseline": da_base,
+        "seed": seed, "da_high": da_high, "da_low": da_low,
+        "da_baseline_used": da_tonic, "da_baseline_cfg": da_base_cfg,
+        "facts": {"hi": fhi, "lo": flo, "unstored_cue": unstored},
         "headline_answer": a_norm, "headline_pick_hi": headline_pick_hi,
         "headline_follows_value": headline_follows_value,
         "first_match_patient": w.first_match_patient(cue) if gate_correct else None,
@@ -421,7 +465,8 @@ def _print_report(per_seed, summary, mode):
     print("  moat-safe by construction (re-ranks ONLY within the gated set). VALIDATE-BY-FUNCTION (R4->R5).")
     print("=" * 118)
     for r in per_seed:
-        da_str = (f"DA_hi={r.get('da_high', float('nan')):.3f} DA_lo={r.get('da_low', float('nan')):.3f}"
+        da_str = (f"DA_hi={r.get('da_high', float('nan')):.3f} DA_lo={r.get('da_low', float('nan')):.3f} "
+                  f"DA_tonic_ref={r.get('da_baseline_used', float('nan')):.3f}"
                   if "da_high" in r else "DA=mock")
         gap = r.get("match_score_gap")
         print(f"  seed {r['seed']}: HEADLINE normal={r['headline_answer']!r} permuted={r['permuted_answer']!r} "
