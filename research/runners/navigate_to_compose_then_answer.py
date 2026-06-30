@@ -180,7 +180,7 @@ def _gen_read_projection(D_dim, n_concept, seed):
     return (rng.standard_normal((D_dim, n_concept)) + 1j * rng.standard_normal((D_dim, n_concept))).astype(np.complex128)
 
 
-def read_gen_concept_spikes(bridge, gen, obj_idx):
+def read_gen_concept_spikes(bridge, gen, obj_idx, device_resident=False):
     """LIVE `gen_concept` spiking response (per-neuron mean spike count) to object obj_idx's RENDERED percept, read OFF
     THE MERGED BRIDGE. The environment renders the object as its structured-perception set into `gen_perception` (the
     sensory render); the LEARNED rate-Hebbian `gen_perception->gen_concept` convergence then fires the NMDA-integrated
@@ -189,8 +189,15 @@ def read_gen_concept_spikes(bridge, gen, obj_idx):
 
     Object i is rendered as the i-th HELD-OUT gen concept's structured-perception set (`vis_sets[gen_held_out[i]]`),
     so the N_OBJECTS distinct objects map to N_OBJECTS DISTINCT semantic categories (one held-out per category) ->
-    category-distinct `gen_concept` codes. Returns the per-neuron gen_concept spike-rate vector (length = gen_concept
-    region size)."""
+    category-distinct `gen_concept` codes.
+
+    device_resident (R4 close, default False = the validated host path BYTE-UNCHANGED): when True, accumulate the
+    gen_concept spikes ON-DEVICE (a backend gather + add, NO per-step `to_host` of the firing carrier) and return the
+    rate as a BACKEND (device) array, so the downstream `gen_proj @ rate` fan-in runs on-device too (see
+    `gen_grounded_phases(device_resident=True)`). Closes the perception->compose grounding host-marshal (R4): the
+    gen_concept spike VECTOR never crosses host (only the final phases do, the R5 body-read). The False path keeps the
+    `fs = to_host(cp_firing_states)` accumulate verbatim. Returns the per-neuron mean gen_concept spike rate (a host
+    vector when False; a backend array when True)."""
     xp, _ = get_backend()
     perc_region = np.asarray(gen["perc_region"], dtype=np.int64)     # gen_perception global indices
     conc_region = np.asarray(gen["conc_region"], dtype=np.int64)     # gen_concept global indices
@@ -209,6 +216,11 @@ def read_gen_concept_spikes(bridge, gen, obj_idx):
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(GEN_SETTLE_STEPS):
         bridge._run_one_simulation_step()
+    if device_resident:
+        # R4 close: accumulate the gen_concept spikes ON-DEVICE (no per-step to_host of the firing carrier). Returns a
+        # BACKEND array so the fan-in projection (gen_grounded_phases) runs on-device too.
+        from research.runners._r4_grounding_onbridge import accumulate_conc_spikes_device
+        return accumulate_conc_spikes_device(bridge, xp.asarray(conc_region), GEN_READ_STEPS, drive_dev=drive_dev)
     conc_acc = np.zeros(conc_region.shape[0], dtype=np.float64)
     for _ in range(GEN_READ_STEPS):
         bridge.cp_external_input_current[:] = 0.0
@@ -220,10 +232,17 @@ def read_gen_concept_spikes(bridge, gen, obj_idx):
     return conc_acc / GEN_READ_STEPS                               # per-neuron mean gen_concept spike rate
 
 
-def gen_grounded_phases(conc_rate, gen_proj):
+def gen_grounded_phases(conc_rate, gen_proj, device_resident=False):
     """Spiking `gen_concept` response -> composer phases[D] in [0,1): the same `angle(proj @ rate)` FORMAT conversion the
     host_m mode used, but the input is the LEARNED-convergence-driven `gen_concept` SPIKES (not the raw cortex_it rate),
-    so the load-bearing grounding is SYNAPTIC. `_to_phasor(phases) = exp(2pi i phases) = exp(i angle(proj @ conc_rate))`."""
+    so the load-bearing grounding is SYNAPTIC. `_to_phasor(phases) = exp(2pi i phases) = exp(i angle(proj @ conc_rate))`.
+
+    device_resident (R4 close, default False): when True, `conc_rate` is a BACKEND (device) array and the fixed
+    cortico-cortical fan-in `gen_proj @ rate` + `angle()` run ON-DEVICE (no host `gen_proj @ rate` matmul), only the
+    final D-length phases crossing host (the R5 body-read). == the host matmul to numerical tolerance."""
+    if device_resident:
+        from research.runners._r4_grounding_onbridge import device_resident_grounded_phases
+        return device_resident_grounded_phases(conc_rate, gen_proj)
     z = gen_proj @ conc_rate.astype(np.complex128)
     return (np.angle(z) % (2.0 * np.pi)) / (2.0 * np.pi)
 
@@ -249,7 +268,8 @@ def lesion_gen_convergence(bridge, gen):
 
 # ── the merged nav-body + perception(cortex_it) + co-resident composer bridge ────────────────────────────────
 def build_compose_bridge(seed: int = 42, with_body: bool = True, co_resident_generalization: bool = True,
-                         grounding: str = GROUNDING_DEFAULT, composer_kind: str = COMPOSER_DEFAULT):
+                         grounding: str = GROUNDING_DEFAULT, composer_kind: str = COMPOSER_DEFAULT,
+                         device_resident_grounding: bool = False):
     """Build the merged nav+conv bridge WITH the perception region(s) + the co-resident composer, and construct the
     navsee-style navigation handles (readout/cortex/tonic) against it + the grounded-code read-projection.
 
@@ -324,6 +344,9 @@ def build_compose_bridge(seed: int = 42, with_body: bool = True, co_resident_gen
         "with_body": bool(with_body),
         "grounding": grounding,
         "composer_kind": composer_kind,
+        # R4 close (default False = the validated host grounding path BYTE-UNCHANGED): the perception->compose
+        # grounding hand-off runs device-resident (no host gen_proj@rate matmul, no to_host of the gen_concept spikes).
+        "device_resident_grounding": bool(device_resident_grounding),
         "it_indices": xp.asarray(it_indices),
         "it_indices_host": it_indices,
         "rf_base": int(handles["rf_base"]),
@@ -399,14 +422,20 @@ def _perceive_and_ground(bridge, composer, handles, proj, obj_word):
     captured for the provenance assert."""
     obj_idx = OBJECT_WORDS.index(obj_word)
     grounding = handles.get("grounding", GROUNDING_DEFAULT)
+    # R4 close (default False = the validated host path): when True, the gen_concept spike accumulation + the fixed
+    # cortico-cortical fan-in projection + angle() run ON-DEVICE (no host gen_proj@rate matmul, no to_host of the
+    # gen_concept spike VECTOR), only the final phases crossing host (the R5 body-read). gen_spikes mode only.
+    device_resident = bool(handles.get("device_resident_grounding", False)) and grounding == "gen_spikes"
     cc = bridge.core_config
     prev_ou, prev_std = cc.enable_ou_process, cc.ou_std_current_pA
     cc.enable_ou_process, cc.ou_std_current_pA = True, 20.0
     try:
         if grounding == "gen_spikes":
             # SPIKES-ONLY: render percept -> learned convergence -> gen_concept SPIKES -> fixed-format phasor.
-            source_vec = read_gen_concept_spikes(bridge, handles["gen"], obj_idx)   # gen_concept cp_firing_states
-            phases = gen_grounded_phases(source_vec, handles["gen_proj"])           # angle(P_read @ concept_spikes)
+            source_vec = read_gen_concept_spikes(bridge, handles["gen"], obj_idx,
+                                                 device_resident=device_resident)   # gen_concept cp_firing_states
+            phases = gen_grounded_phases(source_vec, handles["gen_proj"],
+                                         device_resident=device_resident)           # angle(P_read @ concept_spikes)
             source_kind = "gen_concept_spikes"
         else:
             # LEGACY host_m: cortex_it live rate -> host-`M` random projection (the retired round-trip; A/B only).
@@ -432,10 +461,14 @@ def _perceive_and_ground(bridge, composer, handles, proj, obj_word):
     if obj_word not in handles["grounded_objects"]:
         handles["grounded_objects"].append(obj_word)
     # capture the FIRST grounded object's (source_vec, phases) for the provenance assert (the grounded code == the live
-    # read), so provenance never needs a second live read that would consume different OU noise.
+    # read), so provenance never needs a second live read that would consume different OU noise. source_vec may be a
+    # BACKEND (device) array under the R4 device-resident path -> bring it to host for the capture (to_host is a
+    # passthrough on numpy; the phases are always host). The captured device_resident flag lets the provenance check
+    # re-derive the code the matching way.
     if "provenance_sample" not in handles:
-        handles["provenance_sample"] = {"obj": obj_word, "source": np.asarray(source_vec).copy(),
-                                        "phases": phases.copy(), "source_kind": source_kind}
+        handles["provenance_sample"] = {"obj": obj_word, "source": np.asarray(to_host(source_vec)).copy(),
+                                        "phases": phases.copy(), "source_kind": source_kind,
+                                        "device_resident": bool(device_resident)}
     return source_vec, phases
 
 
@@ -665,10 +698,10 @@ def _provenance_check(bridge, composer, handles, ground_source, ground_phases, o
 
 
 # ── one seed: the COUPLED compose episode + the LESION + ISOLATED-PERCEPTION controls ─────────────────────────
-def run_seed(seed, grounding=GROUNDING_DEFAULT, composer_kind=COMPOSER_DEFAULT):
+def run_seed(seed, grounding=GROUNDING_DEFAULT, composer_kind=COMPOSER_DEFAULT, device_resident_grounding=False):
     xp, backend = get_backend()
-    print(f"\n[navcompose] ===== seed {seed} (backend={backend}, grounding={grounding}, composer={composer_kind}) =====",
-          flush=True)
+    print(f"\n[navcompose] ===== seed {seed} (backend={backend}, grounding={grounding}, composer={composer_kind}, "
+          f"device_resident_grounding={device_resident_grounding}) =====", flush=True)
     chance = 1.0 / N_OBJECTS
 
     layout = default_object_layout(seed)
@@ -680,7 +713,8 @@ def run_seed(seed, grounding=GROUNDING_DEFAULT, composer_kind=COMPOSER_DEFAULT):
 
     # --- COUPLED: navigate + perceive+ground the encountered objects in-episode, then COMPOSE held-out facts. ---
     bridge, composer, h, proj = build_compose_bridge(seed, with_body=True, grounding=grounding,
-                                                     composer_kind=composer_kind)
+                                                     composer_kind=composer_kind,
+                                                     device_resident_grounding=device_resident_grounding)
     print(f"[navcompose] merged bridge: {int(bridge.core_config.num_neurons)} neurons, readout={h.get('readout_region')}_X; "
           f"rf_base={h['rf_base']} cortex_it_base={int(h['it_indices_host'][0])} grounding={h['grounding']}", flush=True)
 
@@ -749,7 +783,8 @@ def run_seed(seed, grounding=GROUNDING_DEFAULT, composer_kind=COMPOSER_DEFAULT):
 
     # --- ISOLATED-PERCEPTION: NO body -> never traverses -> never arrives -> nothing grounded -> nothing composes. ---
     bridge_ip, composer_ip, h_ip, proj_ip = build_compose_bridge(seed, with_body=False, grounding=grounding,
-                                                                 composer_kind=composer_kind)
+                                                                 composer_kind=composer_kind,
+                                                                 device_resident_grounding=device_resident_grounding)
     ep_ip = run_compose_episode(bridge_ip, composer_ip, h_ip, proj_ip, layout, start_pos, route_waypoints, perceive=True)
     grounded_ip = list(h_ip["grounded_objects"])
     print(f"[navcompose]  ISO-PERC  no body -> grounded {len(grounded_ip)} objects in-episode (expect 0)", flush=True)
@@ -806,6 +841,10 @@ def main():
     ap.add_argument("--composer", type=str, default=COMPOSER_DEFAULT, choices=["rf", "onebrain"],
                     help="rf (DEFAULT, the MergedRFComposer oracle) | onebrain (the production-default persistent-loop "
                          "CoResidentOneBrainComposer — purity #1 Route-B Option-3: spikes-only grounding on the one brain)")
+    ap.add_argument("--device-resident-grounding", action="store_true",
+                    help="R4 close (default OFF = the validated host grounding path): run the perception->compose "
+                         "grounding hand-off DEVICE-RESIDENT (no host gen_proj@rate matmul, no to_host of the "
+                         "gen_concept spike VECTOR; only the final phases cross host, the R5 body-read). gen_spikes only.")
     ap.add_argument("--out", type=str, default="research/findings/raw/navigate_to_compose_then_answer.json")
     args = ap.parse_args()
 
@@ -813,7 +852,8 @@ def main():
     print(f"[navcompose] backend={backend} grounding={args.grounding} composer={args.composer} — does the agent NAVIGATE, "
           f"GROUND perceived objects IN-EPISODE ({'gen_concept SPIKES via the LEARNED convergence' if args.grounding == 'gen_spikes' else 'cortex_it rate -> host-M'}), "
           f"and COMPOSE novel perceived-object facts on ONE bridge (held-out >> floor, moat intact)?", flush=True)
-    results = [run_seed(s, grounding=args.grounding, composer_kind=args.composer) for s in args.seeds]
+    results = [run_seed(s, grounding=args.grounding, composer_kind=args.composer,
+                        device_resident_grounding=args.device_resident_grounding) for s in args.seeds]
 
     any_breach = any(r["moat_breach"] for r in results)
     all_go = all(r["go"] for r in results)

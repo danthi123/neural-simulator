@@ -1637,7 +1637,8 @@ class MergedNavConvAgent:
                  nav_critic_place_selforg=None, nav_critic_grid_frontend=None,
                  co_resident_td_cueshift=False,
                  co_resident_perception=False, co_resident_generalization=False,
-                 perception_grounding="gen_spikes", co_resident_command_route=None,
+                 perception_grounding="gen_spikes", perception_device_resident=False,
+                 co_resident_command_route=None,
                  enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
                  enable_da_encoding_gain=True, da_encoding_k=2.0,
                  da_encoding_g_min=0.5, da_encoding_g_max=3.0,
@@ -1878,6 +1879,10 @@ class MergedNavConvAgent:
         self.perception_grounding = str(perception_grounding)
         if self.perception_grounding not in ("gen_spikes", "host_m"):
             raise ValueError(f"perception_grounding must be 'gen_spikes' or 'host_m', got {perception_grounding!r}")
+        # R4 close (default False = the validated host grounding path): run the gen_spikes perception->compose grounding
+        # hand-off DEVICE-RESIDENT (no host gen_proj@rate matmul, no to_host of the gen_concept spike VECTOR; only the
+        # final phases cross host, the R5 body-read). gen_spikes only; the fixed cortico-cortical fan-in runs on-device.
+        self.perception_device_resident = bool(perception_device_resident)
         # co_resident_generalization (the gen stack — structured-perception gen_perception -> NMDA gen_concept ->
         # gen_fact + the trained-then-frozen rate-Hebbian convergence). gen_spikes grounding REQUIRES it (the learned
         # convergence does the percept->concept grounding); it is also independently usable for the generalization
@@ -2109,6 +2114,9 @@ class MergedNavConvAgent:
             "composer_kind": self.co_resident_composer_kind,
             "it_indices": self._handles["cortex_it_indices_xp"],
             "grounded_objects": self._grounded_objects,
+            # R4 close (default False): the gen_spikes grounding hand-off runs device-resident (no host gen_proj@rate
+            # matmul, no to_host of the gen_concept spike VECTOR; only the final phases cross host, the R5 body-read).
+            "device_resident_grounding": self.perception_device_resident,
         }
         if self.perception_grounding == "gen_spikes":
             # the gen handles the standalone `_perceive_and_ground`/`read_gen_concept_spikes` consult for the
