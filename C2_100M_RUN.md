@@ -18,13 +18,26 @@ python -m research.runners._genseq_C2_scaleup_runner --d-model 768 --n-layers 12
 It was launched detached (survives a closed terminal); live log at `research/findings/raw/_c2_100M_live.log`.
 
 ## Monitor (anytime, safe — no GPU contention)
+
+**Authoritative progress — use this (survives reboots).** The detached run's live log can get
+*orphaned* by a PC reboot (its stdout redirect breaks), so the log may show a stale step. The
+checkpoint is the source of truth — read the real step + recent loss anytime:
+```powershell
+python -c "import torch; d=torch.load(r'research/findings/raw/c2_scaleup_100M/genf.ckpt.pt', map_location='cpu', weights_only=True); print('step', d['step'], '/ 450000  (', round(100*d['step']/450000,1), '%)  recent loss', [round(float(x),3) for x in d['loss_history'][-5:]])"
+```
+Confirm it's actively training — GPU busy AND the checkpoint timestamp advancing (it saves every ~500 steps):
 ```powershell
 nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader   # ~80-100% once training
-Get-Content research\findings\raw\_c2_100M_live.log -Tail 20                # heldout ppl every 1000 steps
+Get-Item research\findings\raw\c2_scaleup_100M\genf.ckpt.pt | Select-Object LastWriteTime
 ```
-The first ~10–30 min is a one-time, CPU-bound BPE tokenization of the 127M-char corpus (GPU sits at
-~1%, model loaded — this is normal). Then GPU utilization jumps to ~80–100% and the held-out
-perplexity starts descending (target ~6–10).
+
+**Live log (secondary — may be stale after a reboot):**
+```powershell
+Get-Content research\findings\raw\_c2_100M_live.log -Tail 20                # step / held-out ppl stream
+```
+On a *fresh* start the first ~10–30 min is a one-time CPU-bound BPE tokenization (GPU ~1%, normal);
+then GPU jumps to ~80–100% and held-out perplexity descends (target ~6–10). On a *resume* the BPE +
+tokens load from cache instantly, so training re-engages within ~1 min.
 
 ## Pause / resume / stop (e.g. to game)
 - **Pause / free the GPU:**
