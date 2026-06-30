@@ -124,8 +124,13 @@ break is in play.)
 **Regression** (`tests/test_merged_rf_composer_coresident.py`, `SIM_BACKEND=numpy`): **5/5 PASS** — the default path is
 byte-unchanged (the device-resident flag defaults OFF; the change is purely additive).
 
-**De-risk smoke** (`_r4_grounding_onbridge.py` main, `SIM_BACKEND=numpy`, seed 42, the LIVE merged bridge): __[CPU-SMOKE
-RESULT PLACEHOLDER — filled below once the run lands]__.
+The unit tests are the CONCLUSIVE, fast CPU proof of the load-bearing R4 properties (==host to 1e-9 + the firing
+carrier stays device-resident — they pin exactly the close). The full LIVE-merged-bridge de-risk
+(`_r4_grounding_onbridge.py` main, `SIM_BACKEND=numpy`) is dominated by the numpy-CPU gen-stack convergence-training
+build (~10-15 min, the same cost as the navcompose runner build) and is the controller's CPU/GPU run (see §5) — it
+exercises the property on the live bridge but adds nothing the unit tests don't already prove. (NOTE on the de-risk's
+==host: the host read + the device read are SEPARATE perception windows; the de-risk rests OU off so they are
+deterministic + equal, and falls back to a phasor-cosine >0.9999 check if a residual remains.)
 
 ---
 
@@ -136,10 +141,10 @@ The decisive validation is the full navigate-to-compose 6-seed with the device-r
 (the controller's run), then the integration 6-seed:
 
 ```bash
-# 1) the device-resident grounding de-risk (==host + gen_concept-spike to_host gone), 6 seeds:
-SIM_BACKEND=cupy python -u -m research.runners._r4_grounding_onbridge --seeds 42 43 44 100 101 102 \
+# 1) the device-resident grounding de-risk (==host + gen_concept-spike to_host gone), 6 seeds.
+#    NOTE: _r4_grounding_onbridge's --seeds is COMMA-separated (the navcompose runner's --seeds is SPACE-separated).
+SIM_BACKEND=cupy python -u -m research.runners._r4_grounding_onbridge --seeds 42,43,44,100,101,102 \
     --out research/findings/raw/_r4_grounding_onbridge.json
-#    (note: --seeds is comma-OR-space? the runner splits on ","; use: --seeds 42,43,44,100,101,102)
 
 # 2) the integration 6-seed: navigate-to-compose with the device-resident grounding ON (gen_spikes), rf composer:
 SIM_BACKEND=cupy python -u -m research.runners.navigate_to_compose_then_answer \
