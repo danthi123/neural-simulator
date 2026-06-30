@@ -115,10 +115,10 @@ that marshalled the data to host is GONE.
 **`research/runners/navigate_to_compose_then_answer.py` (wired, opt-in):**
 - `read_gen_concept_spikes(..., device_resident=False)` — `:183` — True routes through
   `accumulate_conc_spikes_device` (device array out); False = the verbatim host accumulate.
-- `gen_grounded_phases(..., device_resident=False)` — `:223` — True routes through
+- `gen_grounded_phases(..., device_resident=False)` — `:235` — True routes through
   `device_resident_grounded_phases` (on-device fan-in); False = the verbatim host matmul.
-- `_perceive_and_ground` — `:401-414` — reads `handles["device_resident_grounding"]` (gen_spikes only) and passes it
-  through; the provenance capture brings the (possibly-device) source to host via `to_host` (`:462`).
+- `_perceive_and_ground` — `:405` (flag read `:428`) — reads `handles["device_resident_grounding"]` (gen_spikes only)
+  and passes it through; the provenance capture brings the (possibly-device) source to host via `to_host`.
 - `build_compose_bridge(..., device_resident_grounding=False)` / `run_seed(..., device_resident_grounding=False)` / the
   `--device-resident-grounding` CLI flag — all default OFF.
 
@@ -151,8 +151,9 @@ carrier stays device-resident — they pin exactly the close). The full LIVE-mer
 (`_r4_grounding_onbridge.py` main, `SIM_BACKEND=numpy`) is dominated by the numpy-CPU gen-stack convergence-training
 build (~10-15 min, the same cost as the navcompose runner build) and is the controller's CPU/GPU run (see §5) — it
 exercises the property on the live bridge but adds nothing the unit tests don't already prove. (NOTE on the de-risk's
-==host: the host read + the device read are SEPARATE perception windows; the de-risk rests OU off so they are
-deterministic + equal, and falls back to a phasor-cosine >0.9999 check if a residual remains.)
+==host, FIXED 2026-06-30: it now accumulates the gen_concept spikes ONCE and formats that ONE shared snapshot BOTH
+ways — host matmul vs on-device — so the comparison isolates the close (the GEMV backend) and is NOT confounded by
+cross-window spike-snapshot variance, which was the GPU NEGATIVE's cause. See the UPDATE at the top.)
 
 ---
 
