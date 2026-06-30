@@ -93,8 +93,17 @@ class EmbeddedClauseParser:
     Reuse-by-import: `AttributedBridgeParser` (per-span role read-out, neural), `OrderedPositionWM` (the WM-hold,
     neural). NO sim/ edit."""
 
-    def __init__(self, seed=42, use_wm_hold=True, scramble_role_map=False):
+    def __init__(self, seed=42, use_wm_hold=True, scramble_role_map=False,
+                 nouns=None, verbs=None, relativizers=None, ignorable=None):
         self.seed = int(seed)
+        # The closed-class lexicon (the environment/lexicon front end -- a host POS lookup, the FLAGGED shortcut).
+        # Default (None) = the module-level probe lexicon (byte-identical to the de-risk's own runs). A caller (e.g.
+        # the production BrainConversationalAgent.hear_nested) supplies its OWN vocab so the SAME mechanism parses
+        # any noun/verb set -- exactly as hear_multiframe takes a known-verb set. The instance `_kind` prefers these.
+        self._nouns = list(nouns) if nouns is not None else list(NOUNS)
+        self._verbs = set(verbs) if verbs is not None else set(VERBS)
+        self._relativizers = set(relativizers) if relativizers is not None else set(RELATIVIZERS)
+        self._ignorable = set(ignorable) if ignorable is not None else set(IGNORABLE)
         # The per-span role reader (NEURAL: the (from-START x from-END x voice) -> role spiking read-out, GO 6/6).
         # scramble_role_map (the LESION/permuted-head anti-cheat) flips its from-END factor off so the structural
         # role map is broken — roles must then NOT resolve.
@@ -102,9 +111,23 @@ class EmbeddedClauseParser:
         # The WM-hold of the suspended matrix head (NEURAL: the gamma-slot RF phasor stack; PUSH = bind-to-slot,
         # POP = read-slot, with the calibrated familiarity moat). vocab = the noun set the head can be.
         self.use_wm_hold = bool(use_wm_hold)
-        self.wm = OrderedPositionWM(seed=seed, vocab=list(NOUNS), n_slots=4, cleanup_words=list(NOUNS))
+        self.wm = OrderedPositionWM(seed=seed, vocab=list(self._nouns), n_slots=4,
+                                    cleanup_words=list(self._nouns))
         # cache the parser's per-position role labels for a clean n-word SVO frame (computed once per n, in spikes).
         self._role_cache = {}
+
+    def _kind(self, tok):
+        """Instance closed-class lookup (prefers this parser's own lexicon over the module globals). 'rel' =
+        relativizer, 'v' = verb, 'n' = noun, 'det' = ignorable determiner, None = unknown (-> the moat abstains)."""
+        if tok in self._relativizers:
+            return "rel"
+        if tok in self._verbs:
+            return "v"
+        if tok in self._nouns:
+            return "n"
+        if tok in self._ignorable:
+            return "det"
+        return None
 
     # --- the neural per-span role read-out (cached; one spiking read per (n, voice, position)) ---
     def _span_roles(self, n, voice=0):
@@ -141,7 +164,7 @@ class EmbeddedClauseParser:
         isolates the HOLD, not the segmentation."""
         if held is None or not self.use_wm_hold:
             return fallback
-        word, _match = self.wm.read_slot(held, "pos0", words=list(NOUNS))
+        word, _match = self.wm.read_slot(held, "pos0", words=list(self._nouns))
         return word        # None if the latch lost the head (the moat) — the caller treats that as a parse failure
 
     # --- segmentation (the host lexical cue front end; the FLAGGED shortcut) + the two-pass role assignment ---
@@ -152,8 +175,8 @@ class EmbeddedClauseParser:
 
         depth-1 relative clauses (subject- AND object-extracted), plus a flat SVO (no relativizer -> nested=False)."""
         toks = [t for t in (flat_tokens.split() if isinstance(flat_tokens, str) else list(flat_tokens))
-                if _kind(t) != "det"]
-        kinds = [_kind(t) for t in toks]
+                if self._kind(t) != "det"]
+        kinds = [self._kind(t) for t in toks]
         if any(k is None for k in kinds):
             return None                                   # an unknown token -> abstain (moat)
 
@@ -176,7 +199,7 @@ class EmbeddedClauseParser:
         if ri == 0:
             return None                                   # a relativizer needs a head noun before it -> abstain
         head = toks[ri - 1]
-        if _kind(head) != "n":
+        if self._kind(head) != "n":
             return None
 
         # PUSH: open the embedded constituent + HOLD the suspended matrix head (NEURAL WM latch).
@@ -193,7 +216,7 @@ class EmbeddedClauseParser:
             return None
 
         # subject- vs object-relative: is there a SUBJECT inside the embedded span (a noun before the embedded verb)?
-        emb_kinds = [_kind(t) for t in embedded_toks]
+        emb_kinds = [self._kind(t) for t in embedded_toks]
         if emb_kinds[0] == "v":
             # SUBJECT-relative: "dog that [chase cat]" — the head is the embedded AGENT (gap in subject position).
             # Reconstruct the 3-slot S-V-O span by injecting the head into slot 0, then read roles NEURALLY.
@@ -211,7 +234,7 @@ class EmbeddedClauseParser:
         else:
             return None
 
-        if len(span) != 3 or _kind(span[1]) != "v":
+        if len(span) != 3 or self._kind(span[1]) != "v":
             return None
         emb_roles = self._span_roles(3)                   # NEURAL role read-out over the reconstructed local positions
         emb = {emb_roles[i]: span[i] for i in range(3)}
@@ -226,10 +249,10 @@ class EmbeddedClauseParser:
             m_roles = self._span_roles(2)                 # NEURAL role read-out (2-slot S-V)
             mm = {m_roles[i]: m_span[i] for i in range(2)}
             matrix = (mm.get("agent"), mm.get("action"), None)
-        elif len(matrix_tail) == 3 and [_kind(t) for t in matrix_tail] == ["v", "n", "n"]:
+        elif len(matrix_tail) == 3 and [self._kind(t) for t in matrix_tail] == ["v", "n", "n"]:
             # transitive matrix with its own object would be a 2-verb-after-rel case (out of the strict 2-verb scope)
             return None
-        elif len(matrix_tail) == 2 and [_kind(t) for t in matrix_tail] == ["v", "n"]:
+        elif len(matrix_tail) == 2 and [self._kind(t) for t in matrix_tail] == ["v", "n"]:
             m_span = [m_head, matrix_tail[0], matrix_tail[1]]   # [head, V, O]
             m_roles = self._span_roles(3)
             mm = {m_roles[i]: m_span[i] for i in range(3)}

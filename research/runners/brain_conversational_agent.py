@@ -178,6 +178,8 @@ class BrainConversationalAgent:
                  enable_attributed=True, enable_multiframe=True, integrated_loop=False,
                  enable_multicue_competition=False, multicue_verbs=None,
                  enable_case_competition=False, case_verbs=None, case_lexicon=None,
+                 enable_embedded_clause=False, embedded_nouns=None, embedded_verbs=None,
+                 embedded_relativizers=None, embedded_readout_redundancy=3,
                  defer_parser=False, communicable_mode=False, communicable_draw="spiking",
                  communicable_config=None, speak_value_Q=None, D=128):
         """`concepts` (optional) = a {word: code} dict to set the vocabulary instead of the defaults. The parser is
@@ -346,6 +348,25 @@ class BrainConversationalAgent:
         # onebrain SVO path is unchanged). Validated GO 6/6 (2026-06-18-frame-selection-GO.md). Built lazily.
         self.enable_multiframe = bool(enable_multiframe)
         self._frame_parser = None
+        # (richer-syntax #3, opt-in) EMBEDDED-CLAUSE parsing: a two-pass parser SEGMENTS a depth-1 embedded relative
+        # clause from a FLAT token stream ('dog that chase cat run') + role-assigns BOTH the embedded clause AND the
+        # matrix clause with the SAME neural conjunctive position-code read-out, holding the suspended matrix head in
+        # the spiking WM latch. `hear_nested(flat_sentence)` parses + stores the matrix fact with the parsed embedded
+        # Clause as its patient -- replacing the host-constructed Clause that `hear_clause_fact` required. Default OFF
+        # = byte-identical (the parser is never constructed; hear_nested asserts-off). Validated GO 6/6 @ 1.000 with
+        # the population-redundancy read-out (2026-06-19-embedded-clause-{parse,redundancy}-derisk.md). Reuse-by-import
+        # (EmbeddedClauseParser + RedundantEmbeddedReadout from _phaseB_embedded_clause_parse_derisk); NO sim/ edit.
+        # The closed-class lexicon (which token is a relativizer/verb/noun) is the legitimate environment/lexicon
+        # front end (same as FrameParser's known-verb set); default = the agent's own vocab (verbs auto-default to the
+        # NOUNS/VERBS probe sets when not supplied). embedded_readout_redundancy>1 wraps the embedded read-out in R
+        # majority-voting phasor replicas (the validated lever lifting the 0.88 marginal seeds to 1.000); the matrix
+        # parse + the moat are unchanged. Built lazily/cached.
+        self.enable_embedded_clause = bool(enable_embedded_clause)
+        self._embedded_nouns = list(embedded_nouns) if embedded_nouns else None
+        self._embedded_verbs = set(embedded_verbs) if embedded_verbs else None
+        self._embedded_relativizers = set(embedded_relativizers) if embedded_relativizers else None
+        self._embedded_readout_redundancy = max(1, int(embedded_readout_redundancy))
+        self._embedded_parser = None
         # (robust-comprehension wire-in, opt-in) multi-cue role COMPETITION: route hear()'s AGENT/PATIENT decision
         # through the validated SPIKING multi-cue role-competition (MultiCueRoleParser -- de-risk
         # 2026-06-19-multicue-competition-spiking-derisk.md, GO), so DEGRADED English (object-fronted / scrambled
@@ -418,6 +439,68 @@ class BrainConversationalAgent:
             self.parser = BridgeParser(seed=self.seed)   # trains in __init__ (defer_train default False) == the eager build
             self._parser_trained_count += 1
         return self.parser
+
+    def _ensure_embedded_parser(self):
+        """Lazily build + cache the `EmbeddedClauseParser` (the two-pass depth-1 relative-clause parser; its neural
+        sub-parsers train once on first use). The lexicon defaults to the de-risk's validated NOUNS/VERBS probe sets
+        unless the caller supplied embedded_nouns/verbs/relativizers (the environment/lexicon front end). When
+        embedded_readout_redundancy>1, a `RedundantEmbeddedReadout` (R majority-voting phasor replicas) is also built
+        so the redundant embedded decode is available via query_nested -- the validated lever that lifts the marginal
+        seeds to 1.000; what_does reads the agent's single persistent composer (the canonical store)."""
+        if self._embedded_parser is None:
+            from research.runners._phaseB_embedded_clause_parse_derisk import (
+                EmbeddedClauseParser, RedundantEmbeddedReadout)
+            self._embedded_parser = EmbeddedClauseParser(
+                seed=self.seed, nouns=self._embedded_nouns, verbs=self._embedded_verbs,
+                relativizers=self._embedded_relativizers)
+            self._embedded_redundant = None
+            if self._embedded_readout_redundancy > 1:
+                # the redundant embedded read-out: R independent phasor codebooks over the composer's vocab, voted
+                # per slot (the population-redundancy robustness lever; reuse-by-import). query_nested uses it.
+                vocab = getattr(self.composer, "words", None)
+                D = getattr(self.composer, "D", 128)
+                self._embedded_redundant = RedundantEmbeddedReadout(
+                    seed=self.seed, D=D, vocab=list(vocab) if vocab is not None else None,
+                    n_replicas=self._embedded_readout_redundancy)
+        return self._embedded_parser
+
+    def hear_nested(self, flat_sentence, voice="active", polarity=None):
+        """Comprehend a FLAT token stream that may contain a depth-1 embedded relative clause ('dog that chase cat
+        run') -- the two-pass parser SEGMENTS the embedded clause + role-assigns BOTH clauses NEURALLY (the spiking
+        conjunctive position-code read-out + the spiking WM-latch hold of the suspended matrix head), then stores the
+        matrix fact with the PARSED embedded `Clause` as its patient (replacing the host-constructed `Clause` that
+        `hear_clause_fact` required). A non-nested SVO is stored as a plain flat fact (nested=False). Returns the
+        parse dict ({'matrix','embedded','nested'}) or None on an unparseable / garbled stream (the no-confab moat:
+        store nothing, return None). Requires enable_embedded_clause=True. After a nested store,
+        what_does(matrix_agent, matrix_action) decodes the embedded clause. (Richer-syntax #3.)"""
+        assert self.enable_embedded_clause, \
+            "hear_nested needs BrainConversationalAgent(enable_embedded_clause=True)"
+        parser = self._ensure_embedded_parser()
+        parsed = parser.parse_nested(flat_sentence)
+        if parsed is None:
+            return None                                       # unparseable / garbled -> abstain (moat), store nothing
+        m_agent, m_action, m_patient = parsed["matrix"]
+        if parsed["nested"]:
+            emb = parsed["embedded"]                          # the parsed embedded Clause (was host-constructed)
+            self.composer.store(m_agent, m_action, emb, polarity=polarity)
+            if self._embedded_redundant is not None:          # mirror the nested fact into the redundant read-out
+                self._embedded_redundant.store(m_agent, m_action, emb, polarity=polarity)
+        else:
+            self.composer.store(m_agent, m_action, m_patient, polarity=polarity)
+            if self._learned_assoc is not None:
+                self._learned_assoc.store_fact([m_agent, m_action, m_patient])
+        return parsed
+
+    def query_nested(self, agent, action):
+        """Decode an embedded-clause patient via the population-redundancy read-out (R majority-voting phasor
+        replicas) -- the validated lever that lifts the marginal-seed embedded decode to 1.000. Falls back to the
+        agent's single composer when redundancy is off (R=1). The no-confab moat is preserved (all replicas / the
+        composer abstain -> None). Requires enable_embedded_clause=True + a prior hear_nested store."""
+        assert self.enable_embedded_clause, \
+            "query_nested needs BrainConversationalAgent(enable_embedded_clause=True)"
+        if getattr(self, "_embedded_redundant", None) is not None:
+            return self._embedded_redundant.query_patient(agent, action)
+        return self.composer.query_patient(agent, action)
 
     def _ensure_attr_parser(self):
         """Lazily build + train the `AttributedBridgeParser` (BRAIN-LOAD SPEEDUP: deferred so a loaded Q&A-only brain
