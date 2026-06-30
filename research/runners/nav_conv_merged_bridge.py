@@ -1641,6 +1641,7 @@ class MergedNavConvAgent:
                  enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
                  enable_da_encoding_gain=True, da_encoding_k=2.0,
                  da_encoding_g_min=0.5, da_encoding_g_max=3.0,
+                 enable_da_recall_vigor=False, da_recall_beta=8.0, da_recall_value_default=1.0,
                  onebrain_k_max=32):
         """Build the merged nav+parser+dlPFC bridge + the composer (same seed + vocab). The composer's vocab is the
         merged dlPFC vocab (the sorted probe vocab) so the dialogue-planning assemblies and the fact-memory codebook
@@ -1737,6 +1738,34 @@ class MergedNavConvAgent:
         self._da_encoding_k = float(da_encoding_k)
         self._da_encoding_g_min = float(da_encoding_g_min)
         self._da_encoding_g_max = float(da_encoding_g_max)
+        # --- DA RECALL-VIGOR hook (TRUE ONE BRAIN roadmap #6 READ side, the higher-leverage lever the Route-A/B
+        #     findings both point to — deep-research scoping 2026-06-30-tier2-6-limbic-to-composer-scoping.md Option 1;
+        #     validated GPU 6/6 GO on THIS deployed merged agent + the real spiking SNc,
+        #     research/runners/_tier2_6_da_recall_vigor_derisk.py). The shared spiking-SNc dopamine carries a
+        #     value/salience PRIOR that RE-RANKS *which* familiarity-cleared stored fact is RETRIEVED by a who/what
+        #     recall (Niv-2007 tonic-DA response vigor; Kandel/catalog O.19 + G.16 "value scales the accumulator drift
+        #     rate"; Lisman-Grace salience-gated retrieval): `score'_i = match_i + beta*(DA - DA_tonic)*value_i`, the
+        #     argmax wins. When True, the agent's `what_does`/`who_does` re-rank the cue-gated candidate set by this
+        #     value prior (via the validated `DARecallVigorComposer`, reuse-by-import) instead of taking the composer's
+        #     plain first-match. Default OFF = byte-identical (the composer's plain query_*; value tags ignored).
+        #     MOAT-SAFE BY CONSTRUCTION: the prior re-ranks ONLY within the familiarity-gated (exact-cue-decode-match)
+        #     candidate set — an UNSTORED cue yields an EMPTY set -> abstain (None) at every DA level, so the prior can
+        #     NEVER manufacture a false-accept (the no-confab moat is a HARD structural gate, not a tunable). The DA is
+        #     read from the SAME shared `dopamine` `_da_confidence_gate`/`_da_encoding_gain` read (off THIS agent's
+        #     merged bridge); the reference (DA_tonic) is the `dopamine` modulator baseline, so the prior is exactly OFF
+        #     at tonic DA (byte-identical at rest). NO `sim/` edit (composer-runner-layer read-side value prior; reuses
+        #     the composer's own on-substrate unbind/cleanup as the familiarity gate + match scores). The VALUE TAG per
+        #     fact is the fact's salience at ENCODING TIME = the live shared dopamine relative to baseline (a salient/
+        #     high-DA utterance encodes with higher value — the SAME Lisman-Grace salience the encoding-gain WRITE side
+        #     reads); facts heard at tonic DA carry value 0. `da_recall_value_default` is the value used only when the
+        #     bridge has NO `dopamine` modulator (no limbic/critic/TD slice co-resident) so the prior is otherwise a
+        #     no-op; the hook is meaningful only with a `dopamine` modulator present (the production default).
+        self.enable_da_recall_vigor = bool(enable_da_recall_vigor)
+        self._da_recall_beta = float(da_recall_beta)
+        self._da_recall_value_default = float(da_recall_value_default)
+        self._da_recall_baseline = 0.5            # resolved from the `dopamine` modulator baseline in __init__ (below)
+        self._fact_values = []                    # per-kb-index stored value/salience tag (parallel to composer.kb)
+        self._da_recall_view = None               # lazily-built DARecallVigorComposer bound to self.composer
         # co_resident_td_cueshift (TRUE ONE BRAIN roadmap #3): also lift the A-CSC TD cue-shift slice onto the merged
         # bridge (the td_ slice + the `dopamine`-over-td_snc modulator). Default False = byte-preserved. When True the
         # moat-no-regression check verifies the shared TD DA broadcast does not perturb conversational comprehension.
@@ -1942,6 +1971,17 @@ class MergedNavConvAgent:
         if self.enable_da_encoding_gain:
             self.composer.encoding_gain_fn = self._da_encoding_gain
 
+        # READ-side limbic->composer recall-vigor hook (roadmap #6 READ side): resolve the DA reference (DA_tonic) from
+        # the shared `dopamine` modulator baseline so the value prior is exactly OFF at tonic DA (byte-identical at
+        # rest). If no `dopamine` modulator is present, the default 0.5 is harmless (the prior is a no-op anyway —
+        # _da_recall_dopamine returns the baseline -> da_term == 0). NO composer mutation when the hook is OFF.
+        _nm = getattr(self._merged_bridge, "neuromodulator_manager", None)
+        if _nm is not None:
+            try:
+                self._da_recall_baseline = float(_nm._config_by_name("dopamine").baseline)
+            except (KeyError, AttributeError):
+                pass                                          # no `dopamine` modulator -> keep the harmless default
+
         # The parser READ surface on the merged framework slices (so `self.parser.parse(...)` matches the agent's).
         self.parser = _MergedParserAdapter(self._merged_bridge, self._handles["conj_arr"], self._handles["role_arr"])
 
@@ -2118,6 +2158,103 @@ class MergedNavConvAgent:
         return da_to_encoding_gain(da, da_baseline, self._da_encoding_k,
                                    g_min=self._da_encoding_g_min, g_max=self._da_encoding_g_max)
 
+    # --- DA RECALL-VIGOR hook (roadmap #6 READ side): the shared spiking-SNc dopamine carries a value/salience prior
+    #     that re-ranks WHICH familiarity-cleared stored fact is RETRIEVED (the validated DARecallVigorComposer) ---
+    def _da_recall_dopamine(self):
+        """Read the SHARED spiking-SNc dopamine off the merged bridge (the SAME read `_da_confidence_gate` /
+        `_da_encoding_gain` use). Returns the live concentration, or the resolved tonic reference if no `dopamine`
+        modulator is present (=> da_term == 0 => the value prior is a no-op). The GPU agent reads the live SNc here; a
+        CPU guard test overrides this with a scalar."""
+        nm = getattr(self._merged_bridge, "neuromodulator_manager", None)
+        if nm is None:
+            return float(self._da_recall_baseline)
+        try:
+            return float(nm.get_concentration("dopamine"))
+        except (KeyError, AttributeError):
+            return float(self._da_recall_baseline)
+
+    def _store_fact_value(self, agent, action, patient, value=None, polarity=None):
+        """Store a fact via the composer (the unchanged on-substrate encode) AND record its per-fact VALUE/SALIENCE tag
+        (parallel to `composer.kb`) so the recall-vigor prior can re-rank by it. `value`=None (the live-store path) =>
+        the fact's salience at ENCODING TIME = the live shared dopamine relative to baseline, clipped to >= 0 (a
+        salient/high-DA utterance encodes with higher value — the SAME Lisman-Grace salience the encoding-gain WRITE
+        side reads; a tonic-DA fact carries value 0). When the bridge has no `dopamine` modulator the salience is the
+        `da_recall_value_default` (so the prior is otherwise a documented no-op). The list stays in lock-step with the
+        kb even when the recall-vigor hook is OFF (cheap; keeps the value tags valid if the hook is toggled on)."""
+        if value is None:
+            nm = getattr(self._merged_bridge, "neuromodulator_manager", None)
+            has_da = False
+            if nm is not None:
+                try:
+                    nm.get_concentration("dopamine"); has_da = True
+                except (KeyError, AttributeError):
+                    has_da = False
+            if has_da:
+                value = max(0.0, self._da_recall_dopamine() - float(self._da_recall_baseline))
+            else:
+                value = float(self._da_recall_value_default)
+        self.composer.store(agent, action, patient, polarity=polarity)
+        self._fact_values.append(float(value))
+
+    def _da_recall_vigor_view(self):
+        """The validated `DARecallVigorComposer` (reuse-by-import) bound to THIS agent's composer + value tags + the
+        live shared-DA read. Lazily built (and rebound if the composer object changed). The view holds NO state beyond
+        a reference to `self.composer` + `self._fact_values`, so it tracks the agent's live kb."""
+        from research.runners._tier2_6_da_recall_vigor_derisk import DARecallVigorComposer
+        v = self._da_recall_view
+        if v is None or v.comp is not self.composer:
+            v = DARecallVigorComposer(self.composer, da_fn=self._da_recall_dopamine,
+                                      beta=self._da_recall_beta, da_baseline=self._da_recall_baseline)
+            v.values = self._fact_values            # SHARE the agent's value list (not a copy) so it tracks new stores
+            self._da_recall_view = v
+        else:
+            v.da_baseline = float(self._da_recall_baseline)
+            v.beta = float(self._da_recall_beta)
+        return v
+
+    def _da_recall_select(self, **cue_roles):
+        """The DA-gated value-prior winner over the cue-gated candidate set, generalized to a MULTI-ROLE who/what cue
+        (the de-risk's `DARecallVigorComposer` cues on a single role; a production who/what recall gates on the JOINT
+        cue — agent AND action for `what_does`, action AND patient for `who_does`). Returns the kb index of the
+        value-prior winner among the facts whose cue roles ALL decode-match `cue_roles`, or None (abstain) if the gated
+        set is empty (the no-confab moat: an unstored/again-unmatched cue has nothing to re-rank).
+
+        The re-rank is the de-risk's EXACT formula `score'_i = match_i + beta*(DA - DA_tonic)*value_i` (match_i = the
+        composer's OWN matched-filter cleanup confidence; the value prior re-ranks ONLY within the gated set), reusing
+        the composer's on-substrate `_unbind_all_phases` + `_cleanup_all_scored` (the SAME primitives the
+        DARecallVigorComposer view uses) as the familiarity gate + the per-role match scores. Ties resolve to the
+        FIRST candidate (kb order) so the prior-off / value-independent baseline is the composer's first-match."""
+        comp = self.composer
+        comps = [c for _f, c in comp.kb]
+        if not comps:
+            return None
+        # decode every cue role for every stored fact (batched on-substrate unbind + matched-filter cleanup -- the
+        # composer's OWN op result; this IS the familiarity gate the no-confab moat rides on).
+        decoded = {}
+        scored = {}
+        for role, want in cue_roles.items():
+            rec = comp._unbind_all_phases(comps, role)
+            words, scores = comp._cleanup_all_scored(rec)
+            decoded[role] = words
+            scored[role] = scores
+        cand = [i for i in range(len(comps))
+                if all(decoded[role][i] == want for role, want in cue_roles.items())]
+        if not cand:
+            return None                              # empty gated set -> abstain (the moat)
+        da = float(self._da_recall_dopamine())
+        da_term = self._da_recall_beta * (da - float(self._da_recall_baseline))   # the DA gate on the value prior
+        # match_i = the mean of the cue roles' cleanup confidences (the de-risk uses the single cue role's score; for a
+        # joint cue the mean is the natural matched-filter confidence over the gated roles). Value-weighted score'.
+        best_i, best_s = None, None
+        for i in cand:
+            match_i = float(np.mean([scored[role][i] for role in cue_roles]))
+            val = self._fact_values[i] if i < len(self._fact_values) else 0.0
+            sprime = match_i + da_term * float(val)
+            # strict '>' so an exact tie keeps the EARLIER (lower-index) candidate = the first-match baseline
+            if best_s is None or sprime > best_s + 1e-12:
+                best_i, best_s = i, sprime
+        return best_i
+
     def _gated_out(self, match_fn, g_eff):
         """The de-risk's gate, applied to THIS agent's composer reads (no `sim/`/composer edit, reuse-by-import): is
         the FIRST stored block matching the cue (`match_fn(agent, action, patient)`) NOISE-DOMINATED at the operating
@@ -2166,29 +2303,58 @@ class MergedNavConvAgent:
 
     # --- comprehend / store / recall (mirror BrainConversationalAgent exactly) ---
     def hear(self, sentence, voice="active", polarity=None):
-        """Comprehend an SVO statement and store it. `sentence` is 'agent action patient' (or its passive frame)."""
+        """Comprehend an SVO statement and store it. `sentence` is 'agent action patient' (or its passive frame). The
+        fact's VALUE/SALIENCE tag (the live shared dopamine relative to baseline) is recorded for the recall-vigor
+        prior -- via `_store_fact_value` (which calls `composer.store`), so the store is unchanged and the value list
+        stays in lock-step with the kb whether or not the recall-vigor hook is on."""
         roles = self.parser.parse(sentence.split(), voice)
-        self.composer.store(roles["agent"], roles["action"], roles["patient"], polarity=polarity)
+        self._store_fact_value(roles["agent"], roles["action"], roles["patient"], polarity=polarity)
         return roles
 
     def hear_clause_fact(self, agent, action, clause, polarity=None):
         """Store a fact whose patient is an embedded clause (the parser handles flat SVO; nested input parsing is
-        future work, so the clause is provided structurally here)."""
-        self.composer.store(agent, action, clause, polarity=polarity)
+        future work, so the clause is provided structurally here). Records the fact's value/salience tag (live shared
+        dopamine) for the recall-vigor prior."""
+        self._store_fact_value(agent, action, clause, polarity=polarity)
 
     def what_does(self, agent, action):
         """'what does <agent> <action>?' -> patient (concept or rendered clause) or None (abstain). When the DA
-        salience gate is on, a high-DA (salient) turn ABSTAINS on a noise-dominated cue read (moat-safe sharpening)."""
+        salience gate is on, a high-DA (salient) turn ABSTAINS on a noise-dominated cue read (moat-safe sharpening).
+        When the DA RECALL-VIGOR hook is on (roadmap #6 READ side), the (agent, action)-gated candidate set is
+        RE-RANKED by the shared-dopamine value prior so the high-value fact's patient is recalled (default OFF =>
+        the composer's plain first-match query). MOAT-SAFE: the prior re-ranks ONLY within the familiarity-gated set,
+        so an unstored/unmatched cue still abstains (the selector returns None -> None)."""
         if self.enable_da_salience_gate and self._gated_out(
                 lambda wa, wv, _wp: wa == agent and wv == action, self._da_confidence_gate()):
             return None
+        if self.enable_da_recall_vigor:
+            return self._render_patient_at(self._da_recall_select(agent=agent, action=action))
         return self.composer.query_patient(agent, action)
 
     def who_does(self, action, patient):
+        """'who <action> <patient>?' -> agent or None (abstain). The DA salience gate + the DA recall-vigor prior apply
+        symmetrically to what_does (the value prior re-ranks the (action, patient)-gated set; default OFF =>
+        the composer's plain first-match)."""
         if self.enable_da_salience_gate and self._gated_out(
                 lambda _wa, wv, wp: wv == action and wp == patient, self._da_confidence_gate()):
             return None
+        if self.enable_da_recall_vigor:
+            i = self._da_recall_select(action=action, patient=patient)
+            return None if i is None else self.composer.unbind(self.composer.kb[i][1], "agent")
         return self.composer.query_agent(action, patient)
+
+    def _render_patient_at(self, idx):
+        """Render the patient of stored fact `idx` (the recall-vigor winner) EXACTLY as the composer's plain
+        `query_patient` does for a matched fact -- the decoded patient noun plus any bound attributes -- so the
+        value-prior path produces the same answer SHAPE as the plain query (only WHICH fact differs). None idx ->
+        None (abstain)."""
+        if idx is None:
+            return None
+        comp = self.composer
+        fact, composite = comp.kb[idx]
+        noun = comp._render(composite, "patient", fact.get("patient"))
+        adjs = [comp.unbind(composite, r) for r in ("attribute", "attribute2") if r in fact]
+        return " ".join(adjs + [noun]) if adjs else noun
 
     def is_it_true(self, agent, action, patient):
         if self.enable_da_salience_gate and self._gated_out(
