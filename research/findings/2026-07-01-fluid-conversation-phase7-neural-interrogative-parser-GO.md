@@ -51,6 +51,12 @@ abstain/miss is byte-identical to the prior behaviour → low regression risk). 
 who→agent, does→yesno` (brain-based, learned), `_neural_parse("what does the dog chase?") → ("patient", ('dog',
 'chase'))`; the console answers correctly; both offline self-checks (`--demo`/`--showcase`) + all 4 CI tests green. ⇒
 the deployed console's core what-question comprehension is brain-based (composer + parser), not a host keyword rule.
-Honest scope unchanged: the broader intent-DISPATCH (learn/discuss/compare/classify/why/instance) stays host
-orchestration (interface routing, not the wh-comprehension cheat this closes); who/yes-no keep their keyword routes
-(the neural map recalls them too — a further wire-in if prioritized).
+
+## Update 2 (2026-07-01, CYCLE 783 cont.) — extended to ALL THREE wh-routes (what · who · yes/no)
+The wire-in was generalized: a single `_neural_parse` is computed once (after the compare/classify/why/discuss routes,
+so it only rewrites the wh-question routes) and OVERRIDES (subject, verb, object) for the yes/no, who, AND what routes
+from the composer wh→type + BridgeParser roles; the keyword extraction stays the fallback. Verified: "what does the dog
+chase? → The dog chases cat.", "who eats meat? → The dog eats meat.", "does the dog eat meat? → Yes, the dog eats meat."
+all resolve via the neural parse; both offline self-checks + all 4 CI tests green. Honest scope unchanged: the broader
+intent-DISPATCH (learn/discuss/compare/classify/why/instance) stays host orchestration (interface routing, not the
+wh-comprehension cheat this closes). ⇒ all three core question types in the deployed console are brain-based comprehension.

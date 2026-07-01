@@ -498,6 +498,22 @@ class FluidChat:
                 topic = subj or concepts_in[0]
                 return self._discuss(topic)
 
+            # NEURAL interrogative parse (Phase-7), for the remaining wh-question routes (yes/no, who, what): the
+            # wh->query-type is composer-recalled + the content->roles via the BridgeParser -> (subject, verb, object).
+            # Placed AFTER compare/classify/why/discuss (which use subj/concepts_in) so it only rewrites the wh-routes;
+            # the keyword subj/verb/obj remain the FALLBACK when the neural parse abstains (byte-identical then).
+            try:
+                _qt, _cue = _neural_parse(self.mta.agent, raw, self.agents, self.actions, self.patients, self.inflect)
+            except Exception:
+                _qt, _cue = None, None
+            if _cue:
+                if _qt == "yesno" and len(_cue) >= 3:
+                    subj, verb, obj = _cue[0], _cue[1], _cue[2]
+                elif _qt == "agent" and len(_cue) >= 2:
+                    verb, obj = _cue[0], _cue[1]
+                elif _qt == "patient" and len(_cue) >= 2:
+                    subj, verb = _cue[0], _cue[1]
+
             # YES/NO ("does the dog eat meat?" / "is it true the dog eats meat?") -> is_it_true
             if ("does" in tset or "do" in tset or "is" in tset or "are" in tset) and subj and verb and obj:
                 truth = self.mta.agent.is_it_true(subj, verb, obj)
@@ -539,15 +555,7 @@ class FluidChat:
             if subj is None and kind_q is not None:
                 subj = kind_q
 
-            # WHAT (default) -> patient query. The subject+verb come from the NEURAL interrogative parser (Phase-7:
-            # composer wh->query-type + BridgeParser roles) when it resolves a patient-query cue; else the keyword
-            # subj/verb (a fallback -> byte-identical to the prior behaviour when the neural parse abstains).
-            try:
-                _qt, _cue = _neural_parse(self.mta.agent, raw, self.agents, self.actions, self.patients, self.inflect)
-            except Exception:
-                _qt, _cue = None, None
-            if _qt == "patient" and _cue and len(_cue) >= 2 and _cue[0] in self.agents:
-                subj, verb = _cue[0], _cue[1]                # brain-based comprehension of "what does X Y?"
+            # WHAT (default) -> patient query (subj/verb are the neural cue when it resolved, else the keyword values).
             if subj is None or verb is None:
                 return "I don't know."
             _p, reply = self._answer(subj, verb)
