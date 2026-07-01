@@ -1,29 +1,29 @@
 {
-  "horse": [
+  "banana": [
     [
-      "horse",
+      "banana",
       "isa",
-      "animal"
+      "berry"
     ],
     [
-      "horse",
+      "banana",
       "isa",
-      "mammal"
+      "fruit"
     ],
     [
-      "horse",
-      "has",
-      "fur"
+      "banana",
+      "is",
+      "yellow"
     ],
     [
-      "horse",
-      "has",
-      "stallion"
+      "banana",
+      "is",
+      "green"
     ],
     [
-      "horse",
-      "has",
-      "hoof"
+      "banana",
+      "is",
+      "black"
     ]
   ],
   "elephant": [
@@ -41,13 +41,11 @@
       "elephant",
       "has",
       "tusk"
-    ]
-  ],
-  "lion": [
+    ],
     [
-      "lion",
-      "isa",
-      "cat"
+      "elephant",
+      "is",
+      "grey"
     ]
   ]
 }

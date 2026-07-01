@@ -43,10 +43,13 @@ from research.runners._grounded_lang_integration_derisk import _build_inflection
 from research.runners._fluidconv_phase1_grounded_continuation_derisk import _extract_all_svos, _fact_key  # noqa: E402
 from research.runners._fluidconv_phase2_ra_finetune import VERBS, FT_CKPT, SUBJECTS as FT_SUBJECTS, OBJECTS as FT_OBJECTS  # noqa: E402
 from research.runners._fluidconv_phase2_ra_qa_eval_derisk import FTFaculty, _v3  # noqa: E402
-from research.runners._fluidconv_phase15_wikidata_breadth_derisk import _fetch_entity, PROPS as _WD_PROPS  # noqa: E402
+from research.runners._fluidconv_phase15_wikidata_breadth_derisk import _fetch_entity  # noqa: E402
 
 _WD_SEARCH = "https://www.wikidata.org/w/api.php"          # wbsearchentities: resolve a concept NAME -> a Wikidata QID
 _WD_CACHE = _REPO / "research" / "findings" / "raw" / "_fluidconv_console_wikidata_cache.json"
+# the console's (richer than Phase-15's validated pair) clean-property set: subclass-of -> isa (taxonomy, a noun);
+# has-part -> has; color -> is (an adjective, salient common knowledge like "a banana is yellow").
+_WD_PROPS = {"P279": "isa", "P527": "has", "P462": "is"}
 
 OUT = _REPO / "research" / "findings" / "raw" / "_fluidconv_chat_repl_demo.json"
 _QWORDS = {"what", "who", "does", "do", "is", "are", "tell", "can", "could", "why", "how", "when", "where", "?"}
