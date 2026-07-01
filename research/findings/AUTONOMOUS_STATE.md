@@ -6063,3 +6063,26 @@ verify loop in place of Qwen-0.5B (Phase-0's core test): measure fluency (held-o
 drop-in + the no-confab MOAT still holds. Then Phase 1 (recurrent/RWKV on-substrate + multi-turn) etc. per the
 roadmap. Present results; proceed under blanket authority. biologization/one-brain HARD; moat a PLUS (tradeable for
 fluency where it helps); honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 750 (2026-07-01 — Phase-0 generator TRAINING confirmed into-learning; drop-in precisely scoped [simpler than feared])
+
+Phase-0 training (bhhlay51p) CONFIRMED into-learning: BPE(2049, 8M-char cap) -> encode 99.6M train tokens (142382
+unique) + 2.03M heldout, cached .npy -> arch V=2049 d=512 L=6 H=8 blk=512 (~21M params, 15-25x < Qwen-0.5B), steps
+25000, heldout-every 1500, GPU 100%. Healthy overnight ~1.5-2h -> research/findings/raw/fluidconv/gen_tinystories_20M.ckpt.
+
+DROP-IN SCOPED (simpler than feared): the grounded-lang gate->constrain->verify loop ALREADY has the constrained-
+decode machinery -- `_GroundedConstrainedLM` (research/runners/constrained_decode_gate.py:51) + constrained_decode_core
+(FROZEN _CDC_* constants, NOT to tune) -- which wraps a TinyGPT + `generate_ids(prompt_ids, max_new)` with a grounded
+non-vacuity/veto constraint. It currently HARDCODES d_model=256/n_layer=4 (:103). The Phase-0 drop-in = point it at
+the ~20M TinyStories ckpt: parameterize the arch load (read d_model/n_layer/n_head/block_size from the ckpt dict --
+tiny_transformer_train saves vocab_size/n_layer/... ; CONFIRM d_model/n_head/block are in the dict, else pass them),
+additive (does NOT touch the frozen _CDC_ constants). Then run the grounded-lang loop with the 20M constrained-LM.
+
+**EXACT NEXT CONCRETE ACTION:** on the Phase-0 training (bhhlay51p) completing -> (1) sample the generator (a few
+free-gen prompts) to eyeball fluency + read the held-out ppl trajectory (overfit check); (2) build the drop-in
+(parameterize `_GroundedConstrainedLM` to load the 20M ckpt's arch) + run the grounded-lang gate->constrain->verify
+loop with it; MEASURE: fluency (held-out ppl / constrained-gen non-vacuity) + grounding-drop-in (the gen asserts the
+gated fact) + the no-confab MOAT still 0-FA (the gen never asserts an unverified fact -> falls back to template).
+This is Phase-0's core thesis test (a MINIMAL 20M transformer, brain-trained on our corpus, replaces the 0.5B Qwen
+in the loop, fluency-only-gated). Then Phase 1 (recurrent/RWKV on-substrate + multi-turn) per the roadmap. Present
+results; proceed under blanket authority. biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN.
