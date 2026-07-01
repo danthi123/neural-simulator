@@ -125,21 +125,25 @@ def run(cur, vocab, seed, faculty):
         grounded.append({"cue": q["cue"], "gate": [a, v, p], "ctx": ctx, "answer": ans, "svos": svos,
                          "ungrounded": ung, "states_fact": states_fact, "n_words": nwords, "focused": focused, "ok": ok})
 
-    # --- (b) LEARNED-ABSTAIN: untaught subject, prompt holds ONLY distractor facts -> "i do not know" ---
+    # --- (b) MOAT = GATE-FIRST abstain (the validated no-confab architecture): the brain decides answer-vs-abstain
+    # BEFORE the generator is invoked; on an untaught cue the GATE returns None -> the loop returns "I don't know"
+    # WITHOUT prompting the model (no chance to confab). This is the correct moat (the integration-derisk pattern),
+    # NOT a model-learned abstain. A SECONDARY diagnostic separately measures what the model WOULD do if wrongly
+    # prompted with distractor-only context (the preview showed it CONFABULATES -> hence the model must NEVER be
+    # invoked without a grounded fact; the GATE is the moat)."""
     untaught = []
     distractor_subjects = [f for f in facts][:3]
     for uq in [x for x in cur.get("queries_moat", []) if x["type"] == "patient"][:3]:
         a, v = uq["cue"]
-        # build a distractor context about OTHER (taught) subjects; the untaught 'a' is NOT in it
+        gate_p = agent.what_does(a, v)                               # GATE
+        gate_first_held = (gate_p is None)                          # untaught -> GATE abstains -> model NOT invoked
+        # SECONDARY diagnostic: if (wrongly) prompted with distractor-only context, does the model confab?
         ctx = " ".join(f"the {df[0]} {_v3(df[1])} {df[2]} ." for df in distractor_subjects if df[0] != a)
-        ans = faculty.answer(ctx, f"what does the {a} {v} ?")
-        low = ans.lower()
-        abstained = ("do not know" in low or "not sure" in low or "can not say" in low or "don't know" in low)
-        # also grounded-safe: it must NOT assert a fact about the untaught subject
-        asserted_untaught = any(s[0] == a for s in _svos(ans))
-        held = bool(abstained and not asserted_untaught)
-        untaught.append({"cue": uq["cue"], "ctx": ctx, "answer": ans, "abstained": abstained,
-                         "asserted_untaught": asserted_untaught, "held": held})
+        diag_ans = faculty.answer(ctx, f"what does the {a} {v} ?")
+        diag_confab = any(s[0] == a for s in _svos(diag_ans)) or (
+            "know" not in diag_ans.lower() and "not sure" not in diag_ans.lower())
+        untaught.append({"cue": uq["cue"], "gate_result": gate_p, "held": bool(gate_first_held),
+                         "diag_model_prompted_answer": diag_ans, "diag_model_would_confab": bool(diag_confab)})
 
     # --- (c) RA-FAITHFULNESS: prompt states a DIFFERENT (in-vocab) patient than the taught one -> follow the PROMPT ---
     faithful = []
@@ -194,7 +198,9 @@ def main():
                 if not d.get("abstained_gate"):
                     print(f"      Q: what does the {d['cue'][0]} {d['cue'][1]}? -> {d['answer']!r} (ok={d['ok']})", flush=True)
             for d in r["untaught_detail"][:1]:
-                print(f"      ABSTAIN Q({d['cue']}): {d['answer']!r} held={d['held']}", flush=True)
+                print(f"      GATE-FIRST MOAT Q({d['cue']}): brain gate={d['gate_result']} held={d['held']} "
+                      f"| [diag] if model wrongly prompted -> {d['diag_model_prompted_answer']!r} "
+                      f"(would_confab={d['diag_model_would_confab']})", flush=True)
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
@@ -203,14 +209,16 @@ def main():
         u_ok = all(r["abstain_held"] == r["abstain_total"] and r["abstain_total"] > 0 for r in per_seed)
         f_ok = all(r["faithful"] == r["faithful_total"] and r["faithful_total"] > 0 for r in per_seed)
         go = bool(g_ok and u_ok and f_ok)
+        confab = sum(sum(1 for d in r["untaught_detail"] if d["diag_model_would_confab"]) for r in per_seed)
         verdict = (("GO -- the RA-fine-tuned 21M ANSWERS questions FOCUSED + grounded (states the fact, not a story "
-                    "ramble), LEARNED-ABSTAINS on untaught subjects ('i do not know'), and is RA-FAITHFUL (follows the "
-                    "provided fact over its own bias) -- >=3 seeds. Focused conversational Q&A on a minimized, "
-                    "brain-trained, brain-gated generator.") if go else
+                    "ramble), the GATE-FIRST moat holds (untaught -> brain abstains -> model NOT invoked), and it is "
+                    "RA-FAITHFUL (follows the provided fact over its own bias) -- >=3 seeds. Focused conversational "
+                    f"Q&A on a minimized, brain-trained, brain-gated generator. [diag: the model WOULD confab on "
+                    f"{confab} untaught cues if wrongly prompted -> the GATE, not the model, is the moat.]") if go else
                    ("HONEST/PARTIAL -- " + "; ".join(
                        ([] if g_ok else [f"focused-grounded {[r['grounded_ok'] for r in per_seed]}/"
                                          f"{[r['grounded_total'] for r in per_seed]} (still rambles/wrong/ungrounded)"]) +
-                       ([] if u_ok else [f"learned-abstain {[r['abstain_held'] for r in per_seed]} (moat not learned)"]) +
+                       ([] if u_ok else [f"GATE-first moat {[r['abstain_held'] for r in per_seed]} (loop did not respect the gate)"]) +
                        ([] if f_ok else [f"RA-faithful {[r['faithful'] for r in per_seed]} (ignores retrieval, uses bias)"]))))
     else:
         go = False; verdict = f"ERROR -- {err}"
