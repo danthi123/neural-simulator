@@ -550,6 +550,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  co_resident_limbic: bool = False,
                                  co_resident_drive: bool = False,
                                  drive_n_pool: int = 60,
+                                 drive_to_da: bool = False,
+                                 drive_da_sensitivity: float = 8.0,
                                  co_resident_nav_critic: bool = False,
                                  nav_critic_convergent_upstate: bool = False,
                                  nav_critic_homeostasis_mask: str = "all3",
@@ -1081,6 +1083,25 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
             targets=[ModulatorTarget(target_type="plasticity_rate", scope="all", sensitivity=+1.0)],
             production_rules=[ProductionRule(rule_type="from_region_firing_signed", sensitivity=8.0,
                                              threshold=0.30, window_ms=200.0, source_regions=["td_snc"])])]
+
+    # HUNGER -> DA link (drive_to_da, additive default-off; Tier-3 Option 3 "cross-modal one animal"): the shared
+    # spiking hunger drive raises the shared `dopamine` broadcast, so a HUNGRY brain's DA rises and the moat-safe
+    # `_da_confidence_gate` TIGHTENS conversational abstention -- the SAME limbic drive touches BOTH the acting (nav)
+    # and conversing (composer) halves. Appends a `from_region_firing` rule reading `drive_agrp` firing to the
+    # `dopamine` modulator's production_rules; a modulator's rules are SUMMED per step (sim/neuromodulators.py:264),
+    # so DA = the SNc term (unchanged) + a hunger term. `from_region_firing` is a shipped rule type (NOT the reserved
+    # from_novelty stub); this is a RUNNER-layer edit (NO `sim/` edit). Biology: O.10 incentive motivation
+    # (deprivation amplifies reward VALUE; Berridge/Toates). MOAT-SAFE: DA only ever RAISES the gate above its g0
+    # floor (da_to_gate clamps), so hunger can ONLY TIGHTEN the no-confab moat, never loosen it. Requires a `dopamine`
+    # modulator (a limbic/critic/td slice) + the drive slice; default False = byte-unchanged.
+    if drive_to_da and co_resident_drive and getattr(cfg, "neuromodulators", None):
+        from sim.neuromodulators import ProductionRule as _HungerPR
+        _da_cfg = next((m for m in cfg.neuromodulators if m.name == "dopamine"), None)
+        assert _da_cfg is not None, \
+            "drive_to_da requires a `dopamine` modulator (co_resident_nav_critic / co_resident_limbic / td_cueshift)"
+        _da_cfg.production_rules.append(
+            _HungerPR(rule_type="from_region_firing", sensitivity=float(drive_da_sensitivity),
+                      threshold=0.0, window_ms=200.0, source_regions=["drive_agrp"]))
 
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
@@ -1638,7 +1659,7 @@ class MergedNavConvAgent:
                  co_resident_td_cueshift=False,
                  co_resident_perception=False, co_resident_generalization=False,
                  perception_grounding="gen_spikes", perception_device_resident=False,
-                 co_resident_drive=False, drive_n_pool=60,
+                 co_resident_drive=False, drive_n_pool=60, drive_to_da=False, drive_da_sensitivity=8.0,
                  co_resident_command_route=None,
                  enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
                  enable_da_encoding_gain=True, da_encoding_k=2.0,
@@ -1934,10 +1955,13 @@ class MergedNavConvAgent:
         # byte-unchanged; ZERO out-edges so it is nav/conv-inert. Read by firing rate off cp_firing_states.
         self.co_resident_drive = bool(co_resident_drive)
         self._drive_n_pool = int(drive_n_pool)
+        self._drive_to_da = bool(drive_to_da)                  # Tier-3 Option 3: hunger raises the shared DA
+        self._drive_da_sensitivity = float(drive_da_sensitivity)
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
             seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,
             onebrain_rf_size=_onebrain_rf_size,
             co_resident_drive=self.co_resident_drive, drive_n_pool=self._drive_n_pool,
+            drive_to_da=self._drive_to_da, drive_da_sensitivity=self._drive_da_sensitivity,
             co_resident_perception=self.co_resident_perception,
             co_resident_generalization=self.co_resident_generalization,
             enable_spiking_wta_readout=(self.co_resident_perception or self.co_resident_command_route),
