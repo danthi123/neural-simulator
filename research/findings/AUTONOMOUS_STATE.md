@@ -6547,3 +6547,28 @@ grounded (0 ungrounded) + generic normalization (dogs->dog kind) + moat (unknown
 wire generic/definite into the console + scope the REAL-corpus knowledge-acquisition pipeline (parse a simple-Wiki-
 style fact corpus -> grounded facts) as the scaling arc (owner: real corpus, stage cumulatively). biologization/
 one-brain HARD; moat a PLUS (grounded, never confab); honest origin+gitea; COMMIT ON MAIN; GPU/CuPy.
+
+## CYCLE 767 BATCH (2026-07-01 — owner: "all levers, parallel where possible"; 3 of 4 delivered, 1 in flight)
+
+Owner steered ALL the grounded-growth levers, my order, parallelize. Ran 3 concurrent tracks:
+- **Phase-12 ACQUISITION (GO 3-seed, commit b99e40ee):** the knowledge-acquisition pipeline -- parse a real-fact
+  corpus day-by-day -> store, staged cumulatively; recall 30/30, day-1 retention 10/10 every day (no forgetting),
+  breadth 15 concepts, moat 0-FA. The KB-size/breadth lever. `_fluidconv_phase12_knowledge_acquisition_derisk.py`.
+- **Phase-13 INSTANCE-REP (GO 3-seed, commit 60fae199):** kind vs instance ("the dog" a specific referent w/ own
+  facts + isa-inheritance vs "dogs" the kind); distinct instances; isa-lesion breaks inheritance; moat.
+  `_fluidconv_phase13_instance_representation_derisk.py`. (scoping: subagent, commit 2786d3e8.)
+- **Broader render fine-tune (IN FLIGHT, bg bpqcoccbk):** re-fine-tune the 21M on a broadened verb set (~40 verbs,
+  superset of the 18 -- adds guard/help/herd/hear/need/hunt/build/grow/protect/... ) so more grounded facts render
+  fluently (the Phase-11 render bottleneck: 9/12 -> ~12/12). Overwrites FT_CKPT; the OLD ckpt is BACKED UP at
+  gen_tinystories_ra_ft.ckpt.pt.bak. Step 1000/2500, ~10 min left.
+
+**EXACT NEXT CONCRETE ACTION:** when the broader fine-tune (bpqcoccbk) COMPLETES: (1) VERIFY no regression --
+`SIM_BACKEND=numpy python -m research.runners._fluidconv_phase2_ra_qa_eval_derisk --seeds 42 43 44` must stay
+focused-grounded 5/5 + moat (the broader verb set must NOT dilute the focused QA); (2) VERIFY improved render
+coverage -- re-run `_fluidconv_phase11_grow_knowledge_derisk --seeds 42 43 44` and confirm the 3 previously-
+unrenderable dog facts (guard/help/herd) now RENDER (rich_n rises above 7). If GO -> the render lever is delivered
+(commit + finding). If REGRESSION (Phase-2 < 5/5) -> restore the backup (cp .bak -> FT_CKPT) + keep the render lever
+as a v2-ckpt opt-in (honest). Then REPORT the full 4-lever batch to the owner. THEN (deferred/owner-blocked): the
+real-corpus DATA source upgrade (ConceptNet/simplified-Wiki + a fact-extraction front-end) for true encyclopedic
+breadth; the webapp Interact wire-in (owner UI verify). biologization/one-brain HARD; moat a PLUS; honest
+origin+gitea; COMMIT ON MAIN; GPU/CuPy.
