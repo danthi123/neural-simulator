@@ -94,7 +94,11 @@ from research.runners._homeostatic_drive_rl_cheap_first_probe import TwoPoolDriv
 # the perceivable objects (the gen stack renders OBJECT_WORDS.index(obj)); the composer vocab already carries them
 # + the link verb (navigate_to_compose_then_answer's 6-seed GO uses the same set with vocab=None).
 OBJECT_WORDS = ["apple", "river", "dog", "cat"]
-LINK_VERB = "near"          # a vocab verb (navigate_to_compose_then_answer's ACTIONS include "near")
+LINK_VERB = "near"          # the link verb; MUST be in the composer vocab (RFPhasorComposer builds concepts FROM vocab)
+# the composer vocab MUST declare every word a fact uses (RFPhasorComposer.concepts = {w: code for w in vocab};
+# _filler_phases KeyErrors on an undeclared word). Mirror navigate_to_compose_then_answer.build_compose_bridge's
+# validated `vocab = OBJECT_WORDS + ACTIONS` exactly (the objects are placeholders overwritten live by grounding).
+VOCAB = list(OBJECT_WORDS) + ["chase", LINK_VERB]
 
 # survival dynamics — the validated persistent_living_loop_derisk corridor (GO 6/6): refill > learned round-trip
 # cost but < random-walk cost, so the LEARNED policy survives while lesion/yoke crash.
@@ -390,7 +394,7 @@ def _build_agent(seed):
     """The merged one brain: composer + perception + the co-resident SPIKING drive, all on ONE bridge."""
     from research.runners.nav_conv_merged_bridge import MergedNavConvAgent
     return MergedNavConvAgent(
-        seed=seed, co_resident_composer=True, co_resident_composer_kind="rf",
+        seed=seed, vocab=VOCAB, co_resident_composer=True, co_resident_composer_kind="rf",
         co_resident_perception=True, co_resident_generalization=True, perception_grounding="gen_spikes",
         co_resident_drive=True)
 
