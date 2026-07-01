@@ -113,6 +113,33 @@ class FluidChat:
         self._inst_used = {k: 0 for k in self.kinds}   # how many instance slots consumed per kind
         # on-demand REAL-knowledge breadth (Phase-15): a per-concept Wikidata fact cache (fetch-once, reused/offline).
         self._wd_cache = json.loads(_WD_CACHE.read_text()) if _WD_CACHE.exists() else {}
+        self._learned = []            # KIND-level facts learned beyond the base curriculum (Wikidata + taught) -> persist
+
+    def save_state(self, path):
+        """Persist the GROWN knowledge (kind-level facts learned this + prior sessions) so the brain REMEMBERS across
+        restarts (the owner's 'grow THROUGH experiences'). Instances (dog_1) are session discourse state -> not saved."""
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        Path(path).write_text(json.dumps({"learned": self._learned}, indent=2))
+        return len(self._learned)
+
+    def load_state(self, path):
+        """Re-instate grown facts: re-inject each concept's (deterministic) code + re-store the fact -> rebuild the KB.
+        Idempotent (dedup vs already-known). The base curriculum is re-taught by __init__; this adds the learned delta."""
+        if not os.path.exists(path):
+            return 0
+        learned = json.loads(Path(path).read_text()).get("learned", [])
+        n = 0
+        for f in learned:
+            a, v, p = f[0], f[1], f[2]
+            if [a, v, p] in self._learned:
+                continue
+            for t in (a, v, p):
+                self._ensure_concept(t)
+            self.mta.agent.composer.store(a, v, p)
+            self.store_keys.add((a, v, p)); self.agents.add(a); self.patients.add(p); self._learned.append([a, v, p])
+            n += 1
+        self.kinds = sorted(self.agents)
+        return n
 
     def _ensure_concept(self, w):
         """Inject a runtime composer code for a never-seen concept (deterministic per word). The numpy cleanup rebuilds
@@ -172,6 +199,8 @@ class FluidChat:
             self.mta.agent.composer.store(a, v, p)
             self.store_keys.add((a, v, p))
             self.agents.add(a); self.patients.add(p); n += 1
+            if [a, v, p] not in self._learned:
+                self._learned.append([a, v, p])              # persist the grown knowledge
         self.kinds = sorted(self.agents)                     # the new concept + its parents become mintable kinds
         ex = "; ".join(f"{a} {v} {p}" for (a, v, p) in facts[:4])
         return f"ok, i learned {n} facts about the {concept}: {ex}."
@@ -456,6 +485,8 @@ class FluidChat:
             self.store_keys.add((subj, verb, obj))
             # the learned subject/object become known entities so LATER questions find them (growth)
             self.agents.add(subj); self.patients.add(obj)
+            if [subj, verb, obj] not in self._learned:
+                self._learned.append([subj, verb, obj])         # persist the grown knowledge
             return f"ok, i learned that the {subj} {_v3(verb)} {obj}."
         return "sorry, i didn't understand that."
 
@@ -491,6 +522,8 @@ def main():
     ap.add_argument("--demo", action="store_true", help="run the canned demo transcript (Q&A + anaphora + growth + moat)")
     ap.add_argument("--instance-demo", action="store_true", help="run the instance-rep transcript (mint + definite/generic + inherit + distinct + moat)")
     ap.add_argument("--script", default=None, help="'|'-separated turns to run then exit")
+    ap.add_argument("--persist", default=None, help="path to a state file: LOAD grown facts on start, SAVE on exit "
+                                                    "(the brain REMEMBERS what it learned across sessions, Phase-17)")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
     if not os.path.exists(FT_CKPT):
@@ -498,6 +531,10 @@ def main():
     t0 = time.time()
     try:
         chat = FluidChat(seed=a.seed)
+        if a.persist:
+            n = chat.load_state(a.persist)
+            if n:
+                print(f"[fluid-chat] remembered {n} fact(s) from a prior session ({a.persist}).", flush=True)
         print(f"[fluid-chat] ready -- brain (comprehension+knowledge+moat) + a ~{chat.npar:.0f}M brain-gated "
               f"generator (fluency). dev={chat.faculty.device}\n", flush=True)
     except Exception as e:
@@ -545,6 +582,8 @@ def main():
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)
         Path(a.out).write_text(json.dumps(out, indent=2, default=str))
         print(f"\n  [saved] {a.out}", flush=True)
+        if a.persist:
+            print(f"  [remembered {chat.save_state(a.persist)} grown fact(s) -> {a.persist}]", flush=True)
         return 0 if (go is None or go) else 1
     # interactive
     print("  (interactive; blank line or 'quit' to exit)\n", flush=True)
@@ -556,6 +595,8 @@ def main():
         if not line or line.lower() in ("quit", "exit"):
             break
         print(f"  brain> {chat.turn(line)}", flush=True)
+    if a.persist:
+        print(f"  [remembered {chat.save_state(a.persist)} grown fact(s) -> {a.persist}]", flush=True)
     return 0
 
 

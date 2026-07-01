@@ -6683,6 +6683,30 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 780 (2026-07-01 — PERSISTENCE GO: the brain REMEMBERS learned facts across sessions [Phase-17])
+
+Built + de-risked + wired PERSISTENCE (the owner's "grow THROUGH experiences"). Mechanism (cheap, composes built
+pieces): a learned concept's code is DETERMINISTIC (md5(word)->seed->phases, `_ensure_concept`), so persistence saves
+the learned FACT-LIST (JSON) + on load re-injects the identical code + re-stores -> KB rebuilt bit-for-bit (NO tensor
+persistence needed). `FluidChat.save_state/load_state` + a `--persist <path>` flag. De-risk `_fluidconv_phase17_
+persistence_derisk.py` GO 3-seed: round-trip 4/4, cold-start 0/4 (load-bearing), deterministic-code BIT-IDENTICAL, base
+survives, moat holds. LIVE across TWO processes: session 1 learns "wolf eats rabbit" + Wikidata elephant -> saves 5;
+session 2 (fresh) "remembered 5 fact(s)" -> recalls both the taught fact AND the elephant Wikidata knowledge. CI-guarded
+(`tests/test_fluidconv_chat_repl.py` now 4 tests incl persistence). NO sim/ edit. ⇒ the console is now a GROWING
+artifact: learn-on-demand -> connected discuss -> compare/gist -> REMEMBER across sessions + instance-rep + multi-turn +
+moat.
+
+**EXACT NEXT CONCRETE ACTION:** commit the persistence arc (de-risk runner + console save/load + `--persist` + CI test +
+finding + raw json + this state) to BOTH remotes on main. THEN update CLAUDE.md arc header (add P16 discourse-plan
+synthesis + P17 persistence). THEN continue autonomously (owner "you choose / keep going"): the fact-grounded fluid-
+conversation console is now comprehensively built (learn/discuss-connected/compare/gist/instance/multi-turn/growth/
+persist/moat, on REAL Wikidata knowledge). The remaining levers are OWNER-STEER or WALLS: #3 plan-guided synthesis
+fine-tune (a train, deprioritized -- #1 is fluent; present the trade-off); the open-domain / free-inference wall
+(documented); webapp Interact (owner UI verify); spiking-forward (KV-cache). If continuing autonomously, options: wire
+persistence to a default lineage path (auto-remember by default); pre-warm more Wikidata concepts; or a light polish of
+the single-fact FT answer path (trailing-space). biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless
+justified; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy (numpy for CPU/console).
+
 ## CYCLE 779 (2026-07-01 — synthesis cheap-first COMPLETE [#1+#2] + CI-guarded + integration-verified; next = persistence)
 
 Multi-fact-synthesis cheap-first is COMPREHENSIVELY DONE: #1 connected prose (`plan_discourse`: aggregation +

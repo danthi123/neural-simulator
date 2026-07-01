@@ -67,6 +67,22 @@ def test_discourse_plan_synthesis(chat):
     assert "both" in shared and "eat meat" in shared          # entailment-only intersection (dog+wolf both eat meat)
 
 
+def test_persistence_save_load(chat, tmp_path):
+    """Phase-17: a learned fact is written to the persist file and survives a save/load round-trip (the brain
+    remembers). Uses the cache-backed `learn about elephant` (offline) so real Wikidata facts populate the grown set.
+    Cross-instance reload is covered by the fast bare-agent de-risk; this guards the save_state/load_state plumbing."""
+    import json as _json
+    reply = chat.turn("learn about elephant").lower()         # cache-backed (offline); populates the grown set
+    assert "elephant" in reply and "mammal" in reply
+    state = str(tmp_path / "state.json")
+    n = chat.save_state(state)
+    saved = [tuple(f) for f in _json.loads(open(state).read())["learned"]]
+    assert ("elephant", "isa", "mammal") in saved             # persisted
+    assert chat.load_state(state) == 0                        # idempotent (already known -> 0 new)
+    assert chat.mta.agent.what_does("elephant", "isa") == "mammal"   # still recalled
+    assert n >= 1
+
+
 def test_instance_demo_self_check():
     """Phase-14 instance-rep in the console: 'which dog?' -- a specific referent vs the generic kind, on a FRESH
     console (a distinct instance-mint state from the base-demo fixture)."""

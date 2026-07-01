@@ -1,0 +1,48 @@
+{
+  "probe": "fluidconv_phase17_persistence",
+  "GO": true,
+  "verdict": "GO -- PERSISTENT grown knowledge: learned facts SAVE + re-LOAD into a fresh same-seed brain (all recalled), a cold-start brain recalls NONE (persistence load-bearing), the base survives, the moat abstains on the unlearned, and the re-injected concept codes are BIT-IDENTICAL to the originals (the round-trip works because codes are deterministic md5, not because they're stored). >=3 seeds. The brain REMEMBERS what it learned across sessions -- reuse-by-import, NO sim/ edit.",
+  "resolves": "persistent grown knowledge: save learned facts + re-store on load (deterministic codes) -> the brain remembers across sessions; cold-start recalls none; moat holds.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 38.2,
+  "per_seed": [
+    {
+      "seed": 42,
+      "cold_start_recalled": 0,
+      "roundtrip_recalled": 4,
+      "n_learned": 4,
+      "roundtrip_ok": true,
+      "cold_start_ok": true,
+      "base_ok": true,
+      "moat_ok": true,
+      "deterministic_code_ok": true
+    },
+    {
+      "seed": 43,
+      "cold_start_recalled": 0,
+      "roundtrip_recalled": 4,
+      "n_learned": 4,
+      "roundtrip_ok": true,
+      "cold_start_ok": true,
+      "base_ok": true,
+      "moat_ok": true,
+      "deterministic_code_ok": true
+    },
+    {
+      "seed": 44,
+      "cold_start_recalled": 0,
+      "roundtrip_recalled": 4,
+      "n_learned": 4,
+      "roundtrip_ok": true,
+      "cold_start_ok": true,
+      "base_ok": true,
+      "moat_ok": true,
+      "deterministic_code_ok": true
+    }
+  ],
+  "HONEST_CEILING": "saves the learned FACT-LIST + relies on deterministic per-concept codes (md5) to reproduce the codebook -- NOT the raw composer complex-weight tensor (a JSON re-instate, like the Tier-3 persistence). Base-curriculum codes reproduce because the seed is fixed (a lineage fixes it). Instances (dog_1) are session discourse state -> intentionally not persisted. The console wires save_state/load_state around this."
+}
