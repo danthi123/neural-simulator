@@ -145,9 +145,13 @@ def run_seed(seed, *, n_settle=300, verbose=True):
     da_sated = _measure_hunger_da(agent, 0.0, n_settle=n_settle)
     da_hungry = _measure_hunger_da(agent, 1.0, n_settle=n_settle)
     da_lesion = _measure_hunger_da(agent, 1.0, sever_link=True, n_settle=n_settle)   # clean lesion: link severed, same deficit
-    sweep = [(d, _measure_hunger_da(agent, d, n_settle=n_settle)) for d in (0.0, 0.5, 1.0)]
+    sweep_defs = [0.0, 0.25, 0.5, 0.75, 1.0]
+    sweep = [(d, _measure_hunger_da(agent, d, n_settle=n_settle)) for d in sweep_defs]
     sweep_da = [v for _, v in sweep]
-    monotone = all(b >= a - 1e-6 for a, b in zip(sweep_da, sweep_da[1:])) and (sweep_da[-1] > sweep_da[0] + 0.02)
+    # GRADED (dose-response): DA rises with the body deficit -- measured by corr(deficit, DA) >= 0.7 over a 5-point
+    # sweep, ROBUST to a single noisy spiking-read point (a strict 3-point monotonicity flipped run-to-run on the
+    # stochastic read -- smoke-2 True / smoke-3 False with no sweep-code change). The endpoint rise is the `link` gate.
+    monotone = bool(float(np.corrcoef(sweep_defs, sweep_da)[0, 1]) >= 0.7) if float(np.std(sweep_da)) > 1e-9 else False
 
     # ── (4) the gate composition (validated da_to_gate on the measured DAs) ──
     g_sated = da_to_gate(da_sated, da_baseline, G0, K)
