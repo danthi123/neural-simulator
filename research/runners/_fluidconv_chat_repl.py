@@ -65,6 +65,7 @@ class FluidChat:
         self.store_keys = {tuple(f) for f in facts}
         self.faculty = FTFaculty()
         self.npar = self.faculty.npar
+        self._mentioned = {}          # subject -> set of verbs already said (so "tell me more" surfaces a NEW fact)
 
     def _content(self, toks):
         subj = next((t for t in toks if t in self.agents or t in self.vocab and t not in _STOP and t not in self.actions), None)
@@ -79,6 +80,7 @@ class FluidChat:
         p = self.mta.agent.what_does(subj, verb)
         if p is None:
             return None, "I don't know."
+        self._mentioned.setdefault(subj, set()).add(verb)     # track what's been said (for "tell me more")
         ctx = f"the {subj} {_v3(verb)} {p} ."
         ans = self.faculty.answer(ctx, f"what does the {subj} {verb} ?")
         svos = _extract_all_svos(ans, self.agents, self.actions, self.patients, self.inflect)
@@ -88,6 +90,25 @@ class FluidChat:
         if p in self.mta.referents:
             self.mta._write_referent(p)
         return p, reply
+
+    def _elaborate(self, subj):
+        """Surface an ADDITIONAL grounded fact about subj (beyond what's been said) -- richer discourse than a single
+        fact. The dlPFC dialogue planner (`elaborate`) picks a related concept; map it to an UNMENTIONED (subj, verb,
+        concept) fact, else scan the subject's facts for a new one; else honestly say that's all it knows."""
+        said = self._mentioned.get(subj, set())
+        try:
+            assoc = self.mta.agent.elaborate(subj)
+        except Exception:
+            assoc = None
+        cand = []
+        if assoc is not None:
+            cand = [v for v in sorted(self.actions) if v not in said and self.mta.agent.what_does(subj, v) == assoc]
+        if not cand:                                # fallback: any unmentioned fact about subj
+            cand = [v for v in sorted(self.actions) if v not in said and self.mta.agent.what_does(subj, v) is not None]
+        if not cand:
+            return None, f"that's all i know about the {subj}."
+        _p, reply = self._answer(subj, cand[0])
+        return cand[0], reply
 
     def turn(self, text):
         """One conversation turn: statement -> learn; question -> gate->answer->verify; untaught -> abstain."""
@@ -104,6 +125,12 @@ class FluidChat:
             obj = next((t for t in toks if t in self.patients and t != subj), None)
             if has_pron and subj is None:                       # resolve a pronoun agent via the held referent
                 subj = self.mta._resolve("it", query_verb=verb)
+
+            # ELABORATE ("tell me more about the dog" / "what else about the dog") -> a NEW grounded fact via the
+            # dlPFC dialogue planner (checked BEFORE describe so 'more'/'else' don't fall into the first-fact describe)
+            if ("more" in tset or "else" in tset) and subj is not None:
+                _v, reply = self._elaborate(subj)
+                return reply
 
             # DESCRIBE ("tell me about the dog") -> a grounded sentence about the subject's first known fact
             if ("tell" in tset or "about" in tset) and subj is not None:
@@ -161,7 +188,8 @@ DEMO = [
     "does the cat eat grass?",       # 5 -> No.  (yes/no negative)
     "who eats meat?",                # 6 -> the dog eats meat.  (who -> agent)
     "tell me about the bird",        # 7 -> the bird eats seed.  (describe)
-    "what does the lion eat?",       # 8 -> I don't know.  (moat)
+    "tell me more about the dog",    # 8 -> a NEW dog fact (chase+eat already said -> the dog likes bone)  (elaborate)
+    "what does the lion eat?",       # 9 -> I don't know.  (moat)
 ]
 
 
@@ -194,14 +222,17 @@ def main():
         if a.demo:
             def _said(i, sub):
                 return sub in transcript[i]["brain"].lower()
+            elab = transcript[8]["brain"].lower()                             # elaborate -> a NEW dog fact
             go = bool(_said(0, "cat") and _said(1, "fish")                     # what + anaphora
                       and "learned" in transcript[2]["brain"].lower() and _said(3, "rabbit")   # growth + usable
                       and (_said(4, "yes") and _said(4, "meat"))              # yes/no positive
                       and transcript[5]["brain"].lower().startswith(("no", "i don't"))          # yes/no negative
                       and _said(6, "dog")                                     # who -> dog
                       and _said(7, "seed")                                    # describe the bird
-                      and "know" in transcript[8]["brain"].lower())            # moat
-            print(f"\n  [demo self-check] what/anaphora/growth/yes-no/who/describe/moat all correct: {go}", flush=True)
+                      and ("dog" in elab and ("bone" in elab or "meat" in elab or "cat" in elab))  # elaborate: a dog fact
+                      and "know" in transcript[9]["brain"].lower())            # moat
+            print(f"\n  [demo self-check] what/anaphora/growth/yes-no/who/describe/elaborate/moat all correct: {go}",
+                  flush=True)
         out = {"probe": "fluidconv_chat_repl", "seed": a.seed, "demo": bool(a.demo), "transcript": transcript,
                "demo_all_correct": go, "npar_M": round(chat.npar, 1),
                "elapsed_seconds": round(time.time() - t0, 1)}

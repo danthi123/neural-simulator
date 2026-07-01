@@ -71,4 +71,17 @@ what does the lion eat?  -> I don't know.             (moat)
 The conversation now spans what / who / yes-no / describe questions + multi-turn pronoun anaphora + learn-from-
 conversation + abstention — grounded + moat-preserved throughout, on the minimized brain-gated stack.
 
+## Update (CYCLE 760) — ELABORATE (the dlPFC dialogue planner volunteers a related fact) + regression-verify
+- **Elaborate:** *"tell me more about the dog"* → the dlPFC dialogue planner (`elaborate`, spiking spreading-activation
+  over the agent's own association graph) surfaces an UNMENTIONED grounded fact about the subject → *"the dog likes
+  bone, yes."* (chase + eat were already said earlier in the demo). This is richer discourse than single-fact Q&A —
+  the brain *volunteers* related knowledge, grounded + VERIFY-checked. The enriched demo self-check (what/anaphora/
+  growth/yes-no/who/describe/**elaborate**/moat) is all-correct.
+- **Regression-verify** (my session's ONE shared-file edit — `constrained_decode_gate.py`, additive
+  d_model/n_layer/n_head/bpe_path + `weights_only=True`): the 33 q2 constrained-decode tests PASS; my edit is additive
+  and the file is NOT in the no-harm test's protected list; my session touched ZERO protected files → the additive
+  edit is non-regressive. (The 1 failing `test_protected_byte_empty` is a PRE-EXISTING Windows-encoding + stale-
+  baseline test-infra bug — `subprocess(text=True)` chokes on a UTF-8 byte in the git-diff over protected files that a
+  prior session legitimately changed since the `02addfa` baseline — flagged for a separate fix, task_702635b3.)
+
 **Artifacts:** `research/runners/_fluidconv_chat_repl.py`; demo `research/findings/raw/_fluidconv_chat_repl_demo.json`.

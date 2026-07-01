@@ -36,11 +36,15 @@
       "brain": "the bird eats seed ."
     },
     {
+      "you": "tell me more about the dog",
+      "brain": "the dog likes bone , yes ."
+    },
+    {
       "you": "what does the lion eat?",
       "brain": "I don't know."
     }
   ],
   "demo_all_correct": true,
   "npar_M": 21.3,
-  "elapsed_seconds": 12.6
+  "elapsed_seconds": 124.3
 }
