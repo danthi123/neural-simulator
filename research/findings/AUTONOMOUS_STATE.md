@@ -6182,11 +6182,18 @@ Built + committed the whole Phase-2/3 stack (reuse-by-import, NO sim/ edit):
   "what does the dog eat? -> the dog eats meat. ... what does the lion eat? -> I don't know." moat 3/3, drift-caught
   3/3, grounded-reply 3/5 partial (2 misses = vocab coverage: fox/rabbit -- 'rabbit' not in the QA object pool).
 
-**EXACT NEXT CONCRETE ACTION:** when the fine-tune bg task (bs8f42bti) COMPLETES, re-run BOTH on the FINAL ckpt:
-`python -m research.runners._fluidconv_phase2_ra_qa_eval_derisk --seeds 42 43 44` and
-`python -m research.runners._fluidconv_phase3_conversational_turn_derisk --seeds 42 43 44` (SIM_BACKEND=numpy). Bank a
-consolidated Phase-2+3 GO finding with the FINAL-ckpt numbers + the demo transcript, commit both remotes, bump this to
-CYCLE 754 DONE. THEN: multi-turn (persistent discourse referents / recurrent state) + replace the interrogative-parse
-scaffold with a neural interrogative parser + widen the QA object vocab (so fox/rabbit-type facts render). If the
-final-ckpt grounded-reply is still <5/5 on vocab, that's a vocab-coverage finding (widen OBJECTS), not a mechanism
-failure. biologization/one-brain HARD; moat a PLUS (GATE-FIRST); honest origin+gitea; COMMIT ON MAIN; GPU/CuPy.
+UPDATE: the narrow-vocab ft (bs8f42bti) was STOPPED + the OBJECTS pool WIDENED to cover all curriculum patients
+(rabbit/cat/mouse/light/water/shade/tree/ground/cave; commit 4673fe27) -> re-launched WIDE (bg **b88f5yop4**, log
+`research/findings/raw/fluidconv/phase2_ra_ft_wide.log`, ~25 min, saves FT_CKPT atomically every 250 steps).
+
+**EXACT NEXT CONCRETE ACTION:** when the WIDE fine-tune (b88f5yop4) COMPLETES (or if it hangs / a watchdog fires and
+the log shows step >= ~2400 + FT_CKPT exists), re-run BOTH on the FINAL ckpt:
+`SIM_BACKEND=numpy python -m research.runners._fluidconv_phase2_ra_qa_eval_derisk --seeds 42 43 44` and
+`SIM_BACKEND=numpy python -m research.runners._fluidconv_phase3_conversational_turn_derisk --seeds 42 43 44`. Bank a
+consolidated Phase-2+3 GO finding with the FINAL wide-ckpt numbers + the demo transcript
+("what does the dog eat? -> the dog eats meat." ... "the lion? -> I don't know."), commit both remotes, mark CYCLE
+754 DONE. THEN CYCLE 755 = MULTI-TURN: wire the existing validated `MultiTurnAgent` + `SpikingLoopContextBuffer`
+(anaphora, 2026-06-17 GO; biased-competition disambiguation opt-in) onto the Phase-3 turn (pronoun 'it' in a
+follow-up resolves to the held referent, then gate->ft-answer->verify); + replace the interrogative-parse scaffold
+with a neural interrogative parser. biologization/one-brain HARD; moat a PLUS (GATE-FIRST); honest origin+gitea;
+COMMIT ON MAIN; GPU/CuPy for real runs.
