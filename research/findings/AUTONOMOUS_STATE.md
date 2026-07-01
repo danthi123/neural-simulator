@@ -6635,3 +6635,27 @@ research-gate the extraction if it's a genuinely new mechanism). Deferred: webap
 the spiking-forward speed-wall (when the KV-cache lever lands). Honest wall: free open-world inference beyond learned
 facts (the hedge is the deliverable). biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified; honest
 origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
+
+## CYCLE 770 (2026-07-01 — instance-rep WIRED into the FluidChat console; both demos GREEN)
+
+`_fluidconv_chat_repl.py`: wired Phase-14 instance-rep INTO the actual console (the owner uses this) -- mint-on-mention
+("i saw a dog" -> dog_1 isa dog, per-kind `_last_inst` tracking), instance attribution ("the dog is brown" -> the
+instance's OWN fact, routed as a DECLARATIVE before the question-split since "is" is also a q-cue), definite/generic
+routing ("what is the dog?" -> the instance's brown; "what does the dog eat?" -> inherited meat via isa; "what do dogs
+eat?" -> the kind via plural-normalize), all backward-compatible (instance branches fire only when a kind is minted).
+Bumped the console composer to D=256 (Phase-13/14 parity, headroom). Added `--instance-demo` + its self-check (mint/
+attribute/own/inherit/generic/distinct-persist/moat) = **True**; the existing `--demo` self-check STILL **True** (no
+regression). Fixes en route: added "isa"/"is" relation tokens + `_ATTRS` + instance slots to the console vocab (codes
+fixed at build); the decl-attr top-level route; plural->kind normalization for the generic query. NO sim/ edit. The
+console now covers: what/who/yes-no/describe/elaborate/discuss/compare/anaphora/growth/instance-rep + the moat, plus
+in-session single-fact acquisition (the STATEMENT->LEARN path). CPU-runnable (numpy).
+
+**EXACT NEXT CONCRETE ACTION:** commit the console instance-rep wiring (runner + this state) to BOTH remotes on main.
+THEN continue autonomously (owner "you choose / keep going"): re-attempt the real-corpus DATA breadth lever -- retry
+ConceptNet (was 502); if still down, pick an alternate OFFLINE triples source (a bundled ConceptNet/simple-Wikipedia
+snapshot) + build a prose->SVO fact-extraction front-end feeding the Phase-12 acquisition pipeline, for TRUE
+encyclopedic grounded breadth (research-gate the extraction ONLY if it's a genuinely new mechanism; simplify-to-SVO is
+composing validated parse+store). Deferred: webapp Interact wire-in (owner UI verify); the spiking-forward speed-wall
+(when the KV-cache lever lands). Honest wall: free open-world inference beyond learned facts (the hedge is the
+deliverable). biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified; honest origin+gitea; COMMIT ON
+MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).

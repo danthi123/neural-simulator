@@ -4,17 +4,22 @@ facts, and it abstains ("I don't know") on what it hasn't learned.
 
   QUESTION  "what does the dog eat?" / "what does it chase?" (pronoun) / "who eats meat?" / "does the dog eat meat?"
             -> interrogative parse -> brain GATE (moat gate-FIRST) -> RA-fine-tuned 21M focused answer -> VERIFY.
+  DISCUSS   "tell me about the dog" -> open-ended grounded discussion of the neighbourhood (Phase-10); "compare X Y".
+  INSTANCE  "i saw a dog" -> mint a specific instance; "the dog is brown" -> its OWN fact; "what is the dog?" -> brown;
+            "what do dogs eat?" -> the KIND ("which dog?", Phase-14: definite vs generic + isa-inheritance).
   STATEMENT "the wolf eats rabbit" / "wolf eat rabbit"  -> hear (LEARN) -> "ok, i learned that the wolf eats rabbit."
   UNTAUGHT  -> "I don't know."   (the no-confab moat)
 
 Assembles: `MultiTurnAgent` (multi-turn anaphora, Phase 4) + `FTFaculty` (the RA render/QA fine-tuned generator,
-Phase 2) + the Phase-3 gate->answer->VERIFY + Phase-5 growth. The BRAIN does comprehension + knowledge + grounding +
-moat; the minimized (~21M) brain-trained brain-gated generator does fluency. Reuse-by-import; NO sim/ edit.
+Phase 2) + the Phase-3 gate->answer->VERIFY + Phase-5 growth + Phase-10 discussion + Phase-14 instance-rep. The BRAIN
+does comprehension + knowledge + grounding + moat; the minimized (~21M) brain-gated generator does fluency.
+Reuse-by-import; NO sim/ edit.
 
 Run (scripted smoke / demo):
   SIM_BACKEND=numpy python -m research.runners._fluidconv_chat_repl --demo
+  SIM_BACKEND=numpy python -m research.runners._fluidconv_chat_repl --instance-demo
   SIM_BACKEND=numpy python -m research.runners._fluidconv_chat_repl --script "what does the dog eat?|the wolf eats rabbit|what does the wolf eat?"
-Run (interactive): ... (no --script/--demo -> reads stdin; blank line or 'quit' exits)
+Run (interactive): ... (no --script/--demo/--instance-demo -> reads stdin; blank line or 'quit' exits)
 """
 from __future__ import annotations
 import argparse, json, os, sys, time, traceback
@@ -40,6 +45,10 @@ OUT = _REPO / "research" / "findings" / "raw" / "_fluidconv_chat_repl_demo.json"
 _QWORDS = {"what", "who", "does", "do", "is", "are", "tell", "can", "could", "why", "how", "when", "where", "?"}
 _PRON = {"it", "its", "they", "them", "that"}
 _STOP = {"the", "a", "an", "does", "do", "did", "the", "to", "of", "please"}
+# instance-rep (Phase-14): a curated attribute vocab (for "the dog is brown") + N instance slots per kind.
+_ATTRS = ["brown", "black", "white", "grey", "big", "small", "fast", "slow", "brave", "gentle", "old", "young"]
+_INST_SLOTS = 2
+_INTRO_CUES = {"saw", "have", "found", "met", "there"}   # "i saw a dog" / "there is a dog" -> mint an instance
 
 
 class FluidChat:
@@ -53,19 +62,29 @@ class FluidChat:
         self.patients = {f[2] for f in facts}
         self.actions = {f[1] for f in facts}
         self.inflect = _build_inflection_map(sorted(self.actions))
+        # mintable KINDS (Phase-14): the curriculum's agents (things that act -- dog/cat/bird/...). Pre-allocate a few
+        # instance tokens per kind (dog_1, dog_2, ...) so a mentioned instance has a composer code (codes are fixed
+        # at build). "the dog" (a specific referent) resolves to the last such instance; "dogs" -> the kind.
+        self.kinds = sorted(self.agents)
+        self._inst_toks = {k: [f"{k}_{i+1}" for i in range(_INST_SLOTS)] for k in self.kinds}
         # a generous pre-allocated vocab so new facts can be TAUGHT (composer codes are fixed at build): curriculum +
-        # the fine-tune's broad subject/object pools + any extra.
-        vocab = set(_collect_vocab(self.cur)) | set(FT_SUBJECTS) | set(FT_OBJECTS) | set(extra_vocab or [])
+        # the fine-tune's broad subject/object pools + instance slots + attribute vocab + any extra.
+        vocab = (set(_collect_vocab(self.cur)) | set(FT_SUBJECTS) | set(FT_OBJECTS) | set(_ATTRS)
+                 | {"isa", "is"}          # instance-rep relation tokens (action fillers) need composer codes
+                 | {t for slots in self._inst_toks.values() for t in slots} | set(extra_vocab or []))
         self.vocab = sorted(vocab)
         # referents (for anaphora) must stay small (one 40-neuron attractor/referent in n=600) -> a curated set
         referents = sorted(set(sorted(self.agents)[:6]) | set(list(self.patients)[:4]))
         self.mta = MultiTurnAgent(referent_concepts=referents, concepts={w: None for w in self.vocab},
-                                  seed=seed, defer_planner=True, enable_biased_competition=False, composer_kind="rf")
+                                  seed=seed, defer_planner=True, enable_biased_competition=False, composer_kind="rf",
+                                  D=256)
         _teach(self.mta.agent, self.cur)
         self.store_keys = {tuple(f) for f in facts}
         self.faculty = FTFaculty()
         self.npar = self.faculty.npar
         self._mentioned = {}          # subject -> set of verbs already said (so "tell me more" surfaces a NEW fact)
+        self._last_inst = {}          # kind -> the LAST minted instance token (per-kind discourse referent, Phase-14)
+        self._inst_used = {k: 0 for k in self.kinds}   # how many instance slots consumed per kind
 
     def _content(self, toks):
         subj = next((t for t in toks if t in self.agents or t in self.vocab and t not in _STOP and t not in self.actions), None)
@@ -74,6 +93,37 @@ class FluidChat:
 
     def _is_question(self, toks):
         return bool(set(toks) & _QWORDS)
+
+    def _kind_of(self, toks):
+        """(kind, is_plural): a singular kind token -> (kind, False); a plural 'dogs' -> (kind, True)."""
+        for t in toks:
+            if t in self.kinds:
+                return t, False
+            if t.endswith("es") and t[:-2] in self.kinds:
+                return t[:-2], True
+            if t.endswith("s") and t[:-1] in self.kinds:
+                return t[:-1], True
+        return None, False
+
+    def _mint(self, kind):
+        """Introduce a discourse instance of `kind`: assign the next free slot + store the isa link, track per-kind."""
+        if self._inst_used.get(kind, 0) >= len(self._inst_toks.get(kind, [])):
+            return None
+        tok = self._inst_toks[kind][self._inst_used[kind]]; self._inst_used[kind] += 1
+        self.mta.agent.composer.store(tok, "isa", kind)         # "dog_1 isa dog" (inherit the kind's facts)
+        self._last_inst[kind] = tok
+        return tok
+
+    def _answer_instance(self, inst, kind, verb):
+        """INSTANCE-FIRST / KIND-FALLBACK (Phase-14): the instance's OWN fact, else inherit the kind's via isa. The
+        instance's own attribute renders as a grounded template ('The dog is brown.'); an inherited kind fact uses the
+        validated RA-render+VERIFY path (`_answer`). Display always uses the KIND name, never the internal token."""
+        own = self.mta.agent.what_does(inst, verb)
+        if own is not None:
+            self._mentioned.setdefault(kind, set()).add(verb)
+            return (f"The {kind} is {own}." if verb == "is" else f"The {kind} {_v3(verb)} {own}.")
+        _p, reply = self._answer(kind, verb)                    # inherit via the kind (RA-render + VERIFY)
+        return reply
 
     def _answer(self, subj, verb):
         """Phase-3 turn: GATE -> RA-render -> VERIFY. Writes the answer as the salient referent (Phase-4)."""
@@ -159,6 +209,17 @@ class FluidChat:
         toks = [t for t in toks if t]
         if not toks:
             return "?"
+        # INSTANCE ATTRIBUTE (Phase-14), declarative -- "the dog is/was brown". Checked BEFORE the question split
+        # because "is"/"was" are also question cues; a subject-first clause with an attribute + no wh-word/'?' is a
+        # STATEMENT. Routes to the minted instance's OWN episodic fact.
+        _k0, _pl0 = self._kind_of(toks)
+        _ts0 = set(toks)
+        if (_k0 is not None and not _pl0 and "the" in _ts0 and ("is" in _ts0 or "was" in _ts0)
+                and not (_ts0 & {"what", "who", "how", "why"}) and "?" not in raw
+                and any(t in _ATTRS for t in toks) and _k0 in self._last_inst):
+            attr = next(t for t in toks if t in _ATTRS)
+            self.mta.agent.composer.store(self._last_inst[_k0], "is", attr)
+            return f"ok, the {_k0} is {attr}."
         if self._is_question(toks):
             tset = set(toks)
             has_pron = any(t in _PRON for t in toks)
@@ -214,11 +275,37 @@ class FluidChat:
                 _p, reply = self._answer(who, verb)
                 return reply
 
+            # INSTANCE (Phase-14): a definite singular "the dog" that has a minted instance -> the instance's OWN fact
+            # (or inherited via isa). A plural/generic "dogs" (or an un-minted kind) falls through to the kind path.
+            kind_q, is_plural_q = self._kind_of(toks)
+            verb_q = verb if verb is not None else ("is" if ("is" in tset or "was" in tset) else None)
+            if (kind_q is not None and not is_plural_q and "the" in tset and kind_q in self._last_inst
+                    and obj is None and verb_q is not None):
+                return self._answer_instance(self._last_inst[kind_q], kind_q, verb_q)
+            # normalize a plural/bare kind mention to the kind concept for a GENERIC query ("what do dogs eat?")
+            if subj is None and kind_q is not None:
+                subj = kind_q
+
             # WHAT (default) -> patient query
             if subj is None or verb is None:
                 return "I don't know."
             _p, reply = self._answer(subj, verb)
             return reply
+        # INSTANCE-REP (Phase-14) statements, checked before the kind-fact SVO parse:
+        tset_s = set(toks)
+        kind_s, is_plural_s = self._kind_of(toks)
+        #  MINT: "i saw a dog" / "there is a dog" -> introduce a discourse instance of the kind (dog_1 isa dog).
+        if (kind_s is not None and not is_plural_s and "the" not in tset_s
+                and ("a" in tset_s or "an" in tset_s) and (tset_s & _INTRO_CUES)):
+            tok = self._mint(kind_s)
+            return f"ok, a {kind_s}." if tok is not None else "ok."
+        #  ATTRIBUTE: "the dog is/was brown" (a minted instance present) -> store the instance's OWN episodic fact.
+        if (kind_s is not None and not is_plural_s and "the" in tset_s and ("is" in tset_s or "was" in tset_s)
+                and kind_s in self._last_inst):
+            attr = next((t for t in toks if t in _ATTRS), None)
+            if attr is not None:
+                self.mta.agent.composer.store(self._last_inst[kind_s], "is", attr)
+                return f"ok, the {kind_s} is {attr}."
         # STATEMENT -> LEARN (growth). parse S V O over the vocab.
         subj = next((t for t in toks if t in self.vocab and t not in _STOP and self.inflect.get(t) not in self.actions), None)
         verb = next((self.inflect.get(t) for t in toks if self.inflect.get(t) in self.actions), None)
@@ -248,11 +335,23 @@ DEMO = [
     "what does the lion eat?",       # 9 -> I don't know.  (moat)
 ]
 
+INSTANCE_DEMO = [                    # Phase-14: "which dog?" -- a specific instance vs the generic kind
+    "i saw a dog",                   # 0 -> ok, a dog.            (mint dog_1 isa dog)
+    "the dog is brown",              # 1 -> ok, the dog is brown. (store the instance's OWN fact)
+    "what is the dog?",              # 2 -> The dog is brown.     (the instance's own fact, not the kind's)
+    "what does the dog eat?",        # 3 -> the dog eats meat.    (INHERITED from the kind via isa)
+    "what do dogs eat?",             # 4 -> the dog eats meat.    (GENERIC "dogs" -> the kind)
+    "i saw a cat",                   # 5 -> ok, a cat.            (mint a 2nd instance, different kind)
+    "what is the dog?",              # 6 -> The dog is brown.     (distinct-persist: still the dog instance)
+    "what does the wolf eat?",       # 7 -> I don't know.         (moat: "wolf" never introduced)
+]
+
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--demo", action="store_true", help="run the canned demo transcript (Q&A + anaphora + growth + moat)")
+    ap.add_argument("--instance-demo", action="store_true", help="run the instance-rep transcript (mint + definite/generic + inherit + distinct + moat)")
     ap.add_argument("--script", default=None, help="'|'-separated turns to run then exit")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
@@ -266,7 +365,8 @@ def main():
     except Exception as e:
         traceback.print_exc(); print(f"ERROR: {e}"); return 1
 
-    turns = DEMO if a.demo else (a.script.split("|") if a.script else None)
+    turns = (DEMO if a.demo else INSTANCE_DEMO if a.instance_demo
+             else (a.script.split("|") if a.script else None))
     transcript = []
     if turns is not None:
         for t in turns:
@@ -275,7 +375,19 @@ def main():
             print(f"  you>   {t.strip()}\n  brain> {reply}", flush=True)
         # a light self-check for the canned demo
         go = None
-        if a.demo:
+        if a.instance_demo:
+            def _isaid(i, sub):
+                return sub in transcript[i]["brain"].lower()
+            go = bool("a dog" in transcript[0]["brain"].lower()          # mint
+                      and _isaid(1, "brown")                             # attribute stored
+                      and _isaid(2, "brown")                             # instance own fact (definite)
+                      and _isaid(3, "meat")                              # inherited via isa
+                      and _isaid(4, "meat")                              # generic "dogs" -> the kind
+                      and _isaid(6, "brown")                             # distinct-persist after a 2nd mint
+                      and "know" in transcript[7]["brain"].lower())      # moat
+            print(f"\n  [instance-demo self-check] mint/attribute/own/inherit/generic/distinct-persist/moat "
+                  f"all correct: {go}", flush=True)
+        elif a.demo:
             def _said(i, sub):
                 return sub in transcript[i]["brain"].lower()
             elab = transcript[8]["brain"].lower()                             # elaborate -> a NEW dog fact
