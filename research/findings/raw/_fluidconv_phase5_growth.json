@@ -1,0 +1,165 @@
+{
+  "probe": "fluidconv_phase5_growth",
+  "GO": true,
+  "verdict": "GO -- GROWTH through conversation: each NEW fact heard is immediately answered grounded (RA-rendered), the generator GENERALIZES to subjects unseen in its fine-tune vocab, base facts are RETAINED, the moat holds 0-FA on still-untaught cues, and the new facts are DURABLE. >=3 seeds. The brain grows its knowledge from the conversation.",
+  "resolves": "growth through conversation: new facts learned from dialogue are immediately answerable (RA-rendered, generalizing to novel entities), old retained, moat intact.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 29.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "learned": [
+        {
+          "fact": [
+            "wolf",
+            "eat",
+            "rabbit"
+          ],
+          "answered": "rabbit",
+          "reply": "the wolf eats rabbit .",
+          "verified": true,
+          "novel_to_generator": false,
+          "ok": true
+        },
+        {
+          "fact": [
+            "camel",
+            "eat",
+            "grass"
+          ],
+          "answered": "grass",
+          "reply": "the camel eats grass , yes .",
+          "verified": true,
+          "novel_to_generator": true,
+          "ok": true
+        },
+        {
+          "fact": [
+            "zebra",
+            "like",
+            "hay"
+          ],
+          "answered": "hay",
+          "reply": "the zebra likes hay .",
+          "verified": true,
+          "novel_to_generator": true,
+          "ok": true
+        }
+      ],
+      "n_learn": 3,
+      "n_growth": 3,
+      "novel_generalize_ok": true,
+      "retention_before": true,
+      "retention_after": true,
+      "moat_ok": true,
+      "moat_gate": null,
+      "durability_ok": true,
+      "durability_reply": "the wolf eats rabbit ."
+    },
+    {
+      "seed": 43,
+      "learned": [
+        {
+          "fact": [
+            "wolf",
+            "eat",
+            "rabbit"
+          ],
+          "answered": "rabbit",
+          "reply": "the wolf eats rabbit .",
+          "verified": true,
+          "novel_to_generator": false,
+          "ok": true
+        },
+        {
+          "fact": [
+            "camel",
+            "eat",
+            "grass"
+          ],
+          "answered": "grass",
+          "reply": "the camel eats grass , yes .",
+          "verified": true,
+          "novel_to_generator": true,
+          "ok": true
+        },
+        {
+          "fact": [
+            "zebra",
+            "like",
+            "hay"
+          ],
+          "answered": "hay",
+          "reply": "the zebra likes hay .",
+          "verified": true,
+          "novel_to_generator": true,
+          "ok": true
+        }
+      ],
+      "n_learn": 3,
+      "n_growth": 3,
+      "novel_generalize_ok": true,
+      "retention_before": true,
+      "retention_after": true,
+      "moat_ok": true,
+      "moat_gate": null,
+      "durability_ok": true,
+      "durability_reply": "the wolf eats rabbit ."
+    },
+    {
+      "seed": 44,
+      "learned": [
+        {
+          "fact": [
+            "wolf",
+            "eat",
+            "rabbit"
+          ],
+          "answered": "rabbit",
+          "reply": "the wolf eats rabbit .",
+          "verified": true,
+          "novel_to_generator": false,
+          "ok": true
+        },
+        {
+          "fact": [
+            "camel",
+            "eat",
+            "grass"
+          ],
+          "answered": "grass",
+          "reply": "the camel eats grass , yes .",
+          "verified": true,
+          "novel_to_generator": true,
+          "ok": true
+        },
+        {
+          "fact": [
+            "zebra",
+            "like",
+            "hay"
+          ],
+          "answered": "hay",
+          "reply": "the zebra likes hay .",
+          "verified": true,
+          "novel_to_generator": true,
+          "ok": true
+        }
+      ],
+      "n_learn": 3,
+      "n_growth": 3,
+      "novel_generalize_ok": true,
+      "retention_before": true,
+      "retention_after": true,
+      "moat_ok": true,
+      "moat_gate": null,
+      "durability_ok": true,
+      "durability_reply": "the wolf eats rabbit ."
+    }
+  ],
+  "HONEST_CEILING": "growth over PRE-ALLOCATED concept codes (new concept CODES = the dendritic/allocation frontier); full cross-session persistence validated in the develop loop; here a within-session durability check stands in."
+}
