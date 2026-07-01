@@ -6683,6 +6683,30 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 786 (2026-07-01 — EMERGE-1 RAN: BOUNDARY [the honest prior]; the wall is the LOCAL RULE's depth-scaling)
+
+Built + ran EMERGE-1 (`_emerge1_deep_dendritic_representation_derisk.py`, reuse DendriticMLP, CPU, NO sim/ edit): does a
+DEEP dendritic net w/ a biologically-plausible LOCAL rule (feedback alignment + Urbanczik-Senn) DEVELOP generalizable
+depth-2 structure (threshold-of-XORs, held-out + hidden-rep probe)? **BOUNDARY, robust across 300 + 900-epoch budgets,
+3 seeds:** oracle backprop generalizes (0.95, task IS deep-learnable) but the local FA rule MEMORIZES (train->1.00) and
+does NOT generalize (held-out ~0.58 ~= chance); more epochs = more memorization, not generalization. Single-layer fails
+(0.18-0.25). Apical-lesion floor 0.47-0.50, probe ~chance (no features emerge w/o top-down error). NUANCE: deep FA
+developed PARTIAL structure (XOR-latent probe 0.65-0.78 > frozen 0.51; beats single-layer) = a characterized partial,
+exactly the scoping forecast. ⇒ the emergence wall is the DEPTH-SCALING of biologically-plausible LOCAL credit
+assignment, NOT (only) the point neuron -- the months-scale TWO_COMPARTMENT sim/ rewrite would NOT clear it. Empirical
+crux: backprop credit-assigns through depth (not bio-local); plausible local rules don't (at our scale) -- THAT is why
+we hand-design. Honest negative under strict biology = the deliverable. Build-SAVING.
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-1 (runner + finding + raw json + this state) to BOTH remotes on main +
+PRESENT the result to the owner (it empirically answers the strategic question: dendrite necessary-not-sufficient; the
+wall is the local rule's depth-scaling; the substrate rewrite is NOT warranted on the emergence premise). Then, per the
+owner's steer: the precisely-narrowed CHEAP follow-on is EMERGE-1b -- swap a STRONGER biologically-plausible local rule
+(burst-multiplexing Payeur-Naud / PC-Depth-uP) into the deep learner + re-run this exact harness; GO only if it
+GENERALIZES through depth where vanilla FA memorized (CPU, hours, NO sim/ edit). If EMERGE-1b also BOUNDARY -> the
+honest posture is the re-scope (backprop-trained generator does deep-emergent-structure; spiking brain does grounding/
+memory/moat/embodiment). AWAIT owner steer on which (this is the strategic fork they've been reasoning through).
+biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified; honest origin+gitea; COMMIT ON MAIN.
+
 ## CYCLE 785 (2026-07-01 — dendritic-emergence research RETURNED + trust-but-verified; EMERGE-1 is the pivotal gate)
 
 The dendritic-cortex-for-emergence scoping (subagent a2a7c51c57e8ba893) returned + I trust-but-verified the load-bearing

@@ -1,0 +1,111 @@
+{
+  "probe": "emerge1_deep_dendritic_representation",
+  "GO": false,
+  "verdict": "BOUNDARY (the honest prior) -- deep_FA didn't clearly beat the floors (held 0.584 vs single 0.184/lesion 0.504) -- FA didn't credit-assign through depth; hidden structure didn't emerge (probe 0.682 vs frozen 0.518; alignment climb=False); wrong-sign not at chance (0.658). The deep dendritic FA rule does NOT cleanly develop depth-2 structure at our scale (oracle CAN: 0.948), matching the field's 'bio-plausible deep learning struggles to credit-assign through depth' evidence. This is a CHARACTERIZED frontier, not a fix -- build-saving: do NOT start the months-scale sim/ rewrite on the emergence premise; the wall is depth-scaling of the local rule, not (only) the point neuron.",
+  "task": "depth-2 threshold-of-5-pair-XORs over 10 bits (needs 2 nonlinear levels; held-out generalization + hidden-rep probe for the emergent XOR latents)",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 900,
+    "lr": 0.7,
+    "batch": 128,
+    "hidden": 64
+  },
+  "elapsed_seconds": 21.9,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_train": 665,
+      "n_heldout": 359,
+      "deep_FA": {
+        "train": 1.0,
+        "heldout": 0.5598885793871866,
+        "probe_latent": 0.6707520891364902,
+        "align_start": 0.04621128180771698,
+        "align_end": 0.0645189061088083
+      },
+      "single_layer": {
+        "train": 0.7037593984962406,
+        "heldout": 0.17548746518105848
+      },
+      "apical_lesion": {
+        "train": 0.5263157894736842,
+        "heldout": 0.45125348189415043,
+        "probe_latent": 0.5052924791086351
+      },
+      "wrong_sign": {
+        "train": 0.9939849624060151,
+        "heldout": 0.6183844011142061
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9860724233983287
+      },
+      "chance": 0.5487465181058496
+    },
+    {
+      "seed": 43,
+      "n_train": 665,
+      "n_heldout": 359,
+      "deep_FA": {
+        "train": 1.0,
+        "heldout": 0.649025069637883,
+        "probe_latent": 0.7493036211699164,
+        "align_start": 0.15338658060774651,
+        "align_end": 0.020985656686222525
+      },
+      "single_layer": {
+        "train": 0.7007518796992481,
+        "heldout": 0.17548746518105848
+      },
+      "apical_lesion": {
+        "train": 0.47969924812030074,
+        "heldout": 0.5376044568245125,
+        "probe_latent": 0.532033426183844
+      },
+      "wrong_sign": {
+        "train": 1.0,
+        "heldout": 0.6935933147632312
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9749303621169917
+      },
+      "chance": 0.5376044568245125
+    },
+    {
+      "seed": 44,
+      "n_train": 665,
+      "n_heldout": 359,
+      "deep_FA": {
+        "train": 0.9593984962406015,
+        "heldout": 0.5431754874651811,
+        "probe_latent": 0.6256267409470752,
+        "align_start": 0.1296873303321307,
+        "align_end": 0.22078148007930262
+      },
+      "single_layer": {
+        "train": 0.6481203007518797,
+        "heldout": 0.20055710306406685
+      },
+      "apical_lesion": {
+        "train": 0.48721804511278194,
+        "heldout": 0.5236768802228412,
+        "probe_latent": 0.516991643454039
+      },
+      "wrong_sign": {
+        "train": 1.0,
+        "heldout": 0.6629526462395543
+      },
+      "oracle_bp": {
+        "train": 0.9984962406015038,
+        "heldout": 0.883008356545961
+      },
+      "chance": 0.5236768802228412
+    }
+  ],
+  "HONEST_NOTE": "Reuses the built DendriticMLP deep feedback-alignment learner (no weight transport, local Urbanczik-Senn hidden rule). The oracle arm is a fenced backprop ceiling (task-sanity + emergence-alignment reference ONLY), NOT a shipped biologically-local mode. A BOUNDARY is the honest prior + is build-saving (localizes the wall to depth-scaling of the local rule, before any months-scale sim/ two-compartment rewrite)."
+}
