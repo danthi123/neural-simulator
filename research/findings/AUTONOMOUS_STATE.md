@@ -6683,6 +6683,31 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 777 (2026-07-01 — color enrichment + CLAUDE.md refresh + DISPATCHED the synthesis-frontier research)
+
+Two commits landed: (1) color enrichment (P462 -> adjective "is" fact; "a banana is a berry and a fruit. It is
+yellow, green and black."; "an elephant is grey"); (2) CLAUDE.md arc header refreshed to Phases 0-15 + console +
+Wikidata breadth. ConceptNet retried -> STILL 502 (action facts blocked; Wikidata lacks commonsense action relations).
+Identified the remaining BIG gap for the owner's goal: multi-fact SYNTHESIS -- DISCUSS groups/lists facts but does NOT
+synthesize into connected prose w/ inference/connectives (the 21M confabulates on multi-fact contexts, Phase-10). That
+is a DOCUMENTED BOUNDARY -> per the standing research gate, the mandated first move is DEEP-RESEARCH-FIRST, not build.
+DISPATCHED a read-only general-purpose research subagent (bg **a03dbd63ed2dea880**) to produce a ranked
+biologically-grounded cheap-first scoping doc (SURPASS 4-move: isolate/quantify the residual -> reframe via
+Levelt/NLG-microplanning biology -> rank cheap-first options [host NLG microplanning vs a small synthesis fine-tune vs
+synthesis+VERIFY-fallback vs bigger model] -> verdict) at `research/findings/2026-07-01-multi-fact-synthesis-frontier-
+scoping.md`. NOT building synthesis autonomously -- it needs owner steer (minimize-transformer tension).
+
+**EXACT NEXT CONCRETE ACTION:** WHEN the research subagent (a03dbd63ed2dea880) returns: REVIEW its findings doc
+(trust-but-verify the load-bearing claims -- esp. the residual quantification + whether host-NLG-microplanning is a
+"cheat" under the BRAIN-BASED-ONLY standard), COMMIT the doc to BOTH remotes on main, and PRESENT the executive summary
++ the recommended cheap-first de-risk to the owner for steer (this is the standing practice: research -> present ranked
+options BEFORE building). If the recommended de-risk is clearly cheap + moat-protected + NOT a new-mechanism-class
+(e.g. synthesis-attempt+VERIFY-fallback, which reuses built pieces), it MAY proceed under blanket authority; a genuine
+new mechanism (a synthesis fine-tune / a bigger model) waits for owner steer. Meanwhile the console (Phases 0-15) is
+solid + tested + reads well on REAL Wikidata knowledge learned on demand. Deferred: webapp Interact (owner UI verify);
+spiking-forward speed-wall (KV-cache). biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified; honest
+origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU/console).
+
 ## CYCLE 776 (2026-07-01 — long-conversation integration test found + fixed an instance-token leak in DISCUSS)
 
 Stress-tested the console as a LONG interleaved conversation (13 turns: learn-on-demand + kind isa/has query + discuss +
