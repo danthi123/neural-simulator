@@ -69,33 +69,49 @@ from research.runners._da_composer_salience_cleanup_derisk import (
 G0, K, NOISE_SIGMA, N_QUERY_REPS, N_FACTS, D = 0.06, 2.0, 2.0, 20, 8, 64
 
 
-def _measure_hunger_da(agent, deficit, lesion=False, n_settle=300, n_washout=250, i_scale=300.0):
+def _measure_hunger_da(agent, deficit, sever_link=False, n_settle=300, n_washout=250, i_scale=300.0):
     """Measure the settled shared-`dopamine` concentration under a given body deficit, INDEPENDENTLY of the prior
     measure. First a WASHOUT (zero all drive current, run `n_washout` steps) settles the network + lets DA decay to
-    its consistent REST tonic -- so sequential conditions on the shared bridge do NOT carry over (the first smoke's
-    lesion-DA-higher-than-sated artifact). Then inject the body deficit as interoceptive current (drive_agrp ∝
-    deficit, drive_pomc ∝ surplus), run `n_settle` steps so the `from_region_firing` rule drives DA up from
-    `drive_agrp` firing, and READ the DA. lesion=True zeros the interoceptive current (drive_agrp silent) -> DA
-    stays at the rest tonic (like sated). The DA is read off the neuromodulator manager, driven by drive_agrp
-    SPIKES -- brain-based (not a host deficit value)."""
+    its consistent REST tonic -- so sequential conditions on the shared bridge do NOT carry over. Then inject the
+    body deficit as interoceptive current (drive_agrp ∝ deficit, drive_pomc ∝ surplus), run `n_settle` steps so the
+    `from_region_firing` rule drives DA up from `drive_agrp` firing, and READ the DA (off the neuromodulator manager,
+    driven by drive_agrp SPIKES -- brain-based, not a host deficit value).
+
+    sever_link=True is the CLEAN drive-lesion (validate-by-function): it keeps the SAME deficit current (drive_agrp
+    fires IDENTICALLY -> the network state is MATCHED) but temporarily REMOVES the hunger->DA `from_region_firing`
+    rule (source_regions=['drive_agrp']) from the shared `dopamine` modulator -- so the deficit no longer reaches DA.
+    Because drive_agrp is nav-inert (zero out-edges), the deficit reaches DA ONLY through that rule, so severing it
+    isolates the hunger contribution with the SNc term matched (vs the naive current-zeroing lesion, which changes
+    the network + lets the SNc drift). The rule is restored in a finally-block."""
     import sim.backend as B
     xp, _ = B.get_backend()
     br = agent._merged_bridge
     rm = br.region_manager
+    nm = br.neuromodulator_manager
     agrp = xp.asarray(np.asarray(rm.indices("drive_agrp"), dtype=np.int64))
     pomc = xp.asarray(np.asarray(rm.indices("drive_pomc"), dtype=np.int64))
-    # WASHOUT to a consistent rest state (independence between measures).
-    for _ in range(int(n_washout)):
-        br.cp_external_input_current[:] = 0.0
-        br._run_one_simulation_step()
-    i_agrp = 0.0 if lesion else i_scale * max(0.0, float(deficit))
-    i_pomc = i_scale * max(0.0, 1.0 - float(deficit))
-    for _ in range(int(n_settle)):
-        br.cp_external_input_current[:] = 0.0
-        br.cp_external_input_current[agrp] = i_agrp
-        br.cp_external_input_current[pomc] = i_pomc
-        br._run_one_simulation_step()
-    return float(br.neuromodulator_manager.get_concentration("dopamine"))
+    # optionally SEVER the hunger->DA link (remove the drive_agrp rule) for the clean lesion; restore in finally.
+    da_cfg = nm._config_by_name("dopamine")
+    removed = None
+    if sever_link:
+        for i, r in enumerate(list(da_cfg.production_rules)):
+            if "drive_agrp" in (getattr(r, "source_regions", None) or []):
+                removed = (i, da_cfg.production_rules.pop(i)); break
+    try:
+        for _ in range(int(n_washout)):                    # WASHOUT to a consistent rest state (independence)
+            br.cp_external_input_current[:] = 0.0
+            br._run_one_simulation_step()
+        i_agrp = i_scale * max(0.0, float(deficit))         # ALWAYS inject the deficit (drive_agrp fires); the LINK
+        i_pomc = i_scale * max(0.0, 1.0 - float(deficit))   # is what sever_link removes, NOT the drive current
+        for _ in range(int(n_settle)):
+            br.cp_external_input_current[:] = 0.0
+            br.cp_external_input_current[agrp] = i_agrp
+            br.cp_external_input_current[pomc] = i_pomc
+            br._run_one_simulation_step()
+        return float(nm.get_concentration("dopamine"))
+    finally:
+        if removed is not None:
+            da_cfg.production_rules.insert(removed[0], removed[1])   # restore the link
 
 
 def _build_agent(seed):
@@ -128,7 +144,7 @@ def run_seed(seed, *, n_settle=300, verbose=True):
     # ── (1)-(3) the NEW link, on the real bridge ──
     da_sated = _measure_hunger_da(agent, 0.0, n_settle=n_settle)
     da_hungry = _measure_hunger_da(agent, 1.0, n_settle=n_settle)
-    da_lesion = _measure_hunger_da(agent, 1.0, lesion=True, n_settle=n_settle)
+    da_lesion = _measure_hunger_da(agent, 1.0, sever_link=True, n_settle=n_settle)   # clean lesion: link severed, same deficit
     sweep = [(d, _measure_hunger_da(agent, d, n_settle=n_settle)) for d in (0.0, 0.5, 1.0)]
     sweep_da = [v for _, v in sweep]
     monotone = all(b >= a - 1e-6 for a, b in zip(sweep_da, sweep_da[1:])) and (sweep_da[-1] > sweep_da[0] + 0.02)
