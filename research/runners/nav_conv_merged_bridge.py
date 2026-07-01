@@ -1638,6 +1638,7 @@ class MergedNavConvAgent:
                  co_resident_td_cueshift=False,
                  co_resident_perception=False, co_resident_generalization=False,
                  perception_grounding="gen_spikes", perception_device_resident=False,
+                 co_resident_drive=False, drive_n_pool=60,
                  co_resident_command_route=None,
                  enable_da_salience_gate=True, da_gate_g0=0.06, da_gate_k=2.0, da_gate_cap=0.25,
                  enable_da_encoding_gain=True, da_encoding_k=2.0,
@@ -1928,9 +1929,15 @@ class MergedNavConvAgent:
         if self.co_resident_composer and self.co_resident_composer_kind == "onebrain":
             _onebrain_rf_size = CoResidentOneBrainComposer.n_total_for(
                 D=_D, vocab=vocab, k_max=self._onebrain_k_max, enable_attributed=False)
+        # Tier-3 living-loop seam (additive, default-off, byte-preserving): the co-resident 2-pool SPIKING hunger
+        # drive (drive_agrp/drive_pomc; O.05/O.06). Appended LAST in the build so all other index bases are
+        # byte-unchanged; ZERO out-edges so it is nav/conv-inert. Read by firing rate off cp_firing_states.
+        self.co_resident_drive = bool(co_resident_drive)
+        self._drive_n_pool = int(drive_n_pool)
         self._merged_bridge, self._handles = build_merged_nav_conv_bridge(
             seed=seed, vocab=vocab, co_resident_rf=self.co_resident_composer, rf_D=_D,
             onebrain_rf_size=_onebrain_rf_size,
+            co_resident_drive=self.co_resident_drive, drive_n_pool=self._drive_n_pool,
             co_resident_perception=self.co_resident_perception,
             co_resident_generalization=self.co_resident_generalization,
             enable_spiking_wta_readout=(self.co_resident_perception or self.co_resident_command_route),
