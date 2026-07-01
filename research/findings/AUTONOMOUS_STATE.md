@@ -6683,6 +6683,26 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 773 (2026-07-01 — the acquire->DISCUSS loop on learned Wikidata facts + a/an polish)
+
+Closed the DISCUSS gap on learned real facts: "tell me about the horse" was dropping the isa/has facts (the FT
+generator wasn't trained on those relations -> VERIFY rejected). Fix: `_discuss` renders taxonomy relations (isa/is/has)
+via a grounded TEMPLATE (the fact is in the KB by construction = no confab risk); curriculum action verbs keep the
+FT-render+VERIFY path. `_neighbourhood` now treats "isa" as a category relation too. Added `_art` (a/an agreement) for
+readability. LIVE: "learn about horse" -> "tell me about the horse" -> "Here's what I know about the horse: a horse is
+an animal. a horse is a mammal. a horse has fur. a horse has stallion. a horse has hoof." -- a grounded discussion of
+REAL Wikidata knowledge learned on demand, moat-safe. Both offline self-checks (--demo + --instance-demo) STILL True (no
+regression). NO sim/ edit. ⇒ the full loop: learn a real concept on demand -> discuss it richly, grounded + hedged.
+
+**EXACT NEXT CONCRETE ACTION:** commit the discuss-on-learned + a/an polish (runner + this state + the horse cache) to
+BOTH remotes on main. THEN continue autonomously (owner "you choose / keep going"): (A) a small OFFLINE CI test pinning
+the console's --demo + --instance-demo self-checks (protects the whole console; guard NOT-RUNNABLE if the FT ckpt is
+absent, like the de-risks); (B) richer Wikidata relations + a prose->SVO pass for multi-word values (some concepts like
+"elephant" returned 0 clean facts -- widen the property set / relax the head-token filter); (C) periodically retry
+ConceptNet for action facts (still 502). Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall
+(KV-cache lever). Honest wall: free open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS;
+NO sim/ edit unless justified; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU/console).
+
 ## CYCLE 771 (2026-07-01 — REAL-DATA breadth via Wikidata; Phase-15 GO 3/3; ConceptNet still 502)
 
 ConceptNet API STILL 502 (multi-cycle outage). Probed alternates: WordNet data not downloaded (nltk present, no

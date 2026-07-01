@@ -58,6 +58,11 @@ _INST_SLOTS = 2
 _INTRO_CUES = {"saw", "have", "found", "met", "there"}   # "i saw a dog" / "there is a dog" -> mint an instance
 
 
+def _art(w):
+    """The indefinite article for a word ('a'/'an') -- a light readability polish for grounded templates."""
+    return "an" if (w[:1].lower() in "aeiou") else "a"
+
+
 class FluidChat:
     """One coherent fluid-conversation agent (Phases 2-5 assembled)."""
 
@@ -231,9 +236,9 @@ class FluidChat:
         plus the members of a category topic (X is <topic> -> X's facts)."""
         kb = self._stored_facts()
         facts = [list(f) for f in kb if topic in (f[0], f[2])]
-        # category members ONLY via the "is" relation (X is <topic>) -- a non-"is" patient (dog chase cat) does NOT
-        # make the agent a member, so a regular topic doesn't vacuum in unrelated facts.
-        for m in [f[0] for f in kb if f[2] == topic and f[1] == "is"]:
+        # category members ONLY via the "is"/"isa" relation (X is <topic>) -- a non-taxonomic patient (dog chase cat)
+        # does NOT make the agent a member, so a regular topic doesn't vacuum in unrelated facts.
+        for m in [f[0] for f in kb if f[2] == topic and f[1] in ("is", "isa")]:
             facts += [list(f) for f in kb if f[0] == m and list(f) not in facts]
         return facts
 
@@ -251,7 +256,16 @@ class FluidChat:
             return f"I don't know much about the {topic}."
         sentences = []
         for (a, v, p) in nb:
-            q = f"what is the {a} ?" if v == "is" else f"what does the {a} {v} ?"
+            # TAXONOMY relations (isa/is/has -- e.g. Phase-15 Wikidata facts) render via a grounded TEMPLATE: the fact
+            # is in the KB by construction (no confab risk), and the FT generator wasn't trained on these relations.
+            if v in ("isa", "is"):
+                sentences.append(f"{_art(a)} {a} is {_art(p)} {p}.")
+                continue
+            if v == "has":
+                sentences.append(f"{_art(a)} {a} has {p}.")
+                continue
+            # curriculum ACTION verbs (chase/eat/like) -> the FT render + VERIFY path (fluent + drift-guarded).
+            q = f"what does the {a} {v} ?"
             one = self.faculty.answer(f"the {a} {_v3(v)} {p} .", q)
             svos = _extract_all_svos(one, self.agents, self.actions, self.patients, self.inflect)
             ungrounded = [s for s in svos if _fact_key(s) not in self.store_keys]
@@ -354,7 +368,7 @@ class FluidChat:
             if kind_q is not None and obj is None and verb is None:
                 if "is" in tset or "was" in tset:
                     par = self.mta.agent.what_does(kind_q, "isa") or self.mta.agent.what_does(kind_q, "is")
-                    return f"a {kind_q} is a {par}." if par is not None else "I don't know."
+                    return f"{_art(kind_q)} {kind_q} is {_art(par)} {par}." if par is not None else "I don't know."
                 if "has" in tset or "have" in tset:
                     part = self.mta.agent.what_does(kind_q, "has")
                     return f"the {kind_q} has {part}." if part is not None else "I don't know."
