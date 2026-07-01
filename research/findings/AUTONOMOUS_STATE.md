@@ -6660,6 +6660,29 @@ composing validated parse+store). Deferred: webapp Interact wire-in (owner UI ve
 deliverable). biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified; honest origin+gitea; COMMIT ON
 MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 772 (2026-07-01 — WIRED Wikidata learn-on-demand INTO the console; live end-to-end)
+
+`_fluidconv_chat_repl.py`: added `learn about <concept>` -- fetch + ingest a concept's REAL Wikidata facts mid-
+conversation (the on-demand grounded tail, `project_vocab_target_breadth_vs_depth`). Mechanism: `_wd_qid`
+(wbsearchentities name->QID) + reuse Phase-15 `_fetch_entity` (P279 isa / P527 has -> simplified SVO) + `_ensure_concept`
+(runtime composer code injection -- deterministic md5 seed; the numpy cleanup rebuilds its codebook from composer.words
+per-call so appending is safe, verified by probe) + store; per-concept disk cache (fetch-once, offline reuse). Added a
+KIND-level isa/has query branch ("what is the horse?" -> isa parent; "what does the horse have?" -> a has-part) since
+is/isa/has aren't curriculum action verbs. LIVE end-to-end: "learn about horse" -> 5 real facts (horse isa animal/mammal,
+has fur/stallion); "what is the horse?" -> "a horse is a animal"; "what does the horse have?" -> "the horse has fur";
+"dragon" -> moat abstains. Both offline demos STILL GREEN (--demo + --instance-demo self-checks True; no regression).
+The Wikidata fetch is host-side data-prep (legitimate environment); brain learns via composer.store. NO sim/ edit.
+
+**EXACT NEXT CONCRETE ACTION:** commit the console learn-on-demand (runner + this state; the per-concept cache is a
+runtime artifact -- add it too so the demo is reproducible offline) to BOTH remotes on main. THEN continue autonomously
+(owner "you choose / keep going"): options, pick highest-leverage -- (A) minor render polish (a/an agreement in the
+kind-taxonomy template "a horse is a animal" -> "an animal"; cheap); (B) richer Wikidata relations (diet P1034-ish,
+habitat) + a prose->SVO extraction pass for multi-word values; (C) periodically retry ConceptNet (action facts
+capable-of/desires) -- was 502; (D) a small CI test that pins the console instance/learn self-checks (offline path).
+Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall (KV-cache lever). Honest wall: free
+open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
+honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
+
 ## CYCLE 771 (2026-07-01 — REAL-DATA breadth via Wikidata; Phase-15 GO 3/3; ConceptNet still 502)
 
 ConceptNet API STILL 502 (multi-cycle outage). Probed alternates: WordNet data not downloaded (nltk present, no

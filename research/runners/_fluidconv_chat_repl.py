@@ -7,6 +7,8 @@ facts, and it abstains ("I don't know") on what it hasn't learned.
   DISCUSS   "tell me about the dog" -> open-ended grounded discussion of the neighbourhood (Phase-10); "compare X Y".
   INSTANCE  "i saw a dog" -> mint a specific instance; "the dog is brown" -> its OWN fact; "what is the dog?" -> brown;
             "what do dogs eat?" -> the KIND ("which dog?", Phase-14: definite vs generic + isa-inheritance).
+  LEARN     "learn about horse" -> fetch + ingest REAL Wikidata facts on demand (Phase-15 grounded tail); then
+            "what is the horse?" -> "a horse is a mammal"; "what does the horse have?" -> "the horse has fur".
   STATEMENT "the wolf eats rabbit" / "wolf eat rabbit"  -> hear (LEARN) -> "ok, i learned that the wolf eats rabbit."
   UNTAUGHT  -> "I don't know."   (the no-confab moat)
 
@@ -22,8 +24,9 @@ Run (scripted smoke / demo):
 Run (interactive): ... (no --script/--demo/--instance-demo -> reads stdin; blank line or 'quit' exits)
 """
 from __future__ import annotations
-import argparse, json, os, sys, time, traceback
+import argparse, hashlib, json, os, sys, time, traceback, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
+import numpy as np
 
 os.environ.setdefault("SIM_BACKEND", "numpy")
 try:
@@ -40,6 +43,10 @@ from research.runners._grounded_lang_integration_derisk import _build_inflection
 from research.runners._fluidconv_phase1_grounded_continuation_derisk import _extract_all_svos, _fact_key  # noqa: E402
 from research.runners._fluidconv_phase2_ra_finetune import VERBS, FT_CKPT, SUBJECTS as FT_SUBJECTS, OBJECTS as FT_OBJECTS  # noqa: E402
 from research.runners._fluidconv_phase2_ra_qa_eval_derisk import FTFaculty, _v3  # noqa: E402
+from research.runners._fluidconv_phase15_wikidata_breadth_derisk import _fetch_entity, PROPS as _WD_PROPS  # noqa: E402
+
+_WD_SEARCH = "https://www.wikidata.org/w/api.php"          # wbsearchentities: resolve a concept NAME -> a Wikidata QID
+_WD_CACHE = _REPO / "research" / "findings" / "raw" / "_fluidconv_console_wikidata_cache.json"
 
 OUT = _REPO / "research" / "findings" / "raw" / "_fluidconv_chat_repl_demo.json"
 _QWORDS = {"what", "who", "does", "do", "is", "are", "tell", "can", "could", "why", "how", "when", "where", "?"}
@@ -85,6 +92,59 @@ class FluidChat:
         self._mentioned = {}          # subject -> set of verbs already said (so "tell me more" surfaces a NEW fact)
         self._last_inst = {}          # kind -> the LAST minted instance token (per-kind discourse referent, Phase-14)
         self._inst_used = {k: 0 for k in self.kinds}   # how many instance slots consumed per kind
+        # on-demand REAL-knowledge breadth (Phase-15): a per-concept Wikidata fact cache (fetch-once, reused/offline).
+        self._wd_cache = json.loads(_WD_CACHE.read_text()) if _WD_CACHE.exists() else {}
+
+    def _ensure_concept(self, w):
+        """Inject a runtime composer code for a never-seen concept (deterministic per word). The numpy cleanup rebuilds
+        its codebook from `composer.words` each call, so appending is safe. Enables learning about NEW concepts."""
+        comp = self.mta.agent.composer
+        if w not in comp.concepts:
+            s = int(hashlib.md5(w.encode()).hexdigest()[:8], 16)
+            comp.concepts[w] = np.random.default_rng(s).uniform(0.0, 1.0, comp.D)
+            comp.words = sorted(set(comp.words) | {w})
+
+    def _wd_qid(self, name):
+        """Resolve a concept NAME -> its top Wikidata QID via wbsearchentities."""
+        url = (_WD_SEARCH + "?action=wbsearchentities&format=json&language=en&type=item&limit=1&search="
+               + urllib.parse.quote(name))
+        req = urllib.request.Request(url, headers={"User-Agent": "sim-research/1.0 (grounded-knowledge)"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            hits = json.loads(r.read().decode("utf-8")).get("search", [])
+        return hits[0]["id"] if hits else None
+
+    def _wikidata_learn(self, concept):
+        """LEARN real grounded facts about `concept` from Wikidata on demand (the on-demand tail): resolve QID -> fetch
+        clean SVO (P279 isa / P527 has) -> inject codes -> store. Cached per-concept. The fetch is host-side data-prep
+        (legitimate environment); the brain LEARNS via composer.store. Graceful on network failure."""
+        concept = concept.lower().strip()
+        if concept in self._wd_cache:
+            facts = self._wd_cache[concept]
+        else:
+            try:
+                qid = self._wd_qid(concept)
+                if not qid:
+                    return f"i couldn't find '{concept}' in the knowledge source."
+                facts = _fetch_entity(concept, qid, _WD_PROPS, per_prop=3)   # reuse the Phase-15 fetch+simplify
+            except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError):
+                return "i couldn't reach the knowledge source right now."
+            self._wd_cache[concept] = facts
+            try:
+                _WD_CACHE.write_text(json.dumps(self._wd_cache, indent=2))
+            except Exception:
+                pass
+        if not facts:
+            return f"i couldn't find facts about the {concept}."
+        n = 0
+        for (a, v, p) in facts:
+            for t in (a, v, p):
+                self._ensure_concept(t)
+            self.mta.agent.composer.store(a, v, p)
+            self.store_keys.add((a, v, p))
+            self.agents.add(a); self.patients.add(p); n += 1
+        self.kinds = sorted(self.agents)                     # the new concept + its parents become mintable kinds
+        ex = "; ".join(f"{a} {v} {p}" for (a, v, p) in facts[:4])
+        return f"ok, i learned {n} facts about the {concept}: {ex}."
 
     def _content(self, toks):
         subj = next((t for t in toks if t in self.agents or t in self.vocab and t not in _STOP and t not in self.actions), None)
@@ -209,6 +269,13 @@ class FluidChat:
         toks = [t for t in toks if t]
         if not toks:
             return "?"
+        # LEARN-ON-DEMAND (Phase-15): "learn about X" / "look up X" / "study X" -> fetch + ingest X's real Wikidata
+        # facts (the on-demand grounded tail). Checked first so "about"/"learn" don't fall into DISCUSS/LEARN-SVO.
+        if (("learn" in toks and "about" in toks) or "look" in toks and "up" in toks or toks[:1] == ["study"]):
+            after = toks[toks.index("about") + 1:] if "about" in toks else toks[1:]
+            concept = next((t for t in after if t not in _STOP and t.isalpha()), None)
+            if concept is not None:
+                return self._wikidata_learn(concept)
         # INSTANCE ATTRIBUTE (Phase-14), declarative -- "the dog is/was brown". Checked BEFORE the question split
         # because "is"/"was" are also question cues; a subject-first clause with an attribute + no wh-word/'?' is a
         # STATEMENT. Routes to the minted instance's OWN episodic fact.
@@ -282,6 +349,15 @@ class FluidChat:
             if (kind_q is not None and not is_plural_q and "the" in tset and kind_q in self._last_inst
                     and obj is None and verb_q is not None):
                 return self._answer_instance(self._last_inst[kind_q], kind_q, verb_q)
+            # KIND taxonomy (Phase-15 learned facts): "what is the elephant?" -> its isa parent; "what does the tree
+            # have?" -> a has-part. Handles the is/have relations the curriculum action verbs (chase/eat/like) lack.
+            if kind_q is not None and obj is None and verb is None:
+                if "is" in tset or "was" in tset:
+                    par = self.mta.agent.what_does(kind_q, "isa") or self.mta.agent.what_does(kind_q, "is")
+                    return f"a {kind_q} is a {par}." if par is not None else "I don't know."
+                if "has" in tset or "have" in tset:
+                    part = self.mta.agent.what_does(kind_q, "has")
+                    return f"the {kind_q} has {part}." if part is not None else "I don't know."
             # normalize a plural/bare kind mention to the kind concept for a GENERIC query ("what do dogs eat?")
             if subj is None and kind_q is not None:
                 subj = kind_q

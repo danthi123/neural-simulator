@@ -1,0 +1,29 @@
+{
+  "horse": [
+    [
+      "horse",
+      "isa",
+      "animal"
+    ],
+    [
+      "horse",
+      "isa",
+      "mammal"
+    ],
+    [
+      "horse",
+      "has",
+      "fur"
+    ],
+    [
+      "horse",
+      "has",
+      "stallion"
+    ],
+    [
+      "horse",
+      "has",
+      "hoof"
+    ]
+  ]
+}
