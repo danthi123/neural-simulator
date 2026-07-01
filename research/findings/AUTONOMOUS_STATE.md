@@ -6683,6 +6683,27 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 775 (2026-07-01 — grounded discourse-cohesion in DISCUSS: fact grouping + isa/is/has article correctness)
+
+Made the DISCUSS output read more like fluid conversation (the #1 goal): the topic's OWN facts are GROUPED into cohesive
+sentences via grounded templates -- "An elephant is a mammal. It has a trunk and tusk." / "A horse is an animal and a
+mammal. It has fur, stallion and hoof." (vs the prior one-per-fact list). Added `_join_and` (comma list, 'and' before
+the last) + `_art` (a/an). Fixed a real render bug: the curriculum stores adjectives under "is" (dog is big) vs Wikidata
+taxonomy under "isa" (dog isa mammal) -- split them so "isa" gets a noun article ("is a mammal") and "is" does not ("is
+big", not "a big"), in the grouping, the member template, AND the kind-query branch. All grounded-by-construction (no
+confab); action-verb facts still render via FT+VERIFY. Both offline self-checks STILL green (no regression). NO sim/
+edit.
+
+**EXACT NEXT CONCRETE ACTION:** commit the discourse-cohesion (runner + this state) to BOTH remotes on main. THEN
+continue autonomously (owner "you choose / keep going"): the console fluid-conversation loop is now solid + tested +
+reads well on REAL Wikidata knowledge learned on demand. Options: (B) widen Wikidata relations for richer per-concept
+facts (P462 color as an adjective "is" fact; some concepts still sparse) + retry ConceptNet (action facts; still 502);
+(D) surface the console in the webapp Interact tab (ASK owner before UI changes). Consider a sync-documentation pass
+(CLAUDE.md + memory) to record the fluid-conversation console + Phases 14-15 as a coherent capability (the arc header is
+stale re: Phases 14-15 + the console + Wikidata breadth). Deferred: spiking-forward speed-wall (KV-cache). Honest wall:
+free open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
+honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU/console).
+
 ## CYCLE 774 (2026-07-01 — CI test for the console + robust data-driven Wikidata QID resolution)
 
 Two robustness deliverables: (1) `tests/test_fluidconv_chat_repl.py` -- an OFFLINE CI guard pinning the console's base

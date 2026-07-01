@@ -63,6 +63,14 @@ def _art(w):
     return "an" if (w[:1].lower() in "aeiou") else "a"
 
 
+def _join_and(items):
+    """'a, b and c' (comma-separated, 'and' before the last) -- readable list rendering for grounded discussion."""
+    items = list(items)
+    if len(items) <= 1:
+        return items[0] if items else ""
+    return ", ".join(items[:-1]) + " and " + items[-1]
+
+
 class FluidChat:
     """One coherent fluid-conversation agent (Phases 2-5 assembled)."""
 
@@ -251,9 +259,11 @@ class FluidChat:
         return facts
 
     def _discuss(self, topic, *, max_facts=7):
-        """Open-ended grounded DISCUSSION (Phase-10): render each neighbourhood fact FAITHFULLY (single-fact; a
-        multi-fact context makes the 21M confabulate) + per-sentence VERIFY + concatenate. Moat: an ungrounded render
-        is dropped; an empty neighbourhood hedges."""
+        """Open-ended grounded DISCUSSION (Phase-10): render the neighbourhood FAITHFULLY, then concatenate. The topic's
+        own TAXONOMY facts (isa/has -- e.g. Phase-15 Wikidata) are GROUPED into flowing sentences ("An elephant is a
+        mammal. It has a trunk and tusk.") -- grounded by construction (no confab), less list-y than one-per-fact. Other
+        facts (action verbs, category members) go one-per-sentence through the FT render + VERIFY. Moat: an ungrounded
+        render is dropped; an empty neighbourhood hedges."""
         nb = []                                                         # dedup the neighbourhood
         for f in self._neighbourhood(topic):
             if f not in nb:
@@ -262,12 +272,31 @@ class FluidChat:
                 break
         if not nb:
             return f"I don't know much about the {topic}."
+        # (1) group the TOPIC's OWN facts into cohesive sentences (grounded templates). Note the relation split:
+        # "isa" = taxonomy (a noun -> needs an article: "is a mammal"); "is" = an adjective ("is big", no article).
+        isa_parents = [p for (a, v, p) in nb if a == topic and v == "isa"]
+        is_attrs = [p for (a, v, p) in nb if a == topic and v == "is"]
+        has_parts = [p for (a, v, p) in nb if a == topic and v == "has"]
+        lead = []
+        if isa_parents:
+            lead.append(f"{_art(topic).capitalize()} {topic} is "
+                        f"{_join_and([f'{_art(x)} {x}' for x in isa_parents[:3]])}.")
+        if is_attrs:
+            pron = "It" if isa_parents else f"{_art(topic).capitalize()} {topic}"
+            lead.append(f"{pron} is {_join_and(is_attrs[:3])}.")
+        if has_parts:
+            pron = "It" if (isa_parents or is_attrs) else f"The {topic}"
+            lead.append(f"{pron} has {_join_and(has_parts[:4])}.")
+        # (2) the rest (action verbs + category-member facts) render one-per-sentence via FT + VERIFY.
         sentences = []
         for (a, v, p) in nb:
-            # TAXONOMY relations (isa/is/has -- e.g. Phase-15 Wikidata facts) render via a grounded TEMPLATE: the fact
-            # is in the KB by construction (no confab risk), and the FT generator wasn't trained on these relations.
-            if v in ("isa", "is"):
+            if a == topic and v in ("isa", "is", "has"):
+                continue                                                # already covered by the grouped lead
+            if v == "isa":                                             # a member's taxonomy fact (noun -> article)
                 sentences.append(f"{_art(a)} {a} is {_art(p)} {p}.")
+                continue
+            if v == "is":                                              # an adjective attribute (no article)
+                sentences.append(f"{_art(a)} {a} is {p}.")
                 continue
             if v == "has":
                 sentences.append(f"{_art(a)} {a} has {p}.")
@@ -281,7 +310,8 @@ class FluidChat:
             # nothing ungrounded -- this drops both confabulation AND grounded-but-off-topic render drift.
             if ([a, v, p] in svos) and not ungrounded:
                 sentences.append(one.strip())
-        return (f"Here's what I know about the {topic}: " + " ".join(sentences)) if sentences \
+        out = lead + sentences                                          # grouped taxonomy lead, then the rest
+        return (f"Here's what I know about the {topic}: " + " ".join(out)) if out \
             else f"I don't know much about the {topic}."
 
     def turn(self, text):
@@ -375,8 +405,11 @@ class FluidChat:
             # have?" -> a has-part. Handles the is/have relations the curriculum action verbs (chase/eat/like) lack.
             if kind_q is not None and obj is None and verb is None:
                 if "is" in tset or "was" in tset:
-                    par = self.mta.agent.what_does(kind_q, "isa") or self.mta.agent.what_does(kind_q, "is")
-                    return f"{_art(kind_q)} {kind_q} is {_art(par)} {par}." if par is not None else "I don't know."
+                    par = self.mta.agent.what_does(kind_q, "isa")       # taxonomy: a noun -> "is a mammal"
+                    if par is not None:
+                        return f"{_art(kind_q)} {kind_q} is {_art(par)} {par}."
+                    attr = self.mta.agent.what_does(kind_q, "is")       # adjective -> "is big" (no article)
+                    return f"the {kind_q} is {attr}." if attr is not None else "I don't know."
                 if "has" in tset or "have" in tset:
                     part = self.mta.agent.what_does(kind_q, "has")
                     return f"the {kind_q} has {part}." if part is not None else "I don't know."
