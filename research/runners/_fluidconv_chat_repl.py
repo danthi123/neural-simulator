@@ -251,6 +251,10 @@ class FluidChat:
         """The topic's grounded neighbourhood (association-graph adjacency): facts where topic is agent or patient,
         plus the members of a category topic (X is <topic> -> X's facts)."""
         kb = self._stored_facts()
+        # exclude discourse-INSTANCE tokens (dog_1, cat_1, ...): they are referents, not encyclopedic knowledge about
+        # the KIND, so a "tell me about the dog" must not list "a dog_1 is a dog" (the instance is queried via "the dog").
+        inst = {t for slots in self._inst_toks.values() for t in slots}
+        kb = [f for f in kb if f[0] not in inst and f[2] not in inst]
         facts = [list(f) for f in kb if topic in (f[0], f[2])]
         # category members ONLY via the "is"/"isa" relation (X is <topic>) -- a non-taxonomic patient (dog chase cat)
         # does NOT make the agent a member, so a regular topic doesn't vacuum in unrelated facts.

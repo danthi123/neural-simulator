@@ -6683,6 +6683,26 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 776 (2026-07-01 — long-conversation integration test found + fixed an instance-token leak in DISCUSS)
+
+Stress-tested the console as a LONG interleaved conversation (13 turns: learn-on-demand + kind isa/has query + discuss +
+mint instance + attribute + definite/generic + yes-no + growth + learned-fact reuse + moat) -- 12/13 clean, found ONE
+bug: "tell me about the dog" (after minting dog_1) leaked the INTERNAL instance token ("...a dog_1 is a dog. a dog_1 is
+brown."). Root cause: `_neighbourhood` category-member expansion vacuumed the discourse instance (dog_1 isa dog) into
+the KIND discussion. Fix: exclude instance tokens (dog_1, cat_1, ...) from the discussion neighbourhood -- they are
+referents (queried via "the dog"), not encyclopedic KIND knowledge. Now "tell me about the dog" is clean; "what is the
+dog?" still returns the instance's brown (the instance branch). Both offline self-checks STILL green. NO sim/ edit. The
+full interleaved conversation now holds together end-to-end (the owner's "talk to it like an LLM" use case).
+
+**EXACT NEXT CONCRETE ACTION:** commit the DISCUSS instance-leak fix (runner + this state) to BOTH remotes on main. THEN
+continue autonomously (owner "you choose / keep going"): the console fluid-conversation loop is solid + tested + reads
+well + holds up over a long interleaved conversation on REAL Wikidata knowledge learned on demand. Options: (B) widen
+Wikidata relations (P462 color as an adjective "is" fact) for richer per-concept facts + retry ConceptNet (action facts;
+still 502); (D) surface the console in the webapp Interact tab (ASK owner before UI). Deferred: spiking-forward speed-
+wall (KV-cache). Honest wall: fluent single-pass SYNTHESIS over multiple facts (DISCUSS groups, doesn't synthesize) +
+free open-world inference. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified; honest
+origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU/console).
+
 ## CYCLE 775 (2026-07-01 — grounded discourse-cohesion in DISCUSS: fact grouping + isa/is/has article correctness)
 
 Made the DISCUSS output read more like fluid conversation (the #1 goal): the topic's OWN facts are GROUPED into cohesive
