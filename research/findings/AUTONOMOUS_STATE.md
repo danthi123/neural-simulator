@@ -6683,6 +6683,32 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 787 (2026-07-01 — OWNER MASTER DIRECTIVE: relentless biological emergence; boundaries = undiscovered mechanisms)
+
+Owner gave the master directive (memory `project_master_directive_relentless_biological_emergence`): the GOAL is a
+REAL-brain simulation as an ARTIFICIAL LIFEFORM that learns+grows, communication first; NO scaffolding except the
+world/body interface; emergent, single spiking substrate, ONE brain; autonomously THEORIZE->RESEARCH->DEVELOP->TEST->
+ITERATE, biology-grounded, DRIVING it myself (don't gate at every fork). CRITICAL REFRAME: "honest negatives" /
+"boundaries" are UNDISCOVERED MECHANISMS to work PAST, not endpoints -- real brains do these things, so a mechanism
+EXISTS; a boundary means I haven't digitized the right biology yet. Use the provided textbooks/papers; be relentless
+"no matter how long it takes." ⇒ the feature-by-feature console work was scaffolding (now OFF the primary path, a demo);
+the path is the emergent biological brain. EMERGE-1's BOUNDARY is reframed: vanilla feedback-alignment is the WEAKEST
+mechanism; the brain's actual deep-credit mechanism is burst-multiplexed dendritic plasticity (Payeur-Naud 2021) +
+the dendritic microcircuit (Sacramento-Senn 2018) -> digitize THOSE faithfully + iterate past the depth wall. sim/
+edits ARE fair game when a faithful mechanism needs them (protected-caution = anti-cheat, not anti-biology).
+
+**EXACT NEXT CONCRETE ACTION:** running the loop. Dispatched a focused mechanism-research pass (subagent) for the
+FAITHFUL DIGITIZATION SPEC of burst-multiplexed dendritic credit assignment (Payeur-Naud burst-dependent plasticity +
+Sacramento-Senn self-predicting dendritic microcircuit): the exact update equations, the 2-compartment-pyramidal +
+SST/PV interneuron microcircuit structure, how bursts multiplex feedforward(event-rate)/feedback(burst-rate) to
+credit-assign through depth WITHOUT weight transport, the delta from what DendriticMLP already does (vanilla FA +
+Urbanczik-Senn), and a minimal faithful EMERGE-1b implementation plan. WHEN it returns: review (trust-but-verify),
+commit, and BUILD EMERGE-1b -- implement the faithful rule + re-run the EMERGE-1 harness (deep threshold-of-XORs, arms,
+anti-cheats, held-out + probe); GO if it GENERALIZES through depth where vanilla FA memorized. If BOUNDARY -> that
+mechanism didn't clear it -> research the NEXT (the microcircuit variant / a stronger faithful rule), iterating past the
+wall per the directive. Then onward toward the emergent brain. NO cheats/scaffolding (except world/body); honest
+origin+gitea; COMMIT ON MAIN; deep-research-gate + anti-cheats + multi-seed on each mechanism.
+
 ## CYCLE 786 (2026-07-01 — EMERGE-1 RAN: BOUNDARY [the honest prior]; the wall is the LOCAL RULE's depth-scaling)
 
 Built + ran EMERGE-1 (`_emerge1_deep_dendritic_representation_derisk.py`, reuse DendriticMLP, CPU, NO sim/ edit): does a
