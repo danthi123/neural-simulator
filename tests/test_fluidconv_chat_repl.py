@@ -84,6 +84,10 @@ def test_persistence_save_load(chat, tmp_path):
     # taxonomy chain (real 2-level Wikidata subclass, offline via the parent-extended cache: elephant->mammal->vertebrata)
     cls = chat.turn("how is the elephant classified?").lower()
     assert "mammal" in cls and "which is" in cls
+    # grounded WHY: the isa-path explanation (offline) + the moat (no fabricated reason)
+    why = chat.turn("why is an elephant a vertebrata?").lower()
+    assert why.startswith("because") and "mammal" in why      # explained via the real path
+    assert "know" in chat.turn("why is an elephant a fish?").lower()   # moat: fish not an ancestor -> abstain
 
 
 def test_instance_demo_self_check():

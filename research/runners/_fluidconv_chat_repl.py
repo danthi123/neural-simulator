@@ -11,6 +11,8 @@ facts, and it abstains ("I don't know") on what it hasn't learned.
             "what is the horse?" -> "a horse is a mammal"; "what does the horse have?" -> "the horse has fur".
   CLASSIFY  "how is the elephant classified?" / "trace the dog's ancestry" -> the real Wikidata subclass CHAIN
             ("An elephant is a mammal, which is a vertebrate") -- Collins-Quillian taxonomy, all grounded edges.
+  WHY       "why is a dog a chordate?" -> the grounded isa-PATH ("Because a dog is a mammal, a mammal is a vertebrate
+            and a vertebrate is a chordate") -- abstains if it's not a real ancestor (no fabricated reason).
   STATEMENT "the wolf eats rabbit" / "wolf eat rabbit"  -> hear (LEARN) -> "ok, i learned that the wolf eats rabbit."
   UNTAUGHT  -> "I don't know."   (the no-confab moat)
 
@@ -248,6 +250,17 @@ class FluidChat:
             chain.append(nxt); seen.add(nxt); cur = nxt
         return chain
 
+    def _why_isa(self, x, y):
+        """Grounded EXPLANATION of a taxonomic membership: "why is a dog a chordate?" -> the real isa-PATH from x up to
+        y ("Because a dog is a mammal, a mammal is a vertebrate and a vertebrate is a chordate."). None if y is not an
+        ancestor of x (the moat -- no fabricated reason). Every step is a stored subclass edge."""
+        chain = self._taxonomy_chain(x)
+        if y not in chain:
+            return None
+        path = [x] + chain[:chain.index(y) + 1]
+        steps = [f"{_art(a)} {a} is {_art(b)} {b}" for a, b in zip(path, path[1:])]
+        return "Because " + _join_and(steps) + "."
+
     def _content(self, toks):
         subj = next((t for t in toks if t in self.agents or t in self.vocab and t not in _STOP and t not in self.actions), None)
         verb = next((self.inflect.get(t) for t in toks if self.inflect.get(t) in self.actions), None)
@@ -448,6 +461,15 @@ class FluidChat:
                     return cmp_prose
                 dx, dy = self._discuss(x), self._discuss(y)      # else: the two grounded discussions
                 return f"{dx} And {dy[0].lower()}{dy[1:]}" if dy else dx
+
+            # WHY (taxonomic) ("why is a dog a chordate?") -> the grounded isa-PATH from x up to y (no fabricated
+            # reason: abstain if y is not a real ancestor of x). Checked before classify (it's the more specific query).
+            if "why" in tset and len(concepts_in) >= 2:
+                x, y = concepts_in[0], concepts_in[1]
+                why = self._why_isa(x, y)
+                if why is not None:
+                    return why
+                return f"I don't know why the {x} would be {_art(y)} {y}."
 
             # CLASSIFY / TAXONOMY CHAIN ("how is the dog classified?" / "trace the dog's ancestry" / "what is a dog
             # ultimately?") -> the real Wikidata subclass chain (Collins-Quillian), rendered as connected prose.
