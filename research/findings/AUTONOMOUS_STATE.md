@@ -6246,3 +6246,29 @@ characterize). If the spiking-forward machinery is Qwen-specific / not TinyGPT-r
 either adapt it or defer the spiking-forward + do a capability step instead (neural interrogative parser, or breadth
 via a broader KB). biologization/one-brain HARD; moat a PLUS (GATE-FIRST); honest origin+gitea; COMMIT ON MAIN;
 GPU/CuPy for real runs.
+
+## CYCLE 756 RE-PRIORITIZED (2026-07-01 — spiking-forward DEFERRED [tracked shortcut]; pivot to GROWTH-through-conversation)
+
+Examined `_genseq_allspiking_forward_compose_derisk.py`: it is ARCH-GENERIC (operates on a block's weight matrices
+Wq/Wk/Wv/Wo/W1/W2 via RF bridges + shipped spiking LN/GELU/softmax), so a TinyGPT COULD be wired through it. BUT:
+(1) it is a MAJOR integration (extract all 6 layers into the blk format + full-forward + logit compare); (2)
+autoregressive spiking generation for a full conversational turn (20 tokens x 6-layer RF forward) is impractically
+SLOW (the KV-cache speed lever is unbuilt); (3) per the 88.6M finding (logit_fid 1.0) it is a CONFIRMATION not a
+discovery. Per the owner's "END fully-spiking-one-brain, PATH by efficiency, TRACK+burn-down shortcuts" note
+(feedback_end_state_fully_spiking_one_brain_path_by_efficiency): the ANN-generator is now a TRACKED SHORTCUT (the
+fluency faculty runs as an ANN; the spiking-forward conversion is deferred until the speed lever exists -- it is a
+validated-mechanism reuse, not a new capability, so deferring loses no science). CONVERSATIONAL CAPABILITY is the
+owner's immediate priority -> pivot.
+
+**EXACT NEXT CONCRETE ACTION:** CYCLE 756 = GROWTH-through-conversation (the owner phrase "grow through these
+experiences"; roadmap GAP F; validated-composition of hear/store + persistence + the RA generator). Build
+`_fluidconv_phase5_growth_derisk.py`: (1) teach the brain a NEW fact mid-conversation via `agent.hear("elephant eat
+leaf")` (a NOVEL subject not in the fine-tune vocab); (2) immediately ask "what does the elephant eat?" -> brain GATE
+recalls -> the RA-fine-tuned 21M renders "the elephant eats leaf." (TESTS the RA generator's GENERALIZATION to a novel
+entity from the provided fact -- the whole point of the format fine-tune); (3) OLD facts retained after learning new
+(no catastrophic forgetting at the brain-store level); (4) moat still 0-FA on still-untaught cues; (5) PERSISTENCE --
+the new fact survives a save/reload (BridgeLineage or composer state). MEASURE (>=3 seeds): learn-from-conversation
+(new fact answered grounded) + novel-entity generalization + retention + moat + persistence. GO bar: new fact
+answered grounded (RA-rendered) + old retained + moat 0-FA + persists. Reuse-by-import; NO sim/ edit. THEN: neural
+interrogative parser (burn the Phase-3/4 parse scaffold) + broader-KB breadth + (deferred) the spiking-forward when
+the speed lever lands. biologization/one-brain HARD; moat a PLUS (GATE-FIRST); honest origin+gitea; COMMIT ON MAIN.
