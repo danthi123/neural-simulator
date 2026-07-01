@@ -5785,3 +5785,23 @@ multi-day loop where each day = Option-1's live() foraging (perceive+ground+stor
 MergedNavConvAgent, then consolidate/retention/tier-grow/persist; the day's facts come from PERCEPTION not a script.
 Reuse-by-import (live(), consolidate, TierPromoter, BridgeLineage); CPU-logic-check -> GPU 1-seed smoke (controller-
 serial) -> multi-day -> 6-seed. NO sim/ edit. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 738 (2026-06-30 — Tier-3 Option 2A BUILT + CPU-verified; GPU smoke in flight)
+
+Built `research/runners/_tier3_develop_with_a_body_derisk.py` (9b19ca72, NO sim/ edit): a self-contained multi-day
+runner where ONE persistent MergedNavConvAgent DEVELOPS over DAYS from LIVED experience. Each day = Option-1's
+live() foraging a cumulatively-richer DevWorld (objects introduced over days: day0 [apple,cat] -> day2
+[apple,cat,dog,river], the lived chain apple->cat->dog->river); old lived facts RETAINED as new days add facts; the
+developed brain PERSISTS across a reset. 7 gates in _verdict: develops (facts grow) / retention (old facts recalled
+>=0.8) / frozen-brain flat (commit_facts=False -> sees-but-doesn't-store -> competence 0) / lived-not-scripted
+(permuted-world -> different fact set) / no-confab MOAT ((obj,'chase') abstains every day + conv byte-frozen) /
+persistence-across-reset / alive+corr. Reuse-by-import (live/LiveState/SpikingHunger/_lived_recall/_build_agent from
+Option 1); live() gained ONE additive default-off `commit_facts` param (default True = byte-identical to the 6/6 GO,
+only gates the store -> no regression by construction). compile OK + CPU logic checks pass (DevWorld cumulative +
+permuted; verdict GO path + all 6 NEGATIVE paths flip go=False).
+
+**EXACT NEXT CONCRETE ACTION:** 2A GPU smoke IN FLIGHT (bg **btkyem55b**, `--smoke --n-days 3 --steps-per-day 300`;
+builds 4 agents = develop+frozen+permuted+persistence). On JOIN-CLOSES -> run the 6-seed (`--seeds 42 43 44 100 101
+102 --n-days 4`), controller-serial, ETA from the smoke timing (4 builds/seed -> watch the wall-clock; optimize
+n_days/builds if too slow). On a mechanics fail -> localize (develops/retention/frozen/permuted/moat/persist). Then
+finalize an Option-2A findings doc + present. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN.
