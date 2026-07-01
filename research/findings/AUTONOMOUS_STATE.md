@@ -5738,3 +5738,25 @@ develop-with-a-body / Option 3 cross-modal one-animal / Option 4 lived consolida
 present before building the next). On any seed NEGATIVE -> localize (survival/corr/lived-memory/moat/persistence) +
 honest partial. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN. (persistent_living_loop is GO 6/6 on the
 SAME corridor+rate-proxy mechanism -> expect survival 6/6; the NEW gates held on seed 42.)
+
+## CYCLE 736 (2026-06-30 — Tier-3 live-and-remember: 6/6 GO -- the FIRST persistent living agent, first Tier-3 synthesis slice CLOSED)
+
+**6/6 seeds GO** (buy0f6vhn, exit 0, seeds 42/43/44/100/101/102, ~7 min/seed = 42 min total). ALL 5 gates every seed:
+survival (intact minE 0.95-0.98/crash0%; LESION+YOKE crash 4-100%), corr +0.97-0.98, lived_memory (recall 2/2 +
+corrupting the grounded codes collapses recall to 0.00 -> load-bearing on the percept), moat 1/1 + conversational
+synapses BYTE-FROZEN in vivo, persistence (resume 2/2, cold 0/2). The FIRST persistent living agent: a merged
+one-brain that LIVES a drive-biased life, PERCEIVES+GROUNDS+STORES the objects it encounters during its own
+behaviour, is QUERIED about what it lived (moat abstains on never-encountered), and PERSISTS across a reset. NO sim/
+edit (one additive default-off co_resident_drive passthrough). Findings FINALIZED:
+`research/findings/2026-06-30-tier3-live-and-remember-first-slice.md`. ⇒ the first genuine Tier-3 SYNTHESIS slice is
+CLOSED (the capstone was largely-done-in-pieces; this is the JOIN). Honest scope: learned spatial policy = deferred
+Tier-4 dendrite wall (survival = validated rate-proxy stand-in); persistence = JSON re-instate; open-endedness =
+encounter-driven corridor; pure-spiking-reward = smoke-validated follow-on.
+
+**EXACT NEXT CONCRETE ACTION:** PRESENT the 6/6 GO + the ranked follow-on fork to the owner (research-gate: present
+before building the next north-star direction) -- Option 2 develop-with-a-body (each day's knowledge LIVED not
+scripted; MEDIUM) / Option 3 cross-modal one-animal (the shared hunger drive tightens the conversational moat -> ONE
+drive touches BOTH halves; SMALL) / Option 4 lived consolidation (event-triggered SWR replay; MEDIUM). Recommend
+presenting; on owner pick -> deep-research-gate if a new mechanism class, else compose-and-de-risk (6-seed +
+anti-cheats). Also pending (non-critical): a CLAUDE.md 'Recent arc' Tier-3 entry (milestone doc-sync). Moat 0-leak
+(HARD); honest origin+gitea; COMMIT ON MAIN.

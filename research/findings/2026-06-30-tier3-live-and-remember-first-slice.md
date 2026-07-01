@@ -3,8 +3,9 @@
 **2026-06-30 (CYCLE 733-735, autonomous loop; owner-picked Option 1 of the Tier-3 capstone scoping).**
 The first artificial-life-capstone SYNTHESIS slice: a merged one-brain that LIVES a drive-biased life, PERCEIVES +
 GROUNDS + STORES the objects it encounters *during its own behaviour*, can be QUERIED about what it lived (the
-no-confab moat intact), and PERSISTS across a reset. **Seed-42 GO (5/5 gates) on the real merged bridge; the full
-6-seed is [PENDING — bg buy0f6vhn, ETA ~48 min].** Runner: `research/runners/_tier3_live_and_remember_derisk.py`.
+no-confab moat intact), and PERSISTS across a reset. **6/6 seeds GO — all 5 gates, every seed** (seeds 42/43/44/
+100/101/102; ~7 min/seed; verdict `research/findings/raw/_tier3_live_and_remember.json`). Runner:
+`research/runners/_tier3_live_and_remember_derisk.py`.
 **NO `sim/` edit** (one additive default-off `co_resident_drive` passthrough on `MergedNavConvAgent`, forwarding a
 `build_merged_nav_conv_bridge` param that already existed).
 
@@ -28,7 +29,7 @@ not a scripted perceive-list). After the life the agent answers "what did you en
 grounded memory — or ABSTAINS on a never-encountered object. The life PERSISTS (body + lived facts + grounded codes
 via `BridgeLineage`); a reset → reload resumes the SAME memory.
 
-## The five gates (seed-42, on the real merged bridge, GPU)
+## The five gates (6/6 seeds GO; seed-42 values shown — all seeds materially identical: intact minE 0.95–0.98/crash 0%, corr +0.97–0.98, recall 2/2, corrupt 0.00, moat 1/1, resume 2/2, cold 0/2)
 | gate | result | evidence |
 |---|---|---|
 | **survival** (drive load-bearing) | GO | intact minE **0.95** / crash **0%**; LESION minE 0.00 / crash 12%; YOKE minE 0.00 / crash 30% |
@@ -72,7 +73,11 @@ holds by construction). Validate-by-function (drive-lesion/yoke = survival; grou
 was caught, root-caused, and fixed — not hidden).
 
 ## Verdict
-Seed-42 demonstrates the FIRST persistent living agent that perceives, remembers, and can be talked to about what it
-lived — on the merged one brain, moat intact, NO `sim/` edit. **[6-seed robustness PENDING — buy0f6vhn.]** On a
-6/6 GO this closes the first genuine Tier-3 synthesis slice; the ranked follow-ons (Option 2 develop-with-a-body,
-Option 3 cross-modal one-animal, Option 4 lived consolidation) remain.
+**6/6 seeds GO** (42/43/44/100/101/102) demonstrates the FIRST persistent living agent that perceives, remembers, and
+can be talked to about what it lived — on the merged one brain, moat intact, NO `sim/` edit. This **closes the first
+genuine Tier-3 synthesis slice**: the merged one brain is no longer a battery of demos but a LIFE that perceives,
+remembers, and can be talked to about its own experience, persisting across resets. The ranked follow-ons remain
+(Option 2 develop-with-a-body — each day's knowledge LIVED not scripted; Option 3 cross-modal one-animal — the shared
+hunger drive tightens the conversational moat, so ONE drive touches BOTH halves; Option 4 lived consolidation —
+event-triggered SWR replay of what it experienced). The deferred Tier-4 wall (a *learned* spatial policy) stays off
+this slice's critical path.
