@@ -69,6 +69,12 @@ def _art(w):
     return "an" if (w[:1].lower() in "aeiou") else "a"
 
 
+def _clean(s):
+    """Tidy a generator string for display: collapse whitespace, fix ' .'/' ,' spacing, capitalize the first letter."""
+    s = " ".join(s.split()).replace(" .", ".").replace(" ,", ",").replace(" ?", "?").replace(" !", "!")
+    return (s[:1].upper() + s[1:]) if s else s
+
+
 def _join_and(items):
     """'a, b and c' (comma-separated, 'and' before the last) -- readable list rendering for grounded discussion."""
     items = list(items)
@@ -255,7 +261,7 @@ class FluidChat:
         svos = _extract_all_svos(ans, self.agents, self.actions, self.patients, self.inflect)
         ung = [s for s in svos if _fact_key(s) not in self.store_keys]
         verified = bool((([subj, verb, p] in svos) or (p in ans.split())) and not ung)
-        reply = ans if verified else f"The {subj} {_v3(verb)} {p}."
+        reply = _clean(ans) if verified else f"The {subj} {_v3(verb)} {p}."
         if p in self.mta.referents:
             self.mta._write_referent(p)
         return p, reply
