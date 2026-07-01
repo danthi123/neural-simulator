@@ -6086,3 +6086,22 @@ gated fact) + the no-confab MOAT still 0-FA (the gen never asserts an unverified
 This is Phase-0's core thesis test (a MINIMAL 20M transformer, brain-trained on our corpus, replaces the 0.5B Qwen
 in the loop, fluency-only-gated). Then Phase 1 (recurrent/RWKV on-substrate + multi-turn) per the roadmap. Present
 results; proceed under blanket authority. biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 751 (2026-07-01 — Phase-0 GO on FLUENCY: a ~21M minimal transformer is fluent [the minimize-transformer thesis])
+
+Phase-0 training done (bhhlay51p, ~4.3h): a ~21.3M GPT (d512/L6/H8/V2049/blk512) on 90M TinyStories tokens ->
+init loss 7.78 -> final 1.78; held-out ppl 8.00 -> **5.66 monotone, NO overfit** (train 6.05 ~= held-out 6.11 at
+24k -> generalizes; the overfit-not-size generative-ceiling wall AVOIDED via the constrained TinyStories regime).
+Free-gen samples are genuinely FLUENT (coherent multi-sentence TinyStories prose). ⇒ the transformer can be
+MINIMIZED (15-25x smaller than Qwen-0.5B) + is still fluent on a constrained domain; small enough that the validated
+88.6M spiking-forward path makes bridge co-residence cheap (spiking-on-substrate, minimized+brain-integrated). NO
+sim/ edit. Findings: `research/findings/2026-07-01-fluid-conversation-phase0-minimal-generator.md`. Ckpt:
+research/findings/raw/fluidconv/gen_tinystories_20M.ckpt.pt (+ gen_tinystories.bpe.json).
+
+**EXACT NEXT CONCRETE ACTION:** BUILD the Phase-0 DROP-IN (the core thesis test): parameterize
+`constrained_decode_gate._GroundedConstrainedLM.__init__` for the 21M arch (add d_model/n_layer/n_head + a bpe_path
+override; additive backward-compat defaults d256/L4 -> DON'T touch the FROZEN _CDC_* constants) + point it at the
+21M ckpt; run the grounded-lang gate->constrain->verify test with it. MEASURE: constrained generation is GROUNDED
+(low unsupported-content-error / non-vacuity) vs unconstrained drift, AND the no-confab MOAT holds (never asserts an
+unverified fact). Use weights_only=True on torch.load (own ckpt). Then Phase 1 (recurrent/RWKV + multi-turn) per the
+roadmap. biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN.
