@@ -6197,3 +6197,26 @@ consolidated Phase-2+3 GO finding with the FINAL wide-ckpt numbers + the demo tr
 follow-up resolves to the held referent, then gate->ft-answer->verify); + replace the interrogative-parse scaffold
 with a neural interrogative parser. biologization/one-brain HARD; moat a PLUS (GATE-FIRST); honest origin+gitea;
 COMMIT ON MAIN; GPU/CuPy for real runs.
+
+## CYCLE 754 DONE (2026-07-01 — Phase-2+3 GO on the FINAL wide ckpt: focused conversational Q&A + the full grounded turn)
+
+Wide ft (b88f5yop4) converged (init 4.59 -> final 0.877, 2500 steps, ~26 min). BOTH definitive evals GO, 3 seeds:
+- Phase-2 (`_fluidconv_phase2_ra_qa_eval_derisk`): focused-grounded 5/5, GATE-first moat 3/3, RA-faithful 3/3,
+  median 5 answer words. The model CONFABULATES if wrongly prompted (would-confab 9/9) -> the moat is GATE-FIRST.
+- Phase-3 (`_fluidconv_phase3_conversational_turn_derisk`): grounded-reply 5/5, moat 3/3, drift-caught 3/3.
+  Transcript = north star ("what does the dog eat? -> the dog eats meat." ... "the lion? -> I don't know.").
+Commit 284f35c5 (finding `2026-07-01-fluid-conversation-phase2-3-focused-QA-full-turn-GO.md`), both remotes. The
+minimized (21M, 15-25x < Qwen), brain-trained, brain-gated generator does focused grounded Q&A; BRAIN =
+comprehension+knowledge+moat. Transformer minimized, not deleted. NO sim/ edit anywhere in Phases 0-3.
+
+**EXACT NEXT CONCRETE ACTION:** CYCLE 755 = MULTI-TURN dialogue. Build `_fluidconv_phase4_multiturn_derisk.py`:
+route a turn through the existing validated `MultiTurnAgent` (multi_turn_agent.py: `_write_referent`/`held_referent`
+anaphora, 2026-06-17 GO; `enable_biased_competition` for >=2 held referents, opt-in) SO a follow-up question with a
+pronoun ("what does IT eat?") resolves 'it' to the referent held from the prior turn, THEN routes through the
+Phase-3 turn (brain GATE -> RA-fine-tuned 21M focused answer -> post-hoc VERIFY). MEASURE (>=3 seeds): (a) turn-2
+pronoun resolves to the turn-1 referent -> correct grounded answer; (b) reset/lesion the WM loop -> the pronoun does
+NOT resolve (abstain) [load-bearing]; (c) an ambiguous/empty-WM pronoun -> abstain (moat); (d) the single-turn
+Phase-3 result is unregressed. Reuse-by-import; NO sim/ edit. Use `defer_planner=True` on MultiTurnAgent (the WM-loop
+build is the dominant cost). GO bar: turn-2 anaphora resolves + grounded answer + WM-lesion collapses + moat holds.
+THEN: neural interrogative parser (replace the scaffold) + breadth (retrieval-augmentation). biologization/one-brain
+HARD; moat a PLUS (GATE-FIRST); honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
