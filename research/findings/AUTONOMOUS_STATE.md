@@ -5866,3 +5866,29 @@ Option 3 cross-modal one-animal (isolate the hunger->DA link design + the cheape
 ONLY tighten [structurally guaranteed], the shift tracks the drive [lesion->no shift]), then controller-verify +
 build the de-risk. FALLBACK if the owner redirects: they may prefer Option 2B (24/7 harness, north-star) or Option
 4 or to hold -- honor the steer. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 742 (2026-07-01 — Tier-3 Option 3 (cross-modal one-animal) SCOPED + controller-verified; building)
+
+Option-3 scoping subagent (a1172670cdc0d7540) done + doc pushed
+(`research/findings/2026-07-01-tier3-option3-cross-modal-one-animal-scoping.md`). VERDICT: largely done + cheap --
+3 of 4 pieces exist (shared spiking `dopamine` modulator [nav-critic default-ON] + the 6/6-GO hunger drive
+drive_agrp/pomc + the moat-safe `_da_confidence_gate` already wired into the live read path). The genuine residual =
+ONE missing arrow: drive_agrp has zero out-edges + feeds no modulator, so hunger doesn't raise DA. RECOMMENDATION
+(option b, NO sim/ edit): append a `ProductionRule(rule_type="from_region_firing", source_regions=["drive_agrp"])`
+to the shared `dopamine` NeuromodulatorConfig.production_rules, behind an additive default-off `drive_to_da` kwarg.
+CONTROLLER-VERIFIED: `from_region_firing` is a REAL shipped rule type (sim/neuromodulators.py:121/736, USED by other
+modulators :929/:964/:1105 -- NOT the reserved from_novelty stub), and production rules are SUMMED per modulator
+(:264) -> DA = SNc term (unchanged) + a hunger term; nav_conv_merged_bridge.py is a RUNNER -> runner-layer edit, NO
+sim/. Biology: O.10 incentive motivation (deprivation amplifies reward VALUE; Berridge/Toates). De-risk: a new
+`_tier3_cross_modal_one_animal_derisk.py` -- hungry abstains MORE than sated on a BORDERLINE cue; moat 0-FA at BOTH
+hunger levels (structurally guaranteed by da_to_gate's clamp + asserted byte-unchanged -> the moat can ONLY tighten,
+never loosen); drive-lesion collapses the shift (validate-by-function); sated-both + permuted-hunger controls; hunger
+read from cp_firing_states. Ladder 1-seed -> 6-seed. Subagent recommends Option 3 first (cheapest, sim/-free,
+moat-safe), then Option 2B (24/7 harness, north-star), defer Option 4 (needs a new novelty read-out, maybe a sim/ edit).
+
+**EXACT NEXT CONCRETE ACTION:** BUILD Option 3 -- (1) add the additive default-off `drive_to_da` hunger->DA link
+(append the from_region_firing rule reading drive_agrp to the shared dopamine modulator in build_merged_nav_conv_bridge
++ a MergedNavConvAgent passthrough); (2) build `_tier3_cross_modal_one_animal_derisk.py` (hungry-vs-sated borderline-
+cue abstention differential + moat 0-FA both levels + drive-lesion/sated-both/permuted controls). CPU-logic-check ->
+GPU 1-seed smoke (controller-serial) -> 6-seed. NO sim/ edit predicted. Moat 0-leak + can-only-tighten (HARD); honest
+origin+gitea; COMMIT ON MAIN. (Owner may redirect to Option 2B / hold.)
