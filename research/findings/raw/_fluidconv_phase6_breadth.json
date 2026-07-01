@@ -1,0 +1,55 @@
+{
+  "probe": "fluidconv_phase6_breadth",
+  "GO": true,
+  "verdict": "GO -- BREADTH: the fluid stack holds over a broader 40-fact KB at D=256 -- recall 1.00, RA-render 0.97, moat 0-FA (3 seeds). 'Almost any topic' within the grounded regime: many entities answerable + the honest abstention boundary beyond.",
+  "resolves": "breadth: the fluid stack over a broader KB (many entities) at higher D; recall + RA-render + moat 0-FA + the honest capacity boundary.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "D": 256,
+  "n_facts": 40,
+  "mean_recall": 1.0,
+  "mean_render": 0.967,
+  "elapsed_seconds": 40.8,
+  "per_seed": [
+    {
+      "seed": 42,
+      "D": 256,
+      "n_facts": 40,
+      "recall_ok": 20,
+      "recall_total": 20,
+      "render_ok": 20,
+      "moat_false_accepts": 0,
+      "moat_total": 12,
+      "recall_rate": 1.0,
+      "render_rate": 1.0
+    },
+    {
+      "seed": 43,
+      "D": 256,
+      "n_facts": 40,
+      "recall_ok": 20,
+      "recall_total": 20,
+      "render_ok": 19,
+      "moat_false_accepts": 0,
+      "moat_total": 12,
+      "recall_rate": 1.0,
+      "render_rate": 0.95
+    },
+    {
+      "seed": 44,
+      "D": 256,
+      "n_facts": 40,
+      "recall_ok": 20,
+      "recall_total": 20,
+      "render_ok": 19,
+      "moat_false_accepts": 0,
+      "moat_total": 12,
+      "recall_rate": 1.0,
+      "render_rate": 0.95
+    }
+  ],
+  "HONEST_CEILING": "breadth is bounded by the composer's FHRR capacity (~sqrt(D)/M; raise D or add distinct codes -- validated to 320) + the generator's vocab (TinyStories common English, generalizing) + the taught KB; the abstention moat is the truthful 'I don't know' boundary. Open-domain (non-fact) conversation remains the field wall."
+}
