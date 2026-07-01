@@ -6381,3 +6381,29 @@ legitimate lexical cue, not a cheat) + DEFER to the multicue-parser arc. Reuse-b
 required (flag it). THEN: webapp Interact wire-in (needs owner to verify the UI) + (deferred) spiking-forward +
 experience-connection (Tier-3 live-and-remember -> converse about LIVED percepts). biologization/one-brain HARD;
 moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
+
+## CYCLE 761 DONE (2026-07-01 — neural interrogative parser GO: the question-parse shortcut burned down)
+
+`_fluidconv_phase7_neural_interrog_parser_derisk.py`, 3 seeds GO: wh->query-type via the VALIDATED composer + content
+->roles via the VALIDATED BridgeParser. NEURAL match 10/10, permuted breaks the what/who cases (load-bearing), lesion
+abstains 10/10. Honest residual (content-vs-function ID via vocab; query-type->frame slot map) = defensible
+lexical/structural cues, not the burned wh-detection cheat. Commit fb1f61c0; finding
+`2026-07-01-fluid-conversation-phase7-neural-interrogative-parser-GO.md`. ARC: Phases 0-7 + console; the fluid-
+conversation priority has a comprehensive, verified, documented first pass; the question-parse tracked shortcut is
+closed (remaining tracked: ANN generator->spiking-forward [deferred, speed wall]; growth over new concept CODES
+[dendritic frontier]).
+
+**EXACT NEXT CONCRETE ACTION:** CYCLE 762 = the EXPERIENCE-CONNECTION -- converse about the brain's LIVED PERCEPTS
+(the owner's "grounded in the brain's knowledge AND EXPERIENCES"; the fluid stack currently converses about TAUGHT
+facts only). This bridges the fluid-conversation stack (Phase 5 growth + the console) with the VALIDATED perception/
+grounding arcs (Tier-3 `_tier3_live_and_remember_derisk` perceive_and_ground; the step-3 `navigate_to_compose_then_
+answer` fixed-projection grounding of a live cortex_it rate-vector -> a concept code). STANDING PRACTICE first: write
+a concise SCOPING (`2026-07-01-fluid-conversation-experience-connection-scoping.md`) -- (a) READ perceive_and_ground +
+the step-3 grounding to see what's cleanly reusable, (b) the cheap-first de-risk: ground a PERCEIVED object's fact
+(via the fixed perception projection, NOT taught) into the fluid console's composer, then the console answers about
+it (RA-render) + the moat holds on un-perceived objects, (c) anti-cheats (grounding-lesion collapses the recall;
+iso-perception/no-body grounds nothing; moat 0-FA). Then run the cheap-first de-risk (>=3 seeds) if tractable. GO =
+the console converses about a perceived (not taught) object, grounding load-bearing, moat 0-FA. HONEST if the
+perception integration is heavy -> a lightweight fixed-projection grounding stands in (noted). Reuse-by-import; NO
+sim/ edit. THEN: webapp Interact wire-in (needs owner to verify UI) + (deferred) spiking-forward + dendritic-codes.
+biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
