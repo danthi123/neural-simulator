@@ -1,0 +1,165 @@
+{
+  "probe": "fluidconv_phase4_multiturn",
+  "GO": true,
+  "verdict": "GO -- MULTI-TURN grounded conversation: a turn-2 PRONOUN resolves to the turn-1 answer held in the spiking WM loop -> correct grounded answer; WM-lesion collapses to abstain (load-bearing); empty-WM pronoun abstains (moat); single-turn unregressed. >=3 seeds. Fluid back-and-forth on the minimized, brain-trained, brain-gated stack.",
+  "resolves": "multi-turn grounded conversation: a follow-up pronoun resolves to the held discourse referent (spiking WM loop) then routes through the Phase-3 gate->answer->verify.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 104.2,
+  "per_seed": [
+    {
+      "seed": 42,
+      "chain": [
+        "dog",
+        "chase",
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "turn1": {
+        "user": "what does the dog chase?",
+        "reply": "the dog chases cat .",
+        "abstained": false,
+        "resolved": "dog",
+        "answer_obj": "cat",
+        "verified": true
+      },
+      "turn2": {
+        "user": "what does it eat?",
+        "reply": "the cat eats fish .",
+        "abstained": false,
+        "resolved": "cat",
+        "answer_obj": "fish",
+        "verified": true
+      },
+      "anaphora_ok": true,
+      "turn2_lesioned": {
+        "user": "what does it eat?",
+        "reply": "I don't know.",
+        "abstained": true,
+        "resolved": null
+      },
+      "lesion_ok": true,
+      "turn_empty": {
+        "user": "what does it eat?",
+        "reply": "I don't know.",
+        "abstained": true,
+        "resolved": null
+      },
+      "empty_ok": true,
+      "turn_single": {
+        "user": "what does the dog chase?",
+        "reply": "the dog chases cat .",
+        "abstained": false,
+        "resolved": "dog",
+        "answer_obj": "cat",
+        "verified": true
+      },
+      "single_ok": true
+    },
+    {
+      "seed": 43,
+      "chain": [
+        "dog",
+        "chase",
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "turn1": {
+        "user": "what does the dog chase?",
+        "reply": "the dog chases cat .",
+        "abstained": false,
+        "resolved": "dog",
+        "answer_obj": "cat",
+        "verified": true
+      },
+      "turn2": {
+        "user": "what does it eat?",
+        "reply": "the cat eats fish .",
+        "abstained": false,
+        "resolved": "cat",
+        "answer_obj": "fish",
+        "verified": true
+      },
+      "anaphora_ok": true,
+      "turn2_lesioned": {
+        "user": "what does it eat?",
+        "reply": "I don't know.",
+        "abstained": true,
+        "resolved": null
+      },
+      "lesion_ok": true,
+      "turn_empty": {
+        "user": "what does it eat?",
+        "reply": "I don't know.",
+        "abstained": true,
+        "resolved": null
+      },
+      "empty_ok": true,
+      "turn_single": {
+        "user": "what does the dog chase?",
+        "reply": "the dog chases cat .",
+        "abstained": false,
+        "resolved": "dog",
+        "answer_obj": "cat",
+        "verified": true
+      },
+      "single_ok": true
+    },
+    {
+      "seed": 44,
+      "chain": [
+        "dog",
+        "chase",
+        "cat",
+        "eat",
+        "fish"
+      ],
+      "turn1": {
+        "user": "what does the dog chase?",
+        "reply": "the dog chases cat .",
+        "abstained": false,
+        "resolved": "dog",
+        "answer_obj": "cat",
+        "verified": true
+      },
+      "turn2": {
+        "user": "what does it eat?",
+        "reply": "the cat eats fish .",
+        "abstained": false,
+        "resolved": "cat",
+        "answer_obj": "fish",
+        "verified": true
+      },
+      "anaphora_ok": true,
+      "turn2_lesioned": {
+        "user": "what does it eat?",
+        "reply": "I don't know.",
+        "abstained": true,
+        "resolved": null
+      },
+      "lesion_ok": true,
+      "turn_empty": {
+        "user": "what does it eat?",
+        "reply": "I don't know.",
+        "abstained": true,
+        "resolved": null
+      },
+      "empty_ok": true,
+      "turn_single": {
+        "user": "what does the dog chase?",
+        "reply": "the dog chases cat .",
+        "abstained": false,
+        "resolved": "dog",
+        "answer_obj": "cat",
+        "verified": true
+      },
+      "single_ok": true
+    }
+  ],
+  "HONEST_CEILING": "anaphora over a single dominant held referent; >=2-referent disambiguation is the biased-competition path (opt-in, validated separately); open breadth is a follow-on."
+}
