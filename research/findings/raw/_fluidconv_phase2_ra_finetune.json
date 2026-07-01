@@ -1,0 +1,15 @@
+{
+  "steps": 2500,
+  "init_loss": 4.5903239250183105,
+  "final_loss": 0.8769927024841309,
+  "corpus_stats": {
+    "n_qa": 16000,
+    "qa_chars": 1779039,
+    "ts_chars": 1779039,
+    "total_chars": 3564013,
+    "ts_fraction": 0.499
+  },
+  "npar_M": 21.3,
+  "ckpt": "research/findings/raw/fluidconv/gen_tinystories_ra_ft.ckpt.pt",
+  "elapsed_seconds": 1574.5
+}

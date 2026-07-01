@@ -1,0 +1,627 @@
+{
+  "probe": "fluidconv_phase2_ra_qa_eval",
+  "GO": true,
+  "verdict": "GO -- the RA-fine-tuned 21M ANSWERS questions FOCUSED + grounded (states the fact, not a story ramble), the GATE-FIRST moat holds (untaught -> brain abstains -> model NOT invoked), and it is RA-FAITHFUL (follows the provided fact over its own bias) -- >=3 seeds. Focused conversational Q&A on a minimized, brain-trained, brain-gated generator. [diag: the model WOULD confab on 9 untaught cues if wrongly prompted -> the GATE, not the model, is the moat.]",
+  "resolves": "does the RA-fine-tuned 21M do FOCUSED grounded conversational Q&A (vs the v3 base-model story ramble), with learned-abstain + RA-faithfulness, in the brain-gated loop?",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 30.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "grounded_ok": 5,
+      "grounded_total": 5,
+      "abstain_held": 3,
+      "abstain_total": 3,
+      "faithful": 3,
+      "faithful_total": 3,
+      "median_answer_words": 5,
+      "grounded_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "gate": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "ctx": "the dog eats meat .",
+          "answer": "the dog eats meat .",
+          "svos": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 5,
+          "focused": true,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "gate": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "ctx": "the cat eats fish .",
+          "answer": "the cat eats fish .",
+          "svos": [
+            [
+              "cat",
+              "eat",
+              "fish"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 5,
+          "focused": true,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "gate": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "ctx": "the bird eats seed .",
+          "answer": "the bird eats seed .",
+          "svos": [
+            [
+              "bird",
+              "eat",
+              "seed"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 5,
+          "focused": true,
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "gate": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "ctx": "the fox chases rabbit .",
+          "answer": "the fox chases rabbit .",
+          "svos": [
+            [
+              "fox",
+              "chase",
+              "rabbit"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 5,
+          "focused": true,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "gate": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "ctx": "the bee makes honey .",
+          "answer": "the bee makes honey , yes .",
+          "svos": [
+            [
+              "bee",
+              "make",
+              "honey"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 7,
+          "focused": true,
+          "ok": true
+        }
+      ],
+      "untaught_detail": [
+        {
+          "cue": [
+            "lion",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true,
+          "diag_model_prompted_answer": "the lion eats fish , yes .",
+          "diag_model_would_confab": true
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true,
+          "diag_model_prompted_answer": "the whale eats fish , yes .",
+          "diag_model_would_confab": true
+        },
+        {
+          "cue": [
+            "dog",
+            "drink"
+          ],
+          "gate_result": null,
+          "held": true,
+          "diag_model_prompted_answer": "the dog likes to eat seed .",
+          "diag_model_would_confab": true
+        }
+      ],
+      "faithful_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "provided": "ball",
+          "true": "meat",
+          "answer": "the dog eats ball .",
+          "follows_prompt": true,
+          "used_bias": false
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "provided": "ball",
+          "true": "fish",
+          "answer": "the cat eats ball , yes .",
+          "follows_prompt": true,
+          "used_bias": false
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "provided": "ball",
+          "true": "seed",
+          "answer": "the bird eats ball , yes .",
+          "follows_prompt": true,
+          "used_bias": false
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "grounded_ok": 5,
+      "grounded_total": 5,
+      "abstain_held": 3,
+      "abstain_total": 3,
+      "faithful": 3,
+      "faithful_total": 3,
+      "median_answer_words": 5,
+      "grounded_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "gate": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "ctx": "the dog eats meat .",
+          "answer": "the dog eats meat .",
+          "svos": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 5,
+          "focused": true,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "gate": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "ctx": "the cat eats fish .",
+          "answer": "the cat eats fish .",
+          "svos": [
+            [
+              "cat",
+              "eat",
+              "fish"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 5,
+          "focused": true,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "gate": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "ctx": "the bird eats seed .",
+          "answer": "the bird eats seed .",
+          "svos": [
+            [
+              "bird",
+              "eat",
+              "seed"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 5,
+          "focused": true,
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "gate": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "ctx": "the fox chases rabbit .",
+          "answer": "the fox chases rabbit .",
+          "svos": [
+            [
+              "fox",
+              "chase",
+              "rabbit"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 5,
+          "focused": true,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "gate": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "ctx": "the bee makes honey .",
+          "answer": "the bee makes honey , yes .",
+          "svos": [
+            [
+              "bee",
+              "make",
+              "honey"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 7,
+          "focused": true,
+          "ok": true
+        }
+      ],
+      "untaught_detail": [
+        {
+          "cue": [
+            "lion",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true,
+          "diag_model_prompted_answer": "the lion eats fish , yes .",
+          "diag_model_would_confab": true
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true,
+          "diag_model_prompted_answer": "the whale eats fish , yes .",
+          "diag_model_would_confab": true
+        },
+        {
+          "cue": [
+            "dog",
+            "drink"
+          ],
+          "gate_result": null,
+          "held": true,
+          "diag_model_prompted_answer": "the dog likes to eat seed .",
+          "diag_model_would_confab": true
+        }
+      ],
+      "faithful_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "provided": "ball",
+          "true": "meat",
+          "answer": "the dog eats ball .",
+          "follows_prompt": true,
+          "used_bias": false
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "provided": "ball",
+          "true": "fish",
+          "answer": "the cat eats ball , yes .",
+          "follows_prompt": true,
+          "used_bias": false
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "provided": "ball",
+          "true": "seed",
+          "answer": "the bird eats ball , yes .",
+          "follows_prompt": true,
+          "used_bias": false
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "grounded_ok": 5,
+      "grounded_total": 5,
+      "abstain_held": 3,
+      "abstain_total": 3,
+      "faithful": 3,
+      "faithful_total": 3,
+      "median_answer_words": 5,
+      "grounded_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "gate": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "ctx": "the dog eats meat .",
+          "answer": "the dog eats meat .",
+          "svos": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 5,
+          "focused": true,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "gate": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "ctx": "the cat eats fish .",
+          "answer": "the cat eats fish .",
+          "svos": [
+            [
+              "cat",
+              "eat",
+              "fish"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 5,
+          "focused": true,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "gate": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "ctx": "the bird eats seed .",
+          "answer": "the bird eats seed .",
+          "svos": [
+            [
+              "bird",
+              "eat",
+              "seed"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 5,
+          "focused": true,
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "gate": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "ctx": "the fox chases rabbit .",
+          "answer": "the fox chases rabbit .",
+          "svos": [
+            [
+              "fox",
+              "chase",
+              "rabbit"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 5,
+          "focused": true,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "gate": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "ctx": "the bee makes honey .",
+          "answer": "the bee makes honey , yes .",
+          "svos": [
+            [
+              "bee",
+              "make",
+              "honey"
+            ]
+          ],
+          "ungrounded": [],
+          "states_fact": true,
+          "n_words": 7,
+          "focused": true,
+          "ok": true
+        }
+      ],
+      "untaught_detail": [
+        {
+          "cue": [
+            "lion",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true,
+          "diag_model_prompted_answer": "the lion eats fish , yes .",
+          "diag_model_would_confab": true
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true,
+          "diag_model_prompted_answer": "the whale eats fish , yes .",
+          "diag_model_would_confab": true
+        },
+        {
+          "cue": [
+            "dog",
+            "drink"
+          ],
+          "gate_result": null,
+          "held": true,
+          "diag_model_prompted_answer": "the dog likes to eat seed .",
+          "diag_model_would_confab": true
+        }
+      ],
+      "faithful_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "provided": "ball",
+          "true": "meat",
+          "answer": "the dog eats ball .",
+          "follows_prompt": true,
+          "used_bias": false
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "provided": "ball",
+          "true": "fish",
+          "answer": "the cat eats ball , yes .",
+          "follows_prompt": true,
+          "used_bias": false
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "provided": "ball",
+          "true": "seed",
+          "answer": "the bird eats ball , yes .",
+          "follows_prompt": true,
+          "used_bias": false
+        }
+      ]
+    }
+  ],
+  "HONEST_CEILING": "tests focused single-turn grounded Q&A; multi-turn coherence + open breadth are the follow-ons (recurrent state + retrieval-augmentation + abstention)."
+}

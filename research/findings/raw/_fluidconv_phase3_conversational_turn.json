@@ -1,0 +1,625 @@
+{
+  "probe": "fluidconv_phase3_conversational_turn",
+  "GO": true,
+  "verdict": "GO -- the FULL grounded conversational TURN works end-to-end: free-text question -> brain comprehend+gate -> RA-fine-tuned 21M focused fluent grounded reply -> VERIFY; untaught -> gate-first 'I don't know' (model not invoked); adversarial drift -> VERIFY rejects. >=3 seeds. 'Talk to it like an LLM' assembled from validated parts (brain: comprehension+knowledge+moat; minimized generator: fluency).",
+  "resolves": "the full grounded conversational turn end-to-end (comprehend -> gate -> fluent grounded answer -> verify), 'talk to it like an LLM' from validated parts.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 29.8,
+  "per_seed": [
+    {
+      "seed": 42,
+      "grounded_ok": 5,
+      "grounded_total": 5,
+      "moat_held": 3,
+      "moat_total": 3,
+      "drift_caught": 3,
+      "drift_total": 3,
+      "grounded_detail": [
+        {
+          "user": "what does the dog eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "reply": "the dog eats meat .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "ok": true
+        },
+        {
+          "user": "what does the cat eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "reply": "the cat eats fish .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "ok": true
+        },
+        {
+          "user": "what does the bird eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "reply": "the bird eats seed .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "ok": true
+        },
+        {
+          "user": "what does the fox chase ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "reply": "the fox chases rabbit .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "ok": true
+        },
+        {
+          "user": "what does the bee make ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "reply": "the bee makes honey , yes .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "ok": true
+        }
+      ],
+      "moat_detail": [
+        {
+          "user": "what does the lion eat ?",
+          "qtype": null,
+          "reply": "I don't know.",
+          "abstained": true,
+          "verified": null,
+          "held": true
+        },
+        {
+          "user": "what does the whale eat ?",
+          "qtype": null,
+          "reply": "I don't know.",
+          "abstained": true,
+          "verified": null,
+          "held": true
+        },
+        {
+          "user": "what does the dog drink ?",
+          "qtype": null,
+          "reply": "I don't know.",
+          "abstained": true,
+          "verified": null,
+          "held": true
+        }
+      ],
+      "drift_detail": [
+        {
+          "user": "what does the dog eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "model_answer": "the dog eats bone .",
+          "ungrounded": [
+            [
+              "dog",
+              "eat",
+              "bone"
+            ]
+          ],
+          "reply": "The dog eats meat.",
+          "abstained": false,
+          "verified": false,
+          "drift_rejected": true,
+          "wrong_p": "bone",
+          "caught": true
+        },
+        {
+          "user": "what does the cat eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "model_answer": "the cat eats bone .",
+          "ungrounded": [
+            [
+              "cat",
+              "eat",
+              "bone"
+            ]
+          ],
+          "reply": "The cat eats fish.",
+          "abstained": false,
+          "verified": false,
+          "drift_rejected": true,
+          "wrong_p": "bone",
+          "caught": true
+        },
+        {
+          "user": "what does the bird eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "model_answer": "the bird eats bone .",
+          "ungrounded": [
+            [
+              "bird",
+              "eat",
+              "bone"
+            ]
+          ],
+          "reply": "The bird eats seed.",
+          "abstained": false,
+          "verified": false,
+          "drift_rejected": true,
+          "wrong_p": "bone",
+          "caught": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "grounded_ok": 5,
+      "grounded_total": 5,
+      "moat_held": 3,
+      "moat_total": 3,
+      "drift_caught": 3,
+      "drift_total": 3,
+      "grounded_detail": [
+        {
+          "user": "what does the dog eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "reply": "the dog eats meat .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "ok": true
+        },
+        {
+          "user": "what does the cat eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "reply": "the cat eats fish .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "ok": true
+        },
+        {
+          "user": "what does the bird eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "reply": "the bird eats seed .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "ok": true
+        },
+        {
+          "user": "what does the fox chase ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "reply": "the fox chases rabbit .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "ok": true
+        },
+        {
+          "user": "what does the bee make ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "reply": "the bee makes honey , yes .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "ok": true
+        }
+      ],
+      "moat_detail": [
+        {
+          "user": "what does the lion eat ?",
+          "qtype": null,
+          "reply": "I don't know.",
+          "abstained": true,
+          "verified": null,
+          "held": true
+        },
+        {
+          "user": "what does the whale eat ?",
+          "qtype": null,
+          "reply": "I don't know.",
+          "abstained": true,
+          "verified": null,
+          "held": true
+        },
+        {
+          "user": "what does the dog drink ?",
+          "qtype": null,
+          "reply": "I don't know.",
+          "abstained": true,
+          "verified": null,
+          "held": true
+        }
+      ],
+      "drift_detail": [
+        {
+          "user": "what does the dog eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "model_answer": "the dog eats bone .",
+          "ungrounded": [
+            [
+              "dog",
+              "eat",
+              "bone"
+            ]
+          ],
+          "reply": "The dog eats meat.",
+          "abstained": false,
+          "verified": false,
+          "drift_rejected": true,
+          "wrong_p": "bone",
+          "caught": true
+        },
+        {
+          "user": "what does the cat eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "model_answer": "the cat eats bone .",
+          "ungrounded": [
+            [
+              "cat",
+              "eat",
+              "bone"
+            ]
+          ],
+          "reply": "The cat eats fish.",
+          "abstained": false,
+          "verified": false,
+          "drift_rejected": true,
+          "wrong_p": "bone",
+          "caught": true
+        },
+        {
+          "user": "what does the bird eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "model_answer": "the bird eats bone .",
+          "ungrounded": [
+            [
+              "bird",
+              "eat",
+              "bone"
+            ]
+          ],
+          "reply": "The bird eats seed.",
+          "abstained": false,
+          "verified": false,
+          "drift_rejected": true,
+          "wrong_p": "bone",
+          "caught": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "grounded_ok": 5,
+      "grounded_total": 5,
+      "moat_held": 3,
+      "moat_total": 3,
+      "drift_caught": 3,
+      "drift_total": 3,
+      "grounded_detail": [
+        {
+          "user": "what does the dog eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "reply": "the dog eats meat .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "ok": true
+        },
+        {
+          "user": "what does the cat eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "reply": "the cat eats fish .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "ok": true
+        },
+        {
+          "user": "what does the bird eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "reply": "the bird eats seed .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "ok": true
+        },
+        {
+          "user": "what does the fox chase ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "reply": "the fox chases rabbit .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "ok": true
+        },
+        {
+          "user": "what does the bee make ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "reply": "the bee makes honey , yes .",
+          "abstained": false,
+          "verified": true,
+          "drift_rejected": false,
+          "expected": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "ok": true
+        }
+      ],
+      "moat_detail": [
+        {
+          "user": "what does the lion eat ?",
+          "qtype": null,
+          "reply": "I don't know.",
+          "abstained": true,
+          "verified": null,
+          "held": true
+        },
+        {
+          "user": "what does the whale eat ?",
+          "qtype": null,
+          "reply": "I don't know.",
+          "abstained": true,
+          "verified": null,
+          "held": true
+        },
+        {
+          "user": "what does the dog drink ?",
+          "qtype": null,
+          "reply": "I don't know.",
+          "abstained": true,
+          "verified": null,
+          "held": true
+        }
+      ],
+      "drift_detail": [
+        {
+          "user": "what does the dog eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "model_answer": "the dog eats bone .",
+          "ungrounded": [
+            [
+              "dog",
+              "eat",
+              "bone"
+            ]
+          ],
+          "reply": "The dog eats meat.",
+          "abstained": false,
+          "verified": false,
+          "drift_rejected": true,
+          "wrong_p": "bone",
+          "caught": true
+        },
+        {
+          "user": "what does the cat eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "model_answer": "the cat eats bone .",
+          "ungrounded": [
+            [
+              "cat",
+              "eat",
+              "bone"
+            ]
+          ],
+          "reply": "The cat eats fish.",
+          "abstained": false,
+          "verified": false,
+          "drift_rejected": true,
+          "wrong_p": "bone",
+          "caught": true
+        },
+        {
+          "user": "what does the bird eat ?",
+          "qtype": "patient",
+          "gate_fact": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "model_answer": "the bird eats bone .",
+          "ungrounded": [
+            [
+              "bird",
+              "eat",
+              "bone"
+            ]
+          ],
+          "reply": "The bird eats seed.",
+          "abstained": false,
+          "verified": false,
+          "drift_rejected": true,
+          "wrong_p": "bone",
+          "caught": true
+        }
+      ]
+    }
+  ],
+  "SCAFFOLD_NOTE": "the interrogative parse is a light rule-based comprehension over the brain's vocab + wh/aux cues; the brain-based replacement is a neural interrogative parser (follow-on).",
+  "HONEST_CEILING": "single-turn grounded Q&A; multi-turn coherence (persistent discourse referents + the multi-referent WTA) + open breadth are the follow-ons."
+}
