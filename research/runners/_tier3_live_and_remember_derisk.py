@@ -199,6 +199,7 @@ class LiveState:
         self.yoke_pool = (self.rng.permutation(np.linspace(0.0, 1.0, 200)) if yoke else None)
         self.yi = 0
         self._prev_hunger = None
+        self._hunger_cache = None                          # cached (hunger, agrp_rate) for the drive_read_every skip
         # the LIVED MEMORY (filled during the life):
         self.encountered = []                              # first-encounter order (open-ended: the lived trajectory)
         self.lived_facts = []                              # [(prev, LINK_VERB, cur)] linking consecutive encounters
@@ -231,17 +232,30 @@ def _decode_code(d):
 
 
 # ── the continuous living loop (survival + perceive-ground-store on encounters) ──────────────────────────────
-def live(agent, hunger_reader, state, world, n_steps, *, drive_reward="spiking", grounded_obj_cache=None):
+def live(agent, hunger_reader, state, world, n_steps, *, drive_reward="spiking", drive_read_every=10,
+         grounded_obj_cache=None):
     """Run a stretch of the agent's life IN PLACE on `state`. Survival = the validated Q policy shaped by the
     intrinsic drive-reduction reward; on first arrival at an object cell the agent perceive_and_grounds it + stores
-    a lived fact. Returns per-step traces (energies, deficits, agrp_rates)."""
+    a lived fact. Returns per-step traces (energies, deficits, agrp_rates).
+
+    drive_reward="spiking": the intrinsic reward rides the SPIKING hunger read off the bridge (brain-based; each read
+      is `window` bridge steps, so it is sampled every drive_read_every-th step and cached between -- the biologically-
+      faithful slow-hypothalamic-integration optimization). "rate_proxy": the validated host drive-reduction shapes
+      the reward (NO per-step bridge stepping); the spiking drive is validated separately by the one-time corr sweep."""
     energies, deficits, agrp_rates = [], [], []
     cache = grounded_obj_cache if grounded_obj_cache is not None else set()
     for _ in range(n_steps):
         deficit = SET_POINT - state.E
-        # the SPIKING drive read (always, for the corr gate + to bias/reward survival)
-        hunger_spk, agrp_rate = hunger_reader.read(deficit, lesion=state.lesion)
-        deficits.append(deficit); agrp_rates.append(agrp_rate)
+        deficits.append(deficit)
+        # the SPIKING drive read (spiking mode only; rate_proxy uses the host drive + the separate corr sweep, so it
+        # steps the bridge only for groundings -> tractable). Sample every drive_read_every-th step, reuse the cache.
+        if drive_reward == "spiking":
+            if state._hunger_cache is None or (state.t % max(1, drive_read_every) == 0):
+                state._hunger_cache = hunger_reader.read(deficit, lesion=state.lesion)
+            hunger_spk, agrp_rate = state._hunger_cache
+            agrp_rates.append(agrp_rate)
+        else:
+            hunger_spk = None
         # the drive value that shapes the reward:
         if state.lesion:
             drive_val = 0.0                                # lesion: no drive -> r == 0 -> no learning -> starves
@@ -250,7 +264,7 @@ def live(agent, hunger_reader, state, world, n_steps, *, drive_reward="spiking",
         elif drive_reward == "spiking":
             drive_val = hunger_spk                         # the SPIKING hunger IS the drive (brain-based)
         else:
-            drive_val = state.drive_proxy.update(deficit)  # the validated rate-proxy fallback
+            drive_val = state.drive_proxy.update(deficit)  # the validated rate-proxy (host drive-reduction)
 
         # action selection (eps-greedy, random tie-break)
         if state.rng.random() < EPS:
@@ -336,8 +350,12 @@ def main():
     ap.add_argument("--n-steps", type=int, default=900, help="living steps per segment (lived once; the resume runs a short tail)")
     ap.add_argument("--drive-window", type=int, default=40)
     ap.add_argument("--drive-reward", choices=["spiking", "rate_proxy"], default="spiking",
-                    help="'spiking': the intrinsic reward rides the spiking-hunger read (brain-based); 'rate_proxy': "
-                         "the validated host drive-reduction (the spiking drive still read for the corr gate)")
+                    help="'spiking': the intrinsic reward rides the spiking-hunger read (brain-based, expensive); "
+                         "'rate_proxy': the validated host drive-reduction (the spiking drive still read for the "
+                         "corr gate) -- the tractable survival path for the 6-seed run")
+    ap.add_argument("--drive-read-every", type=int, default=10,
+                    help="(spiking mode) sample the spiking hunger every Nth living step, reuse the cache -- the "
+                         "biologically-faithful slow-hypothalamic-integration optimization (cuts the per-step cost)")
     ap.add_argument("--n-objects", type=int, default=3)
     ap.add_argument("--modes", nargs="+", default=["intact", "lesion", "yoke"])
     ap.add_argument("--out", default="research/findings/raw/_tier3_live_and_remember.json")
@@ -359,7 +377,8 @@ def main():
     try:
         for seed in a.seeds:
             per_seed.append(run_seed(seed, root, n_steps=a.n_steps, drive_window=a.drive_window,
-                                     drive_reward=a.drive_reward, n_objects=a.n_objects, modes=a.modes))
+                                     drive_reward=a.drive_reward, drive_read_every=a.drive_read_every,
+                                     n_objects=a.n_objects, modes=a.modes))
             v = per_seed[-1]["verdict"]
             print(f"  >>> seed {seed}: {'GO' if v.get('go') else 'NO'}  {v}", flush=True)
     finally:
@@ -399,7 +418,7 @@ def _build_agent(seed):
         co_resident_drive=True)
 
 
-def run_seed(seed, root, *, n_steps=900, drive_window=40, drive_reward="spiking", n_objects=3,
+def run_seed(seed, root, *, n_steps=900, drive_window=40, drive_reward="spiking", drive_read_every=10, n_objects=3,
              modes=("intact", "lesion", "yoke")):
     """One seed: for each mode build the merged brain, live, and measure survival + lived memory + moat; on intact
     also do the drive corr sweep, the grounding-lesion arm, and the persistence-across-reset check."""
@@ -417,7 +436,8 @@ def run_seed(seed, root, *, n_steps=900, drive_window=40, drive_reward="spiking"
         pre_conn = to_host(bridge.cp_connections.data).copy()
         st = LiveState(seed, lesion=(mode == "lesion"), yoke=(mode == "yoke"))
         cache = set()
-        seg = live(agent, hunger, st, world, n_steps, drive_reward=drive_reward, grounded_obj_cache=cache)
+        seg = live(agent, hunger, st, world, n_steps, drive_reward=drive_reward,
+                   drive_read_every=drive_read_every, grounded_obj_cache=cache)
         surv = _survival(seg["energies"])
         recall_ok, recall_tot = _lived_recall(agent, st.lived_facts)
         abstain_ok, abstain_tot = _moat_check(agent, world)
@@ -436,7 +456,7 @@ def run_seed(seed, root, *, n_steps=900, drive_window=40, drive_reward="spiking"
             rec.update(_persistence_check(seed, root, st, world, n_steps, drive_window, drive_reward))
             # grounding-lesion: a fresh agent, sever the perception->concept convergence, re-live -> recall collapses.
             rec["grounding_lesion"] = _grounding_lesion_arm(seed, world, n_steps, drive_window, drive_reward,
-                                                            lesion_gen_convergence)
+                                                            drive_read_every, lesion_gen_convergence)
         out["modes"][mode] = rec
         print(f"  [seed {seed} {mode}] minE {surv['min_energy']:.2f} crash% {100*surv['crash_frac']:.0f} | "
               f"enc {len(st.encountered)} facts {len(st.lived_facts)} recall {recall_ok}/{recall_tot} | "
@@ -483,7 +503,7 @@ def _persistence_check(seed, root, st, world, n_steps, drive_window, drive_rewar
             "cold_recall": [c_ok, c_tot], "no_persistence_differs": no_persistence_differs}
 
 
-def _grounding_lesion_arm(seed, world, n_steps, drive_window, drive_reward, lesion_gen_convergence):
+def _grounding_lesion_arm(seed, world, n_steps, drive_window, drive_reward, drive_read_every, lesion_gen_convergence):
     """A fresh agent whose perception->concept convergence is SEVERED before the life: it still encounters + stores
     the SAME objects, but the grounded codes are random -> lived-recall collapses to chance (the memory rides the
     LIVE percept). Returns the lesioned recall fraction (should be << the intact fraction)."""
@@ -491,7 +511,8 @@ def _grounding_lesion_arm(seed, world, n_steps, drive_window, drive_reward, lesi
     lesion_gen_convergence(agent._merged_bridge, agent._handles["gen"])
     hunger = SpikingHunger(agent._merged_bridge, window=drive_window)
     st = LiveState(seed)
-    live(agent, hunger, st, world, n_steps, drive_reward=drive_reward, grounded_obj_cache=set())
+    live(agent, hunger, st, world, n_steps, drive_reward=drive_reward,
+         drive_read_every=drive_read_every, grounded_obj_cache=set())
     ok, tot = _lived_recall(agent, st.lived_facts)
     return {"recall_ok": ok, "recall_tot": tot, "recall_frac": (ok / tot if tot else 0.0)}
 
@@ -533,7 +554,7 @@ def _run_smoke(a):
         pre_conn = to_host(bridge.cp_connections.data).copy()
         st = LiveState(a.seeds[0])
         seg = live(agent, hunger, st, world, min(a.n_steps, 120), drive_reward=a.drive_reward,
-                   grounded_obj_cache=set())
+                   drive_read_every=a.drive_read_every, grounded_obj_cache=set())
         surv = _survival(seg["energies"])
         recall_ok, recall_tot = _lived_recall(agent, st.lived_facts)
         abstain_ok, abstain_tot = _moat_check(agent, world)
