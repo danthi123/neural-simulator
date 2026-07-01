@@ -6220,3 +6220,29 @@ Phase-3 result is unregressed. Reuse-by-import; NO sim/ edit. Use `defer_planner
 build is the dominant cost). GO bar: turn-2 anaphora resolves + grounded answer + WM-lesion collapses + moat holds.
 THEN: neural interrogative parser (replace the scaffold) + breadth (retrieval-augmentation). biologization/one-brain
 HARD; moat a PLUS (GATE-FIRST); honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
+
+## CYCLE 755 DONE (2026-07-01 — Phase-4 GO: multi-turn grounded dialogue, a pronoun resolves to the held referent)
+
+`_fluidconv_phase4_multiturn_derisk.py`, 3 seeds GO. The validated MultiTurnAgent spiking WM loop holds the prior
+turn's ANSWER as the salient referent; a follow-up pronoun resolves to it -> gate->RA-21M-answer->VERIFY. Transcript:
+"what does the dog chase? -> the dog chases cat." then "what does it eat? -> the cat eats fish." (it->cat). Gates 3/3:
+anaphora, WM-lesion-collapses (load-bearing), empty-WM-abstains (moat), single-turn-unregressed. Fix: referent set
+must be small (~8; one 40-neuron attractor/referent in n=600; the full agents U patients set overflowed read()).
+Commit 7fc10662; finding `2026-07-01-fluid-conversation-phase4-multiturn-GO.md`. The fluid-conv stack now spans
+Phase 0 (minimal fluent gen) -> 1 (fluid grounded render) -> 2 (focused Q&A via the brain-train fine-tune) ->
+3 (full single-turn) -> 4 (multi-turn anaphora). NO sim/ edit anywhere in Phases 0-4.
+
+**EXACT NEXT CONCRETE ACTION:** CYCLE 756 = the ON-SUBSTRATE SPIKING-FORWARD of the 21M generator (the biologization
+capstone; roadmap Phase-1; ties the capability to the "single substrate / fully-spiking / minimize-the-transformer"
+end-state -- the stack is currently brain-GATED but the generator is still an ANN). CHEAP-FIRST DE-RISK: does the
+RA-fine-tuned 21M (a TinyGPT), run as a SPIKING forward on the RF substrate (reuse the VALIDATED 88.6M path
+`_genseq_allspiking_forward_compose_derisk` -- 21M is trivial vs 88.6M), produce the SAME focused grounded answers as
+the ANN on the Phase-2 eval? Step 1 = READ `research/runners/_genseq_allspiking_forward_compose_derisk.py` (+ the
+100M spiking-forward finding) to see the machinery + whether it takes a TinyGPT/ckpt directly; Step 2 = wire the 21M
+ckpt through the spiking forward for ONE conversational turn; Step 3 = compare the spiking answer vs the ANN answer
+(logit fidelity / same focused answer) on the Phase-2 grounded set. GO = spiking == ANN focused answers + moat held;
+HONEST BOUNDARY if the graded-spiking error degrades the QA (-> the research gate fires: more T/pool budget, or
+characterize). If the spiking-forward machinery is Qwen-specific / not TinyGPT-ready, that's a scoping finding ->
+either adapt it or defer the spiking-forward + do a capability step instead (neural interrogative parser, or breadth
+via a broader KB). biologization/one-brain HARD; moat a PLUS (GATE-FIRST); honest origin+gitea; COMMIT ON MAIN;
+GPU/CuPy for real runs.
