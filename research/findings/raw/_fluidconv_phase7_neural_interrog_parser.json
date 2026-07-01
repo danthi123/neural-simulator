@@ -1,0 +1,1603 @@
+{
+  "probe": "fluidconv_phase7_neural_interrog_parser",
+  "GO": true,
+  "verdict": "GO -- the NEURAL interrogative parser matches the host scaffold on held-out questions (query-type + cue) via the composer (wh->type) + BridgeParser (content-in-frame), the PERMUTED wh->type map breaks it (load-bearing, not a host fallback), and the LESION abstains. >=3 seeds. The wh/aux question-parse scaffold is burned down to brain mechanisms.",
+  "resolves": "burn the host wh/aux question-parse scaffold -> wh->query-type via the composer + content->roles via the BridgeParser (both validated spiking mechanisms).",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 58.4,
+  "base": [
+    {
+      "seed": 42,
+      "permute": false,
+      "lesion": false,
+      "n": 10,
+      "match": 10,
+      "qt_correct": 10,
+      "abstain": 0,
+      "rows": [
+        {
+          "q": "what does the dog eat ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "eat"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "dog",
+              "eat"
+            ]
+          ]
+        },
+        {
+          "q": "what does the cat eat ?",
+          "gt": [
+            "patient",
+            [
+              "cat",
+              "eat"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "cat",
+              "eat"
+            ]
+          ]
+        },
+        {
+          "q": "what does the dog like ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "like"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "dog",
+              "like"
+            ]
+          ]
+        },
+        {
+          "q": "what does the dog like ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "like"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "dog",
+              "like"
+            ]
+          ]
+        },
+        {
+          "q": "who eats meat ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "meat"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "eat",
+              "meat"
+            ]
+          ]
+        },
+        {
+          "q": "who eats bone ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "bone"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "eat",
+              "bone"
+            ]
+          ]
+        },
+        {
+          "q": "who eats bone ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "bone"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "eat",
+              "bone"
+            ]
+          ]
+        },
+        {
+          "q": "does the cat like bone ?",
+          "gt": [
+            "yesno",
+            [
+              "cat",
+              "like",
+              "bone"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "cat",
+              "like",
+              "bone"
+            ]
+          ]
+        },
+        {
+          "q": "does the fox eat rabbit ?",
+          "gt": [
+            "yesno",
+            [
+              "fox",
+              "eat",
+              "rabbit"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "fox",
+              "eat",
+              "rabbit"
+            ]
+          ]
+        },
+        {
+          "q": "does the cow chase meat ?",
+          "gt": [
+            "yesno",
+            [
+              "cow",
+              "chase",
+              "meat"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "cow",
+              "chase",
+              "meat"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "permute": false,
+      "lesion": false,
+      "n": 10,
+      "match": 10,
+      "qt_correct": 10,
+      "abstain": 0,
+      "rows": [
+        {
+          "q": "what does the dog chase ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "chase"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "dog",
+              "chase"
+            ]
+          ]
+        },
+        {
+          "q": "what does the fox chase ?",
+          "gt": [
+            "patient",
+            [
+              "fox",
+              "chase"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "fox",
+              "chase"
+            ]
+          ]
+        },
+        {
+          "q": "what does the fox like ?",
+          "gt": [
+            "patient",
+            [
+              "fox",
+              "like"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "fox",
+              "like"
+            ]
+          ]
+        },
+        {
+          "q": "what does the cow eat ?",
+          "gt": [
+            "patient",
+            [
+              "cow",
+              "eat"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "cow",
+              "eat"
+            ]
+          ]
+        },
+        {
+          "q": "who likes seed ?",
+          "gt": [
+            "agent",
+            [
+              "like",
+              "seed"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "like",
+              "seed"
+            ]
+          ]
+        },
+        {
+          "q": "who likes rabbit ?",
+          "gt": [
+            "agent",
+            [
+              "like",
+              "rabbit"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "like",
+              "rabbit"
+            ]
+          ]
+        },
+        {
+          "q": "who eats meat ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "meat"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "eat",
+              "meat"
+            ]
+          ]
+        },
+        {
+          "q": "does the dog eat rabbit ?",
+          "gt": [
+            "yesno",
+            [
+              "dog",
+              "eat",
+              "rabbit"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "dog",
+              "eat",
+              "rabbit"
+            ]
+          ]
+        },
+        {
+          "q": "does the cat eat fish ?",
+          "gt": [
+            "yesno",
+            [
+              "cat",
+              "eat",
+              "fish"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "cat",
+              "eat",
+              "fish"
+            ]
+          ]
+        },
+        {
+          "q": "does the cow chase fish ?",
+          "gt": [
+            "yesno",
+            [
+              "cow",
+              "chase",
+              "fish"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "cow",
+              "chase",
+              "fish"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "permute": false,
+      "lesion": false,
+      "n": 10,
+      "match": 10,
+      "qt_correct": 10,
+      "abstain": 0,
+      "rows": [
+        {
+          "q": "what does the fox like ?",
+          "gt": [
+            "patient",
+            [
+              "fox",
+              "like"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "fox",
+              "like"
+            ]
+          ]
+        },
+        {
+          "q": "what does the dog eat ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "eat"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "dog",
+              "eat"
+            ]
+          ]
+        },
+        {
+          "q": "what does the cat chase ?",
+          "gt": [
+            "patient",
+            [
+              "cat",
+              "chase"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "cat",
+              "chase"
+            ]
+          ]
+        },
+        {
+          "q": "what does the cat eat ?",
+          "gt": [
+            "patient",
+            [
+              "cat",
+              "eat"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "cat",
+              "eat"
+            ]
+          ]
+        },
+        {
+          "q": "who eats fish ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "fish"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "eat",
+              "fish"
+            ]
+          ]
+        },
+        {
+          "q": "who likes seed ?",
+          "gt": [
+            "agent",
+            [
+              "like",
+              "seed"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "like",
+              "seed"
+            ]
+          ]
+        },
+        {
+          "q": "who likes rabbit ?",
+          "gt": [
+            "agent",
+            [
+              "like",
+              "rabbit"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "like",
+              "rabbit"
+            ]
+          ]
+        },
+        {
+          "q": "does the bird chase meat ?",
+          "gt": [
+            "yesno",
+            [
+              "bird",
+              "chase",
+              "meat"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "bird",
+              "chase",
+              "meat"
+            ]
+          ]
+        },
+        {
+          "q": "does the bird chase bone ?",
+          "gt": [
+            "yesno",
+            [
+              "bird",
+              "chase",
+              "bone"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "bird",
+              "chase",
+              "bone"
+            ]
+          ]
+        },
+        {
+          "q": "does the cat eat bone ?",
+          "gt": [
+            "yesno",
+            [
+              "cat",
+              "eat",
+              "bone"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "cat",
+              "eat",
+              "bone"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "permuted": [
+    {
+      "seed": 42,
+      "permute": true,
+      "lesion": false,
+      "n": 10,
+      "match": 3,
+      "qt_correct": 3,
+      "abstain": 0,
+      "rows": [
+        {
+          "q": "what does the dog eat ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "eat"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "dog",
+              "eat"
+            ]
+          ]
+        },
+        {
+          "q": "what does the cat eat ?",
+          "gt": [
+            "patient",
+            [
+              "cat",
+              "eat"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "cat",
+              "eat"
+            ]
+          ]
+        },
+        {
+          "q": "what does the dog like ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "like"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "dog",
+              "like"
+            ]
+          ]
+        },
+        {
+          "q": "what does the dog like ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "like"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "dog",
+              "like"
+            ]
+          ]
+        },
+        {
+          "q": "who eats meat ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "meat"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "eat",
+              "meat"
+            ]
+          ]
+        },
+        {
+          "q": "who eats bone ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "bone"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "eat",
+              "bone"
+            ]
+          ]
+        },
+        {
+          "q": "who eats bone ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "bone"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "eat",
+              "bone"
+            ]
+          ]
+        },
+        {
+          "q": "does the cat like bone ?",
+          "gt": [
+            "yesno",
+            [
+              "cat",
+              "like",
+              "bone"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "cat",
+              "like",
+              "bone"
+            ]
+          ]
+        },
+        {
+          "q": "does the fox eat rabbit ?",
+          "gt": [
+            "yesno",
+            [
+              "fox",
+              "eat",
+              "rabbit"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "fox",
+              "eat",
+              "rabbit"
+            ]
+          ]
+        },
+        {
+          "q": "does the cow chase meat ?",
+          "gt": [
+            "yesno",
+            [
+              "cow",
+              "chase",
+              "meat"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "cow",
+              "chase",
+              "meat"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "permute": true,
+      "lesion": false,
+      "n": 10,
+      "match": 3,
+      "qt_correct": 3,
+      "abstain": 0,
+      "rows": [
+        {
+          "q": "what does the dog chase ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "chase"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "dog",
+              "chase"
+            ]
+          ]
+        },
+        {
+          "q": "what does the fox chase ?",
+          "gt": [
+            "patient",
+            [
+              "fox",
+              "chase"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "fox",
+              "chase"
+            ]
+          ]
+        },
+        {
+          "q": "what does the fox like ?",
+          "gt": [
+            "patient",
+            [
+              "fox",
+              "like"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "fox",
+              "like"
+            ]
+          ]
+        },
+        {
+          "q": "what does the cow eat ?",
+          "gt": [
+            "patient",
+            [
+              "cow",
+              "eat"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "cow",
+              "eat"
+            ]
+          ]
+        },
+        {
+          "q": "who likes seed ?",
+          "gt": [
+            "agent",
+            [
+              "like",
+              "seed"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "like",
+              "seed"
+            ]
+          ]
+        },
+        {
+          "q": "who likes rabbit ?",
+          "gt": [
+            "agent",
+            [
+              "like",
+              "rabbit"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "like",
+              "rabbit"
+            ]
+          ]
+        },
+        {
+          "q": "who eats meat ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "meat"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "eat",
+              "meat"
+            ]
+          ]
+        },
+        {
+          "q": "does the dog eat rabbit ?",
+          "gt": [
+            "yesno",
+            [
+              "dog",
+              "eat",
+              "rabbit"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "dog",
+              "eat",
+              "rabbit"
+            ]
+          ]
+        },
+        {
+          "q": "does the cat eat fish ?",
+          "gt": [
+            "yesno",
+            [
+              "cat",
+              "eat",
+              "fish"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "cat",
+              "eat",
+              "fish"
+            ]
+          ]
+        },
+        {
+          "q": "does the cow chase fish ?",
+          "gt": [
+            "yesno",
+            [
+              "cow",
+              "chase",
+              "fish"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "cow",
+              "chase",
+              "fish"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "permute": true,
+      "lesion": false,
+      "n": 10,
+      "match": 3,
+      "qt_correct": 3,
+      "abstain": 0,
+      "rows": [
+        {
+          "q": "what does the fox like ?",
+          "gt": [
+            "patient",
+            [
+              "fox",
+              "like"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "fox",
+              "like"
+            ]
+          ]
+        },
+        {
+          "q": "what does the dog eat ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "eat"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "dog",
+              "eat"
+            ]
+          ]
+        },
+        {
+          "q": "what does the cat chase ?",
+          "gt": [
+            "patient",
+            [
+              "cat",
+              "chase"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "cat",
+              "chase"
+            ]
+          ]
+        },
+        {
+          "q": "what does the cat eat ?",
+          "gt": [
+            "patient",
+            [
+              "cat",
+              "eat"
+            ]
+          ],
+          "neural": [
+            "agent",
+            [
+              "cat",
+              "eat"
+            ]
+          ]
+        },
+        {
+          "q": "who eats fish ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "fish"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "eat",
+              "fish"
+            ]
+          ]
+        },
+        {
+          "q": "who likes seed ?",
+          "gt": [
+            "agent",
+            [
+              "like",
+              "seed"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "like",
+              "seed"
+            ]
+          ]
+        },
+        {
+          "q": "who likes rabbit ?",
+          "gt": [
+            "agent",
+            [
+              "like",
+              "rabbit"
+            ]
+          ],
+          "neural": [
+            "patient",
+            [
+              "like",
+              "rabbit"
+            ]
+          ]
+        },
+        {
+          "q": "does the bird chase meat ?",
+          "gt": [
+            "yesno",
+            [
+              "bird",
+              "chase",
+              "meat"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "bird",
+              "chase",
+              "meat"
+            ]
+          ]
+        },
+        {
+          "q": "does the bird chase bone ?",
+          "gt": [
+            "yesno",
+            [
+              "bird",
+              "chase",
+              "bone"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "bird",
+              "chase",
+              "bone"
+            ]
+          ]
+        },
+        {
+          "q": "does the cat eat bone ?",
+          "gt": [
+            "yesno",
+            [
+              "cat",
+              "eat",
+              "bone"
+            ]
+          ],
+          "neural": [
+            "yesno",
+            [
+              "cat",
+              "eat",
+              "bone"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "lesion": [
+    {
+      "seed": 42,
+      "permute": false,
+      "lesion": true,
+      "n": 10,
+      "match": 0,
+      "qt_correct": 0,
+      "abstain": 10,
+      "rows": [
+        {
+          "q": "what does the dog eat ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "eat"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "what does the cat eat ?",
+          "gt": [
+            "patient",
+            [
+              "cat",
+              "eat"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "what does the dog like ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "like"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "what does the dog like ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "like"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "who eats meat ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "meat"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "who eats bone ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "bone"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "who eats bone ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "bone"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "does the cat like bone ?",
+          "gt": [
+            "yesno",
+            [
+              "cat",
+              "like",
+              "bone"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "does the fox eat rabbit ?",
+          "gt": [
+            "yesno",
+            [
+              "fox",
+              "eat",
+              "rabbit"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "does the cow chase meat ?",
+          "gt": [
+            "yesno",
+            [
+              "cow",
+              "chase",
+              "meat"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "permute": false,
+      "lesion": true,
+      "n": 10,
+      "match": 0,
+      "qt_correct": 0,
+      "abstain": 10,
+      "rows": [
+        {
+          "q": "what does the dog chase ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "chase"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "what does the fox chase ?",
+          "gt": [
+            "patient",
+            [
+              "fox",
+              "chase"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "what does the fox like ?",
+          "gt": [
+            "patient",
+            [
+              "fox",
+              "like"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "what does the cow eat ?",
+          "gt": [
+            "patient",
+            [
+              "cow",
+              "eat"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "who likes seed ?",
+          "gt": [
+            "agent",
+            [
+              "like",
+              "seed"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "who likes rabbit ?",
+          "gt": [
+            "agent",
+            [
+              "like",
+              "rabbit"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "who eats meat ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "meat"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "does the dog eat rabbit ?",
+          "gt": [
+            "yesno",
+            [
+              "dog",
+              "eat",
+              "rabbit"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "does the cat eat fish ?",
+          "gt": [
+            "yesno",
+            [
+              "cat",
+              "eat",
+              "fish"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "does the cow chase fish ?",
+          "gt": [
+            "yesno",
+            [
+              "cow",
+              "chase",
+              "fish"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "permute": false,
+      "lesion": true,
+      "n": 10,
+      "match": 0,
+      "qt_correct": 0,
+      "abstain": 10,
+      "rows": [
+        {
+          "q": "what does the fox like ?",
+          "gt": [
+            "patient",
+            [
+              "fox",
+              "like"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "what does the dog eat ?",
+          "gt": [
+            "patient",
+            [
+              "dog",
+              "eat"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "what does the cat chase ?",
+          "gt": [
+            "patient",
+            [
+              "cat",
+              "chase"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "what does the cat eat ?",
+          "gt": [
+            "patient",
+            [
+              "cat",
+              "eat"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "who eats fish ?",
+          "gt": [
+            "agent",
+            [
+              "eat",
+              "fish"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "who likes seed ?",
+          "gt": [
+            "agent",
+            [
+              "like",
+              "seed"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "who likes rabbit ?",
+          "gt": [
+            "agent",
+            [
+              "like",
+              "rabbit"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "does the bird chase meat ?",
+          "gt": [
+            "yesno",
+            [
+              "bird",
+              "chase",
+              "meat"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "does the bird chase bone ?",
+          "gt": [
+            "yesno",
+            [
+              "bird",
+              "chase",
+              "bone"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        },
+        {
+          "q": "does the cat eat bone ?",
+          "gt": [
+            "yesno",
+            [
+              "cat",
+              "eat",
+              "bone"
+            ]
+          ],
+          "neural": [
+            null,
+            null
+          ]
+        }
+      ]
+    }
+  ],
+  "HONEST_CEILING": "the wh->query-type map is now brain-based (composer); the residual (which tokens are content vs function words, + the query-type->SVO-frame slot map) uses the vocab + a small structural frame -- defensible brain-based cues (cf. the FrameParser), not the burned-down host wh-detection."
+}
