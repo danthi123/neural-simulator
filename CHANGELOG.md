@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-06-30 — The largest spiking generative model yet, and "one brain" delivered end-to-end: the whole conversational turn runs in neurons, driven by a shared emotional core
+
+### Added
+
+- **The biggest brain-runnable generative model to date — ~88.6M parameters, running faithfully in spikes.** A ~88.6M-parameter text generator was trained on a 143 MB simplified-Wikipedia corpus and then run on the spiking substrate: its spiking output matches the ordinary-computer version essentially exactly (perplexity ratio 1.0000) — the largest generative model the project has shown running faithfully as spikes. Alongside it, a long-standing "it stops working above a certain size" belief was overturned: it was two ordinary bugs (a mis-set fine-tuning rate + an over-trained base), not a real wall. At this size the model *learns a new topic while keeping the old one* (92.9% retained), and the "sleep-replay" mechanism that prevents forgetting helps more the more it's used. Honest limit recorded: at ~88.6M parameters the model saturates a 41M-word corpus and stops improving — going further needs *more data*, not more compute. Finding: `2026-06-30-100M-C2-scaleup-C1-GO-C2-nuanced.md`.
+
+### Changed
+
+- **"One brain" delivered end-to-end: the whole conversational turn runs in neurons, driven by the same emotional/value core that drives movement.** Two closures. First, the shared dopamine signal that already guides navigation now also shapes *conversation* — it sharpens the "don't make things up" threshold, strengthens how strongly a salient fact is stored, and (newly, six seeds, zero fabrications) biases *which* remembered fact wins when a question is asked. One shared reward/value core now drives both action and speech — the "one self" the roadmap aimed for. Second, the last places where a question's internal steps briefly dropped out of neurons into ordinary code were closed: the whole "who did what?" turn now runs on one brain, in spikes, start to finish (validated at the full 2048-dimension / 320-word production scale, the "won't make things up" guarantee bit-for-bit intact). No engine edits anywhere — every piece was an off-by-default switch or a reuse of existing machinery. Findings: `2026-06-30-tier2-6-limbic-to-composer-scoping.md`, `-integrated-spiking-loop-scoping.md`, `-R4-perception-compose-grounding-onbridge-CLOSE.md`.
+- **A couple of conversational polish skills folded into the shipping agents.** Two abilities previously only proven in test scripts are now in the production agents behind off-by-default switches: resolving *which* of several remembered things a pronoun refers to using a graded (rather than fixed) nudge, and understanding sentences with an embedded relative clause ("the dog that chased the cat ran"). Defaults unchanged; the "won't make things up" guarantee holds throughout.
+
 ## [Unreleased] — 2026-06-19 — One brain, fully spiking by default: the navigation decision moves into neurons; the conversational engine gets 10–20× faster and a little richer
 
 ### Added
