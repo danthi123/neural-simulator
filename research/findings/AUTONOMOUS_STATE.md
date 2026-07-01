@@ -5936,3 +5936,25 @@ _free_agent/bundle claims, add the per_day_wake_fn seam + _free_agent guard + th
 multi-day body-run through the ACTUAL harness: per-day bundles discoverable + PAUSE->resume continues the developed
 life). Both NO sim/ edit predicted. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN. Night: Option 3 -> 2B ->
 richer-world / Option 4.
+
+## CYCLE 745 (2026-07-01 — Option 3 smoke-4 FULL GO (6/6 checks); 6-seed in flight; findings drafted; starting Option 2B)
+
+Option 3 smoke-4 (bwjyju9iq): FULL GO all 6 checks -- DA sated 0.500/hungry 0.583/lesion 0.511 (clean link-sever ~=
+sated), gate 0.06->0.226, hungry abstains 0.12->0.43 err 0.22->0.09, moat 0-FA, graded corr GO. The mechanism held
+since smoke-1; 4 iterations were DA-measurement methodology fixes (vocab/carryover-washout/lesion-confound/brittle-
+monotone -> corr-graded). 6-seed IN FLIGHT (b4gtm8jez, ~24 min). Findings drafted:
+`research/findings/2026-07-01-tier3-option3-cross-modal-one-animal-first-slice.md` (6-seed aggregate pending).
+
+Option 2B VERIFIED build-ready: _free_agent (_longitudinal_develop_loop_gpu.py:507) does
+`br._cp.get_default_memory_pool().free_all_blocks()` -> the guard is load-bearing (must NOT free the persistent
+merged brain per-day); the bundle _inner_agent (developed_brain_io.py:56 getattr(agent,"agent",agent)) falls through
+to the MergedNavConvAgent's .composer -> bundles accept it verbatim. NO sim/ edit predicted.
+
+**EXACT NEXT CONCRETE ACTION:** (parallel, during the 6-seed GPU run) BUILD Option 2B -- add an additive default-None
+`per_day_wake_fn` seam to develop_gpu (replaces the LISTEN-only WAKE+CONVERSE :389-423 with a foraging day; slot
+between should_continue :376 + consolidate :426) + the _free_agent guard (:468, skip for the persistent agent) + a
+sibling harness entry (develop_run.py --with-body / develop_with_body_run.py) that builds the MergedNavConvAgent once
++ drives develop_gpu through the SAME lineage/PAUSE/bundle/supervisor scaffold. HARD: byte-identity of the unset path
+(default None) + moat 0-FA. De-risk: a short multi-day body-run through the ACTUAL harness (per-day bundles
+discoverable + PAUSE->resume continues the developed life). On the Option-3 6-seed landing -> finalize Option-3
+findings first (plug the aggregate), then continue Option 2B. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN.
