@@ -1,0 +1,53 @@
+{
+  "seed": 44,
+  "n_steps": 500,
+  "lived_facts": [
+    [
+      "river",
+      "near",
+      "cat"
+    ],
+    [
+      "cat",
+      "near",
+      "apple"
+    ]
+  ],
+  "placed": [
+    "river",
+    "cat",
+    "apple"
+  ],
+  "held_out": [
+    "dog"
+  ],
+  "moat_ok": true,
+  "lesion_collapsed": true,
+  "converse_ok": 2,
+  "converse_total": 2,
+  "conv": [
+    {
+      "fact": [
+        "river",
+        "near",
+        "cat"
+      ],
+      "recall": "cat",
+      "reply": "the river is near the cat.",
+      "ok": true
+    },
+    {
+      "fact": [
+        "cat",
+        "near",
+        "apple"
+      ],
+      "recall": "apple",
+      "reply": "the cat likes to see apple .",
+      "ok": true
+    }
+  ],
+  "GO": true,
+  "verdict": "GO (smoke) -- the merged one brain PERCEIVED objects DURING behaviour (live cortex_it spiking forward) + the RA console CONVERSED about them (recall + RA-render); moat holds on never-encountered objects; grounding-lesion collapses recall. The full embodied perceive-while-acting -> converse loop works end-to-end on one brain (single-seed smoke; multi-seed is the follow-on).",
+  "elapsed_seconds": 149.9
+}

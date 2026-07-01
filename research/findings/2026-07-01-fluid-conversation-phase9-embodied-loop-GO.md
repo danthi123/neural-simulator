@@ -23,10 +23,19 @@ ONE brain (Tier-3 live-and-remember + the RA console); reuse-by-import, **NO `si
 owner's *"grounded in the brain's own knowledge AND EXPERIENCES"* vision, realized end-to-end on one minimized-
 transformer, brain-trained, brain-gated substrate.
 
+## Multi-seed solidification — GO 3/3 (seeds 42/43/44)
+The single-seed smoke was solidified to multi-seed: **all 3 seeds GO** — each LIVED a 500-step episode, perceived 2
+objects during behaviour, conversed 2/2 (RA-rendered), moat held (never-encountered object → abstain), grounding-
+lesion collapsed recall. Sample renders: *"the apple is near the cat.", "the cat is near the dog.", "the river is near
+the dog."* HONEST NUANCE: the RA generator sometimes **paraphrases** the "near" relation (e.g. *"the dog likes to see
+cat"*) rather than rendering it verbatim — but it always NAMES the correct perceived object (the grounded content is
+intact; `ok` = the perceived patient appears in the reply). That is the P5 generalization envelope (the "near"
+relation wasn't in the RA fine-tune's verb set); the content grounding + moat + lesion are unaffected. ⇒ the full
+embodied perceive-while-acting → converse loop is **multi-seed GO**, capstone solidified.
+
 ## Honest scope
-- **Single-seed smoke** (the merged-bridge build + a live episode is heavy); multi-seed is the follow-on. The pieces
-  it composes are each multi-seed GO (Tier-3 live-and-remember 6/6; the Phase-8 experience-connection 3/3; the RA
-  console Phases 2–8).
+- The pieces it composes are each multi-seed GO (Tier-3 live-and-remember 6/6; the Phase-8 experience-connection 3/3;
+  the RA console Phases 2–8), and the full loop is now itself 3-seed GO.
 - The RA render of the "near" relation is via prompt-conditioning + the generator's generalization (the RA fine-tune
   didn't train "near" specifically); it renders cleanly here, bounded by the same generalization envelope as Phase 5.
 
