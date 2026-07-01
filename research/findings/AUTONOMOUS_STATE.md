@@ -6039,3 +6039,27 @@ corpus), then drop it into the grounded-lang gate->constrain->verify loop replac
 (held-out ppl) + grounding-drop-in + moat 0-FA. Present the roadmap to the owner (transparency); proceed under the
 blanket authority. Serial GPU (no contention): Phase-0 training launches AFTER the Option-3 re-run frees the GPU.
 biologization/one-brain HARD; honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 749 (2026-07-01 — Option 3 6/6 GO (3rd Tier-3 property, finalized); PIVOT executing: Phase-0 fluid-conversation generator TRAINING launched)
+
+Option 3 (cross-modal one-animal) re-run (b7v35ci7v) = **clean 6/6 GO** with the corrected moat gate. On seeds 43/102
+the SATED baseline leaked 1-2 FA under heavy noise while the HUNGRY (tightened) gate stayed 0-FA -> hunger CLOSED the
+conversational false-accepts (the cross-modal effect, vivid). Finalized the findings + flipped CLAUDE.md (Tier 3 =
+THREE one-brain properties GO: lives+remembers, develops-from-lived-experience, one-drive-both-halves). NO sim/ edit
+across all three.
+
+**PIVOT EXECUTING (the owner MAIN priority):** fluid LLM-like conversation, minimize the transformer. Both research
+passes synthesized (CYCLE 748). **Phase 0 LAUNCHED:** fetched a TinyStories subset (b1p6cc335: 443800 stories / 90M
+tokens / 400MB in 27s -> data/corpus/tinystories_{full,train,heldout}.txt; split 392MB train + 8MB heldout), and
+TRAINING a ~20M generator (bhhlay51p: tiny_transformer_train --corpus tinystories_train --d-model 512 --n-layer 6
+--n-head 8 --vocab 2048 --block 512 --batch 32 --steps 25000 --dropout 0.1 --wd 0.1 --warmup 1000 --heldout-every
+1500 -> research/findings/raw/fluidconv/gen_tinystories_20M.ckpt). Overnight ~1.5-2h (BPE-fit capped at 8M-char
+sample; encode .npy-cached; ~20M params = 15-25x smaller than Qwen-0.5B). Justified public-corpus fetch under the
+blanket authority (precedented: the project already downloads SimpleWiki).
+
+**EXACT NEXT CONCRETE ACTION:** (1) verify the Phase-0 training is into-learning (one-shot log check in a few min --
+monitor-long-runs). (2) On training completion -> DROP the ~20M generator into the grounded-lang gate->constrain->
+verify loop in place of Qwen-0.5B (Phase-0's core test): measure fluency (held-out ppl on the domain) + grounding
+drop-in + the no-confab MOAT still holds. Then Phase 1 (recurrent/RWKV on-substrate + multi-turn) etc. per the
+roadmap. Present results; proceed under blanket authority. biologization/one-brain HARD; moat a PLUS (tradeable for
+fluency where it helps); honest origin+gitea; COMMIT ON MAIN.

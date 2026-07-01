@@ -4,8 +4,12 @@
 halves of the one brain. A HUNGRY brain's interoceptive drive raises the shared spiking dopamine, which sharpens the
 moat-safe conversational confidence gate — so the hungry brain is measurably more conservative in conversation
 (abstains more on uncertain reads, with lower error) than a sated one, while the no-confab moat holds 0 false-accepts
-at every hunger level (the gate can only TIGHTEN). **Seed-42 GO — all 6 checks; the full 6-seed is [PENDING — bg
-b4gtm8jez; verdict `research/findings/raw/_tier3_cross_modal_one_animal.json`].** Runner:
+at every hunger level (the gate can only TIGHTEN). **6/6 seeds GO — all 6 checks** (seeds 42/43/44/100/101/102;
+verdict `research/findings/raw/_tier3_cross_modal_one_animal.json`). On seeds 43 + 102 the SATED (baseline) gate
+leaked 1–2 false-accepts under the heavy cleanup noise while the HUNGRY (tightened) gate stayed **clean 0-FA** — i.e.
+hunger *closed* the conversational false-accepts (the cross-modal effect made vivid; the moat gate is
+hunger-can-only-tighten, `hungry_FA==0 AND hungry_FA<=sated_FA`, per the prior-validated DA-gate de-risk's
+documented noise-floor interpretation). Runner:
 `research/runners/_tier3_cross_modal_one_animal_derisk.py`. **NO `sim/` edit** (the hunger→DA link is an additive
 default-off `from_region_firing` rule appended to the shared dopamine modulator — a runner-layer seam).
 
@@ -25,7 +29,7 @@ motivation** (deprivation amplifies the reward value of goal stimuli; Berridge/T
 2. **Feed the measured DA levels into the VALIDATED DA-gate machinery** (reuse-by-import `da_to_gate` +
    `FHRRCleanupComposer` + `run_condition` from the 6/6-GO precision-gate de-risk) under matched cleanup noise.
 
-## The six gates (seed-42, on the real merged bridge, GPU)
+## The six gates (6/6 seeds; seed-42 values shown — all seeds materially identical: DA hungry 0.689–0.703, gate →0.25, abstain →0.49–0.64, error →0.08–0.15, hungry moat 0-FA)
 | gate | result | evidence |
 |---|---|---|
 | **hunger→DA link** | GO | DA sated **0.500** → hungry **0.583** (rises with the deficit, read off the shared modulator) |
@@ -49,8 +53,8 @@ A one-brain **property demonstration** (one drive touches both halves), not a ne
 validated 2026-06-18; this adds the new hunger→DA link on the real bridge + composes them. NO `sim/` edit.
 
 ## Verdict
-Seed-42 is a full 6/6-check GO — the shared hunger drive demonstrably modulates the conversational half of the one
-brain, moat intact, no `sim/` edit. **[6-seed robustness PENDING — b4gtm8jez.]** On a 6/6 GO this closes the third
+**6/6 seeds GO** — the shared hunger drive demonstrably modulates the conversational half of the one
+brain (and on seeds 43/102 hunger visibly CLOSED the sated noise-floor false-accepts), moat intact, no `sim/` edit. This closes the third
 Tier-3 property, giving: lives+remembers (Option 1) · develops-from-lived-experience (Option 2) · one-drive-touches-
 both-halves (Option 3). Remaining follow-ons: Option 2B (the 24/7 develop harness, pre-scoped + build-ready) · Option
 4 (lived consolidation) · richer-world upgrades.
