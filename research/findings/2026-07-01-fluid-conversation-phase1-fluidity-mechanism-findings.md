@@ -84,7 +84,37 @@ off-fact). The path forward is NOT a third veto variant — it is one of:
    vocabulary, so it learns the render/answer FORMAT generally (generalizing, not memorizing specific facts). Still a
    minimized, brain-trained, brain-gated generator — the honest sweet spot, not the Qwen fallback.
 
-**Artifacts:** `_fluidconv_phase1_grounded_continuation_derisk.py` (v1); `_fluidconv_phase1_broadened_veto_derisk.py`
-(v2); results `_fluidconv_phase1_grounded_continuation.json`, `_fluidconv_phase1_broadened_veto.json`. NO `sim/` edit;
-reuse-by-import. Both negatives are real findings: they map the fluid-grounded mechanism space and rule out per-token
-veto grounding.
+## v3 RESULT — **GO**: prompt-conditioned free-gen + post-hoc VERIFY = fluid AND grounded (no fine-tune, no veto)
+`_fluidconv_phase1_conditioned_freegen_derisk.py` — the reframe realized: state the gated fact as a natural lead (the
+brain's neural word order + a minimal surface scaffold), let the 21M continue FREELY (fluent, unvetoed), and re-parse
+the whole text post-hoc (moat-as-a-plus). **Result 3 seeds: fluid+grounded 15/15, drift-caught 3/3,
+untaught-abstain 3/3 — GO.** Samples are genuinely fluent grounded prose:
+- *"The dog eats meat. It is not in the stick! It is a thick stick for Max to sleep. He licks Tom and Lily. 'Look, it
+  is a bone! Let's eat it!' Lily says."*
+- *"The bird eats seed. It is not in the pot. 'Yes, it is. But I am brave. And I can do it.' Tom says. He takes a
+  piece of bread from his pocket."*
+
+Each starts with the brain's grounded fact and continues fluently WITHOUT asserting a false animal-fact; adversarial
+wrong-fact leads ("The cat eats meat.") are FLAGGED by post-hoc VERIFY; untaught cues abstain (the GATE gives no
+lead). One initial "miss" (seed 43) was root-caused to a VERIFY extractor **false positive** — the multi-fact
+extractor bound `fish · make · cat` ACROSS three sentence boundaries ("fish. They make a big mess. …her cat"); the fix
+made `_extract_all_svos` **sentence-boundary-aware** (an SVO must be within one sentence) → 15/15. That is a strict
+strengthening of VERIFY (fewer false positives, no real within-sentence assertion missed).
+
+**⇒ Phase-1 fluidity mechanism SETTLED:** fluent grounded RENDERING is achievable NOW, cheaply, with the ~21M
+generator, via **prompt-conditioning (not a veto) + free (fluent) generation + post-hoc VERIFY** — the moat kept as a
+post-hoc PLUS. This is the honest fluid-grounded substrate the owner's north star needs.
+
+**Honest scope + what's still open for "talk to it like an LLM":** v3 does fluent grounded *rendering* (state a fact +
+fluent narrative), NOT (a) focused conversational **Q&A** (the base model *continues a story*, it does not *answer a
+question* — it rambles on-topic-but-unfocused, e.g. "…Sam is sad. He does not like the fish."), (b) **multi-turn**
+coherence, or (c) open-topic **breadth**. The next high-leverage lever is the roadmap's **retrieval-augmented
+render/QA fine-tune** (teach the 21M the Q + retrieved-fact → focused grounded answer FORMAT over a broad synthetic
+vocabulary, generalizing not memorizing) — still a minimized, brain-trained, brain-gated generator. Then assemble the
+full turn: free-text question → brain comprehend + retrieve/abstain → fluent focused grounded reply → VERIFY.
+
+**Artifacts:** `_fluidconv_phase1_grounded_continuation_derisk.py` (v1 + the sentence-aware `_extract_all_svos`);
+`_fluidconv_phase1_broadened_veto_derisk.py` (v2); `_fluidconv_phase1_conditioned_freegen_derisk.py` (v3, GO);
+results `_fluidconv_phase1_{grounded_continuation,broadened_veto,conditioned_freegen}.json`. NO `sim/` edit;
+reuse-by-import. The two negatives + the GO together map the fluid-grounded mechanism space: per-token veto ✗ (kills
+fluency), free-gen alone ✗ (off-fact), prompt-condition + post-hoc-verify ✓.

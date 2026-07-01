@@ -66,47 +66,47 @@ OUT = _REPO / "research" / "findings" / "raw" / "_fluidconv_phase1_grounded_cont
 
 
 def _extract_all_svos(prose, agents, actions, patients, inflect):
-    """Scan a (possibly multi-sentence) prose for ALL (agent, action, patient) SVOs over KNOWN entities, in surface
-    order. For every occurrence of a known verb, bind the nearest preceding known agent and the nearest following
-    known patient (before the next verb) -> one SVO. Function words / determiners / novel narrative tokens are
-    ignored. Returns a list of [a, v, p] canonical triples. This is the multi-fact generalization of the integration
-    de-risk's single-SVO extractor -- a real fluent continuation can assert SEVERAL facts, each must be checked."""
+    """Scan prose for ALL (agent, action, patient) SVOs over KNOWN entities, SENTENCE-BOUNDARY-AWARE. A real
+    assertion is WITHIN one sentence -- binding an agent/verb/patient ACROSS sentence boundaries (e.g. 'fish. They
+    make a big mess. ...her cat' -> spurious 'fish make cat') is a false positive, so we split on .!?; and extract
+    per sentence. Within a sentence: for each known verb, bind the nearest preceding known agent + the nearest
+    following known patient (neither crossing another verb). Function/novel words are ignored. Returns [a,v,p] list.
+    (Strict improvement over the cross-sentence version: removes false positives, never misses a real within-sentence
+    assertion.)"""
     import re
-    toks = re.findall(r"[a-z]+", prose.lower())
-    # index every token as ('A', word) / ('V', base) / ('P', word) / ('_', ) so we can walk left->right
-    marks = []
-    for t in toks:
-        bv = inflect.get(t)
-        if bv in actions:
-            marks.append(("V", bv))
-        elif t in agents and t in patients:
-            marks.append(("AP", t))     # ambiguous (some nouns are both agent+patient in the curriculum)
-        elif t in agents:
-            marks.append(("A", t))
-        elif t in patients:
-            marks.append(("P", t))
-        else:
-            marks.append(("_", t))
     svos = []
-    for i, (kind, val) in enumerate(marks):
-        if kind != "V":
-            continue
-        # nearest preceding agent (A or AP), not crossing an earlier verb
-        a = None
-        for j in range(i - 1, -1, -1):
-            if marks[j][0] == "V":
-                break
-            if marks[j][0] in ("A", "AP"):
-                a = marks[j][1]; break
-        # nearest following patient (P or AP), before the next verb
-        p = None
-        for j in range(i + 1, len(marks)):
-            if marks[j][0] == "V":
-                break
-            if marks[j][0] in ("P", "AP"):
-                p = marks[j][1]; break
-        if a and p:
-            svos.append([a, val, p])
+    for sent in re.split(r"[.!?;]+", prose):
+        toks = re.findall(r"[a-z]+", sent.lower())
+        marks = []
+        for t in toks:
+            bv = inflect.get(t)
+            if bv in actions:
+                marks.append(("V", bv))
+            elif t in agents and t in patients:
+                marks.append(("AP", t))     # ambiguous (some nouns are both agent+patient in the curriculum)
+            elif t in agents:
+                marks.append(("A", t))
+            elif t in patients:
+                marks.append(("P", t))
+            else:
+                marks.append(("_", t))
+        for i, (kind, val) in enumerate(marks):
+            if kind != "V":
+                continue
+            a = None
+            for j in range(i - 1, -1, -1):
+                if marks[j][0] == "V":
+                    break
+                if marks[j][0] in ("A", "AP"):
+                    a = marks[j][1]; break
+            p = None
+            for j in range(i + 1, len(marks)):
+                if marks[j][0] == "V":
+                    break
+                if marks[j][0] in ("P", "AP"):
+                    p = marks[j][1]; break
+            if a and p:
+                svos.append([a, val, p])
     return svos
 
 

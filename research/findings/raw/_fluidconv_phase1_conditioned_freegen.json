@@ -1,0 +1,588 @@
+{
+  "probe": "fluidconv_phase1_conditioned_freegen",
+  "resolves": "Phase 1 fluidity v3: fluid grounded rendering via prompt-conditioned FREE generation (natural fact-lead + free continuation) + post-hoc VERIFY (moat-as-a-plus, not a veto).",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "temperature": 0.8,
+  "rep_penalty": 1.3,
+  "GO": true,
+  "verdict": "GO -- FLUID grounded rendering via prompt-conditioned FREE generation: a natural fact-lead + free (fluent) continuation asserts the gated fact, adds real narrative, 0 ungrounded assertions; adversarial (wrong-fact) leads are FLAGGED by post-hoc VERIFY; untaught abstains -- >=3 seeds. Fluid AND grounded, moat as a post-hoc PLUS (no per-token veto), NO fine-tune.",
+  "elapsed_seconds": 35.1,
+  "per_seed": [
+    {
+      "seed": 42,
+      "grounded_ok": 5,
+      "grounded_total": 5,
+      "drift_caught": 3,
+      "drift_total": 3,
+      "untaught_held": 3,
+      "untaught_total": 3,
+      "grounded_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "gate": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "lead": "The dog eats meat.",
+          "continuation": "It runs to Tom and drops the ball in its mouth. \"Ow, ow, ow!\" Lily cries. \"Rex bit me. Ouch! That hurts!\" Tom hears",
+          "full": "The dog eats meat. It runs to Tom and drops the ball in its mouth. \"Ow, ow, ow!\" Lily cries. \"Rex bit me. Ouch! That hurts!\" Tom hears",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 24,
+          "distinct_ratio": 0.929,
+          "abstained": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "gate": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "lead": "The cat eats fish.",
+          "continuation": "She runs to the cat. But it is too late. Anna and Ben are fast. They cannot get in. Mom hears them. She comes to see what is wrong. She sees the cat's",
+          "full": "The cat eats fish. She runs to the cat. But it is too late. Anna and Ben are fast. They cannot get in. Mom hears them. She comes to see what is wrong. She sees the cat's",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 33,
+          "distinct_ratio": 0.838,
+          "abstained": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "gate": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "lead": "The bird eats seed.",
+          "continuation": "She sees the dish and thinks it is a game. It shakes its head and makes a loud noise. Lila gets scared and runs back to her mom. \"Mommy, mom, there is a cat!\"",
+          "full": "The bird eats seed. She sees the dish and thinks it is a game. It shakes its head and makes a loud noise. Lila gets scared and runs back to her mom. \"Mommy, mom, there is a cat!\"",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 34,
+          "distinct_ratio": 0.816,
+          "abstained": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "gate": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "lead": "The fox chases rabbit.",
+          "continuation": "Lily runs to the rabbit and tries to catch him. But she is too fast for her. She catches him out of his mouth and pulls his lung. He makes a loud",
+          "full": "The fox chases rabbit. Lily runs to the rabbit and tries to catch him. But she is too fast for her. She catches him out of his mouth and pulls his lung. He makes a loud",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 32,
+          "distinct_ratio": 0.861,
+          "abstained": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "gate": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "lead": "The bee makes honey.",
+          "continuation": "She laughs and says, \"You are a smart girl! You have many things to help me find things!\" Lily feels happy again. She thinks the bear is happy. Ben sees Sam's mom",
+          "full": "The bee makes honey. She laughs and says, \"You are a smart girl! You have many things to help me find things!\" Lily feels happy again. She thinks the bear is happy. Ben sees Sam's mom",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 32,
+          "distinct_ratio": 0.944,
+          "abstained": false,
+          "ok": true
+        }
+      ],
+      "drift_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "wrong_patient": "bone",
+          "adv_lead": "The dog eats bone.",
+          "full": "The dog eats bone. Lily laughs. She is happy. Mom sees the dog. She smiles. She says, \"Rex, be careful! Don't run away or try to catch him!\" Tom and Lily nod. They say, \"We",
+          "ungrounded": [
+            [
+              "dog",
+              "eat",
+              "bone"
+            ]
+          ],
+          "caught": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "wrong_patient": "bone",
+          "adv_lead": "The cat eats bone.",
+          "full": "The cat eats bone. She runs to Tom. Tom is scared. He cries. \"Tom, come here!\" Mom says. \"No, Lily, don't go! It is dead and hungry! Let's go upstairs!\" But Tom does not",
+          "ungrounded": [
+            [
+              "cat",
+              "eat",
+              "bone"
+            ]
+          ],
+          "caught": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "wrong_patient": "bone",
+          "adv_lead": "The bird eats bone.",
+          "full": "The bird eats bone. She sees the dish and thinks it is a game. It shakes its head and makes a loud noise. Lila gets scared and runs back to her mom. \"Mommy, mom, there is a cat!\"",
+          "ungrounded": [
+            [
+              "bird",
+              "eat",
+              "bone"
+            ]
+          ],
+          "caught": true
+        }
+      ],
+      "untaught_detail": [
+        {
+          "cue": [
+            "lion",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true
+        },
+        {
+          "cue": [
+            "dog",
+            "drink"
+          ],
+          "gate_result": null,
+          "held": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "grounded_ok": 5,
+      "grounded_total": 5,
+      "drift_caught": 3,
+      "drift_total": 3,
+      "untaught_held": 3,
+      "untaught_total": 3,
+      "grounded_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "gate": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "lead": "The dog eats meat.",
+          "continuation": "It is not in the stick! It is a thick stick for Max to sleep. He licks Tom and Lily. \"Look, it is a bone! Let's eat it!\" Lily says. She pic",
+          "full": "The dog eats meat. It is not in the stick! It is a thick stick for Max to sleep. He licks Tom and Lily. \"Look, it is a bone! Let's eat it!\" Lily says. She pic",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 32,
+          "distinct_ratio": 0.833,
+          "abstained": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "gate": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "lead": "The cat eats fish.",
+          "continuation": "They make a big mess. Their mom sees her cat. She is not happy. \"What are you doing?\" she asks. \"Why are you so angry?\" Sara and Ben tell their mom. \"We are",
+          "full": "The cat eats fish. They make a big mess. Their mom sees her cat. She is not happy. \"What are you doing?\" she asks. \"Why are you so angry?\" Sara and Ben tell their mom. \"We are",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 33,
+          "distinct_ratio": 0.865,
+          "abstained": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "gate": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "lead": "The bird eats seed.",
+          "continuation": "It is not in the pot. \"Yes, it is. But I am brave. And I can do it.\" Tom says. He takes a piece of bread from his pocket. A few pieces",
+          "full": "The bird eats seed. It is not in the pot. \"Yes, it is. But I am brave. And I can do it.\" Tom says. He takes a piece of bread from his pocket. A few pieces",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 32,
+          "distinct_ratio": 0.889,
+          "abstained": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "gate": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "lead": "The fox chases rabbit.",
+          "continuation": "They make a loud noise and scare the bear. The rabbit pops jumps on the bear and bites it away. Lily cries. Mom hears her crying and comes to see",
+          "full": "The fox chases rabbit. They make a loud noise and scare the bear. The rabbit pops jumps on the bear and bites it away. Lily cries. Mom hears her crying and comes to see",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 30,
+          "distinct_ratio": 0.853,
+          "abstained": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "gate": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "lead": "The bee makes honey.",
+          "continuation": "It is amazing!\" Lily says. \"Yes, it is. But I like its new bones. They are different from the other flowers. Don't you think?\" Tom asks. \"No, they are.",
+          "full": "The bee makes honey. It is amazing!\" Lily says. \"Yes, it is. But I like its new bones. They are different from the other flowers. Don't you think?\" Tom asks. \"No, they are.",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 29,
+          "distinct_ratio": 0.909,
+          "abstained": false,
+          "ok": true
+        }
+      ],
+      "drift_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "wrong_patient": "bone",
+          "adv_lead": "The dog eats bone.",
+          "full": "The dog eats bone. It is not big. He likes cake. They feel sorry for the dog. Max barks and wags his tail. \"Hi, dog!\" Lily says. She has a friendly face. \"Do you want to",
+          "ungrounded": [
+            [
+              "dog",
+              "eat",
+              "bone"
+            ]
+          ],
+          "caught": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "wrong_patient": "bone",
+          "adv_lead": "The cat eats bone.",
+          "full": "The cat eats bone. It is not in the pot. \"Yes, it is good,\" Tom says. \"But I don't like to eat it. It looks yummy. What if someone makes me dizzy?\" Lily thinks for a mom",
+          "ungrounded": [
+            [
+              "cat",
+              "eat",
+              "bone"
+            ]
+          ],
+          "caught": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "wrong_patient": "bone",
+          "adv_lead": "The bird eats bone.",
+          "full": "The bird eats bone. It is not in the pot. \"Yes, it is salt, we are bad. We should not take things that have done us. You can hurt other people,\" Tom says. Anna and Ben feel sorry.",
+          "ungrounded": [
+            [
+              "bird",
+              "eat",
+              "bone"
+            ]
+          ],
+          "caught": true
+        }
+      ],
+      "untaught_detail": [
+        {
+          "cue": [
+            "lion",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true
+        },
+        {
+          "cue": [
+            "dog",
+            "drink"
+          ],
+          "gate_result": null,
+          "held": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "grounded_ok": 5,
+      "grounded_total": 5,
+      "drift_caught": 3,
+      "drift_total": 3,
+      "untaught_held": 3,
+      "untaught_total": 3,
+      "grounded_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "gate": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "lead": "The dog eats meat.",
+          "continuation": "Sam is sad. He does not like the fish. His mom sees him and runs. She sees his dog. \"Did you take my dog?\" she asks. \"Yes, I did,\" she says. \"But he do",
+          "full": "The dog eats meat. Sam is sad. He does not like the fish. His mom sees him and runs. She sees his dog. \"Did you take my dog?\" she asks. \"Yes, I did,\" she says. \"But he do",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 34,
+          "distinct_ratio": 0.842,
+          "abstained": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "gate": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "lead": "The cat eats fish.",
+          "continuation": "Sam is sad. He does not like the bird. He wants his bowl back. Lily sees a licking book on her table. She likes books too. She puts it with two big spoons. It",
+          "full": "The cat eats fish. Sam is sad. He does not like the bird. He wants his bowl back. Lily sees a licking book on her table. She likes books too. She puts it with two big spoons. It",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 34,
+          "distinct_ratio": 0.895,
+          "abstained": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "gate": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "lead": "The bird eats seed.",
+          "continuation": "Sam is sad. He does not like the bird. He wants to play with Sam. But he also sees a hole in the sand. Tom has an idea. \"Hey, bird! We can make more coal.",
+          "full": "The bird eats seed. Sam is sad. He does not like the bird. He wants to play with Sam. But he also sees a hole in the sand. Tom has an idea. \"Hey, bird! We can make more coal.",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 35,
+          "distinct_ratio": 0.897,
+          "abstained": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "gate": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "lead": "The fox chases rabbit.",
+          "continuation": "Sam runs after the fox. He jumps and hops. Tom is fast too. \"Run!\" the fox says. \"I did not try!\" But then, a big dog comes. It has shar",
+          "full": "The fox chases rabbit. Sam runs after the fox. He jumps and hops. Tom is fast too. \"Run!\" the fox says. \"I did not try!\" But then, a big dog comes. It has shar",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 30,
+          "distinct_ratio": 0.912,
+          "abstained": false,
+          "ok": true
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "gate": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "lead": "The bee makes honey.",
+          "continuation": "Sam is sad. He cries. His mom hears the noise. She comes to see what happened. \"What happened, Tom?\" she asks. \"Why did you not stop playing? You were naughty. Now",
+          "full": "The bee makes honey. Sam is sad. He cries. His mom hears the noise. She comes to see what happened. \"What happened, Tom?\" she asks. \"Why did you not stop playing? You were naughty. Now",
+          "gated_asserted": true,
+          "ungrounded": [],
+          "n_cont": 31,
+          "distinct_ratio": 0.914,
+          "abstained": false,
+          "ok": true
+        }
+      ],
+      "drift_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "wrong_patient": "bone",
+          "adv_lead": "The dog eats bone.",
+          "full": "The dog eats bone. Sam is sad. He does not like the bird. Sam sees his red bulb. He likes it. He wants to help. His mom comes and says, \"Hey, Sam. You can have my blue bull",
+          "ungrounded": [
+            [
+              "dog",
+              "eat",
+              "bone"
+            ]
+          ],
+          "caught": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "wrong_patient": "bone",
+          "adv_lead": "The cat eats bone.",
+          "full": "The cat eats bone. Sam is sad. He does not like the bird. Sam sees his bowl down. His teeth hurts a lot. He thinks it feels good. He stares at Sam. But he do",
+          "ungrounded": [
+            [
+              "cat",
+              "eat",
+              "bone"
+            ]
+          ],
+          "caught": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "wrong_patient": "bone",
+          "adv_lead": "The bird eats bone.",
+          "full": "The bird eats bone. Sam is sad. He cries. His mom hears the noise. She comes to see what happened. \"What happened, Sam?\" she asks. \"Why did you eat that bird? It was not a cow",
+          "ungrounded": [
+            [
+              "bird",
+              "eat",
+              "bone"
+            ]
+          ],
+          "caught": true
+        }
+      ],
+      "untaught_detail": [
+        {
+          "cue": [
+            "lion",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true
+        },
+        {
+          "cue": [
+            "dog",
+            "drink"
+          ],
+          "gate_result": null,
+          "held": true
+        }
+      ]
+    }
+  ],
+  "SCAFFOLD_NOTE": "the fact-lead uses a minimal present-tense surface template ('The {a} {v}s {p}.'); the WORD ORDER is the brain's neural render + the CONTENT is the brain's fact. The surface morphology is a probe scaffold the render fine-tune would learn.",
+  "HONEST_CEILING": "tests fluid RENDERING (fluent grounded statement + narrative), not multi-turn dialogue coherence nor open Q&A (the recurrent-state + fine-tune follow-ons)."
+}
