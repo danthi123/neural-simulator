@@ -5981,3 +5981,30 @@ multi-day loop + per-day save_developed_brain bundles + BridgeLineage persist + 
 a short multi-day body-run that (a) emits per-day console-loadable bundles + (b) PAUSE->reload->resume continues the
 developed life (facts retained), moat 0-FA, NO sim/ edit. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN.
 Night: Option 3 -> 2B(self-contained) -> Option 4 / richer-world.
+
+## CYCLE 747 (2026-07-01 — Option-3 6-seed 4/6->corrected-gate re-running; PIVOT to the MAIN PRIORITY: fluid LLM-like conversation)
+
+Option 3 (cross-modal one-animal) 6-seed v1 (b4gtm8jez): 4/6 GO -- the 2 NO (seeds 43,102) failed ONLY on the moat
+gate, and specifically the SATED (baseline g0) leaked 1-2 FA under heavy noise while the HUNGRY (tightened) gate was
+CLEAN 0-FA on ALL 6. That is Option 3 WORKING (hunger CLOSED the sated conversational false-accepts = the cross-modal
+effect), the DA-gate de-risk's documented baseline-leak-that-tightening-closes interpretation. Corrected the gate
+(200682d0): hungry_FA==0 AND hungry_FA<=sated_FA (hunger can only tighten, da_to_gate clamps at g0) + hunger_closes_leak
+evidence field. Re-running for a clean 6/6 (b7v35ci7v). On GO -> finalize the Option-3 findings + flip CLAUDE.md (3rd
+property GO). Option 2B DEFERRED (Tier-3, below the new priority).
+
+**MAJOR REPRIORITIZATION (owner, 2026-07-01):** THE MAIN NEXT PRIORITY = fluid, LLM-like conversation with the
+simulated brain (real back-and-forth about almost any topic; understanding; responses grounded in the brain's OWN
+knowledge + experiences + the conversation context; growing through it). MINIMIZE the transformer; biologization /
+single substrate / one brain / no-cheats all bind. Blanket authority to research/develop/implement/test at any level
+with justification; parallelize; long GPU runs OK. Memory: project_fluid_llm_like_conversation_priority. OPENING MOVE
+(standing deep-research-first gate): TWO parallel READ-ONLY research passes dispatched -- (1) ad7e8cd32a6246119 =
+current-conversational-stack-vs-fluid-LLM-like GAP assessment (-> 2026-07-01-fluid-conversation-gap-assessment.md);
+(2) a2c97e82fed0ee2c7 = biology/catalog/literature MECHANISMS + the transformer-minimization strategy + ranked
+cheap-first ROADMAP (-> 2026-07-01-fluid-conversation-mechanisms-roadmap.md).
+
+**EXACT NEXT CONCRETE ACTION:** (a) on b7v35ci7v landing -> finalize Option-3 (clean 6/6) + flip CLAUDE.md; (b) on
+BOTH research passes landing -> SYNTHESIZE them into a phased fluid-conversation roadmap, PRESENT the plan +
+recommendation (transparency + steering; proceed under blanket authority, don't gate on approval), then FAN OUT the
+cheapest-first de-risks (parallel). Three tasks tracked (b7v35ci7v + the 2 research subagents). Moat: PLUS not hard
+(tradeable for the learned-lossy fluency path where it helps, per 2026-06-17); biologization/one-brain HARD; honest
+origin+gitea; COMMIT ON MAIN.
