@@ -1,0 +1,30 @@
+{
+  "probe": "fluidconv_chat_repl",
+  "seed": 42,
+  "demo": true,
+  "transcript": [
+    {
+      "you": "what does the dog chase?",
+      "brain": "the dog chases cat ."
+    },
+    {
+      "you": "what does it eat?",
+      "brain": "the cat eats fish ."
+    },
+    {
+      "you": "the wolf eats rabbit",
+      "brain": "ok, i learned that the wolf eats rabbit."
+    },
+    {
+      "you": "what does the wolf eat?",
+      "brain": "the wolf eats rabbit ."
+    },
+    {
+      "you": "what does the lion eat?",
+      "brain": "I don't know."
+    }
+  ],
+  "demo_all_correct": true,
+  "npar_M": 21.3,
+  "elapsed_seconds": 11.6
+}
