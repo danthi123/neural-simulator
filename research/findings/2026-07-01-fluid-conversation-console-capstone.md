@@ -53,4 +53,22 @@ demonstrated.
 - **NEXT:** the neural interrogative parser (burn the parse scaffold); broader-KB breadth; wire the console into the
   webapp Interact tab; and the deferred spiking-forward when the speed lever lands.
 
+## Update (CYCLE 758) — richer question types in the console (self-check all-correct)
+The console's QUESTION branch was enriched with more LLM-like question types, all backed by VALIDATED brain methods
+(no new mechanism): **yes/no** (`is_it_true`), **who** (`who_does`), **describe** (`tell me about X`), alongside the
+existing **what** + pronoun anaphora + growth + moat. The enriched demo transcript is all-correct:
+```
+what does the dog chase? -> the dog chases cat.
+what does it eat?        -> the cat eats fish.        (anaphora)
+the wolf eats rabbit     -> ok, i learned ...         (growth)
+what does the wolf eat?  -> the wolf eats rabbit.     (usable)
+does the dog eat meat?   -> Yes, the dog eats meat.   (yes/no)
+does the cat eat grass?  -> I don't know.             (yes/no; honest abstain -- is_it_true returns unknown on the wrong patient, never a confident wrong "no"/"yes")
+who eats meat?           -> the dog eats meat.        (who -> agent)
+tell me about the bird   -> the bird eats seed.       (describe)
+what does the lion eat?  -> I don't know.             (moat)
+```
+The conversation now spans what / who / yes-no / describe questions + multi-turn pronoun anaphora + learn-from-
+conversation + abstention — grounded + moat-preserved throughout, on the minimized brain-gated stack.
+
 **Artifacts:** `research/runners/_fluidconv_chat_repl.py`; demo `research/findings/raw/_fluidconv_chat_repl_demo.json`.

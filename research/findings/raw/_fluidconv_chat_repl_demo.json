@@ -20,11 +20,27 @@
       "brain": "the wolf eats rabbit ."
     },
     {
+      "you": "does the dog eat meat?",
+      "brain": "Yes, the dog eats meat ."
+    },
+    {
+      "you": "does the cat eat grass?",
+      "brain": "I don't know."
+    },
+    {
+      "you": "who eats meat?",
+      "brain": "the dog eats meat ."
+    },
+    {
+      "you": "tell me about the bird",
+      "brain": "the bird eats seed ."
+    },
+    {
       "you": "what does the lion eat?",
       "brain": "I don't know."
     }
   ],
   "demo_all_correct": true,
   "npar_M": 21.3,
-  "elapsed_seconds": 11.6
+  "elapsed_seconds": 12.6
 }

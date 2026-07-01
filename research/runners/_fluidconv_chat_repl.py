@@ -97,14 +97,41 @@ class FluidChat:
         if not toks:
             return "?"
         if self._is_question(toks):
-            # QUESTION. resolve a pronoun agent via the held referent; else a concrete subject.
+            tset = set(toks)
             has_pron = any(t in _PRON for t in toks)
             verb = next((self.inflect.get(t) for t in toks if self.inflect.get(t) in self.actions), None)
             subj = next((t for t in toks if t in self.agents), None)
-            if has_pron and subj is None:
+            obj = next((t for t in toks if t in self.patients and t != subj), None)
+            if has_pron and subj is None:                       # resolve a pronoun agent via the held referent
                 subj = self.mta._resolve("it", query_verb=verb)
-                if subj is None:
+
+            # DESCRIBE ("tell me about the dog") -> a grounded sentence about the subject's first known fact
+            if ("tell" in tset or "about" in tset) and subj is not None:
+                v = verb or next((vv for vv in sorted(self.actions) if self.mta.agent.what_does(subj, vv) is not None), None)
+                if v is None:
                     return "I don't know."
+                _p, reply = self._answer(subj, v)
+                return reply
+
+            # YES/NO ("does the dog eat meat?" / "is it true the dog eats meat?") -> is_it_true
+            if ("does" in tset or "do" in tset or "is" in tset or "are" in tset) and subj and verb and obj:
+                truth = self.mta.agent.is_it_true(subj, verb, obj)
+                if truth == "yes":
+                    self.store_keys.add((subj, verb, obj))
+                    _p, sent = self._answer(subj, verb)         # RA-render the confirmed fact
+                    return f"Yes, {sent[0].lower()}{sent[1:]}" if sent and sent[0].isupper() else f"Yes, {sent}"
+                return "No." if truth == "no" else "I don't know."
+
+            # WHO ("who eats meat?") -> agent query
+            if "who" in tset and verb and obj:
+                who = self.mta.agent.who_does(verb, obj)
+                if who is None:
+                    return "I don't know."
+                self.agents.add(who)
+                _p, reply = self._answer(who, verb)
+                return reply
+
+            # WHAT (default) -> patient query
             if subj is None or verb is None:
                 return "I don't know."
             _p, reply = self._answer(subj, verb)
@@ -126,11 +153,15 @@ class FluidChat:
 
 
 DEMO = [
-    "what does the dog chase?",      # -> the dog chases cat.   (writes 'cat')
-    "what does it eat?",             # -> it=cat -> the cat eats fish.  (anaphora, Phase 4)
-    "the wolf eats rabbit",          # -> ok, learned  (growth, Phase 5)
-    "what does the wolf eat?",       # -> the wolf eats rabbit.  (learned fact usable)
-    "what does the lion eat?",       # -> I don't know.  (moat)
+    "what does the dog chase?",      # 0 -> the dog chases cat.   (writes 'cat')
+    "what does it eat?",             # 1 -> it=cat -> the cat eats fish.  (anaphora, Phase 4)
+    "the wolf eats rabbit",          # 2 -> ok, learned  (growth, Phase 5)
+    "what does the wolf eat?",       # 3 -> the wolf eats rabbit.  (learned fact usable)
+    "does the dog eat meat?",        # 4 -> Yes, the dog eats meat.  (yes/no)
+    "does the cat eat grass?",       # 5 -> No.  (yes/no negative)
+    "who eats meat?",                # 6 -> the dog eats meat.  (who -> agent)
+    "tell me about the bird",        # 7 -> the bird eats seed.  (describe)
+    "what does the lion eat?",       # 8 -> I don't know.  (moat)
 ]
 
 
@@ -163,10 +194,14 @@ def main():
         if a.demo:
             def _said(i, sub):
                 return sub in transcript[i]["brain"].lower()
-            go = bool(_said(0, "cat") and _said(1, "fish") and "learned" in transcript[2]["brain"].lower()
-                      and _said(3, "rabbit") and "know" in transcript[4]["brain"].lower())
-            print(f"\n  [demo self-check] Q&A + anaphora(it->cat->fish) + growth(wolf) + moat(lion) all correct: {go}",
-                  flush=True)
+            go = bool(_said(0, "cat") and _said(1, "fish")                     # what + anaphora
+                      and "learned" in transcript[2]["brain"].lower() and _said(3, "rabbit")   # growth + usable
+                      and (_said(4, "yes") and _said(4, "meat"))              # yes/no positive
+                      and transcript[5]["brain"].lower().startswith(("no", "i don't"))          # yes/no negative
+                      and _said(6, "dog")                                     # who -> dog
+                      and _said(7, "seed")                                    # describe the bird
+                      and "know" in transcript[8]["brain"].lower())            # moat
+            print(f"\n  [demo self-check] what/anaphora/growth/yes-no/who/describe/moat all correct: {go}", flush=True)
         out = {"probe": "fluidconv_chat_repl", "seed": a.seed, "demo": bool(a.demo), "transcript": transcript,
                "demo_all_correct": go, "npar_M": round(chat.npar, 1),
                "elapsed_seconds": round(time.time() - t0, 1)}
