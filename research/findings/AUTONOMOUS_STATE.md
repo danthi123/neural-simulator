@@ -6293,3 +6293,24 @@ scripted smoke + a canned demo transcript (Q&A + it-anaphora + teach-a-new-fact-
 >=1 seed but prefer 3): the scripted multi-turn+growth+moat transcript is all-correct. Reuse-by-import; NO sim/ edit.
 THEN: neural interrogative parser (burn the parse scaffold) + broader-KB breadth + (deferred) spiking-forward.
 biologization/one-brain HARD; moat a PLUS (GATE-FIRST); honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
+
+## CYCLE 757 DONE (2026-07-01 — the fluid-conversation CONSOLE capstone: Phases 2-5 in one coherent chat)
+
+`_fluidconv_chat_repl.py` (`FluidChat`): QUESTION -> interrogative parse -> brain GATE (moat gate-first, pronoun
+resolved) -> RA-21M focused answer -> VERIFY; STATEMENT -> hear (LEARN; subject/object become known for later Qs);
+untaught -> "I don't know." Scriptable (--demo/--script) + interactive (stdin). Demo self-check ALL-CORRECT: "dog
+chase? -> cat", "it eat? -> fish" (anaphora), "the wolf eats rabbit -> learned", "wolf eat? -> rabbit", "lion eat? ->
+I don't know" (moat). Fix: a learned fact's subject/object must join the known-entity sets so later Qs find them.
+Commit 74076786; finding `2026-07-01-fluid-conversation-console-capstone.md`. ARC STATUS: Phases 0-5 all GO + the
+console; every core owner axis demonstrated; NO sim/ edit anywhere.
+
+**EXACT NEXT CONCRETE ACTION:** CYCLE 758 = enrich the console with RICHER question types (more LLM-like
+conversation, all backed by VALIDATED brain methods): (1) YES/NO ("does the dog eat meat?" -> is_it_true -> "Yes, the
+dog eats meat." / "No." / "I don't know."); (2) DESCRIBE ("tell me about the dog" -> describe/what_does over the
+subject's facts -> a grounded sentence); (3) MULTI-HOP via the pronoun chain already works across turns (dog chase? ->
+cat; it eat? -> fish) -- optionally add reason_chain for a within-turn 2-hop if a relative-clause parse is cheap
+(else DEFER, note it). Build into `FluidChat.turn` (extend the QUESTION branch: detect does/is -> yesno; tell/about ->
+describe). Add these to the --demo transcript + a scripted smoke; keep the moat gate-first + VERIFY. MEASURE: the
+enriched demo transcript all-correct (>=1 seed). Reuse-by-import; NO sim/ edit. THEN: neural interrogative parser
+(burn the parse scaffold) + broader-KB breadth (stream-cortex, higher D, "almost any topic") + webapp Interact
+wire-in + (deferred) spiking-forward. biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN.
