@@ -6683,6 +6683,31 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 779 (2026-07-01 — synthesis cheap-first COMPLETE [#1+#2] + CI-guarded + integration-verified; next = persistence)
+
+Multi-fact-synthesis cheap-first is COMPREHENSIVELY DONE: #1 connected prose (`plan_discourse`: aggregation +
+Joint/Elaboration connectives) + #2 checkable gist (`shared_discourse`: entailment-only intersection) + the checkable
+compare (Contrast/Additive). All wired into the console, de-risk GO, moat by construction, NO sim/ edit, NO train.
+CI-guarded (`tests/test_fluidconv_chat_repl.py` 3 tests: base demo, discourse-plan synthesis + compare + gist, instance
+demo -- all pass). A comprehensive 12-turn integration conversation (learn-Wikidata / connected-discuss / instance
+mint+attribute+query / generic / compare / growth / gist / yes-no / moat / clean-kind-discuss) holds together
+end-to-end. #3 (plan-guided synthesis fine-tune) is DEPRIORITIZED by the research's OWN criterion ("only if #1 not
+fluent enough" -- #1 IS fluent: "An elephant is a mammal; it is grey and has a trunk and tusk.") + is an owner-steer
+trade-off (a train vs minimize-transformer). The free single-pass abstractive-synthesis + open-world cross-fact
+inference wall on a ~21M stays the honest boundary (routed around, not solved).
+
+**EXACT NEXT CONCRETE ACTION:** the next autonomous frontier for the owner's "GROWING THROUGH experiences" goal =
+PERSISTENCE -- the console rebuilds from the curriculum each run, so Wikidata-learned + taught facts are LOST on
+restart. Scope + build: persist the console's learned facts across sessions (save the composer KB fact-list + the
+Wikidata cache [already on disk] + instance state; on load, re-store the facts to rebuild the KB). Check first whether
+RFPhasorComposer/the composer exposes a KB save/load or if re-storing the fact-list rebuilds it (likely cheap --
+composer.kb is a list of fact blocks; re-store on load). If cheap: build a `--persist`/lineage-backed console that
+remembers. If it's a bigger arc (composer tensor persistence): scope it as a de-risk. This composes built pieces
+(composer.store + JSON persistence + the BridgeLineage pattern), NOT a new mechanism -> proceed under blanket authority.
+Deferred/owner-gated: #3 synthesis fine-tune (present the trade-off); webapp Interact (owner UI verify); spiking-forward
+(KV-cache); the open-domain wall. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified; honest
+origin+gitea; COMMIT ON MAIN; GPU/CuPy (numpy for CPU/console).
+
 ## CYCLE 778 (2026-07-01 — synthesis research RETURNED + cheap-first #1 BUILT + WIRED: Phase-16 discourse-plan GO)
 
 The synthesis-frontier research subagent (a03dbd63ed2dea880) returned a strong controller-verified verdict: "DISCUSS
