@@ -6407,3 +6407,29 @@ the console converses about a perceived (not taught) object, grounding load-bear
 perception integration is heavy -> a lightweight fixed-projection grounding stands in (noted). Reuse-by-import; NO
 sim/ edit. THEN: webapp Interact wire-in (needs owner to verify UI) + (deferred) spiking-forward + dendritic-codes.
 biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
+
+## CYCLE 762 DONE (2026-07-01 — experience-connection GO: converse about PERCEIVED, not taught, objects)
+
+`_fluidconv_phase8_experience_derisk.py`, 3 seeds GO: perceived subjects get codes grounded from percepts (the
+validated fixed projection = the composer's phase-code format), conversed via the RA console. CONVERSE 3/3
+("the wolf eats rabbit." etc.), GROUNDING-LESION collapses 3/3 (load-bearing on the percept), MOAT 0-FA 3/3. Fix:
+grounded_codes = REAL phase angles (np.angle), not complex phasors (composer casts to float). Commit c8c7b414;
+scoping+GO doc `2026-07-01-fluid-conversation-experience-connection-scoping.md`. ⇒ the "grounded in the brain's
+EXPERIENCES" clause closed at the conversational layer. ARC: Phases 0-8 + console -- the fluid-conversation priority
+comprehensively addressed on every owner axis (fluent/grounded-knowledge/context/growth/breadth/rich-Q&A/brain-based-
+parse/experiences), minimized (~21M) brain-trained brain-gated stack, NO sim/ edit anywhere.
+
+**EXACT NEXT CONCRETE ACTION:** CYCLE 763 = the FULL EMBODIED EXPERIENCE LOOP (the capstone; the follow-on to
+Phase-8's cheap-first): perceive-while-ACTING on the merged nav+conv brain (Tier-3 `_tier3_live_and_remember_derisk`
++ `MergedNavConvAgent.perceive_and_ground` -- the brain PERCEIVES objects DURING its own behaviour via a LIVE
+cortex_it spiking forward, grounds+stores them) -> then CONVERSE about those lived percepts via the RA console (the
+RA-fine-tuned 21M rendering, NOT the basic query_patient). The integration point: attach the RA generator (FTFaculty)
++ the fluid-console rendering to the Tier-3 lived-facts composer. Step 1 = READ `_tier3_live_and_remember_derisk.py`
+(the live() loop + how lived facts are stored + queried) to assess the cleanest attach. Step 2 = a cheap-first
+de-risk: run a short Tier-3 live episode (perceive+store a couple objects), then the RA console answers "what did you
+encounter?"-style questions about them (RA-render) + the moat holds on never-encountered objects + a grounding-lesion
+collapses. MEASURE (>=3 seeds if tractable, else honest smoke): the RA console converses about LIVE-perceived objects.
+GO = converse about live-perceived objects + moat + lesion. If the merged-bridge integration is too heavy for a clean
+run, characterize honestly + the Phase-8 cheap-first stands as the experience-connection deliverable. Reuse-by-import;
+NO sim/ edit. THEN: webapp Interact wire-in (owner verifies UI) + (deferred) spiking-forward + dendritic-codes.
+biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
