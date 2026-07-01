@@ -54,7 +54,9 @@ VERBS = [("eat", "eats", "ate"), ("chase", "chases", "chased"), ("like", "likes"
          ("throw", "throws", "threw"), ("catch", "catches", "caught"), ("carry", "carries", "carried"),
          ("pick", "picks", "picked"), ("wash", "washes", "washed"), ("paint", "paints", "painted")]
 OBJECTS = ("meat fish seed grass bone milk worm hay honey egg web bread cake ball key ring hat box cup toy "
-           "book bell drum flag leaf rock nut plum apple sock shoe cap coat kite pot dish spoon cup").split()
+           "book bell drum flag leaf rock nut plum apple sock shoe cap coat kite pot dish spoon "
+           # the curriculum's patient words (so a de-risk fact like fox/eat/rabbit or sun/give/light renders):
+           "rabbit cat mouse light water shade tree ground cave").split()
 ADJS = "big small red blue green yellow soft warm cold fast slow clever kind brave happy shy".split()
 
 
