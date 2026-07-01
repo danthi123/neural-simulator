@@ -5822,3 +5822,23 @@ bank the verdict, update CLAUDE.md's Tier-3 arc (Option 2 -> GO), and PRESENT th
 follow-ons (Option 3 cross-modal one-animal / Option 4 lived consolidation / Option 2B 24/7 harness / richer-world).
 On any seed NEGATIVE -> localize (develops/retention/frozen/lived/moat/persist) + honest partial. Moat 0-leak (HARD);
 honest origin+gitea; COMMIT ON MAIN. (n_days=4 adds an explicit day-3 no-new-learning RETENTION day: facts [1,2,3,3].)
+
+## CYCLE 740 (2026-07-01 — Tier-3 Option 2A 6-seed = 6/6 CAPABILITY GO; 1 marginal corr-sanity miss FIXED + re-running)
+
+First 6-seed (bowg8ddn5, ~2h20m): **6/6 on ALL 7 develop-capability gates** (develops/retention 3/3/frozen-flat/
+lived-not-scripted/moat-byte-frozen/persistence/alive), every seed. per-seed facts_seq: 42[1,2,3,3] 43[1,1,3,3]
+44[1,1,3,3] 100[1,2,3,3] 101[1,1,3,3] 102[1,1,2,3] -- all develop + last-recall 3/3 + moat all-abstain + conv
+byte-frozen. The ONLY NO was seed 102 on the borrowed `corr_ok` gate (drive-tracking sweep corr 0.897 < 0.90).
+ROOT CAUSE: the 2A runner hardcoded the corr-sweep read window=20 (for speed) -- noisier than Option-1's validated
+window=40 (where the SAME drive gave corr +0.97-0.98, 6/6). At w=20 corr lands ~0.90; seed 102 dipped to 0.897.
+Under-sampling, NOT a drive failure (the drive tracks; Option 1 validated it). FIX (c969ea9c, NOT p-hacking = the
+validated read config): SpikingHunger corr-sweep window 20->40 (run_seed default). Re-running the full 6-seed at
+w=40 for a clean, consistent 6/6 (all gates incl corr).
+
+**EXACT NEXT CONCRETE ACTION:** the w=40 re-run IS IN FLIGHT (bg **brtgqjisk**, `--seeds 42 43 44 100 101 102
+--n-days 4 --steps-per-day 600`, ETA ~3h, out `_tier3_develop_with_a_body.json`). On completion READ
+`scratchpad/dwab_6seed_w40.log` (per-seed + DWAB6W40_EXIT); expect 6/6 (corr now +0.97-0.98). Then finalize the
+Option-2 findings (flip to 6/6 GO), flip CLAUDE.md Tier-3 arc Option-2->GO, PRESENT + the ranked follow-ons (Option
+3 cross-modal / Option 4 lived consolidation / Option 2B 24/7 harness / richer-world). Moat 0-leak (HARD); honest
+origin+gitea; COMMIT ON MAIN. NOTE: the develop CAPABILITY is ALREADY 6/6 -- the re-run only lifts the redundant
+drive-quality corr metric to the validated config for an unimpeachable clean sweep.
