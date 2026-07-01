@@ -6166,3 +6166,27 @@ measure focused-answer quality + moat (untaught->abstain) + drift-caught, >=3 se
 (not story rambles) + moat 0-FA. This is still a minimized+brain-trained+brain-gated generator (NOT the Qwen
 fallback). Then assemble the full conversational turn + multi-turn (recurrent state) + the multi-referent WTA (GAP D).
 biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
+
+## CYCLE 754 (2026-07-01 — IN FLIGHT: RA fine-tune + Phase-2 focused-Q&A + Phase-3 full-turn all PREVIEW-GO)
+
+Built + committed the whole Phase-2/3 stack (reuse-by-import, NO sim/ edit):
+- `_fluidconv_phase2_ra_finetune.py` (commit caba36b5): RA render/QA fine-tune of the 21M (broad-vocab QA/describe/
+  abstain, INTERLEAVED with TinyStories for anti-forgetting, low-LR continue-train from the 21M ckpt, same BPE).
+  Full run (2500 steps, 16k QA) IN FLIGHT (bg bs8f42bti; step 1000 loss 0.94; ETA ~10 min) -> FT_CKPT
+  `research/findings/raw/fluidconv/gen_tinystories_ra_ft.ckpt.pt` (saved atomically every 250 steps).
+- `_fluidconv_phase2_ra_qa_eval_derisk.py` (commit d8688597 + fix 305fb19c): PREVIEW-GO on the PARTIAL ckpt --
+  focused-grounded 5/5, GATE-FIRST moat 3/3, RA-faithful 3/3, median 5-7 answer words. KEY: the model CONFABULATES
+  if wrongly prompted about an untaught subject -> the moat is GATE-FIRST (brain decides answer-vs-abstain BEFORE
+  the model is invoked), NOT model-learned.
+- `_fluidconv_phase3_conversational_turn_derisk.py` (commit d29d1198): the FULL turn end-to-end, PREVIEW transcript
+  "what does the dog eat? -> the dog eats meat. ... what does the lion eat? -> I don't know." moat 3/3, drift-caught
+  3/3, grounded-reply 3/5 partial (2 misses = vocab coverage: fox/rabbit -- 'rabbit' not in the QA object pool).
+
+**EXACT NEXT CONCRETE ACTION:** when the fine-tune bg task (bs8f42bti) COMPLETES, re-run BOTH on the FINAL ckpt:
+`python -m research.runners._fluidconv_phase2_ra_qa_eval_derisk --seeds 42 43 44` and
+`python -m research.runners._fluidconv_phase3_conversational_turn_derisk --seeds 42 43 44` (SIM_BACKEND=numpy). Bank a
+consolidated Phase-2+3 GO finding with the FINAL-ckpt numbers + the demo transcript, commit both remotes, bump this to
+CYCLE 754 DONE. THEN: multi-turn (persistent discourse referents / recurrent state) + replace the interrogative-parse
+scaffold with a neural interrogative parser + widen the QA object vocab (so fox/rabbit-type facts render). If the
+final-ckpt grounded-reply is still <5/5 on vocab, that's a vocab-coverage finding (widen OBJECTS), not a mechanism
+failure. biologization/one-brain HARD; moat a PLUS (GATE-FIRST); honest origin+gitea; COMMIT ON MAIN; GPU/CuPy.
