@@ -6683,6 +6683,32 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 784 (2026-07-01 — STRATEGIC PIVOT: owner critique -> DENDRITIC CORTEX as the top lever for EMERGENCE)
+
+The owner raised a strategic critique (now memory [[project_dendritic_cortex_for_emergence]]): the conversational work
+became feature-by-feature capability-MATCHING -- each feature routes some computation through spiking neurons, but the
+"conversation" layer (composer binding ALGEBRA, discourse-plan TEMPLATES, intent DISPATCH) is hand-designed host
+orchestration, NOT biology reproducing itself; and it's structurally whack-a-mole (real brains acquire these EMERGENTLY
+from experience). Owner's realization: the DENDRITIC CORTEX is likely the top-priority substrate investment for EMERGENT
+(not hand-designed) conversational/learning/growth capability; leans "1 or 3" (pursue emergence + remove not-yet-walled
+shortcuts). My analysis (agreed, tempered): emergence needs a powerful local learning rule w/ credit assignment = a
+DENDRITIC phenomenon (apical/basal + burst plasticity; Larkum/Payeur-Naud/Sacramento-Senn); point-neuron+Hebbian is too
+weak -> WHY we hand-design; the 2 proven walls (decorrelation Mikulasch-Priesemann; multi-attr binding) are dendritic
+too. TEMPERED: necessary-NOT-sufficient (scale+data+time still matter; no silver bullet); NOT everything needs dendrites
+(PPMI generalized on point neurons). D2 dendritic substrate exists (Phases 0-2). DISPATCHED a read-only deep-research
+scoping (subagent **a2a7c51c57e8ba893**) -> `research/findings/2026-07-01-dendritic-cortex-for-emergence-scoping.md`
+(minimal dendritic mechanism for emergent credit-assignment + the walls; audit D2 + Phase-3 gap; ranked cheap-first
+de-risks that TEST emergence; tractability-at-our-scale verdict).
+
+**EXACT NEXT CONCRETE ACTION:** WHEN the dendritic-emergence research subagent (a2a7c51c57e8ba893) returns: REVIEW the
+scoping doc (trust-but-verify the load-bearing claims -- esp. the dendrite-required-vs-point-neuron-achievable boundary,
+the D2 audit, and the honest tractability/next-wall verdict), COMMIT it to BOTH remotes on main, and PRESENT the
+executive summary + the recommended cheap-first de-risk sequence to the owner for the build decision (this is a
+months-scale build in a known-hard family -> owner steers the commit; the read-only research is the gate). The console
+(Phases 0-17 + reasoning + neural wh-parse) stays the demonstrable artifact; new work shifts toward EMERGENCE +
+scaffold-replacement (remove shortcuts not-yet-walled). biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless
+justified; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
+
 ## CYCLE 783 (2026-07-01 — grounded WHY route + DEPLOYED the Phase-7 neural interrogative parser into the console)
 
 Two deliverables: (1) grounded WHY route -- "why is a dog a chordate?" -> the real isa-PATH ("Because a dog is a
