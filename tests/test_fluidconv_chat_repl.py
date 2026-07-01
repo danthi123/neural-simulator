@@ -51,6 +51,18 @@ def test_base_demo_self_check(chat):
     assert "know" in r[9].lower()                           # moat: untaught -> I don't know
 
 
+def test_discourse_plan_synthesis(chat):
+    """Phase-16: DISCUSS renders a topic's grounded facts as ONE connected prose (aggregation + connectives), and
+    COMPARE fires a checkable Contrast -- grounded by construction, no free generation."""
+    dog = chat.turn("tell me about the dog").lower()
+    # connected prose: an aggregation/Joint connective is present (not one isolated sentence per fact)
+    assert (" and " in dog) or ("; it " in dog)
+    assert "dog" in dog and "meat" in dog                    # grounded (the dog's stored facts)
+    cmp = chat.turn("compare dog and cat").lower()
+    assert "but" in cmp                                       # checkable Contrast (the dog/cat patients differ)
+    assert "dog" in cmp and "cat" in cmp
+
+
 def test_instance_demo_self_check():
     """Phase-14 instance-rep in the console: 'which dog?' -- a specific referent vs the generic kind, on a FRESH
     console (a distinct instance-mint state from the base-demo fixture)."""
