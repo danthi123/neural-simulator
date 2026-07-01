@@ -1,0 +1,142 @@
+{
+  "probe": "emerge1b_burstprop",
+  "GO": false,
+  "verdict": "BOUNDARY -- burst didn't beat vanilla FA (best 0.784 vs FA 0.689). Faithful Burstprop did not clear the depth wall at this scale (oracle CAN: 0.988). Per the master directive this is the NEXT mechanism to find, not a stop: iterate to the Sacramento-Senn self-predicting microcircuit (more gradient-faithful) or a wider/ensemble regime (better burst-rate estimate). Build-saving: NOT the substrate rewrite yet.",
+  "mechanism": "faithful Burstprop (Payeur-Naud 2021): multiplexed event/burst channels, layer-wise burst-coded top-down error via fixed-random feedback, recurrent linearization, BDSP; no weight transport; same W-init as the vanilla-FA baseline (decisive within-net contrast)",
+  "task": "depth-2 threshold-of-5-pair-XORs over 10 bits (== EMERGE-1)",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 1000,
+    "lr": 0.15,
+    "batch": 128,
+    "hidden": 256
+  },
+  "elapsed_seconds": 507.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "vanilla_FA": {
+        "train": 1.0,
+        "heldout": 0.5793871866295265
+      },
+      "burst_bare": {
+        "train": 0.6015037593984962,
+        "heldout": 0.5571030640668524,
+        "no_weight_transport": true,
+        "probe_latent": 0.5275766016713092
+      },
+      "burst_linearized": {
+        "train": 0.8030075187969925,
+        "heldout": 0.7298050139275766,
+        "no_weight_transport": true,
+        "probe_latent": 0.9727019498607242
+      },
+      "wrong_sign": {
+        "train": 0.5894736842105263,
+        "heldout": 0.5069637883008357,
+        "no_weight_transport": true
+      },
+      "apical_lesion": {
+        "train": 0.5263157894736842,
+        "heldout": 0.45125348189415043,
+        "no_weight_transport": true
+      },
+      "no_teaching_null": {
+        "train": 0.5263157894736842,
+        "heldout": 0.45125348189415043,
+        "no_weight_transport": true
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9972144846796658
+      },
+      "same_init_as_FA": true,
+      "chance": 0.5487465181058496
+    },
+    {
+      "seed": 43,
+      "vanilla_FA": {
+        "train": 1.0,
+        "heldout": 0.7493036211699164
+      },
+      "burst_bare": {
+        "train": 0.5744360902255639,
+        "heldout": 0.532033426183844,
+        "no_weight_transport": true,
+        "probe_latent": 0.5192200557103064
+      },
+      "burst_linearized": {
+        "train": 0.9954887218045113,
+        "heldout": 0.9303621169916435,
+        "no_weight_transport": true,
+        "probe_latent": 0.9966573816155989
+      },
+      "wrong_sign": {
+        "train": 0.6150375939849624,
+        "heldout": 0.5571030640668524,
+        "no_weight_transport": true
+      },
+      "apical_lesion": {
+        "train": 0.5203007518796993,
+        "heldout": 0.4623955431754875,
+        "no_weight_transport": true
+      },
+      "no_teaching_null": {
+        "train": 0.5203007518796993,
+        "heldout": 0.4623955431754875,
+        "no_weight_transport": true
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 1.0
+      },
+      "same_init_as_FA": true,
+      "chance": 0.5376044568245125
+    },
+    {
+      "seed": 44,
+      "vanilla_FA": {
+        "train": 1.0,
+        "heldout": 0.7381615598885793
+      },
+      "burst_bare": {
+        "train": 0.5518796992481203,
+        "heldout": 0.5515320334261838,
+        "no_weight_transport": true,
+        "probe_latent": 0.528133704735376
+      },
+      "burst_linearized": {
+        "train": 0.8285714285714286,
+        "heldout": 0.6908077994428969,
+        "no_weight_transport": true,
+        "probe_latent": 0.8807799442896936
+      },
+      "wrong_sign": {
+        "train": 0.6977443609022557,
+        "heldout": 0.6155988857938719,
+        "no_weight_transport": true
+      },
+      "apical_lesion": {
+        "train": 0.48721804511278194,
+        "heldout": 0.5236768802228412,
+        "no_weight_transport": true
+      },
+      "no_teaching_null": {
+        "train": 0.48721804511278194,
+        "heldout": 0.5236768802228412,
+        "no_weight_transport": true
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9665738161559888
+      },
+      "same_init_as_FA": true,
+      "chance": 0.5236768802228412
+    }
+  ],
+  "HONEST_NOTE": "Boundaries are undiscovered mechanisms (master directive): a BOUNDARY here launches the next mechanism (Sacramento-Senn microcircuit / wider-ensemble burst estimate), not a stop. GO localizes the months-scale burst two-compartment substrate build. Oracle is a fenced backprop ceiling (task-sanity), NOT a shipped biologically-local mode."
+}

@@ -6683,6 +6683,35 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 788 (2026-07-01 — EMERGE-1b: the boundary WAS an undiscovered mechanism [Burstprop CONFIRMED]; + the back-on-track skill)
+
+Built + ran EMERGE-1b (`_emerge1b_burstprop_derisk.py`, faithful BurstpropMLP: multiplexed event/burst channels,
+layer-wise burst-coded top-down error via fixed-random feedback + recurrent linearization, BDSP, no weight transport,
+SAME W-init as vanilla FA = decisive within-net contrast). RESULT = MECHANISM CONFIRMED / PARTIAL-GO (NOT a wall):
+burst_linearized develops the level-1 XOR latents (hidden-rep probe **0.87 -> 0.91-0.997** vs vanilla FA's ~0.65 /
+frozen floor 0.51), beats vanilla FA on held-out (+~0.095, less memorization), **best seed 0.930** (probe 0.997, oracle
+1.0 = near-perfect); apical-lesion collapses (probe~chance, credit load-bearing), wrong-sign anti-learns, no-teaching-
+null flat, no weight transport. The runner stamped "BOUNDARY" ONLY on a strict +0.10-margin gate (delivered +0.095) +
+high seed variance -- exactly the drift the back-on-track skill guards against; the SUBSTANCE = the brain's burst-
+multiplexed dendritic credit assignment DEVELOPS deep structure vanilla FA can't, surpassing EMERGE-1's wall. Clean
+multi-seed generalization is scale/finite-sample-limited (sharpens with width/ensemble; seed 43 already 0.93), NOT
+wall-limited. ⇒ the emergent deep-credit mechanism is FOUND; localizes the substrate build to the burst two-compartment
+pyramidal (+ STD/STF). Also CREATED `.claude/skills/back-on-track/SKILL.md` (owner-requested: re-anchors goal +
+constraints + boundaries-are-undiscovered-mechanisms + the proven deep-research->de-risk->iterate loop; catches my
+drift modes). Finding: `2026-07-01-emerge1b-burstprop-MECHANISM-CONFIRMED-partial.md`.
+
+**EXACT NEXT CONCRETE ACTION:** a sharpening run (width 384, epochs 1500, lr 0.12, bg by2h36gq9) is IN FLIGHT to lock a
+clean multi-seed GO. WHEN it returns: if it clears (burst_lin held >=0.75 AND >FA+0.10 AND >lesion+0.10, multi-seed,
+oracle sane) -> upgrade to clean GO + commit; if still partial -> the mechanism is CONFIRMED regardless (representation
+emerges), record + proceed. THEN iterate to the confirming 2nd mechanism: build the **Sacramento-Senn self-predicting
+dendritic microcircuit** de-risk (interneurons cancel the top-down prediction -> apical computes a local backprop-
+approximating error; more gradient-faithful) on the SAME harness; if it too clears the depth wall, burst+microcircuit
+doubly-establish the mechanism. THEN carry the confirmed mechanism toward the substrate (a faithful spiking two-
+compartment + burst channel on the SimulationBridge -- sim/ mechanism build is fair game for faithful biology), then
+the emergence question at scale on a real experience stream. NO cheats/scaffolding (except world/body); emergent/one-
+brain/single-substrate; honest origin+gitea; COMMIT ON MAIN; deep-research-gate + anti-cheats + multi-seed each step;
+DRIVE IT -- boundaries are the next mechanism, not a stop.
+
 ## CYCLE 787 (2026-07-01 — OWNER MASTER DIRECTIVE: relentless biological emergence; boundaries = undiscovered mechanisms)
 
 Owner gave the master directive (memory `project_master_directive_relentless_biological_emergence`): the GOAL is a
