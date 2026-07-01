@@ -6433,3 +6433,22 @@ GO = converse about live-perceived objects + moat + lesion. If the merged-bridge
 run, characterize honestly + the Phase-8 cheap-first stands as the experience-connection deliverable. Reuse-by-import;
 NO sim/ edit. THEN: webapp Interact wire-in (owner verifies UI) + (deferred) spiking-forward + dendritic-codes.
 biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
+
+## CYCLE 763 DONE (2026-07-01 — CAPSTONE GO: the full embodied loop, perceive-while-acting -> converse on one brain)
+
+`_fluidconv_phase9_embodied_loop_smoke.py` (SIM_BACKEND=cupy, merged bridge ~4M syn), single-seed GO: the merged one
+brain LIVED a 400-step episode, PERCEIVED objects DURING behaviour (live cortex_it -> perceive_and_ground -> store;
+lived [apple near cat, cat near dog], river held-out), then the RA console CONVERSED: "the apple is near the cat.",
+"the cat is near the dog." MOAT (river) abstains; GROUNDING-LESION collapses recall. Commit e3229c6f; finding
+`2026-07-01-fluid-conversation-phase9-embodied-loop-GO.md`. ARC COMPLETE: Phases 0-9 + console -- every owner axis,
+NO sim/ edit anywhere. Arc recorded in CLAUDE.md (dcb80100) + memory PROGRESS-2.
+
+**EXACT NEXT CONCRETE ACTION:** CYCLE 764 = SOLIDIFY the capstone to MULTI-SEED (P9 was single-seed; the owner's
+6-seed/multi-seed standard). Multi-seed P9 running in bg (seeds 42/43/44, `_fluidconv_phase9_embodied_loop_smoke
+--seed N --out ..._sN.json`) -> aggregate: does the full embodied loop hold (lived facts perceived + RA-conversed +
+moat + lesion) across seeds? GO = >=3 seeds converse-about-lived + moat + lesion. On completion: aggregate + bank a
+multi-seed capstone note (append to the P9 finding), commit both remotes. If a seed's episode encounters <1 object
+(short 400-step walk), bump --n-steps or note the encounter-variance honestly. THEN (all lower-value/blocked): webapp
+Interact wire-in (owner verifies UI); (deferred) spiking-forward [speed wall] + growth-over-new-CODES [dendritic
+frontier]. The fluid-conversation priority is COMPREHENSIVELY delivered; further cycles are confirmation/integration/
+deferred-frontier. biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy.
