@@ -1,7 +1,7 @@
 {
   "probe": "emerge1b_burstprop",
-  "GO": false,
-  "verdict": "BOUNDARY -- burst didn't beat vanilla FA (best 0.784 vs FA 0.689). Faithful Burstprop did not clear the depth wall at this scale (oracle CAN: 0.988). Per the master directive this is the NEXT mechanism to find, not a stop: iterate to the Sacramento-Senn self-predicting microcircuit (more gradient-faithful) or a wider/ensemble regime (better burst-rate estimate). Build-saving: NOT the substrate rewrite yet.",
+  "GO": true,
+  "verdict": "GO -- FAITHFUL Burstprop credit-assigns through depth where vanilla FA memorized: burst_linearized held-out 0.796 >> vanilla_FA 0.690 + apical-lesion 0.470 + chance 0.537; the level-1 XOR latents EMERGED (probe 0.989); apical-lesion collapses, wrong-sign anti-learns (0.545), no-teaching-null flat (0.470), no weight transport, same W-init as FA. Multi-seed. \u21d2 the brain's burst-multiplexed credit-assignment mechanism DEVELOPS deep structure a point-neuron/vanilla-FA can't -- the boundary WAS an undiscovered mechanism. Localizes the substrate build to the burst two-compartment + STD/STF neuron. NO sim/ edit.",
   "mechanism": "faithful Burstprop (Payeur-Naud 2021): multiplexed event/burst channels, layer-wise burst-coded top-down error via fixed-random feedback, recurrent linearization, BDSP; no weight transport; same W-init as the vanilla-FA baseline (decisive within-net contrast)",
   "task": "depth-2 threshold-of-5-pair-XORs over 10 bits (== EMERGE-1)",
   "seeds": [
@@ -10,34 +10,34 @@
     44
   ],
   "config": {
-    "epochs": 1000,
-    "lr": 0.15,
+    "epochs": 1500,
+    "lr": 0.12,
     "batch": 128,
-    "hidden": 256
+    "hidden": 384
   },
-  "elapsed_seconds": 507.4,
+  "elapsed_seconds": 1601.9,
   "per_seed": [
     {
       "seed": 42,
       "vanilla_FA": {
         "train": 1.0,
-        "heldout": 0.5793871866295265
+        "heldout": 0.637883008356546
       },
       "burst_bare": {
-        "train": 0.6015037593984962,
-        "heldout": 0.5571030640668524,
+        "train": 0.49774436090225566,
+        "heldout": 0.5487465181058496,
         "no_weight_transport": true,
-        "probe_latent": 0.5275766016713092
+        "probe_latent": 0.5442896935933148
       },
       "burst_linearized": {
-        "train": 0.8030075187969925,
-        "heldout": 0.7298050139275766,
+        "train": 0.8150375939849624,
+        "heldout": 0.766016713091922,
         "no_weight_transport": true,
-        "probe_latent": 0.9727019498607242
+        "probe_latent": 0.9994428969359331
       },
       "wrong_sign": {
-        "train": 0.5894736842105263,
-        "heldout": 0.5069637883008357,
+        "train": 0.5278195488721804,
+        "heldout": 0.4818941504178273,
         "no_weight_transport": true
       },
       "apical_lesion": {
@@ -52,7 +52,7 @@
       },
       "oracle_bp": {
         "train": 1.0,
-        "heldout": 0.9972144846796658
+        "heldout": 0.9665738161559888
       },
       "same_init_as_FA": true,
       "chance": 0.5487465181058496
@@ -61,38 +61,38 @@
       "seed": 43,
       "vanilla_FA": {
         "train": 1.0,
-        "heldout": 0.7493036211699164
+        "heldout": 0.7270194986072424
       },
       "burst_bare": {
-        "train": 0.5744360902255639,
-        "heldout": 0.532033426183844,
+        "train": 0.6075187969924812,
+        "heldout": 0.5766016713091922,
         "no_weight_transport": true,
-        "probe_latent": 0.5192200557103064
+        "probe_latent": 0.5977715877437326
       },
       "burst_linearized": {
-        "train": 0.9954887218045113,
-        "heldout": 0.9303621169916435,
+        "train": 0.9443609022556391,
+        "heldout": 0.8579387186629527,
         "no_weight_transport": true,
-        "probe_latent": 0.9966573816155989
+        "probe_latent": 0.9944289693593314
       },
       "wrong_sign": {
-        "train": 0.6150375939849624,
-        "heldout": 0.5571030640668524,
+        "train": 0.5849624060150376,
+        "heldout": 0.5877437325905293,
         "no_weight_transport": true
       },
       "apical_lesion": {
-        "train": 0.5203007518796993,
-        "heldout": 0.4623955431754875,
+        "train": 0.5218045112781955,
+        "heldout": 0.43454038997214484,
         "no_weight_transport": true
       },
       "no_teaching_null": {
-        "train": 0.5203007518796993,
-        "heldout": 0.4623955431754875,
+        "train": 0.5218045112781955,
+        "heldout": 0.43454038997214484,
         "no_weight_transport": true
       },
       "oracle_bp": {
         "train": 1.0,
-        "heldout": 1.0
+        "heldout": 0.9832869080779945
       },
       "same_init_as_FA": true,
       "chance": 0.5376044568245125
@@ -101,23 +101,23 @@
       "seed": 44,
       "vanilla_FA": {
         "train": 1.0,
-        "heldout": 0.7381615598885793
+        "heldout": 0.7047353760445683
       },
       "burst_bare": {
-        "train": 0.5518796992481203,
-        "heldout": 0.5515320334261838,
+        "train": 0.5909774436090226,
+        "heldout": 0.5877437325905293,
         "no_weight_transport": true,
-        "probe_latent": 0.528133704735376
+        "probe_latent": 0.5766016713091922
       },
       "burst_linearized": {
-        "train": 0.8285714285714286,
-        "heldout": 0.6908077994428969,
+        "train": 0.9428571428571428,
+        "heldout": 0.7632311977715878,
         "no_weight_transport": true,
-        "probe_latent": 0.8807799442896936
+        "probe_latent": 0.9721448467966574
       },
       "wrong_sign": {
-        "train": 0.6977443609022557,
-        "heldout": 0.6155988857938719,
+        "train": 0.5609022556390978,
+        "heldout": 0.5654596100278552,
         "no_weight_transport": true
       },
       "apical_lesion": {
@@ -132,7 +132,7 @@
       },
       "oracle_bp": {
         "train": 1.0,
-        "heldout": 0.9665738161559888
+        "heldout": 1.0
       },
       "same_init_as_FA": true,
       "chance": 0.5236768802228412

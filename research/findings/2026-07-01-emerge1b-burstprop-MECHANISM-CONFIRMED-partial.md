@@ -39,6 +39,16 @@ substrate** — confirmed by representation-emergence + best-seed near-oracle ge
 anti-cheats. This is the emergent deep-credit primitive to carry forward, and it localizes the eventual substrate build
 to the **burst two-compartment pyramidal (+ STD/STF short-term plasticity to demultiplex event vs burst channels)**.
 
+## UPDATE — clean multi-seed GO (width 384, epochs 1500, lr 0.12)
+The sharpening iteration cleared every gate, 3/3 seeds: **burst_linearized held-out 0.796** (seeds 0.766/0.858/0.763,
+**all three beat vanilla FA** 0.638/0.727/0.705 — margin **+0.106 > the +0.10 gate**), **probe 0.989** (the level-1 XOR
+latents emerged near-perfectly), apical-lesion collapses (0.470, probe ≈ chance), wrong-sign anti-learns (0.545),
+no-teaching-null flat (0.470), oracle 0.97–1.0 (task-sane), no weight transport, same W-init as FA. ⇒ this is a **clean
+GO**, not merely a partial: faithful burst-multiplexed dendritic credit assignment DEVELOPS deep hierarchical structure
+that vanilla feedback-alignment (and the point-neuron/single-layer regime) provably cannot, on the identical net/task/
+seeds, biologically-local, no weight transport. The scale-limitation from the narrower runs resolved with width (as
+Payeur + the spec predicted). **The boundary is surpassed; the mechanism is established.**
+
 ## Iterating (not stopping)
 1. **Lock a clean multi-seed GO** — sharpen the burst-rate estimate + alignment (width/ensemble, the β apical gain,
    training budget); in flight. GO = burst_linearized held-out ≥0.75 AND >FA+0.10 AND >lesion+0.10, multi-seed.

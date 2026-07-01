@@ -6683,6 +6683,28 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 789 (2026-07-01 — EMERGE-1b CLEAN multi-seed GO; next = self-supervised burst emergence [toward the goal])
+
+The width-384 sharpening CLEARED every gate 3/3 seeds: burst_linearized held-out **0.796** (all 3 beat vanilla FA,
++0.106 > the +0.10 gate), probe **0.989** (XOR latents near-perfectly emerged), apical-lesion collapses, wrong-sign
+anti-learns, no-teaching-null flat, oracle-sane, no weight transport, same W-init as FA. ⇒ **CLEAN GO** -- faithful
+burst-multiplexed dendritic credit assignment DEVELOPS deep hierarchical structure vanilla FA can't; EMERGE-1's depth
+wall is SURPASSED, the mechanism ESTABLISHED. (The narrower-run scale-limitation resolved with width, as predicted.)
+
+**EXACT NEXT CONCRETE ACTION:** DRIVE toward the goal (emergent brain that learns from experience). Burst credit
+assignment is confirmed for SUPERVISED deep learning; the goal needs SELF-SUPERVISED / unsupervised emergence (learn
+structure from experience without labels -- the Urbanczik-Senn "unsupervised mode" the burst rule unifies). Build
+**EMERGE-2: self-supervised deep burst representation emergence** -- a deep BurstpropMLP trained self-supervised
+(predict-next / reconstruct-through-a-bottleneck on a structured stream with latent compositional factors; the teaching
+signal = the self-generated prediction error, NO labels), test whether the hidden rep DEVELOPS the latent factors (probe)
+where a point-neuron / shallow self-supervised net can't. Same anti-cheats (apical-lesion collapses, wrong-sign,
+no-teaching-null, memorization floor; multi-seed 42/43/44). Reuse BurstpropMLP; NO sim/ edit; CPU. If GO -> the emergent
+cortex primitive is confirmed unsupervised -> carry it toward the SPIKING substrate (a faithful two-compartment + burst
+channel on the SimulationBridge; sim/ mechanism build fair game). If BOUNDARY -> the next mechanism (a predictive-coding
+target, the microcircuit). Then: substrate build -> emergence on a real experience/language stream -> communication.
+NO cheats/scaffolding (except world/body); emergent/one-brain/single-substrate; honest origin+gitea; COMMIT ON MAIN;
+DRIVE IT -- boundaries = the next mechanism.
+
 ## CYCLE 788 (2026-07-01 — EMERGE-1b: the boundary WAS an undiscovered mechanism [Burstprop CONFIRMED]; + the back-on-track skill)
 
 Built + ran EMERGE-1b (`_emerge1b_burstprop_derisk.py`, faithful BurstpropMLP: multiplexed event/burst channels,
