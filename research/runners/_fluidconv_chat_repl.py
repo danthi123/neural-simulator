@@ -44,6 +44,7 @@ from research.runners._fluidconv_phase1_grounded_continuation_derisk import _ext
 from research.runners._fluidconv_phase2_ra_finetune import VERBS, FT_CKPT, SUBJECTS as FT_SUBJECTS, OBJECTS as FT_OBJECTS  # noqa: E402
 from research.runners._fluidconv_phase2_ra_qa_eval_derisk import FTFaculty, _v3  # noqa: E402
 from research.runners._fluidconv_phase15_wikidata_breadth_derisk import _fetch_entity  # noqa: E402
+from research.runners._fluidconv_phase16_discourse_plan_derisk import plan_discourse, compare_discourse  # noqa: E402
 
 _WD_SEARCH = "https://www.wikidata.org/w/api.php"          # wbsearchentities: resolve a concept NAME -> a Wikidata QID
 _WD_CACHE = _REPO / "research" / "findings" / "raw" / "_fluidconv_console_wikidata_cache.json"
@@ -52,7 +53,8 @@ _WD_CACHE = _REPO / "research" / "findings" / "raw" / "_fluidconv_console_wikida
 _WD_PROPS = {"P279": "isa", "P527": "has", "P462": "is"}
 
 OUT = _REPO / "research" / "findings" / "raw" / "_fluidconv_chat_repl_demo.json"
-_QWORDS = {"what", "who", "does", "do", "is", "are", "tell", "can", "could", "why", "how", "when", "where", "?"}
+_QWORDS = {"what", "who", "does", "do", "is", "are", "tell", "can", "could", "why", "how", "when", "where", "?",
+           "compare", "different", "difference"}   # compare-requests have no wh-word but are queries, not statements
 _PRON = {"it", "its", "they", "them", "that"}
 _STOP = {"the", "a", "an", "does", "do", "did", "the", "to", "of", "please"}
 # instance-rep (Phase-14): a curated attribute vocab (for "the dog is brown") + N instance slots per kind.
@@ -269,11 +271,11 @@ class FluidChat:
         return facts
 
     def _discuss(self, topic, *, max_facts=7):
-        """Open-ended grounded DISCUSSION (Phase-10): render the neighbourhood FAITHFULLY, then concatenate. The topic's
-        own TAXONOMY facts (isa/has -- e.g. Phase-15 Wikidata) are GROUPED into flowing sentences ("An elephant is a
-        mammal. It has a trunk and tusk.") -- grounded by construction (no confab), less list-y than one-per-fact. Other
-        facts (action verbs, category members) go one-per-sentence through the FT render + VERIFY. Moat: an ungrounded
-        render is dropped; an empty neighbourhood hedges."""
+        """Open-ended grounded DISCUSSION (Phase-10 + the Phase-16 PLAN-then-realize synthesis): the topic's OWN facts
+        render as ONE connected prose via `plan_discourse` (aggregation + Joint/Elaboration connectives -- "An elephant
+        is a mammal; it is grey and has a trunk and tusk."), grounded by construction (every fact is a stored triple, so
+        no free abstractive generation + no confab). Category-member facts (a different agent, for a category topic)
+        render per-fact via a grounded template. Empty neighbourhood -> hedge."""
         nb = []                                                         # dedup the neighbourhood
         for f in self._neighbourhood(topic):
             if f not in nb:
@@ -282,46 +284,23 @@ class FluidChat:
                 break
         if not nb:
             return f"I don't know much about the {topic}."
-        # (1) group the TOPIC's OWN facts into cohesive sentences (grounded templates). Note the relation split:
-        # "isa" = taxonomy (a noun -> needs an article: "is a mammal"); "is" = an adjective ("is big", no article).
-        isa_parents = [p for (a, v, p) in nb if a == topic and v == "isa"]
-        is_attrs = [p for (a, v, p) in nb if a == topic and v == "is"]
-        has_parts = [p for (a, v, p) in nb if a == topic and v == "has"]
-        lead = []
-        if isa_parents:
-            lead.append(f"{_art(topic).capitalize()} {topic} is "
-                        f"{_join_and([f'{_art(x)} {x}' for x in isa_parents[:3]])}.")
-        if is_attrs:
-            pron = "It" if isa_parents else f"{_art(topic).capitalize()} {topic}"
-            lead.append(f"{pron} is {_join_and(is_attrs[:3])}.")
-        if has_parts:
-            pron = "It" if (isa_parents or is_attrs) else f"The {topic}"
-            lead.append(f"{pron} has {_join_and(has_parts[:4])}.")
-        # (2) the rest (action verbs + category-member facts) render one-per-sentence via FT + VERIFY.
-        sentences = []
-        for (a, v, p) in nb:
-            if a == topic and v in ("isa", "is", "has"):
-                continue                                                # already covered by the grouped lead
-            if v == "isa":                                             # a member's taxonomy fact (noun -> article)
-                sentences.append(f"{_art(a)} {a} is {_art(p)} {p}.")
-                continue
-            if v == "is":                                              # an adjective attribute (no article)
-                sentences.append(f"{_art(a)} {a} is {p}.")
-                continue
-            if v == "has":
-                sentences.append(f"{_art(a)} {a} has {p}.")
-                continue
-            # curriculum ACTION verbs (chase/eat/like) -> the FT render + VERIFY path (fluent + drift-guarded).
-            q = f"what does the {a} {v} ?"
-            one = self.faculty.answer(f"the {a} {_v3(v)} {p} .", q)
-            svos = _extract_all_svos(one, self.agents, self.actions, self.patients, self.inflect)
-            ungrounded = [s for s in svos if _fact_key(s) not in self.store_keys]
-            # VERIFY: keep ONLY if the SPECIFIC fact is faithfully asserted (on-topic + no drift to another fact) and
-            # nothing ungrounded -- this drops both confabulation AND grounded-but-off-topic render drift.
-            if ([a, v, p] in svos) and not ungrounded:
-                sentences.append(one.strip())
-        out = lead + sentences                                          # grouped taxonomy lead, then the rest
-        return (f"Here's what I know about the {topic}: " + " ".join(out)) if out \
+        own = [f for f in nb if f[0] == topic]                          # the topic's own grounded facts
+        members = [f for f in nb if f[0] != topic]                      # category-member facts (a != topic)
+        # (1) the topic's OWN facts -> connected prose (grounded discourse plan; no generator -> no confab surface).
+        own_prose, _used = plan_discourse(topic, own) if own else (None, [])
+        # (2) category members -> per-fact grounded templates (isa noun / is adjective / has / action verb).
+        member_sents = []
+        for (a, v, p) in members:
+            if v == "isa":
+                member_sents.append(f"{_art(a)} {a} is {_art(p)} {p}.")
+            elif v == "is":
+                member_sents.append(f"{_art(a)} {a} is {p}.")
+            elif v == "has":
+                member_sents.append(f"{_art(a)} {a} has {p}.")
+            else:
+                member_sents.append(f"{_art(a).capitalize()} {a} {_v3(v)} {p}.")
+        parts = ([own_prose] if (own_prose and "don't know" not in own_prose) else []) + member_sents
+        return (f"Here's what I know about the {topic}: " + " ".join(parts)) if parts \
             else f"I don't know much about the {topic}."
 
     def turn(self, text):
@@ -374,10 +353,17 @@ class FluidChat:
                     return t[:-1]
                 return None
             concepts_in = [c for c in (_norm(t) for t in toks) if c is not None]
-            # COMPARE ("how are dogs and cats different?" / "compare X and Y") -> discuss BOTH neighbourhoods
+            # COMPARE ("how are dogs and cats different?" / "compare X and Y") -> checkable-connective contrast
+            # (Phase-16 `compare_discourse`: "the dog eats meat, but the cat eats fish" IFF a shared verb's patients
+            # differ; "and so does" IFF shared verb+patient), else fall back to the two grounded discussions.
             if ("different" in tset or "compare" in tset or "difference" in tset) and len(concepts_in) >= 2:
                 x, y = concepts_in[0], concepts_in[1]
-                dx, dy = self._discuss(x), self._discuss(y)
+                fx = [f for f in self._neighbourhood(x) if f[0] == x]
+                fy = [f for f in self._neighbourhood(y) if f[0] == y]
+                cmp_prose, conn = compare_discourse(x, y, fx, fy)
+                if conn is not None:                             # a checkable shared-verb relation was found
+                    return cmp_prose
+                dx, dy = self._discuss(x), self._discuss(y)      # else: the two grounded discussions
                 return f"{dx} And {dy[0].lower()}{dy[1:]}" if dy else dx
 
             # DISCUSS ("tell me about the dog" / "what do you think about the dog" / "what about predators") ->

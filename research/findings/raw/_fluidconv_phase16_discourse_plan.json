@@ -1,0 +1,55 @@
+{
+  "probe": "fluidconv_phase16_discourse_plan",
+  "GO": true,
+  "verdict": "GO -- grounded DISCOURSE PLAN closes the multi-fact-synthesis cheap-first #1: a topic's grounded facts render as CONNECTED prose (aggregation + Joint/Elaboration connectives) with FEWER sentences than facts + >=1 aggregated clause, every token grounded (0 invented); the COMPARE path fires checkable connectives (Contrast 'but' IFF patients differ, Additive 'and so does' IFF shared verb+patient); empty -> hedge. NO free abstractive generation, NO sim/ edit, NO train, moat by construction. Ready to wire into the console `_discuss`.",
+  "resolves": "multi-fact synthesis cheap-first #1: grounded discourse plan (aggregation + entailment-checked connectives) -> connected prose, no free generation, moat by construction.",
+  "scenarios": [
+    {
+      "scenario": "elephant (taxonomy)",
+      "prose": "An elephant is a mammal; it is grey and has trunk and tusk.",
+      "n_sents": 2,
+      "n_facts": 4,
+      "depth_ok": true,
+      "grounded_ok": true,
+      "stray": []
+    },
+    {
+      "scenario": "dog (adjective + actions)",
+      "prose": "A dog is big. It eats meat, chases cat and likes bone.",
+      "n_sents": 2,
+      "n_facts": 4,
+      "depth_ok": true,
+      "grounded_ok": true,
+      "stray": []
+    },
+    {
+      "scenario": "banana (multi-attr)",
+      "prose": "A banana is a fruit; it is yellow and green.",
+      "n_sents": 2,
+      "n_facts": 3,
+      "depth_ok": true,
+      "grounded_ok": true,
+      "stray": []
+    },
+    {
+      "scenario": "bird (same-verb aggregation)",
+      "prose": "A bird is an animal. It eats seed and worm.",
+      "n_sents": 2,
+      "n_facts": 3,
+      "depth_ok": true,
+      "grounded_ok": true,
+      "stray": []
+    }
+  ],
+  "compare": {
+    "prose": "the dog eats meat, but the cat eats fish. the dog chases cat, and so does the cat.",
+    "contrast_ok": true,
+    "additive_ok": true
+  },
+  "lesion": {
+    "prose": "I don't know much about the dragon.",
+    "lesion_ok": true
+  },
+  "elapsed_seconds": 0.0,
+  "HONEST_CEILING": "deterministic host-side surface realization from brain-supplied, VERIFY-clean facts (the connective inventory + entailment predicates are host-authored -- like the FRAME_LEXICON; the fully-brain-based Broca connective producer is the deep follow-on). Joint/Elaboration/Contrast/Additive are checkable; free abstractive single-pass synthesis + open-world cross-fact inference on a 21M remains the genuine wall (routed around, not solved)."
+}

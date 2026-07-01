@@ -6683,6 +6683,33 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 778 (2026-07-01 — synthesis research RETURNED + cheap-first #1 BUILT + WIRED: Phase-16 discourse-plan GO)
+
+The synthesis-frontier research subagent (a03dbd63ed2dea880) returned a strong controller-verified verdict: "DISCUSS
+lists facts" is a DISGUISED boundary -- grouped rendering is ALREADY NLG synthesis (aggregation + referring-expression,
+Levelt/Reiter-Dale); the ~70% cheap residual is discourse CONNECTIVES + same-subject AGGREGATION; the genuine wall is
+free abstractive synthesis + open-world inference on a 21M (catalog G.09 = new mechanism class, routed around). Committed
+the scoping doc (704842c2). Then BUILT + WIRED cheap-first #1 (blanket-authorized: cheap, moat-by-construction, NO sim/
+edit, NO train, reuses built pieces): `_fluidconv_phase16_discourse_plan_derisk.py` -- `plan_discourse` (aggregate +
+Joint/Elaboration connectives) + `compare_discourse` (checkable Contrast/Additive), GO on all scenarios (depth/grounded/
+connective-correct/lesion). WIRED into the console `_discuss` + compare: "tell me about the elephant" -> "An elephant is
+a mammal; it is grey and has trunk and tusk."; "tell me about the dog" -> "A dog is big. It eats meat, chases cat and
+likes bone."; "compare dog and cat" -> "the dog eats meat, but the cat eats fish. the dog chases cat, but the cat chases
+mouse. ..." (genuine grounded comparison, every Contrast entailment-checked). Added compare/different to the
+question-trigger set. Both offline self-checks STILL green. Also fixed en route: the cat->Catalan QID bug (e8492a89),
+color enrichment (P462), CLAUDE.md refresh, cache pre-warm. NO sim/ edit anywhere.
+
+**EXACT NEXT CONCRETE ACTION:** commit Phase-16 (the de-risk runner + the console wiring + the finding + raw json + this
+state) to BOTH remotes on main. THEN continue autonomously (owner "you choose / keep going"): the fluid-conversation
+console now does connected grounded prose + checkable comparison on REAL Wikidata knowledge learned on demand -- the
+~70% cheap synthesis residual is CLOSED. Options: (#2) richer checkable inference (gist/shared-property beyond compare);
+extend the Phase-16 CI-guard into `tests/test_fluidconv_chat_repl.py` (add a discuss-connective assertion + a compare
+assertion, offline). Owner-steer (do NOT build autonomously): (#3) a plan-guided synthesis fine-tune of the 21M (genuine
+single-pass fluency; moat+fallback safety) -- a train, waits for steer; the free-abstractive-synthesis wall stays the
+honest boundary. Deferred: webapp Interact (owner UI verify); spiking-forward speed-wall (KV-cache). biologization/one-
+brain HARD; moat a PLUS; NO sim/ edit unless justified; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy (numpy for CPU/
+console).
+
 ## CYCLE 777 (2026-07-01 — color enrichment + CLAUDE.md refresh + DISPATCHED the synthesis-frontier research)
 
 Two commits landed: (1) color enrichment (P462 -> adjective "is" fact; "a banana is a berry and a fruit. It is
