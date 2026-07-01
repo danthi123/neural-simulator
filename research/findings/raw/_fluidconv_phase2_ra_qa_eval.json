@@ -8,7 +8,7 @@
     43,
     44
   ],
-  "elapsed_seconds": 30.0,
+  "elapsed_seconds": 30.6,
   "per_seed": [
     {
       "seed": 42,
@@ -106,17 +106,11 @@
             "rabbit"
           ],
           "ctx": "the fox chases rabbit .",
-          "answer": "the fox chases rabbit .",
-          "svos": [
-            [
-              "fox",
-              "chase",
-              "rabbit"
-            ]
-          ],
+          "answer": "the fox likes to chase rabbit .",
+          "svos": [],
           "ungrounded": [],
           "states_fact": true,
-          "n_words": 5,
+          "n_words": 7,
           "focused": true,
           "ok": true
         },
@@ -154,7 +148,7 @@
           ],
           "gate_result": null,
           "held": true,
-          "diag_model_prompted_answer": "the lion eats fish , yes .",
+          "diag_model_prompted_answer": "the lion eats fish .",
           "diag_model_would_confab": true
         },
         {
@@ -164,7 +158,7 @@
           ],
           "gate_result": null,
           "held": true,
-          "diag_model_prompted_answer": "the whale eats fish , yes .",
+          "diag_model_prompted_answer": "the whale eats fish .",
           "diag_model_would_confab": true
         },
         {
@@ -174,7 +168,7 @@
           ],
           "gate_result": null,
           "held": true,
-          "diag_model_prompted_answer": "the dog likes to eat seed .",
+          "diag_model_prompted_answer": "the dog likes to eat fish .",
           "diag_model_would_confab": true
         }
       ],
@@ -197,7 +191,7 @@
           ],
           "provided": "ball",
           "true": "fish",
-          "answer": "the cat eats ball , yes .",
+          "answer": "the cat eats ball .",
           "follows_prompt": true,
           "used_bias": false
         },
@@ -208,7 +202,7 @@
           ],
           "provided": "ball",
           "true": "seed",
-          "answer": "the bird eats ball , yes .",
+          "answer": "the bird eats ball .",
           "follows_prompt": true,
           "used_bias": false
         }
@@ -310,17 +304,11 @@
             "rabbit"
           ],
           "ctx": "the fox chases rabbit .",
-          "answer": "the fox chases rabbit .",
-          "svos": [
-            [
-              "fox",
-              "chase",
-              "rabbit"
-            ]
-          ],
+          "answer": "the fox likes to chase rabbit .",
+          "svos": [],
           "ungrounded": [],
           "states_fact": true,
-          "n_words": 5,
+          "n_words": 7,
           "focused": true,
           "ok": true
         },
@@ -358,7 +346,7 @@
           ],
           "gate_result": null,
           "held": true,
-          "diag_model_prompted_answer": "the lion eats fish , yes .",
+          "diag_model_prompted_answer": "the lion eats fish .",
           "diag_model_would_confab": true
         },
         {
@@ -368,7 +356,7 @@
           ],
           "gate_result": null,
           "held": true,
-          "diag_model_prompted_answer": "the whale eats fish , yes .",
+          "diag_model_prompted_answer": "the whale eats fish .",
           "diag_model_would_confab": true
         },
         {
@@ -378,7 +366,7 @@
           ],
           "gate_result": null,
           "held": true,
-          "diag_model_prompted_answer": "the dog likes to eat seed .",
+          "diag_model_prompted_answer": "the dog likes to eat fish .",
           "diag_model_would_confab": true
         }
       ],
@@ -401,7 +389,7 @@
           ],
           "provided": "ball",
           "true": "fish",
-          "answer": "the cat eats ball , yes .",
+          "answer": "the cat eats ball .",
           "follows_prompt": true,
           "used_bias": false
         },
@@ -412,7 +400,7 @@
           ],
           "provided": "ball",
           "true": "seed",
-          "answer": "the bird eats ball , yes .",
+          "answer": "the bird eats ball .",
           "follows_prompt": true,
           "used_bias": false
         }
@@ -514,17 +502,11 @@
             "rabbit"
           ],
           "ctx": "the fox chases rabbit .",
-          "answer": "the fox chases rabbit .",
-          "svos": [
-            [
-              "fox",
-              "chase",
-              "rabbit"
-            ]
-          ],
+          "answer": "the fox likes to chase rabbit .",
+          "svos": [],
           "ungrounded": [],
           "states_fact": true,
-          "n_words": 5,
+          "n_words": 7,
           "focused": true,
           "ok": true
         },
@@ -562,7 +544,7 @@
           ],
           "gate_result": null,
           "held": true,
-          "diag_model_prompted_answer": "the lion eats fish , yes .",
+          "diag_model_prompted_answer": "the lion eats fish .",
           "diag_model_would_confab": true
         },
         {
@@ -572,7 +554,7 @@
           ],
           "gate_result": null,
           "held": true,
-          "diag_model_prompted_answer": "the whale eats fish , yes .",
+          "diag_model_prompted_answer": "the whale eats fish .",
           "diag_model_would_confab": true
         },
         {
@@ -582,7 +564,7 @@
           ],
           "gate_result": null,
           "held": true,
-          "diag_model_prompted_answer": "the dog likes to eat seed .",
+          "diag_model_prompted_answer": "the dog likes to eat fish .",
           "diag_model_would_confab": true
         }
       ],
@@ -605,7 +587,7 @@
           ],
           "provided": "ball",
           "true": "fish",
-          "answer": "the cat eats ball , yes .",
+          "answer": "the cat eats ball .",
           "follows_prompt": true,
           "used_bias": false
         },
@@ -616,7 +598,7 @@
           ],
           "provided": "ball",
           "true": "seed",
-          "answer": "the bird eats ball , yes .",
+          "answer": "the bird eats ball .",
           "follows_prompt": true,
           "used_bias": false
         }

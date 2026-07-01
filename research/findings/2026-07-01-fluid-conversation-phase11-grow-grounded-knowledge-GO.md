@@ -41,5 +41,18 @@ offline-textbook-author pattern — all TRUE, grounded), then discuss vs the toy
    grounded facts → grow the KB over "days" (the develop-loop), so discussions get encyclopedically richer, grounded.
 3. **A broader render fine-tune** (more verbs) or the brain's-own-render fallback → more of the KB renders fluently.
 
-**Artifacts:** `research/runners/_fluidconv_phase11_grow_knowledge_derisk.py`; result
-`research/findings/raw/_fluidconv_phase11_grow_knowledge.json`.
+## Update — the broader render fine-tune closes the render bottleneck (no regression)
+The render-vocab lever was executed: the 21M generator was re-fine-tuned on a broadened verb set (~40 verbs, a
+SUPERSET of the original 18 — adds guard/help/herd/hear/need/hunt/build/grow/protect/lead/pull/push/dig/climb/…),
+final loss 1.06. Verified on the broader ckpt (now the default; the old ckpt backed up at `…ra_ft.ckpt.pt.bak`):
+- **NO REGRESSION:** Phase-2 focused Q&A stays **5/5 + moat + RA-faithful** (3 seeds) — the broader verb set did not
+  dilute the focused QA.
+- **RENDER COVERAGE lifted 9/12 → 12/12:** the previously-unrenderable dog facts (guard/help/herd) now render; the
+  rich discussion rose **7 → 9** grounded facts: *"Here's what I know about the dog: the dog eats meat. the dog
+  chases cat. the dog likes bone. the dog sees human. the dog finds toy. the dog catches ball. the dog helps human.
+  the dog herds sheep. the dog chases wolf."* (3 seeds, still 0 ungrounded, generic, moat).
+⇒ the render-vocab bottleneck is closed for the common-verb range; the KB size (the acquisition pipeline, Phase-12)
+remains the deeper breadth lever.
+
+**Artifacts:** `research/runners/_fluidconv_phase11_grow_knowledge_derisk.py`; results
+`research/findings/raw/_fluidconv_phase11_grow_knowledge.json`, `…/fluidconv/phase11_broadverbs.log`.

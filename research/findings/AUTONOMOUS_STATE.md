@@ -6572,3 +6572,24 @@ as a v2-ckpt opt-in (honest). Then REPORT the full 4-lever batch to the owner. T
 real-corpus DATA source upgrade (ConceptNet/simplified-Wiki + a fact-extraction front-end) for true encyclopedic
 breadth; the webapp Interact wire-in (owner UI verify). biologization/one-brain HARD; moat a PLUS; honest
 origin+gitea; COMMIT ON MAIN; GPU/CuPy.
+
+## CYCLE 767 BATCH COMPLETE (2026-07-01 — all 4 grounded-growth levers delivered)
+
+Broader render fine-tune (bpqcoccbk) DONE (final loss 1.06). VERIFIED on the new broader ckpt (now FT_CKPT; old
+backed up .bak): (1) NO REGRESSION -- Phase-2 focused Q&A 5/5 + moat + RA-faithful, 3 seeds (broader verbs didn't
+dilute the QA); (2) RENDER COVERAGE 9/12 -> 12/12 -- guard/help/herd now render; the rich discussion rose 7 -> 9
+grounded facts ("...the dog helps human. the dog herds sheep..."), still 0 ungrounded + generic + moat. Phase-11
+finding updated. ⇒ the owner's "all levers, parallel" batch is COMPLETE:
+- (1) acquisition pipeline Phase-12 GO; (2) broader render fine-tune DONE (12/12, no regression); (3) instance-rep
+  Phase-13 GO; (4) the composition (acquisition -> discussion Phase-10/11, instance-rep, render).
+NO sim/ edit anywhere in the batch. The fluid-conversation arc now spans Phases 0-13 + the console + the grounded-
+growth levers.
+
+**EXACT NEXT CONCRETE ACTION:** commit the batch-complete state + the Phase-11 finding update (both remotes), then
+REPORT the completed 4-lever batch to the owner. Owner is engaged (morning) -> AWAIT their next steer; if quiet,
+CONTINUE with the deferred deeper arcs: (A) the real-corpus DATA-source upgrade -- a downloaded fact corpus
+(ConceptNet-style triples / simplified-Wikipedia) + a fact-extraction front-end (simplify prose -> SVO) feeding the
+Phase-12 acquisition pipeline, for TRUE encyclopedic grounded breadth (the honest big scaling arc; research-gate the
+fact-extraction if it's a new mechanism); (B) wire the instance-rep (Phase-13) + acquisition into the console;
+(C) the webapp Interact wire-in (owner UI verify). Honest wall: free open-world inference beyond learned facts.
+biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
