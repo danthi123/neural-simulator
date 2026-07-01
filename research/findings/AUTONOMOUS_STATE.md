@@ -6522,3 +6522,28 @@ category facts render into discussions -- a small RA fine-tune addition or a cop
 neighbourhood = the field wall (the honest hedge is the deliverable). Also pending (owner-blocked): the webapp
 Interact wire-in (needs owner UI verification). biologization/one-brain HARD; moat a PLUS (honest hedging); honest
 origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
+
+## CYCLE 767 (2026-07-01 — OWNER STEER: GROW GROUNDED KNOWLEDGE [not transformer-supplied]; + the generic/definite nuance)
+
+Owner distinguished "the dog" (definite singular = a specific referent) vs "dogs" (generic = the KIND) and showed a
+rich LLM "tell me about dogs" reply (evolution/breeds/senses/roles/care) -- ~95% of which is the transformer's
+UNVERIFIED parametric world knowledge, exactly what the no-confab thesis avoids. Presented the richness-vs-grounding
+fork; owner chose **GROW GROUNDED KNOWLEDGE**: keep the thesis intact -- the BRAIN LEARNS richer knowledge (real
+corpus facts, grounded/verified), accept it's slow + bounded by the depth wall (thinner than a full LLM for a long
+time, but everything TRUE + traceable). Aligns with `project_deep_knowledge_brain_fluency_build` (real corpus, stage
+cumulatively) + `project_vocab_target_breadth_vs_depth`. NOT the transformer-lean / hybrid options.
+
+Direction: (1) the discussion RICHNESS should SCALE with the grounded KB -- the bottleneck is the ~13-fact toy KB, not
+the mechanism (Phase-10 GO). Grow the KB with REAL simple grounded facts (the offline-textbook-author pattern -> later
+a real-corpus acquisition pipeline: parse simple factual sentences -> composer.store, via the stream-cortex/develop-
+loop). (2) GENERIC/DEFINITE handling: "dogs"/generic -> the KIND (discuss all facts about the kind); "the dog" -> a
+held referent, else the kind (clarify "which dog?" is a refinement).
+
+**EXACT NEXT CONCRETE ACTION:** CYCLE 767 cheap-first = `_fluidconv_phase11_grow_knowledge_derisk.py`: teach a RICHER
+grounded KB (real simple SVO facts about dog/cat/etc. -- e.g. dog is mammal / eat meat / guard home / help human /
+herd sheep / hear well / need exercise / like bone / chase cat), then "tell me about dogs" (generic) -> the Phase-10
+discussion -> a RICHER grounded paragraph (many real facts), MEASURE richness-scales (rich KB cites >> toy KB's 3) +
+grounded (0 ungrounded) + generic normalization (dogs->dog kind) + moat (unknown concept -> hedge), >=3 seeds. Then
+wire generic/definite into the console + scope the REAL-corpus knowledge-acquisition pipeline (parse a simple-Wiki-
+style fact corpus -> grounded facts) as the scaling arc (owner: real corpus, stage cumulatively). biologization/
+one-brain HARD; moat a PLUS (grounded, never confab); honest origin+gitea; COMMIT ON MAIN; GPU/CuPy.
