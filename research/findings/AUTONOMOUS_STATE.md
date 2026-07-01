@@ -6683,6 +6683,28 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 782 (2026-07-01 — deepened classify chain to full ancestry + --showcase one-command demo)
+
+Deepened the taxonomy "classify" route: "learn about X" extends up to 3 parent isa-levels (bounded loop over
+_wd_fetch_store) -> the classify route gives the FULL real Wikidata subclass chain: "A dog is a mammal, which is a
+vertebrata, which is a chordata, which is a deuterostome." (4 levels, all grounded edges, Collins-Quillian). Added
+`--showcase`: one command running the whole fluid-conversation range (base Q&A / learn-Wikidata / connected-discuss /
+classify-chain / compare-contrast / instance mint+attribute+query / growth / gist / moat) with a self-check (verified
+True, offline via the warm cache). CI 4 tests green (classify assertion holds). NO sim/ edit. ⇒ the fact-grounded
+fluid-conversation console is COMPREHENSIVE + polished + tested + GPU/CPU-verified + one-command-demoable.
+
+**EXACT NEXT CONCRETE ACTION:** commit the state. THEN continue ("best judgement"): the high-value FACT-GROUNDED
+autonomous work is saturated (learn/discuss-connected/compare/share/classify-chain/instance/multi-turn/growth/persist/
+moat, REAL Wikidata, GPU+CPU, --showcase, 4 CI tests). The remaining substantive levers are DEEP-ARC or OWNER-STEER:
+(deep, autonomous-possible but big) burn down a tracked shortcut -- the ANN generator -> spiking-forward (gated on the
+KV-cache speed lever, a known wall) OR wire the validated Phase-7 NEURAL interrogative parser into the console's
+rule-based routing (the routing is a host scaffold); (owner-steer) #3 plan-guided synthesis fine-tune (a train);
+open-domain/free-inference wall; webapp Interact (UI verify); auto-persist-default (silent writes). Best-judgement
+options if continuing: a grounded "why is X a Y" explanation route (reuses the isa-path, cheap); OR begin scoping the
+neural-parser-into-console wire-in (a real shortcut burndown, deep-research-gate if it's a new mechanism). Prefer a
+cheap grounded capability + honest scoping of the deep frontier over marginal polish. biologization/one-brain HARD;
+moat a PLUS; NO sim/ edit unless justified; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy (numpy for CPU/console).
+
 ## CYCLE 781 (2026-07-01 — owner "continue best judgement"; GPU-verified console + TAXONOMY-CHAIN classify route)
 
 Owner re-authorized autonomous continuation. (1) VERIFIED the whole console on the GPU backend (SIM_BACKEND=cupy,
