@@ -233,7 +233,7 @@ def _decode_code(d):
 
 # ── the continuous living loop (survival + perceive-ground-store on encounters) ──────────────────────────────
 def live(agent, hunger_reader, state, world, n_steps, *, drive_reward="spiking", drive_read_every=10,
-         perceive=True, grounded_obj_cache=None):
+         perceive=True, commit_facts=True, grounded_obj_cache=None):
     """Run a stretch of the agent's life IN PLACE on `state`. Survival = the validated Q policy shaped by the
     intrinsic drive-reduction reward; on first arrival at an object cell the agent perceive_and_grounds it + stores
     a lived fact. Returns per-step traces (energies, deficits, agrp_rates).
@@ -309,7 +309,9 @@ def live(agent, hunger_reader, state, world, n_steps, *, drive_reward="spiking",
                 state.grounded_codes[obj] = _encode_code(code)
             prev = state.encountered[-1] if state.encountered else None
             state.encountered.append(obj)
-            if prev is not None and prev != obj:
+            # commit_facts=False (the FROZEN-BRAIN control, Tier-3 Option 2A): the agent still PERCEIVES + GROUNDS
+            # (it "sees") but does NOT store the lived fact (it does not "remember") -> competence must stay flat.
+            if prev is not None and prev != obj and commit_facts:
                 agent.composer.store(prev, LINK_VERB, obj) # the lived fact: "encountered prev near obj"
                 state.lived_facts.append((prev, LINK_VERB, obj))
     return {"energies": np.array(energies), "deficits": np.array(deficits), "agrp_rates": np.array(agrp_rates)}
