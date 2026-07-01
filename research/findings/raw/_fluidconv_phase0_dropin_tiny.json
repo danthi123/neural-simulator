@@ -1,0 +1,74 @@
+{
+  "generator": "phase0-tinystories-21.3M",
+  "ckpt": "research/findings/raw/fluidconv/gen_tinystories_20M.ckpt",
+  "arch": {
+    "d_model": 512,
+    "n_layer": 6,
+    "n_head": 8,
+    "block_size": 512,
+    "bpe_path": "research/findings/raw/fluidconv/gen_tinystories.bpe.json"
+  },
+  "ladder": [
+    {
+      "K": 6,
+      "verdict": {
+        "GATE": "PASS",
+        "instrument_valid": true,
+        "science_ok": true,
+        "note": "constrained ungrounded-entity-rate ~0 is MECHANICAL (per-token veto, by construction) -- NOT the discriminating result; the discriminator is constrained NON-VACUITY vs the failing controls",
+        "frozen_bars": {
+          "FAITHFUL_MAX": 0.2,
+          "MIN_GROUNDED_CONTENT": 2,
+          "MIN_GROUNDED_ANSWER_RATE": 0.5,
+          "MIN_SEEDS": 3
+        },
+        "per_seed": {
+          "42": {
+            "unconstrained_uer": 0.8472222222222222,
+            "constrained_uer": 0.075,
+            "constrained_nonvac_rate": 0.8333333333333334,
+            "shuffled_uer": 1.0,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          },
+          "43": {
+            "unconstrained_uer": 0.8472222222222222,
+            "constrained_uer": 0.075,
+            "constrained_nonvac_rate": 0.8333333333333334,
+            "shuffled_uer": 1.0,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          },
+          "44": {
+            "unconstrained_uer": 0.8472222222222223,
+            "constrained_uer": 0.075,
+            "constrained_nonvac_rate": 0.8333333333333334,
+            "shuffled_uer": 1.0,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          }
+        }
+      },
+      "constrained_nonvac_rate_mean": 0.8333333333333334
+    }
+  ],
+  "scale_confident": false,
+  "scale_classification": "TINY (wiring smoke; NOT propagated)",
+  "scale_reason": "single-rung tiny smoke",
+  "nonvac_by_rung": null,
+  "device": "cuda",
+  "tiny": true,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 6.9,
+  "HONEST_CEILING": "the ~21M TinyStories generator -- ~15-25x SMALLER than the external Qwen-0.5B -- supplies fluency behind the validated per-token grounded veto; constrained decoding TRADES open-ended fluency for faithfulness BY DESIGN (NOT free composition, NOT an LLM, NOT conversation-solved). The thesis it tests: the transformer can be MINIMIZED (and made spiking-on-substrate, 88.6M-forward validated) without losing grounded non-vacuity or the no-confab moat."
+}

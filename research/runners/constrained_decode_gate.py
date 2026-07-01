@@ -89,21 +89,26 @@ class _GroundedConstrainedLM:
     OFF (NO masking -- differs ONLY by the veto). torch INFERENCE
     ONLY: torch.no_grad(), greedy argmax, no autograd/optimizer/loss;
     inference mode via model.train(False) (eval-equivalent)."""
-    def __init__(self, ckpt_prefix, mode="constrained", block_size=128):
+    def __init__(self, ckpt_prefix, mode="constrained", block_size=128,
+                 d_model=256, n_layer=4, n_head=4, bpe_path=None):
+        # d_model/n_layer/n_head/bpe_path are ADDITIVE (defaults = the original d256/L4/H4 arch + the
+        # ckpt_prefix+".bpe.json" convention), so existing callers are byte-unchanged; a bigger generator (e.g. the
+        # Phase-0 ~21M TinyStories model d512/L6/H8, whose bpe lives at a different prefix) passes them. The FROZEN
+        # _CDC_* constrained-decode constants are untouched -- only the model arch/tokenizer paths are parameterized.
         import torch
         from sim.tiny_transformer import TinyGPT
         from sim.bpe_tokenizer import BPETokenizer
         self._torch = torch
         self.mode = mode
         self._shuffle_text = None
-        self.tok = BPETokenizer.load(ckpt_prefix + ".bpe.json")
+        self.tok = BPETokenizer.load(bpe_path or (ckpt_prefix + ".bpe.json"))
         V = self.tok.vocab_size
         self.block = block_size
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model = TinyGPT(vocab_size=V, d_model=256, n_layer=4,
-                             n_head=4, block_size=block_size,
+        self.model = TinyGPT(vocab_size=V, d_model=d_model, n_layer=n_layer,
+                             n_head=n_head, block_size=block_size,
                              dropout=0.0)
-        st = torch.load(ckpt_prefix + ".pt", map_location=self.device)
+        st = torch.load(ckpt_prefix + ".pt", map_location=self.device, weights_only=True)
         self.model.load_state_dict(st["model"])
         self.model.train(False)            # inference mode (eval-equiv)
         self.model.to(self.device)
