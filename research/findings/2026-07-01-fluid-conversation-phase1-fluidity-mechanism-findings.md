@@ -54,5 +54,37 @@ or does the tiny 21M model still need a small **fact-rendering/dialogue fine-tun
 lever) to learn the conversational rendering register? If v2 is still stilted, the fine-tune is the next lever (still a
 small, minimized, brain-trained generator — not the Qwen fallback). Either outcome is a real finding.
 
-**Artifacts:** `research/runners/_fluidconv_phase1_grounded_continuation_derisk.py` (v1, negative);
-`research/findings/raw/_fluidconv_phase1_grounded_continuation.json`. NO `sim/` edit. Reuse-by-import.
+## v2 RESULT (NEGATIVE) + the decisive reframe
+`_fluidconv_phase1_broadened_veto_derisk.py` — broadened the veto to the subject's whole knowledge set + temperature
+sampling + repetition penalty. Result 3 seeds: grounded+multifact **0/4**, and the veto output is **word-salad**:
+*"the cat and his chase them to a very chase them at their yes of the chase to the chase and the chase and the
+chase…"*. Even the subject's whole knowledge is only ~7 content words; restricting the lexicon that hard cannot form
+grammatical English (the model loops on the few legal words + emits `yes`/`-` artifacts). **Second confirmation that a
+per-token grounded veto is fundamentally incompatible with fluency** (the vocabulary is too small) — the Phase-0
+honest ceiling ("constrained decode TRADES fluency for faithfulness BY DESIGN") is now doubly verified.
+
+**The decisive contrast that reframes the whole approach — the FREE (unvetoed) baseline:** *"the bird started to fly
+away. It followed it back and forth until it finally stopped. The bird was so happy because now it could see the
+sky."* and *"the cat started to run away. It ran as fast as it could, but soon came across a big tree and decided not
+to stop running…"* — **genuinely fluent, coherent multi-sentence prose, and it asserts ZERO false known-entity facts**
+(free-path ungrounded = 0). The free 21M generation is fluent AND non-hallucinatory (it stays in
+narrative-description register — fly, run, happy, sky — without making false SVO claims about the animals). **It
+simply does not render the SPECIFIC grounded fact on command** (a base completion model is not instruction-tuned).
+
+**⇒ The consolidated Phase-1 verdict:** the fluency is already there and it does not hallucinate facts; the only gap is
+"render the specific grounded fact fluently." Two families of failure are now closed (hard-veto: word-salad; free-gen:
+off-fact). The path forward is NOT a third veto variant — it is one of:
+1. **Prompt-conditioning + post-hoc VERIFY (cheap, no training) — TEST NEXT (v3):** give the free generator a NATURAL
+   fact-lead (the grounded fact stated as an opening — via the brain's own neural serial-order render / `describe()`,
+   biology-based word ordering, NOT a host template) and let it continue fluently; VERIFY re-parses the whole thing
+   and rejects any NEW ungrounded assertion. The free-baseline evidence (fluent + non-hallucinatory) predicts this can
+   work with zero training.
+2. **The retrieval-augmented render fine-tune (the roadmap's "brain-train it" lever) — if v3 is insufficient:** a small
+   fine-tune of the 21M on (fact-in-prompt → fluent sentence) + (question + fact → grounded answer) pairs over a BROAD
+   vocabulary, so it learns the render/answer FORMAT generally (generalizing, not memorizing specific facts). Still a
+   minimized, brain-trained, brain-gated generator — the honest sweet spot, not the Qwen fallback.
+
+**Artifacts:** `_fluidconv_phase1_grounded_continuation_derisk.py` (v1); `_fluidconv_phase1_broadened_veto_derisk.py`
+(v2); results `_fluidconv_phase1_grounded_continuation.json`, `_fluidconv_phase1_broadened_veto.json`. NO `sim/` edit;
+reuse-by-import. Both negatives are real findings: they map the fluid-grounded mechanism space and rule out per-token
+veto grounding.

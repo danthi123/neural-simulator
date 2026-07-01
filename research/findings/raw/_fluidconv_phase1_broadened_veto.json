@@ -1,0 +1,583 @@
+{
+  "probe": "fluidconv_phase1_broadened_veto_fluid_multifact",
+  "resolves": "Phase 1 fluidity v2: fluid multi-fact grounded generation via a broadened veto (the subject's whole retrieved knowledge) + temperature sampling; the retrieval-augmentation frame, moat by construction + post-hoc VERIFY.",
+  "generator": "~21.3M TinyStories (d512/L6/H8)",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "temperature": 0.8,
+  "rep_penalty": 1.3,
+  "GO": false,
+  "verdict": "HONEST/PARTIAL -- grounded+multifact [0, 0, 0]/[4, 4, 4] (single-fact only, degenerate loop, or an ungrounded assertion) -> the small fact-rendering fine-tune may be the next lever; veto-path asserted ungrounded facts [3, 4, 4] (the broadened veto/extractor leaked); free baseline did NOT drift more (veto not load-bearing on this set)",
+  "elapsed_seconds": 42.1,
+  "per_seed": [
+    {
+      "seed": 42,
+      "temperature": 0.8,
+      "rep_penalty": 1.3,
+      "grounded_ok": 0,
+      "grounded_total": 4,
+      "veto_path_ungrounded": 3,
+      "free_path_ungrounded": 0,
+      "untaught_held": 3,
+      "untaught_total": 3,
+      "grounded_detail": [
+        {
+          "subject": "bird",
+          "knowledge": [
+            [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            [
+              "bird",
+              "like",
+              "worm"
+            ],
+            [
+              "bird",
+              "live",
+              "tree"
+            ]
+          ],
+          "allow": "bird eat like live seed tree worm",
+          "text": "the bird for their yes of the tree and they had a yes to have a yes on the yes of the worm for the live in the seed yes of his yes and he was very yes of the",
+          "grounded_svos": [],
+          "distinct_grounded": 0,
+          "ungrounded": [
+            [
+              "tree",
+              "live",
+              "seed"
+            ]
+          ],
+          "distinct_ratio": 0.55,
+          "ok": false
+        },
+        {
+          "subject": "cat",
+          "knowledge": [
+            [
+              "cat",
+              "chase",
+              "mouse"
+            ],
+            [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            [
+              "cat",
+              "like",
+              "milk"
+            ]
+          ],
+          "allow": "cat chase eat fish like milk mouse",
+          "text": "the cat was chase them but the mouse was very chase and it did not like to be chase or chase the cat in his chase or chase it with its chase at a mouse that was chase the cat of a",
+          "grounded_svos": [
+            [
+              "cat",
+              "chase",
+              "mouse"
+            ]
+          ],
+          "distinct_grounded": 1,
+          "ungrounded": [],
+          "distinct_ratio": 0.571,
+          "ok": false
+        },
+        {
+          "subject": "cow",
+          "knowledge": [
+            [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            [
+              "cow",
+              "like",
+              "hay"
+            ]
+          ],
+          "allow": "cow eat grass hay like",
+          "text": "the cow was so yes and she was very very very very yes with her yes to eat with a yes of the cow at the their hay that had been very yes for them and it was a day they were on",
+          "grounded_svos": [],
+          "distinct_grounded": 0,
+          "ungrounded": [
+            [
+              "cow",
+              "eat",
+              "hay"
+            ]
+          ],
+          "distinct_ratio": 0.628,
+          "ok": false
+        },
+        {
+          "subject": "dog",
+          "knowledge": [
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "like",
+              "bone"
+            ]
+          ],
+          "allow": "bone cat chase dog eat like meat",
+          "text": "the dog to their yes and the dog chase them in its bone with his bone on its then at a bone as it had the bone in their bone and they were very meat that their yes were meat",
+          "grounded_svos": [],
+          "distinct_grounded": 0,
+          "ungrounded": [
+            [
+              "dog",
+              "chase",
+              "bone"
+            ]
+          ],
+          "distinct_ratio": 0.625,
+          "ok": false
+        }
+      ],
+      "untaught_detail": [
+        {
+          "subject": "lion",
+          "knowledge": [],
+          "held": true
+        },
+        {
+          "subject": "whale",
+          "knowledge": [],
+          "held": true
+        },
+        {
+          "subject": "plane",
+          "knowledge": [],
+          "held": true
+        }
+      ],
+      "free_detail": [
+        {
+          "subject": "bird",
+          "text": "the bird started to fly away. It followed it back and forth until it finally stopped. The bird was so happy because now it could see the sky. Mommy saw how upset she was, feeling proud that her little bird had brought this happin",
+          "ungrounded": []
+        },
+        {
+          "subject": "cat",
+          "text": "the cat started to run away. It ran as fast as it could, but soon came across a big tree and decided not to stop running for any more time. The cat's owner saw what was happening and gave him a pat. He picked",
+          "ungrounded": []
+        },
+        {
+          "subject": "cow",
+          "text": "the cow started to run away. It ran as fast as it could and the wheat came fast. The farmer then went back home and told his friends about their adventure, who had come back. They laughed and shared a piece of meal",
+          "ungrounded": []
+        },
+        {
+          "subject": "dog",
+          "text": "the dog started to bark. It scared and hissed at him. The dog's owner came over with a hat and pulled it hard. He had their beloved dog very much. \"Thank you, thank you!\" Tom said. \"You saved me!\" \"It is",
+          "ungrounded": []
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "temperature": 0.8,
+      "rep_penalty": 1.3,
+      "grounded_ok": 0,
+      "grounded_total": 4,
+      "veto_path_ungrounded": 4,
+      "free_path_ungrounded": 2,
+      "untaught_held": 3,
+      "untaught_total": 3,
+      "grounded_detail": [
+        {
+          "subject": "bird",
+          "knowledge": [
+            [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            [
+              "bird",
+              "like",
+              "worm"
+            ],
+            [
+              "bird",
+              "live",
+              "tree"
+            ]
+          ],
+          "allow": "bird eat like live seed tree worm",
+          "text": "the bird and a tree in her yes of live her on the seed to be seed for a seed so she had been it was a very seed that no one had a seed to eat with no seed but the",
+          "grounded_svos": [],
+          "distinct_grounded": 0,
+          "ungrounded": [
+            [
+              "tree",
+              "live",
+              "seed"
+            ]
+          ],
+          "distinct_ratio": 0.667,
+          "ok": false
+        },
+        {
+          "subject": "cat",
+          "knowledge": [
+            [
+              "cat",
+              "chase",
+              "mouse"
+            ],
+            [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            [
+              "cat",
+              "like",
+              "milk"
+            ]
+          ],
+          "allow": "cat chase eat fish like milk mouse",
+          "text": "the cat and a mouse in her chase and the cat was very very yes to be on the cat in a chase that she did not like the one she had or the cat in her chase the cat with no its yes or",
+          "grounded_svos": [],
+          "distinct_grounded": 0,
+          "ungrounded": [
+            [
+              "cat",
+              "chase",
+              "cat"
+            ],
+            [
+              "cat",
+              "chase",
+              "cat"
+            ]
+          ],
+          "distinct_ratio": 0.556,
+          "ok": false
+        },
+        {
+          "subject": "cow",
+          "knowledge": [
+            [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            [
+              "cow",
+              "like",
+              "hay"
+            ]
+          ],
+          "allow": "cow eat grass hay like",
+          "text": "the cow and a hay to do their hay for her hay in its hay she was on her hay yes of her hay or her hay or her hay and her hay and the hay for her ha",
+          "grounded_svos": [],
+          "distinct_grounded": 0,
+          "ungrounded": [],
+          "distinct_ratio": 0.487,
+          "ok": false
+        },
+        {
+          "subject": "dog",
+          "knowledge": [
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "like",
+              "bone"
+            ]
+          ],
+          "allow": "bone cat chase dog eat like meat",
+          "text": "the dog and a bone for a bone to eat her meat on its bone and the cat was very yes and she did it very he did not like that her meat was a chase or the cat had a bone",
+          "grounded_svos": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ]
+          ],
+          "distinct_grounded": 1,
+          "ungrounded": [
+            [
+              "cat",
+              "like",
+              "meat"
+            ]
+          ],
+          "distinct_ratio": 0.619,
+          "ok": false
+        }
+      ],
+      "untaught_detail": [
+        {
+          "subject": "lion",
+          "knowledge": [],
+          "held": true
+        },
+        {
+          "subject": "whale",
+          "knowledge": [],
+          "held": true
+        },
+        {
+          "subject": "plane",
+          "knowledge": [],
+          "held": true
+        }
+      ],
+      "free_detail": [
+        {
+          "subject": "bird",
+          "text": "the bird and make a bridge. The cage is for 3 year old child, who wiggles on it. One day, while at the park, he saw something interesting. It was a big pile of cardboard. F",
+          "ungrounded": []
+        },
+        {
+          "subject": "cat",
+          "text": "the cat and make a sound. He is very happy with her cat. Tom saw Max playing with his ball in a puddle. The cat was making a lot of noise. Tom wanted to join Max. Max did not like the sound of watching",
+          "ungrounded": [
+            [
+              "cat",
+              "make",
+              "cat"
+            ]
+          ]
+        },
+        {
+          "subject": "cow",
+          "text": "the cow around a big tree. The poor caws did not like strangers. It stayed in one place for many years. Later that day, a little bird came to visit Grandma. She saw the cat with no hair and was",
+          "ungrounded": [
+            [
+              "tree",
+              "like",
+              "cat"
+            ]
+          ]
+        },
+        {
+          "subject": "dog",
+          "text": "the dog around a big tree. The poor lice, her 3 year old child, said, \"I'm going to help you reach this flower.\" His mom said no, but Fred was determined and with no ways. She",
+          "ungrounded": []
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "temperature": 0.8,
+      "rep_penalty": 1.3,
+      "grounded_ok": 0,
+      "grounded_total": 4,
+      "veto_path_ungrounded": 4,
+      "free_path_ungrounded": 0,
+      "untaught_held": 3,
+      "untaught_total": 3,
+      "grounded_detail": [
+        {
+          "subject": "bird",
+          "knowledge": [
+            [
+              "bird",
+              "eat",
+              "seed"
+            ],
+            [
+              "bird",
+              "like",
+              "worm"
+            ],
+            [
+              "bird",
+              "live",
+              "tree"
+            ]
+          ],
+          "allow": "bird eat like live seed tree worm",
+          "text": "the bird and his worm so he live in a tree of his yes to eat for a very seed the bird for a very then it was not as yes with the yes - they were very yes of their live",
+          "grounded_svos": [
+            [
+              "bird",
+              "live",
+              "tree"
+            ]
+          ],
+          "distinct_grounded": 1,
+          "ungrounded": [
+            [
+              "tree",
+              "eat",
+              "seed"
+            ]
+          ],
+          "distinct_ratio": 0.659,
+          "ok": false
+        },
+        {
+          "subject": "cat",
+          "knowledge": [
+            [
+              "cat",
+              "chase",
+              "mouse"
+            ],
+            [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            [
+              "cat",
+              "like",
+              "milk"
+            ]
+          ],
+          "allow": "cat chase eat fish like milk mouse",
+          "text": "the cat and his chase them to a very chase them at their yes of the chase to the chase and the chase and the chase that are not for the chase or the chase and the mouse and the cha",
+          "grounded_svos": [],
+          "distinct_grounded": 0,
+          "ungrounded": [],
+          "distinct_ratio": 0.488,
+          "ok": false
+        },
+        {
+          "subject": "cow",
+          "knowledge": [
+            [
+              "cow",
+              "eat",
+              "grass"
+            ],
+            [
+              "cow",
+              "like",
+              "hay"
+            ]
+          ],
+          "allow": "cow eat grass hay like",
+          "text": "the cow and eat her cow for a day with her cow to be his cow and hay in a cow of a cow to eat on her cow with her cow cow to eat her very hay at the",
+          "grounded_svos": [],
+          "distinct_grounded": 0,
+          "ungrounded": [
+            [
+              "cow",
+              "eat",
+              "hay"
+            ],
+            [
+              "cow",
+              "eat",
+              "hay"
+            ]
+          ],
+          "distinct_ratio": 0.45,
+          "ok": false
+        },
+        {
+          "subject": "dog",
+          "knowledge": [
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "like",
+              "bone"
+            ]
+          ],
+          "allow": "bone cat chase dog eat like meat",
+          "text": "the dog and his dog chase the cat to his bone and then they were very meat for a bone to be her as their chase in the yes of the bone they had been on for a very day and was so",
+          "grounded_svos": [
+            [
+              "dog",
+              "chase",
+              "cat"
+            ]
+          ],
+          "distinct_grounded": 1,
+          "ungrounded": [
+            [
+              "cat",
+              "chase",
+              "bone"
+            ]
+          ],
+          "distinct_ratio": 0.651,
+          "ok": false
+        }
+      ],
+      "untaught_detail": [
+        {
+          "subject": "lion",
+          "knowledge": [],
+          "held": true
+        },
+        {
+          "subject": "whale",
+          "knowledge": [],
+          "held": true
+        },
+        {
+          "subject": "plane",
+          "knowledge": [],
+          "held": true
+        }
+      ],
+      "free_detail": [
+        {
+          "subject": "bird",
+          "text": "the bird and wanted to play with it. They ran back to their mom and showed her what they saw. Mom said it was a safari polishing police far away. It had many cobwebs on it, but not fi",
+          "ungrounded": []
+        },
+        {
+          "subject": "cat",
+          "text": "the cat and wanted to play too. But the dog had an idea. It decided that it would teach Max. Max went back to his home as fast as possible. He chased after it, but he couldn't catch it. Max was a little sad because",
+          "ungrounded": []
+        },
+        {
+          "subject": "cow",
+          "text": "the cow began to pick up the grass with its mouth. She noticed that it was getting darker and cold, \u00e2\u20ac\u0153Let me help you,\u00e2\u20ac she said. The cow used her brain to feed herself a coin,",
+          "ungrounded": []
+        },
+        {
+          "subject": "dog",
+          "text": "the dog and wanted to play too. But the dog had an idea. It barked loudly at Max. Max was scared of the dog. He did not want to hurt his ears. The dog ran away, but it jumped into a puddle. Lily was",
+          "ungrounded": []
+        }
+      ]
+    }
+  ],
+  "HONEST_CEILING": "if still stilted/single-fact, a small fact-rendering/dialogue fine-tune of the 21M (the brain-train lever) is next -- still a minimized, brain-trained, brain-gated generator, not the Qwen fallback. This tests fluid RENDERING, not multi-turn dialogue coherence (the recurrent-state + multi-referent WTA follow-on)."
+}
