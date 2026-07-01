@@ -6683,6 +6683,35 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 785 (2026-07-01 — dendritic-emergence research RETURNED + trust-but-verified; EMERGE-1 is the pivotal gate)
+
+The dendritic-cortex-for-emergence scoping (subagent a2a7c51c57e8ba893) returned + I trust-but-verified the load-bearing
+claims: the D2 deep-dendritic code EXISTS (`sim/dendritic_mlp.py` DendriticMLP [deep feedback-alignment], `dendritic_
+neuron.py` DendriticLayer [2-compartment BAC + fixed-random apical FA], `dendritic_plasticity.py` urbanczik_senn_update,
+`predictive_coding.py`); the prior dendrite NEGATIVEs are real (incl. a deep CIFAR-conv-FA NEGATIVE 2026-05-18 -> the
+sober tractability verdict is grounded, not hand-wavy). VERDICT (well-hedged): owner's intuition DIRECTIONALLY RIGHT
+(point-neuron+Hebbian can't develop DEEP compositional structure; deep credit assignment IS dendritic; the 2 proven
+walls are dendritic) BUT must be SPLIT (SHALLOW emergence already works on point neurons -- PPMI; only DEEP/hierarchical
+compositional emergence is the dendritic frontier) AND ~only 1/3 of the hand-design pain is dendritic (binding=dendrite;
+generation=separate learned-sequence bet; dispatch=gating, not dendrite). SOBERING: dendrite NECESSARY-NOT-SUFFICIENT --
+bio-plausible deep learning (FA/PC/microcircuits) works at small/shallow scale but does NOT scale to hard problems
+(field's own 2024-26 evidence); honest expectation at our scale = a characterized PARTIAL, not a from-experience
+conversationalist. Silver-bullet risk flagged (project cried "dendrite" 6x + reframed on point neurons, 2x NEGATIVE).
+Minimal mechanism: 2-compartment pyramidal (soma+apical) + fixed-random apical FA + burst-gated local plasticity, >=2
+hidden layers -> buys credit-assignment + decorrelation + multiplicative binding. Recommended: run EMERGE-1 (the one
+never-run cheap de-risk) BEFORE any months-scale sim/ build.
+
+**EXACT NEXT CONCRETE ACTION:** committed the scoping doc (both remotes). Build + run **EMERGE-1** -- the DEEP dendritic
+representation-emergence de-risk (reuse DendriticMLP + DendriticLayer + urbanczik_senn_update; CPU; hours; NO sim/ edit):
+arms = point_hebbian (control-fails) / single_layer_dendrite (prior-NEGATIVE regime, fails) / deep_dendrite_FA (TEST) /
+oracle_backprop (fenced ceiling) / memorization_floor / apical_lesion (collapses) / wrong_sign (anti-learns), on a task
+with genuine compositional/hierarchical structure; metric = held-out generalization AND hidden-representation emergence
+(RSA/linear-probe on frozen hiddens or DendriticMLP.hidden_grad_alignment climbing) ABSENT in the point/single-layer
+arms; GO = deep_dendrite_FA generalizes + structure emerges > both controls, multi-seed (42/43/44), lesion collapses,
+wrong-sign anti-learns. HONEST PRIOR: more likely BOUNDARY than GO (build-saving either way). Do NOT start the
+months-scale NeuronModel.TWO_COMPARTMENT sim/kernels.py rewrite until EMERGE-1 is GO. NO sim/ edit; honest origin+gitea;
+COMMIT ON MAIN.
+
 ## CYCLE 784 (2026-07-01 — STRATEGIC PIVOT: owner critique -> DENDRITIC CORTEX as the top lever for EMERGENCE)
 
 The owner raised a strategic critique (now memory [[project_dendritic_cortex_for_emergence]]): the conversational work
