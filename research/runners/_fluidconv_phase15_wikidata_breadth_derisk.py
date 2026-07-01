@@ -49,10 +49,18 @@ PARENTS = {"mammal": "Q7377", "plant": "Q756"}          # parents to fetch has-p
 PROPS = {"P279": "isa", "P527": "has"}                  # subclass-of -> isa (inheritance link); has-part -> has
 
 
-def _sparql(q, timeout=25):
+def _sparql(q, timeout=25, retries=3):
+    """Query the Wikidata SPARQL endpoint with a small backoff (the public endpoint 502s under rapid calls)."""
     url = _EP + "?format=json&query=" + urllib.parse.quote(q)
-    with urllib.request.urlopen(urllib.request.Request(url, headers=_UA), timeout=timeout) as r:
-        return json.loads(r.read().decode("utf-8")).get("results", {}).get("bindings", [])
+    last = None
+    for attempt in range(retries):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=_UA), timeout=timeout) as r:
+                return json.loads(r.read().decode("utf-8")).get("results", {}).get("bindings", [])
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as ex:
+            last = ex
+            time.sleep(2.0 * (attempt + 1))
+    raise last if last is not None else RuntimeError("sparql failed")
 
 
 def _head_token(label):

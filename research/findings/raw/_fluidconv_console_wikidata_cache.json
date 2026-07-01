@@ -26,5 +26,28 @@
       "hoof"
     ]
   ],
-  "elephant": []
+  "elephant": [
+    [
+      "elephant",
+      "isa",
+      "mammal"
+    ],
+    [
+      "elephant",
+      "has",
+      "trunk"
+    ],
+    [
+      "elephant",
+      "has",
+      "tusk"
+    ]
+  ],
+  "lion": [
+    [
+      "lion",
+      "isa",
+      "cat"
+    ]
+  ]
 }

@@ -6683,6 +6683,27 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 774 (2026-07-01 — CI test for the console + robust data-driven Wikidata QID resolution)
+
+Two robustness deliverables: (1) `tests/test_fluidconv_chat_repl.py` -- an OFFLINE CI guard pinning the console's base
+demo + instance-rep self-checks (2 passed; skips when the FT ckpt/curriculum absent, like the concept-cache-gated
+composer tests). (2) Fixed concepts that returned 0 facts ("elephant" resolved to the FAMILY taxon / the album, neither
+with clean P279/P527): QID disambiguation is now DATA-DRIVEN -- iterate the top-5 wbsearchentities hits and take the
+FIRST yielding clean facts, so "elephant" skips the family+album and lands on the animal (Q7378: isa mammal, has trunk,
+has tusk). Added a 3-try backoff to Phase-15 `_sparql` (the public endpoint 502s under rapid calls; transparent on
+success). LIVE: "learn about elephant" -> 3 real facts -> "tell me about the elephant" -> "an elephant is a mammal. an
+elephant has trunk. an elephant has tusk."; "learn about lion" -> "lion isa cat". Phase-15 de-risk STILL GO (cache).
+Both console self-checks STILL green. NO sim/ edit.
+
+**EXACT NEXT CONCRETE ACTION:** commit the CI test + QID-resolution robustness (test + 2 runners + cache + this state)
+to BOTH remotes on main. THEN continue autonomously (owner "you choose / keep going"): (B-cont) widen the Wikidata
+property set for richer facts (some concepts still yield only 1-2 facts) -- add e.g. P1552(has-quality)/P527 variants +
+a light multi-word->head-noun pass; (C) periodically retry ConceptNet for action facts (capable-of/desires; still
+502); (D) consider surfacing the console in the webapp Interact tab (owner UI verify -- ask before UI changes).
+Deferred: spiking-forward speed-wall (KV-cache lever). Honest wall: free open-world inference beyond learned facts.
+biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy
+for real runs (numpy only for CPU/console).
+
 ## CYCLE 773 (2026-07-01 — the acquire->DISCUSS loop on learned Wikidata facts + a/an polish)
 
 Closed the DISCUSS gap on learned real facts: "tell me about the horse" was dropping the isa/has facts (the FT

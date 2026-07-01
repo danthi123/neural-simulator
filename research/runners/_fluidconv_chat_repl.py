@@ -109,29 +109,37 @@ class FluidChat:
             comp.concepts[w] = np.random.default_rng(s).uniform(0.0, 1.0, comp.D)
             comp.words = sorted(set(comp.words) | {w})
 
-    def _wd_qid(self, name):
-        """Resolve a concept NAME -> its top Wikidata QID via wbsearchentities."""
-        url = (_WD_SEARCH + "?action=wbsearchentities&format=json&language=en&type=item&limit=1&search="
+    def _wd_search(self, name, limit=5):
+        """Resolve a concept NAME -> its top-`limit` candidate Wikidata QIDs (wbsearchentities), in relevance order."""
+        url = (_WD_SEARCH + f"?action=wbsearchentities&format=json&language=en&type=item&limit={limit}&search="
                + urllib.parse.quote(name))
         req = urllib.request.Request(url, headers={"User-Agent": "sim-research/1.0 (grounded-knowledge)"})
         with urllib.request.urlopen(req, timeout=20) as r:
             hits = json.loads(r.read().decode("utf-8")).get("search", [])
-        return hits[0]["id"] if hits else None
+        return [h["id"] for h in hits]
 
     def _wikidata_learn(self, concept):
         """LEARN real grounded facts about `concept` from Wikidata on demand (the on-demand tail): resolve QID -> fetch
         clean SVO (P279 isa / P527 has) -> inject codes -> store. Cached per-concept. The fetch is host-side data-prep
-        (legitimate environment); the brain LEARNS via composer.store. Graceful on network failure."""
+        (legitimate environment); the brain LEARNS via composer.store. Graceful on network failure.
+
+        QID disambiguation is DATA-DRIVEN: iterate the top hits and take the FIRST that yields clean facts -- so a
+        search for 'elephant' skips the family taxon (Q2372824, no clean subclass/has) and the album (no facts) and
+        lands on the animal (Q7378: isa mammal, has trunk, has tusk)."""
         concept = concept.lower().strip()
         if concept in self._wd_cache:
             facts = self._wd_cache[concept]
         else:
             try:
-                qid = self._wd_qid(concept)
-                if not qid:
+                qids = self._wd_search(concept, limit=5)
+                if not qids:
                     return f"i couldn't find '{concept}' in the knowledge source."
-                facts = _fetch_entity(concept, qid, _WD_PROPS, per_prop=3)   # reuse the Phase-15 fetch+simplify
-            except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError):
+                facts = []
+                for qid in qids:                                # first hit yielding clean facts wins
+                    facts = _fetch_entity(concept, qid, _WD_PROPS, per_prop=3)
+                    if facts:
+                        break
+            except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError, RuntimeError):
                 return "i couldn't reach the knowledge source right now."
             self._wd_cache[concept] = facts
             try:
