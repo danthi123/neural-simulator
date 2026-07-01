@@ -5805,3 +5805,20 @@ builds 4 agents = develop+frozen+permuted+persistence). On JOIN-CLOSES -> run th
 102 --n-days 4`), controller-serial, ETA from the smoke timing (4 builds/seed -> watch the wall-clock; optimize
 n_days/builds if too slow). On a mechanics fail -> localize (develops/retention/frozen/permuted/moat/persist). Then
 finalize an Option-2A findings doc + present. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 739 (2026-06-30 — Tier-3 Option 2A smoke FULL GO (8/8); 6-seed IN FLIGHT; findings drafted)
+
+2A smoke (btkyem55b, exit 0, seed 42, n_days=3): **full GO, all 8 checks** -- facts/day [1,2,3] (develops),
+last-recall 3/3 (retention of day-0's fact after 2 more days), moat/day 2/2·3/3·4/4 ((obj,'chase') abstains) +
+conv byte-frozen, frozen-brain 0 facts (commit_facts=False sees-but-doesn't-store -> flat), permuted-world differs
+(lived-not-scripted), persist resumed 3/3 cold 0/3, alive, corr +0.92. ~19 min/seed (4 gen-convergence builds
+dominate; ~2GB VRAM, NOT a VRAM wall). Findings drafted:
+`research/findings/2026-06-30-tier3-option2-develop-with-a-body-first-slice.md` (6-seed aggregate PENDING).
+
+**EXACT NEXT CONCRETE ACTION:** the full 6-seed IS IN FLIGHT (bg **bowg8ddn5**, `--seeds 42 43 44 100 101 102
+--n-days 4 --steps-per-day 600`, ETA ~2h, out `research/findings/raw/_tier3_develop_with_a_body.json`). On completion
+READ `scratchpad/dwab_6seed.log` (per-seed GO lines + DWAB6_EXIT), finalize the findings with the 6-seed aggregate,
+bank the verdict, update CLAUDE.md's Tier-3 arc (Option 2 -> GO), and PRESENT the result + the remaining ranked
+follow-ons (Option 3 cross-modal one-animal / Option 4 lived consolidation / Option 2B 24/7 harness / richer-world).
+On any seed NEGATIVE -> localize (develops/retention/frozen/lived/moat/persist) + honest partial. Moat 0-leak (HARD);
+honest origin+gitea; COMMIT ON MAIN. (n_days=4 adds an explicit day-3 no-new-learning RETENTION day: facts [1,2,3,3].)
