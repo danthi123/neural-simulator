@@ -5958,3 +5958,26 @@ sibling harness entry (develop_run.py --with-body / develop_with_body_run.py) th
 (default None) + moat 0-FA. De-risk: a short multi-day body-run through the ACTUAL harness (per-day bundles
 discoverable + PAUSE->resume continues the developed life). On the Option-3 6-seed landing -> finalize Option-3
 findings first (plug the aggregate), then continue Option 2B. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 746 (2026-07-01 — Option-2B design REFINED on closer read: build SELF-CONTAINED, not a develop_gpu seam)
+
+Closer read of develop_gpu (_longitudinal_develop_loop_gpu.py) BEFORE building the Option-2B per_day_wake_fn seam:
+the StreamCortex is woven through develop_gpu BEYOND the WAKE+CONVERSE block (:389-423) -- the cortex BUILD (:350),
+the resume re-hear (:361-365), build_s (:368), and heard_concepts (:432). So the scoping's "one per_day_wake_fn
+seam" would ALSO need guarding all those cortex references -> an intricate, REGRESSION-RISKY modification of the
+SHIPPED develop_gpu (which the validated develop-loop + the 24/7 harness depend on). DESIGN DECISION (lower-risk):
+build Option 2B as a SELF-CONTAINED `develop_with_body` runner that extends the VALIDATED 2A multi-day loop
+(_tier3_develop_with_a_body_derisk._run_multiday) with the harness features -- per-day CONSOLE BUNDLES
+(save_developed_brain, verified to accept the MergedNavConvAgent via _inner_agent fall-through) + BridgeLineage
+persist + a PAUSE-sentinel (should_continue) + resume -- reusing the develop-loop's AGENT-BASED stage functions where
+useful, but NOT modifying the shipped develop_gpu (ZERO regression risk). The exact-shipped-supervisor integration
+(the develop_gpu seam) is a deferred nicety -- the CAPABILITY (pausable/resumable multi-day body-develop + console
+bundles) is the deliverable + is achievable self-contained. NO sim/ edit.
+
+**EXACT NEXT CONCRETE ACTION:** on the Option-3 6-seed (b4gtm8jez) landing -> (1) READ the log, finalize the Option-3
+findings (plug the 6-seed aggregate) + bank + flip CLAUDE.md (3rd property GO). THEN (2) build Option 2B
+SELF-CONTAINED: `research/runners/_tier3_develop_with_body_persistent_derisk.py` (or extend the 2A runner) = the 2A
+multi-day loop + per-day save_developed_brain bundles + BridgeLineage persist + PAUSE-sentinel + resume; de-risk =
+a short multi-day body-run that (a) emits per-day console-loadable bundles + (b) PAUSE->reload->resume continues the
+developed life (facts retained), moat 0-FA, NO sim/ edit. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN.
+Night: Option 3 -> 2B(self-contained) -> Option 4 / richer-world.
