@@ -6593,3 +6593,20 @@ Phase-12 acquisition pipeline, for TRUE encyclopedic grounded breadth (the hones
 fact-extraction if it's a new mechanism); (B) wire the instance-rep (Phase-13) + acquisition into the console;
 (C) the webapp Interact wire-in (owner UI verify). Honest wall: free open-world inference beyond learned facts.
 biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
+
+## CYCLE 768 (2026-07-01 — owner "you choose / keep going"; ConceptNet API 502 -> pivot to console consolidation)
+
+Owner delegated ordering fully. Chose the ConceptNet real-data breadth lever first; connectivity works but the
+ConceptNet API returns 502 Bad Gateway (their server down, not a network block) -> the real-corpus breadth-scaling is
+BLOCKED right now. PIVOT (my call): consolidate the proven grounded-growth batch into a usable multi-turn
+conversational flow (instance-rep Phase-13 in dialogue), which is tractable + no external dependency. The ConceptNet
+(or an alternate fact dataset) scaling arc is deferred until the API is up / a source is chosen.
+
+**EXACT NEXT CONCRETE ACTION:** build `_fluidconv_phase14_instance_conversation_derisk.py` -- a multi-turn flow with
+DISCOURSE-INSTANCE tracking: "I saw a dog" -> mint an instance (dog_1, isa dog) + set discourse-current; "the dog is
+brown" -> store the instance's OWN fact; "what is the dog?" (definite -> the held instance) -> brown; "what does the
+dog eat?" -> inherited (meat via isa); "what do dogs eat?" (generic -> kind) -> meat; a SECOND instance stays
+distinct; moat. Reuse Phase-13 _resolve + add mint-on-mention + discourse tracking. >=3 seeds. Then (deferred/when
+unblocked): retry ConceptNet / pick an alternate fact dataset for breadth; wire instance+acquisition into FluidChat;
+webapp Interact (owner UI verify). Honest wall: free open-world inference. biologization/one-brain HARD; moat a PLUS;
+honest origin+gitea; COMMIT ON MAIN; GPU/CuPy.
