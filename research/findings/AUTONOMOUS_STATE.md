@@ -5760,3 +5760,28 @@ drive touches BOTH halves; SMALL) / Option 4 lived consolidation (event-triggere
 presenting; on owner pick -> deep-research-gate if a new mechanism class, else compose-and-de-risk (6-seed +
 anti-cheats). Also pending (non-critical): a CLAUDE.md 'Recent arc' Tier-3 entry (milestone doc-sync). Moat 0-leak
 (HARD); honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 737 (2026-06-30 — Tier-3 Option 2 SCOPED + controller-verified; building Option 2A)
+
+Option-2 (develop-with-a-body) scoping subagent (a6a05892606a48719) done + doc pushed
+(`research/findings/2026-06-30-tier3-option2-develop-with-a-body-scoping.md`). VERDICT: the right next slice, cheap
+(largely done in two validated GO halves -- Option-1's live() as the day's WAKE + develop_gpu's SLEEP/GROW/PERSIST
+patterns). The honest seam: the two per-day BRAINS are different substrates (develop-loop = StreamCortex(corpus)+
+build_agent; body = MergedNavConvAgent(perception)) -> the JOIN is SUBSTITUTION not fusion (a body-day runs the
+MergedNavConvAgent INSTEAD of the corpus stream). CONTROLLER-VERIFIED the load-bearing claims: consolidate(agent,...)
+(_longitudinal_develop_loop.py:345) + retention (yes/no via _measure -> agent.is_it_true) are AGENT-COMPOSER patterns
+(NOT StreamCortex-coupled) -> reusable on MergedNavConvAgent (has is_it_true nav_conv_merged_bridge.py:2374); the one
+hard gap (MergedNavConvAgent has no reason_chain) is a NON-ISSUE for the recommended self-contained runner (I control
+metrics -> skip vacuous corridor chains / use composer.query_chain rf_phasor_composer.py:721). NO sim/ edit predicted.
+RECOMMENDATION = Option 2A: a self-contained new runner `_tier3_develop_with_a_body_derisk.py` (owns its multi-day
+loop reusing live() + the develop-loop patterns -> CANNOT regress develop_gpu). 7 checks: LIVED-not-scripted
+(permuted-world control), develops-over-days, no-forgetting/retention, frozen-brain competence-flat, no-confab MOAT
+byte-frozen (HARD), persistence-across-reset, reward-provenance. Ladder 1-seed smoke -> multi-day -> 6-seed. Deferred
+(confirmed off-path): learned spatial policy (Tier-4 dendrite), raw cp_connections persistence, N.17 lived
+consolidation (Option 4), O.21 avg-reward RL, 2D world.
+
+**EXACT NEXT CONCRETE ACTION:** BUILD `research/runners/_tier3_develop_with_a_body_derisk.py` (Option 2A) -- a
+multi-day loop where each day = Option-1's live() foraging (perceive+ground+store the LIVED objects) on ONE persistent
+MergedNavConvAgent, then consolidate/retention/tier-grow/persist; the day's facts come from PERCEPTION not a script.
+Reuse-by-import (live(), consolidate, TierPromoter, BridgeLineage); CPU-logic-check -> GPU 1-seed smoke (controller-
+serial) -> multi-day -> 6-seed. NO sim/ edit. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN.
