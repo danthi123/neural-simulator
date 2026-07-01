@@ -5720,3 +5720,21 @@ The de-risk ran end-to-end on the merged bridge; two bugs found+fixed, both comm
 - The 6-seed uses --drive-reward rate_proxy (survival = validated host stand-in; spiking drive corr-gated); the pure-spiking-reward mode is smoke-validated + a fully-spiking follow-on. compile OK + CPU logic checks pass (verdict GO path + all 3 NEGATIVE paths flip go=False).
 
 **EXACT NEXT CONCRETE ACTION:** improved seed-42 rerun IN FLIGHT (bg b5u7pzbh2, rate_proxy, n_steps 1500) -- confirm the grounding-corruption collapses lived-recall (lived_memory GO) + measure the 2-build/seed timing. On GO -> launch the full 6-seed (`--seeds 42 43 44 100 101 102 --drive-reward rate_proxy --n-steps 1500`), controller-serial, ETA from seed-42. On persist NEGATIVE -> localize. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 735 (2026-06-30 — Tier-3 live-and-remember: seed-42 5/5 GO; full 6-seed IN FLIGHT; findings drafted)
+
+The grounding-corruption fix + tractability restructure VALIDATED on seed 42 (b5u7pzbh2, exit 0): **GO, 5/5 gates** --
+survival (intact minE 0.95/crash0%; lesion 0.00/12%; yoke 0.00/30%), corr +0.98, **lived_memory GO** (intact recall
+2/2, corrupting the grounded codes collapses it to 0.00 -> load-bearing), moat 1/1 + conv byte-frozen, persistence
+(resume 2/2, cold 0/2). Runtime 25min -> **8 min/seed** (2 builds/seed; host-only lesion/yoke). Findings doc drafted:
+`research/findings/2026-06-30-tier3-live-and-remember-first-slice.md` (mechanism + 5 gates + the honest 2-bug debug
+arc + validate-by-function anti-cheats + honest scope; 6-seed aggregate marked PENDING).
+
+**EXACT NEXT CONCRETE ACTION:** the full 6-seed IS IN FLIGHT (bg **buy0f6vhn**, `--seeds 42 43 44 100 101 102
+--drive-reward rate_proxy --n-steps 1500`, ETA ~48 min, out `research/findings/raw/_tier3_live_and_remember.json`).
+On completion READ the log (`scratchpad/lr_6seed.log`, per-seed GO lines + the SIXSEED_EXIT), finalize the findings
+doc with the 6-seed aggregate, bank the verdict, and PRESENT the result + the ranked follow-ons (Option 2
+develop-with-a-body / Option 3 cross-modal one-animal / Option 4 lived consolidation) to the owner (research-gate:
+present before building the next). On any seed NEGATIVE -> localize (survival/corr/lived-memory/moat/persistence) +
+honest partial. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN. (persistent_living_loop is GO 6/6 on the
+SAME corridor+rate-proxy mechanism -> expect survival 6/6; the NEW gates held on seed 42.)
