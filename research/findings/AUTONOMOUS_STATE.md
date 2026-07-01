@@ -5,7 +5,7 @@
 > action without re-deriving context. Update every cycle; commit+push
 > both remotes. The conversation is NOT the memory — this file + git are.
 
-**Updated:** 2026-06-22
+**Updated:** 2026-07-01
 
 **▶▶▶ NEW TOP-LEVEL DIRECTIVE — CYCLE 205 (2026-06-18, owner): TRUE ONE BRAIN — move every bit of the sim possible onto the SHARED, SPIKING substrate.** Memory `feedback_move_everything_to_shared_spiking_substrate` (+ MEMORY.md pointer). The organizing principle for the whole sim now: maximize how much COGNITION runs as genuine spikes/synapses on ONE shared `SimulationBridge` (two axes, both maximized: SPIKE-IFY host computation per the brain-based-only bar + CONSOLIDATE onto one bridge). Owner left the ORDER to me. **State:** conversation half ~fully spike-ified (the one-brain composer = production default); navigation half PARTIAL (BG action-selection + V1/IT perception spiking, but the flagged host shortcuts remain: orienting → spiking superior colliculus, reward → neural reward, dopamine-RPE → spiking SNc, position → neural place/grid code, motor → neural WTA read-out). **Plan (my recommended order, owner-endorsed):** the SHARED systems first (each serves BOTH halves → "two skills sharing a GPU" becomes "one animal sharing a self"): #1 the **reward/value/dopamine limbic core** (motivation/salience), then perception (already shared), the dlPFC WM (already shared), the neuromodulators; then the nav sensorimotor loop (spiking colliculus → neural place code → neural motor read-out). Honest negatives = the deliverable; expect point-neuron walls (where the deferred dendritic substrate may finally earn its keep). **STARTED:** deep-research/AUDIT subagent dispatched (`aba10ae32824d97b0`, read-only) → `research/findings/2026-06-18-full-spikeification-shared-substrate-roadmap.md`: full audit (each cognition SPIKING|HOST-SHORTCUT|SEPARATE-BRIDGE + file:function) + prioritized roadmap + the cheap-first de-risk for the shared reward/value/dopamine core (a spiking DA population driven by a reward pop + a value/critic pop computing TD error in spikes — Schultz RPE; reuse the neuromodulator subsystem's `from_reward` rule + the BG cascade + regions). **EXACT NEXT:** on the audit's return, trust-but-verify + present + build the cheap-first limbic-core de-risk (numpy/CPU first). MEANWHILE richer-syntax #2 is COMPLETE on the substrate: frame-selection GO 6/6 (CYCLE 204, `2026-06-18-frame-selection-GO.md`) — neural verb-position→frame selection 1.000 + end-to-end auto-select+comprehend 1.000, permuted 0.222/lesion 0.333 collapse (a test-harness tuple bug fixed: role_of returns (role,margin), the e2e missed `[0]`; the selector was perfect from run 1). Richer-syntax #2 production wire-in (a `FrameParser` opt-in like `enable_attributed`) + #3 (nested-clause parsing) are bounded follow-ons after the limbic-core arc. Watchdog cron (30 min) + this file guarantee continuation. Never stop; don't defer.
 
@@ -6105,3 +6105,30 @@ override; additive backward-compat defaults d256/L4 -> DON'T touch the FROZEN _C
 (low unsupported-content-error / non-vacuity) vs unconstrained drift, AND the no-confab MOAT holds (never asserts an
 unverified fact). Use weights_only=True on torch.load (own ckpt). Then Phase 1 (recurrent/RWKV + multi-turn) per the
 roadmap. biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 752 (2026-07-01 — Phase-0 DROP-IN GO: the 21M generator is GROUNDED + non-vacuous + moat-intact behind the veto)
+
+Phase-0 grounding half DONE (the core minimize-transformer thesis). Additive-only edit to
+`constrained_decode_gate._GroundedConstrainedLM.__init__` (d_model/n_layer/n_head/bpe_path; defaults = original
+d256/L4/H4 -> existing callers byte-unchanged; weights_only=True) + thin wrapper `_fluidconv_phase0_dropin_derisk.py`
+reusing the VALIDATED harness WHOLE (`_run_rung` + `_GROUNDED`/`_UNGROUNDED` + FROZEN `_CDC_*` verdict). The 21.3M
+TinyStories generator (15-25x smaller than Qwen-0.5B) dropped into the grounded-lang gate->constrain->verify loop is
+**SCALE-CONFIDENT-PASS** across the frozen (6,12,24) ladder x 3 seeds (82.8s GPU): constrained UER 0.012-0.025 (<<0.20)
++ non-vacuity 0.75-0.83 (>=0.5); controls drift hard (unconstrained-UER 0.87-0.91, shuffled-UER 0.78-1.00, shuffled
+non-vac 0.00 => veto LOAD-BEARING); no-confab moat abstain-on-ungrounded 1.00 every rung; instrument valid
+(emittable 1.00). ⇒ Phase 0 CLOSED (fluency ppl 5.66 + grounding). Commits 34f25aae (code) + 27eef98e (finding), both
+remotes. Finding: `research/findings/2026-07-01-fluid-conversation-phase0-dropin-GO.md`. HONEST CEILING: constrained
+decode TRADES fluency for faithfulness BY DESIGN -- renders a SINGLE proposition, per-token vetoed; NOT yet fluid
+multi-turn conversation (the owner's north star = the next arc).
+
+**EXACT NEXT CONCRETE ACTION:** START Phase 1 = CONVERSATIONAL RENDERING (the direct owner-goal test, the fluidity gap
+beyond single-fact constrained decode). Build `_fluidconv_phase1_conversational_render_derisk.py`: prompt the 21M
+generator with (short conversation context + the brain's retrieved grounded fact(s)) and generate a FLUID
+multi-sentence reply grounded by PROMPT-CONDITIONING + POST-HOC VERIFY (re-parse the reply; reject/flag any asserted
+fact NOT in the grounded set) -- i.e. the moat as a PLUS (per `feedback_moat_not_hard_lossy_memory_ok`), softer than
+the rigid per-token veto, to buy fluidity. MEASURE (multi-seed): (a) fluency (reads naturally / low domain ppl),
+(b) grounded-correctness (VERIFY: no hallucinated facts; steered-to-false -> VERIFY catches), (c) an untaught-topic
+control -> abstain / "I don't know", (d) a lesion (empty grounded set) -> no grounded content. GO bar: fluid +
+VERIFY-clean on the de-risk curriculum, hallucination caught, abstains on untaught. Reuse-by-import; NO sim/ edit.
+Then recurrent/RWKV block + on-substrate spiking-forward + multi-referent WTA (GAP D) per the roadmap.
+biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
