@@ -20,6 +20,7 @@ does comprehension + knowledge + grounding + moat; the minimized (~21M) brain-ga
 Reuse-by-import; NO sim/ edit.
 
 Run (scripted smoke / demo):
+  SIM_BACKEND=numpy python -m research.runners._fluidconv_chat_repl --showcase   # the FULL range in one transcript
   SIM_BACKEND=numpy python -m research.runners._fluidconv_chat_repl --demo
   SIM_BACKEND=numpy python -m research.runners._fluidconv_chat_repl --instance-demo
   SIM_BACKEND=numpy python -m research.runners._fluidconv_chat_repl --script "what does the dog eat?|the wolf eats rabbit|what does the wolf eat?"
@@ -558,6 +559,20 @@ DEMO = [
     "what does the lion eat?",       # 9 -> I don't know.  (moat)
 ]
 
+SHOWCASE = [                         # the full fluid-conversation range in one transcript (offline via the warm cache)
+    "what does the dog eat?",        # 0 base grounded Q&A          -> The dog eats meat.
+    "learn about elephant",          # 1 learn REAL Wikidata facts  -> ok, i learned ... elephant isa mammal ...
+    "tell me about the elephant",    # 2 connected grounded prose   -> An elephant is a mammal; it is grey and has ...
+    "how is the elephant classified?",  # 3 taxonomy chain          -> An elephant is a mammal, which is a vertebrata...
+    "compare dog and cat",           # 4 checkable contrast         -> the dog eats meat, but the cat eats fish. ...
+    "i saw a dog",                   # 5 mint an instance           -> ok, a dog.
+    "the dog is brown",              # 6 attribute the instance     -> ok, the dog is brown.
+    "what is the dog?",              # 7 the instance's own fact    -> The dog is brown.
+    "the wolf eats meat",            # 8 learn a fact (growth)      -> ok, i learned ...
+    "what do dogs and wolves share?",  # 9 checkable gist           -> Both the dog and the wolf eat meat.
+    "what does the dragon eat?",     # 10 the no-confab moat        -> I don't know.
+]
+
 INSTANCE_DEMO = [                    # Phase-14: "which dog?" -- a specific instance vs the generic kind
     "i saw a dog",                   # 0 -> ok, a dog.            (mint dog_1 isa dog)
     "the dog is brown",              # 1 -> ok, the dog is brown. (store the instance's OWN fact)
@@ -575,6 +590,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--demo", action="store_true", help="run the canned demo transcript (Q&A + anaphora + growth + moat)")
     ap.add_argument("--instance-demo", action="store_true", help="run the instance-rep transcript (mint + definite/generic + inherit + distinct + moat)")
+    ap.add_argument("--showcase", action="store_true", help="run the full-range transcript (learn/discuss/classify/compare/gist/instance/growth/moat)")
     ap.add_argument("--script", default=None, help="'|'-separated turns to run then exit")
     ap.add_argument("--persist", default=None, help="path to a state file: LOAD grown facts on start, SAVE on exit "
                                                     "(the brain REMEMBERS what it learned across sessions, Phase-17)")
@@ -594,7 +610,7 @@ def main():
     except Exception as e:
         traceback.print_exc(); print(f"ERROR: {e}"); return 1
 
-    turns = (DEMO if a.demo else INSTANCE_DEMO if a.instance_demo
+    turns = (DEMO if a.demo else INSTANCE_DEMO if a.instance_demo else SHOWCASE if a.showcase
              else (a.script.split("|") if a.script else None))
     transcript = []
     if turns is not None:
@@ -604,7 +620,21 @@ def main():
             print(f"  you>   {t.strip()}\n  brain> {reply}", flush=True)
         # a light self-check for the canned demo
         go = None
-        if a.instance_demo:
+        if a.showcase:
+            def _s(i, sub):
+                return sub in transcript[i]["brain"].lower()
+            go = bool(_s(0, "meat")                                                    # base Q&A
+                      and _s(1, "elephant") and _s(1, "mammal")                        # learn (Wikidata)
+                      and _s(2, "mammal") and (" and " in transcript[2]["brain"].lower() or ";" in transcript[2]["brain"])  # discuss-connected
+                      and _s(3, "mammal") and _s(3, "which is")                        # classify chain
+                      and _s(4, "but")                                                 # compare (contrast)
+                      and "a dog" in transcript[5]["brain"].lower() and _s(6, "brown") and _s(7, "brown")  # instance
+                      and "learned" in transcript[8]["brain"].lower()                  # growth
+                      and _s(9, "both") and _s(9, "meat")                              # gist (shared)
+                      and "know" in transcript[10]["brain"].lower())                   # moat
+            print(f"\n  [showcase self-check] Q&A/learn/discuss/classify/compare/instance/growth/gist/moat "
+                  f"all correct: {go}", flush=True)
+        elif a.instance_demo:
             def _isaid(i, sub):
                 return sub in transcript[i]["brain"].lower()
             go = bool("a dog" in transcript[0]["brain"].lower()          # mint
