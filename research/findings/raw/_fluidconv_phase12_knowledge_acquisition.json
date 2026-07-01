@@ -1,0 +1,63 @@
+{
+  "probe": "fluidconv_phase12_knowledge_acquisition",
+  "GO": true,
+  "verdict": "GO -- the KNOWLEDGE-ACQUISITION pipeline works: the brain INGESTS a real-fact corpus day-by-day (parse each sentence -> store), recalls the ingested facts (mean 1.00), RETAINS day-1 facts as later days grow the KB (no catastrophic forgetting), ends knowing many concepts, and the moat holds 0-FA on a never-ingested cue. >=3 seeds. This is the scaling mechanism for grounded breadth (the data source is swappable for a downloaded real corpus).",
+  "resolves": "the knowledge-acquisition pipeline: parse a real-fact corpus -> store, staged cumulatively (the develop-loop pattern) -> grounded breadth; retention (no forgetting) + moat.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 41.3,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_days": 3,
+      "recall_ok": 30,
+      "recall_total": 30,
+      "recall_rate": 1.0,
+      "retention_by_day": [
+        10,
+        10,
+        10
+      ],
+      "day1_total": 10,
+      "day1_retained": 10,
+      "n_concepts": 15,
+      "moat_ok": true
+    },
+    {
+      "seed": 43,
+      "n_days": 3,
+      "recall_ok": 30,
+      "recall_total": 30,
+      "recall_rate": 1.0,
+      "retention_by_day": [
+        10,
+        10,
+        10
+      ],
+      "day1_total": 10,
+      "day1_retained": 10,
+      "n_concepts": 15,
+      "moat_ok": true
+    },
+    {
+      "seed": 44,
+      "n_days": 3,
+      "recall_ok": 30,
+      "recall_total": 30,
+      "recall_rate": 1.0,
+      "retention_by_day": [
+        10,
+        10,
+        10
+      ],
+      "day1_total": 10,
+      "day1_retained": 10,
+      "n_concepts": 15,
+      "moat_ok": true
+    }
+  ],
+  "HONEST_CEILING": "the PIPELINE (parse->store->grow, staged, retained) is the deliverable; the data SOURCE here is a real-knowledge mini-encyclopedia (offline-textbook-author), swappable for a downloaded fact corpus (ConceptNet-style triples / simplified-Wiki). The parser handles SIMPLE 3-word SVO; ingesting raw complex prose needs a fact-extraction front-end (a bounded follow-on). Rich RENDERING of the learned facts is the RA generator's job (the broader-verb fine-tune lever, in flight)."
+}
