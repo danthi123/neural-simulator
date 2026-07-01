@@ -6314,3 +6314,23 @@ describe). Add these to the --demo transcript + a scripted smoke; keep the moat 
 enriched demo transcript all-correct (>=1 seed). Reuse-by-import; NO sim/ edit. THEN: neural interrogative parser
 (burn the parse scaffold) + broader-KB breadth (stream-cortex, higher D, "almost any topic") + webapp Interact
 wire-in + (deferred) spiking-forward. biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 758 DONE (2026-07-01 — richer question types in the console: yes/no + who + describe)
+
+`FluidChat.turn` QUESTION branch enriched (validated brain methods, no new mechanism): yes/no (is_it_true), who
+(who_does), describe (tell-me-about). Enriched --demo self-check ALL-CORRECT across what/anaphora/growth/yes-no/who/
+describe/moat. yes/no on a wrong patient honestly abstains ("I don't know", never a confident wrong answer).
+Commit 8d6fb7f1. The console now spans what/who/yes-no/describe + multi-turn anaphora + growth + abstention.
+
+**EXACT NEXT CONCRETE ACTION:** CYCLE 759 = BREADTH -- scale the fluid stack to a broader KB ("almost any topic",
+the honest scale wall; roadmap GAP B = manage-not-solve via domain-constraint + retrieval-augmentation + abstention).
+Build `_fluidconv_phase6_breadth_derisk.py`: author a BROADER KB (~40-60 facts across MANY entities drawn from the RA
+generator's OWN competent vocab -- SUBJECTS/OBJECTS/VERBS from _fluidconv_phase2_ra_finetune, so the generator renders
+them well), build the agent at a higher composer D (e.g. 256; FHRR capacity ~sqrt(D), validated to 320), teach all
+facts, then MEASURE (>=3 seeds): (a) RECALL across the broad KB (what_does correct on a sample), (b) the RA generator
+renders the broad answers grounded, (c) MOAT 0-FA on a held-out untaught set (the honest "I don't know" boundary), (d)
+CAPACITY -- characterize where recall/moat degrade as facts scale (the FHRR sqrt(D) boundary). GO bar: high recall +
+0-FA moat at the chosen scale; HONEST characterization of the capacity boundary (a data/D lever, not a wall). Then
+run the console over the broad KB (a richer demo transcript). Reuse-by-import; NO sim/ edit. THEN: neural
+interrogative parser (burn the scaffold) + webapp Interact wire-in + (deferred) spiking-forward. biologization/
+one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
