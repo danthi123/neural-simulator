@@ -1,0 +1,101 @@
+{
+  "probe": "fluidconv_phase13_instance_representation",
+  "GO": true,
+  "verdict": "GO -- KIND vs INSTANCE: 'the dog' (definite) resolves to the INSTANCE (its own fact, brown, NOT the kind); the instance INHERITS kind facts via isa ('what does the dog eat?' -> meat); 'dogs' (generic) -> the kind; two instances stay DISTINCT (brown vs black); the ISA-LESION BREAKS inheritance (load-bearing); the moat abstains on an unknown instance. >=3 seeds. The owner's 'which dog?' distinction, with inheritance + no cross-leakage + moat -- reuse-by-import, NO sim/ edit.",
+  "resolves": "kind vs instance: a definite 'the dog' resolves to a specific instance (own facts + isa-inheritance); 'dogs' -> the kind; distinct instances; moat.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 39.6,
+  "base": [
+    {
+      "seed": 42,
+      "lesion_isa": false,
+      "instance_own": "brown",
+      "instance_own_ok": true,
+      "inherited": "meat",
+      "inherited_src": "inherited",
+      "inheritance_ok": true,
+      "generic": "meat",
+      "generic_ok": true,
+      "dog_two_is": "black",
+      "distinct_ok": true,
+      "moat_ok": true
+    },
+    {
+      "seed": 43,
+      "lesion_isa": false,
+      "instance_own": "brown",
+      "instance_own_ok": true,
+      "inherited": "meat",
+      "inherited_src": "inherited",
+      "inheritance_ok": true,
+      "generic": "meat",
+      "generic_ok": true,
+      "dog_two_is": "black",
+      "distinct_ok": true,
+      "moat_ok": true
+    },
+    {
+      "seed": 44,
+      "lesion_isa": false,
+      "instance_own": "brown",
+      "instance_own_ok": true,
+      "inherited": "meat",
+      "inherited_src": "inherited",
+      "inheritance_ok": true,
+      "generic": "meat",
+      "generic_ok": true,
+      "dog_two_is": "black",
+      "distinct_ok": true,
+      "moat_ok": true
+    }
+  ],
+  "lesion": [
+    {
+      "seed": 42,
+      "lesion_isa": true,
+      "instance_own": "brown",
+      "instance_own_ok": true,
+      "inherited": null,
+      "inherited_src": "abstain",
+      "inheritance_ok": false,
+      "generic": "meat",
+      "generic_ok": true,
+      "dog_two_is": "black",
+      "distinct_ok": true,
+      "moat_ok": true
+    },
+    {
+      "seed": 43,
+      "lesion_isa": true,
+      "instance_own": "brown",
+      "instance_own_ok": true,
+      "inherited": null,
+      "inherited_src": "abstain",
+      "inheritance_ok": false,
+      "generic": "meat",
+      "generic_ok": true,
+      "dog_two_is": "black",
+      "distinct_ok": true,
+      "moat_ok": true
+    },
+    {
+      "seed": 44,
+      "lesion_isa": true,
+      "instance_own": "brown",
+      "instance_own_ok": true,
+      "inherited": null,
+      "inherited_src": "abstain",
+      "inheritance_ok": false,
+      "generic": "meat",
+      "generic_ok": true,
+      "dog_two_is": "black",
+      "distinct_ok": true,
+      "moat_ok": true
+    }
+  ],
+  "HONEST_CEILING": "a lightweight instance token + isa-inheritance + definite/generic routing, at the conversational layer (reuse-by-import). Inheritance is via an explicit symbolic isa link (like DRT), NOT code-similarity generalization (the separate PPMI/dendritic frontier). A PERCEIVED/consolidated episodic instance ('the dog I saw on my walk') = the engram-tag/hippocampal path (composes with Tier-3 live-and-remember); multiple co-present instances = the biased-competition WTA drop-in."
+}
