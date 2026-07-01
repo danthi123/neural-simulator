@@ -6008,3 +6008,34 @@ recommendation (transparency + steering; proceed under blanket authority, don't 
 cheapest-first de-risks (parallel). Three tasks tracked (b7v35ci7v + the 2 research subagents). Moat: PLUS not hard
 (tradeable for the learned-lossy fluency path where it helps, per 2026-06-17); biologization/one-brain HARD; honest
 origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 748 (2026-07-01 — FLUID-CONVERSATION roadmap SYNTHESIZED (both research passes in); Phase-0 = minimal-transformer generator)
+
+Both deep-research passes done + committed: `2026-07-01-fluid-conversation-gap-assessment.md` (gap) +
+`2026-07-01-fluid-conversation-mechanisms-roadmap.md` (mechanisms/roadmap). SYNTHESIS:
+- VERDICT on "minimize the transformer": a SPECTRUM; the honest sweet spot is MINIMAL transformer, NOT full-free.
+  Fully transformer-FREE brain-native open-domain fluency is a GENUINE WALL (field-wide: SpikeGPT overfits with
+  scale; project-reproduced 2026-06-02-generative-ceiling; VSA is associative-not-generative; open conversation
+  needs ~360M+ params + trillions of tokens). BUT the project already ran an 88.6M generative transformer as a
+  FAITHFUL SPIKING forward on its OWN RF substrate (ppl_ratio 1.0) -> the transformer is ALREADY a spiking net on
+  the one brain; the lever is SHRINK + brain-integrate, not delete. Decisive scale fact: TinyStories shows <5-10M
+  params are fluent/coherent on a CONSTRAINED domain -> the current external Qwen-0.5B is 15-50x larger than the
+  project's vocab-scale needs.
+- CURRENT STATE (gap pass): the "communicable brain minus hallucinations + growth" is ALREADY BUILT in skeleton
+  (the DiscursiveTurn console, ~1454-3000 concepts, multi-turn, moat 0-FA, grows via develop loop, transformer
+  DETACHABLE/fluency-only). Remaining work = FLUENCY + BREADTH without letting the transformer THINK.
+- 4-PHASE ROADMAP: Phase 0 = a ~10-30M TinyStories-curriculum generator (reuse tiny_transformer_train; prefer
+  hybrid-linear/RWKV recurrent) dropped into the EXISTING grounded-lang gate->constrain->verify loop IN PLACE OF
+  Qwen-0.5B -> tests GAP A (fluency) + E (grounding drop-in) + half-B (abstention-as-breadth) in one slice. Phase 1
+  = recurrent/on-substrate + multi-turn WTA. Phase 2 = growth-via-develop-loop. Phase 3 = thalamocortical dynamical
+  gating (Logiaco-Abbott-Escola 2021, the transformer-FREE compositional-generation science bet, research-gated,
+  PARALLEL). NO sim/ edit for Phase 0; modest local GPU (TinyStories train = hours on the 3090); composes validated
+  pieces (no new mechanism class). Moat stays (a PLUS, tradeable for the learned-lossy fluency path where it helps).
+
+**EXACT NEXT CONCRETE ACTION:** (1) on the Option-3 re-run (b7v35ci7v) finishing -> finalize Option-3 (clean 6/6) +
+flip CLAUDE.md (3rd property GO). (2) START PHASE 0 (long overnight GPU run, per owner "long runs OK"): train a
+~10-30M TinyStories-curriculum generator via tiny_transformer_train (d_model ~320, n_layers ~6-8, TinyStories
+corpus), then drop it into the grounded-lang gate->constrain->verify loop replacing Qwen-0.5B; measure fluency
+(held-out ppl) + grounding-drop-in + moat 0-FA. Present the roadmap to the owner (transparency); proceed under the
+blanket authority. Serial GPU (no contention): Phase-0 training launches AFTER the Option-3 re-run frees the GPU.
+biologization/one-brain HARD; honest origin+gitea; COMMIT ON MAIN.
