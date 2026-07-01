@@ -1,0 +1,627 @@
+{
+  "probe": "fluidconv_phase10_discussion",
+  "GO": true,
+  "verdict": "GO -- OPEN-ENDED grounded DISCUSSION: an open/concept/compare question the gate-first path abstains on now yields a multi-sentence answer citing >=2 grounded facts from the topic's neighbourhood (RA-synthesized), 0 ungrounded fact-claims (moat via VERIFY), an empty-neighbourhood topic HEDGES (no fabrication), the retrieval is load-bearing (permuted -> wrong-topic discussion), and an injected false fact is DROPPED by VERIFY. >=3 seeds. The brain DISCUSSES what it relates, grounded + traceable, instead of one-fact-lookup + abstain.",
+  "resolves": "open-ended grounded discussion: retrieve the topic's neighbourhood -> RA-synthesize a multi-fact discussion -> VERIFY grounded; moat as honest hedging, not hard-abstain.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 39.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "discuss": {
+        "concept": {
+          "question": "tell me about predators",
+          "topic": "predator",
+          "neighbourhood": [
+            [
+              "dog",
+              "is",
+              "predator"
+            ],
+            [
+              "cat",
+              "is",
+              "predator"
+            ],
+            [
+              "fox",
+              "is",
+              "predator"
+            ],
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            [
+              "cat",
+              "chase",
+              "mouse"
+            ],
+            [
+              "fox",
+              "eat",
+              "rabbit"
+            ],
+            [
+              "fox",
+              "chase",
+              "rabbit"
+            ]
+          ],
+          "reply": "Here's what I know about the predator: the dog eats meat . the dog chases cat . the cat eats fish . the cat chases mouse .",
+          "grounded_svos": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            [
+              "cat",
+              "chase",
+              "mouse"
+            ]
+          ],
+          "ungrounded": [],
+          "n_grounded": 4,
+          "hedged": false
+        },
+        "about": {
+          "question": "tell me about the dog",
+          "topic": "dog",
+          "neighbourhood": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "dog",
+              "is",
+              "predator"
+            ]
+          ],
+          "reply": "Here's what I know about the dog: the dog eats meat . the dog chases cat .",
+          "grounded_svos": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "chase",
+              "cat"
+            ]
+          ],
+          "ungrounded": [],
+          "n_grounded": 2,
+          "hedged": false
+        }
+      },
+      "lesion": {
+        "question": "tell me about dragons",
+        "topic": "dragon",
+        "neighbourhood": [],
+        "reply": "I don't know much about that.",
+        "grounded_svos": [],
+        "ungrounded": [],
+        "n_grounded": 0,
+        "hedged": true
+      },
+      "permuted": {
+        "question": "tell me about the dog",
+        "topic": "dog",
+        "neighbourhood": [
+          [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          [
+            "bird",
+            "is",
+            "prey"
+          ]
+        ],
+        "reply": "Here's what I know: the bird eats seed .",
+        "grounded_svos": [
+          [
+            "bird",
+            "eat",
+            "seed"
+          ]
+        ],
+        "ungrounded": [],
+        "n_grounded": 1,
+        "hedged": false
+      },
+      "confab": {
+        "question": "tell me about the dog",
+        "topic": "dog",
+        "neighbourhood": [
+          [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          [
+            "dog",
+            "is",
+            "predator"
+          ]
+        ],
+        "reply": "Here's what I know about the dog: the dog eats meat . the dog chases cat .",
+        "grounded_svos": [
+          [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        ],
+        "ungrounded": [
+          [
+            "dog",
+            "eat",
+            "fish"
+          ]
+        ],
+        "n_grounded": 2,
+        "hedged": false
+      },
+      "concept_ok": true,
+      "about_ok": true,
+      "lesion_ok": true,
+      "permuted_ok": true,
+      "confab_ok": true
+    },
+    {
+      "seed": 43,
+      "discuss": {
+        "concept": {
+          "question": "tell me about predators",
+          "topic": "predator",
+          "neighbourhood": [
+            [
+              "dog",
+              "is",
+              "predator"
+            ],
+            [
+              "cat",
+              "is",
+              "predator"
+            ],
+            [
+              "fox",
+              "is",
+              "predator"
+            ],
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            [
+              "cat",
+              "chase",
+              "mouse"
+            ],
+            [
+              "fox",
+              "eat",
+              "rabbit"
+            ],
+            [
+              "fox",
+              "chase",
+              "rabbit"
+            ]
+          ],
+          "reply": "Here's what I know about the predator: the dog eats meat . the dog chases cat . the cat eats fish . the cat chases mouse .",
+          "grounded_svos": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            [
+              "cat",
+              "chase",
+              "mouse"
+            ]
+          ],
+          "ungrounded": [],
+          "n_grounded": 4,
+          "hedged": false
+        },
+        "about": {
+          "question": "tell me about the dog",
+          "topic": "dog",
+          "neighbourhood": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "dog",
+              "is",
+              "predator"
+            ]
+          ],
+          "reply": "Here's what I know about the dog: the dog eats meat . the dog chases cat .",
+          "grounded_svos": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "chase",
+              "cat"
+            ]
+          ],
+          "ungrounded": [],
+          "n_grounded": 2,
+          "hedged": false
+        }
+      },
+      "lesion": {
+        "question": "tell me about dragons",
+        "topic": "dragon",
+        "neighbourhood": [],
+        "reply": "I don't know much about that.",
+        "grounded_svos": [],
+        "ungrounded": [],
+        "n_grounded": 0,
+        "hedged": true
+      },
+      "permuted": {
+        "question": "tell me about the dog",
+        "topic": "dog",
+        "neighbourhood": [
+          [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          [
+            "bird",
+            "is",
+            "prey"
+          ]
+        ],
+        "reply": "Here's what I know: the bird eats seed .",
+        "grounded_svos": [
+          [
+            "bird",
+            "eat",
+            "seed"
+          ]
+        ],
+        "ungrounded": [],
+        "n_grounded": 1,
+        "hedged": false
+      },
+      "confab": {
+        "question": "tell me about the dog",
+        "topic": "dog",
+        "neighbourhood": [
+          [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          [
+            "dog",
+            "is",
+            "predator"
+          ]
+        ],
+        "reply": "Here's what I know about the dog: the dog eats meat . the dog chases cat .",
+        "grounded_svos": [
+          [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        ],
+        "ungrounded": [
+          [
+            "dog",
+            "eat",
+            "fish"
+          ]
+        ],
+        "n_grounded": 2,
+        "hedged": false
+      },
+      "concept_ok": true,
+      "about_ok": true,
+      "lesion_ok": true,
+      "permuted_ok": true,
+      "confab_ok": true
+    },
+    {
+      "seed": 44,
+      "discuss": {
+        "concept": {
+          "question": "tell me about predators",
+          "topic": "predator",
+          "neighbourhood": [
+            [
+              "dog",
+              "is",
+              "predator"
+            ],
+            [
+              "cat",
+              "is",
+              "predator"
+            ],
+            [
+              "fox",
+              "is",
+              "predator"
+            ],
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            [
+              "cat",
+              "chase",
+              "mouse"
+            ],
+            [
+              "fox",
+              "eat",
+              "rabbit"
+            ],
+            [
+              "fox",
+              "chase",
+              "rabbit"
+            ]
+          ],
+          "reply": "Here's what I know about the predator: the dog eats meat . the dog chases cat . the cat eats fish . the cat chases mouse .",
+          "grounded_svos": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "cat",
+              "eat",
+              "fish"
+            ],
+            [
+              "cat",
+              "chase",
+              "mouse"
+            ]
+          ],
+          "ungrounded": [],
+          "n_grounded": 4,
+          "hedged": false
+        },
+        "about": {
+          "question": "tell me about the dog",
+          "topic": "dog",
+          "neighbourhood": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "chase",
+              "cat"
+            ],
+            [
+              "dog",
+              "is",
+              "predator"
+            ]
+          ],
+          "reply": "Here's what I know about the dog: the dog eats meat . the dog chases cat .",
+          "grounded_svos": [
+            [
+              "dog",
+              "eat",
+              "meat"
+            ],
+            [
+              "dog",
+              "chase",
+              "cat"
+            ]
+          ],
+          "ungrounded": [],
+          "n_grounded": 2,
+          "hedged": false
+        }
+      },
+      "lesion": {
+        "question": "tell me about dragons",
+        "topic": "dragon",
+        "neighbourhood": [],
+        "reply": "I don't know much about that.",
+        "grounded_svos": [],
+        "ungrounded": [],
+        "n_grounded": 0,
+        "hedged": true
+      },
+      "permuted": {
+        "question": "tell me about the dog",
+        "topic": "dog",
+        "neighbourhood": [
+          [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          [
+            "bird",
+            "is",
+            "prey"
+          ]
+        ],
+        "reply": "Here's what I know: the bird eats seed .",
+        "grounded_svos": [
+          [
+            "bird",
+            "eat",
+            "seed"
+          ]
+        ],
+        "ungrounded": [],
+        "n_grounded": 1,
+        "hedged": false
+      },
+      "confab": {
+        "question": "tell me about the dog",
+        "topic": "dog",
+        "neighbourhood": [
+          [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          [
+            "dog",
+            "chase",
+            "cat"
+          ],
+          [
+            "dog",
+            "is",
+            "predator"
+          ]
+        ],
+        "reply": "Here's what I know about the dog: the dog eats meat . the dog chases cat .",
+        "grounded_svos": [
+          [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          [
+            "dog",
+            "chase",
+            "cat"
+          ]
+        ],
+        "ungrounded": [
+          [
+            "dog",
+            "eat",
+            "fish"
+          ]
+        ],
+        "n_grounded": 2,
+        "hedged": false
+      },
+      "concept_ok": true,
+      "about_ok": true,
+      "lesion_ok": true,
+      "permuted_ok": true,
+      "confab_ok": true
+    }
+  ],
+  "HONEST_CEILING": "grounded multi-fact discussion + retrieval-augmented synthesis over the stored+adjacent neighbourhood is achievable; free abstractive synthesis / open-world inference BEYOND the retrieved facts is the field's genuine wall -- the honest hedge (discuss what it relates, flag guesses, say where knowledge ends) is the deliverable at that boundary."
+}
