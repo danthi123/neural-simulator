@@ -61,6 +61,10 @@ def test_discourse_plan_synthesis(chat):
     cmp = chat.turn("compare dog and cat").lower()
     assert "but" in cmp                                       # checkable Contrast (the dog/cat patients differ)
     assert "dog" in cmp and "cat" in cmp
+    # checkable GIST: teach a wolf that shares a fact with the dog, then ask what they share
+    chat.turn("the wolf eats meat")
+    shared = chat.turn("what do dogs and wolves share?").lower()
+    assert "both" in shared and "eat meat" in shared          # entailment-only intersection (dog+wolf both eat meat)
 
 
 def test_instance_demo_self_check():
