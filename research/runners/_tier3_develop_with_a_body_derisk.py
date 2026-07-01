@@ -133,7 +133,7 @@ def _run_multiday(agent, hunger, state, *, n_days, steps_per_day, order=None, co
     return per_day
 
 
-def run_seed(seed, root, *, n_days=4, steps_per_day=700, drive_read_every=10):
+def run_seed(seed, root, *, n_days=4, steps_per_day=700, drive_read_every=10, drive_window=40):
     """One seed: DEVELOP a persistent merged brain over `n_days` LIVED foraging days, then the anti-cheats
     (frozen-brain / permuted-world / persistence-across-reset). Builds: 1 develop agent + 1 frozen + 1 permuted +
     1 persistence agent."""
@@ -144,7 +144,7 @@ def run_seed(seed, root, *, n_days=4, steps_per_day=700, drive_read_every=10):
     # ── the DEVELOP run: one persistent agent lives n_days, accumulating LIVED knowledge ──
     agent = _build_agent(seed)
     bridge = agent._merged_bridge
-    hunger = SpikingHunger(bridge, window=20)
+    hunger = SpikingHunger(bridge, window=drive_window)
     pre_conn = to_host(bridge.cp_connections.data).copy()          # MOAT (in vivo): pre-life conversational synapses
     state = LiveState(seed)
     cache = set()
@@ -165,7 +165,7 @@ def run_seed(seed, root, *, n_days=4, steps_per_day=700, drive_read_every=10):
     # ── FROZEN-BRAIN control: an identical multi-day life but commit_facts=False (sees/grounds, does NOT store) ->
     #    competence must stay FLAT (no accumulated facts -> recall 0). ──
     fr_agent = _build_agent(seed)
-    fr_hunger = SpikingHunger(fr_agent._merged_bridge, window=20)
+    fr_hunger = SpikingHunger(fr_agent._merged_bridge, window=drive_window)
     fr_state = LiveState(seed)
     _run_multiday(fr_agent, fr_hunger, fr_state, n_days=n_days, steps_per_day=steps_per_day,
                   drive_read_every=drive_read_every, commit_facts=False, cache=set(), track=False)
@@ -175,7 +175,7 @@ def run_seed(seed, root, *, n_days=4, steps_per_day=700, drive_read_every=10):
     # ── LIVED-not-scripted control: a PERMUTED-world life (reversed introduction order) -> a DIFFERENT chain ->
     #    a DIFFERENT lived-fact set (the memory tracks the lived layout, not a script). ──
     pm_agent = _build_agent(seed)
-    pm_hunger = SpikingHunger(pm_agent._merged_bridge, window=20)
+    pm_hunger = SpikingHunger(pm_agent._merged_bridge, window=drive_window)
     pm_state = LiveState(seed)
     _run_multiday(pm_agent, pm_hunger, pm_state, n_days=n_days, steps_per_day=steps_per_day,
                   drive_read_every=drive_read_every, order=list(reversed(DEV_ORDER)), cache=set(), track=False)
