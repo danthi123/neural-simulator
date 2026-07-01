@@ -6683,6 +6683,28 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 781 (2026-07-01 — owner "continue best judgement"; GPU-verified console + TAXONOMY-CHAIN classify route)
+
+Owner re-authorized autonomous continuation. (1) VERIFIED the whole console on the GPU backend (SIM_BACKEND=cupy,
+dev=cuda) -- every capability (learn/discuss-connected/compare/yes-no/moat) works identically to numpy-CPU (the owner's
+real env). (2) Built a TAXONOMY-CHAIN "classify" route: "learn about X" now extends ONE parent isa-level (dog -> mammal,
++ mammal -> vertebrata via _wd_fetch_store on the parent, cache-fast/idempotent), and "how is the dog classified?" /
+"trace the dog's ancestry" / "what is a dog ultimately?" -> the real Wikidata subclass CHAIN rendered as connected prose
+("A dog is a mammal, which is a vertebrata" -- Collins-Quillian, all grounded edges). Fixed possessive tokenization
+("dog's"->"dog", removesuffix "'s"). Cache now includes the taxonomy parent "mammal" (offline classify). Also tidied the
+single-fact FT answer ("the dog eats meat ." -> "The dog eats meat.", `_clean`). CI now 4 tests (persistence test also
+asserts the classify chain, offline). Both offline self-checks green. NO sim/ edit.
+
+**EXACT NEXT CONCRETE ACTION:** commit the taxonomy-chain + GPU-verify + docstring + cache + CI + this state to BOTH
+remotes on main. THEN continue autonomously ("best judgement"): the fact-grounded fluid-conversation console is now VERY
+comprehensive (learn/discuss-connected/compare/share/classify-chain/instance/multi-turn/growth/persist/moat, REAL
+Wikidata knowledge, GPU+CPU). Remaining autonomous options (pick highest-leverage, avoid marginal): deepen the classify
+chain to N parent levels (currently 1 extra -> 2-level chains); a "why does X have Y / why is X a Z" grounded
+explanation route; OR consolidate + a broader integration/regression sweep. OWNER-STEER (do NOT build): #3 plan-guided
+synthesis fine-tune (a train); open-domain/free-inference wall; webapp Interact (UI verify); auto-persist-default
+(silent writes); spiking-forward (KV-cache). biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
+honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for CPU/console).
+
 ## CYCLE 780 (2026-07-01 — PERSISTENCE GO: the brain REMEMBERS learned facts across sessions [Phase-17])
 
 Built + de-risked + wired PERSISTENCE (the owner's "grow THROUGH experiences"). Mechanism (cheap, composes built

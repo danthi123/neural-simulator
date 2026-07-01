@@ -9,6 +9,8 @@ facts, and it abstains ("I don't know") on what it hasn't learned.
             "what do dogs eat?" -> the KIND ("which dog?", Phase-14: definite vs generic + isa-inheritance).
   LEARN     "learn about horse" -> fetch + ingest REAL Wikidata facts on demand (Phase-15 grounded tail); then
             "what is the horse?" -> "a horse is a mammal"; "what does the horse have?" -> "the horse has fur".
+  CLASSIFY  "how is the elephant classified?" / "trace the dog's ancestry" -> the real Wikidata subclass CHAIN
+            ("An elephant is a mammal, which is a vertebrate") -- Collins-Quillian taxonomy, all grounded edges.
   STATEMENT "the wolf eats rabbit" / "wolf eat rabbit"  -> hear (LEARN) -> "ok, i learned that the wolf eats rabbit."
   UNTAUGHT  -> "I don't know."   (the no-confab moat)
 
@@ -55,7 +57,8 @@ _WD_PROPS = {"P279": "isa", "P527": "has", "P462": "is"}
 
 OUT = _REPO / "research" / "findings" / "raw" / "_fluidconv_chat_repl_demo.json"
 _QWORDS = {"what", "who", "does", "do", "is", "are", "tell", "can", "could", "why", "how", "when", "where", "?",
-           "compare", "different", "difference", "share", "common"}   # compare/share have no wh-word but are queries
+           "compare", "different", "difference", "share", "common",   # compare/share have no wh-word but are queries
+           "classify", "classified", "classification", "trace", "ancestry", "ultimately"}   # taxonomy-chain triggers
 _PRON = {"it", "its", "they", "them", "that"}
 _STOP = {"the", "a", "an", "does", "do", "did", "the", "to", "of", "please"}
 # instance-rep (Phase-14): a curated attribute vocab (for "the dog is brown") + N instance slots per kind.
@@ -175,14 +178,33 @@ class FluidChat:
         animal Q7378, not the album/family), then fall back to the first hit with facts (so a query that has no
         exact-label match still resolves)."""
         concept = concept.lower().strip()
+        facts, msg = self._wd_fetch_store(concept)
+        if msg is not None:
+            return msg
+        # extend the taxonomy ONE parent level (so "learn about dog" reaches dog -> mammal -> vertebrate, the real
+        # Wikidata subclass chain -> the "classify" route has depth). `_wd_fetch_store` is cache-fast + idempotent
+        # (stores even when cached -> the parent's facts land in THIS session's KB); no further recursion.
+        parent = next((p for (a, v, p) in facts if v == "isa"), None)
+        if parent is not None and parent != concept:
+            try:
+                self._wd_fetch_store(parent)
+            except Exception:
+                pass
+        n = len([f for f in facts])
+        ex = "; ".join(f"{a} {v} {p}" for (a, v, p) in facts[:4])
+        return f"ok, i learned {n} facts about the {concept}: {ex}."
+
+    def _wd_fetch_store(self, concept):
+        """Resolve `concept` -> fetch clean Wikidata SVO (cached) -> inject codes + store. Returns (facts, err_msg):
+        err_msg is None on success (facts may be []), else a user string. Sense-aware QID pick (exact-label-first)."""
+        concept = concept.lower().strip()
         if concept in self._wd_cache:
             facts = self._wd_cache[concept]
         else:
             try:
                 hits = self._wd_search(concept, limit=6)
                 if not hits:
-                    return f"i couldn't find '{concept}' in the knowledge source."
-                # pass 1: exact-label matches first (correct sense), then pass 2: any hit -- first with facts wins.
+                    return [], f"i couldn't find '{concept}' in the knowledge source."
                 exact = [(q, lbl) for (q, lbl) in hits if lbl.lower().strip() == concept]
                 facts = []
                 for qid, _lbl in exact + hits:
@@ -190,26 +212,35 @@ class FluidChat:
                     if facts:
                         break
             except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError, RuntimeError):
-                return "i couldn't reach the knowledge source right now."
+                return [], "i couldn't reach the knowledge source right now."
             self._wd_cache[concept] = facts
             try:
                 _WD_CACHE.write_text(json.dumps(self._wd_cache, indent=2))
             except Exception:
                 pass
         if not facts:
-            return f"i couldn't find facts about the {concept}."
-        n = 0
+            return [], f"i couldn't find facts about the {concept}."
         for (a, v, p) in facts:
             for t in (a, v, p):
                 self._ensure_concept(t)
             self.mta.agent.composer.store(a, v, p)
             self.store_keys.add((a, v, p))
-            self.agents.add(a); self.patients.add(p); n += 1
+            self.agents.add(a); self.patients.add(p)
             if [a, v, p] not in self._learned:
                 self._learned.append([a, v, p])              # persist the grown knowledge
-        self.kinds = sorted(self.agents)                     # the new concept + its parents become mintable kinds
-        ex = "; ".join(f"{a} {v} {p}" for (a, v, p) in facts[:4])
-        return f"ok, i learned {n} facts about the {concept}: {ex}."
+        self.kinds = sorted(self.agents)
+        return facts, None
+
+    def _taxonomy_chain(self, concept, max_hops=5):
+        """Chase the isa link hop-by-hop -> the concept's taxonomic ancestry (Collins-Quillian), all real stored edges.
+        Returns the ordered list of ancestors, e.g. ['mammal', 'vertebrate', 'chordate']."""
+        chain, cur, seen = [], concept, {concept}
+        for _ in range(max_hops):
+            nxt = self.mta.agent.what_does(cur, "isa")
+            if nxt is None or nxt in seen:
+                break
+            chain.append(nxt); seen.add(nxt); cur = nxt
+        return chain
 
     def _content(self, toks):
         subj = next((t for t in toks if t in self.agents or t in self.vocab and t not in _STOP and t not in self.actions), None)
@@ -342,7 +373,7 @@ class FluidChat:
     def turn(self, text):
         """One conversation turn: statement -> learn; question -> gate->answer->verify OR discuss; untaught -> abstain."""
         raw = text.strip()
-        toks = [t.strip("?.!,") for t in raw.lower().split()]
+        toks = [t.strip("?.!,").removesuffix("'s").removesuffix("’s") for t in raw.lower().split()]  # + possessive
         toks = [t for t in toks if t]
         if not toks:
             return "?"
@@ -411,6 +442,18 @@ class FluidChat:
                     return cmp_prose
                 dx, dy = self._discuss(x), self._discuss(y)      # else: the two grounded discussions
                 return f"{dx} And {dy[0].lower()}{dy[1:]}" if dy else dx
+
+            # CLASSIFY / TAXONOMY CHAIN ("how is the dog classified?" / "trace the dog's ancestry" / "what is a dog
+            # ultimately?") -> the real Wikidata subclass chain (Collins-Quillian), rendered as connected prose.
+            _joined = " ".join(toks)
+            if (("classif" in _joined) or "trace" in tset or "ancestry" in tset or "ultimately" in tset) \
+                    and (subj is not None or concepts_in):
+                topic = subj or concepts_in[0]
+                chain = self._taxonomy_chain(topic)
+                if not chain:
+                    return f"I don't know how the {topic} is classified."
+                parts = [f"{_art(chain[0])} {chain[0]}"] + [f"which is {_art(c)} {c}" for c in chain[1:]]
+                return f"{_art(topic).capitalize()} {topic} is " + ", ".join(parts) + "."
 
             # DISCUSS ("tell me about the dog" / "what do you think about the dog" / "what about predators") ->
             # an open-ended grounded discussion of the topic's neighbourhood (Phase-10), not a one-fact lookup.

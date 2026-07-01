@@ -81,6 +81,9 @@ def test_persistence_save_load(chat, tmp_path):
     assert chat.load_state(state) == 0                        # idempotent (already known -> 0 new)
     assert chat.mta.agent.what_does("elephant", "isa") == "mammal"   # still recalled
     assert n >= 1
+    # taxonomy chain (real 2-level Wikidata subclass, offline via the parent-extended cache: elephant->mammal->vertebrata)
+    cls = chat.turn("how is the elephant classified?").lower()
+    assert "mammal" in cls and "which is" in cls
 
 
 def test_instance_demo_self_check():

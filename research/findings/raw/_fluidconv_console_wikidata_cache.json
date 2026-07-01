@@ -272,5 +272,12 @@
       "has",
       "gynoecium"
     ]
+  ],
+  "mammal": [
+    [
+      "mammal",
+      "isa",
+      "vertebrata"
+    ]
   ]
 }
