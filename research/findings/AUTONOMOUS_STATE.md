@@ -5912,3 +5912,27 @@ hunger->DA link (DA_hungry>DA_sated) + gate-tightens + moat. On LINK+GATE+MOAT O
 44 100 101 102`, cheap: 1 build + ~5 DA measures/seed, ~15-20 min). On a link fail -> localize (does drive_agrp fire
 + raise DA? tune drive_da_sensitivity / n_settle). Then finalize an Option-3 findings + present. Moat 0-leak +
 can-only-tighten (HARD); honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 744 (2026-07-01 — Option 3 re-smoke iterating [clean lesion]; Option 2B PRE-SCOPED [pre-staged for the night])
+
+Option 3 (cross-modal one-animal): smoke-2 (bg3b1292s) washout FIXED monotone + stronger sensitivity gave a clean
+delta (DA 0.500->0.583, gate 0.06->0.226, hungry abstains 0.12->0.43 err 0.22->0.09, moat 0-FA); lesion_ok still
+failed (current-zeroing lesion confounded by SNc drift). Fix (28b387a2): clean drive-lesion = SEVER the hunger->DA
+link (same deficit, remove the drive_agrp rule -> network matched). Re-smoke IN FLIGHT (bbvc281wx); expect full GO.
+
+Option 2B (24/7 develop-with-a-body harness -- the watch-a-brain-develop-over-a-week north-star) PRE-SCOPED
+(a810f61041c0c028b, doc `research/findings/2026-07-01-tier3-option2b-24-7-develop-harness-scoping.md`): largely-done,
+a WIRING SEAM (NO sim/ edit). Recommended: an additive default-None `per_day_wake_fn(day_index, state, lineage)` on
+develop_gpu (_longitudinal_develop_loop_gpu.py, slotted between should_continue :376 + consolidate :426; replaces the
+LISTEN-only WAKE :389-423 with a foraging day) + a one-line _free_agent guard (:468 -- the CRUX: _free_agent frees
+composer.bridge's pool = the shared merged bridge for the co-resident composer, so the persistent agent must NOT be
+freed per-day) + a ~40-60 LOC sibling harness entry (develop_run.py --with-body). Claims the supervisor (fsync/PAUSE/
+resume/bundle) + the per-day BUNDLE (developed_brain_io.py:53-56 _inner_agent falls through to the merged agent)
+drive a body-run UNCHANGED. TRUST-BUT-VERIFY at build time: the _free_agent guard + the bundle acceptance.
+
+**EXACT NEXT CONCRETE ACTION:** the Option-3 re-smoke (bbvc281wx) drives the immediate next -- on full GO run the
+6-seed (`--seeds 42 43 44 100 101 102`, cheap ~15-20 min) -> finalize Option-3 findings. THEN Option 2B: verify the
+_free_agent/bundle claims, add the per_day_wake_fn seam + _free_agent guard + the sibling entry, de-risk (short
+multi-day body-run through the ACTUAL harness: per-day bundles discoverable + PAUSE->resume continues the developed
+life). Both NO sim/ edit predicted. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN. Night: Option 3 -> 2B ->
+richer-world / Option 4.
