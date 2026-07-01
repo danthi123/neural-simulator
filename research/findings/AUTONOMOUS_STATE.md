@@ -5892,3 +5892,23 @@ moat-safe), then Option 2B (24/7 harness, north-star), defer Option 4 (needs a n
 cue abstention differential + moat 0-FA both levels + drive-lesion/sated-both/permuted controls). CPU-logic-check ->
 GPU 1-seed smoke (controller-serial) -> 6-seed. NO sim/ edit predicted. Moat 0-leak + can-only-tighten (HARD); honest
 origin+gitea; COMMIT ON MAIN. (Owner may redirect to Option 2B / hold.)
+
+## CYCLE 743 (2026-07-01 — Tier-3 Option 3 cross-modal one-animal BUILT + CPU-verified; GPU smoke in flight)
+
+Wired the hunger->DA link (2bf429d5, additive default-off drive_to_da on build_merged_nav_conv_bridge + MergedNavConvAgent;
+appends a from_region_firing rule reading drive_agrp to the shared dopamine modulator; NO sim/ edit) + built the de-risk
+`research/runners/_tier3_cross_modal_one_animal_derisk.py` (6cd7b5bc): MEASURE hunger->DA on the REAL merged bridge
+(inject deficit -> drive_agrp fires -> read shared dopamine) + FEED the measured DA levels into the VALIDATED DA-gate
+machinery (reuse-by-import da_to_gate + FHRRCleanupComposer + run_condition from the 6/6-GO 2026-06-18 precision-gate
+de-risk). 6 gates: link (DA_hungry>DA_sated) / drive-lesion (no rise) / monotone / gate-tightens / behavioral (hungry
+abstains more + lower error) / no-confab MOAT 0-FA both (can ONLY tighten -- moat-safe by construction). CPU checks
+PASS (gate composition g0 0.06->0.25 tighter; behavioral abstain 0.12->0.49, err 0.22->0.10, moat 0-FA both on
+synthetic DAs -- only the real-bridge hunger->DA measurement needs GPU). NOTE: hit the &-trap again (trailing & on a
+foreground Bash launch -> orphaned the first smoke); caught it, killed the orphan (PID 23724), relaunched properly
+run_in_background=true. LESSON re-underscored: NEVER a trailing & -- always run_in_background.
+
+**EXACT NEXT CONCRETE ACTION:** Option-3 GPU smoke IN FLIGHT (bg **bhz6hvqoy**, --smoke): validates the real-bridge
+hunger->DA link (DA_hungry>DA_sated) + gate-tightens + moat. On LINK+GATE+MOAT OK -> run the 6-seed (`--seeds 42 43
+44 100 101 102`, cheap: 1 build + ~5 DA measures/seed, ~15-20 min). On a link fail -> localize (does drive_agrp fire
++ raise DA? tune drive_da_sensitivity / n_settle). Then finalize an Option-3 findings + present. Moat 0-leak +
+can-only-tighten (HARD); honest origin+gitea; COMMIT ON MAIN.
