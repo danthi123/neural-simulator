@@ -51,6 +51,7 @@ from research.runners._fluidconv_phase2_ra_qa_eval_derisk import FTFaculty, _v3 
 from research.runners._fluidconv_phase15_wikidata_breadth_derisk import _fetch_entity  # noqa: E402
 from research.runners._fluidconv_phase16_discourse_plan_derisk import (  # noqa: E402
     plan_discourse, compare_discourse, shared_discourse)
+from research.runners._fluidconv_phase7_neural_interrog_parser_derisk import _neural_parse, WH as _WH7  # noqa: E402
 
 _WD_SEARCH = "https://www.wikidata.org/w/api.php"          # wbsearchentities: resolve a concept NAME -> a Wikidata QID
 _WD_CACHE = _REPO / "research" / "findings" / "raw" / "_fluidconv_console_wikidata_cache.json"
@@ -109,6 +110,7 @@ class FluidChat:
         # the fine-tune's broad subject/object pools + instance slots + attribute vocab + any extra.
         vocab = (set(_collect_vocab(self.cur)) | set(FT_SUBJECTS) | set(FT_OBJECTS) | set(_ATTRS)
                  | {"isa", "is"}          # instance-rep relation tokens (action fillers) need composer codes
+                 | set(_WH7.keys()) | {"queries", "patient", "agent", "yesno"}   # Phase-7 wh->query-type facts (wh words + roles)
                  | {t for slots in self._inst_toks.values() for t in slots} | set(extra_vocab or []))
         self.vocab = sorted(vocab)
         # referents (for anaphora) must stay small (one 40-neuron attractor/referent in n=600) -> a curated set
@@ -117,6 +119,13 @@ class FluidChat:
                                   seed=seed, defer_planner=True, enable_biased_competition=False, composer_kind="rf",
                                   D=256)
         _teach(self.mta.agent, self.cur)
+        # Phase-7 NEURAL interrogative parser: the wh->query-type map is LEARNED (stored as composer facts + recalled),
+        # so "what does X Y?" comprehension is brain-based (composer wh->type + BridgeParser roles), not a host keyword.
+        for _wh, _qt in _WH7.items():
+            try:
+                self.mta.agent.composer.store(_wh, "queries", _qt)
+            except Exception:
+                pass
         self.store_keys = {tuple(f) for f in facts}
         self.faculty = FTFaculty()
         self.npar = self.faculty.npar
@@ -530,7 +539,15 @@ class FluidChat:
             if subj is None and kind_q is not None:
                 subj = kind_q
 
-            # WHAT (default) -> patient query
+            # WHAT (default) -> patient query. The subject+verb come from the NEURAL interrogative parser (Phase-7:
+            # composer wh->query-type + BridgeParser roles) when it resolves a patient-query cue; else the keyword
+            # subj/verb (a fallback -> byte-identical to the prior behaviour when the neural parse abstains).
+            try:
+                _qt, _cue = _neural_parse(self.mta.agent, raw, self.agents, self.actions, self.patients, self.inflect)
+            except Exception:
+                _qt, _cue = None, None
+            if _qt == "patient" and _cue and len(_cue) >= 2 and _cue[0] in self.agents:
+                subj, verb = _cue[0], _cue[1]                # brain-based comprehension of "what does X Y?"
             if subj is None or verb is None:
                 return "I don't know."
             _p, reply = self._answer(subj, verb)

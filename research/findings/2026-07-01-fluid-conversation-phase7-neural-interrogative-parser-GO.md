@@ -41,3 +41,16 @@ deferred; growth over pre-allocated codes → the dendritic frontier).
 
 **Artifacts:** `research/runners/_fluidconv_phase7_neural_interrog_parser_derisk.py`; result
 `research/findings/raw/_fluidconv_phase7_neural_interrog_parser.json`.
+
+## Update (2026-07-01, CYCLE 783) — DEPLOYED into the FluidChat console (the burndown is now live, not opt-in)
+Per `feedback_close_arcs_to_full_capacity` (flip the validated de-risk into production), the Phase-7 neural parse is
+now WIRED into `_fluidconv_chat_repl.py`: the console stores the wh→query-type facts at init (the wh words + `queries`/
+`patient`/`agent`/`yesno` added to the composer vocab) and the "what does X Y?" tail resolves its (subject, verb) via
+`_neural_parse` (composer wh→type recall + `BridgeParser` roles), with the keyword extraction as a **fallback** (so an
+abstain/miss is byte-identical to the prior behaviour → low regression risk). Verified: composer recall `what→patient,
+who→agent, does→yesno` (brain-based, learned), `_neural_parse("what does the dog chase?") → ("patient", ('dog',
+'chase'))`; the console answers correctly; both offline self-checks (`--demo`/`--showcase`) + all 4 CI tests green. ⇒
+the deployed console's core what-question comprehension is brain-based (composer + parser), not a host keyword rule.
+Honest scope unchanged: the broader intent-DISPATCH (learn/discuss/compare/classify/why/instance) stays host
+orchestration (interface routing, not the wh-comprehension cheat this closes); who/yes-no keep their keyword routes
+(the neural map recalls them too — a further wire-in if prioritized).

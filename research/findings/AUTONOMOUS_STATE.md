@@ -6683,6 +6683,27 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 783 (2026-07-01 — grounded WHY route + DEPLOYED the Phase-7 neural interrogative parser into the console)
+
+Two deliverables: (1) grounded WHY route -- "why is a dog a chordate?" -> the real isa-PATH ("Because a dog is a
+mammal, a mammal is a vertebrata and a vertebrata is a chordata."), moat on non-ancestors ("why is a dog a fish? -> I
+don't know"); a distinct grounded transitive-isa REASONING capability. (2) DEPLOYED the validated Phase-7 neural
+interrogative parser INTO the console (a shortcut burndown to full capacity, `feedback_close_arcs_to_full_capacity`):
+the wh->query-type map is now LEARNED (stored as composer facts what->patient/who->agent/does->yesno + recalled), and
+"what does X Y?" resolves (subj,verb) via `_neural_parse` (composer wh->type + BridgeParser roles) with the keyword
+extraction as a FALLBACK (abstain -> byte-identical, low risk). Verified load-bearing (composer recall what->patient
+etc.; neural parse resolves the cue); fixed a silent-store bug (the wh WORDS weren't in vocab -> store no-op'd -> added
+them). Both offline self-checks + all 4 CI tests green. NO sim/ edit. ⇒ the deployed console's core what-question
+comprehension is brain-based (composer + parser), not a host keyword.
+
+**EXACT NEXT CONCRETE ACTION:** commit the why-route (already committed 72f3faf7) + the neural-parser deployment
+(runner + Phase-7 finding update + this state) to BOTH remotes on main. THEN continue ("best judgement"): the console
+is now comprehensive + several shortcuts burned down. Remaining: extend the neural parse to who/yes-no (the map
+recalls them; a bounded follow-on); OR the DEEP owner-steer/gated levers (#3 synthesis fine-tune [train]; spiking-
+forward [KV-cache]; open-domain wall; webapp/auto-persist [UI/side-effects]). Prefer bounded burndowns + honest
+scoping of the deep frontier; avoid marginal polish. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless
+justified; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy (numpy for CPU/console).
+
 ## CYCLE 782 (2026-07-01 — deepened classify chain to full ancestry + --showcase one-command demo)
 
 Deepened the taxonomy "classify" route: "learn about X" extends up to 3 parent isa-levels (bounded loop over
