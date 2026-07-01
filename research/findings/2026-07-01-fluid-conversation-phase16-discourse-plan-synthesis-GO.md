@@ -48,11 +48,20 @@ fix) moves structure INTO a checkable plan and asks the generator for LESS.
   free-analogy NO-GO). The honest posture at it: checkable-inference-only + grounded connectives + say-where-knowledge-
   ends.
 
+## Update — #2 checkable GIST / shared-property also landed (same session)
+`shared_discourse(x, y)` — "what do dogs and wolves have in common / share?" → the checkable INTERSECTION (shared
+isa-parents + shared verb+patient, entailment-only): *"Both the dog and the wolf are a mammal and both the dog and the
+wolf eat meat."* (base verb for the plural "both" subject). Wired into the console (a "share"/"common" route; irregular
+plural "wolves"→"wolf" added to the normalizer). De-risk GO (shared present only when genuinely in both stores; a
+non-shared fact — dog chases cat vs wolf chases rabbit — is correctly excluded). Grounded by construction; never a free
+generalization. So both cheap-first synthesis pieces (#1 connected prose, #2 checkable gist) are done.
+
 ## Where this sits
 Closes the ~70% cheap residual of the multi-fact-synthesis frontier — "it lists facts" → connected, contrastive,
-grouped grounded prose. Next (gated, lower priority): #2 richer checkable inference (gist/shared-property beyond
-compare); #3 a plan-guided fine-tune for genuine single-pass fluency (moat + fallback as the safety net) — owner-steer,
-since #1 already delivers the connected-prose flavor with zero risk.
+grouped grounded prose + checkable compare/gist. Next (gated, owner-steer): #3 a plan-guided fine-tune for genuine
+single-pass fluency (moat + fallback as the safety net) — a train, waits for steer, since #1/#2 already deliver the
+connected-prose + connect-across-facts flavor with zero risk. The free single-pass abstractive-synthesis + open-world
+cross-fact inference wall on a ~21M stays the honest boundary (routed around, not solved).
 
 **Artifacts:** `research/runners/_fluidconv_phase16_discourse_plan_derisk.py` (+ `plan_discourse`/`compare_discourse`,
 imported by the console); result `research/findings/raw/_fluidconv_phase16_discourse_plan.json`; scoping

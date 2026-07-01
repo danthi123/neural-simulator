@@ -46,6 +46,10 @@
     "contrast_ok": true,
     "additive_ok": true
   },
+  "shared": {
+    "prose": "Both the dog and the wolf are a mammal and both the dog and the wolf eat meat.",
+    "shared_ok": true
+  },
   "lesion": {
     "prose": "I don't know much about the dragon.",
     "lesion_ok": true

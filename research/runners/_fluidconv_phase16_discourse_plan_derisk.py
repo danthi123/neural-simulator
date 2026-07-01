@@ -109,6 +109,27 @@ def plan_discourse(topic, facts, *, render_action=None):
     return prose, used
 
 
+def shared_discourse(x, y, facts_x, facts_y):
+    """CHECKABLE GIST (#2): what two topics SHARE -- shared isa-parents + shared verb+patient facts, entailment-only
+    (a shared fact must be present in BOTH stores; never a free generalization). "both the dog and the wolf eat meat.\""""
+    ox = [f for f in facts_x if f[0] == x]
+    oy = {(v, p) for (a, v, p) in facts_y if a == y}
+    lines = []
+    for (a, v, p) in ox:
+        if (v, p) in oy:
+            if v == "isa":
+                lines.append(f"both the {x} and the {y} are {_art(p)} {p}")
+            elif v == "is":
+                lines.append(f"both the {x} and the {y} are {p}")
+            elif v == "has":
+                lines.append(f"both the {x} and the {y} have {p}")
+            else:
+                lines.append(f"both the {x} and the {y} {v} {p}")   # base verb: plural "both" subject ("both ... eat")
+    if not lines:
+        return f"the {x} and the {y} don't share anything i know.", False
+    return _join_and(lines).capitalize() + ".", True
+
+
 def compare_discourse(x, y, facts_x, facts_y):
     """CHECKABLE-connective COMPARE of two topics (the #2 seam): Contrast 'but' IFF a shared verb's patients DIFFER;
     Additive 'and so does' IFF they share verb+patient. Every connective is entailed by the grounded facts."""
@@ -167,6 +188,17 @@ def run_compare():
     return {"prose": prose, "contrast_ok": bool(contrast_ok), "additive_ok": bool(additive_ok)}
 
 
+def run_shared():
+    fx = [["dog", "isa", "mammal"], ["dog", "eat", "meat"], ["dog", "chase", "cat"]]
+    fy = [["wolf", "isa", "mammal"], ["wolf", "eat", "meat"], ["wolf", "chase", "rabbit"]]
+    # shared: both isa mammal + both eat meat; NOT chase (cat vs rabbit differ)
+    prose, ok = shared_discourse("dog", "wolf", fx, fy)
+    lo = prose.lower()
+    shared_ok = ok and ("both the dog and the wolf are a mammal" in lo) and ("eat meat" in lo) \
+        and ("rabbit" not in lo) and ("cat" not in lo)
+    return {"prose": prose, "shared_ok": bool(shared_ok)}
+
+
 def run_lesion():
     prose, used = plan_discourse("dragon", [])
     return {"prose": prose, "lesion_ok": bool("don't know" in prose and not used)}
@@ -180,12 +212,14 @@ def main():
     try:
         scen = [run_scenario(n, tp, fx) for n, (tp, fx) in SCENARIOS.items()]
         cmp = run_compare()
+        shared = run_shared()
         les = run_lesion()
         for s in scen:
             print(f"  [{s['scenario']}] {s['n_facts']} facts -> {s['n_sents']} sentence(s) | depth {s['depth_ok']} | "
                   f"grounded {s['grounded_ok']}\n      \"{s['prose']}\"", flush=True)
         print(f"  [compare dog/cat] contrast {cmp['contrast_ok']} | additive {cmp['additive_ok']}\n"
               f"      \"{cmp['prose']}\"", flush=True)
+        print(f"  [shared dog/wolf] {shared['shared_ok']}\n      \"{shared['prose']}\"", flush=True)
         print(f"  [lesion] {les['lesion_ok']} -> \"{les['prose']}\"", flush=True)
     except Exception as e:
         err = repr(e); traceback.print_exc()
@@ -194,8 +228,9 @@ def main():
         depth = all(s["depth_ok"] for s in scen)
         grounded = all(s["grounded_ok"] for s in scen)
         conn = cmp["contrast_ok"] and cmp["additive_ok"]
+        shared_ok = shared["shared_ok"]
         lesion = les["lesion_ok"]
-        go = bool(depth and grounded and conn and lesion)
+        go = bool(depth and grounded and conn and shared_ok and lesion)
         verdict = (("GO -- grounded DISCOURSE PLAN closes the multi-fact-synthesis cheap-first #1: a topic's grounded "
                     "facts render as CONNECTED prose (aggregation + Joint/Elaboration connectives) with FEWER sentences "
                     "than facts + >=1 aggregated clause, every token grounded (0 invented); the COMPARE path fires "
@@ -206,6 +241,7 @@ def main():
                        ([] if depth else ["depth (not fewer sentences / no connective)"]) +
                        ([] if grounded else ["grounded (invented tokens: " + str([s['stray'] for s in scen]) + ")"]) +
                        ([] if conn else ["connective-correct (compare predicate)"]) +
+                       ([] if shared_ok else ["shared/gist (checkable intersection)"]) +
                        ([] if lesion else ["lesion"])) + " failed"))
     else:
         go = False; verdict = f"ERROR -- {err}"
@@ -214,7 +250,8 @@ def main():
                "resolves": "multi-fact synthesis cheap-first #1: grounded discourse plan (aggregation + entailment-"
                            "checked connectives) -> connected prose, no free generation, moat by construction.",
                "scenarios": scen if err is None else [], "compare": cmp if err is None else {},
-               "lesion": les if err is None else {}, "elapsed_seconds": round(time.time() - t0, 1),
+               "shared": shared if err is None else {}, "lesion": les if err is None else {},
+               "elapsed_seconds": round(time.time() - t0, 1),
                "HONEST_CEILING": "deterministic host-side surface realization from brain-supplied, VERIFY-clean facts "
                                  "(the connective inventory + entailment predicates are host-authored -- like the "
                                  "FRAME_LEXICON; the fully-brain-based Broca connective producer is the deep follow-on). "

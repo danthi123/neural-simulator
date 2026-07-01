@@ -44,7 +44,8 @@ from research.runners._fluidconv_phase1_grounded_continuation_derisk import _ext
 from research.runners._fluidconv_phase2_ra_finetune import VERBS, FT_CKPT, SUBJECTS as FT_SUBJECTS, OBJECTS as FT_OBJECTS  # noqa: E402
 from research.runners._fluidconv_phase2_ra_qa_eval_derisk import FTFaculty, _v3  # noqa: E402
 from research.runners._fluidconv_phase15_wikidata_breadth_derisk import _fetch_entity  # noqa: E402
-from research.runners._fluidconv_phase16_discourse_plan_derisk import plan_discourse, compare_discourse  # noqa: E402
+from research.runners._fluidconv_phase16_discourse_plan_derisk import (  # noqa: E402
+    plan_discourse, compare_discourse, shared_discourse)
 
 _WD_SEARCH = "https://www.wikidata.org/w/api.php"          # wbsearchentities: resolve a concept NAME -> a Wikidata QID
 _WD_CACHE = _REPO / "research" / "findings" / "raw" / "_fluidconv_console_wikidata_cache.json"
@@ -54,7 +55,7 @@ _WD_PROPS = {"P279": "isa", "P527": "has", "P462": "is"}
 
 OUT = _REPO / "research" / "findings" / "raw" / "_fluidconv_chat_repl_demo.json"
 _QWORDS = {"what", "who", "does", "do", "is", "are", "tell", "can", "could", "why", "how", "when", "where", "?",
-           "compare", "different", "difference"}   # compare-requests have no wh-word but are queries, not statements
+           "compare", "different", "difference", "share", "common"}   # compare/share have no wh-word but are queries
 _PRON = {"it", "its", "they", "them", "that"}
 _STOP = {"the", "a", "an", "does", "do", "did", "the", "to", "of", "please"}
 # instance-rep (Phase-14): a curated attribute vocab (for "the dog is brown") + N instance slots per kind.
@@ -347,12 +348,22 @@ class FluidChat:
             def _norm(t):                                    # map a token to a known concept (handles plurals: dogs->dog)
                 if t in known:
                     return t
+                if t.endswith("ves") and t[:-3] + "f" in known:   # irregular: wolves->wolf, leaves->leaf
+                    return t[:-3] + "f"
                 if t.endswith("es") and t[:-2] in known:
                     return t[:-2]
                 if t.endswith("s") and t[:-1] in known:
                     return t[:-1]
                 return None
             concepts_in = [c for c in (_norm(t) for t in toks) if c is not None]
+            # SHARED / GIST ("what do dogs and cats have in common?" / "what do X and Y share?") -> checkable
+            # intersection (Phase-16 `shared_discourse`: shared isa + shared verb+patient, entailment-only).
+            if ("share" in tset or "common" in tset) and len(concepts_in) >= 2:
+                x, y = concepts_in[0], concepts_in[1]
+                fx = [f for f in self._neighbourhood(x) if f[0] == x]
+                fy = [f for f in self._neighbourhood(y) if f[0] == y]
+                return shared_discourse(x, y, fx, fy)[0]
+
             # COMPARE ("how are dogs and cats different?" / "compare X and Y") -> checkable-connective contrast
             # (Phase-16 `compare_discourse`: "the dog eats meat, but the cat eats fish" IFF a shared verb's patients
             # differ; "and so does" IFF shared verb+patient), else fall back to the two grounded discussions.
