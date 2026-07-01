@@ -1,0 +1,998 @@
+{
+  "probe": "fluidconv_phase1_grounded_continuation",
+  "resolves": "Phase 1 fluidity: fluid (multi-sentence, free) grounded rendering with the ~21M generator, moat kept as a PLUS via post-hoc VERIFY (softer than the Phase-0 per-token veto).",
+  "architecture": "GATE (brain recall/abstain) -> CONSTRAINED CORE (Phase-0 faithful render) -> FREE CONTINUATION (unconstrained 21M, fluid) -> VERIFY (re-parse full text into all known-entity SVOs; each must be grounded, else flag the hallucination).",
+  "generator": "~21.3M TinyStories (d512/L6/H8)",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "GO": false,
+  "verdict": "HONEST/PARTIAL -- fluid+grounded [0, 0, 0]/[5, 5, 5] (continuation degenerate or asserted ungrounded known-entity fact); constraint NOT load-bearing (free baseline drifts <= grounded path)",
+  "elapsed_seconds": 37.8,
+  "per_seed": [
+    {
+      "seed": 42,
+      "grounded_ok": 0,
+      "grounded_total": 5,
+      "drift_caught": 3,
+      "drift_total": 3,
+      "untaught_held": 3,
+      "untaught_total": 3,
+      "grounded_path_ungrounded_count": 4,
+      "free_baseline_ungrounded_count": 0,
+      "grounded_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "gate": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "core": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and",
+          "continuation": "meat. They are not good and mean. They are just different, but they are not mean. They are just different, but they are not mean. They",
+          "full": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and meat. They are not good and mean. They are just different, but they are not mean. They are just different, but they are not mean. They",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "core_has_fact": false,
+          "n_cont_tokens": 26,
+          "abstained": false,
+          "ok": false
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "gate": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "core": "and a fish for the fish to eat and the fish was very yes to eat and the fish was very yes to eat and the",
+          "continuation": "fish was very happy. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big tree",
+          "full": "and a fish for the fish to eat and the fish was very yes to eat and the fish was very yes to eat and the fish was very happy. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big tree",
+          "svos_found": [
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ]
+          ],
+          "core_has_fact": false,
+          "n_cont_tokens": 30,
+          "abstained": false,
+          "ok": false
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "gate": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "core": "and it was very yes and it was very yes to eat the seed and it was very yes to eat it for a",
+          "continuation": "long time. The end. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big tree",
+          "full": "and it was very yes and it was very yes to eat the seed and it was very yes to eat it for a long time. The end. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big tree",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "core_has_fact": false,
+          "n_cont_tokens": 30,
+          "abstained": false,
+          "ok": false
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "gate": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "core": "and the fox chase the fox and the fox were very very very very very very very very very very very very very very very very very",
+          "continuation": "compassionate. One day, the fox was walking in the forest when he saw a big tree. He wanted to climb it, but he was too small.",
+          "full": "and the fox chase the fox and the fox were very very very very very very very very very very very very very very very very very compassionate. One day, the fox was walking in the forest when he saw a big tree. He wanted to climb it, but he was too small.",
+          "svos_found": [
+            [
+              "fox",
+              "chase",
+              "tree"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "fox",
+              "chase",
+              "tree"
+            ]
+          ],
+          "core_has_fact": false,
+          "n_cont_tokens": 26,
+          "abstained": false,
+          "ok": false
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "gate": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "core": "for the bee and the bee to be honey for the bee to be honey for the bee to be honey",
+          "continuation": "for the bee. The bee was happy and flew away. The bee was happy and honest and thanked the bee for being honest. From",
+          "full": "for the bee and the bee to be honey for the bee to be honey for the bee to be honey for the bee. The bee was happy and flew away. The bee was happy and honest and thanked the bee for being honest. From",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "core_has_fact": false,
+          "n_cont_tokens": 24,
+          "abstained": false,
+          "ok": false
+        }
+      ],
+      "drift_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "steer": ". then the bear eat",
+          "core": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and",
+          "continuation": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and meat and me",
+          "full": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and . then the bear eat and meat and meat and meat and meat and meat and meat and meat and meat and meat and meat and me",
+          "svos_found": [
+            [
+              "bear",
+              "eat",
+              "meat"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "bear",
+              "eat",
+              "meat"
+            ]
+          ],
+          "caught": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "steer": ". then the bear eat",
+          "core": "and a fish for the fish to eat and the fish was very yes to eat and the fish was very yes to eat and the",
+          "continuation": "the fish and the fish swam away happily. The bear was happy that he could help the fish and the fish was happy too. Once upon a time, there was a",
+          "full": "and a fish for the fish to eat and the fish was very yes to eat and the fish was very yes to eat and the . then the bear eat the fish and the fish swam away happily. The bear was happy that he could help the fish and the fish was happy too. Once upon a time, there was a",
+          "svos_found": [
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "bear",
+              "eat",
+              "fish"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "bear",
+              "eat",
+              "fish"
+            ]
+          ],
+          "caught": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "steer": ". then the bear eat",
+          "core": "and it was very yes and it was very yes to eat the seed and it was very yes to eat it for a",
+          "continuation": "the seed and it was very happy. The bear ate the seed and it was very yummy. The bear was very happy and he ate it all up.",
+          "full": "and it was very yes and it was very yes to eat the seed and it was very yes to eat it for a . then the bear eat the seed and it was very happy. The bear ate the seed and it was very yummy. The bear was very happy and he ate it all up.",
+          "svos_found": [
+            [
+              "bear",
+              "eat",
+              "seed"
+            ],
+            [
+              "bear",
+              "eat",
+              "seed"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "bear",
+              "eat",
+              "seed"
+            ],
+            [
+              "bear",
+              "eat",
+              "seed"
+            ]
+          ],
+          "caught": true
+        }
+      ],
+      "untaught_detail": [
+        {
+          "cue": [
+            "lion",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true
+        },
+        {
+          "cue": [
+            "dog",
+            "drink"
+          ],
+          "gate_result": null,
+          "held": true
+        }
+      ],
+      "free_baseline_detail": [
+        {
+          "subject": "dog",
+          "full": "the dog and the dog were very happy. They thanked the man and the dog and the dog and the dog and the dog and the dog and the dog and the dog and",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        },
+        {
+          "subject": "cat",
+          "full": "the cat and the dog were very happy. They played together all day long. Once upon a time, there was a little girl named Lily. She loved to play with her toys and",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        },
+        {
+          "subject": "bird",
+          "full": "the bird and the bird were very happy. They thanked the bird and said goodbye. The bird flew away, happy and free. Once upon a time, there was a little girl named",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        },
+        {
+          "subject": "fox",
+          "full": "the fox and the little girl were very happy. They had a great time together and the fox was very thankful for the little girl. Once upon a time, there was a",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        },
+        {
+          "subject": "bee",
+          "full": "the bee was so happy to have a new friend. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "grounded_ok": 0,
+      "grounded_total": 5,
+      "drift_caught": 3,
+      "drift_total": 3,
+      "untaught_held": 3,
+      "untaught_total": 3,
+      "grounded_path_ungrounded_count": 4,
+      "free_baseline_ungrounded_count": 0,
+      "grounded_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "gate": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "core": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and",
+          "continuation": "meat. They are not good and mean. They are just different, but they are not mean. They are just different, but they are not mean. They",
+          "full": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and meat. They are not good and mean. They are just different, but they are not mean. They are just different, but they are not mean. They",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "core_has_fact": false,
+          "n_cont_tokens": 26,
+          "abstained": false,
+          "ok": false
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "gate": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "core": "and a fish for the fish to eat and the fish was very yes to eat and the fish was very yes to eat and the",
+          "continuation": "fish was very happy. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big tree",
+          "full": "and a fish for the fish to eat and the fish was very yes to eat and the fish was very yes to eat and the fish was very happy. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big tree",
+          "svos_found": [
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ]
+          ],
+          "core_has_fact": false,
+          "n_cont_tokens": 30,
+          "abstained": false,
+          "ok": false
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "gate": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "core": "and it was very yes and it was very yes to eat the seed and it was very yes to eat it for a",
+          "continuation": "long time. The end. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big tree",
+          "full": "and it was very yes and it was very yes to eat the seed and it was very yes to eat it for a long time. The end. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big tree",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "core_has_fact": false,
+          "n_cont_tokens": 30,
+          "abstained": false,
+          "ok": false
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "gate": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "core": "and the fox chase the fox and the fox were very very very very very very very very very very very very very very very very very",
+          "continuation": "compassionate. One day, the fox was walking in the forest when he saw a big tree. He wanted to climb it, but he was too small.",
+          "full": "and the fox chase the fox and the fox were very very very very very very very very very very very very very very very very very compassionate. One day, the fox was walking in the forest when he saw a big tree. He wanted to climb it, but he was too small.",
+          "svos_found": [
+            [
+              "fox",
+              "chase",
+              "tree"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "fox",
+              "chase",
+              "tree"
+            ]
+          ],
+          "core_has_fact": false,
+          "n_cont_tokens": 26,
+          "abstained": false,
+          "ok": false
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "gate": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "core": "for the bee and the bee to be honey for the bee to be honey for the bee to be honey",
+          "continuation": "for the bee. The bee was happy and flew away. The bee was happy and honest and thanked the bee for being honest. From",
+          "full": "for the bee and the bee to be honey for the bee to be honey for the bee to be honey for the bee. The bee was happy and flew away. The bee was happy and honest and thanked the bee for being honest. From",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "core_has_fact": false,
+          "n_cont_tokens": 24,
+          "abstained": false,
+          "ok": false
+        }
+      ],
+      "drift_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "steer": ". then the bear eat",
+          "core": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and",
+          "continuation": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and meat and me",
+          "full": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and . then the bear eat and meat and meat and meat and meat and meat and meat and meat and meat and meat and meat and me",
+          "svos_found": [
+            [
+              "bear",
+              "eat",
+              "meat"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "bear",
+              "eat",
+              "meat"
+            ]
+          ],
+          "caught": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "steer": ". then the bear eat",
+          "core": "and a fish for the fish to eat and the fish was very yes to eat and the fish was very yes to eat and the",
+          "continuation": "the fish and the fish swam away happily. The bear was happy that he could help the fish and the fish was happy too. Once upon a time, there was a",
+          "full": "and a fish for the fish to eat and the fish was very yes to eat and the fish was very yes to eat and the . then the bear eat the fish and the fish swam away happily. The bear was happy that he could help the fish and the fish was happy too. Once upon a time, there was a",
+          "svos_found": [
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "bear",
+              "eat",
+              "fish"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "bear",
+              "eat",
+              "fish"
+            ]
+          ],
+          "caught": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "steer": ". then the bear eat",
+          "core": "and it was very yes and it was very yes to eat the seed and it was very yes to eat it for a",
+          "continuation": "the seed and it was very happy. The bear ate the seed and it was very yummy. The bear was very happy and he ate it all up.",
+          "full": "and it was very yes and it was very yes to eat the seed and it was very yes to eat it for a . then the bear eat the seed and it was very happy. The bear ate the seed and it was very yummy. The bear was very happy and he ate it all up.",
+          "svos_found": [
+            [
+              "bear",
+              "eat",
+              "seed"
+            ],
+            [
+              "bear",
+              "eat",
+              "seed"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "bear",
+              "eat",
+              "seed"
+            ],
+            [
+              "bear",
+              "eat",
+              "seed"
+            ]
+          ],
+          "caught": true
+        }
+      ],
+      "untaught_detail": [
+        {
+          "cue": [
+            "lion",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true
+        },
+        {
+          "cue": [
+            "dog",
+            "drink"
+          ],
+          "gate_result": null,
+          "held": true
+        }
+      ],
+      "free_baseline_detail": [
+        {
+          "subject": "dog",
+          "full": "the dog and the dog were very happy. They thanked the man and the dog and the dog and the dog and the dog and the dog and the dog and the dog and",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        },
+        {
+          "subject": "cat",
+          "full": "the cat and the dog were very happy. They played together all day long. Once upon a time, there was a little girl named Lily. She loved to play with her toys and",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        },
+        {
+          "subject": "bird",
+          "full": "the bird and the bird were very happy. They thanked the bird and said goodbye. The bird flew away, happy and free. Once upon a time, there was a little girl named",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        },
+        {
+          "subject": "fox",
+          "full": "the fox and the little girl were very happy. They had a great time together and the fox was very thankful for the little girl. Once upon a time, there was a",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        },
+        {
+          "subject": "bee",
+          "full": "the bee was so happy to have a new friend. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "grounded_ok": 0,
+      "grounded_total": 5,
+      "drift_caught": 3,
+      "drift_total": 3,
+      "untaught_held": 3,
+      "untaught_total": 3,
+      "grounded_path_ungrounded_count": 4,
+      "free_baseline_ungrounded_count": 0,
+      "grounded_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "gate": [
+            "dog",
+            "eat",
+            "meat"
+          ],
+          "core": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and",
+          "continuation": "meat. They are not good and mean. They are just different, but they are not mean. They are just different, but they are not mean. They",
+          "full": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and meat. They are not good and mean. They are just different, but they are not mean. They are just different, but they are not mean. They",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "core_has_fact": false,
+          "n_cont_tokens": 26,
+          "abstained": false,
+          "ok": false
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "gate": [
+            "cat",
+            "eat",
+            "fish"
+          ],
+          "core": "and a fish for the fish to eat and the fish was very yes to eat and the fish was very yes to eat and the",
+          "continuation": "fish was very happy. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big tree",
+          "full": "and a fish for the fish to eat and the fish was very yes to eat and the fish was very yes to eat and the fish was very happy. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big tree",
+          "svos_found": [
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ]
+          ],
+          "core_has_fact": false,
+          "n_cont_tokens": 30,
+          "abstained": false,
+          "ok": false
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "gate": [
+            "bird",
+            "eat",
+            "seed"
+          ],
+          "core": "and it was very yes and it was very yes to eat the seed and it was very yes to eat it for a",
+          "continuation": "long time. The end. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big tree",
+          "full": "and it was very yes and it was very yes to eat the seed and it was very yes to eat it for a long time. The end. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big tree",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "core_has_fact": false,
+          "n_cont_tokens": 30,
+          "abstained": false,
+          "ok": false
+        },
+        {
+          "cue": [
+            "fox",
+            "chase"
+          ],
+          "gate": [
+            "fox",
+            "chase",
+            "rabbit"
+          ],
+          "core": "and the fox chase the fox and the fox were very very very very very very very very very very very very very very very very very",
+          "continuation": "compassionate. One day, the fox was walking in the forest when he saw a big tree. He wanted to climb it, but he was too small.",
+          "full": "and the fox chase the fox and the fox were very very very very very very very very very very very very very very very very very compassionate. One day, the fox was walking in the forest when he saw a big tree. He wanted to climb it, but he was too small.",
+          "svos_found": [
+            [
+              "fox",
+              "chase",
+              "tree"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "fox",
+              "chase",
+              "tree"
+            ]
+          ],
+          "core_has_fact": false,
+          "n_cont_tokens": 26,
+          "abstained": false,
+          "ok": false
+        },
+        {
+          "cue": [
+            "bee",
+            "make"
+          ],
+          "gate": [
+            "bee",
+            "make",
+            "honey"
+          ],
+          "core": "for the bee and the bee to be honey for the bee to be honey for the bee to be honey",
+          "continuation": "for the bee. The bee was happy and flew away. The bee was happy and honest and thanked the bee for being honest. From",
+          "full": "for the bee and the bee to be honey for the bee to be honey for the bee to be honey for the bee. The bee was happy and flew away. The bee was happy and honest and thanked the bee for being honest. From",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "core_has_fact": false,
+          "n_cont_tokens": 24,
+          "abstained": false,
+          "ok": false
+        }
+      ],
+      "drift_detail": [
+        {
+          "cue": [
+            "dog",
+            "eat"
+          ],
+          "steer": ". then the bear eat",
+          "core": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and",
+          "continuation": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and meat and me",
+          "full": "and meat and meat and meat and meat and meat and meat and meat and meat and meat and . then the bear eat and meat and meat and meat and meat and meat and meat and meat and meat and meat and meat and me",
+          "svos_found": [
+            [
+              "bear",
+              "eat",
+              "meat"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "bear",
+              "eat",
+              "meat"
+            ]
+          ],
+          "caught": true
+        },
+        {
+          "cue": [
+            "cat",
+            "eat"
+          ],
+          "steer": ". then the bear eat",
+          "core": "and a fish for the fish to eat and the fish was very yes to eat and the fish was very yes to eat and the",
+          "continuation": "the fish and the fish swam away happily. The bear was happy that he could help the fish and the fish was happy too. Once upon a time, there was a",
+          "full": "and a fish for the fish to eat and the fish was very yes to eat and the fish was very yes to eat and the . then the bear eat the fish and the fish swam away happily. The bear was happy that he could help the fish and the fish was happy too. Once upon a time, there was a",
+          "svos_found": [
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "bear",
+              "eat",
+              "fish"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "fish",
+              "eat",
+              "fish"
+            ],
+            [
+              "bear",
+              "eat",
+              "fish"
+            ]
+          ],
+          "caught": true
+        },
+        {
+          "cue": [
+            "bird",
+            "eat"
+          ],
+          "steer": ". then the bear eat",
+          "core": "and it was very yes and it was very yes to eat the seed and it was very yes to eat it for a",
+          "continuation": "the seed and it was very happy. The bear ate the seed and it was very yummy. The bear was very happy and he ate it all up.",
+          "full": "and it was very yes and it was very yes to eat the seed and it was very yes to eat it for a . then the bear eat the seed and it was very happy. The bear ate the seed and it was very yummy. The bear was very happy and he ate it all up.",
+          "svos_found": [
+            [
+              "bear",
+              "eat",
+              "seed"
+            ],
+            [
+              "bear",
+              "eat",
+              "seed"
+            ]
+          ],
+          "ungrounded_asserted": [
+            [
+              "bear",
+              "eat",
+              "seed"
+            ],
+            [
+              "bear",
+              "eat",
+              "seed"
+            ]
+          ],
+          "caught": true
+        }
+      ],
+      "untaught_detail": [
+        {
+          "cue": [
+            "lion",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true
+        },
+        {
+          "cue": [
+            "whale",
+            "eat"
+          ],
+          "gate_result": null,
+          "held": true
+        },
+        {
+          "cue": [
+            "dog",
+            "drink"
+          ],
+          "gate_result": null,
+          "held": true
+        }
+      ],
+      "free_baseline_detail": [
+        {
+          "subject": "dog",
+          "full": "the dog and the dog were very happy. They thanked the man and the dog and the dog and the dog and the dog and the dog and the dog and the dog and",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        },
+        {
+          "subject": "cat",
+          "full": "the cat and the dog were very happy. They played together all day long. Once upon a time, there was a little girl named Lily. She loved to play with her toys and",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        },
+        {
+          "subject": "bird",
+          "full": "the bird and the bird were very happy. They thanked the bird and said goodbye. The bird flew away, happy and free. Once upon a time, there was a little girl named",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        },
+        {
+          "subject": "fox",
+          "full": "the fox and the little girl were very happy. They had a great time together and the fox was very thankful for the little girl. Once upon a time, there was a",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        },
+        {
+          "subject": "bee",
+          "full": "the bee was so happy to have a new friend. Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she",
+          "svos_found": [],
+          "ungrounded_asserted": [],
+          "n_ungrounded": 0
+        }
+      ]
+    }
+  ],
+  "HONEST_CEILING": "greedy decoding may make continuations repetitive; temp-sampling + repetition penalty is the fluency follow-on. This tests fluid grounded RENDERING, not yet multi-turn dialogue coherence (the recurrent-state + multi-referent WTA follow-on)."
+}
