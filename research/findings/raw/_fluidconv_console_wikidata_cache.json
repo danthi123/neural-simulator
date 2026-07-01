@@ -279,5 +279,48 @@
       "isa",
       "vertebrata"
     ]
+  ],
+  "tiger": [
+    [
+      "tiger",
+      "isa",
+      "cat"
+    ],
+    [
+      "tiger",
+      "is",
+      "white"
+    ],
+    [
+      "tiger",
+      "is",
+      "black"
+    ],
+    [
+      "tiger",
+      "is",
+      "orange"
+    ]
+  ],
+  "felidae": [
+    [
+      "felidae",
+      "is",
+      "color"
+    ]
+  ],
+  "vertebrata": [
+    [
+      "vertebrata",
+      "isa",
+      "chordata"
+    ]
+  ],
+  "chordata": [
+    [
+      "chordata",
+      "isa",
+      "deuterostome"
+    ]
   ]
 }

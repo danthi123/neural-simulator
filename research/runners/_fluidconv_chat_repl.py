@@ -181,15 +181,20 @@ class FluidChat:
         facts, msg = self._wd_fetch_store(concept)
         if msg is not None:
             return msg
-        # extend the taxonomy ONE parent level (so "learn about dog" reaches dog -> mammal -> vertebrate, the real
-        # Wikidata subclass chain -> the "classify" route has depth). `_wd_fetch_store` is cache-fast + idempotent
-        # (stores even when cached -> the parent's facts land in THIS session's KB); no further recursion.
+        # extend the taxonomy up to a few parent levels (so "learn about dog" reaches dog -> mammal -> vertebrate ->
+        # chordate, the real Wikidata subclass chain -> the "classify" route gives full ancestry). `_wd_fetch_store` is
+        # cache-fast + idempotent (stores even when cached -> the ancestors land in THIS session's KB).
         parent = next((p for (a, v, p) in facts if v == "isa"), None)
-        if parent is not None and parent != concept:
+        seen = {concept}
+        for _ in range(3):                                       # bounded: dog -> mammal -> vertebrate -> chordate
+            if parent is None or parent in seen:
+                break
+            seen.add(parent)
             try:
-                self._wd_fetch_store(parent)
+                pf, _msg = self._wd_fetch_store(parent)
             except Exception:
-                pass
+                break
+            parent = next((pp for (a, v, pp) in pf if v == "isa"), None)
         n = len([f for f in facts])
         ex = "; ".join(f"{a} {v} {p}" for (a, v, p) in facts[:4])
         return f"ok, i learned {n} facts about the {concept}: {ex}."
