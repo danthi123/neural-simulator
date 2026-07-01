@@ -6469,3 +6469,29 @@ generator (the deferred end-state biologization, gated on the KV-cache speed lev
 DEFAULT autonomous pick = the least-blocked capability step (NOT webapp, which needs UI verification): either a richer-
 discourse increment (within-turn multi-hop reasoning / negation in the console) or begin scoping the spiking-forward
 speed lever. biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
+
+## CYCLE 765 (2026-07-01 — NEW OWNER STEER: open-ended in-depth discussion; research-gate dispatched)
+
+Owner (awake, morning) steered: push toward FLUID, OPEN-ENDED conversation about practically anything -- "talk, in
+depth, about IDEAS and CONCEPTS the brain may have some RELEVANT information on but doesn't explicitly have an
+'answer' to. Extrapolate as you wish." = beyond fact-Q&A; the `project_communicable_brain_not_rag` vision. This is a
+NEW MECHANISM CLASS (grounded synthesis/extrapolation vs exact-match retrieval) -> the standing research-gate FIRES.
+DISPATCHED a read-only deep-research/catalog scoping subagent (a8471093fba3a8ddc, background) -> it will write
+`research/findings/2026-07-01-open-ended-grounded-discussion-scoping.md` (diagnosis + biology reframe + ranked
+cheap-first mechanisms reusing elaborate/reason_chain/association-graph/stream-cortex/RA-generator + anti-confab
+controls + honest verdict).
+
+EMPIRICAL BASELINE (the current console gap, `_fluidconv_chat_repl`): "tell me about the dog"->one fact;
+"what do you think about the dog?"->one fact (not a discussion); "how are dogs and cats different?"->"I don't know."
+(no cross-fact synthesis); "tell me about predators"->"I don't know." (no concept-level extrapolation). ⇒ the target:
+multi-fact synthesis + concept/category discussion + bounded extrapolation, staying grounded (moat as a PLUS, honest
+hedging, not hard-abstain).
+
+**EXACT NEXT CONCRETE ACTION:** when the scoping subagent (a8471093fba3a8ddc) completes, REVIEW its ranked cheap-first
+plan (trust-but-verify the load-bearing claims), present the recommendation to the owner, then EXECUTE the #1
+cheap-first mechanism (likely: retrieve the topic's association-graph neighborhood -> condition the RA generator on
+the MULTIPLE retrieved facts -> generate a multi-sentence grounded DISCUSSION -> VERIFY asserted known-entity facts
+are grounded [allow non-fact glue, flag ungrounded fact-claims]). Anti-confab controls: extrapolation traceable to
+retrieved knowledge; permuted/lesion; the "makes-things-up" failure caught. >=3 seeds. biologization/one-brain HARD;
+moat a PLUS (honest hedging); honest origin+gitea; COMMIT ON MAIN; GPU/CuPy. Owner has blanket authority granted +
+wants me to extrapolate/pursue the best phases toward LLM-like open discussion.
