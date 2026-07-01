@@ -69,18 +69,25 @@ from research.runners._da_composer_salience_cleanup_derisk import (
 G0, K, NOISE_SIGMA, N_QUERY_REPS, N_FACTS, D = 0.06, 2.0, 2.0, 20, 8, 64
 
 
-def _measure_hunger_da(agent, deficit, lesion=False, n_settle=300, i_scale=300.0):
-    """Inject the body deficit as interoceptive current into the co-resident drive pools (drive_agrp ∝ deficit,
-    drive_pomc ∝ surplus), run the merged bridge `n_settle` steps so the `from_region_firing` rule drives the shared
-    `dopamine` up from `drive_agrp` firing, and READ the settled DA concentration. lesion=True zeros the interoceptive
-    current (drive_agrp silent) -> DA stays at baseline. NOTE the DA is read off the neuromodulator manager (the
-    shared modulator), driven by drive_agrp SPIKES -- brain-based (not a host deficit value)."""
+def _measure_hunger_da(agent, deficit, lesion=False, n_settle=300, n_washout=250, i_scale=300.0):
+    """Measure the settled shared-`dopamine` concentration under a given body deficit, INDEPENDENTLY of the prior
+    measure. First a WASHOUT (zero all drive current, run `n_washout` steps) settles the network + lets DA decay to
+    its consistent REST tonic -- so sequential conditions on the shared bridge do NOT carry over (the first smoke's
+    lesion-DA-higher-than-sated artifact). Then inject the body deficit as interoceptive current (drive_agrp ∝
+    deficit, drive_pomc ∝ surplus), run `n_settle` steps so the `from_region_firing` rule drives DA up from
+    `drive_agrp` firing, and READ the DA. lesion=True zeros the interoceptive current (drive_agrp silent) -> DA
+    stays at the rest tonic (like sated). The DA is read off the neuromodulator manager, driven by drive_agrp
+    SPIKES -- brain-based (not a host deficit value)."""
     import sim.backend as B
     xp, _ = B.get_backend()
     br = agent._merged_bridge
     rm = br.region_manager
     agrp = xp.asarray(np.asarray(rm.indices("drive_agrp"), dtype=np.int64))
     pomc = xp.asarray(np.asarray(rm.indices("drive_pomc"), dtype=np.int64))
+    # WASHOUT to a consistent rest state (independence between measures).
+    for _ in range(int(n_washout)):
+        br.cp_external_input_current[:] = 0.0
+        br._run_one_simulation_step()
     i_agrp = 0.0 if lesion else i_scale * max(0.0, float(deficit))
     i_pomc = i_scale * max(0.0, 1.0 - float(deficit))
     for _ in range(int(n_settle)):
@@ -96,7 +103,7 @@ def _build_agent(seed):
     DA-confidence gate (default-ON) + the shared dopamine modulator (co_resident_nav_critic default-ON)."""
     from research.runners.nav_conv_merged_bridge import MergedNavConvAgent
     return MergedNavConvAgent(seed=seed, co_resident_composer=True, co_resident_composer_kind="rf",
-                              co_resident_drive=True, drive_to_da=True)
+                              co_resident_drive=True, drive_to_da=True, drive_da_sensitivity=30.0)
 
 
 def _store_facts(comp, n_facts, rng):
