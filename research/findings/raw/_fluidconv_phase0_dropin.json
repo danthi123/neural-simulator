@@ -1,0 +1,174 @@
+{
+  "generator": "phase0-tinystories-21.3M",
+  "ckpt": "research/findings/raw/fluidconv/gen_tinystories_20M.ckpt",
+  "arch": {
+    "d_model": 512,
+    "n_layer": 6,
+    "n_head": 8,
+    "block_size": 512,
+    "bpe_path": "research/findings/raw/fluidconv/gen_tinystories.bpe.json"
+  },
+  "ladder": [
+    {
+      "K": 6,
+      "verdict": {
+        "GATE": "PASS",
+        "instrument_valid": true,
+        "science_ok": true,
+        "note": "constrained ungrounded-entity-rate ~0 is MECHANICAL (per-token veto, by construction) -- NOT the discriminating result; the discriminator is constrained NON-VACUITY vs the failing controls",
+        "frozen_bars": {
+          "FAITHFUL_MAX": 0.2,
+          "MIN_GROUNDED_CONTENT": 2,
+          "MIN_GROUNDED_ANSWER_RATE": 0.5,
+          "MIN_SEEDS": 3
+        },
+        "per_seed": {
+          "42": {
+            "unconstrained_uer": 0.9083072263993316,
+            "constrained_uer": 0.024999999999999998,
+            "constrained_nonvac_rate": 0.8333333333333334,
+            "shuffled_uer": 1.0,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          },
+          "43": {
+            "unconstrained_uer": 0.9083072263993316,
+            "constrained_uer": 0.024999999999999998,
+            "constrained_nonvac_rate": 0.8333333333333334,
+            "shuffled_uer": 1.0,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          },
+          "44": {
+            "unconstrained_uer": 0.9083072263993316,
+            "constrained_uer": 0.024999999999999998,
+            "constrained_nonvac_rate": 0.8333333333333334,
+            "shuffled_uer": 1.0,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          }
+        }
+      },
+      "constrained_nonvac_rate_mean": 0.8333333333333334
+    },
+    {
+      "K": 12,
+      "verdict": {
+        "GATE": "PASS",
+        "instrument_valid": true,
+        "science_ok": true,
+        "note": "constrained ungrounded-entity-rate ~0 is MECHANICAL (per-token veto, by construction) -- NOT the discriminating result; the discriminator is constrained NON-VACUITY vs the failing controls",
+        "frozen_bars": {
+          "FAITHFUL_MAX": 0.2,
+          "MIN_GROUNDED_CONTENT": 2,
+          "MIN_GROUNDED_ANSWER_RATE": 0.5,
+          "MIN_SEEDS": 3
+        },
+        "per_seed": {
+          "42": {
+            "unconstrained_uer": 0.8662924003384528,
+            "constrained_uer": 0.012499999999999999,
+            "constrained_nonvac_rate": 0.8333333333333334,
+            "shuffled_uer": 0.7527777777777778,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          },
+          "43": {
+            "unconstrained_uer": 0.866292400338453,
+            "constrained_uer": 0.012499999999999999,
+            "constrained_nonvac_rate": 0.8333333333333334,
+            "shuffled_uer": 0.75,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          },
+          "44": {
+            "unconstrained_uer": 0.8662924003384531,
+            "constrained_uer": 0.012499999999999999,
+            "constrained_nonvac_rate": 0.8333333333333334,
+            "shuffled_uer": 0.8333333333333334,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          }
+        }
+      },
+      "constrained_nonvac_rate_mean": 0.8333333333333334
+    },
+    {
+      "K": 24,
+      "verdict": {
+        "GATE": "PASS",
+        "instrument_valid": true,
+        "science_ok": true,
+        "note": "constrained ungrounded-entity-rate ~0 is MECHANICAL (per-token veto, by construction) -- NOT the discriminating result; the discriminator is constrained NON-VACUITY vs the failing controls",
+        "frozen_bars": {
+          "FAITHFUL_MAX": 0.2,
+          "MIN_GROUNDED_CONTENT": 2,
+          "MIN_GROUNDED_ANSWER_RATE": 0.5,
+          "MIN_SEEDS": 3
+        },
+        "per_seed": {
+          "42": {
+            "unconstrained_uer": 0.8968576666138586,
+            "constrained_uer": 0.013825757575757575,
+            "constrained_nonvac_rate": 0.75,
+            "shuffled_uer": 0.8676470588235294,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          },
+          "43": {
+            "unconstrained_uer": 0.8968576666138585,
+            "constrained_uer": 0.013825757575757576,
+            "constrained_nonvac_rate": 0.75,
+            "shuffled_uer": 0.8694444444444445,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          },
+          "44": {
+            "unconstrained_uer": 0.8968576666138586,
+            "constrained_uer": 0.013825757575757576,
+            "constrained_nonvac_rate": 0.75,
+            "shuffled_uer": 0.875,
+            "shuffled_nonvac_rate": 0.0,
+            "bare_moat_abstain_rate": 1.0,
+            "abstain_on_ungrounded_rate": 1.0,
+            "constrained_multitoken_emittable_rate": 1.0
+          }
+        }
+      },
+      "constrained_nonvac_rate_mean": 0.75
+    }
+  ],
+  "scale_confident": true,
+  "scale_classification": "SCALE-CONFIDENT-PASS",
+  "scale_reason": "all rungs PASS; non-vacuity non-decreasing up to tol; holds at largest rung",
+  "nonvac_by_rung": [
+    0.8333333333333334,
+    0.8333333333333334,
+    0.75
+  ],
+  "device": "cuda",
+  "tiny": false,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 82.8,
+  "HONEST_CEILING": "the ~21M TinyStories generator -- ~15-25x SMALLER than the external Qwen-0.5B -- supplies fluency behind the validated per-token grounded veto; constrained decoding TRADES open-ended fluency for faithfulness BY DESIGN (NOT free composition, NOT an LLM, NOT conversation-solved). The thesis it tests: the transformer can be MINIMIZED (and made spiking-on-substrate, 88.6M-forward validated) without losing grounded non-vacuity or the no-confab moat."
+}
