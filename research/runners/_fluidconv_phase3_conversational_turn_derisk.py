@@ -139,8 +139,16 @@ def run(cur, vocab, seed, faculty):
     vs = (agents_set, actions_set, patients_set, inflect, store_keys)
     ft_verbs = {b for (b, _s, _p) in VERBS}
 
-    # grounded questions (free text) over facts the fine-tune saw in QA format
-    gq = [(f"what does the {a} {v} ?", (a, v, p)) for (a, v, p) in facts if v in ft_verbs][:5]
+    # grounded questions (free text), verb-diverse: derive from queries_recall patient queries (spans eat/chase/make),
+    # over facts the fine-tune saw in QA format. Resolve each cue's patient from the brain GATE (ground truth).
+    gq = []
+    for q in cur.get("queries_recall", []):
+        if q["type"] != "patient" or q["cue"][1] not in ft_verbs:
+            continue
+        a, v = q["cue"]; p = agent.what_does(a, v)
+        if p is not None:
+            gq.append((f"what does the {a} {v} ?", (a, v, p)))
+    gq = gq[:5]
     grounded = []
     for text, (a, v, p) in gq:
         rec = conversational_turn(agent, faculty, text, vs)
