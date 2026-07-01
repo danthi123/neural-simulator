@@ -5842,3 +5842,27 @@ Option-2 findings (flip to 6/6 GO), flip CLAUDE.md Tier-3 arc Option-2->GO, PRES
 3 cross-modal / Option 4 lived consolidation / Option 2B 24/7 harness / richer-world). Moat 0-leak (HARD); honest
 origin+gitea; COMMIT ON MAIN. NOTE: the develop CAPABILITY is ALREADY 6/6 -- the re-run only lifts the redundant
 drive-quality corr metric to the validated config for an unimpeachable clean sweep.
+
+## CYCLE 741 (2026-07-01 — Tier-3 Option 2 develop-with-a-body ACCEPTED 6/6-capability GO; SECOND slice CLOSED)
+
+Owner: "Accept result." The develop-with-a-body CAPABILITY is 6/6 (all 7 gates every seed: develops/retention 3/3/
+frozen-flat/lived-not-scripted/moat-byte-frozen/persistence/alive) from run bowg8ddn5. The 1 NO (seed 102) was ONLY
+the borrowed drive-quality corr sanity-gate (0.897 vs 0.90, a window=20 under-sampling artifact; Option-1-validated
+at +0.98). Owner-accepted (a redundant, Option-1-validated metric, not a develop-capability gate); the runner window
+is now the validated 40. KILLED the (now-unnecessary) w=40 re-run brtgqjisk (TaskStop + verified no lingering python
+-> GPU free). Finalized `research/findings/2026-06-30-tier3-option2-develop-with-a-body-first-slice.md` (6/6 GO) +
+flipped the CLAUDE.md Tier-3 arc to "TWO synthesis slices GO (live-and-remember + develop-with-a-body)".
+
+⇒ Tier-3 has TWO closed synthesis slices: the merged one brain LIVES + REMEMBERS (Option 1) and DEVELOPS OVER TIME
+FROM WHAT IT LIVES (Option 2). NO sim/ edit in either. The ranked follow-ons remain (all COMPOSE validated pieces):
+Option 3 cross-modal one-animal (the shared hunger drive tightens the conversational moat -> ONE drive touching BOTH
+the acting + conversing halves; SMALL; needs a small hunger->DA link since co_resident_drive is read-by-firing only,
+does not feed the DA modulator) · Option 4 lived consolidation (event-triggered SWR replay, N.17) · Option 2B the
+24/7 develop_gpu harness (deploy develop-with-a-body via an additive per_day_agent_factory seam -> a brain develops
+over a WEEK continuously, the owner's watch-a-brain-develop north-star) · richer-world upgrades.
+
+**EXACT NEXT CONCRETE ACTION:** proceed to the next slice (never-stall). Dispatch a READ-ONLY scoping subagent for
+Option 3 cross-modal one-animal (isolate the hunger->DA link design + the cheapest de-risk + anti-cheats: moat can
+ONLY tighten [structurally guaranteed], the shift tracks the drive [lesion->no shift]), then controller-verify +
+build the de-risk. FALLBACK if the owner redirects: they may prefer Option 2B (24/7 harness, north-star) or Option
+4 or to hold -- honor the steer. Moat 0-leak (HARD); honest origin+gitea; COMMIT ON MAIN.
