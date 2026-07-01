@@ -1,0 +1,105 @@
+{
+  "probe": "fluidconv_phase8_experience",
+  "GO": true,
+  "verdict": "GO -- the fluid console converses about PERCEIVED (not taught) objects: each perceived object's code is grounded from a percept (the validated fixed projection), stored, and answered grounded (RA-rendered); the GROUNDING-LESION (corrupt the percept) COLLAPSES the recall (load-bearing on the experience); the moat holds 0-FA on un-perceived objects. >=3 seeds. The 'experiences' clause closed at the conversational layer.",
+  "resolves": "the fluid console converses about a PERCEIVED (not taught) object -- its code grounded from a percept via the validated fixed projection; grounding load-bearing; moat 0-FA.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 22.2,
+  "per_seed": [
+    {
+      "seed": 42,
+      "converse_ok": 3,
+      "converse_total": 3,
+      "conv": [
+        {
+          "perceived": "wolf",
+          "q": "what does the wolf eat?",
+          "reply": "the wolf eats rabbit .",
+          "ok": true
+        },
+        {
+          "perceived": "owl",
+          "q": "what does the owl eat?",
+          "reply": "the owl eats mouse .",
+          "ok": true
+        },
+        {
+          "perceived": "frog",
+          "q": "what does the frog eat?",
+          "reply": "the frog eats worm , yes .",
+          "ok": true
+        }
+      ],
+      "lesion_obj": "wolf",
+      "lesion_collapsed": true,
+      "lesion_recall": null,
+      "moat_ok": true,
+      "moat_gate": null
+    },
+    {
+      "seed": 43,
+      "converse_ok": 3,
+      "converse_total": 3,
+      "conv": [
+        {
+          "perceived": "wolf",
+          "q": "what does the wolf eat?",
+          "reply": "the wolf eats rabbit .",
+          "ok": true
+        },
+        {
+          "perceived": "owl",
+          "q": "what does the owl eat?",
+          "reply": "the owl eats mouse .",
+          "ok": true
+        },
+        {
+          "perceived": "frog",
+          "q": "what does the frog eat?",
+          "reply": "the frog eats worm , yes .",
+          "ok": true
+        }
+      ],
+      "lesion_obj": "wolf",
+      "lesion_collapsed": true,
+      "lesion_recall": null,
+      "moat_ok": true,
+      "moat_gate": null
+    },
+    {
+      "seed": 44,
+      "converse_ok": 3,
+      "converse_total": 3,
+      "conv": [
+        {
+          "perceived": "wolf",
+          "q": "what does the wolf eat?",
+          "reply": "the wolf eats rabbit .",
+          "ok": true
+        },
+        {
+          "perceived": "owl",
+          "q": "what does the owl eat?",
+          "reply": "the owl eats mouse .",
+          "ok": true
+        },
+        {
+          "perceived": "frog",
+          "q": "what does the frog eat?",
+          "reply": "the frog eats worm , yes .",
+          "ok": true
+        }
+      ],
+      "lesion_obj": "wolf",
+      "lesion_collapsed": true,
+      "lesion_recall": null,
+      "moat_ok": true,
+      "moat_gate": null
+    }
+  ],
+  "HONEST_CEILING": "cheap-first: a lightweight per-object percept feature-vector stands in for the live cortex_it spiking forward (same grounding projection). The FULL embodied loop (perceive-while-acting on the merged nav+conv bridge -> converse via the RA console) is the follow-on integration (composes Tier-3 live-and-remember + the RA console)."
+}
