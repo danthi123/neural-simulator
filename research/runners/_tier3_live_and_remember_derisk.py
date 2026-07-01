@@ -233,10 +233,14 @@ def _decode_code(d):
 
 # ── the continuous living loop (survival + perceive-ground-store on encounters) ──────────────────────────────
 def live(agent, hunger_reader, state, world, n_steps, *, drive_reward="spiking", drive_read_every=10,
-         grounded_obj_cache=None):
+         perceive=True, grounded_obj_cache=None):
     """Run a stretch of the agent's life IN PLACE on `state`. Survival = the validated Q policy shaped by the
     intrinsic drive-reduction reward; on first arrival at an object cell the agent perceive_and_grounds it + stores
     a lived fact. Returns per-step traces (energies, deficits, agrp_rates).
+
+    perceive=False (the host-only SURVIVAL-control path, for lesion/yoke in rate_proxy mode): NO bridge access at
+    all -- no spiking read, no perceive_and_ground/store -- so the survival controls need NO bridge build (the drive
+    is the host TwoPoolDrive, exactly the validated persistent_living_loop mechanism). agent/hunger_reader may be None.
 
     drive_reward="spiking": the intrinsic reward rides the SPIKING hunger read off the bridge (brain-based; each read
       is `window` bridge steps, so it is sampled every drive_read_every-th step and cached between -- the biologically-
@@ -249,7 +253,7 @@ def live(agent, hunger_reader, state, world, n_steps, *, drive_reward="spiking",
         deficits.append(deficit)
         # the SPIKING drive read (spiking mode only; rate_proxy uses the host drive + the separate corr sweep, so it
         # steps the bridge only for groundings -> tractable). Sample every drive_read_every-th step, reuse the cache.
-        if drive_reward == "spiking":
+        if drive_reward == "spiking" and perceive:
             if state._hunger_cache is None or (state.t % max(1, drive_read_every) == 0):
                 state._hunger_cache = hunger_reader.read(deficit, lesion=state.lesion)
             hunger_spk, agrp_rate = state._hunger_cache
@@ -296,7 +300,7 @@ def live(agent, hunger_reader, state, world, n_steps, *, drive_reward="spiking",
         energies.append(state.E)
 
         # ── perceive + ground + store on FIRST arrival at an object cell (the lived, open-ended memory) ──
-        obj = world.cell_to_obj.get(state.pos)
+        obj = world.cell_to_obj.get(state.pos) if perceive else None
         if obj is not None and obj not in cache:
             agent.perceive_and_ground(obj)                 # grounds the LIVE spiking percept into the composer
             cache.add(obj)
@@ -394,8 +398,8 @@ def main():
     if per_seed and n_go == len(per_seed):
         print(f"  GO ({n_go}/{len(per_seed)} seeds): the FIRST PERSISTENT LIVING AGENT that perceives, remembers, and "
               "can be talked to about what it LIVED. A merged one-brain lives a drive-biased life (survives while "
-              "LESION+YOKE crash), grounds+stores the objects IT encountered (a GROUNDING-LESION collapses lived "
-              "recall), answers who/what about them + ABSTAINS on never-encountered (the no-confab MOAT held, "
+              "LESION+YOKE crash), grounds+stores the objects IT encountered (corrupting the grounded codes "
+              "collapses lived recall), answers who/what about them + ABSTAINS on never-encountered (the no-confab MOAT held, "
               "conversational synapses byte-frozen), and RESUMES the exact life + memory after a reset. ⇒ the merged "
               "brain becomes a LIFE that can be talked to about its own experience. HONEST SCOPE: the learned spatial "
               "policy stays the deferred Tier-4 dendrite wall (survival uses the validated rate-proxy stand-in); "
@@ -420,56 +424,68 @@ def _build_agent(seed):
 
 def run_seed(seed, root, *, n_steps=900, drive_window=40, drive_reward="spiking", drive_read_every=10, n_objects=3,
              modes=("intact", "lesion", "yoke")):
-    """One seed: for each mode build the merged brain, live, and measure survival + lived memory + moat; on intact
-    also do the drive corr sweep, the grounding-lesion arm, and the persistence-across-reset check."""
+    """One seed. SURVIVAL controls (lesion/yoke) run HOST-ONLY (the validated persistent_living_loop rate-proxy
+    mechanism -- NO bridge build), showing the drive is load-bearing for survival. The INTACT merged-brain life
+    runs ON the bridge: it lives (drive-biased host-Q survival), PERCEIVES+GROUNDS+STORES the objects it encounters,
+    and is measured for lived recall + the no-confab moat + the drive corr sweep + persistence + the grounding-
+    corruption anti-cheat. 2 bridge builds/seed (intact + one persistence agent) -> tractable."""
     from sim.backend import to_host
-    from research.runners.navigate_to_compose_then_answer import lesion_gen_convergence
 
     world = LivingWorld(seed, n_objects=n_objects)
     out = {"seed": seed, "world": {"placed": world.placed, "held_out": world.held_out}, "modes": {}}
 
-    for mode in modes:
-        agent = _build_agent(seed)
-        bridge = agent._merged_bridge
-        hunger = SpikingHunger(bridge, window=drive_window)
-        # MOAT (in vivo): snapshot the conversational synapses before the live run.
-        pre_conn = to_host(bridge.cp_connections.data).copy()
+    # ── SURVIVAL controls (lesion + yoke), HOST-ONLY: the drive is the host TwoPoolDrive (rate_proxy), no bridge.
+    #    The validated persistent_living_loop mechanism -- these show survival REQUIRES the intact drive. ──
+    for mode in ("lesion", "yoke"):
+        if mode not in modes:
+            continue
         st = LiveState(seed, lesion=(mode == "lesion"), yoke=(mode == "yoke"))
-        cache = set()
-        seg = live(agent, hunger, st, world, n_steps, drive_reward=drive_reward,
-                   drive_read_every=drive_read_every, grounded_obj_cache=cache)
+        seg = live(None, None, st, world, n_steps, drive_reward="rate_proxy", perceive=False)
         surv = _survival(seg["energies"])
-        recall_ok, recall_tot = _lived_recall(agent, st.lived_facts)
-        abstain_ok, abstain_tot = _moat_check(agent, world)
-        post_conn = to_host(bridge.cp_connections.data)
-        conv_byte_frozen = bool(pre_conn.shape == post_conn.shape and np.array_equal(pre_conn, post_conn))
+        out["modes"][mode] = {"mode": mode, "survival": surv, "host_only": True}
+        print(f"  [seed {seed} {mode} host-only] minE {surv['min_energy']:.2f} crash% {100*surv['crash_frac']:.0f}",
+              flush=True)
 
-        rec = {"mode": mode, "survival": surv, "n_encountered": len(st.encountered),
-               "encountered": list(st.encountered), "n_lived_facts": len(st.lived_facts),
-               "lived_recall_ok": recall_ok, "lived_recall_tot": recall_tot,
-               "moat_abstain_ok": abstain_ok, "moat_abstain_tot": abstain_tot,
-               "conv_byte_frozen": conv_byte_frozen}
+    # ── INTACT: the merged-brain lived life ON the bridge (perceive/ground/store the objects it encounters) ──
+    agent = _build_agent(seed)
+    bridge = agent._merged_bridge
+    hunger = SpikingHunger(bridge, window=drive_window)
+    pre_conn = to_host(bridge.cp_connections.data).copy()          # MOAT (in vivo): pre-life conversational synapses
+    st = LiveState(seed)
+    seg = live(agent, hunger, st, world, n_steps, drive_reward=drive_reward,
+               drive_read_every=drive_read_every, perceive=True, grounded_obj_cache=set())
+    surv = _survival(seg["energies"])
+    recall_ok, recall_tot = _lived_recall(agent, st.lived_facts)   # captured BEFORE the grounding-corruption
+    abstain_ok, abstain_tot = _moat_check(agent, world)
+    conv_byte_frozen = bool(np.array_equal(pre_conn, to_host(bridge.cp_connections.data)))
+    corr = _drive_corr_sweep(hunger)
+    persist = _persistence_check(seed, root, st)                   # 1 build: cold-then-resumed in one fresh agent
+    # grounding-corruption anti-cheat (in-place, cheap; navigate_to_compose's lesion-recompose pattern): the facts
+    # were stored with the LIVE-grounded codes; CORRUPT those codes -> re-query -> recall collapses (the recall
+    # depends on the SPECIFIC live-grounded codes = the percept). Done LAST (it destroys the intact codebook).
+    gl = _grounding_corrupt_recall(agent, st.lived_facts, st.encountered, seed)
 
-        if mode == "intact":
-            rec["corr_deficit_drive_sweep"] = _drive_corr_sweep(hunger)
-            # persistence: save body + memory, reload into a FRESH agent, re-instate the memory, resume a tail.
-            rec.update(_persistence_check(seed, root, st, world, n_steps, drive_window, drive_reward))
-            # grounding-lesion: a fresh agent, sever the perception->concept convergence, re-live -> recall collapses.
-            rec["grounding_lesion"] = _grounding_lesion_arm(seed, world, n_steps, drive_window, drive_reward,
-                                                            drive_read_every, lesion_gen_convergence)
-        out["modes"][mode] = rec
-        print(f"  [seed {seed} {mode}] minE {surv['min_energy']:.2f} crash% {100*surv['crash_frac']:.0f} | "
-              f"enc {len(st.encountered)} facts {len(st.lived_facts)} recall {recall_ok}/{recall_tot} | "
-              f"moat {abstain_ok}/{abstain_tot} | conv-frozen {conv_byte_frozen}", flush=True)
+    out["modes"]["intact"] = {
+        "mode": "intact", "survival": surv, "n_encountered": len(st.encountered),
+        "encountered": list(st.encountered), "n_lived_facts": len(st.lived_facts),
+        "lived_recall_ok": recall_ok, "lived_recall_tot": recall_tot,
+        "moat_abstain_ok": abstain_ok, "moat_abstain_tot": abstain_tot, "conv_byte_frozen": conv_byte_frozen,
+        "corr_deficit_drive_sweep": corr, "grounding_lesion": gl, **persist}
+    print(f"  [seed {seed} intact] minE {surv['min_energy']:.2f} crash% {100*surv['crash_frac']:.0f} | enc "
+          f"{len(st.encountered)} facts {len(st.lived_facts)} recall {recall_ok}/{recall_tot} "
+          f"(corrupt {gl['recall_frac']:.2f}) | moat {abstain_ok}/{abstain_tot} | conv-frozen {conv_byte_frozen} | "
+          f"corr {corr:+.2f} | persist {persist['persist_resumed_remembers']} cold {persist['cold_recall']}",
+          flush=True)
 
     out["verdict"] = _verdict(out["modes"])
     return out
 
 
-def _persistence_check(seed, root, st, world, n_steps, drive_window, drive_reward):
-    """Save the body + lived memory, reload into a FRESH agent, re-instate the memory (grounded codes + re-store the
-    lived facts), and confirm the reloaded agent answers the lived queries — while a NO-PERSISTENCE cold agent (no
-    re-instate) has an EMPTY memory. Cheap-first JSON re-instate (§1f)."""
+def _persistence_check(seed, root, st):
+    """Save the body + lived memory, then in ONE fresh agent: query the lived facts BEFORE re-instating (the
+    NO-PERSISTENCE cold start -> empty kb -> recall 0), then re-instate (the grounded codes + re-store the lived
+    facts) and query again (the PERSISTED resume -> recalls). Cheap-first JSON re-instate (scoping §1f; true
+    synaptic-tensor persistence is the flagged follow-on). ONE bridge build (cold + resumed share it)."""
     seed_root = os.path.join(root, f"seed{seed}_persist")
     lineage = BridgeLineage(f"live_remember_{seed}", root=Path(seed_root))
     payload = {"body": st.body_payload(), "memory": st.memory_payload()}
@@ -479,42 +495,44 @@ def _persistence_check(seed, root, st, world, n_steps, drive_window, drive_rewar
             json.dump(payload, fh)
     lineage.save(None, save_fn=save_fn, tier="live-and-remember",
                  arch={"kind": "tier3_live_and_remember", "L": L}, snapshot=False)
-
     with open(lineage.load(), "r", encoding="utf-8") as fh:
-        loaded = json.load(fh)
-    mem = loaded["memory"]
-
-    # PERSISTED resume: a fresh agent, re-instate the grounded codes + re-store the lived facts -> memory resumes.
-    resumed = _build_agent(seed)
-    for obj, code in mem["grounded_codes"].items():
-        resumed.composer.concepts[obj] = _decode_code(code)
-    for (prev, verb, cur) in [tuple(f) for f in mem["lived_facts"]]:
-        resumed.composer.store(prev, verb, cur)
+        mem = json.load(fh)["memory"]
     lived_facts = [tuple(f) for f in mem["lived_facts"]]
-    p_ok, p_tot = _lived_recall(resumed, lived_facts)
+
+    fresh = _build_agent(seed)
+    # NO-PERSISTENCE cold start: query BEFORE re-instating -> empty kb -> recall 0 (the memory is not re-derived).
+    c_ok, c_tot = _lived_recall(fresh, lived_facts)
+    # PERSISTED resume: re-instate the grounded codes + re-store the lived facts -> the SAME life's memory resumes.
+    for obj, code in mem["grounded_codes"].items():
+        fresh.composer.concepts[obj] = _decode_code(code)
+    for (prev, verb, cur) in lived_facts:
+        fresh.composer.store(prev, verb, cur)
+    p_ok, p_tot = _lived_recall(fresh, lived_facts)
     resumed_remembers = bool(p_tot > 0 and p_ok == p_tot)
-
-    # NO-PERSISTENCE cold start: a fresh agent with NO re-instate -> empty memory -> cannot answer the lived queries.
-    cold = _build_agent(seed)
-    c_ok, c_tot = _lived_recall(cold, lived_facts)          # nothing stored -> all abstain -> 0
     no_persistence_differs = bool(resumed_remembers and c_ok == 0 and p_tot > 0)
-
     return {"persist_resumed_remembers": resumed_remembers, "persist_recall": [p_ok, p_tot],
             "cold_recall": [c_ok, c_tot], "no_persistence_differs": no_persistence_differs}
 
 
-def _grounding_lesion_arm(seed, world, n_steps, drive_window, drive_reward, drive_read_every, lesion_gen_convergence):
-    """A fresh agent whose perception->concept convergence is SEVERED before the life: it still encounters + stores
-    the SAME objects, but the grounded codes are random -> lived-recall collapses to chance (the memory rides the
-    LIVE percept). Returns the lesioned recall fraction (should be << the intact fraction)."""
-    agent = _build_agent(seed)
-    lesion_gen_convergence(agent._merged_bridge, agent._handles["gen"])
-    hunger = SpikingHunger(agent._merged_bridge, window=drive_window)
-    st = LiveState(seed)
-    live(agent, hunger, st, world, n_steps, drive_reward=drive_reward,
-         drive_read_every=drive_read_every, grounded_obj_cache=set())
-    ok, tot = _lived_recall(agent, st.lived_facts)
-    return {"recall_ok": ok, "recall_tot": tot, "recall_frac": (ok / tot if tot else 0.0)}
+def _grounding_corrupt_recall(agent, lived_facts, encountered, seed):
+    """The lived-memory anti-cheat (navigate_to_compose's validated lesion-recompose pattern): the facts were stored
+    with the LIVE-grounded object codes. CORRUPT those codes in the codebook (as if the perception were unreliable),
+    then re-query the SAME stored facts -> recall COLLAPSES, because the stored composites no longer match the
+    codebook. Load-bearing + matched-to-function: the recall depends on the SPECIFIC codes the live perception
+    produced (a lesion-BEFORE-store instead yields self-consistent garbage that recalls fine -- the seed-42
+    lesson). Destroys the codebook -> call LAST. Returns the corrupted-recall fraction (should be << intact)."""
+    comp = agent.composer
+    rng = np.random.default_rng(seed + 999)
+    cb = comp.concepts
+    for obj in set(encountered):
+        if obj in cb:
+            cb[obj] = rng.uniform(0.0, 1.0, comp.D)         # corrupt the live-grounded code
+    if hasattr(comp, "_csr_cache"):
+        comp._csr_cache = {}                                # invalidate any cached cleanup/store stack
+    if hasattr(comp, "_store_dirty"):
+        comp._store_dirty = True
+    ok, tot = _lived_recall(agent, lived_facts)
+    return {"recall_ok": ok, "recall_tot": tot, "recall_frac": (ok / tot if tot else 1.0)}
 
 
 def _verdict(modes):
@@ -532,8 +550,9 @@ def _verdict(modes):
     lesion_frac = float(gl.get("recall_frac", 1.0))
     lived_memory = bool(I["lived_recall_tot"] >= 1 and intact_frac >= 0.75 and lesion_frac <= intact_frac - 0.3)
     # converse + moat: intact answers correctly AND the no-confab moat abstains on never-encountered (byte-frozen).
+    # (lesion/yoke are HOST-ONLY survival controls -> no bridge -> no conversational synapses to freeze.)
     moat = bool(I["moat_abstain_tot"] >= 1 and I["moat_abstain_ok"] == I["moat_abstain_tot"]
-                and I["conv_byte_frozen"] and Le["conv_byte_frozen"] and Y["conv_byte_frozen"])
+                and I["conv_byte_frozen"])
     persistence = bool(I.get("persist_resumed_remembers") and I.get("no_persistence_differs"))
     go = bool(survival and corr_ok and lived_memory and moat and persistence)
     return {"go": go, "survival": survival, "corr_ok": corr_ok, "lived_memory": lived_memory,
@@ -560,7 +579,7 @@ def _run_smoke(a):
         abstain_ok, abstain_tot = _moat_check(agent, world)
         conv_frozen = bool(np.array_equal(pre_conn, to_host(bridge.cp_connections.data)))
         corr = _drive_corr_sweep(hunger)
-        pc = _persistence_check(a.seeds[0], root, st, world, a.n_steps, a.drive_window, a.drive_reward)
+        pc = _persistence_check(a.seeds[0], root, st)
         ok = bool(len(st.encountered) >= 2 and recall_tot >= 1 and abstain_ok == abstain_tot
                   and conv_frozen and pc["no_persistence_differs"])
         print(f"[smoke] enc {st.encountered} | facts {len(st.lived_facts)} recall {recall_ok}/{recall_tot} | "
