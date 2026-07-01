@@ -6352,3 +6352,32 @@ beyond the first -> richer discourse than single-fact Q&A), reuse `mta.agent.ela
 render the surfaced fact grounded + VERIFY + moat. MEASURE: the console enumerates >1 grounded fact about a subject on
 "tell me more", moat holds. Reuse-by-import; NO sim/ edit. THEN: neural interrogative parser + webapp wire-in +
 (deferred) spiking-forward. biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 760 DONE (2026-07-01 — ELABORATE in the console + regression-verify clean)
+
+Elaborate: "tell me more about the dog" -> the dlPFC dialogue planner (elaborate = spiking spreading-activation over
+the agent's association graph) surfaces an UNMENTIONED grounded fact -> "the dog likes bone, yes." Enriched --demo
+self-check (what/anaphora/growth/yes-no/who/describe/elaborate/moat) ALL-CORRECT. Regression-verify of my session's
+one shared-file edit (constrained_decode_gate.py, additive): 33 q2 tests PASS, my edit non-protected + session
+touched ZERO protected files -> non-regressive; the 1 failing test_protected_byte_empty is a PRE-EXISTING
+Windows-encoding + stale-baseline test-infra bug (flagged task_702635b3). Commit 5b13d8b4.
+
+ARC MILESTONE: the fluid-conversation priority has a COMPREHENSIVE first pass -- Phases 0-6 + the interactive console
+(what/who/yes-no/describe/elaborate + anaphora + growth + breadth + moat), all multi-seed GO, minimized (~21M)
+brain-trained brain-gated stack, NO sim/ edit anywhere, documented (findings + CLAUDE.md arc header + memory PROGRESS).
+
+**EXACT NEXT CONCRETE ACTION:** CYCLE 761 = the NEURAL INTERROGATIVE PARSER de-risk (burn the Phase-3/4/console
+question-parse SCAFFOLD; comprehension is the brain's job per BRAIN-BASED-ONLY; connects to the multicue-parser
+frontier `project_conversational_primary_robust_multicue_parser`). The scaffold uses host wh/aux word-detection + a
+vocab lookup to map a question -> (query-type, cue). DE-RISK (cheap-first): can the validated `BridgeParser` (or a
+brain-based mechanism) comprehend an INTERROGATIVE frame -> (query-type, cue)? Approach: treat the wh-word as a
+LEXICAL/frame cue (like the parser's voice cue) -- train/extend the parser on interrogative examples ("what does DOG
+EAT ?" -> agent=DOG action=EAT + wh marks patient-as-query; "who EAT MEAT ?" -> wh marks agent-as-query) and MEASURE
+it maps held-out questions to the correct (query-type, cue) vs the host scaffold, multi-seed, with a PERMUTED-cue
+anti-cheat (at chance) + a lesion. Build `_fluidconv_phase7_neural_interrog_parser_derisk.py`. GO = correct
+(query-type, cue) on held-out questions >= the host scaffold, permuted at chance. If it's a real build/boundary (the
+parser can't learn interrogative frames cheaply), characterize HONESTLY (the wh->query-type mapping may be a
+legitimate lexical cue, not a cheat) + DEFER to the multicue-parser arc. Reuse-by-import; sim/ edit only if strictly
+required (flag it). THEN: webapp Interact wire-in (needs owner to verify the UI) + (deferred) spiking-forward +
+experience-connection (Tier-3 live-and-remember -> converse about LIVED percepts). biologization/one-brain HARD;
+moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
