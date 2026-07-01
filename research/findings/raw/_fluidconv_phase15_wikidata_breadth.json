@@ -1,0 +1,202 @@
+{
+  "probe": "fluidconv_phase15_wikidata_breadth",
+  "GO": true,
+  "verdict": "GO -- REAL grounded-knowledge breadth from Wikidata: encyclopedic facts (dog isa mammal, tree has root, cat has tooth, ...) are FETCHED + cached + INGESTED via the validated parse+store; every fact recalled; a REAL MULTI-LEVEL taxonomic chain (dog -> mammal -> ancestor, all Wikidata subclass edges) is chased hop-by-hop (Collins-Quillian transitive-isa inheritance); staged ingestion retains batch-1 (no forgetting); the moat abstains on a never-fetched concept. >=3 seeds. The ConceptNet-down breadth lever, delivered via a real alternate source -- reuse-by-import, NO sim/ edit.",
+  "source": "wikidata (P279 subclass-of -> isa; P527 has-part -> has)",
+  "n_facts": 24,
+  "resolves": "real grounded-knowledge breadth: fetch REAL encyclopedic triples from a live curated source (Wikidata), simplify to SVO, ingest via the validated parse+store, converse grounded over them with real isa-inheritance + moat.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 40.1,
+  "facts": [
+    [
+      "dog",
+      "isa",
+      "mammal"
+    ],
+    [
+      "cat",
+      "isa",
+      "felidae"
+    ],
+    [
+      "cat",
+      "isa",
+      "pet"
+    ],
+    [
+      "cat",
+      "isa",
+      "mammal"
+    ],
+    [
+      "cat",
+      "has",
+      "tooth"
+    ],
+    [
+      "cat",
+      "has",
+      "ear"
+    ],
+    [
+      "cat",
+      "has",
+      "eye"
+    ],
+    [
+      "bird",
+      "isa",
+      "vertebrata"
+    ],
+    [
+      "tree",
+      "isa",
+      "plant"
+    ],
+    [
+      "tree",
+      "isa",
+      "phanerophyte"
+    ],
+    [
+      "tree",
+      "has",
+      "root"
+    ],
+    [
+      "tree",
+      "has",
+      "bark"
+    ],
+    [
+      "tree",
+      "has",
+      "trunk"
+    ],
+    [
+      "river",
+      "isa",
+      "watercourse"
+    ],
+    [
+      "river",
+      "isa",
+      "water"
+    ],
+    [
+      "river",
+      "isa",
+      "body"
+    ],
+    [
+      "river",
+      "has",
+      "water"
+    ],
+    [
+      "plant",
+      "has",
+      "root"
+    ],
+    [
+      "plant",
+      "has",
+      "stem"
+    ],
+    [
+      "plant",
+      "has",
+      "layer"
+    ],
+    [
+      "mammal",
+      "isa",
+      "vertebrata"
+    ],
+    [
+      "plant",
+      "isa",
+      "organism"
+    ],
+    [
+      "vertebrata",
+      "isa",
+      "chordata"
+    ],
+    [
+      "watercourse",
+      "isa",
+      "water"
+    ]
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_facts": 24,
+      "recall": 24,
+      "acquisition_ok": true,
+      "dog_isa_chain": [
+        "mammal",
+        "vertebrata",
+        "chordata"
+      ],
+      "tree_isa_chain": [
+        "plant",
+        "organism"
+      ],
+      "inheritance_ok": true,
+      "b1_after1": 14,
+      "b1_after2": 14,
+      "n_batch1": 14,
+      "retention_ok": true,
+      "moat_ok": true
+    },
+    {
+      "seed": 43,
+      "n_facts": 24,
+      "recall": 24,
+      "acquisition_ok": true,
+      "dog_isa_chain": [
+        "mammal",
+        "vertebrata",
+        "chordata"
+      ],
+      "tree_isa_chain": [
+        "plant",
+        "organism"
+      ],
+      "inheritance_ok": true,
+      "b1_after1": 14,
+      "b1_after2": 14,
+      "n_batch1": 14,
+      "retention_ok": true,
+      "moat_ok": true
+    },
+    {
+      "seed": 44,
+      "n_facts": 24,
+      "recall": 24,
+      "acquisition_ok": true,
+      "dog_isa_chain": [
+        "mammal",
+        "vertebrata",
+        "chordata"
+      ],
+      "tree_isa_chain": [
+        "plant",
+        "organism"
+      ],
+      "inheritance_ok": true,
+      "b1_after1": 14,
+      "b1_after2": 14,
+      "n_batch1": 14,
+      "retention_ok": true,
+      "moat_ok": true
+    }
+  ],
+  "HONEST_CEILING": "the Wikidata->SVO front-end is host-side data-prep (single head-token simplification of the value label; curated clean properties P279/P527). Richer relations (diet, habitat, capable-of) + multi-word values need a fuller extraction pass. Composer FHRR capacity (~sqrt(D)) bounds facts-per-brain (D=256 held Phase-12's 30); larger KBs raise D (validated to 320) or shard. Free open-world inference beyond fetched facts remains the field wall (the honest hedge is the deliverable)."
+}

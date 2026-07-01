@@ -6659,3 +6659,27 @@ composing validated parse+store). Deferred: webapp Interact wire-in (owner UI ve
 (when the KV-cache lever lands). Honest wall: free open-world inference beyond learned facts (the hedge is the
 deliverable). biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified; honest origin+gitea; COMMIT ON
 MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
+
+## CYCLE 771 (2026-07-01 — REAL-DATA breadth via Wikidata; Phase-15 GO 3/3; ConceptNet still 502)
+
+ConceptNet API STILL 502 (multi-cycle outage). Probed alternates: WordNet data not downloaded (nltk present, no
+corpus); **Wikidata SPARQL is UP** (different server). Built `_fluidconv_phase15_wikidata_breadth_derisk.py`: fetch REAL
+encyclopedic triples via curated clean properties (P279 subclass-of -> `isa`; P527 has-part -> `has`), simplify value ->
+single head token, CACHE to json (fetch-once -> reproducible/offline multi-seed), ingest via validated parse+store.
+**GO 3/3:** acquisition 24/24 real facts; REAL transitive-isa chain **dog -> mammal -> vertebrata -> chordata** (all
+Wikidata subclass edges, chased hop-by-hop = Collins-Quillian inheritance); staged retention b1 14/14 (no forgetting);
+moat abstains on "dragon". KEY data-model finding: Wikidata annotates has-parts on SPECIES not CLASSES, so the real
+in-data inheritance is the transitive SUBCLASS chain (not class has-parts) -- changed the gate accordingly. The
+Wikidata->SVO front-end is host-side data-prep (legitimate environment), NOT a brain mechanism; brain still learns via
+composer.store. NO sim/ edit. Finding: `2026-07-01-fluid-conversation-phase15-wikidata-real-breadth-GO.md`.
+
+**EXACT NEXT CONCRETE ACTION:** commit Phase-15 (runner + finding + raw json + cache + this state) to BOTH remotes on
+main. THEN continue autonomously (owner "you choose / keep going"): the highest-leverage next step is to WIRE the
+Wikidata real-knowledge source INTO the FluidChat console -- an in-session `learn about <concept>` command that fetches
++ ingests that concept's real Wikidata facts on demand (grounded breadth-on-demand, per `project_vocab_target_breadth_vs_depth`
+"on-demand tail"), then the owner can ask about it. Keep it CPU/numpy; cache fetches; moat + isa-inheritance already
+wired (Phase-14/15). Then: richer Wikidata relations (a fuller prose->SVO extraction if ConceptNet stays down); retry
+ConceptNet periodically for action facts (capable-of/desires). Deferred: webapp Interact wire-in (owner UI verify);
+the spiking-forward speed-wall (KV-cache lever). Honest wall: free open-world inference beyond learned facts.
+biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy
+for real runs (numpy only for CPU smoke/console).
