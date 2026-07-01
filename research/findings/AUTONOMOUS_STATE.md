@@ -6132,3 +6132,37 @@ control -> abstain / "I don't know", (d) a lesion (empty grounded set) -> no gro
 VERIFY-clean on the de-risk curriculum, hallucination caught, abstains on untaught. Reuse-by-import; NO sim/ edit.
 Then recurrent/RWKV block + on-substrate spiking-forward + multi-referent WTA (GAP D) per the roadmap.
 biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
+
+## CYCLE 753 (2026-07-01 — Phase-1 fluidity mechanism SETTLED: v1/v2 NEGATIVE, v3 GO [prompt-condition + free-gen + post-hoc VERIFY])
+
+Mapped the fluid-grounded mechanism space with the ~21M generator (3 de-risks, all reuse-by-import, NO sim/ edit):
+- **v1 NEGATIVE** (constrained core + free continuation): the Phase-0 veto is INHERENTLY terse (allows only 1
+  proposition's words -> forced loop "and meat and meat"); Phase-0 passed its bars because they measure grounding
+  NOT fluency. `_fluidconv_phase1_grounded_continuation_derisk.py`.
+- **v2 NEGATIVE** (broadened veto to subject's whole knowledge + temp sampling): word-salad -- even ~7 content words
+  is too small a lexicon for grammatical English. 2nd confirmation: **per-token veto is incompatible with fluency.**
+  BUT the FREE (unvetoed) baseline was genuinely FLUENT + NON-HALLUCINATORY (0 false facts) -- it just doesn't render
+  the SPECIFIC fact on command. `_fluidconv_phase1_broadened_veto_derisk.py`.
+- **v3 GO** (prompt-conditioned free-gen + post-hoc VERIFY): natural fact-lead + free (fluent) continuation +
+  sentence-aware re-parse. 3 seeds fluid+grounded **15/15**, drift-caught 3/3, untaught-abstain 3/3. Fluent grounded
+  prose ("The dog eats meat. ... 'Look, it is a bone!' Lily says."), moat as a post-hoc PLUS (no veto). One miss was
+  a cross-sentence extractor false-positive -> fixed `_extract_all_svos` to be sentence-boundary-aware -> 15/15.
+  `_fluidconv_phase1_conditioned_freegen_derisk.py`.
+Commits 518bd9f3 (v1) + 39410c0f (v2) + c6373edc (v3), both remotes. Finding:
+`research/findings/2026-07-01-fluid-conversation-phase1-fluidity-mechanism-findings.md`. HONEST SCOPE: v3 does fluent
+grounded RENDERING (state a fact + fluent narrative), NOT focused conversational Q&A (base model rambles STORIES, not
+ANSWERS), NOT multi-turn, NOT open breadth.
+
+**EXACT NEXT CONCRETE ACTION:** BUILD the retrieval-augmented render/QA FINE-TUNE (the roadmap's "brain-train it"
+lever, the direct enabler of "talk to it like an LLM"). STEP 1 = generate a synthetic RA render/QA dataset (a new
+runner, e.g. `_fluidconv_phase2_ra_finetune_dataset.py`): BROAD synthetic vocab (hundreds of entities/verbs/objects/
+attributes, NOT just the 8 animals -> the model learns the FORMAT, generalizes, does NOT memorize facts), examples of
+form "Facts: <retrieved fact(s)>. Question: <who/what/is>? Answer: <focused fluent grounded sentence>" AND a
+render/describe form AND an ABSTAIN form ("Facts: <none relevant>. ... Answer: I don't know."), TinyStories register.
+STEP 2 = fine-tune the 21M from the ckpt (continue training, a few thousand steps; kill-safe; background GPU run;
+weights_only ckpt). STEP 3 = re-test in the grounded-lang loop with the brain GATE: free-text Q -> brain
+comprehend+retrieve/abstain -> the fine-tuned model produces a FOCUSED fluent grounded answer -> post-hoc VERIFY;
+measure focused-answer quality + moat (untaught->abstain) + drift-caught, >=3 seeds. GO bar: focused grounded answers
+(not story rambles) + moat 0-FA. This is still a minimized+brain-trained+brain-gated generator (NOT the Qwen
+fallback). Then assemble the full conversational turn + multi-turn (recurrent state) + the multi-referent WTA (GAP D).
+biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
