@@ -6610,3 +6610,28 @@ distinct; moat. Reuse Phase-13 _resolve + add mint-on-mention + discourse tracki
 unblocked): retry ConceptNet / pick an alternate fact dataset for breadth; wire instance+acquisition into FluidChat;
 webapp Interact (owner UI verify). Honest wall: free open-world inference. biologization/one-brain HARD; moat a PLUS;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy.
+
+## CYCLE 769 (2026-07-01 — Phase-14 instance-conversation GO 3/3; v1 PARTIAL root-caused + fixed)
+
+`_fluidconv_phase14_instance_conversation_derisk.py` -> **GO 3-seed (42/43/44)**. The owner's "which dog?" distinction
+as a live multi-turn transcript: mint dog_1 on "i saw a dog" -> "the dog was brown" stores its OWN fact -> "what is the
+dog?" -> brown (the instance, not the kind's mammal) -> "what does the dog eat?" -> meat (INHERITED via isa) -> "what do
+dogs eat?" -> the kind -> "i saw a cat" (mint cat_1) -> "what is the dog?" STILL -> brown (distinct-persist) -> "the
+wolf" -> moat abstains. 5/5 gates every seed. v1 was HONEST/PARTIAL (generic + distinct-persist failed); root-caused to
+two rule-based-router bugs + FIXED: (1) plural "dogs" not normalized to kind "dog" -> `_kind_of` now returns
+(kind, is_plural); (2) a single `self._cur` discourse pointer broke distinct-persist after a 2nd-kind mint -> replaced
+with `self._last_inst = {kind: token}` (per-kind most-recent instance). Reuse-by-import; NO sim/ edit. Finding:
+`2026-07-01-fluid-conversation-phase14-instance-conversation-GO.md`.
+
+**EXACT NEXT CONCRETE ACTION:** commit Phase-14 (finding + runner + raw json + this state) to BOTH remotes on main.
+THEN continue autonomously (owner "you choose / keep going"): the highest-leverage unblocked step is to WIRE the
+grounded-growth batch into the actual `_fluidconv_chat_repl.py` console so the owner can USE it -- add (a) mint-on-
+mention + per-kind instance tracking (Phase-14) + definite/generic routing, and (b) the Phase-12 acquisition path
+(parse simple-SVO factual statements -> composer.store, growing the KB in-session), on top of the existing
+what/who/yes-no/describe/elaborate/discuss/compare/anaphora/growth/moat. Keep it CPU-runnable (numpy) for the console.
+Then re-attempt the real-corpus DATA breadth (retry ConceptNet; if still 502, pick an alternate offline triples
+source -- e.g. a bundled simplified-Wikipedia/ConceptNet snapshot -- + a prose->SVO fact-extraction front-end;
+research-gate the extraction if it's a genuinely new mechanism). Deferred: webapp Interact wire-in (owner UI verify);
+the spiking-forward speed-wall (when the KV-cache lever lands). Honest wall: free open-world inference beyond learned
+facts (the hedge is the deliverable). biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified; honest
+origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).

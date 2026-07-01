@@ -1,0 +1,141 @@
+{
+  "probe": "fluidconv_phase14_instance_conversation",
+  "GO": true,
+  "verdict": "GO -- instance-rep in a MULTI-TURN flow: an instance is minted on mention, attributed across turns, and 'the dog' (definite) retrieves ITS own fact (brown) + inherits the kind's ('the dog eats meat'); 'dogs' (generic) -> the kind; a second instance keeps the first distinct + retrievable; the moat abstains on a never-introduced 'wolf'. >=3 seeds. The owner's 'which dog?' distinction works conversationally.",
+  "resolves": "instance-rep in a multi-turn conversational flow: mint on mention + discourse tracking + definite/generic + isa-inheritance + distinctness + moat.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 20.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "transcript": [
+        [
+          "i saw a dog",
+          "ok, a dog."
+        ],
+        [
+          "the dog was brown",
+          "ok, the dog is brown."
+        ],
+        [
+          "what is the dog?",
+          "the dog is brown."
+        ],
+        [
+          "what does the dog eat?",
+          "the dog eats meat."
+        ],
+        [
+          "what do dogs eat?",
+          "dogs eats meat."
+        ],
+        [
+          "i saw a cat",
+          "ok, a cat."
+        ],
+        [
+          "what is the dog?",
+          "the dog is brown."
+        ],
+        [
+          "what does the wolf eat?",
+          "I don't know."
+        ]
+      ],
+      "own_ok": true,
+      "inherit_ok": true,
+      "generic_ok": true,
+      "persist_ok": true,
+      "moat_ok": true
+    },
+    {
+      "seed": 43,
+      "transcript": [
+        [
+          "i saw a dog",
+          "ok, a dog."
+        ],
+        [
+          "the dog was brown",
+          "ok, the dog is brown."
+        ],
+        [
+          "what is the dog?",
+          "the dog is brown."
+        ],
+        [
+          "what does the dog eat?",
+          "the dog eats meat."
+        ],
+        [
+          "what do dogs eat?",
+          "dogs eats meat."
+        ],
+        [
+          "i saw a cat",
+          "ok, a cat."
+        ],
+        [
+          "what is the dog?",
+          "the dog is brown."
+        ],
+        [
+          "what does the wolf eat?",
+          "I don't know."
+        ]
+      ],
+      "own_ok": true,
+      "inherit_ok": true,
+      "generic_ok": true,
+      "persist_ok": true,
+      "moat_ok": true
+    },
+    {
+      "seed": 44,
+      "transcript": [
+        [
+          "i saw a dog",
+          "ok, a dog."
+        ],
+        [
+          "the dog was brown",
+          "ok, the dog is brown."
+        ],
+        [
+          "what is the dog?",
+          "the dog is brown."
+        ],
+        [
+          "what does the dog eat?",
+          "the dog eats meat."
+        ],
+        [
+          "what do dogs eat?",
+          "dogs eats meat."
+        ],
+        [
+          "i saw a cat",
+          "ok, a cat."
+        ],
+        [
+          "what is the dog?",
+          "the dog is brown."
+        ],
+        [
+          "what does the wolf eat?",
+          "I don't know."
+        ]
+      ],
+      "own_ok": true,
+      "inherit_ok": true,
+      "generic_ok": true,
+      "persist_ok": true,
+      "moat_ok": true
+    }
+  ],
+  "HONEST_CEILING": "a lightweight rule-based mint/attribute/query router over the validated Phase-13 mechanism + a discourse-current instance pointer (an object-file). Multiple SIMULTANEOUS same-kind instances ('the first dog vs the second dog') -> the biased-competition WTA; perceived/consolidated instances -> the engram/hippocampal path (Tier-3). The interrogative/mint parse is a scaffold (the neural parser, Phase-7, is the brain-based path)."
+}
