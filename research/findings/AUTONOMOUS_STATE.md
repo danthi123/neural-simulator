@@ -6272,3 +6272,24 @@ the new fact survives a save/reload (BridgeLineage or composer state). MEASURE (
 answered grounded (RA-rendered) + old retained + moat 0-FA + persists. Reuse-by-import; NO sim/ edit. THEN: neural
 interrogative parser (burn the Phase-3/4 parse scaffold) + broader-KB breadth + (deferred) the spiking-forward when
 the speed lever lands. biologization/one-brain HARD; moat a PLUS (GATE-FIRST); honest origin+gitea; COMMIT ON MAIN.
+
+## CYCLE 756 DONE (2026-07-01 — Phase-5 GO: growth through conversation, generalizes to novel entities)
+
+`_fluidconv_phase5_growth_derisk.py`, 3 seeds GO. New facts heard mid-conversation are learned + immediately answered
+grounded; STANDOUT: the RA generator GENERALIZES to subjects UNSEEN in its fine-tune vocab ("the camel eats grass",
+"the zebra likes hay" from the provided fact) -> the fine-tune learned the FORMAT, not memorized facts -> breadth
+tractable via a growing KB. Gates 3/3: learn, novel-generalize, retention, moat 0-FA, durability. Commit f62cabaf;
+finding `2026-07-01-fluid-conversation-phase5-growth-GO.md`. The minimized (21M) brain-trained brain-gated stack now
+spans ALL core owner axes: fluent (P0), grounded (P1), focused Q&A (P2), full single-turn (P3), multi-turn (P4),
+grows-through-experience (P5). NO sim/ edit in Phases 0-5.
+
+**EXACT NEXT CONCRETE ACTION:** CYCLE 757 = assemble the INTERACTIVE fluid-conversation CONSOLE (the owner's
+console-not-dashboard priority; a usable capstone tying Phase 2-5 into ONE coherent conversation). Build
+`_fluidconv_chat_repl.py`: a scriptable REPL over `MultiTurnAgent` (multi-turn anaphora) + `FTFaculty` (the RA-fine-
+tuned 21M) that handles (1) QUESTIONS ("what does the X Y?" / "what does it Y?" pronoun) -> interrogative parse ->
+brain GATE (moat gate-first) -> RA focused answer -> post-hoc VERIFY -> reply; (2) STATEMENTS ("X Y Z" / "the X Ys Z")
+-> hear -> "ok, learned." (growth); (3) untaught -> "I don't know." (moat). Support `--script "t1|t2|..."` for a
+scripted smoke + a canned demo transcript (Q&A + it-anaphora + teach-a-new-fact-then-ask + abstain). MEASURE (smoke,
+>=1 seed but prefer 3): the scripted multi-turn+growth+moat transcript is all-correct. Reuse-by-import; NO sim/ edit.
+THEN: neural interrogative parser (burn the parse scaffold) + broader-KB breadth + (deferred) spiking-forward.
+biologization/one-brain HARD; moat a PLUS (GATE-FIRST); honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
