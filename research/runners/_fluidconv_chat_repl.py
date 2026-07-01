@@ -110,8 +110,50 @@ class FluidChat:
         _p, reply = self._answer(subj, cand[0])
         return cand[0], reply
 
+    def _stored_facts(self):
+        """The brain's affirmed SVO facts (string-only roles) from the composer store -- the discussion source."""
+        return [(f.get("agent"), f.get("action"), f.get("patient")) for f, _ in self.mta.agent.composer.kb
+                if all(isinstance(f.get(r), str) for r in ("agent", "action", "patient"))
+                and f.get("polarity", "AFFIRM") != "NEGATE"]
+
+    def _neighbourhood(self, topic):
+        """The topic's grounded neighbourhood (association-graph adjacency): facts where topic is agent or patient,
+        plus the members of a category topic (X is <topic> -> X's facts)."""
+        kb = self._stored_facts()
+        facts = [list(f) for f in kb if topic in (f[0], f[2])]
+        # category members ONLY via the "is" relation (X is <topic>) -- a non-"is" patient (dog chase cat) does NOT
+        # make the agent a member, so a regular topic doesn't vacuum in unrelated facts.
+        for m in [f[0] for f in kb if f[2] == topic and f[1] == "is"]:
+            facts += [list(f) for f in kb if f[0] == m and list(f) not in facts]
+        return facts
+
+    def _discuss(self, topic, *, max_facts=7):
+        """Open-ended grounded DISCUSSION (Phase-10): render each neighbourhood fact FAITHFULLY (single-fact; a
+        multi-fact context makes the 21M confabulate) + per-sentence VERIFY + concatenate. Moat: an ungrounded render
+        is dropped; an empty neighbourhood hedges."""
+        nb = []                                                         # dedup the neighbourhood
+        for f in self._neighbourhood(topic):
+            if f not in nb:
+                nb.append(f)
+            if len(nb) >= max_facts:
+                break
+        if not nb:
+            return f"I don't know much about the {topic}."
+        sentences = []
+        for (a, v, p) in nb:
+            q = f"what is the {a} ?" if v == "is" else f"what does the {a} {v} ?"
+            one = self.faculty.answer(f"the {a} {_v3(v)} {p} .", q)
+            svos = _extract_all_svos(one, self.agents, self.actions, self.patients, self.inflect)
+            ungrounded = [s for s in svos if _fact_key(s) not in self.store_keys]
+            # VERIFY: keep ONLY if the SPECIFIC fact is faithfully asserted (on-topic + no drift to another fact) and
+            # nothing ungrounded -- this drops both confabulation AND grounded-but-off-topic render drift.
+            if ([a, v, p] in svos) and not ungrounded:
+                sentences.append(one.strip())
+        return (f"Here's what I know about the {topic}: " + " ".join(sentences)) if sentences \
+            else f"I don't know much about the {topic}."
+
     def turn(self, text):
-        """One conversation turn: statement -> learn; question -> gate->answer->verify; untaught -> abstain."""
+        """One conversation turn: statement -> learn; question -> gate->answer->verify OR discuss; untaught -> abstain."""
         raw = text.strip()
         toks = [t.strip("?.!,") for t in raw.lower().split()]
         toks = [t for t in toks if t]
@@ -132,13 +174,27 @@ class FluidChat:
                 _v, reply = self._elaborate(subj)
                 return reply
 
-            # DESCRIBE ("tell me about the dog") -> a grounded sentence about the subject's first known fact
-            if ("tell" in tset or "about" in tset) and subj is not None:
-                v = verb or next((vv for vv in sorted(self.actions) if self.mta.agent.what_does(subj, vv) is not None), None)
-                if v is None:
-                    return "I don't know."
-                _p, reply = self._answer(subj, v)
-                return reply
+            known = self.agents | self.patients
+            def _norm(t):                                    # map a token to a known concept (handles plurals: dogs->dog)
+                if t in known:
+                    return t
+                if t.endswith("es") and t[:-2] in known:
+                    return t[:-2]
+                if t.endswith("s") and t[:-1] in known:
+                    return t[:-1]
+                return None
+            concepts_in = [c for c in (_norm(t) for t in toks) if c is not None]
+            # COMPARE ("how are dogs and cats different?" / "compare X and Y") -> discuss BOTH neighbourhoods
+            if ("different" in tset or "compare" in tset or "difference" in tset) and len(concepts_in) >= 2:
+                x, y = concepts_in[0], concepts_in[1]
+                dx, dy = self._discuss(x), self._discuss(y)
+                return f"{dx} And {dy[0].lower()}{dy[1:]}" if dy else dx
+
+            # DISCUSS ("tell me about the dog" / "what do you think about the dog" / "what about predators") ->
+            # an open-ended grounded discussion of the topic's neighbourhood (Phase-10), not a one-fact lookup.
+            if ("tell" in tset or "about" in tset or "think" in tset) and (subj is not None or concepts_in):
+                topic = subj or concepts_in[0]
+                return self._discuss(topic)
 
             # YES/NO ("does the dog eat meat?" / "is it true the dog eats meat?") -> is_it_true
             if ("does" in tset or "do" in tset or "is" in tset or "are" in tset) and subj and verb and obj:

@@ -80,7 +80,7 @@ class Discussant:
         (anti-cheat) retrieves a DIFFERENT topic's neighbourhood."""
         t = permute_topic or topic
         facts = [list(f) for f in self.kb if t in (f[0], f[2])]
-        members = [f[0] for f in self.kb if f[2] == t]          # X is <t> -> X is a member of category t
+        members = [f[0] for f in self.kb if f[2] == t and f[1] == "is"]   # X IS <t> -> member of category t ("is"-only)
         for m in members:
             facts += [list(f) for f in self.kb if f[0] == m and list(f) not in facts]
         return facts
