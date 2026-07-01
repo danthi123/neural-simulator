@@ -6334,3 +6334,21 @@ CAPACITY -- characterize where recall/moat degrade as facts scale (the FHRR sqrt
 run the console over the broad KB (a richer demo transcript). Reuse-by-import; NO sim/ edit. THEN: neural
 interrogative parser (burn the scaffold) + webapp Interact wire-in + (deferred) spiking-forward. biologization/
 one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs.
+
+## CYCLE 759 DONE (2026-07-01 — Phase-6 breadth GO + arc recorded in CLAUDE.md + memory)
+
+Phase-6 breadth GO (3 seeds): 40-fact KB at D=256, recall 1.00, RA-render 0.97, moat 0-FA/12. Breadth = data/D lever
+(FHRR sqrt(D)/M, validated to 320), not a wall; open-domain non-fact conversation = the field wall. Commit 12ce8cc9;
+finding `2026-07-01-fluid-conversation-phase6-breadth-GO.md`. Recorded the whole Phases-0-6 arc in CLAUDE.md (arc
+header, commit 16817e15) + the priority memory (`project_fluid_llm_like_conversation_priority` PROGRESS section). The
+minimize-transformer fluid-conversation stack is a comprehensive first pass: all owner axes GO, NO sim/ edit anywhere.
+
+**EXACT NEXT CONCRETE ACTION:** CYCLE 760 = (1) REGRESSION-VERIFY my session's ONE shared-file edit
+(`constrained_decode_gate.py` -- additive d_model/n_layer/n_head/bpe_path + weights_only=True): run any existing test
+for it + confirm the original Generator-F path is byte-behavior-unregressed (defaults reproduce d256/L4/H4 + the old
+bpe convention). If a `--tiny` CLI path exists, smoke it. (2) Then a CAPABILITY refinement: add ELABORATE/dialogue-
+planning to the console ("tell me more about X" / "what else" -> the dlPFC `elaborate` surfaces a RELATED fact about X
+beyond the first -> richer discourse than single-fact Q&A), reuse `mta.agent.elaborate` + the subject's fact set;
+render the surfaced fact grounded + VERIFY + moat. MEASURE: the console enumerates >1 grounded fact about a subject on
+"tell me more", moat holds. Reuse-by-import; NO sim/ edit. THEN: neural interrogative parser + webapp wire-in +
+(deferred) spiking-forward. biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN.
