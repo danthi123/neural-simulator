@@ -1,4 +1,170 @@
 {
+  "dog": [
+    [
+      "dog",
+      "isa",
+      "mammal"
+    ]
+  ],
+  "cat": [
+    [
+      "cat",
+      "isa",
+      "felidae"
+    ],
+    [
+      "cat",
+      "isa",
+      "pet"
+    ],
+    [
+      "cat",
+      "isa",
+      "mammal"
+    ],
+    [
+      "cat",
+      "has",
+      "tooth"
+    ],
+    [
+      "cat",
+      "has",
+      "ear"
+    ],
+    [
+      "cat",
+      "has",
+      "eye"
+    ]
+  ],
+  "horse": [
+    [
+      "horse",
+      "isa",
+      "animal"
+    ],
+    [
+      "horse",
+      "isa",
+      "mammal"
+    ],
+    [
+      "horse",
+      "has",
+      "fur"
+    ],
+    [
+      "horse",
+      "has",
+      "stallion"
+    ],
+    [
+      "horse",
+      "has",
+      "hoof"
+    ]
+  ],
+  "elephant": [
+    [
+      "elephant",
+      "isa",
+      "mammal"
+    ],
+    [
+      "elephant",
+      "has",
+      "trunk"
+    ],
+    [
+      "elephant",
+      "has",
+      "tusk"
+    ],
+    [
+      "elephant",
+      "is",
+      "grey"
+    ]
+  ],
+  "lion": [
+    [
+      "lion",
+      "isa",
+      "cat"
+    ]
+  ],
+  "bird": [
+    [
+      "bird",
+      "isa",
+      "vertebrata"
+    ]
+  ],
+  "tree": [
+    [
+      "tree",
+      "isa",
+      "plant"
+    ],
+    [
+      "tree",
+      "isa",
+      "phanerophyte"
+    ],
+    [
+      "tree",
+      "has",
+      "root"
+    ],
+    [
+      "tree",
+      "has",
+      "bark"
+    ],
+    [
+      "tree",
+      "has",
+      "trunk"
+    ]
+  ],
+  "apple": [
+    [
+      "apple",
+      "isa",
+      "pome"
+    ],
+    [
+      "apple",
+      "isa",
+      "maloideae"
+    ],
+    [
+      "apple",
+      "isa",
+      "fruit"
+    ],
+    [
+      "apple",
+      "has",
+      "amygdalin"
+    ],
+    [
+      "apple",
+      "is",
+      "yellow"
+    ],
+    [
+      "apple",
+      "is",
+      "green"
+    ],
+    [
+      "apple",
+      "is",
+      "red"
+    ]
+  ],
   "banana": [
     [
       "banana",
@@ -26,26 +192,85 @@
       "black"
     ]
   ],
-  "elephant": [
+  "car": [
     [
-      "elephant",
+      "car",
       "isa",
-      "mammal"
+      "vehicle"
     ],
     [
-      "elephant",
+      "car",
       "has",
-      "trunk"
+      "windshield"
     ],
     [
-      "elephant",
+      "car",
       "has",
-      "tusk"
+      "hood"
     ],
     [
-      "elephant",
-      "is",
-      "grey"
+      "car",
+      "has",
+      "engine"
+    ]
+  ],
+  "fish": [
+    [
+      "fish",
+      "isa",
+      "life"
+    ],
+    [
+      "fish",
+      "isa",
+      "animal"
+    ],
+    [
+      "fish",
+      "has",
+      "skull"
+    ],
+    [
+      "fish",
+      "has",
+      "gill"
+    ],
+    [
+      "fish",
+      "has",
+      "scale"
+    ]
+  ],
+  "flower": [
+    [
+      "flower",
+      "isa",
+      "inflorescence"
+    ],
+    [
+      "flower",
+      "isa",
+      "structure"
+    ],
+    [
+      "flower",
+      "isa",
+      "organ"
+    ],
+    [
+      "flower",
+      "has",
+      "perianth"
+    ],
+    [
+      "flower",
+      "has",
+      "androecium"
+    ],
+    [
+      "flower",
+      "has",
+      "gynoecium"
     ]
   ]
 }
