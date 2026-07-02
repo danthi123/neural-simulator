@@ -1,7 +1,7 @@
 {
   "probe": "emerge6_recurrent_microcircuit_seq",
-  "verdict": "BOUNDARY (build-informative, not a stop) -- free-run recall too low (held-out -0.249 < 0.60; naive-TF 0.008; one-step 0.716); didn't beat apical-lesion (freerun -0.249 vs lesion 0.025); didn't beat hebbian (-0.249 vs 0.000) (one-step map 0.716, task-sane; naive teacher-forced-only recall 0.008). Even dynamics-in-loop scheduled sampling did not stabilize autonomous recall -> the next mechanism is a proper recurrent (e-prop first-order) eligibility trace capturing recurrent sensitivity, and/or burst-window gating (scoping risk #2); if hebbian matches -> the task self-organizes without credit; a recurrent-noise family limit -> Urbanczik-Senn population-feedback / NMNC (shortlist). Do NOT start the sim/ port.",
-  "mechanism": "recurrent target-based microcircuit (Muratore-Capone-Paolucci): the confirmed feedforward active-cancellation credit (r_upper - r_int) made recurrent as (s* - a) (x) eligibility_trace; local, online, NO BPTT, NO weight transport; rate-limit, no spike noise (that is rung 3b)",
+  "verdict": "BOUNDARY (build-informative, not a stop) -- the wall is RE-LOCALIZED from credit-QUALITY to autonomous-GENERATION STABILITY. The leaky e-prop first-order eligibility LEARNS the one-step map teacher-forced (eprop-TF one-step 0.695, ~= the memoryless forward map), so credit quality is NOT the bottleneck -- but autonomous recall is DEAD for every training mode: teacher-forced -> exposure bias (eprop-TF recall -0.031; forward-TF 0.008), and dynamics-in-loop free-run DESTABILIZES the map (eprop free-run one-step -0.282, recall -0.213; forward free-run recall -0.249). Anti-cheats intact (eprop-lesion 0.037, eprop-null 0.037, eprop-shuffled -0.215, wrong 0.108; loc True). \u21d2 TWO distinct local recurrent credit rules (forward eligibility + proper e-prop first-order eligibility) BOTH fail autonomous trajectory generation -> research-gate condition (f) fires: the next mechanism is an autonomous-GENERATION-STABILITY method, NOT another local-rule tweak -- FORCE / RLS feedback (Sussillo-Abbott 2009), Laje-Buonomano innate stable trajectories (2013), or reservoir + trained feedback readout. Dispatch the read-only deep-research round first. Do NOT start the sim/ port.",
+  "mechanism": "recurrent target-based microcircuit (Muratore-Capone-Paolucci) with TWO eligibility forms: (baseline) memoryless map + low-pass INPUT eligibility [rung-3a: map learnable, recall dead]; (PRIMARY) proper e-prop first-order eligibility (Bellec 2020) on a LEAKY recurrent unit -- per-synapse trace eps_ji=kappa*eps_ji+pre_i carrying recurrent sensitivity via the neuron's own membrane leak, gated by phi'(u_j); credit=(s*-a)*phi'*eps; local, online, NO BPTT, NO weight transport (own-leak + own pre-rate + own target error only); rate-limit, no spike noise (rung 3b)",
   "task": "store/recall of a periodic sinusoid-superposition trajectory (Muratore canonical); held-out tail = memorization floor; autonomous free-run recall after teacher withdrawal (teacher-neutrality)",
   "seeds": [
     42,
@@ -13,9 +13,10 @@
     "T": 140,
     "epochs": 600,
     "lr": 0.5,
-    "alpha": 0.7
+    "alpha": 0.7,
+    "kappa": 0.7
   },
-  "elapsed_seconds": 6.2,
+  "elapsed_seconds": 15.1,
   "per_seed": [
     {
       "mc_freerun": {
@@ -64,6 +65,54 @@
         "recall_heldout": -0.028960700511897638,
         "recall_full": 0.029908717939118173,
         "onestep": -0.0698238953499733,
+        "locality_ok": true
+      },
+      "eprop_tf": {
+        "recall_heldout": -0.10600792050203943,
+        "recall_full": 0.10973423545462922,
+        "onestep": 0.693643529048199,
+        "locality_ok": true
+      },
+      "mc_eprop": {
+        "recall_heldout": -0.2698487119432972,
+        "recall_full": 0.023242450974358193,
+        "onestep": -0.30311900514541323,
+        "locality_ok": true
+      },
+      "eprop_lesion": {
+        "recall_heldout": 0.0009897376977457129,
+        "recall_full": 0.021771840191884013,
+        "onestep": -0.08999957735221398,
+        "locality_ok": true
+      },
+      "eprop_wrong": {
+        "recall_heldout": 0.09075689450526515,
+        "recall_full": -0.010591349254631382,
+        "onestep": -0.1033743550989108,
+        "locality_ok": true
+      },
+      "eprop_null": {
+        "recall_heldout": 0.0009897376977457129,
+        "recall_full": 0.021771840191884013,
+        "onestep": -0.08999957735221398,
+        "locality_ok": true
+      },
+      "eprop_shuffled": {
+        "recall_heldout": -0.3949577067608994,
+        "recall_full": 0.03253905877605703,
+        "onestep": -0.7490281676269865,
+        "locality_ok": true
+      },
+      "eprop_hebbian": {
+        "recall_heldout": -0.09631414098881996,
+        "recall_full": 0.04897165049294576,
+        "onestep": 0.013040345661296898,
+        "locality_ok": true
+      },
+      "eprop_untrained": {
+        "recall_heldout": 0.0009897376977457129,
+        "recall_full": 0.021771840191884013,
+        "onestep": -0.08999957735221398,
         "locality_ok": true
       },
       "seed": 42
@@ -117,6 +166,54 @@
         "onestep": 0.05200682390811597,
         "locality_ok": true
       },
+      "eprop_tf": {
+        "recall_heldout": 0.03591243146113286,
+        "recall_full": 0.009565369756468206,
+        "onestep": 0.6262599206624836,
+        "locality_ok": true
+      },
+      "mc_eprop": {
+        "recall_heldout": -0.26046997166433444,
+        "recall_full": -0.019546016901859215,
+        "onestep": -0.39877414680264667,
+        "locality_ok": true
+      },
+      "eprop_lesion": {
+        "recall_heldout": 0.16230099041981516,
+        "recall_full": 0.018882943458092934,
+        "onestep": 0.05586507179361627,
+        "locality_ok": true
+      },
+      "eprop_wrong": {
+        "recall_heldout": 0.198093869470029,
+        "recall_full": 0.024670852333096443,
+        "onestep": -0.029324628567508917,
+        "locality_ok": true
+      },
+      "eprop_null": {
+        "recall_heldout": 0.16230099041981516,
+        "recall_full": 0.018882943458092934,
+        "onestep": 0.05586507179361627,
+        "locality_ok": true
+      },
+      "eprop_shuffled": {
+        "recall_heldout": -0.1816451351102025,
+        "recall_full": 0.03940567139825411,
+        "onestep": -0.625045878654486,
+        "locality_ok": true
+      },
+      "eprop_hebbian": {
+        "recall_heldout": -0.019602214488626136,
+        "recall_full": 0.03762232161028425,
+        "onestep": 0.11275084672264118,
+        "locality_ok": true
+      },
+      "eprop_untrained": {
+        "recall_heldout": 0.16230099041981516,
+        "recall_full": 0.018882943458092934,
+        "onestep": 0.05586507179361627,
+        "locality_ok": true
+      },
       "seed": 43
     },
     {
@@ -166,6 +263,54 @@
         "recall_heldout": -0.04389339031649416,
         "recall_full": 0.017651629828098803,
         "onestep": -0.026855924796421425,
+        "locality_ok": true
+      },
+      "eprop_tf": {
+        "recall_heldout": -0.023991507897699292,
+        "recall_full": 0.07054365468112678,
+        "onestep": 0.7654554074360731,
+        "locality_ok": true
+      },
+      "mc_eprop": {
+        "recall_heldout": -0.10944488931604465,
+        "recall_full": -0.008512637427896893,
+        "onestep": -0.1436072302012303,
+        "locality_ok": true
+      },
+      "eprop_lesion": {
+        "recall_heldout": -0.051972065868892824,
+        "recall_full": 0.0009886884742923892,
+        "onestep": -0.03506389360783689,
+        "locality_ok": true
+      },
+      "eprop_wrong": {
+        "recall_heldout": 0.03442452769948032,
+        "recall_full": 0.009999061896136528,
+        "onestep": -0.02491742112903333,
+        "locality_ok": true
+      },
+      "eprop_null": {
+        "recall_heldout": -0.051972065868892824,
+        "recall_full": 0.0009886884742923892,
+        "onestep": -0.03506389360783689,
+        "locality_ok": true
+      },
+      "eprop_shuffled": {
+        "recall_heldout": -0.06821411100567029,
+        "recall_full": 0.019077181160169376,
+        "onestep": -0.6906147357729556,
+        "locality_ok": true
+      },
+      "eprop_hebbian": {
+        "recall_heldout": 0.023872232497971213,
+        "recall_full": 0.04355413742065235,
+        "onestep": 0.04488500389077218,
+        "locality_ok": true
+      },
+      "eprop_untrained": {
+        "recall_heldout": -0.051972065868892824,
+        "recall_full": 0.0009886884742923892,
+        "onestep": -0.03506389360783689,
         "locality_ok": true
       },
       "seed": 44

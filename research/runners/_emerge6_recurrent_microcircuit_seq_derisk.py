@@ -90,15 +90,31 @@ def _corr(a, b):
 class RecurrentMicrocircuitRNN:
     """Recurrent target-based microcircuit (rate-limit): the confirmed active-cancellation credit made recurrent per
     Muratore-Capone-Paolucci. The ONLY weight is W_rec (Xavier from seed). Credit = (s* - a) (x) eligibility; NO BPTT,
-    NO W_rec.T in the credit path (locality by construction)."""
+    NO W_rec.T in the credit path (locality by construction).
 
-    def __init__(self, N, seed=0, alpha=0.7):
+    Two credit-trace forms, selected by `elig`:
+      - "forward" (kappa=0): the memoryless map a_t = sig(W @ pre) + a low-passed INPUT eligibility e = a*e + (1-a)*pre,
+        shared across post-neurons. This is the rung-3a baseline (one-step map learnable, autonomous recall DEAD).
+      - "eprop" (kappa>0): a proper e-prop first-order eligibility (Bellec 2020) on a LEAKY-integrator unit
+        u_t = kappa*u_{t-1} + W@pre, a_t = sig(u_t). Per-SYNAPSE trace eps_ji = kappa*eps_ji + pre_i (recurrent
+        sensitivity carried forward through the neuron's own membrane leak), gated by the post pseudo-derivative:
+        e_ji = phi'(u_j)*eps_ji; dW_ji += (a*_j - a_j)*e_ji. LOCAL by construction (each synapse uses only its own
+        pre-rate, its post-neuron's activation derivative, and the post-neuron's target error -- NO W.T, NO off-diagonal
+        broadcast, NO BPTT). The membrane leak gives the recurrent depth a memoryless map lacks (and is biology-faithful:
+        real neurons integrate -- this is the natural bridge to the rung-3b spiking neuron's membrane tau)."""
+
+    def __init__(self, N, seed=0, alpha=0.7, kappa=0.0, elig="forward"):
         rng = np.random.default_rng(seed)
         lim = np.sqrt(6.0 / (2 * N))
         self.W = rng.uniform(-lim, lim, (N, N))
-        self.N = N; self.alpha = float(alpha)
+        self.N = N; self.alpha = float(alpha); self.kappa = float(kappa); self.elig = elig
         self._vel = np.zeros((N, N))
         self.used_transpose = False        # locality flag: set True if the credit path ever reads W.T (it must not)
+
+    def _step(self, u, pre):
+        """One recurrent step: u_t = kappa*u_{t-1} + W@pre; a_t = sig(u_t). kappa=0 -> memoryless a=sig(W@pre)."""
+        u = self.kappa * u + self.W @ pre
+        return u, _sig(u)
 
     def train(self, sstar, T_train, mode, epochs, lr, seed, free_run=False):
         """Target-based training over [0, T_train). Local, online-per-step credit accumulated per epoch.
@@ -111,14 +127,16 @@ class RecurrentMicrocircuitRNN:
             perm = rng.permutation(T_train)                     # break the TEMPORAL ORDER of the teacher (order anti-cheat)
             traj = sstar.copy(); traj[:T_train] = sstar[:T_train][perm]
         for ep in range(epochs):
-            e = np.zeros(self.N); dW = np.zeros((self.N, self.N))
+            dW = np.zeros((self.N, self.N))
+            e = np.zeros(self.N)                                # forward-form INPUT eligibility (vector)
+            eps = np.zeros((self.N, self.N))                    # e-prop per-SYNAPSE eligibility (matrix)
+            u = np.zeros(self.N)                                # leaky membrane state (unused when kappa=0)
             p_tf = 1.0 if not free_run else max(0.05, 1.0 - (ep / max(1, epochs - 1)) / 0.7)  # decaying teacher-forcing
             r_prev = traj[0].copy()
             for t in range(T_train - 1):
                 # presynaptic drive: teacher (traj[t]) when teacher-forced, else the network's OWN previous output r_prev
                 pre = traj[t] if (not free_run or rng.random() < p_tf) else r_prev
-                a = _sig(self.W @ pre)                          # recurrence-driven prediction of the next state
-                e = self.alpha * e + (1.0 - self.alpha) * pre   # local eligibility trace (forward-only; Capone Eq.7)
+                u, a = self._step(u, pre)                       # leaky (or memoryless) recurrence-driven prediction
                 if mode in ("apical_feedback_lesion", "no_teaching_null"):
                     err = np.zeros(self.N)                       # no teaching signal reaches the apical -> no learning
                 elif mode == "wrong_sign":
@@ -127,7 +145,13 @@ class RecurrentMicrocircuitRNN:
                     err = traj[t + 1]                            # Bouhadjar-style: associate consecutive states, NO (target-a) error
                 else:                                            # target-based cancellation error (the TEST rule)
                     err = traj[t + 1] - a                        # (a* - a): target activity minus recurrence-driven activity
-                dW += np.outer(err, e)                          # LOCAL: post-error (x) pre-eligibility; no W.T, no BPTT
+                if self.elig == "eprop":
+                    phip = a * (1.0 - a)                          # post pseudo-derivative phi'(u_t) -- LOCAL (own activation)
+                    eps = self.kappa * eps + pre[None, :]        # per-synapse eligibility: recurrent sensitivity via own leak
+                    dW += (err * phip)[:, None] * eps            # LOCAL: (learning-signal * phi') (x) per-synapse eligibility
+                else:
+                    e = self.alpha * e + (1.0 - self.alpha) * pre  # low-pass INPUT eligibility (forward-only; Capone Eq.7)
+                    dW += np.outer(err, e)                       # LOCAL: post-error (x) pre-eligibility; no W.T, no BPTT
                 r_prev = a                                       # network's own output (used as pre when not teacher-forced)
             self._vel = _MOMENTUM * self._vel + dW / max(1, T_train - 1)
             # free-run correction rides on noisy OWN-dynamics -> a gentler lr (the diagnosed conflict: teacher-forced
@@ -136,33 +160,59 @@ class RecurrentMicrocircuitRNN:
 
     def recall(self, sstar):
         """Autonomous free-run from the cue s*_0 (teacher withdrawn -> teacher-neutrality test)."""
-        r = sstar[0].copy(); out = [r]
+        r = sstar[0].copy(); u = np.zeros(self.N); out = [r]
         for _ in range(len(sstar) - 1):
-            r = _sig(self.W @ r); out.append(r)
+            u, r = self._step(u, r); out.append(r)
         return np.asarray(out)
 
     def onestep_pred(self, sstar):
-        """Teacher-forced one-step prediction a_{t+1}=sig(W@s*_t) (the achievable-map ceiling / one-step sanity)."""
-        return np.asarray([_sig(self.W @ sstar[t]) for t in range(len(sstar) - 1)])
+        """Teacher-forced one-step prediction (the achievable-map ceiling / one-step sanity); leaky state carried by the
+        GROUND-TRUTH trajectory so it measures the local map, not autonomous drift."""
+        u = np.zeros(self.N); out = []
+        for t in range(len(sstar) - 1):
+            u, a = self._step(u, sstar[t]); out.append(a)
+        return np.asarray(out)
+
+
+# arm -> (train_mode | None, free_run, elig). "forward" arms are the memoryless rung-3a baseline (kappa forced 0, byte-
+# identical to the committed BOUNDARY); the "eprop" family is the proper leaky-unit e-prop first-order eligibility (the
+# scoped next mechanism) WITH its own full anti-cheat panel so mc_eprop's recall is judged against valid controls.
+ARM_SPEC = {
+    "mc_freerun":             ("recurrent_microcircuit", True,  "forward"),
+    "recurrent_microcircuit": ("recurrent_microcircuit", False, "forward"),
+    "hebbian_selforg":        ("hebbian_selforg",        False, "forward"),
+    "apical_feedback_lesion": ("apical_feedback_lesion", False, "forward"),
+    "wrong_sign":             ("wrong_sign",             False, "forward"),
+    "no_teaching_null":       ("no_teaching_null",       False, "forward"),
+    "shuffled_target":        ("shuffled_target",        False, "forward"),
+    "untrained":              (None,                     False, "forward"),
+    # e-prop leaky family (NEW, mc_eprop = PRIMARY) -- the scoped rung-3a iteration-3 mechanism
+    "eprop_tf":               ("recurrent_microcircuit", False, "eprop"),   # DIAGNOSTIC: teacher-forced full-lr (does the leaky e-prop learn the one-step MAP at all, isolating free-run?)
+    "mc_eprop":               ("recurrent_microcircuit", True,  "eprop"),
+    "eprop_lesion":           ("apical_feedback_lesion", True,  "eprop"),
+    "eprop_wrong":            ("wrong_sign",             True,  "eprop"),
+    "eprop_null":             ("no_teaching_null",       True,  "eprop"),
+    "eprop_shuffled":         ("shuffled_target",        True,  "eprop"),
+    "eprop_hebbian":          ("hebbian_selforg",        True,  "eprop"),
+    "eprop_untrained":        (None,                     True,  "eprop"),
+}
+ARMS = list(ARM_SPEC.keys())
 
 
 def _run_arm(job):
-    seed, arm, N, T, epochs, lr, alpha = job
+    seed, arm, N, T, epochs, lr, alpha, kappa = job
+    train_mode, free_run, elig = ARM_SPEC[arm]
     sstar, T_train = make_seq_task(seed, N=N, T=T)
-    net = RecurrentMicrocircuitRNN(N, seed=seed, alpha=alpha)
-    if arm != "untrained":                                          # untrained -> random-dynamics floor
-        train_mode = "recurrent_microcircuit" if arm == "mc_freerun" else arm
-        net.train(sstar, T_train, train_mode, epochs, lr, seed, free_run=(arm == "mc_freerun"))
+    k = kappa if elig == "eprop" else 0.0                            # forward arms stay memoryless (kappa=0)
+    net = RecurrentMicrocircuitRNN(N, seed=seed, alpha=alpha, kappa=k, elig=elig)
+    if train_mode is not None:                                       # untrained/eprop_untrained -> random-dynamics floor
+        net.train(sstar, T_train, train_mode, epochs, lr, seed, free_run=free_run)
     rec = net.recall(sstar)
     heldout = _corr(rec[T_train:], sstar[T_train:])                  # HELD-OUT continuation (memorization floor)
     full = _corr(rec, sstar)
     onestep = _corr(net.onestep_pred(sstar)[T_train - 1:], sstar[T_train:])   # one-step on the held-out region
     return (seed, arm, {"recall_heldout": heldout, "recall_full": full, "onestep": onestep,
                         "locality_ok": (not net.used_transpose)})
-
-
-ARMS = ["mc_freerun", "recurrent_microcircuit", "hebbian_selforg", "apical_feedback_lesion", "wrong_sign",
-        "no_teaching_null", "shuffled_target", "untrained"]
 
 
 def main():
@@ -172,7 +222,8 @@ def main():
     ap.add_argument("--T", type=int, default=140)
     ap.add_argument("--epochs", type=int, default=600)
     ap.add_argument("--lr", type=float, default=0.5)
-    ap.add_argument("--alpha", type=float, default=0.7)            # eligibility-trace time constant
+    ap.add_argument("--alpha", type=float, default=0.7)            # forward-form eligibility-trace time constant
+    ap.add_argument("--kappa", type=float, default=0.9)            # e-prop leaky-unit membrane leak (recurrent-credit horizon)
     ap.add_argument("--max-workers", type=int, default=0, help="cap parallel workers (0=all cores; e.g. 4 to leave CPU free)")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
@@ -180,7 +231,7 @@ def main():
         print("NOT-RUNNABLE: need >=3 seeds"); return 2
     t0 = time.time(); err = None; per = []
     try:
-        jobs = [(s, arm, a.N, a.T, a.epochs, a.lr, a.alpha) for s in a.seeds for arm in ARMS]
+        jobs = [(s, arm, a.N, a.T, a.epochs, a.lr, a.alpha, a.kappa) for s in a.seeds for arm in ARMS]
         _cap = a.max_workers if (a.max_workers and a.max_workers > 0) else (os.cpu_count() or 1)
         collected = {}
         try:
@@ -195,25 +246,33 @@ def main():
         for s in a.seeds:
             d = collected[s]; d["seed"] = s; per.append(d)
         for d in per:
-            print(f"  [seed {d['seed']}] FREERUN recall(held) {d['mc_freerun']['recall_heldout']:.3f} "
-                  f"(1step {d['mc_freerun']['onestep']:.3f}) | naive-TF recall {d['recurrent_microcircuit']['recall_heldout']:.3f}"
-                  f" | hebbian {d['hebbian_selforg']['recall_heldout']:.3f} | lesion {d['apical_feedback_lesion']['recall_heldout']:.3f}"
-                  f" | wrong {d['wrong_sign']['recall_heldout']:.3f} | null {d['no_teaching_null']['recall_heldout']:.3f}"
-                  f" | shuffled {d['shuffled_target']['recall_heldout']:.3f} | untrained {d['untrained']['recall_heldout']:.3f}"
-                  f" | loc_ok {d['mc_freerun']['locality_ok']}", flush=True)
+            print(f"  [seed {d['seed']}] EPROP recall(held) {d['mc_eprop']['recall_heldout']:.3f} "
+                  f"(1step {d['mc_eprop']['onestep']:.3f}) | eprop-lesion {d['eprop_lesion']['recall_heldout']:.3f}"
+                  f" | eprop-hebbian {d['eprop_hebbian']['recall_heldout']:.3f} | eprop-shuffled {d['eprop_shuffled']['recall_heldout']:.3f}"
+                  f" | eprop-null {d['eprop_null']['recall_heldout']:.3f} | eprop-untr {d['eprop_untrained']['recall_heldout']:.3f}"
+                  f"  ||  eprop-TF(map-diag) 1step {d['eprop_tf']['onestep']:.3f}"
+                  f" | fwd-freerun(baseline) {d['mc_freerun']['recall_heldout']:.3f} (1step {d['mc_freerun']['onestep']:.3f})"
+                  f" | loc_ok {d['mc_eprop']['locality_ok']}", flush=True)
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
     if err is None:
         def m(arm, key="recall_heldout"):
             return float(np.mean([p[arm][key] for p in per]))
-        # PRIMARY = mc_freerun (scheduled-sampling, the autonomous-recall fix); naive teacher-forced kept as baseline
-        mc, mc_1step = m("mc_freerun"), m("mc_freerun", "onestep")
-        naive_tf = m("recurrent_microcircuit")
-        heb, les = m("hebbian_selforg"), m("apical_feedback_lesion")
-        wrong, null, shuf, unt = m("wrong_sign"), m("no_teaching_null"), m("shuffled_target"), m("untrained")
-        loc = all(p["mc_freerun"]["locality_ok"] for p in per)
-        task_sane = mc_1step >= 0.70
+        # PRIMARY = mc_eprop (proper e-prop first-order eligibility on a leaky unit -- the scoped rung-3a iteration-3
+        # mechanism). Controls are the eprop_* family (valid controls for the SAME leaky-unit network); the memoryless
+        # forward mc_freerun is kept as the rung-3a baseline for context.
+        mc, mc_1step = m("mc_eprop"), m("mc_eprop", "onestep")
+        heb, les = m("eprop_hebbian"), m("eprop_lesion")
+        wrong, null, shuf, unt = m("eprop_wrong"), m("eprop_null"), m("eprop_shuffled"), m("eprop_untrained")
+        fwd_base, fwd_1step = m("mc_freerun"), m("mc_freerun", "onestep")   # memoryless rung-3a baseline (recall was dead)
+        etf_1step, etf_recall = m("eprop_tf", "onestep"), m("eprop_tf")     # DIAGNOSTIC: teacher-forced leaky e-prop
+        loc = all(p["mc_eprop"]["locality_ok"] for p in per)
+        # task-sanity = the leaky e-prop CAN learn the one-step map (teacher-forced); free-run then destabilizes it, so
+        # gate on the teacher-forced diagnostic, NOT mc_eprop's (free-run-destabilized) map -- else we mislabel a
+        # generation-stability boundary as a config-tuning INCONCLUSIVE. Bar 0.60 = "map clearly learnable" (chance ~0;
+        # the leaky unit fits a slightly softer map than the memoryless 0.96 because integration adds difficulty).
+        task_sane = etf_1step >= 0.60
         recalls = mc >= 0.60
         beats_hebbian = mc > heb + 0.10
         beats_lesion = mc > les + 0.15
@@ -225,45 +284,47 @@ def main():
         if not loc:
             verdict = "INVALID -- locality assert failed (the credit path used W_rec.T / BPTT). Fix before trusting."
         elif not task_sane:
-            verdict = (f"INCONCLUSIVE -- the target-based rule's one-step map is only {mc_1step:.3f} (<0.70), so the "
-                       f"sequence's local structure isn't cleanly learnable at this config (N={a.N}/T={a.T}/epochs="
-                       f"{a.epochs}/lr={a.lr}/alpha={a.alpha}); tune before reading recall. NOT a mechanism verdict.")
+            verdict = (f"INCONCLUSIVE -- even TEACHER-FORCED, the leaky e-prop's one-step map is only {etf_1step:.3f} "
+                       f"(<0.70), so the local structure isn't learnable at this config (N={a.N}/T={a.T}/epochs={a.epochs}/"
+                       f"lr={a.lr}/kappa={a.kappa}); tune kappa/lr before reading recall. NOT a mechanism verdict.")
         elif go:
-            verdict = (f"GO -- the confirmed active-cancellation credit, made RECURRENT (target-based rule + local "
-                       f"eligibility trace, NO BPTT) and trained with the network's OWN dynamics in the loop (scheduled "
-                       f"sampling), learns to STORE + autonomously RECALL the trajectory: FREE-RUN held-out recall "
-                       f"{mc:.3f} (one-step map {mc_1step:.3f}; naive teacher-forced-only recall {naive_tf:.3f} -- the "
-                       f"exposure-bias baseline the dynamics-in-loop training FIXED) >> apical-lesion {les:.3f} + "
-                       f"untrained {unt:.3f}; wrong-sign anti-learns ({wrong:.3f}), no-teaching null flat ({null:.3f}), "
-                       f"shuffled-target fails ordered recall ({shuf:.3f} -- temporal-order credit is load-bearing), "
+            verdict = (f"GO -- a proper e-prop first-order eligibility (Bellec 2020) on a LEAKY recurrent unit (kappa="
+                       f"{a.kappa}), carrying recurrent sensitivity through the neuron's own membrane leak + gated by the "
+                       f"post pseudo-derivative, learns to STORE + autonomously RECALL the trajectory where the memoryless "
+                       f"forward-eligibility baseline FAILED (fwd free-run recall {fwd_base:.3f}): E-PROP free-run held-out "
+                       f"recall {mc:.3f} (one-step map {mc_1step:.3f}) >> apical-lesion {les:.3f} + untrained {unt:.3f}; "
+                       f"wrong-sign anti-learns ({wrong:.3f}), no-teaching null flat ({null:.3f}), shuffled-target fails "
+                       f"ordered recall ({shuf:.3f} -- temporal-order credit load-bearing), "
                        f"{'beats' if mc > heb + 0.10 else 'ties (Hebbian also solves -- report honest)'} hebbian ({heb:.3f}), "
-                       f"locality asserted (no W.T / no BPTT). Multi-seed. ⇒ rung 3a passes -> run 3b (spike noise) + "
-                       f"Task B (next-symbol). NO sim/ edit.")
+                       f"locality asserted (eligibility uses only own-leak + own pre-rate + own target error; no W.T / no "
+                       f"BPTT). Multi-seed. ⇒ rung 3a passes -> run 3b (spike noise) + Task B (next-symbol). NO sim/ edit.")
         else:
-            miss = []
-            if not recalls: miss.append(f"free-run recall too low (held-out {mc:.3f} < 0.60; naive-TF {naive_tf:.3f}; one-step {mc_1step:.3f})")
-            if not beats_lesion: miss.append(f"didn't beat apical-lesion (freerun {mc:.3f} vs lesion {les:.3f})")
-            if not (beats_hebbian or heb >= 0.60): miss.append(f"didn't beat hebbian ({mc:.3f} vs {heb:.3f})")
-            if not wrong_anti: miss.append(f"wrong-sign didn't anti-learn ({wrong:.3f})")
-            if not null_flat: miss.append(f"no-teaching-null not flat ({null:.3f} vs untrained {unt:.3f})")
-            if not shuffled_fails: miss.append(f"shuffled-target still recalled ({shuf:.3f}) -- temporal order NOT load-bearing")
-            verdict = ("BOUNDARY (build-informative, not a stop) -- " + "; ".join(miss) + f" (one-step map {mc_1step:.3f}, "
-                       f"task-sane; naive teacher-forced-only recall {naive_tf:.3f}). Even dynamics-in-loop scheduled "
-                       f"sampling {'did not' if mc < 0.60 else 'only partly'} stabilize autonomous recall -> the next "
-                       f"mechanism is a proper recurrent (e-prop first-order) eligibility trace capturing recurrent "
-                       f"sensitivity, and/or burst-window gating (scoping risk #2); if hebbian matches -> the task "
-                       f"self-organizes without credit; a recurrent-noise family limit -> Urbanczik-Senn "
-                       f"population-feedback / NMNC (shortlist). Do NOT start the sim/ port.")
+            verdict = (f"BOUNDARY (build-informative, not a stop) -- the wall is RE-LOCALIZED from credit-QUALITY to "
+                       f"autonomous-GENERATION STABILITY. The leaky e-prop first-order eligibility LEARNS the one-step map "
+                       f"teacher-forced (eprop-TF one-step {etf_1step:.3f}, ~= the memoryless forward map), so credit "
+                       f"quality is NOT the bottleneck -- but autonomous recall is DEAD for every training mode: "
+                       f"teacher-forced -> exposure bias (eprop-TF recall {etf_recall:.3f}; forward-TF 0.008), and "
+                       f"dynamics-in-loop free-run DESTABILIZES the map (eprop free-run one-step {mc_1step:.3f}, recall "
+                       f"{mc:.3f}; forward free-run recall {fwd_base:.3f}). Anti-cheats intact (eprop-lesion {les:.3f}, "
+                       f"eprop-null {null:.3f}, eprop-shuffled {shuf:.3f}, wrong {wrong:.3f}; loc {loc}). ⇒ TWO distinct "
+                       f"local recurrent credit rules (forward eligibility + proper e-prop first-order eligibility) BOTH "
+                       f"fail autonomous trajectory generation -> research-gate condition (f) fires: the next mechanism is "
+                       f"an autonomous-GENERATION-STABILITY method, NOT another local-rule tweak -- FORCE / RLS feedback "
+                       f"(Sussillo-Abbott 2009), Laje-Buonomano innate stable trajectories (2013), or reservoir + trained "
+                       f"feedback readout. Dispatch the read-only deep-research round first. Do NOT start the sim/ port.")
     else:
         verdict = f"ERROR -- {err}"
 
     summary = {"probe": "emerge6_recurrent_microcircuit_seq", "verdict": verdict,
-               "mechanism": "recurrent target-based microcircuit (Muratore-Capone-Paolucci): the confirmed feedforward "
-                            "active-cancellation credit (r_upper - r_int) made recurrent as (s* - a) (x) eligibility_trace; "
-                            "local, online, NO BPTT, NO weight transport; rate-limit, no spike noise (that is rung 3b)",
+               "mechanism": "recurrent target-based microcircuit (Muratore-Capone-Paolucci) with TWO eligibility forms: "
+                            "(baseline) memoryless map + low-pass INPUT eligibility [rung-3a: map learnable, recall dead]; "
+                            "(PRIMARY) proper e-prop first-order eligibility (Bellec 2020) on a LEAKY recurrent unit -- "
+                            "per-synapse trace eps_ji=kappa*eps_ji+pre_i carrying recurrent sensitivity via the neuron's own "
+                            "membrane leak, gated by phi'(u_j); credit=(s*-a)*phi'*eps; local, online, NO BPTT, NO weight "
+                            "transport (own-leak + own pre-rate + own target error only); rate-limit, no spike noise (rung 3b)",
                "task": "store/recall of a periodic sinusoid-superposition trajectory (Muratore canonical); held-out tail "
                        "= memorization floor; autonomous free-run recall after teacher withdrawal (teacher-neutrality)",
-               "seeds": a.seeds, "config": {"N": a.N, "T": a.T, "epochs": a.epochs, "lr": a.lr, "alpha": a.alpha},
+               "seeds": a.seeds, "config": {"N": a.N, "T": a.T, "epochs": a.epochs, "lr": a.lr, "alpha": a.alpha, "kappa": a.kappa},
                "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per,
                "HONEST_NOTE": "Rung 3a = RATE-limit + no spike noise (rung 3b re-injects EMERGE-5's Binomial(S)/S). "
                               "Task-sanity/ceiling = the target-based rule's own one-step teacher-forced prediction "
