@@ -404,6 +404,31 @@ def fused_stdp_weight_update(delta_t, w_current, A_plus, A_minus, tau_plus, tau_
     return w_new_clipped
 
 @fuse()
+def fused_htm_permanence_update(w, pre_last, post_now, hfac_post, lam_pot, lam_dep, w_min, w_max):
+    """Bouhadjar-Diesmann 2022 three-term HTM Temporal-Memory permanence update, per coincidence-routed distal
+    synapse (rung-4 Stage C). The unsupervised, local, teacher-free learning rule that self-organizes context-
+    specific high-order sequence prediction. All inputs are PER-SYNAPSE (gathered by the caller from the cached COO
+    exactly like `fused_stdp_weight_update`):
+
+      w         : current permanence (in [w_min, w_max] = [0, 1])
+      pre_last  : 1.0 if the presynaptic cell fired on the PREVIOUS symbol (cp_prev_firing_states), else 0.0
+      post_now  : 1.0 if the postsynaptic cell fired on THIS step (cp_firing_states — a sparse winner), else 0.0
+      hfac_post : the post cell's dAP-rate homeostatic factor 0.5 + 0.5*max(0, z* - z_post), gathered per synapse
+
+    Three terms (validated to reproduce EMERGE-9d on a flat permanence matrix, `_emerge13_stageC_flat_permanence`):
+      (1) POTENTIATION — pre-before-post causal (a distal synapse from a prior WINNER onto a cell that just won),
+          scaled by the homeostasis so over-used cells stop potentiating (fresh cells absorb new contexts).
+      (2) PRESYNAPTIC DEPRESSION — the pre fired but the post did NOT win this step, so this synapse fails to predict
+          the post and weakens (synapses to cells that keep firing without the post disconnect).
+      (3) HOMEOSTASIS is carried in `hfac_post` (the caller maintains the per-cell low-pass dAP-rate z EMA).
+
+    Soft-clamped to [w_min, w_max]. Pure math, no simulator deps; a no-op on any synapse where pre_last == 0."""
+    pot = pre_last * post_now * lam_pot * hfac_post
+    dep = pre_last * (1.0 - post_now) * lam_dep
+    w_new = w + pot - dep
+    return cp.clip(w_new, w_min, w_max)
+
+@fuse()
 def fused_eligibility_trace_decay(trace, decay_factor):
     """Fused kernel for eligibility trace exponential decay.
 
