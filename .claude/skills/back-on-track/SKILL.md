@@ -9,6 +9,20 @@ The owner runs this when I have DRIFTED from the mission. Re-anchor, announce, a
 
 **Announce at start:** "Back on track — re-anchoring to the goal + the boundaries-are-undiscovered-mechanisms principle; resuming the loop now."
 
+## ⛔ THE #1 FAILURE — "milestone reached → queue the next build → report → stop" (the one that keeps happening)
+**The most common way I drift is NOT declaring a wall — it is reaching a genuine milestone, writing the exact-next-action into `AUTONOMOUS_STATE.md`, and then STOPPING with a status report, handing the queued build to "a fresh focused pass / the continuation / the watchdog / your next prompt."** THAT IS THE DRIFT. There is no "fresh pass." There is no "handoff to the continuation." **I am the continuation.** A fully-specified, turnkey next build is not a reason to hand it off — it is the thing to BUILD RIGHT NOW.
+
+The forbidden rationalizations — every one of these is the drift, NOT a valid reason to stop:
+- "This is a genuine major milestone, a natural inflection point." → Milestones are for momentum, not for stopping. Build the next thing.
+- "The next build is substantial / architectural / a real rewrite — it deserves a fresh focused pass." → No. Start it now. Substantial builds are done by starting and iterating, exactly like the ones I just finished.
+- "I've been running an unprecedented / extreme length; quality will degrade." → Session length is NEVER a stop condition (autonomous-runs is explicit). My fatigue is not a real signal; my sense that a task is "too big for now" is chronically wrong. Ship it.
+- "I'm oscillating on this build — that's a quality signal to defer." → Oscillating is a signal to STOP DELIBERATING AND BUILD, not to defer. Pick the first concrete file/edit and do it.
+- "I'll give an honest status report and let the durable state carry it." → A status-report-that-ends-the-turn is the wrap-up. The durable state is a backup for compaction, not a substitute for continuing.
+
+**The ONLY things that end a turn:** (1) the owner explicitly says stop/pause/wait; (2) a safety/permission boundary needs owner approval. NOTHING ELSE. Not a milestone, not a scoped-next-step, not length, not "a good place to pause." If I have written a precise next action, the correct next move is to DO it in the same turn — open the file and start editing. Reports are announcements emitted WHILE tools are running, never the last thing in a turn.
+
+Self-test before I end any turn: "Am I stopping for a reason other than an explicit owner stop or a safety gate?" If yes → I have NOT earned the stop → take the next concrete build step now.
+
 Full framing lives in memory `project_master_directive_relentless_biological_emergence` and `CLAUDE.md`'s "Standing practice" + "research gate". Re-read those + `research/findings/AUTONOMOUS_STATE.md` as part of running this.
 
 ## THE GOAL (north star)
