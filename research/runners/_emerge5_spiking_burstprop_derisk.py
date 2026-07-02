@@ -158,10 +158,14 @@ def _train_spk(net, X, y, mode, epochs, lr, batch, seed, samples):
             net.train_step(X[b], y[b], mode=mode, lr=lr, samples=samples, srng=srng)
 
 
-def run(seed, epochs, lr, batch, hidden, sweep, primary, p0=0.5):
+def _run_arm(job):
+    """Train ONE arm for ONE seed -- an independent unit of work, so the whole (seed x arm) grid parallelizes across
+    cores. Returns (seed, arm_key, entry). arm_key in {'rate_ref', 'spk:<S>', 'apical_lesion', 'wrong_sign',
+    'no_teaching_null', 'oracle_bp'}. Byte-identical to the old sequential run(): each arm re-derives its own
+    data (make_task(seed)) + init (net(seed)) + training RNG (seed+777/+555) from the seed alone."""
+    seed, arm, epochs, lr, batch, hidden, primary, p0 = job
     (Xtr, ytr, Ltr), (Xte, yte, Lte) = make_task(seed)
     deep = [N_BITS, hidden, hidden, 2]
-    res = {"p0": float(p0)}
 
     def _acc(net):
         return float(net.accuracy(Xtr, ytr)), float(net.accuracy(Xte, yte))
@@ -169,43 +173,51 @@ def run(seed, epochs, lr, batch, hidden, sweep, primary, p0=0.5):
     def _probe(net):
         return _probe_latents(_hidden_rep(net, Xtr), Ltr, _hidden_rep(net, Xte), Lte)
 
-    # rate reference (S=inf): the CONFIRMED EMERGE-1b ceiling on the identical net/seed/init -- ALWAYS p0=0.5 (the
-    # original confirmed regime; the analytic rate model has no sampling noise, so p0 doesn't affect it mechanistically
-    # -- kept fixed so this stays the untouched reference point regardless of the spiking arms' p0).
-    ref = BurstpropMLP(deep, seed=seed)
-    _train(ref, Xtr, ytr, "burst_linearized", epochs, lr, batch, seed)
-    tr, te = _acc(ref); res["rate_ref"] = {"train": tr, "heldout": te, "probe_latent": _probe(ref)}
-
-    # spiking sweep over the sample budget S (population coding = the mitigation for burst-estimate noise), at the
-    # given rest-biased p0 (EMERGE-4's measured resting burst probability, or 0.5 to reproduce the first EMERGE-5 run)
-    res["spiking_sweep"] = {}
-    for S in sweep:
+    if arm == "rate_ref":
+        # the CONFIRMED EMERGE-1b ceiling on the identical net/seed/init -- analytic rate model, p0-independent.
+        net = BurstpropMLP(deep, seed=seed)
+        _train(net, Xtr, ytr, "burst_linearized", epochs, lr, batch, seed)
+        tr, te = _acc(net)
+        return (seed, arm, {"train": tr, "heldout": te, "probe_latent": _probe(net)})
+    if arm.startswith("spk:"):
+        S = int(arm.split(":", 1)[1])
         net = SpikingBurstpropMLP(deep, seed=seed, p0=p0)
         _train_spk(net, Xtr, ytr, "burst_linearized", epochs, lr, batch, seed, samples=S)
         tr, te = _acc(net)
-        res["spiking_sweep"][str(S)] = {"train": tr, "heldout": te, "probe_latent": _probe(net)}
-
-    # anti-cheats at the PRIMARY sample budget (spiking) -- SAME p0, incl. the representation-emergence probe on
-    # apical_lesion + no_teaching_null too (a corrupted-credit arm's REPRESENTATION, not just its readout accuracy,
-    # must stay near floor -- the fresh-look review's mandatory anti-cheat vs "good accuracy masks a dead hidden layer")
-    for mode in ("apical_lesion", "wrong_sign", "no_teaching_null"):
+        return (seed, arm, {"train": tr, "heldout": te, "probe_latent": _probe(net)})
+    if arm in ("apical_lesion", "wrong_sign", "no_teaching_null"):
+        # anti-cheats at the PRIMARY sample budget; probe on ALL of them (representation-level gate vs the
+        # "good accuracy masks a dead/laundered hidden layer" false-positive).
         net = SpikingBurstpropMLP(deep, seed=seed, p0=p0)
         wt_ok = all(not any(np.array_equal(Yk, w) or np.array_equal(Yk, w.T) for w in net.W) for Yk in net.Y)
-        _train_spk(net, Xtr, ytr, mode, epochs, lr, batch, seed, samples=primary)
+        _train_spk(net, Xtr, ytr, arm, epochs, lr, batch, seed, samples=primary)
         tr, te = _acc(net)
-        res[mode] = {"train": tr, "heldout": te, "no_weight_transport": bool(wt_ok), "probe_latent": _probe(net)}
+        return (seed, arm, {"train": tr, "heldout": te, "no_weight_transport": bool(wt_ok), "probe_latent": _probe(net)})
+    if arm == "oracle_bp":
+        from research.runners._emerge1_deep_dendritic_representation_derisk import _train as _o_train
+        net = DendriticMLP(deep, seed=seed)
+        _o_train(net, Xtr, ytr, "oracle", epochs, lr, batch, seed)
+        tr, te = _acc(net)
+        return (seed, arm, {"train": tr, "heldout": te})
+    raise ValueError(f"unknown arm {arm}")
 
-    # oracle (fenced backprop ceiling -- task sanity ONLY, not a shipped rule)
-    net = DendriticMLP(deep, seed=seed)
-    from research.runners._emerge1_deep_dendritic_representation_derisk import _train as _o_train
-    _o_train(net, Xtr, ytr, "oracle", epochs, lr, batch, seed)
-    tr, te = _acc(net); res["oracle_bp"] = {"train": tr, "heldout": te}
 
-    # same-W-init check (the decisive within-net contrast is fair)
+def _assemble(seed, hidden, p0, arm_entries):
+    """Reassemble one seed's arm entries into the per-seed dict the aggregation/verdict code expects."""
+    deep = [N_BITS, hidden, hidden, 2]
+    (_, _, _), (_, yte, _) = make_task(seed)
+    res = {"seed": seed, "p0": float(p0), "spiking_sweep": {}}
+    for arm, entry in arm_entries:
+        if arm == "rate_ref":
+            res["rate_ref"] = entry
+        elif arm.startswith("spk:"):
+            res["spiking_sweep"][arm.split(":", 1)[1]] = entry
+        else:
+            res[arm] = entry
     s0 = SpikingBurstpropMLP(deep, seed=seed); r0 = BurstpropMLP(deep, seed=seed)
     res["same_init_as_rate"] = bool(all(np.allclose(a, b) for a, b in zip(s0.W, r0.W)))
     res["chance"] = float(max(np.mean(yte == 0), np.mean(yte == 1)))
-    return {"seed": seed, **res}
+    return res
 
 
 def main():
@@ -227,19 +239,24 @@ def main():
     sweep = list(a.sweep)
     if a.primary not in sweep:
         sweep = sorted(set(sweep + [a.primary]))
+    arms = ["rate_ref"] + [f"spk:{S}" for S in sweep] + ["apical_lesion", "wrong_sign", "no_teaching_null", "oracle_bp"]
     t0 = time.time(); err = None; per = []
     try:
-        # seeds are INDEPENDENT -> run as parallel processes (each 1-thread-BLAS via the env above), ~N_seeds x faster
-        # on top of the ~30x from single-thread BLAS. Sequential fallback if the pool can't start.
+        # EVERY (seed x arm) is an INDEPENDENT training -> parallelize the WHOLE grid, not just seeds, so all cores are
+        # used (drift-mode #6): |seeds| x ~8 arms units across up to os.cpu_count() 1-thread-BLAS workers. Byte-identical
+        # to the old sequential run() (each arm re-derives its own data/init from the seed). Sequential fallback below.
+        jobs = [(s, arm, a.epochs, a.lr, a.batch, a.hidden, a.primary, a.p0) for s in a.seeds for arm in arms]
+        collected = {}
         try:
-            import functools
             from concurrent.futures import ProcessPoolExecutor
-            fn = functools.partial(run, epochs=a.epochs, lr=a.lr, batch=a.batch, hidden=a.hidden,
-                                   sweep=sweep, primary=a.primary, p0=a.p0)
-            with ProcessPoolExecutor(max_workers=min(len(a.seeds), os.cpu_count() or 1)) as ex:
-                per = list(ex.map(fn, a.seeds))
+            with ProcessPoolExecutor(max_workers=min(len(jobs), os.cpu_count() or 1)) as ex:
+                for seed, arm, entry in ex.map(_run_arm, jobs):
+                    collected.setdefault(seed, []).append((arm, entry))
         except Exception:
-            per = [run(s, a.epochs, a.lr, a.batch, a.hidden, sweep, a.primary, p0=a.p0) for s in a.seeds]
+            for job in jobs:
+                seed, arm, entry = _run_arm(job)
+                collected.setdefault(seed, []).append((arm, entry))
+        per = [_assemble(s, a.hidden, a.p0, collected[s]) for s in a.seeds]
         for r in per:
             s = r["seed"]; prim = r["spiking_sweep"][str(a.primary)]
             sweep_str = " ".join(f"S{S}={r['spiking_sweep'][str(S)]['heldout']:.3f}" for S in sweep)
