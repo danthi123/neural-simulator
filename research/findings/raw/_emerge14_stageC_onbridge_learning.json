@@ -1,0 +1,56 @@
+{
+  "probe": "emerge14_stageC_onbridge_learning",
+  "verdict": "BOUNDARY (build-informative) -- branch 0.500 < 0.90; didn't clear Markov/chance (0.500); dAP-lesion didn't collapse (0.500 vs 0.500) (oracle 1.000). Tune the kernel regime on the pool (lam_pot/lam_dep/z_tau/act_th/p_init/perm_conn/epochs) or the weighted-coincidence threshold; the on-substrate permanence learning is the next tuning, not a wall.",
+  "mechanism": "HTM Temporal-Memory permanences in the bridge's coincidence synapse weights (cp_connections.data) over a pre-allocated cross-column potential pool, learned by the sim/ fused_htm_permanence_update kernel (Bouhadjar three-term rule); prediction = the bridge's connected-count coincidence; host residual = winner-selection + committed-metric allocation (as EMERGE-9d)",
+  "task": "overlapping sequences; branch prediction; Markov floor + dAP-lesion + oracle + multi-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "n_seq": 2,
+    "middle_len": 4,
+    "n_cells": 16,
+    "k_win": 4,
+    "act_th": 3,
+    "epochs": 60
+  },
+  "elapsed_seconds": 2.6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      },
+      "htm": 0.5,
+      "lesion": 0.5,
+      "untrained": 0.0
+    },
+    {
+      "seed": 43,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      },
+      "htm": 0.5,
+      "lesion": 0.5,
+      "untrained": 0.0
+    },
+    {
+      "seed": 44,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      },
+      "htm": 0.5,
+      "lesion": 0.5,
+      "untrained": 0.0
+    }
+  ],
+  "HONEST_NOTE": "rung-4 Stage C: LEARNING on the substrate via the committed fused kernel on cp_connections.data. Prediction reads the bridge's learned permanences (connected count). If GO, rung-4 (the whole unsupervised sequence-learning mechanism on the real SimulationBridge) is COMPLETE."
+}
