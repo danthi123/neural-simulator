@@ -1,0 +1,195 @@
+{
+  "probe": "emerge5_spiking_burstprop",
+  "GO": false,
+  "verdict": "BOUNDARY (p0=0.03; next mechanism, not a stop) -- spiking didn't reach the bar (S300 0.505 vs ref 0.796/lesion 0.455); no monotone S-recovery ({'30': 0.5051067780872794, '100': 0.5858867223769731, '300': 0.5051067780872794, '1000': 0.4698235840297122}) -- population coding didn't mitigate; wrong-sign not at chance (readout 0.526, probe 0.734) (oracle 0.983; rate ref 0.796). The burst-estimate noise breaks depth-credit at these budgets. Per the master directive: iterate BEFORE the protected build -- a wider population (extend the sweep), a lower rest bias --p0 (EMERGE-4 measured ~0.03; lower p0 = lower Binomial variance p(1-p)/k = a cleaner credit signal), the Sacramento-Senn self-predicting microcircuit arm (EMERGE-3, more gradient-faithful under noise), or a fully-folded EMERGE-4 transfer. Build-SAVING: do NOT start the sim/ two-compartment port yet.",
+  "mechanism": "EMERGE-1b faithful Burstprop with event rate E + burst probability P as FINITE-SAMPLE spike-count estimates (Poisson events / Binomial bursts over a population x window budget S); single-variable rate->spike transition; population coding (S-sweep) = the flagged mitigation",
+  "task": "depth-2 threshold-of-5-pair-XORs over 10 bits (== EMERGE-1/1b)",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 1500,
+    "lr": 0.12,
+    "batch": 128,
+    "hidden": 384,
+    "sweep": [
+      30,
+      100,
+      300,
+      1000
+    ],
+    "primary": 300,
+    "p0": 0.03
+  },
+  "elapsed_seconds": 1639.6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "p0": 0.03,
+      "rate_ref": {
+        "train": 0.8150375939849624,
+        "heldout": 0.766016713091922,
+        "probe_latent": 0.9994428969359331
+      },
+      "spiking_sweep": {
+        "30": {
+          "train": 0.5263157894736842,
+          "heldout": 0.45125348189415043,
+          "probe_latent": 1.0
+        },
+        "100": {
+          "train": 0.5774436090225564,
+          "heldout": 0.5264623955431755,
+          "probe_latent": 0.9994428969359331
+        },
+        "300": {
+          "train": 0.5323308270676692,
+          "heldout": 0.4596100278551532,
+          "probe_latent": 0.9147632311977716
+        },
+        "1000": {
+          "train": 0.5263157894736842,
+          "heldout": 0.45125348189415043,
+          "probe_latent": 0.8066852367688022
+        }
+      },
+      "apical_lesion": {
+        "train": 0.5278195488721804,
+        "heldout": 0.45403899721448465,
+        "no_weight_transport": true,
+        "probe_latent": 0.584958217270195
+      },
+      "wrong_sign": {
+        "train": 0.5864661654135338,
+        "heldout": 0.4958217270194986,
+        "no_weight_transport": true,
+        "probe_latent": 0.6841225626740947
+      },
+      "no_teaching_null": {
+        "train": 0.5293233082706766,
+        "heldout": 0.45125348189415043,
+        "no_weight_transport": true,
+        "probe_latent": 0.5821727019498607
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9665738161559888
+      },
+      "same_init_as_rate": true,
+      "chance": 0.5487465181058496
+    },
+    {
+      "seed": 43,
+      "p0": 0.03,
+      "rate_ref": {
+        "train": 0.9443609022556391,
+        "heldout": 0.8579387186629527,
+        "probe_latent": 0.9944289693593314
+      },
+      "spiking_sweep": {
+        "30": {
+          "train": 0.47969924812030074,
+          "heldout": 0.5376044568245125,
+          "probe_latent": 1.0
+        },
+        "100": {
+          "train": 0.6390977443609023,
+          "heldout": 0.6434540389972145,
+          "probe_latent": 0.9949860724233983
+        },
+        "300": {
+          "train": 0.5037593984962406,
+          "heldout": 0.532033426183844,
+          "probe_latent": 0.8534818941504179
+        },
+        "1000": {
+          "train": 0.5203007518796993,
+          "heldout": 0.4623955431754875,
+          "probe_latent": 0.777715877437326
+        }
+      },
+      "apical_lesion": {
+        "train": 0.5578947368421052,
+        "heldout": 0.4735376044568245,
+        "no_weight_transport": true,
+        "probe_latent": 0.6027855153203343
+      },
+      "wrong_sign": {
+        "train": 0.5639097744360902,
+        "heldout": 0.49303621169916434,
+        "no_weight_transport": true,
+        "probe_latent": 0.6969359331476324
+      },
+      "no_teaching_null": {
+        "train": 0.5428571428571428,
+        "heldout": 0.47075208913649025,
+        "no_weight_transport": true,
+        "probe_latent": 0.5727019498607242
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9832869080779945
+      },
+      "same_init_as_rate": true,
+      "chance": 0.5376044568245125
+    },
+    {
+      "seed": 44,
+      "p0": 0.03,
+      "rate_ref": {
+        "train": 0.9428571428571428,
+        "heldout": 0.7632311977715878,
+        "probe_latent": 0.9721448467966574
+      },
+      "spiking_sweep": {
+        "30": {
+          "train": 0.5052631578947369,
+          "heldout": 0.5264623955431755,
+          "probe_latent": 1.0
+        },
+        "100": {
+          "train": 0.5533834586466165,
+          "heldout": 0.5877437325905293,
+          "probe_latent": 0.9938718662952646
+        },
+        "300": {
+          "train": 0.48721804511278194,
+          "heldout": 0.5236768802228412,
+          "probe_latent": 0.852924791086351
+        },
+        "1000": {
+          "train": 0.5518796992481203,
+          "heldout": 0.4958217270194986,
+          "probe_latent": 0.7281337047353761
+        }
+      },
+      "apical_lesion": {
+        "train": 0.5428571428571428,
+        "heldout": 0.4373259052924791,
+        "no_weight_transport": true,
+        "probe_latent": 0.5582172701949861
+      },
+      "wrong_sign": {
+        "train": 0.58796992481203,
+        "heldout": 0.5877437325905293,
+        "no_weight_transport": true,
+        "probe_latent": 0.8200557103064067
+      },
+      "no_teaching_null": {
+        "train": 0.5533834586466165,
+        "heldout": 0.45403899721448465,
+        "no_weight_transport": true,
+        "probe_latent": 0.5665738161559889
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 1.0
+      },
+      "same_init_as_rate": true,
+      "chance": 0.5236768802228412
+    }
+  ],
+  "HONEST_NOTE": "Finite-sample SPIKE-COUNT model (NOT dt-stepped, NOT the SimulationBridge) -- isolates the DOMINANT spiking effect (burst-estimate noise + population-coding mitigation), the review's central spiking concern. Kept at p0=0.5 for a clean single-variable transition; the real neuron's low resting burst prob (EMERGE-4 P0~0.03), the refractory E<-apical cross-talk (~0.18), and full dt integration are deferred to the sim/ bridge port (rung 4). Oracle = fenced backprop ceiling (task-sanity), NOT a shipped biologically-local mode. Boundaries = the next mechanism (master directive), never a stop."
+}
