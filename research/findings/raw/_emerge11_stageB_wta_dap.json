@@ -1,0 +1,134 @@
+{
+  "probe": "emerge11_stageB_wta_dap",
+  "verdict": "BOUNDARY (build-informative) -- DAP+WTA didn't select the primed subset (primed 0.00, other 0.00); dAP not load-bearing (gap 0.00 vs wta_only 0.00). Tune the WTA operating point (col_fs_weight / fs_col_weight so the FS fires AFTER the primed cells and suppresses the rest) jointly with i_ff + apical_g_couple (primed fire first). NOT a wall; the WTA timing is next.",
+  "mechanism": "within-column FS-interneuron WTA + the two-compartment dAP (Stage-A') -> dAP-primed cells fire first, drive the FS, and it suppresses the rest -> sparse context-specific firing (the core of EMERGE-9c spiking inference) on the real SimulationBridge",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "i_grid": [
+      300.0,
+      320.0,
+      340.0,
+      360.0,
+      380.0,
+      400.0,
+      420.0,
+      440.0,
+      460.0,
+      480.0,
+      500.0,
+      520.0,
+      540.0,
+      560.0,
+      580.0,
+      600.0,
+      620.0,
+      640.0,
+      660.0,
+      680.0,
+      700.0
+    ],
+    "n_col": 12,
+    "n_primed": 4
+  },
+  "elapsed_seconds": 1.5,
+  "per_seed": [
+    {
+      "dap_wta": {
+        "primed_rate": 0.0,
+        "other_rate": 0.0,
+        "gap": 0.0,
+        "i_ff": 300.0,
+        "max_sparsity": 1.0
+      },
+      "wta_only": {
+        "primed_rate": 0.0,
+        "other_rate": 0.0,
+        "gap": 0.0,
+        "i_ff": 300.0,
+        "max_sparsity": 1.0
+      },
+      "dap_nowta": {
+        "primed_rate": 0.0,
+        "other_rate": 0.0,
+        "gap": 0.0,
+        "i_ff": 300.0,
+        "max_sparsity": 1.0
+      },
+      "lesion_nodap": {
+        "primed_rate": 0.0,
+        "other_rate": 0.0,
+        "gap": 0.0,
+        "i_ff": 300.0,
+        "max_sparsity": 1.0
+      },
+      "seed": 42
+    },
+    {
+      "dap_wta": {
+        "primed_rate": 0.0,
+        "other_rate": 0.0,
+        "gap": 0.0,
+        "i_ff": 300.0,
+        "max_sparsity": 1.0
+      },
+      "wta_only": {
+        "primed_rate": 0.0,
+        "other_rate": 0.0,
+        "gap": 0.0,
+        "i_ff": 300.0,
+        "max_sparsity": 1.0
+      },
+      "dap_nowta": {
+        "primed_rate": 0.0,
+        "other_rate": 0.0,
+        "gap": 0.0,
+        "i_ff": 300.0,
+        "max_sparsity": 1.0
+      },
+      "lesion_nodap": {
+        "primed_rate": 0.0,
+        "other_rate": 0.0,
+        "gap": 0.0,
+        "i_ff": 300.0,
+        "max_sparsity": 1.0
+      },
+      "seed": 43
+    },
+    {
+      "dap_wta": {
+        "primed_rate": 0.0,
+        "other_rate": 0.0,
+        "gap": 0.0,
+        "i_ff": 300.0,
+        "max_sparsity": 1.0
+      },
+      "wta_only": {
+        "primed_rate": 0.0,
+        "other_rate": 0.0,
+        "gap": 0.0,
+        "i_ff": 300.0,
+        "max_sparsity": 1.0
+      },
+      "dap_nowta": {
+        "primed_rate": 0.0,
+        "other_rate": 0.0,
+        "gap": 0.0,
+        "i_ff": 300.0,
+        "max_sparsity": 1.0
+      },
+      "lesion_nodap": {
+        "primed_rate": 0.0,
+        "other_rate": 0.0,
+        "gap": 0.0,
+        "i_ff": 300.0,
+        "max_sparsity": 1.0
+      },
+      "seed": 44
+    }
+  ],
+  "HONEST_NOTE": "rung-4 Stage B1: composes the two proven pieces (two-compartment dAP GO + nav FS-WTA). B2 loads the frozen EMERGE-9b permanences into a recurrent distal pathway + drives the overlapping-sequence -> branch-prediction parity with EMERGE-9c. Then Stage C (three-term kernel -> EMERGE-9d parity) = rung-4 complete."
+}
