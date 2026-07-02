@@ -1,0 +1,175 @@
+{
+  "probe": "emerge6_recurrent_microcircuit_seq",
+  "verdict": "BOUNDARY (build-informative, not a stop) -- free-run recall too low (held-out -0.249 < 0.60; naive-TF 0.008; one-step 0.716); didn't beat apical-lesion (freerun -0.249 vs lesion 0.025); didn't beat hebbian (-0.249 vs 0.000) (one-step map 0.716, task-sane; naive teacher-forced-only recall 0.008). Even dynamics-in-loop scheduled sampling did not stabilize autonomous recall -> the next mechanism is a proper recurrent (e-prop first-order) eligibility trace capturing recurrent sensitivity, and/or burst-window gating (scoping risk #2); if hebbian matches -> the task self-organizes without credit; a recurrent-noise family limit -> Urbanczik-Senn population-feedback / NMNC (shortlist). Do NOT start the sim/ port.",
+  "mechanism": "recurrent target-based microcircuit (Muratore-Capone-Paolucci): the confirmed feedforward active-cancellation credit (r_upper - r_int) made recurrent as (s* - a) (x) eligibility_trace; local, online, NO BPTT, NO weight transport; rate-limit, no spike noise (that is rung 3b)",
+  "task": "store/recall of a periodic sinusoid-superposition trajectory (Muratore canonical); held-out tail = memorization floor; autonomous free-run recall after teacher withdrawal (teacher-neutrality)",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "N": 32,
+    "T": 140,
+    "epochs": 600,
+    "lr": 0.5,
+    "alpha": 0.7
+  },
+  "elapsed_seconds": 6.2,
+  "per_seed": [
+    {
+      "mc_freerun": {
+        "recall_heldout": -0.4229156162574487,
+        "recall_full": 0.11325948362574721,
+        "onestep": 0.6983199731714865,
+        "locality_ok": true
+      },
+      "recurrent_microcircuit": {
+        "recall_heldout": -0.2733162323081687,
+        "recall_full": 0.00874412330985059,
+        "onestep": 0.9489192858537465,
+        "locality_ok": true
+      },
+      "hebbian_selforg": {
+        "recall_heldout": 0.0,
+        "recall_full": 0.0488523631330485,
+        "onestep": 0.0,
+        "locality_ok": true
+      },
+      "apical_feedback_lesion": {
+        "recall_heldout": -0.028960700511897638,
+        "recall_full": 0.029908717939118173,
+        "onestep": -0.0698238953499733,
+        "locality_ok": true
+      },
+      "wrong_sign": {
+        "recall_heldout": 0.21887141287117765,
+        "recall_full": -0.0008978000047513754,
+        "onestep": 0.21887141287117765,
+        "locality_ok": true
+      },
+      "no_teaching_null": {
+        "recall_heldout": -0.028960700511897638,
+        "recall_full": 0.029908717939118173,
+        "onestep": -0.0698238953499733,
+        "locality_ok": true
+      },
+      "shuffled_target": {
+        "recall_heldout": -0.4285061185846006,
+        "recall_full": 0.05527143591946777,
+        "onestep": -0.33063028714479725,
+        "locality_ok": true
+      },
+      "untrained": {
+        "recall_heldout": -0.028960700511897638,
+        "recall_full": 0.029908717939118173,
+        "onestep": -0.0698238953499733,
+        "locality_ok": true
+      },
+      "seed": 42
+    },
+    {
+      "mc_freerun": {
+        "recall_heldout": -0.26740982129096935,
+        "recall_full": 0.031043828915211125,
+        "onestep": 0.8139626937054115,
+        "locality_ok": true
+      },
+      "recurrent_microcircuit": {
+        "recall_heldout": 0.07626109957167292,
+        "recall_full": 0.5216137706026711,
+        "onestep": 0.9583775805539009,
+        "locality_ok": true
+      },
+      "hebbian_selforg": {
+        "recall_heldout": 0.0,
+        "recall_full": 0.03748351634337867,
+        "onestep": 0.0,
+        "locality_ok": true
+      },
+      "apical_feedback_lesion": {
+        "recall_heldout": 0.1480888435933465,
+        "recall_full": 0.034604961679151405,
+        "onestep": 0.05200682390811597,
+        "locality_ok": true
+      },
+      "wrong_sign": {
+        "recall_heldout": 0.15672362526044747,
+        "recall_full": 0.008847571082112031,
+        "onestep": 0.15672362526044747,
+        "locality_ok": true
+      },
+      "no_teaching_null": {
+        "recall_heldout": 0.1480888435933465,
+        "recall_full": 0.034604961679151405,
+        "onestep": 0.05200682390811597,
+        "locality_ok": true
+      },
+      "shuffled_target": {
+        "recall_heldout": -0.16773830662918468,
+        "recall_full": 0.11207583838161965,
+        "onestep": -0.21601436172336186,
+        "locality_ok": true
+      },
+      "untrained": {
+        "recall_heldout": 0.1480888435933465,
+        "recall_full": 0.034604961679151405,
+        "onestep": 0.05200682390811597,
+        "locality_ok": true
+      },
+      "seed": 43
+    },
+    {
+      "mc_freerun": {
+        "recall_heldout": -0.057641593056821205,
+        "recall_full": 0.08180978766912295,
+        "onestep": 0.6342344565421294,
+        "locality_ok": true
+      },
+      "recurrent_microcircuit": {
+        "recall_heldout": 0.21977545477163632,
+        "recall_full": 0.2868236517831052,
+        "onestep": 0.9807432815941782,
+        "locality_ok": true
+      },
+      "hebbian_selforg": {
+        "recall_heldout": 0.0,
+        "recall_full": 0.043352118257994454,
+        "onestep": 0.0,
+        "locality_ok": true
+      },
+      "apical_feedback_lesion": {
+        "recall_heldout": -0.04389339031649416,
+        "recall_full": 0.017651629828098803,
+        "onestep": -0.026855924796421425,
+        "locality_ok": true
+      },
+      "wrong_sign": {
+        "recall_heldout": -0.0026977033633245927,
+        "recall_full": 0.00886596153101528,
+        "onestep": -0.016120612292750604,
+        "locality_ok": true
+      },
+      "no_teaching_null": {
+        "recall_heldout": -0.04389339031649416,
+        "recall_full": 0.017651629828098803,
+        "onestep": -0.026855924796421425,
+        "locality_ok": true
+      },
+      "shuffled_target": {
+        "recall_heldout": -0.1716087788140052,
+        "recall_full": 0.049960435372743126,
+        "onestep": 0.2090257568139397,
+        "locality_ok": true
+      },
+      "untrained": {
+        "recall_heldout": -0.04389339031649416,
+        "recall_full": 0.017651629828098803,
+        "onestep": -0.026855924796421425,
+        "locality_ok": true
+      },
+      "seed": 44
+    }
+  ],
+  "HONEST_NOTE": "Rung 3a = RATE-limit + no spike noise (rung 3b re-injects EMERGE-5's Binomial(S)/S). Task-sanity/ceiling = the target-based rule's own one-step teacher-forced prediction (a separate BPTT autonomous-recall oracle is deferred -- if autonomous recall is the crux, that is the finding, per scoping risk #2). The clean-readout representation gate (rung-2) is subsumed here by direct recall correlation (the units ARE the trajectory in this generator task). Locality by construction: the credit is outer(post-error, pre-eligibility) with a forward-only eligibility trace -- no W_rec.T, no BPTT, no cross-neuron error broadcast."
+}
