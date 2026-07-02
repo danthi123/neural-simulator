@@ -1,0 +1,71 @@
+{
+  "probe": "emerge17_generalizing_word_codes",
+  "verdict": "GO -- the emergent on-bridge learning GENERALIZES across SIMILAR words: an association learned for a TRAINED word (dog->home, cat->away) TRANSFERS to HELD-OUT similar words never trained on (wolf/fox->home, lion->away) at 1.000 >> chance 0.50, because similar words share micro-columns (overlapping SDRs) so the held-out word drives the learned coincidence pathway from the SHARED cells. The ORTHOGONAL-code control collapses to 0.000 (no shared micro-columns -> no transfer: OVERLAP is the cause); dAP-LESION 0.000; DERANGED family->branch 0.000; untrained 0.000; no teacher; multi-seed. => the sequence cortex now has GENERALIZING word representations (not just memorized codes) -- similar words transfer learning, the hallmark of a real lexical cortex. NO sim/ edit; the ONLY change is the word->code encoding (overlapping SDRs).",
+  "mechanism": "generalizing word representations: words = fixed sparse codes over a shared micro-column pool (similar words share micro-columns -> overlapping SDRs); the emergent on-bridge coincidence learning transfers a learned association to a HELD-OUT similar word via the SHARED cells; the sim/ kernel is unchanged, the only change is the word->code encoding",
+  "task": "families -> branch; train one per family, hold out the similar words, test held-out generalization vs orthogonal-code + dAP-lesion + deranged + untrained controls",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 60,
+    "k_win": 4,
+    "act_th": 3
+  },
+  "elapsed_seconds": 2.7,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": 1.0,
+      "orthogonal": 0.0,
+      "lesion": 0.0,
+      "deranged": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 43,
+      "htm": 1.0,
+      "orthogonal": 0.0,
+      "lesion": 0.0,
+      "deranged": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 44,
+      "htm": 1.0,
+      "orthogonal": 0.0,
+      "lesion": 0.0,
+      "deranged": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 100,
+      "htm": 1.0,
+      "orthogonal": 0.0,
+      "lesion": 0.0,
+      "deranged": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 101,
+      "htm": 1.0,
+      "orthogonal": 0.0,
+      "lesion": 0.0,
+      "deranged": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 102,
+      "htm": 1.0,
+      "orthogonal": 0.0,
+      "lesion": 0.0,
+      "deranged": 0.0,
+      "untrained": 0.0
+    }
+  ],
+  "HONEST_NOTE": "cheap-first: controlled synthetic similarity + bigram association isolates generalization-from-overlap. Next: the real stream-cortex PPMI codes (verified similarity-structured) as the scale-up; then high-order sequence generalization (EMERGE-15 corpus with similar words); then grounding."
+}
