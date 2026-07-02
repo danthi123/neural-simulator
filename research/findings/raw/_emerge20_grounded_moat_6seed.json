@@ -1,0 +1,148 @@
+{
+  "probe": "emerge20_grounded_moat",
+  "verdict": "GO -- the emergent sequence cortex produces GROUNDED words + has an INTRINSIC no-confab MOAT: it generates the learned fact for a GROUNDED (trained) cue (dog->home, cat->away: 1.00), GENERALIZES a valid grounded inference for a SIMILAR untrained cue (wolf->home, lion->away: 1.00), and ABSTAINS for a truly-NOVEL ungrounded cue (novel-abstain 1.00, confabulation 0.00) -- it CANNOT confabulate what it has no learned pathway for. dAP-LESION collapses grounded (0.00, the coincidence is load-bearing); multi-seed. => the no-confab moat is EMERGENT from the substrate (not a bolted-on check): a grounded, moat-protected emergent word producer -- replacing the transformer's fluency-in-the-loop role WHILE keeping the moat. NO sim/ edit.",
+  "mechanism": "grounded production + intrinsic no-confab moat on the emergent sequence cortex: a grounded (trained) cue produces the learned fact; a similar untrained cue generalizes a valid inference; a truly-novel cue (disjoint code) drives no coincidence -> abstains (no confabulation); sim/ kernel unchanged",
+  "task": "grounded facts dog->home/cat->away; produce for grounded/generalized/novel cues; novel must abstain; dAP-lesion collapses grounded; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 60,
+    "act_th": 3
+  },
+  "elapsed_seconds": 3.7,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "grounded": 1.0,
+        "generalized": 1.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      },
+      "lesion": {
+        "grounded": 0.0,
+        "generalized": 0.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      },
+      "untrained": {
+        "grounded": 0.0,
+        "generalized": 0.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "grounded": 1.0,
+        "generalized": 1.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      },
+      "lesion": {
+        "grounded": 0.0,
+        "generalized": 0.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      },
+      "untrained": {
+        "grounded": 0.0,
+        "generalized": 0.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "grounded": 1.0,
+        "generalized": 1.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      },
+      "lesion": {
+        "grounded": 0.0,
+        "generalized": 0.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      },
+      "untrained": {
+        "grounded": 0.0,
+        "generalized": 0.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "grounded": 1.0,
+        "generalized": 1.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      },
+      "lesion": {
+        "grounded": 0.0,
+        "generalized": 0.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      },
+      "untrained": {
+        "grounded": 0.0,
+        "generalized": 0.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "grounded": 1.0,
+        "generalized": 1.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      },
+      "lesion": {
+        "grounded": 0.0,
+        "generalized": 0.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      },
+      "untrained": {
+        "grounded": 0.0,
+        "generalized": 0.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "grounded": 1.0,
+        "generalized": 1.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      },
+      "lesion": {
+        "grounded": 0.0,
+        "generalized": 0.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      },
+      "untrained": {
+        "grounded": 0.0,
+        "generalized": 0.0,
+        "novel_abstain": 1.0,
+        "confab": 0.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the no-confab moat is INTRINSIC (an ungrounded cue has no learned pathway -> no production). Next: the open-domain surface-fluency research gate (the transformer's last unique job)."
+}
