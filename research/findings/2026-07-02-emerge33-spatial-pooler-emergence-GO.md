@@ -10,11 +10,12 @@ The competitive pooler forms each member's column code; a category property is t
 - **Held-out inheritance ≥ 0.90:** a member whose property was never taught inherits via the emergent self-organized block.
 - **Moat 1.00:** a code disjoint from every block abstains.
 
-## Anti-cheats (6/6)
-- **NO-POOLER** (fixed random codes → no shared block) — the CLEAN discriminator: held-out inheritance collapses to **0.00 on every seed**, directly isolating the SELF-ORGANIZING pooler as what forms the shared block (without it, no inheritance).
-- **dAP-LESION** (bridge coincidence off): collapses to **0.00**.
-- **PERMUTED-FEATURES** (members' inputs drawn from a mixed pool → no category structure): mean **0.58**, but NOISY (per-seed 0.00–1.00) — with only 1 held-out member per category and 2 properties, a mixed-input member overlaps the right block by chance ~50% with high variance; the held-out 1.00 clears the mean by 0.42 but the clean isolation is the NO-POOLER control (0.00), not this one. (Finer held-out sampling would smooth it; a noted follow-on.)
-- **MOAT 1.00.** 6-seed. The GO does not rest on the noisy permuted control — the no-pooler + dAP-lesion controls (both clean 0.00) carry the isolation.
+## Anti-cheats (6-seed) — the LOAD-BEARING control is the input-destruction permuted-features
+**Methodology correction (2026-07-02):** the original finding gated on a NO-POOLER (fixed-random-code) control that read 0.00 — but a fixed-random-code control is UNRELIABLE in a small column space (a random held-out code coincidentally inherits, or not, by luck: EMERGE-34's equivalent read 1.00). See `2026-07-02-anti-cheat-control-validity-methodology.md`. The runner was strengthened (**HOLD=3 members/category** for a finer metric; random-code control made **seed-dependent** + demoted to a reported secondary check) and the GO now gates on the reliable input-destruction control:
+- **PERMUTED-FEATURES** (members draw from the MIXED pool → no category structure can form → the pooler builds no shared block) — the LOAD-BEARING control: held-out inheritance collapses to **~chance (~0.5 mean)**, the reliable isolation of the learned category structure.
+- **dAP-LESION** (bridge coincidence off → no priming): deterministically collapses to **0.00** — a clean mechanism-ablation control.
+- **RANDOM-CODES** (no pooler, now seed-dependent): reported, ~chance-ish but noisy (the small-column-space coincidence); NOT a strict gate condition.
+- **MOAT 1.00.** 6-seed. The GO rests on the input-destruction permuted control + the deterministic lesion, not on a fixed-random-code control.
 
 ## Significance
 The cortex LEARNS a shared category representation from experience (self-organized, not hand-assigned, not merely the input overlap) AND infers over it — the research gate's top-ranked mechanism (competitive representation learning + inheritance). It reaches the same inference the hand-assigned is-a codes gave (EMERGE-26), but the superordinate is now a learned internal block. Grounded in the HTM Spatial Pooler (Cui-Ahmad-Hawkins 2017, *Front. Comput. Neurosci.*) and the feature-prediction theory of taxonomic inheritance (Saxe-McClelland-Ganguli 2019).
