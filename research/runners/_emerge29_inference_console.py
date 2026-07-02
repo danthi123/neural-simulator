@@ -103,17 +103,61 @@ class SemanticConsole:
             return f"Yes, {_art(concept)} can {prop}."
         return f"I don't know whether {_art(concept)} can {prop}."
 
+    # ---- transitive ordering (the other inference form) --------------------------------------------------------
+    def learn_beats(self, x, y):
+        """An ordering premise 'x beats y' -> x's code -> y's code (the same coincidence primitive)."""
+        self._alloc(x); self._alloc(y)
+        for _ in range(self.epochs):
+            apply_kernel_update(self.b, self.row, self.col, self.ci, self._sdr(self._cols[x]),
+                                self._sdr(self._cols[y]), self.z, 0.14, 0.02, 1.0)
+        return f"ok -- {x} beats {y}."
+
+    def _reachable(self, start, depth=8):
+        reached, active = set(), self._sdr(self._cols[start])
+        for _ in range(depth):
+            ab = np.zeros(len(self.ci), bool)
+            for i in active:
+                ab[i] = True
+            _prime_from_winners(self.b, self.ci, ab)
+            vap = _host(getattr(self.b, "cp_v_apical"))[self.ci]
+            nxt = None
+            for nm, cols in self._cols.items():
+                if nm in reached or nm == start:
+                    continue
+                dr = float(np.mean([vap[c * nE:(c + 1) * nE].max() for c in cols]))
+                if dr > FLOOR and (nxt is None or dr > nxt[1]):
+                    nxt = (nm, dr)
+            if nxt is None:
+                break
+            reached.add(nxt[0]); active = self._sdr(self._cols[nxt[0]])
+        return reached
+
+    def beats(self, x, z):
+        """Answer 'does x beat z?' by transitive chaining over the learned ordering, honestly abstaining."""
+        if x not in self._cols or z not in self._cols:
+            return f"I don't know who {x if x not in self._cols else z} is."
+        if z in self._reachable(x) and x not in self._reachable(z):
+            return f"Yes, {x} beats {z}."
+        if x in self._reachable(z):
+            return f"No, {z} beats {x}."
+        return f"I don't know whether {x} beats {z}."
+
 
 # ---- a tiny natural-language front end (host parsing = the world/keyboard interface) -----------------------------
 _ISA = re.compile(r"(?:a|an)\s+(\w+)\s+is\s+(?:a|an)\s+(\w+)", re.I)
 _PROP = re.compile(r"(?:a|an)\s+(\w+)\s+can\s+(\w+)", re.I)
 _ASK = re.compile(r"can\s+(?:a|an)\s+(\w+)\s+(\w+)\??", re.I)
+_ASKBEAT = re.compile(r"does\s+(\w+)\s+beat\s+(\w+)\??", re.I)                   # transitive query
+_BEATS = re.compile(r"(\w+)\s+beats\s+(\w+)", re.I)                             # ordering premise
 
 
 def handle(console, line):
     line = line.strip()
     if not line:
         return None
+    m = _ASKBEAT.search(line)                                                  # match queries before premises
+    if m:
+        return console.beats(m.group(1).lower(), m.group(2).lower())
     m = _ASK.search(line)
     if m:
         return console.does(m.group(1).lower(), m.group(2).lower())
@@ -123,7 +167,10 @@ def handle(console, line):
     m = _PROP.search(line)
     if m:
         return console.learn_property(m.group(1).lower(), m.group(2).lower())
-    return "(say 'a X is a Y', 'a Y can P', or 'can a X P?')"
+    m = _BEATS.search(line)
+    if m:
+        return console.learn_beats(m.group(1).lower(), m.group(2).lower())
+    return "(say 'a X is a Y', 'a Y can P', 'can a X P?', 'X beats Y', or 'does X beat Z?')"
 
 
 def _demo(seed=42, epochs=80):
@@ -132,9 +179,14 @@ def _demo(seed=42, epochs=80):
     for line in ["a robin is a bird", "a bird is an animal", "a trout is a fish", "a fish is an animal",
                  "a bird can fly", "an animal can breathe", "a fish can swim"]:
         print(f"  you> {line}\n  brain> {handle(c, line)}")
-    print("  --- now ASK (answers were NEVER told; inferred by inheritance) ---")
+    print("  --- ASK by INHERITANCE (answers were NEVER told; inferred up the is-a chain) ---")
     for line in ["can a robin fly?", "can a robin breathe?", "can a trout swim?", "can a trout breathe?",
                  "can a robin swim?", "can a zzz fly?"]:
+        print(f"  you> {line}\n  brain> {handle(c, line)}")
+    print("  --- teach an ORDERING, ASK by TRANSITIVE inference (non-adjacent never told) ---")
+    for line in ["alice beats bob", "bob beats carol", "carol beats dave"]:
+        print(f"  you> {line}\n  brain> {handle(c, line)}")
+    for line in ["does alice beat dave?", "does dave beat alice?", "does bob beat dave?", "does alice beat zoe?"]:
         print(f"  you> {line}\n  brain> {handle(c, line)}")
     print()
 

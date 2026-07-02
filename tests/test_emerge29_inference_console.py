@@ -40,6 +40,18 @@ def test_moat_unknown_concept(console):
     assert handle(c, "can a zzz fly?") == "I don't know what a zzz is."       # unknown concept -> moat
 
 
+def test_transitive_ordering():
+    """Teach an ordering (adjacent premises); the non-adjacent transitive relation is inferred, with a moat."""
+    from research.runners._emerge29_inference_console import SemanticConsole, handle
+    c = SemanticConsole(seed=42, epochs=80)
+    for line in ["alice beats bob", "bob beats carol", "carol beats dave"]:
+        handle(c, line)
+    assert handle(c, "does alice beat dave?") == "Yes, alice beats dave."     # non-adjacent, never told
+    assert handle(c, "does dave beat alice?") == "No, alice beats dave."      # correct reverse
+    assert handle(c, "does bob beat dave?") == "Yes, bob beats dave."
+    assert handle(c, "does alice beat zoe?") == "I don't know who zoe is."    # unknown -> moat
+
+
 if __name__ == "__main__":
     from research.runners._emerge29_inference_console import SemanticConsole, handle
     c = SemanticConsole(seed=42, epochs=80)
