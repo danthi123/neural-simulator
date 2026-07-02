@@ -33,12 +33,14 @@ def build_corpus():
     word2cols = {
         "dog": [0, 1, 2, 3], "wolf": [0, 1, 2, 4], "fox": [0, 1, 2, 5],           # canines share [0,1,2]
         "cat": [6, 7, 8, 9], "lion": [6, 7, 8, 10],                                # felines share [6,7,8]
+        "hawk": [27, 28, 29, 30], "owl": [27, 28, 29, 31],                         # birds share [27,28,29]
         "chased": [11, 12, 13, 14], "ball": [15, 16, 17, 18],                      # shared middle
-        "home": [19, 20, 21, 22], "away": [23, 24, 25, 26],                        # branch words
+        "home": [19, 20, 21, 22], "away": [23, 24, 25, 26], "up": [32, 33, 34, 35],  # branch words
         "zzz": [40, 41, 42, 43], "qqq": [44, 45, 46, 47],                          # NOVEL -- disjoint codes (must abstain)
     }
-    family_branch = {"dog": "home", "wolf": "home", "fox": "home", "cat": "away", "lion": "away"}
-    trained = ["dog", "cat"]                                                       # the grounded (trained) subjects
+    family_branch = {"dog": "home", "wolf": "home", "fox": "home", "cat": "away", "lion": "away",
+                     "hawk": "up", "owl": "up"}
+    trained = ["dog", "cat", "hawk"]                                               # the grounded (trained) subjects (one per family)
     sentences = {s: [s, "chased", "ball", family_branch[s]] for s in family_branch}
     M = 1 + max(c for cols in word2cols.values() for c in cols)
     return word2cols, family_branch, trained, sentences, M
@@ -104,6 +106,7 @@ def _transcript(cortex):
         ("wolf", "GENERALIZE: never trained, but SIMILAR to dog -> canine continuation"),
         ("fox", "GENERALIZE (similar to dog)"),
         ("lion", "GENERALIZE (similar to cat)"),
+        ("owl", "GENERALIZE (similar to hawk -> up)"),
         ("zzz", "MOAT: novel/ungrounded -> ABSTAINS (no confabulation)"),
         ("qqq", "MOAT: novel/ungrounded -> ABSTAINS"),
     ]

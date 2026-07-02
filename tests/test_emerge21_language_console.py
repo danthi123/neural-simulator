@@ -26,6 +26,7 @@ def test_generalization(cortex):
     assert cortex.respond("wolf")[-1] == "home"                  # canine -> home (generalized from dog)
     assert cortex.respond("fox")[-1] == "home"
     assert cortex.respond("lion")[-1] == "away"                  # feline -> away (generalized from cat)
+    assert cortex.respond("owl")[-1] == "up"                     # bird -> up (generalized from hawk)
 
 
 def test_intrinsic_moat_abstains(cortex):
