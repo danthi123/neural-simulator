@@ -1,0 +1,116 @@
+{
+  "probe": "emerge37_cancellation_emergent_codes",
+  "verdict": "GO -- the full Collins-Quillian inference (INHERITANCE + specific-override CANCELLATION) works on codes LEARNED FROM EXPERIENCE, not just hand-assigned. A member-specific fact CANCELS the inherited class default (1.00: robin answers WALKS, its specific fact beating the inherited flies); the non-overridden members INHERIT the class property via the LEARNED grouping (1.00). PERMUTED-CONTEXT collapses the inheritance (0.50 -- scrambled co-occurrence -> no emergent grouping); dAP-LESION 0.00; 6-seed. => cancellation is not tied to hand-assigned codes -- the substrate does full Collins-Quillian inference over structure DISCOVERED from experience. NO sim/ edit.",
+  "mechanism": "cancellation on emergent codes: members learn member-content -> context (co-occurrence); class property on the emergent context (inherited); a member-specific override taught on the member's content directly out-drives the inherited (graded read: direct 1-hop beats inherited 2-hop); committed sim/ three-term kernel; sim/ unchanged",
+  "task": "stream members->context; teach class property on emergent context + one specific override; test cancellation + inheritance vs permuted-context + dAP-lesion; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 80,
+    "act_th": 2,
+    "override": [
+      "robin",
+      "walks"
+    ]
+  },
+  "elapsed_seconds": 7.5,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "override": 1.0,
+        "inherit": 1.0
+      },
+      "permuted": {
+        "override": 1.0,
+        "inherit": 0.5
+      },
+      "lesion": {
+        "override": 0.0,
+        "inherit": 0.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "override": 1.0,
+        "inherit": 1.0
+      },
+      "permuted": {
+        "override": 1.0,
+        "inherit": 0.5
+      },
+      "lesion": {
+        "override": 0.0,
+        "inherit": 0.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "override": 1.0,
+        "inherit": 1.0
+      },
+      "permuted": {
+        "override": 1.0,
+        "inherit": 0.5
+      },
+      "lesion": {
+        "override": 0.0,
+        "inherit": 0.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "override": 1.0,
+        "inherit": 1.0
+      },
+      "permuted": {
+        "override": 1.0,
+        "inherit": 0.5
+      },
+      "lesion": {
+        "override": 0.0,
+        "inherit": 0.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "override": 1.0,
+        "inherit": 1.0
+      },
+      "permuted": {
+        "override": 1.0,
+        "inherit": 0.5
+      },
+      "lesion": {
+        "override": 0.0,
+        "inherit": 0.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "override": 1.0,
+        "inherit": 1.0
+      },
+      "permuted": {
+        "override": 1.0,
+        "inherit": 0.5
+      },
+      "lesion": {
+        "override": 0.0,
+        "inherit": 0.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "ties EMERGE-26 cancellation (hand-assigned codes) to EMERGE-30 emergent codes -- the full Collins-Quillian inference over LEARNED structure. The context tokens are the environment; the grouping is discovered (permuted-context isolates it)."
+}
