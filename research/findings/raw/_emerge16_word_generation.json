@@ -1,0 +1,51 @@
+{
+  "probe": "emerge16_word_generation",
+  "verdict": "GO -- the emergent HTM Temporal-Memory sequence cortex GENERATES word sequences autoregressively on the real spiking bridge: from a CUE word it rolls out the correct learned continuation (exact-sentence 1.000, branch-matches-cue 1.000) with NO external drive of the continuation, NO critic, NO extra learning -- the predicted (dAP-primed) cells become the next active set and predict the next word (excitability-replay). The generation is CONTEXT-DRIVEN (each cue generates ITS branch, swap-follows 1.000); dAP-LESION collapses it (branch 0.000); untrained 0.000; multi-seed. => the substrate is now a word-sequence PRODUCER, not just a predictor -- the honest simulate-don't-bolt-on path to language PRODUCTION, replacing the transformer's generate role. NO sim/ edit.",
+  "mechanism": "autoregressive GENERATION on the emergent on-bridge HTM Temporal-Memory: a cue word's winner SDR -> the bridge's weighted coincidence predicts the next column's primed cells -> those become the next active set (excitability-replay) -> roll out the sequence; NO external drive of the continuation, NO critic, NO extra learning",
+  "task": "generate the full continuation from each cue word; exact-sentence + branch-matches-cue + dAP-lesion + untrained + cue-context-driven + multi-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "n_subj": 4,
+    "epochs": 80,
+    "k_win": 4,
+    "act_th": 3
+  },
+  "elapsed_seconds": 25.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm_exact": 1.0,
+      "htm_branch": 1.0,
+      "swap_follows": 1.0,
+      "lesion_exact": 0.0,
+      "lesion_branch": 0.0,
+      "untrained_exact": 0.0,
+      "untrained_branch": 0.0
+    },
+    {
+      "seed": 43,
+      "htm_exact": 1.0,
+      "htm_branch": 1.0,
+      "swap_follows": 1.0,
+      "lesion_exact": 0.0,
+      "lesion_branch": 0.0,
+      "untrained_exact": 0.0,
+      "untrained_branch": 0.0
+    },
+    {
+      "seed": 44,
+      "htm_exact": 1.0,
+      "htm_branch": 1.0,
+      "swap_follows": 1.0,
+      "lesion_exact": 0.0,
+      "lesion_branch": 0.0,
+      "untrained_exact": 0.0,
+      "untrained_branch": 0.0
+    }
+  ],
+  "HONEST_NOTE": "reuse-by-import of the rung-4 learner + EMERGE-15 word-LM; NO sim/ edit. Generation = the predict->become-active rollout (the excitability-replay read-out mode). Next: similarity-structured codes (generalization) + grounding the emitted words to the no-confab moat; the open residual (next gate) = open-domain surface fluency."
+}
