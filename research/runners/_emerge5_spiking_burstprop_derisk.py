@@ -49,6 +49,11 @@ import argparse, json, os, sys, time, traceback
 from pathlib import Path
 
 os.environ.setdefault("SIM_BACKEND", "numpy")
+# PERF: these are TINY matmuls (a few hundred wide). Multi-threaded BLAS OVERSUBSCRIBES a many-core box and runs ~30x
+# SLOWER (measured 266ms vs 8.8ms/step on 20 cores) + burns cores on thread-sync (the "low util" symptom). Force ONE
+# BLAS thread per process (must be set BEFORE numpy imports) and parallelize across SEEDS instead (main() ProcessPool).
+for _tv in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+    os.environ.setdefault(_tv, "1")
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 except Exception:
@@ -193,9 +198,19 @@ def main():
         sweep = sorted(set(sweep + [a.primary]))
     t0 = time.time(); err = None; per = []
     try:
-        for s in a.seeds:
-            r = run(s, a.epochs, a.lr, a.batch, a.hidden, sweep, a.primary); per.append(r)
-            prim = r["spiking_sweep"][str(a.primary)]
+        # seeds are INDEPENDENT -> run as parallel processes (each 1-thread-BLAS via the env above), ~N_seeds x faster
+        # on top of the ~30x from single-thread BLAS. Sequential fallback if the pool can't start.
+        try:
+            import functools
+            from concurrent.futures import ProcessPoolExecutor
+            fn = functools.partial(run, epochs=a.epochs, lr=a.lr, batch=a.batch, hidden=a.hidden,
+                                   sweep=sweep, primary=a.primary)
+            with ProcessPoolExecutor(max_workers=min(len(a.seeds), os.cpu_count() or 1)) as ex:
+                per = list(ex.map(fn, a.seeds))
+        except Exception:
+            per = [run(s, a.epochs, a.lr, a.batch, a.hidden, sweep, a.primary) for s in a.seeds]
+        for r in per:
+            s = r["seed"]; prim = r["spiking_sweep"][str(a.primary)]
             sweep_str = " ".join(f"S{S}={r['spiking_sweep'][str(S)]['heldout']:.3f}" for S in sweep)
             print(f"  [seed {s}] rate_ref {r['rate_ref']['heldout']:.3f} | spiking[{sweep_str}] | "
                   f"primary(S{a.primary}) held {prim['heldout']:.3f} probe {prim['probe_latent']:.3f} | "
