@@ -1,0 +1,139 @@
+{
+  "probe": "emerge34_perception_grounded_emergence",
+  "verdict": "GO -- PERCEPTION-GROUNDED EMERGENCE: the brain forms categories from REAL SENSORY EXPERIENCE. Objects SEEN through the real Gabor/V1 front end -> a competitive pooler DISCOVERS the categories from the perceptual similarity -> a property taught on some perceived objects is INHERITED by HELD-OUT PERCEIVED objects (0.97, 3/category), on the spiking bridge. PER-IMAGE PIXEL SCRAMBLE collapses it (0.53 -- destroying the VISUAL similarity kills the category); RANDOM-CODES (no pooler) 0.47; dAP-LESION 0.00; a disjoint code ABSTAINS (1.00); 6-seed. => the brain LEARNS what a category IS by LOOKING, then reasons about it -- emergent semantics grounded in real perception, NO sim/ edit.",
+  "mechanism": "categories emerge from PERCEPTION: object shapes -> real retina/V1 Gabor front end -> top-T V1 features -> a competitive Spatial Pooler self-organizes a shared column block per visual category -> on-bridge inheritance (committed sim/ three-term kernel) over the perceived codes; sim/ unchanged",
+  "task": "render objects, encode through the real Gabor/V1 front end, pool, teach property on training objects, test held-out perceived-object inheritance + moat vs per-image scramble + no-pooler + dAP-lesion",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 80,
+    "n_ex": 12,
+    "t_active": 20,
+    "n_col": 80,
+    "K": 12
+  },
+  "elapsed_seconds": 843.1,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "scrambled": {
+        "held_out": 0.8333333333333334,
+        "moat": 1.0
+      },
+      "randcode": {
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "scrambled": {
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "randcode": {
+        "held_out": 0.16666666666666666,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "scrambled": {
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "randcode": {
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "held_out": 0.8333333333333334,
+        "moat": 1.0
+      },
+      "scrambled": {
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "randcode": {
+        "held_out": 0.6666666666666666,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "scrambled": {
+        "held_out": 0.3333333333333333,
+        "moat": 1.0
+      },
+      "randcode": {
+        "held_out": 0.3333333333333333,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "scrambled": {
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "randcode": {
+        "held_out": 0.6666666666666666,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the visual front end (Gabor/V1) + the pooler are the perception + representation steps (a rate reference for the fully-spiking versions); the INHERITANCE runs on the real spiking bridge. The shapes are simple oriented bars (2 visual categories); richer objects + a spiking V1/pooler + coupling into the experiential console are the follow-ons. Connects real perception -> emergent semantics -- the master-directive 'learn from experience' direction."
+}
