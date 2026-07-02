@@ -1,0 +1,132 @@
+{
+  "probe": "emerge2b_selfsup_nextsymbol",
+  "GO": false,
+  "verdict": "INCONCLUSIVE -- oracle only 0.420; tune (epochs/lr/hidden) before reading the burst arms.",
+  "task": "self-supervised next-symbol classification: predict the lawful 4-class next symbol (2 depth-2 threshold-of-XORs of 10 bits); NO external label; discriminating (classification) controls",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 1500,
+    "lr": 0.5,
+    "batch": 128,
+    "hidden": 384
+  },
+  "elapsed_seconds": 1513.9,
+  "per_seed": [
+    {
+      "seed": 42,
+      "chance": 0.31754874651810583,
+      "deep_burst_linearized": {
+        "heldout": 0.6100278551532033,
+        "train": 0.6887218045112782,
+        "no_weight_transport": true,
+        "probe_latent": 0.8200557103064067
+      },
+      "wrong_sign": {
+        "heldout": 0.596100278551532,
+        "train": 0.7969924812030075,
+        "no_weight_transport": true
+      },
+      "apical_lesion": {
+        "heldout": 0.27298050139275765,
+        "train": 0.29774436090225564,
+        "no_weight_transport": true
+      },
+      "no_teaching_null": {
+        "heldout": 0.27298050139275765,
+        "train": 0.29774436090225564,
+        "no_weight_transport": true
+      },
+      "vanilla_FA": {
+        "heldout": 0.30919220055710306,
+        "train": 0.48872180451127817
+      },
+      "single_layer": {
+        "heldout": 0.10863509749303621,
+        "train": 0.544360902255639
+      },
+      "oracle_bp": {
+        "heldout": 0.584958217270195,
+        "train": 0.6330827067669172
+      }
+    },
+    {
+      "seed": 43,
+      "chance": 0.3565459610027855,
+      "deep_burst_linearized": {
+        "heldout": 0.6573816155988857,
+        "train": 0.6766917293233082,
+        "no_weight_transport": true,
+        "probe_latent": 0.7192200557103064
+      },
+      "wrong_sign": {
+        "heldout": 0.5682451253481894,
+        "train": 0.7669172932330827,
+        "no_weight_transport": true
+      },
+      "apical_lesion": {
+        "heldout": 0.28690807799442897,
+        "train": 0.3263157894736842,
+        "no_weight_transport": true
+      },
+      "no_teaching_null": {
+        "heldout": 0.28690807799442897,
+        "train": 0.3263157894736842,
+        "no_weight_transport": true
+      },
+      "vanilla_FA": {
+        "heldout": 0.5125348189415042,
+        "train": 0.6075187969924812
+      },
+      "single_layer": {
+        "heldout": 0.09749303621169916,
+        "train": 0.5082706766917293
+      },
+      "oracle_bp": {
+        "heldout": 0.3565459610027855,
+        "train": 0.2887218045112782
+      }
+    },
+    {
+      "seed": 44,
+      "chance": 0.31754874651810583,
+      "deep_burst_linearized": {
+        "heldout": 0.5013927576601671,
+        "train": 0.5789473684210527,
+        "no_weight_transport": true,
+        "probe_latent": 0.7704735376044568
+      },
+      "wrong_sign": {
+        "heldout": 0.5459610027855153,
+        "train": 0.6045112781954888,
+        "no_weight_transport": true
+      },
+      "apical_lesion": {
+        "heldout": 0.31754874651810583,
+        "train": 0.3097744360902256,
+        "no_weight_transport": true
+      },
+      "no_teaching_null": {
+        "heldout": 0.31754874651810583,
+        "train": 0.3097744360902256,
+        "no_weight_transport": true
+      },
+      "vanilla_FA": {
+        "heldout": 0.15877437325905291,
+        "train": 0.20300751879699247
+      },
+      "single_layer": {
+        "heldout": 0.08913649025069638,
+        "train": 0.5007518796992482
+      },
+      "oracle_bp": {
+        "heldout": 0.31754874651810583,
+        "train": 0.3097744360902256
+      }
+    }
+  ],
+  "HONEST_NOTE": "Classification objective so the wrong-sign/null controls discriminate (they didn't in EMERGE-2's regression). Self-supervised = the target is the lawful next part of the observation, not an external label. Boundaries = the next mechanism. Oracle = fenced backprop task-sanity."
+}
