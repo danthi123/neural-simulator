@@ -1,0 +1,129 @@
+{
+  "probe": "emerge8_predictive_alignment",
+  "verdict": "BOUNDARY (build-informative, not a stop) -- PA did NOT recover from perturbation better than the fixed reservoir (PA 0.223 vs reservoir 0.603) (clean gen PA 0.318 / reservoir 0.761, task-sane; noise-gen PA 0.322 vs res 0.711). The careful chaos-taming rule did not make the trajectory a more-recoverable attractor than the fixed reservoir at this config -> either PA-tuning (g/eta_M/alpha/epochs; PA is sensitive to the chaos gain + alignment lr) OR a genuine toy-scale limit (the recurrent-credit advantage may need larger scale / richer targets; escalate per the shortlist: Laje-Buonomano innate-trajectory training / Gilra-Gerstner FOLLOW). Do NOT start the sim/ port.",
+  "mechanism": "Predictive Alignment (Asabuki-Clopath 2025, Nat Commun 16:6784): recurrent = fixed sparse chaotic G + plastic M; dM = eta_M(Qz - (M-alphaG)r)r^T (align recurrent prediction with fixed-random readout feedback Qz, suppress chaos); delta readout dW=eta_W(f-z)r^T; fully local, no W^T, no inverse-correlation matrix, no BPTT; autonomous generation after a cue",
+  "task": "autonomous generation of a periodic sinusoid-superposition trajectory (cue then free-run) under state noise; metric = readout-vs-target correlation; PA vs FIXED-RESERVOIR bar under matched noise",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "N": 250,
+    "K": 2,
+    "T": 180,
+    "g": 1.5,
+    "alpha": 1.0,
+    "tau": 10.0,
+    "epochs": 120,
+    "eta_M": 0.0003,
+    "eta_W": 0.01,
+    "sigma_train": 0.05,
+    "sigma_eval": 0.15,
+    "n_traj": 8,
+    "perturb_mag": 3.0
+  },
+  "elapsed_seconds": 114.8,
+  "per_seed": [
+    {
+      "pa": {
+        "gen_clean": 0.35835649109594064,
+        "gen_noisy": 0.3319120058216101,
+        "pert_recovery": 0.31428132445981755,
+        "locality_ok": true
+      },
+      "fixed_reservoir": {
+        "gen_clean": 0.7795980383732762,
+        "gen_noisy": 0.7150841014250439,
+        "pert_recovery": 0.6119993017947963,
+        "locality_ok": true
+      },
+      "pa_no_reg": {
+        "gen_clean": 0.30582439770849595,
+        "gen_noisy": 0.26867804329354167,
+        "pert_recovery": 0.1692345890311436,
+        "locality_ok": true
+      },
+      "pa_scrambled_Q": {
+        "gen_clean": 0.2863690547968012,
+        "gen_noisy": 0.2513905405506857,
+        "pert_recovery": 0.16215659075384206,
+        "locality_ok": true
+      },
+      "untrained": {
+        "gen_clean": 0.0,
+        "gen_noisy": 0.0,
+        "pert_recovery": 0.0,
+        "locality_ok": true
+      },
+      "seed": 42
+    },
+    {
+      "pa": {
+        "gen_clean": 0.31910293447391663,
+        "gen_noisy": 0.3298371024592395,
+        "pert_recovery": 0.1931120345587256,
+        "locality_ok": true
+      },
+      "fixed_reservoir": {
+        "gen_clean": 0.7485531842683856,
+        "gen_noisy": 0.7101999920460838,
+        "pert_recovery": 0.611515086178344,
+        "locality_ok": true
+      },
+      "pa_no_reg": {
+        "gen_clean": 0.4704715719922789,
+        "gen_noisy": 0.45081798256900046,
+        "pert_recovery": 0.35430723525938984,
+        "locality_ok": true
+      },
+      "pa_scrambled_Q": {
+        "gen_clean": 0.14095480456884732,
+        "gen_noisy": 0.14913274045146793,
+        "pert_recovery": 0.058533179296052944,
+        "locality_ok": true
+      },
+      "untrained": {
+        "gen_clean": 0.0,
+        "gen_noisy": 0.0,
+        "pert_recovery": 0.0,
+        "locality_ok": true
+      },
+      "seed": 43
+    },
+    {
+      "pa": {
+        "gen_clean": 0.2759353284908266,
+        "gen_noisy": 0.303350055484732,
+        "pert_recovery": 0.16240966775756815,
+        "locality_ok": true
+      },
+      "fixed_reservoir": {
+        "gen_clean": 0.7539157694655995,
+        "gen_noisy": 0.7083842846409203,
+        "pert_recovery": 0.5845403582171772,
+        "locality_ok": true
+      },
+      "pa_no_reg": {
+        "gen_clean": 0.04545173653628374,
+        "gen_noisy": 0.032012829559638016,
+        "pert_recovery": -0.023327798613787937,
+        "locality_ok": true
+      },
+      "pa_scrambled_Q": {
+        "gen_clean": 0.09509631125624607,
+        "gen_noisy": 0.12214546138889637,
+        "pert_recovery": 0.09757367109112498,
+        "locality_ok": true
+      },
+      "untrained": {
+        "gen_clean": 0.0,
+        "gen_noisy": 0.0,
+        "pert_recovery": 0.0,
+        "locality_ok": true
+      },
+      "seed": 44
+    }
+  ],
+  "HONEST_NOTE": "The decisive merged-fork test: PA (the scoped chaos-taming rule) must BEAT the fixed chaotic reservoir (same G, no plastic M) on autonomous generation UNDER NOISE -- the regime where 3 prior probes showed naive local recurrent credit fails/degrades. Rate-limit (spiking-LIF PA is rung-3b). Locality: PA uses own r, own fixed G, fixed random feedback Q, post feedback-error -- no W^T, no BPTT (used_transpose False, asserted)."
+}
