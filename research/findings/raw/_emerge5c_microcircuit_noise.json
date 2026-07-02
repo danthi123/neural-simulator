@@ -1,0 +1,118 @@
+{
+  "probe": "emerge5c_microcircuit_noise",
+  "verdict": "GO -- ACTIVE CANCELLATION is MORE noise-robust than raw burst-rate estimation: under the same finite-sample noise (S=300), the spiking MICROCIRCUIT builds a cleaner representation (clean-readout 0.975) than spiking Burstprop (0.622), approaching its own rate ceiling (0.978); apical-feedback lesion collapses it (0.488 ~ floor 0.488), no-teaching null flat (0.488). \u21d2 the microcircuit is the better rung-2 credit rule under spike noise -- carry IT (not Burstprop) toward the sim/ two-compartment port. NO sim/ edit.",
+  "question": "under the same finite-sample spike noise (S), does the Sacramento-Senn microcircuit's active interneuron cancellation build a cleaner hidden representation (clean-readout on frozen rep) than Burstprop's raw burst-rate estimation? -- decides which credit rule to carry to the sim/ port",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 1500,
+    "lr": 0.12,
+    "batch": 128,
+    "hidden": 384,
+    "samples": 300,
+    "p0": 0.03
+  },
+  "elapsed_seconds": 727.7,
+  "per_seed": [
+    {
+      "burstprop_spiking": {
+        "own": 0.4596100278551532,
+        "clean_readout": 0.584958217270195
+      },
+      "microcircuit_spiking": {
+        "own": 0.9944289693593314,
+        "clean_readout": 0.9888579387186629
+      },
+      "mc_spiking_lesion": {
+        "own": 0.5348189415041783,
+        "clean_readout": 0.45125348189415043
+      },
+      "mc_spiking_null": {
+        "own": 0.45125348189415043,
+        "clean_readout": 0.45125348189415043
+      },
+      "microcircuit_rate": {
+        "own": 0.9944289693593314,
+        "clean_readout": 0.9860724233983287
+      },
+      "burstprop_rate": {
+        "own": 0.766016713091922,
+        "clean_readout": 0.9052924791086351
+      },
+      "untrained": {
+        "own": 0.45125348189415043,
+        "clean_readout": 0.45125348189415043
+      },
+      "seed": 42,
+      "chance": 0.5487465181058496
+    },
+    {
+      "burstprop_spiking": {
+        "own": 0.532033426183844,
+        "clean_readout": 0.5933147632311978
+      },
+      "microcircuit_spiking": {
+        "own": 0.947075208913649,
+        "clean_readout": 0.9693593314763231
+      },
+      "mc_spiking_lesion": {
+        "own": 0.5376044568245125,
+        "clean_readout": 0.5376044568245125
+      },
+      "mc_spiking_null": {
+        "own": 0.5376044568245125,
+        "clean_readout": 0.5376044568245125
+      },
+      "microcircuit_rate": {
+        "own": 0.9610027855153204,
+        "clean_readout": 0.9331476323119777
+      },
+      "burstprop_rate": {
+        "own": 0.8579387186629527,
+        "clean_readout": 0.8913649025069638
+      },
+      "untrained": {
+        "own": 0.5376044568245125,
+        "clean_readout": 0.5376044568245125
+      },
+      "seed": 43,
+      "chance": 0.5376044568245125
+    },
+    {
+      "burstprop_spiking": {
+        "own": 0.5236768802228412,
+        "clean_readout": 0.6880222841225627
+      },
+      "microcircuit_spiking": {
+        "own": 0.9721448467966574,
+        "clean_readout": 0.9665738161559888
+      },
+      "mc_spiking_lesion": {
+        "own": 0.5236768802228412,
+        "clean_readout": 0.4763231197771588
+      },
+      "mc_spiking_null": {
+        "own": 0.4763231197771588,
+        "clean_readout": 0.4763231197771588
+      },
+      "microcircuit_rate": {
+        "own": 0.9777158774373259,
+        "clean_readout": 0.9693593314763231
+      },
+      "burstprop_rate": {
+        "own": 0.7632311977715878,
+        "clean_readout": 0.7047353760445683
+      },
+      "untrained": {
+        "own": 0.4763231197771588,
+        "clean_readout": 0.4763231197771588
+      },
+      "seed": 44,
+      "chance": 0.5236768802228412
+    }
+  ],
+  "HONEST_NOTE": "Head-to-head at the healthy width-384 config. Noise model = Binomial(S, phi(u^P))/S on the credit-carrying firing rates (same injection point as EMERGE-5's Burstprop); output error stays target-exact (clean logits, as in both the rate microcircuit and Burstprop). Microcircuit credit read in the self-predicting form (as EMERGE-3; interneuron maintenance dropped -- it does not affect the within-step FF update). RATE-limit, NOT dt-integrated. The clean-readout probe reads the noise-free analytic rep. A BOUNDARY here (cancellation no better than Burstprop) is build-informative: it says the finite-sample noise limit is mechanism-general and the next move is a population-feedback factor / noise-geometry, per the 2025-26 shortlist."
+}
