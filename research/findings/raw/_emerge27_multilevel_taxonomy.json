@@ -1,0 +1,148 @@
+{
+  "probe": "emerge27_multilevel_taxonomy",
+  "verdict": "GO -- MULTI-LEVEL taxonomic inheritance emerges on the spiking HTM cortex: a concept inherits from MULTIPLE levels of its is-a hierarchy at once -- respiration 'breathes' from ANIMAL (2 levels up, 1.00) AND locomotion from BIRD/FISH (1 level up, held-out, 1.00) -- with NO inference engine. DIMENSION-ISOLATION (1.00): penguin's specific 'walks' CANCELS the inherited flies at LOCOMOTION while its RESPIRATION inheritance 'breathes' SURVIVES -- the full Collins-Quillian hierarchical structure. DERANGED mid-level collapses locomotion inheritance (0.00); dAP-LESION collapses (0.00); a no-ancestor concept ABSTAINS both dimensions (1.00); 6-seed. => the substrate infers over a MULTI-LEVEL relational hierarchy, NO sim/ edit.",
+  "mechanism": "multi-level Collins-Quillian inheritance: each concept's code = content + ALL ancestor superordinate blocks; teach a property at each level's block; a concept inherits from every level (each level's block primes its property); per-dimension argmax over apical drive so a member-specific fact cancels only its dimension; committed sim/ three-term kernel; sim/ unchanged",
+  "task": "teach level facts (ANIMAL->breathes, BIRD->flies, FISH->swims) + specific (penguin->walks); test multi-level inheritance + dimension-isolation + moat vs deranged-ancestors + dAP-lesion; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 80,
+    "act_th": 2
+  },
+  "elapsed_seconds": 8.8,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "resp_inherit": 1.0,
+        "loco_inherit": 1.0,
+        "dim_isolation": 1.0,
+        "moat": 1.0
+      },
+      "deranged": {
+        "resp_inherit": 1.0,
+        "loco_inherit": 0.0,
+        "dim_isolation": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "resp_inherit": 0.0,
+        "loco_inherit": 0.0,
+        "dim_isolation": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "resp_inherit": 1.0,
+        "loco_inherit": 1.0,
+        "dim_isolation": 1.0,
+        "moat": 1.0
+      },
+      "deranged": {
+        "resp_inherit": 1.0,
+        "loco_inherit": 0.0,
+        "dim_isolation": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "resp_inherit": 0.0,
+        "loco_inherit": 0.0,
+        "dim_isolation": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "resp_inherit": 1.0,
+        "loco_inherit": 1.0,
+        "dim_isolation": 1.0,
+        "moat": 1.0
+      },
+      "deranged": {
+        "resp_inherit": 1.0,
+        "loco_inherit": 0.0,
+        "dim_isolation": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "resp_inherit": 0.0,
+        "loco_inherit": 0.0,
+        "dim_isolation": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "resp_inherit": 1.0,
+        "loco_inherit": 1.0,
+        "dim_isolation": 1.0,
+        "moat": 1.0
+      },
+      "deranged": {
+        "resp_inherit": 1.0,
+        "loco_inherit": 0.0,
+        "dim_isolation": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "resp_inherit": 0.0,
+        "loco_inherit": 0.0,
+        "dim_isolation": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "resp_inherit": 1.0,
+        "loco_inherit": 1.0,
+        "dim_isolation": 1.0,
+        "moat": 1.0
+      },
+      "deranged": {
+        "resp_inherit": 1.0,
+        "loco_inherit": 0.0,
+        "dim_isolation": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "resp_inherit": 0.0,
+        "loco_inherit": 0.0,
+        "dim_isolation": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "resp_inherit": 1.0,
+        "loco_inherit": 1.0,
+        "dim_isolation": 1.0,
+        "moat": 1.0
+      },
+      "deranged": {
+        "resp_inherit": 1.0,
+        "loco_inherit": 0.0,
+        "dim_isolation": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "resp_inherit": 0.0,
+        "loco_inherit": 0.0,
+        "dim_isolation": 0.0,
+        "moat": 1.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the is-a hierarchy is host-DESIGNED (ancestor blocks hand-assigned). Inference-over-structure, NOT acquisition-of-structure-from-experience (the deferred R-c residual: the hierarchy must EMERGE from statistics -- the next research gate). Next build: transitive relational inference (recombine overlapping learned pairs, hippocampal D.02)."
+}
