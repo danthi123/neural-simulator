@@ -1,0 +1,83 @@
+{
+  "probe": "emerge13_stageC_flat_permanence",
+  "verdict": "GO -- the Bouhadjar THREE-TERM rule self-organizes context-specific branch prediction on a FLAT [post,pre] PERMANENCE MATRIX (single-segment-per-cell over a dense potential pool, homeostatic allocation, NO segment lists, NO structural growth): branch 1.000 >> Markov 0.500, >> chance 0.500, >> dAP-lesion 0.000; untrained 0.000; no teacher; multi-seed. => the Stage-C sim/ realization is a flat-CSR permanence-update kernel over a pre-allocated coincidence potential pool + WEIGHTED coincidence (c_drive = active-synapse permanence sum). BUILD the additive/guarded fused_htm_permanence_update kernel next.",
+  "mechanism": "Bouhadjar three-term HTM learning on a FLAT [post,pre] permanence matrix (single conceptual segment per cell, dense cross-column potential pool, homeostatic dAP-rate allocation, no structural growth) -- the flat-CSR-compatible realization that gates the sim/ Stage-C kernel",
+  "task": "overlapping sequences; branch prediction; Markov floor + dAP-lesion + oracle + multi-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "n_seq": 2,
+    "middle_len": 4,
+    "n_cells": 16,
+    "k_win": 4,
+    "act_th": 3,
+    "epochs": 80
+  },
+  "elapsed_seconds": 0.7,
+  "per_seed": [
+    {
+      "htm": {
+        "branch": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch": 0.0,
+        "locality_ok": true
+      },
+      "seed": 42,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      }
+    },
+    {
+      "htm": {
+        "branch": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch": 0.0,
+        "locality_ok": true
+      },
+      "seed": 43,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      }
+    },
+    {
+      "htm": {
+        "branch": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch": 0.0,
+        "locality_ok": true
+      },
+      "seed": 44,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      }
+    }
+  ],
+  "HONEST_NOTE": "Stage-C DESIGN GATE: if flat-matrix three-term == EMERGE-9d, the sim/ port is a flat-CSR permanence kernel + weighted coincidence (simple); if not, multi-segment is required (harder port). Cheap-first, single-variable (learning data structure), gated before any sim/ edit. The disjoint-SDR task uses each cell for <=1 context, so single-segment suffices."
+}
