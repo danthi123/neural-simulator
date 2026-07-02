@@ -1,0 +1,83 @@
+{
+  "probe": "emerge9b_htm_faithful",
+  "verdict": "GO -- the FAITHFUL multi-segment HTM Temporal Memory self-organizes robust CONTEXT-SPECIFIC high-order prediction, UNSUPERVISED + local: branch acc 1.000 >> Markov floor 0.125, >> chance 0.125, >> lesion 0.000 (distal mechanism load-bearing); untrained 0.000; locality asserted. Multi-seed. => the rung-3 pivot WORKS robustly (allocation-based self-organization) -> 6-seed + capacity (more sequences), then rung-3b spiking-LIF port (dAP -> our two-compartment neuron). NO sim/ edit.",
+  "mechanism": "faithful multi-segment HTM Temporal Memory (Hawkins-Ahmad; discrete Bouhadjar-Diesmann 2022): per-cell segment LISTS, population SDR winners, best-matching-segment-else-allocate-fresh-cells, local Hebbian permanence; UNSUPERVISED (no teacher); no BPTT/transport",
+  "task": "overlapping sequences; branch (divergent) prediction; Markov floor + distal-lesion + oracle controls",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "n_seq": 8,
+    "middle_len": 4,
+    "n_cells": 64,
+    "k_win": 4,
+    "act_th": 3,
+    "epochs": 50
+  },
+  "elapsed_seconds": 1.4,
+  "per_seed": [
+    {
+      "htm": {
+        "branch_acc": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "seed": 42,
+      "floors": {
+        "markov_L": 0.125,
+        "oracle": 1.0,
+        "chance": 0.125
+      }
+    },
+    {
+      "htm": {
+        "branch_acc": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "seed": 43,
+      "floors": {
+        "markov_L": 0.125,
+        "oracle": 1.0,
+        "chance": 0.125
+      }
+    },
+    {
+      "htm": {
+        "branch_acc": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "seed": 44,
+      "floors": {
+        "markov_L": 0.125,
+        "oracle": 1.0,
+        "chance": 0.125
+      }
+    }
+  ],
+  "HONEST_NOTE": "Faithful multi-segment HTM (fixes EMERGE-9's minimal single-permanence-row context-merge). Discrete algorithm; spiking-LIF port (dAP -> our two-compartment neuron) is rung-3b. Unsupervised: no teacher; self-organization IS the deliverable, not a cheat."
+}

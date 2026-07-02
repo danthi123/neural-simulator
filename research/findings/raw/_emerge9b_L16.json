@@ -1,0 +1,83 @@
+{
+  "probe": "emerge9b_htm_faithful",
+  "verdict": "BOUNDARY (build-informative) -- branch acc 0.500 < 0.90; didn't clear Markov/chance (htm 0.500, markov 0.500) (oracle 1.000). Iterate the faithful HTM (k_win / act_th / n_cells / epochs / learn_th) -- allocation needs >= k distinct least-used cells + act_th separating contexts. NOT a wall; the mechanism is the next tuning.",
+  "mechanism": "faithful multi-segment HTM Temporal Memory (Hawkins-Ahmad; discrete Bouhadjar-Diesmann 2022): per-cell segment LISTS, population SDR winners, best-matching-segment-else-allocate-fresh-cells, local Hebbian permanence; UNSUPERVISED (no teacher); no BPTT/transport",
+  "task": "overlapping sequences; branch (divergent) prediction; Markov floor + distal-lesion + oracle controls",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "n_seq": 2,
+    "middle_len": 16,
+    "n_cells": 16,
+    "k_win": 4,
+    "act_th": 3,
+    "epochs": 50
+  },
+  "elapsed_seconds": 1.0,
+  "per_seed": [
+    {
+      "htm": {
+        "branch_acc": 0.5,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "seed": 42,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      }
+    },
+    {
+      "htm": {
+        "branch_acc": 0.5,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "seed": 43,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      }
+    },
+    {
+      "htm": {
+        "branch_acc": 0.5,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "seed": 44,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      }
+    }
+  ],
+  "HONEST_NOTE": "Faithful multi-segment HTM (fixes EMERGE-9's minimal single-permanence-row context-merge). Discrete algorithm; spiking-LIF port (dAP -> our two-compartment neuron) is rung-3b. Unsupervised: no teacher; self-organization IS the deliverable, not a cheat."
+}
