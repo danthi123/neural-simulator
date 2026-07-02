@@ -6683,6 +6683,32 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 791 (2026-07-01 — EMERGE-3 microcircuit GO [2nd mechanism]; deep biological credit assignment ROBUST across 2 rules)
+
+The Sacramento-Senn dendritic-microcircuit de-risk (parallel subagent aad4d64a083e755fc) returned GO + I trust-but-
+verified (read the code + finding): NO sim/ edit (git clean), NO weight transport (W_PP_td fixed-random; W_PI=-W_PP_td
+derives from the feedback pathway, not a forward W). Result 3-seed: microcircuit held-out **0.961** (>> vanilla_FA
+0.630, +0.33; tracks the backprop oracle 0.953, as predicted for the more-gradient-faithful rule), probe 0.943;
+controls all bite -- feedback_lesion 0.482 (collapses), wrong_sign 0.521, no_teaching_null 0.521 (both ~chance),
+single_layer 0.237. ⇒ **deep biological credit assignment is now confirmed by TWO mechanistically-distinct faithful
+mechanisms** (Burstprop EMERGE-1b 0.796 fully-from-scratch; microcircuit 0.961) -- robust, not a Burstprop artifact.
+HONEST CAVEAT (verified, foregrounded in the finding): the microcircuit's interneuron is HELD at its self-predicting
+fixed point (W_PI=-W_PP_td, the paper's own converged phase), NOT co-adapted from scratch -- the from-scratch
+live-coupled version SAT AT CHANCE. So the credit-assignment RECURSION is confirmed, but the interneuron self-predicting
+STATE is hand-initialized here = a residual scaffold. (Burstprop is the cleaner fully-from-scratch emergent result --
+nothing hand-set.) Finding: `2026-07-01-emerge3-microcircuit-GO.md`.
+
+**EXACT NEXT CONCRETE ACTION:** commit the microcircuit GO (runner + finding + json) to BOTH remotes on main (honest
+caveat in the message). AWAIT EMERGE-2b (b41ahwtww, self-supervised next-symbol classification, running in parallel) --
+its result closes the self-supervised question with a discriminating control. THEN drive to the GOAL (parallelize where
+independent): (1) the from-scratch interneuron self-predicting-state LEARNING is a boundary = the next mechanism to
+iterate (how do the SST interneurons LEARN to cancel from scratch? -- the paper's M2.7/M2.8 phase; the subagent's
+attempt sat at chance -> a tuning/mechanism gap); (2) the BIG goal-move: carry the confirmed credit-assignment mechanism
+(Burstprop, the fully-from-scratch one) toward the SPIKING SUBSTRATE -- a faithful two-compartment + burst neuron on the
+SimulationBridge (sim/ mechanism build fair game; deep-research-gate the faithful spiking implementation first), where
+self-supervised predict-your-input is the natural real test at scale. NO cheats/scaffolding (except world/body);
+emergent/one-brain/single-substrate; honest origin+gitea; COMMIT ON MAIN; PARALLELIZE; boundaries = the next mechanism.
+
 ## CYCLE 790 (2026-07-01 — EMERGE-2 self-supervised: real signal, control-limited in regression; + PARALLELIZE fix + skill)
 
 Owner flagged (a) low util + (b) parallelization. Root cause: I was serializing single-threaded numpy runs. FIXED: added
