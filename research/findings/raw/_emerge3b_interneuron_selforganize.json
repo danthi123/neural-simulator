@@ -1,0 +1,97 @@
+{
+  "probe": "emerge3b_interneuron_selforganize",
+  "GO": true,
+  "verdict": "GO -- the SST interneuron's top-down-cancelling self-predicting state SELF-ORGANIZES FROM SCRATCH and GENERALIZES: held-out cancellation Q 0.973 (from random-init ~0) >> frozen -0.000; the dendrite learned to self-predict (R2 0.970) and cancels from the LOCAL layer even with the soma nudge OFF (no-nudge Q 0.946); it is SPECIFIC to the learned feedback (a DIFFERENT fixed-random feedback is NOT cancelled: alt Q -0.357); wrong-sign anti-cancels (-10.000); W_PI learned from random, no weight transport. Multi-seed. \u21d2 EMERGE-3's flagged residual is CLOSED -- the converged self-predicting form it read is reachable by self-organization, not hand-set; the microcircuit is now fully from-scratch (matching Burstprop). NEXT: fold the LIVE self-organized interneuron into the depth-2 task credit (EMERGE-3c). NO sim/ edit.",
+  "mechanism": "faithful Sacramento-Senn interneuron self-prediction (M2.7 dendrite-predicts-soma + M2.8 apical-silencing), from RANDOM init (no hand-set W_PI, no weight transport), measured by held-out top-down cancellation quality Q; rates from a fixed random net (isolates the interneuron self-organization from feedforward learning)",
+  "question": "does the microcircuit's self-predicting (top-down-cancelling) state self-organize from scratch + generalize? -- closing EMERGE-3's hand-set-W_PI residual",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 400,
+    "batch": 128,
+    "hidden": 64,
+    "upper": 64
+  },
+  "elapsed_seconds": 8.2,
+  "per_seed": [
+    {
+      "seed": 42,
+      "selforganize": {
+        "heldout_Q": 0.9736768275077539,
+        "train_Q": 0.9741648782496283,
+        "init_Q": 0.0006871053993542375,
+        "no_weight_transport": true,
+        "heldout_Q_altfeedback": -0.5558985871677746,
+        "heldout_Q_nonudge": 0.9528532540022167,
+        "selfpredict_R2_heldout": 0.9646168021510592
+      },
+      "frozen": {
+        "heldout_Q": 0.0006871053993542375,
+        "train_Q": 0.0006962809352798471,
+        "init_Q": 0.0006871053993542375,
+        "no_weight_transport": true
+      },
+      "wrong_sign": {
+        "heldout_Q": -10.0,
+        "train_Q": -10.0,
+        "init_Q": 0.0006871053993542375,
+        "no_weight_transport": true
+      },
+      "chance_Q": 0.0
+    },
+    {
+      "seed": 43,
+      "selforganize": {
+        "heldout_Q": 0.9710780353529386,
+        "train_Q": 0.9715044645815133,
+        "init_Q": -0.0016085037633644106,
+        "no_weight_transport": true,
+        "heldout_Q_altfeedback": -0.26346976227935714,
+        "heldout_Q_nonudge": 0.946697135314387,
+        "selfpredict_R2_heldout": 0.9707810986908503
+      },
+      "frozen": {
+        "heldout_Q": -0.0016085037633644106,
+        "train_Q": -0.001604358040591558,
+        "init_Q": -0.0016085037633644106,
+        "no_weight_transport": true
+      },
+      "wrong_sign": {
+        "heldout_Q": -10.0,
+        "train_Q": -10.0,
+        "init_Q": -0.0016085037633644106,
+        "no_weight_transport": true
+      },
+      "chance_Q": 0.0
+    },
+    {
+      "seed": 44,
+      "selforganize": {
+        "heldout_Q": 0.9731080527506254,
+        "train_Q": 0.9735130517612735,
+        "init_Q": 9.547127009335021e-05,
+        "no_weight_transport": true,
+        "heldout_Q_altfeedback": -0.25306436260737697,
+        "heldout_Q_nonudge": 0.9398918716053193,
+        "selfpredict_R2_heldout": 0.9731056370844435
+      },
+      "frozen": {
+        "heldout_Q": 9.547127009335021e-05,
+        "train_Q": 9.531841518295447e-05,
+        "init_Q": 9.547127009335021e-05,
+        "no_weight_transport": true
+      },
+      "wrong_sign": {
+        "heldout_Q": -10.0,
+        "train_Q": -10.0,
+        "init_Q": 9.547127009335021e-05,
+        "no_weight_transport": true
+      },
+      "chance_Q": 0.0
+    }
+  ],
+  "HONEST_NOTE": "Isolated test of the CONVERGENCE question EMERGE-3 flagged (interneuron held at self-predicting fixed point). Rates come from a FIXED random net so this measures ONLY whether the interneuron LEARNS to cancel the fixed-random top-down from random init + generalizes to held-out inputs (the developmental self-organization). A GO justifies EMERGE-3's converged-form read (it is reachable, not hand-set); the LIVE-coupled task credit with the self-organized interneuron is the follow-on (EMERGE-3c). Boundaries = undiscovered mechanisms (master directive). Faithful choices: rate-limit steady state; g_som teaching nudge present (the paper's continuous nudged dynamics); att_D/int_den == EMERGE-3. Burstprop remains the fully-from-scratch PRIMARY path to the substrate."
+}

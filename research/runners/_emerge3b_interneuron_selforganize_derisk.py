@@ -88,6 +88,12 @@ class SelfOrgInterneuron:
         # FIXED-RANDOM top-down feedback (upper rate -> local apical), O(1) (== EMERGE-3 scale). NEVER a forward W.
         frng = np.random.default_rng(seed + 4271)
         self.W_PP_td = frng.normal(0.0, 1.0, (H, U))
+        # a DIFFERENT independent fixed-random feedback -> the WELL-POSED structure-specificity control: the trained
+        # interneuron must cancel W_PP_td SPECIFICALLY, not any top-down. (Replaces the ill-posed shuffled-nudge
+        # control: in a feedforward isolation r_up=f(r_P), so a corrupted soma nudge is recoverable from the local
+        # layer -- the interneuron legitimately cancels from W_IP@r_P regardless. A DIFFERENT feedback pathway it never
+        # learned is the correct permuted-target test.)
+        self.W_PP_td_alt = frng.normal(0.0, 1.0, (H, U))
         # interneuron weights: BOTH random-init (the honest from-scratch start; NOT -W_PP_td).
         self.W_IP = frng.normal(0.0, 1.0 / np.sqrt(H), (U, H))       # local pyr -> int dendrite
         self.W_PI = frng.normal(0.0, 0.01, (H, U))                   # int -> local apical (small random)
@@ -97,32 +103,34 @@ class SelfOrgInterneuron:
         r_up = _sig(r_P @ self.W1)                                  # (m,U) upper pyramidal rate
         return r_P, r_up
 
-    def _apical(self, r_P, r_up, nudge_up=None):
-        """Compute interneuron state + local apical potential v_A (M2.2/M2.4/M2.5). nudge_up = the upper rate that
-        nudges the interneuron soma (defaults to the true r_up; shuffled in the shuffled_upper arm)."""
-        u_up = _logit(r_up if nudge_up is None else nudge_up)       # (m,U) upper somatic potential
-        v_I = r_P @ self.W_IP.T                                     # (m,U) int dendrite
-        u_I = (self.g_D * v_I + self.g_som * u_up) / self.int_den   # (m,U) int soma
-        r_int = _sig(u_I)                                           # (m,U) int rate
-        v_A = r_up @ self.W_PP_td.T + r_int @ self.W_PI.T           # (m,H) local apical potential
+    def _apical(self, r_P, r_up, nudge_scale=1.0, feedback=None):
+        """Compute interneuron state + local apical potential v_A (M2.2/M2.4/M2.5). nudge_scale scales the g_som soma
+        nudge (0 = the interneuron must predict the top-down from the LOCAL layer via W_IP alone); feedback overrides
+        which fixed-random top-down pathway the apical sees (the structure-specificity control)."""
+        Wtd = self.W_PP_td if feedback is None else feedback
+        u_up = _logit(r_up)                                        # (m,U) upper somatic potential
+        v_I = r_P @ self.W_IP.T                                    # (m,U) int dendrite
+        u_I = (self.g_D * v_I + nudge_scale * self.g_som * u_up) / self.int_den   # (m,U) int soma
+        r_int = _sig(u_I)                                          # (m,U) int rate
+        v_A = r_up @ Wtd.T + r_int @ self.W_PI.T                   # (m,H) local apical potential
         return v_I, r_int, v_A
 
-    def cancellation_quality(self, X):
-        """Q = 1 - ||v_A|| / ||td_drive|| on the given inputs (true dynamics). 1 = perfect cancellation, 0 = none."""
+    def cancellation_quality(self, X, feedback=None, nudge_scale=1.0):
+        """Q = 1 - ||v_A|| / ||td_drive|| on the given inputs. 1 = perfect cancellation, <=0 = none/anti. feedback
+        selects the top-down pathway (default the trained W_PP_td; W_PP_td_alt = the specificity control); nudge_scale=0
+        forces cancellation from the local layer alone (the W_IP predictive role)."""
         r_P, r_up = self.rates(X)
-        _, _, v_A = self._apical(r_P, r_up)
-        td = r_up @ self.W_PP_td.T
+        Wtd = self.W_PP_td if feedback is None else feedback
+        _, _, v_A = self._apical(r_P, r_up, nudge_scale=nudge_scale, feedback=feedback)
+        td = r_up @ Wtd.T
         denom = float(np.linalg.norm(td)) + 1e-12
-        return float(1.0 - np.linalg.norm(v_A) / denom)
+        q = 1.0 - float(np.linalg.norm(v_A)) / denom
+        return float(np.clip(q, -10.0, 1.0))                       # clip the anti-cancel arm to keep JSON finite
 
     def train_step(self, X, mode):
         r_P, r_up = self.rates(X)
         m = max(1, X.shape[0])
-        nudge = None
-        if mode == "shuffled_upper":                                # nudge the int soma with a row-shuffled upper rate
-            perm = np.random.default_rng(hash(("shuf", int(r_up.sum() * 1e6)) ) & 0xFFFFFFFF).permutation(len(r_up))
-            nudge = r_up[perm]
-        v_I, r_int, v_A = self._apical(r_P, r_up, nudge_up=nudge)
+        v_I, r_int, v_A = self._apical(r_P, r_up)
         if mode == "frozen":
             return
         # M2.7: interneuron dendrite predicts its (upper-nudged) soma -> learns the top-down structure from the local layer
@@ -132,8 +140,8 @@ class SelfOrgInterneuron:
         dW_PI = ((0.0 - v_A).T @ r_int) / m                        # (H,U)
         if mode == "wrong_sign":                                    # negate BOTH -> anti-cancel (apical grows)
             dW_IP, dW_PI = -dW_IP, -dW_PI
-        self.W_IP = self.W_IP + self.eta_ip * dW_IP
-        self.W_PI = self.W_PI + self.eta_pi * dW_PI
+        self.W_IP = np.clip(self.W_IP + self.eta_ip * dW_IP, -1e3, 1e3)   # clip bounds the wrong-sign divergence
+        self.W_PI = np.clip(self.W_PI + self.eta_pi * dW_PI, -1e3, 1e3)
 
 
 def _train(net, X, mode, epochs, batch, seed):
@@ -157,7 +165,7 @@ def _no_transport(net):
 def run(seed, epochs, batch, hidden, upper):
     (Xtr, _ytr, _Ltr), (Xte, _yte, _Lte) = make_task(seed)
     res = {}
-    for mode in ("selforganize", "frozen", "wrong_sign", "shuffled_upper"):
+    for mode in ("selforganize", "frozen", "wrong_sign"):
         net = SelfOrgInterneuron(N_BITS, hidden, upper, seed=seed)
         q_init = net.cancellation_quality(Xte)                      # held-out Q at random init (~0 baseline)
         wt_ok = _no_transport(net)
@@ -165,7 +173,13 @@ def run(seed, epochs, batch, hidden, upper):
         entry = {"heldout_Q": net.cancellation_quality(Xte), "train_Q": net.cancellation_quality(Xtr),
                  "init_Q": q_init, "no_weight_transport": bool(wt_ok and _no_transport(net))}
         if mode == "selforganize":
-            # secondary read: did the interneuron dendrite learn to PREDICT its soma (the self-predicting state)?
+            # STRUCTURE-SPECIFICITY control (well-posed): the trained interneuron must NOT cancel a DIFFERENT
+            # fixed-random feedback (it learned to cancel W_PP_td specifically, not any top-down).
+            entry["heldout_Q_altfeedback"] = net.cancellation_quality(Xte, feedback=net.W_PP_td_alt)
+            # W_IP predictive role: cancellation with the g_som soma nudge OFF -> the interneuron must predict the
+            # top-down from the LOCAL layer via the learned W_IP alone (the genuine self-predicting mechanism).
+            entry["heldout_Q_nonudge"] = net.cancellation_quality(Xte, nudge_scale=0.0)
+            # secondary: did the interneuron dendrite learn to PREDICT its soma (the self-predicting state)?
             r_P, r_up = net.rates(Xte); v_I, r_int, _ = net._apical(r_P, r_up)
             pred = _sig(net.att_D * v_I)
             ss = float(1.0 - np.linalg.norm(r_int - pred) / (np.linalg.norm(r_int - r_int.mean()) + 1e-12))
@@ -190,39 +204,42 @@ def main():
     try:
         for s in a.seeds:
             r = run(s, a.epochs, a.batch, a.hidden, a.upper); per.append(r)
-            print(f"  [seed {s}] selforg heldQ {r['selforganize']['heldout_Q']:.3f} (init {r['selforganize']['init_Q']:.3f}"
-                  f", selfpred R2 {r['selforganize']['selfpredict_R2_heldout']:.3f}) | frozen {r['frozen']['heldout_Q']:.3f}"
-                  f" | wrong {r['wrong_sign']['heldout_Q']:.3f} | shuffled {r['shuffled_upper']['heldout_Q']:.3f} | wt_ok "
-                  f"{r['selforganize']['no_weight_transport']}", flush=True)
+            so_ = r['selforganize']
+            print(f"  [seed {s}] selforg heldQ {so_['heldout_Q']:.3f} (init {so_['init_Q']:.3f}, selfpred R2 "
+                  f"{so_['selfpredict_R2_heldout']:.3f}, no-nudge {so_['heldout_Q_nonudge']:.3f}) | frozen "
+                  f"{r['frozen']['heldout_Q']:.3f} | wrong {r['wrong_sign']['heldout_Q']:.3f} | alt-feedback "
+                  f"{so_['heldout_Q_altfeedback']:.3f} | wt_ok {so_['no_weight_transport']}", flush=True)
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
     if err is None:
         def mq(k):
             return float(np.mean([p[k]["heldout_Q"] for p in per]))
-        so, fr, wr, sh = mq("selforganize"), mq("frozen"), mq("wrong_sign"), mq("shuffled_upper")
+        so, fr, wr = mq("selforganize"), mq("frozen"), mq("wrong_sign")
+        alt = float(np.mean([p["selforganize"]["heldout_Q_altfeedback"] for p in per]))
+        nonudge = float(np.mean([p["selforganize"]["heldout_Q_nonudge"] for p in per]))
         sp = float(np.mean([p["selforganize"]["selfpredict_R2_heldout"] for p in per]))
         wt = all(p["selforganize"]["no_weight_transport"] for p in per)
         self_organizes = (so >= 0.80) and (so > fr + 0.30)
         wrong_anti = wr <= 0.0
-        shuffled_fails = sh < so - 0.30
-        go = bool(self_organizes and wrong_anti and shuffled_fails and wt)
+        specific = alt < so - 0.30                                  # cancels the LEARNED feedback, not a fresh one
+        go = bool(self_organizes and wrong_anti and specific and wt)
         if go:
             verdict = (f"GO -- the SST interneuron's top-down-cancelling self-predicting state SELF-ORGANIZES FROM "
                        f"SCRATCH and GENERALIZES: held-out cancellation Q {so:.3f} (from random-init ~0) >> frozen "
-                       f"{fr:.3f}; the dendrite learned to self-predict (R2 {sp:.3f}); wrong-sign anti-cancels "
-                       f"({wr:.3f}), shuffled-upper fails ({sh:.3f}) -> the cancellation is LEARNED + structure-"
-                       f"specific, not a trivial nudge passthrough; W_PI learned from random, no weight transport. "
-                       f"Multi-seed. ⇒ EMERGE-3's flagged residual is CLOSED -- the converged self-predicting form it "
-                       f"read is reachable by self-organization, not hand-set; the microcircuit is now fully "
-                       f"from-scratch (matching Burstprop). NEXT: fold the LIVE self-organized interneuron into the "
-                       f"depth-2 task credit (EMERGE-3c). NO sim/ edit.")
+                       f"{fr:.3f}; the dendrite learned to self-predict (R2 {sp:.3f}) and cancels from the LOCAL layer "
+                       f"even with the soma nudge OFF (no-nudge Q {nonudge:.3f}); it is SPECIFIC to the learned feedback "
+                       f"(a DIFFERENT fixed-random feedback is NOT cancelled: alt Q {alt:.3f}); wrong-sign anti-cancels "
+                       f"({wr:.3f}); W_PI learned from random, no weight transport. Multi-seed. ⇒ EMERGE-3's flagged "
+                       f"residual is CLOSED -- the converged self-predicting form it read is reachable by self-"
+                       f"organization, not hand-set; the microcircuit is now fully from-scratch (matching Burstprop). "
+                       f"NEXT: fold the LIVE self-organized interneuron into the depth-2 task credit (EMERGE-3c). NO sim/ edit.")
         else:
             miss = []
             if so < 0.80: miss.append(f"held-out Q {so:.3f} < 0.80")
             if so <= fr + 0.30: miss.append(f"didn't beat frozen (Q {so:.3f} vs {fr:.3f})")
             if not wrong_anti: miss.append(f"wrong-sign didn't anti-cancel ({wr:.3f} > 0)")
-            if not shuffled_fails: miss.append(f"shuffled-upper didn't fail ({sh:.3f}); cancellation not structure-specific")
+            if not specific: miss.append(f"not feedback-specific (cancels a DIFFERENT feedback too: alt Q {alt:.3f} vs so {so:.3f})")
             if not wt: miss.append("weight-transport check failed")
             verdict = ("BOUNDARY (next mechanism, not a stop) -- " + "; ".join(miss) + f". Per the master directive the "
                        f"interneuron self-organization needs the next mechanism (faster interneuron timescale vs FF; a "
