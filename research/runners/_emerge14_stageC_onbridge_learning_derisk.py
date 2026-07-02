@@ -33,6 +33,7 @@ from pathlib import Path
 import numpy as np
 
 from research.runners._emerge9b_htm_faithful_derisk import make_overlap_sequences, markov_branch_acc, full_oracle
+from research.runners._emerge12_stageB2_bridge_tm_derisk import _prime_from_winners
 from sim.kernels import fused_htm_permanence_update
 
 OUT = Path("research/findings/raw/_emerge14_stageC_onbridge_learning.json")
@@ -45,7 +46,7 @@ def _host(x):
         return np.asarray(x)
 
 
-def build_pool_bridge(vocab, nE, seed, p_init=0.24, perm_conn=0.5, act_th=3, coincidence=True):
+def build_pool_bridge(vocab, nE, seed, p_init=0.0, perm_conn=0.5, act_th=3, coincidence=True):
     """A bridge holding vocab*nE cells with a PRE-ALLOCATED DENSE cross-column coincidence potential pool at p_init
     (sub-connected). Weighted coincidence so c_drive = sum of active-synapse permanences; threshold ~ act_th connected.
     Returns (bridge, cells_idx, coo_row, coo_col)."""
@@ -114,26 +115,24 @@ def apply_kernel_update(bridge, coo_row, coo_col, cells_idx, prev_win, cur_win, 
     bridge.cp_connections.data[:] = bridge.xp.asarray(updated.astype(np.float32)) if hasattr(bridge, "xp") else updated.astype(np.float32)
 
 
-def connected_predict(bridge, coo_row, coo_col, cells_idx, active_cells, N, nE, perm_conn, act_th):
-    """Prediction from the LEARNED substrate permanences: per post-cell, count CONNECTED (perm>=perm_conn) synapses from
-    active cells; predictive iff >= act_th. Reads cp_connections.data (the bridge's own learned weights)."""
-    n = int(bridge.core_config.num_neurons)
-    active_vec = np.zeros(n, np.float64)
+def coincidence_predict(bridge, cells_idx, active_cells, N, nE):
+    """ON-SUBSTRATE prediction via the bridge's WEIGHTED coincidence recurrence (Stage-B2 `_prime_from_winners`): the
+    active cells are placed as the just-fired set, the coincidence pathway is stepped (c_drive = sum of active-synapse
+    permanences over the graded pool), and the cells whose apical dAP plateau charged (cp_v_apical elevated) are the
+    predicted cells. Faithful (the bridge's own recurrence, so the dAP-LESION severs it) + graded (a connected pool
+    contributes ~1/synapse, a sub-connected one ~p_init). Returns the set of predicted EMERGE cell indices."""
+    if getattr(bridge, "cp_v_apical", None) is None and not bridge.core_config.enable_coincidence_detection:
+        return set()                                             # dAP-LESION: no coincidence -> no prediction (collapses)
+    active_bool = np.zeros(len(cells_idx), bool)
     for i in active_cells:
-        active_vec[cells_idx[i]] = 1.0
-    data = _host(bridge.cp_connections.data).astype(np.float64)
-    conn = data >= perm_conn
-    pre_active = active_vec[coo_row] > 0.5
-    contrib = (conn & pre_active).astype(np.float64)
-    ccount = np.zeros(n, np.float64)
-    np.add.at(ccount, coo_col, contrib)                          # per post-cell connected-active count
-    # map back to EMERGE cell index (identity here) -> predictive columns
-    pred = set()
-    inv = {int(cells_idx[i]): i for i in range(N)}
-    for bpost in np.where(ccount >= act_th)[0]:
-        if int(bpost) in inv:
-            pred.add(inv[int(bpost)])
-    return pred
+        active_bool[i] = True
+    _prime_from_winners(bridge, cells_idx, active_bool)
+    _vap = getattr(bridge, "cp_v_apical", None)
+    if _vap is None or np.asarray(_host(_vap)).ndim == 0:
+        return set()
+    E_rest = float(getattr(bridge.core_config, "apical_E_rest", -65.0))
+    v_ap = _host(_vap)[cells_idx]
+    return set(int(i) for i in np.where(v_ap > E_rest + 2.0)[0])
 
 
 class OnBridgeLearner:
@@ -141,7 +140,7 @@ class OnBridgeLearner:
     bridge's learned permanences) + ON-SUBSTRATE update (the fused kernel on cp_connections.data)."""
 
     def __init__(self, bridge, coo_row, coo_col, cells_idx, vocab, nE, k_win=4, act_th=3, learn_th=2, perm_conn=0.5,
-                 p_init=0.24, lam_pot=0.14, lam_dep=0.02, z_tau=0.85, z_star=1.0, lesion=False):
+                 p_init=0.0, lam_pot=0.14, lam_dep=0.02, z_tau=0.85, z_star=1.0, lesion=False):
         self.b, self.row, self.col, self.cells_idx = bridge, coo_row, coo_col, cells_idx
         self.M, self.nE, self.N = vocab, nE, vocab * nE
         self.k_win, self.act_th, self.learn_th, self.perm_conn, self.p_init = k_win, act_th, learn_th, perm_conn, p_init
@@ -201,8 +200,7 @@ class OnBridgeLearner:
                 apply_kernel_update(self.b, self.row, self.col, self.cells_idx, prev_winners, winners,
                                     self.z, self.lam_pot, self.lam_dep, self.z_star)
             active = winners if primed else (set(col) if prev_winners or not primed else winners)
-            predictive = connected_predict(self.b, self.row, self.col, self.cells_idx, active, self.N, self.nE,
-                                           self.perm_conn, self.act_th)
+            predictive = coincidence_predict(self.b, self.cells_idx, active, self.N, self.nE)
             self.z *= self.z_tau
             for i in predictive:
                 self.z[i] += (1.0 - self.z_tau)
@@ -215,8 +213,7 @@ class OnBridgeLearner:
             col = self._col(c)
             primed = [i for i in col if i in predictive] if not self.lesion else []
             active = set(primed[:self.k_win]) if primed else set(col)
-            predictive = connected_predict(self.b, self.row, self.col, self.cells_idx, active, self.N, self.nE,
-                                           self.perm_conn, self.act_th)
+            predictive = coincidence_predict(self.b, self.cells_idx, active, self.N, self.nE)
             preds.append(set(i // self.nE for i in predictive))
             prev_winners = active
         return preds

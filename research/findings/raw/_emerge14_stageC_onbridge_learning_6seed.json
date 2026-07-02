@@ -6,7 +6,10 @@
   "seeds": [
     42,
     43,
-    44
+    44,
+    100,
+    101,
+    102
   ],
   "config": {
     "n_seq": 2,
@@ -16,7 +19,7 @@
     "act_th": 3,
     "epochs": 40
   },
-  "elapsed_seconds": 3.2,
+  "elapsed_seconds": 5.8,
   "per_seed": [
     {
       "seed": 42,
@@ -42,6 +45,39 @@
     },
     {
       "seed": 44,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      },
+      "htm": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 100,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      },
+      "htm": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 101,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      },
+      "htm": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 102,
       "floors": {
         "markov_L": 0.5,
         "oracle": 1.0,
