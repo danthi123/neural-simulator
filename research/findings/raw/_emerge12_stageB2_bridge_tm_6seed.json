@@ -1,0 +1,702 @@
+{
+  "probe": "emerge12_stageB2_bridge_tm",
+  "verdict": "GO -- the FULL HTM Temporal Memory inference runs on the real SimulationBridge: the frozen EMERGE-9b distal connectivity, LOADED via inject_explicit_wiring as a recurrent coincidence pathway, produces context-specific branch prediction 1.000 (== 9c numpy spiking ref 1.000) from the bridge's OWN coincidence recurrence + apical-dAP fire-first selection. >> Markov 0.500, >> chance 0.500, >> dAP-lesion 0.000 (the loaded distal pathway is load-bearing); untrained 0.000. Multi-seed. => rung-4 inference on-substrate DONE -> Stage C (the three-term permanence kernel = learning on the substrate => EMERGE-9d parity = rung-4 complete).",
+  "mechanism": "FULL HTM Temporal Memory inference on the real SimulationBridge: frozen EMERGE-9b distal connectivity loaded via inject_explicit_wiring as a recurrent coincidence_detector pathway; prediction = native coincidence (c_drive>=act_th -> apical dAP); winner selection = dAP fire-first (drive-level sparsity, Stage-B1 reframing); readout = primed apical state",
+  "task": "overlapping sequences; branch prediction; dAP-lesion + untrained + Markov/chance + 9c-parity",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "n_seq": 2,
+    "middle_len": 4,
+    "n_cells": 16,
+    "k_win": 4,
+    "act_th": 3,
+    "epochs": 50,
+    "n_sub": 14,
+    "drives": [
+      340.0,
+      360.0,
+      380.0,
+      400.0,
+      420.0,
+      440.0,
+      460.0
+    ]
+  },
+  "elapsed_seconds": 2.7,
+  "per_seed": [
+    {
+      "seed": 42,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      },
+      "htm": {
+        "branch_acc": 1.0,
+        "middle_drive": 340.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "lesion": {
+        "branch_acc": 0.0,
+        "middle_drive": 0.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "middle_drive": 0.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "ref_9c_spiking": 1.0
+    },
+    {
+      "seed": 43,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      },
+      "htm": {
+        "branch_acc": 1.0,
+        "middle_drive": 340.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "lesion": {
+        "branch_acc": 0.0,
+        "middle_drive": 0.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "middle_drive": 0.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "ref_9c_spiking": 1.0
+    },
+    {
+      "seed": 44,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      },
+      "htm": {
+        "branch_acc": 1.0,
+        "middle_drive": 340.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "lesion": {
+        "branch_acc": 0.0,
+        "middle_drive": 0.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "middle_drive": 0.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "ref_9c_spiking": 1.0
+    },
+    {
+      "seed": 100,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      },
+      "htm": {
+        "branch_acc": 1.0,
+        "middle_drive": 340.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "lesion": {
+        "branch_acc": 0.0,
+        "middle_drive": 0.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "middle_drive": 0.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "ref_9c_spiking": 1.0
+    },
+    {
+      "seed": 101,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      },
+      "htm": {
+        "branch_acc": 1.0,
+        "middle_drive": 340.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "lesion": {
+        "branch_acc": 0.0,
+        "middle_drive": 0.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "middle_drive": 0.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "ref_9c_spiking": 1.0
+    },
+    {
+      "seed": 102,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      },
+      "htm": {
+        "branch_acc": 1.0,
+        "middle_drive": 340.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 1.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "lesion": {
+        "branch_acc": 0.0,
+        "middle_drive": 0.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "middle_drive": 0.0,
+        "per_drive": [
+          {
+            "middle_drive": 340.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 360.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 380.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 400.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 420.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 440.0,
+            "branch_acc": 0.0
+          },
+          {
+            "middle_drive": 460.0,
+            "branch_acc": 0.0
+          }
+        ]
+      },
+      "ref_9c_spiking": 1.0
+    }
+  ],
+  "HONEST_NOTE": "rung-4 Stage B2: the learned connectivity now lives ON the bridge (inject_explicit_wiring coincidence pathway), inference is the bridge's own spiking recurrence. Flat per-cell coincidence (union over segments) == per-segment in this disjoint-SDR task (the 9c-parity control verifies). Stage C = the three-term permanence kernel (learning on the substrate) => EMERGE-9d parity = rung-4 complete."
+}
