@@ -1,0 +1,132 @@
+{
+  "probe": "emerge26_emergent_inheritance",
+  "verdict": "GO -- INFERENCE BEYOND TOLD FACTS emerges on the spiking HTM cortex: a never-taught member INHERITS its class property (1.00 on HELD-OUT members whose property was never taught, only the class 'a BIRD flies'/'a FISH swims') purely from a SHARED superordinate code x the next-state predictor -- NO inference engine (Collins-Quillian 1969). CANCELLATION holds (1.00: 'penguin' answers WALKS, the specific fact beating the inherited flies -- graded drive). DERANGED-superordinate collapses it (0.00, isolating the is-a code as the cause); dAP-LESION collapses (0.00); a no-superordinate concept ABSTAINS (1.00, no confabulated property); 6-seed. => the substrate INFERS over relational structure -- the first inference-beyond-told-facts on the emergent brain, NO sim/ edit.",
+  "mechanism": "Collins-Quillian property inheritance emerges from a shared superordinate (is-a) code x the HTM next-state predictor -- NO inference engine: teach only class-level facts on the shared superordinate block; a member inherits because it shares that block; a stronger member-specific pathway cancels the inherited default (graded apical-drive argmax); committed sim/ three-term kernel; sim/ unchanged",
+  "task": "teach class facts (BIRD->flies, FISH->swims) + one specific (penguin->walks); test held-out members inherit + cancellation + moat vs deranged-superordinate + dAP-lesion; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 80,
+    "act_th": 2,
+    "content_cols": 3,
+    "super_cols": 2
+  },
+  "elapsed_seconds": 6.8,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "inheritance": 1.0,
+        "override": 1.0,
+        "moat": 1.0
+      },
+      "deranged": {
+        "inheritance": 0.0,
+        "override": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "inheritance": 0.0,
+        "override": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "inheritance": 1.0,
+        "override": 1.0,
+        "moat": 1.0
+      },
+      "deranged": {
+        "inheritance": 0.0,
+        "override": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "inheritance": 0.0,
+        "override": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "inheritance": 1.0,
+        "override": 1.0,
+        "moat": 1.0
+      },
+      "deranged": {
+        "inheritance": 0.0,
+        "override": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "inheritance": 0.0,
+        "override": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "inheritance": 1.0,
+        "override": 1.0,
+        "moat": 1.0
+      },
+      "deranged": {
+        "inheritance": 0.0,
+        "override": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "inheritance": 0.0,
+        "override": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "inheritance": 1.0,
+        "override": 1.0,
+        "moat": 1.0
+      },
+      "deranged": {
+        "inheritance": 0.0,
+        "override": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "inheritance": 0.0,
+        "override": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "inheritance": 1.0,
+        "override": 1.0,
+        "moat": 1.0
+      },
+      "deranged": {
+        "inheritance": 0.0,
+        "override": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "inheritance": 0.0,
+        "override": 0.0,
+        "moat": 1.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the substrate INFERS over relational structure that is host-DESIGNED (the shared is-a codes are hand-assigned). A GO proves inference-over-structure, NOT acquisition-of-structure-from-experience (R-c, the deferred residual): the is-a codes must EMERGE from co-occurrence/perception statistics (the PPMI stream cortex + replay) -- the next research gate. Also: transitive/multi-hop taxonomy (bird->animal->breathes) is the named next inference step."
+}
