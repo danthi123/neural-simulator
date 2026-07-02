@@ -1,0 +1,47 @@
+{
+  "probe": "emerge19_real_ppmi_generalization",
+  "verdict": "GO -- the emergent on-bridge learning GENERALIZES on the REAL stream-cortex PPMI codes: a learned association transfers to a HELD-OUT word that is similar ONLY because the stream cortex LEARNED it so (held-out-gen 1.000 >> chance 0.500), via the real codes' overlapping top-K micro-columns. The SHUFFLED-CODE control collapses to 0.167 (random codes -> no real similarity -> no transfer: the LEARNED similarity is the cause); dAP-LESION 0.000; untrained 0.000; multi-seed. => the generalizing lexical representation is REAL (works on learned similarity, not a hand-built artifact). NO sim/ edit.",
+  "mechanism": "generalization on the REAL stream-cortex PPMI codes: words = top-K micro-columns of their learned code; real-similar words share top-K -> overlapping SDRs -> a learned association transfers to a held-out real-similar word; sim/ kernel unchanged, only the real codes as input",
+  "task": "cluster real-similarity families by cosine (no labels), train one per family -> branch, hold out the rest, test held-out generalization vs shuffled-code + dAP-lesion + untrained",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 60,
+    "kc": 16,
+    "act_th": 3,
+    "n_fam": 2,
+    "fam_size": 2,
+    "fam_anchor_member_cos": [
+      0.8281862634020367,
+      0.8003679388758302
+    ]
+  },
+  "elapsed_seconds": 6.6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": 1.0,
+      "shuffled": 0.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 43,
+      "htm": 1.0,
+      "shuffled": 0.5,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 44,
+      "htm": 1.0,
+      "shuffled": 0.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    }
+  ],
+  "HONEST_NOTE": "validates EMERGE-17/18 on the project's REAL learned similarity structure (not synthetic). Next: grounding the emitted words to the no-confab moat; the open-domain surface-fluency research gate."
+}
