@@ -1,0 +1,160 @@
+{
+  "probe": "emerge30_emergent_superordinate",
+  "verdict": "GO -- EMERGENT STRUCTURE FROM EXPERIENCE: the shared superordinate is NOT host-designed -- it EMERGES from a co-occurrence stream, and the validated inheritance rides the LEARNED grouping. A member is NEVER told its category or its property; the brain only OBSERVED it co-occurring with context tokens, yet it INHERITS the class property (1.00; the HIGHLIGHTED held-out members 1.00). PERMUTED-CONTEXT collapses it (0.50 -- scrambled co-occurrence -> no category emerges); NO-LEARNING (0.00) and dAP-LESION (0.00) collapse; a never-observed member ABSTAINS (1.00); 6-seed. => the substrate ACQUIRES relational structure from experience AND infers over it -- the last honest residual of the inference arc CLOSED, the master-directive core, NO sim/ edit.",
+  "mechanism": "the shared superordinate EMERGES from co-occurrence: the committed sim/ three-term kernel learns member-content -> context (on-bridge Hebbian co-occurrence); all category members learn the same context cells -> the emergent superordinate; a class property taught on those emergent cells is inherited via a 2-hop read (member -> emergent context -> property); sim/ unchanged",
+  "task": "stream members co-occurring with latent-category contexts (no label); teach a property on the emergent shared cells; test member inheritance + held-out + moat vs permuted-context + no-learning + dAP-lesion",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 80,
+    "act_th": 2
+  },
+  "elapsed_seconds": 15.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "inherit": 1.0,
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "inherit": 0.5,
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "nolearn": {
+        "inherit": 0.0,
+        "held_out": 0.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "inherit": 0.0,
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "inherit": 1.0,
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "inherit": 0.5,
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "nolearn": {
+        "inherit": 0.0,
+        "held_out": 0.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "inherit": 0.0,
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "inherit": 1.0,
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "inherit": 0.5,
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "nolearn": {
+        "inherit": 0.0,
+        "held_out": 0.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "inherit": 0.0,
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "inherit": 1.0,
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "inherit": 0.5,
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "nolearn": {
+        "inherit": 0.0,
+        "held_out": 0.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "inherit": 0.0,
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "inherit": 1.0,
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "inherit": 0.5,
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "nolearn": {
+        "inherit": 0.0,
+        "held_out": 0.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "inherit": 0.0,
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "inherit": 1.0,
+        "held_out": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "inherit": 0.5,
+        "held_out": 0.5,
+        "moat": 1.0
+      },
+      "nolearn": {
+        "inherit": 0.0,
+        "held_out": 0.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "inherit": 0.0,
+        "held_out": 0.0,
+        "moat": 1.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the context TOKENS are the environment (legitimate world/experience); the category GROUPING (which members belong together) is DISCOVERED from co-occurrence, not told -- the permuted-context control isolates that. Follow-ons: overlapping/varied contexts (not one shared token per category) + an HTM Spatial-Pooler that forms a NEW shared column block (Cui-Ahmad-Hawkins 2017) + cancellation on emergent codes + coupling into the console (EMERGE-29)."
+}
