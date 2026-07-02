@@ -1,0 +1,83 @@
+{
+  "probe": "emerge9d_spiking_learning",
+  "verdict": "GO -- FULLY-SPIKING unsupervised HTM Temporal Memory: BOTH inference (LIF + dAP + WTA) AND learning (the Bouhadjar THREE-TERM rule -- spike-timing potentiation + presynaptic depression + dAP-rate homeostasis) self-organize context-specific high-order prediction: branch acc 1.000 >> Markov 0.125, >> chance 0.125, >> dAP-lesion 0.000; untrained 0.000; locality asserted; NO teacher; homeostasis replaces the discrete allocation heuristic. Multi-seed. => the numpy spiking-substrate ladder is COMPLETE (rung 3) -> rung-4 = the sim/ two-compartment NeuronModel port (dAP = apical compartment; three-term rule as a plastic RegionPathway). NO sim/ edit.",
+  "mechanism": "FULLY-SPIKING HTM Temporal Memory: spiking inference (LIF+dAP+WTA) + spike-driven three-term learning (STDP-windowed potentiation + presynaptic depression + dAP-rate homeostasis); unsupervised (no teacher); homeostasis replaces the discrete allocation heuristic",
+  "task": "overlapping sequences; branch prediction; Markov floor + dAP-lesion + oracle + multi-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "n_seq": 8,
+    "middle_len": 4,
+    "n_cells": 64,
+    "k_win": 4,
+    "act_th": 3,
+    "epochs": 80
+  },
+  "elapsed_seconds": 1.7,
+  "per_seed": [
+    {
+      "htm": {
+        "branch": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch": 0.0,
+        "locality_ok": true
+      },
+      "seed": 42,
+      "floors": {
+        "markov_L": 0.125,
+        "oracle": 1.0,
+        "chance": 0.125
+      }
+    },
+    {
+      "htm": {
+        "branch": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch": 0.0,
+        "locality_ok": true
+      },
+      "seed": 43,
+      "floors": {
+        "markov_L": 0.125,
+        "oracle": 1.0,
+        "chance": 0.125
+      }
+    },
+    {
+      "htm": {
+        "branch": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch": 0.0,
+        "locality_ok": true
+      },
+      "seed": 44,
+      "floors": {
+        "markov_L": 0.125,
+        "oracle": 1.0,
+        "chance": 0.125
+      }
+    }
+  ],
+  "HONEST_NOTE": "Completes the numpy spiking ladder: inference AND learning are spike-driven. The three-term rule is the verified Bouhadjar Eq.1 (potentiation windowed + presynaptic depression + dAP-rate homeostasis). Next: rung-4 sim/ two-compartment NeuronModel port (dAP = apical compartment). Unsupervised: no teacher; self-organization IS the deliverable."
+}
