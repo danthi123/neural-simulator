@@ -1,0 +1,162 @@
+{
+  "probe": "emerge32_varied_context_emergence",
+  "verdict": "GO -- EMERGENT STRUCTURE FROM VARIED EXPERIENCE: the emergent category is NOT keyed to a single shared token -- each member was OBSERVED with a DIFFERENT overlapping feature subset (no universal token), yet a HELD-OUT member (different subset, property never taught) still INHERITS via the FEATURE OVERLAP (1.00), taught via one exemplar per category. PERMUTED-POOL collapses it (0.29 -- random pool -> no category overlap); NO-LEARNING (0.00) and dAP-LESION (0.00) collapse; a never-observed member ABSTAINS (1.00); 6-seed. => the emergence is robust to varied contexts -- the 'shared-token = provided superordinate' critique is CLOSED. NO sim/ edit.",
+  "mechanism": "emergent category from Rogers-McClelland feature overlap: each member streamed with its own varied k-of-n feature subset (guaranteed pairwise overlap >= ACT_TH); member-content -> features learned on-bridge; property taught via an exemplar binds to its features; a held-out member inherits via the OVERLAP of its subset with the exemplar's -- no universal token; sim/ unchanged",
+  "task": "stream members with varied overlapping feature subsets; teach via one exemplar/category; test held-out inheritance + moat vs permuted-pool + no-learning + dAP-lesion; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 80,
+    "act_th": 2,
+    "pool_n": 4,
+    "subset_k": 3
+  },
+  "elapsed_seconds": 23.9,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "held_out": 1.0,
+        "all": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "held_out": 0.25,
+        "all": 0.5,
+        "moat": 1.0
+      },
+      "nolearn": {
+        "held_out": 0.0,
+        "all": 0.3333333333333333,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "all": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "held_out": 1.0,
+        "all": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "held_out": 0.25,
+        "all": 0.5,
+        "moat": 1.0
+      },
+      "nolearn": {
+        "held_out": 0.0,
+        "all": 0.3333333333333333,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "all": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "held_out": 1.0,
+        "all": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "held_out": 0.25,
+        "all": 0.5,
+        "moat": 1.0
+      },
+      "nolearn": {
+        "held_out": 0.0,
+        "all": 0.3333333333333333,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "all": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "held_out": 1.0,
+        "all": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "held_out": 0.25,
+        "all": 0.5,
+        "moat": 1.0
+      },
+      "nolearn": {
+        "held_out": 0.0,
+        "all": 0.3333333333333333,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "all": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "held_out": 1.0,
+        "all": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "held_out": 0.0,
+        "all": 0.3333333333333333,
+        "moat": 1.0
+      },
+      "nolearn": {
+        "held_out": 0.0,
+        "all": 0.3333333333333333,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "all": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "held_out": 1.0,
+        "all": 1.0,
+        "moat": 1.0
+      },
+      "permuted": {
+        "held_out": 0.75,
+        "all": 0.8333333333333334,
+        "moat": 1.0
+      },
+      "nolearn": {
+        "held_out": 0.0,
+        "all": 0.3333333333333333,
+        "moat": 1.0
+      },
+      "lesion": {
+        "held_out": 0.0,
+        "all": 0.0,
+        "moat": 1.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "closes the EMERGE-30 'one shared token' simplification. The features are still the environment (legitimate); the GROUPING is discovered from overlap (permuted-pool isolates it). Next: an HTM Spatial-Pooler that forms a NEW shared column block from the varied inputs; cancellation on emergent codes; couple into the experiential console (EMERGE-31)."
+}
