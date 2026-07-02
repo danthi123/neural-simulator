@@ -29,7 +29,7 @@ OUT = Path("research/findings/raw/_emerge10_stageA_dap_fire_first.json")
 
 
 def build_bridge(seed, n_ctx=60, n_col=40, ctx_col_density=1.0, ctx_col_weight=14.0, k_threshold=10.0,
-                 coincidence=True, plateau_scale=1.0):
+                 coincidence=True, plateau_scale=1.0, two_compartment=False, apical_coupling=0.12, apical_leak=0.8):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from sim.regions import BrainRegion, RegionPathway
@@ -63,6 +63,8 @@ def build_bridge(seed, n_ctx=60, n_col=40, ctx_col_density=1.0, ctx_col_weight=1
     cfg.enable_coincidence_detection = bool(coincidence)
     cfg.coincidence_k_threshold = float(k_threshold)
     cfg.coincidence_plateau_strength = 80.0 * float(plateau_scale)   # regenerative NMDA-plateau conductance (the dAP)
+    cfg.enable_two_compartment_dap = bool(two_compartment)
+    cfg.apical_soma_coupling = float(apical_coupling); cfg.apical_leak = float(apical_leak)
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
     bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
@@ -105,22 +107,22 @@ def threshold_sweep(bridge, ctx_idx, col_idx, prime, desync, seed, i_grid):
     return np.array([col_fire_fraction(bridge, ctx_idx, col_idx, i_ff, prime, desync, seed=seed) for i_ff in i_grid])
 
 
-def _run_seed(seed, i_grid, plateau_scale, ctx_weight):
+def _run_seed(seed, i_grid, plateau_scale, ctx_weight, two_compartment, apical_coupling):
     out = {}
     # PRIMED vs UNPRIMED with coincidence ON
-    b, _ = build_bridge(seed, coincidence=True, plateau_scale=plateau_scale, ctx_col_weight=ctx_weight)
+    b, _ = build_bridge(seed, coincidence=True, plateau_scale=plateau_scale, ctx_col_weight=ctx_weight, two_compartment=two_compartment, apical_coupling=apical_coupling)
     rm = b.region_manager
     ctx = np.asarray(rm.indices("context"), dtype=np.int64); col = np.asarray(rm.indices("column"), dtype=np.int64)
     out["unprimed"] = threshold_sweep(b, ctx, col, prime=False, desync=False, seed=seed, i_grid=i_grid).tolist()
-    b, _ = build_bridge(seed, coincidence=True, plateau_scale=plateau_scale, ctx_col_weight=ctx_weight)
+    b, _ = build_bridge(seed, coincidence=True, plateau_scale=plateau_scale, ctx_col_weight=ctx_weight, two_compartment=two_compartment, apical_coupling=apical_coupling)
     out["primed"] = threshold_sweep(b, ctx, col, prime=True, desync=False, seed=seed, i_grid=i_grid).tolist()
-    b, _ = build_bridge(seed, coincidence=True, plateau_scale=plateau_scale, ctx_col_weight=ctx_weight)
+    b, _ = build_bridge(seed, coincidence=True, plateau_scale=plateau_scale, ctx_col_weight=ctx_weight, two_compartment=two_compartment, apical_coupling=apical_coupling)
     out["primed_noFF"] = threshold_sweep(b, ctx, col, prime=True, desync=False, seed=seed, i_grid=[0.0] * len(i_grid)).tolist()
     # dAP-LESION: coincidence OFF (plateau kernel disabled) -> primed should == unprimed
-    b, _ = build_bridge(seed, coincidence=False, plateau_scale=plateau_scale, ctx_col_weight=ctx_weight)
+    b, _ = build_bridge(seed, coincidence=False, plateau_scale=plateau_scale, ctx_col_weight=ctx_weight, two_compartment=two_compartment, apical_coupling=apical_coupling)
     out["lesion_primed"] = threshold_sweep(b, ctx, col, prime=True, desync=False, seed=seed, i_grid=i_grid).tolist()
     # DESYNC anti-cheat: context fires but NOT synchronously -> no coincidence plateau
-    b, _ = build_bridge(seed, coincidence=True, plateau_scale=plateau_scale, ctx_col_weight=ctx_weight)
+    b, _ = build_bridge(seed, coincidence=True, plateau_scale=plateau_scale, ctx_col_weight=ctx_weight, two_compartment=two_compartment, apical_coupling=apical_coupling)
     out["desync_primed"] = threshold_sweep(b, ctx, col, prime=True, desync=True, seed=seed, i_grid=i_grid).tolist()
     return seed, out
 
@@ -139,6 +141,8 @@ def main():
     ap.add_argument("--i-steps", type=int, default=13)
     ap.add_argument("--plateau-scale", type=float, default=1.0)
     ap.add_argument("--ctx-weight", type=float, default=2.0)
+    ap.add_argument("--two-compartment", action="store_true")
+    ap.add_argument("--apical-coupling", type=float, default=0.12)
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
     if len(a.seeds) < 3:
@@ -147,7 +151,7 @@ def main():
     t0 = time.time(); err = None; per = []
     try:
         for s in a.seeds:
-            seed, out = _run_seed(s, i_grid, a.plateau_scale, a.ctx_weight)
+            seed, out = _run_seed(s, i_grid, a.plateau_scale, a.ctx_weight, a.two_compartment, a.apical_coupling)
             out["seed"] = seed; per.append(out)
         for d in per:
             tp = _thresh(d["primed"], i_grid); tu = _thresh(d["unprimed"], i_grid)
