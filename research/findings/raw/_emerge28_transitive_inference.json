@@ -1,0 +1,137 @@
+{
+  "probe": "emerge28_transitive_inference",
+  "verdict": "GO -- TRANSITIVE INFERENCE emerges on the spiking HTM cortex: from ONLY adjacent premises (A>B, B>C, C>D, D>E) the never-trained NON-ADJACENT relations are INFERRED (1.00 on HELD-OUT pairs) by chaining the overlapping premises into an integrated order -- NO inference engine (Dusek-Eichenbaum; catalog D.02). The CRITICAL internal pair B>D (1.00) -- unsolvable by associative strength (B and D each appear as both greater and lesser), so this is genuine inference not association. dAP-LESION collapses (0.00); BROKEN-CHAIN (drop the middle premise C>D -> B and D uncomparable) collapses B>D (0.00, isolating the transitive chaining); 6-seed. => the substrate INTEGRATES premises into a relational order, NO sim/ edit.",
+  "mechanism": "transitive inference by chaining overlapping premises: each item = a disjoint code; premise X>Y learned as X->Y via the committed sim/ three-term kernel; overlapping premises chain into a learned order A->B->C->D->E; greater(X,Y) = Y reachable downstream of X (autoregressive rollout); non-adjacent relations inferred by integration; sim/ unchanged",
+  "task": "teach adjacent premises A>B..D>E; test non-adjacent + critical B>D vs dAP-lesion + broken-chain; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 80,
+    "act_th": 2,
+    "items": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ]
+  },
+  "elapsed_seconds": 2.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "adjacent": 1.0,
+        "nonadjacent": 1.0,
+        "critical_BD": 1.0
+      },
+      "lesion": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0
+      },
+      "broken": {
+        "adjacent": 0.75,
+        "nonadjacent": 0.16666666666666666,
+        "critical_BD": 0.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "adjacent": 1.0,
+        "nonadjacent": 1.0,
+        "critical_BD": 1.0
+      },
+      "lesion": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0
+      },
+      "broken": {
+        "adjacent": 0.75,
+        "nonadjacent": 0.16666666666666666,
+        "critical_BD": 0.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "adjacent": 1.0,
+        "nonadjacent": 1.0,
+        "critical_BD": 1.0
+      },
+      "lesion": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0
+      },
+      "broken": {
+        "adjacent": 0.75,
+        "nonadjacent": 0.16666666666666666,
+        "critical_BD": 0.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "adjacent": 1.0,
+        "nonadjacent": 1.0,
+        "critical_BD": 1.0
+      },
+      "lesion": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0
+      },
+      "broken": {
+        "adjacent": 0.75,
+        "nonadjacent": 0.16666666666666666,
+        "critical_BD": 0.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "adjacent": 1.0,
+        "nonadjacent": 1.0,
+        "critical_BD": 1.0
+      },
+      "lesion": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0
+      },
+      "broken": {
+        "adjacent": 0.75,
+        "nonadjacent": 0.16666666666666666,
+        "critical_BD": 0.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "adjacent": 1.0,
+        "nonadjacent": 1.0,
+        "critical_BD": 1.0
+      },
+      "lesion": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0
+      },
+      "broken": {
+        "adjacent": 0.75,
+        "nonadjacent": 0.16666666666666666,
+        "critical_BD": 0.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the items + premises are host-DESIGNED; inference-over-structure, not acquisition-from-experience (the R-c residual). With EMERGE-26/27 (inheritance) this completes the inference triad: generalization (17), inheritance (26/27), transitivity (28). Next: emergent structure from experience (the R-c research gate) + couple the inference read-out into the console."
+}
