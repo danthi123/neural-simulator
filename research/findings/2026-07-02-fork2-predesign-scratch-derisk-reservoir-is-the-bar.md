@@ -1,0 +1,34 @@
+# Fork-2 pre-design scratch de-risk — the task is airtight vs Markov, but a FIXED RESERVOIR is the real bar, and naive local recurrent credit does NOT beat it → the honest Fork-2 milestone must be "beat the reservoir under noise" (which needs the careful chaos-taming rule = Predictive Alignment)
+
+**2026-07-02 (autonomous; controller-side cheap-first de-risk of the Fork-2 next-symbol reframe, done in parallel with the verify+design workflow `wf_7ae92286-4be`).** Scratch probes preserved at `research/findings/raw/_fork2_predesign_{markov_floor_check,reservoir_baseline,local_credit_prototype}.py`. Pure numpy, CPU, multi-seed 42/43/44. **These are crude directional prototypes, not the shippable de-risk** — but the three findings are robust enough to reshape the de-risk design before any `_emerge6` build.
+
+## Why this ran
+The research gate recommended Fork-2 (reframe rung-3 from continuous autonomous-trajectory recall to discrete high-order next-symbol prediction) as the cheap-first move, with a `context_lesion` (beat a 1st-order-Markov floor) anti-cheat. Before committing build effort, I empirically stress-tested the two load-bearing premises: (a) can the task be built so Markov lookup provably fails? (b) is "our local credit rule predicts next symbols" actually a meaningful recurrent-credit test?
+
+## Finding 1 — the task design is AIRTIGHT vs Markov (context_lesion is meaningful)
+Two-overlapping-sequences: each sequence = `[cue_i] + [shared middle of length L] + [branch_i]`; the middle is identical across sequences, only cue + branch differ. Predicting the branch requires carrying the cue across L shared symbols (order-(L+1) context).
+- Full-context oracle branch-accuracy: **1.000** (task is solvable WITH context).
+- k-th-order Markov (count model) branch-accuracy: **exactly chance** (0.500 / 0.250 / 0.125) for **every k ≤ L** — provably, because the last k symbols lie inside the identical shared middle, so the model must emit the same distribution for all sequences. Only at k ≥ L+1 (reaching the cue) does it hit 1.000.
+⇒ `context_lesion` against a Markov floor with k = L is a real, un-gameable test of long-range context. Airtight.
+
+## Finding 2 — a FIXED RANDOM RESERVOIR + trained readout SOLVES the clean task (so it is the real control, not Markov)
+A fixed random leaky reservoir (echo-state; freeze `W_rec`, `W_in`; train ONLY a local delta-rule readout) scores **1.000** branch-accuracy on the clean task for every config tested — n_seq=4, L up to 24; n_seq=8, L=16. The cue perturbs the high-dimensional reservoir state and the readout reads it out even 24 steps later.
+⇒ **On the clean task, recurrent CREDIT is NOT load-bearing — the readout does all the work.** A `context_lesion` (Markov) anti-cheat does NOT catch this. The de-risk MUST add a **`fixed_reservoir` control** (train only the readout): a trained-recurrent "primary" arm is only meaningful if it BEATS the fixed reservoir. Building Fork-2 without this control would produce a meaningless "pass."
+
+## Finding 3 — under noise the reservoir degrades, but naive local recurrent credit does NOT beat it (it hurts)
+The classic regime where trained recurrent weights should earn their keep (Laje-Buonomano: taming chaos → noise-robustness): a chaotic reservoir (g=1.5) under state noise.
+- Fixed reservoir branch-accuracy under state noise: 0.95 (noise 0.1) → **0.90 (noise 0.3)** → 0.67 (noise 0.5); L=24 noise 0.3 → 0.66. So it degrades but stays fairly robust at moderate noise.
+- **Trained recurrent** with a fully-local RFLO/e-prop rule (fixed random-feedback readout-error learning signal `L = B·err`, no weight transport; per-synapse κ-decayed eligibility; delta-rule readout): **0.250 = chance** at usable learning rates (lr_rec 0.05/0.02/0.005), and only 0.64 at lr_rec=0.001 — **worse than the fixed reservoir (0.90) at every setting.** Lowering chaos (g=1.1) doesn't help (trained 0.25 vs fixed 0.95). `wrong_feedback` (sign-flipped learning signal) = chance ✓ (anti-cheat holds).
+⇒ **A naive local recurrent-credit update destabilizes the useful reservoir dynamics rather than improving them** — precisely the chaos-taming problem. On this task the fixed reservoir is a *high bar*, and the cheap "just train the recurrent weights with our local rule" version of Fork-2 is a false economy: it does not beat (it underperforms) doing nothing to the recurrent weights.
+
+## Implication for the de-risk design (reshapes the plan)
+1. The honest Fork-2 milestone is NOT "our local rule predicts next symbols" (a fixed reservoir already does, better). It must be **"a biologically-plausible recurrent-training rule BEATS the fixed-reservoir baseline under noise"** — i.e. recurrent credit demonstrably tames chaos into noise-robustness.
+2. The de-risk arm set MUST include a **`fixed_reservoir` control** (the real bar) alongside `context_lesion` (Markov floor) and the existing lesion/wrong-sign/no-teaching-null/shuffled controls. GO = trained-recurrent > fixed-reservoir under matched noise, multi-seed, + beats the Markov floor, + anti-cheats load-bearing.
+3. **Fork-1 and Fork-2 partially MERGE.** The rule that can beat the reservoir under noise is the careful chaos-taming rule — i.e. Asabuki-Clopath 2025 Predictive Alignment (the fully-local, spiking Fork-1 mechanism), not a naive RFLO/e-prop update. So the recommended build is: the Fork-2 *task* (noisy next-symbol prediction, teacher-forced, no autonomous free-run) as the harness, with the Fork-1 *mechanism* (Predictive Alignment) as the recurrent-training rule to be shown load-bearing against the fixed-reservoir + Markov baselines. This is cheaper + more rigorous than either fork alone, and directly tests the confirmed-microcircuit-compatible PA rule.
+
+## Honest scope / caveats
+- Crude scratch prototypes: the RFLO implementation is minimal (single fixed feedback matrix, κ-decayed pre-eligibility, no per-layer normalization/careful lr schedule) — it is possible a more careful naive rule does better, but the robust directional signal (fixed reservoir is a high bar; naive local recurrent training underperforms it across an lr sweep and two g values) is enough to mandate the `fixed_reservoir` control + the PA mechanism for the real de-risk.
+- These findings will be reconciled with the verify+design workflow (`wf_7ae92286-4be`) synthesis; where they conflict, the empirical result (a fixed reservoir trivially solves the clean task) is load-bearing and the analytical design must accommodate it.
+
+## Artifacts
+`research/findings/raw/_fork2_predesign_markov_floor_check.py` (Finding 1), `_fork2_predesign_reservoir_baseline.py` (Findings 2+3 reservoir), `_fork2_predesign_local_credit_prototype.py` (Finding 3 local credit). Prior: `2026-07-02-rung3-generation-stability-mechanisms-scoping.md`, `2026-07-02-emerge6b-rung3a-eprop-eligibility-relocalizes-wall-to-generation-stability.md`.
