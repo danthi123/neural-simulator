@@ -268,6 +268,7 @@ class SimulationBridge:
         # research/runners/coincidence_wall_probe.py. See 2026-06-09-coincidence-substrate-upgrade-design.md.
         self.cp_conductance_g_coincidence = None          # slow coincidence-plateau conductance (None unless enable_coincidence_detection + a routed pathway)
         self.cp_v_apical = None                            # rung-4 two-compartment dAP apical membrane voltage (None unless enable_two_compartment_dap; lazily allocated at rest)
+        self.cp_htm_z = None                               # rung-4 Stage C: per-cell low-pass dAP-rate for HTM permanence homeostasis (None unless enable_htm_learning; lazily allocated at 0)
         self.cp_conductance_g_coincidence_rise = None     # dual-exp rise component
         self.cp_coincidence_synapse_mask = None           # bool per-synapse: True for coincidence_detector-routed synapses
         # GRADED dendritic-plateau READ-OUT (Stage 1, 2026-06-20). The SMOOTH/non-saturating sibling of

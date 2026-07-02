@@ -204,6 +204,20 @@ class CoreSimConfig:
     apical_R: float = 0.15                       # plateau-current -> apical-voltage scale (pA -> mV)
     apical_g_couple: float = 1.0                 # electrotonic soma<->apical coupling conductance (attenuation to the soma)
     apical_E_rest: float = -65.0                 # apical resting potential (mV)
+    # HTM Temporal-Memory permanence learning (rung-4 Stage C, Bouhadjar-Diesmann 2022 three-term rule). When True,
+    # the coincidence_detector-routed distal synapses (cp_coincidence_synapse_mask) have their WEIGHTS (= HTM
+    # permanences in [0,1]) updated each step by fused_htm_permanence_update: causal potentiation (pre-on-previous
+    # AND post-this-step) scaled by a per-cell dAP-rate homeostatic factor + presynaptic depression (pre fired, post
+    # did not). The per-cell low-pass dAP (predictive) rate z is tracked in cp_htm_z (z *= z_tau; z[predictive] +=
+    # 1-z_tau). Applied ONLY on synapses passing the per-synapse plastic mask (so the runner freezes non-distal
+    # pathways). Default False -> cp_htm_z is never allocated, the update block is unreached, cp_connections.data is
+    # byte-identical (mirrors enable_two_compartment_dap / enable_coincidence_detection). See EMERGE-13 (the flat-
+    # permanence three-term rule this realizes) + EMERGE-12 (the on-bridge inference it learns).
+    enable_htm_learning: bool = False
+    htm_lam_pot: float = 0.14                     # potentiation rate (permanence increment per causal coincidence)
+    htm_lam_dep: float = 0.02                     # presynaptic depression rate (permanence decrement when pre fires without post)
+    htm_z_tau: float = 0.85                       # per-cell dAP-rate low-pass factor (z *= z_tau each step)
+    htm_z_star: float = 1.0                       # target dAP rate; hfac = 0.5 + 0.5*max(0, z_star - z_post)
     # Poirazi-Mel 2003 WEIGHTED-subunit refinement (2026-06-09). The count form above switches the plateau
     # on the bare COUNT of coincident routed inputs (c_i = mask^T @ prev_fired), so it is WEIGHT-BLIND: a
     # sparse-distinct ensemble that fires >= K cells everywhere triggers the same plateau regardless of the
