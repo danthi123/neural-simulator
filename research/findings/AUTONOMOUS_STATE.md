@@ -6683,6 +6683,35 @@ Deferred: webapp Interact wire-in (owner UI verify); spiking-forward speed-wall 
 open-world inference beyond learned facts. biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified;
 honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy only for CPU smoke/console).
 
+## CYCLE 790 (2026-07-01 — EMERGE-2 self-supervised: real signal, control-limited in regression; + PARALLELIZE fix + skill)
+
+Owner flagged (a) low util + (b) parallelization. Root cause: I was serializing single-threaded numpy runs. FIXED: added
+a PARALLELIZE directive to the back-on-track skill (drift-mode #6 + a parallelization section: concurrent bg processes
+for sweeps, concurrent subagents for independent mechanisms, never wait idle, strict narrow git-add). DEMONSTRATED:
+dispatched the Sacramento-Senn microcircuit de-risk as a parallel subagent (aad4d64a083e755fc, the independent confirming
+2nd mechanism, running) + ran a 3-config EMERGE-2 bottleneck sweep concurrently (h=16/24/40). (One slip: used `&` for the
+sweep = the &-trap; they finished fine but I'll use run_in_background henceforth.)
+
+EMERGE-2 (self-supervised, predict the lawful depth-2 part b of the observation from a, NO labels): after fixing v1
+(too-easy, raw-probe 0.99) + v2 (too-hard, oracle chance) + a training-scaling bug -> the fixed run + the bottleneck
+sweep all show the SAME: deep_burst generalizes (0.72-0.80) >> shallow (~0.58) + lesion (~0.60) + linear (0.585) [a REAL
+self-supervised depth signal], oracle 0.98-1.0 (task-sane), BUT wrong_sign stays ~0.70-0.73 (does NOT drop to floor) at
+EVERY width -> the wrong-sign anti-cheat is INTRINSICALLY non-discriminating in multi-output REGRESSION (the output layer
+fits b from any hidden features). So the regression design can't cleanly attribute the signal to the CORRECT burst
+credit. (wrong-sign DID discriminate in EMERGE-1b's CLASSIFICATION, 0.545 -> the fix is a classification objective, not
+width-tuning.) Honest: encouraging self-supervised signal, clean attribution deferred to a classification test.
+
+**EXACT NEXT CONCRETE ACTION (parallelized):** TWO independent probes running: (1) the Sacramento-Senn microcircuit
+subagent (aad4d64a083e755fc) -- independent 2nd mechanism on the SUPERVISED harness (discriminating controls); (2) build
++ launch **EMERGE-2b** = self-supervised NEXT-SYMBOL CLASSIFICATION (a multi-class depth-2 next-symbol target, framed
+self-supervised = predict the lawful next part of the observation, NO external label), REUSING EMERGE-1b's proven
+BurstpropMLP (softmax) + DendriticMLP arms where wrong-sign DISCRIMINATES -> a clean self-supervised read. Launch via
+run_in_background (NOT &). WHEN both land: if EMERGE-2b GO -> burst self-supervised confirmed; if microcircuit GO ->
+mechanism doubly-established. THEN drive to the GOAL: carry the confirmed mechanism to the SPIKING SUBSTRATE (faithful
+two-compartment + burst neuron on the SimulationBridge; sim/ mechanism build fair game), where self-supervised
+predict-your-input is the natural real test. Commit EMERGE-2 artifacts. NO cheats/scaffolding (except world/body);
+emergent/one-brain/single-substrate; honest origin+gitea; COMMIT ON MAIN; PARALLELIZE; boundaries = the next mechanism.
+
 ## CYCLE 789 (2026-07-01 — EMERGE-1b CLEAN multi-seed GO; next = self-supervised burst emergence [toward the goal])
 
 The width-384 sharpening CLEARED every gate 3/3 seeds: burst_linearized held-out **0.796** (all 3 beat vanilla FA,

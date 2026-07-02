@@ -1,0 +1,126 @@
+{
+  "probe": "emerge2_selfsup_burst_v2",
+  "GO": false,
+  "verdict": "BOUNDARY (the next mechanism to find, not a stop) -- wrong-sign/null not at floor (oracle 0.874, linear 0.585). Per the master directive: iterate -- wider/ensemble (sharper burst estimate, as in EMERGE-1b), a predictive-coding target (`sim/predictive_coding.py`), or the Sacramento-Senn microcircuit's local error.",
+  "task": "self-supervised: predict the lawful part b (6 depth-2 threshold-of-XORs of 10 bits) from a; emergence = held-out b-prediction accuracy (deep vs shallow/linear); NO external labels",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 1200,
+    "lr": 0.5,
+    "batch": 64,
+    "hidden": 256
+  },
+  "elapsed_seconds": 404.5,
+  "per_seed": [
+    {
+      "seed": 42,
+      "linear_baseline": 0.5872794800371403,
+      "chance": 0.6402042711234913,
+      "deep_burst_linearized": {
+        "heldout_bitacc": 0.7957288765088208,
+        "train_bitacc": 0.8225563909774436,
+        "no_weight_transport": true
+      },
+      "point_shallow": {
+        "heldout_bitacc": 0.4740018570102136,
+        "train_bitacc": 0.6335839598997494,
+        "no_weight_transport": true
+      },
+      "oracle_bp": {
+        "heldout_bitacc": 0.6620241411327762,
+        "train_bitacc": 0.6581453634085213,
+        "no_weight_transport": true
+      },
+      "apical_lesion": {
+        "heldout_bitacc": 0.585422469823584,
+        "train_bitacc": 0.5969924812030075,
+        "no_weight_transport": true
+      },
+      "wrong_sign": {
+        "heldout_bitacc": 0.7678737233054782,
+        "train_bitacc": 0.774937343358396,
+        "no_weight_transport": true
+      },
+      "no_teaching_null": {
+        "heldout_bitacc": 0.585422469823584,
+        "train_bitacc": 0.5969924812030075,
+        "no_weight_transport": true
+      }
+    },
+    {
+      "seed": 43,
+      "linear_baseline": 0.5863509749303621,
+      "chance": 0.6207056638811513,
+      "deep_burst_linearized": {
+        "heldout_bitacc": 0.7906220984215413,
+        "train_bitacc": 0.8486215538847118,
+        "no_weight_transport": true
+      },
+      "point_shallow": {
+        "heldout_bitacc": 0.5139275766016713,
+        "train_bitacc": 0.6170426065162907,
+        "no_weight_transport": true
+      },
+      "oracle_bp": {
+        "heldout_bitacc": 0.9842154131847726,
+        "train_bitacc": 0.9932330827067669,
+        "no_weight_transport": true
+      },
+      "apical_lesion": {
+        "heldout_bitacc": 0.6016713091922006,
+        "train_bitacc": 0.6265664160401002,
+        "no_weight_transport": true
+      },
+      "wrong_sign": {
+        "heldout_bitacc": 0.6996285979572887,
+        "train_bitacc": 0.7611528822055138,
+        "no_weight_transport": true
+      },
+      "no_teaching_null": {
+        "heldout_bitacc": 0.6016713091922006,
+        "train_bitacc": 0.6265664160401002,
+        "no_weight_transport": true
+      }
+    },
+    {
+      "seed": 44,
+      "linear_baseline": 0.5807799442896936,
+      "chance": 0.6276694521819871,
+      "deep_burst_linearized": {
+        "heldout_bitacc": 0.733983286908078,
+        "train_bitacc": 0.7654135338345864,
+        "no_weight_transport": true
+      },
+      "point_shallow": {
+        "heldout_bitacc": 0.5162488393686165,
+        "train_bitacc": 0.6451127819548872,
+        "no_weight_transport": true
+      },
+      "oracle_bp": {
+        "heldout_bitacc": 0.9772516248839369,
+        "train_bitacc": 0.987719298245614,
+        "no_weight_transport": true
+      },
+      "apical_lesion": {
+        "heldout_bitacc": 0.5970287836583101,
+        "train_bitacc": 0.5919799498746867,
+        "no_weight_transport": true
+      },
+      "wrong_sign": {
+        "heldout_bitacc": 0.797585886722377,
+        "train_bitacc": 0.8355889724310777,
+        "no_weight_transport": true
+      },
+      "no_teaching_null": {
+        "heldout_bitacc": 0.5970287836583101,
+        "train_bitacc": 0.5919799498746867,
+        "no_weight_transport": true
+      }
+    }
+  ],
+  "HONEST_NOTE": "v2: measures PREDICTION quality (clean), not linear disentanglement (v1's flaw, caught by the raw-probe control). Teaching signal = self-generated prediction error, no labels. BOUNDARY = the next mechanism (scale/PC/microcircuit), not a stop. Oracle = fenced backprop task-sanity, NOT a shipped biological mode. Small net -> numpy is the right tool."
+}
