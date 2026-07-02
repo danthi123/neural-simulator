@@ -267,6 +267,7 @@ class SimulationBridge:
         # called, and total_input_current_pA is byte-identical to today. K/gain calibrated by
         # research/runners/coincidence_wall_probe.py. See 2026-06-09-coincidence-substrate-upgrade-design.md.
         self.cp_conductance_g_coincidence = None          # slow coincidence-plateau conductance (None unless enable_coincidence_detection + a routed pathway)
+        self.cp_v_apical = None                            # rung-4 two-compartment dAP apical membrane voltage (None unless enable_two_compartment_dap; lazily allocated at rest)
         self.cp_conductance_g_coincidence_rise = None     # dual-exp rise component
         self.cp_coincidence_synapse_mask = None           # bool per-synapse: True for coincidence_detector-routed synapses
         # GRADED dendritic-plateau READ-OUT (Stage 1, 2026-06-20). The SMOOTH/non-saturating sibling of
@@ -6426,19 +6427,42 @@ class SimulationBridge:
                 else:
                     # No prior spikes this step -> zero coincident drive (the plateau still DECAYS below).
                     c_drive = cp.zeros_like(self.cp_conductance_g_coincidence)
+                # rung-4 two-compartment dAP: the plateau REGENERATES on the APICAL voltage cp_v_apical (not the soma),
+                # so apical->soma coupling cannot close a somatic runaway loop; only an attenuated (sub-threshold)
+                # fraction of the apical depolarization reaches the soma. Default off -> _v_plateau is the somatic V and
+                # the plateau current is added to the soma directly (byte-identical to the original line).
+                _two_comp = getattr(cfg, "enable_two_compartment_dap", False)
+                if _two_comp and self.cp_v_apical is None:
+                    self.cp_v_apical = cp.full_like(self.cp_membrane_potential_v,
+                                                    cp.float32(getattr(cfg, "apical_E_rest", -65.0)))
+                _v_plateau = self.cp_v_apical if _two_comp else self.cp_membrane_potential_v
                 (self.cp_conductance_g_coincidence,
                  self.cp_conductance_g_coincidence_rise,
                  I_coincidence) = fused_coincidence_plateau(
                     self.cp_conductance_g_coincidence,
                     self.cp_conductance_g_coincidence_rise,
                     self._cached_decay_coincidence, self._cached_decay_coincidence_rise,
-                    self.cp_membrane_potential_v, cfg.syn_reversal_potential_e,  # E = E_e = 0 mV
+                    _v_plateau, cfg.syn_reversal_potential_e,  # E = E_e = 0 mV; regeneration on the apical when 2-comp
                     cfg.nmda_mg_concentration,
                     c_drive,  # COUNT (default) or WEIGHTED coincident sum (cfg.coincidence_weighted_drive)
                     cp.float32(getattr(cfg, "coincidence_k_threshold", 6.0)),  # WEIGHT units when weighted_drive
                     cp.float32(getattr(cfg, "coincidence_gain", 2.0)),
                     cp.float32(getattr(cfg, "coincidence_plateau_strength", 80.0)))
-                total_input_current_pA = total_input_current_pA + I_coincidence
+                if _two_comp:
+                    _gc = cp.float32(getattr(cfg, "apical_g_couple", 1.0))
+                    _tau = cp.float32(getattr(cfg, "apical_tau_ms", 15.0))
+                    _R = cp.float32(getattr(cfg, "apical_R", 0.15))
+                    _Er = cp.float32(getattr(cfg, "apical_E_rest", -65.0))
+                    _dt = cp.float32(cfg.dt_ms)
+                    # apical leaky-membrane ODE: leak toward rest + R*plateau current + electrotonic soma coupling
+                    _dv = (-(self.cp_v_apical - _Er) + _R * I_coincidence
+                           + _gc * (self.cp_membrane_potential_v - self.cp_v_apical))
+                    self.cp_v_apical = self.cp_v_apical + (_dt / _tau) * _dv
+                    # only the attenuated electrotonic coupling reaches the soma (a full apical plateau stays sub-threshold)
+                    total_input_current_pA = (total_input_current_pA
+                                              + _gc * (self.cp_v_apical - self.cp_membrane_potential_v))
+                else:
+                    total_input_current_pA = total_input_current_pA + I_coincidence
 
             # --- 2.3a-ter. GRADED dendritic-plateau READ-OUT (Stage 1, 2026-06-20). The SMOOTH, non-
             # saturating sibling of the all-or-none coincidence block above -- the dendrite's ONE genuine

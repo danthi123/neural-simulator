@@ -192,6 +192,18 @@ class CoreSimConfig:
     coincidence_plateau_strength: float = 80.0  # per-step plateau conductance increment scale (the regenerative NMDA-spike drive)
     coincidence_tau_decay_ms: float = 80.0      # plateau duration (Major-Larkum-Schiller NMDA spike 50-100ms)
     coincidence_tau_rise_ms: float = 2.0        # plateau rise (ms)
+    # rung-4 two-compartment dAP (2026-07-02, EMERGE-10 Stage A'). A single-compartment coincidence plateau
+    # injected as a SOMATIC current is binary (can't do the HTM "predictive != active" sub-threshold priming;
+    # a minimal current-routing shortcut runs away because the plateau senses the soma). GENUINE fix: cp_v_apical
+    # is a real leaky membrane VOLTAGE; the plateau REGENERATES on cp_v_apical (Mg-unblock read on the apical, not
+    # the soma), the plateau current + electrotonic soma-coupling charge it, and only apical_g_couple*(v_apical -
+    # v_soma) reaches the soma -- a full apical plateau stays sub-threshold at the soma, no somatic runaway.
+    # Default OFF -> the somatic-injection path is byte-identical. See EMERGE-10 Stage A'.
+    enable_two_compartment_dap: bool = False
+    apical_tau_ms: float = 15.0                 # apical membrane time constant
+    apical_R: float = 0.15                       # plateau-current -> apical-voltage scale (pA -> mV)
+    apical_g_couple: float = 1.0                 # electrotonic soma<->apical coupling conductance (attenuation to the soma)
+    apical_E_rest: float = -65.0                 # apical resting potential (mV)
     # Poirazi-Mel 2003 WEIGHTED-subunit refinement (2026-06-09). The count form above switches the plateau
     # on the bare COUNT of coincident routed inputs (c_i = mask^T @ prev_fired), so it is WEIGHT-BLIND: a
     # sparse-distinct ensemble that fires >= K cells everywhere triggers the same plateau regardless of the
