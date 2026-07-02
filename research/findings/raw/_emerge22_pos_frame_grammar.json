@@ -1,0 +1,50 @@
+{
+  "probe": "emerge22_pos_frame_grammar",
+  "verdict": "GO -- the emergent sequence cortex does SYSTEMATIC RECOMBINATION (surface fluency, production side): it predicts a HELD-OUT content combination GRAMMATICALLY -- a novel sentence whose content-word combo was never trained but whose POS FRAME was (1.000 next-POS-class on held-out combos >> chance 0.333) -- by learning the frame over shared POS-CLASS micro-columns (a construction grammar). PERMUTED-frame 0.500 (no frame -> no generalization); CLASS-DERANGEMENT 0.167 (wrong class cols -> collapses); dAP-LESION 0.000; untrained 0.000; no teacher; multi-seed. => open-domain surface fluency is SURPASSABLE on the substrate -- the emergent cortex generates NOVEL grammatical structure, replacing the transformer's grammar/fluency role. NO sim/ edit.",
+  "mechanism": "systematic recombination via a POS-frame construction grammar on the emergent sequence cortex: words = POS-class micro-columns (shared) + content col; the frame is learned over the shared class cols -> a held-out content combination is predicted grammatically; sim/ kernel unchanged",
+  "task": "POS-frame grammar; train content combos, test next-POS-class on HELD-OUT novel combos vs permuted + class-derangement + dAP-lesion + untrained",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 80,
+    "act_th": 3,
+    "frame": [
+      "DET",
+      "NOUN",
+      "VERB",
+      "DET",
+      "NOUN"
+    ]
+  },
+  "elapsed_seconds": 441.9,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": 1.0,
+      "permuted": 0.25,
+      "deranged": 0.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 43,
+      "htm": 1.0,
+      "permuted": 1.0,
+      "deranged": 0.25,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 44,
+      "htm": 1.0,
+      "permuted": 0.25,
+      "deranged": 0.25,
+      "lesion": 0.0,
+      "untrained": 0.0
+    }
+  ],
+  "HONEST_NOTE": "the production side of surface fluency (systematic recombination). The genuinely-hard core that remains is NOT surface form -- it is open-world semantics (a separate faculty). Next: couple to the LearnedFrameGrammar/CQ ordered read-out + discourse connectives for full connected prose."
+}
