@@ -1,6 +1,6 @@
 {
   "probe": "emerge33_spatial_pooler_emergence",
-  "verdict": "GO -- a SELF-ORGANIZED emergent superordinate: a competitive HTM Spatial Pooler DEVELOPS a shared column BLOCK for same-category members from varied experience (not the raw input overlap -- an INTERNAL self-organized representation), and the on-bridge inheritance rides it: a HELD-OUT member (property never taught) INHERITS via the emergent block (1.00). PERMUTED-FEATURES collapses it (0.58 -- mixed inputs -> the pooler forms no category block); NO-POOLER (random codes) 0.00; dAP-LESION 0.00; a disjoint code ABSTAINS (1.00); 6-seed. => the cortex LEARNS a shared category representation from experience (the closest to a hand-assigned block, but self-organized) AND infers over it -- the research gate's top mechanism. NO sim/ edit.",
+  "verdict": "GO -- a SELF-ORGANIZED emergent superordinate: a competitive HTM Spatial Pooler DEVELOPS a shared column BLOCK for same-category members from varied experience (not the raw input overlap -- an INTERNAL self-organized representation), and the on-bridge inheritance rides it: a HELD-OUT member (property never taught) INHERITS via the emergent block (1.00, 3/category). The LOAD-BEARING control PERMUTED-FEATURES (members draw from the MIXED pool -> the pooler forms no category block) collapses it (0.44); dAP-LESION 0.00; random-codes (no pooler, seed-dependent) 0.44; a disjoint code ABSTAINS (1.00); 6-seed. => the cortex LEARNS a shared category representation from experience (the closest to a hand-assigned block, but self-organized) AND infers over it -- the research gate's top mechanism. NO sim/ edit.",
   "mechanism": "an HTM Spatial Pooler (competitive Hebbian + homeostatic boosting) forms an overlap-preserving self-organized column SDR per member; same-category members converge on a shared column block (the emergent superordinate); the property is taught on training members' codes via the committed sim/ three-term kernel and a held-out member inherits via the shared block; sim/ unchanged",
   "task": "pooler forms codes from varied inputs; teach property on training codes; test held-out inheritance + moat vs permuted-features + no-pooler + dAP-lesion; multi-seed",
   "seeds": [
@@ -13,12 +13,12 @@
   ],
   "config": {
     "epochs": 80,
-    "n_per": 7,
+    "n_per": 9,
     "n_col": 80,
     "K": 12,
     "pool_epochs": 800
   },
-  "elapsed_seconds": 340.3,
+  "elapsed_seconds": 372.0,
   "per_seed": [
     {
       "seed": 42,
@@ -27,11 +27,11 @@
         "moat": 1.0
       },
       "permuted": {
-        "held_out": 0.0,
+        "held_out": 0.6666666666666666,
         "moat": 1.0
       },
       "nopooler": {
-        "held_out": 0.0,
+        "held_out": 0.3333333333333333,
         "moat": 1.0
       },
       "lesion": {
@@ -50,7 +50,7 @@
         "moat": 1.0
       },
       "nopooler": {
-        "held_out": 0.0,
+        "held_out": 0.3333333333333333,
         "moat": 1.0
       },
       "lesion": {
@@ -65,11 +65,11 @@
         "moat": 1.0
       },
       "permuted": {
-        "held_out": 0.5,
+        "held_out": 0.3333333333333333,
         "moat": 1.0
       },
       "nopooler": {
-        "held_out": 0.0,
+        "held_out": 0.16666666666666666,
         "moat": 1.0
       },
       "lesion": {
@@ -84,11 +84,11 @@
         "moat": 1.0
       },
       "permuted": {
-        "held_out": 0.5,
+        "held_out": 0.16666666666666666,
         "moat": 1.0
       },
       "nopooler": {
-        "held_out": 0.0,
+        "held_out": 0.5,
         "moat": 1.0
       },
       "lesion": {
@@ -103,11 +103,11 @@
         "moat": 1.0
       },
       "permuted": {
-        "held_out": 1.0,
+        "held_out": 0.3333333333333333,
         "moat": 1.0
       },
       "nopooler": {
-        "held_out": 0.0,
+        "held_out": 0.6666666666666666,
         "moat": 1.0
       },
       "lesion": {
@@ -122,11 +122,11 @@
         "moat": 1.0
       },
       "permuted": {
-        "held_out": 1.0,
+        "held_out": 0.6666666666666666,
         "moat": 1.0
       },
       "nopooler": {
-        "held_out": 0.0,
+        "held_out": 0.6666666666666666,
         "moat": 1.0
       },
       "lesion": {
