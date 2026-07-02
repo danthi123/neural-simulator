@@ -27,6 +27,19 @@ Under the same finite-sample noise where Burstprop's representation degrades to 
 1. **The comparison slightly under-noises the microcircuit's credit.** Noise was injected on the firing rates (matching EMERGE-5's injection point), but the descending apical error `e_upper` carried the exact output nudge down (only `phi'(r_obs)`-modulated); the interneuron cancellation *difference* (`r_upper − r_int`) was not itself re-estimated from noisy spike counts at each descent step. A **stricter test** should inject finite-sample noise into that cancellation difference too. The structural argument predicts the microcircuit still wins (its error comes from the exact top nudge, robust to per-step rate noise), but that is TO BE TESTED, not assumed — this is the immediate verification before committing to the months-scale substrate build.
 2. **Cosmetic numerical overflow** (`RuntimeWarning: overflow in matmul`) in the *reused* rate-microcircuit's interneuron-maintenance rule (`_emerge3_microcircuit_derisk.py:229`) at width-384 (EMERGE-3's default was width-64). It is in the maintenance loop that does NOT feed the credit (read in the self-predicting form), the rate ceiling came out valid (0.978, not NaN), and the spiking-microcircuit arm drops the maintenance loop entirely (unaffected). Worth a numerical guard if the rate microcircuit is run wide again, but it does not affect this result.
 
+## STRICT-NOISE UPDATE (caveat #1 closed) — 2026-07-02
+Ran the stricter test flagged above: `SpikingMicrocircuitMLP(cancel_noise=True)` injects additive finite-sample noise `sd=sqrt(2·r·(1−r)/S)` into the descending apical error itself (the interneuron cancellation difference `r_upper − r_int`, a difference of two independent S-sample spike-rate estimates) at the output AND each descent step — so the microcircuit's distinctive credit channel is noised, not just the `phi'` modulation. Result (width-384, S=300, 3 seeds, 4-worker light-contention run):
+
+| arm | clean-readout (mean) |
+|---|---|
+| **microcircuit STRICT-noise** | **0.981** (0.983/0.969/0.992) |
+| microcircuit rate-noise-only | 0.975 |
+| microcircuit rate ceiling | 0.978 |
+| spiking Burstprop | 0.622 |
+| strict-lesion / strict-null (anti-cheats) | 0.488 / 0.479 (= floor ✓) |
+
+**GO (STRICT) — the caveat is closed.** Strict-noise clean-readout (0.981) ≈ rate-noise-only (0.975) ≈ the noise-free ceiling (0.978), ≫ Burstprop (0.622); lesion + null collapse to floor. The cancellation-difference noise barely dents the microcircuit because the credit magnitude is anchored by the exact top-down output nudge propagated through the fixed feedback pathway — a genuine structural robustness, not an artifact of under-noising. Caveat #2 (the width-384 W_PI-maintenance overflow) remains cosmetic (unused-for-credit maintenance loop; the rate ceiling is valid; the spiking arm drops that loop) — a numerical guard is deferred, not load-bearing.
+
 ## State of rung 2 (updated)
 - Rate→spike credit: Burstprop degrades under finite-sample noise (EMERGE-5/5b); **the microcircuit does NOT** (this doc) — active cancellation is the noise-robust mechanism.
 - Immediate next: the stricter cancellation-difference-noise test (verify the GO survives injecting noise into `r_upper − r_int`). If it survives → the microcircuit is confirmed as the credit rule for the `sim/` two-compartment port (rung 4); scope that build (research-gated).

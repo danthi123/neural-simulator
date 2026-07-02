@@ -62,7 +62,16 @@ class SpikingMicrocircuitMLP(MicrocircuitMLP):
     finite-sample spike-count estimates Binomial(S, rate)/S -- the SAME noise model EMERGE-5 injects into Burstprop.
     The apical error v_A = W_PP_td @ e and its phi'(r) modulation ride on the noisy rates; the output error stays
     target-exact (clean logits). Interneuron maintenance is dropped (the credit is read in the self-predicting form,
-    as in EMERGE-3, so it does not affect the within-step FF update). Eval forward is the inherited clean analytic one."""
+    as in EMERGE-3, so it does not affect the within-step FF update). Eval forward is the inherited clean analytic one.
+
+    cancel_noise=True = the STRICTER test (the EMERGE-5c GO caveat): the descending apical error itself -- physically
+    the interneuron cancellation difference e = r_upper - r_int, a difference of TWO independent S-sample spike-rate
+    estimates -- gets additive finite-sample noise sd = sqrt(2*r*(1-r)/S) at the output AND at each descent step, so
+    the microcircuit's DISTINCTIVE credit channel is noised, not merely the phi'-modulation."""
+
+    def __init__(self, sizes, seed=0, cancel_noise=False, **kw):
+        super().__init__(sizes, seed=seed, **kw)
+        self.cancel_noise = bool(cancel_noise)
 
     def train_step(self, X, y, mode, lr, samples=None, srng=None):
         acts, lg = self._forward(X); y = np.asarray(y)
@@ -79,15 +88,26 @@ class SpikingMicrocircuitMLP(MicrocircuitMLP):
             delta_out = -delta_out
         upd = [None] * nW
         upd[-1] = -(r[-1].T @ delta_out)
+        # STRICTER noise (cancel_noise): the interneuron cancellation error is a difference of two independent S-sample
+        # spike-rate estimates -> additive finite-sample noise sd=sqrt(2*r*(1-r)/S) on the descending error itself.
+        cn = bool(getattr(self, "cancel_noise", False)) and (samples is not None) and (srng is not None)
+
+        def _cn(rate):
+            return srng.normal(0.0, np.sqrt(np.clip(2.0 * rate * (1.0 - rate) / float(samples), 1e-12, None)))
+
         # top->bottom apical-error recursion (M2.11), on the noisy rates
         v_A = [None] * nhid
         e_upper = -delta_out
+        if cn and mode != "no_teaching_null":
+            e_upper = e_upper + _cn(_softmax(lg))                     # output cancellation-difference noise
         for k in range(nhid - 1, -1, -1):
             r_post = r[k + 1]
             Wtd = np.zeros_like(self.W_PP_td[k]) if mode == "feedback_lesion" else self.W_PP_td[k]
             v_A_k = e_upper @ Wtd.T
             v_A[k] = v_A_k
             e_upper = (r_post * (1.0 - r_post)) * v_A_k
+            if cn:
+                e_upper = e_upper + _cn(r_post)                       # per-layer cancellation-difference noise
         # feedforward somatic-error rule (M2.6), on the noisy rates
         for k in range(nhid):
             r_prev = r[k]; r_post = r[k + 1]; phi_prime = r_post * (1.0 - r_post)
@@ -124,10 +144,13 @@ def _run_arm(job):
         net = SpikingBurstpropMLP(deep, seed=seed, p0=p0)
         _train_spk(net, Xtr, ytr, "burst_linearized", epochs, lr, batch, seed, samples=samples)
         return (seed, arm, {"own": own(net), "clean_readout": clean(net)})
-    if arm in ("microcircuit_spiking", "mc_spiking_lesion", "mc_spiking_null"):
-        md = {"microcircuit_spiking": "microcircuit", "mc_spiking_lesion": "feedback_lesion",
-              "mc_spiking_null": "no_teaching_null"}[arm]
-        net = SpikingMicrocircuitMLP(deep, seed=seed)
+    if arm in ("microcircuit_spiking", "mc_spiking_lesion", "mc_spiking_null",
+               "microcircuit_spiking_strict", "mc_strict_lesion", "mc_strict_null"):
+        strict = arm in ("microcircuit_spiking_strict", "mc_strict_lesion", "mc_strict_null")
+        md = ("microcircuit" if arm in ("microcircuit_spiking", "microcircuit_spiking_strict")
+              else "feedback_lesion" if arm in ("mc_spiking_lesion", "mc_strict_lesion")
+              else "no_teaching_null")
+        net = SpikingMicrocircuitMLP(deep, seed=seed, cancel_noise=strict)
         _train_spk_mc(net, Xtr, ytr, md, epochs, lr, batch, seed, samples=samples)
         return (seed, arm, {"own": own(net), "clean_readout": clean(net)})
     if arm == "microcircuit_rate":
@@ -144,7 +167,8 @@ def _run_arm(job):
     raise ValueError(f"unknown arm {arm}")
 
 
-ARMS = ["burstprop_spiking", "microcircuit_spiking", "mc_spiking_lesion", "mc_spiking_null",
+ARMS = ["burstprop_spiking", "microcircuit_spiking", "microcircuit_spiking_strict",
+        "mc_strict_lesion", "mc_strict_null", "mc_spiking_lesion", "mc_spiking_null",
         "microcircuit_rate", "burstprop_rate", "untrained"]
 
 
@@ -184,59 +208,63 @@ def main():
             d["chance"] = float(max(np.mean(yte == 0), np.mean(yte == 1)))
             per.append(d)
         for d in per:
-            print(f"  [seed {d['seed']}] MC-spk own {d['microcircuit_spiking']['own']:.3f} clean "
-                  f"{d['microcircuit_spiking']['clean_readout']:.3f} | BP-spk own {d['burstprop_spiking']['own']:.3f} "
-                  f"clean {d['burstprop_spiking']['clean_readout']:.3f} | MC-rate {d['microcircuit_rate']['own']:.3f} | "
-                  f"BP-rate {d['burstprop_rate']['own']:.3f} | floor {d['untrained']['clean_readout']:.3f} | "
-                  f"MC-lesion clean {d['mc_spiking_lesion']['clean_readout']:.3f} | MC-null clean "
-                  f"{d['mc_spiking_null']['clean_readout']:.3f} | chance {d['chance']:.3f}", flush=True)
+            print(f"  [seed {d['seed']}] MC-STRICT clean {d['microcircuit_spiking_strict']['clean_readout']:.3f} "
+                  f"(own {d['microcircuit_spiking_strict']['own']:.3f}) | MC-rateNoise clean "
+                  f"{d['microcircuit_spiking']['clean_readout']:.3f} | BP-spk clean "
+                  f"{d['burstprop_spiking']['clean_readout']:.3f} | MC-rate ceil {d['microcircuit_rate']['own']:.3f} | "
+                  f"floor {d['untrained']['clean_readout']:.3f} | strict-lesion {d['mc_strict_lesion']['clean_readout']:.3f}"
+                  f" | strict-null {d['mc_strict_null']['clean_readout']:.3f} | chance {d['chance']:.3f}", flush=True)
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
     if err is None:
         def m(arm, key="clean_readout"):
             return float(np.mean([p[arm][key] for p in per]))
-        mc_clean, bp_clean = m("microcircuit_spiking"), m("burstprop_spiking")
-        mc_own, mc_rate = m("microcircuit_spiking", "own"), m("microcircuit_rate", "own")
+        # HEADLINE = the STRICT arm (cancellation-difference noise injected -- the honest test); the rate-noise-only
+        # microcircuit (mc_clean) is reported as intermediate context.
+        mc_strict, mc_clean, bp_clean = m("microcircuit_spiking_strict"), m("microcircuit_spiking"), m("burstprop_spiking")
+        mc_rate = m("microcircuit_rate", "own")
         bp_rate, floor = m("burstprop_rate", "own"), m("untrained")
-        les, null = m("mc_spiking_lesion"), m("mc_spiking_null")
+        les, null = m("mc_strict_lesion"), m("mc_strict_null")
         ch = float(np.mean([p["chance"] for p in per]))
         # sanity: the rate microcircuit must be a real ceiling (learns the task), else my reuse is broken
         mc_rate_sane = mc_rate >= 0.70
         lesion_collapses = les <= floor + 0.08
         null_flat = null <= floor + 0.08
-        beats_burstprop = mc_clean > bp_clean + 0.08
-        approaches_ceiling = mc_clean >= mc_rate - 0.12
+        beats_burstprop = mc_strict > bp_clean + 0.08
+        approaches_ceiling = mc_strict >= mc_rate - 0.12
         go = bool(mc_rate_sane and beats_burstprop and approaches_ceiling and lesion_collapses and null_flat)
-        same_wall = bool(mc_rate_sane and abs(mc_clean - bp_clean) <= 0.06)
+        same_wall = bool(mc_rate_sane and abs(mc_strict - bp_clean) <= 0.06)
         if not mc_rate_sane:
             verdict = (f"INCONCLUSIVE -- the rate microcircuit ceiling is only {mc_rate:.3f} (<0.70), so the "
                        f"microcircuit reuse/config isn't learning the task cleanly; fix before comparing the spiking "
                        f"reps. (BP rate ceiling {bp_rate:.3f} for reference.)")
         elif go:
-            verdict = (f"GO -- ACTIVE CANCELLATION is MORE noise-robust than raw burst-rate estimation: under the same "
-                       f"finite-sample noise (S={a.samples}), the spiking MICROCIRCUIT builds a cleaner representation "
-                       f"(clean-readout {mc_clean:.3f}) than spiking Burstprop ({bp_clean:.3f}), approaching its own rate "
-                       f"ceiling ({mc_rate:.3f}); apical-feedback lesion collapses it ({les:.3f} ~ floor {floor:.3f}), "
-                       f"no-teaching null flat ({null:.3f}). ⇒ the microcircuit is the better rung-2 credit rule under "
-                       f"spike noise -- carry IT (not Burstprop) toward the sim/ two-compartment port. NO sim/ edit.")
+            verdict = (f"GO (STRICT) -- ACTIVE CANCELLATION is MORE noise-robust than raw burst-rate estimation EVEN when "
+                       f"the interneuron cancellation DIFFERENCE is itself spike-estimated: under the same finite-sample "
+                       f"noise (S={a.samples}), the STRICT-noise spiking MICROCIRCUIT builds a cleaner representation "
+                       f"(clean-readout {mc_strict:.3f}) than spiking Burstprop ({bp_clean:.3f}), approaching its own rate "
+                       f"ceiling ({mc_rate:.3f}); the apical-feedback lesion collapses it ({les:.3f} ~ floor {floor:.3f}), "
+                       f"no-teaching null flat ({null:.3f}). (rate-noise-only microcircuit {mc_clean:.3f} for context.) "
+                       f"⇒ the microcircuit is CONFIRMED the noise-robust rung-2 credit rule -- carry IT (not Burstprop) "
+                       f"toward the sim/ two-compartment port; scope that build (research-gated). NO sim/ edit.")
         elif same_wall:
-            verdict = (f"BOUNDARY (mechanism-general noise wall) -- active cancellation does NOT beat raw burst-rate "
-                       f"estimation under finite-sample spike noise: spiking microcircuit clean-rep {mc_clean:.3f} ~= "
-                       f"spiking Burstprop {bp_clean:.3f} (both << the microcircuit rate ceiling {mc_rate:.3f}, > floor "
-                       f"{floor:.3f}). ⇒ the finite-sample credit-noise limit is MECHANISM-GENERAL (not specific to "
-                       f"Burstprop's burst channel). Per the master directive the next research-gated move is a "
-                       f"population-FEEDBACK factor (Urbanczik-Senn 2009) or NMNC-style credit-noise GEOMETRY "
-                       f"(shortlist), NOT another local point-credit rule. Build-informative. Lesion collapses "
-                       f"{les:.3f}, null {null:.3f}.")
+            verdict = (f"BOUNDARY (mechanism-general noise wall) -- once the cancellation DIFFERENCE is spike-estimated, "
+                       f"active cancellation does NOT beat raw burst-rate estimation: STRICT spiking microcircuit clean-rep "
+                       f"{mc_strict:.3f} ~= spiking Burstprop {bp_clean:.3f} (both << the microcircuit rate ceiling "
+                       f"{mc_rate:.3f}, > floor {floor:.3f}); the EMERGE-5c GO was carried by the exact top-nudge, which "
+                       f"the strict test removes. (rate-noise-only microcircuit {mc_clean:.3f} for context.) ⇒ the "
+                       f"finite-sample credit-noise limit is MECHANISM-GENERAL. Next research-gated move: a population-"
+                       f"FEEDBACK factor (Urbanczik-Senn 2009) or NMNC-style credit-noise GEOMETRY (shortlist), NOT another "
+                       f"local point-credit rule. Build-informative. Lesion {les:.3f}, null {null:.3f}.")
         else:
-            verdict = (f"PARTIAL/MIXED -- spiking microcircuit clean-rep {mc_clean:.3f} vs spiking Burstprop {bp_clean:.3f} "
-                       f"(rate ceiling {mc_rate:.3f}, floor {floor:.3f}, lesion {les:.3f}, null {null:.3f}). The "
-                       f"microcircuit "
-                       f"{'edges out Burstprop but not by the +0.08 bar / does not approach its ceiling' if mc_clean > bp_clean else 'does not beat Burstprop'}"
-                       f"; anti-cheats: lesion-collapse={lesion_collapses}, null-flat={null_flat}. A real comparison "
-                       f"data point, not a clean GO -- iterate (wider net / a full multi-step microcircuit relaxation / "
-                       f"the population-feedback factor). NOT a stop.")
+            verdict = (f"PARTIAL/MIXED (STRICT) -- strict spiking microcircuit clean-rep {mc_strict:.3f} vs spiking "
+                       f"Burstprop {bp_clean:.3f} (rate-noise-only mc {mc_clean:.3f}; rate ceiling {mc_rate:.3f}, floor "
+                       f"{floor:.3f}, lesion {les:.3f}, null {null:.3f}). The strict microcircuit "
+                       f"{'edges out Burstprop but not by the +0.08 bar / does not approach its ceiling' if mc_strict > bp_clean else 'does not beat Burstprop'}"
+                       f"; anti-cheats: lesion-collapse={lesion_collapses}, null-flat={null_flat}. So the EMERGE-5c GO is "
+                       f"PARTLY carried by the exact top-nudge -- active cancellation helps but the cancellation-noise "
+                       f"erodes some of the win. Iterate (population-feedback factor / wider net). NOT a stop.")
     else:
         verdict = f"ERROR -- {err}"
 
