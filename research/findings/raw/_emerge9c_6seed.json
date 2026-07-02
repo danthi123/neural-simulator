@@ -1,0 +1,164 @@
+{
+  "probe": "emerge9c_spiking_tm",
+  "verdict": "GO -- the context-specific high-order prediction SURVIVES spiking inference: SPIKING branch acc 1.000 (== discrete 1.000) via LIF somas + dAP plateau + per-column WTA -- dAP-primed cells win the spiking competition and select the SAME context-specific SDR the discrete rule did. >> Markov 0.500, >> chance 0.500, >> dAP-lesion 0.000 (the dendritic plateau is load-bearing); untrained 0.000; locality asserted. Multi-seed. => rung-3b (spiking substrate) holds -> scope the sim/ two-compartment NeuronModel port (rung-4; the dAP = the apical compartment). NO sim/ edit.",
+  "mechanism": "HTM Temporal Memory with SPIKING inference (LIF somas + distal-dendrite dAP plateau + per-column WTA inhibition); learning UNCHANGED from EMERGE-9b (validated local unsupervised permanence); dAP = the apical compartment of our two-compartment neuron",
+  "task": "overlapping sequences; branch prediction; spiking-vs-discrete parity + Markov floor + dAP-lesion + oracle",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "n_seq": 2,
+    "middle_len": 4,
+    "n_cells": 16,
+    "k_win": 4,
+    "act_th": 3,
+    "epochs": 50
+  },
+  "elapsed_seconds": 0.5,
+  "per_seed": [
+    {
+      "htm": {
+        "branch_spiking": 1.0,
+        "branch_discrete": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch_spiking": 0.0,
+        "branch_discrete": null,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_spiking": 0.0,
+        "branch_discrete": null,
+        "locality_ok": true
+      },
+      "seed": 42,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      }
+    },
+    {
+      "htm": {
+        "branch_spiking": 1.0,
+        "branch_discrete": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch_spiking": 0.0,
+        "branch_discrete": null,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_spiking": 0.0,
+        "branch_discrete": null,
+        "locality_ok": true
+      },
+      "seed": 43,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      }
+    },
+    {
+      "htm": {
+        "branch_spiking": 1.0,
+        "branch_discrete": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch_spiking": 0.0,
+        "branch_discrete": null,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_spiking": 0.0,
+        "branch_discrete": null,
+        "locality_ok": true
+      },
+      "seed": 44,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      }
+    },
+    {
+      "htm": {
+        "branch_spiking": 1.0,
+        "branch_discrete": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch_spiking": 0.0,
+        "branch_discrete": null,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_spiking": 0.0,
+        "branch_discrete": null,
+        "locality_ok": true
+      },
+      "seed": 100,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      }
+    },
+    {
+      "htm": {
+        "branch_spiking": 1.0,
+        "branch_discrete": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch_spiking": 0.0,
+        "branch_discrete": null,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_spiking": 0.0,
+        "branch_discrete": null,
+        "locality_ok": true
+      },
+      "seed": 101,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      }
+    },
+    {
+      "htm": {
+        "branch_spiking": 1.0,
+        "branch_discrete": 1.0,
+        "locality_ok": true
+      },
+      "lesion": {
+        "branch_spiking": 0.0,
+        "branch_discrete": null,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_spiking": 0.0,
+        "branch_discrete": null,
+        "locality_ok": true
+      },
+      "seed": 102,
+      "floors": {
+        "markov_L": 0.5,
+        "oracle": 1.0,
+        "chance": 0.5
+      }
+    }
+  ],
+  "HONEST_NOTE": "rung-3b single-variable step: learning is the validated EMERGE-9b rule UNCHANGED; only the active-cell SELECTION becomes spiking (LIF + dAP plateau + WTA). A follow-on rung makes LEARNING spiking too (STDP-windowed permanence + dAP-rate homeostasis, the Bouhadjar three-term rule). Then the sim/ two-compartment NeuronModel port (rung-4). dAP = apical compartment."
+}
