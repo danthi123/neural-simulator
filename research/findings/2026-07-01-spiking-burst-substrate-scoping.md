@@ -49,7 +49,7 @@ Kandel 6e Ch 13 pp 293-298). The genuine deltas, smallest → largest:
 
 1. **A two-compartment spiking pyramidal `NeuronModel`** — soma (basal-driven, spikes) + apical (top-down-driven,
    sets burst probability), with **BAC coupling** (apical depolarization near a somatic spike → a burst). The
-   authoritative spiking reference (Que & Naud et al. 2024, §below) confirms the minimal faithful model is a
+   authoritative spiking reference (Stuck, Wang & Naud 2025 — Burstprop, bioRxiv 2024, §below) confirms the minimal faithful model is a
    **two-compartment LIF WITHOUT adaptation** — the simplest dynamics that capture burst-dependent credit assignment.
    → NEW: a `NeuronModel.TWO_COMPARTMENT_BURST` (or extend Izhikevich with an apical state); state arrays
    `cp_v_apical`, an ISI/burst counter; a fused two-compartment kernel. Est. ~120-180 lines + state alloc.
@@ -156,7 +156,7 @@ feedback pathways, BDSP on the feedforward synapses; run the EXACT EMERGE-1 dept
   INCONCLUSIVE, not a mechanism verdict); (6) no-weight-transport asserted (Y never written / never = forward W).
 - **Match-to-rate check:** the spiking net's held-out + probe should be within a tolerance band of the rate
   BurstpropMLP on the same task (rate 0.796 / probe 0.989) — a spiking-vs-rate gap localizes burst-estimation noise.
-- **Cost:** the expensive stage. Small net (hundreds of neurons — Que-Naud 2024 reach MNIST at this scale), many
+- **Cost:** the expensive stage. Small net (hundreds of neurons — Stuck-Wang-Naud 2025 reach MNIST at this scale), many
   spiking steps × epochs. GPU genuinely helps here (the tiny rate de-risk was CPU-minutes; the spiking net is
   step-loop-bound). Start CPU-smoke (1 seed, reduced epochs) to shake out the wiring, then GPU multi-seed.
 
@@ -173,7 +173,7 @@ one-brain, learn-from-experience target). Confirm no catastrophic forgetting / p
 ## 4. COST / FEASIBILITY (honest, on one RTX 3090)
 
 - **Compute per neuron:** catalog G.02 quotes **~10× per neuron** for compartmental neurons. The two-compartment LIF
-  (Que-Naud 2024, no adaptation) is the LOW end — roughly 2× the somatic ODE (a second compartment) + a burst counter
+  (Stuck-Wang-Naud 2025, no adaptation) is the LOW end — roughly 2× the somatic ODE (a second compartment) + a burst counter
   + the apical matvec. The graded-plateau apical read-out is already a per-step restricted matvec (`bridge.py:6463-
   6482`), so the apical drive cost is a KNOWN, already-paid pattern, not new.
 - **VRAM:** trivial at Stage A/B scale (hundreds → low-thousands of neurons; the project routinely runs 50K-117K-neuron
@@ -236,7 +236,7 @@ net on the EMERGE-1 depth-2 task, GPU multi-seed) turns the CONFIRMED rate resul
   [BDSP rule, event/burst multiplexing, apical→P, recurrent linearization.]
 - Naud & Sprekeler. *Sparse bursts optimize information transmission in a multiplexed neural code.* PNAS 2018.
   [Event rate = feedforward / burst prob = feedback; STD decodes events, STF decodes bursts — the demultiplexer.]
-- Que, Naud, et al. *A Burst-Dependent Algorithm for Neuromorphic On-Chip Learning of Spiking Neural Networks.*
+- Stuck, Wang & Naud. *A Burst-Dependent Algorithm for Neuromorphic On-Chip Learning of Spiking Neural Networks.* (author correction 2026-07-01: previously mis-cited as "Que, Naud" — verified Stuck/Wang/Naud via IOP + WebSearch)
   bioRxiv 2024.07.19.604308 (v1/v2); IOP Neuromorph. Comput. Eng. 2025 (2634-4386/adb511). **[THE authoritative
   SPIKING Burstprop: two-compartment LIF WITHOUT adaptation = the minimal faithful model; fully-spiking
   communication of both feedforward + learning signals; MNIST at hundreds of neurons — the direct Stage-A/B

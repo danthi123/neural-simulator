@@ -1,0 +1,63 @@
+# Shortlist — 2025-2026 MECHANISM papers to acquire (targeted at the project's actual open problems)
+
+**2026-07-01.** Produced by a 6-scout literature workflow (`paper-scouts-2025`) deliberately aimed at implementable MECHANISMS for the current frontier (spiking credit assignment, recurrent/local sequence learning, dendritic scaling, noise-driven self-organization, curriculum), NOT more brain-vs-LLM alignment correlation studies (we already have ~26 of those; the scouts were instructed to exclude them unless a paper carried a real mechanism). Controller trust-but-verified the two most load-bearing + surprising citations live (Burstprop 2025 authorship corrected; Predictive E-prop confirmed real). DOIs/IDs are for the owner to pull PDFs into `references/papers/`.
+
+## How this connects to what we're building
+- **Rung 2 (rate→spike burst credit) is ALREADY published as a concrete spiking recipe** — Burstprop 2025 (below) is literally our current ladder rung written out with exact traces + time constants + honest depth-degradation numbers. Validates the path AND gives a reference to check our EMERGE-5 port against.
+- **The two GAPS the scouts flag confirm our current work is at the frontier, not redundant:** (a) the exact ensemble-WIDTH vs time-WINDOW vs redundant-copies fork for BURST-rate noise is *unresolved* in 2025-26 — so our EMERGE-5 width sweep (running now) is a legitimate original de-risk; (b) NO paper does fully-local, spiking, deep-recurrent *language/sequence generation* at scale — so rung 3 is genuine frontier (compose pieces, don't adopt one paper).
+
+## TIER 1 — get now (verified real; implementable mechanism; serves a stated open problem)
+
+1. **Burstprop (spiking, on-chip)** — Stuck, Wang & Naud, *Neuromorphic Computing & Engineering* 5(1), 2025 — **DOI 10.1088/2634-4386/adb511** (bioRxiv 2024.07.19.604308). *[controller-verified real; corrects our own doc's "Que,Naud" mis-cite.]* The direct spiking descendant of the Payeur-Naud burst-credit line = **our ladder rung 2 made concrete**: event-rate eligibility trace (τ≈10 ms), P_B = tanh(|V_d|) signed-error code, single-phase soma→dendrite regularizer (no two-phase teacher). Gives depth-degradation numbers to check our port against, and the signed baseline-free burst code is the field's cleanest partial answer to our burst-noise problem. **Read first.**
+
+2. **Predictive E-prop** — Noè, Yamamoto, Katori & Sato, *bioRxiv* 2026 — **10.64898/2026.02.12.705507** (posted Feb 2026). *[controller-verified real.]* Optimizes a **predict-next objective via the online + local e-prop rule in a recurrent spiking net** — the tightest single published fusion of rung-3 (recurrent local sequence credit, no BPTT) + the predict-next emergence driver + the local/spiking constraint. **Read second (closest to our rung-3 target).** Preprint — verify the exact locality claims on read.
+
+3. **Energy optimization induces predictive-coding properties in a multi-compartment SPIKING net** — Zhang, Chitic & Bohté, *PLoS Comput Biol* 2025 — **10.1371/journal.pcbi.1013112**. Top-down cancellation **self-organizes on a spiking two-compartment neuron** from a local energy term |V_apical − V_soma|, with **NO hand-wired interneuron microcircuit** — the interneuron-FREE alternative to our EMERGE-3b SST route, and a drop-in local objective for the rung-4 sim/ neuron. **Read third (cheapest immediate de-risk vs our SST route).**
+
+4. **Distinct plasticity rules across dendritic compartments in vivo during learning** — Wright, Hedrick & Komiyama, *Science* 388(6744):322, 2025 — **10.1126/science.ads4706** (PMID 40245144). **Empirical ground truth**: apical potentiation is driven by local clustered coactivity and is NOT somatic-spike-gated; basal potentiation requires somatic spikes. Tells us exactly which local rule goes in which compartment for the sim/ port — protects against the plausible wrong turn of soma-spike-gating apical plasticity. **Read alongside #1-3 as the biological authority.**
+
+5. **Backpropagation through space, time, and the brain (Generalized Latent Equilibrium, GLE)** — Ellenberger, Haider, Jordan, … Petrovici, *Nature Communications* 2025 (arXiv 2403.16933) — **10.1038/s41467-025-66666-z**. Fully-local spatio-temporal credit, **no BPTT, no stored history**, via two dendritic time-constants + a prospective/phase-advanced compartment. Same Senn/Petrovici lineage as our microcircuit. Serves rung-3. Caveat: published version is rate-based — a blueprint to spike-ify.
+
+6. **Reinforcement learning in populations of spiking neurons** — Urbanczik & Senn, *Nature Neuroscience* 12, 2009 — **10.1038/nn.2264**. Older but foundational: a **population-response feedback factor** (not naive unit-averaging) is what makes credit *speed up* with N. Directly answers the form of our population-coding-vs-noise mitigation; maps onto burst-ensemble multiplexing (ensemble burst fraction = the population readout).
+
+7. **Credit Assignment via Neural Manifold Noise Correlation (NMNC)** — Kang, Richards & Sabatini, *arXiv* 2601.02636, Jan 2026. *[verified live by scout.]* Confine credit-carrying noise to a **learned low-dimensional manifold** (correlated population perturbations, not isotropic per-neuron noise) → credit estimated without scaling samples with N. Reframes our #1 problem as "shape the noise's population geometry." Spiking portability asserted, not shown.
+
+8. **DeepDendrite / Dendritic Hierarchical Scheduling** — Zhang, He, Ma, … Du & Huang, *Nature Communications* 2023 — **10.1038/s41467-023-41553-7**. Canonical **single-GPU multi-compartment solve** (parallel Hines, bit-identical, 60-1500× over NEURON) + a dendritic error-signal plasticity module. Proves the two-compartment sim/ port + scale (rung-4) is not a wall on a 3090.
+
+9. **Structural plasticity in GPU-accelerated sparse SNNs (GeNN)** — Knight, Senk & Nowotny, *arXiv* 2510.19764, 2025 (public code). Hits three constraints at once: local e-prop (a shippable baseline vs burst-credit), single-GPU sparse scaling, and activity/STDP-driven **structural self-organization** (serves "structure must self-organize").
+
+10. **Emergent functions of noise-driven spontaneous activity (criticality)** — Ikeda, Akita & Takahashi, *Frontiers in Neural Circuits* 2025 — **10.3389/fncir.2025.1585087**. Fully-specified 100-neuron LIF where **noise alone (no teaching) self-organizes** the net, dose-dependent on background rate (≈ our resting-burst-prob dose) — near-exact match to our just-found noise-variance-self-organizes result, with symmetric-inhibitory-STDP as the runaway stabilizer. Trivial numpy de-risk.
+
+11. **Dendritic Localized Learning (DLL)** — Lv, Xu, … Zheng & Huang, *ICML 2025* (PMLR 267:41682) — arXiv 2501.09976 (public code). A three-compartment (soma/apical/basal) **fully-local, single-phase** rule (no weight symmetry, no global error), validated on RNNs — an independent cross-check on our burst/Sacramento implementations.
+
+12. **Diffusion of Neuromodulators for Temporal Credit Assignment** — Barretto-Bittar, Levina, Giannakakis & Zeraati, *arXiv* 2603.08949, Mar 2026. *[verified live by scout.]* Augments e-prop with a **spatially-diffusing neuromodulatory credit field** — a cheap replacement for exact top-down error routing in a recurrent spiking cortex; its diffuse/imprecise credit dovetails with our noise-self-org thread.
+
+13. **Learning curves for hierarchically compositional data with power-law features** — Cagnetta, Kang & Wyart, *arXiv* 2505.07067, 2025. Quantitative **experience-stream design principle**: a power-law/Zipf corpus gives an *implicit* curriculum (shallow-frequent first scaffolds deep-rare), with per-depth sample thresholds — lets us size a small corpus so a target compositional depth becomes learnable.
+
+14. **Self-supervised predictive learning accounts for cortical layer-specificity** — Kermani Nejad et al., *Nature Communications* 2025 — **s41467-025-61399-5** (PMC12227776). Biological blueprint: L2/3 predicts, L5 (direct thalamic input) is the internally-generated teacher — maps ~1:1 onto apical-predict/basal-teach, no external labels. Value is the architecture (published version uses weight transport — port the architecture onto our local dendritic engine).
+
+## TIER 2 — maybe / lower priority (engineering reuse or verify-before-build)
+- **Predictive Coding in V1 L2/3 (PV/SOM/VIP spiking)** — Nemati, Davey, Meffin & Burkitt, *bioRxiv* 2025.11.01.686040 — subtype-resolved interneuron cancellation; wiring template, verify rule before build.
+- **Phaseless Alignment Learning (PAL)** — Max, Kriener, … Senn & Petrovici, *Nat Mach Intell* 2024 (arXiv 2212.10249) — learns feedback weights by exploiting noise correlations, phase-free/local; turns noise-self-org into a way to *learn* the credit-carrying feedback.
+- **Noise-based reward-modulated learning (NRL)** — García Fernández, Ahmad & van Gerven, *arXiv* 2503.23972, 2025 — noise-as-perturbation + eligibility; depth-scaling anchor.
+- **Dendritic Resonate-and-Fire (D-RF)** — Zhang et al., *arXiv* 2509.17186, 2025 — extends the RESONATE_AND_FIRE neuron **we already run** with frequency-tuned dendritic branches for long sequences (take the neuron, not the surrogate-BPTT rule).
+- **PMSN: Parallel Multi-compartment Spiking Neuron** — Chen et al., *arXiv* 2408.14917, 2024 — parallel-over-time multi-compartment (FFT of linear compartments); take the simulation mechanism.
+- **DendSN: Scalable Dendritic Modeling** — Huang et al., *arXiv* 2412.06355, 2024 (SpikingJelly) — dendritic expressivity at ~0.92× LIF throughput (Triton kernels); branch-gating as a compositional-routing lever.
+- **µPC: Scaling Predictive Coding to 100+ layers** — Innocenti, Achour & Buckley, *arXiv* 2505.13124, 2025 — μP-style per-layer LR/init scaling with zero-shot HP transfer.
+- **Error Highways: Scaling PC to Very Deep Networks** — Mohammadi & Ororbia, *arXiv* 2606.22744, 2026 — depth-independent direct error-injection (verify highway matrices fixed/random vs learned).
+- **Two-compartment neuronal spiking model (apical amplify/isolate/drive)** — Pastorelli et al., *arXiv* 2311.06074 — GPU-friendly piecewise-linear two-compartment neuron; candidate for the sim/ port.
+- **Adaptive chunking in a PFC+BG circuit** — eLife reviewed preprint 2025 (97894v2) — DA-gated BG disinhibition learns *when to chunk* → compositional units emerge from RL.
+- **Thalamocortical architectures for flexible cognition** — Scott, Halassa et al., *Trends Cogn Sci* 2024 (PMC11305962) — gating motif menu for our region + transmission_gate infra.
+- **BabyLM 2025 findings** — Charpentier, Choshen, Warstadt et al., *EMNLP* 2025 — at ≤100M words, hand-ordered curricula wash out; the win is **adaptive per-item difficulty** (self-paced) → "emphasize almost-predictable tokens." Read with Cagnetta.
+- **Dendritic Spikes Expand Tolerated Population Noise Structures** — Poleg-Polsky, *J Neurosci* 2018 — cheap "already-have-the-parts" de-risk: does the dendritic-spike threshold on our existing two-compartment neuron already buy robustness to correlated burst noise before adding wide ensembles.
+- **SORN "Where's the Noise?"** — Hartmann, Lazar, Nessler & Triesch, *PLoS CB* 2015 — a validation battery (anti-cheat checklist) for noise-driven self-org claims.
+
+## SKIP (real but not implementable for us / violate constraints)
+- General Self-Prediction Enhancement for Spiking Neurons (2601.21823) — surrogate-BPTT training-stability trick, single-neuron self-prediction (not the interneuron/top-down kind); violates locality.
+- SpikingBrain technical report (2509.05276) — cluster-scale (7B/76B), BPTT; only the train-dense/infer-sparse conversion recipe is a nugget.
+- Scalable Learning in Structured Recurrent SNNs without BP (2605.00402) — thin preprint, classification-only, no sequence/scaling.
+- Generalizing E-prop to Deep Networks (2512.24506) — author flags no experiments + retains transport/weight-symmetry.
+
+## Controller notes
+- Verified live: Burstprop 2025 (authors Stuck/Wang/Naud — corrected our scoping doc), Predictive E-prop (Noè et al., real). The scout distinguished verified-real from author-list-only and flagged both gaps honestly; trustworthy.
+- The single biggest strategic takeaway: **rung 2 is published (validate against it), rung 3 is genuine frontier (compose), and our noise-driven-self-org finding sits in an active 2025-26 thread (Ikeda / PAL / NMNC) that reframes finite-sample spike noise as a *functional* signal** — for both self-organization and *learning the feedback weights that carry credit*. That last point (PAL, GLE, NMNC) is worth serious follow-up: it could close our no-weight-transport feedback gap using the very noise we already have.
