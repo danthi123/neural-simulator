@@ -1,0 +1,113 @@
+{
+  "probe": "emerge24_online_growth",
+  "verdict": "GO -- the emergent producer LEARNS A NEW GROUNDED FACT LIVE (mid-life, on the same spiking bridge), PRODUCES it (1.00), RETAINS the old facts (1.00, no catastrophic forgetting), and still ABSTAINS on a novel cue (1.00, the moat holds through growth). BEFORE teaching, the new subject ABSTAINS (1.00 -- genuinely unknown, not pre-existing); dAP-LESION collapses learning (0.00); no teacher; multi-seed. Growth = potentiating the new fact's disjoint pathway on the pre-allocated coincidence pool via the committed sim/ three-term kernel. => a brain that GROWS its knowledge from experience, biology-native, NO sim/ edit -- the master directive's core, on the toward-language chain.",
+  "mechanism": "online growth on the emergent producer: potentiate a NEW fact's disjoint adjacent-pair pathways on the SAME bridge (pre-allocated dense coincidence pool + committed sim/ three-term kernel); a distinct verb keeps the new pathway disjoint -> the old facts are retained (no catastrophic forgetting); the new subject is a disjoint code -> abstains before, produces after; sim/ unchanged",
+  "task": "train base facts, teach a new fact LIVE, verify learned-new + retention + moat + pre-teach-abstain; dAP-lesion; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs_base": 80,
+    "epochs_new": 80,
+    "act_th": 2
+  },
+  "elapsed_seconds": 6.1,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "pre_teach_abstain": 1.0,
+        "learned_new": 1.0,
+        "retention": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "pre_teach_abstain": 1.0,
+        "learned_new": 0.0,
+        "retention": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "pre_teach_abstain": 1.0,
+        "learned_new": 1.0,
+        "retention": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "pre_teach_abstain": 1.0,
+        "learned_new": 0.0,
+        "retention": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "pre_teach_abstain": 1.0,
+        "learned_new": 1.0,
+        "retention": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "pre_teach_abstain": 1.0,
+        "learned_new": 0.0,
+        "retention": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "pre_teach_abstain": 1.0,
+        "learned_new": 1.0,
+        "retention": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "pre_teach_abstain": 1.0,
+        "learned_new": 0.0,
+        "retention": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "pre_teach_abstain": 1.0,
+        "learned_new": 1.0,
+        "retention": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "pre_teach_abstain": 1.0,
+        "learned_new": 0.0,
+        "retention": 0.0,
+        "moat": 1.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "pre_teach_abstain": 1.0,
+        "learned_new": 1.0,
+        "retention": 1.0,
+        "moat": 1.0
+      },
+      "lesion": {
+        "pre_teach_abstain": 1.0,
+        "learned_new": 0.0,
+        "retention": 0.0,
+        "moat": 1.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the new fact uses a DISTINCT verb (no shared-verb high-order ambiguity in the object slot). Online growth of facts that SHARE a verb/object with the base (requiring high-order context to disambiguate) + growth that OVERRIDES a generalization prior are the named next integration steps. The deep residual is open-world SEMANTICS (knowledge acquisition beyond told facts)."
+}
