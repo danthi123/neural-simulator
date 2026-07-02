@@ -1,6 +1,6 @@
 ---
 name: back-on-track
-description: Run this to re-anchor Claude to the project's true goal, non-negotiable constraints, and the proven boundary-surpassing workflow whenever it has drifted — declaring a wall/boundary as final, deferring hard work as "too big", asking for input on something it should decide, letting an over-strict gate mislabel real progress as a dead end, or wrapping up instead of autonomously driving the next biological mechanism. Composes with autonomous-runs + continual-autonomous-work.
+description: Run this to re-anchor Claude to the project's true goal, non-negotiable constraints, and the proven boundary-surpassing workflow whenever it has drifted — declaring a wall/boundary as final, deferring hard work as "too big", asking for input on something it should decide, letting an over-strict gate mislabel real progress as a dead end, wrapping up instead of driving the next biological mechanism, or serializing independent work single-threaded (low CPU/GPU util) instead of parallelizing across cores/subagents. Composes with autonomous-runs + continual-autonomous-work.
 ---
 
 # Back On Track
@@ -29,6 +29,16 @@ If I'm doing ANY of these, I've drifted — stop and re-anchor:
 3. **Asking instead of deciding.** Kicking a decision to the owner that the workflow can resolve. Reserve questions for genuine VALUE forks (which of several *equally-good* directions to prioritize) — NOT for "should I keep going / is this a wall / which mechanism / is this good enough."
 4. **Mislabeling progress.** An over-strict gate or framing calling real progress a dead end (e.g. a de-risk that beats its baseline + shows the mechanism working, stamped "BOUNDARY" over a hair's-width margin). Read the SUBSTANCE — partial progress = iterate, not stop.
 5. **Wrapping up.** "Good stopping point," a status-report-and-wait, or a summary with no next action. There is no natural stop until the owner says so.
+6. **Serializing independent work (under-using the hardware).** Running de-risks / seed-sweeps / config-sweeps / independent mechanisms ONE AT A TIME — and single-threaded (one numpy process → one CPU core, GPU idle, low util) — when they are independent and could run CONCURRENTLY. Waiting idle for a long run or a research subagent instead of advancing the next independent step in parallel. If I catch low CPU/GPU utilization or a queue of "run this, then that," I've drifted.
+
+## PARALLELIZE (the default, not the exception — `feedback_parallelize_aggressively_via_subagents`)
+Independent work runs CONCURRENTLY:
+- **Sweeps** (same runner, different seeds/widths/betas/task-variants): launch them as **multiple concurrent background processes** (`run_in_background`), one per config/seed — this saturates the CPU cores (fixing the low-util symptom) AND collapses a serial sweep into one wall-clock window. Aggregate the results after. For a multi-seed runner that's single-threaded, prefer N one-seed processes over one N-seed process when speed matters.
+- **Independent mechanisms / de-risks** (e.g. burst-multiplexing vs the dendritic microcircuit, or a research pass vs a build): advance them **in parallel** — concurrent subagents, or a subagent for one while I build the other. Don't finish one mechanism before starting an independent one.
+- **During any wait** (a long run, a research subagent): the next independent step starts NOW, in parallel — never wait idle.
+- **Right-size + parallelize together:** cheap-first config for the first look, AND fan the sweep out concurrently. (Single-threaded numpy is the correct tool for one small net — but N of them should be N processes, not N sequential.)
+- Mitigate cross-attribution with **strict, narrow `git add` per unit of work** (commit each result separately), NOT by serializing.
+Self-check: "Is anything running while I think? Are the independent things I'm about to do sequentially actually independent → launch them together. Is util low because I'm single-threaded → fan out across cores/subagents."
 
 ## THE PROVEN WORKFLOW TO SURPASS ISSUES (use this every time — it repeatedly turns "walls" into wins)
 Track record: the conversational-whitening wall → reframed via the Mikulasch–Priesemann analog/dendritic limit; the navigation action-selection wall → the Wang-2002 accumulator + Lo-Wang commit burst; the perceptual cold-start → the dorsal "where" stream + superior colliculus; EMERGE-1's feedback-alignment depth-wall → burst-multiplexed dendritic credit assignment. When stuck or facing a boundary:
