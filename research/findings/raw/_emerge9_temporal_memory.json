@@ -1,0 +1,89 @@
+{
+  "probe": "emerge9_temporal_memory",
+  "verdict": "BOUNDARY (build-informative, not a stop) -- HTM branch acc 0.667 < 0.90; didn't beat Markov floor+.15/chance+.20 (htm 0.667, markov_L 0.500, chance 0.500) (oracle 1.000, task context-solvable). The minimal HTM-TM did not cleanly self-organize context-specific prediction at this config -> bounded retune (n_cells / theta_seg / p_skel / epochs -- allocation needs enough cells/column + a segment threshold that separates contexts; do NOT thrash) OR a faithfulness gap (add multi-segment cells / the depression term). Do NOT start the sim/ port.",
+  "mechanism": "minimal-faithful HTM Temporal Memory (discrete form of Bouhadjar-Diesmann 2022 spiking TM): M columns x nE cells; per-cell distal segment (permanence over a fixed sparse skeleton); predictive cells / bursting / best-match-else-ALLOCATE winner selection / local Hebbian permanence learning; UNSUPERVISED (no teacher, performance never feeds learning); no BPTT",
+  "task": "overlapping sequences ([cue]+[shared middle L]+[branch]); branch (divergent) prediction; beat order-<=L Markov floor + distal-lesion collapse + full-context-oracle learnability",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "n_seq": 2,
+    "middle_len": 4,
+    "n_cells": 16,
+    "epochs": 40,
+    "theta_seg": 1,
+    "p_skel": 0.35
+  },
+  "elapsed_seconds": 0.3,
+  "per_seed": [
+    {
+      "htm": {
+        "branch_acc": 1.0,
+        "locality_ok": true
+      },
+      "lesion_distal": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "seed": 42,
+      "floors": {
+        "markov_L": 0.5,
+        "markov_1": 0.5,
+        "oracle": 1.0,
+        "vocab": 8,
+        "chance": 0.5
+      }
+    },
+    {
+      "htm": {
+        "branch_acc": 1.0,
+        "locality_ok": true
+      },
+      "lesion_distal": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "seed": 43,
+      "floors": {
+        "markov_L": 0.5,
+        "markov_1": 0.5,
+        "oracle": 1.0,
+        "vocab": 8,
+        "chance": 0.5
+      }
+    },
+    {
+      "htm": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "lesion_distal": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "untrained": {
+        "branch_acc": 0.0,
+        "locality_ok": true
+      },
+      "seed": 44,
+      "floors": {
+        "markov_L": 0.5,
+        "markov_1": 0.5,
+        "oracle": 1.0,
+        "vocab": 8,
+        "chance": 0.5
+      }
+    }
+  ],
+  "HONEST_NOTE": "Discrete HTM-TM (the algorithm Bouhadjar spikified); the spiking-LIF port (dAP -> our confirmed two-compartment neuron, permanence three-term rule, WTA inhibition) is rung-3b. High-order context self-organizes by ALLOCATION (distinct winner cells per context), NOT by training recurrent weights to a target -> sidesteps the 5-probe reservoir dead-end. Unsupervised: no teacher; 'self-organizes without a target' is the deliverable, not a cheat."
+}
