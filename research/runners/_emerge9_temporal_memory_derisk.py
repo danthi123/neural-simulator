@@ -122,12 +122,20 @@ class TemporalMemory:
                     matched = cells[col_ov >= self.theta_seg] if prev_active.any() else np.array([], int)
                     if matched.size > 0:
                         winners = matched                             # existing SDR matches this context -> reinforce it
-                    else:                                             # ALLOCATE a fresh k-cell context SDR...
-                        nmat = mature[cells].sum(axis=1).astype(float)
-                        if prev_winners.size > 0:                     # ...preferring cells WIRED to the prev context
-                            connected = (self.P[cells][:, prev_winners] >= 0).sum(axis=1)
-                            nmat -= connected                         # prefer better-connected + less-used cells
-                        winners = cells[np.argsort(nmat)[:self.k_win]]
+                    elif prev_winners.size > 0:                       # ALLOCATE a fresh k-cell SDR, DISJOINT per context
+                        connected = (self.P[cells][:, prev_winners] >= 0).sum(axis=1)
+                        cand = np.where(connected >= self.theta_seg)[0]   # cells that CAN mature predictive for this context
+                        if cand.size < self.k_win:
+                            cand = np.argsort(-connected)[:max(self.k_win, cand.size)]
+                        # context-DETERMINISTIC pick among candidates: same context (prev SDR) -> same winners (stable
+                        # across epochs); different context -> disjoint winners (no merge). Deterministic hash of the
+                        # sorted prev-SDR cell indices (Python's hash() is process-randomized -> not usable here).
+                        pw = np.sort(prev_winners).astype(np.int64)
+                        ctx = int((pw * np.arange(1, pw.size + 1)).sum() % (2 ** 31 - 1))
+                        pick = np.random.default_rng(ctx).permutation(cand)[:self.k_win]
+                        winners = cells[pick]
+                    else:                                             # first symbol (no context): first k cells
+                        winners = cells[:self.k_win]
                 else:
                     winners = cells
 
