@@ -1,0 +1,97 @@
+{
+  "probe": "emerge36_spiking_perception_pipeline",
+  "verdict": "GO -- the FULLY-SPIKING PERCEPTION->POOLER->INFERENCE pipeline: objects SEEN through the real Gabor/V1 front end -> a spiking sparse-expansion codon (EMERGE-35, NO numpy kWTA) -> a held-out PERCEIVED object inherits its visual category's property (1.00, 3/category), on the spiking bridge, end-to-end. PER-IMAGE PIXEL SCRAMBLE collapses it (0.56, the load-bearing perception control); dAP-LESION 0.00; 6-seed. => SEE an object, discover what a category is, reason about a novel one -- all SPIKING, biology-grounded (Gabor/V1 + cerebellar-granule codon), NO sim/ edit. Closes the fully-spiking perception pipeline (EMERGE-34's numpy pooler replaced).",
+  "mechanism": "fully-spiking perception pipeline: shapes -> real Gabor/V1 responses -> top-active V1 cells = feature layer -> a spiking sparse-expansion codon (decorrelated columns, coincidence-driven, EMERGE-35) -> on-bridge inheritance; no numpy kWTA anywhere; sim/ unchanged",
+  "task": "perceived objects (2 visual categories, 9 exemplars) -> V1 -> spiking codon; teach property on training codons; held-out perceived-object inheritance vs per-image scramble + dAP-lesion",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 40,
+    "n_feat": 60,
+    "n_col": 250,
+    "samp": 3,
+    "act_th": 2
+  },
+  "elapsed_seconds": 7.6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "held_out": 1.0
+      },
+      "scrambled": {
+        "held_out": 0.8333333333333334
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "held_out": 1.0
+      },
+      "scrambled": {
+        "held_out": 0.3333333333333333
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "held_out": 1.0
+      },
+      "scrambled": {
+        "held_out": 0.5
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "held_out": 1.0
+      },
+      "scrambled": {
+        "held_out": 0.8333333333333334
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "held_out": 1.0
+      },
+      "scrambled": {
+        "held_out": 0.5
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "held_out": 1.0
+      },
+      "scrambled": {
+        "held_out": 0.3333333333333333
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the whole pipeline is spiking (Gabor/V1 encode is the rate-reference sensory front end; the pooler codon + inheritance are on the spiking bridge). The scramble control is noisy at a single seed (small setup) so the GO keys on the multi-seed mean + the deterministic lesion. Composes EMERGE-34 + EMERGE-35 GO pieces."
+}
