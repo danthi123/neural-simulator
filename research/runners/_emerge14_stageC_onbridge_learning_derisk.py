@@ -165,17 +165,27 @@ class OnBridgeLearner:
         return wc[self.cells_idx]                                # per EMERGE cell
 
     def _match_count(self, post_cell, prev_win):
-        """CONNECTED-synapse overlap (perm>=perm_conn) into post from prev winners. On the dense pool, matching must be
-        connected (not perm>0, which is full everywhere) so an untrained context matches nothing -> allocates."""
+        """POTENTIATED-synapse overlap (perm > p_init+0.02) into post from prev winners -- the SAME "committed" threshold
+        `_committed_count` uses, NOT the CONNECTED threshold (perm>=perm_conn). The dense pool pre-exists at p_init=0.0,
+        so `perm>0` is full everywhere (can't distinguish) and `perm>=perm_conn=0.5` is only reached after ~4 potentiation
+        steps (lam_pot=0.14). Requiring CONNECTED for a MATCH made the learner keep RE-ALLOCATING for the first several
+        epochs (a match needs a connected synapse that doesn't exist yet) -> at n_seq>2 the allocation CHURNS and two
+        distinct contexts MERGE onto the same shared-middle cells (branch prediction collapses to 0.000). Matching on the
+        committed threshold makes a cell that was potentiated ONCE (perm~0.14 > 0.02) count as a match IMMEDIATELY, so
+        re-training REINFORCES the epoch-0 disjoint allocation instead of re-drawing it -- the exact behaviour of the numpy
+        FlatHTM oracle (EMERGE-13 `_match_count` = potential-synapse `W>0` overlap on its grow-from-zero pool). An untrained
+        context (all perm = p_init = 0.0) still matches 0 (0.0 is not > 0.02) -> it still ALLOCATES, so the no-teacher /
+        untrained anti-cheats are preserved."""
         if not prev_win:
             return 0
         data = _host(self.b.cp_connections.data).astype(np.float64)
         pre_set = set(int(self.cells_idx[i]) for i in prev_win)
         bpost = int(self.cells_idx[post_cell])
         idx = np.where(self.col == bpost)[0]
+        thr = self.p_init + 0.02                                  # "committed" (potentiated-above-init), not connected
         m = 0
         for k in idx:
-            if int(self.row[k]) in pre_set and data[k] >= self.perm_conn:
+            if int(self.row[k]) in pre_set and data[k] >= thr:
                 m += 1
         return m
 

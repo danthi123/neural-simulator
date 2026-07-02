@@ -1,0 +1,92 @@
+{
+  "probe": "emerge14_stageC_onbridge_learning",
+  "verdict": "GO -- the HTM Temporal-Memory permanences LIVE in the bridge's coincidence synapse weights and are LEARNED from scratch by the sim/ fused_htm_permanence_update kernel (three-term rule) over a pre-allocated potential pool: branch 1.000 >> Markov 0.125, >> chance 0.125, >> dAP-lesion 0.000; untrained 0.000; no teacher; multi-seed. => rung-4 LEARNING is on the substrate -> the whole unsupervised sequence-learning mechanism runs on the real SimulationBridge. rung-4 COMPLETE (host residual: winner-selection + committed-metric allocation, as in EMERGE-9d).",
+  "mechanism": "HTM Temporal-Memory permanences in the bridge's coincidence synapse weights (cp_connections.data) over a pre-allocated cross-column potential pool, learned by the sim/ fused_htm_permanence_update kernel (Bouhadjar three-term rule); prediction = the bridge's connected-count coincidence; host residual = winner-selection + committed-metric allocation (as EMERGE-9d)",
+  "task": "overlapping sequences; branch prediction; Markov floor + dAP-lesion + oracle + multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "n_seq": 8,
+    "middle_len": 4,
+    "n_cells": 40,
+    "k_win": 4,
+    "act_th": 3,
+    "epochs": 80
+  },
+  "elapsed_seconds": 2201.3,
+  "per_seed": [
+    {
+      "seed": 42,
+      "floors": {
+        "markov_L": 0.125,
+        "oracle": 1.0,
+        "chance": 0.125
+      },
+      "htm": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 43,
+      "floors": {
+        "markov_L": 0.125,
+        "oracle": 1.0,
+        "chance": 0.125
+      },
+      "htm": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 44,
+      "floors": {
+        "markov_L": 0.125,
+        "oracle": 1.0,
+        "chance": 0.125
+      },
+      "htm": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 100,
+      "floors": {
+        "markov_L": 0.125,
+        "oracle": 1.0,
+        "chance": 0.125
+      },
+      "htm": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 101,
+      "floors": {
+        "markov_L": 0.125,
+        "oracle": 1.0,
+        "chance": 0.125
+      },
+      "htm": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 102,
+      "floors": {
+        "markov_L": 0.125,
+        "oracle": 1.0,
+        "chance": 0.125
+      },
+      "htm": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    }
+  ],
+  "HONEST_NOTE": "rung-4 Stage C: LEARNING on the substrate via the committed fused kernel on cp_connections.data. Prediction reads the bridge's learned permanences (connected count). If GO, rung-4 (the whole unsupervised sequence-learning mechanism on the real SimulationBridge) is COMPLETE."
+}
