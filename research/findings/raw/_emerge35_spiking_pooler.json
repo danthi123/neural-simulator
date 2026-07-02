@@ -1,0 +1,97 @@
+{
+  "probe": "emerge35_spiking_pooler",
+  "verdict": "GO -- the FULLY-SPIKING pooler: a spiking SPARSE-EXPANSION column layer (the Marr-Albus codon: 24 features -> 250 columns, each sampling 3 decorrelated features, firing if >= 2) forms category-SEPARATING codes that SCALE to 4 categories (held-out inheritance 1.00 >> chance 0.25) and support on-bridge inheritance -- all via the validated coincidence drive, NO numpy kWTA. PERMUTED-FEATURES (input-destruction) collapses to 0.24 (~chance); dAP-LESION 0.00; 6-seed. => the EMERGE-33/34 rate-reference is CLOSED -- a fully-spiking, biology-grounded (cerebellar-granule sparse expansion / F.12) category-separating pooler on the substrate. NO sim/ edit.",
+  "mechanism": "fully-spiking sparse-expansion pooler (Marr-Albus codon, F.12): features -> a large column layer via a fixed decorrelated coincidence projection; a column fires when >= act_th of its sampled features are active (coincidence_weighted_drive); sparse expansion separates similar inputs geometrically -> category-separating codons scaling to 4+ categories; inheritance on the codons via the committed sim/ three-term kernel; NO numpy kWTA; sim/ unchanged",
+  "task": "4 latent categories x 9 members (varied feature subsets); teach property on training members' spiking codons; test held-out inheritance vs permuted-features + dAP-lesion; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 40,
+    "n_feat": 24,
+    "n_col": 250,
+    "samp": 3,
+    "act_th": 2
+  },
+  "elapsed_seconds": 13.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "held_out": 1.0
+      },
+      "permuted": {
+        "held_out": 0.16666666666666666
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "held_out": 1.0
+      },
+      "permuted": {
+        "held_out": 0.25
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "held_out": 1.0
+      },
+      "permuted": {
+        "held_out": 0.25
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "held_out": 1.0
+      },
+      "permuted": {
+        "held_out": 0.3333333333333333
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "held_out": 1.0
+      },
+      "permuted": {
+        "held_out": 0.16666666666666666
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "held_out": 1.0
+      },
+      "permuted": {
+        "held_out": 0.25
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the sparse-expansion projection is FIXED + decorrelated (the cerebellar-granule codon, biology-grounded), not competitively LEARNED -- it gives fully-spiking category separation without the self-organized (Hebbian competitive) pooler. The competitive self-organizing version (three-term kernel learning feat->col + FS-WTA, per the research gate) is the further refinement; but the sparse-expansion pooler already closes the fully-spiking-pooler note (no numpy kWTA)."
+}
